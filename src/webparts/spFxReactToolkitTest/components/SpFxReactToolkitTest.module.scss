@@ -1,0 +1,109 @@
+@import '~@fluentui/react/dist/sass/References.scss';
+
+.spFxReactToolkitTest {
+  overflow: hidden;
+  padding: 1em;
+  color: "[theme:bodyText, default: #323130]";
+  color: var(--bodyText);
+  &.teams {
+    font-family: $ms-font-family-fallbacks;
+  }
+}
+
+.welcome {
+  text-align: center;
+}
+
+.welcomeImage {
+  width: 100%;
+  max-width: 420px;
+}
+
+.links {
+  a {
+    text-decoration: none;
+    color: "[theme:link, default:#03787c]";
+    color: var(--link); // note: CSS Custom Properties support is limited to modern browsers only
+
+    &:hover {
+      text-decoration: underline;
+      color: "[theme:linkHovered, default: #014446]";
+      color: var(--linkHovered); // note: CSS Custom Properties support is limited to modern browsers only
+    }
+  }
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  
+  &.success {
+    background-color: #DFF6DD;
+    color: #107C10;
+  }
+  
+  &.error {
+    background-color: #FDE7E9;
+    color: #A4262C;
+  }
+}
+
+.logMessage {
+  padding: 8px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  
+  &.info {
+    background-color: #F3F2F1;
+  }
+  
+  &.warning {
+    background-color: #FFF4CE;
+  }
+  
+  &.error {
+    background-color: #FDE7E9;
+  }
+  
+  &.verbose {
+    background-color: #E1DFDD;
+  }
+}
+
+.detailsSection {
+  margin-top: 16px;
+  
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 8px;
+    background-color: #F3F2F1;
+    border-radius: 4px;
+    
+    &:hover {
+      background-color: #EDEBE9;
+    }
+  }
+  
+  pre {
+    background-color: #F3F2F1;
+    padding: 12px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 12px;
+  }
+}

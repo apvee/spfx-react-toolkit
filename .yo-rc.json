@@ -1,0 +1,18 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "22.14.0",
+    "sdksVersions": {},
+    "version": "1.21.1",
+    "libraryName": "apvee-spfx-react-toolkit",
+    "libraryId": "5d643195-c536-4651-9c73-4967736890b7",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "@apvee/spfx-react-toolkit",
+    "solutionShortDescription": "@apvee/spfx-react-toolkit description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

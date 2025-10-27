@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "apvee-spfx-react-toolkit-client-side-solution",
+    "id": "5d643195-c536-4651-9c73-4967736890b7",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.21.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "@apvee/spfx-react-toolkit description"
+      },
+      "longDescription": {
+        "default": "@apvee/spfx-react-toolkit description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "apvee-spfx-react-toolkit Feature",
+        "description": "The feature that activates elements of the apvee-spfx-react-toolkit solution.",
+        "id": "b8ee1e7b-59c8-4296-aace-d9b76e17e88a",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/apvee-spfx-react-toolkit.sppkg"
+  }
+}
