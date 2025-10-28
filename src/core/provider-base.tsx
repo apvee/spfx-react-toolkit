@@ -1,5 +1,5 @@
-// provider.tsx
-// SPFxProvider - Instance-based, auto-detecting, pragmatic approach
+// provider-base.tsx
+// SPFxProviderBase - Internal base implementation with shared logic
 
 import * as React from 'react';
 import { useSetAtom, useStore } from 'jotai';
@@ -14,33 +14,19 @@ import {
 import { useThemeSubscription } from '../utils/theme-subscription';
 
 /**
- * SPFxProvider - Instance-based provider for SPFx React Toolkit
+ * SPFxProviderBase - Internal base provider with shared logic
  * 
- * Automatically detects component type and extracts all necessary properties.
- * No manual prop passing needed - just pass `this` from your SPFx component!
+ * DO NOT use directly - use type-specific providers instead:
+ * - SPFxWebPartProvider
+ * - SPFxApplicationCustomizerProvider
+ * - SPFxListViewCommandSetProvider
+ * - SPFxFieldCustomizerProvider
  * 
- * Features:
- * - Auto-detects: WebPart, ApplicationCustomizer, CommandSet, FieldCustomizer
- * - Extracts: context, properties, displayMode, containerEl, etc.
- * - Manages: Jotai atoms initialization and cleanup
- * - Type-safe: Full TypeScript support with generics
+ * Or use the generic SPFxProvider for backward compatibility.
  * 
- * @example
- * ```tsx
- * // In your WebPart:
- * export default class MyWebPart extends BaseClientSideWebPart<IMyProps> {
- *   public render(): void {
- *     const element = React.createElement(
- *       SPFxProvider,
- *       { instance: this },
- *       React.createElement(MyApp)
- *     );
- *     ReactDom.render(element, this.domElement);
- *   }
- * }
- * ```
+ * @internal
  */
-export function SPFxProvider<TProps = unknown>(
+export function SPFxProviderBase<TProps = unknown>(
   props: SPFxProviderProps<TProps>
 ): JSX.Element {
   const { instance, children } = props;

@@ -13,8 +13,10 @@
   },
   "dependencies": {
     "@fluentui/react": "^8.106.4",
+    "@microsoft/sp-application-base": "1.21.1",
     "@microsoft/sp-component-base": "1.21.1",
     "@microsoft/sp-core-library": "1.21.1",
+    "@microsoft/sp-listview-extensibility": "1.21.1",
     "@microsoft/sp-lodash-subset": "1.21.1",
     "@microsoft/sp-office-ui-fabric-core": "1.21.1",
     "@microsoft/sp-property-pane": "1.21.1",

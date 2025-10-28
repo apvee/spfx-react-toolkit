@@ -8,7 +8,7 @@ import {
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
 import * as strings from 'SpFxReactToolkitTestWebPartStrings';
-import { SPFxProvider } from '../../core';
+import { SPFxWebPartProvider } from '../../core';
 import SpFxReactToolkitTest from './components/SpFxReactToolkitTest';
 
 export interface ISpFxReactToolkitTestWebPartProps {
@@ -19,8 +19,8 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
 
   public render(): void {
     const element: React.ReactElement = React.createElement(
-      SPFxProvider,
-      { instance: this as never },
+      SPFxWebPartProvider,
+      { instance: this },
       React.createElement(SpFxReactToolkitTest)
     );
 
