@@ -2,7 +2,6 @@
 // Hook to access SharePoint page context
 
 import type { PageContext } from '@microsoft/sp-page-context';
-import type { SPFxContextLike } from '../core/types';
 import { useSPFxContext } from './useSPFxContext';
 
 /**
@@ -39,8 +38,8 @@ import { useSPFxContext } from './useSPFxContext';
  * 
  * @see {@link useSPFxContext} for accessing the full SPFx context
  */
-export function useSPFxPageContext<TSPFxCtx extends SPFxContextLike = SPFxContextLike>(): PageContext {
-  const { spfxContext } = useSPFxContext<TSPFxCtx>();
+export function useSPFxPageContext(): PageContext {
+  const { spfxContext } = useSPFxContext();
   
   // Extract pageContext from SPFx context
   // All SPFx contexts have pageContext property

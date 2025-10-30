@@ -1,22 +1,21 @@
 // type-guards.ts
-// Type guards for SPFx component detection using structural typing
+// Type guards for SPFx component detection using structural typing (duck typing)
 
+import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+import type { BaseApplicationCustomizer } from '@microsoft/sp-application-base';
+import type { BaseListViewCommandSet, BaseFieldCustomizer } from '@microsoft/sp-listview-extensibility';
 import type {
-  SPFxComponentLike,
-  WebPartLike,
-  ApplicationCustomizerLike,
-  ListViewCommandSetLike,
-  FieldCustomizerLike,
+  SPFxComponent,
   HostKind,
 } from './types';
 
 /**
  * Type guard: Check if instance is a WebPart
- * Uses structural typing (no class imports needed)
+ * Uses duck typing - checks for WebPart-specific properties
  */
-export function isWebPart<TProps = unknown>(
+export function isWebPart<TProps extends {} = {}>(
   instance: unknown
-): instance is WebPartLike<TProps> {
+): instance is BaseClientSideWebPart<TProps> {
   if (!instance || typeof instance !== 'object') return false;
   
   const obj = instance as Record<string, unknown>;
@@ -33,10 +32,11 @@ export function isWebPart<TProps = unknown>(
 
 /**
  * Type guard: Check if instance is an ApplicationCustomizer
+ * Uses duck typing - checks for ApplicationCustomizer-specific properties
  */
-export function isApplicationCustomizer<TProps = unknown>(
+export function isApplicationCustomizer<TProps extends {} = {}>(
   instance: unknown
-): instance is ApplicationCustomizerLike<TProps> {
+): instance is BaseApplicationCustomizer<TProps> {
   if (!instance || typeof instance !== 'object') return false;
   
   const obj = instance as Record<string, unknown>;
@@ -56,10 +56,11 @@ export function isApplicationCustomizer<TProps = unknown>(
 
 /**
  * Type guard: Check if instance is a ListViewCommandSet
+ * Uses duck typing - checks for CommandSet-specific properties
  */
-export function isListViewCommandSet<TProps = unknown>(
+export function isListViewCommandSet<TProps extends {} = {}>(
   instance: unknown
-): instance is ListViewCommandSetLike<TProps> {
+): instance is BaseListViewCommandSet<TProps> {
   if (!instance || typeof instance !== 'object') return false;
   
   const obj = instance as Record<string, unknown>;
@@ -76,10 +77,11 @@ export function isListViewCommandSet<TProps = unknown>(
 
 /**
  * Type guard: Check if instance is a FieldCustomizer
+ * Uses duck typing - checks for FieldCustomizer-specific properties
  */
-export function isFieldCustomizer<TProps = unknown>(
+export function isFieldCustomizer<TProps extends {} = {}>(
   instance: unknown
-): instance is FieldCustomizerLike<TProps> {
+): instance is BaseFieldCustomizer<TProps> {
   if (!instance || typeof instance !== 'object') return false;
   
   const obj = instance as Record<string, unknown>;
@@ -102,8 +104,8 @@ export function isFieldCustomizer<TProps = unknown>(
  * Detect the kind of SPFx component from an instance
  * Throws if unable to detect
  */
-export function detectComponentKind<TProps = unknown>(
-  instance: SPFxComponentLike<TProps>
+export function detectComponentKind<TProps extends {} = {}>(
+  instance: SPFxComponent<TProps>
 ): HostKind {
   if (isWebPart(instance)) return 'WebPart';
   if (isApplicationCustomizer(instance)) return 'AppCustomizer';

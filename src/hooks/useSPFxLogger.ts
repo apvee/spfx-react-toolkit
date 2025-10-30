@@ -1,10 +1,12 @@
 // useSPFxLogger.ts
 // Hook for structured logging with SPFx context
 
+import { useSPFxContext } from '../core/context';
 import { useSPFxInstanceInfo } from './useSPFxInstanceInfo';
 import { useSPFxUserInfo } from './useSPFxUserInfo';
 import { useSPFxSiteInfo } from './useSPFxSiteInfo';
 import { useSPFxCorrelationInfo } from './useSPFxCorrelationInfo';
+import type { WebPartContext } from '@microsoft/sp-webpart-base';
 
 /**
  * Log levels
@@ -41,6 +43,9 @@ export interface LogEntry {
   
   /** Correlation ID */
   readonly correlationId: string | undefined;
+  
+  /** WebPart tag - only available for WebPart contexts */
+  readonly webPartTag?: string;
   
   /** Extra metadata */
   readonly extra?: Record<string, unknown>;
@@ -132,8 +137,16 @@ export function useSPFxLogger(
   const { displayName, loginName } = useSPFxUserInfo();
   const { siteUrl, webUrl } = useSPFxSiteInfo();
   const { correlationId } = useSPFxCorrelationInfo();
+  const { spfxContext, kind } = useSPFxContext();
   
   const emit = (level: LogLevel, message: string, extra?: Record<string, unknown>): void => {
+    // Extract webPartTag only if in WebPart context
+    let webPartTag: string | undefined;
+    if (kind === 'WebPart') {
+      const wpContext = spfxContext as WebPartContext;
+      webPartTag = wpContext.webPartTag;
+    }
+    
     const entry: LogEntry = {
       level,
       message,
@@ -144,6 +157,7 @@ export function useSPFxLogger(
       siteUrl,
       webUrl,
       correlationId,
+      webPartTag,
       extra,
     };
     
@@ -152,7 +166,9 @@ export function useSPFxLogger(
     } else {
       // Default: log to console
       const levelUpper = level.toUpperCase();
-      const line = '[' + levelUpper + '] ' + entry.ts + ' ' + host + '/' + instanceId + ' – ' + message;
+      // For WebPart contexts, display webPartTag instead of instanceId for better readability
+      const displayId = kind === 'WebPart' && webPartTag ? webPartTag : instanceId;
+      const line = '[' + levelUpper + '] ' + entry.ts + ' ' + host + '/' + displayId + ' – ' + message;
       
       // Use appropriate console method
       const consoleFn = level === 'debug' ? console.log : console[level];

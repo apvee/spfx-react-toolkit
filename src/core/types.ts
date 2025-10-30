@@ -1,7 +1,9 @@
 // types.ts
 // Core type definitions for SPFx React Toolkit
 
-import type { DisplayMode } from '@microsoft/sp-core-library';
+import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+import type { BaseApplicationCustomizer } from '@microsoft/sp-application-base';
+import type { BaseListViewCommandSet, BaseFieldCustomizer } from '@microsoft/sp-listview-extensibility';
 
 /**
  * Type of SPFx host component
@@ -14,88 +16,44 @@ export type HostKind =
   | 'ACE';
 
 /**
- * Structural types for SPFx components (no imports needed)
- * These match the actual SPFx base class structures
+ * Union type for all SPFx component instances
+ * Uses actual SPFx base classes for full type safety and API access
  */
+export type SPFxComponent<TProps extends {} = {}> = 
+  | BaseClientSideWebPart<TProps>
+  | BaseApplicationCustomizer<TProps>
+  | BaseListViewCommandSet<TProps>
+  | BaseFieldCustomizer<TProps>;
 
 /**
- * Minimal SPFx Context structure (common to all)
+ * Union type for all SPFx context types
+ * Provides type-safe access to common context properties across all SPFx components
+ * 
+ * @remarks
+ * All SPFx contexts include these common properties:
+ * - `pageContext` - SharePoint page context
+ * - `serviceScope` - Service locator for SPFx services
+ * - `instanceId` - Unique identifier for the component instance
+ * 
+ * For component-specific properties, use type narrowing or casting:
+ * ```typescript
+ * const ctx = useSPFxContext();
+ * if (ctx.kind === 'WebPart') {
+ *   const wpContext = ctx.spfxContext as WebPartContext;
+ *   // Access WebPart-specific properties
+ * }
+ * ```
  */
-export interface SPFxContextLike {
-  readonly instanceId?: string;
-  readonly pageContext?: unknown;
-  readonly serviceScope?: unknown;
-}
-
-/**
- * WebPart-like structure (structural typing)
- */
-export interface WebPartLike<TProps = unknown> {
-  readonly context: SPFxContextLike & {
-    readonly instanceId: string;
-  };
-  readonly properties: TProps;
-  readonly displayMode: DisplayMode;
-  readonly domElement: HTMLElement;
-  render(): void;
-}
-
-/**
- * ApplicationCustomizer-like structure
- */
-export interface ApplicationCustomizerLike<TProps = unknown> {
-  readonly context: SPFxContextLike & {
-    readonly instanceId: string;
-    readonly placeholderProvider: {
-      readonly changedEvent: unknown;
-      tryCreateContent(name: unknown, options?: unknown): unknown;
-    };
-  };
-  readonly properties: TProps;
-}
-
-/**
- * ListViewCommandSet-like structure
- */
-export interface ListViewCommandSetLike<TProps = unknown> {
-  readonly context: SPFxContextLike & {
-    readonly instanceId: string;
-    readonly listView: {
-      readonly selectedRows?: ReadonlyArray<unknown>;
-      readonly rows?: ReadonlyArray<unknown>;
-      readonly list?: { title?: string };
-      listViewStateChangedEvent?: unknown;
-    };
-  };
-  readonly properties: TProps;
-  onExecute(event: unknown): void;
-  tryGetCommand(id: string): unknown;
-}
-
-/**
- * FieldCustomizer-like structure
- */
-export interface FieldCustomizerLike<TProps = unknown> {
-  readonly context: SPFxContextLike & {
-    readonly instanceId: string;
-    readonly field: {
-      readonly listId: string;
-      readonly internalName: string;
-    };
-    readonly itemId?: number;
-  };
-  readonly properties: TProps;
-  onRenderCell(event: unknown): void;
-}
-
-/**
- * Union type for all SPFx component-like structures
- */
-export type SPFxComponentLike<TProps = unknown> = 
-  | WebPartLike<TProps>
-  | ApplicationCustomizerLike<TProps>
-  | ListViewCommandSetLike<TProps>
-  | FieldCustomizerLike<TProps>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SPFxContextType = 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | BaseClientSideWebPart<any>['context']
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | BaseApplicationCustomizer<any>['context']
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | BaseListViewCommandSet<any>['context']
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | BaseFieldCustomizer<any>['context'];
 
 /**
  * Container size information
@@ -121,9 +79,9 @@ export interface ContainerSize {
  * }
  * ```
  */
-export interface SPFxProviderProps<TProps = unknown> {
+export interface SPFxProviderProps<TProps extends {} = {}> {
   /** SPFx component instance (WebPart, ApplicationCustomizer, etc.) */
-  readonly instance: SPFxComponentLike<TProps>;
+  readonly instance: SPFxComponent<TProps>;
   
   /** Children to render */
   readonly children?: React.ReactNode;
@@ -132,13 +90,22 @@ export interface SPFxProviderProps<TProps = unknown> {
 /**
  * Context value provided by SPFxProvider
  * Contains only static metadata, no reactive state
+ * 
+ * @remarks
+ * The `spfxContext` property provides type-safe access to common SPFx context properties
+ * like `pageContext`, `serviceScope`, and `instanceId`. For component-specific properties,
+ * use type narrowing with the `kind` property.
  */
-export interface SPFxContextValue<TContext extends SPFxContextLike = SPFxContextLike> {
+export interface SPFxContextValue {
   /** Unique identifier for this SPFx instance */
   readonly instanceId: string;
   
-  /** SPFx context object */
-  readonly spfxContext: TContext;
+  /** 
+   * SPFx context object with full type safety
+   * Provides access to common properties: pageContext, serviceScope, instanceId
+   * For component-specific properties, use type narrowing based on `kind`
+   */
+  readonly spfxContext: SPFxContextType;
   
   /** Type of host component */
   readonly kind: HostKind;

@@ -2,7 +2,7 @@
 // React Context for SPFx metadata (static, non-reactive)
 
 import * as React from 'react';
-import type { SPFxContextValue, SPFxContextLike } from './types';
+import type { SPFxContextValue } from './types';
 
 /**
  * React Context for SPFx metadata
@@ -26,7 +26,7 @@ if (process.env.NODE_ENV !== 'production') {
  * 
  * @internal
  */
-export function useSPFxContext<TSPFxCtx extends SPFxContextLike = SPFxContextLike>(): SPFxContextValue<TSPFxCtx> {
+export function useSPFxContext(): SPFxContextValue {
   const context = React.useContext(SPFxContext);
   
   if (!context) {
@@ -36,5 +36,5 @@ export function useSPFxContext<TSPFxCtx extends SPFxContextLike = SPFxContextLik
     );
   }
   
-  return context as SPFxContextValue<TSPFxCtx>;
+  return context;
 }

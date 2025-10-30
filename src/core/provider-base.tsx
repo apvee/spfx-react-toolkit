@@ -26,16 +26,22 @@ import { useThemeSubscription } from '../utils/theme-subscription';
  * 
  * @internal
  */
-export function SPFxProviderBase<TProps = unknown>(
+export function SPFxProviderBase<TProps extends {} = {}>(
   props: SPFxProviderProps<TProps>
 ): JSX.Element {
   const { instance, children } = props;
   
+  // Cast to 'any' to access protected/private properties
+  // This is safe because we're inside the provider and know the structure
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const instanceAny = instance as any;
+  
   // Detect component kind (WebPart, AppCustomizer, etc.)
-  const kind = React.useMemo(() => detectComponentKind(instance), [instance]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const kind = React.useMemo(() => detectComponentKind(instance as any), [instance]);
   
   // Extract context and instanceId
-  const context = instance.context;
+  const context = instanceAny.context;
   const instanceId = React.useMemo(
     () => deriveInstanceId(context),
     [context]
@@ -51,7 +57,7 @@ export function SPFxProviderBase<TProps = unknown>(
   const setTheme = useSetAtom(spfxAtoms.theme(instanceId));
   
   // Ref to track last known properties value (prevents loop)
-  const lastPropertiesRef = React.useRef<unknown>(instance.properties);
+  const lastPropertiesRef = React.useRef<unknown>(instanceAny.properties);
   
   // Subscribe to theme changes (single subscription per instance)
   useThemeSubscription(context, setTheme);
@@ -59,16 +65,17 @@ export function SPFxProviderBase<TProps = unknown>(
   // Initialize atoms based on component type
   React.useEffect(() => {
     // Properties (common to all)
-    setProperties(instance.properties);
-    lastPropertiesRef.current = instance.properties;
+    setProperties(instanceAny.properties);
+    lastPropertiesRef.current = instanceAny.properties;
     
     // WebPart-specific
     if (isWebPart(instance)) {
-      setDisplayMode(instance.displayMode);
-      setContainerEl(instance.domElement);
+      setDisplayMode(instanceAny.displayMode);
+      setContainerEl(instanceAny.domElement);
     }
   }, [
     instance,
+    instanceAny,
     setProperties,
     setDisplayMode,
     setContainerEl,
@@ -77,11 +84,11 @@ export function SPFxProviderBase<TProps = unknown>(
   // Sync properties when they change (SPFx → Atom)
   // Property Pane changes will trigger this via instance.properties reference change
   React.useEffect(() => {
-    if (instance.properties !== lastPropertiesRef.current) {
-      setProperties(instance.properties);
-      lastPropertiesRef.current = instance.properties;
+    if (instanceAny.properties !== lastPropertiesRef.current) {
+      setProperties(instanceAny.properties);
+      lastPropertiesRef.current = instanceAny.properties;
     }
-  }, [instance.properties, setProperties]);
+  }, [instanceAny.properties, setProperties, instanceAny]);
   
   // Sync properties when atom changes (Atom → SPFx)
   // Hook updates will trigger this via atom subscription
@@ -94,7 +101,7 @@ export function SPFxProviderBase<TProps = unknown>(
       // Only sync if atom value is different from last known value
       if (atomValue !== lastPropertiesRef.current) {
         // Mutate SPFx properties object (copy all properties from atom to instance)
-        const target = instance.properties as Record<string, unknown>;
+        const target = instanceAny.properties as Record<string, unknown>;
         const source = atomValue as Record<string, unknown>;
         
         // Clear existing properties
@@ -115,7 +122,7 @@ export function SPFxProviderBase<TProps = unknown>(
         
         // Refresh Property Pane for WebParts (if propertyPane exists)
         if (isWebPart(instance)) {
-          const ctx = instance.context as unknown as { propertyPane?: { refresh(): void } };
+          const ctx = instanceAny.context as unknown as { propertyPane?: { refresh(): void } };
           if (ctx.propertyPane && typeof ctx.propertyPane.refresh === 'function') {
             ctx.propertyPane.refresh();
           }
@@ -124,14 +131,14 @@ export function SPFxProviderBase<TProps = unknown>(
     });
     
     return unsubscribe;
-  }, [store, instanceId, instance]);
+  }, [store, instanceId, instance, instanceAny]);
   
   // WebPart: Sync displayMode when it changes
   React.useEffect(() => {
     if (isWebPart(instance)) {
-      setDisplayMode(instance.displayMode);
+      setDisplayMode(instanceAny.displayMode);
     }
-  }, [instance, setDisplayMode]);
+  }, [instance, instanceAny, setDisplayMode]);
   
   // Cleanup atoms when component unmounts (memory leak prevention)
   React.useEffect(() => {

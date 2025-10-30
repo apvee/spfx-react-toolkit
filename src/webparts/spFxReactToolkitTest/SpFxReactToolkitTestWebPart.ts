@@ -23,7 +23,7 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
       { instance: this },
       React.createElement(SpFxReactToolkitTest)
     );
-
+    
     ReactDom.render(element, this.domElement);
   }
 
