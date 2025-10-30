@@ -1,0 +1,1843 @@
+# SPFx React Toolkit - LLM Reference Guide
+
+> **Version**: 0.0.1  
+> **SPFx Compatibility**: 1.21.1+  
+> **React Version**: 17.x  
+> **License**: MIT  
+> **Purpose**: Comprehensive reference for AI/LLM code generation
+
+---
+
+## Table of Contents
+
+1. [Quick Reference](#quick-reference)
+2. [Core Concepts](#core-concepts)
+3. [Setup Pattern](#setup-pattern)
+4. [Hook Catalog](#hook-catalog)
+5. [Type Definitions](#type-definitions)
+6. [Common Patterns](#common-patterns)
+7. [Anti-Patterns (DO NOT USE)](#anti-patterns-do-not-use)
+8. [Complete Examples](#complete-examples)
+9. [Migration Guide](#migration-guide)
+10. [Troubleshooting](#troubleshooting)
+
+---
+
+## Quick Reference
+
+### Essential Imports
+
+```typescript
+// Provider (required at root)
+import { SPFxProvider } from 'spfx-react-toolkit';
+
+// Common hooks
+import {
+  useSPFxProperties,
+  useSPFxDisplayMode,
+  useSPFxThemeInfo,
+  useSPFxUserInfo,
+  useSPFxSiteInfo,
+  useSPFxPageContext,
+} from 'spfx-react-toolkit';
+
+// Types (always use 'type' import)
+import type {
+  SPFxPropertiesInfo,
+  SPFxDisplayModeInfo,
+  SPFxUserInfo,
+} from 'spfx-react-toolkit';
+```
+
+### Minimal WebPart Setup
+
+```typescript
+// In WebPart's render() method
+import * as React from 'react';
+import * as ReactDom from 'react-dom';
+import { SPFxProvider } from 'spfx-react-toolkit';
+import MyComponent from './components/MyComponent';
+
+public render(): void {
+  const element = React.createElement(
+    SPFxProvider,
+    { instance: this as never }, // Cast required for protected properties
+    React.createElement(MyComponent)
+  );
+  
+  ReactDom.render(element, this.domElement);
+}
+```
+
+---
+
+## Core Concepts
+
+### 1. Architecture Overview
+
+**SPFx React Toolkit** provides:
+- Single `SPFxProvider` wrapper for entire component tree
+- 26+ hooks for accessing SPFx context, properties, services
+- Jotai-based atomic state management (per-instance scoped)
+- Automatic bidirectional property synchronization
+- Type-safe API with full TypeScript support
+
+### 2. State Management
+
+**Jotai Atoms**:
+- Each SPFx instance has isolated state via `atomFamily(instanceId)`
+- No global store - state is scoped per WebPart/Extension instance
+- Automatic cleanup on unmount
+
+**React Context**:
+- Static metadata only (instanceId, kind, spfxContext)
+- No reactive state in context (prevents unnecessary re-renders)
+
+### 3. Provider Detection
+
+The provider automatically detects:
+- `WebPart` - BaseClientSideWebPart
+- `AppCustomizer` - BaseApplicationCustomizer
+- `CommandSet` - BaseListViewCommandSet
+- `FieldCustomizer` - BaseFieldCustomizer
+
+### 4. Instance Isolation
+
+Multiple instances of the same WebPart on a page are isolated:
+- Separate state atoms per instance
+- Storage keys include instanceId
+- No cross-instance pollution
+
+---
+
+## Setup Pattern
+
+### WebPart Integration
+
+```typescript
+// MyWebPart.ts
+import { Version } from '@microsoft/sp-core-library';
+import {
+  BaseClientSideWebPart,
+  IPropertyPaneConfiguration,
+} from '@microsoft/sp-webpart-base';
+import * as React from 'react';
+import * as ReactDom from 'react-dom';
+import { SPFxProvider } from 'spfx-react-toolkit';
+import MyComponent from './components/MyComponent';
+
+export interface IMyWebPartProps {
+  title: string;
+  description: string;
+}
+
+export default class MyWebPart extends BaseClientSideWebPart<IMyWebPartProps> {
+  
+  public render(): void {
+    const element: React.ReactElement = React.createElement(
+      SPFxProvider,
+      { instance: this as never },
+      React.createElement(MyComponent)
+    );
+    
+    ReactDom.render(element, this.domElement);
+  }
+
+  protected onDispose(): void {
+    ReactDom.unmountComponentAtNode(this.domElement);
+  }
+
+  protected get dataVersion(): Version {
+    return Version.parse('1.0');
+  }
+
+  protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
+    return {
+      pages: [
+        {
+          header: { description: 'Settings' },
+          groups: [
+            {
+              groupName: 'Basic Settings',
+              groupFields: [
+                PropertyPaneTextField('title', {
+                  label: 'Title'
+                }),
+                PropertyPaneTextField('description', {
+                  label: 'Description'
+                })
+              ]
+            }
+          ]
+        }
+      ]
+    };
+  }
+}
+```
+
+### Component Usage
+
+```typescript
+// MyComponent.tsx
+import * as React from 'react';
+import { useSPFxProperties, useSPFxDisplayMode } from 'spfx-react-toolkit';
+import type { IMyWebPartProps } from '../MyWebPart';
+
+const MyComponent: React.FC = () => {
+  const { properties, setProperties } = useSPFxProperties<IMyWebPartProps>();
+  const { isEdit } = useSPFxDisplayMode();
+  
+  return (
+    <div>
+      <h1>{properties?.title ?? 'Default Title'}</h1>
+      <p>{properties?.description}</p>
+      {isEdit && (
+        <button onClick={() => setProperties({ title: 'Updated!' })}>
+          Update Title
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default MyComponent;
+```
+
+---
+
+## Hook Catalog
+
+### Core & Properties
+
+#### `useSPFxProperties<T>()`
+**Purpose**: Access and update SPFx properties with type safety  
+**Returns**: `{ properties: T | undefined, setProperties, updateProperties }`  
+**Use Case**: Property Pane synchronization, component configuration
+
+```typescript
+const { properties, setProperties, updateProperties } = useSPFxProperties<IMyProps>();
+
+// Direct set (partial merge)
+setProperties({ title: 'New Title' });
+
+// Updater function
+updateProperties(prev => ({ ...prev, count: (prev?.count ?? 0) + 1 }));
+```
+
+#### `useSPFxDisplayMode()`
+**Purpose**: Detect edit vs. read mode  
+**Returns**: `{ mode: DisplayMode, isEdit: boolean, isRead: boolean }`  
+**Use Case**: Conditional rendering, edit-only controls
+
+```typescript
+const { isEdit, isRead, mode } = useSPFxDisplayMode();
+
+return isEdit ? <EditPanel /> : <ReadOnlyView />;
+```
+
+#### `useSPFxInstanceInfo()`
+**Purpose**: Get instance metadata  
+**Returns**: `{ id: string, kind: HostKind }`  
+**Use Case**: Logging, debugging, analytics
+
+```typescript
+const { id, kind } = useSPFxInstanceInfo();
+// kind: 'WebPart' | 'AppCustomizer' | 'CommandSet' | 'FieldCustomizer'
+```
+
+### Context & Environment
+
+#### `useSPFxPageContext()`
+**Purpose**: Access full PageContext object  
+**Returns**: `PageContext`  
+**Use Case**: Site info, user info, list context, web info
+
+```typescript
+const pageContext = useSPFxPageContext();
+const webUrl = pageContext.web.absoluteUrl;
+const siteName = pageContext.site.name;
+```
+
+#### `useSPFxPageType()`
+**Purpose**: Detect page type  
+**Returns**: `{ pageType: string, isModernPage: boolean, isListView: boolean, isSitePage: boolean }`  
+**Use Case**: Page-specific behavior, analytics
+
+```typescript
+const { pageType, isModernPage, isListView } = useSPFxPageType();
+
+if (isListView) {
+  return <ListViewExperience />;
+}
+```
+
+#### `useSPFxEnvironmentInfo()`
+**Purpose**: Detect execution environment  
+**Returns**: `{ type: string, isLocal: boolean, isClassic: boolean, isSharePoint: boolean }`  
+**Use Case**: Environment-specific behavior, mock data in local workbench
+
+```typescript
+const { isLocal, isSharePoint } = useSPFxEnvironmentInfo();
+
+if (isLocal) {
+  return <MockDataWarning />;
+}
+```
+
+#### `useSPFxTeams()`
+**Purpose**: Teams context integration  
+**Returns**: `{ supported: boolean, context: unknown, theme: TeamsTheme }`  
+**Use Case**: Teams-specific features, theme sync
+
+```typescript
+const { supported, theme } = useSPFxTeams();
+
+if (supported) {
+  return <div className={`teams-theme-${theme}`}>Teams Mode</div>;
+}
+```
+
+### User & Site Information
+
+#### `useSPFxUserInfo()`
+**Purpose**: Current user information  
+**Returns**: `{ loginName: string, displayName: string, email?: string, isExternal: boolean }`  
+**Use Case**: Personalization, authorization
+
+```typescript
+const { displayName, email, isExternal } = useSPFxUserInfo();
+
+return (
+  <div>
+    <p>Welcome, {displayName}!</p>
+    {isExternal && <Badge>Guest User</Badge>}
+  </div>
+);
+```
+
+#### `useSPFxSiteInfo()`
+**Purpose**: Site metadata  
+**Returns**: `{ title, webUrl, serverRelativeUrl, siteClassification, group, etc. }`  
+**Use Case**: Site branding, navigation
+
+```typescript
+const { title, webUrl, siteClassification } = useSPFxSiteInfo();
+
+return (
+  <header>
+    <h1>{title}</h1>
+    {siteClassification && <Badge>{siteClassification}</Badge>}
+  </header>
+);
+```
+
+#### `useSPFxLocaleInfo()`
+**Purpose**: Localization settings  
+**Returns**: `{ uiLocale: string, currentCultureName: string }`  
+**Use Case**: i18n, formatting
+
+```typescript
+const { currentCultureName } = useSPFxLocaleInfo();
+
+const formatter = new Intl.DateTimeFormat(currentCultureName);
+```
+
+#### `useSPFxListInfo()`
+**Purpose**: List context (if applicable)  
+**Returns**: `SPFxListInfo | undefined`  
+**Use Case**: List-scoped components, list views
+
+```typescript
+const listInfo = useSPFxListInfo();
+
+if (listInfo) {
+  console.log(`List: ${listInfo.title}, ID: ${listInfo.id}`);
+}
+```
+
+#### `useSPFxHubSiteInfo()`
+**Purpose**: Hub site association  
+**Returns**: `SPFxHubSiteInfo | undefined`  
+**Use Case**: Hub navigation, hub branding
+
+```typescript
+const hubInfo = useSPFxHubSiteInfo();
+
+if (hubInfo?.isHubSite) {
+  return <HubNavigation hubUrl={hubInfo.hubSiteUrl} />;
+}
+```
+
+### UI & Theming
+
+#### `useSPFxThemeInfo()`
+**Purpose**: Fluent UI 8 theme (SPFx default)  
+**Returns**: `IReadonlyTheme | undefined`  
+**Use Case**: Styling with theme tokens, dark mode detection
+
+```typescript
+const theme = useSPFxThemeInfo();
+const isDark = theme?.isInverted ?? false;
+
+return (
+  <div style={{
+    backgroundColor: theme?.semanticColors?.bodyBackground,
+    color: theme?.semanticColors?.bodyText
+  }}>
+    Themed Content
+  </div>
+);
+```
+
+#### `useSPFxFluent9ThemeInfo()`
+**Purpose**: Fluent UI 9 theme with Teams detection  
+**Returns**: `{ theme: Theme, isTeams: boolean, teamsTheme?: string }`  
+**Use Case**: Fluent UI 9 apps, FluentProvider integration
+
+```typescript
+import { FluentProvider } from '@fluentui/react-components';
+
+const { theme, isTeams } = useSPFxFluent9ThemeInfo();
+
+return (
+  <FluentProvider theme={theme}>
+    <MyFluentUI9App />
+  </FluentProvider>
+);
+```
+
+#### `useSPFxContainerSize()`
+**Purpose**: Responsive container dimensions  
+**Returns**: `{ size: SPFxContainerSize, isSmall, isMedium, isLarge, isXLarge, isXXLarge, isXXXLarge, width, height }`  
+**Use Case**: Responsive layouts, adaptive UI
+
+```typescript
+const { size, width, isSmall } = useSPFxContainerSize();
+
+if (isSmall) {
+  return <MobileLayout />;
+}
+
+return <DesktopLayout columns={size === 'xxxLarge' ? 6 : 3} />;
+```
+
+#### `useSPFxContainerInfo()`
+**Purpose**: Container DOM element and size tracking  
+**Returns**: `{ element: HTMLElement | undefined, size: ContainerSize | undefined }`  
+**Use Case**: Direct DOM manipulation, size monitoring
+
+```typescript
+const { element, size } = useSPFxContainerInfo();
+
+useEffect(() => {
+  if (element) {
+    // Direct DOM operations
+    element.style.overflow = 'hidden';
+  }
+}, [element]);
+```
+
+### Storage
+
+#### `useSPFxSessionStorage<T>(key, defaultValue)`
+**Purpose**: Session-scoped storage (per tab)  
+**Returns**: `{ value: T, setValue, remove }`  
+**Use Case**: Wizard state, temporary cache, tab-specific settings
+
+```typescript
+const { value: step, setValue: setStep } = useSPFxSessionStorage('wizard-step', 1);
+
+return (
+  <div>
+    <p>Step {step} of 3</p>
+    <button onClick={() => setStep(s => s + 1)}>Next</button>
+  </div>
+);
+```
+
+#### `useSPFxLocalStorage<T>(key, defaultValue)`
+**Purpose**: Persistent storage (across sessions)  
+**Returns**: `{ value: T, setValue, remove }`  
+**Use Case**: User preferences, long-term cache, settings
+
+```typescript
+const { value: viewMode, setValue: setViewMode } = useSPFxLocalStorage('view-mode', 'grid');
+
+return (
+  <div>
+    <button onClick={() => setViewMode('list')}>List View</button>
+    <button onClick={() => setViewMode('grid')}>Grid View</button>
+  </div>
+);
+```
+
+### Performance & Diagnostics
+
+#### `useSPFxPerformance()`
+**Purpose**: Performance measurement  
+**Returns**: `{ mark, measure, time }`  
+**Use Case**: Performance profiling, bottleneck detection
+
+```typescript
+const { time } = useSPFxPerformance();
+
+const fetchData = async () => {
+  const result = await time('fetch-data', async () => {
+    const response = await fetch('/api/data');
+    return response.json();
+  });
+  
+  console.log(`Fetch took ${result.durationMs}ms`);
+  return result.result;
+};
+```
+
+#### `useSPFxLogger(handler?)`
+**Purpose**: Structured logging with context  
+**Returns**: `{ debug, info, warn, error }`  
+**Use Case**: Diagnostic logging, error tracking, Application Insights integration
+
+```typescript
+const logger = useSPFxLogger();
+
+const handleClick = () => {
+  logger.info('Button clicked', { buttonId: 'save', timestamp: Date.now() });
+};
+
+const handleError = (error: Error) => {
+  logger.error('Operation failed', {
+    errorMessage: error.message,
+    stack: error.stack
+  });
+};
+```
+
+#### `useSPFxCorrelationInfo()`
+**Purpose**: Correlation tracking  
+**Returns**: `{ correlationId: string, tenantId: string }`  
+**Use Case**: Distributed tracing, support diagnostics
+
+```typescript
+const { correlationId, tenantId } = useSPFxCorrelationInfo();
+
+// Include in API calls for tracing
+const headers = {
+  'X-Correlation-Id': correlationId,
+  'X-Tenant-Id': tenantId
+};
+```
+
+### Permissions & Security
+
+#### `useSPFxPermissions()`
+**Purpose**: User permissions checking  
+**Returns**: `{ site, web, list, hasWebPermission, hasSitePermission, hasListPermission }`  
+**Use Case**: Security trimming, conditional features
+
+```typescript
+import { SPPermission } from '@microsoft/sp-page-context';
+
+const { hasWebPermission, hasListPermission } = useSPFxPermissions();
+
+const canManageWeb = hasWebPermission(SPPermission.manageWeb);
+const canAddItems = hasListPermission(SPPermission.addListItems);
+
+if (canManageWeb) {
+  return <AdminPanel />;
+}
+```
+
+#### `useSPFxServiceScope()`
+**Purpose**: Access SPFx service locator  
+**Returns**: `ServiceScope | undefined`  
+**Use Case**: Advanced service consumption, custom services
+
+```typescript
+const serviceScope = useSPFxServiceScope();
+
+// Consume custom service
+const myService = serviceScope?.consume(MyServiceKey);
+```
+
+### HTTP Clients
+
+#### `useSPFxSPHttpClient(baseUrl?)`
+**Purpose**: SharePoint REST API client  
+**Returns**: `SPHttpClient | undefined`  
+**Use Case**: SharePoint API calls
+
+```typescript
+import { SPHttpClient } from '@microsoft/sp-http';
+
+const spHttpClient = useSPFxSPHttpClient();
+const pageContext = useSPFxPageContext();
+
+const fetchLists = async () => {
+  if (!spHttpClient) return [];
+  
+  try {
+    const response = await spHttpClient.get(
+      `${pageContext.web.absoluteUrl}/_api/web/lists`,
+      SPHttpClient.configurations.v1
+    );
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.value;
+  } catch (error) {
+    console.error('Failed to fetch lists:', error);
+    return [];
+  }
+};
+```
+
+#### `useSPFxMSGraphClient()`
+**Purpose**: Microsoft Graph API client  
+**Returns**: `MSGraphClient | undefined`  
+**Use Case**: Graph API calls (user, groups, teams, etc.)
+
+```typescript
+const msGraphClient = useSPFxMSGraphClient();
+
+const fetchUserProfile = async () => {
+  if (!msGraphClient) return null;
+  
+  try {
+    const user = await msGraphClient
+      .api('/me')
+      .select('displayName,mail,jobTitle')
+      .get();
+    
+    return user;
+  } catch (error) {
+    console.error('Graph API error:', error);
+    return null;
+  }
+};
+```
+
+#### `useSPFxAadHttpClient()`
+**Purpose**: Azure AD secured API client  
+**Returns**: `AadHttpClient | undefined`  
+**Use Case**: Custom APIs secured with Azure AD
+
+```typescript
+import { AadHttpClient } from '@microsoft/sp-http';
+
+const aadHttpClient = useSPFxAadHttpClient();
+
+const callCustomApi = async () => {
+  if (!aadHttpClient) return null;
+  
+  try {
+    const response = await aadHttpClient.get(
+      'https://api.contoso.com/v1/data',
+      AadHttpClient.configurations.v1
+    );
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('API call failed:', error);
+    return null;
+  }
+};
+```
+
+---
+
+## Type Definitions
+
+### Core Types
+
+```typescript
+// Provider props
+interface SPFxProviderProps<TProps = {}> {
+  instance: SPFxComponent<TProps>;
+  children?: React.ReactNode;
+}
+
+// Component types
+type SPFxComponent<TProps = {}> = 
+  | BaseClientSideWebPart<TProps>
+  | BaseApplicationCustomizer<TProps>
+  | BaseListViewCommandSet<TProps>
+  | BaseFieldCustomizer<TProps>;
+
+// Host kind
+type HostKind = 'WebPart' | 'AppCustomizer' | 'FieldCustomizer' | 'CommandSet' | 'ACE';
+
+// Container size categories
+type SPFxContainerSize = 'small' | 'medium' | 'large' | 'xLarge' | 'xxLarge' | 'xxxLarge';
+
+// Container dimensions
+interface ContainerSize {
+  readonly width: number;
+  readonly height: number;
+}
+
+// Teams theme
+type TeamsTheme = 'default' | 'dark' | 'highContrast';
+```
+
+### Hook Return Types
+
+```typescript
+// Properties hook
+interface SPFxPropertiesInfo<T = unknown> {
+  properties: T | undefined;
+  setProperties: (props: Partial<T>) => void;
+  updateProperties: (updater: (prev: T | undefined) => T) => void;
+}
+
+// Display mode hook
+interface SPFxDisplayModeInfo {
+  mode: DisplayMode | undefined;
+  isEdit: boolean;
+  isRead: boolean;
+}
+
+// User info hook
+interface SPFxUserInfo {
+  loginName: string;
+  displayName: string;
+  email?: string;
+  isExternal: boolean;
+}
+
+// Site info hook
+interface SPFxSiteInfo {
+  id: string;
+  webId: string;
+  title: string;
+  webUrl: string;
+  serverRelativeUrl: string;
+  siteClassification?: string;
+  group?: SPFxGroupInfo;
+  // ... more fields
+}
+
+// Permissions hook
+interface SPFxPermissionsInfo {
+  site: SPPermission | undefined;
+  web: SPPermission | undefined;
+  list: SPPermission | undefined;
+  hasWebPermission: (permission: SPPermission) => boolean;
+  hasSitePermission: (permission: SPPermission) => boolean;
+  hasListPermission: (permission: SPPermission) => boolean;
+}
+
+// Storage hook
+interface SPFxStorageHook<T> {
+  value: T;
+  setValue: (value: T | ((prev: T) => T)) => void;
+  remove: () => void;
+}
+
+// Performance hook
+interface SPFxPerformanceInfo {
+  mark: (name: string) => void;
+  measure: (name: string, startMark: string, endMark?: string) => SPFxPerfResult;
+  time: <T>(name: string, fn: () => Promise<T> | T) => Promise<SPFxPerfResult<T>>;
+}
+
+// Logger hook
+interface SPFxLoggerInfo {
+  debug: (message: string, extra?: Record<string, unknown>) => void;
+  info: (message: string, extra?: Record<string, unknown>) => void;
+  warn: (message: string, extra?: Record<string, unknown>) => void;
+  error: (message: string, extra?: Record<string, unknown>) => void;
+}
+```
+
+---
+
+## Common Patterns
+
+### Pattern 1: Property-driven Component
+
+```typescript
+interface IMyWebPartProps {
+  title: string;
+  itemCount: number;
+  showHeader: boolean;
+}
+
+const MyComponent: React.FC = () => {
+  const { properties } = useSPFxProperties<IMyWebPartProps>();
+  
+  if (!properties) {
+    return <Spinner label="Loading..." />;
+  }
+  
+  return (
+    <div>
+      {properties.showHeader && <h1>{properties.title}</h1>}
+      <ItemList count={properties.itemCount} />
+    </div>
+  );
+};
+```
+
+### Pattern 2: Responsive Layout
+
+```typescript
+const ResponsiveComponent: React.FC = () => {
+  const { size, width } = useSPFxContainerSize();
+  
+  const columns = React.useMemo(() => {
+    switch (size) {
+      case 'small': return 1;
+      case 'medium': return 2;
+      case 'large': return 3;
+      case 'xLarge': return 4;
+      case 'xxLarge': return 5;
+      case 'xxxLarge': return 6;
+      default: return 3;
+    }
+  }, [size]);
+  
+  return <GridLayout columns={columns} />;
+};
+```
+
+### Pattern 3: Conditional Rendering Based on Permissions
+
+```typescript
+const SecureComponent: React.FC = () => {
+  const { hasWebPermission } = useSPFxPermissions();
+  const canManage = hasWebPermission(SPPermission.manageWeb);
+  const canEdit = hasWebPermission(SPPermission.editListItems);
+  
+  return (
+    <div>
+      <ContentView />
+      {canEdit && <EditButton />}
+      {canManage && <AdminPanel />}
+    </div>
+  );
+};
+```
+
+### Pattern 4: Data Fetching with Error Handling
+
+```typescript
+const DataComponent: React.FC = () => {
+  const spHttpClient = useSPFxSPHttpClient();
+  const pageContext = useSPFxPageContext();
+  const logger = useSPFxLogger();
+  const { time } = useSPFxPerformance();
+  
+  const [data, setData] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  
+  const fetchData = React.useCallback(async () => {
+    if (!spHttpClient) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const result = await time('fetch-lists', async () => {
+        const response = await spHttpClient.get(
+          `${pageContext.web.absoluteUrl}/_api/web/lists`,
+          SPHttpClient.configurations.v1
+        );
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const json = await response.json();
+        return json.value;
+      });
+      
+      logger.info('Data fetched successfully', {
+        itemCount: result.result.length,
+        durationMs: result.durationMs
+      });
+      
+      setData(result.result);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+      logger.error('Failed to fetch data', { error: errorMsg });
+      setError(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, [spHttpClient, pageContext, logger, time]);
+  
+  React.useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+  
+  if (loading) return <Spinner />;
+  if (error) return <MessageBar messageBarType={MessageBarType.error}>{error}</MessageBar>;
+  if (!data.length) return <div>No data</div>;
+  
+  return <DataList items={data} />;
+};
+```
+
+### Pattern 5: Persistent User Preferences
+
+```typescript
+interface UserPreferences {
+  theme: 'light' | 'dark' | 'auto';
+  viewMode: 'grid' | 'list' | 'compact';
+  itemsPerPage: number;
+}
+
+const PreferencesComponent: React.FC = () => {
+  const { value: prefs, setValue: setPrefs } = useSPFxLocalStorage<UserPreferences>(
+    'user-preferences',
+    { theme: 'auto', viewMode: 'grid', itemsPerPage: 10 }
+  );
+  
+  const updateViewMode = (viewMode: UserPreferences['viewMode']) => {
+    setPrefs(prev => ({ ...prev, viewMode }));
+  };
+  
+  return (
+    <div>
+      <ChoiceGroup
+        selectedKey={prefs.viewMode}
+        options={[
+          { key: 'grid', text: 'Grid' },
+          { key: 'list', text: 'List' },
+          { key: 'compact', text: 'Compact' }
+        ]}
+        onChange={(_, option) => updateViewMode(option!.key as any)}
+      />
+      <ContentView mode={prefs.viewMode} itemsPerPage={prefs.itemsPerPage} />
+    </div>
+  );
+};
+```
+
+### Pattern 6: Fluent UI 9 Integration
+
+```typescript
+import { FluentProvider, Button, Card } from '@fluentui/react-components';
+
+const Fluent9Component: React.FC = () => {
+  const { theme, isTeams } = useSPFxFluent9ThemeInfo();
+  const { displayName } = useSPFxUserInfo();
+  
+  return (
+    <FluentProvider theme={theme}>
+      <Card>
+        <h3>Hello from {isTeams ? 'Teams' : 'SharePoint'}!</h3>
+        <p>Welcome, {displayName}!</p>
+        <Button appearance="primary">Click me</Button>
+      </Card>
+    </FluentProvider>
+  );
+};
+```
+
+### Pattern 7: Property Pane Sync
+
+```typescript
+interface IConfigurableWebPartProps {
+  title: string;
+  showHeader: boolean;
+  maxItems: number;
+}
+
+const ConfigurableComponent: React.FC = () => {
+  const { properties, setProperties } = useSPFxProperties<IConfigurableWebPartProps>();
+  const { isEdit } = useSPFxDisplayMode();
+  
+  const handleTitleChange = (newTitle: string) => {
+    // This will automatically update Property Pane
+    setProperties({ title: newTitle });
+  };
+  
+  return (
+    <div>
+      {isEdit ? (
+        <TextField
+          value={properties?.title ?? ''}
+          onChange={(_, value) => handleTitleChange(value ?? '')}
+          placeholder="Enter title..."
+        />
+      ) : (
+        <h1>{properties?.title}</h1>
+      )}
+    </div>
+  );
+};
+```
+
+### Pattern 8: Teams-Aware Component
+
+```typescript
+const TeamsAwareComponent: React.FC = () => {
+  const { supported: isTeams, theme: teamsTheme } = useSPFxTeams();
+  const { type: envType } = useSPFxEnvironmentInfo();
+  
+  const environment = React.useMemo(() => {
+    if (isTeams) {
+      return `Microsoft Teams (${teamsTheme})`;
+    }
+    return envType === 'SharePoint' ? 'SharePoint Online' : 'Other';
+  }, [isTeams, teamsTheme, envType]);
+  
+  return (
+    <div className={isTeams ? 'teams-mode' : 'sharepoint-mode'}>
+      <Badge>Running in: {environment}</Badge>
+      <Content />
+    </div>
+  );
+};
+```
+
+---
+
+## Anti-Patterns (DO NOT USE)
+
+### ❌ Anti-Pattern 1: Accessing context directly
+
+```typescript
+// WRONG - Don't access context directly
+const MyComponent: React.FC = () => {
+  const context = useSPFxContext(); // Too low-level
+  const userEmail = context.spfxContext.pageContext.user.email; // Verbose
+  
+  return <div>{userEmail}</div>;
+};
+
+// CORRECT - Use specific hooks
+const MyComponent: React.FC = () => {
+  const { email } = useSPFxUserInfo();
+  
+  return <div>{email}</div>;
+};
+```
+
+### ❌ Anti-Pattern 2: Not handling undefined
+
+```typescript
+// WRONG - Properties might be undefined
+const MyComponent: React.FC = () => {
+  const { properties } = useSPFxProperties<IMyProps>();
+  
+  return <h1>{properties.title}</h1>; // Runtime error if undefined
+};
+
+// CORRECT - Always handle undefined
+const MyComponent: React.FC = () => {
+  const { properties } = useSPFxProperties<IMyProps>();
+  
+  return <h1>{properties?.title ?? 'Default Title'}</h1>;
+};
+```
+
+### ❌ Anti-Pattern 3: Forgetting error handling in HTTP calls
+
+```typescript
+// WRONG - No error handling
+const fetchData = async () => {
+  const spHttpClient = useSPFxSPHttpClient();
+  const response = await spHttpClient!.get(url, SPHttpClient.configurations.v1);
+  const data = await response.json(); // Might fail
+  return data;
+};
+
+// CORRECT - Always handle errors
+const fetchData = async () => {
+  const spHttpClient = useSPFxSPHttpClient();
+  
+  if (!spHttpClient) {
+    throw new Error('SPHttpClient not available');
+  }
+  
+  try {
+    const response = await spHttpClient.get(url, SPHttpClient.configurations.v1);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Fetch failed:', error);
+    throw error;
+  }
+};
+```
+
+### ❌ Anti-Pattern 4: Using hooks outside SPFxProvider
+
+```typescript
+// WRONG - Hook called outside provider
+const App: React.FC = () => {
+  const { properties } = useSPFxProperties(); // Error!
+  
+  return <div>{properties?.title}</div>;
+};
+
+// In WebPart.render():
+ReactDom.render(<App />, this.domElement); // Missing SPFxProvider
+
+// CORRECT - Always wrap with provider
+const App: React.FC = () => {
+  const { properties } = useSPFxProperties();
+  
+  return <div>{properties?.title}</div>;
+};
+
+// In WebPart.render():
+ReactDom.render(
+  <SPFxProvider instance={this as never}>
+    <App />
+  </SPFxProvider>,
+  this.domElement
+);
+```
+
+### ❌ Anti-Pattern 5: Mutating properties directly
+
+```typescript
+// WRONG - Don't mutate properties
+const MyComponent: React.FC = () => {
+  const { properties } = useSPFxProperties<IMyProps>();
+  
+  const handleClick = () => {
+    properties!.count++; // Mutation - won't trigger update
+  };
+  
+  return <button onClick={handleClick}>Increment</button>;
+};
+
+// CORRECT - Use setProperties or updateProperties
+const MyComponent: React.FC = () => {
+  const { properties, updateProperties } = useSPFxProperties<IMyProps>();
+  
+  const handleClick = () => {
+    updateProperties(prev => ({ ...prev, count: (prev?.count ?? 0) + 1 }));
+  };
+  
+  return <button onClick={handleClick}>Increment</button>;
+};
+```
+
+### ❌ Anti-Pattern 6: Not scoping storage keys
+
+```typescript
+// WRONG - Using raw localStorage directly
+const MyComponent: React.FC = () => {
+  const [value, setValue] = React.useState(() => {
+    return localStorage.getItem('my-key') ?? 'default';
+  });
+  
+  // Problem: Shared across all instances!
+  
+  return <input value={value} onChange={e => setValue(e.target.value)} />;
+};
+
+// CORRECT - Use scoped storage hook
+const MyComponent: React.FC = () => {
+  const { value, setValue } = useSPFxLocalStorage('my-key', 'default');
+  
+  // Automatically scoped per instance
+  
+  return <input value={value} onChange={e => setValue(e.target.value)} />;
+};
+```
+
+### ❌ Anti-Pattern 7: Ignoring Teams context async nature
+
+```typescript
+// WRONG - Assuming Teams context is immediately available
+const MyComponent: React.FC = () => {
+  const { context } = useSPFxTeams();
+  
+  const teamName = context.team.displayName; // Might be undefined during init
+  
+  return <div>{teamName}</div>;
+};
+
+// CORRECT - Check supported flag first
+const MyComponent: React.FC = () => {
+  const { supported, context } = useSPFxTeams();
+  
+  if (!supported) {
+    return <div>Not running in Teams</div>;
+  }
+  
+  const teamsContext = context as { team?: { displayName?: string } };
+  const teamName = teamsContext?.team?.displayName ?? 'Unknown';
+  
+  return <div>{teamName}</div>;
+};
+```
+
+---
+
+## Complete Examples
+
+### Example 1: Full-Featured WebPart
+
+```typescript
+// MyWebPart.ts
+import { Version } from '@microsoft/sp-core-library';
+import {
+  BaseClientSideWebPart,
+  IPropertyPaneConfiguration,
+  PropertyPaneTextField,
+  PropertyPaneToggle,
+  PropertyPaneSlider,
+} from '@microsoft/sp-webpart-base';
+import * as React from 'react';
+import * as ReactDom from 'react-dom';
+import { SPFxProvider } from 'spfx-react-toolkit';
+import MyComponent from './components/MyComponent';
+
+export interface IMyWebPartProps {
+  title: string;
+  description: string;
+  showHeader: boolean;
+  maxItems: number;
+}
+
+export default class MyWebPart extends BaseClientSideWebPart<IMyWebPartProps> {
+  
+  public render(): void {
+    const element: React.ReactElement = React.createElement(
+      SPFxProvider,
+      { instance: this as never },
+      React.createElement(MyComponent)
+    );
+    
+    ReactDom.render(element, this.domElement);
+  }
+
+  protected onDispose(): void {
+    ReactDom.unmountComponentAtNode(this.domElement);
+  }
+
+  protected get dataVersion(): Version {
+    return Version.parse('1.0');
+  }
+
+  protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
+    return {
+      pages: [
+        {
+          header: {
+            description: 'Configure your web part'
+          },
+          groups: [
+            {
+              groupName: 'Display Settings',
+              groupFields: [
+                PropertyPaneTextField('title', {
+                  label: 'Title'
+                }),
+                PropertyPaneTextField('description', {
+                  label: 'Description',
+                  multiline: true
+                }),
+                PropertyPaneToggle('showHeader', {
+                  label: 'Show header',
+                  onText: 'Visible',
+                  offText: 'Hidden'
+                }),
+                PropertyPaneSlider('maxItems', {
+                  label: 'Maximum items',
+                  min: 1,
+                  max: 50,
+                  value: 10,
+                  showValue: true
+                })
+              ]
+            }
+          ]
+        }
+      ]
+    };
+  }
+}
+
+// MyComponent.tsx
+import * as React from 'react';
+import { Stack, Spinner, MessageBar, MessageBarType } from '@fluentui/react';
+import {
+  useSPFxProperties,
+  useSPFxDisplayMode,
+  useSPFxThemeInfo,
+  useSPFxUserInfo,
+  useSPFxSiteInfo,
+  useSPFxSPHttpClient,
+  useSPFxLogger,
+  useSPFxPerformance,
+  useSPFxPageContext,
+  useSPFxContainerSize,
+} from 'spfx-react-toolkit';
+import { SPHttpClient } from '@microsoft/sp-http';
+import type { IMyWebPartProps } from '../MyWebPart';
+
+interface IListItem {
+  Id: number;
+  Title: string;
+  Created: string;
+}
+
+const MyComponent: React.FC = () => {
+  // Hooks
+  const { properties } = useSPFxProperties<IMyWebPartProps>();
+  const { isEdit } = useSPFxDisplayMode();
+  const theme = useSPFxThemeInfo();
+  const { displayName } = useSPFxUserInfo();
+  const { title: siteTitle } = useSPFxSiteInfo();
+  const spHttpClient = useSPFxSPHttpClient();
+  const pageContext = useSPFxPageContext();
+  const logger = useSPFxLogger();
+  const { time } = useSPFxPerformance();
+  const { size, width } = useSPFxContainerSize();
+  
+  // State
+  const [items, setItems] = React.useState<IListItem[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  
+  // Fetch data
+  const fetchItems = React.useCallback(async () => {
+    if (!spHttpClient || !properties?.maxItems) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const result = await time('fetch-items', async () => {
+        const response = await spHttpClient.get(
+          `${pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('Documents')/items?$top=${properties.maxItems}&$select=Id,Title,Created`,
+          SPHttpClient.configurations.v1
+        );
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        return data.value as IListItem[];
+      });
+      
+      logger.info('Items fetched', {
+        count: result.result.length,
+        durationMs: result.durationMs
+      });
+      
+      setItems(result.result);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+      logger.error('Failed to fetch items', { error: errorMsg });
+      setError(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, [spHttpClient, properties?.maxItems, pageContext, logger, time]);
+  
+  React.useEffect(() => {
+    fetchItems();
+  }, [fetchItems]);
+  
+  // Responsive columns
+  const columns = React.useMemo(() => {
+    switch (size) {
+      case 'small': return 1;
+      case 'medium': return 2;
+      case 'large': return 3;
+      default: return 4;
+    }
+  }, [size]);
+  
+  // Render
+  return (
+    <div style={{
+      backgroundColor: theme?.semanticColors?.bodyBackground,
+      color: theme?.semanticColors?.bodyText,
+      padding: 16
+    }}>
+      {properties?.showHeader && (
+        <Stack tokens={{ childrenGap: 8 }} styles={{ root: { marginBottom: 16 } }}>
+          <h1>{properties?.title ?? 'My WebPart'}</h1>
+          <p>{properties?.description}</p>
+          <div style={{ fontSize: 12, opacity: 0.7 }}>
+            Welcome, {displayName} | Site: {siteTitle} | Width: {width}px ({size})
+          </div>
+        </Stack>
+      )}
+      
+      {isEdit && (
+        <MessageBar messageBarType={MessageBarType.info}>
+          Edit mode: Configure settings in the property pane
+        </MessageBar>
+      )}
+      
+      {loading && <Spinner label="Loading items..." />}
+      
+      {error && (
+        <MessageBar messageBarType={MessageBarType.error} onDismiss={() => setError(null)}>
+          {error}
+        </MessageBar>
+      )}
+      
+      {!loading && !error && items.length === 0 && (
+        <MessageBar>No items found</MessageBar>
+      )}
+      
+      {!loading && !error && items.length > 0 && (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${columns}, 1fr)`,
+          gap: 16
+        }}>
+          {items.map(item => (
+            <div key={item.Id} style={{
+              border: `1px solid ${theme?.semanticColors?.bodyDivider}`,
+              borderRadius: 4,
+              padding: 12
+            }}>
+              <h3>{item.Title}</h3>
+              <p style={{ fontSize: 12, opacity: 0.7 }}>
+                {new Date(item.Created).toLocaleDateString()}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default MyComponent;
+```
+
+### Example 2: Fluent UI 9 Teams App
+
+```typescript
+// TeamsWebPart.tsx (component)
+import * as React from 'react';
+import {
+  FluentProvider,
+  Button,
+  Card,
+  CardHeader,
+  CardPreview,
+  makeStyles,
+  tokens,
+} from '@fluentui/react-components';
+import {
+  useSPFxFluent9ThemeInfo,
+  useSPFxTeams,
+  useSPFxUserInfo,
+  useSPFxMSGraphClient,
+  useSPFxLogger,
+} from 'spfx-react-toolkit';
+
+const useStyles = makeStyles({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalL,
+    padding: tokens.spacingVerticalL,
+  },
+  card: {
+    width: '100%',
+    maxWidth: '400px',
+  }
+});
+
+const TeamsComponent: React.FC = () => {
+  const styles = useStyles();
+  const { theme, isTeams, teamsTheme } = useSPFxFluent9ThemeInfo();
+  const { supported: teamsSupported } = useSPFxTeams();
+  const { displayName, email } = useSPFxUserInfo();
+  const msGraphClient = useSPFxMSGraphClient();
+  const logger = useSPFxLogger();
+  
+  const [userPhoto, setUserPhoto] = React.useState<string | null>(null);
+  
+  React.useEffect(() => {
+    const fetchPhoto = async () => {
+      if (!msGraphClient) return;
+      
+      try {
+        const photoBlob = await msGraphClient
+          .api('/me/photo/$value')
+          .get();
+        
+        const photoUrl = URL.createObjectURL(photoBlob);
+        setUserPhoto(photoUrl);
+      } catch (error) {
+        logger.warn('Could not fetch user photo', { error });
+      }
+    };
+    
+    fetchPhoto();
+  }, [msGraphClient, logger]);
+  
+  return (
+    <FluentProvider theme={theme}>
+      <div className={styles.container}>
+        <Card className={styles.card}>
+          <CardHeader
+            image={userPhoto ? { src: userPhoto } : undefined}
+            header={<h3>{displayName}</h3>}
+            description={email}
+          />
+          <CardPreview>
+            <div style={{ padding: tokens.spacingVerticalM }}>
+              <p>Environment: {isTeams ? `Teams (${teamsTheme})` : 'SharePoint'}</p>
+              <p>Teams SDK: {teamsSupported ? '✅ Available' : '❌ Not available'}</p>
+            </div>
+          </CardPreview>
+          <Button appearance="primary" onClick={() => logger.info('Button clicked')}>
+            Click Me
+          </Button>
+        </Card>
+      </div>
+    </FluentProvider>
+  );
+};
+
+export default TeamsComponent;
+```
+
+### Example 3: Advanced Data Management with Caching
+
+```typescript
+import * as React from 'react';
+import { Spinner, DetailsList, IColumn } from '@fluentui/react';
+import {
+  useSPFxSPHttpClient,
+  useSPFxPageContext,
+  useSPFxLogger,
+  useSPFxPerformance,
+  useSPFxLocalStorage,
+} from 'spfx-react-toolkit';
+import { SPHttpClient } from '@microsoft/sp-http';
+
+interface ICachedData<T> {
+  data: T;
+  timestamp: number;
+  ttl: number; // Time to live in milliseconds
+}
+
+const CachedDataComponent: React.FC = () => {
+  const spHttpClient = useSPFxSPHttpClient();
+  const pageContext = useSPFxPageContext();
+  const logger = useSPFxLogger();
+  const { time } = useSPFxPerformance();
+  
+  // Persistent cache with 5 min TTL
+  const { value: cache, setValue: setCache } = useSPFxLocalStorage<ICachedData<any[]> | null>(
+    'data-cache',
+    null
+  );
+  
+  const [items, setItems] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  
+  const fetchData = React.useCallback(async (forceRefresh: boolean = false) => {
+    if (!spHttpClient) return;
+    
+    // Check cache first
+    if (!forceRefresh && cache && Date.now() - cache.timestamp < cache.ttl) {
+      logger.info('Using cached data', { age: Date.now() - cache.timestamp });
+      setItems(cache.data);
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      const result = await time('fetch-data', async () => {
+        const response = await spHttpClient.get(
+          `${pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('Documents')/items?$top=100`,
+          SPHttpClient.configurations.v1
+        );
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data.value;
+      });
+      
+      logger.info('Data fetched', {
+        count: result.result.length,
+        durationMs: result.durationMs,
+        cached: false
+      });
+      
+      // Update cache
+      setCache({
+        data: result.result,
+        timestamp: Date.now(),
+        ttl: 5 * 60 * 1000 // 5 minutes
+      });
+      
+      setItems(result.result);
+    } catch (error) {
+      logger.error('Fetch failed', { error });
+    } finally {
+      setLoading(false);
+    }
+  }, [spHttpClient, pageContext, cache, logger, time, setCache]);
+  
+  React.useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+  
+  const columns: IColumn[] = [
+    {
+      key: 'title',
+      name: 'Title',
+      fieldName: 'Title',
+      minWidth: 200,
+      maxWidth: 400,
+    },
+    {
+      key: 'modified',
+      name: 'Modified',
+      fieldName: 'Modified',
+      minWidth: 100,
+      maxWidth: 200,
+      onRender: (item) => new Date(item.Modified).toLocaleString()
+    }
+  ];
+  
+  if (loading) {
+    return <Spinner label="Loading..." />;
+  }
+  
+  return (
+    <div>
+      <button onClick={() => fetchData(true)}>Refresh</button>
+      <DetailsList items={items} columns={columns} />
+    </div>
+  );
+};
+
+export default CachedDataComponent;
+```
+
+---
+
+## Migration Guide
+
+### From Vanilla SPFx to Toolkit
+
+#### Before (Vanilla SPFx)
+
+```typescript
+// MyWebPart.tsx
+import * as React from 'react';
+import { WebPartContext } from '@microsoft/sp-webpart-base';
+
+export interface IMyWebPartProps {
+  context: WebPartContext;
+  title: string;
+  description: string;
+}
+
+const MyWebPart: React.FC<IMyWebPartProps> = ({ context, title, description }) => {
+  const userDisplayName = context.pageContext.user.displayName;
+  const siteTitle = context.pageContext.web.title;
+  const theme = context.theme;
+  
+  return (
+    <div style={{ backgroundColor: theme.semanticColors.bodyBackground }}>
+      <h1>{title}</h1>
+      <p>{description}</p>
+      <p>User: {userDisplayName}</p>
+      <p>Site: {siteTitle}</p>
+    </div>
+  );
+};
+
+// In WebPart render():
+const element = React.createElement(MyWebPart, {
+  context: this.context,
+  title: this.properties.title,
+  description: this.properties.description
+});
+```
+
+#### After (With Toolkit)
+
+```typescript
+// MyWebPart.tsx
+import * as React from 'react';
+import {
+  useSPFxProperties,
+  useSPFxUserInfo,
+  useSPFxSiteInfo,
+  useSPFxThemeInfo,
+} from 'spfx-react-toolkit';
+
+interface IMyWebPartProps {
+  title: string;
+  description: string;
+}
+
+const MyWebPart: React.FC = () => {
+  const { properties } = useSPFxProperties<IMyWebPartProps>();
+  const { displayName } = useSPFxUserInfo();
+  const { title: siteTitle } = useSPFxSiteInfo();
+  const theme = useSPFxThemeInfo();
+  
+  return (
+    <div style={{ backgroundColor: theme?.semanticColors?.bodyBackground }}>
+      <h1>{properties?.title}</h1>
+      <p>{properties?.description}</p>
+      <p>User: {displayName}</p>
+      <p>Site: {siteTitle}</p>
+    </div>
+  );
+};
+
+// In WebPart render():
+import { SPFxProvider } from 'spfx-react-toolkit';
+
+const element = React.createElement(
+  SPFxProvider,
+  { instance: this as never },
+  React.createElement(MyWebPart)
+);
+```
+
+**Benefits**:
+- ✅ No prop drilling
+- ✅ Cleaner component API
+- ✅ Automatic context propagation
+- ✅ Type-safe hooks
+- ✅ No manual context passing
+
+---
+
+## Troubleshooting
+
+### Issue 1: "useSPFxContext must be used within SPFxProvider"
+
+**Cause**: Hook called outside `SPFxProvider` wrapper
+
+**Solution**:
+```typescript
+// ❌ Wrong
+ReactDom.render(<MyComponent />, this.domElement);
+
+// ✅ Correct
+ReactDom.render(
+  <SPFxProvider instance={this as never}>
+    <MyComponent />
+  </SPFxProvider>,
+  this.domElement
+);
+```
+
+### Issue 2: Properties not updating in Property Pane
+
+**Cause**: Not using `setProperties` from hook
+
+**Solution**:
+```typescript
+// ❌ Wrong
+const { properties } = useSPFxProperties<IMyProps>();
+properties.title = 'New'; // Direct mutation
+
+// ✅ Correct
+const { properties, setProperties } = useSPFxProperties<IMyProps>();
+setProperties({ title: 'New' });
+```
+
+### Issue 3: Teams context not available
+
+**Cause**: Teams context loads asynchronously
+
+**Solution**:
+```typescript
+const { supported, context } = useSPFxTeams();
+
+if (!supported) {
+  return <div>Not in Teams</div>;
+}
+
+// Now safe to use context
+```
+
+### Issue 4: Storage not persisting
+
+**Cause**: Browser privacy settings or incognito mode
+
+**Solution**:
+- Check browser allows localStorage/sessionStorage
+- Test in normal (non-incognito) window
+- Provide fallback for disabled storage
+
+### Issue 5: HTTP client undefined
+
+**Cause**: Accessing client before initialization
+
+**Solution**:
+```typescript
+const spHttpClient = useSPFxSPHttpClient();
+
+if (!spHttpClient) {
+  return <Spinner label="Initializing..." />;
+}
+
+// Now safe to use
+```
+
+### Issue 6: Container size always 0
+
+**Cause**: Container not yet mounted in DOM
+
+**Solution**:
+```typescript
+const { width, height } = useSPFxContainerSize();
+
+if (width === 0 || height === 0) {
+  return <Spinner />; // Wait for mount
+}
+
+// Now safe to use dimensions
+```
+
+---
+
+## Additional Resources
+
+- **NPM Package**: `npm install spfx-react-toolkit jotai`
+- **GitHub**: https://github.com/apvee/spfx-react-toolkit
+- **Issues**: https://github.com/apvee/spfx-react-toolkit/issues
+- **SPFx Docs**: https://learn.microsoft.com/sharepoint/dev/spfx/
+- **Jotai Docs**: https://jotai.org/
+- **Fluent UI**: https://react.fluentui.dev/
+
+---
+
+## Version History
+
+- **0.0.1** (Initial): Core hooks, provider, TypeScript support
+- Compatible with SPFx 1.21.1+
+- React 17.x
+- Node >= 22.14.0 < 23.0.0
+
+---
+
+**End of LLM Reference Guide**

@@ -205,7 +205,7 @@ if (hubInfo?.isHubSite) {
 ### UI & Layout
 
 #### `useSPFxThemeInfo()`
-Access theme colors and semantic tokens for styling.
+Access theme colors and semantic tokens for styling (Fluent UI 8).
 
 ```typescript
 const theme = useSPFxThemeInfo();
@@ -217,6 +217,21 @@ return (
   }}>
     Themed Content
   </div>
+);
+```
+
+#### `useSPFxFluent9ThemeInfo()`
+Access Fluent UI 9 theme with automatic Teams/SharePoint detection.
+
+```typescript
+import { FluentProvider } from '@fluentui/react-components';
+
+const { theme, isTeams, teamsTheme } = useSPFxFluent9ThemeInfo();
+
+return (
+  <FluentProvider theme={theme}>
+    <MyFluentUI9Component />
+  </FluentProvider>
 );
 ```
 
@@ -326,14 +341,13 @@ if (canManageWeb) {
 ```
 
 #### `useSPFxServiceScope()`
-Access SPFx service scope for advanced scenarios.
+Access SPFx service scope for advanced service consumption.
 
 ```typescript
 const serviceScope = useSPFxServiceScope();
 
-if (serviceScope) {
-  // Access SPFx services directly
-}
+// Access SPFx services
+const myService = serviceScope?.consume(MyServiceKey);
 ```
 
 ### HTTP Clients
@@ -343,15 +357,26 @@ Access SharePoint REST API client.
 
 ```typescript
 const spHttpClient = useSPFxSPHttpClient();
+const pageContext = useSPFxPageContext();
 
 const fetchLists = async () => {
   if (spHttpClient) {
-    const response = await spHttpClient.get(
-      `${pageContext.web.absoluteUrl}/_api/web/lists`,
-      SPHttpClient.configurations.v1
-    );
-    const data = await response.json();
-    return data.value;
+    try {
+      const response = await spHttpClient.get(
+        `${pageContext.web.absoluteUrl}/_api/web/lists`,
+        SPHttpClient.configurations.v1
+      );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data.value;
+    } catch (error) {
+      console.error('Failed to fetch lists:', error);
+      return [];
+    }
   }
 };
 ```
@@ -364,8 +389,14 @@ const msGraphClient = useSPFxMSGraphClient();
 
 const fetchMe = async () => {
   if (msGraphClient) {
-    const me = await msGraphClient.api('/me').get();
-    console.log(me);
+    try {
+      const me = await msGraphClient.api('/me').get();
+      console.log(me);
+      return me;
+    } catch (error) {
+      console.error('Graph API error:', error);
+      return null;
+    }
   }
 };
 ```
@@ -378,12 +409,22 @@ const aadHttpClient = useSPFxAadHttpClient();
 
 const callCustomApi = async () => {
   if (aadHttpClient) {
-    const response = await aadHttpClient.get(
-      'https://api.contoso.com/data',
-      AadHttpClient.configurations.v1
-    );
-    const data = await response.json();
-    return data;
+    try {
+      const response = await aadHttpClient.get(
+        'https://api.contoso.com/data',
+        AadHttpClient.configurations.v1
+      );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('API call failed:', error);
+      return null;
+    }
   }
 };
 ```
@@ -410,6 +451,68 @@ All hooks follow a consistent pattern:
 3. Return read-only interface (no direct atom exposure)
 4. Type-safe with full TypeScript inference
 
+### Why Jotai?
+This library uses [Jotai](https://jotai.org/) for state management because:
+- **Atomic**: Each piece of state is independent
+- **Scoped**: `atomFamily` enables per-instance isolation (multiple WebParts work independently)
+- **Minimal**: Small bundle size (~3KB), no global store
+- **React-native**: Built for React, works with Concurrent Mode
+- **TypeScript-first**: Excellent type inference
+
+## TypeScript Support
+
+All hooks are fully typed with TypeScript. Import types from the library:
+
+```typescript
+import type {
+  // Core types
+  SPFxProviderProps,
+  SPFxContextValue,
+  HostKind,
+  SPFxComponent,
+  ContainerSize,
+  
+  // Hook return types
+  SPFxPropertiesInfo,
+  SPFxDisplayModeInfo,
+  SPFxInstanceInfo,
+  SPFxEnvironmentInfo,
+  SPFxPageTypeInfo,
+  SPFxUserInfo,
+  SPFxSiteInfo,
+  SPFxGroupInfo,
+  SPFxLocaleInfo,
+  SPFxListInfo,
+  SPFxHubSiteInfo,
+  SPFxThemeInfo,
+  SPFxFluent9ThemeInfo,
+  SPFxContainerInfo,
+  SPFxContainerSize,
+  SPFxContainerSizeInfo,
+  SPFxStorageHook,
+  SPFxPerformanceInfo,
+  SPFxPerfResult,
+  SPFxLoggerInfo,
+  LogEntry,
+  LogLevel,
+  SPFxCorrelationInfo,
+  SPFxPermissionsInfo,
+  SPFxServiceScopeInfo,
+  SPFxSPHttpClientInfo,
+  SPFxMSGraphClientInfo,
+  SPFxAadHttpClientInfo,
+  SPFxTeamsInfo,
+  TeamsTheme,
+} from 'spfx-react-toolkit';
+```
+
+## Compatibility
+
+- **SPFx Version**: 1.21.1+
+- **Node**: >= 22.14.0 < 23.0.0
+- **React**: 17.x (SPFx standard)
+- **TypeScript**: ~5.3.3
+
 ## Best Practices
 
 1. **Always wrap with Provider**: Place `SPFxProvider` at the root of your component tree
@@ -418,6 +521,31 @@ All hooks follow a consistent pattern:
 4. **Use storage wisely**: Session storage for temporary state, local storage for preferences
 5. **Leverage performance hooks**: Use `useSPFxPerformance` for critical operations
 6. **Log with context**: `useSPFxLogger` includes correlation IDs automatically
+7. **Error handling**: Always wrap HTTP client calls in try-catch blocks
+8. **Memoization**: Use `useMemo`/`useCallback` for expensive operations based on hook data
+
+## Troubleshooting
+
+### Provider errors
+- **Error: "useSPFxContext must be used within SPFxProvider"**
+  - Ensure your component tree is wrapped with `SPFxProvider`
+  - Check that hooks are called inside functional components, not outside
+
+### Property sync issues
+- Properties not updating? Check that you're using `setProperties` from `useSPFxProperties`
+- Property Pane not reflecting changes? Ensure SPFx instance properties are mutable
+
+### Teams context not detected
+- Teams context loads asynchronously - check `supported` flag before using
+- In local workbench, Teams context won't be available
+
+### Storage not persisting
+- Check browser settings - localStorage/sessionStorage may be disabled
+- Storage keys are scoped per instance - different WebPart instances have isolated storage
+
+### Type errors
+- Ensure you're importing types from the library: `import type { ... } from 'spfx-react-toolkit'`
+- Use type assertions when accessing SPFx context-specific properties
 
 ## TypeScript Support
 
