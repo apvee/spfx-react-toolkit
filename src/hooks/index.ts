@@ -5,6 +5,7 @@ export * from './useSPFxContext';
 export * from './useSPFxCorrelationInfo';
 export * from './useSPFxDisplayMode';
 export * from './useSPFxEnvironmentInfo';
+export * from './useSPFxFluent9ThemeInfo';
 export * from './useSPFxHubSiteInfo';
 export * from './useSPFxInstanceInfo';
 export * from './useSPFxListInfo';

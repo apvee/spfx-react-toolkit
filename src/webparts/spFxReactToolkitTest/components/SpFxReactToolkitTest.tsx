@@ -42,6 +42,7 @@ import {
   useSPFxMSGraphClient,
   useSPFxAadHttpClient,
   useSPFxPerformance,
+  useSPFxFluent9ThemeInfo,
 } from '../../../hooks';
 import { SPPermission } from '@microsoft/sp-page-context';
 
@@ -92,6 +93,7 @@ const SpFxReactToolkitTest: React.FC = () => {
 
   // Theme & Environment
   const theme = useSPFxThemeInfo();
+  const fluent9ThemeInfo = useSPFxFluent9ThemeInfo();
   const { type: envType, isLocal } = useSPFxEnvironmentInfo();
   const isDarkTheme = theme?.isInverted ?? false;
 
@@ -504,6 +506,27 @@ const SpFxReactToolkitTest: React.FC = () => {
               <InfoRow label="Body Background" value={theme?.semanticColors?.bodyBackground ?? 'N/A'} icon="FabricFolderFill" />
               <InfoRow label="Body Text" value={theme?.semanticColors?.bodyText ?? 'N/A'} icon="Font" />
               <InfoRow label="Link Color" value={theme?.semanticColors?.link ?? 'N/A'} icon="Link" />
+            </Stack>
+
+            {/* Fluent UI 9 Theme Information Card */}
+            <Stack tokens={{ childrenGap: 2 }}>
+              <h3>
+                <Icon iconName="Color" style={{ marginRight: '8px' }} />
+                Fluent UI 9 Theme Information
+                <Separator />
+              </h3>
+              <InfoRow label="Is Teams Context" value={fluent9ThemeInfo.isTeams ? 'Yes' : 'No'} icon="TeamsLogo" />
+              {fluent9ThemeInfo.isTeams && fluent9ThemeInfo.teamsTheme && (
+                <InfoRow label="Teams Theme" value={fluent9ThemeInfo.teamsTheme} icon="Color" />
+              )}
+              <details className={styles.detailsSection}>
+                <summary>
+                  Click to expand Fluent UI 9 Theme (JSON)
+                </summary>
+                <pre>
+                  {safeStringify(fluent9ThemeInfo.theme, 2)}
+                </pre>
+              </details>
             </Stack>
 
             {/* Advanced Diagnostics Card */}

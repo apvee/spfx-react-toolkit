@@ -5,45 +5,50 @@ import { useMemo } from 'react';
 import { useSPFxContainerInfo } from './useSPFxContainerInfo';
 
 /**
- * Container size categories (SharePoint/Fluent UI aligned)
+ * Container size categories (Fluent UI 9 aligned)
  * 
- * Based on official SharePoint Grid & Responsive Design breakpoints:
- * @see https://learn.microsoft.com/sharepoint/dev/design/grid-and-responsive-design
+ * Based on official Fluent UI 9 responsive breakpoints:
+ * @see https://developer.microsoft.com/en-us/fluentui#/styles/web/responsive
  * 
- * - small:   < 480px   (Mobile portrait, narrow sidebar)
- * - medium:  480-640px (Mobile landscape, small tablets)
- * - large:   640-1024px (Tablets, single column)
- * - xLarge:  1024-1366px (Laptop, desktop standard)
- * - xxLarge: > 1366px  (Large desktop, 4K, multi-column)
+ * - small:    320-479px   (Mobile portrait)
+ * - medium:   480-639px   (Mobile landscape, small tablets)
+ * - large:    640-1023px  (Tablets, single column)
+ * - xLarge:   1024-1365px (Laptop, desktop standard)
+ * - xxLarge:  1366-1919px (Large desktop, wide screen)
+ * - xxxLarge: >= 1920px   (4K, ultra-wide, multi-column)
  */
 export type SPFxContainerSize = 
-  | 'small'    // < 480px
-  | 'medium'   // 480-640px
-  | 'large'    // 640-1024px
-  | 'xLarge'   // 1024-1366px
-  | 'xxLarge'; // > 1366px
+  | 'small'     // 320-479px
+  | 'medium'    // 480-639px
+  | 'large'     // 640-1023px
+  | 'xLarge'    // 1024-1365px
+  | 'xxLarge'   // 1366-1919px
+  | 'xxxLarge'; // >= 1920px
 
 /**
  * Return type for useSPFxContainerSize hook
  */
 export interface SPFxContainerSizeInfo {
-  /** Container size category (SharePoint aligned) */
+  /** Container size category (Fluent UI 9 aligned) */
   readonly size: SPFxContainerSize;
   
-  /** Is small container (< 480px) - mobile portrait, narrow sidebar */
+  /** Is small container (320-479px) - mobile portrait */
   readonly isSmall: boolean;
   
-  /** Is medium container (480-640px) - mobile landscape, small tablets */
+  /** Is medium container (480-639px) - mobile landscape, small tablets */
   readonly isMedium: boolean;
   
-  /** Is large container (640-1024px) - tablets, single column */
+  /** Is large container (640-1023px) - tablets, single column */
   readonly isLarge: boolean;
   
-  /** Is extra large container (1024-1366px) - laptop, desktop standard */
+  /** Is extra large container (1024-1365px) - laptop, desktop standard */
   readonly isXLarge: boolean;
   
-  /** Is extra extra large container (> 1366px) - large desktop, multi-column */
+  /** Is extra extra large container (1366-1919px) - large desktop, wide screen */
   readonly isXXLarge: boolean;
+  
+  /** Is extra extra extra large container (>= 1920px) - 4K, ultra-wide, multi-column */
+  readonly isXXXLarge: boolean;
   
   /** Actual container width in pixels */
   readonly width: number;
@@ -53,23 +58,24 @@ export interface SPFxContainerSizeInfo {
 }
 
 /**
- * SharePoint container size breakpoints
+ * Fluent UI 9 container size breakpoints
  * 
- * Based on official SharePoint responsive grid system:
- * - Small:   320px  (1 column, no gutter)
- * - Medium:  480px  (12 columns, 16px gutter)
- * - Large:   640px  (12 columns, 24px gutter)
- * - XLarge:  1024px (12 columns, 24px gutter)
- * - XXLarge: 1366px (12 columns, 32px gutter)
+ * Based on official Fluent UI 9 responsive breakpoints:
+ * - Small:    320px  (mobile portrait)
+ * - Medium:   480px  (mobile landscape, small tablets)
+ * - Large:    640px  (tablets, single column)
+ * - XLarge:   1024px (laptop, desktop standard)
+ * - XXLarge:  1366px (large desktop, wide screen)
+ * - XXXLarge: 1920px (4K, ultra-wide, multi-column)
  * 
- * @see https://learn.microsoft.com/sharepoint/dev/design/grid-and-responsive-design#breakpoints
+ * @see https://developer.microsoft.com/en-us/fluentui#/styles/web/responsive
  */
 const CONTAINER_SIZE_BREAKPOINTS = {
-  small: 480,    // SharePoint Small → Medium
-  medium: 640,   // SharePoint Medium → Large
-  large: 1024,   // SharePoint Large → XLarge
-  xLarge: 1366,  // SharePoint XLarge → XXLarge
-  // xxLarge: > 1366px (SharePoint XXLarge+)
+  small: 480,     // Fluent UI 9: Small → Medium (320-479 → 480+)
+  medium: 640,    // Fluent UI 9: Medium → Large (480-639 → 640+)
+  large: 1024,    // Fluent UI 9: Large → XLarge (640-1023 → 1024+)
+  xLarge: 1366,   // Fluent UI 9: XLarge → XXLarge (1024-1365 → 1366+)
+  xxLarge: 1920,  // Fluent UI 9: XXLarge → XXXLarge (1366-1919 → 1920+)
 } as const;
 
 /**
@@ -80,37 +86,41 @@ const CONTAINER_SIZE_BREAKPOINTS = {
  */
 function getContainerSize(width: number): SPFxContainerSize {
   if (width < CONTAINER_SIZE_BREAKPOINTS.small) {
-    return 'small';
+    return 'small';     // < 480px
   }
   if (width < CONTAINER_SIZE_BREAKPOINTS.medium) {
-    return 'medium';
+    return 'medium';    // 480-639px
   }
   if (width < CONTAINER_SIZE_BREAKPOINTS.large) {
-    return 'large';
+    return 'large';     // 640-1023px
   }
   if (width < CONTAINER_SIZE_BREAKPOINTS.xLarge) {
-    return 'xLarge';
+    return 'xLarge';    // 1024-1365px
   }
-  return 'xxLarge';
+  if (width < CONTAINER_SIZE_BREAKPOINTS.xxLarge) {
+    return 'xxLarge';   // 1366-1919px
+  }
+  return 'xxxLarge';    // >= 1920px
 }
 
 /**
- * Hook to get container size with SharePoint-aligned breakpoints
+ * Hook to get container size with Fluent UI 9 aligned breakpoints
  * 
  * Automatically tracks container size changes and categorizes into
- * SharePoint/Fluent UI compatible size categories.
+ * Fluent UI 9 compatible size categories.
  * 
- * Breakpoints (aligned with SharePoint):
- * - small:   < 480px   (mobile portrait, narrow sidebar)
- * - medium:  480-640px (mobile landscape, small tablets)
- * - large:   640-1024px (tablets, single column)
- * - xLarge:  1024-1366px (laptop, desktop standard)
- * - xxLarge: > 1366px  (large desktop, multi-column)
+ * Breakpoints (aligned with Fluent UI 9):
+ * - small:    320-479px   (mobile portrait)
+ * - medium:   480-639px   (mobile landscape, small tablets)
+ * - large:    640-1023px  (tablets, single column)
+ * - xLarge:   1024-1365px (laptop, desktop standard)
+ * - xxLarge:  1366-1919px (large desktop, wide screen)
+ * - xxxLarge: >= 1920px   (4K, ultra-wide, multi-column)
  * 
  * Useful for:
  * - Responsive layouts based on actual container space
  * - Adaptive UI that works in sidebars, columns, or full width
- * - SharePoint-compatible responsive design
+ * - Fluent UI 9 compatible responsive design
  * - Making layout decisions based on available space
  * 
  * @returns Container size information and helpers
@@ -118,7 +128,7 @@ function getContainerSize(width: number): SPFxContainerSize {
  * @example
  * ```tsx
  * function MyWebPart() {
- *   const { size, isSmall, isXLarge, width } = useSPFxContainerSize();
+ *   const { size, isSmall, isXXXLarge, width } = useSPFxContainerSize();
  *   
  *   // Decision based on size
  *   if (size === 'small') {
@@ -129,6 +139,10 @@ function getContainerSize(width: number): SPFxContainerSize {
  *     return <TabletView />;
  *   }
  *   
+ *   if (size === 'xxxLarge') {
+ *     return <UltraWideView columns={6} />;  // 4K/ultra-wide
+ *   }
+ *   
  *   return <DesktopView columns={size === 'xxLarge' ? 4 : 3} />;
  * }
  * ```
@@ -136,7 +150,7 @@ function getContainerSize(width: number): SPFxContainerSize {
  * @example
  * ```tsx
  * function ResponsiveComponent() {
- *   const { isSmall, isMedium, isLarge, isXLarge, isXXLarge } = useSPFxContainerSize();
+ *   const { isSmall, isMedium, isLarge, isXLarge, isXXLarge, isXXXLarge } = useSPFxContainerSize();
  *   
  *   return (
  *     <div>
@@ -144,6 +158,7 @@ function getContainerSize(width: number): SPFxContainerSize {
  *       {(isMedium || isLarge) && <TabletLayout />}
  *       {isXLarge && <DesktopLayout columns={3} />}
  *       {isXXLarge && <DesktopLayout columns={4} />}
+ *       {isXXXLarge && <UltraWideLayout columns={6} />}
  *     </div>
  *   );
  * }
@@ -162,6 +177,7 @@ function getContainerSize(width: number): SPFxContainerSize {
  *       {size === 'medium' && <TwoColumnLayout />}
  *       {size === 'large' && <ThreeColumnLayout />}
  *       {(size === 'xLarge' || size === 'xxLarge') && <MultiColumnLayout />}
+ *       {size === 'xxxLarge' && <UltraWideLayout columns={6} />}
  *     </div>
  *   );
  * }
@@ -182,6 +198,7 @@ export function useSPFxContainerSize(): SPFxContainerSizeInfo {
       isLarge: size === 'large',
       isXLarge: size === 'xLarge',
       isXXLarge: size === 'xxLarge',
+      isXXXLarge: size === 'xxxLarge',
       width,
       height,
     };
