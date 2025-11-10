@@ -9,6 +9,7 @@ import type { ServiceScope } from '@microsoft/sp-core-library';
 /**
  * Extract ThemeProvider from SPFx context
  * Works with any SPFx context type (WebPart, ApplicationCustomizer, etc.)
+ * @internal
  */
 function getThemeProvider(spfxContext: unknown): ThemeProvider {
   const ctx = spfxContext as {
@@ -30,6 +31,7 @@ function getThemeProvider(spfxContext: unknown): ThemeProvider {
  * 
  * @param spfxContext - SPFx context object
  * @param setTheme - Setter function to update theme state
+ * @internal
  */
 export function useThemeSubscription(
   spfxContext: unknown,

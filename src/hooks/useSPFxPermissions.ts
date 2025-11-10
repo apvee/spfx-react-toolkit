@@ -10,17 +10,17 @@ import { useSPFxPageContext } from './useSPFxPageContext';
  */
 export interface SPFxPermissionsInfo {
   /** Site collection permissions */
-  readonly site: SPPermission | undefined;
-  
+  readonly sitePermissions: SPPermission | undefined;
+
   /** Web permissions */
-  readonly web: SPPermission | undefined;
-  
+  readonly webPermissions: SPPermission | undefined;
+
   /** List permissions (if in list context) */
-  readonly list: SPPermission | undefined;
-  
+  readonly listPermissions: SPPermission | undefined;
+
   /** Check if user has specific web permission */
   readonly hasWebPermission: (permission: SPPermission) => boolean;
-  
+
   /** Check if user has specific site permission */
   readonly hasSitePermission: (permission: SPPermission) => boolean;
 
@@ -71,12 +71,12 @@ export interface SPFxPermissionsInfo {
  */
 export function useSPFxPermissions(): SPFxPermissionsInfo {
   const pageContext = useSPFxPageContext();
-  
+
   // Extract permissions from pageContext
-  const site = (pageContext.site as unknown as { permissions?: SPPermission })?.permissions;
-  const web = (pageContext.web as unknown as { permissions?: SPPermission })?.permissions;
-  const list = (pageContext.list as unknown as { permissions?: SPPermission })?.permissions;
-  
+  const sitePermissions = (pageContext.site as unknown as { permissions?: SPPermission })?.permissions;
+  const webPermissions = (pageContext.web as unknown as { permissions?: SPPermission })?.permissions;
+  const listPermissions = (pageContext.list as unknown as { permissions?: SPPermission })?.permissions;
+
   // Helper to check permission
   const has = useCallback(
     (perms: SPPermission | undefined, permission: SPPermission): boolean => {
@@ -87,27 +87,27 @@ export function useSPFxPermissions(): SPFxPermissionsInfo {
     },
     []
   );
-  
+
   // Specific helpers for each scope
   const hasWebPermission = useCallback(
-    (permission: SPPermission): boolean => has(web, permission),
-    [has, web]
+    (permission: SPPermission): boolean => has(webPermissions, permission),
+    [has, webPermissions]
   );
-  
+
   const hasSitePermission = useCallback(
-    (permission: SPPermission): boolean => has(site, permission),
-    [has, site]
+    (permission: SPPermission): boolean => has(sitePermissions, permission),
+    [has, sitePermissions]
   );
-  
+
   const hasListPermission = useCallback(
-    (permission: SPPermission): boolean => has(list, permission),
-    [has, list]
+    (permission: SPPermission): boolean => has(listPermissions, permission),
+    [has, listPermissions]
   );
-  
+
   return {
-    site,
-    web,
-    list,
+    sitePermissions,
+    webPermissions,
+    listPermissions,
     hasWebPermission,
     hasSitePermission,
     hasListPermission,

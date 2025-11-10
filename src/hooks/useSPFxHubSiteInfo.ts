@@ -1,7 +1,10 @@
 // useSPFxHubSiteInfo.ts
 // Hook for Hub Site information
 
+import { useState, useEffect } from 'react';
+import { SPHttpClient } from '@microsoft/sp-http';
 import { useSPFxPageContext } from './useSPFxPageContext';
+import { useSPFxSPHttpClient } from './useSPFxSPHttpClient';
 
 /**
  * Return type for useSPFxHubSiteInfo hook
@@ -13,17 +16,25 @@ export interface SPFxHubSiteInfo {
   /** Hub site ID (GUID) if associated, undefined otherwise */
   readonly hubSiteId: string | undefined;
   
-  /** Hub site URL if available, undefined otherwise */
+  /** Hub site URL (fetched via REST API) */
   readonly hubSiteUrl: string | undefined;
+  
+  /** Whether hub site URL is being loaded */
+  readonly isLoading: boolean;
+  
+  /** Error during hub site URL fetch */
+  readonly error: Error | undefined;
 }
 
 /**
  * Hook for Hub Site information
  * 
  * Provides information about SharePoint Hub Site association:
- * - isHubSite: Whether site is part of a hub
- * - hubSiteId: Unique hub site identifier
- * - hubSiteUrl: Hub site absolute URL
+ * - isHubSite: Whether site is associated with a hub
+ * - hubSiteId: Unique hub site identifier (GUID) from pageContext
+ * - hubSiteUrl: Hub site URL (fetched via REST API)
+ * - isLoading: Loading state for hub URL fetch
+ * - error: Error during hub URL fetch
  * 
  * Hub Sites are modern SharePoint feature that allow:
  * - Unified navigation across related sites
@@ -33,24 +44,24 @@ export interface SPFxHubSiteInfo {
  * 
  * Use this hook to:
  * - Detect hub site association
+ * - Get hub site ID and URL
  * - Implement hub-aware navigation
- * - Apply hub-specific branding
- * - Build hub site aggregation features
  * 
- * Note: This hook is specialized for Hub Site architectures.
- * If your app doesn't work with Hub Sites, you don't need this hook.
- * Most standalone team sites are not hub-associated.
- * Only use when implementing hub-specific features.
+ * Note: hubSiteUrl is fetched asynchronously via REST API when isHubSite is true.
  * 
- * @returns Hub site information
+ * @returns Hub site information (isHubSite, hubSiteId, hubSiteUrl, isLoading, error)
  * 
  * @example
  * ```tsx
  * function MyComponent() {
- *   const { isHubSite, hubSiteId, hubSiteUrl } = useSPFxHubSiteInfo();
+ *   const { isHubSite, hubSiteId, hubSiteUrl, isLoading } = useSPFxHubSiteInfo();
  *   
  *   if (!isHubSite) {
  *     return <div>Not part of a hub site</div>;
+ *   }
+ *   
+ *   if (isLoading) {
+ *     return <Spinner label="Loading hub info..." />;
  *   }
  *   
  *   return (
@@ -66,16 +77,13 @@ export interface SPFxHubSiteInfo {
  * @example Hub-aware navigation
  * ```tsx
  * function HubNavigation() {
- *   const { isHubSite, hubSiteUrl } = useSPFxHubSiteInfo();
+ *   const { isHubSite, hubSiteUrl, isLoading } = useSPFxHubSiteInfo();
+ *   
+ *   if (!isHubSite || isLoading) return null;
  *   
  *   return (
  *     <nav>
- *       {isHubSite && (
- *         <a href={hubSiteUrl} className="hub-link">
- *           ← Back to Hub
- *         </a>
- *       )}
- *       <a href="/">Home</a>
+ *       <a href={hubSiteUrl}>← Back to Hub</a>
  *     </nav>
  *   );
  * }
@@ -83,26 +91,75 @@ export interface SPFxHubSiteInfo {
  */
 export function useSPFxHubSiteInfo(): SPFxHubSiteInfo {
   const pageContext = useSPFxPageContext();
+  const { invoke, baseUrl } = useSPFxSPHttpClient();
   
-  // Extract hub site info from legacy page context
+  const [hubSiteUrl, setHubSiteUrl] = useState<string | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | undefined>(undefined);
+  
+  // Get hub site info from legacyPageContext
   const legacy = (pageContext as unknown as {
     legacyPageContext?: {
       hubSiteId?: string;
-      hubSiteUrl?: string;
+      isHubSite?: boolean;
     };
+    webAbsoluteUrl?: string;
   }).legacyPageContext;
   
   const hubSiteId = legacy?.hubSiteId;
-  const hubSiteUrl = legacy?.hubSiteUrl;
+  const isCurrentSiteTheHub = legacy?.isHubSite ?? false;
+  const currentSiteUrl = (pageContext as unknown as { webAbsoluteUrl?: string }).webAbsoluteUrl;
   
   // Site is part of a hub if hubSiteId exists and is not empty GUID
   const isHubSite = hubSiteId !== undefined && 
                     hubSiteId !== '' && 
                     hubSiteId !== '00000000-0000-0000-0000-000000000000';
   
+  // Fetch hub site URL when needed
+  useEffect(() => {
+    if (!isHubSite || !hubSiteId) {
+      return;
+    }
+    
+    // OPTIMIZATION: If current site IS the hub site, use current URL directly
+    if (isCurrentSiteTheHub && currentSiteUrl) {
+      setHubSiteUrl(currentSiteUrl);
+      setIsLoading(false);
+      return;
+    }
+    
+    // Otherwise, fetch hub URL via API (current site is associated to a hub)
+    setIsLoading(true);
+    setError(undefined);
+    
+    // Use the web's hub site data endpoint to get hub URL
+    // This endpoint returns { value: "JSON_STRING" }, so we need to parse twice
+    invoke(client =>
+      client.get(
+        `${baseUrl}/_api/web/hubsitedata(false)`,
+        SPHttpClient.configurations.v1
+      )
+      .then(res => res.json())
+      .then((response: { value: string }) => JSON.parse(response.value))
+    )
+      .then((data: { url?: string }) => {
+        if (data.url) {
+          setHubSiteUrl(data.url);
+        }
+        setIsLoading(false);
+      })
+      .catch(err => {
+        const errorObj = err instanceof Error ? err : new Error(String(err));
+        setError(errorObj);
+        setIsLoading(false);
+      });
+  }, [isHubSite, hubSiteId, isCurrentSiteTheHub, currentSiteUrl, invoke, baseUrl]);
+  
   return {
     isHubSite,
     hubSiteId: isHubSite ? hubSiteId : undefined,
-    hubSiteUrl: isHubSite ? hubSiteUrl : undefined,
+    hubSiteUrl,
+    isLoading,
+    error,
   };
 }

@@ -3,8 +3,7 @@
 
 import { useAtomValue } from 'jotai';
 import { DisplayMode } from '@microsoft/sp-core-library';
-import { useSPFxContext } from './useSPFxContext';
-import { spfxAtoms } from './../core/atoms';
+import { spfxAtoms } from './../core/atoms.internal';
 
 /**
  * Return type for useSPFxDisplayMode hook
@@ -52,13 +51,8 @@ export interface SPFxDisplayModeInfo {
  * ```
  */
 export function useSPFxDisplayMode(): SPFxDisplayModeInfo {
-  const { instanceId } = useSPFxContext();
-  
-  // Get display mode atom for this instance
-  const displayModeAtom = spfxAtoms.displayMode(instanceId);
-  
-  // Read current mode (readonly)
-  const modeValue = useAtomValue(displayModeAtom);
+  // Read current mode directly from atom (readonly)
+  const modeValue = useAtomValue(spfxAtoms.displayMode);
   
   // Default to Read mode if not set
   const mode = modeValue ?? DisplayMode.Read;

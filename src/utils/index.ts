@@ -1,2 +1,2 @@
-export * from './resize-observer';
-export * from './theme-subscription';
+// Empty - no public utilities to export
+// All utilities are internal and used only within the library

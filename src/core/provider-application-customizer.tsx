@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import type { BaseApplicationCustomizer } from '@microsoft/sp-application-base';
-import { SPFxProviderBase } from './provider-base';
+import { SPFxProviderBase } from './provider-base.internal';
 
 /**
  * Props for the SPFx Application Customizer-specific provider component.

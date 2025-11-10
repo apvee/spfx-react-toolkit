@@ -25,11 +25,24 @@
 
 ## Quick Reference
 
+### Installation
+
+```bash
+# Single command (auto-installs peer dependencies)
+npm install @apvee/spfx-react-toolkit
+```
+
+**Auto-installed peer dependencies (npm 7+):**
+- `jotai` ^2.0.0 - Atomic state management (~3KB, always used)
+- `@pnp/sp` ^4.0.0 - SharePoint API (tree-shaken if not used)
+- `@pnp/core` ^4.0.0
+- `@pnp/queryable` ^4.0.0
+
 ### Essential Imports
 
 ```typescript
 // Provider (required at root)
-import { SPFxProvider } from 'spfx-react-toolkit';
+import { SPFxProvider } from '@apvee/spfx-react-toolkit';
 
 // Common hooks
 import {
@@ -39,14 +52,16 @@ import {
   useSPFxUserInfo,
   useSPFxSiteInfo,
   useSPFxPageContext,
-} from 'spfx-react-toolkit';
+} from '@apvee/spfx-react-toolkit';
+
+
 
 // Types (always use 'type' import)
 import type {
   SPFxPropertiesInfo,
   SPFxDisplayModeInfo,
   SPFxUserInfo,
-} from 'spfx-react-toolkit';
+} from '@apvee/spfx-react-toolkit';
 ```
 
 ### Minimal WebPart Setup
@@ -55,7 +70,7 @@ import type {
 // In WebPart's render() method
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { SPFxProvider } from 'spfx-react-toolkit';
+import { SPFxProvider } from '@apvee/spfx-react-toolkit';
 import MyComponent from './components/MyComponent';
 
 public render(): void {
@@ -123,7 +138,7 @@ import {
 } from '@microsoft/sp-webpart-base';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { SPFxProvider } from 'spfx-react-toolkit';
+import { SPFxProvider } from '@apvee/spfx-react-toolkit';
 import MyComponent from './components/MyComponent';
 
 export interface IMyWebPartProps {
@@ -181,7 +196,7 @@ export default class MyWebPart extends BaseClientSideWebPart<IMyWebPartProps> {
 ```typescript
 // MyComponent.tsx
 import * as React from 'react';
-import { useSPFxProperties, useSPFxDisplayMode } from 'spfx-react-toolkit';
+import { useSPFxProperties, useSPFxDisplayMode } from '@apvee/spfx-react-toolkit';
 import type { IMyWebPartProps } from '../MyWebPart';
 
 const MyComponent: React.FC = () => {
@@ -635,13 +650,11 @@ const callCustomApi = async () => {
   
   try {
     const response = await aadHttpClient.get(
-      'https://api.contoso.com/v1/data',
+      'https://api.contoso.com/data',
       AadHttpClient.configurations.v1
     );
     
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     
     return await response.json();
   } catch (error) {
@@ -649,6 +662,500 @@ const callCustomApi = async () => {
     return null;
   }
 };
+```
+
+#### `useSPFxOneDriveAppData<T>(fileName, folder?, autoFetch?)`
+**Purpose**: Manage JSON files in user's OneDrive appRoot folder with unified read/write operations  
+**Returns**: `{ data, isLoading, error, isWriting, writeError, load, write, isReady }`  
+**Use Case**: User-scoped storage, preferences, cache, per-instance data persistence
+
+**Parameters**:
+- `fileName`: Name of JSON file (e.g., 'config.json', 'settings.json')
+- `folder`: Optional folder/namespace for file organization (sanitized, e.g., 'my-app', instanceId)
+- `autoFetch`: Auto-load on mount. Default: true
+
+**Requirements**: Microsoft Graph permissions (Files.ReadWrite or Files.ReadWrite.AppFolder)
+
+```typescript
+interface MyConfig {
+  theme: string;
+  language: string;
+}
+
+// Auto-fetch from root
+const { data, isLoading, error, write, isWriting, isReady } = 
+  useSPFxOneDriveAppData<MyConfig>('config.json');
+
+if (isLoading) return <Spinner />;
+if (error) return <div>Error: {error.message}</div>;
+
+const handleSave = async () => {
+  try {
+    await write({ theme: 'dark', language: 'en' });
+    console.log('Saved!');
+  } catch (err) {
+    console.error('Save failed:', err);
+  }
+};
+
+return (
+  <div>
+    <p>Theme: {data?.theme}</p>
+    <button onClick={handleSave} disabled={isWriting}>
+      {isWriting ? 'Saving...' : 'Save'}
+    </button>
+  </div>
+);
+```
+
+**With folder namespace for isolation:**
+```typescript
+// Store in appRoot:/my-app/config.json
+const { data, write } = useSPFxOneDriveAppData<MyConfig>('config.json', 'my-app');
+
+// Per-instance storage (multi-instance support)
+const { id } = useSPFxInstanceInfo();
+const { data, write } = useSPFxOneDriveAppData<Settings>('settings.json', id);
+```
+
+**Lazy loading (manual load):**
+```typescript
+const { data, load, isLoading, write } = useSPFxOneDriveAppData<Cache>(
+  'cache.json',
+  'my-app',
+  false  // Don't auto-fetch
+);
+
+return (
+  <button onClick={load} disabled={isLoading}>
+    {isLoading ? 'Loading...' : 'Load Cache'}
+  </button>
+);
+```
+
+**CRUD-like operations:**
+```typescript
+interface TodoList {
+  items: Array<{ id: string; text: string; done: boolean }>;
+}
+
+const TodoApp: React.FC = () => {
+  const { data, write, isLoading } = useSPFxOneDriveAppData<TodoList>('todos.json', 'todo-app');
+  
+  const addTodo = async (text: string) => {
+    await write({
+      items: [...(data?.items ?? []), { id: crypto.randomUUID(), text, done: false }]
+    });
+  };
+  
+  const toggleTodo = async (id: string) => {
+    await write({
+      items: data?.items.map(item => 
+        item.id === id ? { ...item, done: !item.done } : item
+      ) ?? []
+    });
+  };
+  
+  if (isLoading) return <Spinner />;
+  
+  return <TodoList items={data?.items ?? []} onToggle={toggleTodo} onAdd={addTodo} />;
+};
+```
+
+#### `useSPFxTenantProperty<T>(key, autoFetch?)`
+**Purpose**: Manage tenant-wide properties using SharePoint StorageEntity API with smart serialization  
+**Returns**: `{ data, description, isLoading, error, isWriting, writeError, canWrite, load, write, remove, isReady }`  
+**Use Case**: Tenant-wide centralized configuration, feature flags, API endpoints, version tracking
+
+**Parameters**:
+- `key`: Unique property key (e.g., 'appVersion', 'apiEndpoint', 'featureFlags')
+- `autoFetch`: Auto-load on mount. Default: true
+
+**Requirements**: 
+- Tenant app catalog must be provisioned
+- Read: Any authenticated user
+- Write/Remove: Site Collection Administrator role on tenant app catalog site
+- **Note**: Being a Tenant Admin is NOT sufficient; you must be added as Site Collection Admin to the app catalog
+
+**Metadata Support**:
+- SharePoint StorageEntity only supports `description` field (not `comment`)
+
+**Smart Serialization**:
+- Primitives (string, number, boolean, null, bigint) → String(content)
+- Date objects → ISO 8601 string
+- Objects/arrays → JSON.stringify(content)
+
+```typescript
+// String property
+const { data, write, canWrite, isLoading, error } = 
+  useSPFxTenantProperty<string>('appVersion');
+
+if (isLoading) return <Spinner />;
+if (error) return <MessageBar messageBarType={MessageBarType.error}>{error.message}</MessageBar>;
+
+const handleUpdate = async () => {
+  if (!canWrite) {
+    alert('Insufficient permissions');
+    return;
+  }
+  
+  try {
+    await write('2.0.1', 'Current application version', 'Updated by admin');
+    console.log('Version updated!');
+  } catch (err) {
+    console.error('Update failed:', err);
+  }
+};
+
+return (
+  <div>
+    <Text>Version: {data ?? 'Not Set'}</Text>
+    {canWrite && <PrimaryButton onClick={handleUpdate}>Update Version</PrimaryButton>}
+  </div>
+);
+```
+
+**Number and Boolean properties:**
+```typescript
+// Number - stored as "10485760", read as 10485760 (number)
+const { data: maxSize, write } = useSPFxTenantProperty<number>('maxUploadSize');
+await write(10485760, 'Maximum file upload size in bytes');
+console.log(typeof maxSize); // "number"
+
+// Boolean - stored as "true"/"false", read as true/false (boolean)
+const { data: maintenanceMode } = useSPFxTenantProperty<boolean>('maintenanceMode');
+if (maintenanceMode) {
+  return <MessageBar messageBarType={MessageBarType.warning}>System under maintenance</MessageBar>;
+}
+```
+
+**Date property (stored as ISO string):**
+```typescript
+const { data, write } = useSPFxTenantProperty<string>('lastDeployment');
+
+// Write ISO string
+await write(new Date().toISOString(), 'Last deployment timestamp');
+
+// Read and convert back to Date
+const lastDeploy = data ? new Date(data) : undefined;
+console.log(lastDeploy?.toLocaleString());
+```
+
+**Complex objects with JSON:**
+```typescript
+interface FeatureFlags {
+  enableChat: boolean;
+  enableAnalytics: boolean;
+  maxUsers: number;
+  betaFeatures: string[];
+}
+
+const { data, write, isLoading } = useSPFxTenantProperty<FeatureFlags>('featureFlags');
+
+// Stored as JSON string, read as parsed object
+await write({
+  enableChat: true,
+  enableAnalytics: false,
+  maxUsers: 1000,
+  betaFeatures: ['newUI', 'advancedSearch']
+}, 'Global feature flags configuration');
+
+if (isLoading) return <Spinner />;
+
+if (data?.enableChat) {
+  return <ChatPanel maxUsers={data.maxUsers} />;
+}
+```
+
+**With metadata viewing:**
+```typescript
+const { data, description, isLoading } = 
+  useSPFxTenantProperty<string>('apiEndpoint');
+
+if (isLoading) return <Spinner />;
+
+return (
+  <Stack tokens={{ childrenGap: 5 }}>
+    <Text variant="large">Value: {data}</Text>
+    {description && <Text variant="small">Description: {description}</Text>}
+  </Stack>
+);
+```
+
+**Property removal:**
+```typescript
+const { data, remove, canWrite } = useSPFxTenantProperty<string>('deprecatedSetting');
+
+const handleDelete = async () => {
+  if (!canWrite || !confirm('Delete this property? This cannot be undone.')) return;
+  
+  try {
+    await remove();
+    console.log('Property deleted');
+  } catch (err) {
+    console.error('Delete failed:', err);
+  }
+};
+
+return (
+  <Stack tokens={{ childrenGap: 10 }}>
+    <Text>Value: {data ?? 'Not found'}</Text>
+    {canWrite && data && (
+      <DefaultButton onClick={handleDelete} text="Delete Property" />
+    )}
+  </Stack>
+);
+```
+
+**Multi-property dashboard:**
+```typescript
+const version = useSPFxTenantProperty<string>('appVersion');
+const maintenance = useSPFxTenantProperty<boolean>('maintenanceMode');
+const lastUpdate = useSPFxTenantProperty<string>('lastUpdate');
+const config = useSPFxTenantProperty<AppConfig>('appConfig');
+
+const isLoading = version.isLoading || maintenance.isLoading || 
+                  lastUpdate.isLoading || config.isLoading;
+
+if (isLoading) return <Spinner label="Loading dashboard..." />;
+
+return (
+  <Stack tokens={{ childrenGap: 20 }}>
+    <Text variant="xxLarge">Tenant Configuration</Text>
+    
+    <Stack tokens={{ childrenGap: 10 }}>
+      <Label>App Version: {version.data ?? 'Not Set'}</Label>
+      <Label>Maintenance Mode: {maintenance.data ? 'ON' : 'OFF'}</Label>
+      <Label>Last Update: {lastUpdate.data ? new Date(lastUpdate.data).toLocaleString() : 'Never'}</Label>
+    </Stack>
+    
+    {config.data && (
+      <Stack tokens={{ childrenGap: 5 }}>
+        <Text variant="large">Configuration</Text>
+        <pre>{JSON.stringify(config.data, null, 2)}</pre>
+      </Stack>
+    )}
+  </Stack>
+);
+```
+
+#### `useSPFxUserPhoto(options?)`
+**Purpose**: Load user profile photos from Microsoft Graph API  
+**Returns**: `{ photoUrl, photoBlob, isLoading, error, reload, isReady }`  
+**Use Case**: Display user avatars, profile pictures, team member photos
+
+**Parameters**:
+- `options.userId`: Microsoft Graph user ID (optional, defaults to current user)
+- `options.email`: User email address (alternative to userId)
+- `options.size`: Photo size - '48x48', '64x64', '96x96', '120x120', '240x240', '360x360', '432x432', '504x504', '648x648'
+- `options.autoFetch`: Auto-load on mount. Default: true
+
+**Requirements**: Microsoft Graph permissions (User.Read for current user, User.ReadBasic.All for other users)
+
+```typescript
+// Current user photo
+const { photoUrl, isLoading, error } = useSPFxUserPhoto();
+
+return (
+  <div>
+    {isLoading ? (
+      <Spinner />
+    ) : error ? (
+      <div>Error: {error.message}</div>
+    ) : (
+      <img src={photoUrl || '/default-avatar.png'} alt="User" />
+    )}
+  </div>
+);
+```
+
+**Specific user by email:**
+```typescript
+const { photoUrl, reload } = useSPFxUserPhoto({ 
+  email: 'user@contoso.com',
+  size: '96x96'
+});
+
+return <img src={photoUrl || '/default-avatar.png'} alt="User" />;
+```
+
+**Lazy loading:**
+```typescript
+const { photoUrl, reload, isLoading } = useSPFxUserPhoto({ 
+  email: 'user@contoso.com',
+  autoFetch: false
+});
+
+return (
+  <div>
+    {photoUrl ? (
+      <img src={photoUrl} alt="User" />
+    ) : (
+      <button onClick={reload} disabled={isLoading}>Load Photo</button>
+    )}
+  </div>
+);
+```
+
+  return (
+    <div>
+      <button onClick={() => addTodo('New Task')} disabled={isWriting}>
+        Add Todo
+      </button>
+      {data?.items.map(item => (
+        <div key={item.id}>
+          <input 
+            type="checkbox" 
+            checked={item.done} 
+            onChange={() => toggleTodo(item.id)} 
+          />
+          <span>{item.title}</span>
+          <button onClick={() => deleteTodo(item.id)}>Delete</button>
+        </div>
+      ))}
+    </div>
+  );
+};
+```
+
+**Parameters**:
+- `options` (optional): Configuration object
+  - `userId`: User Graph ID or Azure AD Object ID
+  - `email`: User email/UPN
+  - `size`: Photo size - '48x48' | '64x64' | '96x96' | '120x120' | '240x240' (default) | '360x360' | '432x432' | '504x504' | '648x648'
+  - `autoFetch`: Auto-load on mount. Default: true
+
+**Microsoft Graph Permissions Required**:
+- **User.Read**: Required for current user's photo (`/me/photo`)
+- **User.ReadBasic.All**: Required for other users' photos (`/users/{id}/photo`)
+- **User.Read.All**: Alternative permission (more privileged)
+
+**Permission Notes**:
+- Permissions must be configured in Azure AD app registration
+- Admin or user consent required depending on permission type
+- 404 errors = user has no photo (not a permission issue)
+- 403 errors = insufficient permissions
+
+**Memory Management**:
+- Blob URLs automatically revoked on unmount (prevents memory leaks)
+- Safe to use in lists or dynamic components
+
+**Examples**:
+
+**Current user avatar:**
+```typescript
+const { photoUrl, isLoading, error } = useSPFxUserPhoto();
+
+if (isLoading) return <Spinner />;
+if (error) return <Persona text="User" size={PersonaSize.size72} />;
+
+return <img src={photoUrl} alt="User" style={{ width: 240, height: 240, borderRadius: '50%' }} />;
+```
+
+**Team member by email:**
+```typescript
+function TeamMember({ email, name }: { email: string; name: string }) {
+  const { photoUrl, isLoading } = useSPFxUserPhoto({ 
+    email,
+    size: '96x96'
+  });
+  
+  return (
+    <Stack horizontal tokens={{ childrenGap: 10 }}>
+      {isLoading ? (
+        <Spinner size={SpinnerSize.small} />
+      ) : (
+        <img src={photoUrl || '/default-avatar.png'} alt={name} />
+      )}
+      <Text>{name}</Text>
+    </Stack>
+  );
+}
+```
+
+**Large profile photo by user ID:**
+```typescript
+const { photoUrl, reload, isLoading, error } = useSPFxUserPhoto({ 
+  userId: 'abc-123-def',
+  size: '360x360'
+});
+
+return (
+  <Stack>
+    {error ? (
+      <MessageBar messageBarType={MessageBarType.error}>
+        Failed to load photo: {error.message}
+      </MessageBar>
+    ) : (
+      <img src={photoUrl} alt="Profile" />
+    )}
+    
+    <PrimaryButton 
+      onClick={reload} 
+      disabled={isLoading}
+      text="Refresh Photo"
+    />
+  </Stack>
+);
+```
+
+**Lazy loading:**
+```typescript
+const { photoUrl, reload, isLoading } = useSPFxUserPhoto({ 
+  email: 'user@contoso.com',
+  autoFetch: false
+});
+
+return (
+  <div>
+    {photoUrl ? (
+      <img src={photoUrl} alt="Avatar" />
+    ) : (
+      <button onClick={reload} disabled={isLoading}>
+        {isLoading ? 'Loading...' : 'Load Photo'}
+      </button>
+    )}
+  </div>
+);
+```
+
+**Access raw blob for upload:**
+```typescript
+const { photoBlob, photoUrl } = useSPFxUserPhoto();
+
+const handleUploadToAzure = async () => {
+  if (!photoBlob) return;
+  
+  const formData = new FormData();
+  formData.append('photo', photoBlob, 'profile.jpg');
+  
+  await fetch('/api/upload', {
+    method: 'POST',
+    body: formData
+  });
+};
+
+return (
+  <div>
+    <img src={photoUrl} alt="Preview" />
+    <button onClick={handleUploadToAzure}>Upload to Azure</button>
+  </div>
+);
+```
+
+**Responsive images:**
+```typescript
+function ResponsiveAvatar() {
+  const small = useSPFxUserPhoto({ size: '96x96' });
+  const large = useSPFxUserPhoto({ size: '240x240' });
+  
+  return (
+    <picture>
+      <source media="(min-width: 768px)" srcSet={large.photoUrl} />
+      <img src={small.photoUrl} alt="User Avatar" />
+    </picture>
+  );
+}
 ```
 
 ---
@@ -754,6 +1261,52 @@ interface SPFxLoggerInfo {
   info: (message: string, extra?: Record<string, unknown>) => void;
   warn: (message: string, extra?: Record<string, unknown>) => void;
   error: (message: string, extra?: Record<string, unknown>) => void;
+}
+
+// OneDrive AppData hook
+interface SPFxOneDriveAppDataResult<T> {
+  data: T | undefined;
+  isLoading: boolean;
+  error: Error | undefined;
+  isWriting: boolean;
+  writeError: Error | undefined;
+  load: () => Promise<void>;
+  write: (content: T) => Promise<void>;
+  isReady: boolean;
+}
+
+// Tenant Property hook
+interface SPFxTenantPropertyResult<T> {
+  data: T | undefined;
+  description: string | undefined;  // SharePoint only supports description, not comment
+  isLoading: boolean;
+  error: Error | undefined;
+  isWriting: boolean;
+  writeError: Error | undefined;
+  canWrite: boolean;
+  load: () => Promise<void>;
+  write: (content: T, description?: string) => Promise<void>;
+  remove: () => Promise<void>;
+  isReady: boolean;
+}
+
+// User Photo hook
+type SPFxUserPhotoSize = '48x48' | '64x64' | '96x96' | '120x120' | '240x240' | '360x360' | '432x432' | '504x504' | '648x648';
+
+interface SPFxUserPhotoOptions {
+  userId?: string;        // User Graph ID or Azure AD Object ID
+  email?: string;         // User email/UPN
+  size?: SPFxUserPhotoSize; // Default: '240x240'
+  autoFetch?: boolean;    // Default: true
+}
+
+interface SPFxUserPhotoResult {
+  photoUrl: string | undefined;     // Blob URL for <img src />
+  photoBlob: Blob | undefined;      // Raw blob for processing
+  isLoading: boolean;
+  error: Error | undefined;
+  reload: () => Promise<void>;
+  isReady: boolean;
 }
 ```
 
@@ -1200,7 +1753,7 @@ import {
 } from '@microsoft/sp-webpart-base';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { SPFxProvider } from 'spfx-react-toolkit';
+import { SPFxProvider } from '@apvee/spfx-react-toolkit';
 import MyComponent from './components/MyComponent';
 
 export interface IMyWebPartProps {
@@ -1283,7 +1836,7 @@ import {
   useSPFxPerformance,
   useSPFxPageContext,
   useSPFxContainerSize,
-} from 'spfx-react-toolkit';
+} from '@apvee/spfx-react-toolkit';
 import { SPHttpClient } from '@microsoft/sp-http';
 import type { IMyWebPartProps } from '../MyWebPart';
 
@@ -1444,7 +1997,7 @@ import {
   useSPFxUserInfo,
   useSPFxMSGraphClient,
   useSPFxLogger,
-} from 'spfx-react-toolkit';
+} from '@apvee/spfx-react-toolkit';
 
 const useStyles = makeStyles({
   container: {
@@ -1526,7 +2079,7 @@ import {
   useSPFxLogger,
   useSPFxPerformance,
   useSPFxLocalStorage,
-} from 'spfx-react-toolkit';
+} from '@apvee/spfx-react-toolkit';
 import { SPHttpClient } from '@microsoft/sp-http';
 
 interface ICachedData<T> {
@@ -1687,7 +2240,7 @@ import {
   useSPFxUserInfo,
   useSPFxSiteInfo,
   useSPFxThemeInfo,
-} from 'spfx-react-toolkit';
+} from '@apvee/spfx-react-toolkit';
 
 interface IMyWebPartProps {
   title: string;
@@ -1711,7 +2264,7 @@ const MyWebPart: React.FC = () => {
 };
 
 // In WebPart render():
-import { SPFxProvider } from 'spfx-react-toolkit';
+import { SPFxProvider } from '@apvee/spfx-react-toolkit';
 
 const element = React.createElement(
   SPFxProvider,
@@ -1820,23 +2373,442 @@ if (width === 0 || height === 0) {
 
 ---
 
+### Example 4: OneDrive AppData Persistence
+
+```typescript
+import * as React from 'react';
+import { Spinner, TextField, PrimaryButton, MessageBar, MessageBarType } from '@fluentui/react';
+import {
+  useSPFxOneDriveAppData,
+  useSPFxInstanceInfo,
+  useSPFxLogger,
+} from '@apvee/spfx-react-toolkit';
+
+interface IUserPreferences {
+  theme: 'light' | 'dark';
+  language: string;
+  notifications: boolean;
+  lastVisit: number;
+}
+
+const PreferencesComponent: React.FC = () => {
+  const { id } = useSPFxInstanceInfo();
+  const logger = useSPFxLogger();
+  
+  // Store preferences in OneDrive with instance-specific folder
+  const {
+    data: prefs,
+    isLoading,
+    error,
+    write,
+    isWriting,
+    isReady,
+  } = useSPFxOneDriveAppData<IUserPreferences>(
+    'preferences.json',
+    id, // Each instance has its own file
+    true // Auto-fetch on mount
+  );
+  
+  const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
+  const [language, setLanguage] = React.useState('en');
+  const [notifications, setNotifications] = React.useState(true);
+  
+  // Sync local state with loaded preferences
+  React.useEffect(() => {
+    if (prefs) {
+      setTheme(prefs.theme);
+      setLanguage(prefs.language);
+      setNotifications(prefs.notifications);
+      logger.info('Preferences loaded from OneDrive');
+    }
+  }, [prefs, logger]);
+  
+  const handleSave = async () => {
+    try {
+      await write({
+        theme,
+        language,
+        notifications,
+        lastVisit: Date.now(),
+      });
+      logger.info('Preferences saved to OneDrive successfully');
+    } catch (err) {
+      logger.error('Failed to save preferences', { error: err });
+    }
+  };
+  
+  if (isLoading) return <Spinner label="Loading preferences..." />;
+  
+  if (error) {
+    return (
+      <MessageBar messageBarType={MessageBarType.error}>
+        Failed to load preferences: {error.message}
+      </MessageBar>
+    );
+  }
+  
+  return (
+    <div>
+      <h2>User Preferences</h2>
+      {isReady && prefs?.lastVisit && (
+        <p>Last visit: {new Date(prefs.lastVisit).toLocaleString()}</p>
+      )}
+      
+      <div>
+        <label>Theme:</label>
+        <select value={theme} onChange={(e) => setTheme(e.target.value as 'light' | 'dark')}>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+      
+      <TextField
+        label="Language"
+        value={language}
+        onChange={(_, val) => setLanguage(val ?? 'en')}
+      />
+      
+      <div>
+        <input
+          type="checkbox"
+          checked={notifications}
+          onChange={(e) => setNotifications(e.target.checked)}
+        />
+        <label>Enable Notifications</label>
+      </div>
+      
+      <PrimaryButton
+        text={isWriting ? 'Saving...' : 'Save Preferences'}
+        onClick={handleSave}
+        disabled={isWriting}
+      />
+    </div>
+  );
+};
+
+export default PreferencesComponent;
+```
+
+---
+
+### Example 5: Tenant Property Management Dashboard
+
+```typescript
+import * as React from 'react';
+import { Stack, Spinner, TextField, PrimaryButton, DefaultButton, MessageBar, MessageBarType, Text, Label } from '@fluentui/react';
+import {
+  useSPFxTenantProperty,
+  useSPFxLogger,
+} from '@apvee/spfx-react-toolkit';
+
+interface IFeatureFlags {
+  enableChat: boolean;
+  enableAnalytics: boolean;
+  maxUsers: number;
+  betaFeatures: string[];
+}
+
+const TenantConfigDashboard: React.FC = () => {
+  const logger = useSPFxLogger();
+  
+  // Multiple tenant properties
+  const appVersion = useSPFxTenantProperty<string>('appVersion');
+  const maintenanceMode = useSPFxTenantProperty<boolean>('maintenanceMode');
+  const lastDeployment = useSPFxTenantProperty<string>('lastDeployment');
+  const featureFlags = useSPFxTenantProperty<IFeatureFlags>('featureFlags');
+  const maxUploadSize = useSPFxTenantProperty<number>('maxUploadSize');
+  
+  const [editVersion, setEditVersion] = React.useState('');
+  const [editFlags, setEditFlags] = React.useState<IFeatureFlags>({
+    enableChat: false,
+    enableAnalytics: false,
+    maxUsers: 100,
+    betaFeatures: []
+  });
+  
+  // Sync local state with loaded data
+  React.useEffect(() => {
+    if (appVersion.data) setEditVersion(appVersion.data);
+  }, [appVersion.data]);
+  
+  React.useEffect(() => {
+    if (featureFlags.data) setEditFlags(featureFlags.data);
+  }, [featureFlags.data]);
+  
+  const isLoading = appVersion.isLoading || maintenanceMode.isLoading || 
+                    lastDeployment.isLoading || featureFlags.isLoading || 
+                    maxUploadSize.isLoading;
+  
+  const hasError = appVersion.error || maintenanceMode.error || 
+                   lastDeployment.error || featureFlags.error || 
+                   maxUploadSize.error;
+  
+  const handleUpdateVersion = async () => {
+    if (!appVersion.canWrite) {
+      logger.warn('User lacks permission to update app version');
+      return;
+    }
+    
+    try {
+      await appVersion.write(editVersion, 'Application version number', 'Updated from dashboard');
+      logger.info('App version updated', { version: editVersion });
+    } catch (err) {
+      logger.error('Failed to update app version', { error: err });
+    }
+  };
+  
+  const handleToggleMaintenance = async () => {
+    if (!maintenanceMode.canWrite) {
+      logger.warn('User lacks permission to toggle maintenance mode');
+      return;
+    }
+    
+    try {
+      const newMode = !maintenanceMode.data;
+      await maintenanceMode.write(newMode, 'System maintenance mode flag', 
+        `Set to ${newMode ? 'ON' : 'OFF'} by administrator`);
+      logger.info('Maintenance mode toggled', { enabled: newMode });
+    } catch (err) {
+      logger.error('Failed to toggle maintenance mode', { error: err });
+    }
+  };
+  
+  const handleUpdateDeploymentDate = async () => {
+    if (!lastDeployment.canWrite) return;
+    
+    try {
+      await lastDeployment.write(
+        new Date().toISOString(), 
+        'Last deployment timestamp',
+        'Auto-updated from dashboard'
+      );
+      logger.info('Deployment date updated');
+    } catch (err) {
+      logger.error('Failed to update deployment date', { error: err });
+    }
+  };
+  
+  const handleUpdateFeatureFlags = async () => {
+    if (!featureFlags.canWrite) return;
+    
+    try {
+      await featureFlags.write(editFlags, 'Global feature flags configuration');
+      logger.info('Feature flags updated', { flags: editFlags });
+    } catch (err) {
+      logger.error('Failed to update feature flags', { error: err });
+    }
+  };
+  
+  const handleUpdateMaxSize = async () => {
+    if (!maxUploadSize.canWrite) return;
+    
+    try {
+      // 100 MB in bytes
+      await maxUploadSize.write(104857600, 'Maximum file upload size in bytes');
+      logger.info('Max upload size updated');
+    } catch (err) {
+      logger.error('Failed to update max upload size', { error: err });
+    }
+  };
+  
+  if (isLoading) return <Spinner label="Loading tenant configuration..." />;
+  
+  if (hasError) {
+    return (
+      <MessageBar messageBarType={MessageBarType.error}>
+        Failed to load some tenant properties. Check console for details.
+      </MessageBar>
+    );
+  }
+  
+  return (
+    <Stack tokens={{ childrenGap: 30 }}>
+      <Text variant="xxLarge">Tenant Configuration Dashboard</Text>
+      
+      {/* Maintenance Mode Banner */}
+      {maintenanceMode.data && (
+        <MessageBar messageBarType={MessageBarType.warning}>
+          🚧 System is currently in MAINTENANCE MODE
+        </MessageBar>
+      )}
+      
+      {/* Read-only Info */}
+      <Stack tokens={{ childrenGap: 15 }}>
+        <Text variant="xLarge">System Information</Text>
+        
+        <Stack tokens={{ childrenGap: 5 }}>
+          <Label>App Version: {appVersion.data ?? 'Not Set'}</Label>
+          {appVersion.description && <Text variant="small">ℹ️ {appVersion.description}</Text>}
+          
+          <Label>Maintenance Mode: {maintenanceMode.data ? '🔴 ON' : '🟢 OFF'}</Label>
+          
+          <Label>Last Deployment: {lastDeployment.data ? new Date(lastDeployment.data).toLocaleString() : 'Never'}</Label>
+          
+          <Label>Max Upload Size: {maxUploadSize.data ? `${(maxUploadSize.data / 1048576).toFixed(0)} MB` : 'Not Set'}</Label>
+        </Stack>
+      </Stack>
+      
+      {/* Feature Flags */}
+      {featureFlags.data && (
+        <Stack tokens={{ childrenGap: 10 }}>
+          <Text variant="xLarge">Feature Flags</Text>
+          <pre style={{ backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
+            {JSON.stringify(featureFlags.data, null, 2)}
+          </pre>
+          {featureFlags.description && <Text variant="small">ℹ️ {featureFlags.description}</Text>}
+        </Stack>
+      )}
+      
+      {/* Admin Controls */}
+      {(appVersion.canWrite || maintenanceMode.canWrite || featureFlags.canWrite) && (
+        <Stack tokens={{ childrenGap: 20 }}>
+          <Text variant="xLarge">⚙️ Admin Controls</Text>
+          
+          {/* Version Update */}
+          {appVersion.canWrite && (
+            <Stack tokens={{ childrenGap: 10 }}>
+              <TextField
+                label="Update App Version"
+                value={editVersion}
+                onChange={(_, val) => setEditVersion(val ?? '')}
+                disabled={appVersion.isWriting}
+              />
+              <PrimaryButton
+                text={appVersion.isWriting ? 'Updating...' : 'Update Version'}
+                onClick={handleUpdateVersion}
+                disabled={appVersion.isWriting || editVersion === appVersion.data}
+              />
+              {appVersion.writeError && (
+                <MessageBar messageBarType={MessageBarType.error}>
+                  {appVersion.writeError.message}
+                </MessageBar>
+              )}
+            </Stack>
+          )}
+          
+          {/* Maintenance Mode Toggle */}
+          {maintenanceMode.canWrite && (
+            <Stack tokens={{ childrenGap: 10 }}>
+              <Label>Maintenance Mode Control</Label>
+              <PrimaryButton
+                text={maintenanceMode.isWriting ? 'Toggling...' : 
+                      maintenanceMode.data ? 'Disable Maintenance Mode' : 'Enable Maintenance Mode'}
+                onClick={handleToggleMaintenance}
+                disabled={maintenanceMode.isWriting}
+                styles={{ root: { backgroundColor: maintenanceMode.data ? '#c50f1f' : '#0078d4' } }}
+              />
+            </Stack>
+          )}
+          
+          {/* Deployment Date */}
+          {lastDeployment.canWrite && (
+            <Stack tokens={{ childrenGap: 10 }}>
+              <Label>Update Deployment Timestamp</Label>
+              <DefaultButton
+                text={lastDeployment.isWriting ? 'Updating...' : 'Mark as Deployed Now'}
+                onClick={handleUpdateDeploymentDate}
+                disabled={lastDeployment.isWriting}
+              />
+            </Stack>
+          )}
+          
+          {/* Feature Flags Editor */}
+          {featureFlags.canWrite && (
+            <Stack tokens={{ childrenGap: 10 }}>
+              <Label>Feature Flags Configuration</Label>
+              <div>
+                <input
+                  type="checkbox"
+                  checked={editFlags.enableChat}
+                  onChange={(e) => setEditFlags({ ...editFlags, enableChat: e.target.checked })}
+                />
+                <label style={{ marginLeft: 8 }}>Enable Chat</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  checked={editFlags.enableAnalytics}
+                  onChange={(e) => setEditFlags({ ...editFlags, enableAnalytics: e.target.checked })}
+                />
+                <label style={{ marginLeft: 8 }}>Enable Analytics</label>
+              </div>
+              <TextField
+                label="Max Users"
+                type="number"
+                value={editFlags.maxUsers.toString()}
+                onChange={(_, val) => setEditFlags({ ...editFlags, maxUsers: parseInt(val ?? '100') })}
+              />
+              <PrimaryButton
+                text={featureFlags.isWriting ? 'Saving...' : 'Save Feature Flags'}
+                onClick={handleUpdateFeatureFlags}
+                disabled={featureFlags.isWriting}
+              />
+            </Stack>
+          )}
+          
+          {/* Max Upload Size */}
+          {maxUploadSize.canWrite && (
+            <Stack tokens={{ childrenGap: 10 }}>
+              <Label>Set Max Upload Size to 100 MB</Label>
+              <DefaultButton
+                text={maxUploadSize.isWriting ? 'Setting...' : 'Set Max Size'}
+                onClick={handleUpdateMaxSize}
+                disabled={maxUploadSize.isWriting}
+              />
+            </Stack>
+          )}
+        </Stack>
+      )}
+      
+      {!appVersion.canWrite && !maintenanceMode.canWrite && !featureFlags.canWrite && (
+        <MessageBar messageBarType={MessageBarType.info}>
+          ℹ️ You don't have permission to modify tenant properties.
+          Contact your SharePoint administrator to request access.
+        </MessageBar>
+      )}
+    </Stack>
+  );
+};
+
+export default TenantConfigDashboard;
+```
+
+---
+
 ## Additional Resources
 
-- **NPM Package**: `npm install spfx-react-toolkit jotai`
+### Installation
+
+**Core Package** (includes all standard hooks):
+```bash
+npm install @apvee/spfx-react-toolkit
+```
+
+**Optional PnPjs Integration** (only if using PnP hooks):
+```bash
+npm install @pnp/sp @pnp/core @pnp/queryable
+```
+
+**Note**: Jotai is bundled as a core dependency. PnP packages are optional peer dependencies - install only if you need `useSPFxPnP`, `useSPFxPnPList`, `useSPFxPnPSearch`, or `useSPFxPnPContext`.
+
+### Links
+
 - **GitHub**: https://github.com/apvee/spfx-react-toolkit
 - **Issues**: https://github.com/apvee/spfx-react-toolkit/issues
 - **SPFx Docs**: https://learn.microsoft.com/sharepoint/dev/spfx/
 - **Jotai Docs**: https://jotai.org/
 - **Fluent UI**: https://react.fluentui.dev/
+- **Microsoft Graph**: https://learn.microsoft.com/graph/
+- **PnPjs Docs**: https://pnp.github.io/pnpjs/
 
 ---
 
 ## Version History
 
 - **0.0.1** (Initial): Core hooks, provider, TypeScript support
-- Compatible with SPFx 1.21.1+
+- Compatible with SPFx >=1.18.0
 - React 17.x
-- Node >= 22.14.0 < 23.0.0
+- Node.js version aligned with your SPFx version (e.g., Node 18.x for SPFx 1.21.1 - see [SPFx compatibility table](https://learn.microsoft.com/sharepoint/dev/spfx/compatibility))
 
 ---
 

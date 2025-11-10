@@ -76,6 +76,7 @@ const CONTAINER_SIZE_BREAKPOINTS = {
   large: 1024,    // Fluent UI 9: Large → XLarge (640-1023 → 1024+)
   xLarge: 1366,   // Fluent UI 9: XLarge → XXLarge (1024-1365 → 1366+)
   xxLarge: 1920,  // Fluent UI 9: XXLarge → XXXLarge (1366-1919 → 1920+)
+  xxxLarge: Infinity, // No upper bound for XXXLarge (>= 1920px)
 } as const;
 
 /**

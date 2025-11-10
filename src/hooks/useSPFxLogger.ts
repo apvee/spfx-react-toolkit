@@ -1,7 +1,7 @@
 // useSPFxLogger.ts
 // Hook for structured logging with SPFx context
 
-import { useSPFxContext } from '../core/context';
+import { useSPFxContext } from './useSPFxContext';
 import { useSPFxInstanceInfo } from './useSPFxInstanceInfo';
 import { useSPFxUserInfo } from './useSPFxUserInfo';
 import { useSPFxSiteInfo } from './useSPFxSiteInfo';
@@ -133,11 +133,11 @@ export interface SPFxLoggerInfo {
 export function useSPFxLogger(
   handler?: (entry: LogEntry) => void
 ): SPFxLoggerInfo {
-  const { id: instanceId, kind: host } = useSPFxInstanceInfo();
+  const { id: instanceId, kind } = useSPFxInstanceInfo();
   const { displayName, loginName } = useSPFxUserInfo();
   const { siteUrl, webUrl } = useSPFxSiteInfo();
   const { correlationId } = useSPFxCorrelationInfo();
-  const { spfxContext, kind } = useSPFxContext();
+  const { spfxContext } = useSPFxContext();
   
   const emit = (level: LogLevel, message: string, extra?: Record<string, unknown>): void => {
     // Extract webPartTag only if in WebPart context
@@ -152,7 +152,7 @@ export function useSPFxLogger(
       message,
       ts: new Date().toISOString(),
       instanceId,
-      host,
+      host: kind,
       user: displayName + ' (' + loginName + ')',
       siteUrl,
       webUrl,
@@ -168,7 +168,7 @@ export function useSPFxLogger(
       const levelUpper = level.toUpperCase();
       // For WebPart contexts, display webPartTag instead of instanceId for better readability
       const displayId = kind === 'WebPart' && webPartTag ? webPartTag : instanceId;
-      const line = '[' + levelUpper + '] ' + entry.ts + ' ' + host + '/' + displayId + ' – ' + message;
+      const line = '[' + levelUpper + '] ' + entry.ts + ' ' + kind + '/' + displayId + ' – ' + message;
       
       // Use appropriate console method
       const consoleFn = level === 'debug' ? console.log : console[level];

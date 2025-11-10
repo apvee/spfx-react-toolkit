@@ -2,19 +2,21 @@
 // SPFxProviderBase - Internal base implementation with shared logic
 
 import * as React from 'react';
-import { useSetAtom, useStore } from 'jotai';
-import { SPFxContext } from './context';
-import { spfxAtoms } from './atoms';
+import { Provider, createStore, useSetAtom, useAtomValue } from 'jotai';
+import { SPFxContext } from './context.internal';
+import { spfxAtoms } from './atoms.internal';
 import type { SPFxProviderProps, SPFxContextValue } from './types';
 import {
   detectComponentKind,
-  deriveInstanceId,
   isWebPart,
-} from './type-guards';
-import { useThemeSubscription } from '../utils/theme-subscription';
+} from '../utils/type-guards.internal';
+import { useThemeSubscription } from '../utils/theme-subscription.internal';
 
 /**
  * SPFxProviderBase - Internal base provider with shared logic
+ * 
+ * Creates an isolated Jotai store for each instance, ensuring complete
+ * state isolation between multiple SPFx components on the same page.
  * 
  * DO NOT use directly - use type-specific providers instead:
  * - SPFxWebPartProvider
@@ -40,21 +42,21 @@ export function SPFxProviderBase<TProps extends {} = {}>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const kind = React.useMemo(() => detectComponentKind(instance as any), [instance]);
   
-  // Extract context and instanceId
+  // Extract context (BaseComponentContext - has instanceId)
   const context = instanceAny.context;
-  const instanceId = React.useMemo(
-    () => deriveInstanceId(context),
-    [context]
-  );
   
-  // Get Jotai store for subscription
-  const store = useStore();
+  // Extract instanceId type-safe (all SPFx contexts extend BaseComponentContext)
+  const instanceId = React.useMemo(() => context.instanceId, [context]);
   
-  // Get atom setters for this instance
-  const setProperties = useSetAtom(spfxAtoms.properties(instanceId));
-  const setDisplayMode = useSetAtom(spfxAtoms.displayMode(instanceId));
-  const setContainerEl = useSetAtom(spfxAtoms.containerEl(instanceId));
-  const setTheme = useSetAtom(spfxAtoms.theme(instanceId));
+  // Create isolated Jotai store for this Provider instance
+  // Each store is independent, ensuring complete state isolation
+  const store = React.useMemo(() => createStore(), []);
+  
+  // Get atom setters (using the isolated store)
+  const setProperties = useSetAtom(spfxAtoms.properties, { store });
+  const setDisplayMode = useSetAtom(spfxAtoms.displayMode, { store });
+  const setContainerEl = useSetAtom(spfxAtoms.containerEl, { store });
+  const setTheme = useSetAtom(spfxAtoms.theme, { store });
   
   // Ref to track last known properties value (prevents loop)
   const lastPropertiesRef = React.useRef<unknown>(instanceAny.properties);
@@ -92,46 +94,45 @@ export function SPFxProviderBase<TProps extends {} = {}>(
   
   // Sync properties when atom changes (Atom → SPFx)
   // Hook updates will trigger this via atom subscription
+  const properties = useAtomValue(spfxAtoms.properties, { store });
   React.useEffect(() => {
-    const propertiesAtom = spfxAtoms.properties(instanceId);
+    // Guard: Don't sync if atom is still undefined (initial state before initialization)
+    // This prevents race condition where useAtomValue reads before initialization useEffect runs
+    if (properties === undefined) {
+      return;
+    }
     
-    const unsubscribe = store.sub(propertiesAtom, () => {
-      const atomValue = store.get(propertiesAtom);
+    // Only sync if atom value is different from last known value
+    if (properties !== lastPropertiesRef.current) {
+      // Mutate SPFx properties object (copy all properties from atom to instance)
+      const target = instanceAny.properties as Record<string, unknown>;
+      const source = properties as Record<string, unknown>;
       
-      // Only sync if atom value is different from last known value
-      if (atomValue !== lastPropertiesRef.current) {
-        // Mutate SPFx properties object (copy all properties from atom to instance)
-        const target = instanceAny.properties as Record<string, unknown>;
-        const source = atomValue as Record<string, unknown>;
-        
-        // Clear existing properties
-        for (const key in target) {
-          if (Object.prototype.hasOwnProperty.call(target, key)) {
-            delete target[key];
-          }
-        }
-        
-        // Copy new properties
-        for (const key in source) {
-          if (Object.prototype.hasOwnProperty.call(source, key)) {
-            target[key] = source[key];
-          }
-        }
-        
-        lastPropertiesRef.current = atomValue;
-        
-        // Refresh Property Pane for WebParts (if propertyPane exists)
-        if (isWebPart(instance)) {
-          const ctx = instanceAny.context as unknown as { propertyPane?: { refresh(): void } };
-          if (ctx.propertyPane && typeof ctx.propertyPane.refresh === 'function') {
-            ctx.propertyPane.refresh();
-          }
+      // Clear existing properties
+      for (const key in target) {
+        if (Object.prototype.hasOwnProperty.call(target, key)) {
+          delete target[key];
         }
       }
-    });
-    
-    return unsubscribe;
-  }, [store, instanceId, instance, instanceAny]);
+      
+      // Copy new properties
+      for (const key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+      
+      lastPropertiesRef.current = properties;
+      
+      // Refresh Property Pane for WebParts (if propertyPane exists)
+      if (isWebPart(instance)) {
+        const ctx = instanceAny.context as unknown as { propertyPane?: { refresh(): void } };
+        if (ctx.propertyPane && typeof ctx.propertyPane.refresh === 'function') {
+          ctx.propertyPane.refresh();
+        }
+      }
+    }
+  }, [properties, instance, instanceAny]);
   
   // WebPart: Sync displayMode when it changes
   React.useEffect(() => {
@@ -139,25 +140,6 @@ export function SPFxProviderBase<TProps extends {} = {}>(
       setDisplayMode(instanceAny.displayMode);
     }
   }, [instance, instanceAny, setDisplayMode]);
-  
-  // Cleanup atoms when component unmounts (memory leak prevention)
-  React.useEffect(() => {
-    return () => {
-      const families = [
-        spfxAtoms.theme,
-        spfxAtoms.displayMode,
-        spfxAtoms.properties,
-        spfxAtoms.containerEl,
-        spfxAtoms.containerSize,
-        spfxAtoms.teams,
-        spfxAtoms.dynamicData,
-      ];
-      
-      families.forEach(family => {
-        family.remove(instanceId);
-      });
-    };
-  }, [instanceId]);
   
   // Create context value (memoized to prevent re-renders)
   const contextValue = React.useMemo<SPFxContextValue>(
@@ -170,8 +152,10 @@ export function SPFxProviderBase<TProps extends {} = {}>(
   );
   
   return (
-    <SPFxContext.Provider value={contextValue}>
-      {children}
-    </SPFxContext.Provider>
+    <Provider store={store}>
+      <SPFxContext.Provider value={contextValue}>
+        {children}
+      </SPFxContext.Provider>
+    </Provider>
   );
 }

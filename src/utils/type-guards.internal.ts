@@ -7,11 +7,12 @@ import type { BaseListViewCommandSet, BaseFieldCustomizer } from '@microsoft/sp-
 import type {
   SPFxComponent,
   HostKind,
-} from './types';
+} from '../core/types';
 
 /**
  * Type guard: Check if instance is a WebPart
  * Uses duck typing - checks for WebPart-specific properties
+ * @internal
  */
 export function isWebPart<TProps extends {} = {}>(
   instance: unknown
@@ -33,6 +34,7 @@ export function isWebPart<TProps extends {} = {}>(
 /**
  * Type guard: Check if instance is an ApplicationCustomizer
  * Uses duck typing - checks for ApplicationCustomizer-specific properties
+ * @internal
  */
 export function isApplicationCustomizer<TProps extends {} = {}>(
   instance: unknown
@@ -57,6 +59,7 @@ export function isApplicationCustomizer<TProps extends {} = {}>(
 /**
  * Type guard: Check if instance is a ListViewCommandSet
  * Uses duck typing - checks for CommandSet-specific properties
+ * @internal
  */
 export function isListViewCommandSet<TProps extends {} = {}>(
   instance: unknown
@@ -78,6 +81,7 @@ export function isListViewCommandSet<TProps extends {} = {}>(
 /**
  * Type guard: Check if instance is a FieldCustomizer
  * Uses duck typing - checks for FieldCustomizer-specific properties
+ * @internal
  */
 export function isFieldCustomizer<TProps extends {} = {}>(
   instance: unknown
@@ -103,6 +107,7 @@ export function isFieldCustomizer<TProps extends {} = {}>(
 /**
  * Detect the kind of SPFx component from an instance
  * Throws if unable to detect
+ * @internal
  */
 export function detectComponentKind<TProps extends {} = {}>(
   instance: SPFxComponent<TProps>
@@ -116,23 +121,4 @@ export function detectComponentKind<TProps extends {} = {}>(
     '[SPFxProvider] Unable to detect SPFx component type. ' +
     'Instance must be a WebPart, ApplicationCustomizer, CommandSet, or FieldCustomizer.'
   );
-}
-
-/**
- * Derive instanceId from SPFx context
- * Fallback to generic ID if not found
- */
-export function deriveInstanceId(context: unknown): string {
-  if (!context || typeof context !== 'object') {
-    return 'spfx-instance-unknown';
-  }
-  
-  const ctx = context as Record<string, unknown>;
-  
-  if ('instanceId' in ctx && typeof ctx.instanceId === 'string') {
-    return ctx.instanceId;
-  }
-  
-  // Fallback
-  return 'spfx-instance-fallback';
 }

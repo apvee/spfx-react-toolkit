@@ -2,8 +2,7 @@
 // Hook to access and manage SPFx properties
 
 import { useAtomValue, useSetAtom } from 'jotai';
-import { useSPFxContext } from './useSPFxContext';
-import { spfxAtoms } from './../core/atoms';
+import { spfxAtoms } from './../core/atoms.internal';
 
 /**
  * Return type for useSPFxProperties hook
@@ -87,16 +86,11 @@ export interface SPFxPropertiesInfo<TProps = unknown> {
  * ```
  */
 export function useSPFxProperties<TProps = unknown>(): SPFxPropertiesInfo<TProps> {
-  const { instanceId } = useSPFxContext();
-  
-  // Get properties atom for this instance
-  const propertiesAtom = spfxAtoms.properties(instanceId);
-  
-  // Read current properties (cast to generic type)
-  const properties = useAtomValue(propertiesAtom) as TProps | undefined;
+  // Read current properties directly from atom (cast to generic type)
+  const properties = useAtomValue(spfxAtoms.properties) as TProps | undefined;
   
   // Get setter (stable reference from Jotai)
-  const setPropertiesAtom = useSetAtom(propertiesAtom);
+  const setPropertiesAtom = useSetAtom(spfxAtoms.properties);
   
   // Setter with partial merge (functional update for stable dependencies)
   const setProperties = (updates: Partial<TProps>): void => {

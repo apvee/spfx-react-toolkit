@@ -9,6 +9,7 @@ import type { ContainerSize } from '../core/types';
  * 
  * @param element - DOM element to observe
  * @param onResize - Callback when size changes
+ * @internal
  */
 export function useResizeObserver(
   element: HTMLElement | undefined,

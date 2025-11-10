@@ -1,7 +1,7 @@
 // useSPFxContext.ts
 // Internal hook to access SPFx context metadata
 
-import { useSPFxContext } from '../core/context';
+import { useSPFxContext } from '../core/context.internal';
 
 /**
  * Internal hook to access SPFx context

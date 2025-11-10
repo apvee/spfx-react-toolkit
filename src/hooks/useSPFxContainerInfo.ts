@@ -2,9 +2,8 @@
 // Hook to access container element and size
 
 import { useAtomValue, useSetAtom } from 'jotai';
-import { useSPFxContext } from './useSPFxContext';
-import { spfxAtoms } from '../core/atoms';
-import { useResizeObserver } from '../utils/resize-observer';
+import { spfxAtoms } from '../core/atoms.internal';
+import { useResizeObserver } from '../utils/resize-observer.internal';
 import type { ContainerSize } from '../core/types';
 
 /**
@@ -48,18 +47,12 @@ export interface SPFxContainerInfo {
  * ```
  */
 export function useSPFxContainerInfo(): SPFxContainerInfo {
-  const { instanceId } = useSPFxContext();
-  
-  // Get atoms for this instance
-  const containerElAtom = spfxAtoms.containerEl(instanceId);
-  const containerSizeAtom = spfxAtoms.containerSize(instanceId);
-  
-  // Read current values
-  const element = useAtomValue(containerElAtom);
-  const size = useAtomValue(containerSizeAtom);
+  // Read container element and size directly from atoms
+  const element = useAtomValue(spfxAtoms.containerEl);
+  const size = useAtomValue(spfxAtoms.containerSize);
   
   // Setup ResizeObserver with atom setter
-  const setSize = useSetAtom(containerSizeAtom);
+  const setSize = useSetAtom(spfxAtoms.containerSize);
   useResizeObserver(element, setSize);
   
   return {

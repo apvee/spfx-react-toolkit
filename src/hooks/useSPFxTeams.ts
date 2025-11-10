@@ -3,8 +3,7 @@
 
 import { useEffect } from 'react';
 import { useAtom } from 'jotai';
-import { spfxAtoms } from '../core/atoms';
-import { useSPFxInstanceInfo } from './useSPFxInstanceInfo';
+import { spfxAtoms } from '../core/atoms.internal';
 import { useSPFxContext } from './useSPFxContext';
 
 /**
@@ -73,9 +72,8 @@ export interface SPFxTeamsInfo {
  * ```
  */
 export function useSPFxTeams(): SPFxTeamsInfo {
-  const { id } = useSPFxInstanceInfo();
   const { spfxContext } = useSPFxContext();
-  const [state, setState] = useAtom(spfxAtoms.teams(id));
+  const [state, setState] = useAtom(spfxAtoms.teams);
   
   useEffect(() => {
     // Skip if already initialized
@@ -173,7 +171,7 @@ export function useSPFxTeams(): SPFxTeamsInfo {
     return () => {
       disposed = true;
     };
-  }, [id, spfxContext, setState, state.initialized]);
+  }, [spfxContext, setState, state.initialized]);
   
   return {
     supported: state.supported,

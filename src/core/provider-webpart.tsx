@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-import { SPFxProviderBase } from './provider-base';
+import { SPFxProviderBase } from './provider-base.internal';
 
 /**
  * Props for the SPFx WebPart-specific provider component.

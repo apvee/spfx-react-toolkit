@@ -3,8 +3,7 @@
 
 import { useAtomValue } from 'jotai';
 import type { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { useSPFxContext } from './useSPFxContext';
-import { spfxAtoms } from '../core/atoms';
+import { spfxAtoms } from '../core/atoms.internal';
 
 /**
  * Hook to access the current SPFx theme
@@ -31,11 +30,6 @@ import { spfxAtoms } from '../core/atoms';
  * ```
  */
 export function useSPFxThemeInfo(): IReadonlyTheme | undefined {
-  const { instanceId } = useSPFxContext();
-  
-  // Get theme atom for this instance
-  const themeAtom = spfxAtoms.theme(instanceId);
-  
-  // Read current theme value (subscription handled by Provider)
-  return useAtomValue(themeAtom);
+  // Read current theme value directly from atom
+  return useAtomValue(spfxAtoms.theme);
 }

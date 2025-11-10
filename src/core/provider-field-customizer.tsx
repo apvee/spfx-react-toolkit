@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import type { BaseFieldCustomizer } from '@microsoft/sp-listview-extensibility';
-import { SPFxProviderBase } from './provider-base';
+import { SPFxProviderBase } from './provider-base.internal';
 
 /**
  * Props for the SPFx Field Customizer-specific provider component.
