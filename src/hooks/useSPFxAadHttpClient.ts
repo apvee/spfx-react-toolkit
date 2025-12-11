@@ -1,9 +1,9 @@
 // useSPFxAadHttpClient.ts
 // Hook to access Azure AD-secured APIs with state management
 
-import { useState, useCallback, useEffect } from 'react';
-import { useSPFxContext } from './useSPFxContext';
-import type { AadHttpClient } from '@microsoft/sp-http';
+import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useSPFxServiceScope } from './useSPFxServiceScope';
+import { AadHttpClient, AadHttpClientFactory } from '@microsoft/sp-http';
 
 /**
  * Return type for useSPFxAadHttpClient hook
@@ -68,13 +68,18 @@ export interface SPFxAadHttpClientInfo {
  * 
  * For type safety, import SPFx types:
  * ```typescript
- * import type { AadHttpClient } from '@microsoft/sp-http';
+ * import { AadHttpClient } from '@microsoft/sp-http';
  * ```
  * 
  * Requirements:
  * - Add permissions to package-solution.json webApiPermissionRequests
  * - Admin must grant permissions in SharePoint Admin Center
- * - AadHttpClientFactory available in SPFx context
+ * - SPFx ServiceScope with AadHttpClientFactory service
+ * 
+ * @remarks
+ * This hook consumes AadHttpClientFactory from SPFx ServiceScope using dependency injection.
+ * The factory is consumed lazily and cached. The factory.getClient() method is then called
+ * asynchronously for each resourceUrl to obtain the AadHttpClient instance.
  * 
  * @param initialResourceUrl - Azure AD resource URL or App ID (optional, can be set later)
  * 
@@ -111,7 +116,7 @@ export interface SPFxAadHttpClientInfo {
  * 
  * @example Using client directly for advanced control
  * ```tsx
- * import type { AadHttpClient } from '@microsoft/sp-http';
+ * import { AadHttpClient } from '@microsoft/sp-http';
  * 
  * function ProductsManager() {
  *   const { client, resourceUrl } = useSPFxAadHttpClient('https://api.contoso.com');
@@ -241,14 +246,12 @@ export interface SPFxAadHttpClientInfo {
  * ```
  */
 export function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpClientInfo {
-  const { spfxContext } = useSPFxContext();
+  const { consume } = useSPFxServiceScope();
   
-  // Extract factory from context
-  const ctx = spfxContext as {
-    aadHttpClientFactory?: {
-      getClient: (resource: string) => Promise<AadHttpClient>;
-    };
-  };
+  // Lazy consume AadHttpClientFactory from ServiceScope (cached by useMemo)
+  const factory = useMemo(() => {
+    return consume<AadHttpClientFactory>(AadHttpClientFactory.serviceKey);
+  }, [consume]);
   
   // State management
   const [resourceUrl, setResourceUrl] = useState<string | undefined>(initialResourceUrl);
@@ -265,13 +268,8 @@ export function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpCl
       return;
     }
     
-    if (!ctx.aadHttpClientFactory) {
-      console.warn('AadHttpClientFactory not available in SPFx context');
-      return;
-    }
-    
     // Get AadHttpClient for the specified resource
-    ctx.aadHttpClientFactory
+    factory
       .getClient(resourceUrl)
       .then((aadClient: AadHttpClient) => {
         setClient(aadClient);
@@ -279,7 +277,7 @@ export function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpCl
       .catch((err: Error) => {
         console.error('Failed to initialize AadHttpClient:', err);
       });
-  }, [resourceUrl, ctx.aadHttpClientFactory]);
+  }, [resourceUrl, factory]);
   
   // Invoke with automatic state management
   const invoke = useCallback(

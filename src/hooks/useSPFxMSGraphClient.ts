@@ -1,9 +1,9 @@
 // useSPFxMSGraphClient.ts
 // Hook to access Microsoft Graph client with state management
 
-import { useState, useCallback, useEffect } from 'react';
-import { useSPFxContext } from './useSPFxContext';
-import type { MSGraphClientV3 } from '@microsoft/sp-http';
+import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useSPFxServiceScope } from './useSPFxServiceScope';
+import { MSGraphClientV3, MSGraphClientFactory } from '@microsoft/sp-http';
 
 /**
  * Return type for useSPFxMSGraphClient hook
@@ -65,13 +65,18 @@ export interface SPFxMSGraphClientInfo {
  * 
  * And import SPFx types:
  * ```typescript
- * import type { MSGraphClientV3 } from '@microsoft/sp-http';
+ * import { MSGraphClientV3 } from '@microsoft/sp-http';
  * import type * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
  * ```
  * 
  * Requirements:
- * - MSGraphClientFactory available in SPFx context (v1.15.0+)
+ * - SPFx ServiceScope with MSGraphClientFactory service (v1.15.0+)
  * - Appropriate Microsoft Graph permissions granted by admin
+ * 
+ * @remarks
+ * This hook consumes MSGraphClientFactory from SPFx ServiceScope using dependency injection.
+ * The factory is consumed lazily and cached. The factory.getClient() method is then called
+ * asynchronously to obtain the MSGraphClientV3 instance, which may be undefined until initialized.
  * 
  * @example Using invoke with state management
  * ```tsx
@@ -105,7 +110,7 @@ export interface SPFxMSGraphClientInfo {
  * 
  * @example Using client directly for advanced control
  * ```tsx
- * import type { MSGraphClientV3 } from '@microsoft/sp-http';
+ * import { MSGraphClientV3 } from '@microsoft/sp-http';
  * import type * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
  * 
  * function MessagesList() {
@@ -208,26 +213,21 @@ export interface SPFxMSGraphClientInfo {
  * ```
  */
 export function useSPFxMSGraphClient(): SPFxMSGraphClientInfo {
-  const { spfxContext } = useSPFxContext();
+  const { consume } = useSPFxServiceScope();
+  
+  // Lazy consume MSGraphClientFactory from ServiceScope (cached by useMemo)
+  const factory = useMemo(() => {
+    return consume<MSGraphClientFactory>(MSGraphClientFactory.serviceKey);
+  }, [consume]);
+  
   const [client, setClient] = useState<MSGraphClientV3 | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | undefined>(undefined);
   
-  // Initialize Graph client
+  // Initialize Graph client (factory.getClient is async)
   useEffect(() => {
-    const ctx = spfxContext as {
-      msGraphClientFactory?: {
-        getClient: (version: string) => Promise<MSGraphClientV3>;
-      };
-    };
-    
-    if (!ctx.msGraphClientFactory) {
-      console.warn('MSGraphClientFactory not available in SPFx context');
-      return;
-    }
-    
     // Get MSGraphClientV3 (version 3 of Microsoft Graph JavaScript Client Library)
-    ctx.msGraphClientFactory
+    factory
       .getClient('3')
       .then((graphClient: MSGraphClientV3) => {
         setClient(graphClient);
@@ -235,7 +235,7 @@ export function useSPFxMSGraphClient(): SPFxMSGraphClientInfo {
       .catch((err: Error) => {
         console.error('Failed to initialize MSGraphClient:', err);
       });
-  }, [spfxContext]);
+  }, [factory]);
   
   // Invoke with automatic state management
   const invoke = useCallback(

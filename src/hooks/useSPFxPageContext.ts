@@ -1,8 +1,9 @@
 // useSPFxPageContext.ts
 // Hook to access SharePoint page context
 
-import type { PageContext } from '@microsoft/sp-page-context';
-import { useSPFxContext } from './useSPFxContext';
+import { useMemo } from 'react';
+import { PageContext } from '@microsoft/sp-page-context';
+import { useSPFxServiceScope } from './useSPFxServiceScope';
 
 /**
  * Hook to access SharePoint page context
@@ -18,8 +19,8 @@ import { useSPFxContext } from './useSPFxContext';
  * @returns SharePoint page context object
  * 
  * @remarks
- * This hook extracts and returns the `pageContext` property from the SPFx context.
- * If you need access to the full SPFx context object, use `useSPFxContext` instead.
+ * This hook consumes PageContext from SPFx ServiceScope using dependency injection.
+ * The service is consumed lazily (only when this hook is used) and cached for performance.
  * 
  * @example
  * ```tsx
@@ -39,18 +40,11 @@ import { useSPFxContext } from './useSPFxContext';
  * @see {@link useSPFxContext} for accessing the full SPFx context
  */
 export function useSPFxPageContext(): PageContext {
-  const { spfxContext } = useSPFxContext();
+  const { consume } = useSPFxServiceScope();
   
-  // Extract pageContext from SPFx context
-  // All SPFx contexts have pageContext property
-  const ctx = spfxContext as { pageContext?: PageContext };
-  
-  if (!ctx.pageContext) {
-    throw new Error(
-      'SPFx context does not contain pageContext. ' +
-      'This should never happen with valid SPFx contexts.'
-    );
-  }
-  
-  return ctx.pageContext;
+  // Lazy consume PageContext from ServiceScope (cached by useMemo)
+  // ServiceScope is guaranteed to be finished by SPFxProvider guard
+  return useMemo(() => {
+    return consume<PageContext>(PageContext.serviceKey);
+  }, [consume]);
 }

@@ -1,9 +1,10 @@
 // useSPFxSPHttpClient.ts
 // Hook to access SharePoint REST APIs with state management
 
-import { useState, useCallback, useEffect } from 'react';
-import { useSPFxContext } from './useSPFxContext';
-import type { SPHttpClient } from '@microsoft/sp-http';
+import { useMemo, useState, useCallback } from 'react';
+import { useSPFxServiceScope } from './useSPFxServiceScope';
+import { useSPFxPageContext } from './useSPFxPageContext';
+import { SPHttpClient } from '@microsoft/sp-http';
 
 /**
  * Return type for useSPFxSPHttpClient hook
@@ -12,8 +13,9 @@ export interface SPFxSPHttpClientInfo {
   /** 
    * Native SPHttpClient from SPFx.
    * Provides access to SharePoint REST APIs with built-in authentication.
+   * Always available (non-undefined) after Provider initialization.
    */
-  readonly client: SPHttpClient | undefined;
+  readonly client: SPHttpClient;
   
   /** 
    * Invoke SharePoint REST API call with automatic state management.
@@ -67,12 +69,17 @@ export interface SPFxSPHttpClientInfo {
  * 
  * For type safety, import SPFx types:
  * ```typescript
- * import type { SPHttpClient } from '@microsoft/sp-http';
+ * import { SPHttpClient } from '@microsoft/sp-http';
  * ```
  * 
  * Requirements:
- * - SPHttpClient available in SPFx context
+ * - SPFx ServiceScope with SPHttpClient service
  * - Appropriate SharePoint permissions for target APIs
+ * 
+ * @remarks
+ * This hook consumes SPHttpClient from SPFx ServiceScope using dependency injection.
+ * The service is consumed lazily (only when this hook is used) and cached for optimal
+ * performance. The client is always available (non-undefined) after Provider initialization.
  * 
  * @param initialBaseUrl - Base URL for SharePoint site (optional, defaults to current site)
  * 
@@ -107,14 +114,14 @@ export interface SPFxSPHttpClientInfo {
  * 
  * @example Using client directly for advanced control
  * ```tsx
- * import type { SPHttpClient } from '@microsoft/sp-http';
+ * import { SPHttpClient } from '@microsoft/sp-http';
  * 
  * function ListItems() {
  *   const { client, baseUrl } = useSPFxSPHttpClient();
  *   const [items, setItems] = useState([]);
  *   const [loading, setLoading] = useState(false);
  *   
- *   if (!client) return <Spinner label="Initializing HTTP client..." />;
+ *   // client is always available after Provider initialization
  *   
  *   const loadItems = async () => {
  *     setLoading(true);
@@ -228,20 +235,16 @@ export interface SPFxSPHttpClientInfo {
  * ```
  */
 export function useSPFxSPHttpClient(initialBaseUrl?: string): SPFxSPHttpClientInfo {
-  const { spfxContext } = useSPFxContext();
+  const { consume } = useSPFxServiceScope();
+  const pageContext = useSPFxPageContext();
   
-  // Extract context data
-  const ctx = spfxContext as {
-    pageContext?: {
-      web?: {
-        absoluteUrl?: string;
-      };
-    };
-    spHttpClient?: SPHttpClient;
-  };
+  // Lazy consume SPHttpClient from ServiceScope (cached by useMemo)
+  const client = useMemo(() => {
+    return consume<SPHttpClient>(SPHttpClient.serviceKey);
+  }, [consume]);
   
   // Default to current site if no baseUrl provided
-  const defaultBaseUrl = initialBaseUrl?.trim() || ctx.pageContext?.web?.absoluteUrl || '';
+  const defaultBaseUrl = initialBaseUrl?.trim() || pageContext.web.absoluteUrl || '';
   
   // Normalize: remove trailing slash for consistency (ES5-compatible)
   const normalizedBaseUrl = defaultBaseUrl.charAt(defaultBaseUrl.length - 1) === '/'
@@ -249,17 +252,9 @@ export function useSPFxSPHttpClient(initialBaseUrl?: string): SPFxSPHttpClientIn
     : defaultBaseUrl;
   
   // State management
-  const [client] = useState<SPHttpClient | undefined>(ctx.spHttpClient);
   const [baseUrl, setBaseUrlState] = useState<string>(normalizedBaseUrl);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | undefined>(undefined);
-  
-  // Initialize client
-  useEffect(() => {
-    if (!ctx.spHttpClient) {
-      console.warn('SPHttpClient not available in SPFx context');
-    }
-  }, [ctx.spHttpClient]);
   
   // Public setter for baseUrl with normalization
   const setBaseUrl = useCallback((url: string) => {

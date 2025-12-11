@@ -18,6 +18,11 @@ import { useThemeSubscription } from '../utils/theme-subscription.internal';
  * Creates an isolated Jotai store for each instance, ensuring complete
  * state isolation between multiple SPFx components on the same page.
  * 
+ * The provider ensures SPFx ServiceScope is finished before rendering children,
+ * guaranteeing that all services are available for consumption via dependency
+ * injection in hooks. This prevents race conditions and ensures type-safe access
+ * to SPFx services.
+ * 
  * DO NOT use directly - use type-specific providers instead:
  * - SPFxWebPartProvider
  * - SPFxApplicationCustomizerProvider
@@ -30,7 +35,7 @@ import { useThemeSubscription } from '../utils/theme-subscription.internal';
  */
 export function SPFxProviderBase<TProps extends {} = {}>(
   props: SPFxProviderProps<TProps>
-): JSX.Element {
+): React.ReactElement {
   const { instance, children } = props;
   
   // Cast to 'any' to access protected/private properties
@@ -47,6 +52,25 @@ export function SPFxProviderBase<TProps extends {} = {}>(
   
   // Extract instanceId type-safe (all SPFx contexts extend BaseComponentContext)
   const instanceId = React.useMemo(() => context.instanceId, [context]);
+  
+  // Extract serviceScope and ensure it's finished before rendering
+  const serviceScope = React.useMemo(() => context.serviceScope, [context]);
+  const [isScopeReady, setIsScopeReady] = React.useState(false);
+  
+  // Wait for serviceScope to be finished before rendering children
+  React.useEffect(() => {
+    if (!serviceScope) {
+      // Fallback: if no serviceScope, proceed (shouldn't happen in valid SPFx)
+      setIsScopeReady(true);
+      return;
+    }
+    
+    // whenFinished callback fires immediately if already finished (synchronous)
+    // or later when finished (asynchronous) - handles both scenarios
+    serviceScope.whenFinished(() => {
+      setIsScopeReady(true);
+    });
+  }, [serviceScope]);
   
   // Create isolated Jotai store for this Provider instance
   // Each store is independent, ensuring complete state isolation
@@ -150,6 +174,13 @@ export function SPFxProviderBase<TProps extends {} = {}>(
     }),
     [instanceId, context, kind]
   );
+  
+  // Guard: Wait for serviceScope to be finished before rendering children
+  // This ensures all hooks can safely consume services via serviceScope.consume()
+  // If serviceScope is already finished, this guard passes immediately (no flash)
+  if (!isScopeReady) {
+    return React.createElement(React.Fragment, undefined);
+  }
   
   return (
     <Provider store={store}>
