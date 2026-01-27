@@ -14,6 +14,8 @@ import {
   Icon,
 } from '@fluentui/react';
 
+/* eslint-disable max-lines */
+
 // Import all hooks from SPFx React Toolkit
 import {
   useSPFxProperties,
@@ -1189,16 +1191,10 @@ const SpFxReactToolkitTest: React.FC = () => {
   }, [logger]);
 
   const handleLoadOneDrive = React.useCallback(async () => {
-    try {
-      await oneDriveData.load();
-      setMessageText('Data loaded from OneDrive successfully!');
-      setShowMessage(true);
-      setTimeout(() => setShowMessage(false), 3000);
-    } catch (error) {
-      setMessageText(`Load failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      setShowMessage(true);
-      setTimeout(() => setShowMessage(false), 5000);
-    }
+    await oneDriveData.load();
+    setMessageText('OneDrive load completed. Check status below (missing file sets isNotFound=true).');
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 3000);
   }, [oneDriveData]);
 
   const handleSaveOneDrive = React.useCallback(async () => {
@@ -1674,6 +1670,12 @@ const SpFxReactToolkitTest: React.FC = () => {
                   Write Error: {oneDriveData.writeError.message}
                 </MessageBar>
               )}
+
+              {!oneDriveData.isLoading && oneDriveData.isNotFound && !oneDriveData.data && !oneDriveData.error && (
+                <MessageBar messageBarType={MessageBarType.info}>
+                  File not found in OneDrive yet (isNotFound=true). Click &quot;Save to OneDrive&quot; to create it.
+                </MessageBar>
+              )}
               
               {oneDriveData.isLoading ? (
                 <MessageBar messageBarType={MessageBarType.info}>Loading from OneDrive...</MessageBar>
@@ -1683,9 +1685,14 @@ const SpFxReactToolkitTest: React.FC = () => {
                   <InfoRow label="Counter" value={String(oneDriveData.data.counter)} icon="NumberField" />
                   <InfoRow label="Last Updated" value={new Date(oneDriveData.data.timestamp).toLocaleString()} icon="DateTime" />
                   <InfoRow label="Is Ready" value={oneDriveData.isReady ? 'Yes' : 'No'} icon="CheckMark" />
+                  <InfoRow label="Is Not Found" value={oneDriveData.isNotFound ? 'Yes' : 'No'} icon="BlockedSiteSolid12" />
                 </Stack>
               ) : (
-                <Label>No data loaded yet. Click &quot;Load&quot; to fetch from OneDrive.</Label>
+                <Label>
+                  {oneDriveData.isNotFound
+                    ? 'No file found yet. Click "Save to OneDrive" to create it.'
+                    : 'No data loaded yet. Click "Load" to fetch from OneDrive.'}
+                </Label>
               )}
               
               <TextField
