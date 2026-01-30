@@ -4,6 +4,7 @@
 import * as React from 'react';
 import type { BaseFieldCustomizer } from '@microsoft/sp-listview-extensibility';
 import { SPFxProviderBase } from './provider-base.internal';
+import type { SPFxComponent } from './types';
 
 /**
  * Props for the SPFx Field Customizer-specific provider component.
@@ -64,5 +65,5 @@ export interface SPFxFieldCustomizerProviderProps<TProps extends {} = {}> {
 export function SPFxFieldCustomizerProvider<TProps extends {} = {}>(
   props: SPFxFieldCustomizerProviderProps<TProps>
 ): JSX.Element {
-  return <SPFxProviderBase instance={props.instance as never}>{props.children}</SPFxProviderBase>;
+  return <SPFxProviderBase instance={props.instance as SPFxComponent<TProps>}>{props.children}</SPFxProviderBase>;
 }

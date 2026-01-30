@@ -4,6 +4,7 @@
 import * as React from 'react';
 import type { BaseApplicationCustomizer } from '@microsoft/sp-application-base';
 import { SPFxProviderBase } from './provider-base.internal';
+import type { SPFxComponent } from './types';
 
 /**
  * Props for the SPFx Application Customizer-specific provider component.
@@ -63,5 +64,5 @@ export interface SPFxApplicationCustomizerProviderProps<TProps extends {} = {}> 
 export function SPFxApplicationCustomizerProvider<TProps extends {} = {}>(
   props: SPFxApplicationCustomizerProviderProps<TProps>
 ): JSX.Element {
-  return <SPFxProviderBase instance={props.instance as never}>{props.children}</SPFxProviderBase>;
+  return <SPFxProviderBase instance={props.instance as SPFxComponent<TProps>}>{props.children}</SPFxProviderBase>;
 }

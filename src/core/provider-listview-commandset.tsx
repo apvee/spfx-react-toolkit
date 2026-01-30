@@ -4,6 +4,7 @@
 import * as React from 'react';
 import type { BaseListViewCommandSet } from '@microsoft/sp-listview-extensibility';
 import { SPFxProviderBase } from './provider-base.internal';
+import type { SPFxComponent } from './types';
 
 /**
  * Props for the SPFx ListView Command Set-specific provider component.
@@ -66,5 +67,5 @@ export interface SPFxListViewCommandSetProviderProps<TProps extends {} = {}> {
 export function SPFxListViewCommandSetProvider<TProps extends {} = {}>(
   props: SPFxListViewCommandSetProviderProps<TProps>
 ): JSX.Element {
-  return <SPFxProviderBase instance={props.instance as never}>{props.children}</SPFxProviderBase>;
+  return <SPFxProviderBase instance={props.instance as SPFxComponent<TProps>}>{props.children}</SPFxProviderBase>;
 }

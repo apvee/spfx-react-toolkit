@@ -4,6 +4,7 @@
 import * as React from 'react';
 import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { SPFxProviderBase } from './provider-base.internal';
+import type { SPFxComponent } from './types';
 
 /**
  * Props for the SPFx WebPart-specific provider component.
@@ -54,5 +55,5 @@ export interface SPFxWebPartProviderProps<TProps extends {} = {}> {
 export function SPFxWebPartProvider<TProps extends {} = {}>(
   props: SPFxWebPartProviderProps<TProps>
 ): JSX.Element {
-  return <SPFxProviderBase instance={props.instance as never}>{props.children}</SPFxProviderBase>;
+  return <SPFxProviderBase instance={props.instance as SPFxComponent<TProps>}>{props.children}</SPFxProviderBase>;
 }
