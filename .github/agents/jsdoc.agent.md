@@ -2,7 +2,7 @@
 name: "JSDoc Master Agent"
 description: "A specialized agent that scans the entire TypeScript codebase to generate, fix, and standardize all JSDoc comments across .ts and .tsx files, with support for exclusions."
 tools:
-  ['vscode', 'execute', 'read', 'edit', 'search', 'web', 'agent', 'azure-mcp/search', 'context7/*', 'memory/*', 'sequential-thinking/*', 'serena/*', 'github/*', 'todo']
+  ['vscode', 'execute', 'read', 'edit', 'search', 'web', 'azure-mcp/search', 'agent', 'serena/*', 'sequential-thinking/*', 'context7/*', 'memory/*', 'todo']
 ---
 
 # JSDoc Master Agent

@@ -1,9 +1,10 @@
 // useSPFxMSGraphClient.ts
 // Hook to access Microsoft Graph client with state management
 
-import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useSPFxServiceScope } from './useSPFxServiceScope';
 import { MSGraphClientV3, MSGraphClientFactory } from '@microsoft/sp-http';
+import { useAsyncInvoke } from './useAsyncInvoke.internal';
 
 /**
  * Return type for useSPFxMSGraphClient hook
@@ -221,8 +222,6 @@ export function useSPFxMSGraphClient(): SPFxMSGraphClientInfo {
   }, [consume]);
   
   const [client, setClient] = useState<MSGraphClientV3 | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | undefined>(undefined);
   
   // Initialize Graph client (factory.getClient is async)
   useEffect(() => {
@@ -237,34 +236,11 @@ export function useSPFxMSGraphClient(): SPFxMSGraphClientInfo {
       });
   }, [factory]);
   
-  // Invoke with automatic state management
-  const invoke = useCallback(
-    async <T>(fn: (client: MSGraphClientV3) => Promise<T>): Promise<T> => {
-      if (!client) {
-        throw new Error('Graph client not initialized. Wait for client to be available.');
-      }
-      
-      setIsLoading(true);
-      setError(undefined);
-      
-      try {
-        const result = await fn(client);
-        return result;
-      } catch (err) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        setError(error);
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [client]
+  // Use shared async invocation pattern
+  const { invoke, isLoading, error, clearError } = useAsyncInvoke(
+    client,
+    'Graph client not initialized. Wait for client to be available.'
   );
-  
-  // Clear error helper
-  const clearError = useCallback(() => {
-    setError(undefined);
-  }, []);
   
   return {
     client,

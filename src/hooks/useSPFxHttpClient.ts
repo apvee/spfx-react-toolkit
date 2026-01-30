@@ -1,9 +1,10 @@
 // useSPFxHttpClient.ts
 // Hook to access generic HTTP client with state management
 
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo } from 'react';
 import { useSPFxServiceScope } from './useSPFxServiceScope';
 import { HttpClient } from '@microsoft/sp-http';
+import { useAsyncInvoke } from './useAsyncInvoke.internal';
 
 /**
  * Return type for useSPFxHttpClient hook
@@ -240,38 +241,11 @@ export function useSPFxHttpClient(): SPFxHttpClientInfo {
     return consume<HttpClient>(HttpClient.serviceKey);
   }, [consume]);
   
-  // State management
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | undefined>(undefined);
-  
-  // Invoke with automatic state management
-  const invoke = useCallback(
-    async <T>(fn: (client: HttpClient) => Promise<T>): Promise<T> => {
-      if (!client) {
-        throw new Error('HttpClient not initialized. Check SPFx context.');
-      }
-      
-      setIsLoading(true);
-      setError(undefined);
-      
-      try {
-        const result = await fn(client);
-        return result;
-      } catch (err) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        setError(error);
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [client]
+  // Use shared async invocation pattern
+  const { invoke, isLoading, error, clearError } = useAsyncInvoke(
+    client,
+    'HttpClient not initialized. Check SPFx context.'
   );
-  
-  // Clear error helper
-  const clearError = useCallback(() => {
-    setError(undefined);
-  }, []);
   
   return {
     client,

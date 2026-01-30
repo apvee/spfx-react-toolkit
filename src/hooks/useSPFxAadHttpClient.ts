@@ -1,9 +1,10 @@
 // useSPFxAadHttpClient.ts
 // Hook to access Azure AD-secured APIs with state management
 
-import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useSPFxServiceScope } from './useSPFxServiceScope';
 import { AadHttpClient, AadHttpClientFactory } from '@microsoft/sp-http';
+import { useAsyncInvoke } from './useAsyncInvoke.internal';
 
 /**
  * Return type for useSPFxAadHttpClient hook
@@ -253,11 +254,9 @@ export function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpCl
     return consume<AadHttpClientFactory>(AadHttpClientFactory.serviceKey);
   }, [consume]);
   
-  // State management
+  // State management for resourceUrl and client
   const [resourceUrl, setResourceUrl] = useState<string | undefined>(initialResourceUrl);
   const [client, setClient] = useState<AadHttpClient | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | undefined>(undefined);
   
   // Initialize client when resourceUrl changes
   useEffect(() => {
@@ -279,36 +278,11 @@ export function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpCl
       });
   }, [resourceUrl, factory]);
   
-  // Invoke with automatic state management
-  const invoke = useCallback(
-    async <T>(fn: (client: AadHttpClient) => Promise<T>): Promise<T> => {
-      if (!client) {
-        throw new Error(
-          'AadHttpClient not initialized. Set resourceUrl and wait for client initialization.'
-        );
-      }
-      
-      setIsLoading(true);
-      setError(undefined);
-      
-      try {
-        const result = await fn(client);
-        return result;
-      } catch (err) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        setError(error);
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [client]
+  // Use shared async invocation pattern
+  const { invoke, isLoading, error, clearError } = useAsyncInvoke(
+    client,
+    'AadHttpClient not initialized. Set resourceUrl and wait for client initialization.'
   );
-  
-  // Clear error helper
-  const clearError = useCallback(() => {
-    setError(undefined);
-  }, []);
   
   return {
     client,

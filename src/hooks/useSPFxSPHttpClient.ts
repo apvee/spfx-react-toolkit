@@ -5,6 +5,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { useSPFxServiceScope } from './useSPFxServiceScope';
 import { useSPFxPageContext } from './useSPFxPageContext';
 import { SPHttpClient } from '@microsoft/sp-http';
+import { useAsyncInvoke } from './useAsyncInvoke.internal';
 
 /**
  * Return type for useSPFxSPHttpClient hook
@@ -251,10 +252,8 @@ export function useSPFxSPHttpClient(initialBaseUrl?: string): SPFxSPHttpClientIn
     ? defaultBaseUrl.slice(0, -1) 
     : defaultBaseUrl;
   
-  // State management
+  // BaseUrl state management (specific to this hook)
   const [baseUrl, setBaseUrlState] = useState<string>(normalizedBaseUrl);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | undefined>(undefined);
   
   // Public setter for baseUrl with normalization
   const setBaseUrl = useCallback((url: string) => {
@@ -265,34 +264,11 @@ export function useSPFxSPHttpClient(initialBaseUrl?: string): SPFxSPHttpClientIn
     setBaseUrlState(normalized);
   }, []);
   
-  // Invoke with automatic state management
-  const invoke = useCallback(
-    async <T>(fn: (client: SPHttpClient) => Promise<T>): Promise<T> => {
-      if (!client) {
-        throw new Error('SPHttpClient not initialized. Check SPFx context.');
-      }
-      
-      setIsLoading(true);
-      setError(undefined);
-      
-      try {
-        const result = await fn(client);
-        return result;
-      } catch (err) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        setError(error);
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [client]
+  // Use shared async invocation pattern
+  const { invoke, isLoading, error, clearError } = useAsyncInvoke(
+    client,
+    'SPHttpClient not initialized. Check SPFx context.'
   );
-  
-  // Clear error helper
-  const clearError = useCallback(() => {
-    setError(undefined);
-  }, []);
   
   return {
     client,
