@@ -604,8 +604,9 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
   const [hasMore, setHasMore] = useState(false);
   
   // Tracking for pagination and refetch
+  // Type is wrapper function that returns the original callback (to avoid React state comparison issues)
   const [lastQueryBuilder, setLastQueryBuilder] = useState<
-    SearchQueryBuilderFn | null
+    (() => SearchQueryBuilderFn) | null
   >(null);
   const [lastQueryText, setLastQueryText] = useState<string | null>(null);
   const [lastPageSize, setLastPageSize] = useState<number | undefined>(undefined);
@@ -636,7 +637,8 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
     query: string | SearchQueryBuilderFn,
     queryOptions?: { pageSize?: number },
     startRow?: number,
-    appendResults?: boolean
+    appendResults?: boolean,
+    overrideRefiners?: Map<string, string[]>
   ): Promise<SearchResult<T>[]> => {
     if (!sp || !context?.isInitialized) {
       const err = new Error('[useSPFxPnPSearch] PnP context not initialized. Ensure @pnp/sp/search is imported.');
@@ -677,9 +679,11 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
       }
       
       // Apply refinement filters if any
-      if (appliedRefiners.size > 0) {
+      // Use overrideRefiners if provided (for applyRefiner race condition fix)
+      const refinersToApply = overrideRefiners ?? appliedRefiners;
+      if (refinersToApply.size > 0) {
         const refinementFilters: string[] = [];
-        appliedRefiners.forEach(function(values, key) {
+        refinersToApply.forEach(function(values, key) {
           values.forEach(function(value) {
             refinementFilters.push(key + ":equals('" + value + "')");
           });
@@ -735,18 +739,23 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
         return parsedResults;
       }
       
-      // Calculate new results length for hasMore
-      const newResultsLength = appendResults ? results.length + parsedResults.length : parsedResults.length;
+      // Calculate new results length for hasMore using functional update
+      // This avoids needing results.length in the dependency array
+      let finalResultsLength = 0;
       
       if (appendResults) {
-        setResults(function(prev) { return prev.concat(parsedResults); });
+        setResults(function(prev) { 
+          finalResultsLength = prev.length + parsedResults.length;
+          return prev.concat(parsedResults); 
+        });
       } else {
+        finalResultsLength = parsedResults.length;
         setResults(parsedResults);
       }
       
       setTotalResults(totalRows);
       setRefiners(parsedRefiners);
-      setHasMore(newResultsLength < totalRows);
+      setHasMore(finalResultsLength < totalRows);
       
       return parsedResults;
       
@@ -755,7 +764,7 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
       setError(error);
       throw error;
     }
-  }, [sp, context?.isInitialized, options, defaultPageSize, lastPageSize, appliedRefiners, results.length]);
+  }, [sp, context?.isInitialized, options, defaultPageSize, lastPageSize, appliedRefiners]);
   
   /**
    * Executes a search query.
@@ -834,8 +843,9 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
     try {
       const nextStartRow = currentStartRow + lastPageSize;
       
+      // Call lastQueryBuilder() to get the original callback function
       const query = lastQueryBuilder 
-        ? lastQueryBuilder
+        ? lastQueryBuilder()
         : lastQueryText!;
       
       const parsedResults = await executeSearch(
@@ -871,8 +881,9 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
     setCurrentStartRow(0);
     
     try {
+      // Call lastQueryBuilder() to get the original callback function
       const query = lastQueryBuilder 
-        ? lastQueryBuilder
+        ? lastQueryBuilder()
         : lastQueryText!;
       
       await executeSearch(query, { pageSize: lastPageSize }, 0, false);
@@ -897,39 +908,53 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
       throw err;
     }
     
-    // Update applied refiners map
-    setAppliedRefiners(function(prev) {
-      const newMap = new Map<string, string[]>();
-      prev.forEach(function(value, key) {
-        newMap.set(key, value);
-      });
-      
-      const existing = newMap.get(refinerName) ?? [];
-      
-      // Toggle: if already exists, remove; otherwise add
-      const index = existing.indexOf(refinerValue);
-      if (index > -1) {
-        const updated = existing.slice();
-        updated.splice(index, 1);
-        if (updated.length === 0) {
-          newMap.delete(refinerName);
-        } else {
-          newMap.set(refinerName, updated);
-        }
-      } else {
-        newMap.set(refinerName, existing.concat([refinerValue]));
-      }
-      
-      return newMap;
+    // Calculate new refiners map (toggle logic)
+    const newRefiners = new Map<string, string[]>();
+    appliedRefiners.forEach(function(value, key) {
+      newRefiners.set(key, value);
     });
     
-    // Re-execute search with new refiners
-    // Note: appliedRefiners state will be updated on next render
-    // So we need to wait a tick or use the new map directly
-    // For simplicity, we'll call refetch which will use updated appliedRefiners
-    await refetch();
+    const existing = newRefiners.get(refinerName) ?? [];
     
-  }, [lastQueryBuilder, lastQueryText, refetch]);
+    // Toggle: if already exists, remove; otherwise add
+    const index = existing.indexOf(refinerValue);
+    if (index > -1) {
+      const updated = existing.slice();
+      updated.splice(index, 1);
+      if (updated.length === 0) {
+        newRefiners.delete(refinerName);
+      } else {
+        newRefiners.set(refinerName, updated);
+      }
+    } else {
+      newRefiners.set(refinerName, existing.concat([refinerValue]));
+    }
+    
+    // Update state for UI
+    setAppliedRefiners(newRefiners);
+    
+    // Re-execute search with new refiners passed directly
+    // This avoids the race condition where state isn't updated yet
+    setLoading(true);
+    setError(undefined);
+    setCurrentStartRow(0);
+    
+    try {
+      // Call lastQueryBuilder() to get the original callback function
+      const query = lastQueryBuilder 
+        ? lastQueryBuilder()
+        : lastQueryText!;
+      
+      // Pass newRefiners directly to avoid race condition
+      await executeSearch(query, { pageSize: lastPageSize }, 0, false, newRefiners);
+      
+    } finally {
+      if (mountedRef.current) {
+        setLoading(false);
+      }
+    }
+    
+  }, [lastQueryBuilder, lastQueryText, lastPageSize, appliedRefiners, executeSearch]);
   
   return {
     search: search,
