@@ -180,24 +180,6 @@ const MyComponent: React.FC = () => {
 | React | 17.x |
 | TypeScript | 5.3+ |
 
-## Architecture
-
-SPFx React Toolkit uses a layered architecture:
-
-```
-┌─────────────────────────────────────────┐
-│           Your React Components          │
-├─────────────────────────────────────────┤
-│       35+ Type-Safe React Hooks          │
-├─────────────────────────────────────────┤
-│      Jotai Atoms (Instance-Scoped)       │
-├─────────────────────────────────────────┤
-│    SPFx Provider (Context + Sync)        │
-├─────────────────────────────────────────┤
-│         SPFx Runtime (WebPart, etc.)     │
-└─────────────────────────────────────────┘
-```
-
 ## License
 
 MIT - See [LICENSE](../LICENSE) for details.
@@ -207,7 +189,3 @@ MIT - See [LICENSE](../LICENSE) for details.
 - [Full API Reference](./INDEX.md)
 - [GitHub Repository](https://github.com/apvee/spfx-react-toolkit)
 - [NPM Package](https://www.npmjs.com/package/@apvee/spfx-react-toolkit)
-
----
-
-*Generated from JSDoc comments. Last updated: January 31, 2026*

@@ -1,6 +1,6 @@
 # API Reference
 
-> Complete API documentation for @apvee/spfx-react-toolkit v1.2.0
+> Complete API documentation for @apvee/spfx-react-toolkit
 
 ## Table of Contents
 

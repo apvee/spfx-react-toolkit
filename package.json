@@ -1,6 +1,6 @@
 {
   "name": "@apvee/spfx-react-toolkit",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Comprehensive React runtime and hooks library for SharePoint Framework (SPFx)",
   "private": false,
   "engines": {
@@ -27,6 +27,7 @@
     "@microsoft/sp-core-library": ">=1.18.0",
     "@microsoft/sp-listview-extensibility": ">=1.18.0",
     "@microsoft/sp-webpart-base": ">=1.18.0",
+    "jotai": "^2.6.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "tslib": "2.3.1"
@@ -54,8 +55,7 @@
   "peerDependencies": {
     "@pnp/core": "^4.0.0",
     "@pnp/queryable": "^4.0.0",
-    "@pnp/sp": "^4.0.0",
-    "jotai": "^2.0.0"
+    "@pnp/sp": "^4.0.0"
   },
   "homepage": "https://github.com/apvee/spfx-react-toolkit#readme",
   "repository": {
