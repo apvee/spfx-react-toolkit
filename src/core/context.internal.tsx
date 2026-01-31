@@ -24,8 +24,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 /**
  * Internal hook to access SPFx context
- * Throws error if used outside SPFxProvider
- * 
+ *
+ * Provides access to the SPFx context value containing instanceId, spfxContext, and kind.
+ * Must be used within an SPFxProvider component tree.
+ *
+ * @returns SPFxContextValue containing instanceId, spfxContext, and kind
+ * @throws Error if used outside SPFxProvider - component must be wrapped with \<SPFxProvider\>
+ *
  * @internal
  */
 export function useSPFxContext(): SPFxContextValue {

@@ -94,6 +94,10 @@ export interface PnPContextInfo {
  * - Memoized for performance (avoids re-initialization on re-renders)
  * - Error handling with detailed error state
  * 
+ * @see {@link useSPFxPnP} for state-managed PnP operations with invoke/batch helpers
+ * @see {@link useSPFxPnPList} for list-specific operations with pagination
+ * @see {@link useSPFxPnPSearch} for SharePoint Search integration
+ * 
  * @param siteUrl - SharePoint site URL (optional)
  *                  - Undefined: uses current site
  *                  - Relative: '/sites/hr' (automatically resolves to absolute URL)

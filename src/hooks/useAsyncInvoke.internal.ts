@@ -36,19 +36,22 @@ export interface AsyncInvokeResult<TClient> {
 
 /**
  * Internal hook for async invocation with state management.
- * 
+ *
+ * @internal
+ *
  * Provides a consistent pattern for:
  * - Loading state tracking during async operations
  * - Error capture and management
  * - Type-safe client invocation
- * 
+ *
  * Used by HTTP client hooks (HttpClient, SPHttpClient, MSGraphClient, AadHttpClient)
  * to reduce code duplication while maintaining consistent behavior.
- * 
+ *
+ * @template TClient - The client type (HttpClient, SPHttpClient, MSGraphClientV3, AadHttpClient)
  * @param client - The client instance (can be undefined for async init scenarios)
  * @param notReadyError - Error message when client is undefined (default: 'Client not initialized')
- * @returns State and invoke function
- * 
+ * @returns AsyncInvokeResult with invoke function, isLoading, error, and clearError
+ *
  * @example
  * ```typescript
  * // Inside a hook implementation

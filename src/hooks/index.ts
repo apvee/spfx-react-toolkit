@@ -1,3 +1,34 @@
+/**
+ * SPFx React Hooks
+ *
+ * Collection of React hooks for accessing SPFx context, services, and SharePoint APIs.
+ *
+ * **Context & Metadata:**
+ * - `useSPFxContext` - Core SPFx context access
+ * - `useSPFxPageContext` - SharePoint page context
+ * - `useSPFxInstanceInfo` - Component instance metadata
+ * - `useSPFxEnvironmentInfo` - Environment detection (Teams, SharePoint, etc.)
+ *
+ * **HTTP Clients:**
+ * - `useSPFxHttpClient` - Generic HTTP client
+ * - `useSPFxSPHttpClient` - SharePoint REST API client
+ * - `useSPFxMSGraphClient` - Microsoft Graph client
+ * - `useSPFxAadHttpClient` - Azure AD secured API client
+ *
+ * **PnPjs Integration:**
+ * - `useSPFxPnP` - PnPjs with state management
+ * - `useSPFxPnPContext` - PnPjs SPFI factory
+ * - `useSPFxPnPList` - List operations
+ * - `useSPFxPnPSearch` - SharePoint Search
+ *
+ * **UI & Theming:**
+ * - `useSPFxThemeInfo` - SPFx theme (v8)
+ * - `useSPFxFluent9ThemeInfo` - Fluent UI 9 theme
+ * - `useSPFxDisplayMode` - Edit/Read mode
+ * - `useSPFxContainerSize` - Responsive breakpoints
+ *
+ * @module hooks
+ */
 export * from './useSPFxAadHttpClient';
 export * from './useSPFxContainerInfo';
 export * from './useSPFxContainerSize';

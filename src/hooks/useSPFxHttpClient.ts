@@ -85,6 +85,10 @@ export interface SPFxHttpClientInfo {
  * 
  * Use HttpClient for external APIs, SPHttpClient for SharePoint `/_api/` endpoints.
  * 
+ * @see {@link useSPFxSPHttpClient} for SharePoint REST API calls
+ * @see {@link useSPFxAadHttpClient} for Azure AD secured API calls
+ * @see {@link useSPFxMSGraphClient} for Microsoft Graph API calls
+ * 
  * @example Using invoke with public API
  * ```tsx
  * function WeatherWidget() {

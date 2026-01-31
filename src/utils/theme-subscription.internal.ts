@@ -8,7 +8,14 @@ import type { ServiceScope } from '@microsoft/sp-core-library';
 
 /**
  * Extract ThemeProvider from SPFx context
+ *
  * Works with any SPFx context type (WebPart, ApplicationCustomizer, etc.)
+ * by consuming ThemeProvider service from the ServiceScope.
+ *
+ * @param spfxContext - Any SPFx context object (WebPartContext, ApplicationCustomizerContext, etc.)
+ * @returns ThemeProvider service instance from SPFx ServiceScope
+ * @throws Error if context does not have serviceScope
+ *
  * @internal
  */
 function getThemeProvider(spfxContext: unknown): ThemeProvider {
@@ -27,10 +34,19 @@ function getThemeProvider(spfxContext: unknown): ThemeProvider {
 
 /**
  * Hook to subscribe to SPFx theme changes
- * Automatically updates the provided setter when theme changes
- * 
- * @param spfxContext - SPFx context object
- * @param setTheme - Setter function to update theme state
+ *
+ * Automatically updates the provided setter when theme changes.
+ * Sets initial theme on mount and subscribes to themeChangedEvent.
+ *
+ * @param spfxContext - SPFx context object with serviceScope
+ * @param setTheme - Setter function to update theme state (receives IReadonlyTheme or undefined)
+ * @returns void - Hook manages subscription lifecycle internally
+ *
+ * @remarks
+ * - Initial theme is set synchronously on mount if available
+ * - Cleanup removes event listener automatically on unmount
+ * - Uses SPFx observer pattern for event subscription
+ *
  * @internal
  */
 export function useThemeSubscription(

@@ -6,9 +6,19 @@ import type { ContainerSize } from '../core/types';
 
 /**
  * Hook to observe element size changes using ResizeObserver
- * 
- * @param element - DOM element to observe
- * @param onResize - Callback when size changes
+ *
+ * Automatically sets up and cleans up ResizeObserver subscription.
+ * Calls onResize with undefined if element is undefined or ResizeObserver is not supported.
+ *
+ * @param element - DOM element to observe, or undefined to clear observation
+ * @param onResize - Callback invoked with {width, height} on size changes, or undefined when element is unavailable
+ * @returns void - Hook manages subscription lifecycle internally
+ *
+ * @remarks
+ * - Cleanup is handled automatically on unmount or when element changes
+ * - ResizeObserver polyfill is NOT included - requires browser support
+ * - Initial size is reported immediately after observation starts
+ *
  * @internal
  */
 export function useResizeObserver(

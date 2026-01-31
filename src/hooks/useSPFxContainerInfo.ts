@@ -31,6 +31,8 @@ export interface SPFxContainerInfo {
  * 
  * @returns Container element and size
  * 
+ * @see {@link useSPFxContainerSize} for responsive breakpoint categories (small/medium/large)
+ * 
  * @example
  * ```tsx
  * function MyComponent() {

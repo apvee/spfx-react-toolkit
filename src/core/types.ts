@@ -66,6 +66,8 @@ export interface ContainerSize {
 /**
  * Props accepted by SPFxProvider (instance-based API)
  * 
+ * @template TProps - The properties type for the SPFx component (WebPart props, Extension props, etc.)
+ * 
  * @example
  * ```tsx
  * // In your WebPart render():

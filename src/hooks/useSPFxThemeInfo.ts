@@ -13,6 +13,8 @@ import { spfxAtoms } from '../core/atoms.internal';
  * 
  * @returns Current theme object or undefined if not yet loaded
  * 
+ * @see {@link useSPFxFluent9ThemeInfo} for Fluent UI 9 theme conversion
+ * 
  * @example
  * ```tsx
  * function MyComponent() {

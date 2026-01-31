@@ -11,7 +11,22 @@ import type {
 
 /**
  * Type guard: Check if instance is a WebPart
- * Uses duck typing - checks for WebPart-specific properties
+ *
+ * Uses duck typing (structural typing) to detect WebPart instances
+ * by checking for WebPart-specific properties: displayMode, domElement, render, context, properties.
+ *
+ * @template TProps - WebPart properties type
+ * @param instance - SPFx component instance to check
+ * @returns True if instance is a BaseClientSideWebPart, narrowing the type
+ *
+ * @example
+ * ```typescript
+ * if (isWebPart(instance)) {
+ *   // instance is now typed as BaseClientSideWebPart<TProps>
+ *   console.log(instance.displayMode);
+ * }
+ * ```
+ *
  * @internal
  */
 export function isWebPart<TProps extends {} = {}>(
@@ -33,7 +48,22 @@ export function isWebPart<TProps extends {} = {}>(
 
 /**
  * Type guard: Check if instance is an ApplicationCustomizer
- * Uses duck typing - checks for ApplicationCustomizer-specific properties
+ *
+ * Uses duck typing (structural typing) to detect ApplicationCustomizer instances
+ * by checking for placeholderProvider in context and absence of displayMode.
+ *
+ * @template TProps - ApplicationCustomizer properties type
+ * @param instance - SPFx component instance to check
+ * @returns True if instance is a BaseApplicationCustomizer, narrowing the type
+ *
+ * @example
+ * ```typescript
+ * if (isApplicationCustomizer(instance)) {
+ *   // instance is now typed as BaseApplicationCustomizer<TProps>
+ *   console.log(instance.context.placeholderProvider);
+ * }
+ * ```
+ *
  * @internal
  */
 export function isApplicationCustomizer<TProps extends {} = {}>(
@@ -58,7 +88,22 @@ export function isApplicationCustomizer<TProps extends {} = {}>(
 
 /**
  * Type guard: Check if instance is a ListViewCommandSet
- * Uses duck typing - checks for CommandSet-specific properties
+ *
+ * Uses duck typing (structural typing) to detect ListViewCommandSet instances
+ * by checking for onExecute and tryGetCommand methods.
+ *
+ * @template TProps - ListViewCommandSet properties type
+ * @param instance - SPFx component instance to check
+ * @returns True if instance is a BaseListViewCommandSet, narrowing the type
+ *
+ * @example
+ * ```typescript
+ * if (isListViewCommandSet(instance)) {
+ *   // instance is now typed as BaseListViewCommandSet<TProps>
+ *   instance.tryGetCommand('COMMAND_ID');
+ * }
+ * ```
+ *
  * @internal
  */
 export function isListViewCommandSet<TProps extends {} = {}>(
@@ -80,7 +125,22 @@ export function isListViewCommandSet<TProps extends {} = {}>(
 
 /**
  * Type guard: Check if instance is a FieldCustomizer
- * Uses duck typing - checks for FieldCustomizer-specific properties
+ *
+ * Uses duck typing (structural typing) to detect FieldCustomizer instances
+ * by checking for field in context and onRenderCell method.
+ *
+ * @template TProps - FieldCustomizer properties type
+ * @param instance - SPFx component instance to check
+ * @returns True if instance is a BaseFieldCustomizer, narrowing the type
+ *
+ * @example
+ * ```typescript
+ * if (isFieldCustomizer(instance)) {
+ *   // instance is now typed as BaseFieldCustomizer<TProps>
+ *   console.log(instance.context.field);
+ * }
+ * ```
+ *
  * @internal
  */
 export function isFieldCustomizer<TProps extends {} = {}>(
@@ -106,7 +166,20 @@ export function isFieldCustomizer<TProps extends {} = {}>(
 
 /**
  * Detect the kind of SPFx component from an instance
- * Throws if unable to detect
+ *
+ * Checks the instance against all known SPFx component types and returns
+ * the corresponding HostKind discriminator.
+ *
+ * @template TProps - SPFx component properties type
+ * @param instance - SPFx component instance to detect
+ * @returns HostKind ('WebPart' | 'AppCustomizer' | 'CommandSet' | 'FieldCustomizer')
+ * @throws Error if unable to detect component type
+ *
+ * @example
+ * ```typescript
+ * const kind = detectComponentKind(this); // 'WebPart'
+ * ```
+ *
  * @internal
  */
 export function detectComponentKind<TProps extends {} = {}>(

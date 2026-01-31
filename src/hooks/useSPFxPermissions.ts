@@ -18,13 +18,25 @@ export interface SPFxPermissionsInfo {
   /** List permissions (if in list context) */
   readonly listPermissions: SPPermission | undefined;
 
-  /** Check if user has specific web permission */
+  /** 
+   * Check if user has specific web permission
+   * @param permission - SPPermission to check (e.g., SPPermission.manageWeb, SPPermission.editListItems)
+   * @returns True if user has the permission at web level
+   */
   readonly hasWebPermission: (permission: SPPermission) => boolean;
 
-  /** Check if user has specific site permission */
+  /** 
+   * Check if user has specific site collection permission
+   * @param permission - SPPermission to check (e.g., SPPermission.manageWeb, SPPermission.createGroups)
+   * @returns True if user has the permission at site collection level
+   */
   readonly hasSitePermission: (permission: SPPermission) => boolean;
 
-  /** Check if user has specific list permission */
+  /** 
+   * Check if user has specific list permission
+   * @param permission - SPPermission to check (e.g., SPPermission.addListItems, SPPermission.deleteListItems)
+   * @returns True if user has the permission at list level, false if no list context
+   */
   readonly hasListPermission: (permission: SPPermission) => boolean;
 }
 

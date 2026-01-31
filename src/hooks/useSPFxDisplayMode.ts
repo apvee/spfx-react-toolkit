@@ -36,6 +36,8 @@ export interface SPFxDisplayModeInfo {
  * 
  * @returns Display mode information
  * 
+ * @see {@link useSPFxIsEdit} for a simple boolean shortcut
+ * 
  * @example
  * ```tsx
  * function MyComponent() {
@@ -72,6 +74,8 @@ export function useSPFxDisplayMode(): SPFxDisplayModeInfo {
  * Shortcut for useSPFxDisplayMode().isEdit
  * 
  * @returns true if in Edit mode, false otherwise
+ * 
+ * @see {@link useSPFxDisplayMode} for full display mode information
  * 
  * @example
  * ```tsx
