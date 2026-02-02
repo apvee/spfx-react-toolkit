@@ -1,6 +1,6 @@
 {
   "name": "@apvee/spfx-react-toolkit",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "description": "Comprehensive React runtime and hooks library for SharePoint Framework (SPFx)",
   "private": false,
   "engines": {
@@ -22,15 +22,17 @@
   "dependencies": {
     "@fluentui/react-migration-v8-v9": "^9.9.12",
     "@fluentui/react-theme": "^9.2.0",
-    "@microsoft/sp-application-base": ">=1.18.0",
+    "@microsoft/sp-application-base": "1.21.1",
     "@microsoft/sp-component-base": ">=1.18.0",
-    "@microsoft/sp-core-library": ">=1.18.0",
+    "@microsoft/sp-core-library": "1.21.1",
     "@microsoft/sp-listview-extensibility": ">=1.18.0",
     "@microsoft/sp-webpart-base": ">=1.18.0",
     "jotai": "^2.6.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "tslib": "2.3.1"
+    "tslib": "2.3.1",
+    "@microsoft/decorators": "1.21.1",
+    "@microsoft/sp-dialog": "1.21.1"
   },
   "devDependencies": {
     "@fluentui/react": "^8.106.4",
@@ -39,7 +41,7 @@
     "@microsoft/rush-stack-compiler-5.3": "0.1.0",
     "@microsoft/sp-build-web": ">=1.18.0",
     "@microsoft/sp-lodash-subset": ">=1.18.0",
-    "@microsoft/sp-module-interfaces": ">=1.18.0",
+    "@microsoft/sp-module-interfaces": "1.21.1",
     "@microsoft/sp-office-ui-fabric-core": ">=1.18.0",
     "@microsoft/sp-property-pane": ">=1.18.0",
     "@rushstack/eslint-config": "4.0.1",

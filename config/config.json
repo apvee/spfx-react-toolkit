@@ -9,10 +9,19 @@
           "manifest": "./src/webparts/spFxReactToolkitTest/SpFxReactToolkitTestWebPart.manifest.json"
         }
       ]
+    },
+    "sp-fx-react-toolkit-test-application-customizer": {
+      "components": [
+        {
+          "entrypoint": "./lib/extensions/spFxReactToolkitTest/SpFxReactToolkitTestApplicationCustomizer.js",
+          "manifest": "./src/extensions/spFxReactToolkitTest/SpFxReactToolkitTestApplicationCustomizer.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
   "localizedResources": {
-    "SpFxReactToolkitTestWebPartStrings": "lib/webparts/spFxReactToolkitTest/loc/{locale}.js"
+    "SpFxReactToolkitTestWebPartStrings": "lib/webparts/spFxReactToolkitTest/loc/{locale}.js",
+    "SpFxReactToolkitTestApplicationCustomizerStrings": "lib/extensions/spFxReactToolkitTest/loc/{locale}.js"
   }
 }

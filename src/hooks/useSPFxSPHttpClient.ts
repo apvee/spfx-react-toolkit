@@ -14,9 +14,9 @@ export interface SPFxSPHttpClientInfo {
   /** 
    * Native SPHttpClient from SPFx.
    * Provides access to SharePoint REST APIs with built-in authentication.
-   * Always available (non-undefined) after Provider initialization.
+   * Will be undefined if ServiceScope is not available.
    */
-  readonly client: SPHttpClient;
+  readonly client: SPHttpClient | undefined;
   
   /** 
    * Invoke SharePoint REST API call with automatic state management.
@@ -24,6 +24,7 @@ export interface SPFxSPHttpClientInfo {
    * 
    * @param fn - Function that receives SPHttpClient and returns a promise
    * @returns Promise with the result
+   * @throws Error if client is not available
    * 
    * @example
    * ```tsx
@@ -57,6 +58,22 @@ export interface SPFxSPHttpClientInfo {
   
   /** Current base URL (site absolute URL) */
   readonly baseUrl: string;
+
+  /**
+   * Computed state: true when client is ready for use.
+   * Equivalent to: client !== undefined
+   * 
+   * @example
+   * ```tsx
+   * const { isReady, client, invoke } = useSPFxSPHttpClient();
+   * 
+   * if (!isReady) return <Spinner label="Waiting for SPHttpClient..." />;
+   * 
+   * // Safe to use client or invoke
+   * const data = await invoke(c => c.get(...).then(r => r.json()));
+   * ```
+   */
+  readonly isReady: boolean;
 }
 
 /**
@@ -240,8 +257,14 @@ export function useSPFxSPHttpClient(initialBaseUrl?: string): SPFxSPHttpClientIn
   const pageContext = useSPFxPageContext();
   
   // Lazy consume SPHttpClient from ServiceScope (cached by useMemo)
-  const client = useMemo(() => {
-    return consume<SPHttpClient>(SPHttpClient.serviceKey);
+  // Returns undefined if ServiceScope is not available
+  const client = useMemo((): SPHttpClient | undefined => {
+    try {
+      return consume<SPHttpClient>(SPHttpClient.serviceKey);
+    } catch (err) {
+      console.error('Failed to consume SPHttpClient from ServiceScope:', err);
+      return undefined;
+    }
   }, [consume]);
   
   // Default to current site if no baseUrl provided
@@ -267,8 +290,11 @@ export function useSPFxSPHttpClient(initialBaseUrl?: string): SPFxSPHttpClientIn
   // Use shared async invocation pattern
   const { invoke, isLoading, error, clearError } = useAsyncInvoke(
     client,
-    'SPHttpClient not initialized. Check SPFx context.'
+    'SPHttpClient not available. Check SPFx context and ServiceScope.'
   );
+  
+  // Computed: ready when client is available
+  const isReady = client !== undefined;
   
   return {
     client,
@@ -278,5 +304,6 @@ export function useSPFxSPHttpClient(initialBaseUrl?: string): SPFxSPHttpClientIn
     clearError,
     setBaseUrl,
     baseUrl,
+    isReady,
   };
 }

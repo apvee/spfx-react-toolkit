@@ -140,11 +140,10 @@ const SpFxReactToolkitTest: React.FC = () => {
   const msGraphClient = useSPFxMSGraphClient();
   const aadHttpClient = useSPFxAadHttpClient();
 
-  // OneDrive AppData hook (using instance id as folder for isolation)
+  // OneDrive AppData hook (using hook name as folder for demo)
   const oneDriveData = useSPFxOneDriveAppData<IOneDriveTestData>(
     'test-data.json',
-    id, // Use instance ID as folder for multi-instance support
-    false // Manual load for demo purposes
+    { autoFetch: false, createIfMissing: true, defaultValue: { message: '', counter: 0, timestamp: 0 }, folder: 'useSPFxOneDriveAppData' }
   );
 
   // Tenant Property hook (tenant-wide configuration)
@@ -307,7 +306,7 @@ const SpFxReactToolkitTest: React.FC = () => {
 
   const handleRemoveTenantProperty = React.useCallback(async (propertyName: 'version' | 'counter') => {
     const hook = propertyName === 'version' ? tenantVersion : tenantCounter;
-    
+
     if (!hook.canWrite) {
       setMessageText('Insufficient permissions to remove tenant properties');
       setShowMessage(true);
@@ -430,11 +429,11 @@ const SpFxReactToolkitTest: React.FC = () => {
                 Locale & Regional Settings
                 <Separator />
               </h3>
-              
+
               <InfoRow label="Content Locale" value={localeInfo.locale} icon="Globe" />
               <InfoRow label="UI Locale" value={localeInfo.uiLocale} icon="LocaleLanguage" />
               <InfoRow label="Text Direction" value={localeInfo.isRtl ? 'Right-to-Left (RTL)' : 'Left-to-Right (LTR)'} icon="TextAlignLeft" />
-              
+
               {localeInfo.timeZone && (
                 <>
                   <InfoRow label="Time Zone" value={localeInfo.timeZone.description} icon="Clock" />
@@ -452,7 +451,7 @@ const SpFxReactToolkitTest: React.FC = () => {
                   </Label>
                 </>
               )}
-              
+
               <Label>
                 <Icon iconName="InfoSolid" style={{ marginRight: '4px', color: '#0078d4' }} />
                 Use with JavaScript Intl APIs for i18n (dates, numbers, currencies)
@@ -502,15 +501,15 @@ const SpFxReactToolkitTest: React.FC = () => {
                   Hub Site Association
                   <Separator />
                 </h3>
-                
+
                 {hubInfo.error && (
                   <MessageBar messageBarType={MessageBarType.error}>
                     Failed to load hub site URL: {hubInfo.error.message}
                   </MessageBar>
                 )}
-                
+
                 <InfoRow label="Hub Site ID" value={hubInfo.hubSiteId} icon="Fingerprint" />
-                
+
                 {hubInfo.isLoading ? (
                   <MessageBar messageBarType={MessageBarType.info}>
                     Loading hub site URL...
@@ -546,12 +545,12 @@ const SpFxReactToolkitTest: React.FC = () => {
                 Cross-Site Permissions
                 <Separator />
               </h3>
-              
+
               <Label>
                 <Icon iconName="Info" style={{ marginRight: '4px', color: '#0078d4' }} />
                 Check permissions on a different site (auto-fetch when URL is provided)
               </Label>
-              
+
               <TextField
                 label="Target Site URL"
                 value={crossSiteUrl || ''}
@@ -559,37 +558,37 @@ const SpFxReactToolkitTest: React.FC = () => {
                 placeholder="https://contoso.sharepoint.com/sites/targetsite"
                 description="Enter a site URL - permissions will be fetched automatically"
               />
-              
+
               {crossSitePermissions.isLoading && (
                 <MessageBar messageBarType={MessageBarType.info}>
                   Loading permissions from {crossSiteUrl}...
                 </MessageBar>
               )}
-              
+
               {crossSitePermissions.error && (
                 <MessageBar messageBarType={MessageBarType.error}>
                   Error: {crossSitePermissions.error.message}
                 </MessageBar>
               )}
-              
+
               {crossSiteUrl && !crossSitePermissions.isLoading && !crossSitePermissions.error && (
                 <Stack tokens={{ childrenGap: 1 }}>
-                  <InfoRow 
-                    label="Target Site" 
-                    value={crossSiteUrl} 
-                    icon="Globe" 
+                  <InfoRow
+                    label="Target Site"
+                    value={crossSiteUrl}
+                    icon="Globe"
                   />
-                  <StatusBadge 
-                    label="Can Manage Web (Cross-Site)" 
-                    available={crossSitePermissions.hasWebPermission(SPPermission.manageWeb)} 
+                  <StatusBadge
+                    label="Can Manage Web (Cross-Site)"
+                    available={crossSitePermissions.hasWebPermission(SPPermission.manageWeb)}
                   />
-                  <StatusBadge 
-                    label="Can Manage Lists (Cross-Site)" 
-                    available={crossSitePermissions.hasWebPermission(SPPermission.manageLists)} 
+                  <StatusBadge
+                    label="Can Manage Lists (Cross-Site)"
+                    available={crossSitePermissions.hasWebPermission(SPPermission.manageLists)}
                   />
-                  <StatusBadge 
-                    label="Can Add Items (Cross-Site)" 
-                    available={crossSitePermissions.hasWebPermission(SPPermission.addListItems)} 
+                  <StatusBadge
+                    label="Can Add Items (Cross-Site)"
+                    available={crossSitePermissions.hasWebPermission(SPPermission.addListItems)}
                   />
                 </Stack>
               )}
@@ -602,28 +601,28 @@ const SpFxReactToolkitTest: React.FC = () => {
                 User Photo Demo
                 <Separator />
               </h3>
-              
+
               {userPhoto.error && (
                 <MessageBar messageBarType={MessageBarType.error}>
                   Load Error: {userPhoto.error.message}
                 </MessageBar>
               )}
-              
+
               {userPhoto.isLoading ? (
                 <MessageBar messageBarType={MessageBarType.info}>Loading photo from Microsoft Graph...</MessageBar>
               ) : userPhoto.photoUrl ? (
                 <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
-                  <img 
-                    src={userPhoto.photoUrl} 
+                  <img
+                    src={userPhoto.photoUrl}
                     alt={displayName}
-                    style={{ 
-                      width: 120, 
-                      height: 120, 
+                    style={{
+                      width: 120,
+                      height: 120,
                       borderRadius: '50%',
                       objectFit: 'cover',
                       border: '3px solid #0078d4',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                    }} 
+                    }}
                   />
                   <Stack tokens={{ childrenGap: 1 }}>
                     <InfoRow label="Display Name" value={displayName} icon="Contact" />
@@ -634,10 +633,10 @@ const SpFxReactToolkitTest: React.FC = () => {
                 </Stack>
               ) : (
                 <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
-                  <div style={{ 
-                    width: 120, 
-                    height: 120, 
-                    borderRadius: '50%', 
+                  <div style={{
+                    width: 120,
+                    height: 120,
+                    borderRadius: '50%',
                     backgroundColor: '#0078d4',
                     display: 'flex',
                     alignItems: 'center',
@@ -654,14 +653,14 @@ const SpFxReactToolkitTest: React.FC = () => {
                   </Label>
                 </Stack>
               )}
-              
-              <PrimaryButton 
-                text={userPhoto.isLoading ? 'Loading...' : 'Reload Photo'} 
-                onClick={userPhoto.reload} 
+
+              <PrimaryButton
+                text={userPhoto.isLoading ? 'Loading...' : 'Reload Photo'}
+                onClick={userPhoto.reload}
                 disabled={userPhoto.isLoading}
-                iconProps={{ iconName: 'Refresh' }} 
+                iconProps={{ iconName: 'Refresh' }}
               />
-              
+
               <Label>
                 <Icon iconName="InfoSolid" style={{ marginRight: '4px', color: '#0078d4' }} />
                 Photo loaded from Microsoft Graph API (/me/photos/240x240/$value)
@@ -683,13 +682,13 @@ const SpFxReactToolkitTest: React.FC = () => {
                 OneDrive AppData Demo
                 <Separator />
               </h3>
-              
+
               {oneDriveData.error && (
                 <MessageBar messageBarType={MessageBarType.error}>
                   Load Error: {oneDriveData.error.message}
                 </MessageBar>
               )}
-              
+
               {oneDriveData.writeError && (
                 <MessageBar messageBarType={MessageBarType.warning}>
                   Write Error: {oneDriveData.writeError.message}
@@ -701,7 +700,7 @@ const SpFxReactToolkitTest: React.FC = () => {
                   File not found in OneDrive yet (isNotFound=true). Click &quot;Save to OneDrive&quot; to create it.
                 </MessageBar>
               )}
-              
+
               {oneDriveData.isLoading ? (
                 <MessageBar messageBarType={MessageBarType.info}>Loading from OneDrive...</MessageBar>
               ) : oneDriveData.data ? (
@@ -719,7 +718,7 @@ const SpFxReactToolkitTest: React.FC = () => {
                     : 'No data loaded yet. Click "Load" to fetch from OneDrive.'}
                 </Label>
               )}
-              
+
               <TextField
                 label="New Message"
                 value={oneDriveMessage}
@@ -727,25 +726,25 @@ const SpFxReactToolkitTest: React.FC = () => {
                 placeholder="Enter a message to save..."
                 disabled={oneDriveData.isWriting || oneDriveData.isLoading}
               />
-              
+
               <Stack horizontal tokens={{ childrenGap: 2 }}>
-                <PrimaryButton 
-                  text="Load from OneDrive" 
-                  onClick={handleLoadOneDrive} 
+                <PrimaryButton
+                  text="Load from OneDrive"
+                  onClick={handleLoadOneDrive}
                   disabled={oneDriveData.isLoading || oneDriveData.isWriting}
-                  iconProps={{ iconName: 'CloudDownload' }} 
+                  iconProps={{ iconName: 'CloudDownload' }}
                 />
-                <PrimaryButton 
-                  text={oneDriveData.isWriting ? 'Saving...' : 'Save to OneDrive'} 
-                  onClick={handleSaveOneDrive} 
+                <PrimaryButton
+                  text={oneDriveData.isWriting ? 'Saving...' : 'Save to OneDrive'}
+                  onClick={handleSaveOneDrive}
                   disabled={!oneDriveMessage || oneDriveData.isWriting || oneDriveData.isLoading}
-                  iconProps={{ iconName: 'CloudUpload' }} 
+                  iconProps={{ iconName: 'CloudUpload' }}
                 />
               </Stack>
-              
+
               <Label>
                 <Icon iconName="InfoSolid" style={{ marginRight: '4px', color: '#0078d4' }} />
-                Data is stored in your OneDrive (appRoot:/{id}/test-data.json). Each WebPart instance has its own file.
+                Data is stored in your OneDrive (appRoot:/useSPFxOneDriveAppData/test-data.json).
               </Label>
               <Label>
                 <Icon iconName="Warning" style={{ marginRight: '4px', color: '#d83b01' }} />
@@ -760,19 +759,19 @@ const SpFxReactToolkitTest: React.FC = () => {
                 Tenant Property Demo
                 <Separator />
               </h3>
-              
+
               {(tenantVersion.error || tenantCounter.error) && (
                 <MessageBar messageBarType={MessageBarType.error}>
                   Load Error: {tenantVersion.error?.message || tenantCounter.error?.message}
                 </MessageBar>
               )}
-              
+
               {(tenantVersion.writeError || tenantCounter.writeError) && (
                 <MessageBar messageBarType={MessageBarType.warning}>
                   Write Error: {tenantVersion.writeError?.message || tenantCounter.writeError?.message}
                 </MessageBar>
               )}
-              
+
               {(tenantVersion.isLoading || tenantCounter.isLoading) ? (
                 <MessageBar messageBarType={MessageBarType.info}>Loading from tenant app catalog...</MessageBar>
               ) : (tenantVersion.data || tenantCounter.data) ? (
@@ -796,7 +795,7 @@ const SpFxReactToolkitTest: React.FC = () => {
               ) : (
                 <Label>No data loaded yet. Click &quot;Load&quot; to fetch from tenant properties.</Label>
               )}
-              
+
               <TextField
                 label="New Version"
                 value={tenantVersionInput}
@@ -804,43 +803,43 @@ const SpFxReactToolkitTest: React.FC = () => {
                 placeholder="e.g., 1.0.0"
                 disabled={tenantVersion.isWriting || tenantVersion.isLoading || !tenantVersion.canWrite}
               />
-              
+
               <Stack horizontal tokens={{ childrenGap: 2 }}>
-                <PrimaryButton 
-                  text="Load Properties" 
-                  onClick={handleLoadTenantProperty} 
+                <PrimaryButton
+                  text="Load Properties"
+                  onClick={handleLoadTenantProperty}
                   disabled={tenantVersion.isLoading || tenantCounter.isLoading}
-                  iconProps={{ iconName: 'CloudDownload' }} 
+                  iconProps={{ iconName: 'CloudDownload' }}
                 />
-                <PrimaryButton 
-                  text={tenantVersion.isWriting ? 'Saving...' : 'Save Version'} 
-                  onClick={handleSaveTenantVersion} 
+                <PrimaryButton
+                  text={tenantVersion.isWriting ? 'Saving...' : 'Save Version'}
+                  onClick={handleSaveTenantVersion}
                   disabled={!tenantVersionInput || tenantVersion.isWriting || !tenantVersion.canWrite}
-                  iconProps={{ iconName: 'Save' }} 
+                  iconProps={{ iconName: 'Save' }}
                 />
-                <PrimaryButton 
-                  text={tenantCounter.isWriting ? 'Incrementing...' : 'Increment Counter'} 
-                  onClick={handleIncrementTenantCounter} 
+                <PrimaryButton
+                  text={tenantCounter.isWriting ? 'Incrementing...' : 'Increment Counter'}
+                  onClick={handleIncrementTenantCounter}
                   disabled={tenantCounter.isWriting || !tenantCounter.canWrite}
-                  iconProps={{ iconName: 'Add' }} 
+                  iconProps={{ iconName: 'Add' }}
                 />
               </Stack>
-              
+
               <Stack horizontal tokens={{ childrenGap: 2 }}>
-                <DefaultButton 
-                  text="Remove Version" 
-                  onClick={() => handleRemoveTenantProperty('version')} 
+                <DefaultButton
+                  text="Remove Version"
+                  onClick={() => handleRemoveTenantProperty('version')}
                   disabled={tenantVersion.isWriting || !tenantVersion.canWrite || !tenantVersion.data}
-                  iconProps={{ iconName: 'Delete' }} 
+                  iconProps={{ iconName: 'Delete' }}
                 />
-                <DefaultButton 
-                  text="Remove Counter" 
-                  onClick={() => handleRemoveTenantProperty('counter')} 
+                <DefaultButton
+                  text="Remove Counter"
+                  onClick={() => handleRemoveTenantProperty('counter')}
                   disabled={tenantCounter.isWriting || !tenantCounter.canWrite || !tenantCounter.data}
-                  iconProps={{ iconName: 'Delete' }} 
+                  iconProps={{ iconName: 'Delete' }}
                 />
               </Stack>
-              
+
               <Label>
                 <Icon iconName="InfoSolid" style={{ marginRight: '4px', color: '#0078d4' }} />
                 Properties are stored tenant-wide in SharePoint StorageEntity. All users can read, only admins can write.
@@ -853,7 +852,7 @@ const SpFxReactToolkitTest: React.FC = () => {
                 <Icon iconName="Warning" style={{ marginRight: '4px', color: '#d83b01' }} />
                 Requires: Tenant app catalog provisioned, Manage Web permissions to write
               </Label>
-              
+
               {!tenantVersion.canWrite && (
                 <MessageBar messageBarType={MessageBarType.info}>
                   ℹ️ You don&apos;t have permission to modify tenant properties. Contact your SharePoint administrator.

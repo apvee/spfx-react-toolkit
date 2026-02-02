@@ -273,19 +273,19 @@ function MultiStepWizard() {
 
 ## useSPFxOneDriveAppData
 
-Cloud-synced storage using OneDrive app-specific data folder.
+Cloud-synced JSON storage using OneDrive app-specific data folder.
 
 ### Prerequisites
 
 Requires Microsoft Graph permissions:
-- `Files.ReadWrite.AppFolder`
+- `Files.ReadWrite` or `Files.ReadWrite.AppFolder`
 
 ### Signature
 
 ```typescript
-function useSPFxOneDriveAppData<T>(
+function useSPFxOneDriveAppData<T = unknown>(
   fileName: string,
-  defaultValue: T
+  options?: SPFxOneDriveAppDataOptions<T>
 ): SPFxOneDriveAppDataResult<T>
 ```
 
@@ -293,128 +293,238 @@ function useSPFxOneDriveAppData<T>(
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `fileName` | `string` | Yes | File name in app data folder |
-| `defaultValue` | `T` | Yes | Default value when file doesn't exist |
+| `fileName` | `string` | Yes | File name in app data folder (e.g., `'config.json'`) |
+| `options` | `SPFxOneDriveAppDataOptions<T>` | No | Configuration options |
+
+### Options
+
+```typescript
+interface SPFxOneDriveAppDataOptions<T> {
+  /** Optional folder/namespace for file organization */
+  folder?: string;
+  
+  /** Whether to auto-load on mount. Default: true */
+  autoFetch?: boolean;
+  
+  /** Default value when file is missing (404) */
+  defaultValue?: T;
+  
+  /** If true, create file with defaultValue when missing */
+  createIfMissing?: boolean;
+}
+```
 
 ### Returns
 
 ```typescript
 interface SPFxOneDriveAppDataResult<T> {
-  /** Current data value */
-  readonly data: T;
+  /** Current data value (undefined if not loaded) */
+  readonly data: T | undefined;
   
-  /** Loading state */
+  /** Loading state during load() calls */
   readonly isLoading: boolean;
   
-  /** Saving state */
-  readonly isSaving: boolean;
-  
-  /** Error if any operation failed */
+  /** Last error from load() calls */
   readonly error: Error | undefined;
   
-  /** Save data to OneDrive */
-  readonly save: (value: T | ((prev: T) => T)) => Promise<void>;
+  /** True if file does not exist (404 response) */
+  readonly isNotFound: boolean;
   
-  /** Reload data from OneDrive */
-  readonly reload: () => Promise<void>;
+  /** Loading state during write() calls */
+  readonly isWriting: boolean;
+  
+  /** Last error from write() calls */
+  readonly writeError: Error | undefined;
+  
+  /** Load/reload file from OneDrive */
+  readonly load: () => Promise<void>;
+  
+  /** Write data to OneDrive (upsert) */
+  readonly write: (content: T) => Promise<void>;
+  
+  /** True when data is loaded and ready */
+  readonly isReady: boolean;
 }
 ```
 
-### Example: Cloud-Synced Settings
+### Example: Basic Usage with Auto-Fetch
 
 ```tsx
 import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
 
-interface CloudSettings {
-  favorites: string[];
-  recentItems: { id: string; title: string; date: string }[];
-  preferences: { notifications: boolean };
+interface MyConfig {
+  theme: 'light' | 'dark';
+  language: string;
 }
 
-function CloudSyncedFavorites() {
-  const { 
-    data, 
-    isLoading, 
-    isSaving, 
-    save, 
-    error 
-  } = useSPFxOneDriveAppData<CloudSettings>('app-settings.json', {
-    favorites: [],
-    recentItems: [],
-    preferences: { notifications: true }
-  });
+function ConfigPanel() {
+  const { data, isLoading, error, write, isWriting, isReady } = 
+    useSPFxOneDriveAppData<MyConfig>('config.json');
   
-  const addToFavorites = async (itemId: string) => {
-    await save(prev => ({
-      ...prev,
-      favorites: [...prev.favorites, itemId]
-    }));
+  const handleSave = async (newConfig: MyConfig) => {
+    try {
+      await write(newConfig);
+      console.log('Saved!');
+    } catch (err) {
+      console.error('Save failed:', err);
+    }
   };
   
-  const removeFromFavorites = async (itemId: string) => {
-    await save(prev => ({
-      ...prev,
-      favorites: prev.favorites.filter(id => id !== itemId)
-    }));
-  };
-  
-  if (isLoading) return <Spinner label="Loading settings..." />;
+  if (isLoading) return <Spinner label="Loading configuration..." />;
   if (error) return <MessageBar messageBarType={MessageBarType.error}>{error.message}</MessageBar>;
+  if (!isReady) return <Spinner />;
   
   return (
-    <div className="favorites">
-      {isSaving && <span className="sync-indicator">Syncing...</span>}
-      <h3>Favorites ({data.favorites.length})</h3>
-      <ul>
-        {data.favorites.map(id => (
-          <li key={id}>
-            {id}
-            <button onClick={() => removeFromFavorites(id)}>Remove</button>
-          </li>
-        ))}
-      </ul>
+    <div>
+      <Toggle 
+        label="Dark Mode"
+        checked={data?.theme === 'dark'}
+        onChange={(_, checked) => handleSave({ ...data!, theme: checked ? 'dark' : 'light' })}
+        disabled={isWriting}
+      />
+      {isWriting && <Spinner label="Saving..." />}
     </div>
   );
 }
 ```
 
-### Example: Cross-Device Sync
+### Example: With Folder Namespace
 
 ```tsx
 import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
 
-interface UserState {
-  lastVisited: { url: string; title: string; timestamp: number }[];
-  bookmarks: { id: string; url: string; title: string }[];
-}
-
-function CrossDeviceState() {
-  const { data, save, reload, isLoading, isSaving } = useSPFxOneDriveAppData<UserState>(
-    'user-state.json',
-    { lastVisited: [], bookmarks: [] }
+function MyApp() {
+  // Files stored in appRoot:/my-app-v2/
+  const { data, write, isReady } = useSPFxOneDriveAppData<AppState>(
+    'state.json',
+    { folder: 'my-app-v2' }
   );
   
-  // Track page visits
-  React.useEffect(() => {
-    const visit = {
-      url: window.location.href,
-      title: document.title,
-      timestamp: Date.now()
-    };
-    
-    save(prev => ({
-      ...prev,
-      lastVisited: [visit, ...prev.lastVisited.slice(0, 9)]
-    }));
-  }, []);
+  if (!isReady) return <Spinner />;
+  return <div>State: {JSON.stringify(data)}</div>;
+}
+```
+
+### Example: Create If Missing
+
+```tsx
+import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
+
+interface UserPrefs {
+  favorites: string[];
+  notifications: boolean;
+}
+
+const defaultPrefs: UserPrefs = {
+  favorites: [],
+  notifications: true
+};
+
+function UserPreferences() {
+  const { 
+    data, 
+    isLoading, 
+    isNotFound, 
+    isReady,
+    write 
+  } = useSPFxOneDriveAppData<UserPrefs>('prefs.json', {
+    folder: 'user-settings',
+    defaultValue: defaultPrefs,
+    createIfMissing: true  // Auto-create file if missing
+  });
+  
+  // If file is missing, it will be auto-created with defaultValue
+  if (isLoading) return <Spinner label="Loading preferences..." />;
+  if (!isReady) return <Spinner />;
+  
+  const addFavorite = async (id: string) => {
+    await write({
+      ...data!,
+      favorites: [...data!.favorites, id]
+    });
+  };
   
   return (
-    <div className="sync-status">
-      <button onClick={reload} disabled={isLoading}>
-        🔄 Sync from Cloud
+    <div>
+      <h3>Favorites ({data?.favorites.length})</h3>
+      {/* ... */}
+    </div>
+  );
+}
+```
+
+### Example: Manual Load (Lazy)
+
+```tsx
+import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
+
+function LazyLoader() {
+  const { data, load, isLoading, isReady } = useSPFxOneDriveAppData<CacheData>(
+    'cache.json',
+    { autoFetch: false }  // Don't auto-load
+  );
+  
+  return (
+    <div>
+      <button onClick={load} disabled={isLoading}>
+        {isLoading ? 'Loading...' : 'Load Cache'}
       </button>
-      {isSaving && <span>Saving to OneDrive...</span>}
-      <p>Last visited ({data.lastVisited.length} items synced across devices)</p>
+      {isReady && <pre>{JSON.stringify(data, null, 2)}</pre>}
+    </div>
+  );
+}
+```
+
+### Example: CRUD-like Operations
+
+```tsx
+import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
+
+interface TodoList {
+  items: Array<{ id: string; text: string; done: boolean }>;
+}
+
+function TodoApp() {
+  const { data, write, isLoading, isWriting, isReady } = 
+    useSPFxOneDriveAppData<TodoList>('todos.json', {
+      folder: 'todo-app',
+      defaultValue: { items: [] },
+      createIfMissing: true
+    });
+  
+  const addTodo = async (text: string) => {
+    const newItem = { id: crypto.randomUUID(), text, done: false };
+    await write({
+      items: [...(data?.items ?? []), newItem]
+    });
+  };
+  
+  const toggleTodo = async (id: string) => {
+    await write({
+      items: data?.items.map(item => 
+        item.id === id ? { ...item, done: !item.done } : item
+      ) ?? []
+    });
+  };
+  
+  const deleteTodo = async (id: string) => {
+    await write({
+      items: data?.items.filter(item => item.id !== id) ?? []
+    });
+  };
+  
+  if (isLoading) return <Spinner />;
+  if (!isReady) return <Spinner label="Initializing..." />;
+  
+  return (
+    <div>
+      <TodoList 
+        items={data?.items ?? []} 
+        onToggle={toggleTodo}
+        onDelete={deleteTodo}
+      />
+      <AddTodoForm onAdd={addTodo} disabled={isWriting} />
+      {isWriting && <span>Saving...</span>}
     </div>
   );
 }
@@ -422,7 +532,7 @@ function CrossDeviceState() {
 
 ### Source
 
-[View source](../../src/hooks/useSPFxOneDriveAppData.ts)
+[View source](../../../src/hooks/useSPFxOneDriveAppData.ts)
 
 ---
 
@@ -434,4 +544,4 @@ function CrossDeviceState() {
 
 ---
 
-*Generated from JSDoc comments. Last updated: January 31, 2026*
+*Generated from JSDoc comments. Last updated: February 2, 2026*

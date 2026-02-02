@@ -1,8 +1,62 @@
 // useSPFxOneDriveAppData.ts
 // Hook to manage JSON files in OneDrive appRoot folder with state management
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useSPFxMSGraphClient } from './useSPFxMSGraphClient';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PURE FUNCTIONS (extracted for stability and testability)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Build Graph API path with optional folder namespace.
+ * Sanitizes folder name to prevent path traversal attacks.
+ * 
+ * @param fileName - Name of the file
+ * @param folderName - Optional folder namespace
+ * @returns Full Graph API path for file content
+ */
+function buildApiPath(fileName: string, folderName?: string): string {
+  const basePath = '/me/drive/special/appRoot:';
+
+  if (folderName) {
+    // Sanitize folder name: only allow alphanumeric, hyphens, underscores
+    // This prevents path traversal (../) and other injection attacks
+    const safeFolderName = folderName.replace(/[^a-zA-Z0-9-_]/g, '-');
+    return `${basePath}/${safeFolderName}/${fileName}:/content`;
+  }
+
+  return `${basePath}/${fileName}:/content`;
+}
+
+/**
+ * Check if an error indicates a 404 / itemNotFound response from Graph API.
+ * 
+ * @param err - The error to check
+ * @returns True if the error indicates file not found
+ */
+function isNotFoundError(err: unknown): boolean {
+  const anyErr = err as {
+    statusCode?: number;
+    status?: number;
+    code?: string;
+    message?: string;
+    body?: { error?: { code?: string; message?: string } };
+  };
+
+  // Check status codes
+  if (anyErr?.statusCode === 404 || anyErr?.status === 404) return true;
+
+  // Check error codes
+  const code = anyErr?.code ?? anyErr?.body?.error?.code;
+  if (code && /itemnotfound/i.test(code)) return true;
+
+  // Check error messages as fallback
+  const message = anyErr?.message ?? anyErr?.body?.error?.message;
+  if (message && /(\b404\b|not found|itemnotfound)/i.test(message)) return true;
+
+  return false;
+}
 
 /**
  * Return type for useSPFxOneDriveAppData hook
@@ -13,13 +67,13 @@ export interface SPFxOneDriveAppDataResult<T> {
    * Undefined if not loaded yet or on error.
    */
   readonly data: T | undefined;
-  
+
   /** 
    * Loading state for read operations.
    * True during initial load or manual load() calls.
    */
   readonly isLoading: boolean;
-  
+
   /** 
    * Last error from read operations.
    * Cleared on successful load or write.
@@ -31,19 +85,19 @@ export interface SPFxOneDriveAppDataResult<T> {
    * In the legacy signature this is treated as a non-error.
    */
   readonly isNotFound: boolean;
-  
+
   /** 
    * Loading state for write operations.
    * True during write() calls.
    */
   readonly isWriting: boolean;
-  
+
   /** 
    * Last error from write operations.
    * Cleared on successful write or load.
    */
   readonly writeError: Error | undefined;
-  
+
   /** 
    * Manually load/reload the file from OneDrive.
    * Updates data, isLoading, and error states.
@@ -59,7 +113,7 @@ export interface SPFxOneDriveAppDataResult<T> {
    * ```
    */
   readonly load: () => Promise<void>;
-  
+
   /** 
    * Write data to OneDrive file.
    * Creates file if it doesn't exist, updates if it does.
@@ -78,7 +132,7 @@ export interface SPFxOneDriveAppDataResult<T> {
    * ```
    */
   readonly write: (content: T) => Promise<void>;
-  
+
   /** 
    * Computed state: true if data is loaded successfully.
    * Equivalent to: !isLoading && !error && data !== undefined
@@ -303,91 +357,59 @@ export interface SPFxOneDriveAppDataOptions<T> {
  * }
  * ```
  */
-// Legacy signature (backward compatible)
-export function useSPFxOneDriveAppData<T = unknown>(
-  fileName: string,
-  folder?: string,
-  autoFetch?: boolean
-): SPFxOneDriveAppDataResult<T>;
-
-// New signature (options object)
 export function useSPFxOneDriveAppData<T = unknown>(
   fileName: string,
   options?: SPFxOneDriveAppDataOptions<T>
-): SPFxOneDriveAppDataResult<T>;
-
-export function useSPFxOneDriveAppData<T = unknown>(
-  fileName: string,
-  folderOrOptions?: string | SPFxOneDriveAppDataOptions<T>,
-  autoFetch: boolean = true
 ): SPFxOneDriveAppDataResult<T> {
-  const { client } = useSPFxMSGraphClient();
+  const {
+    client,
+    isReady: isClientReady,
+    isInitializing: isClientInitializing,
+    initError: clientInitError
+  } = useSPFxMSGraphClient();
 
-  const options: SPFxOneDriveAppDataOptions<T> =
-    typeof folderOrOptions === 'object' && folderOrOptions !== null
-      ? folderOrOptions
-      : { folder: folderOrOptions, autoFetch };
+  // ═══════════════════════════════════════════════════════════════════════════
+  // OPTIONS (stabilized with useMemo to prevent unnecessary re-renders)
+  // ═══════════════════════════════════════════════════════════════════════════
 
-  const folder = options.folder;
-  const shouldAutoFetch = options.autoFetch ?? true;
-  const defaultValue = options.defaultValue;
-  const createIfMissing = options.createIfMissing ?? false;
-  
-  // State management
+  const resolvedOptions = useMemo(() => options ?? {}, [options]);
+
+  // Extract stable primitive values for dependency arrays
+  const folder = resolvedOptions.folder;
+  const shouldAutoFetch = resolvedOptions.autoFetch ?? true;
+  const defaultValue = resolvedOptions.defaultValue;
+  const createIfMissing = resolvedOptions.createIfMissing ?? false;
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // STATE MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════════════════
+
   const [data, setData] = useState<T | undefined>(defaultValue);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined>(undefined);
   const [isWriting, setIsWriting] = useState<boolean>(false);
   const [writeError, setWriteError] = useState<Error | undefined>(undefined);
   const [isNotFound, setIsNotFound] = useState<boolean>(false);
-  
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // REFS (for cleanup and stable references)
+  // ═══════════════════════════════════════════════════════════════════════════
+
   // Track component mounted state to prevent memory leaks
-  const isMounted = useRef<boolean>(true);
-  
+  const isMountedRef = useRef<boolean>(true);
   useEffect(() => {
-    isMounted.current = true;
     return () => {
-      isMounted.current = false;
+      isMountedRef.current = false;
     };
   }, []);
-  
-  /**
-   * Build Graph API path with optional folder namespace
-   * Sanitizes folder name to prevent path traversal attacks
-   */
-  const buildApiPath = useCallback((file: string, folderName?: string): string => {
-    const basePath = '/me/drive/special/appRoot:';
-    
-    if (folderName) {
-      // Sanitize folder name: only allow alphanumeric, hyphens, underscores
-      // This prevents path traversal (../) and other injection attacks
-      const safeFolderName = folderName.replace(/[^a-zA-Z0-9-_]/g, '-');
-      return `${basePath}/${safeFolderName}/${file}:/content`;
-    }
-    
-    return `${basePath}/${file}:/content`;
-  }, []);
 
-  const isNotFoundError = useCallback((err: unknown): boolean => {
-    const anyErr = err as {
-      statusCode?: number;
-      status?: number;
-      code?: string;
-      message?: string;
-      body?: { error?: { code?: string; message?: string } };
-    };
+  // Track if createIfMissing write has been attempted (to prevent multiple writes)
+  const createAttemptedRef = useRef<boolean>(false);
 
-    if (anyErr?.statusCode === 404 || anyErr?.status === 404) return true;
+  // ═══════════════════════════════════════════════════════════════════════════
+  // WRITE CALLBACK (defined first, no dependency on load)
+  // ═══════════════════════════════════════════════════════════════════════════
 
-    const code = anyErr?.code ?? anyErr?.body?.error?.code;
-    if (code && /itemnotfound/i.test(code)) return true;
-
-    const message = anyErr?.message ?? anyErr?.body?.error?.message;
-    if (message && /(\b404\b|not found|itemnotfound)/i.test(message)) return true;
-
-    return false;
-  }, []);
-  
   /**
    * Write data to OneDrive file
    * Creates file if it doesn't exist, updates if it does (upsert)
@@ -395,28 +417,34 @@ export function useSPFxOneDriveAppData<T = unknown>(
    */
   const write = useCallback(async (content: T): Promise<void> => {
     if (!client) {
+      if (isClientInitializing) {
+        throw new Error('Graph client is still initializing. Please wait and try again.');
+      }
+      if (clientInitError) {
+        throw new Error(`Graph client initialization failed: ${clientInitError.message}`);
+      }
       throw new Error('Graph client not available. Cannot write file.');
     }
-    
+
     if (!fileName) {
       throw new Error('fileName is required. Cannot write file.');
     }
-    
+
     setIsWriting(true);
     setWriteError(undefined);
-    
+
     try {
       const apiPath = buildApiPath(fileName, folder);
-      
+
       // Always stringify to ensure valid JSON
       const jsonContent = JSON.stringify(content);
-      
+
       await client
         .api(apiPath)
         .header('Content-Type', 'application/json')
         .put(jsonContent);
-      
-      if (isMounted.current) {
+
+      if (isMountedRef.current) {
         // Update local data to reflect successful write
         setData(content);
         setIsNotFound(false);
@@ -424,44 +452,60 @@ export function useSPFxOneDriveAppData<T = unknown>(
         setError(undefined);
       }
     } catch (err) {
-      if (isMounted.current) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        setWriteError(error);
-        console.error('Failed to write file to OneDrive:', error);
+      if (isMountedRef.current) {
+        const writeErr = err instanceof Error ? err : new Error(String(err));
+        setWriteError(writeErr);
+        console.error('Failed to write file to OneDrive:', writeErr);
       }
       // Re-throw to allow caller to handle
       throw err;
     } finally {
-      if (isMounted.current) {
+      if (isMountedRef.current) {
         setIsWriting(false);
       }
     }
-  }, [client, fileName, folder, buildApiPath]);
+  }, [client, fileName, folder, isClientInitializing, clientInitError]);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // LOAD CALLBACK (NO dependency on write - uses effect for createIfMissing)
+  // ═══════════════════════════════════════════════════════════════════════════
 
   /**
    * Load file from OneDrive
    * Updates data, isLoading, and error states
+   * Does NOT call write directly - createIfMissing is handled by separate effect
    */
   const load = useCallback(async (): Promise<void> => {
     if (!client) {
-      console.warn('Graph client not available yet. Skipping load.');
+      if (isClientInitializing) {
+        console.info('Graph client is still initializing. Skipping load - will auto-retry when ready.');
+        return;
+      }
+      if (clientInitError) {
+        console.error('Graph client initialization failed:', clientInitError.message);
+        return;
+      }
+      console.warn('Graph client not available. Skipping load.');
       return;
     }
-    
+
     if (!fileName) {
       console.warn('fileName is required. Skipping load.');
       return;
     }
-    
+
+    // Reset createAttempted flag when load is called (fresh attempt)
+    createAttemptedRef.current = false;
+
     setIsLoading(true);
     setError(undefined);
     setIsNotFound(false);
-    
+
     try {
       const apiPath = buildApiPath(fileName, folder);
       const fileContent = await client.api(apiPath).get();
-      
-      if (isMounted.current) {
+
+      if (isMountedRef.current) {
         // Parse JSON if response is string, otherwise use as-is
         if (typeof fileContent === 'string') {
           try {
@@ -472,62 +516,84 @@ export function useSPFxOneDriveAppData<T = unknown>(
         } else {
           setData(fileContent as T);
         }
-
         setIsNotFound(false);
       }
     } catch (err) {
-      if (isMounted.current) {
+      if (isMountedRef.current) {
         const notFound = isNotFoundError(err);
         setIsNotFound(notFound);
 
         if (notFound) {
           // Missing file is treated as a non-error.
-          // - Legacy signature: data stays undefined
-          // - Options signature: if defaultValue provided, data is set to it
+          // Set data to defaultValue if provided, otherwise undefined
           if (defaultValue !== undefined) {
             setData(defaultValue);
-
-            if (createIfMissing) {
-              try {
-                await write(defaultValue);
-              } catch (writeErr) {
-                // write() already updates writeError state
-                console.error('Failed to create missing file in OneDrive:', writeErr);
-              }
-            }
           } else {
             setData(undefined);
           }
-
           setError(undefined);
           console.info('OneDrive file not found. isNotFound=true');
+          // NOTE: createIfMissing is handled by separate useEffect
           return;
         }
 
-        const error = err instanceof Error ? err : new Error(String(err));
-        setError(error);
-        // Don't throw - allow component to handle error via state
-        console.error('Failed to load file from OneDrive:', error);
+        const loadError = err instanceof Error ? err : new Error(String(err));
+        setError(loadError);
+        console.error('Failed to load file from OneDrive:', loadError);
       }
     } finally {
-      if (isMounted.current) {
+      if (isMountedRef.current) {
         setIsLoading(false);
       }
     }
-  }, [client, fileName, folder, buildApiPath, defaultValue, createIfMissing, isNotFoundError, write]);
-  
-  // Auto-fetch on mount if enabled
+  }, [client, fileName, folder, defaultValue, isClientInitializing, clientInitError]); // ← NO write, NO createIfMissing
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EFFECTS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Auto-fetch on mount if enabled (wait for client to be ready)
   useEffect(() => {
-    if (shouldAutoFetch && client && fileName) {
+    if (shouldAutoFetch && isClientReady && fileName) {
       load().catch(() => {
         // Error already handled in load() function
       });
     }
-  }, [shouldAutoFetch, client, fileName, load]);
-  
+  }, [shouldAutoFetch, isClientReady, fileName, load]);
+
+  // Separate effect for createIfMissing - reacts to isNotFound state
+  // This breaks the circular dependency: load → write
+  useEffect(() => {
+    // Guard conditions:
+    // 1. File must be not found
+    // 2. createIfMissing must be enabled
+    // 3. defaultValue must be provided
+    // 4. Must not be currently writing (prevent double-write)
+    // 5. Must not have already attempted create (prevent infinite loop)
+    // 6. Must not be currently loading (wait for load to complete)
+    if (
+      isNotFound &&
+      createIfMissing &&
+      defaultValue !== undefined &&
+      !isWriting &&
+      !createAttemptedRef.current &&
+      !isLoading
+    ) {
+      createAttemptedRef.current = true;
+      write(defaultValue).catch((writeErr) => {
+        // write() already updates writeError state
+        console.error('Failed to create missing file in OneDrive:', writeErr);
+      });
+    }
+  }, [isNotFound, createIfMissing, defaultValue, isWriting, isLoading, write]);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // COMPUTED STATE & RETURN
+  // ═══════════════════════════════════════════════════════════════════════════
+
   // Computed state: ready when data loaded successfully
   const isReady = !isLoading && !error && data !== undefined;
-  
+
   return {
     data,
     isLoading,

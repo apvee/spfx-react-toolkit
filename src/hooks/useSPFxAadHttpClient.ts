@@ -1,7 +1,7 @@
 // useSPFxAadHttpClient.ts
 // Hook to access Azure AD-secured APIs with state management
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useSPFxServiceScope } from './useSPFxServiceScope';
 import { AadHttpClient, AadHttpClientFactory } from '@microsoft/sp-http';
 import { useAsyncInvoke } from './useAsyncInvoke.internal';
@@ -23,6 +23,7 @@ export interface SPFxAadHttpClientInfo {
    * 
    * @param fn - Function that receives AadHttpClient and returns a promise
    * @returns Promise with the result
+   * @throws Error if client is not initialized yet
    * 
    * @example
    * ```tsx
@@ -45,6 +46,7 @@ export interface SPFxAadHttpClientInfo {
   /** 
    * Last error from invoke() calls.
    * Does not capture errors from direct client usage.
+   * @see initError for initialization errors
    */
   readonly error: Error | undefined;
   
@@ -56,6 +58,53 @@ export interface SPFxAadHttpClientInfo {
   
   /** Current Azure AD resource URL or App ID */
   readonly resourceUrl: string | undefined;
+
+  /**
+   * True while the AAD client is being initialized.
+   * Use this to show a loading indicator during startup.
+   * 
+   * @example
+   * ```tsx
+   * const { client, isInitializing } = useSPFxAadHttpClient('https://api.contoso.com');
+   * 
+   * if (isInitializing) return <Spinner label="Initializing AAD client..." />;
+   * if (!client) return <Error message="AAD client unavailable" />;
+   * ```
+   */
+  readonly isInitializing: boolean;
+
+  /**
+   * Error that occurred during client initialization.
+   * If set, the client will remain undefined.
+   * 
+   * @example
+   * ```tsx
+   * const { initError } = useSPFxAadHttpClient('https://api.contoso.com');
+   * 
+   * if (initError) {
+   *   return <MessageBar messageBarType={MessageBarType.error}>
+   *     Failed to initialize AAD client: {initError.message}
+   *   </MessageBar>;
+   * }
+   * ```
+   */
+  readonly initError: Error | undefined;
+
+  /**
+   * Computed state: true when client is ready for use.
+   * Equivalent to: client !== undefined && !isInitializing && !initError
+   * 
+   * @example
+   * ```tsx
+   * const { isReady, invoke, resourceUrl } = useSPFxAadHttpClient('https://api.contoso.com');
+   * 
+   * if (!isReady) return <Spinner />;
+   * 
+   * // Safe to use client or invoke
+   * const data = await invoke(c => c.get(`${resourceUrl}/api/data`, ...).then(r => r.json()));
+   * ```
+   */
+  readonly isReady: boolean;
 }
 
 /**
@@ -249,40 +298,92 @@ export interface SPFxAadHttpClientInfo {
 export function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpClientInfo {
   const { consume } = useSPFxServiceScope();
   
+  // ═══════════════════════════════════════════════════════════════════════════
+  // STATE
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  const [resourceUrl, setResourceUrl] = useState<string | undefined>(initialResourceUrl);
+  const [client, setClient] = useState<AadHttpClient | undefined>(undefined);
+  const [isInitializing, setIsInitializing] = useState<boolean>(!!initialResourceUrl);
+  const [initError, setInitError] = useState<Error | undefined>(undefined);
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // REFS (for cleanup and preventing memory leaks)
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  // Track component mounted state to prevent memory leaks
+  const isMountedRef = useRef<boolean>(true);
+  
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FACTORY (lazy consume from ServiceScope)
+  // ═══════════════════════════════════════════════════════════════════════════
+  
   // Lazy consume AadHttpClientFactory from ServiceScope (cached by useMemo)
   const factory = useMemo(() => {
     return consume<AadHttpClientFactory>(AadHttpClientFactory.serviceKey);
   }, [consume]);
   
-  // State management for resourceUrl and client
-  const [resourceUrl, setResourceUrl] = useState<string | undefined>(initialResourceUrl);
-  const [client, setClient] = useState<AadHttpClient | undefined>(undefined);
+  // ═══════════════════════════════════════════════════════════════════════════
+  // INITIALIZATION EFFECT
+  // ═══════════════════════════════════════════════════════════════════════════
   
   // Initialize client when resourceUrl changes
   useEffect(() => {
-    // Reset client immediately when resourceUrl changes
+    // Reset client and error immediately when resourceUrl changes
     setClient(undefined);
+    setInitError(undefined);
     
     if (!resourceUrl) {
+      setIsInitializing(false);
       return;
     }
+    
+    setIsInitializing(true);
     
     // Get AadHttpClient for the specified resource
     factory
       .getClient(resourceUrl)
       .then((aadClient: AadHttpClient) => {
-        setClient(aadClient);
+        // Only update state if still mounted
+        if (isMountedRef.current) {
+          setClient(aadClient);
+          setIsInitializing(false);
+        }
       })
-      .catch((err: Error) => {
-        console.error('Failed to initialize AadHttpClient:', err);
+      .catch((err: unknown) => {
+        // Only update state if still mounted
+        if (isMountedRef.current) {
+          const error = err instanceof Error ? err : new Error(String(err));
+          setInitError(error);
+          setIsInitializing(false);
+          console.error('Failed to initialize AadHttpClient:', error);
+        }
       });
   }, [resourceUrl, factory]);
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ASYNC INVOKE PATTERN
+  // ═══════════════════════════════════════════════════════════════════════════
   
   // Use shared async invocation pattern
   const { invoke, isLoading, error, clearError } = useAsyncInvoke(
     client,
-    'AadHttpClient not initialized. Set resourceUrl and wait for client initialization.'
+    'AadHttpClient not initialized. Set resourceUrl and wait for client initialization, or check initError.'
   );
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // COMPUTED STATE & RETURN
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  // Computed: ready when client is available and no errors
+  const isReady = client !== undefined && !isInitializing && !initError;
   
   return {
     client,
@@ -292,5 +393,8 @@ export function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpCl
     clearError,
     setResourceUrl,
     resourceUrl,
+    isInitializing,
+    initError,
+    isReady,
   };
 }

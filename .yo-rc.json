@@ -1,7 +1,7 @@
 {
   "@microsoft/generator-sharepoint": {
     "plusBeta": false,
-    "isCreatingSolution": true,
+    "isCreatingSolution": false,
     "nodeVersion": "22.14.0",
     "sdksVersions": {},
     "version": "1.21.1",
@@ -13,6 +13,9 @@
     "solutionShortDescription": "@apvee/spfx-react-toolkit description",
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
-    "componentType": "webpart"
+    "componentType": "extension",
+    "extensionType": "ApplicationCustomizer",
+    "template": "none",
+    "componentName": "SPFxReactToolkitTest"
   }
 }

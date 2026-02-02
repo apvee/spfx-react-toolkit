@@ -13,9 +13,9 @@ export interface SPFxHttpClientInfo {
   /** 
    * Native HttpClient from SPFx.
    * Provides access to generic HTTP endpoints (non-SharePoint).
-   * Always available (non-undefined) after Provider initialization.
+   * Will be undefined if ServiceScope is not available.
    */
-  readonly client: HttpClient;
+  readonly client: HttpClient | undefined;
   
   /** 
    * Invoke HTTP API call with automatic state management.
@@ -23,6 +23,7 @@ export interface SPFxHttpClientInfo {
    * 
    * @param fn - Function that receives HttpClient and returns a promise
    * @returns Promise with the result
+   * @throws Error if client is not available
    * 
    * @example
    * ```tsx
@@ -50,6 +51,22 @@ export interface SPFxHttpClientInfo {
   
   /** Clear the current error */
   readonly clearError: () => void;
+
+  /**
+   * Computed state: true when client is ready for use.
+   * Equivalent to: client !== undefined
+   * 
+   * @example
+   * ```tsx
+   * const { isReady, invoke } = useSPFxHttpClient();
+   * 
+   * if (!isReady) return <Spinner label="Waiting for HttpClient..." />;
+   * 
+   * // Safe to use invoke
+   * const data = await invoke(c => c.get(...).then(r => r.json()));
+   * ```
+   */
+  readonly isReady: boolean;
 }
 
 /**
@@ -241,15 +258,24 @@ export function useSPFxHttpClient(): SPFxHttpClientInfo {
   const { consume } = useSPFxServiceScope();
   
   // Lazy consume HttpClient from ServiceScope (cached by useMemo)
-  const client = useMemo(() => {
-    return consume<HttpClient>(HttpClient.serviceKey);
+  // Returns undefined if ServiceScope is not available
+  const client = useMemo((): HttpClient | undefined => {
+    try {
+      return consume<HttpClient>(HttpClient.serviceKey);
+    } catch (err) {
+      console.error('Failed to consume HttpClient from ServiceScope:', err);
+      return undefined;
+    }
   }, [consume]);
   
   // Use shared async invocation pattern
   const { invoke, isLoading, error, clearError } = useAsyncInvoke(
     client,
-    'HttpClient not initialized. Check SPFx context.'
+    'HttpClient not available. Check SPFx context and ServiceScope.'
   );
+  
+  // Computed: ready when client is available
+  const isReady = client !== undefined;
   
   return {
     client,
@@ -257,5 +283,6 @@ export function useSPFxHttpClient(): SPFxHttpClientInfo {
     isLoading,
     error,
     clearError,
+    isReady,
   };
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+    <ClientSideComponentInstance
+        Title="SpFxReactToolkitTest"
+        Location="ClientSideExtension.ApplicationCustomizer"
+        ComponentId="4c2e58cc-1253-43e5-bfa3-b22a07ace279"
+        Properties="{&quot;testMessage&quot;:&quot;Test message&quot;}">
+    </ClientSideComponentInstance>
+</Elements>
