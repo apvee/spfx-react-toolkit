@@ -15,25 +15,25 @@ export interface SPFxTenantPropertyResult<T> {
    * Undefined if not loaded yet or on error.
    */
   readonly data: T | undefined;
-  
+
   /** 
    * Property description metadata (optional).
    * SharePoint StorageEntity only supports description, not comment.
    */
   readonly description: string | undefined;
-  
+
   /** 
    * Loading state for read operations.
    * True during initial load or manual load() calls.
    */
   readonly isLoading: boolean;
-  
+
   /** 
    * Last error from read operations.
    * Cleared on successful load.
    */
   readonly error: Error | undefined;
-  
+
   /** 
    * Manually load/reload the property from tenant app catalog.
    * Updates data, description, isLoading, and error states.
@@ -49,7 +49,7 @@ export interface SPFxTenantPropertyResult<T> {
    * ```
    */
   readonly load: () => Promise<void>;
-  
+
   /** 
    * Computed state: true if data is loaded successfully.
    * Equivalent to: !isLoading && !error && data !== undefined
@@ -191,13 +191,13 @@ export function useSPFxTenantProperty<T = unknown>(
   autoFetch: boolean = true
 ): SPFxTenantPropertyResult<T> {
   const { spHttpClient, discoverAppCatalogUrl, isMountedRef } = useAppCatalogUrl();
-  
+
   // State management
   const [data, setData] = useState<T | undefined>(undefined);
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined>(undefined);
-  
+
   /**
    * Deserialize value from storage
    * - Try JSON.parse first
@@ -211,7 +211,7 @@ export function useSPFxTenantProperty<T = unknown>(
       return rawValue as T;
     }
   }, []);
-  
+
   /**
    * Load property from tenant app catalog
    */
@@ -220,31 +220,31 @@ export function useSPFxTenantProperty<T = unknown>(
       console.warn('SPHttpClient not available yet. Skipping load.');
       return;
     }
-    
+
     if (!key) {
       console.warn('key is required. Skipping load.');
       return;
     }
-    
+
     setIsLoading(true);
     setError(undefined);
-    
+
     try {
       // Discover app catalog URL
       const catalogUrl = await discoverAppCatalogUrl();
-      
+
       // Read property
       const response: SPHttpClientResponse = await spHttpClient.get(
         `${catalogUrl}/_api/web/GetStorageEntity('${encodeURIComponent(key)}')`,
         SPHttpClient.configurations.v1
       );
-      
+
       if (!response.ok) {
         throw new Error(`Failed to read property: ${response.statusText}`);
       }
-      
+
       const entity: IStorageEntity = await response.json();
-      
+
       if (isMountedRef.current) {
         if (entity.Value) {
           setData(deserializeValue(entity.Value));
@@ -267,7 +267,7 @@ export function useSPFxTenantProperty<T = unknown>(
       }
     }
   }, [spHttpClient, key, discoverAppCatalogUrl, deserializeValue, isMountedRef]);
-  
+
   // Auto-fetch on mount if enabled
   useEffect(() => {
     if (autoFetch && spHttpClient && key) {
@@ -276,10 +276,10 @@ export function useSPFxTenantProperty<T = unknown>(
       });
     }
   }, [autoFetch, spHttpClient, key, load]);
-  
+
   // Computed state: ready when data loaded successfully
   const isReady = !isLoading && !error && data !== undefined;
-  
+
   return {
     data,
     description,
