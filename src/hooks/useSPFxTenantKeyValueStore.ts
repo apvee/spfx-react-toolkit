@@ -61,6 +61,45 @@ function deserializeValue<T>(rawValue: string): T {
   }
 }
 
+/**
+ * Build the list REST API base URL.
+ *
+ * @param catalogUrl - Tenant app catalog absolute URL
+ * @returns REST API URL for the TenantKeyValueStore list
+ */
+function getListApiUrl(catalogUrl: string): string {
+  return `${catalogUrl}/_api/web/lists/getByTitle('${LIST_TITLE}')`;
+}
+
+/**
+ * Create a multiline text (Note) field on the list.
+ *
+ * @param client - SPHttpClient instance
+ * @param listApiUrl - REST API URL for the target list
+ * @param fieldTitle - Internal name / title for the new field
+ */
+async function createField(
+  client: SPHttpClient,
+  listApiUrl: string,
+  fieldTitle: string
+): Promise<void> {
+  const response: SPHttpClientResponse = await client.post(
+    `${listApiUrl}/fields`,
+    SPHttpClient.configurations.v1,
+    {
+      body: JSON.stringify({
+        FieldTypeKind: 3, // Note (multiline text)
+        Title: fieldTitle
+      })
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to create ${fieldTitle} field: ${response.statusText}. ${errorText}`);
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // TYPES
 // ═══════════════════════════════════════════════════════════════════════════
@@ -373,12 +412,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
   // Internal helpers
   // ─────────────────────────────────────────────────────────────────────────
 
-  /**
-   * Build the list REST API base URL
-   */
-  const getListApiUrl = useCallback((catalogUrl: string): string => {
-    return `${catalogUrl}/_api/web/lists/getByTitle('${LIST_TITLE}')`;
-  }, []);
+
 
   /**
    * Check and update write permission (executed once)
@@ -399,31 +433,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
       });
   }, [checkWritePermission, isMountedRef]);
 
-  /**
-   * Create a multiline text (Note) field on the list.
-   * Extracted to avoid duplication between fresh-provision and field-repair paths.
-   */
-  const createField = useCallback(async (
-    client: SPHttpClient,
-    listApiUrl: string,
-    fieldTitle: string
-  ): Promise<void> => {
-    const response: SPHttpClientResponse = await client.post(
-      `${listApiUrl}/fields`,
-      SPHttpClient.configurations.v1,
-      {
-        body: JSON.stringify({
-          FieldTypeKind: 3, // Note (multiline text)
-          Title: fieldTitle
-        })
-      }
-    );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to create ${fieldTitle} field: ${response.statusText}. ${errorText}`);
-    }
-  }, []);
 
   /**
    * Ensure the hidden list exists and has all required fields.
@@ -476,8 +486,8 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
 
         const fields: IFieldsCheckResponse = await fieldsResponse.json();
         const existingFields = fields.value.map(f => f.InternalName);
-        const hasValue = existingFields.indexOf('Value') !== -1;
-        const hasDescription = existingFields.indexOf('Description') !== -1;
+        const hasValue = existingFields.includes('Value');
+        const hasDescription = existingFields.includes('Description');
 
         // All fields present → list is fully ready
         if (hasValue && hasDescription) {
@@ -551,7 +561,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
       .catch((err: Error) => { cleanupMutex(); throw err; });
     provisioningPromiseRef.current = promise;
     return promise;
-  }, [createField, getListApiUrl]);
+  }, []);
 
   // ─────────────────────────────────────────────────────────────────────────
   // Eager initialization: verify/provision list as soon as SPHttpClient is
@@ -593,7 +603,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
 
     const data: IListItemsResponse = await response.json();
     return data.value.length > 0 ? data.value[0] : undefined;
-  }, [getListApiUrl]);
+  }, []);
 
   /**
    * Map a raw SharePoint list item to an SPFxTenantKeyValueStoreItem.
@@ -622,9 +632,6 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
     try {
       const catalogUrl = await discoverAppCatalogUrl();
 
-      // Check permission in background (non-blocking)
-      ensurePermissionChecked(catalogUrl);
-
       // Ensure list exists (auto-provision if needed; fallback-safe for read-only users)
       try {
         await ensureListReady(spHttpClient, catalogUrl);
@@ -648,7 +655,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
         setIsLoading(false);
       }
     }
-  }, [spHttpClient, discoverAppCatalogUrl, ensurePermissionChecked, ensureListReady, findItemByKey, isMountedRef]);
+  }, [spHttpClient, discoverAppCatalogUrl, ensureListReady, findItemByKey, isMountedRef]);
 
   const list = useCallback(async (): Promise<SPFxTenantKeyValueStoreItem<unknown>[]> => {
     if (!spHttpClient) {
@@ -660,9 +667,6 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
 
     try {
       const catalogUrl = await discoverAppCatalogUrl();
-
-      // Check permission in background (non-blocking)
-      ensurePermissionChecked(catalogUrl);
 
       // Ensure list exists (auto-provision if needed; fallback-safe for read-only users)
       try {
@@ -695,7 +699,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
         setIsLoading(false);
       }
     }
-  }, [spHttpClient, discoverAppCatalogUrl, ensurePermissionChecked, ensureListReady, getListApiUrl, isMountedRef]);
+  }, [spHttpClient, discoverAppCatalogUrl, ensureListReady, isMountedRef]);
 
   const save = useCallback(async <T = unknown>(
     key: string,
@@ -732,7 +736,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
             },
             body: JSON.stringify({
               Value: serializedValue,
-              Description: description ?? ''
+              Description: description ?? existing.Description ?? ''
             })
           }
         );
@@ -772,7 +776,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
         setIsWriting(false);
       }
     }
-  }, [spHttpClient, discoverAppCatalogUrl, ensureListReady, findItemByKey, getListApiUrl, isMountedRef]);
+  }, [spHttpClient, discoverAppCatalogUrl, ensureListReady, findItemByKey, isMountedRef]);
 
   const remove = useCallback(async (key: string): Promise<void> => {
     if (!spHttpClient) {
@@ -823,7 +827,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
         setIsWriting(false);
       }
     }
-  }, [spHttpClient, discoverAppCatalogUrl, ensureListReady, findItemByKey, getListApiUrl, isMountedRef]);
+  }, [spHttpClient, discoverAppCatalogUrl, ensureListReady, findItemByKey, isMountedRef]);
 
   // Computed: ready when client is available
   const isReady = spHttpClient !== undefined;
