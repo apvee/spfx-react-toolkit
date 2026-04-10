@@ -17,7 +17,7 @@ The toolkit provides **35 hooks** organized into functional categories. All hook
 | [UI & Theming](./theming.md) | 4 | Theme, Fluent UI 9, and container info |
 | [User & Site](./user-site.md) | 5 | User, site, hub, and list information |
 | [Environment](./environment.md) | 4 | Environment detection, Teams, locale |
-| [Storage](./storage.md) | 3 | LocalStorage, SessionStorage, OneDrive |
+| [Storage](./storage.md) | 4 | LocalStorage, SessionStorage, OneDrive, Tenant KV Store |
 | [Permissions](./permissions.md) | 2 | Permission checking |
 | [Performance & Diagnostics](./performance.md) | 4 | Logging, timing, correlation |
 
@@ -91,6 +91,8 @@ The toolkit provides **35 hooks** organized into functional categories. All hook
 | `useSPFxLocalStorage<T>(key, default)` | Persistent storage | [View](./storage.md#usespfxlocalstorage) |
 | `useSPFxSessionStorage<T>(key, default)` | Session storage | [View](./storage.md#usespfxsessionstorage) |
 | `useSPFxOneDriveAppData<T>(file, default)` | Cloud storage | [View](./storage.md#usespfxonedriveappdata) |
+| `useSPFxTenantProperty<T>(key)` | Tenant properties (read-only) | [View](./storage.md#usespfxtenantproperty) |
+| `useSPFxTenantKeyValueStore()` | Tenant key-value store | [View](./storage.md#usespfxtenantkeyvaluestore) |
 
 ### Permissions Hooks
 
@@ -106,7 +108,6 @@ The toolkit provides **35 hooks** organized into functional categories. All hook
 | `useSPFxPerformance()` | Performance timing | [View](./performance.md#usespfxperformance) |
 | `useSPFxLogger()` | Structured logging | [View](./performance.md#usespfxlogger) |
 | `useSPFxCorrelationInfo()` | Request correlation | [View](./performance.md#usespfxcorrelationinfo) |
-| `useSPFxTenantProperty(key)` | Tenant properties | [View](./performance.md#usespfxtenantproperty) |
 
 ---
 

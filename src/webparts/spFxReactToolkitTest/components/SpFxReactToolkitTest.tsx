@@ -56,8 +56,10 @@ import {
   useSPFxFluent9ThemeInfo,
   useSPFxOneDriveAppData,
   useSPFxTenantProperty,
+  useSPFxTenantKeyValueStore,
   useSPFxUserPhoto,
 } from '../../../hooks';
+import type { SPFxTenantKeyValueStoreItem } from '../../../hooks';
 import { SPPermission } from '@microsoft/sp-page-context';
 
 interface IWebPartProps {
@@ -150,6 +152,9 @@ const SpFxReactToolkitTest: React.FC = () => {
   const tenantVersion = useSPFxTenantProperty<string>('spfx-toolkit-test-version', false);
   const tenantCounter = useSPFxTenantProperty<number>('spfx-toolkit-test-counter', false);
 
+  // Tenant Key-Value Store hook (REST-based CRUD)
+  const tenantKVStore = useSPFxTenantKeyValueStore();
+
   // User Photo hook (current user profile photo)
   const userPhoto = useSPFxUserPhoto();
 
@@ -164,6 +169,13 @@ const SpFxReactToolkitTest: React.FC = () => {
   const [performanceResult, setPerformanceResult] = React.useState<string>('');
   const [logMessages, setLogMessages] = React.useState<Array<{ level: string; message: string }>>([]);
   const [crossSiteUrl, setCrossSiteUrl] = React.useState<string | undefined>(undefined);
+
+  // Tenant Key-Value Store demo state
+  const [kvStoreKey, setKvStoreKey] = React.useState<string>('');
+  const [kvStoreValue, setKvStoreValue] = React.useState<string>('');
+  const [kvStoreDescription, setKvStoreDescription] = React.useState<string>('');
+  const [kvStoreItems, setKvStoreItems] = React.useState<SPFxTenantKeyValueStoreItem<unknown>[]>([]);
+  const [kvStoreResult, setKvStoreResult] = React.useState<string>('');
 
   // Cross-site permissions (fetch only when URL is set)
   const crossSitePermissions = useSPFxCrossSitePermissions(crossSiteUrl);
@@ -257,20 +269,72 @@ const SpFxReactToolkitTest: React.FC = () => {
   }, [tenantVersion, tenantCounter]);
 
   const handleSaveTenantVersion = React.useCallback(async () => {
-    if (!tenantVersion.canWrite) {
-      setMessageText('Insufficient permissions to write tenant properties');
+    setMessageText('Write operations are no longer supported via REST API. Use PowerShell instead.');
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 5000);
+  }, []);
+
+  const handleIncrementTenantCounter = React.useCallback(async () => {
+    setMessageText('Write operations are no longer supported via REST API. Use PowerShell instead.');
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 5000);
+  }, []);
+
+  const handleRemoveTenantProperty = React.useCallback(async (_propertyName: 'version' | 'counter') => {
+    setMessageText('Remove operations are no longer supported via REST API. Use PowerShell instead.');
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 5000);
+  }, []);
+
+  // Tenant Key-Value Store handlers
+  const handleKVStoreList = React.useCallback(async () => {
+    try {
+      const items = await tenantKVStore.list();
+      setKvStoreItems(items);
+      setMessageText(`Listed ${items.length} item(s) from tenant key-value store.`);
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 3000);
+    } catch (error) {
+      setMessageText(`List failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setShowMessage(true);
       setTimeout(() => setShowMessage(false), 5000);
+    }
+  }, [tenantKVStore]);
+
+  const handleKVStoreGet = React.useCallback(async () => {
+    if (!kvStoreKey) {
+      setMessageText('Please enter a key to look up.');
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 3000);
       return;
     }
-
     try {
-      await tenantVersion.write(
-        tenantVersionInput,
-        'Test version property from SPFx React Toolkit'
-      );
-      setTenantVersionInput('');
-      setMessageText('Version saved to tenant properties!');
+      const item = await tenantKVStore.get<string>(kvStoreKey);
+      if (item) {
+        setKvStoreResult(`Key: ${item.key}, Value: ${typeof item.value === 'object' ? JSON.stringify(item.value) : String(item.value)}${item.description ? `, Description: ${item.description}` : ''}`);
+      } else {
+        setKvStoreResult('(not found)');
+      }
+      setMessageText(item ? `Found key "${kvStoreKey}".` : `Key "${kvStoreKey}" not found.`);
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 3000);
+    } catch (error) {
+      setMessageText(`Get failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 5000);
+    }
+  }, [tenantKVStore, kvStoreKey]);
+
+  const handleKVStoreSave = React.useCallback(async () => {
+    if (!kvStoreKey || !kvStoreValue) {
+      setMessageText('Please enter both a key and a value.');
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 3000);
+      return;
+    }
+    try {
+      await tenantKVStore.save<string>(kvStoreKey, kvStoreValue, kvStoreDescription || undefined);
+      setMessageText(`Saved key "${kvStoreKey}" successfully.`);
       setShowMessage(true);
       setTimeout(() => setShowMessage(false), 3000);
     } catch (error) {
@@ -278,49 +342,19 @@ const SpFxReactToolkitTest: React.FC = () => {
       setShowMessage(true);
       setTimeout(() => setShowMessage(false), 5000);
     }
-  }, [tenantVersionInput, tenantVersion]);
+  }, [tenantKVStore, kvStoreKey, kvStoreValue, kvStoreDescription]);
 
-  const handleIncrementTenantCounter = React.useCallback(async () => {
-    if (!tenantCounter.canWrite) {
-      setMessageText('Insufficient permissions to write tenant properties');
-      setShowMessage(true);
-      setTimeout(() => setShowMessage(false), 5000);
-      return;
-    }
-
-    try {
-      const newValue = (tenantCounter.data ?? 0) + 1;
-      await tenantCounter.write(
-        newValue,
-        'Test counter property from SPFx React Toolkit'
-      );
-      setMessageText(`Counter incremented to ${newValue}!`);
+  const handleKVStoreRemove = React.useCallback(async () => {
+    if (!kvStoreKey) {
+      setMessageText('Please enter a key to remove.');
       setShowMessage(true);
       setTimeout(() => setShowMessage(false), 3000);
-    } catch (error) {
-      setMessageText(`Increment failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      setShowMessage(true);
-      setTimeout(() => setShowMessage(false), 5000);
-    }
-  }, [tenantCounter]);
-
-  const handleRemoveTenantProperty = React.useCallback(async (propertyName: 'version' | 'counter') => {
-    const hook = propertyName === 'version' ? tenantVersion : tenantCounter;
-
-    if (!hook.canWrite) {
-      setMessageText('Insufficient permissions to remove tenant properties');
-      setShowMessage(true);
-      setTimeout(() => setShowMessage(false), 5000);
       return;
     }
-
-    if (!confirm(`Are you sure you want to remove the ${propertyName} property?`)) {
-      return;
-    }
-
     try {
-      await hook.remove();
-      setMessageText(`${propertyName} property removed!`);
+      await tenantKVStore.remove(kvStoreKey);
+      setKvStoreResult('');
+      setMessageText(`Removed key "${kvStoreKey}" successfully.`);
       setShowMessage(true);
       setTimeout(() => setShowMessage(false), 3000);
     } catch (error) {
@@ -328,7 +362,7 @@ const SpFxReactToolkitTest: React.FC = () => {
       setShowMessage(true);
       setTimeout(() => setShowMessage(false), 5000);
     }
-  }, [tenantVersion, tenantCounter]);
+  }, [tenantKVStore, kvStoreKey]);
 
   return (
     <section className={`${styles.spFxReactToolkitTest} ${hasTeamsContext ? styles.teams : ''}`}>
@@ -766,12 +800,6 @@ const SpFxReactToolkitTest: React.FC = () => {
                 </MessageBar>
               )}
 
-              {(tenantVersion.writeError || tenantCounter.writeError) && (
-                <MessageBar messageBarType={MessageBarType.warning}>
-                  Write Error: {tenantVersion.writeError?.message || tenantCounter.writeError?.message}
-                </MessageBar>
-              )}
-
               {(tenantVersion.isLoading || tenantCounter.isLoading) ? (
                 <MessageBar messageBarType={MessageBarType.info}>Loading from tenant app catalog...</MessageBar>
               ) : (tenantVersion.data || tenantCounter.data) ? (
@@ -790,7 +818,7 @@ const SpFxReactToolkitTest: React.FC = () => {
                       {tenantCounter.description}
                     </Label>
                   )}
-                  <InfoRow label="Can Write" value={tenantVersion.canWrite ? 'Yes' : 'No'} icon="Permissions" />
+                  <InfoRow label="Mode" value="Read-only (REST write blocked by Microsoft)" icon="Permissions" />
                 </Stack>
               ) : (
                 <Label>No data loaded yet. Click &quot;Load&quot; to fetch from tenant properties.</Label>
@@ -801,7 +829,7 @@ const SpFxReactToolkitTest: React.FC = () => {
                 value={tenantVersionInput}
                 onChange={(_, newValue) => setTenantVersionInput(newValue ?? '')}
                 placeholder="e.g., 1.0.0"
-                disabled={tenantVersion.isWriting || tenantVersion.isLoading || !tenantVersion.canWrite}
+                disabled={tenantVersion.isLoading}
               />
 
               <Stack horizontal tokens={{ childrenGap: 2 }}>
@@ -812,37 +840,37 @@ const SpFxReactToolkitTest: React.FC = () => {
                   iconProps={{ iconName: 'CloudDownload' }}
                 />
                 <PrimaryButton
-                  text={tenantVersion.isWriting ? 'Saving...' : 'Save Version'}
+                  text="Save Version (disabled)"
                   onClick={handleSaveTenantVersion}
-                  disabled={!tenantVersionInput || tenantVersion.isWriting || !tenantVersion.canWrite}
+                  disabled={true}
                   iconProps={{ iconName: 'Save' }}
                 />
                 <PrimaryButton
-                  text={tenantCounter.isWriting ? 'Incrementing...' : 'Increment Counter'}
+                  text="Increment Counter (disabled)"
                   onClick={handleIncrementTenantCounter}
-                  disabled={tenantCounter.isWriting || !tenantCounter.canWrite}
+                  disabled={true}
                   iconProps={{ iconName: 'Add' }}
                 />
               </Stack>
 
               <Stack horizontal tokens={{ childrenGap: 2 }}>
                 <DefaultButton
-                  text="Remove Version"
+                  text="Remove Version (disabled)"
                   onClick={() => handleRemoveTenantProperty('version')}
-                  disabled={tenantVersion.isWriting || !tenantVersion.canWrite || !tenantVersion.data}
+                  disabled={true}
                   iconProps={{ iconName: 'Delete' }}
                 />
                 <DefaultButton
-                  text="Remove Counter"
+                  text="Remove Counter (disabled)"
                   onClick={() => handleRemoveTenantProperty('counter')}
-                  disabled={tenantCounter.isWriting || !tenantCounter.canWrite || !tenantCounter.data}
+                  disabled={true}
                   iconProps={{ iconName: 'Delete' }}
                 />
               </Stack>
 
               <Label>
                 <Icon iconName="InfoSolid" style={{ marginRight: '4px', color: '#0078d4' }} />
-                Properties are stored tenant-wide in SharePoint StorageEntity. All users can read, only admins can write.
+                Properties are read-only via REST API. Microsoft has blocked SetStorageEntity and RemoveStorageEntity endpoints.
               </Label>
               <Label>
                 <Icon iconName="Info" style={{ marginRight: '4px', color: '#0078d4' }} />
@@ -850,14 +878,116 @@ const SpFxReactToolkitTest: React.FC = () => {
               </Label>
               <Label>
                 <Icon iconName="Warning" style={{ marginRight: '4px', color: '#d83b01' }} />
-                Requires: Tenant app catalog provisioned, Manage Web permissions to write
+                Use PowerShell (Set-PnPStorageEntity) to write tenant properties. For REST CRUD, use useSPFxTenantKeyValueStore.
               </Label>
 
-              {!tenantVersion.canWrite && (
-                <MessageBar messageBarType={MessageBarType.info}>
-                  ℹ️ You don&apos;t have permission to modify tenant properties. Contact your SharePoint administrator.
+              <MessageBar messageBarType={MessageBarType.info}>
+                ℹ️ Write operations require PowerShell. Use useSPFxTenantKeyValueStore for REST-based CRUD.
+              </MessageBar>
+            </Stack>
+
+
+            {/* Tenant Key-Value Store Demo Card */}
+            <Stack tokens={{ childrenGap: 2 }}>
+              <h3>
+                <Icon iconName="TableGroup" style={{ marginRight: '8px' }} />
+                Tenant Key-Value Store Demo
+                <Separator />
+              </h3>
+
+              <Stack horizontal tokens={{ childrenGap: 8 }}>
+                <StatusBadge label="Ready" available={tenantKVStore.isReady} />
+                <StatusBadge label="Can Write" available={tenantKVStore.canWrite} />
+              </Stack>
+
+              {tenantKVStore.error && (
+                <MessageBar messageBarType={MessageBarType.error}>
+                  Read Error: {tenantKVStore.error.message}
                 </MessageBar>
               )}
+              {tenantKVStore.writeError && (
+                <MessageBar messageBarType={MessageBarType.error}>
+                  Write Error: {tenantKVStore.writeError.message}
+                </MessageBar>
+              )}
+
+              <TextField
+                label="Key"
+                value={kvStoreKey}
+                onChange={(_, v) => setKvStoreKey(v ?? '')}
+                placeholder="e.g., apiEndpoint"
+              />
+              <TextField
+                label="Value"
+                value={kvStoreValue}
+                onChange={(_, v) => setKvStoreValue(v ?? '')}
+                placeholder="e.g., https://api.example.com"
+              />
+              <TextField
+                label="Description (optional)"
+                value={kvStoreDescription}
+                onChange={(_, v) => setKvStoreDescription(v ?? '')}
+                placeholder="e.g., Production API endpoint"
+              />
+
+              <Stack horizontal tokens={{ childrenGap: 2 }}>
+                <PrimaryButton
+                  text="List All"
+                  onClick={handleKVStoreList}
+                  disabled={tenantKVStore.isLoading || !tenantKVStore.isReady}
+                  iconProps={{ iconName: 'BulletedList' }}
+                />
+                <PrimaryButton
+                  text="Get"
+                  onClick={handleKVStoreGet}
+                  disabled={tenantKVStore.isLoading || !tenantKVStore.isReady}
+                  iconProps={{ iconName: 'Search' }}
+                />
+                <PrimaryButton
+                  text="Save"
+                  onClick={handleKVStoreSave}
+                  disabled={tenantKVStore.isWriting || !tenantKVStore.isReady}
+                  iconProps={{ iconName: 'Save' }}
+                />
+                <DefaultButton
+                  text="Remove"
+                  onClick={handleKVStoreRemove}
+                  disabled={tenantKVStore.isWriting || !tenantKVStore.isReady}
+                  iconProps={{ iconName: 'Delete' }}
+                />
+              </Stack>
+
+              {kvStoreResult && (
+                <InfoRow label="Get Result" value={kvStoreResult} icon="StatusCircleCheckmark" />
+              )}
+
+              {kvStoreItems.length > 0 && (
+                <Stack tokens={{ childrenGap: 1 }}>
+                  <Label>
+                    <Icon iconName="BulletedList" style={{ marginRight: '4px' }} />
+                    All Items ({kvStoreItems.length})
+                  </Label>
+                  {kvStoreItems.map(item => (
+                    <InfoRow
+                      key={item.id}
+                      label={item.key}
+                      value={typeof item.value === 'object' ? JSON.stringify(item.value) : String(item.value)}
+                      icon="Variable"
+                    />
+                  ))}
+                </Stack>
+              )}
+
+              {(tenantKVStore.isLoading || tenantKVStore.isWriting) && (
+                <MessageBar messageBarType={MessageBarType.info}>
+                  {tenantKVStore.isWriting ? 'Writing...' : 'Loading...'}
+                </MessageBar>
+              )}
+
+              <Label>
+                <Icon iconName="InfoSolid" style={{ marginRight: '4px', color: '#0078d4' }} />
+                Uses hidden list &quot;TenantKeyValueStore&quot; in tenant app catalog. Requires Site Collection Admin for write.
+              </Label>
             </Stack>
 
 

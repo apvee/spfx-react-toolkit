@@ -1,16 +1,18 @@
 # Storage Hooks
 
-> Hooks for data persistence across browser storage and OneDrive
+> Hooks for data persistence across browser storage, OneDrive, tenant properties, and tenant-level key-value store
 
 ## Overview
 
-These hooks provide access to browser storage (localStorage, sessionStorage) and OneDrive app-specific data storage.
+These hooks provide access to browser storage (localStorage, sessionStorage), OneDrive app-specific data storage, tenant properties, and tenant-level key-value store.
 
 | Hook | Returns | Description |
 |------|---------|-------------|
 | [`useSPFxLocalStorage`](#usespfxlocalstorage) | `[value, setValue]` | Browser localStorage with namespace |
 | [`useSPFxSessionStorage`](#usespfxsessionstorage) | `[value, setValue]` | Browser sessionStorage with namespace |
 | [`useSPFxOneDriveAppData`](#usespfxonedriveappdata) | `SPFxOneDriveAppDataResult` | OneDrive app-specific storage |
+| [`useSPFxTenantProperty`](#usespfxtenantproperty) | `SPFxTenantPropertyResult` | Tenant properties (read-only) |
+| [`useSPFxTenantKeyValueStore`](#usespfxtenantkeyvaluestore) | `SPFxTenantKeyValueStoreResult` | Tenant-level key-value store |
 
 ---
 
@@ -536,12 +538,309 @@ function TodoApp() {
 
 ---
 
+## useSPFxTenantProperty
+
+Access tenant-wide custom properties (read-only).
+
+> **Note:** Write and remove operations have been removed in v2.0.0. Microsoft has blocked the
+> SetStorageEntity and RemoveStorageEntity REST API endpoints. Tenant properties can only be
+> managed via PowerShell (`Set-PnPStorageEntity`, `Remove-PnPStorageEntity`).
+> For a read/write key-value store at tenant level, use [`useSPFxTenantKeyValueStore`](#usespfxtenantkeyvaluestore).
+
+### Signature
+
+```typescript
+function useSPFxTenantProperty<T = unknown>(
+  key: string,
+  autoFetch?: boolean
+): SPFxTenantPropertyResult<T>
+```
+
+### Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `key` | `string` | Yes | — | Tenant property key |
+| `autoFetch` | `boolean` | No | `true` | Auto-load on mount |
+
+### Returns
+
+```typescript
+interface SPFxTenantPropertyResult<T> {
+  /** Property value (undefined while loading or if not found) */
+  readonly data: T | undefined;
+
+  /** Property description metadata */
+  readonly description: string | undefined;
+  
+  /** Loading state */
+  readonly isLoading: boolean;
+  
+  /** Error if fetch failed */
+  readonly error: Error | undefined;
+
+  /** Manually load/reload the property */
+  readonly load: () => Promise<void>;
+
+  /** True if data is loaded successfully */
+  readonly isReady: boolean;
+}
+```
+
+### Example: Feature Flags
+
+```tsx
+import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
+
+function FeatureGatedComponent() {
+  const { data: featureFlags, isLoading } = useSPFxTenantProperty<string>('FeatureFlags');
+  
+  if (isLoading) return <Spinner />;
+  
+  const flags = featureFlags ? JSON.parse(featureFlags) : {};
+  
+  return (
+    <div>
+      {flags.enableNewUI && <NewUIComponent />}
+      {flags.enableBetaFeatures && <BetaFeatures />}
+    </div>
+  );
+}
+```
+
+### Example: Tenant Configuration
+
+```tsx
+import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
+
+function TenantConfiguredComponent() {
+  const { data: apiEndpoint, isLoading, error } = useSPFxTenantProperty<string>('CustomApiEndpoint');
+  const { data: apiKey } = useSPFxTenantProperty<string>('CustomApiKey');
+  
+  if (isLoading) return <Spinner label="Loading configuration..." />;
+  if (error) return <MessageBar messageBarType={MessageBarType.error}>{error.message}</MessageBar>;
+  
+  if (!apiEndpoint || !apiKey) {
+    return (
+      <MessageBar messageBarType={MessageBarType.warning}>
+        Tenant properties not configured. Contact your administrator.
+      </MessageBar>
+    );
+  }
+  
+  return <ApiClient endpoint={apiEndpoint} apiKey={apiKey} />;
+}
+```
+
+### Example: Multi-Property Configuration
+
+```tsx
+import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
+
+function ConfiguredWidget() {
+  const logo = useSPFxTenantProperty<string>('CompanyLogo');
+  const theme = useSPFxTenantProperty<string>('CompanyTheme');
+  const helpUrl = useSPFxTenantProperty<string>('HelpDeskUrl');
+  
+  const isLoading = logo.isLoading || theme.isLoading || helpUrl.isLoading;
+  
+  if (isLoading) return <Spinner />;
+  
+  const themeColors = theme.data ? JSON.parse(theme.data) : { primary: '#0078d4' };
+  
+  return (
+    <div style={{ '--primary-color': themeColors.primary } as React.CSSProperties}>
+      {logo.data && <img src={logo.data} alt="Company Logo" />}
+      {helpUrl.data && <a href={helpUrl.data}>Help</a>}
+    </div>
+  );
+}
+```
+
+### Source
+
+[View source](../../../src/hooks/useSPFxTenantProperty.ts)
+
+---
+
+## useSPFxTenantKeyValueStore
+
+Tenant-level key-value store backed by a hidden SharePoint list in the tenant app catalog. Provides CRUD operations (get, list, save, remove) with smart serialization for any data type.
+
+This hook is an alternative to tenant properties (StorageEntity) for scenarios requiring read/write access via REST, since Microsoft has blocked the SetStorageEntity and RemoveStorageEntity REST endpoints.
+
+### Signature
+
+```typescript
+function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult
+```
+
+### Returns
+
+```typescript
+interface SPFxTenantKeyValueStoreResult {
+  /** Loading state for read operations */
+  readonly isLoading: boolean;
+  /** Last error from read operations */
+  readonly error: Error | undefined;
+  /** Loading state for write operations */
+  readonly isWriting: boolean;
+  /** Last error from write operations */
+  readonly writeError: Error | undefined;
+  /** Whether the current user can write (Site Collection Admin on app catalog) */
+  readonly canWrite: boolean;
+  /** True when SPHttpClient is available */
+  readonly isReady: boolean;
+
+  /** Get a single item by key */
+  readonly get: <T = unknown>(key: string) => Promise<SPFxTenantKeyValueStoreItem<T> | undefined>;
+  /** List all items (sorted by key) */
+  readonly list: () => Promise<SPFxTenantKeyValueStoreItem<unknown>[]>;
+  /** Create or update a key-value pair (auto-provisions list on first write) */
+  readonly save: <T = unknown>(key: string, value: T, description?: string) => Promise<void>;
+  /** Remove an item by key (no-op if not found) */
+  readonly remove: (key: string) => Promise<void>;
+}
+
+interface SPFxTenantKeyValueStoreItem<T = unknown> {
+  /** Property key */
+  readonly key: string;
+  /** Deserialized property value */
+  readonly value: T;
+  /** Optional description metadata */
+  readonly description: string | undefined;
+  /** SharePoint list item ID */
+  readonly id: number;
+}
+```
+
+### Storage Details
+
+The store uses a hidden list named `TenantKeyValueStore` in the tenant app catalog:
+- **Title** column: key (indexed, unique)
+- **Value** column: multiline text (stores serialized data)
+- **Description** column: multiline text (optional metadata)
+
+The list is auto-provisioned on the first `save()` call. Read operations (`get`, `list`) return `undefined`/`[]` gracefully if the list doesn't exist yet.
+
+### Serialization
+
+| Input type | Stored as |
+|------------|-----------|
+| `string` | Raw string |
+| `number`, `boolean`, `bigint` | `String(value)` |
+| `null` | `"null"` |
+| `Date` | ISO 8601 string |
+| Objects/arrays | `JSON.stringify()` |
+
+Deserialization attempts `JSON.parse()` first; falls back to raw string.
+
+### Requirements
+
+- Tenant app catalog must be provisioned
+- **Read**: Any authenticated user
+- **Write/Remove**: Site Collection Administrator role on the tenant app catalog site
+
+### Example: Basic CRUD
+
+```tsx
+import { useSPFxTenantKeyValueStore } from '@apvee/spfx-react-toolkit';
+
+function TenantConfigEditor() {
+  const store = useSPFxTenantKeyValueStore();
+  const [value, setValue] = React.useState('');
+
+  const handleLoad = async () => {
+    const item = await store.get<string>('apiEndpoint');
+    if (item) setValue(item.value);
+  };
+
+  const handleSave = async () => {
+    await store.save<string>('apiEndpoint', value, 'Production API endpoint');
+  };
+
+  const handleDelete = async () => {
+    await store.remove('apiEndpoint');
+    setValue('');
+  };
+
+  return (
+    <Stack tokens={{ childrenGap: 10 }}>
+      <TextField value={value} onChange={(_, v) => setValue(v ?? '')} />
+      <Stack horizontal tokens={{ childrenGap: 5 }}>
+        <PrimaryButton onClick={handleLoad}>Load</PrimaryButton>
+        <PrimaryButton onClick={handleSave} disabled={store.isWriting}>Save</PrimaryButton>
+        <DefaultButton onClick={handleDelete}>Delete</DefaultButton>
+      </Stack>
+      {store.error && <MessageBar messageBarType={MessageBarType.error}>{store.error.message}</MessageBar>}
+    </Stack>
+  );
+}
+```
+
+### Example: Heterogeneous Types
+
+```tsx
+const store = useSPFxTenantKeyValueStore();
+
+// String
+await store.save<string>('appVersion', '2.1.0');
+
+// Number
+await store.save<number>('maxUploadSize', 10485760);
+
+// Complex object
+interface FeatureFlags { enableChat: boolean; maxUsers: number; }
+await store.save<FeatureFlags>('featureFlags', { enableChat: true, maxUsers: 500 });
+
+// Read back with type safety
+const flags = await store.get<FeatureFlags>('featureFlags');
+if (flags?.value.enableChat) { /* ... */ }
+```
+
+### Example: Property Dashboard
+
+```tsx
+function AllPropertiesView() {
+  const store = useSPFxTenantKeyValueStore();
+  const [items, setItems] = React.useState<SPFxTenantKeyValueStoreItem<unknown>[]>([]);
+
+  React.useEffect(() => {
+    store.list().then(setItems);
+  }, []);
+
+  if (store.isLoading) return <Spinner />;
+
+  return (
+    <DetailsList
+      items={items.map(i => ({
+        key: i.key,
+        value: typeof i.value === 'object' ? JSON.stringify(i.value) : String(i.value),
+        description: i.description ?? '',
+      }))}
+      columns={[
+        { key: 'key', name: 'Key', fieldName: 'key', minWidth: 150 },
+        { key: 'value', name: 'Value', fieldName: 'value', minWidth: 200 },
+        { key: 'desc', name: 'Description', fieldName: 'description', minWidth: 200 },
+      ]}
+    />
+  );
+}
+```
+
+### Source
+
+[View source](../../../src/hooks/useSPFxTenantKeyValueStore.ts)
+
+---
+
 ## See Also
 
 - [HTTP Client Hooks](./http-clients.md) - API access
 - [PnPjs Hooks](./pnpjs.md) - SharePoint data access
 - [Context Hooks](./context.md) - SPFx context
+- [Performance Hooks](./performance.md) - Performance measurement & diagnostics
 
 ---
 
-*Generated from JSDoc comments. Last updated: February 2, 2026*
+*Generated from JSDoc comments. Last updated: April 10, 2026*
