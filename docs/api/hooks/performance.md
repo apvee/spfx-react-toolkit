@@ -4,14 +4,13 @@
 
 ## Overview
 
-These hooks provide performance measurement, logging, correlation tracking, and tenant configuration access.
+These hooks provide performance measurement, logging, correlation tracking, and diagnostic information.
 
 | Hook | Returns | Description |
 |------|---------|-------------|
 | [`useSPFxPerformance`](#usespfxperformance) | `SPFxPerformanceResult` | Performance timing utilities |
 | [`useSPFxLogger`](#usespfxlogger) | `SPFxLoggerResult` | Structured logging |
 | [`useSPFxCorrelationInfo`](#usespfxcorrelationinfo) | `SPFxCorrelationInfo` | Request correlation IDs |
-| [`useSPFxTenantProperty`](#usespfxtenantproperty) | `SPFxTenantPropertyResult` | Tenant-wide properties |
 
 ---
 
@@ -446,113 +445,6 @@ function ErrorBoundary({ children }: { children: React.ReactNode }) {
 ### Source
 
 [View source](../../src/hooks/useSPFxCorrelationInfo.ts)
-
----
-
-## useSPFxTenantProperty
-
-Access tenant-wide custom properties.
-
-### Signature
-
-```typescript
-function useSPFxTenantProperty(key: string): SPFxTenantPropertyResult
-```
-
-### Parameters
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `key` | `string` | Yes | Tenant property key |
-
-### Returns
-
-```typescript
-interface SPFxTenantPropertyResult {
-  /** Property value (undefined while loading or if not found) */
-  readonly value: string | undefined;
-  
-  /** Loading state */
-  readonly isLoading: boolean;
-  
-  /** Error if fetch failed */
-  readonly error: Error | undefined;
-}
-```
-
-### Example: Feature Flags
-
-```tsx
-import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
-
-function FeatureGatedComponent() {
-  const { value: featureFlags, isLoading } = useSPFxTenantProperty('FeatureFlags');
-  
-  if (isLoading) return <Spinner />;
-  
-  const flags = featureFlags ? JSON.parse(featureFlags) : {};
-  
-  return (
-    <div>
-      {flags.enableNewUI && <NewUIComponent />}
-      {flags.enableBetaFeatures && <BetaFeatures />}
-    </div>
-  );
-}
-```
-
-### Example: Tenant Configuration
-
-```tsx
-import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
-
-function TenantConfiguredComponent() {
-  const { value: apiEndpoint, isLoading, error } = useSPFxTenantProperty('CustomApiEndpoint');
-  const { value: apiKey } = useSPFxTenantProperty('CustomApiKey');
-  
-  if (isLoading) return <Spinner label="Loading configuration..." />;
-  if (error) return <MessageBar messageBarType={MessageBarType.error}>{error.message}</MessageBar>;
-  
-  if (!apiEndpoint || !apiKey) {
-    return (
-      <MessageBar messageBarType={MessageBarType.warning}>
-        Tenant properties not configured. Contact your administrator.
-      </MessageBar>
-    );
-  }
-  
-  return <ApiClient endpoint={apiEndpoint} apiKey={apiKey} />;
-}
-```
-
-### Example: Multi-Property Configuration
-
-```tsx
-import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
-
-function ConfiguredWidget() {
-  const logo = useSPFxTenantProperty('CompanyLogo');
-  const theme = useSPFxTenantProperty('CompanyTheme');
-  const helpUrl = useSPFxTenantProperty('HelpDeskUrl');
-  
-  const isLoading = logo.isLoading || theme.isLoading || helpUrl.isLoading;
-  
-  if (isLoading) return <Spinner />;
-  
-  const themeColors = theme.value ? JSON.parse(theme.value) : { primary: '#0078d4' };
-  
-  return (
-    <div style={{ '--primary-color': themeColors.primary } as React.CSSProperties}>
-      {logo.value && <img src={logo.value} alt="Company Logo" />}
-      {helpUrl.value && <a href={helpUrl.value}>Help</a>}
-    </div>
-  );
-}
-```
-
-### Source
-
-[View source](../../src/hooks/useSPFxTenantProperty.ts)
 
 ---
 

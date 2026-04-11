@@ -156,6 +156,8 @@ const MyComponent: React.FC = () => {
 | [`useSPFxLocalStorage`](./api/hooks/storage.md#usespfxlocalstorage) | Instance-scoped localStorage |
 | [`useSPFxSessionStorage`](./api/hooks/storage.md#usespfxsessionstorage) | Instance-scoped sessionStorage |
 | [`useSPFxOneDriveAppData`](./api/hooks/storage.md#usespfxonedriveappdata) | OneDrive app folder storage |
+| [`useSPFxTenantProperty`](./api/hooks/storage.md#usespfxtenantproperty) | Tenant properties (read-only) |
+| [`useSPFxTenantKeyValueStore`](./api/hooks/storage.md#usespfxtenantkeyvaluestore) | Tenant-level key-value store |
 
 ### Permissions
 | Hook | Description |
@@ -169,7 +171,6 @@ const MyComponent: React.FC = () => {
 | [`useSPFxPerformance`](./api/hooks/performance.md#usespfxperformance) | Performance measurement |
 | [`useSPFxLogger`](./api/hooks/performance.md#usespfxlogger) | Structured logging |
 | [`useSPFxCorrelationInfo`](./api/hooks/performance.md#usespfxcorrelationinfo) | Request correlation |
-| [`useSPFxTenantProperty`](./api/hooks/performance.md#usespfxtenantproperty) | Tenant properties |
 
 ## Requirements
 

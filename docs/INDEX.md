@@ -137,6 +137,8 @@ Persistent storage with instance scoping.
 | [`useSPFxLocalStorage`](./api/hooks/storage.md#usespfxlocalstorage) | `SPFxStorageHook<T>` | Instance-scoped localStorage |
 | [`useSPFxSessionStorage`](./api/hooks/storage.md#usespfxsessionstorage) | `SPFxStorageHook<T>` | Instance-scoped sessionStorage |
 | [`useSPFxOneDriveAppData`](./api/hooks/storage.md#usespfxonedriveappdata) | `SPFxOneDriveAppDataResult<T>` | OneDrive app folder storage |
+| [`useSPFxTenantProperty`](./api/hooks/storage.md#usespfxtenantproperty) | `SPFxTenantPropertyResult<T>` | Tenant properties (read-only) |
+| [`useSPFxTenantKeyValueStore`](./api/hooks/storage.md#usespfxtenantkeyvaluestore) | `SPFxTenantKeyValueStoreResult` | Tenant-level key-value store |
 
 ### Permissions
 
@@ -156,7 +158,6 @@ Performance measurement and logging.
 | [`useSPFxPerformance`](./api/hooks/performance.md#usespfxperformance) | `SPFxPerformanceInfo` | Performance measurement |
 | [`useSPFxLogger`](./api/hooks/performance.md#usespfxlogger) | `SPFxLoggerInfo` | Structured logging |
 | [`useSPFxCorrelationInfo`](./api/hooks/performance.md#usespfxcorrelationinfo) | `SPFxCorrelationInfo` | Request correlation IDs |
-| [`useSPFxTenantProperty`](./api/hooks/performance.md#usespfxtenantproperty) | `SPFxTenantPropertyResult<T>` | Tenant properties |
 
 ---
 

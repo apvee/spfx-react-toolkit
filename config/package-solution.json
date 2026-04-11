@@ -3,7 +3,7 @@
   "solution": {
     "name": "apvee-spfx-react-toolkit-client-side-solution",
     "id": "5d643195-c536-4651-9c73-4967736890b7",
-    "version": "1.0.0.0",
+    "version": "2.0.0.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,

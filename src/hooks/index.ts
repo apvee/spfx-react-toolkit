@@ -59,6 +59,7 @@ export * from './useSPFxServiceScope';
 export * from './useSPFxSiteInfo';
 export * from './useSPFxStorage';
 export * from './useSPFxTeams';
+export * from './useSPFxTenantKeyValueStore';
 export * from './useSPFxTenantProperty';
 export * from './useSPFxThemeInfo';
 export * from './useSPFxUserInfo';
