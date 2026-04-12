@@ -1,7 +1,7 @@
 // useSPFxUserPhoto.ts
 // Hook to load user photos from Microsoft Graph API
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useSPFxMSGraphClient } from './useSPFxMSGraphClient';
 
 /**
@@ -424,12 +424,12 @@ export function useSPFxUserPhoto(
   // Computed state: ready when photo loaded successfully
   const isReady = !isLoading && !error && photoUrl !== undefined;
   
-  return {
+  return useMemo(() => ({
     photoUrl,
     photoBlob,
     isLoading,
     error,
     reload: load,
     isReady
-  };
+  }), [photoUrl, photoBlob, isLoading, error, load, isReady]);
 }

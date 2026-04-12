@@ -1,6 +1,7 @@
 // useSPFxCorrelationInfo.ts
 // Hook for correlation and tenant ID extraction
 
+import { useMemo } from 'react';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -66,8 +67,8 @@ export function useSPFxCorrelationInfo(): SPFxCorrelationInfo {
     { tenantId?: { toString(): string } } | undefined;
   const tenantId = aadInfo?.tenantId?.toString();
   
-  return {
+  return useMemo(() => ({
     correlationId,
     tenantId,
-  };
+  }), [correlationId, tenantId]);
 }

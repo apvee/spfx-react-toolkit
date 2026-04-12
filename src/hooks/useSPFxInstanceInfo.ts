@@ -1,6 +1,7 @@
 // useSPFxInstanceInfo.ts
 // Hook to access SPFx instance metadata
 
+import { useMemo } from 'react';
 import { useSPFxContext } from './useSPFxContext';
 import type { HostKind } from '../core/types';
 
@@ -47,8 +48,8 @@ export interface SPFxInstanceInfo {
 export function useSPFxInstanceInfo(): SPFxInstanceInfo {
   const { instanceId, kind } = useSPFxContext();
   
-  return {
+  return useMemo(() => ({
     id: instanceId,
     kind,
-  };
+  }), [instanceId, kind]);
 }

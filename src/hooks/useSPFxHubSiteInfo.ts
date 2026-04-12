@@ -1,7 +1,7 @@
 // useSPFxHubSiteInfo.ts
 // Hook for Hub Site information
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { SPHttpClient } from '@microsoft/sp-http';
 import { useSPFxPageContext } from './useSPFxPageContext';
 import { useSPFxSPHttpClient } from './useSPFxSPHttpClient';
@@ -155,11 +155,11 @@ export function useSPFxHubSiteInfo(): SPFxHubSiteInfo {
       });
   }, [isHubSite, hubSiteId, isCurrentSiteTheHub, currentSiteUrl, invoke, baseUrl]);
   
-  return {
+  return useMemo(() => ({
     isHubSite,
     hubSiteId: isHubSite ? hubSiteId : undefined,
     hubSiteUrl,
     isLoading,
     error,
-  };
+  }), [isHubSite, hubSiteId, hubSiteUrl, isLoading, error]);
 }

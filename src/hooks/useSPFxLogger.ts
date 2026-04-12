@@ -1,6 +1,7 @@
 // useSPFxLogger.ts
 // Hook for structured logging with SPFx context
 
+import { useCallback, useMemo } from 'react';
 import { useSPFxContext } from './useSPFxContext';
 import { useSPFxInstanceInfo } from './useSPFxInstanceInfo';
 import { useSPFxUserInfo } from './useSPFxUserInfo';
@@ -139,7 +140,7 @@ export function useSPFxLogger(
   const { correlationId } = useSPFxCorrelationInfo();
   const { spfxContext } = useSPFxContext();
   
-  const emit = (level: LogLevel, message: string, extra?: Record<string, unknown>): void => {
+  const emit = useCallback((level: LogLevel, message: string, extra?: Record<string, unknown>): void => {
     // Extract webPartTag only if in WebPart context
     let webPartTag: string | undefined;
     if (kind === 'WebPart') {
@@ -174,12 +175,12 @@ export function useSPFxLogger(
       const consoleFn = level === 'debug' ? console.log : console[level];
       consoleFn(line, extra ?? {});
     }
-  };
+  }, [instanceId, kind, displayName, loginName, siteUrl, webUrl, correlationId, spfxContext, handler]);
   
-  return {
+  return useMemo(() => ({
     debug: (m: string, e?: Record<string, unknown>): void => emit('debug', m, e),
     info: (m: string, e?: Record<string, unknown>): void => emit('info', m, e),
     warn: (m: string, e?: Record<string, unknown>): void => emit('warn', m, e),
     error: (m: string, e?: Record<string, unknown>): void => emit('error', m, e),
-  };
+  }), [emit]);
 }

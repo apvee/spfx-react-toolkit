@@ -1,7 +1,7 @@
 // useAppCatalogUrl.internal.ts
 // Internal hook to discover and cache the tenant app catalog URL
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useSPFxSPHttpClient } from './useSPFxSPHttpClient';
 import { useSPFxPageContext } from './useSPFxPageContext';
 import { SPHttpClient } from '@microsoft/sp-http';
@@ -42,6 +42,7 @@ export function useAppCatalogUrl(): AppCatalogUrlInfo {
   const pageContext = useSPFxPageContext();
 
   const [appCatalogUrl, setAppCatalogUrl] = useState<string | undefined>(undefined);
+  const appCatalogUrlRef = useRef<string | undefined>(undefined);
 
   const isMountedRef = useRef<boolean>(true);
 
@@ -57,8 +58,8 @@ export function useAppCatalogUrl(): AppCatalogUrlInfo {
       throw new Error('SPHttpClient or PageContext not available');
     }
 
-    if (appCatalogUrl) {
-      return appCatalogUrl;
+    if (appCatalogUrlRef.current) {
+      return appCatalogUrlRef.current;
     }
 
     try {
@@ -77,6 +78,8 @@ export function useAppCatalogUrl(): AppCatalogUrlInfo {
         throw new Error('Tenant app catalog is not provisioned. Please provision the app catalog first.');
       }
 
+      // eslint-disable-next-line require-atomic-updates -- Idempotent: always sets the same discovered URL
+      appCatalogUrlRef.current = data.CorporateCatalogUrl;
       if (isMountedRef.current) {
         setAppCatalogUrl(data.CorporateCatalogUrl);
       }
@@ -85,7 +88,7 @@ export function useAppCatalogUrl(): AppCatalogUrlInfo {
     } catch (err) {
       throw new Error(`App catalog discovery failed: ${err instanceof Error ? err.message : String(err)}`);
     }
-  }, [spHttpClient, pageContext, appCatalogUrl]);
+  }, [spHttpClient, pageContext]);
 
   const checkWritePermission = useCallback(async (catalogUrl: string): Promise<boolean> => {
     if (!spHttpClient) return false;
@@ -105,11 +108,11 @@ export function useAppCatalogUrl(): AppCatalogUrlInfo {
     }
   }, [spHttpClient]);
 
-  return {
+  return useMemo(() => ({
     appCatalogUrl,
     spHttpClient,
     discoverAppCatalogUrl,
     checkWritePermission,
     isMountedRef,
-  };
+  }), [appCatalogUrl, spHttpClient, discoverAppCatalogUrl, checkWritePermission]);
 }

@@ -54,6 +54,9 @@ Instructions for building high-quality ReactJS components with modern patterns, 
 - Use `useEffect` with proper dependency arrays to avoid infinite loops
 - Implement cleanup functions in effects to prevent memory leaks
 - Use `useMemo` and `useCallback` for performance optimization when needed
+- **Custom hooks MUST wrap their return object/array in `useMemo`** — returning a plain object literal `{ ... }` or array `[ ... ]` creates a new reference every render, causing infinite re-render loops when consumers use the hook result in `useEffect`/`useCallback` dependency arrays
+- **Inline closures returned from hooks MUST use `useCallback`** — if a hook returns functions, they must be wrapped in `useCallback` to maintain stable references; wrapping only the outer object in `useMemo` is insufficient if the functions inside are recreated each render  
+- **Never include mutable state in `useCallback` deps when it causes the callback to be used in a `useEffect` that sets that same state** — this creates a circular dependency (state changes → callback recreates → effect fires → state changes). Use `useRef` to read the value inside the callback without adding it to the dependency array
 - Create custom hooks for reusable stateful logic
 - Follow the rules of hooks (only call at the top level)
 - Use `useRef` for accessing DOM elements and storing mutable values

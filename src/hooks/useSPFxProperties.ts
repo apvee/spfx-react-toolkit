@@ -1,6 +1,7 @@
 // useSPFxProperties.ts
 // Hook to access and manage SPFx properties
 
+import { useCallback, useMemo } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { spfxAtoms } from './../core/atoms.internal';
 
@@ -93,21 +94,21 @@ export function useSPFxProperties<TProps = unknown>(): SPFxPropertiesInfo<TProps
   const setPropertiesAtom = useSetAtom(spfxAtoms.properties);
   
   // Setter with partial merge (functional update for stable dependencies)
-  const setProperties = (updates: Partial<TProps>): void => {
+  const setProperties = useCallback((updates: Partial<TProps>): void => {
     setPropertiesAtom((prev: unknown) => ({
       ...(prev ?? {} as TProps),
       ...updates,
     }));
-  };
+  }, [setPropertiesAtom]);
   
   // Updater function pattern (like React setState)
-  const updateProperties = (updater: (current: TProps | undefined) => TProps): void => {
+  const updateProperties = useCallback((updater: (current: TProps | undefined) => TProps): void => {
     setPropertiesAtom((prev: unknown) => updater(prev as TProps | undefined));
-  };
+  }, [setPropertiesAtom]);
   
-  return {
+  return useMemo(() => ({
     properties,
     setProperties,
     updateProperties,
-  };
+  }), [properties, setProperties, updateProperties]);
 }

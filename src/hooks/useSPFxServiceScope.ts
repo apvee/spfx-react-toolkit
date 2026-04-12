@@ -1,7 +1,7 @@
 // useSPFxServiceScope.ts
 // Hook for SPFx ServiceScope (Dependency Injection)
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useSPFxContext } from './useSPFxContext';
 import type { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
 
@@ -131,8 +131,8 @@ export function useSPFxServiceScope(): SPFxServiceScopeInfo {
     return serviceScope.consume(serviceKey);
   }, [serviceScope]);
   
-  return {
+  return useMemo(() => ({
     serviceScope,
     consume,
-  };
+  }), [serviceScope, consume]);
 }

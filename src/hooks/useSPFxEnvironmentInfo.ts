@@ -1,6 +1,7 @@
 // useSPFxEnvironmentInfo.ts
 // Hook to access environment type information
 
+import { useMemo } from 'react';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -133,7 +134,7 @@ export function useSPFxEnvironmentInfo(): SPFxEnvironmentInfo {
     type = 'SharePoint';
   }
   
-  return {
+  return useMemo(() => ({
     type,
     isLocal,
     isWorkbench,
@@ -142,5 +143,5 @@ export function useSPFxEnvironmentInfo(): SPFxEnvironmentInfo {
     isTeams,
     isOffice,
     isOutlook,
-  };
+  }), [type, isLocal, isWorkbench, isTeams, isOffice, isOutlook]);
 }

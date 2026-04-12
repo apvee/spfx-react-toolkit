@@ -1,6 +1,7 @@
 // useSPFxContainerInfo.ts
 // Hook to access container element and size
 
+import { useMemo } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { spfxAtoms } from '../core/atoms.internal';
 import { useResizeObserver } from '../utils/resize-observer.internal';
@@ -57,8 +58,8 @@ export function useSPFxContainerInfo(): SPFxContainerInfo {
   const setSize = useSetAtom(spfxAtoms.containerSize);
   useResizeObserver(element, setSize);
   
-  return {
+  return useMemo(() => ({
     element,
     size,
-  };
+  }), [element, size]);
 }

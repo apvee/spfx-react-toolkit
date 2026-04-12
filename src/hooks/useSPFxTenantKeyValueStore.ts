@@ -1,7 +1,7 @@
 // useSPFxTenantKeyValueStore.ts
 // Hook to manage tenant-wide key-value pairs using a hidden SharePoint list in the tenant app catalog
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAppCatalogUrl } from './useAppCatalogUrl.internal';
 import { SPHttpClient } from '@microsoft/sp-http';
 import type { SPHttpClientResponse } from '@microsoft/sp-http';
@@ -832,7 +832,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
     // Computed: ready when client is available
     const isReady = spHttpClient !== undefined;
 
-    return {
+    return useMemo(() => ({
         isLoading,
         error,
         isWriting,
@@ -843,5 +843,5 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
         list,
         save,
         remove,
-    };
+    }), [isLoading, error, isWriting, writeError, canWrite, isReady, get, list, save, remove]);
 }

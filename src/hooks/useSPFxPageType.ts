@@ -1,6 +1,7 @@
 // useSPFxPageType.ts
 // Hook for SharePoint page type detection
 
+import { useMemo } from 'react';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -173,12 +174,12 @@ export function useSPFxPageType(): SPFxPageTypeInfo {
   // Modern page = site page (not classic web part page)
   const isModernPage = isSitePage;
   
-  return {
+  return useMemo(() => ({
     pageType,
     isModernPage,
     isSitePage,
     isListPage,
     isListFormPage,
     isWebPartPage,
-  };
+  }), [pageType, isModernPage, isSitePage, isListPage, isListFormPage, isWebPartPage]);
 }

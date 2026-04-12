@@ -1,7 +1,7 @@
 // useSPFxTeams.ts
 // Hook for Microsoft Teams context integration
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { spfxAtoms } from '../core/atoms.internal';
 import { useSPFxContext } from './useSPFxContext';
@@ -173,9 +173,9 @@ export function useSPFxTeams(): SPFxTeamsInfo {
     };
   }, [spfxContext, setState, state.initialized]);
   
-  return {
+  return useMemo(() => ({
     supported: state.supported,
     context: state.context,
     theme: state.theme,
-  };
+  }), [state.supported, state.context, state.theme]);
 }

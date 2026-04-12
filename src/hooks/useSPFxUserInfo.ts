@@ -1,6 +1,7 @@
 // useSPFxUserInfo.ts
 // Hook to access current user information
 
+import { useMemo } from 'react';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -57,10 +58,10 @@ export function useSPFxUserInfo(): SPFxUserInfo {
   
   const user = pageContext.user;
   
-  return {
+  return useMemo(() => ({
     loginName: user.loginName,
     displayName: user.displayName,
     email: user.email,
     isExternal: user.isExternalGuestUser ?? false,
-  };
+  }), [user.loginName, user.displayName, user.email, user.isExternalGuestUser]);
 }

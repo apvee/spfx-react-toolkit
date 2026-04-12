@@ -1,6 +1,7 @@
 // useSPFxLocaleInfo.ts
 // Hook for locale and regional settings
 
+import { useMemo } from 'react';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -146,10 +147,10 @@ export function useSPFxLocaleInfo(): SPFxLocaleInfo {
   // Cast needed because timeZoneInfo is not yet in public types
   const timeZone = (pageContext.web as { timeZoneInfo?: SPFxTimeZone }).timeZoneInfo;
   
-  return {
+  return useMemo(() => ({
     locale,
     uiLocale,
     timeZone,
     isRtl,
-  };
+  }), [locale, uiLocale, timeZone, isRtl]);
 }

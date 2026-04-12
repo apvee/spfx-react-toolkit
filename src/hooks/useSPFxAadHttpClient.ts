@@ -385,7 +385,7 @@ export function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpCl
   // Computed: ready when client is available and no errors
   const isReady = client !== undefined && !isInitializing && !initError;
   
-  return {
+  return useMemo(() => ({
     client,
     invoke,
     isLoading,
@@ -396,5 +396,5 @@ export function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpCl
     isInitializing,
     initError,
     isReady,
-  };
+  }), [client, invoke, isLoading, error, clearError, setResourceUrl, resourceUrl, isInitializing, initError, isReady]);
 }

@@ -1,6 +1,7 @@
 // useSPFxListInfo.ts
 // Hook to access list information (when in list context)
 
+import { useMemo } from 'react';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -83,19 +84,21 @@ export function useSPFxListInfo(): SPFxListInfo | undefined {
     };
   }).list;
   
-  if (!list || !list.id) {
-    return undefined;
-  }
-  
-  // List template type 101 is Document Library
-  const baseTemplate = list.baseTemplate;
-  const isDocumentLibrary = baseTemplate === 101;
-  
-  return {
-    id: list.id.toString(),
-    title: list.title ?? 'Unknown List',
-    serverRelativeUrl: list.serverRelativeUrl ?? '',
-    baseTemplate,
-    isDocumentLibrary,
-  };
+  return useMemo(() => {
+    if (!list || !list.id) {
+      return undefined;
+    }
+    
+    // List template type 101 is Document Library
+    const baseTemplate = list.baseTemplate;
+    const isDocumentLibrary = baseTemplate === 101;
+    
+    return {
+      id: list.id.toString(),
+      title: list.title ?? 'Unknown List',
+      serverRelativeUrl: list.serverRelativeUrl ?? '',
+      baseTemplate,
+      isDocumentLibrary,
+    };
+  }, [list]);
 }

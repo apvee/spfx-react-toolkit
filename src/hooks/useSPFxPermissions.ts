@@ -1,7 +1,7 @@
 // useSPFxPermissions.ts
 // Hook for SharePoint permissions checking
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { SPPermission } from '@microsoft/sp-page-context';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
@@ -116,12 +116,12 @@ export function useSPFxPermissions(): SPFxPermissionsInfo {
     [has, listPermissions]
   );
 
-  return {
+  return useMemo(() => ({
     sitePermissions,
     webPermissions,
     listPermissions,
     hasWebPermission,
     hasSitePermission,
     hasListPermission,
-  };
+  }), [sitePermissions, webPermissions, listPermissions, hasWebPermission, hasSitePermission, hasListPermission]);
 }

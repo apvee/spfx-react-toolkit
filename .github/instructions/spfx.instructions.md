@@ -184,6 +184,7 @@ this.domElement.innerHTML = strings.TitleLabel;
 - Cleanup in `onDispose()`: intervals, subscriptions, `ReactDom.unmountComponentAtNode`
 - Use `MSGraphClientV3` (not deprecated `GraphHttpClient`)
 - Add JSDoc comments for public methods
+- **Wrap custom hook return objects in `useMemo`** to guarantee stable references and prevent infinite re-render loops in consumers
 
 ### ❌ NEVER
 - Use `any` type → use `unknown` or specific types
@@ -192,6 +193,7 @@ this.domElement.innerHTML = strings.TitleLabel;
 - Create memory leaks (setInterval without cleanup)
 - Change manifest `id` after deployment
 - Store secrets in code → use Azure Key Vault
+- **Return a plain object literal `{ ... }` from a custom hook without `useMemo`** — creates a new reference every render, causing infinite loops when used in dependency arrays
 
 ### Context Inference
 | If Found | Then Use |

@@ -1,7 +1,7 @@
 // useSPFxPerformance.ts
 // Hook for performance measurement and monitoring
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useSPFxInstanceInfo } from './useSPFxInstanceInfo';
 import { useSPFxCorrelationInfo } from './useSPFxCorrelationInfo';
 
@@ -158,9 +158,9 @@ export function useSPFxPerformance(): SPFxPerformanceInfo {
     [mark, measure]
   );
   
-  return {
+  return useMemo(() => ({
     mark,
     measure,
     time,
-  };
+  }), [mark, measure, time]);
 }

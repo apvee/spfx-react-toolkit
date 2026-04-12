@@ -2,7 +2,7 @@
 // Internal hook for async invocation with state management
 // Used by HTTP client hooks to reduce code duplication
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 /**
  * Result type for useAsyncInvoke hook
@@ -101,10 +101,10 @@ export function useAsyncInvoke<TClient>(
     setError(undefined);
   }, []);
   
-  return {
+  return useMemo(() => ({
     invoke,
     isLoading,
     error,
     clearError,
-  };
+  }), [invoke, isLoading, error, clearError]);
 }

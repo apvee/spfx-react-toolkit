@@ -417,10 +417,10 @@ export function useSPFxPnPContext(
     }
   }, [effectiveSiteUrl, spfxContext, configKey]);
   
-  return {
+  return useMemo(() => ({
     sp,
     isInitialized: sp !== undefined,
     error,
     siteUrl: effectiveSiteUrl
-  };
+  }), [sp, error, effectiveSiteUrl]);
 }

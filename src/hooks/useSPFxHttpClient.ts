@@ -277,12 +277,12 @@ export function useSPFxHttpClient(): SPFxHttpClientInfo {
   // Computed: ready when client is available
   const isReady = client !== undefined;
   
-  return {
+  return useMemo(() => ({
     client,
     invoke,
     isLoading,
     error,
     clearError,
     isReady,
-  };
+  }), [client, invoke, isLoading, error, clearError, isReady]);
 }
