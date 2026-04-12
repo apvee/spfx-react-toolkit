@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useSPFxPnPContext } from './useSPFxPnPContext';
 import type { PnPContextInfo } from './useSPFxPnPContext';
 
@@ -956,7 +956,7 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
     
   }, [lastQueryBuilder, lastQueryText, lastPageSize, appliedRefiners, executeSearch]);
   
-  return {
+  return useMemo(() => ({
     search: search,
     suggest: suggest,
     results: results,
@@ -970,5 +970,5 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
     refetch: refetch,
     applyRefiner: applyRefiner,
     clearError: clearError
-  };
+  }), [search, suggest, results, totalResults, refiners, loading, loadingMore, hasMore, error, loadMore, refetch, applyRefiner, clearError]);
 }

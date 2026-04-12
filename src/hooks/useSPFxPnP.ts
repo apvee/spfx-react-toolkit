@@ -1,7 +1,7 @@
 // useSPFxPnP.ts
 // Hook to access PnPjs with state management and batching support
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import type { SPFI } from '@pnp/sp';
 import { useSPFxPnPContext, PnPContextInfo } from './useSPFxPnPContext';
 
@@ -638,7 +638,7 @@ export function useSPFxPnP(pnpContext?: PnPContextInfo): SPFxPnPInfo {
     setInvokeError(undefined);
   }, []);
   
-  return {
+  return useMemo(() => ({
     sp,
     invoke,
     batch,
@@ -647,5 +647,5 @@ export function useSPFxPnP(pnpContext?: PnPContextInfo): SPFxPnPInfo {
     clearError,
     isInitialized,
     siteUrl,
-  };
+  }), [sp, invoke, batch, isLoading, error, clearError, isInitialized, siteUrl]);
 }

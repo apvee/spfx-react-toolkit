@@ -296,7 +296,7 @@ export function useSPFxSPHttpClient(initialBaseUrl?: string): SPFxSPHttpClientIn
   // Computed: ready when client is available
   const isReady = client !== undefined;
   
-  return {
+  return useMemo(() => ({
     client,
     invoke,
     isLoading,
@@ -305,5 +305,5 @@ export function useSPFxSPHttpClient(initialBaseUrl?: string): SPFxSPHttpClientIn
     setBaseUrl,
     baseUrl,
     isReady,
-  };
+  }), [client, invoke, isLoading, error, clearError, setBaseUrl, baseUrl, isReady]);
 }

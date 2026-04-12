@@ -594,7 +594,7 @@ export function useSPFxOneDriveAppData<T = unknown>(
   // Computed state: ready when data loaded successfully
   const isReady = !isLoading && !error && data !== undefined;
 
-  return {
+  return useMemo(() => ({
     data,
     isLoading,
     error,
@@ -604,5 +604,5 @@ export function useSPFxOneDriveAppData<T = unknown>(
     load,
     write,
     isReady,
-  };
+  }), [data, isLoading, error, isWriting, writeError, isNotFound, load, write, isReady]);
 }

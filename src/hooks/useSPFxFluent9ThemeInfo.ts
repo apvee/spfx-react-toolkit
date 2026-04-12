@@ -138,11 +138,11 @@ export function useSPFxFluent9ThemeInfo(): SPFxFluent9ThemeInfo {
     return webLightTheme;
   }, [teamsInfo.supported, teamsInfo.theme, spfxTheme]);
   
-  return {
+  return useMemo(() => ({
     theme,
     isTeams: teamsInfo.supported,
     teamsTheme: teamsInfo.theme
-  };
+  }), [theme, teamsInfo.supported, teamsInfo.theme]);
 }
 
 /**

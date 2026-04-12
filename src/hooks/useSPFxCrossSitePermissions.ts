@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { SPPermission } from '@microsoft/sp-page-context';
 import { SPHttpClient } from '@microsoft/sp-http';
 import { useSPFxSPHttpClient } from './useSPFxSPHttpClient';
@@ -209,7 +209,7 @@ export function useSPFxCrossSitePermissions(
     [listPermissions]
   );
 
-  return {
+  return useMemo(() => ({
     sitePermissions,
     webPermissions,
     listPermissions,
@@ -218,5 +218,5 @@ export function useSPFxCrossSitePermissions(
     hasListPermission,
     isLoading,
     error,
-  };
+  }), [sitePermissions, webPermissions, listPermissions, hasWebPermission, hasSitePermission, hasListPermission, isLoading, error]);
 }

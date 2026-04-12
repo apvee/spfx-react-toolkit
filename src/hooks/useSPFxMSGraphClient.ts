@@ -354,7 +354,7 @@ export function useSPFxMSGraphClient(): SPFxMSGraphClientInfo {
   // Computed: ready when client is available and no errors
   const isReady = client !== undefined && !isInitializing && !initError;
   
-  return {
+  return useMemo(() => ({
     client,
     invoke,
     isLoading,
@@ -363,5 +363,5 @@ export function useSPFxMSGraphClient(): SPFxMSGraphClientInfo {
     isInitializing,
     initError,
     isReady,
-  };
+  }), [client, invoke, isLoading, error, clearError, isInitializing, initError, isReady]);
 }

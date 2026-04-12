@@ -1,7 +1,7 @@
 // useSPFxTenantProperty.ts
 // Hook to read tenant-wide properties using SharePoint StorageEntity API (read-only)
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useAppCatalogUrl } from './useAppCatalogUrl.internal';
 import { SPHttpClient } from '@microsoft/sp-http';
 import type { SPHttpClientResponse } from '@microsoft/sp-http';
@@ -280,12 +280,12 @@ export function useSPFxTenantProperty<T = unknown>(
   // Computed state: ready when data loaded successfully
   const isReady = !isLoading && !error && data !== undefined;
 
-  return {
+  return useMemo(() => ({
     data,
     description,
     isLoading,
     error,
     load,
     isReady,
-  };
+  }), [data, description, isLoading, error, load, isReady]);
 }

@@ -1,6 +1,7 @@
 // useSPFxSiteInfo.ts
 // Hook to access site collection and web information
 
+import { useMemo } from 'react';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -146,7 +147,7 @@ export function useSPFxSiteInfo(): SPFxSiteInfo {
     };
   }).legacyPageContext;
   
-  return {
+  return useMemo(() => ({
     // Web identity (prefixed)
     webId: webObj.id.toString(),
     webUrl: webObj.absoluteUrl,
@@ -166,5 +167,5 @@ export function useSPFxSiteInfo(): SPFxSiteInfo {
       id: siteObj.group.id.toString(),
       isPublic: siteObj.group.isPublic ?? false,
     } : undefined,
-  };
+  }), [siteObj, webObj, legacy]);
 }

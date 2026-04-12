@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useSPFxPnPContext } from './useSPFxPnPContext';
 import type { PnPContextInfo } from './useSPFxPnPContext';
 
@@ -1028,7 +1028,7 @@ export function useSPFxPnPList<T = unknown>(
   // Derived state
   const isEmpty = items.length === 0 && !loading && !error;
 
-  return {
+  return useMemo(() => ({
     query,
     items: items as T[],
     loading,
@@ -1046,5 +1046,5 @@ export function useSPFxPnPList<T = unknown>(
     createBatch,
     updateBatch,
     removeBatch,
-  };
+  }), [query, items, loading, loadingMore, error, isEmpty, hasMore, refetch, loadMore, clearError, getById, create, update, remove, createBatch, updateBatch, removeBatch]);
 }

@@ -3,7 +3,7 @@
 
 import { atomWithStorage } from 'jotai/utils';
 import { useAtom } from 'jotai';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useSPFxInstanceInfo } from './useSPFxInstanceInfo';
 
 /**
@@ -72,18 +72,18 @@ export function useSPFxLocalStorage<T>(
   const [value, setValue] = useAtom(storageAtom);
   
   // Remove function (reset to default)
-  const remove = (): void => {
+  const remove = useCallback((): void => {
     setValue(defaultValue);
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem(scopedKey);
     }
-  };
+  }, [setValue, defaultValue, scopedKey]);
   
-  return {
+  return useMemo(() => ({
     value,
     setValue,
     remove,
-  };
+  }), [value, setValue, remove]);
 }
 
 /**
@@ -166,16 +166,16 @@ export function useSPFxSessionStorage<T>(
   const [value, setValue] = useAtom(storageAtom);
   
   // Remove function (reset to default)
-  const remove = (): void => {
+  const remove = useCallback((): void => {
     setValue(defaultValue);
     if (typeof sessionStorage !== 'undefined') {
       sessionStorage.removeItem(scopedKey);
     }
-  };
+  }, [setValue, defaultValue, scopedKey]);
   
-  return {
+  return useMemo(() => ({
     value,
     setValue,
     remove,
-  };
+  }), [value, setValue, remove]);
 }
