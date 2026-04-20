@@ -1,5 +1,5 @@
 // useSPFxOneDriveAppData.ts
-// Hook to manage JSON files in OneDrive appRoot folder with state management
+// Hook to manage JSON files in OneDrive approot folder with state management
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useSPFxMSGraphClient } from './useSPFxMSGraphClient';
@@ -17,7 +17,7 @@ import { useSPFxMSGraphClient } from './useSPFxMSGraphClient';
  * @returns Full Graph API path for file content
  */
 function buildApiPath(fileName: string, folderName?: string): string {
-  const basePath = '/me/drive/special/appRoot:';
+  const basePath = '/me/drive/special/approot:';
 
   if (folderName) {
     // Sanitize folder name: only allow alphanumeric, hyphens, underscores
@@ -170,10 +170,10 @@ export interface SPFxOneDriveAppDataOptions<T> {
 }
 
 /**
- * Hook to manage JSON files in user's OneDrive appRoot folder
+ * Hook to manage JSON files in user's OneDrive approot folder
  * 
  * Provides unified read/write operations for JSON data stored in OneDrive's special
- * appRoot folder (accessible per-app, user-scoped storage).
+ * approot folder (accessible per-app, user-scoped storage).
  * 
  * Features:
  * - Automatic JSON serialization/deserialization
@@ -236,7 +236,7 @@ export interface SPFxOneDriveAppDataOptions<T> {
  * // Store files in a dedicated folder
  * const { data, write } = useSPFxOneDriveAppData<State>(
  *   'state.json',
- *   'my-app-v2'  // Files stored in appRoot:/my-app-v2/state.json
+ *   'my-app-v2'  // Files stored in approot:/my-app-v2/state.json
  * );
  * ```
  * 
@@ -246,7 +246,7 @@ export interface SPFxOneDriveAppDataOptions<T> {
  * const { id } = useSPFxInstanceInfo();
  * const { data, write } = useSPFxOneDriveAppData<Settings>(
  *   'settings.json',
- *   id  // Files stored in appRoot:/abc-123-guid/settings.json
+ *   id  // Files stored in approot:/abc-123-guid/settings.json
  * );
  * ```
  * 
@@ -275,7 +275,7 @@ export interface SPFxOneDriveAppDataOptions<T> {
  *   const state = useSPFxOneDriveAppData<State>('state.json', 'myapp');
  *   const cache = useSPFxOneDriveAppData<Cache>('cache.json', 'myapp');
  *   
- *   // All files stored in appRoot:/myapp/
+ *   // All files stored in approot:/myapp/
  *   // Easy to manage and clean up as a group
  * }
  * ```
