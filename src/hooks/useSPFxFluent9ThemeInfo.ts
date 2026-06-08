@@ -38,7 +38,7 @@ export interface SPFxFluent9ThemeInfo {
  * 
  * The hook uses memoization to avoid expensive theme conversions on every render.
  * Theme updates are automatically handled when the user switches themes in
- * SharePoint or Teams through the SPFxProvider's theme subscription mechanism.
+ * SharePoint or Teams through the SPFx provider theme subscription mechanism.
  * 
  * Priority order:
  * 1. Teams theme (if running in Teams context)

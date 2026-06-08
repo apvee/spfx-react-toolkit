@@ -51,9 +51,14 @@ function getThemeProvider(spfxContext: unknown): ThemeProvider {
  */
 export function useThemeSubscription(
   spfxContext: unknown,
-  setTheme: (theme: IReadonlyTheme | undefined) => void
+  setTheme: (theme: IReadonlyTheme | undefined) => void,
+  isScopeReady: boolean
 ): void {
   useEffect(() => {
+    if (!isScopeReady) {
+      return;
+    }
+
     const themeProvider = getThemeProvider(spfxContext);
     
     // Get initial theme
@@ -86,5 +91,5 @@ export function useThemeSubscription(
       observer.isDisposed = true;
       themeProvider.themeChangedEvent.remove(observer, handler);
     };
-  }, [spfxContext, setTheme]);
+  }, [spfxContext, setTheme, isScopeReady]);
 }

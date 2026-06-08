@@ -29,7 +29,7 @@ export interface SPFxListViewCommandSetProviderProps<TProps extends {} = {}> {
  *
  * This is a type-safe wrapper around the base provider that accepts a ListView Command Set instance
  * directly without requiring type casting. Use this provider in ListView Command Sets instead of the
- * generic `SPFxProvider`.
+ * other host-specific providers.
  *
  * @param props - The component props.
  * @returns The provider component.

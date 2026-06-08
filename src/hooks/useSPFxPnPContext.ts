@@ -202,8 +202,8 @@ export interface PnPContextInfo {
  *   const financeContext = useSPFxPnPContext('/sites/finance');
  *   
  *   // Inject into specialized hooks
- *   const { items: hrItems } = useSPFxPnPList('Employees', hrContext.sp);
- *   const { items: financeItems } = useSPFxPnPList('Invoices', financeContext.sp);
+ *   const { items: hrItems } = useSPFxPnPList('Employees', undefined, hrContext);
+ *   const { items: financeItems } = useSPFxPnPList('Invoices', undefined, financeContext);
  *   
  *   return (
  *     <Stack tokens={{ childrenGap: 20 }}>
@@ -364,7 +364,7 @@ export function useSPFxPnPContext(
       if (!spfxContext) {
         throw new Error(
           'SPFx context is not available. ' +
-          'Ensure your component is wrapped with SPFxProvider.'
+          'Ensure your component is wrapped with an SPFx provider.'
         );
       }
       

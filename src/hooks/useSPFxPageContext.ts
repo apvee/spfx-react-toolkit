@@ -43,7 +43,7 @@ export function useSPFxPageContext(): PageContext {
   const { consume } = useSPFxServiceScope();
   
   // Lazy consume PageContext from ServiceScope (cached by useMemo)
-  // ServiceScope is guaranteed to be finished by SPFxProvider guard
+  // ServiceScope is guaranteed to be finished by the SPFx provider guard
   return useMemo(() => {
     return consume<PageContext>(PageContext.serviceKey);
   }, [consume]);

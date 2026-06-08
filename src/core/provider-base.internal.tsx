@@ -29,8 +29,6 @@ import { useThemeSubscription } from '../utils/theme-subscription.internal';
  * - SPFxListViewCommandSetProvider
  * - SPFxFieldCustomizerProvider
  * 
- * Or use the generic SPFxProvider for backward compatibility.
- * 
  * @internal
  */
 export function SPFxProviderBase<TProps extends {} = {}>(
@@ -59,17 +57,29 @@ export function SPFxProviderBase<TProps extends {} = {}>(
   
   // Wait for serviceScope to be finished before rendering children
   React.useEffect(() => {
+    let disposed = false;
+
+    setIsScopeReady(false);
+
     if (!serviceScope) {
       // Fallback: if no serviceScope, proceed (shouldn't happen in valid SPFx)
       setIsScopeReady(true);
-      return;
+      return () => {
+        disposed = true;
+      };
     }
     
     // whenFinished callback fires immediately if already finished (synchronous)
     // or later when finished (asynchronous) - handles both scenarios
     serviceScope.whenFinished(() => {
-      setIsScopeReady(true);
+      if (!disposed) {
+        setIsScopeReady(true);
+      }
     });
+
+    return () => {
+      disposed = true;
+    };
   }, [serviceScope]);
   
   // Create isolated Jotai store for this Provider instance
@@ -86,7 +96,7 @@ export function SPFxProviderBase<TProps extends {} = {}>(
   const lastPropertiesRef = React.useRef<unknown>(instanceAny.properties);
   
   // Subscribe to theme changes (single subscription per instance)
-  useThemeSubscription(context, setTheme);
+  useThemeSubscription(context, setTheme, isScopeReady);
   
   // Initialize atoms based on component type
   React.useEffect(() => {
