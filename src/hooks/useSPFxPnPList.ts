@@ -5,17 +5,16 @@ import type { PnPContextInfo } from './useSPFxPnPContext';
 // Import PnPjs native types for proper type safety
 import type { IItems } from '@pnp/sp/items';
 import type { InitialFieldQuery, ComparisonResult } from '@pnp/sp/spqueryable';
-
-// Declare Proxy for TypeScript (available in ES6+)
-/* eslint-disable @typescript-eslint/no-explicit-any */
-interface ProxyHandler<T extends object> {
-  get?(target: T, prop: string | symbol, receiver: any): any;
-}
-
-declare const Proxy: {
-  new <T extends object>(target: T, handler: ProxyHandler<T>): T;
-};
-/* eslint-enable @typescript-eslint/no-explicit-any */
+import {
+  collectCreatedIds,
+  collectRejectedReasons,
+  createBatchError,
+} from './useSPFxPnPList.batch.internal';
+import {
+  createMonitoredListQuery,
+  hasMoreListItems,
+  resolveEffectiveListQuery,
+} from './useSPFxPnPList.query.internal';
 
 /**
  * Type representing a fluent filter function for type-safe query building.
@@ -611,39 +610,6 @@ export function useSPFxPnPList<T = unknown>(
   }, []);
 
   /**
-   * Helper: Creates a recursive Proxy to track .top() calls in queryBuilder.
-   * This allows automatic detection of user-specified page size.
-   */
-  const createMonitoredQuery = useCallback((target: IItems, tracker: { top?: number }): IItems => {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    
-    return new (Proxy as any)(target, {
-      get: function(t: IItems, prop: string | symbol): any {
-        if (prop === 'top') {
-          return function(n: number): IItems {
-            tracker.top = n;
-            const result = (t as any).top.call(t, n);
-            return createMonitoredQuery(result as IItems, tracker);
-          };
-        }
-        
-        const value = (t as any)[prop as string];
-        if (typeof value === 'function') {
-          return function(...args: unknown[]): any {
-            const result = (value as any).apply(t, args);
-            if (result && typeof result === 'object' && typeof (result as any).select === 'function') {
-              return createMonitoredQuery(result as IItems, tracker);
-            }
-            return result;
-          };
-        }
-        return value;
-      }
-    }) as IItems;
-    /* eslint-enable @typescript-eslint/no-explicit-any */
-  }, []);
-
-  /**
    * Executes a query with automatic .top() detection.
    */
   const query = useCallback(async (
@@ -664,16 +630,13 @@ export function useSPFxPnPList<T = unknown>(
       const baseQuery = sp.web.lists.getByTitle(listTitle).items;
       
       // Track .top() calls with Proxy
-      const tracker: { top?: number } = { top: undefined };
-      const monitored = createMonitoredQuery(baseQuery, tracker);
+      const tracker = { top: undefined as number | undefined };
+      const monitored = createMonitoredListQuery(baseQuery, tracker);
       
       // Build user query
       const userQuery = queryBuilder ? queryBuilder(monitored) : monitored;
       
       // Smart decision: user .top() > pageSize option > no limit
-      let finalQuery: IItems;
-      let effectivePageSize: number | undefined;
-      
       // Warning if both specified
       if (tracker.top !== undefined && pageSize !== undefined) {
         console.warn(
@@ -682,19 +645,9 @@ export function useSPFxPnPList<T = unknown>(
         );
       }
       
-      if (tracker.top !== undefined) {
-        // User specified .top() explicitly
-        finalQuery = userQuery;
-        effectivePageSize = tracker.top;
-      } else if (pageSize !== undefined) {
-        // Use pageSize option
-        finalQuery = userQuery.top(pageSize);
-        effectivePageSize = pageSize;
-      } else {
-        // No pagination
-        finalQuery = userQuery;
-        effectivePageSize = undefined;
-      }
+      const effective = resolveEffectiveListQuery(userQuery, tracker, pageSize);
+      const finalQuery = effective.query;
+      const effectivePageSize = effective.pageSize;
       
       const result = await finalQuery() as T[];
       
@@ -707,11 +660,7 @@ export function useSPFxPnPList<T = unknown>(
       setCurrentSkip(result.length);
       
       // hasMore only meaningful with pagination
-      if (effectivePageSize !== undefined) {
-        setHasMore(result.length === effectivePageSize);
-      } else {
-        setHasMore(false);
-      }
+      setHasMore(hasMoreListItems(result.length, effectivePageSize));
       
       setLoading(false);
       return result;
@@ -723,7 +672,7 @@ export function useSPFxPnPList<T = unknown>(
       }
       throw err;
     }
-  }, [sp, context?.isInitialized, listTitle, defaultPageSize, createMonitoredQuery]);
+  }, [sp, context?.isInitialized, listTitle, defaultPageSize]);
 
   /**
    * Re-executes the last query (resets pagination).
@@ -741,9 +690,14 @@ export function useSPFxPnPList<T = unknown>(
    * Debounced refetch to prevent race conditions during rapid CRUD operations.
    */
   const debouncedRefetch = useCallback(() => {
+    if (!lastQueryBuilder) {
+      return;
+    }
+
     if (refetchTimeoutRef.current) {
       clearTimeout(refetchTimeoutRef.current);
     }
+
     refetchTimeoutRef.current = setTimeout(function() {
       refetch().catch(function(err) {
         const error = err as Error;
@@ -751,7 +705,7 @@ export function useSPFxPnPList<T = unknown>(
         setError(error);
       });
     }, 100);
-  }, [refetch]);
+  }, [lastQueryBuilder, refetch]);
 
   /**
    * Loads more items (pagination with last query).
@@ -777,8 +731,8 @@ export function useSPFxPnPList<T = unknown>(
       }
 
       const baseQuery = sp.web.lists.getByTitle(listTitle).items;
-      const tracker: { top?: number } = { top: undefined };
-      const monitored = createMonitoredQuery(baseQuery, tracker);
+      const tracker = { top: undefined as number | undefined };
+      const monitored = createMonitoredListQuery(baseQuery, tracker);
       
       const userQuery = lastQueryBuilder(monitored);
       const finalQuery = userQuery.skip(currentSkip).top(lastEffectivePageSize);
@@ -793,7 +747,7 @@ export function useSPFxPnPList<T = unknown>(
       setCurrentSkip(function(prev: number) {
         return prev + result.length;
       });
-      setHasMore(result.length === lastEffectivePageSize);
+      setHasMore(hasMoreListItems(result.length, lastEffectivePageSize));
       setLoadingMore(false);
       
       return result;
@@ -805,7 +759,7 @@ export function useSPFxPnPList<T = unknown>(
       }
       throw err;
     }
-  }, [lastQueryBuilder, lastEffectivePageSize, loadingMore, loading, sp, context?.isInitialized, listTitle, currentSkip, createMonitoredQuery]);
+  }, [lastQueryBuilder, lastEffectivePageSize, loadingMore, loading, sp, context?.isInitialized, listTitle, currentSkip]);
 
   /**
    * Gets a single item by ID.
@@ -887,34 +841,27 @@ export function useSPFxPnPList<T = unknown>(
     }
 
     try {
-      const ids: number[] = [];
-      const errors: unknown[] = [];
       const batchResult = sp.batched();
       const batchedSP = batchResult[0];
       const execute = batchResult[1];
-
       const list = batchedSP.web.lists.getByTitle(listTitle);
 
-      // Queue all creates
-      for (let i = 0; i < itemsToCreate.length; i++) {
-        list.items.add(itemsToCreate[i] as Record<string, unknown>).then(function(result: { data: { Id: number } }) {
-          ids.push(result.data.Id);
-        }).catch(function(error: unknown) {
-          console.error('Batch create error:', error);
-          errors.push(error);
-        });
-      }
+      const operations = itemsToCreate.map(function(itemToCreate) {
+        return list.items.add(itemToCreate as Record<string, unknown>);
+      });
 
-      // Execute batch
       await execute();
-      
-      // If there were errors in individual operations, set error state
+
+      const settled = await Promise.allSettled(operations);
+      const { ids, errors } = collectCreatedIds(settled);
+
       if (errors.length > 0) {
-        const batchError = new Error(`Batch create failed: ${errors.length} of ${itemsToCreate.length} items failed`);
+        const batchError = createBatchError('create', errors.length, itemsToCreate.length);
         setError(batchError);
         console.error('Batch create summary:', errors);
+        throw batchError;
       }
-      
+
       debouncedRefetch();
       return ids;
     } catch (err) {
@@ -935,32 +882,27 @@ export function useSPFxPnPList<T = unknown>(
     }
 
     try {
-      const errors: unknown[] = [];
       const batchResult = sp.batched();
       const batchedSP = batchResult[0];
       const execute = batchResult[1];
-
       const list = batchedSP.web.lists.getByTitle(listTitle);
 
-      // Queue all updates
-      for (let i = 0; i < updates.length; i++) {
-        const updateItem = updates[i];
-        list.items.getById(updateItem.id).update(updateItem.item as Record<string, unknown>).catch(function(error: unknown) {
-          console.error('Batch update error:', error);
-          errors.push(error);
-        });
-      }
+      const operations = updates.map(function(updateItem) {
+        return list.items.getById(updateItem.id).update(updateItem.item as Record<string, unknown>);
+      });
 
-      // Execute batch
       await execute();
-      
-      // If there were errors in individual operations, set error state
+
+      const settled = await Promise.allSettled(operations);
+      const errors = collectRejectedReasons(settled);
+
       if (errors.length > 0) {
-        const batchError = new Error(`Batch update failed: ${errors.length} of ${updates.length} items failed`);
+        const batchError = createBatchError('update', errors.length, updates.length);
         setError(batchError);
         console.error('Batch update summary:', errors);
+        throw batchError;
       }
-      
+
       debouncedRefetch();
     } catch (err) {
       const error = err as Error;
@@ -978,31 +920,27 @@ export function useSPFxPnPList<T = unknown>(
     }
 
     try {
-      const errors: unknown[] = [];
       const batchResult = sp.batched();
       const batchedSP = batchResult[0];
       const execute = batchResult[1];
-
       const list = batchedSP.web.lists.getByTitle(listTitle);
 
-      // Queue all deletes
-      for (let i = 0; i < ids.length; i++) {
-        list.items.getById(ids[i]).delete().catch(function(error: unknown) {
-          console.error('Batch delete error:', error);
-          errors.push(error);
-        });
-      }
+      const operations = ids.map(function(id) {
+        return list.items.getById(id).delete();
+      });
 
-      // Execute batch
       await execute();
-      
-      // If there were errors in individual operations, set error state
+
+      const settled = await Promise.allSettled(operations);
+      const errors = collectRejectedReasons(settled);
+
       if (errors.length > 0) {
-        const batchError = new Error(`Batch delete failed: ${errors.length} of ${ids.length} items failed`);
+        const batchError = createBatchError('delete', errors.length, ids.length);
         setError(batchError);
         console.error('Batch delete summary:', errors);
+        throw batchError;
       }
-      
+
       debouncedRefetch();
     } catch (err) {
       const error = err as Error;

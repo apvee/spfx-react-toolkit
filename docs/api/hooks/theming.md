@@ -31,7 +31,7 @@ function useSPFxThemeInfo(): IReadonlyTheme | undefined
 
 ### Description
 
-Theme subscription is managed automatically by SPFxProvider. Updates when user switches between light/dark theme or theme settings change.
+Theme subscription is managed automatically by SPFx providers. Updates when user switches between light/dark theme or theme settings change.
 
 **Theme object includes:**
 - `semanticColors` - Context-aware colors (bodyBackground, bodyText, link, etc.)

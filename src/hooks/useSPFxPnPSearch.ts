@@ -8,11 +8,16 @@ import '@pnp/sp/search';
 // Import PnPjs search types
 import type { 
   ISearchBuilder,
-  IRefiner,
-  ISuggestResult,
-  ISearchResult
+  ISuggestResult
 } from '@pnp/sp/search';
-import { SearchQueryBuilder } from '@pnp/sp/search';
+import {
+  buildRefinementFilters,
+  parseSearchRefiners,
+  parseSearchResults,
+} from './useSPFxPnPSearch.results.internal';
+import {
+  buildSearchQuery,
+} from './useSPFxPnPSearch.query.internal';
 
 /**
  * Type alias for SearchQueryBuilder function
@@ -587,8 +592,9 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
   options?: UseSPFxPnPSearchOptions,
   pnpContext?: PnPContextInfo
 ): SPFxPnPSearchInfo<T> {
-  // Get PnP context
-  const context = useSPFxPnPContext(pnpContext?.siteUrl);
+  // Get PnP context (use provided context or create default)
+  const defaultContext = useSPFxPnPContext();
+  const context = pnpContext || defaultContext;
   const { sp } = context;
   
   // Default options
@@ -650,27 +656,7 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
       const pageSize = queryOptions?.pageSize ?? lastPageSize ?? defaultPageSize;
       const row = startRow ?? 0;
       
-      // Initialize SearchQueryBuilder
-      let builder: ISearchBuilder;
-      
-      if (typeof query === 'string') {
-        // String query case
-        builder = SearchQueryBuilder(query);
-      } else {
-        // Builder callback case
-        builder = SearchQueryBuilder('');
-        
-        // Apply default options BEFORE user callback
-        if (options?.selectProperties && options.selectProperties.length > 0) {
-          builder = builder.selectProperties(...options.selectProperties);
-        }
-        if (options?.refiners) {
-          builder = builder.refiners(options.refiners);
-        }
-        
-        // Let user override everything
-        builder = query(builder);
-      }
+      let builder = buildSearchQuery(query, options);
       
       // Apply pagination
       builder = builder.rowLimit(pageSize);
@@ -681,17 +667,9 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
       // Apply refinement filters if any
       // Use overrideRefiners if provided (for applyRefiner race condition fix)
       const refinersToApply = overrideRefiners ?? appliedRefiners;
-      if (refinersToApply.size > 0) {
-        const refinementFilters: string[] = [];
-        refinersToApply.forEach(function(values, key) {
-          values.forEach(function(value) {
-            refinementFilters.push(key + ":equals('" + value + "')");
-          });
-        });
-        
-        if (refinementFilters.length > 0) {
-          builder = builder.refinementFilters(...refinementFilters);
-        }
+      const refinementFilters = buildRefinementFilters(refinersToApply);
+      if (refinementFilters.length > 0) {
+        builder = builder.refinementFilters(...refinementFilters);
       }
       
       // Execute search - sp.search() returns SearchResults (PnPjs v4)
@@ -704,35 +682,12 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
       const totalRows = searchResults.TotalRows ?? 0;
       
       // Map ISearchResult to our SearchResult<T> format
-      const parsedResults: SearchResult<T>[] = rawResults.map(function(result: ISearchResult) {
-        // ISearchResult is already a flat object with all properties
-        // Generate ID from Path or DocId
-        const id = String(result.DocId ?? result.Path ?? Math.random());
-        const rank = result.Rank ? parseInt(String(result.Rank), 10) : undefined;
-        
-        return {
-          id: id,
-          data: result as unknown as T, // ISearchResult is already the data
-          raw: result,                  // Keep original for reference
-          rank: rank
-        };
-      });
+      const parsedResults = parseSearchResults<T>(rawResults);
       
       // Parse refiners from RawSearchResults
       // PnPjs v4: SearchResults.RawSearchResults.PrimaryQueryResult.RefinementResults.Refiners
       const refinerResults = searchResults.RawSearchResults?.PrimaryQueryResult?.RefinementResults?.Refiners ?? [];
-      const parsedRefiners: SearchRefiner[] = refinerResults.map(function(refiner: IRefiner) {
-        return {
-          name: refiner.Name ?? '',
-          entries: (refiner.Entries ?? []).map(function(entry) {
-            return {
-              value: entry.RefinementName ?? '',
-              count: parseInt(entry.RefinementCount, 10) || 0,
-              token: entry.RefinementToken ?? ''
-            };
-          })
-        };
-      });
+      const parsedRefiners = parseSearchRefiners(refinerResults);
       
       // Update state
       if (!mountedRef.current) {

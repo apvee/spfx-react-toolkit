@@ -64,7 +64,7 @@ export interface ContainerSize {
 }
 
 /**
- * Props accepted by SPFxProvider (instance-based API)
+ * Props accepted by SPFx providers (instance-based API)
  * 
  * @template TProps - The properties type for the SPFx component (WebPart props, Extension props, etc.)
  * 
@@ -73,7 +73,7 @@ export interface ContainerSize {
  * // In your WebPart render():
  * public render(): void {
  *   const element = React.createElement(
- *     SPFxProvider,
+ *     SPFxWebPartProvider,
  *     { instance: this },
  *     React.createElement(MyComponent)
  *   );
@@ -90,7 +90,7 @@ export interface SPFxProviderProps<TProps extends {} = {}> {
 }
 
 /**
- * Context value provided by SPFxProvider
+ * Context value provided by SPFx providers
  * Contains only static metadata, no reactive state
  * 
  * @remarks

@@ -191,7 +191,7 @@ export function detectComponentKind<TProps extends {} = {}>(
   if (isFieldCustomizer(instance)) return 'FieldCustomizer';
   
   throw new Error(
-    '[SPFxProvider] Unable to detect SPFx component type. ' +
+    '[SPFx provider] Unable to detect SPFx component type. ' +
     'Instance must be a WebPart, ApplicationCustomizer, CommandSet, or FieldCustomizer.'
   );
 }

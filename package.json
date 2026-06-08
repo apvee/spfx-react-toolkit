@@ -9,7 +9,10 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
-    "lib/**/*",
+    "lib/index.*",
+    "lib/core/**/*",
+    "lib/hooks/**/*",
+    "lib/utils/**/*",
     "README.md",
     "LICENSE"
   ],
