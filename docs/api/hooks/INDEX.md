@@ -88,16 +88,20 @@ function PermissionNotice() {
 #### Manual Check Example
 
 ```tsx
-const precheck = useSPFxApiPermissionPrecheck(
-  { graph: ['Sites.Read.All'] },
-  { autoCheck: false, mode: 'passive' }
-);
+import { useSPFxApiPermissionPrecheck } from '@apvee/spfx-react-toolkit';
 
-return (
-  <button onClick={() => precheck.retryWithoutCache()} disabled={precheck.isChecking}>
-    Recheck permissions
-  </button>
-);
+function ManualPermissionStatus() {
+  const precheck = useSPFxApiPermissionPrecheck(
+    { graph: ['Sites.Read.All'] },
+    { autoCheck: false, mode: 'passive' }
+  );
+
+  return (
+    <button onClick={() => precheck.retryWithoutCache()} disabled={precheck.isChecking}>
+      Recheck permissions
+    </button>
+  );
+}
 ```
 
 `mode: 'passive'` prevents the precheck from launching an authentication popup or redirect while it probes token availability. Use `retryWithoutCache()` after an administrator changes API access or when you need SPFx to bypass a cached token on the next check.

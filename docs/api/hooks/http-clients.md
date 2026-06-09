@@ -525,7 +525,10 @@ The hook consumes `AadTokenProviderFactory` from the SPFx service scope and init
 ### Example: Manual Token Request
 
 ```tsx
-import { useSPFxAadTokenProvider } from '@apvee/spfx-react-toolkit';
+import {
+  decodeSPFxJwtPayload,
+  useSPFxAadTokenProvider,
+} from '@apvee/spfx-react-toolkit';
 
 function TokenProbe() {
   const { tokenProvider, isReady, isInitializing, initError } = useSPFxAadTokenProvider();
@@ -537,8 +540,8 @@ function TokenProbe() {
     }
 
     const token = await tokenProvider.getToken('https://graph.microsoft.com');
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    setScopeText(payload.scp || '');
+    const payload = decodeSPFxJwtPayload(token);
+    setScopeText(payload?.scp || '');
   };
 
   if (isInitializing) return <Spinner label="Preparing token provider..." />;

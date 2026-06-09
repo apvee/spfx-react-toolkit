@@ -105,17 +105,21 @@ Use `useSPFxApiPermissionPrecheck` to check whether the current SPFx runtime can
 ```typescript
 import { useSPFxApiPermissionPrecheck } from '@apvee/spfx-react-toolkit';
 
-const precheck = useSPFxApiPermissionPrecheck({
-  graph: ['Sites.Read.All'],
-  customApis: [
-    {
-      name: 'Orders API',
-      resource: 'api://contoso-orders-api',
-      packageResource: 'Orders API',
-      scopes: ['Orders.Read']
-    }
-  ]
-});
+function PermissionStatus() {
+  const precheck = useSPFxApiPermissionPrecheck({
+    graph: ['Sites.Read.All'],
+    customApis: [
+      {
+        name: 'Orders API',
+        resource: 'api://contoso-orders-api',
+        packageResource: 'Orders API',
+        scopes: ['Orders.Read']
+      }
+    ]
+  });
+
+  return <span>{precheck.configurationState}</span>;
+}
 ```
 
 `available` means the current SPFx runtime obtained a token with the delegated scope. It does not read tenant grants and does not replace server-side authorization.
