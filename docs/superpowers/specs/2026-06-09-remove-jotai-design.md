@@ -65,7 +65,7 @@ interface SPFxRuntimeState {
   readonly teams: {
     readonly supported: boolean;
     readonly context?: unknown;
-    readonly theme?: TeamsTheme;
+    readonly theme?: 'default' | 'dark' | 'highContrast';
     readonly initialized: boolean;
   };
 }
@@ -89,7 +89,8 @@ Internal hooks:
 
 ```ts
 function useSPFxRuntimeSelector<T>(
-  selector: (state: SPFxRuntimeState) => T
+  selector: (state: SPFxRuntimeState) => T,
+  isEqual?: (previous: T, next: T) => boolean
 ): T;
 
 function useSPFxRuntimeActions(): {
@@ -105,6 +106,20 @@ function useSPFxRuntimeActions(): {
 ```
 
 The selector hook should compare selected values with `Object.is`. A hook re-renders only when its selected slice changes.
+
+`state.internal.tsx` must not import from hook modules. Shared runtime types must live in the core runtime module or `src/core/types.ts` to avoid circular imports.
+
+Implementation rules:
+
+- `setState` must create a new state object only when at least one top-level field changes.
+- `setState` must not notify subscribers when the next state is referentially identical to the previous state or when a partial update has no changed fields.
+- Subscriber notification must iterate over a snapshot of listeners, so unsubscribe/subscribe during notification does not corrupt iteration.
+- Runtime action functions must be stable across renders.
+- Selectors must not allocate new object literals unless the hook provides an equality function. Prefer selecting top-level stable references or selecting multiple fields separately. `Object.is` is the default equality function.
+- `useSPFxRuntimeSelector` must guard against missed updates between render and effect subscription by checking the selected value again immediately after subscribing.
+- `useSPFxRuntimeSelector` must keep the latest selector in a ref so inline selectors do not force unnecessary unsubscribe/resubscribe churn.
+- If the selector or equality function identity changes, `useSPFxRuntimeSelector` must re-evaluate the selected value without waiting for the next store notification.
+- Runtime hooks must throw a clear provider-missing error when used outside an SPFx provider.
 
 ## Provider Behavior
 
@@ -124,6 +139,13 @@ to:
 
 The existing `SPFxContext.Provider` remains, and provider-specific wrappers continue to pass only `instance`.
 
+Initial runtime state should be seeded synchronously from the current provider instance where possible:
+
+- `properties` from `instance.properties`;
+- `displayMode` and `containerEl` for web parts;
+- `teams` to `{ supported: false, initialized: false }`;
+- `theme` as `undefined` until the SPFx theme subscription provides the initial theme.
+
 The provider still:
 
 - waits for `serviceScope.whenFinished`;
@@ -133,6 +155,10 @@ The provider still:
 - syncs changed SPFx properties into runtime state;
 - syncs runtime property changes back into `instance.properties`;
 - refreshes the web part property pane when properties change from React.
+
+The provider should not use `useSPFxRuntimeSelector` for its internal `properties` sync. It should subscribe imperatively to the runtime store in an effect and synchronize only the `properties` reference. This avoids making `SPFxProviderBase` re-render on every runtime property update.
+
+If the `instance` prop changes without unmounting the provider, keep the same runtime store object but reconcile the runtime state from the new instance and update the static `SPFxContext` value. This preserves current provider-store lifetime semantics while avoiding stale instance metadata.
 
 ## Storage Hooks
 
@@ -145,7 +171,15 @@ They should be implemented as local hooks with:
 - functional setter support;
 - `remove()` that deletes the browser storage item and resets to `defaultValue`;
 - safe no-op behavior when `localStorage` or `sessionStorage` is unavailable;
-- browser `storage` event handling to sync updates from other tabs/windows.
+- safe handling for storage read/write/remove exceptions, including private browsing or quota failures;
+- browser `storage` event handling to sync updates from other tabs/windows;
+- a re-read when `scopedKey` or `defaultValue` changes, matching the current dynamic atom recreation behavior.
+
+Write behavior:
+
+- React state should update even if persistence fails, because the public hook has no error channel.
+- If `JSON.stringify` returns `undefined`, remove the storage key and keep the resolved React state value.
+- If `JSON.stringify` throws, keep the resolved React state value and skip persistence.
 
 Do not add an in-memory per-key registry. Same-page cross-component synchronization for identical storage keys is not currently documented and is outside this refactor.
 
@@ -155,9 +189,17 @@ Do not add an in-memory per-key registry. Same-page cross-component synchronizat
 
 React 17 does not include `useSyncExternalStore`. Use `useState` plus `useEffect` subscription inside `useSPFxRuntimeSelector`. Do not add `use-sync-external-store`.
 
+The selector hook must handle the React 17 effect timing gap:
+
+1. Read the selected value for initial render.
+2. Subscribe in `useEffect`.
+3. Immediately after subscribing, re-read the selected value and update local state if it changed before the subscription was attached.
+
 ### Unnecessary Re-Renders
 
 The runtime store context value must be stable. Do not place the whole runtime state in context. Hooks must subscribe through selectors and update only when the selected value changes by `Object.is`.
+
+Hooks that need multiple fields must avoid selectors that allocate new objects on every store notification. They should either call the selector hook once per field or use an explicit shallow equality helper.
 
 ### Provider Isolation
 
@@ -202,6 +244,8 @@ Remove:
 
 Replace "Built on Jotai" language with "provider-scoped runtime store" or equivalent wording.
 
+While editing `package.json`, preserve packaging for every public root export. The package tarball must include `lib/services/**/*` and `lib/helpers/**/*` because `src/index.ts` exports those barrels.
+
 ## Verification Plan
 
 Minimum checks:
@@ -210,7 +254,7 @@ Minimum checks:
 - `npx eslint src --ext .ts,.tsx --max-warnings=0`
 - `npm run build`
 - `npm --cache /tmp/spfx-react-toolkit-npm-cache pack --dry-run`
-- `rg -n "jotai|atomWithStorage|useAtom|useAtomValue|useSetAtom|spfxAtoms|atoms\\.internal" src package.json README.md docs`
+- `rg -n "jotai|atomWithStorage|useAtom|useAtomValue|useSetAtom|spfxAtoms|atoms\\.internal" src package.json package-lock.json README.md docs --glob '!docs/superpowers/**'`
 
 Behavior-focused introspection:
 
@@ -218,7 +262,9 @@ Behavior-focused introspection:
 - Confirm no runtime hook imports Jotai.
 - Confirm no provider renders a Jotai provider.
 - Confirm package tarball no longer includes Jotai-dependent code.
+- Confirm package tarball includes `lib/services/**/*` and `lib/helpers/**/*`.
 - Confirm hooks still export the same public names and return types.
+- Compare declaration output for public hooks before and after the refactor.
 
 Focused manual review:
 
@@ -226,16 +272,18 @@ Focused manual review:
 - `useSPFxContainerInfo`: verify resize updates only container subscribers.
 - `useSPFxTeams`: verify initialized guard and unsupported fallback.
 - `useSPFxStorage`: verify local/session storage unavailable, invalid JSON, remove, and functional setter cases.
+- `SPFxProviderBase`: verify runtime property synchronization uses an imperative store subscription and does not depend on provider React state.
 
 ## Recommended Implementation Slices
 
-1. Add internal runtime store and selector hooks.
-2. Convert `SPFxProviderBase` to use the runtime store.
-3. Convert runtime consumers: theme, display mode, properties, container, Teams.
-4. Rewrite storage hooks without Jotai.
-5. Remove `atoms.internal.ts` and package dependency references.
-6. Update docs and package metadata.
-7. Run verification and compare declaration output for public hook compatibility.
+1. Capture baseline declaration output for public hook compatibility.
+2. Add internal runtime store and selector hooks.
+3. Convert `SPFxProviderBase` to use the runtime store.
+4. Convert runtime consumers: theme, display mode, properties, container, Teams.
+5. Rewrite storage hooks without Jotai.
+6. Remove `atoms.internal.ts` and package dependency references.
+7. Update docs and package metadata.
+8. Run verification and compare declaration output for public hook compatibility.
 
 ## Release Note
 
