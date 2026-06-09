@@ -24,9 +24,9 @@ Built on a provider-scoped runtime store, it delivers per-instance state isolati
 
 ### Features
 
-- ✅ **35+ React Hooks** — Comprehensive API surface for all SPFx capabilities
+- ✅ **35+ React Hooks** — Comprehensive API surface for SPFx runtime data, clients, token providers, and API permission prechecks
 - ✅ **Public Helpers** — Pure utilities for storage keys, property pane helpers, environment checks, logging, and context extraction
-- ✅ **Public Services** — Reusable service factories for storage, SPFx context data, properties, theme, PnPjs, and provider composition
+- ✅ **Public Services** — Reusable service factories for storage, SPFx context data, properties, theme, PnPjs, API permission prechecks, and provider composition
 - ✅ **Instance Isolation** — State scoped per SPFx instance (multi-instance support)
 - ✅ **PnPjs Integration** — Optional hooks for PnPjs v4 with type-safe filters
 - ✅ **Cross-Platform** — Teams, SharePoint, and Local Workbench support
@@ -97,6 +97,28 @@ const user = getSPFxUserInfo(pageContext);
 const filtersKey = createScopedSPFxStorageKey(instanceId, 'filters');
 const tasks = createSPFxPnPListService(sp, 'Tasks', 50);
 ```
+
+### API Permission Precheck
+
+Use `useSPFxApiPermissionPrecheck` to check whether the current SPFx runtime can obtain delegated tokens for Microsoft Graph and custom APIs before running a feature that depends on those scopes.
+
+```typescript
+import { useSPFxApiPermissionPrecheck } from '@apvee/spfx-react-toolkit';
+
+const precheck = useSPFxApiPermissionPrecheck({
+  graph: ['Sites.Read.All'],
+  customApis: [
+    {
+      name: 'Orders API',
+      resource: 'api://contoso-orders-api',
+      packageResource: 'Orders API',
+      scopes: ['Orders.Read']
+    }
+  ]
+});
+```
+
+`available` means the current SPFx runtime obtained a token with the delegated scope. It does not read tenant grants and does not replace server-side authorization.
 
 ---
 

@@ -182,6 +182,40 @@ function hasSPFxPermission(
 
 Returns `false` when `permissionSet` is undefined. Otherwise delegates to `SPPermission.hasPermission(permission)`.
 
+## API Permission Precheck Helpers
+
+Import:
+
+```ts
+import {
+  buildSPFxApiPermissionAdminMessage,
+  classifySPFxApiPermissionError,
+  createSPFxApiPermissionRequirementId,
+  decodeSPFxJwtPayload,
+  evaluateSPFxApiPermissionRequirement,
+  extractSPFxDelegatedScopes,
+  normalizeSPFxApiPermissionRequirements,
+  summarizeSPFxApiPermissionResults,
+  validateSPFxApiPermissionRequirement,
+} from '@apvee/spfx-react-toolkit';
+```
+
+These helpers power the API permission precheck hooks and services without reading React context or acquiring tokens themselves. They normalize Graph and custom API configuration, decode delegated `scp` scopes from JWT payloads, classify token acquisition errors, and summarize results for UI buckets and remediation.
+
+| Function | Purpose |
+|----------|---------|
+| `normalizeSPFxApiPermissionRequirements` | Expands Graph shorthand, custom API shorthand, and explicit requirements into deduplicated delegated-scope requirements. |
+| `buildSPFxApiPermissionAdminMessage` | Builds administrator-facing remediation text for a package resource and scope. |
+| `createSPFxApiPermissionRequirementId` | Creates stable requirement identifiers such as `graph:Sites.Read.All` or custom API IDs. |
+| `validateSPFxApiPermissionRequirement` | Returns an invalid-result object when a requirement is incomplete or uses an unsupported permission kind. |
+| `decodeSPFxJwtPayload` | Decodes the payload section of a JWT without validating or exposing the raw token. |
+| `extractSPFxDelegatedScopes` | Reads delegated scopes from the JWT `scp` claim. |
+| `evaluateSPFxApiPermissionRequirement` | Evaluates one requirement against a decoded token payload and returns a check result. |
+| `classifySPFxApiPermissionError` | Maps token acquisition failures to precheck statuses such as consent, interaction, timeout, and transient failure. |
+| `summarizeSPFxApiPermissionResults` | Groups check results into `available`, `missing`, `warnings`, and `unknown` summaries with an overall configuration state. |
+
+`normalizeSPFxApiPermissionRequirements` also carries `packageResource` and `scope` into each requirement so remediation can point back to the same resource/scope values used in `webApiPermissionRequests`.
+
 ## Container Helpers
 
 Import:

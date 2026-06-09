@@ -83,6 +83,8 @@ Access SPFx HTTP clients for API calls.
 | [`useSPFxHttpClient`](./api/hooks/http-clients.md#usespfxhttpclient) | `SPFxHttpClientInfo` | Generic HTTP client |
 | [`useSPFxSPHttpClient`](./api/hooks/http-clients.md#usespfxsphttpclient) | `SPFxSPHttpClientInfo` | SharePoint REST API client |
 | [`useSPFxAadHttpClient`](./api/hooks/http-clients.md#usespfxaadhttpclient) | `SPFxAadHttpClientInfo` | Azure AD secured API client |
+| [`useSPFxAadTokenProvider`](./api/hooks/http-clients.md#usespfxaadtokenprovider) | `SPFxAadTokenProviderInfo` | SPFx AAD token provider access |
+| [`useSPFxApiPermissionPrecheck`](./api/hooks/http-clients.md#usespfxapipermissionprecheck) | `SPFxApiPermissionPrecheckResult` | Delegated Graph and custom API permission precheck |
 | [`useSPFxMSGraphClient`](./api/hooks/http-clients.md#usespfxmsgraphclient) | `SPFxMSGraphClientInfo` | Microsoft Graph client |
 
 ### PnPjs Integration
@@ -172,17 +174,19 @@ Public non-React service factories for composing SPFx, PnPjs, SharePoint REST, a
 | PnPjs services | Context, invoke/batch, list CRUD, and search | [services/INDEX.md](./api/services/INDEX.md) |
 | Tenant services | App catalog discovery, tenant properties, tenant key-value store | [services/INDEX.md](./api/services/INDEX.md) |
 | Graph services | OneDrive app data and user photos | [services/INDEX.md](./api/services/INDEX.md) |
+| API permission precheck service | Token-provider-based delegated scope checks with remediation entries for `webApiPermissionRequests` | [services/INDEX.md](./api/services/INDEX.md) |
 
 ---
 
 ## Helpers
 
-Public pure helper functions for SPFx context mapping, permission checks, storage keys, tenant value serialization, Graph paths, and theme conversion.
+Public pure helper functions for SPFx context mapping, permission checks, API permission precheck normalization and summarization, storage keys, tenant value serialization, Graph paths, and theme conversion.
 
 | Module | Description | Documentation |
 |--------|-------------|---------------|
 | Page context helpers | User, site, list, locale, environment, page type, and correlation mapping | [helpers/INDEX.md](./api/helpers/INDEX.md) |
 | Utility helpers | Permissions, container size, storage keys, tenant values, Graph paths, theme conversion | [helpers/INDEX.md](./api/helpers/INDEX.md) |
+| API permission precheck helpers | Requirement normalization, JWT scope evaluation, error classification, and summaries that map remediation to `webApiPermissionRequests` | [helpers/INDEX.md](./api/helpers/INDEX.md) |
 
 ---
 

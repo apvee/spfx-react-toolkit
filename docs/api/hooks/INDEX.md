@@ -12,7 +12,7 @@ Hooks are the React-facing API. They must be used within components wrapped by a
 |----------|-------|-------------|
 | [Context](./context.md) | 4 | Core SPFx context and service scope |
 | [Properties & Display](./properties.md) | 3 | Web part properties and display mode |
-| [HTTP Clients](./http-clients.md) | 4 | SharePoint, Graph, and Azure AD APIs |
+| [HTTP Clients](./http-clients.md) | 6 | SharePoint, Graph, Azure AD APIs, token provider access, and API permission prechecks |
 | [PnPjs](./pnpjs.md) | 4 | PnPjs context, invoke/batch, lists, and search |
 | [UI & Theming](./theming.md) | 4 | Theme, Fluent UI 9, and container info |
 | [User & Site](./user-site.md) | 5 | User, site, hub, and list information |
@@ -50,6 +50,57 @@ Hooks are the React-facing API. They must be used within components wrapped by a
 | `useSPFxSPHttpClient()` | SharePoint REST requests | [View](./http-clients.md#usespfxsphttpclient) |
 | `useSPFxMSGraphClient()` | Microsoft Graph API | [View](./http-clients.md#usespfxmsgraphclient) |
 | `useSPFxAadHttpClient(resourceId)` | Azure AD protected APIs | [View](./http-clients.md#usespfxaadhttpclient) |
+| `useSPFxAadTokenProvider()` | SPFx AAD token provider access | [View](./http-clients.md#usespfxaadtokenprovider) |
+| `useSPFxApiPermissionPrecheck(config, options?)` | Delegated Graph and custom API permission precheck | [View](./http-clients.md#usespfxapipermissionprecheck) |
+
+#### API Permission Precheck Example
+
+```tsx
+import { useSPFxApiPermissionPrecheck } from '@apvee/spfx-react-toolkit';
+
+function PermissionNotice() {
+  const precheck = useSPFxApiPermissionPrecheck({
+    graph: ['Sites.Read.All'],
+    customApis: [
+      {
+        name: 'Orders API',
+        resource: 'api://contoso-orders-api',
+        packageResource: 'Orders API',
+        scopes: ['Orders.Read']
+      }
+    ]
+  });
+
+  if (precheck.configurationState === 'ready') {
+    return null;
+  }
+
+  return (
+    <ul>
+      {precheck.missing.map(item => (
+        <li key={item.id}>{item.adminMessage}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+#### Manual Check Example
+
+```tsx
+const precheck = useSPFxApiPermissionPrecheck(
+  { graph: ['Sites.Read.All'] },
+  { autoCheck: false, mode: 'passive' }
+);
+
+return (
+  <button onClick={() => precheck.retryWithoutCache()} disabled={precheck.isChecking}>
+    Recheck permissions
+  </button>
+);
+```
+
+`mode: 'passive'` prevents the precheck from launching an authentication popup or redirect while it probes token availability. Use `retryWithoutCache()` after an administrator changes API access or when you need SPFx to bypass a cached token on the next check.
 
 ### PnPjs Hooks
 
