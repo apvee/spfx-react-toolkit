@@ -102,6 +102,8 @@ export function useSPFxApiPermissionPrecheck(
   const autoCheckKeyRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
+    isMountedRef.current = true;
+
     return () => {
       isMountedRef.current = false;
     };
@@ -330,6 +332,6 @@ function createAutoCheckKey(
   try {
     return JSON.stringify({ config, options });
   } catch {
-    return `${Date.now()}`;
+    return 'unserializable-config';
   }
 }
