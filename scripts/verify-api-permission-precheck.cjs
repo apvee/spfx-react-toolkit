@@ -5,10 +5,7 @@ const os = require('os');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
-const outDir = path.join(os.tmpdir(), 'spfx-api-permission-precheck-verify');
-
-fs.rmSync(outDir, { recursive: true, force: true });
-fs.mkdirSync(outDir, { recursive: true });
+const outDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spfx-api-permission-precheck-verify-'));
 
 const sourceFiles = [
   'src/helpers/spfx-api-permission-precheck.helpers.ts'
@@ -244,6 +241,20 @@ assert.strictEqual(
   'invalidRequirement'
 );
 
+const missingKindRequirement = {
+  id: 'missing-kind',
+  resourceName: 'Missing Kind API',
+  resourceEndpoint: 'api://missing-kind',
+  packageResource: 'Missing Kind API',
+  scope: 'MissingKind.Read',
+  required: true,
+  adminMessage: 'Approve Missing Kind API / MissingKind.Read in SharePoint Admin Center API access.'
+};
+assert.strictEqual(
+  helpers.evaluateSPFxApiPermissionRequirement(missingKindRequirement, graphPayload).status,
+  'invalidRequirement'
+);
+
 assert.strictEqual(
   helpers.evaluateSPFxApiPermissionRequirement(requirements[0], undefined).status,
   'unsupportedToken'
@@ -319,3 +330,5 @@ assert.strictEqual(helpers.decodeSPFxJwtPayload('not-a-jwt'), undefined);
 assert.strictEqual(helpers.decodeSPFxJwtPayload('header.not-json.signature'), undefined);
 
 console.log('api permission precheck verification passed');
+
+fs.rmSync(outDir, { recursive: true, force: true });

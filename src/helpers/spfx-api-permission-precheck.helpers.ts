@@ -260,7 +260,8 @@ export function validateSPFxApiPermissionRequirement(
     !requirement.resourceName?.trim() ||
     !requirement.resourceEndpoint?.trim() ||
     !requirement.packageResource?.trim() ||
-    !requirement.scope?.trim()
+    !requirement.scope?.trim() ||
+    !kind
   ) {
     return createSPFxApiPermissionResult(
       requirement,
@@ -376,9 +377,9 @@ export function evaluateSPFxApiPermissionRequirement(
     );
   }
 
-  const acceptableLowerScopes = acceptableScopes.map(scope => scope.toLocaleLowerCase());
+  const acceptableLowerScopes = acceptableScopes.map(scope => scope.toLowerCase());
   const caseMismatchScope = detectedScopes.find(
-    scope => acceptableLowerScopes.indexOf(scope.toLocaleLowerCase()) >= 0
+    scope => acceptableLowerScopes.indexOf(scope.toLowerCase()) >= 0
   );
 
   return createSPFxApiPermissionResult(
@@ -397,7 +398,7 @@ export function classifySPFxApiPermissionError(
   error: unknown
 ): SPFxApiPermissionCheckResult {
   const errorText = getErrorText(error);
-  const normalizedErrorText = errorText.toLocaleLowerCase();
+  const normalizedErrorText = errorText.toLowerCase();
   const errorCode = getErrorCode(error, errorText);
 
   if (normalizedErrorText.indexOf('aadsts65001') >= 0 || normalizedErrorText.indexOf('consent') >= 0) {
