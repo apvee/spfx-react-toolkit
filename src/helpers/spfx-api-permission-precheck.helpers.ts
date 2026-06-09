@@ -146,16 +146,6 @@ function normalizeScopeInput(scopeInput: SPFxPermissionScopeInput): {
   };
 }
 
-function sanitizeRequirementIdPart(value: string): string {
-  const sanitized = value
-    .trim()
-    .replace(/^[a-z]+:\/\//i, '')
-    .replace(/[^a-zA-Z0-9._-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-
-  return sanitized || 'resource';
-}
-
 function getDeduplicationKey(requirement: SPFxApiPermissionRequirement): string {
   return `${requirement.resourceEndpoint}\n${requirement.scope}`;
 }
@@ -249,7 +239,7 @@ export function createSPFxApiPermissionRequirementId(
     return `graph:${trimmedScope}`;
   }
 
-  return `api:${sanitizeRequirementIdPart(prefix || resourceEndpoint)}:${trimmedScope}`;
+  return `api:${(prefix || resourceEndpoint).trim()}:${trimmedScope}`;
 }
 
 export function validateSPFxApiPermissionRequirement(

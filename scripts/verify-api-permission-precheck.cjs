@@ -109,10 +109,18 @@ const optionalCustom = helpers.normalizeSPFxApiPermissionRequirements({
     }
   ]
 });
-assert.strictEqual(optionalCustom[0].id, 'api:inventory:Inventory.Read');
+assert.strictEqual(optionalCustom[0].id, 'api:api://inventory:Inventory.Read');
 assert.strictEqual(optionalCustom[0].required, false);
 assert.strictEqual(optionalCustom[0].label, 'Inventory read');
 assert.deepStrictEqual(optionalCustom[0].expectedAudiences, ['api://inventory']);
+assert.strictEqual(
+  helpers.createSPFxApiPermissionRequirementId('api://inventory', 'Inventory.Read', 'orders-api'),
+  'api:orders-api:Inventory.Read'
+);
+assert.strictEqual(
+  helpers.createSPFxApiPermissionRequirementId('api://inventory', 'Inventory.Read'),
+  'api:api://inventory:Inventory.Read'
+);
 
 const deduped = helpers.normalizeSPFxApiPermissionRequirements({
   graph: ['User.Read', 'User.Read'],
