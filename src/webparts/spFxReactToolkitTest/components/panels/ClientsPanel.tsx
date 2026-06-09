@@ -14,6 +14,8 @@ import {
 } from '@fluentui/react';
 import {
   useSPFxAadHttpClient,
+  useSPFxAadTokenProvider,
+  useSPFxApiPermissionPrecheck,
   useSPFxHttpClient,
   useSPFxMSGraphClient,
   useSPFxSPHttpClient,
@@ -30,6 +32,7 @@ const ClientsPanel: React.FC = () => {
   const spHttp = useSPFxSPHttpClient();
   const graph = useSPFxMSGraphClient();
   const aad = useSPFxAadHttpClient();
+  const aadTokenProvider = useSPFxAadTokenProvider();
 
   const [httpResult, setHttpResult] = React.useState<unknown>();
   const [spResult, setSpResult] = React.useState<unknown>();
@@ -37,6 +40,24 @@ const ClientsPanel: React.FC = () => {
   const [aadResult, setAadResult] = React.useState<unknown>();
   const [aadResource, setAadResource] = React.useState('');
   const [aadPath, setAadPath] = React.useState('/api/health');
+  const permissionPrecheck = useSPFxApiPermissionPrecheck(
+    {
+      graph: ['User.Read'],
+      customApis: aadResource.trim()
+        ? [
+            {
+              name: 'Custom API',
+              resource: aadResource.trim(),
+              scopes: ['user_impersonation']
+            }
+          ]
+        : []
+    },
+    {
+      autoCheck: false,
+      mode: 'passive'
+    }
+  );
 
   const loadExternal = React.useCallback(async () => {
     const data = await http.invoke(client =>
@@ -90,6 +111,7 @@ const ClientsPanel: React.FC = () => {
           <StatusBadge label="SPHttpClient" available={spHttp.isReady} />
           <StatusBadge label="MSGraphClient" available={graph.isReady} />
           <StatusBadge label="AadHttpClient" available={aad.isReady} />
+          <StatusBadge label="AadTokenProvider" available={aadTokenProvider.isReady} />
         </Stack>
         <InfoGrid
           rows={[
@@ -97,6 +119,7 @@ const ClientsPanel: React.FC = () => {
             { label: 'Graph Initializing', value: graph.isInitializing ? 'Yes' : 'No', icon: 'Sync' },
             { label: 'AAD Resource', value: aad.resourceUrl, icon: 'CloudSecure' },
             { label: 'AAD Initializing', value: aad.isInitializing ? 'Yes' : 'No', icon: 'Sync' },
+            { label: 'AAD Token Provider Initializing', value: aadTokenProvider.isInitializing ? 'Yes' : 'No', icon: 'Sync' },
           ]}
         />
       </DemoCard>
@@ -165,6 +188,44 @@ const ClientsPanel: React.FC = () => {
           />
         </Stack>
         {aadResult && <JsonDetails label="AadHttpClient result" value={aadResult} />}
+      </DemoCard>
+
+      <DemoCard title="API Permission Precheck" iconName="Permissions" error={permissionPrecheck.tokenProviderError}>
+        <Stack horizontal wrap tokens={{ childrenGap: 8 }}>
+          <PrimaryButton
+            text={permissionPrecheck.isChecking ? 'Checking...' : 'Check permissions'}
+            iconProps={{ iconName: 'Permissions' }}
+            disabled={!aadTokenProvider.isReady || permissionPrecheck.isChecking}
+            onClick={permissionPrecheck.check}
+          />
+          <DefaultButton
+            text="Retry without cache"
+            iconProps={{ iconName: 'Refresh' }}
+            disabled={!aadTokenProvider.isReady || permissionPrecheck.isChecking}
+            onClick={permissionPrecheck.retryWithoutCache}
+          />
+        </Stack>
+        <InfoGrid
+          rows={[
+            { label: 'Configuration State', value: permissionPrecheck.configurationState, icon: 'StatusCircleQuestionMark' },
+            { label: 'Configured', value: permissionPrecheck.isConfigured ? 'Yes' : 'No', icon: 'Completed' },
+            { label: 'Required Graph Scope', value: 'User.Read', icon: 'OfficeAssistantLogo' },
+            { label: 'Custom API Resource', value: aadResource.trim() || 'Not configured', icon: 'AzureAPIManagement' },
+          ]}
+        />
+        {permissionPrecheck.missing.map(permission => (
+          <MessageBar key={permission.id} messageBarType={MessageBarType.error}>
+            {permission.message}
+          </MessageBar>
+        ))}
+        {permissionPrecheck.warnings.map(permission => (
+          <MessageBar key={permission.id} messageBarType={MessageBarType.warning}>
+            {permission.message}
+          </MessageBar>
+        ))}
+        {permissionPrecheck.results.length > 0 && (
+          <JsonDetails label="API permission precheck results" value={permissionPrecheck.results} />
+        )}
       </DemoCard>
     </Stack>
   );
