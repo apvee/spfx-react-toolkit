@@ -12,7 +12,7 @@ import type { SPFxContextValue } from './types';
  * - kind: Type of host component
  * 
  * This context does NOT contain reactive state.
- * State is managed via Jotai atoms in isolated stores per Provider instance.
+ * State is managed via isolated runtime stores per Provider instance.
  * 
  * @internal
  */

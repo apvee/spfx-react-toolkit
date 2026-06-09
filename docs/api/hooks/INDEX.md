@@ -1,25 +1,25 @@
 # Hooks API Reference
 
-> Complete reference for all SPFx React Toolkit hooks
+> Complete reference for SPFx React Toolkit hooks
 
 ## Overview
 
-The toolkit provides **35 hooks** organized into functional categories. All hooks must be used within components wrapped by an [SPFx Provider](../core/providers.md).
+Hooks are the React-facing API. They must be used within components wrapped by a host-specific SPFx provider such as `SPFxWebPartProvider`, `SPFxApplicationCustomizerProvider`, `SPFxFieldCustomizerProvider`, or `SPFxListViewCommandSetProvider`.
 
 ## Categories
 
 | Category | Hooks | Description |
 |----------|-------|-------------|
-| [Context](./context.md) | 3 | Core SPFx context and services |
+| [Context](./context.md) | 4 | Core SPFx context and service scope |
 | [Properties & Display](./properties.md) | 3 | Web part properties and display mode |
-| [HTTP Clients](./http-clients.md) | 3 | SharePoint, Graph, and Azure AD APIs |
-| [PnPjs](./pnpjs.md) | 2 | PnP/sp and PnP/graph instances |
+| [HTTP Clients](./http-clients.md) | 4 | SharePoint, Graph, and Azure AD APIs |
+| [PnPjs](./pnpjs.md) | 4 | PnPjs context, invoke/batch, lists, and search |
 | [UI & Theming](./theming.md) | 4 | Theme, Fluent UI 9, and container info |
 | [User & Site](./user-site.md) | 5 | User, site, hub, and list information |
-| [Environment](./environment.md) | 4 | Environment detection, Teams, locale |
-| [Storage](./storage.md) | 4 | LocalStorage, SessionStorage, OneDrive, Tenant KV Store |
+| [Environment](./environment.md) | 4 | Environment detection, Teams, locale, and page type |
+| [Storage](./storage.md) | 5 | Browser, OneDrive, and tenant storage |
 | [Permissions](./permissions.md) | 2 | Permission checking |
-| [Performance & Diagnostics](./performance.md) | 4 | Logging, timing, correlation |
+| [Performance & Diagnostics](./performance.md) | 3 | Logging, timing, correlation |
 
 ---
 
@@ -31,21 +31,23 @@ The toolkit provides **35 hooks** organized into functional categories. All hook
 |------|-------------|------|
 | `useSPFxContext()` | Full SPFx context object | [View](./context.md#usespfxcontext) |
 | `useSPFxPageContext()` | Page context information | [View](./context.md#usespfxpagecontext) |
-| `useSPFxInstanceInfo()` | Web part instance details | [View](./context.md#usespfxinstanceinfo) |
+| `useSPFxServiceScope()` | SPFx service scope access | [View](./context.md#usespfxservicescope) |
+| `useSPFxInstanceInfo()` | Component instance details | [View](./context.md#usespfxinstanceinfo) |
 
 ### Properties & Display Hooks
 
 | Hook | Description | Docs |
 |------|-------------|------|
-| `useSPFxProperties<T>()` | Web part properties | [View](./properties.md#usespfxproperties) |
+| `useSPFxProperties<T>()` | Component properties with bidirectional sync | [View](./properties.md#usespfxproperties) |
 | `useSPFxDisplayMode()` | Edit/Read display mode | [View](./properties.md#usespfxdisplaymode) |
-| `useSPFxPropertyPane()` | Property pane controls | [View](./properties.md#usespfxpropertypane) |
+| `useSPFxIsEdit()` | Boolean shortcut for edit mode | [View](./properties.md#usespfxisedit) |
 
 ### HTTP Client Hooks
 
 | Hook | Description | Docs |
 |------|-------------|------|
 | `useSPFxHttpClient()` | Generic HTTP requests | [View](./http-clients.md#usespfxhttpclient) |
+| `useSPFxSPHttpClient()` | SharePoint REST requests | [View](./http-clients.md#usespfxsphttpclient) |
 | `useSPFxMSGraphClient()` | Microsoft Graph API | [View](./http-clients.md#usespfxmsgraphclient) |
 | `useSPFxAadHttpClient(resourceId)` | Azure AD protected APIs | [View](./http-clients.md#usespfxaadhttpclient) |
 
@@ -53,8 +55,10 @@ The toolkit provides **35 hooks** organized into functional categories. All hook
 
 | Hook | Description | Docs |
 |------|-------------|------|
-| `useSPFxPnPSP()` | PnPjs SP instance | [View](./pnpjs.md#usespfxpnpsp) |
-| `useSPFxPnPGraph()` | PnPjs Graph instance | [View](./pnpjs.md#usespfxpnpgraph) |
+| `useSPFxPnP()` | PnPjs invoke and batch helpers | [View](./pnpjs.md#usespfxpnp) |
+| `useSPFxPnPContext()` | PnPjs `SPFI` factory | [View](./pnpjs.md#usespfxpnpcontext) |
+| `useSPFxPnPList<T>()` | SharePoint list CRUD and batch operations | [View](./pnpjs.md#usespfxpnplist) |
+| `useSPFxPnPSearch<T>()` | SharePoint Search with pagination | [View](./pnpjs.md#usespfxpnpsearch) |
 
 ### UI & Theming Hooks
 
@@ -62,8 +66,8 @@ The toolkit provides **35 hooks** organized into functional categories. All hook
 |------|-------------|------|
 | `useSPFxThemeInfo()` | SharePoint theme | [View](./theming.md#usespfxthemeinfo) |
 | `useSPFxFluent9ThemeInfo()` | Fluent UI 9 theme | [View](./theming.md#usespfxfluent9themeinfo) |
-| `useSPFxContainerSize()` | Container dimensions | [View](./theming.md#usespfxcontainersize) |
-| `useSPFxContainerInfo()` | Section background info | [View](./theming.md#usespfxcontainerinfo) |
+| `useSPFxContainerSize()` | Responsive container size category | [View](./theming.md#usespfxcontainersize) |
+| `useSPFxContainerInfo()` | Container element and dimensions | [View](./theming.md#usespfxcontainerinfo) |
 
 ### User & Site Hooks
 
@@ -88,9 +92,9 @@ The toolkit provides **35 hooks** organized into functional categories. All hook
 
 | Hook | Description | Docs |
 |------|-------------|------|
-| `useSPFxLocalStorage<T>(key, default)` | Persistent storage | [View](./storage.md#usespfxlocalstorage) |
-| `useSPFxSessionStorage<T>(key, default)` | Session storage | [View](./storage.md#usespfxsessionstorage) |
-| `useSPFxOneDriveAppData<T>(file, default)` | Cloud storage | [View](./storage.md#usespfxonedriveappdata) |
+| `useSPFxLocalStorage<T>(key, defaultValue)` | Instance-scoped persistent browser storage | [View](./storage.md#usespfxlocalstorage) |
+| `useSPFxSessionStorage<T>(key, defaultValue)` | Instance-scoped session browser storage | [View](./storage.md#usespfxsessionstorage) |
+| `useSPFxOneDriveAppData<T>(fileName, defaultValue)` | OneDrive app folder storage | [View](./storage.md#usespfxonedriveappdata) |
 | `useSPFxTenantProperty<T>(key)` | Tenant properties (read-only) | [View](./storage.md#usespfxtenantproperty) |
 | `useSPFxTenantKeyValueStore()` | Tenant key-value store | [View](./storage.md#usespfxtenantkeyvaluestore) |
 
@@ -116,11 +120,10 @@ The toolkit provides **35 hooks** organized into functional categories. All hook
 All hooks follow the same basic pattern:
 
 ```tsx
-import { 
-  SPFxWebPartProvider, 
-  useSPFxContext, 
+import {
+  SPFxWebPartProvider,
+  useSPFxContext,
   useSPFxProperties,
-  // ... other hooks
 } from '@apvee/spfx-react-toolkit';
 
 // In your web part render method:
@@ -135,23 +138,16 @@ public render(): void {
 
 // In your component:
 const MyComponent: React.FC = () => {
-  // Use any hooks here
   const ctx = useSPFxContext();
-  const { title } = useSPFxProperties<IMyProps>();
-  const { displayName } = useSPFxUserInfo();
-  
-  return <div>Hello {displayName}!</div>;
+  const { properties } = useSPFxProperties<IMyProps>();
+  return <div>{ctx.instanceId}: {properties?.title}</div>;
 };
 ```
-
----
 
 ## See Also
 
 - [Core Providers](../core/providers.md) - Provider components
 - [Core Types](../core/types.md) - Type definitions
+- [Helpers API](../helpers/INDEX.md) - Pure utility functions
+- [Services API](../services/INDEX.md) - Non-React service factories
 - [Introduction](../../INTRODUCTION.md) - Getting started
-
----
-
-*Generated from JSDoc comments. Last updated: January 31, 2026*

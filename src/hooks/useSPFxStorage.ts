@@ -1,9 +1,7 @@
 // useSPFxStorage.ts
 // Hooks for persisted storage scoped to SPFx instance
 
-import { atomWithStorage } from 'jotai/utils';
-import { useAtom } from 'jotai';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect, useState } from 'react';
 import { createScopedSPFxStorageKey } from '../helpers/spfx-storage.helpers';
 import { useSPFxInstanceInfo } from './useSPFxInstanceInfo';
 
@@ -21,10 +19,151 @@ export interface SPFxStorageHook<T> {
   readonly remove: () => void;
 }
 
+type StorageKind = 'local' | 'session';
+
+type StorageValueUpdater<T> = T | ((prev: T) => T);
+
+function getBrowserStorage(kind: StorageKind): Storage | undefined {
+  try {
+    if (kind === 'local' && typeof localStorage !== 'undefined') {
+      return localStorage;
+    }
+
+    if (kind === 'session' && typeof sessionStorage !== 'undefined') {
+      return sessionStorage;
+    }
+  } catch {
+    return undefined;
+  }
+
+  return undefined;
+}
+
+function readStorageValue<T>(
+  storage: Storage | undefined,
+  key: string,
+  defaultValue: T
+): T {
+  if (!storage) {
+    return defaultValue;
+  }
+
+  try {
+    const item = storage.getItem(key);
+    if (item === null) {
+      return defaultValue;
+    }
+
+    return JSON.parse(item) as T;
+  } catch {
+    return defaultValue;
+  }
+}
+
+function writeStorageValue<T>(
+  storage: Storage | undefined,
+  key: string,
+  value: T
+): void {
+  if (!storage) {
+    return;
+  }
+
+  try {
+    const item = JSON.stringify(value);
+    if (item === undefined) {
+      storage.removeItem(key);
+      return;
+    }
+
+    storage.setItem(key, item);
+  } catch {
+    // Storage can fail in private browsing, quota limits, or blocked contexts.
+  }
+}
+
+function removeStorageValue(storage: Storage | undefined, key: string): void {
+  if (!storage) {
+    return;
+  }
+
+  try {
+    storage.removeItem(key);
+  } catch {
+    // Best-effort persistence API.
+  }
+}
+
+function useSPFxBrowserStorage<T>(
+  kind: StorageKind,
+  key: string,
+  defaultValue: T
+): SPFxStorageHook<T> {
+  const { id: instanceId } = useSPFxInstanceInfo();
+  const scopedKey = useMemo(
+    () => createScopedSPFxStorageKey(instanceId, key),
+    [instanceId, key]
+  );
+
+  const [value, setStoredValue] = useState<T>(() => (
+    readStorageValue(getBrowserStorage(kind), scopedKey, defaultValue)
+  ));
+
+  useEffect(() => {
+    setStoredValue(readStorageValue(getBrowserStorage(kind), scopedKey, defaultValue));
+  }, [kind, scopedKey, defaultValue]);
+
+  const setValue = useCallback((nextValue: StorageValueUpdater<T>): void => {
+    setStoredValue(previous => {
+      const resolved = typeof nextValue === 'function'
+        ? (nextValue as (prev: T) => T)(previous)
+        : nextValue;
+
+      writeStorageValue(getBrowserStorage(kind), scopedKey, resolved);
+      return resolved;
+    });
+  }, [kind, scopedKey]);
+
+  const remove = useCallback((): void => {
+    removeStorageValue(getBrowserStorage(kind), scopedKey);
+    setStoredValue(defaultValue);
+  }, [kind, scopedKey, defaultValue]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const storage = getBrowserStorage(kind);
+    if (!storage) {
+      return;
+    }
+
+    const handleStorage = (event: StorageEvent): void => {
+      if (event.storageArea !== storage || event.key !== scopedKey) {
+        return;
+      }
+
+      setStoredValue(readStorageValue(storage, scopedKey, defaultValue));
+    };
+
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, [kind, scopedKey, defaultValue]);
+
+  return useMemo(() => ({
+    value,
+    setValue,
+    remove,
+  }), [value, setValue, remove]);
+}
+
 /**
  * Hook to use localStorage scoped to SPFx instance
  * 
- * Creates a persisted state atom using Jotai's atomWithStorage.
  * The storage key is automatically scoped to the SPFx instance ID,
  * ensuring isolation between different web parts/extensions.
  * 
@@ -59,38 +198,12 @@ export function useSPFxLocalStorage<T>(
   key: string,
   defaultValue: T
 ): SPFxStorageHook<T> {
-  const { id: instanceId } = useSPFxInstanceInfo();
-  
-  // Create scoped storage key
-  const scopedKey = createScopedSPFxStorageKey(instanceId, key);
-  
-  // Create atom with storage (memoized to avoid recreation)
-  const storageAtom = useMemo(
-    () => atomWithStorage<T>(scopedKey, defaultValue),
-    [scopedKey, defaultValue]
-  );
-  
-  const [value, setValue] = useAtom(storageAtom);
-  
-  // Remove function (reset to default)
-  const remove = useCallback((): void => {
-    setValue(defaultValue);
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem(scopedKey);
-    }
-  }, [setValue, defaultValue, scopedKey]);
-  
-  return useMemo(() => ({
-    value,
-    setValue,
-    remove,
-  }), [value, setValue, remove]);
+  return useSPFxBrowserStorage('local', key, defaultValue);
 }
 
 /**
  * Hook to use sessionStorage scoped to SPFx instance
  * 
- * Creates a persisted state atom using Jotai's atomWithStorage.
  * The storage key is automatically scoped to the SPFx instance ID,
  * ensuring isolation between different web parts/extensions.
  * 
@@ -124,59 +237,5 @@ export function useSPFxSessionStorage<T>(
   key: string,
   defaultValue: T
 ): SPFxStorageHook<T> {
-  const { id: instanceId } = useSPFxInstanceInfo();
-  
-  // Create scoped storage key
-  const scopedKey = createScopedSPFxStorageKey(instanceId, key);
-  
-  // Create atom with session storage
-  const storageAtom = useMemo(
-    () => atomWithStorage<T>(
-      scopedKey,
-      defaultValue,
-      {
-        getItem: (key) => {
-          if (typeof sessionStorage === 'undefined') {
-            return defaultValue;
-          }
-          const item = sessionStorage.getItem(key);
-          if (item === null) {
-            return defaultValue;
-          }
-          try {
-            return JSON.parse(item) as T;
-          } catch {
-            return defaultValue;
-          }
-        },
-        setItem: (key, value) => {
-          if (typeof sessionStorage !== 'undefined') {
-            sessionStorage.setItem(key, JSON.stringify(value));
-          }
-        },
-        removeItem: (key) => {
-          if (typeof sessionStorage !== 'undefined') {
-            sessionStorage.removeItem(key);
-          }
-        },
-      }
-    ),
-    [scopedKey, defaultValue]
-  );
-  
-  const [value, setValue] = useAtom(storageAtom);
-  
-  // Remove function (reset to default)
-  const remove = useCallback((): void => {
-    setValue(defaultValue);
-    if (typeof sessionStorage !== 'undefined') {
-      sessionStorage.removeItem(scopedKey);
-    }
-  }, [setValue, defaultValue, scopedKey]);
-  
-  return useMemo(() => ({
-    value,
-    setValue,
-    remove,
-  }), [value, setValue, remove]);
+  return useSPFxBrowserStorage('session', key, defaultValue);
 }

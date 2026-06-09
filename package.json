@@ -1,6 +1,6 @@
 {
   "name": "@apvee/spfx-react-toolkit",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Comprehensive React runtime and hooks library for SharePoint Framework (SPFx)",
   "private": false,
   "engines": {
@@ -12,6 +12,8 @@
     "lib/index.*",
     "lib/core/**/*",
     "lib/hooks/**/*",
+    "lib/services/**/*",
+    "lib/helpers/**/*",
     "lib/utils/**/*",
     "README.md",
     "LICENSE"
@@ -20,6 +22,9 @@
     "build": "gulp bundle",
     "clean": "gulp clean",
     "test": "gulp test",
+    "verify:runtime-store": "node scripts/verify-runtime-store.cjs",
+    "verify:state-removal": "node scripts/verify-state-removal.cjs",
+    "verify:public-docs": "node scripts/verify-public-docs.cjs",
     "prepublishOnly": "npm run clean && npm run build"
   },
   "dependencies": {
@@ -30,7 +35,6 @@
     "@microsoft/sp-core-library": "1.21.1",
     "@microsoft/sp-listview-extensibility": ">=1.18.0",
     "@microsoft/sp-webpart-base": ">=1.18.0",
-    "jotai": "^2.6.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "tslib": "2.3.1",
@@ -87,7 +91,6 @@
     "commandset",
     "field-customizer",
     "application-customizer",
-    "jotai",
     "pnp",
     "pnpjs",
     "context",

@@ -1,9 +1,8 @@
 // useSPFxThemeInfo.ts
 // Hook to access current SPFx theme
 
-import { useAtomValue } from 'jotai';
 import type { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { spfxAtoms } from '../core/atoms.internal';
+import { useSPFxRuntimeSelector } from '../core/state.internal';
 
 /**
  * Hook to access the current SPFx theme
@@ -32,6 +31,5 @@ import { spfxAtoms } from '../core/atoms.internal';
  * ```
  */
 export function useSPFxThemeInfo(): IReadonlyTheme | undefined {
-  // Read current theme value directly from atom
-  return useAtomValue(spfxAtoms.theme);
+  return useSPFxRuntimeSelector(state => state.theme);
 }

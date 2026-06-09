@@ -4,12 +4,12 @@
 
 ## Overview
 
-**SPFx React Toolkit** is a production-ready library that simplifies SharePoint Framework development by providing a unified React context provider and a comprehensive collection of strongly-typed hooks. Built on [Jotai](https://jotai.org/) atomic state management, it delivers per-instance state isolation, automatic synchronization, and an ergonomic React Hooks API.
+**SPFx React Toolkit** is a production-ready library that simplifies SharePoint Framework development by providing a unified React context provider and a comprehensive collection of strongly-typed hooks. Built on a provider-scoped runtime store, it delivers per-instance state isolation, automatic synchronization, and an ergonomic React Hooks API.
 
 ### Key Benefits
 
 - **💪 Type-Safe**: Full TypeScript support with zero `any` usage
-- **⚡ Optimized**: Jotai atomic state with per-instance scoping
+- **⚡ Optimized**: Provider-scoped runtime state with per-instance isolation
 - **🔄 Auto-Sync**: Bidirectional synchronization between React and SPFx
 - **🎨 Universal**: Works with all SPFx component types
 - **📦 Modular**: Tree-shakeable, minimal bundle impact
@@ -26,7 +26,6 @@ All peer dependencies are installed automatically with npm 7+:
 
 | Dependency | Size | Purpose |
 |------------|------|---------|
-| **Jotai** | ~3KB | Core state management |
 | **PnPjs** | 30-50KB | SharePoint API (tree-shakeable) |
 
 ## Quick Start
@@ -171,6 +170,30 @@ const MyComponent: React.FC = () => {
 | [`useSPFxPerformance`](./api/hooks/performance.md#usespfxperformance) | Performance measurement |
 | [`useSPFxLogger`](./api/hooks/performance.md#usespfxlogger) | Structured logging |
 | [`useSPFxCorrelationInfo`](./api/hooks/performance.md#usespfxcorrelationinfo) | Request correlation |
+
+## Helpers And Services
+
+Hooks are the React API. Helpers and services are public non-React APIs for composition outside components or for building custom abstractions.
+
+### Helpers
+
+Helpers are pure functions. They do not perform I/O and do not read provider state.
+
+| Helper group | Examples | Documentation |
+|--------------|----------|---------------|
+| Page context mapping | `getSPFxUserInfo`, `getSPFxSiteInfo`, `getSPFxEnvironmentInfo` | [Helpers API](./api/helpers/INDEX.md) |
+| Utility helpers | `createScopedSPFxStorageKey`, `getSPFxContainerSize`, `hasSPFxPermission` | [Helpers API](./api/helpers/INDEX.md) |
+| Graph and theme helpers | `buildOneDriveAppDataPath`, `buildUserPhotoEndpoint`, `createFluent9ThemeFromSPFxTheme` | [Helpers API](./api/helpers/INDEX.md) |
+
+### Services
+
+Services perform reusable I/O operations with dependencies supplied by the caller.
+
+| Service group | Examples | Documentation |
+|---------------|----------|---------------|
+| PnPjs services | `createSPFxPnPContextService`, `createSPFxPnPListService`, `createSPFxPnPSearchService` | [Services API](./api/services/INDEX.md) |
+| Tenant services | `createSPFxAppCatalogService`, `createSPFxTenantPropertyService`, `createSPFxTenantKeyValueStoreService` | [Services API](./api/services/INDEX.md) |
+| Graph services | `createSPFxOneDriveAppDataService`, `createSPFxUserPhotoService` | [Services API](./api/services/INDEX.md) |
 
 ## Requirements
 

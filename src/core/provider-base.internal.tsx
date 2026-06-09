@@ -2,10 +2,13 @@
 // SPFxProviderBase - Internal base implementation with shared logic
 
 import * as React from 'react';
-import { Provider, createStore, useSetAtom, useAtomValue } from 'jotai';
 import { SPFxContext } from './context.internal';
-import { spfxAtoms } from './atoms.internal';
 import type { SPFxProviderProps, SPFxContextValue } from './types';
+import { createSPFxRuntimeStore } from './runtime-store.internal';
+import {
+  createSPFxRuntimeActions,
+  SPFxRuntimeStoreContext,
+} from './state.internal';
 import {
   detectComponentKind,
   isWebPart,
@@ -15,7 +18,7 @@ import { useThemeSubscription } from '../utils/theme-subscription.internal';
 /**
  * SPFxProviderBase - Internal base provider with shared logic
  * 
- * Creates an isolated Jotai store for each instance, ensuring complete
+ * Creates an isolated runtime store for each instance, ensuring complete
  * state isolation between multiple SPFx components on the same page.
  * 
  * The provider ensures SPFx ServiceScope is finished before rendering children,
@@ -82,82 +85,82 @@ export function SPFxProviderBase<TProps extends {} = {}>(
     };
   }, [serviceScope]);
   
-  // Create isolated Jotai store for this Provider instance
+  // Create isolated runtime store for this Provider instance
   // Each store is independent, ensuring complete state isolation
-  const store = React.useMemo(() => createStore(), []);
-  
-  // Get atom setters (using the isolated store)
-  const setProperties = useSetAtom(spfxAtoms.properties, { store });
-  const setDisplayMode = useSetAtom(spfxAtoms.displayMode, { store });
-  const setContainerEl = useSetAtom(spfxAtoms.containerEl, { store });
-  const setTheme = useSetAtom(spfxAtoms.theme, { store });
+  const store = React.useMemo(() => createSPFxRuntimeStore(), []);
+  const runtimeActions = React.useMemo(() => createSPFxRuntimeActions(store), [store]);
   
   // Ref to track last known properties value (prevents loop)
   const lastPropertiesRef = React.useRef<unknown>(instanceAny.properties);
   
   // Subscribe to theme changes (single subscription per instance)
-  useThemeSubscription(context, setTheme, isScopeReady);
+  useThemeSubscription(context, runtimeActions.setTheme, isScopeReady);
   
-  // Initialize atoms based on component type
+  // Initialize runtime state based on component type
   React.useEffect(() => {
     // Properties (common to all)
-    setProperties(instanceAny.properties);
     lastPropertiesRef.current = instanceAny.properties;
+    runtimeActions.setProperties(instanceAny.properties);
     
     // WebPart-specific
     if (isWebPart(instance)) {
-      setDisplayMode(instanceAny.displayMode);
-      setContainerEl(instanceAny.domElement);
+      runtimeActions.setDisplayMode(instanceAny.displayMode);
+      runtimeActions.setContainerElement(instanceAny.domElement);
+    } else {
+      runtimeActions.setDisplayMode(undefined);
+      runtimeActions.setContainerElement(undefined);
     }
   }, [
     instance,
     instanceAny,
-    setProperties,
-    setDisplayMode,
-    setContainerEl,
+    runtimeActions,
   ]);
   
-  // Sync properties when they change (SPFx → Atom)
+  // Sync properties when they change (SPFx -> Runtime)
   // Property Pane changes will trigger this via instance.properties reference change
   React.useEffect(() => {
     if (instanceAny.properties !== lastPropertiesRef.current) {
-      setProperties(instanceAny.properties);
       lastPropertiesRef.current = instanceAny.properties;
+      runtimeActions.setProperties(instanceAny.properties);
     }
-  }, [instanceAny.properties, setProperties, instanceAny]);
+  }, [instanceAny.properties, runtimeActions, instanceAny]);
   
-  // Sync properties when atom changes (Atom → SPFx)
-  // Hook updates will trigger this via atom subscription
-  const properties = useAtomValue(spfxAtoms.properties, { store });
+  // Sync properties when runtime state changes (Runtime → SPFx)
+  // Hook updates trigger this via an imperative store subscription.
   React.useEffect(() => {
-    // Guard: Don't sync if atom is still undefined (initial state before initialization)
-    // This prevents race condition where useAtomValue reads before initialization useEffect runs
-    if (properties === undefined) {
-      return;
-    }
-    
-    // Only sync if atom value is different from last known value
-    if (properties !== lastPropertiesRef.current) {
-      // Mutate SPFx properties object (copy all properties from atom to instance)
+    const syncPropertiesToInstance = (): void => {
+      const properties = store.getState().properties;
+
+      // Guard: Don't sync if runtime state is still undefined (initial state before initialization)
+      if (properties === undefined) {
+        return;
+      }
+
+      // Only sync if runtime value is different from last known value
+      if (properties === lastPropertiesRef.current) {
+        return;
+      }
+
+      // Mutate SPFx properties object (copy all properties from runtime state to instance)
       const target = instanceAny.properties as Record<string, unknown>;
       const source = properties as Record<string, unknown>;
-      
+
       // Clear existing properties
       for (const key in target) {
         if (Object.prototype.hasOwnProperty.call(target, key)) {
           delete target[key];
         }
       }
-      
+
       // Copy new properties
       for (const key in source) {
         if (Object.prototype.hasOwnProperty.call(source, key)) {
           target[key] = source[key];
         }
       }
-      
+
       lastPropertiesRef.current = properties;
-      
+
       // Refresh Property Pane for WebParts (if propertyPane exists)
       if (isWebPart(instance)) {
         const ctx = instanceAny.context as unknown as { propertyPane?: { refresh(): void } };
@@ -165,15 +168,20 @@ export function SPFxProviderBase<TProps extends {} = {}>(
           ctx.propertyPane.refresh();
         }
       }
-    }
-  }, [properties, instance, instanceAny]);
+    };
+
+    const unsubscribe = store.subscribe(syncPropertiesToInstance);
+    syncPropertiesToInstance();
+
+    return unsubscribe;
+  }, [store, instance, instanceAny]);
   
   // WebPart: Sync displayMode when it changes
   React.useEffect(() => {
     if (isWebPart(instance)) {
-      setDisplayMode(instanceAny.displayMode);
+      runtimeActions.setDisplayMode(instanceAny.displayMode);
     }
-  }, [instance, instanceAny, setDisplayMode]);
+  }, [instance, instanceAny, runtimeActions]);
   
   // Create context value (memoized to prevent re-renders)
   const contextValue = React.useMemo<SPFxContextValue>(
@@ -193,10 +201,10 @@ export function SPFxProviderBase<TProps extends {} = {}>(
   }
   
   return (
-    <Provider store={store}>
+    <SPFxRuntimeStoreContext.Provider value={store}>
       <SPFxContext.Provider value={contextValue}>
         {children}
       </SPFxContext.Provider>
-    </Provider>
+    </SPFxRuntimeStoreContext.Provider>
   );
 }
