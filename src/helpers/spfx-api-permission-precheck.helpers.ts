@@ -289,7 +289,7 @@ export function decodeSPFxJwtPayload(token: string): SPFxJwtPayload | undefined 
     }
 
     return payload as SPFxJwtPayload;
-  } catch (_error) {
+  } catch {
     return undefined;
   }
 }
@@ -680,7 +680,7 @@ function getErrorText(error: unknown): string {
 
   try {
     return JSON.stringify(error);
-  } catch (_jsonError) {
+  } catch {
     return String(error);
   }
 }
