@@ -22,8 +22,8 @@
     "build": "gulp bundle",
     "clean": "gulp clean",
     "test": "gulp test",
+    "verify:examples": "node scripts/verify-example-coverage.cjs",
     "verify:runtime-store": "node scripts/verify-runtime-store.cjs",
-    "verify:state-removal": "node scripts/verify-state-removal.cjs",
     "verify:public-docs": "node scripts/verify-public-docs.cjs",
     "prepublishOnly": "npm run clean && npm run build"
   },
@@ -37,9 +37,7 @@
     "@microsoft/sp-webpart-base": ">=1.18.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "tslib": "2.3.1",
-    "@microsoft/decorators": "1.21.1",
-    "@microsoft/sp-dialog": "1.21.1"
+    "tslib": "2.3.1"
   },
   "devDependencies": {
     "@fluentui/react": "^8.106.4",

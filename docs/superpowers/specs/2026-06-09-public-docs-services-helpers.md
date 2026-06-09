@@ -363,7 +363,6 @@ This work is complete when:
 - Public hook docs no longer mention non-exported hooks.
 - `scripts/verify-public-docs.cjs` passes.
 - Existing checks still pass:
-  - `node scripts/verify-state-removal.cjs`
   - `npx tsc --noEmit --pretty false`
   - `npx eslint src --ext .ts,.tsx --max-warnings=0`
   - `git diff --check`

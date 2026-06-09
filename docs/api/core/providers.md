@@ -241,7 +241,6 @@ import {
   BaseListViewCommandSet, 
   IListViewCommandSetExecuteEventParameters 
 } from '@microsoft/sp-listview-extensibility';
-import { Dialog } from '@microsoft/sp-dialog';
 import { SPFxListViewCommandSetProvider } from '@apvee/spfx-react-toolkit';
 
 interface IMyCommandSetProps {

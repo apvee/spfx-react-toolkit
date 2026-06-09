@@ -37,9 +37,24 @@ Built on a provider-scoped runtime store, it delivers per-instance state isolati
 
 ### Installation
 
+Install the package in your SPFx project:
+
 ```bash
 npm install @apvee/spfx-react-toolkit
 ```
+
+If you use the PnPjs hooks or services, install the peer PnPjs packages as well:
+
+```bash
+npm install @pnp/core @pnp/queryable @pnp/sp
+```
+
+Then wrap the SPFx entry point with the provider that matches the component type you are building:
+
+- `SPFxWebPartProvider` for WebParts
+- `SPFxApplicationCustomizerProvider` for Application Customizers
+- `SPFxFieldCustomizerProvider` for Field Customizers
+- `SPFxListViewCommandSetProvider` for ListView Command Sets
 
 ### Basic Usage
 
@@ -81,6 +96,33 @@ import {
 const user = getSPFxUserInfo(pageContext);
 const filtersKey = createScopedSPFxStorageKey(instanceId, 'filters');
 const tasks = createSPFxPnPListService(sp, 'Tasks', 50);
+```
+
+---
+
+## Development Scripts
+
+Use these scripts when working on this repository:
+
+| Script | Purpose |
+|--------|---------|
+| `npm run build` | Bundles the SPFx package with `gulp bundle`, including TypeScript, Sass, lint, and webpack steps. |
+| `npm run clean` | Removes generated SPFx build output. Run before a clean build or before publishing. |
+| `npm test` | Runs the SPFx test pipeline with `gulp test`. |
+| `npm run verify:examples` | Verifies that the sample webpart registry covers all exported hooks and providers. |
+| `npm run verify:runtime-store` | Runs a focused runtime-store behavior check without requiring SharePoint. |
+| `npm run verify:public-docs` | Verifies that public helper/service documentation stays aligned with exported APIs. |
+| `npm run prepublishOnly` | Runs automatically before `npm publish`; currently performs a clean build. |
+
+Recommended local check before opening a PR or publishing a package:
+
+```bash
+npm run clean
+npm run build
+npm test
+npm run verify:examples
+npm run verify:runtime-store
+npm run verify:public-docs
 ```
 
 ---
