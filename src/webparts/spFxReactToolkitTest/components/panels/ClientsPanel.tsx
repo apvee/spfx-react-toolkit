@@ -40,23 +40,35 @@ const ClientsPanel: React.FC = () => {
   const [aadResult, setAadResult] = React.useState<unknown>();
   const [aadResource, setAadResource] = React.useState('');
   const [aadPath, setAadPath] = React.useState('/api/health');
-  const permissionPrecheck = useSPFxApiPermissionPrecheck(
-    {
+  const trimmedAadResource = React.useMemo(
+    () => aadResource.trim(),
+    [aadResource]
+  );
+  const permissionPrecheckConfig = React.useMemo(
+    () => ({
       graph: ['User.Read'],
-      customApis: aadResource.trim()
+      customApis: trimmedAadResource
         ? [
             {
               name: 'Custom API',
-              resource: aadResource.trim(),
+              resource: trimmedAadResource,
               scopes: ['user_impersonation']
             }
           ]
         : []
-    },
-    {
+    }),
+    [trimmedAadResource]
+  );
+  const permissionPrecheckOptions = React.useMemo(
+    () => ({
       autoCheck: false,
       mode: 'passive'
-    }
+    } as const),
+    []
+  );
+  const permissionPrecheck = useSPFxApiPermissionPrecheck(
+    permissionPrecheckConfig,
+    permissionPrecheckOptions
   );
 
   const loadExternal = React.useCallback(async () => {
@@ -85,9 +97,9 @@ const ClientsPanel: React.FC = () => {
   }, [graph]);
 
   const initializeAad = React.useCallback(() => {
-    aad.setResourceUrl(aadResource.trim());
+    aad.setResourceUrl(trimmedAadResource);
     setAadResult(undefined);
-  }, [aad, aadResource]);
+  }, [aad, trimmedAadResource]);
 
   const loadAad = React.useCallback(async () => {
     if (!aad.resourceUrl) {
@@ -177,7 +189,7 @@ const ClientsPanel: React.FC = () => {
           <PrimaryButton
             text="Initialize AAD client"
             iconProps={{ iconName: 'PlugConnected' }}
-            disabled={!aadResource.trim() || aad.isInitializing}
+            disabled={!trimmedAadResource || aad.isInitializing}
             onClick={initializeAad}
           />
           <DefaultButton
@@ -210,7 +222,7 @@ const ClientsPanel: React.FC = () => {
             { label: 'Configuration State', value: permissionPrecheck.configurationState, icon: 'StatusCircleQuestionMark' },
             { label: 'Configured', value: permissionPrecheck.isConfigured ? 'Yes' : 'No', icon: 'Completed' },
             { label: 'Required Graph Scope', value: 'User.Read', icon: 'OfficeAssistantLogo' },
-            { label: 'Custom API Resource', value: aadResource.trim() || 'Not configured', icon: 'AzureAPIManagement' },
+            { label: 'Custom API Resource', value: trimmedAadResource || 'Not configured', icon: 'AzureAPIManagement' },
           ]}
         />
         {permissionPrecheck.missing.map(permission => (
