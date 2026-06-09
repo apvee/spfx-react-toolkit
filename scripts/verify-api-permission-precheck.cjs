@@ -37,6 +37,8 @@ execFileSync(
 );
 
 const helpers = require(path.join(outDir, 'helpers/spfx-api-permission-precheck.helpers.js'));
+const servicePath = path.join(outDir, 'services/spfx-api-permission-precheck.service.js');
+const service = fs.existsSync(servicePath) ? require(servicePath) : undefined;
 
 function createJwt(payload) {
   const encoded = Buffer.from(JSON.stringify(payload))
@@ -329,6 +331,115 @@ assert.strictEqual(summaryCannotDetermine.unknown.length, 1);
 assert.strictEqual(helpers.decodeSPFxJwtPayload('not-a-jwt'), undefined);
 assert.strictEqual(helpers.decodeSPFxJwtPayload('header.not-json.signature'), undefined);
 
-console.log('api permission precheck verification passed');
+async function verifyService() {
+  assert.ok(service, 'compiled service module should be present');
+  assert.strictEqual(typeof service.createSPFxApiPermissionPrecheckService, 'function');
 
-fs.rmSync(outDir, { recursive: true, force: true });
+  const graphToken = createJwt({
+    aud: 'https://graph.microsoft.com',
+    scp: 'Sites.Read.All User.Read',
+    exp: now + 3600
+  });
+  const customToken = createJwt({
+    aud: 'api://orders',
+    scp: 'Orders.Read',
+    exp: now + 3600
+  });
+
+  const graphCalls = [];
+  const graphOnlyPrecheck = service.createSPFxApiPermissionPrecheckService({
+    getToken: async (resourceEndpoint, options) => {
+      graphCalls.push({ resourceEndpoint, options });
+      return graphToken;
+    }
+  });
+  const graphOnlyResults = await graphOnlyPrecheck.check({
+    graph: ['Sites.Read.All', 'User.Read']
+  });
+  assert.strictEqual(graphCalls.length, 1);
+  assert.strictEqual(graphCalls[0].resourceEndpoint, 'https://graph.microsoft.com');
+  assert.deepStrictEqual(graphCalls[0].options, { useCachedToken: true });
+  assert.deepStrictEqual(graphOnlyResults.map(result => result.status), ['available', 'available']);
+
+  const multiResourceCalls = [];
+  const multiResourcePrecheck = service.createSPFxApiPermissionPrecheckService({
+    getToken: async (resourceEndpoint, options) => {
+      multiResourceCalls.push({ resourceEndpoint, options });
+      return resourceEndpoint === 'https://graph.microsoft.com' ? graphToken : customToken;
+    }
+  });
+  const multiResourceResults = await multiResourcePrecheck.check({
+    graph: ['Sites.Read.All'],
+    customApis: [
+      {
+        id: 'orders',
+        name: 'Orders API',
+        resource: 'api://orders',
+        expectedAudiences: ['api://orders'],
+        scopes: ['Orders.Read']
+      }
+    ]
+  });
+  assert.strictEqual(multiResourceCalls.length, 2);
+  assert.deepStrictEqual(
+    multiResourceCalls.map(call => call.resourceEndpoint).sort(),
+    ['api://orders', 'https://graph.microsoft.com']
+  );
+  assert.deepStrictEqual(multiResourceResults.map(result => result.status), ['available', 'available']);
+
+  const consentPrecheck = service.createSPFxApiPermissionPrecheckService({
+    getToken: async () => {
+      throw new Error('AADSTS65001: The user or administrator has not consented.');
+    }
+  });
+  const consentResults = await consentPrecheck.check({
+    graph: ['Mail.Read']
+  });
+  assert.strictEqual(consentResults.length, 1);
+  assert.strictEqual(consentResults[0].status, 'consentRequired');
+
+  const timeoutPrecheck = service.createSPFxApiPermissionPrecheckService({
+    getToken: () => new Promise(resolve => setTimeout(() => resolve(graphToken), 50))
+  });
+  const timeoutResults = await timeoutPrecheck.check(
+    { graph: ['Sites.Read.All'] },
+    { timeoutMs: 1 }
+  );
+  assert.strictEqual(timeoutResults.length, 1);
+  assert.strictEqual(timeoutResults[0].status, 'timeout');
+
+  const invalidCalls = [];
+  const invalidPrecheck = service.createSPFxApiPermissionPrecheckService({
+    getToken: async resourceEndpoint => {
+      invalidCalls.push(resourceEndpoint);
+      return graphToken;
+    }
+  });
+  const invalidResults = await invalidPrecheck.check({
+    requirements: [
+      {
+        id: 'invalid',
+        resourceName: 'Invalid API',
+        resourceEndpoint: 'api://invalid',
+        packageResource: 'Invalid API',
+        scope: '',
+        kind: 'delegatedScope',
+        required: true,
+        adminMessage: 'Invalid requirement'
+      }
+    ]
+  });
+  assert.strictEqual(invalidCalls.length, 0);
+  assert.strictEqual(invalidResults.length, 1);
+  assert.strictEqual(invalidResults[0].status, 'invalidRequirement');
+}
+
+verifyService()
+  .then(() => {
+    console.log('api permission precheck verification passed');
+    fs.rmSync(outDir, { recursive: true, force: true });
+  })
+  .catch(error => {
+    fs.rmSync(outDir, { recursive: true, force: true });
+    throw error;
+  });
