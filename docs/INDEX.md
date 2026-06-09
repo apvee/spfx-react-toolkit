@@ -166,6 +166,8 @@ Performance measurement and logging.
 - [Introduction & Quick Start](./INTRODUCTION.md)
 - [Core Module](./api/core/INDEX.md)
 - [Hooks Module](./api/hooks/INDEX.md)
+- [Services Module](./api/services/INDEX.md)
+- [Helpers Module](./api/helpers/INDEX.md)
 
 ---
 

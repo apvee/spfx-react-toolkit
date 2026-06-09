@@ -2,6 +2,7 @@
 // Hook for correlation and tenant ID extraction
 
 import { useMemo } from 'react';
+import { getSPFxCorrelationInfo } from '../helpers/spfx-page-context.helpers';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -57,18 +58,13 @@ export interface SPFxCorrelationInfo {
  */
 export function useSPFxCorrelationInfo(): SPFxCorrelationInfo {
   const pageContext = useSPFxPageContext();
-  
-  // correlationId is in pageContext.site (SPSite type - public API)
   const correlationId = pageContext.site?.correlationId?.toString();
-  
-  // tenantId is in pageContext.aadInfo (AzureActiveDirectoryInfo - internal type)
-  // Casting required because AzureActiveDirectoryInfo is not exposed in public types
-  const aadInfo = pageContext.aadInfo as unknown as 
+  const aadInfo = pageContext.aadInfo as unknown as
     { tenantId?: { toString(): string } } | undefined;
   const tenantId = aadInfo?.tenantId?.toString();
   
-  return useMemo(() => ({
-    correlationId,
-    tenantId,
-  }), [correlationId, tenantId]);
+  return useMemo(
+    () => getSPFxCorrelationInfo(pageContext),
+    [pageContext, correlationId, tenantId]
+  );
 }

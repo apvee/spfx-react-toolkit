@@ -3,6 +3,7 @@
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useSPFxMSGraphClient } from './useSPFxMSGraphClient';
+import { createSPFxUserPhotoService } from '../services/spfx-user-photo.service';
 
 /**
  * Available photo sizes from Microsoft Graph
@@ -116,6 +117,49 @@ export interface SPFxUserPhotoResult {
    * ```
    */
   readonly isReady: boolean;
+}
+
+interface GraphPhotoErrorShape {
+  readonly statusCode?: number;
+  readonly status?: number;
+  readonly message?: string;
+  readonly body?: {
+    readonly error?: {
+      readonly message?: string;
+    };
+  };
+}
+
+function getPhotoErrorStatus(err: unknown): number | undefined {
+  const graphError = (typeof err === 'object' && err !== null)
+    ? err as GraphPhotoErrorShape
+    : {};
+
+  return graphError.statusCode ?? graphError.status;
+}
+
+function getPhotoErrorMessage(err: unknown, error: Error): string {
+  const graphError = (typeof err === 'object' && err !== null)
+    ? err as GraphPhotoErrorShape
+    : {};
+
+  return graphError.message ?? graphError.body?.error?.message ?? error.message;
+}
+
+function createEnhancedPhotoError(err: unknown): Error {
+  const error = err instanceof Error ? err : new Error(String(err));
+  const status = getPhotoErrorStatus(err);
+  const message = getPhotoErrorMessage(err, error);
+
+  if (status === 404 || message.indexOf('404') !== -1) {
+    error.message = 'Photo not found. User may not have a profile photo.';
+  } else if (status === 403 || message.indexOf('403') !== -1) {
+    error.message = 'Insufficient permissions to access photo. Check Graph API permissions.';
+  } else if (status === 401 || message.indexOf('401') !== -1) {
+    error.message = 'Authentication failed. User may not be signed in.';
+  }
+
+  return error;
 }
 
 /**
@@ -296,6 +340,9 @@ export function useSPFxUserPhoto(
   options?: SPFxUserPhotoOptions
 ): SPFxUserPhotoResult {
   const { client: graphClient } = useSPFxMSGraphClient();
+  const userPhotoService = useMemo(() => (
+    graphClient ? createSPFxUserPhotoService(graphClient) : undefined
+  ), [graphClient]);
   
   // Destructure options with defaults
   const {
@@ -328,32 +375,12 @@ export function useSPFxUserPhoto(
   }, []);
   
   /**
-   * Build Graph API endpoint based on user identifier
-   */
-  const buildPhotoEndpoint = useCallback((): string => {
-    // Determine base path
-    let basePath: string;
-    
-    if (userId) {
-      // Specific user by ID
-      basePath = `/users/${userId}`;
-    } else if (email) {
-      // Specific user by email
-      basePath = `/users/${email}`;
-    } else {
-      // Current user
-      basePath = '/me';
-    }
-    
-    // Append photo size endpoint
-    return `${basePath}/photos/${size}/$value`;
-  }, [userId, email, size]);
-  
-  /**
    * Load photo from Microsoft Graph
    */
   const load = useCallback(async (): Promise<void> => {
-    if (!graphClient) {
+    const service = userPhotoService;
+
+    if (!graphClient || !service) {
       const err = new Error('MSGraphClient not available. Cannot load photo.');
       console.error('[useSPFxUserPhoto]', err);
       
@@ -367,12 +394,8 @@ export function useSPFxUserPhoto(
     setError(undefined);
     
     try {
-      const endpoint = buildPhotoEndpoint();
-      
       // Fetch photo blob from Graph API
-      const blob: Blob = await graphClient
-        .api(endpoint)
-        .get();
+      const blob = await service.getPhotoBlob({ userId, email, size });
       
       if (isMounted.current) {
         // Revoke previous blob URL if exists
@@ -389,15 +412,11 @@ export function useSPFxUserPhoto(
       }
     } catch (err) {
       if (isMounted.current) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        
-        // Enhanced error messages (ES5-compatible)
-        if (error.message.indexOf('404') !== -1) {
-          error.message = 'Photo not found. User may not have a profile photo.';
-        } else if (error.message.indexOf('403') !== -1) {
-          error.message = 'Insufficient permissions to access photo. Check Graph API permissions.';
-        } else if (error.message.indexOf('401') !== -1) {
-          error.message = 'Authentication failed. User may not be signed in.';
+        const error = createEnhancedPhotoError(err);
+
+        if (currentBlobUrl.current) {
+          URL.revokeObjectURL(currentBlobUrl.current);
+          currentBlobUrl.current = undefined;
         }
         
         setError(error);
@@ -410,16 +429,16 @@ export function useSPFxUserPhoto(
         setIsLoading(false);
       }
     }
-  }, [graphClient, buildPhotoEndpoint]);
+  }, [graphClient, userPhotoService, userId, email, size]);
   
   // Auto-fetch on mount if enabled
   useEffect(() => {
-    if (autoFetch && graphClient) {
+    if (autoFetch && userPhotoService) {
       load().catch(() => {
         // Error already handled in load() function
       });
     }
-  }, [autoFetch, graphClient, load]);
+  }, [autoFetch, userPhotoService, load]);
   
   // Computed state: ready when photo loaded successfully
   const isReady = !isLoading && !error && photoUrl !== undefined;

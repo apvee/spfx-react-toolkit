@@ -1,21 +1,11 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useSPFxPnPContext } from './useSPFxPnPContext';
 import type { PnPContextInfo } from './useSPFxPnPContext';
+import { createSPFxPnPListService } from '../services/spfx-pnp-list.service';
 
 // Import PnPjs native types for proper type safety
 import type { IItems } from '@pnp/sp/items';
 import type { InitialFieldQuery, ComparisonResult } from '@pnp/sp/spqueryable';
-
-// Declare Proxy for TypeScript (available in ES6+)
-/* eslint-disable @typescript-eslint/no-explicit-any */
-interface ProxyHandler<T extends object> {
-  get?(target: T, prop: string | symbol, receiver: any): any;
-}
-
-declare const Proxy: {
-  new <T extends object>(target: T, handler: ProxyHandler<T>): T;
-};
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**
  * Type representing a fluent filter function for type-safe query building.
@@ -589,6 +579,12 @@ export function useSPFxPnPList<T = unknown>(
   // Default pageSize from hook options
   const defaultPageSize = options?.pageSize;
 
+  const service = useMemo(() => {
+    return sp && context?.isInitialized
+      ? createSPFxPnPListService<T>(sp, listTitle, defaultPageSize)
+      : undefined;
+  }, [sp, context?.isInitialized, listTitle, defaultPageSize]);
+
   // Local state management
   const [items, setItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
@@ -600,47 +596,19 @@ export function useSPFxPnPList<T = unknown>(
   const [lastQueryBuilder, setLastQueryBuilder] = useState<((items: IItems) => IItems) | undefined>(undefined);
   const [lastEffectivePageSize, setLastEffectivePageSize] = useState<number | undefined>(undefined);
   const [currentSkip, setCurrentSkip] = useState(0);
+  const [hasLastQuery, setHasLastQuery] = useState(false);
 
   // Refs
   const refetchTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const mountedRef = useRef(true);
 
+  const identityQueryBuilder = useCallback((listItems: IItems): IItems => {
+    return listItems;
+  }, []);
+
   // Clear error handler
   const clearError = useCallback(() => {
     setError(undefined);
-  }, []);
-
-  /**
-   * Helper: Creates a recursive Proxy to track .top() calls in queryBuilder.
-   * This allows automatic detection of user-specified page size.
-   */
-  const createMonitoredQuery = useCallback((target: IItems, tracker: { top?: number }): IItems => {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    
-    return new (Proxy as any)(target, {
-      get: function(t: IItems, prop: string | symbol): any {
-        if (prop === 'top') {
-          return function(n: number): IItems {
-            tracker.top = n;
-            const result = (t as any).top.call(t, n);
-            return createMonitoredQuery(result as IItems, tracker);
-          };
-        }
-        
-        const value = (t as any)[prop as string];
-        if (typeof value === 'function') {
-          return function(...args: unknown[]): any {
-            const result = (value as any).apply(t, args);
-            if (result && typeof result === 'object' && typeof (result as any).select === 'function') {
-              return createMonitoredQuery(result as IItems, tracker);
-            }
-            return result;
-          };
-        }
-        return value;
-      }
-    }) as IItems;
-    /* eslint-enable @typescript-eslint/no-explicit-any */
   }, []);
 
   /**
@@ -650,7 +618,7 @@ export function useSPFxPnPList<T = unknown>(
     queryBuilder?: (items: IItems) => IItems,
     queryOptions?: { pageSize?: number }
   ): Promise<T[]> => {
-    if (!sp || !context?.isInitialized) {
+    if (!service) {
       const err = new Error('[useSPFxPnPList] PnP context not initialized. Ensure @pnp/sp is installed.');
       setError(err);
       throw err;
@@ -660,61 +628,20 @@ export function useSPFxPnPList<T = unknown>(
     setError(undefined);
 
     try {
-      const pageSize = queryOptions?.pageSize ?? defaultPageSize;
-      const baseQuery = sp.web.lists.getByTitle(listTitle).items;
+      const result = await service.query(queryBuilder, queryOptions);
       
-      // Track .top() calls with Proxy
-      const tracker: { top?: number } = { top: undefined };
-      const monitored = createMonitoredQuery(baseQuery, tracker);
-      
-      // Build user query
-      const userQuery = queryBuilder ? queryBuilder(monitored) : monitored;
-      
-      // Smart decision: user .top() > pageSize option > no limit
-      let finalQuery: IItems;
-      let effectivePageSize: number | undefined;
-      
-      // Warning if both specified
-      if (tracker.top !== undefined && pageSize !== undefined) {
-        console.warn(
-          `[useSPFxPnPList] Both .top(${tracker.top}) and pageSize(${pageSize}) specified. ` +
-          `Using .top(${tracker.top}).`
-        );
-      }
-      
-      if (tracker.top !== undefined) {
-        // User specified .top() explicitly
-        finalQuery = userQuery;
-        effectivePageSize = tracker.top;
-      } else if (pageSize !== undefined) {
-        // Use pageSize option
-        finalQuery = userQuery.top(pageSize);
-        effectivePageSize = pageSize;
-      } else {
-        // No pagination
-        finalQuery = userQuery;
-        effectivePageSize = undefined;
-      }
-      
-      const result = await finalQuery() as T[];
-      
-      if (!mountedRef.current) return result;
+      if (!mountedRef.current) return result.items;
       
       // Update state
-      setItems(result);
+      setItems(result.items);
       setLastQueryBuilder(() => queryBuilder);
-      setLastEffectivePageSize(effectivePageSize);
-      setCurrentSkip(result.length);
-      
-      // hasMore only meaningful with pagination
-      if (effectivePageSize !== undefined) {
-        setHasMore(result.length === effectivePageSize);
-      } else {
-        setHasMore(false);
-      }
+      setLastEffectivePageSize(result.effectivePageSize);
+      setCurrentSkip(result.nextSkip);
+      setHasLastQuery(true);
+      setHasMore(result.hasMore);
       
       setLoading(false);
-      return result;
+      return result.items;
       
     } catch (err) {
       if (mountedRef.current) {
@@ -723,24 +650,28 @@ export function useSPFxPnPList<T = unknown>(
       }
       throw err;
     }
-  }, [sp, context?.isInitialized, listTitle, defaultPageSize, createMonitoredQuery]);
+  }, [service]);
 
   /**
    * Re-executes the last query (resets pagination).
    */
   const refetch = useCallback(async () => {
-    if (!lastQueryBuilder) {
+    if (!hasLastQuery) {
       throw new Error('[useSPFxPnPList] No previous query to refetch. Call query() first.');
     }
     
     setCurrentSkip(0);
     await query(lastQueryBuilder, { pageSize: lastEffectivePageSize });
-  }, [lastQueryBuilder, lastEffectivePageSize, query]);
+  }, [hasLastQuery, lastQueryBuilder, lastEffectivePageSize, query]);
 
   /**
    * Debounced refetch to prevent race conditions during rapid CRUD operations.
    */
   const debouncedRefetch = useCallback(() => {
+    if (!hasLastQuery) {
+      return;
+    }
+
     if (refetchTimeoutRef.current) {
       clearTimeout(refetchTimeoutRef.current);
     }
@@ -751,13 +682,13 @@ export function useSPFxPnPList<T = unknown>(
         setError(error);
       });
     }, 100);
-  }, [refetch]);
+  }, [hasLastQuery, refetch]);
 
   /**
    * Loads more items (pagination with last query).
    */
   const loadMore = useCallback(async (): Promise<T[]> => {
-    if (!lastQueryBuilder) {
+    if (!hasLastQuery) {
       throw new Error('[useSPFxPnPList] No previous query. Call query() first.');
     }
     
@@ -772,31 +703,23 @@ export function useSPFxPnPList<T = unknown>(
     setLoadingMore(true);
 
     try {
-      if (!sp || !context?.isInitialized) {
+      if (!service) {
         throw new Error('[useSPFxPnPList] PnP context not initialized');
       }
 
-      const baseQuery = sp.web.lists.getByTitle(listTitle).items;
-      const tracker: { top?: number } = { top: undefined };
-      const monitored = createMonitoredQuery(baseQuery, tracker);
+      const queryBuilder = lastQueryBuilder || identityQueryBuilder;
+      const result = await service.loadMore(queryBuilder, lastEffectivePageSize, currentSkip);
       
-      const userQuery = lastQueryBuilder(monitored);
-      const finalQuery = userQuery.skip(currentSkip).top(lastEffectivePageSize);
-      
-      const result = await finalQuery() as T[];
-      
-      if (!mountedRef.current) return result;
+      if (!mountedRef.current) return result.items;
       
       setItems(function(prevItems: T[]) {
-        return prevItems.concat(result);
+        return prevItems.concat(result.items);
       });
-      setCurrentSkip(function(prev: number) {
-        return prev + result.length;
-      });
-      setHasMore(result.length === lastEffectivePageSize);
+      setCurrentSkip(result.nextSkip);
+      setHasMore(result.hasMore);
       setLoadingMore(false);
       
-      return result;
+      return result.items;
       
     } catch (err) {
       if (mountedRef.current) {
@@ -805,18 +728,18 @@ export function useSPFxPnPList<T = unknown>(
       }
       throw err;
     }
-  }, [lastQueryBuilder, lastEffectivePageSize, loadingMore, loading, sp, context?.isInitialized, listTitle, currentSkip, createMonitoredQuery]);
+  }, [hasLastQuery, lastQueryBuilder, identityQueryBuilder, lastEffectivePageSize, loadingMore, loading, service, currentSkip]);
 
   /**
    * Gets a single item by ID.
    */
   const getById = useCallback(async (id: number): Promise<T | undefined> => {
-    if (!sp || !context?.isInitialized) {
+    if (!service) {
       throw new Error('[useSPFxPnPList] PnP context not initialized');
     }
 
     try {
-      const item = await sp.web.lists.getByTitle(listTitle).items.getById(id)() as T;
+      const item = await service.getById(id);
       return item;
     } catch (err) {
       const error = err as Error;
@@ -824,105 +747,85 @@ export function useSPFxPnPList<T = unknown>(
       setError(error);
       return undefined;
     }
-  }, [sp, context?.isInitialized, listTitle]);
+  }, [service]);
 
   /**
    * Creates a new list item.
    */
   const create = useCallback(async (item: Partial<T>): Promise<number> => {
-    if (!sp || !context?.isInitialized) {
+    if (!service) {
       throw new Error('PnP context not initialized');
     }
 
     try {
-      const result = await sp.web.lists.getByTitle(listTitle).items.add(item as Record<string, unknown>);
+      const result = await service.create(item);
       debouncedRefetch();
-      return result.data.Id;
+      return result;
     } catch (err) {
       setError(err as Error);
       throw err;
     }
-  }, [sp, context?.isInitialized, listTitle, debouncedRefetch]);
+  }, [service, debouncedRefetch]);
 
   /**
    * Updates an existing list item.
    */
   const update = useCallback(async (id: number, item: Partial<T>): Promise<void> => {
-    if (!sp || !context?.isInitialized) {
+    if (!service) {
       throw new Error('PnP context not initialized');
     }
 
     try {
-      await sp.web.lists.getByTitle(listTitle).items.getById(id).update(item as Record<string, unknown>);
+      await service.update(id, item);
       debouncedRefetch();
     } catch (err) {
       setError(err as Error);
       throw err;
     }
-  }, [sp, context?.isInitialized, listTitle, debouncedRefetch]);
+  }, [service, debouncedRefetch]);
 
   /**
    * Deletes a list item.
    */
   const remove = useCallback(async (id: number): Promise<void> => {
-    if (!sp || !context?.isInitialized) {
+    if (!service) {
       throw new Error('PnP context not initialized');
     }
 
     try {
-      await sp.web.lists.getByTitle(listTitle).items.getById(id).delete();
+      await service.remove(id);
       debouncedRefetch();
     } catch (err) {
       setError(err as Error);
       throw err;
     }
-  }, [sp, context?.isInitialized, listTitle, debouncedRefetch]);
+  }, [service, debouncedRefetch]);
 
   /**
    * Creates multiple items in a batch.
    */
   const createBatch = useCallback(async (itemsToCreate: Partial<T>[]): Promise<number[]> => {
-    if (!sp || !context?.isInitialized) {
+    if (!service) {
       throw new Error('PnP context not initialized');
     }
 
     try {
-      const ids: number[] = [];
-      const errors: unknown[] = [];
-      const batchResult = sp.batched();
-      const batchedSP = batchResult[0];
-      const execute = batchResult[1];
-
-      const list = batchedSP.web.lists.getByTitle(listTitle);
-
-      // Queue all creates
-      for (let i = 0; i < itemsToCreate.length; i++) {
-        list.items.add(itemsToCreate[i] as Record<string, unknown>).then(function(result: { data: { Id: number } }) {
-          ids.push(result.data.Id);
-        }).catch(function(error: unknown) {
-          console.error('Batch create error:', error);
-          errors.push(error);
-        });
-      }
-
-      // Execute batch
-      await execute();
+      const result = await service.createBatch(itemsToCreate);
       
       // If there were errors in individual operations, set error state
-      if (errors.length > 0) {
-        const batchError = new Error(`Batch create failed: ${errors.length} of ${itemsToCreate.length} items failed`);
-        setError(batchError);
-        console.error('Batch create summary:', errors);
+      if (result.summaryError) {
+        setError(result.summaryError);
+        console.error('Batch create summary:', result.errors);
       }
       
       debouncedRefetch();
-      return ids;
+      return result.value;
     } catch (err) {
       const error = err as Error;
       setError(error);
       throw error;
     }
-  }, [sp, context?.isInitialized, listTitle, debouncedRefetch]);
+  }, [service, debouncedRefetch]);
 
   /**
    * Updates multiple items in a batch.
@@ -930,35 +833,17 @@ export function useSPFxPnPList<T = unknown>(
   const updateBatch = useCallback(async (
     updates: Array<{ id: number; item: Partial<T> }>
   ): Promise<void> => {
-    if (!sp || !context?.isInitialized) {
+    if (!service) {
       throw new Error('PnP context not initialized');
     }
 
     try {
-      const errors: unknown[] = [];
-      const batchResult = sp.batched();
-      const batchedSP = batchResult[0];
-      const execute = batchResult[1];
-
-      const list = batchedSP.web.lists.getByTitle(listTitle);
-
-      // Queue all updates
-      for (let i = 0; i < updates.length; i++) {
-        const updateItem = updates[i];
-        list.items.getById(updateItem.id).update(updateItem.item as Record<string, unknown>).catch(function(error: unknown) {
-          console.error('Batch update error:', error);
-          errors.push(error);
-        });
-      }
-
-      // Execute batch
-      await execute();
+      const result = await service.updateBatch(updates);
       
       // If there were errors in individual operations, set error state
-      if (errors.length > 0) {
-        const batchError = new Error(`Batch update failed: ${errors.length} of ${updates.length} items failed`);
-        setError(batchError);
-        console.error('Batch update summary:', errors);
+      if (result.summaryError) {
+        setError(result.summaryError);
+        console.error('Batch update summary:', result.errors);
       }
       
       debouncedRefetch();
@@ -967,40 +852,23 @@ export function useSPFxPnPList<T = unknown>(
       setError(error);
       throw error;
     }
-  }, [sp, context?.isInitialized, listTitle, debouncedRefetch]);
+  }, [service, debouncedRefetch]);
 
   /**
    * Deletes multiple items in a batch.
    */
   const removeBatch = useCallback(async (ids: number[]): Promise<void> => {
-    if (!sp || !context?.isInitialized) {
+    if (!service) {
       throw new Error('PnP context not initialized');
     }
 
     try {
-      const errors: unknown[] = [];
-      const batchResult = sp.batched();
-      const batchedSP = batchResult[0];
-      const execute = batchResult[1];
-
-      const list = batchedSP.web.lists.getByTitle(listTitle);
-
-      // Queue all deletes
-      for (let i = 0; i < ids.length; i++) {
-        list.items.getById(ids[i]).delete().catch(function(error: unknown) {
-          console.error('Batch delete error:', error);
-          errors.push(error);
-        });
-      }
-
-      // Execute batch
-      await execute();
+      const result = await service.removeBatch(ids);
       
       // If there were errors in individual operations, set error state
-      if (errors.length > 0) {
-        const batchError = new Error(`Batch delete failed: ${errors.length} of ${ids.length} items failed`);
-        setError(batchError);
-        console.error('Batch delete summary:', errors);
+      if (result.summaryError) {
+        setError(result.summaryError);
+        console.error('Batch delete summary:', result.errors);
       }
       
       debouncedRefetch();
@@ -1009,7 +877,7 @@ export function useSPFxPnPList<T = unknown>(
       setError(error);
       throw error;
     }
-  }, [sp, context?.isInitialized, listTitle, debouncedRefetch]);
+  }, [service, debouncedRefetch]);
 
   /**
    * Cleanup on unmount.

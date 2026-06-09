@@ -4,6 +4,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import type { SPFI } from '@pnp/sp';
 import { useSPFxPnPContext, PnPContextInfo } from './useSPFxPnPContext';
+import { createSPFxPnPService } from '../services/spfx-pnp.service';
 
 /**
  * Return type for useSPFxPnP hook
@@ -561,13 +562,17 @@ export function useSPFxPnP(pnpContext?: PnPContextInfo): SPFxPnPInfo {
   
   // Prioritized error: invoke/batch errors take precedence over context errors
   const error = invokeError || contextError;
+
+  const service = useMemo(() => {
+    return sp ? createSPFxPnPService(sp) : undefined;
+  }, [sp]);
   
   /**
    * Execute single PnPjs operation with state management
    */
   const invoke = useCallback(
     async <T>(fn: (sp: SPFI) => Promise<T>): Promise<T> => {
-      if (!sp) {
+      if (!service) {
         throw new Error(
           'SPFI instance not initialized. ' +
           'Check isInitialized property or context error.'
@@ -578,7 +583,7 @@ export function useSPFxPnP(pnpContext?: PnPContextInfo): SPFxPnPInfo {
       setInvokeError(undefined);
       
       try {
-        const result = await fn(sp);
+        const result = await service.invoke(fn);
         return result;
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
@@ -588,7 +593,7 @@ export function useSPFxPnP(pnpContext?: PnPContextInfo): SPFxPnPInfo {
         setIsLoading(false);
       }
     },
-    [sp]
+    [service]
   );
   
   /**
@@ -596,7 +601,7 @@ export function useSPFxPnP(pnpContext?: PnPContextInfo): SPFxPnPInfo {
    */
   const batch = useCallback(
     async <T>(fn: (batchedSP: SPFI) => Promise<T>): Promise<T> => {
-      if (!sp) {
+      if (!service) {
         throw new Error(
           'SPFI instance not initialized. ' +
           'Check isInitialized property or context error.'
@@ -607,17 +612,7 @@ export function useSPFxPnP(pnpContext?: PnPContextInfo): SPFxPnPInfo {
       setInvokeError(undefined);
       
       try {
-        // Create batched instance
-        const [batchedSP, execute] = sp.batched();
-        
-        // User builds operations
-        const resultPromise = fn(batchedSP);
-        
-        // Execute batch automatically
-        await execute();
-        
-        // Resolve results
-        const result = await resultPromise;
+        const result = await service.batch(fn);
         
         return result;
       } catch (err) {
@@ -628,7 +623,7 @@ export function useSPFxPnP(pnpContext?: PnPContextInfo): SPFxPnPInfo {
         setIsLoading(false);
       }
     },
-    [sp]
+    [service]
   );
   
   /**

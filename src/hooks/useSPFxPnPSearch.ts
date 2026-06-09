@@ -1,18 +1,10 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useSPFxPnPContext } from './useSPFxPnPContext';
 import type { PnPContextInfo } from './useSPFxPnPContext';
-
-// Import PnPjs native search
-import '@pnp/sp/search';
+import { createSPFxPnPSearchService } from '../services/spfx-pnp-search.service';
 
 // Import PnPjs search types
-import type { 
-  ISearchBuilder,
-  IRefiner,
-  ISuggestResult,
-  ISearchResult
-} from '@pnp/sp/search';
-import { SearchQueryBuilder } from '@pnp/sp/search';
+import type { ISearchBuilder } from '@pnp/sp/search';
 
 /**
  * Type alias for SearchQueryBuilder function
@@ -588,11 +580,18 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
   pnpContext?: PnPContextInfo
 ): SPFxPnPSearchInfo<T> {
   // Get PnP context
-  const context = useSPFxPnPContext(pnpContext?.siteUrl);
+  const defaultContext = useSPFxPnPContext();
+  const context = pnpContext || defaultContext;
   const { sp } = context;
   
   // Default options
   const defaultPageSize = options?.pageSize ?? 50;
+
+  const service = useMemo(() => {
+    return sp && context?.isInitialized
+      ? createSPFxPnPSearchService<T>(sp, options)
+      : undefined;
+  }, [sp, context?.isInitialized, options]);
   
   // State
   const [results, setResults] = useState<SearchResult<T>[]>([]);
@@ -640,7 +639,7 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
     appendResults?: boolean,
     overrideRefiners?: Map<string, string[]>
   ): Promise<SearchResult<T>[]> => {
-    if (!sp || !context?.isInitialized) {
+    if (!service) {
       const err = new Error('[useSPFxPnPSearch] PnP context not initialized. Ensure @pnp/sp/search is imported.');
       setError(err);
       throw err;
@@ -649,90 +648,15 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
     try {
       const pageSize = queryOptions?.pageSize ?? lastPageSize ?? defaultPageSize;
       const row = startRow ?? 0;
-      
-      // Initialize SearchQueryBuilder
-      let builder: ISearchBuilder;
-      
-      if (typeof query === 'string') {
-        // String query case
-        builder = SearchQueryBuilder(query);
-      } else {
-        // Builder callback case
-        builder = SearchQueryBuilder('');
-        
-        // Apply default options BEFORE user callback
-        if (options?.selectProperties && options.selectProperties.length > 0) {
-          builder = builder.selectProperties(...options.selectProperties);
-        }
-        if (options?.refiners) {
-          builder = builder.refiners(options.refiners);
-        }
-        
-        // Let user override everything
-        builder = query(builder);
-      }
-      
-      // Apply pagination
-      builder = builder.rowLimit(pageSize);
-      if (row > 0) {
-        builder = builder.startRow(row);
-      }
-      
-      // Apply refinement filters if any
-      // Use overrideRefiners if provided (for applyRefiner race condition fix)
       const refinersToApply = overrideRefiners ?? appliedRefiners;
-      if (refinersToApply.size > 0) {
-        const refinementFilters: string[] = [];
-        refinersToApply.forEach(function(values, key) {
-          values.forEach(function(value) {
-            refinementFilters.push(key + ":equals('" + value + "')");
-          });
-        });
-        
-        if (refinementFilters.length > 0) {
-          builder = builder.refinementFilters(...refinementFilters);
-        }
-      }
-      
-      // Execute search - sp.search() returns SearchResults (PnPjs v4)
-      // SearchResults exposes: ElapsedTime, RowCount, PrimarySearchResults, TotalRows
-      const searchResults = await sp.search(builder);
-      
-      // PnPjs v4 SearchResults.PrimarySearchResults already contains parsed result objects
-      // Each result is an ISearchResult with properties like Title, Path, Rank, etc.
-      const rawResults = searchResults.PrimarySearchResults ?? [];
-      const totalRows = searchResults.TotalRows ?? 0;
-      
-      // Map ISearchResult to our SearchResult<T> format
-      const parsedResults: SearchResult<T>[] = rawResults.map(function(result: ISearchResult) {
-        // ISearchResult is already a flat object with all properties
-        // Generate ID from Path or DocId
-        const id = String(result.DocId ?? result.Path ?? Math.random());
-        const rank = result.Rank ? parseInt(String(result.Rank), 10) : undefined;
-        
-        return {
-          id: id,
-          data: result as unknown as T, // ISearchResult is already the data
-          raw: result,                  // Keep original for reference
-          rank: rank
-        };
+      const searchResponse = await service.search(query, {
+        pageSize,
+        startRow: row,
+        refinementFilters: refinersToApply
       });
-      
-      // Parse refiners from RawSearchResults
-      // PnPjs v4: SearchResults.RawSearchResults.PrimaryQueryResult.RefinementResults.Refiners
-      const refinerResults = searchResults.RawSearchResults?.PrimaryQueryResult?.RefinementResults?.Refiners ?? [];
-      const parsedRefiners: SearchRefiner[] = refinerResults.map(function(refiner: IRefiner) {
-        return {
-          name: refiner.Name ?? '',
-          entries: (refiner.Entries ?? []).map(function(entry) {
-            return {
-              value: entry.RefinementName ?? '',
-              count: parseInt(entry.RefinementCount, 10) || 0,
-              token: entry.RefinementToken ?? ''
-            };
-          })
-        };
-      });
+      const parsedResults = searchResponse.results as SearchResult<T>[];
+      const totalRows = searchResponse.totalResults;
+      const parsedRefiners = searchResponse.refiners as SearchRefiner[];
       
       // Update state
       if (!mountedRef.current) {
@@ -764,7 +688,7 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
       setError(error);
       throw error;
     }
-  }, [sp, context?.isInitialized, options, defaultPageSize, lastPageSize, appliedRefiners]);
+  }, [service, defaultPageSize, lastPageSize, appliedRefiners]);
   
   /**
    * Executes a search query.
@@ -805,21 +729,20 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
    * Gets search suggestions.
    */
   const suggest = useCallback(async (queryText: string): Promise<string[]> => {
-    if (!sp || !context?.isInitialized) {
+    if (!service) {
       const err = new Error('[useSPFxPnPSearch] PnP context not initialized.');
       setError(err);
       throw err;
     }
     
     try {
-      const result: ISuggestResult = await sp.searchSuggest(queryText);
-      return result.Queries ?? [];
+      return await service.suggest(queryText);
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
       setError(error);
       throw error;
     }
-  }, [sp, context?.isInitialized]);
+  }, [service]);
   
   /**
    * Loads more results (pagination).

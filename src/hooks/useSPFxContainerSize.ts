@@ -2,6 +2,7 @@
 // Hook for container size detection with SharePoint-aligned breakpoints
 
 import { useMemo } from 'react';
+import { getSPFxContainerSize } from '../helpers/spfx-container.helpers';
 import { useSPFxContainerInfo } from './useSPFxContainerInfo';
 
 /**
@@ -55,53 +56,6 @@ export interface SPFxContainerSizeInfo {
   
   /** Actual container height in pixels */
   readonly height: number;
-}
-
-/**
- * Fluent UI 9 container size breakpoints
- * 
- * Based on official Fluent UI 9 responsive breakpoints:
- * - Small:    320px  (mobile portrait)
- * - Medium:   480px  (mobile landscape, small tablets)
- * - Large:    640px  (tablets, single column)
- * - XLarge:   1024px (laptop, desktop standard)
- * - XXLarge:  1366px (large desktop, wide screen)
- * - XXXLarge: 1920px (4K, ultra-wide, multi-column)
- * 
- * @see https://developer.microsoft.com/en-us/fluentui#/styles/web/responsive
- */
-const CONTAINER_SIZE_BREAKPOINTS = {
-  small: 480,     // Fluent UI 9: Small → Medium (320-479 → 480+)
-  medium: 640,    // Fluent UI 9: Medium → Large (480-639 → 640+)
-  large: 1024,    // Fluent UI 9: Large → XLarge (640-1023 → 1024+)
-  xLarge: 1366,   // Fluent UI 9: XLarge → XXLarge (1024-1365 → 1366+)
-  xxLarge: 1920,  // Fluent UI 9: XXLarge → XXXLarge (1366-1919 → 1920+)
-  xxxLarge: Infinity, // No upper bound for XXXLarge (>= 1920px)
-} as const;
-
-/**
- * Get container size category from width
- * 
- * @param width - Container width in pixels
- * @returns Container size category
- */
-function getContainerSize(width: number): SPFxContainerSize {
-  if (width < CONTAINER_SIZE_BREAKPOINTS.small) {
-    return 'small';     // < 480px
-  }
-  if (width < CONTAINER_SIZE_BREAKPOINTS.medium) {
-    return 'medium';    // 480-639px
-  }
-  if (width < CONTAINER_SIZE_BREAKPOINTS.large) {
-    return 'large';     // 640-1023px
-  }
-  if (width < CONTAINER_SIZE_BREAKPOINTS.xLarge) {
-    return 'xLarge';    // 1024-1365px
-  }
-  if (width < CONTAINER_SIZE_BREAKPOINTS.xxLarge) {
-    return 'xxLarge';   // 1366-1919px
-  }
-  return 'xxxLarge';    // >= 1920px
 }
 
 /**
@@ -190,7 +144,7 @@ export function useSPFxContainerSize(): SPFxContainerSizeInfo {
   return useMemo(() => {
     const width = containerSize?.width ?? 0;
     const height = containerSize?.height ?? 0;
-    const size = getContainerSize(width);
+    const size = getSPFxContainerSize(width);
     
     return {
       size,

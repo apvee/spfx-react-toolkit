@@ -1,18 +1,12 @@
 // useSPFxPnPContext.ts
 // Hook factory to create configured PnPjs SPFI instance
 
-import { useMemo, useState } from 'react';
-import { spfi, SPFI } from '@pnp/sp';
-import { SPFx } from '@pnp/sp';
-import { Caching } from '@pnp/queryable';
-import { InjectHeaders } from '@pnp/queryable';
-
-// Selective imports - ONLY base modules needed for context
-import '@pnp/sp/webs';
-import '@pnp/sp/batching';
+import { useMemo } from 'react';
+import type { SPFI } from '@pnp/sp';
 
 import { useSPFxContext } from './useSPFxContext';
 import { useSPFxPageContext } from './useSPFxPageContext';
+import { createSPFxPnPContextService } from '../services/spfx-pnp-context.service';
 
 /**
  * Configuration for PnPjs context
@@ -317,30 +311,14 @@ export function useSPFxPnPContext(
   const { spfxContext } = useSPFxContext();
   const pageContext = useSPFxPageContext();
   
-  // State for error tracking
-  const [error, setError] = useState<Error | undefined>(undefined);
+  const service = useMemo(() => {
+    return createSPFxPnPContextService(spfxContext, pageContext);
+  }, [spfxContext, pageContext.web.absoluteUrl]);
   
   // Resolve effective site URL
   const effectiveSiteUrl = useMemo(() => {
-    // If no siteUrl provided, use current site
-    if (!siteUrl) {
-      return pageContext.web.absoluteUrl;
-    }
-    
-    // Normalize: remove trailing slash (ES5 compatible)
-    const trimmed = siteUrl.charAt(siteUrl.length - 1) === '/' 
-      ? siteUrl.slice(0, -1) 
-      : siteUrl;
-    
-    // If relative URL, make it absolute (ES5 compatible)
-    if (trimmed.charAt(0) === '/') {
-      const origin = new URL(pageContext.web.absoluteUrl).origin;
-      return `${origin}${trimmed}`;
-    }
-    
-    // Already absolute
-    return trimmed;
-  }, [siteUrl, pageContext.web.absoluteUrl]);
+    return service.resolveSiteUrl(siteUrl);
+  }, [service, siteUrl]);
   
   // Serialize config for stable dependency
   // This ensures useMemo doesn't re-run when config object reference changes
@@ -352,75 +330,30 @@ export function useSPFxPnPContext(
   // there's a tiny overhead that's negligible compared to network/rendering costs.
   // 
   // This approach prioritizes DX (works without memoization) over micro-optimization.
-  const configKey = useMemo(() => 
-    JSON.stringify(config || {}),
-    [config]
-  );
+  const configKey = useMemo(() => service.getConfigKey(config), [service, config]);
   
   // Create and configure SPFI instance
-  const sp = useMemo(() => {
+  const pnpState = useMemo((): Pick<PnPContextInfo, 'sp' | 'error'> => {
     try {
-      // Validate SPFx context availability
-      if (!spfxContext) {
-        throw new Error(
-          'SPFx context is not available. ' +
-          'Ensure your component is wrapped with SPFxProvider.'
-        );
-      }
-      
-      // Initialize PnPjs with SPFx behavior for authentication
-      let instance = spfi(effectiveSiteUrl).using(SPFx(spfxContext));
-      
-      // Apply caching if enabled
-      if (config?.cache?.enabled) {
-        const cacheOptions = {
-          store: config.cache.storage || 'session',
-          keyFactory: config.cache.keyFactory || ((url: string) => {
-            // Simple hash function for cache keys (ES5 compatible)
-            let hash = 0;
-            for (let i = 0; i < url.length; i++) {
-              const char = url.charCodeAt(i);
-              hash = ((hash << 5) - hash) + char;
-              hash = hash & hash; // Convert to 32-bit integer
-            }
-            return `pnp-cache-${Math.abs(hash)}`;
-          }),
-          timeout: config.cache.timeout || 300000 // 5 minutes default
-        };
-        
-        instance = instance.using(Caching(cacheOptions));
-      }
-      
-      // Apply batching if enabled
-      // Note: Batching behavior can be added when needed
-      // if (config?.batch?.enabled) {
-      //   instance = instance.using(Batching());
-      // }
-      
-      // Apply custom headers if provided
-      if (config?.headers) {
-        instance = instance.using(InjectHeaders(config.headers));
-      }
-      
-      // Clear any previous errors on successful initialization
-      setError(undefined);
-      
-      return instance;
+      return {
+        sp: service.createSPFI(effectiveSiteUrl, config),
+        error: undefined
+      };
       
     } catch (err) {
-      // Capture initialization error
       const error = err instanceof Error ? err : new Error(String(err));
-      setError(error);
       
-      // Return undefined on error
-      return undefined;
+      return {
+        sp: undefined,
+        error
+      };
     }
-  }, [effectiveSiteUrl, spfxContext, configKey]);
+  }, [service, effectiveSiteUrl, configKey]);
   
   return useMemo(() => ({
-    sp,
-    isInitialized: sp !== undefined,
-    error,
+    sp: pnpState.sp,
+    isInitialized: pnpState.sp !== undefined,
+    error: pnpState.error,
     siteUrl: effectiveSiteUrl
-  }), [sp, error, effectiveSiteUrl]);
+  }), [pnpState, effectiveSiteUrl]);
 }

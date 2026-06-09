@@ -4,6 +4,7 @@
 import { atomWithStorage } from 'jotai/utils';
 import { useAtom } from 'jotai';
 import { useMemo, useCallback } from 'react';
+import { createScopedSPFxStorageKey } from '../helpers/spfx-storage.helpers';
 import { useSPFxInstanceInfo } from './useSPFxInstanceInfo';
 
 /**
@@ -61,7 +62,7 @@ export function useSPFxLocalStorage<T>(
   const { id: instanceId } = useSPFxInstanceInfo();
   
   // Create scoped storage key
-  const scopedKey = 'spfx:' + instanceId + ':' + key;
+  const scopedKey = createScopedSPFxStorageKey(instanceId, key);
   
   // Create atom with storage (memoized to avoid recreation)
   const storageAtom = useMemo(
@@ -126,7 +127,7 @@ export function useSPFxSessionStorage<T>(
   const { id: instanceId } = useSPFxInstanceInfo();
   
   // Create scoped storage key
-  const scopedKey = 'spfx:' + instanceId + ':' + key;
+  const scopedKey = createScopedSPFxStorageKey(instanceId, key);
   
   // Create atom with session storage
   const storageAtom = useMemo(

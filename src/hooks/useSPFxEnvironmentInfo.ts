@@ -2,6 +2,7 @@
 // Hook to access environment type information
 
 import { useMemo } from 'react';
+import { getSPFxEnvironmentInfo } from '../helpers/spfx-page-context.helpers';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -82,17 +83,11 @@ export interface SPFxEnvironmentInfo {
  */
 export function useSPFxEnvironmentInfo(): SPFxEnvironmentInfo {
   const pageContext = useSPFxPageContext();
-  
-  // Get legacy page context for environment detection
   const legacy = (pageContext as unknown as {
     legacyPageContext?: {
-      isSPO?: boolean;
       isOnPremises?: boolean;
-      webAbsoluteUrl?: string;
     };
   }).legacyPageContext;
-  
-  // Check for SDK contexts (Teams, Office, Outlook)
   const sdks = (pageContext as unknown as {
     sdks?: {
       microsoftTeams?: unknown;
@@ -101,47 +96,15 @@ export function useSPFxEnvironmentInfo(): SPFxEnvironmentInfo {
     };
   }).sdks;
   
-  const isTeams = sdks?.microsoftTeams !== undefined;
-  const isOffice = sdks?.office !== undefined;
-  const isOutlook = sdks?.outlook !== undefined;
-  
-  // Check for local workbench
-  const webUrl = pageContext.web.absoluteUrl.toLowerCase();
-  const isLocal = webUrl.indexOf('localhost') !== -1 || 
-                  webUrl.indexOf('127.0.0.1') !== -1;
-  
-  // Check for workbench (local or hosted)
-  const isWorkbench = isLocal || 
-                      webUrl.indexOf('workbench.aspx') !== -1 ||
-                      webUrl.indexOf('_layouts/15/workbench.aspx') !== -1;
-  
-  // Check for SharePoint On-Premises
-  const isOnPrem = legacy?.isOnPremises ?? false;
-  
-  // Determine environment type (priority order: Local > Teams > Outlook > Office > OnPrem > SharePoint)
-  let type: SPFxEnvironmentType;
-  if (isLocal) {
-    type = 'Local';
-  } else if (isTeams) {
-    type = 'Teams';
-  } else if (isOutlook) {
-    type = 'Outlook';
-  } else if (isOffice) {
-    type = 'Office';
-  } else if (isOnPrem) {
-    type = 'SharePointOnPrem';
-  } else {
-    type = 'SharePoint';
-  }
-  
-  return useMemo(() => ({
-    type,
-    isLocal,
-    isWorkbench,
-    isSharePoint: type === 'SharePoint',
-    isSharePointOnPrem: type === 'SharePointOnPrem',
-    isTeams,
-    isOffice,
-    isOutlook,
-  }), [type, isLocal, isWorkbench, isTeams, isOffice, isOutlook]);
+  return useMemo(
+    () => getSPFxEnvironmentInfo(pageContext),
+    [
+      pageContext,
+      pageContext.web.absoluteUrl,
+      legacy?.isOnPremises,
+      sdks?.microsoftTeams,
+      sdks?.office,
+      sdks?.outlook,
+    ]
+  );
 }

@@ -2,6 +2,7 @@
 // Hook to access list information (when in list context)
 
 import { useMemo } from 'react';
+import { getSPFxListInfo } from '../helpers/spfx-page-context.helpers';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -73,8 +74,6 @@ export interface SPFxListInfo {
  */
 export function useSPFxListInfo(): SPFxListInfo | undefined {
   const pageContext = useSPFxPageContext();
-  
-  // Try to get list from page context
   const list = (pageContext as unknown as {
     list?: {
       id?: { toString: () => string };
@@ -84,21 +83,8 @@ export function useSPFxListInfo(): SPFxListInfo | undefined {
     };
   }).list;
   
-  return useMemo(() => {
-    if (!list || !list.id) {
-      return undefined;
-    }
-    
-    // List template type 101 is Document Library
-    const baseTemplate = list.baseTemplate;
-    const isDocumentLibrary = baseTemplate === 101;
-    
-    return {
-      id: list.id.toString(),
-      title: list.title ?? 'Unknown List',
-      serverRelativeUrl: list.serverRelativeUrl ?? '',
-      baseTemplate,
-      isDocumentLibrary,
-    };
-  }, [list]);
+  return useMemo(
+    () => getSPFxListInfo(pageContext),
+    [pageContext, list]
+  );
 }

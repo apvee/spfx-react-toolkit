@@ -2,6 +2,7 @@
 // Hook to access site collection and web information
 
 import { useMemo } from 'react';
+import { getSPFxSiteInfo } from '../helpers/spfx-page-context.helpers';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -136,36 +137,16 @@ export interface SPFxSiteInfo {
  */
 export function useSPFxSiteInfo(): SPFxSiteInfo {
   const pageContext = useSPFxPageContext();
-  
   const siteObj = pageContext.site;
   const webObj = pageContext.web;
-  
-  // Try to get additional properties from legacy context
   const legacy = (pageContext as unknown as {
     legacyPageContext?: {
       siteClassification?: string;
     };
   }).legacyPageContext;
   
-  return useMemo(() => ({
-    // Web identity (prefixed)
-    webId: webObj.id.toString(),
-    webUrl: webObj.absoluteUrl,
-    webServerRelativeUrl: webObj.serverRelativeUrl,
-    
-    // Web metadata (no prefix - unique, most common)
-    title: webObj.title,
-    languageId: webObj.language ?? 1033, // Default to English
-    logoUrl: (webObj as unknown as { logoUrl?: string }).logoUrl,
-    
-    // Site collection (all prefixed)
-    siteId: siteObj.id.toString(),
-    siteUrl: siteObj.absoluteUrl,
-    siteServerRelativeUrl: siteObj.serverRelativeUrl,
-    siteClassification: legacy?.siteClassification,
-    siteGroup: siteObj.group ? {
-      id: siteObj.group.id.toString(),
-      isPublic: siteObj.group.isPublic ?? false,
-    } : undefined,
-  }), [siteObj, webObj, legacy]);
+  return useMemo(
+    () => getSPFxSiteInfo(pageContext),
+    [pageContext, siteObj, webObj, legacy]
+  );
 }
