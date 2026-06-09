@@ -29,7 +29,7 @@ export interface SPFxApplicationCustomizerProviderProps<TProps extends {} = {}> 
  *
  * This is a type-safe wrapper around the base provider that accepts an Application Customizer instance
  * directly without requiring type casting. Use this provider in Application Customizers instead of the
- * generic `SPFxProvider`.
+ * other host-specific providers.
  *
  * @param props - The component props.
  * @returns The provider component.

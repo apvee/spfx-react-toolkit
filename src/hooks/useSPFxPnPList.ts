@@ -675,6 +675,7 @@ export function useSPFxPnPList<T = unknown>(
     if (refetchTimeoutRef.current) {
       clearTimeout(refetchTimeoutRef.current);
     }
+
     refetchTimeoutRef.current = setTimeout(function() {
       refetch().catch(function(err) {
         const error = err as Error;
@@ -817,7 +818,7 @@ export function useSPFxPnPList<T = unknown>(
         setError(result.summaryError);
         console.error('Batch create summary:', result.errors);
       }
-      
+
       debouncedRefetch();
       return result.value;
     } catch (err) {
@@ -845,7 +846,7 @@ export function useSPFxPnPList<T = unknown>(
         setError(result.summaryError);
         console.error('Batch update summary:', result.errors);
       }
-      
+
       debouncedRefetch();
     } catch (err) {
       const error = err as Error;
@@ -870,7 +871,7 @@ export function useSPFxPnPList<T = unknown>(
         setError(result.summaryError);
         console.error('Batch delete summary:', result.errors);
       }
-      
+
       debouncedRefetch();
     } catch (err) {
       const error = err as Error;

@@ -29,7 +29,7 @@ export interface SPFxFieldCustomizerProviderProps<TProps extends {} = {}> {
  *
  * This is a type-safe wrapper around the base provider that accepts a Field Customizer instance
  * directly without requiring type casting. Use this provider in Field Customizers instead of the
- * generic `SPFxProvider`.
+ * other host-specific providers.
  *
  * @param props - The component props.
  * @returns The provider component.

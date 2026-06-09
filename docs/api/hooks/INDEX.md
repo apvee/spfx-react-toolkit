@@ -126,7 +126,7 @@ import {
 // In your web part render method:
 public render(): void {
   const element = (
-    <SPFxWebPartProvider context={this.context}>
+    <SPFxWebPartProvider instance={this}>
       <MyComponent />
     </SPFxWebPartProvider>
   );

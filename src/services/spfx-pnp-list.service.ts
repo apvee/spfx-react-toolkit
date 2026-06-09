@@ -123,6 +123,35 @@ function createBatchResult<TValue>(
   };
 }
 
+function collectRejectedReasons<T>(settled: PromiseSettledResult<T>[]): unknown[] {
+  return settled
+    .filter(function(result): result is PromiseRejectedResult {
+      return result.status === 'rejected';
+    })
+    .map(function(result): unknown {
+      return result.reason;
+    });
+}
+
+function collectCreatedIds(settled: PromiseSettledResult<unknown>[]): { ids: number[]; errors: unknown[] } {
+  const ids: number[] = [];
+  const errors: unknown[] = [];
+
+  settled.forEach(function(result): void {
+    if (result.status === 'fulfilled') {
+      try {
+        ids.push(getCreatedItemId(result.value));
+      } catch (error) {
+        errors.push(error);
+      }
+    } else {
+      errors.push(result.reason);
+    }
+  });
+
+  return { ids, errors };
+}
+
 export function createSPFxPnPListService<T = unknown>(
   sp: SPFI,
   listTitle: string,
@@ -223,23 +252,18 @@ export function createSPFxPnPListService<T = unknown>(
   const createBatch = async (
     itemsToCreate: Partial<T>[]
   ): Promise<SPFxPnPListBatchResult<number[]>> => {
-    const ids: number[] = [];
-    const errors: unknown[] = [];
     const [batchedSP, execute] = sp.batched();
     const list = batchedSP.web.lists.getByTitle(listTitle);
+    const operations: Promise<unknown>[] = [];
 
     for (let i = 0; i < itemsToCreate.length; i++) {
-      list.items.add(itemsToCreate[i] as Record<string, unknown>)
-        .then(function(result: unknown): void {
-          ids.push(getCreatedItemId(result));
-        })
-        .catch(function(error: unknown): void {
-          console.error('Batch create error:', error);
-          errors.push(error);
-        });
+      operations.push(list.items.add(itemsToCreate[i] as Record<string, unknown>) as Promise<unknown>);
     }
 
     await execute();
+
+    const settled = await Promise.allSettled(operations);
+    const { ids, errors } = collectCreatedIds(settled);
 
     return createBatchResult(ids, errors, itemsToCreate.length, 'create');
   };
@@ -247,41 +271,41 @@ export function createSPFxPnPListService<T = unknown>(
   const updateBatch = async (
     updates: Array<{ id: number; item: Partial<T> }>
   ): Promise<SPFxPnPListBatchResult<void>> => {
-    const errors: unknown[] = [];
     const [batchedSP, execute] = sp.batched();
     const list = batchedSP.web.lists.getByTitle(listTitle);
+    const operations: Promise<unknown>[] = [];
 
     for (let i = 0; i < updates.length; i++) {
       const updateItem = updates[i];
 
-      list.items.getById(updateItem.id)
-        .update(updateItem.item as Record<string, unknown>)
-        .catch(function(error: unknown): void {
-          console.error('Batch update error:', error);
-          errors.push(error);
-        });
+      operations.push(
+        list.items
+          .getById(updateItem.id)
+          .update(updateItem.item as Record<string, unknown>) as Promise<unknown>
+      );
     }
 
     await execute();
+
+    const settled = await Promise.allSettled(operations);
+    const errors = collectRejectedReasons(settled);
 
     return createBatchResult(undefined, errors, updates.length, 'update');
   };
 
   const removeBatch = async (ids: number[]): Promise<SPFxPnPListBatchResult<void>> => {
-    const errors: unknown[] = [];
     const [batchedSP, execute] = sp.batched();
     const list = batchedSP.web.lists.getByTitle(listTitle);
+    const operations: Promise<unknown>[] = [];
 
     for (let i = 0; i < ids.length; i++) {
-      list.items.getById(ids[i])
-        .delete()
-        .catch(function(error: unknown): void {
-          console.error('Batch delete error:', error);
-          errors.push(error);
-        });
+      operations.push(list.items.getById(ids[i]).delete() as Promise<unknown>);
     }
 
     await execute();
+
+    const settled = await Promise.allSettled(operations);
+    const errors = collectRejectedReasons(settled);
 
     return createBatchResult(undefined, errors, ids.length, 'delete');
   };

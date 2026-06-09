@@ -11,6 +11,6 @@ import { useSPFxContext } from '../core/context.internal';
  * - spfxContext: The SPFx context object (WebPartContext, etc.)
  * - kind: Type of host component ('WebPart', 'AppCustomizer', etc.)
  * 
- * @throws Error if used outside SPFxProvider
+ * @throws Error if used outside an SPFx provider
  */
 export { useSPFxContext };

@@ -579,7 +579,7 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
   options?: UseSPFxPnPSearchOptions,
   pnpContext?: PnPContextInfo
 ): SPFxPnPSearchInfo<T> {
-  // Get PnP context
+  // Get PnP context (use provided context or create default)
   const defaultContext = useSPFxPnPContext();
   const context = pnpContext || defaultContext;
   const { sp } = context;

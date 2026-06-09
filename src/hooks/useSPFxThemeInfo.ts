@@ -8,7 +8,7 @@ import { spfxAtoms } from '../core/atoms.internal';
 /**
  * Hook to access the current SPFx theme
  * 
- * Theme subscription is managed automatically by SPFxProvider.
+ * Theme subscription is managed automatically by SPFx providers.
  * Updates when user switches between light/dark theme or theme settings change.
  * 
  * @returns Current theme object or undefined if not yet loaded

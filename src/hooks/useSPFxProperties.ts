@@ -40,7 +40,7 @@ export interface SPFxPropertiesInfo<TProps = unknown> {
  * - Updater function pattern (like React setState)
  * - Automatic bidirectional sync with SPFx (managed by Provider)
  * 
- * The SPFxProvider automatically handles synchronization:
+ * The SPFx provider automatically handles synchronization:
  * - Property Pane changes → Atom → Hook (automatic)
  * - Hook updates → Atom → SPFx properties (automatic)
  * - Property Pane refresh for WebParts (automatic)
@@ -80,7 +80,7 @@ export interface SPFxPropertiesInfo<TProps = unknown> {
  * // In WebPart render():
  * // Just pass the instance - sync is automatic!
  * const element = React.createElement(
- *   SPFxProvider,
+ *   SPFxWebPartProvider,
  *   { instance: this },
  *   React.createElement(MyComponent)
  * );

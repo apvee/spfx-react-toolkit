@@ -196,8 +196,8 @@ export interface PnPContextInfo {
  *   const financeContext = useSPFxPnPContext('/sites/finance');
  *   
  *   // Inject into specialized hooks
- *   const { items: hrItems } = useSPFxPnPList('Employees', hrContext.sp);
- *   const { items: financeItems } = useSPFxPnPList('Invoices', financeContext.sp);
+ *   const { items: hrItems } = useSPFxPnPList('Employees', undefined, hrContext);
+ *   const { items: financeItems } = useSPFxPnPList('Invoices', undefined, financeContext);
  *   
  *   return (
  *     <Stack tokens={{ childrenGap: 20 }}>

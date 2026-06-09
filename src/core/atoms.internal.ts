@@ -11,7 +11,7 @@ import type { ContainerSize } from './types';
  * Collection of Jotai atoms for SPFx state
  * 
  * These atoms are isolated per Provider instance through separate stores.
- * Each SPFxProvider creates its own store, ensuring complete isolation
+ * Each SPFx provider creates its own store, ensuring complete isolation
  * between multiple instances on the same page.
  * 
  * Usage in hooks:
