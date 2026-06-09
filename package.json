@@ -22,6 +22,7 @@
     "build": "gulp bundle",
     "clean": "gulp clean",
     "test": "gulp test",
+    "verify:api-permission-precheck": "node scripts/verify-api-permission-precheck.cjs",
     "verify:examples": "node scripts/verify-example-coverage.cjs",
     "verify:runtime-store": "node scripts/verify-runtime-store.cjs",
     "verify:public-docs": "node scripts/verify-public-docs.cjs",
