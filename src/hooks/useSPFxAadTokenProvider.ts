@@ -57,14 +57,12 @@ export function useSPFxAadTokenProvider(): SPFxAadTokenProviderInfo {
   const [initError, setInitError] = useState<Error | undefined>(undefined);
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // REFS (for cleanup and preventing double initialization)
+  // REFS (for cleanup and preventing stale updates)
   // ═══════════════════════════════════════════════════════════════════════════
 
   // Track component mounted state to prevent memory leaks
   const isMountedRef = useRef<boolean>(true);
-
-  // Track if initialization has been attempted (prevent double init)
-  const initAttemptedRef = useRef<boolean>(false);
+  const requestIdRef = useRef<number>(0);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -98,19 +96,16 @@ export function useSPFxAadTokenProvider(): SPFxAadTokenProviderInfo {
 
   // Initialize AAD token provider (factory.getTokenProvider is async)
   useEffect(() => {
-    // Prevent double initialization
-    if (initAttemptedRef.current) {
-      return;
-    }
-    initAttemptedRef.current = true;
+    const requestId = requestIdRef.current + 1;
+    requestIdRef.current = requestId;
 
     // Reset state for new initialization
+    setTokenProvider(undefined);
     setIsInitializing(true);
     setInitError(undefined);
 
     if (factoryResult.error || !factoryResult.factory) {
-      if (isMountedRef.current) {
-        setTokenProvider(undefined);
+      if (isMountedRef.current && requestId === requestIdRef.current) {
         setInitError(factoryResult.error);
         setIsInitializing(false);
         console.error('Failed to consume AadTokenProviderFactory:', factoryResult.error);
@@ -122,15 +117,15 @@ export function useSPFxAadTokenProvider(): SPFxAadTokenProviderInfo {
     factoryResult.factory
       .getTokenProvider()
       .then((aadTokenProvider: AadTokenProvider) => {
-        // Only update state if still mounted
-        if (isMountedRef.current) {
+        // Only update state if still mounted and this request is current
+        if (isMountedRef.current && requestId === requestIdRef.current) {
           setTokenProvider(aadTokenProvider);
           setIsInitializing(false);
         }
       })
       .catch((err: unknown) => {
-        // Only update state if still mounted
-        if (isMountedRef.current) {
+        // Only update state if still mounted and this request is current
+        if (isMountedRef.current && requestId === requestIdRef.current) {
           const error = err instanceof Error ? err : new Error(String(err));
           setInitError(error);
           setIsInitializing(false);
