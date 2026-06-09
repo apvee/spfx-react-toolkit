@@ -20,6 +20,7 @@ export interface SPFxApiPermissionPrecheckServiceOptions {
   readonly useCachedToken?: boolean;
   readonly validateAudience?: boolean;
   readonly timeoutMs?: number;
+  readonly sequentialResourceAcquisition?: boolean;
 }
 
 export interface SPFxApiPermissionPrecheckService {
@@ -57,6 +58,15 @@ async function checkSPFxApiPermissions(
   }
 
   const requirementGroups = groupRequirementsByResourceEndpoint(validRequirements);
+
+  if (options?.sequentialResourceAcquisition) {
+    for (const requirements of requirementGroups.values()) {
+      results.push(...await checkSPFxApiPermissionResourceGroup(tokenProvider, requirements, options));
+    }
+
+    return results;
+  }
+
   const groupResults = await Promise.all(
     Array.from(requirementGroups.values()).map(requirements =>
       checkSPFxApiPermissionResourceGroup(tokenProvider, requirements, options)

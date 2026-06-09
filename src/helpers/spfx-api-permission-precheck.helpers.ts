@@ -432,7 +432,9 @@ export function classifySPFxApiPermissionError(
     normalizedErrorText.indexOf('login') >= 0 ||
     normalizedErrorText.indexOf('mfa') >= 0 ||
     normalizedErrorText.indexOf('interaction') >= 0 ||
-    normalizedErrorText.indexOf('interactive') >= 0
+    normalizedErrorText.indexOf('interactive') >= 0 ||
+    normalizedErrorText.indexOf('authentication popup') >= 0 ||
+    (normalizedErrorText.indexOf('passive') >= 0 && normalizedErrorText.indexOf('popup') >= 0)
   ) {
     return createSPFxApiPermissionResult(
       requirement,

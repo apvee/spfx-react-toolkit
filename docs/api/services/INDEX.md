@@ -299,6 +299,7 @@ interface SPFxAadTokenProviderLike {
 | `useCachedToken` | Uses SPFx cached tokens unless set to `false`. |
 | `validateAudience` | Validates token audience against expected audiences unless set to `false`. |
 | `timeoutMs` | Token acquisition timeout; defaults to `15000`. |
+| `sequentialResourceAcquisition` | Acquires resource-group tokens one at a time when set to `true`; defaults to concurrent acquisition. |
 
 Returned `SPFxApiPermissionPrecheckService` method:
 

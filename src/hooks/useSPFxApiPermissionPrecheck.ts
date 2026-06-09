@@ -80,19 +80,32 @@ export function useSPFxApiPermissionPrecheck(
     () => normalizeSPFxApiPermissionRequirements(config),
     [config]
   );
+  const requirementsKey = useMemo(
+    () => createRequirementsKey(normalizedRequirements),
+    [normalizedRequirements]
+  );
+  const stableRequirementsRef = useRef<readonly SPFxApiPermissionRequirement[]>(normalizedRequirements);
+  const stableRequirementsKeyRef = useRef<string | undefined>(undefined);
+
+  if (stableRequirementsKeyRef.current !== requirementsKey) {
+    stableRequirementsKeyRef.current = requirementsKey;
+    stableRequirementsRef.current = normalizedRequirements;
+  }
+
+  const stableRequirements = stableRequirementsRef.current;
   const service = useMemo(
     () => tokenProvider ? createSPFxApiPermissionPrecheckService(tokenProvider) : undefined,
     [tokenProvider]
   );
   const autoCheckKey = useMemo(
-    () => createAutoCheckKey(config, {
+    () => createAutoCheckKey(requirementsKey, {
       autoCheck,
       mode,
       useCachedToken,
       validateAudience,
       timeoutMs
     }),
-    [autoCheck, config, mode, timeoutMs, useCachedToken, validateAudience]
+    [autoCheck, mode, requirementsKey, timeoutMs, useCachedToken, validateAudience]
   );
 
   const [isChecking, setIsChecking] = useState<boolean>(false);
@@ -100,6 +113,7 @@ export function useSPFxApiPermissionPrecheck(
   const isMountedRef = useRef<boolean>(true);
   const requestIdRef = useRef<number>(0);
   const autoCheckKeyRef = useRef<string | undefined>(undefined);
+  const activeRequirementsKeyRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -110,19 +124,39 @@ export function useSPFxApiPermissionPrecheck(
   }, []);
 
   useEffect(() => {
+    if (activeRequirementsKeyRef.current === undefined) {
+      activeRequirementsKeyRef.current = requirementsKey;
+      return;
+    }
+
+    if (activeRequirementsKeyRef.current === requirementsKey) {
+      return;
+    }
+
+    activeRequirementsKeyRef.current = requirementsKey;
+    requestIdRef.current += 1;
+    autoCheckKeyRef.current = undefined;
+
+    if (isMountedRef.current) {
+      setIsChecking(false);
+      setResults([]);
+    }
+  }, [requirementsKey]);
+
+  useEffect(() => {
     if (tokenProvider || isInitializing) {
       return;
     }
 
     const requestId = requestIdRef.current + 1;
     requestIdRef.current = requestId;
-    const unavailableResults = createTokenProviderUnavailableResults(normalizedRequirements);
+    const unavailableResults = createTokenProviderUnavailableResults(stableRequirements);
 
     if (isMountedRef.current && requestId === requestIdRef.current) {
       setIsChecking(false);
       setResults(unavailableResults);
     }
-  }, [isInitializing, normalizedRequirements, tokenProvider]);
+  }, [isInitializing, requirementsKey, stableRequirements, tokenProvider]);
 
   const runCheck = useCallback(async (
     nextUseCachedToken: boolean
@@ -146,10 +180,11 @@ export function useSPFxApiPermissionPrecheck(
           () => service.check(config, {
             useCachedToken: nextUseCachedToken,
             validateAudience,
-            timeoutMs
+            timeoutMs,
+            sequentialResourceAcquisition: mode === 'passive'
           })
         )
-        : createTokenProviderUnavailableResults(normalizedRequirements);
+        : createTokenProviderUnavailableResults(stableRequirements);
 
       if (isMountedRef.current && requestId === requestIdRef.current) {
         setResults(nextResults);
@@ -166,8 +201,8 @@ export function useSPFxApiPermissionPrecheck(
     instanceInfo.id,
     instanceInfo.kind,
     mode,
-    normalizedRequirements,
     service,
+    stableRequirements,
     timeoutMs,
     tokenProvider,
     validateAudience
@@ -325,12 +360,22 @@ function createTokenProviderUnavailableResults(
   }));
 }
 
+function createRequirementsKey(
+  requirements: readonly SPFxApiPermissionRequirement[]
+): string {
+  try {
+    return JSON.stringify(requirements);
+  } catch {
+    return 'unserializable-requirements';
+  }
+}
+
 function createAutoCheckKey(
-  config: SPFxApiPermissionPrecheckConfig,
+  requirementsKey: string,
   options: Required<SPFxApiPermissionPrecheckOptions>
 ): string {
   try {
-    return JSON.stringify({ config, options });
+    return JSON.stringify({ requirementsKey, options });
   } catch {
     return 'unserializable-config';
   }

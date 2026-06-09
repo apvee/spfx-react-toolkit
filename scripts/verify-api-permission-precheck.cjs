@@ -271,6 +271,13 @@ assert.strictEqual(
   'interactionRequired'
 );
 assert.strictEqual(
+  helpers.classifySPFxApiPermissionError(
+    requirements[0],
+    new Error('SPFx API permission precheck passive mode blocked an authentication popup.')
+  ).status,
+  'interactionRequired'
+);
+assert.strictEqual(
   helpers.classifySPFxApiPermissionError(requirements[0], new Error('claims challenge received')).status,
   'claimsChallenge'
 );
@@ -386,6 +393,44 @@ async function verifyService() {
     ['api://orders', 'https://graph.microsoft.com']
   );
   assert.deepStrictEqual(multiResourceResults.map(result => result.status), ['available', 'available']);
+
+  let resolveSequentialGraphToken;
+  const sequentialCalls = [];
+  const sequentialPrecheck = service.createSPFxApiPermissionPrecheckService({
+    getToken: async resourceEndpoint => {
+      sequentialCalls.push(resourceEndpoint);
+
+      if (resourceEndpoint === 'https://graph.microsoft.com') {
+        return new Promise(resolve => {
+          resolveSequentialGraphToken = () => resolve(graphToken);
+        });
+      }
+
+      return customToken;
+    }
+  });
+  const sequentialCheckPromise = sequentialPrecheck.check(
+    {
+      graph: ['Sites.Read.All'],
+      customApis: [
+        {
+          id: 'orders',
+          name: 'Orders API',
+          resource: 'api://orders',
+          expectedAudiences: ['api://orders'],
+          scopes: ['Orders.Read']
+        }
+      ]
+    },
+    { sequentialResourceAcquisition: true }
+  );
+  await Promise.resolve();
+  assert.deepStrictEqual(sequentialCalls, ['https://graph.microsoft.com']);
+  assert.strictEqual(typeof resolveSequentialGraphToken, 'function');
+  resolveSequentialGraphToken();
+  const sequentialResults = await sequentialCheckPromise;
+  assert.deepStrictEqual(sequentialCalls, ['https://graph.microsoft.com', 'api://orders']);
+  assert.deepStrictEqual(sequentialResults.map(result => result.status), ['available', 'available']);
 
   const consentPrecheck = service.createSPFxApiPermissionPrecheckService({
     getToken: async () => {
