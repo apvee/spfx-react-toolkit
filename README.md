@@ -24,7 +24,7 @@ Built on a provider-scoped runtime store, it delivers per-instance state isolati
 
 ### Features
 
-- ✅ **35+ React Hooks** — Comprehensive API surface for SPFx runtime data, clients, token providers, and API permission prechecks
+- ✅ **40 React Hooks** — Comprehensive API surface for SPFx runtime data, clients, token providers, and API permission prechecks
 - ✅ **Public Helpers** — Pure utilities for storage keys, property pane helpers, environment checks, logging, and context extraction
 - ✅ **Public Services** — Reusable service factories for storage, SPFx context data, properties, theme, PnPjs, API permission prechecks, and provider composition
 - ✅ **Instance Isolation** — State scoped per SPFx instance (multi-instance support)
@@ -158,7 +158,7 @@ npm run verify:public-docs
 For complete documentation including:
 - Installation & configuration
 - All 4 provider components
-- Complete hooks API reference (35+ hooks)
+- Complete hooks API reference (40 hooks)
 - Public helpers and services API references
 - Code examples and best practices
 

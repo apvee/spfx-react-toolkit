@@ -1,6 +1,6 @@
 # SPFx React Toolkit
 
-> A comprehensive React runtime and hooks library for SharePoint Framework (SPFx) with 35+ type-safe hooks
+> A comprehensive React runtime and hooks library for SharePoint Framework (SPFx) with 40 type-safe hooks
 
 ## Overview
 
@@ -107,6 +107,7 @@ const MyComponent: React.FC = () => {
 |------|-------------|
 | [`useSPFxProperties`](./api/hooks/properties.md#usespfxproperties) | Bidirectional property management |
 | [`useSPFxDisplayMode`](./api/hooks/properties.md#usespfxdisplaymode) | Read/Edit mode detection |
+| [`useSPFxIsEdit`](./api/hooks/properties.md#usespfxisedit) | Boolean shortcut for edit mode |
 
 ### HTTP Clients
 | Hook | Description |
