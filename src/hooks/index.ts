@@ -30,6 +30,8 @@
  * @module hooks
  */
 export * from './useSPFxAadHttpClient';
+export * from './useSPFxApiPermissionPrecheck';
+export * from './useSPFxAadTokenProvider';
 export * from './useSPFxContainerInfo';
 export * from './useSPFxContainerSize';
 export * from './useSPFxCorrelationInfo';

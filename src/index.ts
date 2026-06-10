@@ -27,3 +27,5 @@
  */
 export * from './core';
 export * from './hooks';
+export * from './services';
+export * from './helpers';

@@ -12,7 +12,7 @@ import type { SPFxContextValue } from './types';
  * - kind: Type of host component
  * 
  * This context does NOT contain reactive state.
- * State is managed via Jotai atoms in isolated stores per Provider instance.
+ * State is managed via isolated runtime stores per Provider instance.
  * 
  * @internal
  */
@@ -26,10 +26,10 @@ if (process.env.NODE_ENV !== 'production') {
  * Internal hook to access SPFx context
  *
  * Provides access to the SPFx context value containing instanceId, spfxContext, and kind.
- * Must be used within an SPFxProvider component tree.
+ * Must be used within an SPFx provider component tree.
  *
  * @returns SPFxContextValue containing instanceId, spfxContext, and kind
- * @throws Error if used outside SPFxProvider - component must be wrapped with \<SPFxProvider\>
+ * @throws Error if used outside an SPFx provider - component must be wrapped with a host-specific provider.
  *
  * @internal
  */
@@ -38,8 +38,8 @@ export function useSPFxContext(): SPFxContextValue {
   
   if (!context) {
     throw new Error(
-      'useSPFxContext must be used within SPFxProvider. ' +
-      'Make sure your component is wrapped with <SPFxProvider>.'
+      'useSPFxContext must be used within an SPFx provider. ' +
+      'Make sure your component is wrapped with a host-specific SPFx provider.'
     );
   }
   

@@ -2,6 +2,7 @@
 // Hook for SharePoint page type detection
 
 import { useMemo } from 'react';
+import { getSPFxPageTypeInfo } from '../helpers/spfx-page-context.helpers';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -100,15 +101,11 @@ export interface SPFxPageTypeInfo {
  */
 export function useSPFxPageType(): SPFxPageTypeInfo {
   const pageContext = useSPFxPageContext();
-  
-  // Try to get page type from modern pageContext
   const modernPage = (pageContext as unknown as {
     page?: {
       type?: string;
     };
   }).page;
-  
-  // Try to get page type from legacy context
   const legacy = (pageContext as unknown as {
     legacyPageContext?: {
       pageType?: string;
@@ -117,69 +114,8 @@ export function useSPFxPageType(): SPFxPageTypeInfo {
     };
   }).legacyPageContext;
   
-  // Determine page type
-  let pageType: SPFxPageType = 'unknown';
-  
-  // Check modern page type first
-  const modernPageType = modernPage?.type?.toLowerCase();
-  if (modernPageType) {
-    if (modernPageType.indexOf('sitepage') !== -1) {
-      pageType = 'sitePage';
-    } else if (modernPageType.indexOf('webpartpage') !== -1) {
-      pageType = 'webPartPage';
-    }
-  }
-  
-  // Check legacy page type
-  if (pageType === 'unknown') {
-    const legacyPageType = legacy?.pageType?.toLowerCase();
-    if (legacyPageType) {
-      if (legacyPageType.indexOf('sitepage') !== -1) {
-        pageType = 'sitePage';
-      } else if (legacyPageType.indexOf('webpartpage') !== -1) {
-        pageType = 'webPartPage';
-      } else if (legacyPageType.indexOf('list') !== -1) {
-        // Check if it's a form or list view
-        if (legacy?.formType !== undefined && legacy.formType !== null) {
-          pageType = 'listFormPage';
-        } else {
-          pageType = 'listPage';
-        }
-      } else if (legacyPageType.indexOf('profile') !== -1) {
-        pageType = 'profilePage';
-      } else if (legacyPageType.indexOf('search') !== -1) {
-        pageType = 'searchPage';
-      }
-    }
-  }
-  
-  // If still unknown, try to infer from context
-  if (pageType === 'unknown') {
-    // If we have a list ID, likely a list page
-    if (legacy?.listId) {
-      if (legacy.formType !== undefined && legacy.formType !== null) {
-        pageType = 'listFormPage';
-      } else {
-        pageType = 'listPage';
-      }
-    }
-  }
-  
-  // Calculate helper flags
-  const isSitePage = pageType === 'sitePage';
-  const isWebPartPage = pageType === 'webPartPage';
-  const isListPage = pageType === 'listPage';
-  const isListFormPage = pageType === 'listFormPage';
-  
-  // Modern page = site page (not classic web part page)
-  const isModernPage = isSitePage;
-  
-  return useMemo(() => ({
-    pageType,
-    isModernPage,
-    isSitePage,
-    isListPage,
-    isListFormPage,
-    isWebPartPage,
-  }), [pageType, isModernPage, isSitePage, isListPage, isListFormPage, isWebPartPage]);
+  return useMemo(
+    () => getSPFxPageTypeInfo(pageContext),
+    [pageContext, modernPage?.type, legacy?.pageType, legacy?.listId, legacy?.formType]
+  );
 }

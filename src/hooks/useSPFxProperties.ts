@@ -2,8 +2,7 @@
 // Hook to access and manage SPFx properties
 
 import { useCallback, useMemo } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { spfxAtoms } from './../core/atoms.internal';
+import { useSPFxRuntimeActions, useSPFxRuntimeSelector } from './../core/state.internal';
 
 /**
  * Return type for useSPFxProperties hook
@@ -40,9 +39,9 @@ export interface SPFxPropertiesInfo<TProps = unknown> {
  * - Updater function pattern (like React setState)
  * - Automatic bidirectional sync with SPFx (managed by Provider)
  * 
- * The SPFxProvider automatically handles synchronization:
- * - Property Pane changes → Atom → Hook (automatic)
- * - Hook updates → Atom → SPFx properties (automatic)
+ * The SPFx provider automatically handles synchronization:
+ * - Property Pane changes → runtime state → Hook (automatic)
+ * - Hook updates → runtime state → SPFx properties (automatic)
  * - Property Pane refresh for WebParts (automatic)
  * 
  * @returns Properties and setter functions
@@ -80,31 +79,28 @@ export interface SPFxPropertiesInfo<TProps = unknown> {
  * // In WebPart render():
  * // Just pass the instance - sync is automatic!
  * const element = React.createElement(
- *   SPFxProvider,
+ *   SPFxWebPartProvider,
  *   { instance: this },
  *   React.createElement(MyComponent)
  * );
  * ```
  */
 export function useSPFxProperties<TProps = unknown>(): SPFxPropertiesInfo<TProps> {
-  // Read current properties directly from atom (cast to generic type)
-  const properties = useAtomValue(spfxAtoms.properties) as TProps | undefined;
-  
-  // Get setter (stable reference from Jotai)
-  const setPropertiesAtom = useSetAtom(spfxAtoms.properties);
+  const properties = useSPFxRuntimeSelector(state => state.properties) as TProps | undefined;
+  const { setProperties: setRuntimeProperties } = useSPFxRuntimeActions();
   
   // Setter with partial merge (functional update for stable dependencies)
   const setProperties = useCallback((updates: Partial<TProps>): void => {
-    setPropertiesAtom((prev: unknown) => ({
+    setRuntimeProperties((prev: unknown) => ({
       ...(prev ?? {} as TProps),
       ...updates,
     }));
-  }, [setPropertiesAtom]);
+  }, [setRuntimeProperties]);
   
   // Updater function pattern (like React setState)
   const updateProperties = useCallback((updater: (current: TProps | undefined) => TProps): void => {
-    setPropertiesAtom((prev: unknown) => updater(prev as TProps | undefined));
-  }, [setPropertiesAtom]);
+    setRuntimeProperties((prev: unknown) => updater(prev as TProps | undefined));
+  }, [setRuntimeProperties]);
   
   return useMemo(() => ({
     properties,

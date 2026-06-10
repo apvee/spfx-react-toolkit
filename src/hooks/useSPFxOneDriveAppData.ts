@@ -3,60 +3,7 @@
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useSPFxMSGraphClient } from './useSPFxMSGraphClient';
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PURE FUNCTIONS (extracted for stability and testability)
-// ═══════════════════════════════════════════════════════════════════════════
-
-/**
- * Build Graph API path with optional folder namespace.
- * Sanitizes folder name to prevent path traversal attacks.
- * 
- * @param fileName - Name of the file
- * @param folderName - Optional folder namespace
- * @returns Full Graph API path for file content
- */
-function buildApiPath(fileName: string, folderName?: string): string {
-  const basePath = '/me/drive/special/approot:';
-
-  if (folderName) {
-    // Sanitize folder name: only allow alphanumeric, hyphens, underscores
-    // This prevents path traversal (../) and other injection attacks
-    const safeFolderName = folderName.replace(/[^a-zA-Z0-9-_]/g, '-');
-    return `${basePath}/${safeFolderName}/${fileName}:/content`;
-  }
-
-  return `${basePath}/${fileName}:/content`;
-}
-
-/**
- * Check if an error indicates a 404 / itemNotFound response from Graph API.
- * 
- * @param err - The error to check
- * @returns True if the error indicates file not found
- */
-function isNotFoundError(err: unknown): boolean {
-  const anyErr = err as {
-    statusCode?: number;
-    status?: number;
-    code?: string;
-    message?: string;
-    body?: { error?: { code?: string; message?: string } };
-  };
-
-  // Check status codes
-  if (anyErr?.statusCode === 404 || anyErr?.status === 404) return true;
-
-  // Check error codes
-  const code = anyErr?.code ?? anyErr?.body?.error?.code;
-  if (code && /itemnotfound/i.test(code)) return true;
-
-  // Check error messages as fallback
-  const message = anyErr?.message ?? anyErr?.body?.error?.message;
-  if (message && /(\b404\b|not found|itemnotfound)/i.test(message)) return true;
-
-  return false;
-}
+import { createSPFxOneDriveAppDataService } from '../services/spfx-onedrive-app-data.service';
 
 /**
  * Return type for useSPFxOneDriveAppData hook
@@ -380,6 +327,10 @@ export function useSPFxOneDriveAppData<T = unknown>(
   const defaultValue = resolvedOptions.defaultValue;
   const createIfMissing = resolvedOptions.createIfMissing ?? false;
 
+  const oneDriveAppDataService = useMemo(() => (
+    client ? createSPFxOneDriveAppDataService(client) : undefined
+  ), [client]);
+
   // ═══════════════════════════════════════════════════════════════════════════
   // STATE MANAGEMENT
   // ═══════════════════════════════════════════════════════════════════════════
@@ -416,7 +367,9 @@ export function useSPFxOneDriveAppData<T = unknown>(
    * Updates isWriting and writeError states
    */
   const write = useCallback(async (content: T): Promise<void> => {
-    if (!client) {
+    const service = oneDriveAppDataService;
+
+    if (!client || !service) {
       if (isClientInitializing) {
         throw new Error('Graph client is still initializing. Please wait and try again.');
       }
@@ -434,15 +387,7 @@ export function useSPFxOneDriveAppData<T = unknown>(
     setWriteError(undefined);
 
     try {
-      const apiPath = buildApiPath(fileName, folder);
-
-      // Always stringify to ensure valid JSON
-      const jsonContent = JSON.stringify(content);
-
-      await client
-        .api(apiPath)
-        .header('Content-Type', 'application/json')
-        .put(jsonContent);
+      await service.write<T>(fileName, content, folder);
 
       if (isMountedRef.current) {
         // Update local data to reflect successful write
@@ -464,7 +409,7 @@ export function useSPFxOneDriveAppData<T = unknown>(
         setIsWriting(false);
       }
     }
-  }, [client, fileName, folder, isClientInitializing, clientInitError]);
+  }, [client, oneDriveAppDataService, fileName, folder, isClientInitializing, clientInitError]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // LOAD CALLBACK (NO dependency on write - uses effect for createIfMissing)
@@ -476,7 +421,9 @@ export function useSPFxOneDriveAppData<T = unknown>(
    * Does NOT call write directly - createIfMissing is handled by separate effect
    */
   const load = useCallback(async (): Promise<void> => {
-    if (!client) {
+    const service = oneDriveAppDataService;
+
+    if (!client || !service) {
       if (isClientInitializing) {
         console.info('Graph client is still initializing. Skipping load - will auto-retry when ready.');
         return;
@@ -502,28 +449,10 @@ export function useSPFxOneDriveAppData<T = unknown>(
     setIsNotFound(false);
 
     try {
-      const apiPath = buildApiPath(fileName, folder);
-      const fileContent = await client.api(apiPath).get();
+      const readResult = await service.read<T>(fileName, folder);
 
       if (isMountedRef.current) {
-        // Parse JSON if response is string, otherwise use as-is
-        if (typeof fileContent === 'string') {
-          try {
-            setData(JSON.parse(fileContent) as T);
-          } catch (parseError) {
-            throw new Error(`Failed to parse JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
-          }
-        } else {
-          setData(fileContent as T);
-        }
-        setIsNotFound(false);
-      }
-    } catch (err) {
-      if (isMountedRef.current) {
-        const notFound = isNotFoundError(err);
-        setIsNotFound(notFound);
-
-        if (notFound) {
+        if (readResult.isNotFound) {
           // Missing file is treated as a non-error.
           // Set data to defaultValue if provided, otherwise undefined
           if (defaultValue !== undefined) {
@@ -531,12 +460,19 @@ export function useSPFxOneDriveAppData<T = unknown>(
           } else {
             setData(undefined);
           }
+          setIsNotFound(true);
           setError(undefined);
           console.info('OneDrive file not found. isNotFound=true');
           // NOTE: createIfMissing is handled by separate useEffect
           return;
         }
 
+        setData(readResult.data);
+        setIsNotFound(false);
+      }
+    } catch (err) {
+      if (isMountedRef.current) {
+        setIsNotFound(false);
         const loadError = err instanceof Error ? err : new Error(String(err));
         setError(loadError);
         console.error('Failed to load file from OneDrive:', loadError);
@@ -546,7 +482,7 @@ export function useSPFxOneDriveAppData<T = unknown>(
         setIsLoading(false);
       }
     }
-  }, [client, fileName, folder, defaultValue, isClientInitializing, clientInitError]); // ← NO write, NO createIfMissing
+  }, [client, oneDriveAppDataService, fileName, folder, defaultValue, isClientInitializing, clientInitError]); // ← NO write, NO createIfMissing
 
   // ═══════════════════════════════════════════════════════════════════════════
   // EFFECTS

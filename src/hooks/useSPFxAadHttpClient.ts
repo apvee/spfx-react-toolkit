@@ -313,6 +313,7 @@ export function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpCl
   
   // Track component mounted state to prevent memory leaks
   const isMountedRef = useRef<boolean>(true);
+  const requestIdRef = useRef<number>(0);
   
   // Cleanup on unmount
   useEffect(() => {
@@ -339,6 +340,9 @@ export function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpCl
     // Reset client and error immediately when resourceUrl changes
     setClient(undefined);
     setInitError(undefined);
+
+    const requestId = requestIdRef.current + 1;
+    requestIdRef.current = requestId;
     
     if (!resourceUrl) {
       setIsInitializing(false);
@@ -351,15 +355,15 @@ export function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpCl
     factory
       .getClient(resourceUrl)
       .then((aadClient: AadHttpClient) => {
-        // Only update state if still mounted
-        if (isMountedRef.current) {
+        // Only update state if still mounted and this request is current
+        if (isMountedRef.current && requestId === requestIdRef.current) {
           setClient(aadClient);
           setIsInitializing(false);
         }
       })
       .catch((err: unknown) => {
-        // Only update state if still mounted
-        if (isMountedRef.current) {
+        // Only update state if still mounted and this request is current
+        if (isMountedRef.current && requestId === requestIdRef.current) {
           const error = err instanceof Error ? err : new Error(String(err));
           setInitError(error);
           setIsInitializing(false);

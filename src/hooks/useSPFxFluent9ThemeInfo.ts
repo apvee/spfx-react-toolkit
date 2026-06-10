@@ -3,13 +3,7 @@
 
 import { useMemo } from 'react';
 import type { Theme } from '@fluentui/react-theme';
-import { 
-  webLightTheme,
-  teamsLightTheme, 
-  teamsDarkTheme, 
-  teamsHighContrastTheme 
-} from '@fluentui/react-theme';
-import { createV9Theme } from '@fluentui/react-migration-v8-v9';
+import { createFluent9ThemeFromSPFxTheme, getTeamsFluentTheme } from '../helpers/spfx-theme.helpers';
 import { useSPFxThemeInfo } from './useSPFxThemeInfo';
 import { useSPFxTeams } from './useSPFxTeams';
 
@@ -38,7 +32,7 @@ export interface SPFxFluent9ThemeInfo {
  * 
  * The hook uses memoization to avoid expensive theme conversions on every render.
  * Theme updates are automatically handled when the user switches themes in
- * SharePoint or Teams through the SPFxProvider's theme subscription mechanism.
+ * SharePoint or Teams through the SPFx provider theme subscription mechanism.
  * 
  * Priority order:
  * 1. Teams theme (if running in Teams context)
@@ -129,13 +123,8 @@ export function useSPFxFluent9ThemeInfo(): SPFxFluent9ThemeInfo {
     }
     
     // Priority 2: Convert SPFx theme to Fluent UI 9
-    if (spfxTheme) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return createV9Theme(spfxTheme as any);
-    }
-    
     // Priority 3: Fallback to default light theme
-    return webLightTheme;
+    return createFluent9ThemeFromSPFxTheme(spfxTheme);
   }, [teamsInfo.supported, teamsInfo.theme, spfxTheme]);
   
   return useMemo(() => ({
@@ -143,20 +132,4 @@ export function useSPFxFluent9ThemeInfo(): SPFxFluent9ThemeInfo {
     isTeams: teamsInfo.supported,
     teamsTheme: teamsInfo.theme
   }), [theme, teamsInfo.supported, teamsInfo.theme]);
-}
-
-/**
- * Maps Teams theme name to corresponding Fluent UI 9 theme
- * @internal
- */
-function getTeamsFluentTheme(teamsThemeName: string): Theme {
-  switch (teamsThemeName) {
-    case 'dark':
-      return teamsDarkTheme;
-    case 'highContrast':
-      return teamsHighContrastTheme;
-    case 'default':
-    default:
-      return teamsLightTheme;
-  }
 }

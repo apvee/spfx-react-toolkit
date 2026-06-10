@@ -29,34 +29,37 @@ export interface SPFxListViewCommandSetProviderProps<TProps extends {} = {}> {
  *
  * This is a type-safe wrapper around the base provider that accepts a ListView Command Set instance
  * directly without requiring type casting. Use this provider in ListView Command Sets instead of the
- * generic `SPFxProvider`.
+ * other host-specific providers.
  *
  * @param props - The component props.
  * @returns The provider component.
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import * as ReactDom from 'react-dom';
  * import { SPFxListViewCommandSetProvider } from 'spfx-react-toolkit';
- * import { Dialog } from '@microsoft/sp-dialog';
  *
  * export default class MyCommandSet extends BaseListViewCommandSet<IMyProps> {
  *   public onExecute(event: IListViewCommandSetExecuteEventParameters): void {
  *     switch (event.itemId) {
  *       case 'COMMAND_1':
- *         // Create a dialog container
- *         const dialog = Dialog.alert({
- *           title: 'Custom Dialog',
- *           message: this._renderDialog()
- *         });
+ *         const container = document.createElement('div');
+ *         document.body.appendChild(container);
+ *
+ *         ReactDom.render(this._renderPanel(() => {
+ *           ReactDom.unmountComponentAtNode(container);
+ *           document.body.removeChild(container);
+ *         }), container);
  *         break;
  *     }
  *   }
  *
- *   private _renderDialog(): React.ReactElement {
+ *   private _renderPanel(onClose: () => void): React.ReactElement {
  *     return React.createElement(
  *       SPFxListViewCommandSetProvider,
  *       { instance: this },
- *       React.createElement(MyComponent)
+ *       React.createElement(MyComponent, { onClose })
  *     );
  *   }
  * }

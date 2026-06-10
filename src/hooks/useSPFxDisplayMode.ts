@@ -2,9 +2,8 @@
 // Hook to access display mode (Read/Edit)
 
 import { useMemo } from 'react';
-import { useAtomValue } from 'jotai';
 import { DisplayMode } from '@microsoft/sp-core-library';
-import { spfxAtoms } from './../core/atoms.internal';
+import { useSPFxRuntimeSelector } from './../core/state.internal';
 
 /**
  * Return type for useSPFxDisplayMode hook
@@ -54,8 +53,7 @@ export interface SPFxDisplayModeInfo {
  * ```
  */
 export function useSPFxDisplayMode(): SPFxDisplayModeInfo {
-  // Read current mode directly from atom (readonly)
-  const modeValue = useAtomValue(spfxAtoms.displayMode);
+  const modeValue = useSPFxRuntimeSelector(state => state.displayMode);
   
   // Default to Read mode if not set
   const mode = modeValue ?? DisplayMode.Read;

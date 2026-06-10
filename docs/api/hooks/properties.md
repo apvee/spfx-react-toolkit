@@ -53,8 +53,8 @@ Properties are the configuration values for WebParts/Extensions that:
 - Are specific to each instance
 
 **Synchronization is automatic:**
-- Property Pane changes → Atom → Hook (automatic)
-- Hook updates → Atom → SPFx properties (automatic)
+- Property Pane changes → runtime state → Hook (automatic)
+- Hook updates → runtime state → SPFx properties (automatic)
 - Property Pane refresh for WebParts (automatic)
 
 ### Example: Basic Usage

@@ -2,8 +2,7 @@
 // Hook for Microsoft Teams context integration
 
 import { useEffect, useMemo } from 'react';
-import { useAtom } from 'jotai';
-import { spfxAtoms } from '../core/atoms.internal';
+import { useSPFxRuntimeActions, useSPFxRuntimeSelector } from '../core/state.internal';
 import { useSPFxContext } from './useSPFxContext';
 
 /**
@@ -73,7 +72,8 @@ export interface SPFxTeamsInfo {
  */
 export function useSPFxTeams(): SPFxTeamsInfo {
   const { spfxContext } = useSPFxContext();
-  const [state, setState] = useAtom(spfxAtoms.teams);
+  const state = useSPFxRuntimeSelector(runtimeState => runtimeState.teams);
+  const { setTeamsState } = useSPFxRuntimeActions();
   
   useEffect(() => {
     // Skip if already initialized
@@ -93,7 +93,7 @@ export function useSPFxTeams(): SPFxTeamsInfo {
       | undefined;
     
     if (!teamsSDK) {
-      setState({ supported: false, initialized: true });
+      setTeamsState({ supported: false, initialized: true });
       return;
     }
     
@@ -111,7 +111,7 @@ export function useSPFxTeams(): SPFxTeamsInfo {
         'default'
       ) as TeamsTheme;
       
-      setState({
+      setTeamsState({
         supported: true,
         context,
         theme: normalizedTheme,
@@ -157,21 +157,24 @@ export function useSPFxTeams(): SPFxTeamsInfo {
     const init = async (): Promise<void> => {
       const v2Success = await tryV2();
       if (!v2Success) {
-        await tryV1();
+        const v1Success = await tryV1();
+        if (!v1Success && !disposed) {
+          setTeamsState({ supported: false, initialized: true });
+        }
       }
     };
     
     init().catch(() => {
       // Fallback: mark as not supported
       if (!disposed) {
-        setState({ supported: false, initialized: true });
+        setTeamsState({ supported: false, initialized: true });
       }
     });
     
     return () => {
       disposed = true;
     };
-  }, [spfxContext, setState, state.initialized]);
+  }, [spfxContext, setTeamsState, state.initialized]);
   
   return useMemo(() => ({
     supported: state.supported,

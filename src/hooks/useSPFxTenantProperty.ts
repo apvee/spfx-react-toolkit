@@ -3,8 +3,7 @@
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useAppCatalogUrl } from './useAppCatalogUrl.internal';
-import { SPHttpClient } from '@microsoft/sp-http';
-import type { SPHttpClientResponse } from '@microsoft/sp-http';
+import { createSPFxTenantPropertyService } from '../services/spfx-tenant-property.service';
 
 /**
  * Return type for useSPFxTenantProperty hook
@@ -61,14 +60,6 @@ export interface SPFxTenantPropertyResult<T> {
    * ```
    */
   readonly isReady: boolean;
-}
-
-/**
- * SharePoint StorageEntity response interface
- */
-interface IStorageEntity {
-  Value: string;
-  Description?: string;
 }
 
 /**
@@ -191,6 +182,10 @@ export function useSPFxTenantProperty<T = unknown>(
   autoFetch: boolean = true
 ): SPFxTenantPropertyResult<T> {
   const { spHttpClient, discoverAppCatalogUrl, isMountedRef } = useAppCatalogUrl();
+  const tenantPropertyService = useMemo(
+    () => spHttpClient ? createSPFxTenantPropertyService(spHttpClient) : undefined,
+    [spHttpClient]
+  );
 
   // State management
   const [data, setData] = useState<T | undefined>(undefined);
@@ -199,24 +194,10 @@ export function useSPFxTenantProperty<T = unknown>(
   const [error, setError] = useState<Error | undefined>(undefined);
 
   /**
-   * Deserialize value from storage
-   * - Try JSON.parse first
-   * - If fails, return raw string (will be cast to T by TypeScript)
-   */
-  const deserializeValue = useCallback((rawValue: string): T => {
-    try {
-      return JSON.parse(rawValue) as T;
-    } catch {
-      // Not valid JSON, assume it's a primitive value
-      return rawValue as T;
-    }
-  }, []);
-
-  /**
    * Load property from tenant app catalog
    */
   const load = useCallback(async (): Promise<void> => {
-    if (!spHttpClient) {
+    if (!tenantPropertyService) {
       console.warn('SPHttpClient not available yet. Skipping load.');
       return;
     }
@@ -234,26 +215,11 @@ export function useSPFxTenantProperty<T = unknown>(
       const catalogUrl = await discoverAppCatalogUrl();
 
       // Read property
-      const response: SPHttpClientResponse = await spHttpClient.get(
-        `${catalogUrl}/_api/web/GetStorageEntity('${encodeURIComponent(key)}')`,
-        SPHttpClient.configurations.v1
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to read property: ${response.statusText}`);
-      }
-
-      const entity: IStorageEntity = await response.json();
+      const property = await tenantPropertyService.get<T>(key, catalogUrl);
 
       if (isMountedRef.current) {
-        if (entity.Value) {
-          setData(deserializeValue(entity.Value));
-          setDescription(entity.Description);
-        } else {
-          // Property doesn't exist or has no value
-          setData(undefined);
-          setDescription(undefined);
-        }
+        setData(property.value);
+        setDescription(property.description);
       }
     } catch (err) {
       if (isMountedRef.current) {
@@ -266,16 +232,16 @@ export function useSPFxTenantProperty<T = unknown>(
         setIsLoading(false);
       }
     }
-  }, [spHttpClient, key, discoverAppCatalogUrl, deserializeValue, isMountedRef]);
+  }, [tenantPropertyService, key, discoverAppCatalogUrl, isMountedRef]);
 
   // Auto-fetch on mount if enabled
   useEffect(() => {
-    if (autoFetch && spHttpClient && key) {
+    if (autoFetch && tenantPropertyService && key) {
       load().catch(() => {
         // Error already handled in load() function
       });
     }
-  }, [autoFetch, spHttpClient, key, load]);
+  }, [autoFetch, tenantPropertyService, key, load]);
 
   // Computed state: ready when data loaded successfully
   const isReady = !isLoading && !error && data !== undefined;

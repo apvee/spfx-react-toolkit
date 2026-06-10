@@ -1,6 +1,6 @@
 {
   "name": "@apvee/spfx-react-toolkit",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Comprehensive React runtime and hooks library for SharePoint Framework (SPFx)",
   "private": false,
   "engines": {
@@ -9,7 +9,12 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
-    "lib/**/*",
+    "lib/index.*",
+    "lib/core/**/*",
+    "lib/hooks/**/*",
+    "lib/services/**/*",
+    "lib/helpers/**/*",
+    "lib/utils/**/*",
     "README.md",
     "LICENSE"
   ],
@@ -17,22 +22,15 @@
     "build": "gulp bundle",
     "clean": "gulp clean",
     "test": "gulp test",
-    "prepublishOnly": "npm run clean && npm run build"
+    "verify:examples": "node scripts/verify-example-coverage.cjs",
+    "verify:runtime-store": "node scripts/verify-runtime-store.cjs",
+    "verify:public-docs": "node scripts/verify-public-docs.cjs",
+    "prepublishOnly": "npm run clean && npm run build && npm test && npm run verify:examples && npm run verify:runtime-store && npm run verify:public-docs"
   },
   "dependencies": {
     "@fluentui/react-migration-v8-v9": "^9.9.12",
     "@fluentui/react-theme": "^9.2.0",
-    "@microsoft/sp-application-base": "1.21.1",
-    "@microsoft/sp-component-base": ">=1.18.0",
-    "@microsoft/sp-core-library": "1.21.1",
-    "@microsoft/sp-listview-extensibility": ">=1.18.0",
-    "@microsoft/sp-webpart-base": ">=1.18.0",
-    "jotai": "^2.6.0",
-    "react": "17.0.1",
-    "react-dom": "17.0.1",
-    "tslib": "2.3.1",
-    "@microsoft/decorators": "1.21.1",
-    "@microsoft/sp-dialog": "1.21.1"
+    "tslib": "2.3.1"
   },
   "devDependencies": {
     "@fluentui/react": "^8.106.4",
@@ -40,10 +38,17 @@
     "@microsoft/eslint-plugin-spfx": ">=1.18.0",
     "@microsoft/rush-stack-compiler-5.3": "0.1.0",
     "@microsoft/sp-build-web": ">=1.18.0",
+    "@microsoft/sp-application-base": "1.21.1",
+    "@microsoft/sp-component-base": "1.21.1",
+    "@microsoft/sp-core-library": "1.21.1",
+    "@microsoft/sp-http": "1.21.1",
+    "@microsoft/sp-listview-extensibility": "1.21.1",
     "@microsoft/sp-lodash-subset": ">=1.18.0",
     "@microsoft/sp-module-interfaces": "1.21.1",
     "@microsoft/sp-office-ui-fabric-core": ">=1.18.0",
+    "@microsoft/sp-page-context": "1.21.1",
     "@microsoft/sp-property-pane": ">=1.18.0",
+    "@microsoft/sp-webpart-base": "1.21.1",
     "@rushstack/eslint-config": "4.0.1",
     "@types/react": "17.0.45",
     "@types/react-dom": "17.0.17",
@@ -52,12 +57,23 @@
     "eslint": "8.57.1",
     "eslint-plugin-react-hooks": "4.3.0",
     "gulp": "4.0.2",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
     "typescript": "~5.3.3"
   },
   "peerDependencies": {
+    "@microsoft/sp-application-base": ">=1.18.0 <2.0.0",
+    "@microsoft/sp-component-base": ">=1.18.0 <2.0.0",
+    "@microsoft/sp-core-library": ">=1.18.0 <2.0.0",
+    "@microsoft/sp-http": ">=1.18.0 <2.0.0",
+    "@microsoft/sp-listview-extensibility": ">=1.18.0 <2.0.0",
+    "@microsoft/sp-page-context": ">=1.18.0 <2.0.0",
+    "@microsoft/sp-webpart-base": ">=1.18.0 <2.0.0",
     "@pnp/core": "^4.0.0",
     "@pnp/queryable": "^4.0.0",
-    "@pnp/sp": "^4.0.0"
+    "@pnp/sp": "^4.0.0",
+    "react": "17.x",
+    "react-dom": "17.x"
   },
   "homepage": "https://github.com/apvee/spfx-react-toolkit#readme",
   "repository": {
@@ -84,7 +100,6 @@
     "commandset",
     "field-customizer",
     "application-customizer",
-    "jotai",
     "pnp",
     "pnpjs",
     "context",

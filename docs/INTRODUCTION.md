@@ -1,15 +1,15 @@
 # SPFx React Toolkit
 
-> A comprehensive React runtime and hooks library for SharePoint Framework (SPFx) with 35+ type-safe hooks
+> A comprehensive React runtime and hooks library for SharePoint Framework (SPFx) with 40 type-safe hooks
 
 ## Overview
 
-**SPFx React Toolkit** is a production-ready library that simplifies SharePoint Framework development by providing a unified React context provider and a comprehensive collection of strongly-typed hooks. Built on [Jotai](https://jotai.org/) atomic state management, it delivers per-instance state isolation, automatic synchronization, and an ergonomic React Hooks API.
+**SPFx React Toolkit** is a production-ready library that simplifies SharePoint Framework development by providing a unified React context provider and a comprehensive collection of strongly-typed hooks. Built on a provider-scoped runtime store, it delivers per-instance state isolation, automatic synchronization, and an ergonomic React Hooks API.
 
 ### Key Benefits
 
 - **💪 Type-Safe**: Full TypeScript support with zero `any` usage
-- **⚡ Optimized**: Jotai atomic state with per-instance scoping
+- **⚡ Optimized**: Provider-scoped runtime state with per-instance isolation
 - **🔄 Auto-Sync**: Bidirectional synchronization between React and SPFx
 - **🎨 Universal**: Works with all SPFx component types
 - **📦 Modular**: Tree-shakeable, minimal bundle impact
@@ -26,7 +26,6 @@ All peer dependencies are installed automatically with npm 7+:
 
 | Dependency | Size | Purpose |
 |------------|------|---------|
-| **Jotai** | ~3KB | Core state management |
 | **PnPjs** | 30-50KB | SharePoint API (tree-shakeable) |
 
 ## Quick Start
@@ -108,6 +107,7 @@ const MyComponent: React.FC = () => {
 |------|-------------|
 | [`useSPFxProperties`](./api/hooks/properties.md#usespfxproperties) | Bidirectional property management |
 | [`useSPFxDisplayMode`](./api/hooks/properties.md#usespfxdisplaymode) | Read/Edit mode detection |
+| [`useSPFxIsEdit`](./api/hooks/properties.md#usespfxisedit) | Boolean shortcut for edit mode |
 
 ### HTTP Clients
 | Hook | Description |
@@ -115,6 +115,8 @@ const MyComponent: React.FC = () => {
 | [`useSPFxHttpClient`](./api/hooks/http-clients.md#usespfxhttpclient) | Generic HTTP client |
 | [`useSPFxSPHttpClient`](./api/hooks/http-clients.md#usespfxsphttpclient) | SharePoint REST API client |
 | [`useSPFxAadHttpClient`](./api/hooks/http-clients.md#usespfxaadhttpclient) | Azure AD secured API client |
+| [`useSPFxAadTokenProvider`](./api/hooks/http-clients.md#usespfxaadtokenprovider) | SPFx AAD token provider access |
+| [`useSPFxApiPermissionPrecheck`](./api/hooks/http-clients.md#usespfxapipermissionprecheck) | Delegated Graph and custom API permission precheck |
 | [`useSPFxMSGraphClient`](./api/hooks/http-clients.md#usespfxmsgraphclient) | Microsoft Graph client |
 
 ### PnPjs Integration
@@ -171,6 +173,34 @@ const MyComponent: React.FC = () => {
 | [`useSPFxPerformance`](./api/hooks/performance.md#usespfxperformance) | Performance measurement |
 | [`useSPFxLogger`](./api/hooks/performance.md#usespfxlogger) | Structured logging |
 | [`useSPFxCorrelationInfo`](./api/hooks/performance.md#usespfxcorrelationinfo) | Request correlation |
+
+## Helpers And Services
+
+Hooks are the React API. Helpers and services are public non-React APIs for composition outside components or for building custom abstractions.
+
+### Helpers
+
+Helpers are pure functions. They do not perform I/O and do not read provider state.
+
+| Helper group | Examples | Documentation |
+|--------------|----------|---------------|
+| Page context mapping | `getSPFxUserInfo`, `getSPFxSiteInfo`, `getSPFxEnvironmentInfo` | [Helpers API](./api/helpers/INDEX.md) |
+| Utility helpers | `createScopedSPFxStorageKey`, `getSPFxContainerSize`, `hasSPFxPermission` | [Helpers API](./api/helpers/INDEX.md) |
+| API permission precheck helpers | `normalizeSPFxApiPermissionRequirements`, `summarizeSPFxApiPermissionResults` | [Helpers API](./api/helpers/INDEX.md) |
+| Graph and theme helpers | `buildOneDriveAppDataPath`, `buildUserPhotoEndpoint`, `createFluent9ThemeFromSPFxTheme` | [Helpers API](./api/helpers/INDEX.md) |
+
+### Services
+
+Services perform reusable I/O operations with dependencies supplied by the caller.
+
+| Service group | Examples | Documentation |
+|---------------|----------|---------------|
+| PnPjs services | `createSPFxPnPContextService`, `createSPFxPnPListService`, `createSPFxPnPSearchService` | [Services API](./api/services/INDEX.md) |
+| Tenant services | `createSPFxAppCatalogService`, `createSPFxTenantPropertyService`, `createSPFxTenantKeyValueStoreService` | [Services API](./api/services/INDEX.md) |
+| Graph services | `createSPFxOneDriveAppDataService`, `createSPFxUserPhotoService` | [Services API](./api/services/INDEX.md) |
+| API permission precheck services | `createSPFxApiPermissionPrecheckService` | [Services API](./api/services/INDEX.md) |
+
+API permission precheck helpers, services, and hooks evaluate delegated token scopes for Graph and custom APIs. Remediation messages map each requirement back to the `webApiPermissionRequests` resource/scope pair that an administrator reviews in SharePoint admin center.
 
 ## Requirements
 

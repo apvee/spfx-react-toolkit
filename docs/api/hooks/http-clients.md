@@ -11,6 +11,8 @@ These hooks provide access to SPFx HTTP clients for making API calls with automa
 | [`useSPFxHttpClient`](#usespfxhttpclient) | `SPFxHttpClientInfo` | Sync | Generic HTTP client for external APIs |
 | [`useSPFxSPHttpClient`](#usespfxsphttpclient) | `SPFxSPHttpClientInfo` | Sync | SharePoint REST API client |
 | [`useSPFxAadHttpClient`](#usespfxaadhttpclient) | `SPFxAadHttpClientInfo` | Async | Azure AD secured API client |
+| [`useSPFxAadTokenProvider`](#usespfxaadtokenprovider) | `SPFxAadTokenProviderInfo` | Async | SPFx AAD token provider access |
+| [`useSPFxApiPermissionPrecheck`](#usespfxapipermissionprecheck) | `SPFxApiPermissionPrecheckResult` | Async | Delegated Graph and custom API permission precheck |
 | [`useSPFxMSGraphClient`](#usespfxmsgraphclient) | `SPFxMSGraphClientInfo` | Async | Microsoft Graph client |
 
 ### When to Use Which Client
@@ -20,6 +22,8 @@ These hooks provide access to SPFx HTTP clients for making API calls with automa
 | `HttpClient` | External APIs, webhooks, public endpoints |
 | `SPHttpClient` | SharePoint REST API (`/_api/`) |
 | `AadHttpClient` | Custom Azure AD secured APIs |
+| `AadTokenProvider` | Token acquisition and delegated API permission diagnostics |
+| `useSPFxApiPermissionPrecheck` | Preflight Graph or custom API delegated scopes before enabling a feature |
 | `MSGraphClient` | Microsoft Graph API |
 
 ### State Management Pattern
@@ -36,6 +40,8 @@ All hooks follow a consistent pattern:
 | `isReady` | ✅ | ✅ | Client ready for use |
 | `isInitializing` | ❌ | ✅ | Client being initialized |
 | `initError` | ❌ | ✅ | Initialization error |
+
+`useSPFxApiPermissionPrecheck` returns permission-specific state instead of a client. Its result includes `configurationState`, `available`, `missing`, `warnings`, `unknown`, `check()`, `retry()`, and `retryWithoutCache()`.
 
 ---
 
@@ -488,6 +494,192 @@ function DynamicApiSelector() {
 ### Source
 
 [View source](../../../src/hooks/useSPFxAadHttpClient.ts)
+
+---
+
+## useSPFxAadTokenProvider
+
+Access the SPFx `AadTokenProvider` directly when you need token acquisition behavior that is not covered by `AadHttpClient`.
+
+### Signature
+
+```typescript
+function useSPFxAadTokenProvider(): SPFxAadTokenProviderInfo
+```
+
+### Returns
+
+```typescript
+interface SPFxAadTokenProviderInfo {
+  readonly tokenProvider: AadTokenProvider | undefined;
+  readonly isInitializing: boolean;
+  readonly initError: Error | undefined;
+  readonly isReady: boolean;
+}
+```
+
+### Description
+
+The hook consumes `AadTokenProviderFactory` from the SPFx service scope and initializes the native provider asynchronously. It does not request a token by itself.
+
+### Example: Manual Token Request
+
+```tsx
+import {
+  decodeSPFxJwtPayload,
+  useSPFxAadTokenProvider,
+} from '@apvee/spfx-react-toolkit';
+
+function TokenProbe() {
+  const { tokenProvider, isReady, isInitializing, initError } = useSPFxAadTokenProvider();
+  const [scopeText, setScopeText] = React.useState<string>('');
+
+  const inspectGraphToken = async () => {
+    if (!tokenProvider) {
+      return;
+    }
+
+    const token = await tokenProvider.getToken('https://graph.microsoft.com');
+    const payload = decodeSPFxJwtPayload(token);
+    setScopeText(payload?.scp || '');
+  };
+
+  if (isInitializing) return <Spinner label="Preparing token provider..." />;
+  if (initError) return <ErrorMessage message={initError.message} />;
+
+  return (
+    <>
+      <button onClick={inspectGraphToken} disabled={!isReady}>
+        Inspect Graph scopes
+      </button>
+      <pre>{scopeText}</pre>
+    </>
+  );
+}
+```
+
+### Source
+
+[View source](../../../src/hooks/useSPFxAadTokenProvider.ts)
+
+---
+
+## useSPFxApiPermissionPrecheck
+
+Check whether the current SPFx runtime can obtain delegated tokens for Microsoft Graph and custom API scopes.
+
+### Signature
+
+```typescript
+function useSPFxApiPermissionPrecheck(
+  config: SPFxApiPermissionPrecheckConfig,
+  options?: SPFxApiPermissionPrecheckOptions
+): SPFxApiPermissionPrecheckResult
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `config` | `SPFxApiPermissionPrecheckConfig` | Yes | Graph, custom API, or explicit delegated-scope requirements |
+| `options` | `SPFxApiPermissionPrecheckOptions` | No | Check behavior such as passive mode, cache usage, audience validation, and timeout |
+
+### Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `autoCheck` | `true` | Runs a check after the token provider is ready. Set to `false` for manual checks. |
+| `mode` | `'passive'` | In passive mode, the hook blocks SPFx popup and redirect auth events during the check. Use `'interactiveAllowed'` only when an interactive token flow is acceptable. |
+| `useCachedToken` | `true` | Uses cached tokens unless set to `false`. |
+| `validateAudience` | `true` | Validates token audience against expected audiences unless set to `false`. |
+| `timeoutMs` | `15000` | Token acquisition timeout in milliseconds. |
+
+### Returns
+
+```typescript
+interface SPFxApiPermissionPrecheckResult {
+  readonly isChecking: boolean;
+  readonly isConfigured: boolean;
+  readonly configurationState: 'idle' | 'checking' | 'ready' | 'actionRequired' | 'cannotDetermine';
+  readonly available: readonly SPFxApiPermissionSummary[];
+  readonly missing: readonly SPFxApiPermissionSummary[];
+  readonly warnings: readonly SPFxApiPermissionSummary[];
+  readonly unknown: readonly SPFxApiPermissionSummary[];
+  readonly results: readonly SPFxApiPermissionCheckResult[];
+  readonly tokenProviderError: Error | undefined;
+  readonly check: () => Promise<readonly SPFxApiPermissionCheckResult[]>;
+  readonly retry: () => Promise<readonly SPFxApiPermissionCheckResult[]>;
+  readonly retryWithoutCache: () => Promise<readonly SPFxApiPermissionCheckResult[]>;
+}
+```
+
+### Description
+
+The hook normalizes Graph and custom API requirements, uses the SPFx `AadTokenProvider` to acquire one token per resource, and evaluates delegated `scp` scopes in the token payload. Remediation entries include the `resource` and `scope` values that map back to `webApiPermissionRequests`.
+
+`available` means the current SPFx runtime obtained a token with the delegated scope. It does not read tenant grants and does not replace server-side authorization.
+
+### Example: Simple Precheck
+
+```tsx
+import { useSPFxApiPermissionPrecheck } from '@apvee/spfx-react-toolkit';
+
+function OrdersPermissionGate() {
+  const precheck = useSPFxApiPermissionPrecheck({
+    graph: ['Sites.Read.All'],
+    customApis: [
+      {
+        name: 'Orders API',
+        resource: 'api://contoso-orders-api',
+        packageResource: 'Orders API',
+        scopes: ['Orders.Read']
+      }
+    ]
+  });
+
+  if (precheck.isChecking) return <Spinner label="Checking API access..." />;
+  if (precheck.configurationState === 'ready') return <OrdersView />;
+
+  return (
+    <MessageBar>
+      {precheck.missing.map(item => (
+        <div key={item.id}>{item.adminMessage}</div>
+      ))}
+    </MessageBar>
+  );
+}
+```
+
+### Example: Manual Passive Check
+
+```tsx
+import { useSPFxApiPermissionPrecheck } from '@apvee/spfx-react-toolkit';
+
+function ManualPermissionCheck() {
+  const precheck = useSPFxApiPermissionPrecheck(
+    { graph: ['Sites.Read.All'] },
+    { autoCheck: false, mode: 'passive' }
+  );
+
+  return (
+    <>
+      <button onClick={() => precheck.check()} disabled={precheck.isChecking}>
+        Check now
+      </button>
+      <button onClick={() => precheck.retryWithoutCache()} disabled={precheck.isChecking}>
+        Recheck without cache
+      </button>
+      <pre>{precheck.configurationState}</pre>
+    </>
+  );
+}
+```
+
+Use `retryWithoutCache()` after SharePoint admin center API access changes or when a cached token may not include a newly granted delegated scope.
+
+### Source
+
+[View source](../../../src/hooks/useSPFxApiPermissionPrecheck.ts)
 
 ---
 

@@ -3,9 +3,6 @@
  * Each demo showcases specific hooks from the SPFx React Toolkit
  */
 
-// HTTP Client demo
-export { HttpClientDemo } from './HttpClientDemo';
-
 // PnP Context demo
 export { PnPContextDemo } from './PnPContextDemo';
 

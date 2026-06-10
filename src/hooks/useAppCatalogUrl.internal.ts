@@ -4,15 +4,8 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useSPFxSPHttpClient } from './useSPFxSPHttpClient';
 import { useSPFxPageContext } from './useSPFxPageContext';
-import { SPHttpClient } from '@microsoft/sp-http';
-import type { SPHttpClientResponse } from '@microsoft/sp-http';
-
-/**
- * Tenant app catalog URL response
- */
-interface ITenantAppCatalogResponse {
-  CorporateCatalogUrl: string;
-}
+import type { SPHttpClient } from '@microsoft/sp-http';
+import { createSPFxAppCatalogService } from '../services/spfx-app-catalog.service';
 
 /**
  * Return type for useAppCatalogUrl internal hook
@@ -40,6 +33,10 @@ export interface AppCatalogUrlInfo {
 export function useAppCatalogUrl(): AppCatalogUrlInfo {
   const { client: spHttpClient } = useSPFxSPHttpClient();
   const pageContext = useSPFxPageContext();
+  const appCatalogService = useMemo(
+    () => createSPFxAppCatalogService(spHttpClient, pageContext),
+    [spHttpClient, pageContext]
+  );
 
   const [appCatalogUrl, setAppCatalogUrl] = useState<string | undefined>(undefined);
   const appCatalogUrlRef = useRef<string | undefined>(undefined);
@@ -63,50 +60,23 @@ export function useAppCatalogUrl(): AppCatalogUrlInfo {
     }
 
     try {
-      const response: SPHttpClientResponse = await spHttpClient.get(
-        `${pageContext.web.absoluteUrl}/_api/SP_TenantSettings_Current`,
-        SPHttpClient.configurations.v1
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to discover app catalog: ${response.statusText}`);
-      }
-
-      const data: ITenantAppCatalogResponse = await response.json();
-
-      if (!data.CorporateCatalogUrl) {
-        throw new Error('Tenant app catalog is not provisioned. Please provision the app catalog first.');
-      }
+      const discoveredCatalogUrl = await appCatalogService.discoverUrl();
 
       // eslint-disable-next-line require-atomic-updates -- Idempotent: always sets the same discovered URL
-      appCatalogUrlRef.current = data.CorporateCatalogUrl;
+      appCatalogUrlRef.current = discoveredCatalogUrl;
       if (isMountedRef.current) {
-        setAppCatalogUrl(data.CorporateCatalogUrl);
+        setAppCatalogUrl(discoveredCatalogUrl);
       }
 
-      return data.CorporateCatalogUrl;
+      return discoveredCatalogUrl;
     } catch (err) {
       throw new Error(`App catalog discovery failed: ${err instanceof Error ? err.message : String(err)}`);
     }
-  }, [spHttpClient, pageContext]);
+  }, [spHttpClient, pageContext, appCatalogService]);
 
   const checkWritePermission = useCallback(async (catalogUrl: string): Promise<boolean> => {
-    if (!spHttpClient) return false;
-
-    try {
-      const response: SPHttpClientResponse = await spHttpClient.get(
-        `${catalogUrl}/_api/web/currentuser?$select=IsSiteAdmin`,
-        SPHttpClient.configurations.v1
-      );
-
-      if (!response.ok) return false;
-
-      const user = await response.json();
-      return user.IsSiteAdmin === true;
-    } catch {
-      return false;
-    }
-  }, [spHttpClient]);
+    return appCatalogService.canCurrentUserWrite(catalogUrl);
+  }, [appCatalogService]);
 
   return useMemo(() => ({
     appCatalogUrl,

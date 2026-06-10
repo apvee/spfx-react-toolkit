@@ -2,7 +2,8 @@
 // Hook for SharePoint permissions checking
 
 import { useCallback, useMemo } from 'react';
-import { SPPermission } from '@microsoft/sp-page-context';
+import type { SPPermission } from '@microsoft/sp-page-context';
+import { hasSPFxPermission } from '../helpers/spfx-permissions.helpers';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
@@ -89,31 +90,20 @@ export function useSPFxPermissions(): SPFxPermissionsInfo {
   const webPermissions = (pageContext.web as unknown as { permissions?: SPPermission })?.permissions;
   const listPermissions = (pageContext.list as unknown as { permissions?: SPPermission })?.permissions;
 
-  // Helper to check permission
-  const has = useCallback(
-    (perms: SPPermission | undefined, permission: SPPermission): boolean => {
-      if (!perms) {
-        return false;
-      }
-      return perms.hasPermission(permission);
-    },
-    []
-  );
-
   // Specific helpers for each scope
   const hasWebPermission = useCallback(
-    (permission: SPPermission): boolean => has(webPermissions, permission),
-    [has, webPermissions]
+    (permission: SPPermission): boolean => hasSPFxPermission(webPermissions, permission),
+    [webPermissions]
   );
 
   const hasSitePermission = useCallback(
-    (permission: SPPermission): boolean => has(sitePermissions, permission),
-    [has, sitePermissions]
+    (permission: SPPermission): boolean => hasSPFxPermission(sitePermissions, permission),
+    [sitePermissions]
   );
 
   const hasListPermission = useCallback(
-    (permission: SPPermission): boolean => has(listPermissions, permission),
-    [has, listPermissions]
+    (permission: SPPermission): boolean => hasSPFxPermission(listPermissions, permission),
+    [listPermissions]
   );
 
   return useMemo(() => ({

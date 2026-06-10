@@ -3,102 +3,7 @@
 
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAppCatalogUrl } from './useAppCatalogUrl.internal';
-import { SPHttpClient } from '@microsoft/sp-http';
-import type { SPHttpClientResponse } from '@microsoft/sp-http';
-
-// ═══════════════════════════════════════════════════════════════════════════
-// CONSTANTS
-// ═══════════════════════════════════════════════════════════════════════════
-
-const LIST_TITLE = 'TenantKeyValueStore';
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PURE FUNCTIONS (extracted for stability and testability)
-// ═══════════════════════════════════════════════════════════════════════════
-
-/**
- * Escape a string value for use in OData filter expressions.
- * Single quotes must be doubled to prevent injection.
- *
- * @param value - Raw string value
- * @returns Escaped string safe for OData $filter
- */
-function escapeODataValue(value: string): string {
-    return value.replace(/'/g, "''");
-}
-
-/**
- * Serialize a value for storage.
- * - Primitives (string, number, boolean, null, bigint) → String(value)
- * - Date → ISO 8601 string
- * - Objects/arrays → JSON.stringify()
- *
- * @param value - Value to serialize
- * @returns Serialized string representation
- */
-function serializeValue(value: unknown): string {
-    if (value === null) return String(value);
-    if (value instanceof Date) return value.toISOString();
-    const type = typeof value;
-    if (type === 'string' || type === 'number' || type === 'boolean' || type === 'bigint') {
-        return String(value);
-    }
-    return JSON.stringify(value);
-}
-
-/**
- * Deserialize a stored string value back to a typed value.
- * Attempts JSON.parse first; falls back to raw string.
- *
- * @param rawValue - Stored string value
- * @returns Parsed value
- */
-function deserializeValue<T>(rawValue: string): T {
-    try {
-        return JSON.parse(rawValue) as T;
-    } catch {
-        return rawValue as unknown as T;
-    }
-}
-
-/**
- * Build the list REST API base URL.
- *
- * @param catalogUrl - Tenant app catalog absolute URL
- * @returns REST API URL for the TenantKeyValueStore list
- */
-function getListApiUrl(catalogUrl: string): string {
-    return `${catalogUrl}/_api/web/lists/getByTitle('${LIST_TITLE}')`;
-}
-
-/**
- * Create a multiline text (Note) field on the list.
- *
- * @param client - SPHttpClient instance
- * @param listApiUrl - REST API URL for the target list
- * @param fieldTitle - Internal name / title for the new field
- */
-async function createField(
-    client: SPHttpClient,
-    listApiUrl: string,
-    fieldTitle: string
-): Promise<void> {
-    const response: SPHttpClientResponse = await client.post(
-        `${listApiUrl}/fields`,
-        SPHttpClient.configurations.v1,
-        {
-            body: JSON.stringify({
-                FieldTypeKind: 3, // Note (multiline text)
-                Title: fieldTitle
-            })
-        }
-    );
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to create ${fieldTitle} field: ${response.statusText}. ${errorText}`);
-    }
-}
+import { createSPFxTenantKeyValueStoreService } from '../services/spfx-tenant-key-value-store.service';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -241,30 +146,6 @@ export interface SPFxTenantKeyValueStoreResult {
     readonly remove: (key: string) => Promise<void>;
 }
 
-/**
- * SharePoint list item response shape
- */
-interface IListItemResponse {
-    Id: number;
-    Title: string;
-    Value: string;
-    Description?: string;
-}
-
-/**
- * SharePoint list items collection response (odata=nometadata via SPHttpClient default)
- */
-interface IListItemsResponse {
-    value: IListItemResponse[];
-}
-
-/**
- * SharePoint fields check response (odata=nometadata via SPHttpClient default)
- */
-interface IFieldsCheckResponse {
-    value: Array<{ InternalName: string }>;
-}
-
 // ═══════════════════════════════════════════════════════════════════════════
 // HOOK
 // ═══════════════════════════════════════════════════════════════════════════
@@ -290,7 +171,7 @@ interface IFieldsCheckResponse {
  * - Smart serialization for primitives, Date, and complex objects
  * - Permission checking (canWrite flag via IsSiteAdmin)
  * - Unique key enforcement (Indexed + EnforceUniqueValues on Title)
- * - Concurrent provisioning protection (mutex ref)
+ * - Concurrent provisioning protection (service mutex)
  * - Memory leak safe with mounted state tracking
  * - Idempotent remove (no-op if key or list doesn't exist)
  *
@@ -395,6 +276,10 @@ interface IFieldsCheckResponse {
  */
 export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
     const { spHttpClient, discoverAppCatalogUrl, checkWritePermission, isMountedRef } = useAppCatalogUrl();
+    const tenantKeyValueStoreService = useMemo(
+        () => spHttpClient ? createSPFxTenantKeyValueStoreService(spHttpClient) : undefined,
+        [spHttpClient]
+    );
 
     // State management
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -403,9 +288,6 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
     const [writeError, setWriteError] = useState<Error | undefined>(undefined);
     const [canWrite, setCanWrite] = useState<boolean>(false);
 
-    // Provisioning state
-    const listProvisionedRef = useRef<boolean>(false);
-    const provisioningPromiseRef = useRef<Promise<void> | undefined>(undefined);
     const permissionCheckedRef = useRef<boolean>(false);
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -433,196 +315,32 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
             });
     }, [checkWritePermission, isMountedRef]);
 
-
-
-    /**
-     * Ensure the hidden list exists and has all required fields.
-     * Uses a ref-based fast path (zero API calls after first successful check)
-     * and a mutex to prevent concurrent provisioning.
-     *
-     * Flow:
-     * 1. Fast path: `listProvisionedRef` is true → return immediately
-     * 2. Mutex: reuse in-flight promise if already provisioning
-     * 3. Lightweight existence check (1 API call): GET list?$select=Id
-     *    - 200 (exists) → field introspection, create missing fields only
-     *    - 404 (missing) → full provision: create list + fields + Title uniqueness
-     * 4. Mark ref true on success, cleanup mutex on success or failure
-     */
-    const ensureListReady = useCallback((
-        client: SPHttpClient,
-        catalogUrl: string
-    ): Promise<void> => {
-        // Fast path: already verified — zero API calls
-        if (listProvisionedRef.current) return Promise.resolve();
-
-        // Mutex: reuse in-flight provisioning promise
-        if (provisioningPromiseRef.current) return provisioningPromiseRef.current;
-
-        const doProvision = async (): Promise<void> => {
-            const listApiUrl = getListApiUrl(catalogUrl);
-
-            // ── Step 1: Lightweight existence check (single API call) ──────
-            const listResponse: SPHttpClientResponse = await client.get(
-                `${listApiUrl}?$select=Id`,
-                SPHttpClient.configurations.v1
-            );
-
-            const listExists = listResponse.status !== 404;
-
-            if (listExists && !listResponse.ok) {
-                throw new Error(`Failed to check list existence: ${listResponse.statusText}`);
-            }
-
-            if (listExists) {
-                // ── Step 2: List exists → field introspection ──────────────
-                const fieldsResponse: SPHttpClientResponse = await client.get(
-                    `${listApiUrl}/fields?$filter=InternalName eq 'Value' or InternalName eq 'Description'&$select=InternalName`,
-                    SPHttpClient.configurations.v1
-                );
-
-                if (!fieldsResponse.ok) {
-                    throw new Error(`Failed to check list fields: ${fieldsResponse.statusText}`);
-                }
-
-                const fields: IFieldsCheckResponse = await fieldsResponse.json();
-                const existingFields = fields.value.map(f => f.InternalName);
-                const hasValue = existingFields.includes('Value');
-                const hasDescription = existingFields.includes('Description');
-
-                // All fields present → list is fully ready
-                if (hasValue && hasDescription) {
-                    return;
-                }
-
-                // Create only the missing fields
-                if (!hasValue) {
-                    await createField(client, listApiUrl, 'Value');
-                }
-                if (!hasDescription) {
-                    await createField(client, listApiUrl, 'Description');
-                }
-
-                // Skip Title uniqueness — list already existed, constraint is either
-                // already set or intentionally not re-applied on field repair
-                return;
-            }
-
-            // ── Step 3: List does not exist → full provision ─────────────
-            // 3a. Create list
-            const createListResponse: SPHttpClientResponse = await client.post(
-                `${catalogUrl}/_api/web/lists`,
-                SPHttpClient.configurations.v1,
-                {
-                    body: JSON.stringify({
-                        BaseTemplate: 100,
-                        Title: LIST_TITLE,
-                        Hidden: true,
-                        NoCrawl: true
-                    })
-                }
-            );
-
-            if (!createListResponse.ok) {
-                const errorText = await createListResponse.text();
-                throw new Error(`Failed to create list: ${createListResponse.statusText}. ${errorText}`);
-            }
-
-            // 3b. Create Value + Description fields (list is fresh — no need to check)
-            await createField(client, getListApiUrl(catalogUrl), 'Value');
-            await createField(client, getListApiUrl(catalogUrl), 'Description');
-
-            // 3c. Set Title field as Indexed + EnforceUniqueValues (only on creation)
-            const titleResp: SPHttpClientResponse = await client.post(
-                `${getListApiUrl(catalogUrl)}/fields/getByInternalNameOrTitle('Title')`,
-                SPHttpClient.configurations.v1,
-                {
-                    headers: {
-                        'X-HTTP-Method': 'MERGE',
-                        'If-Match': '*'
-                    },
-                    body: JSON.stringify({
-                        Indexed: true,
-                        EnforceUniqueValues: true
-                    })
-                }
-            );
-
-            if (!titleResp.ok) {
-                // Non-fatal: unique constraint may already exist
-                console.warn('Failed to set Title uniqueness constraint. It may already be configured.');
-            }
-        };
-
-        // All ref mutations are synchronous — no await between read and write.
-        // doProvision() never touches refs; .then() callbacks are separate scopes.
-        const cleanupMutex = (): void => { provisioningPromiseRef.current = undefined; };
-        const promise = doProvision()
-            .then(() => { listProvisionedRef.current = true; cleanupMutex(); })
-            .catch((err: Error) => { cleanupMutex(); throw err; });
-        provisioningPromiseRef.current = promise;
-        return promise;
-    }, []);
-
     // ─────────────────────────────────────────────────────────────────────────
     // Eager initialization: verify/provision list as soon as SPHttpClient is
     // available, overlapping with component render. By the time the user
-    // triggers an operation, listProvisionedRef is already true → zero latency.
-    // The mutex in ensureListReady handles the race if an operation fires
-    // while this init is still in-flight.
+    // triggers an operation, the service cache is already warm → zero latency.
+    // The service mutex handles the race if an operation fires while this init
+    // is still in-flight.
     // ─────────────────────────────────────────────────────────────────────────
     useEffect(() => {
-        if (!spHttpClient) return;
+        if (!tenantKeyValueStoreService) return;
 
         discoverAppCatalogUrl()
             .then(catalogUrl => {
                 ensurePermissionChecked(catalogUrl);
-                return ensureListReady(spHttpClient, catalogUrl);
+                return tenantKeyValueStoreService.ensureListReady(catalogUrl);
             })
             .catch(() => {
                 // Silently fail — operations will retry on demand via their own ensureListReady call
             });
-    }, [spHttpClient, discoverAppCatalogUrl, ensurePermissionChecked, ensureListReady]);
-
-    /**
-     * Find an item by key, returning the raw list item or undefined.
-     */
-    const findItemByKey = useCallback(async (
-        client: SPHttpClient,
-        catalogUrl: string,
-        key: string
-    ): Promise<IListItemResponse | undefined> => {
-        const safeKey = escapeODataValue(key);
-        const response: SPHttpClientResponse = await client.get(
-            `${getListApiUrl(catalogUrl)}/items?$filter=Title eq '${safeKey}'&$select=Id,Title,Value,Description&$top=1`,
-            SPHttpClient.configurations.v1
-        );
-
-        if (!response.ok) {
-            throw new Error(`Failed to find item: ${response.statusText}`);
-        }
-
-        const data: IListItemsResponse = await response.json();
-        return data.value.length > 0 ? data.value[0] : undefined;
-    }, []);
-
-    /**
-     * Map a raw SharePoint list item to an SPFxTenantKeyValueStoreItem.
-     */
-    function mapItem<T>(raw: IListItemResponse): SPFxTenantKeyValueStoreItem<T> {
-        return {
-            key: raw.Title,
-            value: deserializeValue<T>(raw.Value),
-            description: raw.Description || undefined,
-            id: raw.Id,
-        };
-    }
+    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, ensurePermissionChecked]);
 
     // ─────────────────────────────────────────────────────────────────────────
     // Public operations
     // ─────────────────────────────────────────────────────────────────────────
 
     const get = useCallback(async <T = unknown>(key: string): Promise<SPFxTenantKeyValueStoreItem<T> | undefined> => {
-        if (!spHttpClient) {
+        if (!tenantKeyValueStoreService) {
             throw new Error('SPHttpClient not available. Cannot get property.');
         }
 
@@ -634,15 +352,13 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
 
             // Ensure list exists (auto-provision if needed; fallback-safe for read-only users)
             try {
-                await ensureListReady(spHttpClient, catalogUrl);
+                await tenantKeyValueStoreService.ensureListReady(catalogUrl);
             } catch {
                 // Provisioning may fail for read-only users — treat as "list not yet created"
                 return undefined;
             }
 
-            const raw = await findItemByKey(spHttpClient, catalogUrl, key);
-
-            return raw ? mapItem<T>(raw) : undefined;
+            return tenantKeyValueStoreService.get<T>(key, catalogUrl);
         } catch (err) {
             if (isMountedRef.current) {
                 const capturedError = err instanceof Error ? err : new Error(String(err));
@@ -655,10 +371,10 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
                 setIsLoading(false);
             }
         }
-    }, [spHttpClient, discoverAppCatalogUrl, ensureListReady, findItemByKey, isMountedRef]);
+    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, isMountedRef]);
 
     const list = useCallback(async (): Promise<SPFxTenantKeyValueStoreItem<unknown>[]> => {
-        if (!spHttpClient) {
+        if (!tenantKeyValueStoreService) {
             throw new Error('SPHttpClient not available. Cannot list properties.');
         }
 
@@ -670,23 +386,13 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
 
             // Ensure list exists (auto-provision if needed; fallback-safe for read-only users)
             try {
-                await ensureListReady(spHttpClient, catalogUrl);
+                await tenantKeyValueStoreService.ensureListReady(catalogUrl);
             } catch {
                 // Provisioning may fail for read-only users — treat as "list not yet created"
                 return [];
             }
 
-            const response: SPHttpClientResponse = await spHttpClient.get(
-                `${getListApiUrl(catalogUrl)}/items?$select=Id,Title,Value,Description&$orderby=Title`,
-                SPHttpClient.configurations.v1
-            );
-
-            if (!response.ok) {
-                throw new Error(`Failed to list items: ${response.statusText}`);
-            }
-
-            const data: IListItemsResponse = await response.json();
-            return data.value.map(raw => mapItem<unknown>(raw));
+            return tenantKeyValueStoreService.list(catalogUrl);
         } catch (err) {
             if (isMountedRef.current) {
                 const capturedError = err instanceof Error ? err : new Error(String(err));
@@ -699,14 +405,14 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
                 setIsLoading(false);
             }
         }
-    }, [spHttpClient, discoverAppCatalogUrl, ensureListReady, isMountedRef]);
+    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, isMountedRef]);
 
     const save = useCallback(async <T = unknown>(
         key: string,
         value: T,
         description?: string
     ): Promise<void> => {
-        if (!spHttpClient) {
+        if (!tenantKeyValueStoreService) {
             throw new Error('SPHttpClient not available. Cannot save property.');
         }
 
@@ -715,55 +421,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
 
         try {
             const catalogUrl = await discoverAppCatalogUrl();
-
-            // Ensure list is ready (auto-provision on first operation)
-            await ensureListReady(spHttpClient, catalogUrl);
-
-            const serializedValue = serializeValue(value);
-
-            // Check if key already exists
-            const existing = await findItemByKey(spHttpClient, catalogUrl, key);
-
-            if (existing) {
-                // Update existing item
-                const updateResponse: SPHttpClientResponse = await spHttpClient.post(
-                    `${getListApiUrl(catalogUrl)}/items(${existing.Id})`,
-                    SPHttpClient.configurations.v1,
-                    {
-                        headers: {
-                            'X-HTTP-Method': 'MERGE',
-                            'If-Match': '*'
-                        },
-                        body: JSON.stringify({
-                            Value: serializedValue,
-                            Description: description ?? existing.Description ?? ''
-                        })
-                    }
-                );
-
-                if (!updateResponse.ok) {
-                    const errorText = await updateResponse.text();
-                    throw new Error(`Failed to update item: ${updateResponse.statusText}. ${errorText}`);
-                }
-            } else {
-                // Create new item
-                const createResponse: SPHttpClientResponse = await spHttpClient.post(
-                    `${getListApiUrl(catalogUrl)}/items`,
-                    SPHttpClient.configurations.v1,
-                    {
-                        body: JSON.stringify({
-                            Title: key,
-                            Value: serializedValue,
-                            Description: description ?? ''
-                        })
-                    }
-                );
-
-                if (!createResponse.ok) {
-                    const errorText = await createResponse.text();
-                    throw new Error(`Failed to create item: ${createResponse.statusText}. ${errorText}`);
-                }
-            }
+            await tenantKeyValueStoreService.save<T>(key, value, catalogUrl, description);
         } catch (err) {
             if (isMountedRef.current) {
                 const capturedError = err instanceof Error ? err : new Error(String(err));
@@ -776,10 +434,10 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
                 setIsWriting(false);
             }
         }
-    }, [spHttpClient, discoverAppCatalogUrl, ensureListReady, findItemByKey, isMountedRef]);
+    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, isMountedRef]);
 
     const remove = useCallback(async (key: string): Promise<void> => {
-        if (!spHttpClient) {
+        if (!tenantKeyValueStoreService) {
             throw new Error('SPHttpClient not available. Cannot remove property.');
         }
 
@@ -788,33 +446,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
 
         try {
             const catalogUrl = await discoverAppCatalogUrl();
-
-            // Ensure list is ready (auto-provision on first operation)
-            await ensureListReady(spHttpClient, catalogUrl);
-
-            // Find the item
-            const existing = await findItemByKey(spHttpClient, catalogUrl, key);
-
-            if (!existing) {
-                return; // Item doesn't exist — idempotent no-op
-            }
-
-            // Delete the item
-            const deleteResponse: SPHttpClientResponse = await spHttpClient.post(
-                `${getListApiUrl(catalogUrl)}/items(${existing.Id})`,
-                SPHttpClient.configurations.v1,
-                {
-                    headers: {
-                        'X-HTTP-Method': 'DELETE',
-                        'If-Match': '*'
-                    }
-                }
-            );
-
-            if (!deleteResponse.ok) {
-                const errorText = await deleteResponse.text();
-                throw new Error(`Failed to remove item: ${deleteResponse.statusText}. ${errorText}`);
-            }
+            await tenantKeyValueStoreService.remove(key, catalogUrl);
         } catch (err) {
             if (isMountedRef.current) {
                 const capturedError = err instanceof Error ? err : new Error(String(err));
@@ -827,7 +459,7 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
                 setIsWriting(false);
             }
         }
-    }, [spHttpClient, discoverAppCatalogUrl, ensureListReady, findItemByKey, isMountedRef]);
+    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, isMountedRef]);
 
     // Computed: ready when client is available
     const isReady = spHttpClient !== undefined;
