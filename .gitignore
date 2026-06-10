@@ -15,6 +15,9 @@ temp
 *.sppkg
 .heft
 
+# Local agent planning artifacts
+docs/superpowers/
+
 # Coverage directory used by tools like istanbul
 coverage
 
