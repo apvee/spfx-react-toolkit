@@ -200,4 +200,4 @@ Public pure helper functions for SPFx context mapping, permission checks, API pe
 
 ---
 
-*Generated from JSDoc comments. Last updated: January 31, 2026*
+*Generated from source API metadata and public documentation.*

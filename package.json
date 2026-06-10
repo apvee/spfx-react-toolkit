@@ -25,7 +25,7 @@
     "verify:examples": "node scripts/verify-example-coverage.cjs",
     "verify:runtime-store": "node scripts/verify-runtime-store.cjs",
     "verify:public-docs": "node scripts/verify-public-docs.cjs",
-    "prepublishOnly": "npm run clean && npm run build"
+    "prepublishOnly": "npm run clean && npm run build && npm test && npm run verify:examples && npm run verify:runtime-store && npm run verify:public-docs"
   },
   "dependencies": {
     "@fluentui/react-migration-v8-v9": "^9.9.12",
@@ -33,7 +33,9 @@
     "@microsoft/sp-application-base": "1.21.1",
     "@microsoft/sp-component-base": ">=1.18.0",
     "@microsoft/sp-core-library": "1.21.1",
+    "@microsoft/sp-http": "1.21.1",
     "@microsoft/sp-listview-extensibility": ">=1.18.0",
+    "@microsoft/sp-page-context": "1.21.1",
     "@microsoft/sp-webpart-base": ">=1.18.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",

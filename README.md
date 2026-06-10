@@ -2,7 +2,7 @@
 
 > A comprehensive React runtime, hooks, helpers, and services library for SharePoint Framework (SPFx). Simplifies SPFx development with instance-scoped state isolation, ergonomic hooks, and reusable non-React composition APIs across WebParts, Extensions, and Command Sets.
 
-![SPFx React Toolkit](./assets/banner.png)
+![SPFx React Toolkit](https://raw.githubusercontent.com/apvee/spfx-react-toolkit/main/assets/banner.png)
 
 ---
 
@@ -25,8 +25,8 @@ Built on a provider-scoped runtime store, it delivers per-instance state isolati
 ### Features
 
 - ✅ **40 React Hooks** — Comprehensive API surface for SPFx runtime data, clients, token providers, and API permission prechecks
-- ✅ **Public Helpers** — Pure utilities for storage keys, property pane helpers, environment checks, logging, and context extraction
-- ✅ **Public Services** — Reusable service factories for storage, SPFx context data, properties, theme, PnPjs, API permission prechecks, and provider composition
+- ✅ **Public Helpers** — Pure utilities for storage keys, context extraction, tenant value parsing, theme conversion, and API permission prechecks
+- ✅ **Public Services** — Reusable service factories for PnPjs, app catalog lookup, tenant properties, tenant key-value storage, OneDrive app data, user photos, and API permission prechecks
 - ✅ **Instance Isolation** — State scoped per SPFx instance (multi-instance support)
 - ✅ **PnPjs Integration** — Optional hooks for PnPjs v4 with type-safe filters
 - ✅ **Cross-Platform** — Teams, SharePoint, and Local Workbench support
@@ -138,7 +138,7 @@ Use these scripts when working on this repository:
 | `npm run verify:examples` | Verifies that the sample webpart registry covers all exported hooks and providers. |
 | `npm run verify:runtime-store` | Runs a focused runtime-store behavior check without requiring SharePoint. |
 | `npm run verify:public-docs` | Verifies that public helper/service documentation stays aligned with exported APIs. |
-| `npm run prepublishOnly` | Runs automatically before `npm publish`; currently performs a clean build. |
+| `npm run prepublishOnly` | Runs automatically before `npm publish`; performs a clean build, test task, and release verification checks. |
 
 Recommended local check before opening a PR or publishing a package:
 
