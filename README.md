@@ -12,6 +12,8 @@
 
 Built on a provider-scoped runtime store, it delivers per-instance state isolation, automatic synchronization, and APIs that work both inside React hooks and in non-hook composition code.
 
+> **Designed for SPFx host projects:** This package is intended to be installed and consumed from SharePoint Framework projects. It is not a standalone React application; the consuming SPFx project provides the SharePoint runtime, React runtime, and host-specific SPFx packages.
+
 ### Key Benefits
 
 | Benefit | Description |
