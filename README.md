@@ -1,199 +1,92 @@
 # SPFx React Toolkit
 
-> A comprehensive React runtime, hooks, helpers, and services library for SharePoint Framework (SPFx). Simplifies SPFx development with instance-scoped state isolation, ergonomic hooks, and reusable non-React composition APIs across WebParts, Extensions, and Command Sets.
+React providers, 40 hooks, public helpers and services for SharePoint Framework. Each provider maintains runtime state for its SPFx instance. Hooks cover context, properties, clients, PnPjs, themes, permissions, storage and diagnostics; helpers and services support composition outside React.
 
 ![SPFx React Toolkit](https://raw.githubusercontent.com/apvee/spfx-react-toolkit/main/assets/banner.png)
 
----
-
-## Overview
-
-**SPFx React Toolkit** is a production-ready library that simplifies SharePoint Framework development by providing unified React providers, strongly-typed hooks, and reusable public helpers/services.
-
-Built on a provider-scoped runtime store, it delivers per-instance state isolation, automatic synchronization, and APIs that work both inside React hooks and in non-hook composition code.
-
-> **Designed for SPFx host projects:** This package is intended to be installed and consumed from SharePoint Framework projects. It is not a standalone React application; the consuming SPFx project provides the SharePoint runtime, React runtime, and host-specific SPFx packages.
-
-### Key Benefits
-
-| Benefit | Description |
-|---------|-------------|
-| 💪 **Type-Safe** | Full TypeScript support across hooks, helpers, and services |
-| ⚡ **Optimized** | Provider-scoped runtime state with per-instance isolation |
-| 🔄 **Auto-Sync** | Bidirectional synchronization between React and SPFx |
-| 🎨 **Universal** | Works with WebParts, Application Customizers, Field Customizers, and Command Sets |
-| 📦 **Modular** | Public hooks for React usage, plus helpers/services for non-hook composition |
-
-### Features
-
-- ✅ **40 React Hooks** — Comprehensive API surface for SPFx runtime data, clients, token providers, and API permission prechecks
-- ✅ **Public Helpers** — Pure utilities for storage keys, context extraction, tenant value parsing, theme conversion, and API permission prechecks
-- ✅ **Public Services** — Reusable service factories for PnPjs, app catalog lookup, tenant properties, tenant key-value storage, OneDrive app data, user photos, and API permission prechecks
-- ✅ **Instance Isolation** — State scoped per SPFx instance (multi-instance support)
-- ✅ **PnPjs Integration** — Optional hooks for PnPjs v4 with type-safe filters
-- ✅ **Cross-Platform** — Teams, SharePoint, and Local Workbench support
-
----
-
-## Quick Start
-
-### Installation
-
-Install the package in your SPFx project:
+Install in an SPFx host project:
 
 ```bash
 npm install @apvee/spfx-react-toolkit
 ```
 
-If you use the PnPjs hooks or services, install the peer PnPjs packages as well:
+The host supplies the React and SPFx runtimes. PnPjs APIs require the compatible `@pnp/core`, `@pnp/queryable` and `@pnp/sp` peers. Preserve versions compatible with your host; do not upgrade an existing SPFx toolchain just to install the toolkit.
 
-```bash
-npm install @pnp/core @pnp/queryable @pnp/sp
-```
+```tsx
+import * as React from 'react';
+import * as ReactDom from 'react-dom';
+import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+import { SPFxWebPartProvider, useSPFxUserInfo } from '@apvee/spfx-react-toolkit';
 
-Then wrap the SPFx entry point with the provider that matches the component type you are building:
-
-- `SPFxWebPartProvider` for WebParts
-- `SPFxApplicationCustomizerProvider` for Application Customizers
-- `SPFxFieldCustomizerProvider` for Field Customizers
-- `SPFxListViewCommandSetProvider` for ListView Command Sets
-
-### Basic Usage
-
-```typescript
-// In your WebPart
-import { SPFxWebPartProvider } from '@apvee/spfx-react-toolkit';
-
-public render(): void {
-  const element = (
-    <SPFxWebPartProvider instance={this}>
-      <MyComponent />
-    </SPFxWebPartProvider>
-  );
-  ReactDom.render(element, this.domElement);
-}
-
-// In your component
-import { useSPFxProperties, useSPFxUserInfo } from '@apvee/spfx-react-toolkit';
-
-const MyComponent: React.FC = () => {
-  const { properties } = useSPFxProperties<IMyProps>();
+const Greeting: React.FC = () => {
   const { displayName } = useSPFxUserInfo();
-
   return <div>Hello {displayName}!</div>;
 };
-```
 
-### Helpers and Services
+export default class GreetingWebPart extends BaseClientSideWebPart<{}> {
+  public render(): void {
+    ReactDom.render(
+      React.createElement(SPFxWebPartProvider, { instance: this }, React.createElement(Greeting)),
+      this.domElement
+    );
+  }
 
-Use public helpers and services when the logic must run outside a React hook while keeping the same behavior used internally by the hooks.
-
-```typescript
-import {
-  createScopedSPFxStorageKey,
-  createSPFxPnPListService,
-  getSPFxUserInfo,
-} from '@apvee/spfx-react-toolkit';
-
-const user = getSPFxUserInfo(pageContext);
-const filtersKey = createScopedSPFxStorageKey(instanceId, 'filters');
-const tasks = createSPFxPnPListService(sp, 'Tasks', 50);
-```
-
-### API Permission Precheck
-
-Use `useSPFxApiPermissionPrecheck` to check whether the current SPFx runtime can obtain delegated tokens for Microsoft Graph and custom APIs before running a feature that depends on those scopes.
-
-```typescript
-import { useSPFxApiPermissionPrecheck } from '@apvee/spfx-react-toolkit';
-
-function PermissionStatus() {
-  const precheck = useSPFxApiPermissionPrecheck({
-    graph: ['Sites.Read.All'],
-    customApis: [
-      {
-        name: 'Orders API',
-        resource: 'api://contoso-orders-api',
-        packageResource: 'Orders API',
-        scopes: ['Orders.Read']
-      }
-    ]
-  });
-
-  return <span>{precheck.configurationState}</span>;
+  protected onDispose(): void {
+    ReactDom.unmountComponentAtNode(this.domElement);
+  }
 }
 ```
 
-`available` means the current SPFx runtime obtained a token with the delegated scope. It does not read tenant grants and does not replace server-side authorization.
+Choose `SPFxWebPartProvider`, `SPFxApplicationCustomizerProvider`, `SPFxFieldCustomizerProvider` or `SPFxListViewCommandSetProvider` to match the actual SPFx host. The sample includes real WebPart and Application Customizer entry points. Field Customizer and Command Set provider coverage currently checks exports; mounting those providers needs their corresponding hosts.
 
----
+## Repository development
 
-## Development Scripts
+This repository uses npm workspaces:
 
-Use these scripts when working on this repository:
+- `packages/spfx-react-toolkit`: publishable library; `tsc` emits ESNext modules, declarations and maps to `lib`.
+- `apps/spfx-react-toolkit-test`: private SPFx sample; SPFx 1.21.1 Gulp build performs Sass, lint and webpack bundling against the library package.
+- `docs`, `scripts`, `tests`: shared documentation, verification and regression tests.
 
-| Script | Purpose |
-|--------|---------|
-| `npm run build` | Bundles the SPFx package with `gulp bundle`, including TypeScript, Sass, lint, and webpack steps. |
-| `npm run clean` | Removes generated SPFx build output. Run before a clean build or before publishing. |
-| `npm test` | Runs the SPFx test pipeline with `gulp test`. |
-| `npm run verify:examples` | Verifies that the sample webpart registry covers all exported hooks and providers. |
-| `npm run verify:runtime-store` | Runs a focused runtime-store behavior check without requiring SharePoint. |
-| `npm run verify:public-docs` | Verifies that public helper/service documentation stays aligned with exported APIs. |
-| `npm run prepublishOnly` | Runs automatically before `npm publish`; performs a clean build, test task, and release verification checks. |
-
-Recommended local check before opening a PR or publishing a package:
+Run from the cloned repository root:
 
 ```bash
-npm run clean
-npm run build
-npm test
-npm run verify:examples
-npm run verify:runtime-store
-npm run verify:public-docs
+npm ci
+npm run build:library
+npm run build:app
+npm run verify
+npm run verify:package
 ```
 
----
+`npm test` runs the Node behavioral suite; it is not a Gulp test task. `npm run build` builds library then app. To debug locally:
 
-## 📚 Documentation
+```bash
+npm run trust-dev-cert --workspace @apvee/spfx-react-toolkit-test
+npm run serve --workspace @apvee/spfx-react-toolkit-test
+```
 
-For complete documentation including:
-- Installation & configuration
-- All 4 provider components
-- Complete hooks API reference (40 hooks)
-- Public helpers and services API references
-- Code examples and best practices
+After library source changes, rebuild with `npm run build:library` and restart the app's serve process. The app consumes the package's compiled `lib` entry point. See [Development](./docs/DEVELOPMENT.md) for the full command map and [SharePoint validation](./docs/SHAREPOINT-VALIDATION.md) for real-host checks and prerequisites.
 
-**➡️ [View Full Documentation](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/INTRODUCTION.md)**
-
----
+The layout migration preserves the package import name and public API. Source moved from root `src` to the library workspace; SPFx sample source/config moved to the app workspace. Root build output is replaced by workspace output. Consumers continue to import `@apvee/spfx-react-toolkit`.
 
 ## Requirements
 
-| Requirement | Version |
-|-------------|---------|
-| Node.js | 22.x |
-| SPFx | 1.18.0+ |
-| React | 17.x |
-| TypeScript | 5.3+ |
+| Requirement | Repository verification baseline |
+|-------------|----------------------------------|
+| Node.js | `>=22.14.0 <23.0.0` |
+| SPFx build/runtime packages | `1.21.1` |
+| React / ReactDOM | `17.0.1` (package peers: `17.x`) |
+| TypeScript | `5.3.3` |
+| PnPjs | `4.17.0` (package peers: `^4.0.0`) |
 
----
+The package declares SPFx peers `>=1.18.0 <2.0.0`; that range is a compatibility declaration, not evidence of testing every version. Repository checks use SPFx 1.21.1. Authenticated tenant validation is a separate step.
 
-## License
+## Documentation
 
-MIT — See [LICENSE](./LICENSE) for details.
+- [Introduction and quick start](./docs/INTRODUCTION.md)
+- [API reference: 4 providers, 40 hooks, helpers and services](./docs/INDEX.md)
+- [Helpers API](./docs/api/helpers/INDEX.md)
+- [Services API](./docs/api/services/INDEX.md)
+- [NPM package](https://www.npmjs.com/package/@apvee/spfx-react-toolkit)
+- [Issues](https://github.com/apvee/spfx-react-toolkit/issues)
 
----
-
-## Links
-
-- [📖 Full Documentation](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/INTRODUCTION.md)
-- [📚 API Reference](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/INDEX.md)
-- [🧰 Helpers API](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/helpers/INDEX.md)
-- [🧩 Services API](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/services/INDEX.md)
-- [📦 NPM Package](https://www.npmjs.com/package/@apvee/spfx-react-toolkit)
-- [🐛 Issues](https://github.com/apvee/spfx-react-toolkit/issues)
-
----
-
-Made with ❤️ by [Apvee Solutions](https://github.com/apvee)
+MIT — see [LICENSE](./LICENSE).

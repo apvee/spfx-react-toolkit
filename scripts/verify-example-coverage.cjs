@@ -2,10 +2,12 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
-const hooksIndexPath = path.join(root, 'src', 'hooks', 'index.ts');
-const coreIndexPath = path.join(root, 'src', 'core', 'index.ts');
+const hooksIndexPath = path.join(root, 'packages', 'spfx-react-toolkit', 'src', 'hooks', 'index.ts');
+const coreIndexPath = path.join(root, 'packages', 'spfx-react-toolkit', 'src', 'core', 'index.ts');
 const registryPath = path.join(
   root,
+  'apps',
+  'spfx-react-toolkit-test',
   'src',
   'webparts',
   'spFxReactToolkitTest',

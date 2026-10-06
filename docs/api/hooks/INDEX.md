@@ -149,7 +149,7 @@ function ManualPermissionStatus() {
 |------|-------------|------|
 | `useSPFxLocalStorage<T>(key, defaultValue)` | Instance-scoped persistent browser storage | [View](./storage.md#usespfxlocalstorage) |
 | `useSPFxSessionStorage<T>(key, defaultValue)` | Instance-scoped session browser storage | [View](./storage.md#usespfxsessionstorage) |
-| `useSPFxOneDriveAppData<T>(fileName, defaultValue)` | OneDrive app folder storage | [View](./storage.md#usespfxonedriveappdata) |
+| `useSPFxOneDriveAppData<T>(fileName, options?)` | OneDrive app folder storage | [View](./storage.md#usespfxonedriveappdata) |
 | `useSPFxTenantProperty<T>(key)` | Tenant properties (read-only) | [View](./storage.md#usespfxtenantproperty) |
 | `useSPFxTenantKeyValueStore()` | Tenant key-value store | [View](./storage.md#usespfxtenantkeyvaluestore) |
 

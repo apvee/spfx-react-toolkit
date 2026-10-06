@@ -78,7 +78,7 @@ function MyComponent() {
 
 ### Source
 
-[View source](../../src/hooks/useSPFxContext.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxContext.ts)
 
 ---
 
@@ -135,7 +135,7 @@ function MyComponent() {
 
 ### Source
 
-[View source](../../src/hooks/useSPFxPageContext.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxPageContext.ts)
 
 ---
 
@@ -173,71 +173,64 @@ ServiceScope is SPFx's dependency injection container that provides:
 - `PageContext` (via @microsoft/sp-page-context)
 - `HttpClient` (via @microsoft/sp-http)
 - `MSGraphClientFactory` (via @microsoft/sp-http)
-- `SPPermission` (via @microsoft/sp-page-context)
-- `EventAggregator` (via @microsoft/sp-core-library)
 
 > **Note:** Most common services have dedicated hooks (`useSPFxHttpClient`, `useSPFxMSGraphClient`). Use this hook for custom services or advanced scenarios.
 
 ### Example: Consuming a Custom Service
 
 ```tsx
+import * as React from 'react';
 import { useSPFxServiceScope } from '@apvee/spfx-react-toolkit';
 import { ServiceKey } from '@microsoft/sp-core-library';
 
-// Define service interface
 interface IMyService {
   getData(): Promise<string[]>;
 }
 
-// Service key (typically defined in service file)
+class MyService implements IMyService {
+  public getData(): Promise<string[]> {
+    return Promise.resolve(['Example item']);
+  }
+}
+
 const MyServiceKey = ServiceKey.create<IMyService>('my-solution:IMyService', MyService);
 
 function MyComponent() {
   const { consume } = useSPFxServiceScope();
   const [data, setData] = React.useState<string[]>([]);
-  
+
   React.useEffect(() => {
-    // Consume the custom service
-    const myService = consume<IMyService>(MyServiceKey);
-    myService.getData().then(setData);
+    let disposed = false;
+    const myService = consume(MyServiceKey);
+    myService.getData().then(items => {
+      if (!disposed) setData(items);
+    });
+    return () => { disposed = true; };
   }, [consume]);
-  
-  return (
-    <ul>
-      {data.map((item, i) => <li key={i}>{item}</li>)}
-    </ul>
-  );
+
+  return <ul>{data.map((item, i) => <li key={i}>{item}</li>)}</ul>;
 }
 ```
 
-### Example: Accessing EventAggregator
+### Example: Accessing PageContext
+
+`PageContext.serviceKey` is a public SPFx service key. Permission objects are data returned through PageContext or permission hooks; they are not ServiceScope service keys.
 
 ```tsx
+import * as React from 'react';
 import { useSPFxServiceScope } from '@apvee/spfx-react-toolkit';
-import { useEffect } from 'react';
+import { PageContext } from '@microsoft/sp-page-context';
 
-function MyComponent() {
-  const { serviceScope } = useSPFxServiceScope();
-  
-  useEffect(() => {
-    if (!serviceScope) return;
-    
-    // Subscribe to cross-component events
-    const subscription = serviceScope.consume(EventAggregator.serviceKey)
-      .subscribe('ItemSelected', (args: { itemId: number }) => {
-        console.log('Item selected:', args.itemId);
-      });
-    
-    return () => subscription.dispose();
-  }, [serviceScope]);
-  
-  return <div>Listening for events...</div>;
+function SiteTitle() {
+  const { consume } = useSPFxServiceScope();
+  const pageContext = consume(PageContext.serviceKey);
+  return <p>{pageContext.web.title}</p>;
 }
 ```
 
 ### Source
 
-[View source](../../src/hooks/useSPFxServiceScope.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts)
 
 ---
 
@@ -323,7 +316,7 @@ function MyComponent() {
 
 ### Source
 
-[View source](../../src/hooks/useSPFxInstanceInfo.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxInstanceInfo.ts)
 
 ---
 

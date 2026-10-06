@@ -1,0 +1,99 @@
+
+> @apvee/spfx-react-toolkit@2.1.0 prepublishOnly
+> npm run clean && npm run build && npm test && npm run verify:examples && npm run verify:runtime-store && npm run verify:public-docs
+
+
+> @apvee/spfx-react-toolkit@2.1.0 clean
+> gulp clean
+
+Build target: DEBUG
+[[90m11:02:08[39m] Using gulpfile ~/GitHub/apvee/spfx-react-toolkit/gulpfile.js
+[[90m11:02:08[39m] Starting 'clean'...
+[[90m11:02:08[39m] Starting gulp
+[[90m11:02:08[39m] Starting subtask '[36mclean[39m'...
+[[90m11:02:08[39m] Finished subtask '[36mclean[39m' after [35m50 ms[39m
+[[90m11:02:08[39m] Finished 'clean' after 51 ms
+[[90m11:02:08[39m] [35m==================[ Finished ]==================[39m
+[[90m11:02:09[39m] Project @apvee/spfx-react-toolkit version:[33m2.1.0[39m
+[[90m11:02:09[39m] Build tools version:[33m3.19.0[39m
+[[90m11:02:09[39m] Node version:[33mv22.20.0[39m
+[[90m11:02:09[39m] Total duration:[33m2.26 s[39m
+
+> @apvee/spfx-react-toolkit@2.1.0 build
+> gulp bundle
+
+Build target: DEBUG
+[[90m11:02:10[39m] Using gulpfile ~/GitHub/apvee/spfx-react-toolkit/gulpfile.js
+[[90m11:02:10[39m] Starting 'bundle'...
+[[90m11:02:10[39m] Starting gulp
+[[90m11:02:10[39m] Starting subtask '[36mpre-copy[39m'...
+[[90m11:02:10[39m] Finished subtask '[36mpre-copy[39m' after [35m7.02 ms[39m
+[[90m11:02:10[39m] Starting subtask '[36mcopy-static-assets[39m'...
+[[90m11:02:10[39m] Starting subtask '[36msass[39m'...
+[[90m11:02:10[39m] Finished subtask '[36msass[39m' after [35m160 ms[39m
+[[90m11:02:10[39m] Starting subtask '[36mlint[39m'...
+[[90m11:02:10[39m] [[36mlint[39m] eslint version: 8.57.1
+[[90m11:02:10[39m] Starting subtask '[36mtsc[39m'...
+[[90m11:02:10[39m] [[36mtsc[39m] typescript version: 5.3.3
+[[90m11:02:10[39m] Finished subtask '[36mcopy-static-assets[39m' after [35m179 ms[39m
+[[90m11:02:12[39m] Finished subtask '[36mtsc[39m' after [35m1.71 s[39m
+[[90m11:02:12[39m] Finished subtask '[36mlint[39m' after [35m2.18 s[39m
+[[90m11:02:12[39m] Starting subtask '[36mpost-copy[39m'...
+[[90m11:02:12[39m] Finished subtask '[36mpost-copy[39m' after [35m56 μs[39m
+[[90m11:02:12[39m] Starting subtask '[36mconfigure-webpack[39m'...
+[[90m11:02:12[39m] Finished subtask '[36mconfigure-webpack[39m' after [35m283 ms[39m
+[[90m11:02:12[39m] Starting subtask '[36mwebpack[39m'...
+[[90m11:02:16[39m] Finished subtask '[36mwebpack[39m' after [35m3.4 s[39m
+[[90m11:02:16[39m] Finished 'bundle' after 6.04 s
+[[90m11:02:16[39m] [35m==================[ Finished ]==================[39m
+[[90m11:02:17[39m] Project @apvee/spfx-react-toolkit version:[33m2.1.0[39m
+[[90m11:02:17[39m] Build tools version:[33m3.19.0[39m
+[[90m11:02:17[39m] Node version:[33mv22.20.0[39m
+[[90m11:02:17[39m] Total duration:[33m7.64 s[39m
+
+> @apvee/spfx-react-toolkit@2.1.0 test
+> gulp test
+
+Build target: DEBUG
+[[90m11:02:18[39m] Using gulpfile ~/GitHub/apvee/spfx-react-toolkit/gulpfile.js
+[[90m11:02:18[39m] Starting 'test'...
+[[90m11:02:18[39m] Starting gulp
+[[90m11:02:18[39m] Starting subtask '[36mpre-copy[39m'...
+[[90m11:02:18[39m] Finished subtask '[36mpre-copy[39m' after [35m1.91 ms[39m
+[[90m11:02:18[39m] Starting subtask '[36mcopy-static-assets[39m'...
+[[90m11:02:18[39m] Starting subtask '[36msass[39m'...
+[[90m11:02:18[39m] Finished subtask '[36msass[39m' after [35m159 ms[39m
+[[90m11:02:18[39m] Starting subtask '[36mlint[39m'...
+[[90m11:02:18[39m] [[36mlint[39m] eslint version: 8.57.1
+[[90m11:02:18[39m] Starting subtask '[36mtsc[39m'...
+[[90m11:02:18[39m] [[36mtsc[39m] typescript version: 5.3.3
+[[90m11:02:18[39m] Finished subtask '[36mcopy-static-assets[39m' after [35m175 ms[39m
+[[90m11:02:19[39m] Finished subtask '[36mtsc[39m' after [35m1.47 s[39m
+[[90m11:02:20[39m] Finished subtask '[36mlint[39m' after [35m1.89 s[39m
+[[90m11:02:20[39m] Starting subtask '[36mpost-copy[39m'...
+[[90m11:02:20[39m] Finished subtask '[36mpost-copy[39m' after [35m48 μs[39m
+[[90m11:02:20[39m] Starting subtask '[36mconfigure-webpack[39m'...
+[[90m11:02:20[39m] Finished subtask '[36mconfigure-webpack[39m' after [35m131 ms[39m
+[[90m11:02:20[39m] Starting subtask '[36mwebpack[39m'...
+[[90m11:02:23[39m] Finished subtask '[36mwebpack[39m' after [35m3 s[39m
+[[90m11:02:23[39m] Finished 'test' after 5.19 s
+[[90m11:02:23[39m] [35m==================[ Finished ]==================[39m
+[[90m11:02:24[39m] Project @apvee/spfx-react-toolkit version:[33m2.1.0[39m
+[[90m11:02:24[39m] Build tools version:[33m3.19.0[39m
+[[90m11:02:24[39m] Node version:[33mv22.20.0[39m
+[[90m11:02:24[39m] Total duration:[33m6.79 s[39m
+
+> @apvee/spfx-react-toolkit@2.1.0 verify:examples
+> node scripts/verify-example-coverage.cjs
+
+Verified webpart demo coverage for 40 hooks and 4 providers.
+
+> @apvee/spfx-react-toolkit@2.1.0 verify:runtime-store
+> node scripts/verify-runtime-store.cjs
+
+runtime store verification passed
+
+> @apvee/spfx-react-toolkit@2.1.0 verify:public-docs
+> node scripts/verify-public-docs.cjs
+
+public docs verification passed

@@ -1,0 +1,182 @@
+
+> spfx-react-toolkit-monorepo@2.1.0 package:solution
+> npm run bundle:ship && npm run package:solution --workspace @apvee/spfx-react-toolkit-test
+
+
+> spfx-react-toolkit-monorepo@2.1.0 bundle:ship
+> npm run build:library && npm run bundle:ship --workspace @apvee/spfx-react-toolkit-test
+
+
+> spfx-react-toolkit-monorepo@2.1.0 build:library
+> npm run build --workspace @apvee/spfx-react-toolkit
+
+
+> @apvee/spfx-react-toolkit@2.1.0 build
+> tsc -p tsconfig.json
+
+
+> @apvee/spfx-react-toolkit-test@2.1.0 bundle:ship
+> gulp bundle --ship
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Build target: SHIP
+[[90m11:40:49[39m] Using gulpfile /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/gulpfile.js
+[[90m11:40:49[39m] Starting 'bundle'...
+[[90m11:40:49[39m] Starting gulp
+[[90m11:40:49[39m] Starting subtask '[36mpre-copy[39m'...
+[[90m11:40:49[39m] Finished subtask '[36mpre-copy[39m' after [35m3.37 ms[39m
+[[90m11:40:49[39m] Starting subtask '[36mcopy-static-assets[39m'...
+[[90m11:40:49[39m] Starting subtask '[36msass[39m'...
+Browserslist: browsers data (caniuse-lite) is 12 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[[90m11:40:50[39m] Finished subtask '[36msass[39m' after [35m148 ms[39m
+[[90m11:40:50[39m] Starting subtask '[36mlint[39m'...
+[[90m11:40:50[39m] [[36mlint[39m] eslint version: 8.57.1
+[[90m11:40:50[39m] Starting subtask '[36mtsc[39m'...
+[[90m11:40:50[39m] [[36mtsc[39m] typescript version: 5.3.3
+[[90m11:40:50[39m] Finished subtask '[36mcopy-static-assets[39m' after [35m168 ms[39m
+[[90m11:40:51[39m] Finished subtask '[36mtsc[39m' after [35m1.27 s[39m
+[[90m11:40:51[39m] Finished subtask '[36mlint[39m' after [35m1.49 s[39m
+[[90m11:40:51[39m] Starting subtask '[36mpost-copy[39m'...
+[[90m11:40:51[39m] Finished subtask '[36mpost-copy[39m' after [35m93 μs[39m
+[[90m11:40:51[39m] Starting subtask '[36mconfigure-webpack[39m'...
+[[90m11:40:51[39m] Finished subtask '[36mconfigure-webpack[39m' after [35m171 ms[39m
+[[90m11:40:51[39m] Starting subtask '[36mwebpack[39m'...
+[[90m11:40:55[39m] Finished subtask '[36mwebpack[39m' after [35m4.15 s[39m
+[[90m11:40:55[39m] Finished 'bundle' after 5.97 s
+[[90m11:40:56[39m] [35m==================[ Finished ]==================[39m
+[[90m11:40:56[39m] Project @apvee/spfx-react-toolkit-test version:[33m2.1.0[39m
+[[90m11:40:56[39m] Build tools version:[33m3.19.0[39m
+[[90m11:40:56[39m] Node version:[33mv22.20.0[39m
+[[90m11:40:56[39m] Total duration:[33m7.65 s[39m
+The build failed because a task wrote output to stderr.
+Exiting with exit code: 1
+
+> @apvee/spfx-react-toolkit-test@2.1.0 package:solution
+> gulp package-solution --ship
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Build target: SHIP
+[[90m11:40:57[39m] Using gulpfile /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/gulpfile.js
+[[90m11:40:57[39m] Starting 'package-solution'...
+[[90m11:40:57[39m] Starting gulp
+[[90m11:40:57[39m] Starting subtask '[36mpackage-solution[39m'...
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found manifest: 4c2e58cc-1253-43e5-bfa3-b22a07ace279.manifest.json
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found manifest: 54985a3d-eaad-4041-8fdc-a50241798c07.manifest.json
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: SpFxReactToolkitTestApplicationCustomizerStrings_en-us.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: SpFxReactToolkitTestWebPartStrings_en-us.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.157_a02d472a06df9692204e.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.877_380bd78b2fcbd9b80fd0.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.lib_webparts_spFxReactToolkitTest_components_demos_index_js.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-clients.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-clients_7183dc45fd3dcf569248.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-context.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-context_14183c64712712248e8b.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-graph-data.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-graph-data_2f366cd9e28b22c58fea.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-pnp.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-pnp_6cb4d9ccd0d41c04ff7e.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-providers.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-providers_5f667917e055bff7e878.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-runtime.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-runtime_10090ec7b49f800ee126.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-search.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-search_accbcb62d48125acc0f3.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-tenant.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-tenant_c2a3973995ece346bcc9.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.vendors-node_modules_fluentui_react_lib_components_Button_PrimaryButton_PrimaryButton_js.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.vendors-node_modules_fluentui_react_lib_components_TextField_TextField_js.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: sp-fx-react-toolkit-test-application-customizer.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: sp-fx-react-toolkit-test-application-customizer_85880989dd0304710595.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: sp-fx-react-toolkit-test-web-part.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: sp-fx-react-toolkit-test-web-part_b9b76c8904ec62111698.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found client-side build resource: sp-fx-react-toolkit-test-web-part_b9b76c8904ec62111698.js.LICENSE.txt
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found teams icons: 54985a3d-eaad-4041-8fdc-a50241798c07_color.png
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found teams icons: 54985a3d-eaad-4041-8fdc-a50241798c07_outline.png
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Verifying configuration...
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Done!
+[[90m11:40:57[39m] [[36mpackage-solution[39m] 
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Normalizing solution information...
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Attempting creating component definitions for {2} manifests
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created component definitions for {2} manifests
+[[90m11:40:57[39m] [[36mpackage-solution[39m] feature.componentIds not set! Adding 2 components to feature { apvee-spfx-react-toolkit Feature }.
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Done!
+[[90m11:40:57[39m] [[36mpackage-solution[39m] 
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Reading custom Feature XML...
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Done!
+[[90m11:40:57[39m] [[36mpackage-solution[39m] 
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Validating App Package...
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Admins can make this solution available to all sites immediately, but the solution also contains feature.xml elements for provisioning. Feature.xml elements are not automatically applied unless the solution is explicitly installed on a site.
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Done!
+[[90m11:40:57[39m] [[36mpackage-solution[39m] 
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Reading resources...
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Done!
+[[90m11:40:57[39m] [[36mpackage-solution[39m] 
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Reading Sharepoint Assets & Creating XML...
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found Element Manifest: elements.xml
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Found Element Manifest: ClientSideInstance.xml
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Done!
+[[90m11:40:57[39m] [[36mpackage-solution[39m] 
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Writing solution XML to /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug...
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Cleaned /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/AppManifest.xml
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/_rels/AppManifest.xml.rels
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/_rels/.rels
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/[Content_Types].xml
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/_rels/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml.rels
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml.config.xml
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/elements.xml
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/ClientSideInstance.xml
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/Extension_4c2e58cc-1253-43e5-bfa3-b22a07ace279.xml
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/WebPart_54985a3d-eaad-4041-8fdc-a50241798c07.xml
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets.xml
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/_rels/ClientSideAssets.xml.rels
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets.xml.config.xml
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestApplicationCustomizerStrings_en-us.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestWebPartStrings_en-us.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.157_a02d472a06df9692204e.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.877_380bd78b2fcbd9b80fd0.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.lib_webparts_spFxReactToolkitTest_components_demos_index_js.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-clients.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-clients_7183dc45fd3dcf569248.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-context.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-context_14183c64712712248e8b.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-graph-data.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-graph-data_2f366cd9e28b22c58fea.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-pnp.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-pnp_6cb4d9ccd0d41c04ff7e.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-providers.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-providers_5f667917e055bff7e878.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-runtime.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-runtime_10090ec7b49f800ee126.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-search.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-search_accbcb62d48125acc0f3.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-tenant.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-tenant_c2a3973995ece346bcc9.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.vendors-node_modules_fluentui_react_lib_components_Button_PrimaryButton_PrimaryButton_js.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.vendors-node_modules_fluentui_react_lib_components_TextField_TextField_js.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-application-customizer.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-application-customizer_85880989dd0304710595.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part_b9b76c8904ec62111698.js
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part_b9b76c8904ec62111698.js.LICENSE.txt
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/54985a3d-eaad-4041-8fdc-a50241798c07_color.png
+[[90m11:40:57[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/54985a3d-eaad-4041-8fdc-a50241798c07_outline.png
+[[90m11:40:58[39m] [[36mpackage-solution[39m] Created file: /private/tmp/spfx-toolkit-clean-y3wx2d65/apps/spfx-react-toolkit-test/sharepoint/solution/apvee-spfx-react-toolkit.sppkg
+[[90m11:40:58[39m] [[36mpackage-solution[39m] Done!
+[[90m11:40:58[39m] [[36mpackage-solution[39m] 
+[[90m11:40:58[39m] [[36mpackage-solution[39m] ALL DONE!
+[[90m11:40:58[39m] [[36mpackage-solution[39m] 
+[[90m11:40:58[39m] Finished subtask '[36mpackage-solution[39m' after [35m280 ms[39m
+[[90m11:40:58[39m] Finished 'package-solution' after 281 ms
+[[90m11:40:58[39m] [35m==================[ Finished ]==================[39m
+[[90m11:40:59[39m] Project @apvee/spfx-react-toolkit-test version:[33m2.1.0[39m
+[[90m11:40:59[39m] Build tools version:[33m3.19.0[39m
+[[90m11:40:59[39m] Node version:[33mv22.20.0[39m
+[[90m11:40:59[39m] Total duration:[33m1.82 s[39m

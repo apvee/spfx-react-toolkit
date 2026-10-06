@@ -1,0 +1,106 @@
+TAP version 13
+# (node:34469) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: search suggestions keep the newest response when requests finish in reverse order
+not ok 1 - search suggestions keep the newest response when requests finish in reverse order
+  ---
+  duration_ms: 72.012416
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/demo-suggestions.test.cjs:23:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(f.container.textContent.includes('new suggestion'))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/demo-suggestions.test.cjs:30:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: clearing search input invalidates pending suggestions immediately
+not ok 2 - clearing search input invalidates pending suggestions immediately
+  ---
+  duration_ms: 14.758458
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/demo-suggestions.test.cjs:33:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(!f.container.textContent.includes('old suggestion'))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/demo-suggestions.test.cjs:38:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: editing during debounce invalidates an already running suggestion request
+not ok 3 - editing during debounce invalidates an already running suggestion request
+  ---
+  duration_ms: 11.799
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/demo-suggestions.test.cjs:42:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(!f.container.textContent.includes('old suggestion'))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/demo-suggestions.test.cjs:47:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: unmount cancels debounce and ignores an already running suggestion request
+ok 4 - unmount cancels debounce and ignores an already running suggestion request
+  ---
+  duration_ms: 10.163416
+  type: 'test'
+  ...
+# Subtest: selecting a suggestion cancels pending updates for the previous query
+not ok 5 - selecting a suggestion cancels pending updates for the previous query
+  ---
+  duration_ms: 9.995791
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/demo-suggestions.test.cjs:62:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/demo-suggestions.test.cjs:70:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 1
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 590.077125

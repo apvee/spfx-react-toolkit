@@ -1,0 +1,11 @@
+
+> spfx-react-toolkit-monorepo@2.1.0 build:library
+> npm run build --workspace @apvee/spfx-react-toolkit
+
+
+> @apvee/spfx-react-toolkit@2.1.0 build
+> tsc -p tsconfig.json
+
+real 1.24
+user 2.48
+sys 0.19

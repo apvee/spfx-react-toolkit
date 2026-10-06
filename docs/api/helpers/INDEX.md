@@ -299,7 +299,7 @@ Serializes tenant-scoped values for SharePoint string storage:
 function deserializeTenantValue<T>(rawValue: string): T;
 ```
 
-Parses JSON when possible. If parsing fails, returns the raw string cast to `T`.
+Parses JSON when possible. If parsing fails, returns the raw string cast to `T`. This legacy format is not a complete type round trip: numeric/boolean/null-like strings become JSON primitives, bigints may lose precision when parsed as numbers, and dates remain strings. `T` does not perform runtime validation; validate deserialized values in the caller. No new envelope or stored-data migration is introduced.
 
 ## Graph Path Helpers
 

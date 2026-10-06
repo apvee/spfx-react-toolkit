@@ -1,0 +1,5 @@
+Extracted docs/api/hooks/http-clients.md: ### Example: Cross-Site Query
+Extracted docs/api/hooks/context.md: ### Example: Consuming a Custom Service
+Extracted docs/api/hooks/context.md: ### Example: Accessing PageContext
+Extracted docs/api/core/providers.md: Placeholders can appear after initialization
+TypeScript 5.3.3 typecheck against installed SPFx 1.21.1/workspace package: PASS (4 snippets, exit 0)

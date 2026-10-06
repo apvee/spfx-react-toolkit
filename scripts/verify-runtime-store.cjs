@@ -5,16 +5,15 @@ const os = require('os');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
-const outDir = path.join(os.tmpdir(), 'spfx-runtime-store-verify');
+const outDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spfx-runtime-store-verify-'));
 
-fs.rmSync(outDir, { recursive: true, force: true });
-fs.mkdirSync(outDir, { recursive: true });
+try {
 
 execFileSync(
-  'npx',
+  process.execPath,
   [
-    'tsc',
-    'src/core/runtime-store.internal.ts',
+    require.resolve('typescript/bin/tsc'),
+    'packages/spfx-react-toolkit/src/core/runtime-store.internal.ts',
     '--module',
     'commonjs',
     '--target',
@@ -75,3 +74,7 @@ store.setState({ containerSize: { width: 10, height: 20 } });
 assert.strictEqual(notifications, 3, 'unsubscribed listener should not receive later updates');
 
 console.log('runtime store verification passed');
+
+} finally {
+  fs.rmSync(outDir, { recursive: true, force: true });
+}

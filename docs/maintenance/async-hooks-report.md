@@ -1,0 +1,67 @@
+# F4 — async hook implementation report
+
+Status: initial local checks passed; independent review subsequently found two PnPList P2 defects. Fix round 1 is complete with local checks PASS (42 async tests / 90 integrated tests), awaiting independent scoped re-review. See the review-round section below. Worktree: `/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit`. No commit, push, merge, publication, deployment, dependency, package, lock or configuration changes made by this task.
+
+## Scope and root causes
+
+Only assigned hook source files plus `tests/async-hooks.test.cjs`, `tests/async-test-harness.cjs` and this report were edited.
+
+- **B02 OneDrive**: former file/folder/client reads and writes updated current state; a former 404 triggered the current file's create-if-missing effect. Identity and request generations now gate data, missing/error state and automatic creation. Creation requires a missing result belonging to the current generation. Independent read/write pending counts protect loading. A newer write owns local data over an older read or write. Inline object defaults also reproduced an extra automatic load after a successful response; a latest default ref now removes that fetch loop while each request captures its own fallback.
+- **B05 TenantKV**: `get/list` returned the service promise without awaiting, bypassing catch and prematurely executing finally. Both now await inside try, preserve documented undefined/empty read fallback, capture current read errors and track overlapping reads/writes independently. Existing write rejection values still propagate. Permission/init completions are guarded against service/catalog identity replacement.
+- **B06 AsyncInvoke**: a boolean became false on the first concurrent completion. Each client generation owns its pending count and latest invocation. Former client/unmounted responses settle caller promises without changing current UI state.
+- **B07 Search**: setting refiner state did not change the closure used by a new search. New search now explicitly supplies an empty map; refetch/loadMore retain current filters and refiner toggles use the immediate current map. Query generations invalidate older replacements/pages/errors; synchronous pagination lock blocks same-tick duplicate dispatch. Accumulated count is computed before setters so hasMore does not depend on React executing a functional setter synchronously. Suggestions return their existing promises and reject as before, while an obsolete suggestion rejection cannot replace a newer search's error state. Equivalent inline search options preserve service identity using their consumed primitive/array values.
+- **B08 TenantProperty/PnPList**: mounted-only checks did not distinguish former key/list/service identities. Generations now guard results, errors and completion flags; identity changes clear prior data and pagination. List queries also protect same-identity reverse completion, double loadMore, superseded page append and old CRUD/debounce effects.
+- **AppCatalog candidate confirmed**: old discovery overwrote the cached URL after client/PageContext changed; an already resolved cache also survived replacement. Real React tests reproduce both. Cache is invalidated by catalog service identity and former discovery results cannot publish into the current cache.
+
+Public exports, arguments, result shapes and request promises remain unchanged. Stale requests are not cancelled: they still resolve/reject to the original caller. TenantProperty and OneDrive loads keep swallowing read failures into state; TenantKV keeps read fallbacks and write rejection behavior; AsyncInvoke and search retain Error normalization; list retains its existing rejection values. No change to tenant serialization or service implementations.
+
+## Error and loading semantics
+
+- Starting an operation clears its displayed error, as existing hooks did. AsyncInvoke and TenantKV permit only the latest-started operation in that channel to publish an error; an older failure cannot overwrite a newer call's cleared/successful state. Their loading flags remain true while any request in the current identity/channel remains pending.
+- TenantProperty, List and Search use latest replacement request ownership. Superseded requests do not contribute to current identity loading or change current data/error/page state. loadMore is bound to its query generation and a second simultaneous call returns an empty page without dispatch. Failed pages release the lock and preserve the previous offset for retry.
+- OneDrive uses latest-started read/write ownership for local data and errors together, with independent pending counts for read and write loading. An identity change resets error/missing state and seeds data from the current defaultValue, preserving lazy initialization. A newer write prevents an old read/404 from restoring old data or creating a default. Remote writes are not serialized or cancelled; guards govern local presentation, not server transaction ordering.
+- AppCatalog discovery still returns each caller's discovered URL. Only current service discoveries can enter the cache.
+
+## Persistent regression suite and evidence
+
+The harness transpiles the actual TypeScript hook source with the installed TypeScript runtime, mounts it through **real React 17.0.1 + ReactDOM 17.0.1** and **JSDOM 15.2.1**, and uses React `act` for actual render/effect/cleanup. Doubles are confined to unavailable SPFx/PnP/Graph/catalog service boundaries; loading/data/error logic is production code. No added dependency/tool. Node MessageChannel is disabled in the test browser setup because React 17's browser scheduler otherwise retains a live Node port after completion.
+
+The initial 16 regression tests were run RED before fixes; after correcting the harness's React reserved `key` prop and VM cross-realm array assertions, they were rerun against untouched `git show HEAD:src/hooks/*.ts` sources copied to `/private/tmp/spfx-async-baseline`. All 16 failed for their intended behavioral defect. The full final suite contains 31 cases: overlapping completion orders; client/key/file/list identity and autoFetch change; old 404 and previous missing-state creation; read/write ordering; latest error/clearError; read fallbacks/provisioning and write failure propagation; unmount failures on five hooks; same-identity list/search ordering; new/refetch refiners; synchronous duplicate page dispatch; superseded pages; retry offset; batched hasMore; inline options/defaults; pending and resolved app catalog cache replacement.
+
+| Command / snapshot | Observed result |
+| --- | --- |
+| `ASYNC_HOOK_SOURCE=/private/tmp/spfx-async-baseline node --test tests/async-hooks.test.cjs` — original 16 | 16 tests, **0 pass / 16 fail** (`/private/tmp/spfx-async-red.txt`) |
+| `node --test tests/async-hooks.test.cjs` — additional cases before final fixes | 26 tests, **24 pass / 2 fail**: OneDrive inline object default restarted successful autoFetch; old search suggestion rejection replaced current successful search state (`/private/tmp/spfx-async-additional-red.txt`) |
+| Full final suite against untouched baseline | 30 tests, **9 pass / 21 fail**, no cancelled/skipped tests (`/private/tmp/spfx-async-red-complete.txt`) |
+| `node --test tests/async-hooks.test.cjs` — fixed implementation | 31 tests, **31 pass / 0 fail**, no cancelled/skipped tests (`/private/tmp/spfx-async-green.txt`) |
+| `npm run typecheck --workspace @apvee/spfx-react-toolkit` | `tsc -p tsconfig.json --noEmit`, exit 0 (`/private/tmp/spfx-async-typecheck.txt`) |
+| `npm run lint --workspace @apvee/spfx-react-toolkit` | `eslint src --ext .ts,.tsx`, exit 0, no errors/warnings (`/private/tmp/spfx-async-lint.txt`) |
+| `npm run build:library` | `tsc -p tsconfig.json`, exit 0; later source changes also checked by final noEmit (`/private/tmp/spfx-async-build.txt`) |
+| `npm test` current integration snapshot | 53 tests, **50 pass / 3 fail**, all 30 assigned tests passed at that snapshot (31 after lazy-seed characterization); remaining demo suggestion tests 31–33 were being handled in a different task (`/private/tmp/spfx-async-npm-test.txt`) |
+
+The full-suite failures above are: `search suggestions keep the newest response when requests finish in reverse order`; `clearing search input invalidates pending suggestions immediately`; `editing during debounce invalidates an already running suggestion request`. They are disclosed, not counted as a green full-repository result. Deliberate service failures retain production console error logging; the five unmount tests assert that no React/production console errors occur after cleanup.
+
+## Limits
+
+No authenticated SharePoint/Graph tenant test was available. Real service authentication, permissions, provisioning mutex and remote read/write transaction ordering remain external integration concerns. The test boundaries isolate hook lifecycle and service promise contracts; they do not claim to validate SPFx SDK/PnP implementations. Consumer tarball/API and app packaging checks belong to the orchestrator. No changes were made for unconfirmed service hypotheses. The orchestrator subsequently found an author-introduced lazy default regression: the identity reset effect ran on mount and erased the initial defaultValue. A new lazy mount/file-identity seed test was observed RED (0/1, `/private/tmp/spfx-async-lazy-default-red.txt`); reset now uses the current default ref, preserving a light seed at mount and a dark seed after identity replacement without network requests. Automatic creation still requires a current missing request token. Final hook suite is 31/31 GREEN; fresh typecheck and lint pass. No independent review PASS is claimed here.
+
+## Independent review — fix round 1
+
+The independent runtime reviewer returned **async F4/F8 FAIL** with two P2 PnPList findings reproduced on both the current implementation and original HEAD. The initial local PASS above was insufficient coverage, not an independent approval. Both findings are now corrected and ready for scoped re-review; no reviewer PASS is asserted by the author.
+
+1. **Old mutation replayed its captured query.** `query(A) → pending create → query(B) → create resolves` scheduled a debounce with the latest generation but invoked the old `refetch` closure bound to A. Observed calls were `A, B, A` and final items A. All six CRUD/batch operations shared this root cause. The query identity now records the latest started query's builder/options; the debounce reads those parameters at dispatch and invokes the stable query function with them. It refreshes B even if B's initial request remains pending. A query started after scheduling invalidates the timer, and service identity/unmount guards remain intact. No stale callback can replay A into B's generation.
+2. **Failed refetch discarded valid pagination.** `refetch()` eagerly called `setCurrentSkip(0)` before obtaining a successful query result. On failure, visible items stayed in place while the next `loadMore()` requested offset zero rather than the successful offset two. The eager reset was removed. Successful query responses already atomically publish items, nextSkip and hasMore; failed refetch retains all successful pagination state, propagates the original rejection and releases loading so loadMore/retry can proceed.
+
+The persistent tests were written and observed RED before these fixes: six literal CRUD/batch traces expected `['A', 'B', 'B']`, plus the offset preservation case expected `[2]`. All seven failed for the reviewer's causes. Four boundary cases were added for a replacement query still pending, query change during an already scheduled debounce, former-service mutation completion, and unmount with both scheduled and pending mutations. Existing concurrency/error/retry tests remain unchanged. No shared package/configuration/service/app files or public API were changed in this round.
+
+| Command | Result / versioned evidence |
+| --- | --- |
+| `node --test --test-name-pattern='pending (create\|update\|remove)\|failed refetch preserves' tests/async-hooks.test.cjs` before production fix | **0/7 PASS, 7 FAIL** — [RED output](evidence/async-fix-round1-red.txt) |
+| Same focused command after fix | **7/7 PASS** — [focused GREEN output](evidence/async-fix-round1-focused-green.txt) |
+| `node --test /private/tmp/spfx-independent-edge.cjs` (original reviewer reproductions) | **2/2 PASS** — [reviewer repro GREEN output](evidence/async-fix-round1-reviewer-repro-green.txt) |
+| `node --test tests/async-hooks.test.cjs` | **42/42 PASS**, no cancelled/skipped — [async suite](evidence/async-fix-round1-suite-green.txt) |
+| `npm test` on current integrated tree | **90/90 PASS**, no cancelled/skipped — [full suite](evidence/async-fix-round1-npm-test.txt) |
+| `npm run typecheck --workspace @apvee/spfx-react-toolkit` | exit 0 — [typecheck](evidence/async-fix-round1-typecheck.txt) |
+| `npm run lint --workspace @apvee/spfx-react-toolkit` | exit 0, no errors/warnings — [lint](evidence/async-fix-round1-lint.txt) |
+
+All evidence for this review round is stored in the repository rather than relying only on temporary files. The prior demo suggestion failures in the historical 53-test snapshot have been corrected by their owning task; the latest full suite above is green. Tenant/network limitations in the preceding section still apply. This task did not commit, push, merge, publish or deploy.

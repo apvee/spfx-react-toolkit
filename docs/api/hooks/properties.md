@@ -53,9 +53,11 @@ Properties are the configuration values for WebParts/Extensions that:
 - Are specific to each instance
 
 **Synchronization is automatic:**
-- Property Pane changes → runtime state → Hook (automatic)
+- Property Pane changes → runtime state → Hook when the host renders the provider
 - Hook updates → runtime state → SPFx properties (automatic)
 - Property Pane refresh for WebParts (automatic)
+
+The provider reconciles a shallow snapshot on each committed render: top-level changes, removals and replaced nested references are detected even when SPFx mutates the host property bag in place. It does not deep-clone properties or detect mutation inside a nested object whose reference stays unchanged. Replace that nested value and render the provider when updating it. `setProperties` shallow-merges; `updateProperties` supplies the replacement bag.
 
 ### Example: Basic Usage
 
@@ -162,7 +164,7 @@ function ConfigurableForm() {
 
 ### Source
 
-[View source](../../src/hooks/useSPFxProperties.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts)
 
 ---
 
@@ -262,7 +264,7 @@ function ReadView() {
 
 ### Source
 
-[View source](../../src/hooks/useSPFxDisplayMode.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts)
 
 ---
 
@@ -303,7 +305,7 @@ function MyComponent() {
 
 ### Source
 
-[View source](../../src/hooks/useSPFxDisplayMode.ts#L89)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts)
 
 ---
 

@@ -44,7 +44,7 @@ function collectPublicDocs() {
       const relativePath = path.relative(root, fullPath);
 
       if (entry.isDirectory()) {
-        if (relativePath.startsWith(`docs${path.sep}superpowers`)) {
+        if (relativePath.startsWith(`docs${path.sep}superpowers`) || relativePath.startsWith(`docs${path.sep}maintenance`)) {
           continue;
         }
         walk(fullPath);
@@ -64,12 +64,12 @@ function assertContainsAll(documentPath, names, label) {
   assert.deepStrictEqual(missing, [], `${documentPath} missing ${label}: ${missing.join(', ')}`);
 }
 
-const helperModules = resolveBarrelExports('src/helpers/index.ts');
+const helperModules = resolveBarrelExports('packages/spfx-react-toolkit/src/helpers/index.ts');
 const helperFunctions = helperModules.flatMap(modulePath => (
   collectExportedNames(modulePath, /export\s+function\s+([A-Za-z0-9_]+)/g)
 ));
 
-const serviceModules = resolveBarrelExports('src/services/index.ts');
+const serviceModules = resolveBarrelExports('packages/spfx-react-toolkit/src/services/index.ts');
 const serviceFactories = serviceModules.flatMap(modulePath => (
   collectExportedNames(modulePath, /export\s+function\s+([A-Za-z0-9_]+)/g)
 ));
@@ -113,4 +113,20 @@ for (const docPath of collectPublicDocs()) {
 
 assert.deepStrictEqual(offenders, []);
 
-console.log('public docs verification passed');
+
+
+// Validate repository-relative links in public docs as well as the export inventory.
+const brokenLinks = [];
+for (const documentPath of ['README.md', 'packages/spfx-react-toolkit/README.md', ...collectPublicDocs()]) {
+  const source = read(documentPath);
+  for (const match of source.matchAll(/\]\(([^)]+)\)/g)) {
+    const target = match[1].split(/\s+["']/)[0];
+    if (/^(?:[a-z][a-z0-9+.-]*:|#|\/)/i.test(target)) continue;
+    const relative = decodeURIComponent(target.split('#')[0]);
+    if (relative && !fs.existsSync(path.resolve(root, path.dirname(documentPath), relative))) {
+      brokenLinks.push(`${documentPath}: ${target}`);
+    }
+  }
+}
+assert.deepStrictEqual(brokenLinks, [], `Broken public documentation links:\n${brokenLinks.join('\n')}`);
+console.log('public docs verification passed (API inventory and relative links)');

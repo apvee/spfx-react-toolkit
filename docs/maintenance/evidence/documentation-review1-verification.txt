@@ -1,0 +1,11 @@
+Date: 2026-10-06
+npm run verify:public-docs
+Exit 0
+public docs verification passed (API inventory and relative links)
+
+npm run verify:examples
+Exit 0
+Verified webpart demo coverage for 40 hooks and 4 providers.
+
+git diff --check -- docs/api/hooks/http-clients.md docs/api/hooks/context.md docs/api/core/providers.md docs/maintenance/documentation-report.md
+Exit 0, no output

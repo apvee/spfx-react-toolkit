@@ -1,459 +1,107 @@
 # Performance & Diagnostics Hooks
 
-> Hooks for performance monitoring, logging, and diagnostic information
-
-## Overview
-
-These hooks provide performance measurement, logging, correlation tracking, and diagnostic information.
-
-| Hook | Returns | Description |
-|------|---------|-------------|
-| [`useSPFxPerformance`](#usespfxperformance) | `SPFxPerformanceResult` | Performance timing utilities |
-| [`useSPFxLogger`](#usespfxlogger) | `SPFxLoggerResult` | Structured logging |
-| [`useSPFxCorrelationInfo`](#usespfxcorrelationinfo) | `SPFxCorrelationInfo` | Request correlation IDs |
-
----
-
 ## useSPFxPerformance
 
-Performance measurement and timing utilities.
-
-### Signature
-
 ```typescript
-function useSPFxPerformance(): SPFxPerformanceResult
-```
-
-### Returns
-
-```typescript
-interface PerformanceMark {
-  /** Mark name */
+function useSPFxPerformance(): SPFxPerformanceInfo;
+interface SPFxPerfResult<T = unknown> {
   readonly name: string;
-  
-  /** Timestamp in milliseconds */
-  readonly timestamp: number;
+  readonly durationMs: number;
+  readonly result?: T;
+  readonly instanceId: string;
+  readonly host: string;
+  readonly correlationId: string | undefined;
 }
-
-interface PerformanceMeasure {
-  /** Measure name */
-  readonly name: string;
-  
-  /** Duration in milliseconds */
-  readonly duration: number;
-  
-  /** Start mark name */
-  readonly startMark: string;
-  
-  /** End mark name */
-  readonly endMark: string;
-}
-
-interface SPFxPerformanceResult {
-  /**
-   * Create a performance mark.
-   * @param name - Unique mark name
-   */
+interface SPFxPerformanceInfo {
   readonly mark: (name: string) => void;
-  
-  /**
-   * Measure time between two marks.
-   * @param name - Measure name
-   * @param startMark - Start mark name
-   * @param endMark - End mark name (defaults to now)
-   */
-  readonly measure: (name: string, startMark: string, endMark?: string) => PerformanceMeasure;
-  
-  /**
-   * Get all performance marks.
-   */
-  readonly getMarks: () => PerformanceMark[];
-  
-  /**
-   * Get all performance measures.
-   */
-  readonly getMeasures: () => PerformanceMeasure[];
-  
-  /**
-   * Clear all marks and measures.
-   */
-  readonly clear: () => void;
-  
-  /**
-   * Time a function execution.
-   * @param name - Measure name
-   * @param fn - Function to time
-   */
-  readonly time: <T>(name: string, fn: () => T) => T;
-  
-  /**
-   * Time an async function execution.
-   * @param name - Measure name
-   * @param fn - Async function to time
-   */
-  readonly timeAsync: <T>(name: string, fn: () => Promise<T>) => Promise<T>;
+  readonly measure: (name: string, startMark: string, endMark?: string) => SPFxPerfResult;
+  readonly time: <T>(name: string, fn: () => Promise<T> | T) => Promise<SPFxPerfResult<T>>;
 }
 ```
 
-### Example: Measure Data Loading
+`time()` awaits sync or async work and returns its result with measured duration and SPFx metadata. Concurrent calls with the same measurement name have distinct internal start marks, removed in `finally`; callback failures reject the returned promise. Browser measurement failures fall back to a zero duration. Public `mark()` names and measurement entries remain part of the browser Performance API; callers choosing explicit mark names manage collisions and cleanup themselves.
 
 ```tsx
+import * as React from 'react';
 import { useSPFxPerformance } from '@apvee/spfx-react-toolkit';
 
-function DataList() {
-  const { mark, measure, timeAsync } = useSPFxPerformance();
-  const [items, setItems] = React.useState<IItem[]>([]);
-  
-  React.useEffect(() => {
-    const loadData = async () => {
-      mark('data-load-start');
-      
-      const data = await timeAsync('fetch-items', () => 
-        fetchItems()
-      );
-      
-      mark('data-load-end');
-      const loadTime = measure('total-load', 'data-load-start', 'data-load-end');
-      
-      console.log(`Data loaded in ${loadTime.duration}ms`);
-      setItems(data);
-    };
-    
-    loadData();
-  }, []);
-  
-  return <ItemList items={items} />;
+function TimedButton() {
+  const { time } = useSPFxPerformance();
+  const run = async () => {
+    const measured = await time('calculate', () => 2 + 2);
+    console.log(measured.result, measured.durationMs);
+  };
+  return <button onClick={run}>Measure</button>;
 }
 ```
 
-### Example: Performance Dashboard
-
-```tsx
-import { useSPFxPerformance } from '@apvee/spfx-react-toolkit';
-
-function PerformanceMonitor() {
-  const { getMeasures, clear } = useSPFxPerformance();
-  const [measures, setMeasures] = React.useState<PerformanceMeasure[]>([]);
-  
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setMeasures(getMeasures());
-    }, 1000);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
-  return (
-    <div className="perf-monitor">
-      <h3>Performance Metrics</h3>
-      <button onClick={clear}>Clear</button>
-      <table>
-        <thead>
-          <tr>
-            <th>Operation</th>
-            <th>Duration</th>
-          </tr>
-        </thead>
-        <tbody>
-          {measures.map(m => (
-            <tr key={m.name}>
-              <td>{m.name}</td>
-              <td>{m.duration.toFixed(2)}ms</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-```
-
-### Example: Component Render Timing
-
-```tsx
-import { useSPFxPerformance } from '@apvee/spfx-react-toolkit';
-
-function TrackedComponent() {
-  const { mark, measure } = useSPFxPerformance();
-  
-  // Mark render start
-  mark('render-start');
-  
-  // Effect runs after render
-  React.useEffect(() => {
-    mark('render-end');
-    const renderTime = measure('component-render', 'render-start', 'render-end');
-    
-    if (renderTime.duration > 100) {
-      console.warn(`Slow render: ${renderTime.duration}ms`);
-    }
-  });
-  
-  return <div>Tracked Content</div>;
-}
-```
-
-### Source
-
-[View source](../../src/hooks/useSPFxPerformance.ts)
-
----
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts)
 
 ## useSPFxLogger
 
-Structured logging with SPFx Log service integration.
-
-### Signature
-
 ```typescript
-function useSPFxLogger(): SPFxLoggerResult
-```
-
-### Returns
-
-```typescript
-type LogLevel = 'verbose' | 'info' | 'warning' | 'error';
-
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 interface LogEntry {
-  readonly timestamp: Date;
   readonly level: LogLevel;
-  readonly source: string;
   readonly message: string;
-  readonly data?: unknown;
+  readonly ts: string;
+  readonly instanceId: string;
+  readonly host: string;
+  readonly user: string;
+  readonly siteUrl: string | undefined;
+  readonly webUrl: string | undefined;
+  readonly correlationId: string | undefined;
+  readonly webPartTag?: string;
+  readonly extra?: Record<string, unknown>;
 }
-
-interface SPFxLoggerResult {
-  /**
-   * Log verbose message (debug).
-   */
-  readonly verbose: (source: string, message: string, data?: unknown) => void;
-  
-  /**
-   * Log info message.
-   */
-  readonly info: (source: string, message: string, data?: unknown) => void;
-  
-  /**
-   * Log warning message.
-   */
-  readonly warn: (source: string, message: string, data?: unknown) => void;
-  
-  /**
-   * Log error message.
-   */
-  readonly error: (source: string, message: string, error?: Error) => void;
-  
-  /**
-   * Get recent log entries.
-   */
-  readonly getEntries: (count?: number) => LogEntry[];
-  
-  /**
-   * Clear log entries.
-   */
-  readonly clear: () => void;
+interface SPFxLoggerInfo {
+  readonly debug: (message: string, extra?: Record<string, unknown>) => void;
+  readonly info: (message: string, extra?: Record<string, unknown>) => void;
+  readonly warn: (message: string, extra?: Record<string, unknown>) => void;
+  readonly error: (message: string, extra?: Record<string, unknown>) => void;
 }
+function useSPFxLogger(handler?: (entry: LogEntry) => void): SPFxLoggerInfo;
 ```
 
-### Example: Service Logging
+Without a handler the hook logs to console; a custom handler receives the structured entry. Application code owns persistence and any external telemetry transport.
 
 ```tsx
+import * as React from 'react';
 import { useSPFxLogger } from '@apvee/spfx-react-toolkit';
 
-function DataService() {
-  const logger = useSPFxLogger();
-  
-  const fetchItems = async () => {
-    const source = 'DataService.fetchItems';
-    
-    logger.info(source, 'Starting data fetch');
-    
-    try {
-      const response = await fetch('/api/items');
-      
-      if (!response.ok) {
-        logger.warn(source, 'Non-OK response', { status: response.status });
-        throw new Error(`HTTP ${response.status}`);
-      }
-      
-      const data = await response.json();
-      logger.info(source, 'Data fetch complete', { count: data.length });
-      
-      return data;
-    } catch (err) {
-      logger.error(source, 'Data fetch failed', err as Error);
-      throw err;
-    }
-  };
-  
-  return { fetchItems };
+function SaveButton() {
+  const logger = useSPFxLogger(entry => console.log(entry));
+  return <button onClick={() => logger.info('Save requested', { source: 'toolbar' })}>Save</button>;
 }
 ```
 
-### Example: Debug Panel
-
-```tsx
-import { useSPFxLogger, useSPFxEnvironmentInfo } from '@apvee/spfx-react-toolkit';
-
-function DebugPanel() {
-  const logger = useSPFxLogger();
-  const { isLocal } = useSPFxEnvironmentInfo();
-  const [entries, setEntries] = React.useState<LogEntry[]>([]);
-  
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setEntries(logger.getEntries(50));
-    }, 500);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
-  // Only show in local development
-  if (!isLocal) return null;
-  
-  return (
-    <div className="debug-panel">
-      <h4>Debug Log</h4>
-      <button onClick={logger.clear}>Clear</button>
-      <div className="log-entries">
-        {entries.map((entry, i) => (
-          <div key={i} className={`log-entry log-${entry.level}`}>
-            <span className="timestamp">
-              {entry.timestamp.toLocaleTimeString()}
-            </span>
-            <span className="level">{entry.level.toUpperCase()}</span>
-            <span className="source">{entry.source}</span>
-            <span className="message">{entry.message}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-```
-
-### Source
-
-[View source](../../src/hooks/useSPFxLogger.ts)
-
----
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxLogger.ts)
 
 ## useSPFxCorrelationInfo
 
-Access request correlation IDs for tracing.
-
-### Signature
-
 ```typescript
-function useSPFxCorrelationInfo(): SPFxCorrelationInfo
-```
-
-### Returns
-
-```typescript
+function useSPFxCorrelationInfo(): SPFxCorrelationInfo;
 interface SPFxCorrelationInfo {
-  /** Current correlation ID (GUID) */
-  readonly correlationId: string;
-  
-  /** Session ID for the current page session */
-  readonly sessionId: string;
-  
-  /** Generate a new correlation ID for a sub-request */
-  readonly generateSubCorrelationId: () => string;
+  readonly correlationId: string | undefined;
+  readonly tenantId: string | undefined;
 }
 ```
 
-### Example: Request Tracing
+Maps optional correlation and tenant IDs exposed by PageContext. A missing ID remains undefined; this hook does not create a distributed tracing session.
 
 ```tsx
-import { useSPFxCorrelationInfo, useSPFxLogger } from '@apvee/spfx-react-toolkit';
-
-function TracedApiClient() {
-  const { correlationId, generateSubCorrelationId } = useSPFxCorrelationInfo();
-  const logger = useSPFxLogger();
-  
-  const fetchWithTracing = async (url: string) => {
-    const subCorrelationId = generateSubCorrelationId();
-    
-    logger.info('API', `Request to ${url}`, { 
-      correlationId, 
-      subCorrelationId 
-    });
-    
-    const response = await fetch(url, {
-      headers: {
-        'X-Correlation-Id': subCorrelationId,
-        'X-Session-Id': correlationId
-      }
-    });
-    
-    logger.info('API', `Response from ${url}`, { 
-      status: response.status,
-      subCorrelationId 
-    });
-    
-    return response;
-  };
-  
-  return { fetchWithTracing };
-}
-```
-
-### Example: Error Reporting
-
-```tsx
+import * as React from 'react';
 import { useSPFxCorrelationInfo } from '@apvee/spfx-react-toolkit';
 
-function ErrorBoundary({ children }: { children: React.ReactNode }) {
-  const { correlationId, sessionId } = useSPFxCorrelationInfo();
-  const [error, setError] = React.useState<Error | null>(null);
-  
-  const reportError = async (err: Error) => {
-    await fetch('/api/errors', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: err.message,
-        stack: err.stack,
-        correlationId,
-        sessionId,
-        timestamp: new Date().toISOString()
-      })
-    });
-  };
-  
-  React.useEffect(() => {
-    if (error) {
-      reportError(error);
-    }
-  }, [error]);
-  
-  if (error) {
-    return (
-      <div className="error-display">
-        <h2>Something went wrong</h2>
-        <p>Error ID: {correlationId}</p>
-        <p>Please reference this ID when contacting support.</p>
-      </div>
-    );
-  }
-  
-  return <>{children}</>;
+function CorrelationStatus() {
+  const { correlationId, tenantId } = useSPFxCorrelationInfo();
+  return <p>{tenantId ?? 'No tenant ID'} / {correlationId ?? 'No correlation ID'}</p>;
 }
 ```
 
-### Source
-
-[View source](../../src/hooks/useSPFxCorrelationInfo.ts)
-
----
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts)
 
 ## See Also
 
-- [Context Hooks](./context.md) - SPFx context access
-- [Environment Hooks](./environment.md) - Environment detection
-- [Storage Hooks](./storage.md) - Data persistence
-
----
-
-*Generated from JSDoc comments. Last updated: January 31, 2026*
+- [Context Hooks](./context.md)
+- [Page Context Helpers](../helpers/INDEX.md#page-context-helpers)

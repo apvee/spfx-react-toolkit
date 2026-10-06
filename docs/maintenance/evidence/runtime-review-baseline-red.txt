@@ -1,0 +1,1581 @@
+TAP version 13
+# Subtest: AsyncInvoke loading covers overlapping calls, completion 0 first
+not ok 1 - AsyncInvoke loading covers overlapping calls, completion 0 first
+  ---
+  duration_ms: 47.380208
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:6:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:14:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: AsyncInvoke loading covers overlapping calls, completion 1 first
+not ok 2 - AsyncInvoke loading covers overlapping calls, completion 1 first
+  ---
+  duration_ms: 11.374292
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:6:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:14:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: AsyncInvoke ignores former client error and preserves rejection after unmount
+not ok 3 - AsyncInvoke ignores former client error and preserves rejection after unmount
+  ---
+  duration_ms: 8.921959
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:18:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + Error: old client
+    +     at /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:25:41
+    +     at /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:59
+    +     at batchedUpdates$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+    +     at act (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+    +     at settle (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:35)
+    +     at TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:25:11)
+    +     at Test.runInAsyncScope (node:async_hooks:214:14)
+    +     at Test.run (node:internal/test_runner/test:1047:25)
+    +     at Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    +     at Test.postRun (node:internal/test_runner/test:1173:19)
+    - undefined
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  actual:
+  error: 'old client'
+  stack: |-
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:25:41
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:59
+    batchedUpdates$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+    act (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+    settle (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:35)
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:25:11)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:26:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: TenantKV get awaits service and captures rejection as fallback
+not ok 4 - TenantKV get awaits service and captures rejection as fallback
+  ---
+  duration_ms: 19.728958
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:34:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:43:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: TenantKV list awaits service and captures rejection as fallback
+not ok 5 - TenantKV list awaits service and captures rejection as fallback
+  ---
+  duration_ms: 13.450459
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:34:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:43:16)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: TenantKV reads and writes track all pending operations independently
+not ok 6 - TenantKV reads and writes track all pending operations independently
+  ---
+  duration_ms: 13.197625
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:48:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:57:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: TenantProperty autoFetch change discards reverse completion and stale rejection
+not ok 7 - TenantProperty autoFetch change discards reverse completion and stale rejection
+  ---
+  duration_ms: 8.98525
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:63:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    'A' !== 'B'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'B'
+  actual: 'A'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:73:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# OneDrive file not found. isNotFound=true
+# OneDrive file not found. isNotFound=true
+# Subtest: OneDrive old 404 cannot create default in the current file
+not ok 8 - OneDrive old 404 cannot create default in the current file
+  ---
+  duration_ms: 20.317209
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:83:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    'default' !== 'B'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'B'
+  actual: 'default'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:95:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: OneDrive identity clears old missing state before createIfMissing effect
+not ok 9 - OneDrive identity clears old missing state before createIfMissing effect
+  ---
+  duration_ms: 17.094292
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:99:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   [
+    +     'b',
+    +     'default'
+    +   ]
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0:
+      0: 'b'
+      1: 'default'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:108:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: OneDrive newer write wins over older read and reverse write completion
+not ok 10 - OneDrive newer write wins over older read and reverse write completion
+  ---
+  duration_ms: 11.953917
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:111:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:120:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: PnPList identity and latest query prevent stale state/error
+not ok 11 - PnPList identity and latest query prevent stale state/error
+  ---
+  duration_ms: 20.708334
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:125:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   'A'
+    -   'B'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'B'
+  actual:
+    0: 'A'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:135:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: PnPList rejects duplicate page dispatch and ignores page from superseded query
+not ok 12 - PnPList rejects duplicate page dispatch and ignores page from superseded query
+  ---
+  duration_ms: 18.522667
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:142:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'new',
+    +   'stale'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'new'
+  actual:
+    0: 'new'
+    1: 'stale'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:153:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: PnPSearch clears refiners on new search but keeps them on refetch
+not ok 13 - PnPSearch clears refiners on new search but keeps them on refetch
+  ---
+  duration_ms: 18.383791
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:155:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   [
+    +     'color',
+    +     [
+    +       'red'
+    +     ]
+    +   ]
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0:
+      0: 'color'
+      1:
+        0: 'red'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:165:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: PnPSearch latest query ignores reversed responses and stale errors
+not ok 14 - PnPSearch latest query ignores reversed responses and stale errors
+  ---
+  duration_ms: 17.111958
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:167:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    'A' !== 'B'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'B'
+  actual: 'A'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:176:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: PnPSearch same-tick loadMore dispatches one page and superseded page cannot append
+not ok 15 - PnPSearch same-tick loadMore dispatches one page and superseded page cannot append
+  ---
+  duration_ms: 13.439292
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:182:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:190:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: AppCatalog cached URL invalidates with pageContext/client service identity
+not ok 16 - AppCatalog cached URL invalidates with pageContext/client service identity
+  ---
+  duration_ms: 4.881791
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:195:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'catalog-a'
+    - 'catalog-b'
+               ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'catalog-b'
+  actual: 'catalog-a'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:207:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: OneDrive inline object default does not restart a successful autoFetch
+not ok 17 - OneDrive inline object default does not restart a successful autoFetch
+  ---
+  duration_ms: 12.331708
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:210:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:217:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: AsyncInvoke newer success is not replaced by an older failure and clearError works
+not ok 18 - AsyncInvoke newer success is not replaced by an older failure and clearError works
+  ---
+  duration_ms: 4.450167
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:222:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + Error: old
+    +     at /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:230:41
+    +     at /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:59
+    +     at batchedUpdates$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+    +     at act (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+    +     at settle (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:35)
+    +     at TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:230:11)
+    +     at async Test.run (node:internal/test_runner/test:1054:7)
+    +     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+    - undefined
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  actual:
+  error: 'old'
+  stack: |-
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:230:41
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:59
+    batchedUpdates$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+    act (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+    settle (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:35)
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:230:11)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:231:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Failed to save tenant key-value: Error: write denied
+#     at TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:239:18)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+#     at Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+#     at Test.postRun (node:internal/test_runner/test:1173:19)
+#     at Test.run (node:internal/test_runner/test:1101:12)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: TenantKV provisioning read fallback remains successful and write rejection propagates
+ok 19 - TenantKV provisioning read fallback remains successful and write rejection propagates
+  ---
+  duration_ms: 9.095416
+  type: 'test'
+  ...
+# Subtest: PnPSearch old suggestion rejection cannot replace newer successful search error state
+not ok 20 - PnPSearch old suggestion rejection cannot replace newer successful search error state
+  ---
+  duration_ms: 11.66475
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:254:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + Error: old suggestion
+    +     at /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:261:50
+    +     at /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:59
+    +     at batchedUpdates$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+    +     at act (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+    +     at settle (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:35)
+    +     at TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:261:11)
+    +     at async Test.run (node:internal/test_runner/test:1054:7)
+    +     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+    - undefined
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  actual:
+  error: 'old suggestion'
+  stack: |-
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:261:50
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:59
+    batchedUpdates$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+    act (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+    settle (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:35)
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:261:11)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:262:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: property deferred failure after unmount cannot update React state
+ok 21 - property deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 7.061166
+  type: 'test'
+  ...
+# Subtest: drive deferred failure after unmount cannot update React state
+ok 22 - drive deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 7.535667
+  type: 'test'
+  ...
+# Subtest: list deferred failure after unmount cannot update React state
+ok 23 - list deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 10.50575
+  type: 'test'
+  ...
+# Subtest: search deferred failure after unmount cannot update React state
+ok 24 - search deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 13.291416
+  type: 'test'
+  ...
+# Subtest: store deferred failure after unmount cannot update React state
+ok 25 - store deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 7.416292
+  type: 'test'
+  ...
+# Subtest: PnPSearch query pagination uses accumulated count for hasMore
+ok 26 - PnPSearch query pagination uses accumulated count for hasMore
+  ---
+  duration_ms: 10.354417
+  type: 'test'
+  ...
+# Subtest: PnPList latest query wins within one identity and failed page retries the same offset
+not ok 27 - PnPList latest query wins within one identity and failed page retries the same offset
+  ---
+  duration_ms: 12.804708
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:311:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   'old'
+    -   'new'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'new'
+  actual:
+    0: 'old'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:327:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Failed to write file to OneDrive: Error: denied
+#     at Object.write (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:360:23)
+#     at Object.eval [as write] (eval at loadHook (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:20:5), <anonymous>:257:27)
+#     at /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:364:48
+#     at /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:59
+#     at batchedUpdates$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+#     at act (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+#     at settle (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-test-harness.cjs:34:35)
+#     at TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:364:11)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+# Subtest: PnPSearch failed page keeps offset and inline options remain stable
+ok 28 - PnPSearch failed page keeps offset and inline options remain stable
+  ---
+  duration_ms: 9.6715
+  type: 'test'
+  ...
+# OneDrive file not found. isNotFound=true
+# Subtest: OneDrive write errors propagate and successful missing creation writes once
+ok 29 - OneDrive write errors propagate and successful missing creation writes once
+  ---
+  duration_ms: 9.741459
+  type: 'test'
+  ...
+# Subtest: AppCatalog resolved cache is cleared on service change before discovery
+not ok 30 - AppCatalog resolved cache is cleared on service change before discovery
+  ---
+  duration_ms: 4.22525
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:375:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'catalog-a'
+    - undefined
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  actual: 'catalog-a'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:384:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: OneDrive lazy default is the current identity seed without starting a read
+not ok 31 - OneDrive lazy default is the current identity seed without starting a read
+  ---
+  duration_ms: 7.163
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:388:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+    +   theme: 'light'
+    -   theme: 'dark'
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    theme: 'dark'
+  actual:
+    theme: 'light'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/async-hooks.test.cjs:396:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Error: Uncaught [Error: ServiceScope consumed before finish]
+#     at reportException (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:62:24)
+#     at innerInvokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:332:9)
+#     at invokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:267:3)
+#     at HTMLUnknownElementImpl._dispatch (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:214:9)
+#     at HTMLUnknownElementImpl.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:87:17)
+#     at HTMLUnknownElement.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:144:23)
+#     at Object.invokeGuardedCallbackDev (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:3994:16)
+#     at invokeGuardedCallback (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:4056:31)
+#     at flushPassiveEffectsImpl (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:23574:9)
+#     at unstable_runWithPriority (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/node_modules/scheduler/cjs/scheduler.development.js:468:12) Error: ServiceScope consumed before finish
+#     at Object.consume (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-test-harness.cjs:67:30)
+#     at getThemeProvider (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/packages/spfx-react-toolkit/src/utils/theme-subscription.internal.ts:27:29)
+#     at /private/tmp/spfx-runtime-review-baseline.1Rkb3c/packages/spfx-react-toolkit/src/utils/theme-subscription.internal.ts:51:31
+#     at invokePassiveEffectCreate (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:23487:20)
+#     at HTMLUnknownElement.callCallback (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:3945:14)
+#     at innerInvokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:316:27)
+#     at invokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:267:3)
+#     at HTMLUnknownElementImpl._dispatch (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:214:9)
+#     at HTMLUnknownElementImpl.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:87:17)
+#     at HTMLUnknownElement.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:144:23)
+# The above error occurred in the <SPFxProviderBase> component:
+#     at SPFxProviderBase (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/packages/spfx-react-toolkit/src/core/provider-base.internal.tsx:32:13)
+# Consider adding an error boundary to your tree to customize error handling behavior.
+# Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+# Error: Uncaught [Error: ServiceScope consumed before finish]
+#     at reportException (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:62:24)
+#     at innerInvokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:332:9)
+#     at invokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:267:3)
+#     at HTMLUnknownElementImpl._dispatch (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:214:9)
+#     at HTMLUnknownElementImpl.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:87:17)
+#     at HTMLUnknownElement.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:144:23)
+#     at Object.invokeGuardedCallbackDev (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:3994:16)
+#     at invokeGuardedCallback (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:4056:31)
+#     at flushPassiveEffectsImpl (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:23574:9)
+#     at unstable_runWithPriority (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/node_modules/scheduler/cjs/scheduler.development.js:468:12) Error: ServiceScope consumed before finish
+#     at Object.consume (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-test-harness.cjs:67:30)
+#     at getThemeProvider (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/packages/spfx-react-toolkit/src/utils/theme-subscription.internal.ts:27:29)
+#     at /private/tmp/spfx-runtime-review-baseline.1Rkb3c/packages/spfx-react-toolkit/src/utils/theme-subscription.internal.ts:51:31
+#     at invokePassiveEffectCreate (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:23487:20)
+#     at HTMLUnknownElement.callCallback (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:3945:14)
+#     at innerInvokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:316:27)
+#     at invokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:267:3)
+#     at HTMLUnknownElementImpl._dispatch (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:214:9)
+#     at HTMLUnknownElementImpl.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:87:17)
+#     at HTMLUnknownElement.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:144:23)
+# The above error occurred in the <SPFxProviderBase> component:
+#     at SPFxProviderBase (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/packages/spfx-react-toolkit/src/core/provider-base.internal.tsx:32:13)
+# Consider adding an error boundary to your tree to customize error handling behavior.
+# Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+# Error: Uncaught [AssertionError: storage must settle without repeated effect updates]
+#     at reportException (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:62:24)
+#     at innerInvokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:332:9)
+#     at invokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:267:3)
+#     at HTMLUnknownElementImpl._dispatch (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:214:9)
+#     at HTMLUnknownElementImpl.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:87:17)
+#     at HTMLUnknownElement.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:144:23)
+#     at Object.invokeGuardedCallbackDev (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:3994:16)
+#     at invokeGuardedCallback (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:4056:31)
+#     at beginWork$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:23964:7)
+#     at performUnitOfWork (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22779:12) AssertionError [ERR_ASSERTION]: storage must settle without repeated effect updates
+#     at Child (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:119:12)
+#     at renderWithHooks (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:14985:18)
+#     at updateFunctionComponent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:17356:20)
+#     at beginWork (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:19063:16)
+#     at HTMLUnknownElement.callCallback (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:3945:14)
+#     at innerInvokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:316:27)
+#     at invokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:267:3)
+#     at HTMLUnknownElementImpl._dispatch (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:214:9)
+#     at HTMLUnknownElementImpl.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:87:17)
+#     at HTMLUnknownElement.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:144:23) {
+#   generatedMessage: false,
+#   code: 'ERR_ASSERTION',
+#   actual: false,
+#   expected: true,
+#   operator: '==',
+#   diff: 'simple'
+# }
+# The above error occurred in the <Child> component:
+#     at Child (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:119:12)
+#     at SPFxProviderBase (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/packages/spfx-react-toolkit/src/core/provider-base.internal.tsx:32:13)
+# Consider adding an error boundary to your tree to customize error handling behavior.
+# Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+# Error: Uncaught [AssertionError: storage must settle without repeated effect updates]
+#     at reportException (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:62:24)
+#     at innerInvokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:332:9)
+#     at invokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:267:3)
+#     at HTMLUnknownElementImpl._dispatch (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:214:9)
+#     at HTMLUnknownElementImpl.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:87:17)
+#     at HTMLUnknownElement.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:144:23)
+#     at Object.invokeGuardedCallbackDev (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:3994:16)
+#     at invokeGuardedCallback (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:4056:31)
+#     at beginWork$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:23964:7)
+#     at performUnitOfWork (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22779:12) AssertionError [ERR_ASSERTION]: storage must settle without repeated effect updates
+#     at Child (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:119:12)
+#     at renderWithHooks (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:14985:18)
+#     at updateFunctionComponent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:17356:20)
+#     at beginWork (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:19063:16)
+#     at HTMLUnknownElement.callCallback (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:3945:14)
+#     at innerInvokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:316:27)
+#     at invokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:267:3)
+#     at HTMLUnknownElementImpl._dispatch (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:214:9)
+#     at HTMLUnknownElementImpl.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:87:17)
+#     at HTMLUnknownElement.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:144:23) {
+#   generatedMessage: false,
+#   code: 'ERR_ASSERTION',
+#   actual: false,
+#   expected: true,
+#   operator: '==',
+#   diff: 'simple'
+# }
+# The above error occurred in the <Child> component:
+#     at Child (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:119:12)
+#     at SPFxProviderBase (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/packages/spfx-react-toolkit/src/core/provider-base.internal.tsx:32:13)
+# Consider adding an error boundary to your tree to customize error handling behavior.
+# Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+# Subtest: provider observes displayMode changes on the same host instance
+not ok 32 - provider observes displayMode changes on the same host instance
+  ---
+  duration_ms: 104.25625
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:21:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:28:12
+    run (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:7:9)
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:21:79)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+  ...
+# Subtest: Property Pane in-place mutation after hook setter reaches consumers
+not ok 33 - Property Pane in-place mutation after hook setter reaches consumers
+  ---
+  duration_ms: 40.5635
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:33:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    'hook' !== 'pane'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'pane'
+  actual: 'hook'
+  operator: 'strictEqual'
+  stack: |-
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:44:10
+    run (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:7:9)
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:33:83)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: provider observes in-place property deletion before and after hook updates
+not ok 34 - provider observes in-place property deletion before and after hook updates
+  ---
+  duration_ms: 33.782042
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:53:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:63:10
+    run (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:7:9)
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:53:90)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: two providers keep properties and subscriptions isolated through cleanup
+ok 35 - two providers keep properties and subscriptions isolated through cleanup
+  ---
+  duration_ms: 26.789
+  type: 'test'
+  ...
+# Subtest: replacing a ready scope hides children until the new scope finishes
+not ok 36 - replacing a ready scope hides children until the new scope finishes
+  ---
+  duration_ms: 25.653709
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:86:1'
+  failureType: 'testCodeFailure'
+  error: 'ServiceScope consumed before finish'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.consume (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-test-harness.cjs:67:30)
+    getThemeProvider (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/packages/spfx-react-toolkit/src/utils/theme-subscription.internal.ts:27:29)
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/packages/spfx-react-toolkit/src/utils/theme-subscription.internal.ts:51:31
+    invokePassiveEffectCreate (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:23487:20)
+    HTMLUnknownElement.callCallback (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:3945:14)
+    innerInvokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:316:27)
+    invokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:267:3)
+    HTMLUnknownElementImpl._dispatch (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:214:9)
+    HTMLUnknownElementImpl.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:87:17)
+    HTMLUnknownElement.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:144:23)
+  ...
+# Subtest: old scope completion cannot release a newer pending scope
+not ok 37 - old scope completion cannot release a newer pending scope
+  ---
+  duration_ms: 29.741584
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:101:1'
+  failureType: 'testCodeFailure'
+  error: 'ServiceScope consumed before finish'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    Object.consume (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-test-harness.cjs:67:30)
+    getThemeProvider (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/packages/spfx-react-toolkit/src/utils/theme-subscription.internal.ts:27:29)
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/packages/spfx-react-toolkit/src/utils/theme-subscription.internal.ts:51:31
+    invokePassiveEffectCreate (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:23487:20)
+    HTMLUnknownElement.callCallback (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:3945:14)
+    innerInvokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:316:27)
+    invokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:267:3)
+    HTMLUnknownElementImpl._dispatch (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:214:9)
+    HTMLUnknownElementImpl.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:87:17)
+    HTMLUnknownElement.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:144:23)
+  ...
+# Subtest: inline object storage default settles (missing)
+not ok 38 - inline object storage default settles (missing)
+  ---
+  duration_ms: 37.160959
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:114:40'
+  failureType: 'testCodeFailure'
+  error: 'storage must settle without repeated effect updates'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    Child (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:119:12)
+    renderWithHooks (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:14985:18)
+    updateFunctionComponent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:17356:20)
+    beginWork (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:19063:16)
+    HTMLUnknownElement.callCallback (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:3945:14)
+    innerInvokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:316:27)
+    invokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:267:3)
+    HTMLUnknownElementImpl._dispatch (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:214:9)
+    HTMLUnknownElementImpl.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:87:17)
+    HTMLUnknownElement.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:144:23)
+  ...
+# Subtest: inline object storage default settles (persisted)
+not ok 39 - inline object storage default settles (persisted)
+  ---
+  duration_ms: 31.083833
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:114:40'
+  failureType: 'testCodeFailure'
+  error: 'storage must settle without repeated effect updates'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    Child (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:119:12)
+    renderWithHooks (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:14985:18)
+    updateFunctionComponent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:17356:20)
+    beginWork (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:19063:16)
+    HTMLUnknownElement.callCallback (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:3945:14)
+    innerInvokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:316:27)
+    invokeEventListeners (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:267:3)
+    HTMLUnknownElementImpl._dispatch (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:214:9)
+    HTMLUnknownElementImpl.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:87:17)
+    HTMLUnknownElement.dispatchEvent (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:144:23)
+  ...
+# Subtest: default changes preserve current value and remove uses latest default
+not ok 40 - default changes preserve current value and remove uses latest default
+  ---
+  duration_ms: 33.539708
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:131:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    a new fallback alone does not reset a missing key
+    + actual - expected
+    
+      {
+    +   count: 8
+    -   count: 1
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    count: 1
+  actual:
+    count: 8
+  operator: 'deepStrictEqual'
+  stack: |-
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:137:10
+    run (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:7:9)
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:131:85)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: key and storage kind switches use persisted values or the current fallback
+ok 41 - key and storage kind switches use persisted values or the current fallback
+  ---
+  duration_ms: 29.677792
+  type: 'test'
+  ...
+# Subtest: storage events affect only the matching provider and listeners detach on unmount
+ok 42 - storage events affect only the matching provider and listeners detach on unmount
+  ---
+  duration_ms: 25.808458
+  type: 'test'
+  ...
+# Subtest: in-place scope replacement hides children immediately and ignores completion after unmount
+not ok 43 - in-place scope replacement hides children immediately and ignores completion after unmount
+  ---
+  duration_ms: 21.07925
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:204:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    'initial' !== ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ''
+  actual: 'initial'
+  operator: 'strictEqual'
+  stack: |-
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:212:10
+    run (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:7:9)
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:204:106)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: replacing host property bags and provider instances preserves host-origin state
+ok 44 - replacing host property bags and provider instances preserves host-origin state
+  ---
+  duration_ms: 26.744334
+  type: 'test'
+  ...
+# Subtest: external storage deletion uses latest fallback and ignores a different key or storage area
+not ok 45 - external storage deletion uses latest fallback and ignores a different key or storage area
+  ---
+  duration_ms: 24.076042
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:240:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Values have same structure but are not reference-equal:
+    
+    {
+      count: 9
+    }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    count: 9
+  actual:
+    count: 9
+  operator: 'strictEqual'
+  stack: |-
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:248:10
+    run (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:7:9)
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/provider-storage.test.cjs:240:106)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# (node:32705) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: PnP cache expires after custom timeout in session storage
+not ok 46 - PnP cache expires after custom timeout in session storage
+  ---
+  duration_ms: 247.93325
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:7:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+    +   Title: 'response-1'
+    -   Title: 'response-2'
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    Title: 'response-2'
+  actual:
+    Title: 'response-1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:18:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: PnP cache expires after custom timeout in local storage
+not ok 47 - PnP cache expires after custom timeout in local storage
+  ---
+  duration_ms: 130.495333
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:7:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+    +   Title: 'response-1'
+    -   Title: 'response-2'
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    Title: 'response-2'
+  actual:
+    Title: 'response-1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:18:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: PnP cache retains legacy five minute fallback for timeout undefined
+ok 48 - PnP cache retains legacy five minute fallback for timeout undefined
+  ---
+  duration_ms: 106.7025
+  type: 'test'
+  ...
+# Subtest: PnP cache retains legacy five minute fallback for timeout 0
+ok 49 - PnP cache retains legacy five minute fallback for timeout 0
+  ---
+  duration_ms: 92.304167
+  type: 'test'
+  ...
+# Subtest: PnP hook changes cache key factory and retains equal inline configuration
+not ok 50 - PnP hook changes cache key factory and retains equal inline configuration
+  ---
+  duration_ms: 96.739875
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:38:1'
+  failureType: 'testCodeFailure'
+  error: 'different function identity must rebuild SPFI'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: cross-site permissions retain current site when old requests finish last
+not ok 51 - cross-site permissions retain current site when old requests finish last
+  ---
+  duration_ms: 14.513291
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:71:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:76:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: clearing cross-site URL invalidates pending permissions and stays idle
+not ok 52 - clearing cross-site URL invalidates pending permissions and stays idle
+  ---
+  duration_ms: 6.038209
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:82:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + Permission {
+    +   mask: {
+    +     High: 0,
+    +     Low: 1
+    +   }
+    + }
+    - undefined
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  actual:
+    mask:
+      High: 0
+      Low: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:86:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: cross-site permissions clear previous grants while target is loading
+not ok 53 - cross-site permissions clear previous grants while target is loading
+  ---
+  duration_ms: 5.78475
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:90:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + Permission {
+    +   mask: {
+    +     High: 0,
+    +     Low: 1
+    +   }
+    + }
+    - undefined
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  actual:
+    mask:
+      High: 0
+      Low: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:94:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: user photo retains current user blob when old user finishes last
+not ok 54 - user photo retains current user blob when old user finishes last
+  ---
+  duration_ms: 11.718625
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:109:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Values have same structure but are not reference-equal:
+    
+    Blob {
+      [Symbol(kHandle)]: Blob {},
+      [Symbol(kLength)]: 1,
+      [Symbol(kType)]: ''
+    }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:116:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: user photo overlapping reload keeps latest blob when the first completes last
+not ok 55 - user photo overlapping reload keeps latest blob when the first completes last
+  ---
+  duration_ms: 10.201041
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:121:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected "actual" to be reference-equal to "expected":
+    + actual - expected
+    
+      Blob {
+        [Symbol(kHandle)]: Blob {},
+    +   [Symbol(kLength)]: 3,
+    -   [Symbol(kLength)]: 6,
+        [Symbol(kType)]: ''
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:129:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: user photo clears previous user while a different user photo is pending
+not ok 56 - user photo clears previous user while a different user photo is pending
+  ---
+  duration_ms: 8.673583
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:131:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + Blob {
+    +   [Symbol(kHandle)]: Blob {},
+    +   [Symbol(kLength)]: 1,
+    +   [Symbol(kType)]: ''
+    + }
+    - undefined
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  actual:
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:135:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: same-name overlapping time reports each operation duration independently
+not ok 57 - same-name overlapping time reports each operation duration independently
+  ---
+  duration_ms: 5.012583
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:139:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    50 !== 150
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 150
+  actual: 50
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:156:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: PnP context resolves site, injects headers and rebuilds changed scalar config
+ok 58 - PnP context resolves site, injects headers and rebuilds changed scalar config
+  ---
+  duration_ms: 115.8225
+  type: 'test'
+  ...
+# Subtest: PnP hook exposes initialization failure and recovers when context becomes available
+ok 59 - PnP hook exposes initialization failure and recovers when context becomes available
+  ---
+  duration_ms: 85.075875
+  type: 'test'
+  ...
+# Subtest: cross-site old rejection cannot replace new success and unmount ignores deferred updates
+not ok 60 - cross-site old rejection cannot replace new success and unmount ignores deferred updates
+  ---
+  duration_ms: 5.564917
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:191:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + Error: old denied
+    +     at /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:195:50
+    +     at batchedUpdates$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+    +     at Object.act (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+    +     at TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:195:11)
+    +     at async Test.run (node:internal/test_runner/test:1054:7)
+    +     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+    - undefined
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  actual:
+  error: 'old denied'
+  stack: |-
+    /private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:195:50
+    batchedUpdates$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+    Object.act (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:195:11)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:196:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: current cross-site network rejection surfaces error and clears loading
+ok 61 - current cross-site network rejection surfaces error and clears loading
+  ---
+  duration_ms: 5.04625
+  type: 'test'
+  ...
+# Subtest: photo older success cannot finish newer loading and stale error cannot replace newer success
+not ok 62 - photo older success cannot finish newer loading and stale error cannot replace newer success
+  ---
+  duration_ms: 8.213834
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:207:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:211:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: photo current 403 maps error and unmount releases its blob URL without creating a stale one
+ok 63 - photo current 403 maps error and unmount releases its blob URL without creating a stale one
+  ---
+  duration_ms: 8.259334
+  type: 'test'
+  ...
+# Subtest: Teams supports wrapper-v2 SDK shape and normalizes theme
+not ok 64 - Teams supports wrapper-v2 SDK shape and normalizes theme
+  ---
+  duration_ms: 13.911041
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:245:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:250:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: Teams supports direct-v2 SDK shape and normalizes theme
+ok 65 - Teams supports direct-v2 SDK shape and normalizes theme
+  ---
+  duration_ms: 10.393959
+  type: 'test'
+  ...
+# Subtest: Teams supports direct-v1 SDK shape and normalizes theme
+ok 66 - Teams supports direct-v1 SDK shape and normalizes theme
+  ---
+  duration_ms: 9.518625
+  type: 'test'
+  ...
+# Subtest: Teams initialized context replacement acquires new SDK context
+not ok 67 - Teams initialized context replacement acquires new SDK context
+  ---
+  duration_ms: 10.211041
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:254:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected "actual" to be reference-equal to "expected":
+    + actual - expected
+    
+      {
+        app: {
+    +     theme: 'dark'
+    -     theme: 'default'
+        }
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    app:
+      theme: 'default'
+  actual:
+    app:
+      theme: 'dark'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:258:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: Teams ignores a superseded deferred context and completion after unmount
+ok 68 - Teams ignores a superseded deferred context and completion after unmount
+  ---
+  duration_ms: 9.079084
+  type: 'test'
+  ...
+# Subtest: API precheck invalidates available results and checks replacement provider
+not ok 69 - API precheck invalidates available results and checks replacement provider
+  ---
+  duration_ms: 30.466833
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:280:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:285:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: API precheck replacement invalidates old in-flight check and retains new result
+not ok 70 - API precheck replacement invalidates old in-flight check and retains new result
+  ---
+  duration_ms: 27.586
+  type: 'test'
+  location: '/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:289:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'available'
+    - 'missingScope'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'missingScope'
+  actual: 'available'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-runtime-review-baseline.1Rkb3c/tests/services.test.cjs:293:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: API precheck passive events, retry cache options and unmount preserve contracts
+ok 71 - API precheck passive events, retry cache options and unmount preserve contracts
+  ---
+  duration_ms: 24.194709
+  type: 'test'
+  ...
+# Subtest: API precheck groups token acquisition and maps timeout without losing scope results
+ok 72 - API precheck groups token acquisition and maps timeout without losing scope results
+  ---
+  duration_ms: 11.741916
+  type: 'test'
+  ...
+1..72
+# tests 72
+# suites 0
+# pass 24
+# fail 48
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1408.248584

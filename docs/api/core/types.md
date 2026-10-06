@@ -4,7 +4,7 @@
 
 ## Overview
 
-The core module exports essential type definitions used throughout the library. These types provide full TypeScript support with strict typing and no `any` usage.
+The core module exports essential type definitions used throughout the library. These types provide full TypeScript support with public TypeScript declarations.
 
 ---
 
@@ -31,7 +31,7 @@ type HostKind =
 | `'AppCustomizer'` | Application customizer extension |
 | `'FieldCustomizer'` | Field customizer extension |
 | `'CommandSet'` | ListView command set extension |
-| `'ACE'` | Adaptive Card Extension (Viva Connections) |
+| `'ACE'` | Reserved host discriminator; no ACE provider is exported |
 
 ### Example
 
@@ -54,7 +54,7 @@ function MyComponent() {
 
 ### Source
 
-[View source](../../src/core/types.ts#L11)
+[View source](../../../packages/spfx-react-toolkit/src/core/types.ts)
 
 ---
 
@@ -88,7 +88,7 @@ function getInstanceId<T extends {}>(component: SPFxComponent<T>): string {
 
 ### Source
 
-[View source](../../src/core/types.ts#L22)
+[View source](../../../packages/spfx-react-toolkit/src/core/types.ts)
 
 ---
 
@@ -136,7 +136,7 @@ function MyComponent() {
 
 ### Source
 
-[View source](../../src/core/types.ts#L48)
+[View source](../../../packages/spfx-react-toolkit/src/core/types.ts)
 
 ---
 
@@ -178,7 +178,7 @@ function MyComponent() {
 
 ### Source
 
-[View source](../../src/core/types.ts#L61)
+[View source](../../../packages/spfx-react-toolkit/src/core/types.ts)
 
 ---
 
@@ -231,7 +231,7 @@ const element = React.createElement(
 
 ### Source
 
-[View source](../../src/core/types.ts#L84)
+[View source](../../../packages/spfx-react-toolkit/src/core/types.ts)
 
 ---
 
@@ -288,7 +288,7 @@ function MyComponent() {
 
 ### Source
 
-[View source](../../src/core/types.ts#L101)
+[View source](../../../packages/spfx-react-toolkit/src/core/types.ts)
 
 ---
 

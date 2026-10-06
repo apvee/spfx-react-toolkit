@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "rootDir": "src",
+    "outDir": "lib",
+    "inlineSources": false,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noImplicitAny": true,
+    "types": [
+      "webpack-env"
+    ],
+    "typeRoots": [
+      "../../node_modules/@types",
+      "../../node_modules/@microsoft"
+    ],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "experimentalDecorators": false
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "lib"
+  ],
+  "extends": "@microsoft/rush-stack-compiler-5.3/includes/tsconfig-web.json"
+}

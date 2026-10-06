@@ -8,7 +8,7 @@
     "**/coverage": true,
     "**/jest-output": true,
     "**/lib-amd": true,
-    "src/**/*.scss.ts": true
+    "**/src/**/*.scss.ts": true
   },
-  "typescript.tsdk": ".\\node_modules\\typescript\\lib"
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

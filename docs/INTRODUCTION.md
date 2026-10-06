@@ -4,15 +4,15 @@
 
 ## Overview
 
-**SPFx React Toolkit** is a production-ready library that simplifies SharePoint Framework development by providing a unified React context provider and a comprehensive collection of strongly-typed hooks. Built on a provider-scoped runtime store, it delivers per-instance state isolation, automatic synchronization, and an ergonomic React Hooks API.
+**SPFx React Toolkit** is a library that simplifies SharePoint Framework development by providing a unified React context provider and a comprehensive collection of strongly-typed hooks. Built on a provider-scoped runtime store, it delivers per-instance state isolation, automatic synchronization, and an ergonomic React Hooks API.
 
 ### Key Benefits
 
-- **💪 Type-Safe**: Full TypeScript support with zero `any` usage
+- **💪 Type-Safe**: Public TypeScript declarations for hooks, helpers and services
 - **⚡ Optimized**: Provider-scoped runtime state with per-instance isolation
 - **🔄 Auto-Sync**: Bidirectional synchronization between React and SPFx
-- **🎨 Universal**: Works with all SPFx component types
-- **📦 Modular**: Tree-shakeable, minimal bundle impact
+- **🎨 Host providers**: Four exported providers for their matching SPFx component types
+- **📦 Modular**: ESNext library modules compiled independently from the sample app
 
 ## Installation
 
@@ -22,11 +22,9 @@ npm install @apvee/spfx-react-toolkit
 
 ### Peer Dependencies
 
-All peer dependencies are installed automatically with npm 7+:
+The consuming SPFx project supplies compatible React, ReactDOM and SPFx runtime packages. PnPjs hooks/services use `@pnp/core`, `@pnp/queryable` and `@pnp/sp` v4 peers. Check the host's dependency versions rather than relying on npm to choose a newer SPFx toolchain.
 
-| Dependency | Size | Purpose |
-|------------|------|---------|
-| **PnPjs** | 30-50KB | SharePoint API (tree-shakeable) |
+The repository is an npm workspace monorepo: [library source](../packages/spfx-react-toolkit/src/index.ts) builds with TypeScript to ESNext `lib`; the private [SPFx sample](../apps/spfx-react-toolkit-test/package.json) bundles with SPFx 1.21.1 Gulp. See [Development](./DEVELOPMENT.md) and [SharePoint validation](./SHAREPOINT-VALIDATION.md). Library changes require a library rebuild and a serve restart.
 
 ## Quick Start
 
@@ -36,6 +34,8 @@ Choose the appropriate provider for your SPFx component type:
 
 ```tsx
 import { SPFxWebPartProvider } from '@apvee/spfx-react-toolkit';
+import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+import * as React from 'react';
 import * as ReactDom from 'react-dom';
 
 export default class MyWebPart extends BaseClientSideWebPart<IMyWebPartProps> {
@@ -204,12 +204,15 @@ API permission precheck helpers, services, and hooks evaluate delegated token sc
 
 ## Requirements
 
-| Requirement | Version |
-|-------------|---------|
-| Node.js | 22.x |
-| SPFx | 1.18.0+ |
-| React | 17.x |
-| TypeScript | 5.3+ |
+| Requirement | Repository verification baseline |
+|-------------|----------------------------------|
+| Node.js | `>=22.14.0 <23.0.0` |
+| SPFx build/runtime packages | `1.21.1` |
+| React / ReactDOM | `17.0.1` (package peers: `17.x`) |
+| TypeScript | `5.3.3` |
+| PnPjs | `4.17.0` (package peers: `^4.0.0`) |
+
+The package declares SPFx peers `>=1.18.0 <2.0.0`; that range is a compatibility declaration, not evidence of testing every version. Repository checks use SPFx 1.21.1. Authenticated tenant validation is a separate step.
 
 ## License
 

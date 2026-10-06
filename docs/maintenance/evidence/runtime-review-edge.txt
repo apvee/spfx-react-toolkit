@@ -1,0 +1,68 @@
+TAP version 13
+# query calls [ 'A', 'B', 'A' ] items [ 'A' ]
+# Subtest: completed old CRUD must not refetch superseded query
+not ok 1 - completed old CRUD must not refetch superseded query
+  ---
+  duration_ms: 195.991125
+  type: 'test'
+  location: '/private/tmp/spfx-independent-edge.cjs:5:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   'A'
+    -   'B'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'B'
+  actual:
+    0: 'A'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-independent-edge.cjs:17:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# pagination offsets after failed refetch [ 0 ]
+# Subtest: failed refetch must preserve current successful pagination offset
+not ok 2 - failed refetch must preserve current successful pagination offset
+  ---
+  duration_ms: 25.360166
+  type: 'test'
+  location: '/private/tmp/spfx-independent-edge.cjs:19:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   0
+    -   2
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 2
+  actual:
+    0: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/tmp/spfx-independent-edge.cjs:28:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 477.894375

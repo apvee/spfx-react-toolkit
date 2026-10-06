@@ -1,0 +1,185 @@
+
+> spfx-react-toolkit-monorepo@2.1.0 verify:public-docs
+> node scripts/verify-public-docs.cjs
+
+public docs verification passed
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Broken public documentation links:
+docs/api/core/providers.md: ../../src/core/provider-webpart.tsx
+docs/api/core/providers.md: ../../src/core/provider-application-customizer.tsx
+docs/api/core/providers.md: ../../src/core/provider-field-customizer.tsx
+docs/api/core/providers.md: ../../src/core/provider-listview-commandset.tsx
+docs/api/core/types.md: ../../src/core/types.ts#L11
+docs/api/core/types.md: ../../src/core/types.ts#L22
+docs/api/core/types.md: ../../src/core/types.ts#L48
+docs/api/core/types.md: ../../src/core/types.ts#L61
+docs/api/core/types.md: ../../src/core/types.ts#L84
+docs/api/core/types.md: ../../src/core/types.ts#L101
+docs/api/hooks/context.md: ../../src/hooks/useSPFxContext.ts
+docs/api/hooks/context.md: ../../src/hooks/useSPFxPageContext.ts
+docs/api/hooks/context.md: ../../src/hooks/useSPFxServiceScope.ts
+docs/api/hooks/context.md: ../../src/hooks/useSPFxInstanceInfo.ts
+docs/api/hooks/environment.md: ../../src/hooks/useSPFxEnvironmentInfo.ts
+docs/api/hooks/environment.md: ../../src/hooks/useSPFxTeams.ts
+docs/api/hooks/environment.md: ../../src/hooks/useSPFxLocaleInfo.ts
+docs/api/hooks/environment.md: ../../src/hooks/useSPFxPageType.ts
+docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxHttpClient.ts
+docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxSPHttpClient.ts
+docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxAadHttpClient.ts
+docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxAadTokenProvider.ts
+docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxApiPermissionPrecheck.ts
+docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxMSGraphClient.ts
+docs/api/hooks/performance.md: ../../src/hooks/useSPFxPerformance.ts
+docs/api/hooks/performance.md: ../../src/hooks/useSPFxLogger.ts
+docs/api/hooks/performance.md: ../../src/hooks/useSPFxCorrelationInfo.ts
+docs/api/hooks/permissions.md: ../../src/hooks/useSPFxPermissions.ts
+docs/api/hooks/permissions.md: ../../src/hooks/useSPFxCrossSitePermissions.ts
+docs/api/hooks/pnpjs.md: ../../src/hooks/useSPFxPnP.ts
+docs/api/hooks/pnpjs.md: ../../src/hooks/useSPFxPnPContext.ts
+docs/api/hooks/pnpjs.md: ../../src/hooks/useSPFxPnPList.ts
+docs/api/hooks/pnpjs.md: ../../src/hooks/useSPFxPnPSearch.ts
+docs/api/hooks/properties.md: ../../src/hooks/useSPFxProperties.ts
+docs/api/hooks/properties.md: ../../src/hooks/useSPFxDisplayMode.ts
+docs/api/hooks/properties.md: ../../src/hooks/useSPFxDisplayMode.ts#L89
+docs/api/hooks/storage.md: ../../src/hooks/useSPFxLocalStorage.ts
+docs/api/hooks/storage.md: ../../src/hooks/useSPFxSessionStorage.ts
+docs/api/hooks/storage.md: ../../../src/hooks/useSPFxOneDriveAppData.ts
+docs/api/hooks/storage.md: ../../../src/hooks/useSPFxTenantProperty.ts
+docs/api/hooks/storage.md: ../../../src/hooks/useSPFxTenantKeyValueStore.ts
+docs/api/hooks/theming.md: ../../src/hooks/useSPFxThemeInfo.ts
+docs/api/hooks/theming.md: ../../src/hooks/useSPFxFluent9ThemeInfo.ts
+docs/api/hooks/theming.md: ../../src/hooks/useSPFxContainerSize.ts
+docs/api/hooks/theming.md: ../../src/hooks/useSPFxContainerInfo.ts
+docs/api/hooks/user-site.md: ../../src/hooks/useSPFxUserInfo.ts
+docs/api/hooks/user-site.md: ../../src/hooks/useSPFxUserPhoto.ts
+docs/api/hooks/user-site.md: ../../src/hooks/useSPFxSiteInfo.ts
+docs/api/hooks/user-site.md: ../../src/hooks/useSPFxHubSiteInfo.ts
+docs/api/hooks/user-site.md: ../../src/hooks/useSPFxListInfo.ts
++ actual - expected
+
++ [
++   'docs/api/core/providers.md: ../../src/core/provider-webpart.tsx',
++   'docs/api/core/providers.md: ../../src/core/provider-application-customizer.tsx',
++   'docs/api/core/providers.md: ../../src/core/provider-field-customizer.tsx',
++   'docs/api/core/providers.md: ../../src/core/provider-listview-commandset.tsx',
++   'docs/api/core/types.md: ../../src/core/types.ts#L11',
++   'docs/api/core/types.md: ../../src/core/types.ts#L22',
++   'docs/api/core/types.md: ../../src/core/types.ts#L48',
++   'docs/api/core/types.md: ../../src/core/types.ts#L61',
++   'docs/api/core/types.md: ../../src/core/types.ts#L84',
++   'docs/api/core/types.md: ../../src/core/types.ts#L101',
++   'docs/api/hooks/context.md: ../../src/hooks/useSPFxContext.ts',
++   'docs/api/hooks/context.md: ../../src/hooks/useSPFxPageContext.ts',
++   'docs/api/hooks/context.md: ../../src/hooks/useSPFxServiceScope.ts',
++   'docs/api/hooks/context.md: ../../src/hooks/useSPFxInstanceInfo.ts',
++   'docs/api/hooks/environment.md: ../../src/hooks/useSPFxEnvironmentInfo.ts',
++   'docs/api/hooks/environment.md: ../../src/hooks/useSPFxTeams.ts',
++   'docs/api/hooks/environment.md: ../../src/hooks/useSPFxLocaleInfo.ts',
++   'docs/api/hooks/environment.md: ../../src/hooks/useSPFxPageType.ts',
++   'docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxHttpClient.ts',
++   'docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxSPHttpClient.ts',
++   'docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxAadHttpClient.ts',
++   'docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxAadTokenProvider.ts',
++   'docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxApiPermissionPrecheck.ts',
++   'docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxMSGraphClient.ts',
++   'docs/api/hooks/performance.md: ../../src/hooks/useSPFxPerformance.ts',
++   'docs/api/hooks/performance.md: ../../src/hooks/useSPFxLogger.ts',
++   'docs/api/hooks/performance.md: ../../src/hooks/useSPFxCorrelationInfo.ts',
++   'docs/api/hooks/permissions.md: ../../src/hooks/useSPFxPermissions.ts',
++   'docs/api/hooks/permissions.md: ../../src/hooks/useSPFxCrossSitePermissions.ts',
++   'docs/api/hooks/pnpjs.md: ../../src/hooks/useSPFxPnP.ts',
++   'docs/api/hooks/pnpjs.md: ../../src/hooks/useSPFxPnPContext.ts',
++   'docs/api/hooks/pnpjs.md: ../../src/hooks/useSPFxPnPList.ts',
++   'docs/api/hooks/pnpjs.md: ../../src/hooks/useSPFxPnPSearch.ts',
++   'docs/api/hooks/properties.md: ../../src/hooks/useSPFxProperties.ts',
++   'docs/api/hooks/properties.md: ../../src/hooks/useSPFxDisplayMode.ts',
++   'docs/api/hooks/properties.md: ../../src/hooks/useSPFxDisplayMode.ts#L89',
++   'docs/api/hooks/storage.md: ../../src/hooks/useSPFxLocalStorage.ts',
++   'docs/api/hooks/storage.md: ../../src/hooks/useSPFxSessionStorage.ts',
++   'docs/api/hooks/storage.md: ../../../src/hooks/useSPFxOneDriveAppData.ts',
++   'docs/api/hooks/storage.md: ../../../src/hooks/useSPFxTenantProperty.ts',
++   'docs/api/hooks/storage.md: ../../../src/hooks/useSPFxTenantKeyValueStore.ts',
++   'docs/api/hooks/theming.md: ../../src/hooks/useSPFxThemeInfo.ts',
++   'docs/api/hooks/theming.md: ../../src/hooks/useSPFxFluent9ThemeInfo.ts',
++   'docs/api/hooks/theming.md: ../../src/hooks/useSPFxContainerSize.ts',
++   'docs/api/hooks/theming.md: ../../src/hooks/useSPFxContainerInfo.ts',
++   'docs/api/hooks/user-site.md: ../../src/hooks/useSPFxUserInfo.ts',
++   'docs/api/hooks/user-site.md: ../../src/hooks/useSPFxUserPhoto.ts',
++   'docs/api/hooks/user-site.md: ../../src/hooks/useSPFxSiteInfo.ts',
++   'docs/api/hooks/user-site.md: ../../src/hooks/useSPFxHubSiteInfo.ts',
++   'docs/api/hooks/user-site.md: ../../src/hooks/useSPFxListInfo.ts'
++ ]
+- []
+
+    at Object.<anonymous> (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/scripts/verify-public-docs.cjs:131:8)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [
+    'docs/api/core/providers.md: ../../src/core/provider-webpart.tsx',
+    'docs/api/core/providers.md: ../../src/core/provider-application-customizer.tsx',
+    'docs/api/core/providers.md: ../../src/core/provider-field-customizer.tsx',
+    'docs/api/core/providers.md: ../../src/core/provider-listview-commandset.tsx',
+    'docs/api/core/types.md: ../../src/core/types.ts#L11',
+    'docs/api/core/types.md: ../../src/core/types.ts#L22',
+    'docs/api/core/types.md: ../../src/core/types.ts#L48',
+    'docs/api/core/types.md: ../../src/core/types.ts#L61',
+    'docs/api/core/types.md: ../../src/core/types.ts#L84',
+    'docs/api/core/types.md: ../../src/core/types.ts#L101',
+    'docs/api/hooks/context.md: ../../src/hooks/useSPFxContext.ts',
+    'docs/api/hooks/context.md: ../../src/hooks/useSPFxPageContext.ts',
+    'docs/api/hooks/context.md: ../../src/hooks/useSPFxServiceScope.ts',
+    'docs/api/hooks/context.md: ../../src/hooks/useSPFxInstanceInfo.ts',
+    'docs/api/hooks/environment.md: ../../src/hooks/useSPFxEnvironmentInfo.ts',
+    'docs/api/hooks/environment.md: ../../src/hooks/useSPFxTeams.ts',
+    'docs/api/hooks/environment.md: ../../src/hooks/useSPFxLocaleInfo.ts',
+    'docs/api/hooks/environment.md: ../../src/hooks/useSPFxPageType.ts',
+    'docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxHttpClient.ts',
+    'docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxSPHttpClient.ts',
+    'docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxAadHttpClient.ts',
+    'docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxAadTokenProvider.ts',
+    'docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxApiPermissionPrecheck.ts',
+    'docs/api/hooks/http-clients.md: ../../../src/hooks/useSPFxMSGraphClient.ts',
+    'docs/api/hooks/performance.md: ../../src/hooks/useSPFxPerformance.ts',
+    'docs/api/hooks/performance.md: ../../src/hooks/useSPFxLogger.ts',
+    'docs/api/hooks/performance.md: ../../src/hooks/useSPFxCorrelationInfo.ts',
+    'docs/api/hooks/permissions.md: ../../src/hooks/useSPFxPermissions.ts',
+    'docs/api/hooks/permissions.md: ../../src/hooks/useSPFxCrossSitePermissions.ts',
+    'docs/api/hooks/pnpjs.md: ../../src/hooks/useSPFxPnP.ts',
+    'docs/api/hooks/pnpjs.md: ../../src/hooks/useSPFxPnPContext.ts',
+    'docs/api/hooks/pnpjs.md: ../../src/hooks/useSPFxPnPList.ts',
+    'docs/api/hooks/pnpjs.md: ../../src/hooks/useSPFxPnPSearch.ts',
+    'docs/api/hooks/properties.md: ../../src/hooks/useSPFxProperties.ts',
+    'docs/api/hooks/properties.md: ../../src/hooks/useSPFxDisplayMode.ts',
+    'docs/api/hooks/properties.md: ../../src/hooks/useSPFxDisplayMode.ts#L89',
+    'docs/api/hooks/storage.md: ../../src/hooks/useSPFxLocalStorage.ts',
+    'docs/api/hooks/storage.md: ../../src/hooks/useSPFxSessionStorage.ts',
+    'docs/api/hooks/storage.md: ../../../src/hooks/useSPFxOneDriveAppData.ts',
+    'docs/api/hooks/storage.md: ../../../src/hooks/useSPFxTenantProperty.ts',
+    'docs/api/hooks/storage.md: ../../../src/hooks/useSPFxTenantKeyValueStore.ts',
+    'docs/api/hooks/theming.md: ../../src/hooks/useSPFxThemeInfo.ts',
+    'docs/api/hooks/theming.md: ../../src/hooks/useSPFxFluent9ThemeInfo.ts',
+    'docs/api/hooks/theming.md: ../../src/hooks/useSPFxContainerSize.ts',
+    'docs/api/hooks/theming.md: ../../src/hooks/useSPFxContainerInfo.ts',
+    'docs/api/hooks/user-site.md: ../../src/hooks/useSPFxUserInfo.ts',
+    'docs/api/hooks/user-site.md: ../../src/hooks/useSPFxUserPhoto.ts',
+    'docs/api/hooks/user-site.md: ../../src/hooks/useSPFxSiteInfo.ts',
+    'docs/api/hooks/user-site.md: ../../src/hooks/useSPFxHubSiteInfo.ts',
+    'docs/api/hooks/user-site.md: ../../src/hooks/useSPFxListInfo.ts'
+  ],
+  expected: [],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.20.0

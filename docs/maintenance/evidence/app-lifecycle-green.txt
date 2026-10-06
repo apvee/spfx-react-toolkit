@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: Application Customizer recreates a disposed placeholder and ignores former disposal callbacks
+ok 1 - Application Customizer recreates a disposed placeholder and ignores former disposal callbacks
+  ---
+  duration_ms: 50.494833
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 307.009917

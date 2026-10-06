@@ -72,7 +72,7 @@ export default class MyWebPart extends BaseClientSideWebPart<IMyWebPartProps> {
 
 ### Source
 
-[View source](../../src/core/provider-webpart.tsx)
+[View source](../../../packages/spfx-react-toolkit/src/core/provider-webpart.tsx)
 
 ---
 
@@ -102,44 +102,74 @@ interface SPFxApplicationCustomizerProviderProps<TProps extends {} = {}> {
 
 ### Example
 
+Placeholders can appear after initialization and be disposed during navigation. Subscribe to `changedEvent`, retry creation when it changes, and bind disposal to the placeholder captured by each callback. A late disposal callback from an old placeholder must not unmount a replacement.
+
 ```tsx
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { BaseApplicationCustomizer, PlaceholderName } from '@microsoft/sp-application-base';
-import { SPFxApplicationCustomizerProvider } from '@apvee/spfx-react-toolkit';
+import { BaseApplicationCustomizer, PlaceholderContent, PlaceholderName } from '@microsoft/sp-application-base';
+import { SPFxApplicationCustomizerProvider, useSPFxProperties } from '@apvee/spfx-react-toolkit';
 
 interface IMyCustomizerProps {
   headerMessage: string;
 }
 
+const HeaderComponent: React.FC = () => {
+  const { properties } = useSPFxProperties<IMyCustomizerProps>();
+  return <header>{properties?.headerMessage ?? 'Welcome'}</header>;
+};
+
 export default class MyApplicationCustomizer extends BaseApplicationCustomizer<IMyCustomizerProps> {
+  private topPlaceholder?: PlaceholderContent;
+
   public onInit(): Promise<void> {
-    // Get header placeholder
-    const placeholder = this.context.placeholderProvider.tryCreateContent(
-      PlaceholderName.Top
-    );
-
-    if (placeholder) {
-      const element = React.createElement(
-        SPFxApplicationCustomizerProvider,
-        { instance: this },
-        React.createElement(HeaderComponent)
-      );
-      ReactDom.render(element, placeholder.domElement);
-    }
-
+    this.context.placeholderProvider.changedEvent.add(this, this.renderTopPlaceholder);
+    this.renderTopPlaceholder();
     return Promise.resolve();
   }
 
-  protected onDispose(): void {
-    // Clean up React components
+  public onDispose(): void {
+    this.context.placeholderProvider.changedEvent.remove(this, this.renderTopPlaceholder);
+    const placeholder = this.topPlaceholder;
+    this.topPlaceholder = undefined;
+    if (placeholder) {
+      ReactDom.unmountComponentAtNode(placeholder.domElement);
+      placeholder.dispose();
+    }
   }
+
+  private renderTopPlaceholder = (): void => {
+    if (!this.topPlaceholder) {
+      const capturedPlaceholder = this.context.placeholderProvider.tryCreateContent(
+        PlaceholderName.Top,
+        {
+          onDispose: () => {
+            if (capturedPlaceholder) {
+              ReactDom.unmountComponentAtNode(capturedPlaceholder.domElement);
+              if (this.topPlaceholder === capturedPlaceholder) {
+                this.topPlaceholder = undefined;
+              }
+            }
+          }
+        }
+      );
+      this.topPlaceholder = capturedPlaceholder;
+    }
+
+    if (!this.topPlaceholder) return;
+    const element = React.createElement(
+      SPFxApplicationCustomizerProvider,
+      { instance: this },
+      React.createElement(HeaderComponent)
+    );
+    ReactDom.render(element, this.topPlaceholder.domElement);
+  };
 }
 ```
 
 ### Source
 
-[View source](../../src/core/provider-application-customizer.tsx)
+[View source](../../../packages/spfx-react-toolkit/src/core/provider-application-customizer.tsx)
 
 ---
 
@@ -204,7 +234,7 @@ export default class MyFieldCustomizer extends BaseFieldCustomizer<IMyFieldProps
 
 ### Source
 
-[View source](../../src/core/provider-field-customizer.tsx)
+[View source](../../../packages/spfx-react-toolkit/src/core/provider-field-customizer.tsx)
 
 ---
 
@@ -275,21 +305,21 @@ export default class MyCommandSet extends BaseListViewCommandSet<IMyCommandSetPr
 
 ### Source
 
-[View source](../../src/core/provider-listview-commandset.tsx)
+[View source](../../../packages/spfx-react-toolkit/src/core/provider-listview-commandset.tsx)
 
 ---
 
 ## Provider Features
 
-All providers share these capabilities:
+All providers use the common runtime. The sample mounts WebPart and Application Customizer providers in their real host entry points; Field Customizer and ListView Command Set exports are checked but require separate real-host validation. See [SharePoint validation](../../SHAREPOINT-VALIDATION.md).
 
 ### Instance Isolation
 
-Each SPFx instance gets its own isolated state store. Multiple instances of the same WebPart on a page do not share state.
+Each SPFx instance gets its own isolated state store. Provider runtime state is scoped to each SPFx instance. Explicitly shared external clients, tenant data and application objects remain shared by their own contracts.
 
 ### Automatic Synchronization
 
-- **Property Pane → React**: Changes in the Property Pane automatically update React state
+- **Property Pane → React**: A host render reconciles top-level values, removals and changed references using a shallow snapshot; nested in-place mutations are not deep-observed
 - **React → SPFx**: Property updates via `useSPFxProperties` sync back to SPFx
 
 ### Theme Subscription
@@ -299,6 +329,10 @@ Theme changes (light/dark mode) are automatically detected and propagated to hoo
 ### Display Mode Tracking
 
 Edit/Read mode changes are tracked and available via `useSPFxDisplayMode`.
+
+### Lifecycle
+
+The host must unmount React when it disposes its rendered surface. The provider removes its theme subscription and runtime listeners on unmount; scope replacement waits for the current ServiceScope and ignores obsolete readiness callbacks. Local lifecycle regression tests cover these paths, but they do not establish a universal memory or tenant-host guarantee.
 
 ### Container Observation
 

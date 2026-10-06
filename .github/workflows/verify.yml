@@ -1,0 +1,22 @@
+name: Verify monorepo
+on:
+  push:
+  pull_request:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.20.0'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - run: npm run verify
+      - run: npm run package:solution
+      - run: npm run verify:package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: spfx-test-solution
+          path: apps/spfx-react-toolkit-test/sharepoint/solution/*.sppkg

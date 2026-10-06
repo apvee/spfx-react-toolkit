@@ -8,8 +8,8 @@ These hooks provide access to browser storage (localStorage, sessionStorage), On
 
 | Hook | Returns | Description |
 |------|---------|-------------|
-| [`useSPFxLocalStorage`](#usespfxlocalstorage) | `[value, setValue]` | Browser localStorage with namespace |
-| [`useSPFxSessionStorage`](#usespfxsessionstorage) | `[value, setValue]` | Browser sessionStorage with namespace |
+| [`useSPFxLocalStorage`](#usespfxlocalstorage) | `SPFxStorageHook<T>` | Browser localStorage with namespace |
+| [`useSPFxSessionStorage`](#usespfxsessionstorage) | `SPFxStorageHook<T>` | Browser sessionStorage with namespace |
 | [`useSPFxOneDriveAppData`](#usespfxonedriveappdata) | `SPFxOneDriveAppDataResult` | OneDrive app-specific storage |
 | [`useSPFxTenantProperty`](#usespfxtenantproperty) | `SPFxTenantPropertyResult` | Tenant properties (read-only) |
 | [`useSPFxTenantKeyValueStore`](#usespfxtenantkeyvaluestore) | `SPFxTenantKeyValueStoreResult` | Tenant-level key-value store |
@@ -26,7 +26,7 @@ Persistent storage that survives browser restarts. Data is namespaced per web pa
 function useSPFxLocalStorage<T>(
   key: string,
   defaultValue: T
-): [T, (value: T | ((prev: T) => T)) => void]
+): SPFxStorageHook<T>
 ```
 
 ### Parameters
@@ -34,13 +34,19 @@ function useSPFxLocalStorage<T>(
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `key` | `string` | Yes | Storage key (automatically namespaced) |
-| `defaultValue` | `T` | Yes | Default value when key doesn't exist |
+| `defaultValue` | `T` | Yes | Fallback when the current key is missing or unreadable |
 
 ### Returns
 
-A tuple containing:
-- `[0]`: Current value of type `T`
-- `[1]`: Setter function (accepts value or updater function)
+An object containing:
+
+- `value`: Current value of type `T`
+- `setValue`: Setter accepting a value or updater function
+- `remove`: Removes the stored key and resets `value` to the current default
+
+### Default and persistence behavior
+
+The default seeds the current key when no readable JSON exists. Changing only `defaultValue` preserves the current value, including when the default is an inline object. `remove()` and a matching browser storage deletion event reset to the latest default. Changing key or instance ID reloads that scoped key, using the current default if needed. Persistence is best effort: blocked storage, invalid JSON and quota failures do not throw from this hook. Browser storage event rules apply; this is not a same-document synchronization bus.
 
 ### Namespacing
 
@@ -58,7 +64,7 @@ interface UserPreferences {
 }
 
 function SettingsPanel() {
-  const [preferences, setPreferences] = useSPFxLocalStorage<UserPreferences>(
+  const { value: preferences, setValue: setPreferences } = useSPFxLocalStorage<UserPreferences>(
     'userPrefs',
     { theme: 'light', itemsPerPage: 10, showSidebar: true }
   );
@@ -105,7 +111,7 @@ function SettingsPanel() {
 import { useSPFxLocalStorage } from '@apvee/spfx-react-toolkit';
 
 function SearchWithHistory() {
-  const [history, setHistory] = useSPFxLocalStorage<string[]>('searchHistory', []);
+  const { value: history, setValue: setHistory } = useSPFxLocalStorage<string[]>('searchHistory', []);
   const [query, setQuery] = React.useState('');
   
   const handleSearch = () => {
@@ -139,13 +145,13 @@ function SearchWithHistory() {
 
 ### Source
 
-[View source](../../src/hooks/useSPFxLocalStorage.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts)
 
 ---
 
 ## useSPFxSessionStorage
 
-Temporary storage that persists only for the current browser session.
+Temporary storage that persists only for the current browser session/tab. It has the same default, removal and best-effort behavior as [local storage](#default-and-persistence-behavior).
 
 ### Signature
 
@@ -153,7 +159,7 @@ Temporary storage that persists only for the current browser session.
 function useSPFxSessionStorage<T>(
   key: string,
   defaultValue: T
-): [T, (value: T | ((prev: T) => T)) => void]
+): SPFxStorageHook<T>
 ```
 
 ### Parameters
@@ -161,13 +167,15 @@ function useSPFxSessionStorage<T>(
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `key` | `string` | Yes | Storage key (automatically namespaced) |
-| `defaultValue` | `T` | Yes | Default value when key doesn't exist |
+| `defaultValue` | `T` | Yes | Fallback when the current key is missing or unreadable |
 
 ### Returns
 
-A tuple containing:
-- `[0]`: Current value of type `T`
-- `[1]`: Setter function (accepts value or updater function)
+An object containing:
+
+- `value`: Current value of type `T`
+- `setValue`: Setter accepting a value or updater function
+- `remove`: Removes the stored key and resets `value` to the current default
 
 ### Example: Form Draft
 
@@ -181,7 +189,7 @@ interface FormData {
 }
 
 function FormWithDraft() {
-  const [draft, setDraft] = useSPFxSessionStorage<FormData>('formDraft', {
+  const { value: draft, setValue: setDraft } = useSPFxSessionStorage<FormData>('formDraft', {
     title: '',
     description: '',
     category: ''
@@ -227,7 +235,7 @@ interface WizardState {
 }
 
 function MultiStepWizard() {
-  const [wizard, setWizard] = useSPFxSessionStorage<WizardState>('wizard', {
+  const { value: wizard, setValue: setWizard } = useSPFxSessionStorage<WizardState>('wizard', {
     currentStep: 0,
     completedSteps: [],
     data: {}
@@ -269,7 +277,7 @@ function MultiStepWizard() {
 
 ### Source
 
-[View source](../../src/hooks/useSPFxSessionStorage.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts)
 
 ---
 
@@ -348,6 +356,12 @@ interface SPFxOneDriveAppDataResult<T> {
   readonly isReady: boolean;
 }
 ```
+
+### Request ownership and lazy defaults
+
+`defaultValue` seeds `data` even with `autoFetch: false`; changing file, folder or Graph client seeds the new identity from the current default without forcing a lazy fetch. Changing an inline default alone does not reload. A current missing-file response is required before `createIfMissing` writes a default.
+
+Latest-started reads and writes own the local data/error state together. An older read, 404 or write completion cannot replace a newer write's local data. `isLoading` and `isWriting` track pending reads and writes separately for the current identity. Identity changes and unmount ignore obsolete completions. Requests still settle for their callers; remote writes are not cancelled or serialized. `load()` records read errors in `error`; `write()` records `writeError` and rejects on failure. These guards do not provide remote transaction ordering.
 
 ### Example: Basic Usage with Auto-Fetch
 
@@ -534,7 +548,7 @@ function TodoApp() {
 
 ### Source
 
-[View source](../../../src/hooks/useSPFxOneDriveAppData.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData.ts)
 
 ---
 
@@ -587,17 +601,21 @@ interface SPFxTenantPropertyResult<T> {
 }
 ```
 
+### Request behavior
+
+Changing key, service/catalog identity or fetch mode invalidates previous request ownership and clears old data. Only the latest load can publish data, error and loading state. `load()` records read failures in `error`; it resolves rather than rethrowing them. `isReady` indicates a successfully loaded current value. Requests are not cancelled on identity change or unmount.
+
 ### Example: Feature Flags
 
 ```tsx
 import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
 
 function FeatureGatedComponent() {
-  const { data: featureFlags, isLoading } = useSPFxTenantProperty<string>('FeatureFlags');
+  const { data: featureFlags, isLoading } = useSPFxTenantProperty<{ enableNewUI?: boolean; enableBetaFeatures?: boolean }>('FeatureFlags');
   
   if (isLoading) return <Spinner />;
   
-  const flags = featureFlags ? JSON.parse(featureFlags) : {};
+  const flags = featureFlags ?? {};
   
   return (
     <div>
@@ -639,14 +657,14 @@ import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
 
 function ConfiguredWidget() {
   const logo = useSPFxTenantProperty<string>('CompanyLogo');
-  const theme = useSPFxTenantProperty<string>('CompanyTheme');
+  const theme = useSPFxTenantProperty<{ primary: string }>('CompanyTheme');
   const helpUrl = useSPFxTenantProperty<string>('HelpDeskUrl');
   
   const isLoading = logo.isLoading || theme.isLoading || helpUrl.isLoading;
   
   if (isLoading) return <Spinner />;
   
-  const themeColors = theme.data ? JSON.parse(theme.data) : { primary: '#0078d4' };
+  const themeColors = theme.data ?? { primary: '#0078d4' };
   
   return (
     <div style={{ '--primary-color': themeColors.primary } as React.CSSProperties}>
@@ -659,13 +677,13 @@ function ConfiguredWidget() {
 
 ### Source
 
-[View source](../../../src/hooks/useSPFxTenantProperty.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts)
 
 ---
 
 ## useSPFxTenantKeyValueStore
 
-Tenant-level key-value store backed by a hidden SharePoint list in the tenant app catalog. Provides CRUD operations (get, list, save, remove) with smart serialization for any data type.
+Tenant-level key-value store backed by a hidden SharePoint list in the tenant app catalog. Provides CRUD operations (get, list, save, remove) using the existing string/JSON serialization format.
 
 This hook is an alternative to tenant properties (StorageEntity) for scenarios requiring read/write access via REST, since Microsoft has blocked the SetStorageEntity and RemoveStorageEntity REST endpoints.
 
@@ -714,6 +732,12 @@ interface SPFxTenantKeyValueStoreItem<T = unknown> {
 }
 ```
 
+### Error and loading behavior
+
+Read operations remain pending until their service promises settle. `get()` returns `undefined` and `list()` returns `[]` on read failures while publishing `error`; these fallbacks alone cannot distinguish absence from failure. Writes publish `writeError` and reject their returned promises on failure. Handle write rejections in the caller.
+
+Read and write channels have independent pending counts: their loading flags remain true while any current-identity operation in that channel is pending. Starting an operation clears its channel error; only the latest-started operation may publish that error. Old catalog/service and unmounted completions do not update the current hook. The server still controls authorization and remote ordering.
+
 ### Storage Details
 
 The store uses a hidden list named `TenantKeyValueStore` in the tenant app catalog:
@@ -733,12 +757,12 @@ The list is auto-provisioned on the first `save()` call. Read operations (`get`,
 | `Date` | ISO 8601 string |
 | Objects/arrays | `JSON.stringify()` |
 
-Deserialization attempts `JSON.parse()` first; falls back to raw string.
+Deserialization attempts `JSON.parse()` first; falls back to raw string. This legacy format does not preserve every input type: strings such as `"123"`, `"true"` or `"null"` become JSON primitives; a bigint may become a lossy number; dates remain ISO strings. The generic `T` is a compile-time annotation, not runtime validation. Existing stored values retain this format; validate read values in application code.
 
 ### Requirements
 
 - Tenant app catalog must be provisioned
-- **Read**: Any authenticated user
+- **Read**: Requires the current user to have access to the catalog/list; actual tenant permissions apply
 - **Write/Remove**: Site Collection Administrator role on the tenant app catalog site
 
 ### Example: Basic CRUD
@@ -830,7 +854,7 @@ function AllPropertiesView() {
 
 ### Source
 
-[View source](../../../src/hooks/useSPFxTenantKeyValueStore.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore.ts)
 
 ---
 

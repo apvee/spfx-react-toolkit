@@ -193,6 +193,8 @@ Public pure helper functions for SPFx context mapping, permission checks, API pe
 ## Quick Links
 
 - [Introduction & Quick Start](./INTRODUCTION.md)
+- [Workspace Development](./DEVELOPMENT.md)
+- [SharePoint Validation](./SHAREPOINT-VALIDATION.md)
 - [Core Module](./api/core/INDEX.md)
 - [Hooks Module](./api/hooks/INDEX.md)
 - [Services Module](./api/services/INDEX.md)

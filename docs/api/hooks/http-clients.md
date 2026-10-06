@@ -45,6 +45,10 @@ All hooks follow a consistent pattern:
 
 ---
 
+## Concurrent invocations
+
+The HTTP, SharePoint REST, AadHttpClient and Graph client hooks use the same invocation tracker. `isLoading` remains true while any invocation on the current client is pending. Starting an invocation clears displayed error; only the latest-started invocation can publish an error. Client replacement and unmount ignore obsolete UI updates while caller promises still resolve/reject. `clearError()` does not cancel requests. Initialization flags/errors are separate from invocation state.
+
 ## useSPFxHttpClient
 
 Access generic HTTP client for external API calls.
@@ -150,7 +154,7 @@ function SlackNotifier() {
 
 ### Source
 
-[View source](../../../src/hooks/useSPFxHttpClient.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxHttpClient.ts)
 
 ---
 
@@ -290,35 +294,51 @@ function TaskList() {
 
 ### Example: Cross-Site Query
 
+Use the intended URL directly for the request. `setBaseUrl()` updates state for subsequent renders; the current callback still captures the earlier `baseUrl`.
+
 ```tsx
+import * as React from 'react';
 import { useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
 import { SPHttpClient } from '@microsoft/sp-http';
 
+interface DocumentItem {
+  Id: number;
+  Title: string;
+}
+
 function CrossSiteData() {
-  const { invoke, setBaseUrl, baseUrl, isLoading, isReady } = useSPFxSPHttpClient();
-  const [otherSiteData, setOtherSiteData] = React.useState([]);
-  
-  const loadFromOtherSite = () => {
-    setBaseUrl('https://tenant.sharepoint.com/sites/OtherSite');
-    invoke(client =>
-      client.get(
-        `${baseUrl}/_api/web/lists/getbytitle('Documents')/items`,
-        SPHttpClient.configurations.v1
-      ).then(res => res.json())
-    ).then(result => setOtherSiteData(result.value));
+  const { invoke, setBaseUrl, isLoading, isReady, error } = useSPFxSPHttpClient();
+  const [otherSiteData, setOtherSiteData] = React.useState<DocumentItem[]>([]);
+
+  const loadFromOtherSite = async () => {
+    const targetUrl = 'https://tenant.sharepoint.com/sites/OtherSite';
+    setBaseUrl(targetUrl);
+    try {
+      const result = await invoke(client =>
+        client.get(
+          `${targetUrl}/_api/web/lists/getbytitle('Documents')/items`,
+          SPHttpClient.configurations.v1
+        ).then(res => res.json())
+      );
+      setOtherSiteData(result.value);
+    } catch {
+      // The hook exposes the invocation error for the UI below.
+    }
   };
-  
-  return (
+
+  return <div>
     <button onClick={loadFromOtherSite} disabled={!isReady || isLoading}>
       Load from Other Site
     </button>
-  );
+    {error && <p>{error.message}</p>}
+    {otherSiteData.map(item => <p key={item.Id}>{item.Title}</p>)}
+  </div>;
 }
 ```
 
 ### Source
 
-[View source](../../../src/hooks/useSPFxSPHttpClient.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxSPHttpClient.ts)
 
 ---
 
@@ -493,7 +513,7 @@ function DynamicApiSelector() {
 
 ### Source
 
-[View source](../../../src/hooks/useSPFxAadHttpClient.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxAadHttpClient.ts)
 
 ---
 
@@ -560,7 +580,7 @@ function TokenProbe() {
 
 ### Source
 
-[View source](../../../src/hooks/useSPFxAadTokenProvider.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts)
 
 ---
 
@@ -617,7 +637,7 @@ interface SPFxApiPermissionPrecheckResult {
 
 The hook normalizes Graph and custom API requirements, uses the SPFx `AadTokenProvider` to acquire one token per resource, and evaluates delegated `scp` scopes in the token payload. Remediation entries include the `resource` and `scope` values that map back to `webApiPermissionRequests`.
 
-`available` means the current SPFx runtime obtained a token with the delegated scope. It does not read tenant grants and does not replace server-side authorization.
+`available` means the current SPFx runtime obtained a token with the delegated scope. It does not read tenant grants and does not replace server-side authorization. Requirements or token-provider replacement clear prior check results and invalidate older requests. With `autoCheck` enabled, the current provider is checked again when ready; manual mode waits for `check()`/`retry()`.
 
 ### Example: Simple Precheck
 
@@ -679,7 +699,7 @@ Use `retryWithoutCache()` after SharePoint admin center API access changes or wh
 
 ### Source
 
-[View source](../../../src/hooks/useSPFxApiPermissionPrecheck.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxApiPermissionPrecheck.ts)
 
 ---
 
@@ -901,7 +921,7 @@ function UpcomingEvents() {
 
 ### Source
 
-[View source](../../../src/hooks/useSPFxMSGraphClient.ts)
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxMSGraphClient.ts)
 
 ---
 

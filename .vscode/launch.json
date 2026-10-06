@@ -6,7 +6,7 @@
       "type": "msedge",
       "request": "launch",
       "url": "https://{tenantDomain}/_layouts/workbench.aspx",
-      "webRoot": "${workspaceRoot}",
+      "webRoot": "${workspaceFolder}/apps/spfx-react-toolkit-test",
       "sourceMaps": true,
       "sourceMapPathOverrides": {
         "webpack:///.././src/*": "${webRoot}/src/*",

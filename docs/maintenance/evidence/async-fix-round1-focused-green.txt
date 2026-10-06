@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: PnPList pending create refetches the current query after replacement
+ok 1 - PnPList pending create refetches the current query after replacement
+  ---
+  duration_ms: 197.289625
+  type: 'test'
+  ...
+# Subtest: PnPList pending update refetches the current query after replacement
+ok 2 - PnPList pending update refetches the current query after replacement
+  ---
+  duration_ms: 151.35775
+  type: 'test'
+  ...
+# Subtest: PnPList pending remove refetches the current query after replacement
+ok 3 - PnPList pending remove refetches the current query after replacement
+  ---
+  duration_ms: 151.193167
+  type: 'test'
+  ...
+# Subtest: PnPList pending createBatch refetches the current query after replacement
+ok 4 - PnPList pending createBatch refetches the current query after replacement
+  ---
+  duration_ms: 147.130875
+  type: 'test'
+  ...
+# Subtest: PnPList pending updateBatch refetches the current query after replacement
+ok 5 - PnPList pending updateBatch refetches the current query after replacement
+  ---
+  duration_ms: 150.252583
+  type: 'test'
+  ...
+# Subtest: PnPList pending removeBatch refetches the current query after replacement
+ok 6 - PnPList pending removeBatch refetches the current query after replacement
+  ---
+  duration_ms: 141.296459
+  type: 'test'
+  ...
+# Subtest: PnPList failed refetch preserves the successful next-page offset
+ok 7 - PnPList failed refetch preserves the successful next-page offset
+  ---
+  duration_ms: 21.445125
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1207.030208

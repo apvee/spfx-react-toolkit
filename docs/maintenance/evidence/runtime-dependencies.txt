@@ -1,0 +1,267 @@
+spfx-react-toolkit-monorepo@2.1.0 /Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit
+├─┬ @apvee/spfx-react-toolkit-test@2.1.0 -> ./apps/spfx-react-toolkit-test
+│ ├─┬ @fluentui/react@8.125.0
+│ │ ├─┬ @fluentui/foundation-legacy@8.6.0
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-focus@8.10.0
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-hooks@8.10.0
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-portal-compat-context@9.0.15
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-window-provider@2.3.0
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/theme@2.7.0
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/utilities@8.17.0
+│ │ │ └── react@17.0.1 deduped
+│ │ ├── react-dom@17.0.1 deduped
+│ │ └── react@17.0.1 deduped
+│ ├─┬ @microsoft/sp-application-base@1.21.1
+│ │ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ │ ├─┬ @microsoft/sp-diagnostics@1.21.1
+│ │ │ └── @microsoft/sp-core-library@1.21.1 deduped
+│ │ ├─┬ @microsoft/sp-extension-base@1.21.1
+│ │ │ └── @microsoft/sp-core-library@1.21.1 deduped
+│ │ ├─┬ @microsoft/sp-http-base@1.21.1
+│ │ │ └── @microsoft/sp-core-library@1.21.1 deduped
+│ │ ├─┬ @microsoft/sp-loader@1.21.1
+│ │ │ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ └─┬ @microsoft/sp-search-extensibility@1.21.1
+│ │   └── @microsoft/sp-core-library@1.21.1 deduped
+│ ├─┬ @microsoft/sp-component-base@1.21.1
+│ │ ├─┬ @fluentui/react-components@9.72.3
+│ │ │ ├─┬ @fluentui/react-accordion@9.8.10
+│ │ │ │ ├─┬ @fluentui/react-context-selector@9.2.9
+│ │ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ │ └── react@17.0.1 deduped
+│ │ │ │ ├─┬ @fluentui/react-jsx-runtime@9.3.0
+│ │ │ │ │ └── react@17.0.1 deduped
+│ │ │ │ ├─┬ @fluentui/react-motion-components-preview@0.11.1
+│ │ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ │ └── react@17.0.1 deduped
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-alert@9.0.0-beta.126
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-aria@9.17.3
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-avatar@9.9.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-badge@9.4.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-breadcrumb@9.3.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-button@9.6.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-card@9.5.3
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-carousel@9.8.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-checkbox@9.5.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-color-picker@9.2.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-combobox@9.16.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-dialog@9.15.5
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-divider@9.4.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-drawer@9.10.5
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-field@9.4.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-image@9.3.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-infobutton@9.0.0-beta.104
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-infolabel@9.4.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-input@9.7.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-label@9.3.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-link@9.6.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-list@9.6.3
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-menu@9.20.2
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-message-bar@9.6.10
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-motion@9.11.1
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-nav@9.3.10
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-overflow@9.6.2
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-persona@9.5.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-popover@9.12.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-portal@9.8.5
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-positioning@9.20.7
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ ├── react@17.0.1 deduped
+│ │ │ │ └─┬ use-sync-external-store@1.6.0
+│ │ │ │   └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-progress@9.4.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-provider@9.22.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-radio@9.5.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-rating@9.3.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-search@9.3.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-select@9.4.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-shared-contexts@9.25.2
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-skeleton@9.4.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-slider@9.5.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-spinbutton@9.5.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-spinner@9.7.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-swatch-picker@9.4.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-switch@9.4.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-table@9.19.2
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-tabs@9.10.4
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-tag-picker@9.7.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-tags@9.7.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-teaching-popover@9.6.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-text@9.6.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-textarea@9.6.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-toast@9.7.5
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-toolbar@9.6.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-tooltip@9.8.8
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-tree@9.15.2
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-utilities@9.25.1
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-virtualizer@9.0.0-alpha.104
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ │ └─┬ @microsoft/sp-dynamic-data@1.21.1
+│ │   └── @microsoft/sp-core-library@1.21.1 deduped
+│ ├─┬ @microsoft/sp-core-library@1.21.1
+│ │ ├── react-dom@17.0.1 deduped
+│ │ └── react@17.0.1 deduped
+│ ├─┬ @microsoft/sp-http@1.21.1
+│ │ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ │ └─┬ @microsoft/sp-http-msgraph@1.21.1
+│ │   └── @microsoft/sp-core-library@1.21.1 deduped
+│ ├─┬ @microsoft/sp-listview-extensibility@1.21.1
+│ │ └── @microsoft/sp-core-library@1.21.1 deduped
+│ ├─┬ @microsoft/sp-page-context@1.21.1
+│ │ └── @microsoft/sp-core-library@1.21.1 deduped
+│ ├─┬ @microsoft/sp-property-pane@1.21.1
+│ │ ├─┬ @fluentui/react-icons@2.0.312
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-tabster@9.26.7
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ │ ├─┬ @microsoft/sp-image-helper@1.21.1
+│ │ │ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├── react-dom@17.0.1 deduped
+│ │ └── react@17.0.1 deduped
+│ ├─┬ @microsoft/sp-webpart-base@1.21.1
+│ │ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ │ ├── react-dom@17.0.1 deduped
+│ │ └── react@17.0.1 deduped
+│ ├── @pnp/sp@4.17.0
+│ ├── react-dom@17.0.1 deduped
+│ └── react@17.0.1 deduped
+├─┬ @apvee/spfx-react-toolkit@2.1.0 -> ./packages/spfx-react-toolkit
+│ ├─┬ @fluentui/react-migration-v8-v9@9.9.12
+│ │ ├─┬ @griffel/react@1.5.30
+│ │ │ └── react@17.0.1 deduped
+│ │ ├── react-dom@17.0.1 deduped
+│ │ └── react@17.0.1 deduped
+│ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ ├── @pnp/sp@4.17.0 deduped
+│ ├── react-dom@17.0.1 deduped
+│ └── react@17.0.1 deduped
+├─┬ react-dom@17.0.1
+│ └── react@17.0.1 deduped
+└── react@17.0.1
+

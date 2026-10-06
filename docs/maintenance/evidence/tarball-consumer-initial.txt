@@ -1,0 +1,467 @@
+
+> spfx-react-toolkit-monorepo@2.1.0 verify:package
+> node scripts/verify-package.cjs
+
+
+> spfx-react-toolkit-monorepo@2.1.0 build:library
+> npm run build --workspace @apvee/spfx-react-toolkit
+
+
+> @apvee/spfx-react-toolkit@2.1.0 build
+> tsc -p tsconfig.json
+
+npm warn deprecated read-package-tree@5.1.6: The functionality that this package provided is now in @npmcli/arborist
+npm warn deprecated readdir-scoped-modules@1.1.0: This functionality has been moved to @npmcli/fs
+npm warn deprecated osenv@0.1.5: This package is no longer supported.
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated debuglog@1.0.1: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+npm warn deprecated stable@0.1.8: Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility
+npm warn deprecated source-map-url@0.4.1: See https://github.com/lydell/source-map-url#deprecated
+npm warn deprecated read-package-json@2.1.2: This package is no longer supported. Please use @npmcli/package-json instead.
+npm warn deprecated lodash.get@4.4.2: This package is deprecated. Use the optional chaining (?.) operator instead.
+npm warn deprecated request-promise-native@1.0.9: request-promise-native has been deprecated because it extends the now deprecated request package, see https://github.com/request/request/issues/3142
+npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated urix@0.1.0: Please see https://github.com/lydell/urix#deprecated
+npm warn deprecated lodash.isequal@4.5.0: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
+npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated resolve-url@0.2.1: https://github.com/lydell/resolve-url#deprecated
+npm warn deprecated abab@2.0.6: Use your platform's native atob() and btoa() methods instead
+npm warn deprecated har-validator@5.1.5: this library is no longer supported
+npm warn deprecated acorn-import-assertions@1.9.0: package has been renamed to acorn-import-attributes
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.0.6: Glob versions prior to v9 are no longer supported
+npm warn deprecated source-map-resolve@0.5.3: See https://github.com/lydell/source-map-resolve#deprecated
+npm warn deprecated domexception@1.0.1: Use your platform's native DOMException instead
+npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+npm warn deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.
+npm warn deprecated fsevents@1.2.13: Upgrade to fsevents v2 to mitigate potential security issues
+npm warn deprecated fsevents@1.2.13: Upgrade to fsevents v2 to mitigate potential security issues
+npm warn deprecated sane@4.1.0: some dependency vulnerabilities fixed, support for node < 10 dropped, and newer ECMAScript syntax/features added
+npm warn deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+npm warn deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142
+npm warn deprecated adal-angular@1.0.16: This package is no longer supported. Please migrate to @azure/msal-angular.
+npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+npm warn deprecated @microsoft/teams-js@2.32.0: Package no longer supported. Use at your own risk
+
+added 2422 packages in 17s
+npm warn install-scripts 4 packages have install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@1.2.13 (install: node install.js)
+npm warn install-scripts   es5-ext@0.10.64 (postinstall:  node -e "try{require('./_postinstall')}catch(e){}" || exit 0)
+npm warn install-scripts   fsevents@2.3.3 (install: (install scripts present))
+npm warn install-scripts   fsevents@1.2.13 (install: node install.js)
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+isolated-spfx-toolkit-consumer@2.1.0 /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer
+├─┬ @apvee/spfx-react-toolkit@2.1.0
+│ ├─┬ @fluentui/react-migration-v8-v9@9.9.12
+│ │ ├─┬ @griffel/react@1.5.30
+│ │ │ └── react@17.0.1 deduped
+│ │ ├── react-dom@17.0.1 deduped
+│ │ └── react@17.0.1 deduped
+│ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ ├── @pnp/sp@4.17.0 deduped
+│ ├── react-dom@17.0.1 deduped
+│ └── react@17.0.1 deduped
+├─┬ @fluentui/react@8.125.0
+│ ├─┬ @fluentui/foundation-legacy@8.6.0
+│ │ └── react@17.0.1 deduped
+│ ├─┬ @fluentui/react-focus@8.10.0
+│ │ └── react@17.0.1 deduped
+│ ├─┬ @fluentui/react-hooks@8.10.0
+│ │ └── react@17.0.1 deduped
+│ ├─┬ @fluentui/react-portal-compat-context@9.0.15
+│ │ └── react@17.0.1 deduped
+│ ├─┬ @fluentui/react-window-provider@2.3.0
+│ │ └── react@17.0.1 deduped
+│ ├─┬ @fluentui/theme@2.7.0
+│ │ └── react@17.0.1 deduped
+│ ├─┬ @fluentui/utilities@8.17.0
+│ │ └── react@17.0.1 deduped
+│ ├── react-dom@17.0.1 deduped
+│ └── react@17.0.1 deduped
+├─┬ @microsoft/sp-application-base@1.21.1
+│ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ ├─┬ @microsoft/sp-diagnostics@1.21.1
+│ │ └── @microsoft/sp-core-library@1.21.1 deduped
+│ ├─┬ @microsoft/sp-extension-base@1.21.1
+│ │ └── @microsoft/sp-core-library@1.21.1 deduped
+│ ├─┬ @microsoft/sp-http-base@1.21.1
+│ │ └── @microsoft/sp-core-library@1.21.1 deduped
+│ ├─┬ @microsoft/sp-loader@1.21.1
+│ │ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ │ ├── react-dom@17.0.1 deduped
+│ │ └── react@17.0.1 deduped
+│ └─┬ @microsoft/sp-search-extensibility@1.21.1
+│   └── @microsoft/sp-core-library@1.21.1 deduped
+├─┬ @microsoft/sp-component-base@1.21.1
+│ ├─┬ @fluentui/react-components@9.72.3
+│ │ ├─┬ @fluentui/react-accordion@9.8.10
+│ │ │ ├─┬ @fluentui/react-context-selector@9.2.9
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-jsx-runtime@9.3.0
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├─┬ @fluentui/react-motion-components-preview@0.11.1
+│ │ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ │ └── react@17.0.1 deduped
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-alert@9.0.0-beta.126
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-aria@9.17.3
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-avatar@9.9.9
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-badge@9.4.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-breadcrumb@9.3.9
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-button@9.6.9
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-card@9.5.3
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-carousel@9.8.9
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-checkbox@9.5.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-color-picker@9.2.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-combobox@9.16.9
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-dialog@9.15.5
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-divider@9.4.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-drawer@9.10.5
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-field@9.4.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-image@9.3.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-infobutton@9.0.0-beta.104
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-infolabel@9.4.9
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-input@9.7.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-label@9.3.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-link@9.6.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-list@9.6.3
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-menu@9.20.2
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-message-bar@9.6.10
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-motion@9.11.1
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-nav@9.3.10
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-overflow@9.6.2
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-persona@9.5.9
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-popover@9.12.9
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-portal@9.8.5
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-positioning@9.20.7
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ ├── react@17.0.1 deduped
+│ │ │ └─┬ use-sync-external-store@1.6.0
+│ │ │   └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-progress@9.4.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-provider@9.22.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-radio@9.5.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-rating@9.3.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-search@9.3.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-select@9.4.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-shared-contexts@9.25.2
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-skeleton@9.4.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-slider@9.5.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-spinbutton@9.5.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-spinner@9.7.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-swatch-picker@9.4.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-switch@9.4.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-table@9.19.2
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-tabs@9.10.4
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-tag-picker@9.7.9
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-tags@9.7.9
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-teaching-popover@9.6.9
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-text@9.6.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-textarea@9.6.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-toast@9.7.5
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-toolbar@9.6.9
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-tooltip@9.8.8
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-tree@9.15.2
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-utilities@9.25.1
+│ │ │ └── react@17.0.1 deduped
+│ │ ├─┬ @fluentui/react-virtualizer@9.0.0-alpha.104
+│ │ │ ├── react-dom@17.0.1 deduped
+│ │ │ └── react@17.0.1 deduped
+│ │ ├── react-dom@17.0.1 deduped
+│ │ └── react@17.0.1 deduped
+│ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ └─┬ @microsoft/sp-dynamic-data@1.21.1
+│   └── @microsoft/sp-core-library@1.21.1 deduped
+├─┬ @microsoft/sp-core-library@1.21.1
+│ ├── react-dom@17.0.1 deduped
+│ └── react@17.0.1 deduped
+├─┬ @microsoft/sp-http@1.21.1
+│ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ └─┬ @microsoft/sp-http-msgraph@1.21.1
+│   └── @microsoft/sp-core-library@1.21.1 deduped
+├─┬ @microsoft/sp-listview-extensibility@1.21.1
+│ └── @microsoft/sp-core-library@1.21.1 deduped
+├─┬ @microsoft/sp-page-context@1.21.1
+│ └── @microsoft/sp-core-library@1.21.1 deduped
+├─┬ @microsoft/sp-property-pane@1.21.1
+│ ├─┬ @fluentui/react-icons@2.0.312
+│ │ └── react@17.0.1 deduped
+│ ├─┬ @fluentui/react-tabster@9.26.7
+│ │ ├── react-dom@17.0.1 deduped
+│ │ └── react@17.0.1 deduped
+│ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ ├─┬ @microsoft/sp-image-helper@1.21.1
+│ │ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ │ ├── react-dom@17.0.1 deduped
+│ │ └── react@17.0.1 deduped
+│ ├── react-dom@17.0.1 deduped
+│ └── react@17.0.1 deduped
+├─┬ @microsoft/sp-webpart-base@1.21.1
+│ ├── @microsoft/sp-core-library@1.21.1 deduped
+│ ├── react-dom@17.0.1 deduped
+│ └── react@17.0.1 deduped
+├── @pnp/sp@4.17.0
+├─┬ react-dom@17.0.1
+│ └── react@17.0.1 deduped
+└── react@17.0.1
+
+
+> isolated-spfx-toolkit-consumer@2.1.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> isolated-spfx-toolkit-consumer@2.1.0 bundle:ship
+> gulp bundle --ship
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Build target: SHIP
+[[90m11:11:16[39m] Using gulpfile /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/gulpfile.js
+[[90m11:11:16[39m] Starting 'bundle'...
+[[90m11:11:16[39m] Starting gulp
+[[90m11:11:16[39m] Starting subtask '[36mpre-copy[39m'...
+[[90m11:11:16[39m] Finished subtask '[36mpre-copy[39m' after [35m2.25 ms[39m
+[[90m11:11:16[39m] Starting subtask '[36mcopy-static-assets[39m'...
+[[90m11:11:16[39m] Starting subtask '[36msass[39m'...
+Browserslist: browsers data (caniuse-lite) is 12 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[[90m11:11:16[39m] Finished subtask '[36msass[39m' after [35m154 ms[39m
+[[90m11:11:16[39m] Starting subtask '[36mlint[39m'...
+[[90m11:11:16[39m] [[36mlint[39m] eslint version: 8.57.1
+[[90m11:11:16[39m] Starting subtask '[36mtsc[39m'...
+[[90m11:11:16[39m] [[36mtsc[39m] typescript version: 5.3.3
+[[90m11:11:16[39m] Finished subtask '[36mcopy-static-assets[39m' after [35m171 ms[39m
+[[90m11:11:17[39m] Finished subtask '[36mtsc[39m' after [35m1.14 s[39m
+[[90m11:11:18[39m] Finished subtask '[36mlint[39m' after [35m1.39 s[39m
+[[90m11:11:18[39m] Starting subtask '[36mpost-copy[39m'...
+[[90m11:11:18[39m] Finished subtask '[36mpost-copy[39m' after [35m56 μs[39m
+[[90m11:11:18[39m] Starting subtask '[36mconfigure-webpack[39m'...
+[[90m11:11:18[39m] Finished subtask '[36mconfigure-webpack[39m' after [35m134 ms[39m
+[[90m11:11:18[39m] Starting subtask '[36mwebpack[39m'...
+[[90m11:11:22[39m] Finished subtask '[36mwebpack[39m' after [35m3.91 s[39m
+[[90m11:11:22[39m] Finished 'bundle' after 5.59 s
+[[90m11:11:22[39m] [35m==================[ Finished ]==================[39m
+[[90m11:11:23[39m] Project isolated-spfx-toolkit-consumer version:[33m2.1.0[39m
+[[90m11:11:23[39m] Build tools version:[33m3.19.0[39m
+[[90m11:11:23[39m] Node version:[33mv22.20.0[39m
+[[90m11:11:23[39m] Total duration:[33m7.25 s[39m
+The build failed because a task wrote output to stderr.
+Exiting with exit code: 1
+
+> isolated-spfx-toolkit-consumer@2.1.0 package:solution
+> gulp package-solution --ship
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Build target: SHIP
+[[90m11:11:24[39m] Using gulpfile /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/gulpfile.js
+[[90m11:11:24[39m] Starting 'package-solution'...
+[[90m11:11:24[39m] Starting gulp
+[[90m11:11:24[39m] Starting subtask '[36mpackage-solution[39m'...
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found manifest: 4c2e58cc-1253-43e5-bfa3-b22a07ace279.manifest.json
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found manifest: 54985a3d-eaad-4041-8fdc-a50241798c07.manifest.json
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.261_87b6f7730a9dc1f49ef4.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.808_89655cbc9278b40ad0c4.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-clients_b61d6fc382b6cb6b4498.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-context_3694f34a46df46aa731b.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-graph-data_dd7d0fe73879b0c287f2.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-pnp_61536044c50d84281109.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-providers_4cc04837d4d707f2c889.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-runtime_f43e0c3a28180af34c93.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-search_e8988c025948706286b8.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-tenant_de25e6bfb99e8ed9478b.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: sp-fx-react-toolkit-test-application-customizer_ea0a7542d7b3c6fec2da.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: sp-fx-react-toolkit-test-web-part_6d3f27f326c8d4d51635.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: sp-fx-react-toolkit-test-web-part_6d3f27f326c8d4d51635.js.LICENSE.txt
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found teams icons: 54985a3d-eaad-4041-8fdc-a50241798c07_color.png
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found teams icons: 54985a3d-eaad-4041-8fdc-a50241798c07_outline.png
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Verifying configuration...
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
+[[90m11:11:24[39m] [[36mpackage-solution[39m] 
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Normalizing solution information...
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Attempting creating component definitions for {2} manifests
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created component definitions for {2} manifests
+[[90m11:11:24[39m] [[36mpackage-solution[39m] feature.componentIds not set! Adding 2 components to feature { apvee-spfx-react-toolkit Feature }.
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
+[[90m11:11:24[39m] [[36mpackage-solution[39m] 
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Reading custom Feature XML...
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
+[[90m11:11:24[39m] [[36mpackage-solution[39m] 
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Validating App Package...
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Admins can make this solution available to all sites immediately, but the solution also contains feature.xml elements for provisioning. Feature.xml elements are not automatically applied unless the solution is explicitly installed on a site.
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
+[[90m11:11:24[39m] [[36mpackage-solution[39m] 
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Reading resources...
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
+[[90m11:11:24[39m] [[36mpackage-solution[39m] 
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Reading Sharepoint Assets & Creating XML...
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found Element Manifest: elements.xml
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Found Element Manifest: ClientSideInstance.xml
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
+[[90m11:11:24[39m] [[36mpackage-solution[39m] 
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Writing solution XML to /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug...
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Cleaned /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/AppManifest.xml
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/_rels/AppManifest.xml.rels
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/_rels/.rels
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/[Content_Types].xml
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/_rels/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml.rels
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml.config.xml
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/elements.xml
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/ClientSideInstance.xml
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/Extension_4c2e58cc-1253-43e5-bfa3-b22a07ace279.xml
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/WebPart_54985a3d-eaad-4041-8fdc-a50241798c07.xml
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets.xml
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/_rels/ClientSideAssets.xml.rels
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets.xml.config.xml
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.261_87b6f7730a9dc1f49ef4.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.808_89655cbc9278b40ad0c4.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-clients_b61d6fc382b6cb6b4498.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-context_3694f34a46df46aa731b.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-graph-data_dd7d0fe73879b0c287f2.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-pnp_61536044c50d84281109.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-providers_4cc04837d4d707f2c889.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-runtime_f43e0c3a28180af34c93.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-search_e8988c025948706286b8.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-tenant_de25e6bfb99e8ed9478b.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-application-customizer_ea0a7542d7b3c6fec2da.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part_6d3f27f326c8d4d51635.js
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part_6d3f27f326c8d4d51635.js.LICENSE.txt
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/54985a3d-eaad-4041-8fdc-a50241798c07_color.png
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/54985a3d-eaad-4041-8fdc-a50241798c07_outline.png
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/apvee-spfx-react-toolkit.sppkg
+[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
+[[90m11:11:24[39m] [[36mpackage-solution[39m] 
+[[90m11:11:24[39m] [[36mpackage-solution[39m] ALL DONE!
+[[90m11:11:24[39m] [[36mpackage-solution[39m] 
+[[90m11:11:24[39m] Finished subtask '[36mpackage-solution[39m' after [35m99 ms[39m
+[[90m11:11:24[39m] Finished 'package-solution' after 100 ms
+[[90m11:11:24[39m] [35m==================[ Finished ]==================[39m
+[[90m11:11:25[39m] Project isolated-spfx-toolkit-consumer version:[33m2.1.0[39m
+[[90m11:11:25[39m] Build tools version:[33m3.19.0[39m
+[[90m11:11:25[39m] Node version:[33mv22.20.0[39m
+[[90m11:11:25[39m] Total duration:[33m1.68 s[39m
+Tarball consumer passed: 331 files; 179177 bytes; TypeScript, public/deep imports, SPFx ship bundle and solution. Consumer: /var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer

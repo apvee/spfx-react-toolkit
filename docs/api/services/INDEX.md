@@ -103,7 +103,7 @@ interface SPFxPnPPageContextLike {
 |--------|---------|
 | `cache.enabled` | Enables PnPjs caching |
 | `cache.storage` | `session` or `local`; defaults to `session` |
-| `cache.timeout` | Cache timeout in milliseconds; defaults to `300000` |
+| `cache.timeout` | Cache timeout in milliseconds, applied as PnPjs expiry; defaults to `300000`, and `0` retains that legacy fallback |
 | `cache.keyFactory` | Custom cache key builder |
 | `batch.enabled` | Reserved config marker for callers that coordinate batching |
 | `batch.maxRequests` | Reserved max request marker |
@@ -117,7 +117,7 @@ Returned `SPFxPnPContextService` methods:
 | `createSPFI(siteUrl?, config?)` | Creates a configured PnPjs `SPFI` instance |
 | `getConfigKey(config?)` | Returns a JSON string key for memoizing config |
 
-`createSPFI` throws when `spfxContext` is not available.
+`createSPFI` throws when `spfxContext` is not available. Cache expiry uses `Date.now() + timeout` through PnPjs `expireFunc`. A custom `cache.keyFactory` is used directly; `getConfigKey()` is a JSON key and cannot represent function identity, so callers memoizing their own service configuration must track the key factory reference separately.
 
 ## PnP Generic Service
 
@@ -338,7 +338,7 @@ Returned methods:
 
 `SPFxTenantKeyValueStoreServiceItem<T>` contains `key`, `value`, `description`, and `id`.
 
-Provisioning is guarded per catalog URL so concurrent calls share the same in-flight setup promise. Values are serialized with `serializeTenantValue` and read with `deserializeTenantValue`.
+Provisioning is guarded per catalog URL so concurrent calls share the same in-flight setup promise. Values are serialized with `serializeTenantValue` and read with `deserializeTenantValue`. The [legacy tenant serialization limits](../helpers/INDEX.md#deserializetenantvalue) apply; the generic return type does not validate stored values. Actual catalog/list permissions determine whether requests succeed.
 
 ## OneDrive App Data Service
 

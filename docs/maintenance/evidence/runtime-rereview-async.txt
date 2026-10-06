@@ -1,0 +1,301 @@
+TAP version 13
+# Subtest: AsyncInvoke loading covers overlapping calls, completion 0 first
+ok 1 - AsyncInvoke loading covers overlapping calls, completion 0 first
+  ---
+  duration_ms: 54.142791
+  type: 'test'
+  ...
+# Subtest: AsyncInvoke loading covers overlapping calls, completion 1 first
+ok 2 - AsyncInvoke loading covers overlapping calls, completion 1 first
+  ---
+  duration_ms: 13.05875
+  type: 'test'
+  ...
+# Subtest: AsyncInvoke ignores former client error and preserves rejection after unmount
+ok 3 - AsyncInvoke ignores former client error and preserves rejection after unmount
+  ---
+  duration_ms: 10.55925
+  type: 'test'
+  ...
+# Failed to get tenant key-value: Error: network
+#     at /Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-hooks.test.cjs:44:45
+#     at /Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-test-harness.cjs:34:59
+#     at batchedUpdates$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+#     at act (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+#     at settle (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-test-harness.cjs:34:35)
+#     at TestContext.<anonymous> (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-hooks.test.cjs:44:15)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: TenantKV get awaits service and captures rejection as fallback
+ok 4 - TenantKV get awaits service and captures rejection as fallback
+  ---
+  duration_ms: 27.635625
+  type: 'test'
+  ...
+# Failed to list tenant key-values: Error: network
+#     at /Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-hooks.test.cjs:44:45
+#     at /Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-test-harness.cjs:34:59
+#     at batchedUpdates$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+#     at act (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+#     at settle (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-test-harness.cjs:34:35)
+#     at TestContext.<anonymous> (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-hooks.test.cjs:44:15)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: TenantKV list awaits service and captures rejection as fallback
+ok 5 - TenantKV list awaits service and captures rejection as fallback
+  ---
+  duration_ms: 24.306542
+  type: 'test'
+  ...
+# Subtest: TenantKV reads and writes track all pending operations independently
+ok 6 - TenantKV reads and writes track all pending operations independently
+  ---
+  duration_ms: 14.873209
+  type: 'test'
+  ...
+# Subtest: TenantProperty autoFetch change discards reverse completion and stale rejection
+ok 7 - TenantProperty autoFetch change discards reverse completion and stale rejection
+  ---
+  duration_ms: 12.501084
+  type: 'test'
+  ...
+# OneDrive file not found. isNotFound=true
+# Subtest: OneDrive old 404 cannot create default in the current file
+ok 8 - OneDrive old 404 cannot create default in the current file
+  ---
+  duration_ms: 24.7405
+  type: 'test'
+  ...
+# Subtest: OneDrive identity clears old missing state before createIfMissing effect
+ok 9 - OneDrive identity clears old missing state before createIfMissing effect
+  ---
+  duration_ms: 20.373959
+  type: 'test'
+  ...
+# Subtest: OneDrive newer write wins over older read and reverse write completion
+ok 10 - OneDrive newer write wins over older read and reverse write completion
+  ---
+  duration_ms: 17.24175
+  type: 'test'
+  ...
+# Subtest: PnPList identity and latest query prevent stale state/error
+ok 11 - PnPList identity and latest query prevent stale state/error
+  ---
+  duration_ms: 30.976917
+  type: 'test'
+  ...
+# Subtest: PnPList rejects duplicate page dispatch and ignores page from superseded query
+ok 12 - PnPList rejects duplicate page dispatch and ignores page from superseded query
+  ---
+  duration_ms: 26.568
+  type: 'test'
+  ...
+# Subtest: PnPSearch clears refiners on new search but keeps them on refetch
+ok 13 - PnPSearch clears refiners on new search but keeps them on refetch
+  ---
+  duration_ms: 29.5265
+  type: 'test'
+  ...
+# Subtest: PnPSearch latest query ignores reversed responses and stale errors
+ok 14 - PnPSearch latest query ignores reversed responses and stale errors
+  ---
+  duration_ms: 33.111875
+  type: 'test'
+  ...
+# Subtest: PnPSearch same-tick loadMore dispatches one page and superseded page cannot append
+ok 15 - PnPSearch same-tick loadMore dispatches one page and superseded page cannot append
+  ---
+  duration_ms: 19.385875
+  type: 'test'
+  ...
+# Subtest: AppCatalog cached URL invalidates with pageContext/client service identity
+ok 16 - AppCatalog cached URL invalidates with pageContext/client service identity
+  ---
+  duration_ms: 13.359208
+  type: 'test'
+  ...
+# Subtest: OneDrive inline object default does not restart a successful autoFetch
+ok 17 - OneDrive inline object default does not restart a successful autoFetch
+  ---
+  duration_ms: 14.257417
+  type: 'test'
+  ...
+# Subtest: AsyncInvoke newer success is not replaced by an older failure and clearError works
+ok 18 - AsyncInvoke newer success is not replaced by an older failure and clearError works
+  ---
+  duration_ms: 10.256958
+  type: 'test'
+  ...
+# Failed to save tenant key-value: Error: write denied
+#     at TestContext.<anonymous> (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-hooks.test.cjs:239:18)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+#     at Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+#     at Test.postRun (node:internal/test_runner/test:1173:19)
+#     at Test.run (node:internal/test_runner/test:1101:12)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: TenantKV provisioning read fallback remains successful and write rejection propagates
+ok 19 - TenantKV provisioning read fallback remains successful and write rejection propagates
+  ---
+  duration_ms: 17.706791
+  type: 'test'
+  ...
+# Subtest: PnPSearch old suggestion rejection cannot replace newer successful search error state
+ok 20 - PnPSearch old suggestion rejection cannot replace newer successful search error state
+  ---
+  duration_ms: 11.773083
+  type: 'test'
+  ...
+# Subtest: property deferred failure after unmount cannot update React state
+ok 21 - property deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 6.789041
+  type: 'test'
+  ...
+# Subtest: drive deferred failure after unmount cannot update React state
+ok 22 - drive deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 13.900875
+  type: 'test'
+  ...
+# Subtest: list deferred failure after unmount cannot update React state
+ok 23 - list deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 18.165291
+  type: 'test'
+  ...
+# Subtest: search deferred failure after unmount cannot update React state
+ok 24 - search deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 13.817917
+  type: 'test'
+  ...
+# Subtest: store deferred failure after unmount cannot update React state
+ok 25 - store deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 9.40375
+  type: 'test'
+  ...
+# Subtest: PnPSearch query pagination uses accumulated count for hasMore
+ok 26 - PnPSearch query pagination uses accumulated count for hasMore
+  ---
+  duration_ms: 16.896917
+  type: 'test'
+  ...
+# Subtest: PnPList latest query wins within one identity and failed page retries the same offset
+ok 27 - PnPList latest query wins within one identity and failed page retries the same offset
+  ---
+  duration_ms: 15.093375
+  type: 'test'
+  ...
+# Failed to write file to OneDrive: Error: denied
+#     at Object.write (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-hooks.test.cjs:360:23)
+#     at Object.eval [as write] (eval at loadHook (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-test-harness.cjs:20:5), <anonymous>:283:27)
+#     at /Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-hooks.test.cjs:364:48
+#     at /Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-test-harness.cjs:34:59
+#     at batchedUpdates$1 (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+#     at act (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+#     at settle (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-test-harness.cjs:34:35)
+#     at TestContext.<anonymous> (/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit/tests/async-hooks.test.cjs:364:11)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+# Subtest: PnPSearch failed page keeps offset and inline options remain stable
+ok 28 - PnPSearch failed page keeps offset and inline options remain stable
+  ---
+  duration_ms: 9.6405
+  type: 'test'
+  ...
+# OneDrive file not found. isNotFound=true
+# Subtest: OneDrive write errors propagate and successful missing creation writes once
+ok 29 - OneDrive write errors propagate and successful missing creation writes once
+  ---
+  duration_ms: 11.20175
+  type: 'test'
+  ...
+# Subtest: AppCatalog resolved cache is cleared on service change before discovery
+ok 30 - AppCatalog resolved cache is cleared on service change before discovery
+  ---
+  duration_ms: 4.863833
+  type: 'test'
+  ...
+# Subtest: OneDrive lazy default is the current identity seed without starting a read
+ok 31 - OneDrive lazy default is the current identity seed without starting a read
+  ---
+  duration_ms: 8.892125
+  type: 'test'
+  ...
+# Subtest: PnPList pending create refetches the current query after replacement
+ok 32 - PnPList pending create refetches the current query after replacement
+  ---
+  duration_ms: 134.961333
+  type: 'test'
+  ...
+# Subtest: PnPList pending update refetches the current query after replacement
+ok 33 - PnPList pending update refetches the current query after replacement
+  ---
+  duration_ms: 133.210416
+  type: 'test'
+  ...
+# Subtest: PnPList pending remove refetches the current query after replacement
+ok 34 - PnPList pending remove refetches the current query after replacement
+  ---
+  duration_ms: 133.907542
+  type: 'test'
+  ...
+# Subtest: PnPList pending createBatch refetches the current query after replacement
+ok 35 - PnPList pending createBatch refetches the current query after replacement
+  ---
+  duration_ms: 130.264208
+  type: 'test'
+  ...
+# Subtest: PnPList pending updateBatch refetches the current query after replacement
+ok 36 - PnPList pending updateBatch refetches the current query after replacement
+  ---
+  duration_ms: 134.344416
+  type: 'test'
+  ...
+# Subtest: PnPList pending removeBatch refetches the current query after replacement
+ok 37 - PnPList pending removeBatch refetches the current query after replacement
+  ---
+  duration_ms: 132.077041
+  type: 'test'
+  ...
+# Subtest: PnPList failed refetch preserves the successful next-page offset
+ok 38 - PnPList failed refetch preserves the successful next-page offset
+  ---
+  duration_ms: 13.316583
+  type: 'test'
+  ...
+# Subtest: PnPList CRUD refresh uses the replacement query even while its first response is pending
+ok 39 - PnPList CRUD refresh uses the replacement query even while its first response is pending
+  ---
+  duration_ms: 131.260708
+  type: 'test'
+  ...
+# Subtest: PnPList a newer query invalidates an already scheduled CRUD refresh
+ok 40 - PnPList a newer query invalidates an already scheduled CRUD refresh
+  ---
+  duration_ms: 136.018583
+  type: 'test'
+  ...
+# Subtest: PnPList former-service mutation cannot refresh the replacement list
+ok 41 - PnPList former-service mutation cannot refresh the replacement list
+  ---
+  duration_ms: 134.712459
+  type: 'test'
+  ...
+# Subtest: PnPList unmount cancels scheduled mutation refresh and ignores later mutation completion
+ok 42 - PnPList unmount cancels scheduled mutation refresh and ignores later mutation completion
+  ---
+  duration_ms: 138.116958
+  type: 'test'
+  ...
+1..42
+# tests 42
+# suites 0
+# pass 42
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2234.56575

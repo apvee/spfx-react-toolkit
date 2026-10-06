@@ -1,412 +1,123 @@
-# User & Site Hooks
+# User and Site Hooks
 
-> Hooks for accessing user and site information
-
-## Overview
-
-These hooks provide access to current user, site, hub site, and list information.
-
-| Hook | Returns | Description |
-|------|---------|-------------|
-| [`useSPFxUserInfo`](#usespfxuserinfo) | `SPFxUserInfo` | Current user information |
-| [`useSPFxUserPhoto`](#usespfxuserphoto) | `SPFxUserPhotoResult` | User profile photo |
-| [`useSPFxSiteInfo`](#usespfxsiteinfo) | `SPFxSiteInfo` | Site and web information |
-| [`useSPFxHubSiteInfo`](#usespfxhubsiteinfo) | `SPFxHubSiteInfo` | Hub site information |
-| [`useSPFxListInfo`](#usespfxlistinfo) | `SPFxListInfo \| undefined` | Current list context |
-
----
+Public hook signatures and result shapes match the library source. External types (React, SPFx and PnPjs) come from their respective packages. All hooks require a matching SPFx provider.
 
 ## useSPFxUserInfo
 
-Access current user information.
-
-### Signature
-
 ```typescript
-function useSPFxUserInfo(): SPFxUserInfo
-```
-
-### Returns
-
-```typescript
-interface SPFxUserInfo {
-  /** User login name (e.g., "domain\\user" or email) */
-  readonly loginName: string;
-  
-  /** User display name */
-  readonly displayName: string;
-  
-  /** User email address (optional) */
-  readonly email?: string;
-  
-  /** Whether user is an external guest user */
-  readonly isExternal: boolean;
+export function useSPFxUserInfo(): SPFxUserInfo;
+export interface SPFxUserInfo {
+    readonly loginName: string;
+    readonly displayName: string;
+    readonly email?: string;
+    readonly isExternal: boolean;
 }
 ```
 
-### Example
+Maps the current PageContext user. Optional email depends on host metadata; isExternal falls back to false when the host omits the guest flag.
 
-```tsx
-import { useSPFxUserInfo } from '@apvee/spfx-react-toolkit';
-
-function WelcomeMessage() {
-  const { displayName, email, isExternal } = useSPFxUserInfo();
-  
-  return (
-    <div>
-      <h2>Welcome, {displayName}!</h2>
-      {email && <p>Email: {email}</p>}
-      {isExternal && (
-        <span className="badge">Guest User</span>
-      )}
-    </div>
-  );
-}
-```
-
-### Source
-
-[View source](../../src/hooks/useSPFxUserInfo.ts)
-
----
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts)
 
 ## useSPFxUserPhoto
 
-Access user profile photo with multiple size options.
-
-### Signature
-
 ```typescript
-function useSPFxUserPhoto(options?: SPFxUserPhotoOptions): SPFxUserPhotoResult
-```
-
-### Parameters
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `options` | `SPFxUserPhotoOptions` | No | Photo options |
-
-### Options
-
-```typescript
-type SPFxUserPhotoSize = 
-  | 'S'   // 48×48
-  | 'M'   // 72×72  
-  | 'L';  // 120×120
-
-interface SPFxUserPhotoOptions {
-  /** User login name (default: current user) */
-  loginName?: string;
-  
-  /** Photo size (default: 'M') */
-  size?: SPFxUserPhotoSize;
+export function useSPFxUserPhoto(options?: SPFxUserPhotoOptions): SPFxUserPhotoResult;
+export type SPFxUserPhotoSize = '48x48' | '64x64' | '96x96' | '120x120' | '240x240' | '360x360' | '432x432' | '504x504' | '648x648';
+export interface SPFxUserPhotoOptions {
+    userId?: string;
+    email?: string;
+    size?: SPFxUserPhotoSize;
+    autoFetch?: boolean;
+}
+export interface SPFxUserPhotoResult {
+    readonly photoUrl: string | undefined;
+    readonly photoBlob: Blob | undefined;
+    readonly isLoading: boolean;
+    readonly error: Error | undefined;
+    readonly reload: () => Promise<void>;
+    readonly isReady: boolean;
 }
 ```
 
-### Returns
-
-```typescript
-interface SPFxUserPhotoResult {
-  /** Photo URL (undefined while loading) */
-  readonly url: string | undefined;
-  
-  /** Loading state */
-  readonly isLoading: boolean;
-  
-  /** Error if failed */
-  readonly error: Error | undefined;
-}
-```
-
-### Example: Current User Photo
+Loads a Graph photo for the specified user ID/email or current user, with default size 240x240 and autoFetch true. Changing Graph service, user ID/email or size clears prior photo state and invalidates previous request ownership. Only the current request publishes photo/error/loading results. Obsolete blob URLs are revoked; active URLs are cleaned up on replacement or unmount. Requests are not cancelled. Handle unavailable photos and authentication/permission errors in the UI.
 
 ```tsx
-import { useSPFxUserPhoto, useSPFxUserInfo } from '@apvee/spfx-react-toolkit';
-
-function UserCard() {
-  const { displayName, email } = useSPFxUserInfo();
-  const { url, isLoading } = useSPFxUserPhoto({ size: 'L' });
-  
-  return (
-    <div className="user-card">
-      {isLoading ? (
-        <div className="avatar-placeholder" />
-      ) : (
-        <img src={url} alt={displayName} className="avatar" />
-      )}
-      <h3>{displayName}</h3>
-      <p>{email}</p>
-    </div>
-  );
-}
-```
-
-### Example: Other User Photo
-
-```tsx
+import * as React from 'react';
 import { useSPFxUserPhoto } from '@apvee/spfx-react-toolkit';
 
-function TeamMemberCard({ loginName, name }: { loginName: string; name: string }) {
-  const { url, isLoading, error } = useSPFxUserPhoto({ 
-    loginName, 
-    size: 'M' 
-  });
-  
-  return (
-    <div className="team-member">
-      <img 
-        src={error ? '/images/default-avatar.png' : url} 
-        alt={name}
-      />
-      <span>{name}</span>
-    </div>
-  );
+function Avatar() {
+  const { photoUrl, isLoading, error } = useSPFxUserPhoto();
+  if (isLoading) return <p>Loading photo</p>;
+  if (error || !photoUrl) return <p>No photo available</p>;
+  return <img src={photoUrl} alt="Current user" />;
 }
 ```
 
-### Source
-
-[View source](../../src/hooks/useSPFxUserPhoto.ts)
-
----
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts)
 
 ## useSPFxSiteInfo
 
-Access site collection and web information.
-
-### Signature
-
 ```typescript
-function useSPFxSiteInfo(): SPFxSiteInfo
-```
-
-### Returns
-
-```typescript
-interface SPFxGroupInfo {
-  /** Group ID (GUID) */
-  readonly id: string;
-  
-  /** Whether group is public */
-  readonly isPublic: boolean;
+export function useSPFxSiteInfo(): SPFxSiteInfo;
+export interface SPFxGroupInfo {
+    readonly id: string;
+    readonly isPublic: boolean;
 }
-
-interface SPFxSiteInfo {
-  // Web properties
-  /** Web ID (GUID) */
-  readonly webId: string;
-  
-  /** Web absolute URL */
-  readonly webUrl: string;
-  
-  /** Web server relative URL */
-  readonly webServerRelativeUrl: string;
-  
-  /** Web title */
-  readonly title: string;
-  
-  /** Web language ID (LCID) */
-  readonly languageId: number;
-  
-  /** Site logo URL */
-  readonly logoUrl?: string;
-  
-  // Site collection properties
-  /** Site collection ID (GUID) */
-  readonly siteId: string;
-  
-  /** Site collection absolute URL */
-  readonly siteUrl: string;
-  
-  /** Site collection server relative URL */
-  readonly siteServerRelativeUrl: string;
-  
-  /** Site classification label */
-  readonly siteClassification?: string;
-  
-  /** Microsoft 365 Group info (if group-connected) */
-  readonly siteGroup?: SPFxGroupInfo;
+export interface SPFxSiteInfo {
+    readonly webId: string;
+    readonly webUrl: string;
+    readonly webServerRelativeUrl: string;
+    readonly title: string;
+    readonly languageId: number;
+    readonly logoUrl?: string;
+    readonly siteId: string;
+    readonly siteUrl: string;
+    readonly siteServerRelativeUrl: string;
+    readonly siteClassification?: string;
+    readonly siteGroup?: SPFxGroupInfo;
 }
 ```
 
-### Example
+Maps site collection and web metadata from PageContext. Classification, logo and group metadata are optional.
 
-```tsx
-import { useSPFxSiteInfo } from '@apvee/spfx-react-toolkit';
-
-function SiteHeader() {
-  const { 
-    title, 
-    logoUrl, 
-    webUrl,
-    siteClassification, 
-    siteGroup 
-  } = useSPFxSiteInfo();
-  
-  return (
-    <header>
-      {logoUrl && <img src={logoUrl} alt="Site logo" />}
-      <h1>{title}</h1>
-      
-      {siteClassification && (
-        <span className="classification">{siteClassification}</span>
-      )}
-      
-      {siteGroup && (
-        <span className="group-badge">
-          {siteGroup.isPublic ? 'Public Group' : 'Private Group'}
-        </span>
-      )}
-    </header>
-  );
-}
-```
-
-### Source
-
-[View source](../../src/hooks/useSPFxSiteInfo.ts)
-
----
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts)
 
 ## useSPFxHubSiteInfo
 
-Access hub site information.
-
-### Signature
-
 ```typescript
-function useSPFxHubSiteInfo(): SPFxHubSiteInfo
-```
-
-### Returns
-
-```typescript
-interface SPFxHubSiteInfo {
-  /** Whether current site is connected to a hub */
-  readonly isConnected: boolean;
-  
-  /** Hub site ID (GUID) */
-  readonly hubSiteId?: string;
-  
-  /** Whether current site is a hub site */
-  readonly isHubSite: boolean;
+export function useSPFxHubSiteInfo(): SPFxHubSiteInfo;
+export interface SPFxHubSiteInfo {
+    readonly isHubSite: boolean;
+    readonly hubSiteId: string | undefined;
+    readonly hubSiteUrl: string | undefined;
+    readonly isLoading: boolean;
+    readonly error: Error | undefined;
 }
 ```
 
-### Example
+Loads hub information when available. Inspect isLoading/error and optional hubSiteId/hubSiteUrl rather than assuming every site is connected to a hub.
 
-```tsx
-import { useSPFxHubSiteInfo, useSPFxSiteInfo } from '@apvee/spfx-react-toolkit';
-
-function HubNavigation() {
-  const { isConnected, isHubSite, hubSiteId } = useSPFxHubSiteInfo();
-  const { title } = useSPFxSiteInfo();
-  
-  if (!isConnected && !isHubSite) {
-    return null; // No hub connection
-  }
-  
-  return (
-    <nav className="hub-nav">
-      {isHubSite ? (
-        <span className="hub-badge">Hub Site</span>
-      ) : (
-        <span>Connected to Hub: {hubSiteId}</span>
-      )}
-    </nav>
-  );
-}
-```
-
-### Source
-
-[View source](../../src/hooks/useSPFxHubSiteInfo.ts)
-
----
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts)
 
 ## useSPFxListInfo
 
-Access current list context (when in list context).
-
-### Signature
-
 ```typescript
-function useSPFxListInfo(): SPFxListInfo | undefined
-```
-
-### Returns
-
-```typescript
-interface SPFxListInfo {
-  /** List ID (GUID) */
-  readonly id: string;
-  
-  /** List title */
-  readonly title: string;
-  
-  /** List server relative URL */
-  readonly serverRelativeUrl: string;
-  
-  /** List base template ID */
-  readonly baseTemplate: number;
+export function useSPFxListInfo(): SPFxListInfo | undefined;
+export interface SPFxListInfo {
+    readonly id: string;
+    readonly title: string;
+    readonly serverRelativeUrl: string;
+    readonly baseTemplate?: number;
+    readonly isDocumentLibrary?: boolean;
 }
 ```
 
-Returns `undefined` if not in a list context (e.g., on a site page without list association).
+Returns undefined when the page has no list context. baseTemplate and isDocumentLibrary are optional because host metadata can omit the template.
 
-### Example
-
-```tsx
-import { useSPFxListInfo } from '@apvee/spfx-react-toolkit';
-
-function ListAwareComponent() {
-  const listInfo = useSPFxListInfo();
-  
-  if (!listInfo) {
-    return <p>This component requires a list context.</p>;
-  }
-  
-  return (
-    <div>
-      <h2>List: {listInfo.title}</h2>
-      <p>Template: {listInfo.baseTemplate}</p>
-      <p>URL: {listInfo.serverRelativeUrl}</p>
-    </div>
-  );
-}
-```
-
-### Example: Field Customizer Usage
-
-```tsx
-import { useSPFxListInfo } from '@apvee/spfx-react-toolkit';
-
-function FieldRenderer({ value }: { value: string }) {
-  const listInfo = useSPFxListInfo();
-  
-  // Field customizer always has list context
-  const isTaskList = listInfo?.baseTemplate === 107; // Task list template
-  
-  return (
-    <span className={isTaskList ? 'task-field' : 'generic-field'}>
-      {value}
-    </span>
-  );
-}
-```
-
-### Source
-
-[View source](../../src/hooks/useSPFxListInfo.ts)
-
----
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxListInfo.ts)
 
 ## See Also
 
-- [Permissions Hooks](./permissions.md) - Permission checking
-- [Environment Hooks](./environment.md) - Environment detection
-- [Context Hooks](./context.md) - Context access
-
----
-
-*Generated from JSDoc comments. Last updated: January 31, 2026*
+- [API index](../../INDEX.md)
+- [Services](../services/INDEX.md)
+- [SharePoint validation](../../SHAREPOINT-VALIDATION.md)
