@@ -40,3 +40,23 @@ La nuova richiesta utente autorizza il merge locale su dev e il lavoro nel check
 ## Pulizia root conclusa
 
 Rootlegacy lib/dist/release/temp/src rimosse (508 file, 13.410.937 byte), backup completo verificato in /private/tmp e manifest persistente. Build→verify90/API82→ship PASS; directory non rigenerate; root_cleanup_review indipendente PASS. Sorgenti e API immutati. Il prossimo comando di sviluppo si esegue dal checkout principale dev.
+
+## Shortcut di avvio richiesto
+
+Aggiunto npm run serve nella root: build library → app gulp serve, forwarding argomenti dopo --. Aggiornate guide/README. Build+help, verifier documenti e review indipendente PASS; dettagli ROOT-SERVE.md. Delta intenzionale rispetto allo snapshot storico: package.json principale e tre documenti pubblici, nessun runtime o dipendenza.
+
+## Razionalizzazione evidenze richiesta
+
+Rimossi22 log/harness intermedi o duplicati, nessun test o pagina pubblica eliminato. Due baseline operative trasferite byte-identiche in tests/fixtures, verify-api aggiorna solo2percorsi. Conservati ledger e rapporti unici, RED/GREEN e gatefinali; backup completo verificato e manifest persistente. npmverify90/API82 e review indipendente PASS. Il comando serve aggiunto resta invariato. Vedere EVIDENCE-CLEANUP.md; snapshot183 storico non rigenerato per questi delta intenzionali.
+
+## Policy Git del monorepo richiesta
+
+Creato AGENTS.md alla root: checkout corrente, niente worktree automatici; all’inizio di ogni incarico di modifica chiedere branch corrente oppure nuovo branch nello stesso checkout, salvo scelta già esplicita per quell’incarico. La scelta vale per continuazioni e subagenti; preservare modifiche preesistenti. Regola applicata ai workspace e revisione indipendente git_policy_review (GPT-6.1 Sol) PASS. Nessun prodotto, dipendenza, branch o worktree modificato per questa aggiunta; modifica eseguita su dev già concordato.
+
+## Lingua AGENTS e proposta documentazione interna
+
+AGENTS.md riscritto integralmente in inglese senza cambiare le regole; review indipendente git_policy_review PASS. Valutata proposta .docs/maintenance (versionata) e .docs/superpowers (attualmente locale/ignorata), mantenendo docs per API e guide pubbliche e AGENTS alla root. Nessun file spostato: l’utente ha richiesto prima una valutazione. La migrazione eventuale richiede aggiornamento link, .gitignore, verifier pubblico e convenzione in AGENTS; i riferimenti storici restano riconoscibili.
+
+## Approvazione .docs e peer Fluent
+
+Documentazione interna trasferita a .docs/maintenance e .docs/superpowers (67 file originali preservati); docs contiene le guide ufficiali. AGENTS root in inglese conserva policyGit e indica i nuovi percorsi; Superpowers resta ignorato. User ha richiesto esplicitamente entrambi Fluent come peer condivise: library peer+dev e app dependencies con stessi intervalli; tslib diretto superfluo rimosso, resta nei pacchetti SPFx che lo usano. Lock senza aggiornamenti versioni. VerifierAPI conserva baseline storiche e 82 dichiarazioni, con eccezioni precise autorizzate e controllo import dichiarati. 90test/build/typecheck/lint/packconsumer+fresh-no-lockconsumer/shared realpaths PASS, review indipendente PASS. Vedere DOCS-AND-DEPENDENCIES.md. Goaltenant ancoraBLOCKED, nessun esito esterno simulato.

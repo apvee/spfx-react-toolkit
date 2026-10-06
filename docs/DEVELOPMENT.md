@@ -11,7 +11,8 @@ All commands below run from the cloned repository root. Use Node `>=22.14.0 <23.
 | `apps/spfx-react-toolkit-test/src` | WebPart, Application Customizer and demo UI |
 | `apps/spfx-react-toolkit-test/config` | SPFx Gulp and tenant debug configuration |
 | `apps/spfx-react-toolkit-test/lib`, `dist`, `temp`, `sharepoint` | Generated sample/build/package output under the app workspace |
-| `tests`, `scripts`, `docs` | Root behavioral checks, verification and documentation |
+| `tests`, `scripts`, `docs` | Root behavioral checks, verification and public documentation |
+| `.docs/maintenance`, `.docs/superpowers` | Internal versioned maintenance records and local ignored agent plans |
 
 The app resolves `@apvee/spfx-react-toolkit` as an npm workspace package through its compiled `lib/index.js`. It does not compile the library source through a path alias. Build library first; after editing library source, rebuild it and stop/restart the running app serve process. The app's Sass and webpack steps are independent of library compilation.
 
@@ -32,6 +33,7 @@ npm run build:app
 | `npm run build:library` | Library workspace `tsc -p tsconfig.json` |
 | `npm run build:app` | App workspace `gulp bundle` |
 | `npm run build` | Builds library, then app |
+| `npm run serve` | Builds library, then starts the app workspace with `gulp serve`; forwards arguments after `--` |
 | `npm run clean` | Library removes `lib`; app runs `gulp clean` |
 | `npm test` | `node --test tests/*.test.cjs` |
 | `npm run typecheck` | Both workspaces run `tsc --noEmit` |
@@ -51,10 +53,11 @@ Run `npm run verify` and `npm run verify:package` before requesting review. `pre
 ## Local SPFx debug
 
 ```bash
-npm run build:library
 npm run trust-dev-cert --workspace @apvee/spfx-react-toolkit-test
-npm run serve --workspace @apvee/spfx-react-toolkit-test
+npm run serve
 ```
+
+`npm run serve` rebuilds the library before starting the app. For example, `npm run serve -- --config=spFxReactToolkitTest` forwards the configuration to Gulp.
 
 Trusting the certificate affects your local development certificate store. Configure the app's tenant URLs before opening the authenticated workbench. See [SharePoint validation](./SHAREPOINT-VALIDATION.md) for exact host entry points and manual checks. The repository VS Code launch configuration points at the app workspace; its TypeScript SDK points at root `node_modules`.
 
@@ -63,3 +66,7 @@ Trusting the certificate affects your local development certificate store. Confi
 `npm run pack:library` writes `artifacts/apvee-spfx-react-toolkit-2.1.0.tgz` for the current package version. The tarball contains package metadata, README, LICENSE and compiled `lib/index.*`, `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services`, `lib/utils`. Entry points remain `lib/index.js` and `lib/index.d.ts`. The app, SPFx manifests, source, tests, config and repository docs are excluded. Source maps point back to source paths; source is not embedded in the tarball.
 
 A package-content check does not validate tenant authentication, Graph consent or SharePoint-host lifecycle. Local regression tests use real React lifecycle with doubles at unavailable SDK/service boundaries. Record real-host results separately.
+
+## Shared Fluent packages
+
+The library declares migration-v8-v9 ^9.9.12 and react-theme ^9.2.0 as mandatory peers. They are devDependencies for library development and dependencies of the SPFx test app. The published package does not own separate Fluent runtime dependencies. The tarball consumer check verifies that the app and library resolve the same Fluent packages. This is an explicit consumer contract selected by the user; all historical peer ranges remain unchanged. `tslib` is supplied by the SPFx packages that declare and import it, rather than an unused direct dependency of this library.

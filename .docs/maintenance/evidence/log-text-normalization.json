@@ -1,0 +1,30 @@
+{
+  "normalization": "ANSI color codes, trailing whitespace and surplus blank EOF lines removed for readable versioned output; command results unchanged",
+  "files": [
+    {
+      "file": ".docs/maintenance/evidence/fluent-peers-final-consumer.txt",
+      "rawSha256": "c0d3604674c2ce34062de14cc1a6a39aba28ef8bc26ed57d78a1a99ee932f98f",
+      "textSha256": "77c863d0140842350d3aff101c0bf5dc4328d665a8e07f862582116e5b091158"
+    },
+    {
+      "file": ".docs/maintenance/evidence/fluent-peers-final-ship.txt",
+      "rawSha256": "c6dd4fca05887904190e4d7d279b6f0102b3650e7ed5718b7fd296ca3334169f",
+      "textSha256": "0c0b7c9c470af7075f8fcf835606062bdc476c98dc3c18e30792c54f6a28b1c3"
+    },
+    {
+      "file": ".docs/maintenance/evidence/fluent-peers-fresh-consumer.txt",
+      "rawSha256": "1ebc1cf64bdbef529360b67673c620cff58818762cd90b6f26ee8bd1503131f8",
+      "textSha256": "91a15289a09e7f34d77a66c53659b23b92532ef9f19d84c1041caf969288e599"
+    },
+    {
+      "file": ".docs/maintenance/evidence/root-serve-help.txt",
+      "rawSha256": "700bdf7049de09d3de20dc1152188b6305bd0f094168cb0a1e6bb0224afc8fbf",
+      "textSha256": "3654b9e08355972756c0f6cc5d826ee91201da7d1c6fdc19a8b78e88897e1075"
+    },
+    {
+      "file": ".docs/maintenance/evidence/fluent-peers-before-consumer.txt",
+      "rawSha256": "b4b2944b59272fabe8bf3c4fb16a13e3b4a4d4b12d5df6b4d8264ea907f7c7c6",
+      "textSha256": "f9617a45ff7ed728e3fe4ee064bc106dde4ed5cf4e9d925529e69e6290f3b825"
+    }
+  ]
+}

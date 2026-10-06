@@ -7,7 +7,7 @@ React providers, 40 hooks, public helpers and services for SharePoint Framework.
 Install in an SPFx host project:
 
 ```bash
-npm install @apvee/spfx-react-toolkit
+npm install @apvee/spfx-react-toolkit "@fluentui/react-migration-v8-v9@^9.9.12" "@fluentui/react-theme@^9.2.0"
 ```
 
 The host supplies the React and SPFx runtimes. PnPjs APIs require the compatible `@pnp/core`, `@pnp/queryable` and `@pnp/sp` peers. Preserve versions compatible with your host; do not upgrade an existing SPFx toolchain just to install the toolkit.
@@ -87,3 +87,5 @@ Rebuild the library and restart serve after changing library source. These devel
 - [Services API](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/services/INDEX.md)
 
 MIT — see [LICENSE](./LICENSE).
+
+Fluent integration uses mandatory peer dependencies `@fluentui/react-migration-v8-v9` (`^9.9.12`) and `@fluentui/react-theme` (`^9.2.0`). The consuming project provides compatible shared packages; modern npm can install missing peers automatically. Existing compatible installations are reused. The SPFx test app declares both explicitly. `tslib` is required by the SPFx packages that use it; this library’s ES2020 output does not import it.

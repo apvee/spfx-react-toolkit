@@ -16,7 +16,7 @@ temp
 .heft
 
 # Local agent planning artifacts
-docs/superpowers/
+.docs/superpowers/
 
 # Coverage directory used by tools like istanbul
 coverage

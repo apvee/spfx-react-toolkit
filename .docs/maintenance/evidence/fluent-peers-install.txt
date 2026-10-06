@@ -40,7 +40,7 @@ npm warn deprecated adal-angular@1.0.16: This package is no longer supported. Pl
 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
 npm warn deprecated @microsoft/teams-js@2.32.0: Package no longer supported. Use at your own risk
 
-added 2423 packages in 17s
+added 2423 packages in 16s
 npm warn install-scripts 4 packages have install scripts not yet covered by allowScripts:
 npm warn install-scripts   fsevents@1.2.13 (install: node install.js)
 npm warn install-scripts   es5-ext@0.10.64 (postinstall:  node -e "try{require('./_postinstall')}catch(e){}" || exit 0)

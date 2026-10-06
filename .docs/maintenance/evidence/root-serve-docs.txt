@@ -1,0 +1,5 @@
+
+> spfx-react-toolkit-monorepo@2.1.0 verify:public-docs
+> node scripts/verify-public-docs.cjs
+
+public docs verification passed (API inventory and relative links)

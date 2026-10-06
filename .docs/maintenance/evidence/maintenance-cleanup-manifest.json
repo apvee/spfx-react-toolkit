@@ -1,0 +1,104 @@
+{
+  "removedFiles": {
+    "runtime-review-edge-reproduction.cjs": {
+      "bytes": 1764,
+      "sha256": "8b6d9151a2db689f28e24b5c68e663de6537af8dd0d0993387e4b4a40dfcbad5"
+    },
+    "store-concurrent-b.txt": {
+      "bytes": 34,
+      "sha256": "d0d34854c217d86672d31559c721d4bc7a0f1d2d7fea9839bf13292671541bfb"
+    },
+    "app-dev.txt": {
+      "bytes": 2430,
+      "sha256": "7833f5b1e75ac0098e2044142a149ee3b37382f9e84f18b1dc1e9dd76d4b0ac8"
+    },
+    "app-ship-package.txt": {
+      "bytes": 23027,
+      "sha256": "6c1f5fcea70222beb6d9a691f5f2d5cb8f95d7d09c6d0b13f2ae794ae4e9c745"
+    },
+    "clean-build-initial.txt": {
+      "bytes": 3146,
+      "sha256": "6b2d8677d5ea1ffe28574513b9b125468281199779b8105a0b194e2719b46214"
+    },
+    "clean-tests-initial.txt": {
+      "bytes": 20784,
+      "sha256": "619f7a9da1206fbce476d0577359a49f63ec1359c2deda8490651d284c99a14e"
+    },
+    "clean-ship-current.txt": {
+      "bytes": 21532,
+      "sha256": "34507793244c85b1b1c8e8347aeab93e60dd14586a5ddf3a9bd0e18b57ae0494"
+    },
+    "tarball-consumer-initial.txt": {
+      "bytes": 34230,
+      "sha256": "1bf7b20c32db8a40226aa8d9be06625d048542aa80bb976d542fe37164352ec2"
+    },
+    "workspace-install.txt": {
+      "bytes": 48,
+      "sha256": "cc3ff68aab335c7816c0ebb2171286abf8bd758d278b7f37641c78912ccc7e42"
+    },
+    "runtime-dependencies.txt": {
+      "bytes": 13364,
+      "sha256": "bfa65f7dda2427a2db82c2d0c4d12f38964b1820fce6179a64fbc69142c99c29"
+    },
+    "runtime-review-green.txt": {
+      "bytes": 21579,
+      "sha256": "90b74ef10344ea7389712ff224b5dd7ca6b42185bf05fe4e3511a38d08961a11"
+    },
+    "runtime-reviewed-safe-groups.txt": {
+      "bytes": 10351,
+      "sha256": "ec08422b78e077272797dbe990c3f3b6f38abc0f59c4b3a812342b5f00ca3ec4"
+    },
+    "integration-pre-merge-verify.txt": {
+      "bytes": 25252,
+      "sha256": "c1eaaa8b203191bab42536f4e7046b5bd19547a1b2b817a883003c04b09757b0"
+    },
+    "integration-dev-build.txt": {
+      "bytes": 2665,
+      "sha256": "fa96206a77e7d1d1d666a3472c532caf0c991099360ded005cc5a938016ac721"
+    },
+    "integration-dev-verify.txt": {
+      "bytes": 24717,
+      "sha256": "274a007b1499a90e70885b632118f101afa37595f60b9057beebdd82ca467fb6"
+    },
+    "integration-dev-install.txt": {
+      "bytes": 5137,
+      "sha256": "cb0204ae1791abfe8dd943ff28750b859980af0e58bae57730f0ba9391f7bbfa"
+    },
+    "baseline-build.txt": {
+      "bytes": 1899,
+      "sha256": "cae279293de0113f5c4465efcf87bd3ecf75e344af95e00eb50b731660d35be0"
+    },
+    "baseline-test.txt": {
+      "bytes": 1893,
+      "sha256": "90fb16e1fc98a9ce4507befaa6574ecbcc50241ee39981e1e8b377f82a985991"
+    },
+    "async-fix-round1-lint.txt": {
+      "bytes": 69,
+      "sha256": "24de2745bfa04f44450f9cc015fb2c03db1698a551c28293793b36e8b607a70b"
+    },
+    "async-fix-round1-typecheck.txt": {
+      "bytes": 78,
+      "sha256": "ae8b3c915ae3d4fe680d0ea534812d0c4c7a5c7e4e7f2a22d5119decdfe42f4e"
+    },
+    "async-fix-round1-npm-test.txt": {
+      "bytes": 23981,
+      "sha256": "bd51e2cb86291f1a51a9ce90c8824b6a45af0c04263593b08f49aafefaee877b"
+    },
+    "async-fix-round1-suite-green.txt": {
+      "bytes": 13230,
+      "sha256": "971d68fc1f5be8de5b1e4f5e18b61e1b09dd4ce8d5c1bd5218c2b081fc488f6d"
+    }
+  },
+  "removedCount": 22,
+  "removedBytes": 251210,
+  "backupPath": "/private/tmp/spfx-maintenance-cleanup-9rgj22_9/removed-evidence.tgz",
+  "backupSha256": "faea44bc3c203562d22bc37c7a1cff39e0ed9cd132401db9d2a2af74c9159499",
+  "movedFixtureSha256": {
+    "api-baseline.json": "58115e3214d2a0aa4f747ccce7c541894ed7417c2fc88522539785a0ddc2d648",
+    "package-baseline.json": "92a10935c4df12aef19fa2a9b76acc1a20c93ab1d3047db85cb65bd3b99535c6"
+  },
+  "before": {
+    "docsFiles": 108,
+    "evidenceFiles": 65
+  }
+}

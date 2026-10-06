@@ -44,9 +44,6 @@ function collectPublicDocs() {
       const relativePath = path.relative(root, fullPath);
 
       if (entry.isDirectory()) {
-        if (relativePath.startsWith(`docs${path.sep}superpowers`) || relativePath.startsWith(`docs${path.sep}maintenance`)) {
-          continue;
-        }
         walk(fullPath);
       } else if (entry.isFile() && entry.name.endsWith('.md')) {
         docs.push(relativePath);

@@ -7,7 +7,7 @@ React providers, 40 hooks, public helpers and services for SharePoint Framework.
 Install in an SPFx host project:
 
 ```bash
-npm install @apvee/spfx-react-toolkit
+npm install @apvee/spfx-react-toolkit "@fluentui/react-migration-v8-v9@^9.9.12" "@fluentui/react-theme@^9.2.0"
 ```
 
 The host supplies the React and SPFx runtimes. PnPjs APIs require the compatible `@pnp/core`, `@pnp/queryable` and `@pnp/sp` peers. Preserve versions compatible with your host; do not upgrade an existing SPFx toolchain just to install the toolkit.
@@ -45,7 +45,8 @@ This repository uses npm workspaces:
 
 - `packages/spfx-react-toolkit`: publishable library; `tsc` emits ESNext modules, declarations and maps to `lib`.
 - `apps/spfx-react-toolkit-test`: private SPFx sample; SPFx 1.21.1 Gulp build performs Sass, lint and webpack bundling against the library package.
-- `docs`, `scripts`, `tests`: shared documentation, verification and regression tests.
+- `docs`, `scripts`, `tests`: public documentation, verification and regression tests.
+- `.docs`: internal maintenance records and local agent planning material.
 
 Run from the cloned repository root:
 
@@ -61,7 +62,7 @@ npm run verify:package
 
 ```bash
 npm run trust-dev-cert --workspace @apvee/spfx-react-toolkit-test
-npm run serve --workspace @apvee/spfx-react-toolkit-test
+npm run serve
 ```
 
 After library source changes, rebuild with `npm run build:library` and restart the app's serve process. The app consumes the package's compiled `lib` entry point. See [Development](./docs/DEVELOPMENT.md) for the full command map and [SharePoint validation](./docs/SHAREPOINT-VALIDATION.md) for real-host checks and prerequisites.
@@ -90,3 +91,5 @@ The package declares SPFx peers `>=1.18.0 <2.0.0`; that range is a compatibility
 - [Issues](https://github.com/apvee/spfx-react-toolkit/issues)
 
 MIT — see [LICENSE](./LICENSE).
+
+Fluent integration uses mandatory peer dependencies `@fluentui/react-migration-v8-v9` (`^9.9.12`) and `@fluentui/react-theme` (`^9.2.0`). The consuming project provides compatible shared packages; modern npm can install missing peers automatically. Existing compatible installations are reused. The SPFx test app declares both explicitly. `tslib` is required by the SPFx packages that use it; this library’s ES2020 output does not import it.

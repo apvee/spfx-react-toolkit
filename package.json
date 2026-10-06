@@ -13,6 +13,7 @@
     "build": "npm run build:library && npm run build:app",
     "build:library": "npm run build --workspace @apvee/spfx-react-toolkit",
     "build:app": "npm run build --workspace @apvee/spfx-react-toolkit-test",
+    "serve": "npm run build:library && npm run serve --workspace @apvee/spfx-react-toolkit-test --",
     "bundle:ship": "npm run build:library && npm run bundle:ship --workspace @apvee/spfx-react-toolkit-test",
     "package:solution": "npm run bundle:ship && npm run package:solution --workspace @apvee/spfx-react-toolkit-test",
     "clean": "npm run clean --workspaces",

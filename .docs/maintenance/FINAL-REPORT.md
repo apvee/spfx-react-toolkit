@@ -22,7 +22,7 @@ Rimosse le dichiarazioni dirette inutilizzate ajv, sp-lodash-subset e sp-office-
 
 ## Documentazione e revisioni
 
-README repository/npm, API e guide [sviluppo](../DEVELOPMENT.md)/[tenant](../SHAREPOINT-VALIDATION.md) allineate ai sorgenti. Corretti link e membri/esempi inesistenti. Tre ulteriori rilievi documentali del revisore sono stati corretti e ricompilati: URL cross-site, servizi SDK e lifecycle Customizer.
+README repository/npm, API e guide [sviluppo](../../docs/DEVELOPMENT.md)/[tenant](../../docs/SHAREPOINT-VALIDATION.md) allineate ai sorgenti. Corretti link e membri/esempi inesistenti. Tre ulteriori rilievi documentali del revisore sono stati corretti e ricompilati: URL cross-site, servizi SDK e lifecycle Customizer.
 
 Tutti i subagenti effettivi usano GPT-6.1 Sol, con autori e revisori diversi. [REVIEWS](REVIEWS.md) e [matrice definitiva](VERIFICATION-MATRIX.md) separano PASS locali, FAIL corretti e prove esterne non eseguite.
 

@@ -1,0 +1,182 @@
+
+> spfx-react-toolkit-monorepo@2.1.0 package:solution
+> npm run bundle:ship && npm run package:solution --workspace @apvee/spfx-react-toolkit-test
+
+
+> spfx-react-toolkit-monorepo@2.1.0 bundle:ship
+> npm run build:library && npm run bundle:ship --workspace @apvee/spfx-react-toolkit-test
+
+
+> spfx-react-toolkit-monorepo@2.1.0 build:library
+> npm run build --workspace @apvee/spfx-react-toolkit
+
+
+> @apvee/spfx-react-toolkit@2.1.0 build
+> tsc -p tsconfig.json
+
+
+> @apvee/spfx-react-toolkit-test@2.1.0 bundle:ship
+> gulp bundle --ship
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Build target: SHIP
+[14:09:48] Using gulpfile ~/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/gulpfile.js
+[14:09:48] Starting 'bundle'...
+[14:09:48] Starting gulp
+[14:09:48] Starting subtask 'pre-copy'...
+[14:09:48] Finished subtask 'pre-copy' after 5.31 ms
+[14:09:48] Starting subtask 'copy-static-assets'...
+[14:09:48] Starting subtask 'sass'...
+Browserslist: browsers data (caniuse-lite) is 12 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[14:09:48] Finished subtask 'sass' after 140 ms
+[14:09:48] Starting subtask 'lint'...
+[14:09:48] [lint] eslint version: 8.57.1
+[14:09:48] Starting subtask 'tsc'...
+[14:09:48] [tsc] typescript version: 5.3.3
+[14:09:48] Finished subtask 'copy-static-assets' after 157 ms
+[14:09:49] Finished subtask 'tsc' after 1.1 s
+[14:09:50] Finished subtask 'lint' after 1.58 s
+[14:09:50] Starting subtask 'post-copy'...
+[14:09:50] Finished subtask 'post-copy' after 58 μs
+[14:09:50] Starting subtask 'configure-webpack'...
+[14:09:50] Finished subtask 'configure-webpack' after 130 ms
+[14:09:50] Starting subtask 'webpack'...
+[14:09:54] Finished subtask 'webpack' after 3.65 s
+[14:09:54] Finished 'bundle' after 5.51 s
+[14:09:54] ==================[ Finished ]==================
+[14:09:55] Project @apvee/spfx-react-toolkit-test version:2.1.0
+[14:09:55] Build tools version:3.19.0
+[14:09:55] Node version:v22.20.0
+[14:09:55] Total duration:7.56 s
+The build failed because a task wrote output to stderr.
+Exiting with exit code: 1
+
+> @apvee/spfx-react-toolkit-test@2.1.0 package:solution
+> gulp package-solution --ship
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Build target: SHIP
+[14:09:56] Using gulpfile ~/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/gulpfile.js
+[14:09:56] Starting 'package-solution'...
+[14:09:56] Starting gulp
+[14:09:56] Starting subtask 'package-solution'...
+[14:09:56] [package-solution] Found manifest: 4c2e58cc-1253-43e5-bfa3-b22a07ace279.manifest.json
+[14:09:56] [package-solution] Found manifest: 54985a3d-eaad-4041-8fdc-a50241798c07.manifest.json
+[14:09:56] [package-solution] Found client-side build resource: SpFxReactToolkitTestApplicationCustomizerStrings_en-us.js
+[14:09:56] [package-solution] Found client-side build resource: SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js
+[14:09:56] [package-solution] Found client-side build resource: SpFxReactToolkitTestWebPartStrings_en-us.js
+[14:09:56] [package-solution] Found client-side build resource: SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.157_a02d472a06df9692204e.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.877_380bd78b2fcbd9b80fd0.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.lib_webparts_spFxReactToolkitTest_components_demos_index_js.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-clients.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-clients_7183dc45fd3dcf569248.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-context.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-context_14183c64712712248e8b.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-graph-data.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-graph-data_2f366cd9e28b22c58fea.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-pnp.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-pnp_6cb4d9ccd0d41c04ff7e.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-providers.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-providers_5f667917e055bff7e878.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-runtime.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-runtime_10090ec7b49f800ee126.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-search.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-search_accbcb62d48125acc0f3.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-tenant.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.spfx-demo-tenant_c2a3973995ece346bcc9.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.vendors-node_modules_fluentui_react_lib_components_Button_PrimaryButton_PrimaryButton_js.js
+[14:09:56] [package-solution] Found client-side build resource: chunk.vendors-node_modules_fluentui_react_lib_components_TextField_TextField_js.js
+[14:09:56] [package-solution] Found client-side build resource: sp-fx-react-toolkit-test-application-customizer.js
+[14:09:56] [package-solution] Found client-side build resource: sp-fx-react-toolkit-test-application-customizer_85880989dd0304710595.js
+[14:09:56] [package-solution] Found client-side build resource: sp-fx-react-toolkit-test-web-part.js
+[14:09:56] [package-solution] Found client-side build resource: sp-fx-react-toolkit-test-web-part_b9b76c8904ec62111698.js
+[14:09:56] [package-solution] Found client-side build resource: sp-fx-react-toolkit-test-web-part_b9b76c8904ec62111698.js.LICENSE.txt
+[14:09:56] [package-solution] Found teams icons: 54985a3d-eaad-4041-8fdc-a50241798c07_color.png
+[14:09:56] [package-solution] Found teams icons: 54985a3d-eaad-4041-8fdc-a50241798c07_outline.png
+[14:09:56] [package-solution] Verifying configuration...
+[14:09:56] [package-solution] Done!
+[14:09:56] [package-solution]
+[14:09:56] [package-solution] Normalizing solution information...
+[14:09:56] [package-solution] Attempting creating component definitions for {2} manifests
+[14:09:56] [package-solution] Created component definitions for {2} manifests
+[14:09:56] [package-solution] feature.componentIds not set! Adding 2 components to feature { apvee-spfx-react-toolkit Feature }.
+[14:09:56] [package-solution] Done!
+[14:09:56] [package-solution]
+[14:09:56] [package-solution] Reading custom Feature XML...
+[14:09:56] [package-solution] Done!
+[14:09:56] [package-solution]
+[14:09:56] [package-solution] Validating App Package...
+[14:09:56] [package-solution] Admins can make this solution available to all sites immediately, but the solution also contains feature.xml elements for provisioning. Feature.xml elements are not automatically applied unless the solution is explicitly installed on a site.
+[14:09:56] [package-solution] Done!
+[14:09:56] [package-solution]
+[14:09:56] [package-solution] Reading resources...
+[14:09:56] [package-solution] Done!
+[14:09:56] [package-solution]
+[14:09:56] [package-solution] Reading Sharepoint Assets & Creating XML...
+[14:09:56] [package-solution] Found Element Manifest: elements.xml
+[14:09:56] [package-solution] Found Element Manifest: ClientSideInstance.xml
+[14:09:56] [package-solution] Done!
+[14:09:56] [package-solution]
+[14:09:56] [package-solution] Writing solution XML to /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug...
+[14:09:56] [package-solution] Cleaned /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/AppManifest.xml
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/_rels/AppManifest.xml.rels
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/_rels/.rels
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/[Content_Types].xml
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/_rels/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml.rels
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml.config.xml
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/elements.xml
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/ClientSideInstance.xml
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/Extension_4c2e58cc-1253-43e5-bfa3-b22a07ace279.xml
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/WebPart_54985a3d-eaad-4041-8fdc-a50241798c07.xml
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets.xml
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/_rels/ClientSideAssets.xml.rels
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets.xml.config.xml
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestApplicationCustomizerStrings_en-us.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestWebPartStrings_en-us.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.157_a02d472a06df9692204e.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.877_380bd78b2fcbd9b80fd0.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.lib_webparts_spFxReactToolkitTest_components_demos_index_js.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-clients.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-clients_7183dc45fd3dcf569248.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-context.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-context_14183c64712712248e8b.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-graph-data.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-graph-data_2f366cd9e28b22c58fea.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-pnp.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-pnp_6cb4d9ccd0d41c04ff7e.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-providers.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-providers_5f667917e055bff7e878.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-runtime.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-runtime_10090ec7b49f800ee126.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-search.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-search_accbcb62d48125acc0f3.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-tenant.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-tenant_c2a3973995ece346bcc9.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.vendors-node_modules_fluentui_react_lib_components_Button_PrimaryButton_PrimaryButton_js.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/chunk.vendors-node_modules_fluentui_react_lib_components_TextField_TextField_js.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-application-customizer.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-application-customizer_85880989dd0304710595.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part_b9b76c8904ec62111698.js
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part_b9b76c8904ec62111698.js.LICENSE.txt
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/54985a3d-eaad-4041-8fdc-a50241798c07_color.png
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/debug/ClientSideAssets/54985a3d-eaad-4041-8fdc-a50241798c07_outline.png
+[14:09:56] [package-solution] Created file: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/sharepoint/solution/apvee-spfx-react-toolkit.sppkg
+[14:09:56] [package-solution] Done!
+[14:09:56] [package-solution]
+[14:09:56] [package-solution] ALL DONE!
+[14:09:56] [package-solution]
+[14:09:56] Finished subtask 'package-solution' after 289 ms
+[14:09:56] Finished 'package-solution' after 290 ms
+[14:09:56] ==================[ Finished ]==================
+[14:09:57] Project @apvee/spfx-react-toolkit-test version:2.1.0
+[14:09:57] Build tools version:3.19.0
+[14:09:57] Node version:v22.20.0
+[14:09:57] Total duration:1.87 s

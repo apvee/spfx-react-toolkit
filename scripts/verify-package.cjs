@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const {execFileSync} = require('node:child_process');
+const {createRequire} = require('node:module');
 const root = path.resolve(__dirname, '..');
 const library = path.join(root, 'packages/spfx-react-toolkit');
 const app = path.join(root, 'apps/spfx-react-toolkit-test');
@@ -34,9 +35,17 @@ try {
   fs.writeFileSync(path.join(consumer,'src/consumer-compatibility.ts'),`import { SPFxWebPartProvider, useSPFxProperties, createSPFxPnPListService, createScopedSPFxStorageKey } from '@apvee/spfx-react-toolkit';\nimport { useSPFxContext } from '@apvee/spfx-react-toolkit/lib/hooks/useSPFxContext';\nimport type { SPFxProviderProps } from '@apvee/spfx-react-toolkit/lib/core/types';\nexport const contracts = { SPFxWebPartProvider, useSPFxProperties, createSPFxPnPListService, createScopedSPFxStorageKey, useSPFxContext };\nexport type ConsumerProviderProps = SPFxProviderProps;\nimport { useSPFxEnvironmentInfo, useSPFxLocaleInfo, useSPFxLocalStorage, useSPFxPerformance, SPFxStorageHook, SPFxPerfResult } from '@apvee/spfx-react-toolkit';\nexport function useDocumentedAPIContracts(): { isTeams: boolean; locale: string; uiLocale: string; stored: boolean; save: SPFxStorageHook<{ enabled: boolean }>['setValue']; remove: () => void; timed: () => Promise<SPFxPerfResult<boolean>> } {\n  const environment = useSPFxEnvironmentInfo();\n  const locale = useSPFxLocaleInfo();\n  const storage = useSPFxLocalStorage('prefs', { enabled: true });\n  const performance = useSPFxPerformance();\n  return { isTeams: environment.isTeams, locale: locale.locale, uiLocale: locale.uiLocale, stored: storage.value.enabled, save: storage.setValue, remove: storage.remove, timed: () => performance.time('probe', () => storage.value.enabled) };\n}\n`);
   run(['install','--no-audit','--no-fund'],consumer);
   assert.equal(fs.lstatSync(path.join(consumer,'node_modules/@apvee/spfx-react-toolkit')).isSymbolicLink(),false);
-  run(['ls','react','react-dom','@microsoft/sp-core-library','@pnp/sp'],consumer);
-  run(['run','typecheck'],consumer);
+  const hostRequire = createRequire(path.join(consumer, 'package.json'));
+  const libraryRequire = createRequire(path.join(consumer, 'node_modules/@apvee/spfx-react-toolkit/package.json'));
+  for (const name of ['@fluentui/react-migration-v8-v9', '@fluentui/react-theme']) {
+    assert.equal(fs.realpathSync(hostRequire.resolve(name + '/package.json')),
+      fs.realpathSync(libraryRequire.resolve(name + '/package.json')), `${name} must be shared with the consumer`);
+  }
+  run(['ls','react','react-dom','@microsoft/sp-core-library','@pnp/sp','@fluentui/react-migration-v8-v9','@fluentui/react-theme','tslib'],consumer);
+  // SPFx generates Sass declarations during the bundle. A clean consumer has
+  // no .scss.ts files yet, so generate them before the standalone typecheck.
   run(['run','bundle:ship'],consumer);
+  run(['run','typecheck'],consumer);
   run(['run','package:solution'],consumer);
   console.log(`Tarball consumer passed: ${packed.files.length} files; ${packed.size} bytes; TypeScript, public/deep imports, SPFx ship bundle and solution. Consumer: ${consumer}`);
 } finally {

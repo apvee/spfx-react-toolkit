@@ -10,25 +10,25 @@ TAP version 13
 # Subtest: Application Customizer recreates a disposed placeholder and ignores former disposal callbacks
 ok 1 - Application Customizer recreates a disposed placeholder and ignores former disposal callbacks
   ---
-  duration_ms: 51.849541
+  duration_ms: 53.705458
   type: 'test'
   ...
 # Subtest: AsyncInvoke loading covers overlapping calls, completion 0 first
 ok 2 - AsyncInvoke loading covers overlapping calls, completion 0 first
   ---
-  duration_ms: 53.611375
+  duration_ms: 52.670083
   type: 'test'
   ...
 # Subtest: AsyncInvoke loading covers overlapping calls, completion 1 first
 ok 3 - AsyncInvoke loading covers overlapping calls, completion 1 first
   ---
-  duration_ms: 10.930958
+  duration_ms: 10.679542
   type: 'test'
   ...
 # Subtest: AsyncInvoke ignores former client error and preserves rejection after unmount
 ok 4 - AsyncInvoke ignores former client error and preserves rejection after unmount
   ---
-  duration_ms: 11.466541
+  duration_ms: 11.218792
   type: 'test'
   ...
 # Failed to get tenant key-value: Error: network
@@ -43,7 +43,7 @@ ok 4 - AsyncInvoke ignores former client error and preserves rejection after unm
 # Subtest: TenantKV get awaits service and captures rejection as fallback
 ok 5 - TenantKV get awaits service and captures rejection as fallback
   ---
-  duration_ms: 22.720625
+  duration_ms: 24.500666
   type: 'test'
   ...
 # Failed to list tenant key-values: Error: network
@@ -58,86 +58,86 @@ ok 5 - TenantKV get awaits service and captures rejection as fallback
 # Subtest: TenantKV list awaits service and captures rejection as fallback
 ok 6 - TenantKV list awaits service and captures rejection as fallback
   ---
-  duration_ms: 16.827583
+  duration_ms: 16.515459
   type: 'test'
   ...
 # Subtest: TenantKV reads and writes track all pending operations independently
 ok 7 - TenantKV reads and writes track all pending operations independently
   ---
-  duration_ms: 17.793542
+  duration_ms: 15.596042
   type: 'test'
   ...
 # Subtest: TenantProperty autoFetch change discards reverse completion and stale rejection
 ok 8 - TenantProperty autoFetch change discards reverse completion and stale rejection
   ---
-  duration_ms: 9.919375
+  duration_ms: 9.005708
   type: 'test'
   ...
 # OneDrive file not found. isNotFound=true
 # Subtest: OneDrive old 404 cannot create default in the current file
 ok 9 - OneDrive old 404 cannot create default in the current file
   ---
-  duration_ms: 15.325
+  duration_ms: 14.726333
   type: 'test'
   ...
 # Subtest: OneDrive identity clears old missing state before createIfMissing effect
 ok 10 - OneDrive identity clears old missing state before createIfMissing effect
   ---
-  duration_ms: 18.281792
+  duration_ms: 18.905542
   type: 'test'
   ...
 # Subtest: OneDrive newer write wins over older read and reverse write completion
 ok 11 - OneDrive newer write wins over older read and reverse write completion
   ---
-  duration_ms: 14.370916
+  duration_ms: 12.606459
   type: 'test'
   ...
 # Subtest: PnPList identity and latest query prevent stale state/error
 ok 12 - PnPList identity and latest query prevent stale state/error
   ---
-  duration_ms: 28.377084
+  duration_ms: 22.012125
   type: 'test'
   ...
 # Subtest: PnPList rejects duplicate page dispatch and ignores page from superseded query
 ok 13 - PnPList rejects duplicate page dispatch and ignores page from superseded query
   ---
-  duration_ms: 20.232708
+  duration_ms: 17.7155
   type: 'test'
   ...
 # Subtest: PnPSearch clears refiners on new search but keeps them on refetch
 ok 14 - PnPSearch clears refiners on new search but keeps them on refetch
   ---
-  duration_ms: 20.479
+  duration_ms: 19.273791
   type: 'test'
   ...
 # Subtest: PnPSearch latest query ignores reversed responses and stale errors
 ok 15 - PnPSearch latest query ignores reversed responses and stale errors
   ---
-  duration_ms: 12.945125
+  duration_ms: 12.806417
   type: 'test'
   ...
 # Subtest: PnPSearch same-tick loadMore dispatches one page and superseded page cannot append
 ok 16 - PnPSearch same-tick loadMore dispatches one page and superseded page cannot append
   ---
-  duration_ms: 14.44925
+  duration_ms: 12.747917
   type: 'test'
   ...
 # Subtest: AppCatalog cached URL invalidates with pageContext/client service identity
 ok 17 - AppCatalog cached URL invalidates with pageContext/client service identity
   ---
-  duration_ms: 4.906458
+  duration_ms: 4.492333
   type: 'test'
   ...
 # Subtest: OneDrive inline object default does not restart a successful autoFetch
 ok 18 - OneDrive inline object default does not restart a successful autoFetch
   ---
-  duration_ms: 9.887334
+  duration_ms: 8.600375
   type: 'test'
   ...
 # Subtest: AsyncInvoke newer success is not replaced by an older failure and clearError works
 ok 19 - AsyncInvoke newer success is not replaced by an older failure and clearError works
   ---
-  duration_ms: 5.963625
+  duration_ms: 4.752292
   type: 'test'
   ...
 # Failed to save tenant key-value: Error: write denied
@@ -151,55 +151,55 @@ ok 19 - AsyncInvoke newer success is not replaced by an older failure and clearE
 # Subtest: TenantKV provisioning read fallback remains successful and write rejection propagates
 ok 20 - TenantKV provisioning read fallback remains successful and write rejection propagates
   ---
-  duration_ms: 11.988833
+  duration_ms: 11.114375
   type: 'test'
   ...
 # Subtest: PnPSearch old suggestion rejection cannot replace newer successful search error state
 ok 21 - PnPSearch old suggestion rejection cannot replace newer successful search error state
   ---
-  duration_ms: 16.03875
+  duration_ms: 10.632709
   type: 'test'
   ...
 # Subtest: property deferred failure after unmount cannot update React state
 ok 22 - property deferred failure after unmount cannot update React state
   ---
-  duration_ms: 6.416042
+  duration_ms: 5.790458
   type: 'test'
   ...
 # Subtest: drive deferred failure after unmount cannot update React state
 ok 23 - drive deferred failure after unmount cannot update React state
   ---
-  duration_ms: 10.797042
+  duration_ms: 10.136084
   type: 'test'
   ...
 # Subtest: list deferred failure after unmount cannot update React state
 ok 24 - list deferred failure after unmount cannot update React state
   ---
-  duration_ms: 12.102042
+  duration_ms: 12.413083
   type: 'test'
   ...
 # Subtest: search deferred failure after unmount cannot update React state
 ok 25 - search deferred failure after unmount cannot update React state
   ---
-  duration_ms: 10.519666
+  duration_ms: 10.864417
   type: 'test'
   ...
 # Subtest: store deferred failure after unmount cannot update React state
 ok 26 - store deferred failure after unmount cannot update React state
   ---
-  duration_ms: 7.787667
+  duration_ms: 8.140334
   type: 'test'
   ...
 # Subtest: PnPSearch query pagination uses accumulated count for hasMore
 ok 27 - PnPSearch query pagination uses accumulated count for hasMore
   ---
-  duration_ms: 10.189167
+  duration_ms: 10.537167
   type: 'test'
   ...
 # Subtest: PnPList latest query wins within one identity and failed page retries the same offset
 ok 28 - PnPList latest query wins within one identity and failed page retries the same offset
   ---
-  duration_ms: 13.522042
+  duration_ms: 13.282542
   type: 'test'
   ...
 # Failed to write file to OneDrive: Error: denied
@@ -216,378 +216,378 @@ ok 28 - PnPList latest query wins within one identity and failed page retries th
 # Subtest: PnPSearch failed page keeps offset and inline options remain stable
 ok 29 - PnPSearch failed page keeps offset and inline options remain stable
   ---
-  duration_ms: 9.096125
+  duration_ms: 9.59975
   type: 'test'
   ...
 # OneDrive file not found. isNotFound=true
 # Subtest: OneDrive write errors propagate and successful missing creation writes once
 ok 30 - OneDrive write errors propagate and successful missing creation writes once
   ---
-  duration_ms: 10.654542
+  duration_ms: 9.870792
   type: 'test'
   ...
 # Subtest: AppCatalog resolved cache is cleared on service change before discovery
 ok 31 - AppCatalog resolved cache is cleared on service change before discovery
   ---
-  duration_ms: 4.034042
+  duration_ms: 4.364625
   type: 'test'
   ...
 # Subtest: OneDrive lazy default is the current identity seed without starting a read
 ok 32 - OneDrive lazy default is the current identity seed without starting a read
   ---
-  duration_ms: 7.153625
+  duration_ms: 7.274709
   type: 'test'
   ...
 # Subtest: PnPList pending create refetches the current query after replacement
 ok 33 - PnPList pending create refetches the current query after replacement
   ---
-  duration_ms: 132.955208
+  duration_ms: 134.236375
   type: 'test'
   ...
 # Subtest: PnPList pending update refetches the current query after replacement
 ok 34 - PnPList pending update refetches the current query after replacement
   ---
-  duration_ms: 131.438208
+  duration_ms: 131.558041
   type: 'test'
   ...
 # Subtest: PnPList pending remove refetches the current query after replacement
 ok 35 - PnPList pending remove refetches the current query after replacement
   ---
-  duration_ms: 133.434
+  duration_ms: 131.923125
   type: 'test'
   ...
 # Subtest: PnPList pending createBatch refetches the current query after replacement
 ok 36 - PnPList pending createBatch refetches the current query after replacement
   ---
-  duration_ms: 132.278584
+  duration_ms: 131.360834
   type: 'test'
   ...
 # Subtest: PnPList pending updateBatch refetches the current query after replacement
 ok 37 - PnPList pending updateBatch refetches the current query after replacement
   ---
-  duration_ms: 133.401125
+  duration_ms: 135.227875
   type: 'test'
   ...
 # Subtest: PnPList pending removeBatch refetches the current query after replacement
 ok 38 - PnPList pending removeBatch refetches the current query after replacement
   ---
-  duration_ms: 131.639459
+  duration_ms: 132.080583
   type: 'test'
   ...
 # Subtest: PnPList failed refetch preserves the successful next-page offset
 ok 39 - PnPList failed refetch preserves the successful next-page offset
   ---
-  duration_ms: 13.980417
+  duration_ms: 16.815542
   type: 'test'
   ...
 # Subtest: PnPList CRUD refresh uses the replacement query even while its first response is pending
 ok 40 - PnPList CRUD refresh uses the replacement query even while its first response is pending
   ---
-  duration_ms: 134.087875
+  duration_ms: 134.334291
   type: 'test'
   ...
 # Subtest: PnPList a newer query invalidates an already scheduled CRUD refresh
 ok 41 - PnPList a newer query invalidates an already scheduled CRUD refresh
   ---
-  duration_ms: 139.736083
+  duration_ms: 142.667875
   type: 'test'
   ...
 # Subtest: PnPList former-service mutation cannot refresh the replacement list
 ok 42 - PnPList former-service mutation cannot refresh the replacement list
   ---
-  duration_ms: 137.352125
+  duration_ms: 145.276917
   type: 'test'
   ...
 # Subtest: PnPList unmount cancels scheduled mutation refresh and ignores later mutation completion
 ok 43 - PnPList unmount cancels scheduled mutation refresh and ignores later mutation completion
   ---
-  duration_ms: 142.184625
+  duration_ms: 133.178083
   type: 'test'
   ...
-# (node:59365) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (node:52481) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: search suggestions keep the newest response when requests finish in reverse order
 ok 44 - search suggestions keep the newest response when requests finish in reverse order
   ---
-  duration_ms: 80.09225
+  duration_ms: 73.03075
   type: 'test'
   ...
 # Subtest: clearing search input invalidates pending suggestions immediately
 ok 45 - clearing search input invalidates pending suggestions immediately
   ---
-  duration_ms: 16.780166
+  duration_ms: 15.53675
   type: 'test'
   ...
 # Subtest: editing during debounce invalidates an already running suggestion request
 ok 46 - editing during debounce invalidates an already running suggestion request
   ---
-  duration_ms: 14.894
+  duration_ms: 13.808292
   type: 'test'
   ...
 # Subtest: unmount cancels debounce and ignores an already running suggestion request
 ok 47 - unmount cancels debounce and ignores an already running suggestion request
   ---
-  duration_ms: 11.516292
+  duration_ms: 10.043042
   type: 'test'
   ...
 # Subtest: selecting a suggestion cancels pending updates for the previous query
 ok 48 - selecting a suggestion cancels pending updates for the previous query
   ---
-  duration_ms: 14.819042
+  duration_ms: 14.147417
   type: 'test'
   ...
 # Subtest: library and SPFx app have independent package boundaries
 ok 49 - library and SPFx app have independent package boundaries
   ---
-  duration_ms: 77.248708
+  duration_ms: 101.889834
   type: 'test'
   ...
 # Subtest: provider observes displayMode changes on the same host instance
 ok 50 - provider observes displayMode changes on the same host instance
   ---
-  duration_ms: 111.935959
+  duration_ms: 105.644625
   type: 'test'
   ...
 # Subtest: Property Pane in-place mutation after hook setter reaches consumers
 ok 51 - Property Pane in-place mutation after hook setter reaches consumers
   ---
-  duration_ms: 39.548459
+  duration_ms: 40.122
   type: 'test'
   ...
 # Subtest: provider observes in-place property deletion before and after hook updates
 ok 52 - provider observes in-place property deletion before and after hook updates
   ---
-  duration_ms: 34.9545
+  duration_ms: 30.902125
   type: 'test'
   ...
 # Subtest: two providers keep properties and subscriptions isolated through cleanup
 ok 53 - two providers keep properties and subscriptions isolated through cleanup
   ---
-  duration_ms: 27.124125
+  duration_ms: 29.956375
   type: 'test'
   ...
 # Subtest: replacing a ready scope hides children until the new scope finishes
 ok 54 - replacing a ready scope hides children until the new scope finishes
   ---
-  duration_ms: 23.828334
+  duration_ms: 27.191625
   type: 'test'
   ...
 # Subtest: old scope completion cannot release a newer pending scope
 ok 55 - old scope completion cannot release a newer pending scope
   ---
-  duration_ms: 28.100958
+  duration_ms: 23.060291
   type: 'test'
   ...
 # Subtest: inline object storage default settles (missing)
 ok 56 - inline object storage default settles (missing)
   ---
-  duration_ms: 33.868458
+  duration_ms: 32.087917
   type: 'test'
   ...
 # Subtest: inline object storage default settles (persisted)
 ok 57 - inline object storage default settles (persisted)
   ---
-  duration_ms: 31.445333
+  duration_ms: 29.618333
   type: 'test'
   ...
 # Subtest: default changes preserve current value and remove uses latest default
 ok 58 - default changes preserve current value and remove uses latest default
   ---
-  duration_ms: 28.460292
+  duration_ms: 28.590792
   type: 'test'
   ...
 # Subtest: key and storage kind switches use persisted values or the current fallback
 ok 59 - key and storage kind switches use persisted values or the current fallback
   ---
-  duration_ms: 28.45425
+  duration_ms: 28.062209
   type: 'test'
   ...
 # Subtest: storage events affect only the matching provider and listeners detach on unmount
 ok 60 - storage events affect only the matching provider and listeners detach on unmount
   ---
-  duration_ms: 26.042709
+  duration_ms: 27.310791
   type: 'test'
   ...
 # Subtest: in-place scope replacement hides children immediately and ignores completion after unmount
 ok 61 - in-place scope replacement hides children immediately and ignores completion after unmount
   ---
-  duration_ms: 22.663959
+  duration_ms: 20.737541
   type: 'test'
   ...
 # Subtest: replacing host property bags and provider instances preserves host-origin state
 ok 62 - replacing host property bags and provider instances preserves host-origin state
   ---
-  duration_ms: 22.213416
+  duration_ms: 20.783458
   type: 'test'
   ...
 # Subtest: external storage deletion uses latest fallback and ignores a different key or storage area
 ok 63 - external storage deletion uses latest fallback and ignores a different key or storage area
   ---
-  duration_ms: 22.155167
+  duration_ms: 22.071208
   type: 'test'
   ...
-# (node:59368) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (node:52484) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: PnP cache expires after custom timeout in session storage
 ok 64 - PnP cache expires after custom timeout in session storage
   ---
-  duration_ms: 255.547666
+  duration_ms: 256.704
   type: 'test'
   ...
 # Subtest: PnP cache expires after custom timeout in local storage
 ok 65 - PnP cache expires after custom timeout in local storage
   ---
-  duration_ms: 128.751209
+  duration_ms: 126.041167
   type: 'test'
   ...
 # Subtest: PnP cache retains legacy five minute fallback for timeout undefined
 ok 66 - PnP cache retains legacy five minute fallback for timeout undefined
   ---
-  duration_ms: 107.231958
+  duration_ms: 104.727667
   type: 'test'
   ...
 # Subtest: PnP cache retains legacy five minute fallback for timeout 0
 ok 67 - PnP cache retains legacy five minute fallback for timeout 0
   ---
-  duration_ms: 88.075833
+  duration_ms: 84.889041
   type: 'test'
   ...
 # Subtest: PnP hook changes cache key factory and retains equal inline configuration
 ok 68 - PnP hook changes cache key factory and retains equal inline configuration
   ---
-  duration_ms: 89.858542
+  duration_ms: 89.047625
   type: 'test'
   ...
 # Subtest: cross-site permissions retain current site when old requests finish last
 ok 69 - cross-site permissions retain current site when old requests finish last
   ---
-  duration_ms: 9.520625
+  duration_ms: 11.530375
   type: 'test'
   ...
 # Subtest: clearing cross-site URL invalidates pending permissions and stays idle
 ok 70 - clearing cross-site URL invalidates pending permissions and stays idle
   ---
-  duration_ms: 8.471083
+  duration_ms: 4.963333
   type: 'test'
   ...
 # Subtest: cross-site permissions clear previous grants while target is loading
 ok 71 - cross-site permissions clear previous grants while target is loading
   ---
-  duration_ms: 6.243709
+  duration_ms: 5.991458
   type: 'test'
   ...
 # Subtest: user photo retains current user blob when old user finishes last
 ok 72 - user photo retains current user blob when old user finishes last
   ---
-  duration_ms: 11.268875
+  duration_ms: 11.373875
   type: 'test'
   ...
 # Subtest: user photo overlapping reload keeps latest blob when the first completes last
 ok 73 - user photo overlapping reload keeps latest blob when the first completes last
   ---
-  duration_ms: 9.737792
+  duration_ms: 10.044625
   type: 'test'
   ...
 # Subtest: user photo clears previous user while a different user photo is pending
 ok 74 - user photo clears previous user while a different user photo is pending
   ---
-  duration_ms: 10.681166
+  duration_ms: 9.085625
   type: 'test'
   ...
 # Subtest: same-name overlapping time reports each operation duration independently
 ok 75 - same-name overlapping time reports each operation duration independently
   ---
-  duration_ms: 4.545875
+  duration_ms: 4.730416
   type: 'test'
   ...
 # Subtest: PnP context resolves site, injects headers and rebuilds changed scalar config
 ok 76 - PnP context resolves site, injects headers and rebuilds changed scalar config
   ---
-  duration_ms: 95.155917
+  duration_ms: 96.713166
   type: 'test'
   ...
 # Subtest: PnP hook exposes initialization failure and recovers when context becomes available
 ok 77 - PnP hook exposes initialization failure and recovers when context becomes available
   ---
-  duration_ms: 75.2915
+  duration_ms: 72.721834
   type: 'test'
   ...
 # Subtest: cross-site old rejection cannot replace new success and unmount ignores deferred updates
 ok 78 - cross-site old rejection cannot replace new success and unmount ignores deferred updates
   ---
-  duration_ms: 6.171334
+  duration_ms: 4.657417
   type: 'test'
   ...
 # Subtest: current cross-site network rejection surfaces error and clears loading
 ok 79 - current cross-site network rejection surfaces error and clears loading
   ---
-  duration_ms: 3.974625
+  duration_ms: 3.761291
   type: 'test'
   ...
 # Subtest: photo older success cannot finish newer loading and stale error cannot replace newer success
 ok 80 - photo older success cannot finish newer loading and stale error cannot replace newer success
   ---
-  duration_ms: 6.624292
+  duration_ms: 7.553334
   type: 'test'
   ...
 # Subtest: photo current 403 maps error and unmount releases its blob URL without creating a stale one
 ok 81 - photo current 403 maps error and unmount releases its blob URL without creating a stale one
   ---
-  duration_ms: 7.768125
+  duration_ms: 6.96025
   type: 'test'
   ...
 # Subtest: Teams supports wrapper-v2 SDK shape and normalizes theme
 ok 82 - Teams supports wrapper-v2 SDK shape and normalizes theme
   ---
-  duration_ms: 12.768958
+  duration_ms: 11.941708
   type: 'test'
   ...
 # Subtest: Teams supports direct-v2 SDK shape and normalizes theme
 ok 83 - Teams supports direct-v2 SDK shape and normalizes theme
   ---
-  duration_ms: 8.996958
+  duration_ms: 11.529292
   type: 'test'
   ...
 # Subtest: Teams supports direct-v1 SDK shape and normalizes theme
 ok 84 - Teams supports direct-v1 SDK shape and normalizes theme
   ---
-  duration_ms: 10.417125
+  duration_ms: 8.033667
   type: 'test'
   ...
 # Subtest: Teams initialized context replacement acquires new SDK context
 ok 85 - Teams initialized context replacement acquires new SDK context
   ---
-  duration_ms: 8.528042
+  duration_ms: 13.150167
   type: 'test'
   ...
 # Subtest: Teams ignores a superseded deferred context and completion after unmount
 ok 86 - Teams ignores a superseded deferred context and completion after unmount
   ---
-  duration_ms: 11.175417
+  duration_ms: 10.017125
   type: 'test'
   ...
 # Subtest: API precheck invalidates available results and checks replacement provider
 ok 87 - API precheck invalidates available results and checks replacement provider
   ---
-  duration_ms: 25.003958
+  duration_ms: 25.855458
   type: 'test'
   ...
 # Subtest: API precheck replacement invalidates old in-flight check and retains new result
 ok 88 - API precheck replacement invalidates old in-flight check and retains new result
   ---
-  duration_ms: 22.853
+  duration_ms: 24.299709
   type: 'test'
   ...
 # Subtest: API precheck passive events, retry cache options and unmount preserve contracts
 ok 89 - API precheck passive events, retry cache options and unmount preserve contracts
   ---
-  duration_ms: 21.385375
+  duration_ms: 22.751542
   type: 'test'
   ...
 # Subtest: API precheck groups token acquisition and maps timeout without losing scope results
 ok 90 - API precheck groups token acquisition and maps timeout without losing scope results
   ---
-  duration_ms: 12.084667
+  duration_ms: 12.283542
   type: 'test'
   ...
 1..90
@@ -598,7 +598,7 @@ ok 90 - API precheck groups token acquisition and maps timeout without losing sc
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 2110.05125
+# duration_ms 2241.849917
 
 > spfx-react-toolkit-monorepo@2.1.0 typecheck
 > npm run typecheck --workspaces

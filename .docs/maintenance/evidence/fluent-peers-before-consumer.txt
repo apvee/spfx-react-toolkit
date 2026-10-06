@@ -52,7 +52,7 @@ npm warn deprecated adal-angular@1.0.16: This package is no longer supported. Pl
 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
 npm warn deprecated @microsoft/teams-js@2.32.0: Package no longer supported. Use at your own risk
 
-added 2422 packages in 17s
+added 2422 packages in 15s
 npm warn install-scripts 4 packages have install scripts not yet covered by allowScripts:
 npm warn install-scripts   fsevents@1.2.13 (install: node install.js)
 npm warn install-scripts   es5-ext@0.10.64 (postinstall:  node -e "try{require('./_postinstall')}catch(e){}" || exit 0)
@@ -60,7 +60,7 @@ npm warn install-scripts   fsevents@2.3.3 (install: (install scripts present))
 npm warn install-scripts   fsevents@1.2.13 (install: node install.js)
 npm warn install-scripts
 npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
-isolated-spfx-toolkit-consumer@2.1.0 /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer
+isolated-spfx-toolkit-consumer@2.1.0 /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer
 ├─┬ @apvee/spfx-react-toolkit@2.1.0
 │ ├─┬ @fluentui/react-migration-v8-v9@9.9.12
 │ │ ├─┬ @griffel/react@1.5.30
@@ -334,36 +334,36 @@ isolated-spfx-toolkit-consumer@2.1.0 /private/var/folders/fs/zs5145z97n5c6znzgrt
 
 [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
 Build target: SHIP
-[[90m11:11:16[39m] Using gulpfile /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/gulpfile.js
-[[90m11:11:16[39m] Starting 'bundle'...
-[[90m11:11:16[39m] Starting gulp
-[[90m11:11:16[39m] Starting subtask '[36mpre-copy[39m'...
-[[90m11:11:16[39m] Finished subtask '[36mpre-copy[39m' after [35m2.25 ms[39m
-[[90m11:11:16[39m] Starting subtask '[36mcopy-static-assets[39m'...
-[[90m11:11:16[39m] Starting subtask '[36msass[39m'...
+[13:50:24] Using gulpfile /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/gulpfile.js
+[13:50:24] Starting 'bundle'...
+[13:50:24] Starting gulp
+[13:50:24] Starting subtask 'pre-copy'...
+[13:50:24] Finished subtask 'pre-copy' after 2.1 ms
+[13:50:24] Starting subtask 'copy-static-assets'...
+[13:50:24] Starting subtask 'sass'...
 Browserslist: browsers data (caniuse-lite) is 12 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
-[[90m11:11:16[39m] Finished subtask '[36msass[39m' after [35m154 ms[39m
-[[90m11:11:16[39m] Starting subtask '[36mlint[39m'...
-[[90m11:11:16[39m] [[36mlint[39m] eslint version: 8.57.1
-[[90m11:11:16[39m] Starting subtask '[36mtsc[39m'...
-[[90m11:11:16[39m] [[36mtsc[39m] typescript version: 5.3.3
-[[90m11:11:16[39m] Finished subtask '[36mcopy-static-assets[39m' after [35m171 ms[39m
-[[90m11:11:17[39m] Finished subtask '[36mtsc[39m' after [35m1.14 s[39m
-[[90m11:11:18[39m] Finished subtask '[36mlint[39m' after [35m1.39 s[39m
-[[90m11:11:18[39m] Starting subtask '[36mpost-copy[39m'...
-[[90m11:11:18[39m] Finished subtask '[36mpost-copy[39m' after [35m56 μs[39m
-[[90m11:11:18[39m] Starting subtask '[36mconfigure-webpack[39m'...
-[[90m11:11:18[39m] Finished subtask '[36mconfigure-webpack[39m' after [35m134 ms[39m
-[[90m11:11:18[39m] Starting subtask '[36mwebpack[39m'...
-[[90m11:11:22[39m] Finished subtask '[36mwebpack[39m' after [35m3.91 s[39m
-[[90m11:11:22[39m] Finished 'bundle' after 5.59 s
-[[90m11:11:22[39m] [35m==================[ Finished ]==================[39m
-[[90m11:11:23[39m] Project isolated-spfx-toolkit-consumer version:[33m2.1.0[39m
-[[90m11:11:23[39m] Build tools version:[33m3.19.0[39m
-[[90m11:11:23[39m] Node version:[33mv22.20.0[39m
-[[90m11:11:23[39m] Total duration:[33m7.25 s[39m
+[13:50:24] Finished subtask 'sass' after 132 ms
+[13:50:24] Starting subtask 'lint'...
+[13:50:24] [lint] eslint version: 8.57.1
+[13:50:24] Starting subtask 'tsc'...
+[13:50:24] [tsc] typescript version: 5.3.3
+[13:50:24] Finished subtask 'copy-static-assets' after 147 ms
+[13:50:26] Finished subtask 'tsc' after 1.07 s
+[13:50:26] Finished subtask 'lint' after 1.33 s
+[13:50:26] Starting subtask 'post-copy'...
+[13:50:26] Finished subtask 'post-copy' after 47 μs
+[13:50:26] Starting subtask 'configure-webpack'...
+[13:50:26] Finished subtask 'configure-webpack' after 120 ms
+[13:50:26] Starting subtask 'webpack'...
+[13:50:29] Finished subtask 'webpack' after 3.45 s
+[13:50:29] Finished 'bundle' after 5.04 s
+[13:50:30] ==================[ Finished ]==================
+[13:50:30] Project isolated-spfx-toolkit-consumer version:2.1.0
+[13:50:30] Build tools version:3.19.0
+[13:50:30] Node version:v22.20.0
+[13:50:30] Total duration:6.64 s
 The build failed because a task wrote output to stderr.
 Exiting with exit code: 1
 
@@ -372,96 +372,96 @@ Exiting with exit code: 1
 
 [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
 Build target: SHIP
-[[90m11:11:24[39m] Using gulpfile /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/gulpfile.js
-[[90m11:11:24[39m] Starting 'package-solution'...
-[[90m11:11:24[39m] Starting gulp
-[[90m11:11:24[39m] Starting subtask '[36mpackage-solution[39m'...
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found manifest: 4c2e58cc-1253-43e5-bfa3-b22a07ace279.manifest.json
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found manifest: 54985a3d-eaad-4041-8fdc-a50241798c07.manifest.json
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.261_87b6f7730a9dc1f49ef4.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.808_89655cbc9278b40ad0c4.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-clients_b61d6fc382b6cb6b4498.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-context_3694f34a46df46aa731b.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-graph-data_dd7d0fe73879b0c287f2.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-pnp_61536044c50d84281109.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-providers_4cc04837d4d707f2c889.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-runtime_f43e0c3a28180af34c93.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-search_e8988c025948706286b8.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: chunk.spfx-demo-tenant_de25e6bfb99e8ed9478b.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: sp-fx-react-toolkit-test-application-customizer_ea0a7542d7b3c6fec2da.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: sp-fx-react-toolkit-test-web-part_6d3f27f326c8d4d51635.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found client-side build resource: sp-fx-react-toolkit-test-web-part_6d3f27f326c8d4d51635.js.LICENSE.txt
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found teams icons: 54985a3d-eaad-4041-8fdc-a50241798c07_color.png
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found teams icons: 54985a3d-eaad-4041-8fdc-a50241798c07_outline.png
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Verifying configuration...
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
-[[90m11:11:24[39m] [[36mpackage-solution[39m] 
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Normalizing solution information...
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Attempting creating component definitions for {2} manifests
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created component definitions for {2} manifests
-[[90m11:11:24[39m] [[36mpackage-solution[39m] feature.componentIds not set! Adding 2 components to feature { apvee-spfx-react-toolkit Feature }.
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
-[[90m11:11:24[39m] [[36mpackage-solution[39m] 
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Reading custom Feature XML...
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
-[[90m11:11:24[39m] [[36mpackage-solution[39m] 
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Validating App Package...
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Admins can make this solution available to all sites immediately, but the solution also contains feature.xml elements for provisioning. Feature.xml elements are not automatically applied unless the solution is explicitly installed on a site.
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
-[[90m11:11:24[39m] [[36mpackage-solution[39m] 
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Reading resources...
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
-[[90m11:11:24[39m] [[36mpackage-solution[39m] 
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Reading Sharepoint Assets & Creating XML...
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found Element Manifest: elements.xml
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Found Element Manifest: ClientSideInstance.xml
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
-[[90m11:11:24[39m] [[36mpackage-solution[39m] 
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Writing solution XML to /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug...
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Cleaned /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/AppManifest.xml
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/_rels/AppManifest.xml.rels
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/_rels/.rels
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/[Content_Types].xml
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/_rels/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml.rels
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml.config.xml
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/elements.xml
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/ClientSideInstance.xml
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/Extension_4c2e58cc-1253-43e5-bfa3-b22a07ace279.xml
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/WebPart_54985a3d-eaad-4041-8fdc-a50241798c07.xml
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets.xml
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/_rels/ClientSideAssets.xml.rels
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets.xml.config.xml
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.261_87b6f7730a9dc1f49ef4.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.808_89655cbc9278b40ad0c4.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-clients_b61d6fc382b6cb6b4498.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-context_3694f34a46df46aa731b.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-graph-data_dd7d0fe73879b0c287f2.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-pnp_61536044c50d84281109.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-providers_4cc04837d4d707f2c889.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-runtime_f43e0c3a28180af34c93.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-search_e8988c025948706286b8.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-tenant_de25e6bfb99e8ed9478b.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-application-customizer_ea0a7542d7b3c6fec2da.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part_6d3f27f326c8d4d51635.js
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part_6d3f27f326c8d4d51635.js.LICENSE.txt
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/54985a3d-eaad-4041-8fdc-a50241798c07_color.png
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/debug/ClientSideAssets/54985a3d-eaad-4041-8fdc-a50241798c07_outline.png
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer/sharepoint/solution/apvee-spfx-react-toolkit.sppkg
-[[90m11:11:24[39m] [[36mpackage-solution[39m] Done!
-[[90m11:11:24[39m] [[36mpackage-solution[39m] 
-[[90m11:11:24[39m] [[36mpackage-solution[39m] ALL DONE!
-[[90m11:11:24[39m] [[36mpackage-solution[39m] 
-[[90m11:11:24[39m] Finished subtask '[36mpackage-solution[39m' after [35m99 ms[39m
-[[90m11:11:24[39m] Finished 'package-solution' after 100 ms
-[[90m11:11:24[39m] [35m==================[ Finished ]==================[39m
-[[90m11:11:25[39m] Project isolated-spfx-toolkit-consumer version:[33m2.1.0[39m
-[[90m11:11:25[39m] Build tools version:[33m3.19.0[39m
-[[90m11:11:25[39m] Node version:[33mv22.20.0[39m
-[[90m11:11:25[39m] Total duration:[33m1.68 s[39m
-Tarball consumer passed: 331 files; 179177 bytes; TypeScript, public/deep imports, SPFx ship bundle and solution. Consumer: /var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-6XnNfn/consumer
+[13:50:31] Using gulpfile /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/gulpfile.js
+[13:50:31] Starting 'package-solution'...
+[13:50:31] Starting gulp
+[13:50:31] Starting subtask 'package-solution'...
+[13:50:31] [package-solution] Found manifest: 4c2e58cc-1253-43e5-bfa3-b22a07ace279.manifest.json
+[13:50:31] [package-solution] Found manifest: 54985a3d-eaad-4041-8fdc-a50241798c07.manifest.json
+[13:50:31] [package-solution] Found client-side build resource: SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js
+[13:50:31] [package-solution] Found client-side build resource: SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js
+[13:50:31] [package-solution] Found client-side build resource: chunk.261_231b6770156da30c617f.js
+[13:50:31] [package-solution] Found client-side build resource: chunk.808_89655cbc9278b40ad0c4.js
+[13:50:31] [package-solution] Found client-side build resource: chunk.spfx-demo-clients_b61d6fc382b6cb6b4498.js
+[13:50:31] [package-solution] Found client-side build resource: chunk.spfx-demo-context_3694f34a46df46aa731b.js
+[13:50:31] [package-solution] Found client-side build resource: chunk.spfx-demo-graph-data_dd7d0fe73879b0c287f2.js
+[13:50:31] [package-solution] Found client-side build resource: chunk.spfx-demo-pnp_61536044c50d84281109.js
+[13:50:31] [package-solution] Found client-side build resource: chunk.spfx-demo-providers_4cc04837d4d707f2c889.js
+[13:50:31] [package-solution] Found client-side build resource: chunk.spfx-demo-runtime_f43e0c3a28180af34c93.js
+[13:50:31] [package-solution] Found client-side build resource: chunk.spfx-demo-search_e8988c025948706286b8.js
+[13:50:31] [package-solution] Found client-side build resource: chunk.spfx-demo-tenant_de25e6bfb99e8ed9478b.js
+[13:50:31] [package-solution] Found client-side build resource: sp-fx-react-toolkit-test-application-customizer_6c7a21b2073bdbb457ae.js
+[13:50:31] [package-solution] Found client-side build resource: sp-fx-react-toolkit-test-web-part_6ac148c562d0ff3ee469.js
+[13:50:31] [package-solution] Found client-side build resource: sp-fx-react-toolkit-test-web-part_6ac148c562d0ff3ee469.js.LICENSE.txt
+[13:50:31] [package-solution] Found teams icons: 54985a3d-eaad-4041-8fdc-a50241798c07_color.png
+[13:50:31] [package-solution] Found teams icons: 54985a3d-eaad-4041-8fdc-a50241798c07_outline.png
+[13:50:31] [package-solution] Verifying configuration...
+[13:50:31] [package-solution] Done!
+[13:50:31] [package-solution]
+[13:50:31] [package-solution] Normalizing solution information...
+[13:50:31] [package-solution] Attempting creating component definitions for {2} manifests
+[13:50:31] [package-solution] Created component definitions for {2} manifests
+[13:50:31] [package-solution] feature.componentIds not set! Adding 2 components to feature { apvee-spfx-react-toolkit Feature }.
+[13:50:31] [package-solution] Done!
+[13:50:31] [package-solution]
+[13:50:31] [package-solution] Reading custom Feature XML...
+[13:50:31] [package-solution] Done!
+[13:50:31] [package-solution]
+[13:50:31] [package-solution] Validating App Package...
+[13:50:31] [package-solution] Admins can make this solution available to all sites immediately, but the solution also contains feature.xml elements for provisioning. Feature.xml elements are not automatically applied unless the solution is explicitly installed on a site.
+[13:50:31] [package-solution] Done!
+[13:50:31] [package-solution]
+[13:50:31] [package-solution] Reading resources...
+[13:50:31] [package-solution] Done!
+[13:50:31] [package-solution]
+[13:50:31] [package-solution] Reading Sharepoint Assets & Creating XML...
+[13:50:31] [package-solution] Found Element Manifest: elements.xml
+[13:50:31] [package-solution] Found Element Manifest: ClientSideInstance.xml
+[13:50:31] [package-solution] Done!
+[13:50:31] [package-solution]
+[13:50:31] [package-solution] Writing solution XML to /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug...
+[13:50:31] [package-solution] Cleaned /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/AppManifest.xml
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/_rels/AppManifest.xml.rels
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/_rels/.rels
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/[Content_Types].xml
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/_rels/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml.rels
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml.config.xml
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/elements.xml
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/ClientSideInstance.xml
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/Extension_4c2e58cc-1253-43e5-bfa3-b22a07ace279.xml
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/WebPart_54985a3d-eaad-4041-8fdc-a50241798c07.xml
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets.xml
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/_rels/ClientSideAssets.xml.rels
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets.xml.config.xml
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.261_231b6770156da30c617f.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.808_89655cbc9278b40ad0c4.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-clients_b61d6fc382b6cb6b4498.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-context_3694f34a46df46aa731b.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-graph-data_dd7d0fe73879b0c287f2.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-pnp_61536044c50d84281109.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-providers_4cc04837d4d707f2c889.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-runtime_f43e0c3a28180af34c93.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-search_e8988c025948706286b8.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-tenant_de25e6bfb99e8ed9478b.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-application-customizer_6c7a21b2073bdbb457ae.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part_6ac148c562d0ff3ee469.js
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part_6ac148c562d0ff3ee469.js.LICENSE.txt
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/54985a3d-eaad-4041-8fdc-a50241798c07_color.png
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/debug/ClientSideAssets/54985a3d-eaad-4041-8fdc-a50241798c07_outline.png
+[13:50:31] [package-solution] Created file: /private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer/sharepoint/solution/apvee-spfx-react-toolkit.sppkg
+[13:50:31] [package-solution] Done!
+[13:50:31] [package-solution]
+[13:50:31] [package-solution] ALL DONE!
+[13:50:31] [package-solution]
+[13:50:31] Finished subtask 'package-solution' after 91 ms
+[13:50:31] Finished 'package-solution' after 92 ms
+[13:50:32] ==================[ Finished ]==================
+[13:50:32] Project isolated-spfx-toolkit-consumer version:2.1.0
+[13:50:32] Build tools version:3.19.0
+[13:50:32] Node version:v22.20.0
+[13:50:32] Total duration:1.62 s
+Tarball consumer passed: 331 files; 179922 bytes; TypeScript, public/deep imports, SPFx ship bundle and solution. Consumer: /var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-WFCsAT/consumer

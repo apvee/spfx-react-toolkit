@@ -22,7 +22,7 @@
 | Tarball consumer esterno | PASS |Install npm del.tgz senza workspace/symlink, TypeScript public+deep+documentedcontracts, runtime `npm ls`, SPFxship e.sppkg; [log](evidence/final-tarball-consumer.txt). Tempeliminato automaticamente |
 | Regressioni aggiuntive reviewer | PASS |B17/B18 originalrepro2/2, options/laziness2/2, authorRED7/7→GREEN7/7, scopedre-reviewpass |
 | CI coherence | PASS statico/localcommands | `.github/workflows/verify.yml` stessa sequenza install/build/verify/ship/tarball; checked setup-node/checkout official v4 docs. Esecuzione runner GitHub NOT RUN, nessun push autorizzato |
-| Tenant WebPart/ApplicationCustomizer, permessi/Graph/Teams/storage/batch | BLOCKED / NOT RUN |Nessun tenantURL/accesso/autorizzazione test reale disponibile. [Procedura riproducibile](../SHAREPOINT-VALIDATION.md); no deploy/simulazione. Risultati manuali devono essere riportati separatamente |
+| Tenant WebPart/ApplicationCustomizer, permessi/Graph/Teams/storage/batch | BLOCKED / NOT RUN |Nessun tenantURL/accesso/autorizzazione test reale disponibile. [Procedura riproducibile](../../docs/SHAREPOINT-VALIDATION.md); no deploy/simulazione. Risultati manuali devono essere riportati separatamente |
 | Compatibilità SPFx>=1.18<2 eReact17.x | DICHIARATA |Peer conservati. Prova effettiva SPFx1.21.1/React17.0.1/TS5.3.3/Node22.20.0 soltanto; non matrice universale |
 | Formato persistito / sourcemaps | CONSERVATO, limite noto |Tenant legacyJSON può coerce stringnumeric/bool/null eperdere bigint precision; no runtimevalidation promessa. Sourcemaps nonembed source comebaseline. Publicdeeppaths/internal conservati |
 

@@ -1,0 +1,135 @@
+
+> fresh-shared-fluent-consumer@2.1.0 bundle:ship
+> gulp bundle --ship
+
+Build target: SHIP
+[14:06:50] Using gulpfile /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/gulpfile.js
+[14:06:50] Starting 'bundle'...
+[14:06:50] Starting gulp
+[14:06:50] Starting subtask 'pre-copy'...
+[14:06:50] Finished subtask 'pre-copy' after 4.76 ms
+[14:06:50] Starting subtask 'copy-static-assets'...
+[14:06:50] Starting subtask 'sass'...
+[14:06:50] Finished subtask 'sass' after 141 ms
+[14:06:50] Starting subtask 'lint'...
+[14:06:50] [lint] eslint version: 8.57.1
+[14:06:50] Starting subtask 'tsc'...
+[14:06:50] [tsc] typescript version: 5.3.3
+[14:06:50] Finished subtask 'copy-static-assets' after 156 ms
+[14:06:51] Finished subtask 'tsc' after 1.09 s
+[14:06:52] Finished subtask 'lint' after 1.43 s
+[14:06:52] Starting subtask 'post-copy'...
+[14:06:52] Finished subtask 'post-copy' after 47 μs
+[14:06:52] Starting subtask 'configure-webpack'...
+[14:06:52] Finished subtask 'configure-webpack' after 112 ms
+[14:06:52] Starting subtask 'webpack'...
+[14:06:57] Finished subtask 'webpack' after 4.96 s
+[14:06:57] Finished 'bundle' after 6.65 s
+[14:06:57] ==================[ Finished ]==================
+[14:06:58] Project fresh-shared-fluent-consumer version:2.1.0
+[14:06:58] Build tools version:3.19.0
+[14:06:58] Node version:v22.20.0
+[14:06:58] Total duration:8.56 s
+
+> fresh-shared-fluent-consumer@2.1.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> fresh-shared-fluent-consumer@2.1.0 package:solution
+> gulp package-solution --ship
+
+Build target: SHIP
+[14:07:00] Using gulpfile /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/gulpfile.js
+[14:07:00] Starting 'package-solution'...
+[14:07:00] Starting gulp
+[14:07:00] Starting subtask 'package-solution'...
+[14:07:00] [package-solution] Found manifest: 4c2e58cc-1253-43e5-bfa3-b22a07ace279.manifest.json
+[14:07:00] [package-solution] Found manifest: 54985a3d-eaad-4041-8fdc-a50241798c07.manifest.json
+[14:07:00] [package-solution] Found client-side build resource: SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js
+[14:07:00] [package-solution] Found client-side build resource: SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js
+[14:07:00] [package-solution] Found client-side build resource: chunk.261_d8fa25e72b934aa2c4f9.js
+[14:07:00] [package-solution] Found client-side build resource: chunk.808_6655be29ec4f61003007.js
+[14:07:00] [package-solution] Found client-side build resource: chunk.spfx-demo-clients_a28918965e1d4effb8fd.js
+[14:07:00] [package-solution] Found client-side build resource: chunk.spfx-demo-context_6fadb685e0c78825a9a2.js
+[14:07:00] [package-solution] Found client-side build resource: chunk.spfx-demo-graph-data_44d577c17bfab36d0133.js
+[14:07:00] [package-solution] Found client-side build resource: chunk.spfx-demo-pnp_a8135d3976f72768d71c.js
+[14:07:00] [package-solution] Found client-side build resource: chunk.spfx-demo-providers_544193f8815e5c0e4f13.js
+[14:07:00] [package-solution] Found client-side build resource: chunk.spfx-demo-runtime_a695ba9c9f9c40520347.js
+[14:07:00] [package-solution] Found client-side build resource: chunk.spfx-demo-search_54211fe2333521887cdd.js
+[14:07:00] [package-solution] Found client-side build resource: chunk.spfx-demo-tenant_4d5fe3fe7cc8b028232c.js
+[14:07:00] [package-solution] Found client-side build resource: sp-fx-react-toolkit-test-application-customizer_6d67a1f7e6c1c7c68f2b.js
+[14:07:00] [package-solution] Found client-side build resource: sp-fx-react-toolkit-test-web-part_7b5cff1f00e79ead09c1.js
+[14:07:00] [package-solution] Found teams icons: 54985a3d-eaad-4041-8fdc-a50241798c07_color.png
+[14:07:00] [package-solution] Found teams icons: 54985a3d-eaad-4041-8fdc-a50241798c07_outline.png
+[14:07:00] [package-solution] Verifying configuration...
+[14:07:00] [package-solution] Done!
+[14:07:00] [package-solution]
+[14:07:00] [package-solution] Normalizing solution information...
+[14:07:00] [package-solution] Attempting creating component definitions for {2} manifests
+[14:07:00] [package-solution] Created component definitions for {2} manifests
+[14:07:00] [package-solution] feature.componentIds not set! Adding 2 components to feature { apvee-spfx-react-toolkit Feature }.
+[14:07:00] [package-solution] Done!
+[14:07:00] [package-solution]
+[14:07:00] [package-solution] Reading custom Feature XML...
+[14:07:00] [package-solution] Done!
+[14:07:00] [package-solution]
+[14:07:00] [package-solution] Validating App Package...
+[14:07:00] [package-solution] Admins can make this solution available to all sites immediately, but the solution also contains feature.xml elements for provisioning. Feature.xml elements are not automatically applied unless the solution is explicitly installed on a site.
+[14:07:00] [package-solution] Done!
+[14:07:00] [package-solution]
+[14:07:00] [package-solution] Reading resources...
+[14:07:00] [package-solution] Done!
+[14:07:00] [package-solution]
+[14:07:00] [package-solution] Reading Sharepoint Assets & Creating XML...
+[14:07:00] [package-solution] Found Element Manifest: elements.xml
+[14:07:00] [package-solution] Found Element Manifest: ClientSideInstance.xml
+[14:07:00] [package-solution] Done!
+[14:07:00] [package-solution]
+[14:07:00] [package-solution] Writing solution XML to /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug...
+[14:07:00] [package-solution] Cleaned /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/AppManifest.xml
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/_rels/AppManifest.xml.rels
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/_rels/.rels
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/[Content_Types].xml
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/_rels/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml.rels
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/feature_b8ee1e7b-59c8-4296-aace-d9b76e17e88a.xml.config.xml
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/elements.xml
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/ClientSideInstance.xml
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/Extension_4c2e58cc-1253-43e5-bfa3-b22a07ace279.xml
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/b8ee1e7b-59c8-4296-aace-d9b76e17e88a/WebPart_54985a3d-eaad-4041-8fdc-a50241798c07.xml
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets.xml
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/_rels/ClientSideAssets.xml.rels
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets.xml.config.xml
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.261_d8fa25e72b934aa2c4f9.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.808_6655be29ec4f61003007.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-clients_a28918965e1d4effb8fd.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-context_6fadb685e0c78825a9a2.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-graph-data_44d577c17bfab36d0133.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-pnp_a8135d3976f72768d71c.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-providers_544193f8815e5c0e4f13.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-runtime_a695ba9c9f9c40520347.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-search_54211fe2333521887cdd.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/chunk.spfx-demo-tenant_4d5fe3fe7cc8b028232c.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-application-customizer_6d67a1f7e6c1c7c68f2b.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/sp-fx-react-toolkit-test-web-part_7b5cff1f00e79ead09c1.js
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/54985a3d-eaad-4041-8fdc-a50241798c07_color.png
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/debug/ClientSideAssets/54985a3d-eaad-4041-8fdc-a50241798c07_outline.png
+[14:07:00] [package-solution] Created file: /private/tmp/spfx-fresh-peer-consumer-00x8dx0l/consumer/sharepoint/solution/apvee-spfx-react-toolkit.sppkg
+[14:07:00] [package-solution] Done!
+[14:07:00] [package-solution]
+[14:07:00] [package-solution] ALL DONE!
+[14:07:00] [package-solution]
+[14:07:00] Finished subtask 'package-solution' after 98 ms
+[14:07:00] Finished 'package-solution' after 99 ms
+[14:07:00] ==================[ Finished ]==================
+[14:07:01] Project fresh-shared-fluent-consumer version:2.1.0
+[14:07:01] Build tools version:3.19.0
+[14:07:01] Node version:v22.20.0
+[14:07:01] Total duration:1.67 s
+SHARED @fluentui/react-migration-v8-v9 9.9.12
+SHARED @fluentui/react-theme 9.2.0
+SPFx tslib owner: 2.3.1
+FRESH PEER CONSUMER PASS: started without seed lockfile/node_modules; Sass generated before typecheck

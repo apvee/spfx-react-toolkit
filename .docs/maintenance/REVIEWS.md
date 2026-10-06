@@ -25,3 +25,11 @@ Reviewer indipendente dev_integration_review (GPT-6.1 Sol) PASS: commit c69e8e1/
 ## Pulizia root autorizzata
 
 root_cleanup_review (GPT-6.1 Sol) PASS pre/post: 508 file tutti ignored/non tracked, riferimenti attivi workspace, backup completo controllato per SHA256/dimensioni, build+verify90/API82+ship PASS, cinque directory root assenti e non rigenerate. Sorgenti prodotto identici a HEAD.
+
+## Razionalizzazione test/documentazione/evidenze
+
+maintenance_cleanup_audit (GPT-6.1 Sol) PASS: tutti9test/harness,6script e20pagine pubbliche necessari;22log/harnesssuperati rimossi con backup/SHA/commit storico verificati; fixtureAPI/package byte-identiche, scriptdelta2require; linkintegri,90test eAPI82/tipi/lint/verifierPASS. Nessun sorgente runtime eliminato o controllo indebolito.
+
+## .docs e Fluent peer condivise
+
+docs_peer_integration_review (GPT-6.1 Sol) PASS e scoped re-review PASS: 67 file trasferiti con dati conservati, fixture immutabili/link/ignore/policy validi, mappa peer+dev/app autorizzata, import JS/DTS dichiarati, API82, consumer tarball condiviso e consumer fresh senza seedlock. Bootstrap Sass corretto prima del typecheck, nessuna verifica eliminata. Tenant NOT RUN.

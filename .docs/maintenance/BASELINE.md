@@ -7,7 +7,7 @@
 - Struttura: root pubblicabile con `src/{core,hooks,services,helpers,utils,webparts,extensions}`, Gulp/config/sharepoint/teams/assets, tre script di verifica, documentazione API. Nessuna CI in HEAD.
 - Build originale: `npm run build` PASS (bundle ~6.0s, totale 7.6s). `npm test` PASS (~6.3s task, 8.6s totale), ma esegue sass/lint/tsc/webpack, senza assertion test: copertura comportamentale non dimostrata. Eseguiti con dipendenze preesistenti, installazione pulita ancora da verificare.
 - `npm run verify:examples`: PASS, 40 hook e 4 provider nel registry (copertura dichiarativa, non esecuzione tenant). `verify:runtime-store`: PASS, assertion su stato/subscription. `verify:public-docs`: PASS, nomi helper/service e riferimenti obsoleti.
-- I comandi build/test sono stati lanciati contemporaneamente sul baseline; tempi non sono benchmark affidabili. Misure prestazionali successive saranno sequenziali. Log in `docs/maintenance/evidence/baseline-*.txt`.
+- I comandi build/test sono stati lanciati contemporaneamente sul baseline; tempi non sono benchmark affidabili. Misure prestazionali successive saranno sequenziali. Esiti e tempi iniziali conservati qui; pipeline sequenziale completa in `evidence/baseline-release.txt`. I log intermedi rimossi sono recuperabili dal commit storico `e59686c`.
 - API e dichiarazioni baseline saranno confrontate con compilazione finale, inclusi deep path `lib/{core,hooks,services,helpers,utils}`. Main ESNext `lib/index.js`, types `lib/index.d.ts`, senza exports map.
 - SharePoint/Graph/tenant: nessun accesso fornito. Build non prova funzionamento tenant; preparare matrice e procedura riproducibile.
 
@@ -19,4 +19,4 @@
 
 - Installazione baseline worktree: `npm ci --ignore-scripts --no-audit --no-fund` PASS (2425 packages, 9s), lifecycle scripts non esercitati in questo passo; finale userà npm ci completo. Pack baseline: 331 file, 176648 bytes compressi, 817065 bytes estratti.
 
-- Prepublish baseline sequenziale PASS: clean → bundle → gulp test (secondo bundle) → tre verifier, prova `evidence/baseline-release.txt`. Dichiarazioni baseline persistite con SHA256 in `evidence/api-baseline.json`; log .txt per non essere esclusi da .gitignore.
+- Prepublish baseline sequenziale PASS: clean → bundle → gulp test (secondo bundle) → tre verifier, prova `evidence/baseline-release.txt`. Dichiarazioni baseline persistite con SHA256 in `../../tests/fixtures/api-baseline.json`; log .txt per non essere esclusi da .gitignore.

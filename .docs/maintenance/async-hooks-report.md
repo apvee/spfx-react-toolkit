@@ -59,9 +59,13 @@ The persistent tests were written and observed RED before these fixes: six liter
 | `node --test --test-name-pattern='pending (create\|update\|remove)\|failed refetch preserves' tests/async-hooks.test.cjs` before production fix | **0/7 PASS, 7 FAIL** — [RED output](evidence/async-fix-round1-red.txt) |
 | Same focused command after fix | **7/7 PASS** — [focused GREEN output](evidence/async-fix-round1-focused-green.txt) |
 | `node --test /private/tmp/spfx-independent-edge.cjs` (original reviewer reproductions) | **2/2 PASS** — [reviewer repro GREEN output](evidence/async-fix-round1-reviewer-repro-green.txt) |
-| `node --test tests/async-hooks.test.cjs` | **42/42 PASS**, no cancelled/skipped — [async suite](evidence/async-fix-round1-suite-green.txt) |
-| `npm test` on current integrated tree | **90/90 PASS**, no cancelled/skipped — [full suite](evidence/async-fix-round1-npm-test.txt) |
-| `npm run typecheck --workspace @apvee/spfx-react-toolkit` | exit 0 — [typecheck](evidence/async-fix-round1-typecheck.txt) |
-| `npm run lint --workspace @apvee/spfx-react-toolkit` | exit 0, no errors/warnings — [lint](evidence/async-fix-round1-lint.txt) |
+| `node --test tests/async-hooks.test.cjs` | **42/42 PASS**, no cancelled/skipped — [async suite](evidence/runtime-rereview-async.txt) |
+| `npm test` on current integrated tree | **90/90 PASS**, no cancelled/skipped — [full suite](evidence/root-cleanup-verify.txt) |
+| `npm run typecheck --workspace @apvee/spfx-react-toolkit` | exit 0 — [typecheck](evidence/root-cleanup-verify.txt) |
+| `npm run lint --workspace @apvee/spfx-react-toolkit` | exit 0, no errors/warnings — [lint](evidence/root-cleanup-verify.txt) |
 
 All evidence for this review round is stored in the repository rather than relying only on temporary files. The prior demo suggestion failures in the historical 53-test snapshot have been corrected by their owning task; the latest full suite above is green. Tenant/network limitations in the preceding section still apply. This task did not commit, push, merge, publish or deploy.
+
+## Razionalizzazione delle evidenze
+
+I log ripetuti di questa fix round sono stati sostituiti nei link dalla re-review indipendente async42 e dal gate root90/typecheck/lint completo. RED7/7 e GREEN mirato7/7 sono conservati. Gli output originali rimangono recuperabili dal commit e59686c e dal backup della pulizia, senza ridurre la copertura dei test.
