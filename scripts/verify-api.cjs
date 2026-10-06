@@ -6,9 +6,10 @@ const { assertCompatibleDeclaration } = require('./api-compatibility.helpers.cjs
 const root = path.resolve(__dirname, '..');
 const baseline = require('../tests/fixtures/api-baseline.json');
 const requireApprovedAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts'));
+const requirePnPListAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts'));
 for (const [name, snapshot] of Object.entries(baseline)) {
   const current = fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib', name), 'utf8');
-  assertCompatibleDeclaration(name, current, snapshot.declaration, { requireApprovedAdditions });
+  assertCompatibleDeclaration(name, current, snapshot.declaration, { requireApprovedAdditions, requirePnPListAdditions });
 }
 const manifest = require('../packages/spfx-react-toolkit/package.json');
 const originalPackage = require('../tests/fixtures/package-baseline.json');

@@ -13,7 +13,7 @@ Hooks are the React-facing API. They must be used within components wrapped by a
 | [Context](./context.md) | 4 | Core SPFx context and service scope |
 | [Properties & Display](./properties.md) | 3 | Web part properties and display mode |
 | [HTTP Clients](./http-clients.md) | 6 | SharePoint, Graph, Azure AD APIs, token provider access, and API permission prechecks |
-| [PnPjs](./pnpjs.md) | 4 | PnPjs context, invoke/batch, lists, and search |
+| [PnPjs](./pnpjs.md) | 7 | PnPjs context, invoke/batch, lists, and search |
 | [UI & Theming](./theming.md) | 4 | Theme, Fluent UI 9, and container info |
 | [User & Site](./user-site.md) | 5 | User, site, hub, and list information |
 | [Environment](./environment.md) | 4 | Environment detection, Teams, locale, and page type |
@@ -113,6 +113,9 @@ function ManualPermissionStatus() {
 | `useSPFxPnP()` | PnPjs invoke and batch helpers | [View](./pnpjs.md#usespfxpnp) |
 | `useSPFxPnPContext()` | PnPjs `SPFI` factory | [View](./pnpjs.md#usespfxpnpcontext) |
 | `useSPFxPnPList<T>()` | SharePoint list CRUD and batch operations | [View](./pnpjs.md#usespfxpnplist) |
+| `useSPFxPnPListById<T>(id, options?, pnpContext?)` | List access by GUID | [View](./pnpjs.md#usespfxpnplistbyid) |
+| `useSPFxPnPListByUrl<T>(serverRelativeUrl, options?, pnpContext?)` | List access by decoded server-relative root URL | [View](./pnpjs.md#usespfxpnplistbyurl) |
+| `useSPFxPnPListByPath<T>(webRelativePath, options?, pnpContext?)` | List access by decoded web-relative root path | [View](./pnpjs.md#usespfxpnplistbypath) |
 | `useSPFxPnPSearch<T>()` | SharePoint Search with pagination | [View](./pnpjs.md#usespfxpnpsearch) |
 
 ### UI & Theming Hooks

@@ -5,6 +5,19 @@ import '@pnp/sp/lists';
 import '@pnp/sp/items';
 import '@pnp/sp/batching';
 
+import { resolveListTarget, snapshotListTarget } from './spfx-pnp-list-target.internal';
+
+/**
+ * Select a SharePoint list by exact title, GUID, decoded server-relative root URL
+ * or decoded root path relative to the supplied client's explicit web.
+ * String targets always remain titles; URL/path request escaping is owned by PnPjs.
+ */
+export type SPFxPnPListSelector =
+  | { readonly kind: 'title'; readonly title: string }
+  | { readonly kind: 'id'; readonly id: string }
+  | { readonly kind: 'url'; readonly serverRelativeUrl: string }
+  | { readonly kind: 'path'; readonly webRelativePath: string };
+
 export type SPFxPnPListQueryBuilder = (items: IItems) => IItems;
 
 export interface SPFxPnPListQueryOptions {
@@ -152,14 +165,24 @@ function collectCreatedIds(settled: PromiseSettledResult<unknown>[]): { ids: num
   return { ids, errors };
 }
 
+/**
+ * Create list operations using the supplied PnP client and a captured list target.
+ *
+ * @param sp - Configured client; batch operations use its own batched client.
+ * @param listTarget - Exact title string or explicit list selector. GUIDs accept paired
+ * braces and surrounding whitespace. URL/path roots are decoded values; path selectors
+ * require an explicit HTTP(S) web base on the operation's client.
+ * @param defaultPageSize - Default query size when neither options nor `.top()` override it.
+ * @returns List query, item CRUD and batch operations. Selector validation rejects lazily
+ * from operations, including empty batches; constructing the service does not validate.
+ */
 export function createSPFxPnPListService<T = unknown>(
   sp: SPFI,
-  listTitle: string,
+  listTarget: string | SPFxPnPListSelector,
   defaultPageSize?: number
 ): SPFxPnPListService<T> {
-  const getItems = (): IItems => {
-    return sp.web.lists.getByTitle(listTitle).items;
-  };
+  const target = snapshotListTarget(listTarget);
+  const getItems = (): IItems => resolveListTarget(sp, target).items;
 
   const query = async (
     queryBuilder?: SPFxPnPListQueryBuilder,
@@ -221,12 +244,11 @@ export function createSPFxPnPListService<T = unknown>(
   };
 
   const getById = async (id: number): Promise<T> => {
-    return sp.web.lists.getByTitle(listTitle).items.getById(id)() as Promise<T>;
+    return resolveListTarget(sp, target).items.getById(id)() as Promise<T>;
   };
 
   const create = async (item: Partial<T>): Promise<number> => {
-    const result = await sp.web.lists
-      .getByTitle(listTitle)
+    const result = await resolveListTarget(sp, target)
       .items
       .add(item as Record<string, unknown>) as unknown;
 
@@ -234,16 +256,14 @@ export function createSPFxPnPListService<T = unknown>(
   };
 
   const update = async (id: number, item: Partial<T>): Promise<void> => {
-    await sp.web.lists
-      .getByTitle(listTitle)
+    await resolveListTarget(sp, target)
       .items
       .getById(id)
       .update(item as Record<string, unknown>);
   };
 
   const remove = async (id: number): Promise<void> => {
-    await sp.web.lists
-      .getByTitle(listTitle)
+    await resolveListTarget(sp, target)
       .items
       .getById(id)
       .delete();
@@ -253,7 +273,7 @@ export function createSPFxPnPListService<T = unknown>(
     itemsToCreate: Partial<T>[]
   ): Promise<SPFxPnPListBatchResult<number[]>> => {
     const [batchedSP, execute] = sp.batched();
-    const list = batchedSP.web.lists.getByTitle(listTitle);
+    const list = resolveListTarget(batchedSP, target);
     const operations: Promise<unknown>[] = [];
 
     for (let i = 0; i < itemsToCreate.length; i++) {
@@ -272,7 +292,7 @@ export function createSPFxPnPListService<T = unknown>(
     updates: Array<{ id: number; item: Partial<T> }>
   ): Promise<SPFxPnPListBatchResult<void>> => {
     const [batchedSP, execute] = sp.batched();
-    const list = batchedSP.web.lists.getByTitle(listTitle);
+    const list = resolveListTarget(batchedSP, target);
     const operations: Promise<unknown>[] = [];
 
     for (let i = 0; i < updates.length; i++) {
@@ -295,7 +315,7 @@ export function createSPFxPnPListService<T = unknown>(
 
   const removeBatch = async (ids: number[]): Promise<SPFxPnPListBatchResult<void>> => {
     const [batchedSP, execute] = sp.batched();
-    const list = batchedSP.web.lists.getByTitle(listTitle);
+    const list = resolveListTarget(batchedSP, target);
     const operations: Promise<unknown>[] = [];
 
     for (let i = 0; i < ids.length; i++) {

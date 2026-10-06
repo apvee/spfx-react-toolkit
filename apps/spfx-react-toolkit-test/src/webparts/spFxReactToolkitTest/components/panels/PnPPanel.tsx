@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { MessageBar, MessageBarType, Stack } from '@fluentui/react';
+import { PnPListAccessDemo } from '../demos/PnPListAccessDemo';
 import {
   PnPContextDemo,
   PnPListDemo,
@@ -14,6 +15,7 @@ const PnPPanel: React.FC = () => (
     <PnPContextDemo />
     <PnPOperationsDemo />
     <PnPListDemo />
+    <PnPListAccessDemo />
   </Stack>
 );
 

@@ -14,11 +14,22 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { act } = require('react-dom/test-utils');
 function loadHook(file, name, stubs = {}) {
-    const module = { exports: {} };
-    const source = fs.readFileSync(path.join(process.env.ASYNC_HOOK_SOURCE || path.join(__dirname, '../packages/spfx-react-toolkit/src/hooks'), file + '.ts'), 'utf8');
-    const requireBoundary = key => key === 'react' ? React : stubs[key] || (() => { throw new Error('Missing boundary: ' + key); })();
-    new Function('require', 'module', 'exports', ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText)(requireBoundary, module, module.exports);
-    return module.exports[name];
+    const modules = new Map();
+    function load(fileName) {
+        if (modules.has(fileName)) return modules.get(fileName).exports;
+        const module = { exports: {} };
+        modules.set(fileName, module);
+        const source = fs.readFileSync(path.join(process.env.ASYNC_HOOK_SOURCE || path.join(__dirname, '../packages/spfx-react-toolkit/src/hooks'), fileName + '.ts'), 'utf8');
+        const requireBoundary = key => {
+            if (key === 'react') return React;
+            // Exercise the actual shared list lifecycle, retaining existing service/SDK boundaries.
+            if (key === './useSPFxPnPList.internal') return load('useSPFxPnPList.internal');
+            return stubs[key] || (() => { throw new Error('Missing boundary: ' + key); })();
+        };
+        new Function('require', 'module', 'exports', ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText)(requireBoundary, module, module.exports);
+        return module.exports;
+    }
+    return load(file)[name];
 }
 function mount(hook, props) {
     const container = document.createElement('div');

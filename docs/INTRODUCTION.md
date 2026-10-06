@@ -1,6 +1,6 @@
 # SPFx React Toolkit
 
-> A comprehensive React runtime and hooks library for SharePoint Framework (SPFx) with 41 type-safe hooks
+> A comprehensive React runtime and hooks library for SharePoint Framework (SPFx) with 44 type-safe hooks
 
 ## Overview
 
@@ -125,6 +125,9 @@ const MyComponent: React.FC = () => {
 | [`useSPFxPnP`](./api/hooks/pnpjs.md#usespfxpnp) | PnPjs with state management |
 | [`useSPFxPnPContext`](./api/hooks/pnpjs.md#usespfxpnpcontext) | PnPjs SPFI factory |
 | [`useSPFxPnPList`](./api/hooks/pnpjs.md#usespfxpnplist) | List CRUD operations |
+| [`useSPFxPnPListById`](./api/hooks/pnpjs.md#usespfxpnplistbyid) | List access by GUID |
+| [`useSPFxPnPListByUrl`](./api/hooks/pnpjs.md#usespfxpnplistbyurl) | List access by decoded server-relative root URL |
+| [`useSPFxPnPListByPath`](./api/hooks/pnpjs.md#usespfxpnplistbypath) | List access by decoded web-relative root path |
 | [`useSPFxPnPSearch`](./api/hooks/pnpjs.md#usespfxpnpsearch) | SharePoint Search |
 
 ### UI & Theming

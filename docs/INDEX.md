@@ -96,6 +96,9 @@ PnPjs v4 integration with state management.
 | [`useSPFxPnP`](./api/hooks/pnpjs.md#usespfxpnp) | `SPFxPnPInfo` | PnPjs with invoke/batch helpers |
 | [`useSPFxPnPContext`](./api/hooks/pnpjs.md#usespfxpnpcontext) | `PnPContextInfo` | PnPjs SPFI factory |
 | [`useSPFxPnPList`](./api/hooks/pnpjs.md#usespfxpnplist) | `SPFxPnPListInfo<T>` | List CRUD operations |
+| [`useSPFxPnPListById`](./api/hooks/pnpjs.md#usespfxpnplistbyid) | `SPFxPnPListInfo<T>` | List access by GUID |
+| [`useSPFxPnPListByUrl`](./api/hooks/pnpjs.md#usespfxpnplistbyurl) | `SPFxPnPListInfo<T>` | List access by decoded server-relative root URL |
+| [`useSPFxPnPListByPath`](./api/hooks/pnpjs.md#usespfxpnplistbypath) | `SPFxPnPListInfo<T>` | List access by decoded web-relative root path |
 | [`useSPFxPnPSearch`](./api/hooks/pnpjs.md#usespfxpnpsearch) | `SPFxPnPSearchInfo<T>` | SharePoint Search with pagination |
 
 ### UI & Theming

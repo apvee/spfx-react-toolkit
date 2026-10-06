@@ -1,6 +1,6 @@
 # SPFx React Toolkit
 
-React providers, 41 hooks, public helpers and services for SharePoint Framework. Each provider maintains runtime state for its SPFx instance. Hooks cover context, properties, clients, PnPjs, themes, permissions, storage and diagnostics; helpers and services support composition outside React.
+React providers, 44 hooks, public helpers and services for SharePoint Framework. Each provider maintains runtime state for its SPFx instance. Hooks cover context, properties, clients, PnPjs, themes, permissions, storage and diagnostics; helpers and services support composition outside React.
 
 ![SPFx React Toolkit](https://raw.githubusercontent.com/apvee/spfx-react-toolkit/main/assets/banner.png)
 
@@ -38,6 +38,10 @@ export default class GreetingWebPart extends BaseClientSideWebPart<{}> {
 ```
 
 Choose `SPFxWebPartProvider`, `SPFxApplicationCustomizerProvider`, `SPFxFieldCustomizerProvider` or `SPFxListViewCommandSetProvider` to match the actual SPFx host. The sample includes real WebPart and Application Customizer entry points. Field Customizer and Command Set provider coverage currently checks exports; mounting those providers needs their corresponding hosts.
+
+## List selection
+
+[`useSPFxPnPList`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/hooks/pnpjs.md#usespfxpnplist) keeps its exact-title API. [`useSPFxPnPListById`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/hooks/pnpjs.md#usespfxpnplistbyid), [`useSPFxPnPListByUrl`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/hooks/pnpjs.md#usespfxpnplistbyurl) and [`useSPFxPnPListByPath`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/hooks/pnpjs.md#usespfxpnplistbypath) select by list GUID, decoded server-relative root URL or decoded web-relative root path. All share the existing generic item type, options, optional PnP context and CRUD/query results. They do not query on mount; invalid selectors fail lazily through existing operation failure channels (`getById` resolves `undefined` and publishes `error` for service failures; query/write actions reject). Supply the intended web's context for cross-site access; paths require an explicit client web base. The standalone [`createSPFxPnPListService`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/services/INDEX.md#createspfxpnplistservice) accepts a title string or `SPFxPnPListSelector`. Numeric item IDs remain distinct from list GUIDs.
 
 ## Site collection storage
 

@@ -97,7 +97,7 @@ export interface SPFxPnPListInfo<T = unknown> {
 }
 ```
 
-Creates list CRUD and query operations for listTitle. It does not auto-query on mount: call query(). A new query or list/service identity supersedes prior data, errors, pages and pending CRUD/debounce refresh effects. loadMore is bound to the active query; duplicate simultaneous calls return an empty page without a second dispatch. Failed pages release the lock and retain the offset for retry. Caller promises retain their existing rejection values. Remote CRUD operations are not undone when a completion becomes stale. Batch methods can reject with per-item failures after successful items have completed; inspect server data before retrying a partial batch.
+Creates list CRUD and query operations for the exact `listTitle`. Strings remain titles, even when they resemble a GUID or URL; they are not trimmed or auto-detected. It does not auto-query on mount: call query(). A new query or list/service identity supersedes prior data, errors, pages and pending CRUD/debounce refresh effects. loadMore is bound to the active query; duplicate simultaneous calls return an empty page without a second dispatch. Failed pages release the lock and retain the offset for retry. Caller promises retain their existing failure channels, detailed below. Remote CRUD operations are not undone when a completion becomes stale. Successful batch writes are not rolled back; inspect hook `error` and server data before retrying a partial batch.
 
 ```tsx
 import * as React from 'react';
@@ -106,15 +106,87 @@ import { useSPFxPnPList } from '@apvee/spfx-react-toolkit';
 function TaskList() {
   const list = useSPFxPnPList<{ Id: number; Title: string }>('Tasks', { pageSize: 25 });
   return <div>
-    <button onClick={() => list.query()} disabled={list.loading}>Load tasks</button>
+    <button onClick={() => { void list.query().catch(() => undefined); }} disabled={list.loading}>Load tasks</button>
     {list.error && <p>{list.error.message}</p>}
     {list.items.map(item => <p key={item.Id}>{item.Title}</p>)}
-    <button onClick={() => list.loadMore()} disabled={!list.hasMore || list.loadingMore}>More</button>
+    <button onClick={() => { void list.loadMore().catch(() => undefined); }} disabled={!list.hasMore || list.loadingMore}>More</button>
   </div>;
 }
 ```
 
 [View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts)
+
+## useSPFxPnPListById
+
+```typescript
+export function useSPFxPnPListById<T = unknown>(id: string, options?: UseSPFxPnPListOptions, pnpContext?: PnPContextInfo): SPFxPnPListInfo<T>;
+```
+
+Selects a list by its hyphenated GUID. Uppercase/lowercase, surrounding whitespace and paired braces are accepted; the GUID is normalized to lowercase without braces. This is the **list GUID**: `getById(12)`, `update(12, item)` and `remove(12)` still use a numeric **item ID** inside the selected list.
+
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts)
+
+## useSPFxPnPListByUrl
+
+```typescript
+export function useSPFxPnPListByUrl<T = unknown>(serverRelativeUrl: string, options?: UseSPFxPnPListOptions, pnpContext?: PnPContextInfo): SPFxPnPListInfo<T>;
+```
+
+Selects a list by its decoded server-relative root URL, beginning with exactly one `/`, for example `/sites/projects/Lists/Tasks`. The URL is passed to the supplied client's web; it does not select another site or change authentication context. SharePoint determines whether the target belongs to that web. For cross-site access, supply a PnP context configured for the target web explicitly.
+
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts)
+
+## useSPFxPnPListByPath
+
+```typescript
+export function useSPFxPnPListByPath<T = unknown>(webRelativePath: string, options?: UseSPFxPnPListOptions, pnpContext?: PnPContextInfo): SPFxPnPListInfo<T>;
+```
+
+Selects a list by its decoded root path relative to the supplied client's configured web, without a leading `/`, for example `Lists/Tasks` or `Shared Documents`. No `Lists/` prefix is added. Path resolution requires `sp.web.toUrl()` to have an explicit HTTP(S) web URL ending in `/_api/web` (an optional trailing slash is accepted). Unbased clients and indirect `rootWeb` endpoints cannot establish this base; path operations report an actionable error through the failure channels below. The resolver does not fetch metadata, consult page context or create a replacement client.
+
+[View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath.ts)
+
+### Shared list hook behavior and decoded roots
+
+All four hooks return the same `SPFxPnPListInfo<T>` above and accept the same `UseSPFxPnPListOptions` (`pageSize`) and optional `PnPContextInfo`. `T` describes expected items; it does not validate server data. Call the hooks unconditionally under a matching provider. They do not query on mount: call `query()` when needed and catch rejected action promises while displaying `error`. Editable invalid targets do not throw during render. Selector validation occurs asynchronously when an operation is requested, including empty batches, before list work is queued or dispatched. Missing lists and denied permissions remain server errors. `query`, `loadMore` and single-item writes reject service failures through their caller promises and publish `error` for the current operation. `getById` catches service failures (including invalid selectors), publishes `error` and resolves `undefined`; missing or uninitialized PnP context still rejects before service execution. For settled per-item batch failures, the hooks publish `summaryError` through `error` and log item errors: `createBatch` resolves the successfully created IDs, while `updateBatch` and `removeBatch` resolve `undefined`. Underlying service rejection, including selector-validation or batch-execution failure, still rejects hook batch promises.
+
+URL/path inputs are decoded values. Pass spaces, apostrophes, Unicode, literal `%` and `#` as characters, rather than pre-encoding them. `%20` means a literal percent followed by `20`; the toolkit does not decode or encode input segments. PnPjs owns request escaping; its reserved parameter-alias syntax is not promised to be literal. Blank roots, absolute/protocol-relative URLs, backslashes, query suffixes and literal `.`/`..` segments fail selector validation through the failure channels above. Trailing slashes are accepted as supplied. Confirm `%`/`#` behavior in your authenticated SharePoint host separately from local request-escaping tests.
+
+| Configured PnP web | Server-relative URL | Web-relative path |
+|--------------------|---------------------|-------------------|
+| Tenant root (`/`) | `/Lists/Tasks` | `Lists/Tasks` |
+| Site (`/sites/projects`) | `/sites/projects/Lists/Tasks` | `Lists/Tasks` |
+| Subweb (`/sites/projects/team`) | `/sites/projects/team/Lists/Tasks` | `Lists/Tasks` |
+
+Only the configured web base pathname is decoded once for path joining. User input segments remain unchanged. All selector modes use the supplied client and preserve existing query, pagination, CRUD, batch and instance-isolation behavior. Actual changes to target, context or page size reset local list state; unrelated rerenders do not.
+
+```tsx
+import * as React from 'react';
+import {
+  useSPFxPnPContext, useSPFxPnPList, useSPFxPnPListById,
+  useSPFxPnPListByUrl, useSPFxPnPListByPath,
+} from '@apvee/spfx-react-toolkit';
+
+type Task = { Id: number; Title: string };
+
+function SelectedLists() {
+  // Explicitly select this web, including for cross-site access.
+  const context = useSPFxPnPContext('/sites/projects/team');
+  const byTitle = useSPFxPnPList<Task>('Tasks', { pageSize: 25 }, context);
+  const byId = useSPFxPnPListById<Task>('11111111-2222-3333-4444-555555555555', { pageSize: 25 }, context);
+  const byUrl = useSPFxPnPListByUrl<Task>('/sites/projects/team/Lists/Tasks', { pageSize: 25 }, context);
+  const byPath = useSPFxPnPListByPath<Task>('Lists/Tasks', { pageSize: 25 }, context);
+  const lists = [byTitle, byId, byUrl, byPath];
+  return <div>{lists.map((list, index) => <div key={index}>
+    <button disabled={!context.isInitialized || list.loading}
+      onClick={() => { void list.query().catch(() => undefined); }}>Load mode {index + 1}</button>
+    {list.error && <p>{list.error.message}</p>}
+    {list.items.map(item => <p key={item.Id}>{item.Title}</p>)}
+  </div>)}</div>;
+}
+```
+
+Use the actual GUID and root of your list in place of these illustrative values. Each hook has independent local state. Settled per-item batch failures publish hook `error` while batch promises resolve successful create IDs or `undefined` for update/remove; underlying service rejection still rejects those promises. Successful server writes are not rolled back. The standalone [list service](../services/INDEX.md#createspfxpnplistservice) returns its existing `value`/`errors`/`summaryError` batch envelope instead. Inspect hook `error` and server state before retrying a partial batch.
 
 ## useSPFxPnPSearch
 

@@ -136,6 +136,9 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
       { symbol: 'useSPFxPnPContext', kind: 'read', notes: 'Current and optional cross-site SPFI contexts.' },
       { symbol: 'useSPFxPnP', kind: 'read', notes: 'PnP invoke and batching helper.' },
       { symbol: 'useSPFxPnPList', kind: 'write', notes: 'List query and optional CRUD operations.' },
+      { symbol: 'useSPFxPnPListById', kind: 'read', notes: 'Manual first-page list query by GUID.' },
+      { symbol: 'useSPFxPnPListByUrl', kind: 'read', notes: 'Manual first-page list query by decoded server-relative root URL.' },
+      { symbol: 'useSPFxPnPListByPath', kind: 'read', notes: 'Manual first-page list query by decoded web-relative root path.' },
     ],
   },
   {

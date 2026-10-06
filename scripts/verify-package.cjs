@@ -35,6 +35,22 @@ try {
       assert.ok(packedPaths.has(file), `Missing site store package dependency: ${file}`);
     }
   }
+  // The selector resolver and shared hook runtime are required at runtime.
+  for (const module of [
+    'services/spfx-pnp-list.service',
+    'services/spfx-pnp-list-target.internal',
+    'hooks/useSPFxPnPList',
+    'hooks/useSPFxPnPList.internal',
+    'hooks/useSPFxPnPListById',
+    'hooks/useSPFxPnPListByUrl',
+    'hooks/useSPFxPnPListByPath',
+    'hooks/useSPFxPnPContext'
+  ]) {
+    for (const extension of ['js', 'd.ts']) {
+      const file = `lib/${module}.${extension}`;
+      assert.ok(packedPaths.has(file), `Missing PnP list package dependency: ${file}`);
+    }
+  }
   const consumer = path.join(temp,'consumer'); fs.mkdirSync(consumer);
   for (const name of ['src','config','sharepoint','teams','gulpfile.js','tsconfig.json','.eslintrc.js']) fs.cpSync(path.join(app,name),path.join(consumer,name),{recursive:true});
   const manifest = JSON.parse(fs.readFileSync(path.join(app,'package.json'),'utf8'));
@@ -158,6 +174,160 @@ export async function tenantHookContracts(store: SPFxTenantKeyValueStoreResult):
   await store.save<Preference>('prefs', { enabled: items.length > 0 }, 'Description');
   await store.remove('prefs');
   return item;
+}
+`);
+  fs.writeFileSync(path.join(consumer, 'src/pnp-list-compatibility.ts'), `import type { SPFI } from '@pnp/sp';
+import {
+  createSPFxPnPListService, useSPFxPnPList, useSPFxPnPListById,
+  useSPFxPnPListByUrl, useSPFxPnPListByPath,
+  SPFxPnPListSelector, SPFxPnPListService, SPFxPnPListQueryResult,
+  SPFxPnPListBatchResult, SPFxPnPListInfo, PnPContextInfo
+} from '@apvee/spfx-react-toolkit';
+import {
+  createSPFxPnPListService as createDeepService,
+  SPFxPnPListSelector as DeepSelector,
+  SPFxPnPListService as DeepService,
+  SPFxPnPListQueryResult as DeepQueryResult,
+  SPFxPnPListBatchResult as DeepBatchResult
+} from '@apvee/spfx-react-toolkit/lib/services/spfx-pnp-list.service';
+import { useSPFxPnPList as useDeepTitle, SPFxPnPListInfo as DeepInfo } from '@apvee/spfx-react-toolkit/lib/hooks/useSPFxPnPList';
+import { useSPFxPnPListById as useDeepId } from '@apvee/spfx-react-toolkit/lib/hooks/useSPFxPnPListById';
+import { useSPFxPnPListByUrl as useDeepUrl } from '@apvee/spfx-react-toolkit/lib/hooks/useSPFxPnPListByUrl';
+import { useSPFxPnPListByPath as useDeepPath } from '@apvee/spfx-react-toolkit/lib/hooks/useSPFxPnPListByPath';
+
+type Item = { Id: number; Title: string };
+function consumeProbeValues(...values: unknown[]): number { return values.length; }
+type LegacyFactory = <T = unknown>(sp: SPFI, listTitle: string, defaultPageSize?: number) => SPFxPnPListService<T>;
+export const legacyFactories: LegacyFactory[] = [createSPFxPnPListService, createDeepService];
+
+export async function serviceContracts(sp: SPFI): Promise<DeepQueryResult<Item>> {
+  const targets: (string | SPFxPnPListSelector)[] = [
+    'Tasks', { kind: 'title', title: 'Tasks' },
+    { kind: 'id', id: '11111111-2222-3333-4444-555555555555' },
+    { kind: 'url', serverRelativeUrl: '/sites/team/Lists/Tasks' },
+    { kind: 'path', webRelativePath: 'Lists/Tasks' }
+  ];
+  const deepTargets: (string | DeepSelector)[] = targets;
+  const services: DeepService<Item>[] = targets.map(target => createSPFxPnPListService<Item>(sp, target, 50));
+  services.push(...deepTargets.map(target => createDeepService<Item>(sp, target, 50)));
+  const unknownService: SPFxPnPListService<unknown> = createSPFxPnPListService(sp, 'Tasks');
+  const unknownDeep: DeepService<unknown> = createDeepService(sp, { kind: 'path', webRelativePath: 'Tasks' });
+  const unknownItem: unknown = await unknownService.getById(1);
+  await unknownDeep.query();
+  for (const service of services) {
+    const queried: SPFxPnPListQueryResult<Item> = await service.query(items => items.select('Id', 'Title'), { pageSize: 50 });
+    const more: DeepQueryResult<Item> = await service.loadMore(items => items.top(50), 50, queried.nextSkip);
+    const item: Item = await service.getById(1);
+    const id: number = await service.create({ Title: item.Title });
+    const updated: void = await service.update(id, { Title: 'Changed' });
+    const removed: void = await service.remove(id);
+    const created: SPFxPnPListBatchResult<number[]> = await service.createBatch([{ Title: 'Batch' }]);
+    const changed: DeepBatchResult<void> = await service.updateBatch([{ id, item: { Title: 'Batch changed' } }]);
+    const deleted: SPFxPnPListBatchResult<void> = await service.removeBatch(created.value);
+    const errors: unknown[] = deleted.errors;
+    const error: Error | undefined = changed.summaryError;
+    consumeProbeValues(unknownItem, more, updated, removed, errors, error);
+    // @ts-expect-error Item IDs stay numeric.
+    await service.getById('1');
+    // @ts-expect-error Generic item fields retain their declared types.
+    await service.create({ Title: 1 });
+  }
+  return services[0].query();
+}
+
+export function useListContracts(context: PnPContextInfo): DeepInfo<Item>[] {
+  const results: SPFxPnPListInfo<Item>[] = [
+    useSPFxPnPList<Item>('Tasks'), useSPFxPnPList<Item>('Tasks', { pageSize: 50 }, context),
+    useDeepTitle<Item>('Tasks'), useDeepTitle<Item>('Tasks', { pageSize: 50 }, context),
+    useSPFxPnPListById<Item>('guid'), useSPFxPnPListById<Item>('guid', { pageSize: 50 }, context),
+    useDeepId<Item>('guid'), useDeepId<Item>('guid', { pageSize: 50 }, context),
+    useSPFxPnPListByUrl<Item>('/Lists/Tasks'), useSPFxPnPListByUrl<Item>('/Lists/Tasks', { pageSize: 50 }, context),
+    useDeepUrl<Item>('/Lists/Tasks'), useDeepUrl<Item>('/Lists/Tasks', { pageSize: 50 }, context),
+    useSPFxPnPListByPath<Item>('Lists/Tasks'), useSPFxPnPListByPath<Item>('Lists/Tasks', { pageSize: 50 }, context),
+    useDeepPath<Item>('Lists/Tasks'), useDeepPath<Item>('Lists/Tasks', { pageSize: 50 }, context)
+  ];
+  const unknownResults: SPFxPnPListInfo<unknown>[] = [
+    useSPFxPnPList('Tasks'), useDeepTitle('Tasks'),
+    useSPFxPnPListById('guid'), useDeepId('guid'),
+    useSPFxPnPListByUrl('/Lists/Tasks'), useDeepUrl('/Lists/Tasks'),
+    useSPFxPnPListByPath('Lists/Tasks'), useDeepPath('Lists/Tasks')
+  ];
+  consumeProbeValues(unknownResults);
+  return results;
+}
+
+export async function hookResults(hook: SPFxPnPListInfo<Item>): Promise<Item[]> {
+  const items: Item[] = hook.items;
+  const queried: Item[] = await hook.query(query => query.top(50), { pageSize: 50 });
+  const more: Item[] = await hook.loadMore();
+  const item: Item | undefined = await hook.getById(1);
+  const id: number = await hook.create({ Title: 'New' });
+  const updated: void = await hook.update(id, { Title: 'Changed' });
+  const removed: void = await hook.remove(id);
+  const ids: number[] = await hook.createBatch([{ Title: 'Batch' }]);
+  const batchUpdated: void = await hook.updateBatch([{ id, item: { Title: 'Changed' } }]);
+  const batchRemoved: void = await hook.removeBatch(ids);
+  const refreshed: void = await hook.refetch();
+  hook.clearError();
+  const flags: boolean[] = [hook.loading, hook.loadingMore, hook.hasMore, hook.isEmpty];
+  const error: Error | undefined = hook.error;
+  consumeProbeValues(items, more, item, updated, removed, batchUpdated, batchRemoved, refreshed, flags, error);
+  // @ts-expect-error Hook generic results cannot lose their item fields.
+  const strings: string[] = queried;
+  // @ts-expect-error Hook item fields retain their declared types.
+  await hook.update(id, { Title: false });
+  consumeProbeValues(strings);
+  return queried;
+}
+
+export function invalidTargets(sp: SPFI): void {
+  for (const factory of [createSPFxPnPListService, createDeepService]) {
+    // @ts-expect-error Unsupported selector discriminant.
+    factory(sp, { kind: 'guid', id: 'guid' });
+    // @ts-expect-error Title value must be a string.
+    factory(sp, { kind: 'title', title: 1 });
+    // @ts-expect-error GUID value must be a string.
+    factory(sp, { kind: 'id', id: 1 });
+    // @ts-expect-error URL value must be a string.
+    factory(sp, { kind: 'url', serverRelativeUrl: false });
+    // @ts-expect-error Path value must be a string.
+    factory(sp, { kind: 'path', webRelativePath: null });
+    // @ts-expect-error Selector requires its matching value.
+    factory(sp, { kind: 'id' });
+    // @ts-expect-error A title selector cannot carry GUID fields.
+    factory(sp, { kind: 'title', title: 'Tasks', id: 'guid' });
+    // @ts-expect-error A GUID selector cannot carry URL fields.
+    factory(sp, { kind: 'id', id: 'guid', serverRelativeUrl: '/Lists/Tasks' });
+    // @ts-expect-error A URL selector cannot carry path fields.
+    factory(sp, { kind: 'url', serverRelativeUrl: '/Lists/Tasks', webRelativePath: 'Lists/Tasks' });
+    // @ts-expect-error A path selector cannot carry title fields.
+    factory(sp, { kind: 'path', webRelativePath: 'Lists/Tasks', title: 'Tasks' });
+    // @ts-expect-error Targets cannot be numeric.
+    factory(sp, 1);
+  }
+  for (const titleHook of [useSPFxPnPList, useDeepTitle]) {
+    // @ts-expect-error Historical title hooks retain their string argument.
+    titleHook({ kind: 'title', title: 'Tasks' });
+  }
+  for (const hook of [useSPFxPnPListById, useDeepId, useSPFxPnPListByUrl, useDeepUrl, useSPFxPnPListByPath, useDeepPath]) {
+    // @ts-expect-error New hook inputs are strings.
+    hook(1);
+    // @ts-expect-error New hook inputs are values rather than selector objects.
+    hook({ kind: 'id', id: 'guid' });
+    // @ts-expect-error Hook page sizes remain numeric.
+    hook('value', { pageSize: '50' });
+    // @ts-expect-error Hook context must be a PnP context.
+    hook('value', undefined, {});
+  }
+}
+
+export function readonlySelectors(selector: Extract<SPFxPnPListSelector, { kind: 'title' }>, deep: Extract<DeepSelector, { kind: 'path' }>): void {
+  // @ts-expect-error Selector discriminants remain readonly.
+  selector.kind = 'title';
+  // @ts-expect-error Selector values remain readonly.
+  selector.title = 'Changed';
+  // @ts-expect-error Deep selector values remain readonly.
+  deep.webRelativePath = 'Changed';
 }
 `);
   run(['install','--no-audit','--no-fund'],consumer);
