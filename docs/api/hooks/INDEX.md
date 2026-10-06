@@ -17,7 +17,7 @@ Hooks are the React-facing API. They must be used within components wrapped by a
 | [UI & Theming](./theming.md) | 4 | Theme, Fluent UI 9, and container info |
 | [User & Site](./user-site.md) | 5 | User, site, hub, and list information |
 | [Environment](./environment.md) | 4 | Environment detection, Teams, locale, and page type |
-| [Storage](./storage.md) | 5 | Browser, OneDrive, and tenant storage |
+| [Storage](./storage.md) | 6 | Browser, OneDrive, site collection and tenant storage |
 | [Permissions](./permissions.md) | 2 | Permission checking |
 | [Performance & Diagnostics](./performance.md) | 3 | Logging, timing, correlation |
 
@@ -152,6 +152,7 @@ function ManualPermissionStatus() {
 | `useSPFxOneDriveAppData<T>(fileName, options?)` | OneDrive app folder storage | [View](./storage.md#usespfxonedriveappdata) |
 | `useSPFxTenantProperty<T>(key)` | Tenant properties (read-only) | [View](./storage.md#usespfxtenantproperty) |
 | `useSPFxTenantKeyValueStore()` | Tenant key-value store | [View](./storage.md#usespfxtenantkeyvaluestore) |
+| `useSPFxSiteKeyValueStore()` | Collection root-web key-value store shared by subsites | [View](./storage.md#usespfxsitekeyvaluestore) |
 
 ### Permissions Hooks
 

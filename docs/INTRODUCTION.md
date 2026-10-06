@@ -1,6 +1,6 @@
 # SPFx React Toolkit
 
-> A comprehensive React runtime and hooks library for SharePoint Framework (SPFx) with 40 type-safe hooks
+> A comprehensive React runtime and hooks library for SharePoint Framework (SPFx) with 41 type-safe hooks
 
 ## Overview
 
@@ -160,6 +160,7 @@ const MyComponent: React.FC = () => {
 | [`useSPFxOneDriveAppData`](./api/hooks/storage.md#usespfxonedriveappdata) | OneDrive app folder storage |
 | [`useSPFxTenantProperty`](./api/hooks/storage.md#usespfxtenantproperty) | Tenant properties (read-only) |
 | [`useSPFxTenantKeyValueStore`](./api/hooks/storage.md#usespfxtenantkeyvaluestore) | Tenant-level key-value store |
+| [`useSPFxSiteKeyValueStore`](./api/hooks/storage.md#usespfxsitekeyvaluestore) | Collection root-web key-value store shared by subsites |
 
 ### Permissions
 | Hook | Description |
@@ -197,6 +198,7 @@ Services perform reusable I/O operations with dependencies supplied by the calle
 |---------------|----------|---------------|
 | PnPjs services | `createSPFxPnPContextService`, `createSPFxPnPListService`, `createSPFxPnPSearchService` | [Services API](./api/services/INDEX.md) |
 | Tenant services | `createSPFxAppCatalogService`, `createSPFxTenantPropertyService`, `createSPFxTenantKeyValueStoreService` | [Services API](./api/services/INDEX.md) |
+| Site collection service | `createSPFxSiteKeyValueStoreService` | [Services API](./api/services/INDEX.md#createspfxsitekeyvaluestoreservice) |
 | Graph services | `createSPFxOneDriveAppDataService`, `createSPFxUserPhotoService` | [Services API](./api/services/INDEX.md) |
 | API permission precheck services | `createSPFxApiPermissionPrecheckService` | [Services API](./api/services/INDEX.md) |
 

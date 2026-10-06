@@ -38,7 +38,7 @@ npm run build:app
 | `npm test` | `node --test tests/*.test.cjs` |
 | `npm run typecheck` | Both workspaces run `tsc --noEmit` |
 | `npm run lint` | Both workspaces run ESLint on source |
-| `npm run verify:examples` | Demo registry matches 40 hook and 4 provider exports |
+| `npm run verify:examples` | Demo registry matches 41 hook and 4 provider exports |
 | `npm run verify:runtime-store` | Runtime store behavior check using the local compiler |
 | `npm run verify:public-docs` | Public helper/service coverage and local documentation link targets |
 | `npm run verify:api` | Public export/declaration compatibility checks |
@@ -64,6 +64,8 @@ Trusting the certificate affects your local development certificate store. Confi
 ## Package shape
 
 `npm run pack:library` writes `artifacts/apvee-spfx-react-toolkit-2.1.0.tgz` for the current package version. The tarball contains package metadata, README, LICENSE and compiled `lib/index.*`, `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services`, `lib/utils`. Entry points remain `lib/index.js` and `lib/index.d.ts`. The app, SPFx manifests, source, tests, config and repository docs are excluded. Source maps point back to source paths; source is not embedded in the tarball.
+
+The isolated consumer probe covers all six public site-store symbols, the hook/service deep imports and existing tenant APIs. See [site storage](./api/hooks/storage.md#usespfxsitekeyvaluestore) and the [standalone service](./api/services/INDEX.md#createspfxsitekeyvaluestoreservice) for their contracts; the [real-host checklist](./SHAREPOINT-VALIDATION.md#site-collection-key-value-store) remains separate.
 
 A package-content check does not validate tenant authentication, Graph consent or SharePoint-host lifecycle. Local regression tests use real React lifecycle with doubles at unavailable SDK/service boundaries. Record real-host results separately.
 

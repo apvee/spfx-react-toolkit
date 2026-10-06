@@ -1,6 +1,6 @@
 # SPFx React Toolkit
 
-React providers, 40 hooks, public helpers and services for SharePoint Framework. Each provider maintains runtime state for its SPFx instance. Hooks cover context, properties, clients, PnPjs, themes, permissions, storage and diagnostics; helpers and services support composition outside React.
+React providers, 41 hooks, public helpers and services for SharePoint Framework. Each provider maintains runtime state for its SPFx instance. Hooks cover context, properties, clients, PnPjs, themes, permissions, storage and diagnostics; helpers and services support composition outside React.
 
 ![SPFx React Toolkit](https://raw.githubusercontent.com/apvee/spfx-react-toolkit/main/assets/banner.png)
 
@@ -38,6 +38,10 @@ export default class GreetingWebPart extends BaseClientSideWebPart<{}> {
 ```
 
 Choose `SPFxWebPartProvider`, `SPFxApplicationCustomizerProvider`, `SPFxFieldCustomizerProvider` or `SPFxListViewCommandSetProvider` to match the actual SPFx host. The sample includes real WebPart and Application Customizer entry points. Field Customizer and Command Set provider coverage currently checks exports; mounting those providers needs their corresponding hosts.
+
+## Site collection storage
+
+[`useSPFxSiteKeyValueStore`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/hooks/storage.md#usespfxsitekeyvaluestore) shares one hidden `SiteKeyValueStore` in the collection root web across all subsites. The standalone [`createSPFxSiteKeyValueStoreService`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/services/INDEX.md#createspfxsitekeyvaluestoreservice) accepts `pageContext.site.absoluteUrl` explicitly. Mount, reads and removal do not provision; `save` or explicit service `ensureListReady` can provision. Effective root-web/list grants apply, and `canWrite` is advisory. Hook read failures return fallbacks with `error`; writes reject and must be caught. Existing tenant storage remains in the tenant app catalog.
 
 ## Package contents
 

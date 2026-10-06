@@ -16,3 +16,4 @@ export * from './spfx-tenant-key-value-store.service';
 export * from './spfx-onedrive-app-data.service';
 export * from './spfx-user-photo.service';
 export * from './spfx-api-permission-precheck.service';
+export * from './spfx-site-key-value-store.service';

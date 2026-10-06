@@ -2,13 +2,13 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
+const { assertCompatibleDeclaration } = require('./api-compatibility.helpers.cjs');
 const root = path.resolve(__dirname, '..');
 const baseline = require('../tests/fixtures/api-baseline.json');
-const printer = ts.createPrinter({removeComments:true});
-const canonical = text => printer.printFile(ts.createSourceFile('module.d.ts', text, ts.ScriptTarget.Latest, true));
+const requireApprovedAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts'));
 for (const [name, snapshot] of Object.entries(baseline)) {
   const current = fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib', name), 'utf8');
-  assert.equal(canonical(current), canonical(snapshot.declaration), `Declaration contract changed: ${name}`);
+  assertCompatibleDeclaration(name, current, snapshot.declaration, { requireApprovedAdditions });
 }
 const manifest = require('../packages/spfx-react-toolkit/package.json');
 const originalPackage = require('../tests/fixtures/package-baseline.json');

@@ -106,6 +106,16 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
+    key: 'site',
+    title: 'Site',
+    iconName: 'TableGroup',
+    description: 'Collection-root key-value store shared by subsites, with manual CRUD.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-site' */ './panels/SitePanel')),
+    coverage: [
+      { symbol: 'useSPFxSiteKeyValueStore', kind: 'write', notes: 'Manual collection-root CRUD using disposable site demo keys.' },
+    ],
+  },
+  {
     key: 'tenant',
     title: 'Tenant',
     iconName: 'Org',

@@ -134,7 +134,7 @@ Detect environment and platform capabilities.
 
 ### Storage
 
-Persistent storage with instance scoping.
+Browser storage is instance-scoped; cloud stores use their documented user, collection or tenant scope.
 
 | Hook | Returns | Description |
 |------|---------|-------------|
@@ -143,6 +143,7 @@ Persistent storage with instance scoping.
 | [`useSPFxOneDriveAppData`](./api/hooks/storage.md#usespfxonedriveappdata) | `SPFxOneDriveAppDataResult<T>` | OneDrive app folder storage |
 | [`useSPFxTenantProperty`](./api/hooks/storage.md#usespfxtenantproperty) | `SPFxTenantPropertyResult<T>` | Tenant properties (read-only) |
 | [`useSPFxTenantKeyValueStore`](./api/hooks/storage.md#usespfxtenantkeyvaluestore) | `SPFxTenantKeyValueStoreResult` | Tenant-level key-value store |
+| [`useSPFxSiteKeyValueStore`](./api/hooks/storage.md#usespfxsitekeyvaluestore) | `SPFxSiteKeyValueStoreResult` | Collection root-web key-value store shared by subsites |
 
 ### Permissions
 
@@ -173,6 +174,7 @@ Public non-React service factories for composing SPFx, PnPjs, SharePoint REST, a
 |--------|-------------|---------------|
 | PnPjs services | Context, invoke/batch, list CRUD, and search | [services/INDEX.md](./api/services/INDEX.md) |
 | Tenant services | App catalog discovery, tenant properties, tenant key-value store | [services/INDEX.md](./api/services/INDEX.md) |
+| Site collection service | `createSPFxSiteKeyValueStoreService`: root-web storage shared by subsites | [services/INDEX.md](./api/services/INDEX.md#createspfxsitekeyvaluestoreservice) |
 | Graph services | OneDrive app data and user photos | [services/INDEX.md](./api/services/INDEX.md) |
 | API permission precheck service | Token-provider-based delegated scope checks with remediation entries for `webApiPermissionRequests` | [services/INDEX.md](./api/services/INDEX.md) |
 
