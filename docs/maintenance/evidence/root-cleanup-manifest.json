@@ -1,0 +1,2047 @@
+{
+  "removedDirectories": [
+    "lib",
+    "dist",
+    "release",
+    "temp",
+    "src"
+  ],
+  "fileCount": 508,
+  "bytes": 13410937,
+  "backupPath": "/private/tmp/spfx-legacy-root-backup-62qxde84/legacy-root.tgz",
+  "backupSha256": "a23d6287eede35fd56d37c1e4ebd8c6d0c92af115ec21c6522b4e5de0443b14d",
+  "files": {
+    "lib/index.js": {
+      "bytes": 950,
+      "sha256": "ccd70acfa26c6ab962051c8d55171550a6a75254f56d9396f08b1ff164054bba"
+    },
+    "lib/index.js.map": {
+      "bytes": 220,
+      "sha256": "5af9204a31dcb80748bac466cdb6cfdfc3b4aec4899179e5219247bcc9d3619d"
+    },
+    "lib/index.d.ts": {
+      "bytes": 952,
+      "sha256": "5d90f0496b3a64bc83a881abcc40935d21783878079de2b4c3ae368861c99af0"
+    },
+    "lib/index.d.ts.map": {
+      "bytes": 222,
+      "sha256": "3335d1930ae126a72dc7c99feb31db74e681622453da5699f2bf326303f04389"
+    },
+    "lib/core/provider-application-customizer.js": {
+      "bytes": 1544,
+      "sha256": "c5a4ddc77f3ef812aa7a65cf1911a745a91c7cf09f2d7e9725f2734d438c8b79"
+    },
+    "lib/core/provider-application-customizer.js.map": {
+      "bytes": 447,
+      "sha256": "ebae852e56c9196fb93c805eed90d5d96d55f9ccd741ab945122715260e2f0fa"
+    },
+    "lib/core/context.internal.js": {
+      "bytes": 1378,
+      "sha256": "d639d6f4d78fa5e9e6b25b8d3d0468eb0db50b28c585dd3bf419ef4d567b448a"
+    },
+    "lib/core/provider-application-customizer.d.ts": {
+      "bytes": 1938,
+      "sha256": "fdd7082c47ac443dc9b8ae692b28fa93e1c3e9236295330a9a87c869b4f8e815"
+    },
+    "lib/core/runtime-store.internal.js": {
+      "bytes": 1653,
+      "sha256": "30e185d5c2f6fdf734e54fae85df45708b8385b3552a275ad6129e188a2765ce"
+    },
+    "lib/core/types.js": {
+      "bytes": 104,
+      "sha256": "0cd0d51c12bce905e5bd9e0a9d4b8913a6c9ddcf9e297b6d1ad38f327570d6ca"
+    },
+    "lib/core/provider-webpart.js": {
+      "bytes": 1130,
+      "sha256": "7ffd4da70cc6e211acc8197271390e182fe210f28f72c2c48ac7afd994c3ac36"
+    },
+    "lib/core/types.js.map": {
+      "bytes": 131,
+      "sha256": "f060b40845086f6653e3e17898f3bf121141031f41abbb9898733f4ee60b41a8"
+    },
+    "lib/core/provider-application-customizer.d.ts.map": {
+      "bytes": 587,
+      "sha256": "b88987ac290b51e3905d497baa9b9a99c9f80db6dd85cacb8106c62bce311cfb"
+    },
+    "lib/core/types.d.ts": {
+      "bytes": 3243,
+      "sha256": "efb0023dc9adcfc187c7b8f7a50e8e09f12ae04f29f495ab3229dcbb2b0f902f"
+    },
+    "lib/core/state.internal.js.map": {
+      "bytes": 2860,
+      "sha256": "964a05383417f6971f6e7f9625fa7813d5a7d5d841ece7d05a2d94a3b63fd1a2"
+    },
+    "lib/core/provider-listview-commandset.d.ts.map": {
+      "bytes": 587,
+      "sha256": "6625b2cd91b7b4591fe80de2d6e7b2881d088b05f163c17cd5c9d49b58a4a349"
+    },
+    "lib/core/provider-listview-commandset.d.ts": {
+      "bytes": 2169,
+      "sha256": "81dfe912159a99a057ff88a2d4dc51137783c1cd2bdac4797a85ab12dda3c3ef"
+    },
+    "lib/core/index.js": {
+      "bytes": 984,
+      "sha256": "d41d6063b8dd900b36e913dd7d19cbf6afdd9d6ad2b95dae8cb91d77b39b9cdb"
+    },
+    "lib/core/provider-listview-commandset.js.map": {
+      "bytes": 447,
+      "sha256": "994a650578ea3f71b6afbc928532aaaa2b783ff8c9f376d0ea4fa43f6fe5e84b"
+    },
+    "lib/core/context.internal.d.ts": {
+      "bytes": 1040,
+      "sha256": "a2011ec50153ae407f55c234aac3fe0e867e5cad818a10eabb9ca4bd6ae49e57"
+    },
+    "lib/core/state.internal.d.ts": {
+      "bytes": 1317,
+      "sha256": "2b325a876350af73dad1bb9c154a5129fd86df63ea5e5298afeafdecf2a2fa7c"
+    },
+    "lib/core/provider-field-customizer.d.ts": {
+      "bytes": 1942,
+      "sha256": "bce5414ec5f9b99d949d063a2303fa742a80eaf50913468d44d84433e45a2990"
+    },
+    "lib/core/provider-base.internal.js": {
+      "bytes": 7522,
+      "sha256": "4c6080c6037a10ad870a7033160d2ef6b4a149f8fc0f4ac2c5de469ca0e7923a"
+    },
+    "lib/core/runtime-store.internal.js.map": {
+      "bytes": 1726,
+      "sha256": "04b3431f755d045c8ea449b380a72b19c367e7a416489bf81f3c2a1b9bb7d386"
+    },
+    "lib/core/provider-webpart.js.map": {
+      "bytes": 408,
+      "sha256": "546c931da354613aa7bad835901ca5ea7ac6e51d5481c84538c15f97734bf91e"
+    },
+    "lib/core/provider-field-customizer.js": {
+      "bytes": 1572,
+      "sha256": "64a1fc3cef89017c9e773d9704104a411a961c2dfc82e4f0f3cd818dbf4d5458"
+    },
+    "lib/core/provider-field-customizer.js.map": {
+      "bytes": 436,
+      "sha256": "9cf570b1cae5389b83260e8508d024209b2383d217ae04d24a8547d231de1ea2"
+    },
+    "lib/core/provider-base.internal.d.ts.map": {
+      "bytes": 374,
+      "sha256": "efd8c7ed746edb2ccf6bd993964dfdadc5bdf547eb51cde9992807c27b755e16"
+    },
+    "lib/core/runtime-store.internal.d.ts": {
+      "bytes": 1330,
+      "sha256": "1867b0cf41ff0fa24ae716fe5f62e17470f30c78b9e072c81eae52b033af9a76"
+    },
+    "lib/core/state.internal.d.ts.map": {
+      "bytes": 1200,
+      "sha256": "e84d2404f86953255d85c117c85d8ea042edde5590600b905f4e2e3254713638"
+    },
+    "lib/core/provider-base.internal.d.ts": {
+      "bytes": 952,
+      "sha256": "5078b5a4aba2a52f3625abf2b91f1eed6558b99068085ea94a52061c8a95bfc6"
+    },
+    "lib/core/provider-webpart.d.ts.map": {
+      "bytes": 548,
+      "sha256": "a07c8517b194669f5e46f9caaa2b3e2213b98e40c7a46910391b08e831bba44c"
+    },
+    "lib/core/provider-base.internal.js.map": {
+      "bytes": 4753,
+      "sha256": "1258f54b53d6857166172fc4a878f89e1cc78c97558947bad001a50c696ef584"
+    },
+    "lib/core/index.js.map": {
+      "bytes": 251,
+      "sha256": "c1682417aac23eaa208beb052ea2006b40834c6a027818d9026561d7483e81f6"
+    },
+    "lib/core/context.internal.d.ts.map": {
+      "bytes": 325,
+      "sha256": "14dd4a2c375f2951b1088aa3fd598dda944a7c8601b23012192afc09a65442d1"
+    },
+    "lib/core/state.internal.js": {
+      "bytes": 2836,
+      "sha256": "9fa9fbb32b3b8c38b6c436554e72b55e1b9da8732d82c80bb75636f70d6fe8e1"
+    },
+    "lib/core/types.d.ts.map": {
+      "bytes": 1284,
+      "sha256": "1928871d842756247bb70e911ed67770ee6bc76dc4e948fa8b2d9d762ed1cebc"
+    },
+    "lib/core/provider-webpart.d.ts": {
+      "bytes": 1469,
+      "sha256": "c84a7e0c64604cbf8a42067fd1ed324fa99b493a19f0eff01fb9267f52b45596"
+    },
+    "lib/core/provider-listview-commandset.js": {
+      "bytes": 1782,
+      "sha256": "2a192c72cc57d754c008e619a06ea4ec033910d2b9016b6379178fb2964decde"
+    },
+    "lib/core/index.d.ts": {
+      "bytes": 986,
+      "sha256": "c17127e51e46d62a62f99d71eb34677f8570949d1b05b7f6d491186e63eef64e"
+    },
+    "lib/core/provider-field-customizer.d.ts.map": {
+      "bytes": 576,
+      "sha256": "2305cc2fbf2db81689af0c9e04779d0b316380bdb2adae924a3c7a8d2849b366"
+    },
+    "lib/core/runtime-store.internal.d.ts.map": {
+      "bytes": 1241,
+      "sha256": "348549ef6ede9a0a7cc516c5c142859be26c9c24de96e8ed15499ccce95b5903"
+    },
+    "lib/core/context.internal.js.map": {
+      "bytes": 603,
+      "sha256": "64bbd0e408aab6d08fc398e5aac14363b1ff21bbfc5412e4ce7f3a999872427f"
+    },
+    "lib/core/index.d.ts.map": {
+      "bytes": 253,
+      "sha256": "e7fdf4d196aaa7c0dfd77fb4c0f4db966d48a1683e027369fe5a12b32ae52668"
+    },
+    "lib/utils/resize-observer.internal.d.ts": {
+      "bytes": 982,
+      "sha256": "85b997e1bed363c2ed58eadf31c6aef0647ae8858e7f18cb9494330005fc5a09"
+    },
+    "lib/utils/type-guards.internal.d.ts": {
+      "bytes": 3992,
+      "sha256": "3d741280a56d3a782d4ff321882fe57e1ce553da1a0b9dfdb874c2ae861be57b"
+    },
+    "lib/utils/type-guards.internal.js.map": {
+      "bytes": 2125,
+      "sha256": "36a1a032c95860957277f94920721a5a397727bd09f48b0a6c859f7e70c40def"
+    },
+    "lib/utils/type-guards.internal.d.ts.map": {
+      "bytes": 1060,
+      "sha256": "028afade9101cf925bd55606a7f4c90dd0ff25510e052e0d2ba993fc64b73b2b"
+    },
+    "lib/utils/resize-observer.internal.js.map": {
+      "bytes": 881,
+      "sha256": "d7816c47d79b49bd183c1898dae0a90a7d3d030c8acf28b35d2b5acda3138022"
+    },
+    "lib/utils/type-guards.internal.js": {
+      "bytes": 5208,
+      "sha256": "5e7a8960cf22129a359a0e81fe0804d404e9acc2a9441fb22c2cc4bf8ba43afb"
+    },
+    "lib/utils/theme-subscription.internal.js": {
+      "bytes": 2796,
+      "sha256": "4ea14169faa549ef6a372147a9d56c8f2242d3957d1aac67a0efdc66474b13ab"
+    },
+    "lib/utils/index.js": {
+      "bytes": 137,
+      "sha256": "d7e03dda61d5693421165180e9375c4e5fcb90d205555adafa47a3d3b2883d5f"
+    },
+    "lib/utils/resize-observer.internal.d.ts.map": {
+      "bytes": 345,
+      "sha256": "f0380123ce2c665f7ac54f4696578e6e5d6781563097c04db048beaef77488ff"
+    },
+    "lib/utils/resize-observer.internal.js": {
+      "bytes": 1630,
+      "sha256": "af2fb9c551dd30b1252c5763d77c2afc59940bc38e7198ad1333d5395d8ba62d"
+    },
+    "lib/utils/theme-subscription.internal.js.map": {
+      "bytes": 1460,
+      "sha256": "dd8912f00a5ae5ffc05af2e14b76301bb48a18badcab52944bd97c13be3b0ee7"
+    },
+    "lib/utils/theme-subscription.internal.d.ts": {
+      "bytes": 902,
+      "sha256": "099b57cd8c676ac0547060aa2920d236983b3f01d1d6bb106a78773d7fdfcd78"
+    },
+    "lib/utils/index.js.map": {
+      "bytes": 135,
+      "sha256": "24c26f0ce29ed61df1e15cfb60691cc1af8e18fd7e9f0f46c6c33ddfb923b187"
+    },
+    "lib/utils/index.d.ts": {
+      "bytes": 35,
+      "sha256": "3835f8d92ad0699690cf572ad0da8aa3bfa5cc1c66fbd2609c52a02b9da828dc"
+    },
+    "lib/utils/theme-subscription.internal.d.ts.map": {
+      "bytes": 365,
+      "sha256": "330fd62a11a8ab455a86b8779dbb96d7fe62e7c24b24c2db5949e244398ad88e"
+    },
+    "lib/utils/index.d.ts.map": {
+      "bytes": 113,
+      "sha256": "7c5f3e251357a44371b59542acd99348a5ae133cadf3c3c1e831de1d1139da9c"
+    },
+    "lib/extensions/spFxReactToolkitTest/SpFxReactToolkitTestApplicationCustomizer.d.ts": {
+      "bytes": 516,
+      "sha256": "c1ae18610f28ebfa01730085052cb974ca7f59c387dd7dda96559a3a56048f85"
+    },
+    "lib/extensions/spFxReactToolkitTest/SpFxReactToolkitTestApplicationCustomizer.manifest.json": {
+      "bytes": 750,
+      "sha256": "42d6d499cc4a4320c9bf9428c015537a276f3c672cdce0bedec33fe8cec35da4"
+    },
+    "lib/extensions/spFxReactToolkitTest/SpFxReactToolkitTestApplicationCustomizer.js": {
+      "bytes": 2769,
+      "sha256": "0b65f9505a109015ec180308919e2fd4c334f6b6e3de81bd12454facd6bda0a7"
+    },
+    "lib/extensions/spFxReactToolkitTest/SpFxReactToolkitTestApplicationCustomizer.d.ts.map": {
+      "bytes": 499,
+      "sha256": "04e12f77b1a582dfad6c0b49b81f2e5aec192afc0183d876812d67bb83699276"
+    },
+    "lib/extensions/spFxReactToolkitTest/SpFxReactToolkitTestApplicationCustomizer.js.map": {
+      "bytes": 2285,
+      "sha256": "e2e04761fa17799cd659906001a2c281271b4b1935e50021aed7c6d7c63f413a"
+    },
+    "lib/extensions/spFxReactToolkitTest/loc/en-us.js": {
+      "bytes": 99,
+      "sha256": "6dee17b9d23e1d4f0a96c1d502693e958b9d90a0a3da73ebaa7da4c9ec255f8a"
+    },
+    "lib/hooks/useSPFxPageType.js": {
+      "bytes": 2120,
+      "sha256": "f0c17424b0dcfa918420ebb76ec5b8b55fd0857993477cc2182e1bc32997fe13"
+    },
+    "lib/hooks/useSPFxPnPList.query.internal.d.ts.map": {
+      "bytes": 646,
+      "sha256": "a2f32a7cf98ca9aed6b4be81119e5c46270ccada9582f79c9cd02643b16daa8b"
+    },
+    "lib/hooks/useSPFxPageType.d.ts": {
+      "bytes": 2382,
+      "sha256": "c59c180fb1e884c5d0c8aec2b385616bc1473d864129a34e357317d09b9611d4"
+    },
+    "lib/hooks/useSPFxPnP.d.ts": {
+      "bytes": 16555,
+      "sha256": "04040d347bf0b7d82cfa4bec1a6b6a7cc36d5b9c0d01725ea6e0302f2b3b8258"
+    },
+    "lib/hooks/useSPFxPerformance.d.ts.map": {
+      "bytes": 989,
+      "sha256": "b4a464696bf04b3799bff84839c6ac7362affc599decfd4364c40b06e599a260"
+    },
+    "lib/hooks/useSPFxPnPList.batch.internal.js.map": {
+      "bytes": 913,
+      "sha256": "6cfa38a4b69c396119c32e2a715da29e28556131b74d833aed8dda76a5b1b270"
+    },
+    "lib/hooks/useSPFxDisplayMode.d.ts.map": {
+      "bytes": 505,
+      "sha256": "8afab734fc3938a8098df9b666540a8e3b6ad59cffd50a59d40e4233f62bc0fb"
+    },
+    "lib/hooks/useSPFxPerformance.d.ts": {
+      "bytes": 2230,
+      "sha256": "4e9a4070a26f73e235e1e57952a0a570f0473e166848693c4d128196b0c4ff38"
+    },
+    "lib/hooks/useSPFxServiceScope.d.ts": {
+      "bytes": 3420,
+      "sha256": "686431049d56d5c99628005e91991c93dbbd6452c19dda28200abd3e6e9aaa58"
+    },
+    "lib/hooks/useSPFxFluent9ThemeInfo.d.ts": {
+      "bytes": 3280,
+      "sha256": "634251b32bc8813fbfc8fed9fe9ca83f9a62bb2ea0415793b022aa958d4656cf"
+    },
+    "lib/hooks/useSPFxTeams.d.ts.map": {
+      "bytes": 486,
+      "sha256": "7bfcc21ac9a47484385ea314f7dbbe6f34b50cdcd0d38d7524aa7a8fe17323b5"
+    },
+    "lib/hooks/useSPFxSiteInfo.d.ts": {
+      "bytes": 3825,
+      "sha256": "2800b51d9358e97fc44eb825728d3f3b24f5388af4b7c87ad2c030acb54264dc"
+    },
+    "lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.js": {
+      "bytes": 4069,
+      "sha256": "aa8d438efde889ff17698c3c040af9041a7dc202924aa709a99b3ae4816245b3"
+    },
+    "lib/hooks/useSPFxServiceScope.d.ts.map": {
+      "bytes": 529,
+      "sha256": "f8b2fe74668ade358163e2d9af7619b00ca900bcf6823852e9ee1d463db4b33d"
+    },
+    "lib/hooks/useSPFxContainerSize.d.ts": {
+      "bytes": 4142,
+      "sha256": "92ed4fb43994a00927551c7e9bc26f0b18ec37d7d8ae2067f82b1fcd3fdca68c"
+    },
+    "lib/hooks/useSPFxEnvironmentInfo.d.ts": {
+      "bytes": 1821,
+      "sha256": "7d0b00f5fc252610e729e30ba111181fe4a40007cc0dab9f31046bf0bdd5c2ba"
+    },
+    "lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.d.ts.map": {
+      "bytes": 373,
+      "sha256": "0c3fbcf275760aa3139094fe623d1fe8cf3daec9fc1dd634c80cadddadf33e3f"
+    },
+    "lib/hooks/useSPFxPnPSearch.js": {
+      "bytes": 17303,
+      "sha256": "30961da30ff0b5d25ce697754a7ce748dbcccffd09248cef4964deb061ca8ead"
+    },
+    "lib/hooks/useSPFxPnPContext.d.ts.map": {
+      "bytes": 1253,
+      "sha256": "c76dbe5ee18a083b2cd8b456ddc3aba9256438ac93bd0abbe2c804e7c52c1307"
+    },
+    "lib/hooks/useSPFxPnPList.d.ts.map": {
+      "bytes": 2422,
+      "sha256": "714ea73831b490236ecb091a2b749f6dbf2dcfd8dbcabf7d2d0de5e2a299cc5d"
+    },
+    "lib/hooks/useAsyncInvoke.internal.d.ts.map": {
+      "bytes": 653,
+      "sha256": "3c2f1a88eaf025bdf9bc61dd9b4af211d5c5b6fdd08ded4b48c5e3e60cc4eba6"
+    },
+    "lib/hooks/useSPFxThemeInfo.d.ts.map": {
+      "bytes": 262,
+      "sha256": "4a9baae352bbaa77aa39585de0757e2ea8ed58e888ebc46e97ca68cd8dfc2c4d"
+    },
+    "lib/hooks/useSPFxProperties.js.map": {
+      "bytes": 1058,
+      "sha256": "c56bebd2230aaf3de552ab70ee10b85d8b2b85c3fbfa6ffbfc73c8fe3d7145a1"
+    },
+    "lib/hooks/useSPFxCrossSitePermissions.js": {
+      "bytes": 5121,
+      "sha256": "0d87de329ce5dfe6c02d411437353b67f7549285e5fc6c487ad22ac693683ed9"
+    },
+    "lib/hooks/useSPFxListInfo.d.ts.map": {
+      "bytes": 527,
+      "sha256": "125d51bd1244a53330bd916c3ccd0d6d601d040ac2c7ec2dca0bbcb401425b4c"
+    },
+    "lib/hooks/useSPFxPnPSearch.query.internal.d.ts": {
+      "bytes": 404,
+      "sha256": "d1d837dad82e17c45d1e82b2705cb0889081ce606855ea580bbe806c99060c43"
+    },
+    "lib/hooks/useSPFxPageContext.js": {
+      "bytes": 1567,
+      "sha256": "62c2eb6fc3491c72ac8840acfcc99b3f5790614e43239907eb6b1edc44e85a94"
+    },
+    "lib/hooks/useSPFxPageContext.js.map": {
+      "bytes": 559,
+      "sha256": "7363cfbd3ee1901c9dae786749eb1d47c3c655b2f2c79de9dc23cb0cea5b3a03"
+    },
+    "lib/hooks/useSPFxLogger.d.ts.map": {
+      "bytes": 1533,
+      "sha256": "b74763f03f3de8adf51dd375b24b26a1c84fd987589427a980a8062178827250"
+    },
+    "lib/hooks/useSPFxEnvironmentInfo.js.map": {
+      "bytes": 702,
+      "sha256": "729bd65d69e78cd3921cadd802f5ebf7723dd2f40cd908e55b6b309dbf92606d"
+    },
+    "lib/hooks/useSPFxContainerSize.js.map": {
+      "bytes": 936,
+      "sha256": "7bb3278f7b59612c406388d59aff8953edb8ac489e977e2f5e8bc09fbcd3cf7f"
+    },
+    "lib/hooks/useSPFxPnPContext.d.ts": {
+      "bytes": 9594,
+      "sha256": "9ceea543ddba2a5245497a379b9228a367ed72c0c4777667a49e3cdddd92245a"
+    },
+    "lib/hooks/useSPFxHttpClient.d.ts.map": {
+      "bytes": 880,
+      "sha256": "b45dd7f3568034f0a9f503043cf136e6f31a56511767a3765e65fdab395fdf99"
+    },
+    "lib/hooks/useSPFxStorage.d.ts": {
+      "bytes": 2267,
+      "sha256": "f8e95312ed6db414c6f0bc48606dace5f6d9d20b21549f79e880588983f12d81"
+    },
+    "lib/hooks/useSPFxPnPSearch.query.internal.js": {
+      "bytes": 563,
+      "sha256": "406b159c52d3166a38f71028076b10fb643cf77cb247ff4ffc223bb4cdad0d57"
+    },
+    "lib/hooks/useSPFxLocaleInfo.js": {
+      "bytes": 3117,
+      "sha256": "a5a71f84f591b3a85b798280617124c086067881dafb6ad0ee5215e3e80aaacc"
+    },
+    "lib/hooks/useSPFxCrossSitePermissions.js.map": {
+      "bytes": 3926,
+      "sha256": "40c61e0cc6465e4cc670fb4a98fd0a08cf9f078ec4791adc10a781958db3f91f"
+    },
+    "lib/hooks/useSPFxPnPList.js.map": {
+      "bytes": 9324,
+      "sha256": "85585e8bb56ccf36b367c431f97d2d3d2e18b0338a97325e5e8203f068c64677"
+    },
+    "lib/hooks/useSPFxMSGraphClient.d.ts.map": {
+      "bytes": 990,
+      "sha256": "44a8f81ba964fd38968346a36129de34c2265b5e3908d0b9a45c3b6a889d4df2"
+    },
+    "lib/hooks/useSPFxStorage.js.map": {
+      "bytes": 3715,
+      "sha256": "f9b2248b0552cf99894b0260cbbf819e1e07e1d83be4a89c90d6dc17acdab440"
+    },
+    "lib/hooks/useSPFxHubSiteInfo.js": {
+      "bytes": 4292,
+      "sha256": "1a4643de1bd8757e8355700a00fb72288bb4c67a0930610a76a1d9573c5f483b"
+    },
+    "lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.d.ts.map": {
+      "bytes": 1078,
+      "sha256": "77d03a8320f8908fcd6f3addbfc0d794d1cec50d52037f5d52507362749eacc3"
+    },
+    "lib/hooks/useSPFxContainerInfo.js": {
+      "bytes": 1404,
+      "sha256": "88986b4e6f11d7677fc03a32034baa21966cddf1ebe1b1513127cdc0b5238295"
+    },
+    "lib/hooks/useSPFxPnPContext.js.map": {
+      "bytes": 1942,
+      "sha256": "06425d791b2575f21a7d8f5258f215dcad3c226ef9d3092ce6f31382fe49471e"
+    },
+    "lib/hooks/useSPFxThemeInfo.js": {
+      "bytes": 917,
+      "sha256": "cf852f25b936df4d0b1862cc602f690fb84efc4af98d6f8fa8e0869401ac4b7e"
+    },
+    "lib/hooks/useSPFxFluent9ThemeInfo.js.map": {
+      "bytes": 1073,
+      "sha256": "3cd8734fd783868412b7c1b16ccfbeedf1a94cb5031f56da1ff9b808a20609ae"
+    },
+    "lib/hooks/useSPFxPermissions.js.map": {
+      "bytes": 1183,
+      "sha256": "e692c9f6e2a2f3a3216305cd38b2eba2178d50187d88b251922e708772828132"
+    },
+    "lib/hooks/useSPFxProperties.d.ts": {
+      "bytes": 2515,
+      "sha256": "f1aa44303f3d18dc849b8170ca5671bb1184ee59cb65e124ff513adde7e4f044"
+    },
+    "lib/hooks/useSPFxPnPList.batch.internal.js": {
+      "bytes": 761,
+      "sha256": "bb107471e1129ad0cbafc6c7be283f1a260917dc0c1da019c494f1b602959d85"
+    },
+    "lib/hooks/useSPFxUserInfo.d.ts.map": {
+      "bytes": 444,
+      "sha256": "fd6b012a89d40115f44d4d8ce55049600316f0def2b25c427d51da290ae7acc9"
+    },
+    "lib/hooks/useSPFxPnPList.d.ts": {
+      "bytes": 16490,
+      "sha256": "5f3bc67448bdba6c1643d5eeb548593cc05bd0fcf77b179cb9d32d85c8faf0ca"
+    },
+    "lib/hooks/useSPFxAadTokenProvider.js.map": {
+      "bytes": 2923,
+      "sha256": "ec45ca5c32324a877f262af6d07680c06e2abd754958fc9fc8c4c512ed21f027"
+    },
+    "lib/hooks/useSPFxSPHttpClient.js": {
+      "bytes": 7449,
+      "sha256": "4a19c1164cb2edf1fb3bd53695c6d8a1b778f38b639793f4fc927d6eaec334d2"
+    },
+    "lib/hooks/useSPFxPnPList.query.internal.js.map": {
+      "bytes": 1449,
+      "sha256": "30e11f8804ef019e6ce0af69c69e09a266f223ec1899e39526515079b075ff26"
+    },
+    "lib/hooks/useSPFxCorrelationInfo.d.ts": {
+      "bytes": 1399,
+      "sha256": "174ad5e1b3f62d30b2dcab809fef6301d921cfbc634213cfd5666972b318ce02"
+    },
+    "lib/hooks/useSPFxPageType.js.map": {
+      "bytes": 678,
+      "sha256": "cba8d4997d9e3d2a6fdfe612eeb732f3181e61296b328345d9c567dfa7cc23bb"
+    },
+    "lib/hooks/useAppCatalogUrl.internal.d.ts": {
+      "bytes": 1174,
+      "sha256": "75def3d00902899863823a500b494a99afd93dac573d51142f859652b73f31f7"
+    },
+    "lib/hooks/useSPFxMSGraphClient.js": {
+      "bytes": 10772,
+      "sha256": "13d6168209bb500371b1b9d257df5d17b158a331bb5162eab24022b613277304"
+    },
+    "lib/hooks/useSPFxTenantKeyValueStore.js.map": {
+      "bytes": 5972,
+      "sha256": "3b6ce97316e75eab3690edaa4dcb41d1a6c6f55abb1deab07027c226b6bfcf4b"
+    },
+    "lib/hooks/useSPFxSiteInfo.d.ts.map": {
+      "bytes": 984,
+      "sha256": "c970066ff0351785de08d6d564080766bef307b73c588c9d280abb8c2f28a918"
+    },
+    "lib/hooks/useSPFxProperties.d.ts.map": {
+      "bytes": 595,
+      "sha256": "2d811ce1e33b16c29e5055c198139122687995d79a0401cd727e58ef231f9d3b"
+    },
+    "lib/hooks/useSPFxServiceScope.js.map": {
+      "bytes": 872,
+      "sha256": "85470a5a08b5be6921e59f6a8643bc95599c8cc75215151500d44929df3b1288"
+    },
+    "lib/hooks/useSPFxTenantKeyValueStore.d.ts": {
+      "bytes": 8594,
+      "sha256": "67e326e91638b4b183113d7348fb3bf3019525ab4a65b95325fca84e286a1a4c"
+    },
+    "lib/hooks/useSPFxContainerInfo.d.ts": {
+      "bytes": 1151,
+      "sha256": "715e056594d8b55053d67eebfcbbe57a8cbd3a6394714ba58cf57ad7ff06f04f"
+    },
+    "lib/hooks/useAppCatalogUrl.internal.js": {
+      "bytes": 2567,
+      "sha256": "854d490635f0a9478bdb4b494fa7c4ab63baee7befe4698a5150518d5348f3cd"
+    },
+    "lib/hooks/useSPFxPnPSearch.results.internal.js.map": {
+      "bytes": 1312,
+      "sha256": "910aef10b250619c7dc5eaa8a27981cfadc8cbb637f270c12fcd49066fbac795"
+    },
+    "lib/hooks/useSPFxPnPSearch.d.ts": {
+      "bytes": 15029,
+      "sha256": "960b78957158f5347e28c47a147daf4568c043de2e213e416bb27f0a21361e0a"
+    },
+    "lib/hooks/useSPFxPerformance.js.map": {
+      "bytes": 2114,
+      "sha256": "d28bf6a917149685b9ef04fa979a8c5a241c9b1e52aeb3645426f23764e6a081"
+    },
+    "lib/hooks/useSPFxPnPList.js": {
+      "bytes": 20548,
+      "sha256": "1ba88146aa07c66af1156c4b2baa06ccd0c91b755db62ee42a246f0143c9ac9e"
+    },
+    "lib/hooks/useSPFxTeams.d.ts": {
+      "bytes": 1641,
+      "sha256": "0cc1b2b1e0e4ef7d1efc7aa1624f9aa3a8dc132bf4e29c3e00b2e76d54a3b607"
+    },
+    "lib/hooks/useSPFxContext.d.ts.map": {
+      "bytes": 221,
+      "sha256": "85ad6b17d5ce30393b33fb034c72b97b7df69eee367284211a01acdc8f845fa4"
+    },
+    "lib/hooks/useAsyncInvoke.internal.js": {
+      "bytes": 2424,
+      "sha256": "1e8854920e186c5534fec25c89c62b8145ca589ca1e83aab5634c6ea40e9f676"
+    },
+    "lib/hooks/useSPFxListInfo.js.map": {
+      "bytes": 548,
+      "sha256": "387eb919495ad5f54f2c2592269ddbd52a2681fc958e3659c43f7f3c1b4916f2"
+    },
+    "lib/hooks/useSPFxApiPermissionPrecheck.d.ts": {
+      "bytes": 1517,
+      "sha256": "4746ff35cf406efddafd1df90e672c425496b571aad0ae039360369f069adb5f"
+    },
+    "lib/hooks/useSPFxMSGraphClient.js.map": {
+      "bytes": 2729,
+      "sha256": "8e5d50a26008128efcaa01a42a10c7bc0d1f9de3d28ba7c7ee43f65afeea48ab"
+    },
+    "lib/hooks/useSPFxLogger.js": {
+      "bytes": 3871,
+      "sha256": "08c4be4055513467f5a66695c558144163d1774b74cfe0feacfedb86dfbad14b"
+    },
+    "lib/hooks/useSPFxHttpClient.d.ts": {
+      "bytes": 7534,
+      "sha256": "0a3db760147d4d9f1dbcb2782760b1ab3ae93932fe66e988e3599fdd9004f218"
+    },
+    "lib/hooks/useSPFxThemeInfo.d.ts": {
+      "bytes": 838,
+      "sha256": "00890b5b4c49a7092ef08c62b7837dfa65b87d373d429353f20cb204671526ef"
+    },
+    "lib/hooks/index.js": {
+      "bytes": 2552,
+      "sha256": "d367a1e99e0bdf04754c4f75a02c17f0176f1445c810e5b4a3fa23983da30b63"
+    },
+    "lib/hooks/useSPFxUserPhoto.d.ts.map": {
+      "bytes": 1133,
+      "sha256": "67918df6b77d4ca62311887f262d32106f5ba6ca93b511bcd32a51d0cfe733a4"
+    },
+    "lib/hooks/useSPFxSiteInfo.js": {
+      "bytes": 3166,
+      "sha256": "3dcd725d0c1e8b3dc68b0c7877547581bf585670872bea2b4c2033f058137e11"
+    },
+    "lib/hooks/useSPFxPnPSearch.d.ts.map": {
+      "bytes": 2498,
+      "sha256": "1b047267c6b4786dfb1db157615df6ed3c2be9fbb3c5ebc78cc0d15a32e4f354"
+    },
+    "lib/hooks/useSPFxDisplayMode.js": {
+      "bytes": 2021,
+      "sha256": "2518c1cb146a96ae34ea18cfe2459132e7624cd385b5692e39b85fccca2cd354"
+    },
+    "lib/hooks/useSPFxPnPList.batch.internal.d.ts": {
+      "bytes": 457,
+      "sha256": "428b7aa511226b44caf04950a8ec09169f4714cad6d1187b84cd2d3668c60709"
+    },
+    "lib/hooks/useSPFxServiceScope.js": {
+      "bytes": 3452,
+      "sha256": "d0810d826ca35b99f87e59d7691007b1537ff3a997b2884124fb761af4f0a960"
+    },
+    "lib/hooks/useSPFxAadTokenProvider.d.ts.map": {
+      "bytes": 507,
+      "sha256": "ce0b1021360dfad419c15715cf6851c28e3b62cc3650bbe7b46c4f7610e1f3a5"
+    },
+    "lib/hooks/useSPFxLogger.js.map": {
+      "bytes": 2380,
+      "sha256": "3ceeeb5f449bd3b75d4b4352c4b338520c95e34c2f5315410b70563460b860d0"
+    },
+    "lib/hooks/useSPFxInstanceInfo.d.ts": {
+      "bytes": 995,
+      "sha256": "462d38fb3b21346bb39ba8b607b5e8e1cd9e915e1556bc55e98525022bd38694"
+    },
+    "lib/hooks/useSPFxAadHttpClient.js.map": {
+      "bytes": 3037,
+      "sha256": "a507c9a5b963af5920bb48b6e519d96337353abf90e6e660830a17fa7d2dcec8"
+    },
+    "lib/hooks/useSPFxListInfo.js": {
+      "bytes": 1746,
+      "sha256": "4aa7b667dbad4796a0673a7134da45d40cf4ddeb08ac1e1c3453bfae919adb4a"
+    },
+    "lib/hooks/useSPFxPageContext.d.ts.map": {
+      "bytes": 259,
+      "sha256": "52b6c68df79fe8753c04a82f13802554ed12470a8c019583bae03aba696d9ba7"
+    },
+    "lib/hooks/useSPFxHubSiteInfo.d.ts.map": {
+      "bytes": 558,
+      "sha256": "dffdc36d14f28b0fc93d4e4c15df623091616bc30d17d499a9f44e925a0da574"
+    },
+    "lib/hooks/useSPFxPnPSearch.query.internal.js.map": {
+      "bytes": 705,
+      "sha256": "41e46988b49079459eed3ae11b9cb590b90ebe29dc331a92a8d9d08088da9714"
+    },
+    "lib/hooks/useSPFxContext.d.ts": {
+      "bytes": 438,
+      "sha256": "876365aea9a4130fb0776db64945b563aac9c92dbcbf3d6130113390555a3eea"
+    },
+    "lib/hooks/useSPFxContainerInfo.d.ts.map": {
+      "bytes": 422,
+      "sha256": "0f6fe2c248cb309ded07aae5a6513270d175511d3418cc8fe4d491faa1856177"
+    },
+    "lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.js": {
+      "bytes": 659,
+      "sha256": "bee065b453b3eee583cf977190aecd1d9954ae41795fe0ff5101ccaf5c4b9397"
+    },
+    "lib/hooks/useSPFxSPHttpClient.js.map": {
+      "bytes": 2104,
+      "sha256": "cb9af77c638ab25be2153bb5f27bd7e7d10f236f90ea46fdfb445d5a5b413726"
+    },
+    "lib/hooks/useSPFxTenantProperty.d.ts": {
+      "bytes": 5555,
+      "sha256": "b37a054ed0da468dfebb10f54b966525c4232ff7673fbf32739c3432fa414bf9"
+    },
+    "lib/hooks/useSPFxListInfo.d.ts": {
+      "bytes": 1845,
+      "sha256": "9b9bf8b43a3766ce1d399119dd370050f8994be3850dd7094567c9dd307cc4c7"
+    },
+    "lib/hooks/useSPFxLocaleInfo.d.ts.map": {
+      "bytes": 798,
+      "sha256": "cfbf89e514572aa705a896399dc5f295ad5b9e7081aefba8f049582c6ce5d5d9"
+    },
+    "lib/hooks/useSPFxTeams.js.map": {
+      "bytes": 3130,
+      "sha256": "e7e41154f978d4bbf88764dade895c886a42d6f03b8b5fbb408ddd0b4c4ac098"
+    },
+    "lib/hooks/useSPFxContainerInfo.js.map": {
+      "bytes": 745,
+      "sha256": "902530ae1eafdd6498a10b58cdeb00808ea754ff65a4313568719ea6aa69989e"
+    },
+    "lib/hooks/useSPFxPermissions.d.ts": {
+      "bytes": 2561,
+      "sha256": "76dca6c9530b4c6f102805839aebcfd30a57856626cdb139dce167b7ba53efb9"
+    },
+    "lib/hooks/useSPFxTenantKeyValueStore.js": {
+      "bytes": 13598,
+      "sha256": "43da9cf2b7a9638c806a256b60bb9283ce0e96e5261d910c4d4a782fbd7bc378"
+    },
+    "lib/hooks/useSPFxOneDriveAppData.js.map": {
+      "bytes": 6218,
+      "sha256": "9bf677a4c3bbb69e964eec124f2597e54671135dcddcaba2c3b0db58147fbf25"
+    },
+    "lib/hooks/useSPFxUserPhoto.js.map": {
+      "bytes": 4699,
+      "sha256": "586ab6511f261284e4ee1a4479e7fb3ac6aeecf71de394991ff559e2a69262ef"
+    },
+    "lib/hooks/useSPFxPnP.js.map": {
+      "bytes": 2866,
+      "sha256": "736096c58c338acbfa21ae1276169e386a6bbeee9fd8624878c685d6d2e0f2bc"
+    },
+    "lib/hooks/useSPFxPerformance.js": {
+      "bytes": 3576,
+      "sha256": "c7daaf690ad40c0ca9ed642ef92585af879277f0e637b240e3abb9ad93d259bc"
+    },
+    "lib/hooks/useSPFxContainerSize.d.ts.map": {
+      "bytes": 860,
+      "sha256": "7a546f35de00c9175459250fc123be50d7190606751780d46909d7b2fdb5ab47"
+    },
+    "lib/hooks/useSPFxApiPermissionPrecheck.js": {
+      "bytes": 9388,
+      "sha256": "d746b9a38a339335c1ad9134ac95d251449bfcf2af6cbc0d8479bc736cd427b4"
+    },
+    "lib/hooks/useSPFxLocaleInfo.js.map": {
+      "bytes": 809,
+      "sha256": "e552194379ebd9e30048366375c511911586fc1d935a7b98160884401b2aefd4"
+    },
+    "lib/hooks/useSPFxDisplayMode.d.ts": {
+      "bytes": 1783,
+      "sha256": "d0fd1db3ef463a68608af28d694283e38ce502fd6921e375bd577e668a979771"
+    },
+    "lib/hooks/useSPFxAadTokenProvider.js": {
+      "bytes": 6167,
+      "sha256": "3f71a28c40878945ab01b95905f7448cfd51c341e0ce6650cfbf4b8c0432482f"
+    },
+    "lib/hooks/useAppCatalogUrl.internal.js.map": {
+      "bytes": 2003,
+      "sha256": "605f1e450b39b82f5290f174943a5f328efb33f45c0bce832c3bdaf428c613cd"
+    },
+    "lib/hooks/useSPFxOneDriveAppData.d.ts": {
+      "bytes": 8689,
+      "sha256": "2b98194fe325b606a5efb024d1abcad96093ff4cce011bc6da6ba38c088be171"
+    },
+    "lib/hooks/useSPFxPnPContext.js": {
+      "bytes": 10132,
+      "sha256": "65031ab437a74c8c4118d1a81d7559933b1b50b46880c9f4f0bf37a6e1d707eb"
+    },
+    "lib/hooks/useSPFxSPHttpClient.d.ts": {
+      "bytes": 7351,
+      "sha256": "ccd36ba85f3a528ac70271bdd5a906d5cbd62128ded33b814efd0b52e1a140e4"
+    },
+    "lib/hooks/useSPFxEnvironmentInfo.d.ts.map": {
+      "bytes": 766,
+      "sha256": "b972590a922baa9f115722430ee0a6e8fbb940b18b9a4b0c3944e81415302f38"
+    },
+    "lib/hooks/useSPFxPnP.d.ts.map": {
+      "bytes": 1399,
+      "sha256": "cd550bc23d094e22aef7b1e2a50b64867e48f84d0a9cca94b710299ff9e1f642"
+    },
+    "lib/hooks/useSPFxInstanceInfo.js.map": {
+      "bytes": 497,
+      "sha256": "a38a745e6255c6bc73cb7a47b6f2c18a704042cc6874a5e94fba4105c01b6a7c"
+    },
+    "lib/hooks/useSPFxOneDriveAppData.js": {
+      "bytes": 17035,
+      "sha256": "342805a823782718c80c010231f9593e371a57d4a4a1db46233d549065bc0154"
+    },
+    "lib/hooks/useSPFxSiteInfo.js.map": {
+      "bytes": 684,
+      "sha256": "803bf546b2b34a41ebdfd16eda71be2224abd3aa85c86064549cf3f3ab59c05b"
+    },
+    "lib/hooks/useSPFxPageContext.d.ts": {
+      "bytes": 1139,
+      "sha256": "88000c95b52679d0ac16ee4f1c2c9498319fe6e1033f03a4abd73512a60a4d70"
+    },
+    "lib/hooks/useSPFxUserPhoto.d.ts": {
+      "bytes": 7586,
+      "sha256": "ffb05d395db2cd78b1938d57c9546c545eff5ce5c564df500291ce46135185e2"
+    },
+    "lib/hooks/useSPFxLocaleInfo.d.ts": {
+      "bytes": 3760,
+      "sha256": "5cdac9b69a3f332ee3c162530256d679c3b41fc5c774fb75fbcc594dfee104ba"
+    },
+    "lib/hooks/useSPFxCorrelationInfo.js": {
+      "bytes": 1652,
+      "sha256": "b040fc110e8a92f19f70f9e8416e50b53857622c39c02b74da517792143faa7a"
+    },
+    "lib/hooks/useSPFxPageType.d.ts.map": {
+      "bytes": 676,
+      "sha256": "6626277b2db7734f819dd9428d4f03a8d5863413023a3d9c2092e42c1d1864fa"
+    },
+    "lib/hooks/useSPFxSPHttpClient.d.ts.map": {
+      "bytes": 1023,
+      "sha256": "441285429603d46eac7ae0a477bb18b1efa5700a24050f1916c5ea60a8c0d242"
+    },
+    "lib/hooks/useSPFxTeams.js": {
+      "bytes": 4645,
+      "sha256": "bac71178ffb2b1a09c3e5b4b3a41b9a8f957fccb2233d28c1194f6e93cd43204"
+    },
+    "lib/hooks/useSPFxCrossSitePermissions.d.ts": {
+      "bytes": 2289,
+      "sha256": "435e1a14cafa52caf8620f1d5fa0658e5338407a214c98c2ccacdd44577c7177"
+    },
+    "lib/hooks/useSPFxAadHttpClient.d.ts.map": {
+      "bytes": 1176,
+      "sha256": "b12c7307b57effc25570af5da6192e275f145888dc0dad789316e8677a0f92fa"
+    },
+    "lib/hooks/useSPFxLogger.d.ts": {
+      "bytes": 3023,
+      "sha256": "2fc2fd66888c1a92c3436252b10ab08d6144dc38033fbaefcdc918588cc6e4b8"
+    },
+    "lib/hooks/useAppCatalogUrl.internal.d.ts.map": {
+      "bytes": 649,
+      "sha256": "a2aeaae227bc172acfb55dcf664fbf471e2f12be4e92775c0b95aba8470cd082"
+    },
+    "lib/hooks/useSPFxDisplayMode.js.map": {
+      "bytes": 869,
+      "sha256": "1d8d5bc83eea8e1742d24faf56742bdc298dbe2ca3ad51e9da90ea4a2d96126f"
+    },
+    "lib/hooks/useSPFxPnPSearch.results.internal.js": {
+      "bytes": 1232,
+      "sha256": "f4712dd3f5fab1d8b92803dfccde1759be9746fb21963abbbdb304488d05fffd"
+    },
+    "lib/hooks/index.js.map": {
+      "bytes": 1021,
+      "sha256": "a6574ea76993ba267fdaa0a14ec61e06b9e66d1fad18f52d1d836339a39c9847"
+    },
+    "lib/hooks/useSPFxInstanceInfo.d.ts.map": {
+      "bytes": 398,
+      "sha256": "089e91a05a6688421dc0187abe091427f2e9c696c771383ad5359f759f1c2a19"
+    },
+    "lib/hooks/useSPFxPnPList.query.internal.js": {
+      "bytes": 1537,
+      "sha256": "8db4a20aefcfa554beedc198be4511be0c1d3adacc6a310fa398f38b9d402a3c"
+    },
+    "lib/hooks/useSPFxUserPhoto.js": {
+      "bytes": 9798,
+      "sha256": "d7e1bccc2747b06dda5f310b47f1e4fd7a6d32661ecbba70dab350fee971743b"
+    },
+    "lib/hooks/useSPFxPnPList.query.internal.d.ts": {
+      "bytes": 619,
+      "sha256": "6abfd33084d00d4cad317b99db887a5c761adde300c78e35a7b3ee0ffbdfae56"
+    },
+    "lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.d.ts": {
+      "bytes": 1129,
+      "sha256": "bb9f9722930295dff418c554af341009f0f6499b3af7a7dd9db4265e3b8f220b"
+    },
+    "lib/hooks/useSPFxOneDriveAppData.d.ts.map": {
+      "bytes": 1305,
+      "sha256": "504dc404e8fef3b9ff045d6a44d794b25640eaf9a70c75fb07b242f649085b63"
+    },
+    "lib/hooks/useSPFxMSGraphClient.d.ts": {
+      "bytes": 7800,
+      "sha256": "10bb8186538f37294ab9506346809e9d478c5fbeba2fda1142bd69e58eadbe5d"
+    },
+    "lib/hooks/useSPFxPnPSearch.js.map": {
+      "bytes": 9013,
+      "sha256": "ea8f747bdf6fe180690bb30c3f4c2bb336031b4301547274a39ebff0207231a3"
+    },
+    "lib/hooks/useSPFxHttpClient.js.map": {
+      "bytes": 1254,
+      "sha256": "372edee827ac0b1f119b5c7dd14668c2cc476934b09acf4ada63115b81f0f352"
+    },
+    "lib/hooks/useSPFxUserInfo.js": {
+      "bytes": 1197,
+      "sha256": "cbaa678b1e5af0ebb4a45798f71f9730533f468ef7fe2d8802300d8a87e2afe2"
+    },
+    "lib/hooks/useSPFxFluent9ThemeInfo.js": {
+      "bytes": 3844,
+      "sha256": "5cf2f4e1adc236d3b13f752edf1c0f88d43719792d2becb1395ab1e26f466006"
+    },
+    "lib/hooks/useSPFxStorage.js": {
+      "bytes": 5363,
+      "sha256": "f305ae4a18443aa8ababd7b7ad10d534fc52dba4485a606f543430830bbb3c0b"
+    },
+    "lib/hooks/useSPFxPnPSearch.query.internal.d.ts.map": {
+      "bytes": 428,
+      "sha256": "3345ffbbcb97b4965c89a1789d84c16b06be7964c618883b4e457eee207b81e1"
+    },
+    "lib/hooks/useSPFxCorrelationInfo.d.ts.map": {
+      "bytes": 389,
+      "sha256": "1f3eb4aaadcf41f1009112a79a8616a91e9dfe7e84c66c1120b135cdb525b50a"
+    },
+    "lib/hooks/useSPFxAadTokenProvider.d.ts": {
+      "bytes": 1434,
+      "sha256": "6b8ae64dbb2a5ad6244ebdeb9b03df6222e71c653c8c444777a11051fe52d715"
+    },
+    "lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.js.map": {
+      "bytes": 846,
+      "sha256": "571bcde5d73402b5a22ee1ac9dcad4dbe282fb6fa9371b7f3e491e0e84004794"
+    },
+    "lib/hooks/useSPFxApiPermissionPrecheck.js.map": {
+      "bytes": 7911,
+      "sha256": "0732adb36ca80a985aa8a79d93b9e224f8f60596558d638d3742edfd1f9579fd"
+    },
+    "lib/hooks/useSPFxPnPSearch.results.internal.d.ts.map": {
+      "bytes": 529,
+      "sha256": "03e2af48b31be3fd39816746d8ad4c41f8750f54e9c497aff3621c6fa6d9ae2f"
+    },
+    "lib/hooks/useSPFxCorrelationInfo.js.map": {
+      "bytes": 694,
+      "sha256": "41b3508d69e087f41fb4ae71910de29c7910a41ab11f41b8eb422c3152c2042f"
+    },
+    "lib/hooks/useSPFxThemeInfo.js.map": {
+      "bytes": 339,
+      "sha256": "213901c2c6f6839cbb84586f4efa7e40ba0950244db1d9a53602d0518b0a0bb3"
+    },
+    "lib/hooks/useSPFxFluent9ThemeInfo.d.ts.map": {
+      "bytes": 525,
+      "sha256": "53c29b27a9b73d99db8d4b4c498126b1ca8d70b1ca9d32352693cf79e59fa70d"
+    },
+    "lib/hooks/useSPFxEnvironmentInfo.js": {
+      "bytes": 1499,
+      "sha256": "47b96f2ac16449050fb928ec52d3062787e67185d1e3cee462ad9f98d1611ecc"
+    },
+    "lib/hooks/useSPFxTenantProperty.d.ts.map": {
+      "bytes": 786,
+      "sha256": "6cb6f4fbcccca1f416d0a48af943138f3ce4c37fc1abf2474c9dd6cc5925d483"
+    },
+    "lib/hooks/useSPFxContext.js.map": {
+      "bytes": 245,
+      "sha256": "3cff848c52a087a30149aa36705b4b1b7c0cb4c87866fa897f62685fedf1307e"
+    },
+    "lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.d.ts": {
+      "bytes": 274,
+      "sha256": "d4f1d9d2df8066c12d6bddbdb93fb395b10d1f039670aae0b5e57b9796a9eeee"
+    },
+    "lib/hooks/index.d.ts": {
+      "bytes": 2554,
+      "sha256": "091d37151806bf23a7a9415e0551e5e83225dbfb270a4922cd626454c938eea6"
+    },
+    "lib/hooks/useAsyncInvoke.internal.d.ts": {
+      "bytes": 2091,
+      "sha256": "c6c21b48cbffbfb39ca4d45c2bcbc5b0c786575d6b6ad4c7413be92763c61157"
+    },
+    "lib/hooks/useSPFxTenantProperty.js.map": {
+      "bytes": 2589,
+      "sha256": "c7b3a89e130b39d9685c9c1cb22daba07bee465f571f8fa5eef9bf405b4f72bf"
+    },
+    "lib/hooks/useSPFxStorage.d.ts.map": {
+      "bytes": 685,
+      "sha256": "4349391f22d2b8a4f4ae24ccfd629b8a992fa4009d1d0c95878f0ab6490c452d"
+    },
+    "lib/hooks/useAsyncInvoke.internal.js.map": {
+      "bytes": 1379,
+      "sha256": "8df660f0a283efa8d1bce81e31a59ccb63bc86edb933d2c52fdf9bd1942cd252"
+    },
+    "lib/hooks/useSPFxContainerSize.js": {
+      "bytes": 3365,
+      "sha256": "bd17944809952b31d81b0d592504472a29a1ac6519520af590145539e187a0c3"
+    },
+    "lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.js.map": {
+      "bytes": 3754,
+      "sha256": "af09d5948b79015dbef1b2ba1b7bed96165dcb192e08be45b94c8f016e3b3543"
+    },
+    "lib/hooks/useSPFxUserInfo.js.map": {
+      "bytes": 606,
+      "sha256": "116f7016ed42a01bde13dc1aa48c25675e33f0e181e9109cb098c61c46e9e492"
+    },
+    "lib/hooks/useSPFxHttpClient.js": {
+      "bytes": 6883,
+      "sha256": "8e168c518145e9f511c57bf645b8c0176d9fa3910cfc5fe5c1dbdf4ff262661d"
+    },
+    "lib/hooks/useSPFxAadHttpClient.js": {
+      "bytes": 11776,
+      "sha256": "41c3c3f9727f8621fd420e62c2880945a6a2f0b01cc3cdc8a6ca36cb553b4499"
+    },
+    "lib/hooks/useSPFxPnP.js": {
+      "bytes": 14490,
+      "sha256": "ed95cc67e26d975739b8e88d7114131f3cd9fbda63936f3582e6696666707fef"
+    },
+    "lib/hooks/useSPFxInstanceInfo.js": {
+      "bytes": 959,
+      "sha256": "e641c9ce58dbcde31fc4c1f170515cb44fe1bed27b70765dedf014132da2d0d0"
+    },
+    "lib/hooks/useSPFxCrossSitePermissions.d.ts.map": {
+      "bytes": 887,
+      "sha256": "943ed403faad200f17d95d56782735d0a7c3248cf9177faad7329c8fa0d55d07"
+    },
+    "lib/hooks/useSPFxPnPSearch.results.internal.d.ts": {
+      "bytes": 480,
+      "sha256": "6c77c4b92cf7a700808518f55f8604138fe54f4cd5eb232d575d2becaff57ad1"
+    },
+    "lib/hooks/useSPFxProperties.js": {
+      "bytes": 2756,
+      "sha256": "65af9eb377511198fdc34b3bea0a7925dc3023eb9083ae01dafbfc10ef300a7e"
+    },
+    "lib/hooks/useSPFxPermissions.js": {
+      "bytes": 2350,
+      "sha256": "f869c27f04a0c8b4fed0201bfb03800db421c8ffc3b634a201a12a2291f3db8c"
+    },
+    "lib/hooks/useSPFxTenantKeyValueStore.d.ts.map": {
+      "bytes": 1464,
+      "sha256": "be939ff953bbed6c09c6ab55495dab1aba5bbefaf8a4e302303e95f736c4477d"
+    },
+    "lib/hooks/useSPFxApiPermissionPrecheck.d.ts.map": {
+      "bytes": 1243,
+      "sha256": "cfe79ba3d9ffef1a73cda15724d80fa7818f291dd1bff1e1b7a76c48cef5f6d9"
+    },
+    "lib/hooks/useSPFxAadHttpClient.d.ts": {
+      "bytes": 8932,
+      "sha256": "9ad032e8bab878957bfa1443e2050d00385b8ef9ef40d20b62df393701566b4e"
+    },
+    "lib/hooks/useSPFxContext.js": {
+      "bytes": 506,
+      "sha256": "d7314fea0a11d37119aadc74907e58d3afc982b96511bafba2b059f7fdf3330e"
+    },
+    "lib/hooks/index.d.ts.map": {
+      "bytes": 1023,
+      "sha256": "e006ddb1dd5ad20e187d92c1fa35c5b17f6b4ddd3f8e9afcc103e5714b306d3f"
+    },
+    "lib/hooks/useSPFxTenantProperty.js": {
+      "bytes": 6693,
+      "sha256": "6d142fba1740ff182bd9f5538a29271e8f4e2c3dac0dcfe68a1ffe040177887d"
+    },
+    "lib/hooks/useSPFxUserInfo.d.ts": {
+      "bytes": 1155,
+      "sha256": "275eb3cddbe43b6d1e508def2c8182b0f92f78e9a8dd2ef11743d4df82fbfe89"
+    },
+    "lib/hooks/useSPFxPnPList.batch.internal.d.ts.map": {
+      "bytes": 576,
+      "sha256": "4ae115540f0091afd223b9fb8c08b48129b00cdb42b2793708e57865c950146b"
+    },
+    "lib/hooks/useSPFxHubSiteInfo.d.ts": {
+      "bytes": 2337,
+      "sha256": "d0b25210ec2f4ad8b137f0c5f07547f03a312c49b20e7bd7c91e0a79f6c85b89"
+    },
+    "lib/hooks/useSPFxPermissions.d.ts.map": {
+      "bytes": 718,
+      "sha256": "6269bb45f655005c96a9518ad5c1ad0362fde9c3df4f23b5b9fdd9ed97a878a2"
+    },
+    "lib/hooks/useSPFxHubSiteInfo.js.map": {
+      "bytes": 2362,
+      "sha256": "e99803e057581f4895df7b342c40e075ba6046baa80c3d4e1d4c339d6d3af928"
+    },
+    "lib/webparts/spFxReactToolkitTest/SpFxReactToolkitTestWebPart.d.ts.map": {
+      "bytes": 567,
+      "sha256": "98f6acb19811f87da7a8cd72eb0a47f25abe6f69e3cb520abc27aac2d5571aa8"
+    },
+    "lib/webparts/spFxReactToolkitTest/SpFxReactToolkitTestWebPart.d.ts": {
+      "bytes": 625,
+      "sha256": "cca68fbba1397201a9089169b5c97d31c98c77fddb69ea9078c08847c364dbef"
+    },
+    "lib/webparts/spFxReactToolkitTest/SpFxReactToolkitTestWebPart.js": {
+      "bytes": 1616,
+      "sha256": "ed3b08bd1cbc343d7d8e477757c7414b182eb56e10a9812edc0b54c6f0039373"
+    },
+    "lib/webparts/spFxReactToolkitTest/SpFxReactToolkitTestWebPart.manifest.json": {
+      "bytes": 798,
+      "sha256": "1dcdd7b0323473579883f77c158f55af8f8d1590f75ada24e8c53df26e57ff55"
+    },
+    "lib/webparts/spFxReactToolkitTest/SpFxReactToolkitTestWebPart.js.map": {
+      "bytes": 1202,
+      "sha256": "d9713a9f4bd5d4ddf75a2abbff35eb7aa5615c4ebb7fed430b869af2e9079492"
+    },
+    "lib/webparts/spFxReactToolkitTest/loc/en-us.js": {
+      "bytes": 916,
+      "sha256": "74bc8580104a997ba07f0d7b58c89193f513a9c96e7c1c1f7b1c22b448e9a930"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest.d.ts.map": {
+      "bytes": 291,
+      "sha256": "d5cc4b69743b4cc4310e79ab258c42f3f10afa4193483d5c97e9be2b0d20f846"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest.module.scss.d.ts.map": {
+      "bytes": 267,
+      "sha256": "8c6c9447e551763e42bb592425a6dfa49f75b8cf49f0d1905558cb82a0f974f9"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest.module.scss.js.map": {
+      "bytes": 518,
+      "sha256": "b077c627b7e05e7f123bd8fdc27a14734634e70f78d5fb4e0af5fba44104248b"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demoRegistry.d.ts.map": {
+      "bytes": 799,
+      "sha256": "891b6350fe076edcd29f7d9c0d8710108f0dc286a740912ed71d606b42308d25"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demoRegistry.js.map": {
+      "bytes": 5347,
+      "sha256": "fed190bb832627b96ac9d8d537f6e32f2e9d50431102d9a67fe23f4e3971a2d8"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest.js": {
+      "bytes": 3116,
+      "sha256": "4ca13ef9cd6c4cd983443810d2b329375de4431e0e145bb59bcf937f30fe38a9"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demoRegistry.d.ts": {
+      "bytes": 688,
+      "sha256": "9c6137457399f0b2346b19d5c285154993ccdfde691eba7f796ba3ef68686c38"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest.module.scss.d.ts": {
+      "bytes": 342,
+      "sha256": "a577a4168607b3e654882070867e342ceb504318f8882e8223934e9a270029f0"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demoRegistry.js": {
+      "bytes": 7775,
+      "sha256": "c589bc6b0f0151251dbd19175c6fdb04d728df61abbecc0c72979fb40859d592"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest.module.scss.js": {
+      "bytes": 518,
+      "sha256": "a34efe564024ba0a91a7fd8d86e3dd4f8fc4272bbd0f6dd24ef18a37192852d7"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest.module.css": {
+      "bytes": 2468,
+      "sha256": "7cdbf39bafba87cb1545d9cbe9e762933d2a4afffae9a6394630871d9100b10d"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest.d.ts": {
+      "bytes": 165,
+      "sha256": "b5456a763f6e4647a92f053ff62ff874209da8f0413c5d9c6f6b7113f5e53f22"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest.js.map": {
+      "bytes": 2959,
+      "sha256": "3ff5c9759ec32f48f83659f1f36183d511b8c35fc84fe7dab68aa5989abc26e6"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/ClientsPanel.d.ts.map": {
+      "bytes": 282,
+      "sha256": "c561f62010a658decea8ff3c4589dc3cf548d4eac353321cbdfca250256bf912"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/ClientsPanel.js": {
+      "bytes": 9330,
+      "sha256": "28d095689900a3da5482d61ee38b5af7490d0589bac641efbe65ffd9b842f431"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/ContextPanel.js.map": {
+      "bytes": 7633,
+      "sha256": "30658c8386f4b8609ce9893ee36466625b8bf420df1374e40b00f40162e92c4a"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/ProvidersPanel.d.ts": {
+      "bytes": 147,
+      "sha256": "38532f99cbf250b6b7422922e7b1df418992acd6856fb9e48ed8fe27807d0ee2"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/GraphDataPanel.d.ts.map": {
+      "bytes": 286,
+      "sha256": "91d1bcd368987ac824130016bddd4b18de13a99a9d1f81709b26ebf571211917"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/TenantPanel.d.ts.map": {
+      "bytes": 280,
+      "sha256": "6a72cf87a3a61d26eb34a57c87308c8cc5dbbdf4ef10f1d258f6036461703f56"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/PnPPanel.d.ts.map": {
+      "bytes": 272,
+      "sha256": "a972ccdcc6e5f99224e13030e8ee79413f57f1f3114f6ea74cee80e4bdc7a640"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/ClientsPanel.d.ts": {
+      "bytes": 141,
+      "sha256": "6a944843b13a214cfcd34ad2798165b2b0a37b4f71e1b8da5b2697fc04348235"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/GraphDataPanel.d.ts": {
+      "bytes": 147,
+      "sha256": "643aed96858cab9dff3c9d87b5af913627aca58fcdf0b08f5f4d7dce93bdb17d"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/ClientsPanel.js.map": {
+      "bytes": 8518,
+      "sha256": "64faa23509e33e21343feeb5cd792e1583b7184184f1519551c274cab8674e3e"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/SearchPanel.js.map": {
+      "bytes": 1027,
+      "sha256": "7bd343380a740b217d75699eebb57a08aaaf231bd4dbbe69c268fa8ee78b5f95"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/ProvidersPanel.js.map": {
+      "bytes": 1723,
+      "sha256": "bcfe937a46c29003ad43dee4bfbcad5a8f9db83fb78f022d9747b4d94f9b7846"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/TenantPanel.js.map": {
+      "bytes": 5178,
+      "sha256": "91db1b23f57424e185691859dd05d1c3e1ca1bb4ca776e02e170e43b2053151b"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/TenantPanel.d.ts": {
+      "bytes": 138,
+      "sha256": "4646d0a14ae6a5d96d97a61621b602b720112538e035a357fbaf33a74127125a"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/SearchPanel.d.ts": {
+      "bytes": 138,
+      "sha256": "028f2089bd650ba5167bc32de044904cc2425469c068df9822cdd9de9d45431e"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/GraphDataPanel.js.map": {
+      "bytes": 4361,
+      "sha256": "337e683d7d1048771b70a90216ac98ec194113d08e5cb34be539f6e239e00b65"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/ContextPanel.d.ts": {
+      "bytes": 141,
+      "sha256": "3c8534d65b2da8bf14ccacb6bc271f4e458d1d22026b12893614ec54c80b68e7"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/RuntimePanel.d.ts": {
+      "bytes": 141,
+      "sha256": "944c7303fe3061729f7ebd9840b411ba62f1ce0051bc64e9f3e8f1a14e50f7c4"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/RuntimePanel.d.ts.map": {
+      "bytes": 282,
+      "sha256": "b674262225f365f2b040d376113abbf83b3b40427b7ed48d279e6022fef6afa5"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/PnPPanel.d.ts": {
+      "bytes": 129,
+      "sha256": "e9c4d079963391f42dac881f91d33b1fa403a67265aa702168349dc44b5a6b59"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/SearchPanel.js": {
+      "bytes": 1293,
+      "sha256": "86d809ebcd89efac3a8f85eee2824837d638099853c8f53ee86619c9efb79652"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/ContextPanel.js": {
+      "bytes": 8803,
+      "sha256": "8ce77081901dd6388746745a5d35da6a63cacd074791b6b892f5559e890a21fa"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/ProvidersPanel.js": {
+      "bytes": 2806,
+      "sha256": "6988f3dd677f2edd24c156de05624f72553ce73286959bc1b9a37014fa565300"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/PnPPanel.js": {
+      "bytes": 656,
+      "sha256": "0021e03bc6496fe39beacdab04dd049e6ffc85eb45c26a428755a07da4ae128f"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/TenantPanel.js": {
+      "bytes": 5501,
+      "sha256": "0b29c9184a325aa9d4c536f1165a7b6771860072117b06621d0e6564e7385775"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/GraphDataPanel.js": {
+      "bytes": 4664,
+      "sha256": "a22930b040df7f5f688c025eed917dc2c2500eb22091dd407d209156596f0326"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/RuntimePanel.js.map": {
+      "bytes": 6909,
+      "sha256": "6342465169aa687fa536450abd28f7607e93e0670357fd682dc8f064690f5f0e"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/SearchPanel.d.ts.map": {
+      "bytes": 279,
+      "sha256": "3da9b3ce4c11f5689def2887341e1c7c6703e857739a0379c8de1c8b4d07e617"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/ProvidersPanel.d.ts.map": {
+      "bytes": 285,
+      "sha256": "faa6af6f6e7326223af6cee55eb0772351b736898b929f2f7bcd587109faa842"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/ContextPanel.d.ts.map": {
+      "bytes": 282,
+      "sha256": "41171c8eb5be88167a99e24b9fb1911876e9669395a3da8170c8b23e99c12f1a"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/PnPPanel.js.map": {
+      "bytes": 579,
+      "sha256": "ff7fbf57fecc2d4258b195a1072a107224367daf9a718a9172bb43951de994fa"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/panels/RuntimePanel.js": {
+      "bytes": 7332,
+      "sha256": "2f254796c66cde5448c08276987158b0a195db951bb1df8dbe0ab4b62685a324"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/InfoRow.d.ts": {
+      "bytes": 496,
+      "sha256": "d7d0a19b08b57891afcf56cc698a41ed99daec329e64a689c3f2e95d6f97cec5"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/StatusBadge.js.map": {
+      "bytes": 599,
+      "sha256": "55f8aadde777c71b4de08ec2703cf1fd00ea845521eb9da806f64dd2d2a7b233"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/ActionResult.d.ts.map": {
+      "bytes": 393,
+      "sha256": "5ffeceb9fc73555cdc591c0416b6c309290b11c9c23ff5fa852ee9f87ddd4d8c"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/InfoGrid.d.ts.map": {
+      "bytes": 488,
+      "sha256": "e6357366f14d4dd54c02cd37b24c94c37f6abc7806c0c3dcb3bf5e0e825c7e80"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/JsonDetails.d.ts.map": {
+      "bytes": 376,
+      "sha256": "5598c5f8c9f8abfed43095dfcda5b697d8805a0de1e6c3b49a6f4db178219bf2"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/JsonDetails.js": {
+      "bytes": 843,
+      "sha256": "d971fd08ae1a3ba8721dc62407b45f2cad096a17250c4ff3264893478fc3c6de"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/StatusBadge.d.ts": {
+      "bytes": 457,
+      "sha256": "172f4dd3fcf2f886fe0311abb1bee8118f1f27c6e91a7c0985d43588dbb2bf0c"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/index.js": {
+      "bytes": 350,
+      "sha256": "76986b333b7b1f86052c9269c752562b129cec27947bfa1f83f238f531bea8c3"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/DemoCard.js": {
+      "bytes": 751,
+      "sha256": "adbb3b4d3a4ae026d0f1523195dc327410de9360de4135dbc37dc55807030ec5"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/DemoCard.js.map": {
+      "bytes": 845,
+      "sha256": "843ad9b01bd0330ebeec8af5f266ac7a57cfd3a18d0bdb861c98f8ff9956d5d8"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/DemoCard.d.ts.map": {
+      "bytes": 494,
+      "sha256": "75abc3abd7f827bc96704d89650c7c76c1b16fc3cb187da23a081bb328a40e71"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/InfoGrid.js": {
+      "bytes": 390,
+      "sha256": "ae7c034a6f44cddcef79eb19fe8571d5722ab217185dc4e143f706ebbce74172"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/JsonDetails.js.map": {
+      "bytes": 991,
+      "sha256": "51dd47ff63fbd8882458016fb43773fc3d37384f53c5321f0bd1ae4460fc2537"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/InfoGrid.d.ts": {
+      "bytes": 333,
+      "sha256": "caa55ec58eda5a497c7fc76146393c32c025481242174049c6a723176f6d02e0"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/InfoRow.js.map": {
+      "bytes": 555,
+      "sha256": "ed6450ab57543c28094d148ee5889f39230a0b34a97cb3aee167a43a6507fd7e"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/JsonDetails.d.ts": {
+      "bytes": 230,
+      "sha256": "d014c642fb0fa0dce1309d24dd4ae3031bd1210c0512981aecda4ee7ac580d48"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/InfoRow.js": {
+      "bytes": 561,
+      "sha256": "5f13eafbc6cdf34b3811e0cf9852a9bf41bb150e105caa6a50db5a6f43853bfc"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/ActionResult.js": {
+      "bytes": 464,
+      "sha256": "d698e5ae0b14d6ba29002863353f778c51382539bf47b15a9f032863a05a014a"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/ActionResult.d.ts": {
+      "bytes": 246,
+      "sha256": "85c0babbd3be4cb46e4c8d2ce1338e180a724965a714df6e3f739c3abb554e80"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/ActionResult.js.map": {
+      "bytes": 621,
+      "sha256": "633895077ae4dd6953144bf07f5050c2ec5871c70614681c601309eccfe4b8a7"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/index.js.map": {
+      "bytes": 425,
+      "sha256": "bf69bed64269ac2dff4ede1cd29a0182ca27d5191052f7a3631847ab3e22ccb3"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/InfoGrid.js.map": {
+      "bytes": 666,
+      "sha256": "5dea47bfa75acdad8d2b29cc0113c363cba62e66443c910732d3f3011cf0e189"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/InfoRow.d.ts.map": {
+      "bytes": 444,
+      "sha256": "15399523f11e4f1f308c2dab4df7274c40c3fba5856ea934e6cc2de04e4a042f"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/index.d.ts": {
+      "bytes": 501,
+      "sha256": "11104775d8cb5bb173559b080e537e08ca8921f43c9e48c9e203bad39387d4f1"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/StatusBadge.js": {
+      "bytes": 542,
+      "sha256": "a2ff374506fa3e7592f43566e359f798fbed15572e59ef8c2a39595f2f4411ea"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/StatusBadge.d.ts.map": {
+      "bytes": 403,
+      "sha256": "622ea1571764ffc2e499c2a9aab0b8c5dce88c4b0da4236c13e83808a68d0507"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/index.d.ts.map": {
+      "bytes": 532,
+      "sha256": "a97955eaffdeaabb3d4724d463e484d382eaf80315a167bc6c0ca3f642482bdb"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/shared/DemoCard.d.ts": {
+      "bytes": 323,
+      "sha256": "45fcd604e57547061c337eecdd3fa335631daa243df669e6ee2abb1cabd1644d"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchAdvancedDemo.js": {
+      "bytes": 4220,
+      "sha256": "6e1c78b7c469ed96664d0c76017e52fa744212df2d4a02d53652f0dc1f5d1ce7"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchRefinersDemo.js.map": {
+      "bytes": 3574,
+      "sha256": "7ee18c237cd680bdaac441eab35c8caaa7637ee7324699d9261559132a549699"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPListDemo.js.map": {
+      "bytes": 5240,
+      "sha256": "2dd24107a045de33449465665ce5bb489791cef0a4a4d5c0da92d9b922cb7ade"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPListDemo.js": {
+      "bytes": 5294,
+      "sha256": "addfea5bd805d76e8132b7292551d5571677a6e5d27878cd3222d13c4b7f830d"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPOperationsDemo.d.ts": {
+      "bytes": 314,
+      "sha256": "7323777511dc787506864638239db7d349294a5c89b3a30cd34fcc5a6b147d01"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchBasicDemo.js.map": {
+      "bytes": 3127,
+      "sha256": "307137c7f62f2a8adf9393b569de28f887b72788b3c41b3cfdfa67daa7f8853b"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPOperationsDemo.js": {
+      "bytes": 4967,
+      "sha256": "045ac932914b8aedfc1df547e9376f8e993c4514806a6c8286c570bdf6bde0f3"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPOperationsDemo.d.ts.map": {
+      "bytes": 349,
+      "sha256": "56686c0c42ff93047838b93cec3e31ada5bad1aaaa91af72e7c1d6a108cb6b4e"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchSuggestionsDemo.js": {
+      "bytes": 4057,
+      "sha256": "e328226a61dbe915f20984c7324cf52a7e1ed0eabb74b4912c6519a1538c2c24"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPContextDemo.d.ts.map": {
+      "bytes": 297,
+      "sha256": "40054bd64731fe0be1db9611dde3c922bf093194ff5bb983e7c904975258fa4d"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchRefinersDemo.js": {
+      "bytes": 3704,
+      "sha256": "35710931b3cac11e72365040cf23bf5764620113f9d455e3becf1d7d2a5745bd"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchBasicDemo.js": {
+      "bytes": 3276,
+      "sha256": "8fea084d37b631e9246a6faacd1638819439a4df70aa910d7de7ec6cd45e98d6"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchSuggestionsDemo.d.ts": {
+      "bytes": 199,
+      "sha256": "45e2f006d6f7228b423871f9d7010af109ac4bb33315bef23dbd371c3f661edd"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchAdvancedDemo.d.ts": {
+      "bytes": 202,
+      "sha256": "59800269d0d9adb41c862b9b05d0467a800e9e8bc507543e8f6080b0ff0d68ac"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/index.js": {
+      "bytes": 672,
+      "sha256": "71ae6276687856ed590753ff2f1cd0a1a1b4911d9ede36ae75a3eefd1bea8ed1"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPContextDemo.js": {
+      "bytes": 6045,
+      "sha256": "a9712d24ab9d399c7914f60e8848e99a156b4fd6e01494f09de414fdddf5e099"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchAdvancedDemo.js.map": {
+      "bytes": 3908,
+      "sha256": "9c945301c2c2e753e01164cc893ade1b77600e9d7d3b452ef3d206e880c19560"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchAdvancedDemo.d.ts.map": {
+      "bytes": 291,
+      "sha256": "69ea82d2e1208d5cd4adbe0a4d201e1420bf86c96cc609f8bf50e8f6486f716e"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchRefinersDemo.d.ts.map": {
+      "bytes": 291,
+      "sha256": "3b4f8a1b3797ff553793ea54dfe65c1ce8b6a02ce42e1f3ee3a1b6a0971b0cc3"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchRefinersDemo.d.ts": {
+      "bytes": 188,
+      "sha256": "67fa80e3138c7ee8f90fe85c29815ecce8377266f3068ab0330da1fc5bb482c9"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchBasicDemo.d.ts": {
+      "bytes": 185,
+      "sha256": "6e9ba4b84102c65e505b854a4e177eeccad7946f0040c9a6ff9fd3c1cfecf7c8"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/index.js.map": {
+      "bytes": 532,
+      "sha256": "2adb870fbc35f962ba17401f160cbee433307a79ce1e80ab2dc69b4811eac3c4"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchSuggestionsDemo.js.map": {
+      "bytes": 3634,
+      "sha256": "eed5856c368179066179d3c9de26baae9dc98af3c3112dfea1b3bee4470a9b96"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchSuggestionsDemo.d.ts.map": {
+      "bytes": 297,
+      "sha256": "c27a33fc2356a80488bb82bd9b165ff8111243cd22436b33f6bfdb4093cfa6f2"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPListDemo.d.ts": {
+      "bytes": 243,
+      "sha256": "514559e70bd2af8c8e6e953e8c7486cb7a91de9d102508c04765e234f099483f"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/index.d.ts": {
+      "bytes": 574,
+      "sha256": "2a1ccfd0d6770077c623a5561d6c9030d5695b87a3c95d04ccd8d17e5d729484"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPOperationsDemo.js.map": {
+      "bytes": 4252,
+      "sha256": "e6041980cdf71a1ac19ebf0780e532221a7a0aec9fdb11d7d1d1edde83728941"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPSearchBasicDemo.d.ts.map": {
+      "bytes": 285,
+      "sha256": "97099510772379571edfd4d4e5a6f171bd0be6c558414b47be89267e3652b428"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPContextDemo.d.ts": {
+      "bytes": 259,
+      "sha256": "8e60d7c13bf0af0619dc22e977f8b29587670a02ac03166ebc87b8c4e946a195"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPContextDemo.js.map": {
+      "bytes": 5104,
+      "sha256": "fa109c26a4bb736b2b476b6d7554d2021aa8a8c0d41d907489eb72db8d7d1644"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/index.d.ts.map": {
+      "bytes": 482,
+      "sha256": "0ddc0a1d2022e4e2d6aec60162c0a8c10b9a1baad3a4a82cf5630707bf1be3b4"
+    },
+    "lib/webparts/spFxReactToolkitTest/components/demos/PnPListDemo.d.ts.map": {
+      "bytes": 332,
+      "sha256": "a14e20507aaec0e080a70d567c48b1f0159f0abf86e1fbaf2347533be84ee659"
+    },
+    "lib/helpers/spfx-storage.helpers.js": {
+      "bytes": 358,
+      "sha256": "2eda5ea4ee74c9ba2b84c4148d7a8f118cd8d67ff2c81ba20140e5086bac85a4"
+    },
+    "lib/helpers/spfx-storage.helpers.js.map": {
+      "bytes": 262,
+      "sha256": "ecc8a80993ce00a7d510b7f49d6caa15aea82a26eec3cbf79d139573ee829cf2"
+    },
+    "lib/helpers/spfx-tenant-value.helpers.d.ts.map": {
+      "bytes": 372,
+      "sha256": "57eeaec37999794d19e1ebb14a5847869ec29cbfca9dcf25a4bbb01b971d197b"
+    },
+    "lib/helpers/spfx-container.helpers.js.map": {
+      "bytes": 772,
+      "sha256": "066b9e74885c32d81ce14466ef05e9d55ef4e8ac39f3f1e09e8be1c4dca824bc"
+    },
+    "lib/helpers/spfx-api-permission-precheck.helpers.d.ts.map": {
+      "bytes": 4109,
+      "sha256": "238564ac1d1065981c84f385802c58715beb7173c54a4787ed077d0e9a14a293"
+    },
+    "lib/helpers/spfx-permissions.helpers.d.ts.map": {
+      "bytes": 302,
+      "sha256": "bf6a8cd6631110869fc88855253f69ca2d6a5f9d83d4ed131ec80391be1e401f"
+    },
+    "lib/helpers/spfx-graph-path.helpers.d.ts.map": {
+      "bytes": 558,
+      "sha256": "12dff1898a93e4f8a6e6184c3f091c28b755bf0b0cea2795ac3877661e13f3a3"
+    },
+    "lib/helpers/spfx-permissions.helpers.js": {
+      "bytes": 448,
+      "sha256": "cc825f262dfd92cbcf41039c0c29afd0c0b43187a9fe3fa0281e8b474c4b4118"
+    },
+    "lib/helpers/spfx-api-permission-precheck.helpers.js": {
+      "bytes": 15566,
+      "sha256": "81dd426e6e4e6a0915b20f4fad30908b5af43f5025f2911a6ca13fed418c7bc7"
+    },
+    "lib/helpers/spfx-page-context.helpers.js.map": {
+      "bytes": 5116,
+      "sha256": "ee2ce6d7aecc487fb05e4b87bf1a20afe87c1131634574e6ca5881be8aca7280"
+    },
+    "lib/helpers/spfx-theme.helpers.js.map": {
+      "bytes": 700,
+      "sha256": "cebda0556a2dc78fa7b3bc2d13cc38bab6a5f34fcb754a754db3e344c6e1fcf9"
+    },
+    "lib/helpers/spfx-container.helpers.d.ts.map": {
+      "bytes": 269,
+      "sha256": "02d9bfbcdefec4368a0488f46ae87996997a022125fd8349d2dc40bd57ca0090"
+    },
+    "lib/helpers/index.js": {
+      "bytes": 598,
+      "sha256": "16eb8b9e6d1c32be79ee6a22efe42356851c0d0d033b01db6ba8b998770db0af"
+    },
+    "lib/helpers/spfx-tenant-value.helpers.d.ts": {
+      "bytes": 758,
+      "sha256": "486ab592e6965f90c6322d808f04ffdc70c1290c6abf9e753e049f60bb595a75"
+    },
+    "lib/helpers/spfx-page-context.helpers.d.ts": {
+      "bytes": 3809,
+      "sha256": "e31024a534a8df42a386d116a98dcbc364b9bee9175002b2db3237d1037426d1"
+    },
+    "lib/helpers/spfx-api-permission-precheck.helpers.js.map": {
+      "bytes": 13973,
+      "sha256": "46df53e0a76d112764b3795c4b949be5ca7a7ddaadb6cc23e2fa7bb0a62648ec"
+    },
+    "lib/helpers/spfx-container.helpers.d.ts": {
+      "bytes": 343,
+      "sha256": "e4bfc464af5b9b0773d0d25a38b4d2c59fa39d49e8ea09d2892dd5701ec12f24"
+    },
+    "lib/helpers/spfx-page-context.helpers.js": {
+      "bytes": 6665,
+      "sha256": "33c21314a6c292a69a8f564677263e8c5d503f30fb573ea024ab1446bdd7bb73"
+    },
+    "lib/helpers/spfx-tenant-value.helpers.js.map": {
+      "bytes": 942,
+      "sha256": "03c04f4a9af8cd49ba74537cee0731676710fc8971db2d15fb6c42a6f0429409"
+    },
+    "lib/helpers/spfx-tenant-value.helpers.js": {
+      "bytes": 1221,
+      "sha256": "63ccd3465a01364dd73aabe031dd5a0fe00b467e3219a476fc5333f6d3fddc84"
+    },
+    "lib/helpers/spfx-permissions.helpers.js.map": {
+      "bytes": 329,
+      "sha256": "02cc991f54f219f22199a6c09c045ec7a2c52a7dbea1e3873d1477aa543c558c"
+    },
+    "lib/helpers/spfx-graph-path.helpers.d.ts": {
+      "bytes": 871,
+      "sha256": "ae8d06fc1adcda154e0d575c150e2863b76f1f3b520650592c415a39f036918c"
+    },
+    "lib/helpers/spfx-page-context.helpers.d.ts.map": {
+      "bytes": 2710,
+      "sha256": "1d65e35c1a650b4a2abf73eab26340c5946e17ff13d7db2b52d5061bf4d52b6f"
+    },
+    "lib/helpers/spfx-theme.helpers.js": {
+      "bytes": 1104,
+      "sha256": "d3f552a91a2f8bf98392a3a54ccbd407de29ff39ce454b7afec99ad2ed3dbd1a"
+    },
+    "lib/helpers/spfx-permissions.helpers.d.ts": {
+      "bytes": 462,
+      "sha256": "90f0a6a502f23c96365a9da60751e7f9ddab5a2fc4fef94696f0a53f142210bd"
+    },
+    "lib/helpers/spfx-container.helpers.js": {
+      "bytes": 854,
+      "sha256": "7b0d223e907d5451582a71eca6ec70e88599b74a60d1a78244f6a0e4d92bf23d"
+    },
+    "lib/helpers/spfx-theme.helpers.d.ts.map": {
+      "bytes": 395,
+      "sha256": "c092228feaa0a8be1e8e9460292f4bec9fe00a05e58b7fe3ec90e50eb42e499d"
+    },
+    "lib/helpers/spfx-api-permission-precheck.helpers.d.ts": {
+      "bytes": 4919,
+      "sha256": "8317b8c25e8d186ce54e159cd864f6b457e48177096d8b4a783bbe09a5220ad2"
+    },
+    "lib/helpers/index.js.map": {
+      "bytes": 311,
+      "sha256": "a83059759c64bc9282a5940f0384dd64220db915abe0f11bbc5add28ed65b5b8"
+    },
+    "lib/helpers/spfx-graph-path.helpers.js.map": {
+      "bytes": 837,
+      "sha256": "006fcf20e6630414b5b9ad661528a9770a16cd33898f65c4c4ccdce5b17d2e35"
+    },
+    "lib/helpers/index.d.ts": {
+      "bytes": 600,
+      "sha256": "23550f9c98200157b6e50ddb7967b3bbafa6b800986d18ffc45f4c80d74529de"
+    },
+    "lib/helpers/spfx-theme.helpers.d.ts": {
+      "bytes": 691,
+      "sha256": "48f0b632c3bd2cd746e41245218b01622ddf6ece916efabbcfcc9785ae2a4822"
+    },
+    "lib/helpers/spfx-storage.helpers.d.ts": {
+      "bytes": 344,
+      "sha256": "f1ea4399a3304fa9ba2bfa553f47db9fb1d959d3dd446f4c36fa28c3931c41c7"
+    },
+    "lib/helpers/spfx-graph-path.helpers.js": {
+      "bytes": 1131,
+      "sha256": "ac0b4fa2c48b9aec3d90b91ac6ee45b7909f9aa25f64f826f49a5f6932573b75"
+    },
+    "lib/helpers/index.d.ts.map": {
+      "bytes": 313,
+      "sha256": "bfcf8bac66d6a1cae291d91b49e39881d71555717f93dc8f95c025f3e4ce8191"
+    },
+    "lib/helpers/spfx-storage.helpers.d.ts.map": {
+      "bytes": 234,
+      "sha256": "7731e6a5e6f4b041176d9d5531b869cf31efe5d36326832c059ea80f61bd0036"
+    },
+    "lib/services/spfx-api-permission-precheck.service.js.map": {
+      "bytes": 3029,
+      "sha256": "a0c2676183b446c6f93532c53b4761e13b49dc53b164701f64273574d701a29d"
+    },
+    "lib/services/spfx-tenant-property.service.js": {
+      "bytes": 1140,
+      "sha256": "03e41cb74e8aaa78e5c7d489a31baa2d1d0f38342c6dc0515dab53fb9ade3df1"
+    },
+    "lib/services/spfx-pnp-search.service.d.ts.map": {
+      "bytes": 1554,
+      "sha256": "92343612b95eecca771e022c99231b3b942bfadfb7e50a4ff3b4a17c246ac094"
+    },
+    "lib/services/spfx-pnp-context.service.js": {
+      "bytes": 2007,
+      "sha256": "246c49f68a2eb40ca70216e3b3373f9aba2095585917c7e4708e5b30556f121f"
+    },
+    "lib/services/spfx-pnp-context.service.d.ts.map": {
+      "bytes": 1005,
+      "sha256": "71bb63954f5576618a17bf26a135269b059a6a3464759e489e29afea50d2f1cf"
+    },
+    "lib/services/spfx-api-permission-precheck.service.d.ts.map": {
+      "bytes": 833,
+      "sha256": "683370268b202ecfc26ab21e580c06e7998f44fbd9e54d1d9db1853c0e3b674c"
+    },
+    "lib/services/spfx-user-photo.service.js.map": {
+      "bytes": 478,
+      "sha256": "a28760c0fa39c6d441faef21e42823f658f829801e10ada514464e1c6444e4e9"
+    },
+    "lib/services/spfx-pnp.service.d.ts": {
+      "bytes": 369,
+      "sha256": "c0a294d82f35bdd8ed25cd6f96c128d192b13fd71dbe127eef0519243c084198"
+    },
+    "lib/services/spfx-api-permission-precheck.service.d.ts": {
+      "bytes": 978,
+      "sha256": "1b9500e33bacf4e785a23158a8b7fbed10d9b795c86d6cd1dbe6fd7d01ff12aa"
+    },
+    "lib/services/spfx-onedrive-app-data.service.js": {
+      "bytes": 2054,
+      "sha256": "45823c07f5b8eb0b4358afc75fc9b341af4573206e7f0f6de4c9b15dcdd62518"
+    },
+    "lib/services/spfx-pnp-list.service.d.ts.map": {
+      "bytes": 1896,
+      "sha256": "0985508784c349c9c0f2c40b177effb3ee0853383b49c994ecc1422b7c2271c3"
+    },
+    "lib/services/spfx-user-photo.service.d.ts.map": {
+      "bytes": 630,
+      "sha256": "ba548b5d7037c50ef989387b7edab14aff700619d000bbee9ba93847ef3e51f6"
+    },
+    "lib/services/spfx-pnp-list.service.js.map": {
+      "bytes": 7308,
+      "sha256": "ad71f58ee5e96c7fecf220b4fd038dfaf4c85abc4940ad62eb9d2e95f0fc36a0"
+    },
+    "lib/services/spfx-pnp-search.service.js": {
+      "bytes": 3401,
+      "sha256": "333ca663bb738910e3557b07aa8f9d4d0dc477291d454cfa2f2dba3982fb43d8"
+    },
+    "lib/services/index.js": {
+      "bytes": 688,
+      "sha256": "2b90f7c774a183693a716eac25ab0bd0c2fd0c9033c6eb85b904b716a5930162"
+    },
+    "lib/services/spfx-onedrive-app-data.service.d.ts": {
+      "bytes": 610,
+      "sha256": "c1bab9713902ec0fad9980550ee5abdcad3c8430a22ead2ada20a938b83ad4d6"
+    },
+    "lib/services/spfx-pnp.service.js": {
+      "bytes": 435,
+      "sha256": "c37cea8c4124332010644da46bca258c1c5e873e61460bd844f97e8bef917c2a"
+    },
+    "lib/services/spfx-tenant-property.service.js.map": {
+      "bytes": 1116,
+      "sha256": "0dd0de6eb8adaacd84896821c31f19d7e5a380360f05b95eb946b236f706122d"
+    },
+    "lib/services/spfx-onedrive-app-data.service.d.ts.map": {
+      "bytes": 695,
+      "sha256": "ec67f07f77ec510c4d2b7d5bd322a73764530fd73d43ff15721eeae78dfa266a"
+    },
+    "lib/services/spfx-pnp-search.service.d.ts": {
+      "bytes": 1396,
+      "sha256": "32d2fc44cd787caccb0a46e7ac9a899bf2babe8812d8f213b2d30a327c61c930"
+    },
+    "lib/services/spfx-pnp-context.service.js.map": {
+      "bytes": 2163,
+      "sha256": "8ab2b5366f6ebafb8d2fcff590e6811c3c50a03efefc77a155e10925dfdf4480"
+    },
+    "lib/services/spfx-app-catalog.service.d.ts": {
+      "bytes": 525,
+      "sha256": "f689d3d85f70a6c89674545fffb11b04e9f5a3e47d55311761eff21b7c919abe"
+    },
+    "lib/services/spfx-app-catalog.service.d.ts.map": {
+      "bytes": 520,
+      "sha256": "be0848b7d407d85af50885c4633fa31c008a4450730e91c45c58edc83800d9b3"
+    },
+    "lib/services/spfx-tenant-key-value-store.service.d.ts": {
+      "bytes": 919,
+      "sha256": "9161a7f2e2c284a3e8c001f539baee9c63964d4a7dba36eaebd7bb4477258722"
+    },
+    "lib/services/spfx-user-photo.service.d.ts": {
+      "bytes": 628,
+      "sha256": "49e60217d9c7cfdf43b4f82563afd18065056ebcd79c4b209cc6ff64adc546c5"
+    },
+    "lib/services/spfx-pnp-list.service.d.ts": {
+      "bytes": 1617,
+      "sha256": "585d942464f7c85e27ab403e8d208d000f942f25c30e739a7147926b19480efa"
+    },
+    "lib/services/spfx-tenant-property.service.d.ts": {
+      "bytes": 493,
+      "sha256": "f03a3bd1d36fd97834023622234dddcd828d24cc44acb5b4311a95a0c1629ea0"
+    },
+    "lib/services/spfx-pnp-list.service.js": {
+      "bytes": 7152,
+      "sha256": "4397feca5190852b79327cf3d832e266b5cac6f6ff44a9cf34d663086292f4f2"
+    },
+    "lib/services/spfx-tenant-property.service.d.ts.map": {
+      "bytes": 555,
+      "sha256": "16ff780762c01796c95a380805e3725f3b01dc7a8318199c46cb295dba1f6abd"
+    },
+    "lib/services/spfx-pnp-search.service.js.map": {
+      "bytes": 3278,
+      "sha256": "68c166924431a967fc1b0affe36fb48196fe09665b1a98dcb8eab63f9682e33d"
+    },
+    "lib/services/spfx-tenant-key-value-store.service.js": {
+      "bytes": 8623,
+      "sha256": "0792d8cd6f202117d02d497821a2e6c1c8e6694480b21322a37d39af70cf10e0"
+    },
+    "lib/services/spfx-app-catalog.service.js.map": {
+      "bytes": 1471,
+      "sha256": "663a14ed282a25570127e199fc71cd4d6c1356cf0b057b4b62080a7f476ee04a"
+    },
+    "lib/services/index.js.map": {
+      "bytes": 358,
+      "sha256": "c935ba552b32a55223157530dfd0cd20ac2c4d37c08c75b1ac82093d5974acaa"
+    },
+    "lib/services/spfx-api-permission-precheck.service.js": {
+      "bytes": 3283,
+      "sha256": "0d5475a6fd8e557f08da20d28a2abacaa19229ab7a3197578d03307ce04b6805"
+    },
+    "lib/services/spfx-user-photo.service.js": {
+      "bytes": 421,
+      "sha256": "2c21c37d60f3c2eb7c7f1f4427b4de1503ad2fa5b2ff8ea5959aa76a7cae70f5"
+    },
+    "lib/services/index.d.ts": {
+      "bytes": 690,
+      "sha256": "5611595e380cac141de8cd3a154256ba51bc8adca72e6b39564367d1a48b2cf8"
+    },
+    "lib/services/spfx-tenant-key-value-store.service.d.ts.map": {
+      "bytes": 1033,
+      "sha256": "54ef726c59e8693c3d25e9dd2f3f4cfc0995a96597229850a52040b60fcbacb9"
+    },
+    "lib/services/spfx-app-catalog.service.js": {
+      "bytes": 1735,
+      "sha256": "6788700c4266f25b074dfc03ec9eb5bb992cb219c65d69d757437fd442f17d9b"
+    },
+    "lib/services/spfx-tenant-key-value-store.service.js.map": {
+      "bytes": 7383,
+      "sha256": "1b1f8be9b20145299adcde5936cd491ed1bc45c6a51fb3468da400e9c019c26f"
+    },
+    "lib/services/spfx-pnp.service.js.map": {
+      "bytes": 570,
+      "sha256": "b227fa605ce2fb653b6795acda83dbc26d45c657f52834a6d441fa9ea6a84920"
+    },
+    "lib/services/spfx-pnp.service.d.ts.map": {
+      "bytes": 556,
+      "sha256": "0c187c5613c5abb49ed279bf81bf5c80ea983ffd955309271b5ba4a9d457e142"
+    },
+    "lib/services/index.d.ts.map": {
+      "bytes": 360,
+      "sha256": "d37b852fcc8c96360e892495003deb867091ee14ef7393506e723636f04eebb6"
+    },
+    "lib/services/spfx-onedrive-app-data.service.js.map": {
+      "bytes": 2060,
+      "sha256": "78200b38715d2e42be468eba223153c29e9a4b07301502d2497cd1897ae40720"
+    },
+    "lib/services/spfx-pnp-context.service.d.ts": {
+      "bytes": 963,
+      "sha256": "e8134652c8fc4861f528d337ce3a2d4421b8c8e31a4020204d849dfccebcdeec"
+    },
+    "dist/chunk.spfx-demo-clients.js.map": {
+      "bytes": 17535,
+      "sha256": "3ac3a041c6f8a85e2e425e31a660c70990b58928d04a9ab83a925ede3ee89a92"
+    },
+    "dist/chunk.spfx-demo-graph-data.js": {
+      "bytes": 8163,
+      "sha256": "bb88d6ae26fd902a548c29af955e8de01dead4ad46d00607f7dc40e34103b8b0"
+    },
+    "dist/chunk.spfx-demo-runtime.js": {
+      "bytes": 11997,
+      "sha256": "34045bd3e9ad66eaa123708581bf0361849bc3a96a5855d7bef5ac58280ca0fa"
+    },
+    "dist/chunk.spfx-demo-search.js.map": {
+      "bytes": 2010,
+      "sha256": "31fe9a5af8f44589c1416f26e4bb8305cc4b3fc9b82c5736380694d28e342771"
+    },
+    "dist/sp-fx-react-toolkit-test-web-part.js": {
+      "bytes": 1991464,
+      "sha256": "ba3d547f1648a474fe82d7151ebbea9085b40e72c800b952e5c149080e80c9e7"
+    },
+    "dist/sp-fx-react-toolkit-test-application-customizer.js.map": {
+      "bytes": 951549,
+      "sha256": "7486b2ac7d3030431da25a9760719f9be6e8dcbd26b470321fc4a7dc80736b34"
+    },
+    "dist/chunk.vendors-node_modules_fluentui_react_lib_components_Button_PrimaryButton_PrimaryButton_js.js": {
+      "bytes": 17348,
+      "sha256": "00d884ff04e5e8f7bca0b1eb89523d73fa194391505c5a9adff7f72ad39ac486"
+    },
+    "dist/chunk.spfx-demo-pnp.js": {
+      "bytes": 2357,
+      "sha256": "7164c3fa110485cd0499cbe34e9456b72eaa5238d0b567e99a4167c5a9337a80"
+    },
+    "dist/chunk.spfx-demo-tenant.js": {
+      "bytes": 9199,
+      "sha256": "52378da9dcc77567ba815329ee50c08024fc2f3f55b3ca71cdab5753ffce2974"
+    },
+    "dist/SpFxReactToolkitTestApplicationCustomizerStrings_en-us.js": {
+      "bytes": 99,
+      "sha256": "6dee17b9d23e1d4f0a96c1d502693e958b9d90a0a3da73ebaa7da4c9ec255f8a"
+    },
+    "dist/chunk.vendors-node_modules_fluentui_react_lib_components_TextField_TextField_js.js.map": {
+      "bytes": 47956,
+      "sha256": "107dc81d34b629b1b4fd7ad41916ab0ba6dcad7dfcb5ca6316d252c7a6b2ea1d"
+    },
+    "dist/chunk.spfx-demo-graph-data.js.map": {
+      "bytes": 8958,
+      "sha256": "89112aa83dc172baf8030725483cb02b06d2dccd9946d0929022b48583e5176d"
+    },
+    "dist/chunk.spfx-demo-providers.js": {
+      "bytes": 4858,
+      "sha256": "a320cbd0f415eee17827eddd3e339de53b04714973f3a362c6639dbc69ba2c82"
+    },
+    "dist/chunk.vendors-node_modules_fluentui_react_lib_components_TextField_TextField_js.js": {
+      "bytes": 47250,
+      "sha256": "cd441150a227b2baa74cf9610d5ec1d25633cd7ad1e7dd12f2e7333a69011d4e"
+    },
+    "dist/chunk.spfx-demo-context.js.map": {
+      "bytes": 15678,
+      "sha256": "56b4ed868c947035100b9ebaa66eaa2f7108932d5f801da45b0497531b3db1c9"
+    },
+    "dist/chunk.spfx-demo-runtime.js.map": {
+      "bytes": 13501,
+      "sha256": "292c5b44b68be59ed9e61b3bb7d92de6d3eed2638e09720a86f874c06037e3b6"
+    },
+    "dist/4c2e58cc-1253-43e5-bfa3-b22a07ace279.manifest.json": {
+      "bytes": 1859,
+      "sha256": "a9833935a04ff0d0acaccccabe602160ea2c85261ad0a2bae3a9f8d47d8c2568"
+    },
+    "dist/chunk.lib_webparts_spFxReactToolkitTest_components_demos_index_js.js": {
+      "bytes": 69000,
+      "sha256": "bbdf7d74a12db6ee1c9ddcf3ebe126e1703eff66e5223317290241bedf3a4843"
+    },
+    "dist/chunk.spfx-demo-pnp.js.map": {
+      "bytes": 1069,
+      "sha256": "8370fd35b33cb9ea1a3150ecaba4aecbc529ee91e0179ff3f059d57fc2514f47"
+    },
+    "dist/sp-fx-react-toolkit-test-web-part.js.map": {
+      "bytes": 1978713,
+      "sha256": "188333e96ab29e3691edf9c4830e63d9bd1699a95093807ef2eeeb4795a6e291"
+    },
+    "dist/sp-fx-react-toolkit-test-application-customizer.js": {
+      "bytes": 838760,
+      "sha256": "86ea0ce7c0df54498bba8beca1119596bdd46802c7eb07be332f1bf691656c28"
+    },
+    "dist/SpFxReactToolkitTestWebPartStrings_en-us.js": {
+      "bytes": 916,
+      "sha256": "74bc8580104a997ba07f0d7b58c89193f513a9c96e7c1c1f7b1c22b448e9a930"
+    },
+    "dist/chunk.spfx-demo-tenant.js.map": {
+      "bytes": 10300,
+      "sha256": "450e0120cd78ea68e70badd5d0519ee16af6b9ab460b2e2fca99aa47870f39e3"
+    },
+    "dist/chunk.spfx-demo-context.js": {
+      "bytes": 13288,
+      "sha256": "feea3fc7285fb2351c8d58e5ea9405ce984d40a3e572998925be36e1ee830c7e"
+    },
+    "dist/chunk.vendors-node_modules_fluentui_react_lib_components_Button_PrimaryButton_PrimaryButton_js.js.map": {
+      "bytes": 14566,
+      "sha256": "adc3b0bae2a1d85d3af140a920e50972ea1abc9012459d7accdd48f73391ba57"
+    },
+    "dist/chunk.lib_webparts_spFxReactToolkitTest_components_demos_index_js.js.map": {
+      "bytes": 66288,
+      "sha256": "ec115483b2c0edf981ba34b31f070ea3b407859f16fe9ff6cef8ddf8e757b12f"
+    },
+    "dist/chunk.spfx-demo-search.js": {
+      "bytes": 3544,
+      "sha256": "67dae762ab2dd5cbe6d12ede96c8c4632826493e726312f7d299956fe181471d"
+    },
+    "dist/chunk.spfx-demo-providers.js.map": {
+      "bytes": 4161,
+      "sha256": "be960d2f3cbc085574a9bf187568763753704056d66aa6af8eaeda7a37c596c6"
+    },
+    "dist/54985a3d-eaad-4041-8fdc-a50241798c07.manifest.json": {
+      "bytes": 2465,
+      "sha256": "41f6dceaaf1b3b05f8e5ee96e0df36e31ddeec05a77db0372097327a5b548188"
+    },
+    "dist/chunk.spfx-demo-clients.js": {
+      "bytes": 14515,
+      "sha256": "ab6507bd27a9f35e711e5806f8963cc893bd78c694594fdd6602a045b08ee468"
+    },
+    "release/component-dependency-audit/spfx-react-toolkit.json": {
+      "bytes": 11412,
+      "sha256": "185b5d2e1c79bc28c4f43e45b72e8c59e36cf821b6ea2b64a868139266129354"
+    },
+    "release/manifests/4c2e58cc-1253-43e5-bfa3-b22a07ace279.manifest.json": {
+      "bytes": 1851,
+      "sha256": "b6348f059aba7671ab4e93045f03263ecc8a2a7df4f8af4494990b8f892fa05c"
+    },
+    "release/manifests/54985a3d-eaad-4041-8fdc-a50241798c07.manifest.json": {
+      "bytes": 2457,
+      "sha256": "3e9ebe936f50ff641171e0c035838dfd7bd784603de027252bd1b557c7af0f49"
+    },
+    "release/assets/chunk.spfx-demo-clients.js.map": {
+      "bytes": 17535,
+      "sha256": "3ac3a041c6f8a85e2e425e31a660c70990b58928d04a9ab83a925ede3ee89a92"
+    },
+    "release/assets/chunk.spfx-demo-graph-data.js": {
+      "bytes": 8163,
+      "sha256": "bb88d6ae26fd902a548c29af955e8de01dead4ad46d00607f7dc40e34103b8b0"
+    },
+    "release/assets/chunk.spfx-demo-runtime.js": {
+      "bytes": 11997,
+      "sha256": "34045bd3e9ad66eaa123708581bf0361849bc3a96a5855d7bef5ac58280ca0fa"
+    },
+    "release/assets/chunk.spfx-demo-search.js.map": {
+      "bytes": 2010,
+      "sha256": "31fe9a5af8f44589c1416f26e4bb8305cc4b3fc9b82c5736380694d28e342771"
+    },
+    "release/assets/sp-fx-react-toolkit-test-web-part.js": {
+      "bytes": 1991464,
+      "sha256": "ba3d547f1648a474fe82d7151ebbea9085b40e72c800b952e5c149080e80c9e7"
+    },
+    "release/assets/sp-fx-react-toolkit-test-application-customizer.js.map": {
+      "bytes": 951549,
+      "sha256": "7486b2ac7d3030431da25a9760719f9be6e8dcbd26b470321fc4a7dc80736b34"
+    },
+    "release/assets/chunk.vendors-node_modules_fluentui_react_lib_components_Button_PrimaryButton_PrimaryButton_js.js": {
+      "bytes": 17348,
+      "sha256": "00d884ff04e5e8f7bca0b1eb89523d73fa194391505c5a9adff7f72ad39ac486"
+    },
+    "release/assets/chunk.spfx-demo-pnp.js": {
+      "bytes": 2357,
+      "sha256": "7164c3fa110485cd0499cbe34e9456b72eaa5238d0b567e99a4167c5a9337a80"
+    },
+    "release/assets/chunk.spfx-demo-tenant.js": {
+      "bytes": 9199,
+      "sha256": "52378da9dcc77567ba815329ee50c08024fc2f3f55b3ca71cdab5753ffce2974"
+    },
+    "release/assets/SpFxReactToolkitTestApplicationCustomizerStrings_en-us.js": {
+      "bytes": 99,
+      "sha256": "6dee17b9d23e1d4f0a96c1d502693e958b9d90a0a3da73ebaa7da4c9ec255f8a"
+    },
+    "release/assets/chunk.vendors-node_modules_fluentui_react_lib_components_TextField_TextField_js.js.map": {
+      "bytes": 47956,
+      "sha256": "107dc81d34b629b1b4fd7ad41916ab0ba6dcad7dfcb5ca6316d252c7a6b2ea1d"
+    },
+    "release/assets/chunk.spfx-demo-graph-data.js.map": {
+      "bytes": 8958,
+      "sha256": "89112aa83dc172baf8030725483cb02b06d2dccd9946d0929022b48583e5176d"
+    },
+    "release/assets/chunk.spfx-demo-providers.js": {
+      "bytes": 4858,
+      "sha256": "a320cbd0f415eee17827eddd3e339de53b04714973f3a362c6639dbc69ba2c82"
+    },
+    "release/assets/chunk.vendors-node_modules_fluentui_react_lib_components_TextField_TextField_js.js": {
+      "bytes": 47250,
+      "sha256": "cd441150a227b2baa74cf9610d5ec1d25633cd7ad1e7dd12f2e7333a69011d4e"
+    },
+    "release/assets/chunk.spfx-demo-context.js.map": {
+      "bytes": 15678,
+      "sha256": "56b4ed868c947035100b9ebaa66eaa2f7108932d5f801da45b0497531b3db1c9"
+    },
+    "release/assets/chunk.spfx-demo-runtime.js.map": {
+      "bytes": 13501,
+      "sha256": "292c5b44b68be59ed9e61b3bb7d92de6d3eed2638e09720a86f874c06037e3b6"
+    },
+    "release/assets/chunk.lib_webparts_spFxReactToolkitTest_components_demos_index_js.js": {
+      "bytes": 69000,
+      "sha256": "bbdf7d74a12db6ee1c9ddcf3ebe126e1703eff66e5223317290241bedf3a4843"
+    },
+    "release/assets/chunk.spfx-demo-pnp.js.map": {
+      "bytes": 1069,
+      "sha256": "8370fd35b33cb9ea1a3150ecaba4aecbc529ee91e0179ff3f059d57fc2514f47"
+    },
+    "release/assets/sp-fx-react-toolkit-test-web-part.js.map": {
+      "bytes": 1978713,
+      "sha256": "188333e96ab29e3691edf9c4830e63d9bd1699a95093807ef2eeeb4795a6e291"
+    },
+    "release/assets/sp-fx-react-toolkit-test-application-customizer.js": {
+      "bytes": 838760,
+      "sha256": "86ea0ce7c0df54498bba8beca1119596bdd46802c7eb07be332f1bf691656c28"
+    },
+    "release/assets/SpFxReactToolkitTestWebPartStrings_en-us.js": {
+      "bytes": 916,
+      "sha256": "74bc8580104a997ba07f0d7b58c89193f513a9c96e7c1c1f7b1c22b448e9a930"
+    },
+    "release/assets/chunk.spfx-demo-tenant.js.map": {
+      "bytes": 10300,
+      "sha256": "450e0120cd78ea68e70badd5d0519ee16af6b9ab460b2e2fca99aa47870f39e3"
+    },
+    "release/assets/chunk.spfx-demo-context.js": {
+      "bytes": 13288,
+      "sha256": "feea3fc7285fb2351c8d58e5ea9405ce984d40a3e572998925be36e1ee830c7e"
+    },
+    "release/assets/chunk.vendors-node_modules_fluentui_react_lib_components_Button_PrimaryButton_PrimaryButton_js.js.map": {
+      "bytes": 14566,
+      "sha256": "adc3b0bae2a1d85d3af140a920e50972ea1abc9012459d7accdd48f73391ba57"
+    },
+    "release/assets/chunk.lib_webparts_spFxReactToolkitTest_components_demos_index_js.js.map": {
+      "bytes": 66288,
+      "sha256": "ec115483b2c0edf981ba34b31f070ea3b407859f16fe9ff6cef8ddf8e757b12f"
+    },
+    "release/assets/chunk.spfx-demo-search.js": {
+      "bytes": 3544,
+      "sha256": "67dae762ab2dd5cbe6d12ede96c8c4632826493e726312f7d299956fe181471d"
+    },
+    "release/assets/chunk.spfx-demo-providers.js.map": {
+      "bytes": 4161,
+      "sha256": "be960d2f3cbc085574a9bf187568763753704056d66aa6af8eaeda7a37c596c6"
+    },
+    "release/assets/chunk.spfx-demo-clients.js": {
+      "bytes": 14515,
+      "sha256": "ab6507bd27a9f35e711e5806f8963cc893bd78c694594fdd6602a045b08ee468"
+    },
+    "temp/build/manifests.js": {
+      "bytes": 56699,
+      "sha256": "174bc1f6efbf4eb30e09f61f134139530ff75b430a10e34d02833fe9b5bb3106"
+    },
+    "src/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest.module.scss.ts": {
+      "bytes": 440,
+      "sha256": "6685e859967444aa272a783e4bc94b75e91f31dccddf62801efa03d7d53ee524"
+    }
+  }
+}

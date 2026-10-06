@@ -2,7 +2,7 @@
 
 ## Stato corrente
 
-- Worktree: `/Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit`; baseline HEAD `7e065362`. Checkout originale `dev` pulito e preservato. Modifiche locali non committate; nessun push/merge/publish/deploy.
+- Checkout operativo: `/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit`, branch `dev`. Baseline `7e065362`; commit monorepo `c69e8e1` integrato in fast-forward con autorizzazione utente del 2026-10-06. Nessun push/publish/deploy. Il precedente worktree è archiviato in modo recuperabile dopo verifica e conservazione degli artefatti ignorati. Vedere [INTEGRATION.md](INTEGRATION.md).
 - F1–F7 PASS dopo revisioni e fix. F8 locale PASS: 90 test, API 82 moduli, clean install, build dev/ship, soluzione SPFx e tarball consumer. Validazione tenant richiesta: BLOCKED / NOT RUN.
 - Stato autorevole: [REVIEWS](REVIEWS.md), [MATRICE](VERIFICATION-MATRIX.md), [RAPPORTO](FINAL-REPORT.md). Rapporti e log iniziali mantengono lo storico FAIL, superato dalle re-review finali.
 - Ultime modifiche di prodotto: PnPList e tre esempi documentali, revisionati indipendentemente. Poi eseguiti clean prepublishOnly/ship, library prepublish 83 test, consumer tarball e pack definitivi. Nessun finding locale necessario residuo.
@@ -19,7 +19,7 @@ Audit consecutivi del medesimo blocco esterno: **3** (turn originale e due conti
 - Ruling: npm workspaces e SPFx dev 1.21.1 fissato; semplicità e nessun major implicito. Costo se errato: adattamento tooling consumer.
 - Ruling: serializzazione legacy conservata; nuovo formato può rompere contratti/dati persistiti. Costo: ambiguità documentata residua.
 - Ruling: API deep/internal e configurazioni CDN/MCP conservate; usi esterni non escludibili. Costo: possibile superfluità residua.
-- Ruling: worktree mantenuto senza integrazione Git, rispettando no push/merge. Costo: futura integrazione autorizzata necessaria.
+- Ruling aggiornato: merge locale su dev autorizzato dall’utente; lavoro nel checkout corrente e worktree archiviato. Nessun push/publish/deploy.
 
 ## Non ripetere
 
@@ -32,3 +32,11 @@ Ricontrollati 183 hash dei sorgenti e hash tgz/sppkg: tutti invariati. Checkout 
 ## Seconda continuazione automatica — terzo audit
 
 Blocco esterno confermato per la terza goal turn consecutiva: manca un tenant autenticato già autorizzato, oppure risultati manuali reali. Goal impostato BLOCKED senza ridurre obiettivo o dichiararlo completo. Alla ripresa esplicita dopo BLOCKED, avviare un audit nuovo (non riutilizzare il conteggio3), verificare nuovi elementi e proseguire dal residuo tenant; non rifare lavoro locale concluso.
+
+## Cambio di workflow autorizzato
+
+La nuova richiesta utente autorizza il merge locale su dev e il lavoro nel checkout corrente, sostituendo il precedente vincolo no-merge per questa integrazione. La prova tenant rimane BLOCKED e il goal non è dichiarato completo. In futuro usare il checkout corrente, salvo diversa richiesta.
+
+## Pulizia root conclusa
+
+Rootlegacy lib/dist/release/temp/src rimosse (508 file, 13.410.937 byte), backup completo verificato in /private/tmp e manifest persistente. Build→verify90/API82→ship PASS; directory non rigenerate; root_cleanup_review indipendente PASS. Sorgenti e API immutati. Il prossimo comando di sviluppo si esegue dal checkout principale dev.

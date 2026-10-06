@@ -1,0 +1,467 @@
+Updating 7e06536..c69e8e1
+Fast-forward
+ .github/workflows/verify.yml                       |   22 +
+ .gitignore                                         |    3 +
+ .npmignore                                         |   16 -
+ .vscode/launch.json                                |    4 +-
+ .vscode/settings.json                              |    4 +-
+ README.md                                          |  217 +--
+ .../spfx-react-toolkit-test/.eslintrc.js           |    2 +-
+ .hintrc => apps/spfx-react-toolkit-test/.hintrc    |    0
+ .../spfx-react-toolkit-test/.yo-rc.json            |    0
+ .../spfx-react-toolkit-test/config}/config.json    |    0
+ .../config}/deploy-azure-storage.json              |    0
+ .../config}/package-solution.json                  |    0
+ .../spfx-react-toolkit-test/config}/sass.json      |    0
+ .../spfx-react-toolkit-test/config}/serve.json     |    0
+ .../config}/write-manifests.json                   |    0
+ apps/spfx-react-toolkit-test/gulpfile.js           |   22 +
+ apps/spfx-react-toolkit-test/package.json          |   50 +
+ .../sharepoint}/assets/ClientSideInstance.xml      |    0
+ .../sharepoint}/assets/elements.xml                |    0
+ ...tToolkitTestApplicationCustomizer.manifest.json |    0
+ .../SpFxReactToolkitTestApplicationCustomizer.ts   |   14 +-
+ .../extensions/spFxReactToolkitTest/loc/en-us.js   |    0
+ .../spFxReactToolkitTest/loc/myStrings.d.ts        |    0
+ .../SpFxReactToolkitTestWebPart.manifest.json      |    0
+ .../SpFxReactToolkitTestWebPart.ts                 |    2 +-
+ .../components/SpFxReactToolkitTest.module.scss    |    0
+ .../components/SpFxReactToolkitTest.tsx            |    2 +-
+ .../components/demoRegistry.ts                     |    0
+ .../components/demos/PnPContextDemo.tsx            |    2 +-
+ .../components/demos/PnPListDemo.tsx               |    2 +-
+ .../components/demos/PnPOperationsDemo.tsx         |    2 +-
+ .../components/demos/PnPSearchAdvancedDemo.tsx     |    2 +-
+ .../components/demos/PnPSearchBasicDemo.tsx        |    2 +-
+ .../components/demos/PnPSearchRefinersDemo.tsx     |    2 +-
+ .../components/demos/PnPSearchSuggestionsDemo.tsx  |   28 +-
+ .../spFxReactToolkitTest/components/demos/index.ts |    0
+ .../components/panels/ClientsPanel.tsx             |    2 +-
+ .../components/panels/ContextPanel.tsx             |    2 +-
+ .../components/panels/GraphDataPanel.tsx           |    2 +-
+ .../components/panels/PnPPanel.tsx                 |    0
+ .../components/panels/ProvidersPanel.tsx           |    2 +-
+ .../components/panels/RuntimePanel.tsx             |    2 +-
+ .../components/panels/SearchPanel.tsx              |    2 +-
+ .../components/panels/TenantPanel.tsx              |    4 +-
+ .../components/shared/ActionResult.tsx             |    0
+ .../components/shared/DemoCard.tsx                 |    0
+ .../components/shared/InfoGrid.tsx                 |    0
+ .../components/shared/InfoRow.tsx                  |    0
+ .../components/shared/JsonDetails.tsx              |    0
+ .../components/shared/StatusBadge.tsx              |    0
+ .../components/shared/index.ts                     |    0
+ .../webparts/spFxReactToolkitTest/loc/en-us.js     |    0
+ .../spFxReactToolkitTest/loc/mystrings.d.ts        |    0
+ .../54985a3d-eaad-4041-8fdc-a50241798c07_color.png |  Bin
+ ...4985a3d-eaad-4041-8fdc-a50241798c07_outline.png |  Bin
+ apps/spfx-react-toolkit-test/tsconfig.json         |   40 +
+ docs/DEVELOPMENT.md                                |   65 +
+ docs/INDEX.md                                      |    2 +
+ docs/INTRODUCTION.md                               |   31 +-
+ docs/SHAREPOINT-VALIDATION.md                      |   83 +
+ docs/api/core/providers.md                         |   82 +-
+ docs/api/core/types.md                             |   16 +-
+ docs/api/helpers/INDEX.md                          |    2 +-
+ docs/api/hooks/INDEX.md                            |    2 +-
+ docs/api/hooks/context.md                          |   65 +-
+ docs/api/hooks/environment.md                      |  408 +----
+ docs/api/hooks/http-clients.md                     |   62 +-
+ docs/api/hooks/performance.md                      |  458 +-----
+ docs/api/hooks/permissions.md                      |  411 +----
+ docs/api/hooks/pnpjs.md                            |  789 ++-------
+ docs/api/hooks/properties.md                       |   10 +-
+ docs/api/hooks/storage.md                          |   82 +-
+ docs/api/hooks/theming.md                          |  317 +---
+ docs/api/hooks/user-site.md                        |  431 +----
+ docs/api/services/INDEX.md                         |    6 +-
+ docs/maintenance/BASELINE.md                       |   22 +
+ docs/maintenance/DESIGN.md                         |   38 +
+ docs/maintenance/FINAL-REPORT.md                   |   66 +
+ docs/maintenance/FINDINGS.md                       |   53 +
+ docs/maintenance/PLAN.md                           |   64 +
+ docs/maintenance/PROGRESS.md                       |   34 +
+ docs/maintenance/REVIEWS.md                        |   19 +
+ docs/maintenance/VERIFICATION-MATRIX.md            |   29 +
+ docs/maintenance/async-hooks-report.md             |   67 +
+ docs/maintenance/documentation-report.md           |   50 +
+ docs/maintenance/evidence/api-baseline.json        |  330 ++++
+ docs/maintenance/evidence/app-dev.txt              |   40 +
+ docs/maintenance/evidence/app-lifecycle-green.txt  |   16 +
+ docs/maintenance/evidence/app-lifecycle-red.txt    |   32 +
+ docs/maintenance/evidence/app-ship-package.txt     |  182 +++
+ docs/maintenance/evidence/artifact-sha256.json     |    4 +
+ .../evidence/async-fix-round1-focused-green.txt    |   52 +
+ .../maintenance/evidence/async-fix-round1-lint.txt |    4 +
+ .../evidence/async-fix-round1-npm-test.txt         |  597 +++++++
+ docs/maintenance/evidence/async-fix-round1-red.txt |  242 +++
+ .../async-fix-round1-reviewer-repro-green.txt      |   24 +
+ .../evidence/async-fix-round1-suite-green.txt      |  301 ++++
+ .../evidence/async-fix-round1-typecheck.txt        |    4 +
+ docs/maintenance/evidence/baseline-build.txt       |   32 +
+ docs/maintenance/evidence/baseline-install.txt     |   43 +
+ docs/maintenance/evidence/baseline-pack.json       | 1671 ++++++++++++++++++++
+ docs/maintenance/evidence/baseline-release.txt     |   99 ++
+ docs/maintenance/evidence/baseline-test.txt        |   32 +
+ docs/maintenance/evidence/clean-build-initial.txt  |   55 +
+ docs/maintenance/evidence/clean-install.txt        |   50 +
+ docs/maintenance/evidence/clean-ship-current.txt   |  184 +++
+ docs/maintenance/evidence/clean-tests-initial.txt  |  531 +++++++
+ .../evidence/demo-review-baseline-red.txt          |  106 ++
+ docs/maintenance/evidence/docs-links-red.txt       |  185 +++
+ .../evidence/documentation-review1-typecheck.txt   |    5 +
+ .../documentation-review1-verification.txt         |   11 +
+ docs/maintenance/evidence/final-clean-release.txt  |  726 +++++++++
+ docs/maintenance/evidence/final-clean-ship.txt     |  182 +++
+ .../evidence/final-library-prepublish.txt          |  569 +++++++
+ docs/maintenance/evidence/final-pack.txt           |  357 +++++
+ .../evidence/final-runtime-dependencies.txt        |  267 ++++
+ docs/maintenance/evidence/final-source-sha256.json |  185 +++
+ .../evidence/final-tarball-consumer.txt            |  467 ++++++
+ docs/maintenance/evidence/final-worktree-ship.txt  |  190 +++
+ docs/maintenance/evidence/library-measure.txt      |   11 +
+ docs/maintenance/evidence/monorepo-red.txt         |   34 +
+ docs/maintenance/evidence/package-baseline.json    |  112 ++
+ docs/maintenance/evidence/runtime-dependencies.txt |  267 ++++
+ .../evidence/runtime-rereview-async.txt            |  301 ++++
+ .../maintenance/evidence/runtime-rereview-edge.txt |   24 +
+ .../evidence/runtime-rereview-integration.txt      |  597 +++++++
+ .../evidence/runtime-rereview-options.txt          |   22 +
+ .../evidence/runtime-review-baseline-red.txt       | 1581 ++++++++++++++++++
+ .../evidence/runtime-review-edge-baseline.txt      |   68 +
+ .../evidence/runtime-review-edge-reproduction.cjs  |   29 +
+ docs/maintenance/evidence/runtime-review-edge.txt  |   68 +
+ docs/maintenance/evidence/runtime-review-green.txt |  531 +++++++
+ .../evidence/runtime-reviewed-safe-groups.txt      |  290 ++++
+ docs/maintenance/evidence/store-concurrent-a.txt   |    1 +
+ docs/maintenance/evidence/store-concurrent-b.txt   |    1 +
+ .../evidence/tarball-consumer-initial.txt          |  467 ++++++
+ .../evidence/tarball-review-failure.txt            |  395 +++++
+ docs/maintenance/evidence/workspace-install.txt    |    2 +
+ docs/maintenance/provider-storage-report.md        |   51 +
+ docs/maintenance/services-report.md                |   44 +
+ gulpfile.js                                        |   16 -
+ package-lock.json                                  |  299 ++--
+ package.json                                       |  119 +-
+ packages/spfx-react-toolkit/.eslintrc.js           |  319 ++++
+ packages/spfx-react-toolkit/LICENSE                |   21 +
+ packages/spfx-react-toolkit/README.md              |   89 ++
+ packages/spfx-react-toolkit/package.json           |   99 ++
+ .../src}/core/context.internal.tsx                 |    0
+ .../spfx-react-toolkit/src}/core/index.ts          |    0
+ .../src}/core/provider-application-customizer.tsx  |    0
+ .../src}/core/provider-base.internal.tsx           |   53 +-
+ .../src}/core/provider-field-customizer.tsx        |    0
+ .../src}/core/provider-listview-commandset.tsx     |    0
+ .../src}/core/provider-webpart.tsx                 |    0
+ .../src}/core/runtime-store.internal.ts            |    0
+ .../src}/core/state.internal.tsx                   |    0
+ .../spfx-react-toolkit/src}/core/types.ts          |    0
+ .../spfx-react-toolkit/src}/helpers/index.ts       |    0
+ .../spfx-api-permission-precheck.helpers.ts        |    0
+ .../src}/helpers/spfx-container.helpers.ts         |    0
+ .../src}/helpers/spfx-graph-path.helpers.ts        |    0
+ .../src}/helpers/spfx-page-context.helpers.ts      |    0
+ .../src}/helpers/spfx-permissions.helpers.ts       |    0
+ .../src}/helpers/spfx-storage.helpers.ts           |    0
+ .../src}/helpers/spfx-tenant-value.helpers.ts      |    0
+ .../src}/helpers/spfx-theme.helpers.ts             |    0
+ .../spfx-react-toolkit/src}/hooks/index.ts         |    0
+ .../src}/hooks/useAppCatalogUrl.internal.ts        |   15 +-
+ .../src}/hooks/useAsyncInvoke.internal.ts          |   41 +-
+ .../src}/hooks/useSPFxAadHttpClient.ts             |    0
+ .../src}/hooks/useSPFxAadTokenProvider.ts          |    0
+ .../src}/hooks/useSPFxApiPermissionPrecheck.ts     |    6 +-
+ .../src}/hooks/useSPFxContainerInfo.ts             |    0
+ .../src}/hooks/useSPFxContainerSize.ts             |    0
+ .../src}/hooks/useSPFxContext.ts                   |    0
+ .../src}/hooks/useSPFxCorrelationInfo.ts           |    0
+ .../src}/hooks/useSPFxCrossSitePermissions.ts      |   14 +
+ .../src}/hooks/useSPFxDisplayMode.ts               |    0
+ .../src}/hooks/useSPFxEnvironmentInfo.ts           |    0
+ .../src}/hooks/useSPFxFluent9ThemeInfo.ts          |    0
+ .../src}/hooks/useSPFxHttpClient.ts                |    0
+ .../src}/hooks/useSPFxHubSiteInfo.ts               |    0
+ .../src}/hooks/useSPFxInstanceInfo.ts              |    0
+ .../src}/hooks/useSPFxListInfo.ts                  |    0
+ .../src}/hooks/useSPFxLocaleInfo.ts                |    0
+ .../spfx-react-toolkit/src}/hooks/useSPFxLogger.ts |    0
+ .../src}/hooks/useSPFxMSGraphClient.ts             |    0
+ .../src}/hooks/useSPFxOneDriveAppData.ts           |   77 +-
+ .../src}/hooks/useSPFxPageContext.ts               |    0
+ .../src}/hooks/useSPFxPageType.ts                  |    0
+ .../src}/hooks/useSPFxPerformance.ts               |   25 +-
+ .../src}/hooks/useSPFxPermissions.ts               |    0
+ .../spfx-react-toolkit/src}/hooks/useSPFxPnP.ts    |    0
+ .../src}/hooks/useSPFxPnPContext.ts                |    2 +-
+ .../src}/hooks/useSPFxPnPList.batch.internal.ts    |    0
+ .../src}/hooks/useSPFxPnPList.query.internal.ts    |    0
+ .../src}/hooks/useSPFxPnPList.ts                   |  146 +-
+ .../src}/hooks/useSPFxPnPSearch.query.internal.ts  |    0
+ .../hooks/useSPFxPnPSearch.results.internal.ts     |    0
+ .../src}/hooks/useSPFxPnPSearch.ts                 |  398 ++---
+ .../src}/hooks/useSPFxProperties.ts                |    0
+ .../src}/hooks/useSPFxSPHttpClient.ts              |    0
+ .../src}/hooks/useSPFxServiceScope.ts              |    0
+ .../src}/hooks/useSPFxSiteInfo.ts                  |    0
+ .../src}/hooks/useSPFxStorage.ts                   |   23 +-
+ .../spfx-react-toolkit/src}/hooks/useSPFxTeams.ts  |   23 +-
+ ...FxTenantKeyValueStore.serialization.internal.ts |    0
+ ...eSPFxTenantKeyValueStore.sharepoint.internal.ts |    0
+ .../src}/hooks/useSPFxTenantKeyValueStore.ts       |   98 +-
+ .../src}/hooks/useSPFxTenantProperty.ts            |   29 +-
+ .../src}/hooks/useSPFxThemeInfo.ts                 |    0
+ .../src}/hooks/useSPFxUserInfo.ts                  |    0
+ .../src}/hooks/useSPFxUserPhoto.ts                 |   37 +-
+ {src => packages/spfx-react-toolkit/src}/index.ts  |    2 +-
+ .../spfx-react-toolkit/src}/services/index.ts      |    0
+ .../spfx-api-permission-precheck.service.ts        |    0
+ .../src}/services/spfx-app-catalog.service.ts      |    0
+ .../services/spfx-onedrive-app-data.service.ts     |    0
+ .../src}/services/spfx-pnp-context.service.ts      |    3 +-
+ .../src}/services/spfx-pnp-list.service.ts         |    0
+ .../src}/services/spfx-pnp-search.service.ts       |    0
+ .../src}/services/spfx-pnp.service.ts              |    0
+ .../spfx-tenant-key-value-store.service.ts         |    0
+ .../src}/services/spfx-tenant-property.service.ts  |    0
+ .../src}/services/spfx-user-photo.service.ts       |    0
+ .../spfx-react-toolkit/src}/utils/index.ts         |    0
+ .../src}/utils/resize-observer.internal.ts         |    0
+ .../src}/utils/theme-subscription.internal.ts      |    0
+ .../src}/utils/type-guards.internal.ts             |    0
+ .../spfx-react-toolkit/tsconfig.json               |   21 +-
+ scripts/pack-library.cjs                           |    7 +
+ scripts/verify-api.cjs                             |   24 +
+ scripts/verify-example-coverage.cjs                |    6 +-
+ scripts/verify-package.cjs                         |   44 +
+ scripts/verify-public-docs.cjs                     |   24 +-
+ scripts/verify-runtime-store.cjs                   |   15 +-
+ tests/app-lifecycle.test.cjs                       |   57 +
+ tests/async-hooks.test.cjs                         |  521 ++++++
+ tests/async-test-harness.cjs                       |   48 +
+ tests/demo-suggestions.test.cjs                    |   72 +
+ tests/monorepo.test.cjs                            |   39 +
+ tests/provider-storage.test.cjs                    |  256 +++
+ tests/provider-test-harness.cjs                    |  103 ++
+ tests/services-test-harness.cjs                    |   82 +
+ tests/services.test.cjs                            |  332 ++++
+ 245 files changed, 16958 insertions(+), 3536 deletions(-)
+ create mode 100644 .github/workflows/verify.yml
+ delete mode 100644 .npmignore
+ rename .eslintrc.js => apps/spfx-react-toolkit-test/.eslintrc.js (99%)
+ rename .hintrc => apps/spfx-react-toolkit-test/.hintrc (100%)
+ rename .yo-rc.json => apps/spfx-react-toolkit-test/.yo-rc.json (100%)
+ rename {config => apps/spfx-react-toolkit-test/config}/config.json (100%)
+ rename {config => apps/spfx-react-toolkit-test/config}/deploy-azure-storage.json (100%)
+ rename {config => apps/spfx-react-toolkit-test/config}/package-solution.json (100%)
+ rename {config => apps/spfx-react-toolkit-test/config}/sass.json (100%)
+ rename {config => apps/spfx-react-toolkit-test/config}/serve.json (100%)
+ rename {config => apps/spfx-react-toolkit-test/config}/write-manifests.json (100%)
+ create mode 100644 apps/spfx-react-toolkit-test/gulpfile.js
+ create mode 100644 apps/spfx-react-toolkit-test/package.json
+ rename {sharepoint => apps/spfx-react-toolkit-test/sharepoint}/assets/ClientSideInstance.xml (100%)
+ rename {sharepoint => apps/spfx-react-toolkit-test/sharepoint}/assets/elements.xml (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/extensions/spFxReactToolkitTest/SpFxReactToolkitTestApplicationCustomizer.manifest.json (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/extensions/spFxReactToolkitTest/SpFxReactToolkitTestApplicationCustomizer.ts (83%)
+ rename {src => apps/spfx-react-toolkit-test/src}/extensions/spFxReactToolkitTest/loc/en-us.js (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/extensions/spFxReactToolkitTest/loc/myStrings.d.ts (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/SpFxReactToolkitTestWebPart.manifest.json (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/SpFxReactToolkitTestWebPart.ts (96%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest.module.scss (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest.tsx (98%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/demoRegistry.ts (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/demos/PnPContextDemo.tsx (98%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/demos/PnPListDemo.tsx (98%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/demos/PnPOperationsDemo.tsx (98%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/demos/PnPSearchAdvancedDemo.tsx (98%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/demos/PnPSearchBasicDemo.tsx (98%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/demos/PnPSearchRefinersDemo.tsx (98%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/demos/PnPSearchSuggestionsDemo.tsx (79%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/demos/index.ts (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/panels/ClientsPanel.tsx (99%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/panels/ContextPanel.tsx (99%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/panels/GraphDataPanel.tsx (99%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/panels/PnPPanel.tsx (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/panels/ProvidersPanel.tsx (98%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/panels/RuntimePanel.tsx (99%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/panels/SearchPanel.tsx (94%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/panels/TenantPanel.tsx (97%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/shared/ActionResult.tsx (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/shared/DemoCard.tsx (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/shared/InfoGrid.tsx (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/shared/InfoRow.tsx (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/shared/JsonDetails.tsx (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/shared/StatusBadge.tsx (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/components/shared/index.ts (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/loc/en-us.js (100%)
+ rename {src => apps/spfx-react-toolkit-test/src}/webparts/spFxReactToolkitTest/loc/mystrings.d.ts (100%)
+ rename {teams => apps/spfx-react-toolkit-test/teams}/54985a3d-eaad-4041-8fdc-a50241798c07_color.png (100%)
+ rename {teams => apps/spfx-react-toolkit-test/teams}/54985a3d-eaad-4041-8fdc-a50241798c07_outline.png (100%)
+ create mode 100644 apps/spfx-react-toolkit-test/tsconfig.json
+ create mode 100644 docs/DEVELOPMENT.md
+ create mode 100644 docs/SHAREPOINT-VALIDATION.md
+ create mode 100644 docs/maintenance/BASELINE.md
+ create mode 100644 docs/maintenance/DESIGN.md
+ create mode 100644 docs/maintenance/FINAL-REPORT.md
+ create mode 100644 docs/maintenance/FINDINGS.md
+ create mode 100644 docs/maintenance/PLAN.md
+ create mode 100644 docs/maintenance/PROGRESS.md
+ create mode 100644 docs/maintenance/REVIEWS.md
+ create mode 100644 docs/maintenance/VERIFICATION-MATRIX.md
+ create mode 100644 docs/maintenance/async-hooks-report.md
+ create mode 100644 docs/maintenance/documentation-report.md
+ create mode 100644 docs/maintenance/evidence/api-baseline.json
+ create mode 100644 docs/maintenance/evidence/app-dev.txt
+ create mode 100644 docs/maintenance/evidence/app-lifecycle-green.txt
+ create mode 100644 docs/maintenance/evidence/app-lifecycle-red.txt
+ create mode 100644 docs/maintenance/evidence/app-ship-package.txt
+ create mode 100644 docs/maintenance/evidence/artifact-sha256.json
+ create mode 100644 docs/maintenance/evidence/async-fix-round1-focused-green.txt
+ create mode 100644 docs/maintenance/evidence/async-fix-round1-lint.txt
+ create mode 100644 docs/maintenance/evidence/async-fix-round1-npm-test.txt
+ create mode 100644 docs/maintenance/evidence/async-fix-round1-red.txt
+ create mode 100644 docs/maintenance/evidence/async-fix-round1-reviewer-repro-green.txt
+ create mode 100644 docs/maintenance/evidence/async-fix-round1-suite-green.txt
+ create mode 100644 docs/maintenance/evidence/async-fix-round1-typecheck.txt
+ create mode 100644 docs/maintenance/evidence/baseline-build.txt
+ create mode 100644 docs/maintenance/evidence/baseline-install.txt
+ create mode 100644 docs/maintenance/evidence/baseline-pack.json
+ create mode 100644 docs/maintenance/evidence/baseline-release.txt
+ create mode 100644 docs/maintenance/evidence/baseline-test.txt
+ create mode 100644 docs/maintenance/evidence/clean-build-initial.txt
+ create mode 100644 docs/maintenance/evidence/clean-install.txt
+ create mode 100644 docs/maintenance/evidence/clean-ship-current.txt
+ create mode 100644 docs/maintenance/evidence/clean-tests-initial.txt
+ create mode 100644 docs/maintenance/evidence/demo-review-baseline-red.txt
+ create mode 100644 docs/maintenance/evidence/docs-links-red.txt
+ create mode 100644 docs/maintenance/evidence/documentation-review1-typecheck.txt
+ create mode 100644 docs/maintenance/evidence/documentation-review1-verification.txt
+ create mode 100644 docs/maintenance/evidence/final-clean-release.txt
+ create mode 100644 docs/maintenance/evidence/final-clean-ship.txt
+ create mode 100644 docs/maintenance/evidence/final-library-prepublish.txt
+ create mode 100644 docs/maintenance/evidence/final-pack.txt
+ create mode 100644 docs/maintenance/evidence/final-runtime-dependencies.txt
+ create mode 100644 docs/maintenance/evidence/final-source-sha256.json
+ create mode 100644 docs/maintenance/evidence/final-tarball-consumer.txt
+ create mode 100644 docs/maintenance/evidence/final-worktree-ship.txt
+ create mode 100644 docs/maintenance/evidence/library-measure.txt
+ create mode 100644 docs/maintenance/evidence/monorepo-red.txt
+ create mode 100644 docs/maintenance/evidence/package-baseline.json
+ create mode 100644 docs/maintenance/evidence/runtime-dependencies.txt
+ create mode 100644 docs/maintenance/evidence/runtime-rereview-async.txt
+ create mode 100644 docs/maintenance/evidence/runtime-rereview-edge.txt
+ create mode 100644 docs/maintenance/evidence/runtime-rereview-integration.txt
+ create mode 100644 docs/maintenance/evidence/runtime-rereview-options.txt
+ create mode 100644 docs/maintenance/evidence/runtime-review-baseline-red.txt
+ create mode 100644 docs/maintenance/evidence/runtime-review-edge-baseline.txt
+ create mode 100644 docs/maintenance/evidence/runtime-review-edge-reproduction.cjs
+ create mode 100644 docs/maintenance/evidence/runtime-review-edge.txt
+ create mode 100644 docs/maintenance/evidence/runtime-review-green.txt
+ create mode 100644 docs/maintenance/evidence/runtime-reviewed-safe-groups.txt
+ create mode 100644 docs/maintenance/evidence/store-concurrent-a.txt
+ create mode 100644 docs/maintenance/evidence/store-concurrent-b.txt
+ create mode 100644 docs/maintenance/evidence/tarball-consumer-initial.txt
+ create mode 100644 docs/maintenance/evidence/tarball-review-failure.txt
+ create mode 100644 docs/maintenance/evidence/workspace-install.txt
+ create mode 100644 docs/maintenance/provider-storage-report.md
+ create mode 100644 docs/maintenance/services-report.md
+ delete mode 100644 gulpfile.js
+ create mode 100644 packages/spfx-react-toolkit/.eslintrc.js
+ create mode 100644 packages/spfx-react-toolkit/LICENSE
+ create mode 100644 packages/spfx-react-toolkit/README.md
+ create mode 100644 packages/spfx-react-toolkit/package.json
+ rename {src => packages/spfx-react-toolkit/src}/core/context.internal.tsx (100%)
+ rename {src => packages/spfx-react-toolkit/src}/core/index.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/core/provider-application-customizer.tsx (100%)
+ rename {src => packages/spfx-react-toolkit/src}/core/provider-base.internal.tsx (81%)
+ rename {src => packages/spfx-react-toolkit/src}/core/provider-field-customizer.tsx (100%)
+ rename {src => packages/spfx-react-toolkit/src}/core/provider-listview-commandset.tsx (100%)
+ rename {src => packages/spfx-react-toolkit/src}/core/provider-webpart.tsx (100%)
+ rename {src => packages/spfx-react-toolkit/src}/core/runtime-store.internal.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/core/state.internal.tsx (100%)
+ rename {src => packages/spfx-react-toolkit/src}/core/types.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/helpers/index.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/helpers/spfx-api-permission-precheck.helpers.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/helpers/spfx-container.helpers.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/helpers/spfx-graph-path.helpers.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/helpers/spfx-page-context.helpers.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/helpers/spfx-permissions.helpers.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/helpers/spfx-storage.helpers.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/helpers/spfx-tenant-value.helpers.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/helpers/spfx-theme.helpers.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/index.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useAppCatalogUrl.internal.ts (82%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useAsyncInvoke.internal.ts (68%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxAadHttpClient.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxAadTokenProvider.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxApiPermissionPrecheck.ts (97%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxContainerInfo.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxContainerSize.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxContext.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxCorrelationInfo.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxCrossSitePermissions.ts (95%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxDisplayMode.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxEnvironmentInfo.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxFluent9ThemeInfo.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxHttpClient.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxHubSiteInfo.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxInstanceInfo.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxListInfo.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxLocaleInfo.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxLogger.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxMSGraphClient.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxOneDriveAppData.ts (87%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxPageContext.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxPageType.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxPerformance.ts (88%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxPermissions.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxPnP.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxPnPContext.ts (99%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxPnPList.batch.internal.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxPnPList.query.internal.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxPnPList.ts (84%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxPnPSearch.query.internal.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxPnPSearch.results.internal.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxPnPSearch.ts (68%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxProperties.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxSPHttpClient.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxServiceScope.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxSiteInfo.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxStorage.ts (86%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxTeams.ts (88%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxTenantKeyValueStore.serialization.internal.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxTenantKeyValueStore.ts (83%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxTenantProperty.ts (87%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxThemeInfo.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxUserInfo.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/hooks/useSPFxUserPhoto.ts (90%)
+ rename {src => packages/spfx-react-toolkit/src}/index.ts (90%)
+ rename {src => packages/spfx-react-toolkit/src}/services/index.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/services/spfx-api-permission-precheck.service.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/services/spfx-app-catalog.service.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/services/spfx-onedrive-app-data.service.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/services/spfx-pnp-context.service.ts (95%)
+ rename {src => packages/spfx-react-toolkit/src}/services/spfx-pnp-list.service.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/services/spfx-pnp-search.service.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/services/spfx-pnp.service.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/services/spfx-tenant-key-value-store.service.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/services/spfx-tenant-property.service.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/services/spfx-user-photo.service.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/utils/index.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/utils/resize-observer.internal.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/utils/theme-subscription.internal.ts (100%)
+ rename {src => packages/spfx-react-toolkit/src}/utils/type-guards.internal.ts (100%)
+ rename tsconfig.json => packages/spfx-react-toolkit/tsconfig.json (66%)
+ create mode 100644 scripts/pack-library.cjs
+ create mode 100644 scripts/verify-api.cjs
+ create mode 100644 scripts/verify-package.cjs
+ create mode 100644 tests/app-lifecycle.test.cjs
+ create mode 100644 tests/async-hooks.test.cjs
+ create mode 100644 tests/async-test-harness.cjs
+ create mode 100644 tests/demo-suggestions.test.cjs
+ create mode 100644 tests/monorepo.test.cjs
+ create mode 100644 tests/provider-storage.test.cjs
+ create mode 100644 tests/provider-test-harness.cjs
+ create mode 100644 tests/services-test-harness.cjs
+ create mode 100644 tests/services.test.cjs

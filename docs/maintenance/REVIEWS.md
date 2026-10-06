@@ -17,3 +17,11 @@ Nessun revisore ha modificato prodotto. Tenant/Graph/Teams reali e CIremota NOTR
 - Review guida finale: precisato che nuova identità keyFactory ricrea SPFI ma non implica nuova chiave cache se il valore restituito è uguale. Corretto il testo; probe strict batch/cache, hash tgz/sppkg e corrispondenza byte dei log verificati indipendentemente.
 
 - Review finale del supplemento: F7 PASS e F8 locale completa PASS. Istruzioni batch/cache, 183 hash source, hash tgz/sppkg, cinque log definitivi e link maintenance verificati indipendentemente. Nessun finding locale bloccante; tenant resta NOT RUN/BLOCKED e goal attivo.
+
+## Integrazione autorizzata su dev
+
+Reviewer indipendente dev_integration_review (GPT-6.1 Sol) PASS: commit c69e8e1/ancestry, 183 hash source, 2 hash artefatti, workspace link nel checkout principale, 90/90 test, API82 e verificatori. Modifiche residue soltanto al registro; nessun finding bloccante per ritiro worktree.
+
+## Pulizia root autorizzata
+
+root_cleanup_review (GPT-6.1 Sol) PASS pre/post: 508 file tutti ignored/non tracked, riferimenti attivi workspace, backup completo controllato per SHA256/dimensioni, build+verify90/API82+ship PASS, cinque directory root assenti e non rigenerate. Sorgenti prodotto identici a HEAD.

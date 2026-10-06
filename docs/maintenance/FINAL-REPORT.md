@@ -1,6 +1,6 @@
 # Rapporto finale locale — 2026-10-06
 
-Il monorepo è implementato e verificato nel worktree Codex isolato. **Tutte le fasi locali hanno ottenuto PASS dopo correzioni e revisioni indipendenti. La validazione autenticata nel tenant resta BLOCKED / NOT RUN; il goal persistente non è dichiarato completo.** Il checkout originale `dev` è pulito e preservato. Nessun commit, push, merge, publish o deploy.
+Il monorepo è implementato, verificato e integrato localmente su `dev` con autorizzazione utente. Checkout operativo: `/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit`. **Tutte le fasi locali e la verifica post-merge hanno ottenuto PASS. La validazione autenticata nel tenant resta BLOCKED / NOT RUN; il goal persistente non è dichiarato completo.** Nessun push, publish o deploy. Le prove iniziali svolte nel worktree sono conservate come storico.
 
 ## Architettura
 
@@ -29,7 +29,7 @@ Tutti i subagenti effettivi usano GPT-6.1 Sol, con autori e revisori diversi. [R
 ## Comandi esatti
 
 ```bash
-cd /Users/fabiofranzini/.codex/worktrees/spfx-toolkit-monorepo/spfx-react-toolkit
+cd /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit
 npm ci
 npm run build
 npm run verify
@@ -64,3 +64,11 @@ Peer SPFx >=1.18 <2 conservato, ma prova effettiva limitata a SPFx 1.21.1/React 
 - Worktree conservato senza integrazione Git: integrazione successiva richiede autorizzazione separata per push/merge.
 
 Stato goal finale: **BLOCKED**, dopo tre audit consecutivi del medesimo impedimento esterno. Ripresa possibile quando saranno disponibili accesso tenant autorizzato o prove manuali reali; il perimetro completo è conservato.
+
+## Integrazione locale autorizzata su dev
+
+Il 2026-10-06 l’utente ha autorizzato il merge locale e la prosecuzione nel checkout corrente. Il commit `c69e8e1` è stato integrato in fast-forward da `7e065362` su `dev`, senza conflitti. Le affermazioni precedenti su checkout preservato e assenza di merge descrivono la consegna precedente a questa autorizzazione. Checkout operativo: `/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit`. Nessun push, publish o deploy. Verifica e gestione del worktree documentate in [INTEGRATION.md](INTEGRATION.md). Il residuo tenant resta invariato.
+
+## Pulizia root dopo merge
+
+Rimossi lib/dist/release/temp/src della root: 508 residui generati, circa 13,4 MB, dopo backup verificato. Build, 90 test, API82 e packaging sono passati nel checkout principale; review indipendente PASS. Il vecchio worktree è archiviato in modo recuperabile. Dettagli in [ROOT-CLEANUP.md](ROOT-CLEANUP.md).
