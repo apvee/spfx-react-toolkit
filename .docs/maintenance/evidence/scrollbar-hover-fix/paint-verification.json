@@ -1,0 +1,2526 @@
+{
+  "passed": true,
+  "frames": 168,
+  "records": [
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-vertical-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-vertical-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-vertical-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-vertical-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-vertical-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-vertical-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-horizontal-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-horizontal-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-horizontal-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-horizontal-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-horizontal-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-horizontal-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-vertical-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-vertical-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-vertical-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-vertical-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-vertical-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-vertical-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-horizontal-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-horizontal-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-horizontal-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-horizontal-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-horizontal-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-horizontal-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-vertical-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-vertical-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-vertical-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-vertical-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-vertical-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-vertical-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-horizontal-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-horizontal-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-horizontal-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-horizontal-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-horizontal-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-horizontal-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-vertical-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-vertical-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-vertical-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-vertical-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-vertical-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-vertical-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-horizontal-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-horizontal-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-horizontal-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-horizontal-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-horizontal-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-horizontal-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-vertical-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-vertical-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-vertical-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-vertical-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-vertical-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-vertical-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-horizontal-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-horizontal-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-horizontal-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-horizontal-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-horizontal-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-horizontal-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-vertical-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-vertical-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-vertical-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-vertical-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-vertical-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-vertical-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-horizontal-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-horizontal-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-horizontal-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-horizontal-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-horizontal-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-horizontal-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 206,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-vertical-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 206,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-vertical-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 206,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-vertical-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 206,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-vertical-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 206,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-vertical-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 206,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-vertical-leave.png"
+    },
+    {
+      "browser": "edge",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 871,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-horizontal-base.png"
+    },
+    {
+      "browser": "edge",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 871,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-horizontal-hover.png"
+    },
+    {
+      "browser": "edge",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 871,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-horizontal-pressed.png"
+    },
+    {
+      "browser": "edge",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 871,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-horizontal-drag.png"
+    },
+    {
+      "browser": "edge",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 871,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-horizontal-released.png"
+    },
+    {
+      "browser": "edge",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 871,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-horizontal-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-vertical-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-vertical-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-vertical-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-vertical-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-vertical-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-vertical-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-horizontal-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-horizontal-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-horizontal-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-horizontal-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-horizontal-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-canvas",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-canvas-horizontal-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-vertical-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-vertical-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-vertical-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-vertical-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-vertical-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-vertical-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-horizontal-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-horizontal-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-horizontal-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-horizontal-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-horizontal-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-light-alternative",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-light-alternative-horizontal-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-vertical-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-vertical-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-vertical-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-vertical-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-vertical-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-vertical-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-horizontal-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-horizontal-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-horizontal-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-horizontal-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-horizontal-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-canvas",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-canvas-horizontal-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-vertical-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-vertical-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-vertical-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-vertical-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-vertical-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-vertical-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-horizontal-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-horizontal-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-horizontal-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        179,
+        179,
+        179
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-horizontal-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        189,
+        189,
+        189
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-horizontal-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-dark-alternative",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        173,
+        173,
+        173
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-dark-alternative-horizontal-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-vertical-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-vertical-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-vertical-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-vertical-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-vertical-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-vertical-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-horizontal-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-horizontal-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-horizontal-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-horizontal-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-horizontal-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-canvas",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-canvas-horizontal-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-vertical-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-vertical-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-vertical-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-vertical-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-vertical-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 91,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-vertical-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-horizontal-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-horizontal-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-horizontal-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-horizontal-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        26,
+        235,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-horizontal-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "sx-6px.json",
+      "name": "catalog-highContrast-alternative",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        255,
+        255,
+        255
+      ],
+      "matchingPixels": 940,
+      "passed": true,
+      "image": "sx-6px-catalog-highContrast-alternative-horizontal-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "vertical",
+      "phase": "base",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 206,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-vertical-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "vertical",
+      "phase": "hover",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 206,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-vertical-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "vertical",
+      "phase": "pressed",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 206,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-vertical-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "vertical",
+      "phase": "drag",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 206,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-vertical-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "vertical",
+      "phase": "released",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 206,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-vertical-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "vertical",
+      "phase": "leave",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 206,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-vertical-leave.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "horizontal",
+      "phase": "base",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 871,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-horizontal-base.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "horizontal",
+      "phase": "hover",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 871,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-horizontal-hover.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "horizontal",
+      "phase": "pressed",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 871,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-horizontal-pressed.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "horizontal",
+      "phase": "drag",
+      "expected": [
+        77,
+        77,
+        77
+      ],
+      "matchingPixels": 871,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-horizontal-drag.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "horizontal",
+      "phase": "released",
+      "expected": [
+        87,
+        87,
+        87
+      ],
+      "matchingPixels": 871,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-horizontal-released.png"
+    },
+    {
+      "browser": "chrome",
+      "source": "styles-6px.json",
+      "name": "sample-scroll-preview",
+      "axis": "horizontal",
+      "phase": "leave",
+      "expected": [
+        97,
+        97,
+        97
+      ],
+      "matchingPixels": 871,
+      "passed": true,
+      "image": "styles-6px-scroll-thumb-horizontal-leave.png"
+    }
+  ]
+}

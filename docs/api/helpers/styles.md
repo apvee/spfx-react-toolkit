@@ -272,6 +272,8 @@ Border geometry remains explicit: compose `borderWidth.thin`, `borderStyle.solid
 
 `scrollbar.fluent` is the only scrollbar selection (`SxBaseDescriptor`). In Edge/Chrome and other browsers supporting `@supports selector(::-webkit-scrollbar)`, both axes use **6px** scrollbars with a `colorNeutralStrokeAccessible` thumb and transparent track/corner. These pseudo-element rules apply only under `(forced-colors: none)`; standard `scrollbarWidth` and `scrollbarColor` become `auto` in that branch so they do not suppress vendor styling. Other browsers retain standard `scrollbarWidth: thin` and `scrollbarColor: var(--colorNeutralStrokeAccessible) transparent`. An actual `(forced-colors: active)` media rule sets `scrollbarColor: auto`, preserving native thin sizing and browser system colors. The recipe adds no overflow, container dimensions, gutter, overscroll, smooth scrolling, or `forced-color-adjust: none`.
 
+The vendor thumb retains **3px rounded corners** on both axes. Its base color is `colorNeutralStrokeAccessible`; moving the pointer over the thumb itself uses `colorNeutralStrokeAccessibleHover`, and pressing or dragging it uses `colorNeutralStrokeAccessiblePressed`. Pressed feedback wins while the thumb is also hovered; release restores hover feedback and leaving restores the base color. These tokens follow the existing Fluent theme variables in scope. Hovering the content or track does not activate thumb feedback. Forced colors and browsers using the standard fallback retain native interactions.
+
 ```tsx
 const sx = useSx();
 return <div className={sx(width.px(320), height.px(160), overflow.auto, scrollbar.fluent, presets.canvas)}>

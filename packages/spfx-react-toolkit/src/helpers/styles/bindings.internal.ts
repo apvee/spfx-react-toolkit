@@ -55,6 +55,15 @@ export function createBindingStyle(binding: SxBinding, query: SxQuery, state?: S
         }),
         ...(binding.scrollbarThumb === undefined ? {} : {
           '::-webkit-scrollbar-thumb': { backgroundColor: binding.scrollbarThumb, borderRadius: '3px' },
+          ...(binding.scrollbarThumbHover === undefined ? {} : {
+            '::-webkit-scrollbar-thumb:hover': { backgroundColor: binding.scrollbarThumbHover }
+          }),
+          ...(binding.scrollbarThumbPressed === undefined ? {} : {
+            '::-webkit-scrollbar-thumb:active': { backgroundColor: binding.scrollbarThumbPressed },
+            // Greater specificity preserves pressed feedback when hover also
+            // matches, independent of Griffel's rule insertion order.
+            '::-webkit-scrollbar-thumb:hover:active': { backgroundColor: binding.scrollbarThumbPressed }
+          }),
           '::-webkit-scrollbar-track': { backgroundColor: 'transparent' },
           '::-webkit-scrollbar-corner': { backgroundColor: 'transparent' }
         })

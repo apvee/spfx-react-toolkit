@@ -181,7 +181,7 @@ const StylesExamples: React.FC<{ readonly highContrast: boolean }> = ({ highCont
     </DemoCard>
 
     <DemoCard title="The single Fluent scrollbar recipe" iconName="Color">
-      <p>Both axes use 6px scrollbars in Edge/Chrome, with native thin fallback elsewhere. Overflow and dimensions are explicit; forced colors retain system colors.</p>
+      <p>Both axes use 6px rounded scrollbars in Edge/Chrome. Hover or drag either thumb to see its Fluent feedback, with native thin fallback elsewhere. Overflow and dimensions are explicit; forced colors retain system colors.</p>
       <div data-sx-demo="scroll-preview" tabIndex={0} aria-label="Scrollable recipe region"
         className={sx(height.px(140), width.full, maxWidth.px(320), overflow.auto, scrollbar.fluent, presets.alternative, padding.small)}>
         <div className={sx(width.px(600))}>

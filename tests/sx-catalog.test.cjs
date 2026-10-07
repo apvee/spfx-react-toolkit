@@ -7,7 +7,7 @@ const { loadSxModules } = require('./fixtures/sx-harness.cjs');
 const stylesDirectory = path.resolve(__dirname, '../packages/spfx-react-toolkit/src/helpers/styles');
 const directTokenCounts = {
   foreground: 8, background: 8, presets: 21, 'border-color': 16,
-  'border-width': 8, 'border-radius': 24, 'box-shadow': 2, scrollbar: 1
+  'border-width': 8, 'border-radius': 24, 'box-shadow': 2, scrollbar: 3
 };
 function inspectThemeReferences(source, filename) {
   const ast = ts.createSourceFile(filename, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
@@ -247,6 +247,38 @@ test('vendor scrollbar binding caches stay distinct from generic bindings in eit
     const { activeRules } = require('./fixtures/sx-harness.cjs');
     assert.ok(activeRules(renderer, classes.get(f.styles.scrollbar.fluent)).some(rule => rule.includes('::-webkit-scrollbar')));
     assert.ok(!activeRules(renderer, classes.get(generic)).some(rule => rule.includes('::-webkit-scrollbar')));
+  }
+});
+test('fluent scrollbar restores Fluent thumb hover and pressed colors with pressed priority', () => {
+  const f = loadSxModules(), renderer = require('@griffel/core').createDOMRenderer(null);
+  f.load('resolve.internal').resolveSxInputs({ renderer, dir: 'ltr' }, [f.styles.scrollbar.fluent]);
+  const rules = Object.keys(renderer.insertionCache);
+  for (const [selector, token] of [
+    ['::-webkit-scrollbar-thumb:hover', '--colorNeutralStrokeAccessibleHover'],
+    ['::-webkit-scrollbar-thumb:active', '--colorNeutralStrokeAccessiblePressed'],
+    ['::-webkit-scrollbar-thumb:hover:active', '--colorNeutralStrokeAccessiblePressed']
+  ]) {
+    assert.ok(rules.some(rule => rule.includes(`${selector}{background-color:var(${token})`)
+      && rule.includes('@supports selector(::-webkit-scrollbar)') && rule.includes('(forced-colors: none)')),
+    `The real thumb ${selector} needs its Fluent state color`);
+  }
+  // The combined hover/active selector has greater specificity than hover alone,
+  // so the pressed token wins regardless of insertion order while both match.
+});
+test('thumb hover and pressed colors each participate independently in renderer cache identity', () => {
+  for (const field of ['scrollbarThumbHover', 'scrollbarThumbPressed']) {
+    const f = loadSxModules(), renderer = require('@griffel/core').createDOMRenderer(null);
+    const resolve = f.load('resolve.internal').resolveSxInputs;
+    const { activeRules } = require('./fixtures/sx-harness.cjs');
+    for (const color of ['red', 'blue']) {
+      const descriptor = f.createDeclaration('scrollbarColor', 'gray transparent', {
+        property: 'scrollbarColor', fallback: 'auto', scrollbarThumb: 'gray', [field]: color
+      });
+      const className = resolve({ renderer, dir: 'ltr' }, [descriptor]);
+      const state = field === 'scrollbarThumbHover' ? 'hover' : 'active';
+      assert.ok(activeRules(renderer, className).some(rule => rule.includes(`::-webkit-scrollbar-thumb:${state}{background-color:${color}`)),
+        `The ${state} color ${color} must survive a previous cached color`);
+    }
   }
 });
 test('vendor scrollbar selectors stay inside responsive and interaction scopes', () => {

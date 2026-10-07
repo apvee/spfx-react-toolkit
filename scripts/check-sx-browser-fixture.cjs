@@ -11,6 +11,7 @@ const url = process.env.SX_BROWSER_URL || 'http://127.0.0.1:4317';
 const observations = [];
 const errors = [];
 const consoleMessages = [];
+const thumbInteractionCaptures = [];
 let browser;
 let page;
 async function check(name, actual, wanted) {
@@ -26,6 +27,50 @@ async function scrollbarAxes(id) {
     const css = getComputedStyle(element, '::-webkit-scrollbar');
     return { width: css.width, height: css.height };
   });
+}
+async function exerciseScrollbarThumb(id, axis, name, colors) {
+  const target = page.locator(`#${id}`);
+  await target.scrollIntoViewIfNeeded();
+  await target.evaluate(element => { element.scrollTop = 0; element.scrollLeft = 0; });
+  const geometry = await target.evaluate(element => {
+    const rect = element.getBoundingClientRect(), css = getComputedStyle(element);
+    return { x: rect.x, y: rect.y, width: rect.width, height: rect.height,
+      left: parseFloat(css.borderLeftWidth), right: parseFloat(css.borderRightWidth),
+      top: parseFloat(css.borderTopWidth), bottom: parseFloat(css.borderBottomWidth) };
+  });
+  const point = axis === 'vertical'
+    ? { x: geometry.x + geometry.width - geometry.right - 3, y: geometry.y + geometry.top + 10 }
+    : { x: geometry.x + geometry.left + 10, y: geometry.y + geometry.height - geometry.bottom - 3 };
+  let currentPoint = { x: 0, y: 0 };
+  async function capture(phase, expectedColor) {
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    const filename = `${label}-${name}-${axis}-${phase}.png`;
+    await target.screenshot({ path: path.join(output, filename) });
+    // CSSOM reports the base pseudo style for native scrollbar widget states.
+    // Preserve actual paint evidence for pixel review instead of certifying a
+    // hover/pressed color from that unrelated computed base value.
+    thumbInteractionCaptures.push({ name, axis, phase, expectedColor, filename,
+      pointer: currentPoint, geometry, paintVerification: 'Requires screenshot/pixel review' });
+  }
+  await page.mouse.move(0, 0);
+  await capture('base', colors.base);
+  currentPoint = point;
+  await page.mouse.move(point.x, point.y);
+  await capture('hover', colors.hover);
+  await page.mouse.down();
+  try {
+    await capture('pressed', colors.pressed);
+    currentPoint = { x: point.x + (axis === 'horizontal' ? 30 : 0), y: point.y + (axis === 'vertical' ? 15 : 0) };
+    await page.mouse.move(currentPoint.x, currentPoint.y, { steps: 4 });
+    await capture('drag', colors.pressed);
+    await check(`${name}:${axis}:thumb-drag-scrolls`, await target.evaluate((element, direction) =>
+      direction === 'vertical' ? element.scrollTop > 0 : element.scrollLeft > 0, axis), true);
+  } finally { await page.mouse.up(); }
+  await capture('released', colors.hover);
+  currentPoint = { x: 0, y: 0 };
+  await page.mouse.move(0, 0);
+  await capture('leave', colors.base);
+  await check(`${name}:${axis}:retains-6px`, await scrollbarAxes(id), { width: '6px', height: '6px' });
 }
 async function state(id) {
   return page.locator(`#${id}`).evaluate(element => ({
@@ -318,6 +363,9 @@ async function runCatalog() {
   await check('catalog:scrollbar-standard-support', await page.evaluate(() =>
     CSS.supports('scrollbar-width', 'thin') && CSS.supports('scrollbar-color', 'red transparent')), true);
   const vendorScrollbars = await page.evaluate(() => CSS.supports('selector(::-webkit-scrollbar)'));
+  if (vendorScrollbars) await check('catalog:thumb-state-selector-support', await page.evaluate(() =>
+    ['::-webkit-scrollbar-thumb:hover', '::-webkit-scrollbar-thumb:active', '::-webkit-scrollbar-thumb:hover:active']
+      .every(selector => CSS.supports(`selector(${selector})`))), true);
   const styledWidth = vendorScrollbars ? 'auto' : 'thin';
   const stableClasses = {};
   for (const theme of ['light', 'dark', 'highContrast']) {
@@ -360,6 +408,14 @@ async function runCatalog() {
       const ratio = contrast(thumb, underlying);
       catalogContrasts.push({ theme, surface, scrollbarThumb: thumb, underlying, ratio: Number(ratio.toFixed(2)), limitation: 'Transparent track depends on the actual underlying surface.' });
       await check(`catalog:${theme}:${surface}:verified-scrollbar-ratio-at-least-3`, ratio >= 3, true);
+      if (vendorScrollbars) {
+        const colors = {
+          base: thumb,
+          hover: rgb({ light: '#575757', dark: '#bdbdbd', highContrast: '#1aebff' }[theme]),
+          pressed: rgb({ light: '#4d4d4d', dark: '#b3b3b3', highContrast: '#1aebff' }[theme])
+        };
+        for (const axis of ['vertical', 'horizontal']) await exerciseScrollbarThumb(scrollbarId, axis, `catalog-${theme}-${surface}`, colors);
+      }
     }
     await check(`catalog:${theme}:typography-inherits`, await computed('catalog-typography-inherits', 'color'), 'rgb(11, 22, 33)');
     await check(`catalog:${theme}:transparent-inherits`, await computed('catalog-transparent-inherits', 'color'), 'rgb(11, 22, 33)');
@@ -416,8 +472,6 @@ async function runCatalog() {
       }
     }
     await page.locator('#catalog').scrollIntoViewIfNeeded();
-    await snapshot(`catalog-${theme}`);
-    await page.locator('#catalog').screenshot({ path: path.join(output, `${label}-catalog-${theme}-detail.png`) });
   }
   // High-contrast Fluent palette and browser forced-colors are separate mechanisms.
   for (const theme of ['light', 'dark', 'highContrast']) {
@@ -443,6 +497,17 @@ async function runCatalog() {
     await page.emulateMedia({ forcedColors: 'none' });
     await check(`catalog:${theme}:forced-colors-deactivated`, await page.evaluate(() => matchMedia('(forced-colors: active)').matches), false);
   }
+  // Full-page and oversized element captures temporarily resize Chromium's
+  // viewport. On macOS that
+  // can leave following native scrollbar widgets without their gutter/hit area
+  // despite correct computed pseudo styles. Preserve these overview captures
+  // after all actual thumb interactions, so they cannot alter later test input.
+  for (const theme of ['light', 'dark', 'highContrast']) {
+    await render({ theme });
+    await page.locator('#catalog').scrollIntoViewIfNeeded();
+    await snapshot(`catalog-${theme}`);
+    await page.locator('#catalog').screenshot({ path: path.join(output, `${label}-catalog-${theme}-detail.png`) });
+  }
 }
 
 (async () => {
@@ -462,7 +527,7 @@ async function runCatalog() {
   } catch (error) { errors.push(error.stack); }
   const report = { version, node: process.version, url, viewport: { width: 1210, height: 900 },
     module: process.env.PLAYWRIGHT_MODULE_PATH || 'playwright', executable: process.env.SX_BROWSER_EXECUTABLE || 'Playwright default',
-    localBrowser: true, sharePointHost: 'NOT EXECUTED', observations, catalogContrasts, consoleMessages, errors };
+    localBrowser: true, sharePointHost: 'NOT EXECUTED', observations, catalogContrasts, thumbInteractionCaptures, consoleMessages, errors };
   fs.writeFileSync(path.join(output, `${label}.json`), JSON.stringify(report, null, 2));
   console.log(JSON.stringify({ version, checks: observations.length, failures: errors.length, errors }, null, 2));
   await browser.close();

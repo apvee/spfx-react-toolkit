@@ -11755,7 +11755,7 @@
         {
           "kind": "CallExpression",
           "name": "fluent",
-          "expression": "createRecipe('scrollbar.fluent', [\n  /*#__PURE__*/ createDeclaration('scrollbarWidth', 'thin', {\n    property: 'scrollbarWidth', fallback: 'auto', scrollbarSize: '6px'\n  }),\n  /*#__PURE__*/ createDeclaration('scrollbarColor', `${thumbColor} transparent`, {\n    property: 'scrollbarColor', fallback: 'auto', forcedColors: 'auto', scrollbarThumb: thumbColor\n  })\n])"
+          "expression": "createRecipe('scrollbar.fluent', [\n  /*#__PURE__*/ createDeclaration('scrollbarWidth', 'thin', {\n    property: 'scrollbarWidth', fallback: 'auto', scrollbarSize: '6px'\n  }),\n  /*#__PURE__*/ createDeclaration('scrollbarColor', `${thumbColor} transparent`, {\n    property: 'scrollbarColor', fallback: 'auto', forcedColors: 'auto', scrollbarThumb: thumbColor,\n    scrollbarThumbHover: tokens.colorNeutralStrokeAccessibleHover,\n    scrollbarThumbPressed: tokens.colorNeutralStrokeAccessiblePressed\n  })\n])"
         }
       ],
       "effects": {
