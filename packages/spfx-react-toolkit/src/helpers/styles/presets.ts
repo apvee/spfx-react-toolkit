@@ -1,3 +1,4 @@
+import { tokens } from '@fluentui/react-theme';
 import { SxBaseDescriptor } from './types';
 import { createDeclaration, createRecipe } from './descriptor.internal';
 
@@ -7,8 +8,8 @@ import { createDeclaration, createRecipe } from './descriptor.internal';
  * @example sx(presets.canvas, typography.body1)
  */
 export const canvas: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.canvas', [
-  /*#__PURE__*/ createDeclaration('backgroundColor', 'var(--colorNeutralBackground1)', { property: 'backgroundColor', fallback: 'transparent' }),
-  /*#__PURE__*/ createDeclaration('color', 'var(--colorNeutralForeground1)', { property: 'color', fallback: 'inherit' }),
+  /*#__PURE__*/ createDeclaration('backgroundColor', tokens.colorNeutralBackground1, { property: 'backgroundColor', fallback: 'transparent' }),
+  /*#__PURE__*/ createDeclaration('color', tokens.colorNeutralForeground1, { property: 'color', fallback: 'inherit' }),
 ]);
 
 /** Applies colorNeutralBackground2 background and colorNeutralForeground1 foreground.
@@ -17,8 +18,8 @@ export const canvas: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.canv
  * @example sx(presets.alternative, typography.body1)
  */
 export const alternative: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.alternative', [
-  /*#__PURE__*/ createDeclaration('backgroundColor', 'var(--colorNeutralBackground2)', { property: 'backgroundColor', fallback: 'transparent' }),
-  /*#__PURE__*/ createDeclaration('color', 'var(--colorNeutralForeground1)', { property: 'color', fallback: 'inherit' }),
+  /*#__PURE__*/ createDeclaration('backgroundColor', tokens.colorNeutralBackground2, { property: 'backgroundColor', fallback: 'transparent' }),
+  /*#__PURE__*/ createDeclaration('color', tokens.colorNeutralForeground1, { property: 'color', fallback: 'inherit' }),
 ]);
 
 /** Applies colorSubtleBackground background and colorNeutralForeground2 foreground.
@@ -27,8 +28,8 @@ export const alternative: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets
  * @example sx(presets.subtle, typography.body1)
  */
 export const subtle: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.subtle', [
-  /*#__PURE__*/ createDeclaration('backgroundColor', 'var(--colorSubtleBackground)', { property: 'backgroundColor', fallback: 'transparent' }),
-  /*#__PURE__*/ createDeclaration('color', 'var(--colorNeutralForeground2)', { property: 'color', fallback: 'inherit' }),
+  /*#__PURE__*/ createDeclaration('backgroundColor', tokens.colorSubtleBackground, { property: 'backgroundColor', fallback: 'transparent' }),
+  /*#__PURE__*/ createDeclaration('color', tokens.colorNeutralForeground2, { property: 'color', fallback: 'inherit' }),
 ]);
 
 /** Applies colorTransparentBackground background; leaves color inherited.
@@ -37,7 +38,7 @@ export const subtle: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.subt
  * @example sx(presets.transparent, typography.body1)
  */
 export const transparent: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.transparent', [
-  /*#__PURE__*/ createDeclaration('backgroundColor', 'var(--colorTransparentBackground)', { property: 'backgroundColor', fallback: 'transparent' }),
+  /*#__PURE__*/ createDeclaration('backgroundColor', tokens.colorTransparentBackground, { property: 'backgroundColor', fallback: 'transparent' }),
 ]);
 
 /** Applies colorBrandBackground background and colorNeutralForegroundOnBrand foreground.
@@ -46,8 +47,8 @@ export const transparent: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets
  * @example sx(presets.brand, typography.body1)
  */
 export const brand: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.brand', [
-  /*#__PURE__*/ createDeclaration('backgroundColor', 'var(--colorBrandBackground)', { property: 'backgroundColor', fallback: 'transparent' }),
-  /*#__PURE__*/ createDeclaration('color', 'var(--colorNeutralForegroundOnBrand)', { property: 'color', fallback: 'inherit' }),
+  /*#__PURE__*/ createDeclaration('backgroundColor', tokens.colorBrandBackground, { property: 'backgroundColor', fallback: 'transparent' }),
+  /*#__PURE__*/ createDeclaration('color', tokens.colorNeutralForegroundOnBrand, { property: 'color', fallback: 'inherit' }),
 ]);
 
 /** Applies colorBrandBackground2 background and colorBrandForeground2 foreground.
@@ -56,8 +57,8 @@ export const brand: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.brand
  * @example sx(presets.brandTint, typography.body1)
  */
 export const brandTint: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.brandTint', [
-  /*#__PURE__*/ createDeclaration('backgroundColor', 'var(--colorBrandBackground2)', { property: 'backgroundColor', fallback: 'transparent' }),
-  /*#__PURE__*/ createDeclaration('color', 'var(--colorBrandForeground2)', { property: 'color', fallback: 'inherit' }),
+  /*#__PURE__*/ createDeclaration('backgroundColor', tokens.colorBrandBackground2, { property: 'backgroundColor', fallback: 'transparent' }),
+  /*#__PURE__*/ createDeclaration('color', tokens.colorBrandForeground2, { property: 'color', fallback: 'inherit' }),
 ]);
 
 /** Applies colorNeutralBackgroundInverted background and colorNeutralForegroundInverted foreground.
@@ -68,8 +69,8 @@ export const brandTint: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.b
  * @example sx(presets.inverted, typography.body1)
  */
 export const inverted: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.inverted', [
-  /*#__PURE__*/ createDeclaration('backgroundColor', 'var(--colorNeutralBackgroundInverted)', { property: 'backgroundColor', fallback: 'transparent' }),
-  /*#__PURE__*/ createDeclaration('color', 'var(--colorNeutralForegroundInverted)', { property: 'color', fallback: 'inherit' }),
+  /*#__PURE__*/ createDeclaration('backgroundColor', tokens.colorNeutralBackgroundInverted, { property: 'backgroundColor', fallback: 'transparent' }),
+  /*#__PURE__*/ createDeclaration('color', tokens.colorNeutralForegroundInverted, { property: 'color', fallback: 'inherit' }),
 ]);
 
 /** Applies colorStatusSuccessBackground1 background and colorStatusSuccessForeground1 foreground.
@@ -78,8 +79,8 @@ export const inverted: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.in
  * @example sx(presets.success, typography.body1)
  */
 export const success: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.success', [
-  /*#__PURE__*/ createDeclaration('backgroundColor', 'var(--colorStatusSuccessBackground1)', { property: 'backgroundColor', fallback: 'transparent' }),
-  /*#__PURE__*/ createDeclaration('color', 'var(--colorStatusSuccessForeground1)', { property: 'color', fallback: 'inherit' }),
+  /*#__PURE__*/ createDeclaration('backgroundColor', tokens.colorStatusSuccessBackground1, { property: 'backgroundColor', fallback: 'transparent' }),
+  /*#__PURE__*/ createDeclaration('color', tokens.colorStatusSuccessForeground1, { property: 'color', fallback: 'inherit' }),
 ]);
 
 /** Applies colorStatusWarningBackground1 background and colorStatusWarningForeground1 foreground.
@@ -88,8 +89,8 @@ export const success: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.suc
  * @example sx(presets.warning, typography.body1)
  */
 export const warning: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.warning', [
-  /*#__PURE__*/ createDeclaration('backgroundColor', 'var(--colorStatusWarningBackground1)', { property: 'backgroundColor', fallback: 'transparent' }),
-  /*#__PURE__*/ createDeclaration('color', 'var(--colorStatusWarningForeground1)', { property: 'color', fallback: 'inherit' }),
+  /*#__PURE__*/ createDeclaration('backgroundColor', tokens.colorStatusWarningBackground1, { property: 'backgroundColor', fallback: 'transparent' }),
+  /*#__PURE__*/ createDeclaration('color', tokens.colorStatusWarningForeground1, { property: 'color', fallback: 'inherit' }),
 ]);
 
 /** Applies colorStatusDangerBackground1 background and colorStatusDangerForeground1 foreground.
@@ -98,8 +99,8 @@ export const warning: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.war
  * @example sx(presets.danger, typography.body1)
  */
 export const danger: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.danger', [
-  /*#__PURE__*/ createDeclaration('backgroundColor', 'var(--colorStatusDangerBackground1)', { property: 'backgroundColor', fallback: 'transparent' }),
-  /*#__PURE__*/ createDeclaration('color', 'var(--colorStatusDangerForeground1)', { property: 'color', fallback: 'inherit' }),
+  /*#__PURE__*/ createDeclaration('backgroundColor', tokens.colorStatusDangerBackground1, { property: 'backgroundColor', fallback: 'transparent' }),
+  /*#__PURE__*/ createDeclaration('color', tokens.colorStatusDangerForeground1, { property: 'color', fallback: 'inherit' }),
 ]);
 
 /** Applies colorNeutralBackgroundDisabled background and colorNeutralForegroundDisabled foreground.
@@ -110,6 +111,6 @@ export const danger: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.dang
  * @example sx(presets.disabled, typography.body1)
  */
 export const disabled: SxBaseDescriptor = /*#__PURE__*/ createRecipe('presets.disabled', [
-  /*#__PURE__*/ createDeclaration('backgroundColor', 'var(--colorNeutralBackgroundDisabled)', { property: 'backgroundColor', fallback: 'transparent' }),
-  /*#__PURE__*/ createDeclaration('color', 'var(--colorNeutralForegroundDisabled)', { property: 'color', fallback: 'inherit' }),
+  /*#__PURE__*/ createDeclaration('backgroundColor', tokens.colorNeutralBackgroundDisabled, { property: 'backgroundColor', fallback: 'transparent' }),
+  /*#__PURE__*/ createDeclaration('color', tokens.colorNeutralForegroundDisabled, { property: 'color', fallback: 'inherit' }),
 ]);

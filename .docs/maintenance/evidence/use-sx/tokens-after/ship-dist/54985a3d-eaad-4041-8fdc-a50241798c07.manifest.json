@@ -1,0 +1,89 @@
+{
+  "id": "54985a3d-eaad-4041-8fdc-a50241798c07",
+  "alias": "SpFxReactToolkitTestWebPart",
+  "componentType": "WebPart",
+  "version": "2.1.0",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "supportedHosts": [
+    "SharePointWebPart",
+    "TeamsPersonalApp",
+    "TeamsTab",
+    "SharePointFullPage"
+  ],
+  "supportsThemeVariants": true,
+  "preconfiguredEntries": [
+    {
+      "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
+      "group": {
+        "default": "Advanced"
+      },
+      "title": {
+        "default": "SPFxReactToolkitTest"
+      },
+      "description": {
+        "default": "SPFxReactToolkitTest description"
+      },
+      "officeFabricIconFontName": "Page",
+      "properties": {
+        "description": "SPFxReactToolkitTest"
+      }
+    }
+  ],
+  "loaderConfig": {
+    "internalModuleBaseUrls": [
+      "https://localhost:4321/dist/"
+    ],
+    "entryModuleId": "sp-fx-react-toolkit-test-web-part",
+    "scriptResources": {
+      "sp-fx-react-toolkit-test-web-part": {
+        "type": "path",
+        "path": "sp-fx-react-toolkit-test-web-part_6b32bfb8e2de760a883c.js"
+      },
+      "react": {
+        "type": "component",
+        "id": "0d910c1c-13b9-4e1c-9aa4-b008c5e42d7d",
+        "version": "17.0.1"
+      },
+      "react-dom": {
+        "type": "component",
+        "id": "aa0a46ec-1505-43cd-a44a-93f3a5aa460a",
+        "version": "17.0.1"
+      },
+      "@microsoft/sp-core-library": {
+        "type": "component",
+        "id": "7263c7d0-1d6a-45ec-8d85-d4d1d234171b",
+        "version": "1.21.1"
+      },
+      "@microsoft/sp-property-pane": {
+        "type": "component",
+        "id": "f9e737b7-f0df-4597-ba8c-3060f82380db",
+        "version": "1.21.1"
+      },
+      "@microsoft/sp-webpart-base": {
+        "type": "component",
+        "id": "974a7777-0990-4136-8fa6-95d80114c2e0",
+        "version": "1.21.1"
+      },
+      "SpFxReactToolkitTestWebPartStrings": {
+        "type": "path",
+        "path": "SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js"
+      },
+      "@microsoft/sp-component-base": {
+        "type": "component",
+        "id": "467dc675-7cc5-4709-8aac-78e3b71bd2f6",
+        "version": "1.21.1"
+      },
+      "@microsoft/sp-http": {
+        "type": "component",
+        "id": "c07208f0-ea3b-4c1a-9965-ac1b825211a6",
+        "version": "1.21.1"
+      },
+      "@microsoft/sp-page-context": {
+        "type": "component",
+        "id": "1c4541f7-5c31-41aa-9fa8-fbc9dc14c0a8",
+        "version": "1.21.1"
+      }
+    }
+  }
+}

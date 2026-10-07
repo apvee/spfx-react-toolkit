@@ -46,6 +46,20 @@ const className = sx(presets.canvas, typography.body1, padding.medium);
 
 All catalog pixel factories accept finite nonnegative numbers, including zero, and preserve explicit `px` units. Negative values, `NaN`, and infinity throw `RangeError`; values are never silently clamped.
 
+### Fluent token references
+
+The library source uses `tokens` from `@fluentui/react-theme` for token-backed declarations. These references contain CSS variable expressions, not resolved theme colors:
+
+```ts
+import { tokens } from '@fluentui/react-theme';
+
+// Library source value used by foreground.subtle:
+const subtleColor = tokens.colorNeutralForeground2;
+// Value emitted for the color declaration: var(--colorNeutralForeground2)
+```
+
+Consumers continue to use `sx(foreground.subtle)`. The browser resolves the emitted CSS variable against the element's scoped Fluent theme, so theme changes preserve the same descriptor API and theme scoping. The CSS variable mappings below describe emitted values.
+
 `body1` uses the installed `@fluentui/react-theme` recipe. Its values remain CSS variable references: `fontFamilyBase`, `fontSizeBase300`, `fontWeightRegular`, and `lineHeightBase300`. It does not set color. Theme variables must be supplied in the element's scope, usually by a Fluent provider; descriptor construction itself requires no provider.
 
 ## Types and scopes

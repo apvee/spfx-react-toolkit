@@ -1,0 +1,902 @@
+{
+  "tokens-before": [
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase300",
+      "text": "o.L.fontSizeBase300"
+    },
+    {
+      "key": "fontWeightRegular",
+      "text": "o.L.fontWeightRegular"
+    },
+    {
+      "key": "lineHeightBase300",
+      "text": "o.L.lineHeightBase300"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase300",
+      "text": "o.L.fontSizeBase300"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightBase300",
+      "text": "o.L.lineHeightBase300"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase300",
+      "text": "o.L.fontSizeBase300"
+    },
+    {
+      "key": "fontWeightBold",
+      "text": "o.L.fontWeightBold"
+    },
+    {
+      "key": "lineHeightBase300",
+      "text": "o.L.lineHeightBase300"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase400",
+      "text": "o.L.fontSizeBase400"
+    },
+    {
+      "key": "fontWeightRegular",
+      "text": "o.L.fontWeightRegular"
+    },
+    {
+      "key": "lineHeightBase400",
+      "text": "o.L.lineHeightBase400"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase200",
+      "text": "o.L.fontSizeBase200"
+    },
+    {
+      "key": "fontWeightRegular",
+      "text": "o.L.fontWeightRegular"
+    },
+    {
+      "key": "lineHeightBase200",
+      "text": "o.L.lineHeightBase200"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase200",
+      "text": "o.L.fontSizeBase200"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightBase200",
+      "text": "o.L.lineHeightBase200"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase200",
+      "text": "o.L.fontSizeBase200"
+    },
+    {
+      "key": "fontWeightBold",
+      "text": "o.L.fontWeightBold"
+    },
+    {
+      "key": "lineHeightBase200",
+      "text": "o.L.lineHeightBase200"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase100",
+      "text": "o.L.fontSizeBase100"
+    },
+    {
+      "key": "fontWeightRegular",
+      "text": "o.L.fontWeightRegular"
+    },
+    {
+      "key": "lineHeightBase100",
+      "text": "o.L.lineHeightBase100"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase100",
+      "text": "o.L.fontSizeBase100"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightBase100",
+      "text": "o.L.lineHeightBase100"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase500",
+      "text": "o.L.fontSizeBase500"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightBase500",
+      "text": "o.L.lineHeightBase500"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase400",
+      "text": "o.L.fontSizeBase400"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightBase400",
+      "text": "o.L.lineHeightBase400"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase400",
+      "text": "o.L.fontSizeBase400"
+    },
+    {
+      "key": "fontWeightBold",
+      "text": "o.L.fontWeightBold"
+    },
+    {
+      "key": "lineHeightBase400",
+      "text": "o.L.lineHeightBase400"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeHero800",
+      "text": "o.L.fontSizeHero800"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightHero800",
+      "text": "o.L.lineHeightHero800"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeHero700",
+      "text": "o.L.fontSizeHero700"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightHero700",
+      "text": "o.L.lineHeightHero700"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase600",
+      "text": "o.L.fontSizeBase600"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightBase600",
+      "text": "o.L.lineHeightBase600"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeHero900",
+      "text": "o.L.fontSizeHero900"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightHero900",
+      "text": "o.L.lineHeightHero900"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeHero1000",
+      "text": "o.L.fontSizeHero1000"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightHero1000",
+      "text": "o.L.lineHeightHero1000"
+    }
+  ],
+  "tokens-after": [
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase300",
+      "text": "o.L.fontSizeBase300"
+    },
+    {
+      "key": "fontWeightRegular",
+      "text": "o.L.fontWeightRegular"
+    },
+    {
+      "key": "lineHeightBase300",
+      "text": "o.L.lineHeightBase300"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase300",
+      "text": "o.L.fontSizeBase300"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightBase300",
+      "text": "o.L.lineHeightBase300"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase300",
+      "text": "o.L.fontSizeBase300"
+    },
+    {
+      "key": "fontWeightBold",
+      "text": "o.L.fontWeightBold"
+    },
+    {
+      "key": "lineHeightBase300",
+      "text": "o.L.lineHeightBase300"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase400",
+      "text": "o.L.fontSizeBase400"
+    },
+    {
+      "key": "fontWeightRegular",
+      "text": "o.L.fontWeightRegular"
+    },
+    {
+      "key": "lineHeightBase400",
+      "text": "o.L.lineHeightBase400"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase200",
+      "text": "o.L.fontSizeBase200"
+    },
+    {
+      "key": "fontWeightRegular",
+      "text": "o.L.fontWeightRegular"
+    },
+    {
+      "key": "lineHeightBase200",
+      "text": "o.L.lineHeightBase200"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase200",
+      "text": "o.L.fontSizeBase200"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightBase200",
+      "text": "o.L.lineHeightBase200"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase200",
+      "text": "o.L.fontSizeBase200"
+    },
+    {
+      "key": "fontWeightBold",
+      "text": "o.L.fontWeightBold"
+    },
+    {
+      "key": "lineHeightBase200",
+      "text": "o.L.lineHeightBase200"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase100",
+      "text": "o.L.fontSizeBase100"
+    },
+    {
+      "key": "fontWeightRegular",
+      "text": "o.L.fontWeightRegular"
+    },
+    {
+      "key": "lineHeightBase100",
+      "text": "o.L.lineHeightBase100"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase100",
+      "text": "o.L.fontSizeBase100"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightBase100",
+      "text": "o.L.lineHeightBase100"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase500",
+      "text": "o.L.fontSizeBase500"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightBase500",
+      "text": "o.L.lineHeightBase500"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase400",
+      "text": "o.L.fontSizeBase400"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightBase400",
+      "text": "o.L.lineHeightBase400"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase400",
+      "text": "o.L.fontSizeBase400"
+    },
+    {
+      "key": "fontWeightBold",
+      "text": "o.L.fontWeightBold"
+    },
+    {
+      "key": "lineHeightBase400",
+      "text": "o.L.lineHeightBase400"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeHero800",
+      "text": "o.L.fontSizeHero800"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightHero800",
+      "text": "o.L.lineHeightHero800"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeHero700",
+      "text": "o.L.fontSizeHero700"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightHero700",
+      "text": "o.L.lineHeightHero700"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeBase600",
+      "text": "o.L.fontSizeBase600"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightBase600",
+      "text": "o.L.lineHeightBase600"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeHero900",
+      "text": "o.L.fontSizeHero900"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightHero900",
+      "text": "o.L.lineHeightHero900"
+    },
+    {
+      "key": "fontFamilyBase",
+      "text": "o.L.fontFamilyBase"
+    },
+    {
+      "key": "fontSizeHero1000",
+      "text": "o.L.fontSizeHero1000"
+    },
+    {
+      "key": "fontWeightSemibold",
+      "text": "o.L.fontWeightSemibold"
+    },
+    {
+      "key": "lineHeightHero1000",
+      "text": "o.L.lineHeightHero1000"
+    },
+    {
+      "key": "colorNeutralBackground1",
+      "text": "o.L.colorNeutralBackground1"
+    },
+    {
+      "key": "colorNeutralBackground2",
+      "text": "o.L.colorNeutralBackground2"
+    },
+    {
+      "key": "colorSubtleBackground",
+      "text": "o.L.colorSubtleBackground"
+    },
+    {
+      "key": "colorTransparentBackground",
+      "text": "o.L.colorTransparentBackground"
+    },
+    {
+      "key": "colorBrandBackground",
+      "text": "o.L.colorBrandBackground"
+    },
+    {
+      "key": "colorBrandBackground2",
+      "text": "o.L.colorBrandBackground2"
+    },
+    {
+      "key": "colorNeutralBackgroundInverted",
+      "text": "o.L.colorNeutralBackgroundInverted"
+    },
+    {
+      "key": "colorNeutralBackgroundDisabled",
+      "text": "o.L.colorNeutralBackgroundDisabled"
+    },
+    {
+      "key": "colorNeutralStroke1",
+      "text": "o.L.colorNeutralStroke1"
+    },
+    {
+      "key": "colorNeutralStroke1",
+      "text": "o.L.colorNeutralStroke1"
+    },
+    {
+      "key": "colorNeutralStroke1",
+      "text": "o.L.colorNeutralStroke1"
+    },
+    {
+      "key": "colorNeutralStroke1",
+      "text": "o.L.colorNeutralStroke1"
+    },
+    {
+      "key": "colorNeutralStroke2",
+      "text": "o.L.colorNeutralStroke2"
+    },
+    {
+      "key": "colorNeutralStroke2",
+      "text": "o.L.colorNeutralStroke2"
+    },
+    {
+      "key": "colorNeutralStroke2",
+      "text": "o.L.colorNeutralStroke2"
+    },
+    {
+      "key": "colorNeutralStroke2",
+      "text": "o.L.colorNeutralStroke2"
+    },
+    {
+      "key": "colorBrandStroke1",
+      "text": "o.L.colorBrandStroke1"
+    },
+    {
+      "key": "colorBrandStroke1",
+      "text": "o.L.colorBrandStroke1"
+    },
+    {
+      "key": "colorBrandStroke1",
+      "text": "o.L.colorBrandStroke1"
+    },
+    {
+      "key": "colorBrandStroke1",
+      "text": "o.L.colorBrandStroke1"
+    },
+    {
+      "key": "colorNeutralStrokeDisabled",
+      "text": "o.L.colorNeutralStrokeDisabled"
+    },
+    {
+      "key": "colorNeutralStrokeDisabled",
+      "text": "o.L.colorNeutralStrokeDisabled"
+    },
+    {
+      "key": "colorNeutralStrokeDisabled",
+      "text": "o.L.colorNeutralStrokeDisabled"
+    },
+    {
+      "key": "colorNeutralStrokeDisabled",
+      "text": "o.L.colorNeutralStrokeDisabled"
+    },
+    {
+      "key": "borderRadiusNone",
+      "text": "o.L.borderRadiusNone"
+    },
+    {
+      "key": "borderRadiusNone",
+      "text": "o.L.borderRadiusNone"
+    },
+    {
+      "key": "borderRadiusNone",
+      "text": "o.L.borderRadiusNone"
+    },
+    {
+      "key": "borderRadiusNone",
+      "text": "o.L.borderRadiusNone"
+    },
+    {
+      "key": "borderRadiusSmall",
+      "text": "o.L.borderRadiusSmall"
+    },
+    {
+      "key": "borderRadiusSmall",
+      "text": "o.L.borderRadiusSmall"
+    },
+    {
+      "key": "borderRadiusSmall",
+      "text": "o.L.borderRadiusSmall"
+    },
+    {
+      "key": "borderRadiusSmall",
+      "text": "o.L.borderRadiusSmall"
+    },
+    {
+      "key": "borderRadiusMedium",
+      "text": "o.L.borderRadiusMedium"
+    },
+    {
+      "key": "borderRadiusMedium",
+      "text": "o.L.borderRadiusMedium"
+    },
+    {
+      "key": "borderRadiusMedium",
+      "text": "o.L.borderRadiusMedium"
+    },
+    {
+      "key": "borderRadiusMedium",
+      "text": "o.L.borderRadiusMedium"
+    },
+    {
+      "key": "borderRadiusLarge",
+      "text": "o.L.borderRadiusLarge"
+    },
+    {
+      "key": "borderRadiusLarge",
+      "text": "o.L.borderRadiusLarge"
+    },
+    {
+      "key": "borderRadiusLarge",
+      "text": "o.L.borderRadiusLarge"
+    },
+    {
+      "key": "borderRadiusLarge",
+      "text": "o.L.borderRadiusLarge"
+    },
+    {
+      "key": "borderRadiusXLarge",
+      "text": "o.L.borderRadiusXLarge"
+    },
+    {
+      "key": "borderRadiusXLarge",
+      "text": "o.L.borderRadiusXLarge"
+    },
+    {
+      "key": "borderRadiusXLarge",
+      "text": "o.L.borderRadiusXLarge"
+    },
+    {
+      "key": "borderRadiusXLarge",
+      "text": "o.L.borderRadiusXLarge"
+    },
+    {
+      "key": "borderRadiusCircular",
+      "text": "o.L.borderRadiusCircular"
+    },
+    {
+      "key": "borderRadiusCircular",
+      "text": "o.L.borderRadiusCircular"
+    },
+    {
+      "key": "borderRadiusCircular",
+      "text": "o.L.borderRadiusCircular"
+    },
+    {
+      "key": "borderRadiusCircular",
+      "text": "o.L.borderRadiusCircular"
+    },
+    {
+      "key": "strokeWidthThin",
+      "text": "o.L.strokeWidthThin"
+    },
+    {
+      "key": "strokeWidthThin",
+      "text": "o.L.strokeWidthThin"
+    },
+    {
+      "key": "strokeWidthThin",
+      "text": "o.L.strokeWidthThin"
+    },
+    {
+      "key": "strokeWidthThin",
+      "text": "o.L.strokeWidthThin"
+    },
+    {
+      "key": "strokeWidthThick",
+      "text": "o.L.strokeWidthThick"
+    },
+    {
+      "key": "strokeWidthThick",
+      "text": "o.L.strokeWidthThick"
+    },
+    {
+      "key": "strokeWidthThick",
+      "text": "o.L.strokeWidthThick"
+    },
+    {
+      "key": "strokeWidthThick",
+      "text": "o.L.strokeWidthThick"
+    },
+    {
+      "key": "shadow4",
+      "text": "o.L.shadow4"
+    },
+    {
+      "key": "shadow8",
+      "text": "o.L.shadow8"
+    },
+    {
+      "key": "colorNeutralForeground1",
+      "text": "o.L.colorNeutralForeground1"
+    },
+    {
+      "key": "colorNeutralForeground2",
+      "text": "o.L.colorNeutralForeground2"
+    },
+    {
+      "key": "colorNeutralForeground3",
+      "text": "o.L.colorNeutralForeground3"
+    },
+    {
+      "key": "colorNeutralForegroundDisabled",
+      "text": "o.L.colorNeutralForegroundDisabled"
+    },
+    {
+      "key": "colorBrandForeground1",
+      "text": "o.L.colorBrandForeground1"
+    },
+    {
+      "key": "colorNeutralForegroundOnBrand",
+      "text": "o.L.colorNeutralForegroundOnBrand"
+    },
+    {
+      "key": "colorNeutralForegroundInverted",
+      "text": "o.L.colorNeutralForegroundInverted"
+    },
+    {
+      "key": "colorBrandForegroundLink",
+      "text": "o.L.colorBrandForegroundLink"
+    },
+    {
+      "key": "colorNeutralBackground1",
+      "text": "o.L.colorNeutralBackground1"
+    },
+    {
+      "key": "colorNeutralForeground1",
+      "text": "o.L.colorNeutralForeground1"
+    },
+    {
+      "key": "colorNeutralBackground2",
+      "text": "o.L.colorNeutralBackground2"
+    },
+    {
+      "key": "colorNeutralForeground1",
+      "text": "o.L.colorNeutralForeground1"
+    },
+    {
+      "key": "colorSubtleBackground",
+      "text": "o.L.colorSubtleBackground"
+    },
+    {
+      "key": "colorNeutralForeground2",
+      "text": "o.L.colorNeutralForeground2"
+    },
+    {
+      "key": "colorTransparentBackground",
+      "text": "o.L.colorTransparentBackground"
+    },
+    {
+      "key": "colorBrandBackground",
+      "text": "o.L.colorBrandBackground"
+    },
+    {
+      "key": "colorNeutralForegroundOnBrand",
+      "text": "o.L.colorNeutralForegroundOnBrand"
+    },
+    {
+      "key": "colorBrandBackground2",
+      "text": "o.L.colorBrandBackground2"
+    },
+    {
+      "key": "colorBrandForeground2",
+      "text": "o.L.colorBrandForeground2"
+    },
+    {
+      "key": "colorNeutralBackgroundInverted",
+      "text": "o.L.colorNeutralBackgroundInverted"
+    },
+    {
+      "key": "colorNeutralForegroundInverted",
+      "text": "o.L.colorNeutralForegroundInverted"
+    },
+    {
+      "key": "colorStatusSuccessBackground1",
+      "text": "o.L.colorStatusSuccessBackground1"
+    },
+    {
+      "key": "colorStatusSuccessForeground1",
+      "text": "o.L.colorStatusSuccessForeground1"
+    },
+    {
+      "key": "colorStatusWarningBackground1",
+      "text": "o.L.colorStatusWarningBackground1"
+    },
+    {
+      "key": "colorStatusWarningForeground1",
+      "text": "o.L.colorStatusWarningForeground1"
+    },
+    {
+      "key": "colorStatusDangerBackground1",
+      "text": "o.L.colorStatusDangerBackground1"
+    },
+    {
+      "key": "colorStatusDangerForeground1",
+      "text": "o.L.colorStatusDangerForeground1"
+    },
+    {
+      "key": "colorNeutralBackgroundDisabled",
+      "text": "o.L.colorNeutralBackgroundDisabled"
+    },
+    {
+      "key": "colorNeutralForegroundDisabled",
+      "text": "o.L.colorNeutralForegroundDisabled"
+    },
+    {
+      "key": "colorNeutralStrokeAccessible",
+      "text": "o.L.colorNeutralStrokeAccessible"
+    }
+  ]
+}

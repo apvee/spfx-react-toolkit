@@ -1,6 +1,85 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const ts = require('typescript');
 const { loadSxModules } = require('./fixtures/sx-harness.cjs');
+const stylesDirectory = path.resolve(__dirname, '../packages/spfx-react-toolkit/src/helpers/styles');
+const directTokenCounts = {
+  foreground: 8, background: 8, presets: 21, 'border-color': 16,
+  'border-width': 8, 'border-radius': 24, 'box-shadow': 2, scrollbar: 1
+};
+function inspectThemeReferences(source, filename) {
+  const ast = ts.createSourceFile(filename, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+  const theme = require('@fluentui/react-theme');
+  const violations = [], directTokens = [];
+  const imported = new Set();
+  for (const statement of ast.statements) {
+    if (ts.isImportDeclaration(statement) && statement.moduleSpecifier.text === '@fluentui/react-theme') {
+      const bindings = statement.importClause?.namedBindings;
+      if (bindings && ts.isNamedImports(bindings)) {
+        for (const element of bindings.elements) {
+          if (!element.propertyName) imported.add(element.name.text);
+        }
+      }
+    }
+  }
+  function visit(node) {
+    // AST literal nodes exclude comments/JSDoc and the independent test oracles.
+    if (ts.isStringLiteralLike(node) || ts.isTemplateHead(node) || ts.isTemplateMiddle(node) || ts.isTemplateTail(node)) {
+      for (const match of node.text.matchAll(/var\(\s*--([\w-]+)/g)) {
+        if (!match[1].startsWith('apvee-sx-')) violations.push(`handwritten var(--${match[1]})`);
+      }
+    }
+    if (ts.isPropertyAccessExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === 'tokens') {
+      const key = node.name.text;
+      directTokens.push(key);
+      if (!imported.has('tokens') || !Object.hasOwn(theme.tokens, key)) violations.push(`unofficial tokens.${key}`);
+    }
+    if (ts.isPropertyAccessExpression(node) && ts.isPropertyAccessExpression(node.expression)
+      && ts.isIdentifier(node.expression.expression) && node.expression.expression.text === 'typographyStyles') {
+      const recipe = node.expression.name.text, property = node.name.text;
+      if (!imported.has('typographyStyles') || !Object.hasOwn(theme.typographyStyles[recipe] || {}, property)) {
+        violations.push(`unofficial typographyStyles.${recipe}.${property}`);
+      }
+    }
+    // Existing typed tokens[`spacingVertical${suffix}`] accesses remain valid;
+    // their union keys are checked by TypeScript and their values by layout tests.
+    ts.forEachChild(node, visit);
+  }
+  visit(ast);
+  return { violations, directTokens };
+}
+test('catalog theme references use official Fluent accesses instead of handwritten variable literals', () => {
+  const violations = [], counts = {};
+  for (const filename of fs.readdirSync(stylesDirectory).filter(name => name.endsWith('.ts'))) {
+    const result = inspectThemeReferences(fs.readFileSync(path.join(stylesDirectory, filename), 'utf8'), filename);
+    violations.push(...result.violations.map(message => `${filename}: ${message}`));
+    const module = filename.slice(0, -3);
+    if (Object.hasOwn(directTokenCounts, module)) counts[module] = result.directTokens.length;
+  }
+  assert.deepEqual(violations, [], `${violations.length} invalid catalog theme references`);
+  assert.deepEqual(counts, directTokenCounts);
+});
+test('theme reference policy catches strings and template fragments while allowing private variables and official recipes', () => {
+  const source = [
+    "import { tokens, typographyStyles } from '@fluentui/react-theme';",
+    '/** var(--colorNeutralForeground1) */',
+    "const privateValue = 'var(--apvee-sx-color, inherit)';",
+    'const official = tokens.colorNeutralForeground1;',
+    'const typography = typographyStyles.body1.fontFamily;',
+    'const spacing = tokens[`spacingVertical${suffix}`];',
+    "const literal = 'var(--colorNeutralForeground1)';",
+    'const template = `var(--colorNeutralBackground1) ${tokens.colorNeutralForeground1} var(--shadow4)`;',
+    'const invalid = tokens.missingToken;'
+  ].join('\n');
+  assert.deepEqual(inspectThemeReferences(source, 'policy.ts').violations, [
+    'handwritten var(--colorNeutralForeground1)', 'handwritten var(--colorNeutralBackground1)',
+    'handwritten var(--shadow4)', 'unofficial tokens.missingToken'
+  ]);
+  assert.deepEqual(inspectThemeReferences('const value = tokens.colorNeutralForeground1;', 'unimported.ts').violations,
+    ['unofficial tokens.colorNeutralForeground1']);
+});
 function declarations(f, inputs) {
   return Object.fromEntries(f.load('normalize.internal').normalizeSxInputs(inputs)[0].declarations.map(({ property, value }) => [property, value]));
 }

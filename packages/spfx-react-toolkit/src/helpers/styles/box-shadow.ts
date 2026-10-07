@@ -1,3 +1,4 @@
+import { tokens } from '@fluentui/react-theme';
 import { SxBaseDescriptor } from './types';
 import { createDeclaration } from './descriptor.internal';
 
@@ -11,10 +12,10 @@ export const none: SxBaseDescriptor = /*#__PURE__*/ createDeclaration('boxShadow
  * Token shadows require scoped Fluent theme variables.
  * @example sx(boxShadow.small)
  */
-export const small: SxBaseDescriptor = /*#__PURE__*/ createDeclaration('boxShadow', 'var(--shadow4)', { property: 'boxShadow', fallback: 'none' });
+export const small: SxBaseDescriptor = /*#__PURE__*/ createDeclaration('boxShadow', tokens.shadow4, { property: 'boxShadow', fallback: 'none' });
 
 /** Applies box-shadow var(--shadow8) without changing geometry.
  * Token shadows require scoped Fluent theme variables.
  * @example sx(boxShadow.medium)
  */
-export const medium: SxBaseDescriptor = /*#__PURE__*/ createDeclaration('boxShadow', 'var(--shadow8)', { property: 'boxShadow', fallback: 'none' });
+export const medium: SxBaseDescriptor = /*#__PURE__*/ createDeclaration('boxShadow', tokens.shadow8, { property: 'boxShadow', fallback: 'none' });

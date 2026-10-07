@@ -1,3 +1,4 @@
+import { tokens } from '@fluentui/react-theme';
 import { SxBaseDescriptor } from './types';
 import { createDeclaration, createRecipe } from './descriptor.internal';
 
@@ -10,7 +11,7 @@ import { createDeclaration, createRecipe } from './descriptor.internal';
  */
 export const fluent: SxBaseDescriptor = /*#__PURE__*/ createRecipe('scrollbar.fluent', [
   /*#__PURE__*/ createDeclaration('scrollbarWidth', 'thin', { property: 'scrollbarWidth', fallback: 'auto' }),
-  /*#__PURE__*/ createDeclaration('scrollbarColor', 'var(--colorNeutralStrokeAccessible) transparent', {
+  /*#__PURE__*/ createDeclaration('scrollbarColor', `${tokens.colorNeutralStrokeAccessible} transparent`, {
     property: 'scrollbarColor', fallback: 'auto', forcedColors: 'auto'
   })
 ]);
