@@ -1,0 +1,114 @@
+{
+  "errors": [],
+  "branch": "apvee/fluent-style-utilities",
+  "head": "3135cd4735af969ee234b42c720d34ee6fc2ce20",
+  "candidateSha256": "b1b5af2ea1db82e7bdcbe1f8e420dafa29bb85e39b8a9ec69c59c2041b5efb02",
+  "baseline": {
+    "raw": 563032,
+    "gzip": 169661,
+    "brotli": 143653
+  },
+  "candidate": {
+    "raw": 702451,
+    "gzip": 201446,
+    "brotli": 169664
+  },
+  "packageCommands": [
+    {
+      "args": [
+        "run",
+        "build:library"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "ls",
+        "--parseable",
+        "--all",
+        "@griffel/core",
+        "@griffel/react",
+        "@fluentui/react-shared-contexts",
+        "@fluentui/react-migration-v8-v9",
+        "@fluentui/react-theme",
+        "@fluentui/react-utilities"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "ls",
+        "react",
+        "react-dom",
+        "@microsoft/sp-core-library",
+        "@pnp/sp",
+        "@griffel/core",
+        "@griffel/react",
+        "@fluentui/react-shared-contexts",
+        "@fluentui/react-migration-v8-v9",
+        "@fluentui/react-theme",
+        "@fluentui/react-utilities",
+        "tslib"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "run",
+        "bundle:ship"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit",
+        "--strict",
+        "--skipLibCheck",
+        "--target",
+        "es2020",
+        "--module",
+        "esnext",
+        "--moduleResolution",
+        "node",
+        "compatibility/sx-package-public.ts",
+        "compatibility/sx-package-deep.ts"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "run",
+        "package:solution"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    }
+  ],
+  "review": "approved; no open findings",
+  "sharePoint": "NOT EXECUTED"
+}

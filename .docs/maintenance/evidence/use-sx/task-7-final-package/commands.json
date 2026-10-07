@@ -1,0 +1,267 @@
+[
+  {
+    "args": [
+      "run",
+      "build:library"
+    ],
+    "command": "npm",
+    "commandArgs": [
+      "run",
+      "build:library"
+    ],
+    "cwd": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit",
+    "prepareMetadata": false,
+    "metadataAdvisoryRouting": false,
+    "status": 0,
+    "signal": null,
+    "failureMarkers": [],
+    "warnings": []
+  },
+  {
+    "args": [
+      "install",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "command": "npm",
+    "commandArgs": [
+      "install",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "cwd": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-bcyGw4/consumer",
+    "prepareMetadata": false,
+    "metadataAdvisoryRouting": false,
+    "status": 0,
+    "signal": null,
+    "failureMarkers": [],
+    "warnings": [
+      "npm warn deprecated readdir-scoped-modules@1.1.0: This functionality has been moved to @npmcli/fs",
+      "npm warn deprecated read-package-tree@5.1.6: The functionality that this package provided is now in @npmcli/arborist",
+      "npm warn deprecated osenv@0.1.5: This package is no longer supported.",
+      "npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.",
+      "npm warn deprecated debuglog@1.0.1: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.",
+      "npm warn deprecated stable@0.1.8: Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility",
+      "npm warn deprecated source-map-url@0.4.1: See https://github.com/lydell/source-map-url#deprecated",
+      "npm warn deprecated read-package-json@2.1.2: This package is no longer supported. Please use @npmcli/package-json instead.",
+      "npm warn deprecated lodash.get@4.4.2: This package is deprecated. Use the optional chaining (?.) operator instead.",
+      "npm warn deprecated request-promise-native@1.0.9: request-promise-native has been deprecated because it extends the now deprecated request package, see https://github.com/request/request/issues/3142",
+      "npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported",
+      "npm warn deprecated urix@0.1.0: Please see https://github.com/lydell/urix#deprecated",
+      "npm warn deprecated lodash.isequal@4.5.0: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.",
+      "npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead",
+      "npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported",
+      "npm warn deprecated resolve-url@0.2.1: https://github.com/lydell/resolve-url#deprecated",
+      "npm warn deprecated abab@2.0.6: Use your platform's native atob() and btoa() methods instead",
+      "npm warn deprecated har-validator@5.1.5: this library is no longer supported",
+      "npm warn deprecated acorn-import-assertions@1.9.0: package has been renamed to acorn-import-attributes",
+      "npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported",
+      "npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported",
+      "npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported",
+      "npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported",
+      "npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported",
+      "npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported",
+      "npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported",
+      "npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported",
+      "npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported",
+      "npm warn deprecated glob@7.0.6: Glob versions prior to v9 are no longer supported",
+      "npm warn deprecated source-map-resolve@0.5.3: See https://github.com/lydell/source-map-resolve#deprecated",
+      "npm warn deprecated domexception@1.0.1: Use your platform's native DOMException instead",
+      "npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead",
+      "npm warn deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.",
+      "npm warn deprecated fsevents@1.2.13: Upgrade to fsevents v2 to mitigate potential security issues",
+      "npm warn deprecated fsevents@1.2.13: Upgrade to fsevents v2 to mitigate potential security issues",
+      "npm warn deprecated sane@4.1.0: some dependency vulnerabilities fixed, support for node < 10 dropped, and newer ECMAScript syntax/features added",
+      "npm warn deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.",
+      "npm warn deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142",
+      "npm warn deprecated adal-angular@1.0.16: This package is no longer supported. Please migrate to @azure/msal-angular.",
+      "npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.",
+      "npm warn deprecated @microsoft/teams-js@2.32.0: Package no longer supported. Use at your own risk",
+      "npm warn install-scripts 4 packages have install scripts not yet covered by allowScripts:",
+      "npm warn install-scripts   fsevents@1.2.13 (install: node install.js)",
+      "npm warn install-scripts   es5-ext@0.10.64 (postinstall:  node -e \"try{require('./_postinstall')}catch(e){}\" || exit 0)",
+      "npm warn install-scripts   fsevents@2.3.3 (install: (install scripts present))",
+      "npm warn install-scripts   fsevents@1.2.13 (install: node install.js)",
+      "npm warn install-scripts",
+      "npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow."
+    ]
+  },
+  {
+    "args": [
+      "ls",
+      "--parseable",
+      "--all",
+      "@griffel/core",
+      "@griffel/react",
+      "@fluentui/react-shared-contexts",
+      "@fluentui/react-migration-v8-v9",
+      "@fluentui/react-theme",
+      "@fluentui/react-utilities"
+    ],
+    "command": "npm",
+    "commandArgs": [
+      "ls",
+      "--parseable",
+      "--all",
+      "@griffel/core",
+      "@griffel/react",
+      "@fluentui/react-shared-contexts",
+      "@fluentui/react-migration-v8-v9",
+      "@fluentui/react-theme",
+      "@fluentui/react-utilities"
+    ],
+    "cwd": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-bcyGw4/consumer",
+    "prepareMetadata": false,
+    "metadataAdvisoryRouting": false,
+    "status": 0,
+    "signal": null,
+    "failureMarkers": [],
+    "warnings": []
+  },
+  {
+    "args": [
+      "ls",
+      "react",
+      "react-dom",
+      "@microsoft/sp-core-library",
+      "@pnp/sp",
+      "@griffel/core",
+      "@griffel/react",
+      "@fluentui/react-shared-contexts",
+      "@fluentui/react-migration-v8-v9",
+      "@fluentui/react-theme",
+      "@fluentui/react-utilities",
+      "tslib"
+    ],
+    "command": "npm",
+    "commandArgs": [
+      "ls",
+      "react",
+      "react-dom",
+      "@microsoft/sp-core-library",
+      "@pnp/sp",
+      "@griffel/core",
+      "@griffel/react",
+      "@fluentui/react-shared-contexts",
+      "@fluentui/react-migration-v8-v9",
+      "@fluentui/react-theme",
+      "@fluentui/react-utilities",
+      "tslib"
+    ],
+    "cwd": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-bcyGw4/consumer",
+    "prepareMetadata": false,
+    "metadataAdvisoryRouting": false,
+    "status": 0,
+    "signal": null,
+    "failureMarkers": [],
+    "warnings": []
+  },
+  {
+    "args": [
+      "run",
+      "bundle:ship"
+    ],
+    "command": "/Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node",
+    "commandArgs": [
+      "--require",
+      "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/gulp-build-metadata-preload.cjs",
+      "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-bcyGw4/consumer/node_modules/gulp/bin/gulp.js",
+      "bundle",
+      "--ship"
+    ],
+    "cwd": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-bcyGw4/consumer",
+    "prepareMetadata": true,
+    "metadataAdvisoryRouting": true,
+    "status": 0,
+    "signal": null,
+    "failureMarkers": [],
+    "warnings": [
+      "[verification metadata advisory] [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`",
+      "[verification metadata advisory] Browserslist: browsers data (caniuse-lite) is 12 months old. Please run:"
+    ]
+  },
+  {
+    "args": [
+      "run",
+      "typecheck"
+    ],
+    "command": "npm",
+    "commandArgs": [
+      "run",
+      "typecheck"
+    ],
+    "cwd": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-bcyGw4/consumer",
+    "prepareMetadata": false,
+    "metadataAdvisoryRouting": false,
+    "status": 0,
+    "signal": null,
+    "failureMarkers": [],
+    "warnings": []
+  },
+  {
+    "args": [
+      "exec",
+      "--",
+      "tsc",
+      "--noEmit",
+      "--strict",
+      "--skipLibCheck",
+      "--target",
+      "es2020",
+      "--module",
+      "esnext",
+      "--moduleResolution",
+      "node",
+      "compatibility/sx-package-public.ts",
+      "compatibility/sx-package-deep.ts"
+    ],
+    "command": "npm",
+    "commandArgs": [
+      "exec",
+      "--",
+      "tsc",
+      "--noEmit",
+      "--strict",
+      "--skipLibCheck",
+      "--target",
+      "es2020",
+      "--module",
+      "esnext",
+      "--moduleResolution",
+      "node",
+      "compatibility/sx-package-public.ts",
+      "compatibility/sx-package-deep.ts"
+    ],
+    "cwd": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-bcyGw4/consumer",
+    "prepareMetadata": false,
+    "metadataAdvisoryRouting": false,
+    "status": 0,
+    "signal": null,
+    "failureMarkers": [],
+    "warnings": []
+  },
+  {
+    "args": [
+      "run",
+      "package:solution"
+    ],
+    "command": "/Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node",
+    "commandArgs": [
+      "--require",
+      "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/gulp-build-metadata-preload.cjs",
+      "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-bcyGw4/consumer/node_modules/gulp/bin/gulp.js",
+      "package-solution",
+      "--ship"
+    ],
+    "cwd": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-bcyGw4/consumer",
+    "prepareMetadata": true,
+    "metadataAdvisoryRouting": true,
+    "status": 0,
+    "signal": null,
+    "failureMarkers": [],
+    "warnings": [
+      "[verification metadata advisory] [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`",
+      "[verification metadata advisory] Browserslist: browsers data (caniuse-lite) is 12 months old. Please run:"
+    ]
+  }
+]

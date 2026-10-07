@@ -1,0 +1,38 @@
+[
+  {
+    "command": "build-library+build-app",
+    "session": 51465,
+    "exit_code": 0,
+    "provenance": "Root inspected actual exec/write_stdin completion result for this tool session; not inferred from log text."
+  },
+  {
+    "command": "verify",
+    "session": 88124,
+    "exit_code": 0,
+    "provenance": "Root inspected actual exec/write_stdin completion result for this tool session; not inferred from log text."
+  },
+  {
+    "command": "build-core+panel-fixtures",
+    "session": 44979,
+    "exit_code": 0,
+    "provenance": "Root inspected actual exec/write_stdin completion result for this tool session; not inferred from log text."
+  },
+  {
+    "command": "core-browser",
+    "session": 1528,
+    "exit_code": 0,
+    "provenance": "Root inspected actual exec/write_stdin completion result for this tool session; not inferred from log text."
+  },
+  {
+    "command": "panel-browser",
+    "session": 21602,
+    "exit_code": 0,
+    "provenance": "Root inspected actual exec/write_stdin completion result for this tool session; not inferred from log text."
+  },
+  {
+    "command": "verify-package",
+    "session": 37379,
+    "exit_code": 0,
+    "provenance": "Root inspected actual exec/write_stdin completion result for this tool session; not inferred from log text."
+  }
+]

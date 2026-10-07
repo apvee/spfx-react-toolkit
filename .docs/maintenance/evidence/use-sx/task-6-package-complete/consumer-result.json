@@ -1,0 +1,15 @@
+{
+  "consumer": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-sfEgT9/consumer",
+  "packedFiles": 599,
+  "packedBytes": 236221,
+  "documentedDeclarations": 237,
+  "failures": [
+    {
+      "args": [
+        "run",
+        "bundle:ship"
+      ],
+      "message": "npm run bundle:ship reported subprocess failure despite wrapper status 0; evidence: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/use-sx/task-6-package-complete\n+ actual - expected\n\n+ [\n+   'Exiting with exit code: 1',\n+   'The build failed because a task wrote output to stderr.'\n+ ]\n- []\n"
+    }
+  ]
+}

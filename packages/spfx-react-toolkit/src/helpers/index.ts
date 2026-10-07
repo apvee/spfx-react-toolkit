@@ -15,3 +15,4 @@ export * from './spfx-tenant-value.helpers';
 export * from './spfx-graph-path.helpers';
 export * from './spfx-theme.helpers';
 export * from './spfx-api-permission-precheck.helpers';
+export * from './styles';

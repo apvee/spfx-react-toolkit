@@ -4,6 +4,10 @@
 
 Helpers are public non-React utilities exported from `@apvee/spfx-react-toolkit`. They do not read React context, do not perform I/O, and do not manage provider state.
 
+## Styles and useSx
+
+See [Styles and useSx](./styles.md) for every qualified layout, dimension, spacing, color, preset, typography, border, overflow and scrollbar member, plus states and container/viewport scopes. Descriptors are immutable pure data; the React hook composes them through the host Griffel renderer.
+
 ## When To Use Helpers
 
 Use helpers when you already have the required SPFx input and want the same transformation logic used by the hooks.

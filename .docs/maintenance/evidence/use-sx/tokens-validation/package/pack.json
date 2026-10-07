@@ -1,0 +1,3009 @@
+{
+  "id": "@apvee/spfx-react-toolkit@2.1.0",
+  "name": "@apvee/spfx-react-toolkit",
+  "version": "2.1.0",
+  "size": 236522,
+  "unpackedSize": 1202564,
+  "shasum": "4ad637959b2b29328fd508a76e1b01edc85f5e0f",
+  "integrity": "sha512-PWkvMXlZQyT1bNWsMXXROqjVQmvhKj21dBdHkoUEArGFEm5fPCp77cGg9ZiXR63tJdUzuTj6uHQQZZzPRoMrzQ==",
+  "filename": "apvee-spfx-react-toolkit-2.1.0.tgz",
+  "files": [
+    {
+      "path": "LICENSE",
+      "size": 1072,
+      "mode": 420
+    },
+    {
+      "path": "README.md",
+      "size": 7751,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/context.internal.d.ts",
+      "size": 1040,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/context.internal.d.ts.map",
+      "size": 325,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/context.internal.js",
+      "size": 1378,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/context.internal.js.map",
+      "size": 603,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/index.d.ts",
+      "size": 986,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/index.d.ts.map",
+      "size": 253,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/index.js",
+      "size": 984,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/index.js.map",
+      "size": 251,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-application-customizer.d.ts",
+      "size": 1938,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-application-customizer.d.ts.map",
+      "size": 587,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-application-customizer.js",
+      "size": 1544,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-application-customizer.js.map",
+      "size": 447,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-base.internal.d.ts",
+      "size": 952,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-base.internal.d.ts.map",
+      "size": 375,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-base.internal.js",
+      "size": 7984,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-base.internal.js.map",
+      "size": 5264,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-field-customizer.d.ts",
+      "size": 1942,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-field-customizer.d.ts.map",
+      "size": 576,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-field-customizer.js",
+      "size": 1572,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-field-customizer.js.map",
+      "size": 436,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-listview-commandset.d.ts",
+      "size": 2169,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-listview-commandset.d.ts.map",
+      "size": 587,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-listview-commandset.js",
+      "size": 1782,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-listview-commandset.js.map",
+      "size": 447,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-webpart.d.ts",
+      "size": 1469,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-webpart.d.ts.map",
+      "size": 548,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-webpart.js",
+      "size": 1130,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/provider-webpart.js.map",
+      "size": 408,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/runtime-store.internal.d.ts",
+      "size": 1330,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/runtime-store.internal.d.ts.map",
+      "size": 1241,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/runtime-store.internal.js",
+      "size": 1653,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/runtime-store.internal.js.map",
+      "size": 1726,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/state.internal.d.ts",
+      "size": 1317,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/state.internal.d.ts.map",
+      "size": 1200,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/state.internal.js",
+      "size": 2836,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/state.internal.js.map",
+      "size": 2860,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/types.d.ts",
+      "size": 3243,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/types.d.ts.map",
+      "size": 1284,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/types.js",
+      "size": 104,
+      "mode": 420
+    },
+    {
+      "path": "lib/core/types.js.map",
+      "size": 131,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/index.d.ts",
+      "size": 626,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/index.d.ts.map",
+      "size": 334,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/index.js",
+      "size": 624,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/index.js.map",
+      "size": 332,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-api-permission-precheck.helpers.d.ts",
+      "size": 4919,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-api-permission-precheck.helpers.d.ts.map",
+      "size": 4109,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-api-permission-precheck.helpers.js",
+      "size": 15566,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-api-permission-precheck.helpers.js.map",
+      "size": 13973,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-container.helpers.d.ts",
+      "size": 343,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-container.helpers.d.ts.map",
+      "size": 269,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-container.helpers.js",
+      "size": 854,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-container.helpers.js.map",
+      "size": 772,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-graph-path.helpers.d.ts",
+      "size": 871,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-graph-path.helpers.d.ts.map",
+      "size": 558,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-graph-path.helpers.js",
+      "size": 1131,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-graph-path.helpers.js.map",
+      "size": 837,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-page-context.helpers.d.ts",
+      "size": 3809,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-page-context.helpers.d.ts.map",
+      "size": 2710,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-page-context.helpers.js",
+      "size": 6665,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-page-context.helpers.js.map",
+      "size": 5116,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-permissions.helpers.d.ts",
+      "size": 462,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-permissions.helpers.d.ts.map",
+      "size": 302,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-permissions.helpers.js",
+      "size": 448,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-permissions.helpers.js.map",
+      "size": 329,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-storage.helpers.d.ts",
+      "size": 344,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-storage.helpers.d.ts.map",
+      "size": 234,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-storage.helpers.js",
+      "size": 358,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-storage.helpers.js.map",
+      "size": 262,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-tenant-value.helpers.d.ts",
+      "size": 758,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-tenant-value.helpers.d.ts.map",
+      "size": 372,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-tenant-value.helpers.js",
+      "size": 1221,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-tenant-value.helpers.js.map",
+      "size": 942,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-theme.helpers.d.ts",
+      "size": 691,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-theme.helpers.d.ts.map",
+      "size": 395,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-theme.helpers.js",
+      "size": 1104,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/spfx-theme.helpers.js.map",
+      "size": 700,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/align-items.d.ts",
+      "size": 921,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/align-items.d.ts.map",
+      "size": 423,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/align-items.js",
+      "size": 1333,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/align-items.js.map",
+      "size": 878,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/align-self.d.ts",
+      "size": 898,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/align-self.d.ts.map",
+      "size": 421,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/align-self.js",
+      "size": 1286,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/align-self.js.map",
+      "size": 876,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/background.d.ts",
+      "size": 1798,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/background.d.ts.map",
+      "size": 576,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/background.js",
+      "size": 2805,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/background.js.map",
+      "size": 1475,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/bindings.internal.d.ts",
+      "size": 645,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/bindings.internal.d.ts.map",
+      "size": 491,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/bindings.internal.js",
+      "size": 3028,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/bindings.internal.js.map",
+      "size": 2526,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-color.d.ts",
+      "size": 1075,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-color.d.ts.map",
+      "size": 377,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-color.js",
+      "size": 3596,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-color.js.map",
+      "size": 2422,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-radius.d.ts",
+      "size": 1523,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-radius.d.ts.map",
+      "size": 477,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-radius.js",
+      "size": 5258,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-radius.js.map",
+      "size": 3518,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-style.d.ts",
+      "size": 320,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-style.d.ts.map",
+      "size": 230,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-style.js",
+      "size": 844,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-style.js.map",
+      "size": 690,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-width.d.ts",
+      "size": 817,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-width.d.ts.map",
+      "size": 328,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-width.js",
+      "size": 2485,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/border-width.js.map",
+      "size": 1819,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/box-shadow.d.ts",
+      "size": 683,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/box-shadow.d.ts.map",
+      "size": 326,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/box-shadow.js",
+      "size": 982,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/box-shadow.js.map",
+      "size": 662,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/cache.internal.d.ts",
+      "size": 442,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/cache.internal.d.ts.map",
+      "size": 503,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/cache.internal.js",
+      "size": 488,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/cache.internal.js.map",
+      "size": 505,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/container.d.ts",
+      "size": 595,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/container.d.ts.map",
+      "size": 232,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/container.js",
+      "size": 883,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/container.js.map",
+      "size": 475,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/descriptor.internal.d.ts",
+      "size": 3422,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/descriptor.internal.d.ts.map",
+      "size": 2488,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/descriptor.internal.js",
+      "size": 1235,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/descriptor.internal.js.map",
+      "size": 1057,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/flex-item.d.ts",
+      "size": 575,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/flex-item.d.ts.map",
+      "size": 370,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/flex-item.js",
+      "size": 860,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/flex-item.js.map",
+      "size": 734,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/flex.d.ts",
+      "size": 678,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/flex.d.ts.map",
+      "size": 358,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/flex.js",
+      "size": 1319,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/flex.js.map",
+      "size": 1022,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/foreground.d.ts",
+      "size": 1815,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/foreground.d.ts.map",
+      "size": 576,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/foreground.js",
+      "size": 2639,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/foreground.js.map",
+      "size": 1443,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/gap.d.ts",
+      "size": 1410,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/gap.d.ts.map",
+      "size": 526,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/gap.js",
+      "size": 1789,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/gap.js.map",
+      "size": 1078,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/grid.d.ts",
+      "size": 449,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/grid.d.ts.map",
+      "size": 234,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/grid.js",
+      "size": 1087,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/grid.js.map",
+      "size": 719,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/height.d.ts",
+      "size": 663,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/height.d.ts.map",
+      "size": 336,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/height.js",
+      "size": 890,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/height.js.map",
+      "size": 627,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/index.d.ts",
+      "size": 2249,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/index.d.ts.map",
+      "size": 1896,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/index.js",
+      "size": 2023,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/index.js.map",
+      "size": 1774,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/justify-content.d.ts",
+      "size": 826,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/justify-content.d.ts.map",
+      "size": 382,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/justify-content.js",
+      "size": 1194,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/justify-content.js.map",
+      "size": 762,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-block-end.d.ts",
+      "size": 1593,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-block-end.d.ts.map",
+      "size": 552,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-block-end.js",
+      "size": 2026,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-block-end.js.map",
+      "size": 1058,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-block-start.d.ts",
+      "size": 1611,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-block-start.d.ts.map",
+      "size": 556,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-block-start.js",
+      "size": 2072,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-block-start.js.map",
+      "size": 1062,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-block.d.ts",
+      "size": 1565,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-block.d.ts.map",
+      "size": 544,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-block.js",
+      "size": 2117,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-block.js.map",
+      "size": 1134,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-inline-end.d.ts",
+      "size": 1602,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-inline-end.d.ts.map",
+      "size": 554,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-inline-end.js",
+      "size": 2049,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-inline-end.js.map",
+      "size": 1060,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-inline-start.d.ts",
+      "size": 1620,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-inline-start.d.ts.map",
+      "size": 558,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-inline-start.js",
+      "size": 2095,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-inline-start.js.map",
+      "size": 1064,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-inline.d.ts",
+      "size": 1574,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-inline.d.ts.map",
+      "size": 546,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-inline.js",
+      "size": 2147,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin-inline.js.map",
+      "size": 1136,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin.d.ts",
+      "size": 1519,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin.d.ts.map",
+      "size": 532,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin.js",
+      "size": 2304,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/margin.js.map",
+      "size": 1280,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/max-height.d.ts",
+      "size": 507,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/max-height.d.ts.map",
+      "size": 295,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/max-height.js",
+      "size": 678,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/max-height.js.map",
+      "size": 495,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/max-width.d.ts",
+      "size": 501,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/max-width.d.ts.map",
+      "size": 293,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/max-width.js",
+      "size": 668,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/max-width.js.map",
+      "size": 493,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/min-height.d.ts",
+      "size": 506,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/min-height.d.ts.map",
+      "size": 295,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/min-height.js",
+      "size": 676,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/min-height.js.map",
+      "size": 495,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/min-width.d.ts",
+      "size": 504,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/min-width.d.ts.map",
+      "size": 293,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/min-width.js",
+      "size": 670,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/min-width.js.map",
+      "size": 493,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/normalize.internal.d.ts",
+      "size": 1078,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/normalize.internal.d.ts.map",
+      "size": 1026,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/normalize.internal.js",
+      "size": 1946,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/normalize.internal.js.map",
+      "size": 2074,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/overflow-horizontal.d.ts",
+      "size": 846,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/overflow-horizontal.d.ts.map",
+      "size": 344,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/overflow-horizontal.js",
+      "size": 1095,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/overflow-horizontal.js.map",
+      "size": 617,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/overflow-vertical.d.ts",
+      "size": 832,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/overflow-vertical.d.ts.map",
+      "size": 340,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/overflow-vertical.js",
+      "size": 1081,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/overflow-vertical.js.map",
+      "size": 613,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/overflow.d.ts",
+      "size": 779,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/overflow.d.ts.map",
+      "size": 419,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/overflow.js",
+      "size": 1532,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/overflow.js.map",
+      "size": 1141,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-block-end.d.ts",
+      "size": 1602,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-block-end.d.ts.map",
+      "size": 554,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-block-end.js",
+      "size": 2049,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-block-end.js.map",
+      "size": 1060,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-block-start.d.ts",
+      "size": 1620,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-block-start.d.ts.map",
+      "size": 558,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-block-start.js",
+      "size": 2095,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-block-start.js.map",
+      "size": 1064,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-block.d.ts",
+      "size": 1574,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-block.d.ts.map",
+      "size": 546,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-block.js",
+      "size": 2147,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-block.js.map",
+      "size": 1136,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-inline-end.d.ts",
+      "size": 1611,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-inline-end.d.ts.map",
+      "size": 556,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-inline-end.js",
+      "size": 2072,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-inline-end.js.map",
+      "size": 1062,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-inline-start.d.ts",
+      "size": 1629,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-inline-start.d.ts.map",
+      "size": 560,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-inline-start.js",
+      "size": 2118,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-inline-start.js.map",
+      "size": 1066,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-inline.d.ts",
+      "size": 1583,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-inline.d.ts.map",
+      "size": 548,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-inline.js",
+      "size": 2177,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding-inline.js.map",
+      "size": 1138,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding.d.ts",
+      "size": 1528,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding.d.ts.map",
+      "size": 534,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding.js",
+      "size": 2348,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/padding.js.map",
+      "size": 1284,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/presets.d.ts",
+      "size": 4388,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/presets.d.ts.map",
+      "size": 725,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/presets.js",
+      "size": 7655,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/presets.js.map",
+      "size": 3592,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/renderer.internal.d.ts",
+      "size": 434,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/renderer.internal.d.ts.map",
+      "size": 425,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/renderer.internal.js",
+      "size": 449,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/renderer.internal.js.map",
+      "size": 450,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/resolve.internal.d.ts",
+      "size": 352,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/resolve.internal.d.ts.map",
+      "size": 341,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/resolve.internal.js",
+      "size": 1852,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/resolve.internal.js.map",
+      "size": 1782,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/responsive.d.ts",
+      "size": 1354,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/responsive.d.ts.map",
+      "size": 522,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/responsive.js",
+      "size": 1245,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/responsive.js.map",
+      "size": 531,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/scopes.internal.d.ts",
+      "size": 493,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/scopes.internal.d.ts.map",
+      "size": 495,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/scopes.internal.js",
+      "size": 553,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/scopes.internal.js.map",
+      "size": 717,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/scrollbar.d.ts",
+      "size": 572,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/scrollbar.d.ts.map",
+      "size": 227,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/scrollbar.js",
+      "size": 980,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/scrollbar.js.map",
+      "size": 569,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/spacing.internal.d.ts",
+      "size": 771,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/spacing.internal.d.ts.map",
+      "size": 606,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/spacing.internal.js",
+      "size": 1049,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/spacing.internal.js.map",
+      "size": 985,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/states.d.ts",
+      "size": 1195,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/states.d.ts.map",
+      "size": 436,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/states.js",
+      "size": 1152,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/states.js.map",
+      "size": 485,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/text-align.d.ts",
+      "size": 555,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/text-align.d.ts.map",
+      "size": 323,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/text-align.js",
+      "size": 795,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/text-align.js.map",
+      "size": 596,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/text.d.ts",
+      "size": 609,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/text.d.ts.map",
+      "size": 312,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/text.js",
+      "size": 1161,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/text.js.map",
+      "size": 848,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/types.d.ts",
+      "size": 1978,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/types.d.ts.map",
+      "size": 837,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/types.js",
+      "size": 162,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/types.js.map",
+      "size": 193,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/typography.d.ts",
+      "size": 4554,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/typography.d.ts.map",
+      "size": 1014,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/typography.js",
+      "size": 14401,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/typography.js.map",
+      "size": 9933,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/viewport.d.ts",
+      "size": 1235,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/viewport.d.ts.map",
+      "size": 518,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/viewport.js",
+      "size": 1123,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/viewport.js.map",
+      "size": 527,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/width.d.ts",
+      "size": 595,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/width.d.ts.map",
+      "size": 334,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/width.js",
+      "size": 816,
+      "mode": 420
+    },
+    {
+      "path": "lib/helpers/styles/width.js.map",
+      "size": 625,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/index.d.ts",
+      "size": 2777,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/index.d.ts.map",
+      "size": 1159,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/index.js",
+      "size": 2775,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/index.js.map",
+      "size": 1157,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useAppCatalogUrl.internal.d.ts",
+      "size": 1174,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useAppCatalogUrl.internal.d.ts.map",
+      "size": 649,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useAppCatalogUrl.internal.js",
+      "size": 2989,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useAppCatalogUrl.internal.js.map",
+      "size": 2361,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useAsyncInvoke.internal.d.ts",
+      "size": 2180,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useAsyncInvoke.internal.d.ts.map",
+      "size": 654,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useAsyncInvoke.internal.js",
+      "size": 3577,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useAsyncInvoke.internal.js.map",
+      "size": 2454,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxAadHttpClient.d.ts",
+      "size": 8932,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxAadHttpClient.d.ts.map",
+      "size": 1176,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxAadHttpClient.js",
+      "size": 11776,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxAadHttpClient.js.map",
+      "size": 3037,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxAadTokenProvider.d.ts",
+      "size": 1434,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxAadTokenProvider.d.ts.map",
+      "size": 507,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxAadTokenProvider.js",
+      "size": 6167,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxAadTokenProvider.js.map",
+      "size": 2923,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxApiPermissionPrecheck.d.ts",
+      "size": 1517,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxApiPermissionPrecheck.d.ts.map",
+      "size": 1243,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxApiPermissionPrecheck.js",
+      "size": 9569,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxApiPermissionPrecheck.js.map",
+      "size": 8039,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxContainerInfo.d.ts",
+      "size": 1151,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxContainerInfo.d.ts.map",
+      "size": 422,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxContainerInfo.js",
+      "size": 1404,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxContainerInfo.js.map",
+      "size": 745,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxContainerSize.d.ts",
+      "size": 4142,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxContainerSize.d.ts.map",
+      "size": 860,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxContainerSize.js",
+      "size": 3365,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxContainerSize.js.map",
+      "size": 936,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxContext.d.ts",
+      "size": 438,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxContext.d.ts.map",
+      "size": 221,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxContext.js",
+      "size": 506,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxContext.js.map",
+      "size": 245,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxCorrelationInfo.d.ts",
+      "size": 1399,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxCorrelationInfo.d.ts.map",
+      "size": 389,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxCorrelationInfo.js",
+      "size": 1652,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxCorrelationInfo.js.map",
+      "size": 694,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxCrossSitePermissions.d.ts",
+      "size": 2289,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxCrossSitePermissions.d.ts.map",
+      "size": 887,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxCrossSitePermissions.js",
+      "size": 5462,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxCrossSitePermissions.js.map",
+      "size": 4209,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxDisplayMode.d.ts",
+      "size": 1783,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxDisplayMode.d.ts.map",
+      "size": 505,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxDisplayMode.js",
+      "size": 2021,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxDisplayMode.js.map",
+      "size": 869,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxEnvironmentInfo.d.ts",
+      "size": 1821,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxEnvironmentInfo.d.ts.map",
+      "size": 766,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxEnvironmentInfo.js",
+      "size": 1499,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxEnvironmentInfo.js.map",
+      "size": 702,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxFluent9ThemeInfo.d.ts",
+      "size": 3280,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxFluent9ThemeInfo.d.ts.map",
+      "size": 525,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxFluent9ThemeInfo.js",
+      "size": 3844,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxFluent9ThemeInfo.js.map",
+      "size": 1073,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxHttpClient.d.ts",
+      "size": 7534,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxHttpClient.d.ts.map",
+      "size": 880,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxHttpClient.js",
+      "size": 6883,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxHttpClient.js.map",
+      "size": 1254,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxHubSiteInfo.d.ts",
+      "size": 2337,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxHubSiteInfo.d.ts.map",
+      "size": 558,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxHubSiteInfo.js",
+      "size": 4292,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxHubSiteInfo.js.map",
+      "size": 2362,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxInstanceInfo.d.ts",
+      "size": 995,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxInstanceInfo.d.ts.map",
+      "size": 398,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxInstanceInfo.js",
+      "size": 959,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxInstanceInfo.js.map",
+      "size": 497,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxListInfo.d.ts",
+      "size": 1845,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxListInfo.d.ts.map",
+      "size": 527,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxListInfo.js",
+      "size": 1746,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxListInfo.js.map",
+      "size": 548,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxLocaleInfo.d.ts",
+      "size": 3760,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxLocaleInfo.d.ts.map",
+      "size": 798,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxLocaleInfo.js",
+      "size": 3117,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxLocaleInfo.js.map",
+      "size": 809,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxLogger.d.ts",
+      "size": 3023,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxLogger.d.ts.map",
+      "size": 1533,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxLogger.js",
+      "size": 3871,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxLogger.js.map",
+      "size": 2380,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxMSGraphClient.d.ts",
+      "size": 7800,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxMSGraphClient.d.ts.map",
+      "size": 990,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxMSGraphClient.js",
+      "size": 10772,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxMSGraphClient.js.map",
+      "size": 2729,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxOneDriveAppData.d.ts",
+      "size": 8689,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxOneDriveAppData.d.ts.map",
+      "size": 1305,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxOneDriveAppData.js",
+      "size": 19173,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxOneDriveAppData.js.map",
+      "size": 8244,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPageContext.d.ts",
+      "size": 1139,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPageContext.d.ts.map",
+      "size": 259,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPageContext.js",
+      "size": 1567,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPageContext.js.map",
+      "size": 559,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPageType.d.ts",
+      "size": 2382,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPageType.d.ts.map",
+      "size": 676,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPageType.js",
+      "size": 2120,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPageType.js.map",
+      "size": 678,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPerformance.d.ts",
+      "size": 2230,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPerformance.d.ts.map",
+      "size": 989,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPerformance.js",
+      "size": 3935,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPerformance.js.map",
+      "size": 2338,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPermissions.d.ts",
+      "size": 2561,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPermissions.d.ts.map",
+      "size": 718,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPermissions.js",
+      "size": 2350,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPermissions.js.map",
+      "size": 1183,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnP.d.ts",
+      "size": 16555,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnP.d.ts.map",
+      "size": 1399,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnP.js",
+      "size": 14490,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnP.js.map",
+      "size": 2866,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPContext.d.ts",
+      "size": 9594,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPContext.d.ts.map",
+      "size": 1253,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPContext.js",
+      "size": 10159,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPContext.js.map",
+      "size": 1972,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.batch.internal.d.ts",
+      "size": 457,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.batch.internal.d.ts.map",
+      "size": 576,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.batch.internal.js",
+      "size": 761,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.batch.internal.js.map",
+      "size": 913,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.d.ts",
+      "size": 16574,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.d.ts.map",
+      "size": 2422,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.internal.d.ts",
+      "size": 531,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.internal.d.ts.map",
+      "size": 478,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.internal.js",
+      "size": 15036,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.internal.js.map",
+      "size": 12813,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.js",
+      "size": 10445,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.js.map",
+      "size": 662,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.query.internal.d.ts",
+      "size": 619,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.query.internal.d.ts.map",
+      "size": 646,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.query.internal.js",
+      "size": 1537,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPList.query.internal.js.map",
+      "size": 1449,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPListById.d.ts",
+      "size": 1204,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPListById.d.ts.map",
+      "size": 417,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPListById.js",
+      "size": 1120,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPListById.js.map",
+      "size": 362,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPListByPath.d.ts",
+      "size": 1334,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPListByPath.d.ts.map",
+      "size": 422,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPListByPath.js",
+      "size": 1265,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPListByPath.js.map",
+      "size": 368,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPListByUrl.d.ts",
+      "size": 1302,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPListByUrl.d.ts.map",
+      "size": 422,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPListByUrl.js",
+      "size": 1234,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPListByUrl.js.map",
+      "size": 369,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPSearch.d.ts",
+      "size": 15029,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPSearch.d.ts.map",
+      "size": 2498,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPSearch.js",
+      "size": 15567,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPSearch.js.map",
+      "size": 8973,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPSearch.query.internal.d.ts",
+      "size": 404,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPSearch.query.internal.d.ts.map",
+      "size": 428,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPSearch.query.internal.js",
+      "size": 563,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPSearch.query.internal.js.map",
+      "size": 705,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPSearch.results.internal.d.ts",
+      "size": 480,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPSearch.results.internal.d.ts.map",
+      "size": 529,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPSearch.results.internal.js",
+      "size": 1232,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxPnPSearch.results.internal.js.map",
+      "size": 1312,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxProperties.d.ts",
+      "size": 2515,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxProperties.d.ts.map",
+      "size": 595,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxProperties.js",
+      "size": 2756,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxProperties.js.map",
+      "size": 1058,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxServiceScope.d.ts",
+      "size": 3420,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxServiceScope.d.ts.map",
+      "size": 529,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxServiceScope.js",
+      "size": 3452,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxServiceScope.js.map",
+      "size": 872,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxSiteInfo.d.ts",
+      "size": 3825,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxSiteInfo.d.ts.map",
+      "size": 984,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxSiteInfo.js",
+      "size": 3166,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxSiteInfo.js.map",
+      "size": 684,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxSiteKeyValueStore.d.ts",
+      "size": 2363,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxSiteKeyValueStore.d.ts.map",
+      "size": 1294,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxSiteKeyValueStore.js",
+      "size": 6786,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxSiteKeyValueStore.js.map",
+      "size": 6859,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxSPHttpClient.d.ts",
+      "size": 7351,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxSPHttpClient.d.ts.map",
+      "size": 1023,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxSPHttpClient.js",
+      "size": 7449,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxSPHttpClient.js.map",
+      "size": 2104,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxStorage.d.ts",
+      "size": 2475,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxStorage.d.ts.map",
+      "size": 685,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxStorage.js",
+      "size": 5838,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxStorage.js.map",
+      "size": 3833,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTeams.d.ts",
+      "size": 1641,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTeams.d.ts.map",
+      "size": 486,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTeams.js",
+      "size": 5003,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTeams.js.map",
+      "size": 3482,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantKeyValueStore.d.ts",
+      "size": 8594,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantKeyValueStore.d.ts.map",
+      "size": 1464,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantKeyValueStore.js",
+      "size": 16164,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantKeyValueStore.js.map",
+      "size": 8262,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.d.ts",
+      "size": 274,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.d.ts.map",
+      "size": 373,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.js",
+      "size": 659,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.js.map",
+      "size": 846,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.d.ts",
+      "size": 1129,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.d.ts.map",
+      "size": 1078,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.js",
+      "size": 4069,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.js.map",
+      "size": 3754,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantProperty.d.ts",
+      "size": 5555,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantProperty.d.ts.map",
+      "size": 786,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantProperty.js",
+      "size": 7675,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxTenantProperty.js.map",
+      "size": 3522,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxThemeInfo.d.ts",
+      "size": 838,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxThemeInfo.d.ts.map",
+      "size": 262,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxThemeInfo.js",
+      "size": 917,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxThemeInfo.js.map",
+      "size": 339,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxUserInfo.d.ts",
+      "size": 1155,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxUserInfo.d.ts.map",
+      "size": 444,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxUserInfo.js",
+      "size": 1197,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxUserInfo.js.map",
+      "size": 606,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxUserPhoto.d.ts",
+      "size": 7586,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxUserPhoto.d.ts.map",
+      "size": 1133,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxUserPhoto.js",
+      "size": 10932,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSPFxUserPhoto.js.map",
+      "size": 5792,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useStableCallback.d.ts",
+      "size": 1470,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useStableCallback.d.ts.map",
+      "size": 206,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useStableCallback.js",
+      "size": 1447,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useStableCallback.js.map",
+      "size": 259,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSx.d.ts",
+      "size": 996,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSx.d.ts.map",
+      "size": 249,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSx.js",
+      "size": 1239,
+      "mode": 420
+    },
+    {
+      "path": "lib/hooks/useSx.js.map",
+      "size": 526,
+      "mode": 420
+    },
+    {
+      "path": "lib/index.d.ts",
+      "size": 959,
+      "mode": 420
+    },
+    {
+      "path": "lib/index.d.ts.map",
+      "size": 222,
+      "mode": 420
+    },
+    {
+      "path": "lib/index.js",
+      "size": 957,
+      "mode": 420
+    },
+    {
+      "path": "lib/index.js.map",
+      "size": 220,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/index.d.ts",
+      "size": 743,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/index.d.ts.map",
+      "size": 383,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/index.js",
+      "size": 741,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/index.js.map",
+      "size": 381,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-api-permission-precheck.service.d.ts",
+      "size": 978,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-api-permission-precheck.service.d.ts.map",
+      "size": 833,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-api-permission-precheck.service.js",
+      "size": 3283,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-api-permission-precheck.service.js.map",
+      "size": 3029,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-app-catalog.service.d.ts",
+      "size": 525,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-app-catalog.service.d.ts.map",
+      "size": 520,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-app-catalog.service.js",
+      "size": 1735,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-app-catalog.service.js.map",
+      "size": 1471,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-list-key-value-store.internal.d.ts",
+      "size": 893,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-list-key-value-store.internal.d.ts.map",
+      "size": 1063,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-list-key-value-store.internal.js",
+      "size": 11556,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-list-key-value-store.internal.js.map",
+      "size": 10306,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-onedrive-app-data.service.d.ts",
+      "size": 610,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-onedrive-app-data.service.d.ts.map",
+      "size": 695,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-onedrive-app-data.service.js",
+      "size": 2054,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-onedrive-app-data.service.js.map",
+      "size": 2060,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-context.service.d.ts",
+      "size": 963,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-context.service.d.ts.map",
+      "size": 1005,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-context.service.js",
+      "size": 2076,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-context.service.js.map",
+      "size": 2254,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-list-target.internal.d.ts",
+      "size": 602,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-list-target.internal.d.ts.map",
+      "size": 533,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-list-target.internal.js",
+      "size": 4049,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-list-target.internal.js.map",
+      "size": 3758,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-list.service.d.ts",
+      "size": 2874,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-list.service.d.ts.map",
+      "size": 2294,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-list.service.js",
+      "size": 7882,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-list.service.js.map",
+      "size": 7266,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-search.service.d.ts",
+      "size": 1396,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-search.service.d.ts.map",
+      "size": 1554,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-search.service.js",
+      "size": 3401,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp-search.service.js.map",
+      "size": 3278,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp.service.d.ts",
+      "size": 369,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp.service.d.ts.map",
+      "size": 556,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp.service.js",
+      "size": 435,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-pnp.service.js.map",
+      "size": 570,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-site-key-value-store.internal.d.ts",
+      "size": 1307,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-site-key-value-store.internal.d.ts.map",
+      "size": 1390,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-site-key-value-store.internal.js",
+      "size": 8442,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-site-key-value-store.internal.js.map",
+      "size": 8476,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-site-key-value-store.service.d.ts",
+      "size": 1250,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-site-key-value-store.service.d.ts.map",
+      "size": 1146,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-site-key-value-store.service.js",
+      "size": 2644,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-site-key-value-store.service.js.map",
+      "size": 2537,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-tenant-key-value-store.service.d.ts",
+      "size": 919,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-tenant-key-value-store.service.d.ts.map",
+      "size": 1031,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-tenant-key-value-store.service.js",
+      "size": 296,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-tenant-key-value-store.service.js.map",
+      "size": 312,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-tenant-property.service.d.ts",
+      "size": 493,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-tenant-property.service.d.ts.map",
+      "size": 555,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-tenant-property.service.js",
+      "size": 1140,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-tenant-property.service.js.map",
+      "size": 1116,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-user-photo.service.d.ts",
+      "size": 628,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-user-photo.service.d.ts.map",
+      "size": 630,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-user-photo.service.js",
+      "size": 421,
+      "mode": 420
+    },
+    {
+      "path": "lib/services/spfx-user-photo.service.js.map",
+      "size": 478,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/index.d.ts",
+      "size": 35,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/index.d.ts.map",
+      "size": 113,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/index.js",
+      "size": 137,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/index.js.map",
+      "size": 135,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/resize-observer.internal.d.ts",
+      "size": 982,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/resize-observer.internal.d.ts.map",
+      "size": 345,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/resize-observer.internal.js",
+      "size": 1630,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/resize-observer.internal.js.map",
+      "size": 881,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/theme-subscription.internal.d.ts",
+      "size": 902,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/theme-subscription.internal.d.ts.map",
+      "size": 365,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/theme-subscription.internal.js",
+      "size": 2796,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/theme-subscription.internal.js.map",
+      "size": 1460,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/type-guards.internal.d.ts",
+      "size": 3992,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/type-guards.internal.d.ts.map",
+      "size": 1060,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/type-guards.internal.js",
+      "size": 5208,
+      "mode": 420
+    },
+    {
+      "path": "lib/utils/type-guards.internal.js.map",
+      "size": 2125,
+      "mode": 420
+    },
+    {
+      "path": "package.json",
+      "size": 3257,
+      "mode": 420
+    }
+  ],
+  "entryCount": 599,
+  "bundled": []
+}

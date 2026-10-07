@@ -4,12 +4,15 @@
 
 ## Overview
 
-Hooks are the React-facing API. They must be used within components wrapped by a host-specific SPFx provider such as `SPFxWebPartProvider`, `SPFxApplicationCustomizerProvider`, `SPFxFieldCustomizerProvider`, or `SPFxListViewCommandSetProvider`.
+Hooks are the React-facing API. SPFx-specific hooks must be used within components wrapped by a host-specific SPFx provider such as `SPFxWebPartProvider`, `SPFxApplicationCustomizerProvider`, `SPFxFieldCustomizerProvider`, or `SPFxListViewCommandSetProvider`.
+
+Generic React hooks `useStableCallback` and `useSx` need no SPFx provider. useSx token selections require theme variables in scope, normally from the host’s existing FluentProvider.
 
 ## Categories
 
 | Category | Hooks | Description |
 |----------|-------|-------------|
+| [React Utilities](./react.md) | 2 | Stable callbacks and typed styles without an SPFx provider |
 | [Context](./context.md) | 4 | Core SPFx context and service scope |
 | [Properties & Display](./properties.md) | 3 | Web part properties and display mode |
 | [HTTP Clients](./http-clients.md) | 6 | SharePoint, Graph, Azure AD APIs, token provider access, and API permission prechecks |
@@ -24,6 +27,13 @@ Hooks are the React-facing API. They must be used within components wrapped by a
 ---
 
 ## Quick Reference
+
+### React Utility Hooks
+
+| Hook | Description | Docs |
+|------|-------------|------|
+| `useStableCallback(fn)` | Fluent UI 9 callback alias with stable identity | [View](./react.md#usestablecallback) |
+| `useSx(options?)` | Ordered class composer for typed style descriptors | [View](./react.md#usesx) |
 
 ### Context Hooks
 
@@ -176,7 +186,7 @@ function ManualPermissionStatus() {
 
 ## Usage Pattern
 
-All hooks follow the same basic pattern:
+SPFx-specific hooks follow this provider-based pattern:
 
 ```tsx
 import {

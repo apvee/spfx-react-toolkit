@@ -1,0 +1,21 @@
+{
+  "changes": [
+    "packages/spfx-react-toolkit/src/helpers/styles/index.ts",
+    "tests/sx-runtime.test.cjs",
+    "docs/DEVELOPMENT.md"
+  ],
+  "unexpected": [],
+  "baselineTarballSha256": "d87c017581e27d58d2525be9133041953341dc85f9ea61601d68ba92303fa7d5",
+  "versions": {
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "typescript": "5.3.3",
+    "webpack": "5.95.0",
+    "@griffel/core": "1.19.2",
+    "@griffel/react": "1.5.30",
+    "@fluentui/react-provider": "9.22.8",
+    "@fluentui/react-shared-contexts": "9.25.2",
+    "@fluentui/react-theme": "9.2.0",
+    "playwright": "1.64.0-alpha-1790635538000"
+  }
+}

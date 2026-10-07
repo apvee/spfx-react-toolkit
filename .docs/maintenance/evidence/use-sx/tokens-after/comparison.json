@@ -1,0 +1,190 @@
+{
+  "rows": [
+    {
+      "name": "unchanged-baseline",
+      "before": {
+        "raw": 46006,
+        "gzip": 15191,
+        "brotli": 13479
+      },
+      "after": {
+        "raw": 46006,
+        "gzip": 15191,
+        "brotli": 13479
+      },
+      "delta": {
+        "raw": 0,
+        "gzip": 0,
+        "brotli": 0
+      },
+      "calls": 0,
+      "tokens": 0,
+      "typography": 0
+    },
+    {
+      "name": "unchanged-candidate",
+      "before": {
+        "raw": 80403,
+        "gzip": 19677,
+        "brotli": 17085
+      },
+      "after": {
+        "raw": 82811,
+        "gzip": 19924,
+        "brotli": 17343
+      },
+      "delta": {
+        "raw": 2408,
+        "gzip": 247,
+        "brotli": 258
+      },
+      "calls": 0,
+      "tokens": 436,
+      "typography": 17
+    },
+    {
+      "name": "minimum-direct",
+      "before": {
+        "raw": 64538,
+        "gzip": 15754,
+        "brotli": 13693
+      },
+      "after": {
+        "raw": 64538,
+        "gzip": 15754,
+        "brotli": 13693
+      },
+      "delta": {
+        "raw": 0,
+        "gzip": 0,
+        "brotli": 0
+      },
+      "calls": 0,
+      "tokens": 436,
+      "typography": 17
+    },
+    {
+      "name": "minimum-wrapper",
+      "before": {
+        "raw": 116994,
+        "gzip": 32459,
+        "brotli": 28281
+      },
+      "after": {
+        "raw": 119402,
+        "gzip": 32802,
+        "brotli": 28536
+      },
+      "delta": {
+        "raw": 2408,
+        "gzip": 343,
+        "brotli": 255
+      },
+      "calls": 6,
+      "tokens": 436,
+      "typography": 17
+    },
+    {
+      "name": "minimum-wrapper-deep",
+      "before": {
+        "raw": 71772,
+        "gzip": 17907,
+        "brotli": 15516
+      },
+      "after": {
+        "raw": 74180,
+        "gzip": 18227,
+        "brotli": 15825
+      },
+      "delta": {
+        "raw": 2408,
+        "gzip": 320,
+        "brotli": 309
+      },
+      "calls": 6,
+      "tokens": 436,
+      "typography": 17
+    },
+    {
+      "name": "already-fluent-direct",
+      "before": {
+        "raw": 159744,
+        "gzip": 45817,
+        "brotli": 38594
+      },
+      "after": {
+        "raw": 162152,
+        "gzip": 46160,
+        "brotli": 38825
+      },
+      "delta": {
+        "raw": 2408,
+        "gzip": 343,
+        "brotli": 231
+      },
+      "calls": 0,
+      "tokens": 436,
+      "typography": 17
+    },
+    {
+      "name": "already-fluent-wrapper",
+      "before": {
+        "raw": 162466,
+        "gzip": 46742,
+        "brotli": 39434
+      },
+      "after": {
+        "raw": 164874,
+        "gzip": 47085,
+        "brotli": 39656
+      },
+      "delta": {
+        "raw": 2408,
+        "gzip": 343,
+        "brotli": 222
+      },
+      "calls": 6,
+      "tokens": 436,
+      "typography": 17
+    },
+    {
+      "name": "full-ui",
+      "before": {
+        "raw": 458952,
+        "gzip": 125917,
+        "brotli": 103329
+      },
+      "after": {
+        "raw": 458605,
+        "gzip": 125905,
+        "brotli": 103315
+      },
+      "delta": {
+        "raw": -347,
+        "gzip": -12,
+        "brotli": -14
+      },
+      "calls": 384,
+      "tokens": 436,
+      "typography": 17
+    }
+  ],
+  "ship": {
+    "before": {
+      "raw": 702451,
+      "gzip": 201446,
+      "brotli": 169664
+    },
+    "after": {
+      "raw": 702096,
+      "gzip": 201430,
+      "brotli": 169563
+    },
+    "delta": {
+      "raw": -355,
+      "gzip": -16,
+      "brotli": -101
+    }
+  },
+  "cssEqual": true
+}

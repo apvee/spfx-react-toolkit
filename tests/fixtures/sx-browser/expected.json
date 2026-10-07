@@ -1,0 +1,29 @@
+{
+  "recordedBeforeCascadeCorrections": true,
+  "containerThresholds": { "479": "column", "480": "column", "639": "column", "640": "row", "1023": "row", "1024": "row" },
+  "responsiveWidths": { "479": "100px", "480": "180px", "639": "180px", "640": "240px", "1023": "240px", "1024": "360px" },
+  "gap": { "639": "4px", "640": "20px", "1024": "32px" },
+  "viewportWidth": "420px",
+  "nestedWidth": "100px",
+  "independentRegions": ["column", "row"],
+  "ownChildWidth": "75px",
+  "selfContainerWidth": "1024px",
+  "statePriorityWidths": {
+    "479": { "hover": "110px", "active": "120px", "focusVisible": "130px" },
+    "480": { "hover": "140px", "active": "150px", "focusVisible": "160px" },
+    "640": { "hover": "200px", "active": "210px", "focusVisible": "220px" },
+    "1024": { "hover": "260px", "active": "270px", "focusVisible": "280px" }
+  },
+  "inheritedOmittedColor": "rgb(11, 22, 33)",
+  "removedScopeWidth": "111px",
+  "separateSx": { "base": "360px", "hover": "240px", "container": "280px", "containerHover": "320px" },
+  "externalClass": { "intercalated": "400px", "laterDescriptor": "360px", "externalLast": "400px", "descriptorLast": "240px" },
+  "foreignScoped": { "base": "400px", "sxLast": "360px", "nativeLast": "400px" },
+  "separateStates": { "base": "100px", "hover": "110px", "active": "120px", "focusVisible": "130px" },
+  "simultaneousStates": { "hover": "rgb(200, 0, 0)", "active": "rgb(0, 160, 0)", "focusVisible": "rgb(0, 0, 220)", "focusVisibleContainer": "rgb(120, 0, 180)" },
+  "disabledColor": "rgb(100, 100, 100)",
+  "selectedColor": "rgb(200, 100, 0)",
+  "verticalInlineThreshold": { "639": "column", "640": "row" },
+  "rtl": { "paddingLeft": "0px", "paddingRight": "13px", "logicalStart": "13px", "direction": "rtl" },
+  "queryPriority": "260px"
+}

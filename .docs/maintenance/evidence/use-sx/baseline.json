@@ -1,0 +1,536 @@
+{
+  "node": "v22.20.0",
+  "versions": {
+    "typescript": "5.3.3",
+    "react": "17.0.1",
+    "@microsoft/sp-build-web": "1.21.1",
+    "@fluentui/react-theme": "9.2.0",
+    "@griffel/core": "1.19.2",
+    "@griffel/react": "1.5.30",
+    "@fluentui/react-shared-contexts": "9.25.2"
+  },
+  "libraryVersion": "2.1.0",
+  "tarballSha256": "d87c017581e27d58d2525be9133041953341dc85f9ea61601d68ba92303fa7d5",
+  "commands": {
+    "buildLibrary": 0,
+    "packLibrary": 1,
+    "packLibraryRetry": 0,
+    "bundleShipWrapper": 0,
+    "bundleShipReportedFailure": "Gulp reports exit code 1 from stderr; baseline-browser-mapping data warning"
+  },
+  "files": [
+    {
+      "name": "4c2e58cc-1253-43e5-bfa3-b22a07ace279.manifest.json",
+      "bytes": 1913,
+      "sha256": "5432b4537146b7f37c64c3f7891c057bff11c608a7cbbf8ce6b2213ddbff56b3",
+      "mtime": "2026-10-07T08:15:37.211Z",
+      "currentBuild": true
+    },
+    {
+      "name": "54985a3d-eaad-4041-8fdc-a50241798c07.manifest.json",
+      "bytes": 2519,
+      "sha256": "ea5186805436aab6f5273e7ad26e4303512581abbe3660f51909c7fac81c00a5",
+      "mtime": "2026-10-07T08:15:37.211Z",
+      "currentBuild": true
+    },
+    {
+      "name": "SpFxReactToolkitTestApplicationCustomizerStrings_en-us.js",
+      "bytes": 99,
+      "sha256": "6dee17b9d23e1d4f0a96c1d502693e958b9d90a0a3da73ebaa7da4c9ec255f8a",
+      "mtime": "2026-10-06T10:10:17.327Z",
+      "currentBuild": false,
+      "gzip": 113,
+      "brotli": 86
+    },
+    {
+      "name": "SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js",
+      "bytes": 99,
+      "sha256": "6dee17b9d23e1d4f0a96c1d502693e958b9d90a0a3da73ebaa7da4c9ec255f8a",
+      "mtime": "2026-10-06T10:20:34.817Z",
+      "currentBuild": false,
+      "gzip": 113,
+      "brotli": 86
+    },
+    {
+      "name": "SpFxReactToolkitTestWebPartStrings_en-us.js",
+      "bytes": 916,
+      "sha256": "74bc8580104a997ba07f0d7b58c89193f513a9c96e7c1c1f7b1c22b448e9a930",
+      "mtime": "2026-10-06T10:10:17.327Z",
+      "currentBuild": false,
+      "gzip": 297,
+      "brotli": 229
+    },
+    {
+      "name": "SpFxReactToolkitTestWebPartStrings_en-us_eb42a517954fea904e022e89eb9f35e4.js",
+      "bytes": 916,
+      "sha256": "74bc8580104a997ba07f0d7b58c89193f513a9c96e7c1c1f7b1c22b448e9a930",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 297,
+      "brotli": 229
+    },
+    {
+      "name": "chunk.157_1fea6822854bb543c025.js",
+      "bytes": 23554,
+      "sha256": "4be2b47cba721c87afacb04aabc616fad0927b5b822ca67e3e9c34502639b5d0",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 6163,
+      "brotli": 5302
+    },
+    {
+      "name": "chunk.157_a02d472a06df9692204e.js",
+      "bytes": 23554,
+      "sha256": "2164867f92c1223dfdfafd3c581fba052cadd0b1fba0519cde9d33c7b97a7693",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 6164,
+      "brotli": 5305
+    },
+    {
+      "name": "chunk.877_380bd78b2fcbd9b80fd0.js",
+      "bytes": 15731,
+      "sha256": "6ed4b8cb2cb3de79b2e741b7564d6815d52358883265d17664205ea48061423f",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 4984,
+      "brotli": 4477
+    },
+    {
+      "name": "chunk.lib_webparts_spFxReactToolkitTest_components_demos_index_js.js",
+      "bytes": 69979,
+      "sha256": "4d497cf655b34f325cc686d065c8d585693878dec1f9fd0394ab332e63849d93",
+      "mtime": "2026-10-06T10:10:17.325Z",
+      "currentBuild": false,
+      "gzip": 8826,
+      "brotli": 7449
+    },
+    {
+      "name": "chunk.lib_webparts_spFxReactToolkitTest_components_demos_index_js.js.map",
+      "bytes": 67280,
+      "sha256": "af3b39d20c8fb66d2ad3d42cb4b832db17836eb475049e9f956dc5880de6a67a",
+      "mtime": "2026-10-06T10:10:17.327Z",
+      "currentBuild": false
+    },
+    {
+      "name": "chunk.spfx-demo-clients.js",
+      "bytes": 14653,
+      "sha256": "1c5cc11a20ffa7b8a697d42a4419077466579bb41224f63c47edc1c3cdc9b5d4",
+      "mtime": "2026-10-06T10:10:17.325Z",
+      "currentBuild": false,
+      "gzip": 2739,
+      "brotli": 2364
+    },
+    {
+      "name": "chunk.spfx-demo-clients.js.map",
+      "bytes": 17544,
+      "sha256": "6f620d27679f0d794d27a81b7e3183d48e43483310a27781f39f890ba22cc057",
+      "mtime": "2026-10-06T10:10:17.326Z",
+      "currentBuild": false
+    },
+    {
+      "name": "chunk.spfx-demo-clients_52d3f2baeeadef611de3.js",
+      "bytes": 10431,
+      "sha256": "4458800a92cf5fd1df24bb5d4940c1555a5c707c362a0f94f26553027dc76fea",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 3065,
+      "brotli": 2629
+    },
+    {
+      "name": "chunk.spfx-demo-clients_7183dc45fd3dcf569248.js",
+      "bytes": 10431,
+      "sha256": "1480e40719ce794b843b766b639f6958540300ab1bc463894ba61c54fb34e536",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 3065,
+      "brotli": 2626
+    },
+    {
+      "name": "chunk.spfx-demo-context.js",
+      "bytes": 13713,
+      "sha256": "ebdb0751680f12ca87303fb4f04b16204382ad8d125d2799f306ddd2a022006f",
+      "mtime": "2026-10-06T10:10:17.325Z",
+      "currentBuild": false,
+      "gzip": 2515,
+      "brotli": 2202
+    },
+    {
+      "name": "chunk.spfx-demo-context.js.map",
+      "bytes": 15687,
+      "sha256": "c3c14925cb6795879bf64ded59656904daf583afa302eaa68b72919a3e90cc28",
+      "mtime": "2026-10-06T10:10:17.326Z",
+      "currentBuild": false
+    },
+    {
+      "name": "chunk.spfx-demo-context_14183c64712712248e8b.js",
+      "bytes": 5086,
+      "sha256": "f6d4d17253eda1242e75c24875daa5bd274fd459f2492d421f90f16c081a3cce",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 1760,
+      "brotli": 1508
+    },
+    {
+      "name": "chunk.spfx-demo-context_b3cef3563d42dda55cc5.js",
+      "bytes": 5086,
+      "sha256": "e4413740a1677afedadaa7e4d2dc5132aec9bd102374d6178230299e3ceededf",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 1759,
+      "brotli": 1507
+    },
+    {
+      "name": "chunk.spfx-demo-graph-data.js",
+      "bytes": 8241,
+      "sha256": "0adea215f482e5c1dd9c82d2c40aa834d667678b3a489aafd06c6f4f4bc15d3a",
+      "mtime": "2026-10-06T10:10:17.325Z",
+      "currentBuild": false,
+      "gzip": 2029,
+      "brotli": 1735
+    },
+    {
+      "name": "chunk.spfx-demo-graph-data.js.map",
+      "bytes": 8967,
+      "sha256": "4521e628a84af95a9f6d585f1bd8580c238336c4560911d058bba14ccb981df9",
+      "mtime": "2026-10-06T10:10:17.327Z",
+      "currentBuild": false
+    },
+    {
+      "name": "chunk.spfx-demo-graph-data_2f366cd9e28b22c58fea.js",
+      "bytes": 7982,
+      "sha256": "44d168539dd43735a1812feb74face85237d038f20a62cbaa9495dbb4a97b99b",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 2562,
+      "brotli": 2208
+    },
+    {
+      "name": "chunk.spfx-demo-graph-data_e5260ba6f0d334be4846.js",
+      "bytes": 7982,
+      "sha256": "beae4185ad375838112c1cb5a68dc25058f924d1d462e5f6541c43f8f406514a",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 2563,
+      "brotli": 2209
+    },
+    {
+      "name": "chunk.spfx-demo-pnp.js",
+      "bytes": 8647,
+      "sha256": "d0f3d56db1587f43322bea483754deac2f0afbf1828a1700edd01a991151908f",
+      "mtime": "2026-10-06T13:56:23.855Z",
+      "currentBuild": false,
+      "gzip": 1874,
+      "brotli": 1582
+    },
+    {
+      "name": "chunk.spfx-demo-pnp.js.map",
+      "bytes": 7571,
+      "sha256": "a0d2cc380062e86bed58b24002892d1172e5b811e2de9d8cb360fb513f4af8e5",
+      "mtime": "2026-10-06T13:56:23.858Z",
+      "currentBuild": false
+    },
+    {
+      "name": "chunk.spfx-demo-pnp_6cb4d9ccd0d41c04ff7e.js",
+      "bytes": 536,
+      "sha256": "6f4cc812e778235d9e915501c9d58c73687b8c945a560dc651983da631ab4e35",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 360,
+      "brotli": 297
+    },
+    {
+      "name": "chunk.spfx-demo-pnp_cd30345784ee823a037d.js",
+      "bytes": 2490,
+      "sha256": "dc15ae56f87e164161b8d17e2ac254cd58c90047e7debd3ff95267136e948f73",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 1113,
+      "brotli": 952
+    },
+    {
+      "name": "chunk.spfx-demo-providers.js",
+      "bytes": 4966,
+      "sha256": "18c3cdc652e97b673764c95cf5cb6b123bf8f43501a608b40e27f2e21cf9af32",
+      "mtime": "2026-10-06T10:10:17.325Z",
+      "currentBuild": false,
+      "gzip": 1246,
+      "brotli": 1062
+    },
+    {
+      "name": "chunk.spfx-demo-providers.js.map",
+      "bytes": 4170,
+      "sha256": "ab69874416f4ae1e872cd1e6c82832c7c9816854d38ad1f22f238e2b23240956",
+      "mtime": "2026-10-06T10:10:17.326Z",
+      "currentBuild": false
+    },
+    {
+      "name": "chunk.spfx-demo-providers_5f667917e055bff7e878.js",
+      "bytes": 1684,
+      "sha256": "f6944fd22704bc895b7ceb506083c327f239a266a337d98351c9cd2e93007c9e",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 764,
+      "brotli": 622
+    },
+    {
+      "name": "chunk.spfx-demo-providers_66539f918419afca62d8.js",
+      "bytes": 1684,
+      "sha256": "14cb3d8e7b4e05dab6dc86478576e69e5d95afa26b8d22e22d15bf226f440eb6",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 764,
+      "brotli": 622
+    },
+    {
+      "name": "chunk.spfx-demo-react-hooks_63b41c87e3f92ea95fb4.js",
+      "bytes": 5974,
+      "sha256": "bb77556224813b3c3ed5728d109ca5059353957a96a16e312087c12da61e341f",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 1853,
+      "brotli": 1593
+    },
+    {
+      "name": "chunk.spfx-demo-runtime.js",
+      "bytes": 12117,
+      "sha256": "921333d12e03489df71b39bba1c33a5bfbb46e0c6b24fb00285a4e09e0272028",
+      "mtime": "2026-10-06T10:10:17.325Z",
+      "currentBuild": false,
+      "gzip": 2333,
+      "brotli": 2011
+    },
+    {
+      "name": "chunk.spfx-demo-runtime.js.map",
+      "bytes": 13510,
+      "sha256": "b2b0b30f1338a86dc432f58332dafc35a890bc227753eef12dc2ec62b5320bf9",
+      "mtime": "2026-10-06T10:10:17.327Z",
+      "currentBuild": false
+    },
+    {
+      "name": "chunk.spfx-demo-runtime_10090ec7b49f800ee126.js",
+      "bytes": 9080,
+      "sha256": "4aff376e37d3ab8d4a49a9de6b7f97726a475a19a1afb9935ecf8d8d3f920739",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 2686,
+      "brotli": 2324
+    },
+    {
+      "name": "chunk.spfx-demo-runtime_ca0d213fa80358493961.js",
+      "bytes": 9080,
+      "sha256": "4c2e74e4cbcb0111e98bdbdb86494996db47c7c85692a264da03b045756ffc84",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 2688,
+      "brotli": 2326
+    },
+    {
+      "name": "chunk.spfx-demo-search.js",
+      "bytes": 3608,
+      "sha256": "4d3af82901e5b1ab446979f88f32fe511f8cb313a2166fbb68aca63338eac99b",
+      "mtime": "2026-10-06T10:10:17.325Z",
+      "currentBuild": false,
+      "gzip": 964,
+      "brotli": 840
+    },
+    {
+      "name": "chunk.spfx-demo-search.js.map",
+      "bytes": 2017,
+      "sha256": "34ae9d3a88d7d474b29c479f1e048802e66f09c3035f45f7c896d8132560e268",
+      "mtime": "2026-10-06T10:10:17.327Z",
+      "currentBuild": false
+    },
+    {
+      "name": "chunk.spfx-demo-search_accbcb62d48125acc0f3.js",
+      "bytes": 837,
+      "sha256": "19a38bf09d6d16f483a153f71bf641c9b21ce229d223d6c650599398978ca74b",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 492,
+      "brotli": 418
+    },
+    {
+      "name": "chunk.spfx-demo-search_baeeb49286f36484292a.js",
+      "bytes": 837,
+      "sha256": "a451e37ffe44f9b913eb9ee729b45f92c5e5b1063ee5d0dbd644d97aeb27f357",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 491,
+      "brotli": 415
+    },
+    {
+      "name": "chunk.spfx-demo-site.js",
+      "bytes": 9665,
+      "sha256": "5e4a82057519bbbf1be00163f9e6fea11cc2ea3fe182dfca9bf20054d7425954",
+      "mtime": "2026-10-06T13:11:20.800Z",
+      "currentBuild": false,
+      "gzip": 2245,
+      "brotli": 1957
+    },
+    {
+      "name": "chunk.spfx-demo-site.js.map",
+      "bytes": 11239,
+      "sha256": "9438bcdb273afe576ee897de4b3bfc3b259c3f5054e9e71e414d42cb43d26bd2",
+      "mtime": "2026-10-06T13:11:20.802Z",
+      "currentBuild": false
+    },
+    {
+      "name": "chunk.spfx-demo-site_1221096f26307abda4ac.js",
+      "bytes": 8457,
+      "sha256": "7f345733092648aeaaf08dcf719627ee31b4f2a5168949a537f049e6ffe32350",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 2642,
+      "brotli": 2305
+    },
+    {
+      "name": "chunk.spfx-demo-tenant.js",
+      "bytes": 9280,
+      "sha256": "329f3696936c51d5088823e83cc5961459ae6e3162bebba23e9e172ea161bc4d",
+      "mtime": "2026-10-06T10:10:17.325Z",
+      "currentBuild": false,
+      "gzip": 1932,
+      "brotli": 1685
+    },
+    {
+      "name": "chunk.spfx-demo-tenant.js.map",
+      "bytes": 10317,
+      "sha256": "018aac387a6db47038474a849bdc161596ab92ade90579caf8a38914f43421ce",
+      "mtime": "2026-10-06T10:10:17.327Z",
+      "currentBuild": false
+    },
+    {
+      "name": "chunk.spfx-demo-tenant_c2a3973995ece346bcc9.js",
+      "bytes": 8345,
+      "sha256": "92f7b5a25adb089151f650deddeed83f6fff8640c33e97ea6adae4a9870bdd11",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 2470,
+      "brotli": 2139
+    },
+    {
+      "name": "chunk.spfx-demo-tenant_e09688b23aa53ca26b2b.js",
+      "bytes": 8345,
+      "sha256": "c75c998111d2e54eddeb669e53e275e0b30353b0ad9b4350b60eafca7ee9d031",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 2470,
+      "brotli": 2136
+    },
+    {
+      "name": "chunk.vendors-node_modules_fluentui_react_lib_components_Button_PrimaryButton_PrimaryButton_js.js",
+      "bytes": 17397,
+      "sha256": "e53a683f7aa09fd4b8c8deda4292433e0cb514a5c8acaf8a985b37ce83734e83",
+      "mtime": "2026-10-06T10:10:17.325Z",
+      "currentBuild": false,
+      "gzip": 2651,
+      "brotli": 2263
+    },
+    {
+      "name": "chunk.vendors-node_modules_fluentui_react_lib_components_Button_PrimaryButton_PrimaryButton_js.js.map",
+      "bytes": 14582,
+      "sha256": "168756b0fcd6b703c24130218727196158f2312c94dcab4c0214df28bb623256",
+      "mtime": "2026-10-06T10:10:17.327Z",
+      "currentBuild": false
+    },
+    {
+      "name": "chunk.vendors-node_modules_fluentui_react_lib_components_TextField_TextField_js.js",
+      "bytes": 47301,
+      "sha256": "6125376e427cd253dbe8275f342021f49969d6617e0f945cfc8f33ce9ce48459",
+      "mtime": "2026-10-06T10:10:17.325Z",
+      "currentBuild": false,
+      "gzip": 9545,
+      "brotli": 8180
+    },
+    {
+      "name": "chunk.vendors-node_modules_fluentui_react_lib_components_TextField_TextField_js.js.map",
+      "bytes": 47972,
+      "sha256": "f8fa3c1b28f5060104d1c6c84b1b77f7142796eea334a9e3a7e04faacd61a719",
+      "mtime": "2026-10-06T10:10:17.327Z",
+      "currentBuild": false
+    },
+    {
+      "name": "sp-fx-react-toolkit-test-application-customizer.js",
+      "bytes": 926810,
+      "sha256": "181aef6c0bccfe70662feb810d60ca7be9ddd3a78efcea834aaa10a20cbd614b",
+      "mtime": "2026-10-06T13:48:06.688Z",
+      "currentBuild": false,
+      "gzip": 158389,
+      "brotli": 118832
+    },
+    {
+      "name": "sp-fx-react-toolkit-test-application-customizer.js.map",
+      "bytes": 1043034,
+      "sha256": "c6d0231f6015eaa72d9eccae531b9fccf0a38b6232367440b65d20c82fd16890",
+      "mtime": "2026-10-06T13:48:06.691Z",
+      "currentBuild": false
+    },
+    {
+      "name": "sp-fx-react-toolkit-test-application-customizer_85880989dd0304710595.js",
+      "bytes": 46089,
+      "sha256": "4b4a42712ca297896a301f623e6694e3332f90e98a2840a668d3b83de0d519f9",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 15206,
+      "brotli": 13467
+    },
+    {
+      "name": "sp-fx-react-toolkit-test-application-customizer_db358478796b5017ceb0.js",
+      "bytes": 46089,
+      "sha256": "4b4a42712ca297896a301f623e6694e3332f90e98a2840a668d3b83de0d519f9",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 15206,
+      "brotli": 13467
+    },
+    {
+      "name": "sp-fx-react-toolkit-test-web-part.js",
+      "bytes": 2083365,
+      "sha256": "5c28b2ecccc41268df40cbd6cd0ff112438ef5f30b7bae4eaf2526517cf7d432",
+      "mtime": "2026-10-06T13:48:06.688Z",
+      "currentBuild": false,
+      "gzip": 362710,
+      "brotli": 270361
+    },
+    {
+      "name": "sp-fx-react-toolkit-test-web-part.js.map",
+      "bytes": 2072087,
+      "sha256": "23a58b909c5e1a6daf8f5fb2f37e40f0649bf5243c7b02d2d4f8cd77bfc3974d",
+      "mtime": "2026-10-06T13:48:06.688Z",
+      "currentBuild": false
+    },
+    {
+      "name": "sp-fx-react-toolkit-test-web-part_37e3c047e83ca922b1a4.js",
+      "bytes": 416277,
+      "sha256": "a4f4001004934d8dd26263f9cfb1440c1a9b65a25c945efe5a1d943ee464cefd",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true,
+      "gzip": 123852,
+      "brotli": 103398
+    },
+    {
+      "name": "sp-fx-react-toolkit-test-web-part_37e3c047e83ca922b1a4.js.LICENSE.txt",
+      "bytes": 821,
+      "sha256": "d267720e13a0e64f3c112753bc87a157ef071165ed1bc268803316ed0d231d31",
+      "mtime": "2026-10-07T08:15:37.210Z",
+      "currentBuild": true
+    },
+    {
+      "name": "sp-fx-react-toolkit-test-web-part_b9b76c8904ec62111698.js",
+      "bytes": 402554,
+      "sha256": "9255e69583f6b6d7308cfb57de201e7745297fdfaa3ebf4cd6d0b818f478f573",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false,
+      "gzip": 119958,
+      "brotli": 100062
+    },
+    {
+      "name": "sp-fx-react-toolkit-test-web-part_b9b76c8904ec62111698.js.LICENSE.txt",
+      "bytes": 821,
+      "sha256": "d267720e13a0e64f3c112753bc87a157ef071165ed1bc268803316ed0d231d31",
+      "mtime": "2026-10-06T10:20:34.816Z",
+      "currentBuild": false
+    }
+  ]
+}

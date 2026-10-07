@@ -1,0 +1,326 @@
+--- before/packages/spfx-react-toolkit/src/helpers/styles/bindings.internal.ts
++++ after/packages/spfx-react-toolkit/src/helpers/styles/bindings.internal.ts
+@@ -9,13 +9,12 @@
+   { target: 'viewport', breakpoint: 1024 }, { target: 'container', breakpoint: 1024 }
+ ];
+ // Higher states override lower states, independent of mount and CSS insertion order.
+-// Browser verification of the candidate priority/reset cascade belongs to Task 3.
+ const statePriority: readonly (SxState | undefined)[] = [undefined, 'hover', 'active', 'focus-visible'];
+ function variableName(property: string, query: SxQuery, state?: SxState): `--${string}` {
+   return `--apvee-sx-${property}-${sxScopeKey(query, state)}`;
+ }
+-/** Fixed property chain permits merging independent sx results without replacing their scopes. */
+-export function createBindingStyle(binding: SxBinding): GriffelStyle {
++/** Native property/scope identity merges with foreign Griffel classes; every scope reads the same priority chain. */
++export function createBindingStyle(binding: SxBinding, query: SxQuery, state?: SxState): GriffelStyle {
+   let value = binding.fallback;
+   const reset: Record<`--${string}`, string> = {};
+   for (const state of statePriority) {
+@@ -29,13 +28,21 @@
+       reset[variable] = 'initial';
+     }
+   }
+-  return {
++  let propertyStyle: GriffelStyle = {
+     [binding.property]: value,
+-    ':where(&)': reset,
+     ...(binding.forcedColors === undefined ? {} : {
+       '@media (forced-colors: active)': { [binding.property]: binding.forcedColors }
+     })
+   };
++  if (state) propertyStyle = { [`:${state}`]: propertyStyle };
++  if (query.target === 'container') {
++    propertyStyle = { [`@container apvee-sx (min-inline-size: ${query.breakpoint}px)`]: propertyStyle };
++  } else if (query.target === 'viewport') {
++    propertyStyle = { [`@media (min-width: ${query.breakpoint}px)`]: propertyStyle };
++  }
++  // Reset all private variables locally even when this native property scope is
++  // inactive. Keep the reset below live assignments from independently merged sx.
++  return { ...propertyStyle, ':where(&)': reset };
+ }
+ /** Scoped assignments are ordinary Griffel declarations, never inline style. */
+ export function createAssignmentStyle(declaration: SxNormalizedDeclaration): GriffelStyle {
+--- before/packages/spfx-react-toolkit/src/helpers/styles/resolve.internal.ts
++++ after/packages/spfx-react-toolkit/src/helpers/styles/resolve.internal.ts
+@@ -15,14 +15,17 @@
+       continue;
+     }
+     for (const declaration of segment.declarations) {
+-      const bindingKey = JSON.stringify([declaration.binding.property, declaration.binding.fallback, declaration.binding.forcedColors]);
++      const scopeKey = sxScopeKey(declaration.query, declaration.state);
++      const bindingKey = JSON.stringify([
++        declaration.binding.property, declaration.binding.fallback, declaration.binding.forcedColors, scopeKey
++      ]);
+       let binding = cache.bindings.get(bindingKey);
+       if (!binding) {
+-        binding = makeStyles({ root: createBindingStyle(declaration.binding) });
++        binding = makeStyles({ root: createBindingStyle(declaration.binding, declaration.query, declaration.state) });
+         cache.bindings.set(bindingKey, binding);
+       }
+       const assignmentKey = JSON.stringify([
+-        declaration.property, sxScopeKey(declaration.query, declaration.state), declaration.value
++        declaration.property, scopeKey, declaration.value
+       ]);
+       let assignment = cache.assignments.get(assignmentKey);
+       if (!assignment) {
+--- before/tests/sx-runtime.test.cjs
++++ after/tests/sx-runtime.test.cjs
+@@ -70,6 +70,52 @@
+   assert.ok(rules.some(rule => /--apvee-sx-width-base:\s*360px/.test(rule)));
+   assert.ok(rules.some(rule => /:where\(/.test(rule) && /initial/.test(rule)));
+ });
++// Documentless real core CSS supports queries that JSDOM's CSSOM cannot parse.
++function retainedCoreRules(renderer, className) {
++  const classes = new Set(className.split(/\s+/));
++  return Object.keys(renderer.insertionCache).filter(rule =>
++    [...rule.matchAll(/\.([a-zA-Z0-9_-]+)/g)].some(match => classes.has(match[1])));
++}
++const foreignScopes = [
++  ['hover', ':hover', s => s.hover],
++  ['active', ':active', s => s.active],
++  ['focus-visible', ':focus-visible', s => s.focusVisible],
++  ['viewport', '@media (min-width: 640px)', s => s.viewport.medium],
++  ['container', '@container apvee-sx (min-inline-size: 640px)', s => s.responsive.medium],
++  ['viewport-hover', '@media (min-width: 640px)', s => d => s.viewport.medium(s.hover(d)), ':hover'],
++  ['container-hover', '@container apvee-sx (min-inline-size: 640px)', s => d => s.responsive.medium(s.hover(d)), ':hover']
++];
++for (const [name, selector, descriptorScope, stateSelector] of foreignScopes) {
++  test(`later native or sx width wins in the same foreign Griffel ${name} scope`, () => {
++    const { styles: s, load } = fixture();
++    const renderer = createDOMRenderer(null);
++    const environment = { renderer, dir: 'ltr' };
++    const resolve = (...inputs) => load('resolve.internal').resolveSxInputs(environment, inputs);
++    const scopedWidth = stateSelector ? { [stateSelector]: { width: '400px' } } : { width: '400px' };
++    const external = makeStyles({ root: { [selector]: scopedWidth } })(environment).root;
++    const descriptor = descriptorScope(s)(s.width.px(360));
++    for (const compose of [inputs => resolve(...inputs), inputs => mergeClasses(...inputs.map(input =>
++      typeof input === 'string' ? input : resolve(input)))]) {
++      const sxLast = retainedCoreRules(renderer, compose([external, descriptor]));
++      assert.ok(!sxLast.some(rule => /width:\s*400px/.test(rule)), 'later descriptor must replace the native property in this scope');
++      assert.ok(sxLast.some(rule => /width:\s*var\(/.test(rule)), 'native scoped property binding must remain');
++      const nativeLast = retainedCoreRules(renderer, compose([descriptor, external]));
++      assert.ok(nativeLast.some(rule => /width:\s*400px/.test(rule)), 'later native property must remain');
++      assert.ok(!nativeLast.some(rule => /width:\s*var\(/.test(rule)), 'later native property must replace the scoped binding');
++    }
++  });
++  test(`a ${name}-only descriptor preserves a foreign base width`, () => {
++    const { styles: s, load } = fixture();
++    const renderer = createDOMRenderer(null);
++    const environment = { renderer, dir: 'ltr' };
++    const external = makeStyles({ root: { width: '400px' } })(environment).root;
++    const className = load('resolve.internal').resolveSxInputs(environment,
++      [external, descriptorScope(s)(s.width.px(360))]);
++    const rules = retainedCoreRules(renderer, className);
++    assert.ok(rules.some(rule => /width:\s*400px/.test(rule)), 'foreign base declaration must survive scoped sx input');
++    assert.ok(!rules.some(rule => /^\.[a-z0-9]+\{width:\s*var\(/.test(rule)), 'scoped input must not emit an unscoped native property');
++  });
++}
+ test('live assignments have greater specificity than local resets; container queries use inline size', () => {
+   const { styles: s, load } = fixture();
+   // Inspect the real core renderer insertion cache rather than relying on JSDOM
+--- before/tests/fixtures/sx-browser/index.tsx
++++ after/tests/fixtures/sx-browser/index.tsx
+@@ -39,7 +39,14 @@
+ const disabled = background('rgb(100, 100, 100)');
+ const selected = background('rgb(200, 100, 0)');
+ const neutral = background('rgb(240, 240, 240)');
+-const externalStyles = makeStyles({ width: { width: '400px' } });
++const externalStyles = makeStyles({
++  width: { width: '400px' }, hover: { ':hover': { width: '400px' } },
++  active: { ':active': { width: '400px' } }, focus: { ':focus-visible': { width: '400px' } },
++  viewport: { '@media (min-width: 640px)': { width: '400px' } },
++  container: { '@container apvee-sx (min-inline-size: 640px)': { width: '400px' } },
++  viewportHover: { '@media (min-width: 640px)': { ':hover': { width: '400px' } } },
++  containerHover: { '@container apvee-sx (min-inline-size: 640px)': { ':hover': { width: '400px' } } }
++});
+ const renderer = createDOMRenderer(document);
+ let config: FixtureConfig = {
+   size: 639, reverse: new URLSearchParams(location.search).get('reverse') === '1',
+@@ -48,7 +55,8 @@
+ 
+ function Fixture(props: FixtureConfig): React.ReactElement {
+   const sx = useSx();
+-  const external = externalStyles({ renderer: useRenderer_unstable(), dir: props.dir }).width;
++  const native = externalStyles({ renderer: useRenderer_unstable(), dir: props.dir });
++  const external = native.width;
+   const ordered = (inputs: readonly SxInput[]): readonly SxInput[] => props.reverse ? [...inputs].reverse() : inputs;
+   const probe = (id: string, inputs: readonly SxInput[], children?: React.ReactNode): React.ReactElement =>
+     <div key={id} id={id} className={sx('probe', ...inputs)}>{children || id}</div>;
+@@ -79,6 +87,18 @@
+     viewport.large(hover(width.px(230)), active(width.px(240)), focusVisible(width.px(250))),
+     responsive.large(hover(width.px(260)), active(width.px(270)), focusVisible(width.px(280)))
+   ];
++  const foreignScopes: readonly [string, string, SxInput][] = [
++    ['hover', native.hover, hover(width.px(360))],
++    ['viewport', native.viewport, viewport.medium(width.px(360))],
++    ['container', native.container, responsive.medium(width.px(360))],
++    ['viewport-hover', native.viewportHover, viewport.medium(hover(width.px(360)))],
++    ['container-hover', native.containerHover, responsive.medium(hover(width.px(360)))]
++  ];
++  const foreignNodes = foreignScopes.flatMap(([name, className, descriptor]) => [
++    probe(`foreign-${name}-sx-last`, [external, className, descriptor]),
++    probe(`foreign-${name}-native-last`, [external, descriptor, className]),
++    probe(`foreign-${name}-base-preserved`, [external, descriptor])
++  ]);
+   return <>
+     <h1>useSx real-browser checkpoint</h1>
+     <p className="legend">Real React 17, Griffel and FluentProvider. Geometry styles belong only to fixture hosts.</p>
+@@ -107,6 +127,7 @@
+       {probe('external-later-descriptor', [width.px(240), external, gap(12), width.px(360)])}
+       <div id="external-last" className={mergeClasses(sx(width.px(240)), external)}>External last</div>
+       <div id="descriptor-last" className={mergeClasses(external, sx(width.px(240)))}>Descriptor last</div>
++      {host('foreign-container', props.size, props.reverse ? [...foreignNodes].reverse() : foreignNodes)}
+     </section>
+     <section className="case" id="states"><h2>Keyboard focus, hover, active, disabled and selected</h2>
+       <button id="state-base" className={sx(neutral, hover(red), active(green), focusVisible(blue))}>State base</button>
+@@ -121,6 +142,13 @@
+         className={sx(props.enabled ? props.selected ? selected : neutral : disabled,
+           props.enabled && !props.selected && hover(red), props.enabled && !props.selected && active(green),
+           props.enabled && focusVisible(blue))}>Transition</button>
++      <button id="foreign-separate-states" className={mergeOrdered(['foreign-state-probe',
++        sx(width.px(100)), sx(hover(width.px(110))), sx(active(width.px(120))), sx(focusVisible(width.px(130)))
++      ])}>Separate state strings</button>
++      <button id="foreign-state-sx-last" className={mergeClasses('foreign-state-probe', sx(width.px(100)), native.hover, native.active, native.focus,
++        sx(hover(width.px(360)), active(width.px(360)), focusVisible(width.px(360))))}>Native states before sx</button>
++      <button id="foreign-state-native-last" className={mergeClasses('foreign-state-probe', sx(width.px(100)),
++        sx(hover(width.px(360)), active(width.px(360)), focusVisible(width.px(360))), native.hover, native.active, native.focus)}>Native states after sx</button>
+     </section>
+     <section className="case" id="catalog"><h2>Fluent catalog, theme colors, and scrollbar appearance</h2>
+       {(['canvas', 'alternative'] as const).map(surface => <div key={surface} id={`catalog-${surface}`}
+@@ -141,6 +169,13 @@
+       <div id="catalog-preset-override" className={sx(presets.canvas, foreground.subtle)}>Property-wise foreground override</div>
+       <div id="catalog-preset-reverse" className={sx(foreground.subtle, presets.canvas)}>Property-wise preset override</div>
+       <div id="scrollbar-only" className={sx(scrollbar.fluent)}>Scrollbar appearance without overflow</div>
++      <div className={sx('scrollbar-scope-inactive', container.inlineSize)}>
++        {probe('scrollbar-scoped-inactive', [responsive.medium(scrollbar.fluent)])}
++      </div>
++      <div className={sx('scrollbar-scope-active', container.inlineSize)}>
++        {probe('scrollbar-scoped-query', [responsive.medium(scrollbar.fluent)])}
++        {probe('scrollbar-scoped-query-hover', [responsive.medium(hover(scrollbar.fluent))])}
++      </div>
+       <div id="catalog-typography-body1" className={sx(typography.body1)}>Body1 theme font tokens</div>
+     </section>
+     <section className="case"><h2>Direction and logical longhands</h2>
+--- before/tests/fixtures/sx-browser/index.html
++++ after/tests/fixtures/sx-browser/index.html
+@@ -9,6 +9,9 @@
+ .inherited { color: rgb(11, 22, 33); }
+ .legend { color: #444; }
+ button { min-height: 32px; }
++.foreign-state-probe { display: block; }
++.scrollbar-scope-inactive { width: 639px; }
++.scrollbar-scope-active { width: 640px; }
+ .catalog-surface { display: inline-block; vertical-align: top; width: 360px; padding: 12px; margin: 4px; }
+ .catalog-preset { padding: 6px; margin-block: 4px; }
+ .catalog-scrollbox { width: 320px; height: 100px; }
+--- before/tests/fixtures/sx-browser/expected.json
++++ after/tests/fixtures/sx-browser/expected.json
+@@ -18,6 +18,8 @@
+   "removedScopeWidth": "111px",
+   "separateSx": { "base": "360px", "hover": "240px", "container": "280px", "containerHover": "320px" },
+   "externalClass": { "intercalated": "400px", "laterDescriptor": "360px", "externalLast": "400px", "descriptorLast": "240px" },
++  "foreignScoped": { "base": "400px", "sxLast": "360px", "nativeLast": "400px" },
++  "separateStates": { "base": "100px", "hover": "110px", "active": "120px", "focusVisible": "130px" },
+   "simultaneousStates": { "hover": "rgb(200, 0, 0)", "active": "rgb(0, 160, 0)", "focusVisible": "rgb(0, 0, 220)", "focusVisibleContainer": "rgb(120, 0, 180)" },
+   "disabledColor": "rgb(100, 100, 100)",
+   "selectedColor": "rgb(200, 100, 0)",
+--- before/scripts/check-sx-browser-fixture.cjs
++++ after/scripts/check-sx-browser-fixture.cjs
+@@ -104,6 +104,32 @@
+   for (const [id, key] of [['external-intercalated', 'intercalated'], ['external-later-descriptor', 'laterDescriptor'], ['external-last', 'externalLast'], ['descriptor-last', 'descriptorLast']]) {
+     await check(`${order}:${id}`, await computed(id, 'width'), expected.externalClass[key]);
+   }
++  // Actual native Griffel property classes and sx bindings share each atomic scope.
++  // Inactive query/state descriptors must preserve the preceding foreign base.
++  for (const size of [639, 640]) {
++    await page.mouse.move(0, 0);
++    await page.setViewportSize({ width: size, height: 900 });
++    await render({ size });
++    for (const scope of ['hover', 'viewport', 'container', 'viewport-hover', 'container-hover']) {
++      const hasHover = scope.includes('hover');
++      const queryActive = scope === 'hover' || size === 640;
++      for (const [suffix, activeWidth] of [['sx-last', expected.foreignScoped.sxLast], ['native-last', expected.foreignScoped.nativeLast], ['base-preserved', expected.foreignScoped.sxLast]]) {
++        const id = `foreign-${scope}-${suffix}`;
++        await page.mouse.move(0, 0);
++        await check(`${order}:${size}:${id}:inactive-state`, await computed(id, 'width'),
++          !hasHover && queryActive ? activeWidth : expected.foreignScoped.base);
++        if (hasHover) {
++          await page.locator(`#${id}`).hover({ position: { x: 5, y: 5 } });
++          await check(`${order}:${size}:${id}:real-hover`, (await state(id)).hover, true);
++          await check(`${order}:${size}:${id}:hover-width`, await computed(id, 'width'),
++            queryActive ? activeWidth : expected.foreignScoped.base);
++        }
++      }
++    }
++  }
++  await page.mouse.move(0, 0);
++  await page.setViewportSize({ width: 1210, height: 900 });
++  await render({ size: 1024 });
+   await page.locator('#scope-removed').scrollIntoViewIfNeeded();
+   const removedScopeBox = await page.locator('#scope-removed').boundingBox();
+   // Keep the pointer inside both the 333px hovered size and the 111px base size.
+@@ -199,6 +225,34 @@
+   await check(`${order}:selected-keyboard-focus-visible`, (await state('transition')).focusVisible, true);
+   await outlineVisible('transition', `${order}:selected-focus`);
+   await snapshot(`${order}-selected-focus`);
++
++  for (const [id, widths] of [
++    ['foreign-separate-states', expected.separateStates],
++    ['foreign-state-sx-last', { base: '100px', hover: '360px', active: '360px', focusVisible: '360px' }],
++    ['foreign-state-native-last', { base: '100px', hover: '400px', active: '400px', focusVisible: '400px' }]
++  ]) {
++    await page.locator('#focus-start').focus();
++    await page.mouse.move(0, 0);
++    await check(`${order}:${id}:base`, await computed(id, 'width'), widths.base);
++    await page.locator(`#${id}`).hover({ position: { x: 5, y: 5 } });
++    await check(`${order}:${id}:hover`, await computed(id, 'width'), widths.hover);
++    await page.mouse.down();
++    await check(`${order}:${id}:pointer-states`, await state(id), { hover: true, active: true, focusVisible: false });
++    await check(`${order}:${id}:active`, await computed(id, 'width'), widths.active);
++    await page.mouse.up();
++    await page.locator('#focus-start').focus();
++    await page.keyboard.press('Tab');
++    await page.locator(`#${id}`).focus();
++    // Focusing can scroll the target after the pointer-only check. Place the
++    // pointer inside its current geometry before asserting all three states.
++    await page.locator(`#${id}`).hover({ position: { x: 5, y: 5 } });
++    await page.keyboard.down('Space');
++    await check(`${order}:${id}:simultaneous-states`, await state(id), { hover: true, active: true, focusVisible: true });
++    await check(`${order}:${id}:focus-visible`, await computed(id, 'width'), widths.focusVisible);
++    await outlineVisible(id, `${order}:${id}:focus-outline`);
++    await page.keyboard.up('Space');
++  }
++  await page.mouse.move(0, 0);
+ 
+   await render({ dir: 'rtl' });
+   for (const [property, value] of Object.entries({ paddingLeft: expected.rtl.paddingLeft, paddingRight: expected.rtl.paddingRight, paddingInlineStart: expected.rtl.logicalStart, direction: expected.rtl.direction })) {
+@@ -305,6 +359,15 @@
+         overscrollBehavior: css.overscrollBehavior, scrollBehavior: css.scrollBehavior, forcedColorAdjust: css.forcedColorAdjust };
+     }), { overflowX: 'visible', overflowY: 'visible', scrollbarGutter: 'auto', overscrollBehavior: 'auto', scrollBehavior: 'auto', forcedColorAdjust: 'auto' });
+     await check(`catalog:${theme}:no-inline-style`, await page.locator('#catalog [style]').count(), 0);
++    await page.mouse.move(0, 0);
++    await check(`catalog:${theme}:scoped-scrollbar-inactive-query-width`, await computed('scrollbar-scoped-inactive', 'scrollbarWidth'), 'auto');
++    await check(`catalog:${theme}:scoped-scrollbar-inactive-query-color`, await computed('scrollbar-scoped-inactive', 'scrollbarColor'), 'auto');
++    await check(`catalog:${theme}:scoped-scrollbar-active-query-width`, await computed('scrollbar-scoped-query', 'scrollbarWidth'), 'thin');
++    await check(`catalog:${theme}:scoped-scrollbar-inactive-hover-width`, await computed('scrollbar-scoped-query-hover', 'scrollbarWidth'), 'auto');
++    await page.locator('#scrollbar-scoped-query-hover').hover({ position: { x: 5, y: 5 } });
++    await check(`catalog:${theme}:scoped-scrollbar-real-hover`, (await state('scrollbar-scoped-query-hover')).hover, true);
++    await check(`catalog:${theme}:scoped-scrollbar-active-hover-width`, await computed('scrollbar-scoped-query-hover', 'scrollbarWidth'), 'thin');
++    await page.mouse.move(0, 0);
+     await page.locator('#catalog').scrollIntoViewIfNeeded();
+     await snapshot(`catalog-${theme}`);
+     await page.locator('#catalog').screenshot({ path: path.join(output, `${label}-catalog-${theme}-detail.png`) });
+@@ -319,6 +382,13 @@
+       await check(`catalog:${theme}:${surface}:forced-scrollbar-width`, await computed(`scrollbar-${surface}`, 'scrollbarWidth'), 'thin');
+       await check(`catalog:${theme}:${surface}:forced-colors-native-adjust`, await computed(`scrollbar-${surface}`, 'forcedColorAdjust'), 'auto');
+     }
++    await check(`catalog:${theme}:forced-scoped-query-scrollbar-color`, await computed('scrollbar-scoped-query', 'scrollbarColor'), 'auto');
++    await check(`catalog:${theme}:forced-scoped-query-scrollbar-width`, await computed('scrollbar-scoped-query', 'scrollbarWidth'), 'thin');
++    await page.locator('#scrollbar-scoped-query-hover').hover({ position: { x: 5, y: 5 } });
++    await check(`catalog:${theme}:forced-scoped-hover-is-active`, (await state('scrollbar-scoped-query-hover')).hover, true);
++    await check(`catalog:${theme}:forced-scoped-hover-scrollbar-color`, await computed('scrollbar-scoped-query-hover', 'scrollbarColor'), 'auto');
++    await check(`catalog:${theme}:forced-scoped-hover-scrollbar-width`, await computed('scrollbar-scoped-query-hover', 'scrollbarWidth'), 'thin');
++    await page.mouse.move(0, 0);
+     await page.locator('#catalog').scrollIntoViewIfNeeded();
+     await snapshot(`catalog-${theme}-forced-colors`);
+     await page.locator('#catalog').screenshot({ path: path.join(output, `${label}-catalog-${theme}-forced-colors-detail.png`) });

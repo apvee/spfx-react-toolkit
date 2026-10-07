@@ -1,0 +1,2856 @@
+{
+  "url": "http://127.0.0.1:4320",
+  "browser": "155.0.8059.39",
+  "boundary": "SPFx Teams/theme hook context only; actual compiled library, sample panel, React17, Griffel, FluentProvider",
+  "observations": [
+    {
+      "name": "page identity",
+      "actual": "StylesPanel local browser fixture",
+      "expected": "StylesPanel local browser fixture",
+      "pass": true
+    },
+    {
+      "name": "local origin",
+      "actual": "http://127.0.0.1:4320",
+      "expected": "http://127.0.0.1:4320",
+      "pass": true
+    },
+    {
+      "name": "meaningful actual panel",
+      "actual": 1,
+      "expected": 1,
+      "pass": true
+    },
+    {
+      "name": "framework overlay",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "name": "sample-owned probes have no inline styles",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "name": "fixture discloses SPFx boundary",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "fractional width accepted",
+      "actual": "240.5px",
+      "expected": "240.5px",
+      "pass": true
+    },
+    {
+      "name": "fractional gap accepted",
+      "actual": "24.5px",
+      "expected": "24.5px",
+      "pass": true
+    },
+    {
+      "name": "width control",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "gap row control",
+      "actual": "24px",
+      "expected": "24px",
+      "pass": true
+    },
+    {
+      "name": "gap column control",
+      "actual": "24px",
+      "expected": "24px",
+      "pass": true
+    },
+    {
+      "name": "grid columns control",
+      "actual": 3,
+      "expected": 3,
+      "pass": true
+    },
+    {
+      "name": "width control resets",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "repeated width reuses classes",
+      "actual": "___1ojnu7d_1ugya4c f1wr8cux fesaohn fnuvm9s fven747 fe1i5ti f1shh959 f192fcqt f18ewkem f59xuti f1ni1mdb fp5hfmc fb58wx9 f1chpglt f1xkcvg f5mq4or f1ohwr71 fobriim f1ftef96 f14vfv3v f17mfez9 fhui0c9 f1d4vq04 f1pat48m f16y3up1 f1cznqwp f1sge5mm f18qjryy frl3bgl f6meijp fuj9ge6 flpncnk fzk0t9x f1705jiq f1n2xilz f9dsn2z f1g34xs9 fd2rqiq fzjamvq f1mfr2ch f1bu5l5g f4zy944 f131to1r f1bpv4mn f12x4g18 fjrr7qv f1sqcqph fq9zs8j fszywk3 f1mbm72a f80rk3e flbj3qb f1o1074r fxfifol faad9t5 ffgnetb f124q2hy fn1m5jr frgjbob f1sgab03 f123qfrz ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 fgoif5t f19hdgzh fhbyxa8 fz43ycm f1clgd3g f1txx495 f16fo7jh f1bh2pm7 f142amtl fzx802y f1mfo0kj fcb3aep fpchbki f6bbo4t f113pak6 f1gszwws fh1kgr6 fdz3sec f7hrg1n f15k4jc8 f1mt2hfz fi8hgs f6exzyp fc6721c fpt3me0 ffxs5fp f1wy8c8l fiu5anf f5wrdt6 fhuwmdm farf00o f1bljeg6 f10c741k fex4rba f1wg9dfm f16q3gba f1g27q5t fnutz8s fjqaihd f18ebtnb f4ekt4z funu27g fw4tfog fgllwk2 f1u15qpj f151k7wo f17fmwoa f2mwp8p f19zgy72 f1f3vm53 fp5maxr f9p29uk f1e7mxat ft49hk7 fxhqgqk frutg0q f1rz2esj f1ido6ui f65d5c1 f1uaqha1 frdm21b",
+      "expected": "___1ojnu7d_1ugya4c f1wr8cux fesaohn fnuvm9s fven747 fe1i5ti f1shh959 f192fcqt f18ewkem f59xuti f1ni1mdb fp5hfmc fb58wx9 f1chpglt f1xkcvg f5mq4or f1ohwr71 fobriim f1ftef96 f14vfv3v f17mfez9 fhui0c9 f1d4vq04 f1pat48m f16y3up1 f1cznqwp f1sge5mm f18qjryy frl3bgl f6meijp fuj9ge6 flpncnk fzk0t9x f1705jiq f1n2xilz f9dsn2z f1g34xs9 fd2rqiq fzjamvq f1mfr2ch f1bu5l5g f4zy944 f131to1r f1bpv4mn f12x4g18 fjrr7qv f1sqcqph fq9zs8j fszywk3 f1mbm72a f80rk3e flbj3qb f1o1074r fxfifol faad9t5 ffgnetb f124q2hy fn1m5jr frgjbob f1sgab03 f123qfrz ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 fgoif5t f19hdgzh fhbyxa8 fz43ycm f1clgd3g f1txx495 f16fo7jh f1bh2pm7 f142amtl fzx802y f1mfo0kj fcb3aep fpchbki f6bbo4t f113pak6 f1gszwws fh1kgr6 fdz3sec f7hrg1n f15k4jc8 f1mt2hfz fi8hgs f6exzyp fc6721c fpt3me0 ffxs5fp f1wy8c8l fiu5anf f5wrdt6 fhuwmdm farf00o f1bljeg6 f10c741k fex4rba f1wg9dfm f16q3gba f1g27q5t fnutz8s fjqaihd f18ebtnb f4ekt4z funu27g fw4tfog fgllwk2 f1u15qpj f151k7wo f17fmwoa f2mwp8p f19zgy72 f1f3vm53 fp5maxr f9p29uk f1e7mxat ft49hk7 fxhqgqk frutg0q f1rz2esj f1ido6ui f65d5c1 f1uaqha1 frdm21b",
+      "pass": true
+    },
+    {
+      "name": "foreground subtle",
+      "actual": "rgb(66, 66, 66)",
+      "expected": "rgb(66, 66, 66)",
+      "pass": true
+    },
+    {
+      "name": "subtle background role",
+      "actual": "rgba(0, 0, 0, 0)",
+      "expected": "rgba(0, 0, 0, 0)",
+      "pass": true
+    },
+    {
+      "name": "alternative background role",
+      "actual": "rgb(250, 250, 250)",
+      "expected": "rgb(250, 250, 250)",
+      "pass": true
+    },
+    {
+      "name": "theme retains descriptor classes",
+      "actual": "___1ohemeb_pmkbx10 fjmjg2y f185ylgn f1x9p5hw f1s9kca9 fcqynok fsi61t5 fm9boe3 fmo53n3 f1t0jois fgg2yy5 fstd7g2 f1meu12r f1gwkff6 f9027yd f30uf8n f1dfch6k f16m8h1a f11qplsu f17zfai2 f8rz8tk fy1li3s fsvanyl fnrn9pb fyissds f1tlvj2j f1writl0 f1v0p6iw f1h9it4c fiuj6ia fr7q59y f1i0xkln fpjhbzb fbkvb2r f1rjyw7e felslhk f1505knk frs5uvq f1omuqn5 fjn3lqo f1xbnr3f fbw3182 f1d704g5 f65o0rm flcf14w frymv01 f1n96i52 fcqv68f f1dq9jxn f1e6omiw fnhh9bk fmda7py f1jy3682 f15vyft5 fyhw4pd f1pp4uzj fc9epat f1v1gr3r f3xnemz f1gtbpds f1lhca3l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f1awlhpf fe6alhj fwh2vdj f1sqlf4d fz9rzkd fkqmxmf f1czv96z f1wuza59 fxybczy f1el2xd f16l4tb0 fu38dzx fhqf7q2 fun2co2 f110bcp f1w1rpc8 f8gdlhy f1bkac3w f8bvu9l f1cw2n13 f13t4fch f1xb2v35 f3hqfqy f1az4by8 fm5v7df f7wzrr1 f1dzaauv f1vjek9b f13sw7h8 fqd1pf4 f16mizat fy0cdbd fw35dqb f1y9l8wy f184s1fk f172zg12 f1q99mel f1klxw8u fxgg3kv f1ksu50 f8m6vq0 fngdqp f15hd3yq f1asx19p f1a6ty3i f1gy3gce f1tq5cew f9n81sh f1nxnt9b f72lomm fbzzzad fiyrgf0 f1mf498z fzoraje f1mr3xok f5okia6 flrm0aq f1tzmmyf fxitunn f1qgsl1o fq59xhy f1ymvdye f1qc9o3m fugvtzh f1kcoa8f fkpzaqw f1jcwp81 f1e6uwgd f15w1us3 fkchlj0 ffctgak fubzxyh fkw7er3 f1rfxc31 f17er9qn fsc5ax9 f5s52j fnkbbbq f51eoym f1fwqvc2 f17lr1o6 f1xh54xx f1glduex f8ji4vc fxrelf5 f1t6159o f1bqiewp f1f71wea fkgann fqld717 ffdn23z",
+      "expected": "___1ohemeb_pmkbx10 fjmjg2y f185ylgn f1x9p5hw f1s9kca9 fcqynok fsi61t5 fm9boe3 fmo53n3 f1t0jois fgg2yy5 fstd7g2 f1meu12r f1gwkff6 f9027yd f30uf8n f1dfch6k f16m8h1a f11qplsu f17zfai2 f8rz8tk fy1li3s fsvanyl fnrn9pb fyissds f1tlvj2j f1writl0 f1v0p6iw f1h9it4c fiuj6ia fr7q59y f1i0xkln fpjhbzb fbkvb2r f1rjyw7e felslhk f1505knk frs5uvq f1omuqn5 fjn3lqo f1xbnr3f fbw3182 f1d704g5 f65o0rm flcf14w frymv01 f1n96i52 fcqv68f f1dq9jxn f1e6omiw fnhh9bk fmda7py f1jy3682 f15vyft5 fyhw4pd f1pp4uzj fc9epat f1v1gr3r f3xnemz f1gtbpds f1lhca3l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f1awlhpf fe6alhj fwh2vdj f1sqlf4d fz9rzkd fkqmxmf f1czv96z f1wuza59 fxybczy f1el2xd f16l4tb0 fu38dzx fhqf7q2 fun2co2 f110bcp f1w1rpc8 f8gdlhy f1bkac3w f8bvu9l f1cw2n13 f13t4fch f1xb2v35 f3hqfqy f1az4by8 fm5v7df f7wzrr1 f1dzaauv f1vjek9b f13sw7h8 fqd1pf4 f16mizat fy0cdbd fw35dqb f1y9l8wy f184s1fk f172zg12 f1q99mel f1klxw8u fxgg3kv f1ksu50 f8m6vq0 fngdqp f15hd3yq f1asx19p f1a6ty3i f1gy3gce f1tq5cew f9n81sh f1nxnt9b f72lomm fbzzzad fiyrgf0 f1mf498z fzoraje f1mr3xok f5okia6 flrm0aq f1tzmmyf fxitunn f1qgsl1o fq59xhy f1ymvdye f1qc9o3m fugvtzh f1kcoa8f fkpzaqw f1jcwp81 f1e6uwgd f15w1us3 fkchlj0 ffctgak fubzxyh fkw7er3 f1rfxc31 f17er9qn fsc5ax9 f5s52j fnkbbbq f51eoym f1fwqvc2 f17lr1o6 f1xh54xx f1glduex f8ji4vc fxrelf5 f1t6159o f1bqiewp f1f71wea fkgann fqld717 ffdn23z",
+      "pass": true
+    },
+    {
+      "name": "dark preset live variables",
+      "actual": "rgb(79, 82, 178)",
+      "expected": "rgb(79, 82, 178)",
+      "pass": true
+    },
+    {
+      "name": "host:real-theme-token",
+      "actual": "#0f6cbd",
+      "expected": "#0f6cbd",
+      "pass": true
+    },
+    {
+      "name": "host:canvas-background",
+      "actual": "rgb(255, 255, 255)",
+      "expected": "rgb(255, 255, 255)",
+      "pass": true
+    },
+    {
+      "name": "host:canvas-color",
+      "actual": "rgb(36, 36, 36)",
+      "expected": "rgb(36, 36, 36)",
+      "pass": true
+    },
+    {
+      "name": "default:real-theme-token",
+      "actual": "#5b5fc7",
+      "expected": "#5b5fc7",
+      "pass": true
+    },
+    {
+      "name": "default:canvas-background",
+      "actual": "rgb(255, 255, 255)",
+      "expected": "rgb(255, 255, 255)",
+      "pass": true
+    },
+    {
+      "name": "default:canvas-color",
+      "actual": "rgb(36, 36, 36)",
+      "expected": "rgb(36, 36, 36)",
+      "pass": true
+    },
+    {
+      "name": "dark:real-theme-token",
+      "actual": "#4f52b2",
+      "expected": "#4f52b2",
+      "pass": true
+    },
+    {
+      "name": "dark:canvas-background",
+      "actual": "rgb(41, 41, 41)",
+      "expected": "rgb(41, 41, 41)",
+      "pass": true
+    },
+    {
+      "name": "dark:canvas-color",
+      "actual": "rgb(255, 255, 255)",
+      "expected": "rgb(255, 255, 255)",
+      "pass": true
+    },
+    {
+      "name": "contrast:real-theme-token",
+      "actual": "#ffffff",
+      "expected": "#ffffff",
+      "pass": true
+    },
+    {
+      "name": "contrast:canvas-background",
+      "actual": "rgb(0, 0, 0)",
+      "expected": "rgb(0, 0, 0)",
+      "pass": true
+    },
+    {
+      "name": "contrast:canvas-color",
+      "actual": "rgb(255, 255, 255)",
+      "expected": "rgb(255, 255, 255)",
+      "pass": true
+    },
+    {
+      "name": "high contrast inverted unavailable",
+      "actual": "true",
+      "expected": "true",
+      "pass": true
+    },
+    {
+      "name": "high contrast visible notice",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "high contrast readable canvas fallback",
+      "actual": "rgb(0, 0, 0)",
+      "expected": "rgb(0, 0, 0)",
+      "pass": true
+    },
+    {
+      "name": "disabled preset semantic presentation",
+      "actual": "true",
+      "expected": "true",
+      "pass": true
+    },
+    {
+      "name": "active provider RTL logical padding",
+      "actual": "32px",
+      "expected": "32px",
+      "pass": true
+    },
+    {
+      "name": "active provider RTL opposite padding",
+      "actual": "12px",
+      "expected": "12px",
+      "pass": true
+    },
+    {
+      "name": "active provider LTR logical padding",
+      "actual": "32px",
+      "expected": "32px",
+      "pass": true
+    },
+    {
+      "name": "nearest independent small region",
+      "actual": "180px",
+      "expected": "180px",
+      "pass": true
+    },
+    {
+      "name": "nearest independent large region",
+      "actual": "300px",
+      "expected": "300px",
+      "pass": true
+    },
+    {
+      "name": "region A independently grows",
+      "actual": "300px",
+      "expected": "300px",
+      "pass": true
+    },
+    {
+      "name": "region B independently shrinks",
+      "actual": "180px",
+      "expected": "180px",
+      "pass": true
+    },
+    {
+      "name": "small:query below",
+      "actual": "180px",
+      "expected": "180px",
+      "pass": true
+    },
+    {
+      "name": "small:query inclusive",
+      "actual": "300px",
+      "expected": "300px",
+      "pass": true
+    },
+    {
+      "name": "small:viewport below",
+      "actual": "180px",
+      "expected": "180px",
+      "pass": true
+    },
+    {
+      "name": "small:viewport inclusive",
+      "actual": "300px",
+      "expected": "300px",
+      "pass": true
+    },
+    {
+      "name": "medium:query below",
+      "actual": "180px",
+      "expected": "180px",
+      "pass": true
+    },
+    {
+      "name": "medium:query inclusive",
+      "actual": "300px",
+      "expected": "300px",
+      "pass": true
+    },
+    {
+      "name": "medium:viewport below",
+      "actual": "180px",
+      "expected": "180px",
+      "pass": true
+    },
+    {
+      "name": "medium:viewport inclusive",
+      "actual": "300px",
+      "expected": "300px",
+      "pass": true
+    },
+    {
+      "name": "large:query below",
+      "actual": "180px",
+      "expected": "180px",
+      "pass": true
+    },
+    {
+      "name": "large:query inclusive",
+      "actual": "300px",
+      "expected": "300px",
+      "pass": true
+    },
+    {
+      "name": "large:viewport below",
+      "actual": "180px",
+      "expected": "180px",
+      "pass": true
+    },
+    {
+      "name": "large:viewport inclusive",
+      "actual": "300px",
+      "expected": "300px",
+      "pass": true
+    },
+    {
+      "name": "keyboard reaches native action",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "real focus-visible state",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "focus recipe border",
+      "actual": "rgb(91, 95, 199)",
+      "expected": "rgb(91, 95, 199)",
+      "pass": true
+    },
+    {
+      "name": "native visible outline",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "simultaneous native states",
+      "actual": [
+        true,
+        true,
+        true
+      ],
+      "expected": [
+        true,
+        true,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "name": "active wins hover and selected",
+      "actual": "rgb(91, 95, 199)",
+      "expected": "rgb(91, 95, 199)",
+      "pass": true
+    },
+    {
+      "name": "native disabled",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "disabled hover drops enabled recipe",
+      "actual": "rgb(240, 240, 240)",
+      "expected": "rgb(240, 240, 240)",
+      "pass": true
+    },
+    {
+      "name": "disabled native action inert",
+      "actual": "Action invocations: 1",
+      "expected": "Action invocations: 1",
+      "pass": true
+    },
+    {
+      "name": "scroll recipe overflow",
+      "actual": "auto",
+      "expected": "auto",
+      "pass": true
+    },
+    {
+      "name": "scroll recipe width",
+      "actual": "thin",
+      "expected": "thin",
+      "pass": true
+    },
+    {
+      "name": "scroll region genuinely scrolls",
+      "actual": 40,
+      "expected": 40,
+      "pass": true
+    },
+    {
+      "name": "forced colors real media active",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "forced colors system scrollbar",
+      "actual": "auto",
+      "expected": "auto",
+      "pass": true
+    },
+    {
+      "name": "forced color adjust retained",
+      "actual": "auto",
+      "expected": "auto",
+      "pass": true
+    },
+    {
+      "name": "catalog has all base namespace choices",
+      "actual": 43,
+      "expected": 43,
+      "pass": true
+    },
+    {
+      "name": "catalog width.auto real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog width.full real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog width.full changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog width.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog width.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog minWidth.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog minWidth.zero real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog minWidth.zero changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog height.auto real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog height.full real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog height.full changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog height.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog height.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog minHeight.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog minHeight.zero real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog minHeight.zero changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog maxWidth.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog maxWidth.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog maxWidth.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog maxHeight.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog maxHeight.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog maxHeight.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flex.column real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flex.noWrap real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flex.noWrap changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flex.row real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flex.row changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flex.wrap real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flex.wrap changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flexItem.grow real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flexItem.noGrow real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flexItem.noGrow changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flexItem.noShrink real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flexItem.noShrink changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flexItem.shrink real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog flexItem.shrink changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog grid.columns real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignItems.baseline real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignItems.center real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignItems.center changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignItems.end real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignItems.end changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignItems.start real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignItems.start changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignItems.stretch real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignItems.stretch changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog justifyContent.center real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog justifyContent.end real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog justifyContent.end changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog justifyContent.spaceBetween real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog justifyContent.spaceBetween changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog justifyContent.start real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog justifyContent.start changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignSelf.auto real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignSelf.center real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignSelf.center changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignSelf.end real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignSelf.end changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignSelf.start real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignSelf.start changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignSelf.stretch real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog alignSelf.stretch changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog gap.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog padding.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInline.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlock.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineStart.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingInlineEnd.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockStart.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog paddingBlockEnd.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog margin.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInline.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlock.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineStart.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginInlineEnd.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockStart.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.extraSmall real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.extraSmall changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.px real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.px changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog marginBlockEnd.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.brand real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.disabled real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.disabled changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.inverted real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.inverted changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.link real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.link changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.muted real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.muted changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.onBrand real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.onBrand changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.primary real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.primary changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.subtle real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog foreground.subtle changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.alternative real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.brand real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.brand changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.brandTint real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.brandTint changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.canvas real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.canvas changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.disabled real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.disabled changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.inverted real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.inverted changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.subtle real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.subtle changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.transparent real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog background.transparent changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.alternative real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.brand real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.brand changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.brandTint real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.brandTint changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.canvas real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.canvas changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.danger real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.danger changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.disabled real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.disabled changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.inverted real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.inverted changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.subtle real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.subtle changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.success real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.success changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.transparent real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.transparent changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.warning real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog presets.warning changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.body1 real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.body1Strong real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.body1Strong changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.body1Stronger real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.body1Stronger changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.body2 real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.body2 changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.caption1 real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.caption1 changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.caption1Strong real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.caption1Strong changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.caption1Stronger real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.caption1Stronger changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.caption2 real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.caption2 changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.caption2Strong real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.caption2Strong changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.display real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.display changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.largeTitle real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.largeTitle changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.subtitle1 real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.subtitle1 changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.subtitle2 real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.subtitle2 changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.subtitle2Stronger real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.subtitle2Stronger changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.title1 real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.title1 changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.title2 real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.title2 changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.title3 real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog typography.title3 changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog textAlign.center real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog textAlign.end real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog textAlign.end changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog textAlign.start real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog textAlign.start changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog text.noWrap real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog text.truncate real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog text.truncate changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog text.wrap real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog text.wrap changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderWidth.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderWidth.thick real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderWidth.thick changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderWidth.thin real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderWidth.thin changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderStyle.solid real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderColor.brand real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderColor.disabled real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderColor.disabled changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderColor.primary real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderColor.primary changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderColor.subtle real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderColor.subtle changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderRadius.circular real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderRadius.extraLarge real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderRadius.extraLarge changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderRadius.large real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderRadius.large changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderRadius.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderRadius.medium changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderRadius.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderRadius.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderRadius.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog borderRadius.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog boxShadow.medium real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog boxShadow.none real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog boxShadow.none changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog boxShadow.small real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog boxShadow.small changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.visible real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.hidden real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.hidden changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.auto real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.auto changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.horizontal.auto real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.horizontal.hidden real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.horizontal.hidden changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.horizontal.visible real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.horizontal.visible changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.vertical.auto real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.vertical.hidden real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.vertical.hidden changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.vertical.visible real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog overflow.vertical.visible changes applied descriptor",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog scrollbar.fluent real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog container.inlineSize real class",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "catalog member count",
+      "actual": 220,
+      "expected": 220,
+      "pass": true
+    },
+    {
+      "name": "catalog inverted high contrast unavailable",
+      "actual": "true",
+      "expected": "true",
+      "pass": true
+    },
+    {
+      "name": "mobile controls stay usable",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "mobile no page-wide overflow",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "console health",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    },
+    {
+      "name": "page errors",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    }
+  ],
+  "failures": [],
+  "consoleMessages": [],
+  "pageErrors": []
+}

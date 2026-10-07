@@ -53,6 +53,13 @@ Core TypeScript type definitions.
 
 ## Hooks
 
+### React Utilities
+
+| Hook | Returns | Documentation |
+| --- | --- | --- |
+| `useStableCallback` | Stable callback | [React utility hooks](./api/hooks/react.md#usestablecallback) |
+| `useSx` | `SxFunction` class composer | [Styles and useSx](./api/helpers/styles.md) |
+
 ### Context & Metadata
 
 Access SPFx context and instance metadata.
@@ -189,6 +196,7 @@ Public pure helper functions for SPFx context mapping, permission checks, API pe
 
 | Module | Description | Documentation |
 |--------|-------------|---------------|
+| Style descriptors | Complete typed catalog, theme mappings, state and responsive scopes | [styles.md](./api/helpers/styles.md) |
 | Page context helpers | User, site, list, locale, environment, page type, and correlation mapping | [helpers/INDEX.md](./api/helpers/INDEX.md) |
 | Utility helpers | Permissions, container size, storage keys, tenant values, Graph paths, theme conversion | [helpers/INDEX.md](./api/helpers/INDEX.md) |
 | API permission precheck helpers | Requirement normalization, JWT scope evaluation, error classification, and summaries that map remediation to `webApiPermissionRequests` | [helpers/INDEX.md](./api/helpers/INDEX.md) |

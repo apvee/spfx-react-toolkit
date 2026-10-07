@@ -1,0 +1,16 @@
+{
+  "historicalFixtures": {
+    "tests/fixtures/api-baseline.json": "58115e3214d2a0aa4f747ccce7c541894ed7417c2fc88522539785a0ddc2d648",
+    "tests/fixtures/package-baseline.json": "92a10935c4df12aef19fa2a9b76acc1a20c93ab1d3047db85cb65bd3b99535c6"
+  },
+  "frozenBaselineTarball": {
+    "path": "artifacts/sx-baseline/library.tgz",
+    "sha256": "d87c017581e27d58d2525be9133041953341dc85f9ea61601d68ba92303fa7d5"
+  },
+  "candidateTarball": {
+    "path": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-Sx4NCa/apvee-spfx-react-toolkit-2.1.0.tgz",
+    "sha256": "e2b8cf87c891c9c96df1d96de0d5d5e0a251a913fdc82d477e75bb61f3304083",
+    "npmShasum": "c5387d7d13cb05b396d49b65d2640ee2cd853e80",
+    "bytes": 236221
+  }
+}
