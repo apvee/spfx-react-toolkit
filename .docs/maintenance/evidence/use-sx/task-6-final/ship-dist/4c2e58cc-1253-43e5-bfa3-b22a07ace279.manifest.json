@@ -1,0 +1,60 @@
+{
+  "id": "4c2e58cc-1253-43e5-bfa3-b22a07ace279",
+  "alias": "SpFxReactToolkitTestApplicationCustomize",
+  "componentType": "Extension",
+  "extensionType": "ApplicationCustomizer",
+  "version": "2.1.0",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "loaderConfig": {
+    "internalModuleBaseUrls": [
+      "https://localhost:4321/dist/"
+    ],
+    "entryModuleId": "sp-fx-react-toolkit-test-application-customizer",
+    "scriptResources": {
+      "sp-fx-react-toolkit-test-application-customizer": {
+        "type": "path",
+        "path": "sp-fx-react-toolkit-test-application-customizer_0b3fc27b7b763c1e472a.js"
+      },
+      "react": {
+        "type": "component",
+        "id": "0d910c1c-13b9-4e1c-9aa4-b008c5e42d7d",
+        "version": "17.0.1"
+      },
+      "react-dom": {
+        "type": "component",
+        "id": "aa0a46ec-1505-43cd-a44a-93f3a5aa460a",
+        "version": "17.0.1"
+      },
+      "@microsoft/sp-core-library": {
+        "type": "component",
+        "id": "7263c7d0-1d6a-45ec-8d85-d4d1d234171b",
+        "version": "1.21.1"
+      },
+      "@microsoft/sp-application-base": {
+        "type": "component",
+        "id": "4df9bb86-ab0a-4aab-ab5f-48bf167048fb",
+        "version": "1.21.1"
+      },
+      "SpFxReactToolkitTestApplicationCustomizerStrings": {
+        "type": "path",
+        "path": "SpFxReactToolkitTestApplicationCustomizerStrings_en-us_21ee5ac509711759aec6453a895ea006.js"
+      },
+      "@microsoft/sp-component-base": {
+        "type": "component",
+        "id": "467dc675-7cc5-4709-8aac-78e3b71bd2f6",
+        "version": "1.21.1"
+      },
+      "@microsoft/sp-http": {
+        "type": "component",
+        "id": "c07208f0-ea3b-4c1a-9965-ac1b825211a6",
+        "version": "1.21.1"
+      },
+      "@microsoft/sp-page-context": {
+        "type": "component",
+        "id": "1c4541f7-5c31-41aa-9fa8-fbc9dc14c0a8",
+        "version": "1.21.1"
+      }
+    }
+  }
+}

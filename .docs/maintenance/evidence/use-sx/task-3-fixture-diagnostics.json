@@ -1,0 +1,24 @@
+{
+  "before": {
+    "x": 25,
+    "y": 307.34375,
+    "width": 333,
+    "height": 24
+  },
+  "hoverBefore": true,
+  "after": {
+    "x": 25,
+    "y": 307.34375,
+    "width": 111,
+    "height": 24
+  },
+  "hoverAfter": true,
+  "pointer": {
+    "x": 191.5,
+    "y": 319.34375
+  },
+  "tokens": {
+    "color": "rgb(36, 36, 36)",
+    "primary": "#242424"
+  }
+}

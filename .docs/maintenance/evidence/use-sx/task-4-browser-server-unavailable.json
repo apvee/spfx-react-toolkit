@@ -1,0 +1,19 @@
+{
+  "version": "152.0.7977.83",
+  "node": "v22.20.0",
+  "url": "http://127.0.0.1:4318",
+  "viewport": {
+    "width": 1210,
+    "height": 900
+  },
+  "module": "/Users/fabiofranzini/.npm/_npx/31e32ef8478fbf80/node_modules/playwright",
+  "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "localBrowser": true,
+  "sharePointHost": "NOT EXECUTED",
+  "observations": [],
+  "catalogContrasts": [],
+  "consoleMessages": [],
+  "errors": [
+    "page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4318/?reverse=0\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:4318/?reverse=0\", waiting until \"load\"\u001b[22m\n\n    at runOrder (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/check-sx-browser-fixture.cjs:47:14)\n    at /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/check-sx-browser-fixture.cjs:332:11"
+  ]
+}

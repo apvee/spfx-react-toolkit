@@ -1,0 +1,2411 @@
+{
+  "files": [
+    {
+      "file": "src/helpers/styles/align-items.ts",
+      "declarations": [
+        {
+          "name": "start",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "center",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "end",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "stretch",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "baseline",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/align-self.ts",
+      "declarations": [
+        {
+          "name": "auto",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "start",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "center",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "end",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "stretch",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/background.ts",
+      "declarations": [
+        {
+          "name": "canvas",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 8
+        },
+        {
+          "name": "alternative",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 14
+        },
+        {
+          "name": "subtle",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 20
+        },
+        {
+          "name": "transparent",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 26
+        },
+        {
+          "name": "brand",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "brandTint",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 38
+        },
+        {
+          "name": "inverted",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 44
+        },
+        {
+          "name": "disabled",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 50
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/border-color.ts",
+      "declarations": [
+        {
+          "name": "primary",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 8
+        },
+        {
+          "name": "subtle",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 19
+        },
+        {
+          "name": "brand",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 30
+        },
+        {
+          "name": "disabled",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 41
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/border-radius.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 8
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 19
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 30
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 41
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 52
+        },
+        {
+          "name": "circular",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 63
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/border-style.ts",
+      "declarations": [
+        {
+          "name": "solid",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 8
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/border-width.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 8
+        },
+        {
+          "name": "thin",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 19
+        },
+        {
+          "name": "thick",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 30
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/box-shadow.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 8
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 14
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 20
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/container.ts",
+      "declarations": [
+        {
+          "name": "inlineSize",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 11
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/flex-item.ts",
+      "declarations": [
+        {
+          "name": "grow",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "noGrow",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "shrink",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "noShrink",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/flex.ts",
+      "declarations": [
+        {
+          "name": "row",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "column",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 15
+        },
+        {
+          "name": "wrap",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 23
+        },
+        {
+          "name": "noWrap",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 28
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/foreground.ts",
+      "declarations": [
+        {
+          "name": "primary",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 8
+        },
+        {
+          "name": "subtle",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 14
+        },
+        {
+          "name": "muted",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 20
+        },
+        {
+          "name": "disabled",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 26
+        },
+        {
+          "name": "brand",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "onBrand",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 38
+        },
+        {
+          "name": "inverted",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 44
+        },
+        {
+          "name": "link",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 50
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/gap.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/grid.ts",
+      "declarations": [
+        {
+          "name": "columns",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 10
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/height.ts",
+      "declarations": [
+        {
+          "name": "auto",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "full",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 20
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/justify-content.ts",
+      "declarations": [
+        {
+          "name": "start",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "center",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "end",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "spaceBetween",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/margin-block-end.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/margin-block-start.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/margin-block.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/margin-inline-end.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/margin-inline-start.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/margin-inline.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/margin.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/max-height.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 15
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/max-width.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 15
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/min-height.ts",
+      "declarations": [
+        {
+          "name": "zero",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 15
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/min-width.ts",
+      "declarations": [
+        {
+          "name": "zero",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 15
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/overflow-horizontal.ts",
+      "declarations": [
+        {
+          "name": "visible",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 8
+        },
+        {
+          "name": "hidden",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 14
+        },
+        {
+          "name": "auto",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 20
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/overflow-vertical.ts",
+      "declarations": [
+        {
+          "name": "visible",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 8
+        },
+        {
+          "name": "hidden",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 14
+        },
+        {
+          "name": "auto",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 20
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/overflow.ts",
+      "declarations": [
+        {
+          "name": "visible",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "hidden",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 20
+        },
+        {
+          "name": "auto",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 28
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/padding-block-end.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/padding-block-start.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/padding-block.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/padding-inline-end.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/padding-inline-start.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/padding-inline.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/padding.ts",
+      "declarations": [
+        {
+          "name": "none",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "extraSmall",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "small",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        },
+        {
+          "name": "medium",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 22
+        },
+        {
+          "name": "large",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        },
+        {
+          "name": "extraLarge",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 32
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 40
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/presets.ts",
+      "declarations": [
+        {
+          "name": "canvas",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 9
+        },
+        {
+          "name": "alternative",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 19
+        },
+        {
+          "name": "subtle",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 29
+        },
+        {
+          "name": "transparent",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 39
+        },
+        {
+          "name": "brand",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 48
+        },
+        {
+          "name": "brandTint",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 58
+        },
+        {
+          "name": "inverted",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 70
+        },
+        {
+          "name": "success",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 80
+        },
+        {
+          "name": "warning",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 90
+        },
+        {
+          "name": "danger",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 100
+        },
+        {
+          "name": "disabled",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 112
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/responsive.ts",
+      "declarations": [
+        {
+          "name": "small",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 9
+        },
+        {
+          "name": "medium",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 18
+        },
+        {
+          "name": "large",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/scrollbar.ts",
+      "declarations": [
+        {
+          "name": "fluent",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 11
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/states.ts",
+      "declarations": [
+        {
+          "name": "hover",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 9
+        },
+        {
+          "name": "active",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 18
+        },
+        {
+          "name": "focusVisible",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/text-align.ts",
+      "declarations": [
+        {
+          "name": "start",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "center",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "end",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 17
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/text.ts",
+      "declarations": [
+        {
+          "name": "wrap",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "noWrap",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 11
+        },
+        {
+          "name": "truncate",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 16
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/types.ts",
+      "declarations": [
+        {
+          "name": "sxDescriptorBrand",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 2
+        },
+        {
+          "name": "SxBaseDescriptor",
+          "kind": "interface",
+          "documented": true,
+          "memberCount": 1,
+          "documentedMembers": 1,
+          "members": [
+            {
+              "name": "[sxDescriptorBrand]",
+              "kind": "PropertySignature",
+              "documented": true
+            }
+          ],
+          "line": 7
+        },
+        {
+          "name": "SxStateDescriptor",
+          "kind": "interface",
+          "documented": true,
+          "memberCount": 1,
+          "documentedMembers": 1,
+          "members": [
+            {
+              "name": "[sxDescriptorBrand]",
+              "kind": "PropertySignature",
+              "documented": true
+            }
+          ],
+          "line": 14
+        },
+        {
+          "name": "SxResponsiveDescriptor",
+          "kind": "interface",
+          "documented": true,
+          "memberCount": 1,
+          "documentedMembers": 1,
+          "members": [
+            {
+              "name": "[sxDescriptorBrand]",
+              "kind": "PropertySignature",
+              "documented": true
+            }
+          ],
+          "line": 21
+        },
+        {
+          "name": "SxDescriptor",
+          "kind": "type",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 26
+        },
+        {
+          "name": "SxInput",
+          "kind": "type",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 29
+        },
+        {
+          "name": "SxFunction",
+          "kind": "type",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 35
+        },
+        {
+          "name": "SxOptions",
+          "kind": "interface",
+          "documented": true,
+          "memberCount": 1,
+          "documentedMembers": 1,
+          "members": [
+            {
+              "name": "dir",
+              "kind": "PropertySignature",
+              "documented": true
+            }
+          ],
+          "line": 37
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/typography.ts",
+      "declarations": [
+        {
+          "name": "body1",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 9
+        },
+        {
+          "name": "body1Strong",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 20
+        },
+        {
+          "name": "body1Stronger",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 31
+        },
+        {
+          "name": "body2",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 42
+        },
+        {
+          "name": "caption1",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 53
+        },
+        {
+          "name": "caption1Strong",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 64
+        },
+        {
+          "name": "caption1Stronger",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 75
+        },
+        {
+          "name": "caption2",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 86
+        },
+        {
+          "name": "caption2Strong",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 97
+        },
+        {
+          "name": "subtitle1",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 108
+        },
+        {
+          "name": "subtitle2",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 119
+        },
+        {
+          "name": "subtitle2Stronger",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 130
+        },
+        {
+          "name": "title1",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 141
+        },
+        {
+          "name": "title2",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 152
+        },
+        {
+          "name": "title3",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 163
+        },
+        {
+          "name": "largeTitle",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 174
+        },
+        {
+          "name": "display",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 185
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/viewport.ts",
+      "declarations": [
+        {
+          "name": "small",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 9
+        },
+        {
+          "name": "medium",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 18
+        },
+        {
+          "name": "large",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 27
+        }
+      ]
+    },
+    {
+      "file": "src/helpers/styles/width.ts",
+      "declarations": [
+        {
+          "name": "auto",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 7
+        },
+        {
+          "name": "full",
+          "kind": "variable",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 12
+        },
+        {
+          "name": "px",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 20
+        }
+      ]
+    },
+    {
+      "file": "src/hooks/useSx.ts",
+      "declarations": [
+        {
+          "name": "useSx",
+          "kind": "function",
+          "documented": true,
+          "memberCount": 0,
+          "documentedMembers": 0,
+          "members": [],
+          "line": 19
+        }
+      ]
+    }
+  ],
+  "gaps": []
+}

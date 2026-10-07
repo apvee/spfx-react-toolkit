@@ -1,0 +1,1137 @@
+{
+  "version": "152.0.7977.83",
+  "node": "v22.20.0",
+  "url": "http://127.0.0.1:4317",
+  "viewport": {
+    "width": 1210,
+    "height": 900
+  },
+  "module": "/Users/fabiofranzini/.npm/_npx/31e32ef8478fbf80/node_modules/playwright",
+  "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "localBrowser": true,
+  "sharePointHost": "NOT EXECUTED",
+  "observations": [
+    {
+      "name": "forward:page-title",
+      "actual": "useSx real-browser checkpoint",
+      "expected": "useSx real-browser checkpoint",
+      "pass": true
+    },
+    {
+      "name": "forward:page-url",
+      "actual": "http://127.0.0.1:4317",
+      "expected": "http://127.0.0.1:4317",
+      "pass": true
+    },
+    {
+      "name": "forward:meaningful-content",
+      "actual": "useSx real-browser checkpoint",
+      "expected": "useSx real-browser checkpoint",
+      "pass": true
+    },
+    {
+      "name": "forward:framework-overlay",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "name": "forward:real-container-type",
+      "actual": "inline-size",
+      "expected": "inline-size",
+      "pass": true
+    },
+    {
+      "name": "forward:real-container-name",
+      "actual": "apvee-sx",
+      "expected": "apvee-sx",
+      "pass": true
+    },
+    {
+      "name": "forward:479:direction",
+      "actual": "column",
+      "expected": "column",
+      "pass": true
+    },
+    {
+      "name": "forward:479:width",
+      "actual": "100px",
+      "expected": "100px",
+      "pass": true
+    },
+    {
+      "name": "forward:479:viewport-unaffected",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "forward:479:window-unaffected",
+      "actual": 1210,
+      "expected": 1210,
+      "pass": true
+    },
+    {
+      "name": "forward:480:direction",
+      "actual": "column",
+      "expected": "column",
+      "pass": true
+    },
+    {
+      "name": "forward:480:width",
+      "actual": "180px",
+      "expected": "180px",
+      "pass": true
+    },
+    {
+      "name": "forward:480:viewport-unaffected",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "forward:480:window-unaffected",
+      "actual": 1210,
+      "expected": 1210,
+      "pass": true
+    },
+    {
+      "name": "forward:639:direction",
+      "actual": "column",
+      "expected": "column",
+      "pass": true
+    },
+    {
+      "name": "forward:639:width",
+      "actual": "180px",
+      "expected": "180px",
+      "pass": true
+    },
+    {
+      "name": "forward:639:gap",
+      "actual": "4px",
+      "expected": "4px",
+      "pass": true
+    },
+    {
+      "name": "forward:639:viewport-unaffected",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "forward:639:window-unaffected",
+      "actual": 1210,
+      "expected": 1210,
+      "pass": true
+    },
+    {
+      "name": "forward:640:direction",
+      "actual": "row",
+      "expected": "row",
+      "pass": true
+    },
+    {
+      "name": "forward:640:width",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "forward:640:gap",
+      "actual": "20px",
+      "expected": "20px",
+      "pass": true
+    },
+    {
+      "name": "forward:640:viewport-unaffected",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "forward:640:window-unaffected",
+      "actual": 1210,
+      "expected": 1210,
+      "pass": true
+    },
+    {
+      "name": "forward:1023:direction",
+      "actual": "row",
+      "expected": "row",
+      "pass": true
+    },
+    {
+      "name": "forward:1023:width",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "forward:1023:viewport-unaffected",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "forward:1023:window-unaffected",
+      "actual": 1210,
+      "expected": 1210,
+      "pass": true
+    },
+    {
+      "name": "forward:1024:direction",
+      "actual": "row",
+      "expected": "row",
+      "pass": true
+    },
+    {
+      "name": "forward:1024:width",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "forward:1024:gap",
+      "actual": "32px",
+      "expected": "32px",
+      "pass": true
+    },
+    {
+      "name": "forward:1024:viewport-unaffected",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "forward:1024:window-unaffected",
+      "actual": 1210,
+      "expected": 1210,
+      "pass": true
+    },
+    {
+      "name": "forward:nested-nearest-container",
+      "actual": "100px",
+      "expected": "100px",
+      "pass": true
+    },
+    {
+      "name": "forward:outer-large-container",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "forward:independent-regions",
+      "actual": [
+        "column",
+        "row"
+      ],
+      "expected": [
+        "column",
+        "row"
+      ],
+      "pass": true
+    },
+    {
+      "name": "forward:outside-container-base",
+      "actual": "100px",
+      "expected": "100px",
+      "pass": true
+    },
+    {
+      "name": "forward:container-beats-viewport-same-threshold",
+      "actual": "260px",
+      "expected": "260px",
+      "pass": true
+    },
+    {
+      "name": "forward:parent-own-child",
+      "actual": "75px",
+      "expected": "75px",
+      "pass": true
+    },
+    {
+      "name": "forward:omitted-color-inherits",
+      "actual": "rgb(11, 22, 33)",
+      "expected": "rgb(11, 22, 33)",
+      "pass": true
+    },
+    {
+      "name": "forward:hovered-parent-width",
+      "actual": "600px",
+      "expected": "600px",
+      "pass": true
+    },
+    {
+      "name": "forward:hovered-parent-own-child",
+      "actual": "75px",
+      "expected": "75px",
+      "pass": true
+    },
+    {
+      "name": "forward:hovered-parent-child-token-isolated",
+      "actual": "rgb(36, 36, 36)",
+      "expected": "#242424",
+      "pass": false
+    },
+    {
+      "name": "forward:hovered-parent-own-child-private-var",
+      "actual": "",
+      "expected": "",
+      "pass": true
+    },
+    {
+      "name": "forward:separate:base",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "forward:separate:hover",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "forward:separate-strings:base",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "forward:separate-strings:hover",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "forward:separate-query:container",
+      "actual": "280px",
+      "expected": "280px",
+      "pass": true
+    },
+    {
+      "name": "forward:separate-query:container-hover",
+      "actual": "320px",
+      "expected": "320px",
+      "pass": true
+    },
+    {
+      "name": "forward:external-intercalated",
+      "actual": "400px",
+      "expected": "400px",
+      "pass": true
+    },
+    {
+      "name": "forward:external-later-descriptor",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "forward:external-last",
+      "actual": "400px",
+      "expected": "400px",
+      "pass": true
+    },
+    {
+      "name": "forward:descriptor-last",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "forward:scope-present-hover",
+      "actual": "333px",
+      "expected": "333px",
+      "pass": true
+    },
+    {
+      "name": "forward:removed-scope-still-hovered",
+      "actual": false,
+      "expected": true,
+      "pass": false
+    },
+    {
+      "name": "forward:removed-scope-width",
+      "actual": "111px",
+      "expected": "111px",
+      "pass": true
+    },
+    {
+      "name": "forward:vertical-639",
+      "actual": "column",
+      "expected": "column",
+      "pass": true
+    },
+    {
+      "name": "forward:vertical-640",
+      "actual": "row",
+      "expected": "row",
+      "pass": true
+    },
+    {
+      "name": "forward:vertical-block-width-stays-160",
+      "actual": "160px",
+      "expected": "160px",
+      "pass": true
+    },
+    {
+      "name": "forward:hover-color",
+      "actual": "rgb(200, 0, 0)",
+      "expected": "rgb(200, 0, 0)",
+      "pass": true
+    },
+    {
+      "name": "forward:pointer-active-hover",
+      "actual": {
+        "hover": true,
+        "active": true,
+        "focusVisible": false
+      },
+      "expected": {
+        "hover": true,
+        "active": true,
+        "focusVisible": false
+      },
+      "pass": true
+    },
+    {
+      "name": "forward:active-beats-hover",
+      "actual": "rgb(0, 160, 0)",
+      "expected": "rgb(0, 160, 0)",
+      "pass": true
+    },
+    {
+      "name": "forward:keyboard-target",
+      "actual": "state-base",
+      "expected": "state-base",
+      "pass": true
+    },
+    {
+      "name": "forward:keyboard-focus-color",
+      "actual": "rgb(0, 0, 220)",
+      "expected": "rgb(0, 0, 220)",
+      "pass": true
+    },
+    {
+      "name": "forward:all-three-states",
+      "actual": {
+        "hover": true,
+        "active": true,
+        "focusVisible": true
+      },
+      "expected": {
+        "hover": true,
+        "active": true,
+        "focusVisible": true
+      },
+      "pass": true
+    },
+    {
+      "name": "forward:focus-visible-survives-active-hover",
+      "actual": "rgb(0, 0, 220)",
+      "expected": "rgb(0, 0, 220)",
+      "pass": true
+    },
+    {
+      "name": "forward:query-all-three-states",
+      "actual": {
+        "hover": true,
+        "active": true,
+        "focusVisible": true
+      },
+      "expected": {
+        "hover": true,
+        "active": true,
+        "focusVisible": true
+      },
+      "pass": true
+    },
+    {
+      "name": "forward:query-focus-visible-survives",
+      "actual": "rgb(120, 0, 180)",
+      "expected": "rgb(120, 0, 180)",
+      "pass": true
+    },
+    {
+      "name": "forward:transition-enabled-hover",
+      "actual": "rgb(200, 0, 0)",
+      "expected": "rgb(200, 0, 0)",
+      "pass": true
+    },
+    {
+      "name": "forward:disabled-native-attribute",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "forward:disabled-pointer-remains",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "forward:disabled-color",
+      "actual": "rgb(100, 100, 100)",
+      "expected": "rgb(100, 100, 100)",
+      "pass": true
+    },
+    {
+      "name": "forward:selected-pointer-remains",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "forward:selected-native-state",
+      "actual": "true",
+      "expected": "true",
+      "pass": true
+    },
+    {
+      "name": "forward:selected-color",
+      "actual": "rgb(200, 100, 0)",
+      "expected": "rgb(200, 100, 0)",
+      "pass": true
+    },
+    {
+      "name": "forward:enabled-hover-restored",
+      "actual": "rgb(200, 0, 0)",
+      "expected": "rgb(200, 0, 0)",
+      "pass": true
+    },
+    {
+      "name": "forward:rtl:paddingLeft",
+      "actual": "0px",
+      "expected": "0px",
+      "pass": true
+    },
+    {
+      "name": "forward:rtl:paddingRight",
+      "actual": "13px",
+      "expected": "13px",
+      "pass": true
+    },
+    {
+      "name": "forward:rtl:paddingInlineStart",
+      "actual": "13px",
+      "expected": "13px",
+      "pass": true
+    },
+    {
+      "name": "forward:rtl:direction",
+      "actual": "rtl",
+      "expected": "rtl",
+      "pass": true
+    },
+    {
+      "name": "forward:rtl-physical-flipped-left",
+      "actual": "0px",
+      "expected": "0px",
+      "pass": true
+    },
+    {
+      "name": "forward:rtl-physical-flipped-right",
+      "actual": "17px",
+      "expected": "17px",
+      "pass": true
+    },
+    {
+      "name": "forward:sx-does-not-add-inline-style",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "name": "forward:viewport-639",
+      "actual": "120px",
+      "expected": "120px",
+      "pass": true
+    },
+    {
+      "name": "forward:viewport-inclusive-640",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "forward:mobile-viewport",
+      "actual": "120px",
+      "expected": "120px",
+      "pass": true
+    },
+    {
+      "name": "inverse:page-title",
+      "actual": "useSx real-browser checkpoint",
+      "expected": "useSx real-browser checkpoint",
+      "pass": true
+    },
+    {
+      "name": "inverse:page-url",
+      "actual": "http://127.0.0.1:4317",
+      "expected": "http://127.0.0.1:4317",
+      "pass": true
+    },
+    {
+      "name": "inverse:meaningful-content",
+      "actual": "useSx real-browser checkpoint",
+      "expected": "useSx real-browser checkpoint",
+      "pass": true
+    },
+    {
+      "name": "inverse:framework-overlay",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "name": "inverse:real-container-type",
+      "actual": "inline-size",
+      "expected": "inline-size",
+      "pass": true
+    },
+    {
+      "name": "inverse:real-container-name",
+      "actual": "apvee-sx",
+      "expected": "apvee-sx",
+      "pass": true
+    },
+    {
+      "name": "inverse:479:direction",
+      "actual": "column",
+      "expected": "column",
+      "pass": true
+    },
+    {
+      "name": "inverse:479:width",
+      "actual": "100px",
+      "expected": "100px",
+      "pass": true
+    },
+    {
+      "name": "inverse:479:viewport-unaffected",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "inverse:479:window-unaffected",
+      "actual": 1210,
+      "expected": 1210,
+      "pass": true
+    },
+    {
+      "name": "inverse:480:direction",
+      "actual": "column",
+      "expected": "column",
+      "pass": true
+    },
+    {
+      "name": "inverse:480:width",
+      "actual": "180px",
+      "expected": "180px",
+      "pass": true
+    },
+    {
+      "name": "inverse:480:viewport-unaffected",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "inverse:480:window-unaffected",
+      "actual": 1210,
+      "expected": 1210,
+      "pass": true
+    },
+    {
+      "name": "inverse:639:direction",
+      "actual": "column",
+      "expected": "column",
+      "pass": true
+    },
+    {
+      "name": "inverse:639:width",
+      "actual": "180px",
+      "expected": "180px",
+      "pass": true
+    },
+    {
+      "name": "inverse:639:gap",
+      "actual": "4px",
+      "expected": "4px",
+      "pass": true
+    },
+    {
+      "name": "inverse:639:viewport-unaffected",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "inverse:639:window-unaffected",
+      "actual": 1210,
+      "expected": 1210,
+      "pass": true
+    },
+    {
+      "name": "inverse:640:direction",
+      "actual": "row",
+      "expected": "row",
+      "pass": true
+    },
+    {
+      "name": "inverse:640:width",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "inverse:640:gap",
+      "actual": "20px",
+      "expected": "20px",
+      "pass": true
+    },
+    {
+      "name": "inverse:640:viewport-unaffected",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "inverse:640:window-unaffected",
+      "actual": 1210,
+      "expected": 1210,
+      "pass": true
+    },
+    {
+      "name": "inverse:1023:direction",
+      "actual": "row",
+      "expected": "row",
+      "pass": true
+    },
+    {
+      "name": "inverse:1023:width",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "inverse:1023:viewport-unaffected",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "inverse:1023:window-unaffected",
+      "actual": 1210,
+      "expected": 1210,
+      "pass": true
+    },
+    {
+      "name": "inverse:1024:direction",
+      "actual": "row",
+      "expected": "row",
+      "pass": true
+    },
+    {
+      "name": "inverse:1024:width",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "inverse:1024:gap",
+      "actual": "32px",
+      "expected": "32px",
+      "pass": true
+    },
+    {
+      "name": "inverse:1024:viewport-unaffected",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "inverse:1024:window-unaffected",
+      "actual": 1210,
+      "expected": 1210,
+      "pass": true
+    },
+    {
+      "name": "inverse:nested-nearest-container",
+      "actual": "100px",
+      "expected": "100px",
+      "pass": true
+    },
+    {
+      "name": "inverse:outer-large-container",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "inverse:independent-regions",
+      "actual": [
+        "column",
+        "row"
+      ],
+      "expected": [
+        "column",
+        "row"
+      ],
+      "pass": true
+    },
+    {
+      "name": "inverse:outside-container-base",
+      "actual": "100px",
+      "expected": "100px",
+      "pass": true
+    },
+    {
+      "name": "inverse:container-beats-viewport-same-threshold",
+      "actual": "260px",
+      "expected": "260px",
+      "pass": true
+    },
+    {
+      "name": "inverse:parent-own-child",
+      "actual": "75px",
+      "expected": "75px",
+      "pass": true
+    },
+    {
+      "name": "inverse:omitted-color-inherits",
+      "actual": "rgb(11, 22, 33)",
+      "expected": "rgb(11, 22, 33)",
+      "pass": true
+    },
+    {
+      "name": "inverse:hovered-parent-width",
+      "actual": "600px",
+      "expected": "600px",
+      "pass": true
+    },
+    {
+      "name": "inverse:hovered-parent-own-child",
+      "actual": "75px",
+      "expected": "75px",
+      "pass": true
+    },
+    {
+      "name": "inverse:hovered-parent-child-token-isolated",
+      "actual": "rgb(36, 36, 36)",
+      "expected": "#242424",
+      "pass": false
+    },
+    {
+      "name": "inverse:hovered-parent-own-child-private-var",
+      "actual": "",
+      "expected": "",
+      "pass": true
+    },
+    {
+      "name": "inverse:separate:base",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "inverse:separate:hover",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "inverse:separate-strings:base",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "inverse:separate-strings:hover",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "inverse:separate-query:container",
+      "actual": "280px",
+      "expected": "280px",
+      "pass": true
+    },
+    {
+      "name": "inverse:separate-query:container-hover",
+      "actual": "320px",
+      "expected": "320px",
+      "pass": true
+    },
+    {
+      "name": "inverse:external-intercalated",
+      "actual": "400px",
+      "expected": "400px",
+      "pass": true
+    },
+    {
+      "name": "inverse:external-later-descriptor",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "inverse:external-last",
+      "actual": "400px",
+      "expected": "400px",
+      "pass": true
+    },
+    {
+      "name": "inverse:descriptor-last",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "inverse:scope-present-hover",
+      "actual": "333px",
+      "expected": "333px",
+      "pass": true
+    },
+    {
+      "name": "inverse:removed-scope-still-hovered",
+      "actual": false,
+      "expected": true,
+      "pass": false
+    },
+    {
+      "name": "inverse:removed-scope-width",
+      "actual": "111px",
+      "expected": "111px",
+      "pass": true
+    },
+    {
+      "name": "inverse:vertical-639",
+      "actual": "column",
+      "expected": "column",
+      "pass": true
+    },
+    {
+      "name": "inverse:vertical-640",
+      "actual": "row",
+      "expected": "row",
+      "pass": true
+    },
+    {
+      "name": "inverse:vertical-block-width-stays-160",
+      "actual": "160px",
+      "expected": "160px",
+      "pass": true
+    },
+    {
+      "name": "inverse:hover-color",
+      "actual": "rgb(200, 0, 0)",
+      "expected": "rgb(200, 0, 0)",
+      "pass": true
+    },
+    {
+      "name": "inverse:pointer-active-hover",
+      "actual": {
+        "hover": true,
+        "active": true,
+        "focusVisible": false
+      },
+      "expected": {
+        "hover": true,
+        "active": true,
+        "focusVisible": false
+      },
+      "pass": true
+    },
+    {
+      "name": "inverse:active-beats-hover",
+      "actual": "rgb(0, 160, 0)",
+      "expected": "rgb(0, 160, 0)",
+      "pass": true
+    },
+    {
+      "name": "inverse:keyboard-target",
+      "actual": "state-base",
+      "expected": "state-base",
+      "pass": true
+    },
+    {
+      "name": "inverse:keyboard-focus-color",
+      "actual": "rgb(0, 0, 220)",
+      "expected": "rgb(0, 0, 220)",
+      "pass": true
+    },
+    {
+      "name": "inverse:all-three-states",
+      "actual": {
+        "hover": true,
+        "active": true,
+        "focusVisible": true
+      },
+      "expected": {
+        "hover": true,
+        "active": true,
+        "focusVisible": true
+      },
+      "pass": true
+    },
+    {
+      "name": "inverse:focus-visible-survives-active-hover",
+      "actual": "rgb(0, 0, 220)",
+      "expected": "rgb(0, 0, 220)",
+      "pass": true
+    },
+    {
+      "name": "inverse:query-all-three-states",
+      "actual": {
+        "hover": true,
+        "active": true,
+        "focusVisible": true
+      },
+      "expected": {
+        "hover": true,
+        "active": true,
+        "focusVisible": true
+      },
+      "pass": true
+    },
+    {
+      "name": "inverse:query-focus-visible-survives",
+      "actual": "rgb(120, 0, 180)",
+      "expected": "rgb(120, 0, 180)",
+      "pass": true
+    },
+    {
+      "name": "inverse:transition-enabled-hover",
+      "actual": "rgb(200, 0, 0)",
+      "expected": "rgb(200, 0, 0)",
+      "pass": true
+    },
+    {
+      "name": "inverse:disabled-native-attribute",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "inverse:disabled-pointer-remains",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "inverse:disabled-color",
+      "actual": "rgb(100, 100, 100)",
+      "expected": "rgb(100, 100, 100)",
+      "pass": true
+    },
+    {
+      "name": "inverse:selected-pointer-remains",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "inverse:selected-native-state",
+      "actual": "true",
+      "expected": "true",
+      "pass": true
+    },
+    {
+      "name": "inverse:selected-color",
+      "actual": "rgb(200, 100, 0)",
+      "expected": "rgb(200, 100, 0)",
+      "pass": true
+    },
+    {
+      "name": "inverse:enabled-hover-restored",
+      "actual": "rgb(200, 0, 0)",
+      "expected": "rgb(200, 0, 0)",
+      "pass": true
+    },
+    {
+      "name": "inverse:rtl:paddingLeft",
+      "actual": "0px",
+      "expected": "0px",
+      "pass": true
+    },
+    {
+      "name": "inverse:rtl:paddingRight",
+      "actual": "13px",
+      "expected": "13px",
+      "pass": true
+    },
+    {
+      "name": "inverse:rtl:paddingInlineStart",
+      "actual": "13px",
+      "expected": "13px",
+      "pass": true
+    },
+    {
+      "name": "inverse:rtl:direction",
+      "actual": "rtl",
+      "expected": "rtl",
+      "pass": true
+    },
+    {
+      "name": "inverse:rtl-physical-flipped-left",
+      "actual": "0px",
+      "expected": "0px",
+      "pass": true
+    },
+    {
+      "name": "inverse:rtl-physical-flipped-right",
+      "actual": "17px",
+      "expected": "17px",
+      "pass": true
+    },
+    {
+      "name": "inverse:sx-does-not-add-inline-style",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "name": "inverse:viewport-639",
+      "actual": "120px",
+      "expected": "120px",
+      "pass": true
+    },
+    {
+      "name": "inverse:viewport-inclusive-640",
+      "actual": "420px",
+      "expected": "420px",
+      "pass": true
+    },
+    {
+      "name": "inverse:mobile-viewport",
+      "actual": "120px",
+      "expected": "120px",
+      "pass": true
+    },
+    {
+      "name": "console-health",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    }
+  ],
+  "consoleMessages": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+  ],
+  "errors": [
+    "forward:hovered-parent-child-token-isolated: expected \"#242424\", got \"rgb(36, 36, 36)\"",
+    "forward:removed-scope-still-hovered: expected true, got false",
+    "inverse:hovered-parent-child-token-isolated: expected \"#242424\", got \"rgb(36, 36, 36)\"",
+    "inverse:removed-scope-still-hovered: expected true, got false"
+  ]
+}

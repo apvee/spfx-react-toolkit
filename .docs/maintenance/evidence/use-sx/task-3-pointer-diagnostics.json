@@ -1,0 +1,25 @@
+{
+  "initial": {
+    "x": 25,
+    "y": 307.34375,
+    "width": 222,
+    "height": 24
+  },
+  "pointer": {
+    "x": 136,
+    "y": 319.34375
+  },
+  "hovered": {
+    "x": 25,
+    "y": 307.34375,
+    "width": 333,
+    "height": 24
+  },
+  "after": {
+    "x": 25,
+    "y": 307.34375,
+    "width": 111,
+    "height": 24
+  },
+  "hoverAfter": false
+}

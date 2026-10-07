@@ -1,0 +1,36 @@
+{
+  "protectedFiles": [
+    {
+      "name": "AGENTS.md",
+      "preserved": true
+    },
+    {
+      "name": ".docs/maintenance/2026-10-07-fluent-style-utilities-analysis.md",
+      "preserved": true
+    },
+    {
+      "name": "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts",
+      "preserved": true
+    },
+    {
+      "name": "apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/ReactHooksPanel.tsx",
+      "preserved": true
+    },
+    {
+      "name": "tests/stable-callback.test.cjs",
+      "preserved": true
+    },
+    {
+      "name": "tests/demo-stable-callback.test.cjs",
+      "preserved": true
+    }
+  ],
+  "lockChanges": [
+    "apps/spfx-react-toolkit-test",
+    "packages/spfx-react-toolkit"
+  ],
+  "branch": "apvee/fluent-style-utilities",
+  "head": "3135cd4735af969ee234b42c720d34ee6fc2ce20",
+  "gitDir": ".git",
+  "gitCommon": ".git"
+}

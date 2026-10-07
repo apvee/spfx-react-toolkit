@@ -1,0 +1,51 @@
+{
+  "branch": "apvee/fluent-style-utilities",
+  "checks": [
+    {
+      "command": "node --test tests/sx-normalization.test.cjs tests/sx-runtime.test.cjs tests/sx-renderer.test.cjs",
+      "exitCode": 0,
+      "log": "task-2-final-targeted.log",
+      "result": "12/12"
+    },
+    {
+      "command": "node --test tests/sx-runtime.test.cjs",
+      "exitCode": 1,
+      "log": "task-2-specificity-red.log",
+      "result": "4/5, intended missing emitted specificity"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "log": "task-2-final-root-tests.log",
+      "result": "481/481"
+    },
+    {
+      "command": "npm run build:library",
+      "exitCode": 0,
+      "log": "task-2-final-build.log",
+      "result": "library tsc"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "log": "task-2-final-typecheck.log",
+      "result": "both workspaces"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "log": "task-2-final-lint.log",
+      "result": "both workspaces"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "log": "task-2-diff-check.log",
+      "result": "no whitespace errors"
+    }
+  ],
+  "upstreamSaltDiagnosticPreserved": true,
+  "browserExecuted": false,
+  "fullVerifyExecuted": false,
+  "packageVerifyExecuted": false
+}

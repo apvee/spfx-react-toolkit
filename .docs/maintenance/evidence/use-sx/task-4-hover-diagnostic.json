@@ -1,0 +1,166 @@
+[
+  {
+    "size": 479,
+    "defaultHover": true
+  },
+  {
+    "size": 480,
+    "defaultHover": true
+  },
+  {
+    "size": 640,
+    "defaultHover": false,
+    "error": "locator.hover: Timeout 3000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#state-priority')\u001b[22m\n\u001b[2m    - locator resolved to <button id=\"state-priority\" class=\"___wnte840_1t9v6qe ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f87sgga f1ksbtjv fx9hmf2 f1wlhy8f f1usk5hf foloyc1 fc05yw3 fug6ktq f5bdwya f1h2bbue f1nkruac f14z6iu f1els0jq fe8dylh fb42bmv f13dpxqx f1o3dpai f1098ntm f1mz0lkm\">State responsive priority</button>\u001b[22m\n\u001b[2m  - attempting hover action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and stable\u001b[22m\n\u001b[2m      - element is not stable\u001b[22m\n\u001b[2m    - retrying hover action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and stable\u001b[22m\n\u001b[2m      - element is not stable\u001b[22m\n\u001b[2m    - retrying hover action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    6 × waiting for element to be visible and stable\u001b[22m\n\u001b[2m      - element is not stable\u001b[22m\n\u001b[2m    - retrying hover action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n",
+    "frames": [
+      {
+        "width": 100,
+        "height": 51,
+        "top": 404.875,
+        "hover": false,
+        "scrollY": 1317
+      },
+      {
+        "width": 200,
+        "height": 32,
+        "top": 404.875,
+        "hover": true,
+        "scrollY": 1317
+      },
+      {
+        "width": 100,
+        "height": 51,
+        "top": 404.875,
+        "hover": false,
+        "scrollY": 1317
+      },
+      {
+        "width": 200,
+        "height": 32,
+        "top": 404.875,
+        "hover": true,
+        "scrollY": 1317
+      },
+      {
+        "width": 100,
+        "height": 51,
+        "top": 404.875,
+        "hover": false,
+        "scrollY": 1317
+      },
+      {
+        "width": 200,
+        "height": 32,
+        "top": 404.875,
+        "hover": true,
+        "scrollY": 1317
+      },
+      {
+        "width": 100,
+        "height": 51,
+        "top": 404.875,
+        "hover": false,
+        "scrollY": 1317
+      },
+      {
+        "width": 200,
+        "height": 32,
+        "top": 404.875,
+        "hover": true,
+        "scrollY": 1317
+      },
+      {
+        "width": 100,
+        "height": 51,
+        "top": 404.875,
+        "hover": false,
+        "scrollY": 1317
+      },
+      {
+        "width": 200,
+        "height": 32,
+        "top": 404.875,
+        "hover": true,
+        "scrollY": 1317
+      },
+      {
+        "width": 100,
+        "height": 51,
+        "top": 404.875,
+        "hover": false,
+        "scrollY": 1317
+      },
+      {
+        "width": 200,
+        "height": 32,
+        "top": 404.875,
+        "hover": true,
+        "scrollY": 1317
+      },
+      {
+        "width": 100,
+        "height": 51,
+        "top": 404.875,
+        "hover": false,
+        "scrollY": 1317
+      },
+      {
+        "width": 200,
+        "height": 32,
+        "top": 404.875,
+        "hover": true,
+        "scrollY": 1317
+      },
+      {
+        "width": 100,
+        "height": 51,
+        "top": 404.875,
+        "hover": false,
+        "scrollY": 1317
+      },
+      {
+        "width": 200,
+        "height": 32,
+        "top": 404.875,
+        "hover": true,
+        "scrollY": 1317
+      },
+      {
+        "width": 100,
+        "height": 51,
+        "top": 404.875,
+        "hover": false,
+        "scrollY": 1317
+      },
+      {
+        "width": 200,
+        "height": 32,
+        "top": 404.875,
+        "hover": true,
+        "scrollY": 1317
+      },
+      {
+        "width": 100,
+        "height": 51,
+        "top": 404.875,
+        "hover": false,
+        "scrollY": 1317
+      },
+      {
+        "width": 200,
+        "height": 32,
+        "top": 404.875,
+        "hover": true,
+        "scrollY": 1317
+      }
+    ]
+  },
+  {
+    "size": 640,
+    "topLeftHover": true,
+    "hover": true
+  },
+  {
+    "size": 1024,
+    "defaultHover": true
+  }
+]
