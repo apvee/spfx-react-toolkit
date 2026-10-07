@@ -140,3 +140,14 @@ for (const documentPath of ['README.md', 'packages/spfx-react-toolkit/README.md'
 }
 assert.deepStrictEqual(brokenLinks, [], `Broken public documentation links:\n${brokenLinks.join('\n')}`);
 console.log(`public docs verification passed (${styleSurface.length} qualified style exports with source JSDoc, historical helper/service inventory and relative links)`);
+
+const facadeSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/styles/index.ts'));
+assert.deepStrictEqual(facadeSurface.map(item => item.name).sort(),
+  [...styleSurface, ...sxHook].map(item => item.name).sort(),
+  'Clean styles facade must expose the canonical descriptor surface and useSx');
+assertContainsAll('docs/PACKAGE-IMPORTS.md', [
+  '/core', '/hooks', '/helpers', '/services', '/styles', '/styles/useSx', '/hooks/useStableCallback',
+  '/lib/', 'typesVersions', 'moduleResolution', 'SxFunction', 'SxOptions', 'SxInput',
+  'CommonJS', 'sideEffects', '1,023', '512', 'PnP',
+], 'facade imports and compatibility constraints');
+assert.ok(read('docs/INDEX.md').includes('./PACKAGE-IMPORTS.md'), 'Package import guide must be indexed');

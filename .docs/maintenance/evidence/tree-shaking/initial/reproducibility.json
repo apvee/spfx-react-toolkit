@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "checks": [
+    {
+      "label": "initial-replay",
+      "fixtureIds": "complete contract",
+      "fixtures": [
+        "helper/root",
+        "helper/domain",
+        "helper/leaf",
+        "stable-callback/root",
+        "stable-callback/domain",
+        "stable-callback/leaf",
+        "stable-callback/probe",
+        "provider/root",
+        "provider/domain",
+        "provider/leaf",
+        "sx-width-only/root",
+        "sx-width-only/domain",
+        "sx-width-only/leaf",
+        "pnp-context/root",
+        "pnp-context/domain",
+        "pnp-context/leaf",
+        "pnp-list/root",
+        "pnp-list/domain",
+        "pnp-list/leaf",
+        "pnp-search/root",
+        "pnp-search/domain",
+        "pnp-search/leaf",
+        "pnp-batch/root",
+        "pnp-batch/domain",
+        "pnp-batch/leaf",
+        "sx-minimum/root",
+        "sx-minimum/domain",
+        "sx-minimum/leaf",
+        "sx-minimum/probe",
+        "empty/control",
+        "type-only/control",
+        "griffel-direct/control",
+        "already-fluent/control",
+        "already-fluent-direct/control",
+        "dynamic-styles/control",
+        "lazy-styles/control"
+      ],
+      "failures": [],
+      "durationMs": 32168
+    },
+    {
+      "label": "initial-relocated",
+      "fixtureIds": [
+        "helper",
+        "sx-minimum",
+        "lazy-styles"
+      ],
+      "fixtures": [
+        "helper/root",
+        "helper/domain",
+        "helper/leaf",
+        "sx-minimum/root",
+        "sx-minimum/domain",
+        "sx-minimum/leaf",
+        "sx-minimum/probe",
+        "lazy-styles/control"
+      ],
+      "failures": [],
+      "durationMs": 8613
+    }
+  ]
+}

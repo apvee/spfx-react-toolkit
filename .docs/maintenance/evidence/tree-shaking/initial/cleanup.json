@@ -1,0 +1,6 @@
+{
+  "relocatedConsumer": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/tree-shaking-relocation-SsTdSH/consumer",
+  "removed": true,
+  "originalConsumerRetained": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-3lJvjT/consumer",
+  "reason": "Original package consumer retained for subsequent authorized tasks; only relocation copy removed after evidence saved."
+}

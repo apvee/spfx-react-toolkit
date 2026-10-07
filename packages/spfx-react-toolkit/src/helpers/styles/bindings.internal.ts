@@ -28,12 +28,48 @@ export function createBindingStyle(binding: SxBinding, query: SxQuery, state?: S
       reset[variable] = 'initial';
     }
   }
+  const hasVendorScrollbar = binding.scrollbarSize !== undefined || binding.scrollbarThumb !== undefined;
+  const vendorVariable = variableName(`${binding.property}-vendor`, query, state);
+  if (hasVendorScrollbar) {
+    // Keep a single native binding in the ordinary Griffel property/scope so a
+    // later foreign atomic declaration can replace it. Block inherited vendor
+    // choices even while this element's query or interaction scope is inactive.
+    value = `var(${vendorVariable}, ${value})`;
+    reset[vendorVariable] = 'initial';
+  }
   let propertyStyle: GriffelStyle = {
     [binding.property]: value,
     ...(binding.forcedColors === undefined ? {} : {
       '@media (forced-colors: active)': { [binding.property]: binding.forcedColors }
     })
   };
+  // Non-auto standard scrollbar properties suppress vendor pseudo-elements in
+  // modern Chromium. Reset them only where the vendor recipe can apply, leaving
+  // native thin/system colors in other browsers and forced-colors mode.
+  if (hasVendorScrollbar) {
+    propertyStyle['@supports selector(::-webkit-scrollbar)'] = {
+      '@media (forced-colors: none)': {
+        '&&&': { [vendorVariable]: 'auto' },
+        ...(binding.scrollbarSize === undefined ? {} : {
+          '::-webkit-scrollbar': { width: binding.scrollbarSize, height: binding.scrollbarSize }
+        }),
+        ...(binding.scrollbarThumb === undefined ? {} : {
+          '::-webkit-scrollbar-thumb': { backgroundColor: binding.scrollbarThumb, borderRadius: '3px' },
+          ...(binding.scrollbarThumbHover === undefined ? {} : {
+            '::-webkit-scrollbar-thumb:hover': { backgroundColor: binding.scrollbarThumbHover }
+          }),
+          ...(binding.scrollbarThumbPressed === undefined ? {} : {
+            '::-webkit-scrollbar-thumb:active': { backgroundColor: binding.scrollbarThumbPressed },
+            // Greater specificity preserves pressed feedback when hover also
+            // matches, independent of Griffel's rule insertion order.
+            '::-webkit-scrollbar-thumb:hover:active': { backgroundColor: binding.scrollbarThumbPressed }
+          }),
+          '::-webkit-scrollbar-track': { backgroundColor: 'transparent' },
+          '::-webkit-scrollbar-corner': { backgroundColor: 'transparent' }
+        })
+      }
+    };
+  }
   if (state) propertyStyle = { [`:${state}`]: propertyStyle };
   if (query.target === 'container') {
     propertyStyle = { [`@container apvee-sx (min-inline-size: ${query.breakpoint}px)`]: propertyStyle };

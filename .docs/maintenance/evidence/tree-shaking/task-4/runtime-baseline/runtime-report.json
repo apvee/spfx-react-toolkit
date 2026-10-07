@@ -1,0 +1,2678 @@
+{
+  "schemaVersion": 1,
+  "complete": true,
+  "passed": false,
+  "provenance": {
+    "node": "v22.20.0",
+    "npm": "11.19.1",
+    "consumerRoot": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer",
+    "toolkitDir": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit",
+    "tarballSha256": "ac1b3aaf1a7f806787188c9157c3a7034632d4b19b28db6a3d0a20f170c7f8a6",
+    "toolkitManifestSha256": "0e14efe2c0870310e1f1f67c337390eae3e9260a8e2ad08748568d05571625b3",
+    "interception": "HTTP send only; client and registration bundled in one realm; fresh process per probe"
+  },
+  "probes": [
+    {
+      "scenario": "context",
+      "variant": "root",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe context /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/context/root/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "status": "failed"
+    },
+    {
+      "scenario": "context",
+      "variant": "domain",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe context /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/context/domain/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "status": "failed"
+    },
+    {
+      "scenario": "context",
+      "variant": "leaf",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/context/leaf/entry.js",
+      "fixtureSha256": "5127f7b7fd0221d01d2cbf6cb6078b3493ff3719078bd3b546260bdb52f4f6bd",
+      "bundleSha256": "f1036e849c1afdc2a872b64b54dd7c806d8c77cdc27604637a01f0183af98a54",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-context-leaf.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 132909,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-context.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPContextService"
+          ],
+          "sizeBeforeMinification": 2076,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "dateAdd",
+            "delay",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "noInherit",
+            "objectDefinedNotNull",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 107,
+            "active": 83
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection",
+            "noInherit"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "delay",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "BrowserFetchWithRetry"
+          ],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Caching"
+          ],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "HttpRequestError",
+            "JSONParse",
+            "parseBinderWithErrorCheck"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "BrowserFetchWithRetry",
+            "Caching",
+            "DefaultParse",
+            "InjectHeaders",
+            "JSONParse",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "body",
+            "op",
+            "parseBinderWithErrorCheck",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 34,
+            "active": 26
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "BatchNever"
+          ],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 3,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 8,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/request-digest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RequestDigest"
+          ],
+          "sizeBeforeMinification": 2749,
+          "reasonCounts": {
+            "total": 6,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spbrowser.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1066,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spfx.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFx"
+          ],
+          "sizeBeforeMinification": 2864,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 5,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFx",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 639,
+          "reasonCounts": {
+            "total": 3,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 27,
+            "active": 26
+          }
+        },
+        {
+          "resource": "@pnp/sp/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3312,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/odata-url-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1558,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 8,
+            "active": 6
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "context",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/web",
+            "method": "GET",
+            "headers": {
+              "X-PnPjs-RequestId": "07301608-91de-4ebc-9f6b-4dc11d4e42e2",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8",
+              "X-ClientService-ClientTag": "s.s.web",
+              "X-Standalone": "context"
+            }
+          }
+        ],
+        "result": {
+          "web": {
+            "Title": "Standalone web"
+          },
+          "resolved": "https://tenant.test/sites/other"
+        }
+      }
+    },
+    {
+      "scenario": "list",
+      "variant": "root",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe list /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/list/root/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "status": "failed"
+    },
+    {
+      "scenario": "list",
+      "variant": "domain",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe list /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/list/domain/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "status": "failed"
+    },
+    {
+      "scenario": "list",
+      "variant": "leaf",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/list/leaf/entry.js",
+      "fixtureSha256": "2db130d5111136c2604a0241d799eb8f3259f9edf200d113ced754f9b2736a1a",
+      "bundleSha256": "43fd869a5fd1aa880743345fcb2514e7a29536d5d3c35069dd199b3bf0ca09d4",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-list-leaf.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 169760,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-list-target.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "resolveListTarget",
+            "snapshotListTarget"
+          ],
+          "sizeBeforeMinification": 4049,
+          "reasonCounts": {
+            "total": 10,
+            "active": 10
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-list.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPListService"
+          ],
+          "sizeBeforeMinification": 8150,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "objectDefinedNotNull",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 116,
+            "active": 83
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "TextParse",
+            "parseBinderWithErrorCheck",
+            "parseODataJSON"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "InjectHeaders",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "TextParse",
+            "addProp",
+            "body",
+            "headers",
+            "op",
+            "parseBinderWithErrorCheck",
+            "parseODataJSON",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 59,
+            "active": 48
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 3,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 8,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/request-digest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2749,
+          "reasonCounts": {
+            "total": 6,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spbrowser.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1066,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spfx.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2864,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 10,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit",
+            "extractWebUrl",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 639,
+          "reasonCounts": {
+            "total": 8,
+            "active": 8
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 123,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/list.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 185,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Items"
+          ],
+          "sizeBeforeMinification": 10316,
+          "reasonCounts": {
+            "total": 7,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 131,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "List",
+            "Lists",
+            "_List"
+          ],
+          "sizeBeforeMinification": 14969,
+          "reasonCounts": {
+            "total": 15,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/web.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 822,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "deleteableWithETag",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 78,
+            "active": 75
+          }
+        },
+        {
+          "resource": "@pnp/sp/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3312,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 12,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/odata-url-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "odataUrlFrom"
+          ],
+          "sizeBeforeMinification": 1558,
+          "reasonCounts": {
+            "total": 7,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/to-resource-path.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "toResourcePath"
+          ],
+          "sizeBeforeMinification": 129,
+          "reasonCounts": {
+            "total": 5,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 16,
+            "active": 14
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 10,
+            "active": 6
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "list",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/web/lists/getByTitle('Tasks')/items?%24top=2",
+            "method": "GET",
+            "headers": {
+              "X-PnPjs-RequestId": "d436cbbc-1bdb-48be-943a-d43667f7ebb4",
+              "X-ClientService-ClientTag": "s.s.w.l.g.items",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8"
+            }
+          },
+          {
+            "url": "https://tenant.test/sites/standalone/_api/$batch",
+            "method": "POST",
+            "headers": {
+              "Content-Type": "multipart/mixed; boundary=batch_0117b153-f286-4f82-bf65-ed8f1bd3bc84",
+              "X-PnPjs-RequestId": "50402616-278e-4297-a414-b955fb966d02",
+              "X-ClientService-ClientTag": "s.s.$batch",
+              "Accept": "application/json"
+            },
+            "body": "--batch_0117b153-f286-4f82-bf65-ed8f1bd3bc84\nContent-Type: multipart/mixed; boundary=\"changeset_f04d544c-b125-4713-b394-cf3f7517a246\"\n\n--changeset_f04d544c-b125-4713-b394-cf3f7517a246\nContent-Type: application/http\nContent-Transfer-Encoding: binary\n\nPOST https://tenant.test/sites/standalone/_api/web/lists/getByTitle('Tasks')/items HTTP/1.1\naccept: application/json\ncontent-type: application/json;charset=utf-8\n\n{\"Title\":\"Created task\"}\n\n--changeset_f04d544c-b125-4713-b394-cf3f7517a246--\n\n--batch_0117b153-f286-4f82-bf65-ed8f1bd3bc84--\n"
+          }
+        ],
+        "result": {
+          "query": {
+            "items": [
+              {
+                "Id": 7,
+                "Title": "Standalone task"
+              }
+            ],
+            "effectivePageSize": 2,
+            "hasMore": false,
+            "nextSkip": 1
+          },
+          "batch": {
+            "value": [
+              11
+            ],
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "scenario": "search",
+      "variant": "root",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe search /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/search/root/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "status": "failed"
+    },
+    {
+      "scenario": "search",
+      "variant": "domain",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe search /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/search/domain/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "status": "failed"
+    },
+    {
+      "scenario": "search",
+      "variant": "leaf",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/search/leaf/entry.js",
+      "fixtureSha256": "5a107fccaae5e017dba228375804739a8e6a33a4a6e157c1942c1588e60d9232",
+      "bundleSha256": "83621166689f71621c39aee9e786ca5d63c420809b755585d5b9458647780d62",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-search-leaf.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 147772,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-search.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPSearchService"
+          ],
+          "sizeBeforeMinification": 3401,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 114,
+            "active": 72
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CacheAlways",
+            "CacheKey"
+          ],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "parseBinderWithErrorCheck"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CacheAlways",
+            "CacheKey",
+            "DefaultParse",
+            "InjectHeaders",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "body",
+            "invokable",
+            "op",
+            "parseBinderWithErrorCheck",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 38,
+            "active": 27
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "invokable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 8,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/request-digest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2749,
+          "reasonCounts": {
+            "total": 6,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spbrowser.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1066,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spfx.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2864,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 9,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 9,
+            "active": 8
+          }
+        },
+        {
+          "resource": "@pnp/sp/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 639,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SearchQueryBuilder"
+          ],
+          "sizeBeforeMinification": 536,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/query.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SearchQueryBuilder",
+            "_Search"
+          ],
+          "sizeBeforeMinification": 8112,
+          "reasonCounts": {
+            "total": 6,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/suggest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "_Suggest"
+          ],
+          "sizeBeforeMinification": 1732,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3429,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 34,
+            "active": 31
+          }
+        },
+        {
+          "resource": "@pnp/sp/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3312,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/odata-url-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1558,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 3,
+            "active": 3
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 9,
+            "active": 5
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "search",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/search/postquery",
+            "method": "POST",
+            "headers": {
+              "X-PnPjs-RequestId": "3dc6e852-2780-4497-a832-ad5b0110be34",
+              "X-PnP-CacheKey": "256764191",
+              "X-PnP-CacheAlways": "1",
+              "X-ClientService-ClientTag": "s.s.s.postquery",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8"
+            },
+            "body": "{\"request\":{\"Querytext\":\"Standalone\",\"RowLimit\":2,\"HitHighlightedProperties\":[],\"Properties\":[],\"RefinementFilters\":[],\"ReorderingRules\":[],\"SelectProperties\":[],\"SortList\":[]}}"
+          },
+          {
+            "url": "https://tenant.test/sites/standalone/_api/search/suggest?querytext=%27Standalone%27",
+            "method": "GET",
+            "headers": {
+              "X-PnPjs-RequestId": "ff8fa232-1dbb-450d-8e1e-c48de3193844",
+              "X-ClientService-ClientTag": "s.s.s.suggest",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8"
+            }
+          }
+        ],
+        "result": {
+          "search": {
+            "results": [
+              {
+                "id": "9",
+                "data": {
+                  "DocId": "9",
+                  "Title": "Standalone search",
+                  "Rank": "12"
+                },
+                "raw": {
+                  "DocId": "9",
+                  "Title": "Standalone search",
+                  "Rank": "12"
+                },
+                "rank": 12
+              }
+            ],
+            "totalResults": 3,
+            "refiners": []
+          },
+          "suggestions": [
+            "Standalone suggestion"
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "batch",
+      "variant": "root",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe batch /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/batch/root/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "status": "failed"
+    },
+    {
+      "scenario": "batch",
+      "variant": "domain",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe batch /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/batch/domain/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "status": "failed"
+    },
+    {
+      "scenario": "batch",
+      "variant": "leaf",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/batch/leaf/entry.js",
+      "fixtureSha256": "cce63d5d77160dae58f0be41bb5316e60be3909ee8f5a3b9f61f58d7c2ff2db9",
+      "bundleSha256": "4eaaa0b0dfd34b47043749017c0a790fd88b162fdc714edd6dcbdbeddd9dad83",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-batch-leaf.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 131286,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPService"
+          ],
+          "sizeBeforeMinification": 435,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 107,
+            "active": 65
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "parseBinderWithErrorCheck"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "InjectHeaders",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "body",
+            "op",
+            "parseBinderWithErrorCheck",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 33,
+            "active": 22
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 3,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 8,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/request-digest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2749,
+          "reasonCounts": {
+            "total": 6,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spbrowser.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1066,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spfx.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2864,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 5,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 639,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 27,
+            "active": 24
+          }
+        },
+        {
+          "resource": "@pnp/sp/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3312,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/odata-url-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1558,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 8,
+            "active": 6
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "batch",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/$batch",
+            "method": "POST",
+            "headers": {
+              "Content-Type": "multipart/mixed; boundary=batch_60643f59-079a-41a0-93bf-12d3d6f968d0",
+              "X-PnPjs-RequestId": "e9cefc9b-2361-41a5-bdb3-2d5c0b06e838",
+              "X-ClientService-ClientTag": "s.s.$batch",
+              "Accept": "application/json"
+            },
+            "body": "--batch_60643f59-079a-41a0-93bf-12d3d6f968d0\nContent-Type: application/http\nContent-Transfer-Encoding: binary\n\nGET https://tenant.test/sites/standalone/_api/web HTTP/1.1\naccept: application/json\ncontent-type: application/json;charset=utf-8\n\n--batch_60643f59-079a-41a0-93bf-12d3d6f968d0--\n"
+          }
+        ],
+        "result": {
+          "Title": "Standalone web"
+        }
+      }
+    }
+  ],
+  "warnings": [],
+  "failures": [
+    {
+      "scenario": "context",
+      "variant": "root",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe context /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/context/root/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n"
+    },
+    {
+      "scenario": "context",
+      "variant": "domain",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe context /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/context/domain/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n"
+    },
+    {
+      "scenario": "list",
+      "variant": "root",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe list /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/list/root/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n"
+    },
+    {
+      "scenario": "list",
+      "variant": "domain",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe list /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/list/domain/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n"
+    },
+    {
+      "scenario": "search",
+      "variant": "root",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe search /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/search/root/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n"
+    },
+    {
+      "scenario": "search",
+      "variant": "domain",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe search /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/search/domain/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n"
+    },
+    {
+      "scenario": "batch",
+      "variant": "root",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe batch /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/batch/root/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n"
+    },
+    {
+      "scenario": "batch",
+      "variant": "domain",
+      "message": "Command failed: /Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs --run-probe batch /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/batch/domain/entry.js\n/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n",
+      "stderr": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/SPCoreLibraryStrings.resx:1\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\n^\n\nSyntaxError: Unexpected token '<'\n    at wrapSafe (node:internal/modules/cjs/loader:1638:18)\n    at Module._compile (node:internal/modules/cjs/loader:1680:20)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Module.require (node:internal/modules/cjs/loader:1463:12)\n    at require (node:internal/modules/helpers:147:16)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@microsoft/sp-core-library/lib-commonjs/Text.js:4:59)\n"
+    }
+  ]
+}

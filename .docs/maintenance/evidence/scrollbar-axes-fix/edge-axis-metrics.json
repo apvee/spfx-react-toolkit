@@ -1,0 +1,101 @@
+{
+  "elements": [
+    {
+      "tag": "DIV",
+      "scrollbarWidth": "auto",
+      "scrollbarColor": "auto",
+      "overflowX": "auto",
+      "overflowY": "auto",
+      "offsetWidth": 262,
+      "clientWidth": 254,
+      "scrollWidth": 480,
+      "offsetHeight": 102,
+      "clientHeight": 94,
+      "scrollHeight": 260,
+      "verticalGutter": 6,
+      "horizontalGutter": 6
+    },
+    {
+      "tag": "DIV",
+      "scrollbarWidth": "auto",
+      "scrollbarColor": "auto",
+      "overflowX": "auto",
+      "overflowY": "auto",
+      "offsetWidth": 1142,
+      "clientWidth": 1140,
+      "scrollWidth": 1140,
+      "offsetHeight": 206,
+      "clientHeight": 204,
+      "scrollHeight": 204,
+      "verticalGutter": 0,
+      "horizontalGutter": 0
+    },
+    {
+      "tag": "SPAN",
+      "scrollbarWidth": "auto",
+      "scrollbarColor": "auto",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "offsetWidth": 224,
+      "clientWidth": 0,
+      "scrollWidth": 0,
+      "offsetHeight": 39,
+      "clientHeight": 0,
+      "scrollHeight": 0,
+      "verticalGutter": 224,
+      "horizontalGutter": 39
+    },
+    {
+      "tag": "SPAN",
+      "scrollbarWidth": "auto",
+      "scrollbarColor": "auto",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "offsetWidth": 86,
+      "clientWidth": 0,
+      "scrollWidth": 0,
+      "offsetHeight": 19,
+      "clientHeight": 0,
+      "scrollHeight": 0,
+      "verticalGutter": 86,
+      "horizontalGutter": 19
+    },
+    {
+      "tag": "SPAN",
+      "scrollbarWidth": "auto",
+      "scrollbarColor": "auto",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "offsetWidth": 68,
+      "clientWidth": 0,
+      "scrollWidth": 0,
+      "offsetHeight": 19,
+      "clientHeight": 0,
+      "scrollHeight": 0,
+      "verticalGutter": 68,
+      "horizontalGutter": 19
+    },
+    {
+      "tag": "DIV",
+      "scrollbarWidth": "auto",
+      "scrollbarColor": "auto",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "offsetWidth": 480,
+      "clientWidth": 480,
+      "scrollWidth": 480,
+      "offsetHeight": 200,
+      "clientHeight": 200,
+      "scrollHeight": 200,
+      "verticalGutter": 0,
+      "horizontalGutter": 0
+    }
+  ],
+  "browser": "154.0.4258.62",
+  "messages": [
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold"
+    }
+  ]
+}

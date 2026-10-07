@@ -1,0 +1,9 @@
+{
+  "command": "npm --version",
+  "status": 0,
+  "node": "v22.20.0",
+  "npm": "11.19.1",
+  "capture": "Metadata captured after measurement; npm version independently matches existing fresh package verifier npm update notice. Future measurements capture npm before build.",
+  "packageLog": "package-retry.log",
+  "bundleAssetsChanged": false
+}

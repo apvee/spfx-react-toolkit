@@ -1,0 +1,47 @@
+{
+  "consumer": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-2n9uLo/consumer",
+  "durationMs": 113345,
+  "packedFiles": 603,
+  "packedBytes": 243856,
+  "documentedDeclarations": 237,
+  "production": {
+    "bundle": {
+      "complete": true,
+      "passed": true,
+      "durationMs": 32017
+    },
+    "runtime": {
+      "complete": true,
+      "passed": true,
+      "durationMs": 30354
+    },
+    "mutations": {
+      "complete": true,
+      "passed": true,
+      "durationMs": 14652
+    }
+  },
+  "failures": [
+    {
+      "args": [
+        "run",
+        "bundle:ship"
+      ],
+      "message": "npm run bundle:ship failed; evidence: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/final/package\n\n1 !== 0\n"
+    },
+    {
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "message": "npm run typecheck failed; evidence: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/final/package\n\n2 !== 0\n"
+    },
+    {
+      "args": [
+        "run",
+        "package:solution"
+      ],
+      "message": "npm run package:solution failed; evidence: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/final/package\n\n1 !== 0\n"
+    }
+  ]
+}

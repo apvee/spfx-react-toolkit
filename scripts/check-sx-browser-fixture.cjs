@@ -11,6 +11,7 @@ const url = process.env.SX_BROWSER_URL || 'http://127.0.0.1:4317';
 const observations = [];
 const errors = [];
 const consoleMessages = [];
+const thumbInteractionCaptures = [];
 let browser;
 let page;
 async function check(name, actual, wanted) {
@@ -20,6 +21,56 @@ async function check(name, actual, wanted) {
 }
 async function computed(id, property) {
   return page.locator(`#${id}`).evaluate((element, key) => getComputedStyle(element)[key], property);
+}
+async function scrollbarAxes(id) {
+  return page.locator(`#${id}`).evaluate(element => {
+    const css = getComputedStyle(element, '::-webkit-scrollbar');
+    return { width: css.width, height: css.height };
+  });
+}
+async function exerciseScrollbarThumb(id, axis, name, colors) {
+  const target = page.locator(`#${id}`);
+  await target.scrollIntoViewIfNeeded();
+  await target.evaluate(element => { element.scrollTop = 0; element.scrollLeft = 0; });
+  const geometry = await target.evaluate(element => {
+    const rect = element.getBoundingClientRect(), css = getComputedStyle(element);
+    return { x: rect.x, y: rect.y, width: rect.width, height: rect.height,
+      left: parseFloat(css.borderLeftWidth), right: parseFloat(css.borderRightWidth),
+      top: parseFloat(css.borderTopWidth), bottom: parseFloat(css.borderBottomWidth) };
+  });
+  const point = axis === 'vertical'
+    ? { x: geometry.x + geometry.width - geometry.right - 3, y: geometry.y + geometry.top + 10 }
+    : { x: geometry.x + geometry.left + 10, y: geometry.y + geometry.height - geometry.bottom - 3 };
+  let currentPoint = { x: 0, y: 0 };
+  async function capture(phase, expectedColor) {
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    const filename = `${label}-${name}-${axis}-${phase}.png`;
+    await target.screenshot({ path: path.join(output, filename) });
+    // CSSOM reports the base pseudo style for native scrollbar widget states.
+    // Preserve actual paint evidence for pixel review instead of certifying a
+    // hover/pressed color from that unrelated computed base value.
+    thumbInteractionCaptures.push({ name, axis, phase, expectedColor, filename,
+      pointer: currentPoint, geometry, paintVerification: 'Requires screenshot/pixel review' });
+  }
+  await page.mouse.move(0, 0);
+  await capture('base', colors.base);
+  currentPoint = point;
+  await page.mouse.move(point.x, point.y);
+  await capture('hover', colors.hover);
+  await page.mouse.down();
+  try {
+    await capture('pressed', colors.pressed);
+    currentPoint = { x: point.x + (axis === 'horizontal' ? 30 : 0), y: point.y + (axis === 'vertical' ? 15 : 0) };
+    await page.mouse.move(currentPoint.x, currentPoint.y, { steps: 4 });
+    await capture('drag', colors.pressed);
+    await check(`${name}:${axis}:thumb-drag-scrolls`, await target.evaluate((element, direction) =>
+      direction === 'vertical' ? element.scrollTop > 0 : element.scrollLeft > 0, axis), true);
+  } finally { await page.mouse.up(); }
+  await capture('released', colors.hover);
+  currentPoint = { x: 0, y: 0 };
+  await page.mouse.move(0, 0);
+  await capture('leave', colors.base);
+  await check(`${name}:${axis}:retains-6px`, await scrollbarAxes(id), { width: '6px', height: '6px' });
 }
 async function state(id) {
   return page.locator(`#${id}`).evaluate(element => ({
@@ -311,6 +362,11 @@ async function runCatalog() {
   await page.waitForFunction(() => Boolean(window.sxFixture));
   await check('catalog:scrollbar-standard-support', await page.evaluate(() =>
     CSS.supports('scrollbar-width', 'thin') && CSS.supports('scrollbar-color', 'red transparent')), true);
+  const vendorScrollbars = await page.evaluate(() => CSS.supports('selector(::-webkit-scrollbar)'));
+  if (vendorScrollbars) await check('catalog:thumb-state-selector-support', await page.evaluate(() =>
+    ['::-webkit-scrollbar-thumb:hover', '::-webkit-scrollbar-thumb:active', '::-webkit-scrollbar-thumb:hover:active']
+      .every(selector => CSS.supports(`selector(${selector})`))), true);
+  const styledWidth = vendorScrollbars ? 'auto' : 'thin';
   const stableClasses = {};
   for (const theme of ['light', 'dark', 'highContrast']) {
     await render({ theme, dir: 'ltr' });
@@ -334,16 +390,32 @@ async function runCatalog() {
         else if (!disabled) await check(`catalog:${theme}:${surface}:${name}:verified-text-ratio-at-least-4.5`, ratio >= 4.5, true);
       }
       const scrollbarId = `scrollbar-${surface}`;
-      await check(`catalog:${theme}:${surface}:scrollbar-width`, await computed(scrollbarId, 'scrollbarWidth'), 'thin');
+      await check(`catalog:${theme}:${surface}:scrollbar-width`, await computed(scrollbarId, 'scrollbarWidth'), styledWidth);
       const thumb = rgb({ light: '#616161', dark: '#adadad', highContrast: '#ffffff' }[theme]);
-      await check(`catalog:${theme}:${surface}:scrollbar-color`, await computed(scrollbarId, 'scrollbarColor'), `${thumb} rgba(0, 0, 0, 0)`);
+      await check(`catalog:${theme}:${surface}:scrollbar-color`, await computed(scrollbarId, 'scrollbarColor'), vendorScrollbars ? 'auto' : `${thumb} rgba(0, 0, 0, 0)`);
+      if (vendorScrollbars) {
+        await check(`catalog:${theme}:${surface}:scrollbar-both-axes-6px`, await scrollbarAxes(scrollbarId), { width: '6px', height: '6px' });
+        await check(`catalog:${theme}:${surface}:scrollbar-thumb`, await page.locator(`#${scrollbarId}`).evaluate(element => getComputedStyle(element, '::-webkit-scrollbar-thumb').backgroundColor), thumb);
+        await check(`catalog:${theme}:${surface}:scrollbar-rounded-thumb`, await page.locator(`#${scrollbarId}`).evaluate(element => getComputedStyle(element, '::-webkit-scrollbar-thumb').borderTopLeftRadius), '3px');
+      }
       await check(`catalog:${theme}:${surface}:scrollbar-overflow-explicit`, await computed(scrollbarId, 'overflowY'), 'auto');
       await check(`catalog:${theme}:${surface}:scrollbar-actual-overflow`, await page.locator(`#${scrollbarId}`).evaluate(element => element.scrollHeight > element.clientHeight), true);
+      await check(`catalog:${theme}:${surface}:scrollbar-horizontal-overflow`, await page.locator(`#${scrollbarId}`).evaluate(element => element.scrollWidth > element.clientWidth), true);
       await page.locator(`#${scrollbarId}`).evaluate(element => { element.scrollTop = 40; });
       await check(`catalog:${theme}:${surface}:scrollbar-scrolls`, await page.locator(`#${scrollbarId}`).evaluate(element => element.scrollTop), 40);
+      await page.locator(`#${scrollbarId}`).evaluate(element => { element.scrollLeft = 40; });
+      await check(`catalog:${theme}:${surface}:scrollbar-scrolls-horizontally`, await page.locator(`#${scrollbarId}`).evaluate(element => element.scrollLeft), 40);
       const ratio = contrast(thumb, underlying);
       catalogContrasts.push({ theme, surface, scrollbarThumb: thumb, underlying, ratio: Number(ratio.toFixed(2)), limitation: 'Transparent track depends on the actual underlying surface.' });
       await check(`catalog:${theme}:${surface}:verified-scrollbar-ratio-at-least-3`, ratio >= 3, true);
+      if (vendorScrollbars) {
+        const colors = {
+          base: thumb,
+          hover: rgb({ light: '#575757', dark: '#bdbdbd', highContrast: '#1aebff' }[theme]),
+          pressed: rgb({ light: '#4d4d4d', dark: '#b3b3b3', highContrast: '#1aebff' }[theme])
+        };
+        for (const axis of ['vertical', 'horizontal']) await exerciseScrollbarThumb(scrollbarId, axis, `catalog-${theme}-${surface}`, colors);
+      }
     }
     await check(`catalog:${theme}:typography-inherits`, await computed('catalog-typography-inherits', 'color'), 'rgb(11, 22, 33)');
     await check(`catalog:${theme}:transparent-inherits`, await computed('catalog-transparent-inherits', 'color'), 'rgb(11, 22, 33)');
@@ -362,15 +434,44 @@ async function runCatalog() {
     await page.mouse.move(0, 0);
     await check(`catalog:${theme}:scoped-scrollbar-inactive-query-width`, await computed('scrollbar-scoped-inactive', 'scrollbarWidth'), 'auto');
     await check(`catalog:${theme}:scoped-scrollbar-inactive-query-color`, await computed('scrollbar-scoped-inactive', 'scrollbarColor'), 'auto');
-    await check(`catalog:${theme}:scoped-scrollbar-active-query-width`, await computed('scrollbar-scoped-query', 'scrollbarWidth'), 'thin');
+    await check(`catalog:${theme}:scoped-scrollbar-active-query-width`, await computed('scrollbar-scoped-query', 'scrollbarWidth'), styledWidth);
     await check(`catalog:${theme}:scoped-scrollbar-inactive-hover-width`, await computed('scrollbar-scoped-query-hover', 'scrollbarWidth'), 'auto');
     await page.locator('#scrollbar-scoped-query-hover').hover({ position: { x: 5, y: 5 } });
     await check(`catalog:${theme}:scoped-scrollbar-real-hover`, (await state('scrollbar-scoped-query-hover')).hover, true);
-    await check(`catalog:${theme}:scoped-scrollbar-active-hover-width`, await computed('scrollbar-scoped-query-hover', 'scrollbarWidth'), 'thin');
+    await check(`catalog:${theme}:scoped-scrollbar-active-hover-width`, await computed('scrollbar-scoped-query-hover', 'scrollbarWidth'), styledWidth);
+    if (vendorScrollbars) {
+      await check(`catalog:${theme}:inactive-query-has-native-axes-under-styled-parent`, await scrollbarAxes('scrollbar-scoped-inactive'), { width: 'auto', height: 'auto' });
+      await check(`catalog:${theme}:active-query-has-6px-axes`, await scrollbarAxes('scrollbar-scoped-query'), { width: '6px', height: '6px' });
+      await check(`catalog:${theme}:active-hover-has-6px-axes`, await scrollbarAxes('scrollbar-scoped-query-hover'), { width: '6px', height: '6px' });
+    }
     await page.mouse.move(0, 0);
+    if (vendorScrollbars) await check(`catalog:${theme}:inactive-hover-has-native-axes`, await scrollbarAxes('scrollbar-scoped-query-hover'), { width: 'auto', height: 'auto' });
+    await render({ scrollbarEnabled: false });
+    await check(`catalog:${theme}:removed-scrollbar-width`, await computed('scrollbar-removable', 'scrollbarWidth'), 'auto');
+    await check(`catalog:${theme}:removed-scrollbar-color`, await computed('scrollbar-removable', 'scrollbarColor'), 'auto');
+    if (vendorScrollbars) await check(`catalog:${theme}:removed-scrollbar-has-native-axes`, await scrollbarAxes('scrollbar-removable'), { width: 'auto', height: 'auto' });
+    await render({ scrollbarEnabled: true });
+    if (vendorScrollbars) await check(`catalog:${theme}:restored-scrollbar-has-6px-axes`, await scrollbarAxes('scrollbar-removable'), { width: '6px', height: '6px' });
+    for (const scope of ['width', 'color', 'hover']) {
+      for (const order of ['native-last', 'recipe-last']) {
+        for (const composition of ['segmented', 'merged']) {
+          const id = `scrollbar-interop-${scope}-${order}-${composition}`;
+          if (scope === 'hover') await page.locator(`#${id}`).hover({ position: { x: 5, y: 5 } });
+          const nativeLast = order === 'native-last';
+          await check(`catalog:${theme}:${id}:width`, await computed(id, 'scrollbarWidth'),
+            nativeLast && scope !== 'color' ? 'none' : styledWidth);
+          await check(`catalog:${theme}:${id}:color`, await computed(id, 'scrollbarColor'),
+            nativeLast && scope !== 'width' ? 'rgb(255, 0, 0) rgba(0, 0, 0, 0)' : vendorScrollbars ? 'auto' : `${rgb({ light: '#616161', dark: '#adadad', highContrast: '#ffffff' }[theme])} rgba(0, 0, 0, 0)`);
+          if (vendorScrollbars && !nativeLast) await check(`catalog:${theme}:${id}:recipe-last-6px-axes`, await scrollbarAxes(id), { width: '6px', height: '6px' });
+          await page.mouse.move(0, 0);
+          if (vendorScrollbars && scope === 'hover') {
+            await check(`catalog:${theme}:${id}:inactive-hover-native-width`, await computed(id, 'scrollbarWidth'), 'auto');
+            await check(`catalog:${theme}:${id}:inactive-hover-native-axes`, await scrollbarAxes(id), { width: 'auto', height: 'auto' });
+          }
+        }
+      }
+    }
     await page.locator('#catalog').scrollIntoViewIfNeeded();
-    await snapshot(`catalog-${theme}`);
-    await page.locator('#catalog').screenshot({ path: path.join(output, `${label}-catalog-${theme}-detail.png`) });
   }
   // High-contrast Fluent palette and browser forced-colors are separate mechanisms.
   for (const theme of ['light', 'dark', 'highContrast']) {
@@ -381,6 +482,7 @@ async function runCatalog() {
       await check(`catalog:${theme}:${surface}:forced-scrollbar-color`, await computed(`scrollbar-${surface}`, 'scrollbarColor'), 'auto');
       await check(`catalog:${theme}:${surface}:forced-scrollbar-width`, await computed(`scrollbar-${surface}`, 'scrollbarWidth'), 'thin');
       await check(`catalog:${theme}:${surface}:forced-colors-native-adjust`, await computed(`scrollbar-${surface}`, 'forcedColorAdjust'), 'auto');
+      if (vendorScrollbars) await check(`catalog:${theme}:${surface}:forced-colors-vendor-axes-inactive`, await scrollbarAxes(`scrollbar-${surface}`), { width: 'auto', height: 'auto' });
     }
     await check(`catalog:${theme}:forced-scoped-query-scrollbar-color`, await computed('scrollbar-scoped-query', 'scrollbarColor'), 'auto');
     await check(`catalog:${theme}:forced-scoped-query-scrollbar-width`, await computed('scrollbar-scoped-query', 'scrollbarWidth'), 'thin');
@@ -394,6 +496,17 @@ async function runCatalog() {
     await page.locator('#catalog').screenshot({ path: path.join(output, `${label}-catalog-${theme}-forced-colors-detail.png`) });
     await page.emulateMedia({ forcedColors: 'none' });
     await check(`catalog:${theme}:forced-colors-deactivated`, await page.evaluate(() => matchMedia('(forced-colors: active)').matches), false);
+  }
+  // Full-page and oversized element captures temporarily resize Chromium's
+  // viewport. On macOS that
+  // can leave following native scrollbar widgets without their gutter/hit area
+  // despite correct computed pseudo styles. Preserve these overview captures
+  // after all actual thumb interactions, so they cannot alter later test input.
+  for (const theme of ['light', 'dark', 'highContrast']) {
+    await render({ theme });
+    await page.locator('#catalog').scrollIntoViewIfNeeded();
+    await snapshot(`catalog-${theme}`);
+    await page.locator('#catalog').screenshot({ path: path.join(output, `${label}-catalog-${theme}-detail.png`) });
   }
 }
 
@@ -414,7 +527,7 @@ async function runCatalog() {
   } catch (error) { errors.push(error.stack); }
   const report = { version, node: process.version, url, viewport: { width: 1210, height: 900 },
     module: process.env.PLAYWRIGHT_MODULE_PATH || 'playwright', executable: process.env.SX_BROWSER_EXECUTABLE || 'Playwright default',
-    localBrowser: true, sharePointHost: 'NOT EXECUTED', observations, catalogContrasts, consoleMessages, errors };
+    localBrowser: true, sharePointHost: 'NOT EXECUTED', observations, catalogContrasts, thumbInteractionCaptures, consoleMessages, errors };
   fs.writeFileSync(path.join(output, `${label}.json`), JSON.stringify(report, null, 2));
   console.log(JSON.stringify({ version, checks: observations.length, failures: errors.length, errors }, null, 2));
   await browser.close();

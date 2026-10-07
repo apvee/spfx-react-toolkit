@@ -1,0 +1,5 @@
+
+> spfx-react-toolkit-monorepo@2.1.0 verify:api
+> node scripts/verify-api.cjs
+
+API compatibility passed: 82 declaration modules, name/version/entry paths preserved.

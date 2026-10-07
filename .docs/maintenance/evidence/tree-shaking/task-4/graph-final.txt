@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: type-only edges introduce no runtime dependency
+ok 1 - type-only edges introduce no runtime dependency
+  ---
+  duration_ms: 561.283083
+  type: 'test'
+  ...
+# Subtest: named and namespace reexports resolve canonical leaves
+ok 2 - named and namespace reexports resolve canonical leaves
+  ---
+  duration_ms: 334.338959
+  type: 'test'
+  ...
+# Subtest: internal barrel import and unresolved module are reported
+ok 3 - internal barrel import and unresolved module are reported
+  ---
+  duration_ms: 344.192542
+  type: 'test'
+  ...
+# Subtest: runtime cycles are reported without losing unrelated exports
+ok 4 - runtime cycles are reported without losing unrelated exports
+  ---
+  duration_ms: 350.960333
+  type: 'test'
+  ...
+# Subtest: unmarked type-only reexport is absent in emitted JS
+ok 5 - unmarked type-only reexport is absent in emitted JS
+  ---
+  duration_ms: 348.77375
+  type: 'test'
+  ...
+# Subtest: mixed runtime and erased reexports sharing a specifier retain separate edge kinds
+ok 6 - mixed runtime and erased reexports sharing a specifier retain separate edge kinds
+  ---
+  duration_ms: 366.0535
+  type: 'test'
+  ...
+# Subtest: unresolved external packages are reported
+ok 7 - unresolved external packages are reported
+  ---
+  duration_ms: 312.248542
+  type: 'test'
+  ...
+# Subtest: renamed imported namespaces retain runtime leaves and dependencies
+ok 8 - renamed imported namespaces retain runtime leaves and dependencies
+  ---
+  duration_ms: 315.107375
+  type: 'test'
+  ...
+# Subtest: source rules reject internal barrel imports, global renderers and unclassified registrations
+ok 9 - source rules reject internal barrel imports, global renderers and unclassified registrations
+  ---
+  duration_ms: 0.533959
+  type: 'test'
+  ...
+# Subtest: repository source effects match the manifest and internal imports use direct modules
+ok 10 - repository source effects match the manifest and internal imports use direct modules
+  ---
+  duration_ms: 1433.895292
+  type: 'test'
+  ...
+# Subtest: source rules preserve type-only reexports at public barrel boundaries
+ok 11 - source rules preserve type-only reexports at public barrel boundaries
+  ---
+  duration_ms: 313.637291
+  type: 'test'
+  ...
+# Subtest: namespace barrel reexports remain allowed while type-only internal barrel imports are rejected
+ok 12 - namespace barrel reexports remain allowed while type-only internal barrel imports are rejected
+  ---
+  duration_ms: 295.620875
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5123.942208

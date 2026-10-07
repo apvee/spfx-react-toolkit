@@ -1,0 +1,32 @@
+[
+  {
+    "label": "styles-build",
+    "code": 0,
+    "signal": null
+  },
+  {
+    "label": "sx-build",
+    "code": 0,
+    "signal": null
+  },
+  {
+    "label": "edge-styles",
+    "code": 0,
+    "signal": null
+  },
+  {
+    "label": "edge-sx",
+    "code": 0,
+    "signal": null
+  },
+  {
+    "label": "chrome-styles",
+    "code": 0,
+    "signal": null
+  },
+  {
+    "label": "chrome-sx",
+    "code": 0,
+    "signal": null
+  }
+]

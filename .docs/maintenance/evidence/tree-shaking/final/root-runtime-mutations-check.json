@@ -1,0 +1,223 @@
+{
+  "passed": true,
+  "probes": [
+    {
+      "scenario": "context",
+      "variant": "root",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "context: real bundled HTTP operations and parsed results"
+      ]
+    },
+    {
+      "scenario": "context",
+      "variant": "domain",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "context: real bundled HTTP operations and parsed results"
+      ]
+    },
+    {
+      "scenario": "context",
+      "variant": "leaf",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "context: real bundled HTTP operations and parsed results"
+      ]
+    },
+    {
+      "scenario": "list",
+      "variant": "root",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "list: real bundled HTTP operations and parsed results"
+      ]
+    },
+    {
+      "scenario": "list",
+      "variant": "domain",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "list: real bundled HTTP operations and parsed results"
+      ]
+    },
+    {
+      "scenario": "list",
+      "variant": "leaf",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "list: real bundled HTTP operations and parsed results"
+      ]
+    },
+    {
+      "scenario": "search",
+      "variant": "root",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "search: real bundled HTTP operations and parsed results"
+      ]
+    },
+    {
+      "scenario": "search",
+      "variant": "domain",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "search: real bundled HTTP operations and parsed results"
+      ]
+    },
+    {
+      "scenario": "search",
+      "variant": "leaf",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "search: real bundled HTTP operations and parsed results"
+      ]
+    },
+    {
+      "scenario": "batch",
+      "variant": "root",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "batch: real bundled HTTP operations and parsed results"
+      ]
+    },
+    {
+      "scenario": "batch",
+      "variant": "domain",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "batch: real bundled HTTP operations and parsed results"
+      ]
+    },
+    {
+      "scenario": "batch",
+      "variant": "leaf",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "batch: real bundled HTTP operations and parsed results"
+      ]
+    },
+    {
+      "scenario": "providers",
+      "variant": "root",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "mixed imports share canonical provider contexts",
+        "two provider stores isolated",
+        "hook and host updates synchronize",
+        "unmount removes subscriptions and property sync"
+      ]
+    },
+    {
+      "scenario": "providers",
+      "variant": "domain",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "mixed imports share canonical provider contexts",
+        "two provider stores isolated",
+        "hook and host updates synchronize",
+        "unmount removes subscriptions and property sync"
+      ]
+    },
+    {
+      "scenario": "providers",
+      "variant": "leaf",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "mixed imports share canonical provider contexts",
+        "two provider stores isolated",
+        "hook and host updates synchronize",
+        "unmount removes subscriptions and property sync"
+      ]
+    },
+    {
+      "scenario": "styles",
+      "variant": "root",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "mixed useSx imports share real Griffel/Fluent contexts",
+        "class and CSS rule equivalence",
+        "rerender deduplicates rules",
+        "LTR/RTL contexts and independent renderers"
+      ]
+    },
+    {
+      "scenario": "styles",
+      "variant": "domain",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "mixed useSx imports share real Griffel/Fluent contexts",
+        "class and CSS rule equivalence",
+        "rerender deduplicates rules",
+        "LTR/RTL contexts and independent renderers"
+      ]
+    },
+    {
+      "scenario": "styles",
+      "variant": "leaf",
+      "status": "passed",
+      "exit": 0,
+      "assertions": [
+        "mixed useSx imports share real Griffel/Fluent contexts",
+        "class and CSS rule equivalence",
+        "rerender deduplicates rules",
+        "LTR/RTL contexts and independent renderers"
+      ]
+    }
+  ],
+  "mutations": [
+    {
+      "id": "unwanted-pnp",
+      "detected": true
+    },
+    {
+      "id": "unwanted-descriptor",
+      "detected": true
+    },
+    {
+      "id": "missing-new-export",
+      "detected": true
+    },
+    {
+      "id": "missing-legacy-export",
+      "detected": true
+    },
+    {
+      "id": "workspace-origin",
+      "detected": true
+    },
+    {
+      "id": "byte-inflation",
+      "detected": true
+    },
+    {
+      "id": "lost-list-registration",
+      "detected": true
+    },
+    {
+      "id": "lost-batch-registration",
+      "detected": true
+    },
+    {
+      "id": "lost-search-prototype",
+      "detected": true
+    }
+  ]
+}

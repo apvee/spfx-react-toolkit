@@ -1,0 +1,17 @@
+[
+  {
+    "command": "npm run build",
+    "status": 0,
+    "durationMs": 10490
+  },
+  {
+    "command": "npm run verify",
+    "status": 0,
+    "durationMs": 16354
+  },
+  {
+    "command": "npm run verify:package",
+    "status": 0,
+    "durationMs": 116230
+  }
+]

@@ -1,0 +1,91 @@
+{
+  "typescript": "5.3.3",
+  "modes": [
+    "node",
+    "bundler",
+    "node16"
+  ],
+  "runtime": [
+    {
+      "request": "@apvee/spfx-react-toolkit",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/index.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/core",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/core/index.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/hooks",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/hooks/index.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/helpers",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/helpers/index.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/services",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/services/index.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/styles",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/styles/index.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/styles/useSx",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/hooks/useSx.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/hooks/useStableCallback",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/hooks/useStableCallback.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/lib",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/index.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/lib/helpers/styles",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/helpers/styles/index.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/lib/hooks/useSx",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/hooks/useSx.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/lib/hooks/useSx.js",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/hooks/useSx.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/lib/hooks/useSx.d.ts",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/hooks/useSx.d.ts"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/lib/hooks/useSx.js.map",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/hooks/useSx.js.map"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/lib/hooks/useSx.d.ts.map",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/hooks/useSx.d.ts.map"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/lib/hooks/useAsyncInvoke.internal",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/hooks/useAsyncInvoke.internal.js"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/package.json",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/package.json"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/README.md",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/README.md"
+    },
+    {
+      "request": "@apvee/spfx-react-toolkit/LICENSE",
+      "file": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/LICENSE"
+    }
+  ],
+  "declarations": {
+    "node": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/index.d.ts",
+    "bundler": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/index.d.ts",
+    "node16": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit/lib/index.d.ts"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "tarball": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/apvee-spfx-react-toolkit-2.1.0.tgz",
+  "sha256": "5f6dfb24dc7371971850f01c8bc4a19b338c8ad9faf204a9df16fa59db61a298",
+  "consumer": "/private/tmp/task4-candidate-chNE9n",
+  "installation": "Task3 installed dependency tree reused; toolkit replaced by exact newly packed tarball contents without reinstalling dependencies",
+  "sourceTarball": "ac1b3aaf1a7f806787188c9157c3a7034632d4b19b28db6a3d0a20f170c7f8a6"
+}

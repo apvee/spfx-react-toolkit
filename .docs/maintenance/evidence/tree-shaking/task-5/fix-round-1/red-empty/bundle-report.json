@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "mode": "enforce",
+  "complete": true,
+  "provenance": {
+    "node": "v22.20.0",
+    "npm": "11.19.1",
+    "versions": {
+      "typescript": "5.3.3",
+      "webpack": "5.95.0",
+      "react": "17.0.1",
+      "react-dom": "17.0.1",
+      "@pnp/sp": "4.17.0",
+      "@pnp/core": "4.17.0",
+      "@pnp/queryable": "4.17.0",
+      "@griffel/core": "1.19.2",
+      "@griffel/react": "1.5.30",
+      "@fluentui/react-theme": "9.2.0",
+      "@fluentui/react-utilities": "9.25.1",
+      "@fluentui/react-shared-contexts": "9.25.2",
+      "@microsoft/sp-core-library": "1.21.1"
+    },
+    "rootLockfileSha256": "56b44d939cac13a5b31cf9d81474bbc3c6b714da9b4438f4c7ffb7c509ed9dbf",
+    "consumerLockfileSha256": "efdddc2c6950650f197584547c9ea4d3b6e5ae48c1de06220bb06bace0768298",
+    "tarballSha256": "5f6dfb24dc7371971850f01c8bc4a19b338c8ad9faf204a9df16fa59db61a298",
+    "toolkitDir": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-KSsbyw/consumer/node_modules/@apvee/spfx-react-toolkit",
+    "consumerRoot": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-KSsbyw/consumer",
+    "loaderSha256": "5d2e745458f7c15032e9ddee8529e4765f4101891bec956aec2e3667bc84500e",
+    "minifierVersion": "5.44.0",
+    "zlibVersion": "1.3.1-470d3a2",
+    "compression": {
+      "gzipLevel": 9,
+      "brotliQuality": 11
+    }
+  },
+  "attribution": false,
+  "contractSha256": "c22c94e8e26e85d2f5efc70b76b5c524c200c2684868a5435d845dd82aa6f8b6",
+  "fixtures": [],
+  "comparisons": [],
+  "warnings": [],
+  "errors": [],
+  "failures": [],
+  "durationMs": 0,
+  "passed": true
+}

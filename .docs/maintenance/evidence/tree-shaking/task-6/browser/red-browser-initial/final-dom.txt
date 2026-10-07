@@ -1,0 +1,51 @@
+Imports panel local browser fixture
+
+Actual sample panel and compiled package. This is not authenticated SharePoint validation.
+
+All three examples share the same style provider. Each counter is independent.
+
+Use right-to-left
+Root imports
+Increment the counter, invoke its captured callback, and compose descriptors from mixed imports.
+
+Current counter: 1
+
+Increment counter
+Invoke original callback
+Remove width override
+
+Observed counter: 1
+
+Same callback identity: yes
+
+Composed width: 360px. Body typography and logical start padding.
+
+Domain imports
+Increment the counter, invoke its captured callback, and compose descriptors from mixed imports.
+
+Current counter: 2
+
+Increment counter
+Invoke original callback
+Apply width override
+
+Observed counter: 2
+
+Same callback identity: yes
+
+Composed width: 240px. Body typography and logical start padding.
+
+Legacy leaf imports
+Increment the counter, invoke its captured callback, and compose descriptors from mixed imports.
+
+Current counter: 3
+
+Increment counter
+Invoke original callback
+Apply width override
+
+Observed counter: 3
+
+Same callback identity: yes
+
+Composed width: 240px. Body typography and logical start padding.

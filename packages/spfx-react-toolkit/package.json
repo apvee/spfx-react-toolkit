@@ -16,7 +16,8 @@
     "lib/helpers/**/*",
     "lib/utils/**/*",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "lib/styles/**/*"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -102,5 +103,1740 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
-  }
+  },
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./core": {
+      "types": "./lib/core/index.d.ts",
+      "default": "./lib/core/index.js"
+    },
+    "./hooks": {
+      "types": "./lib/hooks/index.d.ts",
+      "default": "./lib/hooks/index.js"
+    },
+    "./helpers": {
+      "types": "./lib/helpers/index.d.ts",
+      "default": "./lib/helpers/index.js"
+    },
+    "./services": {
+      "types": "./lib/services/index.d.ts",
+      "default": "./lib/services/index.js"
+    },
+    "./styles": {
+      "types": "./lib/styles/index.d.ts",
+      "default": "./lib/styles/index.js"
+    },
+    "./styles/useSx": {
+      "types": "./lib/hooks/useSx.d.ts",
+      "default": "./lib/hooks/useSx.js"
+    },
+    "./hooks/useStableCallback": {
+      "types": "./lib/hooks/useStableCallback.d.ts",
+      "default": "./lib/hooks/useStableCallback.js"
+    },
+    "./LICENSE": "./LICENSE",
+    "./README.md": "./README.md",
+    "./lib/core/context.internal.d.ts": "./lib/core/context.internal.d.ts",
+    "./lib/core/context.internal.d.ts.map": "./lib/core/context.internal.d.ts.map",
+    "./lib/core/context.internal": {
+      "types": "./lib/core/context.internal.d.ts",
+      "default": "./lib/core/context.internal.js"
+    },
+    "./lib/core/context.internal.js": {
+      "types": "./lib/core/context.internal.d.ts",
+      "default": "./lib/core/context.internal.js"
+    },
+    "./lib/core/context.internal.js.map": "./lib/core/context.internal.js.map",
+    "./lib/core/index.d.ts": "./lib/core/index.d.ts",
+    "./lib/core/index.d.ts.map": "./lib/core/index.d.ts.map",
+    "./lib/core/index": {
+      "types": "./lib/core/index.d.ts",
+      "default": "./lib/core/index.js"
+    },
+    "./lib/core/index.js": {
+      "types": "./lib/core/index.d.ts",
+      "default": "./lib/core/index.js"
+    },
+    "./lib/core": {
+      "types": "./lib/core/index.d.ts",
+      "default": "./lib/core/index.js"
+    },
+    "./lib/core/index.js.map": "./lib/core/index.js.map",
+    "./lib/core/provider-application-customizer.d.ts": "./lib/core/provider-application-customizer.d.ts",
+    "./lib/core/provider-application-customizer.d.ts.map": "./lib/core/provider-application-customizer.d.ts.map",
+    "./lib/core/provider-application-customizer": {
+      "types": "./lib/core/provider-application-customizer.d.ts",
+      "default": "./lib/core/provider-application-customizer.js"
+    },
+    "./lib/core/provider-application-customizer.js": {
+      "types": "./lib/core/provider-application-customizer.d.ts",
+      "default": "./lib/core/provider-application-customizer.js"
+    },
+    "./lib/core/provider-application-customizer.js.map": "./lib/core/provider-application-customizer.js.map",
+    "./lib/core/provider-base.internal.d.ts": "./lib/core/provider-base.internal.d.ts",
+    "./lib/core/provider-base.internal.d.ts.map": "./lib/core/provider-base.internal.d.ts.map",
+    "./lib/core/provider-base.internal": {
+      "types": "./lib/core/provider-base.internal.d.ts",
+      "default": "./lib/core/provider-base.internal.js"
+    },
+    "./lib/core/provider-base.internal.js": {
+      "types": "./lib/core/provider-base.internal.d.ts",
+      "default": "./lib/core/provider-base.internal.js"
+    },
+    "./lib/core/provider-base.internal.js.map": "./lib/core/provider-base.internal.js.map",
+    "./lib/core/provider-field-customizer.d.ts": "./lib/core/provider-field-customizer.d.ts",
+    "./lib/core/provider-field-customizer.d.ts.map": "./lib/core/provider-field-customizer.d.ts.map",
+    "./lib/core/provider-field-customizer": {
+      "types": "./lib/core/provider-field-customizer.d.ts",
+      "default": "./lib/core/provider-field-customizer.js"
+    },
+    "./lib/core/provider-field-customizer.js": {
+      "types": "./lib/core/provider-field-customizer.d.ts",
+      "default": "./lib/core/provider-field-customizer.js"
+    },
+    "./lib/core/provider-field-customizer.js.map": "./lib/core/provider-field-customizer.js.map",
+    "./lib/core/provider-listview-commandset.d.ts": "./lib/core/provider-listview-commandset.d.ts",
+    "./lib/core/provider-listview-commandset.d.ts.map": "./lib/core/provider-listview-commandset.d.ts.map",
+    "./lib/core/provider-listview-commandset": {
+      "types": "./lib/core/provider-listview-commandset.d.ts",
+      "default": "./lib/core/provider-listview-commandset.js"
+    },
+    "./lib/core/provider-listview-commandset.js": {
+      "types": "./lib/core/provider-listview-commandset.d.ts",
+      "default": "./lib/core/provider-listview-commandset.js"
+    },
+    "./lib/core/provider-listview-commandset.js.map": "./lib/core/provider-listview-commandset.js.map",
+    "./lib/core/provider-webpart.d.ts": "./lib/core/provider-webpart.d.ts",
+    "./lib/core/provider-webpart.d.ts.map": "./lib/core/provider-webpart.d.ts.map",
+    "./lib/core/provider-webpart": {
+      "types": "./lib/core/provider-webpart.d.ts",
+      "default": "./lib/core/provider-webpart.js"
+    },
+    "./lib/core/provider-webpart.js": {
+      "types": "./lib/core/provider-webpart.d.ts",
+      "default": "./lib/core/provider-webpart.js"
+    },
+    "./lib/core/provider-webpart.js.map": "./lib/core/provider-webpart.js.map",
+    "./lib/core/runtime-store.internal.d.ts": "./lib/core/runtime-store.internal.d.ts",
+    "./lib/core/runtime-store.internal.d.ts.map": "./lib/core/runtime-store.internal.d.ts.map",
+    "./lib/core/runtime-store.internal": {
+      "types": "./lib/core/runtime-store.internal.d.ts",
+      "default": "./lib/core/runtime-store.internal.js"
+    },
+    "./lib/core/runtime-store.internal.js": {
+      "types": "./lib/core/runtime-store.internal.d.ts",
+      "default": "./lib/core/runtime-store.internal.js"
+    },
+    "./lib/core/runtime-store.internal.js.map": "./lib/core/runtime-store.internal.js.map",
+    "./lib/core/state.internal.d.ts": "./lib/core/state.internal.d.ts",
+    "./lib/core/state.internal.d.ts.map": "./lib/core/state.internal.d.ts.map",
+    "./lib/core/state.internal": {
+      "types": "./lib/core/state.internal.d.ts",
+      "default": "./lib/core/state.internal.js"
+    },
+    "./lib/core/state.internal.js": {
+      "types": "./lib/core/state.internal.d.ts",
+      "default": "./lib/core/state.internal.js"
+    },
+    "./lib/core/state.internal.js.map": "./lib/core/state.internal.js.map",
+    "./lib/core/types.d.ts": "./lib/core/types.d.ts",
+    "./lib/core/types.d.ts.map": "./lib/core/types.d.ts.map",
+    "./lib/core/types": {
+      "types": "./lib/core/types.d.ts",
+      "default": "./lib/core/types.js"
+    },
+    "./lib/core/types.js": {
+      "types": "./lib/core/types.d.ts",
+      "default": "./lib/core/types.js"
+    },
+    "./lib/core/types.js.map": "./lib/core/types.js.map",
+    "./lib/helpers/index.d.ts": "./lib/helpers/index.d.ts",
+    "./lib/helpers/index.d.ts.map": "./lib/helpers/index.d.ts.map",
+    "./lib/helpers/index": {
+      "types": "./lib/helpers/index.d.ts",
+      "default": "./lib/helpers/index.js"
+    },
+    "./lib/helpers/index.js": {
+      "types": "./lib/helpers/index.d.ts",
+      "default": "./lib/helpers/index.js"
+    },
+    "./lib/helpers": {
+      "types": "./lib/helpers/index.d.ts",
+      "default": "./lib/helpers/index.js"
+    },
+    "./lib/helpers/index.js.map": "./lib/helpers/index.js.map",
+    "./lib/helpers/spfx-api-permission-precheck.helpers.d.ts": "./lib/helpers/spfx-api-permission-precheck.helpers.d.ts",
+    "./lib/helpers/spfx-api-permission-precheck.helpers.d.ts.map": "./lib/helpers/spfx-api-permission-precheck.helpers.d.ts.map",
+    "./lib/helpers/spfx-api-permission-precheck.helpers": {
+      "types": "./lib/helpers/spfx-api-permission-precheck.helpers.d.ts",
+      "default": "./lib/helpers/spfx-api-permission-precheck.helpers.js"
+    },
+    "./lib/helpers/spfx-api-permission-precheck.helpers.js": {
+      "types": "./lib/helpers/spfx-api-permission-precheck.helpers.d.ts",
+      "default": "./lib/helpers/spfx-api-permission-precheck.helpers.js"
+    },
+    "./lib/helpers/spfx-api-permission-precheck.helpers.js.map": "./lib/helpers/spfx-api-permission-precheck.helpers.js.map",
+    "./lib/helpers/spfx-container.helpers.d.ts": "./lib/helpers/spfx-container.helpers.d.ts",
+    "./lib/helpers/spfx-container.helpers.d.ts.map": "./lib/helpers/spfx-container.helpers.d.ts.map",
+    "./lib/helpers/spfx-container.helpers": {
+      "types": "./lib/helpers/spfx-container.helpers.d.ts",
+      "default": "./lib/helpers/spfx-container.helpers.js"
+    },
+    "./lib/helpers/spfx-container.helpers.js": {
+      "types": "./lib/helpers/spfx-container.helpers.d.ts",
+      "default": "./lib/helpers/spfx-container.helpers.js"
+    },
+    "./lib/helpers/spfx-container.helpers.js.map": "./lib/helpers/spfx-container.helpers.js.map",
+    "./lib/helpers/spfx-graph-path.helpers.d.ts": "./lib/helpers/spfx-graph-path.helpers.d.ts",
+    "./lib/helpers/spfx-graph-path.helpers.d.ts.map": "./lib/helpers/spfx-graph-path.helpers.d.ts.map",
+    "./lib/helpers/spfx-graph-path.helpers": {
+      "types": "./lib/helpers/spfx-graph-path.helpers.d.ts",
+      "default": "./lib/helpers/spfx-graph-path.helpers.js"
+    },
+    "./lib/helpers/spfx-graph-path.helpers.js": {
+      "types": "./lib/helpers/spfx-graph-path.helpers.d.ts",
+      "default": "./lib/helpers/spfx-graph-path.helpers.js"
+    },
+    "./lib/helpers/spfx-graph-path.helpers.js.map": "./lib/helpers/spfx-graph-path.helpers.js.map",
+    "./lib/helpers/spfx-page-context.helpers.d.ts": "./lib/helpers/spfx-page-context.helpers.d.ts",
+    "./lib/helpers/spfx-page-context.helpers.d.ts.map": "./lib/helpers/spfx-page-context.helpers.d.ts.map",
+    "./lib/helpers/spfx-page-context.helpers": {
+      "types": "./lib/helpers/spfx-page-context.helpers.d.ts",
+      "default": "./lib/helpers/spfx-page-context.helpers.js"
+    },
+    "./lib/helpers/spfx-page-context.helpers.js": {
+      "types": "./lib/helpers/spfx-page-context.helpers.d.ts",
+      "default": "./lib/helpers/spfx-page-context.helpers.js"
+    },
+    "./lib/helpers/spfx-page-context.helpers.js.map": "./lib/helpers/spfx-page-context.helpers.js.map",
+    "./lib/helpers/spfx-permissions.helpers.d.ts": "./lib/helpers/spfx-permissions.helpers.d.ts",
+    "./lib/helpers/spfx-permissions.helpers.d.ts.map": "./lib/helpers/spfx-permissions.helpers.d.ts.map",
+    "./lib/helpers/spfx-permissions.helpers": {
+      "types": "./lib/helpers/spfx-permissions.helpers.d.ts",
+      "default": "./lib/helpers/spfx-permissions.helpers.js"
+    },
+    "./lib/helpers/spfx-permissions.helpers.js": {
+      "types": "./lib/helpers/spfx-permissions.helpers.d.ts",
+      "default": "./lib/helpers/spfx-permissions.helpers.js"
+    },
+    "./lib/helpers/spfx-permissions.helpers.js.map": "./lib/helpers/spfx-permissions.helpers.js.map",
+    "./lib/helpers/spfx-storage.helpers.d.ts": "./lib/helpers/spfx-storage.helpers.d.ts",
+    "./lib/helpers/spfx-storage.helpers.d.ts.map": "./lib/helpers/spfx-storage.helpers.d.ts.map",
+    "./lib/helpers/spfx-storage.helpers": {
+      "types": "./lib/helpers/spfx-storage.helpers.d.ts",
+      "default": "./lib/helpers/spfx-storage.helpers.js"
+    },
+    "./lib/helpers/spfx-storage.helpers.js": {
+      "types": "./lib/helpers/spfx-storage.helpers.d.ts",
+      "default": "./lib/helpers/spfx-storage.helpers.js"
+    },
+    "./lib/helpers/spfx-storage.helpers.js.map": "./lib/helpers/spfx-storage.helpers.js.map",
+    "./lib/helpers/spfx-tenant-value.helpers.d.ts": "./lib/helpers/spfx-tenant-value.helpers.d.ts",
+    "./lib/helpers/spfx-tenant-value.helpers.d.ts.map": "./lib/helpers/spfx-tenant-value.helpers.d.ts.map",
+    "./lib/helpers/spfx-tenant-value.helpers": {
+      "types": "./lib/helpers/spfx-tenant-value.helpers.d.ts",
+      "default": "./lib/helpers/spfx-tenant-value.helpers.js"
+    },
+    "./lib/helpers/spfx-tenant-value.helpers.js": {
+      "types": "./lib/helpers/spfx-tenant-value.helpers.d.ts",
+      "default": "./lib/helpers/spfx-tenant-value.helpers.js"
+    },
+    "./lib/helpers/spfx-tenant-value.helpers.js.map": "./lib/helpers/spfx-tenant-value.helpers.js.map",
+    "./lib/helpers/spfx-theme.helpers.d.ts": "./lib/helpers/spfx-theme.helpers.d.ts",
+    "./lib/helpers/spfx-theme.helpers.d.ts.map": "./lib/helpers/spfx-theme.helpers.d.ts.map",
+    "./lib/helpers/spfx-theme.helpers": {
+      "types": "./lib/helpers/spfx-theme.helpers.d.ts",
+      "default": "./lib/helpers/spfx-theme.helpers.js"
+    },
+    "./lib/helpers/spfx-theme.helpers.js": {
+      "types": "./lib/helpers/spfx-theme.helpers.d.ts",
+      "default": "./lib/helpers/spfx-theme.helpers.js"
+    },
+    "./lib/helpers/spfx-theme.helpers.js.map": "./lib/helpers/spfx-theme.helpers.js.map",
+    "./lib/helpers/styles/align-items.d.ts": "./lib/helpers/styles/align-items.d.ts",
+    "./lib/helpers/styles/align-items.d.ts.map": "./lib/helpers/styles/align-items.d.ts.map",
+    "./lib/helpers/styles/align-items": {
+      "types": "./lib/helpers/styles/align-items.d.ts",
+      "default": "./lib/helpers/styles/align-items.js"
+    },
+    "./lib/helpers/styles/align-items.js": {
+      "types": "./lib/helpers/styles/align-items.d.ts",
+      "default": "./lib/helpers/styles/align-items.js"
+    },
+    "./lib/helpers/styles/align-items.js.map": "./lib/helpers/styles/align-items.js.map",
+    "./lib/helpers/styles/align-self.d.ts": "./lib/helpers/styles/align-self.d.ts",
+    "./lib/helpers/styles/align-self.d.ts.map": "./lib/helpers/styles/align-self.d.ts.map",
+    "./lib/helpers/styles/align-self": {
+      "types": "./lib/helpers/styles/align-self.d.ts",
+      "default": "./lib/helpers/styles/align-self.js"
+    },
+    "./lib/helpers/styles/align-self.js": {
+      "types": "./lib/helpers/styles/align-self.d.ts",
+      "default": "./lib/helpers/styles/align-self.js"
+    },
+    "./lib/helpers/styles/align-self.js.map": "./lib/helpers/styles/align-self.js.map",
+    "./lib/helpers/styles/background.d.ts": "./lib/helpers/styles/background.d.ts",
+    "./lib/helpers/styles/background.d.ts.map": "./lib/helpers/styles/background.d.ts.map",
+    "./lib/helpers/styles/background": {
+      "types": "./lib/helpers/styles/background.d.ts",
+      "default": "./lib/helpers/styles/background.js"
+    },
+    "./lib/helpers/styles/background.js": {
+      "types": "./lib/helpers/styles/background.d.ts",
+      "default": "./lib/helpers/styles/background.js"
+    },
+    "./lib/helpers/styles/background.js.map": "./lib/helpers/styles/background.js.map",
+    "./lib/helpers/styles/bindings.internal.d.ts": "./lib/helpers/styles/bindings.internal.d.ts",
+    "./lib/helpers/styles/bindings.internal.d.ts.map": "./lib/helpers/styles/bindings.internal.d.ts.map",
+    "./lib/helpers/styles/bindings.internal": {
+      "types": "./lib/helpers/styles/bindings.internal.d.ts",
+      "default": "./lib/helpers/styles/bindings.internal.js"
+    },
+    "./lib/helpers/styles/bindings.internal.js": {
+      "types": "./lib/helpers/styles/bindings.internal.d.ts",
+      "default": "./lib/helpers/styles/bindings.internal.js"
+    },
+    "./lib/helpers/styles/bindings.internal.js.map": "./lib/helpers/styles/bindings.internal.js.map",
+    "./lib/helpers/styles/border-color.d.ts": "./lib/helpers/styles/border-color.d.ts",
+    "./lib/helpers/styles/border-color.d.ts.map": "./lib/helpers/styles/border-color.d.ts.map",
+    "./lib/helpers/styles/border-color": {
+      "types": "./lib/helpers/styles/border-color.d.ts",
+      "default": "./lib/helpers/styles/border-color.js"
+    },
+    "./lib/helpers/styles/border-color.js": {
+      "types": "./lib/helpers/styles/border-color.d.ts",
+      "default": "./lib/helpers/styles/border-color.js"
+    },
+    "./lib/helpers/styles/border-color.js.map": "./lib/helpers/styles/border-color.js.map",
+    "./lib/helpers/styles/border-radius.d.ts": "./lib/helpers/styles/border-radius.d.ts",
+    "./lib/helpers/styles/border-radius.d.ts.map": "./lib/helpers/styles/border-radius.d.ts.map",
+    "./lib/helpers/styles/border-radius": {
+      "types": "./lib/helpers/styles/border-radius.d.ts",
+      "default": "./lib/helpers/styles/border-radius.js"
+    },
+    "./lib/helpers/styles/border-radius.js": {
+      "types": "./lib/helpers/styles/border-radius.d.ts",
+      "default": "./lib/helpers/styles/border-radius.js"
+    },
+    "./lib/helpers/styles/border-radius.js.map": "./lib/helpers/styles/border-radius.js.map",
+    "./lib/helpers/styles/border-style.d.ts": "./lib/helpers/styles/border-style.d.ts",
+    "./lib/helpers/styles/border-style.d.ts.map": "./lib/helpers/styles/border-style.d.ts.map",
+    "./lib/helpers/styles/border-style": {
+      "types": "./lib/helpers/styles/border-style.d.ts",
+      "default": "./lib/helpers/styles/border-style.js"
+    },
+    "./lib/helpers/styles/border-style.js": {
+      "types": "./lib/helpers/styles/border-style.d.ts",
+      "default": "./lib/helpers/styles/border-style.js"
+    },
+    "./lib/helpers/styles/border-style.js.map": "./lib/helpers/styles/border-style.js.map",
+    "./lib/helpers/styles/border-width.d.ts": "./lib/helpers/styles/border-width.d.ts",
+    "./lib/helpers/styles/border-width.d.ts.map": "./lib/helpers/styles/border-width.d.ts.map",
+    "./lib/helpers/styles/border-width": {
+      "types": "./lib/helpers/styles/border-width.d.ts",
+      "default": "./lib/helpers/styles/border-width.js"
+    },
+    "./lib/helpers/styles/border-width.js": {
+      "types": "./lib/helpers/styles/border-width.d.ts",
+      "default": "./lib/helpers/styles/border-width.js"
+    },
+    "./lib/helpers/styles/border-width.js.map": "./lib/helpers/styles/border-width.js.map",
+    "./lib/helpers/styles/box-shadow.d.ts": "./lib/helpers/styles/box-shadow.d.ts",
+    "./lib/helpers/styles/box-shadow.d.ts.map": "./lib/helpers/styles/box-shadow.d.ts.map",
+    "./lib/helpers/styles/box-shadow": {
+      "types": "./lib/helpers/styles/box-shadow.d.ts",
+      "default": "./lib/helpers/styles/box-shadow.js"
+    },
+    "./lib/helpers/styles/box-shadow.js": {
+      "types": "./lib/helpers/styles/box-shadow.d.ts",
+      "default": "./lib/helpers/styles/box-shadow.js"
+    },
+    "./lib/helpers/styles/box-shadow.js.map": "./lib/helpers/styles/box-shadow.js.map",
+    "./lib/helpers/styles/cache.internal.d.ts": "./lib/helpers/styles/cache.internal.d.ts",
+    "./lib/helpers/styles/cache.internal.d.ts.map": "./lib/helpers/styles/cache.internal.d.ts.map",
+    "./lib/helpers/styles/cache.internal": {
+      "types": "./lib/helpers/styles/cache.internal.d.ts",
+      "default": "./lib/helpers/styles/cache.internal.js"
+    },
+    "./lib/helpers/styles/cache.internal.js": {
+      "types": "./lib/helpers/styles/cache.internal.d.ts",
+      "default": "./lib/helpers/styles/cache.internal.js"
+    },
+    "./lib/helpers/styles/cache.internal.js.map": "./lib/helpers/styles/cache.internal.js.map",
+    "./lib/helpers/styles/container.d.ts": "./lib/helpers/styles/container.d.ts",
+    "./lib/helpers/styles/container.d.ts.map": "./lib/helpers/styles/container.d.ts.map",
+    "./lib/helpers/styles/container": {
+      "types": "./lib/helpers/styles/container.d.ts",
+      "default": "./lib/helpers/styles/container.js"
+    },
+    "./lib/helpers/styles/container.js": {
+      "types": "./lib/helpers/styles/container.d.ts",
+      "default": "./lib/helpers/styles/container.js"
+    },
+    "./lib/helpers/styles/container.js.map": "./lib/helpers/styles/container.js.map",
+    "./lib/helpers/styles/descriptor.internal.d.ts": "./lib/helpers/styles/descriptor.internal.d.ts",
+    "./lib/helpers/styles/descriptor.internal.d.ts.map": "./lib/helpers/styles/descriptor.internal.d.ts.map",
+    "./lib/helpers/styles/descriptor.internal": {
+      "types": "./lib/helpers/styles/descriptor.internal.d.ts",
+      "default": "./lib/helpers/styles/descriptor.internal.js"
+    },
+    "./lib/helpers/styles/descriptor.internal.js": {
+      "types": "./lib/helpers/styles/descriptor.internal.d.ts",
+      "default": "./lib/helpers/styles/descriptor.internal.js"
+    },
+    "./lib/helpers/styles/descriptor.internal.js.map": "./lib/helpers/styles/descriptor.internal.js.map",
+    "./lib/helpers/styles/flex-item.d.ts": "./lib/helpers/styles/flex-item.d.ts",
+    "./lib/helpers/styles/flex-item.d.ts.map": "./lib/helpers/styles/flex-item.d.ts.map",
+    "./lib/helpers/styles/flex-item": {
+      "types": "./lib/helpers/styles/flex-item.d.ts",
+      "default": "./lib/helpers/styles/flex-item.js"
+    },
+    "./lib/helpers/styles/flex-item.js": {
+      "types": "./lib/helpers/styles/flex-item.d.ts",
+      "default": "./lib/helpers/styles/flex-item.js"
+    },
+    "./lib/helpers/styles/flex-item.js.map": "./lib/helpers/styles/flex-item.js.map",
+    "./lib/helpers/styles/flex.d.ts": "./lib/helpers/styles/flex.d.ts",
+    "./lib/helpers/styles/flex.d.ts.map": "./lib/helpers/styles/flex.d.ts.map",
+    "./lib/helpers/styles/flex": {
+      "types": "./lib/helpers/styles/flex.d.ts",
+      "default": "./lib/helpers/styles/flex.js"
+    },
+    "./lib/helpers/styles/flex.js": {
+      "types": "./lib/helpers/styles/flex.d.ts",
+      "default": "./lib/helpers/styles/flex.js"
+    },
+    "./lib/helpers/styles/flex.js.map": "./lib/helpers/styles/flex.js.map",
+    "./lib/helpers/styles/foreground.d.ts": "./lib/helpers/styles/foreground.d.ts",
+    "./lib/helpers/styles/foreground.d.ts.map": "./lib/helpers/styles/foreground.d.ts.map",
+    "./lib/helpers/styles/foreground": {
+      "types": "./lib/helpers/styles/foreground.d.ts",
+      "default": "./lib/helpers/styles/foreground.js"
+    },
+    "./lib/helpers/styles/foreground.js": {
+      "types": "./lib/helpers/styles/foreground.d.ts",
+      "default": "./lib/helpers/styles/foreground.js"
+    },
+    "./lib/helpers/styles/foreground.js.map": "./lib/helpers/styles/foreground.js.map",
+    "./lib/helpers/styles/gap.d.ts": "./lib/helpers/styles/gap.d.ts",
+    "./lib/helpers/styles/gap.d.ts.map": "./lib/helpers/styles/gap.d.ts.map",
+    "./lib/helpers/styles/gap": {
+      "types": "./lib/helpers/styles/gap.d.ts",
+      "default": "./lib/helpers/styles/gap.js"
+    },
+    "./lib/helpers/styles/gap.js": {
+      "types": "./lib/helpers/styles/gap.d.ts",
+      "default": "./lib/helpers/styles/gap.js"
+    },
+    "./lib/helpers/styles/gap.js.map": "./lib/helpers/styles/gap.js.map",
+    "./lib/helpers/styles/grid.d.ts": "./lib/helpers/styles/grid.d.ts",
+    "./lib/helpers/styles/grid.d.ts.map": "./lib/helpers/styles/grid.d.ts.map",
+    "./lib/helpers/styles/grid": {
+      "types": "./lib/helpers/styles/grid.d.ts",
+      "default": "./lib/helpers/styles/grid.js"
+    },
+    "./lib/helpers/styles/grid.js": {
+      "types": "./lib/helpers/styles/grid.d.ts",
+      "default": "./lib/helpers/styles/grid.js"
+    },
+    "./lib/helpers/styles/grid.js.map": "./lib/helpers/styles/grid.js.map",
+    "./lib/helpers/styles/height.d.ts": "./lib/helpers/styles/height.d.ts",
+    "./lib/helpers/styles/height.d.ts.map": "./lib/helpers/styles/height.d.ts.map",
+    "./lib/helpers/styles/height": {
+      "types": "./lib/helpers/styles/height.d.ts",
+      "default": "./lib/helpers/styles/height.js"
+    },
+    "./lib/helpers/styles/height.js": {
+      "types": "./lib/helpers/styles/height.d.ts",
+      "default": "./lib/helpers/styles/height.js"
+    },
+    "./lib/helpers/styles/height.js.map": "./lib/helpers/styles/height.js.map",
+    "./lib/helpers/styles/index.d.ts": "./lib/helpers/styles/index.d.ts",
+    "./lib/helpers/styles/index.d.ts.map": "./lib/helpers/styles/index.d.ts.map",
+    "./lib/helpers/styles/index": {
+      "types": "./lib/helpers/styles/index.d.ts",
+      "default": "./lib/helpers/styles/index.js"
+    },
+    "./lib/helpers/styles/index.js": {
+      "types": "./lib/helpers/styles/index.d.ts",
+      "default": "./lib/helpers/styles/index.js"
+    },
+    "./lib/helpers/styles": {
+      "types": "./lib/helpers/styles/index.d.ts",
+      "default": "./lib/helpers/styles/index.js"
+    },
+    "./lib/helpers/styles/index.js.map": "./lib/helpers/styles/index.js.map",
+    "./lib/helpers/styles/justify-content.d.ts": "./lib/helpers/styles/justify-content.d.ts",
+    "./lib/helpers/styles/justify-content.d.ts.map": "./lib/helpers/styles/justify-content.d.ts.map",
+    "./lib/helpers/styles/justify-content": {
+      "types": "./lib/helpers/styles/justify-content.d.ts",
+      "default": "./lib/helpers/styles/justify-content.js"
+    },
+    "./lib/helpers/styles/justify-content.js": {
+      "types": "./lib/helpers/styles/justify-content.d.ts",
+      "default": "./lib/helpers/styles/justify-content.js"
+    },
+    "./lib/helpers/styles/justify-content.js.map": "./lib/helpers/styles/justify-content.js.map",
+    "./lib/helpers/styles/margin-block-end.d.ts": "./lib/helpers/styles/margin-block-end.d.ts",
+    "./lib/helpers/styles/margin-block-end.d.ts.map": "./lib/helpers/styles/margin-block-end.d.ts.map",
+    "./lib/helpers/styles/margin-block-end": {
+      "types": "./lib/helpers/styles/margin-block-end.d.ts",
+      "default": "./lib/helpers/styles/margin-block-end.js"
+    },
+    "./lib/helpers/styles/margin-block-end.js": {
+      "types": "./lib/helpers/styles/margin-block-end.d.ts",
+      "default": "./lib/helpers/styles/margin-block-end.js"
+    },
+    "./lib/helpers/styles/margin-block-end.js.map": "./lib/helpers/styles/margin-block-end.js.map",
+    "./lib/helpers/styles/margin-block-start.d.ts": "./lib/helpers/styles/margin-block-start.d.ts",
+    "./lib/helpers/styles/margin-block-start.d.ts.map": "./lib/helpers/styles/margin-block-start.d.ts.map",
+    "./lib/helpers/styles/margin-block-start": {
+      "types": "./lib/helpers/styles/margin-block-start.d.ts",
+      "default": "./lib/helpers/styles/margin-block-start.js"
+    },
+    "./lib/helpers/styles/margin-block-start.js": {
+      "types": "./lib/helpers/styles/margin-block-start.d.ts",
+      "default": "./lib/helpers/styles/margin-block-start.js"
+    },
+    "./lib/helpers/styles/margin-block-start.js.map": "./lib/helpers/styles/margin-block-start.js.map",
+    "./lib/helpers/styles/margin-block.d.ts": "./lib/helpers/styles/margin-block.d.ts",
+    "./lib/helpers/styles/margin-block.d.ts.map": "./lib/helpers/styles/margin-block.d.ts.map",
+    "./lib/helpers/styles/margin-block": {
+      "types": "./lib/helpers/styles/margin-block.d.ts",
+      "default": "./lib/helpers/styles/margin-block.js"
+    },
+    "./lib/helpers/styles/margin-block.js": {
+      "types": "./lib/helpers/styles/margin-block.d.ts",
+      "default": "./lib/helpers/styles/margin-block.js"
+    },
+    "./lib/helpers/styles/margin-block.js.map": "./lib/helpers/styles/margin-block.js.map",
+    "./lib/helpers/styles/margin-inline-end.d.ts": "./lib/helpers/styles/margin-inline-end.d.ts",
+    "./lib/helpers/styles/margin-inline-end.d.ts.map": "./lib/helpers/styles/margin-inline-end.d.ts.map",
+    "./lib/helpers/styles/margin-inline-end": {
+      "types": "./lib/helpers/styles/margin-inline-end.d.ts",
+      "default": "./lib/helpers/styles/margin-inline-end.js"
+    },
+    "./lib/helpers/styles/margin-inline-end.js": {
+      "types": "./lib/helpers/styles/margin-inline-end.d.ts",
+      "default": "./lib/helpers/styles/margin-inline-end.js"
+    },
+    "./lib/helpers/styles/margin-inline-end.js.map": "./lib/helpers/styles/margin-inline-end.js.map",
+    "./lib/helpers/styles/margin-inline-start.d.ts": "./lib/helpers/styles/margin-inline-start.d.ts",
+    "./lib/helpers/styles/margin-inline-start.d.ts.map": "./lib/helpers/styles/margin-inline-start.d.ts.map",
+    "./lib/helpers/styles/margin-inline-start": {
+      "types": "./lib/helpers/styles/margin-inline-start.d.ts",
+      "default": "./lib/helpers/styles/margin-inline-start.js"
+    },
+    "./lib/helpers/styles/margin-inline-start.js": {
+      "types": "./lib/helpers/styles/margin-inline-start.d.ts",
+      "default": "./lib/helpers/styles/margin-inline-start.js"
+    },
+    "./lib/helpers/styles/margin-inline-start.js.map": "./lib/helpers/styles/margin-inline-start.js.map",
+    "./lib/helpers/styles/margin-inline.d.ts": "./lib/helpers/styles/margin-inline.d.ts",
+    "./lib/helpers/styles/margin-inline.d.ts.map": "./lib/helpers/styles/margin-inline.d.ts.map",
+    "./lib/helpers/styles/margin-inline": {
+      "types": "./lib/helpers/styles/margin-inline.d.ts",
+      "default": "./lib/helpers/styles/margin-inline.js"
+    },
+    "./lib/helpers/styles/margin-inline.js": {
+      "types": "./lib/helpers/styles/margin-inline.d.ts",
+      "default": "./lib/helpers/styles/margin-inline.js"
+    },
+    "./lib/helpers/styles/margin-inline.js.map": "./lib/helpers/styles/margin-inline.js.map",
+    "./lib/helpers/styles/margin.d.ts": "./lib/helpers/styles/margin.d.ts",
+    "./lib/helpers/styles/margin.d.ts.map": "./lib/helpers/styles/margin.d.ts.map",
+    "./lib/helpers/styles/margin": {
+      "types": "./lib/helpers/styles/margin.d.ts",
+      "default": "./lib/helpers/styles/margin.js"
+    },
+    "./lib/helpers/styles/margin.js": {
+      "types": "./lib/helpers/styles/margin.d.ts",
+      "default": "./lib/helpers/styles/margin.js"
+    },
+    "./lib/helpers/styles/margin.js.map": "./lib/helpers/styles/margin.js.map",
+    "./lib/helpers/styles/max-height.d.ts": "./lib/helpers/styles/max-height.d.ts",
+    "./lib/helpers/styles/max-height.d.ts.map": "./lib/helpers/styles/max-height.d.ts.map",
+    "./lib/helpers/styles/max-height": {
+      "types": "./lib/helpers/styles/max-height.d.ts",
+      "default": "./lib/helpers/styles/max-height.js"
+    },
+    "./lib/helpers/styles/max-height.js": {
+      "types": "./lib/helpers/styles/max-height.d.ts",
+      "default": "./lib/helpers/styles/max-height.js"
+    },
+    "./lib/helpers/styles/max-height.js.map": "./lib/helpers/styles/max-height.js.map",
+    "./lib/helpers/styles/max-width.d.ts": "./lib/helpers/styles/max-width.d.ts",
+    "./lib/helpers/styles/max-width.d.ts.map": "./lib/helpers/styles/max-width.d.ts.map",
+    "./lib/helpers/styles/max-width": {
+      "types": "./lib/helpers/styles/max-width.d.ts",
+      "default": "./lib/helpers/styles/max-width.js"
+    },
+    "./lib/helpers/styles/max-width.js": {
+      "types": "./lib/helpers/styles/max-width.d.ts",
+      "default": "./lib/helpers/styles/max-width.js"
+    },
+    "./lib/helpers/styles/max-width.js.map": "./lib/helpers/styles/max-width.js.map",
+    "./lib/helpers/styles/min-height.d.ts": "./lib/helpers/styles/min-height.d.ts",
+    "./lib/helpers/styles/min-height.d.ts.map": "./lib/helpers/styles/min-height.d.ts.map",
+    "./lib/helpers/styles/min-height": {
+      "types": "./lib/helpers/styles/min-height.d.ts",
+      "default": "./lib/helpers/styles/min-height.js"
+    },
+    "./lib/helpers/styles/min-height.js": {
+      "types": "./lib/helpers/styles/min-height.d.ts",
+      "default": "./lib/helpers/styles/min-height.js"
+    },
+    "./lib/helpers/styles/min-height.js.map": "./lib/helpers/styles/min-height.js.map",
+    "./lib/helpers/styles/min-width.d.ts": "./lib/helpers/styles/min-width.d.ts",
+    "./lib/helpers/styles/min-width.d.ts.map": "./lib/helpers/styles/min-width.d.ts.map",
+    "./lib/helpers/styles/min-width": {
+      "types": "./lib/helpers/styles/min-width.d.ts",
+      "default": "./lib/helpers/styles/min-width.js"
+    },
+    "./lib/helpers/styles/min-width.js": {
+      "types": "./lib/helpers/styles/min-width.d.ts",
+      "default": "./lib/helpers/styles/min-width.js"
+    },
+    "./lib/helpers/styles/min-width.js.map": "./lib/helpers/styles/min-width.js.map",
+    "./lib/helpers/styles/normalize.internal.d.ts": "./lib/helpers/styles/normalize.internal.d.ts",
+    "./lib/helpers/styles/normalize.internal.d.ts.map": "./lib/helpers/styles/normalize.internal.d.ts.map",
+    "./lib/helpers/styles/normalize.internal": {
+      "types": "./lib/helpers/styles/normalize.internal.d.ts",
+      "default": "./lib/helpers/styles/normalize.internal.js"
+    },
+    "./lib/helpers/styles/normalize.internal.js": {
+      "types": "./lib/helpers/styles/normalize.internal.d.ts",
+      "default": "./lib/helpers/styles/normalize.internal.js"
+    },
+    "./lib/helpers/styles/normalize.internal.js.map": "./lib/helpers/styles/normalize.internal.js.map",
+    "./lib/helpers/styles/overflow-horizontal.d.ts": "./lib/helpers/styles/overflow-horizontal.d.ts",
+    "./lib/helpers/styles/overflow-horizontal.d.ts.map": "./lib/helpers/styles/overflow-horizontal.d.ts.map",
+    "./lib/helpers/styles/overflow-horizontal": {
+      "types": "./lib/helpers/styles/overflow-horizontal.d.ts",
+      "default": "./lib/helpers/styles/overflow-horizontal.js"
+    },
+    "./lib/helpers/styles/overflow-horizontal.js": {
+      "types": "./lib/helpers/styles/overflow-horizontal.d.ts",
+      "default": "./lib/helpers/styles/overflow-horizontal.js"
+    },
+    "./lib/helpers/styles/overflow-horizontal.js.map": "./lib/helpers/styles/overflow-horizontal.js.map",
+    "./lib/helpers/styles/overflow-vertical.d.ts": "./lib/helpers/styles/overflow-vertical.d.ts",
+    "./lib/helpers/styles/overflow-vertical.d.ts.map": "./lib/helpers/styles/overflow-vertical.d.ts.map",
+    "./lib/helpers/styles/overflow-vertical": {
+      "types": "./lib/helpers/styles/overflow-vertical.d.ts",
+      "default": "./lib/helpers/styles/overflow-vertical.js"
+    },
+    "./lib/helpers/styles/overflow-vertical.js": {
+      "types": "./lib/helpers/styles/overflow-vertical.d.ts",
+      "default": "./lib/helpers/styles/overflow-vertical.js"
+    },
+    "./lib/helpers/styles/overflow-vertical.js.map": "./lib/helpers/styles/overflow-vertical.js.map",
+    "./lib/helpers/styles/overflow.d.ts": "./lib/helpers/styles/overflow.d.ts",
+    "./lib/helpers/styles/overflow.d.ts.map": "./lib/helpers/styles/overflow.d.ts.map",
+    "./lib/helpers/styles/overflow": {
+      "types": "./lib/helpers/styles/overflow.d.ts",
+      "default": "./lib/helpers/styles/overflow.js"
+    },
+    "./lib/helpers/styles/overflow.js": {
+      "types": "./lib/helpers/styles/overflow.d.ts",
+      "default": "./lib/helpers/styles/overflow.js"
+    },
+    "./lib/helpers/styles/overflow.js.map": "./lib/helpers/styles/overflow.js.map",
+    "./lib/helpers/styles/padding-block-end.d.ts": "./lib/helpers/styles/padding-block-end.d.ts",
+    "./lib/helpers/styles/padding-block-end.d.ts.map": "./lib/helpers/styles/padding-block-end.d.ts.map",
+    "./lib/helpers/styles/padding-block-end": {
+      "types": "./lib/helpers/styles/padding-block-end.d.ts",
+      "default": "./lib/helpers/styles/padding-block-end.js"
+    },
+    "./lib/helpers/styles/padding-block-end.js": {
+      "types": "./lib/helpers/styles/padding-block-end.d.ts",
+      "default": "./lib/helpers/styles/padding-block-end.js"
+    },
+    "./lib/helpers/styles/padding-block-end.js.map": "./lib/helpers/styles/padding-block-end.js.map",
+    "./lib/helpers/styles/padding-block-start.d.ts": "./lib/helpers/styles/padding-block-start.d.ts",
+    "./lib/helpers/styles/padding-block-start.d.ts.map": "./lib/helpers/styles/padding-block-start.d.ts.map",
+    "./lib/helpers/styles/padding-block-start": {
+      "types": "./lib/helpers/styles/padding-block-start.d.ts",
+      "default": "./lib/helpers/styles/padding-block-start.js"
+    },
+    "./lib/helpers/styles/padding-block-start.js": {
+      "types": "./lib/helpers/styles/padding-block-start.d.ts",
+      "default": "./lib/helpers/styles/padding-block-start.js"
+    },
+    "./lib/helpers/styles/padding-block-start.js.map": "./lib/helpers/styles/padding-block-start.js.map",
+    "./lib/helpers/styles/padding-block.d.ts": "./lib/helpers/styles/padding-block.d.ts",
+    "./lib/helpers/styles/padding-block.d.ts.map": "./lib/helpers/styles/padding-block.d.ts.map",
+    "./lib/helpers/styles/padding-block": {
+      "types": "./lib/helpers/styles/padding-block.d.ts",
+      "default": "./lib/helpers/styles/padding-block.js"
+    },
+    "./lib/helpers/styles/padding-block.js": {
+      "types": "./lib/helpers/styles/padding-block.d.ts",
+      "default": "./lib/helpers/styles/padding-block.js"
+    },
+    "./lib/helpers/styles/padding-block.js.map": "./lib/helpers/styles/padding-block.js.map",
+    "./lib/helpers/styles/padding-inline-end.d.ts": "./lib/helpers/styles/padding-inline-end.d.ts",
+    "./lib/helpers/styles/padding-inline-end.d.ts.map": "./lib/helpers/styles/padding-inline-end.d.ts.map",
+    "./lib/helpers/styles/padding-inline-end": {
+      "types": "./lib/helpers/styles/padding-inline-end.d.ts",
+      "default": "./lib/helpers/styles/padding-inline-end.js"
+    },
+    "./lib/helpers/styles/padding-inline-end.js": {
+      "types": "./lib/helpers/styles/padding-inline-end.d.ts",
+      "default": "./lib/helpers/styles/padding-inline-end.js"
+    },
+    "./lib/helpers/styles/padding-inline-end.js.map": "./lib/helpers/styles/padding-inline-end.js.map",
+    "./lib/helpers/styles/padding-inline-start.d.ts": "./lib/helpers/styles/padding-inline-start.d.ts",
+    "./lib/helpers/styles/padding-inline-start.d.ts.map": "./lib/helpers/styles/padding-inline-start.d.ts.map",
+    "./lib/helpers/styles/padding-inline-start": {
+      "types": "./lib/helpers/styles/padding-inline-start.d.ts",
+      "default": "./lib/helpers/styles/padding-inline-start.js"
+    },
+    "./lib/helpers/styles/padding-inline-start.js": {
+      "types": "./lib/helpers/styles/padding-inline-start.d.ts",
+      "default": "./lib/helpers/styles/padding-inline-start.js"
+    },
+    "./lib/helpers/styles/padding-inline-start.js.map": "./lib/helpers/styles/padding-inline-start.js.map",
+    "./lib/helpers/styles/padding-inline.d.ts": "./lib/helpers/styles/padding-inline.d.ts",
+    "./lib/helpers/styles/padding-inline.d.ts.map": "./lib/helpers/styles/padding-inline.d.ts.map",
+    "./lib/helpers/styles/padding-inline": {
+      "types": "./lib/helpers/styles/padding-inline.d.ts",
+      "default": "./lib/helpers/styles/padding-inline.js"
+    },
+    "./lib/helpers/styles/padding-inline.js": {
+      "types": "./lib/helpers/styles/padding-inline.d.ts",
+      "default": "./lib/helpers/styles/padding-inline.js"
+    },
+    "./lib/helpers/styles/padding-inline.js.map": "./lib/helpers/styles/padding-inline.js.map",
+    "./lib/helpers/styles/padding.d.ts": "./lib/helpers/styles/padding.d.ts",
+    "./lib/helpers/styles/padding.d.ts.map": "./lib/helpers/styles/padding.d.ts.map",
+    "./lib/helpers/styles/padding": {
+      "types": "./lib/helpers/styles/padding.d.ts",
+      "default": "./lib/helpers/styles/padding.js"
+    },
+    "./lib/helpers/styles/padding.js": {
+      "types": "./lib/helpers/styles/padding.d.ts",
+      "default": "./lib/helpers/styles/padding.js"
+    },
+    "./lib/helpers/styles/padding.js.map": "./lib/helpers/styles/padding.js.map",
+    "./lib/helpers/styles/presets.d.ts": "./lib/helpers/styles/presets.d.ts",
+    "./lib/helpers/styles/presets.d.ts.map": "./lib/helpers/styles/presets.d.ts.map",
+    "./lib/helpers/styles/presets": {
+      "types": "./lib/helpers/styles/presets.d.ts",
+      "default": "./lib/helpers/styles/presets.js"
+    },
+    "./lib/helpers/styles/presets.js": {
+      "types": "./lib/helpers/styles/presets.d.ts",
+      "default": "./lib/helpers/styles/presets.js"
+    },
+    "./lib/helpers/styles/presets.js.map": "./lib/helpers/styles/presets.js.map",
+    "./lib/helpers/styles/renderer.internal.d.ts": "./lib/helpers/styles/renderer.internal.d.ts",
+    "./lib/helpers/styles/renderer.internal.d.ts.map": "./lib/helpers/styles/renderer.internal.d.ts.map",
+    "./lib/helpers/styles/renderer.internal": {
+      "types": "./lib/helpers/styles/renderer.internal.d.ts",
+      "default": "./lib/helpers/styles/renderer.internal.js"
+    },
+    "./lib/helpers/styles/renderer.internal.js": {
+      "types": "./lib/helpers/styles/renderer.internal.d.ts",
+      "default": "./lib/helpers/styles/renderer.internal.js"
+    },
+    "./lib/helpers/styles/renderer.internal.js.map": "./lib/helpers/styles/renderer.internal.js.map",
+    "./lib/helpers/styles/resolve.internal.d.ts": "./lib/helpers/styles/resolve.internal.d.ts",
+    "./lib/helpers/styles/resolve.internal.d.ts.map": "./lib/helpers/styles/resolve.internal.d.ts.map",
+    "./lib/helpers/styles/resolve.internal": {
+      "types": "./lib/helpers/styles/resolve.internal.d.ts",
+      "default": "./lib/helpers/styles/resolve.internal.js"
+    },
+    "./lib/helpers/styles/resolve.internal.js": {
+      "types": "./lib/helpers/styles/resolve.internal.d.ts",
+      "default": "./lib/helpers/styles/resolve.internal.js"
+    },
+    "./lib/helpers/styles/resolve.internal.js.map": "./lib/helpers/styles/resolve.internal.js.map",
+    "./lib/helpers/styles/responsive.d.ts": "./lib/helpers/styles/responsive.d.ts",
+    "./lib/helpers/styles/responsive.d.ts.map": "./lib/helpers/styles/responsive.d.ts.map",
+    "./lib/helpers/styles/responsive": {
+      "types": "./lib/helpers/styles/responsive.d.ts",
+      "default": "./lib/helpers/styles/responsive.js"
+    },
+    "./lib/helpers/styles/responsive.js": {
+      "types": "./lib/helpers/styles/responsive.d.ts",
+      "default": "./lib/helpers/styles/responsive.js"
+    },
+    "./lib/helpers/styles/responsive.js.map": "./lib/helpers/styles/responsive.js.map",
+    "./lib/helpers/styles/scopes.internal.d.ts": "./lib/helpers/styles/scopes.internal.d.ts",
+    "./lib/helpers/styles/scopes.internal.d.ts.map": "./lib/helpers/styles/scopes.internal.d.ts.map",
+    "./lib/helpers/styles/scopes.internal": {
+      "types": "./lib/helpers/styles/scopes.internal.d.ts",
+      "default": "./lib/helpers/styles/scopes.internal.js"
+    },
+    "./lib/helpers/styles/scopes.internal.js": {
+      "types": "./lib/helpers/styles/scopes.internal.d.ts",
+      "default": "./lib/helpers/styles/scopes.internal.js"
+    },
+    "./lib/helpers/styles/scopes.internal.js.map": "./lib/helpers/styles/scopes.internal.js.map",
+    "./lib/helpers/styles/scrollbar.d.ts": "./lib/helpers/styles/scrollbar.d.ts",
+    "./lib/helpers/styles/scrollbar.d.ts.map": "./lib/helpers/styles/scrollbar.d.ts.map",
+    "./lib/helpers/styles/scrollbar": {
+      "types": "./lib/helpers/styles/scrollbar.d.ts",
+      "default": "./lib/helpers/styles/scrollbar.js"
+    },
+    "./lib/helpers/styles/scrollbar.js": {
+      "types": "./lib/helpers/styles/scrollbar.d.ts",
+      "default": "./lib/helpers/styles/scrollbar.js"
+    },
+    "./lib/helpers/styles/scrollbar.js.map": "./lib/helpers/styles/scrollbar.js.map",
+    "./lib/helpers/styles/spacing.internal.d.ts": "./lib/helpers/styles/spacing.internal.d.ts",
+    "./lib/helpers/styles/spacing.internal.d.ts.map": "./lib/helpers/styles/spacing.internal.d.ts.map",
+    "./lib/helpers/styles/spacing.internal": {
+      "types": "./lib/helpers/styles/spacing.internal.d.ts",
+      "default": "./lib/helpers/styles/spacing.internal.js"
+    },
+    "./lib/helpers/styles/spacing.internal.js": {
+      "types": "./lib/helpers/styles/spacing.internal.d.ts",
+      "default": "./lib/helpers/styles/spacing.internal.js"
+    },
+    "./lib/helpers/styles/spacing.internal.js.map": "./lib/helpers/styles/spacing.internal.js.map",
+    "./lib/helpers/styles/states.d.ts": "./lib/helpers/styles/states.d.ts",
+    "./lib/helpers/styles/states.d.ts.map": "./lib/helpers/styles/states.d.ts.map",
+    "./lib/helpers/styles/states": {
+      "types": "./lib/helpers/styles/states.d.ts",
+      "default": "./lib/helpers/styles/states.js"
+    },
+    "./lib/helpers/styles/states.js": {
+      "types": "./lib/helpers/styles/states.d.ts",
+      "default": "./lib/helpers/styles/states.js"
+    },
+    "./lib/helpers/styles/states.js.map": "./lib/helpers/styles/states.js.map",
+    "./lib/helpers/styles/text-align.d.ts": "./lib/helpers/styles/text-align.d.ts",
+    "./lib/helpers/styles/text-align.d.ts.map": "./lib/helpers/styles/text-align.d.ts.map",
+    "./lib/helpers/styles/text-align": {
+      "types": "./lib/helpers/styles/text-align.d.ts",
+      "default": "./lib/helpers/styles/text-align.js"
+    },
+    "./lib/helpers/styles/text-align.js": {
+      "types": "./lib/helpers/styles/text-align.d.ts",
+      "default": "./lib/helpers/styles/text-align.js"
+    },
+    "./lib/helpers/styles/text-align.js.map": "./lib/helpers/styles/text-align.js.map",
+    "./lib/helpers/styles/text.d.ts": "./lib/helpers/styles/text.d.ts",
+    "./lib/helpers/styles/text.d.ts.map": "./lib/helpers/styles/text.d.ts.map",
+    "./lib/helpers/styles/text": {
+      "types": "./lib/helpers/styles/text.d.ts",
+      "default": "./lib/helpers/styles/text.js"
+    },
+    "./lib/helpers/styles/text.js": {
+      "types": "./lib/helpers/styles/text.d.ts",
+      "default": "./lib/helpers/styles/text.js"
+    },
+    "./lib/helpers/styles/text.js.map": "./lib/helpers/styles/text.js.map",
+    "./lib/helpers/styles/types.d.ts": "./lib/helpers/styles/types.d.ts",
+    "./lib/helpers/styles/types.d.ts.map": "./lib/helpers/styles/types.d.ts.map",
+    "./lib/helpers/styles/types": {
+      "types": "./lib/helpers/styles/types.d.ts",
+      "default": "./lib/helpers/styles/types.js"
+    },
+    "./lib/helpers/styles/types.js": {
+      "types": "./lib/helpers/styles/types.d.ts",
+      "default": "./lib/helpers/styles/types.js"
+    },
+    "./lib/helpers/styles/types.js.map": "./lib/helpers/styles/types.js.map",
+    "./lib/helpers/styles/typography.d.ts": "./lib/helpers/styles/typography.d.ts",
+    "./lib/helpers/styles/typography.d.ts.map": "./lib/helpers/styles/typography.d.ts.map",
+    "./lib/helpers/styles/typography": {
+      "types": "./lib/helpers/styles/typography.d.ts",
+      "default": "./lib/helpers/styles/typography.js"
+    },
+    "./lib/helpers/styles/typography.js": {
+      "types": "./lib/helpers/styles/typography.d.ts",
+      "default": "./lib/helpers/styles/typography.js"
+    },
+    "./lib/helpers/styles/typography.js.map": "./lib/helpers/styles/typography.js.map",
+    "./lib/helpers/styles/viewport.d.ts": "./lib/helpers/styles/viewport.d.ts",
+    "./lib/helpers/styles/viewport.d.ts.map": "./lib/helpers/styles/viewport.d.ts.map",
+    "./lib/helpers/styles/viewport": {
+      "types": "./lib/helpers/styles/viewport.d.ts",
+      "default": "./lib/helpers/styles/viewport.js"
+    },
+    "./lib/helpers/styles/viewport.js": {
+      "types": "./lib/helpers/styles/viewport.d.ts",
+      "default": "./lib/helpers/styles/viewport.js"
+    },
+    "./lib/helpers/styles/viewport.js.map": "./lib/helpers/styles/viewport.js.map",
+    "./lib/helpers/styles/width.d.ts": "./lib/helpers/styles/width.d.ts",
+    "./lib/helpers/styles/width.d.ts.map": "./lib/helpers/styles/width.d.ts.map",
+    "./lib/helpers/styles/width": {
+      "types": "./lib/helpers/styles/width.d.ts",
+      "default": "./lib/helpers/styles/width.js"
+    },
+    "./lib/helpers/styles/width.js": {
+      "types": "./lib/helpers/styles/width.d.ts",
+      "default": "./lib/helpers/styles/width.js"
+    },
+    "./lib/helpers/styles/width.js.map": "./lib/helpers/styles/width.js.map",
+    "./lib/hooks/index.d.ts": "./lib/hooks/index.d.ts",
+    "./lib/hooks/index.d.ts.map": "./lib/hooks/index.d.ts.map",
+    "./lib/hooks/index": {
+      "types": "./lib/hooks/index.d.ts",
+      "default": "./lib/hooks/index.js"
+    },
+    "./lib/hooks/index.js": {
+      "types": "./lib/hooks/index.d.ts",
+      "default": "./lib/hooks/index.js"
+    },
+    "./lib/hooks": {
+      "types": "./lib/hooks/index.d.ts",
+      "default": "./lib/hooks/index.js"
+    },
+    "./lib/hooks/index.js.map": "./lib/hooks/index.js.map",
+    "./lib/hooks/useAppCatalogUrl.internal.d.ts": "./lib/hooks/useAppCatalogUrl.internal.d.ts",
+    "./lib/hooks/useAppCatalogUrl.internal.d.ts.map": "./lib/hooks/useAppCatalogUrl.internal.d.ts.map",
+    "./lib/hooks/useAppCatalogUrl.internal": {
+      "types": "./lib/hooks/useAppCatalogUrl.internal.d.ts",
+      "default": "./lib/hooks/useAppCatalogUrl.internal.js"
+    },
+    "./lib/hooks/useAppCatalogUrl.internal.js": {
+      "types": "./lib/hooks/useAppCatalogUrl.internal.d.ts",
+      "default": "./lib/hooks/useAppCatalogUrl.internal.js"
+    },
+    "./lib/hooks/useAppCatalogUrl.internal.js.map": "./lib/hooks/useAppCatalogUrl.internal.js.map",
+    "./lib/hooks/useAsyncInvoke.internal.d.ts": "./lib/hooks/useAsyncInvoke.internal.d.ts",
+    "./lib/hooks/useAsyncInvoke.internal.d.ts.map": "./lib/hooks/useAsyncInvoke.internal.d.ts.map",
+    "./lib/hooks/useAsyncInvoke.internal": {
+      "types": "./lib/hooks/useAsyncInvoke.internal.d.ts",
+      "default": "./lib/hooks/useAsyncInvoke.internal.js"
+    },
+    "./lib/hooks/useAsyncInvoke.internal.js": {
+      "types": "./lib/hooks/useAsyncInvoke.internal.d.ts",
+      "default": "./lib/hooks/useAsyncInvoke.internal.js"
+    },
+    "./lib/hooks/useAsyncInvoke.internal.js.map": "./lib/hooks/useAsyncInvoke.internal.js.map",
+    "./lib/hooks/useSPFxAadHttpClient.d.ts": "./lib/hooks/useSPFxAadHttpClient.d.ts",
+    "./lib/hooks/useSPFxAadHttpClient.d.ts.map": "./lib/hooks/useSPFxAadHttpClient.d.ts.map",
+    "./lib/hooks/useSPFxAadHttpClient": {
+      "types": "./lib/hooks/useSPFxAadHttpClient.d.ts",
+      "default": "./lib/hooks/useSPFxAadHttpClient.js"
+    },
+    "./lib/hooks/useSPFxAadHttpClient.js": {
+      "types": "./lib/hooks/useSPFxAadHttpClient.d.ts",
+      "default": "./lib/hooks/useSPFxAadHttpClient.js"
+    },
+    "./lib/hooks/useSPFxAadHttpClient.js.map": "./lib/hooks/useSPFxAadHttpClient.js.map",
+    "./lib/hooks/useSPFxAadTokenProvider.d.ts": "./lib/hooks/useSPFxAadTokenProvider.d.ts",
+    "./lib/hooks/useSPFxAadTokenProvider.d.ts.map": "./lib/hooks/useSPFxAadTokenProvider.d.ts.map",
+    "./lib/hooks/useSPFxAadTokenProvider": {
+      "types": "./lib/hooks/useSPFxAadTokenProvider.d.ts",
+      "default": "./lib/hooks/useSPFxAadTokenProvider.js"
+    },
+    "./lib/hooks/useSPFxAadTokenProvider.js": {
+      "types": "./lib/hooks/useSPFxAadTokenProvider.d.ts",
+      "default": "./lib/hooks/useSPFxAadTokenProvider.js"
+    },
+    "./lib/hooks/useSPFxAadTokenProvider.js.map": "./lib/hooks/useSPFxAadTokenProvider.js.map",
+    "./lib/hooks/useSPFxApiPermissionPrecheck.d.ts": "./lib/hooks/useSPFxApiPermissionPrecheck.d.ts",
+    "./lib/hooks/useSPFxApiPermissionPrecheck.d.ts.map": "./lib/hooks/useSPFxApiPermissionPrecheck.d.ts.map",
+    "./lib/hooks/useSPFxApiPermissionPrecheck": {
+      "types": "./lib/hooks/useSPFxApiPermissionPrecheck.d.ts",
+      "default": "./lib/hooks/useSPFxApiPermissionPrecheck.js"
+    },
+    "./lib/hooks/useSPFxApiPermissionPrecheck.js": {
+      "types": "./lib/hooks/useSPFxApiPermissionPrecheck.d.ts",
+      "default": "./lib/hooks/useSPFxApiPermissionPrecheck.js"
+    },
+    "./lib/hooks/useSPFxApiPermissionPrecheck.js.map": "./lib/hooks/useSPFxApiPermissionPrecheck.js.map",
+    "./lib/hooks/useSPFxContainerInfo.d.ts": "./lib/hooks/useSPFxContainerInfo.d.ts",
+    "./lib/hooks/useSPFxContainerInfo.d.ts.map": "./lib/hooks/useSPFxContainerInfo.d.ts.map",
+    "./lib/hooks/useSPFxContainerInfo": {
+      "types": "./lib/hooks/useSPFxContainerInfo.d.ts",
+      "default": "./lib/hooks/useSPFxContainerInfo.js"
+    },
+    "./lib/hooks/useSPFxContainerInfo.js": {
+      "types": "./lib/hooks/useSPFxContainerInfo.d.ts",
+      "default": "./lib/hooks/useSPFxContainerInfo.js"
+    },
+    "./lib/hooks/useSPFxContainerInfo.js.map": "./lib/hooks/useSPFxContainerInfo.js.map",
+    "./lib/hooks/useSPFxContainerSize.d.ts": "./lib/hooks/useSPFxContainerSize.d.ts",
+    "./lib/hooks/useSPFxContainerSize.d.ts.map": "./lib/hooks/useSPFxContainerSize.d.ts.map",
+    "./lib/hooks/useSPFxContainerSize": {
+      "types": "./lib/hooks/useSPFxContainerSize.d.ts",
+      "default": "./lib/hooks/useSPFxContainerSize.js"
+    },
+    "./lib/hooks/useSPFxContainerSize.js": {
+      "types": "./lib/hooks/useSPFxContainerSize.d.ts",
+      "default": "./lib/hooks/useSPFxContainerSize.js"
+    },
+    "./lib/hooks/useSPFxContainerSize.js.map": "./lib/hooks/useSPFxContainerSize.js.map",
+    "./lib/hooks/useSPFxContext.d.ts": "./lib/hooks/useSPFxContext.d.ts",
+    "./lib/hooks/useSPFxContext.d.ts.map": "./lib/hooks/useSPFxContext.d.ts.map",
+    "./lib/hooks/useSPFxContext": {
+      "types": "./lib/hooks/useSPFxContext.d.ts",
+      "default": "./lib/hooks/useSPFxContext.js"
+    },
+    "./lib/hooks/useSPFxContext.js": {
+      "types": "./lib/hooks/useSPFxContext.d.ts",
+      "default": "./lib/hooks/useSPFxContext.js"
+    },
+    "./lib/hooks/useSPFxContext.js.map": "./lib/hooks/useSPFxContext.js.map",
+    "./lib/hooks/useSPFxCorrelationInfo.d.ts": "./lib/hooks/useSPFxCorrelationInfo.d.ts",
+    "./lib/hooks/useSPFxCorrelationInfo.d.ts.map": "./lib/hooks/useSPFxCorrelationInfo.d.ts.map",
+    "./lib/hooks/useSPFxCorrelationInfo": {
+      "types": "./lib/hooks/useSPFxCorrelationInfo.d.ts",
+      "default": "./lib/hooks/useSPFxCorrelationInfo.js"
+    },
+    "./lib/hooks/useSPFxCorrelationInfo.js": {
+      "types": "./lib/hooks/useSPFxCorrelationInfo.d.ts",
+      "default": "./lib/hooks/useSPFxCorrelationInfo.js"
+    },
+    "./lib/hooks/useSPFxCorrelationInfo.js.map": "./lib/hooks/useSPFxCorrelationInfo.js.map",
+    "./lib/hooks/useSPFxCrossSitePermissions.d.ts": "./lib/hooks/useSPFxCrossSitePermissions.d.ts",
+    "./lib/hooks/useSPFxCrossSitePermissions.d.ts.map": "./lib/hooks/useSPFxCrossSitePermissions.d.ts.map",
+    "./lib/hooks/useSPFxCrossSitePermissions": {
+      "types": "./lib/hooks/useSPFxCrossSitePermissions.d.ts",
+      "default": "./lib/hooks/useSPFxCrossSitePermissions.js"
+    },
+    "./lib/hooks/useSPFxCrossSitePermissions.js": {
+      "types": "./lib/hooks/useSPFxCrossSitePermissions.d.ts",
+      "default": "./lib/hooks/useSPFxCrossSitePermissions.js"
+    },
+    "./lib/hooks/useSPFxCrossSitePermissions.js.map": "./lib/hooks/useSPFxCrossSitePermissions.js.map",
+    "./lib/hooks/useSPFxDisplayMode.d.ts": "./lib/hooks/useSPFxDisplayMode.d.ts",
+    "./lib/hooks/useSPFxDisplayMode.d.ts.map": "./lib/hooks/useSPFxDisplayMode.d.ts.map",
+    "./lib/hooks/useSPFxDisplayMode": {
+      "types": "./lib/hooks/useSPFxDisplayMode.d.ts",
+      "default": "./lib/hooks/useSPFxDisplayMode.js"
+    },
+    "./lib/hooks/useSPFxDisplayMode.js": {
+      "types": "./lib/hooks/useSPFxDisplayMode.d.ts",
+      "default": "./lib/hooks/useSPFxDisplayMode.js"
+    },
+    "./lib/hooks/useSPFxDisplayMode.js.map": "./lib/hooks/useSPFxDisplayMode.js.map",
+    "./lib/hooks/useSPFxEnvironmentInfo.d.ts": "./lib/hooks/useSPFxEnvironmentInfo.d.ts",
+    "./lib/hooks/useSPFxEnvironmentInfo.d.ts.map": "./lib/hooks/useSPFxEnvironmentInfo.d.ts.map",
+    "./lib/hooks/useSPFxEnvironmentInfo": {
+      "types": "./lib/hooks/useSPFxEnvironmentInfo.d.ts",
+      "default": "./lib/hooks/useSPFxEnvironmentInfo.js"
+    },
+    "./lib/hooks/useSPFxEnvironmentInfo.js": {
+      "types": "./lib/hooks/useSPFxEnvironmentInfo.d.ts",
+      "default": "./lib/hooks/useSPFxEnvironmentInfo.js"
+    },
+    "./lib/hooks/useSPFxEnvironmentInfo.js.map": "./lib/hooks/useSPFxEnvironmentInfo.js.map",
+    "./lib/hooks/useSPFxFluent9ThemeInfo.d.ts": "./lib/hooks/useSPFxFluent9ThemeInfo.d.ts",
+    "./lib/hooks/useSPFxFluent9ThemeInfo.d.ts.map": "./lib/hooks/useSPFxFluent9ThemeInfo.d.ts.map",
+    "./lib/hooks/useSPFxFluent9ThemeInfo": {
+      "types": "./lib/hooks/useSPFxFluent9ThemeInfo.d.ts",
+      "default": "./lib/hooks/useSPFxFluent9ThemeInfo.js"
+    },
+    "./lib/hooks/useSPFxFluent9ThemeInfo.js": {
+      "types": "./lib/hooks/useSPFxFluent9ThemeInfo.d.ts",
+      "default": "./lib/hooks/useSPFxFluent9ThemeInfo.js"
+    },
+    "./lib/hooks/useSPFxFluent9ThemeInfo.js.map": "./lib/hooks/useSPFxFluent9ThemeInfo.js.map",
+    "./lib/hooks/useSPFxHttpClient.d.ts": "./lib/hooks/useSPFxHttpClient.d.ts",
+    "./lib/hooks/useSPFxHttpClient.d.ts.map": "./lib/hooks/useSPFxHttpClient.d.ts.map",
+    "./lib/hooks/useSPFxHttpClient": {
+      "types": "./lib/hooks/useSPFxHttpClient.d.ts",
+      "default": "./lib/hooks/useSPFxHttpClient.js"
+    },
+    "./lib/hooks/useSPFxHttpClient.js": {
+      "types": "./lib/hooks/useSPFxHttpClient.d.ts",
+      "default": "./lib/hooks/useSPFxHttpClient.js"
+    },
+    "./lib/hooks/useSPFxHttpClient.js.map": "./lib/hooks/useSPFxHttpClient.js.map",
+    "./lib/hooks/useSPFxHubSiteInfo.d.ts": "./lib/hooks/useSPFxHubSiteInfo.d.ts",
+    "./lib/hooks/useSPFxHubSiteInfo.d.ts.map": "./lib/hooks/useSPFxHubSiteInfo.d.ts.map",
+    "./lib/hooks/useSPFxHubSiteInfo": {
+      "types": "./lib/hooks/useSPFxHubSiteInfo.d.ts",
+      "default": "./lib/hooks/useSPFxHubSiteInfo.js"
+    },
+    "./lib/hooks/useSPFxHubSiteInfo.js": {
+      "types": "./lib/hooks/useSPFxHubSiteInfo.d.ts",
+      "default": "./lib/hooks/useSPFxHubSiteInfo.js"
+    },
+    "./lib/hooks/useSPFxHubSiteInfo.js.map": "./lib/hooks/useSPFxHubSiteInfo.js.map",
+    "./lib/hooks/useSPFxInstanceInfo.d.ts": "./lib/hooks/useSPFxInstanceInfo.d.ts",
+    "./lib/hooks/useSPFxInstanceInfo.d.ts.map": "./lib/hooks/useSPFxInstanceInfo.d.ts.map",
+    "./lib/hooks/useSPFxInstanceInfo": {
+      "types": "./lib/hooks/useSPFxInstanceInfo.d.ts",
+      "default": "./lib/hooks/useSPFxInstanceInfo.js"
+    },
+    "./lib/hooks/useSPFxInstanceInfo.js": {
+      "types": "./lib/hooks/useSPFxInstanceInfo.d.ts",
+      "default": "./lib/hooks/useSPFxInstanceInfo.js"
+    },
+    "./lib/hooks/useSPFxInstanceInfo.js.map": "./lib/hooks/useSPFxInstanceInfo.js.map",
+    "./lib/hooks/useSPFxListInfo.d.ts": "./lib/hooks/useSPFxListInfo.d.ts",
+    "./lib/hooks/useSPFxListInfo.d.ts.map": "./lib/hooks/useSPFxListInfo.d.ts.map",
+    "./lib/hooks/useSPFxListInfo": {
+      "types": "./lib/hooks/useSPFxListInfo.d.ts",
+      "default": "./lib/hooks/useSPFxListInfo.js"
+    },
+    "./lib/hooks/useSPFxListInfo.js": {
+      "types": "./lib/hooks/useSPFxListInfo.d.ts",
+      "default": "./lib/hooks/useSPFxListInfo.js"
+    },
+    "./lib/hooks/useSPFxListInfo.js.map": "./lib/hooks/useSPFxListInfo.js.map",
+    "./lib/hooks/useSPFxLocaleInfo.d.ts": "./lib/hooks/useSPFxLocaleInfo.d.ts",
+    "./lib/hooks/useSPFxLocaleInfo.d.ts.map": "./lib/hooks/useSPFxLocaleInfo.d.ts.map",
+    "./lib/hooks/useSPFxLocaleInfo": {
+      "types": "./lib/hooks/useSPFxLocaleInfo.d.ts",
+      "default": "./lib/hooks/useSPFxLocaleInfo.js"
+    },
+    "./lib/hooks/useSPFxLocaleInfo.js": {
+      "types": "./lib/hooks/useSPFxLocaleInfo.d.ts",
+      "default": "./lib/hooks/useSPFxLocaleInfo.js"
+    },
+    "./lib/hooks/useSPFxLocaleInfo.js.map": "./lib/hooks/useSPFxLocaleInfo.js.map",
+    "./lib/hooks/useSPFxLogger.d.ts": "./lib/hooks/useSPFxLogger.d.ts",
+    "./lib/hooks/useSPFxLogger.d.ts.map": "./lib/hooks/useSPFxLogger.d.ts.map",
+    "./lib/hooks/useSPFxLogger": {
+      "types": "./lib/hooks/useSPFxLogger.d.ts",
+      "default": "./lib/hooks/useSPFxLogger.js"
+    },
+    "./lib/hooks/useSPFxLogger.js": {
+      "types": "./lib/hooks/useSPFxLogger.d.ts",
+      "default": "./lib/hooks/useSPFxLogger.js"
+    },
+    "./lib/hooks/useSPFxLogger.js.map": "./lib/hooks/useSPFxLogger.js.map",
+    "./lib/hooks/useSPFxMSGraphClient.d.ts": "./lib/hooks/useSPFxMSGraphClient.d.ts",
+    "./lib/hooks/useSPFxMSGraphClient.d.ts.map": "./lib/hooks/useSPFxMSGraphClient.d.ts.map",
+    "./lib/hooks/useSPFxMSGraphClient": {
+      "types": "./lib/hooks/useSPFxMSGraphClient.d.ts",
+      "default": "./lib/hooks/useSPFxMSGraphClient.js"
+    },
+    "./lib/hooks/useSPFxMSGraphClient.js": {
+      "types": "./lib/hooks/useSPFxMSGraphClient.d.ts",
+      "default": "./lib/hooks/useSPFxMSGraphClient.js"
+    },
+    "./lib/hooks/useSPFxMSGraphClient.js.map": "./lib/hooks/useSPFxMSGraphClient.js.map",
+    "./lib/hooks/useSPFxOneDriveAppData.d.ts": "./lib/hooks/useSPFxOneDriveAppData.d.ts",
+    "./lib/hooks/useSPFxOneDriveAppData.d.ts.map": "./lib/hooks/useSPFxOneDriveAppData.d.ts.map",
+    "./lib/hooks/useSPFxOneDriveAppData": {
+      "types": "./lib/hooks/useSPFxOneDriveAppData.d.ts",
+      "default": "./lib/hooks/useSPFxOneDriveAppData.js"
+    },
+    "./lib/hooks/useSPFxOneDriveAppData.js": {
+      "types": "./lib/hooks/useSPFxOneDriveAppData.d.ts",
+      "default": "./lib/hooks/useSPFxOneDriveAppData.js"
+    },
+    "./lib/hooks/useSPFxOneDriveAppData.js.map": "./lib/hooks/useSPFxOneDriveAppData.js.map",
+    "./lib/hooks/useSPFxPageContext.d.ts": "./lib/hooks/useSPFxPageContext.d.ts",
+    "./lib/hooks/useSPFxPageContext.d.ts.map": "./lib/hooks/useSPFxPageContext.d.ts.map",
+    "./lib/hooks/useSPFxPageContext": {
+      "types": "./lib/hooks/useSPFxPageContext.d.ts",
+      "default": "./lib/hooks/useSPFxPageContext.js"
+    },
+    "./lib/hooks/useSPFxPageContext.js": {
+      "types": "./lib/hooks/useSPFxPageContext.d.ts",
+      "default": "./lib/hooks/useSPFxPageContext.js"
+    },
+    "./lib/hooks/useSPFxPageContext.js.map": "./lib/hooks/useSPFxPageContext.js.map",
+    "./lib/hooks/useSPFxPageType.d.ts": "./lib/hooks/useSPFxPageType.d.ts",
+    "./lib/hooks/useSPFxPageType.d.ts.map": "./lib/hooks/useSPFxPageType.d.ts.map",
+    "./lib/hooks/useSPFxPageType": {
+      "types": "./lib/hooks/useSPFxPageType.d.ts",
+      "default": "./lib/hooks/useSPFxPageType.js"
+    },
+    "./lib/hooks/useSPFxPageType.js": {
+      "types": "./lib/hooks/useSPFxPageType.d.ts",
+      "default": "./lib/hooks/useSPFxPageType.js"
+    },
+    "./lib/hooks/useSPFxPageType.js.map": "./lib/hooks/useSPFxPageType.js.map",
+    "./lib/hooks/useSPFxPerformance.d.ts": "./lib/hooks/useSPFxPerformance.d.ts",
+    "./lib/hooks/useSPFxPerformance.d.ts.map": "./lib/hooks/useSPFxPerformance.d.ts.map",
+    "./lib/hooks/useSPFxPerformance": {
+      "types": "./lib/hooks/useSPFxPerformance.d.ts",
+      "default": "./lib/hooks/useSPFxPerformance.js"
+    },
+    "./lib/hooks/useSPFxPerformance.js": {
+      "types": "./lib/hooks/useSPFxPerformance.d.ts",
+      "default": "./lib/hooks/useSPFxPerformance.js"
+    },
+    "./lib/hooks/useSPFxPerformance.js.map": "./lib/hooks/useSPFxPerformance.js.map",
+    "./lib/hooks/useSPFxPermissions.d.ts": "./lib/hooks/useSPFxPermissions.d.ts",
+    "./lib/hooks/useSPFxPermissions.d.ts.map": "./lib/hooks/useSPFxPermissions.d.ts.map",
+    "./lib/hooks/useSPFxPermissions": {
+      "types": "./lib/hooks/useSPFxPermissions.d.ts",
+      "default": "./lib/hooks/useSPFxPermissions.js"
+    },
+    "./lib/hooks/useSPFxPermissions.js": {
+      "types": "./lib/hooks/useSPFxPermissions.d.ts",
+      "default": "./lib/hooks/useSPFxPermissions.js"
+    },
+    "./lib/hooks/useSPFxPermissions.js.map": "./lib/hooks/useSPFxPermissions.js.map",
+    "./lib/hooks/useSPFxPnP.d.ts": "./lib/hooks/useSPFxPnP.d.ts",
+    "./lib/hooks/useSPFxPnP.d.ts.map": "./lib/hooks/useSPFxPnP.d.ts.map",
+    "./lib/hooks/useSPFxPnP": {
+      "types": "./lib/hooks/useSPFxPnP.d.ts",
+      "default": "./lib/hooks/useSPFxPnP.js"
+    },
+    "./lib/hooks/useSPFxPnP.js": {
+      "types": "./lib/hooks/useSPFxPnP.d.ts",
+      "default": "./lib/hooks/useSPFxPnP.js"
+    },
+    "./lib/hooks/useSPFxPnP.js.map": "./lib/hooks/useSPFxPnP.js.map",
+    "./lib/hooks/useSPFxPnPContext.d.ts": "./lib/hooks/useSPFxPnPContext.d.ts",
+    "./lib/hooks/useSPFxPnPContext.d.ts.map": "./lib/hooks/useSPFxPnPContext.d.ts.map",
+    "./lib/hooks/useSPFxPnPContext": {
+      "types": "./lib/hooks/useSPFxPnPContext.d.ts",
+      "default": "./lib/hooks/useSPFxPnPContext.js"
+    },
+    "./lib/hooks/useSPFxPnPContext.js": {
+      "types": "./lib/hooks/useSPFxPnPContext.d.ts",
+      "default": "./lib/hooks/useSPFxPnPContext.js"
+    },
+    "./lib/hooks/useSPFxPnPContext.js.map": "./lib/hooks/useSPFxPnPContext.js.map",
+    "./lib/hooks/useSPFxPnPList.batch.internal.d.ts": "./lib/hooks/useSPFxPnPList.batch.internal.d.ts",
+    "./lib/hooks/useSPFxPnPList.batch.internal.d.ts.map": "./lib/hooks/useSPFxPnPList.batch.internal.d.ts.map",
+    "./lib/hooks/useSPFxPnPList.batch.internal": {
+      "types": "./lib/hooks/useSPFxPnPList.batch.internal.d.ts",
+      "default": "./lib/hooks/useSPFxPnPList.batch.internal.js"
+    },
+    "./lib/hooks/useSPFxPnPList.batch.internal.js": {
+      "types": "./lib/hooks/useSPFxPnPList.batch.internal.d.ts",
+      "default": "./lib/hooks/useSPFxPnPList.batch.internal.js"
+    },
+    "./lib/hooks/useSPFxPnPList.batch.internal.js.map": "./lib/hooks/useSPFxPnPList.batch.internal.js.map",
+    "./lib/hooks/useSPFxPnPList.d.ts": "./lib/hooks/useSPFxPnPList.d.ts",
+    "./lib/hooks/useSPFxPnPList.d.ts.map": "./lib/hooks/useSPFxPnPList.d.ts.map",
+    "./lib/hooks/useSPFxPnPList.internal.d.ts": "./lib/hooks/useSPFxPnPList.internal.d.ts",
+    "./lib/hooks/useSPFxPnPList.internal.d.ts.map": "./lib/hooks/useSPFxPnPList.internal.d.ts.map",
+    "./lib/hooks/useSPFxPnPList.internal": {
+      "types": "./lib/hooks/useSPFxPnPList.internal.d.ts",
+      "default": "./lib/hooks/useSPFxPnPList.internal.js"
+    },
+    "./lib/hooks/useSPFxPnPList.internal.js": {
+      "types": "./lib/hooks/useSPFxPnPList.internal.d.ts",
+      "default": "./lib/hooks/useSPFxPnPList.internal.js"
+    },
+    "./lib/hooks/useSPFxPnPList.internal.js.map": "./lib/hooks/useSPFxPnPList.internal.js.map",
+    "./lib/hooks/useSPFxPnPList": {
+      "types": "./lib/hooks/useSPFxPnPList.d.ts",
+      "default": "./lib/hooks/useSPFxPnPList.js"
+    },
+    "./lib/hooks/useSPFxPnPList.js": {
+      "types": "./lib/hooks/useSPFxPnPList.d.ts",
+      "default": "./lib/hooks/useSPFxPnPList.js"
+    },
+    "./lib/hooks/useSPFxPnPList.js.map": "./lib/hooks/useSPFxPnPList.js.map",
+    "./lib/hooks/useSPFxPnPList.query.internal.d.ts": "./lib/hooks/useSPFxPnPList.query.internal.d.ts",
+    "./lib/hooks/useSPFxPnPList.query.internal.d.ts.map": "./lib/hooks/useSPFxPnPList.query.internal.d.ts.map",
+    "./lib/hooks/useSPFxPnPList.query.internal": {
+      "types": "./lib/hooks/useSPFxPnPList.query.internal.d.ts",
+      "default": "./lib/hooks/useSPFxPnPList.query.internal.js"
+    },
+    "./lib/hooks/useSPFxPnPList.query.internal.js": {
+      "types": "./lib/hooks/useSPFxPnPList.query.internal.d.ts",
+      "default": "./lib/hooks/useSPFxPnPList.query.internal.js"
+    },
+    "./lib/hooks/useSPFxPnPList.query.internal.js.map": "./lib/hooks/useSPFxPnPList.query.internal.js.map",
+    "./lib/hooks/useSPFxPnPListById.d.ts": "./lib/hooks/useSPFxPnPListById.d.ts",
+    "./lib/hooks/useSPFxPnPListById.d.ts.map": "./lib/hooks/useSPFxPnPListById.d.ts.map",
+    "./lib/hooks/useSPFxPnPListById": {
+      "types": "./lib/hooks/useSPFxPnPListById.d.ts",
+      "default": "./lib/hooks/useSPFxPnPListById.js"
+    },
+    "./lib/hooks/useSPFxPnPListById.js": {
+      "types": "./lib/hooks/useSPFxPnPListById.d.ts",
+      "default": "./lib/hooks/useSPFxPnPListById.js"
+    },
+    "./lib/hooks/useSPFxPnPListById.js.map": "./lib/hooks/useSPFxPnPListById.js.map",
+    "./lib/hooks/useSPFxPnPListByPath.d.ts": "./lib/hooks/useSPFxPnPListByPath.d.ts",
+    "./lib/hooks/useSPFxPnPListByPath.d.ts.map": "./lib/hooks/useSPFxPnPListByPath.d.ts.map",
+    "./lib/hooks/useSPFxPnPListByPath": {
+      "types": "./lib/hooks/useSPFxPnPListByPath.d.ts",
+      "default": "./lib/hooks/useSPFxPnPListByPath.js"
+    },
+    "./lib/hooks/useSPFxPnPListByPath.js": {
+      "types": "./lib/hooks/useSPFxPnPListByPath.d.ts",
+      "default": "./lib/hooks/useSPFxPnPListByPath.js"
+    },
+    "./lib/hooks/useSPFxPnPListByPath.js.map": "./lib/hooks/useSPFxPnPListByPath.js.map",
+    "./lib/hooks/useSPFxPnPListByUrl.d.ts": "./lib/hooks/useSPFxPnPListByUrl.d.ts",
+    "./lib/hooks/useSPFxPnPListByUrl.d.ts.map": "./lib/hooks/useSPFxPnPListByUrl.d.ts.map",
+    "./lib/hooks/useSPFxPnPListByUrl": {
+      "types": "./lib/hooks/useSPFxPnPListByUrl.d.ts",
+      "default": "./lib/hooks/useSPFxPnPListByUrl.js"
+    },
+    "./lib/hooks/useSPFxPnPListByUrl.js": {
+      "types": "./lib/hooks/useSPFxPnPListByUrl.d.ts",
+      "default": "./lib/hooks/useSPFxPnPListByUrl.js"
+    },
+    "./lib/hooks/useSPFxPnPListByUrl.js.map": "./lib/hooks/useSPFxPnPListByUrl.js.map",
+    "./lib/hooks/useSPFxPnPSearch.d.ts": "./lib/hooks/useSPFxPnPSearch.d.ts",
+    "./lib/hooks/useSPFxPnPSearch.d.ts.map": "./lib/hooks/useSPFxPnPSearch.d.ts.map",
+    "./lib/hooks/useSPFxPnPSearch": {
+      "types": "./lib/hooks/useSPFxPnPSearch.d.ts",
+      "default": "./lib/hooks/useSPFxPnPSearch.js"
+    },
+    "./lib/hooks/useSPFxPnPSearch.js": {
+      "types": "./lib/hooks/useSPFxPnPSearch.d.ts",
+      "default": "./lib/hooks/useSPFxPnPSearch.js"
+    },
+    "./lib/hooks/useSPFxPnPSearch.js.map": "./lib/hooks/useSPFxPnPSearch.js.map",
+    "./lib/hooks/useSPFxPnPSearch.query.internal.d.ts": "./lib/hooks/useSPFxPnPSearch.query.internal.d.ts",
+    "./lib/hooks/useSPFxPnPSearch.query.internal.d.ts.map": "./lib/hooks/useSPFxPnPSearch.query.internal.d.ts.map",
+    "./lib/hooks/useSPFxPnPSearch.query.internal": {
+      "types": "./lib/hooks/useSPFxPnPSearch.query.internal.d.ts",
+      "default": "./lib/hooks/useSPFxPnPSearch.query.internal.js"
+    },
+    "./lib/hooks/useSPFxPnPSearch.query.internal.js": {
+      "types": "./lib/hooks/useSPFxPnPSearch.query.internal.d.ts",
+      "default": "./lib/hooks/useSPFxPnPSearch.query.internal.js"
+    },
+    "./lib/hooks/useSPFxPnPSearch.query.internal.js.map": "./lib/hooks/useSPFxPnPSearch.query.internal.js.map",
+    "./lib/hooks/useSPFxPnPSearch.results.internal.d.ts": "./lib/hooks/useSPFxPnPSearch.results.internal.d.ts",
+    "./lib/hooks/useSPFxPnPSearch.results.internal.d.ts.map": "./lib/hooks/useSPFxPnPSearch.results.internal.d.ts.map",
+    "./lib/hooks/useSPFxPnPSearch.results.internal": {
+      "types": "./lib/hooks/useSPFxPnPSearch.results.internal.d.ts",
+      "default": "./lib/hooks/useSPFxPnPSearch.results.internal.js"
+    },
+    "./lib/hooks/useSPFxPnPSearch.results.internal.js": {
+      "types": "./lib/hooks/useSPFxPnPSearch.results.internal.d.ts",
+      "default": "./lib/hooks/useSPFxPnPSearch.results.internal.js"
+    },
+    "./lib/hooks/useSPFxPnPSearch.results.internal.js.map": "./lib/hooks/useSPFxPnPSearch.results.internal.js.map",
+    "./lib/hooks/useSPFxProperties.d.ts": "./lib/hooks/useSPFxProperties.d.ts",
+    "./lib/hooks/useSPFxProperties.d.ts.map": "./lib/hooks/useSPFxProperties.d.ts.map",
+    "./lib/hooks/useSPFxProperties": {
+      "types": "./lib/hooks/useSPFxProperties.d.ts",
+      "default": "./lib/hooks/useSPFxProperties.js"
+    },
+    "./lib/hooks/useSPFxProperties.js": {
+      "types": "./lib/hooks/useSPFxProperties.d.ts",
+      "default": "./lib/hooks/useSPFxProperties.js"
+    },
+    "./lib/hooks/useSPFxProperties.js.map": "./lib/hooks/useSPFxProperties.js.map",
+    "./lib/hooks/useSPFxSPHttpClient.d.ts": "./lib/hooks/useSPFxSPHttpClient.d.ts",
+    "./lib/hooks/useSPFxSPHttpClient.d.ts.map": "./lib/hooks/useSPFxSPHttpClient.d.ts.map",
+    "./lib/hooks/useSPFxSPHttpClient": {
+      "types": "./lib/hooks/useSPFxSPHttpClient.d.ts",
+      "default": "./lib/hooks/useSPFxSPHttpClient.js"
+    },
+    "./lib/hooks/useSPFxSPHttpClient.js": {
+      "types": "./lib/hooks/useSPFxSPHttpClient.d.ts",
+      "default": "./lib/hooks/useSPFxSPHttpClient.js"
+    },
+    "./lib/hooks/useSPFxSPHttpClient.js.map": "./lib/hooks/useSPFxSPHttpClient.js.map",
+    "./lib/hooks/useSPFxServiceScope.d.ts": "./lib/hooks/useSPFxServiceScope.d.ts",
+    "./lib/hooks/useSPFxServiceScope.d.ts.map": "./lib/hooks/useSPFxServiceScope.d.ts.map",
+    "./lib/hooks/useSPFxServiceScope": {
+      "types": "./lib/hooks/useSPFxServiceScope.d.ts",
+      "default": "./lib/hooks/useSPFxServiceScope.js"
+    },
+    "./lib/hooks/useSPFxServiceScope.js": {
+      "types": "./lib/hooks/useSPFxServiceScope.d.ts",
+      "default": "./lib/hooks/useSPFxServiceScope.js"
+    },
+    "./lib/hooks/useSPFxServiceScope.js.map": "./lib/hooks/useSPFxServiceScope.js.map",
+    "./lib/hooks/useSPFxSiteInfo.d.ts": "./lib/hooks/useSPFxSiteInfo.d.ts",
+    "./lib/hooks/useSPFxSiteInfo.d.ts.map": "./lib/hooks/useSPFxSiteInfo.d.ts.map",
+    "./lib/hooks/useSPFxSiteInfo": {
+      "types": "./lib/hooks/useSPFxSiteInfo.d.ts",
+      "default": "./lib/hooks/useSPFxSiteInfo.js"
+    },
+    "./lib/hooks/useSPFxSiteInfo.js": {
+      "types": "./lib/hooks/useSPFxSiteInfo.d.ts",
+      "default": "./lib/hooks/useSPFxSiteInfo.js"
+    },
+    "./lib/hooks/useSPFxSiteInfo.js.map": "./lib/hooks/useSPFxSiteInfo.js.map",
+    "./lib/hooks/useSPFxSiteKeyValueStore.d.ts": "./lib/hooks/useSPFxSiteKeyValueStore.d.ts",
+    "./lib/hooks/useSPFxSiteKeyValueStore.d.ts.map": "./lib/hooks/useSPFxSiteKeyValueStore.d.ts.map",
+    "./lib/hooks/useSPFxSiteKeyValueStore": {
+      "types": "./lib/hooks/useSPFxSiteKeyValueStore.d.ts",
+      "default": "./lib/hooks/useSPFxSiteKeyValueStore.js"
+    },
+    "./lib/hooks/useSPFxSiteKeyValueStore.js": {
+      "types": "./lib/hooks/useSPFxSiteKeyValueStore.d.ts",
+      "default": "./lib/hooks/useSPFxSiteKeyValueStore.js"
+    },
+    "./lib/hooks/useSPFxSiteKeyValueStore.js.map": "./lib/hooks/useSPFxSiteKeyValueStore.js.map",
+    "./lib/hooks/useSPFxStorage.d.ts": "./lib/hooks/useSPFxStorage.d.ts",
+    "./lib/hooks/useSPFxStorage.d.ts.map": "./lib/hooks/useSPFxStorage.d.ts.map",
+    "./lib/hooks/useSPFxStorage": {
+      "types": "./lib/hooks/useSPFxStorage.d.ts",
+      "default": "./lib/hooks/useSPFxStorage.js"
+    },
+    "./lib/hooks/useSPFxStorage.js": {
+      "types": "./lib/hooks/useSPFxStorage.d.ts",
+      "default": "./lib/hooks/useSPFxStorage.js"
+    },
+    "./lib/hooks/useSPFxStorage.js.map": "./lib/hooks/useSPFxStorage.js.map",
+    "./lib/hooks/useSPFxTeams.d.ts": "./lib/hooks/useSPFxTeams.d.ts",
+    "./lib/hooks/useSPFxTeams.d.ts.map": "./lib/hooks/useSPFxTeams.d.ts.map",
+    "./lib/hooks/useSPFxTeams": {
+      "types": "./lib/hooks/useSPFxTeams.d.ts",
+      "default": "./lib/hooks/useSPFxTeams.js"
+    },
+    "./lib/hooks/useSPFxTeams.js": {
+      "types": "./lib/hooks/useSPFxTeams.d.ts",
+      "default": "./lib/hooks/useSPFxTeams.js"
+    },
+    "./lib/hooks/useSPFxTeams.js.map": "./lib/hooks/useSPFxTeams.js.map",
+    "./lib/hooks/useSPFxTenantKeyValueStore.d.ts": "./lib/hooks/useSPFxTenantKeyValueStore.d.ts",
+    "./lib/hooks/useSPFxTenantKeyValueStore.d.ts.map": "./lib/hooks/useSPFxTenantKeyValueStore.d.ts.map",
+    "./lib/hooks/useSPFxTenantKeyValueStore": {
+      "types": "./lib/hooks/useSPFxTenantKeyValueStore.d.ts",
+      "default": "./lib/hooks/useSPFxTenantKeyValueStore.js"
+    },
+    "./lib/hooks/useSPFxTenantKeyValueStore.js": {
+      "types": "./lib/hooks/useSPFxTenantKeyValueStore.d.ts",
+      "default": "./lib/hooks/useSPFxTenantKeyValueStore.js"
+    },
+    "./lib/hooks/useSPFxTenantKeyValueStore.js.map": "./lib/hooks/useSPFxTenantKeyValueStore.js.map",
+    "./lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.d.ts": "./lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.d.ts",
+    "./lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.d.ts.map": "./lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.d.ts.map",
+    "./lib/hooks/useSPFxTenantKeyValueStore.serialization.internal": {
+      "types": "./lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.d.ts",
+      "default": "./lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.js"
+    },
+    "./lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.js": {
+      "types": "./lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.d.ts",
+      "default": "./lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.js"
+    },
+    "./lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.js.map": "./lib/hooks/useSPFxTenantKeyValueStore.serialization.internal.js.map",
+    "./lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.d.ts": "./lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.d.ts",
+    "./lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.d.ts.map": "./lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.d.ts.map",
+    "./lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal": {
+      "types": "./lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.d.ts",
+      "default": "./lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.js"
+    },
+    "./lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.js": {
+      "types": "./lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.d.ts",
+      "default": "./lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.js"
+    },
+    "./lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.js.map": "./lib/hooks/useSPFxTenantKeyValueStore.sharepoint.internal.js.map",
+    "./lib/hooks/useSPFxTenantProperty.d.ts": "./lib/hooks/useSPFxTenantProperty.d.ts",
+    "./lib/hooks/useSPFxTenantProperty.d.ts.map": "./lib/hooks/useSPFxTenantProperty.d.ts.map",
+    "./lib/hooks/useSPFxTenantProperty": {
+      "types": "./lib/hooks/useSPFxTenantProperty.d.ts",
+      "default": "./lib/hooks/useSPFxTenantProperty.js"
+    },
+    "./lib/hooks/useSPFxTenantProperty.js": {
+      "types": "./lib/hooks/useSPFxTenantProperty.d.ts",
+      "default": "./lib/hooks/useSPFxTenantProperty.js"
+    },
+    "./lib/hooks/useSPFxTenantProperty.js.map": "./lib/hooks/useSPFxTenantProperty.js.map",
+    "./lib/hooks/useSPFxThemeInfo.d.ts": "./lib/hooks/useSPFxThemeInfo.d.ts",
+    "./lib/hooks/useSPFxThemeInfo.d.ts.map": "./lib/hooks/useSPFxThemeInfo.d.ts.map",
+    "./lib/hooks/useSPFxThemeInfo": {
+      "types": "./lib/hooks/useSPFxThemeInfo.d.ts",
+      "default": "./lib/hooks/useSPFxThemeInfo.js"
+    },
+    "./lib/hooks/useSPFxThemeInfo.js": {
+      "types": "./lib/hooks/useSPFxThemeInfo.d.ts",
+      "default": "./lib/hooks/useSPFxThemeInfo.js"
+    },
+    "./lib/hooks/useSPFxThemeInfo.js.map": "./lib/hooks/useSPFxThemeInfo.js.map",
+    "./lib/hooks/useSPFxUserInfo.d.ts": "./lib/hooks/useSPFxUserInfo.d.ts",
+    "./lib/hooks/useSPFxUserInfo.d.ts.map": "./lib/hooks/useSPFxUserInfo.d.ts.map",
+    "./lib/hooks/useSPFxUserInfo": {
+      "types": "./lib/hooks/useSPFxUserInfo.d.ts",
+      "default": "./lib/hooks/useSPFxUserInfo.js"
+    },
+    "./lib/hooks/useSPFxUserInfo.js": {
+      "types": "./lib/hooks/useSPFxUserInfo.d.ts",
+      "default": "./lib/hooks/useSPFxUserInfo.js"
+    },
+    "./lib/hooks/useSPFxUserInfo.js.map": "./lib/hooks/useSPFxUserInfo.js.map",
+    "./lib/hooks/useSPFxUserPhoto.d.ts": "./lib/hooks/useSPFxUserPhoto.d.ts",
+    "./lib/hooks/useSPFxUserPhoto.d.ts.map": "./lib/hooks/useSPFxUserPhoto.d.ts.map",
+    "./lib/hooks/useSPFxUserPhoto": {
+      "types": "./lib/hooks/useSPFxUserPhoto.d.ts",
+      "default": "./lib/hooks/useSPFxUserPhoto.js"
+    },
+    "./lib/hooks/useSPFxUserPhoto.js": {
+      "types": "./lib/hooks/useSPFxUserPhoto.d.ts",
+      "default": "./lib/hooks/useSPFxUserPhoto.js"
+    },
+    "./lib/hooks/useSPFxUserPhoto.js.map": "./lib/hooks/useSPFxUserPhoto.js.map",
+    "./lib/hooks/useStableCallback.d.ts": "./lib/hooks/useStableCallback.d.ts",
+    "./lib/hooks/useStableCallback.d.ts.map": "./lib/hooks/useStableCallback.d.ts.map",
+    "./lib/hooks/useStableCallback": {
+      "types": "./lib/hooks/useStableCallback.d.ts",
+      "default": "./lib/hooks/useStableCallback.js"
+    },
+    "./lib/hooks/useStableCallback.js": {
+      "types": "./lib/hooks/useStableCallback.d.ts",
+      "default": "./lib/hooks/useStableCallback.js"
+    },
+    "./lib/hooks/useStableCallback.js.map": "./lib/hooks/useStableCallback.js.map",
+    "./lib/hooks/useSx.d.ts": "./lib/hooks/useSx.d.ts",
+    "./lib/hooks/useSx.d.ts.map": "./lib/hooks/useSx.d.ts.map",
+    "./lib/hooks/useSx": {
+      "types": "./lib/hooks/useSx.d.ts",
+      "default": "./lib/hooks/useSx.js"
+    },
+    "./lib/hooks/useSx.js": {
+      "types": "./lib/hooks/useSx.d.ts",
+      "default": "./lib/hooks/useSx.js"
+    },
+    "./lib/hooks/useSx.js.map": "./lib/hooks/useSx.js.map",
+    "./lib/index.d.ts": "./lib/index.d.ts",
+    "./lib/index.d.ts.map": "./lib/index.d.ts.map",
+    "./lib/index": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./lib/index.js": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./lib": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./lib/index.js.map": "./lib/index.js.map",
+    "./lib/services/index.d.ts": "./lib/services/index.d.ts",
+    "./lib/services/index.d.ts.map": "./lib/services/index.d.ts.map",
+    "./lib/services/index": {
+      "types": "./lib/services/index.d.ts",
+      "default": "./lib/services/index.js"
+    },
+    "./lib/services/index.js": {
+      "types": "./lib/services/index.d.ts",
+      "default": "./lib/services/index.js"
+    },
+    "./lib/services": {
+      "types": "./lib/services/index.d.ts",
+      "default": "./lib/services/index.js"
+    },
+    "./lib/services/index.js.map": "./lib/services/index.js.map",
+    "./lib/services/spfx-api-permission-precheck.service.d.ts": "./lib/services/spfx-api-permission-precheck.service.d.ts",
+    "./lib/services/spfx-api-permission-precheck.service.d.ts.map": "./lib/services/spfx-api-permission-precheck.service.d.ts.map",
+    "./lib/services/spfx-api-permission-precheck.service": {
+      "types": "./lib/services/spfx-api-permission-precheck.service.d.ts",
+      "default": "./lib/services/spfx-api-permission-precheck.service.js"
+    },
+    "./lib/services/spfx-api-permission-precheck.service.js": {
+      "types": "./lib/services/spfx-api-permission-precheck.service.d.ts",
+      "default": "./lib/services/spfx-api-permission-precheck.service.js"
+    },
+    "./lib/services/spfx-api-permission-precheck.service.js.map": "./lib/services/spfx-api-permission-precheck.service.js.map",
+    "./lib/services/spfx-app-catalog.service.d.ts": "./lib/services/spfx-app-catalog.service.d.ts",
+    "./lib/services/spfx-app-catalog.service.d.ts.map": "./lib/services/spfx-app-catalog.service.d.ts.map",
+    "./lib/services/spfx-app-catalog.service": {
+      "types": "./lib/services/spfx-app-catalog.service.d.ts",
+      "default": "./lib/services/spfx-app-catalog.service.js"
+    },
+    "./lib/services/spfx-app-catalog.service.js": {
+      "types": "./lib/services/spfx-app-catalog.service.d.ts",
+      "default": "./lib/services/spfx-app-catalog.service.js"
+    },
+    "./lib/services/spfx-app-catalog.service.js.map": "./lib/services/spfx-app-catalog.service.js.map",
+    "./lib/services/spfx-list-key-value-store.internal.d.ts": "./lib/services/spfx-list-key-value-store.internal.d.ts",
+    "./lib/services/spfx-list-key-value-store.internal.d.ts.map": "./lib/services/spfx-list-key-value-store.internal.d.ts.map",
+    "./lib/services/spfx-list-key-value-store.internal": {
+      "types": "./lib/services/spfx-list-key-value-store.internal.d.ts",
+      "default": "./lib/services/spfx-list-key-value-store.internal.js"
+    },
+    "./lib/services/spfx-list-key-value-store.internal.js": {
+      "types": "./lib/services/spfx-list-key-value-store.internal.d.ts",
+      "default": "./lib/services/spfx-list-key-value-store.internal.js"
+    },
+    "./lib/services/spfx-list-key-value-store.internal.js.map": "./lib/services/spfx-list-key-value-store.internal.js.map",
+    "./lib/services/spfx-onedrive-app-data.service.d.ts": "./lib/services/spfx-onedrive-app-data.service.d.ts",
+    "./lib/services/spfx-onedrive-app-data.service.d.ts.map": "./lib/services/spfx-onedrive-app-data.service.d.ts.map",
+    "./lib/services/spfx-onedrive-app-data.service": {
+      "types": "./lib/services/spfx-onedrive-app-data.service.d.ts",
+      "default": "./lib/services/spfx-onedrive-app-data.service.js"
+    },
+    "./lib/services/spfx-onedrive-app-data.service.js": {
+      "types": "./lib/services/spfx-onedrive-app-data.service.d.ts",
+      "default": "./lib/services/spfx-onedrive-app-data.service.js"
+    },
+    "./lib/services/spfx-onedrive-app-data.service.js.map": "./lib/services/spfx-onedrive-app-data.service.js.map",
+    "./lib/services/spfx-pnp-context.service.d.ts": "./lib/services/spfx-pnp-context.service.d.ts",
+    "./lib/services/spfx-pnp-context.service.d.ts.map": "./lib/services/spfx-pnp-context.service.d.ts.map",
+    "./lib/services/spfx-pnp-context.service": {
+      "types": "./lib/services/spfx-pnp-context.service.d.ts",
+      "default": "./lib/services/spfx-pnp-context.service.js"
+    },
+    "./lib/services/spfx-pnp-context.service.js": {
+      "types": "./lib/services/spfx-pnp-context.service.d.ts",
+      "default": "./lib/services/spfx-pnp-context.service.js"
+    },
+    "./lib/services/spfx-pnp-context.service.js.map": "./lib/services/spfx-pnp-context.service.js.map",
+    "./lib/services/spfx-pnp-list-target.internal.d.ts": "./lib/services/spfx-pnp-list-target.internal.d.ts",
+    "./lib/services/spfx-pnp-list-target.internal.d.ts.map": "./lib/services/spfx-pnp-list-target.internal.d.ts.map",
+    "./lib/services/spfx-pnp-list-target.internal": {
+      "types": "./lib/services/spfx-pnp-list-target.internal.d.ts",
+      "default": "./lib/services/spfx-pnp-list-target.internal.js"
+    },
+    "./lib/services/spfx-pnp-list-target.internal.js": {
+      "types": "./lib/services/spfx-pnp-list-target.internal.d.ts",
+      "default": "./lib/services/spfx-pnp-list-target.internal.js"
+    },
+    "./lib/services/spfx-pnp-list-target.internal.js.map": "./lib/services/spfx-pnp-list-target.internal.js.map",
+    "./lib/services/spfx-pnp-list.service.d.ts": "./lib/services/spfx-pnp-list.service.d.ts",
+    "./lib/services/spfx-pnp-list.service.d.ts.map": "./lib/services/spfx-pnp-list.service.d.ts.map",
+    "./lib/services/spfx-pnp-list.service": {
+      "types": "./lib/services/spfx-pnp-list.service.d.ts",
+      "default": "./lib/services/spfx-pnp-list.service.js"
+    },
+    "./lib/services/spfx-pnp-list.service.js": {
+      "types": "./lib/services/spfx-pnp-list.service.d.ts",
+      "default": "./lib/services/spfx-pnp-list.service.js"
+    },
+    "./lib/services/spfx-pnp-list.service.js.map": "./lib/services/spfx-pnp-list.service.js.map",
+    "./lib/services/spfx-pnp-search.service.d.ts": "./lib/services/spfx-pnp-search.service.d.ts",
+    "./lib/services/spfx-pnp-search.service.d.ts.map": "./lib/services/spfx-pnp-search.service.d.ts.map",
+    "./lib/services/spfx-pnp-search.service": {
+      "types": "./lib/services/spfx-pnp-search.service.d.ts",
+      "default": "./lib/services/spfx-pnp-search.service.js"
+    },
+    "./lib/services/spfx-pnp-search.service.js": {
+      "types": "./lib/services/spfx-pnp-search.service.d.ts",
+      "default": "./lib/services/spfx-pnp-search.service.js"
+    },
+    "./lib/services/spfx-pnp-search.service.js.map": "./lib/services/spfx-pnp-search.service.js.map",
+    "./lib/services/spfx-pnp.service.d.ts": "./lib/services/spfx-pnp.service.d.ts",
+    "./lib/services/spfx-pnp.service.d.ts.map": "./lib/services/spfx-pnp.service.d.ts.map",
+    "./lib/services/spfx-pnp.service": {
+      "types": "./lib/services/spfx-pnp.service.d.ts",
+      "default": "./lib/services/spfx-pnp.service.js"
+    },
+    "./lib/services/spfx-pnp.service.js": {
+      "types": "./lib/services/spfx-pnp.service.d.ts",
+      "default": "./lib/services/spfx-pnp.service.js"
+    },
+    "./lib/services/spfx-pnp.service.js.map": "./lib/services/spfx-pnp.service.js.map",
+    "./lib/services/spfx-site-key-value-store.internal.d.ts": "./lib/services/spfx-site-key-value-store.internal.d.ts",
+    "./lib/services/spfx-site-key-value-store.internal.d.ts.map": "./lib/services/spfx-site-key-value-store.internal.d.ts.map",
+    "./lib/services/spfx-site-key-value-store.internal": {
+      "types": "./lib/services/spfx-site-key-value-store.internal.d.ts",
+      "default": "./lib/services/spfx-site-key-value-store.internal.js"
+    },
+    "./lib/services/spfx-site-key-value-store.internal.js": {
+      "types": "./lib/services/spfx-site-key-value-store.internal.d.ts",
+      "default": "./lib/services/spfx-site-key-value-store.internal.js"
+    },
+    "./lib/services/spfx-site-key-value-store.internal.js.map": "./lib/services/spfx-site-key-value-store.internal.js.map",
+    "./lib/services/spfx-site-key-value-store.service.d.ts": "./lib/services/spfx-site-key-value-store.service.d.ts",
+    "./lib/services/spfx-site-key-value-store.service.d.ts.map": "./lib/services/spfx-site-key-value-store.service.d.ts.map",
+    "./lib/services/spfx-site-key-value-store.service": {
+      "types": "./lib/services/spfx-site-key-value-store.service.d.ts",
+      "default": "./lib/services/spfx-site-key-value-store.service.js"
+    },
+    "./lib/services/spfx-site-key-value-store.service.js": {
+      "types": "./lib/services/spfx-site-key-value-store.service.d.ts",
+      "default": "./lib/services/spfx-site-key-value-store.service.js"
+    },
+    "./lib/services/spfx-site-key-value-store.service.js.map": "./lib/services/spfx-site-key-value-store.service.js.map",
+    "./lib/services/spfx-tenant-key-value-store.service.d.ts": "./lib/services/spfx-tenant-key-value-store.service.d.ts",
+    "./lib/services/spfx-tenant-key-value-store.service.d.ts.map": "./lib/services/spfx-tenant-key-value-store.service.d.ts.map",
+    "./lib/services/spfx-tenant-key-value-store.service": {
+      "types": "./lib/services/spfx-tenant-key-value-store.service.d.ts",
+      "default": "./lib/services/spfx-tenant-key-value-store.service.js"
+    },
+    "./lib/services/spfx-tenant-key-value-store.service.js": {
+      "types": "./lib/services/spfx-tenant-key-value-store.service.d.ts",
+      "default": "./lib/services/spfx-tenant-key-value-store.service.js"
+    },
+    "./lib/services/spfx-tenant-key-value-store.service.js.map": "./lib/services/spfx-tenant-key-value-store.service.js.map",
+    "./lib/services/spfx-tenant-property.service.d.ts": "./lib/services/spfx-tenant-property.service.d.ts",
+    "./lib/services/spfx-tenant-property.service.d.ts.map": "./lib/services/spfx-tenant-property.service.d.ts.map",
+    "./lib/services/spfx-tenant-property.service": {
+      "types": "./lib/services/spfx-tenant-property.service.d.ts",
+      "default": "./lib/services/spfx-tenant-property.service.js"
+    },
+    "./lib/services/spfx-tenant-property.service.js": {
+      "types": "./lib/services/spfx-tenant-property.service.d.ts",
+      "default": "./lib/services/spfx-tenant-property.service.js"
+    },
+    "./lib/services/spfx-tenant-property.service.js.map": "./lib/services/spfx-tenant-property.service.js.map",
+    "./lib/services/spfx-user-photo.service.d.ts": "./lib/services/spfx-user-photo.service.d.ts",
+    "./lib/services/spfx-user-photo.service.d.ts.map": "./lib/services/spfx-user-photo.service.d.ts.map",
+    "./lib/services/spfx-user-photo.service": {
+      "types": "./lib/services/spfx-user-photo.service.d.ts",
+      "default": "./lib/services/spfx-user-photo.service.js"
+    },
+    "./lib/services/spfx-user-photo.service.js": {
+      "types": "./lib/services/spfx-user-photo.service.d.ts",
+      "default": "./lib/services/spfx-user-photo.service.js"
+    },
+    "./lib/services/spfx-user-photo.service.js.map": "./lib/services/spfx-user-photo.service.js.map",
+    "./lib/utils/index.d.ts": "./lib/utils/index.d.ts",
+    "./lib/utils/index.d.ts.map": "./lib/utils/index.d.ts.map",
+    "./lib/utils/index": {
+      "types": "./lib/utils/index.d.ts",
+      "default": "./lib/utils/index.js"
+    },
+    "./lib/utils/index.js": {
+      "types": "./lib/utils/index.d.ts",
+      "default": "./lib/utils/index.js"
+    },
+    "./lib/utils": {
+      "types": "./lib/utils/index.d.ts",
+      "default": "./lib/utils/index.js"
+    },
+    "./lib/utils/index.js.map": "./lib/utils/index.js.map",
+    "./lib/utils/resize-observer.internal.d.ts": "./lib/utils/resize-observer.internal.d.ts",
+    "./lib/utils/resize-observer.internal.d.ts.map": "./lib/utils/resize-observer.internal.d.ts.map",
+    "./lib/utils/resize-observer.internal": {
+      "types": "./lib/utils/resize-observer.internal.d.ts",
+      "default": "./lib/utils/resize-observer.internal.js"
+    },
+    "./lib/utils/resize-observer.internal.js": {
+      "types": "./lib/utils/resize-observer.internal.d.ts",
+      "default": "./lib/utils/resize-observer.internal.js"
+    },
+    "./lib/utils/resize-observer.internal.js.map": "./lib/utils/resize-observer.internal.js.map",
+    "./lib/utils/theme-subscription.internal.d.ts": "./lib/utils/theme-subscription.internal.d.ts",
+    "./lib/utils/theme-subscription.internal.d.ts.map": "./lib/utils/theme-subscription.internal.d.ts.map",
+    "./lib/utils/theme-subscription.internal": {
+      "types": "./lib/utils/theme-subscription.internal.d.ts",
+      "default": "./lib/utils/theme-subscription.internal.js"
+    },
+    "./lib/utils/theme-subscription.internal.js": {
+      "types": "./lib/utils/theme-subscription.internal.d.ts",
+      "default": "./lib/utils/theme-subscription.internal.js"
+    },
+    "./lib/utils/theme-subscription.internal.js.map": "./lib/utils/theme-subscription.internal.js.map",
+    "./lib/utils/type-guards.internal.d.ts": "./lib/utils/type-guards.internal.d.ts",
+    "./lib/utils/type-guards.internal.d.ts.map": "./lib/utils/type-guards.internal.d.ts.map",
+    "./lib/utils/type-guards.internal": {
+      "types": "./lib/utils/type-guards.internal.d.ts",
+      "default": "./lib/utils/type-guards.internal.js"
+    },
+    "./lib/utils/type-guards.internal.js": {
+      "types": "./lib/utils/type-guards.internal.d.ts",
+      "default": "./lib/utils/type-guards.internal.js"
+    },
+    "./lib/utils/type-guards.internal.js.map": "./lib/utils/type-guards.internal.js.map",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "core": [
+        "lib/core/index.d.ts"
+      ],
+      "hooks": [
+        "lib/hooks/index.d.ts"
+      ],
+      "helpers": [
+        "lib/helpers/index.d.ts"
+      ],
+      "services": [
+        "lib/services/index.d.ts"
+      ],
+      "styles": [
+        "lib/styles/index.d.ts"
+      ],
+      "styles/useSx": [
+        "lib/hooks/useSx.d.ts"
+      ],
+      "hooks/useStableCallback": [
+        "lib/hooks/useStableCallback.d.ts"
+      ]
+    }
+  },
+  "sideEffects": [
+    "./lib/services/spfx-pnp-context.service.js",
+    "./lib/services/spfx-pnp.service.js",
+    "./lib/services/spfx-pnp-list.service.js",
+    "./lib/services/spfx-pnp-search.service.js"
+  ]
 }

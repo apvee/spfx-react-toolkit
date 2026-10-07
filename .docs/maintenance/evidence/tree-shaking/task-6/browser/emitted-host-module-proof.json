@@ -1,0 +1,4 @@
+{
+  "note": "SPFx host externals declared but unused; module group inventory and emitted-bundle string assertions supplied together",
+  "sdkOrExternalInventory": []
+}

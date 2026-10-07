@@ -1,0 +1,6 @@
+{
+  "identical": true,
+  "modules": 149,
+  "exports": 1118,
+  "reason": "Current frozen namespaces use direct reexports; local namespace alias repair changes only newly covered synthetic syntax."
+}

@@ -1,0 +1,94 @@
+TAP version 13
+# Subtest: permits one bare webs registration only in the list service declaration
+ok 1 - permits one bare webs registration only in the list service declaration
+  ---
+  duration_ms: 6.813625
+  type: 'test'
+  ...
+# Subtest: finished list service requires the standalone webs registration
+ok 2 - finished list service requires the standalone webs registration
+  ---
+  duration_ms: 2.069833
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration duplicate
+ok 3 - rejects list webs registration duplicate
+  ---
+  duration_ms: 1.352875
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration wrong path
+ok 4 - rejects list webs registration wrong path
+  ---
+  duration_ms: 2.02325
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration named import
+ok 5 - rejects list webs registration named import
+  ---
+  duration_ms: 1.611042
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration namespace import
+ok 6 - rejects list webs registration namespace import
+  ---
+  duration_ms: 1.680042
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration default import
+ok 7 - rejects list webs registration default import
+  ---
+  duration_ms: 1.083083
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration type-only import
+ok 8 - rejects list webs registration type-only import
+  ---
+  duration_ms: 1.548917
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration attributes
+ok 9 - rejects list webs registration attributes
+  ---
+  duration_ms: 1.702042
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration assertions
+ok 10 - rejects list webs registration assertions
+  ---
+  duration_ms: 1.262083
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration unrelated statement
+ok 11 - rejects list webs registration unrelated statement
+  ---
+  duration_ms: 1.427583
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration in every other historical declaration
+ok 12 - rejects list webs registration in every other historical declaration
+  ---
+  duration_ms: 43.145042
+  type: 'test'
+  ...
+# Subtest: webs registration approval retains strict list signatures and historical imports
+ok 13 - webs registration approval retains strict list signatures and historical imports
+  ---
+  duration_ms: 1.884917
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires webs registration even without other completion markers
+ok 14 - integrated verify-api requires webs registration even without other completion markers
+  ---
+  duration_ms: 21.149292
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 223.18325

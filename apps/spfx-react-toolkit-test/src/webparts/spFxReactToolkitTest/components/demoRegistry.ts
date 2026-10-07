@@ -23,6 +23,14 @@ const lazyPanel = (
 
 export const demoRegistry: readonly DemoRegistryEntry[] = [
   {
+    key: 'imports',
+    title: 'Imports',
+    iconName: 'Code',
+    description: 'Root, domain and legacy imports share callback behavior and style composition.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-imports' */ './panels/ImportsPanel')),
+    coverage: [], // Existing React Hooks and Styles entries own the exported symbols.
+  },
+  {
     key: 'react-hooks',
     title: 'React Hooks',
     iconName: 'Code',

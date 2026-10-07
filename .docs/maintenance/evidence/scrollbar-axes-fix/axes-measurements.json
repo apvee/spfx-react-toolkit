@@ -1,0 +1,26 @@
+[
+  {
+    "name": "edge",
+    "version": "154.0.4258.62",
+    "metrics": {
+      "width": "6px",
+      "height": "6px",
+      "radius": "3px",
+      "verticalGutter": 6,
+      "horizontalGutter": 6
+    },
+    "passed": true
+  },
+  {
+    "name": "chrome",
+    "version": "155.0.8059.39",
+    "metrics": {
+      "width": "6px",
+      "height": "6px",
+      "radius": "3px",
+      "verticalGutter": 6,
+      "horizontalGutter": 6
+    },
+    "passed": true
+  }
+]

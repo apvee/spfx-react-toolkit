@@ -7,7 +7,7 @@ const { loadSxModules } = require('./fixtures/sx-harness.cjs');
 const stylesDirectory = path.resolve(__dirname, '../packages/spfx-react-toolkit/src/helpers/styles');
 const directTokenCounts = {
   foreground: 8, background: 8, presets: 21, 'border-color': 16,
-  'border-width': 8, 'border-radius': 24, 'box-shadow': 2, scrollbar: 1
+  'border-width': 8, 'border-radius': 24, 'box-shadow': 2, scrollbar: 3
 };
 function inspectThemeReferences(source, filename) {
   const ast = ts.createSourceFile(filename, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
@@ -205,7 +205,95 @@ test('scrollbar exposes only fluent and changes appearance without choosing scro
   f.load('resolve.internal').resolveSxInputs({ renderer, dir: 'ltr' }, [scrollbar.fluent]);
   const css = Object.keys(renderer.insertionCache).join('\n');
   assert.match(css, /@media\s*\(forced-colors:\s*active\).*scrollbar-color:\s*auto/);
-  assert.ok(!/overflow|scrollbar-gutter|overscroll|scroll-behavior|-webkit-scrollbar|forced-color-adjust/.test(css));
+  assert.ok(!/overflow|scrollbar-gutter|overscroll|scroll-behavior|forced-color-adjust/.test(css));
+});
+test('fluent scrollbar emits equally sized vendor axes only outside forced colors', () => {
+  const f = loadSxModules(), { createDOMRenderer } = require('@griffel/core');
+  const renderer = createDOMRenderer(null);
+  f.load('resolve.internal').resolveSxInputs({ renderer, dir: 'ltr' }, [f.styles.scrollbar.fluent]);
+  const rules = Object.keys(renderer.insertionCache);
+  const vendor = rules.filter(rule => rule.includes('::-webkit-scrollbar'));
+  assert.ok(vendor.length > 0, 'The recipe must size both vendor scrollbar axes');
+  assert.ok(vendor.every(rule => rule.includes('@supports selector(::-webkit-scrollbar)')
+    && /@media\s*\(forced-colors:\s*none\)/.test(rule)));
+  assert.ok(vendor.some(rule => /::-webkit-scrollbar\{width:6px/.test(rule)), 'The vertical scrollbar uses the approved 6px width');
+  assert.ok(vendor.some(rule => /::-webkit-scrollbar\{height:6px/.test(rule)), 'The horizontal scrollbar uses the approved 6px height');
+  assert.ok(vendor.some(rule => /::-webkit-scrollbar-thumb\{background-color:var\(--colorNeutralStrokeAccessible\)/.test(rule)));
+  assert.ok(vendor.some(rule => /::-webkit-scrollbar-thumb\{border-radius:3px/.test(rule)), 'The 6px thumb retains rounded caps');
+  for (const [property, variable] of [
+    ['width', '--apvee-sx-scrollbarWidth-vendor-base'],
+    ['color', '--apvee-sx-scrollbarColor-vendor-base']
+  ]) {
+    assert.ok(rules.some(rule => rule.includes('@supports selector(::-webkit-scrollbar)')
+      && /@media\s*\(forced-colors:\s*none\)/.test(rule) && rule.includes(`${variable}:auto`)));
+    assert.ok(rules.some(rule => rule.includes(`scrollbar-${property}:var(${variable},`)));
+    assert.ok(rules.some(rule => rule.includes(':where(') && rule.includes(`${variable}:initial`)),
+      'Every vendor override blocks inherited assignments locally');
+  }
+});
+test('vendor scrollbar binding caches stay distinct from generic bindings in either insertion order', () => {
+  for (const recipeFirst of [false, true]) {
+    const f = loadSxModules(), { createDOMRenderer } = require('@griffel/core');
+    const renderer = createDOMRenderer(null), resolve = f.load('resolve.internal').resolveSxInputs;
+    const generic = f.createRecipe('generic-scrollbar', [
+      f.createDeclaration('scrollbarWidth', 'thin', { property: 'scrollbarWidth', fallback: 'auto' }),
+      f.createDeclaration('scrollbarColor', 'var(--colorNeutralStrokeAccessible) transparent', {
+        property: 'scrollbarColor', fallback: 'auto', forcedColors: 'auto' })
+    ]);
+    const classes = new Map();
+    for (const input of recipeFirst ? [f.styles.scrollbar.fluent, generic] : [generic, f.styles.scrollbar.fluent]) {
+      classes.set(input, resolve({ renderer, dir: 'ltr' }, [input]));
+    }
+    const { activeRules } = require('./fixtures/sx-harness.cjs');
+    assert.ok(activeRules(renderer, classes.get(f.styles.scrollbar.fluent)).some(rule => rule.includes('::-webkit-scrollbar')));
+    assert.ok(!activeRules(renderer, classes.get(generic)).some(rule => rule.includes('::-webkit-scrollbar')));
+  }
+});
+test('fluent scrollbar restores Fluent thumb hover and pressed colors with pressed priority', () => {
+  const f = loadSxModules(), renderer = require('@griffel/core').createDOMRenderer(null);
+  f.load('resolve.internal').resolveSxInputs({ renderer, dir: 'ltr' }, [f.styles.scrollbar.fluent]);
+  const rules = Object.keys(renderer.insertionCache);
+  for (const [selector, token] of [
+    ['::-webkit-scrollbar-thumb:hover', '--colorNeutralStrokeAccessibleHover'],
+    ['::-webkit-scrollbar-thumb:active', '--colorNeutralStrokeAccessiblePressed'],
+    ['::-webkit-scrollbar-thumb:hover:active', '--colorNeutralStrokeAccessiblePressed']
+  ]) {
+    assert.ok(rules.some(rule => rule.includes(`${selector}{background-color:var(${token})`)
+      && rule.includes('@supports selector(::-webkit-scrollbar)') && rule.includes('(forced-colors: none)')),
+    `The real thumb ${selector} needs its Fluent state color`);
+  }
+  // The combined hover/active selector has greater specificity than hover alone,
+  // so the pressed token wins regardless of insertion order while both match.
+});
+test('thumb hover and pressed colors each participate independently in renderer cache identity', () => {
+  for (const field of ['scrollbarThumbHover', 'scrollbarThumbPressed']) {
+    const f = loadSxModules(), renderer = require('@griffel/core').createDOMRenderer(null);
+    const resolve = f.load('resolve.internal').resolveSxInputs;
+    const { activeRules } = require('./fixtures/sx-harness.cjs');
+    for (const color of ['red', 'blue']) {
+      const descriptor = f.createDeclaration('scrollbarColor', 'gray transparent', {
+        property: 'scrollbarColor', fallback: 'auto', scrollbarThumb: 'gray', [field]: color
+      });
+      const className = resolve({ renderer, dir: 'ltr' }, [descriptor]);
+      const state = field === 'scrollbarThumbHover' ? 'hover' : 'active';
+      assert.ok(activeRules(renderer, className).some(rule => rule.includes(`::-webkit-scrollbar-thumb:${state}{background-color:${color}`)),
+        `The ${state} color ${color} must survive a previous cached color`);
+    }
+  }
+});
+test('vendor scrollbar selectors stay inside responsive and interaction scopes', () => {
+  const f = loadSxModules(), { createDOMRenderer } = require('@griffel/core');
+  for (const [input, scope, state] of [
+    [f.styles.responsive.medium(f.styles.hover(f.styles.scrollbar.fluent)), '@container apvee-sx (min-inline-size: 640px)', ':hover'],
+    [f.styles.viewport.small(f.styles.focusVisible(f.styles.scrollbar.fluent)), '@media (min-width: 480px)', ':focus-visible']
+  ]) {
+    const renderer = createDOMRenderer(null);
+    f.load('resolve.internal').resolveSxInputs({ renderer, dir: 'ltr' }, [input]);
+    const vendor = Object.keys(renderer.insertionCache).filter(rule => rule.includes('::-webkit-scrollbar'));
+    assert.ok(vendor.length > 0);
+    assert.ok(vendor.every(rule => rule.includes(scope)
+      && (rule.includes(`${state}::-webkit-scrollbar`) || rule.includes(`${state}{--apvee-sx-`))));
+  }
 });
 test('forced colors binding overrides participate in caching and emit their own media rule', () => {
   const f = loadSxModules(), { createDOMRenderer } = require('@griffel/core');

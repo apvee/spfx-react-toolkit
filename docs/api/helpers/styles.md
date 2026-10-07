@@ -2,7 +2,16 @@
 
 Style descriptors are immutable, typed data used to describe dimensions, Fluent theme references, typography, and CSS scopes. They are independent of SPFx context. Creating or importing a descriptor does not access the DOM or insert CSS.
 
-The complete style catalog is available from the package root and the `@apvee/spfx-react-toolkit/lib/helpers/styles` deep entry point:
+The complete style catalog is available from the package root, the clean `@apvee/spfx-react-toolkit/styles` facade and the historical `@apvee/spfx-react-toolkit/lib/helpers/styles` deep entry point. The facade also re-exports canonical `useSx` and all public descriptor types; the narrow `/styles/useSx` entry exposes only that hook. Root, facade and historical leaves compose with the same active renderer/direction context. See [package imports](../../PACKAGE-IMPORTS.md) for resolver/peer contracts and bundle interpretation.
+
+```tsx
+import { useSx, width, typography, SxInput } from '@apvee/spfx-react-toolkit/styles';
+import * as paddingInlineStart from '@apvee/spfx-react-toolkit/lib/helpers/styles/padding-inline-start';
+// In a component: const sx = useSx();
+const inputs: readonly SxInput[] = [width.px(240), typography.body1, paddingInlineStart.px(16)];
+```
+
+Existing root imports remain valid:
 
 ```ts
 import {
@@ -261,16 +270,22 @@ Border geometry remains explicit: compose `borderWidth.thin`, `borderStyle.solid
 
 `overflow.visible/hidden/auto` expand to both `overflowX` and `overflowY`. `overflow.horizontal.visible/hidden/auto` set only `overflowX`; `overflow.vertical.visible/hidden/auto` set only `overflowY`. The browser retains native axis coupling: a visible axis can compute to auto when the other axis is hidden or auto.
 
-`scrollbar.fluent` is the only scrollbar selection. It sets `scrollbarWidth: thin` and `scrollbarColor: var(--colorNeutralStrokeAccessible) transparent`. An actual `(forced-colors: active)` media rule sets `scrollbarColor: auto`, leaving browser system colors available. It adds no overflow, dimensions, gutter, overscroll, smooth scrolling, `forced-color-adjust: none`, or WebKit pseudo-elements.
+`scrollbar.fluent` is the only scrollbar selection (`SxBaseDescriptor`). In Edge/Chrome and other browsers supporting `@supports selector(::-webkit-scrollbar)`, both axes use **6px** scrollbars with a `colorNeutralStrokeAccessible` thumb and transparent track/corner. These pseudo-element rules apply only under `(forced-colors: none)`; standard `scrollbarWidth` and `scrollbarColor` become `auto` in that branch so they do not suppress vendor styling. Other browsers retain standard `scrollbarWidth: thin` and `scrollbarColor: var(--colorNeutralStrokeAccessible) transparent`. An actual `(forced-colors: active)` media rule sets `scrollbarColor: auto`, preserving native thin sizing and browser system colors. The recipe adds no overflow, container dimensions, gutter, overscroll, smooth scrolling, or `forced-color-adjust: none`.
+
+The vendor thumb retains **3px rounded corners** on both axes. Its base color is `colorNeutralStrokeAccessible`; moving the pointer over the thumb itself uses `colorNeutralStrokeAccessibleHover`, and pressing or dragging it uses `colorNeutralStrokeAccessiblePressed`. Pressed feedback wins while the thumb is also hovered; release restores hover feedback and leaving restores the base color. These tokens follow the existing Fluent theme variables in scope. Hovering the content or track does not activate thumb feedback. Forced colors and browsers using the standard fallback retain native interactions.
+
+In SharePoint host mode, [`createFluent9ThemeFromSPFxTheme`](./INDEX.md#createfluent9themefromspfxtheme) keeps the converted base token and maps hover/pressed to the host palette's `neutralPrimary`/`neutralDark`. This avoids the migration shim mapping all three to `neutralSecondary`. Missing state colors use the converted fallback; custom palettes with equal colors can still produce equal feedback colors. Teams themes and the undefined-theme web light fallback retain their existing tokens.
 
 ```tsx
 const sx = useSx();
-return <div className={sx(height.px(160), overflow.vertical.auto, scrollbar.fluent, presets.canvas)}>
-  {/* Content taller than the explicit height becomes scrollable. */}
+return <div className={sx(width.px(320), height.px(160), overflow.auto, scrollbar.fluent, presets.canvas)}>
+  <div className={sx(width.px(600), height.px(400))}>Content scrolls on both axes.</div>
 </div>;
 ```
 
-Browsers must support standard `scrollbar-width` and `scrollbar-color` for the appearance to apply; otherwise native appearance remains. Platform overlay scrollbars may appear only during scrolling. The transparent track reveals the actual underlying surface, so thumb contrast must be checked there.
+Use the existing shared Griffel/Fluent peers and scoped theme variables described above; no extra dependency is required. Browsers without vendor pseudo-element support need standard `scrollbar-width` and `scrollbar-color` for the thin fallback; otherwise native appearance remains. Platform overlay scrollbars may appear only during scrolling. `hover`, `active`, `focusVisible`, `responsive` and `viewport` scopes apply the vendor rules only while their scopes are active; removing the descriptor restores native appearance. The transparent track reveals the actual underlying surface, so thumb contrast must be checked there.
+
+Foreign Griffel declarations retain the usual argument/merge order: a later native `scrollbarWidth: none` hides the scrollbar, and a later `scrollbarColor` overrides its colors. In modern Chromium, non-`auto` standard scrollbar values select native rendering and can bypass the recipe's vendor 6px sizing. Putting `scrollbar.fluent` last restores the recipe in the same scope.
 
 
 The same local Chrome checkpoint measured the accessible neutral scrollbar thumb against the tested underlying surfaces:

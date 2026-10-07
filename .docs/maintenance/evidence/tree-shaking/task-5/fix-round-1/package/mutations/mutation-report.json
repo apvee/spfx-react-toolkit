@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "complete": true,
+  "passed": true,
+  "mutations": [
+    {
+      "id": "unwanted-pnp",
+      "expected": "helper\\/.*forbidden module group pnp",
+      "detected": true,
+      "rejection": "helper/root: forbidden module group pnp\nhelper/domain: forbidden module group pnp\nhelper/leaf: forbidden module group pnp",
+      "evidence": {
+        "reportFile": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/unwanted-pnp/bundle-report.json",
+        "comparisons": [
+          {
+            "candidate": "helper/root",
+            "reference": "helper/leaf",
+            "metric": "gzip",
+            "maxIncreaseBytes": 512,
+            "increaseBytes": 0,
+            "passed": true
+          },
+          {
+            "candidate": "helper/domain",
+            "reference": "helper/leaf",
+            "metric": "gzip",
+            "maxIncreaseBytes": 1023,
+            "increaseBytes": 0,
+            "passed": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "unwanted-descriptor",
+      "expected": "unexpected declaration width=auto|descriptor calls exceeds",
+      "detected": true,
+      "rejection": "sx-width-only/root: unexpected declaration width=auto\nsx-width-only/root: 2 descriptor calls exceeds 1\nsx-width-only/domain: unexpected declaration width=auto\nsx-width-only/domain: 2 descriptor calls exceeds 1\nsx-width-only/leaf: unexpected declaration width=auto\nsx-width-only/leaf: 2 descriptor calls exceeds 1",
+      "evidence": {
+        "reportFile": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/unwanted-descriptor/bundle-report.json",
+        "comparisons": [
+          {
+            "candidate": "sx-width-only/root",
+            "reference": "sx-width-only/leaf",
+            "metric": "gzip",
+            "maxIncreaseBytes": 1023,
+            "increaseBytes": 0,
+            "passed": true
+          },
+          {
+            "candidate": "sx-width-only/domain",
+            "reference": "sx-width-only/leaf",
+            "metric": "gzip",
+            "maxIncreaseBytes": 1023,
+            "increaseBytes": 0,
+            "passed": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing-new-export",
+      "expected": "exports|entrypoint|contract",
+      "detected": true,
+      "rejection": "Package exports differ from the exact additive contract\n+ actual - expected\n... Skipped lines\n\n  {\n    '.': {\n      default: './lib/index.js',\n      types: './lib/index.d.ts'\n    },\n...\n    },\n-   './styles/useSx': {\n-     default: './lib/hooks/useSx.js',\n-     types: './lib/hooks/useSx.d.ts'\n-   }\n  }\n",
+      "evidence": {
+        "exit": null,
+        "signal": null
+      }
+    },
+    {
+      "id": "missing-legacy-export",
+      "expected": "exports|entrypoint|contract",
+      "detected": true,
+      "rejection": "Package exports differ from the exact additive contract\n+ actual - expected\n... Skipped lines\n\n  {\n    '.': {\n      default: './lib/index.js',\n      types: './lib/index.d.ts'\n    },\n...\n    './lib/hooks/useStableCallback.js.map': './lib/hooks/useStableCallback.js.map',\n-   './lib/hooks/useSx': {\n-     default: './lib/hooks/useSx.js',\n-     types: './lib/hooks/useSx.d.ts'\n-   },\n    './lib/hooks/useSx.d.ts': './lib/hooks/useSx.d.ts',\n    './lib/hooks/useSx.d.ts.map': './lib/hooks/useSx.d.ts.map',\n    './lib/hooks/useSx.js': {\n      default: './lib/hooks/useSx.js',\n      types: './lib/hooks/useSx.d.ts'\n",
+      "evidence": {
+        "exit": null,
+        "signal": null
+      }
+    },
+    {
+      "id": "workspace-origin",
+      "expected": "Toolkit origin escaped consumer",
+      "detected": true,
+      "rejection": "Toolkit origin escaped consumer: /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/packages/spfx-react-toolkit/lib/helpers/spfx-graph-path.helpers.js",
+      "evidence": {
+        "exit": null,
+        "signal": null
+      }
+    },
+    {
+      "id": "byte-inflation",
+      "expected": "Gzip comparison helper\\/root increased",
+      "detected": true,
+      "rejection": "Gzip comparison helper/root increased 17514 > 512",
+      "evidence": {
+        "reportFile": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/byte-inflation/bundle-report.json",
+        "comparisons": [
+          {
+            "candidate": "helper/root",
+            "reference": "helper/leaf",
+            "metric": "gzip",
+            "maxIncreaseBytes": 512,
+            "increaseBytes": 17514,
+            "passed": false
+          },
+          {
+            "candidate": "helper/domain",
+            "reference": "helper/leaf",
+            "metric": "gzip",
+            "maxIncreaseBytes": 1023,
+            "increaseBytes": 0,
+            "passed": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "lost-list-registration",
+      "expected": "getByTitle|lists|undefined",
+      "detected": true,
+      "rejection": "Production probe list: PRODUCTION_RUNTIME_FAILURE TypeError: Cannot read properties of undefined (reading 'lists')\n    at Je (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-list-registration/entry.js:1:32215)\n    at n (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-list-registration/entry.js:1:34482)\n    at Object.query (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-list-registration/entry.js:1:34565)\n    at Module.rt (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-list-registration/entry.js:1:37321)\n    at runProbe (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs:98:44)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs:187:42)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n",
+      "evidence": {
+        "bundleSha256": "c52180986c8492e213de60aa869bc251622ef70d98dbdd03482645df1adcf285",
+        "exit": 1,
+        "signal": null,
+        "stderr": "PRODUCTION_RUNTIME_FAILURE TypeError: Cannot read properties of undefined (reading 'lists')\n    at Je (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-list-registration/entry.js:1:32215)\n    at n (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-list-registration/entry.js:1:34482)\n    at Object.query (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-list-registration/entry.js:1:34565)\n    at Module.rt (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-list-registration/entry.js:1:37321)\n    at runProbe (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs:98:44)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs:187:42)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n",
+        "failureMarkers": [
+          "PRODUCTION_RUNTIME_FAILURE TypeError: Cannot read properties of undefined (reading 'lists')"
+        ]
+      }
+    },
+    {
+      "id": "lost-batch-registration",
+      "expected": "batched.*function",
+      "detected": true,
+      "rejection": "Production probe batch: PRODUCTION_RUNTIME_FAILURE TypeError: e.batched is not a function or its return value is not iterable\n    at Object.batch (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-batch-registration/841.f3c139b6f7a01ca5c0f7.js:1:154)\n    at Module.fe (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-batch-registration/entry.js:1:19228)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async runProbe (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs:98:18)\n",
+      "evidence": {
+        "bundleSha256": "d00352aec295691cac46095564b837f65cf28d872d7cb1e26416d901c8bba86a",
+        "exit": 1,
+        "signal": null,
+        "stderr": "PRODUCTION_RUNTIME_FAILURE TypeError: e.batched is not a function or its return value is not iterable\n    at Object.batch (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-batch-registration/841.f3c139b6f7a01ca5c0f7.js:1:154)\n    at Module.fe (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-batch-registration/entry.js:1:19228)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async runProbe (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs:98:18)\n",
+        "failureMarkers": [
+          "PRODUCTION_RUNTIME_FAILURE TypeError: e.batched is not a function or its return value is not iterable"
+        ]
+      }
+    },
+    {
+      "id": "lost-search-prototype",
+      "expected": "search.*function",
+      "detected": true,
+      "rejection": "Production probe search: PRODUCTION_RUNTIME_FAILURE TypeError: e.search is not a function\n    at Object.search (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-search-prototype/entry.js:1:23647)\n    at Module.ye (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-search-prototype/entry.js:1:23932)\n    at runProbe (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs:98:44)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs:187:42)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n",
+      "evidence": {
+        "bundleSha256": "15d5266992bbfe8bd05a5c62726291b19682b74974e5f69aee3b544adbaa8f63",
+        "exit": 1,
+        "signal": null,
+        "stderr": "PRODUCTION_RUNTIME_FAILURE TypeError: e.search is not a function\n    at Object.search (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-search-prototype/entry.js:1:23647)\n    at Module.ye (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-search-prototype/entry.js:1:23932)\n    at runProbe (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs:98:44)\n    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-production-runtime.cjs:187:42)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Object..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Function._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n",
+        "failureMarkers": [
+          "PRODUCTION_RUNTIME_FAILURE TypeError: e.search is not a function"
+        ]
+      }
+    }
+  ],
+  "failures": [],
+  "provenance": {
+    "consumerRoot": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-gG1Wze/consumer",
+    "installation": "reuses installed consumer dependencies; separate toolkit copies; no npm install"
+  },
+  "durationMs": 15770
+}

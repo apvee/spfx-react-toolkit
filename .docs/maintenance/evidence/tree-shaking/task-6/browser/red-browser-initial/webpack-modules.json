@@ -1,0 +1,586 @@
+{
+  "modules": [
+    {
+      "type": "orphan modules",
+      "orphan": true,
+      "filteredChildren": 3306,
+      "size": 22917716,
+      "sizes": {
+        "javascript": 22917716
+      }
+    },
+    {
+      "type": "runtime modules",
+      "moduleType": "runtime",
+      "filteredChildren": 5,
+      "size": 2032,
+      "sizes": {
+        "runtime": 2032
+      }
+    },
+    {
+      "type": "module",
+      "moduleType": "javascript/esm",
+      "layer": null,
+      "size": 1141250,
+      "sizes": {
+        "javascript": 1141250
+      },
+      "built": true,
+      "codeGenerated": true,
+      "buildTimeExecuted": false,
+      "cached": false,
+      "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx|eca2bb98fe403492597a6045ddb442f7",
+      "name": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx + 350 modules",
+      "nameForCondition": "/private/tmp/imports-panel-browser-qa/entry.tsx",
+      "index": 0,
+      "preOrderIndex": 0,
+      "index2": 361,
+      "postOrderIndex": 361,
+      "cacheable": true,
+      "optional": false,
+      "orphan": false,
+      "failed": false,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "type": "module",
+      "moduleType": "javascript/auto",
+      "layer": null,
+      "size": 190,
+      "sizes": {
+        "javascript": 190
+      },
+      "built": true,
+      "codeGenerated": true,
+      "buildTimeExecuted": false,
+      "cached": false,
+      "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/index.js",
+      "name": "./node_modules/react/index.js",
+      "nameForCondition": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/index.js",
+      "index": 1,
+      "preOrderIndex": 1,
+      "index2": 2,
+      "postOrderIndex": 2,
+      "cacheable": true,
+      "optional": false,
+      "orphan": false,
+      "issuer": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+      "issuerName": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx",
+      "issuerPath": [
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+          "name": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx"
+        }
+      ],
+      "failed": false,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "type": "module",
+      "moduleType": "javascript/auto",
+      "layer": null,
+      "size": 1363,
+      "sizes": {
+        "javascript": 1363
+      },
+      "built": true,
+      "codeGenerated": true,
+      "buildTimeExecuted": false,
+      "cached": false,
+      "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/index.js",
+      "name": "./node_modules/react-dom/index.js",
+      "nameForCondition": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/index.js",
+      "index": 4,
+      "preOrderIndex": 4,
+      "index2": 6,
+      "postOrderIndex": 6,
+      "cacheable": true,
+      "optional": false,
+      "orphan": false,
+      "issuer": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+      "issuerName": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx",
+      "issuerPath": [
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+          "name": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx"
+        }
+      ],
+      "failed": false,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "type": "module",
+      "moduleType": "javascript/auto",
+      "layer": null,
+      "size": 6450,
+      "sizes": {
+        "javascript": 6450
+      },
+      "built": true,
+      "codeGenerated": true,
+      "buildTimeExecuted": false,
+      "cached": false,
+      "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/cjs/react.production.min.js",
+      "name": "./node_modules/react/cjs/react.production.min.js",
+      "nameForCondition": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/cjs/react.production.min.js",
+      "index": 2,
+      "preOrderIndex": 2,
+      "index2": 1,
+      "postOrderIndex": 1,
+      "cacheable": true,
+      "optional": false,
+      "orphan": false,
+      "issuer": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/index.js",
+      "issuerName": "./node_modules/react/index.js",
+      "issuerPath": [
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+          "name": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/index.js",
+          "name": "./node_modules/react/index.js"
+        }
+      ],
+      "failed": false,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "type": "module",
+      "moduleType": "javascript/auto",
+      "layer": null,
+      "size": 120688,
+      "sizes": {
+        "javascript": 120688
+      },
+      "built": true,
+      "codeGenerated": true,
+      "buildTimeExecuted": false,
+      "cached": false,
+      "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.production.min.js",
+      "name": "./node_modules/react-dom/cjs/react-dom.production.min.js",
+      "nameForCondition": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.production.min.js",
+      "index": 5,
+      "preOrderIndex": 5,
+      "index2": 5,
+      "postOrderIndex": 5,
+      "cacheable": true,
+      "optional": false,
+      "orphan": false,
+      "issuer": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/index.js",
+      "issuerName": "./node_modules/react-dom/index.js",
+      "issuerPath": [
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+          "name": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/index.js",
+          "name": "./node_modules/react-dom/index.js"
+        }
+      ],
+      "failed": false,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "type": "module",
+      "moduleType": "javascript/auto",
+      "layer": null,
+      "size": 2108,
+      "sizes": {
+        "javascript": 2108
+      },
+      "built": true,
+      "codeGenerated": true,
+      "buildTimeExecuted": false,
+      "cached": false,
+      "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/object-assign/index.js",
+      "name": "./node_modules/object-assign/index.js",
+      "nameForCondition": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/object-assign/index.js",
+      "index": 3,
+      "preOrderIndex": 3,
+      "index2": 0,
+      "postOrderIndex": 0,
+      "cacheable": true,
+      "optional": false,
+      "orphan": false,
+      "issuer": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/cjs/react.production.min.js",
+      "issuerName": "./node_modules/react/cjs/react.production.min.js",
+      "issuerPath": [
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+          "name": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/index.js",
+          "name": "./node_modules/react/index.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/cjs/react.production.min.js",
+          "name": "./node_modules/react/cjs/react.production.min.js"
+        }
+      ],
+      "failed": false,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "type": "module",
+      "moduleType": "javascript/auto",
+      "layer": null,
+      "size": 198,
+      "sizes": {
+        "javascript": 198
+      },
+      "built": true,
+      "codeGenerated": true,
+      "buildTimeExecuted": false,
+      "cached": false,
+      "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/scheduler/index.js",
+      "name": "./node_modules/scheduler/index.js",
+      "nameForCondition": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/scheduler/index.js",
+      "index": 6,
+      "preOrderIndex": 6,
+      "index2": 4,
+      "postOrderIndex": 4,
+      "cacheable": true,
+      "optional": false,
+      "orphan": false,
+      "issuer": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.production.min.js",
+      "issuerName": "./node_modules/react-dom/cjs/react-dom.production.min.js",
+      "issuerPath": [
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+          "name": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/index.js",
+          "name": "./node_modules/react-dom/index.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.production.min.js",
+          "name": "./node_modules/react-dom/cjs/react-dom.production.min.js"
+        }
+      ],
+      "failed": false,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "type": "module",
+      "moduleType": "javascript/auto",
+      "layer": null,
+      "size": 4235,
+      "sizes": {
+        "javascript": 4235
+      },
+      "built": true,
+      "codeGenerated": true,
+      "buildTimeExecuted": false,
+      "cached": false,
+      "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/scheduler/cjs/scheduler.production.min.js",
+      "name": "./node_modules/scheduler/cjs/scheduler.production.min.js",
+      "nameForCondition": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/scheduler/cjs/scheduler.production.min.js",
+      "index": 7,
+      "preOrderIndex": 7,
+      "index2": 3,
+      "postOrderIndex": 3,
+      "cacheable": true,
+      "optional": false,
+      "orphan": false,
+      "issuer": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/scheduler/index.js",
+      "issuerName": "./node_modules/scheduler/index.js",
+      "issuerPath": [
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+          "name": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/index.js",
+          "name": "./node_modules/react-dom/index.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.production.min.js",
+          "name": "./node_modules/react-dom/cjs/react-dom.production.min.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/scheduler/index.js",
+          "name": "./node_modules/scheduler/index.js"
+        }
+      ],
+      "failed": false,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "type": "module",
+      "moduleType": "javascript/auto",
+      "layer": null,
+      "size": 214,
+      "sizes": {
+        "javascript": 214
+      },
+      "built": true,
+      "codeGenerated": true,
+      "buildTimeExecuted": false,
+      "cached": false,
+      "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/jsx-runtime.js",
+      "name": "./node_modules/react/jsx-runtime.js",
+      "nameForCondition": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/jsx-runtime.js",
+      "index": 295,
+      "preOrderIndex": 295,
+      "index2": 289,
+      "postOrderIndex": 289,
+      "cacheable": true,
+      "optional": false,
+      "orphan": false,
+      "issuer": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-jsx-runtime/lib/utils/Runtime.js",
+      "issuerName": "./node_modules/@fluentui/react-jsx-runtime/lib/utils/Runtime.js",
+      "issuerPath": [
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+          "name": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/ImportsPanel.tsx",
+          "name": "./apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/ImportsPanel.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/index.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/index.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/FluentProvider.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/FluentProvider.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/components/FluentProvider/index.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/components/FluentProvider/index.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/components/FluentProvider/renderFluentProvider.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/components/FluentProvider/renderFluentProvider.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-jsx-runtime/lib/jsx-runtime.js",
+          "name": "./node_modules/@fluentui/react-jsx-runtime/lib/jsx-runtime.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-jsx-runtime/lib/utils/Runtime.js",
+          "name": "./node_modules/@fluentui/react-jsx-runtime/lib/utils/Runtime.js"
+        }
+      ],
+      "failed": false,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "type": "module",
+      "moduleType": "javascript/auto",
+      "layer": null,
+      "size": 196,
+      "sizes": {
+        "javascript": 196
+      },
+      "built": true,
+      "codeGenerated": true,
+      "buildTimeExecuted": false,
+      "cached": false,
+      "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-is/index.js",
+      "name": "./node_modules/react-is/index.js",
+      "nameForCondition": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-is/index.js",
+      "index": 289,
+      "preOrderIndex": 289,
+      "index2": 283,
+      "postOrderIndex": 283,
+      "cacheable": true,
+      "optional": false,
+      "orphan": false,
+      "issuer": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-jsx-runtime/lib/utils/warnIfElementTypeIsInvalid.js",
+      "issuerName": "./node_modules/@fluentui/react-jsx-runtime/lib/utils/warnIfElementTypeIsInvalid.js",
+      "issuerPath": [
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+          "name": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/ImportsPanel.tsx",
+          "name": "./apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/ImportsPanel.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/index.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/index.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/FluentProvider.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/FluentProvider.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/components/FluentProvider/index.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/components/FluentProvider/index.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/components/FluentProvider/renderFluentProvider.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/components/FluentProvider/renderFluentProvider.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-jsx-runtime/lib/jsx-runtime.js",
+          "name": "./node_modules/@fluentui/react-jsx-runtime/lib/jsx-runtime.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-jsx-runtime/lib/jsx/createJSX.js",
+          "name": "./node_modules/@fluentui/react-jsx-runtime/lib/jsx/createJSX.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-jsx-runtime/lib/utils/warnIfElementTypeIsInvalid.js",
+          "name": "./node_modules/@fluentui/react-jsx-runtime/lib/utils/warnIfElementTypeIsInvalid.js"
+        }
+      ],
+      "failed": false,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "type": "module",
+      "moduleType": "javascript/auto",
+      "layer": null,
+      "size": 962,
+      "sizes": {
+        "javascript": 962
+      },
+      "built": true,
+      "codeGenerated": true,
+      "buildTimeExecuted": false,
+      "cached": false,
+      "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/cjs/react-jsx-runtime.production.min.js",
+      "name": "./node_modules/react/cjs/react-jsx-runtime.production.min.js",
+      "nameForCondition": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/cjs/react-jsx-runtime.production.min.js",
+      "index": 296,
+      "preOrderIndex": 296,
+      "index2": 288,
+      "postOrderIndex": 288,
+      "cacheable": true,
+      "optional": false,
+      "orphan": false,
+      "issuer": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/jsx-runtime.js",
+      "issuerName": "./node_modules/react/jsx-runtime.js",
+      "issuerPath": [
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+          "name": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/ImportsPanel.tsx",
+          "name": "./apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/ImportsPanel.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/index.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/index.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/FluentProvider.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/FluentProvider.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/components/FluentProvider/index.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/components/FluentProvider/index.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/components/FluentProvider/renderFluentProvider.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/components/FluentProvider/renderFluentProvider.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-jsx-runtime/lib/jsx-runtime.js",
+          "name": "./node_modules/@fluentui/react-jsx-runtime/lib/jsx-runtime.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-jsx-runtime/lib/utils/Runtime.js",
+          "name": "./node_modules/@fluentui/react-jsx-runtime/lib/utils/Runtime.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react/jsx-runtime.js",
+          "name": "./node_modules/react/jsx-runtime.js"
+        }
+      ],
+      "failed": false,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "type": "module",
+      "moduleType": "javascript/auto",
+      "layer": null,
+      "size": 2347,
+      "sizes": {
+        "javascript": 2347
+      },
+      "built": true,
+      "codeGenerated": true,
+      "buildTimeExecuted": false,
+      "cached": false,
+      "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-is/cjs/react-is.production.min.js",
+      "name": "./node_modules/react-is/cjs/react-is.production.min.js",
+      "nameForCondition": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-is/cjs/react-is.production.min.js",
+      "index": 290,
+      "preOrderIndex": 290,
+      "index2": 282,
+      "postOrderIndex": 282,
+      "cacheable": true,
+      "optional": false,
+      "orphan": false,
+      "issuer": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-is/index.js",
+      "issuerName": "./node_modules/react-is/index.js",
+      "issuerPath": [
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/private/tmp/imports-panel-browser-qa/entry.tsx",
+          "name": "../../../../../private/tmp/imports-panel-browser-qa/entry.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/sx-browser-typescript-loader.cjs!/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/ImportsPanel.tsx",
+          "name": "./apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/ImportsPanel.tsx"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/index.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/index.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/FluentProvider.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/FluentProvider.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/components/FluentProvider/index.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/components/FluentProvider/index.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-provider/lib/components/FluentProvider/renderFluentProvider.js",
+          "name": "./node_modules/@fluentui/react-provider/lib/components/FluentProvider/renderFluentProvider.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-jsx-runtime/lib/jsx-runtime.js",
+          "name": "./node_modules/@fluentui/react-jsx-runtime/lib/jsx-runtime.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-jsx-runtime/lib/jsx/createJSX.js",
+          "name": "./node_modules/@fluentui/react-jsx-runtime/lib/jsx/createJSX.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/@fluentui/react-jsx-runtime/lib/utils/warnIfElementTypeIsInvalid.js",
+          "name": "./node_modules/@fluentui/react-jsx-runtime/lib/utils/warnIfElementTypeIsInvalid.js"
+        },
+        {
+          "identifier": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-is/index.js",
+          "name": "./node_modules/react-is/index.js"
+        }
+      ],
+      "failed": false,
+      "errors": 0,
+      "warnings": 0
+    }
+  ]
+}

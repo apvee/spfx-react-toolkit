@@ -132,3 +132,17 @@ assertStyleExampleCoverage(
   read(path.join(panelsPath, 'stylesCatalog.ts'))
 );
 console.log(`Verified webpart demo coverage for ${hookSymbols.length} hooks, ${providerSymbols.length} providers and ${styleSurface.filter(item => !item.name.startsWith('Sx')).length} qualified runtime style exports (interactive catalog/scopes).`);
+
+// This scenario verifies import interoperability without counting existing hooks twice.
+const importsPanelSource = read(path.join(panelsPath, 'ImportsPanel.tsx'));
+const importsRegistry = read(registryPath);
+for (const marker of ["key: 'imports'", "webpackChunkName: 'spfx-demo-imports'", "'./panels/ImportsPanel'"]) {
+  if (!importsRegistry.includes(marker)) throw new Error(`Imports scenario registry missing ${marker}`);
+}
+for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invoke original callback',
+  'Apply width override', 'Remove width override', 'data-imports-demo="direction"',
+  'rootCallback(state.observe)', 'domainCallback(state.observe)', 'legacyCallback(state.observe)',
+  'rootSx()', 'domainSx()', 'legacySx()']) {
+  if (!importsPanelSource.includes(marker)) throw new Error(`Observable Imports scenario missing ${marker}`);
+}
+console.log('Verified dedicated root/domain/legacy Imports scenario (no duplicate export coverage).');

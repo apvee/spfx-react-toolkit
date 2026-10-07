@@ -1,0 +1,40 @@
+[
+  {
+    "args": [
+      "run",
+      "build:library"
+    ],
+    "command": "npm",
+    "commandArgs": [
+      "run",
+      "build:library"
+    ],
+    "cwd": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit",
+    "prepareMetadata": false,
+    "metadataAdvisoryRouting": false,
+    "status": 0,
+    "signal": null,
+    "failureMarkers": [],
+    "warnings": []
+  },
+  {
+    "args": [
+      "install",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "command": "npm",
+    "commandArgs": [
+      "install",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "cwd": "/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-gkQDdj/consumer",
+    "prepareMetadata": false,
+    "metadataAdvisoryRouting": false,
+    "status": null,
+    "signal": "SIGTERM",
+    "failureMarkers": [],
+    "warnings": []
+  }
+]

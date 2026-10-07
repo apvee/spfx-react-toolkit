@@ -17,7 +17,9 @@ export function resolveSxInputs(environment: SxStyleEnvironment, inputs: readonl
     for (const declaration of segment.declarations) {
       const scopeKey = sxScopeKey(declaration.query, declaration.state);
       const bindingKey = JSON.stringify([
-        declaration.binding.property, declaration.binding.fallback, declaration.binding.forcedColors, scopeKey
+        declaration.binding.property, declaration.binding.fallback, declaration.binding.forcedColors,
+        declaration.binding.scrollbarSize, declaration.binding.scrollbarThumb,
+        declaration.binding.scrollbarThumbHover, declaration.binding.scrollbarThumbPressed, scopeKey
       ]);
       let binding = cache.bindings.get(bindingKey);
       if (!binding) {

@@ -12,6 +12,7 @@ const label = process.env.STYLES_PANEL_LABEL || 'task-5-ui-browser';
 const port = Number(process.env.STYLES_PANEL_PORT || 4320);
 const url = `http://127.0.0.1:${port}`;
 const observations = [], failures = [], consoleMessages = [], pageErrors = [];
+const thumbInteractionCaptures = [];
 let browser, server, page;
 function check(name, actual, expected) {
   const pass = JSON.stringify(actual) === JSON.stringify(expected);
@@ -32,6 +33,46 @@ async function themeChecks(choice, theme) {
   await select('preset', 'canvas');
   check(`${choice}:canvas-background`, await computed('preset-preview', 'backgroundColor'), rgb(theme.colorNeutralBackground1));
   check(`${choice}:canvas-color`, await computed('preset-preview', 'color'), rgb(theme.colorNeutralForeground1));
+}
+async function thumbInteractions(axis) {
+  const target = node('scroll-preview');
+  await target.scrollIntoViewIfNeeded();
+  await target.evaluate(element => { element.scrollTop = 0; element.scrollLeft = 0; });
+  const geometry = await target.evaluate(element => {
+    const rect = element.getBoundingClientRect(), css = getComputedStyle(element);
+    return { x: rect.x, y: rect.y, width: rect.width, height: rect.height,
+      left: parseFloat(css.borderLeftWidth), right: parseFloat(css.borderRightWidth),
+      top: parseFloat(css.borderTopWidth), bottom: parseFloat(css.borderBottomWidth) };
+  });
+  const point = axis === 'vertical'
+    ? { x: geometry.x + geometry.width - geometry.right - 3, y: geometry.y + geometry.top + 10 }
+    : { x: geometry.x + geometry.left + 10, y: geometry.y + geometry.height - geometry.bottom - 3 };
+  let pointer = { x: 0, y: 0 };
+  async function capture(phase, colorToken) {
+    await settle();
+    const filename = `${label}-scroll-thumb-${axis}-${phase}.png`;
+    await target.screenshot({ path: path.join(output, filename) });
+    thumbInteractionCaptures.push({ axis, phase, filename, expectedColor: rgb(await token(colorToken)),
+      pointer, geometry, paintVerification: 'Requires screenshot/pixel review; computed pseudo style does not expose native thumb state' });
+  }
+  await page.mouse.move(0, 0);
+  await capture('base', 'colorNeutralStrokeAccessible');
+  pointer = point;
+  await page.mouse.move(point.x, point.y);
+  await capture('hover', 'colorNeutralStrokeAccessibleHover');
+  await page.mouse.down();
+  try {
+    await capture('pressed', 'colorNeutralStrokeAccessiblePressed');
+    pointer = { x: point.x + (axis === 'horizontal' ? 30 : 0), y: point.y + (axis === 'vertical' ? 15 : 0) };
+    await page.mouse.move(pointer.x, pointer.y, { steps: 4 });
+    await capture('drag', 'colorNeutralStrokeAccessiblePressed');
+    check(`actual ${axis} thumb drag scrolls`, await target.evaluate((element, direction) =>
+      direction === 'vertical' ? element.scrollTop > 0 : element.scrollLeft > 0, axis), true);
+  } finally { await page.mouse.up(); }
+  await capture('released', 'colorNeutralStrokeAccessibleHover');
+  pointer = { x: 0, y: 0 };
+  await page.mouse.move(0, 0);
+  await capture('leave', 'colorNeutralStrokeAccessible');
 }
 (async () => {
   fs.mkdirSync(output, { recursive: true });
@@ -119,11 +160,28 @@ async function themeChecks(choice, theme) {
   check('disabled native action inert', await page.getByText('Action invocations:', { exact: false }).textContent(), before);
   await node('disabled').uncheck(); await node('selected').uncheck();
   check('scroll recipe overflow', await computed('scroll-preview', 'overflowY'), 'auto');
-  check('scroll recipe width', await computed('scroll-preview', 'scrollbarWidth'), 'thin');
+  const vendorScrollbars = await page.evaluate(() => CSS.supports('selector(::-webkit-scrollbar)'));
+  check('scroll recipe width', await computed('scroll-preview', 'scrollbarWidth'), vendorScrollbars ? 'auto' : 'thin');
+  if (vendorScrollbars) check('scroll recipe equally sized axes', await node('scroll-preview').evaluate(element => {
+    const css = getComputedStyle(element, '::-webkit-scrollbar');
+    return { width: css.width, height: css.height };
+  }), { width: '6px', height: '6px' });
   check('scroll region genuinely scrolls', await node('scroll-preview').evaluate(element => { element.scrollTop = 40; return element.scrollTop; }), 40);
+  check('scroll region scrolls horizontally', await node('scroll-preview').evaluate(element => { element.scrollLeft = 40; return element.scrollLeft; }), 40);
+  if (vendorScrollbars) {
+    check('actual thumb selectors supported', await page.evaluate(() =>
+      ['::-webkit-scrollbar-thumb:hover', '::-webkit-scrollbar-thumb:active', '::-webkit-scrollbar-thumb:hover:active']
+        .every(selector => CSS.supports(`selector(${selector})`))), true);
+    for (const axis of ['vertical', 'horizontal']) await thumbInteractions(axis);
+  }
   await page.emulateMedia({ forcedColors: 'active' });
   check('forced colors real media active', await page.evaluate(() => matchMedia('(forced-colors: active)').matches), true);
   check('forced colors system scrollbar', await computed('scroll-preview', 'scrollbarColor'), 'auto');
+  check('forced colors native thin width', await computed('scroll-preview', 'scrollbarWidth'), 'thin');
+  if (vendorScrollbars) check('forced colors vendor sizing inactive', await node('scroll-preview').evaluate(element => {
+    const css = getComputedStyle(element, '::-webkit-scrollbar');
+    return { width: css.width, height: css.height };
+  }), { width: 'auto', height: 'auto' });
   check('forced color adjust retained', await computed('scroll-preview', 'forcedColorAdjust'), 'auto');
   await page.emulateMedia({ forcedColors: 'none' });
   const catalog = await node('catalog-family').locator('option').evaluateAll(options => options.map(option => option.value));
@@ -157,7 +215,7 @@ async function themeChecks(choice, theme) {
   if (browser) await browser.close();
   if (server) await new Promise(resolve => server.close(resolve));
   fs.mkdirSync(output, { recursive: true });
-  fs.writeFileSync(path.join(output, `${label}.json`), JSON.stringify({ url, browser: version, boundary: 'SPFx Teams/theme hook context only; actual compiled library, sample panel, React17, Griffel, FluentProvider', observations, failures, consoleMessages, pageErrors }, null, 2));
+  fs.writeFileSync(path.join(output, `${label}.json`), JSON.stringify({ url, browser: version, boundary: 'SPFx Teams/theme hook context only; actual compiled library, sample panel, React17, Griffel, FluentProvider', observations, thumbInteractionCaptures, failures, consoleMessages, pageErrors }, null, 2));
   console.log(JSON.stringify({ browser: version, checks: observations.length, failures, consoleMessages, pageErrors }, null, 2));
   if (failures.length) process.exitCode = 1;
 });

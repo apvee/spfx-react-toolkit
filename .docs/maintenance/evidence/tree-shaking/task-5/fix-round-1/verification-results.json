@@ -1,0 +1,100 @@
+{
+  "commands": [
+    {
+      "command": "node --test tests/bundle-contract.test.cjs tests/production-runtime.test.cjs",
+      "exit": 0,
+      "tests": 30,
+      "failures": 0
+    },
+    {
+      "command": "npm test",
+      "exit": 0,
+      "tests": 657,
+      "failures": 0
+    },
+    {
+      "command": "npm run verify:package",
+      "exit": 0
+    }
+  ],
+  "bundle": {
+    "complete": true,
+    "passed": true,
+    "fixtureCount": 36
+  },
+  "runtime": {
+    "complete": true,
+    "passed": true,
+    "probeCount": 18
+  },
+  "mutations": {
+    "complete": true,
+    "passed": true,
+    "count": 9,
+    "diagnostics": [
+      {
+        "id": "unwanted-pnp",
+        "mode": "audit",
+        "complete": true,
+        "passed": null,
+        "failures": [
+          "helper/root: forbidden module group pnp",
+          "helper/domain: forbidden module group pnp",
+          "helper/leaf: forbidden module group pnp"
+        ]
+      },
+      {
+        "id": "unwanted-descriptor",
+        "mode": "audit",
+        "complete": true,
+        "passed": null,
+        "failures": [
+          "sx-width-only/root: unexpected declaration width=auto",
+          "sx-width-only/root: 2 descriptor calls exceeds 1",
+          "sx-width-only/domain: unexpected declaration width=auto",
+          "sx-width-only/domain: 2 descriptor calls exceeds 1",
+          "sx-width-only/leaf: unexpected declaration width=auto",
+          "sx-width-only/leaf: 2 descriptor calls exceeds 1"
+        ]
+      },
+      {
+        "id": "byte-inflation",
+        "mode": "audit",
+        "complete": true,
+        "passed": null,
+        "failures": [
+          "Gzip comparison helper/root increased 17514 > 512"
+        ]
+      }
+    ]
+  },
+  "package": {
+    "consumer": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-gG1Wze/consumer",
+    "durationMs": 132484,
+    "packedFiles": 603,
+    "packedBytes": 242995,
+    "documentedDeclarations": 237,
+    "production": {
+      "bundle": {
+        "complete": true,
+        "passed": true,
+        "durationMs": 34855
+      },
+      "runtime": {
+        "complete": true,
+        "passed": true,
+        "durationMs": 32567
+      },
+      "mutations": {
+        "complete": true,
+        "passed": true,
+        "durationMs": 15770
+      }
+    },
+    "failures": []
+  },
+  "baselineBeforeSha256": "3c596d1dc0701b9b790fc878c0d350663ab9c2014d96dcbef8d2be44f5464299",
+  "baselineAfterSha256": "3c596d1dc0701b9b790fc878c0d350663ab9c2014d96dcbef8d2be44f5464299",
+  "baselineUnchanged": true,
+  "fixtureAssetsAndTotalsStableAgainstVersionedSnapshot": true
+}

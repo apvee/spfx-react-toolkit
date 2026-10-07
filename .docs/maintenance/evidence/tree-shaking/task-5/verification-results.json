@@ -1,0 +1,237 @@
+{
+  "commands": [
+    {
+      "command": "node --test tests/bundle-contract.test.cjs tests/production-runtime.test.cjs tests/import-graph.test.cjs",
+      "exit": 0,
+      "tests": 41,
+      "failures": 0,
+      "log": "focused-final.log"
+    },
+    {
+      "command": "npm test",
+      "exit": 0,
+      "tests": 655,
+      "failures": 0,
+      "log": "npm-test-final.log"
+    },
+    {
+      "command": "npm run verify",
+      "exit": 0,
+      "log": "verify-final-detector.log",
+      "tests": 655,
+      "failures": 0
+    },
+    {
+      "command": "npm run verify:package (approved network, writable cache, fresh installed consumer)",
+      "exit": 0,
+      "log": "verify-package-final.log"
+    },
+    {
+      "command": "full relocation measure + compareBundleReports",
+      "exit": 0,
+      "report": "relocation-comparison.json"
+    },
+    {
+      "command": "verify-bundle-contract --write-baseline tests/fixtures/tree-shaking/baseline.json",
+      "exit": 0,
+      "log": "baseline-update.log"
+    }
+  ],
+  "production": {
+    "bundle": {
+      "complete": true,
+      "passed": true,
+      "durationMs": 36297
+    },
+    "runtime": {
+      "complete": true,
+      "passed": true,
+      "durationMs": 32917
+    },
+    "mutations": {
+      "complete": true,
+      "passed": true,
+      "durationMs": 18202
+    }
+  },
+  "packageDurationMs": 137208,
+  "fixtureCount": 36,
+  "runtimeProcessCount": 18,
+  "runtimeExitSignals": [
+    [
+      "context",
+      "root",
+      0,
+      null,
+      []
+    ],
+    [
+      "context",
+      "domain",
+      0,
+      null,
+      []
+    ],
+    [
+      "context",
+      "leaf",
+      0,
+      null,
+      []
+    ],
+    [
+      "list",
+      "root",
+      0,
+      null,
+      []
+    ],
+    [
+      "list",
+      "domain",
+      0,
+      null,
+      []
+    ],
+    [
+      "list",
+      "leaf",
+      0,
+      null,
+      []
+    ],
+    [
+      "search",
+      "root",
+      0,
+      null,
+      []
+    ],
+    [
+      "search",
+      "domain",
+      0,
+      null,
+      []
+    ],
+    [
+      "search",
+      "leaf",
+      0,
+      null,
+      []
+    ],
+    [
+      "batch",
+      "root",
+      0,
+      null,
+      []
+    ],
+    [
+      "batch",
+      "domain",
+      0,
+      null,
+      []
+    ],
+    [
+      "batch",
+      "leaf",
+      0,
+      null,
+      []
+    ],
+    [
+      "providers",
+      "root",
+      0,
+      null,
+      []
+    ],
+    [
+      "providers",
+      "domain",
+      0,
+      null,
+      []
+    ],
+    [
+      "providers",
+      "leaf",
+      0,
+      null,
+      []
+    ],
+    [
+      "styles",
+      "root",
+      0,
+      null,
+      []
+    ],
+    [
+      "styles",
+      "domain",
+      0,
+      null,
+      []
+    ],
+    [
+      "styles",
+      "leaf",
+      0,
+      null,
+      []
+    ]
+  ],
+  "mutations": [
+    {
+      "id": "unwanted-pnp",
+      "detected": true,
+      "expected": "helper\\/.*forbidden module group pnp"
+    },
+    {
+      "id": "unwanted-descriptor",
+      "detected": true,
+      "expected": "unexpected declaration width=auto|descriptor calls exceeds"
+    },
+    {
+      "id": "missing-new-export",
+      "detected": true,
+      "expected": "exports|entrypoint|contract"
+    },
+    {
+      "id": "missing-legacy-export",
+      "detected": true,
+      "expected": "exports|entrypoint|contract"
+    },
+    {
+      "id": "workspace-origin",
+      "detected": true,
+      "expected": "Toolkit origin escaped consumer"
+    },
+    {
+      "id": "byte-inflation",
+      "detected": true,
+      "expected": "Gzip comparison helper\\/root increased"
+    },
+    {
+      "id": "lost-list-registration",
+      "detected": true,
+      "expected": "getByTitle|lists|undefined"
+    },
+    {
+      "id": "lost-batch-registration",
+      "detected": true,
+      "expected": "batched.*function"
+    },
+    {
+      "id": "lost-search-prototype",
+      "detected": true,
+      "expected": "search.*function"
+    }
+  ],
+  "baselineSha256": "3c596d1dc0701b9b790fc878c0d350663ab9c2014d96dcbef8d2be44f5464299",
+  "baselineMatchesFullMeasurement": true
+}

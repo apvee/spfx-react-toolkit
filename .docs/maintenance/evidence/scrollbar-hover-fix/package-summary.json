@@ -1,0 +1,982 @@
+{
+  "consumer": {
+    "consumer": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-dShT5Y/consumer",
+    "durationMs": 106424,
+    "packedFiles": 603,
+    "packedBytes": 245249,
+    "documentedDeclarations": 237,
+    "production": {
+      "bundle": {
+        "complete": true,
+        "passed": true,
+        "durationMs": 28800
+      },
+      "runtime": {
+        "complete": true,
+        "passed": true,
+        "durationMs": 25588
+      },
+      "mutations": {
+        "complete": true,
+        "passed": true,
+        "durationMs": 12570
+      }
+    },
+    "failures": []
+  },
+  "provenance": {
+    "node": "v22.20.0",
+    "npm": "11.19.1",
+    "versions": {
+      "typescript": "5.3.3",
+      "webpack": "5.95.0",
+      "react": "17.0.1",
+      "react-dom": "17.0.1",
+      "@pnp/sp": "4.17.0",
+      "@pnp/core": "4.17.0",
+      "@pnp/queryable": "4.17.0",
+      "@griffel/core": "1.19.2",
+      "@griffel/react": "1.5.30",
+      "@fluentui/react-theme": "9.2.0",
+      "@fluentui/react-utilities": "9.25.1",
+      "@fluentui/react-shared-contexts": "9.25.2",
+      "@microsoft/sp-core-library": "1.21.1"
+    },
+    "rootLockfileSha256": "56b44d939cac13a5b31cf9d81474bbc3c6b714da9b4438f4c7ffb7c509ed9dbf",
+    "consumerLockfileSha256": "66698d93db4f8307fa0243e0b51a619b044a8a9e31d083f2a8a2b129dd8d35de",
+    "tarballSha256": "62543801dad551af8f190ab4a5cb1127ca0938f34cd46fa988b9b5455ee86366",
+    "toolkitDir": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-dShT5Y/consumer/node_modules/@apvee/spfx-react-toolkit",
+    "consumerRoot": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-dShT5Y/consumer",
+    "loaderSha256": "5d2e745458f7c15032e9ddee8529e4765f4101891bec956aec2e3667bc84500e",
+    "minifierVersion": "5.44.0",
+    "zlibVersion": "1.3.1-470d3a2",
+    "compression": {
+      "gzipLevel": 9,
+      "brotliQuality": 11
+    }
+  },
+  "bundle": {
+    "complete": true,
+    "passed": true,
+    "fixtures": 36,
+    "comparisons": [
+      {
+        "candidate": "helper/root",
+        "reference": "helper/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 512,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "helper/domain",
+        "reference": "helper/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "stable-callback/root",
+        "reference": "stable-callback/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "stable-callback/domain",
+        "reference": "stable-callback/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "provider/root",
+        "reference": "provider/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "provider/domain",
+        "reference": "provider/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "sx-width-only/root",
+        "reference": "sx-width-only/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "sx-width-only/domain",
+        "reference": "sx-width-only/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "pnp-context/root",
+        "reference": "pnp-context/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "pnp-context/domain",
+        "reference": "pnp-context/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "pnp-list/root",
+        "reference": "pnp-list/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "pnp-list/domain",
+        "reference": "pnp-list/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "pnp-search/root",
+        "reference": "pnp-search/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "pnp-search/domain",
+        "reference": "pnp-search/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "pnp-batch/root",
+        "reference": "pnp-batch/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "pnp-batch/domain",
+        "reference": "pnp-batch/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "sx-minimum/root",
+        "reference": "sx-minimum/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "sx-minimum/domain",
+        "reference": "sx-minimum/leaf",
+        "metric": "gzip",
+        "maxIncreaseBytes": 1023,
+        "increaseBytes": 0,
+        "passed": true
+      },
+      {
+        "candidate": "sx-minimum/leaf",
+        "reference": "griffel-direct/control",
+        "metric": "gzip",
+        "informational": true,
+        "increaseBytes": 1971,
+        "passed": null
+      },
+      {
+        "candidate": "already-fluent/control",
+        "reference": "already-fluent-direct/control",
+        "metric": "gzip",
+        "informational": true,
+        "increaseBytes": 1625,
+        "passed": null
+      }
+    ],
+    "totals": {
+      "helper/root": {
+        "initial": {
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275
+        }
+      },
+      "helper/domain": {
+        "initial": {
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275
+        }
+      },
+      "helper/leaf": {
+        "initial": {
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275
+        }
+      },
+      "stable-callback/root": {
+        "initial": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        }
+      },
+      "stable-callback/domain": {
+        "initial": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        }
+      },
+      "stable-callback/leaf": {
+        "initial": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        }
+      },
+      "stable-callback/probe": {
+        "initial": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        }
+      },
+      "provider/root": {
+        "initial": {
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609
+        }
+      },
+      "provider/domain": {
+        "initial": {
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609
+        }
+      },
+      "provider/leaf": {
+        "initial": {
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609
+        }
+      },
+      "sx-width-only/root": {
+        "initial": {
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318
+        }
+      },
+      "sx-width-only/domain": {
+        "initial": {
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318
+        }
+      },
+      "sx-width-only/leaf": {
+        "initial": {
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318
+        }
+      },
+      "pnp-context/root": {
+        "initial": {
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570
+        }
+      },
+      "pnp-context/domain": {
+        "initial": {
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570
+        }
+      },
+      "pnp-context/leaf": {
+        "initial": {
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570
+        }
+      },
+      "pnp-list/root": {
+        "initial": {
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838
+        }
+      },
+      "pnp-list/domain": {
+        "initial": {
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838
+        }
+      },
+      "pnp-list/leaf": {
+        "initial": {
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838
+        }
+      },
+      "pnp-search/root": {
+        "initial": {
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724
+        }
+      },
+      "pnp-search/domain": {
+        "initial": {
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724
+        }
+      },
+      "pnp-search/leaf": {
+        "initial": {
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724
+        }
+      },
+      "pnp-batch/root": {
+        "initial": {
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684
+        }
+      },
+      "pnp-batch/domain": {
+        "initial": {
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684
+        }
+      },
+      "pnp-batch/leaf": {
+        "initial": {
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684
+        }
+      },
+      "sx-minimum/root": {
+        "initial": {
+          "raw": 35221,
+          "gzip": 11986,
+          "brotli": 10743
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 35221,
+          "gzip": 11986,
+          "brotli": 10743
+        }
+      },
+      "sx-minimum/domain": {
+        "initial": {
+          "raw": 35221,
+          "gzip": 11986,
+          "brotli": 10743
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 35221,
+          "gzip": 11986,
+          "brotli": 10743
+        }
+      },
+      "sx-minimum/leaf": {
+        "initial": {
+          "raw": 35221,
+          "gzip": 11986,
+          "brotli": 10743
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 35221,
+          "gzip": 11986,
+          "brotli": 10743
+        }
+      },
+      "sx-minimum/probe": {
+        "initial": {
+          "raw": 35221,
+          "gzip": 11986,
+          "brotli": 10743
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 35221,
+          "gzip": 11986,
+          "brotli": 10743
+        }
+      },
+      "empty/control": {
+        "initial": {
+          "raw": 412,
+          "gzip": 267,
+          "brotli": 227
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 412,
+          "gzip": 267,
+          "brotli": 227
+        }
+      },
+      "type-only/control": {
+        "initial": {
+          "raw": 412,
+          "gzip": 267,
+          "brotli": 227
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 412,
+          "gzip": 267,
+          "brotli": 227
+        }
+      },
+      "griffel-direct/control": {
+        "initial": {
+          "raw": 28184,
+          "gzip": 10015,
+          "brotli": 9090
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 28184,
+          "gzip": 10015,
+          "brotli": 9090
+        }
+      },
+      "already-fluent/control": {
+        "initial": {
+          "raw": 72708,
+          "gzip": 23632,
+          "brotli": 20127
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 72708,
+          "gzip": 23632,
+          "brotli": 20127
+        }
+      },
+      "already-fluent-direct/control": {
+        "initial": {
+          "raw": 66421,
+          "gzip": 22007,
+          "brotli": 18689
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 66421,
+          "gzip": 22007,
+          "brotli": 18689
+        }
+      },
+      "dynamic-styles/control": {
+        "initial": {
+          "raw": 65081,
+          "gzip": 15594,
+          "brotli": 13566
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 65081,
+          "gzip": 15594,
+          "brotli": 13566
+        }
+      },
+      "lazy-styles/control": {
+        "initial": {
+          "raw": 3437,
+          "gzip": 1724,
+          "brotli": 1483
+        },
+        "async": {
+          "raw": 262343,
+          "gzip": 66522,
+          "brotli": 55426
+        },
+        "union": {
+          "raw": 265780,
+          "gzip": 68246,
+          "brotli": 56909
+        }
+      }
+    }
+  },
+  "runtime": {
+    "complete": true,
+    "passed": true,
+    "probes": 18
+  },
+  "mutations": {
+    "complete": true,
+    "passed": true,
+    "detected": [
+      {
+        "id": "unwanted-pnp",
+        "detected": true
+      },
+      {
+        "id": "unwanted-descriptor",
+        "detected": true
+      },
+      {
+        "id": "missing-new-export",
+        "detected": true
+      },
+      {
+        "id": "missing-legacy-export",
+        "detected": true
+      },
+      {
+        "id": "workspace-origin",
+        "detected": true
+      },
+      {
+        "id": "byte-inflation",
+        "detected": true
+      },
+      {
+        "id": "lost-list-registration",
+        "detected": true
+      },
+      {
+        "id": "lost-batch-registration",
+        "detected": true
+      },
+      {
+        "id": "lost-search-prototype",
+        "detected": true
+      }
+    ]
+  },
+  "packageCommandStatuses": [
+    {
+      "args": [
+        "run",
+        "build:library"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "ls",
+        "--parseable",
+        "--all",
+        "@griffel/core",
+        "@griffel/react",
+        "@fluentui/react-shared-contexts",
+        "@fluentui/react-migration-v8-v9",
+        "@fluentui/react-theme",
+        "@fluentui/react-utilities"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "ls",
+        "react",
+        "react-dom",
+        "@microsoft/sp-core-library",
+        "@pnp/sp",
+        "@griffel/core",
+        "@griffel/react",
+        "@fluentui/react-shared-contexts",
+        "@fluentui/react-migration-v8-v9",
+        "@fluentui/react-theme",
+        "@fluentui/react-utilities",
+        "tslib"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "run",
+        "bundle:ship"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit",
+        "--strict",
+        "--skipLibCheck",
+        "--target",
+        "es2020",
+        "--module",
+        "esnext",
+        "--moduleResolution",
+        "node",
+        "compatibility/sx-package-public.ts",
+        "compatibility/sx-package-deep.ts"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "run",
+        "package:solution"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    }
+  ]
+}

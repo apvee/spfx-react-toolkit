@@ -1,0 +1,505 @@
+{
+  "schemaVersion": 1,
+  "mode": "enforce",
+  "complete": true,
+  "provenance": {
+    "node": "v22.20.0",
+    "npm": "11.19.1",
+    "versions": {
+      "typescript": "5.3.3",
+      "webpack": "5.95.0",
+      "react": "17.0.1",
+      "react-dom": "17.0.1",
+      "@pnp/sp": "4.17.0",
+      "@pnp/core": "4.17.0",
+      "@pnp/queryable": "4.17.0",
+      "@griffel/core": "1.19.2",
+      "@griffel/react": "1.5.30",
+      "@fluentui/react-theme": "9.2.0",
+      "@fluentui/react-utilities": "9.25.1",
+      "@fluentui/react-shared-contexts": "9.25.2",
+      "@microsoft/sp-core-library": "1.21.1"
+    },
+    "rootLockfileSha256": "56b44d939cac13a5b31cf9d81474bbc3c6b714da9b4438f4c7ffb7c509ed9dbf",
+    "consumerLockfileSha256": "efdddc2c6950650f197584547c9ea4d3b6e5ae48c1de06220bb06bace0768298",
+    "tarballSha256": "5f6dfb24dc7371971850f01c8bc4a19b338c8ad9faf204a9df16fa59db61a298",
+    "toolkitDir": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/toolkit-contract-mutation-6OMdeX/node_modules/@apvee/spfx-react-toolkit",
+    "consumerRoot": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/toolkit-contract-mutation-6OMdeX",
+    "loaderSha256": "5d2e745458f7c15032e9ddee8529e4765f4101891bec956aec2e3667bc84500e",
+    "minifierVersion": "5.44.0",
+    "zlibVersion": "1.3.1-470d3a2",
+    "compression": {
+      "gzipLevel": 9,
+      "brotliQuality": 11
+    }
+  },
+  "attribution": false,
+  "contractSha256": "cbb30b17726ecda64e953d992efdc978f00f409516701132ec35ab635842d774",
+  "fixtures": [
+    {
+      "id": "sx-width-only/root",
+      "status": "measured",
+      "statsFile": "sx-width-only-root-stats.json.gz",
+      "templateSha256": "95ee95b4ce47b5565b4f1aff90a89ab0139145812577804e07424f4d889399d4",
+      "fixtureSha256": "7db06af4604e1289a898399fab1027a29a54053cfbe658b13dd6f95a3d52c1cb",
+      "configSha256": "3b32b35bc6c97e8c3288ce83cdb806992dcea179c6212d0dd53c29ee24604611",
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 716,
+          "gzip": 412,
+          "brotli": 346,
+          "sha256": "3387a0fb3a8de8814dbe8c4cc587d9bb951202c8d812b663ef8f8facfb13ea5b",
+          "initial": true
+        }
+      ],
+      "totals": {
+        "initial": {
+          "raw": 716,
+          "gzip": 412,
+          "brotli": 346
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 716,
+          "gzip": 412,
+          "brotli": 346
+        }
+      },
+      "emittedModules": [
+        {
+          "resource": ".tree-shaking/entries/sx-width-only/root.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 2372,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/descriptor.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createDeclaration"
+          ],
+          "sizeBeforeMinification": 1235,
+          "reasonCounts": {
+            "total": 322,
+            "active": 270
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "sxDescriptorBrand"
+          ],
+          "sizeBeforeMinification": 162,
+          "reasonCounts": {
+            "total": 6,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/width.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "full"
+          ],
+          "sizeBeforeMinification": 855,
+          "reasonCounts": {
+            "total": 3,
+            "active": 1
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "retentionObservations": [
+        {
+          "kind": "declaration",
+          "property": "width",
+          "staticValue": "auto"
+        },
+        {
+          "kind": "declaration",
+          "property": "width",
+          "staticValue": "100%"
+        }
+      ],
+      "warnings": [],
+      "errors": [],
+      "failures": [
+        "sx-width-only/root: unexpected declaration width=auto",
+        "sx-width-only/root: 2 descriptor calls exceeds 1"
+      ]
+    },
+    {
+      "id": "sx-width-only/domain",
+      "status": "measured",
+      "statsFile": "sx-width-only-domain-stats.json.gz",
+      "templateSha256": "95ee95b4ce47b5565b4f1aff90a89ab0139145812577804e07424f4d889399d4",
+      "fixtureSha256": "7086e03220d21564c45abe781ccf58ab7f5f3ff6820082433babae4f5526c155",
+      "configSha256": "72e44fb17f79b12c1dd8a59726ca1fe96048ad5e2f096c676b54f86c89c05ba4",
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 716,
+          "gzip": 412,
+          "brotli": 346,
+          "sha256": "3387a0fb3a8de8814dbe8c4cc587d9bb951202c8d812b663ef8f8facfb13ea5b",
+          "initial": true
+        }
+      ],
+      "totals": {
+        "initial": {
+          "raw": 716,
+          "gzip": 412,
+          "brotli": 346
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 716,
+          "gzip": 412,
+          "brotli": 346
+        }
+      },
+      "emittedModules": [
+        {
+          "resource": ".tree-shaking/entries/sx-width-only/domain.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 2381,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/descriptor.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createDeclaration"
+          ],
+          "sizeBeforeMinification": 1235,
+          "reasonCounts": {
+            "total": 322,
+            "active": 270
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "sxDescriptorBrand"
+          ],
+          "sizeBeforeMinification": 162,
+          "reasonCounts": {
+            "total": 6,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/width.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "full"
+          ],
+          "sizeBeforeMinification": 855,
+          "reasonCounts": {
+            "total": 3,
+            "active": 1
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "retentionObservations": [
+        {
+          "kind": "declaration",
+          "property": "width",
+          "staticValue": "auto"
+        },
+        {
+          "kind": "declaration",
+          "property": "width",
+          "staticValue": "100%"
+        }
+      ],
+      "warnings": [],
+      "errors": [],
+      "failures": [
+        "sx-width-only/domain: unexpected declaration width=auto",
+        "sx-width-only/domain: 2 descriptor calls exceeds 1"
+      ]
+    },
+    {
+      "id": "sx-width-only/leaf",
+      "status": "measured",
+      "statsFile": "sx-width-only-leaf-stats.json.gz",
+      "templateSha256": "95ee95b4ce47b5565b4f1aff90a89ab0139145812577804e07424f4d889399d4",
+      "fixtureSha256": "936597fef315180ae26d983128f2069b1c9ea9f93bd26ebb00c06c9fa4939ec3",
+      "configSha256": "b7d7ee1659cdc80e45b445ff35257b538d937333a288a73e49886aee132ceee8",
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 716,
+          "gzip": 412,
+          "brotli": 346,
+          "sha256": "3387a0fb3a8de8814dbe8c4cc587d9bb951202c8d812b663ef8f8facfb13ea5b",
+          "initial": true
+        }
+      ],
+      "totals": {
+        "initial": {
+          "raw": 716,
+          "gzip": 412,
+          "brotli": 346
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 716,
+          "gzip": 412,
+          "brotli": 346
+        }
+      },
+      "emittedModules": [
+        {
+          "resource": ".tree-shaking/entries/sx-width-only/leaf.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 2390,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/descriptor.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createDeclaration"
+          ],
+          "sizeBeforeMinification": 1235,
+          "reasonCounts": {
+            "total": 5,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "sxDescriptorBrand"
+          ],
+          "sizeBeforeMinification": 162,
+          "reasonCounts": {
+            "total": 3,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/width.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "full"
+          ],
+          "sizeBeforeMinification": 855,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "retentionObservations": [
+        {
+          "kind": "declaration",
+          "property": "width",
+          "staticValue": "auto"
+        },
+        {
+          "kind": "declaration",
+          "property": "width",
+          "staticValue": "100%"
+        }
+      ],
+      "warnings": [],
+      "errors": [],
+      "failures": [
+        "sx-width-only/leaf: unexpected declaration width=auto",
+        "sx-width-only/leaf: 2 descriptor calls exceeds 1"
+      ]
+    }
+  ],
+  "comparisons": [
+    {
+      "candidate": "sx-width-only/root",
+      "reference": "sx-width-only/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "sx-width-only/domain",
+      "reference": "sx-width-only/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    }
+  ],
+  "warnings": [],
+  "errors": [],
+  "failures": [
+    "sx-width-only/root: unexpected declaration width=auto",
+    "sx-width-only/root: 2 descriptor calls exceeds 1",
+    "sx-width-only/domain: unexpected declaration width=auto",
+    "sx-width-only/domain: 2 descriptor calls exceeds 1",
+    "sx-width-only/leaf: unexpected declaration width=auto",
+    "sx-width-only/leaf: 2 descriptor calls exceeds 1"
+  ],
+  "durationMs": 2127,
+  "passed": false
+}

@@ -1,0 +1,2409 @@
+{
+  "schemaVersion": 1,
+  "mode": "enforce",
+  "provenance": {
+    "node": "v22.20.0",
+    "versions": {
+      "typescript": "5.3.3",
+      "webpack": "5.95.0",
+      "react": "17.0.1",
+      "react-dom": "17.0.1",
+      "@pnp/sp": "4.17.0",
+      "@pnp/core": "4.17.0",
+      "@pnp/queryable": "4.17.0",
+      "@griffel/core": "1.19.2",
+      "@griffel/react": "1.5.30",
+      "@fluentui/react-theme": "9.2.0",
+      "@fluentui/react-utilities": "9.25.1",
+      "@fluentui/react-shared-contexts": "9.25.2",
+      "@microsoft/sp-core-library": "1.21.1"
+    },
+    "rootLockfileSha256": "56b44d939cac13a5b31cf9d81474bbc3c6b714da9b4438f4c7ffb7c509ed9dbf",
+    "consumerLockfileSha256": "47f7d9af69d52601d824c5da69ef657b5b540015f8a5ccd3a21491f75bd36c44",
+    "tarballSha256": "24f034a5acb60a68f46c0023784b484941800e09b78d86a65fdad0535270c208",
+    "toolkitDir": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-3lJvjT/consumer/node_modules/@apvee/spfx-react-toolkit",
+    "consumerRoot": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-3lJvjT/consumer",
+    "loaderSha256": "5d2e745458f7c15032e9ddee8529e4765f4101891bec956aec2e3667bc84500e",
+    "minifierVersion": "5.44.0",
+    "zlibVersion": "1.3.1-470d3a2",
+    "compression": {
+      "gzipLevel": 9,
+      "brotliQuality": 11
+    }
+  },
+  "attribution": false,
+  "contractSha256": "50b73b3f10d5d6acd4e651fb265ead908453bd2112b32695e6bae788f2434576",
+  "fixtures": [
+    {
+      "id": "helper/root",
+      "status": "measured",
+      "statsFile": "helper-root-stats.json.gz",
+      "templateSha256": "7e87608b95a8103493721524ef8362300acdd5911ce07997f67b0d92a405fbd2",
+      "fixtureSha256": "4c36daa27939d1375268d9381aa03771d32c76658a49c078de5c2d1e66722243",
+      "configSha256": "e0d069613a1836e8e3eb2cf623fde80cda21361b1e13d89a85c43af8c493e294",
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 40908,
+          "gzip": 13321,
+          "brotli": 11762,
+          "sha256": "24618de903de0e85ea83484f3e49bf6d95101a443d79896610054c5eec432299",
+          "initial": true
+        }
+      ],
+      "totals": {
+        "initial": {
+          "raw": 40908,
+          "gzip": 13321,
+          "brotli": 11762
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 40908,
+          "gzip": 13321,
+          "brotli": 11762
+        }
+      },
+      "emittedModules": [
+        {
+          "resource": ".tree-shaking/entries/helper/root.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 663968,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/core/context.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1378,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 984,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/core/provider-application-customizer.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1544,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/core/provider-base.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 7984,
+          "reasonCounts": {
+            "total": 8,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/core/provider-field-customizer.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1572,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/core/provider-listview-commandset.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1782,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/core/provider-webpart.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1130,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/core/state.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2836,
+          "reasonCounts": {
+            "total": 17,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "buildOneDriveAppDataPath"
+          ],
+          "sizeBeforeMinification": 624,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/spfx-api-permission-precheck.helpers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 15566,
+          "reasonCounts": {
+            "total": 11,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/spfx-container.helpers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 854,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/spfx-graph-path.helpers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "buildOneDriveAppDataPath"
+          ],
+          "sizeBeforeMinification": 1131,
+          "reasonCounts": {
+            "total": 7,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/align-items.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1333,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/align-self.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1286,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/background.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2805,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/bindings.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3028,
+          "reasonCounts": {
+            "total": 3,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/border-color.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3596,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/border-radius.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 5258,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/border-style.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 844,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/border-width.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2485,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/box-shadow.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 982,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/cache.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 488,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/container.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 883,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/descriptor.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createDeclaration",
+            "createRecipe"
+          ],
+          "sizeBeforeMinification": 1235,
+          "reasonCounts": {
+            "total": 322,
+            "active": 300
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/flex-item.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 860,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/flex.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1319,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/foreground.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2639,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/gap.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1789,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/grid.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1087,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/height.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 890,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2023,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/justify-content.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1194,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/margin-block-end.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2026,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/margin-block-start.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2072,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/margin-block.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2117,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/margin-inline-end.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2049,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/margin-inline-start.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2095,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/margin-inline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2147,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/margin.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2304,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/max-height.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 678,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/max-width.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 668,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/min-height.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 676,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/min-width.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 670,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/normalize.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1946,
+          "reasonCounts": {
+            "total": 5,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/overflow-horizontal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1095,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/overflow-vertical.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1081,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/overflow.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1532,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/padding-block-end.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2049,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/padding-block-start.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2095,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/padding-block.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2147,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/padding-inline-end.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2072,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/padding-inline-start.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2118,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/padding-inline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2177,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/padding.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2348,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/presets.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 7655,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/resolve.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1852,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/responsive.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1245,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/scopes.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 553,
+          "reasonCounts": {
+            "total": 12,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/scrollbar.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/spacing.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1049,
+          "reasonCounts": {
+            "total": 120,
+            "active": 15
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/states.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1152,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/text-align.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 795,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/text.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1161,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "sxDescriptorBrand"
+          ],
+          "sizeBeforeMinification": 162,
+          "reasonCounts": {
+            "total": 6,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/typography.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 14401,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/viewport.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1123,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/helpers/styles/width.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 816,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2775,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useAppCatalogUrl.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2989,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useAsyncInvoke.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3577,
+          "reasonCounts": {
+            "total": 8,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxAadHttpClient.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 11776,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxAadTokenProvider.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 6167,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxApiPermissionPrecheck.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 9569,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxContainerInfo.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1404,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxContainerSize.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3365,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxContext.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 506,
+          "reasonCounts": {
+            "total": 12,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxCorrelationInfo.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1652,
+          "reasonCounts": {
+            "total": 6,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxCrossSitePermissions.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 5462,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxDisplayMode.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2021,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxEnvironmentInfo.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1499,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxFluent9ThemeInfo.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3844,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxHttpClient.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 6883,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxHubSiteInfo.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 4292,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxInstanceInfo.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 959,
+          "reasonCounts": {
+            "total": 10,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxListInfo.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1746,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxLocaleInfo.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3117,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxLogger.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3871,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxMSGraphClient.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 10772,
+          "reasonCounts": {
+            "total": 6,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxOneDriveAppData.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 19173,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxPageContext.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1567,
+          "reasonCounts": {
+            "total": 28,
+            "active": 14
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxPageType.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2120,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxPerformance.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3935,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxPermissions.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2350,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxPnP.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 14490,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxPnPContext.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 10159,
+          "reasonCounts": {
+            "total": 8,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxPnPList.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 15036,
+          "reasonCounts": {
+            "total": 8,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxPnPList.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 10445,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxPnPListById.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1120,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxPnPListByPath.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1265,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxPnPListByUrl.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1234,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxPnPSearch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 15567,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxProperties.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2756,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxServiceScope.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3452,
+          "reasonCounts": {
+            "total": 14,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxSiteInfo.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3166,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxSiteKeyValueStore.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 6786,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxSPHttpClient.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 7449,
+          "reasonCounts": {
+            "total": 10,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxStorage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 5838,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxTeams.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 5003,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxTenantKeyValueStore.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 16164,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxTenantProperty.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 7675,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxThemeInfo.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 917,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxUserInfo.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1197,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSPFxUserPhoto.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 10932,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/hooks/useSx.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1239,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "buildOneDriveAppDataPath"
+          ],
+          "sizeBeforeMinification": 957,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 741,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-api-permission-precheck.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3283,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-app-catalog.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1735,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-list-key-value-store.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 11556,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-context.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2076,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-list-target.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 4049,
+          "reasonCounts": {
+            "total": 10,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-list.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 7882,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-search.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3401,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 435,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-site-key-value-store.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8442,
+          "reasonCounts": {
+            "total": 13,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-site-key-value-store.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2644,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-tenant-key-value-store.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 296,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-tenant-property.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1140,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/utils/resize-observer.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1630,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/utils/theme-subscription.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2796,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@fluentui/tokens/lib/global/typographyStyles.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "typographyStyles"
+          ],
+          "sizeBeforeMinification": 3564,
+          "reasonCounts": {
+            "total": 73,
+            "active": 68
+          }
+        },
+        {
+          "resource": "@fluentui/tokens/lib/tokens.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "tokens"
+          ],
+          "sizeBeforeMinification": 33470,
+          "reasonCounts": {
+            "total": 228,
+            "active": 211
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "objectDefinedNotNull",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 123,
+            "active": 89
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CacheAlways",
+            "CacheKey"
+          ],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "TextParse",
+            "parseBinderWithErrorCheck",
+            "parseODataJSON"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CacheAlways",
+            "CacheKey",
+            "Queryable",
+            "TextParse",
+            "addProp",
+            "body",
+            "headers",
+            "invokable",
+            "op",
+            "parseBinderWithErrorCheck",
+            "parseODataJSON",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 65,
+            "active": 49
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "invokable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 5,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 8,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/request-digest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2749,
+          "reasonCounts": {
+            "total": 6,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spbrowser.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1066,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spfx.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2864,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 14,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 11,
+            "active": 9
+          }
+        },
+        {
+          "resource": "@pnp/sp/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 639,
+          "reasonCounts": {
+            "total": 7,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 123,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/list.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 185,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Items"
+          ],
+          "sizeBeforeMinification": 10316,
+          "reasonCounts": {
+            "total": 7,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 131,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "List",
+            "Lists",
+            "_List"
+          ],
+          "sizeBeforeMinification": 14969,
+          "reasonCounts": {
+            "total": 15,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/web.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 822,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 536,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/query.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "_Search"
+          ],
+          "sizeBeforeMinification": 8112,
+          "reasonCounts": {
+            "total": 6,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/suggest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "_Suggest"
+          ],
+          "sizeBeforeMinification": 1732,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3429,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "deleteableWithETag",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 85,
+            "active": 82
+          }
+        },
+        {
+          "resource": "@pnp/sp/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3312,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 12,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/odata-url-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "odataUrlFrom"
+          ],
+          "sizeBeforeMinification": 1558,
+          "reasonCounts": {
+            "total": 7,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/to-resource-path.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "toResourcePath"
+          ],
+          "sizeBeforeMinification": 129,
+          "reasonCounts": {
+            "total": 5,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 16,
+            "active": 14
+          }
+        },
+        {
+          "resource": "external commonjs \"@microsoft/sp-component-base\"",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 42,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "external commonjs \"@microsoft/sp-core-library\"",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 42,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "external commonjs \"@microsoft/sp-http\"",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 42,
+          "reasonCounts": {
+            "total": 41,
+            "active": 12
+          }
+        },
+        {
+          "resource": "external commonjs \"@microsoft/sp-page-context\"",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 42,
+          "reasonCounts": {
+            "total": 10,
+            "active": 3
+          }
+        },
+        {
+          "resource": "external commonjs \"react\"",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createContext"
+          ],
+          "sizeBeforeMinification": 42,
+          "reasonCounts": {
+            "total": 4013,
+            "active": 2724
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 1374,
+            "active": 856
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "retentionObservations": [],
+      "warnings": [],
+      "errors": [],
+      "failures": [
+        "helper/root: forbidden module group pnp",
+        "helper/root: forbidden module group styles-engine"
+      ]
+    }
+  ],
+  "comparisons": [],
+  "warnings": [],
+  "errors": [
+    "helper/domain: missing imports @apvee/spfx-react-toolkit/helpers",
+    "helper/domain: missing imports @apvee/spfx-react-toolkit/helpers"
+  ],
+  "failures": [
+    "helper/root: forbidden module group pnp",
+    "helper/root: forbidden module group styles-engine"
+  ],
+  "durationMs": 2623,
+  "passed": false,
+  "complete": false
+}

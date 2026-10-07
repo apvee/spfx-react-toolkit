@@ -16,7 +16,15 @@ jobs:
       - run: npm run verify
       - run: npm run package:solution
       - run: npm run verify:package
+        env:
+          SPFX_PACKAGE_EVIDENCE: .docs/maintenance/evidence/tree-shaking/ci/package
       - uses: actions/upload-artifact@v4
         with:
           name: spfx-test-solution
           path: apps/spfx-react-toolkit-test/sharepoint/solution/*.sppkg
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tree-shaking-contract-reports
+          path: .docs/maintenance/evidence/tree-shaking/
+          if-no-files-found: warn

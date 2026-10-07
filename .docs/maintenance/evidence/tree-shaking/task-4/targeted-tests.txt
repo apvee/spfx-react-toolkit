@@ -1,0 +1,210 @@
+TAP version 13
+# [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+# Subtest: concatenated emitted modules are traversed
+ok 1 - concatenated emitted modules are traversed
+  ---
+  duration_ms: 16.812792
+  type: 'test'
+  ...
+# Subtest: unused parsed module is not emitted
+ok 2 - unused parsed module is not emitted
+  ---
+  duration_ms: 0.986583
+  type: 'test'
+  ...
+# Subtest: shared lazy asset is counted once
+ok 3 - shared lazy asset is counted once
+  ---
+  duration_ms: 0.680458
+  type: 'test'
+  ...
+# Subtest: audit report cannot satisfy enforce
+ok 4 - audit report cannot satisfy enforce
+  ---
+  duration_ms: 0.304542
+  type: 'test'
+  ...
+# Subtest: consumer slots are strict and width pairs are coherent
+ok 5 - consumer slots are strict and width pairs are coherent
+  ---
+  duration_ms: 0.540416
+  type: 'test'
+  ...
+# Subtest: retention parser observes static descriptor constructor calls
+ok 6 - retention parser observes static descriptor constructor calls
+  ---
+  duration_ms: 9.561333
+  type: 'test'
+  ...
+# Subtest: legacy retention parser preserves value observation
+ok 7 - legacy retention parser preserves value observation
+  ---
+  duration_ms: 1.83575
+  type: 'test'
+  ...
+# Subtest: contract rejects unknown module groups and malformed comparisons
+ok 8 - contract rejects unknown module groups and malformed comparisons
+  ---
+  duration_ms: 0.324791
+  type: 'test'
+  ...
+# Subtest: descriptor and emitted group checks produce concrete failures
+ok 9 - descriptor and emitted group checks produce concrete failures
+  ---
+  duration_ms: 0.602917
+  type: 'test'
+  ...
+# Subtest: truncated nested stats are rejected instead of hiding emitted dependencies
+ok 10 - truncated nested stats are rejected instead of hiding emitted dependencies
+  ---
+  duration_ms: 0.605
+  type: 'test'
+  ...
+# Subtest: nonliteral descriptor values are not reported as static values
+ok 11 - nonliteral descriptor values are not reported as static values
+  ---
+  duration_ms: 1.073542
+  type: 'test'
+  ...
+# Subtest: real production concatenation exposes emitted leaves without parsed orphan inventory
+ok 12 - real production concatenation exposes emitted leaves without parsed orphan inventory
+  ---
+  duration_ms: 950.732833
+  type: 'test'
+  ...
+# Subtest: replay comparison requires identical asset bytes hashes and stable provenance
+ok 13 - replay comparison requires identical asset bytes hashes and stable provenance
+  ---
+  duration_ms: 0.764167
+  type: 'test'
+  ...
+# Subtest: replay comparison rejects missing fixtures unless an explicit subset was selected
+ok 14 - replay comparison rejects missing fixtures unless an explicit subset was selected
+  ---
+  duration_ms: 0.367083
+  type: 'test'
+  ...
+# Subtest: measurement runtime provenance records Node and npm versions
+ok 15 - measurement runtime provenance records Node and npm versions
+  ---
+  duration_ms: 204.187083
+  type: 'test'
+  ...
+# Subtest: initial and progress enforce snapshots never claim a completed gate
+ok 16 - initial and progress enforce snapshots never claim a completed gate
+  ---
+  duration_ms: 0.1735
+  type: 'test'
+  ...
+# Subtest: isolation contract rejects upstream typography even with no retained descriptor calls
+ok 17 - isolation contract rejects upstream typography even with no retained descriptor calls
+  ---
+  duration_ms: 1.052583
+  type: 'test'
+  ...
+# Subtest: type-only edges introduce no runtime dependency
+ok 18 - type-only edges introduce no runtime dependency
+  ---
+  duration_ms: 1512.414375
+  type: 'test'
+  ...
+# Subtest: named and namespace reexports resolve canonical leaves
+ok 19 - named and namespace reexports resolve canonical leaves
+  ---
+  duration_ms: 842.313
+  type: 'test'
+  ...
+# Subtest: internal barrel import and unresolved module are reported
+ok 20 - internal barrel import and unresolved module are reported
+  ---
+  duration_ms: 668.898959
+  type: 'test'
+  ...
+# Subtest: runtime cycles are reported without losing unrelated exports
+ok 21 - runtime cycles are reported without losing unrelated exports
+  ---
+  duration_ms: 527.256416
+  type: 'test'
+  ...
+# Subtest: unmarked type-only reexport is absent in emitted JS
+ok 22 - unmarked type-only reexport is absent in emitted JS
+  ---
+  duration_ms: 499.9975
+  type: 'test'
+  ...
+# Subtest: mixed runtime and erased reexports sharing a specifier retain separate edge kinds
+ok 23 - mixed runtime and erased reexports sharing a specifier retain separate edge kinds
+  ---
+  duration_ms: 1268.498
+  type: 'test'
+  ...
+# Subtest: unresolved external packages are reported
+ok 24 - unresolved external packages are reported
+  ---
+  duration_ms: 692.012792
+  type: 'test'
+  ...
+# Subtest: renamed imported namespaces retain runtime leaves and dependencies
+ok 25 - renamed imported namespaces retain runtime leaves and dependencies
+  ---
+  duration_ms: 483.667584
+  type: 'test'
+  ...
+# Subtest: source rules reject internal barrel imports, global renderers and unclassified registrations
+ok 26 - source rules reject internal barrel imports, global renderers and unclassified registrations
+  ---
+  duration_ms: 0.862584
+  type: 'test'
+  ...
+# Subtest: repository source effects match the manifest and internal imports use direct modules
+ok 27 - repository source effects match the manifest and internal imports use direct modules
+  ---
+  duration_ms: 1951.691167
+  type: 'test'
+  ...
+# Subtest: list factory works without context factory or webs preload
+ok 28 - list factory works without context factory or webs preload
+  ---
+  duration_ms: 1308.003959
+  type: 'test'
+  ...
+# Subtest: context factory registers web queries and batching without other factories
+ok 29 - context factory registers web queries and batching without other factories
+  ---
+  duration_ms: 983.007208
+  type: 'test'
+  ...
+# Subtest: search factory queries and suggests without context or list registrations
+ok 30 - search factory queries and suggests without context or list registrations
+  ---
+  duration_ms: 735.059167
+  type: 'test'
+  ...
+# Subtest: generic service batches real requests with only caller-owned web registration
+ok 31 - generic service batches real requests with only caller-owned web registration
+  ---
+  duration_ms: 631.165875
+  type: 'test'
+  ...
+# [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+# Subtest: production bundles preserve real context, list, search and batching operations in fresh processes
+ok 32 - production bundles preserve real context, list, search and batching operations in fresh processes
+  ---
+  duration_ms: 6130.132208
+  type: 'test'
+  ...
+# Subtest: removing list webs and sole generic batching registrations breaks actual bundled operations
+ok 33 - removing list webs and sole generic batching registrations breaks actual bundled operations
+  ---
+  duration_ms: 1742.303708
+  type: 'test'
+  ...
+1..33
+# tests 33
+# suites 0
+# pass 33
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8784.971125
