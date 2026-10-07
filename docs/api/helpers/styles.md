@@ -274,6 +274,8 @@ Border geometry remains explicit: compose `borderWidth.thin`, `borderStyle.solid
 
 The vendor thumb retains **3px rounded corners** on both axes. Its base color is `colorNeutralStrokeAccessible`; moving the pointer over the thumb itself uses `colorNeutralStrokeAccessibleHover`, and pressing or dragging it uses `colorNeutralStrokeAccessiblePressed`. Pressed feedback wins while the thumb is also hovered; release restores hover feedback and leaving restores the base color. These tokens follow the existing Fluent theme variables in scope. Hovering the content or track does not activate thumb feedback. Forced colors and browsers using the standard fallback retain native interactions.
 
+In SharePoint host mode, [`createFluent9ThemeFromSPFxTheme`](./INDEX.md#createfluent9themefromspfxtheme) keeps the converted base token and maps hover/pressed to the host palette's `neutralPrimary`/`neutralDark`. This avoids the migration shim mapping all three to `neutralSecondary`. Missing state colors use the converted fallback; custom palettes with equal colors can still produce equal feedback colors. Teams themes and the undefined-theme web light fallback retain their existing tokens.
+
 ```tsx
 const sx = useSx();
 return <div className={sx(width.px(320), height.px(160), overflow.auto, scrollbar.fluent, presets.canvas)}>

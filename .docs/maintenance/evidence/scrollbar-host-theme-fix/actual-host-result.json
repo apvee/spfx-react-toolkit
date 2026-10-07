@@ -1,0 +1,37 @@
+{
+  "environment": "Actual user Edge authenticated SharePoint hosted workbench, Styles panel theme=host",
+  "before": {
+    "base": "#605e5c",
+    "hover": "#605e5c",
+    "pressed": "#605e5c"
+  },
+  "after": {
+    "base": "#605e5c",
+    "hover": "#323130",
+    "pressed": "#201f1e"
+  },
+  "geometry": {
+    "width": "6px",
+    "height": "6px",
+    "radius": "3px"
+  },
+  "actualHostPaint": {
+    "axis": "horizontal",
+    "normalRGB": [
+      96,
+      94,
+      92
+    ],
+    "hoverRGB": [
+      50,
+      49,
+      48
+    ],
+    "matchingNormalPixels": 1902,
+    "matchingHoverPixels": 1893,
+    "channelTolerance": 3,
+    "method": "Native OS window captures avoid Chromium viewport capture side effects; thumb tail outside click-cursor highlight, local-only screenshots"
+  },
+  "serveRestart": "Verified only toolkit gulp serve PID3154 cwd app checkout was terminated; fresh npm run serve -- --nobrowser kept running on port4321",
+  "scope": "Actual host stylesheet pipeline and hover verified; no tenant operations, consent changes, deployment or broad permission/lifecycle checklist claimed"
+}

@@ -10,9 +10,18 @@ import { createV9Theme } from '@fluentui/react-migration-v8-v9';
 
 /**
  * Converts an SPFx v8 theme to a Fluent UI 9 theme.
+ * Preserves the migration shim's token mappings except accessible neutral
+ * stroke hover/pressed colors, which use the host palette's neutralPrimary
+ * and neutralDark. Missing/empty state colors retain the shim's fallback.
+ * Does not mutate the SPFx theme. Undefined retains the shared webLightTheme;
+ * custom palettes remain responsible for usable color/contrast differences.
  *
  * @param spfxTheme - SPFx theme, or undefined for the default web light theme
  * @returns Fluent UI 9 theme
+ * @example
+ * const theme = createFluent9ThemeFromSPFxTheme(spfxTheme);
+ * // Pass theme to FluentProvider; host scrollbar thumb hover/pressed feedback
+ * // follows neutralPrimary/neutralDark without replacing other host tokens.
  */
 export function createFluent9ThemeFromSPFxTheme(
   spfxTheme: IReadonlyTheme | undefined
@@ -21,7 +30,16 @@ export function createFluent9ThemeFromSPFxTheme(
     return webLightTheme;
   }
 
-  return createV9Theme(spfxTheme as Parameters<typeof createV9Theme>[0]);
+  const theme = createV9Theme(spfxTheme as Parameters<typeof createV9Theme>[0]);
+  const hover = spfxTheme.palette?.neutralPrimary;
+  const pressed = spfxTheme.palette?.neutralDark;
+  return {
+    ...theme,
+    colorNeutralStrokeAccessibleHover: typeof hover === 'string' && hover.trim()
+      ? hover : theme.colorNeutralStrokeAccessibleHover,
+    colorNeutralStrokeAccessiblePressed: typeof pressed === 'string' && pressed.trim()
+      ? pressed : theme.colorNeutralStrokeAccessiblePressed
+  };
 }
 
 /**

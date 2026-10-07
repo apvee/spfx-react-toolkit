@@ -1,0 +1,316 @@
+{
+  "consumer": {
+    "consumer": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-uOJFKW/consumer",
+    "durationMs": 104150,
+    "packedFiles": 603,
+    "packedBytes": 245898,
+    "documentedDeclarations": 237,
+    "production": {
+      "bundle": {
+        "complete": true,
+        "passed": true,
+        "durationMs": 27872
+      },
+      "runtime": {
+        "complete": true,
+        "passed": true,
+        "durationMs": 25800
+      },
+      "mutations": {
+        "complete": true,
+        "passed": true,
+        "durationMs": 12573
+      }
+    },
+    "failures": []
+  },
+  "provenance": {
+    "node": "v22.20.0",
+    "npm": "11.19.1",
+    "versions": {
+      "typescript": "5.3.3",
+      "webpack": "5.95.0",
+      "react": "17.0.1",
+      "react-dom": "17.0.1",
+      "@pnp/sp": "4.17.0",
+      "@pnp/core": "4.17.0",
+      "@pnp/queryable": "4.17.0",
+      "@griffel/core": "1.19.2",
+      "@griffel/react": "1.5.30",
+      "@fluentui/react-theme": "9.2.0",
+      "@fluentui/react-utilities": "9.25.1",
+      "@fluentui/react-shared-contexts": "9.25.2",
+      "@microsoft/sp-core-library": "1.21.1"
+    },
+    "rootLockfileSha256": "56b44d939cac13a5b31cf9d81474bbc3c6b714da9b4438f4c7ffb7c509ed9dbf",
+    "consumerLockfileSha256": "e5d266e5cd9331f5dbc733c15296ebed1e6762a56c7b27b6652b5fd1e542116f",
+    "tarballSha256": "e3b1bd4f90b2443c996fb1cce4b3c46413b1dc2bfb9eacc55ce057aadc70f468",
+    "toolkitDir": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-uOJFKW/consumer/node_modules/@apvee/spfx-react-toolkit",
+    "consumerRoot": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-uOJFKW/consumer",
+    "loaderSha256": "5d2e745458f7c15032e9ddee8529e4765f4101891bec956aec2e3667bc84500e",
+    "minifierVersion": "5.44.0",
+    "zlibVersion": "1.3.1-470d3a2",
+    "compression": {
+      "gzipLevel": 9,
+      "brotliQuality": 11
+    }
+  },
+  "aliasComparisons": [
+    {
+      "candidate": "helper/root",
+      "reference": "helper/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 512,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "helper/domain",
+      "reference": "helper/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "stable-callback/root",
+      "reference": "stable-callback/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "stable-callback/domain",
+      "reference": "stable-callback/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "provider/root",
+      "reference": "provider/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "provider/domain",
+      "reference": "provider/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "sx-width-only/root",
+      "reference": "sx-width-only/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "sx-width-only/domain",
+      "reference": "sx-width-only/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "pnp-context/root",
+      "reference": "pnp-context/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "pnp-context/domain",
+      "reference": "pnp-context/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "pnp-list/root",
+      "reference": "pnp-list/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "pnp-list/domain",
+      "reference": "pnp-list/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "pnp-search/root",
+      "reference": "pnp-search/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "pnp-search/domain",
+      "reference": "pnp-search/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "pnp-batch/root",
+      "reference": "pnp-batch/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "pnp-batch/domain",
+      "reference": "pnp-batch/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "sx-minimum/root",
+      "reference": "sx-minimum/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "sx-minimum/domain",
+      "reference": "sx-minimum/leaf",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023,
+      "increaseBytes": 0,
+      "passed": true
+    },
+    {
+      "candidate": "sx-minimum/leaf",
+      "reference": "griffel-direct/control",
+      "metric": "gzip",
+      "informational": true,
+      "increaseBytes": 1971,
+      "passed": null
+    },
+    {
+      "candidate": "already-fluent/control",
+      "reference": "already-fluent-direct/control",
+      "metric": "gzip",
+      "informational": true,
+      "increaseBytes": 1625,
+      "passed": null
+    }
+  ],
+  "packageCommandStatuses": [
+    {
+      "args": [
+        "run",
+        "build:library"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "ls",
+        "--parseable",
+        "--all",
+        "@griffel/core",
+        "@griffel/react",
+        "@fluentui/react-shared-contexts",
+        "@fluentui/react-migration-v8-v9",
+        "@fluentui/react-theme",
+        "@fluentui/react-utilities"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "ls",
+        "react",
+        "react-dom",
+        "@microsoft/sp-core-library",
+        "@pnp/sp",
+        "@griffel/core",
+        "@griffel/react",
+        "@fluentui/react-shared-contexts",
+        "@fluentui/react-migration-v8-v9",
+        "@fluentui/react-theme",
+        "@fluentui/react-utilities",
+        "tslib"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "run",
+        "bundle:ship"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit",
+        "--strict",
+        "--skipLibCheck",
+        "--target",
+        "es2020",
+        "--module",
+        "esnext",
+        "--moduleResolution",
+        "node",
+        "compatibility/sx-package-public.ts",
+        "compatibility/sx-package-deep.ts"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    },
+    {
+      "args": [
+        "run",
+        "package:solution"
+      ],
+      "status": 0,
+      "failureMarkers": []
+    }
+  ]
+}

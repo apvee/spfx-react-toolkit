@@ -8,14 +8,14 @@ const { createDOMRenderer } = require('@griffel/core');
 const { RendererProvider } = require('@griffel/react');
 require('@fluentui/react').registerIcons({ icons: { Color: 'color' } });
 const panelPath = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/StylesPanel.tsx');
-function fixture(t) {
+function fixture(t, hostTheme) {
   assert.ok(fs.existsSync(panelPath), 'The observable Styles panel is missing');
   const toolkit = {};
   // Only unavailable SPFx context boundaries are doubled. React, descriptors,
   // useSx, Griffel, FluentProvider and the theme adapter are the real modules.
   const h = createHarness({ '@apvee/spfx-react-toolkit': toolkit,
     './useSPFxTeams': { useSPFxTeams: () => ({ supported: false }) },
-    './useSPFxThemeInfo': { useSPFxThemeInfo: () => undefined } });
+    './useSPFxThemeInfo': { useSPFxThemeInfo: () => hostTheme } });
   Object.assign(toolkit, h.load('helpers/styles/index.ts'), h.load('hooks/useSx.ts'),
     h.load('hooks/useSPFxFluent9ThemeInfo.ts'), h.load('helpers/spfx-theme.helpers.ts'));
   const renderer = createDOMRenderer(null);
@@ -43,6 +43,15 @@ test('Styles controls update real width, gap and grid descriptors', t => {
   f.change('layout-width', 240);
   assert.match(f.rules('layout-preview'), /240px/);
   assert.doesNotMatch(f.rules('layout-preview'), /360px/);
+});
+test('Styles host mode carries real SPFx neutral state colors into the shared FluentProvider', t => {
+  const host = require('@fluentui/react').createTheme();
+  const f = fixture(t, host);
+  assert.equal(f.node('theme').value, 'host');
+  const css = window.getComputedStyle(f.node('provider'));
+  assert.equal(css.getPropertyValue('--colorNeutralStrokeAccessible').trim(), '#605e5c');
+  assert.equal(css.getPropertyValue('--colorNeutralStrokeAccessibleHover').trim(), '#323130');
+  assert.equal(css.getPropertyValue('--colorNeutralStrokeAccessiblePressed').trim(), '#201f1e');
 });
 test('Styles foreground, subtle/alternative, preset and real theme provider controls are observable', t => {
   const f = fixture(t);
