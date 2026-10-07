@@ -1,13 +1,13 @@
 # SPFx React Toolkit
 
-React providers, 44 hooks, public helpers and services for SharePoint Framework. Each provider maintains runtime state for its SPFx instance. Hooks cover context, properties, clients, PnPjs, themes, permissions, storage and diagnostics; helpers and services support composition outside React.
+React providers, 46 hooks, public helpers and services for SharePoint Framework. Each provider maintains runtime state for its SPFx instance. Hooks cover reusable React callbacks, typed class composition with useSx, context, properties, clients, PnPjs, themes, permissions, storage and diagnostics; helpers and services support composition outside React.
 
 ![SPFx React Toolkit](https://raw.githubusercontent.com/apvee/spfx-react-toolkit/main/assets/banner.png)
 
 Install in an SPFx host project:
 
 ```bash
-npm install @apvee/spfx-react-toolkit "@fluentui/react-migration-v8-v9@^9.9.12" "@fluentui/react-theme@^9.2.0"
+npm install @apvee/spfx-react-toolkit "@fluentui/react-migration-v8-v9@^9.9.12" "@fluentui/react-theme@^9.2.0" "@fluentui/react-utilities@^9.25.1" "@griffel/core@^1.19.2" "@griffel/react@^1.5.30" "@fluentui/react-shared-contexts@^9.25.2"
 ```
 
 The host supplies the React and SPFx runtimes. PnPjs APIs require the compatible `@pnp/core`, `@pnp/queryable` and `@pnp/sp` peers. Preserve versions compatible with your host; do not upgrade an existing SPFx toolchain just to install the toolkit.
@@ -77,6 +77,10 @@ After library source changes, rebuild with `npm run build:library` and restart t
 
 The layout migration preserves the package import name and public API. Source moved from root `src` to the library workspace; SPFx sample source/config moved to the app workspace. Root build output is replaced by workspace output. Consumers continue to import `@apvee/spfx-react-toolkit`.
 
+## Typed styles
+
+`useSx()` composes direct descriptors such as `width.full`, `padding.medium` and `presets.canvas` into className strings. See the [full styles reference](./docs/api/helpers/styles.md) for namespaces, states, container/viewport queries, theme requirements and limitations. The sample’s lazy **Styles** panel exercises the complete catalog. Authenticated SharePoint-host checks remain separate.
+
 ## Requirements
 
 | Requirement | Repository verification baseline |
@@ -92,7 +96,7 @@ The package declares SPFx peers `>=1.18.0 <2.0.0`; that range is a compatibility
 ## Documentation
 
 - [Introduction and quick start](./docs/INTRODUCTION.md)
-- [API reference: 4 providers, 44 hooks, helpers and services](./docs/INDEX.md)
+- [API reference: 4 providers, 46 hooks, helpers and services](./docs/INDEX.md)
 - [Helpers API](./docs/api/helpers/INDEX.md)
 - [Services API](./docs/api/services/INDEX.md)
 - [NPM package](https://www.npmjs.com/package/@apvee/spfx-react-toolkit)
@@ -100,4 +104,4 @@ The package declares SPFx peers `>=1.18.0 <2.0.0`; that range is a compatibility
 
 MIT — see [LICENSE](./LICENSE).
 
-Fluent integration uses mandatory peer dependencies `@fluentui/react-migration-v8-v9` (`^9.9.12`) and `@fluentui/react-theme` (`^9.2.0`). The consuming project provides compatible shared packages; modern npm can install missing peers automatically. Existing compatible installations are reused. The SPFx test app declares both explicitly. `tslib` is required by the SPFx packages that use it; this library’s ES2020 output does not import it.
+Fluent and Griffel integration uses mandatory shared peer dependencies `@griffel/core` (`^1.19.2`), `@griffel/react` (`^1.5.30`), `@fluentui/react-shared-contexts` (`^9.25.2`), `@fluentui/react-migration-v8-v9` (`^9.9.12`), `@fluentui/react-theme` (`^9.2.0`) and `@fluentui/react-utilities` (`^9.25.1`). The consuming project provides compatible shared packages; modern npm can install missing peers automatically. Existing compatible installations are reused. The SPFx test app declares these explicitly. Token-based styles need theme variables in scope; useSx needs no SPFx provider or new renderer. The sample uses optional `@fluentui/react-provider@9.22.8` for its theme controls. `tslib` is required by the SPFx packages that use it; this library’s ES2020 output does not import it.

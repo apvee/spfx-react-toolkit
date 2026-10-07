@@ -1,6 +1,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { resolveModule, collectPublicSurface, assertDocumentedSurface } = require('./public-surface.helpers.cjs');
 
 const root = path.resolve(__dirname, '..');
 
@@ -10,13 +11,12 @@ function read(relativePath) {
 
 function resolveBarrelExports(barrelPath) {
   const source = read(barrelPath);
-  const barrelDir = path.dirname(barrelPath);
   const modules = [];
   const exportRegex = /export\s+\*\s+from\s+['"](.+)['"];?/g;
   let match;
 
   while ((match = exportRegex.exec(source)) !== null) {
-    modules.push(path.join(barrelDir, `${match[1]}.ts`));
+    modules.push(path.relative(root, resolveModule(path.join(root, barrelPath), match[1])));
   }
 
   return modules;
@@ -78,6 +78,19 @@ assertContainsAll('docs/api/helpers/INDEX.md', helperFunctions, 'helper function
 assertContainsAll('docs/api/services/INDEX.md', serviceFactories, 'service factories');
 assertContainsAll('docs/api/services/INDEX.md', serviceInterfaces, 'service interfaces');
 
+const styleEntry = path.join(root, 'packages/spfx-react-toolkit/src/helpers/styles/index.ts');
+const styleSurface = collectPublicSurface(styleEntry);
+const helperSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/helpers/index.ts'));
+assert.deepStrictEqual(
+  helperSurface.filter(item => item.filePath.startsWith(path.dirname(styleEntry) + path.sep)).map(item => item.name).sort(),
+  styleSurface.map(item => item.name).sort(),
+  'Style exports must remain reachable through the public helper barrel'
+);
+assertDocumentedSurface(read('docs/api/helpers/styles.md'), styleSurface);
+const sxHook = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSx.ts'));
+assertDocumentedSurface(read('docs/api/hooks/react.md'), sxHook);
+assertContainsAll('docs/api/hooks/INDEX.md', ['useSx', 'useStableCallback'], 'React utility hooks');
+
 const hooksIndex = read('docs/api/hooks/INDEX.md');
 for (const staleHook of ['useSPFxPropertyPane', 'useSPFxPnPSP', 'useSPFxPnPGraph']) {
   assert.ok(!hooksIndex.includes(staleHook), `docs/api/hooks/INDEX.md contains stale hook ${staleHook}`);
@@ -126,4 +139,4 @@ for (const documentPath of ['README.md', 'packages/spfx-react-toolkit/README.md'
   }
 }
 assert.deepStrictEqual(brokenLinks, [], `Broken public documentation links:\n${brokenLinks.join('\n')}`);
-console.log('public docs verification passed (API inventory and relative links)');
+console.log(`public docs verification passed (${styleSurface.length} qualified style exports with source JSDoc, historical helper/service inventory and relative links)`);

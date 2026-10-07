@@ -43,7 +43,11 @@
     "@types/react": "17.0.45",
     "@types/react-dom": "17.0.17",
     "@fluentui/react-migration-v8-v9": "^9.9.12",
-    "@fluentui/react-theme": "^9.2.0"
+    "@fluentui/react-theme": "^9.2.0",
+    "@fluentui/react-utilities": "^9.25.1",
+    "@griffel/core": "1.19.2",
+    "@griffel/react": "1.5.30",
+    "@fluentui/react-shared-contexts": "9.25.2"
   },
   "peerDependencies": {
     "@microsoft/sp-application-base": ">=1.18.0 <2.0.0",
@@ -59,7 +63,11 @@
     "react": "17.x",
     "react-dom": "17.x",
     "@fluentui/react-migration-v8-v9": "^9.9.12",
-    "@fluentui/react-theme": "^9.2.0"
+    "@fluentui/react-theme": "^9.2.0",
+    "@fluentui/react-utilities": "^9.25.1",
+    "@griffel/core": "^1.19.2",
+    "@griffel/react": "^1.5.30",
+    "@fluentui/react-shared-contexts": "^9.25.2"
   },
   "homepage": "https://github.com/apvee/spfx-react-toolkit#readme",
   "repository": {

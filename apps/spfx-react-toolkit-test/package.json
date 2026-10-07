@@ -31,7 +31,12 @@
     "@apvee/spfx-react-toolkit": "2.1.0",
     "@fluentui/react": "8.125.0",
     "@fluentui/react-migration-v8-v9": "^9.9.12",
-    "@fluentui/react-theme": "^9.2.0"
+    "@fluentui/react-theme": "^9.2.0",
+    "@fluentui/react-utilities": "^9.25.1",
+    "@griffel/core": "1.19.2",
+    "@griffel/react": "1.5.30",
+    "@fluentui/react-shared-contexts": "9.25.2",
+    "@fluentui/react-provider": "9.22.8"
   },
   "devDependencies": {
     "@microsoft/eslint-config-spfx": "1.21.1",

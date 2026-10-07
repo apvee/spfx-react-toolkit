@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const { collectPublicSurface } = require('./public-surface.helpers.cjs');
+const { assertStyleExampleCoverage } = require('./style-example.helpers.cjs');
 
 const root = path.resolve(__dirname, '..');
 const hooksIndexPath = path.join(root, 'packages', 'spfx-react-toolkit', 'src', 'hooks', 'index.ts');
@@ -108,8 +110,8 @@ function assertCovered(label, expected, actual) {
 
 const hookSymbols = getExportedSymbols(
   hooksIndexPath,
-  /export\s+function\s+(useSPFx[A-Za-z0-9]+)/g,
-  'useSPFx'
+  /export\s+(?:function|const)\s+(use[A-Z][A-Za-z0-9]+)/g,
+  'use'
 );
 const providerSymbols = getExportedSymbols(
   coreIndexPath,
@@ -121,4 +123,12 @@ const registrySymbols = getRegistrySymbols();
 assertCovered('Hooks', hookSymbols, registrySymbols);
 assertCovered('Providers', providerSymbols, registrySymbols);
 
-console.log(`Verified webpart demo coverage for ${hookSymbols.length} hooks and ${providerSymbols.length} providers.`);
+const styleSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/helpers/styles/index.ts'));
+const panelsPath = path.join(path.dirname(registryPath), 'panels');
+assertStyleExampleCoverage(
+  styleSurface,
+  read(registryPath),
+  read(path.join(panelsPath, 'StylesPanel.tsx')),
+  read(path.join(panelsPath, 'stylesCatalog.ts'))
+);
+console.log(`Verified webpart demo coverage for ${hookSymbols.length} hooks, ${providerSymbols.length} providers and ${styleSurface.filter(item => !item.name.startsWith('Sx')).length} qualified runtime style exports (interactive catalog/scopes).`);

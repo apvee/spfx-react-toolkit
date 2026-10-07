@@ -39,7 +39,9 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   const baseline = parseDeclaration(baselineText);
   const approvedPath = approvedAdditions.get(moduleName);
   const pnpPaths = moduleName === 'hooks/index.d.ts' ? pnpHookPaths : [];
-  const exportCounts = new Map([...(approvedPath ? [approvedPath] : []), ...pnpPaths].map(modulePath => [modulePath, 0]));
+  const stablePaths = moduleName === 'hooks/index.d.ts' ? ['./useStableCallback'] : [];
+  const sxPaths = moduleName === 'hooks/index.d.ts' ? ['./useSx'] : moduleName === 'helpers/index.d.ts' ? ['./styles'] : [];
+  const exportCounts = new Map([...(approvedPath ? [approvedPath] : []), ...pnpPaths, ...stablePaths, ...sxPaths].map(modulePath => [modulePath, 0]));
   let selectorCount = 0;
   let factoryCount = 0;
   const historicalStatements = [];
@@ -74,6 +76,11 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   if (approvedPath && options.requireApprovedAdditions) {
     assert.equal(exportCounts.get(approvedPath), 1, `Missing approved export: ${moduleName}`);
   }
+  if (options.requireSxAdditions) {
+    for (const modulePath of sxPaths) {
+      assert.equal(exportCounts.get(modulePath), 1, `Missing approved style export: ${moduleName}: ${modulePath}`);
+    }
+  }
   if (options.requirePnPListAdditions) {
     for (const modulePath of pnpPaths) {
       assert.equal(exportCounts.get(modulePath), 1, `Missing approved PnP list export: ${moduleName}: ${modulePath}`);
@@ -93,4 +100,37 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   );
 }
 
-module.exports = { assertCompatibleDeclaration };
+// Explicit additive peer contract: shared instances are supplied by the host.
+// Historical fixtures are immutable, including the original Fluent dependencies.
+function assertCompatiblePackageContract(manifest, originalPackage) {
+  const sharedFluentPeers = {
+    '@fluentui/react-migration-v8-v9': originalPackage.dependencies['@fluentui/react-migration-v8-v9'],
+    '@fluentui/react-theme': originalPackage.dependencies['@fluentui/react-theme'],
+  };
+  assert.deepEqual(sharedFluentPeers, {
+    '@fluentui/react-migration-v8-v9': '^9.9.12', '@fluentui/react-theme': '^9.2.0',
+  });
+  assert.deepEqual(manifest.peerDependencies, {
+    ...originalPackage.peerDependencies, ...sharedFluentPeers,
+    '@fluentui/react-utilities': '^9.25.1',
+    '@griffel/core': '^1.19.2', '@griffel/react': '^1.5.30',
+    '@fluentui/react-shared-contexts': '^9.25.2',
+  }, 'Runtime peer contracts changed outside the approved shared Fluent/Griffel peers');
+  assert.deepEqual(manifest.peerDependenciesMeta ?? {}, originalPackage.peerDependenciesMeta ?? {},
+    'Mandatory peers must not become optional');
+  const expectedDependencies = { ...originalPackage.dependencies };
+  assert.equal(expectedDependencies.tslib, '2.3.1', 'Unexpected historical tslib contract');
+  delete expectedDependencies.tslib;
+  for (const name of Object.keys(sharedFluentPeers)) delete expectedDependencies[name];
+  assert.deepEqual(manifest.dependencies ?? {}, expectedDependencies,
+    'Runtime dependencies changed outside the approved tslib cleanup and shared Fluent peers');
+  assert.equal(manifest.private, false);
+  assert.deepEqual(manifest.files, originalPackage.files, 'Published path allowlist changed');
+  assert.equal(manifest.name, '@apvee/spfx-react-toolkit');
+  assert.equal(manifest.version, '2.1.0');
+  assert.equal(manifest.main, 'lib/index.js');
+  assert.equal(manifest.types, 'lib/index.d.ts');
+  assert.equal(manifest.exports, undefined, 'Do not restrict pre-existing deep imports');
+}
+
+module.exports = { assertCompatibleDeclaration, assertCompatiblePackageContract };

@@ -1,6 +1,6 @@
 # SPFx React Toolkit
 
-> A comprehensive React runtime and hooks library for SharePoint Framework (SPFx) with 44 type-safe hooks
+> A comprehensive React runtime and hooks library for SharePoint Framework (SPFx) with 46 type-safe hooks
 
 ## Overview
 
@@ -24,7 +24,13 @@ npm install @apvee/spfx-react-toolkit
 
 The consuming SPFx project supplies compatible React, ReactDOM and SPFx runtime packages. PnPjs hooks/services use `@pnp/core`, `@pnp/queryable` and `@pnp/sp` v4 peers. Check the host's dependency versions rather than relying on npm to choose a newer SPFx toolchain.
 
+Fluent and Griffel integration requires shared peers `@griffel/core` (`^1.19.2`), `@griffel/react` (`^1.5.30`), `@fluentui/react-shared-contexts` (`^9.25.2`), `@fluentui/react-migration-v8-v9` (`^9.9.12`), `@fluentui/react-theme` (`^9.2.0`) and `@fluentui/react-utilities` (`^9.25.1`). Token-based `useSx` selections need theme variables in scope, usually from the host’s existing FluentProvider. The optional provider package used by the sample is `@fluentui/react-provider@9.22.8`; no new provider is required by useSx.
+
 The repository is an npm workspace monorepo: [library source](../packages/spfx-react-toolkit/src/index.ts) builds with TypeScript to ESNext `lib`; the private [SPFx sample](../apps/spfx-react-toolkit-test/package.json) bundles with SPFx 1.21.1 Gulp. See [Development](./DEVELOPMENT.md) and [SharePoint validation](./SHAREPOINT-VALIDATION.md). Library changes require a library rebuild and a serve restart.
+
+## Generic React styles
+
+`const sx = useSx()` returns a class composer: `sx(flex.row, gap.medium, presets.canvas, padding.medium)`. Import these names from the package root and call the hook inside a component. See [Styles and useSx](./api/helpers/styles.md) and [React utility hooks](./api/hooks/react.md) for the full contracts. The lazy Styles sample panel exercises layout, catalog selections, queries, states and scrolling.
 
 ## Quick Start
 
