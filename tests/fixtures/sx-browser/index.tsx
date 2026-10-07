@@ -18,6 +18,7 @@ interface FixtureConfig {
   readonly selected: boolean;
   readonly dir: 'ltr' | 'rtl';
   readonly theme: 'light' | 'dark' | 'highContrast';
+  readonly scrollbarEnabled: boolean;
 }
 interface FixtureApi {
   render(patch: Partial<FixtureConfig>): void;
@@ -41,6 +42,9 @@ const selected = background('rgb(200, 100, 0)');
 const neutral = background('rgb(240, 240, 240)');
 const externalStyles = makeStyles({
   width: { width: '400px' }, hover: { ':hover': { width: '400px' } },
+  scrollbarWidth: { scrollbarWidth: 'none' },
+  scrollbarColor: { scrollbarColor: 'red transparent' },
+  scrollbarHover: { ':hover': { scrollbarWidth: 'none', scrollbarColor: 'red transparent' } },
   active: { ':active': { width: '400px' } }, focus: { ':focus-visible': { width: '400px' } },
   viewport: { '@media (min-width: 640px)': { width: '400px' } },
   container: { '@container apvee-sx (min-inline-size: 640px)': { width: '400px' } },
@@ -50,13 +54,18 @@ const externalStyles = makeStyles({
 const renderer = createDOMRenderer(document);
 let config: FixtureConfig = {
   size: 639, reverse: new URLSearchParams(location.search).get('reverse') === '1',
-  scopes: true, enabled: true, selected: false, dir: 'ltr', theme: 'light'
+  scopes: true, enabled: true, selected: false, dir: 'ltr', theme: 'light', scrollbarEnabled: true
 };
 
 function Fixture(props: FixtureConfig): React.ReactElement {
   const sx = useSx();
   const native = externalStyles({ renderer: useRenderer_unstable(), dir: props.dir });
   const external = native.width;
+  const scrollbarInterop = [
+    { name: 'width', external: native.scrollbarWidth, descriptor: scrollbar.fluent },
+    { name: 'color', external: native.scrollbarColor, descriptor: scrollbar.fluent },
+    { name: 'hover', external: native.scrollbarHover, descriptor: hover(scrollbar.fluent) }
+  ];
   const ordered = (inputs: readonly SxInput[]): readonly SxInput[] => props.reverse ? [...inputs].reverse() : inputs;
   const probe = (id: string, inputs: readonly SxInput[], children?: React.ReactNode): React.ReactElement =>
     <div key={id} id={id} className={sx('probe', ...inputs)}>{children || id}</div>;
@@ -158,7 +167,7 @@ function Fixture(props: FixtureConfig): React.ReactElement {
         <p>Disabled pair below demonstrates disabled presentation only.</p>
         {Object.entries(presets).map(([name, preset]) => <div key={name} id={`preset-${surface}-${name}`}
           className={sx('catalog-preset', preset, typography.body1)}>{name}: readable sample text</div>)}
-        <div id={`scrollbar-${surface}`} className={sx('catalog-scrollbox', catalogBackground[surface], overflow.vertical.auto, scrollbar.fluent)}>
+        <div id={`scrollbar-${surface}`} className={sx('catalog-scrollbox', catalogBackground[surface], overflow.auto, scrollbar.fluent)}>
           <div className="catalog-scroll-content">Scrollable content: scrollbar styling does not select overflow or geometry.</div>
         </div>
       </div>)}
@@ -169,7 +178,20 @@ function Fixture(props: FixtureConfig): React.ReactElement {
       <div id="catalog-preset-override" className={sx(presets.canvas, foreground.subtle)}>Property-wise foreground override</div>
       <div id="catalog-preset-reverse" className={sx(foreground.subtle, presets.canvas)}>Property-wise preset override</div>
       <div id="scrollbar-only" className={sx(scrollbar.fluent)}>Scrollbar appearance without overflow</div>
-      <div className={sx('scrollbar-scope-inactive', container.inlineSize)}>
+      <div id="scrollbar-interop">
+        {scrollbarInterop.map(item => (['native-last', 'recipe-last'] as const).map(order =>
+          (['segmented', 'merged'] as const).map(composition => {
+            const id = `scrollbar-interop-${item.name}-${order}-${composition}`;
+            const inputs = order === 'native-last' ? [item.descriptor, item.external] : [item.external, item.descriptor];
+            const className = composition === 'segmented' ? sx('probe', ...inputs)
+              : mergeClasses('probe', ...inputs.map(input => typeof input === 'string' ? input : sx(input)));
+            return <div key={id} id={id} className={className}>{id}</div>;
+          })))}
+      </div>
+      <div id="scrollbar-removable" className={sx('catalog-scrollbox', overflow.auto, props.scrollbarEnabled && scrollbar.fluent)}>
+        <div className="catalog-scroll-content">Removing the recipe restores native scrollbar appearance.</div>
+      </div>
+      <div className={sx('scrollbar-scope-inactive', container.inlineSize, scrollbar.fluent)}>
         {probe('scrollbar-scoped-inactive', [responsive.medium(scrollbar.fluent)])}
       </div>
       <div className={sx('scrollbar-scope-active', container.inlineSize)}>

@@ -1,0 +1,14 @@
+# Rounded scrollbar axes correction — 2026-10-07
+
+User requested equal thickness in Edge, then explicitly selected **6px on both axes with rounded corners**, superseding the initial 8px proposal. `scrollbar.fluent` now generates 6px WebKit width/height and 3px thumb radius, neutral Fluent thumb/transparent track, scoped to supported selectors and non-forced colors. Native thin/system-color fallback remains. Overflow and container dimensions stay consumer-owned; the sample's dedicated preview now exercises both directions. Public exports, peers and package entrypoint contracts are unchanged.
+
+Private finite binding metadata and renderer-local variables preserve ordinary Griffel native property identity. Independent review caught an initial auto-reset override regression; the fix passed three failing-first real-Griffel regressions and scoped rereview. Later foreign hiding/recoloring wins; recipe-last restores vendor appearance. Responsive/hover scopes, removal, inheritance isolation and forced colors were exercised. Explicit non-auto native overrides opt into browser native rendering and can bypass vendor pixel sizing.
+
+## Final checks
+
+- Fresh `npm run build`, `npm run verify`, `npm run verify:package`, `git diff --check`: PASS. **669 tests**, 36 bundle variants, 18 runtime probes, nine detected mutations; all eight independent consumer commands status0/no failure markers.
+- Actual Edge154.0.4258.62 and Chrome155.0.8059.39 on macOS: each **477 actual StylesPanel + 967 generic-engine observations**, no failures, console warnings/errors or page errors. Cached Playwright fallback: Browser plugin not available; no dependencies installed. Desktop/mobile, both axes/scrolling, rounded pseudo corners, themes, native overrides in both orders, responsive/hover/removal, forced colors and local inheritance checked. SDK-only local context substitutes remain disclosed; actual style modules/React/Griffel/Fluent used. Authenticated host and other browser/OS matrices were not executed by the agent.
+- Edge actual catalog preview measured both physical gutters at6px after excluding borders.
+- All18 blocking alias gaps remain0. Minimum useSx fixture root=leaf **11,934 gzip bytes**, versus24,087 at initial pre-change root; engine extra versus direct Griffel **1,919 bytes**, versus already-Fluent direct **1,576 bytes**. These supersede earlier candidate measurements for current-source interpretation; the informational checked-in baseline remains frozen, not auto-updated.
+
+Reports and compact package/provenance outcomes are in [scrollbar-axes-fix evidence](evidence/scrollbar-axes-fix/package-summary.json), alongside the four browser JSON reports, implementation report and initial/final review. Large temporary screenshots/build logs/raw statistics remain under `/private/tmp/scrollbar-fix-qa`; no extra large intermediate artifact collection is committed.

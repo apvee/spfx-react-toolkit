@@ -270,16 +270,18 @@ Border geometry remains explicit: compose `borderWidth.thin`, `borderStyle.solid
 
 `overflow.visible/hidden/auto` expand to both `overflowX` and `overflowY`. `overflow.horizontal.visible/hidden/auto` set only `overflowX`; `overflow.vertical.visible/hidden/auto` set only `overflowY`. The browser retains native axis coupling: a visible axis can compute to auto when the other axis is hidden or auto.
 
-`scrollbar.fluent` is the only scrollbar selection. It sets `scrollbarWidth: thin` and `scrollbarColor: var(--colorNeutralStrokeAccessible) transparent`. An actual `(forced-colors: active)` media rule sets `scrollbarColor: auto`, leaving browser system colors available. It adds no overflow, dimensions, gutter, overscroll, smooth scrolling, `forced-color-adjust: none`, or WebKit pseudo-elements.
+`scrollbar.fluent` is the only scrollbar selection (`SxBaseDescriptor`). In Edge/Chrome and other browsers supporting `@supports selector(::-webkit-scrollbar)`, both axes use **6px** scrollbars with a `colorNeutralStrokeAccessible` thumb and transparent track/corner. These pseudo-element rules apply only under `(forced-colors: none)`; standard `scrollbarWidth` and `scrollbarColor` become `auto` in that branch so they do not suppress vendor styling. Other browsers retain standard `scrollbarWidth: thin` and `scrollbarColor: var(--colorNeutralStrokeAccessible) transparent`. An actual `(forced-colors: active)` media rule sets `scrollbarColor: auto`, preserving native thin sizing and browser system colors. The recipe adds no overflow, container dimensions, gutter, overscroll, smooth scrolling, or `forced-color-adjust: none`.
 
 ```tsx
 const sx = useSx();
-return <div className={sx(height.px(160), overflow.vertical.auto, scrollbar.fluent, presets.canvas)}>
-  {/* Content taller than the explicit height becomes scrollable. */}
+return <div className={sx(width.px(320), height.px(160), overflow.auto, scrollbar.fluent, presets.canvas)}>
+  <div className={sx(width.px(600), height.px(400))}>Content scrolls on both axes.</div>
 </div>;
 ```
 
-Browsers must support standard `scrollbar-width` and `scrollbar-color` for the appearance to apply; otherwise native appearance remains. Platform overlay scrollbars may appear only during scrolling. The transparent track reveals the actual underlying surface, so thumb contrast must be checked there.
+Use the existing shared Griffel/Fluent peers and scoped theme variables described above; no extra dependency is required. Browsers without vendor pseudo-element support need standard `scrollbar-width` and `scrollbar-color` for the thin fallback; otherwise native appearance remains. Platform overlay scrollbars may appear only during scrolling. `hover`, `active`, `focusVisible`, `responsive` and `viewport` scopes apply the vendor rules only while their scopes are active; removing the descriptor restores native appearance. The transparent track reveals the actual underlying surface, so thumb contrast must be checked there.
+
+Foreign Griffel declarations retain the usual argument/merge order: a later native `scrollbarWidth: none` hides the scrollbar, and a later `scrollbarColor` overrides its colors. In modern Chromium, non-`auto` standard scrollbar values select native rendering and can bypass the recipe's vendor 6px sizing. Putting `scrollbar.fluent` last restores the recipe in the same scope.
 
 
 The same local Chrome checkpoint measured the accessible neutral scrollbar thumb against the tested underlying surfaces:

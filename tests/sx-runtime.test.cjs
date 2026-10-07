@@ -85,6 +85,37 @@ const foreignScopes = [
   ['viewport-hover', '@media (min-width: 640px)', s => d => s.viewport.medium(s.hover(d)), ':hover'],
   ['container-hover', '@container apvee-sx (min-inline-size: 640px)', s => d => s.responsive.medium(s.hover(d)), ':hover']
 ];
+for (const [name, nativeScope, descriptorScope] of [
+  ['base', style => style, s => descriptor => descriptor],
+  ['hover', style => ({ ':hover': style }), s => s.hover],
+  ['container-hover', style => ({ '@container apvee-sx (min-inline-size: 640px)': { ':hover': style } }),
+    s => descriptor => s.responsive.medium(s.hover(descriptor))]
+]) {
+  test(`later native or fluent scrollbar wins in the same Griffel ${name} scope`, () => {
+    const { styles: s, load } = fixture();
+    const renderer = createDOMRenderer(null), environment = { renderer, dir: 'ltr' };
+    const resolve = (...inputs) => load('resolve.internal').resolveSxInputs(environment, inputs);
+    const external = makeStyles({ root: nativeScope({ scrollbarWidth: 'none', scrollbarColor: 'red transparent' }) })(environment).root;
+    const descriptor = descriptorScope(s)(s.scrollbar.fluent);
+    for (const compose of [inputs => resolve(...inputs), inputs => mergeClasses(...inputs.map(input =>
+      typeof input === 'string' ? input : resolve(input)))]) {
+      const nativeLast = retainedCoreRules(renderer, compose([descriptor, external]));
+      assert.ok(nativeLast.some(rule => /scrollbar-width:none/.test(rule)));
+      assert.ok(nativeLast.some(rule => /scrollbar-color:red transparent/.test(rule)));
+      assert.ok(!nativeLast.some(rule => !rule.includes('(forced-colors: active)')
+        && /\{scrollbar-(?:width|color):(?:auto|var\()/.test(rule)),
+      'The later native scrollbar declarations must replace every non-forced native binding');
+      const sxLast = retainedCoreRules(renderer, compose([external, descriptor]));
+      assert.ok(!sxLast.some(rule => /scrollbar-width:none|scrollbar-color:red transparent/.test(rule)));
+      for (const property of ['width', 'color']) {
+        assert.ok(sxLast.some(rule => new RegExp(`\\{scrollbar-${property}:var\\(`).test(rule)),
+          'The later recipe must own the ordinary native property binding');
+      }
+      assert.ok(sxLast.some(rule => /::-webkit-scrollbar\{width:6px/.test(rule)));
+      assert.ok(sxLast.some(rule => /::-webkit-scrollbar\{height:6px/.test(rule)));
+    }
+  });
+}
 for (const [name, selector, descriptorScope, stateSelector] of foreignScopes) {
   test(`later native or sx width wins in the same foreign Griffel ${name} scope`, () => {
     const { styles: s, load } = fixture();

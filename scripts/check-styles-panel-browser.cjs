@@ -119,11 +119,22 @@ async function themeChecks(choice, theme) {
   check('disabled native action inert', await page.getByText('Action invocations:', { exact: false }).textContent(), before);
   await node('disabled').uncheck(); await node('selected').uncheck();
   check('scroll recipe overflow', await computed('scroll-preview', 'overflowY'), 'auto');
-  check('scroll recipe width', await computed('scroll-preview', 'scrollbarWidth'), 'thin');
+  const vendorScrollbars = await page.evaluate(() => CSS.supports('selector(::-webkit-scrollbar)'));
+  check('scroll recipe width', await computed('scroll-preview', 'scrollbarWidth'), vendorScrollbars ? 'auto' : 'thin');
+  if (vendorScrollbars) check('scroll recipe equally sized axes', await node('scroll-preview').evaluate(element => {
+    const css = getComputedStyle(element, '::-webkit-scrollbar');
+    return { width: css.width, height: css.height };
+  }), { width: '6px', height: '6px' });
   check('scroll region genuinely scrolls', await node('scroll-preview').evaluate(element => { element.scrollTop = 40; return element.scrollTop; }), 40);
+  check('scroll region scrolls horizontally', await node('scroll-preview').evaluate(element => { element.scrollLeft = 40; return element.scrollLeft; }), 40);
   await page.emulateMedia({ forcedColors: 'active' });
   check('forced colors real media active', await page.evaluate(() => matchMedia('(forced-colors: active)').matches), true);
   check('forced colors system scrollbar', await computed('scroll-preview', 'scrollbarColor'), 'auto');
+  check('forced colors native thin width', await computed('scroll-preview', 'scrollbarWidth'), 'thin');
+  if (vendorScrollbars) check('forced colors vendor sizing inactive', await node('scroll-preview').evaluate(element => {
+    const css = getComputedStyle(element, '::-webkit-scrollbar');
+    return { width: css.width, height: css.height };
+  }), { width: 'auto', height: 'auto' });
   check('forced color adjust retained', await computed('scroll-preview', 'forcedColorAdjust'), 'auto');
   await page.emulateMedia({ forcedColors: 'none' });
   const catalog = await node('catalog-family').locator('option').evaluateAll(options => options.map(option => option.value));

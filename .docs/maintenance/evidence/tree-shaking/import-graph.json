@@ -11748,9 +11748,14 @@
       ],
       "topLevelInitializations": [
         {
+          "kind": "PropertyAccessExpression",
+          "name": "thumbColor",
+          "expression": "tokens.colorNeutralStrokeAccessible"
+        },
+        {
           "kind": "CallExpression",
           "name": "fluent",
-          "expression": "createRecipe('scrollbar.fluent', [\n  /*#__PURE__*/ createDeclaration('scrollbarWidth', 'thin', { property: 'scrollbarWidth', fallback: 'auto' }),\n  /*#__PURE__*/ createDeclaration('scrollbarColor', `${tokens.colorNeutralStrokeAccessible} transparent`, {\n    property: 'scrollbarColor', fallback: 'auto', forcedColors: 'auto'\n  })\n])"
+          "expression": "createRecipe('scrollbar.fluent', [\n  /*#__PURE__*/ createDeclaration('scrollbarWidth', 'thin', {\n    property: 'scrollbarWidth', fallback: 'auto', scrollbarSize: '6px'\n  }),\n  /*#__PURE__*/ createDeclaration('scrollbarColor', `${thumbColor} transparent`, {\n    property: 'scrollbarColor', fallback: 'auto', forcedColors: 'auto', scrollbarThumb: thumbColor\n  })\n])"
         }
       ],
       "effects": {

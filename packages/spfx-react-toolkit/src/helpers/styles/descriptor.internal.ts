@@ -25,6 +25,10 @@ export interface SxBinding {
   readonly fallback: string;
   /** Optional native value used when the forced-colors media feature is active. */
   readonly forcedColors?: string;
+  /** Finite vendor sizing used by the Fluent scrollbar recipe. */
+  readonly scrollbarSize?: '6px';
+  /** Single Fluent thumb color, separate from the standard thumb/track pair. */
+  readonly scrollbarThumb?: string;
 }
 export interface SxDeclarationData extends SxBaseDescriptor {
   readonly kind: 'declaration';
