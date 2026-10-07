@@ -1,0 +1,3856 @@
+
+> spfx-react-toolkit-monorepo@2.1.0 test
+> node --test tests/*.test.cjs
+
+TAP version 13
+# Subtest: preserves every historical declaration, ignoring comments and whitespace
+ok 1 - preserves every historical declaration, ignoring comments and whitespace
+  ---
+  duration_ms: 119.685084
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant generic default in hooks/useSPFxTenantKeyValueStore.d.ts
+ok 2 - rejects changed tenant generic default in hooks/useSPFxTenantKeyValueStore.d.ts
+  ---
+  duration_ms: 1.665917
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant readonly property in hooks/useSPFxTenantKeyValueStore.d.ts
+ok 3 - rejects changed tenant readonly property in hooks/useSPFxTenantKeyValueStore.d.ts
+  ---
+  duration_ms: 0.829625
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant parameter type in hooks/useSPFxTenantKeyValueStore.d.ts
+ok 4 - rejects changed tenant parameter type in hooks/useSPFxTenantKeyValueStore.d.ts
+  ---
+  duration_ms: 0.752875
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant optional parameter in hooks/useSPFxTenantKeyValueStore.d.ts
+ok 5 - rejects changed tenant optional parameter in hooks/useSPFxTenantKeyValueStore.d.ts
+  ---
+  duration_ms: 0.722375
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant generic default in services/spfx-tenant-key-value-store.service.d.ts
+ok 6 - rejects changed tenant generic default in services/spfx-tenant-key-value-store.service.d.ts
+  ---
+  duration_ms: 0.398541
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant readonly property in services/spfx-tenant-key-value-store.service.d.ts
+ok 7 - rejects changed tenant readonly property in services/spfx-tenant-key-value-store.service.d.ts
+  ---
+  duration_ms: 0.351917
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant parameter type in services/spfx-tenant-key-value-store.service.d.ts
+ok 8 - rejects changed tenant parameter type in services/spfx-tenant-key-value-store.service.d.ts
+  ---
+  duration_ms: 0.313125
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant optional parameter in services/spfx-tenant-key-value-store.service.d.ts
+ok 9 - rejects changed tenant optional parameter in services/spfx-tenant-key-value-store.service.d.ts
+  ---
+  duration_ms: 0.514416
+  type: 'test'
+  ...
+# Subtest: permits one approved export-all in hooks/index.d.ts
+ok 10 - permits one approved export-all in hooks/index.d.ts
+  ---
+  duration_ms: 0.848416
+  type: 'test'
+  ...
+# Subtest: rejects duplicate approved exports in hooks/index.d.ts
+ok 11 - rejects duplicate approved exports in hooks/index.d.ts
+  ---
+  duration_ms: 0.372083
+  type: 'test'
+  ...
+# Subtest: rejects removed historical export in hooks/index.d.ts
+ok 12 - rejects removed historical export in hooks/index.d.ts
+  ---
+  duration_ms: 0.442417
+  type: 'test'
+  ...
+# Subtest: rejects replaced historical export in hooks/index.d.ts
+ok 13 - rejects replaced historical export in hooks/index.d.ts
+  ---
+  duration_ms: 0.380583
+  type: 'test'
+  ...
+# Subtest: rejects unrelated export in hooks/index.d.ts
+ok 14 - rejects unrelated export in hooks/index.d.ts
+  ---
+  duration_ms: 0.379208
+  type: 'test'
+  ...
+# Subtest: rejects wrong path in hooks/index.d.ts
+ok 15 - rejects wrong path in hooks/index.d.ts
+  ---
+  duration_ms: 0.377041
+  type: 'test'
+  ...
+# Subtest: rejects named export in hooks/index.d.ts
+ok 16 - rejects named export in hooks/index.d.ts
+  ---
+  duration_ms: 0.386917
+  type: 'test'
+  ...
+# Subtest: rejects namespace export in hooks/index.d.ts
+ok 17 - rejects namespace export in hooks/index.d.ts
+  ---
+  duration_ms: 0.423959
+  type: 'test'
+  ...
+# Subtest: rejects type-only export in hooks/index.d.ts
+ok 18 - rejects type-only export in hooks/index.d.ts
+  ---
+  duration_ms: 0.36125
+  type: 'test'
+  ...
+# Subtest: rejects export with attributes in hooks/index.d.ts
+ok 19 - rejects export with attributes in hooks/index.d.ts
+  ---
+  duration_ms: 0.736042
+  type: 'test'
+  ...
+# Subtest: rejects unrelated declaration alongside approved export in hooks/index.d.ts
+ok 20 - rejects unrelated declaration alongside approved export in hooks/index.d.ts
+  ---
+  duration_ms: 0.408875
+  type: 'test'
+  ...
+# Subtest: rejects the approved hooks/index.d.ts path in other historical modules
+ok 21 - rejects the approved hooks/index.d.ts path in other historical modules
+  ---
+  duration_ms: 2.947
+  type: 'test'
+  ...
+# Subtest: permits one approved export-all in services/index.d.ts
+ok 22 - permits one approved export-all in services/index.d.ts
+  ---
+  duration_ms: 0.217458
+  type: 'test'
+  ...
+# Subtest: rejects duplicate approved exports in services/index.d.ts
+ok 23 - rejects duplicate approved exports in services/index.d.ts
+  ---
+  duration_ms: 0.11225
+  type: 'test'
+  ...
+# Subtest: rejects removed historical export in services/index.d.ts
+ok 24 - rejects removed historical export in services/index.d.ts
+  ---
+  duration_ms: 0.135042
+  type: 'test'
+  ...
+# Subtest: rejects replaced historical export in services/index.d.ts
+ok 25 - rejects replaced historical export in services/index.d.ts
+  ---
+  duration_ms: 0.15325
+  type: 'test'
+  ...
+# Subtest: rejects unrelated export in services/index.d.ts
+ok 26 - rejects unrelated export in services/index.d.ts
+  ---
+  duration_ms: 0.1385
+  type: 'test'
+  ...
+# Subtest: rejects wrong path in services/index.d.ts
+ok 27 - rejects wrong path in services/index.d.ts
+  ---
+  duration_ms: 0.132042
+  type: 'test'
+  ...
+# Subtest: rejects named export in services/index.d.ts
+ok 28 - rejects named export in services/index.d.ts
+  ---
+  duration_ms: 0.179
+  type: 'test'
+  ...
+# Subtest: rejects namespace export in services/index.d.ts
+ok 29 - rejects namespace export in services/index.d.ts
+  ---
+  duration_ms: 0.176958
+  type: 'test'
+  ...
+# Subtest: rejects type-only export in services/index.d.ts
+ok 30 - rejects type-only export in services/index.d.ts
+  ---
+  duration_ms: 0.209625
+  type: 'test'
+  ...
+# Subtest: rejects export with attributes in services/index.d.ts
+ok 31 - rejects export with attributes in services/index.d.ts
+  ---
+  duration_ms: 0.186292
+  type: 'test'
+  ...
+# Subtest: rejects unrelated declaration alongside approved export in services/index.d.ts
+ok 32 - rejects unrelated declaration alongside approved export in services/index.d.ts
+  ---
+  duration_ms: 0.157041
+  type: 'test'
+  ...
+# Subtest: rejects the approved services/index.d.ts path in other historical modules
+ok 33 - rejects the approved services/index.d.ts path in other historical modules
+  ---
+  duration_ms: 1.518667
+  type: 'test'
+  ...
+# Subtest: finished feature requires its approved export in hooks/index.d.ts
+ok 34 - finished feature requires its approved export in hooks/index.d.ts
+  ---
+  duration_ms: 0.544667
+  type: 'test'
+  ...
+# Subtest: finished feature requires its approved export in services/index.d.ts
+ok 35 - finished feature requires its approved export in services/index.d.ts
+  ---
+  duration_ms: 9.286
+  type: 'test'
+  ...
+# Subtest: integrated verify-api rejects a finished feature missing hooks/index.d.ts export
+ok 36 - integrated verify-api rejects a finished feature missing hooks/index.d.ts export
+  ---
+  duration_ms: 26.697542
+  type: 'test'
+  ...
+# Subtest: integrated verify-api rejects a finished feature missing services/index.d.ts export
+ok 37 - integrated verify-api rejects a finished feature missing services/index.d.ts export
+  ---
+  duration_ms: 20.246375
+  type: 'test'
+  ...
+# Subtest: permits only the approved stable callback export in the hooks barrel
+ok 38 - permits only the approved stable callback export in the hooks barrel
+  ---
+  duration_ms: 0.870541
+  type: 'test'
+  ...
+# Subtest: permits one bare webs registration only in the list service declaration
+ok 39 - permits one bare webs registration only in the list service declaration
+  ---
+  duration_ms: 0.967917
+  type: 'test'
+  ...
+# Subtest: finished list service requires the standalone webs registration
+ok 40 - finished list service requires the standalone webs registration
+  ---
+  duration_ms: 0.318416
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration duplicate
+ok 41 - rejects list webs registration duplicate
+  ---
+  duration_ms: 0.276208
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration wrong path
+ok 42 - rejects list webs registration wrong path
+  ---
+  duration_ms: 5.224
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration named import
+ok 43 - rejects list webs registration named import
+  ---
+  duration_ms: 1.130416
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration namespace import
+ok 44 - rejects list webs registration namespace import
+  ---
+  duration_ms: 1.1495
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration default import
+ok 45 - rejects list webs registration default import
+  ---
+  duration_ms: 1.493958
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration type-only import
+ok 46 - rejects list webs registration type-only import
+  ---
+  duration_ms: 0.549541
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration attributes
+ok 47 - rejects list webs registration attributes
+  ---
+  duration_ms: 0.504125
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration assertions
+ok 48 - rejects list webs registration assertions
+  ---
+  duration_ms: 0.469708
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration unrelated statement
+ok 49 - rejects list webs registration unrelated statement
+  ---
+  duration_ms: 0.44025
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration in every other historical declaration
+ok 50 - rejects list webs registration in every other historical declaration
+  ---
+  duration_ms: 28.680542
+  type: 'test'
+  ...
+# Subtest: webs registration approval retains strict list signatures and historical imports
+ok 51 - webs registration approval retains strict list signatures and historical imports
+  ---
+  duration_ms: 1.246709
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires webs registration even without other completion markers
+ok 52 - integrated verify-api requires webs registration even without other completion markers
+  ---
+  duration_ms: 23.862167
+  type: 'test'
+  ...
+# Subtest: permits exactly the PnP selector and factory widening with or without completion requirements
+ok 53 - permits exactly the PnP selector and factory widening with or without completion requirements
+  ---
+  duration_ms: 0.715125
+  type: 'test'
+  ...
+# Subtest: PnP completion requirements reject missing selector and missing factory widening separately
+ok 54 - PnP completion requirements reject missing selector and missing factory widening separately
+  ---
+  duration_ms: 0.723542
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP mutable selector
+ok 55 - rejects unapproved PnP mutable selector
+  ---
+  duration_ms: 3.220166
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP selector discriminant
+ok 56 - rejects unapproved PnP selector discriminant
+  ---
+  duration_ms: 0.564083
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP optional selector value
+ok 57 - rejects unapproved PnP optional selector value
+  ---
+  duration_ms: 0.44425
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP selector value type
+ok 58 - rejects unapproved PnP selector value type
+  ---
+  duration_ms: 0.402417
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP selector extra field
+ok 59 - rejects unapproved PnP selector extra field
+  ---
+  duration_ms: 0.38325
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP selector union order
+ok 60 - rejects unapproved PnP selector union order
+  ---
+  duration_ms: 0.410958
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory parameter name
+ok 61 - rejects unapproved PnP factory parameter name
+  ---
+  duration_ms: 0.358667
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory target optionality
+ok 62 - rejects unapproved PnP factory target optionality
+  ---
+  duration_ms: 0.358333
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory target narrowing
+ok 63 - rejects unapproved PnP factory target narrowing
+  ---
+  duration_ms: 0.344708
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory extra union
+ok 64 - rejects unapproved PnP factory extra union
+  ---
+  duration_ms: 0.356834
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory generic
+ok 65 - rejects unapproved PnP factory generic
+  ---
+  duration_ms: 0.37025
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory client parameter
+ok 66 - rejects unapproved PnP factory client parameter
+  ---
+  duration_ms: 0.358
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory third parameter
+ok 67 - rejects unapproved PnP factory third parameter
+  ---
+  duration_ms: 0.350708
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory return
+ok 68 - rejects unapproved PnP factory return
+  ---
+  duration_ms: 0.338458
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP service method return
+ok 69 - rejects unapproved PnP service method return
+  ---
+  duration_ms: 0.334583
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP query generic result
+ok 70 - rejects unapproved PnP query generic result
+  ---
+  duration_ms: 3.681791
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP batch result readonly
+ok 71 - rejects unapproved PnP batch result readonly
+  ---
+  duration_ms: 2.842375
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP historical import
+ok 72 - rejects unapproved PnP historical import
+  ---
+  duration_ms: 0.646666
+  type: 'test'
+  ...
+# Subtest: rejects PnP duplicate selector
+ok 73 - rejects PnP duplicate selector
+  ---
+  duration_ms: 0.309875
+  type: 'test'
+  ...
+# Subtest: rejects PnP duplicate factory
+ok 74 - rejects PnP duplicate factory
+  ---
+  duration_ms: 0.220791
+  type: 'test'
+  ...
+# Subtest: rejects PnP unrelated declaration
+ok 75 - rejects PnP unrelated declaration
+  ---
+  duration_ms: 0.379459
+  type: 'test'
+  ...
+# Subtest: permits all PnP export-alls independently of site-store completion requirements
+ok 76 - permits all PnP export-alls independently of site-store completion requirements
+  ---
+  duration_ms: 0.624459
+  type: 'test'
+  ...
+# Subtest: requires the finished PnP export ./useSPFxPnPListById
+ok 77 - requires the finished PnP export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.348542
+  type: 'test'
+  ...
+# Subtest: rejects PnP duplicate export ./useSPFxPnPListById
+ok 78 - rejects PnP duplicate export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.147166
+  type: 'test'
+  ...
+# Subtest: rejects PnP wrong path export ./useSPFxPnPListById
+ok 79 - rejects PnP wrong path export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.256958
+  type: 'test'
+  ...
+# Subtest: rejects PnP named export ./useSPFxPnPListById
+ok 80 - rejects PnP named export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.25425
+  type: 'test'
+  ...
+# Subtest: rejects PnP namespace export ./useSPFxPnPListById
+ok 81 - rejects PnP namespace export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.270833
+  type: 'test'
+  ...
+# Subtest: rejects PnP type-only export ./useSPFxPnPListById
+ok 82 - rejects PnP type-only export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.242541
+  type: 'test'
+  ...
+# Subtest: rejects PnP attributes export ./useSPFxPnPListById
+ok 83 - rejects PnP attributes export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.302458
+  type: 'test'
+  ...
+# Subtest: rejects PnP export ./useSPFxPnPListById outside the hook barrel
+ok 84 - rejects PnP export ./useSPFxPnPListById outside the hook barrel
+  ---
+  duration_ms: 1.676708
+  type: 'test'
+  ...
+# Subtest: requires the finished PnP export ./useSPFxPnPListByUrl
+ok 85 - requires the finished PnP export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.351833
+  type: 'test'
+  ...
+# Subtest: rejects PnP duplicate export ./useSPFxPnPListByUrl
+ok 86 - rejects PnP duplicate export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.163083
+  type: 'test'
+  ...
+# Subtest: rejects PnP wrong path export ./useSPFxPnPListByUrl
+ok 87 - rejects PnP wrong path export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 2.128917
+  type: 'test'
+  ...
+# Subtest: rejects PnP named export ./useSPFxPnPListByUrl
+ok 88 - rejects PnP named export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.5195
+  type: 'test'
+  ...
+# Subtest: rejects PnP namespace export ./useSPFxPnPListByUrl
+ok 89 - rejects PnP namespace export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.296125
+  type: 'test'
+  ...
+# Subtest: rejects PnP type-only export ./useSPFxPnPListByUrl
+ok 90 - rejects PnP type-only export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.261208
+  type: 'test'
+  ...
+# Subtest: rejects PnP attributes export ./useSPFxPnPListByUrl
+ok 91 - rejects PnP attributes export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.309
+  type: 'test'
+  ...
+# Subtest: rejects PnP export ./useSPFxPnPListByUrl outside the hook barrel
+ok 92 - rejects PnP export ./useSPFxPnPListByUrl outside the hook barrel
+  ---
+  duration_ms: 1.6135
+  type: 'test'
+  ...
+# Subtest: requires the finished PnP export ./useSPFxPnPListByPath
+ok 93 - requires the finished PnP export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.374166
+  type: 'test'
+  ...
+# Subtest: rejects PnP duplicate export ./useSPFxPnPListByPath
+ok 94 - rejects PnP duplicate export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.143041
+  type: 'test'
+  ...
+# Subtest: rejects PnP wrong path export ./useSPFxPnPListByPath
+ok 95 - rejects PnP wrong path export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.245
+  type: 'test'
+  ...
+# Subtest: rejects PnP named export ./useSPFxPnPListByPath
+ok 96 - rejects PnP named export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.248958
+  type: 'test'
+  ...
+# Subtest: rejects PnP namespace export ./useSPFxPnPListByPath
+ok 97 - rejects PnP namespace export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.244834
+  type: 'test'
+  ...
+# Subtest: rejects PnP type-only export ./useSPFxPnPListByPath
+ok 98 - rejects PnP type-only export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.237833
+  type: 'test'
+  ...
+# Subtest: rejects PnP attributes export ./useSPFxPnPListByPath
+ok 99 - rejects PnP attributes export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.289667
+  type: 'test'
+  ...
+# Subtest: rejects PnP export ./useSPFxPnPListByPath outside the hook barrel
+ok 100 - rejects PnP export ./useSPFxPnPListByPath outside the hook barrel
+  ---
+  duration_ms: 1.499833
+  type: 'test'
+  ...
+# Subtest: historical title hook cannot widen even when PnP additions are required
+ok 101 - historical title hook cannot widen even when PnP additions are required
+  ---
+  duration_ms: 0.978833
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished PnP ./useSPFxPnPListById independently of site store
+ok 102 - integrated verify-api requires finished PnP ./useSPFxPnPListById independently of site store
+  ---
+  duration_ms: 12.343042
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished PnP ./useSPFxPnPListByUrl independently of site store
+ok 103 - integrated verify-api requires finished PnP ./useSPFxPnPListByUrl independently of site store
+  ---
+  duration_ms: 13.191542
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished PnP ./useSPFxPnPListByPath independently of site store
+ok 104 - integrated verify-api requires finished PnP ./useSPFxPnPListByPath independently of site store
+  ---
+  duration_ms: 16.13875
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished PnP selector independently of site store
+ok 105 - integrated verify-api requires finished PnP selector independently of site store
+  ---
+  duration_ms: 47.239666
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished PnP factory independently of site store
+ok 106 - integrated verify-api requires finished PnP factory independently of site store
+  ---
+  duration_ms: 49.007542
+  type: 'test'
+  ...
+# Subtest: permits exactly the approved style addition hooks/index.d.ts: ./useSx
+ok 107 - permits exactly the approved style addition hooks/index.d.ts: ./useSx
+  ---
+  duration_ms: 1.205834
+  type: 'test'
+  ...
+# Subtest: requires the finished style addition hooks/index.d.ts: ./useSx
+ok 108 - requires the finished style addition hooks/index.d.ts: ./useSx
+  ---
+  duration_ms: 0.206084
+  type: 'test'
+  ...
+# Subtest: rejects style duplicate in hooks/index.d.ts
+ok 109 - rejects style duplicate in hooks/index.d.ts
+  ---
+  duration_ms: 0.185792
+  type: 'test'
+  ...
+# Subtest: rejects style wrong path in hooks/index.d.ts
+ok 110 - rejects style wrong path in hooks/index.d.ts
+  ---
+  duration_ms: 0.354917
+  type: 'test'
+  ...
+# Subtest: rejects style named in hooks/index.d.ts
+ok 111 - rejects style named in hooks/index.d.ts
+  ---
+  duration_ms: 0.265
+  type: 'test'
+  ...
+# Subtest: rejects style namespace in hooks/index.d.ts
+ok 112 - rejects style namespace in hooks/index.d.ts
+  ---
+  duration_ms: 0.248791
+  type: 'test'
+  ...
+# Subtest: rejects style type-only in hooks/index.d.ts
+ok 113 - rejects style type-only in hooks/index.d.ts
+  ---
+  duration_ms: 0.241792
+  type: 'test'
+  ...
+# Subtest: rejects style attributes in hooks/index.d.ts
+ok 114 - rejects style attributes in hooks/index.d.ts
+  ---
+  duration_ms: 0.314916
+  type: 'test'
+  ...
+# Subtest: rejects style historical removal in hooks/index.d.ts
+ok 115 - rejects style historical removal in hooks/index.d.ts
+  ---
+  duration_ms: 0.243667
+  type: 'test'
+  ...
+# Subtest: rejects style unrelated addition in hooks/index.d.ts
+ok 116 - rejects style unrelated addition in hooks/index.d.ts
+  ---
+  duration_ms: 0.249542
+  type: 'test'
+  ...
+# Subtest: rejects the style path ./useSx in every other historical module
+ok 117 - rejects the style path ./useSx in every other historical module
+  ---
+  duration_ms: 21.616042
+  type: 'test'
+  ...
+# Subtest: permits exactly the approved style addition helpers/index.d.ts: ./styles
+ok 118 - permits exactly the approved style addition helpers/index.d.ts: ./styles
+  ---
+  duration_ms: 0.153708
+  type: 'test'
+  ...
+# Subtest: requires the finished style addition helpers/index.d.ts: ./styles
+ok 119 - requires the finished style addition helpers/index.d.ts: ./styles
+  ---
+  duration_ms: 0.088917
+  type: 'test'
+  ...
+# Subtest: rejects style duplicate in helpers/index.d.ts
+ok 120 - rejects style duplicate in helpers/index.d.ts
+  ---
+  duration_ms: 0.07775
+  type: 'test'
+  ...
+# Subtest: rejects style wrong path in helpers/index.d.ts
+ok 121 - rejects style wrong path in helpers/index.d.ts
+  ---
+  duration_ms: 0.103416
+  type: 'test'
+  ...
+# Subtest: rejects style named in helpers/index.d.ts
+ok 122 - rejects style named in helpers/index.d.ts
+  ---
+  duration_ms: 0.1045
+  type: 'test'
+  ...
+# Subtest: rejects style namespace in helpers/index.d.ts
+ok 123 - rejects style namespace in helpers/index.d.ts
+  ---
+  duration_ms: 0.10475
+  type: 'test'
+  ...
+# Subtest: rejects style type-only in helpers/index.d.ts
+ok 124 - rejects style type-only in helpers/index.d.ts
+  ---
+  duration_ms: 0.097042
+  type: 'test'
+  ...
+# Subtest: rejects style attributes in helpers/index.d.ts
+ok 125 - rejects style attributes in helpers/index.d.ts
+  ---
+  duration_ms: 0.181333
+  type: 'test'
+  ...
+# Subtest: rejects style historical removal in helpers/index.d.ts
+ok 126 - rejects style historical removal in helpers/index.d.ts
+  ---
+  duration_ms: 0.100792
+  type: 'test'
+  ...
+# Subtest: rejects style unrelated addition in helpers/index.d.ts
+ok 127 - rejects style unrelated addition in helpers/index.d.ts
+  ---
+  duration_ms: 0.106875
+  type: 'test'
+  ...
+# Subtest: rejects the style path ./styles in every other historical module
+ok 128 - rejects the style path ./styles in every other historical module
+  ---
+  duration_ms: 65.000459
+  type: 'test'
+  ...
+# Subtest: style completion checks preserve previous callback, site-store and PnP approvals
+ok 129 - style completion checks preserve previous callback, site-store and PnP approvals
+  ---
+  duration_ms: 0.272709
+  type: 'test'
+  ...
+# Subtest: permits only the approved package peer additions and previous dependency cleanup
+ok 130 - permits only the approved package peer additions and previous dependency cleanup
+  ---
+  duration_ms: 0.448292
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package historical peer range
+ok 131 - rejects unapproved package historical peer range
+  ---
+  duration_ms: 0.296625
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package new Griffel core peer range
+ok 132 - rejects unapproved package new Griffel core peer range
+  ---
+  duration_ms: 0.133458
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package new Griffel React peer removal
+ok 133 - rejects unapproved package new Griffel React peer removal
+  ---
+  duration_ms: 0.211875
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package new shared-context peer range
+ok 134 - rejects unapproved package new shared-context peer range
+  ---
+  duration_ms: 0.084291
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package unexpected peer
+ok 135 - rejects unapproved package unexpected peer
+  ---
+  duration_ms: 0.121
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package private Griffel runtime dependency
+ok 136 - rejects unapproved package private Griffel runtime dependency
+  ---
+  duration_ms: 0.066167
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package optional mandatory peer
+ok 137 - rejects unapproved package optional mandatory peer
+  ---
+  duration_ms: 0.061333
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package package allowlist
+ok 138 - rejects unapproved package package allowlist
+  ---
+  duration_ms: 0.115041
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package deep-import restriction
+ok 139 - rejects unapproved package deep-import restriction
+  ---
+  duration_ms: 0.063666
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package entry point
+ok 140 - rejects unapproved package entry point
+  ---
+  duration_ms: 0.07475
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished style hooks/index.d.ts
+ok 141 - integrated verify-api requires finished style hooks/index.d.ts
+  ---
+  duration_ms: 36.180042
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished style helpers/index.d.ts
+ok 142 - integrated verify-api requires finished style helpers/index.d.ts
+  ---
+  duration_ms: 19.173875
+  type: 'test'
+  ...
+# Subtest: package gate rejects explicit subprocess failure with wrapper status zero: The build failed because a task wrote output to stderr.
+ok 143 - package gate rejects explicit subprocess failure with wrapper status zero: The build failed because a task wrote output to stderr.
+  ---
+  duration_ms: 4.472417
+  type: 'test'
+  ...
+# Subtest: package gate rejects explicit subprocess failure with wrapper status zero: Exiting with exit code: 1
+ok 144 - package gate rejects explicit subprocess failure with wrapper status zero: Exiting with exit code: 1
+  ---
+  duration_ms: 7.767
+  type: 'test'
+  ...
+# Subtest: package gate rejects explicit subprocess failure with wrapper status zero: [31mError - [webpack] compilation failed[0m
+ok 145 - package gate rejects explicit subprocess failure with wrapper status zero: [31mError - [webpack] compilation failed[0m
+  ---
+  duration_ms: 5.062334
+  type: 'test'
+  ...
+# Subtest: package gate keeps visible data-age warnings distinct from actual subprocess failure
+ok 146 - package gate keeps visible data-age warnings distinct from actual subprocess failure
+  ---
+  duration_ms: 2.518166
+  type: 'test'
+  ...
+# Subtest: metadata preparation leaves malformed configuration and evaluation errors fatal
+ok 147 - metadata preparation leaves malformed configuration and evaluation errors fatal
+  ---
+  duration_ms: 0.751208
+  type: 'test'
+  ...
+# Subtest: Gulp metadata guard prepares only the parent Gulp entry point
+ok 148 - Gulp metadata guard prepares only the parent Gulp entry point
+  ---
+  duration_ms: 0.454375
+  type: 'test'
+  ...
+# Subtest: exact locked metadata advisories stay visible while every other diagnostic retains its channel
+ok 149 - exact locked metadata advisories stay visible while every other diagnostic retains its channel
+  ---
+  duration_ms: 0.762792
+  type: 'test'
+  ...
+# Subtest: advisory routing preserves fatal behavior of an unknown warning monitor
+ok 150 - advisory routing preserves fatal behavior of an unknown warning monitor
+  ---
+  duration_ms: 0.362875
+  type: 'test'
+  ...
+# Subtest: real metadata package lookup tolerates genuinely absent requested packages
+ok 151 - real metadata package lookup tolerates genuinely absent requested packages
+  ---
+  duration_ms: 2.937542
+  type: 'test'
+  ...
+# Subtest: real installed metadata package with a missing main remains fatal
+ok 152 - real installed metadata package with a missing main remains fatal
+  ---
+  duration_ms: 1.739166
+  type: 'test'
+  ...
+# Subtest: real installed metadata package with a missing export remains fatal
+ok 153 - real installed metadata package with a missing export remains fatal
+  ---
+  duration_ms: 8.692334
+  type: 'test'
+  ...
+# Subtest: real installed metadata package with malformed configuration remains fatal
+ok 154 - real installed metadata package with malformed configuration remains fatal
+  ---
+  duration_ms: 3.811833
+  type: 'test'
+  ...
+# Subtest: real metadata module evaluation errors remain fatal
+ok 155 - real metadata module evaluation errors remain fatal
+  ---
+  duration_ms: 4.225042
+  type: 'test'
+  ...
+# Subtest: real installed metadata package without a default entry remains fatal
+ok 156 - real installed metadata package without a default entry remains fatal
+  ---
+  duration_ms: 1.712041
+  type: 'test'
+  ...
+# Subtest: Application Customizer recreates a disposed placeholder and ignores former disposal callbacks
+ok 157 - Application Customizer recreates a disposed placeholder and ignores former disposal callbacks
+  ---
+  duration_ms: 63.106875
+  type: 'test'
+  ...
+# Subtest: AsyncInvoke loading covers overlapping calls, completion 0 first
+ok 158 - AsyncInvoke loading covers overlapping calls, completion 0 first
+  ---
+  duration_ms: 109.22025
+  type: 'test'
+  ...
+# Subtest: AsyncInvoke loading covers overlapping calls, completion 1 first
+ok 159 - AsyncInvoke loading covers overlapping calls, completion 1 first
+  ---
+  duration_ms: 29.232958
+  type: 'test'
+  ...
+# Subtest: AsyncInvoke ignores former client error and preserves rejection after unmount
+ok 160 - AsyncInvoke ignores former client error and preserves rejection after unmount
+  ---
+  duration_ms: 54.479709
+  type: 'test'
+  ...
+# Failed to get tenant key-value: Error: network
+#     at /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-hooks.test.cjs:44:45
+#     at /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-test-harness.cjs:45:59
+#     at batchedUpdates$1 (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+#     at act (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+#     at settle (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-test-harness.cjs:45:35)
+#     at TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-hooks.test.cjs:44:15)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: TenantKV get awaits service and captures rejection as fallback
+ok 161 - TenantKV get awaits service and captures rejection as fallback
+  ---
+  duration_ms: 97.696458
+  type: 'test'
+  ...
+# Failed to list tenant key-values: Error: network
+#     at /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-hooks.test.cjs:44:45
+#     at /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-test-harness.cjs:45:59
+#     at batchedUpdates$1 (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+#     at act (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+#     at settle (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-test-harness.cjs:45:35)
+#     at TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-hooks.test.cjs:44:15)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: TenantKV list awaits service and captures rejection as fallback
+ok 162 - TenantKV list awaits service and captures rejection as fallback
+  ---
+  duration_ms: 66.000584
+  type: 'test'
+  ...
+# Subtest: TenantKV reads and writes track all pending operations independently
+ok 163 - TenantKV reads and writes track all pending operations independently
+  ---
+  duration_ms: 31.5685
+  type: 'test'
+  ...
+# Subtest: TenantProperty autoFetch change discards reverse completion and stale rejection
+ok 164 - TenantProperty autoFetch change discards reverse completion and stale rejection
+  ---
+  duration_ms: 55.936
+  type: 'test'
+  ...
+# OneDrive file not found. isNotFound=true
+# Subtest: OneDrive old 404 cannot create default in the current file
+ok 165 - OneDrive old 404 cannot create default in the current file
+  ---
+  duration_ms: 46.886166
+  type: 'test'
+  ...
+# Subtest: OneDrive identity clears old missing state before createIfMissing effect
+ok 166 - OneDrive identity clears old missing state before createIfMissing effect
+  ---
+  duration_ms: 89.962958
+  type: 'test'
+  ...
+# Subtest: OneDrive newer write wins over older read and reverse write completion
+ok 167 - OneDrive newer write wins over older read and reverse write completion
+  ---
+  duration_ms: 36.272792
+  type: 'test'
+  ...
+# Subtest: PnPList identity and latest query prevent stale state/error
+ok 168 - PnPList identity and latest query prevent stale state/error
+  ---
+  duration_ms: 96.909916
+  type: 'test'
+  ...
+# Subtest: PnPList rejects duplicate page dispatch and ignores page from superseded query
+ok 169 - PnPList rejects duplicate page dispatch and ignores page from superseded query
+  ---
+  duration_ms: 84.911917
+  type: 'test'
+  ...
+# Subtest: PnPSearch clears refiners on new search but keeps them on refetch
+ok 170 - PnPSearch clears refiners on new search but keeps them on refetch
+  ---
+  duration_ms: 52.066875
+  type: 'test'
+  ...
+# Subtest: PnPSearch latest query ignores reversed responses and stale errors
+ok 171 - PnPSearch latest query ignores reversed responses and stale errors
+  ---
+  duration_ms: 33.168958
+  type: 'test'
+  ...
+# Subtest: PnPSearch same-tick loadMore dispatches one page and superseded page cannot append
+ok 172 - PnPSearch same-tick loadMore dispatches one page and superseded page cannot append
+  ---
+  duration_ms: 58.397875
+  type: 'test'
+  ...
+# Subtest: AppCatalog cached URL invalidates with pageContext/client service identity
+ok 173 - AppCatalog cached URL invalidates with pageContext/client service identity
+  ---
+  duration_ms: 20.3595
+  type: 'test'
+  ...
+# Subtest: OneDrive inline object default does not restart a successful autoFetch
+ok 174 - OneDrive inline object default does not restart a successful autoFetch
+  ---
+  duration_ms: 21.746333
+  type: 'test'
+  ...
+# Subtest: AsyncInvoke newer success is not replaced by an older failure and clearError works
+ok 175 - AsyncInvoke newer success is not replaced by an older failure and clearError works
+  ---
+  duration_ms: 10.05
+  type: 'test'
+  ...
+# Failed to save tenant key-value: Error: write denied
+#     at TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-hooks.test.cjs:239:18)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+#     at Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+#     at Test.postRun (node:internal/test_runner/test:1173:19)
+#     at Test.run (node:internal/test_runner/test:1101:12)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: TenantKV provisioning read fallback remains successful and write rejection propagates
+ok 176 - TenantKV provisioning read fallback remains successful and write rejection propagates
+  ---
+  duration_ms: 68.922958
+  type: 'test'
+  ...
+# Subtest: PnPSearch old suggestion rejection cannot replace newer successful search error state
+ok 177 - PnPSearch old suggestion rejection cannot replace newer successful search error state
+  ---
+  duration_ms: 43.680125
+  type: 'test'
+  ...
+# Subtest: property deferred failure after unmount cannot update React state
+ok 178 - property deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 12.417625
+  type: 'test'
+  ...
+# Subtest: drive deferred failure after unmount cannot update React state
+ok 179 - drive deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 16.771333
+  type: 'test'
+  ...
+# Subtest: list deferred failure after unmount cannot update React state
+ok 180 - list deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 43.845084
+  type: 'test'
+  ...
+# Subtest: search deferred failure after unmount cannot update React state
+ok 181 - search deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 69.051625
+  type: 'test'
+  ...
+# Subtest: store deferred failure after unmount cannot update React state
+ok 182 - store deferred failure after unmount cannot update React state
+  ---
+  duration_ms: 32.940666
+  type: 'test'
+  ...
+# Subtest: PnPSearch query pagination uses accumulated count for hasMore
+ok 183 - PnPSearch query pagination uses accumulated count for hasMore
+  ---
+  duration_ms: 10.467916
+  type: 'test'
+  ...
+# Subtest: PnPList latest query wins within one identity and failed page retries the same offset
+ok 184 - PnPList latest query wins within one identity and failed page retries the same offset
+  ---
+  duration_ms: 53.592791
+  type: 'test'
+  ...
+# Failed to write file to OneDrive: Error: denied
+#     at Object.write (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-hooks.test.cjs:360:23)
+#     at Object.eval [as write] (eval at load (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-test-harness.cjs:29:9), <anonymous>:283:27)
+#     at /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-hooks.test.cjs:364:48
+#     at /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-test-harness.cjs:45:59
+#     at batchedUpdates$1 (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
+#     at act (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
+#     at settle (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-test-harness.cjs:45:35)
+#     at TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/async-hooks.test.cjs:364:11)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+# Subtest: PnPSearch failed page keeps offset and inline options remain stable
+ok 185 - PnPSearch failed page keeps offset and inline options remain stable
+  ---
+  duration_ms: 26.816916
+  type: 'test'
+  ...
+# OneDrive file not found. isNotFound=true
+# Subtest: OneDrive write errors propagate and successful missing creation writes once
+ok 186 - OneDrive write errors propagate and successful missing creation writes once
+  ---
+  duration_ms: 23.52725
+  type: 'test'
+  ...
+# Subtest: AppCatalog resolved cache is cleared on service change before discovery
+ok 187 - AppCatalog resolved cache is cleared on service change before discovery
+  ---
+  duration_ms: 11.483625
+  type: 'test'
+  ...
+# Subtest: OneDrive lazy default is the current identity seed without starting a read
+ok 188 - OneDrive lazy default is the current identity seed without starting a read
+  ---
+  duration_ms: 12.302583
+  type: 'test'
+  ...
+# Subtest: PnPList pending create refetches the current query after replacement
+ok 189 - PnPList pending create refetches the current query after replacement
+  ---
+  duration_ms: 160.686375
+  type: 'test'
+  ...
+# Subtest: PnPList pending update refetches the current query after replacement
+ok 190 - PnPList pending update refetches the current query after replacement
+  ---
+  duration_ms: 148.779875
+  type: 'test'
+  ...
+# Subtest: PnPList pending remove refetches the current query after replacement
+ok 191 - PnPList pending remove refetches the current query after replacement
+  ---
+  duration_ms: 151.705709
+  type: 'test'
+  ...
+# Subtest: PnPList pending createBatch refetches the current query after replacement
+ok 192 - PnPList pending createBatch refetches the current query after replacement
+  ---
+  duration_ms: 139.548167
+  type: 'test'
+  ...
+# Subtest: PnPList pending updateBatch refetches the current query after replacement
+ok 193 - PnPList pending updateBatch refetches the current query after replacement
+  ---
+  duration_ms: 146.533708
+  type: 'test'
+  ...
+# Subtest: PnPList pending removeBatch refetches the current query after replacement
+ok 194 - PnPList pending removeBatch refetches the current query after replacement
+  ---
+  duration_ms: 146.47125
+  type: 'test'
+  ...
+# Subtest: PnPList failed refetch preserves the successful next-page offset
+ok 195 - PnPList failed refetch preserves the successful next-page offset
+  ---
+  duration_ms: 18.092333
+  type: 'test'
+  ...
+# Subtest: PnPList CRUD refresh uses the replacement query even while its first response is pending
+ok 196 - PnPList CRUD refresh uses the replacement query even while its first response is pending
+  ---
+  duration_ms: 153.441042
+  type: 'test'
+  ...
+# Subtest: PnPList a newer query invalidates an already scheduled CRUD refresh
+ok 197 - PnPList a newer query invalidates an already scheduled CRUD refresh
+  ---
+  duration_ms: 148.432834
+  type: 'test'
+  ...
+# Subtest: PnPList former-service mutation cannot refresh the replacement list
+ok 198 - PnPList former-service mutation cannot refresh the replacement list
+  ---
+  duration_ms: 151.092208
+  type: 'test'
+  ...
+# Subtest: PnPList unmount cancels scheduled mutation refresh and ignores later mutation completion
+ok 199 - PnPList unmount cancels scheduled mutation refresh and ignores later mutation completion
+  ---
+  duration_ms: 138.757584
+  type: 'test'
+  ...
+# [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+# Subtest: concatenated emitted modules are traversed
+ok 200 - concatenated emitted modules are traversed
+  ---
+  duration_ms: 5.327458
+  type: 'test'
+  ...
+# Subtest: unused parsed module is not emitted
+ok 201 - unused parsed module is not emitted
+  ---
+  duration_ms: 0.389667
+  type: 'test'
+  ...
+# Subtest: shared lazy asset is counted once
+ok 202 - shared lazy asset is counted once
+  ---
+  duration_ms: 0.267916
+  type: 'test'
+  ...
+# Subtest: audit report cannot satisfy enforce
+ok 203 - audit report cannot satisfy enforce
+  ---
+  duration_ms: 0.066042
+  type: 'test'
+  ...
+# Subtest: consumer slots are strict and width pairs are coherent
+ok 204 - consumer slots are strict and width pairs are coherent
+  ---
+  duration_ms: 0.203584
+  type: 'test'
+  ...
+# Subtest: retention parser observes static descriptor constructor calls
+ok 205 - retention parser observes static descriptor constructor calls
+  ---
+  duration_ms: 4.155958
+  type: 'test'
+  ...
+# Subtest: legacy retention parser preserves value observation
+ok 206 - legacy retention parser preserves value observation
+  ---
+  duration_ms: 2.076083
+  type: 'test'
+  ...
+# Subtest: contract rejects unknown module groups and malformed comparisons
+ok 207 - contract rejects unknown module groups and malformed comparisons
+  ---
+  duration_ms: 0.198
+  type: 'test'
+  ...
+# Subtest: descriptor and emitted group checks produce concrete failures
+ok 208 - descriptor and emitted group checks produce concrete failures
+  ---
+  duration_ms: 0.349292
+  type: 'test'
+  ...
+# Subtest: truncated nested stats are rejected instead of hiding emitted dependencies
+ok 209 - truncated nested stats are rejected instead of hiding emitted dependencies
+  ---
+  duration_ms: 0.288625
+  type: 'test'
+  ...
+# Subtest: nonliteral descriptor values are not reported as static values
+ok 210 - nonliteral descriptor values are not reported as static values
+  ---
+  duration_ms: 0.534333
+  type: 'test'
+  ...
+# Subtest: real production concatenation exposes emitted leaves without parsed orphan inventory
+ok 211 - real production concatenation exposes emitted leaves without parsed orphan inventory
+  ---
+  duration_ms: 782.86075
+  type: 'test'
+  ...
+# Subtest: replay comparison requires identical asset bytes hashes and stable provenance
+ok 212 - replay comparison requires identical asset bytes hashes and stable provenance
+  ---
+  duration_ms: 0.847417
+  type: 'test'
+  ...
+# Subtest: replay comparison rejects missing fixtures unless an explicit subset was selected
+ok 213 - replay comparison rejects missing fixtures unless an explicit subset was selected
+  ---
+  duration_ms: 0.864
+  type: 'test'
+  ...
+# Subtest: measurement runtime provenance records Node and npm versions
+ok 214 - measurement runtime provenance records Node and npm versions
+  ---
+  duration_ms: 123.192209
+  type: 'test'
+  ...
+# Subtest: initial and progress enforce snapshots never claim a completed gate
+ok 215 - initial and progress enforce snapshots never claim a completed gate
+  ---
+  duration_ms: 0.1555
+  type: 'test'
+  ...
+# Subtest: all three concrete modes mount without queries and blank inputs disable actions
+ok 216 - all three concrete modes mount without queries and blank inputs disable actions
+  ---
+  duration_ms: 405.9485
+  type: 'test'
+  ...
+# Subtest: Id forwards input and first-page query, displays pending/results/error and recovers
+ok 217 - Id forwards input and first-page query, displays pending/results/error and recovers
+  ---
+  duration_ms: 191.080083
+  type: 'test'
+  ...
+# Subtest: Url forwards input and first-page query, displays pending/results/error and recovers
+ok 218 - Url forwards input and first-page query, displays pending/results/error and recovers
+  ---
+  duration_ms: 163.681625
+  type: 'test'
+  ...
+# Subtest: Path forwards input and first-page query, displays pending/results/error and recovers
+ok 219 - Path forwards input and first-page query, displays pending/results/error and recovers
+  ---
+  duration_ms: 131.49525
+  type: 'test'
+  ...
+# Subtest: Save catches rejected writes and displays failure without success
+ok 220 - Save catches rejected writes and displays failure without success
+  ---
+  duration_ms: 449.7575
+  type: 'test'
+  ...
+# Subtest: Remove catches rejected writes and displays failure without success
+ok 221 - Remove catches rejected writes and displays failure without success
+  ---
+  duration_ms: 170.035125
+  type: 'test'
+  ...
+# Subtest: Get fallback reports current read error and never later becomes success
+ok 222 - Get fallback reports current read error and never later becomes success
+  ---
+  duration_ms: 126.5685
+  type: 'test'
+  ...
+# Subtest: List fallback reports current read error and never later becomes success
+ok 223 - List fallback reports current read error and never later becomes success
+  ---
+  duration_ms: 130.478625
+  type: 'test'
+  ...
+# Subtest: mount performs no CRUD and manual Save accepts an empty string at the collection root
+ok 224 - mount performs no CRUD and manual Save accepts an empty string at the collection root
+  ---
+  duration_ms: 110.263416
+  type: 'test'
+  ...
+# Subtest: pending action cannot publish into a changed collection
+ok 225 - pending action cannot publish into a changed collection
+  ---
+  duration_ms: 84.065833
+  type: 'test'
+  ...
+# Subtest: reader Get and List display actual public-hook data from the collection root
+ok 226 - reader Get and List display actual public-hook data from the collection root
+  ---
+  duration_ms: 125.814
+  type: 'test'
+  ...
+# Subtest: unmount ignores pending action completion without React warnings
+ok 227 - unmount ignores pending action completion without React warnings
+  ---
+  duration_ms: 68.194166
+  type: 'test'
+  ...
+# Subtest: the web part demo invokes its original callback with the updated counter
+ok 228 - the web part demo invokes its original callback with the updated counter
+  ---
+  duration_ms: 271.67325
+  type: 'test'
+  ...
+# (node:35963) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: search suggestions keep the newest response when requests finish in reverse order
+ok 229 - search suggestions keep the newest response when requests finish in reverse order
+  ---
+  duration_ms: 202.417667
+  type: 'test'
+  ...
+# Subtest: clearing search input invalidates pending suggestions immediately
+ok 230 - clearing search input invalidates pending suggestions immediately
+  ---
+  duration_ms: 58.386417
+  type: 'test'
+  ...
+# Subtest: editing during debounce invalidates an already running suggestion request
+ok 231 - editing during debounce invalidates an already running suggestion request
+  ---
+  duration_ms: 40.655375
+  type: 'test'
+  ...
+# Subtest: unmount cancels debounce and ignores an already running suggestion request
+ok 232 - unmount cancels debounce and ignores an already running suggestion request
+  ---
+  duration_ms: 42.268208
+  type: 'test'
+  ...
+# Subtest: selecting a suggestion cancels pending updates for the previous query
+ok 233 - selecting a suggestion cancels pending updates for the previous query
+  ---
+  duration_ms: 36.829375
+  type: 'test'
+  ...
+# Subtest: Styles controls update real width, gap and grid descriptors
+ok 234 - Styles controls update real width, gap and grid descriptors
+  ---
+  duration_ms: 2742.844375
+  type: 'test'
+  ...
+# Subtest: Styles foreground, subtle/alternative, preset and real theme provider controls are observable
+ok 235 - Styles foreground, subtle/alternative, preset and real theme provider controls are observable
+  ---
+  duration_ms: 350.503459
+  type: 'test'
+  ...
+# Subtest: disabled native action removes enabled state recipes and selected presentation
+ok 236 - disabled native action removes enabled state recipes and selected presentation
+  ---
+  duration_ms: 198.461625
+  type: 'test'
+  ...
+# Subtest: every catalog member applies real classes and independent query/scrollbar regions exist
+ok 237 - every catalog member applies real classes and independent query/scrollbar regions exist
+  ---
+  duration_ms: 876.7655
+  type: 'test'
+  ...
+# Subtest: panel has no inline style assignments and fractional pixels remain observable
+ok 238 - panel has no inline style assignments and fractional pixels remain observable
+  ---
+  duration_ms: 144.293833
+  type: 'test'
+  ...
+# Subtest: type-only edges introduce no runtime dependency
+ok 239 - type-only edges introduce no runtime dependency
+  ---
+  duration_ms: 1537.173792
+  type: 'test'
+  ...
+# Subtest: named and namespace reexports resolve canonical leaves
+ok 240 - named and namespace reexports resolve canonical leaves
+  ---
+  duration_ms: 1028.649125
+  type: 'test'
+  ...
+# Subtest: internal barrel import and unresolved module are reported
+ok 241 - internal barrel import and unresolved module are reported
+  ---
+  duration_ms: 966.976375
+  type: 'test'
+  ...
+# Subtest: runtime cycles are reported without losing unrelated exports
+ok 242 - runtime cycles are reported without losing unrelated exports
+  ---
+  duration_ms: 684.218167
+  type: 'test'
+  ...
+# Subtest: unmarked type-only reexport is absent in emitted JS
+ok 243 - unmarked type-only reexport is absent in emitted JS
+  ---
+  duration_ms: 529.824042
+  type: 'test'
+  ...
+# Subtest: mixed runtime and erased reexports sharing a specifier retain separate edge kinds
+ok 244 - mixed runtime and erased reexports sharing a specifier retain separate edge kinds
+  ---
+  duration_ms: 385.876334
+  type: 'test'
+  ...
+# Subtest: unresolved external packages are reported
+ok 245 - unresolved external packages are reported
+  ---
+  duration_ms: 350.619167
+  type: 'test'
+  ...
+# Subtest: renamed imported namespaces retain runtime leaves and dependencies
+ok 246 - renamed imported namespaces retain runtime leaves and dependencies
+  ---
+  duration_ms: 321.694833
+  type: 'test'
+  ...
+# Subtest: tenant tenant behavior: new list setup preserves exact requests, bodies and warning-only uniqueness failure
+ok 247 - tenant tenant behavior: new list setup preserves exact requests, bodies and warning-only uniqueness failure
+  ---
+  duration_ms: 235.4215
+  type: 'test'
+  ...
+# Subtest: tenant tenant behavior: existing list repairs only missing fields in Value/Description order
+ok 248 - tenant tenant behavior: existing list repairs only missing fields in Value/Description order
+  ---
+  duration_ms: 333.109458
+  type: 'test'
+  ...
+# Subtest: tenant tenant behavior: get/list never provision, preserve escaping/raw slash URLs, ignore nextLink and retain coercion
+ok 249 - tenant tenant behavior: get/list never provision, preserve escaping/raw slash URLs, ignore nextLink and retain coercion
+  ---
+  duration_ms: 45.041959
+  type: 'test'
+  ...
+# Subtest: tenant tenant behavior: save auto-provisions then creates with legacy serialization and description defaults
+ok 250 - tenant tenant behavior: save auto-provisions then creates with legacy serialization and description defaults
+  ---
+  duration_ms: 62.61975
+  type: 'test'
+  ...
+# Subtest: tenant tenant behavior: MERGE preserves absent description, permits explicit empty override and uses wildcard ETag
+ok 251 - tenant tenant behavior: MERGE preserves absent description, permits explicit empty override and uses wildcard ETag
+  ---
+  duration_ms: 81.708542
+  type: 'test'
+  ...
+# Subtest: tenant tenant behavior: remove auto-provisions and deletes existing key; absent key is a no-op
+ok 252 - tenant tenant behavior: remove auto-provisions and deletes existing key; absent key is a no-op
+  ---
+  duration_ms: 84.764917
+  type: 'test'
+  ...
+# Subtest: tenant tenant behavior: same-instance provisioning shares promise and separate raw URLs have isolated readiness
+ok 253 - tenant tenant behavior: same-instance provisioning shares promise and separate raw URLs have isolated readiness
+  ---
+  duration_ms: 110.754209
+  type: 'test'
+  ...
+# Subtest: tenant tenant behavior: failed setup clears the mutex, retries, and separate factories do not share readiness
+ok 254 - tenant tenant behavior: failed setup clears the mutex, retries, and separate factories do not share readiness
+  ---
+  duration_ms: 31.965917
+  type: 'test'
+  ...
+# Subtest: tenant tenant behavior: read errors retain original messages and do not swallow 404
+ok 255 - tenant tenant behavior: read errors retain original messages and do not swallow 404
+  ---
+  duration_ms: 50.453083
+  type: 'test'
+  ...
+# Subtest: tenant tenant behavior: field check, list creation and field creation retain error text behavior
+ok 256 - tenant tenant behavior: field check, list creation and field creation retain error text behavior
+  ---
+  duration_ms: 240.989042
+  type: 'test'
+  ...
+# Subtest: tenant tenant behavior: create, update and delete retain exact errors without recovery requests
+ok 257 - tenant tenant behavior: create, update and delete retain exact errors without recovery requests
+  ---
+  duration_ms: 170.392458
+  type: 'test'
+  ...
+# Subtest: core tenant behavior: new list setup preserves exact requests, bodies and warning-only uniqueness failure
+ok 258 - core tenant behavior: new list setup preserves exact requests, bodies and warning-only uniqueness failure
+  ---
+  duration_ms: 15.699375
+  type: 'test'
+  ...
+# Subtest: core tenant behavior: existing list repairs only missing fields in Value/Description order
+ok 259 - core tenant behavior: existing list repairs only missing fields in Value/Description order
+  ---
+  duration_ms: 202.967417
+  type: 'test'
+  ...
+# Subtest: core tenant behavior: get/list never provision, preserve escaping/raw slash URLs, ignore nextLink and retain coercion
+ok 260 - core tenant behavior: get/list never provision, preserve escaping/raw slash URLs, ignore nextLink and retain coercion
+  ---
+  duration_ms: 16.914708
+  type: 'test'
+  ...
+# Subtest: core tenant behavior: save auto-provisions then creates with legacy serialization and description defaults
+ok 261 - core tenant behavior: save auto-provisions then creates with legacy serialization and description defaults
+  ---
+  duration_ms: 90.4835
+  type: 'test'
+  ...
+# Subtest: core tenant behavior: MERGE preserves absent description, permits explicit empty override and uses wildcard ETag
+ok 262 - core tenant behavior: MERGE preserves absent description, permits explicit empty override and uses wildcard ETag
+  ---
+  duration_ms: 38.703958
+  type: 'test'
+  ...
+# Subtest: core tenant behavior: remove auto-provisions and deletes existing key; absent key is a no-op
+ok 263 - core tenant behavior: remove auto-provisions and deletes existing key; absent key is a no-op
+  ---
+  duration_ms: 34.316416
+  type: 'test'
+  ...
+# Subtest: core tenant behavior: same-instance provisioning shares promise and separate raw URLs have isolated readiness
+ok 264 - core tenant behavior: same-instance provisioning shares promise and separate raw URLs have isolated readiness
+  ---
+  duration_ms: 21.467584
+  type: 'test'
+  ...
+# Subtest: core tenant behavior: failed setup clears the mutex, retries, and separate factories do not share readiness
+ok 265 - core tenant behavior: failed setup clears the mutex, retries, and separate factories do not share readiness
+  ---
+  duration_ms: 61.238209
+  type: 'test'
+  ...
+# Subtest: core tenant behavior: read errors retain original messages and do not swallow 404
+ok 266 - core tenant behavior: read errors retain original messages and do not swallow 404
+  ---
+  duration_ms: 25.768875
+  type: 'test'
+  ...
+# Subtest: core tenant behavior: field check, list creation and field creation retain error text behavior
+ok 267 - core tenant behavior: field check, list creation and field creation retain error text behavior
+  ---
+  duration_ms: 161.067292
+  type: 'test'
+  ...
+# Subtest: core tenant behavior: create, update and delete retain exact errors without recovery requests
+ok 268 - core tenant behavior: create, update and delete retain exact errors without recovery requests
+  ---
+  duration_ms: 103.502667
+  type: 'test'
+  ...
+# Subtest: site public factory isolates roots, normalizes URLs and reads without provisioning
+ok 269 - site public factory isolates roots, normalizes URLs and reads without provisioning
+  ---
+  duration_ms: 34.605292
+  type: 'test'
+  ...
+# Subtest: site confirmed list absence returns empty reads and remove without provisioning
+ok 270 - site confirmed list absence returns empty reads and remove without provisioning
+  ---
+  duration_ms: 62.153125
+  type: 'test'
+  ...
+# Subtest: site denies failed list/field/item probes and incompatible schema or rows
+ok 271 - site denies failed list/field/item probes and incompatible schema or rows
+  ---
+  duration_ms: 686.475875
+  type: 'test'
+  ...
+# Subtest: site list completes both continuation forms and preserves server order
+ok 272 - site list completes both continuation forms and preserves server order
+  ---
+  duration_ms: 36.346583
+  type: 'test'
+  ...
+# Subtest: site pagination rejects foreign, repeated, malformed links and failed later page
+ok 273 - site pagination rejects foreign, repeated, malformed links and failed later page
+  ---
+  duration_ms: 167.80025
+  type: 'test'
+  ...
+# Subtest: site setup normalizes mutex/readiness, isolates factories and retries failure
+ok 274 - site setup normalizes mutex/readiness, isolates factories and retries failure
+  ---
+  duration_ms: 16.313125
+  type: 'test'
+  ...
+# Subtest: site setup provisions missing list/Note fields and strictly configures Title uniqueness
+ok 275 - site setup provisions missing list/Note fields and strictly configures Title uniqueness
+  ---
+  duration_ms: 50.3385
+  type: 'test'
+  ...
+# Subtest: site setup rejects wrong field types and failed unique constraint without deleting data
+ok 276 - site setup rejects wrong field types and failed unique constraint without deleting data
+  ---
+  duration_ms: 74.119708
+  type: 'test'
+  ...
+# Subtest: site creation races recover list and field only after bounded validated rereads
+ok 277 - site creation races recover list and field only after bounded validated rereads
+  ---
+  duration_ms: 117.019375
+  type: 'test'
+  ...
+# Subtest: site save shares CRUD serialization, description preservation, clear and escaping
+ok 278 - site save shares CRUD serialization, description preservation, clear and escaping
+  ---
+  duration_ms: 14.963666
+  type: 'test'
+  ...
+# Subtest: site item collision performs at most one exact-key MERGE and preserves original failure otherwise
+ok 279 - site item collision performs at most one exact-key MERGE and preserves original failure otherwise
+  ---
+  duration_ms: 202.69825
+  type: 'test'
+  ...
+# Subtest: site remove never repairs schema and accepts only verified concurrent absence
+ok 280 - site remove never repairs schema and accepts only verified concurrent absence
+  ---
+  duration_ms: 107.9035
+  type: 'test'
+  ...
+# Subtest: site permission checks list effective grants or absent root creation grants and fails closed
+ok 281 - site permission checks list effective grants or absent root creation grants and fails closed
+  ---
+  duration_ms: 326.3125
+  type: 'test'
+  ...
+# Subtest: site normalizes nullable empty SharePoint Note values and distinguishes serialized null
+ok 282 - site normalizes nullable empty SharePoint Note values and distinguishes serialized null
+  ---
+  duration_ms: 14.236708
+  type: 'test'
+  ...
+# Subtest: site creation recovery rejects missing or incompatible postconditions and retains original errors
+ok 283 - site creation recovery rejects missing or incompatible postconditions and retains original errors
+  ---
+  duration_ms: 111.102792
+  type: 'test'
+  ...
+# Subtest: site permissions require each item bit and reject denied or malformed grant response
+ok 284 - site permissions require each item bit and reject denied or malformed grant response
+  ---
+  duration_ms: 95.463791
+  type: 'test'
+  ...
+# Subtest: site permissions accept minimal and verbose EffectiveBasePermissions envelopes but reject malformed words
+ok 285 - site permissions accept minimal and verbose EffectiveBasePermissions envelopes but reject malformed words
+  ---
+  duration_ms: 69.242833
+  type: 'test'
+  ...
+# Subtest: site respects SharePoint key collation and preserves server Title casing when retrieving and updating
+ok 286 - site respects SharePoint key collation and preserves server Title casing when retrieving and updating
+  ---
+  duration_ms: 15.616833
+  type: 'test'
+  ...
+# Subtest: site rejects empty collection URLs before dispatching relative current-web HTTP
+ok 287 - site rejects empty collection URLs before dispatching relative current-web HTTP
+  ---
+  duration_ms: 58.39175
+  type: 'test'
+  ...
+# Subtest: site list recovery preserves original create error through fields-denied while successful create exposes schema failure
+ok 288 - site list recovery preserves original create error through fields-denied while successful create exposes schema failure
+  ---
+  duration_ms: 35.597167
+  type: 'test'
+  ...
+# Subtest: site list recovery preserves original create error through wrong-type while successful create exposes schema failure
+ok 289 - site list recovery preserves original create error through wrong-type while successful create exposes schema failure
+  ---
+  duration_ms: 39.3825
+  type: 'test'
+  ...
+# Subtest: site list recovery preserves original create error through missing-title while successful create exposes schema failure
+ok 290 - site list recovery preserves original create error through missing-title while successful create exposes schema failure
+  ---
+  duration_ms: 36.55675
+  type: 'test'
+  ...
+# Subtest: site list recovery preserves original create error through field-create-denied while successful create exposes schema failure
+ok 291 - site list recovery preserves original create error through field-create-denied while successful create exposes schema failure
+  ---
+  duration_ms: 31.655375
+  type: 'test'
+  ...
+# Subtest: site list recovery preserves original create error through title-merge-denied while successful create exposes schema failure
+ok 292 - site list recovery preserves original create error through title-merge-denied while successful create exposes schema failure
+  ---
+  duration_ms: 35.120625
+  type: 'test'
+  ...
+# Subtest: site list recovery preserves original create error through title-verify-denied while successful create exposes schema failure
+ok 293 - site list recovery preserves original create error through title-verify-denied while successful create exposes schema failure
+  ---
+  duration_ms: 43.362958
+  type: 'test'
+  ...
+# Subtest: library and SPFx app have independent package boundaries
+ok 294 - library and SPFx app have independent package boundaries
+  ---
+  duration_ms: 195.919375
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById preserves equal primitive identity and resets target, client, initialization and pageSize
+ok 295 - useSPFxPnPListById preserves equal primitive identity and resets target, client, initialization and pageSize
+  ---
+  duration_ms: 234.116375
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById suppresses stale query success across targets
+ok 296 - useSPFxPnPListById suppresses stale query success across targets
+  ---
+  duration_ms: 88.21575
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById suppresses stale query error across targets
+ok 297 - useSPFxPnPListById suppresses stale query error across targets
+  ---
+  duration_ms: 53.360166
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById isolates stale pages and retains page dispatch locks
+ok 298 - useSPFxPnPListById isolates stale pages and retains page dispatch locks
+  ---
+  duration_ms: 117.098
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById stale create cannot refresh or set errors on the new target
+ok 299 - useSPFxPnPListById stale create cannot refresh or set errors on the new target
+  ---
+  duration_ms: 199.053292
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById stale update cannot refresh or set errors on the new target
+ok 300 - useSPFxPnPListById stale update cannot refresh or set errors on the new target
+  ---
+  duration_ms: 163.114666
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById stale remove cannot refresh or set errors on the new target
+ok 301 - useSPFxPnPListById stale remove cannot refresh or set errors on the new target
+  ---
+  duration_ms: 167.845125
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById stale createBatch cannot refresh or set errors on the new target
+ok 302 - useSPFxPnPListById stale createBatch cannot refresh or set errors on the new target
+  ---
+  duration_ms: 158.333875
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById stale updateBatch cannot refresh or set errors on the new target
+ok 303 - useSPFxPnPListById stale updateBatch cannot refresh or set errors on the new target
+  ---
+  duration_ms: 165.9125
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById stale removeBatch cannot refresh or set errors on the new target
+ok 304 - useSPFxPnPListById stale removeBatch cannot refresh or set errors on the new target
+  ---
+  duration_ms: 164.870875
+  type: 'test'
+  ...
+# [useSPFxPnPList] getById error: Error: former target failed
+#     at TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/pnp-list-hooks.test.cjs:119:27)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: useSPFxPnPListById suppresses former-target getById rejection
+ok 305 - useSPFxPnPListById suppresses former-target getById rejection
+  ---
+  duration_ms: 25.208375
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById suppresses former-target create rejection
+ok 306 - useSPFxPnPListById suppresses former-target create rejection
+  ---
+  duration_ms: 27.411042
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById suppresses former-target update rejection
+ok 307 - useSPFxPnPListById suppresses former-target update rejection
+  ---
+  duration_ms: 18.548042
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById suppresses former-target remove rejection
+ok 308 - useSPFxPnPListById suppresses former-target remove rejection
+  ---
+  duration_ms: 20.184625
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById suppresses former-target createBatch rejection
+ok 309 - useSPFxPnPListById suppresses former-target createBatch rejection
+  ---
+  duration_ms: 27.90675
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById suppresses former-target updateBatch rejection
+ok 310 - useSPFxPnPListById suppresses former-target updateBatch rejection
+  ---
+  duration_ms: 22.414958
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById suppresses former-target removeBatch rejection
+ok 311 - useSPFxPnPListById suppresses former-target removeBatch rejection
+  ---
+  duration_ms: 67.929458
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById suppresses stale page errors after client replacement
+ok 312 - useSPFxPnPListById suppresses stale page errors after client replacement
+  ---
+  duration_ms: 31.077833
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById cancels scheduled debounce on identity change and unmount
+ok 313 - useSPFxPnPListById cancels scheduled debounce on identity change and unmount
+  ---
+  duration_ms: 310.917834
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById simultaneous instances retain independent state
+ok 314 - useSPFxPnPListById simultaneous instances retain independent state
+  ---
+  duration_ms: 31.963833
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListById invalid editable input mounts without HTTP and rejects only on request
+ok 315 - useSPFxPnPListById invalid editable input mounts without HTTP and rejects only on request
+  ---
+  duration_ms: 660.846125
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl preserves equal primitive identity and resets target, client, initialization and pageSize
+ok 316 - useSPFxPnPListByUrl preserves equal primitive identity and resets target, client, initialization and pageSize
+  ---
+  duration_ms: 96.778333
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl suppresses stale query success across targets
+ok 317 - useSPFxPnPListByUrl suppresses stale query success across targets
+  ---
+  duration_ms: 37.528125
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl suppresses stale query error across targets
+ok 318 - useSPFxPnPListByUrl suppresses stale query error across targets
+  ---
+  duration_ms: 18.197958
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl isolates stale pages and retains page dispatch locks
+ok 319 - useSPFxPnPListByUrl isolates stale pages and retains page dispatch locks
+  ---
+  duration_ms: 56.029292
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl stale create cannot refresh or set errors on the new target
+ok 320 - useSPFxPnPListByUrl stale create cannot refresh or set errors on the new target
+  ---
+  duration_ms: 153.110709
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl stale update cannot refresh or set errors on the new target
+ok 321 - useSPFxPnPListByUrl stale update cannot refresh or set errors on the new target
+  ---
+  duration_ms: 165.060375
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl stale remove cannot refresh or set errors on the new target
+ok 322 - useSPFxPnPListByUrl stale remove cannot refresh or set errors on the new target
+  ---
+  duration_ms: 136.985083
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl stale createBatch cannot refresh or set errors on the new target
+ok 323 - useSPFxPnPListByUrl stale createBatch cannot refresh or set errors on the new target
+  ---
+  duration_ms: 149.4795
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl stale updateBatch cannot refresh or set errors on the new target
+ok 324 - useSPFxPnPListByUrl stale updateBatch cannot refresh or set errors on the new target
+  ---
+  duration_ms: 134.826542
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl stale removeBatch cannot refresh or set errors on the new target
+ok 325 - useSPFxPnPListByUrl stale removeBatch cannot refresh or set errors on the new target
+  ---
+  duration_ms: 144.488834
+  type: 'test'
+  ...
+# [useSPFxPnPList] getById error: Error: former target failed
+#     at TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/pnp-list-hooks.test.cjs:119:27)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: useSPFxPnPListByUrl suppresses former-target getById rejection
+ok 326 - useSPFxPnPListByUrl suppresses former-target getById rejection
+  ---
+  duration_ms: 18.354958
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl suppresses former-target create rejection
+ok 327 - useSPFxPnPListByUrl suppresses former-target create rejection
+  ---
+  duration_ms: 20.292042
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl suppresses former-target update rejection
+ok 328 - useSPFxPnPListByUrl suppresses former-target update rejection
+  ---
+  duration_ms: 20.449459
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl suppresses former-target remove rejection
+ok 329 - useSPFxPnPListByUrl suppresses former-target remove rejection
+  ---
+  duration_ms: 25.203292
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl suppresses former-target createBatch rejection
+ok 330 - useSPFxPnPListByUrl suppresses former-target createBatch rejection
+  ---
+  duration_ms: 27.868958
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl suppresses former-target updateBatch rejection
+ok 331 - useSPFxPnPListByUrl suppresses former-target updateBatch rejection
+  ---
+  duration_ms: 27.057375
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl suppresses former-target removeBatch rejection
+ok 332 - useSPFxPnPListByUrl suppresses former-target removeBatch rejection
+  ---
+  duration_ms: 54.306458
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl suppresses stale page errors after client replacement
+ok 333 - useSPFxPnPListByUrl suppresses stale page errors after client replacement
+  ---
+  duration_ms: 19.24975
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl cancels scheduled debounce on identity change and unmount
+ok 334 - useSPFxPnPListByUrl cancels scheduled debounce on identity change and unmount
+  ---
+  duration_ms: 264.626416
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl simultaneous instances retain independent state
+ok 335 - useSPFxPnPListByUrl simultaneous instances retain independent state
+  ---
+  duration_ms: 17.75675
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByUrl invalid editable input mounts without HTTP and rejects only on request
+ok 336 - useSPFxPnPListByUrl invalid editable input mounts without HTTP and rejects only on request
+  ---
+  duration_ms: 177.204083
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath preserves equal primitive identity and resets target, client, initialization and pageSize
+ok 337 - useSPFxPnPListByPath preserves equal primitive identity and resets target, client, initialization and pageSize
+  ---
+  duration_ms: 15.834417
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath suppresses stale query success across targets
+ok 338 - useSPFxPnPListByPath suppresses stale query success across targets
+  ---
+  duration_ms: 13.876583
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath suppresses stale query error across targets
+ok 339 - useSPFxPnPListByPath suppresses stale query error across targets
+  ---
+  duration_ms: 10.846667
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath isolates stale pages and retains page dispatch locks
+ok 340 - useSPFxPnPListByPath isolates stale pages and retains page dispatch locks
+  ---
+  duration_ms: 12.622667
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath stale create cannot refresh or set errors on the new target
+ok 341 - useSPFxPnPListByPath stale create cannot refresh or set errors on the new target
+  ---
+  duration_ms: 136.727541
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath stale update cannot refresh or set errors on the new target
+ok 342 - useSPFxPnPListByPath stale update cannot refresh or set errors on the new target
+  ---
+  duration_ms: 135.077625
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath stale remove cannot refresh or set errors on the new target
+ok 343 - useSPFxPnPListByPath stale remove cannot refresh or set errors on the new target
+  ---
+  duration_ms: 130.943291
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath stale createBatch cannot refresh or set errors on the new target
+ok 344 - useSPFxPnPListByPath stale createBatch cannot refresh or set errors on the new target
+  ---
+  duration_ms: 134.544291
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath stale updateBatch cannot refresh or set errors on the new target
+ok 345 - useSPFxPnPListByPath stale updateBatch cannot refresh or set errors on the new target
+  ---
+  duration_ms: 131.344708
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath stale removeBatch cannot refresh or set errors on the new target
+ok 346 - useSPFxPnPListByPath stale removeBatch cannot refresh or set errors on the new target
+  ---
+  duration_ms: 136.228208
+  type: 'test'
+  ...
+# [useSPFxPnPList] getById error: Error: former target failed
+#     at TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/pnp-list-hooks.test.cjs:119:27)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: useSPFxPnPListByPath suppresses former-target getById rejection
+ok 347 - useSPFxPnPListByPath suppresses former-target getById rejection
+  ---
+  duration_ms: 10.687833
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath suppresses former-target create rejection
+ok 348 - useSPFxPnPListByPath suppresses former-target create rejection
+  ---
+  duration_ms: 12.609333
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath suppresses former-target update rejection
+ok 349 - useSPFxPnPListByPath suppresses former-target update rejection
+  ---
+  duration_ms: 9.512125
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath suppresses former-target remove rejection
+ok 350 - useSPFxPnPListByPath suppresses former-target remove rejection
+  ---
+  duration_ms: 14.2495
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath suppresses former-target createBatch rejection
+ok 351 - useSPFxPnPListByPath suppresses former-target createBatch rejection
+  ---
+  duration_ms: 9.826334
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath suppresses former-target updateBatch rejection
+ok 352 - useSPFxPnPListByPath suppresses former-target updateBatch rejection
+  ---
+  duration_ms: 11.374708
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath suppresses former-target removeBatch rejection
+ok 353 - useSPFxPnPListByPath suppresses former-target removeBatch rejection
+  ---
+  duration_ms: 10.164875
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath suppresses stale page errors after client replacement
+ok 354 - useSPFxPnPListByPath suppresses stale page errors after client replacement
+  ---
+  duration_ms: 13.1615
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath cancels scheduled debounce on identity change and unmount
+ok 355 - useSPFxPnPListByPath cancels scheduled debounce on identity change and unmount
+  ---
+  duration_ms: 253.919208
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath simultaneous instances retain independent state
+ok 356 - useSPFxPnPListByPath simultaneous instances retain independent state
+  ---
+  duration_ms: 12.680667
+  type: 'test'
+  ...
+# Subtest: useSPFxPnPListByPath invalid editable input mounts without HTTP and rejects only on request
+ok 357 - useSPFxPnPListByPath invalid editable input mounts without HTTP and rejects only on request
+  ---
+  duration_ms: 126.022375
+  type: 'test'
+  ...
+# Subtest: legacy title wrapper still forwards raw strings without selector inference
+ok 358 - legacy title wrapper still forwards raw strings without selector inference
+  ---
+  duration_ms: 14.861916
+  type: 'test'
+  ...
+# Subtest: legacy string remains an exact title: "Tasks"
+ok 359 - legacy string remains an exact title: "Tasks"
+  ---
+  duration_ms: 31.009791
+  type: 'test'
+  ...
+# Subtest: legacy string remains an exact title: ""
+ok 360 - legacy string remains an exact title: ""
+  ---
+  duration_ms: 1.804875
+  type: 'test'
+  ...
+# Subtest: legacy string remains an exact title: "  Tasks  "
+ok 361 - legacy string remains an exact title: "  Tasks  "
+  ---
+  duration_ms: 1.252916
+  type: 'test'
+  ...
+# Subtest: legacy string remains an exact title: "11111111-2222-3333-4444-555555555555"
+ok 362 - legacy string remains an exact title: "11111111-2222-3333-4444-555555555555"
+  ---
+  duration_ms: 2.21275
+  type: 'test'
+  ...
+# Subtest: legacy string remains an exact title: "/sites/projects/Lists/Tasks"
+ok 363 - legacy string remains an exact title: "/sites/projects/Lists/Tasks"
+  ---
+  duration_ms: 1.773958
+  type: 'test'
+  ...
+# Subtest: legacy query pageSize override, top precedence and unbounded result remain stable
+ok 364 - legacy query pageSize override, top precedence and unbounded result remain stable
+  ---
+  duration_ms: 7.561208
+  type: 'test'
+  ...
+# Subtest: legacy loadMore applies supplied offset/pageSize and advances by returned item count
+ok 365 - legacy loadMore applies supplied offset/pageSize and advances by returned item count
+  ---
+  duration_ms: 3.823708
+  type: 'test'
+  ...
+# Subtest: legacy CRUD preserves item IDs, payloads and top-level/nested create IDs
+ok 366 - legacy CRUD preserves item IDs, payloads and top-level/nested create IDs
+  ---
+  duration_ms: 13.933667
+  type: 'test'
+  ...
+# Subtest: legacy createBatch collects successful IDs and failed/missing ID reasons in order
+ok 367 - legacy createBatch collects successful IDs and failed/missing ID reasons in order
+  ---
+  duration_ms: 2.604958
+  type: 'test'
+  ...
+# Subtest: legacy createBatch preserves empty, all-success, all-failure and execute failures
+ok 368 - legacy createBatch preserves empty, all-success, all-failure and execute failures
+  ---
+  duration_ms: 4.218167
+  type: 'test'
+  ...
+# Subtest: legacy updateBatch preserves empty, all-success, all-failure and execute failures
+ok 369 - legacy updateBatch preserves empty, all-success, all-failure and execute failures
+  ---
+  duration_ms: 4.092708
+  type: 'test'
+  ...
+# Subtest: legacy removeBatch preserves empty, all-success, all-failure and execute failures
+ok 370 - legacy removeBatch preserves empty, all-success, all-failure and execute failures
+  ---
+  duration_ms: 4.623583
+  type: 'test'
+  ...
+# Subtest: legacy resolves query on the supplied ordinary client
+ok 371 - legacy resolves query on the supplied ordinary client
+  ---
+  duration_ms: 2.493459
+  type: 'test'
+  ...
+# Subtest: legacy resolves loadMore on the supplied ordinary client
+ok 372 - legacy resolves loadMore on the supplied ordinary client
+  ---
+  duration_ms: 2.209708
+  type: 'test'
+  ...
+# Subtest: legacy resolves getById on the supplied ordinary client
+ok 373 - legacy resolves getById on the supplied ordinary client
+  ---
+  duration_ms: 0.756458
+  type: 'test'
+  ...
+# Subtest: legacy resolves create on the supplied ordinary client
+ok 374 - legacy resolves create on the supplied ordinary client
+  ---
+  duration_ms: 2.677792
+  type: 'test'
+  ...
+# Subtest: legacy resolves update on the supplied ordinary client
+ok 375 - legacy resolves update on the supplied ordinary client
+  ---
+  duration_ms: 2.26875
+  type: 'test'
+  ...
+# Subtest: legacy resolves remove on the supplied ordinary client
+ok 376 - legacy resolves remove on the supplied ordinary client
+  ---
+  duration_ms: 1.180083
+  type: 'test'
+  ...
+# Subtest: legacy resolves createBatch on its own batched client
+ok 377 - legacy resolves createBatch on its own batched client
+  ---
+  duration_ms: 2.706917
+  type: 'test'
+  ...
+# Subtest: legacy resolves updateBatch on its own batched client
+ok 378 - legacy resolves updateBatch on its own batched client
+  ---
+  duration_ms: 2.398125
+  type: 'test'
+  ...
+# Subtest: legacy resolves removeBatch on its own batched client
+ok 379 - legacy resolves removeBatch on its own batched client
+  ---
+  duration_ms: 2.007
+  type: 'test'
+  ...
+# Subtest: title resolves query on the supplied ordinary client
+ok 380 - title resolves query on the supplied ordinary client
+  ---
+  duration_ms: 1.590125
+  type: 'test'
+  ...
+# Subtest: title resolves loadMore on the supplied ordinary client
+ok 381 - title resolves loadMore on the supplied ordinary client
+  ---
+  duration_ms: 1.636292
+  type: 'test'
+  ...
+# Subtest: title resolves getById on the supplied ordinary client
+ok 382 - title resolves getById on the supplied ordinary client
+  ---
+  duration_ms: 2.357875
+  type: 'test'
+  ...
+# Subtest: title resolves create on the supplied ordinary client
+ok 383 - title resolves create on the supplied ordinary client
+  ---
+  duration_ms: 1.93075
+  type: 'test'
+  ...
+# Subtest: title resolves update on the supplied ordinary client
+ok 384 - title resolves update on the supplied ordinary client
+  ---
+  duration_ms: 0.621625
+  type: 'test'
+  ...
+# Subtest: title resolves remove on the supplied ordinary client
+ok 385 - title resolves remove on the supplied ordinary client
+  ---
+  duration_ms: 1.986917
+  type: 'test'
+  ...
+# Subtest: title resolves createBatch on its own batched client
+ok 386 - title resolves createBatch on its own batched client
+  ---
+  duration_ms: 2.018416
+  type: 'test'
+  ...
+# Subtest: title resolves updateBatch on its own batched client
+ok 387 - title resolves updateBatch on its own batched client
+  ---
+  duration_ms: 0.801959
+  type: 'test'
+  ...
+# Subtest: title resolves removeBatch on its own batched client
+ok 388 - title resolves removeBatch on its own batched client
+  ---
+  duration_ms: 1.984084
+  type: 'test'
+  ...
+# Subtest: id resolves query on the supplied ordinary client
+ok 389 - id resolves query on the supplied ordinary client
+  ---
+  duration_ms: 2.310458
+  type: 'test'
+  ...
+# Subtest: id resolves loadMore on the supplied ordinary client
+ok 390 - id resolves loadMore on the supplied ordinary client
+  ---
+  duration_ms: 2.41025
+  type: 'test'
+  ...
+# Subtest: id resolves getById on the supplied ordinary client
+ok 391 - id resolves getById on the supplied ordinary client
+  ---
+  duration_ms: 2.162834
+  type: 'test'
+  ...
+# Subtest: id resolves create on the supplied ordinary client
+ok 392 - id resolves create on the supplied ordinary client
+  ---
+  duration_ms: 0.935875
+  type: 'test'
+  ...
+# Subtest: id resolves update on the supplied ordinary client
+ok 393 - id resolves update on the supplied ordinary client
+  ---
+  duration_ms: 0.79875
+  type: 'test'
+  ...
+# Subtest: id resolves remove on the supplied ordinary client
+ok 394 - id resolves remove on the supplied ordinary client
+  ---
+  duration_ms: 2.126583
+  type: 'test'
+  ...
+# Subtest: id resolves createBatch on its own batched client
+ok 395 - id resolves createBatch on its own batched client
+  ---
+  duration_ms: 1.057208
+  type: 'test'
+  ...
+# Subtest: id resolves updateBatch on its own batched client
+ok 396 - id resolves updateBatch on its own batched client
+  ---
+  duration_ms: 0.794708
+  type: 'test'
+  ...
+# Subtest: id resolves removeBatch on its own batched client
+ok 397 - id resolves removeBatch on its own batched client
+  ---
+  duration_ms: 0.915
+  type: 'test'
+  ...
+# Subtest: url resolves query on the supplied ordinary client
+ok 398 - url resolves query on the supplied ordinary client
+  ---
+  duration_ms: 4.478209
+  type: 'test'
+  ...
+# Subtest: url resolves loadMore on the supplied ordinary client
+ok 399 - url resolves loadMore on the supplied ordinary client
+  ---
+  duration_ms: 22.929291
+  type: 'test'
+  ...
+# Subtest: url resolves getById on the supplied ordinary client
+ok 400 - url resolves getById on the supplied ordinary client
+  ---
+  duration_ms: 3.48725
+  type: 'test'
+  ...
+# Subtest: url resolves create on the supplied ordinary client
+ok 401 - url resolves create on the supplied ordinary client
+  ---
+  duration_ms: 10.794792
+  type: 'test'
+  ...
+# Subtest: url resolves update on the supplied ordinary client
+ok 402 - url resolves update on the supplied ordinary client
+  ---
+  duration_ms: 6.635583
+  type: 'test'
+  ...
+# Subtest: url resolves remove on the supplied ordinary client
+ok 403 - url resolves remove on the supplied ordinary client
+  ---
+  duration_ms: 1.38875
+  type: 'test'
+  ...
+# Subtest: url resolves createBatch on its own batched client
+ok 404 - url resolves createBatch on its own batched client
+  ---
+  duration_ms: 4.90425
+  type: 'test'
+  ...
+# Subtest: url resolves updateBatch on its own batched client
+ok 405 - url resolves updateBatch on its own batched client
+  ---
+  duration_ms: 8.874292
+  type: 'test'
+  ...
+# Subtest: url resolves removeBatch on its own batched client
+ok 406 - url resolves removeBatch on its own batched client
+  ---
+  duration_ms: 8.027708
+  type: 'test'
+  ...
+# Subtest: path resolves query on the supplied ordinary client
+ok 407 - path resolves query on the supplied ordinary client
+  ---
+  duration_ms: 3.1615
+  type: 'test'
+  ...
+# Subtest: path resolves loadMore on the supplied ordinary client
+ok 408 - path resolves loadMore on the supplied ordinary client
+  ---
+  duration_ms: 4.858334
+  type: 'test'
+  ...
+# Subtest: path resolves getById on the supplied ordinary client
+ok 409 - path resolves getById on the supplied ordinary client
+  ---
+  duration_ms: 0.998667
+  type: 'test'
+  ...
+# Subtest: path resolves create on the supplied ordinary client
+ok 410 - path resolves create on the supplied ordinary client
+  ---
+  duration_ms: 5.079375
+  type: 'test'
+  ...
+# Subtest: path resolves update on the supplied ordinary client
+ok 411 - path resolves update on the supplied ordinary client
+  ---
+  duration_ms: 8.82975
+  type: 'test'
+  ...
+# Subtest: path resolves remove on the supplied ordinary client
+ok 412 - path resolves remove on the supplied ordinary client
+  ---
+  duration_ms: 1.473167
+  type: 'test'
+  ...
+# Subtest: path resolves createBatch on its own batched client
+ok 413 - path resolves createBatch on its own batched client
+  ---
+  duration_ms: 9.494625
+  type: 'test'
+  ...
+# Subtest: path resolves updateBatch on its own batched client
+ok 414 - path resolves updateBatch on its own batched client
+  ---
+  duration_ms: 0.937375
+  type: 'test'
+  ...
+# Subtest: path resolves removeBatch on its own batched client
+ok 415 - path resolves removeBatch on its own batched client
+  ---
+  duration_ms: 5.371084
+  type: 'test'
+  ...
+# Subtest: title/GUID normalization: {"kind":"title","title":""}
+ok 416 - title/GUID normalization: {"kind":"title","title":""}
+  ---
+  duration_ms: 5.34375
+  type: 'test'
+  ...
+# Subtest: title/GUID normalization: {"kind":"title","title":"  Tasks  "}
+ok 417 - title/GUID normalization: {"kind":"title","title":"  Tasks  "}
+  ---
+  duration_ms: 3.690125
+  type: 'test'
+  ...
+# Subtest: title/GUID normalization: {"kind":"id","id":"ABCDEF01-2345-6789-0000-EF0123456789"}
+ok 418 - title/GUID normalization: {"kind":"id","id":"ABCDEF01-2345-6789-0000-EF0123456789"}
+  ---
+  duration_ms: 5.247
+  type: 'test'
+  ...
+# Subtest: title/GUID normalization: {"kind":"id","id":"\\t{abcdef01-2345-6789-abcd-ef0123456789}\\n"}
+ok 419 - title/GUID normalization: {"kind":"id","id":"\\t{abcdef01-2345-6789-abcd-ef0123456789}\\n"}
+  ---
+  duration_ms: 8.954541
+  type: 'test'
+  ...
+# Subtest: path derives decoded configured web without metadata: https://tenant.test
+ok 420 - path derives decoded configured web without metadata: https://tenant.test
+  ---
+  duration_ms: 2.503333
+  type: 'test'
+  ...
+# Subtest: path derives decoded configured web without metadata: https://tenant.test/
+ok 421 - path derives decoded configured web without metadata: https://tenant.test/
+  ---
+  duration_ms: 2.040417
+  type: 'test'
+  ...
+# Subtest: path derives decoded configured web without metadata: https://tenant.test/sites/projects
+ok 422 - path derives decoded configured web without metadata: https://tenant.test/sites/projects
+  ---
+  duration_ms: 3.577083
+  type: 'test'
+  ...
+# Subtest: path derives decoded configured web without metadata: https://tenant.test/sites/projects/subweb/
+ok 423 - path derives decoded configured web without metadata: https://tenant.test/sites/projects/subweb/
+  ---
+  duration_ms: 1.957459
+  type: 'test'
+  ...
+# Subtest: path derives decoded configured web without metadata: https://tenant.test/sites/Project%20One/sub%25%23
+ok 424 - path derives decoded configured web without metadata: https://tenant.test/sites/Project%20One/sub%25%23
+  ---
+  duration_ms: 1.892458
+  type: 'test'
+  ...
+# Subtest: path derives decoded configured web without metadata: https://tenant.test/sites/Literal%2520
+ok 425 - path derives decoded configured web without metadata: https://tenant.test/sites/Literal%2520
+  ---
+  duration_ms: 2.759375
+  type: 'test'
+  ...
+# Subtest: URL/path literal escaping remains owned by the actual installed PnP implementation
+ok 426 - URL/path literal escaping remains owned by the actual installed PnP implementation
+  ---
+  duration_ms: 2.239792
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: undefined
+ok 427 - invalid target rejects lazily before all dispatch, including empty batches: undefined
+  ---
+  duration_ms: 2.819833
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: null
+ok 428 - invalid target rejects lazily before all dispatch, including empty batches: null
+  ---
+  duration_ms: 0.391
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: 17
+ok 429 - invalid target rejects lazily before all dispatch, including empty batches: 17
+  ---
+  duration_ms: 0.221334
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {}
+ok 430 - invalid target rejects lazily before all dispatch, including empty batches: {}
+  ---
+  duration_ms: 0.177792
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: []
+ok 431 - invalid target rejects lazily before all dispatch, including empty batches: []
+  ---
+  duration_ms: 0.112666
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"unknown","title":"Tasks"}
+ok 432 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"unknown","title":"Tasks"}
+  ---
+  duration_ms: 0.102292
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":17,"title":"Tasks"}
+ok 433 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":17,"title":"Tasks"}
+  ---
+  duration_ms: 0.093959
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"title":"Tasks"}
+ok 434 - invalid target rejects lazily before all dispatch, including empty batches: {"title":"Tasks"}
+  ---
+  duration_ms: 0.091958
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"title"}
+ok 435 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"title"}
+  ---
+  duration_ms: 0.183459
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"title","title":17}
+ok 436 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"title","title":17}
+  ---
+  duration_ms: 0.098
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":""}
+ok 437 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":""}
+  ---
+  duration_ms: 0.121625
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":" "}
+ok 438 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":" "}
+  ---
+  duration_ms: 0.09475
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"not-a-guid"}
+ok 439 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"not-a-guid"}
+  ---
+  duration_ms: 0.401542
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"{abcdef01-2345-6789-abcd-ef0123456789"}
+ok 440 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"{abcdef01-2345-6789-abcd-ef0123456789"}
+  ---
+  duration_ms: 0.436333
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"abcdef01-2345-6789-abcd-ef0123456789}"}
+ok 441 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"abcdef01-2345-6789-abcd-ef0123456789}"}
+  ---
+  duration_ms: 0.534875
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"abcdef0123456789abcdef0123456789"}
+ok 442 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"abcdef0123456789abcdef0123456789"}
+  ---
+  duration_ms: 0.16225
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"abcdef01-2345-6789-abcd-ef012345678z"}
+ok 443 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"abcdef01-2345-6789-abcd-ef012345678z"}
+  ---
+  duration_ms: 0.422
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":17}
+ok 444 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":17}
+  ---
+  duration_ms: 0.395583
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":""}
+ok 445 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":""}
+  ---
+  duration_ms: 0.298458
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":" "}
+ok 446 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":" "}
+  ---
+  duration_ms: 0.276209
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"Lists/Tasks"}
+ok 447 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"Lists/Tasks"}
+  ---
+  duration_ms: 0.262334
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"//tenant.test/Lists/Tasks"}
+ok 448 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"//tenant.test/Lists/Tasks"}
+  ---
+  duration_ms: 0.277041
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"https://tenant.test/Lists/Tasks"}
+ok 449 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"https://tenant.test/Lists/Tasks"}
+  ---
+  duration_ms: 0.303125
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists\\\\Tasks"}
+ok 450 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists\\\\Tasks"}
+  ---
+  duration_ms: 0.51325
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists/Tasks?view=one"}
+ok 451 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists/Tasks?view=one"}
+  ---
+  duration_ms: 0.346125
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists/./Tasks"}
+ok 452 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists/./Tasks"}
+  ---
+  duration_ms: 0.253042
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists/../Tasks"}
+ok 453 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists/../Tasks"}
+  ---
+  duration_ms: 0.176541
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/."}
+ok 454 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/."}
+  ---
+  duration_ms: 0.304625
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":17}
+ok 455 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":17}
+  ---
+  duration_ms: 0.418875
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":""}
+ok 456 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":""}
+  ---
+  duration_ms: 0.194667
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":" "}
+ok 457 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":" "}
+  ---
+  duration_ms: 0.129125
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"/Lists/Tasks"}
+ok 458 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"/Lists/Tasks"}
+  ---
+  duration_ms: 0.111375
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"//tenant.test/Lists/Tasks"}
+ok 459 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"//tenant.test/Lists/Tasks"}
+  ---
+  duration_ms: 0.109959
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"https://tenant.test/Lists/Tasks"}
+ok 460 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"https://tenant.test/Lists/Tasks"}
+  ---
+  duration_ms: 0.107459
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists\\\\Tasks"}
+ok 461 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists\\\\Tasks"}
+  ---
+  duration_ms: 0.108834
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists/Tasks?view=one"}
+ok 462 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists/Tasks?view=one"}
+  ---
+  duration_ms: 0.109625
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists/./Tasks"}
+ok 463 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists/./Tasks"}
+  ---
+  duration_ms: 0.113417
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists/../Tasks"}
+ok 464 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists/../Tasks"}
+  ---
+  duration_ms: 0.110625
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"."}
+ok 465 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"."}
+  ---
+  duration_ms: 0.10775
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":".."}
+ok 466 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":".."}
+  ---
+  duration_ms: 0.107291
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":17}
+ok 467 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":17}
+  ---
+  duration_ms: 0.174958
+  type: 'test'
+  ...
+# Subtest: path rejects an unbased/indirect client without HTTP: ""
+ok 468 - path rejects an unbased/indirect client without HTTP: ""
+  ---
+  duration_ms: 0.347
+  type: 'test'
+  ...
+# Subtest: path rejects an unbased/indirect client without HTTP: "/sites/relative"
+ok 469 - path rejects an unbased/indirect client without HTTP: "/sites/relative"
+  ---
+  duration_ms: 0.145666
+  type: 'test'
+  ...
+# Subtest: path rejects an unbased/indirect client without HTTP: "https://tenant.test/sites/projects/_api/site/rootweb"
+ok 470 - path rejects an unbased/indirect client without HTTP: "https://tenant.test/sites/projects/_api/site/rootweb"
+  ---
+  duration_ms: 0.193208
+  type: 'test'
+  ...
+# Subtest: path rejects an unbased/indirect client without HTTP: "https://tenant.test/sites/projects/_api/site"
+ok 471 - path rejects an unbased/indirect client without HTTP: "https://tenant.test/sites/projects/_api/site"
+  ---
+  duration_ms: 0.14325
+  type: 'test'
+  ...
+# Subtest: selector mutation cannot retarget the title service
+ok 472 - selector mutation cannot retarget the title service
+  ---
+  duration_ms: 19.051541
+  type: 'test'
+  ...
+# Subtest: selector mutation cannot retarget the id service
+ok 473 - selector mutation cannot retarget the id service
+  ---
+  duration_ms: 7.124458
+  type: 'test'
+  ...
+# Subtest: selector mutation cannot retarget the url service
+ok 474 - selector mutation cannot retarget the url service
+  ---
+  duration_ms: 2.489416
+  type: 'test'
+  ...
+# Subtest: selector mutation cannot retarget the path service
+ok 475 - selector mutation cannot retarget the path service
+  ---
+  duration_ms: 2.151917
+  type: 'test'
+  ...
+# Subtest: mutating an invalid selector after construction does not make it dispatch
+ok 476 - mutating an invalid selector after construction does not make it dispatch
+  ---
+  duration_ms: 0.191042
+  type: 'test'
+  ...
+# Subtest: actual PnP createBatch queues the legacy target into one multipart request
+ok 477 - actual PnP createBatch queues the legacy target into one multipart request
+  ---
+  duration_ms: 6.944875
+  type: 'test'
+  ...
+# Subtest: actual PnP updateBatch queues the legacy target into one multipart request
+ok 478 - actual PnP updateBatch queues the legacy target into one multipart request
+  ---
+  duration_ms: 5.935708
+  type: 'test'
+  ...
+# Subtest: actual PnP removeBatch queues the legacy target into one multipart request
+ok 479 - actual PnP removeBatch queues the legacy target into one multipart request
+  ---
+  duration_ms: 9.33325
+  type: 'test'
+  ...
+# Subtest: actual PnP createBatch queues the title target into one multipart request
+ok 480 - actual PnP createBatch queues the title target into one multipart request
+  ---
+  duration_ms: 2.439084
+  type: 'test'
+  ...
+# Subtest: actual PnP updateBatch queues the title target into one multipart request
+ok 481 - actual PnP updateBatch queues the title target into one multipart request
+  ---
+  duration_ms: 6.848417
+  type: 'test'
+  ...
+# Subtest: actual PnP removeBatch queues the title target into one multipart request
+ok 482 - actual PnP removeBatch queues the title target into one multipart request
+  ---
+  duration_ms: 7.583
+  type: 'test'
+  ...
+# Subtest: actual PnP createBatch queues the id target into one multipart request
+ok 483 - actual PnP createBatch queues the id target into one multipart request
+  ---
+  duration_ms: 4.103084
+  type: 'test'
+  ...
+# Subtest: actual PnP updateBatch queues the id target into one multipart request
+ok 484 - actual PnP updateBatch queues the id target into one multipart request
+  ---
+  duration_ms: 4.954375
+  type: 'test'
+  ...
+# Subtest: actual PnP removeBatch queues the id target into one multipart request
+ok 485 - actual PnP removeBatch queues the id target into one multipart request
+  ---
+  duration_ms: 5.096459
+  type: 'test'
+  ...
+# Subtest: actual PnP createBatch queues the url target into one multipart request
+ok 486 - actual PnP createBatch queues the url target into one multipart request
+  ---
+  duration_ms: 7.327292
+  type: 'test'
+  ...
+# Subtest: actual PnP updateBatch queues the url target into one multipart request
+ok 487 - actual PnP updateBatch queues the url target into one multipart request
+  ---
+  duration_ms: 7.584375
+  type: 'test'
+  ...
+# Subtest: actual PnP removeBatch queues the url target into one multipart request
+ok 488 - actual PnP removeBatch queues the url target into one multipart request
+  ---
+  duration_ms: 5.034083
+  type: 'test'
+  ...
+# Subtest: actual PnP createBatch queues the path target into one multipart request
+ok 489 - actual PnP createBatch queues the path target into one multipart request
+  ---
+  duration_ms: 6.031417
+  type: 'test'
+  ...
+# Subtest: actual PnP updateBatch queues the path target into one multipart request
+ok 490 - actual PnP updateBatch queues the path target into one multipart request
+  ---
+  duration_ms: 4.775
+  type: 'test'
+  ...
+# Subtest: actual PnP removeBatch queues the path target into one multipart request
+ok 491 - actual PnP removeBatch queues the path target into one multipart request
+  ---
+  duration_ms: 20.358542
+  type: 'test'
+  ...
+# Subtest: updateBatch preserves mixed item error settlement while successful work completes
+ok 492 - updateBatch preserves mixed item error settlement while successful work completes
+  ---
+  duration_ms: 2.841959
+  type: 'test'
+  ...
+# Subtest: removeBatch preserves mixed item error settlement while successful work completes
+ok 493 - removeBatch preserves mixed item error settlement while successful work completes
+  ---
+  duration_ms: 3.789
+  type: 'test'
+  ...
+# Subtest: list factory works without context factory or webs preload
+ok 494 - list factory works without context factory or webs preload
+  ---
+  duration_ms: 1175.684542
+  type: 'test'
+  ...
+# Subtest: context factory registers web queries and batching without other factories
+ok 495 - context factory registers web queries and batching without other factories
+  ---
+  duration_ms: 766.425291
+  type: 'test'
+  ...
+# Subtest: search factory queries and suggests without context or list registrations
+ok 496 - search factory queries and suggests without context or list registrations
+  ---
+  duration_ms: 926.946875
+  type: 'test'
+  ...
+# Subtest: generic service batches real requests with only caller-owned web registration
+ok 497 - generic service batches real requests with only caller-owned web registration
+  ---
+  duration_ms: 714.470292
+  type: 'test'
+  ...
+# Subtest: provider observes displayMode changes on the same host instance
+ok 498 - provider observes displayMode changes on the same host instance
+  ---
+  duration_ms: 289.051166
+  type: 'test'
+  ...
+# Subtest: Property Pane in-place mutation after hook setter reaches consumers
+ok 499 - Property Pane in-place mutation after hook setter reaches consumers
+  ---
+  duration_ms: 139.610542
+  type: 'test'
+  ...
+# Subtest: provider observes in-place property deletion before and after hook updates
+ok 500 - provider observes in-place property deletion before and after hook updates
+  ---
+  duration_ms: 90.946083
+  type: 'test'
+  ...
+# Subtest: two providers keep properties and subscriptions isolated through cleanup
+ok 501 - two providers keep properties and subscriptions isolated through cleanup
+  ---
+  duration_ms: 89.251084
+  type: 'test'
+  ...
+# Subtest: replacing a ready scope hides children until the new scope finishes
+ok 502 - replacing a ready scope hides children until the new scope finishes
+  ---
+  duration_ms: 93.350709
+  type: 'test'
+  ...
+# Subtest: old scope completion cannot release a newer pending scope
+ok 503 - old scope completion cannot release a newer pending scope
+  ---
+  duration_ms: 46.262709
+  type: 'test'
+  ...
+# Subtest: inline object storage default settles (missing)
+ok 504 - inline object storage default settles (missing)
+  ---
+  duration_ms: 101.872375
+  type: 'test'
+  ...
+# Subtest: inline object storage default settles (persisted)
+ok 505 - inline object storage default settles (persisted)
+  ---
+  duration_ms: 79.361458
+  type: 'test'
+  ...
+# Subtest: default changes preserve current value and remove uses latest default
+ok 506 - default changes preserve current value and remove uses latest default
+  ---
+  duration_ms: 74.359583
+  type: 'test'
+  ...
+# Subtest: key and storage kind switches use persisted values or the current fallback
+ok 507 - key and storage kind switches use persisted values or the current fallback
+  ---
+  duration_ms: 113.606458
+  type: 'test'
+  ...
+# Subtest: storage events affect only the matching provider and listeners detach on unmount
+ok 508 - storage events affect only the matching provider and listeners detach on unmount
+  ---
+  duration_ms: 107.469041
+  type: 'test'
+  ...
+# Subtest: in-place scope replacement hides children immediately and ignores completion after unmount
+ok 509 - in-place scope replacement hides children immediately and ignores completion after unmount
+  ---
+  duration_ms: 43.789375
+  type: 'test'
+  ...
+# Subtest: replacing host property bags and provider instances preserves host-origin state
+ok 510 - replacing host property bags and provider instances preserves host-origin state
+  ---
+  duration_ms: 87.199
+  type: 'test'
+  ...
+# Subtest: external storage deletion uses latest fallback and ignores a different key or storage area
+ok 511 - external storage deletion uses latest fallback and ignores a different key or storage area
+  ---
+  duration_ms: 81.012667
+  type: 'test'
+  ...
+# Subtest: directory barrels, namespace exports and nested namespaces resolve actual public members
+ok 512 - directory barrels, namespace exports and nested namespaces resolve actual public members
+  ---
+  duration_ms: 11.326375
+  type: 'test'
+  ...
+# Subtest: qualified members and public type properties require actual source JSDoc
+ok 513 - qualified members and public type properties require actual source JSDoc
+  ---
+  duration_ms: 2.243459
+  type: 'test'
+  ...
+# Subtest: style example coverage rejects missing nested members and missing interactive scope use
+ok 514 - style example coverage rejects missing nested members and missing interactive scope use
+  ---
+  duration_ms: 21.986792
+  type: 'test'
+  ...
+# (node:36002) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: PnP cache expires after custom timeout in session storage
+ok 515 - PnP cache expires after custom timeout in session storage
+  ---
+  duration_ms: 765.949084
+  type: 'test'
+  ...
+# Subtest: PnP cache expires after custom timeout in local storage
+ok 516 - PnP cache expires after custom timeout in local storage
+  ---
+  duration_ms: 326.110458
+  type: 'test'
+  ...
+# Subtest: PnP cache retains legacy five minute fallback for timeout undefined
+ok 517 - PnP cache retains legacy five minute fallback for timeout undefined
+  ---
+  duration_ms: 401.657625
+  type: 'test'
+  ...
+# Subtest: PnP cache retains legacy five minute fallback for timeout 0
+ok 518 - PnP cache retains legacy five minute fallback for timeout 0
+  ---
+  duration_ms: 281.511
+  type: 'test'
+  ...
+# Subtest: PnP hook changes cache key factory and retains equal inline configuration
+ok 519 - PnP hook changes cache key factory and retains equal inline configuration
+  ---
+  duration_ms: 265.667291
+  type: 'test'
+  ...
+# Subtest: cross-site permissions retain current site when old requests finish last
+ok 520 - cross-site permissions retain current site when old requests finish last
+  ---
+  duration_ms: 26.488292
+  type: 'test'
+  ...
+# Subtest: clearing cross-site URL invalidates pending permissions and stays idle
+ok 521 - clearing cross-site URL invalidates pending permissions and stays idle
+  ---
+  duration_ms: 7.3905
+  type: 'test'
+  ...
+# Subtest: cross-site permissions clear previous grants while target is loading
+ok 522 - cross-site permissions clear previous grants while target is loading
+  ---
+  duration_ms: 35.350541
+  type: 'test'
+  ...
+# Subtest: user photo retains current user blob when old user finishes last
+ok 523 - user photo retains current user blob when old user finishes last
+  ---
+  duration_ms: 16.571708
+  type: 'test'
+  ...
+# Subtest: user photo overlapping reload keeps latest blob when the first completes last
+ok 524 - user photo overlapping reload keeps latest blob when the first completes last
+  ---
+  duration_ms: 28.357292
+  type: 'test'
+  ...
+# Subtest: user photo clears previous user while a different user photo is pending
+ok 525 - user photo clears previous user while a different user photo is pending
+  ---
+  duration_ms: 29.358125
+  type: 'test'
+  ...
+# Subtest: same-name overlapping time reports each operation duration independently
+ok 526 - same-name overlapping time reports each operation duration independently
+  ---
+  duration_ms: 5.734
+  type: 'test'
+  ...
+# Subtest: PnP context resolves site, injects headers and rebuilds changed scalar config
+ok 527 - PnP context resolves site, injects headers and rebuilds changed scalar config
+  ---
+  duration_ms: 242.175333
+  type: 'test'
+  ...
+# Subtest: PnP hook exposes initialization failure and recovers when context becomes available
+ok 528 - PnP hook exposes initialization failure and recovers when context becomes available
+  ---
+  duration_ms: 144.8195
+  type: 'test'
+  ...
+# Subtest: cross-site old rejection cannot replace new success and unmount ignores deferred updates
+ok 529 - cross-site old rejection cannot replace new success and unmount ignores deferred updates
+  ---
+  duration_ms: 28.297875
+  type: 'test'
+  ...
+# Subtest: current cross-site network rejection surfaces error and clears loading
+ok 530 - current cross-site network rejection surfaces error and clears loading
+  ---
+  duration_ms: 9.449625
+  type: 'test'
+  ...
+# Subtest: photo older success cannot finish newer loading and stale error cannot replace newer success
+ok 531 - photo older success cannot finish newer loading and stale error cannot replace newer success
+  ---
+  duration_ms: 39.678458
+  type: 'test'
+  ...
+# Subtest: photo current 403 maps error and unmount releases its blob URL without creating a stale one
+ok 532 - photo current 403 maps error and unmount releases its blob URL without creating a stale one
+  ---
+  duration_ms: 30.825
+  type: 'test'
+  ...
+# Subtest: Teams supports wrapper-v2 SDK shape and normalizes theme
+ok 533 - Teams supports wrapper-v2 SDK shape and normalizes theme
+  ---
+  duration_ms: 26.924584
+  type: 'test'
+  ...
+# Subtest: Teams supports direct-v2 SDK shape and normalizes theme
+ok 534 - Teams supports direct-v2 SDK shape and normalizes theme
+  ---
+  duration_ms: 22.643417
+  type: 'test'
+  ...
+# Subtest: Teams supports direct-v1 SDK shape and normalizes theme
+ok 535 - Teams supports direct-v1 SDK shape and normalizes theme
+  ---
+  duration_ms: 43.385167
+  type: 'test'
+  ...
+# Subtest: Teams initialized context replacement acquires new SDK context
+ok 536 - Teams initialized context replacement acquires new SDK context
+  ---
+  duration_ms: 28.609583
+  type: 'test'
+  ...
+# Subtest: Teams ignores a superseded deferred context and completion after unmount
+ok 537 - Teams ignores a superseded deferred context and completion after unmount
+  ---
+  duration_ms: 33.633542
+  type: 'test'
+  ...
+# Subtest: API precheck invalidates available results and checks replacement provider
+ok 538 - API precheck invalidates available results and checks replacement provider
+  ---
+  duration_ms: 38.935708
+  type: 'test'
+  ...
+# Subtest: API precheck replacement invalidates old in-flight check and retains new result
+ok 539 - API precheck replacement invalidates old in-flight check and retains new result
+  ---
+  duration_ms: 37.908959
+  type: 'test'
+  ...
+# Subtest: API precheck passive events, retry cache options and unmount preserve contracts
+ok 540 - API precheck passive events, retry cache options and unmount preserve contracts
+  ---
+  duration_ms: 32.437625
+  type: 'test'
+  ...
+# Subtest: API precheck groups token acquisition and maps timeout without losing scope results
+ok 541 - API precheck groups token acquisition and maps timeout without losing scope results
+  ---
+  duration_ms: 22.209708
+  type: 'test'
+  ...
+# Subtest: mount checks permissions without provisioning; root and two subsites share one target and callbacks
+ok 542 - mount checks permissions without provisioning; root and two subsites share one target and callbacks
+  ---
+  duration_ms: 173.161667
+  type: 'test'
+  ...
+# Subtest: missing client rejects every operation and becomes ready once restored
+ok 543 - missing client rejects every operation and becomes ready once restored
+  ---
+  duration_ms: 61.320917
+  type: 'test'
+  ...
+# Subtest: missing root rejects every operation and becomes ready once restored
+ok 544 - missing root rejects every operation and becomes ready once restored
+  ---
+  duration_ms: 73.3475
+  type: 'test'
+  ...
+# Subtest: get publishes read failures and returns fallback
+ok 545 - get publishes read failures and returns fallback
+  ---
+  duration_ms: 34.736
+  type: 'test'
+  ...
+# Subtest: list publishes read failures and returns fallback
+ok 546 - list publishes read failures and returns fallback
+  ---
+  duration_ms: 18.290083
+  type: 'test'
+  ...
+# Subtest: save publishes write failures, rejects, and does not refresh permission
+ok 547 - save publishes write failures, rejects, and does not refresh permission
+  ---
+  duration_ms: 44.276792
+  type: 'test'
+  ...
+# Subtest: remove publishes write failures, rejects, and does not refresh permission
+ok 548 - remove publishes write failures, rejects, and does not refresh permission
+  ---
+  duration_ms: 37.289084
+  type: 'test'
+  ...
+# Subtest: successful writes refresh permission and latest permission result wins
+ok 549 - successful writes refresh permission and latest permission result wins
+  ---
+  duration_ms: 42.89975
+  type: 'test'
+  ...
+# Subtest: permission lookup rejection yields false without an operation error
+ok 550 - permission lookup rejection yields false without an operation error
+  ---
+  duration_ms: 73.826875
+  type: 'test'
+  ...
+# Subtest: read counts all operations resolving in reverse order and publishes only latest-started errors
+ok 551 - read counts all operations resolving in reverse order and publishes only latest-started errors
+  ---
+  duration_ms: 40.42675
+  type: 'test'
+  ...
+# Subtest: write counts all operations resolving in reverse order and publishes only latest-started errors
+ok 552 - write counts all operations resolving in reverse order and publishes only latest-started errors
+  ---
+  duration_ms: 28.971084
+  type: 'test'
+  ...
+# Subtest: operations clear only their own error channel and read/write flags remain independent
+ok 553 - operations clear only their own error channel and read/write flags remain independent
+  ---
+  duration_ms: 51.143417
+  type: 'test'
+  ...
+# Subtest: root change resets state and ignores old calls, callbacks, and permission completions
+ok 554 - root change resets state and ignores old calls, callbacks, and permission completions
+  ---
+  duration_ms: 16.308417
+  type: 'test'
+  ...
+# Subtest: client change resets state and ignores old calls, callbacks, and permission completions
+ok 555 - client change resets state and ignores old calls, callbacks, and permission completions
+  ---
+  duration_ms: 8.809916
+  type: 'test'
+  ...
+# Subtest: normalization does not reset storage identity but scalar URL mutation does
+ok 556 - normalization does not reset storage identity but scalar URL mutation does
+  ---
+  duration_ms: 10.880459
+  type: 'test'
+  ...
+# Subtest: unmount ignores read/write/permission completion and starts no refresh
+ok 557 - unmount ignores read/write/permission completion and starts no refresh
+  ---
+  duration_ms: 64.678333
+  type: 'test'
+  ...
+# Subtest: get latest success suppresses earlier failure
+ok 558 - get latest success suppresses earlier failure
+  ---
+  duration_ms: 8.598667
+  type: 'test'
+  ...
+# Subtest: save latest success suppresses earlier failure
+ok 559 - save latest success suppresses earlier failure
+  ---
+  duration_ms: 9.425584
+  type: 'test'
+  ...
+# Subtest: successful old write does not refresh permission or affect the new collection
+ok 560 - successful old write does not refresh permission or affect the new collection
+  ---
+  duration_ms: 102.672292
+  type: 'test'
+  ...
+# Subtest: layout-effect reads and writes remain visible through passive initialization on mount and collection switch
+ok 561 - layout-effect reads and writes remain visible through passive initialization on mount and collection switch
+  ---
+  duration_ms: 37.3045
+  type: 'test'
+  ...
+# Subtest: child layout effects can start parent-provided operations before the parent layout guard
+ok 562 - child layout effects can start parent-provided operations before the parent layout guard
+  ---
+  duration_ms: 17.065459
+  type: 'test'
+  ...
+# Subtest: useStableCallback exposes the Fluent hook itself without a wrapper
+ok 563 - useStableCallback exposes the Fluent hook itself without a wrapper
+  ---
+  duration_ms: 50.892083
+  type: 'test'
+  ...
+# Subtest: a retained callback reads updated props without an SPFx provider
+ok 564 - a retained callback reads updated props without an SPFx provider
+  ---
+  duration_ms: 24.373625
+  type: 'test'
+  ...
+# Subtest: flex, items, grid and logical alignment expose only intended properties
+ok 565 - flex, items, grid and logical alignment expose only intended properties
+  ---
+  duration_ms: 2450.592167
+  type: 'test'
+  ...
+# Subtest: grid columns accepts positive integers and rejects invalid counts
+ok 566 - grid columns accepts positive integers and rejects invalid counts
+  ---
+  duration_ms: 72.6045
+  type: 'test'
+  ...
+# Subtest: grid columns serializes large finite integers in CSS decimal integer syntax
+ok 567 - grid columns serializes large finite integers in CSS decimal integer syntax
+  ---
+  duration_ms: 55.808542
+  type: 'test'
+  ...
+# Subtest: gap uses literal axis token references and validated pixels
+ok 568 - gap uses literal axis token references and validated pixels
+  ---
+  duration_ms: 59.006375
+  type: 'test'
+  ...
+# Subtest: padding uses literal axis token references and validated pixels
+ok 569 - padding uses literal axis token references and validated pixels
+  ---
+  duration_ms: 49.973458
+  type: 'test'
+  ...
+# Subtest: padding-inline uses literal axis token references and validated pixels
+ok 570 - padding-inline uses literal axis token references and validated pixels
+  ---
+  duration_ms: 52.257625
+  type: 'test'
+  ...
+# Subtest: padding-block uses literal axis token references and validated pixels
+ok 571 - padding-block uses literal axis token references and validated pixels
+  ---
+  duration_ms: 53.380959
+  type: 'test'
+  ...
+# Subtest: padding-inline-start uses literal axis token references and validated pixels
+ok 572 - padding-inline-start uses literal axis token references and validated pixels
+  ---
+  duration_ms: 54.872917
+  type: 'test'
+  ...
+# Subtest: padding-inline-end uses literal axis token references and validated pixels
+ok 573 - padding-inline-end uses literal axis token references and validated pixels
+  ---
+  duration_ms: 49.864917
+  type: 'test'
+  ...
+# Subtest: padding-block-start uses literal axis token references and validated pixels
+ok 574 - padding-block-start uses literal axis token references and validated pixels
+  ---
+  duration_ms: 52.215625
+  type: 'test'
+  ...
+# Subtest: padding-block-end uses literal axis token references and validated pixels
+ok 575 - padding-block-end uses literal axis token references and validated pixels
+  ---
+  duration_ms: 43.348166
+  type: 'test'
+  ...
+# Subtest: margin uses literal axis token references and validated pixels
+ok 576 - margin uses literal axis token references and validated pixels
+  ---
+  duration_ms: 52.101667
+  type: 'test'
+  ...
+# Subtest: margin-inline uses literal axis token references and validated pixels
+ok 577 - margin-inline uses literal axis token references and validated pixels
+  ---
+  duration_ms: 49.028042
+  type: 'test'
+  ...
+# Subtest: margin-block uses literal axis token references and validated pixels
+ok 578 - margin-block uses literal axis token references and validated pixels
+  ---
+  duration_ms: 45.469583
+  type: 'test'
+  ...
+# Subtest: margin-inline-start uses literal axis token references and validated pixels
+ok 579 - margin-inline-start uses literal axis token references and validated pixels
+  ---
+  duration_ms: 42.634333
+  type: 'test'
+  ...
+# Subtest: margin-inline-end uses literal axis token references and validated pixels
+ok 580 - margin-inline-end uses literal axis token references and validated pixels
+  ---
+  duration_ms: 48.514958
+  type: 'test'
+  ...
+# Subtest: margin-block-start uses literal axis token references and validated pixels
+ok 581 - margin-block-start uses literal axis token references and validated pixels
+  ---
+  duration_ms: 45.880833
+  type: 'test'
+  ...
+# Subtest: margin-block-end uses literal axis token references and validated pixels
+ok 582 - margin-block-end uses literal axis token references and validated pixels
+  ---
+  duration_ms: 43.320541
+  type: 'test'
+  ...
+# Subtest: global, axis and side spacing overrides share canonical logical properties
+ok 583 - global, axis and side spacing overrides share canonical logical properties
+  ---
+  duration_ms: 50.920708
+  type: 'test'
+  ...
+# Subtest: dimension facades use literal lengths and reject invalid pixels
+ok 584 - dimension facades use literal lengths and reject invalid pixels
+  ---
+  duration_ms: 283.96
+  type: 'test'
+  ...
+# Subtest: spacing references exist at the exact react-theme 9.2.0 dependency floor
+ok 585 - spacing references exist at the exact react-theme 9.2.0 dependency floor
+  ---
+  duration_ms: 0.735417
+  type: 'test'
+  ...
+# Subtest: catalog theme references use official Fluent accesses instead of handwritten variable literals
+ok 586 - catalog theme references use official Fluent accesses instead of handwritten variable literals
+  ---
+  duration_ms: 99.137
+  type: 'test'
+  ...
+# Subtest: theme reference policy catches strings and template fragments while allowing private variables and official recipes
+ok 587 - theme reference policy catches strings and template fragments while allowing private variables and official recipes
+  ---
+  duration_ms: 0.394208
+  type: 'test'
+  ...
+# Subtest: all 17 typography selections apply only the four official token properties
+ok 588 - all 17 typography selections apply only the four official token properties
+  ---
+  duration_ms: 466.204042
+  type: 'test'
+  ...
+# Subtest: text selections preserve logical alignment and truncate only the documented longhands
+ok 589 - text selections preserve logical alignment and truncate only the documented longhands
+  ---
+  duration_ms: 266.599041
+  type: 'test'
+  ...
+# Subtest: foreground and background apply the approved Fluent role references without implicit states
+ok 590 - foreground and background apply the approved Fluent role references without implicit states
+  ---
+  duration_ms: 230.5835
+  type: 'test'
+  ...
+# Subtest: presets contain only their approved color properties and transparent preserves inherited color
+ok 591 - presets contain only their approved color properties and transparent preserves inherited color
+  ---
+  duration_ms: 152.54375
+  type: 'test'
+  ...
+# Subtest: preset and foreground overrides resolve property by property in argument order
+ok 592 - preset and foreground overrides resolve property by property in argument order
+  ---
+  duration_ms: 167.687834
+  type: 'test'
+  ...
+# Subtest: every catalog color token exists in the installed light dark and high contrast floor
+ok 593 - every catalog color token exists in the installed light dark and high contrast floor
+  ---
+  duration_ms: 0.62325
+  type: 'test'
+  ...
+# Subtest: border geometry and color recipes expand all four sides to independent longhands
+ok 594 - border geometry and color recipes expand all four sides to independent longhands
+  ---
+  duration_ms: 188.319083
+  type: 'test'
+  ...
+# Subtest: radius and shadow selections use the exact supported tokens without other geometry
+ok 595 - radius and shadow selections use the exact supported tokens without other geometry
+  ---
+  duration_ms: 110.186375
+  type: 'test'
+  ...
+# Subtest: overflow recipes keep axis selection independent and leave native coupling to CSS
+ok 596 - overflow recipes keep axis selection independent and leave native coupling to CSS
+  ---
+  duration_ms: 123.962833
+  type: 'test'
+  ...
+# Subtest: scrollbar exposes only fluent and changes appearance without choosing scrolling behavior
+ok 597 - scrollbar exposes only fluent and changes appearance without choosing scrolling behavior
+  ---
+  duration_ms: 202.20125
+  type: 'test'
+  ...
+# Subtest: forced colors binding overrides participate in caching and emit their own media rule
+ok 598 - forced colors binding overrides participate in caching and emit their own media rule
+  ---
+  duration_ms: 108.213917
+  type: 'test'
+  ...
+# Subtest: width and minimum width descriptors contain explicit CSS lengths
+ok 599 - width and minimum width descriptors contain explicit CSS lengths
+  ---
+  duration_ms: 534.56125
+  type: 'test'
+  ...
+# Subtest: pixel factories reject non-finite and negative values
+ok 600 - pixel factories reject non-finite and negative values
+  ---
+  duration_ms: 174.031792
+  type: 'test'
+  ...
+# Subtest: subtle foreground retains the Fluent token reference
+ok 601 - subtle foreground retains the Fluent token reference
+  ---
+  duration_ms: 190.128708
+  type: 'test'
+  ...
+# Subtest: body1 includes only the four official typography properties
+ok 602 - body1 includes only the four official typography properties
+  ---
+  duration_ms: 147.51125
+  type: 'test'
+  ...
+# Subtest: state and responsive scopes preserve inputs and inclusive breakpoints
+ok 603 - state and responsive scopes preserve inputs and inclusive breakpoints
+  ---
+  duration_ms: 134.134625
+  type: 'test'
+  ...
+# Subtest: normalization preserves intercalated class boundaries and the last declaration in each scope
+ok 604 - normalization preserves intercalated class boundaries and the last declaration in each scope
+  ---
+  duration_ms: 496.153792
+  type: 'test'
+  ...
+# Subtest: logical padding/margin tuple recipes resolve per-longhand overrides without crossing strings
+ok 605 - logical padding/margin tuple recipes resolve per-longhand overrides without crossing strings
+  ---
+  duration_ms: 240.711209
+  type: 'test'
+  ...
+# Subtest: empty and falsy inputs produce no segments; scopes preserve canonical values
+ok 606 - empty and falsy inputs produce no segments; scopes preserve canonical values
+  ---
+  duration_ms: 184.701333
+  type: 'test'
+  ...
+# Subtest: default renderer inserts during React17 render without any toolkit provider
+ok 607 - default renderer inserts during React17 render without any toolkit provider
+  ---
+  duration_ms: 472.444459
+  type: 'test'
+  ...
+# Subtest: renderer replacement and separate documents/salts use independent initialized factories
+ok 608 - renderer replacement and separate documents/salts use independent initialized factories
+  ---
+  duration_ms: 256.773042
+  type: 'test'
+  ...
+# Subtest: Fluent direction changes and explicit override produce consistent LTR/RTL sequences
+ok 609 - Fluent direction changes and explicit override produce consistent LTR/RTL sequences
+  ---
+  duration_ms: 170.828541
+  type: 'test'
+  ...
+# Subtest: host nonce/insertion point are respected and unmount preserves host styles
+ok 610 - host nonce/insertion point are respected and unmount preserves host styles
+  ---
+  duration_ms: 161.289625
+  type: 'test'
+  ...
+# Subtest: empty sx is empty and changing 240 to 360 to 240 reuses classes without inline styles
+ok 611 - empty sx is empty and changing 240 to 360 to 240 reuses classes without inline styles
+  ---
+  duration_ms: 405.794875
+  type: 'test'
+  ...
+# Subtest: siblings with different values keep their own assignment classes
+ok 612 - siblings with different values keep their own assignment classes
+  ---
+  duration_ms: 191.3445
+  type: 'test'
+  ...
+# Subtest: intercalated external Griffel width wins until a later width descriptor rebinds it
+ok 613 - intercalated external Griffel width wins until a later width descriptor rebinds it
+  ---
+  duration_ms: 141.883334
+  type: 'test'
+  ...
+# Subtest: two separate sx results preserve independent state assignments during merge
+ok 614 - two separate sx results preserve independent state assignments during merge
+  ---
+  duration_ms: 84.264208
+  type: 'test'
+  ...
+# Subtest: later native or sx width wins in the same foreign Griffel hover scope
+ok 615 - later native or sx width wins in the same foreign Griffel hover scope
+  ---
+  duration_ms: 90.241416
+  type: 'test'
+  ...
+# Subtest: a hover-only descriptor preserves a foreign base width
+ok 616 - a hover-only descriptor preserves a foreign base width
+  ---
+  duration_ms: 95.825167
+  type: 'test'
+  ...
+# Subtest: later native or sx width wins in the same foreign Griffel active scope
+ok 617 - later native or sx width wins in the same foreign Griffel active scope
+  ---
+  duration_ms: 84.50075
+  type: 'test'
+  ...
+# Subtest: a active-only descriptor preserves a foreign base width
+ok 618 - a active-only descriptor preserves a foreign base width
+  ---
+  duration_ms: 67.066958
+  type: 'test'
+  ...
+# Subtest: later native or sx width wins in the same foreign Griffel focus-visible scope
+ok 619 - later native or sx width wins in the same foreign Griffel focus-visible scope
+  ---
+  duration_ms: 75.80075
+  type: 'test'
+  ...
+# Subtest: a focus-visible-only descriptor preserves a foreign base width
+ok 620 - a focus-visible-only descriptor preserves a foreign base width
+  ---
+  duration_ms: 66.186792
+  type: 'test'
+  ...
+# Subtest: later native or sx width wins in the same foreign Griffel viewport scope
+ok 621 - later native or sx width wins in the same foreign Griffel viewport scope
+  ---
+  duration_ms: 64.756375
+  type: 'test'
+  ...
+# Subtest: a viewport-only descriptor preserves a foreign base width
+ok 622 - a viewport-only descriptor preserves a foreign base width
+  ---
+  duration_ms: 61.522125
+  type: 'test'
+  ...
+# Subtest: later native or sx width wins in the same foreign Griffel container scope
+ok 623 - later native or sx width wins in the same foreign Griffel container scope
+  ---
+  duration_ms: 64.539833
+  type: 'test'
+  ...
+# Subtest: a container-only descriptor preserves a foreign base width
+ok 624 - a container-only descriptor preserves a foreign base width
+  ---
+  duration_ms: 56.661208
+  type: 'test'
+  ...
+# Subtest: later native or sx width wins in the same foreign Griffel viewport-hover scope
+ok 625 - later native or sx width wins in the same foreign Griffel viewport-hover scope
+  ---
+  duration_ms: 54.0595
+  type: 'test'
+  ...
+# Subtest: a viewport-hover-only descriptor preserves a foreign base width
+ok 626 - a viewport-hover-only descriptor preserves a foreign base width
+  ---
+  duration_ms: 69.641959
+  type: 'test'
+  ...
+# Subtest: later native or sx width wins in the same foreign Griffel container-hover scope
+ok 627 - later native or sx width wins in the same foreign Griffel container-hover scope
+  ---
+  duration_ms: 56.597625
+  type: 'test'
+  ...
+# Subtest: a container-hover-only descriptor preserves a foreign base width
+ok 628 - a container-hover-only descriptor preserves a foreign base width
+  ---
+  duration_ms: 59.274375
+  type: 'test'
+  ...
+# Subtest: live assignments have greater specificity than local resets; container queries use inline size
+ok 629 - live assignments have greater specificity than local resets; container queries use inline size
+  ---
+  duration_ms: 50.305417
+  type: 'test'
+  ...
+# Subtest: container inlineSize supplies only the named inline-size query boundary
+ok 630 - container inlineSize supplies only the named inline-size query boundary
+  ---
+  duration_ms: 57.524042
+  type: 'test'
+  ...
+# Subtest: removing query and state inputs after rerender removes their assignment classes
+ok 631 - removing query and state inputs after rerender removes their assignment classes
+  ---
+  duration_ms: 54.324375
+  type: 'test'
+  ...
+1..631
+# tests 631
+# suites 0
+# pass 631
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6481.963542

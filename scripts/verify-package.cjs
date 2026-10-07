@@ -6,13 +6,17 @@ const path = require('node:path');
 const {execFileSync, spawnSync} = require('node:child_process');
 const ts = require('typescript');
 const { collectPublicSurface } = require('./public-surface.helpers.cjs');
+const { assertEntrypointContract, verifyConsumerResolution } = require('./package-entrypoints.cjs');
 const {createRequire} = require('node:module');
+const {measureTreeShaking, runInstalledGates, verifyContractMutations} = require('./bundle-contract.internal.cjs');
+const {verifyProductionRuntime} = require('./verify-production-runtime.cjs');
 const root = path.resolve(__dirname, '..');
 const library = path.join(root, 'packages/spfx-react-toolkit');
 const app = path.join(root, 'apps/spfx-react-toolkit-test');
-const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'spfx-tarball-consumer-'));
+const temp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'spfx-tarball-consumer-')));
 const evidence = process.env.SPFX_PACKAGE_EVIDENCE
-  ? path.resolve(process.env.SPFX_PACKAGE_EVIDENCE) : path.join(temp, 'evidence');
+  ? path.resolve(process.env.SPFX_PACKAGE_EVIDENCE) : path.join(root, '.docs/maintenance/evidence/tree-shaking/package');
+assert.ok(evidence !== temp && !evidence.startsWith(temp + path.sep), 'Package evidence must remain outside the temporary consumer');
 fs.mkdirSync(evidence, { recursive: true });
 const commandResults = [];
 const stripAnsi = text => text.replace(/\x1b\[[0-?]*[ -/]*[@-~]/g, '');
@@ -33,6 +37,7 @@ function run(args, cwd, { prepareMetadata = false } = {}) {
     commandArgs = ['--require', preload,
       createRequire(path.join(cwd, 'package.json')).resolve('gulp/bin/gulp.js'), ...gulpTasks[args[1]]];
   }
+  const commandStart=Date.now();
   const result = spawnSync(command, commandArgs, { cwd, env, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
   const stdout = result.stdout ?? '';
   const stderr = result.stderr ?? '';
@@ -44,7 +49,7 @@ function run(args, cwd, { prepareMetadata = false } = {}) {
   const label = `${String(commandResults.length + 1).padStart(2, '0')}-${args.join('-').replace(/[^a-zA-Z0-9-]/g, '')}`;
   fs.writeFileSync(path.join(evidence, label + '.stdout.log'), stdout);
   fs.writeFileSync(path.join(evidence, label + '.stderr.log'), stderr);
-  commandResults.push({ args, command, commandArgs, cwd, prepareMetadata, metadataAdvisoryRouting: prepareMetadata, status: result.status, signal: result.signal,
+  commandResults.push({ args, command, commandArgs, cwd, prepareMetadata, metadataAdvisoryRouting: prepareMetadata, status: result.status, signal: result.signal, durationMs:Date.now()-commandStart,
     error: result.error?.message, failureMarkers, warnings });
   fs.writeFileSync(path.join(evidence, 'commands.json'), JSON.stringify(commandResults, null, 2));
   assert.ifError(result.error);
@@ -107,14 +112,17 @@ function assertEmittedStyleJSDoc(packedPaths) {
   fs.writeFileSync(path.join(evidence, 'style-declarations.json'), JSON.stringify({ declarations: surface.map(item => item.name), count: surface.length }, null, 2));
   return surface.length;
 }
+async function main() {
+const started=Date.now();
 try {
   run(['run','build:library'],root);
   const packed = JSON.parse(execFileSync('npm',['pack','--json','--pack-destination',temp],{cwd:library,encoding:'utf8'}))[0];
   assert.equal(packed.name,'@apvee/spfx-react-toolkit');
   for (const file of packed.files) {
-    assert.ok(/^(package\.json|README\.md|LICENSE|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils)\/.+))$/.test(file.path), `Unexpected package file: ${file.path}`);
+    assert.ok(/^(package\.json|README\.md|LICENSE|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles)\/.+))$/.test(file.path), `Unexpected package file: ${file.path}`);
   }
   const packedPaths = new Set(packed.files.map(file => file.path));
+  assertEntrypointContract(JSON.parse(fs.readFileSync(path.join(library, 'package.json'), 'utf8')), [...packedPaths]);
   fs.writeFileSync(path.join(evidence, 'pack.json'), JSON.stringify(packed, null, 2));
   assertPackedImports(packedPaths);
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
@@ -463,6 +471,10 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   }
   run(['install','--no-audit','--no-fund'],consumer);
   assert.equal(fs.lstatSync(path.join(consumer,'node_modules/@apvee/spfx-react-toolkit')).isSymbolicLink(),false);
+  const installedPackage = JSON.parse(fs.readFileSync(path.join(consumer, 'node_modules/@apvee/spfx-react-toolkit/package.json'), 'utf8'));
+  assertEntrypointContract(installedPackage, [...packedPaths]);
+  verifyConsumerResolution(consumer, evidence);
+  fs.writeFileSync(path.join(evidence, 'consumer-path.txt'), consumer + '\n');
   const hostRequire = createRequire(path.join(consumer, 'package.json'));
   const libraryRequire = createRequire(path.join(consumer, 'node_modules/@apvee/spfx-react-toolkit/package.json'));
   const sharedPackages = ['@griffel/core', '@griffel/react', '@fluentui/react-shared-contexts',
@@ -519,16 +531,23 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
       'compatibility/sx-package-public.ts', 'compatibility/sx-package-deep.ts'] },
     { args: ['run', 'package:solution'], prepareMetadata: true },
   ];
-  for (const step of consumerSteps) {
-    try { run(step.args, consumer, step); }
-    catch (error) { consumerFailures.push({ args: step.args, message: error.message }); }
-  }
+  const productionReports = await runInstalledGates({consumerRoot:fs.realpathSync(consumer),outputDir:evidence,failures:consumerFailures,
+    bundle:options=>measureTreeShaking({...options,mode:'enforce',contract:JSON.parse(fs.readFileSync(path.join(root,'tests/fixtures/tree-shaking/contract.json')))}),
+    runtime:verifyProductionRuntime,mutations:verifyContractMutations,
+    independent:async()=>{for (const step of consumerSteps) {
+      try { run(step.args, consumer, step); }
+      catch (error) { consumerFailures.push({ args: step.args, message: error.message }); }
+    }}
+  });
   fs.writeFileSync(path.join(evidence, 'consumer-result.json'), JSON.stringify({
-    consumer, packedFiles: packed.files.length, packedBytes: packed.size,
-    documentedDeclarations, failures: consumerFailures,
+    consumer, durationMs:Date.now()-started, packedFiles: packed.files.length, packedBytes: packed.size,
+    documentedDeclarations, production: Object.fromEntries(Object.entries(productionReports).map(([name,report])=>[name,{complete:report.complete,passed:report.passed,durationMs:report.durationMs}])), failures: consumerFailures,
   }, null, 2));
   assert.deepEqual(consumerFailures, [], `Isolated consumer verification failed; inspect every command in ${evidence}`);
   console.log(`Tarball consumer passed: ${packed.files.length} files; ${packed.size} bytes; ${documentedDeclarations} preserved JSDoc declarations; TypeScript, public/deep imports, SPFx ship bundle and solution. Consumer: ${consumer}`);
 } finally {
   if(process.env.SPFX_KEEP_CONSUMER !== '1') fs.rmSync(temp,{recursive:true,force:true});
 }
+
+}
+main().catch(error=>{console.error(error);process.exitCode=1;});

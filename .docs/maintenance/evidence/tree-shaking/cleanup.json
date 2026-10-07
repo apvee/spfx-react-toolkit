@@ -1,0 +1,914 @@
+{
+  "authorizedBy": "User: si, eliminali (intermediate snapshots and duplicate proofs)",
+  "createdAt": "2026-10-07T15:42:14.799909+00:00",
+  "finalSourceSnapshot": ".docs/superpowers/sdd/2026-10-07-granular-tree-shaking/final-source-snapshot.json.gz",
+  "sourceFiles": 77,
+  "snapshotRoundTripVerified": true,
+  "removed": [
+    {
+      "path": ".docs/superpowers/sdd/2026-10-07-granular-tree-shaking/final-fix-snapshot.json.gz",
+      "bytes": 43396608,
+      "sha256": "5372185e9aac06fc04fda98928834733f7bef6fb4a98675f37b03d512d84c077",
+      "kind": "intermediate snapshot"
+    },
+    {
+      "path": ".docs/superpowers/sdd/2026-10-07-granular-tree-shaking/task-1-fix1-base.json.gz",
+      "bytes": 7388799,
+      "sha256": "37b7e52d0657d6d6ce5f342303bae46c24b1b007cfc4434611dacad2bfca33d1",
+      "kind": "intermediate snapshot"
+    },
+    {
+      "path": ".docs/superpowers/sdd/2026-10-07-granular-tree-shaking/task-2-snapshot.json.gz",
+      "bytes": 7441237,
+      "sha256": "3d7d21c807a3dd8255ce2c275612232a1fd04b0ead9694742670a91b16f6a3bf",
+      "kind": "intermediate snapshot"
+    },
+    {
+      "path": ".docs/superpowers/sdd/2026-10-07-granular-tree-shaking/task-3-snapshot.json.gz",
+      "bytes": 7588109,
+      "sha256": "81216bba6f92ce03645f6a223f00cd709a575e570730f23498a63ab9dbc9b2b1",
+      "kind": "intermediate snapshot"
+    },
+    {
+      "path": ".docs/superpowers/sdd/2026-10-07-granular-tree-shaking/task-4-snapshot.json.gz",
+      "bytes": 7642763,
+      "sha256": "2a413ee7e8f53ab651567b1889147a678dc7b1b80bee8816006b787ac854eb33",
+      "kind": "intermediate snapshot"
+    },
+    {
+      "path": ".docs/superpowers/sdd/2026-10-07-granular-tree-shaking/task-5-fix1-base.json.gz",
+      "bytes": 32891877,
+      "sha256": "51300de8ff6d320cc254ec560e2ed7ad2ee8fce5ea9bcf534616994e626fe2e8",
+      "kind": "intermediate snapshot"
+    },
+    {
+      "path": ".docs/superpowers/sdd/2026-10-07-granular-tree-shaking/task-5-snapshot.json.gz",
+      "bytes": 20345635,
+      "sha256": "851701a4888576d566004998d5241d526e092c4b8989048b331e674f595d5d9d",
+      "kind": "intermediate snapshot"
+    },
+    {
+      "path": ".docs/superpowers/sdd/2026-10-07-granular-tree-shaking/task-6-fix1-snapshot.json.gz",
+      "bytes": 37977474,
+      "sha256": "662f1763e56ddc736bf36953cb9e611bb1898d87a91c6cea8e6ece9858ce17c8",
+      "kind": "intermediate snapshot"
+    },
+    {
+      "path": ".docs/superpowers/sdd/2026-10-07-granular-tree-shaking/task-6-snapshot.json.gz",
+      "bytes": 37373070,
+      "sha256": "b25919ea8ee762da4c3bb6e9807dda89048ba106951f645494b12c711036b0f8",
+      "kind": "intermediate snapshot"
+    },
+    {
+      "path": ".docs/superpowers/sdd/2026-10-07-granular-tree-shaking/task-1-snapshot.json",
+      "bytes": 72,
+      "sha256": "a7d11daa296fa327b0f9ce140012a532d1f0637c18f63e001351d371989bfbf1",
+      "kind": "intermediate snapshot"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-candidate/context/leaf/stats.json",
+      "bytes": 349937,
+      "sha256": "3a3df8d7313c2ed34f963db39acbad508d8c15377d72d54bd6d77dae0ccf73b1",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-candidate/context/root/stats.json",
+      "bytes": 1977738,
+      "sha256": "2fa167519975da06da0134b7cc368abaff475e98f044234051adb0798b0fabf2",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-candidate/context/domain/stats.json",
+      "bytes": 495330,
+      "sha256": "baa21e14d23749ce2823821669187ca7e809e395a6ce42d48f7a1785ce7d16cb",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-candidate/search/leaf/stats.json",
+      "bytes": 223020,
+      "sha256": "3232b210a099a60be639c9c952622f979bde23445fbd6dc4e6d86cd9df4769ef",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-candidate/search/root/stats.json",
+      "bytes": 1905923,
+      "sha256": "20a16f771b2bc10f82c8ff94a60a614d6ff5e7020a7dcec6fe1e6c2ef134fd8a",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-candidate/search/domain/stats.json",
+      "bytes": 428357,
+      "sha256": "4c3cc300d8bb8af571613692ed93d5b781a508bba7f5cf382208e0ea0f44a369",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-candidate/batch/leaf/stats.json",
+      "bytes": 255120,
+      "sha256": "ba92484fe2ab161ca02bd08536372c5355665e57206d0623d138006c82131512",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-candidate/batch/root/stats.json",
+      "bytes": 1931386,
+      "sha256": "66a4e8232f8934357ba7514b6de86bad88d01dc7102b3492c6551245ef895e94",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-candidate/batch/domain/stats.json",
+      "bytes": 457426,
+      "sha256": "630f72ad8d869266b02b5d6c4f45653b850f519a3f274917a98eea4e51d7d777",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-candidate/list/leaf/stats.json",
+      "bytes": 506670,
+      "sha256": "4c73b0ac3c0e6d3b476174342314f8f01bad1a6d127e5cd4e504a512959685f2",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-candidate/list/root/stats.json",
+      "bytes": 2022661,
+      "sha256": "8ad31dc3017c1080886a4c0ccad16581238de83c5fd32f5bb6fea63f47e28d84",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-candidate/list/domain/stats.json",
+      "bytes": 544943,
+      "sha256": "1a9ac4924fb4e543c4b804ff678820e113babdea30d45305d711224d46e4bbf4",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline-final/context/leaf/stats.json",
+      "bytes": 269417,
+      "sha256": "504ad06f47a09978e9d2ec0d68d9f88546f18ebf7d1fa16034a5b5b68f72e23a",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline-final/context/root/stats.json",
+      "bytes": 6151909,
+      "sha256": "2869282b77153f186fe0b4af8c99b86e0dbf8d8fb6defc250f61414358b5fabc",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline-final/context/domain/stats.json",
+      "bytes": 530530,
+      "sha256": "6ccb9d47f666796963721d54aa6be84dd431a88fa2ac173b508b392c4566ff21",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline-final/search/leaf/stats.json",
+      "bytes": 174531,
+      "sha256": "52d83230eff4c0b32bc897d96310987c8bce86d1b6f04ed07fa0c117b954399b",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline-final/search/root/stats.json",
+      "bytes": 6141478,
+      "sha256": "21ae5c15c0553aa7f3da6c35198606ed8a14ab8ea57bd8a884817183f2c2c762",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline-final/search/domain/stats.json",
+      "bytes": 525303,
+      "sha256": "a10a7e3bfd6655dd8291cc466ceb1f62f53cfcc99ad62550246ede24c3a7efd5",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline-final/batch/leaf/stats.json",
+      "bytes": 195705,
+      "sha256": "b0474c62a5ab747d3914baa16673b3bb5109db8f6c4c3c2372ba1840f72433be",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline-final/batch/root/stats.json",
+      "bytes": 6138648,
+      "sha256": "cf5ec26718933c5e2e2b840dbb7c44276f9aa27e279038d9060a55b88ff9e010",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline-final/batch/domain/stats.json",
+      "bytes": 523892,
+      "sha256": "580f27a188493a52290405193ab5f9280474996497320b9769b406053becf799",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline-final/list/leaf/stats.json",
+      "bytes": 387140,
+      "sha256": "a2f6d06f1fad33c8f64a396b59d9a2800b7bfd51631e1692e64d36cba23c3fbc",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline-final/list/root/stats.json",
+      "bytes": 6140594,
+      "sha256": "ac188f454fc7b9e60232e514d0e23e26c73b573586b507ef687ef61246d97a36",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline-final/list/domain/stats.json",
+      "bytes": 524919,
+      "sha256": "810aed09ce3c41b0a7d597ed5b157405ff16e2dfb31400c3998a38f3b368247c",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/mutations/batch/stats.json",
+      "bytes": 230044,
+      "sha256": "903f950f125118b967464b9f4dd6cde87c8ce0bb752d127e1c520d416817fc06",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/mutations/list/stats.json",
+      "bytes": 496508,
+      "sha256": "1fbe92d27d82fa18f41218a8b0cc659704cd3acd73431f49fff4dfe17f389b83",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/context/leaf/stats.json",
+      "bytes": 269417,
+      "sha256": "5bf0a4d888c6c9a7e6f2ebe2e9c6068bee400652b5350c957d9d595cd5022158",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/context/root/stats.json",
+      "bytes": 6151823,
+      "sha256": "7915b7dda9b8adb2c8ab868fe315228587ce116727ca8060737ada3707a91530",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/context/domain/stats.json",
+      "bytes": 530674,
+      "sha256": "bfcfaf3286af2155d4e57962568f788d3134179bd65621d5074d977560674b05",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/search/leaf/stats.json",
+      "bytes": 291528,
+      "sha256": "54a5ec0cae435e0b980b3df16dedabd558344d154d584868e1bb8d77925ce78c",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/search/root/stats.json",
+      "bytes": 6132202,
+      "sha256": "6419d7a676f53dc1f7828751c5aa158ff068cbaf3f140cf4ced64711cc8c6859",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/search/domain/stats.json",
+      "bytes": 518903,
+      "sha256": "2cfb03189134c9a262ca9c50c5fc29854b50175f1899a924bd4d296ece53eed4",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/batch/leaf/stats.json",
+      "bytes": 259820,
+      "sha256": "8fab69083657b41d7c5c7a0ac21a12ab42b770abd75d0ef7da1f1b6b9c91f0f1",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/batch/root/stats.json",
+      "bytes": 6131359,
+      "sha256": "9c891702d9243525d44ecd52f12692930335d2aaee7e9ae89fa6fd322a82613f",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/batch/domain/stats.json",
+      "bytes": 518535,
+      "sha256": "5e442f6e4cacb99166ab424c12e477930338ae9b79e0e926f51aee68bc59ce53",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/list/leaf/stats.json",
+      "bytes": 380792,
+      "sha256": "1632ae5a8777a15d3a4f24d38ac8c6b37928697ff4d308f01283e814687bf697",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/list/root/stats.json",
+      "bytes": 6131382,
+      "sha256": "2d8b4c9b4f9dfb4d910507b90cfa05cd99f14c410aec0f93db0271c62ec0fc38",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-baseline/list/domain/stats.json",
+      "bytes": 518561,
+      "sha256": "57fc1ad67444b9ea4b0e6cf1918892e893ecd644657aee4570fbaffc62837b9b",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-final/context/leaf/stats.json",
+      "bytes": 349945,
+      "sha256": "4b8100f2490b9bc5dc1dd230db4848f172d920fc72acf330e132f98f978ba48f",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-final/context/root/stats.json",
+      "bytes": 1977608,
+      "sha256": "7bbbc2f833e643e86aec6322cfba1f568822a4f74b4560bf15f5d421368718b6",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-final/context/domain/stats.json",
+      "bytes": 495274,
+      "sha256": "7332e4b006fb423f561f2e7dc319abf4a0cb5364d82d419701da613a5eccd2e8",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-final/search/leaf/stats.json",
+      "bytes": 223236,
+      "sha256": "132c5d247f9bad57cd5230d0061a20eb98ff9c1f043719538117fdc160aac3cd",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-final/search/root/stats.json",
+      "bytes": 1905923,
+      "sha256": "09af90463b0443acceb3f81ca080b7f7d0739c6dcb90e990fbe68648340eabe6",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-final/search/domain/stats.json",
+      "bytes": 428357,
+      "sha256": "6a9bd74cc56c1d93afec3c12c19212d8b0e690ce05ee302e653a43aa1a3fb9fe",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-final/batch/leaf/stats.json",
+      "bytes": 255120,
+      "sha256": "9b016495177bf2a405239a939680cf361bc5dc78a2183a8656b6b94f4429e0fb",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-final/batch/root/stats.json",
+      "bytes": 1931354,
+      "sha256": "5dae1fcc522dce1514ec9944fee30a924fc6ea24203f1ce909794daa9c40a5b0",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-final/batch/domain/stats.json",
+      "bytes": 457298,
+      "sha256": "91b3dd6b118645caab0a7111d6de4af2614b8f06693d2570471468b9f99cd322",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-final/list/leaf/stats.json",
+      "bytes": 506866,
+      "sha256": "6f6521789750e2a69d3af97fb6557b001026a1b6eb036ebf119aa455d1cd3bd9",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-final/list/root/stats.json",
+      "bytes": 2022613,
+      "sha256": "77cc776d3961721d250db7b97839d465dc582b1ce8e35a43f936ef0a51b244d8",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-4/runtime-final/list/domain/stats.json",
+      "bytes": 542389,
+      "sha256": "6edd52600300ce7489f8d4f6651ebe3e2ef98e47d61872e7513407c316b848f5",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/mutations/lost-search-prototype/stats.json",
+      "bytes": 185916,
+      "sha256": "e985c47994ea14779dc35b60c48baa0cdc2be7df89e11d6f6621df12371aab81",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/mutations/lost-list-registration/stats.json",
+      "bytes": 433703,
+      "sha256": "99bdbc55f412b3296336cb1d8c5dd10a53ab2a6848a6a4f316e1fa5173dff8fa",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/mutations/lost-batch-registration/stats.json",
+      "bytes": 202584,
+      "sha256": "29303d17c2f59849e6b44efa274096879fe0da7d496aafed6c40521c2913ffe6",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/context/leaf/stats.json",
+      "bytes": 269079,
+      "sha256": "ac4b92c1f62ede8a57222e501bdb6a82357789a561057293aea27a73074021b0",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/context/root/stats.json",
+      "bytes": 1837024,
+      "sha256": "885fa74abc93ac3be3ed138be183ffb16598f769b6443a0b477de17c91d43222",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/context/domain/stats.json",
+      "bytes": 377941,
+      "sha256": "8ab2ce64d3998d46938feaf7963c9d7e5cb59d312ade1746875ba4b4ea5e07b1",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/providers/leaf/stats.json",
+      "bytes": 2686173,
+      "sha256": "294abfe6659f2eb4d2c903de96667b66b39aeaad7c74060edc628e3f5b0762be",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/providers/root/stats.json",
+      "bytes": 2688756,
+      "sha256": "f04f2b95ec19b700184e398811a5524b3e920fcd2bd75409035ddb2455700b4b",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/providers/domain/stats.json",
+      "bytes": 2687038,
+      "sha256": "cc671ff45d9af96a978c0b2a9465db09bcbc8e1f8828d93d10afafbcb16a301a",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/search/leaf/stats.json",
+      "bytes": 174083,
+      "sha256": "0886b54fc43b0eea130334dc950a550af9ab33f10b9c6af826c8d5b205fd3c67",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/search/root/stats.json",
+      "bytes": 1774662,
+      "sha256": "d11e1661b32316542e3c0089df5deff4887432697b3a0b3f6ca409281282f44a",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/search/domain/stats.json",
+      "bytes": 322044,
+      "sha256": "fbc7faa9bd10e129abc054b04a0cae5790f211b9e12354b5bf3851cd9dd1ed4a",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/styles/leaf/stats.json",
+      "bytes": 7930248,
+      "sha256": "ff2f98b4e1d768df951804995029c97db5ee4ae338b32ad13af3e01d3669fc87",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/styles/root/stats.json",
+      "bytes": 7932630,
+      "sha256": "7305b434ff1296b6715a1035c36a5ff14da330b84a51b9a9c909b2d4a194a9fc",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/styles/domain/stats.json",
+      "bytes": 7933533,
+      "sha256": "1100685290e25c08135eea80468463306a775bfaccb283cb8444edb8c0aa56c4",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/batch/leaf/stats.json",
+      "bytes": 266822,
+      "sha256": "da2992fea15cc4436f8ec8a26913ef9255faa23c6e8122e459c47912b45e4219",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/batch/root/stats.json",
+      "bytes": 2112527,
+      "sha256": "5fbe1c644a71e5a8759a961dcc877ba0edd4e5aa510494c1c1ec80ff61ddeed2",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/batch/domain/stats.json",
+      "bytes": 654653,
+      "sha256": "26d0c4237dee355c7810ca47dd96201345ac8d976d513973473f3d0c330fd1d5",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/list/leaf/stats.json",
+      "bytes": 387420,
+      "sha256": "9b76306570991d065f17e1ae0ffb4c55751f1fe83280238fc117ac12a2ee0e82",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/list/root/stats.json",
+      "bytes": 1874575,
+      "sha256": "5a4b188f74bb10e4fdd8e0d9321066c82bbd57bcde9b5d4246c45109b499095d",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-final/runtime/list/domain/stats.json",
+      "bytes": 418464,
+      "sha256": "2c79328465a0bc1a77cfac4ab75abcd0cc5fcbaf7cf4feb681c36147df82aaae",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/development-mutations-2/lost-search-prototype/stats.json",
+      "bytes": 186053,
+      "sha256": "642b8ecbed7be8354c867002c7a284cc33151907a313cc5c2410b198c00e975e",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/development-mutations-2/lost-list-registration/stats.json",
+      "bytes": 435414,
+      "sha256": "33fb573d28195302e4a9054ab86f9710b0d06c1d6876f335d47e54b54c2785a3",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/development-mutations-2/lost-batch-registration/stats.json",
+      "bytes": 202584,
+      "sha256": "d8be0ccc5158485d576bda430917cd4a18c95e56cfac97845edbaf76a34f544b",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/development-mutations/lost-search-prototype/stats.json",
+      "bytes": 186053,
+      "sha256": "0a1ffcfb43be0d9ff6032cc164a902588dc1fc74a9d41dd556f51263e5fed97b",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/development-mutations/lost-list-registration/stats.json",
+      "bytes": 435414,
+      "sha256": "142f005426726e2dbebc798f96ab3bda574e492d61115d09ac8fae724d1b15a6",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/development-mutations/lost-batch-registration/stats.json",
+      "bytes": 202556,
+      "sha256": "d1dbf386b787540e35a434893a3456b2194774d84251000c2111573c7588ab3e",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-search-prototype/stats.json",
+      "bytes": 185924,
+      "sha256": "85bbc7df37ae2d16ef57d04fd1e4ccce75d7396ad4a40df40ec022bd408c38e7",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-list-registration/stats.json",
+      "bytes": 433704,
+      "sha256": "560e781d907cff104c8bc787a06cfbc45f4ebe306b95fa022f9516b180960a93",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/mutations/lost-batch-registration/stats.json",
+      "bytes": 202584,
+      "sha256": "05389950caf9c9b09fc5c0af5a4f64a43c7c2161203e919003f743c00a379fbc",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/context/leaf/stats.json",
+      "bytes": 269079,
+      "sha256": "f75098a2e6f37b15dc383f18436e8b8f9ed2684c3932e4cd45a45ee1dc259aeb",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/context/root/stats.json",
+      "bytes": 1836864,
+      "sha256": "c2cf90724bec2a40b3faafdb21e66045185ec07fa71b84d0de57019d81bf4f3b",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/context/domain/stats.json",
+      "bytes": 377941,
+      "sha256": "9abf5c3b70f15910d03461d6e1cefb3194054c82da385ab6d25ac143da8657b8",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/providers/leaf/stats.json",
+      "bytes": 2686173,
+      "sha256": "c7e421b49b898103b3e66ffe18e1b5d8600872abe7a51c84ac9f5564a36f8492",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/providers/root/stats.json",
+      "bytes": 2688756,
+      "sha256": "3fbdfa0e57b5e471eda427ce2887370c8b912cc05920d89713f02ada939d0e7d",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/providers/domain/stats.json",
+      "bytes": 2687074,
+      "sha256": "906a372f6ce4c98eaa3279545dff7bdb8bf6fc801ebdaab69fc4d703793366e6",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/search/leaf/stats.json",
+      "bytes": 174083,
+      "sha256": "f9f5dd6b496544fd0a4e3a203831d621d754cb28b4e883955794500a4846e8f7",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/search/root/stats.json",
+      "bytes": 1774662,
+      "sha256": "4b58881167c147b5e657e012ad2c3bec2557f7637f1aab6c129af8ee73d5773d",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/search/domain/stats.json",
+      "bytes": 322044,
+      "sha256": "063d24b2b5c9f58804cc973c6f8c60a72e8a1523ada0db92ac6f157074b703cf",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/styles/leaf/stats.json",
+      "bytes": 7929805,
+      "sha256": "2df39dacaa2485d9d6d9e0c80fe79aa513964243c15778c2e7dc83fbf0422867",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/styles/root/stats.json",
+      "bytes": 7932883,
+      "sha256": "3de9c3575592e1f51608d95bfc6c0da14e6fc01dae1c34cd93f793fda13d0d7f",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/styles/domain/stats.json",
+      "bytes": 7933504,
+      "sha256": "de3d6f55c97dd2cc42e9b31773242c0a440d49a878cc102c246e74337567f4dd",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/batch/leaf/stats.json",
+      "bytes": 266822,
+      "sha256": "ab845e6c1eb42171f60557eaf8d9543d33a84f68cae56a574a83d0a494bb772c",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/batch/root/stats.json",
+      "bytes": 2112559,
+      "sha256": "63a6c3d531d21f529df1b0c31ce20b41e1776a76ac6e57496fcabe9d0c93b814",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/batch/domain/stats.json",
+      "bytes": 654685,
+      "sha256": "88f6eca8109502116a2dfb6f95f1d80e8551aa6a16ec67a67122518652023489",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/list/leaf/stats.json",
+      "bytes": 387420,
+      "sha256": "61b6cfd9bc4e6dfc903f26f3a7ac300332e58cb0427f8f281ce2457349270784",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/list/root/stats.json",
+      "bytes": 1874575,
+      "sha256": "2ef168b8870eb974c09283e7df9d02acc8748aee06b3ae6637d7725ae70b59e6",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/fix-round-1/package/runtime/list/domain/stats.json",
+      "bytes": 418404,
+      "sha256": "d914ec13891d915fd9984157d59cd40f212698cf30406074e3cb4d6539015538",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/mutations/lost-search-prototype/stats.json",
+      "bytes": 185924,
+      "sha256": "171a6c19e9b5bde37185c3e0ebbf787c7966300005eeca7e459ec6412ddd0d88",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/mutations/lost-list-registration/stats.json",
+      "bytes": 433704,
+      "sha256": "c5e0e00991c47a169e7d8720ccf97c701a2fe3d28bdbef82e51e6aafb30d5892",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/mutations/lost-batch-registration/stats.json",
+      "bytes": 202584,
+      "sha256": "9a979312d8d5f734876fae22bbeaf912164f8ad589de476b20d71ca9d1499784",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/context/leaf/stats.json",
+      "bytes": 269079,
+      "sha256": "08f7c3873fa18eb8f593d10a0daea09eda27caf54b09f4bfecc9a31813bd439a",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/context/root/stats.json",
+      "bytes": 1836990,
+      "sha256": "0e3e9757988d1f4ba9fd61633ce98adf14e035127af60449f8011cfac113b8f3",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/context/domain/stats.json",
+      "bytes": 377941,
+      "sha256": "9c6b40b47f5ca7d8162e6a15b05dac71cf7e9979d2532bf6ffd7d25ce1bd36db",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/providers/leaf/stats.json",
+      "bytes": 2686245,
+      "sha256": "4a94ebe369e4a268b1b44396192850d221f5461702ac6687914da99565a0fc09",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/providers/root/stats.json",
+      "bytes": 2688756,
+      "sha256": "a6a0c85619609dd32d766c706fa6ffe26abf866f3828b3a88b65c3d348e7559a",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/providers/domain/stats.json",
+      "bytes": 2687066,
+      "sha256": "ee1caf28bbb1a59888b1f61b8b83de911956ae06f1fdb1c93317f2aa92a3c7b7",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/search/leaf/stats.json",
+      "bytes": 174091,
+      "sha256": "e88322332c2734f1bff53bfb46c37d4e159d0eaee8dac4af2b8a03b66161fdb5",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/search/root/stats.json",
+      "bytes": 1774662,
+      "sha256": "a4b40fc0494d48c125b38c10d7bffa9992fca13424b4c02e86f99d28e1d88494",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/search/domain/stats.json",
+      "bytes": 322044,
+      "sha256": "183f80c96d5aae2ea7a5e40e89363c89c83db0b25d9e794c00f197fc19532b96",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/styles/leaf/stats.json",
+      "bytes": 7929724,
+      "sha256": "bb6441b319fc8a305c7b7b80bd836af154e5fab7167b4736a9a9fe8c6f18754d",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/styles/root/stats.json",
+      "bytes": 7932575,
+      "sha256": "12357f222539129452fbd3eacdd72965938bc22b9535f601e45b33f01a97ddf4",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/styles/domain/stats.json",
+      "bytes": 7933844,
+      "sha256": "69bfccd65bfd6f10861f538ebf2d95a22e7ed473f0973d4da9d7431076adda17",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/batch/leaf/stats.json",
+      "bytes": 266822,
+      "sha256": "9516e6eb5502302b1d7c16693ec9c823dbd583ca06fe22052158f7bd43fac6ca",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/batch/root/stats.json",
+      "bytes": 2112559,
+      "sha256": "afcf0f65350a5c352046f5bbb8565cabfdeee742c73c132e6c281b1462bc6859",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/batch/domain/stats.json",
+      "bytes": 654673,
+      "sha256": "6df8e9175df78d15fe5bff0333d670f53614a4b1b2fb28655f7eb0c5184ec151",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/list/leaf/stats.json",
+      "bytes": 387420,
+      "sha256": "2103604c44aef358890d62092261134139bf114a633b775355f0a40f286d49ef",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/list/root/stats.json",
+      "bytes": 1874623,
+      "sha256": "a814543f4bdddd4ee5f6f944c6089204a545d963c8cbf0e7f2e4a2ba63cc65a1",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/task-5/package-fresh/runtime/list/domain/stats.json",
+      "bytes": 418404,
+      "sha256": "eeef0358eef513071167a52df5b1822b55cf1b6eb3496ddf1dca96cb9f756d65",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/mutations/lost-search-prototype/stats.json",
+      "bytes": 185915,
+      "sha256": "64691d06f4fe020a700d37a327fdc80216574024c930a69b4f62f3719c3c6499",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/mutations/lost-list-registration/stats.json",
+      "bytes": 433704,
+      "sha256": "5909ef768293957588b6defcc4ba7f643c9f2f95ecc2c26a64e30e1a51403a57",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/mutations/lost-batch-registration/stats.json",
+      "bytes": 202584,
+      "sha256": "7463de45edb2f17528806366929e961e578af08afb56b0422c882631bbdb9ba7",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/context/leaf/stats.json",
+      "bytes": 269079,
+      "sha256": "744960ccb2aa2ae6d32e1b28aba4dc05a11f93da023ec63891dbfc5b38c27666",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/context/root/stats.json",
+      "bytes": 1836952,
+      "sha256": "29ce68cd46f14efaa8fd91932a55cb1142fc5ba4a82a86c1e4a23ad96d4c45f7",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/context/domain/stats.json",
+      "bytes": 377941,
+      "sha256": "c8d2f01dc2d1d512d3a8357cfb3c5bade4964feafda18cf85aac21fd708eb6e4",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/providers/leaf/stats.json",
+      "bytes": 2686173,
+      "sha256": "40ee325d92dedb445d9c3e8fd0becd19a933604a44ba5763a69f601bf6131585",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/providers/root/stats.json",
+      "bytes": 2688756,
+      "sha256": "0ffd9cf5f4a93e7dd8e901a777b52ae42c2fd4bc347d3f0f909a5a5276702206",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/providers/domain/stats.json",
+      "bytes": 2687102,
+      "sha256": "0df96da58c700ca4bd1be0ebfdc33ecef492087db5d3369c80e63222939af35e",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/search/leaf/stats.json",
+      "bytes": 174083,
+      "sha256": "e47aed5eec6a202c973d9d3783d4bce66abc24ffec6a3976037f6ee21539a192",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/search/root/stats.json",
+      "bytes": 1774662,
+      "sha256": "559e0fff459e1cb9f6453099972c0580233b54b92eb7a4ae423308c820642e1d",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/search/domain/stats.json",
+      "bytes": 322044,
+      "sha256": "a9d76c4445ae1e62193fe0b683134d757aa5f92eb9f14e3629ce3b91bdff3fc0",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/styles/leaf/stats.json",
+      "bytes": 7929732,
+      "sha256": "b260755c7e420a3152889e9fe2da7fbf376fa5346bdf3c468a30336f2f1af862",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/styles/root/stats.json",
+      "bytes": 7932964,
+      "sha256": "c3775cee6d79491004bde911a6edd0828be6eb196c3e8362ac10f530ca6d7686",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/styles/domain/stats.json",
+      "bytes": 7933844,
+      "sha256": "3fa56211698453d32981979cbbdc69644dc3e28d7b9aa33e7831f555bce01239",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/batch/leaf/stats.json",
+      "bytes": 266822,
+      "sha256": "bac33e68aae49adbac56ad94e2707f7a0ee9349bb8a65d29cd0b481d5c4699de",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/batch/root/stats.json",
+      "bytes": 2112559,
+      "sha256": "d63cbff4f37ce7e190683456839e262ade089278a3b8fa117fa94ace137644dd",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/batch/domain/stats.json",
+      "bytes": 654685,
+      "sha256": "c6bc0f1811148a8c2f4164d5533471eac63cd0f35c970da62982ba71af13fe6b",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/list/leaf/stats.json",
+      "bytes": 387420,
+      "sha256": "a559e1ca5293c68247f236f006dace0f1859ddee56664514c13e93abb6031587",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/list/root/stats.json",
+      "bytes": 1874593,
+      "sha256": "3131fd81cd00c92c728b3894d40aa9ee021c270f07c7a6320a9e9e4a23a6f524",
+      "kind": "intermediate raw webpack stats"
+    },
+    {
+      "path": ".docs/maintenance/evidence/tree-shaking/final/package-attempt-1/runtime/list/domain/stats.json",
+      "bytes": 418416,
+      "sha256": "19f2a672653146471dbf3aa68bed95a3512949c87ddf823803eb96f218ecb6f8",
+      "kind": "intermediate raw webpack stats"
+    }
+  ],
+  "removedBytes": 454753006,
+  "preserved": "Reports/decisions, initial/final evidence, intermediate result logs/reports, browser evidence, original baseline hash inventory, all product/test files",
+  "protectedFilesVerified": 2723,
+  "netSavedBytes": 454503635,
+  "finalSnapshotIncludes": "Latest public Imports-panel explanation and user web-part confirmation"
+}

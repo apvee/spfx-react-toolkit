@@ -1,0 +1,166 @@
+{
+  "passed": true,
+  "fixtures": 36,
+  "assets": 37,
+  "comparisons": 20,
+  "familyTotals": {
+    "helper": {
+      "root": {
+        "raw": 503,
+        "gzip": 324,
+        "brotli": 275
+      },
+      "domain": {
+        "raw": 503,
+        "gzip": 324,
+        "brotli": 275
+      },
+      "leaf": {
+        "raw": 503,
+        "gzip": 324,
+        "brotli": 275
+      }
+    },
+    "stable-callback": {
+      "root": {
+        "raw": 805,
+        "gzip": 473,
+        "brotli": 389
+      },
+      "domain": {
+        "raw": 805,
+        "gzip": 473,
+        "brotli": 389
+      },
+      "leaf": {
+        "raw": 805,
+        "gzip": 473,
+        "brotli": 389
+      }
+    },
+    "provider": {
+      "root": {
+        "raw": 4944,
+        "gzip": 1819,
+        "brotli": 1609
+      },
+      "domain": {
+        "raw": 4944,
+        "gzip": 1819,
+        "brotli": 1609
+      },
+      "leaf": {
+        "raw": 4944,
+        "gzip": 1819,
+        "brotli": 1609
+      }
+    },
+    "sx-width-only": {
+      "root": {
+        "raw": 619,
+        "gzip": 380,
+        "brotli": 318
+      },
+      "domain": {
+        "raw": 619,
+        "gzip": 380,
+        "brotli": 318
+      },
+      "leaf": {
+        "raw": 619,
+        "gzip": 380,
+        "brotli": 318
+      }
+    },
+    "pnp-context": {
+      "root": {
+        "raw": 27586,
+        "gzip": 9529,
+        "brotli": 8570
+      },
+      "domain": {
+        "raw": 27586,
+        "gzip": 9529,
+        "brotli": 8570
+      },
+      "leaf": {
+        "raw": 27586,
+        "gzip": 9529,
+        "brotli": 8570
+      }
+    },
+    "pnp-list": {
+      "root": {
+        "raw": 36236,
+        "gzip": 12081,
+        "brotli": 10838
+      },
+      "domain": {
+        "raw": 36236,
+        "gzip": 12081,
+        "brotli": 10838
+      },
+      "leaf": {
+        "raw": 36236,
+        "gzip": 12081,
+        "brotli": 10838
+      }
+    },
+    "pnp-search": {
+      "root": {
+        "raw": 22134,
+        "gzip": 7552,
+        "brotli": 6724
+      },
+      "domain": {
+        "raw": 22134,
+        "gzip": 7552,
+        "brotli": 6724
+      },
+      "leaf": {
+        "raw": 22134,
+        "gzip": 7552,
+        "brotli": 6724
+      }
+    },
+    "pnp-batch": {
+      "root": {
+        "raw": 21544,
+        "gzip": 7426,
+        "brotli": 6684
+      },
+      "domain": {
+        "raw": 21544,
+        "gzip": 7426,
+        "brotli": 6684
+      },
+      "leaf": {
+        "raw": 21544,
+        "gzip": 7426,
+        "brotli": 6684
+      }
+    },
+    "sx-minimum": {
+      "root": {
+        "raw": 34220,
+        "gzip": 11747,
+        "brotli": 10552
+      },
+      "domain": {
+        "raw": 34220,
+        "gzip": 11747,
+        "brotli": 10552
+      },
+      "leaf": {
+        "raw": 34220,
+        "gzip": 11747,
+        "brotli": 10552
+      }
+    }
+  },
+  "tarballSha256": "6b19512f8a67af0f49abc37b6060fbb8b8dda8101da27a81973ed44130fc7299",
+  "compression": {
+    "gzip": 9,
+    "brotli": 11
+  }
+}

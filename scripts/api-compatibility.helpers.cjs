@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
 const ts = require('typescript');
+const { assertEntrypointContract } = require('./package-entrypoints.cjs');
 
 const printer = ts.createPrinter({ removeComments: true });
 const approvedAdditions = new Map([
@@ -44,6 +45,7 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   const exportCounts = new Map([...(approvedPath ? [approvedPath] : []), ...pnpPaths, ...stablePaths, ...sxPaths].map(modulePath => [modulePath, 0]));
   let selectorCount = 0;
   let factoryCount = 0;
+  let websRegistrationCount = 0;
   const historicalStatements = [];
   for (const statement of current.statements) {
     const exportPath = [...exportCounts.keys()].find(modulePath => isPlainExportAll(statement, modulePath));
@@ -52,6 +54,14 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
       continue;
     }
     if (moduleName === pnpServiceModule) {
+      // The standalone list service needs this single additive registration.
+      // Named/type imports, attributes and every other module remain historical.
+      if (ts.isImportDeclaration(statement) && !statement.importClause &&
+          !statement.assertClause && !statement.attributes && !statement.modifiers?.length &&
+          ts.isStringLiteral(statement.moduleSpecifier) && statement.moduleSpecifier.text === '@pnp/sp/webs') {
+        websRegistrationCount += 1;
+        continue;
+      }
       if (ts.isTypeAliasDeclaration(statement) && printNode(statement, current) === approvedSelector) {
         selectorCount += 1;
         continue;
@@ -92,6 +102,10 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   }
   assert.ok(selectorCount <= 1, 'Duplicate approved PnP list selector');
   assert.ok(factoryCount <= 1, 'Duplicate approved PnP list factory');
+  assert.ok(websRegistrationCount <= 1, 'Duplicate approved PnP list webs registration');
+  if (moduleName === pnpServiceModule && options.requirePnPListWebsRegistration) {
+    assert.equal(websRegistrationCount, 1, 'Missing approved PnP list webs registration');
+  }
   const historicalCurrent = ts.factory.updateSourceFile(current, historicalStatements);
   assert.equal(
     printer.printFile(historicalCurrent),
@@ -125,12 +139,12 @@ function assertCompatiblePackageContract(manifest, originalPackage) {
   assert.deepEqual(manifest.dependencies ?? {}, expectedDependencies,
     'Runtime dependencies changed outside the approved tslib cleanup and shared Fluent peers');
   assert.equal(manifest.private, false);
-  assert.deepEqual(manifest.files, originalPackage.files, 'Published path allowlist changed');
+  assert.deepEqual(manifest.files, [...originalPackage.files, 'lib/styles/**/*'], 'Published path allowlist changed outside the styles facade');
   assert.equal(manifest.name, '@apvee/spfx-react-toolkit');
   assert.equal(manifest.version, '2.1.0');
   assert.equal(manifest.main, 'lib/index.js');
   assert.equal(manifest.types, 'lib/index.d.ts');
-  assert.equal(manifest.exports, undefined, 'Do not restrict pre-existing deep imports');
+  assertEntrypointContract(manifest);
 }
 
 module.exports = { assertCompatibleDeclaration, assertCompatiblePackageContract };

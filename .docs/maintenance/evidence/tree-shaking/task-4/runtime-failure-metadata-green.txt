@@ -1,0 +1,1 @@
+8 failed baseline runtime attempts retain compiled artifact provenance; all 12 fixture hashes equal final candidate

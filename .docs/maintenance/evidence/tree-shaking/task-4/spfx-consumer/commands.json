@@ -1,0 +1,79 @@
+{
+  "complete": true,
+  "passed": true,
+  "consumer": "/private/tmp/task4-candidate-chNE9n",
+  "results": [
+    {
+      "label": "ship",
+      "command": "/Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node",
+      "args": [
+        "--require",
+        "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/gulp-build-metadata-preload.cjs",
+        "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/gulp/bin/gulp.js",
+        "bundle",
+        "--ship"
+      ],
+      "metadataPreload": true,
+      "status": 0,
+      "failureMarkers": [],
+      "warnings": [
+        "[verification metadata advisory] [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`",
+        "[verification metadata advisory] Browserslist: browsers data (caniuse-lite) is 12 months old. Please run:"
+      ]
+    },
+    {
+      "label": "typecheck",
+      "command": "npm",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "metadataPreload": false,
+      "status": 0,
+      "failureMarkers": [],
+      "warnings": []
+    },
+    {
+      "label": "style-declarations",
+      "command": "npm",
+      "args": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit",
+        "--strict",
+        "--skipLibCheck",
+        "--target",
+        "es2020",
+        "--module",
+        "esnext",
+        "--moduleResolution",
+        "node",
+        "compatibility/sx-package-public.ts",
+        "compatibility/sx-package-deep.ts"
+      ],
+      "metadataPreload": false,
+      "status": 0,
+      "failureMarkers": [],
+      "warnings": []
+    },
+    {
+      "label": "solution",
+      "command": "/Users/fabiofranzini/.nvm/versions/node/v22.20.0/bin/node",
+      "args": [
+        "--require",
+        "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/gulp-build-metadata-preload.cjs",
+        "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/gulp/bin/gulp.js",
+        "package-solution",
+        "--ship"
+      ],
+      "metadataPreload": true,
+      "status": 0,
+      "failureMarkers": [],
+      "warnings": [
+        "[verification metadata advisory] [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`",
+        "[verification metadata advisory] Browserslist: browsers data (caniuse-lite) is 12 months old. Please run:"
+      ]
+    }
+  ]
+}

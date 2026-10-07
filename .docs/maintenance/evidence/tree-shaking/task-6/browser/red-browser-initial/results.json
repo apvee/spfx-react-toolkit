@@ -1,0 +1,529 @@
+{
+  "url": "http://127.0.0.1:58974",
+  "browser": "155.0.8059.39",
+  "fallback": "Browser plugin not available; existing cached Playwright with installed Chrome",
+  "boundary": "Actual sample ImportsPanel and actual compiled canonical root/domain/legacy package imports; generic local fixture. Authenticated SharePoint host NOT EXECUTED.",
+  "fixture": "/private/tmp/imports-panel-browser-qa",
+  "observations": [
+    {
+      "name": "no emitted SPFx host requires",
+      "actual": false,
+      "expected": false,
+      "pass": true
+    },
+    {
+      "name": "no emitted SPFx SDK implementation",
+      "actual": false,
+      "expected": false,
+      "pass": true
+    },
+    {
+      "name": "page identity",
+      "actual": "ImportsPanel actual local browser fixture",
+      "expected": "ImportsPanel actual local browser fixture",
+      "pass": true
+    },
+    {
+      "name": "page origin",
+      "actual": "http://127.0.0.1:58974",
+      "expected": "http://127.0.0.1:58974",
+      "pass": true
+    },
+    {
+      "name": "all actual sample cards",
+      "actual": 3,
+      "expected": 3,
+      "pass": true
+    },
+    {
+      "name": "no framework overlay",
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "name": "root: initial width",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "root: LTR start padding",
+      "actual": "16px",
+      "expected": "16px",
+      "pass": true
+    },
+    {
+      "name": "root: LTR opposite padding",
+      "actual": "0px",
+      "expected": "0px",
+      "pass": true
+    },
+    {
+      "name": "domain: initial width",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "domain: LTR start padding",
+      "actual": "16px",
+      "expected": "16px",
+      "pass": true
+    },
+    {
+      "name": "domain: LTR opposite padding",
+      "actual": "0px",
+      "expected": "0px",
+      "pass": true
+    },
+    {
+      "name": "legacy: initial width",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "legacy: LTR start padding",
+      "actual": "16px",
+      "expected": "16px",
+      "pass": true
+    },
+    {
+      "name": "legacy: LTR opposite padding",
+      "actual": "0px",
+      "expected": "0px",
+      "pass": true
+    },
+    {
+      "name": "equivalent initial computed styles",
+      "actual": [
+        {
+          "width": "240px",
+          "paddingLeft": "16px",
+          "paddingRight": "0px",
+          "fontFamily": "\"Segoe UI\", \"Segoe UI Web (West European)\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "20px"
+        },
+        {
+          "width": "240px",
+          "paddingLeft": "16px",
+          "paddingRight": "0px",
+          "fontFamily": "\"Segoe UI\", \"Segoe UI Web (West European)\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "20px"
+        },
+        {
+          "width": "240px",
+          "paddingLeft": "16px",
+          "paddingRight": "0px",
+          "fontFamily": "\"Segoe UI\", \"Segoe UI Web (West European)\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "20px"
+        }
+      ],
+      "expected": [
+        {
+          "width": "240px",
+          "paddingLeft": "16px",
+          "paddingRight": "0px",
+          "fontFamily": "\"Segoe UI\", \"Segoe UI Web (West European)\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "20px"
+        },
+        {
+          "width": "240px",
+          "paddingLeft": "16px",
+          "paddingRight": "0px",
+          "fontFamily": "\"Segoe UI\", \"Segoe UI Web (West European)\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "20px"
+        },
+        {
+          "width": "240px",
+          "paddingLeft": "16px",
+          "paddingRight": "0px",
+          "fontFamily": "\"Segoe UI\", \"Segoe UI Web (West European)\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "20px"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "name": "equivalent initial classes",
+      "actual": [
+        "___p6jil30 ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f1139wxp f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+        "___p6jil30 ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f1139wxp f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+        "___p6jil30 ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f1139wxp f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p"
+      ],
+      "expected": [
+        "___p6jil30 ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f1139wxp f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+        "___p6jil30 ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f1139wxp f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+        "___p6jil30 ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f1139wxp f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p"
+      ],
+      "pass": true
+    },
+    {
+      "name": "root: independent current",
+      "actual": "Current counter: 1",
+      "expected": "Current counter: 1",
+      "pass": true
+    },
+    {
+      "name": "root: captured callback latest state",
+      "actual": "Observed counter: 1",
+      "expected": "Observed counter: 1",
+      "pass": true
+    },
+    {
+      "name": "root: callback identity",
+      "actual": "Same callback identity: yes",
+      "expected": "Same callback identity: yes",
+      "pass": true
+    },
+    {
+      "name": "domain: independent current",
+      "actual": "Current counter: 2",
+      "expected": "Current counter: 2",
+      "pass": true
+    },
+    {
+      "name": "domain: captured callback latest state",
+      "actual": "Observed counter: 2",
+      "expected": "Observed counter: 2",
+      "pass": true
+    },
+    {
+      "name": "domain: callback identity",
+      "actual": "Same callback identity: yes",
+      "expected": "Same callback identity: yes",
+      "pass": true
+    },
+    {
+      "name": "legacy: independent current",
+      "actual": "Current counter: 3",
+      "expected": "Current counter: 3",
+      "pass": true
+    },
+    {
+      "name": "legacy: captured callback latest state",
+      "actual": "Observed counter: 3",
+      "expected": "Observed counter: 3",
+      "pass": true
+    },
+    {
+      "name": "legacy: callback identity",
+      "actual": "Same callback identity: yes",
+      "expected": "Same callback identity: yes",
+      "pass": true
+    },
+    {
+      "name": "root: retained independent count",
+      "actual": "Current counter: 1",
+      "expected": "Current counter: 1",
+      "pass": true
+    },
+    {
+      "name": "domain: retained independent count",
+      "actual": "Current counter: 2",
+      "expected": "Current counter: 2",
+      "pass": true
+    },
+    {
+      "name": "legacy: retained independent count",
+      "actual": "Current counter: 3",
+      "expected": "Current counter: 3",
+      "pass": true
+    },
+    {
+      "name": "root: override width",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "domain: override width",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "legacy: override width",
+      "actual": "360px",
+      "expected": "360px",
+      "pass": true
+    },
+    {
+      "name": "equivalent override styles",
+      "actual": [
+        {
+          "width": "360px",
+          "paddingLeft": "16px",
+          "paddingRight": "0px",
+          "fontFamily": "\"Segoe UI\", \"Segoe UI Web (West European)\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "20px"
+        },
+        {
+          "width": "360px",
+          "paddingLeft": "16px",
+          "paddingRight": "0px",
+          "fontFamily": "\"Segoe UI\", \"Segoe UI Web (West European)\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "20px"
+        },
+        {
+          "width": "360px",
+          "paddingLeft": "16px",
+          "paddingRight": "0px",
+          "fontFamily": "\"Segoe UI\", \"Segoe UI Web (West European)\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "20px"
+        }
+      ],
+      "expected": [
+        {
+          "width": "360px",
+          "paddingLeft": "16px",
+          "paddingRight": "0px",
+          "fontFamily": "\"Segoe UI\", \"Segoe UI Web (West European)\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "20px"
+        },
+        {
+          "width": "360px",
+          "paddingLeft": "16px",
+          "paddingRight": "0px",
+          "fontFamily": "\"Segoe UI\", \"Segoe UI Web (West European)\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "20px"
+        },
+        {
+          "width": "360px",
+          "paddingLeft": "16px",
+          "paddingRight": "0px",
+          "fontFamily": "\"Segoe UI\", \"Segoe UI Web (West European)\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "20px"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "name": "equivalent override classes",
+      "actual": [
+        "___1xdm1kc ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 fgoif5t f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+        "___1xdm1kc ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 fgoif5t f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+        "___1xdm1kc ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 fgoif5t f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p"
+      ],
+      "expected": [
+        "___1xdm1kc ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 fgoif5t f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+        "___1xdm1kc ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 fgoif5t f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+        "___1xdm1kc ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 fgoif5t f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p"
+      ],
+      "pass": true
+    },
+    {
+      "name": "root: restored width",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "root: restored classes",
+      "actual": "___p6jil30 ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f1139wxp f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+      "expected": "___p6jil30 ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f1139wxp f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+      "pass": true
+    },
+    {
+      "name": "domain: restored width",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "domain: restored classes",
+      "actual": "___p6jil30 ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f1139wxp f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+      "expected": "___p6jil30 ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f1139wxp f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+      "pass": true
+    },
+    {
+      "name": "legacy: restored width",
+      "actual": "240px",
+      "expected": "240px",
+      "pass": true
+    },
+    {
+      "name": "legacy: restored classes",
+      "actual": "___p6jil30 ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f1139wxp f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+      "expected": "___p6jil30 ftk38tp f12t3e15 f1fhcsiq f154lqyn f1annqf4 fhg3yth f1hf4y84 fk3h4d5 f19rrr9b f19n5529 ftcfiaj fsa233d f1rb5bgf f6v1wil f1g8lhw2 f13u8clb f3jjbca f14d4jzj fb1hwdn f86v4ci f1xa1iwn fftoh0q f1m3k8r4 f1r4z5jd f5sfecw f1pypl81 f9o8ra9 fsr3usg fmb2uh9 f1139wxp f2z5hmm fckejt7 f9x664r f1hslecu f1pfus4p f4egl3e f6j4sd5 fqhlmsf f1wo78r2 f78uxso floydk9 f1jo70uo fp0xmny f11iyx9m f1b7aben f1l3imgy f1cmgs5i f1oj5pid f1gl7pyf f19n55tj f8mwlv7 fko1m5k fx42ikq f4brz4u fdbluqm f8lhrwh f1ltxifi ffwur8u f3y5qfv ff71pii fp3kkmv fldfqdr fym27fb fa4445u flzplfi fsomcf7 f161eebr fi07bja f1hccikz f1j0x6et f1o30zwv f85yna2 fwfhu43 fsn8xku fs8teqk fx3wqx f17gu0al f1u2ydxp fu8na1a f1veql92 f9t3w6h fhqe1ba f1bp1jtw f1mto01f f1kauuml fp7fjqv f1fvr5gf fli0451 f1f97eh4 f1pcbg0g f1jozqq0 f1kalh55 f1umcftm fjtn2fo fbg76r1 fa4p5jl f1bb5xxp ftnylp9 ftwsyfu fgtyalc f75nrqe flyp7b5 f1bvv12y f1wc4q9n fxznqoi fg99d9j fxy4ijc f1pqygfo f1h41t1d f1ue15kn flutnja f1ud1bfq fdlyqp futecju fvyiszi f18inuwo f1054i3m f1x7x0k2 fkk985x f1ohvdt1 f1lb3xie fuf6owq f1hcz4wp f1t5calb f3zgt5j f1s9t8y2 fmip2lq fue4m4v f18ndsn f1v5h4fu f1210931 f1f19jkz fea5qr7 f1nnhpxu fs6kxb9 f7x4p15 f2xnm4h f10884d3 f1u7gpra f1fe27sa f1ddojpr flty4xc f2ch6sk f1d2052s f3l2vx4 fbfdmpl fk0e7h2 f1d8dzj8 fu4ab85 f1a4l27l f9g1zrn f6n9yq4 f9hyxsp f4u979s f197hm6z fo4s8ro fz8dlpf f1i6j6n f5od83f fa07llk f1s7h6e7 f1pw59u5 f1tx1u5e fbdf7k5 f1yrwsyk f1g2sy9p f1bu7imu fri9myb frhgb9p f1yu8xrq f1xmybkr f14bl6kq fxlwtrv f4y3apu fe2bqtt f1ehy280 f8ooqki frpn9sk fq2fktr f3pi12p",
+      "pass": true
+    },
+    {
+      "name": "active provider RTL",
+      "actual": "rtl",
+      "expected": "rtl",
+      "pass": true
+    },
+    {
+      "name": "root: RTL start padding",
+      "actual": "16px",
+      "expected": "16px",
+      "pass": true
+    },
+    {
+      "name": "root: RTL opposite padding",
+      "actual": "0px",
+      "expected": "0px",
+      "pass": true
+    },
+    {
+      "name": "domain: RTL start padding",
+      "actual": "16px",
+      "expected": "16px",
+      "pass": true
+    },
+    {
+      "name": "domain: RTL opposite padding",
+      "actual": "0px",
+      "expected": "0px",
+      "pass": true
+    },
+    {
+      "name": "legacy: RTL start padding",
+      "actual": "16px",
+      "expected": "16px",
+      "pass": true
+    },
+    {
+      "name": "legacy: RTL opposite padding",
+      "actual": "0px",
+      "expected": "0px",
+      "pass": true
+    },
+    {
+      "name": "root: restored LTR padding",
+      "actual": "16px",
+      "expected": "16px",
+      "pass": true
+    },
+    {
+      "name": "domain: restored LTR padding",
+      "actual": "16px",
+      "expected": "16px",
+      "pass": true
+    },
+    {
+      "name": "legacy: restored LTR padding",
+      "actual": "16px",
+      "expected": "16px",
+      "pass": true
+    },
+    {
+      "name": "desktop overflow inspection",
+      "actual": {
+        "innerWidth": 1440,
+        "scrollWidth": 1425,
+        "offenders": []
+      }
+    },
+    {
+      "name": "desktop no page overflow",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "mobile overflow inspection",
+      "actual": {
+        "innerWidth": 390,
+        "scrollWidth": 375,
+        "offenders": []
+      }
+    },
+    {
+      "name": "mobile no page overflow",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "root: mobile controls visible",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "domain: mobile controls visible",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "legacy: mobile controls visible",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "mobile override overflow inspection",
+      "actual": {
+        "innerWidth": 390,
+        "scrollWidth": 409,
+        "offenders": [
+          {
+            "tag": "P",
+            "probe": "root-preview",
+            "text": "Composed width: 360px. Body typography and logical start padding.",
+            "left": 33,
+            "right": 409
+          }
+        ]
+      }
+    },
+    {
+      "name": "mobile override no page overflow",
+      "actual": false,
+      "expected": true,
+      "pass": false
+    },
+    {
+      "name": "unexpected console warning/errors",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    },
+    {
+      "name": "page errors",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    },
+    {
+      "name": "failed requests",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    }
+  ],
+  "failures": [
+    "mobile override no page overflow"
+  ],
+  "consoleEvents": [],
+  "pageErrors": [],
+  "requestFailures": []
+}

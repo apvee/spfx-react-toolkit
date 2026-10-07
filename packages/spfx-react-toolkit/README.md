@@ -39,6 +39,17 @@ export default class GreetingWebPart extends BaseClientSideWebPart<{}> {
 
 Choose `SPFxWebPartProvider`, `SPFxApplicationCustomizerProvider`, `SPFxFieldCustomizerProvider` or `SPFxListViewCommandSetProvider` to match the actual SPFx host. The sample includes real WebPart and Application Customizer entry points. Field Customizer and Command Set provider coverage currently checks exports; mounting those providers needs their corresponding hosts.
 
+## Package imports
+
+Root imports remain supported. Clean `/core`, `/hooks`, `/helpers`, `/services`, `/styles`, `/styles/useSx` and `/hooks/useStableCallback` aliases resolve to canonical implementations; historical `/lib/...` imports remain available. The `/styles` facade exports descriptors, their public types and `useSx`. For example:
+
+```tsx
+import { useStableCallback } from '@apvee/spfx-react-toolkit/hooks/useStableCallback';
+import { useSx, width, typography } from '@apvee/spfx-react-toolkit/styles';
+```
+
+Use an ESM-aware bundler with package exports and sideEffects support. Shared React/Griffel/Fluent peers, theme variables and existing lifecycle limits still apply; native Node/CJS execution and all peer versions are not verified. Unrelated root imports no longer install incidental PnP registrations: direct callers must import their own PnP features, including inside invoke/batch callbacks. See [package imports and the measured production contract](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/PACKAGE-IMPORTS.md) for resolver requirements, legacy leaves, generic examples, budgets and limitations. The lazy Imports sample exercises updated captured callbacks, mixed descriptors and shared provider direction; authenticated host checks remain separate.
+
 ## List selection
 
 [`useSPFxPnPList`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/hooks/pnpjs.md#usespfxpnplist) keeps its exact-title API. [`useSPFxPnPListById`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/hooks/pnpjs.md#usespfxpnplistbyid), [`useSPFxPnPListByUrl`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/hooks/pnpjs.md#usespfxpnplistbyurl) and [`useSPFxPnPListByPath`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/hooks/pnpjs.md#usespfxpnplistbypath) select by list GUID, decoded server-relative root URL or decoded web-relative root path. All share the existing generic item type, options, optional PnP context and CRUD/query results. They do not query on mount; invalid selectors fail lazily through existing operation failure channels (`getById` resolves `undefined` and publishes `error` for service failures; query/write actions reject). Supply the intended web's context for cross-site access; paths require an explicit client web base. The standalone [`createSPFxPnPListService`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/services/INDEX.md#createspfxpnplistservice) accepts a title string or `SPFxPnPListSelector`. Numeric item IDs remain distinct from list GUIDs.
@@ -49,7 +60,7 @@ Choose `SPFxWebPartProvider`, `SPFxApplicationCustomizerProvider`, `SPFxFieldCus
 
 ## Package contents
 
-The npm tarball includes `package.json`, `README.md`, `LICENSE`, `lib/index.*` and compiled `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services` and `lib/utils` files. JavaScript is emitted as ESNext modules, with TypeScript declarations and source/declaration maps. The main and types entries remain `lib/index.js` and `lib/index.d.ts`. Sample bundles, SPFx manifests/config, source, tests and repository docs are not shipped. Map paths reference repository source; the tarball does not embed that source.
+The npm tarball includes `package.json`, `README.md`, `LICENSE`, `lib/index.*` and compiled `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services`, `lib/utils` and `lib/styles` files. JavaScript is emitted as ESNext modules, with TypeScript declarations and source/declaration maps. The main and types entries remain `lib/index.js` and `lib/index.d.ts`. Sample bundles, SPFx manifests/config, source, tests and repository docs are not shipped. Map paths reference repository source; the tarball does not embed that source.
 
 The repository moved library source to `packages/spfx-react-toolkit/src` and the SPFx sample to `apps/spfx-react-toolkit-test`. The import name, entry points and public API are unchanged by this layout migration.
 

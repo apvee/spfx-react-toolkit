@@ -42,8 +42,8 @@ npm run build:app
 | `npm run verify:runtime-store` | Runtime store behavior check using the local compiler |
 | `npm run verify:public-docs` | Qualified public style exports/JSDoc, historical helper/service coverage and local documentation link targets |
 | `npm run verify:api` | Public export/declaration compatibility checks |
-| `npm run verify` | Tests, typecheck, lint, example/runtime/docs/API checks |
-| `npm run verify:package` | Tarball content and consumer verification |
+| `npm run verify` | Tests, typecheck, lint, example/runtime/docs/API and import-graph checks |
+| `npm run verify:package` | Fresh tarball consumer resolution, bundle/runtime/mutation gates and SPFx verification |
 | `npm run pack:library` | Builds library and runs npm pack into root `artifacts` |
 | `npm run bundle:ship` | Builds library, then app `gulp bundle --ship` |
 | `npm run package:solution` | Ship bundle, then app `gulp package-solution --ship` |
@@ -63,7 +63,7 @@ Trusting the certificate affects your local development certificate store. Confi
 
 ## Package shape
 
-`npm run pack:library` writes `artifacts/apvee-spfx-react-toolkit-2.1.0.tgz` for the current package version. The tarball contains package metadata, README, LICENSE and compiled `lib/index.*`, `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services`, `lib/utils`. Entry points remain `lib/index.js` and `lib/index.d.ts`. The app, SPFx manifests, source, tests, config and repository docs are excluded. Source maps point back to source paths; source is not embedded in the tarball.
+`npm run pack:library` writes `artifacts/apvee-spfx-react-toolkit-2.1.0.tgz` for the current package version. The tarball contains package metadata, README, LICENSE and compiled `lib/index.*`, `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services`, `lib/utils`, `lib/styles`. Entry points remain `lib/index.js` and `lib/index.d.ts`. The app, SPFx manifests, source, tests, config and repository docs are excluded. Source maps point back to source paths; source is not embedded in the tarball.
 
 The isolated consumer probe covers all six public site-store symbols, the hook/service deep imports and existing tenant APIs. See [site storage](./api/hooks/storage.md#usespfxsitekeyvaluestore) and the [standalone service](./api/services/INDEX.md#createspfxsitekeyvaluestoreservice) for their contracts; the [real-host checklist](./SHAREPOINT-VALIDATION.md#site-collection-key-value-store) remains separate.
 
@@ -111,3 +111,62 @@ Run `node --test tests/public-style-docs.test.cjs tests/demo-sx.test.cjs`, `npm 
 Build library before app with `npm run build:library`, then `npm run build:app`; restart an active serve before evaluating new compiled library behavior. Record the actual commands, exit codes and Gulp warnings, even when the outer build exits successfully. The sample uses optional `@fluentui/react-provider@9.22.8` with toolkit themes; consumers are not required to add that provider solely for useSx.
 
 Local Node/DOM checks and the standalone browser fixture establish their own behavior only. The authenticated Styles checklist in [SharePoint validation](./SHAREPOINT-VALIDATION.md#styles-and-usesx) is **NOT EXECUTED** until a tenant run records it. Custom themes, unsupported inverted high contrast, native scrollbar differences and arbitrary-value CSS growth remain documented in the [style reference](./api/helpers/styles.md).
+
+## Production import gates and baseline review
+
+See [package imports](./PACKAGE-IMPORTS.md) for canonical aliases, resolver requirements and limits. The tarball now also includes `lib/styles`. Run the documented development review gates from the root:
+
+```bash
+npm run verify
+npm run verify:package
+```
+
+`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 36-fixture bundle contract, 18 fresh runtime probes and nine mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
+
+Ordinary verification deletes the temporary consumer when it finishes. For diagnostics or an explicit baseline proposal, preserve a fresh installed consumer and read its recorded path before running the examples below. The bundle CLI requires `--consumer-root`; its default mode is `enforce`, its default contract is `tests/fixtures/tree-shaking/contract.json`, and its default output is `.docs/maintenance/evidence/tree-shaking/bundle-contract`:
+
+```bash
+SPFX_KEEP_CONSUMER=1 npm run verify:package
+SPFX_DIAGNOSTIC_CONSUMER="$(cat .docs/maintenance/evidence/tree-shaking/package/consumer-path.txt)"
+node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUMER"
+node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUMER" --mode audit --fixtures helper,stable-callback --output /absolute/path/to/diagnostics
+node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUMER" --attribution
+```
+
+If you set `SPFX_PACKAGE_EVIDENCE`, read `consumer-path.txt` from that evidence directory instead. Run diagnostic commands only after the preserved package verification succeeds.
+
+Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete 36-variant/comparison contract; custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
+
+Normal verification never writes `tests/fixtures/tree-shaking/baseline.json`. To propose an explicit update after reviewing a complete passing run and its toolchain, package/lock/config/fixture hashes, emitted initial/async assets and raw/gzip/Brotli totals:
+
+```bash
+node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUMER" --mode enforce --write-baseline tests/fixtures/tree-shaking/baseline.json
+```
+
+Review the resulting diff explicitly before accepting it. The baseline records informational absolute totals and engine controls. Blocking alias-gap budgets (1,023 gzip bytes; pure helper 512) and zero forbidden retention live in the canonical contract. Updating the informational snapshot neither authorizes changing those budgets nor turns a failed/incomplete/custom run into a baseline. Full namespace/dynamic catalog usage and the lazy catalog's approximately 255 KiB advisory are expected broader retention, distinct from static named-import regressions. Existing npm transitive warnings and SPFx metadata-age advisories are not suppressed.
+
+When diagnostics and any baseline proposal are finished, remove only that recorded consumer's temporary directory. The guard below checks the verifier's exact temporary-path shape before deleting it; it does not search for other consumers or remove evidence:
+
+```bash
+node - "$SPFX_DIAGNOSTIC_CONSUMER" <<'NODE'
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const consumer = fs.realpathSync(process.argv[2]);
+const temporaryDirectory = path.dirname(consumer);
+assert.equal(path.basename(consumer), 'consumer');
+assert.equal(path.dirname(temporaryDirectory), fs.realpathSync(os.tmpdir()));
+assert.match(path.basename(temporaryDirectory), /^spfx-tarball-consumer-[A-Za-z0-9]+$/);
+fs.rmSync(temporaryDirectory, { recursive: true, force: true });
+NODE
+unset SPFX_DIAGNOSTIC_CONSUMER
+```
+
+`SPFX_KEEP_CONSUMER=1` is only a diagnostic opt-in. The normal `npm run verify:package` command retains its automatic cleanup.
+
+## Imports sample
+
+The lazy `Imports` entry (`spfx-demo-imports`) renders three dedicated stable root/domain/legacy components. Each retains a callback captured at mount and reads the latest counter after incrementing. Width override/removal, body typography and logical start padding compose mixed imports beneath a shared FluentProvider; direction switching exercises the same active context. Existing React Hooks and Styles panels retain their root imports and own their existing export coverage. Imports uses empty symbol coverage plus a dedicated observable-scenario check, preserving 46 hooks and four providers without duplicate symbols.
+
+The app normally imports the root. Only `ImportsPanel.tsx` has the exact approved domain/legacy specifier allowlist; this is not permission for arbitrary app `/lib` imports. Run `node --test tests/demo-imports.test.cjs tests/monorepo.test.cjs`, `npm run verify:examples` and `npm run verify:public-docs`, then build library before app. Rebuild and restart an active serve after library edits. Node/DOM interaction checks verify callback/class behavior; actual local browser computed-style observations and authenticated SharePoint checks must be recorded separately. Build success alone does not execute the scenario.

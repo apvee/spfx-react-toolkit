@@ -1,0 +1,1198 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Informational optimized production totals; pairwise budgets and exclusions are in contract.json",
+  "provenance": {
+    "node": "v22.20.0",
+    "npm": "11.19.1",
+    "versions": {
+      "typescript": "5.3.3",
+      "webpack": "5.95.0",
+      "react": "17.0.1",
+      "react-dom": "17.0.1",
+      "@pnp/sp": "4.17.0",
+      "@pnp/core": "4.17.0",
+      "@pnp/queryable": "4.17.0",
+      "@griffel/core": "1.19.2",
+      "@griffel/react": "1.5.30",
+      "@fluentui/react-theme": "9.2.0",
+      "@fluentui/react-utilities": "9.25.1",
+      "@fluentui/react-shared-contexts": "9.25.2",
+      "@microsoft/sp-core-library": "1.21.1"
+    },
+    "rootLockfileSha256": "56b44d939cac13a5b31cf9d81474bbc3c6b714da9b4438f4c7ffb7c509ed9dbf",
+    "consumerLockfileSha256": "efdddc2c6950650f197584547c9ea4d3b6e5ae48c1de06220bb06bace0768298",
+    "tarballSha256": "5f6dfb24dc7371971850f01c8bc4a19b338c8ad9faf204a9df16fa59db61a298",
+    "toolkitDir": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-KSsbyw/consumer/node_modules/@apvee/spfx-react-toolkit",
+    "consumerRoot": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-KSsbyw/consumer",
+    "loaderSha256": "5d2e745458f7c15032e9ddee8529e4765f4101891bec956aec2e3667bc84500e",
+    "minifierVersion": "5.44.0",
+    "zlibVersion": "1.3.1-470d3a2",
+    "compression": {
+      "gzipLevel": 9,
+      "brotliQuality": 11
+    }
+  },
+  "contractSha256": "8af20f8702e647c94d11fc0a1f07a04558fbccd8c3ddf45a1f25212a2d09043b",
+  "fixtures": [
+    {
+      "id": "helper/root",
+      "fixtureSha256": "4c36daa27939d1375268d9381aa03771d32c76658a49c078de5c2d1e66722243",
+      "configSha256": "e0d069613a1836e8e3eb2cf623fde80cda21361b1e13d89a85c43af8c493e294",
+      "totals": {
+        "initial": {
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275,
+          "sha256": "6cd2fe08096fe95c34387212d45a8013b16bb1bea7849a449e97a0f139fc6244",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "helper/domain",
+      "fixtureSha256": "3ec4bec62ab8c8d6269635fb62da18af2575936eed66c191ff1c3fdd98b783a0",
+      "configSha256": "4a39fa3853f750a962291156e7fcff49227f0a7b4892337b77f64a86d735c2f9",
+      "totals": {
+        "initial": {
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275,
+          "sha256": "6cd2fe08096fe95c34387212d45a8013b16bb1bea7849a449e97a0f139fc6244",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "helper/leaf",
+      "fixtureSha256": "0f5b8ccb0225b000e3af258f7f447302af6d2c55677500c9d39b4a92ea06e116",
+      "configSha256": "bf3a46ecdd55d88044be8a2936ca118ee6ed13f0b0b63544a0756740fc4f35ab",
+      "totals": {
+        "initial": {
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 503,
+          "gzip": 324,
+          "brotli": 275,
+          "sha256": "6cd2fe08096fe95c34387212d45a8013b16bb1bea7849a449e97a0f139fc6244",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "stable-callback/root",
+      "fixtureSha256": "55e586f1daba6d5dcf5c3dc3e9e50381d70ea62ce7c84dfd4d34d9b1f4bbaef8",
+      "configSha256": "47c3af9e8818c4dc5446b25c1833a37ab23b3fb9225a8188414cda7b87063725",
+      "totals": {
+        "initial": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389,
+          "sha256": "2fba3d7f4960a721c0d0821f861a1420ee495c789f039afc1ca1f0b6566ee245",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "stable-callback/domain",
+      "fixtureSha256": "8e6e0fe9503e4c9ac9ccf7076b50a4098b40df462e4432414596962bbfec0821",
+      "configSha256": "6d501af23c3fad836c806700324da1d0e88c68a7d5c6b9bf1fccde7449072cac",
+      "totals": {
+        "initial": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389,
+          "sha256": "2fba3d7f4960a721c0d0821f861a1420ee495c789f039afc1ca1f0b6566ee245",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "stable-callback/leaf",
+      "fixtureSha256": "4856034928416d1d404aea81d4d1faae91b1859689fd4542fa98b4a45c5c6f41",
+      "configSha256": "e63825aa79997f20c87c1847384668a8fc608b43b73a0ab41a9e9a33fd800df5",
+      "totals": {
+        "initial": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389,
+          "sha256": "2fba3d7f4960a721c0d0821f861a1420ee495c789f039afc1ca1f0b6566ee245",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "stable-callback/probe",
+      "fixtureSha256": "c7584da1cdc515ae4ec2487cea49e5bf97cf3b3334f364e9a3bbb320bd41eaf2",
+      "configSha256": "d2efed43b716ee3f335cd97b555a83c953e100356f367a15151d8c3834a2f612",
+      "totals": {
+        "initial": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 805,
+          "gzip": 473,
+          "brotli": 389,
+          "sha256": "2fba3d7f4960a721c0d0821f861a1420ee495c789f039afc1ca1f0b6566ee245",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "provider/root",
+      "fixtureSha256": "ba3280d31019c4b571ee520ef25d78741f6f69acbb35d21ceb2499baa8e065da",
+      "configSha256": "94cc51a6f1ce354a7ec5d094010551e287043b9bea3f426bc1f3e6422a69383a",
+      "totals": {
+        "initial": {
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609,
+          "sha256": "caffaaf079be93ee0e9ce73a4e7dbee14fb00579790bb256c99a49e42046b8e0",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "provider/domain",
+      "fixtureSha256": "97112c652c5b918b7c5abcd7b660923d07b4544dc41ce6d2b55b83714dbb2b7b",
+      "configSha256": "e18e2f5bc00f498a427f5b31259b42f816b71153ca773c2b1907e8c801bb8de8",
+      "totals": {
+        "initial": {
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609,
+          "sha256": "caffaaf079be93ee0e9ce73a4e7dbee14fb00579790bb256c99a49e42046b8e0",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "provider/leaf",
+      "fixtureSha256": "e86eb973b53ce6534f1a279fa771449bb2e31383a89d65b80b04647f5ff49fa2",
+      "configSha256": "102fecce5e30b18e6ea97ce0b3eddb7da65f77db2b20f956616969566c66cfb7",
+      "totals": {
+        "initial": {
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 4944,
+          "gzip": 1819,
+          "brotli": 1609,
+          "sha256": "caffaaf079be93ee0e9ce73a4e7dbee14fb00579790bb256c99a49e42046b8e0",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "sx-width-only/root",
+      "fixtureSha256": "7db06af4604e1289a898399fab1027a29a54053cfbe658b13dd6f95a3d52c1cb",
+      "configSha256": "3b32b35bc6c97e8c3288ce83cdb806992dcea179c6212d0dd53c29ee24604611",
+      "totals": {
+        "initial": {
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318,
+          "sha256": "94a6de60abf6c18d712d5742dd7e2df74e1be1cc3dd352ca691b796821ae7db6",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "sx-width-only/domain",
+      "fixtureSha256": "7086e03220d21564c45abe781ccf58ab7f5f3ff6820082433babae4f5526c155",
+      "configSha256": "72e44fb17f79b12c1dd8a59726ca1fe96048ad5e2f096c676b54f86c89c05ba4",
+      "totals": {
+        "initial": {
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318,
+          "sha256": "94a6de60abf6c18d712d5742dd7e2df74e1be1cc3dd352ca691b796821ae7db6",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "sx-width-only/leaf",
+      "fixtureSha256": "936597fef315180ae26d983128f2069b1c9ea9f93bd26ebb00c06c9fa4939ec3",
+      "configSha256": "b7d7ee1659cdc80e45b445ff35257b538d937333a288a73e49886aee132ceee8",
+      "totals": {
+        "initial": {
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 619,
+          "gzip": 380,
+          "brotli": 318,
+          "sha256": "94a6de60abf6c18d712d5742dd7e2df74e1be1cc3dd352ca691b796821ae7db6",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "pnp-context/root",
+      "fixtureSha256": "ce5bc405a91d1a6a65ddea12145292ab5ad25a46328cd97143f22ea0e41592c9",
+      "configSha256": "3c25d7d759ecebaf4dccf44d367414a1f1119b990495ec614c5c657019218389",
+      "totals": {
+        "initial": {
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570,
+          "sha256": "bf8879f1aada6b5687d581e016257c977986feb115e86423f925bf051601d6bb",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "pnp-context/domain",
+      "fixtureSha256": "0e4770b3db4fb10be041f6757f5abb27590b801196b5e48c0cde18ad8d3efb54",
+      "configSha256": "4a31569f8e475e82df3e073d18a0366e84b5cf5da3f2aba30a8af08295d39fa2",
+      "totals": {
+        "initial": {
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570,
+          "sha256": "bf8879f1aada6b5687d581e016257c977986feb115e86423f925bf051601d6bb",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "pnp-context/leaf",
+      "fixtureSha256": "815d55f3cc5b9fcfa26e521c4342a5ed6e0c42c53ae78b357d24c8ff6ee5ea76",
+      "configSha256": "f45e10ea24b1500016b5a3ce7d7fc6149adce83db4e62834a30cbb86b92023d3",
+      "totals": {
+        "initial": {
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 27586,
+          "gzip": 9529,
+          "brotli": 8570,
+          "sha256": "bf8879f1aada6b5687d581e016257c977986feb115e86423f925bf051601d6bb",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "pnp-list/root",
+      "fixtureSha256": "f9971a07785ebc831149530e3b7ddd43feb2f7ae5009e692f490a38da711d78e",
+      "configSha256": "853ce526e5bf94f367b7d6e352d001c90463ec613ed302969ee5a73c6182ad4b",
+      "totals": {
+        "initial": {
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838,
+          "sha256": "8f42844b0c8aa73493a7a9047048ec66ba1f4b2d4cc987f55fb2df1395b7cb42",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "pnp-list/domain",
+      "fixtureSha256": "842edd6d7427ad26f5a28a87495857258c10f9f814456d9498117fd04d9ce642",
+      "configSha256": "ee2538acbdf86650a25d63ffccb4c76337f651a566ee44c1258ded78e75a4dbd",
+      "totals": {
+        "initial": {
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838,
+          "sha256": "8f42844b0c8aa73493a7a9047048ec66ba1f4b2d4cc987f55fb2df1395b7cb42",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "pnp-list/leaf",
+      "fixtureSha256": "a4849b1b7617725c9086bcfab1107473d178c3d3fc6af656be9b8d9e2298c52f",
+      "configSha256": "4b38613f1b79c08a5d22651c70a05aec7bace9208fac48a854457ad75fdb57ed",
+      "totals": {
+        "initial": {
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 36236,
+          "gzip": 12081,
+          "brotli": 10838,
+          "sha256": "8f42844b0c8aa73493a7a9047048ec66ba1f4b2d4cc987f55fb2df1395b7cb42",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "pnp-search/root",
+      "fixtureSha256": "c97a3fe907e2d2a9c1bdedffcf3520acf68d61093d0562a8793fca2beb631ae7",
+      "configSha256": "36ff57a417ef56ce6ebbfebbd83daa808d1a9d2ea24f87af64ca0de0d3bd9f82",
+      "totals": {
+        "initial": {
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724,
+          "sha256": "0422ddd78594cbfeb86b068da590746571dcee1b800fbe0065abbbf94fd40dce",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "pnp-search/domain",
+      "fixtureSha256": "724bf23bb12ebc3565baf5557c7ca0c950e112326bf810711906a31235d48b2e",
+      "configSha256": "b763a231d687d100f491035684d65a66605304f65c676015109a49cdcc33a705",
+      "totals": {
+        "initial": {
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724,
+          "sha256": "0422ddd78594cbfeb86b068da590746571dcee1b800fbe0065abbbf94fd40dce",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "pnp-search/leaf",
+      "fixtureSha256": "ec27f1cdccd64bc11e6e7eeedf5a5de35db1f55386cb4557aed983f831a342f1",
+      "configSha256": "ff05988987f44a40ab4b1fcbb57204fabb2fc8c171af2dd91084dd9eec889c29",
+      "totals": {
+        "initial": {
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 22134,
+          "gzip": 7552,
+          "brotli": 6724,
+          "sha256": "0422ddd78594cbfeb86b068da590746571dcee1b800fbe0065abbbf94fd40dce",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "pnp-batch/root",
+      "fixtureSha256": "297b35f179c2f77c650613206e1d6ec4030d10ec38f386adb6483d52fae1810f",
+      "configSha256": "e927adb7ba6a0d76647474e13b5166d908d2353bbe9ca85f2cf0488e2f5ff2c0",
+      "totals": {
+        "initial": {
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684,
+          "sha256": "661cf7af2eb3ac05dbde283a8aa645bcc1b776601b9ca53161a566c52f5c2722",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "pnp-batch/domain",
+      "fixtureSha256": "dfca1a0654e192ff517789895132ff1d36f752392f314d97a224ed73b00dab2a",
+      "configSha256": "cbece7b83e04f6aeaf422f63c06816d37af39675418cd9444c03c1c2c7c1b664",
+      "totals": {
+        "initial": {
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684,
+          "sha256": "661cf7af2eb3ac05dbde283a8aa645bcc1b776601b9ca53161a566c52f5c2722",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "pnp-batch/leaf",
+      "fixtureSha256": "b863bd2c64ee5ba29f5677dbb0bae352869546a5323ed20324cb747c4a5bf67b",
+      "configSha256": "25a2fadde3c7c75927c3a8c234d8b6b2e97f3a7335327a62b575ef9178860e6a",
+      "totals": {
+        "initial": {
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 21544,
+          "gzip": 7426,
+          "brotli": 6684,
+          "sha256": "661cf7af2eb3ac05dbde283a8aa645bcc1b776601b9ca53161a566c52f5c2722",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "sx-minimum/root",
+      "fixtureSha256": "70a8e00da8b3a6e5e9a4a3cae6858f0a669589e41766fa82dd3e2da1367c90de",
+      "configSha256": "fdf71d59ea0141d3466aadd5048ee43b2a40ecc78c52601d179b03c09ac12907",
+      "totals": {
+        "initial": {
+          "raw": 34220,
+          "gzip": 11747,
+          "brotli": 10552
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 34220,
+          "gzip": 11747,
+          "brotli": 10552
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 34220,
+          "gzip": 11747,
+          "brotli": 10552,
+          "sha256": "bc9ac59be28381543741278f222b1943b22581d249d5c28e294d217f4b454595",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "sx-minimum/domain",
+      "fixtureSha256": "8a40ef43938785b0f78e3809fad3e67bb2592e1957242c5b687fc4d5a91c8e8d",
+      "configSha256": "329c05ee4b7741ccc75c2fbf9c138e1575fb252cb2f3f29447d8997d8a95704a",
+      "totals": {
+        "initial": {
+          "raw": 34220,
+          "gzip": 11747,
+          "brotli": 10552
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 34220,
+          "gzip": 11747,
+          "brotli": 10552
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 34220,
+          "gzip": 11747,
+          "brotli": 10552,
+          "sha256": "bc9ac59be28381543741278f222b1943b22581d249d5c28e294d217f4b454595",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "sx-minimum/leaf",
+      "fixtureSha256": "f170c1ace6adb4c3fe46b2c1f076a0c587e59ac9d326b742b498670ba90e2300",
+      "configSha256": "41ad906f9db0a282cfffd97bab3b520cfc9b531f57b0e65bfa0c22cb5cdf9aed",
+      "totals": {
+        "initial": {
+          "raw": 34220,
+          "gzip": 11747,
+          "brotli": 10552
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 34220,
+          "gzip": 11747,
+          "brotli": 10552
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 34220,
+          "gzip": 11747,
+          "brotli": 10552,
+          "sha256": "bc9ac59be28381543741278f222b1943b22581d249d5c28e294d217f4b454595",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "sx-minimum/probe",
+      "fixtureSha256": "d79946a87b9efa903a1bfff181584eb92c0a5ff72386b148c138a37a5d495dbe",
+      "configSha256": "b376c17c89abe4fe0d845201768072b665389936abe7fb9ec9b0a0a9509e76f8",
+      "totals": {
+        "initial": {
+          "raw": 34220,
+          "gzip": 11747,
+          "brotli": 10552
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 34220,
+          "gzip": 11747,
+          "brotli": 10552
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 34220,
+          "gzip": 11747,
+          "brotli": 10552,
+          "sha256": "bc9ac59be28381543741278f222b1943b22581d249d5c28e294d217f4b454595",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "empty/control",
+      "fixtureSha256": "07b075b4fee94d785b935db4b24cb2c5b642623f621620e0b138fbef21e7f92d",
+      "configSha256": "d9be7c0d9ae2b715e17e582fd1557aa85eefe0075b1f401089de63a417a90edf",
+      "totals": {
+        "initial": {
+          "raw": 412,
+          "gzip": 267,
+          "brotli": 227
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 412,
+          "gzip": 267,
+          "brotli": 227
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 412,
+          "gzip": 267,
+          "brotli": 227,
+          "sha256": "1878a75d03acf242a46b82e63694bfff342c2e58b384ddcb62b001b64e042f27",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "type-only/control",
+      "fixtureSha256": "a8b33a4fda5d3e53eb83bc497e9726983814aa08e50980f10d8680db70a6b844",
+      "configSha256": "c442e813289b74c223cc3a41ce4b2597925d2c6cd9ba55122ce7d7e544ca577f",
+      "totals": {
+        "initial": {
+          "raw": 412,
+          "gzip": 267,
+          "brotli": 227
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 412,
+          "gzip": 267,
+          "brotli": 227
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 412,
+          "gzip": 267,
+          "brotli": 227,
+          "sha256": "1878a75d03acf242a46b82e63694bfff342c2e58b384ddcb62b001b64e042f27",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "griffel-direct/control",
+      "fixtureSha256": "c0a744753255e06ce6dd6f13b12b5d44dce3e6971a71708bc1ec538b58db91d0",
+      "configSha256": "9183145f1ff412eb494095935b9dbfc4ac81aaa9435d90ea89b18b7ed0d46fbb",
+      "totals": {
+        "initial": {
+          "raw": 28184,
+          "gzip": 10015,
+          "brotli": 9090
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 28184,
+          "gzip": 10015,
+          "brotli": 9090
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 28184,
+          "gzip": 10015,
+          "brotli": 9090,
+          "sha256": "3f275f4ea930464455c82c2531a3b8965277a3e6da6440c749b8bd9101f50735",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "already-fluent/control",
+      "fixtureSha256": "6ed3e12055a460b9919000bca44278f9e755decb905ec72e37b5632b351d89d6",
+      "configSha256": "bd2caab154cb8753def0557671106eee3df41e13a4d6883321fbb31ccac138a9",
+      "totals": {
+        "initial": {
+          "raw": 71707,
+          "gzip": 23403,
+          "brotli": 19850
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 71707,
+          "gzip": 23403,
+          "brotli": 19850
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 71707,
+          "gzip": 23403,
+          "brotli": 19850,
+          "sha256": "18104ee6560cb60bd0203451527ae74f6a3dbc01798e05ffef419e034985527c",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "already-fluent-direct/control",
+      "fixtureSha256": "bd0e8d9b51f77da335384e61748822e55f867714111cc87062120af52ce23618",
+      "configSha256": "407329ad868bba685f0b980ba84ded3ce92df82de4f938e1d423d5715a3ff3a3",
+      "totals": {
+        "initial": {
+          "raw": 66421,
+          "gzip": 22007,
+          "brotli": 18689
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 66421,
+          "gzip": 22007,
+          "brotli": 18689
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 66421,
+          "gzip": 22007,
+          "brotli": 18689,
+          "sha256": "05f4ad874f1422e128325c59be010c40bc3a71aa4f854c04b37784a041048583",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "dynamic-styles/control",
+      "fixtureSha256": "c664df2e25bcba661db1a5c5b3e4d056b12b9106e78d2ea3513a3d4515be2132",
+      "configSha256": "69971f122f44cb35bd0fa83e72e601a3dded76ea033dde93d5fbfe148af07b22",
+      "totals": {
+        "initial": {
+          "raw": 64080,
+          "gzip": 15356,
+          "brotli": 13352
+        },
+        "async": {
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "union": {
+          "raw": 64080,
+          "gzip": 15356,
+          "brotli": 13352
+        }
+      },
+      "assets": [
+        {
+          "name": "entry.js",
+          "raw": 64080,
+          "gzip": 15356,
+          "brotli": 13352,
+          "sha256": "ea019b6026e96a6db6b9f23b54bf270779d7a850336b3af3349ba61ebb75843c",
+          "initial": true
+        }
+      ]
+    },
+    {
+      "id": "lazy-styles/control",
+      "fixtureSha256": "2c207d79ad31f796a4dbda58cec4d38b5e90686da50e62f04802e20bfc2a4caf",
+      "configSha256": "9015a0088a412ed756fbba1d601f426a2a94e098e2a29b6ae3a080369426f30b",
+      "totals": {
+        "initial": {
+          "raw": 3437,
+          "gzip": 1724,
+          "brotli": 1482
+        },
+        "async": {
+          "raw": 261180,
+          "gzip": 66256,
+          "brotli": 55084
+        },
+        "union": {
+          "raw": 264617,
+          "gzip": 67980,
+          "brotli": 56566
+        }
+      },
+      "assets": [
+        {
+          "name": "12.aca1c38309d4319cbfbe.js",
+          "raw": 261180,
+          "gzip": 66256,
+          "brotli": 55084,
+          "sha256": "493fa6fc66a982fa1cceb140ab553730c30d32a0e8a641d5b0fb9ade07264e60",
+          "initial": false
+        },
+        {
+          "name": "entry.js",
+          "raw": 3437,
+          "gzip": 1724,
+          "brotli": 1482,
+          "sha256": "85666ebae0fe40db608c8caf82acebd0d77b3bd40a66db93af8920132a0249dc",
+          "initial": true
+        }
+      ]
+    }
+  ]
+}

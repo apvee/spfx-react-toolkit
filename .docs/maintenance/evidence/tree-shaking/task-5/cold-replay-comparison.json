@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "failures": [],
+  "reference": "package-final/bundle/bundle-report.json",
+  "candidate": "baseline-update/bundle-report.json"
+}

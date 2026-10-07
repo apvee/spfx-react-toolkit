@@ -1,0 +1,8 @@
+{
+  "command": "npm run verify",
+  "exit": 0,
+  "durationMs": 21857,
+  "beforeSha256": "3c596d1dc0701b9b790fc878c0d350663ab9c2014d96dcbef8d2be44f5464299",
+  "afterSha256": "3c596d1dc0701b9b790fc878c0d350663ab9c2014d96dcbef8d2be44f5464299",
+  "unchanged": true
+}

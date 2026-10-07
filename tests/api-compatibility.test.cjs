@@ -91,7 +91,8 @@ for (const [missingName] of allowedBarrels) {
           const name = file.slice(declarationsRoot.length);
           if (baseline[name]) {
             const addition = allowedBarrels.find(([barrel]) => barrel === name)?.[1];
-            return baseline[name].declaration + (addition && name !== missingName ? `\nexport * from '${addition}';` : '');
+            const historical = name === pnpServiceName ? registeredHistoricalService : baseline[name].declaration;
+            return historical + (addition && name !== missingName ? `\nexport * from '${addition}';` : '');
           }
         }
         return fs.readFileSync(file, options);
@@ -124,6 +125,82 @@ const selectorDeclaration = `export type SPFxPnPListSelector =
 const widenedService = baseline[pnpServiceName].declaration.replace('listTitle: string', 'listTarget: string | SPFxPnPListSelector');
 const approvedService = `${selectorDeclaration}\n${widenedService}`;
 const pnpRequired = { requirePnPListAdditions: true };
+const websRegistration = "import '@pnp/sp/webs';";
+const registeredHistoricalService = `${websRegistration}\n${baseline[pnpServiceName].declaration}`;
+
+test('permits one bare webs registration only in the list service declaration', () => {
+  for (const current of [registeredHistoricalService, `${websRegistration}\n${approvedService}`]) {
+    assert.doesNotThrow(() => assertCompatibleDeclaration(pnpServiceName, current,
+      baseline[pnpServiceName].declaration, { requirePnPListWebsRegistration: true }));
+  }
+});
+
+test('finished list service requires the standalone webs registration', () => {
+  assert.throws(() => assertCompatibleDeclaration(pnpServiceName, approvedService,
+    baseline[pnpServiceName].declaration, { requirePnPListWebsRegistration: true }), /Missing approved PnP list webs registration/);
+});
+
+for (const [label, addition] of [
+  ['duplicate', `${websRegistration}\n${websRegistration}`],
+  ['wrong path', "import '@pnp/sp/webs/index.js';"],
+  ['named import', "import { Web } from '@pnp/sp/webs';"],
+  ['namespace import', "import * as Webs from '@pnp/sp/webs';"],
+  ['default import', "import Webs from '@pnp/sp/webs';"],
+  ['type-only import', "import type { Web } from '@pnp/sp/webs';"],
+  ['attributes', "import '@pnp/sp/webs' with { type: 'json' };"],
+  ['assertions', "import '@pnp/sp/webs' assert { type: 'json' };"],
+  ['unrelated statement', `${websRegistration}\nexport type Extra = string;`],
+]) {
+  test(`rejects list webs registration ${label}`, () => {
+    assert.throws(() => assertCompatibleDeclaration(pnpServiceName, `${addition}\n${approvedService}`,
+      baseline[pnpServiceName].declaration));
+  });
+}
+
+test('rejects list webs registration in every other historical declaration', () => {
+  for (const [name, snapshot] of Object.entries(baseline)) {
+    if (name === pnpServiceName) continue;
+    assert.throws(() => assertCompatibleDeclaration(name, `${websRegistration}\n${snapshot.declaration}`,
+      snapshot.declaration), /Declaration contract changed/);
+  }
+});
+
+test('webs registration approval retains strict list signatures and historical imports', () => {
+  for (const [before, after] of [
+    ['defaultPageSize?: number', 'defaultPageSize: number'],
+    ["import '@pnp/sp/items';", "import type { IItem } from '@pnp/sp/items';"],
+    ['getById: (id: number) => Promise<T>', 'getById: (id: number) => Promise<T | undefined>'],
+  ]) {
+    assert.ok(approvedService.includes(before));
+    assert.throws(() => assertCompatibleDeclaration(pnpServiceName,
+      `${websRegistration}\n${approvedService.replace(before, after)}`, baseline[pnpServiceName].declaration));
+  }
+});
+
+test('integrated verify-api requires webs registration even without other completion markers', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const scriptPath = path.resolve(__dirname, '../scripts/verify-api.cjs');
+  const localRequire = require('node:module').createRequire(scriptPath);
+  const declarationsRoot = path.resolve(__dirname, '../packages/spfx-react-toolkit/lib') + path.sep;
+  const fileBoundary = {
+    ...fs,
+    existsSync(file) {
+      if (file.includes('/src/hooks/')) return false;
+      return fs.existsSync(file);
+    },
+    readFileSync(file, options) {
+      if (file.startsWith(declarationsRoot)) {
+        const name = file.slice(declarationsRoot.length);
+        if (baseline[name]) return baseline[name].declaration;
+      }
+      return fs.readFileSync(file, options);
+    },
+  };
+  const verify = new Function('require', '__dirname', fs.readFileSync(scriptPath, 'utf8'));
+  assert.throws(() => verify(key => key === 'node:fs' ? fileBoundary : localRequire(key), path.dirname(scriptPath)),
+    /Missing approved PnP list webs registration/);
+});
 
 test('permits exactly the PnP selector and factory widening with or without completion requirements', () => {
   for (const options of [{}, pnpRequired]) {
@@ -232,9 +309,9 @@ for (const missing of [...pnpHookPaths, 'selector', 'factory']) {
           const name = file.slice(declarationsRoot.length);
           if (name === 'hooks/index.d.ts') return `${baseline[name].declaration}\n${pnpExports.replace(`export * from '${missing}';`, '')}`;
           if (name === pnpServiceName) {
-            if (missing === 'selector') return widenedService;
-            if (missing === 'factory') return `${selectorDeclaration}\n${baseline[name].declaration}`;
-            return approvedService;
+            if (missing === 'selector') return `${websRegistration}\n${widenedService}`;
+            if (missing === 'factory') return `${websRegistration}\n${selectorDeclaration}\n${baseline[name].declaration}`;
+            return `${websRegistration}\n${approvedService}`;
           }
           if (baseline[name]) return baseline[name].declaration;
         }
@@ -295,7 +372,7 @@ test('style completion checks preserve previous callback, site-store and PnP app
 const originalPackage = require('./fixtures/package-baseline.json');
 const currentPackage = require('../packages/spfx-react-toolkit/package.json');
 const { assertCompatiblePackageContract } = require('../scripts/api-compatibility.helpers.cjs');
-test('permits only the approved package peer additions and previous dependency cleanup', () => {
+test('permits only approved peer changes, exact additive entrypoints and styles facade files', () => {
   assert.doesNotThrow(() => assertCompatiblePackageContract(currentPackage, originalPackage));
 });
 for (const [label, mutate] of [
@@ -336,7 +413,8 @@ for (const [missingName] of styleBarrels) {
           const name = file.slice(declarationsRoot.length);
           if (baseline[name]) {
             const addition = styleBarrels.find(([barrel]) => barrel === name)?.[1];
-            return baseline[name].declaration + (addition && name !== missingName ? `\nexport * from '${addition}';` : '');
+            const historical = name === pnpServiceName ? registeredHistoricalService : baseline[name].declaration;
+            return historical + (addition && name !== missingName ? `\nexport * from '${addition}';` : '');
           }
         }
         return fs.readFileSync(file, options);
@@ -352,7 +430,7 @@ for (const marker of [
   'Exiting with exit code: 1',
   '\u001b[31mError - [webpack] compilation failed\u001b[0m',
 ]) {
-  test(`package gate rejects explicit subprocess failure with wrapper status zero: ${marker}`, () => {
+  test(`package gate rejects explicit subprocess failure with wrapper status zero: ${marker}`, async () => {
     const fs = require('node:fs');
     const path = require('node:path');
     const scriptPath = path.resolve(__dirname, '../scripts/verify-package.cjs');
@@ -361,13 +439,15 @@ for (const marker of [
       spawnSync: () => ({ status: 0, signal: null, stdout: marker, stderr: '' }),
       execFileSync: () => { throw new Error('Unexpected pack after failed build'); },
     };
-    const verify = new Function('require', '__dirname', 'process', fs.readFileSync(scriptPath, 'utf8'));
-    const processBoundary = { env: {}, stdout: { write() {} }, stderr: { write() {} } };
-    assert.throws(() => verify(key => key === 'node:child_process' ? childBoundary : localRequire(key), path.dirname(scriptPath), processBoundary), /reported subprocess failure despite wrapper status 0/);
+    const verify = new Function('require', '__dirname', 'process', fs.readFileSync(scriptPath, 'utf8').replace(/main\(\)\.catch[\s\S]*$/, 'return main();'));
+    const testEvidence = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'package-gate-unit-'));
+    const processBoundary = { env: {SPFX_PACKAGE_EVIDENCE:testEvidence}, stdout: { write() {} }, stderr: { write() {} } };
+    await assert.rejects(() => verify(key => key === 'node:child_process' ? childBoundary : localRequire(key), path.dirname(scriptPath), processBoundary), /reported subprocess failure despite wrapper status 0/);
+    fs.rmSync(testEvidence,{recursive:true,force:true});
   });
 }
 
-test('package gate keeps visible data-age warnings distinct from actual subprocess failure', () => {
+test('package gate keeps visible data-age warnings distinct from actual subprocess failure', async () => {
   const fs = require('node:fs');
   const path = require('node:path');
   const scriptPath = path.resolve(__dirname, '../scripts/verify-package.cjs');
@@ -377,9 +457,11 @@ test('package gate keeps visible data-age warnings distinct from actual subproce
     execFileSync: () => { throw new Error('Build accepted; pack reached'); },
   };
   let visibleWarning = '';
-  const verify = new Function('require', '__dirname', 'process', fs.readFileSync(scriptPath, 'utf8'));
-  const processBoundary = { env: {}, stdout: { write() {} }, stderr: { write(value) { visibleWarning += value; } } };
-  assert.throws(() => verify(key => key === 'node:child_process' ? childBoundary : localRequire(key), path.dirname(scriptPath), processBoundary), /Build accepted; pack reached/);
+  const verify = new Function('require', '__dirname', 'process', fs.readFileSync(scriptPath, 'utf8').replace(/main\(\)\.catch[\s\S]*$/, 'return main();'));
+  const testEvidence = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'package-gate-unit-'));
+  const processBoundary = { env: {SPFX_PACKAGE_EVIDENCE:testEvidence}, stdout: { write() {} }, stderr: { write(value) { visibleWarning += value; } } };
+  await assert.rejects(() => verify(key => key === 'node:child_process' ? childBoundary : localRequire(key), path.dirname(scriptPath), processBoundary), /Build accepted; pack reached/);
+  fs.rmSync(testEvidence,{recursive:true,force:true});
   assert.match(visibleWarning, /baseline-browser-mapping/);
 });
 

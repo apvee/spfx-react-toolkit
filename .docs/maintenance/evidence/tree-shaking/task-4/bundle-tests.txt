@@ -1,0 +1,119 @@
+TAP version 13
+# [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+# Subtest: concatenated emitted modules are traversed
+ok 1 - concatenated emitted modules are traversed
+  ---
+  duration_ms: 5.96
+  type: 'test'
+  ...
+# Subtest: unused parsed module is not emitted
+ok 2 - unused parsed module is not emitted
+  ---
+  duration_ms: 0.6275
+  type: 'test'
+  ...
+# Subtest: shared lazy asset is counted once
+ok 3 - shared lazy asset is counted once
+  ---
+  duration_ms: 0.421541
+  type: 'test'
+  ...
+# Subtest: audit report cannot satisfy enforce
+ok 4 - audit report cannot satisfy enforce
+  ---
+  duration_ms: 0.087291
+  type: 'test'
+  ...
+# Subtest: consumer slots are strict and width pairs are coherent
+ok 5 - consumer slots are strict and width pairs are coherent
+  ---
+  duration_ms: 0.336416
+  type: 'test'
+  ...
+# Subtest: retention parser observes static descriptor constructor calls
+ok 6 - retention parser observes static descriptor constructor calls
+  ---
+  duration_ms: 3.970709
+  type: 'test'
+  ...
+# Subtest: legacy retention parser preserves value observation
+ok 7 - legacy retention parser preserves value observation
+  ---
+  duration_ms: 0.44825
+  type: 'test'
+  ...
+# Subtest: contract rejects unknown module groups and malformed comparisons
+ok 8 - contract rejects unknown module groups and malformed comparisons
+  ---
+  duration_ms: 0.168792
+  type: 'test'
+  ...
+# Subtest: descriptor and emitted group checks produce concrete failures
+ok 9 - descriptor and emitted group checks produce concrete failures
+  ---
+  duration_ms: 0.285209
+  type: 'test'
+  ...
+# Subtest: truncated nested stats are rejected instead of hiding emitted dependencies
+ok 10 - truncated nested stats are rejected instead of hiding emitted dependencies
+  ---
+  duration_ms: 0.322625
+  type: 'test'
+  ...
+# Subtest: nonliteral descriptor values are not reported as static values
+ok 11 - nonliteral descriptor values are not reported as static values
+  ---
+  duration_ms: 0.350208
+  type: 'test'
+  ...
+# Subtest: real production concatenation exposes emitted leaves without parsed orphan inventory
+ok 12 - real production concatenation exposes emitted leaves without parsed orphan inventory
+  ---
+  duration_ms: 378.09975
+  type: 'test'
+  ...
+# Subtest: replay comparison requires identical asset bytes hashes and stable provenance
+ok 13 - replay comparison requires identical asset bytes hashes and stable provenance
+  ---
+  duration_ms: 0.448
+  type: 'test'
+  ...
+# Subtest: replay comparison rejects missing fixtures unless an explicit subset was selected
+ok 14 - replay comparison rejects missing fixtures unless an explicit subset was selected
+  ---
+  duration_ms: 0.135625
+  type: 'test'
+  ...
+# Subtest: measurement runtime provenance records Node and npm versions
+ok 15 - measurement runtime provenance records Node and npm versions
+  ---
+  duration_ms: 78.300708
+  type: 'test'
+  ...
+# Subtest: initial and progress enforce snapshots never claim a completed gate
+ok 16 - initial and progress enforce snapshots never claim a completed gate
+  ---
+  duration_ms: 0.154833
+  type: 'test'
+  ...
+# Subtest: isolation contract rejects upstream typography even with no retained descriptor calls
+ok 17 - isolation contract rejects upstream typography even with no retained descriptor calls
+  ---
+  duration_ms: 0.505084
+  type: 'test'
+  ...
+# Subtest: production root helper, callback and width consumers emit no unrelated features
+ok 18 - production root helper, callback and width consumers emit no unrelated features
+  ---
+  duration_ms: 5673.111542
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6315.38275

@@ -1,6 +1,7 @@
 import type { SPFI } from '@pnp/sp';
 import type { IItems } from '@pnp/sp/items';
 
+import '@pnp/sp/webs';
 import '@pnp/sp/lists';
 import '@pnp/sp/items';
 import '@pnp/sp/batching';
@@ -167,6 +168,9 @@ function collectCreatedIds(settled: PromiseSettledResult<unknown>[]): { ids: num
 
 /**
  * Create list operations using the supplied PnP client and a captured list target.
+ * This module registers PnP webs, lists, items and batching; it does not require
+ * the toolkit context factory. The client still needs authentication and request
+ * behaviors. Import other PnP features explicitly for direct client operations.
  *
  * @param sp - Configured client; batch operations use its own batched client.
  * @param listTarget - Exact title string or explicit list selector. GUIDs accept paired

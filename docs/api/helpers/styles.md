@@ -2,7 +2,16 @@
 
 Style descriptors are immutable, typed data used to describe dimensions, Fluent theme references, typography, and CSS scopes. They are independent of SPFx context. Creating or importing a descriptor does not access the DOM or insert CSS.
 
-The complete style catalog is available from the package root and the `@apvee/spfx-react-toolkit/lib/helpers/styles` deep entry point:
+The complete style catalog is available from the package root, the clean `@apvee/spfx-react-toolkit/styles` facade and the historical `@apvee/spfx-react-toolkit/lib/helpers/styles` deep entry point. The facade also re-exports canonical `useSx` and all public descriptor types; the narrow `/styles/useSx` entry exposes only that hook. Root, facade and historical leaves compose with the same active renderer/direction context. See [package imports](../../PACKAGE-IMPORTS.md) for resolver/peer contracts and bundle interpretation.
+
+```tsx
+import { useSx, width, typography, SxInput } from '@apvee/spfx-react-toolkit/styles';
+import * as paddingInlineStart from '@apvee/spfx-react-toolkit/lib/helpers/styles/padding-inline-start';
+// In a component: const sx = useSx();
+const inputs: readonly SxInput[] = [width.px(240), typography.body1, paddingInlineStart.px(16)];
+```
+
+Existing root imports remain valid:
 
 ```ts
 import {

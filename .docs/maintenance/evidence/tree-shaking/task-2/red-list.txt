@@ -1,0 +1,56 @@
+TAP version 13
+# Subtest: list factory works without context factory or webs preload
+not ok 1 - list factory works without context factory or webs preload
+  ---
+  duration_ms: 373.921292
+  type: 'test'
+  location: '/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/pnp-registration.test.cjs:17:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    TypeError: Cannot read properties of undefined (reading 'lists')
+        at resolveListTarget (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/packages/spfx-react-toolkit/src/services/spfx-pnp-list-target.internal.ts:77:27)
+        at getItems (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts:104:82)
+        at Object.query (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts:108:48)
+        at main (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/fixtures/tree-shaking/runtime/pnp-standalone.cjs:59:65)
+        at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/fixtures/tree-shaking/runtime/pnp-standalone.cjs:68:1)
+        at Module._compile (node:internal/modules/cjs/loader:1706:14)
+        at Object..js (node:internal/modules/cjs/loader:1839:10)
+        at Module.load (node:internal/modules/cjs/loader:1441:32)
+        at Function._load (node:internal/modules/cjs/loader:1263:12)
+        at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+
+
+    1 !== 0
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    resolveListTarget (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/packages/spfx-react-toolkit/src/services/spfx-pnp-list-target.internal.ts:77:27)
+    getItems (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts:104:82)
+    Object.query (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts:108:48)
+    main (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/fixtures/tree-shaking/runtime/pnp-standalone.cjs:59:65)
+    Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/fixtures/tree-shaking/runtime/pnp-standalone.cjs:68:1)
+    Module._compile (node:internal/modules/cjs/loader:1706:14)
+    Object..js (node:internal/modules/cjs/loader:1839:10)
+    Module.load (node:internal/modules/cjs/loader:1441:32)
+    Function._load (node:internal/modules/cjs/loader:1263:12)
+    TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    runScenario (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/pnp-registration.test.cjs:11:10)
+    TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/pnp-registration.test.cjs:17:74)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 406.293209

@@ -1,0 +1,970 @@
+TAP version 13
+# Subtest: preserves every historical declaration, ignoring comments and whitespace
+ok 1 - preserves every historical declaration, ignoring comments and whitespace
+  ---
+  duration_ms: 74.475584
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant generic default in hooks/useSPFxTenantKeyValueStore.d.ts
+ok 2 - rejects changed tenant generic default in hooks/useSPFxTenantKeyValueStore.d.ts
+  ---
+  duration_ms: 1.450791
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant readonly property in hooks/useSPFxTenantKeyValueStore.d.ts
+ok 3 - rejects changed tenant readonly property in hooks/useSPFxTenantKeyValueStore.d.ts
+  ---
+  duration_ms: 0.682416
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant parameter type in hooks/useSPFxTenantKeyValueStore.d.ts
+ok 4 - rejects changed tenant parameter type in hooks/useSPFxTenantKeyValueStore.d.ts
+  ---
+  duration_ms: 0.613167
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant optional parameter in hooks/useSPFxTenantKeyValueStore.d.ts
+ok 5 - rejects changed tenant optional parameter in hooks/useSPFxTenantKeyValueStore.d.ts
+  ---
+  duration_ms: 0.592584
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant generic default in services/spfx-tenant-key-value-store.service.d.ts
+ok 6 - rejects changed tenant generic default in services/spfx-tenant-key-value-store.service.d.ts
+  ---
+  duration_ms: 0.345958
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant readonly property in services/spfx-tenant-key-value-store.service.d.ts
+ok 7 - rejects changed tenant readonly property in services/spfx-tenant-key-value-store.service.d.ts
+  ---
+  duration_ms: 0.321417
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant parameter type in services/spfx-tenant-key-value-store.service.d.ts
+ok 8 - rejects changed tenant parameter type in services/spfx-tenant-key-value-store.service.d.ts
+  ---
+  duration_ms: 0.286
+  type: 'test'
+  ...
+# Subtest: rejects changed tenant optional parameter in services/spfx-tenant-key-value-store.service.d.ts
+ok 9 - rejects changed tenant optional parameter in services/spfx-tenant-key-value-store.service.d.ts
+  ---
+  duration_ms: 0.67625
+  type: 'test'
+  ...
+# Subtest: permits one approved export-all in hooks/index.d.ts
+ok 10 - permits one approved export-all in hooks/index.d.ts
+  ---
+  duration_ms: 1.248542
+  type: 'test'
+  ...
+# Subtest: rejects duplicate approved exports in hooks/index.d.ts
+ok 11 - rejects duplicate approved exports in hooks/index.d.ts
+  ---
+  duration_ms: 0.46125
+  type: 'test'
+  ...
+# Subtest: rejects removed historical export in hooks/index.d.ts
+ok 12 - rejects removed historical export in hooks/index.d.ts
+  ---
+  duration_ms: 0.634083
+  type: 'test'
+  ...
+# Subtest: rejects replaced historical export in hooks/index.d.ts
+ok 13 - rejects replaced historical export in hooks/index.d.ts
+  ---
+  duration_ms: 0.450042
+  type: 'test'
+  ...
+# Subtest: rejects unrelated export in hooks/index.d.ts
+ok 14 - rejects unrelated export in hooks/index.d.ts
+  ---
+  duration_ms: 0.380708
+  type: 'test'
+  ...
+# Subtest: rejects wrong path in hooks/index.d.ts
+ok 15 - rejects wrong path in hooks/index.d.ts
+  ---
+  duration_ms: 0.396625
+  type: 'test'
+  ...
+# Subtest: rejects named export in hooks/index.d.ts
+ok 16 - rejects named export in hooks/index.d.ts
+  ---
+  duration_ms: 0.335875
+  type: 'test'
+  ...
+# Subtest: rejects namespace export in hooks/index.d.ts
+ok 17 - rejects namespace export in hooks/index.d.ts
+  ---
+  duration_ms: 0.386958
+  type: 'test'
+  ...
+# Subtest: rejects type-only export in hooks/index.d.ts
+ok 18 - rejects type-only export in hooks/index.d.ts
+  ---
+  duration_ms: 0.283542
+  type: 'test'
+  ...
+# Subtest: rejects export with attributes in hooks/index.d.ts
+ok 19 - rejects export with attributes in hooks/index.d.ts
+  ---
+  duration_ms: 0.612833
+  type: 'test'
+  ...
+# Subtest: rejects unrelated declaration alongside approved export in hooks/index.d.ts
+ok 20 - rejects unrelated declaration alongside approved export in hooks/index.d.ts
+  ---
+  duration_ms: 0.343167
+  type: 'test'
+  ...
+# Subtest: rejects the approved hooks/index.d.ts path in other historical modules
+ok 21 - rejects the approved hooks/index.d.ts path in other historical modules
+  ---
+  duration_ms: 1.991917
+  type: 'test'
+  ...
+# Subtest: permits one approved export-all in services/index.d.ts
+ok 22 - permits one approved export-all in services/index.d.ts
+  ---
+  duration_ms: 0.240291
+  type: 'test'
+  ...
+# Subtest: rejects duplicate approved exports in services/index.d.ts
+ok 23 - rejects duplicate approved exports in services/index.d.ts
+  ---
+  duration_ms: 0.124875
+  type: 'test'
+  ...
+# Subtest: rejects removed historical export in services/index.d.ts
+ok 24 - rejects removed historical export in services/index.d.ts
+  ---
+  duration_ms: 0.14925
+  type: 'test'
+  ...
+# Subtest: rejects replaced historical export in services/index.d.ts
+ok 25 - rejects replaced historical export in services/index.d.ts
+  ---
+  duration_ms: 0.126708
+  type: 'test'
+  ...
+# Subtest: rejects unrelated export in services/index.d.ts
+ok 26 - rejects unrelated export in services/index.d.ts
+  ---
+  duration_ms: 0.13175
+  type: 'test'
+  ...
+# Subtest: rejects wrong path in services/index.d.ts
+ok 27 - rejects wrong path in services/index.d.ts
+  ---
+  duration_ms: 0.12675
+  type: 'test'
+  ...
+# Subtest: rejects named export in services/index.d.ts
+ok 28 - rejects named export in services/index.d.ts
+  ---
+  duration_ms: 0.152875
+  type: 'test'
+  ...
+# Subtest: rejects namespace export in services/index.d.ts
+ok 29 - rejects namespace export in services/index.d.ts
+  ---
+  duration_ms: 0.126583
+  type: 'test'
+  ...
+# Subtest: rejects type-only export in services/index.d.ts
+ok 30 - rejects type-only export in services/index.d.ts
+  ---
+  duration_ms: 0.206458
+  type: 'test'
+  ...
+# Subtest: rejects export with attributes in services/index.d.ts
+ok 31 - rejects export with attributes in services/index.d.ts
+  ---
+  duration_ms: 0.174125
+  type: 'test'
+  ...
+# Subtest: rejects unrelated declaration alongside approved export in services/index.d.ts
+ok 32 - rejects unrelated declaration alongside approved export in services/index.d.ts
+  ---
+  duration_ms: 0.160208
+  type: 'test'
+  ...
+# Subtest: rejects the approved services/index.d.ts path in other historical modules
+ok 33 - rejects the approved services/index.d.ts path in other historical modules
+  ---
+  duration_ms: 1.463542
+  type: 'test'
+  ...
+# Subtest: finished feature requires its approved export in hooks/index.d.ts
+ok 34 - finished feature requires its approved export in hooks/index.d.ts
+  ---
+  duration_ms: 1.113458
+  type: 'test'
+  ...
+# Subtest: finished feature requires its approved export in services/index.d.ts
+ok 35 - finished feature requires its approved export in services/index.d.ts
+  ---
+  duration_ms: 0.361833
+  type: 'test'
+  ...
+# Subtest: integrated verify-api rejects a finished feature missing hooks/index.d.ts export
+ok 36 - integrated verify-api rejects a finished feature missing hooks/index.d.ts export
+  ---
+  duration_ms: 16.820791
+  type: 'test'
+  ...
+# Subtest: integrated verify-api rejects a finished feature missing services/index.d.ts export
+ok 37 - integrated verify-api rejects a finished feature missing services/index.d.ts export
+  ---
+  duration_ms: 18.518917
+  type: 'test'
+  ...
+# Subtest: permits only the approved stable callback export in the hooks barrel
+ok 38 - permits only the approved stable callback export in the hooks barrel
+  ---
+  duration_ms: 0.773167
+  type: 'test'
+  ...
+# Subtest: permits one bare webs registration only in the list service declaration
+ok 39 - permits one bare webs registration only in the list service declaration
+  ---
+  duration_ms: 0.849084
+  type: 'test'
+  ...
+# Subtest: finished list service requires the standalone webs registration
+ok 40 - finished list service requires the standalone webs registration
+  ---
+  duration_ms: 0.326542
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration duplicate
+ok 41 - rejects list webs registration duplicate
+  ---
+  duration_ms: 0.264875
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration wrong path
+ok 42 - rejects list webs registration wrong path
+  ---
+  duration_ms: 0.464292
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration named import
+ok 43 - rejects list webs registration named import
+  ---
+  duration_ms: 0.464042
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration namespace import
+ok 44 - rejects list webs registration namespace import
+  ---
+  duration_ms: 0.420542
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration default import
+ok 45 - rejects list webs registration default import
+  ---
+  duration_ms: 0.400167
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration type-only import
+ok 46 - rejects list webs registration type-only import
+  ---
+  duration_ms: 0.423
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration attributes
+ok 47 - rejects list webs registration attributes
+  ---
+  duration_ms: 0.442458
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration assertions
+ok 48 - rejects list webs registration assertions
+  ---
+  duration_ms: 1.030958
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration unrelated statement
+ok 49 - rejects list webs registration unrelated statement
+  ---
+  duration_ms: 0.496291
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration in every other historical declaration
+ok 50 - rejects list webs registration in every other historical declaration
+  ---
+  duration_ms: 20.030333
+  type: 'test'
+  ...
+# Subtest: webs registration approval retains strict list signatures and historical imports
+ok 51 - webs registration approval retains strict list signatures and historical imports
+  ---
+  duration_ms: 2.363708
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires webs registration even without other completion markers
+ok 52 - integrated verify-api requires webs registration even without other completion markers
+  ---
+  duration_ms: 15.857625
+  type: 'test'
+  ...
+# Subtest: permits exactly the PnP selector and factory widening with or without completion requirements
+ok 53 - permits exactly the PnP selector and factory widening with or without completion requirements
+  ---
+  duration_ms: 0.793
+  type: 'test'
+  ...
+# Subtest: PnP completion requirements reject missing selector and missing factory widening separately
+ok 54 - PnP completion requirements reject missing selector and missing factory widening separately
+  ---
+  duration_ms: 0.676042
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP mutable selector
+ok 55 - rejects unapproved PnP mutable selector
+  ---
+  duration_ms: 0.370375
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP selector discriminant
+ok 56 - rejects unapproved PnP selector discriminant
+  ---
+  duration_ms: 0.367625
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP optional selector value
+ok 57 - rejects unapproved PnP optional selector value
+  ---
+  duration_ms: 0.347458
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP selector value type
+ok 58 - rejects unapproved PnP selector value type
+  ---
+  duration_ms: 0.338
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP selector extra field
+ok 59 - rejects unapproved PnP selector extra field
+  ---
+  duration_ms: 0.330916
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP selector union order
+ok 60 - rejects unapproved PnP selector union order
+  ---
+  duration_ms: 0.634166
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory parameter name
+ok 61 - rejects unapproved PnP factory parameter name
+  ---
+  duration_ms: 0.324542
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory target optionality
+ok 62 - rejects unapproved PnP factory target optionality
+  ---
+  duration_ms: 0.336708
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory target narrowing
+ok 63 - rejects unapproved PnP factory target narrowing
+  ---
+  duration_ms: 0.296542
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory extra union
+ok 64 - rejects unapproved PnP factory extra union
+  ---
+  duration_ms: 0.301792
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory generic
+ok 65 - rejects unapproved PnP factory generic
+  ---
+  duration_ms: 0.3165
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory client parameter
+ok 66 - rejects unapproved PnP factory client parameter
+  ---
+  duration_ms: 0.318417
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory third parameter
+ok 67 - rejects unapproved PnP factory third parameter
+  ---
+  duration_ms: 0.320541
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP factory return
+ok 68 - rejects unapproved PnP factory return
+  ---
+  duration_ms: 0.330875
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP service method return
+ok 69 - rejects unapproved PnP service method return
+  ---
+  duration_ms: 0.301625
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP query generic result
+ok 70 - rejects unapproved PnP query generic result
+  ---
+  duration_ms: 0.291875
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP batch result readonly
+ok 71 - rejects unapproved PnP batch result readonly
+  ---
+  duration_ms: 0.295958
+  type: 'test'
+  ...
+# Subtest: rejects unapproved PnP historical import
+ok 72 - rejects unapproved PnP historical import
+  ---
+  duration_ms: 0.300667
+  type: 'test'
+  ...
+# Subtest: rejects PnP duplicate selector
+ok 73 - rejects PnP duplicate selector
+  ---
+  duration_ms: 0.225417
+  type: 'test'
+  ...
+# Subtest: rejects PnP duplicate factory
+ok 74 - rejects PnP duplicate factory
+  ---
+  duration_ms: 0.188875
+  type: 'test'
+  ...
+# Subtest: rejects PnP unrelated declaration
+ok 75 - rejects PnP unrelated declaration
+  ---
+  duration_ms: 0.309875
+  type: 'test'
+  ...
+# Subtest: permits all PnP export-alls independently of site-store completion requirements
+ok 76 - permits all PnP export-alls independently of site-store completion requirements
+  ---
+  duration_ms: 1.046334
+  type: 'test'
+  ...
+# Subtest: requires the finished PnP export ./useSPFxPnPListById
+ok 77 - requires the finished PnP export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.338209
+  type: 'test'
+  ...
+# Subtest: rejects PnP duplicate export ./useSPFxPnPListById
+ok 78 - rejects PnP duplicate export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.148625
+  type: 'test'
+  ...
+# Subtest: rejects PnP wrong path export ./useSPFxPnPListById
+ok 79 - rejects PnP wrong path export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.244083
+  type: 'test'
+  ...
+# Subtest: rejects PnP named export ./useSPFxPnPListById
+ok 80 - rejects PnP named export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.226875
+  type: 'test'
+  ...
+# Subtest: rejects PnP namespace export ./useSPFxPnPListById
+ok 81 - rejects PnP namespace export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.219083
+  type: 'test'
+  ...
+# Subtest: rejects PnP type-only export ./useSPFxPnPListById
+ok 82 - rejects PnP type-only export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.220208
+  type: 'test'
+  ...
+# Subtest: rejects PnP attributes export ./useSPFxPnPListById
+ok 83 - rejects PnP attributes export ./useSPFxPnPListById
+  ---
+  duration_ms: 0.25325
+  type: 'test'
+  ...
+# Subtest: rejects PnP export ./useSPFxPnPListById outside the hook barrel
+ok 84 - rejects PnP export ./useSPFxPnPListById outside the hook barrel
+  ---
+  duration_ms: 1.341291
+  type: 'test'
+  ...
+# Subtest: requires the finished PnP export ./useSPFxPnPListByUrl
+ok 85 - requires the finished PnP export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.283375
+  type: 'test'
+  ...
+# Subtest: rejects PnP duplicate export ./useSPFxPnPListByUrl
+ok 86 - rejects PnP duplicate export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.12625
+  type: 'test'
+  ...
+# Subtest: rejects PnP wrong path export ./useSPFxPnPListByUrl
+ok 87 - rejects PnP wrong path export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.203417
+  type: 'test'
+  ...
+# Subtest: rejects PnP named export ./useSPFxPnPListByUrl
+ok 88 - rejects PnP named export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.253333
+  type: 'test'
+  ...
+# Subtest: rejects PnP namespace export ./useSPFxPnPListByUrl
+ok 89 - rejects PnP namespace export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.20875
+  type: 'test'
+  ...
+# Subtest: rejects PnP type-only export ./useSPFxPnPListByUrl
+ok 90 - rejects PnP type-only export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.200875
+  type: 'test'
+  ...
+# Subtest: rejects PnP attributes export ./useSPFxPnPListByUrl
+ok 91 - rejects PnP attributes export ./useSPFxPnPListByUrl
+  ---
+  duration_ms: 0.222917
+  type: 'test'
+  ...
+# Subtest: rejects PnP export ./useSPFxPnPListByUrl outside the hook barrel
+ok 92 - rejects PnP export ./useSPFxPnPListByUrl outside the hook barrel
+  ---
+  duration_ms: 1.770583
+  type: 'test'
+  ...
+# Subtest: requires the finished PnP export ./useSPFxPnPListByPath
+ok 93 - requires the finished PnP export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.387333
+  type: 'test'
+  ...
+# Subtest: rejects PnP duplicate export ./useSPFxPnPListByPath
+ok 94 - rejects PnP duplicate export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.159875
+  type: 'test'
+  ...
+# Subtest: rejects PnP wrong path export ./useSPFxPnPListByPath
+ok 95 - rejects PnP wrong path export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.240417
+  type: 'test'
+  ...
+# Subtest: rejects PnP named export ./useSPFxPnPListByPath
+ok 96 - rejects PnP named export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.37175
+  type: 'test'
+  ...
+# Subtest: rejects PnP namespace export ./useSPFxPnPListByPath
+ok 97 - rejects PnP namespace export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.303834
+  type: 'test'
+  ...
+# Subtest: rejects PnP type-only export ./useSPFxPnPListByPath
+ok 98 - rejects PnP type-only export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.244
+  type: 'test'
+  ...
+# Subtest: rejects PnP attributes export ./useSPFxPnPListByPath
+ok 99 - rejects PnP attributes export ./useSPFxPnPListByPath
+  ---
+  duration_ms: 0.299291
+  type: 'test'
+  ...
+# Subtest: rejects PnP export ./useSPFxPnPListByPath outside the hook barrel
+ok 100 - rejects PnP export ./useSPFxPnPListByPath outside the hook barrel
+  ---
+  duration_ms: 1.464292
+  type: 'test'
+  ...
+# Subtest: historical title hook cannot widen even when PnP additions are required
+ok 101 - historical title hook cannot widen even when PnP additions are required
+  ---
+  duration_ms: 0.847375
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished PnP ./useSPFxPnPListById independently of site store
+ok 102 - integrated verify-api requires finished PnP ./useSPFxPnPListById independently of site store
+  ---
+  duration_ms: 10.85325
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished PnP ./useSPFxPnPListByUrl independently of site store
+ok 103 - integrated verify-api requires finished PnP ./useSPFxPnPListByUrl independently of site store
+  ---
+  duration_ms: 10.475583
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished PnP ./useSPFxPnPListByPath independently of site store
+ok 104 - integrated verify-api requires finished PnP ./useSPFxPnPListByPath independently of site store
+  ---
+  duration_ms: 10.016917
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished PnP selector independently of site store
+ok 105 - integrated verify-api requires finished PnP selector independently of site store
+  ---
+  duration_ms: 14.492625
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished PnP factory independently of site store
+ok 106 - integrated verify-api requires finished PnP factory independently of site store
+  ---
+  duration_ms: 13.465042
+  type: 'test'
+  ...
+# Subtest: permits exactly the approved style addition hooks/index.d.ts: ./useSx
+ok 107 - permits exactly the approved style addition hooks/index.d.ts: ./useSx
+  ---
+  duration_ms: 0.360875
+  type: 'test'
+  ...
+# Subtest: requires the finished style addition hooks/index.d.ts: ./useSx
+ok 108 - requires the finished style addition hooks/index.d.ts: ./useSx
+  ---
+  duration_ms: 0.162709
+  type: 'test'
+  ...
+# Subtest: rejects style duplicate in hooks/index.d.ts
+ok 109 - rejects style duplicate in hooks/index.d.ts
+  ---
+  duration_ms: 0.156417
+  type: 'test'
+  ...
+# Subtest: rejects style wrong path in hooks/index.d.ts
+ok 110 - rejects style wrong path in hooks/index.d.ts
+  ---
+  duration_ms: 0.217125
+  type: 'test'
+  ...
+# Subtest: rejects style named in hooks/index.d.ts
+ok 111 - rejects style named in hooks/index.d.ts
+  ---
+  duration_ms: 0.207916
+  type: 'test'
+  ...
+# Subtest: rejects style namespace in hooks/index.d.ts
+ok 112 - rejects style namespace in hooks/index.d.ts
+  ---
+  duration_ms: 0.618291
+  type: 'test'
+  ...
+# Subtest: rejects style type-only in hooks/index.d.ts
+ok 113 - rejects style type-only in hooks/index.d.ts
+  ---
+  duration_ms: 0.310791
+  type: 'test'
+  ...
+# Subtest: rejects style attributes in hooks/index.d.ts
+ok 114 - rejects style attributes in hooks/index.d.ts
+  ---
+  duration_ms: 0.332542
+  type: 'test'
+  ...
+# Subtest: rejects style historical removal in hooks/index.d.ts
+ok 115 - rejects style historical removal in hooks/index.d.ts
+  ---
+  duration_ms: 0.237083
+  type: 'test'
+  ...
+# Subtest: rejects style unrelated addition in hooks/index.d.ts
+ok 116 - rejects style unrelated addition in hooks/index.d.ts
+  ---
+  duration_ms: 0.283584
+  type: 'test'
+  ...
+# Subtest: rejects the style path ./useSx in every other historical module
+ok 117 - rejects the style path ./useSx in every other historical module
+  ---
+  duration_ms: 18.392458
+  type: 'test'
+  ...
+# Subtest: permits exactly the approved style addition helpers/index.d.ts: ./styles
+ok 118 - permits exactly the approved style addition helpers/index.d.ts: ./styles
+  ---
+  duration_ms: 0.138791
+  type: 'test'
+  ...
+# Subtest: requires the finished style addition helpers/index.d.ts: ./styles
+ok 119 - requires the finished style addition helpers/index.d.ts: ./styles
+  ---
+  duration_ms: 0.082125
+  type: 'test'
+  ...
+# Subtest: rejects style duplicate in helpers/index.d.ts
+ok 120 - rejects style duplicate in helpers/index.d.ts
+  ---
+  duration_ms: 0.075292
+  type: 'test'
+  ...
+# Subtest: rejects style wrong path in helpers/index.d.ts
+ok 121 - rejects style wrong path in helpers/index.d.ts
+  ---
+  duration_ms: 0.092542
+  type: 'test'
+  ...
+# Subtest: rejects style named in helpers/index.d.ts
+ok 122 - rejects style named in helpers/index.d.ts
+  ---
+  duration_ms: 0.095541
+  type: 'test'
+  ...
+# Subtest: rejects style namespace in helpers/index.d.ts
+ok 123 - rejects style namespace in helpers/index.d.ts
+  ---
+  duration_ms: 0.09425
+  type: 'test'
+  ...
+# Subtest: rejects style type-only in helpers/index.d.ts
+ok 124 - rejects style type-only in helpers/index.d.ts
+  ---
+  duration_ms: 0.097833
+  type: 'test'
+  ...
+# Subtest: rejects style attributes in helpers/index.d.ts
+ok 125 - rejects style attributes in helpers/index.d.ts
+  ---
+  duration_ms: 0.436166
+  type: 'test'
+  ...
+# Subtest: rejects style historical removal in helpers/index.d.ts
+ok 126 - rejects style historical removal in helpers/index.d.ts
+  ---
+  duration_ms: 0.091542
+  type: 'test'
+  ...
+# Subtest: rejects style unrelated addition in helpers/index.d.ts
+ok 127 - rejects style unrelated addition in helpers/index.d.ts
+  ---
+  duration_ms: 0.090833
+  type: 'test'
+  ...
+# Subtest: rejects the style path ./styles in every other historical module
+ok 128 - rejects the style path ./styles in every other historical module
+  ---
+  duration_ms: 17.9005
+  type: 'test'
+  ...
+# Subtest: style completion checks preserve previous callback, site-store and PnP approvals
+ok 129 - style completion checks preserve previous callback, site-store and PnP approvals
+  ---
+  duration_ms: 0.248792
+  type: 'test'
+  ...
+# Subtest: permits only the approved package peer additions and previous dependency cleanup
+ok 130 - permits only the approved package peer additions and previous dependency cleanup
+  ---
+  duration_ms: 0.458125
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package historical peer range
+ok 131 - rejects unapproved package historical peer range
+  ---
+  duration_ms: 0.292209
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package new Griffel core peer range
+ok 132 - rejects unapproved package new Griffel core peer range
+  ---
+  duration_ms: 0.118
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package new Griffel React peer removal
+ok 133 - rejects unapproved package new Griffel React peer removal
+  ---
+  duration_ms: 0.221959
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package new shared-context peer range
+ok 134 - rejects unapproved package new shared-context peer range
+  ---
+  duration_ms: 0.090708
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package unexpected peer
+ok 135 - rejects unapproved package unexpected peer
+  ---
+  duration_ms: 0.13625
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package private Griffel runtime dependency
+ok 136 - rejects unapproved package private Griffel runtime dependency
+  ---
+  duration_ms: 0.070708
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package optional mandatory peer
+ok 137 - rejects unapproved package optional mandatory peer
+  ---
+  duration_ms: 0.05825
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package package allowlist
+ok 138 - rejects unapproved package package allowlist
+  ---
+  duration_ms: 0.095708
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package deep-import restriction
+ok 139 - rejects unapproved package deep-import restriction
+  ---
+  duration_ms: 0.063875
+  type: 'test'
+  ...
+# Subtest: rejects unapproved package entry point
+ok 140 - rejects unapproved package entry point
+  ---
+  duration_ms: 0.066042
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished style hooks/index.d.ts
+ok 141 - integrated verify-api requires finished style hooks/index.d.ts
+  ---
+  duration_ms: 11.273834
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires finished style helpers/index.d.ts
+ok 142 - integrated verify-api requires finished style helpers/index.d.ts
+  ---
+  duration_ms: 12.257
+  type: 'test'
+  ...
+# Subtest: package gate rejects explicit subprocess failure with wrapper status zero: The build failed because a task wrote output to stderr.
+ok 143 - package gate rejects explicit subprocess failure with wrapper status zero: The build failed because a task wrote output to stderr.
+  ---
+  duration_ms: 4.021459
+  type: 'test'
+  ...
+# Subtest: package gate rejects explicit subprocess failure with wrapper status zero: Exiting with exit code: 1
+ok 144 - package gate rejects explicit subprocess failure with wrapper status zero: Exiting with exit code: 1
+  ---
+  duration_ms: 1.572625
+  type: 'test'
+  ...
+# Subtest: package gate rejects explicit subprocess failure with wrapper status zero: [31mError - [webpack] compilation failed[0m
+ok 145 - package gate rejects explicit subprocess failure with wrapper status zero: [31mError - [webpack] compilation failed[0m
+  ---
+  duration_ms: 1.366959
+  type: 'test'
+  ...
+# Subtest: package gate keeps visible data-age warnings distinct from actual subprocess failure
+ok 146 - package gate keeps visible data-age warnings distinct from actual subprocess failure
+  ---
+  duration_ms: 1.212167
+  type: 'test'
+  ...
+# Subtest: metadata preparation leaves malformed configuration and evaluation errors fatal
+ok 147 - metadata preparation leaves malformed configuration and evaluation errors fatal
+  ---
+  duration_ms: 0.432333
+  type: 'test'
+  ...
+# Subtest: Gulp metadata guard prepares only the parent Gulp entry point
+ok 148 - Gulp metadata guard prepares only the parent Gulp entry point
+  ---
+  duration_ms: 0.289625
+  type: 'test'
+  ...
+# Subtest: exact locked metadata advisories stay visible while every other diagnostic retains its channel
+ok 149 - exact locked metadata advisories stay visible while every other diagnostic retains its channel
+  ---
+  duration_ms: 0.314875
+  type: 'test'
+  ...
+# Subtest: advisory routing preserves fatal behavior of an unknown warning monitor
+ok 150 - advisory routing preserves fatal behavior of an unknown warning monitor
+  ---
+  duration_ms: 0.125791
+  type: 'test'
+  ...
+# Subtest: real metadata package lookup tolerates genuinely absent requested packages
+ok 151 - real metadata package lookup tolerates genuinely absent requested packages
+  ---
+  duration_ms: 1.109583
+  type: 'test'
+  ...
+# Subtest: real installed metadata package with a missing main remains fatal
+ok 152 - real installed metadata package with a missing main remains fatal
+  ---
+  duration_ms: 1.213917
+  type: 'test'
+  ...
+# Subtest: real installed metadata package with a missing export remains fatal
+ok 153 - real installed metadata package with a missing export remains fatal
+  ---
+  duration_ms: 2.002542
+  type: 'test'
+  ...
+# Subtest: real installed metadata package with malformed configuration remains fatal
+ok 154 - real installed metadata package with malformed configuration remains fatal
+  ---
+  duration_ms: 1.466625
+  type: 'test'
+  ...
+# Subtest: real metadata module evaluation errors remain fatal
+ok 155 - real metadata module evaluation errors remain fatal
+  ---
+  duration_ms: 1.80975
+  type: 'test'
+  ...
+# Subtest: real installed metadata package without a default entry remains fatal
+ok 156 - real installed metadata package without a default entry remains fatal
+  ---
+  duration_ms: 0.953625
+  type: 'test'
+  ...
+# Subtest: list factory works without context factory or webs preload
+ok 157 - list factory works without context factory or webs preload
+  ---
+  duration_ms: 430.705041
+  type: 'test'
+  ...
+# Subtest: context factory registers web queries and batching without other factories
+ok 158 - context factory registers web queries and batching without other factories
+  ---
+  duration_ms: 386.901041
+  type: 'test'
+  ...
+# Subtest: search factory queries and suggests without context or list registrations
+ok 159 - search factory queries and suggests without context or list registrations
+  ---
+  duration_ms: 399.077125
+  type: 'test'
+  ...
+# Subtest: generic service batches real requests with only caller-owned web registration
+ok 160 - generic service batches real requests with only caller-owned web registration
+  ---
+  duration_ms: 376.880625
+  type: 'test'
+  ...
+1..160
+# tests 160
+# suites 0
+# pass 160
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1633.078541

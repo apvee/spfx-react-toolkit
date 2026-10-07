@@ -1,0 +1,1 @@
+"use strict";exports.id=841,exports.ids=[841],exports.modules={841:(e,t,s)=>{function r(e){return{sp:e,invoke:async t=>t(e),batch:async t=>{const[s,r]=e.batched(),c=t(s);return await r(),c}}}s.d(t,{createSPFxPnPService:()=>r})}};

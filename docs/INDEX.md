@@ -2,6 +2,8 @@
 
 > Complete API documentation for @apvee/spfx-react-toolkit
 
+[Package imports, resolver requirements and tree shaking](./PACKAGE-IMPORTS.md)
+
 ## Table of Contents
 
 - [Core](#core)

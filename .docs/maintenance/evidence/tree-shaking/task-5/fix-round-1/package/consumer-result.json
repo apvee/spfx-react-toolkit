@@ -1,0 +1,25 @@
+{
+  "consumer": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-gG1Wze/consumer",
+  "durationMs": 132484,
+  "packedFiles": 603,
+  "packedBytes": 242995,
+  "documentedDeclarations": 237,
+  "production": {
+    "bundle": {
+      "complete": true,
+      "passed": true,
+      "durationMs": 34855
+    },
+    "runtime": {
+      "complete": true,
+      "passed": true,
+      "durationMs": 32567
+    },
+    "mutations": {
+      "complete": true,
+      "passed": true,
+      "durationMs": 15770
+    }
+  },
+  "failures": []
+}

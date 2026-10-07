@@ -1,0 +1,16 @@
+{
+  "tests/fixtures/api-baseline.json": {
+    "sha256": "58115e3214d2a0aa4f747ccce7c541894ed7417c2fc88522539785a0ddc2d648",
+    "matchesHead": true
+  },
+  "tests/fixtures/package-baseline.json": {
+    "sha256": "92a10935c4df12aef19fa2a9b76acc1a20c93ab1d3047db85cb65bd3b99535c6",
+    "matchesHead": true
+  },
+  "scripts/package-entrypoints.cjs": {
+    "sha256": "67c046d2886800e12ff1dc49965adbb7b86d488933e4bfefd086dfb482ae358d"
+  },
+  "tests/fixtures/package-entrypoints.json": {
+    "sha256": "426520765711227d9d2721727d6644b682ea94e97e1cf34693637d60fbdbfc2a"
+  }
+}

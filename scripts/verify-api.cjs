@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
 const { assertCompatibleDeclaration, assertCompatiblePackageContract } = require('./api-compatibility.helpers.cjs');
+const { assertEntrypointContract, collectPublishedFiles } = require('./package-entrypoints.cjs');
 const root = path.resolve(__dirname, '..');
 const baseline = require('../tests/fixtures/api-baseline.json');
 const requireApprovedAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts'));
@@ -10,11 +11,15 @@ const requirePnPListAdditions = fs.existsSync(path.join(root, 'packages/spfx-rea
 const requireSxAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSx.ts'));
 for (const [name, snapshot] of Object.entries(baseline)) {
   const current = fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib', name), 'utf8');
-  assertCompatibleDeclaration(name, current, snapshot.declaration, { requireApprovedAdditions, requirePnPListAdditions, requireSxAdditions });
+  assertCompatibleDeclaration(name, current, snapshot.declaration, {
+    requireApprovedAdditions, requirePnPListAdditions, requireSxAdditions,
+    requirePnPListWebsRegistration: true,
+  });
 }
 const manifest = require('../packages/spfx-react-toolkit/package.json');
 const originalPackage = require('../tests/fixtures/package-baseline.json');
 assertCompatiblePackageContract(manifest, originalPackage);
+assertEntrypointContract(manifest, collectPublishedFiles());
 
 // A dependency owned by the app/root or present transitively is not sufficient
 // for standalone consumers of the published library, including its types.

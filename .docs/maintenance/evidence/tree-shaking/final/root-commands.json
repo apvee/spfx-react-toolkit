@@ -1,0 +1,17 @@
+[
+  {
+    "command": "npm run build:library",
+    "status": 0,
+    "durationMs": 1420
+  },
+  {
+    "command": "npm run build:app",
+    "status": 0,
+    "durationMs": 10016
+  },
+  {
+    "command": "npm run verify",
+    "status": 0,
+    "durationMs": 20530
+  }
+]

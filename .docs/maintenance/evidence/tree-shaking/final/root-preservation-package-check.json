@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "unchangedManifestFields": [
+    "name",
+    "version",
+    "main",
+    "types",
+    "dependencies",
+    "peerDependencies",
+    "devDependencies",
+    "engines"
+  ],
+  "unchangedHashes": {
+    "package-lock.json": "56b44d939cac13a5b31cf9d81474bbc3c6b714da9b4438f4c7ffb7c509ed9dbf",
+    "tests/fixtures/api-baseline.json": "58115e3214d2a0aa4f747ccce7c541894ed7417c2fc88522539785a0ddc2d648",
+    "tests/fixtures/package-baseline.json": "92a10935c4df12aef19fa2a9b76acc1a20c93ab1d3047db85cb65bd3b99535c6",
+    "tests/fixtures/package-entrypoints.json": "426520765711227d9d2721727d6644b682ea94e97e1cf34693637d60fbdbfc2a",
+    "tests/fixtures/tree-shaking/baseline.json": "3c596d1dc0701b9b790fc878c0d350663ab9c2014d96dcbef8d2be44f5464299"
+  },
+  "packedFiles": 603,
+  "additionalPackedFiles": [
+    "lib/styles/index.d.ts",
+    "lib/styles/index.d.ts.map",
+    "lib/styles/index.js",
+    "lib/styles/index.js.map"
+  ],
+  "consumerResult": {
+    "consumer": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-UWOfvX/consumer",
+    "durationMs": 115259,
+    "packedFiles": 603,
+    "packedBytes": 243856,
+    "documentedDeclarations": 237,
+    "production": {
+      "bundle": {
+        "complete": true,
+        "passed": true,
+        "durationMs": 32060
+      },
+      "runtime": {
+        "complete": true,
+        "passed": true,
+        "durationMs": 29949
+      },
+      "mutations": {
+        "complete": true,
+        "passed": true,
+        "durationMs": 14310
+      }
+    },
+    "failures": []
+  },
+  "packageCommands": 8,
+  "allPackageStatusesZero": true,
+  "failureMarkers": []
+}

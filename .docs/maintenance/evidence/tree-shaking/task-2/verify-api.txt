@@ -1,0 +1,108 @@
+
+> spfx-react-toolkit-monorepo@2.1.0 verify:api
+> node scripts/verify-api.cjs
+
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Declaration contract changed: services/spfx-pnp-list.service.d.ts
++ actual - expected
+
+  "import type { SPFI } from '@pnp/sp';\n" +
+    "import type { IItems } from '@pnp/sp/items';\n" +
++   "import '@pnp/sp/webs';\n" +
+    "import '@pnp/sp/lists';\n" +
+    "import '@pnp/sp/items';\n" +
+    "import '@pnp/sp/batching';\n" +
+    'export type SPFxPnPListQueryBuilder = (items: IItems) => IItems;\n' +
+    'export interface SPFxPnPListQueryOptions {\n' +
+
+    at assertCompatibleDeclaration (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/api-compatibility.helpers.cjs:96:10)
+    at Object.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/verify-api.cjs:13:3)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: "import type { SPFI } from '@pnp/sp';\n" +
+    "import type { IItems } from '@pnp/sp/items';\n" +
+    "import '@pnp/sp/webs';\n" +
+    "import '@pnp/sp/lists';\n" +
+    "import '@pnp/sp/items';\n" +
+    "import '@pnp/sp/batching';\n" +
+    'export type SPFxPnPListQueryBuilder = (items: IItems) => IItems;\n' +
+    'export interface SPFxPnPListQueryOptions {\n' +
+    '    pageSize?: number;\n' +
+    '}\n' +
+    'export interface SPFxPnPListQueryResult<T> {\n' +
+    '    readonly items: T[];\n' +
+    '    readonly effectivePageSize: number | undefined;\n' +
+    '    readonly hasMore: boolean;\n' +
+    '    readonly nextSkip: number;\n' +
+    '}\n' +
+    'export interface SPFxPnPListBatchResult<TValue> {\n' +
+    '    readonly value: TValue;\n' +
+    '    readonly errors: unknown[];\n' +
+    '    readonly summaryError: Error | undefined;\n' +
+    '}\n' +
+    'export interface SPFxPnPListService<T = unknown> {\n' +
+    '    query: (queryBuilder?: SPFxPnPListQueryBuilder, options?: SPFxPnPListQueryOptions) => Promise<SPFxPnPListQueryResult<T>>;\n' +
+    '    loadMore: (queryBuilder: SPFxPnPListQueryBuilder, pageSize: number, skip: number) => Promise<SPFxPnPListQueryResult<T>>;\n' +
+    '    getById: (id: number) => Promise<T>;\n' +
+    '    create: (item: Partial<T>) => Promise<number>;\n' +
+    '    update: (id: number, item: Partial<T>) => Promise<void>;\n' +
+    '    remove: (id: number) => Promise<void>;\n' +
+    '    createBatch: (items: Partial<T>[]) => Promise<SPFxPnPListBatchResult<number[]>>;\n' +
+    '    updateBatch: (updates: Array<{\n' +
+    '        id: number;\n' +
+    '        item: Partial<T>;\n' +
+    '    }>) => Promise<SPFxPnPListBatchResult<void>>;\n' +
+    '    removeBatch: (ids: number[]) => Promise<SPFxPnPListBatchResult<void>>;\n' +
+    '}\n' +
+    'export declare function createSPFxPnPListService<T = unknown>(sp: SPFI, listTitle: string, defaultPageSize?: number): SPFxPnPListService<T>;\n',
+  expected: "import type { SPFI } from '@pnp/sp';\n" +
+    "import type { IItems } from '@pnp/sp/items';\n" +
+    "import '@pnp/sp/lists';\n" +
+    "import '@pnp/sp/items';\n" +
+    "import '@pnp/sp/batching';\n" +
+    'export type SPFxPnPListQueryBuilder = (items: IItems) => IItems;\n' +
+    'export interface SPFxPnPListQueryOptions {\n' +
+    '    pageSize?: number;\n' +
+    '}\n' +
+    'export interface SPFxPnPListQueryResult<T> {\n' +
+    '    readonly items: T[];\n' +
+    '    readonly effectivePageSize: number | undefined;\n' +
+    '    readonly hasMore: boolean;\n' +
+    '    readonly nextSkip: number;\n' +
+    '}\n' +
+    'export interface SPFxPnPListBatchResult<TValue> {\n' +
+    '    readonly value: TValue;\n' +
+    '    readonly errors: unknown[];\n' +
+    '    readonly summaryError: Error | undefined;\n' +
+    '}\n' +
+    'export interface SPFxPnPListService<T = unknown> {\n' +
+    '    query: (queryBuilder?: SPFxPnPListQueryBuilder, options?: SPFxPnPListQueryOptions) => Promise<SPFxPnPListQueryResult<T>>;\n' +
+    '    loadMore: (queryBuilder: SPFxPnPListQueryBuilder, pageSize: number, skip: number) => Promise<SPFxPnPListQueryResult<T>>;\n' +
+    '    getById: (id: number) => Promise<T>;\n' +
+    '    create: (item: Partial<T>) => Promise<number>;\n' +
+    '    update: (id: number, item: Partial<T>) => Promise<void>;\n' +
+    '    remove: (id: number) => Promise<void>;\n' +
+    '    createBatch: (items: Partial<T>[]) => Promise<SPFxPnPListBatchResult<number[]>>;\n' +
+    '    updateBatch: (updates: Array<{\n' +
+    '        id: number;\n' +
+    '        item: Partial<T>;\n' +
+    '    }>) => Promise<SPFxPnPListBatchResult<void>>;\n' +
+    '    removeBatch: (ids: number[]) => Promise<SPFxPnPListBatchResult<void>>;\n' +
+    '}\n' +
+    'export declare function createSPFxPnPListService<T = unknown>(sp: SPFI, listTitle: string, defaultPageSize?: number): SPFxPnPListService<T>;\n',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.20.0

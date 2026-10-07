@@ -2,6 +2,10 @@
 
 These hooks can be used in React components without an SPFx provider. `useStableCallback` needs no FluentProvider; token-based `useSx` selections need theme CSS variables in scope.
 
+## Import choices
+
+Root imports, `/hooks` and historical hook leaves remain supported. The narrow clean `/hooks/useStableCallback` and `/styles/useSx` aliases point to the same canonical hooks. `/styles` exposes `useSx` alongside descriptors and types. Mixed aliases share context and renderer identity rather than adding instances. See [package imports](../../PACKAGE-IMPORTS.md) for complete examples, resolver/peer requirements and measured budgets. The Imports web part complements the existing React Hooks and Styles scenarios.
+
 ## useStableCallback
 
 `useStableCallback` is a direct alias of Fluent UI 9's `useEventCallback` from `@fluentui/react-utilities`. It adds documentation and a toolkit export, with no wrapper or additional behavior.

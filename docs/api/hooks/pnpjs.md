@@ -2,7 +2,28 @@
 
 Public hook signatures and result shapes match the library source. External types (React, SPFx and PnPjs) come from their respective packages. All hooks require a matching SPFx provider.
 
-Install compatible @pnp/core, @pnp/queryable and @pnp/sp v4 peers in your host. List/search modules are imported by their services; custom invoke operations may need additional PnPjs feature imports.
+Install compatible @pnp/core, @pnp/queryable and @pnp/sp v4 peers in your host.
+
+## Package import migration
+
+Root and clean domain imports use the canonical implementations; historical `/lib/...` imports remain supported. Unrelated root imports no longer install incidental PnP features. Direct consumers must import every feature used by their operations, including callbacks passed to `invoke`/`batch`; toolkit-owned registrations do not cover arbitrary caller features. See [package imports](../../PACKAGE-IMPORTS.md) for aliases, resolver and peer requirements, and the local-versus-tenant verification boundary.
+
+## PnP feature registrations
+
+Hooks use service modules that install their own required PnP registrations:
+context installs webs and batching, list installs webs/lists/items/batching,
+search installs search and suggestions, and the generic service installs batching.
+Standalone list and search factories also work with a supplied configured `SPFI`
+without loading the toolkit context factory. The client still requires request
+behaviors and authentication; registration does not grant SharePoint permissions.
+
+Import features used in direct PnP operations explicitly, including callbacks
+passed to `useSPFxPnP().invoke` or `.batch`. For example, a callback reading
+`sp.web()` needs `import '@pnp/sp/webs';`; one reading list items also needs
+`import '@pnp/sp/lists';` and `import '@pnp/sp/items';`. Additional features such
+as files require their corresponding PnP imports. Do not rely on unrelated toolkit
+imports to install these features. See the [service registration table and
+example](../services/INDEX.md#pnp-feature-registrations).
 
 ## useSPFxPnP
 

@@ -1,0 +1,1008 @@
+TAP version 13
+# Subtest: legacy string remains an exact title: "Tasks"
+ok 1 - legacy string remains an exact title: "Tasks"
+  ---
+  duration_ms: 15.121333
+  type: 'test'
+  ...
+# Subtest: legacy string remains an exact title: ""
+ok 2 - legacy string remains an exact title: ""
+  ---
+  duration_ms: 1.201292
+  type: 'test'
+  ...
+# Subtest: legacy string remains an exact title: "  Tasks  "
+ok 3 - legacy string remains an exact title: "  Tasks  "
+  ---
+  duration_ms: 1.99575
+  type: 'test'
+  ...
+# Subtest: legacy string remains an exact title: "11111111-2222-3333-4444-555555555555"
+ok 4 - legacy string remains an exact title: "11111111-2222-3333-4444-555555555555"
+  ---
+  duration_ms: 1.62325
+  type: 'test'
+  ...
+# Subtest: legacy string remains an exact title: "/sites/projects/Lists/Tasks"
+ok 5 - legacy string remains an exact title: "/sites/projects/Lists/Tasks"
+  ---
+  duration_ms: 1.73875
+  type: 'test'
+  ...
+# Subtest: legacy query pageSize override, top precedence and unbounded result remain stable
+ok 6 - legacy query pageSize override, top precedence and unbounded result remain stable
+  ---
+  duration_ms: 4.022791
+  type: 'test'
+  ...
+# Subtest: legacy loadMore applies supplied offset/pageSize and advances by returned item count
+ok 7 - legacy loadMore applies supplied offset/pageSize and advances by returned item count
+  ---
+  duration_ms: 2.655
+  type: 'test'
+  ...
+# Subtest: legacy CRUD preserves item IDs, payloads and top-level/nested create IDs
+ok 8 - legacy CRUD preserves item IDs, payloads and top-level/nested create IDs
+  ---
+  duration_ms: 9.562917
+  type: 'test'
+  ...
+# Subtest: legacy createBatch collects successful IDs and failed/missing ID reasons in order
+ok 9 - legacy createBatch collects successful IDs and failed/missing ID reasons in order
+  ---
+  duration_ms: 2.61275
+  type: 'test'
+  ...
+# Subtest: legacy createBatch preserves empty, all-success, all-failure and execute failures
+ok 10 - legacy createBatch preserves empty, all-success, all-failure and execute failures
+  ---
+  duration_ms: 3.418625
+  type: 'test'
+  ...
+# Subtest: legacy updateBatch preserves empty, all-success, all-failure and execute failures
+ok 11 - legacy updateBatch preserves empty, all-success, all-failure and execute failures
+  ---
+  duration_ms: 3.196291
+  type: 'test'
+  ...
+# Subtest: legacy removeBatch preserves empty, all-success, all-failure and execute failures
+ok 12 - legacy removeBatch preserves empty, all-success, all-failure and execute failures
+  ---
+  duration_ms: 3.211166
+  type: 'test'
+  ...
+# Subtest: legacy resolves query on the supplied ordinary client
+ok 13 - legacy resolves query on the supplied ordinary client
+  ---
+  duration_ms: 0.519167
+  type: 'test'
+  ...
+# Subtest: legacy resolves loadMore on the supplied ordinary client
+ok 14 - legacy resolves loadMore on the supplied ordinary client
+  ---
+  duration_ms: 1.442291
+  type: 'test'
+  ...
+# Subtest: legacy resolves getById on the supplied ordinary client
+ok 15 - legacy resolves getById on the supplied ordinary client
+  ---
+  duration_ms: 1.491792
+  type: 'test'
+  ...
+# Subtest: legacy resolves create on the supplied ordinary client
+ok 16 - legacy resolves create on the supplied ordinary client
+  ---
+  duration_ms: 1.510334
+  type: 'test'
+  ...
+# Subtest: legacy resolves update on the supplied ordinary client
+ok 17 - legacy resolves update on the supplied ordinary client
+  ---
+  duration_ms: 0.301208
+  type: 'test'
+  ...
+# Subtest: legacy resolves remove on the supplied ordinary client
+ok 18 - legacy resolves remove on the supplied ordinary client
+  ---
+  duration_ms: 1.401958
+  type: 'test'
+  ...
+# Subtest: legacy resolves createBatch on its own batched client
+ok 19 - legacy resolves createBatch on its own batched client
+  ---
+  duration_ms: 1.518583
+  type: 'test'
+  ...
+# Subtest: legacy resolves updateBatch on its own batched client
+ok 20 - legacy resolves updateBatch on its own batched client
+  ---
+  duration_ms: 1.433708
+  type: 'test'
+  ...
+# Subtest: legacy resolves removeBatch on its own batched client
+ok 21 - legacy resolves removeBatch on its own batched client
+  ---
+  duration_ms: 1.644375
+  type: 'test'
+  ...
+# Subtest: title resolves query on the supplied ordinary client
+ok 22 - title resolves query on the supplied ordinary client
+  ---
+  duration_ms: 1.466208
+  type: 'test'
+  ...
+# Subtest: title resolves loadMore on the supplied ordinary client
+ok 23 - title resolves loadMore on the supplied ordinary client
+  ---
+  duration_ms: 1.499583
+  type: 'test'
+  ...
+# Subtest: title resolves getById on the supplied ordinary client
+ok 24 - title resolves getById on the supplied ordinary client
+  ---
+  duration_ms: 1.6105
+  type: 'test'
+  ...
+# Subtest: title resolves create on the supplied ordinary client
+ok 25 - title resolves create on the supplied ordinary client
+  ---
+  duration_ms: 0.350042
+  type: 'test'
+  ...
+# Subtest: title resolves update on the supplied ordinary client
+ok 26 - title resolves update on the supplied ordinary client
+  ---
+  duration_ms: 1.381916
+  type: 'test'
+  ...
+# Subtest: title resolves remove on the supplied ordinary client
+ok 27 - title resolves remove on the supplied ordinary client
+  ---
+  duration_ms: 1.430292
+  type: 'test'
+  ...
+# Subtest: title resolves createBatch on its own batched client
+ok 28 - title resolves createBatch on its own batched client
+  ---
+  duration_ms: 1.517708
+  type: 'test'
+  ...
+# Subtest: title resolves updateBatch on its own batched client
+ok 29 - title resolves updateBatch on its own batched client
+  ---
+  duration_ms: 1.524167
+  type: 'test'
+  ...
+# Subtest: title resolves removeBatch on its own batched client
+ok 30 - title resolves removeBatch on its own batched client
+  ---
+  duration_ms: 1.639667
+  type: 'test'
+  ...
+# Subtest: id resolves query on the supplied ordinary client
+ok 31 - id resolves query on the supplied ordinary client
+  ---
+  duration_ms: 0.385583
+  type: 'test'
+  ...
+# Subtest: id resolves loadMore on the supplied ordinary client
+ok 32 - id resolves loadMore on the supplied ordinary client
+  ---
+  duration_ms: 1.462625
+  type: 'test'
+  ...
+# Subtest: id resolves getById on the supplied ordinary client
+ok 33 - id resolves getById on the supplied ordinary client
+  ---
+  duration_ms: 1.46375
+  type: 'test'
+  ...
+# Subtest: id resolves create on the supplied ordinary client
+ok 34 - id resolves create on the supplied ordinary client
+  ---
+  duration_ms: 1.430125
+  type: 'test'
+  ...
+# Subtest: id resolves update on the supplied ordinary client
+ok 35 - id resolves update on the supplied ordinary client
+  ---
+  duration_ms: 1.52925
+  type: 'test'
+  ...
+# Subtest: id resolves remove on the supplied ordinary client
+ok 36 - id resolves remove on the supplied ordinary client
+  ---
+  duration_ms: 1.483125
+  type: 'test'
+  ...
+# Subtest: id resolves createBatch on its own batched client
+ok 37 - id resolves createBatch on its own batched client
+  ---
+  duration_ms: 1.5325
+  type: 'test'
+  ...
+# Subtest: id resolves updateBatch on its own batched client
+ok 38 - id resolves updateBatch on its own batched client
+  ---
+  duration_ms: 1.400625
+  type: 'test'
+  ...
+# Subtest: id resolves removeBatch on its own batched client
+ok 39 - id resolves removeBatch on its own batched client
+  ---
+  duration_ms: 1.436209
+  type: 'test'
+  ...
+# Subtest: url resolves query on the supplied ordinary client
+ok 40 - url resolves query on the supplied ordinary client
+  ---
+  duration_ms: 1.480583
+  type: 'test'
+  ...
+# Subtest: url resolves loadMore on the supplied ordinary client
+ok 41 - url resolves loadMore on the supplied ordinary client
+  ---
+  duration_ms: 1.418834
+  type: 'test'
+  ...
+# Subtest: url resolves getById on the supplied ordinary client
+ok 42 - url resolves getById on the supplied ordinary client
+  ---
+  duration_ms: 1.394416
+  type: 'test'
+  ...
+# Subtest: url resolves create on the supplied ordinary client
+ok 43 - url resolves create on the supplied ordinary client
+  ---
+  duration_ms: 1.465416
+  type: 'test'
+  ...
+# Subtest: url resolves update on the supplied ordinary client
+ok 44 - url resolves update on the supplied ordinary client
+  ---
+  duration_ms: 0.305417
+  type: 'test'
+  ...
+# Subtest: url resolves remove on the supplied ordinary client
+ok 45 - url resolves remove on the supplied ordinary client
+  ---
+  duration_ms: 1.432167
+  type: 'test'
+  ...
+# Subtest: url resolves createBatch on its own batched client
+ok 46 - url resolves createBatch on its own batched client
+  ---
+  duration_ms: 1.496916
+  type: 'test'
+  ...
+# Subtest: url resolves updateBatch on its own batched client
+ok 47 - url resolves updateBatch on its own batched client
+  ---
+  duration_ms: 1.467083
+  type: 'test'
+  ...
+# Subtest: url resolves removeBatch on its own batched client
+ok 48 - url resolves removeBatch on its own batched client
+  ---
+  duration_ms: 1.575542
+  type: 'test'
+  ...
+# Subtest: path resolves query on the supplied ordinary client
+ok 49 - path resolves query on the supplied ordinary client
+  ---
+  duration_ms: 1.817583
+  type: 'test'
+  ...
+# Subtest: path resolves loadMore on the supplied ordinary client
+ok 50 - path resolves loadMore on the supplied ordinary client
+  ---
+  duration_ms: 1.614916
+  type: 'test'
+  ...
+# Subtest: path resolves getById on the supplied ordinary client
+ok 51 - path resolves getById on the supplied ordinary client
+  ---
+  duration_ms: 1.482916
+  type: 'test'
+  ...
+# Subtest: path resolves create on the supplied ordinary client
+ok 52 - path resolves create on the supplied ordinary client
+  ---
+  duration_ms: 1.529083
+  type: 'test'
+  ...
+# Subtest: path resolves update on the supplied ordinary client
+ok 53 - path resolves update on the supplied ordinary client
+  ---
+  duration_ms: 0.468625
+  type: 'test'
+  ...
+# Subtest: path resolves remove on the supplied ordinary client
+ok 54 - path resolves remove on the supplied ordinary client
+  ---
+  duration_ms: 1.54725
+  type: 'test'
+  ...
+# Subtest: path resolves createBatch on its own batched client
+ok 55 - path resolves createBatch on its own batched client
+  ---
+  duration_ms: 2.695083
+  type: 'test'
+  ...
+# Subtest: path resolves updateBatch on its own batched client
+ok 56 - path resolves updateBatch on its own batched client
+  ---
+  duration_ms: 1.524458
+  type: 'test'
+  ...
+# Subtest: path resolves removeBatch on its own batched client
+ok 57 - path resolves removeBatch on its own batched client
+  ---
+  duration_ms: 1.542125
+  type: 'test'
+  ...
+# Subtest: title/GUID normalization: {"kind":"title","title":""}
+ok 58 - title/GUID normalization: {"kind":"title","title":""}
+  ---
+  duration_ms: 1.493375
+  type: 'test'
+  ...
+# Subtest: title/GUID normalization: {"kind":"title","title":"  Tasks  "}
+ok 59 - title/GUID normalization: {"kind":"title","title":"  Tasks  "}
+  ---
+  duration_ms: 1.48325
+  type: 'test'
+  ...
+# Subtest: title/GUID normalization: {"kind":"id","id":"ABCDEF01-2345-6789-0000-EF0123456789"}
+ok 60 - title/GUID normalization: {"kind":"id","id":"ABCDEF01-2345-6789-0000-EF0123456789"}
+  ---
+  duration_ms: 1.467625
+  type: 'test'
+  ...
+# Subtest: title/GUID normalization: {"kind":"id","id":"\\t{abcdef01-2345-6789-abcd-ef0123456789}\\n"}
+ok 61 - title/GUID normalization: {"kind":"id","id":"\\t{abcdef01-2345-6789-abcd-ef0123456789}\\n"}
+  ---
+  duration_ms: 1.4825
+  type: 'test'
+  ...
+# Subtest: path derives decoded configured web without metadata: https://tenant.test
+ok 62 - path derives decoded configured web without metadata: https://tenant.test
+  ---
+  duration_ms: 0.363875
+  type: 'test'
+  ...
+# Subtest: path derives decoded configured web without metadata: https://tenant.test/
+ok 63 - path derives decoded configured web without metadata: https://tenant.test/
+  ---
+  duration_ms: 1.379333
+  type: 'test'
+  ...
+# Subtest: path derives decoded configured web without metadata: https://tenant.test/sites/projects
+ok 64 - path derives decoded configured web without metadata: https://tenant.test/sites/projects
+  ---
+  duration_ms: 1.4025
+  type: 'test'
+  ...
+# Subtest: path derives decoded configured web without metadata: https://tenant.test/sites/projects/subweb/
+ok 65 - path derives decoded configured web without metadata: https://tenant.test/sites/projects/subweb/
+  ---
+  duration_ms: 1.543625
+  type: 'test'
+  ...
+# Subtest: path derives decoded configured web without metadata: https://tenant.test/sites/Project%20One/sub%25%23
+ok 66 - path derives decoded configured web without metadata: https://tenant.test/sites/Project%20One/sub%25%23
+  ---
+  duration_ms: 1.700334
+  type: 'test'
+  ...
+# Subtest: path derives decoded configured web without metadata: https://tenant.test/sites/Literal%2520
+ok 67 - path derives decoded configured web without metadata: https://tenant.test/sites/Literal%2520
+  ---
+  duration_ms: 1.447792
+  type: 'test'
+  ...
+# Subtest: URL/path literal escaping remains owned by the actual installed PnP implementation
+ok 68 - URL/path literal escaping remains owned by the actual installed PnP implementation
+  ---
+  duration_ms: 1.4225
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: undefined
+ok 69 - invalid target rejects lazily before all dispatch, including empty batches: undefined
+  ---
+  duration_ms: 0.304959
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: null
+ok 70 - invalid target rejects lazily before all dispatch, including empty batches: null
+  ---
+  duration_ms: 0.156
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: 17
+ok 71 - invalid target rejects lazily before all dispatch, including empty batches: 17
+  ---
+  duration_ms: 0.139958
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {}
+ok 72 - invalid target rejects lazily before all dispatch, including empty batches: {}
+  ---
+  duration_ms: 0.157417
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: []
+ok 73 - invalid target rejects lazily before all dispatch, including empty batches: []
+  ---
+  duration_ms: 0.098375
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"unknown","title":"Tasks"}
+ok 74 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"unknown","title":"Tasks"}
+  ---
+  duration_ms: 0.093458
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":17,"title":"Tasks"}
+ok 75 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":17,"title":"Tasks"}
+  ---
+  duration_ms: 0.0865
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"title":"Tasks"}
+ok 76 - invalid target rejects lazily before all dispatch, including empty batches: {"title":"Tasks"}
+  ---
+  duration_ms: 0.097958
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"title"}
+ok 77 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"title"}
+  ---
+  duration_ms: 0.165792
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"title","title":17}
+ok 78 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"title","title":17}
+  ---
+  duration_ms: 0.0925
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":""}
+ok 79 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":""}
+  ---
+  duration_ms: 0.101875
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":" "}
+ok 80 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":" "}
+  ---
+  duration_ms: 0.094958
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"not-a-guid"}
+ok 81 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"not-a-guid"}
+  ---
+  duration_ms: 0.092459
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"{abcdef01-2345-6789-abcd-ef0123456789"}
+ok 82 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"{abcdef01-2345-6789-abcd-ef0123456789"}
+  ---
+  duration_ms: 0.092709
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"abcdef01-2345-6789-abcd-ef0123456789}"}
+ok 83 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"abcdef01-2345-6789-abcd-ef0123456789}"}
+  ---
+  duration_ms: 0.092584
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"abcdef0123456789abcdef0123456789"}
+ok 84 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"abcdef0123456789abcdef0123456789"}
+  ---
+  duration_ms: 0.094459
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"abcdef01-2345-6789-abcd-ef012345678z"}
+ok 85 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":"abcdef01-2345-6789-abcd-ef012345678z"}
+  ---
+  duration_ms: 0.09425
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":17}
+ok 86 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"id","id":17}
+  ---
+  duration_ms: 0.089041
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":""}
+ok 87 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":""}
+  ---
+  duration_ms: 0.182958
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":" "}
+ok 88 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":" "}
+  ---
+  duration_ms: 0.186083
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"Lists/Tasks"}
+ok 89 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"Lists/Tasks"}
+  ---
+  duration_ms: 0.121083
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"//tenant.test/Lists/Tasks"}
+ok 90 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"//tenant.test/Lists/Tasks"}
+  ---
+  duration_ms: 0.106334
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"https://tenant.test/Lists/Tasks"}
+ok 91 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"https://tenant.test/Lists/Tasks"}
+  ---
+  duration_ms: 0.103208
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists\\\\Tasks"}
+ok 92 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists\\\\Tasks"}
+  ---
+  duration_ms: 0.10475
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists/Tasks?view=one"}
+ok 93 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists/Tasks?view=one"}
+  ---
+  duration_ms: 0.100666
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists/./Tasks"}
+ok 94 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists/./Tasks"}
+  ---
+  duration_ms: 0.104167
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists/../Tasks"}
+ok 95 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/Lists/../Tasks"}
+  ---
+  duration_ms: 0.1025
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/."}
+ok 96 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":"/."}
+  ---
+  duration_ms: 0.09975
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":17}
+ok 97 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"url","serverRelativeUrl":17}
+  ---
+  duration_ms: 0.08525
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":""}
+ok 98 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":""}
+  ---
+  duration_ms: 0.098875
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":" "}
+ok 99 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":" "}
+  ---
+  duration_ms: 0.097292
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"/Lists/Tasks"}
+ok 100 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"/Lists/Tasks"}
+  ---
+  duration_ms: 0.15225
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"//tenant.test/Lists/Tasks"}
+ok 101 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"//tenant.test/Lists/Tasks"}
+  ---
+  duration_ms: 0.097917
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"https://tenant.test/Lists/Tasks"}
+ok 102 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"https://tenant.test/Lists/Tasks"}
+  ---
+  duration_ms: 0.096208
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists\\\\Tasks"}
+ok 103 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists\\\\Tasks"}
+  ---
+  duration_ms: 0.096875
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists/Tasks?view=one"}
+ok 104 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists/Tasks?view=one"}
+  ---
+  duration_ms: 0.098958
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists/./Tasks"}
+ok 105 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists/./Tasks"}
+  ---
+  duration_ms: 0.100666
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists/../Tasks"}
+ok 106 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"Lists/../Tasks"}
+  ---
+  duration_ms: 0.097167
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"."}
+ok 107 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":"."}
+  ---
+  duration_ms: 0.099459
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":".."}
+ok 108 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":".."}
+  ---
+  duration_ms: 0.097
+  type: 'test'
+  ...
+# Subtest: invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":17}
+ok 109 - invalid target rejects lazily before all dispatch, including empty batches: {"kind":"path","webRelativePath":17}
+  ---
+  duration_ms: 0.082917
+  type: 'test'
+  ...
+# Subtest: path rejects an unbased/indirect client without HTTP: ""
+ok 110 - path rejects an unbased/indirect client without HTTP: ""
+  ---
+  duration_ms: 0.298
+  type: 'test'
+  ...
+# Subtest: path rejects an unbased/indirect client without HTTP: "/sites/relative"
+ok 111 - path rejects an unbased/indirect client without HTTP: "/sites/relative"
+  ---
+  duration_ms: 0.115375
+  type: 'test'
+  ...
+# Subtest: path rejects an unbased/indirect client without HTTP: "https://tenant.test/sites/projects/_api/site/rootweb"
+ok 112 - path rejects an unbased/indirect client without HTTP: "https://tenant.test/sites/projects/_api/site/rootweb"
+  ---
+  duration_ms: 0.148041
+  type: 'test'
+  ...
+# Subtest: path rejects an unbased/indirect client without HTTP: "https://tenant.test/sites/projects/_api/site"
+ok 113 - path rejects an unbased/indirect client without HTTP: "https://tenant.test/sites/projects/_api/site"
+  ---
+  duration_ms: 0.111958
+  type: 'test'
+  ...
+# Subtest: selector mutation cannot retarget the title service
+ok 114 - selector mutation cannot retarget the title service
+  ---
+  duration_ms: 3.128792
+  type: 'test'
+  ...
+# Subtest: selector mutation cannot retarget the id service
+ok 115 - selector mutation cannot retarget the id service
+  ---
+  duration_ms: 0.489917
+  type: 'test'
+  ...
+# Subtest: selector mutation cannot retarget the url service
+ok 116 - selector mutation cannot retarget the url service
+  ---
+  duration_ms: 1.625792
+  type: 'test'
+  ...
+# Subtest: selector mutation cannot retarget the path service
+ok 117 - selector mutation cannot retarget the path service
+  ---
+  duration_ms: 1.559
+  type: 'test'
+  ...
+# Subtest: mutating an invalid selector after construction does not make it dispatch
+ok 118 - mutating an invalid selector after construction does not make it dispatch
+  ---
+  duration_ms: 0.170291
+  type: 'test'
+  ...
+# Subtest: actual PnP createBatch queues the legacy target into one multipart request
+ok 119 - actual PnP createBatch queues the legacy target into one multipart request
+  ---
+  duration_ms: 4.057083
+  type: 'test'
+  ...
+# Subtest: actual PnP updateBatch queues the legacy target into one multipart request
+ok 120 - actual PnP updateBatch queues the legacy target into one multipart request
+  ---
+  duration_ms: 3.118875
+  type: 'test'
+  ...
+# Subtest: actual PnP removeBatch queues the legacy target into one multipart request
+ok 121 - actual PnP removeBatch queues the legacy target into one multipart request
+  ---
+  duration_ms: 3.265208
+  type: 'test'
+  ...
+# Subtest: actual PnP createBatch queues the title target into one multipart request
+ok 122 - actual PnP createBatch queues the title target into one multipart request
+  ---
+  duration_ms: 2.867833
+  type: 'test'
+  ...
+# Subtest: actual PnP updateBatch queues the title target into one multipart request
+ok 123 - actual PnP updateBatch queues the title target into one multipart request
+  ---
+  duration_ms: 2.989791
+  type: 'test'
+  ...
+# Subtest: actual PnP removeBatch queues the title target into one multipart request
+ok 124 - actual PnP removeBatch queues the title target into one multipart request
+  ---
+  duration_ms: 3.079458
+  type: 'test'
+  ...
+# Subtest: actual PnP createBatch queues the id target into one multipart request
+ok 125 - actual PnP createBatch queues the id target into one multipart request
+  ---
+  duration_ms: 2.907834
+  type: 'test'
+  ...
+# Subtest: actual PnP updateBatch queues the id target into one multipart request
+ok 126 - actual PnP updateBatch queues the id target into one multipart request
+  ---
+  duration_ms: 3.017
+  type: 'test'
+  ...
+# Subtest: actual PnP removeBatch queues the id target into one multipart request
+ok 127 - actual PnP removeBatch queues the id target into one multipart request
+  ---
+  duration_ms: 3.162625
+  type: 'test'
+  ...
+# Subtest: actual PnP createBatch queues the url target into one multipart request
+ok 128 - actual PnP createBatch queues the url target into one multipart request
+  ---
+  duration_ms: 3.017333
+  type: 'test'
+  ...
+# Subtest: actual PnP updateBatch queues the url target into one multipart request
+ok 129 - actual PnP updateBatch queues the url target into one multipart request
+  ---
+  duration_ms: 3.055709
+  type: 'test'
+  ...
+# Subtest: actual PnP removeBatch queues the url target into one multipart request
+ok 130 - actual PnP removeBatch queues the url target into one multipart request
+  ---
+  duration_ms: 3.030917
+  type: 'test'
+  ...
+# Subtest: actual PnP createBatch queues the path target into one multipart request
+ok 131 - actual PnP createBatch queues the path target into one multipart request
+  ---
+  duration_ms: 2.969083
+  type: 'test'
+  ...
+# Subtest: actual PnP updateBatch queues the path target into one multipart request
+ok 132 - actual PnP updateBatch queues the path target into one multipart request
+  ---
+  duration_ms: 3.0055
+  type: 'test'
+  ...
+# Subtest: actual PnP removeBatch queues the path target into one multipart request
+ok 133 - actual PnP removeBatch queues the path target into one multipart request
+  ---
+  duration_ms: 2.826417
+  type: 'test'
+  ...
+# Subtest: updateBatch preserves mixed item error settlement while successful work completes
+ok 134 - updateBatch preserves mixed item error settlement while successful work completes
+  ---
+  duration_ms: 1.749167
+  type: 'test'
+  ...
+# Subtest: removeBatch preserves mixed item error settlement while successful work completes
+ok 135 - removeBatch preserves mixed item error settlement while successful work completes
+  ---
+  duration_ms: 1.780792
+  type: 'test'
+  ...
+# Subtest: list factory works without context factory or webs preload
+ok 136 - list factory works without context factory or webs preload
+  ---
+  duration_ms: 372.103
+  type: 'test'
+  ...
+# Subtest: context factory registers web queries and batching without other factories
+ok 137 - context factory registers web queries and batching without other factories
+  ---
+  duration_ms: 354.839875
+  type: 'test'
+  ...
+# Subtest: search factory queries and suggests without context or list registrations
+ok 138 - search factory queries and suggests without context or list registrations
+  ---
+  duration_ms: 363.674125
+  type: 'test'
+  ...
+# Subtest: generic service batches real requests with only caller-owned web registration
+ok 139 - generic service batches real requests with only caller-owned web registration
+  ---
+  duration_ms: 340.408542
+  type: 'test'
+  ...
+# (node:34288) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: PnP cache expires after custom timeout in session storage
+ok 140 - PnP cache expires after custom timeout in session storage
+  ---
+  duration_ms: 245.632792
+  type: 'test'
+  ...
+# Subtest: PnP cache expires after custom timeout in local storage
+ok 141 - PnP cache expires after custom timeout in local storage
+  ---
+  duration_ms: 118.160916
+  type: 'test'
+  ...
+# Subtest: PnP cache retains legacy five minute fallback for timeout undefined
+ok 142 - PnP cache retains legacy five minute fallback for timeout undefined
+  ---
+  duration_ms: 105.196875
+  type: 'test'
+  ...
+# Subtest: PnP cache retains legacy five minute fallback for timeout 0
+ok 143 - PnP cache retains legacy five minute fallback for timeout 0
+  ---
+  duration_ms: 97.296667
+  type: 'test'
+  ...
+# Subtest: PnP hook changes cache key factory and retains equal inline configuration
+ok 144 - PnP hook changes cache key factory and retains equal inline configuration
+  ---
+  duration_ms: 95.266709
+  type: 'test'
+  ...
+# Subtest: cross-site permissions retain current site when old requests finish last
+ok 145 - cross-site permissions retain current site when old requests finish last
+  ---
+  duration_ms: 12.872708
+  type: 'test'
+  ...
+# Subtest: clearing cross-site URL invalidates pending permissions and stays idle
+ok 146 - clearing cross-site URL invalidates pending permissions and stays idle
+  ---
+  duration_ms: 6.045833
+  type: 'test'
+  ...
+# Subtest: cross-site permissions clear previous grants while target is loading
+ok 147 - cross-site permissions clear previous grants while target is loading
+  ---
+  duration_ms: 5.5135
+  type: 'test'
+  ...
+# Subtest: user photo retains current user blob when old user finishes last
+ok 148 - user photo retains current user blob when old user finishes last
+  ---
+  duration_ms: 11.946083
+  type: 'test'
+  ...
+# Subtest: user photo overlapping reload keeps latest blob when the first completes last
+ok 149 - user photo overlapping reload keeps latest blob when the first completes last
+  ---
+  duration_ms: 10.747917
+  type: 'test'
+  ...
+# Subtest: user photo clears previous user while a different user photo is pending
+ok 150 - user photo clears previous user while a different user photo is pending
+  ---
+  duration_ms: 9.197791
+  type: 'test'
+  ...
+# Subtest: same-name overlapping time reports each operation duration independently
+ok 151 - same-name overlapping time reports each operation duration independently
+  ---
+  duration_ms: 4.52075
+  type: 'test'
+  ...
+# Subtest: PnP context resolves site, injects headers and rebuilds changed scalar config
+ok 152 - PnP context resolves site, injects headers and rebuilds changed scalar config
+  ---
+  duration_ms: 102.078084
+  type: 'test'
+  ...
+# Subtest: PnP hook exposes initialization failure and recovers when context becomes available
+ok 153 - PnP hook exposes initialization failure and recovers when context becomes available
+  ---
+  duration_ms: 85.302667
+  type: 'test'
+  ...
+# Subtest: cross-site old rejection cannot replace new success and unmount ignores deferred updates
+ok 154 - cross-site old rejection cannot replace new success and unmount ignores deferred updates
+  ---
+  duration_ms: 5.621
+  type: 'test'
+  ...
+# Subtest: current cross-site network rejection surfaces error and clears loading
+ok 155 - current cross-site network rejection surfaces error and clears loading
+  ---
+  duration_ms: 5.164667
+  type: 'test'
+  ...
+# Subtest: photo older success cannot finish newer loading and stale error cannot replace newer success
+ok 156 - photo older success cannot finish newer loading and stale error cannot replace newer success
+  ---
+  duration_ms: 10.1465
+  type: 'test'
+  ...
+# Subtest: photo current 403 maps error and unmount releases its blob URL without creating a stale one
+ok 157 - photo current 403 maps error and unmount releases its blob URL without creating a stale one
+  ---
+  duration_ms: 8.49725
+  type: 'test'
+  ...
+# Subtest: Teams supports wrapper-v2 SDK shape and normalizes theme
+ok 158 - Teams supports wrapper-v2 SDK shape and normalizes theme
+  ---
+  duration_ms: 14.052875
+  type: 'test'
+  ...
+# Subtest: Teams supports direct-v2 SDK shape and normalizes theme
+ok 159 - Teams supports direct-v2 SDK shape and normalizes theme
+  ---
+  duration_ms: 13.469792
+  type: 'test'
+  ...
+# Subtest: Teams supports direct-v1 SDK shape and normalizes theme
+ok 160 - Teams supports direct-v1 SDK shape and normalizes theme
+  ---
+  duration_ms: 9.370584
+  type: 'test'
+  ...
+# Subtest: Teams initialized context replacement acquires new SDK context
+ok 161 - Teams initialized context replacement acquires new SDK context
+  ---
+  duration_ms: 14.141917
+  type: 'test'
+  ...
+# Subtest: Teams ignores a superseded deferred context and completion after unmount
+ok 162 - Teams ignores a superseded deferred context and completion after unmount
+  ---
+  duration_ms: 10.276333
+  type: 'test'
+  ...
+# Subtest: API precheck invalidates available results and checks replacement provider
+ok 163 - API precheck invalidates available results and checks replacement provider
+  ---
+  duration_ms: 27.639584
+  type: 'test'
+  ...
+# Subtest: API precheck replacement invalidates old in-flight check and retains new result
+ok 164 - API precheck replacement invalidates old in-flight check and retains new result
+  ---
+  duration_ms: 26.3835
+  type: 'test'
+  ...
+# Subtest: API precheck passive events, retry cache options and unmount preserve contracts
+ok 165 - API precheck passive events, retry cache options and unmount preserve contracts
+  ---
+  duration_ms: 23.754417
+  type: 'test'
+  ...
+# Subtest: API precheck groups token acquisition and maps timeout without losing scope results
+ok 166 - API precheck groups token acquisition and maps timeout without losing scope results
+  ---
+  duration_ms: 11.489292
+  type: 'test'
+  ...
+1..166
+# tests 166
+# suites 0
+# pass 166
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1602.300416

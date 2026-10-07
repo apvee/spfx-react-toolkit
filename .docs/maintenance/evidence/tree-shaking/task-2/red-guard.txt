@@ -1,0 +1,174 @@
+TAP version 13
+# API compatibility passed: 82 declaration modules, name/version/entry paths preserved.
+# Subtest: permits one bare webs registration only in the list service declaration
+not ok 1 - permits one bare webs registration only in the list service declaration
+  ---
+  duration_ms: 5.145792
+  type: 'test'
+  location: '/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/api-compatibility.test.cjs:130:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Got unwanted exception.
+    Actual message: "Declaration contract changed: services/spfx-pnp-list.service.d.ts
+    + actual - expected
+
+    + "import '@pnp/sp/webs';\n" +
+    +   "import type { SPFI } from '@pnp/sp';\n" +
+    - "import type { SPFI } from '@pnp/sp';\n" +
+        "import type { IItems } from '@pnp/sp/items';\n" +
+        "import '@pnp/sp/lists';\n" +
+        "import '@pnp/sp/items';\n" +
+        "import '@pnp/sp/batching';\n" +
+        'export type SPFxPnPListQueryBuilder = (items: IItems) => IItems;\n' +
+    "
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  actual:
+  error: |-
+    Declaration contract changed: services/spfx-pnp-list.service.d.ts
+    + actual - expected
+
+    + "import '@pnp/sp/webs';\n" +
+    +   "import type { SPFI } from '@pnp/sp';\n" +
+    - "import type { SPFI } from '@pnp/sp';\n" +
+        "import type { IItems } from '@pnp/sp/items';\n" +
+        "import '@pnp/sp/lists';\n" +
+        "import '@pnp/sp/items';\n" +
+        "import '@pnp/sp/batching';\n" +
+        'export type SPFxPnPListQueryBuilder = (items: IItems) => IItems;\n' +
+
+  stack: |-
+    assertCompatibleDeclaration (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/scripts/api-compatibility.helpers.cjs:96:10)
+    /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/api-compatibility.test.cjs:132:31
+    getActual (node:assert:609:5)
+    Function.doesNotThrow (node:assert:777:32)
+    TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/api-compatibility.test.cjs:132:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  operator: 'doesNotThrow'
+  stack: |-
+    TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/api-compatibility.test.cjs:132:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: finished list service requires the standalone webs registration
+not ok 2 - finished list service requires the standalone webs registration
+  ---
+  duration_ms: 1.6345
+  type: 'test'
+  location: '/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/api-compatibility.test.cjs:137:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/api-compatibility.test.cjs:138:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: rejects list webs registration duplicate
+ok 3 - rejects list webs registration duplicate
+  ---
+  duration_ms: 2.331083
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration wrong path
+ok 4 - rejects list webs registration wrong path
+  ---
+  duration_ms: 1.659125
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration named import
+ok 5 - rejects list webs registration named import
+  ---
+  duration_ms: 1.76475
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration namespace import
+ok 6 - rejects list webs registration namespace import
+  ---
+  duration_ms: 1.281125
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration default import
+ok 7 - rejects list webs registration default import
+  ---
+  duration_ms: 1.064042
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration type-only import
+ok 8 - rejects list webs registration type-only import
+  ---
+  duration_ms: 1.74425
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration attributes
+ok 9 - rejects list webs registration attributes
+  ---
+  duration_ms: 1.717292
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration assertions
+ok 10 - rejects list webs registration assertions
+  ---
+  duration_ms: 1.196834
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration unrelated statement
+ok 11 - rejects list webs registration unrelated statement
+  ---
+  duration_ms: 1.101375
+  type: 'test'
+  ...
+# Subtest: rejects list webs registration in every other historical declaration
+ok 12 - rejects list webs registration in every other historical declaration
+  ---
+  duration_ms: 41.494167
+  type: 'test'
+  ...
+# Subtest: webs registration approval retains strict list signatures and historical imports
+ok 13 - webs registration approval retains strict list signatures and historical imports
+  ---
+  duration_ms: 1.542708
+  type: 'test'
+  ...
+# Subtest: integrated verify-api requires webs registration even without other completion markers
+not ok 14 - integrated verify-api requires webs registration even without other completion markers
+  ---
+  duration_ms: 116.841625
+  type: 'test'
+  location: '/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/api-compatibility.test.cjs:179:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/api-compatibility.test.cjs:200:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 11
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 309.774375

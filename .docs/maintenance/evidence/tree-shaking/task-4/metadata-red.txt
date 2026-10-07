@@ -1,0 +1,149 @@
+TAP version 13
+# Subtest: type-only edges introduce no runtime dependency
+ok 1 - type-only edges introduce no runtime dependency
+  ---
+  duration_ms: 617.636167
+  type: 'test'
+  ...
+# Subtest: named and namespace reexports resolve canonical leaves
+ok 2 - named and namespace reexports resolve canonical leaves
+  ---
+  duration_ms: 482.533958
+  type: 'test'
+  ...
+# Subtest: internal barrel import and unresolved module are reported
+ok 3 - internal barrel import and unresolved module are reported
+  ---
+  duration_ms: 479.916833
+  type: 'test'
+  ...
+# Subtest: runtime cycles are reported without losing unrelated exports
+ok 4 - runtime cycles are reported without losing unrelated exports
+  ---
+  duration_ms: 445.692583
+  type: 'test'
+  ...
+# Subtest: unmarked type-only reexport is absent in emitted JS
+ok 5 - unmarked type-only reexport is absent in emitted JS
+  ---
+  duration_ms: 444.577083
+  type: 'test'
+  ...
+# Subtest: mixed runtime and erased reexports sharing a specifier retain separate edge kinds
+ok 6 - mixed runtime and erased reexports sharing a specifier retain separate edge kinds
+  ---
+  duration_ms: 404.555541
+  type: 'test'
+  ...
+# Subtest: unresolved external packages are reported
+ok 7 - unresolved external packages are reported
+  ---
+  duration_ms: 423.441833
+  type: 'test'
+  ...
+# Subtest: renamed imported namespaces retain runtime leaves and dependencies
+ok 8 - renamed imported namespaces retain runtime leaves and dependencies
+  ---
+  duration_ms: 407.60225
+  type: 'test'
+  ...
+# Subtest: source rules reject internal barrel imports, global renderers and unclassified registrations
+ok 9 - source rules reject internal barrel imports, global renderers and unclassified registrations
+  ---
+  duration_ms: 0.73775
+  type: 'test'
+  ...
+# Subtest: repository source effects match the manifest and internal imports use direct modules
+not ok 10 - repository source effects match the manifest and internal imports use direct modules
+  ---
+  duration_ms: 1528.049916
+  type: 'test'
+  location: '/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/import-graph.test.cjs:68:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+    + [
+    +   {
+    +     from: 'services/spfx-pnp-context.service.ts',
+    +     kind: 'unclassified-external-registration',
+    +     specifiers: [
+    +       '@pnp/sp/webs',
+    +       '@pnp/sp/batching'
+    +     ]
+    +   },
+    +   {
+    +     from: 'services/spfx-pnp-list.service.ts',
+    +     kind: 'unclassified-external-registration',
+    +     specifiers: [
+    +       '@pnp/sp/webs',
+    +       '@pnp/sp/lists',
+    +       '@pnp/sp/items',
+    +       '@pnp/sp/batching'
+    +     ]
+    +   },
+    +   {
+    +     from: 'services/spfx-pnp-search.service.ts',
+    +     kind: 'unclassified-external-registration',
+    +     specifiers: [
+    +       '@pnp/sp/search'
+    +     ]
+    +   },
+    +   {
+    +     from: 'services/spfx-pnp.service.ts',
+    +     kind: 'unclassified-external-registration',
+    +     specifiers: [
+    +       '@pnp/sp/batching'
+    +     ]
+    +   }
+    + ]
+    - []
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0:
+      kind: 'unclassified-external-registration'
+      from: 'services/spfx-pnp-context.service.ts'
+      specifiers:
+        0: '@pnp/sp/webs'
+        1: '@pnp/sp/batching'
+    1:
+      kind: 'unclassified-external-registration'
+      from: 'services/spfx-pnp-list.service.ts'
+      specifiers:
+        0: '@pnp/sp/webs'
+        1: '@pnp/sp/lists'
+        2: '@pnp/sp/items'
+        3: '@pnp/sp/batching'
+    2:
+      kind: 'unclassified-external-registration'
+      from: 'services/spfx-pnp-search.service.ts'
+      specifiers:
+        0: '@pnp/sp/search'
+    3:
+      kind: 'unclassified-external-registration'
+      from: 'services/spfx-pnp.service.ts'
+      specifiers:
+        0: '@pnp/sp/batching'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/import-graph.test.cjs:73:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 9
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5384.995666

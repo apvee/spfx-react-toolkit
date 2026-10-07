@@ -93,21 +93,8 @@ function shipCapture(directory, allowedNames) {
   }
   return { ...filesSize(directory, [...names]), host, manifestReferences: [...references].sort(), runtimeReferences: [...runtimeReferences].sort(), selection: 'current-run JS union manifest path resources union exact current-entry Webpack runtime chunk tables; unique names; no maps or old unreferenced assets' };
 }
-function dataCalls(source) {
-  const file = ts.createSourceFile('bundle.js', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
-  const calls = [];
-  function visit(node) {
-    if (ts.isCallExpression(node) && node.arguments.length >= 2 && ts.isStringLiteral(node.arguments[0])) {
-      const first = node.arguments[0].text;
-      if (ts.isArrayLiteralExpression(node.arguments[1]) && (/^[a-zA-Z]+\./.test(first) || /^(body|caption|subtitle|title|largeTitle|display)/.test(first))) calls.push({ kind: 'recipe', name: first });
-      else if (node.arguments.length === 3 && ts.isObjectLiteralExpression(node.arguments[2]) && node.arguments[2].properties.some(p => p.name?.getText(file) === 'fallback')) {
-        calls.push({ kind: 'declaration', property: first, value: ts.isStringLiteral(node.arguments[1]) ? node.arguments[1].text : node.arguments[1].getText(file) });
-      }
-    }
-    ts.forEachChild(node, visit);
-  }
-  visit(file); return calls;
-}
+const { dataCalls } = require('./bundle-contract.internal.cjs');
+
 async function bundle(name, fixture, library) {
   const dir = path.join(work, name);
   const config = { mode: 'production', devtool: false, entry: path.join(root, 'tests/fixtures/sx-bundle', fixture),

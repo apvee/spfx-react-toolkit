@@ -73,6 +73,40 @@ const photo = createSPFxUserPhotoService(graphClient);
 const blob = await photo.getPhotoBlob({ email: 'user@contoso.com', size: '240x240' });
 ```
 
+## Package import migration
+
+Root and clean domain imports use the canonical implementations; historical `/lib/...` imports remain supported. Unrelated root imports no longer install incidental PnP features. Direct consumers must import every feature used by their operations, including callbacks passed to `invoke`/`batch`; toolkit-owned registrations do not cover arbitrary caller features. See [package imports](../../PACKAGE-IMPORTS.md) for aliases, resolver and peer requirements, and the local-versus-tenant verification boundary.
+
+## PnP feature registrations
+
+Each PnP service module registers the features its operations need. A standalone
+list or search factory works with a supplied `SPFI` without first importing or
+calling `createSPFxPnPContextService`. Supply authentication and request behaviors
+on that client; registrations do not configure credentials or grant permissions.
+
+| Factory module | Guaranteed PnP registrations |
+| --- | --- |
+| `createSPFxPnPContextService` | Webs and batching; `createSPFI` also applies the SPFx request behaviors |
+| `createSPFxPnPListService` | Webs, lists, items and batching |
+| `createSPFxPnPSearchService` | Search and suggestions |
+| `createSPFxPnPService` | Batching |
+
+Direct PnP operations, including callbacks passed to generic `invoke` or `batch`,
+require explicit imports for the features used by the consumer. Do not depend on
+incidental registrations from unrelated toolkit imports.
+
+```typescript
+import '@pnp/sp/webs'; // The callback below uses sp.web directly.
+import { createSPFxPnPService } from '@apvee/spfx-react-toolkit/lib/services/spfx-pnp.service';
+
+const service = createSPFxPnPService(sp); // sp is an authenticated, configured SPFI.
+const web = await service.batch(batched => batched.web());
+```
+
+These factories retain their existing selector, query, cache, error and batch
+contracts. See the [PnP hooks](../hooks/pnpjs.md#pnp-feature-registrations) for the
+same registration policy when using hooks.
+
 ## PnP Context Service
 
 ### `createSPFxPnPContextService`

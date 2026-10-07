@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: production bundles preserve real context, list, search and batching operations in fresh processes
+not ok 1 - production bundles preserve real context, list, search and batching operations in fresh processes
+  ---
+  duration_ms: 0.579125
+  type: 'test'
+  location: '/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/production-runtime.test.cjs:22:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Cannot find module '../scripts/verify-production-runtime.cjs'
+    Require stack:
+    - /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/production-runtime.test.cjs
+  code: 'MODULE_NOT_FOUND'
+  stack: |-
+    Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)
+    defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    Function._load (node:internal/modules/cjs/loader:1192:37)
+    TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    Module.require (node:internal/modules/cjs/loader:1463:12)
+    require (node:internal/modules/helpers:147:16)
+    TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/production-runtime.test.cjs:23:42)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+# Subtest: removing list webs and sole generic batching registrations breaks actual bundled operations
+not ok 2 - removing list webs and sole generic batching registrations breaks actual bundled operations
+  ---
+  duration_ms: 0.181958
+  type: 'test'
+  location: '/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/production-runtime.test.cjs:35:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Cannot find module '../scripts/verify-production-runtime.cjs'
+    Require stack:
+    - /Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/production-runtime.test.cjs
+  code: 'MODULE_NOT_FOUND'
+  stack: |-
+    Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)
+    defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    Function._load (node:internal/modules/cjs/loader:1192:37)
+    TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    Module.require (node:internal/modules/cjs/loader:1463:12)
+    require (node:internal/modules/helpers:147:16)
+    TestContext.<anonymous> (/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/tests/production-runtime.test.cjs:36:42)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 37.0785

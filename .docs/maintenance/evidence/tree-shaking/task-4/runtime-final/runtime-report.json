@@ -1,0 +1,7017 @@
+{
+  "schemaVersion": 1,
+  "complete": true,
+  "passed": true,
+  "provenance": {
+    "node": "v22.20.0",
+    "npm": "11.19.1",
+    "consumerRoot": "/private/tmp/task4-candidate-chNE9n",
+    "toolkitDir": "/private/tmp/task4-candidate-chNE9n/node_modules/@apvee/spfx-react-toolkit",
+    "tarballSha256": "5f6dfb24dc7371971850f01c8bc4a19b338c8ad9faf204a9df16fa59db61a298",
+    "toolkitManifestSha256": "31f45bade35c60115ae44d32a649df1067554b979fd44594e1ac5f41b1c28a98",
+    "interception": "HTTP send only; client and registration bundled in one realm; fresh process per probe"
+  },
+  "probes": [
+    {
+      "scenario": "context",
+      "variant": "root",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-final/context/root/entry.js",
+      "fixtureSha256": "565a54d8317ce4dd5ab9ac83a8f417babea73f44d258f9ce9d93f3450b3990d1",
+      "bundleSha256": "f1036e849c1afdc2a872b64b54dd7c806d8c77cdc27604637a01f0183af98a54",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-context-root.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 132871,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-context.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPContextService"
+          ],
+          "sizeBeforeMinification": 2076,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "dateAdd",
+            "delay",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "noInherit",
+            "objectDefinedNotNull",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 123,
+            "active": 99
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection",
+            "noInherit"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "delay",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "BrowserFetchWithRetry"
+          ],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Caching"
+          ],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "HttpRequestError",
+            "JSONParse",
+            "parseBinderWithErrorCheck"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "BrowserFetchWithRetry",
+            "Caching",
+            "DefaultParse",
+            "InjectHeaders",
+            "JSONParse",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "body",
+            "op",
+            "parseBinderWithErrorCheck",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 65,
+            "active": 57
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "BatchNever"
+          ],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 5,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 8,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/request-digest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RequestDigest"
+          ],
+          "sizeBeforeMinification": 2749,
+          "reasonCounts": {
+            "total": 6,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spbrowser.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1066,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spfx.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFx"
+          ],
+          "sizeBeforeMinification": 2864,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 14,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 11,
+            "active": 10
+          }
+        },
+        {
+          "resource": "@pnp/sp/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFx",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 639,
+          "reasonCounts": {
+            "total": 7,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 85,
+            "active": 84
+          }
+        },
+        {
+          "resource": "@pnp/sp/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3312,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 12,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/odata-url-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1558,
+          "reasonCounts": {
+            "total": 7,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 16,
+            "active": 14
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 1374,
+            "active": 856
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "context",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/web",
+            "method": "GET",
+            "headers": {
+              "X-PnPjs-RequestId": "e117840c-9b9f-4a57-932d-9f13eee75182",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8",
+              "X-ClientService-ClientTag": "s.s.web",
+              "X-Standalone": "context"
+            }
+          }
+        ],
+        "result": {
+          "web": {
+            "Title": "Standalone web"
+          },
+          "resolved": "https://tenant.test/sites/other"
+        }
+      }
+    },
+    {
+      "scenario": "context",
+      "variant": "domain",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-final/context/domain/entry.js",
+      "fixtureSha256": "13685493619330d3395271cfc1b6bb97a5d86a14fc2ac42f72c633cdf165e821",
+      "bundleSha256": "f1036e849c1afdc2a872b64b54dd7c806d8c77cdc27604637a01f0183af98a54",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-context-domain.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 132882,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-context.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPContextService"
+          ],
+          "sizeBeforeMinification": 2076,
+          "reasonCounts": {
+            "total": 3,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "dateAdd",
+            "delay",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "noInherit",
+            "objectDefinedNotNull",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 123,
+            "active": 99
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection",
+            "noInherit"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "delay",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "BrowserFetchWithRetry"
+          ],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Caching"
+          ],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "HttpRequestError",
+            "JSONParse",
+            "parseBinderWithErrorCheck"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "BrowserFetchWithRetry",
+            "Caching",
+            "DefaultParse",
+            "InjectHeaders",
+            "JSONParse",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "body",
+            "op",
+            "parseBinderWithErrorCheck",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 65,
+            "active": 57
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "BatchNever"
+          ],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 5,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 8,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/request-digest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RequestDigest"
+          ],
+          "sizeBeforeMinification": 2749,
+          "reasonCounts": {
+            "total": 6,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spbrowser.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1066,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spfx.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFx"
+          ],
+          "sizeBeforeMinification": 2864,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 14,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 11,
+            "active": 10
+          }
+        },
+        {
+          "resource": "@pnp/sp/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFx",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 639,
+          "reasonCounts": {
+            "total": 7,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 85,
+            "active": 84
+          }
+        },
+        {
+          "resource": "@pnp/sp/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3312,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 12,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/odata-url-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1558,
+          "reasonCounts": {
+            "total": 7,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 16,
+            "active": 14
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 14,
+            "active": 8
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "context",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/web",
+            "method": "GET",
+            "headers": {
+              "X-PnPjs-RequestId": "45a781d1-098b-40fc-bb08-776bfa27f573",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8",
+              "X-ClientService-ClientTag": "s.s.web",
+              "X-Standalone": "context"
+            }
+          }
+        ],
+        "result": {
+          "web": {
+            "Title": "Standalone web"
+          },
+          "resolved": "https://tenant.test/sites/other"
+        }
+      }
+    },
+    {
+      "scenario": "context",
+      "variant": "leaf",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-final/context/leaf/entry.js",
+      "fixtureSha256": "c63ed5ef9b78ac97d35f386941b74486c203eb32dc9b94dfc240019a66deedcb",
+      "bundleSha256": "f1036e849c1afdc2a872b64b54dd7c806d8c77cdc27604637a01f0183af98a54",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-context-leaf.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 132909,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-context.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPContextService"
+          ],
+          "sizeBeforeMinification": 2076,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "dateAdd",
+            "delay",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "noInherit",
+            "objectDefinedNotNull",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 107,
+            "active": 83
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection",
+            "noInherit"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "delay",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "BrowserFetchWithRetry"
+          ],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Caching"
+          ],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "HttpRequestError",
+            "JSONParse",
+            "parseBinderWithErrorCheck"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "BrowserFetchWithRetry",
+            "Caching",
+            "DefaultParse",
+            "InjectHeaders",
+            "JSONParse",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "body",
+            "op",
+            "parseBinderWithErrorCheck",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 34,
+            "active": 26
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "BatchNever"
+          ],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 3,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 8,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/request-digest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RequestDigest"
+          ],
+          "sizeBeforeMinification": 2749,
+          "reasonCounts": {
+            "total": 6,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spbrowser.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1066,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spfx.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFx"
+          ],
+          "sizeBeforeMinification": 2864,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 5,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFx",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 639,
+          "reasonCounts": {
+            "total": 3,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 27,
+            "active": 26
+          }
+        },
+        {
+          "resource": "@pnp/sp/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3312,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/odata-url-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1558,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 8,
+            "active": 6
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "context",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/web",
+            "method": "GET",
+            "headers": {
+              "X-PnPjs-RequestId": "1bf8b323-8528-48a4-a900-23333194a8db",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8",
+              "X-ClientService-ClientTag": "s.s.web",
+              "X-Standalone": "context"
+            }
+          }
+        ],
+        "result": {
+          "web": {
+            "Title": "Standalone web"
+          },
+          "resolved": "https://tenant.test/sites/other"
+        }
+      }
+    },
+    {
+      "scenario": "list",
+      "variant": "root",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-final/list/root/entry.js",
+      "fixtureSha256": "9cb3ad05fd3b8dfe9950a371a198cd25ebeca2cb804beba2e5d8545ff5b40946",
+      "bundleSha256": "331b9af4c8eb5b8f2e31bcd2ecd3e4909758072f544b2737a44afc74fcfcc699",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-list-root.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 169773,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-list-target.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "resolveListTarget",
+            "snapshotListTarget"
+          ],
+          "sizeBeforeMinification": 4049,
+          "reasonCounts": {
+            "total": 10,
+            "active": 9
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-list.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPListService"
+          ],
+          "sizeBeforeMinification": 8150,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "objectDefinedNotNull",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 123,
+            "active": 90
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "TextParse",
+            "parseBinderWithErrorCheck",
+            "parseODataJSON"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "InjectHeaders",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "TextParse",
+            "addProp",
+            "body",
+            "headers",
+            "op",
+            "parseBinderWithErrorCheck",
+            "parseODataJSON",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 67,
+            "active": 54
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 5,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 11,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/request-digest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2749,
+          "reasonCounts": {
+            "total": 6,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spbrowser.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1066,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spfx.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2864,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 14,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 13,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 639,
+          "reasonCounts": {
+            "total": 7,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 123,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/list.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 185,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Items"
+          ],
+          "sizeBeforeMinification": 10316,
+          "reasonCounts": {
+            "total": 7,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 131,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "List",
+            "Lists",
+            "_List"
+          ],
+          "sizeBeforeMinification": 14969,
+          "reasonCounts": {
+            "total": 15,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/web.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 822,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "deleteableWithETag",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 85,
+            "active": 82
+          }
+        },
+        {
+          "resource": "@pnp/sp/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3312,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 12,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/odata-url-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "odataUrlFrom"
+          ],
+          "sizeBeforeMinification": 1558,
+          "reasonCounts": {
+            "total": 7,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/to-resource-path.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "toResourcePath"
+          ],
+          "sizeBeforeMinification": 129,
+          "reasonCounts": {
+            "total": 5,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 16,
+            "active": 14
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 1374,
+            "active": 856
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "list",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/web/lists/getByTitle('Tasks')/items?%24top=2",
+            "method": "GET",
+            "headers": {
+              "X-PnPjs-RequestId": "1f558b22-e195-47fc-a121-7f4ab2611dca",
+              "X-ClientService-ClientTag": "s.s.w.l.g.items",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8"
+            }
+          },
+          {
+            "url": "https://tenant.test/sites/standalone/_api/$batch",
+            "method": "POST",
+            "headers": {
+              "Content-Type": "multipart/mixed; boundary=batch_3a651598-7ccc-4fdd-a384-6987c52f33ca",
+              "X-PnPjs-RequestId": "9f03feba-2b0e-4ddb-b803-72271aa4cd6f",
+              "X-ClientService-ClientTag": "s.s.$batch",
+              "Accept": "application/json"
+            },
+            "body": "--batch_3a651598-7ccc-4fdd-a384-6987c52f33ca\nContent-Type: multipart/mixed; boundary=\"changeset_5b908c46-bdf3-452b-b2fe-eb1ad62e1ca0\"\n\n--changeset_5b908c46-bdf3-452b-b2fe-eb1ad62e1ca0\nContent-Type: application/http\nContent-Transfer-Encoding: binary\n\nPOST https://tenant.test/sites/standalone/_api/web/lists/getByTitle('Tasks')/items HTTP/1.1\naccept: application/json\ncontent-type: application/json;charset=utf-8\n\n{\"Title\":\"Created task\"}\n\n--changeset_5b908c46-bdf3-452b-b2fe-eb1ad62e1ca0--\n\n--batch_3a651598-7ccc-4fdd-a384-6987c52f33ca--\n"
+          }
+        ],
+        "result": {
+          "query": {
+            "items": [
+              {
+                "Id": 7,
+                "Title": "Standalone task"
+              }
+            ],
+            "effectivePageSize": 2,
+            "hasMore": false,
+            "nextSkip": 1
+          },
+          "batch": {
+            "value": [
+              11
+            ],
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "scenario": "list",
+      "variant": "domain",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-final/list/domain/entry.js",
+      "fixtureSha256": "d7569799b5a8bfa23b058dcf63fed8b96aacfeb552c327b072e50d8987d5f029",
+      "bundleSha256": "331b9af4c8eb5b8f2e31bcd2ecd3e4909758072f544b2737a44afc74fcfcc699",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-list-domain.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 169784,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-list-target.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "resolveListTarget",
+            "snapshotListTarget"
+          ],
+          "sizeBeforeMinification": 4049,
+          "reasonCounts": {
+            "total": 10,
+            "active": 9
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-list.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPListService"
+          ],
+          "sizeBeforeMinification": 8150,
+          "reasonCounts": {
+            "total": 3,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "objectDefinedNotNull",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 123,
+            "active": 90
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "TextParse",
+            "parseBinderWithErrorCheck",
+            "parseODataJSON"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "InjectHeaders",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "TextParse",
+            "addProp",
+            "body",
+            "headers",
+            "op",
+            "parseBinderWithErrorCheck",
+            "parseODataJSON",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 67,
+            "active": 54
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 5,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 11,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/request-digest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2749,
+          "reasonCounts": {
+            "total": 6,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spbrowser.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1066,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spfx.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2864,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 14,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 13,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 639,
+          "reasonCounts": {
+            "total": 7,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 123,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/list.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 185,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Items"
+          ],
+          "sizeBeforeMinification": 10316,
+          "reasonCounts": {
+            "total": 7,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 131,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "List",
+            "Lists",
+            "_List"
+          ],
+          "sizeBeforeMinification": 14969,
+          "reasonCounts": {
+            "total": 15,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/web.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 822,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "deleteableWithETag",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 85,
+            "active": 82
+          }
+        },
+        {
+          "resource": "@pnp/sp/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3312,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 12,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/odata-url-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "odataUrlFrom"
+          ],
+          "sizeBeforeMinification": 1558,
+          "reasonCounts": {
+            "total": 7,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/to-resource-path.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "toResourcePath"
+          ],
+          "sizeBeforeMinification": 129,
+          "reasonCounts": {
+            "total": 5,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 16,
+            "active": 14
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 14,
+            "active": 8
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "list",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/web/lists/getByTitle('Tasks')/items?%24top=2",
+            "method": "GET",
+            "headers": {
+              "X-PnPjs-RequestId": "e6104948-b34e-4073-9955-f4bff4a9c2bf",
+              "X-ClientService-ClientTag": "s.s.w.l.g.items",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8"
+            }
+          },
+          {
+            "url": "https://tenant.test/sites/standalone/_api/$batch",
+            "method": "POST",
+            "headers": {
+              "Content-Type": "multipart/mixed; boundary=batch_064667d2-cf67-4caf-ae57-949548369768",
+              "X-PnPjs-RequestId": "368459c1-38b2-448e-bc60-297a07406d90",
+              "X-ClientService-ClientTag": "s.s.$batch",
+              "Accept": "application/json"
+            },
+            "body": "--batch_064667d2-cf67-4caf-ae57-949548369768\nContent-Type: multipart/mixed; boundary=\"changeset_f689c45c-2891-4f32-91c6-0bd11459a3db\"\n\n--changeset_f689c45c-2891-4f32-91c6-0bd11459a3db\nContent-Type: application/http\nContent-Transfer-Encoding: binary\n\nPOST https://tenant.test/sites/standalone/_api/web/lists/getByTitle('Tasks')/items HTTP/1.1\naccept: application/json\ncontent-type: application/json;charset=utf-8\n\n{\"Title\":\"Created task\"}\n\n--changeset_f689c45c-2891-4f32-91c6-0bd11459a3db--\n\n--batch_064667d2-cf67-4caf-ae57-949548369768--\n"
+          }
+        ],
+        "result": {
+          "query": {
+            "items": [
+              {
+                "Id": 7,
+                "Title": "Standalone task"
+              }
+            ],
+            "effectivePageSize": 2,
+            "hasMore": false,
+            "nextSkip": 1
+          },
+          "batch": {
+            "value": [
+              11
+            ],
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "scenario": "list",
+      "variant": "leaf",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-final/list/leaf/entry.js",
+      "fixtureSha256": "9f1c7bcbe91144550dd14de6e246138ed210ce6d57d1d5bb9e1e3d8ea2531f0c",
+      "bundleSha256": "331b9af4c8eb5b8f2e31bcd2ecd3e4909758072f544b2737a44afc74fcfcc699",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-list-leaf.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 169808,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-list-target.internal.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "resolveListTarget",
+            "snapshotListTarget"
+          ],
+          "sizeBeforeMinification": 4049,
+          "reasonCounts": {
+            "total": 10,
+            "active": 9
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-list.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPListService"
+          ],
+          "sizeBeforeMinification": 8150,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "objectDefinedNotNull",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 116,
+            "active": 83
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "TextParse",
+            "parseBinderWithErrorCheck",
+            "parseODataJSON"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "InjectHeaders",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "TextParse",
+            "addProp",
+            "body",
+            "headers",
+            "op",
+            "parseBinderWithErrorCheck",
+            "parseODataJSON",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 59,
+            "active": 48
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 3,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 11,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/request-digest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2749,
+          "reasonCounts": {
+            "total": 6,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spbrowser.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1066,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/spfx.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2864,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 10,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 10,
+            "active": 8
+          }
+        },
+        {
+          "resource": "@pnp/sp/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 639,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 123,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/list.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 185,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/items/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Items"
+          ],
+          "sizeBeforeMinification": 10316,
+          "reasonCounts": {
+            "total": 7,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 131,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "List",
+            "Lists",
+            "_List"
+          ],
+          "sizeBeforeMinification": 14969,
+          "reasonCounts": {
+            "total": 15,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/lists/web.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 822,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "deleteableWithETag",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 78,
+            "active": 75
+          }
+        },
+        {
+          "resource": "@pnp/sp/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3312,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 12,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/odata-url-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "odataUrlFrom"
+          ],
+          "sizeBeforeMinification": 1558,
+          "reasonCounts": {
+            "total": 7,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/to-resource-path.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "toResourcePath"
+          ],
+          "sizeBeforeMinification": 129,
+          "reasonCounts": {
+            "total": 5,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 16,
+            "active": 14
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 10,
+            "active": 6
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "list",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/web/lists/getByTitle('Tasks')/items?%24top=2",
+            "method": "GET",
+            "headers": {
+              "X-PnPjs-RequestId": "0587d456-228d-4b7b-a45e-8e1f386cd49f",
+              "X-ClientService-ClientTag": "s.s.w.l.g.items",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8"
+            }
+          },
+          {
+            "url": "https://tenant.test/sites/standalone/_api/$batch",
+            "method": "POST",
+            "headers": {
+              "Content-Type": "multipart/mixed; boundary=batch_32af62fc-d833-4803-978b-5c5caad3ee5a",
+              "X-PnPjs-RequestId": "57a736b7-319e-42de-953f-84fb1daa3c9f",
+              "X-ClientService-ClientTag": "s.s.$batch",
+              "Accept": "application/json"
+            },
+            "body": "--batch_32af62fc-d833-4803-978b-5c5caad3ee5a\nContent-Type: multipart/mixed; boundary=\"changeset_96dc2bf4-761f-499a-804d-ebe4a08908ca\"\n\n--changeset_96dc2bf4-761f-499a-804d-ebe4a08908ca\nContent-Type: application/http\nContent-Transfer-Encoding: binary\n\nPOST https://tenant.test/sites/standalone/_api/web/lists/getByTitle('Tasks')/items HTTP/1.1\naccept: application/json\ncontent-type: application/json;charset=utf-8\n\n{\"Title\":\"Created task\"}\n\n--changeset_96dc2bf4-761f-499a-804d-ebe4a08908ca--\n\n--batch_32af62fc-d833-4803-978b-5c5caad3ee5a--\n"
+          }
+        ],
+        "result": {
+          "query": {
+            "items": [
+              {
+                "Id": 7,
+                "Title": "Standalone task"
+              }
+            ],
+            "effectivePageSize": 2,
+            "hasMore": false,
+            "nextSkip": 1
+          },
+          "batch": {
+            "value": [
+              11
+            ],
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "scenario": "search",
+      "variant": "root",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-final/search/root/entry.js",
+      "fixtureSha256": "a2ee0319d7bd927ed88ffc85488ea932284a56533ca377daaf747e019bee03b1",
+      "bundleSha256": "f5540f291f5d6ae2badc0574c8f567443312325b4f5a8d0efbd9caaa804e59d1",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-search-root.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 107434,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-search.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPSearchService"
+          ],
+          "sizeBeforeMinification": 3401,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 123,
+            "active": 79
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 8
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CacheAlways",
+            "CacheKey"
+          ],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CacheAlways",
+            "CacheKey",
+            "DefaultParse",
+            "InjectHeaders",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "body",
+            "invokable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 67,
+            "active": 54
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "invokable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 11,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 14,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 13,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SearchQueryBuilder"
+          ],
+          "sizeBeforeMinification": 536,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/query.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SearchQueryBuilder",
+            "_Search"
+          ],
+          "sizeBeforeMinification": 8112,
+          "reasonCounts": {
+            "total": 6,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/suggest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "_Suggest"
+          ],
+          "sizeBeforeMinification": 1732,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3429,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPQueryable",
+            "_SPInstance",
+            "spInvokableFactory",
+            "spPost"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 85,
+            "active": 82
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 1374,
+            "active": 856
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "search",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/search/postquery",
+            "method": "POST",
+            "headers": {
+              "X-PnPjs-RequestId": "33eb3144-8395-4d41-8c3b-4fab368a5191",
+              "X-PnP-CacheKey": "256764191",
+              "X-PnP-CacheAlways": "1",
+              "X-ClientService-ClientTag": "s.s.s.postquery",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8"
+            },
+            "body": "{\"request\":{\"Querytext\":\"Standalone\",\"RowLimit\":2,\"HitHighlightedProperties\":[],\"Properties\":[],\"RefinementFilters\":[],\"ReorderingRules\":[],\"SelectProperties\":[],\"SortList\":[]}}"
+          },
+          {
+            "url": "https://tenant.test/sites/standalone/_api/search/suggest?querytext=%27Standalone%27",
+            "method": "GET",
+            "headers": {
+              "X-PnPjs-RequestId": "f356dec3-bfc8-426a-8c52-baef6d4e93ac",
+              "X-ClientService-ClientTag": "s.s.s.suggest",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8"
+            }
+          }
+        ],
+        "result": {
+          "search": {
+            "results": [
+              {
+                "id": "9",
+                "data": {
+                  "DocId": "9",
+                  "Title": "Standalone search",
+                  "Rank": "12"
+                },
+                "raw": {
+                  "DocId": "9",
+                  "Title": "Standalone search",
+                  "Rank": "12"
+                },
+                "rank": 12
+              }
+            ],
+            "totalResults": 3,
+            "refiners": []
+          },
+          "suggestions": [
+            "Standalone suggestion"
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "search",
+      "variant": "domain",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-final/search/domain/entry.js",
+      "fixtureSha256": "be483b8ad4d13c3c5830c40a6b0cacb9abbc1e1ce6b5d2324ded45aa1d472236",
+      "bundleSha256": "f5540f291f5d6ae2badc0574c8f567443312325b4f5a8d0efbd9caaa804e59d1",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-search-domain.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 107445,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-search.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPSearchService"
+          ],
+          "sizeBeforeMinification": 3401,
+          "reasonCounts": {
+            "total": 3,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 123,
+            "active": 79
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 8
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CacheAlways",
+            "CacheKey"
+          ],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CacheAlways",
+            "CacheKey",
+            "DefaultParse",
+            "InjectHeaders",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "body",
+            "invokable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 67,
+            "active": 54
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "invokable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 11,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 14,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 13,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SearchQueryBuilder"
+          ],
+          "sizeBeforeMinification": 536,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/query.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SearchQueryBuilder",
+            "_Search"
+          ],
+          "sizeBeforeMinification": 8112,
+          "reasonCounts": {
+            "total": 6,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/suggest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "_Suggest"
+          ],
+          "sizeBeforeMinification": 1732,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3429,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPQueryable",
+            "_SPInstance",
+            "spInvokableFactory",
+            "spPost"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 85,
+            "active": 82
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 14,
+            "active": 8
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "search",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/search/postquery",
+            "method": "POST",
+            "headers": {
+              "X-PnPjs-RequestId": "8e698250-0df5-45f6-9e24-b61218b043af",
+              "X-PnP-CacheKey": "256764191",
+              "X-PnP-CacheAlways": "1",
+              "X-ClientService-ClientTag": "s.s.s.postquery",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8"
+            },
+            "body": "{\"request\":{\"Querytext\":\"Standalone\",\"RowLimit\":2,\"HitHighlightedProperties\":[],\"Properties\":[],\"RefinementFilters\":[],\"ReorderingRules\":[],\"SelectProperties\":[],\"SortList\":[]}}"
+          },
+          {
+            "url": "https://tenant.test/sites/standalone/_api/search/suggest?querytext=%27Standalone%27",
+            "method": "GET",
+            "headers": {
+              "X-PnPjs-RequestId": "6e934f2c-0c9f-4035-b89b-1076a813ed8b",
+              "X-ClientService-ClientTag": "s.s.s.suggest",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8"
+            }
+          }
+        ],
+        "result": {
+          "search": {
+            "results": [
+              {
+                "id": "9",
+                "data": {
+                  "DocId": "9",
+                  "Title": "Standalone search",
+                  "Rank": "12"
+                },
+                "raw": {
+                  "DocId": "9",
+                  "Title": "Standalone search",
+                  "Rank": "12"
+                },
+                "rank": 12
+              }
+            ],
+            "totalResults": 3,
+            "refiners": []
+          },
+          "suggestions": [
+            "Standalone suggestion"
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "search",
+      "variant": "leaf",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-final/search/leaf/entry.js",
+      "fixtureSha256": "d39fba1e8994d6e81f39aa2954e4739a911451ea6bcfb235b1d0fec5f3202376",
+      "bundleSha256": "f5540f291f5d6ae2badc0574c8f567443312325b4f5a8d0efbd9caaa804e59d1",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-search-leaf.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 107471,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp-search.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPSearchService"
+          ],
+          "sizeBeforeMinification": 3401,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 61,
+            "active": 47
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "getHashCode",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 8
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CacheAlways",
+            "CacheKey"
+          ],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CacheAlways",
+            "CacheKey",
+            "DefaultParse",
+            "InjectHeaders",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "body",
+            "invokable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 22,
+            "active": 16
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "invokable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 3,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 5,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SearchQueryBuilder"
+          ],
+          "sizeBeforeMinification": 536,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/query.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SearchQueryBuilder",
+            "_Search"
+          ],
+          "sizeBeforeMinification": 8112,
+          "reasonCounts": {
+            "total": 6,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/suggest.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "_Suggest"
+          ],
+          "sizeBeforeMinification": 1732,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/search/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3429,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPQueryable",
+            "_SPInstance",
+            "spInvokableFactory",
+            "spPost"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 9,
+            "active": 9
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 6,
+            "active": 3
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "search",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/search/postquery",
+            "method": "POST",
+            "headers": {
+              "X-PnPjs-RequestId": "4a8428ad-02cf-4c55-8bef-f9158382ca0e",
+              "X-PnP-CacheKey": "256764191",
+              "X-PnP-CacheAlways": "1",
+              "X-ClientService-ClientTag": "s.s.s.postquery",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8"
+            },
+            "body": "{\"request\":{\"Querytext\":\"Standalone\",\"RowLimit\":2,\"HitHighlightedProperties\":[],\"Properties\":[],\"RefinementFilters\":[],\"ReorderingRules\":[],\"SelectProperties\":[],\"SortList\":[]}}"
+          },
+          {
+            "url": "https://tenant.test/sites/standalone/_api/search/suggest?querytext=%27Standalone%27",
+            "method": "GET",
+            "headers": {
+              "X-PnPjs-RequestId": "bdbdafc2-dffd-4760-aa02-663f901a6087",
+              "X-ClientService-ClientTag": "s.s.s.suggest",
+              "Accept": "application/json",
+              "Content-Type": "application/json;charset=utf-8"
+            }
+          }
+        ],
+        "result": {
+          "search": {
+            "results": [
+              {
+                "id": "9",
+                "data": {
+                  "DocId": "9",
+                  "Title": "Standalone search",
+                  "Rank": "12"
+                },
+                "raw": {
+                  "DocId": "9",
+                  "Title": "Standalone search",
+                  "Rank": "12"
+                },
+                "rank": 12
+              }
+            ],
+            "totalResults": 3,
+            "refiners": []
+          },
+          "suggestions": [
+            "Standalone suggestion"
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "batch",
+      "variant": "root",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-final/batch/root/entry.js",
+      "fixtureSha256": "d9bf6ce5637a3def038b61e5e63c2e0fd9ffd1af19d59276ef7532abe4252a9f",
+      "bundleSha256": "ca1683bb66701ca79aab2c048874e0742ed84c53fbe5f1a868392e8c64600c6e",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-batch-root.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 119116,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPService"
+          ],
+          "sizeBeforeMinification": 435,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 123,
+            "active": 81
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "parseBinderWithErrorCheck"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "InjectHeaders",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "body",
+            "op",
+            "parseBinderWithErrorCheck",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 67,
+            "active": 54
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 5,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 11,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 14,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 13,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 85,
+            "active": 82
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 12,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 3,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 16,
+            "active": 14
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 1374,
+            "active": 856
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "batch",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/$batch",
+            "method": "POST",
+            "headers": {
+              "Content-Type": "multipart/mixed; boundary=batch_3881cb4d-166a-4f07-a9c1-9592584f5f94",
+              "X-PnPjs-RequestId": "7d2ebbee-5d26-49ae-b495-40d22a55c452",
+              "X-ClientService-ClientTag": "s.s.$batch",
+              "Accept": "application/json"
+            },
+            "body": "--batch_3881cb4d-166a-4f07-a9c1-9592584f5f94\nContent-Type: application/http\nContent-Transfer-Encoding: binary\n\nGET https://tenant.test/sites/standalone/_api/web HTTP/1.1\naccept: application/json\ncontent-type: application/json;charset=utf-8\n\n--batch_3881cb4d-166a-4f07-a9c1-9592584f5f94--\n"
+          }
+        ],
+        "result": {
+          "Title": "Standalone web"
+        }
+      }
+    },
+    {
+      "scenario": "batch",
+      "variant": "domain",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-final/batch/domain/entry.js",
+      "fixtureSha256": "118585c1c9a19bf6d426ee301018e4bcbb679e3e1d8fdf65da4bbebb089a2fca",
+      "bundleSha256": "ca1683bb66701ca79aab2c048874e0742ed84c53fbe5f1a868392e8c64600c6e",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-batch-domain.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 119127,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPService"
+          ],
+          "sizeBeforeMinification": 435,
+          "reasonCounts": {
+            "total": 3,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 123,
+            "active": 81
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "parseBinderWithErrorCheck"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "InjectHeaders",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "body",
+            "op",
+            "parseBinderWithErrorCheck",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 67,
+            "active": 54
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 5,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 11,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 14,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 13,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 85,
+            "active": 82
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 12,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 8,
+            "active": 5
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 3,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 16,
+            "active": 14
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 14,
+            "active": 8
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "batch",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/$batch",
+            "method": "POST",
+            "headers": {
+              "Content-Type": "multipart/mixed; boundary=batch_9541a25a-a6f0-4309-80c4-bb3da3a6671a",
+              "X-PnPjs-RequestId": "bcb27e53-0fb3-4444-902f-656f8c4a5bd0",
+              "X-ClientService-ClientTag": "s.s.$batch",
+              "Accept": "application/json"
+            },
+            "body": "--batch_9541a25a-a6f0-4309-80c4-bb3da3a6671a\nContent-Type: application/http\nContent-Transfer-Encoding: binary\n\nGET https://tenant.test/sites/standalone/_api/web HTTP/1.1\naccept: application/json\ncontent-type: application/json;charset=utf-8\n\n--batch_9541a25a-a6f0-4309-80c4-bb3da3a6671a--\n"
+          }
+        ],
+        "result": {
+          "Title": "Standalone web"
+        }
+      }
+    },
+    {
+      "scenario": "batch",
+      "variant": "leaf",
+      "bundlePath": "/Users/fabiofranzini/GitHub/apvee/spfx-react-toolkit/.docs/maintenance/evidence/tree-shaking/task-4/runtime-final/batch/leaf/entry.js",
+      "fixtureSha256": "70e89f5953def0df6f043d256a4bb06a0aa97e4bbf8728b72cb9e6ad9343ab58",
+      "bundleSha256": "ca1683bb66701ca79aab2c048874e0742ed84c53fbe5f1a868392e8c64600c6e",
+      "emittedModules": [
+        {
+          "resource": ".production-runtime/pnp-batch-leaf.ts",
+          "chunks": [
+            792
+          ],
+          "usedExports": true,
+          "sizeBeforeMinification": 119146,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@apvee/spfx-react-toolkit/lib/services/spfx-pnp.service.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "createSPFxPnPService"
+          ],
+          "sizeBeforeMinification": 435,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/behaviors/copy-from.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom"
+          ],
+          "sizeBeforeMinification": 1810,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/core/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "CopyFrom",
+            "PnPClientStorage",
+            "Timeline",
+            "asyncReduce",
+            "broadcast",
+            "combine",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "lifecycle",
+            "reduce",
+            "request",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 265,
+          "reasonCounts": {
+            "total": 76,
+            "active": 61
+          }
+        },
+        {
+          "resource": "@pnp/core/moments.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "asyncReduce",
+            "broadcast",
+            "lifecycle",
+            "reduce",
+            "request"
+          ],
+          "sizeBeforeMinification": 3309,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/core/storage.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "PnPClientStorage"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/core/timeline.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Timeline",
+            "cloneObserverCollection"
+          ],
+          "sizeBeforeMinification": 9753,
+          "reasonCounts": {
+            "total": 4,
+            "active": 4
+          }
+        },
+        {
+          "resource": "@pnp/core/util.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "combine",
+            "dateAdd",
+            "getGUID",
+            "hOP",
+            "isArray",
+            "isFunc",
+            "isUrlAbsolute",
+            "jsS",
+            "objectDefinedNotNull",
+            "stringIsNullOrEmpty"
+          ],
+          "sizeBeforeMinification": 5273,
+          "reasonCounts": {
+            "total": 16,
+            "active": 11
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/browser-fetch.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 3970,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching-pessimistic.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 2315,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/caching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 4129,
+          "reasonCounts": {
+            "total": 4,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/cancelable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 8476,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/inject-headers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "InjectHeaders"
+          ],
+          "sizeBeforeMinification": 457,
+          "reasonCounts": {
+            "total": 4,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/parsers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "parseBinderWithErrorCheck"
+          ],
+          "sizeBeforeMinification": 3566,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/queryable/behaviors/resolvers.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "RejectOnError",
+            "ResolveOnData"
+          ],
+          "sizeBeforeMinification": 437,
+          "reasonCounts": {
+            "total": 2,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/queryable/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultParse",
+            "InjectHeaders",
+            "Queryable",
+            "RejectOnError",
+            "ResolveOnData",
+            "body",
+            "op",
+            "parseBinderWithErrorCheck",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 1751,
+          "reasonCounts": {
+            "total": 25,
+            "active": 19
+          }
+        },
+        {
+          "resource": "@pnp/queryable/queryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Queryable",
+            "op",
+            "post",
+            "queryableFactory"
+          ],
+          "sizeBeforeMinification": 8645,
+          "reasonCounts": {
+            "total": 4,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/batching.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 17285,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/defaults.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "DefaultHeaders",
+            "DefaultInit"
+          ],
+          "sizeBeforeMinification": 777,
+          "reasonCounts": {
+            "total": 3,
+            "active": 3
+          }
+        },
+        {
+          "resource": "@pnp/sp/behaviors/telemetry.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Telemetry"
+          ],
+          "sizeBeforeMinification": 1258,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/decorators.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "defaultPath"
+          ],
+          "sizeBeforeMinification": 460,
+          "reasonCounts": {
+            "total": 3,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/fi.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPFI",
+            "spfi"
+          ],
+          "sizeBeforeMinification": 980,
+          "reasonCounts": {
+            "total": 7,
+            "active": 7
+          }
+        },
+        {
+          "resource": "@pnp/sp/spqueryable.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "SPCollection",
+            "SPInstance",
+            "SPQueryable",
+            "_SPCollection",
+            "_SPInstance",
+            "_SPQueryable",
+            "deleteable",
+            "spInvokableFactory",
+            "spPost",
+            "spPostMerge"
+          ],
+          "sizeBeforeMinification": 14731,
+          "reasonCounts": {
+            "total": 22,
+            "active": 22
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/encode-path-str.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "encodePath"
+          ],
+          "sizeBeforeMinification": 1661,
+          "reasonCounts": {
+            "total": 6,
+            "active": 6
+          }
+        },
+        {
+          "resource": "@pnp/sp/utils/extract-web-url.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "extractWebUrl"
+          ],
+          "sizeBeforeMinification": 500,
+          "reasonCounts": {
+            "total": 2,
+            "active": 2
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/index.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [],
+          "sizeBeforeMinification": 302,
+          "reasonCounts": {
+            "total": 1,
+            "active": 1
+          }
+        },
+        {
+          "resource": "@pnp/sp/webs/types.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "Web",
+            "_Web"
+          ],
+          "sizeBeforeMinification": 8715,
+          "reasonCounts": {
+            "total": 8,
+            "active": 6
+          }
+        },
+        {
+          "resource": "tslib/tslib.es6.js",
+          "chunks": [
+            792
+          ],
+          "usedExports": [
+            "__decorate"
+          ],
+          "sizeBeforeMinification": 11802,
+          "reasonCounts": {
+            "total": 5,
+            "active": 3
+          }
+        },
+        {
+          "resource": "webpack/runtime/define property getters",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 308,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/hasOwnProperty shorthand",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 88,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        },
+        {
+          "resource": "webpack/runtime/make namespace object",
+          "chunks": [
+            792
+          ],
+          "usedExports": null,
+          "sizeBeforeMinification": 274,
+          "reasonCounts": {
+            "total": 0,
+            "active": 0
+          }
+        }
+      ],
+      "warnings": [],
+      "status": "passed",
+      "observation": {
+        "scenario": "batch",
+        "calls": [
+          {
+            "url": "https://tenant.test/sites/standalone/_api/$batch",
+            "method": "POST",
+            "headers": {
+              "Content-Type": "multipart/mixed; boundary=batch_492ea379-6020-4490-9281-26d9508eade8",
+              "X-PnPjs-RequestId": "f709947c-5d61-456b-b149-ef5b7f71f1b2",
+              "X-ClientService-ClientTag": "s.s.$batch",
+              "Accept": "application/json"
+            },
+            "body": "--batch_492ea379-6020-4490-9281-26d9508eade8\nContent-Type: application/http\nContent-Transfer-Encoding: binary\n\nGET https://tenant.test/sites/standalone/_api/web HTTP/1.1\naccept: application/json\ncontent-type: application/json;charset=utf-8\n\n--batch_492ea379-6020-4490-9281-26d9508eade8--\n"
+          }
+        ],
+        "result": {
+          "Title": "Standalone web"
+        }
+      }
+    }
+  ],
+  "warnings": [],
+  "failures": []
+}

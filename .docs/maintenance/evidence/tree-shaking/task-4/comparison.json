@@ -1,0 +1,705 @@
+{
+  "complete": true,
+  "baselineOrigin": {
+    "node": "v22.20.0",
+    "npm": "11.19.1",
+    "versions": {
+      "typescript": "5.3.3",
+      "webpack": "5.95.0",
+      "react": "17.0.1",
+      "react-dom": "17.0.1",
+      "@pnp/sp": "4.17.0",
+      "@pnp/core": "4.17.0",
+      "@pnp/queryable": "4.17.0",
+      "@griffel/core": "1.19.2",
+      "@griffel/react": "1.5.30",
+      "@fluentui/react-theme": "9.2.0",
+      "@fluentui/react-utilities": "9.25.1",
+      "@fluentui/react-shared-contexts": "9.25.2",
+      "@microsoft/sp-core-library": "1.21.1"
+    },
+    "rootLockfileSha256": "56b44d939cac13a5b31cf9d81474bbc3c6b714da9b4438f4c7ffb7c509ed9dbf",
+    "consumerLockfileSha256": "b31ac514caf0da32a87ce734071a00aaeb78da2159aaef90971c3ee1a5132926",
+    "tarballSha256": "ac1b3aaf1a7f806787188c9157c3a7034632d4b19b28db6a3d0a20f170c7f8a6",
+    "toolkitDir": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@apvee/spfx-react-toolkit",
+    "consumerRoot": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer",
+    "loaderSha256": "5d2e745458f7c15032e9ddee8529e4765f4101891bec956aec2e3667bc84500e",
+    "minifierVersion": "5.44.0",
+    "zlibVersion": "1.3.1-470d3a2",
+    "compression": {
+      "gzipLevel": 9,
+      "brotliQuality": 11
+    }
+  },
+  "candidateOrigin": {
+    "node": "v22.20.0",
+    "npm": "11.19.1",
+    "versions": {
+      "typescript": "5.3.3",
+      "webpack": "5.95.0",
+      "react": "17.0.1",
+      "react-dom": "17.0.1",
+      "@pnp/sp": "4.17.0",
+      "@pnp/core": "4.17.0",
+      "@pnp/queryable": "4.17.0",
+      "@griffel/core": "1.19.2",
+      "@griffel/react": "1.5.30",
+      "@fluentui/react-theme": "9.2.0",
+      "@fluentui/react-utilities": "9.25.1",
+      "@fluentui/react-shared-contexts": "9.25.2",
+      "@microsoft/sp-core-library": "1.21.1"
+    },
+    "rootLockfileSha256": "56b44d939cac13a5b31cf9d81474bbc3c6b714da9b4438f4c7ffb7c509ed9dbf",
+    "consumerLockfileSha256": "38d25e82a83a9027fb39463c4e05036c3f895e7d14daf4da5a70e86ebda97c05",
+    "tarballSha256": "5f6dfb24dc7371971850f01c8bc4a19b338c8ad9faf204a9df16fa59db61a298",
+    "toolkitDir": "/private/tmp/task4-candidate-chNE9n/node_modules/@apvee/spfx-react-toolkit",
+    "consumerRoot": "/private/tmp/task4-candidate-chNE9n",
+    "loaderSha256": "5d2e745458f7c15032e9ddee8529e4765f4101891bec956aec2e3667bc84500e",
+    "minifierVersion": "5.44.0",
+    "zlibVersion": "1.3.1-470d3a2",
+    "compression": {
+      "gzipLevel": 9,
+      "brotliQuality": 11
+    }
+  },
+  "contractSha256": "d50ab6183f7ddc93eb062dfc84b53195f99218c597c021d0aab8781de08122ce",
+  "sameContract": true,
+  "fixtures": [
+    {
+      "id": "helper/root",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 40908,
+        "gzip": 13321,
+        "brotli": 11762
+      },
+      "after": {
+        "raw": 503,
+        "gzip": 324,
+        "brotli": 275
+      },
+      "retainedModulesBefore": 182,
+      "retainedModulesAfter": 5
+    },
+    {
+      "id": "helper/domain",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 2921,
+        "gzip": 766,
+        "brotli": 633
+      },
+      "after": {
+        "raw": 503,
+        "gzip": 324,
+        "brotli": 275
+      },
+      "retainedModulesBefore": 61,
+      "retainedModulesAfter": 5
+    },
+    {
+      "id": "helper/leaf",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 503,
+        "gzip": 324,
+        "brotli": 275
+      },
+      "after": {
+        "raw": 503,
+        "gzip": 324,
+        "brotli": 275
+      },
+      "retainedModulesBefore": 5,
+      "retainedModulesAfter": 5
+    },
+    {
+      "id": "stable-callback/root",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 41195,
+        "gzip": 13459,
+        "brotli": 11888
+      },
+      "after": {
+        "raw": 805,
+        "gzip": 473,
+        "brotli": 389
+      },
+      "retainedModulesBefore": 185,
+      "retainedModulesAfter": 9
+    },
+    {
+      "id": "stable-callback/domain",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 38603,
+        "gzip": 12961,
+        "brotli": 11512
+      },
+      "after": {
+        "raw": 805,
+        "gzip": 473,
+        "brotli": 389
+      },
+      "retainedModulesBefore": 123,
+      "retainedModulesAfter": 9
+    },
+    {
+      "id": "stable-callback/leaf",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 805,
+        "gzip": 473,
+        "brotli": 389
+      },
+      "after": {
+        "raw": 805,
+        "gzip": 473,
+        "brotli": 389
+      },
+      "retainedModulesBefore": 9,
+      "retainedModulesAfter": 9
+    },
+    {
+      "id": "stable-callback/probe",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 805,
+        "gzip": 473,
+        "brotli": 389
+      },
+      "after": {
+        "raw": 805,
+        "gzip": 473,
+        "brotli": 389
+      },
+      "retainedModulesBefore": 9,
+      "retainedModulesAfter": 9
+    },
+    {
+      "id": "provider/root",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 45295,
+        "gzip": 14732,
+        "brotli": 13028
+      },
+      "after": {
+        "raw": 4944,
+        "gzip": 1819,
+        "brotli": 1609
+      },
+      "retainedModulesBefore": 183,
+      "retainedModulesAfter": 13
+    },
+    {
+      "id": "provider/domain",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 42743,
+        "gzip": 14229,
+        "brotli": 12644
+      },
+      "after": {
+        "raw": 4944,
+        "gzip": 1819,
+        "brotli": 1609
+      },
+      "retainedModulesBefore": 129,
+      "retainedModulesAfter": 13
+    },
+    {
+      "id": "provider/leaf",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 4944,
+        "gzip": 1819,
+        "brotli": 1609
+      },
+      "after": {
+        "raw": 4944,
+        "gzip": 1819,
+        "brotli": 1609
+      },
+      "retainedModulesBefore": 14,
+      "retainedModulesAfter": 13
+    },
+    {
+      "id": "sx-width-only/root",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 41015,
+        "gzip": 13376,
+        "brotli": 11817
+      },
+      "after": {
+        "raw": 619,
+        "gzip": 380,
+        "brotli": 318
+      },
+      "retainedModulesBefore": 181,
+      "retainedModulesAfter": 7
+    },
+    {
+      "id": "sx-width-only/domain",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 3051,
+        "gzip": 835,
+        "brotli": 684
+      },
+      "after": {
+        "raw": 619,
+        "gzip": 380,
+        "brotli": 318
+      },
+      "retainedModulesBefore": 64,
+      "retainedModulesAfter": 7
+    },
+    {
+      "id": "sx-width-only/leaf",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 619,
+        "gzip": 380,
+        "brotli": 318
+      },
+      "after": {
+        "raw": 619,
+        "gzip": 380,
+        "brotli": 318
+      },
+      "retainedModulesBefore": 7,
+      "retainedModulesAfter": 7
+    },
+    {
+      "id": "pnp-context/root",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 45786,
+        "gzip": 14980,
+        "brotli": 13267
+      },
+      "after": {
+        "raw": 27586,
+        "gzip": 9529,
+        "brotli": 8570
+      },
+      "retainedModulesBefore": 183,
+      "retainedModulesAfter": 37
+    },
+    {
+      "id": "pnp-context/domain",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 43050,
+        "gzip": 14439,
+        "brotli": 12851
+      },
+      "after": {
+        "raw": 27586,
+        "gzip": 9529,
+        "brotli": 8570
+      },
+      "retainedModulesBefore": 63,
+      "retainedModulesAfter": 37
+    },
+    {
+      "id": "pnp-context/leaf",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 27586,
+        "gzip": 9529,
+        "brotli": 8570
+      },
+      "after": {
+        "raw": 27586,
+        "gzip": 9529,
+        "brotli": 8570
+      },
+      "retainedModulesBefore": 37,
+      "retainedModulesAfter": 37
+    },
+    {
+      "id": "pnp-list/root",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 45348,
+        "gzip": 14906,
+        "brotli": 13184
+      },
+      "after": {
+        "raw": 36236,
+        "gzip": 12081,
+        "brotli": 10838
+      },
+      "retainedModulesBefore": 181,
+      "retainedModulesAfter": 43
+    },
+    {
+      "id": "pnp-list/domain",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 42596,
+        "gzip": 14351,
+        "brotli": 12762
+      },
+      "after": {
+        "raw": 36236,
+        "gzip": 12081,
+        "brotli": 10838
+      },
+      "retainedModulesBefore": 61,
+      "retainedModulesAfter": 43
+    },
+    {
+      "id": "pnp-list/leaf",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 36236,
+        "gzip": 12081,
+        "brotli": 10838
+      },
+      "after": {
+        "raw": 36236,
+        "gzip": 12081,
+        "brotli": 10838
+      },
+      "retainedModulesBefore": 43,
+      "retainedModulesAfter": 43
+    },
+    {
+      "id": "pnp-search/root",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 42402,
+        "gzip": 13867,
+        "brotli": 12276
+      },
+      "after": {
+        "raw": 22134,
+        "gzip": 7552,
+        "brotli": 6724
+      },
+      "retainedModulesBefore": 181,
+      "retainedModulesAfter": 26
+    },
+    {
+      "id": "pnp-search/domain",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 39650,
+        "gzip": 13321,
+        "brotli": 11866
+      },
+      "after": {
+        "raw": 22134,
+        "gzip": 7552,
+        "brotli": 6724
+      },
+      "retainedModulesBefore": 61,
+      "retainedModulesAfter": 26
+    },
+    {
+      "id": "pnp-search/leaf",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 22134,
+        "gzip": 7552,
+        "brotli": 6724
+      },
+      "after": {
+        "raw": 22134,
+        "gzip": 7552,
+        "brotli": 6724
+      },
+      "retainedModulesBefore": 26,
+      "retainedModulesAfter": 26
+    },
+    {
+      "id": "pnp-batch/root",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 40935,
+        "gzip": 13330,
+        "brotli": 11783
+      },
+      "after": {
+        "raw": 21544,
+        "gzip": 7426,
+        "brotli": 6684
+      },
+      "retainedModulesBefore": 181,
+      "retainedModulesAfter": 26
+    },
+    {
+      "id": "pnp-batch/domain",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 38183,
+        "gzip": 12800,
+        "brotli": 11382
+      },
+      "after": {
+        "raw": 21544,
+        "gzip": 7426,
+        "brotli": 6684
+      },
+      "retainedModulesBefore": 61,
+      "retainedModulesAfter": 26
+    },
+    {
+      "id": "pnp-batch/leaf",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 21544,
+        "gzip": 7426,
+        "brotli": 6684
+      },
+      "after": {
+        "raw": 21544,
+        "gzip": 7426,
+        "brotli": 6684
+      },
+      "retainedModulesBefore": 26,
+      "retainedModulesAfter": 26
+    },
+    {
+      "id": "sx-minimum/root",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 72289,
+        "gzip": 24087,
+        "brotli": 21390
+      },
+      "after": {
+        "raw": 34220,
+        "gzip": 11747,
+        "brotli": 10552
+      },
+      "retainedModulesBefore": 233,
+      "retainedModulesAfter": 68
+    },
+    {
+      "id": "sx-minimum/domain",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 34272,
+        "gzip": 11804,
+        "brotli": 10610
+      },
+      "after": {
+        "raw": 34220,
+        "gzip": 11747,
+        "brotli": 10552
+      },
+      "retainedModulesBefore": 116,
+      "retainedModulesAfter": 68
+    },
+    {
+      "id": "sx-minimum/leaf",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 34220,
+        "gzip": 11747,
+        "brotli": 10552
+      },
+      "after": {
+        "raw": 34220,
+        "gzip": 11747,
+        "brotli": 10552
+      },
+      "retainedModulesBefore": 115,
+      "retainedModulesAfter": 68
+    },
+    {
+      "id": "sx-minimum/probe",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 34220,
+        "gzip": 11747,
+        "brotli": 10552
+      },
+      "after": {
+        "raw": 34220,
+        "gzip": 11747,
+        "brotli": 10552
+      },
+      "retainedModulesBefore": 116,
+      "retainedModulesAfter": 68
+    },
+    {
+      "id": "empty/control",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 412,
+        "gzip": 267,
+        "brotli": 227
+      },
+      "after": {
+        "raw": 412,
+        "gzip": 267,
+        "brotli": 227
+      },
+      "retainedModulesBefore": 4,
+      "retainedModulesAfter": 4
+    },
+    {
+      "id": "type-only/control",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 412,
+        "gzip": 267,
+        "brotli": 227
+      },
+      "after": {
+        "raw": 412,
+        "gzip": 267,
+        "brotli": 227
+      },
+      "retainedModulesBefore": 4,
+      "retainedModulesAfter": 4
+    },
+    {
+      "id": "griffel-direct/control",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 28184,
+        "gzip": 10015,
+        "brotli": 9090
+      },
+      "after": {
+        "raw": 28184,
+        "gzip": 10015,
+        "brotli": 9090
+      },
+      "retainedModulesBefore": 61,
+      "retainedModulesAfter": 61
+    },
+    {
+      "id": "already-fluent/control",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 71707,
+        "gzip": 23403,
+        "brotli": 19850
+      },
+      "after": {
+        "raw": 71707,
+        "gzip": 23401,
+        "brotli": 19837
+      },
+      "retainedModulesBefore": 174,
+      "retainedModulesAfter": 127
+    },
+    {
+      "id": "already-fluent-direct/control",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 66421,
+        "gzip": 22007,
+        "brotli": 18689
+      },
+      "after": {
+        "raw": 66421,
+        "gzip": 22005,
+        "brotli": 18668
+      },
+      "retainedModulesBefore": 121,
+      "retainedModulesAfter": 121
+    },
+    {
+      "id": "dynamic-styles/control",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 102254,
+        "gzip": 27450,
+        "brotli": 24208
+      },
+      "after": {
+        "raw": 64080,
+        "gzip": 15356,
+        "brotli": 13352
+      },
+      "retainedModulesBefore": 233,
+      "retainedModulesAfter": 71
+    },
+    {
+      "id": "lazy-styles/control",
+      "sameFixture": true,
+      "sameConfig": true,
+      "before": {
+        "raw": 264617,
+        "gzip": 67980,
+        "brotli": 56566
+      },
+      "after": {
+        "raw": 264621,
+        "gzip": 67980,
+        "brotli": 56641
+      },
+      "retainedModulesBefore": 283,
+      "retainedModulesAfter": 283
+    }
+  ],
+  "remainingAudits": [
+    {
+      "candidate": "sx-minimum/leaf",
+      "reference": "griffel-direct/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0,
+      "increaseBytes": 1732,
+      "passed": false
+    },
+    {
+      "candidate": "already-fluent/control",
+      "reference": "already-fluent-direct/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0,
+      "increaseBytes": 1396,
+      "passed": false
+    }
+  ],
+  "warnings": [
+    {
+      "id": "lazy-styles/control",
+      "message": "asset size limit: The following asset(s) exceed the recommended size limit (244 KiB).\nThis can impact web performance.\nAssets: \n  370.b0d297fea1dcbcf65a35.js (255 KiB)"
+    }
+  ]
+}

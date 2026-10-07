@@ -1,0 +1,37 @@
+{
+  "reason": "Add explicit report lifecycle completion metadata. All saved audit runs completed; pre-change enforce probe aborted on a missing domain. Existing fixture/asset facts are unchanged.",
+  "changes": [
+    {
+      "label": "initial",
+      "complete": true,
+      "passed": null,
+      "metadataOnly": true,
+      "beforeSha256": "1e9429ae713281f66048c04f0990bfc395edd33e777694ffd50f35b64c471df5",
+      "afterSha256": "e4260dc12e2a763859a5830c691c31cc0a82d6de6fbb8172df05a2bc1392ec92"
+    },
+    {
+      "label": "initial-replay",
+      "complete": true,
+      "passed": null,
+      "metadataOnly": true,
+      "beforeSha256": "66702df9dbd249995279b07d695f402c57c6f27f3cec244c35dc1ae54a86d5bf",
+      "afterSha256": "1ebb319d9ab805f9d089f6d02e932a8783ca55b6c9b5a83c1921fc6f19657130"
+    },
+    {
+      "label": "initial-relocated",
+      "complete": true,
+      "passed": null,
+      "metadataOnly": true,
+      "beforeSha256": "bcb6f8260306a250a0becf2f91a7b66c7c435b762f920ec5a2356d6ae92a05eb",
+      "afterSha256": "021855c5b2f3514b48a8406af43b516892478ae4c978044484d01cbf1af989fc"
+    },
+    {
+      "label": "enforce-prechange-probe",
+      "complete": false,
+      "passed": false,
+      "metadataOnly": true,
+      "beforeSha256": "d30b4ac6e3f9ef866d7f462a323d3b2e2660a697a4c9e6cda7552fc46a042826",
+      "afterSha256": "b57352e8c2630e6a15cd979dfdf3e66a8b47b1644196493094a8c14eb3f19f8c"
+    }
+  ]
+}

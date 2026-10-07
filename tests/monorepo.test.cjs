@@ -4,6 +4,16 @@ const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
 const root = path.resolve(__dirname, '..');
+const importsPanel = path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/ImportsPanel.tsx');
+const importsPanelSpecifiers = new Set([
+  '@apvee/spfx-react-toolkit/hooks',
+  '@apvee/spfx-react-toolkit/styles',
+  '@apvee/spfx-react-toolkit/lib/hooks/useStableCallback',
+  '@apvee/spfx-react-toolkit/lib/hooks/useSx',
+  '@apvee/spfx-react-toolkit/lib/helpers/styles/width',
+  '@apvee/spfx-react-toolkit/lib/helpers/styles/typography',
+  '@apvee/spfx-react-toolkit/lib/helpers/styles/padding-inline-start',
+]);
 test('library and SPFx app have independent package boundaries', () => {
   const workspace = require('../package.json');
   assert.equal(workspace.private, true);
@@ -21,8 +31,9 @@ test('library and SPFx app have independent package boundaries', () => {
     const imports = source.statements.filter(statement => ts.isImportDeclaration(statement) || ts.isExportDeclaration(statement))
       .map(statement => statement.moduleSpecifier?.text).filter(Boolean);
     for (const specifier of imports) {
-      if (specifier.startsWith(library.name)) assert.equal(specifier, library.name, `${f}: app must consume the public root entry`);
-      assert.ok(!specifier.includes('packages/') && !specifier.includes('/lib/'), `${f}: accidental internal import ${specifier}`);
+      const approvedImportsScenario = f === importsPanel && importsPanelSpecifiers.has(specifier);
+      if (specifier.startsWith(library.name)) assert.ok(specifier === library.name || approvedImportsScenario, `${f}: app must consume the public root entry or an exact Imports scenario alias`);
+      assert.ok(!specifier.includes('packages/') && (!specifier.includes('/lib/') || approvedImportsScenario), `${f}: accidental internal import ${specifier}`);
       if (specifier.startsWith('.')) assert.ok(path.resolve(path.dirname(f),specifier).startsWith(path.join(root,'apps/spfx-react-toolkit-test/src') + path.sep), `${f}: import escapes app source`);
     }
   }

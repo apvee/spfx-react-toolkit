@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "toolkit": "/private/tmp/task4-candidate-chNE9n/node_modules/@apvee/spfx-react-toolkit",
+  "manifestMatchesRepository": true,
+  "shared": [
+    {
+      "name": "react",
+      "version": "17.0.1",
+      "path": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/react/package.json"
+    },
+    {
+      "name": "react-dom",
+      "version": "17.0.1",
+      "path": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/react-dom/package.json"
+    },
+    {
+      "name": "@pnp/sp",
+      "version": "4.17.0",
+      "path": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@pnp/sp/package.json"
+    },
+    {
+      "name": "@pnp/core",
+      "version": "4.17.0",
+      "path": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@pnp/core/package.json"
+    },
+    {
+      "name": "@pnp/queryable",
+      "version": "4.17.0",
+      "path": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@pnp/queryable/package.json"
+    },
+    {
+      "name": "@griffel/core",
+      "version": "1.19.2",
+      "path": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@griffel/core/package.json"
+    },
+    {
+      "name": "@griffel/react",
+      "version": "1.5.30",
+      "path": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@griffel/react/package.json"
+    },
+    {
+      "name": "@fluentui/react-theme",
+      "version": "9.2.0",
+      "path": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@fluentui/react-theme/package.json"
+    },
+    {
+      "name": "@fluentui/react-utilities",
+      "version": "9.25.1",
+      "path": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@fluentui/react-utilities/package.json"
+    },
+    {
+      "name": "@fluentui/react-shared-contexts",
+      "version": "9.25.2",
+      "path": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@fluentui/react-shared-contexts/package.json"
+    },
+    {
+      "name": "@microsoft/sp-core-library",
+      "version": "1.21.1",
+      "path": "/private/var/folders/fs/zs5145z97n5c6znzgrtd48fc0000gn/T/spfx-tarball-consumer-1qRwii/consumer/node_modules/@microsoft/sp-core-library/package.json"
+    }
+  ]
+}
