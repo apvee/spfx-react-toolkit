@@ -1,4 +1,5 @@
 import type { PageContext } from '@microsoft/sp-page-context';
+import { resolveSPFxIanaTimeZone } from './spfx-time-zone.internal';
 
 type SPFxGroupInfoResult = {
   readonly id: string;
@@ -137,14 +138,28 @@ export function getSPFxListInfo(pageContext: PageContext): {
 
 /**
  * Maps SPFx PageContext culture and regional data to the toolkit locale info shape.
+ * The original timeZone object is preserved. The optional IANA value is the
+ * audited CLDR territory001 representative for timeZone.id, not a physical city,
+ * user profile zone or guarantee of customized SharePoint Server rules.
+ * Unknown or unverified IDs return undefined without a browser/offset fallback.
  *
  * @param pageContext - SPFx page context
- * @returns Locale and regional information
+ * @returns Locale, regional metadata and an optional representative IANA time zone
+ * @example
+ * ```ts
+ * const { uiLocale, ianaTimeZone } = getSPFxLocaleInfo(pageContext);
+ * if (ianaTimeZone !== undefined) {
+ *   const formatter = new Intl.DateTimeFormat(uiLocale, { timeZone: ianaTimeZone });
+ *   const siteDate = formatter.format(new Date());
+ * }
+ * ```
  */
 export function getSPFxLocaleInfo(pageContext: PageContext): {
   readonly locale: string;
   readonly uiLocale: string;
   readonly timeZone: SPFxTimeZoneResult | undefined;
+  /** Audited standard-group IANA representative; undefined for unresolved IDs. */
+  readonly ianaTimeZone?: string;
   readonly isRtl: boolean;
 } {
   const cultureInfo = pageContext.cultureInfo;
@@ -154,6 +169,7 @@ export function getSPFxLocaleInfo(pageContext: PageContext): {
     locale: cultureInfo.currentCultureName,
     uiLocale: cultureInfo.currentUICultureName,
     timeZone,
+    ianaTimeZone: resolveSPFxIanaTimeZone(timeZone?.id),
     isRtl: cultureInfo.isRightToLeft,
   };
 }

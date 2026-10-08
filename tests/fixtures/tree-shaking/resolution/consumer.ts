@@ -60,3 +60,16 @@ export const textComponents: [typeof rootText, typeof rootText] = [domainText, c
 export const textProps: FormattedTextProps = { as: 'span', maxLines: 2, variant: 'title2' };
 // @ts-expect-error There is no separate inline mode.
 export const removedInline: FormattedTextProps = { inline: true };
+
+import { RelativeTime as rootRelative } from '@apvee/spfx-react-toolkit';
+import { RelativeTime as domainRelative } from '@apvee/spfx-react-toolkit/controls';
+import { RelativeTime as controlRelative } from '@apvee/spfx-react-toolkit/controls/relative-time';
+import type { RelativeTimeProps } from '@apvee/spfx-react-toolkit/controls/relative-time';
+import type { SPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
+export const relativeComponents: [typeof rootRelative, typeof rootRelative] = [domainRelative, controlRelative];
+export const relativeProps: RelativeTimeProps = { dateTime: 0, referenceTime: 60000, locale: 'en' };
+export function mappedZone(info: SPFxLocaleInfo): string | undefined { return info.ianaTimeZone; }
+// @ts-expect-error The derived IANA field is readonly.
+export function readonlyZone(info: SPFxLocaleInfo): void { info.ianaTimeZone = 'UTC'; }
+// @ts-expect-error Private lookup has no clean alias.
+import {} from '@apvee/spfx-react-toolkit/helpers/spfx-time-zone.internal';

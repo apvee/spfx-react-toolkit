@@ -17,6 +17,9 @@ for (const [name, snapshot] of Object.entries(baseline)) {
   });
 }
 assertCompatibleDeclaration('index.d.ts', fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib/index.d.ts'), 'utf8'), baseline['index.d.ts'].declaration, { requireControlsAdditions: true });
+for (const name of ['hooks/useSPFxLocaleInfo.d.ts', 'helpers/spfx-page-context.helpers.d.ts']) {
+  assertCompatibleDeclaration(name, fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib', name), 'utf8'), baseline[name].declaration, { requireIanaAdditions: true });
+}
 const manifest = require('../packages/spfx-react-toolkit/package.json');
 const originalPackage = require('../tests/fixtures/package-baseline.json');
 assertCompatiblePackageContract(manifest, originalPackage);

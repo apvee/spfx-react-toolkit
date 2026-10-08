@@ -49,6 +49,15 @@
     ],
     "fluent-link": [
       "^@fluentui/react-link/"
+    ],
+    "relative-time": [
+      "^@apvee/spfx-react-toolkit/lib/controls/relative-time/"
+    ],
+    "iana-lookup": [
+      "^@apvee/spfx-react-toolkit/lib/helpers/spfx-time-zone\\.internal\\.js$"
+    ],
+    "fluent-tooltip": [
+      "^@fluentui/react-tooltip/"
     ]
   },
   "fixtures": [
@@ -79,7 +88,9 @@
         "fluent-style",
         "style-descriptors",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": []
     },
@@ -115,7 +126,9 @@
         "theme-conversion",
         "style-descriptors",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": []
     },
@@ -146,7 +159,9 @@
         "pnp",
         "styles-engine",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": []
     },
@@ -183,7 +198,9 @@
         "griffel",
         "typography",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -223,7 +240,9 @@
         "list-registration",
         "search-registration",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -252,7 +271,9 @@
       "forbiddenModuleGroups": [
         "search-registration",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -284,7 +305,9 @@
         "list-registration",
         "batch-registration",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -315,7 +338,9 @@
         "list-registration",
         "search-registration",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -355,7 +380,9 @@
         "pnp",
         "provider",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -390,7 +417,9 @@
       "forbiddenModuleGroups": [
         "pnp",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": []
     },
@@ -407,7 +436,9 @@
       "forbiddenModuleGroups": [
         "pnp",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": []
     },
@@ -422,7 +453,9 @@
       "forbiddenModuleGroups": [
         "pnp",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": []
     },
@@ -440,7 +473,9 @@
       "forbiddenModuleGroups": [
         "pnp",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -475,7 +510,9 @@
       "forbiddenModuleGroups": [
         "pnp",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": []
     },
@@ -492,7 +529,9 @@
       "forbiddenModuleGroups": [
         "pnp",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -510,7 +549,9 @@
       },
       "forbiddenModuleGroups": [
         "formatted-text",
-        "markdown"
+        "markdown",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -540,7 +581,9 @@
         "pnp",
         "spfx-runtime",
         "provider",
-        "theme-conversion"
+        "theme-conversion",
+        "relative-time",
+        "iana-lookup"
       ],
       "requiredModuleGroups": [
         "formatted-text",
@@ -549,6 +592,105 @@
         "styles-engine",
         "typography"
       ]
+    },
+    {
+      "id": "relative-time",
+      "template": "relative-time.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/relative-time"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "markdown",
+        "formatted-text",
+        "iana-lookup",
+        "styles-engine"
+      ],
+      "requiredModuleGroups": [
+        "relative-time",
+        "fluent-tooltip"
+      ]
+    },
+    {
+      "id": "locale-info",
+      "template": "locale-info.ts",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/helpers"
+          }
+        },
+        "leaf": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/lib/helpers/spfx-page-context.helpers"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "markdown",
+        "formatted-text",
+        "relative-time",
+        "styles-engine"
+      ],
+      "requiredModuleGroups": [
+        "iana-lookup"
+      ]
+    },
+    {
+      "id": "page-context",
+      "template": "page-context.ts",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/helpers"
+          }
+        },
+        "leaf": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/lib/helpers/spfx-page-context.helpers"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "markdown",
+        "formatted-text",
+        "relative-time",
+        "iana-lookup",
+        "styles-engine"
+      ],
+      "requiredModuleGroups": []
     }
   ],
   "comparisons": [

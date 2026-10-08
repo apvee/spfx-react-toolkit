@@ -74,23 +74,52 @@ interface SPFxLocaleInfo {
   readonly locale: string;
   readonly uiLocale: string;
   readonly timeZone: SPFxTimeZone | undefined;
+  readonly ianaTimeZone?: string;
   readonly isRtl: boolean;
 }
 ```
 
-Maps SPFx culture information and optional `web.timeZoneInfo` preview metadata. The numeric timezone offsets do not supply an IANA timezone identifier; Intl formatting without an explicit `timeZone` uses the browser's timezone.
+### Locale result members
+
+| Member | Meaning |
+| --- | --- |
+| `SPFxLocaleInfo.locale` | Content culture |
+| `SPFxLocaleInfo.uiLocale` | User interface language |
+| `SPFxLocaleInfo.timeZone` | Original optional SharePoint preview metadata |
+| `SPFxLocaleInfo.ianaTimeZone` | Audited optional standard-group IANA representative |
+| `SPFxLocaleInfo.isRtl` | Culture writing direction |
+| `SPFxTimeZone.id` | SharePoint numeric time-zone identifier |
+| `SPFxTimeZone.offset` | SharePoint UTC bias in minutes |
+| `SPFxTimeZone.description` | SharePoint description, not a mapping key |
+| `SPFxTimeZone.daylightOffset` | Additional daylight-time bias in minutes |
+| `SPFxTimeZone.standardOffset` | Additional standard-time bias in minutes |
+
+Maps SPFx culture information and optional `web.timeZoneInfo` preview metadata. `SPFxLocaleInfo.ianaTimeZone` is an optional representative IANA identifier derived only from `timeZone.id`. The original `timeZone` object is preserved by reference, without cloning or mutation. A changed ID on the same metadata object is observed on the next render.
+
+The static mapping uses verified SharePoint standard groups and CLDR territory `001`, with no network requests, locale/offset/description inference or runtime Windows conversion. Unknown, absent, invalid or excluded IDs return undefined. It does not locate a user's city or guarantee all historical/custom rules. SharePoint Server `TIMEZONE.XML` can be customized; this standard mapping cannot verify those installations. Coverage and immutable provenance are documented in the [helper guide](../helpers/INDEX.md#getspfxlocaleinfo).
+
+Passing undefined as Intl/RelativeTime timeZone uses the runtime zone, not a resolved site zone. Locale `it-IT` does not imply Rome; group 4 maps to `Europe/Berlin`.
 
 ```tsx
 import * as React from 'react';
-import { useSPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
+import { RelativeTime, useSPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
 
 function LocalizedDate({ date }: { date: Date }) {
-  const { locale, isRtl } = useSPFxLocaleInfo();
+  const { locale, isRtl, ianaTimeZone } = useSPFxLocaleInfo();
+  if (!ianaTimeZone) return <span>Site time zone unavailable</span>;
   return <time dir={isRtl ? 'rtl' : 'ltr'} dateTime={date.toISOString()}>
-    {new Intl.DateTimeFormat(locale, { dateStyle: 'full' }).format(date)}
+    {new Intl.DateTimeFormat(locale, { dateStyle: 'full', timeZone: ianaTimeZone }).format(date)}
   </time>;
 }
 ```
+
+```tsx
+const { uiLocale, ianaTimeZone } = useSPFxLocaleInfo();
+// Explicit runtime-zone fallback when mapping is unavailable:
+<RelativeTime dateTime={modified} locale={uiLocale} timeZone={ianaTimeZone} />
+```
+
+See [RelativeTime](../controls/relative-time.md) for clock and accessibility behavior.
 
 [View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts)
 

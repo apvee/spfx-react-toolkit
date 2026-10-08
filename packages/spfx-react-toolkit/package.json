@@ -148,6 +148,10 @@
       "types": "./lib/controls/formatted-text/index.d.ts",
       "default": "./lib/controls/formatted-text/index.js"
     },
+    "./controls/relative-time": {
+      "types": "./lib/controls/relative-time/index.d.ts",
+      "default": "./lib/controls/relative-time/index.js"
+    },
     "./LICENSE": "./LICENSE",
     "./README.md": "./README.md",
     "./lib/core/context.internal.d.ts": "./lib/core/context.internal.d.ts",
@@ -1847,6 +1851,9 @@
       ],
       "controls/formatted-text": [
         "lib/controls/formatted-text/index.d.ts"
+      ],
+      "controls/relative-time": [
+        "lib/controls/relative-time/index.d.ts"
       ]
     }
   },

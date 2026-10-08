@@ -649,3 +649,18 @@ test('control dependencies are exact additions rather than unrestricted peer/run
     assert.throws(() => assertCompatiblePackageContract(changed, original));
   }
 });
+
+for (const name of ['hooks/useSPFxLocaleInfo.d.ts', 'helpers/spfx-page-context.helpers.d.ts']) {
+  test(`permits only the exact optional readonly IANA field in ${name}`, () => {
+    const original = baseline[name].declaration;
+    const anchor = name.startsWith('hooks') ? 'export interface SPFxLocaleInfo {' : 'export declare function getSPFxLocaleInfo(pageContext: PageContext): {';
+    assert.ok(original.includes(anchor));
+    const current = original.replace(anchor, anchor + '\n readonly ianaTimeZone?: string;');
+    assert.doesNotThrow(() => assertCompatibleDeclaration(name, current, original));
+    for (const field of ['ianaTimeZone?: string;', 'readonly ianaTimeZone: string;', 'readonly ianaTimeZone?: any;', 'readonly ianaTimeZone?: number;']) {
+      assert.throws(() => assertCompatibleDeclaration(name, original.replace(anchor, anchor + '\n ' + field), original));
+    }
+    assert.throws(() => assertCompatibleDeclaration(name, current.replace('ianaTimeZone?: string;', 'ianaTimeZone?: string;\n readonly ianaTimeZone?: string;'), original));
+    assert.throws(() => assertCompatibleDeclaration(name, original, original, { requireIanaAdditions: true }), /Missing approved IANA/);
+  });
+}

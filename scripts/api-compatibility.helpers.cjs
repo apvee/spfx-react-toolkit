@@ -26,6 +26,8 @@ const parameterSource = parseDeclaration('declare function approved(listTarget: 
 const printNode = (node, source) => printer.printNode(ts.EmitHint.Unspecified, node, source);
 const approvedSelector = printNode(selectorSource.statements[0], selectorSource);
 const approvedParameter = printNode(parameterSource.statements[0].parameters[0], parameterSource);
+const ianaSource = parseDeclaration('interface Approved { readonly ianaTimeZone?: string; }');
+const approvedIanaProperty = printNode(ianaSource.statements[0].members[0], ianaSource);
 
 function isPlainExportAll(statement, modulePath) {
   return ts.isExportDeclaration(statement) &&
@@ -48,6 +50,15 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   let factoryCount = 0;
   let websRegistrationCount = 0;
   const historicalStatements = [];
+  let ianaCount = 0;
+  const isLocaleHook = moduleName === 'hooks/useSPFxLocaleInfo.d.ts';
+  const isLocaleHelper = moduleName === 'helpers/spfx-page-context.helpers.d.ts';
+  function historicalMembers(members) {
+    return members.filter(member => {
+      if (printNode(member, current) !== approvedIanaProperty) return true;
+      ianaCount++; return false;
+    });
+  }
   for (const statement of current.statements) {
     const exportPath = [...exportCounts.keys()].find(modulePath => isPlainExportAll(statement, modulePath));
     if (exportPath) {
@@ -79,7 +90,13 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
         continue;
       }
     }
-    historicalStatements.push(statement);
+    if (isLocaleHook && ts.isInterfaceDeclaration(statement) && statement.name.text === 'SPFxLocaleInfo') {
+      historicalStatements.push(ts.factory.updateInterfaceDeclaration(statement, statement.modifiers, statement.name,
+        statement.typeParameters, statement.heritageClauses, historicalMembers(statement.members)));
+    } else if (isLocaleHelper && ts.isFunctionDeclaration(statement) && statement.name?.text === 'getSPFxLocaleInfo' && ts.isTypeLiteralNode(statement.type)) {
+      historicalStatements.push(ts.factory.updateFunctionDeclaration(statement, statement.modifiers, statement.asteriskToken,
+        statement.name, statement.typeParameters, statement.parameters, ts.factory.createTypeLiteralNode(historicalMembers(statement.type.members)), statement.body));
+    } else historicalStatements.push(statement);
   }
   for (const [modulePath, count] of exportCounts) {
     assert.ok(count <= 1, `Duplicate approved export: ${moduleName}: ${modulePath}`);
@@ -107,6 +124,8 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   if (moduleName === pnpServiceModule && options.requirePnPListWebsRegistration) {
     assert.equal(websRegistrationCount, 1, 'Missing approved PnP list webs registration');
   }
+  assert.ok(ianaCount <= 1, 'Duplicate approved IANA property');
+  if (options.requireIanaAdditions && (isLocaleHook || isLocaleHelper)) assert.equal(ianaCount, 1, 'Missing approved IANA property');
   const historicalCurrent = ts.factory.updateSourceFile(current, historicalStatements);
   assert.equal(
     printer.printFile(historicalCurrent),

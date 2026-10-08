@@ -585,6 +585,60 @@ async function runFormattedText() {
   await page.setViewportSize({ width: 1210, height: 900 });
 }
 
+async function runRelativeTime() {
+  await page.goto(url);
+  await page.waitForFunction(() => !!window.sxFixture);
+  for (const theme of ['light', 'dark']) {
+    await render({ theme, dir: 'ltr' });
+    for (const locale of ['en-US', 'it-IT', 'ar-SA']) {
+      await page.locator('#rt-locale').selectOption(locale);
+      const expectedText = await page.evaluate(tag => new Intl.RelativeTimeFormat(tag, { numeric: 'always' }).format(-1, 'hour'), locale);
+      await check(`relative-time:${theme}:${locale}:label`, await page.locator('#rt-tooltip').textContent(), expectedText);
+      await check(`relative-time:${theme}:${locale}:instant`, await page.locator('#rt-tooltip').getAttribute('datetime'), '2026-01-15T12:00:00.000Z');
+      await check(`relative-time:${theme}:${locale}:no-inline`, await page.locator('#rt-tooltip').evaluate(e => e.hasAttribute('style')), false);
+    }
+    await page.locator('#rt-locale').selectOption('en-US');
+    await check(`relative-time:${theme}:calendar-month`, await page.locator('#rt-fixed').textContent(), '1 month ago');
+    await check(`relative-time:${theme}:fallback-no-root`, await page.locator('#rt-fallback time').count(), 0);
+    await check(`relative-time:${theme}:fallback`, await page.locator('#rt-fallback').textContent(), 'Date unavailable');
+    for (const property of ['color', 'fontFamily', 'fontSize', 'fontWeight', 'lineHeight']) {
+      await check(`relative-time:${theme}:inherit:${property}`, await computed('rt-inherited', property), await computed('rt-parent', property));
+    }
+    await check(`relative-time:${theme}:badge-color`, await computed('rt-badge', 'color'), await page.locator('#rt-badge').evaluate(e => getComputedStyle(e.parentElement).color));
+    const descriptions = await page.locator('#rt-tooltip').getAttribute('aria-describedby');
+    await check(`relative-time:${theme}:external-description`, descriptions.split(' ').includes('rt-description'), true);
+    await check(`relative-time:${theme}:hidden-description`, await page.locator('#rt-no-tooltip').evaluate(e => !!document.getElementById(e.getAttribute('aria-describedby'))?.hidden), true);
+    await check(`relative-time:${theme}:zone-only-label`, await page.locator('#rt-utc').textContent(), await page.locator('#rt-rome').textContent());
+    const full = async id => page.locator(`#${id}`).evaluate(e => document.getElementById(e.getAttribute('aria-describedby')).textContent);
+    await check(`relative-time:${theme}:zone-full-date-differs`, (await full('rt-utc')) !== (await full('rt-rome')), true);
+    await page.locator('#rt-tab-before').focus(); await page.keyboard.press('Tab');
+    await check(`relative-time:${theme}:keyboard-focus`, await page.evaluate(() => document.activeElement.id), 'rt-tooltip');
+    await page.locator('[role="tooltip"]').filter({ hasText: '2026' }).waitFor({ state: 'visible' });
+    await check(`relative-time:${theme}:tooltip-visible`, await page.locator('[role="tooltip"]').filter({ hasText: '2026' }).isVisible(), true);
+    await page.keyboard.press('Escape');
+    await page.locator('[role="tooltip"]').filter({ hasText: '2026' }).waitFor({ state: 'hidden' });
+    await page.keyboard.press('Tab');
+    await check(`relative-time:${theme}:no-tooltip-skips-tab`, await page.evaluate(() => document.activeElement.id), 'rt-tab-after');
+    await page.locator('#rt-tooltip').hover();
+    await page.locator('[role="tooltip"]').filter({ hasText: '2026' }).waitFor({ state: 'visible' });
+    await page.mouse.move(0, 0);
+    await page.locator('#rt-tooltip').blur();
+    await page.locator('[role="tooltip"]').filter({ hasText: '2026' }).waitFor({ state: 'hidden' });
+    await page.locator('#rt-fixture').screenshot({ path: path.join(output, `${label}-relative-time-${theme}.png`) });
+    await page.emulateMedia({ forcedColors: 'active' });
+    await check(`relative-time:${theme}:forced-inheritance`, await computed('rt-inherited', 'color'), await computed('rt-parent', 'color'));
+    await check(`relative-time:${theme}:native-forced-adjust`, await computed('rt-inherited', 'forcedColorAdjust'), 'auto');
+    await page.emulateMedia({ forcedColors: 'none' });
+  }
+  await render({ dir: 'rtl' });
+  await page.locator('#rt-locale').selectOption('ar-SA');
+  await check('relative-time:rtl-inherited', await computed('rt-tooltip', 'direction'), 'rtl');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await check('relative-time:mobile-readable', await page.locator('#rt-tooltip').isVisible(), true);
+  await page.locator('#rt-fixture').screenshot({ path: path.join(output, `${label}-relative-time-mobile.png`) });
+  await page.setViewportSize({ width: 1210, height: 900 });
+}
+
 (async () => {
   fs.mkdirSync(output, { recursive: true });
   browser = await chromium.launch({ headless: true,
@@ -599,6 +653,7 @@ async function runFormattedText() {
     await runOrder(true);
     await runCatalog();
     await runFormattedText();
+    await runRelativeTime();
     await check('console-health', consoleMessages, []);
   } catch (error) { errors.push(error.stack); }
   const report = { version, node: process.version, url, viewport: { width: 1210, height: 900 },

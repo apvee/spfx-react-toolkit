@@ -118,11 +118,28 @@ function getSPFxLocaleInfo(pageContext: PageContext): {
     readonly daylightOffset: number;
     readonly standardOffset: number;
   } | undefined;
+  readonly ianaTimeZone?: string;
   readonly isRtl: boolean;
 }
 ```
 
-Maps culture, UI culture, timezone, and right-to-left metadata from `PageContext`.
+Maps culture, UI culture, timezone, and right-to-left metadata from `PageContext`. `getSPFxLocaleInfo` returns optional readonly `ianaTimeZone` in addition to the unchanged raw `timeZone` object, preserved by reference. No parameters were added.
+
+`ianaTimeZone` is derived solely from `timeZone.id` through a private static lookup. It represents the standard numeric group using CLDR territory `001`; it does not identify a physical city, infer from culture/offset/description, or perform network calls. Group 4 is `Europe/Berlin`, 13 is `America/Los_Angeles`, and 17 is `Pacific/Auckland`. Missing, noninteger, nonfinite, unknown and excluded IDs return undefined, which means unavailable mapping rather than UTC.
+
+The audited 111-candidate inventory includes 104 verified groups; IDs 7, 16, 30, 32, 41, 81 and 92 are excluded. It is not a promise of complete current SharePoint Online coverage. SharePoint Server permits customized `TIMEZONE.XML`; standard IDs cannot prove equivalence to those rules. IANA aliases from the pinned CLDR release are retained, and consumers require suitable Intl time-zone data.
+
+The [versioned audit fixture](../../../tests/fixtures/spfx-time-zone-mapping.json) records every candidate's status/reason, source revisions, snapshot SHA-256 values and license notices. Sources are [PnP Core revision b6ff7b3](https://raw.githubusercontent.com/pnp/pnpcore/b6ff7b30dc8a1dfa8202bca50b75a08e3d3d6c43/src/sdk/PnP.Core/Model/SharePoint/Core/Internal/TimeZone.cs), [CLDR release 48 revision acd6d88](https://raw.githubusercontent.com/unicode-org/cldr/acd6d88ae493633240e19a87a721076a8a75c310/common/supplemental/windowsZones.xml), and [Microsoft numeric groups](https://learn.microsoft.com/en-us/openspecs/sharepoint_protocols/ms-wssfo2/4b41f00e-6782-40f0-9db2-172502446d4c) published 2024-01-17 and snapshotted 2026-10-08. PnP MIT and Unicode-3.0 notices accompany the fixture and derived source.
+
+```tsx
+const info = getSPFxLocaleInfo(pageContext);
+// Explicit policy: no site-zone date when the standard mapping is unavailable.
+const fullDate = info.ianaTimeZone
+  ? new Intl.DateTimeFormat(info.uiLocale, { timeZone: info.ianaTimeZone, dateStyle: 'full' }).format(modified)
+  : 'Site time zone unavailable';
+```
+
+Alternatively, passing undefined to [RelativeTime](../controls/relative-time.md) uses the runtime zone; label that fallback explicitly. The [locale hook](../hooks/environment.md#usespfxlocaleinfo) exposes the same result under an SPFx provider.
 
 ### `getSPFxEnvironmentInfo`
 

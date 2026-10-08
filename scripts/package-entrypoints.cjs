@@ -14,6 +14,7 @@ const cleanAliases = Object.freeze({
   './styles': 'lib/styles/index', './styles/useSx': 'lib/hooks/useSx',
   './hooks/useStableCallback': 'lib/hooks/useStableCallback',
   './controls': 'lib/controls/index', './controls/formatted-text': 'lib/controls/formatted-text/index',
+  './controls/relative-time': 'lib/controls/relative-time/index',
 });
 
 /** Derive explicit exports without changing the frozen historical inventory. */
@@ -71,7 +72,7 @@ function collectPublishedFiles(directory = library) {
   return files.sort();
 }
 
-function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
+function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
   const contract = createEntrypointContract({ publishedFiles, cleanAliases });
   assert.deepEqual(manifest.exports, contract.exports, 'Package exports differ from the exact additive contract');
   // Object equality alone does not check condition priority.
@@ -121,7 +122,7 @@ function verifyConsumerResolution(consumer, evidenceDirectory) {
   fs.copyFileSync(path.join(root, 'tests/fixtures/tree-shaking/resolution/consumer.ts'), fixture);
   const modes = [];
   const declarations = {};
-  const importedNames = ['rootWidth', 'helperWidth', 'width', 'directoryWidth', 'rootSx', 'useSx', 'leafSx', 'legacySx', 'rootCallback', 'useStableCallback', 'legacyCallback', 'rootText', 'domainText', 'controlText'];
+  const importedNames = ['rootWidth', 'helperWidth', 'width', 'directoryWidth', 'rootSx', 'useSx', 'leafSx', 'legacySx', 'rootCallback', 'useStableCallback', 'legacyCallback', 'rootText', 'domainText', 'controlText', 'rootRelative', 'domainRelative', 'controlRelative'];
   for (const [mode, moduleResolution, module] of [
     ['node', ts.ModuleResolutionKind.Node10, ts.ModuleKind.ESNext],
     ['bundler', ts.ModuleResolutionKind.Bundler, ts.ModuleKind.ESNext],
@@ -141,7 +142,7 @@ function verifyConsumerResolution(consumer, evidenceDirectory) {
         if (importedNames.includes(element.name.text)) symbols.set(element.name.text, checker.getAliasedSymbol(checker.getSymbolAtLocation(element.name)));
       }
     }
-    for (const group of [['rootWidth', 'helperWidth', 'width', 'directoryWidth'], ['rootSx', 'useSx', 'leafSx', 'legacySx'], ['rootCallback', 'useStableCallback', 'legacyCallback'], ['rootText', 'domainText', 'controlText']]) {
+    for (const group of [['rootWidth', 'helperWidth', 'width', 'directoryWidth'], ['rootSx', 'useSx', 'leafSx', 'legacySx'], ['rootCallback', 'useStableCallback', 'legacyCallback'], ['rootText', 'domainText', 'controlText'], ['rootRelative', 'domainRelative', 'controlRelative']]) {
       for (const name of group) assert.equal(symbols.get(name), symbols.get(group[0]), `Canonical symbol identity changed: ${name}`);
     }
     declarations[mode] = resolvedRoot.resolvedFileName;

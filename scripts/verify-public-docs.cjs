@@ -92,7 +92,8 @@ assertDocumentedSurface(read('docs/api/hooks/react.md'), sxHook);
 assertContainsAll('docs/api/hooks/INDEX.md', ['useSx', 'useStableCallback'], 'React utility hooks');
 
 const controlSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts'));
-assertDocumentedSurface(read('docs/api/controls/formatted-text.md'), controlSurface);
+assertDocumentedSurface(read('docs/api/controls/formatted-text.md') + '\n' + read('docs/api/controls/relative-time.md'), controlSurface);
+assertDocumentedSurface(read('docs/api/hooks/environment.md'), collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts')));
 assertContainsAll('docs/api/controls/INDEX.md', controlSurface.map(item => item.name), 'control exports');
 
 const hooksIndex = read('docs/api/hooks/INDEX.md');

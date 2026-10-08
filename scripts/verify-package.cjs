@@ -128,6 +128,11 @@ try {
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
   // Both the public entry points and their persistence/client dependencies must ship.
   for (const module of [
+    'controls/relative-time/index',
+    'controls/relative-time/relative-time',
+    'controls/relative-time/relative-time.types',
+    'controls/relative-time/relative-time.internal',
+    'helpers/spfx-time-zone.internal',
     'controls/index',
     'controls/formatted-text/index',
     'controls/formatted-text/formatted-text',

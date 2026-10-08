@@ -30,6 +30,7 @@
 
 | Component / types | Description | Documentation |
 | --- | --- | --- |
+| `RelativeTime`, `RelativeTimeProps` | Localized relative instants, full-date descriptions and clock modes | [RelativeTime](./api/controls/relative-time.md) |
 | `FormattedText`, `FormattedTextProps`, `FormattedTextVariant`, `FormattedTextSemanticElement` | Native text elements, typography, inline Markdown and overflow | [Controls](./api/controls/INDEX.md), [FormattedText](./api/controls/formatted-text.md) |
 
 ## Core
@@ -148,7 +149,7 @@ Detect environment and platform capabilities.
 |------|---------|-------------|
 | [`useSPFxEnvironmentInfo`](./api/hooks/environment.md#usespfxenvironmentinfo) | `SPFxEnvironmentInfo` | Environment type detection |
 | [`useSPFxTeams`](./api/hooks/environment.md#usespfxteams) | `SPFxTeamsInfo` | Microsoft Teams context |
-| [`useSPFxLocaleInfo`](./api/hooks/environment.md#usespfxlocaleinfo) | `SPFxLocaleInfo` | Locale and timezone |
+| [`useSPFxLocaleInfo`](./api/hooks/environment.md#usespfxlocaleinfo) | `SPFxLocaleInfo` | Locale, raw timezone and optional representative IANA zone |
 | [`useSPFxPageType`](./api/hooks/environment.md#usespfxpagetype) | `SPFxPageTypeInfo` | Page type detection |
 
 ### Storage

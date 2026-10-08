@@ -42,6 +42,15 @@ export interface SPFxLocaleInfo {
   
   /** Time zone information from SPWeb (preview API) */
   readonly timeZone: SPFxTimeZone | undefined;
+
+  /**
+   * Audited CLDR territory001 IANA representative for the standard SharePoint
+   * timeZone.id group. Undefined for missing, unknown or unverified IDs.
+   * This represents a group, not the site's physical city or user profile zone;
+   * customized SharePoint Server TIMEZONE.XML rules are not verified.
+   * No locale, offset, description or browser time-zone fallback is inferred.
+   */
+  readonly ianaTimeZone?: string;
   
   /** Whether the language is right-to-left */
   readonly isRtl: boolean;
@@ -54,6 +63,7 @@ export interface SPFxLocaleInfo {
  * - locale: Current content locale (e.g., "en-US", "it-IT")
  * - uiLocale: Current UI language locale
  * - timeZone: Time zone information from SPWeb (preview API)
+ * - ianaTimeZone: Optional audited IANA representative derived only from timeZone.id
  * - isRtl: Right-to-left language detection from CultureInfo
  * 
  * Uses native SPFx properties (no legacy context):
@@ -75,7 +85,7 @@ export interface SPFxLocaleInfo {
  * - Intl.NumberFormat(locale, options)
  * - Intl.Collator(locale, options)
  * 
- * @returns Locale and regional settings
+ * @returns Locale and regional settings, preserving the original SDK timeZone object
  * 
  * @example Basic locale usage
  * ```tsx
@@ -100,12 +110,13 @@ export interface SPFxLocaleInfo {
  * @example Time zone aware formatting
  * ```tsx
  * function Calendar() {
- *   const { locale, timeZone } = useSPFxLocaleInfo();
+ *   const { locale, timeZone, ianaTimeZone } = useSPFxLocaleInfo();
  *   
- *   if (!timeZone) return <div>No timezone info</div>;
+ *   if (!timeZone || ianaTimeZone === undefined) return <div>Site time zone unavailable</div>;
  *   
  *   const formatWithTimeZone = (date: Date) => {
  *     return new Intl.DateTimeFormat(locale, {
+ *       timeZone: ianaTimeZone,
  *       dateStyle: 'medium',
  *       timeStyle: 'short'
  *     }).format(date);
@@ -142,9 +153,10 @@ export function useSPFxLocaleInfo(): SPFxLocaleInfo {
   const uiLocale = cultureInfo.currentUICultureName;
   const isRtl = cultureInfo.isRightToLeft;
   const timeZone = (pageContext.web as { timeZoneInfo?: SPFxTimeZone }).timeZoneInfo;
+  const timeZoneId = timeZone?.id;
   
   return useMemo(
     () => getSPFxLocaleInfo(pageContext),
-    [pageContext, locale, uiLocale, timeZone, isRtl]
+    [pageContext, locale, uiLocale, timeZone, timeZoneId, isRtl]
   );
 }

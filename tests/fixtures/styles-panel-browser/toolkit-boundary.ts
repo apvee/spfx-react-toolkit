@@ -6,3 +6,5 @@ export { useSPFxFluent9ThemeInfo } from '../../../packages/spfx-react-toolkit/li
 export { getTeamsFluentTheme } from '../../../packages/spfx-react-toolkit/lib/helpers/spfx-theme.helpers';
 
 export * from '../../../packages/spfx-react-toolkit/lib/controls';
+
+export { getSPFxLocaleInfo } from '../../../packages/spfx-react-toolkit/lib/helpers/spfx-page-context.helpers';

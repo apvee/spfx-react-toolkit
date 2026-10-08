@@ -7,6 +7,7 @@ import {
 } from '@fluentui/react';
 import { SPPermission } from '@microsoft/sp-page-context';
 import {
+  RelativeTime,
   useSPFxContainerInfo,
   useSPFxContainerSize,
   useSPFxContext,
@@ -93,8 +94,18 @@ const ContextPanel: React.FC = () => {
             { label: 'UI Locale', value: locale.uiLocale, icon: 'Globe' },
             { label: 'RTL', value: bool(locale.isRtl), icon: 'TextAlignLeft' },
             { label: 'Time Zone', value: locale.timeZone?.description, icon: 'Clock' },
+            { label: 'Representative IANA Zone', value: locale.ianaTimeZone ?? 'Unavailable', icon: 'Clock' },
           ]}
         />
+      </DemoCard>
+
+      <DemoCard title="Site Time Zone — Fixed Winter/Summer Instants" iconName="Clock">
+        {locale.ianaTimeZone ? <>
+          <p>Representative standard zone: {locale.ianaTimeZone}. Focus or hover each time to compare its full date.</p>
+          <p>Winter (12:00 UTC): <RelativeTime data-relative-time-context="winter" dateTime="2026-01-15T12:00:00Z" referenceTime="2026-01-15T13:00:00Z" locale={locale.uiLocale} timeZone={locale.ianaTimeZone} /></p>
+          <p>Summer (12:00 UTC): <RelativeTime data-relative-time-context="summer" dateTime="2026-07-15T12:00:00Z" referenceTime="2026-07-15T13:00:00Z" locale={locale.uiLocale} timeZone={locale.ianaTimeZone} /></p>
+          <p>This mapping represents a standard ID group; it does not identify a user's city or custom TIMEZONE.XML rules.</p>
+        </> : <p>IANA mapping unavailable. No site-zone full date is shown; an omitted timeZone would use the runtime zone.</p>}
       </DemoCard>
 
       <DemoCard title="List, Hub, Teams, and Theme" iconName="FabricFolder">

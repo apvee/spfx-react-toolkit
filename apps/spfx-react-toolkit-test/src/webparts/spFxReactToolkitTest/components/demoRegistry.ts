@@ -23,6 +23,16 @@ const lazyPanel = (
 
 export const demoRegistry: readonly DemoRegistryEntry[] = [
   {
+    key: 'relative-time',
+    title: 'RelativeTime',
+    iconName: 'Clock',
+    description: 'Explicit instants, calendar boundaries, clock modes and accessible full dates.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-relative-time' */ './panels/RelativeTimePanel')),
+    coverage: [
+      { symbol: 'RelativeTime', kind: 'snapshot', notes: 'Editable props, fixed/live/frozen clock, tooltip, fallback, native ref/click and FormattedText/Badge composition.' },
+    ],
+  },
+  {
     key: 'formatted-text',
     title: 'FormattedText',
     iconName: 'Font',
