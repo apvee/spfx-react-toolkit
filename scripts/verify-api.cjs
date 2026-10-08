@@ -16,6 +16,7 @@ for (const [name, snapshot] of Object.entries(baseline)) {
     requirePnPListWebsRegistration: true,
   });
 }
+assertCompatibleDeclaration('index.d.ts', fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib/index.d.ts'), 'utf8'), baseline['index.d.ts'].declaration, { requireControlsAdditions: true });
 const manifest = require('../packages/spfx-react-toolkit/package.json');
 const originalPackage = require('../tests/fixtures/package-baseline.json');
 assertCompatiblePackageContract(manifest, originalPackage);

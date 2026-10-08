@@ -23,6 +23,16 @@ const lazyPanel = (
 
 export const demoRegistry: readonly DemoRegistryEntry[] = [
   {
+    key: 'formatted-text',
+    title: 'FormattedText',
+    iconName: 'Font',
+    description: 'Inline Markdown, typography, native elements and constrained overflow.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-formatted-text' */ './panels/FormattedTextPanel')),
+    coverage: [
+      { symbol: 'FormattedText', kind: 'snapshot', notes: 'Editable props, narrow width, RTL, mixed JSX and observable native ref/click behavior.' },
+    ],
+  },
+  {
     key: 'imports',
     title: 'Imports',
     iconName: 'Code',

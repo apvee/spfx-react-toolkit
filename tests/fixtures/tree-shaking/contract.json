@@ -40,6 +40,15 @@
     "typography": [
       "^@apvee/spfx-react-toolkit/lib/helpers/styles/typography\\.js$",
       "^@fluentui/react-theme/"
+    ],
+    "formatted-text": [
+      "^@apvee/spfx-react-toolkit/lib/controls/formatted-text/"
+    ],
+    "markdown": [
+      "^(unified|remark-[^/]+|micromark[^/]*|mdast-util-[^/]+|vfile[^/]*|unist-util-[^/]+)/"
+    ],
+    "fluent-link": [
+      "^@fluentui/react-link/"
     ]
   },
   "fixtures": [
@@ -68,7 +77,9 @@
         "styles-engine",
         "griffel",
         "fluent-style",
-        "style-descriptors"
+        "style-descriptors",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": []
     },
@@ -102,7 +113,9 @@
         "styles-engine",
         "provider",
         "theme-conversion",
-        "style-descriptors"
+        "style-descriptors",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": []
     },
@@ -131,7 +144,9 @@
       },
       "forbiddenModuleGroups": [
         "pnp",
-        "styles-engine"
+        "styles-engine",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": []
     },
@@ -166,7 +181,9 @@
         "styles-engine",
         "provider",
         "griffel",
-        "typography"
+        "typography",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -204,7 +221,9 @@
       },
       "forbiddenModuleGroups": [
         "list-registration",
-        "search-registration"
+        "search-registration",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -231,7 +250,9 @@
         }
       },
       "forbiddenModuleGroups": [
-        "search-registration"
+        "search-registration",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -261,7 +282,9 @@
       },
       "forbiddenModuleGroups": [
         "list-registration",
-        "batch-registration"
+        "batch-registration",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -290,7 +313,9 @@
       },
       "forbiddenModuleGroups": [
         "list-registration",
-        "search-registration"
+        "search-registration",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -328,7 +353,9 @@
       },
       "forbiddenModuleGroups": [
         "pnp",
-        "provider"
+        "provider",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -361,7 +388,9 @@
         }
       },
       "forbiddenModuleGroups": [
-        "pnp"
+        "pnp",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": []
     },
@@ -376,7 +405,9 @@
         }
       },
       "forbiddenModuleGroups": [
-        "pnp"
+        "pnp",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": []
     },
@@ -389,7 +420,9 @@
         }
       },
       "forbiddenModuleGroups": [
-        "pnp"
+        "pnp",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": []
     },
@@ -405,7 +438,9 @@
         }
       },
       "forbiddenModuleGroups": [
-        "pnp"
+        "pnp",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -438,7 +473,9 @@
         }
       },
       "forbiddenModuleGroups": [
-        "pnp"
+        "pnp",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": []
     },
@@ -453,7 +490,9 @@
         }
       },
       "forbiddenModuleGroups": [
-        "pnp"
+        "pnp",
+        "formatted-text",
+        "markdown"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -469,9 +508,46 @@
           }
         }
       },
-      "forbiddenModuleGroups": [],
+      "forbiddenModuleGroups": [
+        "formatted-text",
+        "markdown"
+      ],
       "requiredModuleGroups": [
         "styles-engine"
+      ]
+    },
+    {
+      "id": "formatted-text",
+      "template": "formatted-text.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/formatted-text"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "theme-conversion"
+      ],
+      "requiredModuleGroups": [
+        "formatted-text",
+        "markdown",
+        "fluent-link",
+        "styles-engine",
+        "typography"
       ]
     }
   ],

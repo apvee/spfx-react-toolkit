@@ -4,6 +4,7 @@ const { assertEntrypointContract } = require('./package-entrypoints.cjs');
 
 const printer = ts.createPrinter({ removeComments: true });
 const approvedAdditions = new Map([
+  ['index.d.ts', './controls'],
   ['hooks/index.d.ts', './useSPFxSiteKeyValueStore'],
   ['services/index.d.ts', './spfx-site-key-value-store.service'],
 ]);
@@ -83,7 +84,7 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   for (const [modulePath, count] of exportCounts) {
     assert.ok(count <= 1, `Duplicate approved export: ${moduleName}: ${modulePath}`);
   }
-  if (approvedPath && options.requireApprovedAdditions) {
+  if (approvedPath && ((moduleName === 'index.d.ts' && options.requireControlsAdditions) || (moduleName !== 'index.d.ts' && options.requireApprovedAdditions))) {
     assert.equal(exportCounts.get(approvedPath), 1, `Missing approved export: ${moduleName}`);
   }
   if (options.requireSxAdditions) {
@@ -129,6 +130,7 @@ function assertCompatiblePackageContract(manifest, originalPackage) {
     '@fluentui/react-utilities': '^9.25.1',
     '@griffel/core': '^1.19.2', '@griffel/react': '^1.5.30',
     '@fluentui/react-shared-contexts': '^9.25.2',
+    '@fluentui/react-components': '^9.72.3',
   }, 'Runtime peer contracts changed outside the approved shared Fluent/Griffel peers');
   assert.deepEqual(manifest.peerDependenciesMeta ?? {}, originalPackage.peerDependenciesMeta ?? {},
     'Mandatory peers must not become optional');
@@ -136,10 +138,11 @@ function assertCompatiblePackageContract(manifest, originalPackage) {
   assert.equal(expectedDependencies.tslib, '2.3.1', 'Unexpected historical tslib contract');
   delete expectedDependencies.tslib;
   for (const name of Object.keys(sharedFluentPeers)) delete expectedDependencies[name];
+  Object.assign(expectedDependencies, { unified: '11.0.5', 'remark-parse': '11.0.0', 'remark-gfm': '4.0.1' });
   assert.deepEqual(manifest.dependencies ?? {}, expectedDependencies,
     'Runtime dependencies changed outside the approved tslib cleanup and shared Fluent peers');
   assert.equal(manifest.private, false);
-  assert.deepEqual(manifest.files, [...originalPackage.files, 'lib/styles/**/*'], 'Published path allowlist changed outside the styles facade');
+  assert.deepEqual(manifest.files, [...originalPackage.files, 'lib/styles/**/*', 'lib/controls/**/*'], 'Published path allowlist changed outside the styles facade');
   assert.equal(manifest.name, '@apvee/spfx-react-toolkit');
   assert.equal(manifest.version, '2.1.0');
   assert.equal(manifest.main, 'lib/index.js');

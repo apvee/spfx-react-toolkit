@@ -41,7 +41,7 @@ Choose `SPFxWebPartProvider`, `SPFxApplicationCustomizerProvider`, `SPFxFieldCus
 
 ## Package imports
 
-Root imports remain supported. Clean `/core`, `/hooks`, `/helpers`, `/services`, `/styles`, `/styles/useSx` and `/hooks/useStableCallback` aliases resolve to canonical implementations; historical `/lib/...` imports remain available. The `/styles` facade exports descriptors, their public types and `useSx`. For example:
+Root imports remain supported. Clean `/controls`, `/controls/formatted-text`, `/core`, `/hooks`, `/helpers`, `/services`, `/styles`, `/styles/useSx` and `/hooks/useStableCallback` aliases resolve to canonical implementations; historical `/lib/...` imports remain available. The `/styles` facade exports descriptors, their public types and `useSx`. For example:
 
 ```tsx
 import { useStableCallback } from '@apvee/spfx-react-toolkit/hooks/useStableCallback';
@@ -60,7 +60,7 @@ Use an ESM-aware bundler with package exports and sideEffects support. Shared Re
 
 ## Package contents
 
-The npm tarball includes `package.json`, `README.md`, `LICENSE`, `lib/index.*` and compiled `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services`, `lib/utils` and `lib/styles` files. JavaScript is emitted as ESNext modules, with TypeScript declarations and source/declaration maps. The main and types entries remain `lib/index.js` and `lib/index.d.ts`. Sample bundles, SPFx manifests/config, source, tests and repository docs are not shipped. Map paths reference repository source; the tarball does not embed that source.
+The npm tarball includes `package.json`, `README.md`, `LICENSE`, `lib/index.*` and compiled `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services`, `lib/utils`, `lib/styles` and `lib/controls` files. JavaScript is emitted as ESNext modules, with TypeScript declarations and source/declaration maps. The main and types entries remain `lib/index.js` and `lib/index.d.ts`. Sample bundles, SPFx manifests/config, source, tests and repository docs are not shipped. Map paths reference repository source; the tarball does not embed that source.
 
 The repository moved library source to `packages/spfx-react-toolkit/src` and the SPFx sample to `apps/spfx-react-toolkit-test`. The import name, entry points and public API are unchanged by this layout migration.
 
@@ -107,6 +107,20 @@ Rebuild the library and restart serve after changing library source. These devel
 
 MIT — see [LICENSE](./LICENSE).
 
-Fluent and Griffel integration uses mandatory shared peer dependencies `@griffel/core` (`^1.19.2`), `@griffel/react` (`^1.5.30`), `@fluentui/react-shared-contexts` (`^9.25.2`), `@fluentui/react-migration-v8-v9` (`^9.9.12`), `@fluentui/react-theme` (`^9.2.0`) and `@fluentui/react-utilities` (`^9.25.1`). The consuming project provides compatible shared packages; modern npm can install missing peers automatically. Existing compatible installations are reused. The SPFx test app declares these explicitly. Token-based styles need theme variables in scope; useSx needs no SPFx provider or new renderer. The sample uses optional `@fluentui/react-provider@9.22.8` for its theme controls. `tslib` is required by the SPFx packages that use it; this library’s ES2020 output does not import it.
+Fluent and Griffel integration uses mandatory shared peer dependencies `@griffel/core` (`^1.19.2`), `@griffel/react` (`^1.5.30`), `@fluentui/react-shared-contexts` (`^9.25.2`), `@fluentui/react-migration-v8-v9` (`^9.9.12`), `@fluentui/react-theme` (`^9.2.0`), `@fluentui/react-components` (`^9.72.3`) and `@fluentui/react-utilities` (`^9.25.1`). The consuming project provides compatible shared packages; modern npm can install missing peers automatically. Existing compatible installations are reused. The SPFx test app declares these explicitly. Token-based styles need theme variables in scope; useSx needs no SPFx provider or new renderer. The sample uses optional `@fluentui/react-provider@9.22.8` for its theme controls. `tslib` is required by the SPFx packages that use it; this library’s ES2020 output does not import it.
 
 See the [full styles and useSx reference](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/helpers/styles.md) for the typed catalog, query/state precedence, theme requirements and cache lifetime.
+
+## Formatted text
+
+[`FormattedText`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/controls/formatted-text.md) renders a native text element with the existing typography catalog, restricted inline Markdown, highlight and bounded overflow. `as` defaults to `span` independently of `variant`; valid `maxLines` adds block clamp layout even on span. The control has no `inline` prop and needs no SPFx provider. Supply Fluent theme variables and shared peers, including `@fluentui/react-components` (`^9.72.3`). The library supplies unified/Remark runtime dependencies; disabling Markdown skips parsing but does not guarantee parser removal from the bundle.
+
+```tsx
+import { FormattedText } from '@apvee/spfx-react-toolkit';
+
+<FormattedText as="h2" variant="title2">A heading</FormattedText>
+<FormattedText as="p" subtle>**Secondary** text with a [link](https://example.com).</FormattedText>
+<FormattedText maxLines={2} style={{ width: 240 }}>Long text in a clamped span...</FormattedText>
+```
+
+The lazy **FormattedText** sample exercises its props, light/dark themes, narrow width, RTL, mixed JSX and ref/click observations. Authenticated SharePoint-host validation is separate and remains NOT EXECUTED until recorded.

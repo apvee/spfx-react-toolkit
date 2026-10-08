@@ -4,7 +4,7 @@ const { collectEmittedModules, collectReachableAssets, finalizeReport, renderCon
 function fullEnforceReport() {
   const contract=require('./fixtures/tree-shaking/contract.json');
   const {checkComparisons}=require('../scripts/bundle-contract.internal.cjs');
-  const modules={pnp:'@pnp/sp/webs/index.js','styles-engine':'@apvee/spfx-react-toolkit/lib/helpers/styles/resolve.internal.js','list-registration':'@pnp/sp/lists/index.js','search-registration':'@pnp/sp/search/index.js','batch-registration':'@pnp/sp/batching.js'};
+  const modules={pnp:'@pnp/sp/webs/index.js','styles-engine':'@apvee/spfx-react-toolkit/lib/helpers/styles/resolve.internal.js','list-registration':'@pnp/sp/lists/index.js','search-registration':'@pnp/sp/search/index.js','batch-registration':'@pnp/sp/batching.js','formatted-text':'@apvee/spfx-react-toolkit/lib/controls/formatted-text/formatted-text.js','markdown':'unified/index.js','fluent-link':'@fluentui/react-link/lib/index.js','typography':'@apvee/spfx-react-toolkit/lib/helpers/styles/typography.js'};
   const fixtures=contract.fixtures.flatMap(fixture=>Object.keys(fixture.variants).map(variant=>({id:`${fixture.id}/${variant}`,status:'measured',emittedModules:fixture.requiredModuleGroups.map(group=>({resource:modules[group]})),retentionObservations:[],totals:{union:{gzip:100}},fixtureSha256:'fixture',configSha256:'config',assets:[]})));
   return {schemaVersion:1,mode:'enforce',complete:true,passed:true,provenance:{tarballSha256:'abc'},contractSha256:require('node:crypto').createHash('sha256').update(JSON.stringify(contract)).digest('hex'),fixtures,comparisons:checkComparisons(fixtures,contract).comparisons,failures:[],errors:[]};
 }
@@ -173,7 +173,7 @@ test('baseline completeness independently requires canonical contract, all measu
   const {baselineSnapshot}=require('../scripts/bundle-contract.internal.cjs');
   const variants=[report=>{report.fixtures=[];},report=>{report.fixtures.pop();},report=>{report.fixtures[0].status='unavailable';},report=>{report.fixtures[0].id='replacement/root';},report=>{report.comparisons=[];},report=>{report.comparisons[0].maxIncreaseBytes=999999;},report=>{report.contractSha256='altered';},report=>{report.fixtures[0].emittedModules.push({resource:'@pnp/sp/webs/index.js'});}];
   for(const mutate of variants){const report=fullEnforceReport();mutate(report);assert.equal(finalizeReport(report).passed,false);assert.throws(()=>baselineSnapshot(report),/canonical complete enforce PASS/);}
-  assert.equal(baselineSnapshot(fullEnforceReport()).fixtures.length,36);
+  assert.equal(baselineSnapshot(fullEnforceReport()).fixtures.length,39);
 });
 test('real CLI refuses empty, subset, altered-budget and weakened forbidden-group contracts before baseline write', () => {
   const fs=require('node:fs'),path=require('node:path'),os=require('node:os');

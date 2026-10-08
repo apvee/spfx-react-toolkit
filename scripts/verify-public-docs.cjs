@@ -91,6 +91,10 @@ const sxHook = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit
 assertDocumentedSurface(read('docs/api/hooks/react.md'), sxHook);
 assertContainsAll('docs/api/hooks/INDEX.md', ['useSx', 'useStableCallback'], 'React utility hooks');
 
+const controlSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts'));
+assertDocumentedSurface(read('docs/api/controls/formatted-text.md'), controlSurface);
+assertContainsAll('docs/api/controls/INDEX.md', controlSurface.map(item => item.name), 'control exports');
+
 const hooksIndex = read('docs/api/hooks/INDEX.md');
 for (const staleHook of ['useSPFxPropertyPane', 'useSPFxPnPSP', 'useSPFxPnPGraph']) {
   assert.ok(!hooksIndex.includes(staleHook), `docs/api/hooks/INDEX.md contains stale hook ${staleHook}`);
@@ -99,6 +103,7 @@ for (const staleHook of ['useSPFxPropertyPane', 'useSPFxPnPSP', 'useSPFxPnPGraph
 const publicDocLinks = [
   './api/helpers/INDEX.md',
   './api/services/INDEX.md',
+  './api/controls/INDEX.md',
 ];
 
 for (const link of publicDocLinks) {

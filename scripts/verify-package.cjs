@@ -83,14 +83,14 @@ function assertPackedImports(packedPaths) {
 
 function assertEmittedStyleJSDoc(packedPaths) {
   const styleEntry = path.join(library, 'src/helpers/styles/index.ts');
-  const surface = [...collectPublicSurface(styleEntry), ...collectPublicSurface(path.join(library, 'src/hooks/useSx.ts'))];
+  const surface = [...collectPublicSurface(path.join(library, 'src/controls/index.ts')), ...collectPublicSurface(styleEntry), ...collectPublicSurface(path.join(library, 'src/hooks/useSx.ts'))];
   function findDeclaration(source, name) {
     return source.statements.find(node => node.name?.text === name ||
       (ts.isVariableStatement(node) && node.declarationList.declarations.some(declaration => declaration.name.text === name)));
   }
   const normalizeDocs = (node, source) => (node.jsDoc ?? []).map(doc => doc.getText(source).replace(/\s+/g, ' ').trim()).join(' ');
   for (const declaration of surface) {
-    const relative = path.relative(path.join(library, 'src'), declaration.filePath).replace(/\.ts$/, '.d.ts');
+    const relative = path.relative(path.join(library, 'src'), declaration.filePath).replace(/\.tsx?$/, '.d.ts');
     const packedFile = 'lib/' + relative.split(path.sep).join('/');
     assert.ok(packedPaths.has(packedFile), `Missing documented style declaration: ${packedFile}`);
     const emittedSource = ts.createSourceFile(packedFile, fs.readFileSync(path.join(library, packedFile), 'utf8'), ts.ScriptTarget.Latest, true);
@@ -119,7 +119,7 @@ try {
   const packed = JSON.parse(execFileSync('npm',['pack','--json','--pack-destination',temp],{cwd:library,encoding:'utf8'}))[0];
   assert.equal(packed.name,'@apvee/spfx-react-toolkit');
   for (const file of packed.files) {
-    assert.ok(/^(package\.json|README\.md|LICENSE|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles)\/.+))$/.test(file.path), `Unexpected package file: ${file.path}`);
+    assert.ok(/^(package\.json|README\.md|LICENSE|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls)\/.+))$/.test(file.path), `Unexpected package file: ${file.path}`);
   }
   const packedPaths = new Set(packed.files.map(file => file.path));
   assertEntrypointContract(JSON.parse(fs.readFileSync(path.join(library, 'package.json'), 'utf8')), [...packedPaths]);
@@ -128,6 +128,12 @@ try {
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
   // Both the public entry points and their persistence/client dependencies must ship.
   for (const module of [
+    'controls/index',
+    'controls/formatted-text/index',
+    'controls/formatted-text/formatted-text',
+    'controls/formatted-text/formatted-text.types',
+    'controls/formatted-text/formatted-text.styles.internal',
+    'controls/formatted-text/formatted-text-content.internal',
     'hooks/useSx',
     'helpers/styles/index',
     'helpers/styles/types',
@@ -478,7 +484,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   const hostRequire = createRequire(path.join(consumer, 'package.json'));
   const libraryRequire = createRequire(path.join(consumer, 'node_modules/@apvee/spfx-react-toolkit/package.json'));
   const sharedPackages = ['@griffel/core', '@griffel/react', '@fluentui/react-shared-contexts',
-    '@fluentui/react-migration-v8-v9', '@fluentui/react-theme', '@fluentui/react-utilities'];
+    '@fluentui/react-migration-v8-v9', '@fluentui/react-theme', '@fluentui/react-utilities', '@fluentui/react-components'];
   const sharedPaths = {};
   for (const name of sharedPackages) {
     const hostPath = fs.realpathSync(hostRequire.resolve(name + '/package.json'));

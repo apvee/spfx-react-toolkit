@@ -12,7 +12,7 @@ All commands below run from the cloned repository root. Use Node `>=22.14.0 <23.
 | `apps/spfx-react-toolkit-test/config` | SPFx Gulp and tenant debug configuration |
 | `apps/spfx-react-toolkit-test/lib`, `dist`, `temp`, `sharepoint` | Generated sample/build/package output under the app workspace |
 | `tests`, `scripts`, `docs` | Root behavioral checks, verification and public documentation |
-| `.docs/maintenance`, `.docs/superpowers` | Internal versioned maintenance records and local ignored agent plans |
+| `.docs/maintenance`, `.docs/superpowers` | Local Git-ignored maintenance records, evidence and agent plans |
 
 The app resolves `@apvee/spfx-react-toolkit` as an npm workspace package through its compiled `lib/index.js`. It does not compile the library source through a path alias. Build library first; after editing library source, rebuild it and stop/restart the running app serve process. The app's Sass and webpack steps are independent of library compilation.
 
@@ -38,7 +38,7 @@ npm run build:app
 | `npm test` | `node --test tests/*.test.cjs` |
 | `npm run typecheck` | Both workspaces run `tsc --noEmit` |
 | `npm run lint` | Both workspaces run ESLint on source |
-| `npm run verify:examples` | Demo registry matches 46 hook and 4 provider exports plus all style namespaces/scopes |
+| `npm run verify:examples` | Demo registry matches 46 hook and 4 provider exports plus FormattedText and all style namespaces/scopes |
 | `npm run verify:runtime-store` | Runtime store behavior check using the local compiler |
 | `npm run verify:public-docs` | Qualified public style exports/JSDoc, historical helper/service coverage and local documentation link targets |
 | `npm run verify:api` | Public export/declaration compatibility checks |
@@ -63,7 +63,7 @@ Trusting the certificate affects your local development certificate store. Confi
 
 ## Package shape
 
-`npm run pack:library` writes `artifacts/apvee-spfx-react-toolkit-2.1.0.tgz` for the current package version. The tarball contains package metadata, README, LICENSE and compiled `lib/index.*`, `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services`, `lib/utils`, `lib/styles`. Entry points remain `lib/index.js` and `lib/index.d.ts`. The app, SPFx manifests, source, tests, config and repository docs are excluded. Source maps point back to source paths; source is not embedded in the tarball.
+`npm run pack:library` writes `artifacts/apvee-spfx-react-toolkit-2.1.0.tgz` for the current package version. The tarball contains package metadata, README, LICENSE and compiled `lib/index.*`, `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services`, `lib/utils`, `lib/styles`, `lib/controls`. Entry points remain `lib/index.js` and `lib/index.d.ts`. The app, SPFx manifests, source, tests, config and repository docs are excluded. Source maps point back to source paths; source is not embedded in the tarball.
 
 The isolated consumer probe covers all six public site-store symbols, the hook/service deep imports and existing tenant APIs. See [site storage](./api/hooks/storage.md#usespfxsitekeyvaluestore) and the [standalone service](./api/services/INDEX.md#createspfxsitekeyvaluestoreservice) for their contracts; the [real-host checklist](./SHAREPOINT-VALIDATION.md#site-collection-key-value-store) remains separate.
 
@@ -100,7 +100,7 @@ Inspect the JSON observations, failure logs, DOM captures and screenshots. The r
 
 ## Shared Fluent packages
 
-The library declares `@griffel/core` (`^1.19.2`), `@griffel/react` (`^1.5.30`), `@fluentui/react-shared-contexts` (`^9.25.2`), `@fluentui/react-migration-v8-v9` (`^9.9.12`), `@fluentui/react-theme` (`^9.2.0`) and `@fluentui/react-utilities` (`^9.25.1`) as mandatory peers. They are devDependencies for library development and dependencies of the SPFx test app. The published package does not own separate Fluent runtime dependencies. The tarball consumer check verifies that the app and library resolve the same Fluent packages. These are explicit shared consumer contracts; all historical peer ranges remain unchanged. `useStableCallback` is a direct alias of `useEventCallback` from react-utilities, not a separate implementation. `tslib` is supplied by the SPFx packages that declare and import it, rather than an unused direct dependency of this library.
+The library declares `@griffel/core` (`^1.19.2`), `@griffel/react` (`^1.5.30`), `@fluentui/react-shared-contexts` (`^9.25.2`), `@fluentui/react-migration-v8-v9` (`^9.9.12`), `@fluentui/react-theme` (`^9.2.0`), `@fluentui/react-components` (`^9.72.3`) and `@fluentui/react-utilities` (`^9.25.1`) as mandatory peers. They are devDependencies for library development and dependencies of the SPFx test app. The published package does not own separate Fluent runtime dependencies. FormattedText uses library runtime dependencies unified 11.0.5, remark-parse 11.0.0 and remark-gfm 4.0.1. The tarball consumer check verifies that the app and library resolve the same Fluent packages. These are explicit shared consumer contracts; all historical peer ranges remain unchanged. `useStableCallback` is a direct alias of `useEventCallback` from react-utilities, not a separate implementation. `tslib` is supplied by the SPFx packages that declare and import it, rather than an unused direct dependency of this library.
 
 ## Styles sample and documentation checks
 
@@ -121,7 +121,7 @@ npm run verify
 npm run verify:package
 ```
 
-`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 36-fixture bundle contract, 18 fresh runtime probes and nine mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
+`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 39-fixture bundle contract (including FormattedText root/domain/control equivalents), 18 fresh runtime probes and nine mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
 
 Ordinary verification deletes the temporary consumer when it finishes. For diagnostics or an explicit baseline proposal, preserve a fresh installed consumer and read its recorded path before running the examples below. The bundle CLI requires `--consumer-root`; its default mode is `enforce`, its default contract is `tests/fixtures/tree-shaking/contract.json`, and its default output is `.docs/maintenance/evidence/tree-shaking/bundle-contract`:
 
@@ -135,7 +135,7 @@ node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUM
 
 If you set `SPFX_PACKAGE_EVIDENCE`, read `consumer-path.txt` from that evidence directory instead. Run diagnostic commands only after the preserved package verification succeeds.
 
-Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete 36-variant/comparison contract; custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
+Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete 39-variant/comparison contract; custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
 
 Normal verification never writes `tests/fixtures/tree-shaking/baseline.json`. To propose an explicit update after reviewing a complete passing run and its toolchain, package/lock/config/fixture hashes, emitted initial/async assets and raw/gzip/Brotli totals:
 
@@ -170,3 +170,11 @@ unset SPFX_DIAGNOSTIC_CONSUMER
 The lazy `Imports` entry (`spfx-demo-imports`) renders three dedicated stable root/domain/legacy components. Each retains a callback captured at mount and reads the latest counter after incrementing. Width override/removal, body typography and logical start padding compose mixed imports beneath a shared FluentProvider; direction switching exercises the same active context. Existing React Hooks and Styles panels retain their root imports and own their existing export coverage. Imports uses empty symbol coverage plus a dedicated observable-scenario check, preserving 46 hooks and four providers without duplicate symbols.
 
 The app normally imports the root. Only `ImportsPanel.tsx` has the exact approved domain/legacy specifier allowlist; this is not permission for arbitrary app `/lib` imports. Run `node --test tests/demo-imports.test.cjs tests/monorepo.test.cjs`, `npm run verify:examples` and `npm run verify:public-docs`, then build library before app. Rebuild and restart an active serve after library edits. Node/DOM interaction checks verify callback/class behavior; actual local browser computed-style observations and authenticated SharePoint checks must be recorded separately. Build success alone does not execute the scenario.
+
+## FormattedText sample and checks
+
+The lazy `formatted-text` entry (`spfx-demo-formatted-text`) consumes the compiled library root. Its native labeled controls edit source, all presentation props, bounded width and direction. A shared FluentProvider supplies light/dark themes; the preview uses the existing `foreground.subtle` role for comparison. Mixed JSX, an inspect-ref button and click observations exercise native forwarding. See [FormattedText](./api/controls/formatted-text.md) for semantic/overflow precedence, Markdown fallback and dependency limits.
+
+Run `node --test tests/demo-formatted-text.test.cjs` for sample marker coverage and `npm run verify:examples` for the registry. Marker coverage does not execute the sample. The existing `tests/fixtures/sx-browser/` fixture and browser build/serve/check commands above include FormattedText layout/theme cases alongside the original sx cases. Record DOM/browser evidence separately from authenticated host execution. Build library before app, then restart a running serve before evaluating changes; run the existing `verify` and `verify:package` gates before review. The [FormattedText host checklist](./SHAREPOINT-VALIDATION.md#formattedtext) is NOT EXECUTED until a tenant run records it.
+
+The `.docs/` directory is local and excluded from Git. Verification commands may create evidence there; reproducible inputs stay versioned under `tests/fixtures/`. The legacy style measurement input is `tests/fixtures/sx-bundle/baseline.json`.

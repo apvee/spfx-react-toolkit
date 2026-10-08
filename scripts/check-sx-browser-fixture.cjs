@@ -510,6 +510,81 @@ async function runCatalog() {
   }
 }
 
+async function runFormattedText() {
+  await page.goto(url);
+  await page.waitForFunction(() => !!window.sxFixture);
+  await check('formatted-text:fixture-present', await page.locator('#ft-fixture').count(), 1);
+  for (const theme of ['light', 'dark']) {
+    await render({ theme, dir: 'ltr' });
+    await check(`formatted-text:${theme}:default-tag`, await page.locator('#ft-default').evaluate(e => e.tagName), 'SPAN');
+    await check(`formatted-text:${theme}:default-display`, await computed('ft-default', 'display'), 'inline');
+    await check(`formatted-text:${theme}:heading-tag`, await page.locator('#ft-heading').evaluate(e => e.tagName), 'H2');
+    await check(`formatted-text:${theme}:paragraph-display`, await computed('ft-paragraph', 'display'), 'block');
+    await check(`formatted-text:${theme}:subtle`, await computed('ft-subtle', 'color'), await computed('ft-subtle-reference', 'color'));
+    for (const property of ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight']) {
+      await check(`formatted-text:${theme}:typography:${property}`, await computed('ft-default', property), await computed('ft-subtle-reference', property));
+    }
+    for (const property of ['backgroundColor', 'paddingInlineStart', 'paddingInlineEnd', 'borderTopLeftRadius']) {
+      const actual = await page.locator('#ft-code code').evaluate((e, key) => getComputedStyle(e)[key], property);
+      await check(`formatted-text:${theme}:code:${property}`, actual, await computed('ft-code-reference', property));
+    }
+    const mark = page.locator('#ft-highlight mark');
+    const link = page.locator('#ft-highlight a');
+    await check(`formatted-text:${theme}:mark-foreground`, await mark.evaluate(e => getComputedStyle(e).color), await computed('ft-mark-reference', 'color'));
+    await check(`formatted-text:${theme}:link-foreground`, await link.evaluate(e => getComputedStyle(e).color), await mark.evaluate(e => getComputedStyle(e).color));
+    await link.hover();
+    await check(`formatted-text:${theme}:highlighted-link-hover`, await link.evaluate(e => getComputedStyle(e).color), await mark.evaluate(e => getComputedStyle(e).color));
+    await page.mouse.down();
+    await check(`formatted-text:${theme}:highlighted-link-pressed`, await link.evaluate(e => getComputedStyle(e).color), await mark.evaluate(e => getComputedStyle(e).color));
+    await page.mouse.up();
+    await page.mouse.move(0, 0);
+    await check(`formatted-text:${theme}:nowrap-visible`, await computed('ft-nowrap', 'overflowX'), 'visible');
+    await check(`formatted-text:${theme}:truncate`, await computed('ft-truncate', 'textOverflow'), 'ellipsis');
+    await check(`formatted-text:${theme}:truncate-nowrap`, await computed('ft-truncate', 'whiteSpace'), 'nowrap');
+    await check(`formatted-text:${theme}:invalid-natural-display`, await computed('ft-invalid-clamp', 'display'), 'inline');
+    for (const dir of ['ltr', 'rtl']) {
+      await render({ dir });
+      for (const count of [1, 2, 4]) {
+        const layout = await page.locator(`#ft-clamp-${count}`).evaluate(e => {
+          const css = getComputedStyle(e), box = e.getBoundingClientRect();
+          return { tag: e.tagName, count: css.webkitLineClamp, wrap: css.whiteSpace, height: box.height, line: parseFloat(css.lineHeight), width: box.width, clipped: e.scrollHeight > e.clientHeight };
+        });
+        await check(`formatted-text:${theme}:${dir}:clamp-${count}`, { tag: layout.tag, count: layout.count, wrap: layout.wrap, lines: Math.round(layout.height / layout.line), clipped: layout.clipped },
+          { tag: 'SPAN', count: String(count), wrap: 'normal', lines: count, clipped: true });
+        await check(`formatted-text:${theme}:${dir}:bounded-${count}`, layout.width <= 241, true);
+        await check(`formatted-text:${theme}:${dir}:class-line-count-${count}`, await page.locator(`#ft-clamp-${count}`).evaluate(e => e.style.WebkitLineClamp), '');
+      }
+    }
+    await check(`formatted-text:${theme}:style-override`, await computed('ft-clamp-override', 'webkitLineClamp'), '5');
+    await page.locator('#ft-focus-before').focus();
+    await page.keyboard.press('Tab');
+    await check(`formatted-text:${theme}:markdown-tab-order`, await page.evaluate(() => document.activeElement.parentElement.id), 'ft-focus-markdown');
+    await page.keyboard.press('Tab');
+    await check(`formatted-text:${theme}:jsx-tab-order`, await page.evaluate(() => document.activeElement.id), 'ft-focus-jsx');
+    await page.keyboard.press('Tab');
+    await check(`formatted-text:${theme}:after-tab-order`, await page.evaluate(() => document.activeElement.id), 'ft-focus-after');
+    await page.locator('#ft-fixture').screenshot({ path: path.join(output, `${label}-formatted-text-${theme}.png`) });
+    await page.emulateMedia({ forcedColors: 'active' });
+    await check(`formatted-text:${theme}:forced-active`, await page.evaluate(() => matchMedia('(forced-colors: active)').matches), true);
+    await check(`formatted-text:${theme}:forced-subtle`, await computed('ft-subtle', 'color'), await computed('ft-subtle-reference', 'color'));
+    const code = page.locator('#ft-highlight code');
+    await check(`formatted-text:${theme}:forced-code-outline`, await code.evaluate(e => getComputedStyle(e).outlineStyle), 'solid');
+    await check(`formatted-text:${theme}:forced-mark-adjust`, await mark.evaluate(e => getComputedStyle(e).forcedColorAdjust), 'none');
+    await check(`formatted-text:${theme}:forced-mark-link`, await link.evaluate(e => getComputedStyle(e).color), await mark.evaluate(e => getComputedStyle(e).color));
+    await page.locator('#ft-fixture').screenshot({ path: path.join(output, `${label}-formatted-text-${theme}-forced-colors.png`) });
+    await page.emulateMedia({ forcedColors: 'none' });
+  }
+  await render({ theme: 'light', dir: 'rtl' });
+  await page.locator('#ft-fixture').evaluate(e => { e.style.zoom = '2'; });
+  await check('formatted-text:200-percent-clamp-height', await page.locator('#ft-clamp-2').evaluate(e => Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight))), 4);
+  await page.locator('#ft-fixture').screenshot({ path: path.join(output, `${label}-formatted-text-rtl-zoom200.png`) });
+  await page.locator('#ft-fixture').evaluate(e => { e.style.zoom = ''; });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await check('formatted-text:mobile-bounded', await page.locator('#ft-clamp-2').evaluate(e => e.getBoundingClientRect().right <= window.innerWidth + 1), true);
+  await page.locator('#ft-fixture').screenshot({ path: path.join(output, `${label}-formatted-text-mobile.png`) });
+  await page.setViewportSize({ width: 1210, height: 900 });
+}
+
 (async () => {
   fs.mkdirSync(output, { recursive: true });
   browser = await chromium.launch({ headless: true,
@@ -523,6 +598,7 @@ async function runCatalog() {
     await runOrder(false);
     await runOrder(true);
     await runCatalog();
+    await runFormattedText();
     await check('console-health', consoleMessages, []);
   } catch (error) { errors.push(error.stack); }
   const report = { version, node: process.version, url, viewport: { width: 1210, height: 900 },

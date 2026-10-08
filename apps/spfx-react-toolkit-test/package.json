@@ -36,7 +36,8 @@
     "@griffel/core": "1.19.2",
     "@griffel/react": "1.5.30",
     "@fluentui/react-shared-contexts": "9.25.2",
-    "@fluentui/react-provider": "9.22.8"
+    "@fluentui/react-provider": "9.22.8",
+    "@fluentui/react-components": "9.72.3"
   },
   "devDependencies": {
     "@microsoft/eslint-config-spfx": "1.21.1",

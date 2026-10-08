@@ -49,3 +49,14 @@ export function readonlySelector(selector: Extract<SPFxPnPListSelector, { kind: 
   // @ts-expect-error Selector values remain readonly.
   selector.id = 'changed';
 }
+
+import { FormattedText as rootText } from '@apvee/spfx-react-toolkit';
+import { FormattedText as domainText } from '@apvee/spfx-react-toolkit/controls';
+import { FormattedText as controlText } from '@apvee/spfx-react-toolkit/controls/formatted-text';
+import type { FormattedTextProps } from '@apvee/spfx-react-toolkit/controls';
+// @ts-expect-error Control implementation modules are private.
+import {} from '@apvee/spfx-react-toolkit/controls/formatted-text/formatted-text-content.internal';
+export const textComponents: [typeof rootText, typeof rootText] = [domainText, controlText];
+export const textProps: FormattedTextProps = { as: 'span', maxLines: 2, variant: 'title2' };
+// @ts-expect-error There is no separate inline mode.
+export const removedInline: FormattedTextProps = { inline: true };

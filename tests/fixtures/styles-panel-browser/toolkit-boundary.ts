@@ -4,3 +4,5 @@ export * from '../../../packages/spfx-react-toolkit/lib/helpers/styles';
 export { useSx } from '../../../packages/spfx-react-toolkit/lib/hooks/useSx';
 export { useSPFxFluent9ThemeInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxFluent9ThemeInfo';
 export { getTeamsFluentTheme } from '../../../packages/spfx-react-toolkit/lib/helpers/spfx-theme.helpers';
+
+export * from '../../../packages/spfx-react-toolkit/lib/controls';

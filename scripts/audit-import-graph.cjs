@@ -182,7 +182,7 @@ function auditImportGraph({ sourceRoot, entrypoints }) {
 // Enforced source boundaries are separate from the descriptive audit. Effects
 // metadata owns bare external registrations; local allocations are not thereby
 // claimed pure, and runtime renderers/registries must remain feature-local.
-function hasImmediateRendererCall(expression) {
+function hasImmediateRendererCall(expression, allowLocalStyles = false) {
   const source = ts.createSourceFile('initializer.ts', `const value = (${expression});`, ts.ScriptTarget.Latest, true);
   const renderer = /^(createDOMRenderer|createRenderer|makeStyles|insertCSSRules|registerRenderer|createRegistry|registerFeature)$/;
   function unwrap(node) { return ts.isParenthesizedExpression(node) ? unwrap(node.expression) : node; }
@@ -211,7 +211,7 @@ function hasImmediateRendererCall(expression) {
       const callee = unwrap(node.expression);
       const invoked=callables(callee);
       const name = ts.isIdentifier(callee) ? callee.text : ts.isPropertyAccessExpression(callee) ? callee.name.text : '';
-      if (renderer.test(name)) return true;
+      if (renderer.test(name) && !(allowLocalStyles && name === 'makeStyles')) return true;
       for (const factory of invoked) {
         const immediateDefault = factory.parameters.some((parameter, index) => {
           const argument = node.arguments[index] && unwrap(node.arguments[index]);
@@ -237,7 +237,7 @@ function checkSourceRules(report, sideEffects) {
     const registrations = module.externalImports.filter(edge => edge.kind === 'bare-import');
     const emittedPath = './lib/' + module.path.replace(/\.tsx?$/, '.js');
     if (registrations.length && !classified.has(emittedPath)) issues.push({ kind: 'unclassified-external-registration', from: module.path, specifiers: registrations.map(edge => edge.specifier) });
-    if (module.topLevelInitializations.some(item => hasImmediateRendererCall(item.expression))) issues.push({ kind: 'package-global-renderer', from: module.path });
+    if (module.topLevelInitializations.some(item => hasImmediateRendererCall(item.expression, module.path === 'controls/formatted-text/formatted-text.styles.internal.ts'))) issues.push({ kind: 'package-global-renderer', from: module.path });
   }
   return issues;
 }
@@ -258,7 +258,7 @@ if (require.main === module) {
   const root = path.resolve(__dirname, '..');
   const sourceRoot = path.join(root, 'packages/spfx-react-toolkit/src');
   const output = path.resolve(process.argv[2] || '.docs/maintenance/evidence/tree-shaking/initial/import-graph.json');
-  const report = auditImportGraph({ sourceRoot, entrypoints: ['index.ts', 'core/index.ts', 'hooks/index.ts', 'services/index.ts', 'helpers/index.ts', 'helpers/styles/index.ts'] });
+  const report = auditImportGraph({ sourceRoot, entrypoints: ['index.ts', 'core/index.ts', 'hooks/index.ts', 'services/index.ts', 'helpers/index.ts', 'helpers/styles/index.ts', 'controls/index.ts', 'controls/formatted-text/index.ts'] });
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/package.json')));
   report.peerDependencyContracts = manifest.peerDependencies;
   report.sourceRuleIssues = checkSourceRules(report, manifest.sideEffects);
@@ -278,6 +278,9 @@ if (require.main === module) {
     else if (observed.length && /^helpers\/styles\//.test(module.path)) manual = { classification: 'local-allocation', rationale: 'Manual review: descriptors/recipes copy and freeze local data; brand Symbol, WeakMap cache and priority tables allocate local state. No renderer/CSS/DOM work runs at module evaluation; shared brand/cache identity must survive consumer composition.' };
     else if (observed.length && ['core/context.internal.tsx', 'core/state.internal.tsx'].includes(module.path)) manual = { classification: 'local-context-allocation', rationale: 'Manual review: React.createContext allocates local context objects and development displayName assignments mutate those objects only; provider runtime stores remain instance-owned.' };
     else if (observed.length && module.path === 'helpers/spfx-api-permission-precheck.helpers.ts') manual = { classification: 'local-allocation', rationale: 'Manual review: Sets of expected audiences/statuses are local lookup data; requests and diagnostics run only in exported functions.' };
+    else if (observed.length && module.path === 'controls/formatted-text/formatted-text-content.internal.tsx') manual = { classification: 'local-parser-allocation', rationale: 'Manual review: unified processor configures its own parser/plugins only; no DOM, renderer, external registration or text cache.' };
+    else if (observed.length && module.path === 'controls/formatted-text/formatted-text.styles.internal.ts') manual = { classification: 'local-style-allocation', rationale: 'Manual review: makeStyles defines component-owned rules; renderer/context/CSS work happens through the hook, no package-wide renderer or registry.' };
+    else if (observed.length && module.path === 'controls/formatted-text/formatted-text.tsx') manual = { classification: 'local-component-allocation', rationale: 'Manual review: forwardRef creates a local component; descriptors/styles and parsing run when it renders.' };
     else if (module.effects.classification === 'review-required') manual = { classification: 'review-required', rationale: 'New/unclassified top-level effects require an explicit review checkpoint.' };
     module.effects.manual = manual;
   }

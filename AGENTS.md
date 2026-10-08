@@ -37,7 +37,7 @@ These instructions apply to the entire repository, including `packages/`, `apps/
 ## Documentation locations
 
 - Keep public product documentation, API references, installation, development, and SPFx validation guides in `docs/`.
-- Store internal plans, maintenance records, findings, review notes, and verification evidence in `.docs/maintenance/`.
+- Store internal plans, maintenance records, findings, review notes, and verification evidence in `.docs/maintenance/`; `.docs/` is local and Git-ignored. Keep inputs required by scripts or tests in versioned `tests/fixtures/`, never in `.docs/`.
 - Store Superpowers plans and specifications in `.docs/superpowers/`; this directory contains local ignored planning material.
 - Keep reusable test fixtures in `tests/fixtures/`, not in documentation or evidence directories.
 - Keep this `AGENTS.md` at the repository root. Use these documentation locations even when a skill suggests a different default path.
@@ -100,6 +100,8 @@ These are preferences for controls actually exposed by the runtime, not a claim 
 - Prefer `rg`/`rg --files`, then focused reads: task references, relevant implementation/tests, direct dependencies/consumers, and additional documentation as needed. Expand context to answer a concrete question; stop once evidence is sufficient to act safely.
 - Avoid duplicate searches, unnecessary rereads, speculative repository-wide discovery, and tool calls made only to show activity. Batch independent read-only operations when supported; keep dependent operations and mutations ordered.
 - Make the smallest coherent change that fully solves the task. Prefer existing conventions, explicit behavior, clear interfaces, focused modules, and minimal coupling.
+- When creating or extending controls, hooks or services, inspect the capabilities already implemented in this repository and reuse and compose them before introducing new implementations. Reuse existing helpers and styling primitives as well; do not duplicate their logic or contracts. If an existing capability is unsuitable, document the concrete mismatch without forcing incompatible reuse or introducing speculative abstractions.
+- Use CSS classes for repository-authored styles, including dynamic values, preferably through the existing `useSx` descriptors and Griffel with the host renderer. Do not generate inline styles through JSX `style` objects or imperative element-style assignments by default; dynamic values alone do not justify an exception. Allow inline styles only for an exceptional, demonstrated integration or runtime constraint, and explain near the code why classes are insufficient. Preserve existing consumer-provided `style` escape hatches; forwarding them does not authorize generating inline styles internally.
 - Avoid unrelated cleanup, speculative abstractions, premature generalization, unnecessary dependencies, and theoretical future-proofing. A shared abstraction needs demonstrated common semantics or a necessary shared contract; two consumers alone do not establish that need.
 - Preserve readable code and meaningful error handling. Do not compress code or weaken types to reduce line count or token usage.
 - Internal library modules must import their direct implementation/type modules, never the package root or public index/barrel modules (including type-only imports). Public barrels remain export boundaries; re-exports there are allowed.

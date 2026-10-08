@@ -10,8 +10,9 @@ const aliases = {
   './helpers': 'lib/helpers/index', './services': 'lib/services/index',
   './styles': 'lib/styles/index', './styles/useSx': 'lib/hooks/useSx',
   './hooks/useStableCallback': 'lib/hooks/useStableCallback',
+  './controls': 'lib/controls/index', './controls/formatted-text': 'lib/controls/formatted-text/index',
 };
-const files = [...inventory.files, ...['.js', '.d.ts', '.js.map', '.d.ts.map'].map(ext => 'lib/styles/index' + ext)];
+const files = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index'].flatMap(base => ['.js', '.d.ts', '.js.map', '.d.ts.map'].map(ext => base + ext))];
 test('clean entrypoints select their canonical declarations before runtime', () => {
   for (const [alias, target] of Object.entries(aliases)) {
     assert.deepEqual(manifest.exports?.[alias], { types: './' + target + '.d.ts', default: './' + target + '.js' });
@@ -20,6 +21,7 @@ test('clean entrypoints select their canonical declarations before runtime', () 
   assert.deepEqual(manifest.typesVersions, { '*': {
     core: ['lib/core/index.d.ts'], hooks: ['lib/hooks/index.d.ts'], helpers: ['lib/helpers/index.d.ts'],
     services: ['lib/services/index.d.ts'], styles: ['lib/styles/index.d.ts'],
+    controls: ['lib/controls/index.d.ts'], 'controls/formatted-text': ['lib/controls/formatted-text/index.d.ts'],
     'styles/useSx': ['lib/hooks/useSx.d.ts'], 'hooks/useStableCallback': ['lib/hooks/useStableCallback.d.ts'],
   } });
   assert.equal(manifest.main, 'lib/index.js');
@@ -39,7 +41,7 @@ test('every frozen packed path remains accessible in its original form', () => {
 });
 test('new clean private and wildcard paths are absent', () => {
   assert.ok(manifest.exports);
-  for (const alias of ['./hooks/useAsyncInvoke.internal', './styles/descriptor.internal', './styles/types', './styles/*', './lib/*']) {
+  for (const alias of ['./hooks/useAsyncInvoke.internal', './styles/descriptor.internal', './styles/types', './styles/*', './lib/*', './controls/formatted-text/formatted-text-content.internal', './controls/*']) {
     assert.equal(manifest.exports[alias], undefined);
   }
 });

@@ -6,6 +6,7 @@
 
 ## Table of Contents
 
+- [Controls](#controls)
 - [Core](#core)
   - [Providers](#providers)
   - [Types](#types)
@@ -24,6 +25,12 @@
 - [Helpers](#helpers)
 
 ---
+
+## Controls
+
+| Component / types | Description | Documentation |
+| --- | --- | --- |
+| `FormattedText`, `FormattedTextProps`, `FormattedTextVariant`, `FormattedTextSemanticElement` | Native text elements, typography, inline Markdown and overflow | [Controls](./api/controls/INDEX.md), [FormattedText](./api/controls/formatted-text.md) |
 
 ## Core
 
@@ -210,6 +217,7 @@ Public pure helper functions for SPFx context mapping, permission checks, API pe
 - [Introduction & Quick Start](./INTRODUCTION.md)
 - [Workspace Development](./DEVELOPMENT.md)
 - [SharePoint Validation](./SHAREPOINT-VALIDATION.md)
+- [Controls Module](./api/controls/INDEX.md)
 - [Core Module](./api/core/INDEX.md)
 - [Hooks Module](./api/hooks/INDEX.md)
 - [Services Module](./api/services/INDEX.md)

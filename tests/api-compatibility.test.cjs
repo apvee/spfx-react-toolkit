@@ -626,3 +626,26 @@ test('real installed metadata package without a default entry remains fatal', ()
   withMetadataPackageFixture(JSON.stringify({ name: 'baseline-browser-mapping' }), undefined,
     prepare => assert.throws(prepare, error => error.code === 'MODULE_NOT_FOUND' && error.message.startsWith("Cannot find module 'baseline-browser-mapping'\n")));
 });
+
+// Approved controls are additive; existing declarations and dependency contracts remain exact.
+test('permits only the approved controls root export once', () => {
+  const original = baseline['index.d.ts'].declaration;
+  const addition = "\nexport * from './controls';";
+  assert.doesNotThrow(() => assertCompatibleDeclaration('index.d.ts', original + addition, original));
+  assert.throws(() => assertCompatibleDeclaration('index.d.ts', original + addition + addition, original));
+  assert.throws(() => assertCompatibleDeclaration('index.d.ts', original + "\nexport * from './other-controls';", original));
+});
+test('control dependencies are exact additions rather than unrestricted peer/runtime changes', () => {
+  const { assertCompatiblePackageContract } = require('../scripts/api-compatibility.helpers.cjs');
+  const manifest = require('../packages/spfx-react-toolkit/package.json');
+  const original = require('./fixtures/package-baseline.json');
+  for (const mutate of [
+    p => { p.dependencies.unified = '10.0.0'; },
+    p => { p.dependencies.extra = '1.0.0'; },
+    p => { p.peerDependencies['@fluentui/react-components'] = '*'; },
+    p => { delete p.peerDependencies.react; },
+  ]) {
+    const changed = structuredClone(manifest); mutate(changed);
+    assert.throws(() => assertCompatiblePackageContract(changed, original));
+  }
+});

@@ -209,6 +209,31 @@ async function thumbInteractions(axis) {
   await page.screenshot({ path: path.join(output, `${label}-mobile.png`), fullPage: true });
   check('mobile controls stay usable', await node('catalog-family').isVisible(), true);
   check('mobile no page-wide overflow', await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true);
+  // Actual FormattedText sample consumes the compiled library through the existing boundary.
+  const ft = id => page.locator(`[data-formatted-text-demo="${id}"]`);
+  await ft('text').fill('Read **updates** in [docs](#local). ' + 'Long text '.repeat(40));
+  await ft('variant').selectOption('title2');
+  check('FormattedText variant keeps default span', await ft('preview').evaluate(e => e.tagName), 'SPAN');
+  await ft('as').selectOption('h3');
+  check('FormattedText explicit semantics', await ft('preview').evaluate(e => e.tagName), 'H3');
+  await ft('inspect-ref').click();
+  check('FormattedText native ref observation', (await ft('observations').textContent()).includes('Ref element: h3.'), true);
+  await ft('markdown').uncheck();
+  check('FormattedText Markdown disabled', await ft('preview').locator('strong').count(), 0);
+  await ft('markdown').check();
+  check('FormattedText Markdown enabled', await ft('preview').locator('strong').count(), 1);
+  await ft('maxLines').fill('2');
+  check('FormattedText sample clamp', await ft('preview').evaluate(e => getComputedStyle(e).webkitLineClamp), '2');
+  await ft('subtle').check(); await ft('highlight').check();
+  check('FormattedText sample highlight', await ft('preview').locator('mark').count(), 1);
+  await ft('preview').locator('strong').click();
+  check('FormattedText sample native click', (await ft('observations').textContent()).includes('Preview clicks: 1.'), true);
+  await ft('rtl').check(); await ft('theme').check();
+  check('FormattedText sample RTL', await ft('preview').evaluate(e => getComputedStyle(e).direction), 'rtl');
+  check('FormattedText preserves authored JSX', await ft('mixed-jsx').locator('button').count(), 1);
+  await ft('mixed-jsx').locator('button').click();
+  check('FormattedText authored JSX click', (await ft('observations').textContent()).includes('Preview clicks: 2.'), true);
+  await ft('preview').screenshot({ path: path.join(output, `${label}-formatted-text-preview.png`) });
   check('console health', consoleMessages, []); check('page errors', pageErrors, []);
 })().catch(error => { failures.push(error.stack || error.message); }).finally(async () => {
   const version = browser ? browser.version() : 'not launched';

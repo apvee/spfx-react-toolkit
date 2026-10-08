@@ -140,3 +140,11 @@ test('returned conditional factories remain deferred until the returned function
   ]) assert.equal(checkSourceRules(report(expression),[])[0]?.kind,'package-global-renderer',expression);
   assert.deepEqual(checkSourceRules(report('(() => true ? () => createDOMRenderer() : () => createRegistry())()'),[]),[]);
 });
+
+test('reviewed control style definitions are local but actual renderer allocation stays forbidden', () => {
+  const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
+  const module = expression => ({ path: 'controls/formatted-text/formatted-text.styles.internal.ts', externalImports: [], topLevelInitializations: [{ expression }] });
+  assert.deepEqual(checkSourceRules({ edges: [], modules: [module('makeStyles({ root: {} })')] }, []), []);
+  assert.equal(checkSourceRules({ edges: [], modules: [module('createDOMRenderer()')] }, [])[0].kind, 'package-global-renderer');
+  assert.equal(checkSourceRules({ edges: [], modules: [module('makeStyles({ root: createDOMRenderer() })')] }, [])[0].kind, 'package-global-renderer');
+});

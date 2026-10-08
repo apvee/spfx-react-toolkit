@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { FormattedTextFixture } from './formatted-text';
 import { createDOMRenderer, makeStyles, mergeClasses } from '@griffel/core';
 import { RendererProvider, useRenderer_unstable } from '@griffel/react';
 import { FluentProvider } from '@fluentui/react-provider';
@@ -204,6 +205,7 @@ function Fixture(props: FixtureConfig): React.ReactElement {
       {probe('logical', [width.px(75), declaration('paddingInlineStart', '13px', '0px')])}
       {probe('physical', [width.px(75), declaration('paddingLeft', '17px', '0px')])}
     </section>
+    <FormattedTextFixture />
   </>;
 }
 function render(patch: Partial<FixtureConfig>): void {

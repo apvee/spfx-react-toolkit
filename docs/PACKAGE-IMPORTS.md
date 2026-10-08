@@ -6,7 +6,9 @@ The package publishes ESNext JavaScript for a bundler and TypeScript declaration
 
 | Import suffix after `@apvee/spfx-react-toolkit` | Surface |
 | --- | --- |
-| (root) | All public providers, hooks, helpers and services |
+| (root) | All public controls, providers, hooks, helpers and services |
+| `/controls` | Public controls and their types |
+| `/controls/formatted-text` | Canonical `FormattedText` and its three public types |
 | `/core` | Providers and public core types |
 | `/hooks` | All public hooks |
 | `/helpers` | Public helpers and descriptor namespaces |
@@ -97,10 +99,22 @@ Files, folders and other features need their corresponding explicit PnP imports 
 
 ## What the bundle gate measures
 
-The canonical production contract builds 36 variants and compares nine root/domain/legacy-leaf families. Blocking gzip gaps are at most 1,023 bytes for root/domain versus leaf, at most 512 bytes for the pure helper root versus leaf, and zero forbidden module groups or descriptor-retention violations. The verified informational snapshot currently has zero gaps across all nine families. Absolute raw/gzip/Brotli bytes are informational; compare emitted initial, async and union asset totals with matching compression/toolchain provenance. The checked-in snapshot is `tests/fixtures/tree-shaking/baseline.json`; exclusions and budgets live in `contract.json` next to it.
+The canonical production contract builds 39 variants, including equivalent FormattedText consumers through the root, `/controls` domain and `/controls/formatted-text` control entries, and retains the nine historical root/domain/legacy-leaf comparison families. Blocking gzip gaps are at most 1,023 bytes for root/domain versus leaf, at most 512 bytes for the pure helper root versus leaf, and zero forbidden module groups or descriptor-retention violations. The verified informational snapshot currently has zero gaps across all nine families. Absolute raw/gzip/Brotli bytes are informational; compare emitted initial, async and union asset totals with matching compression/toolchain provenance. The checked-in snapshot is `tests/fixtures/tree-shaking/baseline.json`; exclusions and budgets live in `contract.json` next to it.
 
 Style API reachability gaps and engine overhead answer different questions. The snapshot's minimal style case adds 1,732 gzip bytes versus direct Griffel and 1,396 bytes versus an already-Fluent control. This frozen snapshot predates the fixed-size scrollbar correction; current measurements are recorded separately in the maintenance verification rather than silently rewriting the baseline. These engine deltas are informational controls, not the alias gap budget or a universal app-size promise. A dynamic namespace lookup or a lazily loaded full catalog intentionally retains broader usage. The full lazy styles control emits an approximately 255 KiB async asset and a Webpack 244 KiB size advisory; it is not a static minimal-import regression. The full SPFx sample exercises a broad API surface and cannot establish the minimal-consumer tree-shaking result.
 
-`npm run verify:package` installs the fresh tarball into an isolated real SPFx consumer, validates resolution, executes the canonical 36 bundle/18 runtime/9 mutation gates and builds the ship sample/solution. Transport-controlled runtime probes establish local registration, provider and renderer identity; they do not establish tenant authentication. Existing npm transitive deprecation/lifecycle warnings and SPFx metadata-age advisories remain visible. Check actual warning and failure output, including subprocess markers, instead of relying only on an outer success status.
+`npm run verify:package` installs the fresh tarball into an isolated real SPFx consumer, validates resolution, executes the canonical 39 bundle/18 runtime/9 mutation gates and builds the ship sample/solution. Transport-controlled runtime probes establish local registration, provider and renderer identity; they do not establish tenant authentication. Existing npm transitive deprecation/lifecycle warnings and SPFx metadata-age advisories remain visible. Check actual warning and failure output, including subprocess markers, instead of relying only on an outer success status.
 
 See [development commands and baseline review](./DEVELOPMENT.md#production-import-gates-and-baseline-review) and the authenticated [Imports checklist](./SHAREPOINT-VALIDATION.md#imports).
+
+## FormattedText imports
+
+```tsx
+import { FormattedText } from '@apvee/spfx-react-toolkit';
+import { FormattedText as DomainText } from '@apvee/spfx-react-toolkit/controls';
+import { FormattedText as NarrowText, FormattedTextProps } from '@apvee/spfx-react-toolkit/controls/formatted-text';
+```
+
+All three expose the canonical control. Its parser and style modules remain private. Consumer bundles using unrelated root APIs must eliminate the control and Remark dependencies; bundles using FormattedText include its parser and Fluent Link. `markdown={false}` skips parsing at runtime but does not guarantee parser removal from a bundle importing the control. The parser is a module-local processor, with no external PnP registration or separate provider. Shared `@fluentui/react-components` (`^9.72.3`), React/Griffel and theme/direction contracts still apply. See the [FormattedText reference](./api/controls/formatted-text.md) for props, safety rules, overflow and limitations.
+
+For lazy loading, prefer the relevant domain facade when only that domain is needed. A dynamic root namespace captured by a callback can make Webpack retain all exports. If keeping that namespace form, declare the used exports explicitly with `webpackExports` (for example `useSx`, `width`, `typography`); the lazy production fixture verifies that the control and Markdown parser are then excluded. Static named imports remain covered by the ordinary root/domain/leaf gates.
