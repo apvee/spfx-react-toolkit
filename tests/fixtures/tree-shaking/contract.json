@@ -58,6 +58,15 @@
     ],
     "fluent-tooltip": [
       "^@fluentui/react-tooltip/"
+    ],
+    "auto-skeleton": [
+      "^@apvee/spfx-react-toolkit/lib/controls/auto-skeleton/"
+    ],
+    "fluent-skeleton": [
+      "^@fluentui/react-skeleton/"
+    ],
+    "styles-compiler": [
+      "^@apvee/spfx-react-toolkit/lib/helpers/styles/(resolve|cache|bindings)\\.internal\\.js$"
     ]
   },
   "fixtures": [
@@ -90,7 +99,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": []
     },
@@ -128,7 +138,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": []
     },
@@ -161,7 +172,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": []
     },
@@ -200,7 +212,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -242,7 +255,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -273,7 +287,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -307,7 +322,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -340,7 +356,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -382,7 +399,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -419,7 +437,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": []
     },
@@ -438,7 +457,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": []
     },
@@ -455,7 +475,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": []
     },
@@ -475,7 +496,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -512,7 +534,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": []
     },
@@ -531,7 +554,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -551,7 +575,8 @@
         "formatted-text",
         "markdown",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -583,7 +608,8 @@
         "provider",
         "theme-conversion",
         "relative-time",
-        "iana-lookup"
+        "iana-lookup",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": [
         "formatted-text",
@@ -620,7 +646,8 @@
         "markdown",
         "formatted-text",
         "iana-lookup",
-        "styles-engine"
+        "styles-engine",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": [
         "relative-time",
@@ -654,7 +681,8 @@
         "markdown",
         "formatted-text",
         "relative-time",
-        "styles-engine"
+        "styles-engine",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": [
         "iana-lookup"
@@ -688,9 +716,45 @@
         "formatted-text",
         "relative-time",
         "iana-lookup",
-        "styles-engine"
+        "styles-engine",
+        "auto-skeleton"
       ],
       "requiredModuleGroups": []
+    },
+    {
+      "id": "auto-skeleton",
+      "template": "auto-skeleton.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/auto-skeleton"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "markdown",
+        "formatted-text",
+        "relative-time",
+        "iana-lookup",
+        "styles-compiler"
+      ],
+      "requiredModuleGroups": [
+        "auto-skeleton",
+        "fluent-skeleton"
+      ]
     }
   ],
   "comparisons": [
@@ -813,6 +877,18 @@
       "reference": "already-fluent-direct/control",
       "metric": "gzip",
       "informational": true
+    },
+    {
+      "candidate": "auto-skeleton/root",
+      "reference": "auto-skeleton/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023
+    },
+    {
+      "candidate": "auto-skeleton/domain",
+      "reference": "auto-skeleton/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023
     }
   ]
 }

@@ -237,7 +237,7 @@ function checkSourceRules(report, sideEffects) {
     const registrations = module.externalImports.filter(edge => edge.kind === 'bare-import');
     const emittedPath = './lib/' + module.path.replace(/\.tsx?$/, '.js');
     if (registrations.length && !classified.has(emittedPath)) issues.push({ kind: 'unclassified-external-registration', from: module.path, specifiers: registrations.map(edge => edge.specifier) });
-    if (module.topLevelInitializations.some(item => hasImmediateRendererCall(item.expression, module.path === 'controls/formatted-text/formatted-text.styles.internal.ts'))) issues.push({ kind: 'package-global-renderer', from: module.path });
+    if (module.topLevelInitializations.some(item => hasImmediateRendererCall(item.expression, ['controls/formatted-text/formatted-text.styles.internal.ts', 'controls/auto-skeleton/auto-skeleton.styles.internal.ts'].includes(module.path)))) issues.push({ kind: 'package-global-renderer', from: module.path });
   }
   return issues;
 }
@@ -258,7 +258,7 @@ if (require.main === module) {
   const root = path.resolve(__dirname, '..');
   const sourceRoot = path.join(root, 'packages/spfx-react-toolkit/src');
   const output = path.resolve(process.argv[2] || '.docs/maintenance/evidence/tree-shaking/initial/import-graph.json');
-  const report = auditImportGraph({ sourceRoot, entrypoints: ['index.ts', 'core/index.ts', 'hooks/index.ts', 'services/index.ts', 'helpers/index.ts', 'helpers/styles/index.ts', 'controls/index.ts', 'controls/formatted-text/index.ts', 'controls/relative-time/index.ts'] });
+  const report = auditImportGraph({ sourceRoot, entrypoints: ['index.ts', 'core/index.ts', 'hooks/index.ts', 'services/index.ts', 'helpers/index.ts', 'helpers/styles/index.ts', 'controls/index.ts', 'controls/formatted-text/index.ts', 'controls/relative-time/index.ts', 'controls/auto-skeleton/index.ts'] });
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/package.json')));
   report.peerDependencyContracts = manifest.peerDependencies;
   report.sourceRuleIssues = checkSourceRules(report, manifest.sideEffects);
@@ -279,9 +279,11 @@ if (require.main === module) {
     else if (observed.length && ['core/context.internal.tsx', 'core/state.internal.tsx'].includes(module.path)) manual = { classification: 'local-context-allocation', rationale: 'Manual review: React.createContext allocates local context objects and development displayName assignments mutate those objects only; provider runtime stores remain instance-owned.' };
     else if (observed.length && module.path === 'helpers/spfx-api-permission-precheck.helpers.ts') manual = { classification: 'local-allocation', rationale: 'Manual review: Sets of expected audiences/statuses are local lookup data; requests and diagnostics run only in exported functions.' };
     else if (observed.length && module.path === 'controls/formatted-text/formatted-text-content.internal.tsx') manual = { classification: 'local-parser-allocation', rationale: 'Manual review: unified processor configures its own parser/plugins only; no DOM, renderer, external registration or text cache.' };
+    else if (observed.length && module.path === 'controls/auto-skeleton/auto-skeleton.styles.internal.ts') manual = { classification: 'local-style-allocation', rationale: 'makeStyles defines local rules; renderer and insertion happen only through mounted hooks, no package renderer.' };
     else if (observed.length && module.path === 'controls/formatted-text/formatted-text.styles.internal.ts') manual = { classification: 'local-style-allocation', rationale: 'Manual review: makeStyles defines component-owned rules; renderer/context/CSS work happens through the hook, no package-wide renderer or registry.' };
     else if (observed.length && module.path === 'controls/formatted-text/formatted-text.tsx') manual = { classification: 'local-component-allocation', rationale: 'Manual review: forwardRef creates a local component; descriptors/styles and parsing run when it renders.' };
     else if (observed.length && module.path === 'helpers/spfx-time-zone.internal.ts') manual = { classification: 'local-data-allocation', rationale: 'Audited readonly IANA lookup is a local object literal, no DOM/renderer/requests/registration.' };
+    else if (observed.length && module.path === 'controls/auto-skeleton/auto-skeleton.tsx') manual = { classification: 'local-component-allocation', rationale: 'forwardRef defines the component; DOM measurement, subscriptions and geometry classes run only when mounted with per-instance cleanup.' };
     else if (observed.length && module.path === 'controls/relative-time/relative-time.tsx') manual = { classification: 'local-component-allocation', rationale: 'forwardRef defines a component; formatter/timers/visibility hooks run only when mounted, with per-instance cleanup.' };
     else if (module.effects.classification === 'review-required') manual = { classification: 'review-required', rationale: 'New/unclassified top-level effects require an explicit review checkpoint.' };
     module.effects.manual = manual;

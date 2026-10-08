@@ -73,3 +73,10 @@ export function mappedZone(info: SPFxLocaleInfo): string | undefined { return in
 export function readonlyZone(info: SPFxLocaleInfo): void { info.ianaTimeZone = 'UTC'; }
 // @ts-expect-error Private lookup has no clean alias.
 import {} from '@apvee/spfx-react-toolkit/helpers/spfx-time-zone.internal';
+
+import { AutoSkeleton as rootSkeleton } from '@apvee/spfx-react-toolkit';
+import { AutoSkeleton as domainSkeleton } from '@apvee/spfx-react-toolkit/controls';
+import { AutoSkeleton as controlSkeleton } from '@apvee/spfx-react-toolkit/controls/auto-skeleton';
+import type { AutoSkeletonProps } from '@apvee/spfx-react-toolkit/controls/auto-skeleton';
+export const skeletons = [rootSkeleton, domainSkeleton, controlSkeleton];
+export const skeletonProps: AutoSkeletonProps = { loading: true, children: 'Profile' };

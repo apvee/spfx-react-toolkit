@@ -30,6 +30,7 @@
 
 | Component / types | Description | Documentation |
 | --- | --- | --- |
+| `AutoSkeleton`, `AutoSkeletonProps` | Mounted HTML geometry, loading overlays and persistent child state | [AutoSkeleton](./api/controls/auto-skeleton.md) |
 | `RelativeTime`, `RelativeTimeProps` | Localized relative instants, full-date descriptions and clock modes | [RelativeTime](./api/controls/relative-time.md) |
 | `FormattedText`, `FormattedTextProps`, `FormattedTextVariant`, `FormattedTextSemanticElement` | Native text elements, typography, inline Markdown and overflow | [Controls](./api/controls/INDEX.md), [FormattedText](./api/controls/formatted-text.md) |
 

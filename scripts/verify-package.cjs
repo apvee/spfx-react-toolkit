@@ -128,6 +128,12 @@ try {
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
   // Both the public entry points and their persistence/client dependencies must ship.
   for (const module of [
+    'controls/auto-skeleton/index',
+    'controls/auto-skeleton/auto-skeleton',
+    'controls/auto-skeleton/auto-skeleton.types',
+    'controls/auto-skeleton/auto-skeleton.styles.internal',
+    'controls/auto-skeleton/auto-skeleton-geometry.internal',
+    'controls/auto-skeleton/use-auto-skeleton.internal',
     'controls/relative-time/index',
     'controls/relative-time/relative-time',
     'controls/relative-time/relative-time.types',

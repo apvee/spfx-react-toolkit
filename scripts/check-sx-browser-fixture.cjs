@@ -639,6 +639,65 @@ async function runRelativeTime() {
   await page.setViewportSize({ width: 1210, height: 900 });
 }
 
+async function runAutoSkeleton() {
+  const settle = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  const update = async patch => { await page.evaluate(value => window.autoSkeletonFixture.render(value), patch); await settle(); };
+  const root = page.locator('#as-root');
+  const overlay = () => root.locator('[data-auto-skeleton-overlay]');
+  const geometry = async () => root.evaluate(element => {
+    const items = [...element.querySelectorAll('[data-auto-skeleton-shape]')];
+    const rectangle = items.find(item => Math.abs(item.getBoundingClientRect().width - 160) < 1 && Math.abs(item.getBoundingClientRect().height - 24) < 1);
+    const circle = items.find(item => item.getAttribute('data-auto-skeleton-shape') === 'circle');
+    const aligned = (item, target) => { if (!item || !target) return false; const a=item.getBoundingClientRect(), b=target.getBoundingClientRect(); return Math.abs(a.left-b.left)<=1 && Math.abs(a.top-b.top)<=1 && Math.abs(a.width-b.width)<=1 && Math.abs(a.height-b.height)<=1; };
+    return { shapes: items.every(item => ['circle','rectangle'].includes(item.getAttribute('data-auto-skeleton-shape'))), count:items.length,
+      rectangle:aligned(rectangle,element.querySelector('#as-rectangle')), circle:aligned(circle,element.querySelector('#as-circle')),
+      inline: items.every(item=>!item.hasAttribute('style')), input:element.querySelector('#as-input').value,
+      ignored:items.some(item=>{ const a=item.getBoundingClientRect(),b=element.querySelector('#as-ignored-child').getBoundingClientRect();return Math.abs(a.top-b.top)<1 && Math.abs(a.left-b.left)<1;}) };
+  });
+  await check('auto-skeleton:cold-empty-busy', await page.locator('#as-cold-empty').getAttribute('aria-busy'), 'true');
+  await check('auto-skeleton:cold-empty-no-overlay', await page.locator('#as-cold-empty [data-auto-skeleton-overlay]').count(),0);
+  for (const theme of ['light','dark']) {
+    await page.evaluate(value=>window.sxFixture.render({theme:value,dir:'ltr'}),theme); await settle();
+    await update({loading:false,empty:false,narrow:false,scrolling:false,ignore:true,secondLoading:false,animation:'wave'});
+    await page.locator('#as-input').fill('preserved browser input');
+    await page.evaluate(()=>window.autoSkeletonFixture.focusAndLoad()); await settle();
+    await check(`auto-skeleton:${theme}:overlay`,await overlay().count(),1);
+    const g=await geometry();
+    await check(`auto-skeleton:${theme}:shapes-only`,g.shapes,true); await check(`auto-skeleton:${theme}:rectangle-aligned`,g.rectangle,true);
+    await check(`auto-skeleton:${theme}:circle-aligned`,g.circle,true); await check(`auto-skeleton:${theme}:text-measured`,g.count>4,true);
+    await check(`auto-skeleton:${theme}:no-inline`,g.inline,true); await check(`auto-skeleton:${theme}:ignored-subtree`,g.ignored,false);
+    await check(`auto-skeleton:${theme}:content-hidden`,await root.locator('[data-auto-skeleton-content]').evaluate(e=>getComputedStyle(e).opacity),'0');
+    await check(`auto-skeleton:${theme}:inert`,await root.locator('[data-auto-skeleton-content]').evaluate(e=>e.inert),true);
+    await check(`auto-skeleton:${theme}:focus-released`,await page.evaluate(()=>document.activeElement.id !== 'as-input'),true);
+    await page.locator('#as-input').evaluate(e=>e.focus()); await check(`auto-skeleton:${theme}:inert-blocks-focus`,await page.evaluate(()=>document.activeElement.id !== 'as-input'),true);
+    await page.locator('#as-tab-before').focus(); await page.keyboard.press('Tab'); await check(`auto-skeleton:${theme}:tab-skips-content`,await page.evaluate(()=>document.activeElement.id),'as-tab-after');
+    await check(`auto-skeleton:${theme}:decorative`,await overlay().getAttribute('role'),'presentation');
+    await check(`auto-skeleton:${theme}:single-busy-root`,await overlay().getAttribute('aria-busy'),null);
+    await check(`auto-skeleton:${theme}:second-isolated`,await page.locator('#as-second [data-auto-skeleton-overlay]').count(),0);
+    await update({secondLoading:true}); await check(`auto-skeleton:${theme}:second-independent`,await page.locator('#as-second [data-auto-skeleton-overlay]').count(),1);
+    const before=await root.locator('[data-auto-skeleton-shape]').count(); await update({narrow:true});
+    await check(`auto-skeleton:${theme}:loading-resize-text`,(await root.locator('[data-auto-skeleton-shape]').count())>before,true);
+    await check(`auto-skeleton:${theme}:resize-aligned`,(await geometry()).rectangle,true);
+    const ruleCount=()=>page.evaluate(()=>[...document.styleSheets].reduce((sum,sheet)=>sum+sheet.cssRules.length,0));
+    const rules=await ruleCount(); await update({narrow:true}); await check(`auto-skeleton:${theme}:same-geometry-dedup`,await ruleCount(),rules);
+    await update({animation:'pulse'}); await check(`auto-skeleton:${theme}:pulse`,await root.locator('[data-auto-skeleton-shape]').first().evaluate(e=>getComputedStyle(e,'::after').animationName !== 'none'),true);
+    await page.emulateMedia({reducedMotion:'reduce'}); await settle();
+    await check(`auto-skeleton:${theme}:reduced-motion`,await root.locator('[data-auto-skeleton-shape]').first().evaluate(e=>getComputedStyle(e,'::after').animationIterationCount),'1');
+    await page.emulateMedia({reducedMotion:'no-preference',forcedColors:'active'}); await settle();
+    await check(`auto-skeleton:${theme}:native-forced-colors`,await root.locator('[data-auto-skeleton-shape]').first().evaluate(e=>getComputedStyle(e).backgroundColor),await page.locator('#as-native-item').evaluate(e=>getComputedStyle(e).backgroundColor));
+    await page.emulateMedia({forcedColors:'none'}); await settle();
+    await page.locator('#as-fixture').screenshot({path:path.join(output,`${label}-auto-skeleton-${theme}.png`)});
+    await update({loading:false}); await check(`auto-skeleton:${theme}:children-retained`,await page.locator('#as-input').inputValue(),'preserved browser input');
+    await check(`auto-skeleton:${theme}:inert-removed`,await root.locator('[data-auto-skeleton-content]').evaluate(e=>e.inert),false);
+    await update({loading:true,empty:true}); await check(`auto-skeleton:${theme}:empty-clears`,await overlay().count(),0);
+  }
+  await page.evaluate(()=>window.sxFixture.render({theme:'light',dir:'rtl'})); await update({loading:true,empty:false,narrow:false,scrolling:false});
+  await check('auto-skeleton:rtl-physical-rectangle',(await geometry()).rectangle,true); await check('auto-skeleton:rtl-physical-circle',(await geometry()).circle,true);
+  await update({scrolling:true}); await page.evaluate(()=>window.autoSkeletonFixture.scrollRoot(30,0)); await settle();
+  await check('auto-skeleton:root-scroll-aligned',(await geometry()).rectangle,true);
+  await page.evaluate(()=>window.sxFixture.render({dir:'ltr'})); await update({scrolling:false,loading:false,secondLoading:false});
+}
+
 (async () => {
   fs.mkdirSync(output, { recursive: true });
   browser = await chromium.launch({ headless: true,
@@ -654,6 +713,7 @@ async function runRelativeTime() {
     await runCatalog();
     await runFormattedText();
     await runRelativeTime();
+    await runAutoSkeleton();
     await check('console-health', consoleMessages, []);
   } catch (error) { errors.push(error.stack); }
   const report = { version, node: process.version, url, viewport: { width: 1210, height: 900 },

@@ -38,7 +38,7 @@ npm run build:app
 | `npm test` | `node --test tests/*.test.cjs` |
 | `npm run typecheck` | Both workspaces run `tsc --noEmit` |
 | `npm run lint` | Both workspaces run ESLint on source |
-| `npm run verify:examples` | Demo registry matches 46 hook and 4 provider exports plus FormattedText and all style namespaces/scopes |
+| `npm run verify:examples` | Demo registry matches 46 hook and 4 provider exports plus FormattedText, RelativeTime, AutoSkeleton and all style namespaces/scopes |
 | `npm run verify:runtime-store` | Runtime store behavior check using the local compiler |
 | `npm run verify:public-docs` | Qualified public style exports/JSDoc, historical helper/service coverage and local documentation link targets |
 | `npm run verify:api` | Public export/declaration compatibility checks |
@@ -121,7 +121,7 @@ npm run verify
 npm run verify:package
 ```
 
-`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 48-fixture bundle contract (including FormattedText/RelativeTime and locale/page-context equivalents), 18 fresh runtime probes and nine mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
+`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 51-fixture bundle contract (including AutoSkeleton/FormattedText/RelativeTime and locale/page-context equivalents), 18 fresh runtime probes and nine mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
 
 Ordinary verification deletes the temporary consumer when it finishes. For diagnostics or an explicit baseline proposal, preserve a fresh installed consumer and read its recorded path before running the examples below. The bundle CLI requires `--consumer-root`; its default mode is `enforce`, its default contract is `tests/fixtures/tree-shaking/contract.json`, and its default output is `.docs/maintenance/evidence/tree-shaking/bundle-contract`:
 
@@ -178,3 +178,11 @@ The lazy `formatted-text` entry (`spfx-demo-formatted-text`) consumes the compil
 Run `node --test tests/demo-formatted-text.test.cjs` for sample marker coverage and `npm run verify:examples` for the registry. Marker coverage does not execute the sample. The existing `tests/fixtures/sx-browser/` fixture and browser build/serve/check commands above include FormattedText layout/theme cases alongside the original sx cases. Record DOM/browser evidence separately from authenticated host execution. Build library before app, then restart a running serve before evaluating changes; run the existing `verify` and `verify:package` gates before review. The [FormattedText host checklist](./SHAREPOINT-VALIDATION.md#formattedtext) is NOT EXECUTED until a tenant run records it.
 
 The `.docs/` directory is local and excluded from Git. Verification commands may create evidence there; reproducible inputs stay versioned under `tests/fixtures/`. The legacy style measurement input is `tests/fixtures/sx-bundle/baseline.json`.
+
+## AutoSkeleton sample and checks
+
+The lazy `auto-skeleton` entry (`spfx-demo-auto-skeleton`) consumes the compiled library root. Its native labeled controls edit loading, wave/pulse animation, minimum size, selector exclusions, empty content, width, theme and direction. A 160×24 rectangle, a 40-pixel circle, real wrapped/mixed text and ignored subtrees make geometry observable. Type a note before loading: its value and mount count persist. The focus-then-load action releases focus from the inert content; inspect-ref reports the native div, busy state and generated item count. See [AutoSkeleton](./api/controls/auto-skeleton.md) for the owned block wrapper, native inert requirement, cold/empty behavior and measurement limits.
+
+Run `node --test tests/demo-auto-skeleton.test.cjs` for sample marker coverage and `npm run verify:examples` for the registry. Marker tests do not execute the scenario. Existing source and compiled-sample browser fixtures include AutoSkeleton. The source fixture exposes `window.autoSkeletonFixture.render`, `focusAndLoad` and `scrollRoot`, with `as-` DOM IDs; it inherits direction/theme from `window.sxFixture.render`. Observe real text/shape geometry, resize while hidden, root border/padding/scroll, exclusion subtrees, descendant visibility overrides, focus/inert, empty geometry, two independent instances and Fluent media preferences. New geometry CSS may persist for the renderer lifetime; repeated geometry should reuse rules.
+
+Build the library before the app and restart an active serve after source changes. Run the established `npm run verify` and `npm run verify:package` gates before review, including the 51 root/domain/leaf bundle variants. Record local browser execution separately. The authenticated [AutoSkeleton checklist](./SHAREPOINT-VALIDATION.md#autoskeleton) remains **NOT EXECUTED** until a tenant run records it.

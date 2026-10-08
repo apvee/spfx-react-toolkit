@@ -152,6 +152,10 @@
       "types": "./lib/controls/relative-time/index.d.ts",
       "default": "./lib/controls/relative-time/index.js"
     },
+    "./controls/auto-skeleton": {
+      "types": "./lib/controls/auto-skeleton/index.d.ts",
+      "default": "./lib/controls/auto-skeleton/index.js"
+    },
     "./LICENSE": "./LICENSE",
     "./README.md": "./README.md",
     "./lib/core/context.internal.d.ts": "./lib/core/context.internal.d.ts",
@@ -1854,6 +1858,9 @@
       ],
       "controls/relative-time": [
         "lib/controls/relative-time/index.d.ts"
+      ],
+      "controls/auto-skeleton": [
+        "lib/controls/auto-skeleton/index.d.ts"
       ]
     }
   },

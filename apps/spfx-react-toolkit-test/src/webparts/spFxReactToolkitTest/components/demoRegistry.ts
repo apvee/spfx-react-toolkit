@@ -23,6 +23,16 @@ const lazyPanel = (
 
 export const demoRegistry: readonly DemoRegistryEntry[] = [
   {
+    key: 'auto-skeleton',
+    title: 'AutoSkeleton',
+    iconName: 'Processing',
+    description: 'Measured loading geometry, persistent child state, resize, focus and direction.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-auto-skeleton' */ './panels/AutoSkeletonPanel')),
+    coverage: [
+      { symbol: 'AutoSkeleton', kind: 'snapshot', notes: 'Loading, animation, minimum size, ignored subtrees, empty content, resize, themes/RTL and native ref/focus/state observations.' },
+    ],
+  },
+  {
     key: 'relative-time',
     title: 'RelativeTime',
     iconName: 'Clock',

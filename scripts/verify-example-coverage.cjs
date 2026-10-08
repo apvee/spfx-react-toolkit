@@ -147,7 +147,7 @@ for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invok
 }
 console.log('Verified dedicated root/domain/legacy Imports scenario (no duplicate export coverage).');
 
-const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => item.name === 'FormattedText' || item.name === 'RelativeTime').map(item => item.name);
+const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton'].includes(item.name)).map(item => item.name);
 assertCovered('Controls', controlSymbols, registrySymbols);
 const textPanel = read(path.join(panelsPath, 'FormattedTextPanel.tsx'));
 for (const marker of ['FormattedText', 'maxLines', 'markdown', 'subtle', 'highlight', 'variant', 'as', 'font', 'align', 'wrap', 'truncate', 'italic', 'underline', 'strikethrough', 'ref', 'onClick']) {
@@ -160,3 +160,8 @@ for (const marker of ['RelativeTime', 'dateTime', 'referenceTime', 'locale', 'fo
   if (!relativePanel.includes(marker)) throw new Error(`RelativeTime interactive example missing ${marker}`);
 }
 if (!read(path.join(panelsPath, 'ContextPanel.tsx')).includes('ianaTimeZone')) throw new Error('Locale mapping scenario missing');
+
+const skeletonPanel = read(path.join(panelsPath, 'AutoSkeletonPanel.tsx'));
+for (const marker of ['AutoSkeleton', 'loading', 'animation', 'minSize', 'ignoreSelectors', 'ref', 'data-skeleton-shape', 'rectangle', 'circle']) {
+  if (!skeletonPanel.includes(marker)) throw new Error(`AutoSkeleton interactive example missing ${marker}`);
+}
