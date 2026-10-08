@@ -119,15 +119,27 @@ try {
   const packed = JSON.parse(execFileSync('npm',['pack','--json','--pack-destination',temp],{cwd:library,encoding:'utf8'}))[0];
   assert.equal(packed.name,'@apvee/spfx-react-toolkit');
   for (const file of packed.files) {
-    assert.ok(/^(package\.json|README\.md|LICENSE|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls)\/.+))$/.test(file.path), `Unexpected package file: ${file.path}`);
+    assert.ok(/^(package\.json|README\.md|LICENSE|THIRD-PARTY-NOTICES\.md|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls)\/.+))$/.test(file.path), `Unexpected package file: ${file.path}`);
   }
   const packedPaths = new Set(packed.files.map(file => file.path));
+  assert.ok(packedPaths.has('THIRD-PARTY-NOTICES.md'), 'Artwork attribution must ship');
   assertEntrypointContract(JSON.parse(fs.readFileSync(path.join(library, 'package.json'), 'utf8')), [...packedPaths]);
   fs.writeFileSync(path.join(evidence, 'pack.json'), JSON.stringify(packed, null, 2));
   assertPackedImports(packedPaths);
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
   // Both the public entry points and their persistence/client dependencies must ship.
   for (const module of [
+    'controls/state-message/index',
+    'controls/state-message/state-message',
+    'controls/state-message/state-message.types',
+    'controls/state-message/state-message.styles.internal',
+    'controls/state-message/state-message-theme.internal',
+    'controls/state-message/illustrations/illustration-registry.internal',
+    'controls/state-message/illustrations/default-illustration',
+    'controls/state-message/illustrations/empty-illustration',
+    'controls/state-message/illustrations/error-illustration',
+    'controls/state-message/illustrations/thanks-illustration',
+    'controls/state-message/illustrations/hello-illustration',
     'controls/auto-skeleton/index',
     'controls/auto-skeleton/auto-skeleton',
     'controls/auto-skeleton/auto-skeleton.types',

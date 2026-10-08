@@ -16,6 +16,7 @@ const cleanAliases = Object.freeze({
   './controls': 'lib/controls/index', './controls/formatted-text': 'lib/controls/formatted-text/index',
   './controls/relative-time': 'lib/controls/relative-time/index',
   './controls/auto-skeleton': 'lib/controls/auto-skeleton/index',
+  './controls/state-message': 'lib/controls/state-message/index',
 });
 
 /** Derive explicit exports without changing the frozen historical inventory. */
@@ -54,7 +55,7 @@ function createEntrypointContract({ publishedFiles, cleanAliases: aliases = clea
 }
 
 function collectPublishedFiles(directory = library) {
-  const files = ['LICENSE', 'README.md', 'package.json'];
+  const files = ['LICENSE', 'README.md', 'THIRD-PARTY-NOTICES.md', 'package.json'];
   function visit(folder) {
     for (const entry of fs.readdirSync(folder, { withFileTypes: true })) {
       const file = path.join(folder, entry.name);
@@ -65,7 +66,7 @@ function collectPublishedFiles(directory = library) {
   visit(path.join(directory, 'lib'));
   for (const file of files) {
     assert.ok(fs.existsSync(path.join(directory, file)), `Missing published file: ${file}`);
-    assert.ok(/^(package\.json|README\.md|LICENSE|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls)\/.+))$/.test(file), `Unexpected published file: ${file}`);
+    assert.ok(/^(package\.json|README\.md|LICENSE|THIRD-PARTY-NOTICES\.md|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls)\/.+))$/.test(file), `Unexpected published file: ${file}`);
     if (!file.startsWith('lib/')) continue;
     const source = file.replace(/^lib\//, 'src/').replace(/\.(d\.ts|js)(\.map)?$/, '');
     assert.ok(fs.existsSync(path.join(directory, source + '.ts')) || fs.existsSync(path.join(directory, source + '.tsx')), `Published file lacks canonical source: ${file}`);
@@ -73,7 +74,7 @@ function collectPublishedFiles(directory = library) {
   return files.sort();
 }
 
-function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
+function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
   const contract = createEntrypointContract({ publishedFiles, cleanAliases });
   assert.deepEqual(manifest.exports, contract.exports, 'Package exports differ from the exact additive contract');
   // Object equality alone does not check condition priority.
@@ -123,7 +124,7 @@ function verifyConsumerResolution(consumer, evidenceDirectory) {
   fs.copyFileSync(path.join(root, 'tests/fixtures/tree-shaking/resolution/consumer.ts'), fixture);
   const modes = [];
   const declarations = {};
-  const importedNames = ['rootWidth', 'helperWidth', 'width', 'directoryWidth', 'rootSx', 'useSx', 'leafSx', 'legacySx', 'rootCallback', 'useStableCallback', 'legacyCallback', 'rootText', 'domainText', 'controlText', 'rootRelative', 'domainRelative', 'controlRelative', 'rootSkeleton', 'domainSkeleton', 'controlSkeleton'];
+  const importedNames = ['rootWidth', 'helperWidth', 'width', 'directoryWidth', 'rootSx', 'useSx', 'leafSx', 'legacySx', 'rootCallback', 'useStableCallback', 'legacyCallback', 'rootText', 'domainText', 'controlText', 'rootRelative', 'domainRelative', 'controlRelative', 'rootSkeleton', 'domainSkeleton', 'controlSkeleton', 'rootState', 'domainState', 'controlState'];
   for (const [mode, moduleResolution, module] of [
     ['node', ts.ModuleResolutionKind.Node10, ts.ModuleKind.ESNext],
     ['bundler', ts.ModuleResolutionKind.Bundler, ts.ModuleKind.ESNext],
@@ -143,7 +144,7 @@ function verifyConsumerResolution(consumer, evidenceDirectory) {
         if (importedNames.includes(element.name.text)) symbols.set(element.name.text, checker.getAliasedSymbol(checker.getSymbolAtLocation(element.name)));
       }
     }
-    for (const group of [['rootWidth', 'helperWidth', 'width', 'directoryWidth'], ['rootSx', 'useSx', 'leafSx', 'legacySx'], ['rootCallback', 'useStableCallback', 'legacyCallback'], ['rootText', 'domainText', 'controlText'], ['rootRelative', 'domainRelative', 'controlRelative'], ['rootSkeleton', 'domainSkeleton', 'controlSkeleton']]) {
+    for (const group of [['rootWidth', 'helperWidth', 'width', 'directoryWidth'], ['rootSx', 'useSx', 'leafSx', 'legacySx'], ['rootCallback', 'useStableCallback', 'legacyCallback'], ['rootText', 'domainText', 'controlText'], ['rootRelative', 'domainRelative', 'controlRelative'], ['rootSkeleton', 'domainSkeleton', 'controlSkeleton'], ['rootState', 'domainState', 'controlState']]) {
       for (const name of group) assert.equal(symbols.get(name), symbols.get(group[0]), `Canonical symbol identity changed: ${name}`);
     }
     declarations[mode] = resolvedRoot.resolvedFileName;

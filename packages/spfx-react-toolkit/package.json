@@ -18,7 +18,8 @@
     "README.md",
     "LICENSE",
     "lib/styles/**/*",
-    "lib/controls/**/*"
+    "lib/controls/**/*",
+    "THIRD-PARTY-NOTICES.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -155,6 +156,10 @@
     "./controls/auto-skeleton": {
       "types": "./lib/controls/auto-skeleton/index.d.ts",
       "default": "./lib/controls/auto-skeleton/index.js"
+    },
+    "./controls/state-message": {
+      "types": "./lib/controls/state-message/index.d.ts",
+      "default": "./lib/controls/state-message/index.js"
     },
     "./LICENSE": "./LICENSE",
     "./README.md": "./README.md",
@@ -1861,6 +1866,9 @@
       ],
       "controls/auto-skeleton": [
         "lib/controls/auto-skeleton/index.d.ts"
+      ],
+      "controls/state-message": [
+        "lib/controls/state-message/index.d.ts"
       ]
     }
   },

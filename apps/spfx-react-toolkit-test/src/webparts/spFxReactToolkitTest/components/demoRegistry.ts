@@ -23,6 +23,14 @@ const lazyPanel = (
 
 export const demoRegistry: readonly DemoRegistryEntry[] = [
   {
+    key: 'state-message',
+    title: 'StateMessage',
+    iconName: 'Info',
+    description: 'Section states, theme-aware artwork, container sizing and accessible actions.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-state-message' */ './panels/StateMessagePanel')),
+    coverage: [{ symbol: 'StateMessage', kind: 'snapshot', notes: 'Five presets, light/dark, RTL, responsive host, custom/hidden visual, heading, role, button/link actions and root ref.' }],
+  },
+  {
     key: 'auto-skeleton',
     title: 'AutoSkeleton',
     iconName: 'Processing',

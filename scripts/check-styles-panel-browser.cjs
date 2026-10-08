@@ -282,6 +282,25 @@ async function thumbInteractions(axis) {
   await sk('loading').check(); await sk('empty').check(); await settle();
   check('AutoSkeleton sample empty clears',await skPreview.locator('[data-auto-skeleton-overlay]').count(),0);
   check('AutoSkeleton sample empty stays busy',await skPreview.getAttribute('aria-busy'),'true');
+  const sm = id => page.locator(`[data-state-message-demo="${id}"]`);
+  const smRoot=sm('preview');
+  check('StateMessage sample h3',await smRoot.locator('h3').textContent(),'Your section state');
+  check('StateMessage sample status',await smRoot.locator('[data-state-message-text]').getAttribute('role'),'status');
+  await sm('inspect').click();check('StateMessage sample root ref',(await sm('observations').textContent()).includes('Root: div, heading=h3'),true);
+  await smRoot.getByRole('button',{name:'Try again'}).click();check('StateMessage sample action',(await sm('observations').textContent()).includes('Actions: 1.'),true);
+  check('StateMessage sample disabled',await smRoot.getByRole('button',{name:'Unavailable'}).isDisabled(),true);
+  for(const preset of ['generic','empty','error','success','welcome']){
+    await sm('preset').selectOption(preset);await settle();
+    check(`StateMessage sample ${preset} artwork`,await smRoot.locator('svg').count(),1);
+  }
+  await sm('theme').check();await sm('direction').check();await sm('resize').check();await sm('long').check();await settle();
+  check('StateMessage sample narrow no overflow',await smRoot.evaluate(e=>e.scrollWidth<=e.clientWidth),true);
+  check('StateMessage sample rtl',await smRoot.evaluate(e=>getComputedStyle(e).direction),'rtl');
+  await sm('role').check();check('StateMessage sample explicit alert',await smRoot.locator('[data-state-message-text]').getAttribute('role'),'alert');
+  await sm('heading').selectOption('2');check('StateMessage sample semantic heading',await smRoot.locator('h2').count(),1);
+  await sm('visual').selectOption('hidden');check('StateMessage sample hide',await smRoot.locator('[data-state-message-visual]').count(),0);
+  await sm('visual').selectOption('custom');check('StateMessage sample custom',await smRoot.locator('[role="img"]').getAttribute('aria-label'),'Custom visual');
+  await sm('visual').selectOption('preset');await smRoot.screenshot({path:path.join(output,`${label}-state-message-preview.png`)});
   check('console health', consoleMessages, []); check('page errors', pageErrors, []);
 })().catch(error => { failures.push(error.stack || error.message); }).finally(async () => {
   const version = browser ? browser.version() : 'not launched';

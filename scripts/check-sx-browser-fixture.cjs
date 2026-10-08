@@ -698,6 +698,62 @@ async function runAutoSkeleton() {
   await page.evaluate(()=>window.sxFixture.render({dir:'ltr'})); await update({scrolling:false,loading:false,secondLoading:false});
 }
 
+async function runStateMessage() {
+  const settle = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  const update = async patch => { await page.evaluate(value => window.stateMessageFixture.render(value), patch); await settle(); };
+  const root=page.locator('#sm-root');
+  const visual=root.locator('[data-state-message-visual]');
+  const text=root.locator('[data-state-message-text]');
+  const actions=root.locator('[data-state-message-actions]');
+  await page.setViewportSize({width:1210,height:900});
+  await page.evaluate(()=>window.sxFixture.render({theme:'light',dir:'ltr'}));await settle();
+  await update({hostWidth:663});
+  await check('state-message:639-content-fluid-visual',await visual.evaluate(e=>e.getBoundingClientRect().width),280);
+  await check('state-message:639-content-base-text',await text.evaluate(e=>getComputedStyle(e).maxWidth),'240px');
+  await root.locator('h3').evaluate(e=>e.setAttribute('data-stable-heading','yes'));
+  await actions.locator('button').first().evaluate(e=>e.setAttribute('data-stable-button','yes'));
+  await update({hostWidth:664});
+  await check('state-message:640-content-fluid-visual',await visual.evaluate(e=>e.getBoundingClientRect().width),280);
+  await check('state-message:640-content-large-text',await text.evaluate(e=>getComputedStyle(e).maxWidth),'600px');
+  await check('state-message:640-content-large-actions',await actions.evaluate(e=>getComputedStyle(e).maxWidth),'280px');
+  await check('state-message:heading-retained',await root.locator('h3').getAttribute('data-stable-heading'),'yes');
+  await check('state-message:button-retained',await actions.locator('button').first().getAttribute('data-stable-button'),'yes');
+  await check('state-message:no-inline-styles',await root.locator('[style]').count(),0);
+  await check('state-message:role-text-only',await text.evaluate(e=>e.getAttribute('role')==='status'&&!e.querySelector('button,svg')),true);
+  await actions.locator('button').first().click();await check('state-message:callback',await page.locator('#sm-clicks').textContent(),'1');
+  await check('state-message:disabled',await actions.locator('button').nth(1).isDisabled(),true);
+  await check('state-message:anchor',await actions.locator('a').getAttribute('href'),'#state-help');
+  await actions.locator('button').first().focus();await page.keyboard.press('Tab');
+  await check('state-message:keyboard-skips-disabled',await actions.locator('a').evaluate(e=>e===document.activeElement),true);
+  await page.keyboard.press('Shift+Tab');
+  await check('state-message:keyboard-returns-primary',await actions.locator('button').first().evaluate(e=>e===document.activeElement),true);
+  for(const preset of ['generic','empty','error','success','welcome'])for(const dark of [false,true]){
+    await update({preset,dark});
+    await check(`state-message:${preset}:${dark}:svg`,await visual.locator('svg').count(),1);
+    await check(`state-message:${preset}:${dark}:decorative`,await visual.locator('svg').getAttribute('aria-hidden'),'true');
+    await check(`state-message:${preset}:${dark}:natural-height`,await visual.locator('svg').evaluate(e=>{const r=e.getBoundingClientRect(),box=e.getAttribute('viewBox').split(' ').map(Number);return Math.abs(r.width-280)<1&&Math.abs(r.height-r.width*box[3]/box[2])<1;}),true);
+    await check(`state-message:${preset}:${dark}:local-gradient-ids`,await page.locator('#sm-fixture').evaluate(e=>{
+      const ids=[...e.querySelectorAll('svg [id]')].map(n=>n.id);return new Set(ids).size===ids.length && [...e.querySelectorAll('svg')].every(svg=>[...svg.querySelectorAll('[fill],[stroke]')].every(n=>['fill','stroke'].every(key=>{const value=n.getAttribute(key)||'';return !value.startsWith('url(')||[...svg.querySelectorAll('[id]')].some(id=>value===`url(#${id.id})`);})));}),true);
+  }
+  await update({hostWidth:220,long:true,preset:'empty',dark:false});
+  await check('state-message:narrow-no-overflow',await root.evaluate(e=>e.scrollWidth<=e.clientWidth),true);
+  await check('state-message:narrow-fluid',await visual.evaluate(e=>e.getBoundingClientRect().width),196);
+  await update({long:false,fixedHeight:true,hostWidth:664});
+  await check('state-message:available-height',await root.evaluate(e=>Math.round(e.getBoundingClientRect().height)),700);
+  await update({fixedHeight:false});
+  await page.evaluate(()=>window.sxFixture.render({dir:'rtl'}));await settle();
+  await check('state-message:rtl',await root.evaluate(e=>getComputedStyle(e).direction),'rtl');
+  await page.emulateMedia({forcedColors:'active'});await settle();
+  await check('state-message:forced-colors-text',await root.locator('h3').isVisible(),true);
+  await check('state-message:forced-colors-button',await actions.locator('button').first().isVisible(),true);
+  await page.emulateMedia({forcedColors:'none'});
+  await update({visual:'hidden'});await check('state-message:hidden-visual',await visual.count(),0);
+  await update({visual:'custom'});await check('state-message:custom-visual',await visual.locator('[role="img"]').count(),1);
+  await update({visual:'preset',dark:true,hostWidth:664});
+  await page.locator('#sm-fixture').screenshot({path:path.join(output,`${label}-state-message.png`)});
+  await page.evaluate(()=>window.sxFixture.render({dir:'ltr'}));
+}
+
 (async () => {
   fs.mkdirSync(output, { recursive: true });
   browser = await chromium.launch({ headless: true,
@@ -714,6 +770,7 @@ async function runAutoSkeleton() {
     await runFormattedText();
     await runRelativeTime();
     await runAutoSkeleton();
+    await runStateMessage();
     await check('console-health', consoleMessages, []);
   } catch (error) { errors.push(error.stack); }
   const report = { version, node: process.version, url, viewport: { width: 1210, height: 900 },

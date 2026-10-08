@@ -67,6 +67,15 @@
     ],
     "styles-compiler": [
       "^@apvee/spfx-react-toolkit/lib/helpers/styles/(resolve|cache|bindings)\\.internal\\.js$"
+    ],
+    "state-message": [
+      "^@apvee/spfx-react-toolkit/lib/controls/state-message/"
+    ],
+    "state-artwork": [
+      "^@apvee/spfx-react-toolkit/lib/controls/state-message/illustrations/"
+    ],
+    "fluent-button": [
+      "^@fluentui/react-button/"
     ]
   },
   "fixtures": [
@@ -100,7 +109,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": []
     },
@@ -139,7 +149,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": []
     },
@@ -173,7 +184,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": []
     },
@@ -213,7 +225,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -256,7 +269,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -288,7 +302,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -323,7 +338,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -357,7 +373,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -400,7 +417,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -438,7 +456,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": []
     },
@@ -458,7 +477,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": []
     },
@@ -476,7 +496,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": []
     },
@@ -497,7 +518,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -535,7 +557,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": []
     },
@@ -555,7 +578,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -576,7 +600,8 @@
         "markdown",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -609,7 +634,8 @@
         "theme-conversion",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": [
         "formatted-text",
@@ -647,7 +673,8 @@
         "formatted-text",
         "iana-lookup",
         "styles-engine",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": [
         "relative-time",
@@ -682,7 +709,8 @@
         "formatted-text",
         "relative-time",
         "styles-engine",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": [
         "iana-lookup"
@@ -717,7 +745,8 @@
         "relative-time",
         "iana-lookup",
         "styles-engine",
-        "auto-skeleton"
+        "auto-skeleton",
+        "state-message"
       ],
       "requiredModuleGroups": []
     },
@@ -749,11 +778,48 @@
         "formatted-text",
         "relative-time",
         "iana-lookup",
-        "styles-compiler"
+        "styles-compiler",
+        "state-message"
       ],
       "requiredModuleGroups": [
         "auto-skeleton",
         "fluent-skeleton"
+      ]
+    },
+    {
+      "id": "state-message",
+      "template": "state-message.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/state-message"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "relative-time",
+        "iana-lookup",
+        "auto-skeleton"
+      ],
+      "requiredModuleGroups": [
+        "state-message",
+        "state-artwork",
+        "fluent-button",
+        "formatted-text",
+        "markdown"
       ]
     }
   ],
@@ -887,6 +953,18 @@
     {
       "candidate": "auto-skeleton/domain",
       "reference": "auto-skeleton/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023
+    },
+    {
+      "candidate": "state-message/root",
+      "reference": "state-message/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023
+    },
+    {
+      "candidate": "state-message/domain",
+      "reference": "state-message/control",
       "metric": "gzip",
       "maxIncreaseBytes": 1023
     }

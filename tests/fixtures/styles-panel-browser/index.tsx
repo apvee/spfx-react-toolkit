@@ -7,6 +7,7 @@ import StylesPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFx
 import RelativeTimePanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/RelativeTimePanel';
 import FormattedTextPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/FormattedTextPanel';
 import AutoSkeletonPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/AutoSkeletonPanel';
-registerIcons({ icons: { Color: 'color', Font: 'font', Clock: 'clock', Processing: 'loading' } });
-ReactDOM.render(<RendererProvider renderer={createDOMRenderer(document)}><StylesPanel /><FormattedTextPanel /><RelativeTimePanel /><AutoSkeletonPanel /></RendererProvider>, document.getElementById('root'));
+import StateMessagePanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/StateMessagePanel';
+registerIcons({ icons: { Color: 'color', Font: 'font', Clock: 'clock', Processing: 'loading', Info: 'info' } });
+ReactDOM.render(<RendererProvider renderer={createDOMRenderer(document)}><StylesPanel /><FormattedTextPanel /><RelativeTimePanel /><AutoSkeletonPanel /><StateMessagePanel /></RendererProvider>, document.getElementById('root'));
 window.addEventListener('beforeunload', () => { const root = document.getElementById('root'); if (root) ReactDOM.unmountComponentAtNode(root); });

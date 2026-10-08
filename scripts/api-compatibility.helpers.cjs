@@ -161,7 +161,7 @@ function assertCompatiblePackageContract(manifest, originalPackage) {
   assert.deepEqual(manifest.dependencies ?? {}, expectedDependencies,
     'Runtime dependencies changed outside the approved tslib cleanup and shared Fluent peers');
   assert.equal(manifest.private, false);
-  assert.deepEqual(manifest.files, [...originalPackage.files, 'lib/styles/**/*', 'lib/controls/**/*'], 'Published path allowlist changed outside the styles facade');
+  assert.deepEqual(manifest.files, [...originalPackage.files, 'lib/styles/**/*', 'lib/controls/**/*', 'THIRD-PARTY-NOTICES.md'], 'Published path allowlist changed outside the styles facade');
   assert.equal(manifest.name, '@apvee/spfx-react-toolkit');
   assert.equal(manifest.version, '2.1.0');
   assert.equal(manifest.main, 'lib/index.js');

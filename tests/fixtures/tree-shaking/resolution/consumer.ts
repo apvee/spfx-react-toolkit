@@ -80,3 +80,10 @@ import { AutoSkeleton as controlSkeleton } from '@apvee/spfx-react-toolkit/contr
 import type { AutoSkeletonProps } from '@apvee/spfx-react-toolkit/controls/auto-skeleton';
 export const skeletons = [rootSkeleton, domainSkeleton, controlSkeleton];
 export const skeletonProps: AutoSkeletonProps = { loading: true, children: 'Profile' };
+
+import { StateMessage as rootState } from '@apvee/spfx-react-toolkit';
+import { StateMessage as domainState } from '@apvee/spfx-react-toolkit/controls';
+import { StateMessage as controlState } from '@apvee/spfx-react-toolkit/controls/state-message';
+import type { StateMessageProps } from '@apvee/spfx-react-toolkit/controls/state-message';
+export const states: [typeof rootState, typeof rootState] = [domainState, controlState];
+export const stateProps: StateMessageProps = { title: 'No results', preset: 'empty', visual: false };

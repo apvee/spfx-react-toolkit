@@ -28,6 +28,8 @@
 
 ## Controls
 
+- [StateMessage](./api/controls/state-message.md) — section states, artwork and actions.
+
 | Component / types | Description | Documentation |
 | --- | --- | --- |
 | `AutoSkeleton`, `AutoSkeletonProps` | Mounted HTML geometry, loading overlays and persistent child state | [AutoSkeleton](./api/controls/auto-skeleton.md) |
