@@ -129,6 +129,15 @@ try {
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
   // Both the public entry points and their persistence/client dependencies must ship.
   for (const module of [
+    'controls/group-header.internal',
+    'controls/settings-group/index',
+    'controls/settings-group/settings-group',
+    'controls/settings-group/settings-group.types',
+    'controls/settings-group/settings-group.styles.internal',
+    'controls/accordion-group/index',
+    'controls/accordion-group/accordion-group',
+    'controls/accordion-group/accordion-group.types',
+    'controls/accordion-group/accordion-group.styles.internal',
     'controls/state-message/index',
     'controls/state-message/state-message',
     'controls/state-message/state-message.types',

@@ -17,6 +17,8 @@ const cleanAliases = Object.freeze({
   './controls/relative-time': 'lib/controls/relative-time/index',
   './controls/auto-skeleton': 'lib/controls/auto-skeleton/index',
   './controls/state-message': 'lib/controls/state-message/index',
+  './controls/settings-group': 'lib/controls/settings-group/index',
+  './controls/accordion-group': 'lib/controls/accordion-group/index',
 });
 
 /** Derive explicit exports without changing the frozen historical inventory. */
@@ -74,7 +76,7 @@ function collectPublishedFiles(directory = library) {
   return files.sort();
 }
 
-function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
+function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
   const contract = createEntrypointContract({ publishedFiles, cleanAliases });
   assert.deepEqual(manifest.exports, contract.exports, 'Package exports differ from the exact additive contract');
   // Object equality alone does not check condition priority.

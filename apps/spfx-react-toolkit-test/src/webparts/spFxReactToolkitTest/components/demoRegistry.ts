@@ -23,6 +23,17 @@ const lazyPanel = (
 
 export const demoRegistry: readonly DemoRegistryEntry[] = [
   {
+    key: 'groups',
+    title: 'SettingsGroup and AccordionGroup',
+    iconName: 'Settings',
+    description: 'Caller-owned settings and controlled disclosure with retained panel state.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-groups' */ './panels/GroupsPanel')),
+    coverage: [
+      { symbol: 'SettingsGroup', kind: 'snapshot', notes: 'One labeled Input/Switch per settings item, literal text/JSX presets, actions, width, theme, direction, hidden and root ref.' },
+      { symbol: 'AccordionGroup', kind: 'snapshot', notes: 'Controlled openItems, multiple, disabled, mounted note persistence, unmount reset and root ref.' },
+    ],
+  },
+  {
     key: 'state-message',
     title: 'StateMessage',
     iconName: 'Info',

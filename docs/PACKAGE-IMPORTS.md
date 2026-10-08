@@ -11,6 +11,8 @@ The package publishes ESNext JavaScript for a bundler and TypeScript declaration
 | `/controls/auto-skeleton` | Canonical `AutoSkeleton` and `AutoSkeletonProps` |
 | `/controls/formatted-text` | Canonical `FormattedText` and its three public types |
 | `/controls/relative-time` | Canonical `RelativeTime` and `RelativeTimeProps` |
+| `/controls/settings-group` | Canonical `SettingsGroup` compound Item and public types |
+| `/controls/accordion-group` | Canonical `AccordionGroup` compound Item and public types |
 | `/core` | Providers and public core types |
 | `/hooks` | All public hooks |
 | `/helpers` | Public helpers and descriptor namespaces |

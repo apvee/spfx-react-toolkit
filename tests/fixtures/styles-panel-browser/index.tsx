@@ -8,6 +8,8 @@ import RelativeTimePanel from '../../../apps/spfx-react-toolkit-test/src/webpart
 import FormattedTextPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/FormattedTextPanel';
 import AutoSkeletonPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/AutoSkeletonPanel';
 import StateMessagePanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/StateMessagePanel';
-registerIcons({ icons: { Color: 'color', Font: 'font', Clock: 'clock', Processing: 'loading', Info: 'info' } });
-ReactDOM.render(<RendererProvider renderer={createDOMRenderer(document)}><StylesPanel /><FormattedTextPanel /><RelativeTimePanel /><AutoSkeletonPanel /><StateMessagePanel /></RendererProvider>, document.getElementById('root'));
+import GroupsPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/GroupsPanel';
+const groupFixtureIcon = <svg width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 5h16v14H4zm2 2v10h12V7z" /></svg>;
+registerIcons({ icons: { Color: 'color', Font: 'font', Clock: 'clock', Processing: 'loading', Info: groupFixtureIcon, Settings: groupFixtureIcon, Mail: groupFixtureIcon, Ringer: groupFixtureIcon } });
+ReactDOM.render(<RendererProvider renderer={createDOMRenderer(document)}><StylesPanel /><FormattedTextPanel /><RelativeTimePanel /><AutoSkeletonPanel /><StateMessagePanel /><GroupsPanel /></RendererProvider>, document.getElementById('root'));
 window.addEventListener('beforeunload', () => { const root = document.getElementById('root'); if (root) ReactDOM.unmountComponentAtNode(root); });

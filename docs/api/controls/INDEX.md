@@ -4,6 +4,8 @@ Reusable React controls that do not require an SPFx provider. Theme variables an
 
 | Control / type | Purpose | Reference |
 | --- | --- | --- |
+| `SettingsGroup`, `SettingsGroupProps`, `SettingsGroupItemProps`, `SettingsGroupHeadingLevel` | Caller-owned settings rows in a Fluent Card | [SettingsGroup](./settings-group.md) |
+| `AccordionGroup`, `AccordionGroupProps`, `AccordionGroupItemProps`, `AccordionGroupHeadingLevel`, `AccordionGroupValue` | Fluent disclosure with retained panel state | [AccordionGroup](./accordion-group.md) |
 | `StateMessage` | Section state with artwork, text and actions | [StateMessage](./state-message.md#statemessage) |
 | `StateMessageProps` | Content, preset, visual and native div attributes | [Props](./state-message.md#statemessageprops) |
 | `StateMessagePreset` | generic, empty, error, success or welcome | [Presets](./state-message.md#statemessagepreset) |
@@ -19,4 +21,4 @@ Reusable React controls that do not require an SPFx provider. Theme variables an
 | `FormattedTextVariant` | Keys of the existing typography catalog | [Variants](./formatted-text.md#formattedtextvariant) |
 | `FormattedTextSemanticElement` | `span`, `p` or `h1` through `h6` | [Semantic element](./formatted-text.md#formattedtextsemanticelement) |
 
-Import from the package root, `/controls`, or the individual `/controls/auto-skeleton`, `/controls/formatted-text` `/controls/relative-time` and `/controls/state-message` entries. These entries share the canonical implementation; internal measurement, parser and styling modules are private. See [package imports](../../PACKAGE-IMPORTS.md).
+Import from the package root, `/controls`, or the individual `/controls/auto-skeleton`, `/controls/formatted-text` `/controls/relative-time` `/controls/state-message`, `/controls/settings-group` and `/controls/accordion-group` entries. These entries share the canonical implementation; internal measurement, parser and styling modules are private. See [package imports](../../PACKAGE-IMPORTS.md).

@@ -14,8 +14,10 @@ const aliases = {
   './controls/relative-time': 'lib/controls/relative-time/index',
   './controls/auto-skeleton': 'lib/controls/auto-skeleton/index',
   './controls/state-message': 'lib/controls/state-message/index',
+  './controls/settings-group': 'lib/controls/settings-group/index',
+  './controls/accordion-group': 'lib/controls/accordion-group/index',
 };
-const files = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index'].flatMap(base => ['.js', '.d.ts', '.js.map', '.d.ts.map'].map(ext => base + ext))];
+const files = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index'].flatMap(base => ['.js', '.d.ts', '.js.map', '.d.ts.map'].map(ext => base + ext))];
 test('clean entrypoints select their canonical declarations before runtime', () => {
   for (const [alias, target] of Object.entries(aliases)) {
     assert.deepEqual(manifest.exports?.[alias], { types: './' + target + '.d.ts', default: './' + target + '.js' });
@@ -28,6 +30,8 @@ test('clean entrypoints select their canonical declarations before runtime', () 
     'controls/relative-time': ['lib/controls/relative-time/index.d.ts'],
     'controls/auto-skeleton': ['lib/controls/auto-skeleton/index.d.ts'],
     'controls/state-message': ['lib/controls/state-message/index.d.ts'],
+    'controls/settings-group': ['lib/controls/settings-group/index.d.ts'],
+    'controls/accordion-group': ['lib/controls/accordion-group/index.d.ts'],
     'styles/useSx': ['lib/hooks/useSx.d.ts'], 'hooks/useStableCallback': ['lib/hooks/useStableCallback.d.ts'],
   } });
   assert.equal(manifest.main, 'lib/index.js');

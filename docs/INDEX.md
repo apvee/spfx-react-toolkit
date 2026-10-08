@@ -28,6 +28,9 @@
 
 ## Controls
 
+- [SettingsGroup](./api/controls/settings-group.md) — labeled caller-owned preferences in a Fluent Card.
+- [AccordionGroup](./api/controls/accordion-group.md) — optional details with controlled/uncontrolled disclosure and retained state.
+
 - [StateMessage](./api/controls/state-message.md) — section states, artwork and actions.
 
 | Component / types | Description | Documentation |

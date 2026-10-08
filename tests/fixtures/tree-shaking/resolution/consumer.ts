@@ -87,3 +87,18 @@ import { StateMessage as controlState } from '@apvee/spfx-react-toolkit/controls
 import type { StateMessageProps } from '@apvee/spfx-react-toolkit/controls/state-message';
 export const states: [typeof rootState, typeof rootState] = [domainState, controlState];
 export const stateProps: StateMessageProps = { title: 'No results', preset: 'empty', visual: false };
+
+import { SettingsGroup as rootSettings, AccordionGroup as rootAccordion } from '@apvee/spfx-react-toolkit';
+import { SettingsGroup as domainSettings, AccordionGroup as domainAccordion } from '@apvee/spfx-react-toolkit/controls';
+import { SettingsGroup as controlSettings } from '@apvee/spfx-react-toolkit/controls/settings-group';
+import { AccordionGroup as controlAccordion } from '@apvee/spfx-react-toolkit/controls/accordion-group';
+import type { SettingsGroupProps, SettingsGroupItemProps } from '@apvee/spfx-react-toolkit/controls/settings-group';
+import type { AccordionGroupProps, AccordionGroupItemProps } from '@apvee/spfx-react-toolkit/controls/accordion-group';
+export const settingsAliases: typeof rootSettings[] = [domainSettings, controlSettings];
+export const accordionAliases: typeof rootAccordion[] = [domainAccordion, controlAccordion];
+export const settingsGroupProps: SettingsGroupProps = { title: '**Preferences**' };
+export const settingsItemProps: SettingsGroupItemProps = { description: 'Name' };
+export const accordionGroupProps: AccordionGroupProps = { defaultOpenItems: ['profile'] };
+export const accordionItemProps: AccordionGroupItemProps = { value: 'profile', title: 'Profile' };
+export const settingsCompoundItem: typeof rootSettings.Item = controlSettings.Item;
+export const accordionCompoundItem: typeof rootAccordion.Item = controlAccordion.Item;

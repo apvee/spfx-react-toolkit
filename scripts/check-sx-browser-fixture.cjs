@@ -754,6 +754,162 @@ async function runStateMessage() {
   await page.evaluate(()=>window.sxFixture.render({dir:'ltr'}));
 }
 
+async function runGroups() {
+  await page.goto(url);
+  await page.waitForFunction(() => Boolean(window.groupsFixture));
+  const settle = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  const update = async patch => { await page.evaluate(value => window.groupsFixture.render(value), patch); await settle(); };
+  const settings = page.locator('#groups-settings');
+  const row = page.locator('#groups-setting-row');
+  const accordion = page.locator('#groups-accordion');
+  const persistent = page.locator('#groups-persistent');
+  const reset = page.locator('#groups-reset');
+  const persistentTrigger = persistent.locator('button').first();
+  const resetTrigger = reset.locator('button').first();
+  const metrics = element => { const css = getComputedStyle(element); return { fontSize: css.fontSize, fontWeight: css.fontWeight, lineHeight: css.lineHeight }; };
+  await check('groups:page-title', await page.title(), 'useSx real-browser checkpoint');
+  await check('groups:page-url', new URL(page.url()).origin, url);
+  await check('groups:meaningful-content', await page.locator('#groups-fixture > h2').textContent(), 'SettingsGroup and AccordionGroup browser fixture');
+  await check('groups:no-overlay', await page.locator('webpack-dev-server-client-overlay, #webpack-dev-server-client-overlay, nextjs-portal').count(), 0);
+  await check('groups:root-ref', await page.locator('#groups-ref').textContent(), 'true');
+  for (const size of [500, 639, 640, 500]) {
+    await update({ contentWidth: size });
+    await check(`groups:${size}:content-width`, await settings.evaluate(e => e.clientWidth - parseFloat(getComputedStyle(e).paddingLeft) - parseFloat(getComputedStyle(e).paddingRight)), size);
+    await check(`groups:${size}:fluid-row-direction`, await row.locator('[data-settings-group-row]').evaluate(e => getComputedStyle(e).flexDirection), 'row');
+    await check(`groups:${size}:fluid-row-wrap`, await row.locator('[data-settings-group-row]').evaluate(e => getComputedStyle(e).flexWrap), 'wrap');
+    await check(`groups:${size}:independent-fluid`, await page.locator('#groups-independent-row [data-settings-group-row]').evaluate(e => getComputedStyle(e).flexWrap), 'wrap');
+    const geometry = await page.locator('#groups-fluid-switch').evaluate(e => {
+      const header = e.querySelector('[data-settings-group-leading]').getBoundingClientRect();
+      const controls = e.querySelector('[data-settings-group-controls]').getBoundingClientRect();
+      return { stacked: controls.top >= header.bottom - 1, alongside: Math.abs((controls.top + controls.bottom) - (header.top + header.bottom)) < 2 };
+    });
+    await check(`groups:${size}:compact-switch-alongside`, geometry.alongside, true);
+    if (size === 500) await page.locator('#groups-fluid').screenshot({ path: path.join(output, `${label}-groups-500.png`) });
+  }
+  await update({ contentWidth: 640 });
+  const inset = await page.evaluate(() => {
+    const root = document.querySelector('#groups-settings .fui-Card');
+    const reference = document.querySelector('#groups-card-reference');
+    const css = getComputedStyle(root), native = getComputedStyle(reference);
+    return { actual: [css.paddingTop, css.paddingLeft, css.borderTopWidth, css.borderRadius], reference: [native.paddingTop, native.paddingLeft, native.borderTopWidth, native.borderRadius] };
+  });
+  await check('groups:native-card-inset-radius', inset.actual, inset.reference);
+  await check('groups:cards-zero-row-gap', await page.locator('#groups-settings .fui-Card, #groups-accordion .fui-Card').evaluateAll(nodes => nodes.every(e => getComputedStyle(e).rowGap === '0px')), true);
+  const dividerSpacing = element => {
+    const css = getComputedStyle(element), previous = element.previousElementSibling;
+    const card = element.closest('.fui-Card'), padding = parseFloat(getComputedStyle(card).paddingTop);
+    return { padding, margin: parseFloat(css.marginTop), inset: parseFloat(css.paddingTop), border: parseFloat(css.borderTopWidth),
+      geometry: element.getBoundingClientRect().top - previous.getBoundingClientRect().bottom + parseFloat(css.paddingTop) + parseFloat(css.borderTopWidth) };
+  };
+  for (const override of [false, true, false]) {
+    await update({ cardSizeOverride: override });
+    const padding = override ? 16 : 12;
+    for (const id of ['groups-setting-second', 'groups-reset']) {
+      await check(`groups:${id}:${padding}:card-derived-divider`, await page.locator(`#${id}`).evaluate(dividerSpacing),
+        { padding, margin: padding / 2, inset: padding / 2, border: 1, geometry: padding + 1 });
+    }
+    for (const [id, rowSelector] of [['groups-fluid-second', '[data-settings-group-row]'], ['groups-symmetric-second', '.fui-AccordionHeader button']]) {
+      const geometry = await page.locator(`#${id}`).evaluate((element, selector) => {
+        const previous = element.previousElementSibling, before = previous.querySelector(selector).getBoundingClientRect(), after = element.querySelector(selector).getBoundingClientRect();
+        const border = element.getBoundingClientRect(), thickness = parseFloat(getComputedStyle(element).borderTopWidth);
+        const beforeText = previous.querySelector('[data-group-text]').getBoundingClientRect(), afterText = element.querySelector('[data-group-text]').getBoundingClientRect();
+        return { above: border.top - before.bottom, below: after.top - border.top - thickness,
+          beforeHeight: before.height, afterHeight: after.height, textSymmetric: Math.abs((border.top - beforeText.bottom) - (afterText.top - border.top - thickness)) <= 1 };
+      }, rowSelector);
+      await check(`groups:${id}:${padding}:symmetric-row-divider`, geometry,
+        { above: padding / 2, below: padding / 2, beforeHeight: 44, afterHeight: 44, textSymmetric: true });
+    }
+  }
+  await check('groups:library-header-card-gap', await page.locator('#groups-settings, #groups-accordion').evaluateAll(nodes => nodes.every(e => getComputedStyle(e).rowGap === '12px')), true);
+  await check('groups:library-header-icon-default', await page.locator('#groups-fluid [data-group-icon], #groups-symmetric [data-group-icon]').evaluateAll(nodes => nodes.length === 2 && nodes.every(e => { const box = e.getBoundingClientRect(), child = e.querySelector('svg').getBoundingClientRect(); return box.width === 24 && box.height === 24 && child.width === 24 && child.height === 24; })), true);
+  await check('groups:library-item-icon-default', await page.locator('#groups-fluid [data-group-item-icon], #groups-symmetric [data-group-item-icon]').evaluateAll(nodes => nodes.length === 4 && nodes.every(e => { const box = e.getBoundingClientRect(), child = e.querySelector('svg').getBoundingClientRect(); return box.width === 20 && box.height === 20 && child.width === 20 && child.height === 20; })), true);
+  await check('groups:literal-title', await settings.locator('h2').textContent(), 'Group **title**');
+  await check('groups:literal-description', await settings.locator('[data-group-text] > span').first().textContent(), 'A *subtle description*');
+  await check('groups:no-markdown-elements', await settings.locator('strong, em, a, code').count(), 0);
+  await check('groups:opaque-jsx', await page.locator('#groups-authored-jsx').textContent(), '**Authored JSX**');
+  await page.locator('#groups-action').click();
+  await check('groups:native-action-event', await page.locator('#groups-clicks').textContent(), '1');
+  await settings.locator('h2').dblclick();
+  await check('groups:native-root-event', await page.locator('#groups-native-events').textContent(), '1');
+  for (const theme of ['light', 'dark']) for (const dir of ['ltr', 'rtl']) {
+    await page.evaluate(value => window.sxFixture.render(value), { theme, dir }); await settle();
+    const prefix = `groups:${theme}:${dir}`;
+    await check(`${prefix}:direction`, await settings.evaluate(e => getComputedStyle(e).direction), dir);
+    await check(`${prefix}:group-subtitle2`, await settings.locator('h2').evaluate(metrics), await page.locator('#groups-subtitle-reference').evaluate(metrics));
+    await check(`${prefix}:item-body1Strong`, await row.locator('[data-group-text] > span').first().evaluate(metrics), await page.locator('#groups-body-reference').evaluate(metrics));
+    await check(`${prefix}:description-caption1`, await settings.locator('[data-group-text] > span').first().evaluate(metrics), await page.locator('#groups-caption-reference').evaluate(metrics));
+    await check(`${prefix}:description-subtle`, await settings.locator('[data-group-text] > span').first().evaluate(e => getComputedStyle(e).color), await page.locator('#groups-caption-reference').evaluate(e => getComputedStyle(e).color));
+    await check(`${prefix}:jsx-title-default-metrics`, await page.locator('#groups-authored-jsx').evaluate(metrics), await page.locator('#groups-subtitle-reference').evaluate(metrics));
+    await check(`${prefix}:jsx-description-default-metrics`, await page.locator('#groups-jsx-description').evaluate(metrics), await page.locator('#groups-caption-reference').evaluate(metrics));
+    await check(`${prefix}:jsx-item-default-metrics`, await page.locator('#groups-jsx-item').evaluate(metrics), await page.locator('#groups-body-reference').evaluate(metrics));
+    await check(`${prefix}:jsx-description-subtle`, await page.locator('#groups-jsx-description').evaluate(e => getComputedStyle(e).color), await page.locator('#groups-caption-reference').evaluate(e => getComputedStyle(e).color));
+    await check(`${prefix}:zero-text-gap-margins`, await page.locator('#groups-fixture [data-group-text]').evaluateAll(nodes => nodes.every(e => {
+      const css = getComputedStyle(e);
+      return css.rowGap === '0px' && [...e.children].every(child => {
+        const style = getComputedStyle(child); return style.marginTop === '0px' && style.marginBottom === '0px';
+      });
+    })), true);
+    await check(`${prefix}:single-card-inset`, await accordion.evaluate(e => {
+      const card = e.querySelector('.fui-Card'), button = e.querySelector('.fui-AccordionHeader button'), panel = e.querySelector('.fui-AccordionPanel');
+      const cardStyle = getComputedStyle(card), buttonStyle = getComputedStyle(button), panelStyle = getComputedStyle(panel);
+      return cardStyle.paddingLeft === '12px' && cardStyle.paddingRight === '12px'
+        && buttonStyle.paddingLeft === '0px' && buttonStyle.paddingRight === '0px'
+        && panelStyle.marginLeft === '0px' && panelStyle.marginRight === '0px';
+    }), true);
+    await check(`${prefix}:compact-minimum-rows`, await page.locator('#groups-independent-row [data-settings-group-row], #groups-jsx-row [data-settings-group-row], #groups-accordion .fui-AccordionHeader button').evaluateAll(nodes => nodes.every(e => {
+      const height = e.getBoundingClientRect().height; return height >= 44 && height <= 48;
+    })), true);
+    const alignment = await accordion.evaluate(e => {
+      const header = e.querySelector('[data-accordion-group-item] [data-group-text]');
+      const content = e.querySelector('[data-accordion-group-panel-content]');
+      const direction = getComputedStyle(e).direction;
+      const a = header.getBoundingClientRect(), b = content.getBoundingClientRect();
+      return Math.abs(direction === 'rtl' ? a.right - b.right : a.left - b.left) <= 1;
+    });
+    await check(`${prefix}:panel-header-alignment`, alignment, true);
+    await check(`${prefix}:disabled-inherits`, await page.locator('#groups-disabled').evaluate(e => {
+      const trigger = e.querySelector('button'), text = e.querySelector('[data-group-text]');
+      return getComputedStyle(trigger).color === getComputedStyle(text).color;
+    }), true);
+  }
+  await update({ contentWidth: 220, long: true });
+  await check('groups:narrow-control-wraps-by-fit', await page.locator('#groups-setting-row').evaluate(e => {
+    const header = e.querySelector('[data-settings-group-leading]').getBoundingClientRect(), controls = e.querySelector('[data-settings-group-controls]').getBoundingClientRect(); return controls.top >= header.bottom;
+  }), true);
+  await check('groups:narrow-long-no-overflow', await settings.evaluate(e => e.scrollWidth <= e.clientWidth), true);
+  await check('groups:narrow-accordion-no-overflow', await accordion.evaluate(e => e.scrollWidth <= e.clientWidth), true);
+  await update({ contentWidth: 640, long: false });
+  await page.evaluate(() => window.sxFixture.render({ theme: 'light', dir: 'ltr' })); await settle();
+  await page.locator('#groups-persistent-input').fill('Retained edit');
+  await persistentTrigger.click();
+  await check('groups:closed-aria', await persistentTrigger.getAttribute('aria-expanded'), 'false');
+  await check('groups:closed-mounted-inert', await page.locator('#groups-persistent-input').evaluate(e => Boolean(e.closest('[inert]'))), true);
+  await persistentTrigger.focus(); await page.keyboard.press('Tab');
+  await check('groups:closed-keyboard-exclusion', await resetTrigger.evaluate(e => document.activeElement === e), true);
+  await persistentTrigger.click();
+  await check('groups:reopened-input-persisted', await page.locator('#groups-persistent-input').inputValue(), 'Retained edit');
+  await page.locator('#groups-reset-input').fill('Discard edit');
+  await resetTrigger.click();
+  await page.waitForFunction(() => !document.getElementById('groups-reset-input'));
+  await check('groups:optional-unmount', await page.locator('#groups-reset-input').count(), 0);
+  await resetTrigger.click();
+  await check('groups:optional-reset', await page.locator('#groups-reset-input').inputValue(), 'Initial');
+  await update({ hidden: true });
+  await check('groups:native-hidden-settings', await settings.isVisible(), false);
+  await check('groups:native-hidden-accordion', await page.locator('#groups-hidden').isVisible(), false);
+  await update({ hidden: false });
+  await page.locator('#groups-fixture').screenshot({ path: path.join(output, `${label}-groups-light.png`) });
+  await page.evaluate(() => window.sxFixture.render({ theme: 'dark', dir: 'rtl' })); await settle();
+  await page.locator('#groups-fixture').screenshot({ path: path.join(output, `${label}-groups-dark-rtl.png`) });
+  await page.setViewportSize({ width: 375, height: 900 });
+  await update({ contentWidth: 280, long: true });
+  await settings.screenshot({ path: path.join(output, `${label}-groups-mobile.png`) });
+  await check('groups:mobile-local-no-overflow', await settings.evaluate(e => e.scrollWidth <= e.clientWidth), true);
+  await page.setViewportSize({ width: 1210, height: 900 });
+  await update({ contentWidth: 639, long: false });
+  await page.evaluate(() => window.sxFixture.render({ theme: 'light', dir: 'ltr' }));
+}
+
 (async () => {
   fs.mkdirSync(output, { recursive: true });
   browser = await chromium.launch({ headless: true,
@@ -764,6 +920,9 @@ async function runStateMessage() {
   page.on('pageerror', error => errors.push(`Uncaught browser error: ${error.message}`));
   const version = browser.version();
   try {
+    if (process.env.SX_BROWSER_GROUPS_ONLY === '1') {
+      await runGroups();
+    } else {
     await runOrder(false);
     await runOrder(true);
     await runCatalog();
@@ -771,6 +930,8 @@ async function runStateMessage() {
     await runRelativeTime();
     await runAutoSkeleton();
     await runStateMessage();
+    await runGroups();
+    }
     await check('console-health', consoleMessages, []);
   } catch (error) { errors.push(error.stack); }
   const report = { version, node: process.version, url, viewport: { width: 1210, height: 900 },

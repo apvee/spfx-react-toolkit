@@ -1,4 +1,5 @@
 import { StateMessageFixture } from './state-message';
+import { GroupsFixture } from './groups';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { FormattedTextFixture } from './formatted-text';
@@ -212,6 +213,7 @@ function Fixture(props: FixtureConfig): React.ReactElement {
     <RelativeTimeFixture />
     <AutoSkeletonFixture />
     <StateMessageFixture />
+    <GroupsFixture />
   </>;
 }
 function render(patch: Partial<FixtureConfig>): void {

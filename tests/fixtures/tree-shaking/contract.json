@@ -76,6 +76,18 @@
     ],
     "fluent-button": [
       "^@fluentui/react-button/"
+    ],
+    "settings-group": [
+      "^@apvee/spfx-react-toolkit/lib/controls/settings-group/"
+    ],
+    "accordion-group": [
+      "^@apvee/spfx-react-toolkit/lib/controls/accordion-group/"
+    ],
+    "fluent-card": [
+      "^@fluentui/react-card/"
+    ],
+    "fluent-accordion": [
+      "^@fluentui/react-accordion/"
     ]
   },
   "fixtures": [
@@ -110,7 +122,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": []
     },
@@ -150,7 +164,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": []
     },
@@ -185,7 +201,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": []
     },
@@ -226,7 +244,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -270,7 +290,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -303,7 +325,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -339,7 +363,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -374,7 +400,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -418,7 +446,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -457,7 +487,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": []
     },
@@ -478,7 +510,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": []
     },
@@ -497,7 +531,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": []
     },
@@ -519,7 +555,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -558,7 +596,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": []
     },
@@ -579,7 +619,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -601,7 +643,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -635,7 +679,9 @@
         "relative-time",
         "iana-lookup",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "formatted-text",
@@ -674,7 +720,9 @@
         "iana-lookup",
         "styles-engine",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "relative-time",
@@ -710,7 +758,9 @@
         "relative-time",
         "styles-engine",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "iana-lookup"
@@ -746,7 +796,9 @@
         "iana-lookup",
         "styles-engine",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": []
     },
@@ -779,7 +831,9 @@
         "relative-time",
         "iana-lookup",
         "styles-compiler",
-        "state-message"
+        "state-message",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "auto-skeleton",
@@ -812,7 +866,9 @@
         "provider",
         "relative-time",
         "iana-lookup",
-        "auto-skeleton"
+        "auto-skeleton",
+        "settings-group",
+        "accordion-group"
       ],
       "requiredModuleGroups": [
         "state-message",
@@ -820,6 +876,81 @@
         "fluent-button",
         "formatted-text",
         "markdown"
+      ]
+    },
+    {
+      "id": "settings-group",
+      "template": "settings-group.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/settings-group"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "relative-time",
+        "iana-lookup",
+        "auto-skeleton",
+        "state-message",
+        "accordion-group",
+        "formatted-text",
+        "markdown"
+      ],
+      "requiredModuleGroups": [
+        "settings-group",
+        "fluent-card"
+      ]
+    },
+    {
+      "id": "accordion-group",
+      "template": "accordion-group.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/accordion-group"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "relative-time",
+        "iana-lookup",
+        "auto-skeleton",
+        "state-message",
+        "settings-group",
+        "formatted-text",
+        "markdown"
+      ],
+      "requiredModuleGroups": [
+        "accordion-group",
+        "fluent-card",
+        "fluent-accordion"
       ]
     }
   ],
@@ -965,6 +1096,30 @@
     {
       "candidate": "state-message/domain",
       "reference": "state-message/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023
+    },
+    {
+      "candidate": "settings-group/root",
+      "reference": "settings-group/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023
+    },
+    {
+      "candidate": "settings-group/domain",
+      "reference": "settings-group/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023
+    },
+    {
+      "candidate": "accordion-group/root",
+      "reference": "accordion-group/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023
+    },
+    {
+      "candidate": "accordion-group/domain",
+      "reference": "accordion-group/control",
       "metric": "gzip",
       "maxIncreaseBytes": 1023
     }

@@ -99,6 +99,7 @@ async function thumbInteractions(axis) {
   check('sample-owned probes have no inline styles', await page.locator('[data-sx-demo][style]').count(), 0);
   check('fixture discloses SPFx boundary', (await page.locator('body').textContent()).includes('not authenticated SharePoint validation'), true);
   await page.screenshot({ path: path.join(output, `${label}-desktop.png`), fullPage: true });
+  if (process.env.STYLES_PANEL_GROUPS_ONLY !== '1') {
   await fill('layout-width', 240.5); await fill('layout-gap', 24.5);
   check('fractional width accepted', await computed('layout-preview', 'width'), '240.5px');
   check('fractional gap accepted', await computed('layout-preview', 'columnGap'), '24.5px');
@@ -301,6 +302,103 @@ async function thumbInteractions(axis) {
   await sm('visual').selectOption('hidden');check('StateMessage sample hide',await smRoot.locator('[data-state-message-visual]').count(),0);
   await sm('visual').selectOption('custom');check('StateMessage sample custom',await smRoot.locator('[role="img"]').getAttribute('aria-label'),'Custom visual');
   await sm('visual').selectOption('preset');await smRoot.screenshot({path:path.join(output,`${label}-state-message-preview.png`)});
+  }
+  await page.setViewportSize({ width: 1440, height: 1000 }); await settle();
+  const groups = id => page.locator(`[data-groups-demo="${id}"]`);
+  const settings = groups('settings'), accordion = groups('accordion');
+  const profile = accordion.locator('[data-accordion-group-item]').first();
+  const advanced = accordion.locator('[data-accordion-group-item]').nth(1);
+  const profileTrigger = profile.locator('button').first();
+  const advancedTrigger = advanced.locator('button').first();
+  for (const size of [500, 639, 640]) {
+    await groups('resize').selectOption(String(size)); await settle();
+    check(`Groups sample ${size} real container width`, await settings.evaluate(e => e.clientWidth), size);
+    check(`Groups sample ${size} fluid rows`, await settings.locator('[data-settings-group-row]').first().evaluate(e => getComputedStyle(e).flexWrap), 'wrap');
+    check(`Groups sample ${size} compact switch alongside`, await settings.locator('[data-settings-group-item]').nth(1).evaluate(e => {
+      const header = e.querySelector('[data-settings-group-leading]').getBoundingClientRect(), controls = e.querySelector('[data-settings-group-controls]').getBoundingClientRect();
+      return Math.abs((header.top + header.bottom) - (controls.top + controls.bottom)) < 2;
+    }), true);
+    if (size === 500) await settings.screenshot({ path: path.join(output, `${label}-groups-500.png`) });
+  }
+  check('Groups sample single caller control per settings row', await settings.locator('[data-settings-group-row]').evaluateAll(nodes => nodes.length === 2 && nodes.every(e => e.children.length === 2 && e.querySelectorAll('input').length === 1 && !e.querySelector('.fui-Field, button'))), true);
+  check('Groups sample zero text gaps and margins', await page.locator('[data-groups-demo="frame"] [data-group-text]').evaluateAll(nodes => nodes.every(e => getComputedStyle(e).rowGap === '0px' && [...e.children].every(child => { const css = getComputedStyle(child); return css.marginTop === '0px' && css.marginBottom === '0px'; }))), true);
+  check('Groups sample divider derives total Card spacing', await page.locator('[data-groups-demo="settings"] [data-settings-group-item] + [data-settings-group-item], [data-groups-demo="accordion"] [data-accordion-group-item] + [data-accordion-group-item]').evaluateAll(nodes => nodes.length === 2 && nodes.every(e => {
+    const css = getComputedStyle(e), previous = e.previousElementSibling, padding = parseFloat(getComputedStyle(e.closest('.fui-Card')).paddingTop);
+    const geometry = e.getBoundingClientRect().top - previous.getBoundingClientRect().bottom + parseFloat(css.paddingTop) + parseFloat(css.borderTopWidth);
+    return padding === 12 && css.borderTopWidth === '1px' && parseFloat(css.paddingTop) === padding / 2 && parseFloat(css.marginTop) === padding / 2 && geometry === padding + 1;
+  })), true);
+  check('Groups sample compact Settings row density', await settings.locator('[data-settings-group-row]').evaluateAll(nodes => nodes.every(e => e.getBoundingClientRect().height === 44)), true);
+  check('Groups sample compact Accordion row density', await accordion.locator('.fui-AccordionHeader button').evaluateAll(nodes => nodes.every(e => e.getBoundingClientRect().height === 44)), true);
+  check('Groups sample single Card inset', await page.locator('[data-groups-demo="frame"] .fui-Card').evaluateAll(nodes => nodes.every(e => { const css = getComputedStyle(e); return css.paddingLeft === '12px' && css.paddingRight === '12px' && css.rowGap === '0px'; })), true);
+  check('Groups sample header Card gap 12px', await page.locator('[data-groups-demo="settings"], [data-groups-demo="accordion"]').evaluateAll(nodes => nodes.every(e => getComputedStyle(e).rowGap === '12px')), true);
+  check('Groups sample Settings divider row-box symmetry', await settings.locator('[data-settings-group-item]').nth(1).evaluate(e => {
+    const before = e.previousElementSibling.querySelector('[data-settings-group-row]').getBoundingClientRect(), after = e.querySelector('[data-settings-group-row]').getBoundingClientRect();
+    const divider = e.getBoundingClientRect(), stroke = parseFloat(getComputedStyle(e).borderTopWidth);
+    return divider.top - before.bottom === 6 && after.top - divider.top - stroke === 6;
+  }), true);
+  check('Groups sample Accordion divider body-row symmetry', await advanced.evaluate(e => {
+    const before = e.previousElementSibling.getBoundingClientRect(), after = e.querySelector('.fui-AccordionHeader button').getBoundingClientRect();
+    const divider = e.getBoundingClientRect(), stroke = parseFloat(getComputedStyle(e).borderTopWidth);
+    return divider.top - before.bottom === 6 && after.top - divider.top - stroke === 6 && after.height === 44;
+  }), true);
+  check('Groups sample zero Accordion lateral inset', await accordion.evaluate(e => [...e.querySelectorAll('.fui-AccordionHeader button')].every(button => { const css = getComputedStyle(button); return css.paddingLeft === '0px' && css.paddingRight === '0px'; }) && [...e.querySelectorAll('.fui-AccordionPanel')].every(panel => { const css = getComputedStyle(panel); return css.marginLeft === '0px' && css.marginRight === '0px'; })), true);
+  const iconDiagnostics = await page.locator('[data-groups-demo="frame"] [data-icon-name]').evaluateAll(nodes => nodes.map(e => {
+    const dimensions = node => { const rect = node.getBoundingClientRect(), css = getComputedStyle(node); return { width: rect.width, height: rect.height, fontSize: css.fontSize, lineHeight: css.lineHeight, display: css.display }; };
+    return { name: e.getAttribute('data-icon-name'), icon: dimensions(e), slot: dimensions(e.parentElement), svg: e.querySelector('svg') ? dimensions(e.querySelector('svg')) : undefined };
+  }));
+  observations.push({ name: 'Groups sample icon geometry diagnostic', actual: iconDiagnostics, expected: 'Diagnostic only; assertions below verify dimensions' });
+  check('Groups sample library header icon slot and font 24px', await page.locator('[data-groups-demo="frame"] [data-group-icon]').evaluateAll(nodes => nodes.length === 2 && nodes.every(e => {
+    const rect = e.getBoundingClientRect(), icon = e.querySelector('[data-icon-name]'), painted = icon.querySelector('svg').getBoundingClientRect();
+    return rect.width === 24 && rect.height === 24 && getComputedStyle(icon).fontSize === '24px' && painted.width === 24 && painted.height === 24;
+  })), true);
+  check('Groups sample library item icon slot and font 20px', await page.locator('[data-groups-demo="frame"] [data-group-item-icon]').evaluateAll(nodes => nodes.length === 4 && nodes.every(e => {
+    const rect = e.getBoundingClientRect(), icon = e.querySelector('[data-icon-name]'), painted = icon.querySelector('svg').getBoundingClientRect();
+    return rect.width === 20 && rect.height === 20 && getComputedStyle(icon).fontSize === '20px' && painted.width === 20 && painted.height === 20;
+  })), true);
+  await groups('email').fill('edited@example.com');
+  await groups('note').fill('Sample retained edit');
+  await profileTrigger.click();
+  check('Groups sample closes', await profileTrigger.getAttribute('aria-expanded'), 'false');
+  check('Groups sample retained inert', await groups('note').evaluate(e => Boolean(e.closest('[inert]'))), true);
+  await profileTrigger.focus(); await page.keyboard.press('Tab');
+  check('Groups sample closed keyboard exclusion', await advancedTrigger.evaluate(e => e === document.activeElement), true);
+  await profileTrigger.click();
+  check('Groups sample input persists', await groups('note').inputValue(), 'Sample retained edit');
+  await groups('close-all').focus(); await page.keyboard.press('Enter');
+  check('Groups sample action closes controlled panel', await profileTrigger.getAttribute('aria-expanded'), 'false');
+  check('Groups sample close action keeps visible focus', await groups('close-all').evaluate(e => e === document.activeElement && !e.closest('[inert]')), true);
+  await profileTrigger.click();
+  check('Groups sample action closure retains state', await groups('note').inputValue(), 'Sample retained edit');
+  await groups('multiple').check();
+  await advancedTrigger.click();
+  check('Groups sample multiple profile stays open', await profileTrigger.getAttribute('aria-expanded'), 'true');
+  check('Groups sample multiple advanced opens', await advancedTrigger.getAttribute('aria-expanded'), 'true');
+  await groups('unmount').check();
+  await groups('close-all').focus(); await page.keyboard.press('Enter');
+  check('Groups sample unmount action keeps visible focus', await groups('close-all').evaluate(e => e === document.activeElement && !e.closest('[inert]')), true);
+  await page.waitForFunction(() => !document.querySelector('[data-groups-demo="note"]'));
+  check('Groups sample unmounted optional', await groups('note').count(), 0);
+  await profileTrigger.click();
+  check('Groups sample optional reset', await groups('note').inputValue(), 'Retained note');
+  await groups('inspect').click();
+  check('Groups sample native refs', (await groups('observations').textContent()).includes('settings=div, accordion=div'), true);
+  await groups('disabled').check();
+  check('Groups sample disabled', await profileTrigger.isDisabled(), true);
+  await groups('disabled').uncheck();
+  await groups('hidden').check();
+  check('Groups sample native hidden', await settings.isVisible(), false);
+  await groups('hidden').uncheck();
+  await groups('theme').check(); await groups('direction').check(); await settle();
+  check('Groups sample RTL', await settings.evaluate(e => getComputedStyle(e).direction), 'rtl');
+  check('Groups sample theme token', await settings.evaluate(e => getComputedStyle(e).getPropertyValue('--colorNeutralForeground1').trim()), '#ffffff');
+  check('Groups sample caller settings preserved', await groups('email').inputValue(), 'edited@example.com');
+  await groups('theme').uncheck(); await groups('direction').uncheck(); await settle();
+  await groups('frame').screenshot({ path: path.join(output, `${label}-groups-light.png`) });
+  await groups('theme').check(); await groups('direction').check(); await settle();
+  await groups('frame').screenshot({ path: path.join(output, `${label}-groups-preview.png`) });
+  await groups('resize').selectOption('320'); await settle();
+  check('Groups sample compact no overflow', await settings.evaluate(e => e.scrollWidth <= e.clientWidth), true);
+  await settings.screenshot({ path: path.join(output, `${label}-groups-compact.png`) });
   check('console health', consoleMessages, []); check('page errors', pageErrors, []);
 })().catch(error => { failures.push(error.stack || error.message); }).finally(async () => {
   const version = browser ? browser.version() : 'not launched';

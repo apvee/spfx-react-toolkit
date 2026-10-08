@@ -1,0 +1,63 @@
+# SettingsGroup
+
+`SettingsGroup` places related preferences in a Fluent Card with an optional header. It composes native semantic text, `useSx` typography and Fluent UI 9; no SPFx provider is required. Application controls own labels, values, validation and persistence. Choose [AccordionGroup](./accordion-group.md) for optional details users can reveal.
+
+```tsx
+import { SettingsGroup } from '@apvee/spfx-react-toolkit';
+import { Input, Switch } from '@fluentui/react-components';
+
+<SettingsGroup title="Notification preferences" description="Choose how we contact you.">
+  <SettingsGroup.Item title="Delivery address" description="Your work email.">
+    <Input aria-label="Notification email" value={email} onChange={(_, data) => setEmail(data.value)} />
+  </SettingsGroup.Item>
+  <SettingsGroup.Item title={<span>Account <em>alerts</em></span>}>
+    <Switch aria-label="Receive account alerts" />
+  </SettingsGroup.Item>
+</SettingsGroup>
+```
+
+Import from the package root, `/controls`, or `/controls/settings-group`; these share the canonical implementation. `SettingsGroup.Item` is the row component; there is no separate public flat Item export.
+
+## SettingsGroupProps
+
+Native div attributes/events, `className`, consumer `style`, `dir`, `lang`, `hidden` and the root HTMLDivElement ref are forwarded. The group adds no implicit accessible name, group role, form behavior or generated label relationships. `dangerouslySetInnerHTML` is unsupported because the component owns its content.
+
+| Member | Type | Behavior |
+| --- | --- | --- |
+| `SettingsGroupProps.title` | `React.ReactNode` | Optional phrasing content inside the semantic title heading; strings remain literal. |
+| `SettingsGroupProps.description` | `React.ReactNode` | Optional supporting phrasing content inside a span. |
+| `SettingsGroupProps.icon` | `React.ReactNode` | Optional decorative icon in a fixed 24px header slot. |
+| `SettingsGroupProps.action` | `React.ReactNode` | Optional caller-owned trailing header action. |
+| `SettingsGroupProps.headingLevel` | `SettingsGroupHeadingLevel` | Default 2; selects the title heading wrapper for strings and JSX. |
+| `SettingsGroupProps.appearance` | `'filled' \| 'filled-alternative'` | Fluent Card appearance, default filled. |
+| `SettingsGroupProps.children` | `React.ReactNode` | Items and arbitrary content in declaration order. |
+| `SettingsGroupProps.dangerouslySetInnerHTML` | `never` | Unsupported HTML injection pathway. |
+
+## SettingsGroupItemProps
+
+The row is a div with its own native attributes/events/ref. Titles are visible text, **not implicit labels** for controls. Supply a Fluent control label, Field, or explicit application-owned label IDs. Rows do not clone children, intercept control events or own application state. Keyed rows retain child identity when reordered by the application.
+
+| Member | Type | Behavior |
+| --- | --- | --- |
+| `SettingsGroupItemProps.title` | `React.ReactNode` | Optional phrasing content inside a span; not a heading or control label. |
+| `SettingsGroupItemProps.description` | `React.ReactNode` | Optional supporting phrasing content inside a span. |
+| `SettingsGroupItemProps.icon` | `React.ReactNode` | Optional decorative icon in a fixed 20px Item slot. |
+| `SettingsGroupItemProps.action` | `React.ReactNode` | Optional secondary trailing action. |
+| `SettingsGroupItemProps.children` | `React.ReactNode` | Caller-owned primary controls or custom content. |
+| `SettingsGroupItemProps.dangerouslySetInnerHTML` | `never` | Unsupported HTML injection pathway. |
+
+## SettingsGroupHeadingLevel
+
+Accepts 1 through 6. Choose the group title wrapper for its document hierarchy; it applies to both strings and JSX. Item title/description wrappers are spans. All title/description slots receive inherited defaults: group title `subtitle2`/primary, Item title `body1Strong`/primary and description `caption1`/subtle, with zero block margin and zero title-description gap.
+
+Strings are rendered literally: `**bold**` stays `**bold**`; the group does not parse Markdown or depend on FormattedText. Use noninteractive phrasing JSX such as `<strong>Bold</strong>` or `<em>Emphasis</em>` for formatting. JSX children retain their props, identity and explicit styling; they inherit the wrapper defaults when they do not provide their own. Do not supply nested headings or block markup inside these text wrappers. Supply `undefined` for absent optional content.
+
+## Layout, dependencies and limitations
+
+Fluent Card medium owns the 12px exterior padding, border and radius. The body sets its row gap to zero; the inner content row has a 44px minimum matching native Accordion triggers, independent of the outer divider padding. Adjacent direct Item DOM siblings receive a thin separator with one Card-padding interval of additional spacing, split equally before and after it (6px + 6px at medium). Both halves derive from Fluent’s public `cardCSSVars.cardSizeVar` (`--fui-Card--size`), the same variable as Card padding; arbitrary intervening content breaks adjacency. Consumer wrappers can therefore affect separators. The control preserves declaration order rather than collecting Items into a registry.
+
+Each Settings Item uses a fluid wrapping flex row: text and controls remain side by side while they fit. Leading text grows and wraps around a 160px preferred/minimum width, capped at the available width for narrower groups. A compact Switch can remain beside text at 500px; a wider control wraps only when the combined regions and their 12px horizontal gap do not fit. Wrapped lines use an 8px vertical gap. Title and description remain adjacent with no extra gap. Custom leading content must support wrapping or shrinking within that bounded region.
+
+The group establishes the toolkit `apvee-sx` inline-size container. Row placement follows actual available space and content widths; there is no blanket column layout below a fixed breakpoint. Existing layout/spacing descriptors use the host Griffel renderer and Fluent direction. The optional header sits 12px from the Card (Fluent medium spacing). Header icons have fixed 24px boxes and Item icons fixed 20px boxes; direct font icons inherit slot font size and SVG icons fill the slot. Consumer children keep their props and identity; complex custom icon content retains its own structure. Theme variables require a Fluent theme in scope; the package uses shared Fluent/Griffel peers without a Markdown parser dependency. Native `hidden` hides the group/row without unmounting controls; it is presentation, not authorization.
+
+The lazy **SettingsGroup and AccordionGroup** sample edits labeled values, actions, theme, direction, width and visibility and observes root refs. Automated marker checks establish sample coverage only. Local browser execution and authenticated SharePoint validation are separate; see the [host checklist](../../SHAREPOINT-VALIDATION.md#settingsgroup-and-accordiongroup).

@@ -1830,7 +1830,15 @@
       "default": "./lib/utils/type-guards.internal.js"
     },
     "./lib/utils/type-guards.internal.js.map": "./lib/utils/type-guards.internal.js.map",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./controls/settings-group": {
+      "types": "./lib/controls/settings-group/index.d.ts",
+      "default": "./lib/controls/settings-group/index.js"
+    },
+    "./controls/accordion-group": {
+      "types": "./lib/controls/accordion-group/index.d.ts",
+      "default": "./lib/controls/accordion-group/index.js"
+    }
   },
   "typesVersions": {
     "*": {
@@ -1869,6 +1877,12 @@
       ],
       "controls/state-message": [
         "lib/controls/state-message/index.d.ts"
+      ],
+      "controls/settings-group": [
+        "lib/controls/settings-group/index.d.ts"
+      ],
+      "controls/accordion-group": [
+        "lib/controls/accordion-group/index.d.ts"
       ]
     }
   },
