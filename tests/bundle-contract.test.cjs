@@ -4,7 +4,7 @@ const { collectEmittedModules, collectReachableAssets, finalizeReport, renderCon
 function fullEnforceReport() {
   const contract=require('./fixtures/tree-shaking/contract.json');
   const {checkComparisons}=require('../scripts/bundle-contract.internal.cjs');
-  const modules={'settings-group':'@apvee/spfx-react-toolkit/lib/controls/settings-group/settings-group.js','accordion-group':'@apvee/spfx-react-toolkit/lib/controls/accordion-group/accordion-group.js','fluent-card':'@fluentui/react-card/lib/components/Card/Card.js','fluent-accordion':'@fluentui/react-accordion/lib/components/Accordion/Accordion.js',pnp:'@pnp/sp/webs/index.js','styles-engine':'@apvee/spfx-react-toolkit/lib/helpers/styles/resolve.internal.js','list-registration':'@pnp/sp/lists/index.js','search-registration':'@pnp/sp/search/index.js','batch-registration':'@pnp/sp/batching.js','formatted-text':'@apvee/spfx-react-toolkit/lib/controls/formatted-text/formatted-text.js','markdown':'unified/index.js','fluent-link':'@fluentui/react-link/lib/index.js','typography':'@apvee/spfx-react-toolkit/lib/helpers/styles/typography.js','relative-time':'@apvee/spfx-react-toolkit/lib/controls/relative-time/relative-time.js','fluent-tooltip':'@fluentui/react-tooltip/lib/components/Tooltip/Tooltip.js','iana-lookup':'@apvee/spfx-react-toolkit/lib/helpers/spfx-time-zone.internal.js','auto-skeleton':'@apvee/spfx-react-toolkit/lib/controls/auto-skeleton/auto-skeleton.js','state-message':'@apvee/spfx-react-toolkit/lib/controls/state-message/state-message.js','state-artwork':'@apvee/spfx-react-toolkit/lib/controls/state-message/illustrations/default-illustration.js','fluent-button':'@fluentui/react-button/lib/components/Button/Button.js','fluent-skeleton':'@fluentui/react-skeleton/lib/components/Skeleton/Skeleton.js'};
+  const modules={'settings-group':'@apvee/spfx-react-toolkit/lib/controls/settings-group/settings-group.js','accordion-group':'@apvee/spfx-react-toolkit/lib/controls/accordion-group/accordion-group.js','fluent-card':'@fluentui/react-card/lib/components/Card/Card.js','fluent-accordion':'@fluentui/react-accordion/lib/components/Accordion/Accordion.js',pnp:'@pnp/sp/webs/index.js','styles-engine':'@apvee/spfx-react-toolkit/lib/helpers/styles/resolve.internal.js','list-registration':'@pnp/sp/lists/index.js','search-registration':'@pnp/sp/search/index.js','batch-registration':'@pnp/sp/batching.js','formatted-text':'@apvee/spfx-react-toolkit/lib/controls/formatted-text/formatted-text.js','markdown':'unified/index.js','fluent-link':'@fluentui/react-link/lib/index.js','typography':'@apvee/spfx-react-toolkit/lib/helpers/styles/typography.js','relative-time':'@apvee/spfx-react-toolkit/lib/controls/relative-time/relative-time.js','fluent-tooltip':'@fluentui/react-tooltip/lib/components/Tooltip/Tooltip.js','iana-lookup':'@apvee/spfx-react-toolkit/lib/helpers/spfx-time-zone.internal.js','auto-skeleton':'@apvee/spfx-react-toolkit/lib/controls/auto-skeleton/auto-skeleton.js','state-message':'@apvee/spfx-react-toolkit/lib/controls/state-message/state-message.js','state-artwork':'@apvee/spfx-react-toolkit/lib/controls/state-message/illustrations/default-illustration.js','fluent-button':'@fluentui/react-button/lib/components/Button/Button.js','fluent-skeleton':'@fluentui/react-skeleton/lib/components/Skeleton/Skeleton.js',form:'@apvee/spfx-react-toolkit/lib/controls/form/form.js','react-hook-form':'react-hook-form/dist/index.esm.mjs','form-resolver':'@hookform/resolvers/standard-schema/dist/standard-schema.mjs','form-schema':'@standard-schema/utils/dist/index.js','form-date':'@fluentui/react-datepicker-compat/lib/components/DatePicker/DatePicker.js','form-time':'@fluentui/react-timepicker-compat/lib/components/TimePicker/TimePicker.js'};
   const fixtures=contract.fixtures.flatMap(fixture=>Object.keys(fixture.variants).map(variant=>({id:`${fixture.id}/${variant}`,status:'measured',emittedModules:fixture.requiredModuleGroups.map(group=>({resource:modules[group]})),retentionObservations:[],totals:{union:{gzip:100}},fixtureSha256:'fixture',configSha256:'config',assets:[]})));
   return {schemaVersion:1,mode:'enforce',complete:true,passed:true,provenance:{tarballSha256:'abc'},contractSha256:require('node:crypto').createHash('sha256').update(JSON.stringify(contract)).digest('hex'),fixtures,comparisons:checkComparisons(fixtures,contract).comparisons,failures:[],errors:[]};
 }
@@ -121,7 +121,7 @@ test('isolation contract rejects upstream typography even with no retained descr
 });
 
 
-for (const [budget, boundary] of [[1023, 1023], [512, 512]]) {
+for (const [budget, boundary] of [[1023, 1023], [512, 512], [0, 0]]) {
   test(`gzip budget ${budget} accepts the exact boundary and rejects one byte over`, () => {
     const { checkComparisons } = require('../scripts/bundle-contract.internal.cjs');
     const contract = {comparisons:[{candidate:'helper/root',reference:'helper/leaf',metric:'gzip',maxIncreaseBytes:budget}]};
@@ -173,7 +173,7 @@ test('baseline completeness independently requires canonical contract, all measu
   const {baselineSnapshot}=require('../scripts/bundle-contract.internal.cjs');
   const variants=[report=>{report.fixtures=[];},report=>{report.fixtures.pop();},report=>{report.fixtures[0].status='unavailable';},report=>{report.fixtures[0].id='replacement/root';},report=>{report.comparisons=[];},report=>{report.comparisons[0].maxIncreaseBytes=999999;},report=>{report.contractSha256='altered';},report=>{report.fixtures[0].emittedModules.push({resource:'@pnp/sp/webs/index.js'});}];
   for(const mutate of variants){const report=fullEnforceReport();mutate(report);assert.equal(finalizeReport(report).passed,false);assert.throws(()=>baselineSnapshot(report),/canonical complete enforce PASS/);}
-  assert.equal(baselineSnapshot(fullEnforceReport()).fixtures.length,60);
+  assert.equal(baselineSnapshot(fullEnforceReport()).fixtures.length,66);
 });
 test('real CLI refuses empty, subset, altered-budget and weakened forbidden-group contracts before baseline write', () => {
   const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
@@ -197,4 +197,21 @@ test('real CLI refuses empty, subset, altered-budget and weakened forbidden-grou
     const result=spawnSync(process.execPath,[path.resolve(__dirname,'../scripts/verify-bundle-contract.cjs'),'--consumer-root',path.join(directory,'missing-consumer'),'--contract',copy],{encoding:'utf8'});
     assert.equal(result.status,1);assert.match(result.stderr,/ENOENT/);assert.doesNotMatch(result.stderr,/canonical complete production contract/);
   } finally {fs.rmSync(directory,{recursive:true,force:true});}
+});
+
+test('Form and factory contracts measure the complete family and forbid it in every unrelated fixture', () => {
+  const { checkFixture } = require('../scripts/bundle-contract.internal.cjs');
+  const contract = require('./fixtures/tree-shaking/contract.json');
+  const groups = ['form', 'react-hook-form', 'form-resolver', 'form-schema', 'form-date', 'form-time'];
+  for (const fixture of contract.fixtures) {
+    if (['form', 'form-factory'].includes(fixture.id)) {
+      assert.deepEqual(Object.keys(fixture.variants), ['root', 'domain', 'control']);
+      for (const group of ['form', 'react-hook-form', 'form-resolver', 'form-schema', 'form-date', 'form-time']) assert.ok(fixture.requiredModuleGroups.includes(group));
+      for (const group of ['pnp', 'spfx-runtime', 'provider', 'formatted-text', 'settings-group', 'accordion-group']) assert.ok(fixture.forbiddenModuleGroups.includes(group));
+    } else for (const group of groups) assert.ok(fixture.forbiddenModuleGroups.includes(group), `${fixture.id}: ${group}`);
+  }
+  const helper = contract.fixtures.find(f => f.id === 'helper');
+  for (const resource of ['@apvee/spfx-react-toolkit/lib/controls/form/form.js', 'react-hook-form/dist/index.esm.mjs', '@hookform/resolvers/standard-schema/dist/standard-schema.mjs', '@standard-schema/spec/dist/index.js', '@fluentui/react-datepicker-compat/lib/index.js', '@fluentui/react-calendar-compat/lib/index.js', '@fluentui/react-timepicker-compat/lib/index.js']) {
+    assert.ok(checkFixture({ id: 'helper/root', emittedModules: [{ resource }], retentionObservations: [] }, helper, contract).some(f => f.includes('forbidden module group')), resource);
+  }
 });

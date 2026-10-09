@@ -19,6 +19,7 @@ const cleanAliases = Object.freeze({
   './controls/state-message': 'lib/controls/state-message/index',
   './controls/settings-group': 'lib/controls/settings-group/index',
   './controls/accordion-group': 'lib/controls/accordion-group/index',
+  './controls/form': 'lib/controls/form/index',
 });
 
 /** Derive explicit exports without changing the frozen historical inventory. */
@@ -76,7 +77,7 @@ function collectPublishedFiles(directory = library) {
   return files.sort();
 }
 
-function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
+function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index', 'lib/controls/form/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
   const contract = createEntrypointContract({ publishedFiles, cleanAliases });
   assert.deepEqual(manifest.exports, contract.exports, 'Package exports differ from the exact additive contract');
   // Object equality alone does not check condition priority.
@@ -118,7 +119,7 @@ function verifyConsumerResolution(consumer, evidenceDirectory) {
     assert.equal(fs.realpathSync(resolved), fs.realpathSync(path.join(packageDirectory, expected)), `Runtime resolution changed: ${request}`);
     runtime.push({ request, file: resolved });
   }
-  for (const suffix of ['/hooks/useAsyncInvoke.internal', '/styles/descriptor.internal', '/styles/types']) {
+  for (const suffix of ['/hooks/useAsyncInvoke.internal', '/styles/descriptor.internal', '/styles/types', '/controls/form/form', '/controls/form/create-form', '/controls/form/controls/form-input', '/controls/form/plugins', '/controls/form/advanced', '/lib/controls/form', '/lib/controls/form/index']) {
     assert.throws(() => resolver.resolveSync({}, consumer, '@apvee/spfx-react-toolkit' + suffix), /not exported/);
   }
   const fixture = path.join(consumer, 'compatibility/entrypoint-resolution.ts');
@@ -126,7 +127,7 @@ function verifyConsumerResolution(consumer, evidenceDirectory) {
   fs.copyFileSync(path.join(root, 'tests/fixtures/tree-shaking/resolution/consumer.ts'), fixture);
   const modes = [];
   const declarations = {};
-  const importedNames = ['rootWidth', 'helperWidth', 'width', 'directoryWidth', 'rootSx', 'useSx', 'leafSx', 'legacySx', 'rootCallback', 'useStableCallback', 'legacyCallback', 'rootText', 'domainText', 'controlText', 'rootRelative', 'domainRelative', 'controlRelative', 'rootSkeleton', 'domainSkeleton', 'controlSkeleton', 'rootState', 'domainState', 'controlState'];
+  const importedNames = ['rootWidth', 'helperWidth', 'width', 'directoryWidth', 'rootSx', 'useSx', 'leafSx', 'legacySx', 'rootCallback', 'useStableCallback', 'legacyCallback', 'rootText', 'domainText', 'controlText', 'rootRelative', 'domainRelative', 'controlRelative', 'rootSkeleton', 'domainSkeleton', 'controlSkeleton', 'rootState', 'domainState', 'controlState', 'rootForm', 'domainForm', 'controlForm', 'rootFactory', 'domainFactory', 'controlFactory', 'RootMethods', 'DomainMethods', 'ControlMethods'];
   for (const [mode, moduleResolution, module] of [
     ['node', ts.ModuleResolutionKind.Node10, ts.ModuleKind.ESNext],
     ['bundler', ts.ModuleResolutionKind.Bundler, ts.ModuleKind.ESNext],
@@ -136,6 +137,11 @@ function verifyConsumerResolution(consumer, evidenceDirectory) {
     const program = ts.createProgram([fixture], options);
     const diagnostics = ts.getPreEmitDiagnostics(program);
     assert.equal(diagnostics.length, 0, `${mode} resolution failed:\n${ts.formatDiagnosticsWithColorAndContext(diagnostics, { getCanonicalFileName: file => file, getCurrentDirectory: () => consumer, getNewLine: () => '\n' })}`);
+    if (mode !== 'node') {
+      // Node10 intentionally ignores exports maps and can discover packed
+      // physical modules. Only modern resolution enforces this boundary.
+      for (const suffix of ['/lib/controls/form', '/lib/controls/form/index']) assert.equal(ts.resolveModuleName('@apvee/spfx-react-toolkit' + suffix, fixture, options, ts.sys).resolvedModule, undefined, `${mode} must reject unexported Form physical paths`);
+    }
     const resolvedRoot = ts.resolveModuleName('@apvee/spfx-react-toolkit', fixture, options, ts.sys).resolvedModule;
     assert.equal(fs.realpathSync(resolvedRoot.resolvedFileName), fs.realpathSync(path.join(packageDirectory, 'lib/index.d.ts')), 'Root must not be rewritten to lib/lib');
     const symbols = new Map();
@@ -146,7 +152,7 @@ function verifyConsumerResolution(consumer, evidenceDirectory) {
         if (importedNames.includes(element.name.text)) symbols.set(element.name.text, checker.getAliasedSymbol(checker.getSymbolAtLocation(element.name)));
       }
     }
-    for (const group of [['rootWidth', 'helperWidth', 'width', 'directoryWidth'], ['rootSx', 'useSx', 'leafSx', 'legacySx'], ['rootCallback', 'useStableCallback', 'legacyCallback'], ['rootText', 'domainText', 'controlText'], ['rootRelative', 'domainRelative', 'controlRelative'], ['rootSkeleton', 'domainSkeleton', 'controlSkeleton'], ['rootState', 'domainState', 'controlState']]) {
+    for (const group of [['rootWidth', 'helperWidth', 'width', 'directoryWidth'], ['rootSx', 'useSx', 'leafSx', 'legacySx'], ['rootCallback', 'useStableCallback', 'legacyCallback'], ['rootText', 'domainText', 'controlText'], ['rootRelative', 'domainRelative', 'controlRelative'], ['rootSkeleton', 'domainSkeleton', 'controlSkeleton'], ['rootState', 'domainState', 'controlState'], ['rootForm', 'domainForm', 'controlForm'], ['rootFactory', 'domainFactory', 'controlFactory'], ['RootMethods', 'DomainMethods', 'ControlMethods']]) {
       for (const name of group) assert.equal(symbols.get(name), symbols.get(group[0]), `Canonical symbol identity changed: ${name}`);
     }
     declarations[mode] = resolvedRoot.resolvedFileName;

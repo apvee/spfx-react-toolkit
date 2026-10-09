@@ -8,6 +8,7 @@ The package publishes ESNext JavaScript for a bundler and TypeScript declaration
 | --- | --- |
 | (root) | All public controls, providers, hooks, helpers and services |
 | `/controls` | Public controls and their types |
+| `/controls/form` | Canonical `Form`, `createForm` and public types; compound adapters remain private implementations |
 | `/controls/auto-skeleton` | Canonical `AutoSkeleton` and `AutoSkeletonProps` |
 | `/controls/formatted-text` | Canonical `FormattedText` and its three public types |
 | `/controls/relative-time` | Canonical `RelativeTime` and `RelativeTimeProps` |
@@ -125,7 +126,7 @@ For lazy loading, prefer the relevant domain facade when only that domain is nee
 
 ## RelativeTime and locale mapping
 
-`RelativeTime` and `RelativeTimeProps` are canonical exports from root, `/controls`, and `/controls/relative-time`. The component uses native Intl and Fluent Tooltip, needs no SPFx provider and includes no Remark parser. Locale metadata adds only readonly optional `ianaTimeZone`; the existing SDK `timeZone` object is preserved. The private audited lookup is retained by locale helpers but eliminated from unrelated page-context helper imports. The canonical contract measures 54 variants, retaining previous budgets and adding separate control/locale/page-context cases. See [RelativeTime](./api/controls/relative-time.md) and [locale info](./api/hooks/environment.md#usespfxlocaleinfo).
+`RelativeTime` and `RelativeTimeProps` are canonical exports from root, `/controls`, and `/controls/relative-time`. The component uses native Intl and Fluent Tooltip, needs no SPFx provider and includes no Remark parser. Locale metadata adds only readonly optional `ianaTimeZone`; the existing SDK `timeZone` object is preserved. The private audited lookup is retained by locale helpers but eliminated from unrelated page-context helper imports. The canonical contract measures 66 variants, retaining previous budgets and adding separate control/locale/page-context cases. See [RelativeTime](./api/controls/relative-time.md) and [locale info](./api/hooks/environment.md#usespfxlocaleinfo).
 
 ## AutoSkeleton imports
 
@@ -135,6 +136,18 @@ import { AutoSkeleton as DomainSkeleton } from '@apvee/spfx-react-toolkit/contro
 import { AutoSkeleton as NarrowSkeleton, AutoSkeletonProps } from '@apvee/spfx-react-toolkit/controls/auto-skeleton';
 ```
 
-These entries share the canonical component. Measurement, lifecycle and geometry styling modules are private. AutoSkeleton uses existing Fluent/Griffel peers and native DOM APIs, with no extra runtime dependency, global renderer, shared geometry cache or PnP registration. Its consumer bundles must exclude the Markdown parser, PnP, SPFx runtime and unrelated controls; unrelated root API bundles must eliminate AutoSkeleton. The canonical 54-variant bundle contract covers its root/domain/leaf variants while retaining existing budgets. See [AutoSkeleton](./api/controls/auto-skeleton.md) for native inert behavior, wrapper layout, measurement boundaries and renderer-owned CSS growth.
+These entries share the canonical component. Measurement, lifecycle and geometry styling modules are private. AutoSkeleton uses existing Fluent/Griffel peers and native DOM APIs, with no extra runtime dependency, global renderer, shared geometry cache or PnP registration. Its consumer bundles must exclude the Markdown parser, PnP, SPFx runtime and unrelated controls; unrelated root API bundles must eliminate AutoSkeleton. The canonical 66-variant bundle contract covers its root/domain/leaf variants while retaining existing budgets. See [AutoSkeleton](./api/controls/auto-skeleton.md) for native inert behavior, wrapper layout, measurement boundaries and renderer-owned CSS growth.
 
 StateMessage is available from the root, `/controls` and `/controls/state-message`, with the same component/type identity. Artwork and theme resolver remain private; its synchronous bundle includes all five preset subjects in both themes plus FormattedText. Generic hook/style consumers must not include the StateMessage artwork. The MIT artwork attribution ships as `THIRD-PARTY-NOTICES.md`.
+
+## Form imports and bundle retention
+
+```tsx
+import { Form, createForm } from '@apvee/spfx-react-toolkit';
+import { Form as DomainForm } from '@apvee/spfx-react-toolkit/controls';
+import { Form as ControlForm, FormMethods } from '@apvee/spfx-react-toolkit/controls/form';
+```
+
+The three entries share the canonical family, factory and types. Install the mandatory RHF, compat date/time and icon peers described in the [Form guide](./api/controls/form.md#dependencies); resolver/Standard Schema support is supplied by the package. There are no clean adapter, plugin or advanced entrypoints. Modern TypeScript and Webpack enforce these exports. TypeScript's legacy Node10 resolution can discover physical declaration files and is not an export-map privacy boundary.
+
+The complete family retains all 22 adapters and visual sections. The Form and createForm bundle fixtures require RHF/resolver/schema/date/time/Card modules and exclude PnP, SPFx and unrelated controls. Their root/domain variants have a measured zero-byte gzip gap against `/controls/form`; the contract now enforces that gap. Absolute family sizes are informational, measured with the recorded toolchain; per-slot elimination is not promised. Existing alias budgets and the historical frozen baseline remain unchanged. Unrelated helper/style/control fixtures exclude every new Form dependency group.

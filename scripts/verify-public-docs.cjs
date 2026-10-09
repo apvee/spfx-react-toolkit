@@ -92,7 +92,9 @@ assertDocumentedSurface(read('docs/api/hooks/react.md'), sxHook);
 assertContainsAll('docs/api/hooks/INDEX.md', ['useSx', 'useStableCallback'], 'React utility hooks');
 
 const controlSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts'));
-assertDocumentedSurface(read('docs/api/controls/formatted-text.md') + '\n' + read('docs/api/controls/relative-time.md') + '\n' + read('docs/api/controls/auto-skeleton.md') + '\n' + read('docs/api/controls/state-message.md') + '\n' + read('docs/api/controls/settings-group.md') + '\n' + read('docs/api/controls/accordion-group.md'), controlSurface);
+assertDocumentedSurface(read('docs/api/controls/formatted-text.md') + '\n' + read('docs/api/controls/relative-time.md') + '\n' + read('docs/api/controls/auto-skeleton.md') + '\n' + read('docs/api/controls/state-message.md') + '\n' + read('docs/api/controls/settings-group.md') + '\n' + read('docs/api/controls/accordion-group.md') + '\n' + read('docs/api/controls/form.md'), controlSurface);
+const formSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/form/index.ts'), { includeTypeMembers: true });
+assertDocumentedSurface(read('docs/api/controls/form.md'), formSurface);
 assertDocumentedSurface(read('docs/api/hooks/environment.md'), collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts')));
 assertContainsAll('docs/api/controls/INDEX.md', controlSurface.map(item => item.name), 'control exports');
 

@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '../..');
 const bundles = [];
 
 /** Compile actual TS/ESM source while keeping the host's React and Fluent instances. */
-async function loadModule(entryPath, { parserFailure = false } = {}) {
+async function loadModule(entryPath, { parserFailure = false, reactHookForm = false } = {}) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'formatted-text-'));
   bundles.push(directory);
   const output = path.join(directory, 'module.cjs');
@@ -19,7 +19,8 @@ async function loadModule(entryPath, { parserFailure = false } = {}) {
     output: { path: directory, filename: 'module.cjs', library: { type: 'commonjs2' } },
     resolve: { extensions: ['.tsx', '.ts', '.js'], alias: parserFailure ? { 'remark-parse$': parserDouble } : {} },
     externals: [({ request }, callback) => {
-      if (/^(react(?:-dom)?(?:\/|$)|@fluentui\/|@griffel\/)/.test(request || '')) {
+      if (/^(react(?:-dom)?(?:\/|$)|@fluentui\/|@griffel\/)/.test(request || '') ||
+          (reactHookForm && /^react-hook-form(?:\/|$)/.test(request || ''))) {
         callback(null, `commonjs ${require.resolve(request, { paths: [root] })}`);
       } else callback();
     }],

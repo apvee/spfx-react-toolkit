@@ -68,9 +68,22 @@ test('source rules reject internal barrel imports, global renderers and unclassi
 test('repository source effects match the manifest and internal imports use direct modules', () => {
   const fs = require('node:fs');
   const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
-  const report = auditImportGraph({ sourceRoot: path.resolve(__dirname, '../packages/spfx-react-toolkit/src'), entrypoints: ['index.ts'] });
+  const report = auditImportGraph({ sourceRoot: path.resolve(__dirname, '../packages/spfx-react-toolkit/src'), entrypoints: ['index.ts', 'controls/index.ts', 'controls/form/index.ts'] });
   const manifest = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../packages/spfx-react-toolkit/package.json')));
   assert.deepEqual(checkSourceRules(report, manifest.sideEffects), []);
+  const family = report.publicExports.filter(item => item.entrypoint === 'controls/form/index.ts' && item.kind === 'runtime');
+  assert.deepEqual(family.map(item => item.name).sort(), ['Form', 'createForm']);
+  for (const entrypoint of ['index.ts', 'controls/index.ts']) {
+    for (const exported of family) {
+      const alias = report.publicExports.find(item => item.entrypoint === entrypoint && item.name === exported.name);
+      assert.ok(alias, `${entrypoint}: ${exported.name}`);
+      assert.equal(alias.canonicalSource, exported.canonicalSource);
+      assert.equal(alias.kind, 'runtime');
+    }
+  }
+  for (const module of report.modules.filter(item => item.path.startsWith('controls/form/'))) {
+    assert.ok(module.externalImports.every(edge => edge.kind !== 'bare-import'), `${module.path}: no external registration`);
+  }
 });
 
 test('source rules preserve type-only reexports at public barrel boundaries', () => {
@@ -143,8 +156,10 @@ test('returned conditional factories remain deferred until the returned function
 
 test('reviewed control style definitions are local but actual renderer allocation stays forbidden', () => {
   const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
-  const module = expression => ({ path: 'controls/formatted-text/formatted-text.styles.internal.ts', externalImports: [], topLevelInitializations: [{ expression }] });
-  assert.deepEqual(checkSourceRules({ edges: [], modules: [module('makeStyles({ root: {} })')] }, []), []);
-  assert.equal(checkSourceRules({ edges: [], modules: [module('createDOMRenderer()')] }, [])[0].kind, 'package-global-renderer');
-  assert.equal(checkSourceRules({ edges: [], modules: [module('makeStyles({ root: createDOMRenderer() })')] }, [])[0].kind, 'package-global-renderer');
+  for (const path of ['controls/formatted-text/formatted-text.styles.internal.ts', 'controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts']) {
+    const module = expression => ({ path, externalImports: [], topLevelInitializations: [{ expression }] });
+    assert.deepEqual(checkSourceRules({ edges: [], modules: [module('makeStyles({ root: {} })')] }, []), []);
+    assert.equal(checkSourceRules({ edges: [], modules: [module('createDOMRenderer()')] }, [])[0].kind, 'package-global-renderer');
+    assert.equal(checkSourceRules({ edges: [], modules: [module('makeStyles({ root: createDOMRenderer() })')] }, [])[0].kind, 'package-global-renderer');
+  }
 });

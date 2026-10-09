@@ -12,6 +12,14 @@ npm install @apvee/spfx-react-toolkit "@fluentui/react-migration-v8-v9@^9.9.12" 
 
 The host supplies the React and SPFx runtimes. PnPjs APIs require the compatible `@pnp/core`, `@pnp/queryable` and `@pnp/sp` peers. Preserve versions compatible with your host; do not upgrade an existing SPFx toolchain just to install the toolkit.
 
+Form adds shared RHF and Fluent compat/icon peers. The tested React 17 / Fluent 9.72.3 baseline uses the following versions; preserve the compatible Fluent/Griffel subtree in the host lockfile:
+
+```bash
+npm install react-hook-form@7.87.0 @fluentui/react-datepicker-compat@0.6.16 @fluentui/react-timepicker-compat@0.4.21 @fluentui/react-icons@2.0.312
+```
+
+See [Form dependencies and runtime identity](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/controls/form.md#dependencies).
+
 ```tsx
 import * as React from 'react';
 import * as ReactDom from 'react-dom';

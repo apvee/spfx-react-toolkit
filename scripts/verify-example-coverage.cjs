@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { collectPublicSurface } = require('./public-surface.helpers.cjs');
 const { assertStyleExampleCoverage } = require('./style-example.helpers.cjs');
+const { assertFormExampleCoverage } = require('./form-example.helpers.cjs');
 
 const root = path.resolve(__dirname, '..');
 const hooksIndexPath = path.join(root, 'packages', 'spfx-react-toolkit', 'src', 'hooks', 'index.ts');
@@ -147,7 +148,7 @@ for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invok
 }
 console.log('Verified dedicated root/domain/legacy Imports scenario (no duplicate export coverage).');
 
-const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup'].includes(item.name)).map(item => item.name);
+const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm'].includes(item.name)).map(item => item.name);
 assertCovered('Controls', controlSymbols, registrySymbols);
 const textPanel = read(path.join(panelsPath, 'FormattedTextPanel.tsx'));
 for (const marker of ['FormattedText', 'maxLines', 'markdown', 'subtle', 'highlight', 'variant', 'as', 'font', 'align', 'wrap', 'truncate', 'italic', 'underline', 'strikethrough', 'ref', 'onClick']) {
@@ -175,3 +176,9 @@ const groupsPanel = read(path.join(panelsPath, 'GroupsPanel.tsx'));
 for (const marker of ['SettingsGroup.Item', 'AccordionGroup.Item', 'Input aria-label=', 'Switch aria-label=', 'Icon iconName=', 'openItems=', 'onToggle=', 'multiple=', 'unmountOnClose=', 'defaultValue=', 'title={<span>', 'ref=', 'data-groups-demo="theme"', 'data-groups-demo="direction"', 'data-groups-demo="resize"', 'data-groups-demo="inspect"']) {
   if (!groupsPanel.includes(marker)) throw new Error(`Groups interactive example missing ${marker}`);
 }
+
+assertFormExampleCoverage(
+  collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/form/index.ts')),
+  read(registryPath), read(path.join(panelsPath, 'FormPanel.tsx'))
+);
+console.log('Verified complete compound Form adapter, scope and hook usage.');

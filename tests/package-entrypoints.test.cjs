@@ -16,8 +16,9 @@ const aliases = {
   './controls/state-message': 'lib/controls/state-message/index',
   './controls/settings-group': 'lib/controls/settings-group/index',
   './controls/accordion-group': 'lib/controls/accordion-group/index',
+  './controls/form': 'lib/controls/form/index',
 };
-const files = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index'].flatMap(base => ['.js', '.d.ts', '.js.map', '.d.ts.map'].map(ext => base + ext))];
+const files = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index', 'lib/controls/form/index'].flatMap(base => ['.js', '.d.ts', '.js.map', '.d.ts.map'].map(ext => base + ext))];
 test('clean entrypoints select their canonical declarations before runtime', () => {
   for (const [alias, target] of Object.entries(aliases)) {
     assert.deepEqual(manifest.exports?.[alias], { types: './' + target + '.d.ts', default: './' + target + '.js' });
@@ -32,6 +33,7 @@ test('clean entrypoints select their canonical declarations before runtime', () 
     'controls/state-message': ['lib/controls/state-message/index.d.ts'],
     'controls/settings-group': ['lib/controls/settings-group/index.d.ts'],
     'controls/accordion-group': ['lib/controls/accordion-group/index.d.ts'],
+    'controls/form': ['lib/controls/form/index.d.ts'],
     'styles/useSx': ['lib/hooks/useSx.d.ts'], 'hooks/useStableCallback': ['lib/hooks/useStableCallback.d.ts'],
   } });
   assert.equal(manifest.main, 'lib/index.js');
@@ -51,7 +53,7 @@ test('every frozen packed path remains accessible in its original form', () => {
 });
 test('new clean private and wildcard paths are absent', () => {
   assert.ok(manifest.exports);
-  for (const alias of ['./hooks/useAsyncInvoke.internal', './styles/descriptor.internal', './styles/types', './styles/*', './lib/*', './controls/formatted-text/formatted-text-content.internal', './controls/*', './controls/relative-time/relative-time.internal', './helpers/spfx-time-zone.internal']) {
+  for (const alias of ['./hooks/useAsyncInvoke.internal', './styles/descriptor.internal', './styles/types', './styles/*', './lib/*', './controls/formatted-text/formatted-text-content.internal', './controls/*', './controls/relative-time/relative-time.internal', './helpers/spfx-time-zone.internal', './controls/form/form', './controls/form/create-form', './controls/form/controls/form-input', './controls/form/plugins', './controls/form/advanced', './lib/controls/form', './lib/controls/form/index']) {
     assert.equal(manifest.exports[alias], undefined);
   }
 });

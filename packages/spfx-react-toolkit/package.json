@@ -51,7 +51,11 @@
     "@griffel/core": "1.19.2",
     "@griffel/react": "1.5.30",
     "@fluentui/react-shared-contexts": "9.25.2",
-    "@fluentui/react-components": "9.72.3"
+    "@fluentui/react-components": "9.72.3",
+    "react-hook-form": "7.87.0",
+    "@fluentui/react-datepicker-compat": "0.6.16",
+    "@fluentui/react-timepicker-compat": "0.4.21",
+    "@fluentui/react-icons": "2.0.312"
   },
   "peerDependencies": {
     "@microsoft/sp-application-base": ">=1.18.0 <2.0.0",
@@ -72,7 +76,11 @@
     "@griffel/core": "^1.19.2",
     "@griffel/react": "^1.5.30",
     "@fluentui/react-shared-contexts": "^9.25.2",
-    "@fluentui/react-components": "^9.72.3"
+    "@fluentui/react-components": "^9.72.3",
+    "react-hook-form": ">=7.87.0 <8.0.0",
+    "@fluentui/react-datepicker-compat": ">=0.6.16 <1.0.0",
+    "@fluentui/react-timepicker-compat": ">=0.4.21 <1.0.0",
+    "@fluentui/react-icons": ">=2.0.312 <3.0.0"
   },
   "homepage": "https://github.com/apvee/spfx-react-toolkit#readme",
   "repository": {
@@ -160,6 +168,18 @@
     "./controls/state-message": {
       "types": "./lib/controls/state-message/index.d.ts",
       "default": "./lib/controls/state-message/index.js"
+    },
+    "./controls/settings-group": {
+      "types": "./lib/controls/settings-group/index.d.ts",
+      "default": "./lib/controls/settings-group/index.js"
+    },
+    "./controls/accordion-group": {
+      "types": "./lib/controls/accordion-group/index.d.ts",
+      "default": "./lib/controls/accordion-group/index.js"
+    },
+    "./controls/form": {
+      "types": "./lib/controls/form/index.d.ts",
+      "default": "./lib/controls/form/index.js"
     },
     "./LICENSE": "./LICENSE",
     "./README.md": "./README.md",
@@ -1830,15 +1850,7 @@
       "default": "./lib/utils/type-guards.internal.js"
     },
     "./lib/utils/type-guards.internal.js.map": "./lib/utils/type-guards.internal.js.map",
-    "./package.json": "./package.json",
-    "./controls/settings-group": {
-      "types": "./lib/controls/settings-group/index.d.ts",
-      "default": "./lib/controls/settings-group/index.js"
-    },
-    "./controls/accordion-group": {
-      "types": "./lib/controls/accordion-group/index.d.ts",
-      "default": "./lib/controls/accordion-group/index.js"
-    }
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
@@ -1883,6 +1895,9 @@
       ],
       "controls/accordion-group": [
         "lib/controls/accordion-group/index.d.ts"
+      ],
+      "controls/form": [
+        "lib/controls/form/index.d.ts"
       ]
     }
   },
@@ -1895,6 +1910,8 @@
   "dependencies": {
     "unified": "11.0.5",
     "remark-parse": "11.0.0",
-    "remark-gfm": "4.0.1"
+    "remark-gfm": "4.0.1",
+    "@hookform/resolvers": "5.9.1",
+    "@standard-schema/spec": "1.1.0"
   }
 }

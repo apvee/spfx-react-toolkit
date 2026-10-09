@@ -237,7 +237,7 @@ function checkSourceRules(report, sideEffects) {
     const registrations = module.externalImports.filter(edge => edge.kind === 'bare-import');
     const emittedPath = './lib/' + module.path.replace(/\.tsx?$/, '.js');
     if (registrations.length && !classified.has(emittedPath)) issues.push({ kind: 'unclassified-external-registration', from: module.path, specifiers: registrations.map(edge => edge.specifier) });
-    if (module.topLevelInitializations.some(item => hasImmediateRendererCall(item.expression, ['controls/formatted-text/formatted-text.styles.internal.ts', 'controls/auto-skeleton/auto-skeleton.styles.internal.ts', 'controls/state-message/state-message.styles.internal.ts', 'controls/group-header.internal.tsx', 'controls/settings-group/settings-group.styles.internal.ts', 'controls/accordion-group/accordion-group.styles.internal.ts'].includes(module.path)))) issues.push({ kind: 'package-global-renderer', from: module.path });
+    if (module.topLevelInitializations.some(item => hasImmediateRendererCall(item.expression, ['controls/formatted-text/formatted-text.styles.internal.ts', 'controls/auto-skeleton/auto-skeleton.styles.internal.ts', 'controls/state-message/state-message.styles.internal.ts', 'controls/group-header.internal.tsx', 'controls/settings-group/settings-group.styles.internal.ts', 'controls/accordion-group/accordion-group.styles.internal.ts', 'controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts'].includes(module.path)))) issues.push({ kind: 'package-global-renderer', from: module.path });
   }
   return issues;
 }
@@ -258,15 +258,17 @@ if (require.main === module) {
   const root = path.resolve(__dirname, '..');
   const sourceRoot = path.join(root, 'packages/spfx-react-toolkit/src');
   const output = path.resolve(process.argv[2] || '.docs/maintenance/evidence/tree-shaking/initial/import-graph.json');
-  const report = auditImportGraph({ sourceRoot, entrypoints: ['index.ts', 'core/index.ts', 'hooks/index.ts', 'services/index.ts', 'helpers/index.ts', 'helpers/styles/index.ts', 'controls/index.ts', 'controls/formatted-text/index.ts', 'controls/relative-time/index.ts', 'controls/auto-skeleton/index.ts', 'controls/state-message/index.ts', 'controls/settings-group/index.ts', 'controls/accordion-group/index.ts'] });
+  const report = auditImportGraph({ sourceRoot, entrypoints: ['index.ts', 'core/index.ts', 'hooks/index.ts', 'services/index.ts', 'helpers/index.ts', 'helpers/styles/index.ts', 'controls/index.ts', 'controls/formatted-text/index.ts', 'controls/relative-time/index.ts', 'controls/auto-skeleton/index.ts', 'controls/state-message/index.ts', 'controls/settings-group/index.ts', 'controls/accordion-group/index.ts', 'controls/form/index.ts'] });
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/package.json')));
   report.peerDependencyContracts = manifest.peerDependencies;
+  report.runtimeDependencyContracts = manifest.dependencies;
   report.sourceRuleIssues = checkSourceRules(report, manifest.sideEffects);
   for (const module of report.modules) {
     for (const edge of module.externalImports) {
       const packageName = edge.specifier.startsWith('@') ? edge.specifier.split('/').slice(0, 2).join('/') : edge.specifier.split('/')[0];
       edge.peerPackage = packageName;
       edge.peerRange = manifest.peerDependencies[packageName] ?? null;
+      edge.runtimeDependencyRange = manifest.dependencies?.[packageName];
     }
     // These classifications record the manual source review for this baseline.
     // Unknown/new effectful modules retain review-required rather than inheriting
@@ -287,8 +289,21 @@ if (require.main === module) {
     else if (observed.length && module.path === 'controls/relative-time/relative-time.tsx') manual = { classification: 'local-component-allocation', rationale: 'forwardRef defines a component; formatter/timers/visibility hooks run only when mounted, with per-instance cleanup.' };
     else if (observed.length && module.path === 'controls/state-message/state-message.styles.internal.ts') manual = { classification: 'local-style-allocation', rationale: 'Component-owned makeStyles definitions; insertion only through mounted hooks with host renderer.' };
     else if (observed.length && module.path === 'controls/state-message/state-message.tsx') manual = { classification: 'local-component-allocation', rationale: 'forwardRef and immutable descriptors allocate local definitions; theme reading and artwork rendering only run when mounted.' };
-    else if (observed.length && ['controls/group-header.internal.tsx', 'controls/settings-group/settings-group.styles.internal.ts', 'controls/accordion-group/accordion-group.styles.internal.ts'].includes(module.path)) manual = { classification: 'local-style-allocation', rationale: 'Manual review: makeStyles defines component-local token/selector rules; useSx reads the host renderer only during mounted rendering, with no package renderer or external registration.' };
+    else if (observed.length && ['controls/group-header.internal.tsx', 'controls/settings-group/settings-group.styles.internal.ts', 'controls/accordion-group/accordion-group.styles.internal.ts', 'controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts'].includes(module.path)) manual = { classification: 'local-style-allocation', rationale: 'Manual review: makeStyles defines component-local token/selector rules; useSx reads the host renderer only during mounted rendering, with no package renderer or external registration.' };
     else if (observed.length && ['controls/settings-group/settings-group.tsx', 'controls/accordion-group/accordion-group.tsx'].includes(module.path)) manual = { classification: 'local-component-allocation', rationale: 'Manual review: forwardRef and Object.assign allocate local compound component definitions; immutable responsive descriptors hold data, while parsing/context/motion run only on render.' };
+    else if (observed.length && ['controls/form/form-context.internal.tsx', 'controls/form/field-path.internal.tsx'].includes(module.path)) manual = { classification: 'local-context-allocation', rationale: 'Manual review: React contexts allocate local identity; methods, prefixes and disabled scopes are supplied by mounted providers. No external registration or renderer creation.' };
+    else if (observed.length && module.path === 'controls/form/form-methods.internal.ts') manual = { classification: 'local-cache-allocation', rationale: 'Manual review: WeakMap stores metadata keyed by individual RHF methods; reset wrappers and validators are installed per form instance. The legacy null file literal denotes cleared native selection. No package registry, renderer or external registration.' };
+    else if (observed.length && ['controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts'].includes(module.path)) manual = { classification: 'local-style-allocation', rationale: 'Manual review: makeStyles defines adapter-owned rules. CSS insertion runs only through mounted hooks using the shared host renderer; there is no package-wide renderer.' };
+    else if (observed.length && ['controls/form/form.tsx', 'controls/form/form-error.tsx', 'controls/form/form-reset.tsx', 'controls/form/form-submit.tsx',
+      'controls/form/controls/form-input.tsx', 'controls/form/controls/form-textarea.tsx', 'controls/form/controls/form-search-box.tsx',
+      'controls/form/controls/form-checkbox.tsx', 'controls/form/controls/form-switch.tsx', 'controls/form/controls/form-spin-button.tsx',
+      'controls/form/controls/form-slider.tsx', 'controls/form/controls/form-select.tsx', 'controls/form/controls/form-radio-group.tsx',
+      'controls/form/controls/form-dropdown.tsx', 'controls/form/controls/form-dropdown-multi.tsx', 'controls/form/controls/form-checkbox-group.tsx',
+      'controls/form/controls/form-combobox.tsx', 'controls/form/controls/form-combobox-multi.tsx', 'controls/form/controls/form-tag-picker.tsx',
+      'controls/form/controls/form-rating.tsx', 'controls/form/controls/form-color-picker.tsx', 'controls/form/controls/form-swatch-picker.tsx',
+      'controls/form/controls/form-date-picker.tsx', 'controls/form/controls/form-time-picker.tsx', 'controls/form/controls/form-date-time.tsx',
+      'controls/form/controls/form-file-input.tsx'].includes(module.path)) manual = { classification: 'local-component-allocation', rationale: 'Manual review: forwardRef and the complete compound suite allocate local component definitions. Field registration, parsing, validation, subscriptions and browser work run only for mounted forms. No external registration, package renderer or PURE masking; retaining the complete family is measured separately.' };
+    else if (observed.length && module.path === 'controls/form/composition/form-array-section.tsx') manual = { classification: 'local-data-allocation', rationale: 'Manual review: default labels and announcement formatters are local data/functions. Add/remove/reorder, DOM focus and announcements run only for mounted array sections; no renderer or external registration.' };
     else if (module.effects.classification === 'review-required') manual = { classification: 'review-required', rationale: 'New/unclassified top-level effects require an explicit review checkpoint.' };
     module.effects.manual = manual;
   }

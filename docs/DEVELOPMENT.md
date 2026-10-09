@@ -38,7 +38,7 @@ npm run build:app
 | `npm test` | `node --test tests/*.test.cjs` |
 | `npm run typecheck` | Both workspaces run `tsc --noEmit` |
 | `npm run lint` | Both workspaces run ESLint on source |
-| `npm run verify:examples` | Demo registry matches 46 hook and 4 provider exports plus FormattedText, RelativeTime, AutoSkeleton and all style namespaces/scopes |
+| `npm run verify:examples` | Demo registry matches 46 hook and 4 provider exports plus public controls, the complete Form compound family and all style namespaces/scopes |
 | `npm run verify:runtime-store` | Runtime store behavior check using the local compiler |
 | `npm run verify:public-docs` | Qualified public style exports/JSDoc, historical helper/service coverage and local documentation link targets |
 | `npm run verify:api` | Public export/declaration compatibility checks |
@@ -49,6 +49,16 @@ npm run build:app
 | `npm run package:solution` | Ship bundle, then app `gulp package-solution --ship` |
 
 Run `npm run verify` and `npm run verify:package` before requesting review. `prepublishOnly` is a lifecycle guard, not a publishing instruction: root runs clean/build/verify; the library workspace has its own clean/build/lint/test guard. This workflow does not authorize npm publication, pushes or tenant deployment.
+
+## Form checks
+
+The public compound Form suite uses RHF as its sole state/validation engine. Dependency probes pin React 17.0.1 / TypeScript 5.3.3 / Fluent 9.72.3, check actual inference/callback behavior and ensure compat controls share the host React/Fluent/Griffel instances. See [Form](./api/controls/form.md) for the exact dependency baseline and scoped nullable domains.
+
+Run the focused family tests with `node --test tests/form-*.test.cjs`. Core failure/reset/type tests, adapter behavior tests and structured-array tests establish separate boundaries; a list of exported names is not a behavioral check. The lazy FormPanel covers all 22 adapters plus compound hooks, explicit record reset, failure/retry, nested arrays and sections. Registry coverage preserves the existing 46 top-level hooks and four providers.
+
+The existing source fixture mounts Form through its source entry. The compiled panel fixture mounts the actual FormPanel through the built library. Build library before app, rebuild fixtures and restart any running serve process after source changes. Focused browser runners use `SX_BROWSER_FORM_ONLY=1` and `STYLES_PANEL_FORM_ONLY=1`; record each run independently and inspect screenshots/console errors. These checks do not establish authenticated SharePoint or screen-reader behavior. Keep those [host results](./SHAREPOINT-VALIDATION.md#form) explicitly separate.
+
+Complete `npm run verify` and `npm run verify:package` for final development review. The isolated tarball consumer must resolve root/domain/form exports and distinct input/output declarations, provision the fixed shared peers and verify nested compat/RHF identity. The complete compound family may retain all adapters; unrelated imports must exclude Form/RHF/resolver/date/time modules. Preserve the existing alias budgets and frozen baseline.
 
 ## Local SPFx debug
 
@@ -121,7 +131,7 @@ npm run verify
 npm run verify:package
 ```
 
-`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 54-fixture bundle contract (including AutoSkeleton/FormattedText/RelativeTime and locale/page-context equivalents), 18 fresh runtime probes and nine mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
+`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 66-variant bundle contract (including Form/createForm, existing controls and locale/page-context equivalents), 21 fresh runtime probes and nine mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
 
 Ordinary verification deletes the temporary consumer when it finishes. For diagnostics or an explicit baseline proposal, preserve a fresh installed consumer and read its recorded path before running the examples below. The bundle CLI requires `--consumer-root`; its default mode is `enforce`, its default contract is `tests/fixtures/tree-shaking/contract.json`, and its default output is `.docs/maintenance/evidence/tree-shaking/bundle-contract`:
 
@@ -135,7 +145,7 @@ node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUM
 
 If you set `SPFX_PACKAGE_EVIDENCE`, read `consumer-path.txt` from that evidence directory instead. Run diagnostic commands only after the preserved package verification succeeds.
 
-Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete 39-variant/comparison contract; custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
+Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete contract of 66 variants and 32 comparisons; custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
 
 Normal verification never writes `tests/fixtures/tree-shaking/baseline.json`. To propose an explicit update after reviewing a complete passing run and its toolchain, package/lock/config/fixture hashes, emitted initial/async assets and raw/gzip/Brotli totals:
 

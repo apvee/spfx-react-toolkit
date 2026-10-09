@@ -920,7 +920,9 @@ async function runGroups() {
   page.on('pageerror', error => errors.push(`Uncaught browser error: ${error.message}`));
   const version = browser.version();
   try {
-    if (process.env.SX_BROWSER_GROUPS_ONLY === '1') {
+    if (process.env.SX_BROWSER_FORM_ONLY === '1') {
+      await require('./form-browser.helpers.cjs').exerciseForm({ page, url, output, label, boundary: 'source', check, consoleMessages });
+    } else if (process.env.SX_BROWSER_GROUPS_ONLY === '1') {
       await runGroups();
     } else {
     await runOrder(false);
@@ -932,7 +934,7 @@ async function runGroups() {
     await runStateMessage();
     await runGroups();
     }
-    await check('console-health', consoleMessages, []);
+    if (process.env.SX_BROWSER_FORM_ONLY !== '1') await check('console-health', consoleMessages, []);
   } catch (error) { errors.push(error.stack); }
   const report = { version, node: process.version, url, viewport: { width: 1210, height: 900 },
     module: process.env.PLAYWRIGHT_MODULE_PATH || 'playwright', executable: process.env.SX_BROWSER_EXECUTABLE || 'Playwright default',

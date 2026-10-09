@@ -102,3 +102,22 @@ export const accordionGroupProps: AccordionGroupProps = { defaultOpenItems: ['pr
 export const accordionItemProps: AccordionGroupItemProps = { value: 'profile', title: 'Profile' };
 export const settingsCompoundItem: typeof rootSettings.Item = controlSettings.Item;
 export const accordionCompoundItem: typeof rootAccordion.Item = controlAccordion.Item;
+
+import { Form as rootForm, createForm as rootFactory } from '@apvee/spfx-react-toolkit';
+import { Form as domainForm, createForm as domainFactory } from '@apvee/spfx-react-toolkit/controls';
+import { Form as controlForm, createForm as controlFactory } from '@apvee/spfx-react-toolkit/controls/form';
+import type { FormMethods as RootMethods } from '@apvee/spfx-react-toolkit';
+import type { FormMethods as DomainMethods } from '@apvee/spfx-react-toolkit/controls';
+import type { FormMethods as ControlMethods } from '@apvee/spfx-react-toolkit/controls/form';
+export const formAliases: typeof rootForm[] = [domainForm, controlForm];
+export const factoryAliases: typeof rootFactory[] = [domainFactory, controlFactory];
+export type FormMethodAliases = [RootMethods<{ text: string }>, DomainMethods<{ text: string }>, ControlMethods<{ text: string }>];
+// @ts-expect-error Adapters are available through compound suite members only.
+import { FormInput } from '@apvee/spfx-react-toolkit/controls/form';
+// @ts-expect-error No clean implementation subpath.
+import {} from '@apvee/spfx-react-toolkit/controls/form/form';
+// @ts-expect-error No plugin subpath.
+import {} from '@apvee/spfx-react-toolkit/controls/form/plugins';
+// @ts-expect-error No advanced subpath.
+import {} from '@apvee/spfx-react-toolkit/controls/form/advanced';
+void FormInput;

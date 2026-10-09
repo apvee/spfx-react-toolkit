@@ -88,6 +88,24 @@
     ],
     "fluent-accordion": [
       "^@fluentui/react-accordion/"
+    ],
+    "form": [
+      "^@apvee/spfx-react-toolkit/lib/controls/form/"
+    ],
+    "react-hook-form": [
+      "^react-hook-form/"
+    ],
+    "form-resolver": [
+      "^@hookform/resolvers/"
+    ],
+    "form-schema": [
+      "^@standard-schema/"
+    ],
+    "form-date": [
+      "^@fluentui/react-(datepicker|calendar)-compat/"
+    ],
+    "form-time": [
+      "^@fluentui/react-timepicker-compat/"
     ]
   },
   "fixtures": [
@@ -124,7 +142,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": []
     },
@@ -166,7 +190,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": []
     },
@@ -203,7 +233,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": []
     },
@@ -246,7 +282,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -292,7 +334,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -327,7 +375,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -365,7 +419,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -402,7 +462,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -448,7 +514,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -489,7 +561,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": []
     },
@@ -512,7 +590,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": []
     },
@@ -533,7 +617,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": []
     },
@@ -557,7 +647,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -598,7 +694,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": []
     },
@@ -621,7 +723,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -645,7 +753,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -681,7 +795,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "formatted-text",
@@ -722,7 +842,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "relative-time",
@@ -760,7 +886,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "iana-lookup"
@@ -798,7 +930,13 @@
         "auto-skeleton",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": []
     },
@@ -833,7 +971,13 @@
         "styles-compiler",
         "state-message",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "auto-skeleton",
@@ -868,7 +1012,13 @@
         "iana-lookup",
         "auto-skeleton",
         "settings-group",
-        "accordion-group"
+        "accordion-group",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "state-message",
@@ -908,7 +1058,13 @@
         "state-message",
         "accordion-group",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "settings-group",
@@ -945,12 +1101,108 @@
         "state-message",
         "settings-group",
         "formatted-text",
-        "markdown"
+        "markdown",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
       ],
       "requiredModuleGroups": [
         "accordion-group",
         "fluent-card",
         "fluent-accordion"
+      ]
+    },
+    {
+      "id": "form",
+      "template": "form.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/form"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "theme-conversion",
+        "relative-time",
+        "iana-lookup",
+        "auto-skeleton",
+        "state-message",
+        "settings-group",
+        "accordion-group",
+        "formatted-text",
+        "markdown",
+        "fluent-accordion"
+      ],
+      "requiredModuleGroups": [
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "fluent-card"
+      ]
+    },
+    {
+      "id": "form-factory",
+      "template": "form-factory.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/form"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "theme-conversion",
+        "relative-time",
+        "iana-lookup",
+        "auto-skeleton",
+        "state-message",
+        "settings-group",
+        "accordion-group",
+        "formatted-text",
+        "markdown",
+        "fluent-accordion"
+      ],
+      "requiredModuleGroups": [
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "fluent-card"
       ]
     }
   ],
@@ -1122,6 +1374,30 @@
       "reference": "accordion-group/control",
       "metric": "gzip",
       "maxIncreaseBytes": 1023
+    },
+    {
+      "candidate": "form/root",
+      "reference": "form/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "form/domain",
+      "reference": "form/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "form-factory/root",
+      "reference": "form-factory/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "form-factory/domain",
+      "reference": "form-factory/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
     }
   ]
 }

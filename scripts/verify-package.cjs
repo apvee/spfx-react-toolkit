@@ -46,7 +46,9 @@ function run(args, cwd, { prepareMetadata = false } = {}) {
   const output = stripAnsi(stdout + '\n' + stderr);
   const failureMarkers = output.match(/The build failed[^\n]*|Exiting with exit code:\s*[1-9]\d*[^\n]*|Error - [^\n]*/g) ?? [];
   const warnings = output.split('\n').filter(line => /\bwarn(?:ing)?\b|Browserslist:|\[baseline-browser-mapping\]/i.test(line));
-  const label = `${String(commandResults.length + 1).padStart(2, '0')}-${args.join('-').replace(/[^a-zA-Z0-9-]/g, '')}`;
+  // The shared-peer command can exceed the filesystem's filename limit. The
+  // sequence keeps truncated names unique; commands.json retains every argument.
+  const label = `${String(commandResults.length + 1).padStart(2, '0')}-${args.join('-').replace(/[^a-zA-Z0-9-]/g, '').slice(0, 160)}`;
   fs.writeFileSync(path.join(evidence, label + '.stdout.log'), stdout);
   fs.writeFileSync(path.join(evidence, label + '.stderr.log'), stderr);
   commandResults.push({ args, command, commandArgs, cwd, prepareMetadata, metadataAdvisoryRouting: prepareMetadata, status: result.status, signal: result.signal, durationMs:Date.now()-commandStart,
@@ -56,6 +58,19 @@ function run(args, cwd, { prepareMetadata = false } = {}) {
   assert.equal(result.status, 0, `npm ${args.join(' ')} failed; evidence: ${evidence}`);
   assert.deepEqual(failureMarkers, [], `npm ${args.join(' ')} reported subprocess failure despite wrapper status ${result.status}; evidence: ${evidence}`);
   return stdout;
+}
+
+function resolvePackageManifest(from, name) {
+  // Some compat/icon peers intentionally do not export package.json. Locate
+  // metadata from their real runtime entry without bypassing runtime exports.
+  let directory = path.dirname(from.resolve(name));
+  while (true) {
+    const file = path.join(directory, 'package.json');
+    if (fs.existsSync(file) && JSON.parse(fs.readFileSync(file, 'utf8')).name === name) return file;
+    const parent = path.dirname(directory);
+    assert.notEqual(parent, directory, `Missing package metadata: ${name}`);
+    directory = parent;
+  }
 }
 
 function assertPackedImports(packedPaths) {
@@ -129,6 +144,13 @@ try {
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
   // Both the public entry points and their persistence/client dependencies must ship.
   for (const module of [
+    'controls/form/index',
+    'controls/form/form',
+    'controls/form/create-form',
+    'controls/form/form.types',
+    'controls/form/form-control.types',
+    'controls/form/form-value.types',
+    'controls/form/form-composition.types',
     'controls/group-header.internal',
     'controls/settings-group/index',
     'controls/settings-group/settings-group',
@@ -207,6 +229,10 @@ try {
   manifest.name='isolated-spfx-toolkit-consumer';
   assert.equal(manifest.workspaces, undefined, 'External consumer cannot contain workspaces');
   manifest.dependencies['@apvee/spfx-react-toolkit']='file:'+path.join(temp,packed.filename);
+  const libraryManifest = JSON.parse(fs.readFileSync(path.join(library, 'package.json'), 'utf8'));
+  for (const peer of ['react-hook-form', '@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-icons']) {
+    assert.equal(manifest.dependencies[peer], libraryManifest.devDependencies[peer], `Independent consumer must explicitly provision tested Form peer: ${peer}`);
+  }
   fs.writeFileSync(path.join(consumer,'package.json'),JSON.stringify(manifest,null,2));
   // Seed locked transitive versions while npm replaces workspace identities with the tarball.
   const lock=JSON.parse(fs.readFileSync(path.join(root,'package-lock.json'),'utf8'));
@@ -507,6 +533,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   for (const mode of ['public', 'deep']) {
     fs.copyFileSync(path.join(root, `tests/fixtures/sx-package-${mode}.ts`), path.join(consumer, `compatibility/sx-package-${mode}.ts`));
   }
+  fs.copyFileSync(path.join(root, 'tests/fixtures/form-package-consumer.tsx'), path.join(consumer, 'compatibility/form-package-consumer.tsx'));
   run(['install','--no-audit','--no-fund'],consumer);
   assert.equal(fs.lstatSync(path.join(consumer,'node_modules/@apvee/spfx-react-toolkit')).isSymbolicLink(),false);
   const installedPackage = JSON.parse(fs.readFileSync(path.join(consumer, 'node_modules/@apvee/spfx-react-toolkit/package.json'), 'utf8'));
@@ -516,11 +543,12 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   const hostRequire = createRequire(path.join(consumer, 'package.json'));
   const libraryRequire = createRequire(path.join(consumer, 'node_modules/@apvee/spfx-react-toolkit/package.json'));
   const sharedPackages = ['@griffel/core', '@griffel/react', '@fluentui/react-shared-contexts',
-    '@fluentui/react-migration-v8-v9', '@fluentui/react-theme', '@fluentui/react-utilities', '@fluentui/react-components'];
+    '@fluentui/react-migration-v8-v9', '@fluentui/react-theme', '@fluentui/react-utilities', '@fluentui/react-components', 'react-hook-form',
+    '@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-calendar-compat', '@fluentui/react-icons'];
   const sharedPaths = {};
   for (const name of sharedPackages) {
-    const hostPath = fs.realpathSync(hostRequire.resolve(name + '/package.json'));
-    assert.equal(hostPath, fs.realpathSync(libraryRequire.resolve(name + '/package.json')), `${name} must be shared with the consumer`);
+    const hostPath = fs.realpathSync(resolvePackageManifest(hostRequire, name));
+    assert.equal(hostPath, fs.realpathSync(resolvePackageManifest(libraryRequire, name)), `${name} must be shared with the consumer`);
     assert.equal(fs.realpathSync(hostRequire.resolve(name)), fs.realpathSync(libraryRequire.resolve(name)), `${name} must share its runtime entry`);
     assert.ok(hostPath.startsWith(fs.realpathSync(path.join(consumer, 'node_modules')) + path.sep), `${name} must reside inside the isolated consumer`);
     const installedManifest = JSON.parse(fs.readFileSync(hostPath, 'utf8'));
@@ -543,6 +571,24 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   const providerRequire = createRequire(hostRequire.resolve('@fluentui/react-provider/package.json'));
   assert.equal(fs.realpathSync(providerRequire.resolve('@fluentui/react-shared-contexts')),
     fs.realpathSync(hostRequire.resolve('@fluentui/react-shared-contexts')), 'FluentProvider must use the shared contexts');
+  // Compat dependencies and the official schema resolver must reach the same
+  // host runtimes even when resolved from their own package location.
+  const nestedRuntimePaths = {};
+  for (const owner of ['@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-calendar-compat', '@hookform/resolvers']) {
+    const from = createRequire(hostRequire.resolve(owner));
+    const peers = owner === '@hookform/resolvers' ? ['react', 'react-hook-form']
+      : ['react', 'react-dom', '@griffel/core', '@griffel/react', '@fluentui/react-shared-contexts', '@fluentui/react-utilities'];
+    nestedRuntimePaths[owner] = {};
+    for (const peer of peers) {
+      const actual = fs.realpathSync(from.resolve(peer));
+      assert.equal(actual, fs.realpathSync(hostRequire.resolve(peer)), `${owner} must share host ${peer}`);
+      nestedRuntimePaths[owner][peer] = actual;
+    }
+  }
+  assert.equal(libraryRequire('react-hook-form').useForm, hostRequire('react-hook-form').useForm, 'RHF implementation must share host identity');
+  const datePickerRequire = createRequire(hostRequire.resolve('@fluentui/react-datepicker-compat'));
+  assert.equal(fs.realpathSync(datePickerRequire.resolve('@fluentui/react-calendar-compat')), fs.realpathSync(hostRequire.resolve('@fluentui/react-calendar-compat')), 'DatePicker must share host calendar');
+  fs.writeFileSync(path.join(evidence, 'form-runtime-identity.json'), JSON.stringify(nestedRuntimePaths, null, 2));
   const packageTree = run(['ls', '--parseable', '--all', ...sharedPackages], consumer);
   const installedPaths = new Map(sharedPackages.map(name => [name, new Set()]));
   for (const installedPath of packageTree.trim().split('\n')) {
@@ -567,6 +613,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
     { args: ['run', 'typecheck'] },
     { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node',
       'compatibility/sx-package-public.ts', 'compatibility/sx-package-deep.ts'] },
+    { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/form-package-consumer.tsx'] },
     { args: ['run', 'package:solution'], prepareMetadata: true },
   ];
   const productionReports = await runInstalledGates({consumerRoot:fs.realpathSync(consumer),outputDir:evidence,failures:consumerFailures,

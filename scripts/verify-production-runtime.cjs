@@ -10,17 +10,17 @@ const { buildConfig, statsOptions, collectEmittedModules, renderConsumer, readRu
 const root = path.resolve(__dirname, '..');
 const base = 'https://tenant.test/sites/standalone';
 const toolkit = '@apvee/spfx-react-toolkit';
-const scenarios = ['context', 'list', 'search', 'batch', 'providers', 'styles'];
+const scenarios = ['context', 'list', 'search', 'batch', 'providers', 'styles', 'form'];
 const variants = ['root', 'domain', 'leaf'];
 const leaf = { context: 'spfx-pnp-context.service', list: 'spfx-pnp-list.service', search: 'spfx-pnp-search.service', batch: 'spfx-pnp.service' };
 const hash = data => crypto.createHash('sha256').update(data).digest('hex');
 
 async function compileProbe({ consumerRoot, outputDir, scenario, variant }) {
-  if (!scenarios.includes(scenario) || !['root', 'domain', 'leaf'].includes(variant)) throw new Error('Unknown production runtime probe');
-  const ui = scenario === 'providers' || scenario === 'styles';
+  if (!scenarios.includes(scenario) || !(scenario === 'form' ? ['root', 'domain', 'control'] : variants).includes(variant)) throw new Error('Unknown production runtime probe');
+  const ui = scenario === 'providers' || scenario === 'styles' || scenario === 'form';
   const fixture = ui ? `${scenario}.tsx` : `pnp-${scenario}.ts`;
   const specifier = toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/services' : '/lib/services/' + leaf[scenario]);
-  const imports = ui ? scenario === 'providers' ? {
+  const imports = scenario === 'form' ? { TOOLKIT: toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/controls' : '/controls/form') } : ui ? scenario === 'providers' ? {
     PROVIDER: toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/core' : '/lib/core/provider-webpart'),
     CONTEXT: toolkit + (variant === 'root' ? '/hooks' : ''),
     PROPERTIES: toolkit + (variant === 'root' ? '/lib/hooks/useSPFxProperties' : '/hooks'),
@@ -88,7 +88,11 @@ async function runProbe(scenario, bundlePath, consumerRoot) {
   Object.defineProperty(global,'navigator',{value:dom.window.navigator,configurable:true});
   global.HTMLElement=dom.window.HTMLElement;global.localStorage=dom.window.localStorage;global.sessionStorage=dom.window.sessionStorage;
   window.requestAnimationFrame=callback=>setTimeout(callback,0);window.cancelAnimationFrame=clearTimeout;
-  if(scenario==='providers'||scenario==='styles') {
+  if(scenario==='providers'||scenario==='styles'||scenario==='form') {
+    if (scenario === 'form') {
+      for (const name of ['Node', 'NodeFilter', 'Element', 'Event', 'CustomEvent', 'File', 'FileList', 'MutationObserver']) global[name] = dom.window[name];
+      window.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
+    }
     const host=installHostAdapter(consumerRoot);
     const observation=await require(bundlePath).run({...host,assert});
     dom.window.close();
@@ -161,7 +165,7 @@ async function verifyProductionRuntime({ consumerRoot, outputDir }) {
   const save = () => fs.writeFileSync(path.join(outputDir, 'runtime-report.json'), JSON.stringify(report, null, 2) + '\n');
   save();
   const start=Date.now();
-  await runRuntimeMatrix({report,cases:scenarios.flatMap(scenario=>variants.map(variant=>({scenario,variant}))),
+  await runRuntimeMatrix({report,cases:scenarios.flatMap(scenario=>(scenario === 'form' ? ['root', 'domain', 'control'] : variants).map(variant=>({scenario,variant}))),
     compile:probe=>compileProbe({consumerRoot,outputDir:path.join(outputDir,probe.scenario,probe.variant),...probe}),
     execute:(bundlePath,scenario)=>executeProbe(bundlePath,scenario,consumerRoot),save});
   report.durationMs=Date.now()-start;save();

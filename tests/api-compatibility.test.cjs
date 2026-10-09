@@ -394,6 +394,53 @@ for (const [label, mutate] of [
   });
 }
 
+for (const name of [
+  'react-hook-form', '@fluentui/react-datepicker-compat',
+  '@fluentui/react-timepicker-compat', '@fluentui/react-icons',
+]) {
+  for (const [label, mutate] of [
+    ['removal', manifest => { delete manifest.peerDependencies[name]; }],
+    ['widening', manifest => { manifest.peerDependencies[name] = '*'; }],
+    ['private runtime ownership', manifest => {
+      delete manifest.peerDependencies[name];
+      manifest.dependencies[name] = manifest.devDependencies[name];
+    }],
+    ['duplicate private runtime ownership', manifest => {
+      manifest.dependencies[name] = manifest.devDependencies[name];
+    }],
+  ]) {
+    test(`rejects Form peer ${name} ${label}`, () => {
+      assert.doesNotThrow(() => assertCompatiblePackageContract(currentPackage, originalPackage));
+      const candidate = JSON.parse(JSON.stringify(currentPackage));
+      mutate(candidate);
+      assert.throws(() => assertCompatiblePackageContract(candidate, originalPackage),
+        /Runtime (?:peer contracts|dependencies) changed/);
+    });
+  }
+}
+for (const name of ['@hookform/resolvers', '@standard-schema/spec']) {
+  for (const [label, mutate] of [
+    ['removal', manifest => { delete manifest.dependencies[name]; }],
+    ['widening', manifest => { manifest.dependencies[name] = `^${manifest.dependencies[name]}`; }],
+    ['development-only classification', manifest => {
+      manifest.devDependencies[name] = manifest.dependencies[name];
+      delete manifest.dependencies[name];
+    }],
+    ['peer-only classification', manifest => {
+      manifest.peerDependencies[name] = manifest.dependencies[name];
+      delete manifest.dependencies[name];
+    }],
+  ]) {
+    test(`rejects Form direct dependency ${name} ${label}`, () => {
+      assert.doesNotThrow(() => assertCompatiblePackageContract(currentPackage, originalPackage));
+      const candidate = JSON.parse(JSON.stringify(currentPackage));
+      mutate(candidate);
+      assert.throws(() => assertCompatiblePackageContract(candidate, originalPackage),
+        /Runtime (?:peer contracts|dependencies) changed/);
+    });
+  }
+}
+
 for (const [missingName] of styleBarrels) {
   test(`integrated verify-api requires finished style ${missingName}`, () => {
     const fs = require('node:fs');

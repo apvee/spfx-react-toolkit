@@ -91,6 +91,11 @@ async function thumbInteractions(axis) {
   page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   page.on('console', message => { if (message.type() === 'error' || message.type() === 'warning') consoleMessages.push({ type: message.type(), text: message.text() }); });
   page.on('pageerror', error => pageErrors.push(error.message));
+  if (process.env.STYLES_PANEL_FORM_ONLY === '1') {
+    await require('./form-browser.helpers.cjs').exerciseForm({ page, url, output, label, boundary: 'compiled', check, consoleMessages });
+    check('Form page errors', pageErrors, []);
+    return;
+  }
   await page.goto(url); await node('layout-preview').waitFor();
   check('page identity', await page.title(), 'StylesPanel local browser fixture');
   check('local origin', new URL(page.url()).origin, url);

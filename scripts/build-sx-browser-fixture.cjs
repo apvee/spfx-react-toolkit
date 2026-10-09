@@ -8,6 +8,7 @@ const output = path.join(root, 'temp/sx-browser');
 const program = ts.createProgram([path.join(fixture, 'index.tsx')], {
   noEmit: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext,
   moduleResolution: ts.ModuleResolutionKind.NodeJs, jsx: ts.JsxEmit.React,
+  baseUrl: root, paths: { '@apvee/spfx-react-toolkit': ['tests/fixtures/sx-browser/form-toolkit-boundary.ts'] },
   strict: true, skipLibCheck: true, esModuleInterop: true, lib: ['lib.es2020.d.ts', 'lib.dom.d.ts']
 });
 const diagnostics = ts.getPreEmitDiagnostics(program);
@@ -18,7 +19,7 @@ if (diagnostics.length) {
   process.exitCode = 1;
 } else {
   webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 'index.tsx'),
-    output: { path: output, filename: 'fixture.js' }, resolve: { extensions: ['.tsx', '.ts', '.js'] },
+    output: { path: output, filename: 'fixture.js' }, resolve: { extensions: ['.tsx', '.ts', '.js'], alias: { '@apvee/spfx-react-toolkit$': path.join(fixture, 'form-toolkit-boundary.ts') } },
     module: { rules: [{ test: /\.tsx?$/, use: path.join(__dirname, 'sx-browser-typescript-loader.cjs') }] }
   }, (error, stats) => {
     if (error || stats.hasErrors()) { console.error(error || stats.toString({ all: false, errors: true })); process.exitCode = 1; return; }

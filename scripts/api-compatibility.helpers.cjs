@@ -134,7 +134,7 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   );
 }
 
-// Explicit additive peer contract: shared instances are supplied by the host.
+// Explicit additive peer contract: shared Fluent/Griffel/Form instances are supplied by the host.
 // Historical fixtures are immutable, including the original Fluent dependencies.
 function assertCompatiblePackageContract(manifest, originalPackage) {
   const sharedFluentPeers = {
@@ -150,16 +150,23 @@ function assertCompatiblePackageContract(manifest, originalPackage) {
     '@griffel/core': '^1.19.2', '@griffel/react': '^1.5.30',
     '@fluentui/react-shared-contexts': '^9.25.2',
     '@fluentui/react-components': '^9.72.3',
-  }, 'Runtime peer contracts changed outside the approved shared Fluent/Griffel peers');
+    'react-hook-form': '>=7.87.0 <8.0.0',
+    '@fluentui/react-datepicker-compat': '>=0.6.16 <1.0.0',
+    '@fluentui/react-timepicker-compat': '>=0.4.21 <1.0.0',
+    '@fluentui/react-icons': '>=2.0.312 <3.0.0',
+  }, 'Runtime peer contracts changed outside the approved shared Fluent/Griffel/Form peers');
   assert.deepEqual(manifest.peerDependenciesMeta ?? {}, originalPackage.peerDependenciesMeta ?? {},
     'Mandatory peers must not become optional');
   const expectedDependencies = { ...originalPackage.dependencies };
   assert.equal(expectedDependencies.tslib, '2.3.1', 'Unexpected historical tslib contract');
   delete expectedDependencies.tslib;
   for (const name of Object.keys(sharedFluentPeers)) delete expectedDependencies[name];
-  Object.assign(expectedDependencies, { unified: '11.0.5', 'remark-parse': '11.0.0', 'remark-gfm': '4.0.1' });
+  Object.assign(expectedDependencies, {
+    unified: '11.0.5', 'remark-parse': '11.0.0', 'remark-gfm': '4.0.1',
+    '@hookform/resolvers': '5.9.1', '@standard-schema/spec': '1.1.0',
+  });
   assert.deepEqual(manifest.dependencies ?? {}, expectedDependencies,
-    'Runtime dependencies changed outside the approved tslib cleanup and shared Fluent peers');
+    'Runtime dependencies changed outside the approved tslib cleanup, shared Fluent peers and Form resolver/schema dependencies');
   assert.equal(manifest.private, false);
   assert.deepEqual(manifest.files, [...originalPackage.files, 'lib/styles/**/*', 'lib/controls/**/*', 'THIRD-PARTY-NOTICES.md'], 'Published path allowlist changed outside the styles facade');
   assert.equal(manifest.name, '@apvee/spfx-react-toolkit');

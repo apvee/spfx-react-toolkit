@@ -1,3 +1,4 @@
+import { FormFixture } from './form';
 import { StateMessageFixture } from './state-message';
 import { GroupsFixture } from './groups';
 import * as React from 'react';
@@ -214,12 +215,13 @@ function Fixture(props: FixtureConfig): React.ReactElement {
     <AutoSkeletonFixture />
     <StateMessageFixture />
     <GroupsFixture />
+    <FormFixture />
   </>;
 }
 function render(patch: Partial<FixtureConfig>): void {
   config = { ...config, ...patch };
   ReactDOM.render(<RendererProvider renderer={renderer}>
-    <FluentProvider theme={config.theme === 'dark' ? webDarkTheme : config.theme === 'highContrast' ? teamsHighContrastTheme : webLightTheme} dir={config.dir}><Fixture {...config} /></FluentProvider>
+    <FluentProvider theme={config.theme === 'dark' ? webDarkTheme : config.theme === 'highContrast' ? teamsHighContrastTheme : webLightTheme} dir={config.dir}>{new URLSearchParams(window.location.search).has('form-only') ? <FormFixture /> : <Fixture {...config} />}</FluentProvider>
   </RendererProvider>, document.getElementById('root'));
 }
 window.sxFixture = { render, get config() { return config; } };

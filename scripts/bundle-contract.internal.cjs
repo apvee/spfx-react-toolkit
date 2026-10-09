@@ -246,10 +246,17 @@ function consumerProvenance(consumerRoot) {
   if (!tarball.endsWith('.tgz') || !fs.existsSync(tarball)) throw new Error('Missing consumer tarball provenance');
   const lock = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json')));
   const versions = {};
-  for (const name of ['typescript', 'webpack', 'react', 'react-dom', '@pnp/sp', '@pnp/core', '@pnp/queryable', '@griffel/core', '@griffel/react', '@fluentui/react-theme', '@fluentui/react-utilities', '@fluentui/react-shared-contexts', '@microsoft/sp-core-library']) {
+  for (const name of ['typescript', 'webpack', 'react', 'react-dom', '@pnp/sp', '@pnp/core', '@pnp/queryable', '@griffel/core', '@griffel/react', '@fluentui/react-theme', '@fluentui/react-utilities', '@fluentui/react-shared-contexts', '@microsoft/sp-core-library', '@fluentui/react-components', 'react-hook-form', '@hookform/resolvers', '@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-calendar-compat']) {
     const installed = consumerRequire(name + '/package.json').version;
     if (installed !== lock.packages['node_modules/' + name].version) throw new Error(`Consumer ${name} differs from locked toolchain`);
     versions[name] = installed;
+  }
+  // These packages keep package.json private behind their exports map. The
+  // isolated gate separately verifies their real runtime origins and identity.
+  for (const name of ['@fluentui/react-icons', '@standard-schema/spec', '@standard-schema/utils']) {
+    const manifest = JSON.parse(fs.readFileSync(path.join(consumerRoot, 'node_modules', name, 'package.json'), 'utf8'));
+    if (manifest.name !== name || manifest.version !== lock.packages['node_modules/' + name].version) throw new Error(`Consumer ${name} differs from locked toolchain`);
+    versions[name] = manifest.version;
   }
   if (ts.version !== versions.typescript || require('webpack/package.json').version !== versions.webpack) throw new Error('Measurement tooling differs from locked consumer toolchain');
   if (!/^v22\./.test(process.version) || Number(process.versions.node.split('.')[1]) < 14) throw new Error('Unsupported Node version');

@@ -37,7 +37,11 @@
     "@griffel/react": "1.5.30",
     "@fluentui/react-shared-contexts": "9.25.2",
     "@fluentui/react-provider": "9.22.8",
-    "@fluentui/react-components": "9.72.3"
+    "@fluentui/react-components": "9.72.3",
+    "react-hook-form": "7.87.0",
+    "@fluentui/react-datepicker-compat": "0.6.16",
+    "@fluentui/react-timepicker-compat": "0.4.21",
+    "@fluentui/react-icons": "2.0.312"
   },
   "devDependencies": {
     "@microsoft/eslint-config-spfx": "1.21.1",

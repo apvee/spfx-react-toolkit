@@ -23,6 +23,17 @@ const lazyPanel = (
 
 export const demoRegistry: readonly DemoRegistryEntry[] = [
   {
+    key: 'form',
+    title: 'Form',
+    iconName: 'Edit',
+    description: 'Typed live values, all adapters, nested scopes, ordered arrays and save/reset ownership.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-form' */ './panels/FormPanel')),
+    coverage: [
+      { symbol: 'Form', kind: 'snapshot', notes: 'Dynamic Form.Root/Input/Submit/Reset alongside the typed complete-family record editor.' },
+      { symbol: 'createForm', kind: 'snapshot', notes: '22 adapters, suite hooks, four compositions, rules/schema, native files, drafts, reset, pending save and retries.' },
+    ],
+  },
+  {
     key: 'groups',
     title: 'SettingsGroup and AccordionGroup',
     iconName: 'Settings',
