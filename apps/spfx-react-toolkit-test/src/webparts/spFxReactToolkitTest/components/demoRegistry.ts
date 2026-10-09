@@ -23,6 +23,17 @@ const lazyPanel = (
 
 export const demoRegistry: readonly DemoRegistryEntry[] = [
   {
+    key: 'data-grid',
+    title: 'DataGrid',
+    iconName: 'Table',
+    description: 'Sixteen cell presentations, stable IDs and consumer-owned rows, sort intent and selection.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-data-grid' */ './panels/DataGridPanel')),
+    coverage: [
+      { symbol: 'DataGrid', kind: 'snapshot', notes: 'Dynamic valid/missing/invalid values, native cells, absolute dates and localized statuses.' },
+      { symbol: 'createDataGrid', kind: 'snapshot', notes: 'Typed sixteen-column family, descriptors, controlled selection/sort, activation, loading, resizing and immutable Charts updates.' },
+    ],
+  },
+  {
     key: 'form',
     title: 'Form',
     iconName: 'Edit',

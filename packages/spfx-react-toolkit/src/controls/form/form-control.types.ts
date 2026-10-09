@@ -181,6 +181,7 @@ export type FormTagPickerProps<TInput extends FieldValues> = FormSelectionProps<
 
 /** Numeric Rating with a public div ref and error focus on an eligible native radio.
  * RHF changes precede consumer callbacks. No codec or default-value override exists.
+ * Star color defaults to native `marigold`; explicit `brand` or `neutral` overrides are preserved.
  * @example `<Order.Rating name="score" label="Score" max={5} />`
  */
 export type FormRatingProps<TInput extends FieldValues> = FormControlProps<TInput, number> & Omit<RatingProps, keyof FormFieldPresentationProps | 'defaultValue' | 'name' | 'value'>;

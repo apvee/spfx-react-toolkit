@@ -5,6 +5,7 @@ function fullEnforceReport() {
   const contract=require('./fixtures/tree-shaking/contract.json');
   const {checkComparisons}=require('../scripts/bundle-contract.internal.cjs');
   const modules={'settings-group':'@apvee/spfx-react-toolkit/lib/controls/settings-group/settings-group.js','accordion-group':'@apvee/spfx-react-toolkit/lib/controls/accordion-group/accordion-group.js','fluent-card':'@fluentui/react-card/lib/components/Card/Card.js','fluent-accordion':'@fluentui/react-accordion/lib/components/Accordion/Accordion.js',pnp:'@pnp/sp/webs/index.js','styles-engine':'@apvee/spfx-react-toolkit/lib/helpers/styles/resolve.internal.js','list-registration':'@pnp/sp/lists/index.js','search-registration':'@pnp/sp/search/index.js','batch-registration':'@pnp/sp/batching.js','formatted-text':'@apvee/spfx-react-toolkit/lib/controls/formatted-text/formatted-text.js','markdown':'unified/index.js','fluent-link':'@fluentui/react-link/lib/index.js','typography':'@apvee/spfx-react-toolkit/lib/helpers/styles/typography.js','relative-time':'@apvee/spfx-react-toolkit/lib/controls/relative-time/relative-time.js','fluent-tooltip':'@fluentui/react-tooltip/lib/components/Tooltip/Tooltip.js','iana-lookup':'@apvee/spfx-react-toolkit/lib/helpers/spfx-time-zone.internal.js','auto-skeleton':'@apvee/spfx-react-toolkit/lib/controls/auto-skeleton/auto-skeleton.js','state-message':'@apvee/spfx-react-toolkit/lib/controls/state-message/state-message.js','state-artwork':'@apvee/spfx-react-toolkit/lib/controls/state-message/illustrations/default-illustration.js','fluent-button':'@fluentui/react-button/lib/components/Button/Button.js','fluent-skeleton':'@fluentui/react-skeleton/lib/components/Skeleton/Skeleton.js',form:'@apvee/spfx-react-toolkit/lib/controls/form/form.js','react-hook-form':'react-hook-form/dist/index.esm.mjs','form-resolver':'@hookform/resolvers/standard-schema/dist/standard-schema.mjs','form-schema':'@standard-schema/utils/dist/index.js','form-date':'@fluentui/react-datepicker-compat/lib/components/DatePicker/DatePicker.js','form-time':'@fluentui/react-timepicker-compat/lib/components/TimePicker/TimePicker.js'};
+  Object.assign(modules, { 'data-grid': '@apvee/spfx-react-toolkit/lib/controls/data-grid/data-grid.js', charts: '@fluentui/react-charts/lib/components/Sparkline/Sparkline.js', d3: 'd3-shape/src/line.js' });
   const fixtures=contract.fixtures.flatMap(fixture=>Object.keys(fixture.variants).map(variant=>({id:`${fixture.id}/${variant}`,status:'measured',emittedModules:fixture.requiredModuleGroups.map(group=>({resource:modules[group]})),retentionObservations:[],totals:{union:{gzip:100}},fixtureSha256:'fixture',configSha256:'config',assets:[]})));
   return {schemaVersion:1,mode:'enforce',complete:true,passed:true,provenance:{tarballSha256:'abc'},contractSha256:require('node:crypto').createHash('sha256').update(JSON.stringify(contract)).digest('hex'),fixtures,comparisons:checkComparisons(fixtures,contract).comparisons,failures:[],errors:[]};
 }
@@ -41,6 +42,42 @@ test('legacy retention parser preserves value observation', () => {
 test('contract rejects unknown module groups and malformed comparisons', () => {
   const {validateContract} = require('../scripts/bundle-contract.internal.cjs');
   assert.throws(() => validateContract({schemaVersion:1,moduleGroups:{},fixtures:[{id:'helper',template:'helper.ts',variants:{root:{imports:{}}},forbiddenModuleGroups:['unknown'],requiredModuleGroups:[]}],comparisons:[]}), /Unknown module group/);
+});
+test('DataGrid and factory aliases enforce complete-family cost and exclude query/Form/PnP code', () => {
+  const contract = require('./fixtures/tree-shaking/contract.json');
+  for (const id of ['data-grid', 'data-grid-factory']) {
+    const fixture = contract.fixtures.find(item => item.id === id);
+    assert.ok(fixture, `${id}: missing optimized consumer`);
+    assert.deepEqual(Object.keys(fixture.variants), ['root', 'domain', 'control']);
+    for (const group of ['data-grid', 'charts', 'd3']) assert.ok(fixture.requiredModuleGroups.includes(group), `${id}: ${group}`);
+    for (const group of ['grid-query', 'pnp', 'spfx-runtime', 'provider', 'form', 'react-hook-form', 'form-resolver', 'form-schema']) {
+      assert.ok(fixture.forbiddenModuleGroups.includes(group), `${id}: ${group}`);
+    }
+    for (const alias of ['root', 'domain']) {
+      const comparison = contract.comparisons.find(item => item.candidate === `${id}/${alias}`);
+      assert.equal(comparison?.reference, `${id}/control`);
+      assert.equal(comparison.maxIncreaseBytes, 0, 'additive aliases must not retain unrelated features');
+    }
+  }
+  for (const fixture of contract.fixtures.filter(item => !['data-grid', 'data-grid-factory'].includes(item.id))) {
+    for (const group of ['data-grid', 'charts', 'd3']) assert.ok(fixture.forbiddenModuleGroups.includes(group), `${fixture.id}: ${group}`);
+  }
+});
+test('unrelated consumers reject actual grid/chart/D3 module emissions independently of size', () => {
+  const contract = require('./fixtures/tree-shaking/contract.json');
+  const { checkFixture } = require('../scripts/bundle-contract.internal.cjs');
+  const fixture = contract.fixtures.find(item => item.id === 'helper');
+  for (const resource of [
+    '@apvee/spfx-react-toolkit/lib/controls/data-grid/data-grid.js',
+    '@fluentui/react-table/lib/components/DataGrid/DataGrid.js',
+    '@fluentui/react-charts/lib/components/Sparkline/Sparkline.js',
+    '@fluentui/chart-utilities/lib/utilities/index.js',
+    'd3-scale/src/index.js',
+    'd3-shape/src/line.js',
+  ]) {
+    const failures = checkFixture({ id: 'helper/root', emittedModules: [{ resource }], retentionObservations: [] }, fixture, contract);
+    assert.ok(failures.some(message => /forbidden module group/.test(message)), resource);
+  }
 });
 test('descriptor and emitted group checks produce concrete failures', () => {
   const {checkFixture} = require('../scripts/bundle-contract.internal.cjs');
@@ -173,7 +210,7 @@ test('baseline completeness independently requires canonical contract, all measu
   const {baselineSnapshot}=require('../scripts/bundle-contract.internal.cjs');
   const variants=[report=>{report.fixtures=[];},report=>{report.fixtures.pop();},report=>{report.fixtures[0].status='unavailable';},report=>{report.fixtures[0].id='replacement/root';},report=>{report.comparisons=[];},report=>{report.comparisons[0].maxIncreaseBytes=999999;},report=>{report.contractSha256='altered';},report=>{report.fixtures[0].emittedModules.push({resource:'@pnp/sp/webs/index.js'});}];
   for(const mutate of variants){const report=fullEnforceReport();mutate(report);assert.equal(finalizeReport(report).passed,false);assert.throws(()=>baselineSnapshot(report),/canonical complete enforce PASS/);}
-  assert.equal(baselineSnapshot(fullEnforceReport()).fixtures.length,66);
+  assert.equal(baselineSnapshot(fullEnforceReport()).fixtures.length,72);
 });
 test('real CLI refuses empty, subset, altered-budget and weakened forbidden-group contracts before baseline write', () => {
   const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
@@ -214,4 +251,29 @@ test('Form and factory contracts measure the complete family and forbid it in ev
   for (const resource of ['@apvee/spfx-react-toolkit/lib/controls/form/form.js', 'react-hook-form/dist/index.esm.mjs', '@hookform/resolvers/standard-schema/dist/standard-schema.mjs', '@standard-schema/spec/dist/index.js', '@fluentui/react-datepicker-compat/lib/index.js', '@fluentui/react-calendar-compat/lib/index.js', '@fluentui/react-timepicker-compat/lib/index.js']) {
     assert.ok(checkFixture({ id: 'helper/root', emittedModules: [{ resource }], retentionObservations: [] }, helper, contract).some(f => f.includes('forbidden module group')), resource);
   }
+});
+
+test('optimized consumer resolves nested peer packages through standard Node hierarchy', async () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const path = require('node:path');
+  const webpack = require('webpack');
+  const { buildConfig } = require('../scripts/bundle-contract.internal.cjs');
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'nested-bundle-peer-'));
+  try {
+    const owner = path.join(directory, 'node_modules/owner');
+    const nested = path.join(owner, 'node_modules/nested-peer');
+    fs.mkdirSync(nested, { recursive: true });
+    fs.writeFileSync(path.join(owner, 'package.json'), JSON.stringify({ name: 'owner', module: 'index.js' }));
+    fs.writeFileSync(path.join(owner, 'index.js'), "export { value } from 'nested-peer';");
+    fs.writeFileSync(path.join(nested, 'package.json'), JSON.stringify({ name: 'nested-peer', module: 'index.js' }));
+    fs.writeFileSync(path.join(nested, 'index.js'), 'export const value = 42;');
+    const entry = path.join(directory, 'entry.js');
+    fs.writeFileSync(entry, "export { value } from 'owner';");
+    const output = path.join(directory, 'output');
+    const compiler = webpack(buildConfig(directory, entry, output, false));
+    const stats = await new Promise((resolve, reject) => compiler.run((error, stats) => compiler.close(closeError => error || closeError ? reject(error || closeError) : resolve(stats))));
+    assert.equal(stats.hasErrors(), false, stats.toString({ all: false, errors: true }));
+    assert.equal(require(path.join(output, 'entry.js')).value, 42);
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
 });

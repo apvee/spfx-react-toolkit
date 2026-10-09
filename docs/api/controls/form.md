@@ -6,13 +6,13 @@ Import the compound family and its public types from the package root, `/control
 
 ## Dependencies
 
-The tested baseline is React/ReactDOM 17.0.1, TypeScript 5.3.3 and Fluent react-components 9.72.3, with RHF 7.87.0, datepicker-compat 0.6.16, timepicker-compat 0.4.21 and react-icons 2.0.312. RHF, compat controls and icons are explicit host peers. The package supplies `@hookform/resolvers` 5.9.1 and `@standard-schema/spec` 1.1.0 as direct dependencies.
+The tested baseline is React/ReactDOM 17.0.1, TypeScript 5.3.3 and Fluent react-components 9.74.9, with RHF 7.87.0, datepicker-compat 0.6.16, timepicker-compat 0.4.21 and react-icons 2.0.312. RHF, compat controls and icons are explicit host peers. The package supplies `@hookform/resolvers` 5.9.1 and `@standard-schema/spec` 1.1.0 as direct dependencies.
 
 ```bash
 npm install react-hook-form@7.87.0 @fluentui/react-datepicker-compat@0.6.16 @fluentui/react-timepicker-compat@0.4.21 @fluentui/react-icons@2.0.312
 ```
 
-The compat subtree is locked with calendar-compat 0.3.11 and the existing shared contexts/utilities/Griffel versions. Preserve a compatible host lockfile and check runtime identity: newer compat candidates require newer shared packages and can otherwise introduce duplicate providers/renderers. The tested baseline preserves context 9.25.2, utilities 9.25.1 and Griffel React 1.5.30; peer ranges are not a tested version matrix. Package-root declaration resolution requires these peers even when another named export is used. Do not upgrade the host toolchain solely to install Form.
+The compat subtree is locked with calendar-compat 0.3.11 and the existing shared contexts/utilities/Griffel versions. Preserve a compatible host lockfile and check runtime identity: newer compat candidates require newer shared packages and can otherwise introduce duplicate providers/renderers. The tested baseline preserves context 9.26.4, utilities 9.26.7 and Griffel React 1.7.8; peer ranges are not a tested version matrix. Package-root declaration resolution requires these peers even when another named export is used. Do not upgrade the host toolchain solely to install Form.
 
 ## Rules-only forms
 
@@ -88,7 +88,7 @@ Controlled fields require appropriate initial values. RHF partial/async defaults
 | `Form.Switch` | `boolean` | `false`. |
 | `Form.SpinButton` | `number \| null` | Empty/nonfinite manual commits become `null`; finite display values and step callbacks commit numbers. |
 | `Form.Slider` | `number` | Supply valid defaults and bounds. |
-| `Form.Rating` | `number` | Fluent rating scale and keyboard behavior. |
+| `Form.Rating` | `number` | Fluent rating scale and keyboard behavior; native `marigold` stars by default. Explicit `color="brand"` or `color="neutral"` overrides are preserved. |
 | `Form.Select` | `string` | `''`; option identity is independent of label. |
 | `Form.RadioGroup` | `string` | `''`; named group and enabled-descendant focus. |
 | `Form.Dropdown` | `string` | `''`; selected identity and displayed label are separate. |
@@ -120,7 +120,7 @@ TagPicker requires a text label or explicit `aria-label`; rich/absent labels als
 
 `resetField(name)` targets that field. Same-value resets still clear combobox/date/time drafts. The private per-form coordinator tracks field owners across scoped arrays; moving an item preserves its identity and draft, removing it cleans up its owners, and unrelated forms remain isolated. Reactive `values` and async defaults follow RHF reset semantics with explicit resetOptions from the last committed render. Options from a suspended render do not change the active reset policy. Explicit reset-call options take precedence. A private, reset-scoped handoff preserves only opted-in dirty presentation text across actual RHF array-key replacement under `keepDirtyValues`; it is consumed once and cleared on targeted reset, removal or the next reset. RHF remains the only owner of semantic values and state.
 
-SpinButton also clears uncommitted text on a real targeted reset. Fluent 9.72.3 prioritizes its internal editing text over the controlled display prop and exposes no draft-clear API, so a reset that does not preserve this field replaces only the SpinButton primitive. Its native input identity changes, its forwarded ref updates, and existing input focus is restored. The Field, RHF controller, array item and form retain identity; a preserved dirty owner keeps its native input and draft. This presentation reset adds no numeric validation registry.
+SpinButton also clears uncommitted text on a real targeted reset. Fluent 9.74.9 prioritizes its internal editing text over the controlled display prop and exposes no draft-clear API, so a reset that does not preserve this field replaces only the SpinButton primitive. Its native input identity changes, its forwarded ref updates, and existing input focus is restored. The Field, RHF controller, array item and form retain identity; a preserved dirty owner keeps its native input and draft. This presentation reset adds no numeric validation registry.
 
 TimePicker likewise replaces only its compat primitive on a targeted reset that does not preserve the field, because compat remembers previously submitted text. The forwarded native input ref changes and existing input focus is restored; preserved dirty presentation keeps the primitive. Freeform times commit on blur or selection using the tested compat popup behavior.
 
@@ -244,3 +244,5 @@ These declarations are exported from each Form entrypoint. Form-owned members ap
 ComboboxMulti displays selected labels inside the input at rest. Focus switches to the search query; blur clears that transient query and restores selected labels without changing the stored selections. No selected-value caption is rendered beneath the field. ColorPicker defaults to a responsive square color area capped at 300px, with sliders fitting the same available width. ArraySection uses compact arrow/delete actions with localized accessible labels and tooltips, plus an Add icon alongside its action text.
 
 ObjectSection content and ArraySection item content stack direct fields with `gap.medium` (12px). Their description/error output uses `gap.small` (8px) from the content. Custom layout inside a caller-supplied wrapper remains caller-owned.
+
+The coordinated Fluent/Charts baseline uses Charts 9.3.27 and locks Tabster 8.8.0 with shared Keyborg 2.14.1. Preserve this compatible navigation subtree: Tabster 8.8.1 resolves Keyborg 3 alongside Fluent’s Keyborg 2 and the actual React 17 cleanup probe detects a registry collision. This lock selection satisfies Fluent’s published range; no overrides are used. Native providers may have distinct package versions, but must resolve the same shared contexts, theme and Griffel renderer.

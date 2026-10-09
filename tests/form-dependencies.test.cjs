@@ -9,14 +9,8 @@ const root = path.resolve(__dirname, '..');
 const dependencyRoot = process.env.FORM_DEPENDENCY_PROBE_ROOT || root;
 const hostRequire = createRequire(path.join(dependencyRoot, 'package.json'));
 const runtimeRequire = dependencyRoot === root ? createRequire(path.join(root, 'packages/spfx-react-toolkit/package.json')) : hostRequire;
-const versions = {
-  react: '17.0.1', 'react-dom': '17.0.1', typescript: '5.3.3',
-  '@types/react': '17.0.45', '@types/react-dom': '17.0.17',
-  '@fluentui/react-components': '9.72.3', 'react-hook-form': '7.87.0',
-  '@hookform/resolvers': '5.9.1', '@standard-schema/spec': '1.1.0',
-  '@fluentui/react-datepicker-compat': '0.6.16', '@fluentui/react-timepicker-compat': '0.4.21',
-  '@fluentui/react-icons': '2.0.312', '@fluentui/react-calendar-compat': '0.3.11',
-};
+const baseline = require('./fixtures/dependency-baseline.json');
+const versions = { ...baseline.fixed, ...baseline.shared };
 function packageInfo(name) {
   let directory = path.dirname(runtimeRequire.resolve(name.startsWith('@types/') ? `${name}/package.json` : name));
   while (!fs.existsSync(path.join(directory, 'package.json')) ||
@@ -38,14 +32,14 @@ test('exact dependency baseline preserves the fixed host and supported React pee
   for (const compat of ['@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-calendar-compat']) {
     const compatRequire = createRequire(hostRequire.resolve(compat));
     for (const name of ['react', 'react-dom', '@griffel/react', '@fluentui/react-shared-contexts', '@fluentui/react-utilities']) {
-      assert.equal(compatRequire.resolve(name), hostRequire.resolve(name), `${compat}: ${name}`);
+      assert.equal(fs.realpathSync(compatRequire.resolve(name)), fs.realpathSync(hostRequire.resolve(name)), `${compat}: ${name}`);
     }
   }
   if (dependencyRoot === root) {
     for (const workspace of ['packages/spfx-react-toolkit', 'apps/spfx-react-toolkit-test']) {
       const workspaceRequire = createRequire(path.join(root, workspace, 'package.json'));
       for (const name of ['react', 'react-dom', 'react-hook-form', '@fluentui/react-components', '@fluentui/react-shared-contexts', '@griffel/react']) {
-        assert.equal(workspaceRequire.resolve(name), hostRequire.resolve(name), `${workspace}: ${name}`);
+        assert.equal(fs.realpathSync(workspaceRequire.resolve(name)), fs.realpathSync(hostRequire.resolve(name)), `${workspace}: ${name}`);
       }
     }
     const library = require('../packages/spfx-react-toolkit/package.json');
@@ -127,7 +121,14 @@ test('actual React17/Fluent/RHF submit, reset and date/time callbacks preserve l
     await act(async () => { methods.reset(); });
     assert.equal(container.querySelector('#amount').value, '3');
     assert.equal(methods.getValues('date').getDate(), 30); assert.equal(methods.getValues('time'), undefined);
-  } finally { act(() => { ReactDOM.unmountComponentAtNode(container); }); container.remove(); dom.window.close(); for (const [name, value] of originalGlobals) { if (value === undefined) delete global[name]; else global[name] = value; } }
+  } finally {
+    await act(async () => { ReactDOM.unmountComponentAtNode(container); });
+    // Let native Tabster effects finish before closing their owning window.
+    await new Promise(resolve => setTimeout(resolve, 0));
+    container.remove();
+    dom.window.close();
+    for (const [name, value] of originalGlobals) { if (value === undefined) delete global[name]; else global[name] = value; }
+  }
 });
 
 test('opt-in webpack boundary retains the host RHF implementation', { skip: dependencyRoot !== root }, async () => {

@@ -215,7 +215,6 @@ function Fixture(props: FixtureConfig): React.ReactElement {
     <AutoSkeletonFixture />
     <StateMessageFixture />
     <GroupsFixture />
-    <FormFixture />
   </>;
 }
 function render(patch: Partial<FixtureConfig>): void {

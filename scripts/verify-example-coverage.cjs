@@ -148,7 +148,7 @@ for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invok
 }
 console.log('Verified dedicated root/domain/legacy Imports scenario (no duplicate export coverage).');
 
-const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm'].includes(item.name)).map(item => item.name);
+const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid'].includes(item.name)).map(item => item.name);
 assertCovered('Controls', controlSymbols, registrySymbols);
 const textPanel = read(path.join(panelsPath, 'FormattedTextPanel.tsx'));
 for (const marker of ['FormattedText', 'maxLines', 'markdown', 'subtle', 'highlight', 'variant', 'as', 'font', 'align', 'wrap', 'truncate', 'italic', 'underline', 'strikethrough', 'ref', 'onClick']) {
@@ -182,3 +182,12 @@ assertFormExampleCoverage(
   read(registryPath), read(path.join(panelsPath, 'FormPanel.tsx'))
 );
 console.log('Verified complete compound Form adapter, scope and hook usage.');
+
+const gridPanel = read(path.join(panelsPath, 'DataGridPanel.tsx'));
+for (const marker of ['createDataGrid<DemoRow>()', 'Grid.defineColumns', '<DataGrid ', '<Grid.Column ', 'selectedItems=', 'onSelectionChange=', 'sortState=', 'onSortChange=', 'getRowId=', 'onRowActivate=', 'resizableColumns=', 'hiddenColumnIds=', 'onRetry=', 'dg-update-sparkline', 'dg-color', 'dg-inspect-ref', 'Invalid number', "new Set(['off-page'])"]) {
+  if (!gridPanel.includes(marker)) throw new Error(`DataGrid interactive example missing ${marker}`);
+}
+for (const name of ['Text', 'Number', 'Boolean', 'Date', 'DateTime', 'Badge', 'Icon', 'Link', 'Person', 'People', 'Tags', 'Progress', 'Rating', 'Sparkline', 'Actions']) {
+  if (!gridPanel.includes(`<Grid.${name}Column `)) throw new Error(`DataGrid sample missing ${name} column`);
+}
+console.log('Verified complete DataGrid family, controlled states and immutable chart scenario.');

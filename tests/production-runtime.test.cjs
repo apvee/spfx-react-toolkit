@@ -5,6 +5,69 @@ const path = require('node:path');
 const os = require('node:os');
 const { executeProbe, runRuntimeMatrix } = require('../scripts/verify-production-runtime.cjs');
 
+test('Node-executed production UI uses the browser context through legacy node-conditioned peers', async () => {
+  const webpack = require('webpack');
+  const { buildRuntimeConfig } = require('../scripts/verify-production-runtime.cjs');
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'runtime-module-context-'));
+  try {
+    const shared = path.join(directory, 'node_modules/shared-context');
+    const owner = path.join(directory, 'node_modules/legacy-provider');
+    fs.mkdirSync(shared, { recursive: true }); fs.mkdirSync(owner, { recursive: true });
+    fs.writeFileSync(path.join(shared, 'package.json'), JSON.stringify({ name: 'shared-context', exports: { import: './esm.js', require: './commonjs.cjs' } }));
+    fs.writeFileSync(path.join(shared, 'esm.js'), 'export const context = {};');
+    fs.writeFileSync(path.join(shared, 'commonjs.cjs'), 'exports.context = {};');
+    fs.writeFileSync(path.join(owner, 'package.json'), JSON.stringify({ name: 'legacy-provider', main: './commonjs.cjs', module: './esm.js', exports: { '.': { node: './commonjs.cjs', import: './esm.js', require: './commonjs.cjs' } } }));
+    fs.writeFileSync(path.join(owner, 'esm.js'), "export { context } from 'shared-context';");
+    fs.writeFileSync(path.join(owner, 'commonjs.cjs'), "exports.context = require('shared-context').context;");
+    const entry = path.join(directory, 'entry.js');
+    fs.writeFileSync(entry, "import { context } from 'shared-context'; import { context as provided } from 'legacy-provider'; export const sameContext = context === provided;");
+    const output = path.join(directory, 'output');
+    const stats = await new Promise((resolve, reject) => {
+      const compiler = webpack(buildRuntimeConfig(directory, entry, output, true));
+      compiler.run((error, result) => compiler.close(closeError => error || closeError ? reject(error || closeError) : resolve(result)));
+    });
+    assert.equal(stats.hasErrors(), false, stats.toString({ all: false, errors: true }));
+    assert.equal(require(path.join(output, 'entry.js')).sameContext, true, 'browser module graph must not split conditional contexts');
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});
+
+test('UI runtime supplies genuine WebCrypto to the JSDOM browser boundary', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'runtime-crypto-'));
+  try {
+    fs.writeFileSync(path.join(directory, 'package.json'), JSON.stringify({ name: 'runtime-crypto' }));
+    fs.mkdirSync(path.join(directory, 'node_modules'), { recursive: true });
+    for (const name of ['react', 'react-dom']) fs.symlinkSync(path.dirname(require.resolve(name + '/package.json')), path.join(directory, 'node_modules', name));
+    const fixture = path.join(directory, 'probe.cjs');
+    fs.writeFileSync(fixture, `exports.run = async ({ assert }) => {
+      assert.equal(window.crypto, require('node:crypto').webcrypto);
+      const bytes = new Uint8Array(16);
+      assert.equal(window.crypto.getRandomValues(bytes), bytes);
+      assert.equal(bytes.byteLength, 16);
+      return { assertions: ['actual browser WebCrypto API is available'] };
+    };`);
+    assert.equal(executeProbe(fixture, 'form', directory).exit, 0);
+    assert.equal(executeProbe(fixture, 'data-grid', directory).exit, 0);
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});
+
+test('service runtime loads a real asynchronous chunk in Node without a browser script URL', async () => {
+  const webpack = require('webpack');
+  const { buildRuntimeConfig } = require('../scripts/verify-production-runtime.cjs');
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'runtime-service-chunk-'));
+  try {
+    const entry = path.join(directory, 'entry.js');
+    fs.writeFileSync(entry, "export async function loadBatch() { return (await import('./batch.js')).value; }");
+    fs.writeFileSync(path.join(directory, 'batch.js'), 'export const value = 42;');
+    const output = path.join(directory, 'output');
+    const stats = await new Promise((resolve, reject) => {
+      const compiler = webpack(buildRuntimeConfig(directory, entry, output, false));
+      compiler.run((error, result) => compiler.close(closeError => error || closeError ? reject(error || closeError) : resolve(result)));
+    });
+    assert.equal(stats.hasErrors(), false, stats.toString({ all: false, errors: true }));
+    assert.equal(await require(path.join(output, 'entry.js')).loadBatch(), 42);
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});
+
 test('a fresh process executes emitted fixture bytes and reports HTTP observations', () => {
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'runtime-process-unit-'));
   try {

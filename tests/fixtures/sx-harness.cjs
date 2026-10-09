@@ -32,6 +32,12 @@ function loadSxModules() {
 function createSxDom() {
   const { JSDOM } = require('jsdom');
   const dom = new JSDOM('<!doctype html><html><head></head><body></body></html>');
+  // JSDOM 15 has no WebCrypto; native Tabster requires the browser API.
+  // Use the real Node implementation, preserving secure randomness and subtle.
+  Object.defineProperty(dom.window, 'crypto', {
+    configurable: true,
+    value: require('node:crypto').webcrypto,
+  });
   global.window = dom.window;
   global.document = dom.window.document;
   global.navigator = dom.window.navigator;

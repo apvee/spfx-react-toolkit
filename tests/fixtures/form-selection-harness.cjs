@@ -6,6 +6,16 @@ async function setup() {
  for (const key of ['HTMLElement','HTMLInputElement','HTMLSelectElement','NodeFilter','Event','CustomEvent','MouseEvent','KeyboardEvent','Element','Node','File','FileList','Blob']) global[key] = dom.window[key];
  // JSDOM supplies no layout observer; popup positioning is not under test.
  dom.window.ResizeObserver = class ResizeObserver { observe() {} unobserve() {} disconnect() {} };
+ // Fluent's option walker reads ARIAMixin.role. JSDOM 15 lacks that native
+ // reflection, so retain the DOM contract here without replacing navigation.
+ // Nullable absence belongs to the external reflected DOM attribute contract.
+ if (!('role' in dom.window.Element.prototype)) {
+  Object.defineProperty(dom.window.Element.prototype, 'role', {
+   configurable: true,
+   get() { return this.getAttribute('role'); },
+   set(value) { if (value === null) this.removeAttribute('role'); else this.setAttribute('role', value); }
+  });
+ }
  React = require('react'); ({act} = require('react-dom/test-utils'));
  api = await harness.loadModule('tests/fixtures/form-selection-entry.tsx',{reactHookForm:true});
 }

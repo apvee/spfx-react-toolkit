@@ -135,17 +135,17 @@ The hook reads the existing Griffel renderer and Fluent direction context. `SxOp
 
 ## Dependencies and cache lifetime
 
-The package's mandatory shared style peers are `@griffel/core@^1.19.2`, `@griffel/react@^1.5.30` and `@fluentui/react-shared-contexts@^9.25.2`. Existing Fluent peers remain `@fluentui/react-migration-v8-v9@^9.9.12`, `@fluentui/react-theme@^9.2.0` and `@fluentui/react-utilities@^9.25.1`. The consuming host supplies compatible shared installations; the hook needs no SPFx provider and creates no renderer.
+The package's mandatory shared style peers are `@griffel/core@^1.21.4`, `@griffel/react@^1.7.8` and `@fluentui/react-shared-contexts@^9.26.4`. Existing Fluent peers remain `@fluentui/react-migration-v8-v9@^9.10.20`, `@fluentui/react-theme@^9.2.2` and `@fluentui/react-utilities@^9.26.7`. The consuming host supplies compatible shared installations; the hook needs no SPFx provider and creates no renderer.
 
 Token styles need Fluent theme CSS variables in the element's scope. A host can supply them through its existing FluentProvider. The sample uses `@fluentui/react-provider@9.22.8`; that provider package is optional for consumers and is not an additional toolkit peer. Switching scoped theme variables updates computed colors and sizes without RGB-dependent classes.
 
 Factories and generated assignments are cached by renderer and canonical property/scope/value. Repeated values reuse classes and rules. A finite repeated set of values avoids continued growth from those values; continuously distinct pixel values still grow the assignment maps and Griffel CSS caches for the renderer's lifetime. There is no hard cache limit or CSS removal guarantee on component unmount. The renderer WeakMap does not bound memory while a renderer remains live. Prefer a finite design scale for frequently changing dimensions; do not generate a new arbitrary value every frame.
 
-Factories are isolated per renderer to avoid capturing another renderer's `classNameHashSalt`. The installed Griffel core 1.19.2 emits its upstream development console diagnostic for a nonempty salt during the first factory computation, including an isolated factory. The toolkit preserves that diagnostic. Reuse the host renderer/salt configuration and investigate console output; this behavior is not suppressed or presented as a warning-free custom-salt path.
+Factories are isolated per renderer to avoid capturing another renderer's `classNameHashSalt`. The installed Griffel core 1.21.4 emits its upstream development console diagnostic for a nonempty salt during the first factory computation, including an isolated factory. The toolkit preserves that diagnostic. Reuse the host renderer/salt configuration and investigate console output; this behavior is not suppressed or presented as a warning-free custom-salt path.
 
 ## Complete v1 catalog mappings
 
-Each namespace consists of individual ESM exports returning opaque base descriptors, except the numeric factories and scope functions. The catalog references `@fluentui/react-theme` 9.2.0 and its actual `@fluentui/tokens` 1.0.0-alpha.22 floor. Token selections retain `var(--tokenName)` references, so changing a scoped Fluent theme updates computed styles without generating RGB-dependent classes. A scoped Fluent theme, normally from `FluentProvider`, is required for token-based values; the generic hook requires no SPFx context.
+Each namespace consists of individual ESM exports returning opaque base descriptors, except the numeric factories and scope functions. The catalog references `@fluentui/react-theme` 9.2.2 and its actual `@fluentui/tokens` 1.0.0-alpha.24 floor. Token selections retain `var(--tokenName)` references, so changing a scoped Fluent theme updates computed styles without generating RGB-dependent classes. A scoped Fluent theme, normally from `FluentProvider`, is required for token-based values; the generic hook requires no SPFx context.
 
 ### Layout and dimensions
 

@@ -140,6 +140,16 @@ These entries share the canonical component. Measurement, lifecycle and geometry
 
 StateMessage is available from the root, `/controls` and `/controls/state-message`, with the same component/type identity. Artwork and theme resolver remain private; its synchronous bundle includes all five preset subjects in both themes plus FormattedText. Generic hook/style consumers must not include the StateMessage artwork. The MIT artwork attribution ships as `THIRD-PARTY-NOTICES.md`.
 
+## DataGrid imports and bundle retention
+
+```tsx
+import { DataGrid, createDataGrid } from '@apvee/spfx-react-toolkit';
+import { DataGrid as DomainGrid } from '@apvee/spfx-react-toolkit/controls';
+import { DataGrid as ControlGrid, DataGridProps } from '@apvee/spfx-react-toolkit/controls/data-grid';
+```
+
+All entries share canonical component, factory and type identity. There are no public implementation/cell subpaths or View API. The mandatory Charts peer starts at `^9.3.27`; see the [DataGrid reference](./api/controls/data-grid.md). The complete family includes native Grid, Charts and D3 even for a text-only declaration. Root/domain aliases have a zero-byte gzip gap against the control entry. Unrelated imports must exclude Grid/Charts/D3; grid consumers exclude query/View/toolbar, Form/RHF, PnP and SPFx modules. Existing alias budgets and historical inventories remain enforced.
+
 ## Form imports and bundle retention
 
 ```tsx

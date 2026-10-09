@@ -50,9 +50,28 @@ npm run build:app
 
 Run `npm run verify` and `npm run verify:package` before requesting review. `prepublishOnly` is a lifecycle guard, not a publishing instruction: root runs clean/build/verify; the library workspace has its own clean/build/lint/test guard. This workflow does not authorize npm publication, pushes or tenant deployment.
 
+## DataGrid checks
+
+Run `node --test tests/data-grid-*.test.cjs tests/demo-data-grid.test.cjs` for column/type/identity/classification/native-cell and controlled-state boundaries. The single lazy DataGridPanel is reused by the source fixture and the compiled-library fixture. Grid-only fixtures use dedicated boundaries so a development build does not retain the unrelated Form sample.
+
+```bash
+npm run build:library
+npm run build:app
+SX_BROWSER_DATA_GRID_ONLY=1 node scripts/build-sx-browser-fixture.cjs
+STYLES_PANEL_DATA_GRID_ONLY=1 node scripts/build-styles-panel-browser.cjs
+SX_BROWSER_DATA_GRID_ONLY=1 node scripts/check-sx-browser-fixture.cjs
+STYLES_PANEL_DATA_GRID_ONLY=1 node scripts/check-styles-panel-browser.cjs
+```
+
+Use the existing fixture server on port 4317 for source checks; the compiled runner owns port 4320. Supply the installed Playwright module/browser through the existing browser-runner environment options. Restart serve after library changes. Record source, compiled sample and authenticated [SharePoint/screen-reader checks](./SHAREPOINT-VALIDATION.md#datagrid) separately. `npm run verify` and `npm run verify:package` remain the final gates; the latter installs a standalone tarball consumer and measures the complete Grid/Charts/D3 family at root/domain/control imports.
+
+The optional chart failure probe is separate from normal browser acceptance. Add `DATA_GRID_CHART_PROBE=1` to both the selected Grid-only builder and its runner. The fixture injects a named rendering failure into a wrapper that delegates successful renders to the actual Charts package; it checks summary preservation, native keyboard retry and reset after changed observations. It does not establish that valid input caused the native chart to throw. Rebuild without the flag and restart the source fixture server afterward. Normal acceptance continues to require zero console/page errors; the probe admits only its exact expected injected diagnostics.
+
+The Grid browser runner also measures native Chrome zoom at 200% in a disposable profile: device pixel ratio doubles, the CSS viewport halves and visual viewport scale stays one. This is distinct from pinch zoom or a smaller viewport and does not modify the user's browser profile.
+
 ## Form checks
 
-The public compound Form suite uses RHF as its sole state/validation engine. Dependency probes pin React 17.0.1 / TypeScript 5.3.3 / Fluent 9.72.3, check actual inference/callback behavior and ensure compat controls share the host React/Fluent/Griffel instances. See [Form](./api/controls/form.md) for the exact dependency baseline and scoped nullable domains.
+The public compound Form suite uses RHF as its sole state/validation engine. Dependency probes pin React 17.0.1 / TypeScript 5.3.3 / Fluent 9.74.9, check actual inference/callback behavior and ensure compat controls share the host React/Fluent/Griffel instances. See [Form](./api/controls/form.md) for the exact dependency baseline and scoped nullable domains.
 
 Run the focused family tests with `node --test tests/form-*.test.cjs`. Core failure/reset/type tests, adapter behavior tests and structured-array tests establish separate boundaries; a list of exported names is not a behavioral check. The lazy FormPanel covers all 22 adapters plus compound hooks, explicit record reset, failure/retry, nested arrays and sections. Registry coverage preserves the existing 46 top-level hooks and four providers.
 
@@ -110,7 +129,7 @@ Inspect the JSON observations, failure logs, DOM captures and screenshots. The r
 
 ## Shared Fluent packages
 
-The library declares `@griffel/core` (`^1.19.2`), `@griffel/react` (`^1.5.30`), `@fluentui/react-shared-contexts` (`^9.25.2`), `@fluentui/react-migration-v8-v9` (`^9.9.12`), `@fluentui/react-theme` (`^9.2.0`), `@fluentui/react-components` (`^9.72.3`) and `@fluentui/react-utilities` (`^9.25.1`) as mandatory peers. They are devDependencies for library development and dependencies of the SPFx test app. The published package does not own separate Fluent runtime dependencies. FormattedText uses library runtime dependencies unified 11.0.5, remark-parse 11.0.0 and remark-gfm 4.0.1. The tarball consumer check verifies that the app and library resolve the same Fluent packages. These are explicit shared consumer contracts; all historical peer ranges remain unchanged. `useStableCallback` is a direct alias of `useEventCallback` from react-utilities, not a separate implementation. `tslib` is supplied by the SPFx packages that declare and import it, rather than an unused direct dependency of this library.
+The library declares `@griffel/core` (`^1.21.4`), `@griffel/react` (`^1.7.8`), `@fluentui/react-shared-contexts` (`^9.26.4`), `@fluentui/react-migration-v8-v9` (`^9.10.20`), `@fluentui/react-theme` (`^9.2.2`), `@fluentui/react-components` (`^9.74.9`) `@fluentui/react-utilities` (`^9.26.7`) and `@fluentui/react-charts` (`^9.3.27`) as mandatory peers. They are devDependencies for library development and dependencies of the SPFx test app. The published package does not own separate Fluent runtime dependencies. FormattedText uses library runtime dependencies unified 11.0.5, remark-parse 11.0.0 and remark-gfm 4.0.1. The tarball consumer check verifies that the app and library resolve the same Fluent packages. These are explicit shared consumer contracts; SPFx, React and PnP peer ranges remain unchanged; the tested Fluent/Griffel floors are updated together. `useStableCallback` is a direct alias of `useEventCallback` from react-utilities, not a separate implementation. `tslib` is supplied by the SPFx packages that declare and import it, rather than an unused direct dependency of this library.
 
 ## Styles sample and documentation checks
 
@@ -208,3 +227,5 @@ Both controls compose Fluent Card/Accordion, native semantic text wrappers and u
 Run `node --test tests/groups*.test.cjs tests/demo-groups.test.cjs`, `npm run verify:public-docs` and `npm run verify:examples`. The lazy GroupsPanel uses root imports and exposes labeled settings, controlled expansion, multiple mode, mounted note persistence/unmount reset, native refs, hidden/disabled, theme, RTL and widths 320/500/639/640/900. Marker checks do not execute the scenario. Source and compiled-sample browser fixtures exercise layout, expansion and actual focus behavior; record those observations separately.
 
 Build with `npm run build:library` before `npm run build:app`, and restart an active serve after library changes. Run `npm run verify` and `npm run verify:package` before review. The complete bundle contract now has 60 variants, adding root/domain/control variants for both groups without changing retention budgets. Authenticated [group host checks](./SHAREPOINT-VALIDATION.md#settingsgroup-and-accordiongroup) remain **NOT EXECUTED** until a tenant run records them.
+
+The coordinated Fluent/Charts baseline uses Charts 9.3.27 and locks Tabster 8.8.0 with shared Keyborg 2.14.1. Preserve this compatible navigation subtree: Tabster 8.8.1 resolves Keyborg 3 alongside Fluent’s Keyborg 2 and the actual React 17 cleanup probe detects a registry collision. This lock selection satisfies Fluent’s published range; no overrides are used. Native providers may have distinct package versions, but must resolve the same shared contexts, theme and Griffel renderer.

@@ -20,6 +20,19 @@ function children(member) {
   if (member === 'ColorPicker') return React.createElement(fluent.ColorSlider, { channel: 'hue', 'aria-label': 'Hue' });
   if (member === 'SwatchPicker') return ['blue', 'red'].map(value => React.createElement(fluent.ColorSwatch, { key: value, value, color: value, 'aria-label': `${value} display` }));
 }
+for (const color of [undefined, 'brand', 'neutral']) test(`Rating uses native ${color ?? 'marigold'} colors${color === undefined ? ' by default' : ' when explicitly requested'}`, () => {
+  const F = api.createForm();
+  const f = mount(React.createElement(React.Fragment, undefined,
+    React.createElement(fluent.Rating, { 'data-rating-reference': '', color: color ?? 'marigold', value: 3 }),
+    React.createElement(F.Root, { defaultValues: { rating: 3 }, onSubmit: () => {} },
+      React.createElement(F.Rating, { 'data-rating-field': '', name: 'rating', color }))));
+  try {
+    const selectedIcons = selector => [...f.host.querySelectorAll(`${selector} .fui-RatingItem__selectedIcon`)].map(icon => icon.className);
+    const reference = selectedIcons('[data-rating-reference]');
+    assert.equal(reference.length, 3, 'the native reference renders the three selected stars');
+    assert.deepEqual(selectedIcons('[data-rating-field]'), reference, 'Form stars retain the native color presentation');
+  } finally { f.close(); }
+});
 for (const member of ['Rating', 'ColorPicker', 'SwatchPicker']) test(`${member} live domain, root ref, blur order and Field relationships`, async () => {
   const F = api.createForm(); let methods; const ref = React.createRef(); const seen = [];
   const initial = member === 'Rating' ? 2 : member === 'ColorPicker' ? { h: 20, s: .4, v: .8, a: .3 } : 'blue';

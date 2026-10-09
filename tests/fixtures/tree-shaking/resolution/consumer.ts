@@ -121,3 +121,22 @@ import {} from '@apvee/spfx-react-toolkit/controls/form/plugins';
 // @ts-expect-error No advanced subpath.
 import {} from '@apvee/spfx-react-toolkit/controls/form/advanced';
 void FormInput;
+
+import { DataGrid as rootGrid, createDataGrid as rootGridFactory } from '@apvee/spfx-react-toolkit';
+import { DataGrid as domainGrid, createDataGrid as domainGridFactory } from '@apvee/spfx-react-toolkit/controls';
+import { DataGrid as controlGrid, createDataGrid as controlGridFactory } from '@apvee/spfx-react-toolkit/controls/data-grid';
+import type { DataGridProps as RootGridProps } from '@apvee/spfx-react-toolkit';
+import type { DataGridProps as DomainGridProps } from '@apvee/spfx-react-toolkit/controls';
+import type { DataGridProps as ControlGridProps } from '@apvee/spfx-react-toolkit/controls/data-grid';
+export const gridAliases: typeof rootGrid[] = [domainGrid, controlGrid];
+export const gridFactoryAliases: typeof rootGridFactory[] = [domainGridFactory, controlGridFactory];
+export type GridPropAliases = [RootGridProps<{ id: string }>, DomainGridProps<{ id: string }>, ControlGridProps<{ id: string }>];
+// @ts-expect-error Grid implementation has no public subpath.
+import {} from '@apvee/spfx-react-toolkit/controls/data-grid/data-grid';
+// @ts-expect-error Row model is private.
+import {} from '@apvee/spfx-react-toolkit/controls/data-grid/prepared-rows.internal';
+// @ts-expect-error Column cells are suite members, not flat public controls.
+import { TextColumn } from '@apvee/spfx-react-toolkit/controls/data-grid';
+// @ts-expect-error Table-only API has no View.
+export const gridView = rootGrid.View;
+void TextColumn;

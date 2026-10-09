@@ -230,8 +230,8 @@ try {
   assert.equal(manifest.workspaces, undefined, 'External consumer cannot contain workspaces');
   manifest.dependencies['@apvee/spfx-react-toolkit']='file:'+path.join(temp,packed.filename);
   const libraryManifest = JSON.parse(fs.readFileSync(path.join(library, 'package.json'), 'utf8'));
-  for (const peer of ['react-hook-form', '@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-icons']) {
-    assert.equal(manifest.dependencies[peer], libraryManifest.devDependencies[peer], `Independent consumer must explicitly provision tested Form peer: ${peer}`);
+  for (const peer of [...Object.keys(require('../tests/fixtures/dependency-baseline.json').shared), 'react-hook-form', '@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-icons']) {
+    assert.equal(manifest.dependencies[peer], libraryManifest.devDependencies[peer], `Independent consumer must explicitly provision tested shared peer: ${peer}`);
   }
   fs.writeFileSync(path.join(consumer,'package.json'),JSON.stringify(manifest,null,2));
   // Seed locked transitive versions while npm replaces workspace identities with the tarball.
@@ -534,6 +534,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
     fs.copyFileSync(path.join(root, `tests/fixtures/sx-package-${mode}.ts`), path.join(consumer, `compatibility/sx-package-${mode}.ts`));
   }
   fs.copyFileSync(path.join(root, 'tests/fixtures/form-package-consumer.tsx'), path.join(consumer, 'compatibility/form-package-consumer.tsx'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/data-grid-package-consumer.tsx'), path.join(consumer, 'compatibility/data-grid-package-consumer.tsx'));
   run(['install','--no-audit','--no-fund'],consumer);
   assert.equal(fs.lstatSync(path.join(consumer,'node_modules/@apvee/spfx-react-toolkit')).isSymbolicLink(),false);
   const installedPackage = JSON.parse(fs.readFileSync(path.join(consumer, 'node_modules/@apvee/spfx-react-toolkit/package.json'), 'utf8'));
@@ -543,7 +544,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   const hostRequire = createRequire(path.join(consumer, 'package.json'));
   const libraryRequire = createRequire(path.join(consumer, 'node_modules/@apvee/spfx-react-toolkit/package.json'));
   const sharedPackages = ['@griffel/core', '@griffel/react', '@fluentui/react-shared-contexts',
-    '@fluentui/react-migration-v8-v9', '@fluentui/react-theme', '@fluentui/react-utilities', '@fluentui/react-components', 'react-hook-form',
+    '@fluentui/react-migration-v8-v9', '@fluentui/react-theme', '@fluentui/react-utilities', '@fluentui/react-components', '@fluentui/react-charts', 'react-hook-form',
     '@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-calendar-compat', '@fluentui/react-icons'];
   const sharedPaths = {};
   for (const name of sharedPackages) {
@@ -574,10 +575,10 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   // Compat dependencies and the official schema resolver must reach the same
   // host runtimes even when resolved from their own package location.
   const nestedRuntimePaths = {};
-  for (const owner of ['@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-calendar-compat', '@hookform/resolvers']) {
+  for (const owner of ['@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-calendar-compat', '@fluentui/react-charts', '@fluentui/chart-utilities', '@fluentui/react-table', '@hookform/resolvers']) {
     const from = createRequire(hostRequire.resolve(owner));
     const peers = owner === '@hookform/resolvers' ? ['react', 'react-hook-form']
-      : ['react', 'react-dom', '@griffel/core', '@griffel/react', '@fluentui/react-shared-contexts', '@fluentui/react-utilities'];
+      : ['react', 'react-dom', '@griffel/core', '@griffel/react', '@fluentui/react-shared-contexts', '@fluentui/react-utilities', '@fluentui/react-theme'];
     nestedRuntimePaths[owner] = {};
     for (const peer of peers) {
       const actual = fs.realpathSync(from.resolve(peer));
@@ -585,6 +586,13 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
       nestedRuntimePaths[owner][peer] = actual;
     }
   }
+  // Fluent's navigation hook and Tabster must operate on the same keyboard
+  // registry. Tabster 8.8.1 introduces a second Keyborg major; the tested lock
+  // selects compatible 8.8.0 within Fluent's published ^8.8.0 requirement.
+  const tabsterRequire = createRequire(hostRequire.resolve('tabster'));
+  const fluentTabsterRequire = createRequire(hostRequire.resolve('@fluentui/react-tabster'));
+  assert.equal(fs.realpathSync(tabsterRequire.resolve('keyborg')),
+    fs.realpathSync(fluentTabsterRequire.resolve('keyborg')), 'Tabster must share Fluent Keyborg registry');
   assert.equal(libraryRequire('react-hook-form').useForm, hostRequire('react-hook-form').useForm, 'RHF implementation must share host identity');
   const datePickerRequire = createRequire(hostRequire.resolve('@fluentui/react-datepicker-compat'));
   assert.equal(fs.realpathSync(datePickerRequire.resolve('@fluentui/react-calendar-compat')), fs.realpathSync(hostRequire.resolve('@fluentui/react-calendar-compat')), 'DatePicker must share host calendar');
@@ -614,6 +622,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
     { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node',
       'compatibility/sx-package-public.ts', 'compatibility/sx-package-deep.ts'] },
     { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/form-package-consumer.tsx'] },
+    { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/data-grid-package-consumer.tsx'] },
     { args: ['run', 'package:solution'], prepareMetadata: true },
   ];
   const productionReports = await runInstalledGates({consumerRoot:fs.realpathSync(consumer),outputDir:evidence,failures:consumerFailures,

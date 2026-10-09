@@ -11,6 +11,7 @@ const url = process.env.SX_BROWSER_URL || 'http://127.0.0.1:4317';
 const observations = [];
 const errors = [];
 const consoleMessages = [];
+const chartProbePageErrors = [];
 const thumbInteractionCaptures = [];
 let browser;
 let page;
@@ -917,10 +918,17 @@ async function runGroups() {
     ignoreDefaultArgs: ['--hide-scrollbars'] });
   page = await browser.newPage({ viewport: { width: 1210, height: 900 } });
   page.on('console', message => { if (['error', 'warning'].includes(message.type())) consoleMessages.push({ type: message.type(), text: message.text() }); });
-  page.on('pageerror', error => errors.push(`Uncaught browser error: ${error.message}`));
+  page.on('pageerror', error => {
+    if (process.env.DATA_GRID_CHART_PROBE === '1') chartProbePageErrors.push(error.message);
+    else errors.push(`Uncaught browser error: ${error.message}`);
+  });
   const version = browser.version();
   try {
-    if (process.env.SX_BROWSER_FORM_ONLY === '1') {
+    if (process.env.DATA_GRID_CHART_PROBE === '1') {
+      await require('./data-grid-browser.helpers.cjs').exerciseDataGridChartProbe({ page, url, output, label, boundary: 'source', check, consoleMessages, pageErrors: chartProbePageErrors });
+    } else if (process.env.SX_BROWSER_DATA_GRID_ONLY === '1') {
+      await require('./data-grid-browser.helpers.cjs').exerciseDataGrid({ page, url, output, label, boundary: 'source', check, consoleMessages });
+    } else if (process.env.SX_BROWSER_FORM_ONLY === '1') {
       await require('./form-browser.helpers.cjs').exerciseForm({ page, url, output, label, boundary: 'source', check, consoleMessages });
     } else if (process.env.SX_BROWSER_GROUPS_ONLY === '1') {
       await runGroups();
@@ -934,11 +942,11 @@ async function runGroups() {
     await runStateMessage();
     await runGroups();
     }
-    if (process.env.SX_BROWSER_FORM_ONLY !== '1') await check('console-health', consoleMessages, []);
+    if (process.env.SX_BROWSER_FORM_ONLY !== '1' && process.env.DATA_GRID_CHART_PROBE !== '1') await check('console-health', consoleMessages, []);
   } catch (error) { errors.push(error.stack); }
   const report = { version, node: process.version, url, viewport: { width: 1210, height: 900 },
     module: process.env.PLAYWRIGHT_MODULE_PATH || 'playwright', executable: process.env.SX_BROWSER_EXECUTABLE || 'Playwright default',
-    localBrowser: true, sharePointHost: 'NOT EXECUTED', observations, catalogContrasts, thumbInteractionCaptures, consoleMessages, errors };
+    localBrowser: true, sharePointHost: 'NOT EXECUTED', observations, catalogContrasts, thumbInteractionCaptures, consoleMessages, ...(process.env.DATA_GRID_CHART_PROBE === '1' ? { chartProbePageErrors, chartProbe: 'Fixture-only injected rendering failure; successful renders use actual Charts' } : {}), errors };
   fs.writeFileSync(path.join(output, `${label}.json`), JSON.stringify(report, null, 2));
   console.log(JSON.stringify({ version, checks: observations.length, failures: errors.length, errors }, null, 2));
   await browser.close();

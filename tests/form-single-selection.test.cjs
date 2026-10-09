@@ -10,7 +10,30 @@ for(const member of ['Select','RadioGroup','Dropdown','Combobox'])test(`${member
 test('RadioGroup error focus skips disabled, hidden and inert descendants',async()=>{const F=h.suite('RadioGroup');const {Radio}=require('@fluentui/react-components');const ref=h.React.createRef();const f=h.owner(F,'RadioGroup',{value:''},{ref,label:'Choice',rules:{required:'Choose'},children:[h.React.createElement(Radio,{key:'a',value:'a',label:'Disabled',disabled:true}),h.React.createElement('div',{key:'b',hidden:true},h.React.createElement(Radio,{value:'b',label:'Hidden'})),h.React.createElement('div',{key:'c',inert:''},h.React.createElement(Radio,{value:'c',label:'Inert'})),h.React.createElement(Radio,{key:'d',value:'d',label:'Enabled'})]});try{await h.act(async()=>{await f.methods.trigger('value',{shouldFocus:true});});assert.equal(document.activeElement.value,'d');assert.equal(ref.current.tagName,'DIV');}finally{f.close();}});
 test('selection types correlate each codec with the complete field path and native ref',()=>{const ts=require('typescript');const path=require('node:path');const program=ts.createProgram([path.resolve(__dirname,'fixtures/form-selection-types.tsx')],{noEmit:true,strict:true,skipLibCheck:true,target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.ESNext,moduleResolution:ts.ModuleResolutionKind.NodeJs,jsx:ts.JsxEmit.React,lib:['lib.es2020.d.ts','lib.dom.d.ts']});const diagnostics=ts.getPreEmitDiagnostics(program);assert.equal(diagnostics.length,0,ts.formatDiagnosticsWithColorAndContext(diagnostics,{getCanonicalFileName:f=>f,getCurrentDirectory:()=>process.cwd(),getNewLine:()=> '\n'}));});
 test('Select keeps the visible native label separate from typeahead text',()=>{const F=h.suite('Select'),f=h.owner(F,'Select',{value:'id-a'},{options});try{assert.equal(f.host.querySelector('option[value="id-a"]').textContent,'Alpha');}finally{f.close();}});
-for(const member of ['Dropdown','Combobox'])test(`${member} Fluent keyboard selection commits an identity through RHF`,()=>{const F=h.suite(member),f=h.owner(F,member,{value:'id-a'},{options,open:true,inlinePopup:true});try{const trigger=f.host.querySelector('[role=combobox]');h.key(trigger,'End');h.key(trigger,'Enter');assert.equal(f.methods.getValues('value'),'id-c');}finally{f.close();}});
+for (const member of ['Dropdown', 'Combobox']) {
+ test(`${member} Fluent keyboard selection commits an identity through RHF`, () => {
+  const F = h.suite(member);
+  const selected = [];
+  let f;
+  f = h.owner(F, member, { value: 'id-a' }, {
+   options, open: true, inlinePopup: true,
+   onOptionSelect: (_, data) => selected.push({ option: data.optionValue, field: f.methods.getValues('value') })
+  });
+  try {
+   const trigger = f.host.querySelector('[role=combobox]');
+   const gamma = [...f.host.querySelectorAll('[role=option]')].find(node => node.textContent === 'Gamma');
+   assert.ok(gamma, 'the native Gamma option exists');
+   h.key(trigger, 'End');
+   assert.equal(trigger.getAttribute('aria-activedescendant'), gamma.id, 'Fluent navigation activates the last option');
+   assert.equal(f.methods.getValues('value'), 'id-a', 'navigation alone does not commit a field value');
+   assert.deepEqual(selected, []);
+   h.key(trigger, 'Enter');
+   assert.equal(f.methods.getValues('value'), 'id-c');
+   assert.equal(gamma.getAttribute('aria-selected'), 'true');
+   assert.deepEqual(selected, [{ option: 'id-c', field: 'id-c' }], 'RHF commits before the native consumer callback once');
+  } finally { f.close(); }
+ });
+}
 test('Select applies explicit object codecs and rejects a lossy write before changing RHF',()=>{const F=h.suite('Select');let f=h.owner(F,'Select',{value:{id:'id-a'}},{options,codec:{toControl:v=>v.id,fromControl:id=>({id})}});try{h.change(f.host.querySelector('select'),'id-c');assert.deepEqual(f.methods.getValues('value'),{id:'id-c'});}finally{f.close();}f=h.owner(F,'Select',{value:'id-a'},{options,codec:{toControl:v=>v,fromControl:()=> 'id-a'}});try{h.rejectsRender(()=>h.change(f.host.querySelector('select'),'id-c'),/losslessly/);assert.equal(f.methods.getValues('value'),'id-a');}finally{f.close();}});
 for(const member of ['Select','RadioGroup','Dropdown','Combobox'])test(`${member} supported primitive children retain explicit identity`,()=>{const F=h.suite(member);const fluent=require('@fluentui/react-components');const Primitive=member==='Select'?'option':member==='RadioGroup'?fluent.Radio:fluent.Option;const children=h.React.createElement(Primitive,{value:'child-id',...(member==='RadioGroup'?{label:'Child label'}:{text:'Child text'})},member==='RadioGroup'?undefined:'Child label');const f=h.owner(F,member,{value:'child-id'},{children});try{assert.equal(f.methods.getValues('value'),'child-id');if(member==='Dropdown')assert.equal(f.host.querySelector('button').textContent,'Child text');if(member==='Combobox')assert.equal(f.host.querySelector('input').value,'Child text');}finally{f.close();}});
 for(const member of ['Select','RadioGroup','Dropdown','Combobox'])test(`${member} primary slots cannot bypass root disabling`,()=>{const F=h.suite(member);const f=h.mount(h.React.createElement(F.Root,{disabled:true,defaultValues:{value:'id-a'},onSubmit:()=>{}},h.React.createElement(F[member],{name:'value',options,disabled:false,...(member==='Select'?{select:{disabled:false}}:member==='Dropdown'?{button:{disabled:false}}:member==='Combobox'?{input:{disabled:false}}:{})})));try{assert.ok([...f.host.querySelectorAll(member==='Dropdown'?'[role=combobox]':'input,select,button')].every(node=>node.matches(':disabled')));}finally{f.close();}});

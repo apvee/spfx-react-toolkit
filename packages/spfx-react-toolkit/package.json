@@ -45,17 +45,18 @@
     "typescript": "5.3.3",
     "@types/react": "17.0.45",
     "@types/react-dom": "17.0.17",
-    "@fluentui/react-migration-v8-v9": "^9.9.12",
-    "@fluentui/react-theme": "^9.2.0",
-    "@fluentui/react-utilities": "^9.25.1",
-    "@griffel/core": "1.19.2",
-    "@griffel/react": "1.5.30",
-    "@fluentui/react-shared-contexts": "9.25.2",
-    "@fluentui/react-components": "9.72.3",
+    "@fluentui/react-migration-v8-v9": "9.10.20",
+    "@fluentui/react-theme": "9.2.2",
+    "@fluentui/react-utilities": "9.26.7",
+    "@griffel/core": "1.21.4",
+    "@griffel/react": "1.7.8",
+    "@fluentui/react-shared-contexts": "9.26.4",
+    "@fluentui/react-components": "9.74.9",
     "react-hook-form": "7.87.0",
     "@fluentui/react-datepicker-compat": "0.6.16",
     "@fluentui/react-timepicker-compat": "0.4.21",
-    "@fluentui/react-icons": "2.0.312"
+    "@fluentui/react-icons": "2.0.312",
+    "@fluentui/react-charts": "9.3.27"
   },
   "peerDependencies": {
     "@microsoft/sp-application-base": ">=1.18.0 <2.0.0",
@@ -70,17 +71,18 @@
     "@pnp/sp": "^4.0.0",
     "react": "17.x",
     "react-dom": "17.x",
-    "@fluentui/react-migration-v8-v9": "^9.9.12",
-    "@fluentui/react-theme": "^9.2.0",
-    "@fluentui/react-utilities": "^9.25.1",
-    "@griffel/core": "^1.19.2",
-    "@griffel/react": "^1.5.30",
-    "@fluentui/react-shared-contexts": "^9.25.2",
-    "@fluentui/react-components": "^9.72.3",
+    "@fluentui/react-migration-v8-v9": "^9.10.20",
+    "@fluentui/react-theme": "^9.2.2",
+    "@fluentui/react-utilities": "^9.26.7",
+    "@griffel/core": "^1.21.4",
+    "@griffel/react": "^1.7.8",
+    "@fluentui/react-shared-contexts": "^9.26.4",
+    "@fluentui/react-components": "^9.74.9",
     "react-hook-form": ">=7.87.0 <8.0.0",
     "@fluentui/react-datepicker-compat": ">=0.6.16 <1.0.0",
     "@fluentui/react-timepicker-compat": ">=0.4.21 <1.0.0",
-    "@fluentui/react-icons": ">=2.0.312 <3.0.0"
+    "@fluentui/react-icons": ">=2.0.312 <3.0.0",
+    "@fluentui/react-charts": "^9.3.27"
   },
   "homepage": "https://github.com/apvee/spfx-react-toolkit#readme",
   "repository": {
@@ -180,6 +182,10 @@
     "./controls/form": {
       "types": "./lib/controls/form/index.d.ts",
       "default": "./lib/controls/form/index.js"
+    },
+    "./controls/data-grid": {
+      "types": "./lib/controls/data-grid/index.d.ts",
+      "default": "./lib/controls/data-grid/index.js"
     },
     "./LICENSE": "./LICENSE",
     "./README.md": "./README.md",
@@ -1898,6 +1904,9 @@
       ],
       "controls/form": [
         "lib/controls/form/index.d.ts"
+      ],
+      "controls/data-grid": [
+        "lib/controls/data-grid/index.d.ts"
       ]
     }
   },

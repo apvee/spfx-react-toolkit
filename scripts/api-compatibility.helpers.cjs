@@ -146,14 +146,17 @@ function assertCompatiblePackageContract(manifest, originalPackage) {
   });
   assert.deepEqual(manifest.peerDependencies, {
     ...originalPackage.peerDependencies, ...sharedFluentPeers,
-    '@fluentui/react-utilities': '^9.25.1',
-    '@griffel/core': '^1.19.2', '@griffel/react': '^1.5.30',
-    '@fluentui/react-shared-contexts': '^9.25.2',
-    '@fluentui/react-components': '^9.72.3',
+    '@fluentui/react-utilities': '^9.26.7',
+    '@griffel/core': '^1.21.4', '@griffel/react': '^1.7.8',
+    '@fluentui/react-shared-contexts': '^9.26.4',
+    '@fluentui/react-components': '^9.74.9',
     'react-hook-form': '>=7.87.0 <8.0.0',
     '@fluentui/react-datepicker-compat': '>=0.6.16 <1.0.0',
     '@fluentui/react-timepicker-compat': '>=0.4.21 <1.0.0',
     '@fluentui/react-icons': '>=2.0.312 <3.0.0',
+    '@fluentui/react-charts': '^9.3.27',
+    '@fluentui/react-theme': '^9.2.2',
+    '@fluentui/react-migration-v8-v9': '^9.10.20',
   }, 'Runtime peer contracts changed outside the approved shared Fluent/Griffel/Form peers');
   assert.deepEqual(manifest.peerDependenciesMeta ?? {}, originalPackage.peerDependenciesMeta ?? {},
     'Mandatory peers must not become optional');

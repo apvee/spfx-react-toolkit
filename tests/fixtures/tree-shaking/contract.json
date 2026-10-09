@@ -106,6 +106,23 @@
     ],
     "form-time": [
       "^@fluentui/react-timepicker-compat/"
+    ],
+    "data-grid": [
+      "^@apvee/spfx-react-toolkit/lib/controls/data-grid/",
+      "^@fluentui/react-table/"
+    ],
+    "charts": [
+      "^@fluentui/(react-charts|chart-utilities)/"
+    ],
+    "d3": [
+      "^(d3(?:-[^/]+)?|internmap)/"
+    ],
+    "grid-query": [
+      "^@apvee/spfx-react-toolkit/lib/controls/(data-grid-view|data-grid-toolbar)/",
+      "^@apvee/spfx-react-toolkit/lib/controls/data-grid/(?:.+/)?(?:data-grid-)?(?:view|toolbar|search|filters?|pagination|query|fetch|virtual)[^/]*\\.js$"
+    ],
+    "relative-time-control": [
+      "^@apvee/spfx-react-toolkit/lib/controls/relative-time/relative-time\\.js$"
     ]
   },
   "fixtures": [
@@ -148,7 +165,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": []
     },
@@ -196,7 +216,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": []
     },
@@ -239,7 +262,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": []
     },
@@ -288,7 +314,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -340,7 +369,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -381,7 +413,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -425,7 +460,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -468,7 +506,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -520,7 +561,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -567,7 +611,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": []
     },
@@ -596,7 +643,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": []
     },
@@ -623,7 +673,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": []
     },
@@ -653,7 +706,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -700,7 +756,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": []
     },
@@ -729,7 +788,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -759,7 +821,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -801,7 +866,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "formatted-text",
@@ -848,7 +916,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "relative-time",
@@ -892,7 +963,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "iana-lookup"
@@ -936,7 +1010,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": []
     },
@@ -977,7 +1054,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "auto-skeleton",
@@ -1018,7 +1098,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "state-message",
@@ -1064,7 +1147,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "settings-group",
@@ -1107,7 +1193,10 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "accordion-group",
@@ -1148,7 +1237,10 @@
         "accordion-group",
         "formatted-text",
         "markdown",
-        "fluent-accordion"
+        "fluent-accordion",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1193,7 +1285,10 @@
         "accordion-group",
         "formatted-text",
         "markdown",
-        "fluent-accordion"
+        "fluent-accordion",
+        "data-grid",
+        "charts",
+        "d3"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1203,6 +1298,104 @@
         "form-date",
         "form-time",
         "fluent-card"
+      ]
+    },
+    {
+      "id": "data-grid",
+      "template": "data-grid.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/data-grid"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "theme-conversion",
+        "grid-query",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "formatted-text",
+        "markdown",
+        "relative-time-control",
+        "state-message",
+        "state-artwork",
+        "settings-group",
+        "accordion-group",
+        "iana-lookup"
+      ],
+      "requiredModuleGroups": [
+        "data-grid",
+        "charts",
+        "d3",
+        "auto-skeleton",
+        "fluent-skeleton"
+      ]
+    },
+    {
+      "id": "data-grid-factory",
+      "template": "data-grid-factory.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/data-grid"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "theme-conversion",
+        "grid-query",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "formatted-text",
+        "markdown",
+        "relative-time-control",
+        "state-message",
+        "state-artwork",
+        "settings-group",
+        "accordion-group",
+        "iana-lookup"
+      ],
+      "requiredModuleGroups": [
+        "data-grid",
+        "charts",
+        "d3",
+        "auto-skeleton",
+        "fluent-skeleton"
       ]
     }
   ],
@@ -1396,6 +1589,30 @@
     {
       "candidate": "form-factory/domain",
       "reference": "form-factory/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "data-grid/root",
+      "reference": "data-grid/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "data-grid/domain",
+      "reference": "data-grid/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "data-grid-factory/root",
+      "reference": "data-grid-factory/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "data-grid-factory/domain",
+      "reference": "data-grid-factory/control",
       "metric": "gzip",
       "maxIncreaseBytes": 0
     }

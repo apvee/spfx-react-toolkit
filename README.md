@@ -7,12 +7,12 @@ React providers, 46 hooks, public helpers and services for SharePoint Framework.
 Install in an SPFx host project:
 
 ```bash
-npm install @apvee/spfx-react-toolkit "@fluentui/react-migration-v8-v9@^9.9.12" "@fluentui/react-theme@^9.2.0" "@fluentui/react-utilities@^9.25.1" "@griffel/core@^1.19.2" "@griffel/react@^1.5.30" "@fluentui/react-shared-contexts@^9.25.2"
+npm install @apvee/spfx-react-toolkit "@fluentui/react-components@^9.74.9" "@fluentui/react-charts@^9.3.27" "@fluentui/react-migration-v8-v9@^9.10.20" "@fluentui/react-theme@^9.2.2" "@fluentui/react-utilities@^9.26.7" "@griffel/core@^1.21.4" "@griffel/react@^1.7.8" "@fluentui/react-shared-contexts@^9.26.4"
 ```
 
 The host supplies the React and SPFx runtimes. PnPjs APIs require the compatible `@pnp/core`, `@pnp/queryable` and `@pnp/sp` peers. Preserve versions compatible with your host; do not upgrade an existing SPFx toolchain just to install the toolkit.
 
-Form adds shared RHF and Fluent compat/icon peers. The tested React 17 / Fluent 9.72.3 baseline uses the following versions; preserve the compatible Fluent/Griffel subtree in the host lockfile:
+Form adds shared RHF and Fluent compat/icon peers. The tested React 17 / Fluent 9.74.9 baseline uses the following versions; preserve the compatible Fluent/Griffel subtree in the host lockfile:
 
 ```bash
 npm install react-hook-form@7.87.0 @fluentui/react-datepicker-compat@0.6.16 @fluentui/react-timepicker-compat@0.4.21 @fluentui/react-icons@2.0.312
@@ -57,6 +57,12 @@ import { useSx, width, typography } from '@apvee/spfx-react-toolkit/styles';
 ```
 
 Use an ESM-aware bundler with package exports and sideEffects support. Shared React/Griffel/Fluent peers, theme variables and existing lifecycle limits still apply; native Node/CJS execution and all peer versions are not verified. Unrelated root imports no longer install incidental PnP registrations: direct callers must import their own PnP features, including inside invoke/batch callbacks. See [package imports and the measured production contract](./docs/PACKAGE-IMPORTS.md) for resolver requirements, legacy leaves, generic examples, budgets and limitations. The lazy Imports sample exercises updated captured callbacks, mixed descriptors and shared provider direction; authenticated host checks remain separate.
+
+## DataGrid
+
+[DataGrid and createDataGrid](./docs/api/controls/data-grid.md) provide sixteen native Fluent cell presentations, typed JSX or immutable descriptors, controlled sort intent and selection, and official Charts Sparkline. Consumers supply stable row IDs and own row order. Import from the root, `/controls` or `/controls/data-grid`; create typed suites outside rendering. The complete family includes Charts/D3, while unrelated imports exclude it. The mandatory Charts peer starts at `^9.3.27`.
+
+The lazy **DataGrid** sample exercises all columns, dynamic invalid/missing values, off-page selection, resizing, loading and immutable chart updates. Authenticated SharePoint and screen-reader validation are separate checks.
 
 ## Form
 
@@ -127,11 +133,11 @@ The package declares SPFx peers `>=1.18.0 <2.0.0`; that range is a compatibility
 
 MIT — see [LICENSE](./LICENSE).
 
-Fluent and Griffel integration uses mandatory shared peer dependencies `@griffel/core` (`^1.19.2`), `@griffel/react` (`^1.5.30`), `@fluentui/react-shared-contexts` (`^9.25.2`), `@fluentui/react-migration-v8-v9` (`^9.9.12`), `@fluentui/react-theme` (`^9.2.0`), `@fluentui/react-components` (`^9.72.3`) and `@fluentui/react-utilities` (`^9.25.1`). The consuming project provides compatible shared packages; modern npm can install missing peers automatically. Existing compatible installations are reused. The SPFx test app declares these explicitly. Token-based styles need theme variables in scope; useSx needs no SPFx provider or new renderer. The sample uses optional `@fluentui/react-provider@9.22.8` for its theme controls. `tslib` is required by the SPFx packages that use it; this library’s ES2020 output does not import it.
+Fluent and Griffel integration uses mandatory shared peer dependencies `@griffel/core` (`^1.21.4`), `@griffel/react` (`^1.7.8`), `@fluentui/react-shared-contexts` (`^9.26.4`), `@fluentui/react-migration-v8-v9` (`^9.10.20`), `@fluentui/react-theme` (`^9.2.2`), `@fluentui/react-components` (`^9.74.9`) `@fluentui/react-utilities` (`^9.26.7`) and `@fluentui/react-charts` (`^9.3.27`). The consuming project provides compatible shared packages; modern npm can install missing peers automatically. Existing compatible installations are reused. The SPFx test app declares these explicitly. Token-based styles need theme variables in scope; useSx needs no SPFx provider or new renderer. The sample uses optional `@fluentui/react-provider@9.22.8` for its theme controls. `tslib` is required by the SPFx packages that use it; this library’s ES2020 output does not import it.
 
 ## Formatted text
 
-[`FormattedText`](./docs/api/controls/formatted-text.md) renders a native text element with the existing typography catalog, restricted inline Markdown, highlight and bounded overflow. `as` defaults to `span` independently of `variant`; valid `maxLines` adds block clamp layout even on span. The control has no `inline` prop and needs no SPFx provider. Supply Fluent theme variables and shared peers, including `@fluentui/react-components` (`^9.72.3`). The library supplies unified/Remark runtime dependencies; disabling Markdown skips parsing but does not guarantee parser removal from the bundle.
+[`FormattedText`](./docs/api/controls/formatted-text.md) renders a native text element with the existing typography catalog, restricted inline Markdown, highlight and bounded overflow. `as` defaults to `span` independently of `variant`; valid `maxLines` adds block clamp layout even on span. The control has no `inline` prop and needs no SPFx provider. Supply Fluent theme variables and shared peers, including `@fluentui/react-components` (`^9.74.9`). The library supplies unified/Remark runtime dependencies; disabling Markdown skips parsing but does not guarantee parser removal from the bundle.
 
 ```tsx
 import { FormattedText } from '@apvee/spfx-react-toolkit';
