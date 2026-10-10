@@ -83,14 +83,14 @@ These are preferences for controls actually exposed by the runtime, not a claim 
 
 | Role | Preferred model | Reasoning | Suitable work |
 | --- | --- | --- | --- |
-| Worker | GPT-6.1 Sol (`gpt-6.1-sol`) | low | Deterministic, low-risk, well-specified execution |
+| Worker | GPT-6 Luna (`gpt-6-luna`) | high | Deterministic, low-risk, well-specified execution |
 | Engineer | GPT-6.1 Sol (`gpt-6.1-sol`) | medium | Normal implementation, bounded debugging, tests, and repository investigation |
 | Reasoner / Orchestrator | GPT-6.1 Sol (`gpt-6.1-sol`) | high | Consequential ambiguity, difficult debugging, architecture, decomposition, integration, or review |
 
-- Use GPT-6.1 Sol for all roles where available.
+- Use GPT-6 Luna for Worker roles and GPT-6.1 Sol for Engineer and Reasoner / Orchestrator roles where available.
 - Model tier and reasoning effort are separate controls. Escalate for concrete uncertainty, failed attempts, hidden coupling, or higher impact; reduce effort when remaining work is deterministic, where supported.
 - Use `xhigh` only when `high` is insufficient for a concrete consequential task. Do not use higher effort merely because it is available.
-- Select only models/settings supported by the current runtime. If GPT-6.1 Sol is unavailable, explain the limitation and ask the user to select an alternative before invoking another model. Never claim a model or reasoning change that did not occur.
+- Select only models/settings supported by the current runtime. If the preferred model for the assigned role is unavailable, explain the limitation and ask the user to select an alternative before invoking another model. Never claim a model or reasoning change that did not occur.
 - Exclude GPT-6 Astra from routine selection, escalation, delegation, and review. Agent-initiated Astra use requires a concrete unmet requirement, an explanation of why GPT-6.1 Sol at an appropriate supported reasoning effort is insufficient, and explicit user confirmation.
 - An explicit user selection of Astra counts as confirmation. If the runtime identifies the active session as Astra and no such authorization is established, pause and ask for confirmation or a non-Astra selection. Do not infer the active model from assumptions or branding.
 - Do not create a subagent merely to change model or reasoning settings. Model preferences do not authorize delegation.
@@ -128,12 +128,23 @@ These are preferences for controls actually exposed by the runtime, not a claim 
 - For normal new behavior, add/update meaningful tests; TDD is optional unless required by applicable instructions or useful for the risk. Prefer strict test-first work when practical for security/authorization, financial calculations, parsers, persistence transformations, destructive migrations, and correctness-critical algorithms or state transitions.
 - Once strict test-first work is selected, preserve the failing-test, minimum implementation, passing-test, and re-verification sequence.
 
+## Scoped verification
+
+- For localized changes, run only the tests covering the modified behavior, affected modules and directly affected consumers. Apply this scope during implementation and at ordinary task completion.
+- For mechanical or documentation-only changes, use relevant static checks; do not run behavioral tests without a concrete reason.
+- Do not automatically run root `npm test`, `npm run verify` or `npm run verify:package` after every change.
+- Expand verification only when failures or demonstrated coupling indicate impact beyond the initially affected area.
+- Run full repository gates only when explicitly requested by the user, preparing a release, or changing demonstrated repository-wide contracts such as shared test harnesses, workspace tooling, dependency resolution or package/import boundaries. State the trigger before launching them.
+- Ordinary task completion is not a request for repository-wide review.
+- These scope rules override generic skill defaults that require the entire test suite after every implementation or bug fix.
+- Report the commands executed, what they verify and any remaining limitations. Do not claim the entire repository passes when only targeted checks were run.
+
 ## Verification and completion evidence
 
 - Before claiming completion, a fix, passing checks, or readiness, identify the command/observation supporting that specific claim, run it fresh, inspect output and exit status, and confirm that it proves the claim.
-- Use the smallest sufficient verification during iteration; this does not waive documented project gates. Do not rely solely on confidence, old results, code inspection, partial checks, or a subagent's success report.
+- Select verification according to Scoped verification above. Do not rely solely on confidence, old results, code inspection, partial checks, or a subagent's success report.
 - Root `npm test` runs Node behavioral tests. `npm run typecheck` and `npm run lint` cover the workspaces; `npm run build:library` precedes `npm run build:app`.
-- Run `npm run verify` and `npm run verify:package` before requesting development review, as required by `docs/DEVELOPMENT.md`. These commands do not authorize publication or deployment.
+- Full repository gates are `npm run verify` and `npm run verify:package`; run them only under the conditions in Scoped verification above and `docs/DEVELOPMENT.md`. These commands do not authorize publication or deployment.
 - For instruction/documentation-only edits, inspect the diff, check whitespace and referenced paths/commands, and assess internal consistency. Run additional documentation checks if the affected content requires them; full application builds are not needed solely for an `AGENTS.md` edit.
 - Build, local tests, and package verification do not establish authenticated SharePoint-host behavior or tenant permissions. Keep real-host results separate and label unavailable checks as not executed or blocked; do not present simulations as tenant passes.
 - Confirm requested behavior, scope, likely regressions, justified complexity, and material limitations before completion. If a required check cannot run, report what was verified and what remains unverified.

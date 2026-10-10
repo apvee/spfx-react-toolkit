@@ -78,7 +78,7 @@ Badge colors and appearance are configured per mapped value, for example `values
 
 People uses native `AvatarGroup layout="stack"`. The Tags `+N` button sizes to its text and native padding, without a fixed minimum width; native Overflow still measures and recovers hidden tags. Authored Boolean and action-menu icons use native 20px Regular variants, as do the sample's supplied icons. Consumer-provided icon elements keep their own presentation.
 
-Rating displays only marigold stars. Its numeric value and optional vote count are included in the accessible description, without visible value/count text. Fluent's numeric slots require the documented external `null` shorthand to disable their automatic rendering. The default icon is `Star20Regular` with native `size="large"` (20px); `ratingDisplayProps` retains explicit consumer options, including color and compact mode. An explicitly supplied `count` is independent of the maximum: zero is described, while `undefined` omits it. Localize its accessible vote label through grid strings:
+Rating displays only filled marigold stars. Its numeric value and optional vote count are included in the accessible description, without visible value/count text. Fluent's numeric slots require the documented external `null` shorthand to disable their automatic rendering. The default icon is `Star20Filled` with native `size="large"` (20px); `ratingDisplayProps` retains explicit consumer options, including icon, color and compact mode. An explicitly supplied `count` is independent of the maximum: zero is described, while `undefined` omits it. Localize its accessible vote label through grid strings:
 
 ```tsx
 <Grid items={rows} getRowId={row => row.id} columns={columns}
@@ -629,7 +629,7 @@ Readonly rating presentation.
 | --- | --- |
 | `DataGridRatingOptions.max` | Whole number greater than one; defaults to five. |
 | `DataGridRatingOptions.count` | Optional non-negative whole number of votes for the accessible description only. Zero is included; undefined omits it. Localize with strings.ratingCount. |
-| `DataGridRatingOptions.ratingDisplayProps` | Native visual options, excluding owned value and range. Defaults to marigold, Star20Regular and native large (20px); explicit consumer overrides remain supported. Numeric slots are hidden. |
+| `DataGridRatingOptions.ratingDisplayProps` | Native visual options, excluding owned value and range. Defaults to marigold, Star20Filled and native large (20px); explicit consumer overrides remain supported. Numeric slots are hidden. |
 
 ### `DataGridSparklineOptions`
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { mergeClasses } from '@griffel/react';
 import { AvatarGroup, AvatarGroupItem, AvatarGroupPopover, Badge, Button, Link, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, Persona, ProgressBar, RatingDisplay, Spinner } from '@fluentui/react-components';
-import { CheckmarkCircle20Regular, DismissCircle20Regular, MoreHorizontal20Regular, Star20Regular } from '@fluentui/react-icons';
+import { CheckmarkCircle20Regular, DismissCircle20Regular, MoreHorizontal20Regular, Star20Filled } from '@fluentui/react-icons';
 import type { DataGridCellRenderContext } from '../data-grid-cell.types';
 import type { ResolvedDataGridColumn, ResolvedDataGridPerson } from '../column-normalization.internal';
 import type { DataGridAction } from '../data-grid-column.types';
@@ -134,7 +134,7 @@ function DataGridNativeCell<T extends object>({ context }: {
             // rendered numeric labels. Their meaning remains in the root label.
             return <RatingDisplay {...column.options.ratingDisplayProps}
                 color={column.options.ratingDisplayProps?.color ?? 'marigold'}
-                icon={column.options.ratingDisplayProps?.icon ?? Star20Regular}
+                icon={column.options.ratingDisplayProps?.icon ?? Star20Filled}
                 size={column.options.ratingDisplayProps?.size ?? 'large'}
                 value={value.value} max={maximum} aria-label={label}
                 valueText={null} countText={null}/>;

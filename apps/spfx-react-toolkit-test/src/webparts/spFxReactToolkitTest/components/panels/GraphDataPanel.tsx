@@ -103,6 +103,9 @@ const GraphDataPanel: React.FC = () => {
       </DemoCard>
 
       <DemoCard title="OneDrive AppData" iconName="OneDrive" error={appData.error ?? appData.writeError}>
+        <MessageBar messageBarType={MessageBarType.info}>
+          Load reads the demo JSON from OneDrive. A successful read updates Ready and the OneDrive data below; failures remain visible for retry.
+        </MessageBar>
         <InfoGrid
           rows={[
             { label: 'Ready', value: appData.isReady ? 'Yes' : 'No', icon: 'CheckMark' },

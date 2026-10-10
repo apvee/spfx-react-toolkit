@@ -310,7 +310,7 @@ export interface DataGridProgressOptions extends DataGridNumberOptions {
     /** Native visual options, excluding owned value and accessibility. */
     progressBarProps?: Pick<ProgressBarProps, 'color' | 'shape' | 'thickness'>;
 }
-/** Readonly marigold stars with an accessible value/maximum and optional vote count. */
+/** Readonly filled marigold stars with an accessible value/maximum and optional vote count. */
 export interface DataGridRatingOptions<TItem> {
     /** Whole number greater than one; defaults to five. */
     max?: number;
@@ -319,7 +319,7 @@ export interface DataGridRatingOptions<TItem> {
      * Localize its text with strings.ratingCount. */
     count?: number | ((context: DataGridValueContext<TItem, number>) => number | undefined);
     /** Native visual options, excluding owned value and range.
-     * Defaults to marigold, Star20Regular and native large (20px);
+     * Defaults to marigold, Star20Filled and native large (20px);
      * explicit consumer overrides are retained. Numeric slots are hidden. */
     ratingDisplayProps?: Pick<RatingDisplayProps, 'color' | 'compact' | 'icon' | 'size'>;
 }

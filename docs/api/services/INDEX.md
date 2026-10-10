@@ -503,6 +503,8 @@ Returned methods:
 
 `read` returns `{ data: undefined, isNotFound: true }` for recognized not-found Graph errors. It throws JSON parse errors for invalid stored content and rethrows non-not-found Graph errors.
 
+Reads first obtain complete Graph metadata, without projecting away the download annotation, and immediately fetch the preauthenticated HTTPS `@microsoft.graph.downloadUrl` with `credentials: 'omit'`, without Graph authorization headers. This follows [Microsoft's browser download guidance](https://learn.microsoft.com/en-us/graph/api/driveitem-get-content?view=graph-rest-1.0#downloading-files-in-javascript-apps) and avoids the authenticated `/content` redirect/CORS failure. Missing or invalid download metadata and unsuccessful HTTP downloads are errors. Native `fetch` is required. Writes retain the Graph `/content` endpoint.
+
 ## User Photo Service
 
 ### `createSPFxUserPhotoService`

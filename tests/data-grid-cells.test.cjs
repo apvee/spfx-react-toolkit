@@ -71,6 +71,17 @@ test('rating defaults to native marigold and preserves an explicit consumer colo
     assert.equal(defaultClass, selectedClass({ ratingDisplayProps: { color: 'marigold' } }));
     assert.notEqual(defaultClass, selectedClass({ ratingDisplayProps: { color: 'neutral' } }));
 });
+test('rating defaults to filled stars and preserves an explicit outline icon', () => {
+    const { Star20Filled, Star20Regular } = require('@fluentui/react-icons');
+    const paths = options => Array.from(
+        render(col('rating', options), { value: 4.5 }).querySelectorAll('.fui-RatingItem svg path'),
+        path => path.getAttribute('d'),
+    );
+    const defaultPaths = paths({});
+    assert.ok(defaultPaths.length > 0);
+    assert.deepEqual(defaultPaths, paths({ ratingDisplayProps: { icon: Star20Filled } }));
+    assert.notDeepEqual(defaultPaths, paths({ ratingDisplayProps: { icon: Star20Regular } }));
+});
 test('native scalar and mapped cells preserve valid zero false empty and accessible icon labels', () => {
     assert.equal(render(col('number'), { value: 0 }).textContent, '0');
     assert.equal(render(col('text'), { value: '' }).textContent, '');

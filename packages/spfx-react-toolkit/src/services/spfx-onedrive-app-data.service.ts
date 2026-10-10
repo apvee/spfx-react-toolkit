@@ -7,7 +7,22 @@ export interface SPFxOneDriveAppDataReadResult<T = unknown> {
   readonly isNotFound: boolean;
 }
 
+/** JSON reads and writes in the authenticated user's OneDrive app root. */
 export interface SPFxOneDriveAppDataService {
+  /**
+   * Reads metadata through Graph, then downloads JSON from its preauthenticated
+   * HTTPS URL using native fetch without authorization headers or cookies.
+   * This avoids Graph's browser-incompatible authenticated /content redirect.
+   *
+   * @param fileName - JSON file name in the app root.
+   * @param folder - Optional sanitized folder namespace.
+   * @returns Parsed data, or isNotFound with undefined data for a missing file.
+   * @throws Graph, download, invalid metadata or JSON parsing errors.
+   * @example
+   * ```ts
+   * const result = await appData.read<Settings>('settings.json', 'my-app');
+   * ```
+   */
   read: <T = unknown>(
     fileName: string,
     folder?: string
@@ -68,6 +83,26 @@ function parseOneDriveAppData<T>(fileContent: unknown): T {
   return fileContent as T;
 }
 
+function getDownloadUrl(driveItem: unknown): string {
+  const downloadUrl = typeof driveItem === 'object' && driveItem !== null &&
+    '@microsoft.graph.downloadUrl' in driveItem
+    ? driveItem['@microsoft.graph.downloadUrl']
+    : undefined;
+  if (typeof downloadUrl !== 'string') {
+    throw new Error('OneDrive metadata did not provide a download URL.');
+  }
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(downloadUrl);
+  } catch {
+    throw new Error('OneDrive download URL is invalid.');
+  }
+  if (parsedUrl.protocol !== 'https:') {
+    throw new Error('OneDrive download URL must use HTTPS.');
+  }
+  return downloadUrl;
+}
+
 export function createSPFxOneDriveAppDataService(
   graphClient: MSGraphClientV3
 ): SPFxOneDriveAppDataService {
@@ -76,10 +111,17 @@ export function createSPFxOneDriveAppDataService(
     folder?: string
   ): Promise<SPFxOneDriveAppDataReadResult<T>> => {
     const apiPath = buildOneDriveAppDataPath(fileName, folder);
-    let fileContent: unknown;
+    let driveItem: unknown;
 
     try {
-      fileContent = await graphClient.api(apiPath).get();
+      // Graph /content redirects with 302, which fails browser CORS preflight
+      // when the SDK supplies Authorization. Fetch its preauthenticated URL
+      // directly, without forwarding Graph authorization or browser cookies.
+      // Read complete metadata: projection on this special-folder path can
+      // retain only id/etag and omit the download annotation.
+      driveItem = await graphClient
+        .api(apiPath.replace(/:\/content$/, ''))
+        .get();
     } catch (err) {
       if (isNotFoundError(err)) {
         return {
@@ -90,6 +132,14 @@ export function createSPFxOneDriveAppDataService(
 
       throw err;
     }
+
+    // Only Graph metadata can confirm absence. A failed or expired download
+    // URL must remain an error so createIfMissing cannot overwrite a file.
+    const response = await fetch(getDownloadUrl(driveItem), { credentials: 'omit' });
+    if (!response.ok) {
+      throw new Error(`Failed to download OneDrive file: HTTP ${response.status}`);
+    }
+    const fileContent = await response.text();
 
     return {
       data: parseOneDriveAppData<T>(fileContent),

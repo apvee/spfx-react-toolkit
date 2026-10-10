@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  FocusZoneDirection,
   MessageBar,
   MessageBarType,
   Pivot,
@@ -84,7 +85,11 @@ const SpFxReactToolkitTest: React.FC = () => {
   return (
     <section className={`${styles.spFxReactToolkitTest} ${hasTeamsContext ? styles.teams : ''}`}>
       <CoverageOverview />
-      <Pivot aria-label="SPFx React Toolkit Demo Tabs" style={{ marginTop: 20 }}>
+      <Pivot
+        aria-label="SPFx React Toolkit Demo Tabs"
+        className={styles.demoTabs}
+        focusZoneProps={{ className: styles.demoTabList, direction: FocusZoneDirection.bidirectional }}
+      >
         {demoRegistry.map(entry => (
           <PivotItem key={entry.key} headerText={entry.title} itemIcon={entry.iconName}>
             <DynamicDemoPanel entry={entry} />

@@ -10,6 +10,16 @@
   }
 }
 
+.demoTabs {
+  margin-top: 20px;
+}
+
+.demoTabList:global(.ms-Pivot) {
+  display: flex;
+  flex-wrap: wrap;
+  white-space: normal;
+}
+
 .infoRow {
   display: flex;
   align-items: center;

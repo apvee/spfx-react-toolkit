@@ -48,7 +48,15 @@ npm run build:app
 | `npm run bundle:ship` | Builds library, then app `gulp bundle --ship` |
 | `npm run package:solution` | Ship bundle, then app `gulp package-solution --ship` |
 
-Run `npm run verify` and `npm run verify:package` before requesting review. `prepublishOnly` is a lifecycle guard, not a publishing instruction: root runs clean/build/verify; the library workspace has its own clean/build/lint/test guard. This workflow does not authorize npm publication, pushes or tenant deployment.
+## Verification scope
+
+For localized changes, run only the tests covering the modified behavior, affected modules and directly affected consumers. Use relevant workspace/static checks where needed. Mechanical and documentation-only edits normally need diff, whitespace and consistency checks. Apply this scope during implementation and at ordinary task completion; completing a task is not a request for repository-wide review.
+
+Do not automatically run root `npm test`, `npm run verify` or `npm run verify:package` after every change. Expand verification only when failures or demonstrated coupling indicate broader impact. Full repository gates apply only when explicitly requested by the user, preparing a release, or changing demonstrated repository-wide contracts such as shared test harnesses, workspace tooling, dependency resolution or package/import boundaries. State the trigger before launching them. These scope rules also override generic skill defaults requiring the entire suite after each implementation or bug fix.
+
+The feature-specific checklists below identify relevant checks; references to full gates follow this scope policy. Report commands, covered behavior and remaining limitations without presenting targeted results as a full repository pass.
+
+`prepublishOnly` remains a lifecycle guard, not a publishing instruction: root runs clean/build/verify; the library workspace has its own clean/build/lint/test guard. This workflow does not authorize npm publication, pushes or tenant deployment.
 
 ## DataGrid checks
 
@@ -63,7 +71,7 @@ SX_BROWSER_DATA_GRID_ONLY=1 node scripts/check-sx-browser-fixture.cjs
 STYLES_PANEL_DATA_GRID_ONLY=1 node scripts/check-styles-panel-browser.cjs
 ```
 
-Use the existing fixture server on port 4317 for source checks; the compiled runner owns port 4320. Supply the installed Playwright module/browser through the existing browser-runner environment options. Restart serve after library changes. Record source, compiled sample and authenticated [SharePoint/screen-reader checks](./SHAREPOINT-VALIDATION.md#datagrid) separately. `npm run verify` and `npm run verify:package` remain the final gates; the latter installs a standalone tarball consumer and measures the complete Grid/Charts/D3 family at root/domain/control imports.
+Use the existing fixture server on port 4317 for source checks; the compiled runner owns port 4320. Supply the installed Playwright module/browser through the existing browser-runner environment options. Restart serve after library changes. Record source, compiled sample and authenticated [SharePoint/screen-reader checks](./SHAREPOINT-VALIDATION.md#datagrid) separately. When [full verification applies](#verification-scope), run `npm run verify` and `npm run verify:package`; the latter installs a standalone tarball consumer and measures the complete Grid/Charts/D3 family at root/domain/control imports.
 
 The optional chart failure probe is separate from normal browser acceptance. Add `DATA_GRID_CHART_PROBE=1` to both the selected Grid-only builder and its runner. The fixture injects a named rendering failure into a wrapper that delegates successful renders to the actual Charts package; it checks summary preservation, native keyboard retry and reset after changed observations. It does not establish that valid input caused the native chart to throw. Rebuild without the flag and restart the source fixture server afterward. Normal acceptance continues to require zero console/page errors; the probe admits only its exact expected injected diagnostics.
 
@@ -77,7 +85,7 @@ Run the focused family tests with `node --test tests/form-*.test.cjs`. Core fail
 
 The existing source fixture mounts Form through its source entry. The compiled panel fixture mounts the actual FormPanel through the built library. Build library before app, rebuild fixtures and restart any running serve process after source changes. Focused browser runners use `SX_BROWSER_FORM_ONLY=1` and `STYLES_PANEL_FORM_ONLY=1`; record each run independently and inspect screenshots/console errors. These checks do not establish authenticated SharePoint or screen-reader behavior. Keep those [host results](./SHAREPOINT-VALIDATION.md#form) explicitly separate.
 
-Complete `npm run verify` and `npm run verify:package` for final development review. The isolated tarball consumer must resolve root/domain/form exports and distinct input/output declarations, provision the fixed shared peers and verify nested compat/RHF identity. The complete compound family may retain all adapters; unrelated imports must exclude Form/RHF/resolver/date/time modules. Preserve the existing alias budgets and frozen baseline.
+When [full verification applies](#verification-scope), complete `npm run verify` and `npm run verify:package`. The isolated tarball consumer must resolve root/domain/form exports and distinct input/output declarations, provision the fixed shared peers and verify nested compat/RHF identity. The complete compound family may retain all adapters; unrelated imports must exclude Form/RHF/resolver/date/time modules. Preserve the existing alias budgets and frozen baseline.
 
 ## Local SPFx debug
 
@@ -143,7 +151,7 @@ Local Node/DOM checks and the standalone browser fixture establish their own beh
 
 ## Production import gates and baseline review
 
-See [package imports](./PACKAGE-IMPORTS.md) for canonical aliases, resolver requirements and limits. The tarball now also includes `lib/styles`. Run the documented development review gates from the root:
+See [package imports](./PACKAGE-IMPORTS.md) for canonical aliases, resolver requirements and limits. The tarball now also includes `lib/styles`. When [full verification applies](#verification-scope), run these gates from the root:
 
 ```bash
 npm run verify
@@ -204,7 +212,7 @@ The app normally imports the root. Only `ImportsPanel.tsx` has the exact approve
 
 The lazy `formatted-text` entry (`spfx-demo-formatted-text`) consumes the compiled library root. Its native labeled controls edit source, all presentation props, bounded width and direction. A shared FluentProvider supplies light/dark themes; the preview uses the existing `foreground.subtle` role for comparison. Mixed JSX, an inspect-ref button and click observations exercise native forwarding. See [FormattedText](./api/controls/formatted-text.md) for semantic/overflow precedence, Markdown fallback and dependency limits.
 
-Run `node --test tests/demo-formatted-text.test.cjs` for sample marker coverage and `npm run verify:examples` for the registry. Marker coverage does not execute the sample. The existing `tests/fixtures/sx-browser/` fixture and browser build/serve/check commands above include FormattedText layout/theme cases alongside the original sx cases. Record DOM/browser evidence separately from authenticated host execution. Build library before app, then restart a running serve before evaluating changes; run the existing `verify` and `verify:package` gates before review. The [FormattedText host checklist](./SHAREPOINT-VALIDATION.md#formattedtext) is NOT EXECUTED until a tenant run records it.
+Run `node --test tests/demo-formatted-text.test.cjs` for sample marker coverage and `npm run verify:examples` for the registry. Marker coverage does not execute the sample. The existing `tests/fixtures/sx-browser/` fixture and browser build/serve/check commands above include FormattedText layout/theme cases alongside the original sx cases. Record DOM/browser evidence separately from authenticated host execution. Build library before app, then restart a running serve before evaluating changes; run the existing `verify` and `verify:package` gates when [full verification applies](#verification-scope). The [FormattedText host checklist](./SHAREPOINT-VALIDATION.md#formattedtext) is NOT EXECUTED until a tenant run records it.
 
 The `.docs/` directory is local and excluded from Git. Verification commands may create evidence there; reproducible inputs stay versioned under `tests/fixtures/`. The legacy style measurement input is `tests/fixtures/sx-bundle/baseline.json`.
 
@@ -214,11 +222,11 @@ The lazy `auto-skeleton` entry (`spfx-demo-auto-skeleton`) consumes the compiled
 
 Run `node --test tests/demo-auto-skeleton.test.cjs` for sample marker coverage and `npm run verify:examples` for the registry. Marker tests do not execute the scenario. Existing source and compiled-sample browser fixtures include AutoSkeleton. The source fixture exposes `window.autoSkeletonFixture.render`, `focusAndLoad` and `scrollRoot`, with `as-` DOM IDs; it inherits direction/theme from `window.sxFixture.render`. Observe real text/shape geometry, resize while hidden, root border/padding/scroll, exclusion subtrees, descendant visibility overrides, focus/inert, empty geometry, two independent instances and Fluent media preferences. New geometry CSS may persist for the renderer lifetime; repeated geometry should reuse rules.
 
-Build the library before the app and restart an active serve after source changes. Run the established `npm run verify` and `npm run verify:package` gates before review, including the 54 root/domain/leaf bundle variants. Record local browser execution separately. The authenticated [AutoSkeleton checklist](./SHAREPOINT-VALIDATION.md#autoskeleton) remains **NOT EXECUTED** until a tenant run records it.
+Build the library before the app and restart an active serve after source changes. When [full verification applies](#verification-scope), run the established `npm run verify` and `npm run verify:package` gates, including the 54 root/domain/leaf bundle variants. Record local browser execution separately. The authenticated [AutoSkeleton checklist](./SHAREPOINT-VALIDATION.md#autoskeleton) remains **NOT EXECUTED** until a tenant run records it.
 
 ## StateMessage development
 
-The standalone control composes FormattedText, Fluent Button and useSx container descriptors. Run `node --test tests/state-message*.test.cjs tests/demo-state-message.test.cjs` for contract, artwork/theme, types and demo checks. Source and compiled-sample browser fixtures exercise container widths, light/dark, RTL, actions and forced colors. Build library before app and restart serve after library changes. Run `npm run verify` and `npm run verify:package` before review; the complete contract now has 54 bundle variants. Keep local browser results separate from the [authenticated checklist](./SHAREPOINT-VALIDATION.md#statemessage).
+The standalone control composes FormattedText, Fluent Button and useSx container descriptors. Run `node --test tests/state-message*.test.cjs tests/demo-state-message.test.cjs` for contract, artwork/theme, types and demo checks. Source and compiled-sample browser fixtures exercise container widths, light/dark, RTL, actions and forced colors. Build library before app and restart serve after library changes. When [full verification applies](#verification-scope), run `npm run verify` and `npm run verify:package`; the complete contract now has 54 bundle variants. Keep local browser results separate from the [authenticated checklist](./SHAREPOINT-VALIDATION.md#statemessage).
 
 ## SettingsGroup and AccordionGroup development
 
@@ -226,6 +234,8 @@ Both controls compose Fluent Card/Accordion, native semantic text wrappers and u
 
 Run `node --test tests/groups*.test.cjs tests/demo-groups.test.cjs`, `npm run verify:public-docs` and `npm run verify:examples`. The lazy GroupsPanel uses root imports and exposes labeled settings, controlled expansion, multiple mode, mounted note persistence/unmount reset, native refs, hidden/disabled, theme, RTL and widths 320/500/639/640/900. Marker checks do not execute the scenario. Source and compiled-sample browser fixtures exercise layout, expansion and actual focus behavior; record those observations separately.
 
-Build with `npm run build:library` before `npm run build:app`, and restart an active serve after library changes. Run `npm run verify` and `npm run verify:package` before review. The complete bundle contract now has 60 variants, adding root/domain/control variants for both groups without changing retention budgets. Authenticated [group host checks](./SHAREPOINT-VALIDATION.md#settingsgroup-and-accordiongroup) remain **NOT EXECUTED** until a tenant run records them.
+Build with `npm run build:library` before `npm run build:app`, and restart an active serve after library changes. When [full verification applies](#verification-scope), run `npm run verify` and `npm run verify:package`. The complete bundle contract now has 60 variants, adding root/domain/control variants for both groups without changing retention budgets. Authenticated [group host checks](./SHAREPOINT-VALIDATION.md#settingsgroup-and-accordiongroup) remain **NOT EXECUTED** until a tenant run records them.
 
 The coordinated Fluent/Charts baseline uses Charts 9.3.27 and locks Tabster 8.8.0 with shared Keyborg 2.14.1. Preserve this compatible navigation subtree: Tabster 8.8.1 resolves Keyborg 3 alongside Fluent’s Keyborg 2 and the actual React 17 cleanup probe detects a registry collision. This lock selection satisfies Fluent’s published range; no overrides are used. Native providers may have distinct package versions, but must resolve the same shared contexts, theme and Griffel renderer.
+
+The sample's webpack configuration applies `config/keyborg-instance-id-loader.cjs` to Keyborg's installed ESM/CJS entry. Independently bundled SharePoint and solution copies share `window.__keyborg`, while Keyborg 2.14.1's instance counter is module-local. The loader adds a 128-bit random suffix to instance IDs using browser `crypto.getRandomValues`, preventing one bundle from overwriting another's references. Native keyboard subscriptions and cleanup remain intact; diagnostics are not suppressed and no global registry is added. The loader fails if its reviewed declaration changes. Run `node --test tests/spfx-keyborg.test.cjs tests/spfx-debug-port.test.cjs` when changing this integration. This is a sample build workaround; published library output and other consumers' build configurations are not rewritten.

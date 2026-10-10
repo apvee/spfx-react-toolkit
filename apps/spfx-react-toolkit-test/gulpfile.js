@@ -12,6 +12,15 @@ build.addSuppression(`Warning - [sass] The local CSS class 'ms-Grid' is not came
 
 build.configureWebpack.mergeConfig({
   additionalConfiguration: (configuration) => {
+    const keyborgRoot = path.dirname(require.resolve('keyborg/package.json'));
+    configuration.module = configuration.module || {};
+    configuration.module.rules = configuration.module.rules || [];
+    // SharePoint and other solutions have independently bundled Keyborg copies.
+    // Keep the tested ID-collision fix confined to this sample's webpack build.
+    configuration.module.rules.push({
+      include: [path.join(keyborgRoot, 'dist/index.js'), path.join(keyborgRoot, 'dist/index.cjs')],
+      use: path.join(__dirname, 'config/keyborg-instance-id-loader.cjs'),
+    });
     const serve = require('./config/serve.json');
     const origin = `${serve.https ? 'https' : 'http'}://${serve.hostname || 'localhost'}:${serve.port || 4321}`;
     for (const plugin of configuration.plugins || []) {

@@ -85,7 +85,7 @@ const DataGridPanel: React.FC = () => {
   return <FluentProvider theme={theme === 'dark' ? webDarkTheme : theme === 'highContrast' ? teamsHighContrastTheme : webLightTheme} dir={dir}>
   <section id="data-grid-demo" className={sx(flex.column, gap.medium)}>
     <h3>DataGrid</h3>
-    <p>All sixteen native cell presentations. The consumer owns rows, sorting intent and selection.</p>
+    <p>All sixteen native cell presentations, including filled marigold rating stars. The consumer owns rows, sorting intent and selection.</p>
     <div className={sx(styles.controls, flex.row, flex.wrap, gap.medium)}>
       <label>Theme <Select id="dg-theme" value={theme} onChange={event => setTheme(event.target.value)}><option value="light">Light</option><option value="dark">Dark</option><option value="highContrast">High contrast</option></Select></label>
       <label>Direction <Select id="dg-dir" value={dir} onChange={event => setDir(event.target.value === 'rtl' ? 'rtl' : 'ltr')}><option value="ltr">LTR</option><option value="rtl">RTL</option></Select></label>

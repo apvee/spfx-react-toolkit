@@ -48,6 +48,8 @@ export interface SPFxOneDriveAppDataResult<T> {
   /** 
    * Manually load/reload the file from OneDrive.
    * Updates data, isLoading, and error states.
+   * Reads Graph metadata, then downloads its JSON from the preauthenticated
+   * HTTPS URL without forwarding authorization headers or browser cookies.
    * 
    * @returns Promise that resolves when load completes
    * 
