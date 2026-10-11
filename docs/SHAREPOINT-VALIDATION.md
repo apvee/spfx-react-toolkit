@@ -219,6 +219,7 @@ Authenticated checks and screen-reader observations are **NOT EXECUTED** until a
 | Arrays and sections | Add/remove/move nested records. Stable item keys preserve identity/drafts; reset after a structural change targets current owners. Section focus and localized announcements follow the action. | NOT EXECUTED |
 | Files | Choose real files, clear/reset, preserve an explicitly dirty current selection. An external FileList never masquerades as a restored native selection. No upload occurs. | NOT EXECUTED |
 | Labels and keyboard | Verify Field label/hint/error IDs, first enabled composite error focus, tag removal, date/time popup navigation, Add/Remove/Move focus and skipped hidden/inert/disabled targets with keyboard and a screen reader. | NOT EXECUTED |
+| Settings field rows | In Form, click Reference title to focus its native input and Enabled title to toggle its switch. Clear Reference and save: its hint and error remain associated, required metadata stays truthful. Save/reset use the same record; test 320/500/900px, RTL and two instances. | NOT EXECUTED |
 | Host geometry/lifecycle | Check light/dark, RTL, narrow containers, forced colors and two independent web parts. Remove/reinsert one instance; no value/reset coupling or unhandled exceptions. | NOT EXECUTED |
 
 ## StateMessage

@@ -36,11 +36,43 @@ async function exerciseForm({ page, url, output, label, boundary, check, console
       return Math.round(hint.getBoundingClientRect().top - content.getBoundingClientRect().bottom);
     }), 8);
   }
+  const settings = node('settings-group');
+  const referenceTitle = control('Input').locator('label').filter({ hasText: 'Reference' });
+  const enabledTitle = control('Switch').locator('label').filter({ hasText: 'Enabled' });
+  const descriptions = member => field(member).evaluate(element =>
+    (element.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean)
+      .map(id => document.getElementById(id)?.textContent || ''));
+  await check('Settings row supplies input accessible name', await settings.getByRole('textbox', { name: 'Reference', exact: true }).count(), 1);
+  await check('Settings row supplies switch accessible name', await settings.getByRole('switch', { name: 'Enabled', exact: true }).count(), 1);
+  await check('Settings reference title appears once', await control('Input').getByText('Reference', { exact: true }).count(), 1);
+  await check('Settings reference native label targets actual input', await referenceTitle.getAttribute('for'), await field('Input').getAttribute('id'));
+  await check('Settings reference inherits description', (await descriptions('Input')).some(text => text.includes('Required record identity.')), true);
+  await check('Settings switch inherits description', (await descriptions('Switch')).some(text => text.includes('persisted only by Save record.')), true);
+  await referenceTitle.click();
+  await check('Settings native label focuses input', await field('Input').evaluate(element => element === document.activeElement), true);
+  await enabledTitle.click(); await state('enabled', false);
+  await enabledTitle.click(); await state('enabled', true);
+  await check('Settings label interaction never saves', await node('save-count').textContent(), 'Save callback count: 0');
+  await node('reset').click();
+  await check('Settings reset clears interaction state', JSON.parse(await node('dirty').textContent()), { isDirty: false, fields: {} });
+  for (const width of [320, 500, 900]) {
+    await node('resize').selectOption(String(width)); await settle();
+    await check(`Settings ${width}px actual frame width`, await node('frame').evaluate(element => element.clientWidth), width);
+    await check(`Settings ${width}px layout fits`, await settings.evaluate(element => element.scrollWidth <= element.clientWidth + 1), true);
+    await settings.screenshot({ path: path.join(output, `${label}-settings-${width}.png`) });
+  }
+  await node('direction').check(); await settle();
+  await check('Settings inherits RTL direction', await settings.evaluate(element => getComputedStyle(element).direction), 'rtl');
+  await node('resize').selectOption('320'); await settle();
+  await check('Settings compact RTL fits', await settings.evaluate(element => element.scrollWidth <= element.clientWidth + 1), true);
+  await settings.screenshot({ path: path.join(output, `${label}-settings-320-rtl.png`) });
+  await node('direction').uncheck(); await node('resize').selectOption('900'); await settle();
   const initial = await live();
   await check('Read-only mirror native property', await node('root').getByLabel('Read-only reference preview', { exact: true }).evaluate(e => e.readOnly), true);
   await check('Native required presentation', await field('Input').evaluate(e => e.required), true);
   await check('Form complete native adapter inventory', await page.locator('[data-form-control]').count(), 22);
-  await check('Form authored probes use classes', await page.locator('[data-form-demo][style]').count(), 0);
+  // Screenshot caret masking can leave empty style attributes on native inputs.
+  await check('Form authored probes use classes', await page.locator('[data-form-demo][style]').evaluateAll(nodes => nodes.filter(element => element.style.length > 0).length), 0);
   await field('Input').fill('Browser order'); await field('Input').press('Tab'); await state('reference', 'Browser order');
   await field('Textarea', 'textarea').fill('Browser multiline\nnotes'); await state('notes', 'Browser multiline\nnotes');
   await field('SearchBox').fill('browser search'); await state('query', 'browser search');
@@ -149,6 +181,9 @@ async function exerciseForm({ page, url, output, label, boundary, check, console
   }
   await field('Input').fill(''); await field('Input').press('Tab'); await node('submit').click();
   await check('Rules required error visible', (await node('errors').textContent()).includes('Reference is required'), true);
+  await check('Settings error preserves row hint relationship', (await descriptions('Input')).some(text => text.includes('Required record identity.')), true);
+  await check('Settings error is described by native input', (await descriptions('Input')).some(text => text.includes('Reference is required')), true);
+  await check('Settings required error marks actual input invalid', await field('Input').getAttribute('aria-invalid'), 'true');
   await check('Required failure focuses native input', await page.locator(':focus').getAttribute('name'), 'reference');
   await field('Input').fill('Snapshot before save'); await node('request-submit').click();
   await node('status').filter({ hasText: 'Saving' }).waitFor();
@@ -167,6 +202,8 @@ async function exerciseForm({ page, url, output, label, boundary, check, console
   await node('save-fail').uncheck(); await node('submit').click(); await node('status').filter({ hasText: 'Saved; pending: false' }).waitFor();
   await check('Save retry callback runs', await node('save-count').textContent(), 'Save callback count: 3');
   await node('reset').click(); await state('reference', 'Order B');
+  await check('Settings reset retains automatic accessible name', await settings.getByRole('textbox', { name: 'Reference', exact: true }).count(), 1);
+  await check('Settings reset restores boolean field', await field('Switch').isChecked(), true);
   await node('disabled').check(); await check('Disabled inherited by actual fields', await field('Input').isDisabled(), true); await node('disabled').uncheck();
   await node('frame').screenshot({ path: path.join(output, `${label}-form-light.png`) });
   await field('Input').scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(output, `${label}-form-light-viewport.png`) });

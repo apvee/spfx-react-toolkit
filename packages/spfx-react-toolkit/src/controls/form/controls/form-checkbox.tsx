@@ -11,8 +11,8 @@ import { useFieldAdapter } from '../use-field-adapter.internal';
  * @example `<Order.Checkbox name="value" label="Checkbox" />`
  */
 export const FormCheckbox = React.forwardRef<HTMLInputElement, FormCheckboxProps<FieldValues>>(function FormCheckbox({ className, disabled, fieldProps, hint, id, label, name, onBlur, onChange, orientation, required, rules, input, triState, ...props }, ref) {
-  const binding = useFieldAdapter<FieldValues, boolean | 'mixed'>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   const nativeInput = resolveShorthand(input);
+  const binding = useFieldAdapter<FieldValues, boolean | 'mixed'>({ nativeSlotOwnsDescriptions: true, nativeId: nativeInput?.id, nativeRequired: nativeInput?.required, nativeDisabled: nativeInput?.disabled, describedBy: [props['aria-describedby'], nativeInput?.['aria-describedby']].filter(Boolean).join(' '), className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   const inputProps = { ...nativeInput, onChange: undefined, ...binding.controlProps, name: binding.controller.name, ref: binding.controller.ref, onBlur: (event: React.FocusEvent<HTMLInputElement>) => { binding.controller.onBlur(); onBlur?.(event); nativeInput?.onBlur?.(event); } };
   const checked = triState ? binding.controller.value ?? false : binding.controller.value === true;
   return <Field {...binding.fieldProps}><Checkbox {...props} {...binding.controlProps} name={binding.controller.name} ref={binding.controller.ref} checked={checked}

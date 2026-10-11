@@ -83,7 +83,7 @@ export const FormDatePicker = React.forwardRef<HTMLInputElement, FormDatePickerP
   const updateDraft = (text: string | undefined): void => { draftRef.current = text; setDraft(text); };
   // Fluent compat represents empty controlled date selections with null.
   // eslint-disable-next-line @rushstack/no-new-null
-  const binding = useFieldAdapter<FieldValues, Date | null>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules,
+  const binding = useFieldAdapter<FieldValues, Date | null>({ describedBy: props['aria-describedby'], className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules,
     validateInput: value => !allowTextInput || draftRef.current === undefined || draftRef.current === (value ? formatDate(value) : '') || inputValidationMessage,
     resetText: { read: () => draftRef.current, restore: text => updateDraft(text) }
   });

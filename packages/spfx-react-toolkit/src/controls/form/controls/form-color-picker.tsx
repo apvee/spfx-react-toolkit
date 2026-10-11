@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { mergeSettingsFieldIds } from '../../settings-field-context.internal';
 import { Field, ColorPicker, colorAreaClassNames, colorSliderClassNames, alphaSliderClassNames } from '@fluentui/react-components';
 import type { FieldValues } from 'react-hook-form';
 import type { FormColorPickerProps } from '../form-control.types';
@@ -27,7 +28,7 @@ function copyColor(color: FormHsvColor): FormHsvColor {
 export const FormColorPicker: React.ForwardRefExoticComponent<FormColorPickerProps<FieldValues> & React.RefAttributes<HTMLDivElement>> = React.forwardRef<HTMLDivElement, FormColorPickerProps<FieldValues>>(function FormColorPicker(
   { className, disabled, fieldProps, hint, id, label, name, onBlur, onColorChange, orientation, required, rules, onClickCapture, onKeyDownCapture, ...props }, ref
 ) {
-  const binding = useFieldAdapter<FieldValues, FormHsvColor>({ className, disabled, fieldProps, hint, id, label, name, orientation, required, rules });
+  const binding = useFieldAdapter<FieldValues, FormHsvColor>({ settingsLabelTarget: 'group', describedBy: props['aria-describedby'], className, disabled, fieldProps, hint, id, label, name, orientation, required, rules });
   const compositeRef = useCompositeFieldFocus(ref, binding.focusRef, `input.${colorAreaClassNames.inputX},input.${colorAreaClassNames.inputY},input.${colorSliderClassNames.input},input.${alphaSliderClassNames.input}`, () => true);
   const sx = useSx(); const styles = useFormControlsStyles();
   const isDisabled = binding.controlProps.disabled === true;
@@ -35,9 +36,9 @@ export const FormColorPicker: React.ForwardRefExoticComponent<FormColorPickerPro
   return <Field {...binding.fieldProps}>{fieldControl => <fieldset disabled={isDisabled}
     onPointerDownCapture={event => { if (isDisabled) { event.preventDefault(); event.stopPropagation(); } }}
     className={sx(borderWidth.none, margin.none, padding.none, styles.fieldset)}>
-    <ColorPicker {...props} {...fieldControl} className={sx(styles.colorPicker, width.full, maxWidth.px(300), minWidth.zero)} id={binding.controlProps.id} ref={compositeRef} role={props.role ?? 'group'}
+    <ColorPicker {...props} {...fieldControl} className={sx(styles.colorPicker, width.full, maxWidth.px(300), minWidth.zero)} aria-labelledby={binding.controlProps['aria-labelledby'] ?? fieldControl['aria-labelledby']} id={binding.controlProps.id} ref={compositeRef} role={props.role ?? 'group'}
       aria-disabled={isDisabled || props['aria-disabled']}
-      aria-describedby={[fieldControl['aria-describedby'], props['aria-describedby']].filter(Boolean).join(' ') || undefined}
+      aria-describedby={mergeSettingsFieldIds(fieldControl['aria-describedby'], binding.controlProps['aria-describedby'], props['aria-describedby'])}
        color={copyColor(binding.controller.value ?? { h: 0, s: 0, v: 0 })}
       onClickCapture={event => { if (isDisabled) { event.preventDefault(); event.stopPropagation(); } onClickCapture?.(event); }}
       onKeyDownCapture={event => { if (isDisabled) { event.preventDefault(); event.stopPropagation(); } onKeyDownCapture?.(event); }}

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { mergeSettingsFieldIds } from '../../settings-field-context.internal';
 import { Combobox, Field } from '@fluentui/react-components';
 import { resolveShorthand, useMergedRefs } from '@fluentui/react-utilities';
 import type { FieldValues } from 'react-hook-form';
@@ -40,7 +41,8 @@ export const FormComboboxMulti = React.forwardRef<HTMLInputElement, FormCombobox
   const source = getSelectionSource(options, children);
   const [display, setDisplay] = React.useState('');
   const [editing, setEditing] = React.useState(false);
-  const binding = useFieldAdapter<FieldValues, unknown>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules,
+  const native = resolveShorthand(input);
+  const binding = useFieldAdapter<FieldValues, unknown>({ nativeSlotOwnsDescriptions: true, nativeId: native?.id, nativeRequired: native?.required, nativeDisabled: native?.disabled, describedBy: [props['aria-describedby'], native?.['aria-describedby']].filter(Boolean).join(' '), className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules,
     resetText: { read: () => display, restore: text => { setDisplay(text); setEditing(text.length > 0); } }
   });
   const value = readSelectionValue<string[]>(binding.controller.value, codec, []);
@@ -56,7 +58,6 @@ export const FormComboboxMulti = React.forwardRef<HTMLInputElement, FormCombobox
   }, [valueKey, binding.resetVersion, binding.resetPreservesValues]);
   const nativeListbox = resolveShorthand(listbox);
   const optionChildren = renderSelectionOptions(source);
-  const native = resolveShorthand(input);
   const nativeRef = useMergedRefs(binding.controller.ref, native?.ref);
   const queryChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     if (binding.controlProps.disabled) return;
@@ -76,7 +77,7 @@ export const FormComboboxMulti = React.forwardRef<HTMLInputElement, FormCombobox
       selectedOptions={value}
       value={inputValue}
       input={{
-        ...native, ...binding.controlProps, name: binding.name, ref: nativeRef, value: inputValue, defaultValue: undefined, 'aria-describedby': [fieldControl['aria-describedby'], props['aria-describedby'], native?.['aria-describedby']].filter(Boolean).join(' ') || undefined, onChange: queryChange, onFocus: event => {
+        ...native, ...binding.controlProps, name: binding.name, ref: nativeRef, value: inputValue, defaultValue: undefined, 'aria-describedby': mergeSettingsFieldIds(fieldControl['aria-describedby'], binding.controlProps['aria-describedby'], props['aria-describedby'], native?.['aria-describedby']), onChange: queryChange, onFocus: event => {
           setEditing(true);
           native?.onFocus?.(event);
         }, onBlur: event => {

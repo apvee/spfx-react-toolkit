@@ -18,9 +18,9 @@ export type CompatibleFieldPath<TInput extends FieldValues, TValue> = {
 }[FieldPath<TInput>];
 /** Presentation shared by Fluent Field wrappers; required is metadata, not a validation rule. */
 export interface FormFieldPresentationProps {
-    /** Label owned by Fluent Field; strings render literally. */
+    /** Label owned by Fluent Field; strings render literally. Omit inside SettingsGroup.Item field. */
     label?: React.ReactNode;
-    /** Supporting content associated with the native control. */
+    /** Supporting content associated with the native control. Omit inside SettingsGroup.Item field. */
     hint?: React.ReactNode;
     /** Marks the control as required visually and accessibly. */
     required?: boolean;
@@ -160,13 +160,17 @@ export interface FormTagPickerStrings {
     /** Content shown when no unselected option matches the active query. */
     noOptions: React.ReactNode;
 }
-type FormTagPickerAccessibleName = { /** Plain text visible label also names the selected-tag list. */ label: string; 'aria-label'?: string } | { /** Rich or absent label needs an explicit accessible name. */ label?: React.ReactNode; 'aria-label': string };
+type FormTagPickerAccessibleName = { /** Plain text visible label also names the selected-tag list. */ label: string; 'aria-label'?: string } | { /** Rich or absent label needs an explicit accessible name. */ label?: React.ReactNode; 'aria-label': string } | { /** Inherited SettingsGroup.Item field naming; standalone usage is checked at runtime. */ label?: undefined; 'aria-label'?: undefined };
 /** TagPicker with removable tags, string-array identities and a native input ref.
  * Options or Fluent TagPickerOption children provide identities and display text.
+ * Omit label/aria-label only when SettingsGroup.Item field supplies inherited naming.
+ * Ancestor context cannot be proven by TypeScript; unnamed standalone usage throws at runtime.
  * Query edits retain selections; reset and selection clear query presentation.
  * @example `<Order.TagPicker name="people" label="People" options={people} strings={{ noOptions: 'No people' }} />`
  */
 export type FormTagPickerProps<TInput extends FieldValues> = FormSelectionProps<TInput, string[], TagPickerProps, 'aria-label' | 'children' | 'defaultSelectedOptions' | 'defaultValue' | 'name' | 'noPopover' | 'selectedOptions' | 'value' | 'onChange' | 'onBlur' | 'id'> & FormTagPickerAccessibleName & {
+    /** Additional descriptions for the native query input. */
+    'aria-describedby'?: string;
     /** Input id shared with Fluent Field's label. */
     id?: string;
     /** Query callback after presentation updates; it does not change selected values. */
@@ -491,6 +495,10 @@ export type FormDateTimeProps<TInput extends FieldValues> = FormControlProps<
   TInput,
   FormDateTimeValue
 > & {
+  /** Explicit identity of the semantic date/time group. */
+  id?: string;
+  /** Additional descriptions appended to group hint and validation relationships. */
+  'aria-describedby'?: string;
   /** Label for the DatePicker part. */
   dateLabel?: React.ReactNode;
   /** Package-owned props forwarded to the DatePicker part. */

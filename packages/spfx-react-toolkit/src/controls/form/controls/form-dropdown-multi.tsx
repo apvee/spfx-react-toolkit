@@ -34,11 +34,11 @@ export const FormDropdownMulti = React.forwardRef<HTMLButtonElement, FormDropdow
   ref
 ) {
   const source = getSelectionSource(options, children);
-  const binding = useFieldAdapter<FieldValues, unknown>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
+  const native = resolveShorthand(button);
+  const binding = useFieldAdapter<FieldValues, unknown>({ nativeSlotOwnsDescriptions: true, nativeId: native?.id, nativeDisabled: native?.disabled, describedBy: [props['aria-describedby'], native?.['aria-describedby']].filter(Boolean).join(' '), className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   const value = readSelectionValue<string[]>(binding.controller.value, codec, []);
   const nativeListbox = resolveShorthand(listbox);
   const optionChildren = renderSelectionOptions(source);
-  const native = resolveShorthand(button);
   const nativeRef = useMergedRefs(binding.controller.ref, native?.ref);
   const display = value.map(identity => getSelectionText(source, identity)).filter(Boolean).join(', ');
   return <Field {...binding.fieldProps}>

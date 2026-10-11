@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { mergeSettingsFieldIds } from '../../settings-field-context.internal';
 import { Field, SwatchPicker, colorSwatchClassNames, imageSwatchClassNames } from '@fluentui/react-components';
 import type { FieldValues } from 'react-hook-form';
 import type { FormSwatchPickerProps } from '../form-control.types';
@@ -19,7 +20,7 @@ import { useFormControlsStyles } from './form-controls.styles.internal';
 export const FormSwatchPicker: React.ForwardRefExoticComponent<FormSwatchPickerProps<FieldValues> & React.RefAttributes<HTMLDivElement>> = React.forwardRef<HTMLDivElement, FormSwatchPickerProps<FieldValues>>(function FormSwatchPicker(
   { className, disabled, fieldProps, hint, id, label, name, onBlur, onSelectionChange, orientation, required, rules, shape = 'rounded', onClickCapture, onKeyDownCapture, ...props }, ref
 ) {
-  const binding = useFieldAdapter<FieldValues, string>({ className, disabled, fieldProps, hint, id, label, name, orientation, required, rules });
+  const binding = useFieldAdapter<FieldValues, string>({ settingsLabelTarget: 'group', describedBy: props['aria-describedby'], className, disabled, fieldProps, hint, id, label, name, orientation, required, rules });
   const compositeRef = useCompositeFieldFocus<HTMLDivElement, HTMLButtonElement>(ref, binding.focusRef, `button.${colorSwatchClassNames.root},button.${imageSwatchClassNames.root}`, () => true);
   const sx = useSx(); const styles = useFormControlsStyles();
   const isDisabled = binding.controlProps.disabled === true;
@@ -27,9 +28,9 @@ export const FormSwatchPicker: React.ForwardRefExoticComponent<FormSwatchPickerP
   return <Field {...binding.fieldProps}>{fieldControl => <fieldset disabled={isDisabled}
     onPointerDownCapture={event => { if (isDisabled) { event.preventDefault(); event.stopPropagation(); } }}
     className={sx(borderWidth.none, margin.none, padding.none, styles.fieldset)}>
-    <SwatchPicker {...props} {...fieldControl} shape={shape} id={binding.controlProps.id} ref={compositeRef}
+    <SwatchPicker {...props} {...fieldControl} shape={shape} aria-labelledby={binding.controlProps['aria-labelledby'] ?? fieldControl['aria-labelledby']} id={binding.controlProps.id} ref={compositeRef}
       aria-disabled={isDisabled || props['aria-disabled']}
-      aria-describedby={[fieldControl['aria-describedby'], props['aria-describedby']].filter(Boolean).join(' ') || undefined}
+      aria-describedby={mergeSettingsFieldIds(binding.controlProps['aria-describedby'], props['aria-describedby'])}
        selectedValue={binding.controller.value ?? ''}
       onClickCapture={event => { if (isDisabled) { event.preventDefault(); event.stopPropagation(); } onClickCapture?.(event); }}
       onKeyDownCapture={event => { if (isDisabled) { event.preventDefault(); event.stopPropagation(); } onKeyDownCapture?.(event); }}

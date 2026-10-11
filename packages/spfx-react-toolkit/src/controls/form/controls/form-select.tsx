@@ -33,9 +33,9 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps<Fi
   ref
 ) {
   const source = getSelectionSource(options, children);
-  const binding = useFieldAdapter<FieldValues, unknown>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
-  const value = readSelectionValue(binding.controller.value, codec, '');
   const native = resolveShorthand(select);
+  const binding = useFieldAdapter<FieldValues, unknown>({ nativeSlotOwnsDescriptions: true, nativeId: native?.id, nativeRequired: native?.required, nativeDisabled: native?.disabled, describedBy: [props['aria-describedby'], native?.['aria-describedby']].filter(Boolean).join(' '), className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
+  const value = readSelectionValue(binding.controller.value, codec, '');
   const nativeRef = useMergedRefs(binding.controller.ref, native?.ref);
   const optionChildren = source.options === undefined ? source.children : source.options.map(option => (
     <option key={option.value} value={option.value} disabled={option.disabled}>

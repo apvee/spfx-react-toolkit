@@ -38,6 +38,40 @@ export function ProfileEditor(): React.ReactElement {
 
 `required` supplies visible and accessible metadata. It does **not** create a validation rule. Requirements belong in `rules`, a schema or a resolver. Returned service errors should normally be localized by the consumer with `methods.setError('root.serverError', { message: 'Please try again.' })`.
 
+## Settings rows as Form fields
+
+[SettingsGroup](./settings-group.md#automatic-form-field-rows) can own the visible name and hint of one built-in Form logical control. Use `SettingsGroup.Item field title="..." description="..."` and omit the control's `label` and `hint`. The same integration applies to typed, dynamic and scoped `Fields` adapters, with no manual ARIA naming links or repeated visible text.
+
+```tsx
+import { createForm, SettingsGroup } from '@apvee/spfx-react-toolkit';
+
+const Account = createForm<{ profile: { name: string; enabled: boolean } }>();
+
+<Account.Root defaultValues={{ profile: { name: '', enabled: true } }} onSubmit={saveAccount}>
+  <Account.Object name="profile">{({ Fields }) =>
+    <SettingsGroup title="Profile">
+      <SettingsGroup.Item field title="Name" description="The name shown to your colleagues.">
+        <Fields.Input name="name" required rules={{ required: 'Enter a name.' }} />
+      </SettingsGroup.Item>
+      <SettingsGroup.Item field title="Enabled" description="Allow this account to receive updates.">
+        <Fields.Switch name="enabled" />
+      </SettingsGroup.Item>
+    </SettingsGroup>
+  }</Account.Object>
+  <Account.Error />
+  <Account.Submit>Save</Account.Submit>
+  <Account.Reset>Reset</Account.Reset>
+</Account.Root>
+```
+
+The title must supply a meaningful name and may contain noninteractive phrasing JSX. Arbitrary custom components used in the title must themselves render meaningful accessible content; the toolkit does not inspect their rendered DOM. Native labelable controls receive a real label targeting their actual ID; clicking a row title focuses the input or activates the boolean control. Composite controls receive the row's name at their semantic target rather than assigning the same name to every internal control. DateTime is one logical field and still uses `dateLabel`/`timeLabel` for its two parts. TagPicker inherits the row name for its input and tag group; its ordinary standalone naming requirement remains in force.
+
+The row description is merged with caller `aria-describedby` IDs and Field error IDs. TagPicker accepts `id` for its native query input and `aria-describedby` for additional input descriptions. DateTime accepts `id` and `aria-describedby` for its semantic date/time group; its parts retain their own identities and descriptions. Validation stays with the control, and the row label reflects `required` and effective disabled state. `required` does not create validation: choose field rules, a schema or a resolver as usual. Edits update RHF normally; persistence happens through your existing submit handler, with no automatic save.
+
+Exactly one built-in adapter may own a field row. Repeated adapter `label`/`hint` and multiple owners produce diagnostics. Split multiple controls across field rows, or use an ordinary `SettingsGroup.Item` and name each control explicitly. Secondary actions, nested settings rows and DateTime parts do not inherit the parent row's naming. Custom `useField` bindings and standalone Fluent controls need their own labels/hints and should use ordinary rows. This composition uses the [existing dependencies](#dependencies), Fluent theme and renderer, with no new provider or peer.
+
+The **Form** test web part uses the existing record Reference and Enabled fields in settings rows. Clear Reference and save to see its required error, click titles to observe native activation, edit Enabled, then inspect live/dirty/touched/saved outputs and reset the record. These local interactions do not establish authenticated SharePoint or screen-reader behavior; see the [host checklist](../../SHAREPOINT-VALIDATION.md#form).
+
 ## Input, output and validation ownership
 
 `createForm<TInput>()` retains the input model at submission. `createForm(schema)` infers distinct input/output models from a Standard Schema. `createForm<TInput, TOutput, TContext>({ schema })` and the equivalent `{ resolver }` bind that owner permanently. Standard Schema is an interface; no Zod or Yup dependency is required.
@@ -71,7 +105,7 @@ Unexpected custom-validator failures become validation errors at the rule bounda
 
 Root gates repeated native submissions and `requestSubmit()` through both validation and save. Submit and Reset are disabled while pending; ordinary fields remain editable. Save receives a validated snapshot, so edits after save starts do not mutate it. This does not promise to freeze fields at the initial click. Direct `methods.handleSubmit` preserves RHF behavior and bypasses Root's DOM gate.
 
-Disabled fields follow RHF's omission contract. A disabled Root or section cannot be re-enabled by nested props. `readOnly` retains submitted data where the underlying native control supports it; selection and boolean controls do not acquire a fabricated readOnly implementation. Control change/blur updates RHF before invoking the corresponding consumer callback. Label, hint and validation relationships belong to Fluent Field.
+Disabled fields follow RHF's omission contract. A disabled Root or section cannot be re-enabled by nested props. `readOnly` retains submitted data where the underlying native control supports it; selection and boolean controls do not acquire a fabricated readOnly implementation. Control change/blur updates RHF before invoking the corresponding consumer callback. Ordinary label, hint and validation relationships belong to Fluent Field. Opt-in settings rows compose row naming and hints with those validation relationships.
 
 Semantic adapter callbacks run after the RHF update, followed by supported native-slot notifications. SpinButton's native input change is an editing draft; its top-level change is the numeric commit. CheckboxGroup owns its documented direct Checkbox child callbacks. ColorPicker and SwatchPicker own their adapter callbacks; arbitrary ColorSlider/ImageSwatch children retain Fluent callback order. Native color interaction can normalize absent alpha to `1`; the initial read preserves an absent alpha. RadioGroup owns its group callback, while raw Radio children retain Fluent's native-slot/child/bubbling order; use the group callback when reading the committed form selection.
 
@@ -112,7 +146,7 @@ Typed name compatibility checks both reading the current value and writing the f
 
 Native Select displays its plain visible label. Fluent faceplate/filter/typeahead text uses `textValue` then a plain label; supply textValue for rich JSX labels. Identities never become a hidden display fallback. DropdownMulti, ComboboxMulti and TagPicker preserve Fluent's emitted selection order; CheckboxGroup writes declared option order. Native select/listbox slots cannot replace the option source or selection mode.
 
-TagPicker requires a text label or explicit `aria-label`; rich/absent labels also require `aria-label` to name its tag group. `strings.noOptions` or `noOptionsContent` localizes data-filtered empty content. Filtering custom TagPickerOption children belongs to the consumer. In the tested Fluent version TagPickerOption exposes `aria-disabled` rather than a typed disabled prop; the adapter honors that identity guard.
+Outside a `SettingsGroup.Item field`, TagPicker requires a string label or explicit `aria-label` at runtime; rich/absent labels require `aria-label` to name its tag group. Its type permits omitted naming for inherited field context, so TypeScript alone cannot establish that an unnamed standalone instance is valid. `strings.noOptions` or `noOptionsContent` localizes data-filtered empty content. Filtering custom TagPickerOption children belongs to the consumer. In the tested Fluent version TagPickerOption exposes `aria-disabled` rather than a typed disabled prop; the adapter honors that identity guard.
 
 ## Reset, records and drafts
 
@@ -195,7 +229,7 @@ These declarations are exported from each Form entrypoint. Form-owned members ap
 | `FormCheckboxGroupProps` | `FormCheckboxGroupProps.onChange`, `FormCheckboxGroupProps.onBlur` |
 | `FormComboboxProps` | Uses the adapter, binding or lifecycle contract above. |
 | `FormComboboxMultiProps` | Uses the adapter, binding or lifecycle contract above. |
-| `FormTagPickerProps` | `FormTagPickerProps.id`, `FormTagPickerProps.onChange`, `FormTagPickerProps.onBlur`, `FormTagPickerProps.noOptionsContent`, `FormTagPickerProps.strings` |
+| `FormTagPickerProps` | `FormTagPickerProps.'aria-describedby'`, `FormTagPickerProps.id`, `FormTagPickerProps.onChange`, `FormTagPickerProps.onBlur`, `FormTagPickerProps.noOptionsContent`, `FormTagPickerProps.strings` |
 | `FormTagPickerStrings` | `FormTagPickerStrings.noOptions` |
 | `FormRatingProps` | Uses the adapter, binding or lifecycle contract above. |
 | `FormColorPickerProps` | Uses the adapter, binding or lifecycle contract above. |
@@ -214,7 +248,7 @@ These declarations are exported from each Form entrypoint. Form-owned members ap
 | `FormTimePickerHour` | Uses the adapter, binding or lifecycle contract above. |
 | `FormTimePickerControlProps` | `FormTimePickerControlProps.appearance`, `FormTimePickerControlProps.clearable`, `FormTimePickerControlProps.className`, `FormTimePickerControlProps.dateAnchor`, `FormTimePickerControlProps.defaultOpen`, `FormTimePickerControlProps.disabled`, `FormTimePickerControlProps.endHour`, `FormTimePickerControlProps.inputValidationMessage`, `FormTimePickerControlProps.freeform`, `FormTimePickerControlProps.formatDateToTimeString`, `FormTimePickerControlProps.hourCycle`, `FormTimePickerControlProps.increment`, `FormTimePickerControlProps.inlinePopup`, `FormTimePickerControlProps.open`, `FormTimePickerControlProps.onOpenChange`, `FormTimePickerControlProps.onTimeChange`, `FormTimePickerControlProps.parseTimeStringToDate`, `FormTimePickerControlProps.placeholder`, `FormTimePickerControlProps.showSeconds`, `FormTimePickerControlProps.size`, `FormTimePickerControlProps.startHour` |
 | `FormTimePickerProps` | Uses the adapter, binding or lifecycle contract above. |
-| `FormDateTimeProps` | `FormDateTimeProps.dateLabel`, `FormDateTimeProps.datePickerProps`, `FormDateTimeProps.timeLabel`, `FormDateTimeProps.timePickerProps` |
+| `FormDateTimeProps` | `FormDateTimeProps.id`, `FormDateTimeProps.'aria-describedby'`, `FormDateTimeProps.dateLabel`, `FormDateTimeProps.datePickerProps`, `FormDateTimeProps.timeLabel`, `FormDateTimeProps.timePickerProps` |
 | `FormFileInputProps` | `FormFileInputProps.browseLabel`, `FormFileInputProps.clearLabel`, `FormFileInputProps.formatFiles` |
 | `FormOption` | `FormOption.value`, `FormOption.label`, `FormOption.disabled`, `FormOption.textValue` |
 | `FormValueCodec` | `FormValueCodec.toControl`, `FormValueCodec.fromControl` |

@@ -6,8 +6,8 @@ Most controls are standalone and do not require an SPFx provider. `WebPartShell`
 | --- | --- | --- |
 | `Stage`, `StageProps`, `StageHeaderProps`, `StageBodyProps`, `StageFooterProps` | Explicit Dialog/Drawer/Popover with Header, Body and Footer | [Stage](./stage.md) |
 | `DataGrid`, `createDataGrid` | Native table with sixteen cell presentations and typed or dynamic suite ownership | [DataGrid](./data-grid.md) |
-| `Form`, `createForm` | Typed RHF forms, Fluent adapters, scopes and editable sections | [Form](./form.md) |
-| `SettingsGroup`, `SettingsGroupProps`, `SettingsGroupItemProps`, `SettingsGroupHeadingLevel` | Caller-owned settings rows in a Fluent Card | [SettingsGroup](./settings-group.md) |
+| `Form`, `createForm` | Typed RHF forms, Fluent adapters, settings field rows, scopes and editable sections | [Form](./form.md) |
+| `SettingsGroup`, `SettingsGroupProps`, `SettingsGroupItemProps`, `SettingsGroupHeadingLevel` | Settings rows in a Fluent Card, with opt-in Form naming | [SettingsGroup](./settings-group.md) |
 | `AccordionGroup`, `AccordionGroupProps`, `AccordionGroupItemProps`, `AccordionGroupHeadingLevel`, `AccordionGroupValue` | Fluent disclosure with retained panel state | [AccordionGroup](./accordion-group.md) |
 | `StateMessage` | Section state with artwork, text and actions | [StateMessage](./state-message.md#statemessage) |
 | `StateMessageProps` | Content, preset, visual and native div attributes | [Props](./state-message.md#statemessageprops) |

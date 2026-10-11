@@ -48,11 +48,11 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     key: 'form',
     title: 'Form',
     iconName: 'Edit',
-    description: 'Typed live values, all adapters, nested scopes, ordered arrays and save/reset ownership.',
+    description: 'Typed live values, settings field rows, all adapters, nested scopes, arrays and save/reset ownership.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-form' */ './panels/FormPanel')),
     coverage: [
       { symbol: 'Form', kind: 'snapshot', notes: 'Dynamic Form.Root/Input/Submit/Reset alongside the typed complete-family record editor.' },
-      { symbol: 'createForm', kind: 'snapshot', notes: '22 adapters, suite hooks, four compositions, rules/schema, native files, drafts, reset, pending save and retries.' },
+      { symbol: 'createForm', kind: 'snapshot', notes: '22 adapters, automatic SettingsGroup field labels/hints, suite hooks, four compositions, rules/schema, native files, drafts, reset, pending save and retries.' },
     ],
   },
   {
@@ -70,7 +70,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     description: 'Caller-owned settings and controlled disclosure with retained panel state.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-groups' */ './panels/GroupsPanel')),
     coverage: [
-      { symbol: 'SettingsGroup', kind: 'snapshot', notes: 'One labeled Input/Switch per settings item, literal text/JSX presets, actions, width, theme, direction, hidden and root ref.' },
+      { symbol: 'SettingsGroup', kind: 'snapshot', notes: 'Caller-labeled Input/Switch rows, literal text/JSX, actions, width, theme, direction, hidden and root ref; automatic field composition also runs in Form.' },
       { symbol: 'AccordionGroup', kind: 'snapshot', notes: 'Controlled openItems, multiple, disabled, mounted note persistence, unmount reset and root ref.' },
     ],
   },

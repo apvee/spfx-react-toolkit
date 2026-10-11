@@ -11,8 +11,8 @@ import { useFieldAdapter } from '../use-field-adapter.internal';
  * @example `<Order.Textarea name="notes" label="Textarea" />`
  */
 export const FormTextarea: React.ForwardRefExoticComponent<FormTextareaProps<FieldValues> & React.RefAttributes<HTMLTextAreaElement>> = React.forwardRef<HTMLTextAreaElement, FormTextareaProps<FieldValues>>(function FormTextarea({ className, disabled, fieldProps, hint, id, label, name, onBlur, onChange, orientation, required, rules, textarea, ...props }, ref) {
-  const binding = useFieldAdapter<FieldValues, string>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   const nativeTextarea = resolveShorthand(textarea);
+  const binding = useFieldAdapter<FieldValues, string>({ nativeSlotOwnsDescriptions: true, nativeId: nativeTextarea?.id, nativeRequired: nativeTextarea?.required, nativeDisabled: nativeTextarea?.disabled, describedBy: [props['aria-describedby'], nativeTextarea?.['aria-describedby']].filter(Boolean).join(' '), className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   const textareaProps = { ...nativeTextarea, onChange: undefined, ...binding.controlProps, name: binding.controller.name, ref: binding.controller.ref, onBlur: (event: React.FocusEvent<HTMLTextAreaElement>) => { binding.controller.onBlur(); onBlur?.(event); nativeTextarea?.onBlur?.(event); } };
   const value = binding.controller.value ?? '';
   return <Field {...binding.fieldProps}><Textarea {...props} {...binding.controlProps} name={binding.controller.name} ref={binding.controller.ref} value={value}

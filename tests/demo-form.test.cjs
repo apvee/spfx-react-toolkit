@@ -71,3 +71,29 @@ test('Headless operations and localized section actions retain typed complete re
   assert.match(panel, /readOnly/);
   assert.match(panel, /required rules=\{\{ required: 'Reference is required'/);
 });
+test('Settings rows opt in around existing RHF fields without competing labels or a separate form', () => {
+  const rows = [];
+  walk(source, node => {
+    if (ts.isJsxElement(node) && node.openingElement.tagName.getText(source) === 'SettingsGroup.Item') rows.push(node);
+  });
+  assert.equal(rows.length, 2, 'reference and enabled need working settings rows');
+  const expected = ['reference', 'enabled'];
+  rows.forEach((row, index) => {
+    const attrs = row.openingElement.attributes.properties.map(prop => prop.name?.getText(source));
+    for (const attr of ['field', 'title', 'description']) assert.ok(attrs.includes(attr), attr);
+    const controls = row.children.filter(ts.isJsxSelfClosingElement);
+    assert.equal(controls.length, 1, 'one logical Form control per row');
+    const control = controls[0];
+    assert.equal(control.tagName.getText(source), index === 0 ? 'Order.Input' : 'Order.Switch');
+    const name = control.attributes.properties.find(prop => prop.name?.getText(source) === 'name');
+    assert.equal(name.initializer.text, expected[index], 'settings use the existing record model');
+    for (const attr of ['label', 'hint', 'aria-label', 'aria-labelledby']) {
+      assert.ok(!control.attributes.properties.some(prop => prop.name?.getText(source) === attr), `row owns ${attr}`);
+    }
+    let ancestor = row.parent;
+    while (ancestor && !(ts.isJsxElement(ancestor) && ancestor.openingElement.tagName.getText(source) === 'Order.Root')) ancestor = ancestor.parent;
+    assert.ok(ancestor, 'settings share existing submit/reset ownership');
+  });
+  for (const marker of ['settings-group', 'settings-reference', 'settings-enabled']) assert.ok(panel.includes(`data-form-demo="${marker}"`), marker);
+  assert.equal(registry.split("symbol: 'SettingsGroup'").length - 1, 1, 'retain unique SettingsGroup owner');
+});

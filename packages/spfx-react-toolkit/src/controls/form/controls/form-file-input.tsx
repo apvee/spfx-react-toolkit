@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { mergeSettingsFieldIds } from '../../settings-field-context.internal';
 import { Button, Field } from '@fluentui/react-components';
 import { useMergedRefs } from '@fluentui/react-utilities';
 import { Attach20Regular, Delete20Regular, Document20Regular } from '@fluentui/react-icons';
@@ -26,7 +27,7 @@ export const FormFileInput = React.forwardRef<HTMLInputElement, FormFileInputPro
   const { methods } = useFormRuntimeContext();
   // The browser native file API explicitly uses null for an empty selection.
   // eslint-disable-next-line @rushstack/no-new-null
-  const binding = useFieldAdapter<FieldValues, FileList | null>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
+  const binding = useFieldAdapter<FieldValues, FileList | null>({ describedBy: props['aria-describedby'], className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   const inputRef = React.useRef<HTMLInputElement>();
   // React callback refs explicitly receive null during native element detachment.
   // eslint-disable-next-line @rushstack/no-new-null
@@ -42,7 +43,7 @@ export const FormFileInput = React.forwardRef<HTMLInputElement, FormFileInputPro
   const files = binding.controller.value;
   return <Field {...binding.fieldProps}>{fieldControl => <div className={sx(flex.row, flex.wrap, alignItems.center, gap.small, styles.fileControls)}>
     <input {...props} {...fieldControl} {...binding.controlProps}
-      aria-describedby={[fieldControl['aria-describedby'], props['aria-describedby']].filter(Boolean).join(' ') || undefined}
+      aria-describedby={mergeSettingsFieldIds(fieldControl['aria-describedby'], binding.controlProps['aria-describedby'], props['aria-describedby'])}
       aria-invalid={fieldControl['aria-invalid'] ?? props['aria-invalid']}
       className={styles.fileHidden} ref={mergedRef} name={binding.name} tabIndex={-1} type="file"
       onBlur={event => { binding.controller.onBlur(); onBlur?.(event); }}

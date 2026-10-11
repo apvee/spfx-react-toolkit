@@ -15,9 +15,9 @@ function semanticResult<TValue>(binding: FieldAdapterResult<TValue>): FormFieldR
 }
 /** Custom-control hook implementation; suite wrappers enforce same-suite ownership. */
 export function useFormField<TInput extends FieldValues, TValue>(props: FormUseFieldProps<TInput, TValue>): FormFieldResult<TValue> {
-    return semanticResult(useFieldAdapter<TInput, TValue>(props));
+    return semanticResult(useFieldAdapter<TInput, TValue>({ ...props, inheritSettingsField: false }));
 }
 /** Captured scoped fields already carry an absolute path; avoid applying the rendered scope twice. */
 export function useAbsoluteFormField<TInput extends FieldValues, TValue>(props: FormUseFieldProps<TInput, TValue>): FormFieldResult<TValue> {
-    return semanticResult(useFieldAdapter<TInput, TValue>({ ...props, absoluteName: true }));
+    return semanticResult(useFieldAdapter<TInput, TValue>({ ...props, absoluteName: true, inheritSettingsField: false }));
 }

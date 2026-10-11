@@ -27,9 +27,19 @@ export interface SettingsGroupProps extends Omit<React.HTMLAttributes<HTMLDivEle
 }
 
 /** One composable settings row; caller controls retain identity, labels and state.
- * Use explicit native labels or Field; title does not implicitly label controls.
+ * Opt into field composition to label one built-in Form control using row text.
  * @example <SettingsGroup.Item title="Profile">Content</SettingsGroup.Item> */
 export interface SettingsGroupItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'dangerouslySetInnerHTML'> {
+  /** Use title/description as one built-in Form logical control's label/hint.
+   * Requires a meaningful title and exactly one primary built-in adapter. Empty static strings,
+   * intrinsic markup and Fragments are rejected; numeric title content remains supported.
+   * Custom components must render meaningful accessible title content; their output is caller-owned.
+   * Omit the control's label/hint;
+   * validation stays in Form. Actions, nested rows and custom useField bindings are excluded.
+   * Defaults to false; composite controls name their group instead of every inner control.
+   * @example <SettingsGroup.Item field title="Email" description="Receive alerts"><Order.Switch name="email" /></SettingsGroup.Item>
+   */
+  field?: boolean;
   /** Optional title phrasing content; span wrapper uses body1Strong and primary foreground. */
   title?: React.ReactNode;
   /** Optional description phrasing content; span wrapper uses caption1 and subtle foreground. */
@@ -38,7 +48,7 @@ export interface SettingsGroupItemProps extends Omit<React.HTMLAttributes<HTMLDi
   icon?: React.ReactNode;
   /** Optional secondary caller-owned action, outside the primary controls. */
   action?: React.ReactNode;
-  /** Caller-owned primary controls; explicit labels remain the application responsibility. */
+  /** Primary controls; field mode supplies one built-in Form control with row naming. */
   children?: React.ReactNode;
   /** Raw HTML is unsupported; children own panel/control content. */
   dangerouslySetInnerHTML?: never;

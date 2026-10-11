@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ColorArea, ColorSlider, ColorSwatch, FluentProvider, makeStyles, webDarkTheme, webLightTheme } from '@fluentui/react-components';
-import { Form, createForm, FormDateTimeValue, FormTimePickerParseResult, FormHsvColor, FormMethods, flex, gap, padding, useSx, width } from '@apvee/spfx-react-toolkit';
+import { Form, createForm, FormDateTimeValue, FormTimePickerParseResult, FormHsvColor, FormMethods, SettingsGroup, flex, gap, padding, useSx, width } from '@apvee/spfx-react-toolkit';
 
 interface DemoRow { code: string; note: string; }
 interface DemoRecord {
@@ -160,12 +160,18 @@ const RecordExample: React.FC<{ disabled: boolean }> = ({ disabled }) => {
       <button type="button" data-form-demo="request-submit" disabled={disabled} onClick={() => { formRef.current?.requestSubmit(); formRef.current?.requestSubmit(); }}>Request submit twice</button>
     </div>
     <Order.Root ref={formRef} methods={methods} disabled={disabled} onSubmit={save} onInvalid={() => setStatus('Validation failed')} data-form-demo="root" className={sx(flex.column, gap.large)}>
+      <SettingsGroup data-form-demo="settings-group" title="Record settings" description="Click a row title to focus Reference or toggle Enabled. Clear Reference and save to observe validation; use Reset record to restore both values.">
+        <SettingsGroup.Item field title="Reference" description="Required record identity. This row supplies the field label and hint." data-form-control="Input">
+          <Order.Input data-form-demo="settings-reference" name="reference" required rules={{ required: 'Reference is required' }} />
+        </SettingsGroup.Item>
+        <SettingsGroup.Item field title="Enabled" description="Changes appear in live values and are persisted only by Save record." data-form-control="Switch">
+          <Order.Switch data-form-demo="settings-enabled" name="enabled" />
+        </SettingsGroup.Item>
+      </SettingsGroup>
       <div className={sx(styles.grid, gap.medium)}>
-        <div data-form-control="Input"><Order.Input name="reference" label="Reference" required rules={{ required: 'Reference is required' }} /></div>
         <div data-form-control="Textarea"><Order.Textarea name="notes" label="Notes" resize="vertical" /></div>
         <div data-form-control="SearchBox"><Order.SearchBox name="query" label="Search query" /></div>
         <div data-form-control="Checkbox"><Order.Checkbox name="approved" label="Approved" /></div>
-        <div data-form-control="Switch"><Order.Switch name="enabled" label="Enabled" /></div>
         <div data-form-control="SpinButton"><Order.SpinButton name="quantity" label="Quantity" readOnly={quantityReadOnly} min={0} max={20} /></div>
         <div data-form-control="Slider"><Order.Slider name="progress" label="Progress" min={0} max={100} step={5} /></div>
         <div data-form-control="Select"><Order.Select name="country" label="Country" options={options} /></div>
@@ -233,7 +239,7 @@ const FormPanel: React.FC = () => {
     <div className={sx(flex.row, flex.wrap, gap.medium)}>
       <label><input data-form-demo="theme" type="checkbox" checked={dark} onChange={event => setDark(event.target.checked)} /> Dark theme</label>
       <label><input data-form-demo="direction" type="checkbox" checked={rtl} onChange={event => setRtl(event.target.checked)} /> Right-to-left</label>
-      <label>Frame width <select data-form-demo="resize" value={size} onChange={event => setSize(Number(event.target.value))}>{[320, 640, 900].map(value => <option key={value} value={value}>{value}px</option>)}</select></label>
+      <label>Frame width <select data-form-demo="resize" value={size} onChange={event => setSize(Number(event.target.value))}>{[320, 500, 640, 900].map(value => <option key={value} value={value}>{value}px</option>)}</select></label>
       <label><input data-form-demo="disabled" type="checkbox" checked={disabled} onChange={event => setDisabled(event.target.checked)} /> Disable record form</label>
       <label>Validation example <select data-form-demo="mode" value={mode} onChange={event => setMode(event.target.value)}><option value="rules">Rules only</option><option value="schema">Typed schema transform</option></select></label>
     </div>

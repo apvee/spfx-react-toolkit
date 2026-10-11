@@ -14,9 +14,10 @@ import { useFieldAdapter } from '../use-field-adapter.internal';
  * @example `<Order.SpinButton name="value" label="SpinButton" />`
  */
 export const FormSpinButton: React.ForwardRefExoticComponent<FormSpinButtonProps<FieldValues> & React.RefAttributes<HTMLInputElement>> = React.forwardRef<HTMLInputElement, FormSpinButtonProps<FieldValues>>(function FormSpinButton({ className, disabled, fieldProps, hint, id, label, name, onBlur, onChange, orientation, required, rules, input, incrementButton, decrementButton, ...props }, ref) {
+  const nativeInput = resolveShorthand(input);
   // Fluent's empty committed numeric value is explicitly nullable.
   // eslint-disable-next-line @rushstack/no-new-null
-  const binding = useFieldAdapter<FieldValues, number | null>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
+  const binding = useFieldAdapter<FieldValues, number | null>({ nativeSlotOwnsDescriptions: true, nativeId: nativeInput?.id, nativeRequired: nativeInput?.required, nativeDisabled: nativeInput?.disabled, describedBy: [props['aria-describedby'], nativeInput?.['aria-describedby']].filter(Boolean).join(' '), className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   const nativeElement = React.useRef<HTMLInputElement>();
   const captureNativeElement = React.useCallback<React.RefCallback<HTMLInputElement>>(node => { nativeElement.current = node ?? undefined; }, []);
   const nativeRef = useMergedRefs<HTMLInputElement>(binding.controller.ref, captureNativeElement);
@@ -38,7 +39,6 @@ export const FormSpinButton: React.ForwardRefExoticComponent<FormSpinButtonProps
     restoreFocus.current = false;
     nativeElement.current?.focus();
   }, [primitiveVersion]);
-  const nativeInput = resolveShorthand(input);
   const inputProps = { ...nativeInput, ...binding.controlProps, name: binding.controller.name, ref: nativeRef, onBlur: (event: React.FocusEvent<HTMLInputElement>) => { binding.controller.onBlur(); onBlur?.(event); nativeInput?.onBlur?.(event); } };
   const { disabled: incrementConsumerDisabled, ...incrementProps } = resolveShorthand(incrementButton) ?? {};
   const { disabled: decrementConsumerDisabled, ...decrementProps } = resolveShorthand(decrementButton) ?? {};

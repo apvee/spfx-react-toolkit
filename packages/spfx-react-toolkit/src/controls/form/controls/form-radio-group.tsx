@@ -39,7 +39,7 @@ export const FormRadioGroup = React.forwardRef<HTMLDivElement, FormRadioGroupPro
 ) {
   const sx = useSx();
   const source = getSelectionSource(options, children);
-  const binding = useFieldAdapter<FieldValues, unknown>({ className, disabled, fieldProps, hint, id, label, name, orientation, required, rules });
+  const binding = useFieldAdapter<FieldValues, unknown>({ settingsLabelTarget: 'group', describedBy: props['aria-describedby'], className, disabled, fieldProps, hint, id, label, name, orientation, required, rules });
   const compositeRef = useCompositeFieldFocus(
     ref,
     binding.focusRef,

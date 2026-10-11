@@ -32,9 +32,9 @@
 
 - [WebPartShell](./api/controls/web-part-shell.md) — actual web part provider composition, adaptive surface and inline rich title with searchable plain metadata.
 
-- [Form and createForm](./api/controls/form.md) — typed React Hook Form binding, validation, reset, Fluent controls and structured sections.
+- [Form and createForm](./api/controls/form.md) — typed React Hook Form binding, validation, reset, settings field composition and structured sections.
 
-- [SettingsGroup](./api/controls/settings-group.md) — labeled caller-owned preferences in a Fluent Card.
+- [SettingsGroup](./api/controls/settings-group.md) — caller-owned preferences and automatic Form field names/hints in a Fluent Card.
 - [AccordionGroup](./api/controls/accordion-group.md) — optional details with controlled/uncontrolled disclosure and retained state.
 
 - [StateMessage](./api/controls/state-message.md) — section states, artwork and actions.

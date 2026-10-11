@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { mergeSettingsFieldIds } from '../../settings-field-context.internal';
 import { Field, Rating, ratingItemClassNames } from '@fluentui/react-components';
 import type { FieldValues } from 'react-hook-form';
 import type { FormRatingProps } from '../form-control.types';
@@ -19,7 +20,7 @@ import { useFormControlsStyles } from './form-controls.styles.internal';
 export const FormRating: React.ForwardRefExoticComponent<FormRatingProps<FieldValues> & React.RefAttributes<HTMLDivElement>> = React.forwardRef<HTMLDivElement, FormRatingProps<FieldValues>>(function FormRating(
   { className, color = 'marigold', disabled, fieldProps, hint, id, label, name, onBlur, onChange, orientation, required, rules, onClickCapture, onKeyDownCapture, ...props }, ref
 ) {
-  const binding = useFieldAdapter<FieldValues, number>({ className, disabled, fieldProps, hint, id, label, name, orientation, required, rules });
+  const binding = useFieldAdapter<FieldValues, number>({ settingsLabelTarget: 'group', describedBy: props['aria-describedby'], className, disabled, fieldProps, hint, id, label, name, orientation, required, rules });
   const compositeRef = useCompositeFieldFocus(ref, binding.focusRef, `input.${ratingItemClassNames.fullValueInput}[type="radio"],input.${ratingItemClassNames.halfValueInput}[type="radio"]`, element => element.name === binding.name);
   const sx = useSx(); const styles = useFormControlsStyles();
   const isDisabled = binding.controlProps.disabled === true;
@@ -27,9 +28,9 @@ export const FormRating: React.ForwardRefExoticComponent<FormRatingProps<FieldVa
   return <Field {...binding.fieldProps}>{fieldControl => <fieldset disabled={isDisabled}
     onPointerDownCapture={event => { if (isDisabled) { event.preventDefault(); event.stopPropagation(); } }}
     className={sx(borderWidth.none, margin.none, padding.none, styles.fieldset)}>
-    <Rating {...props} {...fieldControl} color={color} id={binding.controlProps.id} ref={compositeRef}
+    <Rating {...props} {...fieldControl} color={color} aria-labelledby={binding.controlProps['aria-labelledby'] ?? fieldControl['aria-labelledby']} id={binding.controlProps.id} ref={compositeRef}
       aria-disabled={isDisabled || props['aria-disabled']}
-      aria-describedby={[fieldControl['aria-describedby'], props['aria-describedby']].filter(Boolean).join(' ') || undefined}
+      aria-describedby={mergeSettingsFieldIds(fieldControl['aria-describedby'], binding.controlProps['aria-describedby'], props['aria-describedby'])}
       name={binding.name} value={binding.controller.value ?? 0}
       onClickCapture={event => { if (isDisabled) { event.preventDefault(); event.stopPropagation(); } onClickCapture?.(event); }}
       onKeyDownCapture={event => { if (isDisabled) { event.preventDefault(); event.stopPropagation(); } onKeyDownCapture?.(event); }}

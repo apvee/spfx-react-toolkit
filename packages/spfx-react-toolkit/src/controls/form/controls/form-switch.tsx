@@ -11,8 +11,8 @@ import { useFieldAdapter } from '../use-field-adapter.internal';
  * @example `<Order.Switch name="value" label="Switch" />`
  */
 export const FormSwitch: React.ForwardRefExoticComponent<FormSwitchProps<FieldValues> & React.RefAttributes<HTMLInputElement>> = React.forwardRef<HTMLInputElement, FormSwitchProps<FieldValues>>(function FormSwitch({ className, disabled, fieldProps, hint, id, label, name, onBlur, onChange, orientation, required, rules, input, ...props }, ref) {
-  const binding = useFieldAdapter<FieldValues, boolean>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   const nativeInput = resolveShorthand(input);
+  const binding = useFieldAdapter<FieldValues, boolean>({ nativeSlotOwnsDescriptions: true, nativeId: nativeInput?.id, nativeRequired: nativeInput?.required, nativeDisabled: nativeInput?.disabled, describedBy: [props['aria-describedby'], nativeInput?.['aria-describedby']].filter(Boolean).join(' '), className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   // Fluent otherwise merges the native-slot change before the top-level handler.
   // Notify that consumer only after this adapter has updated RHF.
   const inputProps = { ...nativeInput, onChange: undefined, ...binding.controlProps, name: binding.controller.name, ref: binding.controller.ref, onBlur: (event: React.FocusEvent<HTMLInputElement>) => { binding.controller.onBlur(); onBlur?.(event); nativeInput?.onBlur?.(event); } };

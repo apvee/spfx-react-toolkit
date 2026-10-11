@@ -40,7 +40,8 @@ export const FormCombobox = React.forwardRef<HTMLInputElement, FormComboboxProps
   // The layout synchronization below derives selected labels from RHF before paint.
   const [display, setDisplay] = React.useState('');
   const editing = React.useRef(false);
-  const binding = useFieldAdapter<FieldValues, unknown>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules,
+  const native = resolveShorthand(input);
+  const binding = useFieldAdapter<FieldValues, unknown>({ nativeSlotOwnsDescriptions: true, nativeId: native?.id, nativeRequired: native?.required, nativeDisabled: native?.disabled, describedBy: [props['aria-describedby'], native?.['aria-describedby']].filter(Boolean).join(' '), className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules,
     resetText: { read: () => editing.current ? display : undefined, restore: text => { editing.current = true; setDisplay(text); } }
   });
   const value = readSelectionValue<string>(binding.controller.value, codec, '');
@@ -63,7 +64,6 @@ export const FormCombobox = React.forwardRef<HTMLInputElement, FormComboboxProps
   }, [valueKey, selectedText, binding.resetVersion, binding.resetPreservesValues]);
   const nativeListbox = resolveShorthand(listbox);
   const optionChildren = renderSelectionOptions(source);
-  const native = resolveShorthand(input);
   const nativeRef = useMergedRefs(binding.controller.ref, native?.ref);
   const queryChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     if (binding.controlProps.disabled) return;

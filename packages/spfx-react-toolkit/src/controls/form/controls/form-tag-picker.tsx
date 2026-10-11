@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { mergeSettingsFieldIds } from '../../settings-field-context.internal';
 import { Field, Tag, TagPicker, TagPickerControl, TagPickerGroup, TagPickerInput, TagPickerList, TagPickerOption } from '@fluentui/react-components';
 import type { FieldValues } from 'react-hook-form';
 import type { FormTagPickerProps } from '../form-control.types';
@@ -6,6 +7,8 @@ import { useFieldAdapter } from '../use-field-adapter.internal';
 import { getOptionText, getSelectionSource, getSelectionText, readSelectionValue, selectionIsDisabled, writeSelectionValue } from '../selection-options.internal';
 
 /** Removable selected tags with a separate query and actual native input ref.
+ * Naming comes from a plain text label, aria-label or an enclosing SettingsGroup.Item field.
+ * Unnamed standalone usage throws; inherited naming also names the selected-tag list.
  * RHF stores string identities or an explicit codec's live domain. Native Fluent
  * keyboard removal writes through RHF before the consumer selection callback.
  * Explicit reset with keepDirtyValues retains dirty queries through array row remounts.
@@ -38,7 +41,7 @@ export const FormTagPicker = React.forwardRef<HTMLInputElement, FormTagPickerPro
 ) {
   const source = getSelectionSource(options, children);
   const [query, setQuery] = React.useState('');
-  const binding = useFieldAdapter<FieldValues, unknown>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules,
+  const binding = useFieldAdapter<FieldValues, unknown>({ describedBy: props['aria-describedby'], className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules,
     resetText: { read: () => query, restore: text => setQuery(text) }
   });
   const selected = readSelectionValue<string[]>(binding.controller.value, codec, []);
@@ -57,6 +60,7 @@ export const FormTagPicker = React.forwardRef<HTMLInputElement, FormTagPickerPro
     value={option.value} text={getOptionText(option)}
     aria-disabled={option.disabled || undefined}>{option.label}</TagPickerOption>) : <div role="status">{emptyContent}</div>;
   const accessibleName = ariaLabel ?? (typeof label === 'string' ? label : undefined);
+  if (!accessibleName?.trim() && !binding.controlProps['aria-labelledby']) throw new TypeError('Form.TagPicker requires a plain text label, aria-label, or SettingsGroup.Item field name.');
   return <Field {...binding.fieldProps}>{fieldControl => <TagPicker {...props} disabled={binding.controlProps.disabled}
     selectedOptions={selected}
     onOptionSelect={(event, data) => {
@@ -66,12 +70,13 @@ export const FormTagPicker = React.forwardRef<HTMLInputElement, FormTagPickerPro
       onOptionSelect?.(event, data);
     }}>
     <TagPickerControl>
-      <TagPickerGroup aria-label={accessibleName}>
+      <TagPickerGroup aria-label={accessibleName} aria-labelledby={binding.controlProps['aria-labelledby']}>
         {selected.map(value => <Tag key={value}
           value={value} dismissible>{source.entries.find(option => option.value === value)?.label ?? getSelectionText(source, value)}</Tag>)}
       </TagPickerGroup>
       <TagPickerInput {...fieldControl} {...binding.controlProps}
         name={binding.name} aria-label={accessibleName}
+        aria-describedby={mergeSettingsFieldIds(binding.controlProps['aria-describedby'], props['aria-describedby'])}
         ref={binding.controller.ref}
         value={query}
         onBlur={event => {

@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { useId, useMergedRefs } from '@fluentui/react-utilities';
+import { useId, useMergedRefs, resolveShorthand } from '@fluentui/react-utilities';
 import type { FieldProps } from '@fluentui/react-components';
 import { useController } from 'react-hook-form';
 import type { ControllerRenderProps, FieldValues, RegisterOptions } from 'react-hook-form';
 import { useStableCallback } from '../../hooks/useStableCallback';
+import { SettingsFieldContext, mergeSettingsFieldIds } from '../settings-field-context.internal';
 import type { FormFieldPresentationProps } from './form-control.types';
 import { useFormRuntimeContext } from './form-context.internal';
 import { useFieldScopeDisabled, useResolvedFieldPath } from './field-path.internal';
@@ -16,7 +17,19 @@ export interface FieldAdapterOptions<TInput extends FieldValues, TValue> extends
     name: string;
     /** Native control id; omitted ids use a stable generated id shared with the Field label. */
     id?: string;
+    /** Explicit native slot identity and presentation, used only in field row mode. */
+    nativeId?: string;
+    /** Native shorthand props override Fluent's propagated descriptions. */
+    nativeSlotOwnsDescriptions?: boolean;
+    nativeRequired?: boolean;
+    nativeDisabled?: boolean;
     absoluteName?: boolean;
+    /** Custom public useField bindings do not participate in automatic row naming. */
+    inheritSettingsField?: boolean;
+    /** Composite roots cannot be activated by a native label. */
+    settingsLabelTarget?: 'group';
+    /** Additional consumer description relationships on the actual semantic target. */
+    describedBy?: string;
     ref?: React.Ref<HTMLElement>;
     rules?: RegisterOptions<TInput>;
     validateInput?: (value: TValue) => true | string;
@@ -36,6 +49,8 @@ export interface FieldAdapterResult<TValue> {
     controlProps: {
         id: string;
         disabled?: boolean;
+        'aria-labelledby'?: string;
+        'aria-describedby'?: string;
     };
     name: string;
     resetOwner: symbol;
@@ -87,19 +102,31 @@ export function useFieldAdapter<TInput extends FieldValues, TValue>(options: Fie
         return () => { if (metadata.inputValidators.get(owner) === registration) metadata.inputValidators.delete(owner); };
     }, [metadata, name, owner, options.validateInput, validateInput]);
     const { field, fieldState } = useController({ control: methods.control, name, disabled, rules: normalizeFormRules(options.rules as RegisterOptions<FieldValues> | undefined, metadata.hasResolver || options.validateInput === undefined ? undefined : validateInput) });
+    const inheritedSettingsField = React.useContext(SettingsFieldContext);
+    const settingsField = options.inheritSettingsField === false ? undefined : inheritedSettingsField;
+    if (settingsField && (options.label !== undefined || options.hint !== undefined || options.fieldProps?.hint !== undefined || (options.fieldProps !== undefined && 'label' in options.fieldProps && options.fieldProps.label !== undefined))) {
+        throw new TypeError('SettingsGroup.Item field owns label and hint; omit the Form control label/hint.');
+    }
     const generatedId = useId('form-control-');
-    const id = options.id ?? generatedId;
+    const id = options.id ?? (settingsField ? options.nativeId : undefined) ?? generatedId;
+    React.useLayoutEffect(() => settingsField?.register({ owner, id, nativeLabel: options.settingsLabelTarget !== 'group', required: options.nativeRequired ?? options.required === true, disabled: disabled || options.nativeDisabled === true }),
+        [settingsField, owner, id, options.settingsLabelTarget, options.required, options.nativeRequired, options.nativeDisabled, disabled]);
     const ref = useMergedRefs<HTMLElement>(field.ref, options.ref);
     const errors = getFormErrorMessages(fieldState.error);
     const message = renderFormErrorMessages(errors);
+    // Fluent's native shorthand slots may override the Field-propagated description.
+    // Give its existing message a stable identity so those slots can retain the same relationship.
+    const validationMessage = message ?? options.fieldProps?.validationMessage;
+    const validationSlot = settingsField ? resolveShorthand<React.HTMLAttributes<HTMLDivElement>>(validationMessage) : undefined;
+    const validationId = validationSlot ? validationSlot.id ?? `${generatedId}-validation` : undefined;
     const fieldProps: FieldProps = {
         ...options.fieldProps,
         className: options.className,
         ...(options.label === undefined ? {} : { label: { children: options.label, htmlFor: id } }),
         ...(options.hint === undefined ? {} : { hint: options.hint }),
         orientation: options.orientation, required: options.required,
-        validationMessage: message ?? options.fieldProps?.validationMessage,
+        validationMessage: validationSlot ? { ...validationSlot, id: validationId } : validationMessage,
         validationState: errors.length ? 'error' : options.fieldProps?.validationState,
     };
-    return { controller: { ...field, value: field.value as TValue, ref }, fieldProps, controlProps: { id, ...(disabled ? { disabled: true } : {}) }, name, focusRef: field.ref, resetOwner: owner, resetVersion: reset.version, resetPreservesValues: reset.preserveValues, resetSource: reset.source, state: { error: errors[0], errors, invalid: fieldState.invalid, isDirty: fieldState.isDirty, isTouched: fieldState.isTouched } };
+    return { controller: { ...field, value: field.value as TValue, ref }, fieldProps, controlProps: { id, ...(disabled ? { disabled: true } : {}), ...(settingsField ? { 'aria-labelledby': settingsField.labelId, 'aria-describedby': mergeSettingsFieldIds(options.describedBy, settingsField.descriptionId, options.nativeSlotOwnsDescriptions ? validationId : undefined) } : {}) }, name, focusRef: field.ref, resetOwner: owner, resetVersion: reset.version, resetPreservesValues: reset.preserveValues, resetSource: reset.source, state: { error: errors[0], errors, invalid: fieldState.invalid, isDirty: fieldState.isDirty, isTouched: fieldState.isTouched } };
 }

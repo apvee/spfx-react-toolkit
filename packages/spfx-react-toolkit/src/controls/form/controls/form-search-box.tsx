@@ -17,8 +17,8 @@ function isSearchInputChange(event: SearchBoxChangeEvent): event is React.Change
  * @example `<Order.SearchBox name="value" label="SearchBox" />`
  */
 export const FormSearchBox: React.ForwardRefExoticComponent<FormSearchBoxProps<FieldValues> & React.RefAttributes<HTMLInputElement>> = React.forwardRef<HTMLInputElement, FormSearchBoxProps<FieldValues>>(function FormSearchBox({ className, disabled, fieldProps, hint, id, label, name, onBlur, onChange, orientation, required, rules, input, ...props }, ref) {
-  const binding = useFieldAdapter<FieldValues, string>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   const nativeInput = resolveShorthand(input);
+  const binding = useFieldAdapter<FieldValues, string>({ nativeSlotOwnsDescriptions: true, nativeId: nativeInput?.id, nativeRequired: nativeInput?.required, nativeDisabled: nativeInput?.disabled, describedBy: [props['aria-describedby'], nativeInput?.['aria-describedby']].filter(Boolean).join(' '), className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   const inputProps = { ...nativeInput, onChange: undefined, ...binding.controlProps, name: binding.controller.name, ref: binding.controller.ref, onBlur: (event: React.FocusEvent<HTMLInputElement>) => { binding.controller.onBlur(); onBlur?.(event); nativeInput?.onBlur?.(event); } };
   const value = binding.controller.value ?? '';
   return <Field {...binding.fieldProps}><SearchBox {...props} {...binding.controlProps} name={binding.controller.name} ref={binding.controller.ref} value={value}

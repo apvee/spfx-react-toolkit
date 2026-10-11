@@ -11,8 +11,8 @@ import { useFieldAdapter } from '../use-field-adapter.internal';
  * @example `<Order.Slider name="value" label="Slider" />`
  */
 export const FormSlider: React.ForwardRefExoticComponent<FormSliderProps<FieldValues> & React.RefAttributes<HTMLInputElement>> = React.forwardRef<HTMLInputElement, FormSliderProps<FieldValues>>(function FormSlider({ className, disabled, fieldProps, hint, id, label, name, onBlur, onChange, orientation, required, rules, input, ...props }, ref) {
-  const binding = useFieldAdapter<FieldValues, number>({ className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   const nativeInput = resolveShorthand(input);
+  const binding = useFieldAdapter<FieldValues, number>({ nativeSlotOwnsDescriptions: true, nativeId: nativeInput?.id, nativeRequired: nativeInput?.required, nativeDisabled: nativeInput?.disabled, describedBy: [props['aria-describedby'], nativeInput?.['aria-describedby']].filter(Boolean).join(' '), className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });
   // Fluent selects a distinct input.onChange instead of its top-level handler.
   // Own the semantic path once, then notify both consumer callback locations.
   const inputProps = { ...nativeInput, onChange: undefined, ...binding.controlProps, name: binding.controller.name, ref: binding.controller.ref, onBlur: (event: React.FocusEvent<HTMLInputElement>) => { binding.controller.onBlur(); onBlur?.(event); nativeInput?.onBlur?.(event); } };

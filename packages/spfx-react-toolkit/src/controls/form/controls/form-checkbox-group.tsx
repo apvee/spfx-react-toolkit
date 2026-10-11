@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { mergeSettingsFieldIds } from '../../settings-field-context.internal';
 import { Checkbox, Field, FieldContextProvider, checkboxClassNames } from '@fluentui/react-components';
 import { resolveShorthand } from '@fluentui/react-utilities';
 import type { CheckboxProps } from '@fluentui/react-components';
@@ -37,7 +38,7 @@ export const FormCheckboxGroup = React.forwardRef<HTMLDivElement, FormCheckboxGr
   ref
 ) {
   const source = getSelectionSource(options, children);
-  const binding = useFieldAdapter<FieldValues, unknown>({ className, disabled, fieldProps, hint, id, label, name, orientation, required, rules });
+  const binding = useFieldAdapter<FieldValues, unknown>({ settingsLabelTarget: 'group', describedBy: props['aria-describedby'], className, disabled, fieldProps, hint, id, label, name, orientation, required, rules });
   const compositeRef = useCompositeFieldFocus(
     ref,
     binding.focusRef,
@@ -74,7 +75,8 @@ export const FormCheckboxGroup = React.forwardRef<HTMLDivElement, FormCheckboxGr
     });
   });
   return <Field {...binding.fieldProps}>{fieldControl => <div {...props} {...fieldControl}
-    id={binding.controlProps.id}
+    aria-labelledby={binding.controlProps['aria-labelledby'] ?? fieldControl['aria-labelledby']} id={binding.controlProps.id}
+    aria-describedby={mergeSettingsFieldIds(fieldControl['aria-describedby'], binding.controlProps['aria-describedby'], props['aria-describedby'])}
     aria-disabled={binding.controlProps.disabled || undefined}
     ref={compositeRef} role="group">
     <FieldContextProvider

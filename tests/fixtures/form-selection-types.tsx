@@ -45,7 +45,7 @@ const numbersCodec: FormValueCodec<number[], string[]> = { toControl: value => v
 <F.RadioGroup name="text" options={options} ref={select} />;
 // @ts-expect-error native combobox input ref is not a button ref
 <F.Combobox name="text" options={options} ref={button} />;
-// @ts-expect-error TagPicker requires a visible text label or explicit accessible name
+// Ancestor SettingsGroup.Item field naming is permitted; standalone omission is checked at runtime.
 <F.TagPicker name="many" options={options} />;
 // @ts-expect-error rich label needs explicit accessible name
 <F.TagPicker name="many" label={<span>Tags</span>} options={options} />;

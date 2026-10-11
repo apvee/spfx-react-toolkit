@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { mergeSettingsFieldIds } from '../../settings-field-context.internal';
+import { SettingsFieldContext } from '../../settings-field-context.internal';
 import { Field } from '@fluentui/react-components';
 import type { FieldValues } from 'react-hook-form';
 import type { FormDateTimeProps } from '../form-control.types';
@@ -15,9 +17,9 @@ import { FormTimePicker } from './form-time-picker';
  * Public ref targets the group; parent errors focus its first eligible part input.
  * @example `<Order.DateTime name="appointment" label="Appointment" dateLabel="Date" timeLabel="Time" />`
  */
-export const FormDateTime = React.forwardRef<HTMLDivElement, FormDateTimeProps<FieldValues>>(function FormDateTime({ className, disabled, fieldProps, hint, label, name, orientation, required, rules, dateLabel, timeLabel, datePickerProps, timePickerProps }, ref) {
+export const FormDateTime = React.forwardRef<HTMLDivElement, FormDateTimeProps<FieldValues>>(function FormDateTime({ id, 'aria-describedby': describedBy, className, disabled, fieldProps, hint, label, name, orientation, required, rules, dateLabel, timeLabel, datePickerProps, timePickerProps }, ref) {
   const { methods } = useFormRuntimeContext();
-  const binding = useFieldAdapter<FieldValues, FormDateTimeValue>({ className, disabled, fieldProps, hint, label, name, orientation, required, rules });
+  const binding = useFieldAdapter<FieldValues, FormDateTimeValue>({ settingsLabelTarget: 'group', id, describedBy, className, disabled, fieldProps, hint, label, name, orientation, required, rules });
   const acceptsInput = React.useCallback((element: HTMLInputElement) => element.name === `${binding.name}.date` || element.name === `${binding.name}.time`, [binding.name]);
   const groupRef = useCompositeFieldFocus(ref, binding.focusRef, 'input', acceptsInput);
   const currentValue = (): FormDateTimeValue => {
@@ -26,8 +28,8 @@ export const FormDateTime = React.forwardRef<HTMLDivElement, FormDateTimeProps<F
     // eslint-disable-next-line @rushstack/no-new-null
     return current ?? { date: null, time: null };
   };
-  return <Field {...binding.fieldProps}>{controlProps => <div {...controlProps} id={binding.controlProps.id} ref={groupRef} role="group" tabIndex={-1}>
-    <FormDatePicker {...datePickerProps} name={`${name}.date`} label={dateLabel} disabled={binding.controlProps.disabled || datePickerProps?.disabled}
+  return <Field {...binding.fieldProps}>{controlProps => <div {...controlProps} aria-labelledby={binding.controlProps['aria-labelledby'] ?? controlProps['aria-labelledby']} aria-disabled={binding.controlProps.disabled || undefined} aria-describedby={mergeSettingsFieldIds(controlProps['aria-describedby'], binding.controlProps['aria-describedby'], describedBy)} id={binding.controlProps.id} ref={groupRef} role="group" tabIndex={-1}>
+    <SettingsFieldContext.Provider value={undefined}><FormDatePicker {...datePickerProps} name={`${name}.date`} label={dateLabel} disabled={binding.controlProps.disabled || datePickerProps?.disabled}
       onBlur={event => { binding.controller.onBlur(); datePickerProps?.onBlur?.(event); }}
       onSelectDate={date => { binding.controller.onChange({ ...currentValue(), date }); datePickerProps?.onSelectDate?.(date); }} />
     <FormTimePicker {...timePickerProps} name={`${name}.time`} label={timeLabel} disabled={binding.controlProps.disabled || timePickerProps?.disabled}
@@ -36,6 +38,7 @@ export const FormDateTime = React.forwardRef<HTMLDivElement, FormDateTimeProps<F
         if (data.error === undefined || data.selectedTimeText === '') binding.controller.onChange({ ...currentValue(), time: data.selectedTime });
         timePickerProps?.onTimeChange?.(event, data);
       }} />
+    </SettingsFieldContext.Provider>
   </div>}</Field>;
 });
 FormDateTime.displayName = 'Form.DateTime';

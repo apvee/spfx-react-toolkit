@@ -20,7 +20,7 @@ function assertFormExampleCoverage(formSurface, registry, panel) {
   }
   visit(source);
   for (const member of new Set(expected)) assert.ok((member.startsWith('use') ? called : rendered).has(member), `Executable Form sample missing ${member}`);
-  for (const marker of ['theme', 'direction', 'resize', 'values', 'dirty', 'touched', 'errors', 'submit', 'reset', 'new-record', 'dirty-refresh', 'save-delay', 'save-fail', 'request-submit']) {
+  for (const marker of ['theme', 'direction', 'resize', 'values', 'dirty', 'touched', 'errors', 'submit', 'reset', 'new-record', 'dirty-refresh', 'save-delay', 'save-fail', 'request-submit', 'settings-group', 'settings-reference', 'settings-enabled']) {
     assert.ok(panel.includes(`data-form-demo="${marker}"`), `Observable Form sample missing ${marker}`);
   }
   assert.doesNotMatch(panel, /\bstyle\s*=|\bLayout\./, 'Form sample must compose class descriptors');
