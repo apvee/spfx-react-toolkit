@@ -7,8 +7,8 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright')
 const { teamsLightTheme, teamsDarkTheme, teamsHighContrastTheme, webLightTheme } = require('@fluentui/react-theme');
 const root = path.resolve(__dirname, '..');
 const fixtureRoot = path.join(root, 'temp/styles-panel-browser');
-const output = path.resolve(process.env.STYLES_PANEL_EVIDENCE || '.docs/maintenance/evidence/use-sx');
-const label = process.env.STYLES_PANEL_LABEL || 'task-5-ui-browser';
+const output = path.resolve(process.env.STYLES_PANEL_EVIDENCE || (process.env.STYLES_PANEL_SHELL_ONLY === '1' ? '.docs/maintenance/evidence/web-part-shell' : '.docs/maintenance/evidence/use-sx'));
+const label = process.env.STYLES_PANEL_LABEL || (process.env.STYLES_PANEL_SHELL_ONLY === '1' ? 'shell-compiled' : 'task-5-ui-browser');
 const port = Number(process.env.STYLES_PANEL_PORT || 4320);
 const url = `http://127.0.0.1:${port}`;
 const observations = [], failures = [], consoleMessages = [], pageErrors = [];
@@ -91,6 +91,12 @@ async function thumbInteractions(axis) {
   page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   page.on('console', message => { if (message.type() === 'error' || message.type() === 'warning') consoleMessages.push({ type: message.type(), text: message.text() }); });
   page.on('pageerror', error => pageErrors.push(error.message));
+  if (process.env.STYLES_PANEL_SHELL_ONLY === '1') {
+    await require('./web-part-shell-browser.helpers.cjs').checkWebPartShellBrowser(page, { url, output, label, boundary: 'compiled', check, consoleMessages });
+    check('Shell console health', consoleMessages, []);
+    check('Shell page errors', pageErrors, []);
+    return;
+  }
   if (process.env.DATA_GRID_CHART_PROBE === '1') {
     await require('./data-grid-browser.helpers.cjs').exerciseDataGridChartProbe({ page, url, output, label, boundary: 'compiled', check, consoleMessages, pageErrors });
     return;
@@ -419,7 +425,7 @@ async function thumbInteractions(axis) {
   if (browser) await browser.close();
   if (server) await new Promise(resolve => server.close(resolve));
   fs.mkdirSync(output, { recursive: true });
-  fs.writeFileSync(path.join(output, `${label}.json`), JSON.stringify({ url, browser: version, boundary: 'SPFx Teams/theme hook context only; actual compiled library, sample panel, React17, Griffel, FluentProvider', observations, thumbInteractionCaptures, failures, consoleMessages, pageErrors }, null, 2));
+  fs.writeFileSync(path.join(output, `${label}.json`), JSON.stringify({ url, browser: version, boundary: process.env.STYLES_PANEL_SHELL_ONLY === '1' ? 'Actual compiled Shell/provider/store/hooks and sample; SDK/SPFx services only; Browser plugin not available' : 'SPFx Teams/theme hook context only; actual compiled library, sample panel, React17, Griffel, FluentProvider', observations, thumbInteractionCaptures, failures, consoleMessages, pageErrors }, null, 2));
   console.log(JSON.stringify({ browser: version, checks: observations.length, failures, consoleMessages, pageErrors }, null, 2));
   if (failures.length) process.exitCode = 1;
 });

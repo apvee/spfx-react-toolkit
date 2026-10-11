@@ -148,7 +148,7 @@ for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invok
 }
 console.log('Verified dedicated root/domain/legacy Imports scenario (no duplicate export coverage).');
 
-const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid'].includes(item.name)).map(item => item.name);
+const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata'].includes(item.name)).map(item => item.name);
 assertCovered('Controls', controlSymbols, registrySymbols);
 const textPanel = read(path.join(panelsPath, 'FormattedTextPanel.tsx'));
 for (const marker of ['FormattedText', 'maxLines', 'markdown', 'subtle', 'highlight', 'variant', 'as', 'font', 'align', 'wrap', 'truncate', 'italic', 'underline', 'strikethrough', 'ref', 'onClick']) {
@@ -191,3 +191,11 @@ for (const name of ['Text', 'Number', 'Boolean', 'Date', 'DateTime', 'Badge', 'I
   if (!gridPanel.includes(`<Grid.${name}Column `)) throw new Error(`DataGrid sample missing ${name} column`);
 }
 console.log('Verified complete DataGrid family, controlled states and immutable chart scenario.');
+
+const shellPanel = read(path.join(panelsPath, 'WebPartShellPanel.tsx'));
+for (const marker of ['show-title', 'plain', 'rich', 'empty', 'theme', 'direction', 'surface', 'padding', 'note', 'increment', 'observations']) {
+  if (!shellPanel.includes(`data-shell-demo="${marker}"`)) throw new Error(`WebPartShell sample missing ${marker}`);
+}
+const shellHost = read(path.join(path.dirname(registryPath), 'WebPartShellDemoHost.tsx'));
+if ((shellHost.match(/<WebPartShell /g) || []).length !== 1 || /<WebPartShell /.test(shellPanel)) throw new Error('WebPartShell sample must wrap the web part exactly once');
+console.log('Verified WebPartShell root host, metadata and observable child/presentation scenario.');

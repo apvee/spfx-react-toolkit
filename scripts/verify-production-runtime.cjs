@@ -10,7 +10,7 @@ const { buildConfig, statsOptions, collectEmittedModules, renderConsumer, readRu
 const root = path.resolve(__dirname, '..');
 const base = 'https://tenant.test/sites/standalone';
 const toolkit = '@apvee/spfx-react-toolkit';
-const scenarios = ['context', 'list', 'search', 'batch', 'providers', 'styles', 'form', 'data-grid'];
+const scenarios = ['context', 'list', 'search', 'batch', 'providers', 'styles', 'form', 'data-grid', 'web-part-shell'];
 const variants = ['root', 'domain', 'leaf'];
 const leaf = { context: 'spfx-pnp-context.service', list: 'spfx-pnp-list.service', search: 'spfx-pnp-search.service', batch: 'spfx-pnp.service' };
 const hash = data => crypto.createHash('sha256').update(data).digest('hex');
@@ -27,11 +27,11 @@ function buildRuntimeConfig(consumerRoot, entry, outputDir, browserUi) {
 }
 
 async function compileProbe({ consumerRoot, outputDir, scenario, variant }) {
-  if (!scenarios.includes(scenario) || !(['form', 'data-grid'].includes(scenario) ? ['root', 'domain', 'control'] : variants).includes(variant)) throw new Error('Unknown production runtime probe');
-  const ui = scenario === 'providers' || scenario === 'styles' || scenario === 'form' || scenario === 'data-grid';
+  if (!scenarios.includes(scenario) || !(['form', 'data-grid', 'web-part-shell'].includes(scenario) ? ['root', 'domain', 'control'] : variants).includes(variant)) throw new Error('Unknown production runtime probe');
+  const ui = scenario === 'providers' || scenario === 'styles' || scenario === 'form' || scenario === 'data-grid' || scenario === 'web-part-shell';
   const fixture = ui ? `${scenario}.tsx` : `pnp-${scenario}.ts`;
   const specifier = toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/services' : '/lib/services/' + leaf[scenario]);
-  const imports = ['form', 'data-grid'].includes(scenario) ? { TOOLKIT: toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/controls' : '/controls/' + scenario) } : ui ? scenario === 'providers' ? {
+  const imports = ['form', 'data-grid', 'web-part-shell'].includes(scenario) ? { TOOLKIT: toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/controls' : '/controls/' + scenario) } : ui ? scenario === 'providers' ? {
     PROVIDER: toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/core' : '/lib/core/provider-webpart'),
     CONTEXT: toolkit + (variant === 'root' ? '/hooks' : ''),
     PROPERTIES: toolkit + (variant === 'root' ? '/lib/hooks/useSPFxProperties' : '/hooks'),
@@ -45,6 +45,7 @@ async function compileProbe({ consumerRoot, outputDir, scenario, variant }) {
   fs.mkdirSync(path.dirname(entry), { recursive: true });
   fs.writeFileSync(entry, source);
   const config = buildRuntimeConfig(consumerRoot, entry, outputDir, ui);
+  if (scenario === 'web-part-shell') config.output.publicPath = '/production-assets/';
   const stats = await new Promise((resolve, reject) => {
     const compiler = webpack(config);
     compiler.run((error, result) => compiler.close(closeError => error || closeError ? reject(error || closeError) : resolve(result)));
@@ -69,7 +70,7 @@ function executeProbe(bundlePath, scenario, consumerRoot) {
   if(result.error || result.status !== 0 || metadata.failureMarkers.length) throw Object.assign(new Error(`Production probe ${scenario}: ${result.error?.message || metadata.stderr}`),metadata);
   return {...JSON.parse(result.stdout),...metadata};
 }
-function installHostAdapter(consumerRoot) {
+function installHostAdapter(consumerRoot, scenario) {
   const consumerRequire=createRequire(path.join(consumerRoot,'package.json'));
   const original=Module._load;
   global.MessageChannel=window.MessageChannel;
@@ -79,6 +80,7 @@ function installHostAdapter(consumerRoot) {
   Module._load=function(request,parent,isMain) {
     if(host[request]) return host[request];
     if (/^(react|react-dom)(\/|$)/.test(request)) return original.call(this,consumerRequire.resolve(request),parent,isMain);
+    if(scenario === 'web-part-shell' && request === '@microsoft/sp-core-library') return {DisplayMode:{Read:1,Edit:2}};
     if(request === '@microsoft/sp-component-base') return {ThemeProvider:{serviceKey:'production-theme'}};
     return original.call(this,request,parent,isMain);
   };
@@ -98,21 +100,49 @@ async function runProbe(scenario, bundlePath, consumerRoot) {
   Object.defineProperty(global,'navigator',{value:dom.window.navigator,configurable:true});
   global.HTMLElement=dom.window.HTMLElement;global.localStorage=dom.window.localStorage;global.sessionStorage=dom.window.sessionStorage;
   window.requestAnimationFrame=callback=>setTimeout(callback,0);window.cancelAnimationFrame=clearTimeout;
-  if(scenario==='providers'||scenario==='styles'||scenario==='form'||scenario==='data-grid') {
-    if (scenario === 'form' || scenario === 'data-grid') {
+  if(scenario==='providers'||scenario==='styles'||scenario==='form'||scenario==='data-grid'||scenario==='web-part-shell') {
+    if (scenario === 'form' || scenario === 'data-grid' || scenario === 'web-part-shell') {
       for (const name of ['Node', 'NodeFilter', 'Element', 'Event', 'CustomEvent', 'File', 'FileList', 'MutationObserver']) global[name] = dom.window[name];
       window.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
       // JSDOM 15 predates the browser WebCrypto API used by native Tabster.
       // Supply the actual host implementation rather than a random-ID stub.
       Object.defineProperty(window, 'crypto', { value: crypto.webcrypto });
-      if (scenario === 'data-grid') {
+      if (scenario === 'data-grid' || scenario === 'web-part-shell') {
         // JSDOM 15 lacks Range geometry, as in the existing AutoSkeleton Node
         // harness. Real overlay rectangles/inert behavior are browser gates.
         document.createRange = () => ({ selectNodeContents() {}, getClientRects() { return []; } });
       }
     }
-    const host=installHostAdapter(consumerRoot);
-    const observation=await require(bundlePath).run({...host,assert});
+    const assetRequests = [];
+    if (scenario === 'web-part-shell') {
+      // JSDOM15 has no Selection implementation. The legacy null sentinel means
+      // no selection, as in the dependency lifecycle probe; native focus is Task9.
+      document.getSelection = () => null;
+      global.getComputedStyle = window.getComputedStyle.bind(window);
+      global.innerHeight = window.innerHeight;
+      global.requestAnimationFrame = window.requestAnimationFrame;
+      global.cancelAnimationFrame = window.cancelAnimationFrame;
+      global.self = window;
+      const append = document.head.appendChild.bind(document.head);
+      document.head.appendChild = element => {
+        if (element.tagName === 'SCRIPT' && element.src) {
+          const asset = path.basename(new URL(element.src).pathname);
+          assert.ok(/^[a-zA-Z0-9_.-]+\.js$/.test(asset), 'Unexpected runtime asset path');
+          const file = path.join(path.dirname(bundlePath), asset);
+          assert.ok(fs.existsSync(file), `Missing requested emitted asset: ${asset}`);
+          assetRequests.push(asset);
+          // Execute actual emitted chunk bytes through Webpack's real web loader.
+          // This observes requested script assets; it is not a native HTTP test.
+          setTimeout(() => {
+            try { require('node:vm').runInThisContext(fs.readFileSync(file, 'utf8'), { filename: file }); element.onload?.({ type: 'load', target: element }); }
+            catch (error) { element.onerror?.({ type: 'error', target: element }); throw error; }
+          }, 0);
+        }
+        return append(element);
+      };
+    }
+    const host=installHostAdapter(consumerRoot, scenario);
+    const observation=await require(bundlePath).run({...host,assert,assetRequests});
     dom.window.close();
     return {scenario,pid:process.pid,assertions:observation.assertions,observation};
   }
@@ -183,7 +213,7 @@ async function verifyProductionRuntime({ consumerRoot, outputDir }) {
   const save = () => fs.writeFileSync(path.join(outputDir, 'runtime-report.json'), JSON.stringify(report, null, 2) + '\n');
   save();
   const start=Date.now();
-  await runRuntimeMatrix({report,cases:scenarios.flatMap(scenario=>(['form', 'data-grid'].includes(scenario) ? ['root', 'domain', 'control'] : variants).map(variant=>({scenario,variant}))),
+  await runRuntimeMatrix({report,cases:scenarios.flatMap(scenario=>(['form', 'data-grid', 'web-part-shell'].includes(scenario) ? ['root', 'domain', 'control'] : variants).map(variant=>({scenario,variant}))),
     compile:probe=>compileProbe({consumerRoot,outputDir:path.join(outputDir,probe.scenario,probe.variant),...probe}),
     execute:(bundlePath,scenario)=>executeProbe(bundlePath,scenario,consumerRoot),save});
   report.durationMs=Date.now()-start;save();

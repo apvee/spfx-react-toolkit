@@ -148,3 +148,9 @@ import { FormattedText } from '@apvee/spfx-react-toolkit';
 ```
 
 The lazy **FormattedText** sample exercises its props, light/dark themes, narrow width, RTL, mixed JSX and ref/click observations. Authenticated SharePoint-host validation is separate and remains NOT EXECUTED until recorded.
+
+## Web part shell
+
+[`WebPartShell`](./docs/api/controls/web-part-shell.md) wraps an actual `BaseClientSideWebPart` (`instance={this}`), supplies SPFx/Fluent providers, adapts section/application padding and edits a persisted title inline in Edit mode. Extend `IWebPartShellProperties` with application fields, compose `getWebPartShellPropertiesMetadata()` into the class getter, and use the pane's show-title toggle. The exact title properties are `title`, `titleHTML?` and `showTitle?`; defined empty HTML stays authoritative. Import from the root, `/controls` or `/controls/web-part-shell`.
+
+The author UI uses Fluent UI 9; the private Tiptap 3.30.3 engine loads only for a visible Edit title. The locked dependency addition is 32 package records, about 7.6 MB of raw installed content (880 files), separately from emitted asset sizes. See the guide for renderer ownership, SDK subscription limits, protocol restrictions and local/authenticated validation boundaries.

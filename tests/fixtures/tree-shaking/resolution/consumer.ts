@@ -140,3 +140,15 @@ import { TextColumn } from '@apvee/spfx-react-toolkit/controls/data-grid';
 // @ts-expect-error Table-only API has no View.
 export const gridView = rootGrid.View;
 void TextColumn;
+
+import { WebPartShell as rootShell, getWebPartShellPropertiesMetadata as rootMetadata } from '@apvee/spfx-react-toolkit';
+import { WebPartShell as domainShell, getWebPartShellPropertiesMetadata as domainMetadata } from '@apvee/spfx-react-toolkit/controls';
+import { WebPartShell as controlShell, getWebPartShellPropertiesMetadata as controlMetadata } from '@apvee/spfx-react-toolkit/controls/web-part-shell';
+import type { WebPartShellProps as RootShellProps } from '@apvee/spfx-react-toolkit';
+import type { WebPartShellProps as DomainShellProps } from '@apvee/spfx-react-toolkit/controls';
+import type { WebPartShellProps as ControlShellProps, IWebPartShellProperties } from '@apvee/spfx-react-toolkit/controls/web-part-shell';
+export const shellAliases: typeof rootShell[] = [domainShell, controlShell];
+export const metadataAliases: typeof rootMetadata[] = [domainMetadata, controlMetadata];
+export type ShellPropAliases = [RootShellProps<IWebPartShellProperties>, DomainShellProps<IWebPartShellProperties>, ControlShellProps<IWebPartShellProperties>];
+// @ts-expect-error Private editor has no clean subpath.
+import {} from '@apvee/spfx-react-toolkit/controls/web-part-shell/title/web-part-title-editor.internal';

@@ -19,7 +19,7 @@ interface SPFxEnvironmentInfo {
 }
 ```
 
-Maps page-context metadata, host URL and available SDK objects through `getSPFxEnvironmentInfo`. This is host detection, not a development/test/production classification or proof that a remote feature is authorized.
+Resolves `app.host.name` from asynchronously acquired SPFx application SDK context: Teams/TeamsModern maps to Teams, Office to Office, and Outlook/OutlookWin32 to Outlook. SDK presence alone does not classify Office or Outlook as Teams. Until context is available, unknown hosts use SharePoint URL/on-premises fallback; local workbench retains precedence. The hook updates when acquisition completes and shares the matching provider runtime through `useSPFxTeams`. The pure `getSPFxEnvironmentInfo` helper remains a separate page-context mapping, not an asynchronous SDK hook. Host detection is not a development/test/production classification or proof that a remote feature is authorized.
 
 ```tsx
 import * as React from 'react';
@@ -45,7 +45,11 @@ interface SPFxTeamsInfo {
 }
 ```
 
-The hook reads the SPFx Teams SDK wrapper (`sdks.microsoftTeams.teamsJs`) and direct SDK forms, trying the v2 `app.getContext()` API before the v1 callback API. It normalizes the acquired theme. The returned context is `unknown` because SDK versions have different context shapes; narrow it in consuming code. SPFx context replacement resets Teams state and ignores obsolete initialization callbacks; unmount cleanup ignores later completions. The hook does not register a live Teams theme-change subscription.
+The hook reads the validated SPFx SDK wrapper (`sdks.microsoftTeams.teamsJs`) or direct SDK form. It prefers v2 `app.getContext()` and `app.registerOnThemeChangeHandler`, with v1 callback/registration fallback, and normalizes default/dark/highContrast themes. Despite its historical name, the application SDK can serve Teams, Office and Outlook. `supported` means context acquisition succeeded; use `useSPFxEnvironmentInfo` to identify the actual host. Context is `unknown`; narrow it before reading host-specific fields.
+
+Live theme subscriptions share one lazy dispatcher per SDK identity within this library bundle. Each provider runtime store acquires context once for its active SDK subscription and reference-counts its hooks. Replacing the wrapper with the same SDK does not reacquire; replacing the resolved SDK resets state. Recent theme events take precedence over stale initialization themes. Cleanup removes runtime listeners/references and ignores obsolete completions; remount reacquires context.
+
+The SDK offers no public unregister API. The dispatcher can remain without listeners after cleanup, and another bundle or consumer can replace the SDK's single handler. Registration/acquisition failures are reported through `console.error`; successful initial context does not guarantee live updates after a handler failure or replacement. There is no global registry or monkeypatch. See [WebPartShell](../controls/web-part-shell.md#surface-theme-and-lifecycle) for provider-composed usage.
 
 ```tsx
 import * as React from 'react';

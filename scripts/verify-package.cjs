@@ -144,6 +144,14 @@ try {
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
   // Both the public entry points and their persistence/client dependencies must ship.
   for (const module of [
+    'controls/web-part-shell/index',
+    'controls/web-part-shell/web-part-shell',
+    'controls/web-part-shell/web-part-shell.types',
+    'controls/web-part-shell/web-part-shell-metadata',
+    'controls/web-part-shell/web-part-shell-runtime.internal',
+    'controls/web-part-shell/title/web-part-title.internal',
+    'controls/web-part-shell/title/web-part-title-editor.internal',
+    'controls/web-part-shell/title/web-part-title-extensions.internal',
     'controls/form/index',
     'controls/form/form',
     'controls/form/create-form',
@@ -535,6 +543,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   }
   fs.copyFileSync(path.join(root, 'tests/fixtures/form-package-consumer.tsx'), path.join(consumer, 'compatibility/form-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/data-grid-package-consumer.tsx'), path.join(consumer, 'compatibility/data-grid-package-consumer.tsx'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/web-part-shell-package-consumer.tsx'), path.join(consumer, 'compatibility/web-part-shell-package-consumer.tsx'));
   run(['install','--no-audit','--no-fund'],consumer);
   assert.equal(fs.lstatSync(path.join(consumer,'node_modules/@apvee/spfx-react-toolkit')).isSymbolicLink(),false);
   const installedPackage = JSON.parse(fs.readFileSync(path.join(consumer, 'node_modules/@apvee/spfx-react-toolkit/package.json'), 'utf8'));

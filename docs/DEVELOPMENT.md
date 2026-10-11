@@ -158,7 +158,7 @@ npm run verify
 npm run verify:package
 ```
 
-`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 66-variant bundle contract (including Form/createForm, existing controls and locale/page-context equivalents), 21 fresh runtime probes and nine mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
+`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 78-variant bundle contract (including WebPartShell/metadata, Form/createForm, existing controls and locale/page-context equivalents), the current canonical runtime-probe matrix and nine mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
 
 Ordinary verification deletes the temporary consumer when it finishes. For diagnostics or an explicit baseline proposal, preserve a fresh installed consumer and read its recorded path before running the examples below. The bundle CLI requires `--consumer-root`; its default mode is `enforce`, its default contract is `tests/fixtures/tree-shaking/contract.json`, and its default output is `.docs/maintenance/evidence/tree-shaking/bundle-contract`:
 
@@ -172,7 +172,7 @@ node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUM
 
 If you set `SPFX_PACKAGE_EVIDENCE`, read `consumer-path.txt` from that evidence directory instead. Run diagnostic commands only after the preserved package verification succeeds.
 
-Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete contract of 66 variants and 32 comparisons; custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
+Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete contract of 78 variants and 40 comparisons; custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
 
 Normal verification never writes `tests/fixtures/tree-shaking/baseline.json`. To propose an explicit update after reviewing a complete passing run and its toolchain, package/lock/config/fixture hashes, emitted initial/async assets and raw/gzip/Brotli totals:
 
@@ -222,11 +222,11 @@ The lazy `auto-skeleton` entry (`spfx-demo-auto-skeleton`) consumes the compiled
 
 Run `node --test tests/demo-auto-skeleton.test.cjs` for sample marker coverage and `npm run verify:examples` for the registry. Marker tests do not execute the scenario. Existing source and compiled-sample browser fixtures include AutoSkeleton. The source fixture exposes `window.autoSkeletonFixture.render`, `focusAndLoad` and `scrollRoot`, with `as-` DOM IDs; it inherits direction/theme from `window.sxFixture.render`. Observe real text/shape geometry, resize while hidden, root border/padding/scroll, exclusion subtrees, descendant visibility overrides, focus/inert, empty geometry, two independent instances and Fluent media preferences. New geometry CSS may persist for the renderer lifetime; repeated geometry should reuse rules.
 
-Build the library before the app and restart an active serve after source changes. When [full verification applies](#verification-scope), run the established `npm run verify` and `npm run verify:package` gates, including the 54 root/domain/leaf bundle variants. Record local browser execution separately. The authenticated [AutoSkeleton checklist](./SHAREPOINT-VALIDATION.md#autoskeleton) remains **NOT EXECUTED** until a tenant run records it.
+Build the library before the app and restart an active serve after source changes. When [full verification applies](#verification-scope), run the established `npm run verify` and `npm run verify:package` gates with the [current canonical inventory](#production-import-gates-and-baseline-review), including the AutoSkeleton root/domain/control cases. Record local browser execution separately. The authenticated [AutoSkeleton checklist](./SHAREPOINT-VALIDATION.md#autoskeleton) remains **NOT EXECUTED** until a tenant run records it.
 
 ## StateMessage development
 
-The standalone control composes FormattedText, Fluent Button and useSx container descriptors. Run `node --test tests/state-message*.test.cjs tests/demo-state-message.test.cjs` for contract, artwork/theme, types and demo checks. Source and compiled-sample browser fixtures exercise container widths, light/dark, RTL, actions and forced colors. Build library before app and restart serve after library changes. When [full verification applies](#verification-scope), run `npm run verify` and `npm run verify:package`; the complete contract now has 54 bundle variants. Keep local browser results separate from the [authenticated checklist](./SHAREPOINT-VALIDATION.md#statemessage).
+The standalone control composes FormattedText, Fluent Button and useSx container descriptors. Run `node --test tests/state-message*.test.cjs tests/demo-state-message.test.cjs` for contract, artwork/theme, types and demo checks. Source and compiled-sample browser fixtures exercise container widths, light/dark, RTL, actions and forced colors. Build library before app and restart serve after library changes. When [full verification applies](#verification-scope), run `npm run verify` and `npm run verify:package`; use the [current canonical inventory](#production-import-gates-and-baseline-review), which includes StateMessage root/domain/control cases. Keep local browser results separate from the [authenticated checklist](./SHAREPOINT-VALIDATION.md#statemessage).
 
 ## SettingsGroup and AccordionGroup development
 
@@ -234,8 +234,38 @@ Both controls compose Fluent Card/Accordion, native semantic text wrappers and u
 
 Run `node --test tests/groups*.test.cjs tests/demo-groups.test.cjs`, `npm run verify:public-docs` and `npm run verify:examples`. The lazy GroupsPanel uses root imports and exposes labeled settings, controlled expansion, multiple mode, mounted note persistence/unmount reset, native refs, hidden/disabled, theme, RTL and widths 320/500/639/640/900. Marker checks do not execute the scenario. Source and compiled-sample browser fixtures exercise layout, expansion and actual focus behavior; record those observations separately.
 
-Build with `npm run build:library` before `npm run build:app`, and restart an active serve after library changes. When [full verification applies](#verification-scope), run `npm run verify` and `npm run verify:package`. The complete bundle contract now has 60 variants, adding root/domain/control variants for both groups without changing retention budgets. Authenticated [group host checks](./SHAREPOINT-VALIDATION.md#settingsgroup-and-accordiongroup) remain **NOT EXECUTED** until a tenant run records them.
+Build with `npm run build:library` before `npm run build:app`, and restart an active serve after library changes. When [full verification applies](#verification-scope), run `npm run verify` and `npm run verify:package`. The [current canonical bundle contract](#production-import-gates-and-baseline-review) includes root/domain/control variants for both groups without changing retention budgets. Authenticated [group host checks](./SHAREPOINT-VALIDATION.md#settingsgroup-and-accordiongroup) remain **NOT EXECUTED** until a tenant run records them.
 
 The coordinated Fluent/Charts baseline uses Charts 9.3.27 and locks Tabster 8.8.0 with shared Keyborg 2.14.1. Preserve this compatible navigation subtree: Tabster 8.8.1 resolves Keyborg 3 alongside Fluent’s Keyborg 2 and the actual React 17 cleanup probe detects a registry collision. This lock selection satisfies Fluent’s published range; no overrides are used. Native providers may have distinct package versions, but must resolve the same shared contexts, theme and Griffel renderer.
 
 The sample's webpack configuration applies `config/keyborg-instance-id-loader.cjs` to Keyborg's installed ESM/CJS entry. Independently bundled SharePoint and solution copies share `window.__keyborg`, while Keyborg 2.14.1's instance counter is module-local. The loader adds a 128-bit random suffix to instance IDs using browser `crypto.getRandomValues`, preventing one bundle from overwriting another's references. Native keyboard subscriptions and cleanup remain intact; diagnostics are not suppressed and no global registry is added. The loader fails if its reviewed declaration changes. Run `node --test tests/spfx-keyborg.test.cjs tests/spfx-debug-port.test.cjs` when changing this integration. This is a sample build workaround; published library output and other consumers' build configurations are not rewritten.
+
+## WebPartShell development
+
+The actual test web part extends `IWebPartShellProperties`, supplies manifest defaults, composes searchable plain-title metadata and exposes `showTitle` in the pane. Its root host renders `WebPartShell` with the actual instance. The lazy **WebPartShell** panel (`web-part-shell`, `spfx-demo-web-part-shell`) observes surface/padding, theme/direction, root forwarding, authoritative property replacement and preserved child/action state. See the [public API/protocol](./api/controls/web-part-shell.md).
+
+The family uses the existing provider/property/display/theme hooks. SDK theme dispatch is lazy per SDK identity within this bundle and refcounted per runtime store; it has no public unregister and another bundle can replace the single handler. Auto application layout uses SDK presence or a guarded optional exact legacy `SingleWebPartAppPage` indicator. Explicit surface remains available when that indicator is absent. The renderer belongs to the host document; the shell inherits it.
+
+For implementation changes, run the relevant Shell/title/SDK/sample tests, not unrelated behavior suites:
+
+```bash
+node --test tests/web-part-shell*.test.cjs tests/web-part-title*.test.cjs tests/spfx-host-context.test.cjs tests/spfx-teams-theme.test.cjs tests/demo-web-part-shell.test.cjs
+npm run verify:public-docs
+npm run verify:examples
+npm run verify:api
+```
+
+Use static documentation/link checks for documentation-only work. Source and compiled browser fixtures reuse the actual sample panel with real provider/hooks and host service doubles:
+
+```bash
+npm run build:library
+npm run build:app
+SX_BROWSER_SHELL_ONLY=1 node scripts/build-sx-browser-fixture.cjs
+STYLES_PANEL_SHELL_ONLY=1 node scripts/build-styles-panel-browser.cjs
+SX_BROWSER_SHELL_ONLY=1 node scripts/check-sx-browser-fixture.cjs
+STYLES_PANEL_SHELL_ONLY=1 node scripts/check-styles-panel-browser.cjs
+```
+
+The source fixture server uses port 4317; the compiled runner owns port 4320. Supply the installed Playwright module/browser through the existing runner environment options. Rebuild library before app and restart an active app serve after source changes. Local acceptance recorded Chrome 155.0.8059.39, 139 source checks and 140 compiled checks. Actual mouse/keyboard interaction complements CDP composition events and synthetic ClipboardEvent paste; these are not device IME, touch, screen-reader or tenant tests. Record [authenticated checks](./SHAREPOINT-VALIDATION.md#webpartshell) separately.
+
+The fourteen exact private Tiptap 3.30.3 dependencies, public entrypoint and new initial/async boundary justify full package/import gates under [verification scope](#verification-scope) when integrating this feature. Measure fresh packed initial/async/union bytes after the final implementation; earlier measurements predate QA fixes. The install addition is 32 package records / 7,573,815 raw installed bytes / 880 files, separately from emitted bundle cost. Inspect subprocess failures and warnings in `npm run verify` and `npm run verify:package`; neither authorizes publication, deployment or tenant changes.

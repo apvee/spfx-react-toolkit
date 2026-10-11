@@ -123,6 +123,24 @@
     ],
     "relative-time-control": [
       "^@apvee/spfx-react-toolkit/lib/controls/relative-time/relative-time\\.js$"
+    ],
+    "shell": [
+      "^@apvee/spfx-react-toolkit/lib/controls/web-part-shell/"
+    ],
+    "editor": [
+      "^@apvee/spfx-react-toolkit/lib/controls/web-part-shell/title/web-part-title-(editor(?:-adapter)?|extensions|toolbar)\\.internal\\.js$"
+    ],
+    "tiptap": [
+      "^@tiptap/"
+    ],
+    "prosemirror": [
+      "^prosemirror-[^/]+/"
+    ],
+    "editor-menus": [
+      "^@tiptap/extension-(bubble|floating)-menu/"
+    ],
+    "shell-runtime": [
+      "^@apvee/spfx-react-toolkit/lib/controls/web-part-shell/(?!web-part-shell-metadata\\.js$)"
     ]
   },
   "fixtures": [
@@ -168,7 +186,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": []
     },
@@ -219,7 +241,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": []
     },
@@ -265,7 +291,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": []
     },
@@ -317,7 +347,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -372,7 +406,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -416,7 +454,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -463,7 +505,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -509,7 +555,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -564,7 +614,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -614,7 +668,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": []
     },
@@ -646,7 +704,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": []
     },
@@ -676,7 +738,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": []
     },
@@ -709,7 +775,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -759,7 +829,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": []
     },
@@ -791,7 +865,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -824,7 +902,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -869,7 +951,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "formatted-text",
@@ -919,7 +1005,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "relative-time",
@@ -966,7 +1056,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "iana-lookup"
@@ -1013,7 +1107,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": []
     },
@@ -1057,7 +1155,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "auto-skeleton",
@@ -1101,7 +1203,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "state-message",
@@ -1150,7 +1256,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "settings-group",
@@ -1196,7 +1306,11 @@
         "form-time",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "accordion-group",
@@ -1240,7 +1354,11 @@
         "fluent-accordion",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1288,7 +1406,11 @@
         "fluent-accordion",
         "data-grid",
         "charts",
-        "d3"
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1339,7 +1461,11 @@
         "state-artwork",
         "settings-group",
         "accordion-group",
-        "iana-lookup"
+        "iana-lookup",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "data-grid",
@@ -1388,7 +1514,11 @@
         "state-artwork",
         "settings-group",
         "accordion-group",
-        "iana-lookup"
+        "iana-lookup",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
       ],
       "requiredModuleGroups": [
         "data-grid",
@@ -1397,6 +1527,91 @@
         "auto-skeleton",
         "fluent-skeleton"
       ]
+    },
+    {
+      "id": "web-part-shell",
+      "template": "web-part-shell.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/web-part-shell"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "form",
+        "data-grid",
+        "charts",
+        "d3",
+        "editor-menus",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
+      ],
+      "requiredModuleGroups": [
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror"
+      ],
+      "forbiddenInitialModuleGroups": [
+        "editor",
+        "tiptap",
+        "prosemirror"
+      ]
+    },
+    {
+      "id": "web-part-shell-metadata",
+      "template": "web-part-shell-metadata.ts",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/web-part-shell"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "editor",
+        "tiptap",
+        "prosemirror",
+        "provider",
+        "pnp",
+        "spfx-runtime",
+        "griffel",
+        "form",
+        "data-grid",
+        "shell-runtime",
+        "charts",
+        "d3",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time"
+      ],
+      "requiredModuleGroups": []
     }
   ],
   "comparisons": [
@@ -1615,6 +1830,30 @@
       "reference": "data-grid-factory/control",
       "metric": "gzip",
       "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "web-part-shell/root",
+      "reference": "web-part-shell/control",
+      "metric": "gzip",
+      "informational": true
+    },
+    {
+      "candidate": "web-part-shell/domain",
+      "reference": "web-part-shell/control",
+      "metric": "gzip",
+      "informational": true
+    },
+    {
+      "candidate": "web-part-shell-metadata/root",
+      "reference": "web-part-shell-metadata/control",
+      "metric": "gzip",
+      "informational": true
+    },
+    {
+      "candidate": "web-part-shell-metadata/domain",
+      "reference": "web-part-shell-metadata/control",
+      "metric": "gzip",
+      "informational": true
     }
   ]
 }

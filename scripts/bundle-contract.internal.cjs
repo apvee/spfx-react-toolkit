@@ -158,7 +158,7 @@ function validateContract(contract) {
   for (const fixture of contract.fixtures) {
     if (!/^[a-z0-9-]+$/.test(fixture.id) || ids.has(fixture.id) || !fixture.template || !fixture.variants) throw new Error('Invalid/duplicate fixture');
     ids.add(fixture.id);
-    for (const group of [...fixture.forbiddenModuleGroups, ...fixture.requiredModuleGroups]) if (!contract.moduleGroups[group]) throw new Error(`Unknown module group ${group}`);
+    for (const group of [...fixture.forbiddenModuleGroups, ...fixture.requiredModuleGroups, ...(fixture.forbiddenInitialModuleGroups ?? [])]) if (!contract.moduleGroups[group]) throw new Error(`Unknown module group ${group}`);
     for (const variant of Object.keys(fixture.variants)) if (!/^[a-z0-9-]+$/.test(variant)) throw new Error('Invalid variant name');
   }
   for (const patterns of Object.values(contract.moduleGroups)) for (const pattern of patterns) new RegExp(pattern);
@@ -203,6 +203,10 @@ function checkFixture(item, fixture, contract) {
   const matches = group => item.emittedModules.filter(module => contract.moduleGroups[group].some(pattern => new RegExp(pattern).test(module.resource)));
   for (const group of fixture.forbiddenModuleGroups) if (matches(group).length) failures.push(`${item.id}: forbidden module group ${group}`);
   for (const group of fixture.requiredModuleGroups) if (!matches(group).length) failures.push(`${item.id}: missing required module group ${group}`);
+  for (const group of fixture.forbiddenInitialModuleGroups ?? []) {
+    if (!Array.isArray(item.initialChunkIds) || !item.initialChunkIds.length) throw new Error('Missing initial chunk provenance');
+    if (matches(group).some(module => module.chunks.some(id => item.initialChunkIds.includes(id)))) failures.push(`${item.id}: forbidden initial module group ${group}`);
+  }
   const expected = fixture.retainedDescriptors;
   if (expected) {
     for (const call of item.retentionObservations) {
@@ -256,7 +260,7 @@ function consumerProvenance(consumerRoot) {
   }
   // These packages keep package.json private behind their exports map. The
   // isolated gate separately verifies their real runtime origins and identity.
-  for (const name of ['@fluentui/react-icons', '@standard-schema/spec', '@standard-schema/utils']) {
+  for (const name of ['@fluentui/react-icons', '@standard-schema/spec', '@standard-schema/utils', '@tiptap/core', '@tiptap/pm', '@tiptap/react', '@tiptap/extensions', '@tiptap/extension-document', '@tiptap/extension-text', '@tiptap/extension-paragraph', '@tiptap/extension-heading', '@tiptap/extension-hard-break', '@tiptap/extension-bold', '@tiptap/extension-italic', '@tiptap/extension-underline', '@tiptap/extension-bubble-menu', '@tiptap/extension-floating-menu']) {
     const manifest = JSON.parse(fs.readFileSync(path.join(consumerRoot, 'node_modules', name, 'package.json'), 'utf8'));
     if (manifest.name !== name || manifest.version !== lock.packages['node_modules/' + name].version) throw new Error(`Consumer ${name} differs from locked toolchain`);
     versions[name] = manifest.version;
@@ -322,7 +326,7 @@ async function measureTreeShaking({ consumerRoot, outputDir, contract, mode, att
         return { name, ...sizes(fs.readFileSync(file)), initial: reachable.initial.includes(name) };
       });
       const totals = names => assets.filter(a => names.includes(a.name)).reduce((sum, asset) => ({ raw: sum.raw + asset.raw, gzip: sum.gzip + asset.gzip, brotli: sum.brotli + asset.brotli }), { raw: 0, gzip: 0, brotli: 0 });
-      const item = { id, status: 'measured', statsFile, templateSha256: hash(template), fixtureSha256: hash(rendered), configSha256: hash(JSON.stringify(normalizedConfig)), assets, totals: { initial: totals(reachable.initial), async: totals(reachable.async), union: totals(reachable.union) }, emittedModules,
+      const item = { id, status: 'measured', statsFile, templateSha256: hash(template), fixtureSha256: hash(rendered), configSha256: hash(JSON.stringify(normalizedConfig)), assets, initialChunkIds: [...new Set(Object.values(detail.entrypoints ?? {}).flatMap(entry => entry.chunks ?? []))], reachableChunkIds: detail.chunks.filter(chunk => chunk.files.some(name => reachable.union.includes(name))).map(chunk => chunk.id), totals: { initial: totals(reachable.initial), async: totals(reachable.async), union: totals(reachable.union) }, emittedModules,
         retentionObservations: retentionObservations(reachable.union.map(name => fs.readFileSync(path.join(directory, name), 'utf8')).join('\n')), warnings: detail.warnings.map(w => w.message), errors: [] };
       item.failures = checkFixture(item, fixture, contract);
       report.fixtures.push(item); report.failures.push(...item.failures); save();

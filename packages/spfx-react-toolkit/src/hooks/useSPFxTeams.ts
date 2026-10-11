@@ -1,9 +1,11 @@
 // useSPFxTeams.ts
 // Hook for Microsoft Teams context integration
 
-import { useEffect, useMemo, useRef } from 'react';
-import { useSPFxRuntimeActions, useSPFxRuntimeSelector } from '../core/state.internal';
+import { useEffect, useMemo } from 'react';
+import { useSPFxRuntimeStore, useSPFxRuntimeSelector } from '../core/state.internal';
 import { useSPFxContext } from './useSPFxContext';
+import { resolveSPFxTeamsSdk } from '../helpers/spfx-host-context.internal';
+import { subscribeSPFxTeamsRuntime } from '../core/teams-runtime.internal';
 
 /**
  * Teams theme type
@@ -14,7 +16,7 @@ export type TeamsTheme = 'default' | 'dark' | 'highContrast';
  * Return type for useSPFxTeams hook
  */
 export interface SPFxTeamsInfo {
-  /** Whether Teams context is supported/available */
+  /** Whether context acquisition from the SPFx application SDK succeeded. */
   readonly supported: boolean;
   
   /** Teams context object (if available) */
@@ -28,15 +30,25 @@ export interface SPFxTeamsInfo {
  * Hook for Microsoft Teams context integration
  * 
  * Provides access to Microsoft Teams context when SPFx component
- * is running in Teams environment.
+ * exposes the Microsoft 365 application SDK, including Teams, Office and Outlook.
  * 
- * Automatically initializes Teams SDK (supports both v1 and v2 APIs)
+ * Acquires context from the SPFx-provided SDK (supports both v1 and v2 APIs)
  * and provides:
  * - Teams context (team, channel, user info, etc.)
  * - Teams theme (default, dark, high contrast)
  * - Supported flag
  * 
- * The initialization happens asynchronously on first mount.
+ * Context acquisition happens asynchronously on first mount. Live theme events
+ * remain subscribed until the last hook for this runtime store unmounts. SDK
+ * replacement resets the context and ignores obsolete completions. Registration
+ * and acquisition failures are reported through console.error.
+ *
+ * @remarks
+ * A lazy broker shares one theme dispatcher per SDK identity within this library
+ * bundle. The SDK has no public unregister API; cleanup releases runtime stores.
+ * Other bundles that register their own SDK handler can replace the dispatcher.
+ * The supported flag means SDK context is available; useSPFxEnvironmentInfo
+ * resolves whether the actual host is Teams, Office or Outlook.
  * 
  * Useful for:
  * - Teams-specific features
@@ -73,118 +85,17 @@ export interface SPFxTeamsInfo {
 export function useSPFxTeams(): SPFxTeamsInfo {
   const { spfxContext } = useSPFxContext();
   const state = useSPFxRuntimeSelector(runtimeState => runtimeState.teams);
-  const { setTeamsState } = useSPFxRuntimeActions();
-  const previousContextRef = useRef(spfxContext);
+  const store = useSPFxRuntimeStore();
+  const sdk = resolveSPFxTeamsSdk(spfxContext);
 
   useEffect(() => {
-    if (previousContextRef.current !== spfxContext) {
-      previousContextRef.current = spfxContext;
-      setTeamsState({ supported: false, initialized: false });
-    }
-  }, [spfxContext, setTeamsState]);
-  
-  useEffect(() => {
-    // Skip if already initialized
-    if (state.initialized) {
+    if (!sdk) {
+      store.setState({ teams: { supported: false, initialized: true } });
       return;
     }
-    
-    // Extract Teams SDK from context
-    const ctx = spfxContext as { sdks?: { microsoftTeams?: unknown } };
-    const sdks = ctx.sdks;
-    type TeamsSdkLike = {
-      app?: { getContext?: () => Promise<unknown> };
-      getContext?: (callback: (context: unknown) => void) => void;
-    };
-    const teams = sdks?.microsoftTeams as
-      | (TeamsSdkLike & { teamsJs?: TeamsSdkLike })
-      | undefined;
-    const teamsSDK = teams?.teamsJs || teams;
-    
-    if (!teamsSDK) {
-      setTeamsState({ supported: false, initialized: true });
-      return;
-    }
-    
-    let disposed = false;
-    
-    // Helper to apply context and theme
-    const apply = (context: unknown, themeValue?: string): void => {
-      if (disposed) {
-        return;
-      }
-      
-      const normalizedTheme = (
-        themeValue?.toLowerCase() === 'dark' ? 'dark' :
-        themeValue?.toLowerCase() === 'contrast' ||  themeValue?.toLowerCase() === 'highcontrast' ? 'highContrast' :
-        'default'
-      ) as TeamsTheme;
-      
-      setTeamsState({
-        supported: true,
-        context,
-        theme: normalizedTheme,
-        initialized: true,
-      });
-    };
-    
-    // Try v2 API (teams 2.0+)
-    const tryV2 = async (): Promise<boolean> => {
-      try {
-        if (teamsSDK.app?.getContext) {
-          const context = await teamsSDK.app.getContext();
-          const themeValue = (context as { app?: { theme?: string } })?.app?.theme;
-          apply(context, themeValue);
-          return true;
-        }
-        return false;
-      } catch {
-        return false;
-      }
-    };
-    
-    // Try v1 API (teams 1.x)
-    const tryV1 = (): Promise<boolean> => {
-      return new Promise<boolean>((resolve) => {
-        try {
-          if (teamsSDK.getContext) {
-            teamsSDK.getContext((context: unknown) => {
-              const themeValue = (context as { theme?: string })?.theme;
-              apply(context, themeValue);
-              resolve(true);
-            });
-          } else {
-            resolve(false);
-          }
-        } catch {
-          resolve(false);
-        }
-      });
-    };
-    
-    // Initialize async
-    const init = async (): Promise<void> => {
-      const v2Success = await tryV2();
-      if (!v2Success) {
-        const v1Success = await tryV1();
-        if (!v1Success && !disposed) {
-          setTeamsState({ supported: false, initialized: true });
-        }
-      }
-    };
-    
-    init().catch(() => {
-      // Fallback: mark as not supported
-      if (!disposed) {
-        setTeamsState({ supported: false, initialized: true });
-      }
-    });
-    
-    return () => {
-      disposed = true;
-    };
-  }, [spfxContext, setTeamsState, state.initialized]);
-  
+    return subscribeSPFxTeamsRuntime(sdk, store);
+  }, [sdk, store]);
+
   return useMemo(() => ({
     supported: state.supported,
     context: state.context,

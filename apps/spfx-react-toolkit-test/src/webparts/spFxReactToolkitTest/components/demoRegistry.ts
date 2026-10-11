@@ -23,6 +23,17 @@ const lazyPanel = (
 
 export const demoRegistry: readonly DemoRegistryEntry[] = [
   {
+    key: 'web-part-shell',
+    title: 'WebPartShell',
+    iconName: 'Page',
+    description: 'One root Shell, editable rich title, persistent children and host presentation overrides.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-web-part-shell' */ './panels/WebPartShellPanel')),
+    coverage: [
+      { symbol: 'WebPartShell', kind: 'host', notes: 'Actual root wrapper, hook action, title visibility, rich/plain/empty, child counter/note, theme/RTL and surface/padding.' },
+      { symbol: 'getWebPartShellPropertiesMetadata', kind: 'snapshot', notes: 'Web part metadata getter marks the plain title as searchable.' },
+    ],
+  },
+  {
     key: 'data-grid',
     title: 'DataGrid',
     iconName: 'Table',

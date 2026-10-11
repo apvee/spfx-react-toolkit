@@ -18,8 +18,9 @@ const aliases = {
   './controls/accordion-group': 'lib/controls/accordion-group/index',
   './controls/form': 'lib/controls/form/index',
   './controls/data-grid': 'lib/controls/data-grid/index',
+  './controls/web-part-shell': 'lib/controls/web-part-shell/index',
 };
-const files = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index', 'lib/controls/form/index', 'lib/controls/data-grid/index'].flatMap(base => ['.js', '.d.ts', '.js.map', '.d.ts.map'].map(ext => base + ext))];
+const files = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index', 'lib/controls/form/index', 'lib/controls/data-grid/index', 'lib/controls/web-part-shell/index'].flatMap(base => ['.js', '.d.ts', '.js.map', '.d.ts.map'].map(ext => base + ext))];
 test('clean entrypoints select their canonical declarations before runtime', () => {
   for (const [alias, target] of Object.entries(aliases)) {
     assert.deepEqual(manifest.exports?.[alias], { types: './' + target + '.d.ts', default: './' + target + '.js' });
@@ -36,6 +37,7 @@ test('clean entrypoints select their canonical declarations before runtime', () 
     'controls/accordion-group': ['lib/controls/accordion-group/index.d.ts'],
     'controls/form': ['lib/controls/form/index.d.ts'],
     'controls/data-grid': ['lib/controls/data-grid/index.d.ts'],
+    'controls/web-part-shell': ['lib/controls/web-part-shell/index.d.ts'],
     'styles/useSx': ['lib/hooks/useSx.d.ts'], 'hooks/useStableCallback': ['lib/hooks/useStableCallback.d.ts'],
   } });
   assert.equal(manifest.main, 'lib/index.js');

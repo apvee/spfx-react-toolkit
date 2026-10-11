@@ -167,9 +167,24 @@ function assertCompatiblePackageContract(manifest, originalPackage) {
   Object.assign(expectedDependencies, {
     unified: '11.0.5', 'remark-parse': '11.0.0', 'remark-gfm': '4.0.1',
     '@hookform/resolvers': '5.9.1', '@standard-schema/spec': '1.1.0',
+    // Exact private engine versions approved by the Shell dependency checkpoint.
+    '@tiptap/core': '3.30.3',
+    '@tiptap/pm': '3.30.3',
+    '@tiptap/react': '3.30.3',
+    '@tiptap/extensions': '3.30.3',
+    '@tiptap/extension-document': '3.30.3',
+    '@tiptap/extension-text': '3.30.3',
+    '@tiptap/extension-paragraph': '3.30.3',
+    '@tiptap/extension-heading': '3.30.3',
+    '@tiptap/extension-hard-break': '3.30.3',
+    '@tiptap/extension-bold': '3.30.3',
+    '@tiptap/extension-italic': '3.30.3',
+    '@tiptap/extension-underline': '3.30.3',
+    '@tiptap/extension-bubble-menu': '3.30.3',
+    '@tiptap/extension-floating-menu': '3.30.3',
   });
   assert.deepEqual(manifest.dependencies ?? {}, expectedDependencies,
-    'Runtime dependencies changed outside the approved tslib cleanup, shared Fluent peers and Form resolver/schema dependencies');
+    'Runtime dependencies changed outside the approved tslib cleanup, shared Fluent peers, Form resolver/schema dependencies and exact private Shell engine dependencies');
   assert.equal(manifest.private, false);
   assert.deepEqual(manifest.files, [...originalPackage.files, 'lib/styles/**/*', 'lib/controls/**/*', 'THIRD-PARTY-NOTICES.md'], 'Published path allowlist changed outside the styles facade');
   assert.equal(manifest.name, '@apvee/spfx-react-toolkit');

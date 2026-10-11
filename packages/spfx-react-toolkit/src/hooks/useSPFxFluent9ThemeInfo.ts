@@ -14,10 +14,12 @@ export interface SPFxFluent9ThemeInfo {
   /** Fluent UI 9 theme object ready to use with FluentProvider */
   readonly theme: Theme;
   
-  /** Whether the component is running in Microsoft Teams */
+  /** Whether SPFx application SDK context acquisition succeeded, including Office/Outlook.
+   * This legacy field does not identify the actual host or guarantee an SDK theme.
+   */
   readonly isTeams: boolean;
   
-  /** Teams theme name if running in Teams ('default', 'dark', 'contrast') */
+  /** Normalized application theme name ('default', 'dark', 'highContrast'). */
   readonly teamsTheme?: string;
 }
 
@@ -26,16 +28,19 @@ export interface SPFxFluent9ThemeInfo {
  * 
  * Automatically detects the execution context and provides the appropriate
  * Fluent UI 9 theme:
- * - **In Microsoft Teams**: Returns native Teams themes (light/dark/contrast)
+ * - **With a Microsoft 365 application SDK**: Returns native Teams theme tokens
+ *   for the normalized Teams/Office/Outlook theme (light/dark/high contrast)
  * - **In SharePoint**: Converts SPFx theme (v8) to Fluent UI 9 theme
  * - **Fallback**: Returns webLightTheme if no theme available
  * 
  * The hook uses memoization to avoid expensive theme conversions on every render.
  * Theme updates are automatically handled when the user switches themes in
- * SharePoint or Teams through the SPFx provider theme subscription mechanism.
+ * SharePoint through the provider subscription, and in Teams/Office/Outlook
+ * through the SDK theme dispatcher. The dispatcher is shared per SDK identity in
+ * this bundle; another bundle can replace the SDK's single registered handler.
  * 
  * Priority order:
- * 1. Teams theme (if running in Teams context)
+ * 1. Application SDK theme (when context acquisition succeeded)
  * 2. SPFx theme converted to Fluent UI 9
  * 3. Default webLightTheme
  * 

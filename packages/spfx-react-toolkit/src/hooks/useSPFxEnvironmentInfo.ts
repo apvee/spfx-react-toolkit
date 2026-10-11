@@ -4,6 +4,8 @@
 import { useMemo } from 'react';
 import { getSPFxEnvironmentInfo } from '../helpers/spfx-page-context.helpers';
 import { useSPFxPageContext } from './useSPFxPageContext';
+import { useSPFxTeams } from './useSPFxTeams';
+import { resolveSPFxRuntimeHost } from '../helpers/spfx-host-context.internal';
 
 /**
  * SPFx environment types
@@ -48,6 +50,11 @@ export interface SPFxEnvironmentInfo {
 /**
  * Hook to access SPFx environment type information
  * 
+ * Resolves the application host from the SPFx-provided SDK context. Pending or
+ * unknown SDK hosts use the SharePoint URL/on-premises fallback; local workbench
+ * keeps precedence. SDK availability alone does not classify Office or Outlook
+ * as Teams. The host updates when asynchronous context acquisition completes.
+ *
  * Detects the current host environment:
  * - Local: Local workbench (localhost)
  * - SharePoint: SharePoint Online
@@ -88,23 +95,23 @@ export function useSPFxEnvironmentInfo(): SPFxEnvironmentInfo {
       isOnPremises?: boolean;
     };
   }).legacyPageContext;
-  const sdks = (pageContext as unknown as {
-    sdks?: {
-      microsoftTeams?: unknown;
-      office?: unknown;
-      outlook?: unknown;
+  const teams = useSPFxTeams();
+  const host = resolveSPFxRuntimeHost(teams.context);
+
+  return useMemo(() => {
+    const fallback = getSPFxEnvironmentInfo(pageContext);
+    const type: SPFxEnvironmentType = fallback.isLocal ? 'Local'
+      : host !== 'unknown' ? host
+      : legacy?.isOnPremises ? 'SharePointOnPrem'
+      : 'SharePoint';
+    return {
+      ...fallback,
+      type,
+      isSharePoint: type === 'SharePoint',
+      isSharePointOnPrem: type === 'SharePointOnPrem',
+      isTeams: host === 'Teams',
+      isOffice: host === 'Office',
+      isOutlook: host === 'Outlook',
     };
-  }).sdks;
-  
-  return useMemo(
-    () => getSPFxEnvironmentInfo(pageContext),
-    [
-      pageContext,
-      pageContext.web.absoluteUrl,
-      legacy?.isOnPremises,
-      sdks?.microsoftTeams,
-      sdks?.office,
-      sdks?.outlook,
-    ]
-  );
+  }, [pageContext, pageContext.web.absoluteUrl, legacy?.isOnPremises, host]);
 }

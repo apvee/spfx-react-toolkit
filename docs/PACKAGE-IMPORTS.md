@@ -8,6 +8,7 @@ The package publishes ESNext JavaScript for a bundler and TypeScript declaration
 | --- | --- |
 | (root) | All public controls, providers, hooks, helpers and services |
 | `/controls` | Public controls and their types |
+| `/controls/web-part-shell` | Canonical WebPartShell, generic props/persisted types and pure metadata helper |
 | `/controls/form` | Canonical `Form`, `createForm` and public types; compound adapters remain private implementations |
 | `/controls/auto-skeleton` | Canonical `AutoSkeleton` and `AutoSkeletonProps` |
 | `/controls/formatted-text` | Canonical `FormattedText` and its three public types |
@@ -104,11 +105,11 @@ Files, folders and other features need their corresponding explicit PnP imports 
 
 ## What the bundle gate measures
 
-The canonical production contract builds 54 variants, including equivalent AutoSkeleton consumers through root, `/controls` and `/controls/auto-skeleton`, equivalent FormattedText consumers through the root, `/controls` domain and `/controls/formatted-text` control entries, and retains the nine historical root/domain/legacy-leaf comparison families. Blocking gzip gaps are at most 1,023 bytes for root/domain versus leaf, at most 512 bytes for the pure helper root versus leaf, and zero forbidden module groups or descriptor-retention violations. The verified informational snapshot currently has zero gaps across all nine families. Absolute raw/gzip/Brotli bytes are informational; compare emitted initial, async and union asset totals with matching compression/toolchain provenance. The checked-in snapshot is `tests/fixtures/tree-shaking/baseline.json`; exclusions and budgets live in `contract.json` next to it.
+The historical 54-variant production snapshot covers earlier controls, including equivalent AutoSkeleton consumers through root, `/controls` and `/controls/auto-skeleton`, equivalent FormattedText consumers through the root, `/controls` domain and `/controls/formatted-text` control entries, and retains the nine historical root/domain/legacy-leaf comparison families. Blocking gzip gaps are at most 1,023 bytes for root/domain versus leaf, at most 512 bytes for the pure helper root versus leaf, and zero forbidden module groups or descriptor-retention violations. The verified informational snapshot currently has zero gaps across all nine families. Absolute raw/gzip/Brotli bytes are informational; compare emitted initial, async and union asset totals with matching compression/toolchain provenance. The checked-in snapshot is `tests/fixtures/tree-shaking/baseline.json`; exclusions and budgets live in `contract.json` next to it.
 
 Style API reachability gaps and engine overhead answer different questions. The snapshot's minimal style case adds 1,732 gzip bytes versus direct Griffel and 1,396 bytes versus an already-Fluent control. This frozen snapshot predates the fixed-size scrollbar correction; current measurements are recorded separately in the maintenance verification rather than silently rewriting the baseline. These engine deltas are informational controls, not the alias gap budget or a universal app-size promise. A dynamic namespace lookup or a lazily loaded full catalog intentionally retains broader usage. The full lazy styles control emits an approximately 255 KiB async asset and a Webpack 244 KiB size advisory; it is not a static minimal-import regression. The full SPFx sample exercises a broad API surface and cannot establish the minimal-consumer tree-shaking result.
 
-`npm run verify:package` installs the fresh tarball into an isolated real SPFx consumer, validates resolution, executes the canonical 51 bundle/18 runtime/9 mutation gates and builds the ship sample/solution. Transport-controlled runtime probes establish local registration, provider and renderer identity; they do not establish tenant authentication. Existing npm transitive deprecation/lifecycle warnings and SPFx metadata-age advisories remain visible. Check actual warning and failure output, including subprocess markers, instead of relying only on an outer success status.
+`npm run verify:package` installs the fresh tarball into an isolated real SPFx consumer, validates resolution, executes the current canonical bundle/runtime/mutation gates and builds the ship sample/solution. Transport-controlled runtime probes establish local registration, provider and renderer identity; they do not establish tenant authentication. Existing npm transitive deprecation/lifecycle warnings and SPFx metadata-age advisories remain visible. Check actual warning and failure output, including subprocess markers, instead of relying only on an outer success status.
 
 See [development commands and baseline review](./DEVELOPMENT.md#production-import-gates-and-baseline-review) and the authenticated [Imports checklist](./SHAREPOINT-VALIDATION.md#imports).
 
@@ -126,7 +127,7 @@ For lazy loading, prefer the relevant domain facade when only that domain is nee
 
 ## RelativeTime and locale mapping
 
-`RelativeTime` and `RelativeTimeProps` are canonical exports from root, `/controls`, and `/controls/relative-time`. The component uses native Intl and Fluent Tooltip, needs no SPFx provider and includes no Remark parser. Locale metadata adds only readonly optional `ianaTimeZone`; the existing SDK `timeZone` object is preserved. The private audited lookup is retained by locale helpers but eliminated from unrelated page-context helper imports. The canonical contract measures 66 variants, retaining previous budgets and adding separate control/locale/page-context cases. See [RelativeTime](./api/controls/relative-time.md) and [locale info](./api/hooks/environment.md#usespfxlocaleinfo).
+`RelativeTime` and `RelativeTimeProps` are canonical exports from root, `/controls`, and `/controls/relative-time`. The component uses native Intl and Fluent Tooltip, needs no SPFx provider and includes no Remark parser. Locale metadata adds only readonly optional `ianaTimeZone`; the existing SDK `timeZone` object is preserved. The private audited lookup is retained by locale helpers but eliminated from unrelated page-context helper imports. An earlier 66-variant contract snapshot retained previous budgets and added separate control/locale/page-context cases; the current contract also covers later controls. See [RelativeTime](./api/controls/relative-time.md) and [locale info](./api/hooks/environment.md#usespfxlocaleinfo).
 
 ## AutoSkeleton imports
 
@@ -136,7 +137,7 @@ import { AutoSkeleton as DomainSkeleton } from '@apvee/spfx-react-toolkit/contro
 import { AutoSkeleton as NarrowSkeleton, AutoSkeletonProps } from '@apvee/spfx-react-toolkit/controls/auto-skeleton';
 ```
 
-These entries share the canonical component. Measurement, lifecycle and geometry styling modules are private. AutoSkeleton uses existing Fluent/Griffel peers and native DOM APIs, with no extra runtime dependency, global renderer, shared geometry cache or PnP registration. Its consumer bundles must exclude the Markdown parser, PnP, SPFx runtime and unrelated controls; unrelated root API bundles must eliminate AutoSkeleton. The canonical 66-variant bundle contract covers its root/domain/leaf variants while retaining existing budgets. See [AutoSkeleton](./api/controls/auto-skeleton.md) for native inert behavior, wrapper layout, measurement boundaries and renderer-owned CSS growth.
+These entries share the canonical component. Measurement, lifecycle and geometry styling modules are private. AutoSkeleton uses existing Fluent/Griffel peers and native DOM APIs, with no extra runtime dependency, global renderer, shared geometry cache or PnP registration. Its consumer bundles must exclude the Markdown parser, PnP, SPFx runtime and unrelated controls; unrelated root API bundles must eliminate AutoSkeleton. The current bundle contract covers its root/domain/leaf variants while retaining existing budgets. See [AutoSkeleton](./api/controls/auto-skeleton.md) for native inert behavior, wrapper layout, measurement boundaries and renderer-owned CSS growth.
 
 StateMessage is available from the root, `/controls` and `/controls/state-message`, with the same component/type identity. Artwork and theme resolver remain private; its synchronous bundle includes all five preset subjects in both themes plus FormattedText. Generic hook/style consumers must not include the StateMessage artwork. The MIT artwork attribution ships as `THIRD-PARTY-NOTICES.md`.
 
@@ -161,3 +162,23 @@ import { Form as ControlForm, FormMethods } from '@apvee/spfx-react-toolkit/cont
 The three entries share the canonical family, factory and types. Install the mandatory RHF, compat date/time and icon peers described in the [Form guide](./api/controls/form.md#dependencies); resolver/Standard Schema support is supplied by the package. There are no clean adapter, plugin or advanced entrypoints. Modern TypeScript and Webpack enforce these exports. TypeScript's legacy Node10 resolution can discover physical declaration files and is not an export-map privacy boundary.
 
 The complete family retains all 22 adapters and visual sections. The Form and createForm bundle fixtures require RHF/resolver/schema/date/time/Card modules and exclude PnP, SPFx and unrelated controls. Their root/domain variants have a measured zero-byte gzip gap against `/controls/form`; the contract now enforces that gap. Absolute family sizes are informational, measured with the recorded toolchain; per-slot elimination is not promised. Existing alias budgets and the historical frozen baseline remain unchanged. Unrelated helper/style/control fixtures exclude every new Form dependency group.
+
+## WebPartShell imports and editor boundary
+
+```tsx
+import { WebPartShell, getWebPartShellPropertiesMetadata } from '@apvee/spfx-react-toolkit';
+import { WebPartShell as DomainShell } from '@apvee/spfx-react-toolkit/controls';
+import { WebPartShell as ControlShell, type IWebPartShellProperties,
+  type WebPartShellProps, type WebPartShellSurface, type WebPartShellPadding
+} from '@apvee/spfx-react-toolkit/controls/web-part-shell';
+```
+
+All three aliases share the canonical component, generic declaration and metadata helper. The new editor, codec, title renderer and SDK broker modules remain private implementation paths; no wildcard export was added. Packed declarations resolve under TypeScript 5.3's Node10, Bundler and Node16 modes without public engine types. Historical compatibility paths and shared peer contracts remain in force.
+
+The production contract now measures 78 consumer cases, preserving historical inventories and numeric budgets. Unrelated consumers must exclude Shell/title editor/Tiptap/ProseMirror. Shell initial chunks contain the provider/layout/read-title path but exclude the editor engine; visible Edit requests its async asset. Metadata-only bundles retain the pure helper and exclude Shell runtime, providers, SPFx runtime, PnP, Griffel and editor. Optional Bubble/Floating menu modules are absent from emitted assets, although both dependencies are explicitly pinned for the React binding's installation compatibility.
+
+The async `@tiptap/extensions` root reports Placeholder/UndoRedo as used exports, but retains six unused root extension definitions (CharacterCount, DropCursor, Focus, GapCursor, Selection and TrailingNode) because of upstream factory effects. NodeJs/TypeScript 5.3 resolution uses root named exports; complete extension pruning is not guaranteed. Root/domain/control equality and initial engine exclusion are separate from absolute family cost.
+
+Fourteen private implementation dependencies are exactly 3.30.3; there are no new editor peers. The locked install addition is 32 package records, 7,573,815 raw installed bytes (about 7.6 MB) and 880 files; the optional menu packages account for 234,532 bytes and 28 files. This is uncompressed installed content rather than tarball download size. Installed footprint does not imply that every module is bundled.
+
+Measure fresh tarball consumers through all three aliases using `npm run verify:package` when [full gates apply](./DEVELOPMENT.md#verification-scope). Record initial, reachable async and union JS assets, hashes and raw/gzip9/Brotli11 totals, plus lockfile/toolchain/consumer provenance. Earlier exploratory asset sizes predate later editor QA fixes and are not current final measurements. The standalone installation/SPFx gate differs from exploratory tarball extraction with dependencies linked to the checkout. Bundled runtime probes check zero Read requests, actual Edit load/mount, disposal and child preservation; local transport/service doubles do not establish tenant authentication. See [WebPartShell](./api/controls/web-part-shell.md) for title authority, lifecycle, renderer and SDK ownership limits.
