@@ -269,3 +269,22 @@ STYLES_PANEL_SHELL_ONLY=1 node scripts/check-styles-panel-browser.cjs
 The source fixture server uses port 4317; the compiled runner owns port 4320. Supply the installed Playwright module/browser through the existing runner environment options. Rebuild library before app and restart an active app serve after source changes. Local acceptance recorded Chrome 155.0.8059.39, 139 source checks and 140 compiled checks. Actual mouse/keyboard interaction complements CDP composition events and synthetic ClipboardEvent paste; these are not device IME, touch, screen-reader or tenant tests. Record [authenticated checks](./SHAREPOINT-VALIDATION.md#webpartshell) separately.
 
 The fourteen exact private Tiptap 3.30.3 dependencies, public entrypoint and new initial/async boundary justify full package/import gates under [verification scope](#verification-scope) when integrating this feature. Measure fresh packed initial/async/union bytes after the final implementation; earlier measurements predate QA fixes. The install addition is 32 package records / 7,573,815 raw installed bytes / 880 files, separately from emitted bundle cost. Inspect subprocess failures and warnings in `npm run verify` and `npm run verify:package`; neither authorizes publication, deployment or tenant changes.
+
+## Stage checks
+
+See [Stage](./api/controls/stage.md) for the public API and [authenticated checks](./SHAREPOINT-VALIDATION.md#stage). Run targeted Stage behavior/type tests with `node --test tests/stage*.test.cjs tests/demo-stage.test.cjs` after implementation changes; documentation-only changes need static docs/link checks. `npm run verify:public-docs` covers all thirteen public types and their qualified members; `npm run verify:examples` covers the lazy sample registry. Marker checks do not execute the sample.
+
+The source and compiled fixtures reuse the actual StagePanel. The Stage-only fixture commands are:
+
+```bash
+npm run build:library
+npm run build:app
+SX_BROWSER_STAGE_ONLY=1 node scripts/build-sx-browser-fixture.cjs
+STYLES_PANEL_STAGE_ONLY=1 node scripts/build-styles-panel-browser.cjs
+SX_BROWSER_STAGE_ONLY=1 node scripts/check-sx-browser-fixture.cjs
+STYLES_PANEL_STAGE_ONLY=1 node scripts/check-styles-panel-browser.cjs
+```
+
+Start the source fixture server in a separate terminal with `node scripts/serve-sx-browser-fixture.cjs` on port 4317; the compiled runner owns port 4320. Supply the installed Playwright/browser through the existing runner environment options. Build library before app and restart an active serve process after library changes: the app consumes compiled lib. Record source and compiled runs separately, including screenshots, console errors, focus, retained/inert content, short viewport/zoom geometry, native nested popups, RTL and independent instances. No browser execution is established by documentation or static marker checks.
+
+Authenticated SharePoint, Teams/iframe and screen-reader validation remains NOT EXECUTED until separately recorded. Full gates apply only under [verification scope](#verification-scope), including changes to Stage's package/import boundaries; local package gates do not establish tenant behavior.

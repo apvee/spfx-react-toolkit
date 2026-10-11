@@ -13,10 +13,11 @@ import { useFormControlsStyles } from './form-controls.styles.internal';
 /** Fluent SwatchPicker binding with a public root div ref and native descendant error focus.
  * Native disabled fieldset semantics and capture guards prevent disabled edits.
  * RHF receives changes and blur before consumer callbacks; Field owns accessible relationships.
+ * Swatches use Fluent's rounded shape by default; the native shape prop overrides it.
  * @example `<Order.SwatchPicker name="value" label="Choice" />`
  */
 export const FormSwatchPicker: React.ForwardRefExoticComponent<FormSwatchPickerProps<FieldValues> & React.RefAttributes<HTMLDivElement>> = React.forwardRef<HTMLDivElement, FormSwatchPickerProps<FieldValues>>(function FormSwatchPicker(
-  { className, disabled, fieldProps, hint, id, label, name, onBlur, onSelectionChange, orientation, required, rules, onClickCapture, onKeyDownCapture, ...props }, ref
+  { className, disabled, fieldProps, hint, id, label, name, onBlur, onSelectionChange, orientation, required, rules, shape = 'rounded', onClickCapture, onKeyDownCapture, ...props }, ref
 ) {
   const binding = useFieldAdapter<FieldValues, string>({ className, disabled, fieldProps, hint, id, label, name, orientation, required, rules });
   const compositeRef = useCompositeFieldFocus<HTMLDivElement, HTMLButtonElement>(ref, binding.focusRef, `button.${colorSwatchClassNames.root},button.${imageSwatchClassNames.root}`, () => true);
@@ -26,7 +27,7 @@ export const FormSwatchPicker: React.ForwardRefExoticComponent<FormSwatchPickerP
   return <Field {...binding.fieldProps}>{fieldControl => <fieldset disabled={isDisabled}
     onPointerDownCapture={event => { if (isDisabled) { event.preventDefault(); event.stopPropagation(); } }}
     className={sx(borderWidth.none, margin.none, padding.none, styles.fieldset)}>
-    <SwatchPicker {...props} {...fieldControl} id={binding.controlProps.id} ref={compositeRef}
+    <SwatchPicker {...props} {...fieldControl} shape={shape} id={binding.controlProps.id} ref={compositeRef}
       aria-disabled={isDisabled || props['aria-disabled']}
       aria-describedby={[fieldControl['aria-describedby'], props['aria-describedby']].filter(Boolean).join(' ') || undefined}
        selectedValue={binding.controller.value ?? ''}

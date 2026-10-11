@@ -4,6 +4,7 @@ Most controls are standalone and do not require an SPFx provider. `WebPartShell`
 
 | Control / type | Purpose | Reference |
 | --- | --- | --- |
+| `Stage`, `StageProps`, `StageHeaderProps`, `StageBodyProps`, `StageFooterProps` | Explicit Dialog/Drawer/Popover with Header, Body and Footer | [Stage](./stage.md) |
 | `DataGrid`, `createDataGrid` | Native table with sixteen cell presentations and typed or dynamic suite ownership | [DataGrid](./data-grid.md) |
 | `Form`, `createForm` | Typed RHF forms, Fluent adapters, scopes and editable sections | [Form](./form.md) |
 | `SettingsGroup`, `SettingsGroupProps`, `SettingsGroupItemProps`, `SettingsGroupHeadingLevel` | Caller-owned settings rows in a Fluent Card | [SettingsGroup](./settings-group.md) |
@@ -32,3 +33,7 @@ DataGrid public types: `DataGridProps`, `DataGridStrings`, `DataGridSparklineSum
 ## WebPartShell
 
 `WebPartShell`, `IWebPartShellProperties`, `WebPartShellProps`, `WebPartShellSurface`, `WebPartShellPadding` and `getWebPartShellPropertiesMetadata` compose an actual web part with providers, adaptive spacing and a persisted inline title. See the [WebPartShell reference](./web-part-shell.md) for every member, metadata, editor protocol and host limits. Import from the root, `/controls` or `/controls/web-part-shell`.
+
+## Stage
+
+`Stage` is the single value export with `Stage.Header`, `Stage.Body` and `Stage.Footer`. Its thirteen public types are `StagePresentation`, `StageSize`, `StageDismissMode`, `StageDrawerPosition`, `StageHeadingLevel`, `StageOpenChangeReason`, `StageOpenChangeEvent`, `StageOpenChangeData`, `StagePopoverPositioning`, `StageProps`, `StageHeaderProps`, `StageBodyProps` and `StageFooterProps`. See the [Stage reference](./stage.md) for every member, controlled requests, session retention, form composition and host limits. Import from the root, `/controls` or `/controls/stage`; there are no flat part exports.

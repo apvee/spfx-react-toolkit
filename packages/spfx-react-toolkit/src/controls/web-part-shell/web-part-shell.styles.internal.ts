@@ -5,8 +5,9 @@ import { inlineSize } from '../../helpers/styles/container';
 import { zero as minWidthZero } from '../../helpers/styles/min-width';
 import * as padding from '../../helpers/styles/padding';
 import { medium as atMedium } from '../../helpers/styles/responsive';
-import { row, wrap } from '../../helpers/styles/flex';
-import { small as smallGap } from '../../helpers/styles/gap';
+import { column, row, wrap } from '../../helpers/styles/flex';
+import { medium as mediumGap, small as smallGap } from '../../helpers/styles/gap';
+import { center as centerItems } from '../../helpers/styles/align-items';
 import type { WebPartShellPadding } from './web-part-shell.types';
 
 const getProviderStyles = makeCoreStyles({
@@ -27,18 +28,19 @@ export function useWebPartShellProviderStyles(dir: 'ltr' | 'rtl'): { provider: s
 
 /** Call below FluentProvider so direction and tokens match the shell theme. */
 export function useWebPartShellLayoutStyles(surface: 'section' | 'application', requested: WebPartShellPadding): {
-  root: string; content: string; header: string; title: string; actions: string;
+  root: string; content: string; header: string; title: string; actions: string; body: string;
 } {
   const sx = useSx();
   const classes = useStyles();
   const automaticApplication = requested === 'auto' && surface === 'application';
   return {
     root: sx(inlineSize, minWidthZero),
-    content: sx(minWidthZero, requested === 'auto'
+    content: sx(column, mediumGap, minWidthZero, requested === 'auto'
       ? automaticApplication ? padding.medium : padding.none
       : padding[requested], automaticApplication && atMedium(padding.large)),
-    header: sx(row, wrap, smallGap, minWidthZero),
+    header: sx(row, wrap, centerItems, smallGap, minWidthZero),
     title: sx(classes.title),
     actions: sx(classes.actions),
+    body: sx(minWidthZero),
   };
 }

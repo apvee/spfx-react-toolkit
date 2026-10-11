@@ -28,6 +28,8 @@
 
 ## Controls
 
+- [Stage](./api/controls/stage.md) — explicit Dialog/Drawer/Popover with compound Header, Body and Footer, controlled requests and form composition.
+
 - [WebPartShell](./api/controls/web-part-shell.md) — actual web part provider composition, adaptive surface and inline rich title with searchable plain metadata.
 
 - [Form and createForm](./api/controls/form.md) — typed React Hook Form binding, validation, reset, Fluent controls and structured sections.

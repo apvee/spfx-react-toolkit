@@ -58,6 +58,12 @@ import { useSx, width, typography } from '@apvee/spfx-react-toolkit/styles';
 
 Use an ESM-aware bundler with package exports and sideEffects support. Shared React/Griffel/Fluent peers, theme variables and existing lifecycle limits still apply; native Node/CJS execution and all peer versions are not verified. Unrelated root imports no longer install incidental PnP registrations: direct callers must import their own PnP features, including inside invoke/batch callbacks. See [package imports and the measured production contract](./docs/PACKAGE-IMPORTS.md) for resolver requirements, legacy leaves, generic examples, budgets and limitations. The lazy Imports sample exercises updated captured callbacks, mixed descriptors and shared provider direction; authenticated host checks remain separate.
 
+## Stage
+
+[Stage](./docs/api/controls/stage.md) presents the same Header/Body/Footer content as an explicitly selected Dialog, Drawer or anchored Popover. Small is the default size; Dialog and Drawer also support full. Controlled open requests support dirty/pending form guards, with Form.Root inside the surface and Form.Submit in its Footer. Import the single compound Stage value from the root, `/controls` or `/controls/stage`.
+
+Stage uses existing shared Fluent/Griffel peers and inherits the host theme, direction and renderer without requiring an SPFx provider. The lazy Stage sample exercises modes, sizes, retained state, form submission and independent instances. Local browser execution and authenticated SharePoint/Teams/screen-reader validation are separate; host checks remain NOT EXECUTED until recorded.
+
 ## DataGrid
 
 [DataGrid and createDataGrid](./docs/api/controls/data-grid.md) provide sixteen native Fluent cell presentations, typed JSX or immutable descriptors, controlled sort intent and selection, and official Charts Sparkline. Consumers supply stable row IDs and own row order. Import from the root, `/controls` or `/controls/data-grid`; create typed suites outside rendering. The complete family includes Charts/D3, while unrelated imports exclude it. The mandatory Charts peer starts at `^9.3.27`.

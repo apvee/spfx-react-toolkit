@@ -148,7 +148,7 @@ for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invok
 }
 console.log('Verified dedicated root/domain/legacy Imports scenario (no duplicate export coverage).');
 
-const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata'].includes(item.name)).map(item => item.name);
+const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage'].includes(item.name)).map(item => item.name);
 assertCovered('Controls', controlSymbols, registrySymbols);
 const textPanel = read(path.join(panelsPath, 'FormattedTextPanel.tsx'));
 for (const marker of ['FormattedText', 'maxLines', 'markdown', 'subtle', 'highlight', 'variant', 'as', 'font', 'align', 'wrap', 'truncate', 'italic', 'underline', 'strikethrough', 'ref', 'onClick']) {
@@ -199,3 +199,14 @@ for (const marker of ['show-title', 'plain', 'rich', 'empty', 'theme', 'directio
 const shellHost = read(path.join(path.dirname(registryPath), 'WebPartShellDemoHost.tsx'));
 if ((shellHost.match(/<WebPartShell /g) || []).length !== 1 || /<WebPartShell /.test(shellPanel)) throw new Error('WebPartShell sample must wrap the web part exactly once');
 console.log('Verified WebPartShell root host, metadata and observable child/presentation scenario.');
+
+const stagePanelSource = read(path.join(panelsPath, 'StagePanel.tsx'));
+for (const marker of ["key: 'stage'", "webpackChunkName: 'spfx-demo-stage'", "'./panels/StagePanel'"]) {
+  if (!importsRegistry.includes(marker)) throw new Error(`Stage scenario registry missing ${marker}`);
+}
+for (const marker of ['Stage.Header', 'Stage.Body', 'Stage.Footer', 'Editor.Root', 'Editor.Submit',
+  'data-stage-demo="mode"', 'data-stage-demo="size"', 'data-stage-demo="retention"',
+  'data-stage-demo="dirty-guard"', 'data-stage-demo="hold-save"', 'data-stage-demo="menu-inline"']) {
+  if (!stagePanelSource.includes(marker)) throw new Error(`Observable Stage scenario missing ${marker}`);
+}
+console.log('Verified Stage compound modes, dimensions, Form and native popup scenarios.');

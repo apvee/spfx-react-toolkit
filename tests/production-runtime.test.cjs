@@ -47,6 +47,7 @@ test('UI runtime supplies genuine WebCrypto to the JSDOM browser boundary', () =
     };`);
     assert.equal(executeProbe(fixture, 'form', directory).exit, 0);
     assert.equal(executeProbe(fixture, 'data-grid', directory).exit, 0);
+    assert.equal(executeProbe(fixture, 'stage', directory).exit, 0);
   } finally { fs.rmSync(directory, { recursive: true, force: true }); }
 });
 

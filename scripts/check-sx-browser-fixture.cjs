@@ -5,8 +5,8 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 const expected = require('../tests/fixtures/sx-browser/expected.json');
-const output = path.resolve(process.env.SX_BROWSER_EVIDENCE || (process.env.SX_BROWSER_SHELL_ONLY === '1' ? '.docs/maintenance/evidence/web-part-shell' : '.docs/maintenance/evidence/use-sx'));
-const label = process.env.SX_BROWSER_RUN_LABEL || (process.env.SX_BROWSER_SHELL_ONLY === '1' ? 'shell-source' : 'task-3-browser');
+const output = path.resolve(process.env.SX_BROWSER_EVIDENCE || (process.env.SX_BROWSER_STAGE_ONLY === '1' ? '.docs/maintenance/evidence/stage' : process.env.SX_BROWSER_SHELL_ONLY === '1' ? '.docs/maintenance/evidence/web-part-shell' : '.docs/maintenance/evidence/use-sx'));
+const label = process.env.SX_BROWSER_RUN_LABEL || (process.env.SX_BROWSER_STAGE_ONLY === '1' ? 'stage-source' : process.env.SX_BROWSER_SHELL_ONLY === '1' ? 'shell-source' : 'task-3-browser');
 const url = process.env.SX_BROWSER_URL || 'http://127.0.0.1:4317';
 const observations = [];
 const errors = [];
@@ -924,7 +924,9 @@ async function runGroups() {
   });
   const version = browser.version();
   try {
-    if (process.env.SX_BROWSER_SHELL_ONLY === '1') {
+    if (process.env.SX_BROWSER_STAGE_ONLY === '1') {
+      await require('./stage-browser.helpers.cjs').checkStageBrowser(page, { url, output, label, boundary: 'source', check, consoleMessages });
+    } else if (process.env.SX_BROWSER_SHELL_ONLY === '1') {
       await require('./web-part-shell-browser.helpers.cjs').checkWebPartShellBrowser(page, { url, output, label, boundary: 'source', check, consoleMessages });
     } else if (process.env.DATA_GRID_CHART_PROBE === '1') {
       await require('./data-grid-browser.helpers.cjs').exerciseDataGridChartProbe({ page, url, output, label, boundary: 'source', check, consoleMessages, pageErrors: chartProbePageErrors });
@@ -948,7 +950,7 @@ async function runGroups() {
   } catch (error) { errors.push(error.stack); }
   const report = { version, node: process.version, url, viewport: { width: 1210, height: 900 },
     module: process.env.PLAYWRIGHT_MODULE_PATH || 'playwright', executable: process.env.SX_BROWSER_EXECUTABLE || 'Playwright default',
-    localBrowser: true, ...(process.env.SX_BROWSER_SHELL_ONLY === '1' ? { boundary: 'Actual source Shell/provider/store/hooks and sample; SDK/SPFx services only', browserRouting: 'Browser plugin not available' } : {}), sharePointHost: 'NOT EXECUTED', observations, catalogContrasts, thumbInteractionCaptures, consoleMessages, ...(process.env.DATA_GRID_CHART_PROBE === '1' ? { chartProbePageErrors, chartProbe: 'Fixture-only injected rendering failure; successful renders use actual Charts' } : {}), errors };
+    localBrowser: true, ...(process.env.SX_BROWSER_STAGE_ONLY === '1' ? { boundary: 'Actual source Stage, Form, sample and supplemental real Fluent probes', browserRouting: 'Browser plugin not available' } : {}), ...(process.env.SX_BROWSER_SHELL_ONLY === '1' ? { boundary: 'Actual source Shell/provider/store/hooks and sample; SDK/SPFx services only', browserRouting: 'Browser plugin not available' } : {}), sharePointHost: 'NOT EXECUTED', observations, catalogContrasts, thumbInteractionCaptures, consoleMessages, ...(process.env.DATA_GRID_CHART_PROBE === '1' ? { chartProbePageErrors, chartProbe: 'Fixture-only injected rendering failure; successful renders use actual Charts' } : {}), errors };
   fs.writeFileSync(path.join(output, `${label}.json`), JSON.stringify(report, null, 2));
   console.log(JSON.stringify({ version, checks: observations.length, failures: errors.length, errors }, null, 2));
   await browser.close();

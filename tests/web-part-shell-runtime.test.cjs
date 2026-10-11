@@ -73,6 +73,27 @@ test('two Shell providers isolate property updates and cleanup', () => run(h => 
   h.act(() => values.b.setProperties({ title: 'other' })); assert.equal(two.container.querySelector('output').textContent, 'other');
 }));
 
+test('header/body spacing retains the body when title visibility changes and omits an empty header', () => run(h => {
+  const host = h.instance();
+  const fixture = h.mount(host, h.React.createElement('input', { defaultValue: 'draft' }));
+  const body = fixture.container.querySelector('[data-web-part-shell-body]');
+  assert.ok(body);
+  const input = body.querySelector('input'); input.value = 'unsaved';
+  assert.equal(body.previousElementSibling.textContent, 'initial');
+  host.properties.showTitle = false; fixture.render();
+  assert.equal(body.previousElementSibling, null);
+  assert.equal(fixture.container.querySelector('[data-web-part-shell-body]'), body);
+  assert.equal(body.querySelector('input'), input); assert.equal(input.value, 'unsaved');
+  fixture.render(host, { action: false });
+  assert.equal(body.previousElementSibling, null);
+  fixture.render(host, { action: h.React.createElement('button', {}, 'Action') });
+  assert.equal(body.previousElementSibling.textContent, 'Action');
+  assert.equal(body.querySelector('input'), input);
+  host.properties.showTitle = true; fixture.render();
+  assert.equal(body.previousElementSibling.textContent, 'initialAction');
+  assert.equal(body.querySelector('input'), input);
+}));
+
 function observeFluent(h) {
   const { ThemeContext_unstable, useFluent_unstable } = require('@fluentui/react-shared-contexts');
   const { useRenderer_unstable } = require('@griffel/react');

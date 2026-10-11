@@ -101,7 +101,7 @@ Controlled fields require appropriate initial values. RHF partial/async defaults
 | `Form.TimePicker` | `Date \| null` | `null`; local wall-clock time and deterministic anchor. |
 | `Form.DateTime` | `FormDateTimeValue` | Separate nullable date/time parts; no implicit timestamp. |
 | `Form.ColorPicker` | `FormHsvColor` | HSV channels with optional alpha. |
-| `Form.SwatchPicker` | `string` | Stable swatch identity. |
+| `Form.SwatchPicker` | `string` | Stable swatch identity; native `shape` defaults to `rounded`, with `square` and `circular` overrides. |
 | `Form.FileInput` | `FileList \| null` | `null`; actual native file selection, no upload. |
 
 Nullable domains above reflect real Fluent compat/native contracts. `watch`, `getValues`, `setValue` and `reset` retain those values instead of disguising them as undefined. Missing optional props and internal absence use undefined. A schema may transform nullable input to a different output at submission.

@@ -20,6 +20,19 @@ function children(member) {
   if (member === 'ColorPicker') return React.createElement(fluent.ColorSlider, { channel: 'hue', 'aria-label': 'Hue' });
   if (member === 'SwatchPicker') return ['blue', 'red'].map(value => React.createElement(fluent.ColorSwatch, { key: value, value, color: value, 'aria-label': `${value} display` }));
 }
+for (const shape of [undefined, 'square', 'circular']) test(`SwatchPicker uses ${shape ?? 'rounded'} native shape${shape === undefined ? ' by default' : ' when overridden'}`, () => {
+  const F = api.createForm();
+  const f = mount(React.createElement(React.Fragment, undefined,
+    React.createElement(fluent.SwatchPicker, { 'data-swatch-reference': '', shape: shape ?? 'rounded', selectedValue: 'blue' }, children('SwatchPicker')),
+    React.createElement(F.Root, { defaultValues: { value: 'blue' }, onSubmit: () => {} },
+      React.createElement(F.SwatchPicker, { 'data-swatch-field': '', name: 'value', shape }, children('SwatchPicker')))));
+  try {
+    const swatches = selector => [...f.host.querySelectorAll(`${selector} .fui-ColorSwatch`)].map(node => node.className);
+    const reference = swatches('[data-swatch-reference]');
+    assert.equal(reference.length, 2);
+    assert.deepEqual(swatches('[data-swatch-field]'), reference, 'native shape and selection styling agree');
+  } finally { f.close(); }
+});
 for (const color of [undefined, 'brand', 'neutral']) test(`Rating uses native ${color ?? 'marigold'} colors${color === undefined ? ' by default' : ' when explicitly requested'}`, () => {
   const F = api.createForm();
   const f = mount(React.createElement(React.Fragment, undefined,

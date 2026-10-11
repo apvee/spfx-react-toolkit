@@ -8,6 +8,7 @@ The package publishes ESNext JavaScript for a bundler and TypeScript declaration
 | --- | --- |
 | (root) | All public controls, providers, hooks, helpers and services |
 | `/controls` | Public controls and their types |
+| `/controls/stage` | Canonical `Stage` compound Header/Body/Footer and thirteen public types; no flat parts or private state/surface helpers |
 | `/controls/web-part-shell` | Canonical WebPartShell, generic props/persisted types and pure metadata helper |
 | `/controls/form` | Canonical `Form`, `createForm` and public types; compound adapters remain private implementations |
 | `/controls/auto-skeleton` | Canonical `AutoSkeleton` and `AutoSkeletonProps` |
@@ -182,3 +183,12 @@ The async `@tiptap/extensions` root reports Placeholder/UndoRedo as used exports
 Fourteen private implementation dependencies are exactly 3.30.3; there are no new editor peers. The locked install addition is 32 package records, 7,573,815 raw installed bytes (about 7.6 MB) and 880 files; the optional menu packages account for 234,532 bytes and 28 files. This is uncompressed installed content rather than tarball download size. Installed footprint does not imply that every module is bundled.
 
 Measure fresh tarball consumers through all three aliases using `npm run verify:package` when [full gates apply](./DEVELOPMENT.md#verification-scope). Record initial, reachable async and union JS assets, hashes and raw/gzip9/Brotli11 totals, plus lockfile/toolchain/consumer provenance. Earlier exploratory asset sizes predate later editor QA fixes and are not current final measurements. The standalone installation/SPFx gate differs from exploratory tarball extraction with dependencies linked to the checkout. Bundled runtime probes check zero Read requests, actual Edit load/mount, disposal and child preservation; local transport/service doubles do not establish tenant authentication. See [WebPartShell](./api/controls/web-part-shell.md) for title authority, lifecycle, renderer and SDK ownership limits.
+
+## Stage entry
+
+```tsx
+import { Stage } from '@apvee/spfx-react-toolkit/controls/stage';
+import type { StageProps, StageOpenChangeData } from '@apvee/spfx-react-toolkit/controls/stage';
+```
+
+The root, `/controls` and `/controls/stage` expose the same Stage implementation and instance-local context. Only Stage is a value export; use Stage.Header, Stage.Body and Stage.Footer. The thirteen public types and their members are covered in the [Stage reference](./api/controls/stage.md). Flat part exports and private state/surface helper types are not clean public imports. Stage shares existing Fluent/icons/Griffel peers and does not register PnP features or create a renderer. Package/import-graph/runtime gates establish packaging evidence separately from browser and authenticated host behavior.

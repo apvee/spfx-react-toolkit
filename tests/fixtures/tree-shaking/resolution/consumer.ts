@@ -152,3 +152,17 @@ export const metadataAliases: typeof rootMetadata[] = [domainMetadata, controlMe
 export type ShellPropAliases = [RootShellProps<IWebPartShellProperties>, DomainShellProps<IWebPartShellProperties>, ControlShellProps<IWebPartShellProperties>];
 // @ts-expect-error Private editor has no clean subpath.
 import {} from '@apvee/spfx-react-toolkit/controls/web-part-shell/title/web-part-title-editor.internal';
+
+import { Stage as rootStage } from '@apvee/spfx-react-toolkit';
+import { Stage as domainStage } from '@apvee/spfx-react-toolkit/controls';
+import { Stage as controlStage } from '@apvee/spfx-react-toolkit/controls/stage';
+import type { StageProps as RootStageProps } from '@apvee/spfx-react-toolkit';
+import type { StageProps as DomainStageProps } from '@apvee/spfx-react-toolkit/controls';
+import type { StageProps as ControlStageProps } from '@apvee/spfx-react-toolkit/controls/stage';
+export const stageAliases: typeof rootStage[] = [domainStage, controlStage];
+export type StagePropAliases = [RootStageProps, DomainStageProps, ControlStageProps];
+export const stageHeader: typeof rootStage.Header = controlStage.Header;
+// @ts-expect-error Stage implementation is private.
+import {} from '@apvee/spfx-react-toolkit/controls/stage/stage';
+// @ts-expect-error Stage context is private.
+import {} from '@apvee/spfx-react-toolkit/controls/stage/stage-context.internal';

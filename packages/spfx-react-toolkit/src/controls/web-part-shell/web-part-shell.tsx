@@ -18,6 +18,9 @@ function WebPartShellRender<TProperties extends IWebPartShellProperties>(
  * Uses the web part ownerDocument and inherited Griffel renderer; hosts must supply a
  * renderer for that document. Section adds no inset/background; application auto padding
  * is medium below a 640px container inline size and large from 640px.
+ * Header and body have medium (12px) theme spacing, including in sections.
+ * Title and header actions are vertically centered within their wrapping row.
+ * Hiding the title without header actions removes the header and its gap.
  * Native div attributes/events, className, caller style and ref reach the shell root.
  * No normalized/default title property is written at mount.
  * @param props Web part instance, surface/theme options and native div attributes.

@@ -25,20 +25,22 @@ function ShellLayout(props: RuntimeProps & { resolvedSurface: 'section' | 'appli
   const { properties, setProperties } = useSPFxProperties<IWebPartShellProperties>();
   const { isEdit } = useSPFxDisplayMode();
   const styles = useWebPartShellLayoutStyles(resolvedSurface, padding);
+  const showTitle = properties?.showTitle ?? true;
+  const hasHeader = showTitle || React.Children.toArray(action).length > 0;
   const changeTitle = React.useCallback((update: { title: string; titleHTML: string }): void => {
     setProperties(update);
   }, [setProperties]);
   return <div {...nativeProps} ref={rootRef} className={[styles.root, className].filter(Boolean).join(' ')} style={style}
     data-web-part-shell-surface={resolvedSurface}>
     <div className={styles.content} data-web-part-shell-content="">
-      <div className={styles.header}>
+      {hasHeader && <div className={styles.header}>
         <div className={styles.title}>
           <WebPartTitle title={properties?.title ?? ''} titleHTML={properties?.titleHTML}
-            showTitle={properties?.showTitle ?? true} editing={isEdit} onChange={changeTitle} ownerDocument={ownerDocument} />
+            showTitle={showTitle} editing={isEdit} onChange={changeTitle} ownerDocument={ownerDocument} />
         </div>
         <div className={styles.actions}>{action}</div>
-      </div>
-      {children}
+      </div>}
+      <div className={styles.body} data-web-part-shell-body="">{children}</div>
     </div>
   </div>;
 }

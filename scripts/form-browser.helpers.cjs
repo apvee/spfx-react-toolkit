@@ -74,6 +74,7 @@ async function exerciseForm({ page, url, output, label, boundary, check, console
   const saturation = control('ColorPicker').locator('input.fui-ColorArea__inputX');
   const priorSaturation = (await live()).accent.s; await saturation.focus(); await saturation.press('ArrowLeft');
   await check('ColorArea keyboard writes saturation', (await live()).accent.s < priorSaturation, true);
+  await check('SwatchPicker default rounded shape', await control('SwatchPicker').getByRole('radio', { name: 'Blue', exact: true }).evaluate(e => getComputedStyle(e).borderTopLeftRadius), '4px');
   await control('SwatchPicker').getByRole('radio', { name: 'Red', exact: true }).click(); await state('swatch', 'red');
   await field('DatePicker').fill('2026-10-11'); await field('DatePicker').press('Tab'); await check('Date local calendar parts', (await live()).date.day, 11);
   await field('TimePicker').fill('13:45'); await field('TimePicker').press('Tab'); await check('Time local wall-clock parts', [(await live()).time.hour, (await live()).time.minute], [13, 45]);

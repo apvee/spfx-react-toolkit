@@ -42,5 +42,5 @@ test('isolated source and compiled Shell routes keep real hooks and use shared b
   }
   assert.match(read('tests/fixtures/sx-browser/web-part-shell-toolkit-boundary.ts'), /src\/controls\/web-part-shell/);
   assert.match(read('tests/fixtures/styles-panel-browser/web-part-shell-toolkit-boundary.ts'), /lib\/controls\/web-part-shell/);
-  assert.match(read('scripts/build-styles-panel-browser.cjs'), /shellOnly \? \[/);
+  assert.match(read('scripts/build-styles-panel-browser.cjs'), /plugins:\s*shellOnly(?:\s*\|\|\s*stageOnly)?\s*\?\s*\[\]/);
 });

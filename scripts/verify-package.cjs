@@ -144,6 +144,19 @@ try {
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
   // Both the public entry points and their persistence/client dependencies must ship.
   for (const module of [
+    'controls/stage/index',
+    'controls/stage/stage',
+    'controls/stage/stage.types',
+    'controls/stage/stage-controller.internal',
+    'controls/stage/stage-context.internal',
+    'controls/stage/stage-header',
+    'controls/stage/stage-body',
+    'controls/stage/stage-footer',
+    'controls/stage/stage.styles.internal',
+    'controls/stage/stage-dialog.internal',
+    'controls/stage/stage-drawer.internal',
+    'controls/stage/stage-drawer-trigger.internal',
+    'controls/stage/stage-popover.internal',
     'controls/web-part-shell/index',
     'controls/web-part-shell/web-part-shell',
     'controls/web-part-shell/web-part-shell.types',

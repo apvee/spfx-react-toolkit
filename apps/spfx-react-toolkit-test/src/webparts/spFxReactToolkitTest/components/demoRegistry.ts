@@ -56,6 +56,14 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
+    key: 'stage',
+    title: 'Stage',
+    iconName: 'OpenPane',
+    description: 'Explicit Dialog, Drawer and Popover surfaces with shared content and guarded forms.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-stage' */ './panels/StagePanel')),
+    coverage: [{ symbol: 'Stage', kind: 'snapshot', notes: 'Three presentations, sizes, literal/JSX headers, scroll, retention, nested popups, guarded Form save/reset, themes/RTL and selectable Card isolation.' }],
+  },
+  {
     key: 'groups',
     title: 'SettingsGroup and AccordionGroup',
     iconName: 'Settings',

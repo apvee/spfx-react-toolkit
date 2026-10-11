@@ -80,6 +80,16 @@ async function checkWebPartShellBrowser(page, record) {
   await check('Read creates no editable engine DOM', await root.locator('[contenteditable]').count(), 0);
   await check('Read mount never writes properties', (await observations()).refreshes, [0, 0]);
   await check('metadata search/plain fixture property retained', (await observations()).properties.listId, 'keep-0');
+  const headerGap = async shell => shell.locator('[data-web-part-shell-body]').evaluate(body => {
+    const header = body.previousElementSibling;
+    return header ? body.getBoundingClientRect().top - header.getBoundingClientRect().bottom : undefined;
+  });
+  await check('Read header/body default gap', await headerGap(root), 12);
+  await render({ otherProperties: { showTitle: false } });
+  await check('Hidden title without actions removes empty header', await other.locator('[data-web-part-shell-body]').evaluate(body => body.previousElementSibling === null), true);
+  await check('Hidden title without actions leaves no blank gap', await other.locator('[data-web-part-shell-body]').evaluate(body => body.getBoundingClientRect().top - body.parentElement.getBoundingClientRect().top), 0);
+  await render({ otherProperties: { showTitle: true } });
+  await check('Restored title restores the default gap', await headerGap(other), 12);
   await capture('read');
   // Compare actual pixels with the published Fluent recipes in both branches.
   // Explicit sizes/line spacing are overrides, never inferred persistence.
@@ -95,6 +105,7 @@ async function checkWebPartShellBrowser(page, record) {
     await render({ mode: 'Read', properties: { title: 'Preset title', titleHTML: html } });
     await check(`${tag}: Read uses exact Fluent typography`, await typography(root.locator(tag).filter({ hasText: /^Preset title$/ })), [size, line, weight]);
     await page.getByRole('button', { name: 'Enter page Edit mode', exact: true }).click(); await editable.waitFor(); await editable.focus();
+    await check(`${tag}: Edit retains header/body gap`, await headerGap(root), 12);
     await check(`${tag}: Edit uses identical Fluent typography`, await typography(editable.locator(tag)), [size, line, weight]);
     await check(`${tag}: picker shows inherited preset size`, await toolbar().getByRole('combobox', { name: 'Font size', exact: true }).inputValue(), size.slice(0, -2));
     await check(`${tag}: mounting Read/Edit does not persist inherited styles`, await savedHTML(), html);
@@ -356,6 +367,7 @@ async function checkWebPartShellBrowser(page, record) {
   await check('Defined empty rich title preserved', await savedHTML(), '');
   await root.locator('[data-shell-demo="action"]').click();
   await check('Hook action hides editor', await editable.count(), 0);
+  await check('Hidden title with actions retains header/body gap', await headerGap(root), 12);
   await root.locator('[data-shell-demo="show-title"]').check(); await editable.waitFor();
   await check('Panel can recover hidden title', await editable.count(), 1);
   await render({ mode: 'Read' });

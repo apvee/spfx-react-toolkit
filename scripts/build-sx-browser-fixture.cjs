@@ -5,14 +5,16 @@ const webpack = require('webpack');
 const root = path.resolve(__dirname, '..');
 const fixture = path.join(root, 'tests/fixtures/sx-browser');
 const output = path.join(root, 'temp/sx-browser');
+const stageOnly = process.env.SX_BROWSER_STAGE_ONLY === '1';
 const shellOnly = process.env.SX_BROWSER_SHELL_ONLY === '1';
 const gridOnly = process.env.SX_BROWSER_DATA_GRID_ONLY === '1';
 if (shellOnly && gridOnly) throw new Error('Shell-only and Grid-only fixture flags are mutually exclusive.');
+if (stageOnly && [shellOnly, gridOnly, process.env.SX_BROWSER_FORM_ONLY === '1', process.env.SX_BROWSER_GROUPS_ONLY === '1'].some(Boolean)) throw new Error('Stage-only fixture cannot be combined with another Only flag.');
 const chartProbe = process.env.DATA_GRID_CHART_PROBE === '1';
 if (chartProbe && !gridOnly) throw new Error('DATA_GRID_CHART_PROBE=1 requires SX_BROWSER_DATA_GRID_ONLY=1 to select the isolated Grid fixture.');
 const actualCharts = path.join(root, 'node_modules/@fluentui/react-charts/lib/index.js');
-const entry = path.join(fixture, shellOnly ? 'web-part-shell.tsx' : gridOnly ? 'data-grid.tsx' : 'index.tsx');
-const boundary = path.join(fixture, shellOnly ? 'web-part-shell-toolkit-boundary.ts' : gridOnly ? 'data-grid-toolkit-boundary.ts' : 'form-toolkit-boundary.ts');
+const entry = path.join(fixture, stageOnly ? 'stage.tsx' : shellOnly ? 'web-part-shell.tsx' : gridOnly ? 'data-grid.tsx' : 'index.tsx');
+const boundary = path.join(fixture, stageOnly ? 'stage-toolkit-boundary.ts' : shellOnly ? 'web-part-shell-toolkit-boundary.ts' : gridOnly ? 'data-grid-toolkit-boundary.ts' : 'form-toolkit-boundary.ts');
 const program = ts.createProgram([entry, ...(chartProbe ? [path.join(fixture, 'data-grid-chart-probe.tsx')] : [])], {
   noEmit: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext,
   moduleResolution: ts.ModuleResolutionKind.NodeJs, jsx: ts.JsxEmit.React,

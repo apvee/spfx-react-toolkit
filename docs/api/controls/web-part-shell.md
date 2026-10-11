@@ -117,6 +117,10 @@ Auto surface selects application when the SPFx Microsoft 365 SDK is present or t
 
 Section adds zero automatic padding and a transparent background, including the Fluent wrapper. Application uses the existing medium spacing (12px) below 640px container inline-size and large spacing (16px) from 640px. Explicit padding wins. The container query measures the shell root, separately from its padded content; it is not a viewport breakpoint. Layout uses natural height and a wrapping title/action header. The shell adds no scroll lock, sticky header or SharePoint canvas sizing.
 
+Header and body are separated by `gap.medium` (12px with the default Fluent theme) in every surface, including SharePoint sections. This internal gap is independent of outer padding. Hiding the title retains the gap when header actions are present; hiding it without actions removes the empty header and its gap. Content remains mounted when title visibility changes.
+
+The title and header actions are vertically centered within their wrapping row using `alignItems.center`.
+
 Theme tokens merge host, then the nearest ancestor Fluent theme, then the explicit theme override. Missing partial ancestor tokens come from the host; without a host theme, the hook supplies a light fallback. Direction resolves explicit `dir`, then an actual ancestor FluentProvider, then SPFx `cultureInfo.isRightToLeft`. A low-level Fluent context without the provider theme-class context does not establish ancestor direction. The shell supplies `targetDocument` from `instance.context.domElement.ownerDocument` and inherits Griffel's renderer. The host must supply a renderer for that document, including iframe hosts; the shell creates no renderer.
 
 Same-instance rerenders preserve application content and actions. A different `instanceId` resets the keyed runtime subtree. Hiding or emptying the title leaves actions and children mounted. Title Read/Edit changes mount/destroy only the editor. The existing SPFx provider owns service readiness, instance isolation and subscriptions; dispose the React root in the web part's `onDispose`.

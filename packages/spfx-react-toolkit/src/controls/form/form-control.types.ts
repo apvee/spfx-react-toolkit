@@ -194,6 +194,7 @@ export type FormColorPickerProps<TInput extends FieldValues> = FormControlProps<
 /** SwatchPicker stores the stable string identity, independent of label and color.
  * Compose Fluent ColorSwatch or ImageSwatch children. The public ref targets the
  * root div; RHF error focus targets an enabled swatch button.
+ * Native shape defaults to rounded; square and circular remain supported overrides.
  * @example `<Order.SwatchPicker name="theme" label="Theme"><ColorSwatch value="blue" color="#0078d4" /></Order.SwatchPicker>`
  */
 export type FormSwatchPickerProps<TInput extends FieldValues> = FormControlProps<TInput, string> & Omit<SwatchPickerProps, keyof FormFieldPresentationProps | 'defaultSelectedValue' | 'name' | 'selectedValue'>;

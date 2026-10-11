@@ -141,6 +141,18 @@
     ],
     "shell-runtime": [
       "^@apvee/spfx-react-toolkit/lib/controls/web-part-shell/(?!web-part-shell-metadata\\.js$)"
+    ],
+    "stage": [
+      "^@apvee/spfx-react-toolkit/lib/controls/stage/"
+    ],
+    "fluent-dialog": [
+      "^@fluentui/react-dialog/"
+    ],
+    "fluent-drawer": [
+      "^@fluentui/react-drawer/"
+    ],
+    "fluent-popover": [
+      "^@fluentui/react-popover/"
     ]
   },
   "fixtures": [
@@ -190,7 +202,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": []
     },
@@ -245,7 +258,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": []
     },
@@ -295,7 +309,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": []
     },
@@ -351,7 +366,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -410,7 +426,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -458,7 +475,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -509,7 +527,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -559,7 +578,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -618,7 +638,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -672,7 +693,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": []
     },
@@ -708,7 +730,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": []
     },
@@ -742,7 +765,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": []
     },
@@ -779,7 +803,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -833,7 +858,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": []
     },
@@ -869,7 +895,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -906,7 +933,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -955,7 +983,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "formatted-text",
@@ -1009,7 +1038,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "relative-time",
@@ -1060,7 +1090,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "iana-lookup"
@@ -1111,7 +1142,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": []
     },
@@ -1159,7 +1191,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "auto-skeleton",
@@ -1207,7 +1240,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "state-message",
@@ -1260,7 +1294,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "settings-group",
@@ -1310,7 +1345,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "accordion-group",
@@ -1358,7 +1394,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1410,7 +1447,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1465,7 +1503,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "data-grid",
@@ -1518,7 +1557,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "stage"
       ],
       "requiredModuleGroups": [
         "data-grid",
@@ -1558,7 +1598,8 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "stage"
       ],
       "requiredModuleGroups": [
         "shell",
@@ -1609,9 +1650,60 @@
         "form-resolver",
         "form-schema",
         "form-date",
-        "form-time"
+        "form-time",
+        "stage"
       ],
       "requiredModuleGroups": []
+    },
+    {
+      "id": "stage",
+      "template": "stage.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/stage"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror",
+        "markdown"
+      ],
+      "requiredModuleGroups": [
+        "stage",
+        "fluent-card",
+        "fluent-button",
+        "fluent-dialog",
+        "fluent-drawer",
+        "fluent-popover",
+        "style-descriptors",
+        "styles-compiler",
+        "griffel"
+      ]
     }
   ],
   "comparisons": [
@@ -1854,6 +1946,18 @@
       "reference": "web-part-shell-metadata/control",
       "metric": "gzip",
       "informational": true
+    },
+    {
+      "candidate": "stage/root",
+      "reference": "stage/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023
+    },
+    {
+      "candidate": "stage/domain",
+      "reference": "stage/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 1023
     }
   ]
 }
