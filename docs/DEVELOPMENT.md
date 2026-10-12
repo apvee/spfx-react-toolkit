@@ -158,7 +158,7 @@ npm run verify
 npm run verify:package
 ```
 
-`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 84-variant bundle contract (including WebPartShell/metadata, Form/createForm, existing controls and locale/page-context equivalents), the current canonical runtime-probe matrix and the canonical mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
+`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 87-variant bundle contract (including WebPartShell/metadata, Form/createForm, existing controls and locale/page-context equivalents), the current canonical runtime-probe matrix and the canonical mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
 
 Ordinary verification deletes the temporary consumer when it finishes. For diagnostics or an explicit baseline proposal, preserve a fresh installed consumer and read its recorded path before running the examples below. The bundle CLI requires `--consumer-root`; its default mode is `enforce`, its default contract is `tests/fixtures/tree-shaking/contract.json`, and its default output is `.docs/maintenance/evidence/tree-shaking/bundle-contract`:
 
@@ -172,7 +172,7 @@ node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUM
 
 If you set `SPFX_PACKAGE_EVIDENCE`, read `consumer-path.txt` from that evidence directory instead. Run diagnostic commands only after the preserved package verification succeeds.
 
-Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete contract of 84 variants and 44 comparisons; custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
+Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete contract of 87 variants and 46 comparisons; custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
 
 Normal verification never writes `tests/fixtures/tree-shaking/baseline.json`. To propose an explicit update after reviewing a complete passing run and its toolchain, package/lock/config/fixture hashes, emitted initial/async assets and raw/gzip/Brotli totals:
 
@@ -308,3 +308,21 @@ node scripts/check-pagination-browser.cjs
 ```
 
 The browser runner starts temporary loopback servers and closes them afterward. Supply an existing `PLAYWRIGHT_MODULE_PATH` and `CHROME_EXECUTABLE_PATH` when needed; it installs no dependencies. Source and compiled reports, console checks, desktop/mobile screenshots and loading geometry are recorded separately under `.docs/maintenance/evidence/pagination/`. `PAGINATION_BROWSER_EVIDENCE` overrides that destination. Temporary servers require permission to bind a localhost port in restricted environments. Local checks do not establish tenant, Teams iframe or screen-reader behavior.
+
+## Description List checks
+
+See [DescriptionList](./api/controls/description-list.md). Run focused checks with `node --test tests/description-list*.test.cjs tests/demo-description-list.test.cjs`; `npm run verify:examples` checks the lazy registry and `npm run verify:public-docs` checks documented public members. Static markers do not execute the UI. Build the library before the app and restart an active serve process after library changes, because the sample consumes compiled `lib`.
+
+Open the lazy **Description List** panel. Compare data and compound APIs, literal markdown-like strings, zero, empty definitions, Badge/link/block values and slot callbacks. Increment A/B counters, change layout or width and reverse stable IDs: each counter retains its value within the selected API. Check 320/479px stacked versus 480/639/640/900px shared columns in auto; explicit layouts override this. Nested 320px containers stay vertical independently. Toggle root/pair hidden, inspect native refs and observe bubbled clicks; compare the two independent light/LTR and dark/RTL instances. Long values must wrap without losing content. Switching data/compound composition creates a new example.
+
+Authenticated SharePoint, Teams/iframe and screen-reader validation is NOT EXECUTED until separately recorded in the [host checklist](./SHAREPOINT-VALIDATION.md#description-list). Local static, browser and build results do not establish those checks. Full gates apply only under the existing verification-scope rules.
+
+For repeatable browser checks of the actual DescriptionListPanel against source and compiled library fixtures:
+
+```bash
+SX_BROWSER_DESCRIPTION_LIST_ONLY=1 node scripts/build-sx-browser-fixture.cjs
+STYLES_PANEL_DESCRIPTION_LIST_ONLY=1 node scripts/build-styles-panel-browser.cjs
+node scripts/check-description-list-browser.cjs
+```
+
+The focused runner records local source/compiled results separately. It installs no dependencies. Temporary loopback servers may require permission in a restricted environment. These checks do not establish authenticated SharePoint, Teams iframe or screen-reader behavior.

@@ -144,6 +144,10 @@ try {
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
   // Both the public entry points and their persistence/client dependencies must ship.
   for (const module of [
+    'controls/description-list/index',
+    'controls/description-list/description-list',
+    'controls/description-list/description-list.types',
+    'controls/description-list/description-list.styles.internal',
     'controls/pagination/index',
     'controls/pagination/pagination',
     'controls/pagination/pagination.types',
@@ -562,6 +566,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   fs.copyFileSync(path.join(root, 'tests/fixtures/form-package-consumer.tsx'), path.join(consumer, 'compatibility/form-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/data-grid-package-consumer.tsx'), path.join(consumer, 'compatibility/data-grid-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/web-part-shell-package-consumer.tsx'), path.join(consumer, 'compatibility/web-part-shell-package-consumer.tsx'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/description-list-package-consumer.tsx'), path.join(consumer, 'compatibility/description-list-package-consumer.tsx'));
   run(['install','--no-audit','--no-fund'],consumer);
   assert.equal(fs.lstatSync(path.join(consumer,'node_modules/@apvee/spfx-react-toolkit')).isSymbolicLink(),false);
   const installedPackage = JSON.parse(fs.readFileSync(path.join(consumer, 'node_modules/@apvee/spfx-react-toolkit/package.json'), 'utf8'));
@@ -650,6 +655,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
       'compatibility/sx-package-public.ts', 'compatibility/sx-package-deep.ts'] },
     { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/form-package-consumer.tsx'] },
     { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/data-grid-package-consumer.tsx'] },
+    { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/description-list-package-consumer.tsx'] },
     { args: ['run', 'package:solution'], prepareMetadata: true },
   ];
   const productionReports = await runInstalledGates({consumerRoot:fs.realpathSync(consumer),outputDir:evidence,failures:consumerFailures,

@@ -199,3 +199,7 @@ The root, `/controls` and `/controls/stage` expose the same Stage implementation
 Import `Pagination` and its nine public types from the root, `/controls` or `/controls/pagination`. All aliases resolve to the same implementation and declarations; private validation and styling modules have no public alias. See the [Pagination reference](./api/controls/pagination.md) for the four controlled states and request ownership.
 
 Pagination uses the existing shared React, Fluent/icons and Griffel peers. It inherits the host renderer and direction without an SPFx provider or PnP registration. Production bundle checks measure all three aliases and reject Pagination in unrelated consumers; Pagination consumers exclude DataGrid/Charts, Form, Stage and SPFx/PnP code. Installed runtime probes exercise the four modes independently of authenticated SharePoint validation.
+
+## DescriptionList imports
+
+Import `DescriptionList`, `DescriptionListEntry`, `DescriptionListLayout`, `DescriptionListProps` and `DescriptionListItemProps` from the root, `/controls` or `/controls/description-list`. All entries share the canonical implementation and declarations. Use `DescriptionList.Item` for compound composition; implementation, context and styling modules have no public alias. The control uses existing Fluent/Griffel peers and neither registers PnP features nor creates a renderer. See the [DescriptionList reference](./api/controls/description-list.md) for container-responsive layout and content contracts.

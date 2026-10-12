@@ -166,3 +166,9 @@ The author UI uses Fluent UI 9; the private Tiptap 3.30.3 engine loads only for 
 [Pagination](./docs/api/controls/pagination.md) supplies controlled known/unknown-total pages, cursor directions and load-more requests. The application owns rows, loading and result announcements; the control supplies accessible native Fluent navigation, localized labels, compact sizes and host theme/RTL styling. Import from the root, `/controls` or `/controls/pagination`. No new dependency or SPFx provider is required.
 
 The lazy Pagination sample runs real paged results, resets after filter/page-size/total changes, manual loading completion and independent theme/direction instances. Local checks and authenticated SharePoint validation are separate; host checks remain NOT EXECUTED until recorded.
+
+## Description List
+
+[DescriptionList](./docs/api/controls/description-list.md) renders read-only metadata as native term/definition pairs. Use immutable items or `DescriptionList.Item` composition for rich Fluent values. Auto stacks below 480px and aligns columns inside the nearest `container.inlineSize` ancestor; explicit layouts override this. Import the compound value from the root, `/controls` or `/controls/description-list`. Existing Fluent/Griffel peers are reused; no SPFx provider is required.
+
+The lazy Description List sample exercises slots, literal/zero/empty values, resizing, nested containers, stable child state and independent theme/RTL. Local verification and authenticated SharePoint/Teams/screen-reader checks are separate; host checks remain NOT EXECUTED until recorded.

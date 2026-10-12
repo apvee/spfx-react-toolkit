@@ -34,6 +34,14 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
+    key: 'description-list',
+    title: 'Description List',
+    iconName: 'Info',
+    description: 'Native read-only term/value pairs with data or compound composition and responsive columns.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-description-list' */ './panels/DescriptionListPanel')),
+    coverage: [{ symbol: 'DescriptionList', kind: 'snapshot', notes: 'Data/compound APIs, rich slots, literal/zero/empty values, 480px container threshold, nested containers, stable child state, native refs/hidden/events and independent theme/RTL.' }],
+  },
+  {
     key: 'pagination',
     title: 'Pagination',
     iconName: 'ChevronRight',

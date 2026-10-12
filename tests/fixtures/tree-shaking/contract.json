@@ -156,6 +156,9 @@
     ],
     "pagination": [
       "^@apvee/spfx-react-toolkit/lib/controls/pagination/"
+    ],
+    "description-list": [
+      "^@apvee/spfx-react-toolkit/lib/controls/description-list/"
     ]
   },
   "fixtures": [
@@ -207,7 +210,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": []
     },
@@ -264,7 +268,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": []
     },
@@ -316,7 +321,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": []
     },
@@ -374,7 +380,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -435,7 +442,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -485,7 +493,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -538,7 +547,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -590,7 +600,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -651,7 +662,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -707,7 +719,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": []
     },
@@ -745,7 +758,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": []
     },
@@ -781,7 +795,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": []
     },
@@ -820,7 +835,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -876,7 +892,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": []
     },
@@ -914,7 +931,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -953,7 +971,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -1004,7 +1023,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "formatted-text",
@@ -1060,7 +1080,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "relative-time",
@@ -1113,7 +1134,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "iana-lookup"
@@ -1166,7 +1188,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": []
     },
@@ -1216,7 +1239,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "auto-skeleton",
@@ -1266,7 +1290,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "state-message",
@@ -1321,7 +1346,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "settings-group",
@@ -1373,7 +1399,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "accordion-group",
@@ -1423,7 +1450,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1477,7 +1505,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1534,7 +1563,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "data-grid",
@@ -1589,7 +1619,8 @@
         "tiptap",
         "prosemirror",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "data-grid",
@@ -1631,7 +1662,8 @@
         "form-date",
         "form-time",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "shell",
@@ -1684,7 +1716,8 @@
         "form-date",
         "form-time",
         "stage",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": []
     },
@@ -1725,7 +1758,8 @@
         "tiptap",
         "prosemirror",
         "markdown",
-        "pagination"
+        "pagination",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "stage",
@@ -1776,13 +1810,67 @@
         "tiptap",
         "prosemirror",
         "markdown",
-        "stage"
+        "stage",
+        "description-list"
       ],
       "requiredModuleGroups": [
         "pagination",
         "fluent-button",
         "griffel",
         "style-descriptors",
+        "styles-compiler"
+      ]
+    },
+    {
+      "id": "description-list",
+      "template": "description-list.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/description-list"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror",
+        "markdown",
+        "stage",
+        "pagination",
+        "settings-group",
+        "accordion-group",
+        "formatted-text",
+        "relative-time",
+        "auto-skeleton",
+        "state-message"
+      ],
+      "requiredModuleGroups": [
+        "description-list",
+        "griffel",
+        "typography",
         "styles-compiler"
       ]
     }
@@ -2049,6 +2137,18 @@
     {
       "candidate": "pagination/domain",
       "reference": "pagination/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "description-list/root",
+      "reference": "description-list/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "description-list/domain",
+      "reference": "description-list/control",
       "metric": "gzip",
       "maxIncreaseBytes": 0
     }

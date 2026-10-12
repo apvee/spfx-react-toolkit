@@ -148,8 +148,16 @@ for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invok
 }
 console.log('Verified dedicated root/domain/legacy Imports scenario (no duplicate export coverage).');
 
-const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination'].includes(item.name)).map(item => item.name);
+const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination', 'DescriptionList'].includes(item.name)).map(item => item.name);
 assertCovered('Controls', controlSymbols, registrySymbols);
+const descriptionListPanel = read(path.join(panelsPath, 'DescriptionListPanel.tsx'));
+for (const marker of ['DescriptionList.Item', 'items=', 'layout=', 'key={entry.id}',
+  'children: (Component, props)', 'container.inlineSize', '[320, 479, 480, 639, 640, 900]',
+  'createRef<HTMLDListElement>', 'createRef<HTMLDivElement>', 'data-description-list-demo="theme"',
+  'data-description-list-demo="rtl"', 'data-description-list-demo="nested-container"',
+  'data-description-list-demo="inspect-ref"', 'data-description-list-demo="counter"']) {
+  if (!descriptionListPanel.includes(marker)) throw new Error(`DescriptionList interactive example missing ${marker}`);
+}
 const textPanel = read(path.join(panelsPath, 'FormattedTextPanel.tsx'));
 for (const marker of ['FormattedText', 'maxLines', 'markdown', 'subtle', 'highlight', 'variant', 'as', 'font', 'align', 'wrap', 'truncate', 'italic', 'underline', 'strikethrough', 'ref', 'onClick']) {
   if (!textPanel.includes(marker)) throw new Error(`FormattedText interactive example missing ${marker}`);

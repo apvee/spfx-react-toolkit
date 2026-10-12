@@ -199,6 +199,10 @@
       "types": "./lib/controls/pagination/index.d.ts",
       "default": "./lib/controls/pagination/index.js"
     },
+    "./controls/description-list": {
+      "types": "./lib/controls/description-list/index.d.ts",
+      "default": "./lib/controls/description-list/index.js"
+    },
     "./LICENSE": "./LICENSE",
     "./README.md": "./README.md",
     "./lib/core/context.internal.d.ts": "./lib/core/context.internal.d.ts",
@@ -1928,6 +1932,9 @@
       ],
       "controls/pagination": [
         "lib/controls/pagination/index.d.ts"
+      ],
+      "controls/description-list": [
+        "lib/controls/description-list/index.d.ts"
       ]
     }
   },

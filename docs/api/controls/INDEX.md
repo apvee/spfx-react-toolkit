@@ -41,3 +41,7 @@ DataGrid public types: `DataGridProps`, `DataGridStrings`, `DataGridSparklineSum
 ## Pagination
 
 `Pagination` renders controlled page, cursor and incremental navigation. Public types are `PaginationSize`, `PaginationStrings`, `PaginationPagesKnownTotal`, `PaginationPagesUnknownTotal`, `PaginationCursor`, `PaginationLoadMore`, `PaginationState`, `PaginationChangeData` and `PaginationProps`. See the [Pagination reference](./pagination.md) for every member, loading, validation, localization, native forwarding and consumer-owned result state. Import from the root, `/controls` or `/controls/pagination`.
+
+## DescriptionList
+
+`DescriptionList` is the single compound value with `DescriptionList.Item`. Public types are `DescriptionListEntry`, `DescriptionListLayout`, `DescriptionListProps` and `DescriptionListItemProps`. See the [Description List reference](./description-list.md) for all members, items/JSX composition, Fluent slots, native semantics and 480px named-container responsiveness. Import from the root, `/controls` or `/controls/description-list`; there is no flat Item runtime export.

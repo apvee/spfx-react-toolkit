@@ -24,6 +24,7 @@ const cleanAliases = Object.freeze({
   './controls/web-part-shell': 'lib/controls/web-part-shell/index',
   './controls/stage': 'lib/controls/stage/index',
   './controls/pagination': 'lib/controls/pagination/index',
+  './controls/description-list': 'lib/controls/description-list/index',
 });
 
 /** Derive explicit exports without changing the frozen historical inventory. */
@@ -81,7 +82,7 @@ function collectPublishedFiles(directory = library) {
   return files.sort();
 }
 
-function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index', 'lib/controls/form/index', 'lib/controls/data-grid/index', 'lib/controls/web-part-shell/index', 'lib/controls/stage/index', 'lib/controls/pagination/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
+function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index', 'lib/controls/form/index', 'lib/controls/data-grid/index', 'lib/controls/web-part-shell/index', 'lib/controls/stage/index', 'lib/controls/pagination/index', 'lib/controls/description-list/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
   const contract = createEntrypointContract({ publishedFiles, cleanAliases });
   assert.deepEqual(manifest.exports, contract.exports, 'Package exports differ from the exact additive contract');
   // Object equality alone does not check condition priority.
