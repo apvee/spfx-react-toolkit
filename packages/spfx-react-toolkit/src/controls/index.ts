@@ -9,3 +9,4 @@ export * from './data-grid';
 export { WebPartShell, getWebPartShellPropertiesMetadata } from './web-part-shell';
 export type { IWebPartShellProperties, WebPartShellProps, WebPartShellSurface, WebPartShellPadding } from './web-part-shell';
 export * from './stage';
+export * from './pagination';

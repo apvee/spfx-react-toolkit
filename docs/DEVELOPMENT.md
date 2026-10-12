@@ -158,7 +158,7 @@ npm run verify
 npm run verify:package
 ```
 
-`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 78-variant bundle contract (including WebPartShell/metadata, Form/createForm, existing controls and locale/page-context equivalents), the current canonical runtime-probe matrix and nine mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
+`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 84-variant bundle contract (including WebPartShell/metadata, Form/createForm, existing controls and locale/page-context equivalents), the current canonical runtime-probe matrix and the canonical mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
 
 Ordinary verification deletes the temporary consumer when it finishes. For diagnostics or an explicit baseline proposal, preserve a fresh installed consumer and read its recorded path before running the examples below. The bundle CLI requires `--consumer-root`; its default mode is `enforce`, its default contract is `tests/fixtures/tree-shaking/contract.json`, and its default output is `.docs/maintenance/evidence/tree-shaking/bundle-contract`:
 
@@ -172,7 +172,7 @@ node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUM
 
 If you set `SPFX_PACKAGE_EVIDENCE`, read `consumer-path.txt` from that evidence directory instead. Run diagnostic commands only after the preserved package verification succeeds.
 
-Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete contract of 78 variants and 40 comparisons; custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
+Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete contract of 84 variants and 44 comparisons; custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
 
 Normal verification never writes `tests/fixtures/tree-shaking/baseline.json`. To propose an explicit update after reviewing a complete passing run and its toolchain, package/lock/config/fixture hashes, emitted initial/async assets and raw/gzip/Brotli totals:
 
@@ -288,3 +288,23 @@ STYLES_PANEL_STAGE_ONLY=1 node scripts/check-styles-panel-browser.cjs
 Start the source fixture server in a separate terminal with `node scripts/serve-sx-browser-fixture.cjs` on port 4317; the compiled runner owns port 4320. Supply the installed Playwright/browser through the existing runner environment options. Build library before app and restart an active serve process after library changes: the app consumes compiled lib. Record source and compiled runs separately, including screenshots, console errors, focus, retained/inert content, short viewport/zoom geometry, native nested popups, RTL and independent instances. No browser execution is established by documentation or static marker checks.
 
 Authenticated SharePoint, Teams/iframe and screen-reader validation remains NOT EXECUTED until separately recorded. Full gates apply only under [verification scope](#verification-scope), including changes to Stage's package/import boundaries; local package gates do not establish tenant behavior.
+
+## Pagination checks
+
+See [Pagination](./api/controls/pagination.md) for the controlled four-mode API. Run targeted behavior/type checks with `node --test tests/pagination*.test.cjs tests/demo-pagination.test.cjs`; `npm run verify:examples` checks the lazy registry and `npm run verify:public-docs` checks public members. Static demo markers do not execute the UI. Build the library before the app and restart an existing serve process after library changes, since the sample consumes compiled `lib`.
+
+The lazy panel (`pagination`, `spfx-demo-pagination`) uses an outside-render typed DataGrid suite with actual result slicing. Exercise known/unknown totals, cursor and load-more; change filter/page size or reduce total while on a later page and confirm reset to initial results. Manual completion retains current rows, disables navigation and allows Complete loading to apply exactly one stored request. Verify the clicked action icon becomes the spinner without adding a center gap; the action retains its accessible name and all buttons stay disabled. Compare all sizes, native Button appearances and narrow width. Appearance applies to every action, defaults to subtle and can change during loading without losing the spinner or altering results. External loading before a click uses Next in pages/cursor and the Load more action in incremental mode. Verify localized/blank fallback labels, native ref/hidden, enclosing-form submit counts and independent light/LTR and dark/RTL instances.
+
+Authenticated SharePoint, Teams/iframe and screen-reader validation remains NOT EXECUTED until separately recorded. The [host checklist](./SHAREPOINT-VALIDATION.md#pagination) is distinct from local static, browser or build evidence. Full gates apply only under the existing verification-scope rules.
+
+For repeatable local browser execution of the actual PaginationPanel against both source and compiled implementations:
+
+```bash
+npm run build:library
+npm run build:app
+SX_BROWSER_PAGINATION_ONLY=1 node scripts/build-sx-browser-fixture.cjs
+STYLES_PANEL_PAGINATION_ONLY=1 node scripts/build-styles-panel-browser.cjs
+node scripts/check-pagination-browser.cjs
+```
+
+The browser runner starts temporary loopback servers and closes them afterward. Supply an existing `PLAYWRIGHT_MODULE_PATH` and `CHROME_EXECUTABLE_PATH` when needed; it installs no dependencies. Source and compiled reports, console checks, desktop/mobile screenshots and loading geometry are recorded separately under `.docs/maintenance/evidence/pagination/`. `PAGINATION_BROWSER_EVIDENCE` overrides that destination. Temporary servers require permission to bind a localhost port in restricted environments. Local checks do not establish tenant, Teams iframe or screen-reader behavior.

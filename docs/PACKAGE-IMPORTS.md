@@ -9,6 +9,7 @@ The package publishes ESNext JavaScript for a bundler and TypeScript declaration
 | (root) | All public controls, providers, hooks, helpers and services |
 | `/controls` | Public controls and their types |
 | `/controls/stage` | Canonical `Stage` compound Header/Body/Footer and thirteen public types; no flat parts or private state/surface helpers |
+| `/controls/pagination` | Canonical controlled page, cursor and load-more navigation; private validation and styling modules remain internal |
 | `/controls/web-part-shell` | Canonical WebPartShell, generic props/persisted types and pure metadata helper |
 | `/controls/form` | Canonical `Form`, `createForm` and public types; compound adapters remain private implementations |
 | `/controls/auto-skeleton` | Canonical `AutoSkeleton` and `AutoSkeletonProps` |
@@ -176,7 +177,7 @@ import { WebPartShell as ControlShell, type IWebPartShellProperties,
 
 All three aliases share the canonical component, generic declaration and metadata helper. The new editor, codec, title renderer and SDK broker modules remain private implementation paths; no wildcard export was added. Packed declarations resolve under TypeScript 5.3's Node10, Bundler and Node16 modes without public engine types. Historical compatibility paths and shared peer contracts remain in force.
 
-The production contract now measures 78 consumer cases, preserving historical inventories and numeric budgets. Unrelated consumers must exclude Shell/title editor/Tiptap/ProseMirror. Shell initial chunks contain the provider/layout/read-title path but exclude the editor engine; visible Edit requests its async asset. Metadata-only bundles retain the pure helper and exclude Shell runtime, providers, SPFx runtime, PnP, Griffel and editor. Optional Bubble/Floating menu modules are absent from emitted assets, although both dependencies are explicitly pinned for the React binding's installation compatibility.
+The production contract now measures 84 consumer cases, preserving historical inventories and numeric budgets. Unrelated consumers must exclude Shell/title editor/Tiptap/ProseMirror. Shell initial chunks contain the provider/layout/read-title path but exclude the editor engine; visible Edit requests its async asset. Metadata-only bundles retain the pure helper and exclude Shell runtime, providers, SPFx runtime, PnP, Griffel and editor. Optional Bubble/Floating menu modules are absent from emitted assets, although both dependencies are explicitly pinned for the React binding's installation compatibility.
 
 The async `@tiptap/extensions` root reports Placeholder/UndoRedo as used exports, but retains six unused root extension definitions (CharacterCount, DropCursor, Focus, GapCursor, Selection and TrailingNode) because of upstream factory effects. NodeJs/TypeScript 5.3 resolution uses root named exports; complete extension pruning is not guaranteed. Root/domain/control equality and initial engine exclusion are separate from absolute family cost.
 
@@ -192,3 +193,9 @@ import type { StageProps, StageOpenChangeData } from '@apvee/spfx-react-toolkit/
 ```
 
 The root, `/controls` and `/controls/stage` expose the same Stage implementation and instance-local context. Only Stage is a value export; use Stage.Header, Stage.Body and Stage.Footer. The thirteen public types and their members are covered in the [Stage reference](./api/controls/stage.md). Flat part exports and private state/surface helper types are not clean public imports. Stage shares existing Fluent/icons/Griffel peers and does not register PnP features or create a renderer. Package/import-graph/runtime gates establish packaging evidence separately from browser and authenticated host behavior.
+
+## Pagination entry
+
+Import `Pagination` and its nine public types from the root, `/controls` or `/controls/pagination`. All aliases resolve to the same implementation and declarations; private validation and styling modules have no public alias. See the [Pagination reference](./api/controls/pagination.md) for the four controlled states and request ownership.
+
+Pagination uses the existing shared React, Fluent/icons and Griffel peers. It inherits the host renderer and direction without an SPFx provider or PnP registration. Production bundle checks measure all three aliases and reject Pagination in unrelated consumers; Pagination consumers exclude DataGrid/Charts, Form, Stage and SPFx/PnP code. Installed runtime probes exercise the four modes independently of authenticated SharePoint validation.

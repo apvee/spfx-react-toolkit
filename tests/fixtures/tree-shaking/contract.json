@@ -153,6 +153,9 @@
     ],
     "fluent-popover": [
       "^@fluentui/react-popover/"
+    ],
+    "pagination": [
+      "^@apvee/spfx-react-toolkit/lib/controls/pagination/"
     ]
   },
   "fixtures": [
@@ -203,7 +206,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": []
     },
@@ -259,7 +263,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": []
     },
@@ -310,7 +315,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": []
     },
@@ -367,7 +373,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -427,7 +434,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -476,7 +484,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -528,7 +537,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -579,7 +589,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -639,7 +650,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -694,7 +706,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": []
     },
@@ -731,7 +744,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": []
     },
@@ -766,7 +780,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": []
     },
@@ -804,7 +819,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -859,7 +875,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": []
     },
@@ -896,7 +913,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -934,7 +952,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -984,7 +1003,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "formatted-text",
@@ -1039,7 +1059,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "relative-time",
@@ -1091,7 +1112,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "iana-lookup"
@@ -1143,7 +1165,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": []
     },
@@ -1192,7 +1215,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "auto-skeleton",
@@ -1241,7 +1265,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "state-message",
@@ -1295,7 +1320,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "settings-group",
@@ -1346,7 +1372,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "accordion-group",
@@ -1395,7 +1422,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1448,7 +1476,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1504,7 +1533,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "data-grid",
@@ -1558,7 +1588,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "data-grid",
@@ -1599,7 +1630,8 @@
         "form-schema",
         "form-date",
         "form-time",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "shell",
@@ -1651,7 +1683,8 @@
         "form-schema",
         "form-date",
         "form-time",
-        "stage"
+        "stage",
+        "pagination"
       ],
       "requiredModuleGroups": []
     },
@@ -1691,7 +1724,8 @@
         "editor",
         "tiptap",
         "prosemirror",
-        "markdown"
+        "markdown",
+        "pagination"
       ],
       "requiredModuleGroups": [
         "stage",
@@ -1703,6 +1737,53 @@
         "style-descriptors",
         "styles-compiler",
         "griffel"
+      ]
+    },
+    {
+      "id": "pagination",
+      "template": "pagination.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/pagination"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror",
+        "markdown",
+        "stage"
+      ],
+      "requiredModuleGroups": [
+        "pagination",
+        "fluent-button",
+        "griffel",
+        "style-descriptors",
+        "styles-compiler"
       ]
     }
   ],
@@ -1958,6 +2039,18 @@
       "reference": "stage/control",
       "metric": "gzip",
       "maxIncreaseBytes": 1023
+    },
+    {
+      "candidate": "pagination/root",
+      "reference": "pagination/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "pagination/domain",
+      "reference": "pagination/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
     }
   ]
 }

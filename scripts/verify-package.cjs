@@ -144,6 +144,11 @@ try {
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
   // Both the public entry points and their persistence/client dependencies must ship.
   for (const module of [
+    'controls/pagination/index',
+    'controls/pagination/pagination',
+    'controls/pagination/pagination.types',
+    'controls/pagination/pagination.internal',
+    'controls/pagination/pagination.styles.internal',
     'controls/stage/index',
     'controls/stage/stage',
     'controls/stage/stage.types',

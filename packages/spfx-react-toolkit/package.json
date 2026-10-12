@@ -195,6 +195,10 @@
       "types": "./lib/controls/stage/index.d.ts",
       "default": "./lib/controls/stage/index.js"
     },
+    "./controls/pagination": {
+      "types": "./lib/controls/pagination/index.d.ts",
+      "default": "./lib/controls/pagination/index.js"
+    },
     "./LICENSE": "./LICENSE",
     "./README.md": "./README.md",
     "./lib/core/context.internal.d.ts": "./lib/core/context.internal.d.ts",
@@ -1921,6 +1925,9 @@
       ],
       "controls/stage": [
         "lib/controls/stage/index.d.ts"
+      ],
+      "controls/pagination": [
+        "lib/controls/pagination/index.d.ts"
       ]
     }
   },

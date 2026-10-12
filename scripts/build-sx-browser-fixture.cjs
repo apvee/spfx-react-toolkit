@@ -5,6 +5,8 @@ const webpack = require('webpack');
 const root = path.resolve(__dirname, '..');
 const fixture = path.join(root, 'tests/fixtures/sx-browser');
 const output = path.join(root, 'temp/sx-browser');
+const paginationOnly = process.env.SX_BROWSER_PAGINATION_ONLY === '1';
+if (paginationOnly && ['STAGE', 'SHELL', 'DATA_GRID', 'FORM', 'GROUPS'].some(key => process.env[`SX_BROWSER_${key}_ONLY`] === '1')) throw new Error('Pagination-only fixture cannot be combined with another Only flag.');
 const stageOnly = process.env.SX_BROWSER_STAGE_ONLY === '1';
 const shellOnly = process.env.SX_BROWSER_SHELL_ONLY === '1';
 const gridOnly = process.env.SX_BROWSER_DATA_GRID_ONLY === '1';
@@ -13,8 +15,8 @@ if (stageOnly && [shellOnly, gridOnly, process.env.SX_BROWSER_FORM_ONLY === '1',
 const chartProbe = process.env.DATA_GRID_CHART_PROBE === '1';
 if (chartProbe && !gridOnly) throw new Error('DATA_GRID_CHART_PROBE=1 requires SX_BROWSER_DATA_GRID_ONLY=1 to select the isolated Grid fixture.');
 const actualCharts = path.join(root, 'node_modules/@fluentui/react-charts/lib/index.js');
-const entry = path.join(fixture, stageOnly ? 'stage.tsx' : shellOnly ? 'web-part-shell.tsx' : gridOnly ? 'data-grid.tsx' : 'index.tsx');
-const boundary = path.join(fixture, stageOnly ? 'stage-toolkit-boundary.ts' : shellOnly ? 'web-part-shell-toolkit-boundary.ts' : gridOnly ? 'data-grid-toolkit-boundary.ts' : 'form-toolkit-boundary.ts');
+const entry = path.join(fixture, paginationOnly ? 'pagination.tsx' : stageOnly ? 'stage.tsx' : shellOnly ? 'web-part-shell.tsx' : gridOnly ? 'data-grid.tsx' : 'index.tsx');
+const boundary = path.join(fixture, paginationOnly ? 'pagination-toolkit-boundary.ts' : stageOnly ? 'stage-toolkit-boundary.ts' : shellOnly ? 'web-part-shell-toolkit-boundary.ts' : gridOnly ? 'data-grid-toolkit-boundary.ts' : 'form-toolkit-boundary.ts');
 const program = ts.createProgram([entry, ...(chartProbe ? [path.join(fixture, 'data-grid-chart-probe.tsx')] : [])], {
   noEmit: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext,
   moduleResolution: ts.ModuleResolutionKind.NodeJs, jsx: ts.JsxEmit.React,
@@ -40,7 +42,7 @@ if (diagnostics.length) {
     module: { rules: [{ test: /\.tsx?$/, use: path.join(__dirname, 'sx-browser-typescript-loader.cjs') }] }
   }, (error, stats) => {
     if (error || stats.hasErrors()) { console.error(error || stats.toString({ all: false, errors: true })); process.exitCode = 1; return; }
-    fs.copyFileSync(path.join(fixture, shellOnly ? '../web-part-shell-browser/index.html' : 'index.html'), path.join(output, 'index.html'));
+    fs.copyFileSync(path.join(fixture, paginationOnly ? '../pagination-browser/index.html' : shellOnly ? '../web-part-shell-browser/index.html' : 'index.html'), path.join(output, 'index.html'));
     console.log(stats.toString({ all: false, timings: true, assets: true, warnings: true }));
     console.log(`Fixture: ${output}`);
   });

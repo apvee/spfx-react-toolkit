@@ -148,7 +148,7 @@ for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invok
 }
 console.log('Verified dedicated root/domain/legacy Imports scenario (no duplicate export coverage).');
 
-const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage'].includes(item.name)).map(item => item.name);
+const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination'].includes(item.name)).map(item => item.name);
 assertCovered('Controls', controlSymbols, registrySymbols);
 const textPanel = read(path.join(panelsPath, 'FormattedTextPanel.tsx'));
 for (const marker of ['FormattedText', 'maxLines', 'markdown', 'subtle', 'highlight', 'variant', 'as', 'font', 'align', 'wrap', 'truncate', 'italic', 'underline', 'strikethrough', 'ref', 'onClick']) {
@@ -210,3 +210,8 @@ for (const marker of ['Stage.Header', 'Stage.Body', 'Stage.Footer', 'Editor.Root
   if (!stagePanelSource.includes(marker)) throw new Error(`Observable Stage scenario missing ${marker}`);
 }
 console.log('Verified Stage compound modes, dimensions, Form and native popup scenarios.');
+
+const paginationPanel = read(path.join(panelsPath, 'PaginationPanel.tsx'));
+for (const marker of ['Pagination', 'onPaginationChange', 'pageIndex', 'pageSize', 'totalItems', 'hasNextPage', 'hasPreviousPage', 'loading', 'data-pagination-demo="summary"']) {
+  if (!paginationPanel.includes(marker)) throw new Error(`Observable Pagination scenario missing ${marker}`);
+}

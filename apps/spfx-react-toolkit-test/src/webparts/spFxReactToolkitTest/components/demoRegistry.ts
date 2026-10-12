@@ -34,6 +34,14 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
+    key: 'pagination',
+    title: 'Pagination',
+    iconName: 'ChevronRight',
+    description: 'Controlled page, cursor and load-more requests with real consumer-owned results.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-pagination' */ './panels/PaginationPanel')),
+    coverage: [{ symbol: 'Pagination', kind: 'snapshot', notes: 'Four modes, actual paged rows, filter/page-size/total resets, deterministic pending completion, localized labels, native form/ref/hidden, light/dark RTL and independent instances.' }],
+  },
+  {
     key: 'data-grid',
     title: 'DataGrid',
     iconName: 'Table',

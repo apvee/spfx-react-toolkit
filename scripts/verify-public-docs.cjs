@@ -92,13 +92,15 @@ assertDocumentedSurface(read('docs/api/hooks/react.md'), sxHook);
 assertContainsAll('docs/api/hooks/INDEX.md', ['useSx', 'useStableCallback'], 'React utility hooks');
 
 const controlSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts'));
-assertDocumentedSurface(read('docs/api/controls/formatted-text.md') + '\n' + read('docs/api/controls/relative-time.md') + '\n' + read('docs/api/controls/auto-skeleton.md') + '\n' + read('docs/api/controls/state-message.md') + '\n' + read('docs/api/controls/settings-group.md') + '\n' + read('docs/api/controls/accordion-group.md') + '\n' + read('docs/api/controls/form.md') + '\n' + read('docs/api/controls/data-grid.md') + '\n' + read('docs/api/controls/web-part-shell.md') + '\n' + read('docs/api/controls/stage.md'), controlSurface);
+assertDocumentedSurface(read('docs/api/controls/formatted-text.md') + '\n' + read('docs/api/controls/relative-time.md') + '\n' + read('docs/api/controls/auto-skeleton.md') + '\n' + read('docs/api/controls/state-message.md') + '\n' + read('docs/api/controls/settings-group.md') + '\n' + read('docs/api/controls/accordion-group.md') + '\n' + read('docs/api/controls/form.md') + '\n' + read('docs/api/controls/data-grid.md') + '\n' + read('docs/api/controls/web-part-shell.md') + '\n' + read('docs/api/controls/stage.md') + '\n' + read('docs/api/controls/pagination.md'), controlSurface);
 const formSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/form/index.ts'), { includeTypeMembers: true });
 assertDocumentedSurface(read('docs/api/controls/form.md'), formSurface);
 const gridSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/data-grid/index.ts'), { includeTypeMembers: true });
 assertDocumentedSurface(read('docs/api/controls/data-grid.md'), gridSurface);
 const shellSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/web-part-shell/index.ts'), { includeTypeMembers: true });
 assertDocumentedSurface(read('docs/api/controls/web-part-shell.md'), shellSurface);
+const paginationSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/pagination/index.ts'), { includeTypeMembers: true });
+assertDocumentedSurface(read('docs/api/controls/pagination.md'), paginationSurface);
 const stageSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/stage/index.ts'), { includeTypeMembers: true });
 assertDocumentedSurface(read('docs/api/controls/stage.md'), stageSurface);
 // The collector does not follow StageProps' referenced common/state types.

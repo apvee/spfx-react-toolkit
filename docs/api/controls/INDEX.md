@@ -37,3 +37,7 @@ DataGrid public types: `DataGridProps`, `DataGridStrings`, `DataGridSparklineSum
 ## Stage
 
 `Stage` is the single value export with `Stage.Header`, `Stage.Body` and `Stage.Footer`. Its thirteen public types are `StagePresentation`, `StageSize`, `StageDismissMode`, `StageDrawerPosition`, `StageHeadingLevel`, `StageOpenChangeReason`, `StageOpenChangeEvent`, `StageOpenChangeData`, `StagePopoverPositioning`, `StageProps`, `StageHeaderProps`, `StageBodyProps` and `StageFooterProps`. See the [Stage reference](./stage.md) for every member, controlled requests, session retention, form composition and host limits. Import from the root, `/controls` or `/controls/stage`; there are no flat part exports.
+
+## Pagination
+
+`Pagination` renders controlled page, cursor and incremental navigation. Public types are `PaginationSize`, `PaginationStrings`, `PaginationPagesKnownTotal`, `PaginationPagesUnknownTotal`, `PaginationCursor`, `PaginationLoadMore`, `PaginationState`, `PaginationChangeData` and `PaginationProps`. See the [Pagination reference](./pagination.md) for every member, loading, validation, localization, native forwarding and consumer-owned result state. Import from the root, `/controls` or `/controls/pagination`.

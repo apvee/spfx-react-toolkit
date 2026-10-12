@@ -160,3 +160,9 @@ The lazy **FormattedText** sample exercises its props, light/dark themes, narrow
 [`WebPartShell`](./docs/api/controls/web-part-shell.md) wraps an actual `BaseClientSideWebPart` (`instance={this}`), supplies SPFx/Fluent providers, adapts section/application padding and edits a persisted title inline in Edit mode. Extend `IWebPartShellProperties` with application fields, compose `getWebPartShellPropertiesMetadata()` into the class getter, and use the pane's show-title toggle. The exact title properties are `title`, `titleHTML?` and `showTitle?`; defined empty HTML stays authoritative. Import from the root, `/controls` or `/controls/web-part-shell`.
 
 The author UI uses Fluent UI 9; the private Tiptap 3.30.3 engine loads only for a visible Edit title. The locked dependency addition is 32 package records, about 7.6 MB of raw installed content (880 files), separately from emitted asset sizes. See the guide for renderer ownership, SDK subscription limits, protocol restrictions and local/authenticated validation boundaries.
+
+## Pagination
+
+[Pagination](./docs/api/controls/pagination.md) supplies controlled known/unknown-total pages, cursor directions and load-more requests. The application owns rows, loading and result announcements; the control supplies accessible native Fluent navigation, localized labels, compact sizes and host theme/RTL styling. Import from the root, `/controls` or `/controls/pagination`. No new dependency or SPFx provider is required.
+
+The lazy Pagination sample runs real paged results, resets after filter/page-size/total changes, manual loading completion and independent theme/direction instances. Local checks and authenticated SharePoint validation are separate; host checks remain NOT EXECUTED until recorded.

@@ -134,3 +134,9 @@ import { FormattedText } from '@apvee/spfx-react-toolkit';
 The lazy **FormattedText** sample exercises its props, light/dark themes, narrow width, RTL, mixed JSX and ref/click observations. Authenticated SharePoint-host validation is separate and remains NOT EXECUTED until recorded.
 
 [`DataGrid`](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/controls/data-grid.md) and `createDataGrid<T>()` provide sixteen native Fluent column presentations, controlled selection and sort intent. The consumer supplies stable IDs and row order. Import from the root, `/controls`, or `/controls/data-grid`; the complete family includes Charts 9.3.27.
+
+## Pagination
+
+[Pagination](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/api/controls/pagination.md) supplies controlled known/unknown-total pages, cursor directions and load-more requests. The application owns rows, loading and result announcements; the control supplies accessible native Fluent navigation, localized labels, compact sizes and host theme/RTL styling. Import from the root, `/controls` or `/controls/pagination`. No new dependency or SPFx provider is required.
+
+The lazy Pagination sample runs real paged results, resets after filter/page-size/total changes, manual loading completion and independent theme/direction instances. Local checks and authenticated SharePoint validation are separate; host checks remain NOT EXECUTED until recorded.
