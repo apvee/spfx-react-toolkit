@@ -1,12 +1,13 @@
 import * as React from 'react';
-import type { Editor } from '@tiptap/core';
+import type { ChainedCommands, Editor } from '@tiptap/core';
+import { closeHistory } from '@tiptap/pm/history';
 import type { SelectionBookmark } from '@tiptap/pm/state';
 import { makeStyles } from '@griffel/react';
 import { elementContains } from '@fluentui/react-utilities';
 import { tokens } from '@fluentui/react-theme';
 import { ThemeContext_unstable } from '@fluentui/react-shared-contexts';
-import { Toolbar, ToolbarButton, ToolbarToggleButton, ToolbarDivider, Dropdown, Combobox, Option,
-  Popover, PopoverSurface, PopoverTrigger, ColorSwatch, SwatchPicker, Tooltip,
+import { Toolbar, Button, ToolbarToggleButton, ToolbarDivider, Dropdown, Combobox, Option,
+  Popover, PopoverSurface, PopoverTrigger, Tooltip,
   Menu, MenuTrigger, MenuPopover, MenuList, MenuItem, MenuItemRadio, MenuItemCheckbox, MenuDivider,
   Overflow, OverflowItem, useOverflowMenu, useIsOverflowItemVisible } from '@fluentui/react-components';
 import { TextBold20Regular, TextItalic20Regular, TextUnderline20Regular,
@@ -16,47 +17,75 @@ import { useSx } from '../../../hooks/useSx';
 import * as width from '../../../helpers/styles/width';
 import { useResizeObserver } from '../../../utils/resize-observer.internal';
 import type { ContainerSize } from '../../../core/types';
-import { titleFormatRegistry, isTitleHeadingLevel, isTitleColor } from './web-part-title-format.internal';
-import { clearTitleFormat, readTitleSelectionFormat, setTitleFontSize } from './web-part-title-formatting.internal';
+import { titleFormatRegistry, isTitleHeadingLevel } from './web-part-title-format.internal';
+import { clearTitleFormat, readTitleToolbarFormat, setTitleFontSize, setTitleColor, toggleTitleMark } from './web-part-title-formatting.internal';
 import type { TitleSelectionFormat } from './web-part-title-formatting.internal';
-import type { TitleColor } from './web-part-title.types.internal';
+import { WebPartTitleColorPicker } from './web-part-title-color-picker.internal';
+import { resolveWebPartShellStrings } from '../localization/web-part-shell-locales.internal';
+import type { WebPartShellStrings } from '../localization/web-part-shell-strings.internal';
 
 const useToolbarStyles = makeStyles({
   surface: { padding: '2px', maxWidth: 'calc(100vw - 16px)', boxSizing: 'border-box' },
-  toolbar: { minInlineSize: 0, inlineSize: '100%', padding: 0, flexWrap: 'nowrap',
+  toolbar: { minInlineSize: 0, inlineSize: '100%', padding: 0, flexWrap: 'nowrap', alignItems: 'center',
     '& > *': { flexShrink: 0 },
     '& [data-overflowing]': { display: 'none' } },
   // Fluent slots set physical min-width:250px; override that same property
   // so their compact controls fit the measured overflow toolbar in either dir.
   headingWrapper: { paddingInlineEnd: tokens.spacingHorizontalS },
   heading: { minWidth: '112px', width: '112px' },
+  headingButton: { gridTemplateColumns: '[content] minmax(0, 1fr) [icon] auto [end]' },
+  headingValue: { minInlineSize: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
   size: { minWidth: '64px', width: '64px', '& input': { minWidth: '0px', width: '100%' } },
   palette: { display: 'flex', gap: tokens.spacingHorizontalS },
 });
-interface WebPartTitleToolbarProps { editor: Editor; ownerDocument: Document }
+interface WebPartTitleToolbarProps { editor: Editor; ownerDocument: Document; strings?: WebPartShellStrings }
 interface ToolbarActions {
   run: (action: () => void) => void;
   state: TitleSelectionFormat;
   editor: Editor;
+  strings: WebPartShellStrings;
 }
-const colorLabels: Record<TitleColor, string> = { primary: 'Primary', subtle: 'Subtle', brand: 'Brand' };
 
-function SpacingItems({ run, editor, state }: ToolbarActions): React.ReactElement {
-  const change = (attrs: Record<string, number | true | undefined>): void => run(() => { editor.commands.updateAttributes(state.block.type, attrs); });
+/** Prefix native block commands with a boundary on their shared transaction. */
+function blockCommand(editor: Editor): ChainedCommands {
+  return editor.chain().command(({ tr }) => { closeHistory(tr); return true; });
+}
+function SpacingItems({ run, editor, state, strings }: ToolbarActions): React.ReactElement {
+  const change = (attrs: Record<string, number | true | undefined>): void => run(() => { blockCommand(editor).updateAttributes(state.block.type, attrs).run(); });
   return <MenuList>
     <MenuItemRadio persistOnClick={false} name="lineSpacing" value="default"
-      onClick={() => change({ lineSpacing: undefined })}>Default line spacing</MenuItemRadio>
+      onClick={() => change({ lineSpacing: undefined })}>{strings.defaultLineSpacing}</MenuItemRadio>
     {titleFormatRegistry.lineSpacing.map(line => <MenuItemRadio persistOnClick={false} key={line} name="lineSpacing" value={String(line)}
-      onClick={() => change({ lineSpacing: line })}>{`Line spacing ${line}`}</MenuItemRadio>)}
+      onClick={() => change({ lineSpacing: line })}>{strings.lineSpacingValue(line)}</MenuItemRadio>)}
     <MenuDivider />
-    <MenuItemCheckbox persistOnClick={false} name="spacing" value="before" onClick={() => change({ spaceBefore: state.block.spaceBefore ? undefined : true })}>Space before</MenuItemCheckbox>
-    <MenuItemCheckbox persistOnClick={false} name="spacing" value="after" onClick={() => change({ spaceAfter: state.block.spaceAfter ? undefined : true })}>Space after</MenuItemCheckbox>
+    <MenuItemCheckbox persistOnClick={false} name="spacing" value="before" onClick={() => change({ spaceBefore: state.block.spaceBefore ? undefined : true })}>{strings.spaceBefore}</MenuItemCheckbox>
+    <MenuItemCheckbox persistOnClick={false} name="spacing" value="after" onClick={() => change({ spaceAfter: state.block.spaceAfter ? undefined : true })}>{strings.spaceAfter}</MenuItemCheckbox>
   </MenuList>;
 }
 function checkedSpacing(state: TitleSelectionFormat): Record<string, string[]> {
   return { lineSpacing: [state.block.lineSpacing === undefined ? 'default' : String(state.block.lineSpacing)],
     spacing: [...(state.block.spaceBefore ? ['before'] : []), ...(state.block.spaceAfter ? ['after'] : [])] };
 }
+/** Keeps a direct popup bound to its existing Fluent overflow trigger. */
+function DirectColorCommand({ open, onOpenChange, run, state, editor, strings }: ToolbarActions & {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}): React.ReactElement {
+  const colorVisible = useIsOverflowItemVisible('color');
+  React.useLayoutEffect(() => {
+    // Hiding the direct trigger must dismiss its portal and forget its open state;
+    // otherwise narrowing leaves an orphan popup and widening resurrects it.
+    if (!colorVisible) onOpenChange(false);
+  }, [colorVisible, onOpenChange]);
+  return <Popover open={open && colorVisible} onOpenChange={(_event, data) => onOpenChange(data.open)} positioning="below-start">
+    <Tooltip content={state.color === 'mixed' ? strings.mixedFormatting(strings.themeColor) : strings.themeColor} relationship="description">
+      <PopoverTrigger disableButtonEnhancement><Button appearance="subtle" size="medium" aria-label={strings.themeColor} icon={<TextColor20Regular />} /></PopoverTrigger>
+    </Tooltip>
+    <PopoverSurface><WebPartTitleColorPicker strings={strings} selected={state.color}
+      onSelect={color => run(() => { setTitleColor(editor, color); })} /></PopoverSurface>
+  </Popover>;
+}
+
 function OverflowCommands(props: ToolbarActions): React.ReactElement {
   const { ref, isOverflowing } = useOverflowMenu<HTMLButtonElement>();
   const headingVisible = useIsOverflowItemVisible('heading');
@@ -66,47 +95,56 @@ function OverflowCommands(props: ToolbarActions): React.ReactElement {
   const colorVisible = useIsOverflowItemVisible('color');
   const clearVisible = useIsOverflowItemVisible('clear');
   const spacingVisible = useIsOverflowItemVisible('spacing');
+  const [colorOpen, setColorOpen] = React.useState(false);
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  React.useLayoutEffect(() => {
+    // Widening can remove More or just move color back to its direct trigger.
+    // Dismiss the removed color subtree and its parent before a later narrowing
+    // can mount that subtree again. Other valid More menus and inner Escape keep
+    // their normal behavior while the corresponding trigger remains available.
+    if (!isOverflowing || (colorVisible && colorOpen)) { setMenuOpen(false); setColorOpen(false); }
+  }, [isOverflowing, colorVisible, colorOpen]);
   if (!isOverflowing) return <></>;
-  const { run, editor, state } = props;
-  return <Menu checkedValues={{ marks: [state.bold === true ? 'bold' : '', state.italic === true ? 'italic' : '', state.underline === true ? 'underline' : ''] }}>
-    <MenuTrigger disableButtonEnhancement><ToolbarButton ref={ref} aria-label="More title formatting" icon={<MoreHorizontal20Regular />} /></MenuTrigger>
+  const { run, editor, state, strings } = props;
+  return <Menu open={menuOpen} onOpenChange={(_event, data) => { setMenuOpen(data.open); if (!data.open) setColorOpen(false); }} checkedValues={{ marks: [state.bold === true ? 'bold' : '', state.italic === true ? 'italic' : '', state.underline === true ? 'underline' : ''] }}>
+    <Tooltip content={strings.moreTitleFormatting} relationship="description"><MenuTrigger disableButtonEnhancement><Button appearance="subtle" size="medium" ref={ref} aria-label={strings.moreTitleFormatting} icon={<MoreHorizontal20Regular />} /></MenuTrigger></Tooltip>
     <MenuPopover><MenuList>
       {!headingVisible && <Menu checkedValues={{ heading: [state.block.type === 'heading' ? String(state.block.level) : 'normal'] }}>
-        <MenuTrigger disableButtonEnhancement><MenuItem>Heading</MenuItem></MenuTrigger>
+        <MenuTrigger disableButtonEnhancement><MenuItem>{strings.heading}</MenuItem></MenuTrigger>
         <MenuPopover><MenuList>{[1, 2, 3, 4].map(level => <MenuItemRadio key={level} name="heading" value={String(level)}
-          onClick={() => run(() => { editor.commands.setNode('heading', { level }); })}>{`Heading ${level}`}</MenuItemRadio>)}
-          <MenuItemRadio name="heading" value="normal" onClick={() => run(() => { editor.commands.setNode('paragraph'); })}>Normal</MenuItemRadio>
+          onClick={() => run(() => { blockCommand(editor).setNode('heading', { level }).run(); })}>{strings.headingLevel(level)}</MenuItemRadio>)}
+          <MenuItemRadio name="heading" value="normal" onClick={() => run(() => { blockCommand(editor).setNode('paragraph').run(); })}>{strings.normal}</MenuItemRadio>
         </MenuList></MenuPopover>
       </Menu>}
       {(['bold', 'italic', 'underline'] as const).map(mark => {
         const visible = mark === 'bold' ? boldVisible : mark === 'italic' ? italicVisible : underlineVisible;
         if (visible) return <React.Fragment key={mark} />;
-        const label = mark === 'bold' ? 'Bold' : mark === 'italic' ? 'Italic' : 'Underline';
+        const label = strings[mark];
         const toggle = (): void => run(() => {
-          if (mark === 'bold') editor.commands.toggleBold();
-          else if (mark === 'italic') editor.commands.toggleItalic();
-          else editor.commands.toggleUnderline();
+          toggleTitleMark(editor, mark);
         });
         return state[mark] === 'mixed'
           ? <MenuItem key={mark} role="menuitemcheckbox" aria-checked="mixed" onClick={toggle}>{label}</MenuItem>
           : <MenuItemCheckbox key={mark} name="marks" value={mark} onClick={toggle}>{label}</MenuItemCheckbox>;
       })}
-      {!colorVisible && <Menu checkedValues={{ color: state.color === 'mixed' ? [] : [state.color] }}>
-        <MenuTrigger disableButtonEnhancement><MenuItem>Theme color</MenuItem></MenuTrigger>
-        <MenuPopover><MenuList>{(Object.keys(titleFormatRegistry.colors) as TitleColor[]).map(color => <MenuItemRadio key={color} name="color" value={color}
-          onClick={() => run(() => { editor.commands.setMark('titleStyle', { color }); })}>{colorLabels[color]}</MenuItemRadio>)}</MenuList></MenuPopover>
-      </Menu>}
-      {!clearVisible && <MenuItem onClick={() => run(() => { clearTitleFormat(editor); })}>Clear formatting</MenuItem>}
-      {!spacingVisible && <Menu checkedValues={checkedSpacing(state)}><MenuTrigger disableButtonEnhancement><MenuItem>Spacing</MenuItem></MenuTrigger>
+      {/* PopoverTrigger supplies button semantics even with enhancement disabled;
+          retain the command's menu role explicitly at this integration boundary. */}
+      {!colorVisible && <Popover open={colorOpen} onOpenChange={(_event, data) => setColorOpen(data.open)} positioning="below-start">
+        <PopoverTrigger disableButtonEnhancement><MenuItem role="menuitem" persistOnClick>{strings.themeColor}</MenuItem></PopoverTrigger>
+        <PopoverSurface><WebPartTitleColorPicker strings={strings} selected={state.color}
+          onSelect={color => { run(() => { setTitleColor(editor, color); }); setColorOpen(false); setMenuOpen(false); }} /></PopoverSurface>
+      </Popover>}
+      {!clearVisible && <MenuItem onClick={() => run(() => { clearTitleFormat(editor); })}>{strings.clearFormatting}</MenuItem>}
+      {!spacingVisible && <Menu checkedValues={checkedSpacing(state)}><MenuTrigger disableButtonEnhancement><MenuItem>{strings.spacing}</MenuItem></MenuTrigger>
         <MenuPopover><SpacingItems {...props} /></MenuPopover></Menu>}
     </MenuList></MenuPopover>
   </Menu>;
 }
 
 /** Private Fluent-only toolbar; the editor's existing publication callback is the sole writer. */
-export function WebPartTitleToolbar({ editor, ownerDocument }: WebPartTitleToolbarProps): React.ReactElement {
+export function WebPartTitleToolbar({ editor, ownerDocument, strings = resolveWebPartShellStrings(undefined) }: WebPartTitleToolbarProps): React.ReactElement {
   const theme = React.useContext(ThemeContext_unstable);
-  const readSelection = useStableCallback(() => readTitleSelectionFormat(editor, theme));
+  const readSelection = useStableCallback(() => readTitleToolbarFormat(editor, theme));
   const styles = useToolbarStyles();
   const sx = useSx();
   const [contentWidth, setContentWidth] = React.useState<number>();
@@ -180,7 +218,7 @@ export function WebPartTitleToolbar({ editor, ownerDocument }: WebPartTitleToolb
     // Overflow can recover controls, then its next update fits the visible row.
     fitVisibleContent();
   }, [overflowRevision, toolbarElement, fitVisibleContent]);
-  const [state, setState] = React.useState(() => readTitleSelectionFormat(editor, theme));
+  const [state, setState] = React.useState(() => readTitleToolbarFormat(editor, theme));
   React.useEffect(() => { setState(readSelection()); }, [theme, readSelection]);
   const [visible, setVisible] = React.useState(false);
   const [colorOpen, setColorOpen] = React.useState(false);
@@ -250,8 +288,9 @@ export function WebPartTitleToolbar({ editor, ownerDocument }: WebPartTitleToolb
       if (!editor.isDestroyed && editor.state.doc === document && editor.state.selection.eq(selection)) editor.view.focus();
     });
   };
-  const actions: ToolbarActions = { run, state, editor };
+  const actions: ToolbarActions = { run, state, editor, strings };
   const size = state.size === 'mixed' ? '' : String(state.size);
+  const headingLabel = state.block.type === 'heading' ? strings.headingLevel(state.block.level ?? 2) : strings.normal;
   if (!visible || editor.isDestroyed) return <></>;
   // Default Fluent portal mounts inherit the Shell targetDocument and preserve
   // virtual-parent links for this toolbar's nested popups; body overrides do not.
@@ -270,20 +309,21 @@ export function WebPartTitleToolbar({ editor, ownerDocument }: WebPartTitleToolb
         (editor.view.dom.contains(target) || elementContains(surface.current, target))) return;
       setVisible(false);
     }}>
-    <PopoverSurface ref={surface} className={sx(styles.surface, surfaceWidth !== undefined && width.px(surfaceWidth))} data-title-toolbar="" aria-label="Title formatting controls">
+    <PopoverSurface ref={surface} className={sx(styles.surface, surfaceWidth !== undefined && width.px(surfaceWidth))} data-title-toolbar="" aria-label={strings.titleFormattingControls}>
       <Overflow minimumVisible={1} padding={0} onOverflowChange={updateOverflow}>
-        <Toolbar ref={attachToolbar} className={styles.toolbar} size="small" aria-label="Title formatting" checkedValues={{ marks: [state.bold === true ? 'bold' : '', state.italic === true ? 'italic' : '', state.underline === true ? 'underline' : ''] }}>
+        <Toolbar ref={attachToolbar} className={styles.toolbar} size="medium" aria-label={strings.titleFormatting} checkedValues={{ marks: [state.bold === true ? 'bold' : '', state.italic === true ? 'italic' : '', state.underline === true ? 'underline' : ''] }}>
           {/* Fluent composite refs target trigger slots; measure/hide each complete control. */}
-          <OverflowItem id="heading" priority={10}><div className={styles.headingWrapper}><Dropdown className={styles.heading} size="small" aria-label="Heading" value={state.block.type === 'heading' ? `Heading ${state.block.level}` : 'Normal'}
+          <OverflowItem id="heading" priority={10}><div className={styles.headingWrapper}><Dropdown className={styles.heading} size="small" aria-label={strings.heading} value={headingLabel}
+            button={{ className: styles.headingButton, children: <span className={styles.headingValue} title={headingLabel}>{headingLabel}</span> }}
             selectedOptions={[state.block.type === 'heading' ? String(state.block.level) : 'normal']} onOptionSelect={(_event, data) => runPopupOption(() => {
               const level = Number(data.optionValue);
-              if (isTitleHeadingLevel(level)) editor.commands.setNode('heading', { level });
-              else if (data.optionValue === 'normal') editor.commands.setNode('paragraph');
+              if (isTitleHeadingLevel(level)) blockCommand(editor).setNode('heading', { level }).run();
+              else if (data.optionValue === 'normal') blockCommand(editor).setNode('paragraph').run();
             })}>
-            {[1, 2, 3, 4].map(level => <Option key={level} value={String(level)}>{`Heading ${level}`}</Option>)}<Option value="normal">Normal</Option>
+            {[1, 2, 3, 4].map(level => <Option key={level} value={String(level)}>{strings.headingLevel(level)}</Option>)}<Option value="normal">{strings.normal}</Option>
           </Dropdown></div></OverflowItem>
-          <OverflowItem id="size" pinned><div><Combobox className={styles.size} size="small" aria-label="Font size" freeform value={sizeDraft ?? size}
-            placeholder={state.size === 'mixed' ? 'Mixed' : undefined} selectedOptions={state.size === 'mixed' ? [] : [size]}
+          <OverflowItem id="size" pinned><div><Combobox className={styles.size} size="small" aria-label={strings.fontSize} expandIcon={{ 'aria-label': strings.fontSize }} freeform value={sizeDraft ?? size}
+            placeholder={state.size === 'mixed' ? strings.mixed : undefined} selectedOptions={state.size === 'mixed' ? [] : [size]}
             onChange={event => setSizeDraft(event.target.value)}
             onOptionSelect={(_event, data) => { if (data.optionValue) runPopupOption(() => { setTitleFontSize(editor, data.optionValue ?? ''); }); }}
             onKeyDown={event => {
@@ -294,35 +334,25 @@ export function WebPartTitleToolbar({ editor, ownerDocument }: WebPartTitleToolb
           </Combobox></div></OverflowItem>
           <OverflowItem id="marks-divider"><ToolbarDivider /></OverflowItem>
           {(['bold', 'italic', 'underline'] as const).map(mark => {
-            const label = mark === 'bold' ? 'Bold' : mark === 'italic' ? 'Italic' : 'Underline';
+            const label = strings[mark];
             const icon = mark === 'bold' ? <TextBold20Regular /> : mark === 'italic' ? <TextItalic20Regular /> : <TextUnderline20Regular />;
             const toggle = (): void => run(() => {
-              if (mark === 'bold') editor.commands.toggleBold();
-              else if (mark === 'italic') editor.commands.toggleItalic();
-              else editor.commands.toggleUnderline();
+              toggleTitleMark(editor, mark);
             });
-            return <Tooltip key={mark} content={state[mark] === 'mixed' ? `${label}: mixed formatting` : `${label} (Ctrl/Cmd+${label[0]})`} relationship="description">
+            return <Tooltip key={mark} content={state[mark] === 'mixed' ? strings.mixedFormatting(label) : strings.formattingShortcut(label, `Ctrl/Cmd+${mark === 'bold' ? 'B' : mark === 'italic' ? 'I' : 'U'}`)} relationship="description">
               <OverflowItem id={mark}>{state[mark] === 'mixed'
                 // Fluent ToggleButton owns its boolean aria-pressed. The ordinary
-                // Fluent ToolbarButton can accurately expose the third mixed state.
-                ? <ToolbarButton aria-label={label} aria-pressed="mixed" icon={icon} onClick={toggle} />
-                : <ToolbarToggleButton name="marks" value={mark} aria-label={label} icon={icon} onClick={toggle} />}
+                // Fluent Button can accurately expose the third mixed state.
+                ? <Button appearance="subtle" size="medium" aria-label={label} aria-pressed="mixed" icon={icon} onClick={toggle} />
+                : <ToolbarToggleButton size="medium" name="marks" value={mark} aria-label={label} icon={icon} onClick={toggle} />}
               </OverflowItem>
             </Tooltip>;
           })}
-          <OverflowItem id="color"><div><Popover open={colorOpen} onOpenChange={(_event, data) => setColorOpen(data.open)} positioning="below-start">
-            <PopoverTrigger disableButtonEnhancement><ToolbarButton aria-label="Theme color" icon={<TextColor20Regular />} /></PopoverTrigger>
-            <PopoverSurface><SwatchPicker className={styles.palette} aria-label="Title theme colors" selectedValue={state.color === 'mixed' ? '' : state.color}
-              onSelectionChange={(_event, data) => { if (isTitleColor(data.selectedValue)) run(() => { editor.commands.setMark('titleStyle', { color: data.selectedValue }); }); }}>
-              {(Object.keys(titleFormatRegistry.colors) as TitleColor[]).map(color => <Tooltip key={color} content={colorLabels[color]} relationship="label">
-                <ColorSwatch value={color} aria-label={colorLabels[color]} color={tokens[titleFormatRegistry.colors[color]]} />
-              </Tooltip>)}
-            </SwatchPicker></PopoverSurface>
-          </Popover></div></OverflowItem>
-          <OverflowItem id="clear"><Tooltip content="Clear formatting" relationship="description"><ToolbarButton aria-label="Clear formatting" icon={<TextClearFormatting20Regular />} onClick={() => run(() => { clearTitleFormat(editor); })} /></Tooltip></OverflowItem>
+          <OverflowItem id="color"><div><DirectColorCommand {...actions} open={colorOpen} onOpenChange={setColorOpen} /></div></OverflowItem>
+          <OverflowItem id="clear"><Tooltip content={strings.clearFormatting} relationship="description"><Button appearance="subtle" size="medium" aria-label={strings.clearFormatting} icon={<TextClearFormatting20Regular />} onClick={() => run(() => { clearTitleFormat(editor); })} /></Tooltip></OverflowItem>
           <OverflowItem id="spacing-divider"><ToolbarDivider /></OverflowItem>
           <OverflowItem id="spacing"><div><Menu checkedValues={checkedSpacing(state)} positioning="below-start">
-            <MenuTrigger disableButtonEnhancement><ToolbarButton aria-label="Spacing" icon={<TextLineSpacing20Regular />} /></MenuTrigger>
+            <Tooltip content={strings.spacing} relationship="description"><MenuTrigger disableButtonEnhancement><Button appearance="subtle" size="medium" aria-label={strings.spacing} icon={<TextLineSpacing20Regular />} /></MenuTrigger></Tooltip>
             <MenuPopover><SpacingItems {...actions} /></MenuPopover>
           </Menu></div></OverflowItem>
           <OverflowCommands {...actions} />

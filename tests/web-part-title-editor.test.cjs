@@ -54,3 +54,91 @@ test('engine refuses transactions with invalid protocol attributes without write
   h.act(() => editor.commands.updateAttributes('heading', { level: 5, lineSpacing: 1.5 }));
   assert.equal(editor.getHTML(), '<h2>initial</h2>'); assert.equal(host.properties.titleHTML, undefined);
 });
+
+test('UI culture changes update editor labels and empty placeholders without replacing view state', async t => {
+  const h = createHarness(); t.after(() => h.close());
+  const host = h.instance('locale-retention'); host.displayMode = 2;
+  host.context.pageContext.cultureInfo.currentUICultureName = 'it-IT';
+  host.context.pageContext.cultureInfo.currentCultureName = 'de-DE';
+  const fixture = h.mount(host, 'Child'); await h.settle();
+  const editor = h.editor(fixture); const view = editor.view;
+  const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  assert.equal(view.dom.getAttribute('aria-label'), strings('it-IT').titleEditorLabel);
+  h.act(() => { editor.commands.setTextSelection({ from: 2, to: 5 }); editor.commands.toggleBold(); });
+  const saved = host.properties.titleHTML;
+  host.context.pageContext.cultureInfo.currentUICultureName = 'ar-SA';
+  fixture.render(host); await h.settle();
+  assert.equal(h.editor(fixture), editor); assert.equal(editor.view, view);
+  assert.equal(view.dom.getAttribute('aria-label'), strings('ar-SA').titleEditorLabel);
+  assert.equal(editor.state.selection.from, 2); assert.equal(editor.state.selection.to, 5);
+  assert.equal(host.properties.titleHTML, saved);
+  h.act(() => editor.commands.undo()); assert.equal(editor.getHTML(), '<h2>initial</h2>');
+  h.act(() => editor.commands.clearContent());
+  assert.equal(view.dom.querySelector('[data-placeholder]').getAttribute('data-placeholder'), strings('ar-SA').titlePlaceholder);
+  const emptySaved = host.properties.titleHTML;
+  host.context.pageContext.cultureInfo.currentUICultureName = 'de-DE';
+  fixture.render(host); await h.settle();
+  assert.equal(view.dom.querySelector('[data-placeholder]').getAttribute('data-placeholder'), strings('de-DE').titlePlaceholder);
+  assert.equal(host.properties.titleHTML, emptySaved);
+});
+
+test('two shell instances resolve UI language independently and preserve author text', async t => {
+  const h = createHarness(); t.after(() => h.close());
+  const first = h.instance('locale-it'); first.displayMode = 2;
+  const second = h.instance('locale-he'); second.displayMode = 2;
+  first.context.pageContext.cultureInfo.currentUICultureName = 'it-IT';
+  second.context.pageContext.cultureInfo.currentUICultureName = 'he-IL';
+  const a = h.mount(first, 'A'); const b = h.mount(second, 'B'); await h.settle();
+  const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  assert.equal(h.editor(a).view.dom.getAttribute('aria-label'), strings('it-IT').titleEditorLabel);
+  assert.equal(h.editor(b).view.dom.getAttribute('aria-label'), strings('he-IL').titleEditorLabel);
+  assert.equal(h.editor(a).getText(), 'initial'); assert.equal(h.editor(b).getText(), 'initial');
+  assert.equal(first.properties.titleHTML, undefined); assert.equal(second.properties.titleHTML, undefined);
+  first.context.pageContext.cultureInfo.currentUICultureName = 'unknown'; a.render(first); await h.settle();
+  assert.equal(h.editor(a).view.dom.getAttribute('aria-label'), strings('en-US').titleEditorLabel);
+  assert.equal(h.editor(b).view.dom.getAttribute('aria-label'), strings('he-IL').titleEditorLabel);
+});
+
+test('lazy editor failure and Retry follow current UI culture without touching title content', async t => {
+  const React = require('react'); const originalLazy = React.lazy;
+  // Simulate a failed engine chunk at its existing lazy boundary. Retry restores
+  // the real lazy loader, so the test also proves recovery through that boundary.
+  React.lazy = () => function FailedEditorChunk() { throw new Error('Fixture chunk unavailable'); };
+  let h;
+  try { h = createHarness(); } finally { React.lazy = originalLazy; }
+  t.after(() => h.close());
+  const host = h.instance('locale-lazy-failure'); host.displayMode = 2;
+  host.context.pageContext.cultureInfo.currentUICultureName = 'it-IT';
+  const logError = console.error; console.error = () => {};
+  let fixture;
+  try { fixture = h.mount(host, 'Child'); await h.settle(); } finally { console.error = logError; }
+  const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  assert.ok(fixture.container.textContent.includes(strings('it-IT').titleEditorLoadError));
+  host.context.pageContext.cultureInfo.currentUICultureName = 'he-IL'; fixture.render(host); await h.settle();
+  assert.ok(fixture.container.textContent.includes(strings('he-IL').titleEditorLoadError));
+  const retry = [...fixture.container.querySelectorAll('button')].find(node => node.textContent === strings('he-IL').retry);
+  assert.ok(retry); h.act(() => retry.click()); await h.settle();
+  assert.ok(h.editor(fixture));
+  assert.equal(h.editor(fixture).view.dom.getAttribute('aria-label'), strings('he-IL').titleEditorLabel);
+  assert.equal(host.properties.titleHTML, undefined); assert.equal(host.properties.title, 'initial');
+});
+
+test('native mark shortcuts share whole-title caret and selected-range semantics in both letter cases', async t => {
+  const h = createHarness(); t.after(() => h.close());
+  const host = h.instance('whole-title-keyboard'); host.displayMode = 2;
+  const fixture = h.mount(host, 'Child'); await h.settle(); const editor = h.editor(fixture);
+  // The JSDOM platform is non-Mac; native browser acceptance covers Cmd on Mac.
+  for (const [lower, upper, tag] of [['b', 'B', 'strong'], ['i', 'I', 'em'], ['u', 'U', 'u']]) {
+    h.act(() => { editor.commands.setTextSelection(4); });
+    const press = key => h.act(() => { editor.view.dom.dispatchEvent(new h.window.KeyboardEvent('keydown', { key, ctrlKey: true, bubbles: true, cancelable: true })); });
+    press(lower); assert.equal(host.properties.titleHTML, `<h2><${tag}>initial</${tag}></h2>`);
+    assert.equal(editor.state.selection.from, 4); assert.equal(editor.state.selection.to, 4);
+    press(upper); assert.equal(host.properties.titleHTML, '<h2>initial</h2>');
+    h.act(() => { editor.commands.undo(); }); assert.equal(host.properties.titleHTML, `<h2><${tag}>initial</${tag}></h2>`);
+    h.act(() => { editor.commands.undo(); }); assert.equal(host.properties.titleHTML, '<h2>initial</h2>');
+  }
+  h.act(() => { editor.commands.setTextSelection({ from: 2, to: 5 }); });
+  h.act(() => { editor.view.dom.dispatchEvent(new h.window.KeyboardEvent('keydown', { key: 'b', ctrlKey: true, bubbles: true, cancelable: true })); });
+  assert.equal(host.properties.titleHTML, '<h2>i<strong>nit</strong>ial</h2>');
+  assert.equal(editor.state.selection.from, 2); assert.equal(editor.state.selection.to, 5);
+});

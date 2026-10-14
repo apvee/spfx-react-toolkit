@@ -1,5 +1,9 @@
 /** Finite semantic foreground roles persisted by the title protocol. */
-export type TitleColor = 'primary' | 'subtle' | 'brand';
+export type TitleColor =
+  | 'primary' | 'subtle' | 'brand' | 'neutralMuted' | 'brandAlt'
+  | 'neutralDark' | 'neutralLight' | 'neutralLighter' | 'brandDarkest' | 'brandDarker' | 'brandDark' | 'brandLight'
+  | 'darkRed' | 'amber' | 'yellowGreen' | 'cyan' | 'navy'
+  | 'red' | 'orange' | 'yellow' | 'green' | 'teal' | 'blue' | 'purple' | 'pink' | 'brown';
 /** Supported heading levels. */
 export type TitleHeadingLevel = 1 | 2 | 3 | 4;
 /** Supported unitless line spacing values. */

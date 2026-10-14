@@ -209,7 +209,19 @@ async function checkWebPartShellBrowser(page, record) {
       await check(`${cycle}/${dir}/${size}: toolbar has no clipped overflow`, await toolbar().evaluate(e => e.scrollWidth <= e.clientWidth + 1), true);
       await check(`${cycle}/${dir}/${size}: surface fits the actual visible controls plus its padding/border`, Math.abs(settled.width - settled.contentWidth - settled.chrome) <= 1, true);
       if (settled.gap !== undefined) await check(`${cycle}/${dir}/${size}: complete combo controls have the theme token gap`, settled.gap >= settled.gapToken - 0.1, true);
-      if (size >= 500) await check(`${cycle}/${dir}/${size}: widening recovers every command`, settled.overflow, false);
+      // The medium icon buttons need more room than the former small buttons
+      // row. 640/900 must recover fully; at 500 every hidden command must instead
+      // be reachable through Fluent's actual overflow menu.
+      if (size >= 640) await check(`${cycle}/${dir}/${size}: widening recovers every command`, settled.overflow, false);
+      if (size === 500 && settled.overflow) {
+        await button('More title formatting').click();
+        for (const name of ['Heading', 'Bold', 'Italic', 'Underline', 'Theme color', 'Clear formatting', 'Spacing']) {
+          const direct = toolbar().getByRole(name === 'Heading' ? 'combobox' : 'button', { name, exact: true });
+          const menu = page.getByRole('menuitem', { name, exact: true }).or(page.getByRole('menuitemcheckbox', { name, exact: true }));
+          await check(`${cycle}/${dir}/${size}: ${name} remains reachable`, await direct.isVisible() || await menu.isVisible(), true);
+        }
+        await page.keyboard.press('Escape');
+      }
       await check(`${cycle}/${dir}/${size}: V1 omits painter`, await toolbar().getByRole('button', { name: 'Format painter', exact: true }).count(), 0);
       await check(`${cycle}/${dir}/${size}: font control replaces Fluent min-width`, await toolbar().locator('.fui-Combobox').evaluate(e => getComputedStyle(e).minWidth), '64px');
       await page.keyboard.press('Alt+F10');
@@ -280,9 +292,9 @@ async function checkWebPartShellBrowser(page, record) {
   await toolbar().getByRole('combobox', { name: 'Font size', exact: true }).fill('20.5'); await page.keyboard.press('Enter');
   await focusProof('Invalid size'); await check('Invalid fractional font input never writes', await savedHTML(), beforeInvalidSize);
   await check('Invalid fractional font has no property refresh', (await observations()).refreshes[0], beforeInvalidRefresh);
-  for (const color of ['Brand', 'Subtle', 'Primary']) {
+  for (const color of ['brand', 'subtle', 'primary']) {
     await button('Theme color').click();
-    await page.getByRole('radio', { name: color, exact: true }).click();
+    await page.locator(`[data-title-color=${color}]`).click();
     await waitHTML(`wps-color-${color.toLowerCase()}`); await focusProof(`Palette ${color}`);
     await check(`Palette ${color}: parent toolbar continuously visible`, await toolbar().isVisible(), true);
   }
@@ -316,8 +328,34 @@ async function checkWebPartShellBrowser(page, record) {
   await check('Native Shift selection remains target after command', await page.evaluate(() => document.getSelection().toString()), 'Beta');
   await page.keyboard.press('Meta+z'); await page.waitForFunction(() => !(window.shellFixture.observe().properties.titleHTML || '').includes('<em>Beta</em>'));
   await check('Native range command is one undo', await savedHTML(), '<h2><strong>Alpha</strong> Beta Gamma</h2>');
-  await selectRange(6, 6); await command('Underline'); await page.keyboard.insertText('X'); await waitHTML('<u>X</u>');
-  await check('Caret command retains future input formatting', (await savedHTML()).includes('<u>X</u>'), true);
+  await selectRange(6, 6);
+  const beforeWholeRefresh = (await observations()).refreshes[0];
+  await command('Bold');
+  await page.waitForFunction(() => window.shellFixture.observe().properties.titleHTML === '<h2><strong>Alpha Beta Gamma</strong></h2>');
+  await check('No selection makes mixed Bold uniform across the whole title', await savedHTML(), '<h2><strong>Alpha Beta Gamma</strong></h2>');
+  await check('Whole-title formatting publishes once', (await observations()).refreshes[0], beforeWholeRefresh + 1);
+  await check('Whole-title command preserves the native caret offset', await editable.evaluate(element => {
+    const selection = element.ownerDocument.getSelection();
+    if (!selection?.isCollapsed || !selection.anchorNode || !element.contains(selection.anchorNode)) return -1;
+    const prefix = element.ownerDocument.createRange(); prefix.selectNodeContents(element);
+    prefix.setEnd(selection.anchorNode, selection.anchorOffset); return prefix.toString().length;
+  }), 6);
+  await command('Bold');
+  await page.waitForFunction(() => window.shellFixture.observe().properties.titleHTML === '<h2>Alpha Beta Gamma</h2>');
+  await check('Second caret Bold removes emphasis from the whole title', await savedHTML(), '<h2>Alpha Beta Gamma</h2>');
+  await page.keyboard.press('Meta+z');
+  await page.waitForFunction(() => window.shellFixture.observe().properties.titleHTML === '<h2><strong>Alpha Beta Gamma</strong></h2>');
+  await check('Whole-title toggle is one native undo', await savedHTML(), '<h2><strong>Alpha Beta Gamma</strong></h2>');
+  await page.keyboard.press('Meta+b');
+  await page.waitForFunction(() => window.shellFixture.observe().properties.titleHTML === '<h2>Alpha Beta Gamma</h2>');
+  await check('Caret keyboard Bold follows the same whole-title scope', await savedHTML(), '<h2>Alpha Beta Gamma</h2>');
+  await reset('Alpha Beta Gamma', '<h2><strong>Alpha</strong> Beta Gamma</h2>');
+  await selectRange(6, 6); await command('Underline');
+  await page.waitForFunction(() => window.shellFixture.observe().properties.titleHTML === '<h2><strong><u>Alpha</u></strong><u> Beta Gamma</u></h2>');
+  await check('Caret command formats the entire title', await savedHTML(), '<h2><strong><u>Alpha</u></strong><u> Beta Gamma</u></h2>');
+  await page.keyboard.insertText('X');
+  await page.waitForFunction(() => window.shellFixture.observe().properties.titleHTML === '<h2><strong><u>Alpha</u></strong><u> XBeta Gamma</u></h2>');
+  await check('Caret command retains its position and future input formatting', await savedHTML(), '<h2><strong><u>Alpha</u></strong><u> XBeta Gamma</u></h2>');
   await other.locator('[contenteditable]').click();
   await check('Other editor dismisses toolbar without formatting its document', (await observations()).otherProperties.titleHTML, undefined);
   await page.locator('[data-fixture-outside]').click();
@@ -376,7 +414,9 @@ async function checkWebPartShellBrowser(page, record) {
   await check('Child state still persistent after editor teardown', await root.locator('[data-shell-demo="note"]').inputValue(), 'Persistent browser note');
   await check('Child did not unmount', (await observations()).cleanups, 0);
   await root.locator('[data-shell-demo="plain"]').click();
-  await check('Actual sample plain fallback renders literal text', await root.locator('h2').textContent(), 'Literal <sample> title');
+  await check('Actual sample plain action renders its current subject', await root.locator('h2').textContent(), 'Literal <sample> title');
+  await render({ properties: { title: 'Literal <sample> title', titleHTML: undefined } });
+  await check('Plain fallback renders angle brackets as literal text', await root.locator('h2').textContent(), 'Literal <sample> title');
   await root.locator('[data-shell-demo="rich"]').click();
   await check('Actual sample rich control renders formatting', await root.locator('h2 strong').textContent(), 'Rich');
   await render({ surface: undefined, padding: undefined, dir: undefined });

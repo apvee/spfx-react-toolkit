@@ -13,6 +13,7 @@ type ThemeName = 'light' | 'dark' | 'highContrast';
 interface FixturePatch {
   mode?: 'Read' | 'Edit'; host?: HostName; theme?: ThemeName; dir?: 'ltr' | 'rtl';
   width?: number; otherWidth?: number;
+  uiCulture?: string; otherUiCulture?: string; regionalCulture?: string;
   surface?: WebPartShellProps<IWebPartShellProperties>['surface'];
   padding?: WebPartShellProps<IWebPartShellProperties>['padding'];
   fluentTheme?: WebPartShellProps<IWebPartShellProperties>['theme'];
@@ -23,7 +24,7 @@ interface HostDouble {
   displayMode: number; render: () => void;
   context: {
     instanceId: string; domElement: HTMLElement;
-    pageContext: { cultureInfo: { isRightToLeft: boolean }; legacyPageContext: { pageLayoutType?: string } };
+    pageContext: { cultureInfo: { isRightToLeft: boolean; currentUICultureName: string; currentCultureName: string }; legacyPageContext: { pageLayoutType?: string } };
     sdks: { microsoftTeams?: { teamsJs: { app: { getContext: () => Promise<unknown>; registerOnThemeChangeHandler: (handler: (theme: string) => void) => void } } } };
     serviceScope: { whenFinished: (callback: () => void) => void; consume: (key: unknown) => unknown };
     propertyPane: { refresh: () => void };
@@ -42,14 +43,14 @@ export function mountShellFixture(boundary: 'source' | 'compiled'): void {
   const containers = [document.createElement('div'), document.createElement('div')];
   const refreshes = [0, 0]; const subscriptions = [new Set<(args: { theme: ReturnType<typeof createTheme> }) => void>(), new Set<(args: { theme: ReturnType<typeof createTheme> }) => void>()];
   let mounts = 0, cleanups = 0;
-  const state: Required<Pick<FixturePatch, 'mode' | 'host' | 'theme' | 'dir' | 'width' | 'otherWidth'>> & FixturePatch = { mode: 'Read', host: 'SharePoint', theme: 'light', dir: 'ltr', width: 900, otherWidth: 320, surface: 'auto', padding: 'auto' };
+  const state: Required<Pick<FixturePatch, 'mode' | 'host' | 'theme' | 'dir' | 'width' | 'otherWidth'>> & FixturePatch = { mode: 'Read', host: 'SharePoint', theme: 'light', dir: 'ltr', width: 900, otherWidth: 320, surface: 'auto', padding: 'auto', uiCulture: 'en-US', otherUiCulture: 'en-US', regionalCulture: 'it-IT' };
   const theme = (): ReturnType<typeof createTheme> => createTheme({ isInverted: state.theme !== 'light' });
   const sdkHandlers = new Set<(theme: string) => void>();
   const sdk = { app: { getContext: async (): Promise<unknown> => ({ app: { host: { name: state.host }, theme: state.theme === 'light' ? 'default' : state.theme === 'highContrast' ? 'contrast' : 'dark' } }), registerOnThemeChangeHandler: (handler: (theme: string) => void): void => { sdkHandlers.add(handler); } } };
   const hosts: HostDouble[] = containers.map((domElement, index) => {
     const instanceId = `shell-browser-${index}`;
     const service = { tryGetTheme: theme, themeChangedEvent: { add: (_observer: unknown, handler: (args: { theme: ReturnType<typeof createTheme> }) => void): void => { subscriptions[index].add(handler); }, remove: (_observer: unknown, handler: (args: { theme: ReturnType<typeof createTheme> }) => void): void => { subscriptions[index].delete(handler); } } };
-    return { instanceId, domElement, properties: { title: index ? 'Independent title' : 'Alpha Beta Gamma', listId: `keep-${index}` }, displayMode: 1, render: () => {}, context: { instanceId, domElement, pageContext: { cultureInfo: { isRightToLeft: false }, legacyPageContext: {} }, sdks: {}, serviceScope: { whenFinished: callback => callback(), consume: key => { if (key !== 'shell-browser-theme-service') throw new Error(`Unexpected SPFx service ${String(key)}`); return service; } }, propertyPane: { refresh: () => { refreshes[index]++; } } } };
+    return { instanceId, domElement, properties: { title: index ? 'Independent title' : 'Alpha Beta Gamma', listId: `keep-${index}` }, displayMode: 1, render: () => {}, context: { instanceId, domElement, pageContext: { cultureInfo: { isRightToLeft: false, currentUICultureName: 'en-US', currentCultureName: 'it-IT' }, legacyPageContext: {} }, sdks: {}, serviceScope: { whenFinished: callback => callback(), consume: key => { if (key !== 'shell-browser-theme-service') throw new Error(`Unexpected SPFx service ${String(key)}`); return service; } }, propertyPane: { refresh: () => { refreshes[index]++; } } } };
   });
   function PersistentChild(): JSX.Element {
     React.useEffect(() => { mounts++; return () => { cleanups++; }; }, []);
@@ -78,6 +79,8 @@ export function mountShellFixture(boundary: 'source' | 'compiled'): void {
     hosts.forEach((host, index) => {
       host.displayMode = state.mode === 'Edit' ? 2 : 1;
       host.context.pageContext.cultureInfo.isRightToLeft = state.dir === 'rtl';
+      host.context.pageContext.cultureInfo.currentUICultureName = (index === 0 ? state.uiCulture : state.otherUiCulture) ?? 'en-US';
+      host.context.pageContext.cultureInfo.currentCultureName = state.regionalCulture ?? 'it-IT';
       host.context.pageContext.legacyPageContext.pageLayoutType = state.host === 'SingleWebPartAppPage' ? state.host : undefined;
       host.context.sdks.microsoftTeams = ['Teams', 'Office', 'Outlook'].includes(state.host) ? { teamsJs: sdk } : undefined;
       if (index === 0 && patch.properties) Object.assign(host.properties, patch.properties);

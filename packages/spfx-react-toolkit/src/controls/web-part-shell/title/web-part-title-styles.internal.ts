@@ -3,7 +3,7 @@ import { tokens, typographyStyles } from '@fluentui/react-theme';
 import { useSx } from '../../../hooks/useSx';
 import { body1 } from '../../../helpers/styles/typography';
 import { primary } from '../../../helpers/styles/foreground';
-import { titleFormatRegistry, getTitleLineClass, getTitleSizeClass } from './web-part-title-format.internal';
+import { titleColorDescriptors, getTitleColorCss, titleFormatRegistry, getTitleLineClass, getTitleSizeClass } from './web-part-title-format.internal';
 
 /** Shared scoped wrapper for Read blocks and the private editor's document DOM. */
 export interface WebPartTitleStyleClasses {
@@ -37,8 +37,8 @@ function createTitleWrapperStyle(): GriffelStyle {
   for (const line of titleFormatRegistry.lineSpacing) {
     style[`& .${getTitleLineClass(line)}`] = { lineHeight: line };
   }
-  for (const color of ['primary', 'subtle', 'brand'] as const) {
-    style[`& .wps-color-${color}`] = { color: tokens[titleFormatRegistry.colors[color]] };
+  for (const { id } of titleColorDescriptors) {
+    style[`& .wps-color-${id}`] = { color: getTitleColorCss(id) };
   }
   return style;
 }

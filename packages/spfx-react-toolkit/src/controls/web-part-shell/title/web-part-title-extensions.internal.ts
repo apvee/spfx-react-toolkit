@@ -1,5 +1,6 @@
 import { Extension, Mark, type Extensions } from '@tiptap/core';
 import { Plugin } from '@tiptap/pm/state';
+import { toggleTitleMark } from './web-part-title-formatting.internal';
 import { editorContentToTitleDocument } from './web-part-title-editor-adapter.internal';
 import Document from '@tiptap/extension-document';
 import Text from '@tiptap/extension-text';
@@ -52,6 +53,21 @@ const SingleBlockBreak = HardBreak.extend({
   }
 });
 
+// Preserve each native mark's commands and input rules; only keyboard scope
+// follows the same title/range contract as its toolbar command.
+const TitleBold = Bold.extend({ addKeyboardShortcuts() {
+  const toggle = (): boolean => toggleTitleMark(this.editor, 'bold');
+  return { 'Mod-b': toggle, 'Mod-B': toggle };
+} });
+const TitleItalic = Italic.extend({ addKeyboardShortcuts() {
+  const toggle = (): boolean => toggleTitleMark(this.editor, 'italic');
+  return { 'Mod-i': toggle, 'Mod-I': toggle };
+} });
+const TitleUnderline = Underline.extend({ addKeyboardShortcuts() {
+  const toggle = (): boolean => toggleTitleMark(this.editor, 'underline');
+  return { 'Mod-u': toggle, 'Mod-U': toggle };
+} });
+
 const TitleProtocol = Extension.create({
   name: 'titleProtocol',
   addProseMirrorPlugins() {
@@ -64,8 +80,8 @@ const TitleProtocol = Extension.create({
 });
 
 /** Minimal engine extensions; neither engine UI nor unrestricted style parsing is installed. */
-export function createTitleExtensions(placeholder: string): Extensions {
+export function createTitleExtensions(placeholder: string | (() => string)): Extensions {
   return [Document.extend({ content: '(heading|paragraph)' }), Text, Paragraph, Heading.configure({ levels: [1, 2, 3, 4] }),
-    SingleBlockBreak, Bold, Italic, Underline, TitleStyle, TitleBlockAttributes, TitleProtocol,
+    SingleBlockBreak, TitleBold, TitleItalic, TitleUnderline, TitleStyle, TitleBlockAttributes, TitleProtocol,
     UndoRedo, Placeholder.configure({ placeholder })];
 }

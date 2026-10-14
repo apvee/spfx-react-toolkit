@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Button, Input, Switch } from '@fluentui/react-components';
-import { useSPFxProperties, useSPFxDisplayMode, useSPFxFluent9ThemeInfo, useSx, flex, gap, type IWebPartShellProperties } from '@apvee/spfx-react-toolkit';
+import { useSPFxProperties, useSPFxDisplayMode, useSPFxContext, useSPFxFluent9ThemeInfo, useSx, flex, gap, type IWebPartShellProperties } from '@apvee/spfx-react-toolkit';
 import { useShellDemoOptions, type ShellDemoOptions } from '../WebPartShellDemoHost';
 
 const WebPartShellPanel: React.FC = () => {
   const { properties, setProperties } = useSPFxProperties<IWebPartShellProperties>();
   const { isEdit } = useSPFxDisplayMode();
+  const { spfxContext } = useSPFxContext();
   const { teamsTheme } = useSPFxFluent9ThemeInfo();
   const { options, update } = useShellDemoOptions();
   const [note, setNote] = React.useState('Retained child note');
@@ -33,6 +34,7 @@ const WebPartShellPanel: React.FC = () => {
     <Input aria-label="Persistent child note" data-shell-demo="note" value={note} onChange={(_event, data) => setNote(data.value)} />
     <Button data-shell-demo="increment" onClick={() => setCount(value => value + 1)}>Increment child counter</Button>
     <output data-shell-demo="observations">{JSON.stringify({ mode: isEdit ? 'Edit' : 'Read', count, title: properties?.title, titleHTML: properties?.titleHTML, showTitle: properties?.showTitle, teamsTheme, ...options })}</output>
+    <p>Current UI culture: {spfxContext.pageContext.cultureInfo.currentUICultureName}. Title toolbar labels follow this culture independently from regional formatting.</p>
   </div>;
 };
 export default WebPartShellPanel;

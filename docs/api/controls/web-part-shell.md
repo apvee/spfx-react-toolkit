@@ -137,7 +137,7 @@ Canonical HTML uses `p`, `h1`–`h4`, `strong`, `em`, `u`, `span` and `br`, esca
 | --- | --- |
 | Font size | Integer 8–96px; `wps-size-N`. Suggestions: 8/10/12/14/16/18/20/24/28/32/36/48/60/72/96. |
 | Block defaults | H1 → `title1` (32/40px), H2 → `title2` (28/36px), H3 → `title3` (24/32px), H4 → `subtitle1` (20/28px), Normal → `body1` (14/20px), without explicit overrides. Values shown are font size/line-height in the standard web theme; active theme tokens determine actual values. |
-| Theme foreground | `wps-color-primary` → `colorNeutralForeground1`; `wps-color-subtle` → `colorNeutralForeground2`; `wps-color-brand` → `colorBrandForeground1`. |
+| Theme foreground | Stable `wps-color-<id>` markers from the closed foreground registry below. Automatic has no color mark. |
 | Line spacing | Default uses the block's Fluent line-height token. Explicit 1/1.2/1.4/1.6/2/2.4 overrides use `wps-line-10/12/14/16/20/24`. “Default line spacing” removes only that override. |
 | Space before/after | `wps-space-before` and `wps-space-after` toggles; active space uses `spacingVerticalS`. |
 | Emphasis | Bold, italic and underline marks; no links, lists, images or arbitrary color/style configuration. |
@@ -148,11 +148,67 @@ Read and Edit share the official Fluent typography recipes, including font famil
 
 Input and canonical output are limited to 65,536 UTF-8 bytes; parser nesting is limited to depth 32. Input that exceeds a limit or would exceed the canonical byte limit uses the safe fallback. An oversized editor draft stays visible with a recoverable size error; neither title property is patched until the draft fits. There is no implicit truncation. Leaving Edit discards an unsaved oversized draft when the editor is destroyed; previously saved properties remain authoritative.
 
+## Theme colors and localized UI
+
+The circular Fluent SwatchPicker contains vertically stacked Automatic, Theme colors and Standard colors sections, each with a horizontal wrapping row of swatches. Every swatch has a localized name and Tooltip available on pointer hover and keyboard focus; the accessible name matches that name. Theme colors describe roles rather than promising a fixed black/blue value. The same picker and names are available in the toolbar overflow.
+
+The default light-theme palette follows the reference order: 12 Theme colors and 10 Standard colors. The values come exclusively from foreground tokens; fixed `color-mix(in srgb, …)` recipes provide intermediate tones. Their appearance follows the current Fluent theme and may differ from the older Office reference palette, particularly its cyan, blue and purple.
+
+| Offered Theme ID | Foreground source |
+| --- | --- |
+| `primary` | `colorNeutralForeground1` |
+| `neutralDark` | 50% neutral foreground 1 + 50% neutral foreground 2 |
+| `subtle` | `colorNeutralForeground2` |
+| `neutralMuted` | `colorNeutralForeground3` |
+| `neutralLight` | 75% neutral foreground 3 + 25% neutral foreground inverted |
+| `neutralLighter` | 60% neutral foreground 3 + 40% neutral foreground inverted |
+| `brandDarkest` | 25% brand foreground 1 + 75% neutral foreground 1 |
+| `brandDarker` | 40% brand foreground 1 + 60% neutral foreground 1 |
+| `brandDark` | 55% brand foreground 1 + 45% neutral foreground 1 |
+| `brandAlt` | `colorBrandForeground2` |
+| `brand` | `colorBrandForeground1` |
+| `brandLight` | 75% brand foreground 1 + 25% neutral foreground inverted |
+
+| Offered Standard ID | Foreground source |
+| --- | --- |
+| `darkRed` | `colorPaletteRedForeground1` |
+| `red` | `colorPaletteRedForeground3` |
+| `amber` | `colorPaletteMarigoldForeground3` |
+| `yellow` | `colorPaletteYellowForeground3` |
+| `yellowGreen` | 73% yellow foreground 3 + 27% green foreground 3 |
+| `green` | `colorPaletteGreenForeground3` |
+| `cyan` | `colorPaletteLightTealForeground2` |
+| `blue` | `colorPaletteBlueForeground2` |
+| `navy` | `colorPaletteNavyForeground2` |
+| `purple` | `colorPalettePurpleForeground2` |
+
+The accepted protocol retains four earlier colors: `orange` (dark-orange foreground 3), `teal`, `pink` and `brown` (their palette foreground 2). These remain valid in saved titles and appear in the picker while selected, without expanding the default palette. All 26 IDs use stable `wps-color-<id>` markers; derived tones never save CSS expressions or resolved colors in the document.
+
+Colors resolve from the shell's effective Fluent theme, including host/ancestor/explicit overrides. Duplicate resolved colors are collapsed while preserving the currently selected identity and Automatic. For example, default dark-theme red and dark red coincide, so only one is offered at a time; both protocol IDs remain valid. Automatic removes only the color override, preserving emphasis, size and block formatting. Existing primary/subtle/brand titles remain valid. No custom HEX/RGB color picker is provided.
+
+```tsx
+// The saved semantic green follows the active theme; its UI name is translated.
+// The properties object belongs to the SPFx web part instance passed to WebPartShell.
+const properties: IWebPartShellProperties = {
+  title: 'Project documents',
+  titleHTML: '<h2><span class="wps-color-green">Project documents</span></h2>',
+  showTitle: true,
+};
+```
+
+The control ships complete private catalogs for the [50 SharePoint UI cultures listed by Microsoft](https://support.microsoft.com/en-au/sharepoint/platform/languages-supported-by-sharepoint), recorded in the versioned [culture fixture](../../../tests/fixtures/sharepoint-ui-locales.json). The runtime reads `instance.context.pageContext.cultureInfo.currentUICultureName`, independently of the regional `currentCultureName`. Catalog selection normalizes case/separators, uses exact culture and explicit supported aliases, and falls back to `en-US` for absent or unsupported values. Portuguese regional variants, Chinese variants and Serbian scripts remain distinct. No extra locale prop, SPFx AMD string resource configuration or translation service is required.
+
+Localization covers the editor and floating toolbar, every color name, overflow menus, heading/size/spacing choices, mixed-state and shortcut descriptions, empty-title placeholder, loading label, Retry, invalid-saved-title warning and oversized-draft error. Labels belong to each shell instance. Language updates preserve the existing editor view, author content, stored semantic color IDs, selection and undo history without publishing properties. Direction follows the existing `dir`/ancestor/SPFx contract separately from the UI language.
+
+Translation key/placeholder checks and browser tests establish resource coverage and UI binding; they do not certify native-speaker linguistic quality. Authenticated SharePoint and screen-reader checks remain separate from local browser results.
+
 ## Editing and recovery
 
-All author UI uses Fluent UI 9: floating Popover/Toolbar, heading Dropdown, validated font-size Combobox, finite theme SwatchPicker, spacing Menu, clear formatting, Overflow commands, Spinner and MessageBar. Tiptap manages only the contenteditable engine. Labels are English in V1; SPFx locale controls fallback direction, not automatic UI translation. Browser spellcheck remains available.
+All author UI uses Fluent UI 9: floating Popover/Toolbar, heading Dropdown, validated font-size Combobox, finite theme SwatchPicker, spacing Menu, clear formatting, Overflow commands, Spinner and MessageBar. Tiptap manages only the contenteditable engine. All control-owned labels, tooltips, accessible names, placeholders and recovery messages follow the instance’s SharePoint UI culture. Browser spellcheck remains available; author text and consumer-owned content are never translated.
 
-Formatting follows the actual range/caret, with mixed selection states. Popup commands preserve selection and return editor focus where appropriate; keyboard Tab remains available. Native Ctrl/Cmd+B/I/U and undo/redo apply in the editor. The toolbar fits its control content, keeps a theme-token gap between heading and font size, and moves commands into Fluent Overflow when space is limited. Format painter is intentionally absent in V1; each command applies directly to the current selection or caret. Clear removes selection marks and block spacing overrides while keeping text and heading level. Escape does not revert content already published.
+With a selected text range, inline formatting applies to that range. Without a text selection, bold, italic, underline, font size, color and Clear apply to the entire title while preserving the caret position. Ctrl/Cmd+B/I/U follows the same scope. Mixed emphasis becomes uniform on the first action and is removed on the next action; toolbar state describes the whole title at a caret. Color and size changes preserve each text run's unrelated overrides. An empty title stores formatting for subsequent typing without publishing empty-title properties.
+
+Each formatting gesture forms one undo boundary. Clear removes targeted inline marks and block spacing overrides while keeping text and heading level. Heading and spacing already address the title's single block. Popup commands preserve the original caret/range and return editor focus where appropriate; keyboard Tab remains available. Icon buttons and toggles use the same medium size; heading and font-size selectors use small size and are vertically centered with compact widths. The toolbar fits its control content, keeps a theme-token gap between heading and font size, and moves commands into Fluent Overflow when space is limited. Format painter is intentionally absent in V1. Escape does not revert content already published.
 
 One editor view exists per Edit session. Effective document transactions publish one merged `{ title, titleHTML }` patch, preserving other application properties; plain search text comes from the same validated document with breaks/whitespace normalized. Canonical echoes preserve selection/history. A real external title replacement updates the existing view, clamps its selection and establishes fresh history so Undo cannot restore the preceding external version. Theme/direction changes leave history intact.
 
@@ -172,6 +228,6 @@ Root, `/controls` and `/controls/web-part-shell` share canonical component/type/
 
 The actual sample root uses the shell, manifest defaults, searchable metadata and a show-title pane toggle. Its lazy **WebPartShell** panel makes surfaces/padding, theme/direction, property replacement, visibility and preserved child/action state observable. Dedicated browser fixtures cover native ref, event and style forwarding. Build the library before the app and restart an active serve after library changes. See [development checks](../../DEVELOPMENT.md#webpartshell-development) and the [authenticated checklist](../../SHAREPOINT-VALIDATION.md#webpartshell).
 
-Local acceptance used Chrome 155.0.8059.39: 139 source checks and 140 compiled-library checks. These fixtures mount real provider/hooks with service doubles; composition events use CDP and paste uses a synthetic ClipboardEvent, alongside actual mouse/keyboard interactions. They establish local behavior, not authenticated host save/reload/search, live Teams/Office/Outlook behavior, device IME, touch or screen-reader acceptance. Those checks remain NOT EXECUTED until their own host observations are recorded.
+Local Chrome acceptance covers both source and compiled-library fixtures. `scripts/check-title-toolbar-localization-browser.cjs` checks the 50 UI catalogs, color tooltips, instance isolation and narrow/RTL layouts; `scripts/check-title-toolbar-geometry-browser.cjs` checks foreground rendering, whole-title formatting, overflow, themes, forced colors and native 200% zoom. These fixtures mount real providers/hooks with service doubles; composition events use CDP and paste uses a synthetic ClipboardEvent, alongside actual mouse/keyboard interactions. They establish local behavior, not authenticated host save/reload/search, live Teams/Office/Outlook behavior, device IME, touch or screen-reader acceptance. Those checks remain NOT EXECUTED until their own host observations are recorded. Catalog completeness and localized UI bindings do not establish native-speaker certification of the translations.
 
 [View public source](../../../packages/spfx-react-toolkit/src/controls/web-part-shell/index.ts)

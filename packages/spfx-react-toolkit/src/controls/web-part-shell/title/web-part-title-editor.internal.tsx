@@ -10,6 +10,8 @@ import { editorContentToTitleDocument, titleDocumentToEditorContent } from './we
 import { parseTitleHTML, serializeTitleDocument } from './web-part-title-codec.internal';
 import { useWebPartTitleStyles } from './web-part-title-styles.internal';
 import { WebPartTitleToolbar } from './web-part-title-toolbar.internal';
+import { resolveWebPartShellStrings } from '../localization/web-part-shell-locales.internal';
+import type { WebPartShellStrings } from '../localization/web-part-shell-strings.internal';
 import type { TitleDocument } from './web-part-title.types.internal';
 
 const useEditorStyles = makeStyles({ root: {
@@ -21,6 +23,7 @@ const useEditorStyles = makeStyles({ root: {
 
 /** Private async boundary; engine types are never exposed from the public control. */
 export interface WebPartTitleEditorProps {
+  strings?: WebPartShellStrings;
   document: TitleDocument;
   onDocumentChange: (document: TitleDocument) => void;
   ariaLabel: string;
@@ -34,6 +37,7 @@ function documentKey(document: TitleDocument): string {
 
 /** One stable view per Edit session with live atomic publication and authoritative replacement. */
 export function WebPartTitleEditor(props: WebPartTitleEditorProps): React.ReactElement {
+  const strings = props.strings ?? resolveWebPartShellStrings(undefined);
   const styles = useWebPartTitleStyles();
   const editorStyles = useEditorStyles();
   const latest = React.useRef(props);
@@ -41,7 +45,7 @@ export function WebPartTitleEditor(props: WebPartTitleEditorProps): React.ReactE
   const externalReplacement = React.useRef<((document: TitleDocument) => void)>();
   const instance = React.useRef<Editor>();
   const [editor, setEditor] = React.useState<Editor>();
-  const [error, setError] = React.useState<string>();
+  const [error, setError] = React.useState<boolean>(false);
   const syncing = React.useRef({ active: false, dirty: false, composing: false, revision: 0, compositionRevision: 0,
     published: documentKey(props.document), pending: undefined as TitleDocument | undefined });
   React.useLayoutEffect(() => { latest.current = props; });
@@ -60,11 +64,11 @@ export function WebPartTitleEditor(props: WebPartTitleEditorProps): React.ReactE
           latest.current.onDocumentChange(document);
         }
         state.dirty = false;
-        if (!disposing) setError(undefined);
+        if (!disposing) setError(false);
       } catch (caught) {
         if (!(caught instanceof RangeError)) throw caught;
         // Keep both properties untouched and preserve the draft until it fits the protocol.
-        if (!disposing) setError('Title is too large to save. Shorten it to continue.');
+        if (!disposing) setError(true);
       }
     };
     const replace = (document: TitleDocument): void => {
@@ -79,12 +83,12 @@ export function WebPartTitleEditor(props: WebPartTitleEditorProps): React.ReactE
       // Fresh plugin state deliberately resets history while preserving the existing EditorView.
       current.view.updateState(EditorState.create({ schema: current.schema, doc: node, selection, plugins: current.state.plugins }));
       state.published = documentKey(document); state.dirty = false;
-      setError(undefined);
+      setError(false);
       current.emit('selectionUpdate', { editor: current, transaction: current.state.tr });
     };
     const current = new Editor({
       element: wrapper.current?.ownerDocument.createElement('div'),
-      extensions: createTitleExtensions(latest.current.placeholder),
+      extensions: createTitleExtensions(() => latest.current.placeholder),
       content: titleDocumentToEditorContent(latest.current.document), injectCSS: false,
       editorProps: { attributes: { 'aria-label': latest.current.ariaLabel, role: 'textbox', 'aria-multiline': 'true', spellcheck: 'true' },
         handleDOMEvents: {
@@ -134,6 +138,17 @@ export function WebPartTitleEditor(props: WebPartTitleEditorProps): React.ReactE
     return () => { publish(true); state.active = false; externalReplacement.current = undefined; instance.current = undefined; current.destroy(); };
   }, []);
 
+  React.useLayoutEffect(() => {
+    const current = instance.current;
+    if (!current || current.isDestroyed) return;
+    current.setOptions({ editorProps: { ...current.options.editorProps, attributes: {
+      'aria-label': props.ariaLabel, role: 'textbox', 'aria-multiline': 'true', spellcheck: 'true'
+    } } });
+    // Refresh placeholder decorations through a metadata-only transaction. This
+    // keeps this EditorView, selection, stored marks and undo history intact.
+    current.view.dispatch(current.state.tr.setMeta('addToHistory', false));
+  }, [props.ariaLabel, props.placeholder]);
+
   React.useEffect(() => {
     const current = instance.current;
     if (!current || current.isDestroyed) return;
@@ -146,8 +161,8 @@ export function WebPartTitleEditor(props: WebPartTitleEditorProps): React.ReactE
     externalReplacement.current?.(props.document);
   }, [props.document]);
   return <div className={[styles.root, editorStyles.root].join(' ')} ref={wrapper}>
-    {error && <MessageBar intent="error"><MessageBarBody>{error}</MessageBarBody></MessageBar>}
-    {editor && <WebPartTitleToolbar editor={editor} ownerDocument={editor.view.dom.ownerDocument} />}
+    {error && <MessageBar intent="error"><MessageBarBody>{strings.titleTooLargeError}</MessageBarBody></MessageBar>}
+    {editor && <WebPartTitleToolbar editor={editor} ownerDocument={editor.view.dom.ownerDocument} strings={strings} />}
     {/* Tiptap React requires the legacy null sentinel; internal absence remains undefined. */}
     <EditorContent editor={editor ?? null} />
   </div>;

@@ -84,7 +84,7 @@ test('font sizes and palette are bounded and native line-height accepts only the
   const { api, doc } = fixture(t);
   for (const [classes, expected] of [
     ['wps-size-8 wps-color-primary', '<p><span class="wps-color-primary wps-size-8">X</span></p>'],
-    ['wps-size-97 wps-color-red', '<p>X</p>'],
+    ['wps-size-97 wps-color-custom', '<p>X</p>'],
     ['fontSizeXLarge', '<p><span class="wps-size-20">X</span></p>'],
     ['fontSizeLarge fontSize20', '<p>X</p>'],
     ['wps-size-8.5 wps-size-08', '<p>X</p>'],
@@ -199,4 +199,28 @@ test('serializer throws RangeError for oversized canonical output without modify
   assert.throws(() => api.serializeTitleDocument(document), { name: 'RangeError', message: 'Title HTML exceeds 65536 UTF-8 bytes' });
   assert.equal(document.content[0].text.length, 14000);
   assert.equal(api.getTitlePlainText(document), '&'.repeat(14000));
+});
+
+const semanticColorRoles = ['primary', 'subtle', 'brand', 'neutralMuted', 'brandAlt', 'red', 'orange', 'yellow', 'green', 'teal', 'blue', 'purple', 'pink', 'brown', 'neutralDark', 'neutralLight', 'neutralLighter', 'brandDarkest', 'brandDarker', 'brandDark', 'brandLight', 'darkRed', 'amber', 'yellowGreen', 'cyan', 'navy'];
+test('every semantic foreground role round-trips canonical HTML without storing theme values', t => {
+  const { api, doc } = fixture(t);
+  for (const color of semanticColorRoles) {
+    const html = `<h2><span class="wps-color-${color}">Title</span></h2>`;
+    const result = api.parseTitleHTML(html, doc);
+    assert.equal(result.kind, 'valid', color);
+    assert.equal(result.document.content[0].marks.color, color);
+    assert.equal(api.serializeTitleDocument(result.document), html);
+    assert.deepEqual(api.parseTitleHTML(api.serializeTitleDocument(result.document), doc).document, result.document);
+  }
+});
+test('semantic colors reject arbitrary CSS, token names and prototype keys, while Automatic omits the mark', t => {
+  const { api, doc } = fixture(t);
+  for (const color of ['custom', '#ff0000', 'rgb(1, 2, 3)', 'colorNeutralForeground1', 'constructor', '__proto__', 'RED']) {
+    const invalid = { type: 'paragraph', content: [{ type: 'text', text: 'Title', marks: { color } }] };
+    assert.equal(api.isTitleDocument(invalid), false, color);
+    assert.throws(() => api.serializeTitleDocument(invalid), /Invalid/, color);
+    const result = api.parseTitleHTML(`<p><span class="wps-color-${color}">Title</span></p>`, doc);
+    assert.equal(result.document.content[0].marks?.color, undefined);
+  }
+  assert.equal(api.serializeTitleDocument({ type: 'paragraph', content: [{ type: 'text', text: 'Title' }] }), '<p>Title</p>');
 });

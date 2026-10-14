@@ -88,14 +88,14 @@ test('scoped CSS covers finite sizes, lines, spacing toggles and declared defaul
 });
 test('theme palette updates under light, dark, high contrast and RTL without changing content/classes', () => {
   const themes = require('@fluentui/react-theme');
-  const ast = { type: 'paragraph', content: ['primary', 'subtle', 'brand'].map(color => ({ type: 'text', text: color, marks: { color } })) };
+  const ast = { type: 'paragraph', content: ['primary', 'subtle', 'brand', 'neutralMuted', 'brandAlt', 'red', 'orange', 'yellow', 'green', 'teal', 'blue', 'purple', 'pink', 'brown', 'neutralDark', 'neutralLight', 'neutralLighter', 'brandDarkest', 'brandDarker', 'brandDark', 'brandLight', 'darkRed', 'amber', 'yellowGreen', 'cyan', 'navy'].map(color => ({ type: 'text', text: color, marks: { color } })) };
   let html;
-  for (const theme of [themes.webLightTheme, themes.webDarkTheme, themes.teamsHighContrastTheme]) for (const dir of ['ltr', 'rtl']) {
+  for (const theme of [themes.webLightTheme, themes.webDarkTheme, themes.teamsHighContrastTheme, { ...themes.webLightTheme, colorPalettePinkForeground2: '#abcd01', colorBrandForeground2: '#1b2c3d' }]) for (const dir of ['ltr', 'rtl']) {
     const block = render(ast, theme, dir);
     html ??= block.outerHTML;
     assert.equal(block.outerHTML, html);
     const provider = host.querySelector('[data-provider]');
-    for (const token of ['colorNeutralForeground1', 'colorNeutralForeground2', 'colorBrandForeground1']) {
+    for (const token of ['colorNeutralForeground1', 'colorNeutralForeground2', 'colorBrandForeground1', 'colorNeutralForeground3', 'colorBrandForeground2', 'colorPaletteRedForeground3', 'colorPaletteDarkOrangeForeground3', 'colorPaletteYellowForeground3', 'colorPaletteGreenForeground3', 'colorPaletteTealForeground2', 'colorPaletteBlueForeground2', 'colorPalettePurpleForeground2', 'colorPalettePinkForeground2', 'colorPaletteBrownForeground2']) {
       // Fluent injects theme variables in a provider-scoped rule; JSDOM cannot resolve CSS var colors.
       const matchingRules = [...document.styleSheets].flatMap(sheet => [...sheet.cssRules])
         .filter(rule => rule.selectorText && provider.matches(rule.selectorText));
@@ -104,7 +104,7 @@ test('theme palette updates under light, dark, high contrast and RTL without cha
     }
   }
   const rules = cssRules(renderer).join('\n').replace(/:\s+/g, ':').replace(/\{\s+/g, '{');
-  for (const [role, token] of [['primary','colorNeutralForeground1'],['subtle','colorNeutralForeground2'],['brand','colorBrandForeground1']]) assert.match(rules, new RegExp('\\.wps-color-' + role + '[^{]*\\{color:var\\(--' + token + '\\)'));
+  for (const [role, token] of [['primary','colorNeutralForeground1'],['subtle','colorNeutralForeground2'],['brand','colorBrandForeground1'],['neutralMuted','colorNeutralForeground3'],['brandAlt','colorBrandForeground2'],['red','colorPaletteRedForeground3'],['orange','colorPaletteDarkOrangeForeground3'],['yellow','colorPaletteYellowForeground3'],['green','colorPaletteGreenForeground3'],['teal','colorPaletteTealForeground2'],['blue','colorPaletteBlueForeground2'],['purple','colorPalettePurpleForeground2'],['pink','colorPalettePinkForeground2'],['brown','colorPaletteBrownForeground2']]) assert.match(rules, new RegExp('\\.wps-color-' + role + '[^{]*\\{color:var\\(--' + token + '\\)'));
 });
 test('only protocol attributes survive hostile imported markup', () => {
   const parsed = codec.parseTitleHTML('<h2 id="unsafe" onclick="bad()" style="color:red"><span class="alien" title="unsafe">Safe</span><script>bad()</script></h2>', document);
@@ -152,4 +152,19 @@ test('shared editor wrapper scopes identical markers and repeated rendering reus
   document.body.appendChild(outside);
   assert.notEqual(window.getComputedStyle(outside).fontSize, '96px');
   outside.remove();
+});
+
+test('derived title colors use the same foreground-only class resolver as swatches', async () => {
+  const format = await harness.loadModule(path.resolve(__dirname, base + 'web-part-title-format.internal.ts'));
+  render({ type: 'paragraph', content: [{ type: 'text', text: 'Mixed', marks: { color: 'yellowGreen' } }] });
+  const rules = cssRules(renderer).join('\n').replace(/:\s+/g, ':').replace(/\{\s+/g, '{');
+  for (const { id } of format.titleColorDescriptors) {
+    const source = format.titleFormatRegistry.colors[id];
+    const sources = typeof source === 'string' ? [source] : [source.first, source.second];
+    for (const token of sources) assert.match(token, /^color.*Foreground/);
+    const expected = format.getTitleColorCss(id);
+    assert.ok(rules.replace(/\s+/g, '').includes('.wps-color-' + id + '{color:' + expected.replace(/\s+/g, '')), id);
+  }
+  assert.equal(format.getTitleColorCss('yellowGreen'), 'color-mix(in srgb, var(--colorPaletteYellowForeground3) 73%, var(--colorPaletteGreenForeground3))');
+  assert.ok(!host.querySelector('[style]'));
 });

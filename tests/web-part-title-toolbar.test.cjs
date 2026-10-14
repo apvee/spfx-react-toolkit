@@ -10,7 +10,7 @@ async function setup(t, html) {
   const editor = h.editor(fixture);
   return { h, host, fixture, editor };
 }
-function button(label) { return document.querySelector(`[aria-label="${label}"]`); }
+function button(label) { return label === 'Brand' ? document.querySelector('[data-title-color="brand"]') : document.querySelector(`[aria-label="${label}"]`); }
 
 test('Fluent toolbar edits the selected range through the existing publisher and selection alone does not write', async t => {
   const { h, host, editor } = await setup(t);
@@ -77,7 +77,8 @@ test('Heading, Normal, custom size, B/I/U and theme palette controls retain the 
   for (const label of ['Bold', 'Italic', 'Underline']) click(h, button(label));
   assert.equal(host.properties.titleHTML, '<p>i<strong><em><u><span class="wps-size-37">nit</span></u></em></strong>ial</p>');
   click(h, button('Theme color'));
-  assert.equal(document.querySelectorAll('[aria-label="Title theme colors"] button').length, 3);
+  assert.ok(document.querySelector('[data-title-color="automatic"]'));
+  assert.ok(document.querySelector('[data-title-color="brand"]'));
   click(h, button('Brand'));
   assert.equal(host.properties.titleHTML, '<p>i<strong><em><u><span class="wps-color-brand wps-size-37">nit</span></u></em></strong>ial</p>');
   assert.equal(editor.state.selection.from, 2); assert.equal(editor.state.selection.to, 5);
@@ -114,7 +115,8 @@ test('font picker follows Fluent presets and live theme tokens without writing i
   assert.equal(host.properties.titleHTML, saved);
   h.act(() => editor.commands.setMark('titleStyle', { size: 37 }));
   fixture.render(host, { theme: { fontSizeHero700: '44px' } }); await h.settle();
-  assert.equal(button('Font size').value, '37');
+  assert.equal(button('Font size').value, '44', 'toolbar reads inherited whole-title size, not a native stored-caret override');
+  assert.equal(h.load(base + 'web-part-title-formatting.internal.ts').readTitleSelectionFormat(editor).size, 37);
 });
 
 test('default line spacing removes only its override and undo restores it', async t => {
@@ -127,7 +129,7 @@ test('default line spacing removes only its override and undo restores it', asyn
 
 
 
-test('collapsed clear keeps text and heading, sets empty stored marks and preserves its undo boundary', async t => {
+test('collapsed clear removes all title marks while preserving text, heading and its undo boundary', async t => {
   const { h, editor } = await setup(t, '<h4><strong>AB</strong><em>CD</em></h4>');
   const p = h.load(base + 'web-part-title-formatting.internal.ts');
   h.act(() => editor.commands.setTextSelection(5));
@@ -135,7 +137,7 @@ test('collapsed clear keeps text and heading, sets empty stored marks and preser
   h.act(() => p.clearTitleFormat(editor));
   assert.equal(p.readTitleSelectionFormat(editor).italic, false);
   assert.deepEqual(editor.state.storedMarks, []);
-  assert.equal(editor.getHTML(), '<h4><strong>AB</strong><em>CD</em></h4>');
+  assert.equal(editor.getHTML(), '<h4>ABCD</h4>');
   h.act(() => editor.commands.undo());
   assert.equal(editor.getHTML(), '<h4><strong>AB</strong><em>CD</em></h4>');
 });
@@ -161,14 +163,14 @@ test('toolbar keyboard entry focuses Heading and leaves Tab available', async t 
 
 
 
-test('UI caret toggles turn B/I/U on and off without selection-only property writes', async t => {
+test('UI caret toggles turn whole-title B/I/U on and off while preserving the caret', async t => {
   const { h, editor, host } = await setup(t);
   h.act(() => editor.commands.setTextSelection(3)); reveal(h, editor);
   for (const label of ['Bold', 'Italic', 'Underline']) {
     click(h, button(label)); assert.equal(button(label).getAttribute('aria-pressed'), 'true');
     click(h, button(label)); assert.equal(button(label).getAttribute('aria-pressed'), 'false', `${label} turns off on the second caret click`);
   }
-  assert.equal(host.properties.titleHTML, undefined);
+  assert.equal(host.properties.titleHTML, '<h2>initial</h2>');
   assert.equal(editor.state.selection.from, 3); assert.equal(editor.state.selection.to, 3);
 });
 
@@ -182,10 +184,10 @@ test('UI caret formats accumulate and future typing retains stored size color an
   assert.equal(button('Font size').value, '37');
   assert.equal(button('Italic').getAttribute('aria-pressed'), 'true');
   assert.equal(editor.state.storedMarks.find(mark => mark.type.name === 'titleStyle').attrs.color, 'brand');
-  assert.equal(host.properties.titleHTML, undefined);
+  assert.equal(host.properties.titleHTML, '<h2><em><span class="wps-color-brand wps-size-37">initial</span></em></h2>');
   h.act(() => editor.commands.insertContent('X'));
-  assert.equal(host.properties.titleHTML, '<h2>in<em><span class="wps-color-brand wps-size-37">X</span></em>itial</h2>');
-  h.act(() => editor.commands.undo()); assert.equal(editor.getHTML(), '<h2>initial</h2>');
+  assert.equal(host.properties.titleHTML, '<h2><em><span class="wps-color-brand wps-size-37">inXitial</span></em></h2>');
+  h.act(() => editor.commands.undo()); assert.equal(editor.getHTML(), '<h2><em><span class="wps-color-brand wps-size-37">initial</span></em></h2>');
 });
 
 test('UI caret controls preserve explicitly empty stored marks instead of surrounding bold', async t => {
@@ -194,7 +196,7 @@ test('UI caret controls preserve explicitly empty stored marks instead of surrou
   click(h, button('Bold')); assert.deepEqual(editor.state.storedMarks, []);
   click(h, button('Italic'));
   h.act(() => editor.commands.insertContent('X'));
-  assert.equal(host.properties.titleHTML, '<h2><strong>A</strong><em>X</em><strong>BCD</strong></h2>');
+  assert.equal(host.properties.titleHTML, '<h2><em>AXBCD</em></h2>');
 });
 
 test('editor click keeps the nonmodal toolbar open while real outside interaction dismisses it', async t => {
@@ -267,7 +269,7 @@ test('default popup mounts retain the iframe owner document and its popup intera
   await h.settle();
   const color = doc.querySelector('[aria-label="Theme color"]'); click(h, color);
   await h.settle();
-  const brand = doc.querySelector('[aria-label="Brand"]'); assert.ok(brand); assert.equal(brand.ownerDocument, doc);
+  const brand = doc.querySelector('[data-title-color="brand"]'); assert.ok(brand); assert.equal(brand.ownerDocument, doc);
   h.act(() => brand.dispatchEvent(new doc.defaultView.Event('touchstart', { bubbles: true, cancelable: true })));
   assert.ok(doc.querySelector('[data-title-toolbar]'));
   click(h, brand); assert.equal(host.properties.titleHTML, '<h2><span class="wps-color-brand">initial</span></h2>');
@@ -322,4 +324,152 @@ test('V1 toolbar omits format painter and selection gestures never copy formatti
   });
   await h.settle();
   assert.equal(host.properties.titleHTML, '<h2><strong>AB</strong>CD</h2>');
+});
+
+test('Automatic removes only selected color, preserves size and other marks, and is undoable', async t => {
+  const { h, editor, host } = await setup(t, '<h2><strong><span class="wps-color-brand wps-size-37">ABCD</span></strong></h2>');
+  h.act(() => editor.commands.setTextSelection({ from: 2, to: 4 })); reveal(h, editor);
+  click(h, button('Theme color')); click(h, document.querySelector('[data-title-color="automatic"]'));
+  assert.equal(host.properties.titleHTML, '<h2><strong><span class="wps-color-brand wps-size-37">A</span></strong><strong><span class="wps-size-37">BC</span></strong><strong><span class="wps-color-brand wps-size-37">D</span></strong></h2>');
+  assert.equal(editor.state.selection.from, 2); assert.equal(editor.state.selection.to, 4);
+  h.act(() => editor.commands.undo()); assert.match(editor.getHTML(), /wps-color-brand wps-size-37/);
+});
+
+test('picker deduplicates host tokens while retaining Automatic and the active semantic color', async t => {
+  const { h, editor, fixture, host } = await setup(t, '<h2><span class="wps-color-brand">initial</span></h2>');
+  fixture.render(host, { theme: { colorNeutralForeground1: '#123456', colorNeutralForeground2: '#123456', colorBrandForeground1: '#123456' } });
+  await h.settle(); reveal(h, editor); click(h, button('Theme color'));
+  assert.ok(document.querySelector('[data-title-color="brand"]'));
+  assert.ok(document.querySelector('[data-title-color="automatic"]'));
+  assert.equal(document.querySelector('[data-title-color="primary"]'), null);
+  assert.equal(document.querySelector('[data-title-color="subtle"]'), null);
+  assert.equal(host.properties.titleHTML, '<h2><span class="wps-color-brand">initial</span></h2>');
+});
+
+test('localized toolbar commands and palette labels update with the same editor selection', async t => {
+  const { h, host, editor, fixture } = await setup(t);
+  const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  h.act(() => editor.commands.setTextSelection({ from: 2, to: 5 })); reveal(h, editor);
+  host.context.pageContext.cultureInfo.currentUICultureName = 'it-IT'; fixture.render(host); await h.settle();
+  click(h, button(strings('it-IT').themeColor));
+  for (const swatch of document.querySelectorAll('[data-title-color]')) {
+    const id = swatch.getAttribute('data-title-color');
+    assert.equal(swatch.getAttribute('aria-label'), id === 'automatic' ? strings('it-IT').automatic : strings('it-IT').colorNames[id]);
+  }
+  click(h, document.querySelector('[data-title-color="brand"]'));
+  assert.equal(host.properties.titleHTML, '<h2>i<span class="wps-color-brand">nit</span>ial</h2>');
+  assert.equal(editor.state.selection.from, 2); assert.equal(editor.state.selection.to, 5);
+  assert.ok(button(strings('it-IT').bold));
+});
+
+test('compact heading presentation retains its complete localized value across command updates', async t => {
+  const { h, host, editor, fixture } = await setup(t);
+  const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  host.context.pageContext.cultureInfo.currentUICultureName = 'de-DE'; fixture.render(host); await h.settle();
+  h.act(() => editor.commands.setTextSelection({ from: 2, to: 5 })); reveal(h, editor);
+  const heading = button(strings('de-DE').heading);
+  assert.equal(heading.getAttribute('value'), strings('de-DE').headingLevel(2));
+  assert.equal(heading.querySelector('span[title]').textContent, strings('de-DE').headingLevel(2));
+  assert.equal(heading.querySelector('span[title]').getAttribute('title'), strings('de-DE').headingLevel(2));
+  click(h, heading); click(h, menuItem(strings('de-DE').headingLevel(4)));
+  assert.equal(button(strings('de-DE').heading).querySelector('span[title]').getAttribute('title'), strings('de-DE').headingLevel(4));
+  assert.equal(editor.state.selection.from, 2); assert.equal(editor.state.selection.to, 5);
+  assert.equal(host.properties.titleHTML, '<h4>initial</h4>');
+});
+
+test('palette sections preserve ordered accessible groups and each swatch belongs to its semantic row', async t => {
+  const { h, editor } = await setup(t); reveal(h, editor); click(h, button('Theme color'));
+  const sections = [...document.querySelectorAll('[data-title-color-section]')];
+  assert.deepEqual(sections.map(section => section.getAttribute('data-title-color-section')), ['automatic', 'theme', 'palette']);
+  assert.deepEqual(sections.map(section => section.getAttribute('aria-label')), ['Automatic', 'Theme colors', 'Standard colors']);
+  assert.ok(sections.every(section => section.getAttribute('role') === 'group'));
+  assert.equal(document.querySelector('[data-title-color="automatic"]').closest('[data-title-color-row]').getAttribute('data-title-color-row'), 'automatic');
+  assert.equal(document.querySelector('[data-title-color="brand"]').closest('[data-title-color-row]').getAttribute('data-title-color-row'), 'theme');
+  assert.equal(document.querySelector('[data-title-color="red"]').closest('[data-title-color-row]').getAttribute('data-title-color-row'), 'palette');
+});
+
+test('font-size expand action uses the current localized name without Fluent English prefixes', async t => {
+  const { h, host, editor, fixture } = await setup(t);
+  const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  reveal(h, editor);
+  for (const culture of ['it-IT', 'de-DE', 'ar-SA']) {
+    host.context.pageContext.cultureInfo.currentUICultureName = culture;
+    fixture.render(host); await h.settle();
+    const expand = document.querySelector('.fui-Combobox__expandIcon');
+    assert.equal(expand.getAttribute('aria-label'), strings(culture).fontSize);
+    assert.equal(button(strings(culture).fontSize).getAttribute('role'), 'combobox');
+    assert.equal(host.properties.titleHTML, undefined);
+  }
+  const expand = document.querySelector('.fui-Combobox__expandIcon');
+  // Fluent's editable combobox expands on mousedown so it can focus its input.
+  h.act(() => expand.dispatchEvent(new h.window.MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 })));
+  assert.ok(menuItem('28'), 'the localized expand action still opens the font-size choices');
+});
+
+test('collapsed toolbar Bold applies to the entire title, preserves the caret and publishes one undoable transaction', async t => {
+  const { h, host, editor } = await setup(t);
+  h.act(() => editor.commands.setTextSelection(3)); reveal(h, editor);
+  let documentTransactions = 0;
+  editor.on('transaction', ({ transaction }) => { if (transaction.docChanged) documentTransactions++; });
+  click(h, button('Bold'));
+  assert.equal(host.properties.titleHTML, '<h2><strong>initial</strong></h2>');
+  assert.equal(editor.state.selection.from, 3); assert.equal(editor.state.selection.to, 3);
+  assert.equal(documentTransactions, 1);
+  assert.equal(button('Bold').getAttribute('aria-pressed'), 'true');
+  click(h, button('Bold'));
+  assert.equal(host.properties.titleHTML, '<h2>initial</h2>');
+  assert.equal(documentTransactions, 2);
+  h.act(() => editor.commands.undo()); assert.equal(host.properties.titleHTML, '<h2><strong>initial</strong></h2>');
+  assert.equal(editor.state.selection.from, 3);
+  h.act(() => editor.commands.undo()); assert.equal(host.properties.titleHTML, '<h2>initial</h2>');
+});
+
+test('collapsed toolbar state reads mixed whole-title marks, applies all and then removes all', async t => {
+  const { h, host, editor } = await setup(t, '<h2><strong>AB</strong>CD</h2>');
+  h.act(() => editor.commands.setTextSelection(2)); reveal(h, editor);
+  assert.equal(button('Bold').getAttribute('aria-pressed'), 'mixed');
+  click(h, button('Bold'));
+  assert.equal(host.properties.titleHTML, '<h2><strong>ABCD</strong></h2>');
+  assert.equal(button('Bold').getAttribute('aria-pressed'), 'true');
+  click(h, button('Bold'));
+  assert.equal(host.properties.titleHTML, '<h2>ABCD</h2>');
+  assert.equal(button('Bold').getAttribute('aria-pressed'), 'false');
+  assert.equal(editor.state.selection.from, 2);
+});
+
+test('empty-title toolbar styles prepare future typing without publishing and composing clicks never format', async t => {
+  const { h, host, editor } = await setup(t, '<h2></h2>');
+  const before = host.properties.titleHTML; reveal(h, editor);
+  const { Simulate } = require('react-dom/test-utils');
+  h.act(() => { Simulate.change(button('Font size'), { target: { value: '37' } }); });
+  h.act(() => { Simulate.keyDown(button('Font size'), { key: 'Enter' }); });
+  click(h, button('Theme color')); click(h, button('Brand')); click(h, button('Bold'));
+  assert.equal(host.properties.titleHTML, before);
+  assert.equal(button('Font size').value, '37'); assert.equal(button('Bold').getAttribute('aria-pressed'), 'true');
+  h.act(() => { editor.commands.insertContent('Title'); });
+  assert.equal(host.properties.titleHTML, '<h2><strong><span class="wps-color-brand wps-size-37">Title</span></strong></h2>');
+  const saved = host.properties.titleHTML;
+  const descriptor = Object.getOwnPropertyDescriptor(editor.view, 'composing');
+  Object.defineProperty(editor.view, 'composing', { configurable: true, value: true });
+  click(h, button('Italic')); click(h, button('Clear formatting'));
+  assert.equal(host.properties.titleHTML, saved);
+  if (descriptor) Object.defineProperty(editor.view, 'composing', descriptor); else delete editor.view.composing;
+  h.act(() => { editor.commands.undo(); }); assert.equal(host.properties.titleHTML, '');
+});
+
+test('rapid heading and spacing toolbar gestures remain separate undo events on the native transaction', async t => {
+  const { h, host, editor } = await setup(t); reveal(h, editor);
+  h.act(() => { editor.commands.setTextSelection(3); });
+  click(h, button('Heading')); click(h, menuItem('Heading 4'));
+  click(h, button('Heading')); click(h, menuItem('Normal'));
+  assert.equal(host.properties.titleHTML, '<p>initial</p>');
+  h.act(() => { editor.commands.undo(); }); assert.equal(host.properties.titleHTML, '<h4>initial</h4>');
+  h.act(() => { editor.commands.undo(); }); assert.equal(host.properties.titleHTML, '<h2>initial</h2>');
+  reveal(h, editor); click(h, button('Spacing')); click(h, menuItem('Line spacing 2'));
+  reveal(h, editor); click(h, button('Spacing')); click(h, menuItem('Space before'));
+  reveal(h, editor); click(h, button('Spacing')); click(h, menuItem('Space after'));
+  h.act(() => { editor.commands.undo(); }); assert.equal(host.properties.titleHTML, '<h2 class="wps-line-20 wps-space-before">initial</h2>');
+  h.act(() => { editor.commands.undo(); }); assert.equal(host.properties.titleHTML, '<h2 class="wps-line-20">initial</h2>');
+  h.act(() => { editor.commands.undo(); }); assert.equal(host.properties.titleHTML, '<h2>initial</h2>');
+  assert.equal(editor.state.selection.from, 3); assert.equal(editor.state.selection.to, 3);
 });
