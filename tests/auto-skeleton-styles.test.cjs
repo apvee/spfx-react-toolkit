@@ -91,3 +91,84 @@ test('AutoSkeleton geometry overrides Fluent defaults in either direction withou
     await harness.cleanup();
   }
 });
+
+test('AutoSkeleton none keeps Fluent items static and restores animation without replacing content', async () => {
+  const dom = harness.createSxDom();
+  for (const name of ['Node', 'Element', 'HTMLElement', 'NodeFilter', 'MutationObserver', 'Event']) global[name] = window[name];
+  global.getComputedStyle = window.getComputedStyle.bind(window);
+  document.createRange = () => ({ selectNodeContents() {}, getClientRects() { return []; } });
+  const React = require('react');
+  const ReactDOM = require('react-dom');
+  const { act } = require('react-dom/test-utils');
+  const { RendererProvider } = require('@griffel/react');
+  const { createDOMRenderer } = require('@griffel/core');
+  const { FluentProvider } = require('@fluentui/react-provider');
+  const { webLightTheme } = require('@fluentui/react-theme');
+  const { activeRules } = require('./fixtures/sx-harness.cjs');
+  const { AutoSkeleton } = await harness.loadModule(
+    'packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton.tsx'
+  );
+  const prototype = window.HTMLElement.prototype;
+  const originalRect = prototype.getBoundingClientRect;
+  const inert = Object.getOwnPropertyDescriptor(prototype, 'inert');
+  Object.defineProperty(prototype, 'inert', { configurable: true, get() { return this.hasAttribute('inert'); } });
+  prototype.getBoundingClientRect = function () {
+    return { x: 0, y: 0, left: 0, top: 0, right: 160, bottom: 24, width: 160, height: 24 };
+  };
+  const renderer = createDOMRenderer(document);
+  const host = document.createElement('div');
+  document.body.appendChild(host);
+  const child = React.createElement('input', { 'data-skeleton-shape': 'rectangle', defaultValue: 'initial value' });
+  const errors = [];
+  const originalError = console.error;
+  console.error = (...args) => errors.push(args.join(' '));
+  const render = (dir, animation) => act(() => {
+    ReactDOM.render(React.createElement(RendererProvider, { renderer },
+      React.createElement(FluentProvider, { theme: webLightTheme, dir },
+        React.createElement(AutoSkeleton, { id: 'static-preview', loading: true, animation }, child),
+        React.createElement(AutoSkeleton, { id: 'animated-sibling', loading: true }, child))), host);
+  });
+  try {
+    for (const dir of ['ltr', 'rtl']) {
+      render(dir, undefined);
+      const root = host.querySelector('#static-preview');
+      const input = root.querySelector('input');
+      input.value = 'retained value';
+      for (const animation of [undefined, 'pulse', 'none', 'wave', 'none', 'pulse']) {
+        render(dir, animation);
+        const item = root.querySelector('.fui-SkeletonItem');
+        assert.ok(item, 'uses a real Fluent SkeletonItem');
+        assert.ok(root.querySelector('.fui-Skeleton'), 'uses a real Fluent Skeleton');
+        const css = activeRules(renderer, item.className).join('\n');
+        if (animation === 'none') {
+          assert.match(css, /animation-name:\s*none/, 'static mode has no animation');
+          assert.match(css, /background-image:\s*none/, 'static mode has no shimmer gradient');
+          assert.match(css, /transform:\s*none/, 'the decorative fill covers the item in either direction');
+          assert.match(css, /forced-colors/, 'retains Fluent high-contrast styling');
+        } else {
+          assert.doesNotMatch(css, /animation-name:\s*none/, 'animation resumes after static mode');
+          if (animation !== 'pulse') assert.match(css, /background-image:\s*linear-gradient/, 'omission still uses wave');
+        }
+        assert.match(css, /background-color:\s*var\(--colorNeutralStencil1\)/, 'keeps Fluent theme fill');
+        const siblingCss = activeRules(renderer, host.querySelector('#animated-sibling .fui-SkeletonItem').className).join('\n');
+        assert.doesNotMatch(siblingCss, /animation-name:\s*none/, 'static mode does not affect another instance');
+        assert.equal(root.querySelector('input'), input);
+        assert.equal(input.value, 'retained value');
+        assert.equal(root.getAttribute('aria-busy'), 'true');
+        assert.equal(root.querySelector('[data-auto-skeleton-content]').getAttribute('aria-hidden'), 'true');
+        assert.equal(root.querySelector('[data-auto-skeleton-content]').hasAttribute('inert'), true);
+        assert.equal(root.querySelector('[style]'), null);
+      }
+    }
+    assert.deepEqual(errors, []);
+  } finally {
+    console.error = originalError;
+    act(() => { ReactDOM.unmountComponentAtNode(host); });
+    host.remove();
+    prototype.getBoundingClientRect = originalRect;
+    if (inert) Object.defineProperty(prototype, 'inert', inert);
+    else delete prototype.inert;
+    dom.window.close();
+    await harness.cleanup();
+  }
+});

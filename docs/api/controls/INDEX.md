@@ -17,7 +17,7 @@ Most controls are standalone and do not require an SPFx provider. `WebPartShell`
 | `StateMessageHeadingLevel` | Semantic title heading level 1–6 | [Heading](./state-message.md#statemessageheadinglevel-and-statemessagerole) |
 | `StateMessageRole` | status or explicit alert for the text region | [Role](./state-message.md#statemessageheadinglevel-and-statemessagerole) |
 | `StateMessageAction`, `StateMessageClickAction`, `StateMessageLinkAction` | Typed callback/button or navigation/anchor intentions | [Actions](./state-message.md#statemessageaction-statemessageclickaction-and-statemessagelinkaction) |
-| `AutoSkeleton` | Fluent loading items derived from mounted HTML geometry | [AutoSkeleton](./auto-skeleton.md#autoskeleton) |
+| `AutoSkeleton` | Animated or static Fluent placeholders derived from mounted HTML geometry | [AutoSkeleton](./auto-skeleton.md#autoskeleton), [Static placeholders](./auto-skeleton.md#static-placeholders) |
 | `AutoSkeletonProps` | Loading, animation, minimum size, exclusions and native div attributes | [Props](./auto-skeleton.md#autoskeletonprops) |
 | `RelativeTime` | Localized relative instant with accessible full date and clock modes | [RelativeTime](./relative-time.md#relativetime) |
 | `RelativeTimeProps` | Instant, locale, time zone, clock and native attributes | [Props](./relative-time.md#relativetimeprops) |

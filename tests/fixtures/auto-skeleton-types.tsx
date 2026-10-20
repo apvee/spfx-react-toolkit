@@ -12,5 +12,6 @@ const selectors = ['.ignored'] as const;
 <AutoSkeleton loading watch>Content</AutoSkeleton>;
 // @ts-expect-error direct HTML injection unsupported
 <AutoSkeleton loading dangerouslySetInnerHTML={{__html:'Content'}}>Content</AutoSkeleton>;
-// @ts-expect-error only Fluent wave/pulse
 <AutoSkeleton loading animation="none">Content</AutoSkeleton>;
+// @ts-expect-error unsupported animation
+<AutoSkeleton loading animation="spin">Content</AutoSkeleton>;

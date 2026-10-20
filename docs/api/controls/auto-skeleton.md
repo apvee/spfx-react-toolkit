@@ -24,12 +24,28 @@ The props extend native `React.ComponentPropsWithoutRef<'div'>`, excluding owned
 | --- | --- | --- |
 | `AutoSkeletonProps.children` | `React.ReactNode` | Required; rendered content to measure. It stays mounted while loading. |
 | `AutoSkeletonProps.loading` | `boolean` | Required; controls root `aria-busy` and requests the decorative overlay when geometry and native inert are available. |
-| `AutoSkeletonProps.animation` | `'wave' \| 'pulse'` | `'wave'`; uses Fluent's animation and accessibility media rules. |
+| `AutoSkeletonProps.animation` | `'wave' \| 'pulse' \| 'none'` | `'wave'`; animated modes use Fluent's animation and reduced-motion rules. `'none'` shows a uniform themed fill without animation or shimmer; loading semantics are unchanged. |
 | `AutoSkeletonProps.minSize` | `number` | `8`; both normalized width and height must meet this minimum. Values must be finite and greater than zero; invalid values throw `RangeError`. |
 | `AutoSkeletonProps.ignoreSelectors` | `readonly string[]` | Empty; each matching descendant and its entire subtree are excluded. Invalid CSS selectors throw `SyntaxError`, even when nothing matches. |
 | `AutoSkeletonProps.dangerouslySetInnerHTML` | `never` | Unsupported; supply rendered children. Removed from untyped runtime input as well. |
 
 There is no public measurement hook, shape prop, options object, cache, watch or debug API. Do not rely on the private scanner or styling modules.
+
+## Static placeholders
+
+Use `animation="none"` to show geometry-derived placeholders without the visual motion of loading. AutoSkeleton continues to render Fluent `Skeleton` and `SkeletonItem` components with a uniform themed fill, preserving their rounded shapes and forced-colors treatment. Omit `animation` to keep the default `wave`, or select `pulse` for Fluent's pulsing effect.
+
+```tsx
+import { AutoSkeleton } from '@apvee/spfx-react-toolkit';
+
+<AutoSkeleton loading={showPlaceholder} animation="none">
+  <ProfileCard />
+</AutoSkeleton>
+```
+
+`animation` only changes presentation. `loading` still controls the overlay and root `aria-busy`; measurable content remains mounted, hidden and inert while the overlay is active. Setting `animation="none"` does not create a permanent empty-state mode or change focus handling. The same native inert and measurable-content requirements apply. Switching between `none`, `wave` and `pulse` preserves child state and does not affect other AutoSkeleton instances.
+
+In the test web part, enable **Loading** and choose **none** under **Animation**. Resize the preview or change direction while static placeholders are visible, then choose `wave` or `pulse` to restore animation. Finish loading to check that the edited note and content mount count are preserved.
 
 ## Content markers
 
@@ -115,4 +131,4 @@ Use bounded, nonvirtualized HTML. Portals, shadow DOM, pseudo-elements, detailed
 
 Geometry is local to the mounted instance; there is no shared cache or session storage. Equal normalized geometry avoids state updates, duplicate bones are removed, and Griffel deduplicates repeated CSS declarations. New geometry values can still insert rules that persist for the host renderer's lifetime; memory is not guaranteed constant during arbitrary resizing. Generated nodes use classes, without authored inline geometry styles; forwarded consumer `style` remains an escape hatch.
 
-Fluent provides theme colors, forced-colors treatment and reduced-motion behavior. The control does not duplicate those colors or media rules. The lazy test-web-part panel shows one complete profile with a named Fluent Avatar, visible name and role, project description, editable note and metadata icons. A native Fluent Card surrounds AutoSkeleton and retains its themed surface and padding during loading. Its 40-pixel avatar and 160×24 title retain explicit circle/rectangle geometry hints. The same mounted profile exercises loading, animation, minimum size, exclusions, persistent child state, empty content, resize, theme/RTL and native ref/focus behavior. Local checks and authenticated host validation are separate; see the [SharePoint checklist](../../SHAREPOINT-VALIDATION.md#autoskeleton).
+Fluent provides theme colors, forced-colors treatment and reduced-motion behavior. The control does not duplicate those colors or media rules; static mode disables motion and the shimmer gradient on the existing Fluent items. The lazy test-web-part panel shows one complete profile with a named Fluent Avatar, visible name and role, project description, editable note and metadata icons. A native Fluent Card surrounds AutoSkeleton and retains its themed surface and padding during loading. Its 40-pixel avatar and 160×24 title retain explicit circle/rectangle geometry hints. The same mounted profile exercises loading, wave/pulse/static presentation, minimum size, exclusions, persistent child state, empty content, resize, theme/RTL and native ref/focus behavior. Local checks and authenticated host validation are separate; see the [SharePoint checklist](../../SHAREPOINT-VALIDATION.md#autoskeleton).

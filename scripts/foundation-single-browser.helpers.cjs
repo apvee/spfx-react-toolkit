@@ -2,6 +2,7 @@
 // remain on the normal full fixture route and retain their existing assertions.
 async function checkFoundationSingleBrowser(page, check) {
   const origin = new URL(page.url()).origin;
+  const settle = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   const route = async name => {
     await page.goto(`${origin}/?foundation-product=${name}`);
     await page.locator('[data-demo-section]').waitFor();
@@ -78,6 +79,18 @@ async function checkFoundationSingleBrowser(page, check) {
   await auto('focus-target').fill('Note conservata durante il caricamento');
   await auto('loading').check();
   check('AutoSkeleton busy state on actual root', await auto('preview').getAttribute('aria-busy'), 'true');
+  await auto('animation').selectOption('none');
+  await settle();
+  check('AutoSkeleton static Fluent items on actual root', await auto('preview').locator('.fui-SkeletonItem').evaluateAll(items => items.length > 0 && items.every(item => {
+    const css = getComputedStyle(item, '::after');
+    return css.animationName === 'none' && css.backgroundImage === 'none' && css.transform === 'none';
+  })), true);
+  check('AutoSkeleton static busy state retained', await auto('preview').getAttribute('aria-busy'), 'true');
+  for (const animation of ['wave', 'pulse']) {
+    await auto('animation').selectOption(animation);
+    await settle();
+    check(`AutoSkeleton ${animation} restored after static mode`, await auto('preview').locator('.fui-SkeletonItem').first().evaluate(item => getComputedStyle(item, '::after').animationName !== 'none'), true);
+  }
   await auto('loading').uncheck();
   check('AutoSkeleton child note retained', await auto('focus-target').inputValue(), 'Note conservata durante il caricamento');
   await open();

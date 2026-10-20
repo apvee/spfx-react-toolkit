@@ -23,6 +23,14 @@ export const useAutoSkeletonStyles = makeStyles({
   item: {
     position: 'absolute',
   },
+  staticItem: {
+    // Keep Fluent wave's themed base and forced-colors fill, without its moving gradient.
+    '::after': {
+      animationName: 'none',
+      backgroundImage: 'none',
+      transform: 'none',
+    },
+  },
 });
 
 /** Compile current geometry with the host renderer; Griffel deduplicates repeated rules. */

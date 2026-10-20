@@ -146,7 +146,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     description: 'Measured loading geometry, persistent child state, resize, focus and direction.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-auto-skeleton' */ './panels/AutoSkeletonPanel')),
     coverage: [
-      { symbol: 'AutoSkeleton', kind: 'snapshot', notes: 'Loading, animation, minimum size, ignored subtrees, empty content, resize, host theme/RTL and native ref/focus/state observations.' },
+      { symbol: 'AutoSkeleton', kind: 'snapshot', notes: 'Loading, wave/pulse/none animation, static placeholders, minimum size, ignored subtrees, empty content, resize, host theme/RTL and native ref/focus/state observations.' },
     ],
   },
   {

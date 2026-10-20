@@ -17,8 +17,11 @@ export type AutoSkeletonProps = Omit<React.ComponentPropsWithoutRef<'div'>,
   /** Sets root `aria-busy`. When geometry and native `inert` exist, hides measured content
    * beneath a decorative overlay and releases focus inside it. Otherwise content stays available. */
   loading: boolean;
-  /** Fluent animation; defaults to wave and respects the host's reduced-motion preference. */
-  animation?: 'wave' | 'pulse';
+  /** Visual treatment; defaults to `wave`. Fluent `wave` and `pulse` respect reduced motion.
+   * `none` keeps Fluent items with a uniform themed fill and no animation or shimmer.
+   * This affects presentation only: `loading` still controls visibility, inert content and `aria-busy`.
+   */
+  animation?: 'wave' | 'pulse' | 'none';
   /** Minimum normalized width and height in pixels. Defaults to `8`; nonfinite or nonpositive values throw `RangeError` after mount. */
   minSize?: number;
   /** CSS selectors excluding matching descendants and their entire subtrees.

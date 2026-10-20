@@ -15,7 +15,7 @@ const useStyles = makeStyles({
 });
 const ignoredSelectors: readonly string[] = ['.auto-skeleton-demo-ignore'];
 const noSelectors: readonly string[] = [];
-const animations: readonly NonNullable<AutoSkeletonProps['animation']>[] = ['wave', 'pulse'];
+const animations: readonly NonNullable<AutoSkeletonProps['animation']>[] = ['wave', 'pulse', 'none'];
 
 const MountedContent: React.FC<{ inputRef: React.RefObject<HTMLInputElement>; onMount: () => void }> = ({ inputRef, onMount }) => {
   const sx = useSx();
@@ -54,9 +54,9 @@ const AutoSkeletonExamples: React.FC<{ directionControl: React.ReactNode }> = ({
   const rootRef = React.useMemo(() => React.createRef<HTMLDivElement>(), []);
   const inputRef = React.useMemo(() => React.createRef<HTMLInputElement>(), []);
   const onMount = useStableCallback(() => setMounts(value => value + 1));
-  return <DemoCard title="AutoSkeleton" iconName="Processing" description="Show the loading state while preserving profile content, note and layout."
+  return <DemoCard title="AutoSkeleton" iconName="Processing" description="Show animated or static placeholders while preserving profile content, note and layout."
     controls={<><Checkbox input={{ as: 'input', ...{ 'data-auto-skeleton-demo': 'loading' } }} checked={loading} onChange={(_event, data) => setLoading(data.checked === true)} label="Loading" />
-<Field label="Animation"><Select select={{ as: 'select', ...{ 'data-auto-skeleton-demo': 'animation', 'data-demo-variant': 'auto-skeleton' } }} value={animation} onChange={(_event, data) => {
+<Field label="Animation" hint="Choose none for static placeholders. Loading still controls visibility and busy state."><Select select={{ as: 'select', ...{ 'data-auto-skeleton-demo': 'animation', 'data-demo-variant': 'auto-skeleton' } }} value={animation} onChange={(_event, data) => {
         const selected = animations.find(value => value === data.value); if (selected) setAnimation(selected);
       }}>{animations.map(value => <option key={value}>{value}</option>)}</Select></Field>
 <Checkbox input={{ as: 'input', ...{ 'data-auto-skeleton-demo': 'resize' } }} checked={narrow} onChange={(_event, data) => setNarrow(data.checked === true)} label="Narrow width" />

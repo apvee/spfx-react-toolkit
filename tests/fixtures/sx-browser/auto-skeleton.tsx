@@ -2,6 +2,7 @@ import * as React from 'react';
 import { makeStyles, mergeClasses } from '@griffel/react';
 import { Skeleton, SkeletonItem } from '@fluentui/react-components';
 import { AutoSkeleton } from '../../../packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton';
+import type { AutoSkeletonProps } from '../../../packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton.types';
 import { useSx } from '../../../packages/spfx-react-toolkit/src/hooks/useSx';
 import * as width from '../../../packages/spfx-react-toolkit/src/helpers/styles/width';
 
@@ -9,7 +10,7 @@ interface AutoSkeletonFixtureConfig {
   loading: boolean;
   empty: boolean;
   narrow: boolean;
-  animation: 'wave' | 'pulse';
+  animation: NonNullable<AutoSkeletonProps['animation']>;
   minSize: number;
   ignore: boolean;
   scrolling: boolean;
@@ -67,7 +68,7 @@ export function AutoSkeletonFixture(): React.ReactElement {
     <button id="as-loading" type="button" onClick={() => update({ loading: !config.loading })}>Toggle loading</button>{' '}
     <button id="as-resize" type="button" onClick={() => update({ narrow: !config.narrow })}>Resize content</button>{' '}
     <button id="as-empty" type="button" onClick={() => update({ empty: !config.empty })}>Toggle empty</button>{' '}
-    <button id="as-animation" type="button" onClick={() => update({ animation: config.animation === 'wave' ? 'pulse' : 'wave' })}>Toggle animation</button>{' '}
+    <button id="as-animation" type="button" onClick={() => update({ animation: config.animation === 'wave' ? 'pulse' : config.animation === 'pulse' ? 'none' : 'wave' })}>Toggle animation</button>{' '}
     <button id="as-focus-load" type="button" onClick={() => window.autoSkeletonFixture.focusAndLoad()}>Focus input then load</button>
     <button id="as-tab-before" type="button">Before content</button>
     <AutoSkeleton id="as-root" ref={rootRef} loading={config.loading} animation={config.animation} minSize={config.minSize}
@@ -91,7 +92,7 @@ export function AutoSkeletonFixture(): React.ReactElement {
       <div id="as-second-rectangle" data-skeleton-shape="rectangle" className={styles.rectangle} />
     </AutoSkeleton>
     <AutoSkeleton id="as-cold-empty" loading>{undefined}</AutoSkeleton>
-    <Skeleton id="as-native" animation={config.animation} aria-label="Native Fluent comparison">
+    <Skeleton id="as-native" animation={config.animation === 'none' ? 'wave' : config.animation} aria-label="Native Fluent comparison">
       <SkeletonItem id="as-native-item" shape="rectangle" />
     </Skeleton>
   </section>;
