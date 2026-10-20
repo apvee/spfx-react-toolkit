@@ -101,7 +101,7 @@ function getWebPartShellPropertiesMetadata(): IWebPartPropertiesMetadata;
 | `WebPartShellProps.padding` | Defaults to auto; explicit none/small/medium/large uses the existing Fluent spacing scale. |
 | `WebPartShellProps.theme` | Explicit Fluent theme tokens override ancestor and host tokens. |
 | `WebPartShellProps.dir` | Explicit LTR/RTL overrides ancestor Fluent direction and SPFx culture direction. |
-| `WebPartShellProps.action` | Caller-owned header actions under both providers, rendered unchanged. |
+| `WebPartShellProps.action` | Header action content slot under both providers; shorthand retains its DOM. |
 | `WebPartShellProps.children` | Application content; its mounted identity survives title mode and visibility changes. |
 | `WebPartShellProps.dangerouslySetInnerHTML` | Disallowed; untyped injection is discarded. |
 
@@ -226,8 +226,21 @@ Root, `/controls` and `/controls/web-part-shell` share canonical component/type/
 
 ## Sample and verification limits
 
-The actual sample root uses the shell, manifest defaults, searchable metadata and a show-title pane toggle. Its lazy **WebPartShell** panel makes surfaces/padding, theme/direction, property replacement, visibility and preserved child/action state observable. Dedicated browser fixtures cover native ref, event and style forwarding. Build the library before the app and restart an active serve after library changes. See [development checks](../../DEVELOPMENT.md#webpartshell-development) and the [authenticated checklist](../../SHAREPOINT-VALIDATION.md#webpartshell).
+The actual sample root uses the shell, manifest defaults, searchable metadata and a show-title pane toggle. Its lazy **WebPartShell** panel makes surfaces/padding, inherited host theme/direction, property replacement, visibility and preserved child/action state observable. Dedicated browser fixtures cover native ref, event and style forwarding. Build the library before the app and restart an active serve after library changes. See [development checks](../../DEVELOPMENT.md#webpartshell-development) and the [authenticated checklist](../../SHAREPOINT-VALIDATION.md#webpartshell).
 
 Local Chrome acceptance covers both source and compiled-library fixtures. `scripts/check-title-toolbar-localization-browser.cjs` checks the 50 UI catalogs, color tooltips, instance isolation and narrow/RTL layouts; `scripts/check-title-toolbar-geometry-browser.cjs` checks foreground rendering, whole-title formatting, overflow, themes, forced colors and native 200% zoom. These fixtures mount real providers/hooks with service doubles; composition events use CDP and paste uses a synthetic ClipboardEvent, alongside actual mouse/keyboard interactions. They establish local behavior, not authenticated host save/reload/search, live Teams/Office/Outlook behavior, device IME, touch or screen-reader acceptance. Those checks remain NOT EXECUTED until their own host observations are recorded. Catalog completeness and localized UI bindings do not establish native-speaker certification of the translations.
+
+## Header action slot
+
+`action` accepts string/JSX shorthand or a fixed `div` props object under the existing SPFx and Fluent providers. Shorthand keeps its existing DOM; object refs target an inner action div, separate from the shell root. Native attributes, className, consumer style and Fluent render callbacks are supported with the existing peer dependencies:
+
+```tsx
+<WebPartShell instance={this} action={{
+  className: classes.actions,
+  children: (Component, props) => <Component {...props}><MyActions /></Component>,
+}}><MyContent /></WebPartShell>
+```
+
+An empty props object requests the header/action container even when the persisted title is hidden. Booleans, undefined and legacy null suppress action content. Callbacks execute only during ordinary rendering, may run more than once, and are never invoked for presence inspection. Static strings are literal. `as` can only repeat div; raw HTML and unsupported native keys are discarded. JSX/callback subtrees remain caller-owned, and React 17 erased `ReactNode` types can bypass literal-object restrictions. The persisted title protocol, title editor, provider ownership and body lifecycle remain unchanged.
 
 [View public source](../../../packages/spfx-react-toolkit/src/controls/web-part-shell/index.ts)

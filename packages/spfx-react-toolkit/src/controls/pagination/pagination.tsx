@@ -26,8 +26,10 @@ type PaginationAction = 'first' | 'previous' | 'next' | 'last' | 'loadMore';
  * @param props Controlled state, localized labels, loading, button appearance/density and native nav attributes.
  * @returns A labelled navigation landmark, or an empty fragment for invalid runtime state.
  * @example
+ * ```tsx
  * <Pagination pagination={{ type: 'loadMore', hasNextPage: hasMore }} loading={loadingMore}
  *   onPaginationChange={() => { void loadMore().catch(reportError); }} />
+ * ```
  */
 export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(({
   pagination, onPaginationChange, loading = false, size = 'medium', appearance = 'subtle', strings: overrides,
@@ -38,7 +40,12 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(({
   delete navProps.children;
   delete navProps.dangerouslySetInnerHTML;
   const sx = useSx(), styles = usePaginationStyles();
-  const [activeRequest, setActiveRequest] = React.useState<{ mode: 'pages' | 'cursor' | 'loadMore'; action: PaginationAction }>();
+  const [activeRequest, setActiveRequest] = React.useState<{
+    /** Mode associated with the recorded click; ignored when the controlled mode changes. */
+    mode: 'pages' | 'cursor' | 'loadMore';
+    /** Most recently requested navigation action, used only for spinner placement. */
+    action: PaginationAction;
+  }>();
   const wasLoading = React.useRef(loading);
   const mode = pagination?.type;
   React.useEffect(() => {

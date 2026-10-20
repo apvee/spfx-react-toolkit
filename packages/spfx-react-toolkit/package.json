@@ -222,6 +222,26 @@
       "types": "./lib/controls/description-list/index.d.ts",
       "default": "./lib/controls/description-list/index.js"
     },
+    "./controls/content-card": {
+      "types": "./lib/controls/content-card/index.d.ts",
+      "default": "./lib/controls/content-card/index.js"
+    },
+    "./controls/preview-card": {
+      "types": "./lib/controls/preview-card/index.d.ts",
+      "default": "./lib/controls/preview-card/index.js"
+    },
+    "./controls/sharepoint-permission-trim": {
+      "types": "./lib/controls/sharepoint-permission-trim/index.d.ts",
+      "default": "./lib/controls/sharepoint-permission-trim/index.js"
+    },
+    "./controls/sharepoint-group-trim": {
+      "types": "./lib/controls/sharepoint-group-trim/index.d.ts",
+      "default": "./lib/controls/sharepoint-group-trim/index.js"
+    },
+    "./controls/entra-group-trim": {
+      "types": "./lib/controls/entra-group-trim/index.d.ts",
+      "default": "./lib/controls/entra-group-trim/index.js"
+    },
     "./LICENSE": "./LICENSE",
     "./README.md": "./README.md",
     "./lib/core/context.internal.d.ts": "./lib/core/context.internal.d.ts",
@@ -1916,6 +1936,18 @@
       "hooks/useStableCallback": [
         "lib/hooks/useStableCallback.d.ts"
       ],
+      "controls/file-folder-picker": [
+        "lib/controls/file-folder-picker/index.d.ts"
+      ],
+      "property-pane/file-folder-picker": [
+        "lib/property-pane/file-folder-picker/index.d.ts"
+      ],
+      "controls/pickers": [
+        "lib/controls/pickers/index.d.ts"
+      ],
+      "property-pane/pickers": [
+        "lib/property-pane/pickers/index.d.ts"
+      ],
       "controls": [
         "lib/controls/index.d.ts"
       ],
@@ -1955,17 +1987,20 @@
       "controls/description-list": [
         "lib/controls/description-list/index.d.ts"
       ],
-      "controls/file-folder-picker": [
-        "lib/controls/file-folder-picker/index.d.ts"
+      "controls/content-card": [
+        "lib/controls/content-card/index.d.ts"
       ],
-      "property-pane/file-folder-picker": [
-        "lib/property-pane/file-folder-picker/index.d.ts"
+      "controls/preview-card": [
+        "lib/controls/preview-card/index.d.ts"
       ],
-      "controls/pickers": [
-        "lib/controls/pickers/index.d.ts"
+      "controls/sharepoint-permission-trim": [
+        "lib/controls/sharepoint-permission-trim/index.d.ts"
       ],
-      "property-pane/pickers": [
-        "lib/property-pane/pickers/index.d.ts"
+      "controls/sharepoint-group-trim": [
+        "lib/controls/sharepoint-group-trim/index.d.ts"
+      ],
+      "controls/entra-group-trim": [
+        "lib/controls/entra-group-trim/index.d.ts"
       ]
     }
   },

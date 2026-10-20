@@ -117,3 +117,23 @@ test('standalone TagPicker preserves caller descriptions alongside the Fluent Fi
  const f=mount(React.createElement(F.Root,{defaultValues:{tags:[]},onSubmit:()=>{}},React.createElement('p',{id:'standalone-caller-help'},'Caller help'),React.createElement(F.TagPicker,{name:'tags',ref,label:'Tags',hint:'Field hint','aria-describedby':'standalone-caller-help',options})));
  try{const descriptions=ids(ref.current,'aria-describedby');assert.ok(descriptions.includes('standalone-caller-help'));assert.ok(texts(ref.current,'aria-describedby').includes('Field hint'));assert.equal(descriptions.length,new Set(descriptions).size);}finally{f.close();}
 });
+
+test('field bridge inspects slot children, preserves outer Label and excludes empty description associations', () => {
+ const ref=React.createRef(); const f=fixture('Input',{}, {title:{ref,children:'Slot label'},description:{children:''}});
+ try{const label=f.host.querySelector('label[data-settings-field-label]');assert.equal(ref.current.tagName,'SPAN');assert.ok(label.contains(ref.current));assert.equal(label.htmlFor,f.ref.current.id);assert.deepEqual(texts(f.ref.current,'aria-labelledby'),['Slot label']);assert.ok(!ids(f.ref.current,'aria-describedby').some(id=>id.startsWith('settings-description-')));}finally{f.close();}
+ const original=console.error;console.error=()=>{};try{assert.throws(()=>fixture('Input',{}, {title:{children:React.createElement('em',{},' ')}}),/SettingsGroup.*title/);}finally{console.error=original;}
+ let calls=0,renders=0;function Title(){renders++;return 'Callback label';}const g=fixture('Input',{}, {title:{children:(Tag,props)=>{calls++;return React.createElement(Tag,props,React.createElement(Title));}}});try{assert.equal(calls,renders,'validation must not execute title callbacks');assert.ok(texts(g.ref.current,'aria-labelledby').includes('Callback label'));}finally{g.close();}
+});
+
+test('field bridge keeps blank object description containers without blank associations and preserves whitespace shorthand', () => {
+ for (const description of [{children:' '},{children:React.createElement(React.Fragment,{},' ',false,'\n')}]) {
+  const f=fixture('Input',{}, {description});try{assert.ok(f.host.querySelector('[id^="settings-description-"] span span'));assert.ok(!ids(f.ref.current,'aria-describedby').some(id=>id.startsWith('settings-description-')));}finally{f.close();}
+ }
+ const f=fixture('Input',{}, {description:' '});try{assert.ok(ids(f.ref.current,'aria-describedby').some(id=>id.startsWith('settings-description-')));}finally{f.close();}
+});
+
+for (const control of [{ label: undefined, hint: { children: 'Competing hint' } }, { label: { children: 'Competing label' } }, { label: null }, { label: false }, { hint: null }, { hint: false }]) test(`field rows retain defined presentation conflict policy ${JSON.stringify(control)}`, () => {
+ const original = console.error; console.error = () => {};
+ try { assert.throws(() => fixture('Input', control), /SettingsGroup.*(label|hint)/); }
+ finally { console.error = original; }
+});

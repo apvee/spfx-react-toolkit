@@ -77,17 +77,40 @@ StageRoot.displayName = 'Stage';
  * @param props Surface attributes, presentation-specific options and open-state ownership.
  * @returns The integrated trigger, when supplied, and the Fluent-owned surface/portal.
  * @example
+ * ```tsx
  * <Stage presentation="dialog" trigger={<button type="button">Edit</button>}>
  *   <Stage.Header title="Profile" closeLabel="Close" />
  *   <Stage.Body><input aria-label="Name" /></Stage.Body>
  *   <Stage.Footer><button type="button">Save</button></Stage.Footer>
  * </Stage>
+ * ```
  */
 export const Stage = Object.assign(StageRoot, {
-  /** Semantic heading, decorative icon, supporting text and caller-owned actions. */
+  /** Semantic heading, decorative icon, supporting text and caller-owned action. Requires the owning Stage.
+   * @param props Native div attributes and header content.
+   * @returns The header div within the active surface; its ref targets that div.
+   * @example
+   * ```tsx
+   * <Stage presentation="dialog"><Stage.Header title="Profile" /></Stage>
+   * ```
+   */
   Header: StageHeader,
-  /** Growing scroll region, preserving the consumer's content. */
+  /** Growing scroll region, preserving the consumer's content. Requires the owning Stage.
+   * @param props Native div attributes and body content.
+   * @returns The body div within the active surface; its ref targets that div.
+   * @example
+   * ```tsx
+   * <Stage presentation="dialog"><Stage.Body>Content</Stage.Body></Stage>
+   * ```
+   */
   Body: StageBody,
-  /** Optional free-content footer; actions do not dismiss automatically. */
+  /** Optional free-content footer; actions do not dismiss automatically. Requires the owning Stage.
+   * @param props Native div attributes and footer content.
+   * @returns The footer div within the active surface; its ref targets that div.
+   * @example
+   * ```tsx
+   * <Stage presentation="dialog"><Stage.Footer><button type="button">Save</button></Stage.Footer></Stage>
+   * ```
+   */
   Footer: StageFooter,
 });

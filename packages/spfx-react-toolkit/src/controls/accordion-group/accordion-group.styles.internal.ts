@@ -20,6 +20,13 @@ export const useAccordionGroupStyles = makeStyles({
   button: { paddingLeft: 0, paddingRight: 0 },
   panel: { marginLeft: 0, marginRight: 0 },
   panelContent: { paddingBlock: tokens.spacingVerticalS },
+  // Only the introduced object/callback container participates in owned icon sizing.
+  iconContent: {
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+    inlineSize: '100%', blockSize: '100%',
+    '& > i': { fontSize: 'inherit' },
+    '& > svg': { inlineSize: '100%', blockSize: '100%' },
+  },
   icon: {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
     inlineSize: '20px', blockSize: '20px', fontSize: '20px', lineHeight: '1',

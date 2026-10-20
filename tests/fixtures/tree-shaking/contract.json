@@ -159,6 +159,27 @@
     ],
     "description-list": [
       "^@apvee/spfx-react-toolkit/lib/controls/description-list/"
+    ],
+    "content-card": [
+      "^@apvee/spfx-react-toolkit/lib/controls/content-card/"
+    ],
+    "preview-card": [
+      "^@apvee/spfx-react-toolkit/lib/controls/preview-card/"
+    ],
+    "card-frame": [
+      "^@apvee/spfx-react-toolkit/lib/controls/cards/card-frame\\.internal\\.js$"
+    ],
+    "card-image": [
+      "^@apvee/spfx-react-toolkit/lib/controls/cards/card-image\\.internal\\.js$"
+    ],
+    "sharepoint-permission-trim": [
+      "^@apvee/spfx-react-toolkit/lib/controls/sharepoint-permission-trim/"
+    ],
+    "sharepoint-group-trim": [
+      "^@apvee/spfx-react-toolkit/lib/controls/sharepoint-group-trim/"
+    ],
+    "entra-group-trim": [
+      "^@apvee/spfx-react-toolkit/lib/controls/entra-group-trim/"
     ]
   },
   "fixtures": [
@@ -211,7 +232,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": []
     },
@@ -269,7 +297,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": []
     },
@@ -322,7 +357,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": []
     },
@@ -381,7 +423,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -443,7 +492,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -494,7 +550,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -548,7 +611,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -601,7 +671,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -663,7 +740,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -720,7 +804,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": []
     },
@@ -759,7 +850,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": []
     },
@@ -796,7 +894,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": []
     },
@@ -836,7 +941,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -893,7 +1005,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": []
     },
@@ -932,7 +1051,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -972,7 +1098,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -1024,7 +1157,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "formatted-text",
@@ -1081,7 +1221,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "relative-time",
@@ -1135,7 +1282,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "iana-lookup"
@@ -1189,7 +1343,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": []
     },
@@ -1240,7 +1401,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "auto-skeleton",
@@ -1291,7 +1459,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "state-message",
@@ -1347,7 +1522,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "settings-group",
@@ -1400,7 +1582,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "accordion-group",
@@ -1451,7 +1640,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1506,7 +1702,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1564,7 +1767,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "data-grid",
@@ -1620,7 +1830,14 @@
         "prosemirror",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "data-grid",
@@ -1663,7 +1880,14 @@
         "form-time",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "shell",
@@ -1717,7 +1941,14 @@
         "form-time",
         "stage",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": []
     },
@@ -1759,7 +1990,14 @@
         "prosemirror",
         "markdown",
         "pagination",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "stage",
@@ -1811,7 +2049,14 @@
         "prosemirror",
         "markdown",
         "stage",
-        "description-list"
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "pagination",
@@ -1865,13 +2110,389 @@
         "formatted-text",
         "relative-time",
         "auto-skeleton",
-        "state-message"
+        "state-message",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
       ],
       "requiredModuleGroups": [
         "description-list",
         "griffel",
         "typography",
         "styles-compiler"
+      ]
+    },
+    {
+      "id": "content-card",
+      "template": "content-card.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/content-card"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "theme-conversion",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror",
+        "markdown",
+        "stage",
+        "pagination",
+        "description-list",
+        "settings-group",
+        "accordion-group",
+        "formatted-text",
+        "relative-time",
+        "auto-skeleton",
+        "state-message",
+        "preview-card",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
+      ],
+      "requiredModuleGroups": [
+        "content-card",
+        "card-frame",
+        "fluent-card",
+        "griffel",
+        "typography",
+        "styles-compiler"
+      ]
+    },
+    {
+      "id": "preview-card",
+      "template": "preview-card.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/preview-card"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "pnp",
+        "spfx-runtime",
+        "provider",
+        "theme-conversion",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror",
+        "markdown",
+        "stage",
+        "pagination",
+        "description-list",
+        "settings-group",
+        "accordion-group",
+        "formatted-text",
+        "relative-time",
+        "auto-skeleton",
+        "state-message",
+        "content-card",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim"
+      ],
+      "requiredModuleGroups": [
+        "preview-card",
+        "card-frame",
+        "fluent-card",
+        "griffel",
+        "typography",
+        "styles-compiler",
+        "card-image"
+      ]
+    },
+    {
+      "id": "sharepoint-permission-trim",
+      "template": "sharepoint-permission-trim.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/sharepoint-permission-trim"
+          }
+        }
+      },
+      "requiredModuleGroups": [
+        "sharepoint-permission-trim"
+      ],
+      "forbiddenModuleGroups": [
+        "pnp",
+        "styles-engine",
+        "list-registration",
+        "search-registration",
+        "batch-registration",
+        "griffel",
+        "style-descriptors",
+        "fluent-style",
+        "theme-conversion",
+        "typography",
+        "formatted-text",
+        "markdown",
+        "fluent-link",
+        "relative-time",
+        "iana-lookup",
+        "fluent-tooltip",
+        "auto-skeleton",
+        "fluent-skeleton",
+        "styles-compiler",
+        "state-message",
+        "state-artwork",
+        "fluent-button",
+        "settings-group",
+        "accordion-group",
+        "fluent-card",
+        "fluent-accordion",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3",
+        "grid-query",
+        "relative-time-control",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror",
+        "editor-menus",
+        "shell-runtime",
+        "stage",
+        "fluent-dialog",
+        "fluent-drawer",
+        "fluent-popover",
+        "pagination",
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-group-trim",
+        "entra-group-trim"
+      ]
+    },
+    {
+      "id": "sharepoint-group-trim",
+      "template": "sharepoint-group-trim.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/sharepoint-group-trim"
+          }
+        }
+      },
+      "requiredModuleGroups": [
+        "sharepoint-group-trim"
+      ],
+      "forbiddenModuleGroups": [
+        "pnp",
+        "styles-engine",
+        "list-registration",
+        "search-registration",
+        "batch-registration",
+        "griffel",
+        "style-descriptors",
+        "fluent-style",
+        "theme-conversion",
+        "typography",
+        "formatted-text",
+        "markdown",
+        "fluent-link",
+        "relative-time",
+        "iana-lookup",
+        "fluent-tooltip",
+        "auto-skeleton",
+        "fluent-skeleton",
+        "styles-compiler",
+        "state-message",
+        "state-artwork",
+        "fluent-button",
+        "settings-group",
+        "accordion-group",
+        "fluent-card",
+        "fluent-accordion",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3",
+        "grid-query",
+        "relative-time-control",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror",
+        "editor-menus",
+        "shell-runtime",
+        "stage",
+        "fluent-dialog",
+        "fluent-drawer",
+        "fluent-popover",
+        "pagination",
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "entra-group-trim"
+      ]
+    },
+    {
+      "id": "entra-group-trim",
+      "template": "entra-group-trim.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/entra-group-trim"
+          }
+        }
+      },
+      "requiredModuleGroups": [
+        "entra-group-trim"
+      ],
+      "forbiddenModuleGroups": [
+        "pnp",
+        "styles-engine",
+        "list-registration",
+        "search-registration",
+        "batch-registration",
+        "griffel",
+        "style-descriptors",
+        "fluent-style",
+        "theme-conversion",
+        "typography",
+        "formatted-text",
+        "markdown",
+        "fluent-link",
+        "relative-time",
+        "iana-lookup",
+        "fluent-tooltip",
+        "auto-skeleton",
+        "fluent-skeleton",
+        "styles-compiler",
+        "state-message",
+        "state-artwork",
+        "fluent-button",
+        "settings-group",
+        "accordion-group",
+        "fluent-card",
+        "fluent-accordion",
+        "form",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "data-grid",
+        "charts",
+        "d3",
+        "grid-query",
+        "relative-time-control",
+        "shell",
+        "editor",
+        "tiptap",
+        "prosemirror",
+        "editor-menus",
+        "shell-runtime",
+        "stage",
+        "fluent-dialog",
+        "fluent-drawer",
+        "fluent-popover",
+        "pagination",
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim"
       ]
     }
   ],
@@ -2149,6 +2770,66 @@
     {
       "candidate": "description-list/domain",
       "reference": "description-list/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "content-card/root",
+      "reference": "content-card/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "content-card/domain",
+      "reference": "content-card/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "preview-card/root",
+      "reference": "preview-card/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "preview-card/domain",
+      "reference": "preview-card/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "sharepoint-permission-trim/root",
+      "reference": "sharepoint-permission-trim/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "sharepoint-permission-trim/domain",
+      "reference": "sharepoint-permission-trim/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "sharepoint-group-trim/root",
+      "reference": "sharepoint-group-trim/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "sharepoint-group-trim/domain",
+      "reference": "sharepoint-group-trim/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "entra-group-trim/root",
+      "reference": "entra-group-trim/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "entra-group-trim/domain",
+      "reference": "entra-group-trim/control",
       "metric": "gzip",
       "maxIncreaseBytes": 0
     }

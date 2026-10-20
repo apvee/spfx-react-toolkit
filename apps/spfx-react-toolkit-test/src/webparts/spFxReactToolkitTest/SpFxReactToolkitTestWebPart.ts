@@ -1,4 +1,4 @@
-import { fileFolderDemoExperience, fileFolderDemoPreset, fileFolderHasLegacySettings } from './components/shared/fileFolderPickerNavigation';
+import { fileFolderDemoExperience, fileFolderDemoPreset } from './components/shared/fileFolderPickerNavigation';
 import type { FileFolderDemoSettings } from './components/shared/fileFolderPickerNavigation';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
@@ -175,13 +175,14 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
       fileFolderKind === 'folder' ? { kind: 'folder', webUrl: list?.webUrl ?? this.context.pageContext.web.absoluteUrl, list: listTarget ?? '', folder: this.properties.fileFolderFolder ?? '' } :
       fileFolderKind === 'library' ? { kind: 'library', webUrl: list?.webUrl ?? this.context.pageContext.web.absoluteUrl, list: listTarget ?? '' } : { kind: 'siteCollection', siteUrl: site?.url };
     const fileFolderDisabled = (fileFolderKind === 'library' || fileFolderKind === 'folder') && listTarget === undefined;
-    const fileFolderPreset = fileFolderDemoPreset(this.properties);
+    const savedFileFolderPreset = fileFolderDemoPreset(this.properties);
+    const fileFolderPreset = savedFileFolderPreset === 'legacy' ? 'focused' : savedFileFolderPreset;
     const fileFolderInitialLocation = this.properties.fileFolderInitialWeb || this.properties.fileFolderInitialLibrary || this.properties.fileFolderInitialFolder ? {
       webUrl: this.properties.fileFolderInitialWeb?.trim() || undefined,
       list: this.properties.fileFolderInitialLibrary?.trim() || undefined,
       folder: this.properties.fileFolderInitialFolder || undefined,
     } : undefined;
-    const fileFolderExperience = fileFolderDemoExperience(this.properties, fileFolderScope, fileFolderInitialLocation);
+    const fileFolderExperience = fileFolderDemoExperience({ ...this.properties, fileFolderPreset }, fileFolderScope, fileFolderInitialLocation);
     return {
       pages: [
         {
@@ -218,7 +219,6 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
                 ] }),
                 ...(fileFolderKind === 'folder' || fileFolderKind === 'oneDrive' ? [PropertyPaneTextField('fileFolderFolder', { label: 'Existing folder path' })] : []),
                 PropertyPaneDropdown('fileFolderPreset', { label: 'Preset', selectedKey: fileFolderPreset, options: [
-                  ...(fileFolderHasLegacySettings(this.properties) || fileFolderPreset === 'legacy' ? [{ key: 'legacy', text: 'Existing configuration (legacy)' }] : []),
                   { key: 'focused', text: 'Focused' }, { key: 'extended', text: 'Extended' },
                 ] }),
                 PropertyPaneDropdown('fileFolderItemTypes', { label: 'Selectable content', selectedKey: this.properties.fileFolderItemTypes ?? 'files', options: [{ key: 'files', text: 'Files' }, { key: 'folders', text: 'Folders' }, { key: 'all', text: 'Files and folders' }] }),

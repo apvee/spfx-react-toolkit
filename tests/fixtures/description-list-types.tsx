@@ -28,3 +28,13 @@ const item: DescriptionListItemProps = { label: { as: 'div', ref: React.createRe
 // @ts-expect-error stable identity is required
 const invalid: DescriptionListEntry = { label: 'Missing key', value: 'Value' };
 void invalid;
+
+declare const legacyNode: React.ReactNode;
+const legacyValue: DescriptionListItemProps['children'] = legacyNode;
+const conditionalValue: DescriptionListItemProps['children'] = false;
+<DescriptionList.Item label="Conditional">{true}</DescriptionList.Item>;
+// @ts-expect-error fixed tag preserves semantic inner div
+<DescriptionList.Item label={{ as: 'h1', children: 'Heading' }}>Value</DescriptionList.Item>;
+// @ts-expect-error fixed value tag
+<DescriptionList.Item label="Safe">{{ as: 'span', children: 'Value' }}</DescriptionList.Item>;
+void [legacyValue, conditionalValue];

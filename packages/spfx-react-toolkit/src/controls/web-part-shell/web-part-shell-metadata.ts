@@ -5,9 +5,12 @@ import type { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
  * Does not import Property Pane runtime or mutate consumer metadata.
  * @returns A new map and title descriptor on every call.
  * @example
+ * ```ts
+ * // Inside a WebPart class:
  * protected get propertiesMetadata(): IWebPartPropertiesMetadata {
  *   return { ...getWebPartShellPropertiesMetadata(), listId: { isSearchablePlainText: true } };
  * }
+ * ```
  */
 export function getWebPartShellPropertiesMetadata(): IWebPartPropertiesMetadata {
   return { title: { isSearchablePlainText: true } };

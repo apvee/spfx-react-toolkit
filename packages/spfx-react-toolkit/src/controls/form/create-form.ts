@@ -11,10 +11,14 @@ import { createStandardSchemaResolver } from './form-validation.internal';
  * @example `const Order = createForm<{ reference: string }>();`
  */
 export const createForm: CreateForm = (<TInput extends FieldValues, TOutput = TInput, TContext = unknown>(configuration?: StandardSchemaV1<TInput, TOutput> | {
+    /** Standard Schema v1 owner; submitted output follows its transformation. */
     schema: StandardSchemaV1<TInput, TOutput>;
+    /** Excluded when schema owns validation; supplying both is rejected. */
     resolver?: never;
 } | {
+    /** React Hook Form resolver owner for validation and output transformation. */
     resolver: Resolver<TInput, TContext, TOutput>;
+    /** Excluded when resolver owns validation; supplying both is rejected. */
     schema?: never;
 }): FormSuite<TInput, TContext, TOutput, boolean> => {
     if (configuration === undefined)

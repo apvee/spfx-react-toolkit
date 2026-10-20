@@ -21,7 +21,25 @@ async function setup() {
 }
 async function cleanup(){dom?.window.close();await harness.cleanup();}
 function suite(member){const F=api.createForm();assert.ok(F[member],`Form.${member} is implemented in the actual public suite`);return F;}
-function mount(element){const ReactDOM=require('react-dom');const {RendererProvider}=require('@griffel/react');const {FluentProvider,webLightTheme}=require('@fluentui/react-components');const renderer=require('@griffel/core').createDOMRenderer(document,{unstable_filterCSSRule:rule=>!rule.startsWith('@container')});const host=document.createElement('div');document.body.appendChild(host);function render(next=element){element=next;act(()=>{ReactDOM.render(React.createElement(RendererProvider,{renderer},React.createElement(FluentProvider,{theme:webLightTheme},element)),host);});}try{render();}catch(error){host.remove();throw error;}return {host,render,close(){act(()=>{ReactDOM.unmountComponentAtNode(host);});host.remove();}};}
+function mount(element) {
+ const ReactDOM=require('react-dom');
+ const {RendererProvider}=require('@griffel/react');
+ const {FluentProvider,webLightTheme}=require('@fluentui/react-components');
+ const renderer=require('@griffel/core').createDOMRenderer(document,{unstable_filterCSSRule:rule=>!rule.startsWith('@container')});
+ const host=document.createElement('div');document.body.appendChild(host);
+ // Each fixture owns its renderer. Removing the host alone leaves its sheets in
+ // JSDOM, making subsequent geometry/style measurements grow with every test.
+ function release(){
+  host.remove();
+  for(const sheet of Object.values(renderer.stylesheets))sheet.element?.remove();
+ }
+ function render(next=element){
+  element=next;
+  act(()=>{ReactDOM.render(React.createElement(RendererProvider,{renderer},React.createElement(FluentProvider,{theme:webLightTheme},element)),host);});
+ }
+ try{render();}catch(error){release();throw error;}
+ return {host,render,close(){try{act(()=>{ReactDOM.unmountComponentAtNode(host);});}finally{release();}}};
+}
 function change(node,value){node.value=value;act(()=>require('react-dom/test-utils').Simulate.change(node,{target:{value}}));}
 function click(node){assert.ok(node,'interactive target exists');act(()=>require('react-dom/test-utils').Simulate.click(node));}
 function key(node,key){act(()=>require('react-dom/test-utils').Simulate.keyDown(node,{key,code:key}));}

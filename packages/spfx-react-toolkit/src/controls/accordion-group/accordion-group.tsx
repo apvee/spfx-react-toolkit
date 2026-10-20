@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { renderContentSlot } from '../content-slot.internal';
 import { Accordion, AccordionItem, AccordionHeader, AccordionPanel, Card, useId } from '@fluentui/react-components';
 import { GroupHeader, GroupText, hasGroupContent } from '../group-header.internal';
 import { useSx } from '../../hooks/useSx';
@@ -18,7 +19,10 @@ type InertPanelProps = React.HTMLAttributes<HTMLDivElement> & { inert?: '' };
 /** Render a Fluent disclosure, retaining inert descendants unless reset is requested.
  * @param props Native item attributes, value, trigger content and caller-owned panel children.
  * @returns A native Fluent AccordionItem with semantic heading, button and linked panel.
- * @example <AccordionGroup.Item value="profile" title="Profile">Details</AccordionGroup.Item>
+ * @example
+ * ```tsx
+ * <AccordionGroup><AccordionGroup.Item value="profile" title="Profile">Details</AccordionGroup.Item></AccordionGroup>
+ * ```
  */
 const AccordionGroupItem = React.forwardRef<HTMLDivElement, AccordionGroupItemProps>(({
   value, title, description, icon, headingLevel = 3, disabled = false, unmountOnClose = false, children, className, ...nativeProps
@@ -28,7 +32,7 @@ const AccordionGroupItem = React.forwardRef<HTMLDivElement, AccordionGroupItemPr
   const panelId = useId('accordion-group-panel');
   const titlePresent = hasGroupContent(title), descriptionPresent = hasGroupContent(description);
   const renderedIcon = hasGroupContent(icon)
-    ? <span data-group-item-icon="" aria-hidden="true" className={sx(styles.icon, flexItem.noShrink, !disabled && foreground.subtle)}>{icon}</span>
+    ? <span data-group-item-icon="" aria-hidden="true" className={sx(styles.icon, flexItem.noShrink, !disabled && foreground.subtle)}>{renderContentSlot(icon, 'span', sx, { shorthand: 'preserve', className: styles.iconContent })}</span>
     : undefined;
   return <AccordionItem {...nativeProps} ref={ref} value={value} disabled={disabled} data-accordion-group-item=""
     className={sx(styles.item, minWidth.zero, className)}>
@@ -62,7 +66,7 @@ const AccordionGroupRoot = React.forwardRef<HTMLDivElement, AccordionGroupProps>
   const sx = useSx(), styles = useAccordionGroupStyles();
   return <div {...nativeProps} ref={ref} className={sx(styles.root, flex.column, gap.medium, width.full, minWidth.zero, className)}>
     <GroupHeader title={title} description={description} icon={icon} action={action} headingLevel={headingLevel} />
-    <Card appearance={appearance} size="medium" focusMode="off" className={sx(styles.card, width.full, gap.none)}>
+    <Card appearance={appearance === 'alternate' ? 'filled-alternative' : appearance} size="medium" focusMode="off" className={sx(styles.card, width.full, gap.none)}>
       <Accordion<AccordionGroupValue> openItems={openItems} defaultOpenItems={defaultOpenItems} onToggle={onToggle}
         multiple={multiple} collapsible={collapsible} className={sx(styles.accordion, minWidth.zero)}>{children}</Accordion>
     </Card>
@@ -81,6 +85,20 @@ AccordionGroupRoot.displayName = 'AccordionGroup';
  * including JSX; avoid nested headings. Native Card padding is the single lateral inset.
  * @param props Native div attributes, header and native Fluent expansion options.
  * @returns A div containing the optional header and composed Accordion inside a Card.
- * @example <AccordionGroup title="Preferences" defaultOpenItems={['profile']}><AccordionGroup.Item value="profile" title="Profile">Details</AccordionGroup.Item></AccordionGroup>
+ * @example
+ * ```tsx
+ * <AccordionGroup title="Preferences" defaultOpenItems={['profile']}><AccordionGroup.Item value="profile" title="Profile">Details</AccordionGroup.Item></AccordionGroup>
+ * ```
  */
-export const AccordionGroup = Object.assign(AccordionGroupRoot, { Item: AccordionGroupItem });
+export const AccordionGroup = Object.assign(AccordionGroupRoot, {
+  /** Render one uniquely identified disclosure inside AccordionGroup. Closed content
+   * stays mounted/inert unless `unmountOnClose` requests a reset after closing motion.
+   * @param props Native item attributes, value, noninteractive trigger content and panel children.
+   * @returns An item div with semantic heading, trigger and associated panel.
+   * @example
+   * ```tsx
+   * <AccordionGroup><AccordionGroup.Item value="profile" title="Profile">Details</AccordionGroup.Item></AccordionGroup>
+   * ```
+   */
+  Item: AccordionGroupItem
+});

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { renderContentSlot } from '../../content-slot.internal';
 import { mergeClasses } from '@griffel/react';
 import { AvatarGroup, AvatarGroupItem, AvatarGroupPopover, Badge, Button, Link, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, Persona, ProgressBar, RatingDisplay, Spinner } from '@fluentui/react-components';
 import { CheckmarkCircle20Regular, DismissCircle20Regular, MoreHorizontal20Regular, Star20Filled } from '@fluentui/react-icons';
@@ -23,7 +24,7 @@ export function getDataGridCellTooltip<T extends object>(context: DataGridCellRe
         return context.column.kind === 'sparkline' ? context.strings.noObservations : undefined;
     if (context.value.kind === 'boolean')
         return booleanLabel(context, context.value.value);
-    const label = formatDataGridValue(context.column, context.value, context.locale, context.item);
+    const label = formatDataGridValue<T>(context.column, context.value, context.locale, context.item);
     return label === '' ? undefined : label;
 }
 export function isInteractiveDataGridColumn<T extends object>(column: ResolvedDataGridColumn<T>): boolean {
@@ -87,7 +88,7 @@ function DataGridNativeCell<T extends object>({ context }: {
     const { column, value, item } = context;
     const styles = useDataGridCellStyles();
     if (value.status !== 'valid')
-        return <span className={styles.text}>{value.status === 'invalid' ? column.options.invalidPlaceholder ?? context.strings.invalidValue : column.options.placeholder ?? (column.kind === 'sparkline' ? context.strings.noObservations : '—')}</span>;
+        return <span className={styles.text}>{renderContentSlot(value.status === 'invalid' ? column.options.invalidPlaceholder ?? context.strings.invalidValue : column.options.placeholder ?? (column.kind === 'sparkline' ? context.strings.noObservations : '—'), 'span', mergeClasses, { shorthand: 'preserve' })}</span>;
     switch (value.kind) {
         case 'boolean': {
             const label = booleanLabel(context, value.value);
@@ -111,14 +112,14 @@ function DataGridNativeCell<T extends object>({ context }: {
                     column.options.onNavigate?.(event, { item, rowId: context.rowId, value: value.value, href });
                 }}>{value.value}</Link>;
         }
-        case 'person': return column.kind === 'person' ? <NativePerson person={value.value} column={column}/> : <></>;
-        case 'people': return column.kind === 'people' ? <DataGridPeopleCell people={value.value} column={column}/> : <></>;
+        case 'person': return column.kind === 'person' ? <NativePerson<T> person={value.value} column={column}/> : <></>;
+        case 'people': return column.kind === 'people' ? <DataGridPeopleCell<T> people={value.value} column={column}/> : <></>;
         case 'tags': return column.kind === 'tags' ? <DataGridTagsCell tags={value.value} maxVisible={column.options.maxVisible} strings={context.strings}/> : <></>;
         case 'progress': {
             if (column.kind !== 'progress')
                 return <></>;
             const maximum = column.options.max ?? 1;
-            const label = formatDataGridValue(column, value, context.locale, item);
+            const label = formatDataGridValue<T>(column, value, context.locale, item);
             return <span className={styles.cluster}><ProgressBar {...column.options.progressBarProps} className={styles.grow} value={value.value} max={maximum} aria-label={label} aria-valuemin={0} aria-valuemax={maximum} aria-valuenow={value.value}/>{column.options.showValue && <span>{label}</span>}</span>;
         }
         case 'rating': {
@@ -139,15 +140,15 @@ function DataGridNativeCell<T extends object>({ context }: {
                 value={value.value} max={maximum} aria-label={label}
                 valueText={null} countText={null}/>;
         }
-        case 'sparkline': return column.kind === 'sparkline' ? <DataGridSparklineCell context={context} column={column} value={value.value}/> : <></>;
+        case 'sparkline': return column.kind === 'sparkline' ? <DataGridSparklineCell<T> context={context} column={column} value={value.value}/> : <></>;
         case 'actions': return column.kind === 'actions' ? <DataGridActionsCell context={context} actions={column.options.actions}/> : <></>;
         case 'custom': return <></>;
-        default: return <span className={styles.text}>{formatDataGridValue(column, value, context.locale, item)}</span>;
+        default: return <span className={styles.text}>{formatDataGridValue<T>(column, value, context.locale, item)}</span>;
     }
 }
 /** Custom JSX is returned untouched; native cells own only presentation of already classified values. */
 export function renderDataGridCell<T extends object>(context: DataGridCellRenderContext<T>): React.ReactNode {
     if (context.column.kind === 'custom' && context.value.status === 'valid')
         return context.column.renderCell(context.value.raw, context.item, context.rowId);
-    return <DataGridNativeCell context={context}/>;
+    return <DataGridNativeCell<T> context={context}/>;
 }

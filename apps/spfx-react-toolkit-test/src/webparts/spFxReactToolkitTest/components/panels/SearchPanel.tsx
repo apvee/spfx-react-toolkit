@@ -1,36 +1,16 @@
+import { useDemoStyles } from '../shared/demoStyles';
 import * as React from 'react';
-import { Label, MessageBar, MessageBarType, Stack } from '@fluentui/react';
-import { SearchVerticals } from '@apvee/spfx-react-toolkit';
-import {
-  PnPSearchAdvancedDemo,
-  PnPSearchBasicDemo,
-  PnPSearchRefinersDemo,
-  PnPSearchSuggestionsDemo,
-} from '../demos';
-import { DemoCard, InfoGrid } from '../shared';
-
-const SearchPanel: React.FC = () => (
-  <Stack tokens={{ childrenGap: 16 }}>
-    <MessageBar messageBarType={MessageBarType.info}>
-      Search demos cover text queries, builder queries, vertical source ids, refiners, paging, and suggestions.
-    </MessageBar>
-
-    <DemoCard title="Search Verticals" iconName="SearchAndApps">
-      <Label>Built-in source ids are exported by SearchVerticals.</Label>
-      <InfoGrid
-        rows={Object.keys(SearchVerticals).map(key => ({
-          label: key,
-          value: SearchVerticals[key as keyof typeof SearchVerticals],
-          icon: 'Search',
-        }))}
-      />
-    </DemoCard>
-
-    <PnPSearchBasicDemo />
-    <PnPSearchAdvancedDemo />
-    <PnPSearchRefinersDemo />
-    <PnPSearchSuggestionsDemo />
-  </Stack>
-);
-
+import { Field, Select } from '@fluentui/react-components';
+import { PnPSearchBasicDemo } from '../demos/PnPSearchBasicDemo';
+import { PnPSearchAdvancedDemo } from '../demos/PnPSearchAdvancedDemo';
+import { PnPSearchRefinersDemo } from '../demos/PnPSearchRefinersDemo';
+import { PnPSearchSuggestionsDemo } from '../demos/PnPSearchSuggestionsDemo';
+const SearchPanel: React.FC = () => {
+    const demoStyles = useDemoStyles();
+    const [scenario, setScenario] = React.useState('basic');
+    const selector = (busy = false): React.ReactNode => <Field className={demoStyles.controlRow} label="Operation"><Select disabled={busy} select={{ 'data-demo-variant': 'SearchPanel' } as React.SelectHTMLAttributes<HTMLSelectElement>} value={scenario} onChange={(_, data) => setScenario(data.value)}>
+    <option value="basic">Text search</option><option value="advanced">Advanced search</option><option value="refiners">Filtered search</option><option value="suggestions">Suggestions</option>
+  </Select></Field>;
+    return <>{scenario === 'basic' ? <PnPSearchBasicDemo selector={selector}/> : scenario === 'advanced' ? <PnPSearchAdvancedDemo selector={selector}/> : scenario === 'refiners' ? <PnPSearchRefinersDemo selector={selector}/> : <PnPSearchSuggestionsDemo selector={selector}/>}</>;
+};
 export default SearchPanel;

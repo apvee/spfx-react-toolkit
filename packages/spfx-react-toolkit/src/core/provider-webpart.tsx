@@ -7,19 +7,24 @@ import { SPFxProviderBase } from './provider-base.internal';
 import type { SPFxComponent } from './types';
 
 /**
- * Props for the SPFx WebPart-specific provider component.
+ * Inputs for SPFxWebPartProvider. Pass the initialized WebPart instance and a subtree using toolkit hooks. The provider waits for ServiceScope readiness and owns an isolated runtime store; omitted children render no application content.
  *
- * @template TProps - The properties type for the WebPart.
- * @public
+ * @typeParam TProps - Properties type of the supplied SPFx host instance.
+ *
+ * @example
+ * ```tsx
+ * // In the WebPart instance's render or mounting method:
+ * const element = <SPFxWebPartProvider instance={this}><MyComponent /></SPFxWebPartProvider>;
+ * ```
  */
 export interface SPFxWebPartProviderProps<TProps extends {} = {}> {
   /**
-   * The SPFx WebPart instance.
+   * Required, initialized WebPart instance supplying context, properties and lifecycle integration.
    */
   instance: BaseClientSideWebPart<TProps>;
 
   /**
-   * The children to render within the provider.
+   * Optional React subtree receiving host context, theme and isolated runtime state. Descendants mount after service-scope readiness; omission renders no application content.
    */
   children?: React.ReactNode;
 }
@@ -36,7 +41,7 @@ export interface SPFxWebPartProviderProps<TProps extends {} = {}> {
  *
  * @example
  * ```tsx
- * import { SPFxWebPartProvider } from 'spfx-react-toolkit';
+ * import { SPFxWebPartProvider } from '@apvee/spfx-react-toolkit';
  *
  * export default class MyWebPart extends BaseClientSideWebPart<IMyWebPartProps> {
  *   public render(): void {

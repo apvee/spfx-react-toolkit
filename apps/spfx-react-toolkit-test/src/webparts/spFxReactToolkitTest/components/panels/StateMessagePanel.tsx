@@ -1,18 +1,22 @@
 import * as React from 'react';
-import { FluentProvider, Text, webDarkTheme, webLightTheme, makeStyles, tokens } from '@fluentui/react-components';
-import { StateMessage, StateMessagePreset, StateMessageHeadingLevel, useSx, flex, gap, width } from '@apvee/spfx-react-toolkit';
+import { FluentProvider, Text, makeStyles, Checkbox, Select, Button, Field, Input } from '@fluentui/react-components';
+import { StateMessage, StateMessagePreset, StateMessageHeadingLevel, useSx, width, background, minWidth } from '@apvee/spfx-react-toolkit';
 import { DemoCard } from '../shared/DemoCard';
+import { useDemoStyles } from '../shared/demoStyles';
 
 const presets: readonly StateMessagePreset[] = ['generic', 'empty', 'error', 'success', 'welcome'];
 const levels: readonly StateMessageHeadingLevel[] = [1, 2, 3, 4, 5, 6];
-const useStyles = makeStyles({ frame: { maxInlineSize: '100%', outline: `1px solid ${tokens.colorNeutralStroke1}` } });
+const useStyles = makeStyles({ frame: { maxInlineSize: '100%' } });
 
 const StateMessagePanel: React.FC = () => {
   const sx = useSx();
+  const demoStyles = useDemoStyles();
   const styles = useStyles();
+  const [title, setTitle] = React.useState('No documents found');
+  const [description, setDescription] = React.useState('Adjust the **search filters** to find project documents.');
   const [preset, setPreset] = React.useState<StateMessagePreset>('empty');
-  const [dark, setDark] = React.useState(false);
   const [rtl, setRtl] = React.useState(false);
+  const directionSx = useSx({ dir: rtl ? 'rtl' : undefined });
   const [narrow, setNarrow] = React.useState(false);
   const [visual, setVisual] = React.useState('preset');
   const [long, setLong] = React.useState(false);
@@ -20,42 +24,48 @@ const StateMessagePanel: React.FC = () => {
   const [headingLevel, setHeadingLevel] = React.useState<StateMessageHeadingLevel>(3);
   const [clicks, setClicks] = React.useState(0);
   const [observed, setObserved] = React.useState('not inspected');
+  const [slots, setSlots] = React.useState(false);
+  const titleSlotRef = React.useMemo(() => React.createRef<HTMLSpanElement>(), []);
   const rootRef = React.useMemo(() => React.createRef<HTMLDivElement>(), []);
-  return <DemoCard title="StateMessage" iconName="Info" description="Section states, private artwork, container layout and typed actions.">
-    <div className={sx(flex.column, gap.medium)}>
-      <label>Preset <select data-state-message-demo="preset" value={preset} onChange={event => {
-        const value = presets.find(item => item === event.target.value); if (value) setPreset(value);
-      }}>{presets.map(value => <option key={value}>{value}</option>)}</select></label>
-      <label><input data-state-message-demo="theme" type="checkbox" checked={dark} onChange={event => setDark(event.target.checked)} /> Dark theme</label>
-      <label><input data-state-message-demo="direction" type="checkbox" checked={rtl} onChange={event => setRtl(event.target.checked)} /> Right-to-left</label>
-      <label><input data-state-message-demo="resize" type="checkbox" checked={narrow} onChange={event => setNarrow(event.target.checked)} /> Narrow container</label>
-      <label><input data-state-message-demo="long" type="checkbox" checked={long} onChange={event => setLong(event.target.checked)} /> Long content</label>
-      <label><input data-state-message-demo="role" type="checkbox" checked={alert} onChange={event => setAlert(event.target.checked)} /> Explicit alert</label>
-      <label>Visual <select data-state-message-demo="visual" value={visual} onChange={event => setVisual(event.target.value)}>
+  return <DemoCard title="StateMessage" iconName="Info" description="Show the section state with an illustration and relevant actions."
+    controls={<><Field label="Title"><Input input={{ as: 'input', ...{ 'data-state-message-demo': 'title' } }} value={title} onChange={(_event, data) => setTitle(data.value)} /></Field>
+<Field label="Description"><Input input={{ as: 'input', ...{ 'data-state-message-demo': 'description' } }} value={description} onChange={(_event, data) => setDescription(data.value)} /></Field>
+<Field label="Status"><Select select={{ as: 'select', ...{ 'data-state-message-demo': 'preset', ...{ 'data-demo-variant': 'state-message' } } }} value={preset} onChange={(_event, data) => {
+        const value = presets.find(item => item === data.value); if (value) setPreset(value);
+      }}>{presets.map(value => <option key={value}>{value}</option>)}</Select></Field>
+<Checkbox input={{ as: 'input', ...{ 'data-state-message-demo': 'resize' } }} checked={narrow} onChange={(_event, data) => setNarrow(data.checked === true)} label="Narrow width" />
+<Field label="Illustration"><Select select={{ as: 'select', ...{ 'data-state-message-demo': 'visual' } }} value={visual} onChange={(_event, data) => setVisual(data.value)}>
         <option value="preset">Preset artwork</option><option value="custom">Custom visual</option><option value="hidden">Hidden</option>
-      </select></label>
-      <label>Heading level <select data-state-message-demo="heading" value={headingLevel} onChange={event => {
-        const value = levels.find(item => String(item) === event.target.value); if (value) setHeadingLevel(value);
-      }}>{levels.map(value => <option key={value}>{value}</option>)}</select></label>
-      <FluentProvider theme={dark ? webDarkTheme : webLightTheme} dir={rtl ? 'rtl' : 'ltr'}>
+      </Select></Field></>}
+    status={<p aria-live="polite">Preset: {preset} · Actions: {clicks}</p>}
+    diagnostics={<><div className={demoStyles.controls}><Checkbox input={{ as: 'input', ...{ 'data-state-message-demo': 'slots' } }} checked={slots} onChange={(_event, data) => setSlots(data.checked === true)} label="Slot content" />
+<Checkbox input={{ as: 'input', ...{ 'data-state-message-demo': 'direction' } }} checked={rtl} onChange={(_event, data) => setRtl(data.checked === true)} label="RTL direction" />
+<Checkbox input={{ as: 'input', ...{ 'data-state-message-demo': 'long' } }} checked={long} onChange={(_event, data) => setLong(data.checked === true)} label="Long content" />
+<Checkbox input={{ as: 'input', ...{ 'data-state-message-demo': 'role' } }} checked={alert} onChange={(_event, data) => setAlert(data.checked === true)} label="Urgent alert" />
+<Field label="Heading level"><Select select={{ as: 'select', ...{ 'data-state-message-demo': 'heading' } }} value={headingLevel} onChange={(_event, data) => {
+        const value = levels.find(item => String(item) === data.value); if (value) setHeadingLevel(value);
+      }}>{levels.map(value => <option key={value}>{value}</option>)}</Select></Field></div>
+<Button data-state-message-demo="inspect" type="button" onClick={() => {
+        const root = rootRef.current;
+        setObserved(root ? `${root.tagName.toLowerCase()}, heading=${root.querySelector('h1,h2,h3,h4,h5,h6')?.tagName.toLowerCase()}, slot=${titleSlotRef.current?.tagName.toLowerCase() ?? 'shorthand'}, role=${root.querySelector('[data-state-message-text]')?.getAttribute('role') ?? 'none'}` : 'unmounted');
+      }}>Inspect root ref</Button>
+
+<p data-state-message-demo="observations">Actions: {clicks}. Root: {observed}.</p>
+
+<p>The medium breakpoint measures 640px inside the root, excluding its padding. Vertical centering needs an available parent height.</p>
+</>}>
+      <FluentProvider dir={rtl ? 'rtl' : undefined} className={directionSx(background.transparent, minWidth.zero)}>
         <div data-state-message-demo="frame" className={sx(styles.frame, width.px(narrow ? 220 : 664))}>
           <StateMessage data-state-message-demo="preview" ref={rootRef} preset={preset} headingLevel={headingLevel}
-            title={long ? 'The requested content could not be displayed in this section' : 'Your section state'}
-            description={long ? 'Review the **active filters**, check the available information and try again. '.repeat(5) : 'Try **other filters** or read the [documentation](https://learn.microsoft.com/sharepoint/dev/spfx/sharepoint-framework-overview).'}
+            title={slots ? { ref: titleSlotRef, 'data-state-message-demo': 'title-slot', children: '**Literal slot title**' } : long ? 'The requested content could not be displayed in this section' : title}
+            description={slots ? { children: (Component, props) => <Component {...props}>Callback keeps **literal markers**.</Component> } : long ? 'Review the **active filters**, check the available information and try again. '.repeat(5) : description}
             role={alert ? 'alert' : undefined}
-            visual={visual === 'hidden' ? false : visual === 'custom' ? <Text role="img" aria-label="Custom visual">Custom visual</Text> : undefined}
-            primaryAction={{ label: 'Try again', onClick: () => setClicks(value => value + 1) }}
+            visual={visual === 'hidden' ? false : visual === 'custom' ? { children: <Text role="img" aria-label="Custom visual">Custom visual</Text> } : undefined}
+            primaryAction={{ label: slots ? { children: 'Try again' } : 'Try again', onClick: () => setClicks(value => value + 1) }}
             secondaryAction={{ label: 'Unavailable', disabled: true, onClick: () => setClicks(value => value + 1) }}
             tertiaryAction={{ label: 'Documentation', href: 'https://learn.microsoft.com/sharepoint/dev/spfx/sharepoint-framework-overview' }} />
         </div>
       </FluentProvider>
-      <button data-state-message-demo="inspect" type="button" onClick={() => {
-        const root = rootRef.current;
-        setObserved(root ? `${root.tagName.toLowerCase()}, heading=${root.querySelector('h1,h2,h3,h4,h5,h6')?.tagName.toLowerCase()}, role=${root.querySelector('[data-state-message-text]')?.getAttribute('role') ?? 'none'}` : 'unmounted');
-      }}>Inspect root ref</button>
-      <p data-state-message-demo="observations">Actions: {clicks}. Root: {observed}.</p>
-      <p>The medium breakpoint measures 640px inside the root, excluding its padding. Vertical centering needs an available parent height.</p>
-    </div>
   </DemoCard>;
 };
 export default StateMessagePanel;

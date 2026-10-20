@@ -711,3 +711,48 @@ for (const name of ['hooks/useSPFxLocaleInfo.d.ts', 'helpers/spfx-page-context.h
     assert.throws(() => assertCompatibleDeclaration(name, original, original, { requireIanaAdditions: true }), /Missing approved IANA/);
   });
 }
+
+const scopedPermissionName = 'hooks/useSPFxCrossSitePermissions.d.ts';
+const scopedPermissionAdditions = `
+import type { SPFxScopedPermissionsOptions } from '../services/spfx-permission-target.types';
+export type { SPFxScopedPermissionsOptions } from '../services/spfx-permission-target.types';
+export interface SPFxScopedPermissionsInfo {
+  readonly permissions: SPPermission | undefined;
+  readonly hasPermission: (permission: SPPermission) => boolean;
+  readonly isLoading: boolean;
+  readonly error: Error | undefined;
+}
+export declare function useSPFxCrossSitePermissions(options: SPFxScopedPermissionsOptions): SPFxScopedPermissionsInfo;
+`;
+const scopedRequired = { requireScopedPermissionsAdditions: true };
+test('scoped permissions approval preserves the historical hook signature and interfaces', () => {
+  const original = baseline[scopedPermissionName].declaration;
+  assert.doesNotThrow(() => assertCompatibleDeclaration(scopedPermissionName, original + scopedPermissionAdditions, original, scopedRequired));
+  assert.throws(() => assertCompatibleDeclaration(scopedPermissionName, original, original, scopedRequired), /Missing approved scoped/);
+  for (const [before, after] of [
+    ['siteUrl?: string', 'siteUrl: string'],
+    ['options?: SPFxCrossSitePermissionsOptions', 'options?: SPFxCrossSitePermissionsOptions | string'],
+    ['listId?: string', 'listId?: string | number'],
+    ['isLoading: boolean', 'isLoading: boolean | undefined'],
+    ['sitePermissions?: SPPermission', 'sitePermissions?: SPPermission | string'],
+  ]) {
+    assert.ok(original.includes(before));
+    assert.throws(() => assertCompatibleDeclaration(scopedPermissionName, original.replace(before, after) + scopedPermissionAdditions, original, scopedRequired), /Declaration contract changed/);
+  }
+});
+test('scoped permissions rejects missing or duplicate overloads and unrelated widening', () => {
+  const original = baseline[scopedPermissionName].declaration;
+  const overload = 'export declare function useSPFxCrossSitePermissions(options: SPFxScopedPermissionsOptions): SPFxScopedPermissionsInfo;';
+  for (const addition of [scopedPermissionAdditions.replace(overload, ''), scopedPermissionAdditions + overload]) {
+    assert.throws(() => assertCompatibleDeclaration(scopedPermissionName, original + addition, original, scopedRequired), /Missing approved scoped|Duplicate approved scoped/);
+  }
+  for (const addition of [
+    scopedPermissionAdditions.replace('readonly permissions:', 'permissions:'),
+    scopedPermissionAdditions.replace('readonly error: Error | undefined', 'readonly error: Error | string | undefined'),
+    scopedPermissionAdditions.replace('options: SPFxScopedPermissionsOptions', 'options: SPFxScopedPermissionsOptions | string'),
+    scopedPermissionAdditions + 'export interface Unexpected { enabled: boolean; }',
+  ]) assert.throws(() => assertCompatibleDeclaration(scopedPermissionName, original + addition, original, scopedRequired));
+  for (const [name, snapshot] of Object.entries(baseline)) {
+    if (name !== scopedPermissionName) assert.throws(() => assertCompatibleDeclaration(name, snapshot.declaration + scopedPermissionAdditions, snapshot.declaration));
+  }
+});

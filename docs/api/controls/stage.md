@@ -17,7 +17,7 @@ Import from the package root, `/controls` or `/controls/stage`; all share the ca
 
 ## StageProps
 
-Use one Header and one Body, with an optional Footer. Children may be inside an application wrapper; Stage neither collects nor reorders them. Parts require an owning Stage. The root and each part forward an `HTMLDivElement` ref. Native surface attributes/events, `className`, consumer `style`, `dir`, `lang`, `hidden` and `id` are forwarded. Stage owns `role`, `aria-modal`, `aria-labelledby` and `aria-describedby`; root `title`, `dangerouslySetInnerHTML` and duplicate root title/description/icon/actions slots are unsupported.
+Use one Header and one Body, with an optional Footer. Children may be inside an application wrapper; Stage neither collects nor reorders them. Parts require an owning Stage. The root and each part forward an `HTMLDivElement` ref. Native surface attributes/events, `className`, consumer `style`, `dir`, `lang`, `hidden` and `id` are forwarded. Stage owns `role`, `aria-modal`, `aria-labelledby` and `aria-describedby`; root `title`, `dangerouslySetInnerHTML` and duplicate root header presentation slots are unsupported.
 
 | Member | Type | Behavior/default |
 | --- | --- | --- |
@@ -43,15 +43,17 @@ Select controlled or uncontrolled ownership once per mount; changing ownership t
 
 | Member | Type | Behavior/default |
 | --- | --- | --- |
-| `StageHeaderProps.title` | `React.ReactNode` | Required nonempty phrasing content; heading wrapper uses subtitle2/primary. |
-| `StageHeaderProps.description` | `React.ReactNode` | Optional supporting phrasing content; caption1/subtle. |
-| `StageHeaderProps.icon` | `React.ReactNode` | Decorative 24px slot, hidden from assistive technology. |
-| `StageHeaderProps.actions` | `React.ReactNode` | Free caller actions, before X; no automatic dismissal. |
+| `StageHeaderProps.title` | `span` content slot | Required nonempty phrasing content; heading wrapper uses subtitle2/primary. Strings have a one-line ellipsis limit. |
+| `StageHeaderProps.description` | `span` content slot | Optional supporting phrasing content; caption1/subtle. Strings have a two-line ellipsis limit. |
+| `StageHeaderProps.icon` | `span` content slot | Decorative 24px slot, hidden from assistive technology. |
+| `StageHeaderProps.action` | `div` content slot | Optional caller action, before the owned Close button; no automatic dismissal. |
 | `StageHeaderProps.headingLevel` | `StageHeadingLevel` | 2; semantic level independent of visual typography. |
 | `StageHeaderProps.showCloseButton` | `boolean` | true; hiding X does not change dismissal policy. |
 | `StageHeaderProps.closeLabel` | `string` | Close; supply a localized accessible label, for example Chiudi. |
 
-Strings are literal: `**Profile**` remains `**Profile**`, with no Markdown parsing. Text block margins and title-description gap are zero. JSX retains its props, refs, handlers and explicit styling and inherits wrapper presets when it supplies no override. Do not nest headings or block markup in the title. Actions wrap when space is limited. If X is hidden on a modal surface, provide a visible way to close it.
+Strings are literal: `**Profile**` remains `**Profile**`, with no Markdown parsing. In Dialog, Drawer and Popover, a direct title string or a title props object's string `children` occupies at most one line with ellipsis; equivalent description strings occupy at most two lines with ellipsis. Truncation is visual: the complete text remains in the DOM, and the owned heading/description IDs and accessible associations are preserved. Text block margins and title-description gap are zero. JSX and render callback output remain caller-owned presentation, retain their props, refs, handlers and explicit styling, and inherit wrapper presets when they supply no override; Stage does not apply the string line limits to them. Do not nest headings or block markup in the title.
+
+Use the singular `action` prop for the header's application action. This replaces `actions` without a compatibility alias; migrate existing `Stage.Header actions={...}` usages to `action={...}`. Action and Close stay on the same row and are vertically centered with the title/description block in Dialog, Drawer and Popover, including narrow layouts and RTL. Close remains separately owned at the logical end, with reserved space. The action column is bounded to leave room for text; caller controls must allow shrinking (for example, a Button with `sx(minWidth.zero)` and a label span with `sx(minWidth.zero, text.truncate)`), retaining full accessible label text. Prefer one compact visible action or an application-owned menu. If Close is hidden on a modal surface, provide a visible way to close it. Footer actions and other controls' plural `actions` props keep their existing contracts.
 
 ## StageBodyProps and StageFooterProps
 
@@ -72,10 +74,12 @@ For an action footer, use `sx(flex.row, flex.wrap, alignItems.center, justifyCon
 
 | Size | Dialog | Drawer | Popover |
 | --- | --- | --- | --- |
-| small (default) | 640px | 320px | 240px |
-| medium | 800px | 592px | 320px |
-| large | 1120px | 940px | 480px |
+| small (default) | 640px | 320px | 320px |
+| medium | 800px | 592px | 480px |
+| large | 1120px | 940px | 640px |
 | full | Viewport width and height minus two outer gaps | Full viewport width and available height | Unsupported |
+
+Popover uses preferred widths of 320/480/640px, reduced by native Fluent auto-size when viewport space is smaller. The default remains `small`, now 320px. This replaces the previous Popover scale of 240/320/480px; existing small and medium Popovers become wider, and large increases to 640px. Dialog and Drawer presets retain their existing widths. Padding remains 12px per side for Popover. Select each size in the test web part and resize the viewport to observe the available-space constraint in LTR and RTL.
 
 Dialog's equal outer gaps are `clamp(8px, 1vw, 16px)` on all sides. Measure full/narrow geometry against the usable CSS viewport: Fluent's native modal body-scroll lock applies `scrollbar-gutter: stable`, which can reserve a classic scrollbar gutter. Consequently CSS `100vw` can differ from `window.innerWidth`; do not treat that difference as a Stage sizing failure. The responsive gap still follows CSS `1vw`, bounded from 8px to 16px. Full fills both dimensions inside that gap; other Dialog sizes follow content height up to the available maximum. Drawer fills available height and reaches the selected viewport edge, including full size. Popover retains native anchoring, flip/shift and auto-size within viewport limits. Dynamic viewport height is used when supported with vh fallback. Modal surface padding is 24px; Popover padding is 12px. Header/Body/Footer add no duplicate padding.
 
@@ -174,4 +178,20 @@ Stage uses the existing shared Fluent components/icons and Griffel peers. The re
 
 Omitting mountNode retains Fluent's themed portal/virtual-parent behavior. An explicit mountNode is a caller-owned escape hatch: use the correct owner document and verify theme variables, direction, renderer styles, focus and nested portal relationships at that destination. Do not automatically move content to document.body.
 
-The lazy Stage sample covers presentation/size, literal strings and JSX, actions, lifecycle, dirty/pending form and independent themed/RTL instances under selectable Cards. Static sample coverage does not execute the scenario. Source browser, compiled-sample browser, authenticated SharePoint/Teams/iframe and screen-reader checks are separate evidence. No browser or authenticated host execution is claimed by this reference; host checks remain **NOT EXECUTED** until recorded. See [development checks](../../DEVELOPMENT.md#stage-checks) and the [host checklist](../../SHAREPOINT-VALIDATION.md#stage).
+The lazy Stage tab shows one configurable two-field editor in Dialog, Drawer or Popover. Presentation, size, title and description drive the same active surface; header action and Close stay aligned, while save/dismiss/retention guards remain observable. Configuration, open trigger, compact status and advanced diagnostics share one outline card. Modal-only manual completion remains inside the surface to preserve focus ownership. Nested popup, long-content and independent/RTL/native-ancestor regressions remain in the [versioned Stage fixture](../../../tests/fixtures/demo-control-isolation/stage-regressions.tsx). The product and conformance browser results, including any console gate failure, must be reported separately from authenticated host observations.
+
+## Named content slots
+
+Titles, descriptions and icons accept React content or a native `span` props object; `action` accepts React content or a native `div` props object. Use `action` on `Stage.Header`. Props objects support attributes, classes, consumer styles, refs and `children: (Component, props) => JSX` callbacks. The callback receives the fixed inner tag and composed props during rendering; inspection never executes it. Forward those props to preserve its attributes and ref.
+
+```tsx
+<Stage.Header
+  title={{ as: 'span', className: 'custom-title', children: 'Preferences' }}
+  description={{ children: 'Literal **supporting text**' }}
+  action={<button type="button">Help</button>}
+/>
+```
+
+The heading/Label, generated IDs, native trigger and Stage Close remain owned by the control. A slot ref points to its inner container. Strings/JSX shorthand retain their existing DOM and literal formatting; props objects explicitly request an inner container even with empty children. Booleans and absent values suppress content; zero remains visible. Tags cannot replace headings, Labels or triggers; raw HTML is unsupported. Phrasing slots must contain appropriate noninteractive content (especially inside accordion triggers). The existing Fluent theme/host renderer is still required.
+
+Empty or whitespace-only static description objects/fragments do not create accessible description associations unless explicitly named with aria-label/aria-labelledby. Whitespace shorthand retains the control's existing presence behavior. Object/callback icon containers fill the owned shell; their direct SVG children retain 24px header/20px group-item sizing (Stage headers use 24px), even with larger authored SVG dimensions. Callback output and custom components remain caller-owned and opaque.

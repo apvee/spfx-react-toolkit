@@ -28,6 +28,28 @@ const approvedSelector = printNode(selectorSource.statements[0], selectorSource)
 const approvedParameter = printNode(parameterSource.statements[0].parameters[0], parameterSource);
 const ianaSource = parseDeclaration('interface Approved { readonly ianaTimeZone?: string; }');
 const approvedIanaProperty = printNode(ianaSource.statements[0].members[0], ianaSource);
+const searchOperatorSource = parseDeclaration("interface Approved { refinerOperator?: 'and' | 'or'; }");
+const approvedSearchOperator = printNode(searchOperatorSource.statements[0].members[0], searchOperatorSource);
+const searchOperatorInterfaces = new Map([
+  ['hooks/useSPFxPnPSearch.d.ts', ['UseSPFxPnPSearchOptions']],
+  ['services/spfx-pnp-search.service.d.ts', ['SPFxPnPSearchOptions', 'SPFxPnPSearchRequestOptions']],
+]);
+
+// Exact additive scoped permission declarations; historical signatures and types
+// are compared unchanged after removing only these approved AST statements.
+const scopedPermissionModule = 'hooks/useSPFxCrossSitePermissions.d.ts';
+const scopedPermissionSource = parseDeclaration(`
+import type { SPFxScopedPermissionsOptions } from '../services/spfx-permission-target.types';
+export type { SPFxScopedPermissionsOptions } from '../services/spfx-permission-target.types';
+export interface SPFxScopedPermissionsInfo {
+  readonly permissions: SPPermission | undefined;
+  readonly hasPermission: (permission: SPPermission) => boolean;
+  readonly isLoading: boolean;
+  readonly error: Error | undefined;
+}
+export declare function useSPFxCrossSitePermissions(options: SPFxScopedPermissionsOptions): SPFxScopedPermissionsInfo;
+`);
+const approvedScopedStatements = scopedPermissionSource.statements.map(statement => printNode(statement, scopedPermissionSource));
 
 function isPlainExportAll(statement, modulePath) {
   return ts.isExportDeclaration(statement) &&
@@ -46,6 +68,7 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   const stablePaths = moduleName === 'hooks/index.d.ts' ? ['./useStableCallback'] : [];
   const sxPaths = moduleName === 'hooks/index.d.ts' ? ['./useSx'] : moduleName === 'helpers/index.d.ts' ? ['./styles'] : [];
   const exportCounts = new Map([...(approvedPath ? [approvedPath] : []), ...pnpPaths, ...stablePaths, ...sxPaths].map(modulePath => [modulePath, 0]));
+  const scopedCounts = approvedScopedStatements.map(() => 0);
   let selectorCount = 0;
   let factoryCount = 0;
   let websRegistrationCount = 0;
@@ -53,6 +76,7 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   let ianaCount = 0;
   const isLocaleHook = moduleName === 'hooks/useSPFxLocaleInfo.d.ts';
   const isLocaleHelper = moduleName === 'helpers/spfx-page-context.helpers.d.ts';
+  const searchOperatorCounts = new Map((searchOperatorInterfaces.get(moduleName) ?? []).map(name => [name, 0]));
   function historicalMembers(members) {
     return members.filter(member => {
       if (printNode(member, current) !== approvedIanaProperty) return true;
@@ -60,6 +84,10 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
     });
   }
   for (const statement of current.statements) {
+    if (moduleName === scopedPermissionModule) {
+      const approvedIndex = approvedScopedStatements.indexOf(printNode(statement, current));
+      if (approvedIndex >= 0) { scopedCounts[approvedIndex]++; continue; }
+    }
     const exportPath = [...exportCounts.keys()].find(modulePath => isPlainExportAll(statement, modulePath));
     if (exportPath) {
       exportCounts.set(exportPath, exportCounts.get(exportPath) + 1);
@@ -90,7 +118,15 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
         continue;
       }
     }
-    if (isLocaleHook && ts.isInterfaceDeclaration(statement) && statement.name.text === 'SPFxLocaleInfo') {
+    if (ts.isInterfaceDeclaration(statement) && searchOperatorCounts.has(statement.name.text)) {
+      const members = statement.members.filter(member => {
+        if (printNode(member, current) !== approvedSearchOperator) return true;
+        searchOperatorCounts.set(statement.name.text, searchOperatorCounts.get(statement.name.text) + 1);
+        return false;
+      });
+      historicalStatements.push(ts.factory.updateInterfaceDeclaration(statement, statement.modifiers, statement.name,
+        statement.typeParameters, statement.heritageClauses, members));
+    } else if (isLocaleHook && ts.isInterfaceDeclaration(statement) && statement.name.text === 'SPFxLocaleInfo') {
       historicalStatements.push(ts.factory.updateInterfaceDeclaration(statement, statement.modifiers, statement.name,
         statement.typeParameters, statement.heritageClauses, historicalMembers(statement.members)));
     } else if (isLocaleHelper && ts.isFunctionDeclaration(statement) && statement.name?.text === 'getSPFxLocaleInfo' && ts.isTypeLiteralNode(statement.type)) {
@@ -126,6 +162,16 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   }
   assert.ok(ianaCount <= 1, 'Duplicate approved IANA property');
   if (options.requireIanaAdditions && (isLocaleHook || isLocaleHelper)) assert.equal(ianaCount, 1, 'Missing approved IANA property');
+  for (const [name, count] of searchOperatorCounts) {
+    assert.ok(count <= 1, `Duplicate approved search refiner operator: ${name}`);
+    if (options.requireSearchRefinerOperator) assert.equal(count, 1, `Missing approved search refiner operator: ${name}`);
+  }
+  if (moduleName === scopedPermissionModule) {
+    for (const [index, count] of scopedCounts.entries()) {
+      assert.ok(count <= 1, `Duplicate approved scoped permission declaration: ${index}`);
+      if (options.requireScopedPermissionsAdditions) assert.equal(count, 1, `Missing approved scoped permission declaration: ${index}`);
+    }
+  }
   const historicalCurrent = ts.factory.updateSourceFile(current, historicalStatements);
   assert.equal(
     printer.printFile(historicalCurrent),

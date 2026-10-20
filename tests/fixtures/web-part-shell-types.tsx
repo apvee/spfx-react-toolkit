@@ -24,3 +24,11 @@ const metadata = getWebPartShellPropertiesMetadata(); metadata.title.isSearchabl
 
 // @ts-expect-error heading semantics derive from HTML
 <WebPartShell instance={instance} headingLevel={2} />;
+<WebPartShell instance={instance} action={{ ref: React.createRef<HTMLDivElement>(), 'data-actions': 'slot', children: (Component, slotProps) => <Component {...slotProps}><button>Action</button></Component> }} />;
+<WebPartShell instance={instance} action={false && <button>Hidden</button>} />;
+// @ts-expect-error action tag is fixed
+<WebPartShell instance={instance} action={{ as: 'button', children: 'Action' }} />;
+// @ts-expect-error action raw HTML is unsupported
+<WebPartShell instance={instance} action={{ dangerouslySetInnerHTML: { __html: 'unsafe' } }} />;
+// @ts-expect-error callbacks belong inside slot objects
+<WebPartShell instance={instance} action={() => 'Action'} />;

@@ -240,6 +240,10 @@ Public pure helper functions for SPFx context mapping, permission checks, API pe
 
 *Generated from source API metadata and public documentation.*
 
+## Access trims
+
+[SharePointPermissionTrim](./api/controls/sharepoint-permission-trim.md), [SharePointGroupTrim](./api/controls/sharepoint-group-trim.md) and [EntraGroupTrim](./api/controls/entra-group-trim.md) mount caller content only for a current positive permission/membership decision. Direct Loading/Fallback/ErrorFallback branches distinguish pending, denied and failed checks. The matching SPFx provider supplies native clients. The lazy sample exposes editable targets, repeat checks and protected mount counters; the Context panel also demonstrates scoped permissions. Server authorization remains required.
+
 ## SharePoint pickers
 
 [React pickers](api/controls/pickers.md) and [native Property Pane pickers](api/property-pane/pickers.md) cover SitePicker, ListPicker, FieldPicker, ViewPicker, ContentTypePicker, ListItemPicker and PrincipalPicker, with JSON references, consumer options and remote discovery.

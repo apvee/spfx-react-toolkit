@@ -44,3 +44,16 @@ const textarea = React.createRef<HTMLTextAreaElement>();
 const schema: StandardSchemaV1<{ choice: string }, { choice: 'a' | 'b' }> = { '~standard': { version: 1, vendor: 'fixture', validate: () => ({ value: { choice: 'a' } }) } };
 const Schema = createForm(schema);
 <Schema.Root defaultValues={{ choice: '' }} onSubmit={values => { const selected: 'a' | 'b' = values.choice; void selected; }}><Schema.Input name="choice" /></Schema.Root>;
+
+const labelContent = React.createRef<HTMLSpanElement>();
+const hintContent = React.createRef<HTMLDivElement>();
+<F.Input name="text" label={{ as: 'span', ref: labelContent, 'data-label': 'slot', children: 'Literal **label**' }} hint={{ as: 'div', ref: hintContent, children: (Component, props) => <Component {...props}>Callback hint</Component> }} />;
+<F.Textarea name="text" label={{ children: (Component, props) => <Component {...props}>Text</Component> }} />;
+// @ts-expect-error native label cannot be replaced with another tag
+<F.Input name="text" label={{ as: 'label', children: 'Wrong' }} />;
+// @ts-expect-error raw HTML is excluded from the internal hint container
+<F.Input name="text" hint={{ dangerouslySetInnerHTML: { __html: 'Wrong' } }} />;
+// @ts-expect-error callbacks belong in slot children, not as direct values
+<F.Input name="text" label={() => 'Wrong'} />;
+// @ts-expect-error fixed span refs cannot point at SVG elements
+<F.Input name="text" label={{ ref: React.createRef<SVGSVGElement>() }} />;

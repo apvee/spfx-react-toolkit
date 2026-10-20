@@ -70,7 +70,38 @@ The row description is merged with caller `aria-describedby` IDs and Field error
 
 Exactly one built-in adapter may own a field row. Repeated adapter `label`/`hint` and multiple owners produce diagnostics. Split multiple controls across field rows, or use an ordinary `SettingsGroup.Item` and name each control explicitly. Secondary actions, nested settings rows and DateTime parts do not inherit the parent row's naming. Custom `useField` bindings and standalone Fluent controls need their own labels/hints and should use ordinary rows. This composition uses the [existing dependencies](#dependencies), Fluent theme and renderer, with no new provider or peer.
 
-The **Form** test web part uses the existing record Reference and Enabled fields in settings rows. Clear Reference and save to see its required error, click titles to observe native activation, edit Enabled, then inspect live/dirty/touched/saved outputs and reset the record. These local interactions do not establish authenticated SharePoint or screen-reader behavior; see the [host checklist](../../SHAREPOINT-VALIDATION.md#form).
+The **Form** test web part shows one selected form model and, in the variable-field model, one selected adapter at a time. Change the field, edit its value, and use save/reset and the validation controls to inspect the current model's behavior. The versioned [Form regression fixture](../../../tests/fixtures/demo-control-isolation/form-regressions.tsx) retains broader adapter, native-form and isolation scenarios. These local interactions do not establish authenticated SharePoint or screen-reader behavior; see the [host checklist](../../SHAREPOINT-VALIDATION.md#form).
+
+## Presentation slots
+
+Named presentation props follow the [shared content-slot convention](../../CONTROL-SLOTS.md):
+
+| Props | Fixed inner tag | Owned outer region |
+| --- | --- | --- |
+| `label`, `dateLabel`, `timeLabel` | `span` | Fluent Label/Field |
+| `hint` | `div` | Fluent Field hint |
+| ObjectSection/ArraySection `title` | `span` | Native legend/fieldset |
+| ObjectSection/ArraySection `description` | `div` | Associated native hint |
+| TagPicker `noOptionsContent`, `strings.noOptions` | `div` | Owned `role="status"` |
+
+String/number/JSX shorthand retains its existing wrappers and literal text. A props object configures an inner container with attributes, classes, events, a consumer style or ref; its `children` may be a Fluent `(Component, props) => ReactNode` render callback. The ref identifies the inner container. Use `as` only to repeat its fixed tag; raw HTML and direct function shorthand are unsupported. Keep label/legend content noninteractive phrasing. Arbitrary consumer JSX remains the consumer's responsibility.
+
+```tsx
+const labelRef = React.createRef<HTMLSpanElement>();
+<Profile.Input
+  name="name"
+  label={{ ref: labelRef, className: classes.label, children: 'Name' }}
+  hint={{ children: (Component, props) => <Component {...props}>Contact name</Component> }}
+/>;
+```
+
+Native Label/hint IDs, `htmlFor`, required/disabled state and validation precedence stay with Fluent Field. An object `id` names the inner container and does not replace those associations. Only `label={undefined}` omits the top-level native Label request; legacy null, false, true and empty labels retain that request. An undefined top-level hint retains native `fieldProps.hint`; native `fieldProps` slots keep their Fluent contracts. Settings field rows still reject every defined control label/hint, including null/false or objects, because the row owns the single name/description bridge. DateTime part labels pass through the same adapter while the parent keeps its separate group name.
+
+Section props retain the required title-or-`aria-label`-or-`aria-labelledby` union. Empty static title objects require an explicit outer name; opaque callbacks/custom components must render meaningful content. Empty description objects render their inner container without adding an empty fieldset description reference. Callbacks are never evaluated to discover semantic presence.
+
+TagPicker uses only a plain string label for automatic input/tag-group naming. Object, JSX and callback labels require explicit `aria-label`; the toolkit does not extract their text. `noOptionsContent ?? strings.noOptions ?? 'No options match the current query.'` retains nullish fallback and the status shell for boolean/empty content. These slots apply only to data-backed options with no available matches; custom option children still own filtering.
+
+The [existing peers](#dependencies) provide slot resolution and native semantics; no provider or dependency is added. Options, value codecs, `formatFiles`, array `renderItem`, validation messages and localized action/accessible-name strings retain their existing domain contracts. The Form sample's Notes field observes inner refs, click events and a stateful callback hint; Address, DateTime and empty tag results exercise the other slots. Static sample checks do not establish browser or authenticated SharePoint execution.
 
 ## Input, output and validation ownership
 
@@ -176,13 +207,13 @@ Array supports append, prepend, insert, remove, update, replace, move and swap. 
 
 `Form.ArraySection` adds an ordered editable list with `name`, `createItem`, `renderItem`, `minItems`, `maxItems`, `removable`, `reorderable`, `itemLabel`, localized `strings` and `disabled`. Add focuses the first available item control; Remove chooses the next/previous item or Add fallback; Move keeps the item's action focused. Hidden, inert, disabled, aria-disabled and focus-rejecting targets are skipped. Announcements support repeated identical actions. Record reset does not force a focus change.
 
-Sections inherit disabled state and RHF omission. Titles/descriptions accept literal strings or ReactNode, with no implicit Markdown. Caller content and `useSx` own custom layout. Source slots/contentLayout/itemLayout configuration is intentionally replaced with these ordinary content/action props and class overrides.
+Sections inherit disabled state and RHF omission. Titles/descriptions accept the presentation slots above, including literal strings and JSX, with no implicit Markdown. Caller content and `useSx` own custom layout. Source slots/contentLayout/itemLayout configuration is intentionally replaced with these ordinary content/action props and class overrides.
 
 ## Custom binding and compatibility evidence
 
 `Form.useField` supplies the live value, onChange/onBlur/ref, errors, dirty/touched/invalid/disabled and resetVersion for a custom control. Use truthful native/RHF refs; do not fabricate DOM nodes. `Form.useForm` supplies enhanced same-suite RHF methods and reset coordination. These suite hooks are not new package-level hook exports.
 
-The lazy Form sample exercises all adapters, composition, hooks, validation/failure retry, delayed save, explicit record reset, draft/date/file clear and array operations, with theme/direction/width controls. Source browser and compiled sample checks are separate from the authenticated [SharePoint checklist](../../SHAREPOINT-VALIDATION.md#form).
+The lazy Form sample selects one model at a time; its variable-field model selects one of the 22 adapters at a time. Save/reset, validation, draft and pending-save controls operate on that active form. Broader adapter/composition and native/isolation regressions remain in the versioned [Form fixture](../../../tests/fixtures/demo-control-isolation/form-regressions.tsx). Source browser and compiled sample checks are separate from the authenticated [SharePoint checklist](../../SHAREPOINT-VALIDATION.md#form).
 
 See [Development](../../DEVELOPMENT.md) for fresh verification commands and [package imports](../../PACKAGE-IMPORTS.md) for peer resolution and bundle limits. Importing a member of the compound family may retain the complete family; per-slot tree shaking is not promised. Unrelated imports must not retain Form/RHF/schema/date/time dependencies. Build library before the SPFx app and restart a running serve after source changes. Local tests/builds do not establish tenant permissions or screen-reader behavior.
 

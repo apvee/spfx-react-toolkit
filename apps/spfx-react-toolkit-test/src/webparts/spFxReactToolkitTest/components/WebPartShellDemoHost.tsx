@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { Button } from '@fluentui/react-components';
-import { teamsDarkTheme, teamsHighContrastTheme, webLightTheme } from '@fluentui/react-theme';
 import { WebPartShell, useSPFxProperties, type IWebPartShellProperties, type WebPartShellProps } from '@apvee/spfx-react-toolkit';
 
 export interface ShellDemoOptions {
-  theme: 'host' | 'light' | 'dark' | 'highContrast';
-  dir: 'ltr' | 'rtl';
+  actionSlot: boolean;
+  dir: 'host' | 'ltr' | 'rtl';
   surface: 'auto' | 'section' | 'application';
   padding: 'auto' | 'none' | 'small' | 'medium' | 'large';
 }
-const defaults: ShellDemoOptions = { theme: 'host', dir: 'ltr', surface: 'auto', padding: 'auto' };
+const defaults: ShellDemoOptions = { actionSlot: false, dir: 'host', surface: 'auto', padding: 'auto' };
 const ShellDemoContext = React.createContext({ options: defaults, update: (_patch: Partial<ShellDemoOptions>): void => {} });
 export const useShellDemoOptions = (): React.ContextType<typeof ShellDemoContext> => React.useContext(ShellDemoContext);
 
@@ -24,10 +23,9 @@ function ShellDemoAction(): JSX.Element {
 export function WebPartShellDemoHost(props: WebPartShellProps<IWebPartShellProperties>): JSX.Element {
   const [options, setOptions] = React.useState(defaults);
   const update = React.useCallback((patch: Partial<ShellDemoOptions>): void => setOptions(previous => ({ ...previous, ...patch })), []);
-  const theme = options.theme === 'host' ? undefined : options.theme === 'dark' ? teamsDarkTheme
-    : options.theme === 'highContrast' ? teamsHighContrastTheme : webLightTheme;
   return <ShellDemoContext.Provider value={{ options, update }}>
     <WebPartShell {...props} surface={props.surface ?? options.surface} padding={props.padding ?? options.padding}
-      theme={props.theme ?? theme} dir={props.dir ?? options.dir} action={<ShellDemoAction />} />
+      dir={props.dir ?? (options.dir === 'host' ? undefined : options.dir)} action={options.actionSlot ? { 'data-shell-demo': 'action-slot',
+        children: (Component, slotProps) => <Component {...slotProps}><ShellDemoAction /></Component> } : <ShellDemoAction />} />
   </ShellDemoContext.Provider>;
 }

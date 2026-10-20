@@ -6,7 +6,8 @@ function fullEnforceReport() {
   const {checkComparisons}=require('../scripts/bundle-contract.internal.cjs');
   const modules={'settings-group':'@apvee/spfx-react-toolkit/lib/controls/settings-group/settings-group.js','accordion-group':'@apvee/spfx-react-toolkit/lib/controls/accordion-group/accordion-group.js','fluent-card':'@fluentui/react-card/lib/components/Card/Card.js','fluent-accordion':'@fluentui/react-accordion/lib/components/Accordion/Accordion.js',pnp:'@pnp/sp/webs/index.js','styles-engine':'@apvee/spfx-react-toolkit/lib/helpers/styles/resolve.internal.js','list-registration':'@pnp/sp/lists/index.js','search-registration':'@pnp/sp/search/index.js','batch-registration':'@pnp/sp/batching.js','formatted-text':'@apvee/spfx-react-toolkit/lib/controls/formatted-text/formatted-text.js','markdown':'unified/index.js','fluent-link':'@fluentui/react-link/lib/index.js','typography':'@apvee/spfx-react-toolkit/lib/helpers/styles/typography.js','relative-time':'@apvee/spfx-react-toolkit/lib/controls/relative-time/relative-time.js','fluent-tooltip':'@fluentui/react-tooltip/lib/components/Tooltip/Tooltip.js','iana-lookup':'@apvee/spfx-react-toolkit/lib/helpers/spfx-time-zone.internal.js','auto-skeleton':'@apvee/spfx-react-toolkit/lib/controls/auto-skeleton/auto-skeleton.js','state-message':'@apvee/spfx-react-toolkit/lib/controls/state-message/state-message.js','state-artwork':'@apvee/spfx-react-toolkit/lib/controls/state-message/illustrations/default-illustration.js','fluent-button':'@fluentui/react-button/lib/components/Button/Button.js','fluent-skeleton':'@fluentui/react-skeleton/lib/components/Skeleton/Skeleton.js',form:'@apvee/spfx-react-toolkit/lib/controls/form/form.js','react-hook-form':'react-hook-form/dist/index.esm.mjs','form-resolver':'@hookform/resolvers/standard-schema/dist/standard-schema.mjs','form-schema':'@standard-schema/utils/dist/index.js','form-date':'@fluentui/react-datepicker-compat/lib/components/DatePicker/DatePicker.js','form-time':'@fluentui/react-timepicker-compat/lib/components/TimePicker/TimePicker.js'};
   Object.assign(modules, { 'data-grid': '@apvee/spfx-react-toolkit/lib/controls/data-grid/data-grid.js', charts: '@fluentui/react-charts/lib/components/Sparkline/Sparkline.js', d3: 'd3-shape/src/line.js', shell: '@apvee/spfx-react-toolkit/lib/controls/web-part-shell/web-part-shell.js', editor: '@apvee/spfx-react-toolkit/lib/controls/web-part-shell/title/web-part-title-editor.internal.js', tiptap: '@tiptap/core/dist/index.js', prosemirror: 'prosemirror-state/dist/index.js' });
-  Object.assign(modules, { 'description-list': '@apvee/spfx-react-toolkit/lib/controls/description-list/description-list.js', pagination: '@apvee/spfx-react-toolkit/lib/controls/pagination/pagination.js', stage: '@apvee/spfx-react-toolkit/lib/controls/stage/stage.js', 'fluent-dialog': '@fluentui/react-dialog/lib/components/Dialog/Dialog.js', 'fluent-drawer': '@fluentui/react-drawer/lib/components/OverlayDrawer/OverlayDrawer.js', 'fluent-popover': '@fluentui/react-popover/lib/components/Popover/Popover.js', griffel: '@griffel/react/lib/makeStyles.js', 'style-descriptors': '@apvee/spfx-react-toolkit/lib/helpers/styles/width.js', 'styles-compiler': '@apvee/spfx-react-toolkit/lib/helpers/styles/resolve.internal.js' });
+  Object.assign(modules, { 'content-card': '@apvee/spfx-react-toolkit/lib/controls/content-card/content-card.js', 'preview-card': '@apvee/spfx-react-toolkit/lib/controls/preview-card/preview-card.js', 'card-frame': '@apvee/spfx-react-toolkit/lib/controls/cards/card-frame.internal.js', 'card-image': '@apvee/spfx-react-toolkit/lib/controls/cards/card-image.internal.js', 'description-list': '@apvee/spfx-react-toolkit/lib/controls/description-list/description-list.js', pagination: '@apvee/spfx-react-toolkit/lib/controls/pagination/pagination.js', stage: '@apvee/spfx-react-toolkit/lib/controls/stage/stage.js', 'fluent-dialog': '@fluentui/react-dialog/lib/components/Dialog/Dialog.js', 'fluent-drawer': '@fluentui/react-drawer/lib/components/OverlayDrawer/OverlayDrawer.js', 'fluent-popover': '@fluentui/react-popover/lib/components/Popover/Popover.js', griffel: '@griffel/react/lib/makeStyles.js', 'style-descriptors': '@apvee/spfx-react-toolkit/lib/helpers/styles/width.js', 'styles-compiler': '@apvee/spfx-react-toolkit/lib/helpers/styles/resolve.internal.js' });
+  for (const family of ['sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim']) modules[family] = `@apvee/spfx-react-toolkit/lib/controls/${family}/${family}.js`;
   const fixtures=contract.fixtures.flatMap(fixture=>Object.keys(fixture.variants).map(variant=>({id:`${fixture.id}/${variant}`,status:'measured',initialChunkIds:[1],emittedModules:fixture.requiredModuleGroups.map(group=>({resource:modules[group],chunks:fixture.forbiddenInitialModuleGroups?.includes(group)?[2]:[1]})),retentionObservations:[],totals:{union:{gzip:100}},fixtureSha256:'fixture',configSha256:'config',assets:[]})));
   return {schemaVersion:1,mode:'enforce',complete:true,passed:true,provenance:{tarballSha256:'abc'},contractSha256:require('node:crypto').createHash('sha256').update(JSON.stringify(contract)).digest('hex'),fixtures,comparisons:checkComparisons(fixtures,contract).comparisons,failures:[],errors:[]};
 }
@@ -211,7 +212,7 @@ test('baseline completeness independently requires canonical contract, all measu
   const {baselineSnapshot}=require('../scripts/bundle-contract.internal.cjs');
   const variants=[report=>{report.fixtures=[];},report=>{report.fixtures.pop();},report=>{report.fixtures[0].status='unavailable';},report=>{report.fixtures[0].id='replacement/root';},report=>{report.comparisons=[];},report=>{report.comparisons[0].maxIncreaseBytes=999999;},report=>{report.contractSha256='altered';},report=>{report.fixtures[0].emittedModules.push({resource:'@pnp/sp/webs/index.js'});}];
   for(const mutate of variants){const report=fullEnforceReport();mutate(report);assert.equal(finalizeReport(report).passed,false);assert.throws(()=>baselineSnapshot(report),/canonical complete enforce PASS/);}
-  assert.equal(baselineSnapshot(fullEnforceReport()).fixtures.length,87);
+  assert.equal(baselineSnapshot(fullEnforceReport()).fixtures.length,require('./fixtures/tree-shaking/contract.json').fixtures.reduce((count, fixture) => count + Object.keys(fixture.variants).length, 0));
 });
 test('real CLI refuses empty, subset, altered-budget and weakened forbidden-group contracts before baseline write', () => {
   const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
@@ -277,4 +278,27 @@ test('optimized consumer resolves nested peer packages through standard Node hie
     assert.equal(stats.hasErrors(), false, stats.toString({ all: false, errors: true }));
     assert.equal(require(path.join(output, 'entry.js')).value, 42);
   } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});
+
+test('each headless trim selects its complete family and forbids other trim/PnP/style/card/grid emission', () => {
+  const contract = require('./fixtures/tree-shaking/contract.json');
+  const { checkFixture } = require('../scripts/bundle-contract.internal.cjs');
+  const families = ['sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'];
+  for (const family of families) {
+    const fixture = contract.fixtures.find(item => item.id === family);
+    assert.deepEqual(Object.keys(fixture.variants), ['root', 'domain', 'control']);
+    assert.deepEqual(fixture.requiredModuleGroups, [family]);
+    for (const forbidden of [...families.filter(item => item !== family), 'pnp', 'styles-engine', 'style-descriptors', 'content-card', 'preview-card', 'data-grid', 'charts', 'd3']) {
+      assert.ok(fixture.forbiddenModuleGroups.includes(forbidden), `${family}: ${forbidden}`);
+      const resource = forbidden === 'pnp' ? '@pnp/sp/webs/index.js' : `@apvee/spfx-react-toolkit/lib/controls/${forbidden}/${forbidden}.js`;
+      if (families.includes(forbidden) || ['pnp', 'content-card', 'preview-card', 'data-grid'].includes(forbidden)) {
+        assert.ok(checkFixture({ id: `${family}/root`, emittedModules: [{ resource }], retentionObservations: [] }, fixture, contract).some(message => /forbidden module group/.test(message)));
+      }
+    }
+    assert.ok(checkFixture({ id: `${family}/root`, emittedModules: [], retentionObservations: [] }, fixture, contract).some(message => /required module group/.test(message)));
+    for (const alias of ['root', 'domain']) {
+      const comparison = contract.comparisons.find(item => item.candidate === `${family}/${alias}`);
+      assert.equal(comparison.reference, `${family}/control`); assert.equal(comparison.maxIncreaseBytes, 0);
+    }
+  }
 });

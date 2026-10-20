@@ -24,3 +24,23 @@ export const element = <Shell {...props} ref={React.createRef<HTMLDivElement>()}
 import {} from '@apvee/spfx-react-toolkit/controls/web-part-shell/title/web-part-title-editor.internal';
 // @ts-expect-error There is no public editor engine type.
 import type { Editor } from '@apvee/spfx-react-toolkit/controls/web-part-shell';
+
+// Packed generic JSX must infer instance properties even when a props spread retains all slot branches.
+<Shell {...props} action={{ ref: React.createRef<HTMLDivElement>(), 'data-actions': 'slot', children: (Tag, slotProps) => <Tag {...slotProps}><button>Refresh</button></Tag> }} />;
+<Shell {...props} action={false} />;
+// Fluent and React 17 retain legacy null absence.
+<Shell {...props} action={null} />;
+declare const legacyAction: React.ReactNode;
+<Shell {...props} action={legacyAction} />;
+// @ts-expect-error The fixed slot tag cannot replace the Shell action div.
+<Shell {...props} action={{ as: 'button', children: 'Action' }} />;
+// @ts-expect-error Action slots preserve the raw HTML prohibition.
+<Shell {...props} action={{ dangerouslySetInnerHTML: { __html: 'unsafe' } }} />;
+// @ts-expect-error Functions remain children callbacks inside slot objects.
+<Shell {...props} action={() => 'Action'} />;
+// @ts-expect-error The root raw HTML prohibition remains intact for spread consumers.
+<Shell {...props} dangerouslySetInnerHTML={{ __html: 'unsafe' }} />;
+
+interface OtherProperties extends IWebPartShellProperties { otherId: string; }
+// @ts-expect-error Explicit application generics must still match the instance property contract.
+<Shell<OtherProperties> instance={instance} />;

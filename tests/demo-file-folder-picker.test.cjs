@@ -22,16 +22,19 @@ test('new native configuration uses focused without legacy SDK options', () => {
  for(const key of ['fileFolderGraph','fileFolderMyFiles','fileFolderNavigationVisible','fileFolderLayout','fileFolderDeviceUpload']) assert.equal(configured.some(f=>f.targetProperty===key),false,key);
  assert.deepEqual(configured.find(f=>f.targetProperty==='fileFolderPreset').properties.options.map(o=>o.key),['focused','extended']);
 });
-test('saved SDK preferences remain legacy until explicit preset, can be restored, and preserve writes and values', () => {
- const part=loadPart(); part.properties={fileFolderGraph:false,fileFolderTitle:'Saved title',fileFolderLayout:'tiles',fileFolderRecent:true,fileFolderUpload:true,fileFolderCreateFolder:true,fileFolderValues:[selected]};
- const picker=()=>fields(part).find(f=>f.targetProperty==='fileFolderValues').properties;
- const before=picker();assert.equal(before.preset,undefined);assert.equal(before.graphEnabled,false);assert.equal(before.title,'Saved title');assert.deepEqual(before.visibleLocations,['recent']);
- assert.ok(fields(part).find(f=>f.targetProperty==='fileFolderPreset').properties.options.some(o=>o.key==='legacy'));
- part.properties.fileFolderPreset='extended';part.onPropertyPaneFieldChanged('fileFolderPreset','legacy','extended');
- const after=picker();assert.equal(after.preset,'extended');assert.equal(after.graphEnabled,undefined);assert.equal(after.title,undefined);assert.equal(after.visibleLocations,undefined);
- assert.equal(after.uploadEnabled,true);assert.equal(after.createFolderEnabled,true);assert.deepEqual(after.value,[selected]);assert.equal(after.key,before.key);assert.equal(after.valueRevision,before.valueRevision);
- part.properties.fileFolderPreset='legacy';part.onPropertyPaneFieldChanged('fileFolderPreset','extended','legacy');
- assert.equal(picker().graphEnabled,false);assert.equal(picker().title,'Saved title');assert.deepEqual(part.properties.fileFolderValues,[selected]);
+test('native preset menu offers only focused and extended for saved legacy configurations without losing values', () => {
+ for (const preset of [undefined, 'legacy']) {
+  const part=loadPart(); part.properties={fileFolderPreset:preset,fileFolderGraph:false,fileFolderTitle:'Saved title',fileFolderLayout:'tiles',fileFolderRecent:true,fileFolderUpload:true,fileFolderCreateFolder:true,fileFolderValues:[selected]};
+  const picker=()=>fields(part).find(f=>f.targetProperty==='fileFolderValues').properties;
+  const menu=()=>fields(part).find(f=>f.targetProperty==='fileFolderPreset').properties;
+  const before=picker();assert.equal(before.preset,'focused');assert.equal(menu().selectedKey,'focused');
+  assert.deepEqual(menu().options.map(o=>o.key),['focused','extended']);
+  for(const name of ['graphEnabled','title','layout','visibleLocations'])assert.equal(before[name],undefined,name);
+  part.properties.fileFolderPreset='extended';part.onPropertyPaneFieldChanged('fileFolderPreset',preset,'extended');
+  const after=picker();assert.equal(after.preset,'extended');assert.equal(menu().selectedKey,'extended');
+  assert.equal(after.uploadEnabled,true);assert.equal(after.createFolderEnabled,true);assert.deepEqual(after.value,[selected]);assert.equal(after.key,before.key);assert.equal(after.valueRevision,before.valueRevision);
+  assert.equal(part.properties.fileFolderTitle,'Saved title');assert.equal(part.properties.fileFolderGraph,false);
+ }
 });
 test('React and native new demos share preset intents and preset-only edits retain selection and models',async()=>{
  const {createPickerHarness}=require('./fixtures/picker-source-harness.cjs');
@@ -76,14 +79,15 @@ test('native options and diagnostics are compact and only relevant limits/filter
  assert.equal(configured.some(f=>f.targetProperty==='fileFolderSelectionLimit'),true);assert.equal(configured.some(f=>f.targetProperty==='fileFolderExtensions'),false);
  assert.equal(props.selectionLimit,3);assert.equal(props.extensions,undefined);
 });
-test('legacy read adapter retains source routing and device-upload dependency without exposing old controls', () => {
- const part=loadPart();part.properties={fileFolderScope:'oneDrive',fileFolderInitialView:'recent',fileFolderMyFiles:true,fileFolderQuickAccess:true,fileFolderSite:true,fileFolderNavigationPreset:'oneDrive',fileFolderSiteUrl:'https://tenant-my.sharepoint.com/personal/user',fileFolderFromLink:'pivot',fileFolderDeviceUpload:true,fileFolderDeviceLabel:'Saved device label'};
- const picker=()=>fields(part).find(f=>f.targetProperty==='fileFolderValues').properties;
- assert.deepEqual(picker().visibleLocations,['myFiles','site']);assert.equal(picker().initialView,'recent');assert.equal(picker().localFilesMode,'disabled');
- part.properties.fileFolderUpload=true;assert.equal(picker().localFilesMode,'upload');assert.equal(picker().localFilesLabel,'Saved device label');
- assert.equal(picker().navigationPreset,'oneDrive');assert.equal(picker().fromLinkMode,'pivot');assert.equal(picker().siteNavigationUrl,'https://tenant-my.sharepoint.com/personal/user');
- part.properties.fileFolderFolder='Projects';assert.equal(picker().initialView,'location');
- part.properties.fileFolderScope='siteCollection';assert.deepEqual(picker().visibleLocations,['quickAccess','site']);assert.equal(picker().initialView,'location');
+test('legacy read adapter remains available independently of the native preset menu', () => {
+ const h=createHarness({});const {fileFolderDemoExperience}=h.load(path.join(base,'components/shared/fileFolderPickerNavigation.ts'));
+ const settings={fileFolderInitialView:'recent',fileFolderMyFiles:true,fileFolderQuickAccess:true,fileFolderSite:true,fileFolderNavigationPreset:'oneDrive',fileFolderSiteUrl:'https://tenant-my.sharepoint.com/personal/user',fileFolderFromLink:'pivot',fileFolderDeviceUpload:true,fileFolderDeviceLabel:'Saved device label'};
+ const picker=scope=>fileFolderDemoExperience(settings,scope);
+ assert.deepEqual(picker({kind:'oneDrive'}).visibleLocations,['myFiles','site']);assert.equal(picker({kind:'oneDrive'}).initialView,'recent');assert.equal(picker({kind:'oneDrive'}).localFilesMode,'disabled');
+ settings.fileFolderUpload=true;assert.equal(picker({kind:'oneDrive'}).localFilesMode,'upload');assert.equal(picker({kind:'oneDrive'}).localFilesLabel,'Saved device label');
+ assert.equal(picker({kind:'oneDrive'}).navigationPreset,'oneDrive');assert.equal(picker({kind:'oneDrive'}).fromLinkMode,'pivot');
+ assert.equal(picker({kind:'oneDrive',folder:'Projects'}).initialView,'location');
+ assert.deepEqual(picker({kind:'siteCollection'}).visibleLocations,['quickAccess','site']);assert.equal(picker({kind:'siteCollection'}).initialView,'location');
 });
 
 test('native source changes clear optional starting location while preset changes retain it and values', () => {

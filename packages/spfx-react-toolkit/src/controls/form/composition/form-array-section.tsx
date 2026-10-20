@@ -9,7 +9,8 @@ import { FormArray } from './form-array';
 import { formResetTargets, requireFormMethodsMetadata, subscribeToFormResets } from '../form-methods.internal';
 import { focusArrayContent, focusArrayTarget } from './form-array-focus.internal';
 import { assertSectionName, sectionDescriptionIds, useFormSectionsStyles } from './form-sections.styles.internal';
-import { GroupText, hasGroupContent } from '../../group-header.internal';
+import { GroupText, hasGroupContent, hasGroupDescriptionContent } from '../../group-header.internal';
+import { renderContentSlot } from '../../content-slot.internal';
 import { useSx } from '../../../hooks/useSx';
 import * as flex from '../../../helpers/styles/flex';
 import * as gap from '../../../helpers/styles/gap';
@@ -53,7 +54,7 @@ function ArraySectionContent<TInput extends FieldValues, TPath extends FormArray
     };
     const sx = useSx(), styles = useFormSectionsStyles();
     const descriptionId = useId('form-array-description'), errorId = useId('form-array-error');
-    const hasDescription = hasGroupContent(description);
+    const hasDescription = hasGroupDescriptionContent(description);
     const { methods } = useFormRuntimeContext();
     const root = React.useRef<HTMLFieldSetElement>();
     const addButton = React.useRef<HTMLButtonElement | HTMLAnchorElement>();
@@ -116,7 +117,7 @@ function ArraySectionContent<TInput extends FieldValues, TPath extends FormArray
     return <fieldset {...native} ref={element => { root.current = element ?? undefined; }} disabled={disabled} aria-invalid={context.errors.length > 0 || native['aria-invalid']} aria-describedby={sectionDescriptionIds(describedBy, hasDescription ? descriptionId : undefined, context.errors.length ? errorId : undefined)} className={sx(styles.group, container.inlineSize, minWidth.zero, className)}>
         {hasGroupContent(title) && <legend className={styles.legend}><GroupText>{title}</GroupText></legend>}
         <Card appearance={appearance} focusMode="off" size="medium">
-            <Field className={sx(gap.small)} hint={hasDescription ? { id: descriptionId, className: sx(marginBlockStart.none), children: description } : undefined} validationState={context.errors.length ? 'error' : 'none'} validationMessage={context.errors.length ? { id: errorId, className: sx(marginBlockStart.none), children: context.errors.join('; ') } : undefined}>
+            <Field className={sx(gap.small)} hint={hasGroupContent(description) ? { id: descriptionId, className: sx(marginBlockStart.none), children: renderContentSlot(description, 'div', sx, { shorthand: 'preserve' }) } : undefined} validationState={context.errors.length ? 'error' : 'none'} validationMessage={context.errors.length ? { id: errorId, className: sx(marginBlockStart.none), children: context.errors.join('; ') } : undefined}>
                 <div className={sx(flex.column, gap.medium, minWidth.zero)}>
                     {context.items.length === 0 ? <GroupText description>{strings.empty}</GroupText> : <ol className={sx(styles.list, flex.column, gap.medium)}>{context.items.map(item => {
                         const label = itemName(item);

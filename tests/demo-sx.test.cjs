@@ -6,24 +6,30 @@ const { createHarness } = require('./services-test-harness.cjs');
 const { Simulate } = require('react-dom/test-utils');
 const { createDOMRenderer } = require('@griffel/core');
 const { RendererProvider } = require('@griffel/react');
-require('@fluentui/react').registerIcons({ icons: { Color: 'color' } });
-const panelPath = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/StylesPanel.tsx');
+const panelPath = path.resolve(__dirname, 'fixtures/foundation-legacy/StylesPanel.tsx');
 function fixture(t, hostTheme) {
   assert.ok(fs.existsSync(panelPath), 'The observable Styles panel is missing');
   const toolkit = {};
+  let choice = 'host', updateHost;
+  const fluent = require('@fluentui/react-components');
   // Only unavailable SPFx context boundaries are doubled. React, descriptors,
   // useSx, Griffel, FluentProvider and the theme adapter are the real modules.
   const h = createHarness({ '@apvee/spfx-react-toolkit': toolkit,
-    './useSPFxTeams': { useSPFxTeams: () => ({ supported: false }) },
+    './useSPFxTeams': { useSPFxTeams: () => ({ supported: choice !== 'host', theme: choice === 'host' ? undefined : choice }) },
     './useSPFxThemeInfo': { useSPFxThemeInfo: () => hostTheme } });
   Object.assign(toolkit, h.load('helpers/styles/index.ts'), h.load('hooks/useSx.ts'),
     h.load('hooks/useSPFxFluent9ThemeInfo.ts'), h.load('helpers/spfx-theme.helpers.ts'));
   const renderer = createDOMRenderer(null);
   const Panel = h.load(panelPath).default;
-  const view = h.mountComponent(() => h.React.createElement(RendererProvider, { renderer }, h.React.createElement(Panel)));
+  const view = h.mountComponent(() => {
+    const [theme, setTheme] = h.React.useState(toolkit.createFluent9ThemeFromSPFxTheme(hostTheme));
+    updateHost = next => { choice = next; setTheme(toolkit.getTeamsFluentTheme(next)); };
+    return h.React.createElement(RendererProvider, { renderer }, h.React.createElement(fluent.FluentProvider, { theme }, h.React.createElement(Panel)));
+  });
   t.after(h.close);
   const node = id => { const e = view.container.querySelector(`[data-sx-demo="${id}"]`); assert.ok(e, id); return e; };
   const change = (id, value) => h.act(() => {
+    if (id === 'theme') { updateHost(value); return; }
     const e = node(id);
     if (e.type === 'checkbox') { e.checked = value; Simulate.change(e, { target: e }); }
     else { e.value = String(value); Simulate.change(e, { target: e }); }
@@ -47,7 +53,7 @@ test('Styles controls update real width, gap and grid descriptors', t => {
 test('Styles host mode carries real SPFx neutral state colors into the shared FluentProvider', t => {
   const host = require('@fluentui/react').createTheme();
   const f = fixture(t, host);
-  assert.equal(f.node('theme').value, 'host');
+  assert.equal(f.container.querySelector('[data-sx-demo=theme]'), null);
   const css = window.getComputedStyle(f.node('provider'));
   assert.equal(css.getPropertyValue('--colorNeutralStrokeAccessible').trim(), '#605e5c');
   assert.equal(css.getPropertyValue('--colorNeutralStrokeAccessibleHover').trim(), '#323130');
@@ -71,7 +77,7 @@ test('Styles foreground, subtle/alternative, preset and real theme provider cont
   assert.ok(f.node('preset-notice').textContent.includes('unsupported'));
   assert.equal(f.node('preset-preview').hasAttribute('data-unsupported'), true);
 });
-test('disabled native action removes enabled state recipes and selected presentation', t => {
+test('disabled Fluent action removes enabled state recipes and selected presentation', t => {
   const f = fixture(t);
   assert.match(f.rules('state-preview'), /:hover/);
   assert.match(f.rules('state-preview'), /:active/);
@@ -80,7 +86,8 @@ test('disabled native action removes enabled state recipes and selected presenta
   assert.equal(f.node('state-preview').disabled, true);
   assert.equal(f.node('state-preview').getAttribute('aria-pressed'), 'true');
   assert.match(f.rules('state-preview'), /var\(--colorNeutralBackgroundDisabled\)/);
-  assert.doesNotMatch(f.rules('state-preview'), /:hover|:active|:focus-visible|colorBrandBackground/);
+  // Fluent retains its own focus/forced-colors rules; descriptor state assignments are absent.
+  assert.doesNotMatch(f.rules('state-preview'), /--apvee-sx-(?:backgroundColor|color|borderColor)-base-(?:hover|active|focus-visible):var\(/);
   f.change('disabled', false);
   assert.match(f.rules('state-preview'), /:hover/);
 });
@@ -114,6 +121,57 @@ test('panel has no inline style assignments and fractional pixels remain observa
   f.change('catalog-family', 'grid');
   assert.equal(f.node('catalog-value').value, '1');
   f.change('catalog-value', 2.5);
+  assert.equal(f.node('catalog-value').value, '2.5');
+  f.h.act(() => Simulate.blur(f.node('catalog-value')));
   assert.equal(f.node('catalog-value').value, '1');
   assert.match(f.rules('catalog-preview'), /repeat\(1, minmax\(0, 1fr\)\)/);
+});
+
+test('numeric drafts allow clearing and sequential replacement while retaining valid descriptors', t => {
+  const f = fixture(t);
+  f.change('layout-width', '');
+  assert.equal(f.node('layout-width').value, '');
+  assert.match(f.rules('layout-preview'), /240px/);
+  for (const value of ['3', '32', '320', '320.5']) f.change('layout-width', value);
+  assert.equal(f.node('layout-width').value, '320.5');
+  assert.match(f.rules('layout-preview'), /320\.5px/);
+  f.change('layout-columns', ''); f.change('layout-columns', '0');
+  assert.match(f.rules('layout-preview'), /repeat\(2, minmax\(0, 1fr\)\)/);
+  f.h.act(() => Simulate.blur(f.node('layout-columns')));
+  assert.equal(f.node('layout-columns').value, '2');
+});
+
+test('hook, provider, style and service panels use Fluent configuration and shared demo regions', () => {
+  const componentRoot = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
+  const panels = ['Styles', 'Imports', 'ReactHooks', 'Providers', 'Context', 'Runtime', 'Clients', 'GraphData', 'Site', 'Tenant', 'PnP', 'Search'];
+  const files = panels.map(name => path.join(componentRoot, 'panels', name + 'Panel.tsx'))
+    .concat(fs.readdirSync(path.join(componentRoot, 'demos')).filter(name => /^PnP.*\.tsx$/.test(name)).map(name => path.join(componentRoot, 'demos', name)));
+  for (const file of files) {
+    const source = fs.readFileSync(file, 'utf8');
+    assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]/, path.basename(file));
+    assert.doesNotMatch(source, /<(?:input|select|textarea|button|details|a)\b/, path.basename(file));
+    assert.doesNotMatch(source, /\bstyles?\s*=/, path.basename(file));
+    const delegated = /from ['"]\.\.\/demos['"]/.test(source) && /<PnP[A-Za-z]+Demo/.test(source);
+    assert.ok(/DemoCard|useDemoStyles/.test(source) || delegated, `${path.basename(file)} must own shared regions or delegate an actual demo component`);
+  }
+});
+
+test('Styles native slots keep their Fluent label associations', t => {
+  const f = fixture(t);
+  for (const id of ['layout-width', 'layout-columns', 'catalog-family', 'disabled', 'selected']) {
+    const control = f.node(id);
+    assert.ok(control.id, id + ' has a native control ID');
+    assert.ok(Array.from(f.container.querySelectorAll('label')).some(label => label.htmlFor === control.id), id + ' is associated with its visible label');
+  }
+});
+
+test('Styles bounds layout, catalog and query subjects in distinct focusable named regions', t => {
+  const f = fixture(t);
+  for (const [id, name] of [['layout-scroll', 'Layout preview'], ['catalog-scroll', 'Catalog preview'], ['query-scroll', 'Container query previews']]) {
+    const region = f.node(id);
+    assert.equal(region.getAttribute('role'), 'region');
+    assert.equal(region.getAttribute('aria-label'), name);
+    assert.equal(region.tabIndex, 0);
+  }
+  assert.equal(f.node('catalog-preview').getAttribute('role'), null, 'inner subject remains free to demonstrate its selected descriptor');
 });

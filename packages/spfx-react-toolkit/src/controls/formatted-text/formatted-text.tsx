@@ -21,9 +21,11 @@ import type { FormattedTextProps } from './formatted-text.types';
  * @param props Native text attributes, presentation options and owned content.
  * @returns A semantic text root, including when children render nothing.
  * @example
+ * ```tsx
  * <FormattedText as="h2" variant="title2" maxLines={2}>
  *   Read the **updates** in [documentation](./docs).
  * </FormattedText>
+ * ```
  */
 export const FormattedText = React.forwardRef<HTMLElement, FormattedTextProps>((props, ref) => {
   const {

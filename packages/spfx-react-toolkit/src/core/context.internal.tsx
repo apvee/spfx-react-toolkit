@@ -23,15 +23,18 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 /**
- * Internal hook to access SPFx context
+ * Returns static metadata for the nearest host-specific SPFx provider. Call inside a React component or hook; theme, size and property changes are exposed through dedicated runtime hooks. Although its implementation lives in an internal module, this hook is exported from the public hooks entry.
  *
- * Provides access to the SPFx context value containing instanceId, spfxContext, and kind.
- * Must be used within an SPFx provider component tree.
+ * @returns Nearest provider metadata, including kind, instanceId and the SPFx context reference.
+ * @throws Error when called outside a host-specific SPFx provider.
  *
- * @returns SPFxContextValue containing instanceId, spfxContext, and kind
- * @throws Error if used outside an SPFx provider - component must be wrapped with a host-specific provider.
- *
- * @internal
+ * @example
+ * ```tsx
+ * function HostLabel() {
+ *   const { kind, instanceId } = useSPFxContext();
+ *   return <span>{kind}: {instanceId}</span>;
+ * }
+ * ```
  */
 export function useSPFxContext(): SPFxContextValue {
   const context = React.useContext(SPFxContext);

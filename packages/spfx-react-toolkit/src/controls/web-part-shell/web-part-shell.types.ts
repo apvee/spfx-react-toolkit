@@ -1,15 +1,23 @@
+import type { ContentSlot } from '../content-slot.types.internal';
 import type * as React from 'react';
 import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import type { Theme } from '@fluentui/react-theme';
 
 /** Persisted title properties owned by WebPartShell. Extend with application properties.
  * Do not narrow these keys: the shell publishes ordinary strings and visibility values.
- * @example interface Properties extends IWebPartShellProperties { listId: string; }
+ * @example
+ * ```ts
+ * interface Properties extends IWebPartShellProperties { listId: string; }
+ * ```
  */
 export interface IWebPartShellProperties {
-  /** Searchable plain title. Literal H2 fallback when titleHTML is absent. */
+  /** Plain searchable title, kept in sync with rich-title edits. Literal H2 fallback when
+   * `titleHTML` is absent; metadata searchability requires `getWebPartShellPropertiesMetadata`. */
   title: string;
-  /** Authoritative toolkit rich title HTML; defined empty means an empty title.
+  /** Authoritative toolkit rich-title HTML; defined empty means an empty title.
+   * Saved HTML is normalized to the bounded title format for rendering; invalid input
+   * falls back to the plain title without a mount-time property rewrite.
+   * Title edits publish normalized safe markup together with the plain title.
    * Colors are stable semantic IDs resolved from the current Fluent theme;
    * UI-language changes never translate author content or rewrite these IDs. */
   titleHTML?: string;
@@ -17,12 +25,27 @@ export interface IWebPartShellProperties {
   showTitle?: boolean;
 }
 
-/** Automatic host detection, an inset-free section, or an application surface. */
+/** Host surface policy: `auto` detects Teams or a single-web-part app page as `application`;
+ * other hosts use `section`. `section` adds no background or automatic inset; `application`
+ * uses the themed application surface. Omission defaults to `auto`.
+ * @example
+ * ```ts
+ * const surface: WebPartShellSurface = 'section';
+ * ```
+ */
 export type WebPartShellSurface = 'auto' | 'section' | 'application';
-/** Logical Fluent spacing; auto is none for section and responsive medium/large for application. */
+/** Logical Fluent inset: `none`, `small`, `medium` or `large`. `auto` (default) uses none
+ * for section and responsive medium/large application padding around the 640px container breakpoint.
+ * @example
+ * ```ts
+ * const padding: WebPartShellPadding = 'small';
+ * ```
+ */
 export type WebPartShellPadding = 'auto' | 'none' | 'small' | 'medium' | 'large';
 
-/** SPFx shell options and native div attributes. No editor engine types are public.
+/** Actual SPFx web-part shell options and native div attributes. Composes the toolkit
+ * SPFx and Fluent providers internally, waiting for ServiceScope readiness. The host
+ * must supply its document's Griffel renderer. No editor engine types are public.
  * Title editor labels, color tooltips and recovery messages follow the instance's
  * `pageContext.cultureInfo.currentUICultureName`, with English fallback for unsupported
  * cultures. Theme-color identifiers and author content remain language-independent.
@@ -34,7 +57,10 @@ export type WebPartShellPadding = 'auto' | 'none' | 'small' | 'medium' | 'large'
  * the caret/range and provide individual undo boundaries. Empty-title inline formatting
  * affects subsequent typing without publishing an empty document.
  * @template TProperties Web part properties extending the shell's three owned keys.
- * @example <WebPartShell instance={this} padding="small"><MyContent /></WebPartShell>
+ * @example
+ * ```tsx
+ * <WebPartShell instance={this} padding="small"><MyContent /></WebPartShell>
+ * ```
  */
 export interface WebPartShellProps<TProperties extends IWebPartShellProperties>
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'dangerouslySetInnerHTML'> {
@@ -48,9 +74,10 @@ export interface WebPartShellProps<TProperties extends IWebPartShellProperties>
   theme?: Theme;
   /** Direction override; otherwise ancestor Fluent direction or SPFx locale. */
   dir?: 'ltr' | 'rtl';
-  /** Caller-owned header actions, rendered unchanged under both providers. */
-  action?: React.ReactNode;
-  /** Content whose mounted identity is preserved through title Read/Edit changes. */
+  /** Header actions as shorthand or div props/render slot under both providers. Shorthand retains its DOM; slot ref targets the inner div. Empty objects request a header; callbacks run only during rendering. Persisted title/editor and body identity are independent. */
+  action?: ContentSlot<'div'>;
+  /** Content whose mounted identity is preserved through title Read/Edit and same-instance
+   * rerenders. A different `instanceId` resets the subtree; omission leaves an empty body. */
   children?: React.ReactNode;
   /** HTML injection is unavailable; the shell owns the title content pathway. */
   dangerouslySetInnerHTML?: never;

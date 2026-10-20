@@ -101,3 +101,32 @@ const nativeSizing = <Grid items={rows} getRowId={r => r.id} columns={columns} r
 // @ts-expect-error sortability belongs to declared columns
 const rootSortable = <Grid items={rows} getRowId={r => r.id} columns={columns} sortable />;
 void [nativeSizing, rootSortable];
+
+
+// Named presentation slots share direct factory and JSX marker contracts.
+const slotSpanRef = React.createRef<HTMLSpanElement>();
+const slotDivRef = React.createRef<HTMLDivElement>();
+const legacySlot: React.ReactNode = rows.length ? <strong>Legacy</strong> : undefined;
+const slotColumns = Grid.defineColumns(c => [
+  c.text({ id: 'slots', field: 'text', header: { ref: slotSpanRef, children: (Component, props) => <Component {...props}>Header</Component> }, placeholder: { 'data-missing': true, children: 'Missing' }, invalidPlaceholder: { as: 'span', children: <em>Invalid</em> } }),
+  c.actions({ id: 'slot-actions', header: { children: 'Actions' }, actions: [] }),
+]);
+const slotGrid = <Grid items={rows} getRowId={r => r.id} columns={slotColumns}
+  error={{ ref: slotDivRef, onClick: event => { event.currentTarget.focus(); }, children: <p>Error block</p> }}
+  emptyContent={{ as: 'div', children: (Component, props) => <Component {...props}>Empty</Component> }}
+  noResultsContent={rows.length > 0 && <strong>No matches</strong>} />;
+const slotMarkers = <Grid items={rows} getRowId={r => r.id}><Grid.TextColumn id="slot" field="text" header={legacySlot} placeholder={{ ref: slotSpanRef, children: '' }} invalidPlaceholder={false} /><Grid.ActionsColumn id="actions" actions={[]} header={{ children: 'Actions' }} /></Grid>;
+const dynamicSlotMarkers = <DataGrid items={[]} getRowId={r => String(r.id)}><DataGrid.TextColumn id="slot" field="text" header={{ children: 'Header' }} placeholder={{ children: 'Missing' }} /></DataGrid>;
+// @ts-expect-error header tag cannot replace its span
+Grid.defineColumns(c => [c.text({ id: 'bad-header-tag', field: 'text', header: { as: 'div', children: 'Bad' } })]);
+// @ts-expect-error placeholder raw HTML is forbidden
+Grid.defineColumns(c => [c.text({ id: 'bad-placeholder-html', field: 'text', header: 'Header', placeholder: { dangerouslySetInnerHTML: { __html: 'Bad' } } })]);
+// @ts-expect-error object header cannot replace native sort behavior
+const badHeaderMarker = <Grid.TextColumn id="bad" field="text" header={{ as: 'button', children: 'Bad' }} />;
+// @ts-expect-error root callbacks must live in object children
+const badSlotCallback = <Grid items={rows} getRowId={r => r.id} columns={columns} emptyContent={() => <div />} />;
+// @ts-expect-error error cannot change its fixed tag
+const badErrorTag = <Grid items={rows} getRowId={r => r.id} columns={columns} error={{ as: 'span', children: 'Bad' }} />;
+// @ts-expect-error status raw HTML is forbidden
+const badStatusHtml = <Grid items={rows} getRowId={r => r.id} columns={columns} noResultsContent={{ dangerouslySetInnerHTML: { __html: 'Bad' } }} />;
+void [slotGrid, slotMarkers, dynamicSlotMarkers, badHeaderMarker, badSlotCallback, badErrorTag, badStatusHtml];

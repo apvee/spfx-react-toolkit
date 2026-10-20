@@ -53,6 +53,17 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
+    key: 'cards',
+    title: 'Content and Preview Cards',
+    iconName: 'Picture',
+    description: 'One selectable report card with editable properties, image lifecycle and retained notes.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-cards' */ './panels/CardsPanel')),
+    coverage: [
+      { symbol: 'ContentCard', kind: 'snapshot', notes: 'Selectable ContentCard report with retained props/notes; literal/native peer parity in versioned fixtures.' },
+      { symbol: 'PreviewCard', kind: 'snapshot', notes: 'Selectable PreviewCard report, image lifecycle and retained notes; slot/empty-media/native/independent regressions in versioned fixtures.' },
+    ],
+  },
+  {
     key: 'web-part-shell',
     title: 'WebPartShell',
     iconName: 'Page',
@@ -67,9 +78,9 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     key: 'description-list',
     title: 'Description List',
     iconName: 'Info',
-    description: 'Native read-only term/value pairs with data or compound composition and responsive columns.',
+    description: 'One document detail with selectable data/compound composition and responsive layout.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-description-list' */ './panels/DescriptionListPanel')),
-    coverage: [{ symbol: 'DescriptionList', kind: 'snapshot', notes: 'Data/compound APIs, rich slots, literal/zero/empty values, 480px container threshold, nested containers, stable child state, native refs/hidden/events and independent theme/RTL.' }],
+    coverage: [{ symbol: 'DescriptionList', kind: 'snapshot', notes: 'Data/compound APIs, rich slots, literal/zero/empty values, 480px container threshold, nested containers, stable child state, native refs/hidden/events and independent state, inherited host theme and explicit RTL overrides.' }],
   },
   {
     key: 'pagination',
@@ -77,27 +88,27 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     iconName: 'ChevronRight',
     description: 'Controlled page, cursor and load-more requests with real consumer-owned results.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-pagination' */ './panels/PaginationPanel')),
-    coverage: [{ symbol: 'Pagination', kind: 'snapshot', notes: 'Four modes, actual paged rows, filter/page-size/total resets, deterministic pending completion, localized labels, native form/ref/hidden, light/dark RTL and independent instances.' }],
+    coverage: [{ symbol: 'Pagination', kind: 'snapshot', notes: 'Four modes, actual paged rows, filter/page-size/total resets, deterministic pending completion, localized labels, native form/ref/hidden, host theme/RTL and independent instances.' }],
   },
   {
     key: 'data-grid',
     title: 'DataGrid',
     iconName: 'Table',
-    description: 'Sixteen cell presentations, stable IDs and consumer-owned rows, sort intent and selection.',
+    description: 'One compact grid with selectable APIs and column presets, controlled sort and selection.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-data-grid' */ './panels/DataGridPanel')),
     coverage: [
       { symbol: 'DataGrid', kind: 'snapshot', notes: 'Dynamic valid/missing/invalid values, native cells, absolute dates and localized statuses.' },
-      { symbol: 'createDataGrid', kind: 'snapshot', notes: 'Typed sixteen-column family, descriptors, controlled selection/sort, activation, loading, resizing and immutable Charts updates.' },
+      { symbol: 'createDataGrid', kind: 'snapshot', notes: 'Selectable compact column/API presets, controlled selection/sort and activation; full-family/chart conformance in versioned fixtures.' },
     ],
   },
   {
     key: 'form',
     title: 'Form',
     iconName: 'Edit',
-    description: 'Typed live values, settings field rows, all adapters, nested scopes, arrays and save/reset ownership.',
+    description: 'One form with selectable adapters and model families, validation and explicit save/reset.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-form' */ './panels/FormPanel')),
     coverage: [
-      { symbol: 'Form', kind: 'snapshot', notes: 'Dynamic Form.Root/Input/Submit/Reset alongside the typed complete-family record editor.' },
+      { symbol: 'Form', kind: 'snapshot', notes: 'Selectable dynamic, typed, object, array and schema form; conformance comparisons in versioned fixtures.' },
       { symbol: 'createForm', kind: 'snapshot', notes: '22 adapters, automatic SettingsGroup field labels/hints, suite hooks, four compositions, rules/schema, native files, drafts, reset, pending save and retries.' },
     ],
   },
@@ -107,16 +118,16 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     iconName: 'OpenPane',
     description: 'Explicit Dialog, Drawer and Popover surfaces with shared content and guarded forms.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-stage' */ './panels/StagePanel')),
-    coverage: [{ symbol: 'Stage', kind: 'snapshot', notes: 'Three presentations, sizes, literal/JSX headers, scroll, retention, nested popups, guarded Form save/reset, themes/RTL and selectable Card isolation.' }],
+    coverage: [{ symbol: 'Stage', kind: 'snapshot', notes: 'Three presentations, sizes, literal/JSX headers, scroll, retention, nested popups, guarded Form save/reset, host theme/RTL and selectable Card isolation.' }],
   },
   {
     key: 'groups',
     title: 'SettingsGroup and AccordionGroup',
     iconName: 'Settings',
-    description: 'Caller-owned settings and controlled disclosure with retained panel state.',
+    description: 'One selectable SettingsGroup or AccordionGroup with shared preferences and retained notes.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-groups' */ './panels/GroupsPanel')),
     coverage: [
-      { symbol: 'SettingsGroup', kind: 'snapshot', notes: 'Caller-labeled Input/Switch rows, literal text/JSX, actions, width, theme, direction, hidden and root ref; automatic field composition also runs in Form.' },
+      { symbol: 'SettingsGroup', kind: 'snapshot', notes: 'Caller-labeled Input/Switch rows, literal text/JSX, actions, width, inherited host theme, explicit direction overrides, hidden and root ref; automatic field composition also runs in Form.' },
       { symbol: 'AccordionGroup', kind: 'snapshot', notes: 'Controlled openItems, multiple, disabled, mounted note persistence, unmount reset and root ref.' },
     ],
   },
@@ -126,7 +137,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     iconName: 'Info',
     description: 'Section states, theme-aware artwork, container sizing and accessible actions.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-state-message' */ './panels/StateMessagePanel')),
-    coverage: [{ symbol: 'StateMessage', kind: 'snapshot', notes: 'Five presets, light/dark, RTL, responsive host, custom/hidden visual, heading, role, button/link actions and root ref.' }],
+    coverage: [{ symbol: 'StateMessage', kind: 'snapshot', notes: 'Five presets, host theme, RTL, responsive host, custom/hidden visual, heading, role, button/link actions and root ref.' }],
   },
   {
     key: 'auto-skeleton',
@@ -135,7 +146,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     description: 'Measured loading geometry, persistent child state, resize, focus and direction.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-auto-skeleton' */ './panels/AutoSkeletonPanel')),
     coverage: [
-      { symbol: 'AutoSkeleton', kind: 'snapshot', notes: 'Loading, animation, minimum size, ignored subtrees, empty content, resize, themes/RTL and native ref/focus/state observations.' },
+      { symbol: 'AutoSkeleton', kind: 'snapshot', notes: 'Loading, animation, minimum size, ignored subtrees, empty content, resize, host theme/RTL and native ref/focus/state observations.' },
     ],
   },
   {
@@ -162,7 +173,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     key: 'imports',
     title: 'Imports',
     iconName: 'Code',
-    description: 'Root, domain and legacy imports share callback behavior and style composition.',
+    description: 'Select one root, domain or legacy adapter and inspect its captured callback and composed styles.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-imports' */ './panels/ImportsPanel')),
     coverage: [], // Existing React Hooks and Styles entries own the exported symbols.
   },
@@ -180,7 +191,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     key: 'styles',
     title: 'Styles',
     iconName: 'Color',
-    description: 'Interactive descriptor catalog, themes, state composition and independent query regions.',
+    description: 'One selected style recipe with interactive descriptors, inherited host theme and state composition.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-styles' */ './panels/StylesPanel')),
     coverage: [
       { symbol: 'useSx', kind: 'snapshot', notes: 'Interactive Styles controls apply real descriptors; local browser fixture complements host validation.' },
@@ -361,6 +372,24 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
       { symbol: 'useSPFxPnPSearch', kind: 'read', notes: 'Search text, builder, refiners, and suggestions.' },
       { symbol: 'SearchVerticals', kind: 'snapshot', notes: 'Built-in source ids for common verticals.' },
     ],
+  },
+  {
+    key: 'sharepoint-permission-trim', title: 'SharePoint Permission Trim', iconName: 'Permissions',
+    description: 'Current-user access checks.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-sharepoint-permission-trim' */ './panels/SharePointPermissionTrimPanel')),
+    coverage: [{ symbol: 'SharePointPermissionTrim', kind: 'read', notes: 'Actual native reads, all branches, selectors, protected state and explicit repeat; local transport fixtures and tenant validation are separate.' }],
+  },
+  {
+    key: 'sharepoint-group-trim', title: 'SharePoint Group Trim', iconName: 'Permissions',
+    description: 'Current-user access checks.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-sharepoint-group-trim' */ './panels/SharePointGroupTrimPanel')),
+    coverage: [{ symbol: 'SharePointGroupTrim', kind: 'read', notes: 'Actual native reads, all branches, selectors, protected state and explicit repeat; local transport fixtures and tenant validation are separate.' }],
+  },
+  {
+    key: 'entra-group-trim', title: 'Entra Group Trim', iconName: 'Permissions',
+    description: 'Current-user access checks.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-entra-group-trim' */ './panels/EntraGroupTrimPanel')),
+    coverage: [{ symbol: 'EntraGroupTrim', kind: 'read', notes: 'Actual native reads, all branches, selectors, protected state and explicit repeat; local transport fixtures and tenant validation are separate.' }],
   },
 ];
 

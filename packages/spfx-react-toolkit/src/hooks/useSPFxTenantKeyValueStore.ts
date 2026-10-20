@@ -11,11 +11,22 @@ import { createSPFxTenantKeyValueStoreService } from '../services/spfx-tenant-ke
 
 /**
  * A single item from the tenant key-value store
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const store = useSPFxTenantKeyValueStore();
+ * const onLoad = async () => {
+ *   const item: SPFxTenantKeyValueStoreItem<boolean> | undefined = await store.get('featureEnabled');
+ *   console.log(item?.value);
+ * };
+ * ```
+ * @template T - Expected application data shape; no runtime validation is performed.
  */
 export interface SPFxTenantKeyValueStoreItem<T = unknown> {
     /** Property key (stored in Title column) */
     readonly key: string;
-    /** Deserialized property value */
+    /** Deserialized property value; the generic does not validate runtime data or preserve all legacy serialization types */
     readonly value: T;
     /** Optional description metadata */
     readonly description: string | undefined;
@@ -25,6 +36,13 @@ export interface SPFxTenantKeyValueStoreItem<T = unknown> {
 
 /**
  * Return type for useSPFxTenantKeyValueStore hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const store: SPFxTenantKeyValueStoreResult = useSPFxTenantKeyValueStore();
+ * const onLoad = async () => console.log(await store.get<boolean>('featureEnabled'));
+ * ```
  */
 export interface SPFxTenantKeyValueStoreResult {
     /**
@@ -34,8 +52,7 @@ export interface SPFxTenantKeyValueStoreResult {
     readonly isLoading: boolean;
 
     /**
-     * Last error from read operations.
-     * Cleared on next successful read.
+     * Read error from the latest-started read; cleared when another read starts. Setup failures inside get/list return fallbacks without setting this error.
      */
     readonly error: Error | undefined;
 
@@ -46,15 +63,12 @@ export interface SPFxTenantKeyValueStoreResult {
     readonly isWriting: boolean;
 
     /**
-     * Last error from write operations.
-     * Cleared on next successful write.
+     * Write error from the latest-started write; cleared when another write starts.
      */
     readonly writeError: Error | undefined;
 
     /**
-     * Whether the current user has permission to write to the store.
-     * Requires Site Collection Administrator role on the tenant app catalog.
-     * Computed asynchronously on first operation.
+     * App catalog IsSiteAdmin indicator, checked asynchronously during mount/discovery or operations. SharePoint still enforces writes.
      */
     readonly canWrite: boolean;
 
@@ -65,42 +79,17 @@ export interface SPFxTenantKeyValueStoreResult {
     readonly isReady: boolean;
 
     /**
-     * Get a single item by key.
-     * Returns undefined if the key does not exist or the list has not been provisioned.
-     *
-     * @param key - Property key to look up
-     * @returns The item with deserialized value, or undefined
-     *
-     * @example
-     * ```tsx
-     * const store = useSPFxTenantKeyValueStore();
-     *
-     * const handleLoad = async () => {
-     *   const item = await store.get<string>('apiEndpoint');
-     *   if (item) {
-     *     console.log(item.value); // "https://api.example.com"
-     *   }
-     * };
-     * ```
+     * Ensures setup, then reads a key. Setup failure returns undefined without publishing error; discovery/read failures publish error and return undefined.
+     * @param key - Stored property key.
+     * @returns Item or undefined for absent keys or failed reads/setup.
+     * @throws When the SharePoint client is unavailable.
      */
     readonly get: <T = unknown>(key: string) => Promise<SPFxTenantKeyValueStoreItem<T> | undefined>;
 
     /**
-     * List all items in the store.
-     * Returns an empty array if the list has not been provisioned.
-     * Items are sorted by key (Title) ascending.
-     *
-     * @returns Array of all items with deserialized values
-     *
-     * @example
-     * ```tsx
-     * const store = useSPFxTenantKeyValueStore();
-     *
-     * const items = await store.list();
-     * items.forEach(item => {
-     *   console.log(`${item.key}: ${typeof item.value === 'object' ? JSON.stringify(item.value) : item.value}`);
-     * });
-     * ```
+     * Ensures setup, then reads the first server page in Title order; does not follow continuation links. Setup failure returns [] silently; discovery/read failures publish error and return [].
+     * @returns First page of items, or an empty fallback.
+     * @throws When the SharePoint client is unavailable.
      */
     readonly list: () => Promise<SPFxTenantKeyValueStoreItem<unknown>[]>;
 
@@ -119,29 +108,28 @@ export interface SPFxTenantKeyValueStoreResult {
      *
      * @example
      * ```tsx
+     * // Inside a React component beneath a matching host-specific SPFx provider:
      * const store = useSPFxTenantKeyValueStore();
      *
      * // String value
-     * await store.save<string>('apiEndpoint', 'https://api.example.com', 'Production API');
+     * // Call this handler from an event or an effect; do not request during render.
+     * const run = async () => {
+     *   await store.save<string>('apiEndpoint', 'https://api.example.com', 'Production API');
      *
-     * // Complex object
-     * await store.save<FeatureFlags>('featureFlags', { enableChat: true, maxUsers: 1000 });
+     *   // Complex object
+     *   await store.save<FeatureFlags>('featureFlags', { enableChat: true, maxUsers: 1000 });
+     * };
      * ```
+     * @returns Resolves after a successful write; updates preserve an omitted description and empty string clears it.
+     * @throws Client, catalog discovery, provisioning, serialization or write failures; operation failures also publish writeError.
      */
     readonly save: <T = unknown>(key: string, value: T, description?: string) => Promise<void>;
 
     /**
-     * Remove an item by key.
-     * No-op if the key does not exist or the list has not been provisioned.
-     *
-     * @param key - Property key to remove
-     *
-     * @example
-     * ```tsx
-     * const store = useSPFxTenantKeyValueStore();
-     *
-     * await store.remove('deprecatedSetting');
-     * ```
+     * Ensures list setup before deleting a key; an absent key is a no-op.
+     * @param key - Key to remove.
+     * @returns Resolves after successful deletion or absent key.
+     * @throws Client, discovery, provisioning or deletion failures, also captured in writeError.
      */
     readonly remove: (key: string) => Promise<void>;
 }
@@ -151,126 +139,16 @@ export interface SPFxTenantKeyValueStoreResult {
 // ═══════════════════════════════════════════════════════════════════════════
 
 /**
- * Hook to manage tenant-wide key-value pairs backed by a hidden SharePoint list.
+ * Manages a hidden TenantKeyValueStore list in the tenant app catalog. Discovery, permission lookup and setup run on mount; each operation can also ensure setup. Service readiness is cached per catalog URL. isReady indicates client availability, not completed discovery or write authorization. SharePoint enforces actual grants; canWrite uses the catalog IsSiteAdmin flag. Values use legacy tenant serialization: JSON-like strings may be coerced and Date/bigint types do not round-trip. Read setup failures return fallbacks silently; other read failures publish error. Write failures reject. Context changes reset state and obsolete/unmounted completions cannot publish it.
+ * @returns Client readiness, read/write state, permission indicator and CRUD methods.
+ * @throws When called outside an SPFx provider.
  *
- * The store uses a hidden list named `TenantKeyValueStore` in the tenant app catalog.
- * The list is auto-provisioned on the first operation (get, list, save, or remove), with:
- * - Title column: key (indexed, unique)
- * - Value column: multiline text (Note)
- * - Description column: multiline text (Note)
- *
- * This hook provides an alternative to tenant properties (StorageEntity) for scenarios
- * requiring read/write access via REST, since Microsoft has blocked the
- * SetStorageEntity and RemoveStorageEntity REST API endpoints.
- *
- * Features:
- * - CRUD operations (get, list, save, remove) on tenant-scoped key-value data
- * - Auto-provisioning of the hidden list on first operation (any CRUD call)
- * - Smart provisioning: ref-based fast path (zero API calls after first check),
- *   field introspection only when list already exists, Title uniqueness only on creation
- * - Smart serialization for primitives, Date, and complex objects
- * - Permission checking (canWrite flag via IsSiteAdmin)
- * - Unique key enforcement (Indexed + EnforceUniqueValues on Title)
- * - Concurrent provisioning protection (service mutex)
- * - Memory leak safe with mounted state tracking
- * - Idempotent remove (no-op if key or list doesn't exist)
- *
- * Requirements:
- * - Tenant app catalog must be provisioned
- * - Read: Any authenticated user
- * - Write/Remove: Site Collection Administrator role on tenant app catalog site
- *
- * @returns Object with loading states, error states, permission flag, and CRUD functions
- *
- * @example Basic usage
+ * @example
  * ```tsx
- * function TenantConfigPanel() {
+ * function TenantSetting() {
  *   const store = useSPFxTenantKeyValueStore();
- *
- *   const [endpoint, setEndpoint] = React.useState<string>('');
- *
- *   React.useEffect(() => {
- *     store.get<string>('apiEndpoint').then(item => {
- *       if (item) setEndpoint(item.value);
- *     });
- *   }, []);
- *
- *   const handleSave = async () => {
- *     await store.save<string>('apiEndpoint', endpoint, 'Production API endpoint');
- *   };
- *
- *   if (!store.isReady) return <Spinner />;
- *
- *   return (
- *     <Stack tokens={{ childrenGap: 10 }}>
- *       <TextField value={endpoint} onChange={(_, v) => setEndpoint(v ?? '')} />
- *       <PrimaryButton onClick={handleSave} disabled={store.isWriting}>
- *         {store.isWriting ? 'Saving...' : 'Save'}
- *       </PrimaryButton>
- *     </Stack>
- *   );
- * }
- * ```
- *
- * @example Heterogeneous value types
- * ```tsx
- * const store = useSPFxTenantKeyValueStore();
- *
- * // String
- * await store.save<string>('appVersion', '2.1.0');
- * const ver = await store.get<string>('appVersion');
- *
- * // Number
- * await store.save<number>('maxUploadSize', 10485760);
- * const size = await store.get<number>('maxUploadSize');
- *
- * // Complex object
- * interface FeatureFlags { enableChat: boolean; maxUsers: number; }
- * await store.save<FeatureFlags>('featureFlags', { enableChat: true, maxUsers: 500 });
- * const flags = await store.get<FeatureFlags>('featureFlags');
- * ```
- *
- * @example Dashboard listing all properties
- * ```tsx
- * function AllPropertiesView() {
- *   const store = useSPFxTenantKeyValueStore();
- *   const [items, setItems] = React.useState<SPFxTenantKeyValueStoreItem<unknown>[]>([]);
- *
- *   React.useEffect(() => {
- *     store.list().then(setItems);
- *   }, []);
- *
- *   return (
- *     <DetailsList
- *       items={items.map(i => ({
- *         key: i.key,
- *         value: typeof i.value === 'object' ? JSON.stringify(i.value) : String(i.value),
- *         description: i.description ?? '',
- *       }))}
- *       columns={[
- *         { key: 'key', name: 'Key', fieldName: 'key', minWidth: 150 },
- *         { key: 'value', name: 'Value', fieldName: 'value', minWidth: 200 },
- *         { key: 'desc', name: 'Description', fieldName: 'description', minWidth: 200 },
- *       ]}
- *     />
- *   );
- * }
- * ```
- *
- * @example Permission-aware UI
- * ```tsx
- * function TenantStoreManager() {
- *   const store = useSPFxTenantKeyValueStore();
- *
- *   if (!store.canWrite) {
- *     return (
- *       <MessageBar messageBarType={MessageBarType.info}>
- *         Read-only access. Contact your SharePoint administrator for write permissions.
- *       </MessageBar>
- *     );
- *   }
- *
- *   return <EditablePropertyPanel store={store} />;
+ *   const load = async () => console.log(await store.get<boolean>('featureEnabled'));
+ *   return <button onClick={load} disabled={!store.isReady}>Load setting</button>;
  * }
  * ```
  */

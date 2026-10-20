@@ -6,83 +6,54 @@ import { useSPFxRuntimeActions, useSPFxRuntimeSelector } from './../core/state.i
 
 /**
  * Return type for useSPFxProperties hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const props: SPFxPropertiesInfo<{ title: string }> = useSPFxProperties();
+ * const onRename = () => props.setProperties({ title: 'Projects' });
+ * ```
+ * @template TProps - Application properties shape; no runtime validation is performed.
  */
 export interface SPFxPropertiesInfo<TProps = unknown> {
   /** Current properties object */
   readonly properties: TProps | undefined;
   
-  /** 
-   * Update properties with partial updates (shallow merge)
-   * Changes are automatically synced back to SPFx by the Provider
+  /**
+   * Shallow-merges updates into current provider properties. Provider host synchronization determines persistence/refresh behavior.
+   * @param updates - Partial properties to merge.
+   * @returns No value.
    */
   readonly setProperties: (updates: Partial<TProps>) => void;
   
   /**
-   * Update properties using updater function
-   * Useful for complex updates based on current state
-   * Changes are automatically synced back to SPFx by the Provider
+   * Replaces properties with the updater result; missing current properties are passed as undefined.
+   * @param updater - Pure updater returning the complete next property object.
+   * @returns No value.
+   * @throws Updater errors propagate.
    */
   readonly updateProperties: (updater: (current: TProps | undefined) => TProps) => void;
 }
 
 /**
- * Hook to access and manage SPFx properties
- * 
- * Properties are the configuration values for WebParts/Extensions that:
- * - Are set via Property Pane
- * - Persist across page loads
- * - Are specific to each instance
- * 
- * This hook provides:
- * - Type-safe access to properties
- * - Partial updates (merge with existing)
- * - Updater function pattern (like React setState)
- * - Automatic bidirectional sync with SPFx (managed by Provider)
- * 
- * The SPFx provider automatically handles synchronization:
- * - Property Pane changes → runtime state → Hook (automatic)
- * - Hook updates → runtime state → SPFx properties (automatic)
- * - Property Pane refresh for WebParts (automatic)
- * 
- * @returns Properties and setter functions
- * 
+ * Reads and updates the nearest provider properties. setProperties shallow-merges partial updates; updateProperties replaces the complete object and receives undefined before properties are available. The provider synchronizes host properties and refreshes WebPart property panes. This hook does not validate the TProps shape; render under a matching initialized provider using that host property type.
+ *
+ * @typeParam TProps - Host properties shape; no runtime validation is performed.
+ * @returns Current optional properties and partial-merge/complete-replacement setters.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * interface IMyWebPartProps {
- *   title: string;
- *   description: string;
- *   listId?: string;
+ * interface MyProperties { title: string; description: string; }
+ *
+ * function RenameButton() {
+ *   const { properties, updateProperties } = useSPFxProperties<MyProperties>();
+ *   return <button onClick={() => updateProperties(previous => ({
+ *     ...previous,
+ *     title: `${previous?.title ?? ''} Updated`,
+ *     description: previous?.description ?? ''
+ *   }))}>{properties?.title ?? 'Rename'}</button>;
  * }
- * 
- * function MyComponent() {
- *   const { properties, setProperties, updateProperties } = useSPFxProperties<IMyWebPartProps>();
- *   
- *   return (
- *     <div>
- *       <h1>{properties?.title ?? 'Default Title'}</h1>
- *       <p>{properties?.description}</p>
- *       
- *       <button onClick={() => setProperties({ title: 'New Title' })}>
- *         Update Title
- *       </button>
- *       
- *       <button onClick={() => updateProperties(prev => ({
- *         ...prev,
- *         title: (prev?.title ?? '') + ' Updated'
- *       }))}>
- *         Append to Title
- *       </button>
- *     </div>
- *   );
- * }
- * 
- * // In WebPart render():
- * // Just pass the instance - sync is automatic!
- * const element = React.createElement(
- *   SPFxWebPartProvider,
- *   { instance: this },
- *   React.createElement(MyComponent)
- * );
  * ```
  */
 export function useSPFxProperties<TProps = unknown>(): SPFxPropertiesInfo<TProps> {

@@ -1,10 +1,22 @@
 import type * as React from 'react';
 import type { ButtonProps } from '@fluentui/react-components';
 
-/** Native Fluent Button size: small, medium (default) or large, with proportional progress. */
+/** Native Fluent Button size: small, medium (default) or large, with proportional progress.
+ * @example
+ * ```ts
+ * const size: PaginationSize = 'small';
+ * ```
+ */
 export type PaginationSize = NonNullable<ButtonProps['size']>;
 
-/** Visible and accessible labels. Empty overrides fall back to English. */
+/** Visible and accessible labels for all navigation modes. Supply a partial object through
+ * `PaginationProps.strings`; missing/undefined/blank entries fall back to English and
+ * supplied values are trimmed. No locale detection or translation is performed.
+ * @example
+ * ```ts
+ * const strings: Partial<PaginationStrings> = { nextPage: 'Pagina successiva', loading: 'Caricamento' };
+ * ```
+ */
 export interface PaginationStrings {
   /** Accessible name of the navigation landmark and group. Default: Pagination. */
   readonly pagination: string;
@@ -22,7 +34,12 @@ export interface PaginationStrings {
   readonly loading: string;
 }
 
-/** Offset navigation with an exact count. The consumer owns the current page and data. */
+/** Offset navigation with an exact count. The consumer owns the current page and data.
+ * @example
+ * ```ts
+ * const pagination: PaginationPagesKnownTotal = { type: 'pages', pageIndex: 0, pageSize: 10, totalItems: 42 };
+ * ```
+ */
 export interface PaginationPagesKnownTotal {
   /** Selects offset navigation with first/previous/next/last actions. */
   readonly type: 'pages';
@@ -36,7 +53,12 @@ export interface PaginationPagesKnownTotal {
   readonly hasNextPage?: never;
 }
 
-/** Offset navigation with application-owned next-page availability. */
+/** Offset navigation with application-owned next-page availability.
+ * @example
+ * ```ts
+ * const pagination: PaginationPagesUnknownTotal = { type: 'pages', pageIndex: 0, pageSize: 10, hasNextPage: true };
+ * ```
+ */
 export interface PaginationPagesUnknownTotal {
   /** Selects previous/next offset actions without first/last. */
   readonly type: 'pages';
@@ -50,7 +72,12 @@ export interface PaginationPagesUnknownTotal {
   readonly totalItems?: never;
 }
 
-/** Directional navigation; cursor values remain private to the consumer. */
+/** Directional navigation; cursor values remain private to the consumer.
+ * @example
+ * ```ts
+ * const pagination: PaginationCursor = { type: 'cursor', hasPreviousPage: false, hasNextPage: true };
+ * ```
+ */
 export interface PaginationCursor {
   /** Selects previous/next cursor requests. */
   readonly type: 'cursor';
@@ -60,7 +87,12 @@ export interface PaginationCursor {
   readonly hasNextPage: boolean;
 }
 
-/** Incremental navigation that appends data in the consumer. */
+/** Incremental navigation that appends data in the consumer.
+ * @example
+ * ```ts
+ * const pagination: PaginationLoadMore = { type: 'loadMore', hasNextPage: true };
+ * ```
+ */
 export interface PaginationLoadMore {
   /** Selects the single visible load-more action. */
   readonly type: 'loadMore';
@@ -68,10 +100,22 @@ export interface PaginationLoadMore {
   readonly hasNextPage: boolean;
 }
 
-/** Controlled navigation state. No page state, fetching, slicing or cursor storage is retained. */
+/** Controlled navigation state. No page state, fetching, slicing or cursor storage is retained.
+ * @example
+ * ```ts
+ * const pagination: PaginationState = { type: 'pages', pageIndex: 0, pageSize: 20, totalItems: 90 };
+ * ```
+ */
 export type PaginationState = PaginationPagesKnownTotal | PaginationPagesUnknownTotal | PaginationCursor | PaginationLoadMore;
 
-/** Request intent; the consumer commits the next state and handles asynchronous failures. */
+/** Request intent; the consumer commits the next state and handles asynchronous failures.
+ * @example
+ * ```ts
+ * function requestedPage(data: PaginationChangeData): number | undefined {
+ *   return data.type === 'pages' ? data.pageIndex : undefined;
+ * }
+ * ```
+ */
 export type PaginationChangeData =
   | {
       /** Requests an offset page. */
@@ -94,16 +138,22 @@ export type PaginationChangeData =
 
 /**
  * Controlled navigation composed with consumer-owned results and their status summary.
+ * Uses the host Fluent theme/Griffel renderer without an SPFx provider.
  * Invalid runtime state renders no landmark or controls. Native nav attributes and
  * consumer-provided style are forwarded; children and raw HTML are not supported.
  * @example
+ * ```tsx
  * <Pagination pagination={{ type: 'pages', pageIndex, pageSize: 10, totalItems: 42 }}
  *   onPaginationChange={(_event, data) => { if (data.type === 'pages') setPageIndex(data.pageIndex); }} />
+ * ```
  */
 export type PaginationProps = Omit<React.ComponentPropsWithoutRef<'nav'>, 'children' | 'dangerouslySetInnerHTML'> & {
   /** Application-owned state; use safe integer indices, sizes and totals. */
   readonly pagination: PaginationState;
-  /** Available action request. Prevented events are ignored; the component never updates page state. */
+  /** Called for an available action with its React event and discriminated navigation
+   * request. Loading and already-prevented events suppress requests. Omission leaves actions
+   * visible without committing navigation. The component never updates page state or awaits
+   * returned promises; the consumer handles fetching, pending locks and failures. */
   readonly onPaginationChange?: (event: React.SyntheticEvent, data: PaginationChangeData) => void;
   /** Disables actions and shows labelled progress. Default: false. The consumer locks pending requests. */
   readonly loading?: boolean;

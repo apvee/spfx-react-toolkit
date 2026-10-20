@@ -7,6 +7,7 @@ import type { DataGridSuite } from './data-grid.types';
  * suite; inputs and callbacks are immutable and pure. The native div ref follows
  * Fluent's grid and detaches while an empty/no-visible-column status is shown.
  * Sorting reports controlled intent without changing supplied item order.
+ * Requires the Fluent UI/Charts host peers and shared FluentProvider/renderer; no SPFx provider is required.
  * @typeParam TItem Original row model, including explicitly typed index signatures.
  * @returns The native grid, sixteen column markers and defineColumns. No data engine.
  * @example

@@ -49,6 +49,8 @@ test('AutoSkeleton geometry overrides Fluent defaults in either direction withou
   const bones = [
     { shape: 'rectangle', x: 11, y: 7, width: 123, height: 39, radius: 9 },
     { shape: 'circle', x: 25, y: 50, width: 43, height: 43, radius: 21.5 },
+    { shape: 'rectangle', x: 75, y: 7, width: 96, height: 12, radius: 0 },
+    { shape: 'rectangle', x: 190, y: 7, width: 24, height: 24, radius: 0 },
   ];
   try {
     for (const dir of ['rtl', 'ltr']) {
@@ -64,6 +66,11 @@ test('AutoSkeleton geometry overrides Fluent defaults in either direction withou
       assert.match(css, /forced-colors/, 'Fluent forced-colors treatment remains present');
       assert.match(activeRules(renderer, host.querySelector('[data-item="1"]').className).join('\n'),
         /radius:\s*50%/);
+      for (const index of [2, 3]) {
+        const rectangleCss = activeRules(renderer, host.querySelector(`[data-item="${index}"]`).className).join('\n');
+        assert.match(rectangleCss, /border-radius:\s*4px/, 'zero-radius content retains native Fluent rectangle rounding');
+        assert.doesNotMatch(rectangleCss, /border(?:-[a-z]+)*-radius:\s*0(?:px)?(?:;|})/, 'measured zero must not flatten rectangle corners');
+      }
       assert.match(activeRules(renderer, host.querySelector('[data-content]').className).join('\n'),
         /opacity:\s*0/);
       const overlayCss = activeRules(renderer, host.querySelector('[data-overlay]').className).join('\n');

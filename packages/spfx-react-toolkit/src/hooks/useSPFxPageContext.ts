@@ -6,38 +6,18 @@ import { PageContext } from '@microsoft/sp-page-context';
 import { useSPFxServiceScope } from './useSPFxServiceScope';
 
 /**
- * Hook to access SharePoint page context
- * 
- * Provides access to SharePoint page context containing information about:
- * - Site collection and web
- * - Current user
- * - Current list and list item (if applicable)
- * - Teams context (if running in Teams)
- * - Culture and locale settings
- * - Permissions and capabilities
- * 
- * @returns SharePoint page context object
- * 
- * @remarks
- * This hook consumes PageContext from SPFx ServiceScope using dependency injection.
- * The service is consumed lazily (only when this hook is used) and cached for performance.
- * 
+ * Consumes the host PageContext service lazily from the provider's ready ServiceScope and memoizes it for that consume function. Returns the host reference; it does not clone context, fetch list data or independently subscribe to every field mutation. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns The PageContext service instance from the nearest provider scope.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
- *   const pageContext = useSPFxPageContext();
- *   
- *   return (
- *     <div>
- *       <p>Site: {pageContext.web.title}</p>
- *       <p>User: {pageContext.user.displayName}</p>
- *       <p>Locale: {pageContext.cultureInfo.currentUICultureName}</p>
- *     </div>
- *   );
+ * function SiteLabel() {
+ *   const context = useSPFxPageContext();
+ *   return <span>{context.web.title}</span>;
  * }
  * ```
- * 
- * @see {@link useSPFxContext} for accessing the full SPFx context
  */
 export function useSPFxPageContext(): PageContext {
   const { consume } = useSPFxServiceScope();

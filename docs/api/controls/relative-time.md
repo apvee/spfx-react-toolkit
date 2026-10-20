@@ -24,7 +24,7 @@ The props extend native `React.ComponentPropsWithoutRef<'time'>`, excluding form
 | `RelativeTimeProps.autoUpdate` | `boolean` | `true`; updates when the label changes. |
 | `RelativeTimeProps.showTooltip` | `boolean` | `true`; full-date Fluent tooltip with default keyboard tab stop. |
 | `RelativeTimeProps.timeZone` | `string` | Runtime zone; changes the full date, not elapsed time or UTC calendar anniversaries. |
-| `RelativeTimeProps.fallback` | `React.ReactNode` | `undefined`; consumer supplies localized invalid-input content. |
+| `RelativeTimeProps.fallback` | span content slot | `undefined`; consumer supplies localized invalid-input content. |
 | `RelativeTimeProps.referenceTime` | `Date \| string \| number` | Undefined uses the local clock; a valid supplied instant fixes the reference and overrides autoUpdate. Invalid supplied references render fallback. |
 | `RelativeTimeProps.children` | `never` | Unsupported; the formatter owns content. |
 | `RelativeTimeProps.dangerouslySetInnerHTML` | `never` | Unsupported; formatted output uses React text. |
@@ -68,3 +68,15 @@ const { uiLocale, ianaTimeZone } = useSPFxLocaleInfo();
 The [locale hook](../hooks/environment.md#usespfxlocaleinfo) requires an SPFx provider; RelativeTime itself does not. `ianaTimeZone` identifies a representative standard SharePoint numeric zone group. When undefined, this example uses the runtime zone: it does not establish the site's zone. A locale such as `it-IT` does not imply `Europe/Rome`; verified group 4 maps to `Europe/Berlin`. Consumers should choose their unavailable-mapping UI or runtime fallback explicitly.
 
 The sample's lazy RelativeTime panel exercises all props, three clock modes, invalid input, composition and native ref/events. ContextPanel separately compares fixed winter/summer instants only for a mapped site zone. Local tests and browser checks do not establish authenticated SharePoint-host behavior; see [SharePoint validation](../../SHAREPOINT-VALIDATION.md#relativetime-and-site-time-zone).
+
+## Invalid-input fallback slot
+
+`fallback` accepts literal string/JSX shorthand or a fixed `span` props object using existing Fluent/Griffel peers. Shorthand gains no wrapper; objects supply native attributes, classes, a ref and static or Fluent callback children:
+
+```tsx
+<RelativeTime dateTime={undefined} fallback={{ ref: fallbackRef,
+  children: (Component, props) => <Component {...props}>Date unavailable</Component>,
+}} />
+```
+
+Callbacks run only for invalid event/reference input during rendering, without presence preflight. The fallback ref targets span; the component ref remains reserved for the valid time root. Booleans, undefined and legacy null render no fallback; empty props still request a span. Strings stay literal. `as` can only repeat span, raw HTML and unsupported attributes are discarded, and JSX/callback subtrees stay caller-owned. React 17 erased `ReactNode` types can bypass literal-object restrictions. Valid time, clock, Tooltip and localization remain independent of fallback customization. No new dependency or SPFx provider is required.

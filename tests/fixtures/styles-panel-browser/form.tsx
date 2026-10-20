@@ -1,14 +1,9 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { createDOMRenderer } from '@griffel/core';
-import { RendererProvider } from '@griffel/react';
+import { mountDemoFixture } from '../demo-fixture-host';
 import FormPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/FormPanel';
+import RegressionPanel from '../demo-control-isolation/form-regressions';
 
 /** Run the actual Form sample against compiled library modules without the SPFx graph. */
-ReactDOM.render(<RendererProvider renderer={createDOMRenderer(document)}>
-  <section data-form-boundary="compiled"><FormPanel /></section>
-</RendererProvider>, document.getElementById('root'));
-window.addEventListener('beforeunload', () => {
-  const root = document.getElementById('root');
-  if (root) ReactDOM.unmountComponentAtNode(root);
-});
+mountDemoFixture(<>
+  <section data-form-boundary="compiled">{new URLSearchParams(window.location.search).has('product-demo') ? <FormPanel /> : <RegressionPanel />}</section>
+</>);

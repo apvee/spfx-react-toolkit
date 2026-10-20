@@ -24,6 +24,21 @@ function mount(element) {
   render();
   return { host, render, close() { act(() => { ReactDOM.unmountComponentAtNode(host); }); host.remove(); } };
 }
+test('group appearance changes preserve caller controls and their edited value', () => {
+  for (const Group of [SettingsGroup, AccordionGroup]) {
+    const tree = appearance => React.createElement(Group, { appearance, ...(Group === AccordionGroup ? { defaultOpenItems: ['a'] } : {}) },
+      React.createElement(Group.Item, { value: 'a', title: 'Account' }, React.createElement('input', { defaultValue: 'Initial' })));
+    const f = mount(tree(undefined));
+    try {
+      const input = f.host.querySelector('input'); input.value = 'Kept';
+      const defaultClasses = f.host.querySelector('.fui-Card').className;
+      f.render(tree('filled')); assert.equal(f.host.querySelector('.fui-Card').className, defaultClasses, 'default is native filled');
+      for (const appearance of ['filled', 'alternate', 'outline']) {
+        f.render(tree(appearance)); assert.equal(f.host.querySelector('input'), input); assert.equal(input.value, 'Kept');
+      }
+    } finally { f.close(); }
+  }
+});
 test('SettingsGroup preserves native refs/events and caller input identity across keyed reorder', () => {
   const ref = React.createRef(); let clicks = 0;
   const tree = reverse => React.createElement(SettingsGroup, { ref, id: 'settings', title: '**Preferences**', description: '*Details*', onClick: () => clicks++ },
@@ -115,4 +130,39 @@ test('text slots wrap caller JSX in semantic presets without cloning or replacin
     act(() => ownedChild.click()); assert.equal(childClicks, 1);
     f.render(tree(2)); assert.equal(childRef.current, ownedChild);
   } finally { f.close(); }
+});
+
+test('named group slots keep semantic wrappers and inner refs, callback tags and shorthand presence', () => {
+  for (const Group of [SettingsGroup, AccordionGroup]) {
+    const ref = React.createRef(), iconRef = React.createRef(); let calls = 0, slotClicks = 0;
+    const f = mount(React.createElement(Group, { headingLevel: 4,
+      title: { ref, as: 'h1', className: 'inner-title', onClick: () => slotClicks++, dangerouslySetInnerHTML: { __html: '<b id="slot-raw">raw</b>' }, children: 'Slot title' },
+      description: { 'data-description': '', children: 'Description' },
+      icon: { ref: iconRef, children: 'Icon' }, action: { children: (Tag, props) => { calls++; assert.equal(Tag, 'div'); return React.createElement(Tag, { ...props, 'data-action': '' }, 'Action'); } } },
+      React.createElement(Group.Item, { value: 'a', title: { 'data-item-title': '', children: 0 }, description: false })));
+    try {
+      assert.equal(ref.current.tagName, 'SPAN'); assert.equal(ref.current.parentElement.tagName, 'H4');
+      assert.equal(f.host.querySelector('h1'), null); assert.equal(f.host.querySelector('#slot-raw'), null);
+      assert.equal(iconRef.current.parentElement.getAttribute('aria-hidden'), 'true'); act(() => ref.current.click()); assert.equal(slotClicks, 1); assert.ok(ref.current.classList.contains('inner-title'));
+      assert.equal(f.host.querySelector('[data-description]').tagName, 'SPAN');
+      assert.equal(f.host.querySelector('[data-item-title]').textContent, '0'); assert.ok(calls > 0);
+      assert.equal(f.host.querySelector('[data-action]').tagName, 'DIV');
+      f.render(React.createElement(Group, { title: ' ', description: { children: '' } }));
+      assert.equal(f.host.querySelector('h2').textContent, ' '); assert.ok(f.host.querySelector('[data-group-header]'));
+    } finally { f.close(); }
+  }
+});
+
+test('group object/callback icons retain 24px header and 20px item sizing for authored SVG dimensions', () => {
+  const { assertIconSizing } = require('./fixtures/group-icon-assertions.cjs');
+  for (const Group of [SettingsGroup, AccordionGroup]) for (const callback of [false, true]) {
+    const svg = React.createElement('svg', { width: 80, height: 80, 'data-sized-icon': '' });
+    const icon = { children: callback ? (Tag, props) => React.createElement(Tag, props, svg) : svg };
+    const f = mount(React.createElement(Group, { title: 'Header', icon },
+      React.createElement(Group.Item, { value: 'a', title: 'Item', icon })));
+    try {
+      const icons = f.host.querySelectorAll('[data-sized-icon]'); assert.equal(icons.length, 2);
+      assertIconSizing(icons[0], 24); assertIconSizing(icons[1], 20);
+    } finally { f.close(); }
+  }
 });

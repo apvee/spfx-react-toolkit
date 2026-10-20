@@ -19,8 +19,20 @@ const toggle: AccordionGroupProps['onToggle'] = (event, data) => {
 <SettingsGroup headingLevel={7} />;
 // @ts-expect-error heading is bounded
 <AccordionGroup.Item value="a" headingLevel={0} />;
-// @ts-expect-error appearance is bounded
+<SettingsGroup appearance="filled" />;
+<SettingsGroup appearance="alternate" />;
 <SettingsGroup appearance="outline" />;
+<AccordionGroup appearance="filled" />;
+<AccordionGroup appearance="alternate" />;
+<AccordionGroup appearance="outline" />;
+// @ts-expect-error transparent is no longer a group appearance
+<SettingsGroup appearance="transparent" />;
+// @ts-expect-error transparent is no longer a group appearance
+<AccordionGroup appearance="transparent" />;
+// @ts-expect-error use the public alternate name
+<SettingsGroup appearance="filled-alternative" />;
+// @ts-expect-error use the public alternate name
+<AccordionGroup appearance="filled-alternative" />;
 // @ts-expect-error owned HTML pathway unsupported
 <SettingsGroup dangerouslySetInnerHTML={{ __html: 'raw' }} />;
 // @ts-expect-error owned item HTML pathway unsupported
@@ -29,3 +41,15 @@ const toggle: AccordionGroupProps['onToggle'] = (event, data) => {
 <AccordionGroup slots={{ title: 'slot' }} />;
 // @ts-expect-error no invented layout API
 <SettingsGroup.Item layout={{ direction: 'row' }} />;
+
+const conditionalSlot: React.ReactNode = false;
+<SettingsGroup title={conditionalSlot} description={0} icon={{ children: <span>Icon</span>, ref: React.createRef<HTMLSpanElement>() }} />;
+<SettingsGroup title={{ as: 'span', children: (Tag, props) => <Tag {...props}>Callback title</Tag> }} />;
+// @ts-expect-error named title slots cannot replace the semantic heading
+<SettingsGroup title={{ as: 'h1', children: 'Title' }} />;
+// @ts-expect-error raw HTML is forbidden in named slots
+<SettingsGroup title={{ dangerouslySetInnerHTML: { __html: 'raw' } }} />;
+// @ts-expect-error direct render functions are not slot shorthand
+<SettingsGroup title={() => <span>Direct callback</span>} />;
+
+<SettingsGroup title="Icon sizing" icon={{ children: (Tag, props) => <Tag {...props}><svg width={80} height={80} /></Tag> }} description={{ children: <> {false} </> }} />;

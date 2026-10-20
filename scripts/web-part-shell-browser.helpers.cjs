@@ -414,11 +414,11 @@ async function checkWebPartShellBrowser(page, record) {
   await check('Child state still persistent after editor teardown', await root.locator('[data-shell-demo="note"]').inputValue(), 'Persistent browser note');
   await check('Child did not unmount', (await observations()).cleanups, 0);
   await root.locator('[data-shell-demo="plain"]').click();
-  await check('Actual sample plain action renders its current subject', await root.locator('h2').textContent(), 'Literal <sample> title');
+  await check('Actual sample plain action renders its current subject', await root.locator('h2').textContent(), 'Project documents');
   await render({ properties: { title: 'Literal <sample> title', titleHTML: undefined } });
   await check('Plain fallback renders angle brackets as literal text', await root.locator('h2').textContent(), 'Literal <sample> title');
   await root.locator('[data-shell-demo="rich"]').click();
-  await check('Actual sample rich control renders formatting', await root.locator('h2 strong').textContent(), 'Rich');
+  await check('Actual sample rich control renders formatting', await root.locator('h2 strong').textContent(), 'Project');
   await render({ surface: undefined, padding: undefined, dir: undefined });
   await root.locator('[data-shell-demo="surface"]').selectOption('section');
   await check('Actual sample surface override affects root', await root.getAttribute('data-web-part-shell-surface'), 'section');
@@ -426,9 +426,9 @@ async function checkWebPartShellBrowser(page, record) {
   await check('Actual sample padding override affects layout', await root.locator('[data-web-part-shell-content]').evaluate(e => getComputedStyle(e).paddingInlineStart), '8px');
   await root.locator('[data-shell-demo="direction"]').selectOption('rtl');
   await check('Actual sample direction affects root', await root.evaluate(e => getComputedStyle(e).direction), 'rtl');
-  await root.locator('[data-shell-demo="theme"]').selectOption('dark');
-  await check('Actual sample explicit theme overrides host', await root.evaluate(e => getComputedStyle(e).getPropertyValue('--colorNeutralForeground1').trim()), '#ffffff');
-  await root.locator('[data-shell-demo="theme"]').selectOption('light');
+  await render({ theme: 'dark', host: 'Teams' });
+  await check('Actual sample inherits host theme', await root.evaluate(e => getComputedStyle(e).getPropertyValue('--colorNeutralForeground1').trim()), '#ffffff');
+  await render({ theme: 'light' });
   await capture('sample-controls');
 
   // Fresh page isolates the exact intentionally failed lazy request; normal-page

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { FluentProvider } from '@fluentui/react-components';
 import { ThemeContext_unstable, useFluent_unstable, useThemeClassName_unstable } from '@fluentui/react-shared-contexts';
+import { hasContentSlot, inspectContentSlot, renderContentSlot } from '../content-slot.internal';
+import { useSx } from '../../hooks/useSx';
 import { useSPFxProperties } from '../../hooks/useSPFxProperties';
 import { useSPFxDisplayMode } from '../../hooks/useSPFxDisplayMode';
 import { useSPFxContext } from '../../core/context.internal';
@@ -27,8 +29,11 @@ function ShellLayout(props: RuntimeProps & { resolvedSurface: 'section' | 'appli
   const { properties, setProperties } = useSPFxProperties<IWebPartShellProperties>();
   const { isEdit } = useSPFxDisplayMode();
   const styles = useWebPartShellLayoutStyles(resolvedSurface, padding);
+  const sx = useSx();
   const showTitle = properties?.showTitle ?? true;
-  const hasHeader = showTitle || React.Children.toArray(action).length > 0;
+  const actionInspection = inspectContentSlot(action);
+  const hasHeader = showTitle || (actionInspection.kind === 'shorthand'
+    ? React.Children.toArray(actionInspection.children).length > 0 : hasContentSlot(action));
   const changeTitle = React.useCallback((update: { title: string; titleHTML: string }): void => {
     setProperties(update);
   }, [setProperties]);
@@ -40,7 +45,7 @@ function ShellLayout(props: RuntimeProps & { resolvedSurface: 'section' | 'appli
           <WebPartTitle title={properties?.title ?? ''} titleHTML={properties?.titleHTML}
             showTitle={showTitle} editing={isEdit} onChange={changeTitle} ownerDocument={ownerDocument} strings={strings} />
         </div>
-        <div className={styles.actions}>{action}</div>
+        <div className={styles.actions}>{renderContentSlot(action, 'div', sx, { shorthand: 'preserve' })}</div>
       </div>}
       <div className={styles.body} data-web-part-shell-body="">{children}</div>
     </div>

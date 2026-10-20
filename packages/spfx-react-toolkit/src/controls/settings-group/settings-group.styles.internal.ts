@@ -20,6 +20,13 @@ export const useSettingsGroupStyles = makeStyles({
   row: { rowGap: tokens.spacingVerticalS },
   leading: { flexBasis: '160px', minInlineSize: 'min(100%, 160px)', maxInlineSize: '100%' },
   controls: { maxInlineSize: '100%' },
+  // Only the introduced object/callback container participates in owned icon sizing.
+  iconContent: {
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+    inlineSize: '100%', blockSize: '100%',
+    '& > i': { fontSize: 'inherit' },
+    '& > svg': { inlineSize: '100%', blockSize: '100%' },
+  },
   icon: {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
     inlineSize: '20px', blockSize: '20px', fontSize: '20px', lineHeight: '1',

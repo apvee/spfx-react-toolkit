@@ -1,14 +1,5 @@
 import * as React from 'react';
-import {
-  FocusZoneDirection,
-  MessageBar,
-  MessageBarType,
-  Pivot,
-  PivotItem,
-  Spinner,
-  SpinnerSize,
-  Stack,
-} from '@fluentui/react';
+import { MessageBar, MessageBarBody, Spinner, Tab, TabList, useId } from '@fluentui/react-components';
 import styles from './SpFxReactToolkitTest.module.scss';
 import { useSPFxTeams } from '@apvee/spfx-react-toolkit';
 import {
@@ -17,7 +8,7 @@ import {
   type DemoCoverageKind,
   type DemoRegistryEntry,
 } from './demoRegistry';
-import { DemoCard, InfoGrid, StatusBadge } from './shared';
+import { DemoCard, DemoIcon, InfoGrid, StatusBadge, useDemoStyles } from './shared';
 
 const coverageKindLabels: Record<DemoCoverageKind, string> = {
   host: 'Host',
@@ -31,6 +22,7 @@ function countByKind(kind: DemoCoverageKind): number {
 }
 
 const CoverageOverview: React.FC = () => {
+  const demoStyles = useDemoStyles();
   const symbols = new Set(demoCoverage.map(item => item.symbol));
 
   return (
@@ -38,64 +30,72 @@ const CoverageOverview: React.FC = () => {
       title="Package Coverage"
       iconName="CompletedSolid"
       description="Every public provider and hook covered by the package sample surface is tracked here and verified by scripts/verify-example-coverage.cjs."
-    >
-      <Stack horizontal wrap tokens={{ childrenGap: 8 }}>
+      contentPlacement="configuration"
+      status={<div className={demoStyles.actions}>
         <StatusBadge label={`${symbols.size} symbols covered`} available={true} />
         <StatusBadge label={`${countByKind('host')} host providers`} available={true} />
         <StatusBadge label={`${countByKind('snapshot')} snapshots`} available={true} />
         <StatusBadge label={`${countByKind('read')} read demos`} available={true} />
         <StatusBadge label={`${countByKind('write')} write demos`} available={true} />
-      </Stack>
-      <InfoGrid
+      </div>}
+      diagnosticsLabel="Detailed package coverage"
+      diagnostics={<InfoGrid
         rows={demoRegistry.map(entry => ({
           label: entry.title,
           value: `${entry.coverage.length} item(s): ${entry.coverage.map(item => `${item.symbol} (${coverageKindLabels[item.kind]})`).join(', ')}`,
           icon: entry.iconName,
         }))}
-      />
-    </DemoCard>
+      />}
+    />
   );
 };
 
 const DynamicDemoPanel: React.FC<{ entry: DemoRegistryEntry }> = ({ entry }) => {
+  const demoStyles = useDemoStyles();
   const Component = entry.component;
 
   return (
-    <Stack tokens={{ childrenGap: 16 }} styles={{ root: { marginTop: 16 } }}>
-      <MessageBar messageBarType={MessageBarType.info}>
-        {entry.description}
-      </MessageBar>
+    <div className={demoStyles.panel}>
+      <MessageBar intent="info"><MessageBarBody>{entry.description}</MessageBarBody></MessageBar>
       <React.Suspense
         fallback={(
           <Spinner
-            size={SpinnerSize.medium}
+            size="medium"
             label={`Loading ${entry.title} demos...`}
           />
         )}
       >
         <Component />
       </React.Suspense>
-    </Stack>
+    </div>
   );
 };
 
 const SpFxReactToolkitTest: React.FC = () => {
   const { supported: hasTeamsContext } = useSPFxTeams();
+  const demoStyles = useDemoStyles();
+  const navigationId = useId('demo-navigation');
+  const [selectedKey, setSelectedKey] = React.useState(demoRegistry[0].key);
+  const activeEntry = demoRegistry.find(entry => entry.key === selectedKey) ?? demoRegistry[0];
 
   return (
-    <section className={`${styles.spFxReactToolkitTest} ${hasTeamsContext ? styles.teams : ''}`}>
+    <section className={`${styles.spFxReactToolkitTest} ${demoStyles.root} ${hasTeamsContext ? styles.teams : ''}`}>
       <CoverageOverview />
-      <Pivot
-        aria-label="SPFx React Toolkit Demo Tabs"
-        className={styles.demoTabs}
-        focusZoneProps={{ className: styles.demoTabList, direction: FocusZoneDirection.bidirectional }}
-      >
+      <TabList aria-label="SPFx React Toolkit Demo Tabs" className={demoStyles.tabList}
+        selectTabOnFocus selectedValue={selectedKey} onTabSelect={(_event, data) => {
+          if (typeof data.value === 'string' && demoRegistry.some(entry => entry.key === data.value)) setSelectedKey(data.value);
+        }}>
         {demoRegistry.map(entry => (
-          <PivotItem key={entry.key} headerText={entry.title} itemIcon={entry.iconName}>
-            <DynamicDemoPanel entry={entry} />
-          </PivotItem>
+          <Tab key={entry.key} value={entry.key} id={`${navigationId}-tab-${entry.key}`}
+            aria-controls={`${navigationId}-panel-${entry.key}`} icon={<DemoIcon name={entry.iconName} />}>
+            {entry.title}
+          </Tab>
         ))}
-      </Pivot>
+      </TabList>
+      <div role="tabpanel" id={`${navigationId}-panel-${activeEntry.key}`} aria-labelledby={`${navigationId}-tab-${activeEntry.key}`} tabIndex={0}>
+        {/* Preserve Pivot's active-only mount cycle; host updates retain the selected component. */}
+        <DynamicDemoPanel key={activeEntry.key} entry={activeEntry} />
+      </div>
     </section>
   );
 };

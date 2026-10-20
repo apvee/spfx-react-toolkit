@@ -7,17 +7,33 @@ import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
  * Microsoft 365 Group information for group-connected sites
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const group: SPFxGroupInfo | undefined = useSPFxSiteInfo().siteGroup;
+ * console.log(group?.id, group?.isPublic);
+ * ```
  */
 export interface SPFxGroupInfo {
   /** Group ID (GUID) */
   readonly id: string;
   
-  /** Whether group is public (true) or private (false) */
+  /**
+   * Host group visibility flag; defaults to false when missing.
+   */
   readonly isPublic: boolean;
 }
 
 /**
  * Return type for useSPFxSiteInfo hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const site: SPFxSiteInfo = useSPFxSiteInfo();
+ * console.log(site.webUrl, site.siteUrl);
+ * ```
  */
 export interface SPFxSiteInfo {
   // Web identity properties (prefixed - duplicate with site)
@@ -34,7 +50,9 @@ export interface SPFxSiteInfo {
   /** Web title */
   readonly title: string;
   
-  /** Web language ID (LCID) */
+  /**
+   * Current web language LCID; defaults to 1033 when omitted by the host.
+   */
   readonly languageId: number;
   
   /** Site logo URL (if configured) */
@@ -58,80 +76,16 @@ export interface SPFxSiteInfo {
 }
 
 /**
- * Hook to access site collection and web information
- * 
- * Provides comprehensive information about the current SharePoint web (site/subsite)
- * and parent site collection in a unified, flat structure.
- * 
- * **Property naming pattern**:
- * - **Identity properties** (id, url, serverRelativeUrl): Prefixed with `web` or `site` for clarity
- * - **Web metadata** (title, languageId, logoUrl): No prefix (unique to web, most commonly used)
- * - **Site properties**: All prefixed with `site` for consistency
- * 
- * **Web properties** (primary context - 90% use case):
- * - webId, webUrl, webServerRelativeUrl: Web identity
- * - title: Web display name (most commonly used)
- * - languageId: Web language (LCID)
- * - logoUrl: Site logo URL (for branding)
- * 
- * **Site collection properties** (parent context - 30-40% specialized):
- * - siteId, siteUrl, siteServerRelativeUrl: Site collection identity
- * - siteClassification: Enterprise classification label (e.g., "Confidential", "Public")
- * - siteGroup: Microsoft 365 Group information (if group-connected)
- * 
- * Note: In most cases (90%), you'll use web properties. Site collection properties
- * are for specialized scenarios like subsites navigation, classification displays,
- * or Microsoft 365 Group detection.
- * 
- * @returns Site collection and web information
- * 
+ * Maps current web and site-collection metadata without I/O. Web language defaults to 1033 when missing; logo, legacy classification and group data remain optional. Group visibility defaults to false when the host omits it. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns Web/site identifiers, URLs and metadata, with optional group/classification/logo fields.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
- *   const { 
- *     webUrl,             // Web URL (identity)
- *     title,              // Web title (most common)
- *     languageId,         // Web language
- *     logoUrl,            // Site logo (branding)
- *     siteClassification, // Site classification (enterprise)
- *     siteGroup           // M365 Group info (if group-connected)
- *   } = useSPFxSiteInfo();
- *   
- *   return (
- *     <header>
- *       {logoUrl && <img src={logoUrl} alt="Site logo" />}
- *       <h1>{title}</h1>
- *       <a href={webUrl}>Visit Site</a>
- *       
- *       {siteClassification && (
- *         <Label>Classification: {siteClassification}</Label>
- *       )}
- *       
- *       {siteGroup && (
- *         <Badge>
- *           {siteGroup.isPublic ? 'Public Team' : 'Private Team'}
- *         </Badge>
- *       )}
- *       
- *       <p>Language ID: {languageId}</p>
- *     </header>
- *   );
- * }
- * ```
- * 
- * @example
- * ```tsx
- * // Cross-site navigation (subsite scenario)
- * function Navigation() {
- *   const { webUrl, siteUrl, title } = useSPFxSiteInfo();
- *   
- *   return (
- *     <nav>
- *       <a href={siteUrl}>Site Collection Home</a>
- *       <span> / </span>
- *       <a href={webUrl}>{title}</a>
- *     </nav>
- *   );
+ * function SiteLabel() {
+ *   const { title, webUrl } = useSPFxSiteInfo();
+ *   return <a href={webUrl}>{title}</a>;
  * }
  * ```
  */

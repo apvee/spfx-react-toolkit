@@ -101,3 +101,25 @@ test('An ancestor reset cancels pending actions in a nested scoped section',()=>
  function Owner(){methods=F.useForm({defaultValues:{customer:{rows:[]}}});return h.React.createElement(F.Root,{methods,onSubmit:()=>{}},h.React.createElement(F.ObjectSection,{name:'customer',title:'Customer'},({Fields})=>h.React.createElement(Fields.ArraySection,{name:'rows',title:'Rows',createItem:()=>({text:'added'}),renderItem:({Fields})=>h.React.createElement(Fields.Input,{name:'text'}),onClick:event=>{if(event.target.closest('button'))methods.resetField('customer',{defaultValue:{rows:[{text:'replacement'}]}});}})));}
  const f=h.mount(h.React.createElement(Owner));try{methods.register('customer');const add=button(f.host,'Add item');add.focus();h.click(add);assert.deepEqual(methods.getValues('customer.rows'),[{text:'replacement'}]);assert.equal(document.activeElement===add,true);assert.equal(f.host.querySelector('[aria-live]').textContent,'');}finally{f.close();}
 });
+
+for (const member of ['ObjectSection', 'ArraySection']) test(`${member} presentation objects callbacks and empty descriptions keep fieldset associations`, () => {
+ const titleRef = h.React.createRef(), descriptionRef = h.React.createRef(); let calls = 0;
+ const props = { title: { id: 'inner-title', ref: titleRef, children: (Component, attrs) => { calls++; return h.React.createElement(Component, attrs, 'Slot section'); } }, description: { id: 'inner-description', ref: descriptionRef, children: 'Slot description' } };
+ const f = member === 'ObjectSection' ? owner(member, { customer: {} }, { name: 'customer', children: () => undefined, ...props }) : array([], props);
+ try {
+  const group = f.host.querySelector('fieldset'), legend = group.querySelector('legend');
+  assert.equal(titleRef.current.tagName, 'SPAN'); assert.ok(legend.contains(titleRef.current)); assert.equal(legend.textContent, 'Slot section'); assert.ok(calls > 0);
+  assert.equal(descriptionRef.current.tagName, 'DIV'); const described = document.getElementById(group.getAttribute('aria-describedby'));
+  assert.notEqual(described.id, 'inner-description'); assert.ok(described.contains(descriptionRef.current));
+ } finally { f.close(); }
+ const empty = member === 'ObjectSection' ? owner(member, { customer: {} }, { name: 'customer', title: { children: 'Named' }, description: { id: 'empty-description', children: '' }, children: () => undefined }) : array([], { title: { children: 'Named' }, description: { id: 'empty-description', children: '' } });
+ try { assert.equal(empty.host.querySelector('fieldset').getAttribute('aria-describedby'), null); assert.ok(empty.host.querySelector('#empty-description')); } finally { empty.close(); }
+});
+test('empty section title objects need explicit outer names without pre-rendering callbacks', () => {
+ const F = h.suite('ObjectSection');
+ for (const title of [{ children: '' }, { children: '   ' }, { children: h.React.createElement(h.React.Fragment) }]) {
+  h.rejectsRender(() => h.mount(h.React.createElement(F.Root, { defaultValues: { customer: {} }, onSubmit: () => {} }, h.React.createElement(F.ObjectSection, { name: 'customer', title, children: () => undefined }))), /accessible name/);
+ }
+ const f = owner('ObjectSection', { customer: {} }, { name: 'customer', title: { children: '' }, 'aria-label': 'External', children: () => undefined });
+ try { assert.equal(f.host.querySelector('fieldset').getAttribute('aria-label'), 'External'); assert.ok(f.host.querySelector('legend span span')); } finally { f.close(); }
+});

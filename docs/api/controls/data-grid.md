@@ -53,6 +53,55 @@ Dynamic fields are strings and dynamic source values are `unknown`. Known-domain
 
 Supply exactly one declared collection: JSX `children` or `columns`. Omitting both or supplying both is invalid. Nested arrays and fragments are supported; an explicitly empty collection renders the no-visible-columns status. JSX erases component type identity, so suite ownership is also validated at runtime.
 
+## Named presentation slots
+
+`error`, `emptyContent`, `noResultsContent`, column `header`, `placeholder` and
+`invalidPlaceholder` accept literal text, numbers, JSX, boolean conditions or a
+Fluent-style props object. Objects support native attributes, `className`, consumer
+`style`, events, `ref` and `children: (Component, nativeProps) => JSX`. This uses the
+existing Fluent/Griffel peers; no additional dependency is required.
+
+```tsx
+const headerRef = React.createRef<HTMLSpanElement>();
+const presentationColumns = Orders.defineColumns(c => [
+  c.text({ id: 'title', field: 'title', headerAriaLabel: 'Order',
+    header: { ref: headerRef, children: (Component, props) =>
+      <Component {...props}>Order</Component> },
+    placeholder: { children: 'Missing order', title: 'No source value' },
+    invalidPlaceholder: { children: 'Invalid order' },
+  }),
+]);
+const presented = <Orders items={[]} getRowId={item => item.id}
+  columns={presentationColumns}
+  error={{ children: <p>Request failed</p> }}
+  emptyContent={{ children: 'No orders yet' }}
+  noResultsContent={false} />;
+```
+
+Error and status object slots create an inner **div**. Header and placeholder object
+slots create an inner **span**: supply phrasing content, with noninteractive header
+content. `as` may only repeat that fixed tag. Refs and events belong to the inner
+container; the native MessageBarBody, status region, header/sort button and existing
+placeholder span remain owned by the grid. `headerAriaLabel` and `headerTooltip`
+continue to name and describe the native header. A callback runs during ordinary
+rendering, never to classify content or decide whether a region exists.
+
+Shorthand keeps its existing wrappers and JSX identity; strings remain literal.
+Nullish status/placeholders use their existing localized defaults (or the em dash).
+Boolean and empty content suppress default text while retaining the owned wrapper;
+an empty object requests an explicit inner container. Actions headers default only
+when undefined. Error is omitted for undefined, legacy null and false; **true**,
+empty strings, empty fragments and zero still request the error bar. No visible
+columns retains precedence over loading/empty status, and errors can coexist with
+rows and loading. Retry, sorting, sizing, selection and row activation are unchanged.
+
+Raw HTML and unsupported object props are rejected/filtered; React 17's erased
+`ReactNode` can defeat static object restrictions. Arbitrary JSX/callback subtrees
+remain the consumer's responsibility. Domain labels/icons/actions, value readers and
+`renderCell` callbacks retain their existing contracts and rendering paths.
+The lazy sample exposes inner refs, header callback clicks, object error/status and
+missing/invalid slots, and conditional suppression controls.
+
 ## Column inventory
 
 | Suite member / builder | Input and presentation |
@@ -144,7 +193,7 @@ Default empty/no-results text is horizontally centered with Fluent medium vertic
 
 There is no View, toolbar, search, filter, pagination, fetching or virtualization API. Supply data and orchestrate those behaviors in the consumer.
 
-The lazy DataGrid test-web-part scenario exercises all sixteen columns, typed JSX, dynamic data, descriptors, controlled state and immutable charts. Automated source/compiled browser runs and standalone tarball checks are local evidence. Authenticated SharePoint and screen-reader validation remain separate; see the [host checklist](../../SHAREPOINT-VALIDATION.md).
+The lazy DataGrid test-web-part scenario shows one compact grid with selectable typed, descriptor or dynamic APIs and column presets. Its controls update the active grid's rows, sizing, selection and status. Broader column, chart and native-behavior regression cases remain in the versioned [DataGrid fixture](../../../tests/fixtures/demo-control-isolation/data-grid-regressions.tsx). Automated source/compiled browser runs and standalone tarball checks are local evidence. Authenticated SharePoint and screen-reader validation remain separate; see the [host checklist](../../SHAREPOINT-VALIDATION.md).
 
 ## Public API catalog
 

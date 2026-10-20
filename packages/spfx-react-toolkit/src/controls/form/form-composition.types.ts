@@ -1,13 +1,20 @@
 import type * as React from 'react';
+import type { ContentSlot } from '../content-slot.types.internal';
 import type { FieldArrayPath, FieldArrayPathValue, FieldPath, FieldPathValue, FieldValues, UseFieldArrayProps } from 'react-hook-form';
 import type { ScopedFormSuite } from './form.types';
 import type { FormHsvColor } from './form-value.types';
 
+/** Removes optional absence while deriving nested object/array path compatibility. */
 type Present<TValue> = Exclude<TValue, undefined>;
+/** Atomic/native values and arrays excluded from nested record composition paths. */
 type NativeOrArrayValue = Date | File | FileList | Blob | FormHsvColor | readonly unknown[];
-/** Paths to nested records; scalars, native browser objects and arrays are excluded.
- * Optional records are supported when initialized with suitable field defaults.
- * @example `FormObjectPath<{ customer: { name: string } }>` selects `customer`.
+/**
+ * Nested record paths supported by Object/ObjectSection scopes. Native atomic values and arrays are excluded from object scopes.
+ *
+ * @example
+ * ```tsx
+ * const path: FormObjectPath<{ customer: { name: string } }> = 'customer';
+ * ```
  */
 export type FormObjectPath<TInput extends FieldValues> = {
     [TPath in FieldPath<TInput>]: Present<FieldPathValue<TInput, TPath>> extends FieldValues
@@ -18,8 +25,13 @@ export type FormObjectPath<TInput extends FieldValues> = {
  * @example `FormObjectPathValue<{ customer: { name: string } }, 'customer'>`
  */
 export type FormObjectPathValue<TInput extends FieldValues, TPath extends FormObjectPath<TInput>> = Extract<Present<FieldPathValue<TInput, TPath>>, FieldValues>;
-/** RHF array paths containing record items; primitive arrays use multi-value controls.
- * @example `FormArrayPath<{ rows: { sku: string }[] }>` selects `rows`.
+/**
+ * Nested array paths supported by Array/ArraySection scopes.
+ *
+ * @example
+ * ```tsx
+ * const path: FormArrayPath<{ rows: { sku: string }[] }> = 'rows';
+ * ```
  */
 export type FormArrayPath<TInput extends FieldValues> = {
     [TPath in FieldArrayPath<TInput>]: FieldArrayPathValue<TInput, TPath>[number] extends FieldValues
@@ -120,26 +132,31 @@ export type FormObjectComponent<TInput extends FieldValues> = <TPath extends For
  */
 export type FormArrayComponent<TInput extends FieldValues> = <TPath extends FormArrayPath<TInput>>(props: FormArrayProps<TInput, TPath>) => React.ReactElement;
 
-/** A visible legend or an explicit accessible section name. Empty names are rejected at runtime.
- * @example `{ title: 'Customer' }` or `{ 'aria-label': 'Customer' }`
+/**
+ * Accessible section naming: provide title, aria-label or aria-labelledby. Title is a literal-content slot in the owned legend.
+ *
+ * @example
+ * ```ts
+ * const naming: FormSectionName = { title: 'Customer' };
+ * ```
  */
 export type FormSectionName = {
-    /** Visible native legend; plain strings remain literal text. */
-    title: React.ReactNode;
+    /** Literal phrasing content inside the native legend. Objects/callbacks configure an inner span and its ref. */
+    title: ContentSlot<'span'>;
     /** Optional explicit accessible name overriding the legend. */
     'aria-label'?: string;
     /** Optional ID references overriding the legend. */
     'aria-labelledby'?: string;
 } | {
-    /** Optional visible native legend. */
-    title?: React.ReactNode;
+    /** Optional literal legend content; object/callback refs identify its inner span. */
+    title?: ContentSlot<'span'>;
     /** Explicit accessible name when a legend is omitted. */
     'aria-label': string;
     /** Optional external naming element IDs. */
     'aria-labelledby'?: string;
 } | {
-    /** Optional visible native legend. */
-    title?: React.ReactNode;
+    /** Optional literal legend content; object/callback refs identify its inner span. */
+    title?: ContentSlot<'span'>;
     /** Optional explicit accessible name. */
     'aria-label'?: string;
     /** External naming element IDs when a legend is omitted. */
@@ -150,8 +167,9 @@ export type FormSectionName = {
  * @example `{ title: 'Customer', description: 'Contact details', appearance: 'outline' }`
  */
 export type FormSectionProps = Omit<React.FieldsetHTMLAttributes<HTMLFieldSetElement>, 'name' | 'title' | 'children' | 'disabled' | 'dangerouslySetInnerHTML' | 'aria-label' | 'aria-labelledby'> & FormSectionName & {
-    /** Optional description associated with the group through aria-describedby. */
-    description?: React.ReactNode;
+    /** Literal description in the native hint; props/callbacks configure an inner div and its ref.
+     * Empty static objects render their container without adding an empty aria-describedby reference. */
+    description?: ContentSlot<'div'>;
     /** Adds to Root and enclosing scope restrictions and omits disabled adapter values on submission. */
     disabled?: boolean;
     /** Native Fluent Card appearance; defaults to filled. */
@@ -162,9 +180,17 @@ export type FormSectionProps = Omit<React.FieldsetHTMLAttributes<HTMLFieldSetEle
  * @example `<Order.ObjectSection name="customer" title="Customer">{({ Fields }) => <Fields.Input name="name" />}</Order.ObjectSection>`
  */
 export type FormObjectSectionProps<TInput extends FieldValues, TPath extends FormObjectPath<TInput>> = FormSectionProps & FormObjectProps<TInput, TPath>;
-/** Localized visible actions, accessible action names and polite status announcements.
- * Every callback receives the current item label; moved also receives one-based position and total.
- * @example `{ add: 'Aggiungi', empty: 'Nessuna riga', remove: label => `Elimina ${label}` }`
+/**
+ * Localized visible actions, accessible action names and polite status announcements. Every callback receives the current item label; moved also receives one-based position and total.
+ *
+ * @example
+ * ```ts
+ * const strings: FormArraySectionStrings = {
+ *   add: 'Aggiungi',
+ *   empty: 'Nessuna riga',
+ *   remove: label => `Elimina ${label}`
+ * };
+ * ```
  */
 export interface FormArraySectionStrings {
     /** Add button text; defaults to Add item. */

@@ -1,0 +1,61 @@
+import * as React from 'react';
+export { useFixtureTeams as useSPFxTeams } from '../demo-fixture-host';
+export const useSPFxThemeInfo = (): undefined => undefined;
+const page = { site: { absoluteUrl: 'https://simulated.invalid/sites/demo' }, web: { absoluteUrl: 'https://simulated.invalid/sites/demo' }, cultureInfo: { currentCultureName: 'en-US', currentUICultureName: 'en-US' } };
+export const useSPFxPageContext = () => page;
+export const useSPFxContext = () => ({ kind: 'WebPart', spfxContext: { pageContext: page } });
+export const useSPFxInstanceInfo = () => ({ id: 'simulated-demo', kind: 'WebPart' });
+export const useSPFxIsEdit = () => false;
+export const useSPFxEnvironmentInfo = () => ({ type: 'Local simulated host' });
+export const useSPFxUserInfo = () => ({ displayName: 'Simulated User', email: 'simulated@example.invalid', isExternal: false });
+export const useSPFxSiteInfo = () => ({ title: 'Simulated site', webUrl: page.web.absoluteUrl, siteUrl: page.site.absoluteUrl });
+export const useSPFxListInfo = (): undefined => undefined;
+export const useSPFxLocaleInfo = () => ({ locale: 'en-US', uiLocale: 'en-US', isRtl: false, ianaTimeZone: 'Europe/Rome' });
+export const useSPFxHubSiteInfo = () => ({ isHubSite: false });
+export const useSPFxPageType = () => ({ pageType: 'ModernPage' });
+export const useSPFxCorrelationInfo = () => ({ correlationId: 'local-fixture', tenantId: 'simulated' });
+export const useSPFxContainerInfo = () => ({ element: document.getElementById('root') });
+export const useSPFxContainerSize = () => ({ width: innerWidth, height: innerHeight, size: 'local' });
+export const useSPFxServiceScope = () => ({ serviceScope: undefined });
+function useMemoryStorage(_key: string, initial: string) {
+  const [value, setValue] = React.useState(initial);
+  return { value, setValue, remove: () => setValue(initial) };
+}
+export const useSPFxLocalStorage = useMemoryStorage;
+export const useSPFxSessionStorage = useMemoryStorage;
+const logger = { info: () => {}, warn: () => {}, error: () => {} };
+export const useSPFxLogger = () => logger;
+export const useSPFxPerformance = () => ({ time: async (_label: string, operation: () => Promise<unknown>) => { const start = performance.now(); const result = await operation(); return { result, durationMs: performance.now() - start }; } });
+const forbiddenWrite = async (): Promise<never> => { throw new Error('Fixture forbids CRUD'); };
+const unavailable = { isReady: false, isInitializing: false, isLoading: false, error: undefined, invoke: async () => undefined, baseUrl: page.web.absoluteUrl };
+export const useSPFxHttpClient = () => unavailable;
+export const useSPFxSPHttpClient = () => unavailable;
+export const useSPFxMSGraphClient = () => unavailable;
+export const useSPFxAadHttpClient = () => ({ ...unavailable, setResourceUrl: () => {} });
+export const useSPFxAadTokenProvider = () => unavailable;
+export const useSPFxApiPermissionPrecheck = () => ({ isChecking: false, isConfigured: false, configurationState: 'simulated unavailable', missing: [], warnings: [], results: [], check: async () => {}, retryWithoutCache: async () => {} });
+function useLocalRead() {
+  const [isLoading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<Error>();
+  const load = React.useCallback(async () => { setLoading(true); await new Promise(resolve => setTimeout(resolve, 100)); setError(new Error('Simulated network unavailable')); setLoading(false); }, []);
+  return { isReady: false, isLoading, error, load, reload: load, isWriting: false, write: forbiddenWrite };
+}
+export const useSPFxUserPhoto = useLocalRead;
+export const useSPFxOneDriveAppData = useLocalRead;
+export const useSPFxTenantProperty = useLocalRead;
+const store = { isReady: false, canWrite: false, isLoading: false, isWriting: false, get: async () => undefined, list: async () => [], save: forbiddenWrite, remove: forbiddenWrite };
+export const useSPFxSiteKeyValueStore = () => store;
+export const useSPFxTenantKeyValueStore = () => store;
+export const useSPFxPnPContext = () => ({ isInitialized: false, sp: undefined });
+// Match the real hook's stable callback identity across renders of a scope.
+const pnp = { ...unavailable, batch: async () => undefined, clearError: () => {} };
+export const useSPFxPnP = () => pnp;
+const list = { items: [], loading: false, isEmpty: false, hasMore: false, query: async () => [], loadMore: async () => [], clearError: () => {}, create: forbiddenWrite, update: forbiddenWrite, remove: forbiddenWrite };
+export const useSPFxPnPList = () => list;
+export const useSPFxPnPListById = () => list;
+export const useSPFxPnPListByUrl = () => list;
+export const useSPFxPnPListByPath = () => list;
+const suggest = async (query: string) => [`${query} simulated suggestion`];
+const search = { results: [], refiners: [], totalResults: 0, loading: false, hasMore: false, search: async () => [], searchWithBuilder: async () => [], applyRefiner: async () => [], clearError: () => {}, suggest };
+export const useSPFxPnPSearch = () => search;
+export const SearchVerticals = { People: 'simulated-people', Documents: 'simulated-documents', Pages: 'simulated-pages', Videos: 'simulated-videos' };

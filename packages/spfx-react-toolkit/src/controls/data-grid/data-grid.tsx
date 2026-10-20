@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { renderContentSlot } from '../content-slot.internal';
 import {
   createTableColumn,
   DataGrid as FluentDataGrid,
@@ -195,13 +196,13 @@ function DataGridRuntime<T extends object>({ family, props, rootRef }: {
   };
   return <div className={sx(flex.column, gap.small, width.full, minWidth.zero)}>
     {hasError && <MessageBar intent="error">
-      <MessageBarBody>{props.error}</MessageBarBody>
+      <MessageBarBody>{renderContentSlot(props.error, 'div', sx, { shorthand: 'preserve' })}</MessageBarBody>
       {props.onRetry !== undefined && <MessageBarActions>
         <Button appearance="transparent" onClick={props.onRetry}>{strings.retry}</Button>
       </MessageBarActions>}
     </MessageBar>}
     {status !== undefined ? <div role="status" className={columns.length > 0 && (emptyContent ?? undefined) === undefined
-      ? sx(textAlign.center, paddingBlock.medium) : undefined}>{status}</div> : columns.length === 0 || (hasError && rows.length === 0) ? <></> : <>
+      ? sx(textAlign.center, paddingBlock.medium) : undefined}>{renderContentSlot(status, 'div', sx, { shorthand: 'preserve' })}</div> : columns.length === 0 || (hasError && rows.length === 0) ? <></> : <>
       <div data-grid-scroll="" className={sx(horizontalOverflow.auto, width.full, minWidth.zero)}>
         <FluentDataGrid {...nativeRootProps(props)} ref={rootRef} data-grid-root="" items={rows} getRowId={rowIdentity} columns={nativeColumns}
           className={sx(styles.grid, width.full, props.className)} style={props.style} size={props.size}
@@ -218,7 +219,7 @@ function DataGridRuntime<T extends object>({ family, props, rootRef }: {
                 className={columnClasses.get(String(definition.columnId))}
                 title={column?.options.headerTooltip}
                 aria-label={column?.options.headerAriaLabel}>
-                {column.kind === 'actions' && column.options.header === undefined ? strings.actions : column.options.header}
+                {renderContentSlot(column.kind === 'actions' && column.options.header === undefined ? strings.actions : column.options.header, 'span', sx, { shorthand: 'preserve' })}
               </DataGridHeaderCell>;
             }}
           </DataGridRow></DataGridHeader>
@@ -246,7 +247,7 @@ function DataGridRuntime<T extends object>({ family, props, rootRef }: {
 }
 /** Create the native root around a feature-local owning family. */
 export function createDataGridRuntimeComponent<T extends object>(family: FamilyResolution<T>): React.ForwardRefExoticComponent<DataGridProps<T> & React.RefAttributes<HTMLDivElement>> {
-  const Root = React.forwardRef<HTMLDivElement, DataGridProps<T>>((props, ref) => <DataGridRuntime family={family} props={props} rootRef={ref} />);
+  const Root = React.forwardRef<HTMLDivElement, DataGridProps<T>>((props, ref) => <DataGridRuntime<T> family={family} props={props} rootRef={ref} />);
   Root.displayName = 'DataGrid';
   return Root;
 }

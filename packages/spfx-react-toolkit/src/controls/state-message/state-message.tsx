@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button } from '@fluentui/react-components';
+import { hasContentSlot, inspectContentSlot, renderContentSlot } from '../content-slot.internal';
 import { FormattedText } from '../formatted-text/formatted-text';
 import { useSx } from '../../hooks/useSx';
 import * as flex from '../../helpers/styles/flex';
@@ -33,12 +34,13 @@ function Action({ action, appearance, className }: {
   const sx = useSx();
   const { label, className: consumerClass, ...props } = action;
   delete props.dangerouslySetInnerHTML;
+  const labelContent = renderContentSlot(label, 'span', sx, { shorthand: 'preserve' });
   if (typeof props.href === 'string') {
     return <Button {...props} as="a" href={props.href} appearance={appearance} size="medium" shape="rounded"
-      className={sx(className, consumerClass)}>{label}</Button>;
+      className={sx(className, consumerClass)}>{labelContent}</Button>;
   }
   return <Button {...props} as="button" type="button" appearance={appearance} size="medium" shape="rounded"
-    className={sx(className, consumerClass)}>{label}</Button>;
+    className={sx(className, consumerClass)}>{labelContent}</Button>;
 }
 
 /** Replace a bounded section with a state explanation, decorative artwork and optional actions.
@@ -51,8 +53,10 @@ function Action({ action, appearance, className }: {
  * @param props Native div attributes, localized content, preset and button/link intentions.
  * @returns The div root containing text, optional artwork and actions outside the live region.
  * @example
+ * ```tsx
  * <StateMessage preset="empty" title="No results" description="Try **other filters**."
  *   primaryAction={{ label: 'Clear filters', onClick: clearFilters }} />
+ * ```
  */
 export const StateMessage = React.forwardRef<HTMLDivElement, StateMessageProps>(({
   preset, title, description, headingLevel = 3, visual, primaryAction, secondaryAction,
@@ -65,16 +69,27 @@ export const StateMessage = React.forwardRef<HTMLDivElement, StateMessageProps>(
   const styles = useStateMessageStyles();
   const mode = useStateMessageThemeMode();
   const Illustration = visual === undefined && preset ? resolvePresetIllustration(preset) : undefined;
-  const showVisual = Illustration !== undefined || React.Children.toArray(visual).length > 0;
+  const visualInspection = inspectContentSlot(visual);
+  const showVisual = Illustration !== undefined || (visualInspection.kind === 'shorthand'
+    ? React.Children.toArray(visualInspection.children).length > 0 : hasContentSlot(visual));
+  const titleContent = renderContentSlot(title, 'span', sx, { shorthand: 'preserve' });
+  const descriptionInspection = inspectContentSlot(description);
+  // Legacy shorthand is formatted by the existing paragraph, including fragments.
+  // Object static children are formatted inside their span; callback output stays opaque.
+  const descriptionContent = renderContentSlot(description, 'span', sx, {
+    shorthand: 'preserve',
+    mapChildren: descriptionInspection.kind === 'props'
+      ? children => <FormattedText as="span" align="center">{children}</FormattedText> : undefined,
+  });
   const actionClass = sx(width.full);
   return <div {...nativeProps} ref={ref} className={sx(styles.root, container.inlineSize, width.full, minWidth.zero,
     flex.column, alignItems.center, justifyContent.center, gap.extraLarge, padding.medium, className)}>
     {showVisual && <div data-state-message-visual="" className={sx(styles.visual, width.full, maxWidth.px(280),
-      height.auto, flexItem.noShrink)}>{Illustration ? <Illustration mode={mode} /> : visual}</div>}
+      height.auto, flexItem.noShrink)}>{Illustration ? <Illustration mode={mode} /> : renderContentSlot(visual, 'div', sx, { shorthand: 'preserve' })}</div>}
     <div data-state-message-text="" role={role ?? (preset ? presetRoles[preset] : undefined)}
       className={sx(flex.column, alignItems.center, gap.small, width.full, minWidth.zero, maxWidth.px(240), messageLarge)}>
-      <FormattedText as={headings[headingLevel - 1] ?? 'h3'} variant="subtitle2Stronger" markdown={false} align="center">{title}</FormattedText>
-      {description !== undefined && <FormattedText as="p" variant="body1" align="center">{description}</FormattedText>}
+      <FormattedText as={headings[headingLevel - 1] ?? 'h3'} variant="subtitle2Stronger" markdown={false} align="center">{titleContent}</FormattedText>
+      {description !== undefined && <FormattedText as="p" variant="body1" align="center" markdown={descriptionInspection.kind === 'shorthand'}>{descriptionContent}</FormattedText>}
     </div>
     {(primaryAction || secondaryAction || tertiaryAction) && <div data-state-message-actions=""
       className={sx(flex.column, alignItems.stretch, gap.small, width.full, minWidth.zero, maxWidth.px(240), actionsLarge)}>

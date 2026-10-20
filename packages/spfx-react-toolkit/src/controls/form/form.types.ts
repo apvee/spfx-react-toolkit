@@ -50,14 +50,29 @@ export interface FormResolverValidation<TInput extends FieldValues, TContext, TO
     /** A resolver cannot accompany a schema owner. */
     schema?: never;
 }
-/** Rules-only form initialization without a schema/resolver owner. */
+/** Rules-only form initialization without a schema/resolver owner.
+ * @example
+ * ```tsx
+ * const validation: FormWithoutValidation = {};
+ * const Profile = createForm<{ name: string }>();
+ * <Profile.Root {...validation} defaultValues={{ name: '' }} onSubmit={save}>
+ *   <Profile.Input name="name" rules={{ required: 'Enter a name.' }} />
+ * </Profile.Root>;
+ * ```
+ */
 export interface FormWithoutValidation {
     /** Omit schema to validate through per-field rules. */
     schema?: never;
     /** Omit resolver to validate through per-field rules. */
     resolver?: never;
 }
-/** Exactly one schema, resolver, or rules-only validation owner. */
+/** Exactly one schema, resolver, or rules-only validation owner.
+ * @example
+ * ```ts
+ * const validation: FormValidationProps<{ name: string }, unknown, { name: string }> = {};
+ * // Per-field rules own validation when both schema and resolver are omitted.
+ * ```
+ */
 export type FormValidationProps<TInput extends FieldValues, TContext, TOutput> =
     FormSchemaValidation<TInput, TOutput> | FormResolverValidation<TInput, TContext, TOutput> | FormWithoutValidation;
 /** RHF initialization options; a factory-bound validation owner cannot be replaced.
@@ -71,6 +86,7 @@ export type FormUseFormProps<TInput extends FieldValues, TContext = unknown, TOu
     /** The factory-bound resolver cannot be replaced. */
     resolver?: never;
 } : FormValidationProps<TInput, TContext, TOutput>);
+/** Native form attributes; content, submission and validation notifications are supplied by FormRootProps. */
 type FormNativeProps = Omit<React.FormHTMLAttributes<HTMLFormElement>, 'children' | 'onSubmit' | 'onInvalid' | 'dangerouslySetInnerHTML'>;
 /** Native Form Root props: own initialization or provide same-suite methods, never both.
  * noValidate defaults to true. DOM submissions share one gate across validation and save;
@@ -89,7 +105,7 @@ export type FormRootProps<TInput extends FieldValues = FieldValues, TContext = u
      * A returned promise is awaited despite the notification-style void signature; failures are contained.
      */
     onInvalid?: (errors: FormErrors<TInput>, methods: FormMethods<TInput, TContext, TOutput>) => void;
-    /** Disables all bindings in this Root. */
+    /** Adds a disabled restriction to every binding in this Root. Omitted/false adds no restriction and cannot override disabled methods or scopes. */
     disabled?: boolean;
 } & ((FormUseFormProps<TInput, TContext, TOutput, TBound> & {
     /** Omit methods when Root owns initialization. */
@@ -106,7 +122,7 @@ export type FormRootProps<TInput extends FieldValues = FieldValues, TContext = u
 export interface FormFieldResult<TValue> {
     /** Current RHF live value. */
     value: TValue;
-    /** Writes the complete field value. */
+    /** Synchronously writes the complete live-domain value to RHF; validation follows the configured RHF lifecycle. Return value is ignored. */
     onChange: (value: TValue) => void;
     /** Marks the field touched. */
     onBlur: () => void;
@@ -151,6 +167,7 @@ export type FormErrorProps<TInput extends FieldValues = FieldValues> = Omit<Reac
  * @example `<Order.Submit appearance="primary">Save</Order.Submit>`
  */
 export type FormSubmitProps = Omit<Extract<ButtonProps, {
+    /** Selects Fluent's native button branch for typing; as is omitted from the resulting public props. */
     as?: 'button';
 }>, 'type' | 'as'>;
 /** Fluent reset button props; native Root reset cancellation is honored.
@@ -158,83 +175,253 @@ export type FormSubmitProps = Omit<Extract<ButtonProps, {
  * @example `<Order.Reset>Discard changes</Order.Reset>`
  */
 export type FormResetProps = Omit<Extract<ButtonProps, {
+    /** Selects Fluent's native button branch for typing; as is omitted from the resulting public props. */
     as?: 'button';
 }>, 'type' | 'as'>;
 /** Field members of a typed Form family, reused with relative names inside composition scopes.
  * @example `<Order.Input name="reference" label="Reference" />`
  */
 export interface ScopedFormSuite<TInput extends FieldValues> {
-    /** String-valued Fluent Input and Field. */
+    /** String-valued Fluent Input and Field.
+     * @example
+     * ```tsx
+     * <Order.Input name="reference" label="Reference" />
+     * ```
+     */
     Input: React.ForwardRefExoticComponent<FormInputProps<TInput> & React.RefAttributes<HTMLInputElement>>;
-    /** Multiline string-valued Fluent Textarea with native textarea ref. */
+    /** Multiline string-valued Fluent Textarea with native textarea ref.
+     * @example
+     * ```tsx
+     * <Order.Textarea name="notes" label="Notes" />
+     * ```
+     */
     Textarea: React.ForwardRefExoticComponent<FormTextareaProps<TInput> & React.RefAttributes<HTMLTextAreaElement>>;
-    /** String search binding; clear commits an empty string before consumer notification. */
+    /** String search binding; clear commits an empty string before consumer notification.
+     * @example
+     * ```tsx
+     * <Order.SearchBox name="query" label="Search" />
+     * ```
+     */
     SearchBox: React.ForwardRefExoticComponent<FormSearchBoxProps<TInput> & React.RefAttributes<HTMLInputElement>>;
-    /** Boolean checkbox; explicit triState permits the mixed control value. */
+    /** Boolean checkbox; explicit triState permits the mixed control value.
+     * @example
+     * ```tsx
+     * <Order.Checkbox name="approved" label="Approved" />
+     * ```
+     */
     Checkbox: React.ForwardRefExoticComponent<FormCheckboxProps<TInput> & React.RefAttributes<HTMLInputElement>>;
-    /** Boolean switch with additive disabled state and a native input ref. */
+    /** Boolean switch with additive disabled state and a native input ref.
+     * @example
+     * ```tsx
+     * <Order.Switch name="enabled" label="Enabled" />
+     * ```
+     */
     Switch: React.ForwardRefExoticComponent<FormSwitchProps<TInput> & React.RefAttributes<HTMLInputElement>>;
-    /** Numeric spin binding; empty/nonfinite manual commits use its nullable domain. */
+    /** Numeric spin binding; empty/nonfinite manual commits use its nullable domain.
+     * @example
+     * ```tsx
+     * <Order.SpinButton name="quantity" label="Quantity" min={0} />
+     * ```
+     */
     SpinButton: React.ForwardRefExoticComponent<FormSpinButtonProps<TInput> & React.RefAttributes<HTMLInputElement>>;
-    /** Numeric slider using caller-supplied defaults and bounds. */
+    /** Numeric slider using caller-supplied defaults and bounds.
+     * @example
+     * ```tsx
+     * <Order.Slider name="progress" label="Progress" min={0} max={100} />
+     * ```
+     */
     Slider: React.ForwardRefExoticComponent<FormSliderProps<TInput> & React.RefAttributes<HTMLInputElement>>;
-    /** Native select; option identity is independent of display text and optional explicit codec. */
+    /** Native select; option identity is independent of display text and optional explicit codec.
+     * @example
+     * ```tsx
+     * <Order.Select name="country" options={[{ value: "it", label: "Italy" }]} />
+     * ```
+     */
     Select: React.ForwardRefExoticComponent<FormSelectProps<TInput> & React.RefAttributes<HTMLSelectElement>>;
-    /** Named radio selection group with a truthful group ref and enabled-descendant focus. */
+    /** Named radio selection group with a truthful group ref and enabled-descendant focus.
+     * @example
+     * ```tsx
+     * <Order.RadioGroup name="priority" label="Priority" options={priorities} />
+     * ```
+     */
     RadioGroup: React.ForwardRefExoticComponent<FormRadioGroupProps<TInput> & React.RefAttributes<HTMLDivElement>>;
-    /** Single string-identity dropdown, optionally mapped by an explicit domain codec. */
+    /** Single string-identity dropdown, optionally mapped by an explicit domain codec.
+     * @example
+     * ```tsx
+     * <Order.Dropdown name="country" label="Country" options={countries} />
+     * ```
+     */
     Dropdown: React.ForwardRefExoticComponent<FormDropdownProps<TInput> & React.RefAttributes<HTMLButtonElement>>;
-    /** Ordered multiple dropdown selection with optional explicit domain conversion. */
+    /** Ordered multiple dropdown selection with optional explicit domain conversion.
+     * @example
+     * ```tsx
+     * <Order.DropdownMulti name="countries" label="Countries" options={countries} />
+     * ```
+     */
     DropdownMulti: React.ForwardRefExoticComponent<FormDropdownMultiProps<TInput> & React.RefAttributes<HTMLButtonElement>>;
-    /** Ordered checkbox identities; adaptation is limited to documented Fluent Checkbox children. */
+    /** Ordered checkbox identities; adaptation is limited to documented Fluent Checkbox children.
+     * @example
+     * ```tsx
+     * <Order.CheckboxGroup name="tags" label="Tags" options={tags} />
+     * ```
+     */
     CheckboxGroup: React.ForwardRefExoticComponent<FormCheckboxGroupProps<TInput> & React.RefAttributes<HTMLDivElement>>;
-    /** Editable single selection; unmatched query clears its committed identity. */
+    /** Editable single selection; unmatched query clears its committed identity.
+     * @example
+     * ```tsx
+     * <Order.Combobox name="country" label="Country" options={countries} />
+     * ```
+     */
     Combobox: React.ForwardRefExoticComponent<FormComboboxProps<TInput> & React.RefAttributes<HTMLInputElement>>;
-    /** Editable multiple selection; query edits retain committed selected identities. */
+    /** Editable multiple selection; query edits retain committed selected identities.
+     * @example
+     * ```tsx
+     * <Order.ComboboxMulti name="countries" label="Countries" options={countries} />
+     * ```
+     */
     ComboboxMulti: React.ForwardRefExoticComponent<FormComboboxMultiProps<TInput> & React.RefAttributes<HTMLInputElement>>;
-    /** Selected identity tags with keyboard removal and caller-localized empty text. */
+    /** Selected identity tags with keyboard removal and caller-localized empty text.
+     * @example
+     * ```tsx
+     * <Order.TagPicker name="people" label="People" options={people} />
+     * ```
+     */
     TagPicker: React.ForwardRefExoticComponent<FormTagPickerProps<TInput> & React.RefAttributes<HTMLInputElement>>;
-    /** Numeric Fluent Rating with a real group ref and managed radio error focus. */
+    /** Numeric Fluent Rating with a real group ref and managed radio error focus.
+     * @example
+     * ```tsx
+     * <Order.Rating name="score" label="Score" max={5} />
+     * ```
+     */
     Rating: React.ForwardRefExoticComponent<FormRatingProps<TInput> & React.RefAttributes<HTMLDivElement>>;
-    /** HSV color channels with optional alpha, copied before writing the live field. */
+    /** HSV color channels with optional alpha, copied before writing the live field.
+     * @example
+     * ```tsx
+     * <Order.ColorPicker name="accent" label="Accent"><ColorSlider channel="hue" /></Order.ColorPicker>
+     * ```
+     */
     ColorPicker: React.ForwardRefExoticComponent<FormColorPickerProps<TInput> & React.RefAttributes<HTMLDivElement>>;
-    /** Stable string swatch identity; the public ref remains on the real picker group. */
+    /** Stable string swatch identity; the public ref remains on the real picker group.
+     * @example
+     * ```tsx
+     * <Order.SwatchPicker name="theme" label="Theme"><ColorSwatch value="blue" color="#0078d4" /></Order.SwatchPicker>
+     * ```
+     */
     SwatchPicker: React.ForwardRefExoticComponent<FormSwatchPickerProps<TInput> & React.RefAttributes<HTMLDivElement>>;
-    /** Nullable local-calendar date with visible invalid drafts and a native input ref. */
+    /** Nullable local-calendar date with visible invalid drafts and a native input ref.
+     * @example
+     * ```tsx
+     * <Order.DatePicker name="date" label="Date" />
+     * ```
+     */
     DatePicker: React.ForwardRefExoticComponent<FormDatePickerProps<TInput> & React.RefAttributes<HTMLInputElement>>;
-    /** Nullable local wall-clock time using a deterministic anchor and native input ref. */
+    /** Nullable local wall-clock time using a deterministic anchor and native input ref.
+     * @example
+     * ```tsx
+     * <Order.TimePicker name="time" label="Time" />
+     * ```
+     */
     TimePicker: React.ForwardRefExoticComponent<FormTimePickerProps<TInput> & React.RefAttributes<HTMLInputElement>>;
-    /** Independent nullable date/time parts; merging never creates an implicit timestamp. */
+    /** Independent nullable date/time parts; merging never creates an implicit timestamp.
+     * @example
+     * ```tsx
+     * <Order.DateTime name="appointment" dateLabel="Date" timeLabel="Time" />
+     * ```
+     */
     DateTime: React.ForwardRefExoticComponent<FormDateTimeProps<TInput> & React.RefAttributes<HTMLDivElement>>;
-    /** Actual browser FileList selection; clear/reset never fabricates native file restoration. */
+    /** Actual browser FileList selection; clear/reset never fabricates native file restoration.
+     * @example
+     * ```tsx
+     * <Order.FileInput name="attachments" label="Attachments" multiple />
+     * ```
+     */
     FileInput: React.ForwardRefExoticComponent<FormFileInputProps<TInput> & React.RefAttributes<HTMLInputElement>>;
-    /** Headless nested-record scope with path-specific relative field inference. */
+    /** Headless nested-record scope with path-specific relative field inference.
+     * @example
+     * ```tsx
+     * <Order.Object name="customer">{({ Fields }) => <Fields.Input name="name" />}</Order.Object>
+     * ```
+     */
     Object: FormObjectComponent<TInput>;
-    /** Headless structured-record array with stable item keys and explicit operations. */
+    /** Headless structured-record array with stable item keys and explicit operations.
+     * @example
+     * ```tsx
+     * <Order.Array name="rows">{({ items }) => items.map(({ key, Fields }) => <Fields.Input key={key} name="sku" />)}</Order.Array>
+     * ```
+     */
     Array: FormArrayComponent<TInput>;
-    /** Named visual nested-record fieldset with direct errors and inherited disabled state. */
+    /** Named visual nested-record fieldset with direct errors and inherited disabled state.
+     * @example
+     * ```tsx
+     * <Order.ObjectSection name="customer" title="Customer">{({ Fields }) => <Fields.Input name="name" />}</Order.ObjectSection>
+     * ```
+     */
     ObjectSection: FormObjectSectionComponent<TInput>;
-    /** Named ordered editable array with localized actions, bounds and action-owned focus. */
+    /** Named ordered editable array with localized actions, bounds and action-owned focus.
+     * @example
+     * ```tsx
+     * <Order.ArraySection name="rows" title="Rows" createItem={() => ({ sku: "" })} renderItem={({ Fields }) => <Fields.Input name="sku" />} />
+     * ```
+     */
     ArraySection: FormArraySectionComponent<TInput>;
-    /** Field or global native alert. */
+    /** Field or global native alert.
+     * @example
+     * ```tsx
+     * <Order.Error name="reference" />
+     * ```
+     */
     Error: React.ForwardRefExoticComponent<FormErrorProps<TInput> & React.RefAttributes<HTMLDivElement>>;
-    /** Binds custom controls to live RHF value/state. */
+    /** React hook binding a custom control to live RHF value/state inside its owning Root/scope.
+     * Pass a compatible relative name and wire onChange/onBlur/ref; returned state remains owned by RHF.
+     * @example
+     * ```tsx
+     * const field = Order.useField<string>({ name: "reference" });
+     * ```
+     */
     useField: <TValue>(props: FormUseFieldProps<TInput, TValue>) => FormFieldResult<TValue>;
 }
 /** Typed form family. Create factories outside render to keep suite ownership stable.
  * @example `const Order = createForm<{ reference: string }>();`
  */
 export interface FormSuite<TInput extends FieldValues, TContext = unknown, TOutput = TInput, TBound extends boolean = false> extends ScopedFormSuite<TInput> {
-    /** Native form and RHF provider. */
+    /** Native form and RHF provider.
+     * @example
+     * ```tsx
+     * <Order.Root defaultValues={{ reference: "" }} onSubmit={save}><Order.Input name="reference" /></Order.Root>
+     * ```
+     */
     Root: React.ForwardRefExoticComponent<FormRootProps<TInput, TContext, TOutput, TBound> & React.RefAttributes<HTMLFormElement>>;
-    /** Fluent submit button, disabled while RHF is submitting. */
+    /** Fluent submit button, disabled while RHF is submitting.
+     * @example
+     * ```tsx
+     * <Order.Submit appearance="primary">Save</Order.Submit>
+     * ```
+     */
     Submit: React.ForwardRefExoticComponent<FormSubmitProps & React.RefAttributes<HTMLButtonElement>>;
-    /** Fluent reset button, disabled while RHF is submitting. */
+    /** Fluent reset button, disabled while RHF is submitting.
+     * @example
+     * ```tsx
+     * <Order.Reset>Discard edits</Order.Reset>
+     * ```
+     */
     Reset: React.ForwardRefExoticComponent<FormResetProps & React.RefAttributes<HTMLButtonElement>>;
-    /** Creates methods owned by this family. Direct handleSubmit bypasses Root's DOM gate. */
+    /** React hook creating same-suite RHF methods with optional initialization.
+     * Omission uses RHF defaults; factory-bound validation cannot be replaced.
+     * Direct handleSubmit bypasses Root's DOM gate; pass these methods to Root instead of initialization props.
+     * @example
+     * ```ts
+     * const methods = Order.useForm({ defaultValues: { reference: "" }, mode: "onBlur" });
+     * ```
+     */
     useForm: (props?: FormUseFormProps<TInput, TContext, TOutput, TBound>) => FormMethods<TInput, TContext, TOutput>;
 }
-/** Untyped family for dynamic domain names. */
+/** Untyped family for dynamic domain names.
+ * @example
+ * ```tsx
+ * const DynamicForm: UntypedFormSuite = Form;
+ * <DynamicForm.Input name="runtime.field" label="Dynamic field" />;
+ * ```
+ */
 export type UntypedFormSuite = FormSuite<FieldValues>;
 /** Typed factory overloads preserving distinct live input and submitted output.
  * Create suites outside render. Bound owners cannot be replaced at Root or useForm.
@@ -245,12 +432,19 @@ export interface CreateForm {
     <TInput extends FieldValues>(): FormSuite<TInput>;
     /** Infers the live input and transformed output from a Standard Schema. */
     <TSchema extends StandardSchemaV1>(schema: TSchema & (StandardSchemaV1.InferInput<TSchema> extends FieldValues ? unknown : never)): FormSuite<Extract<StandardSchemaV1.InferInput<TSchema>, FieldValues>, unknown, StandardSchemaV1.InferOutput<TSchema>, true>;
-    /** Permanently binds one schema or resolver owner. */
+    /** Permanently binds one schema or resolver owner.
+     * @param options - Exactly one validation owner; its input stays live and its output reaches onSubmit.
+     * @returns A stable family with validation ownership fixed for Root and useForm.
+     */
     <TInput extends FieldValues, TOutput = TInput, TContext = unknown>(options: {
+        /** Standard Schema v1 owner mapping live input to validated output. */
         schema: StandardSchemaV1<TInput, TOutput>;
+        /** Excluded when schema owns validation. */
         resolver?: never;
     } | {
+        /** RHF resolver owner receiving live input and the configured context. */
         resolver: Resolver<TInput, TContext, TOutput>;
+        /** Excluded when resolver owns validation. */
         schema?: never;
     }): FormSuite<TInput, TContext, TOutput, true>;
 }

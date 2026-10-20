@@ -22,9 +22,22 @@ export interface SxResponsiveDescriptor {
   /** Internal responsive descriptor brand. */
   readonly [sxDescriptorBrand]: 'responsive';
 }
-/** Any supported immutable style descriptor. */
+/** Any supported immutable style descriptor.
+ *
+ * @example
+ * ```ts
+ * const descriptor: SxDescriptor = hover(foreground.subtle);
+ * ```
+ */
 export type SxDescriptor = SxBaseDescriptor | SxStateDescriptor | SxResponsiveDescriptor;
-/** Composer argument: descriptors, compiled classes, or ignored conditional values. */
+/** Composer argument: descriptors, compiled classes, or ignored conditional values.
+ *
+ * @example
+ * ```ts
+ * const input: SxInput = undefined;
+ * const className = sx(width.full, input);
+ * ```
+ */
 // eslint-disable-next-line @rushstack/no-new-null -- The conditional composer contract explicitly accepts null.
 export type SxInput = SxDescriptor | string | false | null | undefined;
 /** Ordered style composer; returns a className string, empty when no inputs apply.
@@ -33,7 +46,15 @@ export type SxInput = SxDescriptor | string | false | null | undefined;
  * @example sx(width.full, condition && foreground.subtle)
  */
 export type SxFunction = (...inputs: readonly SxInput[]) => string;
-/** Options describing the effective direction of a style environment. */
+/** Options describing the effective direction of a style environment.
+ *
+ * @example
+ * ```ts
+ * // Inside a React component using the host Fluent renderer:
+ * const options: SxOptions = { dir: 'rtl' };
+ * const sx = useSx(options);
+ * ```
+ */
 export interface SxOptions {
   /** Effective direction override; keep consistent with the host and external Griffel classes.
    * When omitted, uses Fluent direction context; without context, defaults to LTR. */

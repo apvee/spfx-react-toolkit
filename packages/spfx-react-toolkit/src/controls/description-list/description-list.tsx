@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { slot } from '@fluentui/react-utilities';
-import type { SlotRenderFunction } from '@fluentui/react-utilities';
+import { renderContentSlot } from '../content-slot.internal';
 import { useSx } from '../../hooks/useSx';
 import * as margin from '../../helpers/styles/margin';
 import * as minWidth from '../../helpers/styles/min-width';
@@ -12,29 +11,14 @@ import type { DescriptionListLayout, DescriptionListProps, DescriptionListItemPr
 
 const DescriptionListContext = React.createContext<DescriptionListLayout | undefined>(undefined);
 
-type ContentProps = Omit<React.ComponentPropsWithRef<'div'>, 'children' | 'dangerouslySetInnerHTML'> & {
-  as?: 'div';
-  children?: React.ReactNode | SlotRenderFunction<React.ComponentPropsWithRef<'div'>>;
-  dangerouslySetInnerHTML?: never;
-};
-
-/** Fluent shorthand resolution retains refs, callbacks and caller classes inside semantic cells. */
-function renderContentSlot(content: DescriptionListItemProps['children'], className: string, sx: ReturnType<typeof useSx>): React.ReactNode {
-  // Fluent's slot contract uses null for omitted slots; preserve that legacy input and use undefined internally.
-  const resolved = slot.resolveShorthand<ContentProps | null | undefined>(content);
-  if (resolved === undefined || resolved === null) return undefined;
-  const { as: Component = 'div', children, className: consumerClassName, ...nativeProps } = resolved;
-  delete nativeProps.dangerouslySetInnerHTML;
-  const props = { ...nativeProps, className: sx(className, consumerClassName) };
-  return typeof children === 'function'
-    ? children(Component, props)
-    : React.createElement(Component, props, children);
-}
-
 /** One pair with preserved native semantic cells and caller-owned content/state.
  * @param props Native grouping attributes and Fluent content slots.
  * @returns A grouping div containing one dt and one dd.
- * @example <DescriptionList.Item label="Owner">Ada</DescriptionList.Item> */
+ * @example
+ * ```tsx
+ * <DescriptionList><DescriptionList.Item label="Owner">Ada</DescriptionList.Item></DescriptionList>
+ * ```
+ */
 const DescriptionListItem = React.forwardRef<HTMLDivElement, DescriptionListItemProps>(({
   label, children, className, ...nativeProps
 }, ref) => {
@@ -45,10 +29,10 @@ const DescriptionListItem = React.forwardRef<HTMLDivElement, DescriptionListItem
   const itemLayout = layout === 'horizontal' ? styles.itemHorizontal : layout === 'vertical' ? styles.itemVertical : styles.itemAuto;
   return <div {...nativeProps} ref={ref} data-description-list-item="" className={sx(styles.item, itemLayout, minWidth.zero, className)}>
     <dt className={sx(styles.cell, margin.none, minWidth.zero)}>
-      {renderContentSlot(label, sx(typography.body1Strong, foreground.primary, minWidth.zero), sx)}
+      {renderContentSlot(label, 'div', sx, { shorthand: 'wrap', className: sx(typography.body1Strong, foreground.primary, minWidth.zero) })}
     </dt>
     <dd className={sx(styles.cell, margin.none, minWidth.zero)}>
-      {renderContentSlot(children, sx(typography.body1, foreground.primary, minWidth.zero), sx)}
+      {renderContentSlot(children, 'div', sx, { shorthand: 'wrap', className: sx(typography.body1, foreground.primary, minWidth.zero) })}
     </dd>
   </div>;
 });
@@ -81,14 +65,19 @@ DescriptionListRoot.displayName = 'DescriptionList';
  * @param props Native dl attributes, layout and one content pathway.
  * @returns A native dl of term/definition pairs, or an empty fragment.
  * @example
+ * ```tsx
  * <DescriptionList items={[{ id: 'owner', label: 'Owner', value: 'Ada Lovelace' }]} />
+ * ```
  */
 export const DescriptionList = Object.assign(DescriptionListRoot, {
   /** Render one term/value pair inside DescriptionList, preserving native dt/dd cells.
    * Native attributes and ref target the grouping div; Fluent slots customize cell content.
    * @param props Native grouping attributes, required label and associated value slot.
    * @returns A grouping div containing one dt and one dd; requires a DescriptionList parent.
-   * @example <DescriptionList><DescriptionList.Item label="Owner">Ada</DescriptionList.Item></DescriptionList>
+   * @example
+   * ```tsx
+   * <DescriptionList><DescriptionList.Item label="Owner">Ada</DescriptionList.Item></DescriptionList>
+   * ```
    */
   Item: DescriptionListItem,
 });

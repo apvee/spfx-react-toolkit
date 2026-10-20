@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useId, useMergedRefs, resolveShorthand } from '@fluentui/react-utilities';
 import type { FieldProps } from '@fluentui/react-components';
+import { mergeClasses } from '@griffel/react';
+import { renderContentSlot } from '../content-slot.internal';
 import { useController } from 'react-hook-form';
 import type { ControllerRenderProps, FieldValues, RegisterOptions } from 'react-hook-form';
 import { useStableCallback } from '../../hooks/useStableCallback';
@@ -66,6 +68,13 @@ export interface FieldAdapterResult<TValue> {
         isTouched: boolean;
     };
 }
+/** Resolve only after the native Field renders its region. A rejected composite
+ * (e.g. unnamed TagPicker) must not execute a consumer presentation callback.
+ * Fragment preserves shorthand DOM and supports callbacks returning undefined in React 17.
+ */
+function FieldPresentationContent({ content, tag }: { content: unknown; tag: 'span' | 'div' }): React.ReactElement {
+    return React.createElement(React.Fragment, undefined, renderContentSlot(content, tag, mergeClasses, { shorthand: 'preserve' }));
+}
 /** Binds live values directly to RHF and lets Fluent Field own accessible relationships. */
 export function useFieldAdapter<TInput extends FieldValues, TValue>(options: FieldAdapterOptions<TInput, TValue>): FieldAdapterResult<TValue> {
     const { methods, disabled: rootDisabled } = useFormRuntimeContext();
@@ -119,11 +128,17 @@ export function useFieldAdapter<TInput extends FieldValues, TValue>(options: Fie
     const validationMessage = message ?? options.fieldProps?.validationMessage;
     const validationSlot = settingsField ? resolveShorthand<React.HTMLAttributes<HTMLDivElement>>(validationMessage) : undefined;
     const validationId = validationSlot ? validationSlot.id ?? `${generatedId}-validation` : undefined;
+    // Native hint wrappers remain present for defined shorthand (including empty
+    // booleans), while Fluent's legacy null suppresses the hint and undefined
+    // keeps fieldProps.hint. Only objects/callbacks gain the fixed inner div.
+    const hint: FieldProps['hint'] = options.hint === undefined || options.hint === null
+        ? options.hint
+        : { children: React.createElement(FieldPresentationContent, { content: options.hint, tag: 'div' }) };
     const fieldProps: FieldProps = {
         ...options.fieldProps,
         className: options.className,
-        ...(options.label === undefined ? {} : { label: { children: options.label, htmlFor: id } }),
-        ...(options.hint === undefined ? {} : { hint: options.hint }),
+        ...(options.label === undefined ? {} : { label: { children: React.createElement(FieldPresentationContent, { content: options.label, tag: 'span' }), htmlFor: id } }),
+        ...(options.hint === undefined ? {} : { hint }),
         orientation: options.orientation, required: options.required,
         validationMessage: validationSlot ? { ...validationSlot, id: validationId } : validationMessage,
         validationState: errors.length ? 'error' : options.fieldProps?.validationState,

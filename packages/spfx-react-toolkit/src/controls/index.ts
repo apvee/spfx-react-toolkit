@@ -11,5 +11,11 @@ export type { IWebPartShellProperties, WebPartShellProps, WebPartShellSurface, W
 export * from './stage';
 export * from './pagination';
 export * from './description-list';
+export * from './content-card';
+export * from './preview-card';
+export * from './sharepoint-permission-trim';
+export * from './sharepoint-group-trim';
+export * from './entra-group-trim';
 export * from './pickers';
+
 export * from './file-folder-picker';

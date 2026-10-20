@@ -41,7 +41,7 @@ export interface SPFxPnPInfo {
 }
 ```
 
-Uses the supplied PnP context or a default one. invoke and batch return caller promises. isLoading remains true while any current-client operation is pending; only the latest-started operation publishes an error. Client replacement and unmount ignore obsolete state updates. clearError clears display state without cancelling work. Import required PnPjs modules for the operations you call.
+Uses the supplied PnP context or a default one. `invoke` and `batch` return caller promises. Loading uses a single boolean: each operation sets it to true on start and false on settlement, so overlapping work can show false while another operation is still pending. Errors follow settlement order; this hook does not suppress completions after client replacement or unmount. `clearError` clears display state without cancelling work. Import required PnPjs modules for the operations you call.
 
 [View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnP.ts)
 
@@ -217,6 +217,7 @@ export interface UseSPFxPnPSearchOptions {
     pageSize?: number;
     selectProperties?: string[];
     refiners?: string;
+    refinerOperator?: 'and' | 'or';
 }
 export interface SearchResult<T = Record<string, string>> {
     id: string;
@@ -252,6 +253,28 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
 ```
 
 search() starts a new query and clears prior refiners. refetch() and loadMore() retain current refinement filters; applyRefiner toggles the supplied refiner token. Latest query ownership prevents obsolete data, errors or pages from replacing current results. Duplicate simultaneous loadMore calls return an empty page without a second dispatch; failed pages preserve offset for retry. totalResults is the service total, while results contains loaded rows. suggest returns its promise to the caller, which must order its own suggestion UI updates; obsolete suggestion failures cannot replace a newer search error. Requests are not cancelled by these guards.
+
+### Refinement tokens and operators
+
+For faceted search, request the managed properties in `refiners`, render each entry's `value` and `count`, and pass its **`token` unchanged** to `applyRefiner(refiner.name, entry.token)`. Quoted string tokens, numeric/date scalars and native FQL expressions such as `range(...)` are preserved as operands; unquoted hex tokens receive one pair of quotes. Legacy unquoted text values still use escaped string equality. The hook does not decode tokens into display labels or rewrite managed-property names. Selecting the same token again removes it. Search permissions, managed-property refinement configuration and indexing still apply.
+
+`refinerOperator` explicitly selects how multiple values in the **same** facet combine. It defaults to `'and'`, preserving the historical behavior; `'or'` includes any selected value. Different facets always combine with AND. For example, PDF and DOCX with OR produce `FileType:or("tokenPDF","tokenDOCX")`; a Size interval is a separate restriction that still applies to both types. With AND, mutually exclusive file types legitimately return zero results. Changing the hook option resets the current query and selected filters; run `search()` again. Refetch and pagination retain selections and the configured operator.
+
+Use `DisplayAuthor` for the sample's person facets, while `Author` may still be selected to display result metadata. The authenticated sample investigation found normalized `Author` tokens that did not round-trip for PDF documents; `DisplayAuthor` returned matching display-name tokens. Other managed properties depend on their search-schema mappings. The service does not silently replace `Author`. Counts may include duplicates while `totalResults` reflects trimmed results. See [Microsoft's refinement token contract](https://learn.microsoft.com/en-us/sharepoint/dev/general-development/query-refinement-in-sharepoint#understanding-the-refinement-data-in-the-search-result).
+
+```tsx
+const { search, refiners, applyRefiner, loading } = useSPFxPnPSearch({
+  refiners: 'FileType,DisplayAuthor,Size,Write',
+  refinerOperator: 'or'
+});
+// Run search('*') first, then render the refiners from its response.
+refiners.map(refiner => refiner.entries.map(entry => (
+  <button key={`${refiner.name}:${entry.token}`} disabled={loading || !entry.token}
+    onClick={() => applyRefiner(refiner.name, entry.token).catch(console.error)}>
+    {entry.value} ({entry.count})
+  </button>
+)));
+```
 
 ```tsx
 import * as React from 'react';

@@ -17,7 +17,10 @@ const drawer: StageProps = { presentation: 'drawer', children: 'Body', drawerPos
 const popover: StageProps = { presentation: 'popover', children: 'Body', trigger: <button>Open</button>,
   positioning: { position: 'after', align: 'end' }, withArrow: true, mountNode: document.body, dismissMode: 'explicit', unmountOnClose: false };
 const header: StageHeaderProps = { title: <em>Title</em>, description: 'Description', icon: <span />,
-  actions: <button>Save</button>, headingLevel: 6, showCloseButton: false, closeLabel: 'Close', id: 'header' };
+  action: <button>Save</button>, headingLevel: 6, showCloseButton: false, closeLabel: 'Close', id: 'header' };
+// @ts-expect-error Stage.Header uses singular action; the old plural name has no alias.
+const legacyHeaderAction: StageHeaderProps = { title: 'Title', actions: <button>Help</button> };
+void legacyHeaderAction;
 const body: StageBodyProps = { children: <input />, onClick: event => event.currentTarget.focus() };
 const footer: StageFooterProps = { children: <button>Save</button>, className: 'footer' };
 type Parts = [StageProps, StageHeaderProps, StageBodyProps, StageFooterProps];
@@ -80,7 +83,7 @@ const rawFooter: StageFooterProps = { dangerouslySetInnerHTML: { __html: '' } };
 
 import { Stage } from '../../packages/spfx-react-toolkit/src/controls/stage/stage';
 <Stage presentation="dialog" size="full" ref={React.createRef<HTMLDivElement>()}>
-  <Stage.Header title="Profile" actions={<button type="button">Help</button>} closeLabel="Chiudi" ref={React.createRef<HTMLDivElement>()} />
+  <Stage.Header title="Profile" action={<button type="button">Help</button>} closeLabel="Chiudi" ref={React.createRef<HTMLDivElement>()} />
   <Stage.Body ref={React.createRef<HTMLDivElement>()}><input aria-label="Name" /></Stage.Body>
   <Stage.Footer ref={React.createRef<HTMLDivElement>()}><button type="button">Save</button></Stage.Footer>
 </Stage>;
@@ -97,3 +100,15 @@ import { Stage } from '../../packages/spfx-react-toolkit/src/controls/stage/stag
 <Stage presentation={{ small: 'dialog', large: 'drawer' }}>Content</Stage>;
 // @ts-expect-error Popover has no full-screen mode.
 <Stage presentation="popover" size="full" trigger={<button>Open</button>}>Content</Stage>;
+
+const conditionalSlot: React.ReactNode = false;
+<Stage.Header title={conditionalSlot} description={0} icon={{ children: <span>Icon</span>, ref: React.createRef<HTMLSpanElement>() }} />;
+<Stage.Header title={{ as: 'span', children: (Tag, props) => <Tag {...props}>Callback title</Tag> }} />;
+// @ts-expect-error named title slots cannot replace the semantic heading
+<Stage.Header title={{ as: 'h1', children: 'Title' }} />;
+// @ts-expect-error raw HTML is forbidden in named slots
+<Stage.Header title={{ dangerouslySetInnerHTML: { __html: 'raw' } }} />;
+// @ts-expect-error direct render functions are not slot shorthand
+<Stage.Header title={() => <span>Direct callback</span>} />;
+
+<Stage.Header title="Icon sizing" icon={{ children: (Tag, props) => <Tag {...props}><svg width={80} height={80} /></Tag> }} description={{ children: <> {false} </> }} />;

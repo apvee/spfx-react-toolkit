@@ -1,4 +1,5 @@
 import { makeStyles } from '@griffel/react';
+import { tokens } from '@fluentui/react-theme';
 import { useSx } from '../../hooks/useSx';
 import * as flex from '../../helpers/styles/flex';
 import * as flexItem from '../../helpers/styles/flex-item';
@@ -33,9 +34,20 @@ const useSpecificStyles = makeStyles({
   },
   footer: { '&[hidden]': { display: 'none' } },
   neutralCard: { '&::after': { display: 'none' } },
-  cardHeader: { display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr) auto', rowGap: 0 },
+  cardHeader: { display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr) fit-content(50%)', rowGap: 0 },
+  // Reserve the native 32px Close button plus Fluent S spacing, independent of caller action width.
+  withClose: { paddingInlineEnd: `calc(32px + ${tokens.spacingHorizontalS})`, minBlockSize: '32px' },
+  close: { position: 'absolute', insetInlineEnd: 0, top: '50%', transform: 'translateY(-50%)' },
+  literalDescription: { display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' },
   text: { gridColumnStart: 2, gridRowStart: 1 },
   description: { gridColumnStart: 2, gridRowStart: 2 },
+  // Only the introduced object/callback container participates in owned icon sizing.
+  iconContent: {
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+    inlineSize: '100%', blockSize: '100%',
+    '& > i': { fontSize: 'inherit' },
+    '& > svg': { inlineSize: '100%', blockSize: '100%' },
+  },
   icon: {
     gridColumnStart: 1, gridRowStart: 'span 2',
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -45,10 +57,6 @@ const useSpecificStyles = makeStyles({
   },
   actions: {
     gridColumnStart: 3, gridRowStart: 'span 2',
-    // Query the stretched neutral Header, never the viewport or presentation mode.
-    '@container apvee-sx (max-width: 400px)': {
-      gridColumnStart: 1, gridColumnEnd: -1, gridRowStart: 3, marginLeft: 0, marginRight: 0,
-    },
     maxInlineSize: '100%', overflowWrap: 'anywhere',
   },
   dialog: {
@@ -80,9 +88,9 @@ const useSpecificStyles = makeStyles({
     'overflow-x': 'visible !important',
     'overflow-y': 'visible !important',
   },
-  popoverSmall: { width: '240px' },
-  popoverMedium: { width: '320px' },
-  popoverLarge: { width: '480px' },
+  popoverSmall: { width: '320px' },
+  popoverMedium: { width: '480px' },
+  popoverLarge: { width: '640px' },
 });
 
 type StageStyles = ReturnType<typeof useSpecificStyles> & {
@@ -90,6 +98,7 @@ type StageStyles = ReturnType<typeof useSpecificStyles> & {
   modalPadding: string;
   popoverPadding: string;
   popoverContent: string;
+  actionContent: string;
 };
 
 /** Shared host-rendered classes. Adapters combine surface + presentation + size + padding.
@@ -115,7 +124,8 @@ export function useStageStyles(): StageStyles {
     text: sx(styles.text, flex.column, gap.none, minWidth.zero),
     description: sx(styles.description, minWidth.zero),
     icon: sx(styles.icon, flexItem.noShrink),
-    actions: sx(styles.actions, flex.row, flex.wrap, alignItems.center, gap.small, flexItem.noShrink, minWidth.zero),
+    actions: sx(styles.actions, flex.row, flex.noWrap, alignItems.center, gap.small, flexItem.noShrink, minWidth.zero),
+    actionContent: sx(flex.row, flex.noWrap, alignItems.center, gap.small, minWidth.zero),
     modalPadding: sx(padding.px(24)),
     popoverPadding: sx(padding.px(12)),
   };

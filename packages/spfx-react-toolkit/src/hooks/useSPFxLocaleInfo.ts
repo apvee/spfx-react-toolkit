@@ -6,12 +6,17 @@ import { getSPFxLocaleInfo } from '../helpers/spfx-page-context.helpers';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
- * SPTimeZone interface (preview API in SPFx)
- * Based on Microsoft Learn documentation
- * @see https://learn.microsoft.com/en-us/javascript/api/sp-page-context/sptimezone
- * 
- * Note: This is a preview API that may change in future SPFx versions.
- * Type definition based on official docs since it's not yet exported in @microsoft/sp-page-context.
+ * Raw SharePoint regional time-zone metadata read from optional web.timeZoneInfo.
+ * The toolkit preserves this host object without normalizing offsets.
+ * Availability depends on the SPFx host; this shape is not exported by the
+ * pinned sp-page-context package. Prefer ianaTimeZone for Intl formatting.
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const zone: SPFxTimeZone | undefined = useSPFxLocaleInfo().timeZone;
+ * console.log(zone?.id, zone?.description);
+ * ```
  */
 export interface SPFxTimeZone {
   /** Time zone ID (numeric identifier) */
@@ -32,6 +37,13 @@ export interface SPFxTimeZone {
 
 /**
  * Return type for useSPFxLocaleInfo hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const locale: SPFxLocaleInfo = useSPFxLocaleInfo();
+ * console.log(locale.locale, locale.ianaTimeZone);
+ * ```
  */
 export interface SPFxLocaleInfo {
   /** Current locale (e.g., "en-US", "it-IT") */
@@ -58,6 +70,7 @@ export interface SPFxLocaleInfo {
 
 /**
  * Hook for locale and regional settings
+ * Call inside a React component or hook beneath a host-specific SPFx provider.
  * 
  * Provides locale and regional information from SPFx PageContext:
  * - locale: Current content locale (e.g., "en-US", "it-IT")
@@ -85,6 +98,7 @@ export interface SPFxLocaleInfo {
  * - Intl.NumberFormat(locale, options)
  * - Intl.Collator(locale, options)
  * 
+ * @throws Error when no host-specific SPFx provider is present.
  * @returns Locale and regional settings, preserving the original SDK timeZone object
  * 
  * @example Basic locale usage

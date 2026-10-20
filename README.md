@@ -139,7 +139,7 @@ The package declares SPFx peers `>=1.18.0 <2.0.0`; that range is a compatibility
 
 MIT — see [LICENSE](./LICENSE).
 
-Fluent and Griffel integration uses mandatory shared peer dependencies `@griffel/core` (`^1.21.4`), `@griffel/react` (`^1.7.8`), `@fluentui/react-shared-contexts` (`^9.26.4`), `@fluentui/react-migration-v8-v9` (`^9.10.20`), `@fluentui/react-theme` (`^9.2.2`), `@fluentui/react-components` (`^9.74.9`) `@fluentui/react-utilities` (`^9.26.7`) and `@fluentui/react-charts` (`^9.3.27`). The consuming project provides compatible shared packages; modern npm can install missing peers automatically. Existing compatible installations are reused. The SPFx test app declares these explicitly. Token-based styles need theme variables in scope; useSx needs no SPFx provider or new renderer. The sample uses optional `@fluentui/react-provider@9.22.8` for its theme controls. `tslib` is required by the SPFx packages that use it; this library’s ES2020 output does not import it.
+Fluent and Griffel integration uses mandatory shared peer dependencies `@griffel/core` (`^1.21.4`), `@griffel/react` (`^1.7.8`), `@fluentui/react-shared-contexts` (`^9.26.4`), `@fluentui/react-migration-v8-v9` (`^9.10.20`), `@fluentui/react-theme` (`^9.2.2`), `@fluentui/react-components` (`^9.74.9`) `@fluentui/react-utilities` (`^9.26.7`) and `@fluentui/react-charts` (`^9.3.27`). The consuming project provides compatible shared packages; modern npm can install missing peers automatically. Existing compatible installations are reused. The SPFx test app declares these explicitly. Token-based styles need theme variables in scope; useSx needs no SPFx provider or new renderer. The sample uses optional `@fluentui/react-provider@9.22.8` for direction overrides that inherit the host theme. `tslib` is required by the SPFx packages that use it; this library’s ES2020 output does not import it.
 
 ## Formatted text
 
@@ -153,7 +153,7 @@ import { FormattedText } from '@apvee/spfx-react-toolkit';
 <FormattedText maxLines={2} style={{ width: 240 }}>Long text in a clamped span...</FormattedText>
 ```
 
-The lazy **FormattedText** sample exercises its props, light/dark themes, narrow width, RTL, mixed JSX and ref/click observations. Authenticated SharePoint-host validation is separate and remains NOT EXECUTED until recorded.
+The lazy **FormattedText** sample exercises its props, inherited host themes, narrow width, explicit RTL overrides, mixed JSX and ref/click observations. Authenticated SharePoint-host validation is separate and remains NOT EXECUTED until recorded.
 
 ## Web part shell
 
@@ -165,10 +165,22 @@ The author UI uses Fluent UI 9; the private Tiptap 3.30.3 engine loads only for 
 
 [Pagination](./docs/api/controls/pagination.md) supplies controlled known/unknown-total pages, cursor directions and load-more requests. The application owns rows, loading and result announcements; the control supplies accessible native Fluent navigation, localized labels, compact sizes and host theme/RTL styling. Import from the root, `/controls` or `/controls/pagination`. No new dependency or SPFx provider is required.
 
-The lazy Pagination sample runs real paged results, resets after filter/page-size/total changes, manual loading completion and independent theme/direction instances. Local checks and authenticated SharePoint validation are separate; host checks remain NOT EXECUTED until recorded.
+The lazy Pagination sample runs real paged results, resets after filter/page-size/total changes, manual loading completion and independent component state and explicit direction overrides under the shared host theme. Local checks and authenticated SharePoint validation are separate; host checks remain NOT EXECUTED until recorded.
 
 ## Description List
 
 [DescriptionList](./docs/api/controls/description-list.md) renders read-only metadata as native term/definition pairs. Use immutable items or `DescriptionList.Item` composition for rich Fluent values. Auto stacks below 480px and aligns columns inside the nearest `container.inlineSize` ancestor; explicit layouts override this. Import the compound value from the root, `/controls` or `/controls/description-list`. Existing Fluent/Griffel peers are reused; no SPFx provider is required.
 
-The lazy Description List sample exercises slots, literal/zero/empty values, resizing, nested containers, stable child state and independent theme/RTL. Local verification and authenticated SharePoint/Teams/screen-reader checks are separate; host checks remain NOT EXECUTED until recorded.
+The lazy Description List sample exercises slots, literal/zero/empty values, resizing, nested containers, stable child state and independent component state, inherited host theme and explicit RTL overrides. Local verification and authenticated SharePoint/Teams/screen-reader checks are separate; host checks remain NOT EXECUTED until recorded.
+
+## Content and preview cards
+
+[ContentCard](./docs/api/controls/content-card.md) composes native Fluent Card header/body/footer regions with explicit caller controls. [PreviewCard](./docs/api/controls/preview-card.md) adds generated or custom media, src-scoped image failure, fallback and a bounded logo overlay. Both preserve native Card focus/selection and host theme/renderer; no new provider or peer is required. Import from the root, `/controls`, `/controls/content-card` or `/controls/preview-card`, respectively.
+
+Named content accepts shorthand or fixed-tag objects/callbacks following [Control presentation slots](./docs/CONTROL-SLOTS.md). The control owns headings and associations; refs target the inner content containers. Strings are literal, and Markdown requires explicit FormattedText composition. Structural children and data/native peer contracts remain specific to each control. Local tests, browser execution and authenticated SharePoint/Teams/screen-reader checks provide separate evidence.
+
+The [integrated demo](./docs/DEVELOPMENT.md#integrated-demo-presentation-checks) presents Fluent UI 9 tabs, editable props, previews and results. Panels inherit the WebPartShell host theme; detailed coverage starts collapsed; retained, expandable diagnostics use scenario-specific initial states. Local browser evidence uses a simulated SPFx/network boundary. Authenticated host checks remain NOT EXECUTED until recorded.
+
+## Access trims
+
+[SharePointPermissionTrim](./docs/api/controls/sharepoint-permission-trim.md), [SharePointGroupTrim](./docs/api/controls/sharepoint-group-trim.md) and [EntraGroupTrim](./docs/api/controls/entra-group-trim.md) mount caller content only for a current positive permission/membership decision. Direct Loading/Fallback/ErrorFallback branches distinguish pending, denied and failed checks. The matching SPFx provider supplies native clients. The lazy sample exposes editable targets, repeat checks and protected mount counters; the Context panel also demonstrates scoped permissions. Server authorization remains required.

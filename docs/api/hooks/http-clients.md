@@ -747,7 +747,7 @@ interface SPFxMSGraphClientInfo {
 
 Provides `MSGraphClientV3` for authenticated Microsoft Graph API access. Requires appropriate Graph permissions granted by admin.
 
-**Async Initialization**: The Graph client requires async initialization via `factory.getClient('3')`. Use `isInitializing`, `initError`, and `isReady` to track initialization state.
+**Async Initialization**: The Graph client requires async initialization via `factory.getClient('3')`. Use `isInitializing`, `initError`, and `isReady` to track initialization state. When the provider's consumed factory changes, the previous client and its invocation loading/error state are hidden during render. The hook initializes the replacement factory, publishes only its current result and ignores obsolete or unmounted initialization completions. Initialization failure appears through `initError`; invocation failures remain separate in `error`. A newly mounted hook initializes again; it does not persist clients or grants across mounts.
 
 ### Prerequisites
 
@@ -935,3 +935,7 @@ function UpcomingEvents() {
 ---
 
 *Generated from JSDoc comments. Last updated: February 2, 2026*
+
+## Access trim consumers
+
+[SharePointPermissionTrim](../controls/sharepoint-permission-trim.md) and [SharePointGroupTrim](../controls/sharepoint-group-trim.md) reuse the provider's native SPHttpClient. [EntraGroupTrim](../controls/entra-group-trim.md) reuses MSGraphClientV3. Their samples invoke actual native reads; configured User.Read and GroupMember.Read.All requests need separate tenant approval and do not prove hidden membership completeness. Client/provider identity changes invalidate prior asynchronous decisions. See the [host checklist](../../SHAREPOINT-VALIDATION.md).

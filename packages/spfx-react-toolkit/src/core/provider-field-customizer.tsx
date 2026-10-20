@@ -7,19 +7,24 @@ import { SPFxProviderBase } from './provider-base.internal';
 import type { SPFxComponent } from './types';
 
 /**
- * Props for the SPFx Field Customizer-specific provider component.
+ * Inputs for SPFxFieldCustomizerProvider. Pass the initialized Field Customizer instance and a subtree using toolkit hooks. The provider waits for ServiceScope readiness and owns an isolated runtime store; omitted children render no application content.
  *
- * @template TProps - The properties type for the Field Customizer.
- * @public
+ * @typeParam TProps - Properties type of the supplied SPFx host instance.
+ *
+ * @example
+ * ```tsx
+ * // In the Field Customizer instance's render or mounting method:
+ * const element = <SPFxFieldCustomizerProvider instance={this}><MyComponent /></SPFxFieldCustomizerProvider>;
+ * ```
  */
 export interface SPFxFieldCustomizerProviderProps<TProps extends {} = {}> {
   /**
-   * The SPFx Field Customizer instance.
+   * Required, initialized Field Customizer instance supplying context, properties and lifecycle integration.
    */
   instance: BaseFieldCustomizer<TProps>;
 
   /**
-   * The children to render within the provider.
+   * Optional React subtree receiving host context, theme and isolated runtime state. Descendants mount after service-scope readiness; omission renders no application content.
    */
   children?: React.ReactNode;
 }
@@ -36,7 +41,7 @@ export interface SPFxFieldCustomizerProviderProps<TProps extends {} = {}> {
  *
  * @example
  * ```tsx
- * import { SPFxFieldCustomizerProvider } from 'spfx-react-toolkit';
+ * import { SPFxFieldCustomizerProvider } from '@apvee/spfx-react-toolkit';
  * import * as ReactDom from 'react-dom';
  *
  * export default class MyFieldCustomizer extends BaseFieldCustomizer<IMyProps> {

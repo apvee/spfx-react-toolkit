@@ -142,8 +142,42 @@ try {
   fs.writeFileSync(path.join(evidence, 'pack.json'), JSON.stringify(packed, null, 2));
   assertPackedImports(packedPaths);
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
+  for (const module of ['hooks/useSPFxCrossSitePermissions', 'services/spfx-permission-target.types', 'controls/sharepoint-permission-trim/sharepoint-permission-trim', 'controls/sharepoint-permission-trim/sharepoint-permission-trim.types', 'controls/sharepoint-group-trim/sharepoint-group-trim', 'controls/sharepoint-group-trim/sharepoint-group-trim.types', 'controls/entra-group-trim/entra-group-trim', 'controls/entra-group-trim/entra-group-trim.types']) {
+    const declaration = `lib/${module}.d.ts`;
+    assert.ok(packedPaths.has(declaration), `Missing trim declaration: ${declaration}`);
+    assert.match(fs.readFileSync(path.join(library, declaration), 'utf8'), /@example/, `Missing emitted trim JSDoc: ${declaration}`);
+  }
   // Both the public entry points and their persistence/client dependencies must ship.
   for (const module of [
+    'controls/sharepoint-permission-trim/index',
+    'controls/sharepoint-permission-trim/sharepoint-permission-trim',
+    'controls/sharepoint-permission-trim/sharepoint-permission-trim.types',
+    'controls/sharepoint-group-trim/index',
+    'controls/sharepoint-group-trim/sharepoint-group-trim',
+    'controls/sharepoint-group-trim/sharepoint-group-trim.types',
+    'controls/entra-group-trim/index',
+    'controls/entra-group-trim/entra-group-trim',
+    'controls/entra-group-trim/entra-group-trim.types',
+    'controls/access-trim-children.internal',
+    'hooks/useAccessRequest.internal',
+    'hooks/useSPFxCrossSitePermissions',
+    'services/spfx-permission-target.types',
+    'services/spfx-scoped-permissions.internal',
+    'services/spfx-sharepoint-groups.internal',
+    'services/spfx-entra-groups.internal',
+    'helpers/spfx-list-target.helpers.internal',
+    'controls/content-slot.internal',
+    'controls/content-slot.types.internal',
+    'controls/content-card/index',
+    'controls/content-card/content-card',
+    'controls/content-card/content-card.types',
+    'controls/preview-card/index',
+    'controls/preview-card/preview-card',
+    'controls/preview-card/preview-card.types',
+    'controls/cards/card-frame.internal',
+    'controls/cards/card-image.internal',
+    'controls/cards/card-text.internal',
+    'controls/cards/card.styles.internal',
     'controls/description-list/index',
     'controls/description-list/description-list',
     'controls/description-list/description-list.types',
@@ -563,9 +597,11 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   for (const mode of ['public', 'deep']) {
     fs.copyFileSync(path.join(root, `tests/fixtures/sx-package-${mode}.ts`), path.join(consumer, `compatibility/sx-package-${mode}.ts`));
   }
+  fs.copyFileSync(path.join(root, 'tests/fixtures/access-trim-package-consumer.tsx'), path.join(consumer, 'compatibility/access-trim-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/form-package-consumer.tsx'), path.join(consumer, 'compatibility/form-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/data-grid-package-consumer.tsx'), path.join(consumer, 'compatibility/data-grid-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/web-part-shell-package-consumer.tsx'), path.join(consumer, 'compatibility/web-part-shell-package-consumer.tsx'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/content-card-package-consumer.tsx'), path.join(consumer, 'compatibility/content-card-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/description-list-package-consumer.tsx'), path.join(consumer, 'compatibility/description-list-package-consumer.tsx'));
   run(['install','--no-audit','--no-fund'],consumer);
   assert.equal(fs.lstatSync(path.join(consumer,'node_modules/@apvee/spfx-react-toolkit')).isSymbolicLink(),false);
@@ -655,7 +691,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
       'compatibility/sx-package-public.ts', 'compatibility/sx-package-deep.ts'] },
     { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/form-package-consumer.tsx'] },
     { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/data-grid-package-consumer.tsx'] },
-    { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/description-list-package-consumer.tsx'] },
+    { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/description-list-package-consumer.tsx', 'compatibility/content-card-package-consumer.tsx', 'compatibility/access-trim-package-consumer.tsx'] },
     { args: ['run', 'package:solution'], prepareMetadata: true },
   ];
   const productionReports = await runInstalledGates({consumerRoot:fs.realpathSync(consumer),outputDir:evidence,failures:consumerFailures,

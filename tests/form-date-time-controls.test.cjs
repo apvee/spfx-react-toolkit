@@ -244,3 +244,11 @@ test('DatePicker default local calendar parsing stores August 31 rather than Aug
   try { const input = f.host.querySelector('input'); change(input, '2026-08-31'); await blur(input); const value = methods.getValues('date'); assert.deepEqual([value.getFullYear(), value.getMonth(), value.getDate()], [2026, 7, 31]); }
   finally { f.close(); if (previousTimezone === undefined) delete process.env.TZ; else process.env.TZ = previousTimezone; }
 });
+
+test('DateTime part label slots use native Field associations without changing parent or values', () => {
+ const F = api.createForm(); let methods; const dateRef = React.createRef(); const timeRef = React.createRef();
+ function Owner() { methods = F.useForm({ defaultValues: { value: { date: initialDate, time: initialTime } } }); return React.createElement(F.Root, { methods, onSubmit: () => {} }, React.createElement(F.DateTime, { name: 'value', label: { children: 'Appointment' }, dateLabel: { ref: dateRef, children: 'Date slot' }, timeLabel: { ref: timeRef, children: (Component, props) => React.createElement(Component, props, 'Time callback') } })); }
+ const f = mount(React.createElement(Owner));
+ try { for (const ref of [dateRef, timeRef]) { assert.equal(ref.current.tagName, 'SPAN'); const label = ref.current.closest('label'); assert.equal(document.getElementById(label.htmlFor).tagName, 'INPUT'); } assert.ok(f.host.querySelector('[role="group"]')); assert.deepEqual(methods.getValues('value'), { date: initialDate, time: initialTime }); }
+ finally { f.close(); }
+});

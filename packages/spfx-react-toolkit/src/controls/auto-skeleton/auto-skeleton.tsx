@@ -11,6 +11,8 @@ const emptyGeometry: readonly AutoSkeletonBone[] = [];
 /** Derive Fluent skeleton items from the live geometry of mounted HTML content.
  * Children stay mounted in a block wrapper. Real text rectangles and visual leaves
  * produce only circle/rectangle items; text is inset by up to 2px per side for spacing.
+ * Rectangles retain Fluent's rounded corners when content has no measured radius;
+ * positive content radii are preserved and circles use a 50% radius.
  * No geometry cache or generated inline styles.
  * Loading content is hidden/inert only when measurable and native inert is supported.
  * Otherwise content remains available with aria-busy. Native inert and DOM geometry
@@ -19,9 +21,11 @@ const emptyGeometry: readonly AutoSkeletonBone[] = [];
  * @param props Loading state, scan configuration and native div attributes.
  * @returns A div root containing mounted content and an optional decorative skeleton.
  * @example
+ * ```tsx
  * <AutoSkeleton loading={isLoading} animation="pulse">
  *   <section><img data-skeleton-shape="circle" src={photoUrl} alt="" /><p>{name}</p></section>
  * </AutoSkeleton>
+ * ```
  */
 export const AutoSkeleton = React.forwardRef<HTMLDivElement, AutoSkeletonProps>((props, forwardedRef) => {
   const { loading, children, animation = 'wave', minSize = 8, ignoreSelectors = emptySelectors, className, ...nativeProps } = props;

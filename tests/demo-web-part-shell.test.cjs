@@ -19,7 +19,9 @@ test('sample root consumes one compiled-root Shell with persisted title and meta
   const host = read(`${base}components/WebPartShellDemoHost.tsx`);
   assert.match(host, /from '@apvee\/spfx-react-toolkit'/);
   assert.equal((host.match(/<WebPartShell /g) || []).length, 1);
-  assert.match(host, /action=\{<ShellDemoAction/);
+  assert.match(host, /action=\{options.actionSlot/);
+  assert.match(host, /children: \(Component, slotProps\)/);
+  assert.match(host, /data-shell-demo': 'action-slot'/);
   assert.match(host, /useSPFxProperties/);
   assert.doesNotMatch(read(`${base}components/SpFxReactToolkitTest.module.scss`), /padding: 1em/);
 });
@@ -29,7 +31,7 @@ test('Shell panel is registered and makes persisted state and surface options ob
   assert.match(registry, /key: 'web-part-shell'/);
   for (const symbol of ['WebPartShell', 'getWebPartShellPropertiesMetadata']) assert.ok(registry.includes(`symbol: '${symbol}'`));
   const panel = read(`${base}components/panels/WebPartShellPanel.tsx`);
-  for (const marker of ['show-title', 'plain', 'rich', 'empty', 'theme', 'direction', 'surface', 'padding', 'note', 'increment', 'observations']) assert.ok(panel.includes(`data-shell-demo="${marker}"`), marker);
+  for (const marker of ['show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'action-slot-toggle', 'note', 'increment', 'observations']) assert.ok(panel.includes(`data-shell-demo="${marker}"`) || panel.includes(`'data-shell-demo': '${marker}'`), marker);
   assert.match(panel, /useSPFxProperties/);
   assert.doesNotMatch(panel, /<WebPartShell |style=/);
 });

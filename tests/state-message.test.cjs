@@ -92,3 +92,28 @@ test('owned content ignores raw HTML input and stays mounted during theme/preset
     assert.equal(f.host.querySelector('svg').getAttribute('focusable'),'false');
   } finally { f.close(); }
 });
+test('content slots preserve semantics, formatting and opaque callback output', () => {
+  const titleRef = React.createRef(), visualRef = React.createRef(), labelRef = React.createRef(); let calls = 0, clicks = 0;
+  const f = mount({ preset: 'empty', headingLevel: 2,
+    title: { ref: titleRef, className: 'slot-title', children: '**literal**' },
+    description: { children: 'Try **filters**' },
+    visual: { ref: visualRef, children: React.createElement('span', { role: 'img', 'aria-label': 'art' }, 'art') },
+    primaryAction: { label: { ref: labelRef, children: 'Retry' }, onClick: () => clicks++ } });
+  try {
+    assert.equal(titleRef.current.tagName, 'SPAN'); assert.equal(titleRef.current.parentElement.tagName, 'H2');
+    assert.equal(f.host.querySelector('h2 strong'), null); assert.equal(f.host.querySelector('p strong').textContent, 'filters');
+    assert.equal(visualRef.current.tagName, 'DIV'); assert.equal(labelRef.current.parentElement.tagName, 'BUTTON');
+    assert.equal(f.host.querySelector('[role=status]').contains(visualRef.current), false);
+    act(() => labelRef.current.parentElement.click()); assert.equal(clicks, 1);
+    f.render({ title: 'Safe', description: { children: () => { calls++; return '**opaque**'; } }, visual: false });
+    assert.equal(calls, 1); assert.equal(f.host.querySelector('p').textContent, '**opaque**'); assert.equal(f.host.querySelector('p strong'), null);
+    f.render({ title: 'Safe', description: React.createElement(React.Fragment, {}, '**legacy**') });
+    assert.equal(f.host.querySelector('p strong').textContent, 'legacy');
+    f.render({ title: 'Safe', description: { children: React.createElement(React.Fragment, {}, '**static fragment**') }, visual: '' });
+    assert.equal(f.host.querySelector('p strong').textContent, 'static fragment');
+    assert.ok(f.host.querySelector('[data-state-message-visual]'), 'legacy empty-string visual wrapper stays present');
+    f.render({ title: { as: 'h1', dangerouslySetInnerHTML: { __html: '<b>bad</b>' }, children: 'Safe' }, visual: { children: '' } });
+    assert.equal(f.host.querySelector('h1'), null); assert.equal(f.host.querySelector('b'), null);
+    assert.ok(f.host.querySelector('[data-state-message-visual] div'));
+  } finally { f.close(); }
+});

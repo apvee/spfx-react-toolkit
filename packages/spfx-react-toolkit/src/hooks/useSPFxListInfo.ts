@@ -7,68 +7,48 @@ import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
  * Return type for useSPFxListInfo hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const list: SPFxListInfo | undefined = useSPFxListInfo();
+ * console.log(list?.title);
+ * ```
  */
 export interface SPFxListInfo {
   /** List ID (GUID) */
   readonly id: string;
   
-  /** List title */
+  /**
+   * Current list title; defaults to Unknown List when host metadata omits it.
+   */
   readonly title: string;
   
-  /** List server relative URL */
+  /**
+   * List server-relative URL; defaults to an empty string when host metadata omits it.
+   */
   readonly serverRelativeUrl: string;
   
   /** List template type (e.g., 100 for Generic List, 101 for Document Library) */
   readonly baseTemplate?: number;
   
-  /** Whether list is a document library */
+  /**
+   * True only when baseTemplate is 101; missing or different templates produce false.
+   */
   readonly isDocumentLibrary?: boolean;
 }
 
 /**
- * Hook to access list information
- * 
- * Provides information about the current SharePoint list/library
- * when component is rendered in a list context (e.g., list view,
- * list web part, field customizer).
- * 
- * Returns undefined if not in a list context.
- * 
- * Information provided:
- * - id: Unique identifier
- * - title: List title
- * - serverRelativeUrl: Server-relative URL
- * - baseTemplate: List template type
- * - isDocumentLibrary: Whether it's a document library
- * 
- * Note: List context is available in Field Customizers and some
- * List View WebParts. Standard page WebParts typically don't have
- * list context. Always check for undefined return value.
- * 
- * Useful for:
- * - List-specific operations in Field Customizers
- * - Conditional rendering based on list type
- * - Building list URLs
- * - List metadata display
- * 
- * @returns List information or undefined if not in list context
- * 
+ * Maps the current PageContext list when it has an ID. Missing list/ID returns undefined. Missing titles fall back to Unknown List and missing URLs to an empty string. isDocumentLibrary is true only for template 101; no list data is fetched. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns Current list metadata, or undefined when no list ID is available.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
+ * function ListLabel() {
  *   const list = useSPFxListInfo();
- *   
- *   if (!list) {
- *     return <div>Not in list context</div>;
- *   }
- *   
- *   return (
- *     <div>
- *       <h2>{list.title}</h2>
- *       <p>List ID: {list.id}</p>
- *       {list.isDocumentLibrary && <p>Document Library</p>}
- *     </div>
- *   );
+ *   return <span>{list?.title ?? 'No list context'}</span>;
  * }
  * ```
  */

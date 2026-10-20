@@ -1,11 +1,18 @@
 import * as React from 'react';
 import { FluentProvider } from '@fluentui/react-provider';
-import { webLightTheme, webDarkTheme } from '@fluentui/react-theme';
+import { Button, Checkbox, Field, Input, Select, Textarea, makeStyles } from '@fluentui/react-components';
 import {
   FormattedText, FormattedTextProps, FormattedTextVariant, FormattedTextSemanticElement,
-  useSx, typography, foreground, width, padding, gap, flex, borderWidth, borderStyle, borderColor,
+  useSx, typography, width, background, minWidth,
 } from '@apvee/spfx-react-toolkit';
 import { DemoCard } from '../shared/DemoCard';
+import { useDemoStyles } from '../shared/demoStyles';
+
+const useStyles = makeStyles({ frame: { maxWidth: '100%' } });
+function parsePreviewWidth(draft: string): number | undefined {
+  const value = Number(draft);
+  return draft.trim() !== '' && Number.isInteger(value) && value >= 160 && value <= 640 ? value : undefined;
+}
 
 const variants = Object.keys(typography) as FormattedTextVariant[];
 const elements: readonly FormattedTextSemanticElement[] = ['span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
@@ -15,15 +22,17 @@ function Choice<T extends string>({ label, value, choices, onChange, ...attribut
   readonly label: string; readonly value: T; readonly choices: readonly T[];
   readonly onChange: (value: T) => void; readonly 'data-formatted-text-demo': string;
 }): React.ReactElement {
-  return <label>{label}{' '}<select {...attributes} value={value} onChange={event => {
-    const selected = choices.find(choice => choice === event.target.value);
+  return <Field label={label}><Select select={{ as: 'select', ...attributes, 'aria-label': label }} value={value} onChange={(_event, data) => {
+    const selected = choices.find(choice => choice === data.value);
     if (selected !== undefined) onChange(selected);
-  }}>{choices.map(choice => <option key={choice} value={choice}>{choice}</option>)}</select></label>;
+  }}>{choices.map(choice => <option key={choice} value={choice}>{choice}</option>)}</Select></Field>;
 }
 
-const FormattedTextExamples: React.FC = () => {
+const FormattedTextExamples: React.FC<{ directionControl: React.ReactNode }> = ({ directionControl }) => {
   const sx = useSx();
-  const [source, setSource] = React.useState('**Formatted text** with *emphasis*, ~~removed text~~, `code`, and [a link](https://example.com). Edit this text to try long words and overflow.');
+  const styles = useStyles();
+  const [source, setSource] = React.useState('The **intranet project** is ready for review. Read the [work plan](https://example.com) and share your comments.');
+  const [contentMode, setContentMode] = React.useState('text');
   const [variant, setVariant] = React.useState<FormattedTextVariant>('body1');
   const [as, setAs] = React.useState<FormattedTextSemanticElement>('span');
   const [font, setFont] = React.useState<NonNullable<FormattedTextProps['font']>>('base');
@@ -38,61 +47,59 @@ const FormattedTextExamples: React.FC = () => {
   const [truncate, setTruncate] = React.useState(false);
   const [maxLines, setMaxLines] = React.useState(0);
   const [previewWidth, setPreviewWidth] = React.useState(320);
-  const rootRef = React.useRef<HTMLElement>(null);
+  const [widthDraft, setWidthDraft] = React.useState('320');
+  const rootRef = React.useMemo(() => React.createRef<HTMLElement>(), []);
   const [observedTag, setObservedTag] = React.useState('not inspected');
   const [clicks, setClicks] = React.useState(0);
-  const controlsClass = sx(flex.row, flex.wrap, gap.medium);
-  return <DemoCard title="FormattedText" iconName="Font" description="Edit content and change its typography, semantic element and overflow independently.">
-    <div className={sx(flex.column, gap.medium, padding.medium)}>
-      <label>Text{' '}<textarea data-formatted-text-demo="text" rows={4} value={source}
-        className={sx(width.full)} onChange={event => setSource(event.target.value)} /></label>
-      <div className={controlsClass}>
-        <Choice<FormattedTextVariant> data-formatted-text-demo="variant" label="Variant" value={variant} choices={variants} onChange={setVariant} />
-        <Choice<FormattedTextSemanticElement> data-formatted-text-demo="as" label="HTML element" value={as} choices={elements} onChange={setAs} />
-        <Choice<NonNullable<FormattedTextProps['font']>> data-formatted-text-demo="font" label="Font family" value={font} choices={fonts} onChange={setFont} />
-        <Choice<NonNullable<FormattedTextProps['align']>> data-formatted-text-demo="align" label="Alignment" value={align} choices={alignments} onChange={setAlign} />
-      </div>
-      <div className={controlsClass}>
-        <label><input data-formatted-text-demo="markdown" type="checkbox" checked={markdown} onChange={event => setMarkdown(event.target.checked)} /> Markdown</label>
-        <label><input data-formatted-text-demo="subtle" type="checkbox" checked={subtle} onChange={event => setSubtle(event.target.checked)} /> Subtle</label>
-        <label><input data-formatted-text-demo="highlight" type="checkbox" checked={highlight} onChange={event => setHighlight(event.target.checked)} /> Highlight</label>
-        <label><input data-formatted-text-demo="italic" type="checkbox" checked={italic} onChange={event => setItalic(event.target.checked)} /> Italic</label>
-        <label><input data-formatted-text-demo="underline" type="checkbox" checked={underline} onChange={event => setUnderline(event.target.checked)} /> Underline</label>
-        <label><input data-formatted-text-demo="strikethrough" type="checkbox" checked={strikethrough} onChange={event => setStrikethrough(event.target.checked)} /> Strikethrough</label>
-        <label><input data-formatted-text-demo="wrap" type="checkbox" checked={wrap} onChange={event => setWrap(event.target.checked)} /> Wrap</label>
-        <label><input data-formatted-text-demo="truncate" type="checkbox" checked={truncate} onChange={event => setTruncate(event.target.checked)} /> Truncate</label>
-      </div>
-      <div className={controlsClass}>
-        <label>Max lines (0 disables){' '}<input data-formatted-text-demo="maxLines" type="number" min={0} step={1} value={maxLines}
-          onChange={event => { const value = Number(event.target.value); if (Number.isInteger(value) && value >= 0) setMaxLines(value); }} /></label>
-        <label>Preview width{' '}<input data-formatted-text-demo="width" type="range" min={160} max={640} step={20} value={previewWidth}
-          onChange={event => setPreviewWidth(Number(event.target.value))} /> {previewWidth}px</label>
-      </div>
-      <p>The HTML element is independent of the variant. A valid maxLines takes priority and adds block clamp layout even to a span. For single-line ellipsis, select p and constrain the width.</p>
-      <div style={{ maxWidth: '100%' }} className={sx(width.px(previewWidth), borderWidth.thin, borderStyle.solid, borderColor.primary)}>
+  const demoStyles = useDemoStyles();
+  return <DemoCard title="FormattedText" iconName="Font" description="Edit the text, typography and behavior when space is limited."
+    controls={<><Field label="Content"><Select select={{ as: 'select', ...{ 'data-demo-variant': 'formatted-text' } }} value={contentMode} onChange={(_, data) => setContentMode(data.value)}><option value="text">Text</option><option value="jsx">Text and JSX action</option></Select></Field>
+<Field label="Text" className={demoStyles.controlRow}><Textarea textarea={{ as: 'textarea', ...{ 'data-formatted-text-demo': 'text' } }} rows={4} value={source}
+        className={sx(width.full)} onChange={(_event, data) => setSource(data.value)} /></Field>
+<Choice<FormattedTextVariant> data-formatted-text-demo="variant" label="Typography" value={variant} choices={variants} onChange={setVariant} />
+<Checkbox input={{ as: 'input', ...{ 'data-formatted-text-demo': 'markdown' } }} checked={markdown} onChange={(_event, data) => setMarkdown(data.checked === true)} label="Markdown" />
+<Checkbox input={{ as: 'input', ...{ 'data-formatted-text-demo': 'wrap' } }} checked={wrap} onChange={(_event, data) => setWrap(data.checked === true)} label="Wrap text" />
+<Field label="Width" hint="Enter a whole number from 160 to 640. Invalid drafts keep the last valid preview and reset on blur."
+          validationState={parsePreviewWidth(widthDraft) === undefined ? 'error' : 'none'}><Input input={{ as: 'input', ...{ 'data-formatted-text-demo': 'width' } }} type="number" min={160} max={640} step={20} value={widthDraft}
+          onChange={(_event, data) => {
+            setWidthDraft(data.value);
+            const value = parsePreviewWidth(data.value);
+            if (value !== undefined) setPreviewWidth(value);
+          }} onBlur={() => setWidthDraft(String(previewWidth))} /> {previewWidth}px</Field></>}
+    status={<p aria-live="polite">Element: {as} · Variant: {variant} · Preview clicks: {clicks}</p>}
+    diagnostics={<><div className={demoStyles.controls}><Choice<FormattedTextSemanticElement> data-formatted-text-demo="as" label="HTML element" value={as} choices={elements} onChange={setAs} />
+<Choice<NonNullable<FormattedTextProps['font']>> data-formatted-text-demo="font" label="Font" value={font} choices={fonts} onChange={setFont} />
+<Choice<NonNullable<FormattedTextProps['align']>> data-formatted-text-demo="align" label="Alignment" value={align} choices={alignments} onChange={setAlign} />
+<Checkbox input={{ as: 'input', ...{ 'data-formatted-text-demo': 'subtle' } }} checked={subtle} onChange={(_event, data) => setSubtle(data.checked === true)} label="Subtle color" />
+<Checkbox input={{ as: 'input', ...{ 'data-formatted-text-demo': 'highlight' } }} checked={highlight} onChange={(_event, data) => setHighlight(data.checked === true)} label="Highlighted" />
+<Checkbox input={{ as: 'input', ...{ 'data-formatted-text-demo': 'italic' } }} checked={italic} onChange={(_event, data) => setItalic(data.checked === true)} label="Italic" />
+<Checkbox input={{ as: 'input', ...{ 'data-formatted-text-demo': 'underline' } }} checked={underline} onChange={(_event, data) => setUnderline(data.checked === true)} label="Underlined" />
+<Checkbox input={{ as: 'input', ...{ 'data-formatted-text-demo': 'strikethrough' } }} checked={strikethrough} onChange={(_event, data) => setStrikethrough(data.checked === true)} label="Strikethrough" />
+<Checkbox input={{ as: 'input', ...{ 'data-formatted-text-demo': 'truncate' } }} checked={truncate} onChange={(_event, data) => setTruncate(data.checked === true)} label="Truncation" />
+<Field label="Maximum lines (0 disables)"><Input input={{ as: 'input', ...{ 'data-formatted-text-demo': 'maxLines' } }} type="number" min={0} step={1} value={String(maxLines)}
+          onChange={(_event, data) => { const value = Number(data.value); if (Number.isInteger(value) && value >= 0) setMaxLines(value); }} /></Field>
+<p>The HTML element is independent of the variant. A valid maxLines takes priority and adds block clamp layout even to a span. For single-line ellipsis, select p and constrain the width.</p></div>
+{directionControl}
+
+<Button data-formatted-text-demo="inspect-ref" type="button" onClick={() => setObservedTag(rootRef.current ? rootRef.current.tagName.toLowerCase() : 'unmounted')}>Inspect root ref</Button>
+
+<p data-formatted-text-demo="observations" aria-live="polite">Ref element: {observedTag}. Preview clicks: {clicks}.</p>
+</>}>
+      <div className={sx(styles.frame, width.px(previewWidth))}>
         <FormattedText data-formatted-text-demo="preview" ref={rootRef} as={as} variant={variant} font={font} align={align}
           markdown={markdown} subtle={subtle} highlight={highlight} italic={italic} underline={underline} strikethrough={strikethrough}
           wrap={wrap} truncate={truncate} maxLines={maxLines || undefined}
-          onClick={() => setClicks(value => value + 1)}>{source}</FormattedText>
+          onClick={() => setClicks(value => value + 1)}>{contentMode === 'jsx' ? <span data-formatted-text-demo="mixed-jsx">{'**Project update** '}<Button type="button">Open project</Button><React.Fragment>{' *review available*'}</React.Fragment></span> : source}</FormattedText>
       </div>
-      <p className={sx(foreground.subtle)}>Comparison: this text uses the existing foreground.subtle descriptor.</p>
-      <button data-formatted-text-demo="inspect-ref" type="button" onClick={() => setObservedTag(rootRef.current ? rootRef.current.tagName.toLowerCase() : 'unmounted')}>Inspect root ref</button>
-      <p data-formatted-text-demo="observations" aria-live="polite">Ref element: {observedTag}. Preview clicks: {clicks}.</p>
-      <FormattedText data-formatted-text-demo="mixed-jsx" as="p">{'**Markdown string** '}
-        <button type="button" onClick={() => setClicks(value => value + 1)}>Authored JSX button</button>
-        <React.Fragment>{' *fragment emphasis*'}</React.Fragment>
-      </FormattedText>
-    </div>
   </DemoCard>;
 };
 
 const FormattedTextPanel: React.FC = () => {
   const [rtl, setRtl] = React.useState(false);
-  const [dark, setDark] = React.useState(false);
+  const directionSx = useSx({ dir: rtl ? 'rtl' : undefined });
   return <>
-    <label><input data-formatted-text-demo="rtl" type="checkbox" checked={rtl} onChange={event => setRtl(event.target.checked)} /> Right-to-left</label>{' '}
-    <label><input data-formatted-text-demo="theme" type="checkbox" checked={dark} onChange={event => setDark(event.target.checked)} /> Dark theme</label>
-    <FluentProvider theme={dark ? webDarkTheme : webLightTheme} dir={rtl ? 'rtl' : 'ltr'}><FormattedTextExamples /></FluentProvider>
+
+    <FluentProvider dir={rtl ? 'rtl' : undefined} className={directionSx(background.transparent, minWidth.zero)}><FormattedTextExamples directionControl={<Checkbox input={{ as: 'input', ...{ 'data-formatted-text-demo': 'rtl' } }} checked={rtl} onChange={(_event, data) => setRtl(data.checked === true)} label="RTL direction" />} /></FluentProvider>
   </>;
 };
 export default FormattedTextPanel;

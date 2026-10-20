@@ -58,29 +58,74 @@ test('PnP hook changes cache key factory and retains equal inline configuration'
 function deferred() { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; }
 function permissionFixture(t) {
   const requests = [];
-  const client = { get(url) { const request = { url, ...deferred() }; requests.push(request); return request.promise; } };
+  const configuration = {};
+  const provider = { spfxContext: {} };
+  const client = {
+    get(url, nativeConfiguration, options) {
+      const request = { url, nativeConfiguration, options, ...deferred() };
+      requests.push(request);
+      return request.promise;
+    }
+  };
   const invoke = fn => fn(client);
   class Permission { constructor(mask) { this.mask = mask; } hasPermission(permission) { return this.mask.Low === permission.mask.Low; } }
-  const h = createHarness({ './useSPFxSPHttpClient': { useSPFxSPHttpClient: () => ({ invoke }) }, '@microsoft/sp-page-context': { SPPermission: Permission }, '@microsoft/sp-http': { SPHttpClient: { configurations: { v1: {} } } } });
+  const h = createHarness({
+    './useSPFxContext': { useSPFxContext: () => provider },
+    './useSPFxSPHttpClient': { useSPFxSPHttpClient: () => ({ client, invoke }) },
+    '@microsoft/sp-page-context': { SPPermission: Permission },
+    '@microsoft/sp-http': { SPHttpClient: { configurations: { v1: configuration } } }
+  });
   t.after(h.close);
   const hook = h.load('hooks/useSPFxCrossSitePermissions.ts').useSPFxCrossSitePermissions;
   const rendered = h.mount(p => hook(p.url, p.options), { url: 'https://tenant.test/A' });
-  async function finish(indices, Low) { await h.act(async () => { for (const i of indices) requests[i].resolve({ ok: true, json: async () => ({ EffectiveBasePermissions: { High: 0, Low } }) }); await Promise.all(indices.map(i => requests[i].promise)); }); }
-  return { ...h, ...rendered, get current() { return rendered.current; }, requests, finish };
+  async function waitForRequests(...targets) {
+    const expected = targets.flatMap(target => [
+      `https://tenant.test/${target}/_api/site/rootweb/effectivebasepermissions`,
+      `https://tenant.test/${target}/_api/web/effectivebasepermissions`
+    ]);
+    // Native access requests start from an effect through a Promise. Await actual
+    // dispatch before completing/retargeting/unmounting their transport promises.
+    await h.act(async () => {
+      for (let attempt = 0; attempt < 20; attempt++) {
+        await Promise.resolve();
+        if (requests.length >= expected.length) break;
+      }
+    });
+    assert.deepEqual(requests.map(request => request.url), expected, 'legacy overload dispatches exactly the collection-root and selected-web requests');
+    for (const request of requests) {
+      assert.equal(request.nativeConfiguration, configuration);
+      assert.deepEqual(request.options.headers, { Accept: 'application/json;odata.metadata=none' });
+    }
+  }
+  const response = Low => ({ ok: true, json: async () => ({ EffectiveBasePermissions: { High: 0, Low } }) });
+  async function finish(indices, Low) {
+    await h.act(async () => {
+      for (const i of indices) {
+        assert.ok(requests[i], 'permission request must dispatch before its response completes');
+        requests[i].resolve(response(Low));
+      }
+      await Promise.all(indices.map(i => requests[i].promise));
+    });
+  }
+  return { ...h, ...rendered, get current() { return rendered.current; }, requests, waitForRequests, response, finish };
 }
 test('cross-site permissions retain current site when old requests finish last', async t => {
   const f = permissionFixture(t);
+  await f.waitForRequests('A');
   f.render({ url: 'https://tenant.test/B' });
+  await f.waitForRequests('A', 'B');
   await f.finish([2, 3], 2);
   await f.finish([0, 1], 1);
   assert.equal(f.current.webPermissions.mask.Low, 2);
   assert.equal(f.current.sitePermissions.mask.Low, 2);
   assert.equal(f.current.isLoading, false);
   f.render({ url: 'https://tenant.test/B', options: {} });
+  await f.waitForRequests('A', 'B');
   assert.equal(f.requests.length, 4, 'same scalar identity must not fetch again');
 });
 test('clearing cross-site URL invalidates pending permissions and stays idle', async t => {
   const f = permissionFixture(t);
+  await f.waitForRequests('A');
   f.render({ url: '' });
   await f.finish([0, 1], 1);
   assert.equal(f.current.webPermissions, undefined);
@@ -89,11 +134,13 @@ test('clearing cross-site URL invalidates pending permissions and stays idle', a
 });
 test('cross-site permissions clear previous grants while target is loading', async t => {
   const f = permissionFixture(t);
+  await f.waitForRequests('A');
   await f.finish([0, 1], 1);
   f.render({ url: 'https://tenant.test/B' });
   assert.equal(f.current.webPermissions, undefined);
   assert.equal(f.current.sitePermissions, undefined);
   assert.equal(f.current.isLoading, true);
+  await f.waitForRequests('A', 'B');
   await f.finish([2, 3], 2);
 });
 function photoFixture(t) {
@@ -190,18 +237,23 @@ test('PnP hook exposes initialization failure and recovers when context becomes 
 });
 test('cross-site old rejection cannot replace new success and unmount ignores deferred updates', async t => {
   const f = permissionFixture(t);
+  await f.waitForRequests('A');
   f.render({ url: 'https://tenant.test/B' });
+  await f.waitForRequests('A', 'B');
   await f.finish([2, 3], 2);
-  await f.act(async () => { f.requests[0].reject(new Error('old denied')); f.requests[1].resolve({ json: async () => ({}) }); });
+  await f.act(async () => { f.requests[0].reject(new Error('old denied')); f.requests[1].resolve(f.response(1)); });
   assert.equal(f.current.error, undefined); assert.equal(f.current.webPermissions.mask.Low, 2);
-  f.render({ url: 'https://tenant.test/C' }); f.unmount();
+  f.render({ url: 'https://tenant.test/C' });
+  await f.waitForRequests('A', 'B', 'C');
+  f.unmount();
   const errors = t.mock.method(console, 'error', () => {});
   await f.finish([4, 5], 3);
   assert.equal(errors.mock.callCount(), 0, 'no React unmounted-state warning');
 });
 test('current cross-site network rejection surfaces error and clears loading', async t => {
   const f = permissionFixture(t);
-  await f.act(async () => { f.requests[0].reject(new Error('denied')); f.requests[1].resolve({ json: async () => ({}) }); });
+  await f.waitForRequests('A');
+  await f.act(async () => { f.requests[0].reject(new Error('denied')); f.requests[1].resolve(f.response(1)); });
   assert.equal(f.current.error.message, 'denied'); assert.equal(f.current.isLoading, false); assert.equal(f.current.webPermissions, undefined);
 });
 test('photo older success cannot finish newer loading and stale error cannot replace newer success', async t => {

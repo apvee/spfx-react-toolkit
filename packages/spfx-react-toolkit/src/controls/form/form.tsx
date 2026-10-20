@@ -133,8 +133,8 @@ export function createFormSuiteRuntime<TInput extends FieldValues, TContext, TOu
         }
         const ScopedObject: FormObjectComponent<FieldValues> = props => <FieldPathScope prefix={usePrefix()}><fields.Object {...props} /></FieldPathScope>;
         const ScopedArray: FormArrayComponent<FieldValues> = props => <FieldPathScope prefix={usePrefix()}><fields.Array {...props} /></FieldPathScope>;
-        const ScopedObjectSection: FormObjectSectionComponent<FieldValues> = props => <FieldPathScope prefix={usePrefix()}><fields.ObjectSection {...props} /></FieldPathScope>;
-        const ScopedArraySection: FormArraySectionComponent<FieldValues> = props => <FieldPathScope prefix={usePrefix()}><fields.ArraySection {...props} /></FieldPathScope>;
+        const ScopedObjectSection: FormObjectSectionComponent<FieldValues> = <TPath extends FormObjectPath<FieldValues>>(props: FormObjectSectionProps<FieldValues, TPath>) => <FieldPathScope prefix={usePrefix()}><fields.ObjectSection<TPath> {...props} /></FieldPathScope>;
+        const ScopedArraySection: FormArraySectionComponent<FieldValues> = <TPath extends FormArrayPath<FieldValues>>(props: FormArraySectionProps<FieldValues, TPath>) => <FieldPathScope prefix={usePrefix()}><fields.ArraySection<TPath> {...props} /></FieldPathScope>;
         return {
             Input: scopeMember(fields.Input),
             Textarea: scopeMember(fields.Textarea),
@@ -238,6 +238,9 @@ export function createFormSuiteRuntime<TInput extends FieldValues, TContext, TOu
     return { ...fields, Root, Submit: bindMember(FormSubmit), Reset: bindMember(FormReset), useForm: useSuiteForm } as unknown as FormSuite<TInput, TContext, TOutput, TBound>;
 }
 /** Dynamic-name Form family; use createForm for input/output-aware paths.
+ * React Hook Form owns values and validation. Render bindings inside this family's Root;
+ * Fluent UI and date/time compat peers are required, with a shared FluentProvider.
+ * No SPFx provider is required.
  * @example `<Form.Root defaultValues={{title:''}} onSubmit={save}><Form.Input name="title" /></Form.Root>`
  */
 export const Form: UntypedFormSuite = createFormSuiteRuntime<FieldValues, unknown, FieldValues, false>();

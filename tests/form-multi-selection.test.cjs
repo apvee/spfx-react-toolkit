@@ -47,3 +47,23 @@ for(const member of ['CheckboxGroup','RadioGroup'])test(`${member} root fallback
  function Owner(){methods=F.useForm({shouldUseNativeValidation:true,defaultValues:{value:member==='RadioGroup'?'':[]}});return h.React.createElement(F.Root,{methods,onSubmit:()=>{}},h.React.createElement('button',{type:'button','data-outside':true},'Outside'),h.React.createElement(F[member],{name:'value',label:'Choices',rules:{validate:()=> 'Choose'},children:[h.React.createElement('button',{key:'help',type:'button','data-help':true},'Help'),h.React.createElement(Primitive,{key:'managed',value:'a',label:'Hidden',input:{hidden:true}})]}));}
  const f=h.mount(h.React.createElement(Owner));try{const outside=f.host.querySelector('[data-outside]');outside.focus();await h.act(async()=>{await methods.trigger('value',{shouldFocus:true});});assert.equal(document.activeElement===outside,true,'focus remains outside');assert.equal(f.host.querySelector('[data-help]').validationMessage,'');assert.equal(f.host.querySelector('input').validationMessage,'');}finally{f.close();}
 });
+
+test('TagPicker object labels require an explicit name and no-options slots retain the status shell', () => {
+ const F = h.suite('TagPicker'); let calls = 0;
+ h.rejectsRender(() => h.owner(F, 'TagPicker', { value: [] }, { label: { children: () => { calls++; return 'Opaque'; } }, options: [], noOptionsContent: { children: () => { calls++; return 'Empty'; } } }), /plain text label|aria-label/);
+ assert.equal(calls, 0, 'rejected naming never renders the callback subtree');
+ for (const empty of [undefined, null, false, true, '', { id: 'empty-slot', children: 'Custom empty' }, { children: (Component, props) => h.React.createElement(Component, props, 'Callback empty') }]) {
+  const f = h.owner(F, 'TagPicker', { value: [] }, { label: { children: 'Visible' }, 'aria-label': 'Explicit name', options: [], open: true, inline: true, noOptionsContent: empty, strings: { noOptions: { children: 'Localized empty' } } });
+  try { const status = f.host.querySelector('[role="status"]'); assert.ok(status); assert.equal(f.host.querySelector('input').getAttribute('aria-label'), 'Explicit name'); assert.equal(status.textContent, empty == null ? 'Localized empty' : typeof empty === 'boolean' || empty === '' ? '' : empty.children instanceof Function ? 'Callback empty' : 'Custom empty'); }
+  finally { f.close(); }
+ }
+});
+
+test('TagPicker suppresses empty-message callbacks when options or custom children render', () => {
+ const F = h.suite('TagPicker'); const { TagPickerOption } = require('@fluentui/react-components'); let calls = 0;
+ for (const source of [{ options: [{ value: 'a', label: 'Alpha' }] }, { children: h.React.createElement(TagPickerOption, { value: 'a', text: 'Alpha' }, 'Alpha') }]) {
+  const f = h.owner(F, 'TagPicker', { value: [] }, { label: 'Tags', open: true, inline: true, ...source, noOptionsContent: { children: () => { calls++; return 'Empty'; } } });
+  try { assert.equal(calls, 0); assert.equal(f.host.querySelector('[role="status"]'), null); }
+  finally { f.close(); }
+ }
+});

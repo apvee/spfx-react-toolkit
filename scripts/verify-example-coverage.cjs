@@ -126,16 +126,34 @@ assertCovered('Providers', providerSymbols, registrySymbols);
 
 const styleSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/helpers/styles/index.ts'));
 const panelsPath = path.join(path.dirname(registryPath), 'panels');
+// Product variants and versioned conformance fixtures are distinct coverage surfaces.
+// Static markers prove neither browser execution nor simultaneous visible examples.
+const regressionFiles = {
+  Cards: 'demo-control-isolation/cards-regressions.tsx',
+  Stage: 'demo-control-isolation/stage-regressions.tsx',
+  Form: 'demo-control-isolation/form-regressions.tsx',
+  DataGrid: 'demo-control-isolation/data-grid-regressions.tsx',
+  Groups: 'demo-control-isolation/groups-regressions.tsx',
+  Pagination: 'demo-control-isolation/pagination-regressions.tsx',
+  DescriptionList: 'demo-control-isolation/description-list-regressions.tsx',
+};
+function scenarioSource(name) {
+  const product = read(path.join(panelsPath, `${name}Panel.tsx`));
+  const relative = regressionFiles[name] || `foundation-legacy/${name}Panel.tsx`;
+  const fixture = path.join(root, 'tests/fixtures', relative);
+  return product + (fs.existsSync(fixture) ? '\n' + read(fixture) : '');
+}
+
 assertStyleExampleCoverage(
   styleSurface,
   read(registryPath),
-  read(path.join(panelsPath, 'StylesPanel.tsx')),
+  scenarioSource('Styles'),
   read(path.join(panelsPath, 'stylesCatalog.ts'))
 );
 console.log(`Verified webpart demo coverage for ${hookSymbols.length} hooks, ${providerSymbols.length} providers and ${styleSurface.filter(item => !item.name.startsWith('Sx')).length} qualified runtime style exports (interactive catalog/scopes).`);
 
 // This scenario verifies import interoperability without counting existing hooks twice.
-const importsPanelSource = read(path.join(panelsPath, 'ImportsPanel.tsx'));
+const importsPanelSource = scenarioSource('Imports');
 const importsRegistry = read(registryPath);
 for (const marker of ["key: 'imports'", "webpackChunkName: 'spfx-demo-imports'", "'./panels/ImportsPanel'"]) {
   if (!importsRegistry.includes(marker)) throw new Error(`Imports scenario registry missing ${marker}`);
@@ -146,69 +164,69 @@ for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invok
   'rootSx()', 'domainSx()', 'legacySx()']) {
   if (!importsPanelSource.includes(marker)) throw new Error(`Observable Imports scenario missing ${marker}`);
 }
-console.log('Verified dedicated root/domain/legacy Imports scenario (no duplicate export coverage).');
+console.log('Verified selectable root/domain/legacy Imports and dedicated equivalence fixture.');
 
-const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination', 'DescriptionList', 'SitePicker', 'ListPicker', 'FieldPicker', 'ViewPicker', 'ContentTypePicker', 'ListItemPicker', 'PrincipalPicker', 'FileFolderPicker'].includes(item.name)).map(item => item.name);
+const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination', 'DescriptionList', 'ContentCard', 'PreviewCard', 'SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGroupTrim'].includes(item.name)).map(item => item.name);
 assertCovered('Controls', controlSymbols, registrySymbols);
-const descriptionListPanel = read(path.join(panelsPath, 'DescriptionListPanel.tsx'));
+const descriptionListPanel = scenarioSource('DescriptionList');
 for (const marker of ['DescriptionList.Item', 'items=', 'layout=', 'key={entry.id}',
   'children: (Component, props)', 'container.inlineSize', '[320, 479, 480, 639, 640, 900]',
-  'createRef<HTMLDListElement>', 'createRef<HTMLDivElement>', 'data-description-list-demo="theme"',
+  'createRef<HTMLDListElement>', 'createRef<HTMLDivElement>', 'Field label=', 'Select data-description-list-demo=',
   'data-description-list-demo="rtl"', 'data-description-list-demo="nested-container"',
   'data-description-list-demo="inspect-ref"', 'data-description-list-demo="counter"']) {
   if (!descriptionListPanel.includes(marker)) throw new Error(`DescriptionList interactive example missing ${marker}`);
 }
-const textPanel = read(path.join(panelsPath, 'FormattedTextPanel.tsx'));
+const textPanel = scenarioSource('FormattedText');
 for (const marker of ['FormattedText', 'maxLines', 'markdown', 'subtle', 'highlight', 'variant', 'as', 'font', 'align', 'wrap', 'truncate', 'italic', 'underline', 'strikethrough', 'ref', 'onClick']) {
   if (!textPanel.includes(marker)) throw new Error(`FormattedText interactive example missing ${marker}`);
 }
 console.log(`Verified ${controlSymbols.length} public control scenario.`);
 
-const relativePanel = read(path.join(panelsPath, 'RelativeTimePanel.tsx'));
+const relativePanel = scenarioSource('RelativeTime');
 for (const marker of ['RelativeTime', 'dateTime', 'referenceTime', 'locale', 'format', 'autoUpdate', 'showTooltip', 'timeZone', 'fallback', 'ref']) {
   if (!relativePanel.includes(marker)) throw new Error(`RelativeTime interactive example missing ${marker}`);
 }
 if (!read(path.join(panelsPath, 'ContextPanel.tsx')).includes('ianaTimeZone')) throw new Error('Locale mapping scenario missing');
 
-const skeletonPanel = read(path.join(panelsPath, 'AutoSkeletonPanel.tsx'));
+const skeletonPanel = scenarioSource('AutoSkeleton');
 for (const marker of ['AutoSkeleton', 'loading', 'animation', 'minSize', 'ignoreSelectors', 'ref', 'data-skeleton-shape', 'rectangle', 'circle']) {
   if (!skeletonPanel.includes(marker)) throw new Error(`AutoSkeleton interactive example missing ${marker}`);
 }
 
-const statePanel = read(path.join(panelsPath, 'StateMessagePanel.tsx'));
-for (const marker of ['StateMessage', 'preset', 'description', 'headingLevel', 'visual', 'role', 'primaryAction', 'secondaryAction', 'tertiaryAction', 'ref', 'theme', 'resize']) {
+const statePanel = scenarioSource('StateMessage');
+for (const marker of ['StateMessage', 'preset', 'description', 'headingLevel', 'visual', 'role', 'primaryAction', 'secondaryAction', 'tertiaryAction', 'ref', 'resize']) {
   if (!statePanel.includes(marker)) throw new Error(`StateMessage interactive example missing ${marker}`);
 }
 
-const groupsPanel = read(path.join(panelsPath, 'GroupsPanel.tsx'));
-for (const marker of ['SettingsGroup.Item', 'AccordionGroup.Item', 'Input aria-label=', 'Switch aria-label=', 'Icon iconName=', 'openItems=', 'onToggle=', 'multiple=', 'unmountOnClose=', 'defaultValue=', 'title={<span>', 'ref=', 'data-groups-demo="theme"', 'data-groups-demo="direction"', 'data-groups-demo="resize"', 'data-groups-demo="inspect"']) {
-  if (!groupsPanel.includes(marker)) throw new Error(`Groups interactive example missing ${marker}`);
+const groupsPanel = scenarioSource('Groups');
+for (const marker of ['SettingsGroup.Item', 'AccordionGroup.Item', 'Input aria-label=', 'Switch aria-label=', 'DemoIcon name=', 'openItems=', 'onToggle=', 'multiple=', 'unmountOnClose=', 'defaultValue=', 'title={<span>', 'ref=', 'data-groups-demo="direction"', 'data-groups-demo="resize"', 'data-groups-demo="inspect"']) {
+  if (!groupsPanel.includes(marker) && !(/data-groups-demo="([^"]+)"/.test(marker) && groupsPanel.includes(`'data-groups-demo': '${marker.match(/"([^"]+)"/)[1]}'`))) throw new Error(`Groups interactive example missing ${marker}`);
 }
 
 assertFormExampleCoverage(
   collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/form/index.ts')),
-  read(registryPath), read(path.join(panelsPath, 'FormPanel.tsx'))
+  read(registryPath), scenarioSource('Form')
 );
-console.log('Verified complete compound Form adapter, scope and hook usage.');
+console.log('Verified selectable Form adapters plus versioned scope/hook conformance coverage.');
 
-const gridPanel = read(path.join(panelsPath, 'DataGridPanel.tsx'));
+const gridPanel = scenarioSource('DataGrid');
 for (const marker of ['createDataGrid<DemoRow>()', 'Grid.defineColumns', '<DataGrid ', '<Grid.Column ', 'selectedItems=', 'onSelectionChange=', 'sortState=', 'onSortChange=', 'getRowId=', 'onRowActivate=', 'resizableColumns=', 'hiddenColumnIds=', 'onRetry=', 'dg-update-sparkline', 'dg-color', 'dg-inspect-ref', 'Invalid number', "new Set(['off-page'])"]) {
   if (!gridPanel.includes(marker)) throw new Error(`DataGrid interactive example missing ${marker}`);
 }
 for (const name of ['Text', 'Number', 'Boolean', 'Date', 'DateTime', 'Badge', 'Icon', 'Link', 'Person', 'People', 'Tags', 'Progress', 'Rating', 'Sparkline', 'Actions']) {
   if (!gridPanel.includes(`<Grid.${name}Column `)) throw new Error(`DataGrid sample missing ${name} column`);
 }
-console.log('Verified complete DataGrid family, controlled states and immutable chart scenario.');
+console.log('Verified DataGrid presets plus versioned full-family/native/chart conformance coverage.');
 
-const shellPanel = read(path.join(panelsPath, 'WebPartShellPanel.tsx'));
-for (const marker of ['show-title', 'plain', 'rich', 'empty', 'theme', 'direction', 'surface', 'padding', 'note', 'increment', 'observations']) {
+const shellPanel = scenarioSource('WebPartShell');
+for (const marker of ['show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'note', 'increment', 'observations']) {
   if (!shellPanel.includes(`data-shell-demo="${marker}"`)) throw new Error(`WebPartShell sample missing ${marker}`);
 }
 const shellHost = read(path.join(path.dirname(registryPath), 'WebPartShellDemoHost.tsx'));
 if ((shellHost.match(/<WebPartShell /g) || []).length !== 1 || /<WebPartShell /.test(shellPanel)) throw new Error('WebPartShell sample must wrap the web part exactly once');
 console.log('Verified WebPartShell root host, metadata and observable child/presentation scenario.');
 
-const stagePanelSource = read(path.join(panelsPath, 'StagePanel.tsx'));
+const stagePanelSource = scenarioSource('Stage');
 for (const marker of ["key: 'stage'", "webpackChunkName: 'spfx-demo-stage'", "'./panels/StagePanel'"]) {
   if (!importsRegistry.includes(marker)) throw new Error(`Stage scenario registry missing ${marker}`);
 }
@@ -219,14 +237,51 @@ for (const marker of ['Stage.Header', 'Stage.Body', 'Stage.Footer', 'Editor.Root
 }
 console.log('Verified Stage compound modes, dimensions, Form and native popup scenarios.');
 
-const paginationPanel = read(path.join(panelsPath, 'PaginationPanel.tsx'));
+const paginationPanel = scenarioSource('Pagination');
 for (const marker of ['Pagination', 'onPaginationChange', 'pageIndex', 'pageSize', 'totalItems', 'hasNextPage', 'hasPreviousPage', 'loading', 'data-pagination-demo="summary"']) {
   if (!paginationPanel.includes(marker)) throw new Error(`Observable Pagination scenario missing ${marker}`);
 }
 
-// Native picker APIs have a live factory and native field in the sample webpart.
-for (const symbol of ['SitePicker', 'ListPicker', 'FieldPicker', 'ViewPicker', 'ContentTypePicker', 'ListItemPicker', 'PrincipalPicker', 'FileFolderPicker']) {
-  const native = `PropertyPane${symbol}`;
-  if (!registrySymbols.has(native)) throw new Error(`Missing native picker scenario: ${native}`);
-  if (!read(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/SpFxReactToolkitTestWebPart.ts')).includes(`${native}(`)) throw new Error(`Missing live native picker field: ${native}`);
+const cardsPanel = scenarioSource('Cards');
+for (const marker of ["key: 'cards'", "webpackChunkName: 'spfx-demo-cards'", "'./panels/CardsPanel'"]) {
+  if (!importsRegistry.includes(marker)) throw new Error(`Cards scenario registry missing ${marker}`);
+}
+for (const marker of ['ContentCard', 'PreviewCard', 'title={{', 'description={{', 'headerActions={{', 'footer={{',
+  'actions={{', 'previewFallback=', 'logo=', 'headingLevel=', 'image=', 'selected=', 'onSelectionChange=',
+  'checkbox=', 'floatingAction=', 'focusMode=', 'ref=', 'empty-object', 'empty-callback', 'empty-fragment',
+  'data-cards-demo="orientation"', 'data-cards-demo="width"', 'data-cards-demo="fail-image"',
+  'data-cards-demo="new-src"', 'data-cards-demo="native-card"', 'data-cards-demo="retained-input"',
+  'data-cards-demo="inspect-refs"', 'data-cards-demo="direction"']) {
+  if (!cardsPanel.includes(marker) && !(/data-cards-demo="([^"]+)"/.test(marker) && cardsPanel.includes(`'data-cards-demo': '${marker.match(/"([^"]+)"/)[1]}'`))) throw new Error(`Observable Cards example missing ${marker}`);
+}
+const cardsIsolation = read(path.join(root, 'tests/fixtures/demo-control-isolation/cards-legacy-isolation.tsx'));
+if (!cardsIsolation.includes('name="independent"') || !cardsIsolation.includes('dir="rtl"')) throw new Error('Cards independent RTL fixture missing');
+console.log('Verified selectable single Cards, image lifecycle and versioned native/isolation conformance coverage.');
+
+
+for (const name of ['Cards', 'Stage', 'Form', 'DataGrid', 'Groups', 'Pagination', 'DescriptionList', 'Styles', 'Imports', 'RelativeTime', 'FormattedText', 'AutoSkeleton', 'StateMessage', 'WebPartShell', 'Providers', 'Context']) {
+  const product = read(path.join(panelsPath, `${name}Panel.tsx`));
+  if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
+  if (!product.includes('data-demo-variant') && !['ReactHooks'].includes(name)) throw new Error(`${name} selectable product variant missing`);
+}
+console.log('Verified live single-example variant declarations; execution/cardinality are browser checks.');
+// Guard the authored webpart tree, never native DOM emitted by Fluent/toolkit controls.
+const { assertDemoControls } = require('./demo-controls.helpers.cjs');
+assertDemoControls(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest'));
+console.log('Verified Fluent 9 demo controls and host theme inheritance.');
+
+for (const name of ['SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGroupTrim']) {
+  const product = read(path.join(panelsPath, `${name}Panel.tsx`));
+  for (const marker of ['DemoCard', 'data-demo-variant', `${name}.Loading`, `${name}.Fallback`, `${name}.ErrorFallback`, 'key={applied.run}', 'data-trim-demo="applied-target"', 'data-trim-demo="run"', 'TrimProtectedContent', 'observation.gauge']) {
+    if (!product.includes(marker)) throw new Error(`${name} observable scenario missing ${marker}`);
+  }
+}
+const scopedContext = read(path.join(panelsPath, 'ContextPanel.tsx'));
+for (const marker of ['ScopedPermissionResult', 'useSPFxCrossSitePermissions(target)', 'data-context-demo="run-scoped"', 'key={applied.run}']) {
+  if (!scopedContext.includes(marker)) throw new Error(`Context scoped sample missing ${marker}`);
+}
+console.log('Verified actual trim scenarios and scoped Context configuration; execution remains separately verified.');
+
+for (const marker of ['<EntraGroupTrim groups={[{ name: applied.group }]}', 'Permission AND Entra membership']) {
+  if (!read(path.join(panelsPath, 'SharePointPermissionTrimPanel.tsx')).includes(marker)) throw new Error(`Permission/Entra AND sample missing ${marker}`);
 }

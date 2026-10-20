@@ -8,6 +8,13 @@ import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
  * Return type for useSPFxPermissions hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const permissions: SPFxPermissionsInfo = useSPFxPermissions();
+ * console.log(permissions.hasWebPermission(SPPermission.addListItems));
+ * ```
  */
 export interface SPFxPermissionsInfo {
   /** Site collection permissions */
@@ -19,66 +26,40 @@ export interface SPFxPermissionsInfo {
   /** List permissions (if in list context) */
   readonly listPermissions: SPPermission | undefined;
 
-  /** 
-   * Check if user has specific web permission
-   * @param permission - SPPermission to check (e.g., SPPermission.manageWeb, SPPermission.editListItems)
-   * @returns True if user has the permission at web level
+  /**
+   * Checks the corresponding available permission set; this is a UI indicator, not server authorization.
+   * @param permission - Native SPPermission constant or permission mask to require.
+   * @returns Whether all requested permissions exist; false when the set is unavailable.
    */
   readonly hasWebPermission: (permission: SPPermission) => boolean;
 
-  /** 
-   * Check if user has specific site collection permission
-   * @param permission - SPPermission to check (e.g., SPPermission.manageWeb, SPPermission.createGroups)
-   * @returns True if user has the permission at site collection level
+  /**
+   * Checks the corresponding available permission set; this is a UI indicator, not server authorization.
+   * @param permission - Native SPPermission constant or permission mask to require.
+   * @returns Whether all requested permissions exist; false when the set is unavailable.
    */
   readonly hasSitePermission: (permission: SPPermission) => boolean;
 
-  /** 
-   * Check if user has specific list permission
-   * @param permission - SPPermission to check (e.g., SPPermission.addListItems, SPPermission.deleteListItems)
-   * @returns True if user has the permission at list level, false if no list context
+  /**
+   * Checks the corresponding available permission set; this is a UI indicator, not server authorization.
+   * @param permission - Native SPPermission constant or permission mask to require.
+   * @returns Whether all requested permissions exist; false when the set is unavailable.
    */
   readonly hasListPermission: (permission: SPPermission) => boolean;
 }
 
 /**
- * Hook for SharePoint permissions checking
- * 
- * Provides access to current user's permissions at different scopes:
- * - Site collection level
- * - Web (subsite) level  
- * - List level (if applicable)
- * 
- * Includes helper methods for permission checks using SPPermission enum.
- * 
- * Common permissions to check:
- * - SPPermission.manageWeb
- * - SPPermission.addListItems
- * - SPPermission.editListItems
- * - SPPermission.deleteListItems
- * - SPPermission.viewListItems
- * - SPPermission.managePermissions
- * 
- * Useful for:
- * - Conditional UI rendering
- * - Feature availability
- * - Security trimming
- * - Authorization checks
- * 
- * @returns Permissions and helper methods
- * 
+ * Reads available site/web/list permission objects from PageContext without issuing requests. Helper checks return false for missing sets. These are presentation indicators; SharePoint enforces actual authorization.
+ * @returns Available permission objects and mask-check helpers.
+ * @throws When called outside an SPFx provider.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
- *   const { web, hasWebPermission } = useSPFxPermissions();
- *   const canManage = hasWebPermission(SPPermission.manageWeb);
- *   
- *   return (
- *     <div>
- *       {canManage && <button>Manage Settings</button>}
- *       <p>Can manage: {canManage ? 'Yes' : 'No'}</p>
- *     </div>
- *   );
+ * import { SPPermission } from '@microsoft/sp-page-context';
+ *
+ * function PermissionStatus() {
+ *   const { hasWebPermission } = useSPFxPermissions();
+ *   return <span>{hasWebPermission(SPPermission.addListItems) ? 'Can add' : 'Read only'}</span>;
  * }
  * ```
  */

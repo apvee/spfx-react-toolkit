@@ -1,3 +1,4 @@
+const { stageProduct } = require('../tests/fixtures/demo-control-isolation/task3-product.browser.cjs');
 // Both routes exercise the actual lazy-sample panel with real Fluent and Form.
 // Browser plugin not available; reuse installed Playwright, no dependency install.
 const fs = require('node:fs');
@@ -6,7 +7,12 @@ const path = require('node:path');
 async function checkStageBrowser(page, { url, output, label, boundary, check, consoleMessages }) {
   const instance = (id = 'A') => page.locator(`[data-stage-demo="instance"][data-stage-instance="${id}"]`);
   const surface = (id = 'A') => page.locator(`[data-stage-demo="surface"][data-stage-instance="${id}"]:visible`);
-  const marker = (root, name) => root.locator(`[data-stage-demo="${name}"]`);
+  const checkboxMarkers = new Set(['long-text', 'long-body', 'jsx', 'icon', 'description', 'close', 'footer-toggle', 'retention', 'menu-inline', 'dirty-guard', 'hold-save']);
+  const marker = (root, name) => {
+    const selector = `[data-stage-demo="${name}"]`;
+    const tag = checkboxMarkers.has(name) ? 'input' : ['mode', 'size', 'dismiss'].includes(name) ? 'select' : undefined;
+    return root.locator(tag ? `${tag}${selector}, ${selector} ${tag}` : selector);
+  };
   const settle = async () => {
     await page.evaluate(async () => {
       const paint = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -28,6 +34,13 @@ async function checkStageBrowser(page, { url, output, label, boundary, check, co
     await page.emulateMedia({ forcedColors: 'none' });
     await page.goto(url);
     await marker(instance(), 'trigger').waitFor();
+    await page.getByRole('button', { name: 'Independent RTL instance and selectable Card', exact: true }).click();
+    for (const id of ['A', 'B']) {
+      for (const name of ['Advanced save and popup configuration', 'Advanced diagnostics']) {
+        const disclosure = instance(id).getByRole('button', { name, exact: true });
+        if (await disclosure.getAttribute('aria-expanded') !== 'true') await disclosure.click();
+      }
+    }
     try {
       await run();
       cases.push({ name, completed: true });
@@ -62,6 +75,8 @@ async function checkStageBrowser(page, { url, output, label, boundary, check, co
   });
   const approximately = (value, expected) => Math.abs(value - expected) <= 1;
 
+  await stageProduct(page, { url, check });
+
   await scenario('identity', async () => {
     await check('stage:page-title', await page.title(), `Stage ${boundary} browser checkpoint`);
     await check('stage:page-url', new URL(page.url()).origin, url);
@@ -70,11 +85,11 @@ async function checkStageBrowser(page, { url, output, label, boundary, check, co
     await check('stage:framework-overlay', await page.locator('webpack-dev-server-client-overlay, #webpack-dev-server-client-overlay, nextjs-portal').count(), 0);
   });
 
-  for (const [mode, widths] of Object.entries({ dialog: [640, 800, 1120], drawer: [320, 592, 940], popover: [240, 320, 480] })) {
+  for (const [mode, widths] of Object.entries({ dialog: [640, 800, 1120], drawer: [320, 592, 940], popover: [320, 480, 640] })) {
     await scenario(`${mode}-geometry`, async () => {
       for (const [index, size] of ['small', 'medium', 'large'].entries()) {
         await configure(mode, size); await open();
-        for (const viewport of [1920, 1000, 390]) {
+        for (const viewport of [1920, 1000, 390, 320]) {
           await page.setViewportSize({ width: viewport, height: 900 }); await settle();
           const rect = await rectangle(surface());
           // Native Fluent scroll lock reserves the classic scrollbar gutter. An
@@ -146,6 +161,9 @@ async function checkStageBrowser(page, { url, output, label, boundary, check, co
     for (const id of ['A', 'B']) {
       await configure('popover', 'medium', {}, id); await open(id);
       const root = surface(id), input = root.getByRole('textbox', { name: `Name ${id}`, exact: true });
+      const surfaceDiagnostics = root.getByRole('button', { name: 'Advanced surface diagnostics', exact: true });
+      if (await surfaceDiagnostics.getAttribute('aria-expanded') !== 'true') await surfaceDiagnostics.click();
+      await settle();
       const arrow = () => root.locator(':scope > div').first();
       const mounts = await marker(instance(id), 'mount-count').textContent();
       await input.fill('Arrow draft');
@@ -224,7 +242,7 @@ async function checkStageBrowser(page, { url, output, label, boundary, check, co
     const card = marker(surface(), 'header').locator('.fui-Card');
     const neutral = () => card.evaluate(e => { const s = getComputedStyle(e), after = getComputedStyle(e, '::after'); return [s.backgroundColor, s.boxShadow, s.paddingTop, s.borderRadius, after.display]; });
     const baseline = await neutral();
-    await card.hover(); await check('stage:neutral-header-hover', await neutral(), baseline);
+    await heading.hover({ position: { x: 5, y: 5 } }); await check('stage:neutral-header-hover', await neutral(), baseline);
     await page.mouse.down(); await check('stage:neutral-header-pressed', await neutral(), baseline); await page.mouse.up();
     await page.emulateMedia({ forcedColors: 'active' });
     const forced = await neutral();
@@ -232,11 +250,16 @@ async function checkStageBrowser(page, { url, output, label, boundary, check, co
     await check('stage:neutral-header-forced-colors-structural-styles', forced.slice(1), baseline.slice(1));
     await page.emulateMedia({ forcedColors: 'none' });
     await page.setViewportSize({ width: 390, height: 900 }); await settle();
-    await check('stage:header-actions-wrap-at-400-container', await marker(surface(), 'header').evaluate(e => {
-      const title = e.querySelector('.fui-CardHeader__header').getBoundingClientRect();
-      const action = e.querySelector('.fui-CardHeader__action').getBoundingClientRect();
-      return action.top >= title.bottom;
+    await check('stage:header-controls-stay-on-centered-row', await marker(surface(), 'header').evaluate(e => {
+      const header = e.querySelector('.fui-CardHeader').getBoundingClientRect();
+      const action = e.querySelector('[data-stage-demo="header-action"]').getBoundingClientRect();
+      const close = e.querySelector('button[aria-label]').getBoundingClientRect();
+      const center = rect => (rect.top + rect.bottom) / 2;
+      return Math.abs(center(action) - center(close)) <= 1 && Math.abs(center(close) - center(header)) <= 1;
     }), true);
+    await check('stage:header-has-one-consumer-command-and-X', await marker(surface(), 'header').getByRole('button').count(), 2);
+    await check('stage:singular-action-slot', await marker(surface(), 'action-slot').count(), 1);
+    await check('stage:header-diagnostics-moved-to-body', await marker(surface(), 'header').locator('[data-stage-demo="inspect-slot"], [data-stage-demo="slot-observation"], [data-stage-demo="arrow-toggle"]').count(), 0);
     await marker(surface(), 'header-action').click();
     await check('stage:header-action-event-and-no-dismiss', await marker(surface(), 'action-count').textContent(), 'Header actions: 1');
     await close();
@@ -247,11 +270,91 @@ async function checkStageBrowser(page, { url, output, label, boundary, check, co
     const ancestor = page.locator('[data-stage-demo="card"]');
     const labelBefore = await ancestor.getAttribute('aria-labelledby');
     const selectionBefore = await page.locator('[data-stage-demo="card-selection"]').textContent();
+    await page.evaluate(() => window.demoFixtureHost.update({ theme: 'dark' }));
     await open('B');
     await check('stage:dark-rtl-provider', await surface('B').evaluate(e => [getComputedStyle(e).direction, getComputedStyle(e).getPropertyValue('--colorNeutralForeground1').trim()]), ['rtl', '#ffffff']);
     await check('stage:selectable-card-label-isolated', await ancestor.getAttribute('aria-labelledby'), labelBefore);
     await check('stage:selectable-card-selection-preserved', await page.locator('[data-stage-demo="card-selection"]').textContent(), selectionBefore);
     await capture('dark-rtl'); await close('B');
+    await page.evaluate(() => window.demoFixtureHost.update({ theme: 'light' }));
+  });
+
+  await scenario('long-header-text', async () => {
+    for (const id of ['A', 'B']) {
+      for (const mode of ['dialog', 'drawer', 'popover']) {
+        for (const size of mode === 'popover' ? ['small', 'medium', 'large'] : ['small', 'medium', 'large', 'full']) {
+          await page.setViewportSize({ width: 1210, height: 900 });
+          await configure(mode, size, { 'long-text': true, jsx: false, description: true, close: true }, id);
+          await open(id);
+          const root = surface(id), header = marker(root, 'header');
+          const title = root.getByRole('heading');
+          const titleText = await title.textContent();
+          const descriptionText = await root.locator('.fui-CardHeader__description').textContent();
+          await check(`stage:long-text:${id}:${mode}:${size}:substantial-full-text`, titleText.length > 150 && descriptionText.length > 350, true);
+          for (const viewport of [1210, 390, 320]) {
+            await page.setViewportSize({ width: viewport, height: 900 }); await settle();
+            const name = `stage:long-text:${id}:${mode}:${size}:${viewport}`;
+            const layout = await root.evaluate(element => {
+              const header = element.querySelector('[data-stage-demo="header"]');
+              const title = header.querySelector('[role="heading"], h1, h2, h3, h4, h5, h6');
+              const description = header.querySelector('.fui-CardHeader__description span');
+              const action = header.querySelector('[data-stage-demo="header-action"]');
+              const close = header.querySelector('button[aria-label]');
+              const cardHeader = header.querySelector('.fui-CardHeader');
+              const actionRegion = header.querySelector('.fui-CardHeader__action');
+              const bounds = node => { const r = node.getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height }; };
+              const titleStyle = getComputedStyle(title), descriptionStyle = getComputedStyle(description);
+              const h = bounds(cardHeader), t = bounds(title), d = bounds(description), a = bounds(action), c = bounds(close);
+              const centerY = rect => (rect.top + rect.bottom) / 2;
+              const overlaps = (first, second) => first.left < second.right - 1 && first.right > second.left + 1 && first.top < second.bottom - 1 && first.bottom > second.top + 1;
+              const inside = rect => rect.left >= h.left - 1 && rect.right <= h.right + 1 && rect.top >= h.top - 1 && rect.bottom <= h.bottom + 1;
+              const hit = element.ownerDocument.elementFromPoint((c.left + c.right) / 2, (c.top + c.bottom) / 2);
+              return {
+                surfaceWidth: element.getBoundingClientRect().width,
+                viewportWidth: Math.min(element.ownerDocument.documentElement.clientWidth, element.ownerDocument.defaultView.innerWidth),
+                title: [titleStyle.whiteSpace, titleStyle.textOverflow, titleStyle.overflow, t.height],
+                description: [descriptionStyle.webkitLineClamp, descriptionStyle.overflow, d.height],
+                titleTruncated: title.scrollWidth > title.clientWidth,
+                descriptionTruncated: description.scrollHeight > description.clientHeight,
+                fullTitle: title.textContent, fullDescription: description.textContent,
+                labelled: element.ownerDocument.getElementById(element.getAttribute('aria-labelledby'))?.textContent,
+                described: element.ownerDocument.getElementById(element.getAttribute('aria-describedby'))?.textContent,
+                direction: getComputedStyle(element).direction,
+                closeSeparate: !actionRegion.contains(close),
+                centeredControlRow: Math.abs(centerY(a) - centerY(c)) <= 1 && Math.abs(centerY(c) - centerY(h)) <= 1,
+                centeredWithText: Math.abs(centerY(h) - (t.top + d.bottom) / 2) <= 1,
+                closeAtInlineEnd: getComputedStyle(element).direction === 'rtl' ? Math.abs(c.left - h.left) <= 1 : Math.abs(c.right - h.right) <= 1,
+                closeClear: ![t, d, a].some(rect => overlaps(c, rect)),
+                actionClear: ![t, d].some(rect => overlaps(a, rect)),
+                closeHit: close === hit || close.contains(hit),
+                controlsFit: inside(a) && inside(c),
+                horizontalOverflow: element.scrollWidth > element.clientWidth + 1 || header.scrollWidth > header.clientWidth + 1,
+              };
+            });
+            await check(`${name}:full-DOM-and-ARIA-text`, [layout.fullTitle, layout.labelled, layout.fullDescription, layout.described], [titleText, titleText, descriptionText, descriptionText]);
+            await check(`${name}:accessible-heading`, await root.getByRole('heading', { name: titleText, exact: true }).count(), 1);
+            await check(`${name}:title-one-line-ellipsis`, layout.title.slice(0, 3), ['nowrap', 'ellipsis', 'hidden']);
+            await check(`${name}:title-height`, approximately(layout.title[3], 22), true);
+            await check(`${name}:description-two-line-clamp`, layout.description.slice(0, 2), ['2', 'hidden']);
+            await check(`${name}:description-height`, layout.description[2] > 0 && layout.description[2] <= 32.5, true);
+            await check(`${name}:text-really-truncated`, layout.titleTruncated && layout.descriptionTruncated, true);
+            await check(`${name}:provider-direction`, layout.direction, id === 'A' ? 'ltr' : 'rtl');
+            if (mode === 'popover') {
+              const presetWidth = { small: 320, medium: 480, large: 640 }[size];
+              await check(`${name}:preferred-width-bounded-by-viewport`, approximately(layout.surfaceWidth, Math.min(presetWidth, layout.viewportWidth)), true);
+            }
+            await check(`${name}:owned-close-separate-inline-end`, layout.closeSeparate && layout.closeAtInlineEnd, true);
+            await check(`${name}:controls-no-overlap-and-close-hit-target`, layout.closeClear && layout.actionClear && layout.closeHit, true);
+            await check(`${name}:consumer-action-and-close-fit`, layout.controlsFit && !layout.horizontalOverflow, true);
+            await check(`${name}:controls-on-one-row-centered-with-text`, layout.centeredControlRow && layout.centeredWithText, true);
+            await header.getByRole('button', { name: `Close ${id}`, exact: true }).click({ trial: true });
+            observations.push({ mode, size, viewport, id, longText: layout });
+            if (mode === 'popover' && size === 'small') await capture(`long-text-${id}-${mode}-${size}-${viewport}`);
+          }
+          await close(id);
+        }
+      }
+    }
   });
 
   for (const mode of ['dialog', 'drawer', 'popover']) {
@@ -381,7 +484,7 @@ async function checkStageBrowser(page, { url, output, label, boundary, check, co
     });
   }
   await scenario('independent-providers', async () => {
-    await configure('popover', 'large', { dismiss: 'explicit' }); await configure('popover', 'large', { dismiss: 'explicit' }, 'B');
+    await configure('popover', 'large', { dismiss: 'explicit' }); await configure('popover', 'large', { dismiss: 'explicit', retention: true }, 'B');
     await open(); await marker(surface(), 'increment').click();
     await open('B');
     await check('stage:independent-instances-open-together', await surface().count() + await surface('B').count(), 2);
@@ -392,6 +495,14 @@ async function checkStageBrowser(page, { url, output, label, boundary, check, co
     await check('stage:independent-instance-B-close-preserves-A', await marker(instance(), 'open').textContent(), 'Open: true');
     await check('stage:independent-instance-A-theme-direction', await surface().evaluate(e => [getComputedStyle(e).direction, getComputedStyle(e).getPropertyValue('--colorNeutralForeground1').trim()]), ['ltr', '#242424']);
     await close();
+    await open('B'); await marker(surface('B'), 'increment').click(); await close('B');
+    const secondInstance = page.getByRole('button', { name: 'Independent RTL instance and selectable Card', exact: true });
+    await secondInstance.click(); await settle();
+    await check('stage:advanced-second-instance-collapsed', await secondInstance.getAttribute('aria-expanded'), 'false');
+    await check('stage:advanced-second-instance-inert', await marker(instance('B'), 'trigger').evaluate(element => Boolean(element.closest('[inert]'))), true);
+    await secondInstance.click(); await open('B');
+    await check('stage:advanced-collapse-retains-counter', await marker(surface('B'), 'counter').textContent(), '1');
+    await close('B');
   });
   await scenario('optional-parts', async () => {
     await configure('dialog', 'small', { description: false, icon: false, close: false, 'footer-toggle': false }); await open();
@@ -409,6 +520,8 @@ async function checkStageBrowser(page, { url, output, label, boundary, check, co
     await check('stage:probe:JSX-refs-preserved', await page.evaluate(() => { const result = window.stageProbe.observe(); return result.titleRef && result.descriptionRef; }), true);
     await check('stage:probe:JSX-authored-styles', await probe('jsx-title').evaluate(e => [getComputedStyle(e).color, getComputedStyle(e).fontSize]), ['rgb(130, 40, 180)', '18px']);
     await check('stage:probe:JSX-description-style', await probe('jsx-description').evaluate(e => [getComputedStyle(e).fontStyle, getComputedStyle(e).letterSpacing]), ['italic', '1px']);
+    await check('stage:probe:JSX-title-not-automatically-clamped', await probe('jsx-title').evaluate(e => getComputedStyle(e).textOverflow !== 'ellipsis' && getComputedStyle(e).whiteSpace !== 'nowrap'), true);
+    await check('stage:probe:JSX-description-not-automatically-clamped', await probe('jsx-description').evaluate(e => getComputedStyle(e).webkitLineClamp !== '2'), true);
     await probe('jsx-title').click(); await check('stage:probe:JSX-event-preserved', await probe('jsx-clicks').textContent(), '1');
     await probe('increment').click(); const before = await page.evaluate(() => window.stageProbe.observe());
     await updateProbe({ dark: true });
@@ -417,6 +530,13 @@ async function checkStageBrowser(page, { url, output, label, boundary, check, co
     await check('stage:probe:theme-retains-state', await probe('counter').textContent(), '1');
     await updateProbe({ longActions: true }); await page.setViewportSize({ width: 390, height: 900 }); await settle();
     await check('stage:probe:long-actions-no-horizontal-overflow', await probe('surface').evaluate(e => e.scrollWidth <= e.clientWidth + 1), true);
+    await check('stage:probe:long-actions-single-centered-row-and-fit', await probe('surface').evaluate(e => {
+      const header = e.querySelector('.fui-CardHeader').getBoundingClientRect();
+      const controls = [...e.querySelector('.fui-CardHeader').querySelectorAll('button')].map(button => button.getBoundingClientRect());
+      const center = rect => (rect.top + rect.bottom) / 2;
+      return controls.every(control => Math.abs(center(control) - center(header)) <= 1 && control.left >= header.left - 1 && control.right <= header.right + 1)
+        && controls.every((control, index) => controls.slice(index + 1).every(other => control.right <= other.left + 1 || other.right <= control.left + 1));
+    }), true);
     await capture('long-header-actions');
     for (const name of ['First longer Header action text', 'Second longer Header action text', 'Close probe']) {
       await probe('surface').getByRole('button', { name, exact: true }).click();
@@ -446,7 +566,9 @@ async function checkStageBrowser(page, { url, output, label, boundary, check, co
   await scenario('supplemental-iframe-owner', async () => {
     const frame = page.frameLocator('[data-stage-probe="iframe"]');
     const frameProbe = name => frame.locator(`[data-stage-probe="${name}"]`);
+    await probe('iframe').scrollIntoViewIfNeeded();
     await frameProbe('trigger').click(); await frameProbe('surface').waitFor(); await settle();
+    await probe('iframe').scrollIntoViewIfNeeded();
     await check('stage:probe:iframe-portal-ownerDocument', await frameProbe('surface').evaluate(e => e.ownerDocument !== window.parent.document && e.ownerDocument === document), true);
     await check('stage:probe:iframe-theme-direction', await frameProbe('surface').evaluate(e => [getComputedStyle(e).direction, getComputedStyle(e).getPropertyValue('--colorNeutralForeground1').trim()]), ['rtl', '#ffffff']);
     await check('stage:probe:iframe-renderer-inserts-owner-styles', await frame.locator('style[data-make-styles-bucket]').count() > 0, true);

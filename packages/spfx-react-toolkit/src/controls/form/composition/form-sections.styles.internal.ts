@@ -1,6 +1,6 @@
 import { makeStyles, shorthands } from '@griffel/react';
-import type * as React from 'react';
-import { hasGroupContent } from '../../group-header.internal';
+import { hasGroupDescriptionContent } from '../../group-header.internal';
+import type { ContentSlot } from '../../content-slot.types.internal';
 
 /** Details absent from existing layout/typography descriptors. No renderer is created here. */
 export const useFormSectionsStyles = makeStyles({
@@ -11,8 +11,8 @@ export const useFormSectionsStyles = makeStyles({
     live: { position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clipPath: 'inset(50%)', whiteSpace: 'nowrap', ...shorthands.border(0) },
 });
 /** Runtime guard also covers untyped/dynamic callers and empty legends. */
-export function assertSectionName(title: React.ReactNode, label: string | undefined, labelledBy: string | undefined): void {
-    if (!hasGroupContent(typeof title === 'string' ? title.trim() : title) && !label?.trim() && !labelledBy?.trim()) throw new TypeError('Form sections require an accessible name through title, aria-label or aria-labelledby.');
+export function assertSectionName(title: ContentSlot<'span'>, label: string | undefined, labelledBy: string | undefined): void {
+    if (!hasGroupDescriptionContent(typeof title === 'string' ? title.trim() : title) && !label?.trim() && !labelledBy?.trim()) throw new TypeError('Form sections require an accessible name through title, aria-label or aria-labelledby.');
 }
 /** Adds direct section description/error references to caller-owned references. */
 export function sectionDescriptionIds(existing: string | undefined, descriptionId: string | undefined, errorId: string | undefined): string | undefined {

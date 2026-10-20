@@ -283,3 +283,53 @@ test('portal controls keep their original click/Enter behavior without activatin
   assert.equal(clicks,1);assert.equal(activations,0);
   hostHarness.click(dataRows(fixture)[0]);assert.equal(activations,1,'plain row remains activatable beneath owning grid');
 });
+
+
+test('presentation objects resolve inside owned error/status/header shells with native behavior', () => {
+  const refs = [React.createRef(), React.createRef(), React.createRef()];
+  const tags = []; let retries = 0, clicks = 0, sorts = 0;
+  const fixture = owner({ columns: Grid => Grid.defineColumns(c => [c.text({
+    id: 'name', field: 'name', sortable: true, headerAriaLabel: 'Owned header name',
+    header: { ref: refs[0], 'aria-label': 'Inner name', className: 'inner-header', children: (Component, props) => {
+      tags.push(Component); return React.createElement(Component, props, 'Slot header');
+    } },
+  })]), props: { onSortChange: () => sorts++, error: { ref: refs[1], className: 'inner-error', children: React.createElement('p', {}, 'Block error'), onClick: () => clicks++, as: 'h1', dangerouslySetInnerHTML: { __html: 'UNSAFE' } }, onRetry: () => retries++ } });
+  assert.equal(refs[0].current.tagName, 'SPAN');
+  assert.equal(refs[1].current.tagName, 'DIV');
+  assert.ok(refs[1].current.closest('.fui-MessageBarBody'));
+  assert.equal(header(fixture, 'name').getAttribute('aria-label'), 'Owned header name');
+  assert.equal(refs[0].current.getAttribute('aria-label'), 'Inner name');
+  assert.ok(tags.length > 0); assert.ok(tags.every(tag => tag === 'span'));
+  hostHarness.click(refs[0].current); assert.equal(sorts, 1);
+  hostHarness.click(refs[1].current); assert.equal(clicks, 1);
+  assert.doesNotMatch(fixture.host.innerHTML, /UNSAFE|<h1/);
+  hostHarness.click([...fixture.host.querySelectorAll('button')].find(button => button.textContent === 'Retry')); assert.equal(retries, 1);
+  fixture.update({ items: [], error: undefined, emptyContent: { ref: refs[2], className: 'inner-empty', children: 'Literal **empty**' } });
+  assert.equal(refs[2].current.tagName, 'DIV'); assert.equal(refs[2].current.parentElement.getAttribute('role'), 'status');
+  assert.equal(refs[2].current.parentElement.className, '');
+  assert.equal(refs[2].current.textContent, 'Literal **empty**');
+  fixture.update({ emptyState: 'noResults', noResultsContent: { children: (Component, props) => React.createElement(Component, { ...props, 'data-no-results': '' }, 'Object matches') } });
+  assert.equal(fixture.host.querySelector('[role=status] > [data-no-results]').tagName, 'DIV');
+});
+
+test('slot defaults preserve nullish status, error presence and suppressed callbacks', () => {
+  let calls = 0;
+  const suppressed = { children: () => { calls++; return 'Unexpected'; } };
+  const fixture = owner({ items: [], props: { error: true, emptyContent: suppressed, noResultsContent: suppressed } });
+  assert.ok(fixture.host.querySelector('.fui-MessageBar')); assert.equal(fixture.host.querySelector('[role=status]'), null); assert.equal(calls, 0);
+  for (const value of [undefined, null]) {
+    fixture.update({ error: undefined, emptyContent: value });
+    assert.equal(fixture.host.querySelector('[role=status]').textContent, 'No data available');
+    assert.ok(fixture.host.querySelector('[role=status]').className);
+  }
+  for (const value of [false, true, '', React.createElement(React.Fragment)]) {
+    fixture.update({ emptyContent: value });
+    assert.equal(fixture.host.querySelector('[role=status]').textContent, '');
+    assert.equal(fixture.host.querySelector('[role=status]').className, '');
+  }
+  fixture.update({ emptyContent: { children: '' } });
+  assert.equal(fixture.host.querySelector('[role=status] > div').textContent, '');
+  fixture.update({ loading: true, emptyContent: suppressed }); assert.equal(calls, 0);
+  fixture.update({ hiddenColumnIds: new Set(['name', 'value']), error: true });
+  assert.match(fixture.host.querySelector('[role=status]').textContent, /No visible columns/); assert.ok(fixture.host.querySelector('.fui-MessageBar')); assert.equal(calls, 0);
+});

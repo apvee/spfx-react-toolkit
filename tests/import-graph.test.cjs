@@ -156,10 +156,31 @@ test('returned conditional factories remain deferred until the returned function
 
 test('reviewed control style definitions are local but actual renderer allocation stays forbidden', () => {
   const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
-  for (const path of ['controls/formatted-text/formatted-text.styles.internal.ts', 'controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts']) {
+  for (const path of ['controls/file-folder-picker/file-folder-picker.styles.internal.ts', 'controls/formatted-text/formatted-text.styles.internal.ts', 'controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts', 'controls/cards/card.styles.internal.ts', 'controls/web-part-shell/title/web-part-title-color-picker.internal.tsx']) {
     const module = expression => ({ path, externalImports: [], topLevelInitializations: [{ expression }] });
     assert.deepEqual(checkSourceRules({ edges: [], modules: [module('makeStyles({ root: {} })')] }, []), []);
     assert.equal(checkSourceRules({ edges: [], modules: [module('createDOMRenderer()')] }, [])[0].kind, 'package-global-renderer');
     assert.equal(checkSourceRules({ edges: [], modules: [module('makeStyles({ root: createDOMRenderer() })')] }, [])[0].kind, 'package-global-renderer');
   }
+});
+
+test('trim root/domain/control exports share canonical leaves without registrations or barrel imports', () => {
+  const families = [['sharepoint-permission-trim', 'SharePointPermissionTrim'], ['sharepoint-group-trim', 'SharePointGroupTrim'], ['entra-group-trim', 'EntraGroupTrim']];
+  const report = auditImportGraph({ sourceRoot: path.resolve(__dirname, '../packages/spfx-react-toolkit/src'), entrypoints: ['index.ts', 'controls/index.ts', ...families.map(([folder]) => `controls/${folder}/index.ts`)] });
+  for (const [folder, symbol] of families) {
+    const leaf = report.publicExports.find(item => item.entrypoint === `controls/${folder}/index.ts` && item.name === symbol);
+    assert.ok(leaf); assert.equal(leaf.kind, 'runtime');
+    for (const entrypoint of ['index.ts', 'controls/index.ts']) {
+      const alias = report.publicExports.find(item => item.entrypoint === entrypoint && item.name === symbol);
+      assert.ok(alias); assert.equal(alias.canonicalSource, leaf.canonicalSource);
+    }
+    assert.ok(leaf.dependencies.every(dependency => !dependency.startsWith('@pnp/')));
+    for (const module of report.modules.filter(item => item.path.startsWith(`controls/${folder}/`))) {
+      assert.ok(module.externalImports.every(edge => edge.kind !== 'bare-import'));
+    }
+  }
+  const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
+  const manifest = require('../packages/spfx-react-toolkit/package.json');
+  const issues = checkSourceRules(report, manifest.sideEffects);
+  assert.ok(issues.every(issue => !families.some(([folder]) => issue.from?.startsWith(`controls/${folder}/`))), JSON.stringify(issues));
 });

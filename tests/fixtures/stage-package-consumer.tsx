@@ -12,7 +12,7 @@ export const domainProps: DomainProps = props;
 export const controlProps: ControlProps = props;
 const Stage = controlStage;
 export const element = <Stage {...props} ref={React.createRef<HTMLDivElement>()}>
-  <Stage.Header title="Profile" description="Details" actions={<button>Refresh</button>} closeLabel="Close" />
+  <Stage.Header title="Profile" description="Details" action={<button>Refresh</button>} closeLabel="Close" />
   <Stage.Body ref={React.createRef<HTMLDivElement>()}><input aria-label="Name" /></Stage.Body>
   <Stage.Footer><button type="button">Cancel</button></Stage.Footer>
 </Stage>;

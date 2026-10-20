@@ -127,6 +127,6 @@ No SPFx provider or new dependency is required. The control uses existing shared
 
 ## Working sample and validation limits
 
-The lazy **Pagination** test-web-part panel supplies real typed DataGrid rows for all four modes. It exercises filters, page-size changes, total reduction, empty results, deterministic manual request completion, localization, all sizes and appearances, 320px navigation, independent light/LTR and dark/RTL instances, native ref/hidden and enclosing-form submission counts. The consumer owns the live result summary. See [development checks](../../DEVELOPMENT.md#pagination-checks) and [authenticated acceptance](../../SHAREPOINT-VALIDATION.md#pagination).
+The lazy Pagination tab shows one small result list and its navigation. Mode, page size, filter, size/appearance and explicit pending completion drive the current result. Configuration/status/diagnostics share one outline card. The separate enclosing-form/native/isolation comparisons remain in the [versioned regression fixture](../../../tests/fixtures/demo-control-isolation/pagination-regressions.tsx). Source/compiled runners exercise the product route before the preserved regression scenarios; local execution does not establish authenticated host behavior.
 
 Authenticated SharePoint, Teams/iframe and screen-reader validation is **NOT EXECUTED** until separately recorded. Static demo checks do not establish rendered or tenant behavior.

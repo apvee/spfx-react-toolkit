@@ -57,7 +57,7 @@ test('header uses literal semantic text, real CardHeader slots and stable caller
 test('close is last, defaults to Close, is localizable and alone requests dismissal', () => {
   const requests = []; let actionClicks = 0, footerClicks = 0;
   const tree = options => React.createElement(Owner, { request: (_, data) => requests.push(data) },
-    React.createElement(parts.StageHeader, { title: '**Literal title**', actions: React.createElement('button',
+    React.createElement(parts.StageHeader, { title: '**Literal title**', action: React.createElement('button',
       { id: 'help', onClick: () => actionClicks++ }, 'Help'), ...options }),
     React.createElement(parts.StageBody, {}, 'Body'),
     React.createElement(parts.StageFooter, {}, React.createElement('button', { id: 'save', onClick: () => footerClicks++ }, 'Save')));
@@ -65,7 +65,7 @@ test('close is last, defaults to Close, is localizable and alone requests dismis
   try {
     assert.equal(f.host.querySelector('h2').textContent, '**Literal title**');
     assert.equal(f.host.querySelector('h2 strong'), null);
-    assert.equal(f.host.querySelector('.fui-CardHeader__action').lastElementChild.getAttribute('aria-label'), 'Close');
+    assert.equal(f.host.querySelector('.fui-Card').lastElementChild.getAttribute('aria-label'), 'Close');
     act(() => f.host.querySelector('#help').click()); act(() => f.host.querySelector('#save').click());
     assert.equal(actionClicks, 1); assert.equal(footerClicks, 1); assert.deepEqual(requests, []);
     act(() => f.host.querySelector('[aria-label="Close"]').click());
@@ -77,6 +77,32 @@ test('close is last, defaults to Close, is localizable and alone requests dismis
       React.createElement(parts.StageBody, {}, 'Body')));
     assert.equal(f.host.querySelector('.fui-CardHeader__action'), null);
     assert.equal(f.host.querySelector('[data-stage-footer]'), null);
+  } finally { f.close(); }
+});
+test('Stage clamps literal strings while preserving full text, inner refs and caller JSX presentation', () => {
+  const { activeRules } = require('./fixtures/sx-harness.cjs');
+  const title = 'A long literal title that remains in the accessible heading';
+  const description = 'A long literal description that stays intact in the associated supporting text';
+  const ref = React.createRef();
+  const tree = (titleSlot, descriptionSlot) => React.createElement(Owner, {}, React.createElement(parts.StageHeader, {
+    title: titleSlot, description: descriptionSlot,
+  }));
+  const f = mount(tree(title, description));
+  const css = node => activeRules(renderer, node.className).join('\n');
+  try {
+    for (const props of [false, true]) {
+      f.render(tree(props ? { ref, children: title } : title, props ? { children: description } : description));
+      const heading = f.host.querySelector('h2'), detail = f.host.querySelector('.fui-CardHeader__description > span');
+      assert.equal(heading.textContent, title); assert.equal(detail.textContent, description);
+      assert.match(css(heading), /--apvee-sx-textOverflow-base:\s*ellipsis/); assert.match(css(heading), /--apvee-sx-whiteSpace-base:\s*nowrap/);
+      assert.match(css(detail), /-webkit-line-clamp:\s*2/); assert.match(css(detail), /overflow:\s*hidden/);
+      if (props) assert.equal(ref.current.parentElement, heading);
+    }
+    const authored = React.createElement('em', { id: 'authored-title' }, title);
+    f.render(tree(authored, { children: (Tag, props) => React.createElement(Tag, props, description) }));
+    assert.equal(f.host.querySelector('h2').firstElementChild.id, 'authored-title');
+    assert.doesNotMatch(css(f.host.querySelector('h2')), /--apvee-sx-textOverflow-base:\s*ellipsis/);
+    assert.doesNotMatch(css(f.host.querySelector('.fui-CardHeader__description > span')), /-webkit-line-clamp:/);
   } finally { f.close(); }
 });
 test('part roots forward native refs/events/hidden/style and discard untyped raw HTML', () => {
@@ -112,7 +138,7 @@ test('Header activation handlers preserve a neutral Card in hover, pressed and f
   const ref = React.createRef(), callerRef = React.createRef(); let clicks = 0, mouseDowns = 0, pointerDowns = 0;
   const f = mount(React.createElement(Owner, {}, React.createElement(parts.StageHeader, {
     ref, title: 'Title', onClick: () => clicks++, onMouseDown: () => mouseDowns++, onPointerDown: () => pointerDowns++,
-    actions: React.createElement('button', { ref: callerRef, className: 'caller-action', style: { color: 'red' } }, 'Action'),
+    action: React.createElement('button', { ref: callerRef, className: 'caller-action', style: { color: 'red' } }, 'Action'),
   })));
   try {
     const header = f.host.querySelector('[data-stage-header]');
@@ -174,7 +200,7 @@ test('shared geometry and part layout insert host CSS classes with exact presets
     assert.match(cssFor('backdrop'), /\[hidden\]\s*\{display: none;/);
     assert.match(cssFor('backdrop'), /\[hidden\]\s*\{pointer-events: none;/);
     for (const [key, pixels] of Object.entries({ dialogSmall: 640, dialogMedium: 800, dialogLarge: 1120,
-      drawerSmall: 320, drawerMedium: 592, drawerLarge: 940, popoverSmall: 240, popoverMedium: 320, popoverLarge: 480 })) {
+      drawerSmall: 320, drawerMedium: 592, drawerLarge: 940, popoverSmall: 320, popoverMedium: 480, popoverLarge: 640 })) {
       assert.match(cssFor(key), new RegExp(`width: ${pixels}px`));
     }
     assert.match(cssFor('dialogFull'), /100vw/); assert.match(cssFor('dialogFull'), /100vh/);
@@ -187,7 +213,10 @@ test('shared geometry and part layout insert host CSS classes with exact presets
     descriptor('surface', 'minHeight', '0px'); descriptor('surface', 'flexDirection', 'column');
     descriptor('body', 'flexGrow', '1'); descriptor('body', 'overflowY', 'auto');
     descriptor('header', 'flexShrink', '0'); descriptor('footer', 'flexShrink', '0');
-    descriptor('actions', 'flexWrap', 'wrap'); assert.match(cssFor('icon'), /24px/);
+    descriptor('actions', 'flexWrap', 'nowrap'); assert.match(cssFor('icon'), /24px/);
+    assert.match(cssFor('cardHeader'), /grid-template-columns:\s*auto minmax\(0, 1fr\) fit-content\(50%\)/);
+    assert.match(cssFor('close'), /top:\s*50%/);
+    assert.match(cssFor('close'), /transform:\s*translateY\(-50%\)/);
     descriptor('neutralCard', 'backgroundColor', 'var\\(--colorTransparentBackground\\)');
     assert.match(cssFor('neutralCard'), /::after/);
     descriptor('text', 'rowGap', 'var\\(--spacingVerticalNone\\)');
@@ -204,4 +233,49 @@ test('shared geometry and part layout insert host CSS classes with exact presets
     for (const part of ['header', 'body', 'footer']) descriptor(part, 'paddingBlockStart', 'var\\(--spacingVerticalNone\\)');
     assert.equal(f.host.querySelectorAll('[style]').length, 0);
   } finally { f.close(); }
+});
+
+test('Header object slots retain naming shells and Close while empty description does not register', () => {
+  const titleRef = React.createRef(); let callbacks = 0;
+  const tree = description => React.createElement(Owner, {}, React.createElement(parts.StageHeader, {
+    title: { ref: titleRef, children: 'Object title' }, description,
+    icon: { children: 'Icon' }, action: { children: (Tag, props) => { callbacks++; assert.equal(Tag, 'div'); return React.createElement(Tag, { ...props, 'data-application-actions': '' }, 'Help'); } },
+  }));
+  const f = mount(tree({ children: '' }));
+  try {
+    assert.equal(titleRef.current.tagName, 'SPAN'); assert.equal(titleRef.current.parentElement.tagName, 'H2');
+    assert.ok(titleRef.current.closest('.fui-CardHeader__header').id);
+    assert.equal(f.host.querySelector('[data-description-present]').dataset.descriptionPresent, 'false');
+    assert.equal(f.host.querySelector('.fui-Card').lastElementChild.getAttribute('aria-label'), 'Close');
+    assert.ok(callbacks > 0);
+    let descriptionCalls = 0, descriptionRenders = 0;
+    function Description() { descriptionRenders++; return 'Callback help'; }
+    f.render(tree({ children: (Tag, props) => { descriptionCalls++; return React.createElement(Tag, props, React.createElement(Description)); } }));
+    assert.equal(descriptionCalls, descriptionRenders, 'inspection does not execute callbacks');
+    assert.equal(f.host.querySelector('[data-description-present]').dataset.descriptionPresent, 'true');
+  } finally { f.close(); }
+});
+
+test('Header separates whitespace shorthand association from blank object description containers', () => {
+  const tree = description => React.createElement(Owner, {}, React.createElement(parts.StageHeader, { title: 'Title', description }));
+  const f = mount(tree(' '));
+  try {
+    assert.equal(f.host.querySelector('[data-description-present]').dataset.descriptionPresent, 'true');
+    for (const children of [' ', React.createElement(React.Fragment, {}, ' ', false, '\n')]) {
+      f.render(tree({ children }));
+      assert.ok(f.host.querySelector('.fui-CardHeader__description span span'), 'requested inner container remains');
+      assert.equal(f.host.querySelector('[data-description-present]').dataset.descriptionPresent, 'false');
+    }
+    f.render(tree({ 'aria-label': 'Help', children: ' ' }));
+    assert.equal(f.host.querySelector('[data-description-present]').dataset.descriptionPresent, 'true');
+  } finally { f.close(); }
+});
+test('Header object/callback icons retain 24px sizing for authored SVG dimensions', () => {
+  const { assertIconSizing } = require('./fixtures/group-icon-assertions.cjs');
+  for (const callback of [false, true]) {
+    const svg = React.createElement('svg', { width: 80, height: 80, 'data-sized-icon': '' });
+    const icon = { children: callback ? (Tag, props) => React.createElement(Tag, props, svg) : svg };
+    const f = mount(React.createElement(Owner, {}, React.createElement(parts.StageHeader, { title: 'Title', icon })));
+    try { assertIconSizing(f.host.querySelector('[data-sized-icon]'), 24); } finally { f.close(); }
+  }
 });

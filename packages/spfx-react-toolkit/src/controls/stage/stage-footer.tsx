@@ -8,7 +8,10 @@ import type { StageFooterProps } from './stage.types';
  * Requires an owning Stage. Omit Footer entirely when no footer is wanted, leaving no gap.
  * @param props Native div attributes, forwarded ref and optional content.
  * @returns A nonshrinking zero-padding div preserving caller JSX and events.
- * @example <Stage.Footer><button type="submit">Save</button></Stage.Footer>
+ * @example
+ * ```tsx
+ * <Stage presentation="dialog"><Stage.Footer><button type="submit">Save</button></Stage.Footer></Stage>
+ * ```
  */
 export const StageFooter = React.forwardRef<HTMLDivElement, StageFooterProps>(({ children, className, ...nativeProps }, ref) => {
   const attributes: React.HTMLAttributes<HTMLDivElement> = nativeProps;

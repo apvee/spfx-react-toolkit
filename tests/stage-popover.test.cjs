@@ -217,7 +217,7 @@ test('changing Popover retention while open preserves child DOM and state until 
 });
 
 test('preset widths and padding stay class-based while native positioning retains default or bounded placement and auto-size', async () => {
-  for (const [size, pixels] of [[undefined, 240], ['medium', 320], ['large', 480]]) {
+  for (const [size, pixels] of [[undefined, 320], ['small', 320], ['medium', 480], ['large', 640]]) {
     const positioning = size === 'medium' ? { position: 'above', align: 'end' } : undefined; const seen = [];
     const f = mount(React.createElement(Fluent.PositioningConfigurationProvider, { value: data => { seen.push(data.options); return data.options; } },
       tree({ defaultOpen: true, size, positioning })));

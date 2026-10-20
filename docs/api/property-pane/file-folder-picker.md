@@ -80,3 +80,7 @@ Extended SharePoint browsing can lazily authenticate the exact independently ver
 With SPFx `debug=true`, the shared implementation emits bounded internal `console.debug` authentication categories without tokens, claims, raw resource URLs or provider/native payloads. These are separate from the sanitized actionable `onError` contract; optional audience/Graph failures do not become a false configured-source failure. They introduce no public configuration member, automatic hint or spinner. Empty routes, unsupported source combinations, host policy denials, server authorization failures and unavailable browser automation targets require separate validation outcomes.
 
 Native uploads and folder creation are immediate writes. The accepted-reference scope check is not a pre-write destination boundary, and cancelling or discarding a native draft cannot undo those operations.
+
+### Sample Preset menu
+
+The test web part offers only **Focused** and **Extended** in its Property Pane. Saved legacy demo configurations use Focused for both the displayed choice and the native control. Changing the preset preserves selected references, the field key and its value revision; old saved SDK fields are retained without passing them alongside a preset. The reusable Property Pane factory still supports the documented legacy contract when `preset` is omitted.

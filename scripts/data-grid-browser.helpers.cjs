@@ -1,3 +1,4 @@
+const { dataGridProduct } = require('../tests/fixtures/demo-control-isolation/task3-product.browser.cjs');
 const path = require('node:path');
 const fs = require('node:fs');
 const os = require('node:os');
@@ -100,14 +101,26 @@ async function exerciseDataGrid({ page, url, output, label, boundary, check, con
     return geometry;
   }
   page.setDefaultTimeout(10000);
+  await dataGridProduct(page, { url, check });
   await page.goto(`${url}/?data-grid-only=1`);
   await node('data-grid-demo').waitFor();
+  const diagnostics = node('data-grid-demo').getByRole('button', { name: 'Advanced diagnostics', exact: true });
+  if (await diagnostics.getAttribute('aria-expanded') !== 'true') await diagnostics.click();
+  await page.getByRole('button', { name: 'Descriptors, dynamic values and row activation', exact: true }).click();
   await check('DataGrid local origin', new URL(page.url()).origin, new URL(url).origin);
   await check('DataGrid page identity', await page.title(), boundary === 'compiled' ? 'StylesPanel local browser fixture' : 'useSx real-browser checkpoint');
   await check('DataGrid explicit library boundary', await page.locator('[data-grid-boundary]').getAttribute('data-grid-boundary'), boundary);
   await check('DataGrid framework overlay absent', await page.locator('webpack-dev-server-client-overlay,#webpack-dev-server-client-overlay,nextjs-portal').count(), 0);
   await check('DataGrid native role', await main.getAttribute('role'), 'grid');
   await check('DataGrid full sixteen-column sample', await main.locator('.fui-DataGridHeader [role=columnheader][data-grid-column-id]').count(), 16);
+  const mediumHeight = await rows().first().evaluate(row => row.getBoundingClientRect().height);
+  await node('dg-size').selectOption('small');
+  await check('DataGrid size changes native grid presentation', (await rows().first().evaluate(row => row.getBoundingClientRect().height)) < mediumHeight, true);
+  await node('dg-size').selectOption('medium');
+  await node('dg-selection-mode').selectOption('none');
+  await check('DataGrid selectionMode none suppresses selection cells', await main.locator('.fui-DataGridSelectionCell').count(), 0);
+  await check('DataGrid switching selection mode retains consumer IDs', await selectedIds(), ['off-page']);
+  await node('dg-selection-mode').selectOption('multiselect');
   await check('DataGrid native header selection gridcell', await main.locator('.fui-DataGridHeader .fui-DataGridSelectionCell[role=gridcell]').count(), 1);
   await check('DataGrid native selection header/body alignment', await main.evaluate(grid => {
     const head = grid.querySelector('.fui-DataGridHeader .fui-DataGridSelectionCell').getBoundingClientRect();
@@ -118,6 +131,13 @@ async function exerciseDataGrid({ page, url, output, label, boundary, check, con
   await check('DataGrid dynamic scenario', await node('data-grid-dynamic').getAttribute('role'), 'grid');
   await node('dg-inspect-ref').click();
   await check('DataGrid ref native element', await node('dg-ref').textContent(), 'div');
+  await node('dg-inspect-slot-refs').click();
+  await check('DataGrid actual header and missing-value inner slot refs', await node('dg-slot-refs').textContent(), 'header=SPAN error=absent missing=SPAN');
+  await node('dg-slot-suppress').check();
+  await node('dg-inspect-slot-refs').click();
+  await check('DataGrid false placeholder clears inner slot ref', await node('dg-slot-refs').textContent(), 'header=SPAN error=absent missing=absent');
+  await node('dg-slot-suppress').uncheck();
+
   await alignment('intrinsic');
   const initialNames = await rowNames();
   await check('DataGrid supplied row names', initialNames, ['Alpha', 'Beta']);
@@ -168,6 +188,9 @@ async function exerciseDataGrid({ page, url, output, label, boundary, check, con
   await node('dg-reverse').click(); await settle();
   await check('DataGrid consumer alone changes supplied order', await rowNames(), [...initialNames].reverse());
   await node('dg-reverse').click();
+  const headerSlotClicks = Number(await node('dg-slot-clicks').textContent());
+  await main.locator('[data-grid-slot-callback=header]').click();
+  await check('DataGrid native header callback retains click handler', Number(await node('dg-slot-clicks').textContent()), headerSlotClicks + 1);
   await check('DataGrid initial selection exact IDs', await selectedIds(), ['off-page']);
   const headerSelection = main.locator('.fui-DataGridHeader').getByRole('checkbox').first();
   await headerSelection.click(); await settle();
@@ -211,6 +234,11 @@ async function exerciseDataGrid({ page, url, output, label, boundary, check, con
   await activationRow.getByRole('button', { name: 'Custom 0', exact: true }).click();
   await check('DataGrid custom original row state', await activationRow.getByRole('button', { name: 'Custom 1', exact: true }).count(), 1);
   await check('DataGrid custom does not activate row', await node('dg-activation-output').textContent(), clicked);
+  const conformance = page.getByRole('button', { name: 'Descriptors, dynamic values and row activation', exact: true });
+  await conformance.click();
+  await check('DataGrid collapsed conformance panel is inert', await activationRow.evaluate(row => row.closest('.fui-AccordionPanel').hasAttribute('inert')), true);
+  await conformance.click();
+  await check('DataGrid conformance child state retained after collapse', await activationRow.getByRole('button', { name: 'Custom 1', exact: true }).count(), 1);
   await check('DataGrid person name and avatar vertically centered', await main.locator('.fui-Persona').evaluateAll(elements => elements.every(element => {
     const avatar = element.querySelector('.fui-Avatar').getBoundingClientRect();
     const name = element.querySelector('.fui-Persona__primaryText').getBoundingClientRect();
@@ -320,7 +348,7 @@ async function exerciseDataGrid({ page, url, output, label, boundary, check, con
   await check('DataGrid restored available width restores all responsive Tags', await visibleTags(), ['Design', 'Review', 'Release']);
   await capture('light');
   for (const theme of ['dark', 'highContrast']) {
-    await node('dg-theme').selectOption(theme); await node('dg-dir').selectOption('rtl'); await settle();
+    await page.evaluate(theme => window.demoFixtureHost.update({ theme: theme === 'highContrast' ? 'contrast' : theme }), theme); await node('dg-dir').selectOption('rtl'); await settle();
     await check(`DataGrid ${theme} RTL direction`, await main.evaluate(element => getComputedStyle(element).direction), 'rtl');
     await alignment(`${theme}-rtl`); await capture(`${theme}-rtl`);
   }
@@ -391,14 +419,14 @@ async function exerciseDataGrid({ page, url, output, label, boundary, check, con
   await check('DataGrid refresh has no outer loading progress indicator', await node('data-grid-demo').getByRole('progressbar', { name: 'Loading', exact: true }).count(), 0);
   const refreshGeometry = await loadingCellSkeletons('refresh');
   const refreshFingerprint = loadingFingerprint(refreshGeometry);
-  const loadingTheme = await node('dg-theme').evaluate(element => element.value);
+  const loadingTheme = await page.evaluate(() => window.demoFixtureHost.config.theme);
   await node('dg-width').selectOption('640'); await settle();
   await check('DataGrid simulated loading values remain stable during width rerender', loadingFingerprint(await loadingGeometry()), refreshFingerprint);
-  await node('dg-theme').selectOption('light'); await settle();
+  await page.evaluate(() => window.demoFixtureHost.update({ theme: 'light' })); await settle();
   await check('DataGrid simulated loading values remain stable during theme rerender', loadingFingerprint(await loadingGeometry()), refreshFingerprint);
   await check('DataGrid simulated loading bones remain bounded after responsive rerender', loadingBoundsMatch(await loadingGeometry()), true);
   await capture('refresh-loading');
-  await node('dg-width').selectOption('1100'); await node('dg-theme').selectOption(loadingTheme); await settle();
+  await node('dg-width').selectOption('1100'); await page.evaluate(theme => window.demoFixtureHost.update({ theme }), loadingTheme); await settle();
   await node('dg-loading').uncheck(); await settle();
   await check('DataGrid refresh completion removes padding rows', await rows().count(), 2);
   await check('DataGrid refresh completion retains body DOM identity', await main.locator('.fui-DataGridBody').evaluate((body, previous) => body === previous, mountedBody), true);
@@ -418,6 +446,9 @@ async function exerciseDataGrid({ page, url, output, label, boundary, check, con
   await node('dg-loading').uncheck(); await settle();
   await node('dg-error').check();
   await check('DataGrid error retains rows', await rowNames(), initialNames);
+  await node('dg-inspect-slot-refs').click();
+  await check('DataGrid error inner slot ref stays native div', await node('dg-slot-refs').textContent(), 'header=SPAN error=DIV missing=SPAN');
+
   const retries = Number(await node('dg-retries').textContent());
   await node('data-grid-demo').getByRole('button', { name: 'Retry', exact: true }).click();
   await check('DataGrid retry is consumer intent', Number(await node('dg-retries').textContent()), retries + 1);
@@ -448,6 +479,16 @@ async function exerciseDataGrid({ page, url, output, label, boundary, check, con
     return token === '12px' && style.paddingTop === token && style.paddingBottom === token;
   }), true);
   await capture('default-no-results');
+  await node('dg-custom-status-slots').check();
+  await check('DataGrid custom no-results callback visible', await node('data-grid-demo').getByRole('status').filter({ hasText: /^Consumer-owned no-results slot$/ }).count(), 1);
+  await node('dg-slot-suppress').check();
+  await check('DataGrid explicit false suppresses custom status', await node('dg-frame').locator('[role=status]').textContent(), '');
+  await node('dg-slot-suppress').uncheck();
+  await node('dg-empty-state').selectOption('empty');
+  await check('DataGrid custom empty slot visible', await node('data-grid-demo').getByRole('status').filter({ hasText: /^Consumer-owned empty slot$/ }).count(), 1);
+  await node('dg-custom-status-slots').uncheck();
+  await node('dg-empty-state').selectOption('noResults');
+
   await node('dg-loading').check(); await settle();
   if (await main.locator('[data-auto-skeleton-content]').count() === 1) {
     await page.waitForFunction(() => Boolean(document.querySelector('#data-grid-main [data-auto-skeleton-overlay] [data-auto-skeleton-shape]')));
@@ -560,7 +601,7 @@ async function exerciseNativeDataGridZoom({ url, output, label, boundary, check,
           heightRounding: Math.abs(metrics[0].height - metrics[1].height * 2) <= 1,
           visualScale: metrics[1].scale,
         }, { dprRatio: 2, widthRatio: 2, heightRounding: true, visualScale: 1 });
-        await page.locator('#dg-theme').selectOption('dark'); await page.locator('#dg-dir').selectOption('rtl');
+        await page.evaluate(() => window.demoFixtureHost.update({ theme: 'dark' })); await page.locator('#dg-dir').selectOption('rtl');
         await check('DataGrid native zoom200 controls reflow stays bounded', await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true);
         await check('DataGrid native zoom200 scroll region fits CSS viewport', await main.evaluate(grid => {
           const region = grid.closest('[data-grid-scroll]');

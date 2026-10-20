@@ -9,76 +9,50 @@ import { subscribeSPFxTeamsRuntime } from '../core/teams-runtime.internal';
 
 /**
  * Teams theme type
+ *
+ * @example
+ * ```tsx
+ * const theme: TeamsTheme = 'highContrast';
+ * ```
  */
 export type TeamsTheme = 'default' | 'dark' | 'highContrast';
 
 /**
  * Return type for useSPFxTeams hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const host: SPFxTeamsInfo = useSPFxTeams();
+ * console.log(host.supported, host.theme);
+ * ```
  */
 export interface SPFxTeamsInfo {
   /** Whether context acquisition from the SPFx application SDK succeeded. */
   readonly supported: boolean;
   
-  /** Teams context object (if available) */
+  /**
+   * Unverified host SDK context; undefined before acquisition or when unavailable. Narrow using the SDK contract and actual application host.
+   */
   readonly context: unknown | undefined;
   
-  /** Current Teams theme */
+  /**
+   * Normalized application theme, or undefined before/unavailable SDK acquisition.
+   */
   readonly theme: TeamsTheme | undefined;
 }
 
 /**
- * Hook for Microsoft Teams context integration
- * 
- * Provides access to Microsoft Teams context when SPFx component
- * exposes the Microsoft 365 application SDK, including Teams, Office and Outlook.
- * 
- * Acquires context from the SPFx-provided SDK (supports both v1 and v2 APIs)
- * and provides:
- * - Teams context (team, channel, user info, etc.)
- * - Teams theme (default, dark, high contrast)
- * - Supported flag
- * 
- * Context acquisition happens asynchronously on first mount. Live theme events
- * remain subscribed until the last hook for this runtime store unmounts. SDK
- * replacement resets the context and ignores obsolete completions. Registration
- * and acquisition failures are reported through console.error.
+ * Acquires SPFx-provided application SDK context asynchronously, supporting v1/v2 SDK shapes and Teams, Office and Outlook hosts. supported is false until successful acquisition and is not a Teams-host discriminator; use useSPFxEnvironmentInfo for that. Missing SDK/context leaves context and theme undefined. The last subscriber releases the runtime store; SDK replacement resets context and ignores obsolete acquisitions. A dispatcher is shared per SDK identity within this bundle; another bundle can replace its single theme handler. Failures are logged to console.error. Call in a React component or hook beneath the matching host-specific SPFx provider.
  *
- * @remarks
- * A lazy broker shares one theme dispatcher per SDK identity within this library
- * bundle. The SDK has no public unregister API; cleanup releases runtime stores.
- * Other bundles that register their own SDK handler can replace the dispatcher.
- * The supported flag means SDK context is available; useSPFxEnvironmentInfo
- * resolves whether the actual host is Teams, Office or Outlook.
- * 
- * Useful for:
- * - Teams-specific features
- * - Theme synchronization
- * - User context access
- * - Channel/team information
- * - Teams app integration
- * 
- * @returns Teams context information
- * 
+ * @returns SDK readiness, untyped host context and optional normalized application theme.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
- *   const { supported, context, theme } = useSPFxTeams();
- *   
- *   if (!supported) {
- *     return <div>Not in Teams</div>;
- *   }
- *   
- *   const teamsContext = context as {
- *     user?: { id: string };
- *     team?: { displayName: string };
- *   };
- *   
- *   return (
- *     <div className={`teams-theme-${theme}`}>
- *       <p>Team: {teamsContext.team?.displayName}</p>
- *       <p>Theme: {theme}</p>
- *     </div>
- *   );
+ * function ApplicationTheme() {
+ *   const { supported, theme } = useSPFxTeams();
+ *   return <span>{supported ? theme ?? 'Theme unavailable' : 'SDK context unavailable'}</span>;
  * }
  * ```
  */

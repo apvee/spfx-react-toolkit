@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Tooltip, useId } from '@fluentui/react-components';
 import { useFluent_unstable } from '@fluentui/react-shared-contexts';
+import { renderContentSlot } from '../content-slot.internal';
+import { mergeClasses } from '@griffel/react';
 import { useStableCallback } from '../../hooks/useStableCallback';
 import { parseInstant, getRelativeTime } from './relative-time.internal';
 import type { RelativeTimeProps } from './relative-time.types';
@@ -16,9 +18,11 @@ import type { RelativeTimeProps } from './relative-time.types';
  * @param props Input instant, localization, clock/tooltip options and native time attributes.
  * @returns A time root and description/Tooltip, or the supplied fallback for invalid input.
  * @example
+ * ```tsx
  * <FormattedText variant="caption1" subtle>
  *   <RelativeTime dateTime="2026-01-01T12:00:00Z" locale="it-IT" timeZone="Europe/Rome" />
  * </FormattedText>
+ * ```
  */
 export const RelativeTime = React.forwardRef<HTMLTimeElement, RelativeTimeProps>((props, ref) => {
   const {
@@ -64,7 +68,7 @@ export const RelativeTime = React.forwardRef<HTMLTimeElement, RelativeTimeProps>
       second: '2-digit', timeZoneName: 'short', timeZone,
     }),
   } : undefined, [valid, locale, format, timeZone]);
-  if (!formatters) return <>{fallback}</>;
+  if (!formatters) return <>{renderContentSlot(fallback, 'span', mergeClasses, { shorthand: 'preserve' })}</>;
   const relative = getRelativeTime(timestamp, fixed ?? clock);
   const text = (relative.unit === 'second' ? formatters.now : formatters.relative).format(relative.value, relative.unit);
   const fullDate = formatters.full.format(timestamp);

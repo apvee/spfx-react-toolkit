@@ -2,8 +2,8 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const { test } = require('node:test');
 const { Simulate } = require('react-dom/test-utils');
+const { FluentProvider, webLightTheme } = require('@fluentui/react-components');
 const { createHarness } = require('./services-test-harness.cjs');
-require('@fluentui/react').registerIcons({ icons: { TableGroup: 'table', Info: 'info', InfoSolid: 'info', Success: 'success', ErrorBadge: 'error', Completed: 'done', CheckMark: 'check', Cancel: 'cancel', BulletedList: 'list', Search: 'search', Save: 'save', Delete: 'delete' } });
 const panel = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/SitePanel.tsx');
 function deferred() { let resolve; const promise = new Promise(r => { resolve = r; }); return { promise, resolve }; }
 function fixture(t, overrides = {}) {
@@ -33,13 +33,19 @@ function fixture(t, overrides = {}) {
     useSPFxPageContext: () => pageContext,
   };
   t.after(h.close);
+  // JSDOM has no layout observer; messages still use the actual Fluent DOM.
+  window.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
   // Fluent DelayedRender uses window.setTimeout and global clearTimeout; share IDs as browsers do.
   t.mock.method(window, 'setTimeout', (callback, delay) => setTimeout(callback, delay));
-  const Component = h.load(panel).default;
+  const Panel = h.load(panel).default;
+  const Component = () => h.React.createElement(FluentProvider, { theme: webLightTheme }, h.React.createElement(Panel));
   const view = h.mountComponent(Component);
   const flush = async () => h.act(async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); await new Promise(resolve => setTimeout(resolve, 0)); });
   function click(text) {
-    const button = Array.from(view.container.querySelectorAll('button')).find(b => b.querySelector('.ms-Button-label')?.textContent === text);
+    const action = ({ Get: 'get', List: 'list', Save: 'save', Remove: 'remove' })[text];
+    h.act(() => Simulate.change(view.container.querySelector('select'), { target: { value: action } }));
+    text = 'Run';
+    const button = Array.from(view.container.querySelectorAll('button')).find(b => b.textContent === text);
     assert.ok(button, text + ' action exists');
     assert.equal(button.disabled, false, text + ' action is available');
     h.act(() => Simulate.click(button));
@@ -109,4 +115,35 @@ test('unmount ignores pending action completion without React warnings', async t
   const errors = t.mock.method(console, 'error', () => {});
   await f.act(async () => { pending.resolve([]); await pending.promise; });
   assert.equal(errors.mock.callCount(), 0);
+});
+
+test('site service keeps controls, commands and readable results together with collapsed payload diagnostics', async t => {
+  const item = { key: 'sample-key', value: 'visible result', description: 'metadata', id: 7 };
+  const f = fixture(t, { get: async () => item });
+  assert.equal(f.container.querySelector('[aria-label="Site Key-Value Store preview"]'), null, 'a service must not render an empty subject preview');
+  const configuration = f.container.querySelector('[data-demo-configuration]');
+  assert.ok(configuration.querySelector('[aria-label="Site Key-Value Store configuration"] input'));
+  const commands = configuration.querySelector('[aria-label="Site Key-Value Store commands"]');
+  assert.equal(commands.querySelectorAll('input').length, 0);
+  assert.deepEqual([...commands.querySelectorAll('button')].map(node => node.textContent), ['Run']);
+  f.click('Get'); await f.flush();
+  const results = configuration.querySelector('[aria-label="Site Key-Value Store results"]');
+  assert.match(results.textContent, /sample-key/);
+  assert.match(results.textContent, /visible result/);
+  const diagnostics = [...configuration.querySelectorAll('button')].find(node => node.textContent === 'Advanced diagnostics');
+  assert.ok(diagnostics);
+  assert.equal(diagnostics.getAttribute('aria-expanded'), 'false');
+  assert.match(configuration.querySelector('[aria-label="Site Key-Value Store status"]').textContent, /Found/);
+});
+
+test('editing the selected key invalidates a pending read and does not issue another request', async t => {
+  const pending = deferred();
+  const f = fixture(t, { get: (...args) => { f.calls.push(['get', ...args]); return pending.promise; } });
+  f.click('Get');
+  const input = f.container.querySelector('input');
+  f.act(() => Simulate.change(input, { target: { value: 'another-target' } }));
+  await f.act(async () => { pending.resolve({ key: 'obsolete-key', value: 'obsolete-value', id: 1 }); await pending.promise; });
+  assert.equal(f.calls.length, 1);
+  assert.ok(!f.container.textContent.includes('obsolete-value'));
+  assert.ok(!f.container.textContent.includes('Found '));
 });

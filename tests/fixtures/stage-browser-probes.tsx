@@ -29,6 +29,9 @@ const useStyles = makeStyles({
   frame: { width: '1000px', maxWidth: '100%', height: '800px' },
   title: { color: 'rgb(130, 40, 180)', fontSize: '18px' },
   description: { fontStyle: 'italic', letterSpacing: '1px' },
+  // Opaque application controls must be able to shrink in the bounded header action column.
+  actionButton: { minWidth: 0, maxWidth: '100%' },
+  actionLabel: { minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
 });
 const ProbeCounter: React.FC<{ onMount: () => void }> = ({ onMount }) => {
   const [count, setCount] = React.useState(0);
@@ -65,7 +68,10 @@ const Probe: React.FC<{ targetDocument?: Document; iframe?: boolean }> = ({ targ
           description={<span data-stage-probe="jsx-description" className={styles.description}
             ref={element => { descriptionRef.current = element ?? undefined; }}>Authored JSX description</span>}
           closeLabel={iframe ? 'Close iframe probe' : 'Close probe'}
-          actions={state.longActions ? <><Button>First longer Header action text</Button><Button>Second longer Header action text</Button></> : <Button>Probe Header action</Button>} />
+          action={state.longActions ? <>
+            <Button className={styles.actionButton}><span className={styles.actionLabel}>First longer Header action text</span></Button>
+            <Button className={styles.actionButton}><span className={styles.actionLabel}>Second longer Header action text</span></Button>
+          </> : <Button className={styles.actionButton}><span className={styles.actionLabel}>Probe Header action</span></Button>} />
         <Stage.Body><input aria-label="Probe input" onKeyDown={event => { if (state.preventEscape && event.key === 'Escape') event.preventDefault(); }} />
           <ProbeCounter onMount={onMount} /></Stage.Body>
         <Stage.Footer><Button onClick={() => setOpen(false)}>Probe Footer close</Button></Stage.Footer>

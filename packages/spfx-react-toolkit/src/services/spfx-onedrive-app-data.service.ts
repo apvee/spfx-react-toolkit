@@ -2,20 +2,44 @@ import type { MSGraphClientV3 } from '@microsoft/sp-http';
 
 import { buildOneDriveAppDataPath } from '../helpers/spfx-graph-path.helpers';
 
+/**
+ * JSON read outcome. T describes expected data and does not validate it.
+ *
+ * @example
+ * ```ts
+ * const result: SPFxOneDriveAppDataReadResult<{ theme: string }> = await appData.read('settings.json');
+ * if (!result.isNotFound) console.log(result.data?.theme);
+ * ```
+ * @template T - Expected application data shape; no runtime validation is performed.
+ */
 export interface SPFxOneDriveAppDataReadResult<T = unknown> {
+  /**
+   * Parsed JSON, or undefined for a recognized missing file.
+   */
   readonly data: T | undefined;
+  /**
+   * True only for recognized Graph metadata not-found failures; failed downloads reject.
+   */
   readonly isNotFound: boolean;
 }
 
-/** JSON reads and writes in the authenticated user's OneDrive app root. */
+/**
+ * JSON reads and writes in the authenticated user's OneDrive app root. Requires a caller-owned Graph client with appropriate permissions and native fetch for reads.
+ *
+ * @example
+ * ```ts
+ * const appData: SPFxOneDriveAppDataService = createSPFxOneDriveAppDataService(graphClient);
+ * await appData.write('settings.json', { theme: 'dark' }, 'dashboard');
+ * ```
+ */
 export interface SPFxOneDriveAppDataService {
   /**
    * Reads metadata through Graph, then downloads JSON from its preauthenticated
    * HTTPS URL using native fetch without authorization headers or cookies.
    * This avoids Graph's browser-incompatible authenticated /content redirect.
    *
-   * @param fileName - JSON file name in the app root.
-   * @param folder - Optional sanitized folder namespace.
+   * @param fileName - File name, passed into the Graph path without sanitization.
+   * @param folder - Optional namespace; characters other than letters, digits, hyphen and underscore become hyphens.
    * @returns Parsed data, or isNotFound with undefined data for a missing file.
    * @throws Graph, download, invalid metadata or JSON parsing errors.
    * @example
@@ -27,6 +51,14 @@ export interface SPFxOneDriveAppDataService {
     fileName: string,
     folder?: string
   ) => Promise<SPFxOneDriveAppDataReadResult<T>>;
+  /**
+   * Writes JSON through Graph; existing content is replaced.
+   * @param fileName - File name; passed into the Graph path without sanitization.
+   * @param content - JSON-serializable value; generic types do not validate serialization.
+   * @param folder - Optional namespace; non-alphanumeric characters except hyphen/underscore become hyphens.
+   * @returns Resolves after Graph accepts the write.
+   * @throws Serialization and Graph failures.
+   */
   write: <T = unknown>(
     fileName: string,
     content: T,
@@ -103,6 +135,17 @@ function getDownloadUrl(driveItem: unknown): string {
   return downloadUrl;
 }
 
+/**
+ * Creates explicit app-root JSON operations without React context or state.
+ * @param graphClient - Initialized, caller-owned Microsoft Graph client.
+ * @returns JSON read and write methods; construction performs no request.
+ *
+ * @example
+ * ```ts
+ * const appData = createSPFxOneDriveAppDataService(graphClient);
+ * const settings = await appData.read<{ theme: string }>('settings.json');
+ * ```
+ */
 export function createSPFxOneDriveAppDataService(
   graphClient: MSGraphClientV3
 ): SPFxOneDriveAppDataService {

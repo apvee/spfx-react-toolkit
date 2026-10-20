@@ -32,3 +32,7 @@ const actual: Date | null = methods.getValues('date'); void actual;
 <F.TimePicker name="time" parseTimeStringToDate={() => ({ date: null, error: 'bad' })} />;
 // @ts-expect-error compat 0.4.21 does not support Input-only shadow appearances
 <F.TimePicker name="time" appearance="filled-darker-shadow" />;
+
+<F.DateTime name="appointment" label={{ children: 'Appointment' }} dateLabel={{ ref: React.createRef<HTMLSpanElement>(), children: 'Date' }} timeLabel={{ children: (Component, props) => <Component {...props}>Time</Component> }} />;
+// @ts-expect-error DateTime part labels cannot replace their native Labels
+<F.DateTime name="appointment" dateLabel={{ as: 'label', children: 'Date' }} />;

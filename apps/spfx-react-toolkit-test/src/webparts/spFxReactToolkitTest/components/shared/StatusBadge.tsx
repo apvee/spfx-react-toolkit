@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Icon } from '@fluentui/react';
-import styles from '../SpFxReactToolkitTest.module.scss';
+import { Badge } from '@fluentui/react-components';
+import { DemoIcon } from './DemoIcon';
 
 /**
  * Props for the StatusBadge component
@@ -17,8 +17,7 @@ export interface IStatusBadgeProps {
  * with success/error styling based on availability
  */
 export const StatusBadge: React.FC<IStatusBadgeProps> = ({ available, label }) => (
-  <div className={`${styles.statusBadge} ${available ? styles.success : styles.error}`}>
-    <Icon iconName={available ? 'Completed' : 'ErrorBadge'} />
+  <Badge appearance="tint" color={available ? 'success' : 'danger'} icon={<DemoIcon name={available ? 'Completed' : 'ErrorBadge'} />}>
     {label}
-  </div>
+  </Badge>
 );

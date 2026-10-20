@@ -172,3 +172,28 @@ test('untyped HTML injection is discarded and shell modules create no renderer o
     assert.doesNotMatch(source, /createDOMRenderer|@tiptap|prosemirror|\/\*#__PURE__\*\//);
   }
 }));
+test('action slots keep providers, refs, title and child identity across shell updates', () => run(h => {
+  const ref = h.React.createRef(), actionRef = h.React.createRef(); let callbacks = 0;
+  const { useSPFxProperties } = h.load('hooks/useSPFxProperties.ts');
+  function Action() { return h.React.createElement('button', {}, useSPFxProperties().properties.title); }
+  const host = h.instance();
+  const action = { ref: actionRef, className: 'slot-action', children: (Component, props) => {
+    callbacks++; return h.React.createElement(Component, props, h.React.createElement(Action));
+  } };
+  const fixture = h.mount(host, h.React.createElement('input', { defaultValue: 'draft' }), { ref, action });
+  const input = fixture.container.querySelector('input'); input.value = 'unsaved';
+  assert.equal(actionRef.current.tagName, 'DIV'); assert.ok(actionRef.current.classList.contains('slot-action'));
+  assert.equal(actionRef.current.textContent, 'initial'); assert.ok(callbacks > 0);
+  const root = ref.current, button = actionRef.current.querySelector('button');
+  for (const mode of [2, 1]) { host.displayMode = mode; fixture.render(); }
+  assert.equal(ref.current, root); assert.equal(actionRef.current.querySelector('button'), button);
+  assert.equal(fixture.container.querySelector('input'), input); assert.equal(input.value, 'unsaved');
+  host.properties.showTitle = false; fixture.render(host, { ref, action: { children: '' } });
+  assert.ok(fixture.container.querySelector('[data-web-part-shell-body]').previousElementSibling);
+  fixture.render(host, { action: { children: () => undefined } });
+  assert.ok(fixture.container.querySelector('[data-web-part-shell-body]').previousElementSibling, 'opaque empty callback retains requested header');
+  fixture.render(host, { action: '' });
+  assert.ok(fixture.container.querySelector('[data-web-part-shell-body]').previousElementSibling, 'legacy empty-string header stays present');
+  fixture.render(host, { action: h.React.createElement(h.React.Fragment) });
+  assert.ok(fixture.container.querySelector('[data-web-part-shell-body]').previousElementSibling, 'legacy empty-fragment header stays present');
+}));

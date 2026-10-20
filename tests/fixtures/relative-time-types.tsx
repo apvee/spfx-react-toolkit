@@ -29,3 +29,11 @@ const element = <RelativeTime dateTime={undefined} ref={React.createRef<HTMLTime
 void element;
 // @ts-expect-error New APIs represent absence with undefined, not null.
 const legacyNull: RelativeTimeProps = { dateTime: null };
+<RelativeTime dateTime={undefined} fallback={{ ref: React.createRef<HTMLSpanElement>(), children: (Component, slotProps) => <Component {...slotProps}>Unavailable</Component> }} />;
+<RelativeTime dateTime={undefined} fallback={false && 'Hidden'} />;
+// @ts-expect-error fallback tag is fixed
+<RelativeTime dateTime={undefined} fallback={{ as: 'time', children: 'Unavailable' }} />;
+// @ts-expect-error fallback raw HTML is unsupported
+<RelativeTime dateTime={undefined} fallback={{ dangerouslySetInnerHTML: { __html: 'unsafe' } }} />;
+// @ts-expect-error callbacks belong inside slot objects
+<RelativeTime dateTime={undefined} fallback={() => 'Unavailable'} />;

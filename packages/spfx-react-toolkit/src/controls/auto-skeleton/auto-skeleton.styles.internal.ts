@@ -36,7 +36,9 @@ export function useAutoSkeletonGeometryClasses(bones: readonly AutoSkeletonBone[
       top: `${bone.y}px`,
       width: `${bone.width}px`,
       height: `${bone.height}px`,
-      borderRadius: bone.shape === 'circle' ? '50%' : `${bone.radius}px`,
+      // A measured zero is content geometry, not an instruction to flatten Fluent's rectangle shape.
+      ...(bone.shape === 'circle' ? { borderRadius: '50%' }
+        : bone.radius > 0 ? { borderRadius: `${bone.radius}px` } : {}),
     },
   })({ renderer, dir }).root), [bones, renderer, dir]);
 }

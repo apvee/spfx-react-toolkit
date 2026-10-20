@@ -8,7 +8,10 @@ import type { StageBodyProps } from './stage.types';
  * Requires an owning Stage and inherits its surface padding; JSX remains unchanged.
  * @param props Native div attributes, forwarded ref and optional content.
  * @returns A growing zero-padding div; raw HTML injection is unsupported.
- * @example <Stage.Body><input aria-label="Name" /></Stage.Body>
+ * @example
+ * ```tsx
+ * <Stage presentation="dialog"><Stage.Body><input aria-label="Name" /></Stage.Body></Stage>
+ * ```
  */
 export const StageBody = React.forwardRef<HTMLDivElement, StageBodyProps>(({ children, className, ...nativeProps }, ref) => {
   const attributes: React.HTMLAttributes<HTMLDivElement> = nativeProps;

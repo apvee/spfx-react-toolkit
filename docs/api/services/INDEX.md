@@ -286,7 +286,33 @@ Returned methods:
 | `search(query, options?)` | Runs SharePoint Search from a text query or query builder |
 | `suggest(queryText)` | Returns query suggestions |
 
-Default options can set `pageSize`, `selectProperties`, and `refiners`. Per-request options can set `pageSize`, `startRow`, and refinement filters.
+Default options can set `pageSize`, `selectProperties`, `refiners`, and `refinerOperator`. Per-request options can set `pageSize`, `startRow`, refinement filters, and a `refinerOperator` override.
+
+`refinementFilters` maps managed-property names to arrays of server-returned string refinement tokens. Use each entry's `token`, including any FQL quote delimiters, rather than its display `value`. The service handles tokens generically:
+
+| Input | Emitted operand |
+| --- | --- |
+| Quoted string or quoted hex token | Unchanged, without `equals(...)` |
+| Unquoted hex token (`ǂǂ...`) | Quoted once |
+| Numeric or ISO date scalar | Unchanged |
+| Native FQL expression (`range(...)`, `datetime(...)`, etc.) | Unchanged; SharePoint validates it |
+| Legacy unquoted text | `equals("value")`, escaping quotes and backslashes |
+
+`refinerOperator: 'and' | 'or'` defaults to `'and'`. It controls values within each property; different properties always combine with AND. OR groups a property's operands as `Property:or(token1,token2)`, including numeric/date intervals. A request override takes precedence over the service default. Empty arrays contribute no restriction. For person facets, the sample requests `DisplayAuthor`; `Author` can still be selected as result metadata. Property names are preserved without automatic remapping.
+
+```ts
+const service = createSPFxPnPSearchService(sp, {
+  refiners: 'FileType,DisplayAuthor,Size,Write', refinerOperator: 'or'
+});
+const response = await service.search('*');
+const fileType = response.refiners.find(refiner => refiner.name === 'FileType');
+const pdf = fileType?.entries.find(entry => entry.value === 'pdf');
+if (pdf?.token) {
+  await service.search('*', {
+    refinementFilters: new Map([['FileType', [pdf.token]]])
+  });
+}
+```
 
 `SPFxPnPSearchResponse<T>` contains `results`, `totalResults`, and `refiners`.
 

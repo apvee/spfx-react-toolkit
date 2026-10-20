@@ -28,7 +28,7 @@ async function settle() { await page.evaluate(() => new Promise(resolve => reque
 async function token(name) { return node('provider').evaluate((element, value) => getComputedStyle(element).getPropertyValue(`--${value}`).trim(), name); }
 const rgb = hex => /^#[\da-f]{6}$/i.test(hex) ? `rgb(${[1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16)).join(', ')})` : hex;
 async function themeChecks(choice, theme) {
-  await select('theme', choice); await settle();
+  await page.evaluate(theme => window.demoFixtureHost.update({ theme: theme === 'host' ? 'light' : theme }), choice); await settle();
   check(`${choice}:real-theme-token`, await token('colorBrandBackground'), theme.colorBrandBackground);
   await select('preset', 'canvas');
   check(`${choice}:canvas-background`, await computed('preset-preview', 'backgroundColor'), rgb(theme.colorNeutralBackground1));
@@ -117,7 +117,32 @@ async function thumbInteractions(axis) {
     check('Form page errors', pageErrors, []);
     return;
   }
+  if (process.env.STYLES_PANEL_SUGGESTIONS_ONLY === '1') {
+    await page.goto(`${url}?suggestions-only=1`);
+    const input = page.getByRole('textbox', { name: 'Search with Autocomplete' });
+    await input.fill('keyboard');
+    const suggestion = page.getByRole('button', { name: 'keyboard suggestion', exact: true });
+    await suggestion.waitFor();
+    await input.focus(); await page.keyboard.press('Tab');
+    check('suggestion receives keyboard focus', await suggestion.evaluate(e => e === document.activeElement), true);
+    await page.keyboard.press('Enter');
+    check('Enter accepts suggestion', await input.inputValue(), 'keyboard suggestion');
+    await input.fill('space');
+    const spaceSuggestion = page.getByRole('button', { name: 'space suggestion', exact: true });
+    await spaceSuggestion.waitFor(); await spaceSuggestion.focus(); await page.keyboard.press('Space');
+    check('Space accepts suggestion', await input.inputValue(), 'space suggestion');
+    await page.screenshot({ path: path.join(output, `${label}-keyboard-suggestions.png`), fullPage: true });
+    check('suggestions console health', consoleMessages, []); check('suggestions page errors', pageErrors, []);
+    return;
+  }
+  await page.goto(url);
+  await require('./foundation-single-browser.helpers.cjs').checkFoundationSingleBrowser(page, check);
   await page.goto(url); await node('layout-preview').waitFor();
+  // The retained conformance panels now use the shared collapsed diagnostic shell.
+  // Open those native disclosures before exercising their original ref/slot probes.
+  for (const disclosure of await page.getByRole('button', { name: /^(Advanced diagnostics|Advanced diagnostics)$/ }).all()) {
+    if (await disclosure.getAttribute('aria-expanded') !== 'true') await disclosure.click();
+  }
   check('page identity', await page.title(), 'StylesPanel local browser fixture');
   check('local origin', new URL(page.url()).origin, url);
   check('meaningful actual panel', await page.locator('h3').filter({ hasText: 'Layout and roles' }).count(), 1);
@@ -126,6 +151,23 @@ async function thumbInteractions(axis) {
   check('fixture discloses SPFx boundary', (await page.locator('body').textContent()).includes('not authenticated SharePoint validation'), true);
   await page.screenshot({ path: path.join(output, `${label}-desktop.png`), fullPage: true });
   if (process.env.STYLES_PANEL_GROUPS_ONLY !== '1') {
+  await node('layout-width').focus();
+  await page.keyboard.press('ControlOrMeta+A'); await page.keyboard.press('Backspace');
+  check('numeric input permits clear draft', await node('layout-width').inputValue(), '');
+  check('clear draft retains descriptor', await computed('layout-preview', 'width'), '240px');
+  for (const digit of ['3', '2', '0']) await page.keyboard.type(digit);
+  check('ordinary sequential numeric typing', await node('layout-width').inputValue(), '320');
+  check('typed draft updates descriptor', await computed('layout-preview', 'width'), '320px');
+  await page.keyboard.type('.5');
+  check('ordinary fraction typing', await node('layout-width').inputValue(), '320.5');
+  check('typed fraction descriptor', await computed('layout-preview', 'width'), '320.5px');
+  await fill('layout-columns', '0');
+  check('invalid minimum draft stays editable', await node('layout-columns').inputValue(), '0');
+  check('minimum draft retains columns', (await computed('layout-preview', 'gridTemplateColumns')).split(' ').length, 2);
+  await node('layout-columns').blur();
+  check('minimum draft resets on blur', await node('layout-columns').inputValue(), '2');
+  await fill('layout-columns', '2.5'); await node('layout-columns').blur();
+  check('fractional integer draft resets on blur', await node('layout-columns').inputValue(), '2');
   await fill('layout-width', 240.5); await fill('layout-gap', 24.5);
   check('fractional width accepted', await computed('layout-preview', 'width'), '240.5px');
   check('fractional gap accepted', await computed('layout-preview', 'columnGap'), '24.5px');
@@ -141,7 +183,7 @@ async function thumbInteractions(axis) {
   await select('background', 'subtle'); check('subtle background role', await computed('role-preview', 'backgroundColor'), 'rgba(0, 0, 0, 0)');
   await select('background', 'alternative'); check('alternative background role', await computed('role-preview', 'backgroundColor'), rgb(webLightTheme.colorNeutralBackground2));
   await select('preset', 'brand'); const presetClasses = await node('preset-preview').getAttribute('class');
-  await select('theme', 'dark'); check('theme retains descriptor classes', await node('preset-preview').getAttribute('class'), presetClasses);
+  await page.evaluate(() => window.demoFixtureHost.update({ theme: 'dark' })); check('theme retains descriptor classes', await node('preset-preview').getAttribute('class'), presetClasses);
   check('dark preset live variables', await computed('preset-preview', 'backgroundColor'), rgb(teamsDarkTheme.colorBrandBackground));
   await themeChecks('host', webLightTheme); await themeChecks('default', teamsLightTheme);
   await themeChecks('dark', teamsDarkTheme); await themeChecks('contrast', teamsHighContrastTheme);
@@ -149,7 +191,7 @@ async function thumbInteractions(axis) {
   check('high contrast visible notice', (await node('preset-notice').textContent()).includes('unsupported'), true);
   check('high contrast readable canvas fallback', await computed('preset-preview', 'backgroundColor'), rgb(teamsHighContrastTheme.colorNeutralBackground1));
   await select('preset', 'disabled'); check('disabled preset semantic presentation', await node('preset-preview').getAttribute('aria-disabled'), 'true');
-  await select('theme', 'default'); await select('direction', 'rtl');
+  await page.evaluate(() => window.demoFixtureHost.update({ theme: 'default' })); await select('direction', 'rtl');
   check('active provider RTL logical padding', await computed('direction-preview', 'paddingRight'), '32px');
   check('active provider RTL opposite padding', await computed('direction-preview', 'paddingLeft'), '12px');
   await select('direction', 'ltr'); check('active provider LTR logical padding', await computed('direction-preview', 'paddingLeft'), '32px');
@@ -174,11 +216,22 @@ async function thumbInteractions(axis) {
   check('keyboard reaches native action', await node('state-preview').evaluate(element => document.activeElement === element), true);
   check('real focus-visible state', await node('state-preview').evaluate(element => element.matches(':focus-visible')), true);
   check('focus recipe border', await computed('state-preview', 'borderTopColor'), rgb(teamsLightTheme.colorBrandStroke1));
-  check('native visible outline', await node('state-preview').evaluate(element => { const s = getComputedStyle(element); return parseFloat(s.outlineWidth) > 0 && s.outlineStyle !== 'none'; }), true);
+  check('Fluent visible focus indicator', await node('state-preview').evaluate(element => { const s = getComputedStyle(element); return s.boxShadow !== 'none'; }), true);
   await node('state-preview').hover({ position: { x: 5, y: 5 } }); await page.mouse.down();
   check('simultaneous native states', await node('state-preview').evaluate(element => [':hover', ':active', ':focus-visible'].map(state => element.matches(state))), [true, true, true]);
-  check('active wins hover and selected', await computed('state-preview', 'backgroundColor'), rgb(teamsLightTheme.colorBrandBackground));
-  await page.mouse.up(); await node('disabled').check();
+  check('Fluent combined pressed treatment remains visible', await computed('state-preview', 'backgroundColor'), rgb(teamsLightTheme.colorNeutralBackground1Pressed));
+  check('real active descriptor scope carries brand recipe', await node('state-preview').evaluate(e => getComputedStyle(e).getPropertyValue('--apvee-sx-backgroundColor-base-active').trim()), teamsLightTheme.colorBrandBackground);
+  check('active descriptor rule is applied to the real action', await node('state-preview').evaluate(element => {
+    const classes = new Set(element.className.split(/\s+/));
+    return Array.from(document.styleSheets).flatMap(sheet => Array.from(sheet.cssRules)).some(rule =>
+      rule.selectorText?.includes(':active') && rule.style?.getPropertyValue('--apvee-sx-backgroundColor-base-active') === 'var(--colorBrandBackground)' &&
+      [...rule.selectorText.matchAll(/\.([a-zA-Z0-9_-]+)/g)].some(match => classes.has(match[1])));
+  }), true);
+  await page.mouse.up();
+  const beforeKeyboard = await page.getByText('Action invocations:', { exact: false }).textContent();
+  await node('state-preview').focus(); await page.keyboard.press('Space');
+  check('Space invokes real Fluent action', await page.getByText('Action invocations:', { exact: false }).textContent() !== beforeKeyboard, true);
+  await node('disabled').check();
   check('native disabled', await node('state-preview').isDisabled(), true);
   const before = await page.getByText('Action invocations:', { exact: false }).textContent();
   await node('state-preview').hover({ position: { x: 5, y: 5 } });
@@ -227,15 +280,19 @@ async function thumbInteractions(axis) {
     }
   }
   check('catalog member count', exercised, 220);
-  await select('catalog-family', 'presets'); await select('catalog-member', 'inverted'); await select('theme', 'contrast');
+  await select('catalog-family', 'presets'); await select('catalog-member', 'inverted'); await page.evaluate(() => window.demoFixtureHost.update({ theme: 'contrast' }));
   check('catalog inverted high contrast unavailable', await node('catalog-preview').getAttribute('data-unsupported'), 'true');
   await page.screenshot({ path: path.join(output, `${label}-high-contrast.png`), fullPage: true });
-  await select('theme', 'dark'); await select('preset', 'canvas'); await select('catalog-member', 'canvas');
+  await page.evaluate(() => window.demoFixtureHost.update({ theme: 'dark' })); await select('preset', 'canvas'); await select('catalog-member', 'canvas');
   await page.screenshot({ path: path.join(output, `${label}-dark.png`), fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 }); await settle();
   await page.screenshot({ path: path.join(output, `${label}-mobile.png`), fullPage: true });
   check('mobile controls stay usable', await node('catalog-family').isVisible(), true);
   check('mobile no page-wide overflow', await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true);
+  if (process.env.STYLES_PANEL_STYLES_ONLY === '1') {
+    check('Styles console health', consoleMessages, []); check('Styles page errors', pageErrors, []);
+    return;
+  }
   // Actual FormattedText sample consumes the compiled library through the existing boundary.
   const ft = id => page.locator(`[data-formatted-text-demo="${id}"]`);
   await ft('text').fill('Read **updates** in [docs](#local). ' + 'Long text '.repeat(40));
@@ -255,7 +312,7 @@ async function thumbInteractions(axis) {
   check('FormattedText sample highlight', await ft('preview').locator('mark').count(), 1);
   await ft('preview').locator('strong').click();
   check('FormattedText sample native click', (await ft('observations').textContent()).includes('Preview clicks: 1.'), true);
-  await ft('rtl').check(); await ft('theme').check();
+  await ft('rtl').check(); await page.evaluate(() => window.demoFixtureHost.update({ theme: 'dark' }));
   check('FormattedText sample RTL', await ft('preview').evaluate(e => getComputedStyle(e).direction), 'rtl');
   check('FormattedText preserves authored JSX', await ft('mixed-jsx').locator('button').count(), 1);
   await ft('mixed-jsx').locator('button').click();
@@ -301,7 +358,7 @@ async function thumbInteractions(axis) {
   await sk('animation').selectOption('pulse'); await settle();
   await sk('direction').check(); await settle();
   check('AutoSkeleton sample RTL geometry',await skPreview.evaluate(root=>{const rect=root.querySelector('[data-auto-skeleton-demo="rectangle"]').getBoundingClientRect();return [...root.querySelectorAll('[data-auto-skeleton-shape]')].some(e=>{const r=e.getBoundingClientRect();return r.width===160&&r.height===24&&Math.abs(r.left-rect.left)<=1&&Math.abs(r.top-rect.top)<=1;});}),true);
-  await sk('theme').check(); await settle();
+  await page.evaluate(() => window.demoFixtureHost.update({ theme: 'dark' })); await settle();
   await skPreview.screenshot({path:path.join(output,`${label}-auto-skeleton-preview.png`)});
   await sk('loading').uncheck(); await settle();
   check('AutoSkeleton sample state retained',await sk('focus-target').inputValue(),'retained sample note');
@@ -320,7 +377,7 @@ async function thumbInteractions(axis) {
     await sm('preset').selectOption(preset);await settle();
     check(`StateMessage sample ${preset} artwork`,await smRoot.locator('svg').count(),1);
   }
-  await sm('theme').check();await sm('direction').check();await sm('resize').check();await sm('long').check();await settle();
+  await page.evaluate(() => window.demoFixtureHost.update({ theme: 'dark' }));await sm('direction').check();await sm('resize').check();await sm('long').check();await settle();
   check('StateMessage sample narrow no overflow',await smRoot.evaluate(e=>e.scrollWidth<=e.clientWidth),true);
   check('StateMessage sample rtl',await smRoot.evaluate(e=>getComputedStyle(e).direction),'rtl');
   await sm('role').check();check('StateMessage sample explicit alert',await smRoot.locator('[data-state-message-text]').getAttribute('role'),'alert');
@@ -368,17 +425,17 @@ async function thumbInteractions(axis) {
     return divider.top - before.bottom === 6 && after.top - divider.top - stroke === 6 && after.height === 44;
   }), true);
   check('Groups sample zero Accordion lateral inset', await accordion.evaluate(e => [...e.querySelectorAll('.fui-AccordionHeader button')].every(button => { const css = getComputedStyle(button); return css.paddingLeft === '0px' && css.paddingRight === '0px'; }) && [...e.querySelectorAll('.fui-AccordionPanel')].every(panel => { const css = getComputedStyle(panel); return css.marginLeft === '0px' && css.marginRight === '0px'; })), true);
-  const iconDiagnostics = await page.locator('[data-groups-demo="frame"] [data-icon-name]').evaluateAll(nodes => nodes.map(e => {
+  const iconDiagnostics = await page.locator('[data-groups-demo="frame"] [data-group-icon] svg,[data-groups-demo="frame"] [data-group-item-icon] svg').evaluateAll(nodes => nodes.map(e => {
     const dimensions = node => { const rect = node.getBoundingClientRect(), css = getComputedStyle(node); return { width: rect.width, height: rect.height, fontSize: css.fontSize, lineHeight: css.lineHeight, display: css.display }; };
-    return { name: e.getAttribute('data-icon-name'), icon: dimensions(e), slot: dimensions(e.parentElement), svg: e.querySelector('svg') ? dimensions(e.querySelector('svg')) : undefined };
+    return { name: e.tagName, icon: dimensions(e), slot: dimensions(e.closest('[data-group-icon],[data-group-item-icon]')), svg: dimensions(e) };
   }));
   observations.push({ name: 'Groups sample icon geometry diagnostic', actual: iconDiagnostics, expected: 'Diagnostic only; assertions below verify dimensions' });
-  check('Groups sample library header icon slot and font 24px', await page.locator('[data-groups-demo="frame"] [data-group-icon]').evaluateAll(nodes => nodes.length === 2 && nodes.every(e => {
-    const rect = e.getBoundingClientRect(), icon = e.querySelector('[data-icon-name]'), painted = icon.querySelector('svg').getBoundingClientRect();
+  check('Groups sample library header icon slot and font 24px', await page.locator('[data-groups-demo="frame"] [data-group-icon],[data-groups-demo="accordion"] [data-group-icon]').evaluateAll(nodes => nodes.length === 2 && nodes.every(e => {
+    const rect = e.getBoundingClientRect(), icon = e.querySelector('svg'), painted = icon.getBoundingClientRect();
     return rect.width === 24 && rect.height === 24 && getComputedStyle(icon).fontSize === '24px' && painted.width === 24 && painted.height === 24;
   })), true);
-  check('Groups sample library item icon slot and font 20px', await page.locator('[data-groups-demo="frame"] [data-group-item-icon]').evaluateAll(nodes => nodes.length === 4 && nodes.every(e => {
-    const rect = e.getBoundingClientRect(), icon = e.querySelector('[data-icon-name]'), painted = icon.querySelector('svg').getBoundingClientRect();
+  check('Groups sample library item icon slot and font 20px', await page.locator('[data-groups-demo="frame"] [data-group-item-icon],[data-groups-demo="accordion"] [data-group-item-icon]').evaluateAll(nodes => nodes.length === 4 && nodes.every(e => {
+    const rect = e.getBoundingClientRect(), icon = e.querySelector('svg'), painted = icon.getBoundingClientRect();
     return rect.width === 20 && rect.height === 20 && getComputedStyle(icon).fontSize === '20px' && painted.width === 20 && painted.height === 20;
   })), true);
   await groups('email').fill('edited@example.com');
@@ -414,13 +471,13 @@ async function thumbInteractions(axis) {
   await groups('hidden').check();
   check('Groups sample native hidden', await settings.isVisible(), false);
   await groups('hidden').uncheck();
-  await groups('theme').check(); await groups('direction').check(); await settle();
+  await page.evaluate(() => window.demoFixtureHost.update({ theme: 'dark' })); await groups('direction').check(); await settle();
   check('Groups sample RTL', await settings.evaluate(e => getComputedStyle(e).direction), 'rtl');
   check('Groups sample theme token', await settings.evaluate(e => getComputedStyle(e).getPropertyValue('--colorNeutralForeground1').trim()), '#ffffff');
   check('Groups sample caller settings preserved', await groups('email').inputValue(), 'edited@example.com');
-  await groups('theme').uncheck(); await groups('direction').uncheck(); await settle();
+  await page.evaluate(() => window.demoFixtureHost.update({ theme: 'light' })); await groups('direction').uncheck(); await settle();
   await groups('frame').screenshot({ path: path.join(output, `${label}-groups-light.png`) });
-  await groups('theme').check(); await groups('direction').check(); await settle();
+  await page.evaluate(() => window.demoFixtureHost.update({ theme: 'dark' })); await groups('direction').check(); await settle();
   await groups('frame').screenshot({ path: path.join(output, `${label}-groups-preview.png`) });
   await groups('resize').selectOption('320'); await settle();
   check('Groups sample compact no overflow', await settings.evaluate(e => e.scrollWidth <= e.clientWidth), true);

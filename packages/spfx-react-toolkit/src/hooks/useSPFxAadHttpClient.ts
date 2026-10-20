@@ -8,290 +8,131 @@ import { useAsyncInvoke } from './useAsyncInvoke.internal';
 
 /**
  * Return type for useSPFxAadHttpClient hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const info: SPFxAadHttpClientInfo = useSPFxAadHttpClient('https://api.contoso.com');
+ * console.log(info.isReady, info.resourceUrl);
+ * ```
  */
 export interface SPFxAadHttpClientInfo {
-  /** 
-   * Native AadHttpClient from SPFx.
-   * Provides access to Azure AD-secured APIs with built-in authentication.
-   * Undefined until resourceUrl is set and client initialization completes.
+  /**
+   * Native SPFx client, undefined until available or when service consumption/initialization fails. Direct client requests do not update hook loading/error state.
    */
   readonly client: AadHttpClient | undefined;
   
-  /** 
+  /**
    * Invoke Azure AD API call with automatic state management.
    * Tracks loading state and captures errors automatically.
-   * 
+   *
    * @param fn - Function that receives AadHttpClient and returns a promise
    * @returns Promise with the result
    * @throws Error if client is not initialized yet
-   * 
+   *
    * @example
    * ```tsx
+   * // Inside a React component beneath a matching host-specific SPFx provider:
    * const { invoke, resourceUrl } = useSPFxAadHttpClient('https://api.contoso.com');
-   * 
-   * const data = await invoke(client => 
-   *   client.get(`${resourceUrl}/api/orders`, AadHttpClient.configurations.v1)
-   *     .then(res => res.json())
-   * );
+   *
+   * // Call this handler from an event or an effect; do not request during render.
+   * const run = async () => {
+   *   const data = await invoke(client =>
+   *     client.get(`${resourceUrl}/api/orders`, AadHttpClient.configurations.v1)
+   *       .then(res => res.json())
+   *   );
+   * };
    * ```
+   * @throws Callback/request failures are normalized to Error, published when current, and rethrown. HTTP response.ok is not checked automatically.
    */
   readonly invoke: <T>(fn: (client: AadHttpClient) => Promise<T>) => Promise<T>;
   
-  /** 
-   * Loading state - true during invoke() calls.
-   * Does not track direct client usage.
+  /**
+   * True while any invoke call for the current client remains pending; direct client usage is not tracked.
    */
   readonly isLoading: boolean;
   
-  /** 
-   * Last error from invoke() calls.
-   * Does not capture errors from direct client usage.
-   * @see initError for initialization errors
+  /**
+   * Error from the latest-started invoke call; each new call clears it. Older/client-obsolete completions cannot replace it. Direct client usage is not tracked.
    */
   readonly error: Error | undefined;
   
-  /** Clear the current error */
+  /**
+   * Clear the current error
+   * @returns No value; initialization/context errors remain separate.
+   */
   readonly clearError: () => void;
   
-  /** Set or change the resource URL (triggers client re-initialization) */
+  /**
+   * Changes the resource target, triggering asynchronous client initialization; empty string clears the client.
+   * @param url - Resource URL or application ID.
+   * @returns No value.
+   */
   readonly setResourceUrl: (url: string) => void;
   
   /** Current Azure AD resource URL or App ID */
   readonly resourceUrl: string | undefined;
 
   /**
-   * True while the AAD client is being initialized.
-   * Use this to show a loading indicator during startup.
-   * 
+   * True while the selected resource client is being initialized. A false value alone does not guarantee client readiness.
+   *
    * @example
    * ```tsx
-   * const { client, isInitializing } = useSPFxAadHttpClient('https://api.contoso.com');
-   * 
-   * if (isInitializing) return <Spinner label="Initializing AAD client..." />;
-   * if (!client) return <Error message="AAD client unavailable" />;
+   * // Inside a React component beneath a matching host-specific SPFx provider:
+   * const { isInitializing, isReady } = useSPFxAadHttpClient('https://api.contoso.com');
+   * if (isInitializing) return <span>Initializing client</span>;
+   * if (!isReady) return <span>Client unavailable</span>;
    * ```
    */
   readonly isInitializing: boolean;
 
   /**
-   * Error that occurred during client initialization.
-   * If set, the client will remain undefined.
-   * 
+   * Client initialization error, or undefined when none is published. An initialization failure leaves client unavailable; invocation errors are exposed separately by error.
+   *
    * @example
    * ```tsx
+   * // Inside a React component beneath a matching host-specific SPFx provider:
    * const { initError } = useSPFxAadHttpClient('https://api.contoso.com');
-   * 
-   * if (initError) {
-   *   return <MessageBar messageBarType={MessageBarType.error}>
-   *     Failed to initialize AAD client: {initError.message}
-   *   </MessageBar>;
-   * }
+   * if (initError) return <span>{initError.message}</span>;
    * ```
    */
   readonly initError: Error | undefined;
 
   /**
-   * Computed state: true when client is ready for use.
-   * Equivalent to: client !== undefined && !isInitializing && !initError
-   * 
+   * True when the resource client exists, initialization is finished and no initialization error is present. Check readiness before invoking a request.
+   *
    * @example
    * ```tsx
-   * const { isReady, invoke, resourceUrl } = useSPFxAadHttpClient('https://api.contoso.com');
-   * 
-   * if (!isReady) return <Spinner />;
-   * 
-   * // Safe to use client or invoke
-   * const data = await invoke(c => c.get(`${resourceUrl}/api/data`, ...).then(r => r.json()));
+   * import { AadHttpClient } from '@microsoft/sp-http';
+   *
+   * function LoadButton() {
+   *   const { isReady, invoke, resourceUrl } = useSPFxAadHttpClient('https://api.contoso.com');
+   *   const load = async () => {
+   *     try {
+   *       const data = await invoke(client => client.get(`${resourceUrl}/api/data`, AadHttpClient.configurations.v1).then(response => response.json()));
+   *       console.log(data);
+   *     } catch (error) {
+   *       console.error(error);
+   *     }
+   *   };
+   *   return <button disabled={!isReady} onClick={() => void load()}>Load</button>;
+   * }
    * ```
    */
   readonly isReady: boolean;
 }
 
 /**
- * Hook to access Azure AD-secured APIs with built-in state management
- * 
- * Provides native AadHttpClient for authenticated Azure AD-secured API access.
- * Offers two usage patterns:
- * 
- * 1. **invoke()** - Automatic state management (loading + error tracking)
- * 2. **client** - Direct access for full control
- * 
- * For type safety, import SPFx types:
- * ```typescript
- * import { AadHttpClient } from '@microsoft/sp-http';
- * ```
- * 
- * Requirements:
- * - Add permissions to package-solution.json webApiPermissionRequests
- * - Admin must grant permissions in SharePoint Admin Center
- * - SPFx ServiceScope with AadHttpClientFactory service
- * 
- * @remarks
- * This hook consumes AadHttpClientFactory from SPFx ServiceScope using dependency injection.
- * The factory is consumed lazily and cached. The factory.getClient() method is then called
- * asynchronously for each resourceUrl to obtain the AadHttpClient instance.
- * 
- * @param initialResourceUrl - Azure AD resource URL or App ID (optional, can be set later)
- * 
- * @example Using invoke with state management
+ * Accesses the SPFx AadHttpClient from ServiceScope with asynchronous initialization. Direct client calls do not update hook state. invoke tracks all pending calls for its current client and publishes errors only from the latest-started call; obsolete completions still settle their promises. HTTP non-success responses must be checked by the callback; the hook does not inspect response.ok.
+ * @param initialResourceUrl - Initial resource URL or application ID, captured once; use setResourceUrl for later changes. Omitted/empty leaves the client unavailable.
+ * @returns Native client, invocation state and initialization/readiness state.
+ * @throws Missing SPFx provider or synchronous native factory-consumption failures.
+ *
+ * @example
  * ```tsx
- * function OrdersList() {
- *   const { invoke, isLoading, error, clearError, resourceUrl } = useSPFxAadHttpClient(
- *     'https://api.contoso.com'
- *   );
- *   const [orders, setOrders] = useState<Order[]>([]);
- *   
- *   const loadOrders = () => {
- *     invoke(client =>
- *       client.get(
- *         `${resourceUrl}/api/orders`,
- *         AadHttpClient.configurations.v1
- *       ).then(res => res.json())
- *     ).then(data => setOrders(data));
- *   };
- *   
- *   useEffect(() => { loadOrders(); }, []);
- *   
- *   if (isLoading) return <Spinner />;
- *   if (error) return (
- *     <MessageBar messageBarType={MessageBarType.error}>
- *       {error.message}
- *       <Link onClick={() => { clearError(); loadOrders(); }}>Retry</Link>
- *     </MessageBar>
- *   );
- *   
- *   return <ul>{orders.map(o => <li key={o.id}>{o.total}</li>)}</ul>;
- * }
- * ```
- * 
- * @example Using client directly for advanced control
- * ```tsx
- * import { AadHttpClient } from '@microsoft/sp-http';
- * 
- * function ProductsManager() {
- *   const { client, resourceUrl } = useSPFxAadHttpClient('https://api.contoso.com');
- *   const [products, setProducts] = useState([]);
- *   const [loading, setLoading] = useState(false);
- *   
- *   if (!client) return <Spinner label="Initializing AAD client..." />;
- *   
- *   const loadProducts = async () => {
- *     setLoading(true);
- *     try {
- *       const response = await client.get(
- *         `${resourceUrl}/api/products`,
- *         AadHttpClient.configurations.v1
- *       );
- *       const data = await response.json();
- *       setProducts(data);
- *     } catch (err) {
- *       console.error(err);
- *     } finally {
- *       setLoading(false);
- *     }
- *   };
- *   
- *   return (
- *     <>
- *       <button onClick={loadProducts} disabled={loading}>Load</button>
- *       {loading && <Spinner />}
- *       <DetailsList items={products} />
- *     </>
- *   );
- * }
- * ```
- * 
- * @example CRUD operations with invoke
- * ```tsx
- * function ItemsManager() {
- *   const { invoke, isLoading, error, resourceUrl } = useSPFxAadHttpClient(
- *     'https://api.contoso.com'
- *   );
- *   const [items, setItems] = useState([]);
- *   
- *   const loadItems = () => {
- *     invoke(client =>
- *       client.get(
- *         `${resourceUrl}/api/items`,
- *         AadHttpClient.configurations.v1
- *       ).then(res => res.json())
- *     ).then(data => setItems(data));
- *   };
- *   
- *   const createItem = (item: any) => {
- *     invoke(client =>
- *       client.post(
- *         `${resourceUrl}/api/items`,
- *         AadHttpClient.configurations.v1,
- *         { body: JSON.stringify(item) }
- *       ).then(res => res.json())
- *     ).then(loadItems);
- *   };
- *   
- *   const updateItem = (id: string, changes: any) => {
- *     invoke(client =>
- *       client.post(
- *         `${resourceUrl}/api/items/${id}`,
- *         AadHttpClient.configurations.v1,
- *         {
- *           headers: { 'X-HTTP-Method': 'PATCH' },
- *           body: JSON.stringify(changes)
- *         }
- *       )
- *     ).then(loadItems);
- *   };
- *   
- *   const deleteItem = (id: string) => {
- *     invoke(client =>
- *       client.post(
- *         `${resourceUrl}/api/items/${id}`,
- *         AadHttpClient.configurations.v1,
- *         { headers: { 'X-HTTP-Method': 'DELETE' } }
- *       )
- *     ).then(loadItems);
- *   };
- *   
- *   return (
- *     <ItemsUI 
- *       items={items} 
- *       loading={isLoading}
- *       error={error}
- *       onCreate={createItem}
- *       onUpdate={updateItem}
- *       onDelete={deleteItem}
- *     />
- *   );
- * }
- * ```
- * 
- * @example Lazy initialization with setResourceUrl
- * ```tsx
- * function DynamicApi() {
- *   const { invoke, setResourceUrl, resourceUrl, clearError } = useSPFxAadHttpClient();
- *   const [data, setData] = useState(null);
- *   
- *   const loadFromApi = async (apiUrl: string) => {
- *     clearError();
- *     setResourceUrl(apiUrl);
- *     
- *     // Wait for client initialization, then fetch
- *     setTimeout(() => {
- *       invoke(client =>
- *         client.get(
- *           `${apiUrl}/api/data`,
- *           AadHttpClient.configurations.v1
- *         ).then(res => res.json())
- *       ).then(setData);
- *     }, 100);
- *   };
- *   
- *   return (
- *     <>
- *       <button onClick={() => loadFromApi('https://api1.contoso.com')}>API 1</button>
- *       <button onClick={() => loadFromApi('https://api2.contoso.com')}>API 2</button>
- *       {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
- *     </>
- *   );
+ * function ClientStatus() {
+ *   const info = useSPFxAadHttpClient('https://api.contoso.com');
+ *   return <span>{info.isReady ? 'Ready' : 'Unavailable'}</span>;
  * }
  * ```
  */

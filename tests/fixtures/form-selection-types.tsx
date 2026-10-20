@@ -53,3 +53,11 @@ const numbersCodec: FormValueCodec<number[], string[]> = { toControl: value => v
 <F.Select name="text" options={options} defaultValue="a" />;
 // @ts-expect-error Input deliberately has no codec
 <F.Input name="number" codec={numberCodec} />;
+
+<F.TagPicker name="many" label={{ children: 'Tags' }} aria-label="Tag identities" options={options} noOptionsContent={{ children: (Component, props) => <Component {...props}>No matches</Component> }} strings={{ noOptions: { children: 'Localized' } }} />;
+// @ts-expect-error object labels do not automatically name the input and tag group
+<F.TagPicker name="many" label={{ children: 'Tags' }} options={options} />;
+// @ts-expect-error callbacks do not automatically name the input and tag group
+<F.TagPicker name="many" label={{ children: (Component, props) => <Component {...props}>Tags</Component> }} options={options} />;
+// @ts-expect-error message slots retain a fixed div container
+<F.TagPicker name="many" label="Tags" noOptionsContent={{ as: 'span', children: 'No matches' }} />;

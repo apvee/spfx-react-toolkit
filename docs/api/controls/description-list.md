@@ -55,10 +55,10 @@ The 480px transition matches toolkit `responsive.small` and the source Blocks me
 | Member | Type | Behavior |
 | --- | --- | --- |
 | `DescriptionListEntry.id` | `string \| number` | Required stable unique React identity within the list; not a DOM identifier. |
-| `DescriptionListEntry.label` | `NonNullable<Slot<'div'>>` | Required meaningful visible term; text, JSX or Fluent div-slot customization. |
-| `DescriptionListEntry.value` | `Slot<'div'>` | Associated definition; text, JSX or Fluent div-slot customization. Undefined leaves an empty definition. |
+| `DescriptionListEntry.label` | Non-nullable Fluent div content slot | Required meaningful visible term; text, JSX or Fluent div-slot customization. |
+| `DescriptionListEntry.value` | Fluent div content slot with conditions | Associated definition; text, JSX or Fluent div-slot customization. Undefined leaves an empty definition. |
 
-Zero is visible; empty strings and absent values retain their definitions. Legacy Fluent/React slot values may include null, which also yields an empty definition; use undefined for new absence defaults. IDs, data formatting and meaningful labels are consumer responsibilities.
+Zero is visible; empty strings, boolean conditions and absent values retain their definitions. Legacy Fluent/React slot values may include null, which also yields an empty definition; use undefined for new absence defaults. IDs, data formatting and meaningful labels are consumer responsibilities.
 
 ## DescriptionListItemProps
 
@@ -66,15 +66,15 @@ Zero is visible; empty strings and absent values retain their definitions. Legac
 
 | Member | Type | Behavior |
 | --- | --- | --- |
-| `DescriptionListItemProps.label` | `NonNullable<Slot<'div'>>` | Required visible term; customization stays inside the preserved dt. |
+| `DescriptionListItemProps.label` | Non-nullable Fluent div content slot | Required visible term; customization stays inside the preserved dt. |
 | `DescriptionListItemProps.dangerouslySetInnerHTML` | `never` | Unsupported raw-HTML pathway; use content slots. |
-| `DescriptionListItemProps.children` | `Slot<'div'>` | Required associated value; customization stays inside the preserved dd. |
+| `DescriptionListItemProps.children` | Fluent div content slot with conditions | Required associated value; customization stays inside the preserved dd. |
 
 Native children and `dangerouslySetInnerHTML` are replaced/excluded by the slot contract. Consumer `style` escape hatches are forwarded. Repository-authored styling uses classes with the shared host renderer.
 
 ## Slots and accessibility
 
-Scalar labels use semibold Fluent typography and scalar values regular typography. Rich JSX keeps its markup; paragraphs are not wrapped inside text spans. Fluent slot objects preserve native content attributes, refs and render callbacks:
+Scalar labels use semibold Fluent typography and scalar values regular typography. Rich JSX keeps its markup; paragraphs are not wrapped inside text spans. Fluent slot objects preserve allowed native content attributes, refs, consumer style, classes and render callbacks. Strings and JSX retain the existing inner div wrapper; undefined, booleans and legacy null leave the native cell empty. Explicit props objects request a div even when their static children are empty. `as` may only repeat `div`; it cannot select another tag. Slot refs identify the inner div, while root and Item refs continue to identify their native containers:
 
 ```tsx
 <DescriptionList>
@@ -84,12 +84,12 @@ Scalar labels use semibold Fluent typography and scalar values regular typograph
 </DescriptionList>
 ```
 
-Slot types exclude dangerouslySetInnerHTML, and the control removes that raw-HTML prop from resolved slot objects at runtime. Slots customize content inside invariant native term/definition cells. The list adds no keyboard behavior or focus stops; links and buttons retain their own native behavior. Supply an accessible name on the root when needed. Native hidden works on root and individual compound pairs in either layout. Fluent theme variables and normal forced-color adjustment preserve host colors; actual screen-reader and host behavior require separate validation.
+Slot types exclude `dangerouslySetInnerHTML`, and runtime resolution removes raw HTML and unsupported native keys and guards the fixed div tag, including for JavaScript callers. Callback children receive `(Component, props)` during normal rendering; they are never invoked to inspect presence. Keep the provided props on the rendered inner component to retain refs/classes/events. Arbitrary consumer JSX stays caller-owned and is not sanitized or cloned. React 17 can erase object restrictions through a `ReactNode` variable, so static checking alone cannot promise protection for erased values. Slots customize content inside invariant native term/definition cells. The list adds no keyboard behavior or focus stops; links and buttons retain their own native behavior. Supply an accessible name on the root when needed. Native hidden works on root and individual compound pairs in either layout. Fluent theme variables and normal forced-color adjustment preserve host colors; actual screen-reader and host behavior require separate validation.
 
 ## Dependencies and working sample
 
 No SPFx provider or new dependency is required. The control uses the existing shared React 17, Fluent UI 9 and Griffel peers, inherits the host theme/direction/renderer and registers no PnP features. Auto layout requires browser support for CSS container queries; explicit layouts work without a named container.
 
-The lazy **Description List** panel exercises data and compound composition, slots/callbacks, links/Badge/block values, literal strings, zero/blank/undefined, long content, widths 320/479/480/639/640/900, nested containers, independent theme/RTL, native refs/click observations/hidden and counter state across reorder/layout changes. Switching data versus compound mode creates a new example; state preservation is demonstrated within each mode.
+The lazy Description List tab shows one document detail with five entries. Layout, width, data/compound API, order and content variations modify that same list; diagnostics inspect its refs and callbacks without adding a nested list. The heading and one outline configuration precede the undecorated subject. Nested container, pathological values and independent/RTL comparisons remain in the [versioned regression fixture](../../../tests/fixtures/demo-control-isolation/description-list-regressions.tsx). Browser runners exercise the product route and then all preserved conformance assertions.
 
 See [development checks](../../DEVELOPMENT.md#description-list-checks) and [authenticated acceptance](../../SHAREPOINT-VALIDATION.md#description-list). Authenticated SharePoint, Teams/iframe and screen-reader checks remain **NOT EXECUTED** until separately recorded. Static demo checks do not execute the rendered scenario or establish tenant behavior.

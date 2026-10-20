@@ -57,7 +57,7 @@ Use browser Network throttling and log start/finish times to exercise overlappin
 | List paging | Load two pages, click loadMore twice promptly, and start a new query during a page request. No duplicate dispatch/obsolete page append. Failed pages can retry the same offset. |
 | Search refiners | Search, select refiners, refetch and load more; current filters persist. Start a new search; prior refiners clear. Results and hasMore reflect accumulated results. |
 | Latest request | Change list/key/file/query while a previous read is pending. Current identity's data/errors remain authoritative when an old response arrives. Remote writes may still complete; local guards do not cancel them. |
-| Suggestions | Type rapidly, change text during debounce, and clear while a request is pending. Suggestions reflect the current input. Trigger a failed suggestion and a newer successful search; obsolete failure must not replace the newer search error state. |
+| Suggestions | Type rapidly, change text during debounce, and clear while a request is pending. The autocomplete example shows loading throughout debounce and the request; suggestions reflect the current input. A successful empty response explains dependence on search history and tenant configuration, while a failed request shows a separate error with retry guidance. Editing retries and clears previous feedback; short input and selecting a suggestion return to idle. Obsolete responses/errors cannot replace current feedback. Trigger a failed suggestion and a newer successful search; obsolete failure must not replace the newer search error state. Indexed documents alone do not guarantee query suggestions. |
 | Error recovery | Exercise a missing list/file/property, inaccessible target and network failure; record loading completion, error presentation and successful retry after restoring access. |
 
 ## List selector modes
@@ -123,7 +123,7 @@ These authenticated host checks are **NOT EXECUTED**. The local React/Griffel DO
 | Check | Procedure and expected observation | Status |
 | --- | --- | --- |
 | Catalog and layout | Select every namespace/member, including overflow axes, spacing sides, typography, borders and decoration. Change width, gap and columns; the preview visibly follows the selected value. | NOT EXECUTED |
-| Theme and roles | Switch sample light/dark/high contrast themes and site theme. Foreground subtle and background subtle/alternative remain distinct mapped roles; scoped variables change computed styles without replacing classes with resolved RGB values. Inspect presets on canvas and alternative surfaces. | NOT EXECUTED |
+| Theme and roles | Change light/dark/high contrast from the SharePoint or Teams host; panels inherit that theme. Foreground subtle and background subtle/alternative remain distinct mapped roles; scoped variables change computed styles without replacing classes with resolved RGB values. Inspect presets on canvas and alternative surfaces. | NOT EXECUTED |
 | Contrast limitations | Record inverted only on supported light/dark palettes. The floor high contrast inverted pair is black on black (1:1) and unsupported for active content; use canvas/alternative. Disabled preset is disabled-only. Evaluate any custom host palette/surface independently. | NOT EXECUTED |
 | Independent query regions | Resize one of the two named ancestor regions across 480/640/1024px while holding viewport and the other region unchanged. Query content follows its nearest apvee-sx ancestor; its own container does not measure itself. | NOT EXECUTED |
 | Viewport and direction | Resize window separately from the query regions. Verify explicit viewport scopes and logical layout in LTR/RTL with consistent host direction. If vertical writing mode is exercised, container inline-size measures height. | NOT EXECUTED |
@@ -243,6 +243,7 @@ Authenticated checks are **NOT EXECUTED** until a tenant run records them. Build
 | Settings interaction and labels | Edit Notification email and toggle Receive account alerts. Values update through native controls; titles create no implicit label relationships. Invoke the settings header action and inspect the counter. | NOT EXECUTED |
 | Fluid sizing | Select widths 320/500/639/640/900. Each settings control stays beside its text while it fits; compact switches remain beside text at 500px and wider inputs wrap only when needed. Long text and actions fit with one 12px Card inset, zero title-description gap and dividers with 12px total additional spacing split equally around them, derived from the same Card size variable. Header icons occupy 24px and Item icons 20px; header-to-Card spacing is 12px. Use two web parts at different widths. | NOT EXECUTED |
 | Theme and direction | Switch light/dark and RTL. Typography, descriptions, separators, Card surfaces and native focus remain visible and correctly aligned. | NOT EXECUTED |
+| Group appearance | Select Filled, Alternate and Outline on the active SettingsGroup and AccordionGroup. Filled is the default; Alternate changes the native surface color; Outline has a visible border and no filled background or shadow. Edited values and open panels persist during appearance changes, including narrow widths and RTL. No Transparent option is offered. | NOT EXECUTED |
 | Controlled expansion | Toggle Profile/Advanced in single and multiple mode. Reported open panels match the visible panels; Close all panels closes them. | NOT EXECUTED |
 | Retained state and focus | Edit Profile note, close/reopen and confirm it persists. Tab past a closed Profile panel: retained input/button must not receive focus. Inspect native inert support in the tenant browser. | NOT EXECUTED |
 | Explicit reset | Enable Unmount closed panels, edit Profile note and close/reopen. The uncontrolled note resets; application-controlled settings values persist. | NOT EXECUTED |
@@ -313,8 +314,33 @@ Status: **NOT EXECUTED** in an authenticated SharePoint/Teams host. Build librar
 | Semantics and composition | One dl with dt/dd pairs for items or JSX; rich Badge/link/paragraph slots retain markup. Zero is visible and blank/undefined retain empty definitions. Strings remain literal. | NOT EXECUTED |
 | Container layout | Auto stacks at 320/479px and aligns at 480/639/640/900px; explicit layouts override. Nested 320px container remains vertical. Long labels/values wrap. Verify real workbench, page sections and Teams iframe widths. | NOT EXECUTED |
 | State, focus and refs | Increment A/B, reorder stable IDs and change layout/width; state and focused child persist within the selected API. Inspect root dl and compound grouping div refs; native click events bubble. | NOT EXECUTED |
-| Hidden and independence | Root and first compound pair hidden remove their rendered content. Two instances retain independent layout, counter, theme and direction choices. | NOT EXECUTED |
+| Hidden and independence | Root and first compound pair hidden remove their rendered content. Two instances inherit the host theme and retain independent layout/counter state and explicit direction overrides. | NOT EXECUTED |
 | Theme, RTL and accessibility | Verify light/dark, RTL logical order, forced colors and zoom. Screen reader conveys each visible term with its definition; links/buttons remain keyboard-operable without added focus stops. | NOT EXECUTED |
+
+## Integrated demo presentation
+
+Authenticated checks are **NOT EXECUTED**. Local [integrated checks](./DEVELOPMENT.md#integrated-demo-presentation-checks) simulate SPFx services/network snapshots while mounting the actual app, lazy registry panels and compiled controls.
+
+| Check | Expected observation | Status |
+| --- | --- | --- |
+| Host theme and focus | Change the site/Teams theme while a note is focused; previews/popups follow tokens, drafts/counters and focus remain. No panel theme selector is present. | NOT EXECUTED |
+| Navigation and disclosure | Reach all registered Fluent tabs with keyboard at 320px and native 200% zoom. Coverage summary stays visible; detailed coverage starts collapsed; diagnostics retain state and use scenario-specific initial states (AutoSkeleton, FormattedText, RelativeTime, StateMessage and Groups open; Form and Stage collapsed). | NOT EXECUTED |
+| Configuration and boundaries | Fluent 9 labeled fields configure real props outside previews. Actions remain reachable; intentional overflow belongs to named bounded regions. RTL override off inherits host direction. | NOT EXECUTED |
+| Form validation timing | Compare onSubmit, onBlur and onChange with a required empty Reference; errors appear at the selected event, drafts persist through mode/disclosure changes. | NOT EXECUTED |
+| Isolation and requests | Two webparts retain independent values/direction and renderer context. Mounting/disclosure does not perform CRUD; explicit test actions use disposable resources. | NOT EXECUTED |
+
+Record actual host/browser, theme/direction, screenshots, keyboard/focus, console and PASS/FAIL/NOT EXECUTED results separately from local simulation.
+
+## Access trims and scoped permissions — NOT EXECUTED
+
+These authenticated checks remain NOT EXECUTED until recorded against an actual tenant/user. Local deterministic HTTP/Graph fixtures and builds are not tenant passes.
+
+- In each actual lazy trim panel, Run/repeat a permitted, denied and invalid target. Observe Loading, protected counter/effect mounts, distinct Denied/Error text and the applied target. Change target/user/client/provider and confirm former content disappears before replacement reads complete.
+- SharePoint Permission Trim: current-web PageContext mask and native fallback, remote web, list by ID/title/decoded path, item, folder with parent-list validation; library root folder without list item uses list scope. Verify all/any and nested permission AND Entra group composition. Confirm repeat starts a new read where native mask is absent.
+- SharePoint Group Trim: direct membership, nonmembership, remote site-local user identity, exact names including apostrophes, all pages, missing/ambiguous groups and unreadable group errors. Entra principals within site groups are not expanded.
+- Entra Group Trim: obtain tenant approval for the configured User.Read and GroupMember.Read.All requests through the normal process; verify actual Graph access separately. Test GUID/name, All/M365/Security, member/owner/memberOrOwner, all/any, more than twenty IDs, type mismatch, name filtering before ambiguity and owner paging with limited-information IDs. Synchronized/distribution/non-M365 mail-enabled owners must report Error. Verify hidden membership limits; omissions are not proof of absence.
+- Context: preserve legacy idle/staged URL behavior and separately Run/repeat all four scoped overload targets; report errors independently from denial. Confirm actual server operations still enforce authorization.
+- Record tenant, host (SharePoint/Teams), user permissions, consent status, dates, expected/observed results and limitations in maintenance evidence. No deployment or tenant permission change has been performed by this integration.
 
 ## Picker host acceptance
 

@@ -1,20 +1,43 @@
+const { formProduct } = require('../tests/fixtures/demo-control-isolation/task3-product.browser.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
 
 /** Actual browser interactions shared by source and compiled consumer runs. */
 async function exerciseForm({ page, url, output, label, boundary, check, consoleMessages }) {
-  const node = name => page.locator(`[data-form-demo="${name}"]`);
+  const checkboxMarkers = new Set(['direction', 'disabled', 'quantity-read-only', 'scope-disabled', 'save-delay', 'save-fail', 'throw-validator']);
+  const selectMarkers = new Set(['resize', 'mode', 'validation-mode']);
+  const node = name => {
+    const selector = `[data-form-demo="${name}"]`;
+    const tag = checkboxMarkers.has(name) || name === 'custom' ? 'input' : selectMarkers.has(name) ? 'select' : undefined;
+    return page.locator(tag ? `${tag}${selector}, ${selector} ${tag}` : selector);
+  };
   const control = name => page.locator(`[data-form-control="${name}"]`);
   const live = async () => JSON.parse(await node('values').textContent());
   const field = (name, selector = 'input') => control(name).locator(selector).first();
   const state = async (name, wanted) => { await check(`Form live ${name}`, (await live())[name], wanted); };
   const settle = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   page.setDefaultTimeout(10000);
+  const nativeColorWarning = `The keyword 'slider-vertical' specified to an 'appearance' property is not standardized. It will be removed in the future. Use <input type=range style="writing-mode: vertical-lr; direction: rtl"> instead.`;
+  const productConsoleStart = consoleMessages.length;
+  await formProduct(page, { url, check });
+  await settle();
+  const productConsoleEnd = consoleMessages.length;
+  const productMessages = consoleMessages.slice(productConsoleStart, productConsoleEnd);
+  const productSaveFailure = /^Unexpected Form failure: Error: Simulated save failure(?:\n|$)/;
+  await check('Product exact Chrome native ColorArea deprecation warning', productMessages.filter(message => message.type === 'warning' && message.text === nativeColorWarning).length, 1);
+  // Product exercises one deliberately failed save for schema and one for dynamic.
+  await check('Product two deliberate current-family save failures', productMessages.filter(message => message.type === 'error' && productSaveFailure.test(message.text)).length, 2);
+  await check('Product unexpected app or browser diagnostics', productMessages.filter(message => !(message.type === 'warning' && message.text === nativeColorWarning) && !(message.type === 'error' && productSaveFailure.test(message.text))), []);
   await page.goto(`${url}/?form-only=1`);
   await check('Form local origin', new URL(page.url()).origin, new URL(url).origin);
   await check('Form page identity', await page.title(), boundary === 'compiled' ? 'StylesPanel local browser fixture' : 'useSx real-browser checkpoint');
   await check('Form framework overlay absent', await page.locator('webpack-dev-server-client-overlay,#webpack-dev-server-client-overlay,nextjs-portal').count(), 0);
   await node('panel').waitFor();
+  await exerciseFormValidationTiming({ page, check });
+  for (const name of ['Advanced diagnostics', 'Advanced composition and array operations', 'Dynamic Form family']) {
+    const disclosure = node('panel').getByRole('button', { name, exact: true });
+    if (await disclosure.getAttribute('aria-expanded') !== 'true') await disclosure.click();
+  }
   await check('Form meaningful page content', await node('panel').getByRole('heading', { name: 'Form — typed bindings and composition', exact: true }).count(), 1);
   await check('Form explicit library boundary', await page.locator('[data-form-boundary]').getAttribute('data-form-boundary'), boundary === 'compiled' ? 'compiled' : 'source');
   await check('ComboboxMulti selected labels inside input', await field('ComboboxMulti').inputValue(), 'Portugal');
@@ -121,11 +144,21 @@ async function exerciseForm({ page, url, output, label, boundary, check, console
   await control('FileInput').getByRole('button', { name: 'Clear native attachments', exact: true }).click(); await state('files', null); await check('Native file DOM cleared', await field('FileInput', 'input[type=file]').evaluate(e => e.files.length), 0);
   await field('FileInput', 'input[type=file]').setInputFiles(path.resolve('tests/fixtures/form-browser-selection.txt'));
   await node('clear-file').click(); await state('files', null); await check('Native file DOM cleared', await field('FileInput', 'input[type=file]').evaluate(e => e.files.length), 0);
-  await node('custom').fill('Browser custom hook'); await node('custom').press('Tab'); await state('custom', 'Browser custom hook');
+  await node('custom').fill('Browser custom hook');
+  const advanced = node('panel').getByRole('button', { name: 'Advanced composition and array operations', exact: true });
+  await advanced.click(); await advanced.click();
+  await check('Record custom draft survives composition collapse', await node('custom').inputValue(), 'Browser custom hook'); await node('custom').press('Tab'); await state('custom', 'Browser custom hook');
   await node('object').getByLabel('Headless customer name', { exact: true }).fill('Browser customer');
   await check('Object relative path', (await live()).customer.name, 'Browser customer');
   await node('object-section').getByLabel('Address city', { exact: true }).fill('Lisbon'); await check('ObjectSection relative path', (await live()).address.city, 'Lisbon');
   const rows = node('headless-array');
+  const retainedNote = rows.getByRole('textbox', { name: 'Headless note 1', exact: true });
+  await retainedNote.fill('Retained array draft');
+  const retainedNode = await retainedNote.elementHandle();
+  await advanced.click(); await advanced.click();
+  await check('Headless array draft survives advanced collapse', await retainedNote.inputValue(), 'Retained array draft');
+  await check('Headless array native field stays mounted through collapse', await retainedNode.evaluate(element => element === document.querySelector('[name="rows.0.note"]')), true);
+  await retainedNode.dispose();
   const action = name => rows.locator(`[data-form-array-action="${name}"]`);
   await action('append').click(); await check('Headless append adds complete row last', (await live()).rows.at(-1), { code: 'New row', note: '' });
   await action('prepend').click(); await check('Headless prepend adds complete row first', (await live()).rows[0], { code: 'Prepended', note: '' });
@@ -207,7 +240,7 @@ async function exerciseForm({ page, url, output, label, boundary, check, console
   await node('disabled').check(); await check('Disabled inherited by actual fields', await field('Input').isDisabled(), true); await node('disabled').uncheck();
   await node('frame').screenshot({ path: path.join(output, `${label}-form-light.png`) });
   await field('Input').scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(output, `${label}-form-light-viewport.png`) });
-  await node('theme').check(); await node('direction').check(); await settle();
+  await page.evaluate(() => window.demoFixtureHost ? window.demoFixtureHost.update({ theme: 'dark' }) : window.sxFixture.render({ theme: 'dark' })); await node('direction').check(); await settle();
   await check('RTL actual computed direction', await node('frame').evaluate(e => getComputedStyle(e).direction), 'rtl');
   await check('Dark actual theme token', await node('frame').evaluate(e => getComputedStyle(e).getPropertyValue('--colorNeutralForeground1').trim()), '#ffffff');
   await node('frame').screenshot({ path: path.join(output, `${label}-form-dark-rtl.png`) });
@@ -222,7 +255,17 @@ async function exerciseForm({ page, url, output, label, boundary, check, console
   await page.screenshot({ path: path.join(output, `${label}-form-forced-colors-viewport.png`) });
   await page.emulateMedia({ forcedColors: 'none' });
   const dynamic = node('dynamic'); await dynamic.getByLabel('Dynamic input', { exact: true }).fill('Changed dynamic value'); await dynamic.getByRole('button', { name: 'Submit dynamic', exact: true }).click(); await dynamic.getByRole('button', { name: 'Reset dynamic', exact: true }).click(); await check('Dynamic Form reset restores actual input', await dynamic.getByLabel('Dynamic input', { exact: true }).inputValue(), 'Dynamic name');
+  await field('Input').fill('Retained validation draft');
+  await node('validation-mode').selectOption('onChange');
+  const diagnostics = node('panel').getByRole('button', { name: 'Advanced diagnostics', exact: true });
+  if (await diagnostics.getAttribute('aria-expanded') !== 'false') await diagnostics.click();
+  if (await diagnostics.getAttribute('aria-expanded') !== 'true') await diagnostics.click();
+  await check('Record draft survives prop and diagnostic updates', await field('Input').inputValue(), 'Retained validation draft');
+  await node('mode').selectOption('schema'); await node('mode').selectOption('rules');
+  await check('Record draft survives validation example switch', await field('Input').inputValue(), 'Retained validation draft');
   await node('mode').selectOption('schema'); await node('schema').getByLabel('Transform quantity', { exact: true }).fill('23');
+  await check('Schema mode hides record-only simulation commands', await node('new-record').isVisible(), false);
+  await check('Schema mode exposes validator simulation command', await node('throw-validator').isVisible(), true);
   await node('schema').getByRole('button', { name: 'Submit transformed', exact: true }).click();
   await page.waitForFunction(() => document.querySelector('[data-form-demo="schema-output"]')?.textContent.includes('23'));
   await check('Schema transforms only submit output', JSON.parse(await node('schema-output').textContent()), { quantity: 23, type: 'number' });
@@ -239,10 +282,44 @@ async function exerciseForm({ page, url, output, label, boundary, check, console
   await check('Validator retry transformed output', JSON.parse(await node('schema-output').textContent()), { quantity: 12, type: 'number' });
   await check('Validator retry clears exact errors', JSON.parse(await node('schema-errors').textContent()), []);
   await check('Validator retry releases pending', await node('schema').getByRole('button', { name: 'Submit transformed', exact: true }).isDisabled(), false);
-  const nativeColorWarning = `The keyword 'slider-vertical' specified to an 'appearance' property is not standardized. It will be removed in the future. Use <input type=range style="writing-mode: vertical-lr; direction: rtl"> instead.`;
-  await check('Exact Chrome native ColorArea deprecation warning', consoleMessages.filter(message => message.type === 'warning' && message.text === nativeColorWarning).length, 1);
+  await settle();
+  const legacyMessages = consoleMessages.slice(productConsoleEnd);
+  await check('Exact Chrome native ColorArea deprecation warning', legacyMessages.filter(message => message.type === 'warning' && message.text === nativeColorWarning).length, 1);
   const expected = [/^Unexpected Form failure: Error: Simulated save failure(?:\n|$)/, /^Unexpected Form failure: Error: Simulated validator failure(?:\n|$)/];
-  for (const pattern of expected) await check(`Expected injected diagnostic ${pattern.source}`, consoleMessages.filter(message => message.type === 'error' && pattern.test(message.text)).length, 1);
-  await check('Unexpected app or browser diagnostics', consoleMessages.filter(message => !(message.type === 'warning' && message.text === nativeColorWarning) && !expected.some(pattern => message.type === 'error' && pattern.test(message.text))), []);
+  for (const pattern of expected) await check(`Expected injected diagnostic ${pattern.source}`, legacyMessages.filter(message => message.type === 'error' && pattern.test(message.text)).length, 1);
+  await check('Unexpected app or browser diagnostics', legacyMessages.filter(message => !(message.type === 'warning' && message.text === nativeColorWarning) && !expected.some(pattern => message.type === 'error' && pattern.test(message.text))), []);
 }
 module.exports = { exerciseForm };
+
+/** Actual mounted validation timing: each mode is checked before/after its trigger. */
+async function exerciseFormValidationTiming({ page, check }) {
+  const panel = page.locator('[data-form-demo="panel"]');
+  const field = panel.locator('[data-form-control="Input"]').locator('input');
+  const errors = panel.locator('[data-form-demo="errors"]');
+  const mode = panel.locator('[data-form-demo="validation-mode"]');
+  const reset = panel.locator('[data-form-demo="reset"]');
+  const settle = () => page.waitForTimeout(80);
+  const initialDiagnostics = panel.getByRole('button', { name: 'Advanced diagnostics', exact: true });
+  if (await initialDiagnostics.getAttribute('aria-expanded') !== 'true') await initialDiagnostics.click();
+  for (const value of ['onSubmit', 'onBlur', 'onChange']) {
+    await reset.click();
+    await mode.selectOption(value);
+    await field.fill(''); await settle();
+    await check(`Form ${value} required error after change`, (await errors.textContent()).includes('Reference is required'), value === 'onChange');
+    await field.press('Tab'); await settle();
+    await check(`Form ${value} required error after blur`, (await errors.textContent()).includes('Reference is required'), value !== 'onSubmit');
+    await panel.locator('[data-form-demo="submit"]').click(); await settle();
+    await check(`Form ${value} required error after submit`, (await errors.textContent()).includes('Reference is required'), true);
+    await check(`Form ${value} prevents invalid save`, await panel.locator('[data-form-demo="save-count"]').textContent(), 'Save callback count: 0');
+  }
+  await reset.click();
+  await field.fill('Retained validation timing draft');
+  const identity = await field.elementHandle();
+  await mode.selectOption('onBlur'); await mode.selectOption('onSubmit');
+  const diagnostics = panel.getByRole('button', { name: 'Advanced diagnostics', exact: true });
+  if (await diagnostics.getAttribute('aria-expanded') !== 'false') await diagnostics.click();
+  if (await diagnostics.getAttribute('aria-expanded') !== 'true') await diagnostics.click();
+  await check('Form timing changes preserve actual field identity/draft', await identity.evaluate(element => element === document.querySelector('[data-form-control="Input"] input') && element.value === 'Retained validation timing draft'), true);
+  await identity.dispose(); await reset.click();
+}
+module.exports.exerciseFormValidationTiming = exerciseFormValidationTiming;

@@ -141,3 +141,17 @@ test('mounted control without a visibility document still refreshes even if the 
     assert.equal(f.time.textContent, '1 minute ago');
   } finally { f.close(); Object.defineProperty(document, 'hidden', { configurable: true, value: false }); }
 });
+test('fallback slots resolve only for invalid input and keep shorthand without a wrapper', () => {
+  const rootRef = React.createRef(), fallbackRef = React.createRef(); let calls = 0;
+  const fallback = { ref: fallbackRef, className: 'fallback-slot', children: (Component, props) => { calls++; return React.createElement(Component, props, 'Unknown'); } };
+  const f = mount({ ...fixed, ref: rootRef, fallback });
+  try {
+    assert.equal(calls, 0); assert.equal(rootRef.current, f.time);
+    f.render({ dateTime: undefined, ref: rootRef, fallback });
+    assert.equal(calls, 1); assert.equal(rootRef.current, null); assert.equal(fallbackRef.current.tagName, 'SPAN');
+    assert.equal(fallbackRef.current.textContent, 'Unknown');
+    f.render({ dateTime: undefined, fallback: React.createElement('em', { id: 'shorthand-fallback' }, 'Literal') });
+    assert.equal(f.host.querySelector('#shorthand-fallback').parentElement, f.host.firstElementChild);
+    f.render({ dateTime: undefined, fallback: false }); assert.equal(f.host.textContent, '');
+  } finally { f.close(); }
+});

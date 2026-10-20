@@ -123,3 +123,23 @@ test('an orphan Item fails with the missing-parent contract', () => {
     assert.throws(() => act(() => { ReactDOM.render(React.createElement(DescriptionList.Item, { label: 'Orphan' }, 'Value'), host); }), /inside DescriptionList/);
   } finally { console.error = original; act(() => { ReactDOM.unmountComponentAtNode(host); }); host.remove(); }
 });
+
+test('slot guards keep divs fixed, filter unsupported props and normalize conditions', () => {
+  const f = mount(React.createElement(DescriptionList, { items: [
+    { id: 'unsafe', label: { as: 'h1', href: '/unsupported', unknownSlotProp: 'remove', children: 'Safe term' }, value: { as: 'button', children: 'Safe value' } },
+    { id: 'false', label: 'Conditional', value: false },
+    { id: 'true', label: 'Conditional true', value: true },
+    { id: 'empty', label: 'Explicit empty', value: { children: undefined, 'data-empty-container': '' } },
+  ] }));
+  try {
+    assert.ok(!f.host.querySelector('h1,button'), 'content tags cannot replace fixed divs');
+    const term = f.host.querySelector('dt > div');
+    assert.equal(term.textContent, 'Safe term');
+    assert.equal(term.hasAttribute('href'), false);
+    assert.equal(term.hasAttribute('unknownslotprop'), false);
+    const definitions = [...f.host.querySelectorAll('dd')];
+    assert.equal(definitions[1].children.length, 0, 'false creates no content container');
+    assert.equal(definitions[2].children.length, 0, 'true creates no content container');
+    assert.ok(definitions[3].querySelector('div[data-empty-container]'));
+  } finally { f.close(); }
+});

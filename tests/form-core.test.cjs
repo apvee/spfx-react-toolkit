@@ -98,3 +98,59 @@ test('Input honors native id consistently with label/hint while generated ids st
     assert.ok(updatedHints.some(node => node?.textContent === 'Explicit hint'));
   } finally { f.close(); }
 });
+
+test('presentation slot objects and callbacks keep native Field labels hints IDs and error precedence', () => {
+  const F = api.createForm(); let methods; const labelRef = React.createRef(); const hintRef = React.createRef(); let clicks = 0;
+  function Owner() {
+    methods = F.useForm({ defaultValues: { title: 'Initial' } });
+    return React.createElement(F.Root, { methods, onSubmit: () => {} }, React.createElement(F.Input, {
+      name: 'title', id: 'slot-control', required: true, disabled: true,
+      label: { id: 'inner-label', ref: labelRef, className: 'consumer-label', onClick: () => clicks++, children: 'Slot label' },
+      hint: { id: 'inner-hint', ref: hintRef, className: 'consumer-hint', children: (Component, props) => React.createElement(Component, props, 'Callback hint') },
+      fieldProps: { validationMessage: 'Native message', validationState: 'warning' },
+    }));
+  }
+  const f = mount(React.createElement(Owner));
+  try {
+    const input = f.host.querySelector('input'), label = f.host.querySelector('label');
+    assert.equal(label.htmlFor, input.id); assert.notEqual(label.id, 'inner-label');
+    assert.equal(labelRef.current.tagName, 'SPAN'); assert.equal(labelRef.current.parentElement, label);
+    assert.ok(labelRef.current.classList.contains('consumer-label')); assert.equal(input.disabled, true);
+    assert.equal(input.required, true); assert.ok(label.querySelector('.fui-Label__required'));
+    assert.equal(hintRef.current.tagName, 'DIV'); assert.notEqual(hintRef.current.parentElement.id, 'inner-hint');
+    assert.ok(input.getAttribute('aria-describedby').split(' ').includes(hintRef.current.parentElement.id));
+    act(() => require('react-dom/test-utils').Simulate.click(labelRef.current)); assert.equal(clicks, 1);
+    act(() => methods.setError('title', { type: 'manual', message: 'RHF error' }));
+    assert.ok(f.host.textContent.includes('RHF error')); assert.ok(!f.host.textContent.includes('Native message'));
+    const labelId = label.id, hintId = hintRef.current.parentElement.id;
+    f.render(React.createElement(Owner)); assert.equal(f.host.querySelector('label').id, labelId); assert.equal(hintRef.current.parentElement.id, hintId);
+  } finally { f.close(); }
+});
+
+test('legacy empty labels request native Label and undefined hint preserves native Field fallback', () => {
+  const F = api.createForm();
+  for (const label of [null, false, true, '', React.createElement(React.Fragment)]) {
+    const f = mount(React.createElement(F.Root, { defaultValues: { title: '' }, onSubmit: () => {} }, React.createElement(F.Input, { name: 'title', label, fieldProps: { hint: { id: 'native-hint', children: 'Native fallback' } } })));
+    try { assert.ok(f.host.querySelector('label')); assert.equal(f.host.querySelector('label').htmlFor, f.host.querySelector('input').id); assert.equal(f.host.querySelector('#native-hint').textContent, 'Native fallback'); }
+    finally { f.close(); }
+  }
+});
+
+test('render callbacks returning undefined retain native label and hint regions', () => {
+  const F = api.createForm(); let labels = 0, hints = 0;
+  const f = mount(React.createElement(F.Root, { defaultValues: { title: '' }, onSubmit: () => {} }, React.createElement(F.Input, { name: 'title', label: { children: () => { labels++; return undefined; } }, hint: { children: () => { hints++; return undefined; } } })));
+  try { assert.ok(labels > 0); assert.ok(hints > 0); assert.ok(f.host.querySelector('label')); assert.equal(f.host.querySelector('label').htmlFor, f.host.querySelector('input').id); assert.ok(document.getElementById(f.host.querySelector('input').getAttribute('aria-describedby'))); }
+  finally { f.close(); }
+});
+
+test('hint shorthand preserves native null omission empty regions and undefined fallback', () => {
+  const F = api.createForm();
+  for (const hint of [undefined, null, false, true, '']) {
+    const f = mount(React.createElement(F.Root, { defaultValues: { title: '' }, onSubmit: () => {} }, React.createElement(F.Input, { name: 'title', hint, fieldProps: { hint: 'Native fallback' } })));
+    try {
+      const input = f.host.querySelector('input'), describedBy = input.getAttribute('aria-describedby');
+      if (hint === null) assert.equal(describedBy, null);
+      else { assert.ok(describedBy); assert.equal(document.getElementById(describedBy).textContent, hint === undefined ? 'Native fallback' : ''); }
+    } finally { f.close(); }
+  }
+});

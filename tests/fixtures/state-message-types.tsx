@@ -21,3 +21,14 @@ const action: StateMessageAction = { label: 'Retry', onClick: event => event.cur
 <StateMessage title="State" primaryAction={{ label: 'Help', href: '/help', appearance: 'subtle' }} />;
 // @ts-expect-error heading semantic level is bounded
 <StateMessage title="State" headingLevel={7} />;
+const spanRef = React.createRef<HTMLSpanElement>();
+const condition: boolean = true;
+<StateMessage title={{ ref: spanRef, children: (Component, props) => <Component {...props}>Literal</Component> }}
+  description={condition && { children: '**Markdown**', 'data-description': 'slot' }} visual={{ ref: React.createRef<HTMLDivElement>(), children: 'Art' }}
+  primaryAction={{ label: { ref: spanRef, children: 'Retry' }, onClick() {} }} />;
+// @ts-expect-error title cannot replace the owned heading
+<StateMessage title={{ as: 'h1', children: 'Title' }} />;
+// @ts-expect-error slot HTML injection is unsupported
+<StateMessage title="Safe" description={{ dangerouslySetInnerHTML: { __html: 'unsafe' } }} />;
+// @ts-expect-error callbacks belong inside slot objects
+<StateMessage title={() => 'Title'} />;

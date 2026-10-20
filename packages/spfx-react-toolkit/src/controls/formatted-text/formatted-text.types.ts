@@ -2,19 +2,27 @@ import type * as React from 'react';
 import type * as typography from '../../helpers/styles/typography';
 
 /** Existing toolkit typography recipes; each controls appearance independently of HTML semantics.
- * @example const variant: FormattedTextVariant = 'title2';
+ * @example
+ * ```ts
+ * const variant: FormattedTextVariant = 'title2';
+ * ```
  */
 export type FormattedTextVariant = keyof typeof typography;
 
 /** Supported semantic roots. The default is span, regardless of typography.
- * @example const as: FormattedTextSemanticElement = 'h2';
+ * @example
+ * ```ts
+ * const as: FormattedTextSemanticElement = 'h2';
+ * ```
  */
 export type FormattedTextSemanticElement = 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
 /** Native text attributes plus bounded inline Markdown and toolkit typography.
  * A Fluent theme supplies CSS variables; no SPFx provider is required.
  * @example
+ * ```tsx
  * <FormattedText as="h2" variant="title2" maxLines={2}>Read the **updates**.</FormattedText>
+ * ```
  */
 export interface FormattedTextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children' | 'color' | 'dangerouslySetInnerHTML'> {
   /** HTML root, default span. Does not depend on variant; natural display follows this element. */
@@ -25,7 +33,9 @@ export interface FormattedTextProps extends Omit<React.HTMLAttributes<HTMLElemen
   font?: 'base' | 'monospace' | 'numeric';
   /** Text alignment, default start; start/end follow writing direction. */
   align?: 'start' | 'center' | 'end' | 'justify';
-  /** Parse each owned string as safe inline Markdown, default true. JSX stays opaque. */
+  /** Parse owned strings, including arrays/fragments, as safe inline Markdown; defaults
+   * to `true`. JSX stays opaque. Supported emphasis, code and links do not enable raw HTML
+   * or block Markdown; unsafe links retain their text. */
   markdown?: boolean;
   /** Apply the toolkit foreground.subtle descriptor, default false. */
   subtle?: boolean;
@@ -42,7 +52,7 @@ export interface FormattedTextProps extends Omit<React.HTMLAttributes<HTMLElemen
   /** Request single-line ellipsis, default false; requires constrained width and suitable layout. */
   truncate?: boolean;
   /** Positive finite integer line limit. Applies block clamp layout even to span without changing its tag.
-   * Uses a generated class, not inline style. Invalid values are ignored; takes precedence over truncate/wrap. Consumer style may override it. */
+   * Omission adds no line clamp. Invalid values are ignored; takes precedence over truncate/wrap. Consumer style may override it. */
   maxLines?: number;
   /** Owned strings, arrays and fragments receive Markdown; arbitrary JSX retains identity and contents. */
   children?: React.ReactNode;

@@ -8,6 +8,8 @@ The package publishes ESNext JavaScript for a bundler and TypeScript declaration
 | --- | --- |
 | (root) | All public controls, providers, hooks, helpers and services |
 | `/controls` | Public controls and their types |
+| `/controls/content-card` | Canonical `ContentCard`, props, appearance and heading-level types |
+| `/controls/preview-card` | Canonical `PreviewCard`, props, appearance, heading-level, image and orientation types |
 | `/controls/stage` | Canonical `Stage` compound Header/Body/Footer and thirteen public types; no flat parts or private state/surface helpers |
 | `/controls/pagination` | Canonical controlled page, cursor and load-more navigation; private validation and styling modules remain internal |
 | `/controls/web-part-shell` | Canonical WebPartShell, generic props/persisted types and pure metadata helper |
@@ -203,6 +205,12 @@ Pagination uses the existing shared React, Fluent/icons and Griffel peers. It in
 ## DescriptionList imports
 
 Import `DescriptionList`, `DescriptionListEntry`, `DescriptionListLayout`, `DescriptionListProps` and `DescriptionListItemProps` from the root, `/controls` or `/controls/description-list`. All entries share the canonical implementation and declarations. Use `DescriptionList.Item` for compound composition; implementation, context and styling modules have no public alias. The control uses existing Fluent/Griffel peers and neither registers PnP features nor creates a renderer. See the [DescriptionList reference](./api/controls/description-list.md) for container-responsive layout and content contracts.
+
+## Card entries and private slot declarations
+
+Import `ContentCard`, `ContentCardProps`, `ContentCardAppearance` and `ContentCardHeadingLevel` from the root, `/controls` or `/controls/content-card`. Import `PreviewCard`, `PreviewCardProps`, `PreviewCardAppearance`, `PreviewCardHeadingLevel`, `PreviewCardImage` and `PreviewCardOrientation` from the root, `/controls` or `/controls/preview-card`. Each alias re-exports its canonical implementation. See [ContentCard](./api/controls/content-card.md), [PreviewCard](./api/controls/preview-card.md) and [Control presentation slots](./CONTROL-SLOTS.md).
+
+The cards use the existing shared React/Fluent/Griffel peers and host renderer, without an SPFx provider or external PnP registration. The shared card frame, content-slot resolver and slot type aliases have no public entrypoint. Public declarations reference private relative declaration modules; those modules must ship with compiled `lib` for type resolution, which does not make them supported consumer imports. Modern export-map privacy and legacy Node10 physical-file discovery retain the limits described above. Package alias/type/import-graph verification remains separate from browser geometry and authenticated host validation.
 
 ## Picker entrypoints
 

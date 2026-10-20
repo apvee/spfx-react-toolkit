@@ -1,91 +1,28 @@
-@import '~@fluentui/react/dist/sass/References.scss';
-
 .spFxReactToolkitTest {
-  overflow: hidden;
-  color: "[theme:bodyText, default: #323130]";
-  color: var(--bodyText);
-  &.teams {
-    font-family: $ms-font-family-fallbacks;
-  }
+  min-width: 0;
 }
 
-.demoTabs {
-  margin-top: 20px;
+.teams {
+  font-family: inherit;
 }
 
-.demoTabList:global(.ms-Pivot) {
-  display: flex;
-  flex-wrap: wrap;
-  white-space: normal;
-}
-
-.infoRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.statusBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  
-  &.success {
-    background-color: #DFF6DD;
-    color: #107C10;
-  }
-  
-  &.error {
-    background-color: #FDE7E9;
-    color: #A4262C;
-  }
-}
-
+// RuntimePanel still consumes these classes until its v9 migration.
 .logMessage {
-  padding: 8px;
-  margin-bottom: 4px;
-  border-radius: 4px;
-  font-family: monospace;
-  font-size: 12px;
-  
-  &.info {
-    background-color: #F3F2F1;
-  }
-  
-  &.warning {
-    background-color: #FFF4CE;
-  }
-  
-  &.error {
-    background-color: #FDE7E9;
-  }
+  padding: var(--spacingVerticalS);
+  margin-bottom: var(--spacingVerticalXS);
+  border-radius: var(--borderRadiusMedium);
+  font-family: var(--fontFamilyMonospace);
+  font-size: var(--fontSizeBase200);
 }
 
-.detailsSection {
-  margin-top: 16px;
-  
-  summary {
-    cursor: pointer;
-    font-weight: 600;
-    padding: 8px;
-    background-color: #F3F2F1;
-    border-radius: 4px;
-    
-    &:hover {
-      background-color: #EDEBE9;
-    }
-  }
-  
-  pre {
-    background-color: #F3F2F1;
-    padding: 12px;
-    border-radius: 4px;
-    overflow-x: auto;
-    font-size: 12px;
-  }
+.info {
+  background-color: var(--colorNeutralBackground2);
+}
+
+.warning {
+  background-color: var(--colorStatusWarningBackground1);
+}
+
+.error {
+  background-color: var(--colorStatusDangerBackground1);
 }

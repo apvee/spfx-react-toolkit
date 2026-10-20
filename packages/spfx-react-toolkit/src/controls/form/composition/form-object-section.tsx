@@ -6,7 +6,8 @@ import { FieldPathScope, useFieldScopeDisabled, useResolvedFieldPath } from '../
 import { useFormRuntimeContext } from '../form-context.internal';
 import { FormObject } from './form-object';
 import { assertSectionName, sectionDescriptionIds, useFormSectionsStyles } from './form-sections.styles.internal';
-import { GroupText, hasGroupContent } from '../../group-header.internal';
+import { GroupText, hasGroupContent, hasGroupDescriptionContent } from '../../group-header.internal';
+import { renderContentSlot } from '../../content-slot.internal';
 import { useSx } from '../../../hooks/useSx';
 import * as flex from '../../../helpers/styles/flex';
 import * as gap from '../../../helpers/styles/gap';
@@ -28,12 +29,12 @@ export function FormObjectSection<TInput extends FieldValues, TPath extends Form
     const prefix = useResolvedFieldPath('');
     const sx = useSx(), styles = useFormSectionsStyles();
     const descriptionId = useId('form-object-description'), errorId = useId('form-object-error');
-    const hasDescription = hasGroupContent(description);
+    const hasDescription = hasGroupDescriptionContent(description);
     return <FieldPathScope prefix={prefix} disabled={disabled}><FormObject<TInput, TPath> name={name}>{context =>
         <fieldset {...native} disabled={disabled} aria-invalid={context.errors.length > 0 || native['aria-invalid']} aria-describedby={sectionDescriptionIds(describedBy, hasDescription ? descriptionId : undefined, context.errors.length ? errorId : undefined)} className={sx(styles.group, minWidth.zero, className)}>
             {hasGroupContent(title) && <legend className={styles.legend}><GroupText>{title}</GroupText></legend>}
             <Card appearance={appearance} focusMode="off" size="medium">
-                <Field className={sx(gap.small)} hint={hasDescription ? { id: descriptionId, className: sx(marginBlockStart.none), children: description } : undefined} validationState={context.errors.length ? 'error' : 'none'} validationMessage={context.errors.length ? { id: errorId, className: sx(marginBlockStart.none), children: context.errors.join('; ') } : undefined}>
+                <Field className={sx(gap.small)} hint={hasGroupContent(description) ? { id: descriptionId, className: sx(marginBlockStart.none), children: renderContentSlot(description, 'div', sx, { shorthand: 'preserve' }) } : undefined} validationState={context.errors.length ? 'error' : 'none'} validationMessage={context.errors.length ? { id: errorId, className: sx(marginBlockStart.none), children: context.errors.join('; ') } : undefined}>
                     <div data-form-object-content="" className={sx(flex.column, gap.medium, minWidth.zero)}>{children(context)}</div>
                 </Field>
             </Card>

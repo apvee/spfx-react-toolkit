@@ -9,6 +9,13 @@ import { useSPFxTeams } from './useSPFxTeams';
 
 /**
  * Return type for useSPFxFluent9ThemeInfo hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const info: SPFxFluent9ThemeInfo = useSPFxFluent9ThemeInfo();
+ * return <FluentProvider theme={info.theme}>Content</FluentProvider>;
+ * ```
  */
 export interface SPFxFluent9ThemeInfo {
   /** Fluent UI 9 theme object ready to use with FluentProvider */
@@ -24,96 +31,16 @@ export interface SPFxFluent9ThemeInfo {
 }
 
 /**
- * Hook for accessing Fluent UI 9 theme based on SPFx context
- * 
- * Automatically detects the execution context and provides the appropriate
- * Fluent UI 9 theme:
- * - **With a Microsoft 365 application SDK**: Returns native Teams theme tokens
- *   for the normalized Teams/Office/Outlook theme (light/dark/high contrast)
- * - **In SharePoint**: Converts SPFx theme (v8) to Fluent UI 9 theme
- * - **Fallback**: Returns webLightTheme if no theme available
- * 
- * The hook uses memoization to avoid expensive theme conversions on every render.
- * Theme updates are automatically handled when the user switches themes in
- * SharePoint through the provider subscription, and in Teams/Office/Outlook
- * through the SDK theme dispatcher. The dispatcher is shared per SDK identity in
- * this bundle; another bundle can replace the SDK's single registered handler.
- * 
- * Priority order:
- * 1. Application SDK theme (when context acquisition succeeded)
- * 2. SPFx theme converted to Fluent UI 9
- * 3. Default webLightTheme
- * 
- * Useful for:
- * - Wrapping components with FluentProvider
- * - Ensuring consistent theming across SharePoint and Teams
- * - Automatic theme switching when user changes Teams/SharePoint theme
- * - Building Fluent UI 9 applications in SPFx
- * 
- * @returns Theme information including Fluent UI 9 theme and context details
- * 
- * @example Basic usage with FluentProvider
+ * Returns native Fluent Teams tokens when SDK context is supported and a normalized theme is available; otherwise converts the SPFx theme, with webLightTheme as the undefined-theme fallback. Provider and SDK theme subscriptions update this hook. The SDK dispatcher is shared per identity within this bundle; another bundle can replace its single handler. Legacy isTeams means SDK context acquisition succeeded and can also describe Office/Outlook; use useSPFxEnvironmentInfo for the actual host. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns Fluent theme plus SDK availability and optional normalized application-theme metadata.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
+ * @example
  * ```tsx
- * import { FluentProvider } from '@fluentui/react-components';
- * 
- * function MyWebPart() {
+ * function ThemedContent() {
  *   const { theme } = useSPFxFluent9ThemeInfo();
- *   
- *   return (
- *     <FluentProvider theme={theme}>
- *       <MyApp />
- *     </FluentProvider>
- *   );
- * }
- * ```
- * 
- * @example Accessing context information
- * ```tsx
- * function MyComponent() {
- *   const { theme, isTeams, teamsTheme } = useSPFxFluent9ThemeInfo();
- *   
- *   return (
- *     <div>
- *       <p>Running in Teams: {isTeams ? 'Yes' : 'No'}</p>
- *       {isTeams && <p>Teams theme: {teamsTheme}</p>}
- *       <FluentProvider theme={theme}>
- *         <Button>Themed Button</Button>
- *       </FluentProvider>
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Conditional rendering based on theme
- * ```tsx
- * function ThemedComponent() {
- *   const { theme, teamsTheme } = useSPFxFluent9ThemeInfo();
- *   
- *   const isDarkTheme = teamsTheme === 'dark';
- *   
- *   return (
- *     <FluentProvider theme={theme}>
- *       {isDarkTheme ? <DarkModeIcon /> : <LightModeIcon />}
- *     </FluentProvider>
- *   );
- * }
- * ```
- * 
- * @example Using with Fluent UI 9 components
- * ```tsx
- * import { FluentProvider, Button, Card } from '@fluentui/react-components';
- * 
- * function MyWebPart() {
- *   const { theme, isTeams } = useSPFxFluent9ThemeInfo();
- *   
- *   return (
- *     <FluentProvider theme={theme}>
- *       <Card>
- *         <h3>Hello from {isTeams ? 'Teams' : 'SharePoint'}!</h3>
- *         <Button appearance="primary">Click me</Button>
- *       </Card>
- *     </FluentProvider>
- *   );
+ *   return <FluentProvider theme={theme}><span>Themed content</span></FluentProvider>;
  * }
  * ```
  */

@@ -1,9 +1,15 @@
 import type * as React from 'react';
+import type { ContentSlot } from '../content-slot.types.internal';
 import type { ColorPickerProps, RatingProps, SwatchPickerProps, CheckboxProps, ComboboxProps, DropdownProps, FieldProps, InputProps, RadioGroupProps, SelectProps, TagPickerProps, TagPickerInputProps, SearchBoxProps, SliderProps, SpinButtonProps, SwitchProps, TextareaProps } from '@fluentui/react-components';
 import type { FormDateTimeValue, FormHsvColor, FormOptionsSource, FormValueCodec } from './form-value.types';
 import type { FieldPath, FieldPathValue, FieldValues, RegisterOptions } from 'react-hook-form';
 /** Paths which can both supply the control's value and accept its complete write domain.
  * Optional fields may initialize absent; controlled inputs require suitable defaults.
+ * @example
+ * ```ts
+ * type StringPath = CompatibleFieldPath<{ title: string; count: number }, string>;
+ * const name: StringPath = 'title';
+ * ```
  */
 export type CompatibleFieldPath<TInput extends FieldValues, TValue> = {
     [TName in FieldPath<TInput>]: [
@@ -16,15 +22,25 @@ export type CompatibleFieldPath<TInput extends FieldValues, TValue> = {
         FieldPathValue<TInput, TName>
     ] ? TName : never : never;
 }[FieldPath<TInput>];
-/** Presentation shared by Fluent Field wrappers; required is metadata, not a validation rule. */
+/** Presentation shared by Fluent Field wrappers; required is metadata, not a validation rule.
+ * Slots configure inner containers; native Label/hint IDs and associations remain owned by Field.
+ * @example `<Order.Input name="reference" label={{ children: 'Reference', className: classes.label }} hint={{ children: (Component, props) => <Component {...props}>Help</Component> }} />`
+ */
 export interface FormFieldPresentationProps {
-    /** Label owned by Fluent Field; strings render literally. Omit inside SettingsGroup.Item field. */
-    label?: React.ReactNode;
-    /** Supporting content associated with the native control. Omit inside SettingsGroup.Item field. */
-    hint?: React.ReactNode;
+    /** Literal phrasing content inside the native Fluent Label. Objects/callbacks configure an inner span,
+     * including its ref; htmlFor, required/disabled and generated Label ID remain native.
+     * Only undefined omits the top-level label; legacy null/booleans still request the native Label.
+     * Omit inside SettingsGroup.Item field.
+     */
+    label?: ContentSlot<'span'>;
+    /** Supporting content inside the native Field hint. Objects/callbacks configure an inner div;
+     * its ref/ID do not replace the associated native hint ID. Undefined retains fieldProps.hint.
+     * Omit inside SettingsGroup.Item field.
+     */
+    hint?: ContentSlot<'div'>;
     /** Marks the control as required visually and accessibly. */
     required?: boolean;
-    /** Fluent Field label layout. */
+    /** Fluent Field label layout; omission uses Fluent's vertical layout. */
     orientation?: FieldProps['orientation'];
     /** Disables the field; cannot override a disabled form or scope. */
     disabled?: boolean;
@@ -33,20 +49,32 @@ export interface FormFieldPresentationProps {
     /** Additional Fluent Field props; active RHF errors take precedence. */
     fieldProps?: Omit<FieldProps, 'children' | 'className' | 'disabled' | 'label' | 'orientation' | 'required'>;
 }
-/** Binding props for a control that reads and writes one complete value domain. */
+/** Binding props for a control that reads and writes one complete value domain.
+ * @example
+ * ```ts
+ * const props: FormControlProps<{ title: string }, string> = {
+ *   name: 'title', label: 'Title', rules: { required: 'Enter a title.' },
+ * };
+ * ```
+ */
 export type FormControlProps<TInput extends FieldValues, TValue, TName extends CompatibleFieldPath<TInput, TValue> = CompatibleFieldPath<TInput, TValue>> = FormFieldPresentationProps & {
     /** Relative field path; object/array scopes supply its prefix. */
     name: TName;
     /** Domain validation; disallowed when a schema/resolver owns validation. */
     rules?: RegisterOptions<TInput, TName>;
 };
-/** Native text input behaviors supported by Input. */
+/** Native text input behaviors supported by Input.
+ * @example
+ * ```ts
+ * const type: FormInputType = 'email';
+ * ```
+ */
 export type FormInputType = 'text' | 'email' | 'password' | 'search' | 'tel' | 'url';
 /** String binding for Fluent Input; it deliberately has no value codec.
  * @example `<Order.Input name="reference" label="Reference" />`
  */
 export type FormInputProps<TInput extends FieldValues> = FormControlProps<TInput, string> & Omit<InputProps, keyof FormFieldPresentationProps | 'defaultValue' | 'name' | 'value' | 'type'> & {
-    /** Text input behavior; numbers, dates and files use dedicated controls. */
+    /** Text input behavior; defaults to native text. Numbers, dates and files use dedicated controls. */
     type?: FormInputType;
 };
 
@@ -99,9 +127,17 @@ export type FormSliderProps<TInput extends FieldValues> = FormControlProps<TInpu
 
 /** Selection bindings require an explicit lossless codec for a different live field domain.
  * Each mapped member correlates `name` with that path's exact read/write codec type.
+ * @example
+ * ```tsx
+ * const Profile = createForm<{ countryCode: number }>();
+ * <Profile.Select name="countryCode" codec={{ toControl: String, fromControl: Number }}
+ *   options={[{ value: '39', label: 'Italy' }]} />;
+ * ```
  */
 type FormSelectionBinding<TInput extends FieldValues, TValue> =
-    | (FormControlProps<TInput, TValue> & { /** Omit for the complete native string/string-array domain. */ codec?: never })
+    | (FormControlProps<TInput, TValue> & {
+        /** Omit for the complete native string/string-array domain. */
+        codec?: never })
     | { [TName in FieldPath<TInput>]: FormFieldPresentationProps & {
         /** Relative path whose exact live value is converted by this codec. */
         name: TName;
@@ -110,6 +146,12 @@ type FormSelectionBinding<TInput extends FieldValues, TValue> =
         /** Lossless conversion; every writable control identity must round-trip. */
         codec: FormValueCodec<FieldPathValue<TInput, TName>, TValue>;
     } }[FieldPath<TInput>];
+/** Selection adapter props combining field binding, one option source, and unowned Fluent props.
+ * @example
+ * ```tsx
+ * <Order.Dropdown name="country" label="Country" options={[{ value: 'it', label: 'Italy' }]} />
+ * ```
+ */
 type FormSelectionProps<TInput extends FieldValues, TValue, TPrimitive, TOwned extends PropertyKey> = FormSelectionBinding<TInput, TValue> & FormOptionsSource & Omit<TPrimitive, TOwned | keyof FormFieldPresentationProps>;
 /** Native Select for one stable string identity, or an explicitly converted domain.
  * Supply native `option` children or data options. RHF owns value/defaults.
@@ -157,10 +199,28 @@ export type FormCheckboxGroupProps<TInput extends FieldValues> = FormSelectionBi
  * @example `const strings: FormTagPickerStrings = { noOptions: 'Nessun risultato' };`
  */
 export interface FormTagPickerStrings {
-    /** Content shown when no unselected option matches the active query. */
-    noOptions: React.ReactNode;
+    /** Literal empty-result content inside the owned status region; objects/callbacks configure an inner div and its ref. */
+    noOptions: ContentSlot<'div'>;
 }
-type FormTagPickerAccessibleName = { /** Plain text visible label also names the selected-tag list. */ label: string; 'aria-label'?: string } | { /** Rich or absent label needs an explicit accessible name. */ label?: React.ReactNode; 'aria-label': string } | { /** Inherited SettingsGroup.Item field naming; standalone usage is checked at runtime. */ label?: undefined; 'aria-label'?: undefined };
+/** TagPicker naming alternatives; rich labels require explicit text unless a settings field row supplies it.
+ * @example
+ * ```tsx
+ * <Order.TagPicker name="people" aria-label="Selected people" label={<strong>People</strong>} options={people} />
+ * ```
+ */
+type FormTagPickerAccessibleName = {
+    /** Plain text visible label also names the selected-tag list. */
+    label: string;
+    /** Explicit text overriding the label-derived accessible name when supplied. */
+    'aria-label'?: string } | {
+    /** Rich/object/callback or absent label needs an explicit accessible name; no text is inferred. */
+    label?: ContentSlot<'span'>;
+    /** Required text name when standalone label content is not a string. */
+    'aria-label': string } | {
+    /** Omit label when SettingsGroup.Item field supplies inherited naming. Standalone usage is checked at runtime. */
+    label?: undefined;
+    /** Omit with label only when inherited settings-row naming is available. */
+    'aria-label'?: undefined };
 /** TagPicker with removable tags, string-array identities and a native input ref.
  * Options or Fluent TagPickerOption children provide identities and display text.
  * Omit label/aria-label only when SettingsGroup.Item field supplies inherited naming.
@@ -177,8 +237,9 @@ export type FormTagPickerProps<TInput extends FieldValues> = FormSelectionProps<
     onChange?: TagPickerInputProps['onChange'];
     /** Runs after RHF marks the field touched. */
     onBlur?: TagPickerInputProps['onBlur'];
-    /** Overrides localized content when filtering finds no available options. */
-    noOptionsContent?: React.ReactNode;
+    /** Inner div content for the owned no-options status. Objects support attributes, refs and children callbacks.
+     * Nullish values fall back to strings.noOptions; empty/boolean shorthand keeps the status shell. */
+    noOptionsContent?: ContentSlot<'div'>;
     /** Localized package-owned query-result content. */
     strings?: Partial<FormTagPickerStrings>;
 };
@@ -203,16 +264,33 @@ export type FormColorPickerProps<TInput extends FieldValues> = FormControlProps<
  */
 export type FormSwatchPickerProps<TInput extends FieldValues> = FormControlProps<TInput, string> & Omit<SwatchPickerProps, keyof FormFieldPresentationProps | 'defaultSelectedValue' | 'name' | 'selectedValue'>;
 
-/** Package-owned DatePicker validation error identifiers. */
+/** Package-owned DatePicker validation error identifiers.
+ * @example
+ * ```ts
+ * const error: FormDatePickerError = 'invalid-input';
+ * ```
+ */
 export type FormDatePickerError = 'invalid-input' | 'out-of-bounds' | 'required-input';
 
-/** Package-owned validation result emitted after DatePicker text validation. */
+/** Package-owned validation result emitted after DatePicker text validation.
+ * @example
+ * ```ts
+ * const onValidationResult = ({ error }: FormDatePickerValidationResult) => {
+ *   if (error !== undefined) reportDateError(error);
+ * };
+ * ```
+ */
 export type FormDatePickerValidationResult = {
   /** Validation error, or `undefined` when the current text is valid. */
   error?: FormDatePickerError;
 };
 
-/** Localized calendar strings consumed by Form.DatePicker. */
+/** Localized calendar strings consumed by Form.DatePicker.
+ * @example
+ * ```ts
+ * const strings: FormDatePickerStrings = { ...calendarStrings, goToToday: 'Oggi' };
+ * ```
+ */
 export type FormDatePickerStrings = {
   /** Full month names beginning with January. */
   months: readonly string[];
@@ -252,7 +330,18 @@ export type FormDatePickerStrings = {
   dayMarkedAriaLabel?: string;
 };
 
-/** Package-owned localized formatting functions used by Form.DatePicker's calendar. */
+/** Package-owned localized formatting functions used by Form.DatePicker's calendar.
+ * @example
+ * ```ts
+ * const formatter: FormDatePickerFormatting = {
+ *   formatDay: date => String(date.getDate()),
+ *   formatMonth: (date, strings) => strings.months[date.getMonth()],
+ *   formatYear: date => String(date.getFullYear()),
+ *   formatMonthDayYear: date => date.toLocaleDateString('it-IT'),
+ *   formatMonthYear: date => date.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }),
+ * };
+ * ```
+ */
 export type FormDatePickerFormatting = {
   /** Formats a day number. */
   formatDay: (date: Date) => string;
@@ -266,12 +355,23 @@ export type FormDatePickerFormatting = {
   formatMonthYear: (date: Date, strings: FormDatePickerStrings) => string;
 };
 
-/** Numeric weekday identifiers where Sunday is `0` and Saturday is `6`. */
+/** Numeric weekday identifiers where Sunday is `0` and Saturday is `6`.
+ * @example
+ * ```ts
+ * const monday: FormDatePickerDayOfWeek = 1;
+ * ```
+ */
 export type FormDatePickerDayOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-/** Numeric first-week rules: first day, first full week, or first four-day week. */
+/** Numeric first-week rules: 0 is first day, 1 is first full week, and 2 is first four-day week.
+ * @example
+ * ```ts
+ * const firstFourDayWeek: FormDatePickerFirstWeekOfYear = 2;
+ * ```
+ */
 export type FormDatePickerFirstWeekOfYear = 0 | 1 | 2;
 
+/** Native date/time input attributes after removing values, events and presentation owned by the Form binding. */
 type FormDateTimeNativeInputProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   | 'className'
@@ -286,7 +386,13 @@ type FormDateTimeNativeInputProps = Omit<
   | 'value'
 >;
 
-/** Package-owned DatePicker configuration without its Form field binding. */
+/** Package-owned DatePicker configuration without its Form field binding.
+ * @example
+ * ```tsx
+ * const datePickerProps: FormDatePickerControlProps = { allowTextInput: true, firstDayOfWeek: 1 };
+ * <Order.DatePicker name="date" label="Date" {...datePickerProps} />;
+ * ```
+ */
 export type FormDatePickerControlProps = FormDateTimeNativeInputProps & {
   /** Fluent input appearance. */
   appearance?: InputProps['appearance'];
@@ -312,7 +418,7 @@ export type FormDatePickerControlProps = FormDateTimeNativeInputProps & {
   firstDayOfWeek?: FormDatePickerDayOfWeek;
   /** Rule used to determine the first week of a year. */
   firstWeekOfYear?: FormDatePickerFirstWeekOfYear;
-  /** Formats the selected date as input text. */
+  /** Synchronously formats the selected local date as input text; defaults to YYYY-MM-DD, or empty text for undefined. Pair custom formats with parseDateFromString. */
   formatDate?: (date?: Date) => string;
   /** Highlights the current month. */
   highlightCurrentMonth?: boolean;
@@ -324,23 +430,23 @@ export type FormDatePickerControlProps = FormDateTimeNativeInputProps & {
   inlinePopup?: boolean;
   /** Shows the month picker. */
   isMonthPickerVisible?: boolean;
-  /** Latest selectable date. */
+  /** Inclusive latest selectable local calendar date; omission supplies no upper bound. Domain constraints still belong to rules/schema/resolver. */
   maxDate?: Date;
-  /** Earliest selectable date. */
+  /** Inclusive earliest selectable local calendar date; omission supplies no lower bound. Domain constraints still belong to rules/schema/resolver. */
   minDate?: Date;
   /** Controlled popup open state. */
   open?: boolean;
   /** Opens the calendar when the input is clicked. Defaults to `true`. */
   openOnClick?: boolean;
-  /** Reports controlled popup-open changes. */
+  /** Synchronous popup-open notification; receives the proposed boolean state. Update open externally when controlled; the return value is ignored. */
   onOpenChange?: (open: boolean) => void;
-  /** Runs after the bound field value is updated from a calendar selection. */
+  /** Synchronous notification after an accepted calendar or text commit writes RHF. Receives the local Date or legacy compat null for clear; the return value is ignored. */
   // Compat date/time selection and parser contracts explicitly use null for empty values.
   // eslint-disable-next-line @rushstack/no-new-null
   onSelectDate?: (date: Date | null) => void;
-  /** Reports package-owned text-validation results. */
+  /** Synchronous date-validation notification with the package-owned error identifier or undefined for success. Invalid drafts keep the committed value; the return value is ignored. */
   onValidationResult?: (data: FormDatePickerValidationResult) => void;
-  /** Parses direct input text into a date. */
+  /** Synchronously parses direct input text into a local date; return null for rejected text, following the compat parser contract. */
   // Compat date/time selection and parser contracts explicitly use null for empty values.
   // eslint-disable-next-line @rushstack/no-new-null
   parseDateFromString?: (dateText: string) => Date | null;
@@ -375,10 +481,22 @@ export type FormDatePickerProps<TInput extends FieldValues> = FormControlProps<
 > &
   FormDatePickerControlProps;
 
-/** Package-owned TimePicker validation error identifiers. */
+/** Package-owned TimePicker validation error identifiers.
+ * @example
+ * ```ts
+ * const error: FormTimePickerError = 'out-of-bounds';
+ * ```
+ */
 export type FormTimePickerError = 'invalid-input' | 'out-of-bounds' | 'required-input';
 
-/** Package-owned TimePicker selection payload. */
+/** Package-owned TimePicker selection payload.
+ * @example
+ * ```ts
+ * const onTimeChange = (_event: React.SyntheticEvent<HTMLElement>, data: FormTimePickerChangeData) => {
+ *   if (data.error === undefined) inspectTime(data.selectedTime);
+ * };
+ * ```
+ */
 export type FormTimePickerChangeData = {
   /** Selected or parsed time, or `null` when cleared. */
   // Compat date/time selection and parser contracts explicitly use null for empty values.
@@ -390,7 +508,12 @@ export type FormTimePickerChangeData = {
   error?: FormTimePickerError;
 };
 
-/** Package-owned result returned by a freeform time parser. */
+/** Package-owned result returned by a freeform time parser.
+ * @example
+ * ```ts
+ * const rejected: FormTimePickerParseResult = { date: null, error: 'invalid-input' };
+ * ```
+ */
 export type FormTimePickerParseResult = {
   /** Parsed time, or `null` when no valid time is available. */
   // Compat date/time selection and parser contracts explicitly use null for empty values.
@@ -400,7 +523,12 @@ export type FormTimePickerParseResult = {
   error?: FormTimePickerError;
 };
 
-/** Inclusive/exclusive hour boundary supported by Form.TimePicker. */
+/** Inclusive/exclusive hour boundary supported by Form.TimePicker.
+ * @example
+ * ```ts
+ * const endHour: FormTimePickerHour = 24;
+ * ```
+ */
 export type FormTimePickerHour =
   | 0
   | 1
@@ -428,7 +556,13 @@ export type FormTimePickerHour =
   | 23
   | 24;
 
-/** Package-owned TimePicker configuration without its Form field binding. */
+/** Package-owned TimePicker configuration without its Form field binding.
+ * @example
+ * ```tsx
+ * const timePickerProps: FormTimePickerControlProps = { freeform: true, hourCycle: 'h23', increment: 15 };
+ * <Order.TimePicker name="time" label="Time" {...timePickerProps} />;
+ * ```
+ */
 export type FormTimePickerControlProps = FormDateTimeNativeInputProps & {
   /** Fluent input appearance. */
   appearance?: ComboboxProps['appearance'];
@@ -447,11 +581,11 @@ export type FormTimePickerControlProps = FormDateTimeNativeInputProps & {
   disabled?: boolean;
   /** Exclusive end hour for generated options. */
   endHour?: FormTimePickerHour;
-  /** Localized error for rejected or uncommitted time text. Domain validation stays in rules/schema. */
+  /** Localized error for rejected or uncommitted time text; defaults to Complete or correct the time before submitting. Domain validation stays in rules/schema/resolver. */
   inputValidationMessage?: string;
   /** Allows freeform time entry. */
   freeform?: boolean;
-  /** Formats generated and selected time values. */
+  /** Synchronously formats generated/selected local time values; omission uses compat formatting with hourCycle and showSeconds. */
   formatDateToTimeString?: (date: Date) => string;
   /** Selects the locale hour cycle. */
   hourCycle?: 'h11' | 'h12' | 'h23' | 'h24';
@@ -461,11 +595,11 @@ export type FormTimePickerControlProps = FormDateTimeNativeInputProps & {
   inlinePopup?: boolean;
   /** Controlled popup open state. */
   open?: boolean;
-  /** Reports controlled popup-open changes. */
+  /** Synchronous popup-open notification; receives the proposed boolean state. Update open externally when controlled; the return value is ignored. */
   onOpenChange?: (open: boolean) => void;
-  /** Runs after the bound field value is updated from a selection or freeform entry. */
+  /** Receives the native selection event and package-owned time/text/error payload after any accepted RHF write. Invalid draft notifications retain the committed value. The return value is ignored. */
   onTimeChange?: (event: React.SyntheticEvent<HTMLElement>, data: FormTimePickerChangeData) => void;
-  /** Parses freeform input and reports package-owned validation state. */
+  /** Synchronously parses possibly absent freeform text; return the parsed date (or legacy compat null) and optional error. No async parsing is supported. */
   parseTimeStringToDate?: (timeText: string | undefined) => FormTimePickerParseResult;
   /** Placeholder shown when no time is selected. */
   placeholder?: string;
@@ -499,12 +633,12 @@ export type FormDateTimeProps<TInput extends FieldValues> = FormControlProps<
   id?: string;
   /** Additional descriptions appended to group hint and validation relationships. */
   'aria-describedby'?: string;
-  /** Label for the DatePicker part. */
-  dateLabel?: React.ReactNode;
+  /** Literal phrasing slot inside the DatePicker native Label; object/callback refs target its inner span. */
+  dateLabel?: ContentSlot<'span'>;
   /** Package-owned props forwarded to the DatePicker part. */
   datePickerProps?: FormDatePickerControlProps;
-  /** Label for the TimePicker part. */
-  timeLabel?: React.ReactNode;
+  /** Literal phrasing slot inside the TimePicker native Label; object/callback refs target its inner span. */
+  timeLabel?: ContentSlot<'span'>;
   /** Package-owned props forwarded to the TimePicker part. */
   timePickerProps?: FormTimePickerControlProps;
 };
@@ -524,9 +658,9 @@ export type FormFileInputProps<TInput extends FieldValues> = FormControlProps<
   // eslint-disable-next-line @rushstack/no-new-null
   FileList | null
 > & Omit<React.InputHTMLAttributes<HTMLInputElement>, keyof FormFieldPresentationProps | 'children' | 'defaultValue' | 'name' | 'type' | 'value'> & {
-  /** Localized visible action that opens the native file chooser. */
+  /** Localized visible action that opens the native file chooser; defaults to Browse. */
   browseLabel?: string;
-  /** Localized accessible label for clearing the native selection. */
+  /** Localized accessible label for clearing the native selection; defaults to Clear. */
   clearLabel?: string;
   /** Formats the actual live native files; defaults to comma-separated file names. */
   formatFiles?: (files: FileList) => React.ReactNode;

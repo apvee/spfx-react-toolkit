@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { mergeSettingsFieldIds } from '../../settings-field-context.internal';
 import { Field, Tag, TagPicker, TagPickerControl, TagPickerGroup, TagPickerInput, TagPickerList, TagPickerOption } from '@fluentui/react-components';
+import { mergeClasses } from '@griffel/react';
+import { renderContentSlot } from '../../content-slot.internal';
 import type { FieldValues } from 'react-hook-form';
 import type { FormTagPickerProps } from '../form-control.types';
 import { useFieldAdapter } from '../use-field-adapter.internal';
@@ -56,11 +58,11 @@ export const FormTagPicker = React.forwardRef<HTMLInputElement, FormTagPickerPro
   const emptyContent = noOptionsContent ?? strings?.noOptions ?? 'No options match the current query.';
   const normalizedQuery = query.trim().toLocaleLowerCase();
   const available = source.entries.filter(option => !selected.includes(option.value) && getOptionText(option).toLocaleLowerCase().includes(normalizedQuery));
-  const renderedOptions = source.options === undefined ? source.children : available.length ? available.map(option => <TagPickerOption key={option.value}
-    value={option.value} text={getOptionText(option)}
-    aria-disabled={option.disabled || undefined}>{option.label}</TagPickerOption>) : <div role="status">{emptyContent}</div>;
   const accessibleName = ariaLabel ?? (typeof label === 'string' ? label : undefined);
   if (!accessibleName?.trim() && !binding.controlProps['aria-labelledby']) throw new TypeError('Form.TagPicker requires a plain text label, aria-label, or SettingsGroup.Item field name.');
+  const renderedOptions = source.options === undefined ? source.children : available.length ? available.map(option => <TagPickerOption key={option.value}
+    value={option.value} text={getOptionText(option)}
+    aria-disabled={option.disabled || undefined}>{option.label}</TagPickerOption>) : <div role="status">{renderContentSlot(emptyContent, 'div', mergeClasses, { shorthand: 'preserve' })}</div>;
   return <Field {...binding.fieldProps}>{fieldControl => <TagPicker {...props} disabled={binding.controlProps.disabled}
     selectedOptions={selected}
     onOptionSelect={(event, data) => {

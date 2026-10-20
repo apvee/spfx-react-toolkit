@@ -14,6 +14,17 @@ const importsPanelSpecifiers = new Set([
   '@apvee/spfx-react-toolkit/lib/helpers/styles/typography',
   '@apvee/spfx-react-toolkit/lib/helpers/styles/padding-inline-start',
 ]);
+const nativePickerBase = path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest');
+const nativePickerSpecifiers = new Map([
+  [path.join(nativePickerBase, 'SpFxReactToolkitTestWebPart.ts'), new Set([
+    '@apvee/spfx-react-toolkit/property-pane/pickers',
+    '@apvee/spfx-react-toolkit/property-pane/file-folder-picker',
+    '@apvee/spfx-react-toolkit/controls/file-folder-picker',
+  ])],
+  [path.join(nativePickerBase, 'components/shared/fileFolderPickerNavigation.ts'), new Set([
+    '@apvee/spfx-react-toolkit/controls/file-folder-picker',
+  ])],
+]);
 test('library and SPFx app have independent package boundaries', () => {
   const workspace = require('../package.json');
   assert.equal(workspace.private, true);
@@ -32,7 +43,7 @@ test('library and SPFx app have independent package boundaries', () => {
       .map(statement => statement.moduleSpecifier?.text).filter(Boolean);
     for (const specifier of imports) {
       const approvedImportsScenario = f === importsPanel && importsPanelSpecifiers.has(specifier);
-      if (specifier.startsWith(library.name)) assert.ok(specifier === library.name || approvedImportsScenario, `${f}: app must consume the public root entry or an exact Imports scenario alias`);
+      if (specifier.startsWith(library.name)) assert.ok(specifier === library.name || approvedImportsScenario || nativePickerSpecifiers.get(f)?.has(specifier), `${f}: app must consume the public root entry or an exact approved public scenario alias`);
       assert.ok(!specifier.includes('packages/') && (!specifier.includes('/lib/') || approvedImportsScenario), `${f}: accidental internal import ${specifier}`);
       if (specifier.startsWith('.')) assert.ok(path.resolve(path.dirname(f),specifier).startsWith(path.join(root,'apps/spfx-react-toolkit-test/src') + path.sep), `${f}: import escapes app source`);
     }

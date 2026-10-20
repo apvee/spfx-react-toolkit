@@ -1,5 +1,7 @@
 import * as React from 'react';
-import styles from '../SpFxReactToolkitTest.module.scss';
+import { Accordion, AccordionItem, AccordionHeader } from '@fluentui/react-components';
+import { DemoAccordionPanel } from './DemoAccordionPanel';
+import { useDemoStyles } from './demoStyles';
 
 export interface JsonDetailsProps {
   readonly label: string;
@@ -26,9 +28,16 @@ function stringifySafe(value: unknown): string {
   }, 2);
 }
 
-export const JsonDetails: React.FC<JsonDetailsProps> = ({ label, value }) => (
-  <details className={styles.detailsSection}>
-    <summary>{label}</summary>
-    <pre>{stringifySafe(value)}</pre>
-  </details>
-);
+export const JsonDetails: React.FC<JsonDetailsProps> = ({ label, value }) => {
+  const styles = useDemoStyles();
+  return <Accordion collapsible>
+    <AccordionItem value="json">
+      <AccordionHeader>{label}</AccordionHeader>
+      <DemoAccordionPanel>
+        <div className={styles.scroll} role="region" aria-label={`${label} JSON`} tabIndex={0}>
+          <pre className={styles.json}>{stringifySafe(value)}</pre>
+        </div>
+      </DemoAccordionPanel>
+    </AccordionItem>
+  </Accordion>;
+};

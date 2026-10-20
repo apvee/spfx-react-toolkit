@@ -19,11 +19,11 @@ Native div attributes/events, `className`, consumer `style`, `dir` and `lang` ar
 
 | Member | Type | Behavior |
 | --- | --- | --- |
-| `StateMessageProps.title` | `React.ReactNode` | Required literal title; strings are not parsed as Markdown. |
-| `StateMessageProps.description` | `React.ReactNode` | Optional inline Markdown or caller-owned phrasing JSX inside a paragraph. |
+| `StateMessageProps.title` | span content slot | Required literal title; strings are not parsed as Markdown. |
+| `StateMessageProps.description` | span content slot | Optional inline Markdown or caller-owned phrasing JSX inside a paragraph. |
 | `StateMessageProps.preset` | `StateMessagePreset` | Optional artwork and announcement defaults; never supplies application copy. |
 | `StateMessageProps.headingLevel` | `StateMessageHeadingLevel` | Default 3, independent of subtitle2Stronger typography. |
-| `StateMessageProps.visual` | `React.ReactNode` | Undefined uses preset artwork; false hides it; custom content overrides the preset. |
+| `StateMessageProps.visual` | div content slot | Undefined uses preset artwork; false hides it; custom content overrides the preset. |
 | `StateMessageProps.primaryAction` | `StateMessageAction` | Highest emphasis, primary appearance. |
 | `StateMessageProps.secondaryAction` | `StateMessageAction` | Supporting action, secondary appearance. |
 | `StateMessageProps.tertiaryAction` | `StateMessageAction` | Lowest emphasis, subtle appearance. |
@@ -48,7 +48,7 @@ Omitting the preset renders no automatic artwork or role. `role={undefined}` kee
 
 ### StateMessageAction, StateMessageClickAction and StateMessageLinkAction
 
-`StateMessageAction` is a union of a callback action and a navigation action. Both have a visible `label: React.ReactNode`, optional Fluent `icon`, and compatible native/Fluent attributes such as disabled and className. Appearance, size, shape, root element and content belong to the control. Actions render in primary, secondary, tertiary order, with medium size and rounded shape.
+`StateMessageAction` is a union of a callback action and a navigation action. Both have a visible span content-slot `label`, optional Fluent `icon`, and compatible native/Fluent attributes such as disabled and className. Appearance, size, shape, root element and content belong to the control. Actions render in primary, secondary, tertiary order, with medium size and rounded shape.
 
 `StateMessageClickAction` requires `onClick: React.MouseEventHandler<HTMLButtonElement>` and forbids href. Its native button has type=button, so it does not submit a containing form. `StateMessageLinkAction` requires `href: string` and accepts optional target, rel and `onClick: React.MouseEventHandler<HTMLAnchorElement>`; it uses Fluent Button as an anchor. Destinations are assigned as supplied by the application.
 
@@ -87,3 +87,18 @@ The root establishes the toolkit's named inline-size container. All authored lay
 Medium means **640px of root content width**, excluding padding and border. It follows the toolkit's 480/640/1024px breakpoint vocabulary, rather than the source repository's names. The viewport does not decide presentation. A host with outer width 664px and default 12px padding per side has 640px available. Below the threshold, or without container-query support, base sizes remain active. The visual follows the BigMessage sizing approach: width fills the available space up to 280px, and SVG height follows its viewBox ratio. There is no square box or equal-area normalization. Wide subjects are naturally shorter; tall subjects take more vertical space, and the text/actions follow them without a reserved empty square. Custom SVGs should provide an intrinsic aspect ratio, usually through viewBox. Widths can shrink inside a narrow host; content has no fixed height. Custom CSS may change containment and sizing.
 
 The root uses min-height semantics; vertical centering needs an available containing height. Long content can grow naturally. Responsive changes keep the same text/action DOM elements. See [styles and useSx](../helpers/styles.md) for container semantics and [SharePoint validation](../../SHAREPOINT-VALIDATION.md#statemessage) for authenticated checks.
+
+## Content slots
+
+`title`, `description` and action descriptor `label` accept phrasing shorthand or fixed `span` props objects. `visual` accepts shorthand or a fixed `div` props object. These use the existing Fluent/React peers; no additional dependency is required. Shorthand retains its existing wrappers. StateMessage owns the heading, paragraph, live text region and Button/link; artwork and actions remain outside the live region.
+
+```tsx
+<StateMessage title={{ className: classes.title, children: '**Literal title**' }}
+  description={{ children: 'Try **other filters**.' }}
+  visual={{ children: <span role="img" aria-label="Folder">📁</span> }}
+  primaryAction={{ label: { children: 'Retry' }, onClick: retry }} />
+```
+
+Static description strings/fragments keep existing inline Markdown, including object children. Title/action labels stay literal. `children: (Component, props) => <Component {...props}>…</Component>` inside an object supplies a Fluent render callback: output is opaque and must compose `FormattedText` explicitly for Markdown. Callbacks execute only during rendering, never for presence inspection, and may run more than once. Slot refs target their inner span/div; the public ref still targets the root div. Empty objects request containers. Booleans/legacy null suppress content; undefined visual selects preset artwork.
+
+`as` can only repeat the fixed tag. Native attributes, classes, refs and consumer style are supported; raw HTML and unsupported native keys are discarded. Callers own valid phrasing/noninteractive title and label content. Arbitrary JSX/callback subtrees are not sanitized. React 17 erased `ReactNode` types can bypass literal-object type restrictions; runtime guards still protect toolkit containers.

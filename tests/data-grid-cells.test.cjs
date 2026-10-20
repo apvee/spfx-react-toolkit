@@ -234,3 +234,28 @@ test('boolean icons use native 20px variants with one accessible label', () => {
         assert.equal(svg.getAttribute('height'), '20');
     }
 });
+
+
+test('missing and invalid presentation slots retain outer text spans and nullish defaults', () => {
+    const ref = React.createRef(); let clicked = 0, calls = 0;
+    const column = col('number', {
+        placeholder: { ref, className: 'inner-placeholder', onClick: () => clicked++, children: (Component, props) => { calls++; assert.equal(Component, 'span'); return React.createElement(Component, props, 'Missing slot'); } },
+        invalidPlaceholder: { 'data-invalid': '', children: 'Invalid **slot**', as: 'div', dangerouslySetInnerHTML: { __html: 'UNSAFE' } },
+    });
+    render(column, { value: undefined });
+    assert.equal(ref.current.tagName, 'SPAN'); assert.equal(ref.current.parentElement.tagName, 'SPAN'); assert.ok(ref.current.parentElement.className);
+    act(() => ref.current.dispatchEvent(new window.MouseEvent('click', { bubbles: true }))); assert.equal(clicked, 1); assert.ok(calls > 0);
+    const invalid = render(column, { value: 'bad' }).querySelector('[data-invalid]');
+    assert.equal(invalid.tagName, 'SPAN'); assert.equal(invalid.textContent, 'Invalid **slot**'); assert.doesNotMatch(host.innerHTML, /UNSAFE/);
+    const before = calls; render(column, { value: 2 }); assert.equal(calls, before);
+    for (const value of [undefined, null]) {
+        assert.equal(render(col('number', { placeholder: value }), {}).textContent, '—');
+        assert.equal(render(col('number', { invalidPlaceholder: value }), { value: 'bad' }).textContent, strings.invalidValue);
+    }
+    for (const value of [false, true, '', React.createElement(React.Fragment)]) {
+        assert.equal(render(col('number', { placeholder: value }), {}).textContent, '');
+        assert.equal(render(col('number', { invalidPlaceholder: value }), { value: 'bad' }).textContent, '');
+    }
+    assert.equal(render(col('sparkline'), {}).textContent, strings.noObservations);
+    assert.equal(render(col('custom', { renderCell: () => React.createElement('strong', {}, 'Unchanged custom'), placeholder: { children: 'Missing custom' } }), { value: 'valid' }).querySelector('strong').parentElement.classList.contains('fui-FluentProvider'), true);
+});

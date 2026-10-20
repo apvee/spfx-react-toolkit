@@ -1,9 +1,11 @@
+const { paginationProduct } = require('../tests/fixtures/demo-control-isolation/task3-product.browser.cjs');
 // Exercise the actual sample against both source and compiled library boundaries.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
+const { teamsDarkTheme } = require('@fluentui/react-theme');
 const root = path.resolve(__dirname, '..');
 const evidence = path.resolve(process.env.PAGINATION_BROWSER_EVIDENCE || path.join(root, '.docs/maintenance/evidence/pagination'));
 
@@ -31,9 +33,13 @@ async function verify(boundary) {
       if (message.type() === 'error') errors.push(message.text());
       if (message.type() === 'warning') warnings.push(message.text());
     });
+    await paginationProduct(page, { url, check });
     await page.goto(url);
+    await page.getByRole('button', { name: 'Independent RTL instance', exact: true }).click();
     const primary = page.locator('[data-pagination-instance="primary"]');
     const secondary = page.locator('[data-pagination-instance="secondary"]');
+    const diagnostics = primary.getByRole('button', { name: 'Advanced diagnostics', exact: true });
+    if (await diagnostics.getAttribute('aria-expanded') !== 'true') await diagnostics.click();
     const summary = primary.locator('[data-pagination-demo="summary"]');
     const nav = primary.locator('nav');
     const action = label => nav.getByRole('button', { name: label, exact: true });
@@ -69,6 +75,9 @@ async function verify(boundary) {
     await select('appearance').selectOption('subtle');
     check('subtle appearance restored', await action('Next page').getAttribute('class'), subtleClass);
     await checkbox('Complete requests manually').check();
+    // Finish disclosure layout and Playwright's scrolling before comparing icon geometry.
+    await page.evaluate(() => Promise.all(document.getAnimations().filter(animation => animation.effect?.getTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => undefined))));
+    await action('Next page').scrollIntoViewIfNeeded();
     const before = await action('Next page').boundingBox();
     await action('Next page').click();
     const after = await action('Next page').boundingBox();
@@ -150,8 +159,8 @@ async function verify(boundary) {
     check('empty page actions disabled', await nav.locator('button').evaluateAll(nodes => nodes.every(node => node.disabled)), true);
     await select('filter').selectOption('all');
     await checkbox('Reduce total to three').uncheck();
-    await checkbox('Italian labels').check();
-    check('localized labels', await action('Pagina successiva').count(), 1);
+    await checkbox('Custom English labels').check();
+    check('localized labels', await action('Next page').count(), 1);
     await checkbox('Hide navigation').check();
     check('hidden stays hidden', await nav.isVisible(), false);
     await primary.locator('[data-pagination-demo="inspect-ref"]').click();
@@ -160,8 +169,25 @@ async function verify(boundary) {
     check('no accidental form submit', (await primary.locator('[data-pagination-demo="submissions"]').textContent()).trim(), 'Form submissions: 0');
     await primary.locator('[data-pagination-demo="submit"]').click();
     check('explicit form submit', (await primary.locator('[data-pagination-demo="submissions"]').textContent()).trim(), 'Form submissions: 1');
-    check('inherited RTL', await secondary.locator('nav').evaluate(node => getComputedStyle(node).direction), 'rtl');
-    check('mirrored logical icon', await secondary.locator('nav button svg').first().evaluate(node => getComputedStyle(node).transform), 'matrix(-1, 0, 0, 1, 0, 0)');
+    const hostConfig = await page.evaluate(() => window.demoFixtureHost.config);
+    const retainedNavigation = await nav.elementHandle();
+    const primaryState = await summary.textContent();
+    const secondaryState = await secondary.locator('[data-pagination-demo="summary"]').textContent();
+    await page.evaluate(() => window.demoFixtureHost.update({ theme: 'dark' }));
+    try {
+      check('inherited dark token', await secondary.locator('nav').evaluate(node => getComputedStyle(node).getPropertyValue('--colorNeutralForeground1').trim()), teamsDarkTheme.colorNeutralForeground1);
+      check('inherited RTL', await secondary.locator('nav').evaluate(node => getComputedStyle(node).direction), 'rtl');
+      check('mirrored logical icon', await secondary.locator('nav button svg').first().evaluate(node => getComputedStyle(node).transform), 'matrix(-1, 0, 0, 1, 0, 0)');
+      check('theme retains navigation DOM', await nav.evaluate((node, previous) => node === previous, retainedNavigation), true);
+      check('theme retains primary result state', await summary.textContent(), primaryState);
+      check('theme retains independent result state', await secondary.locator('[data-pagination-demo="summary"]').textContent(), secondaryState);
+      check('theme retains form submissions', (await primary.locator('[data-pagination-demo="submissions"]').textContent()).trim(), 'Form submissions: 1');
+      await page.screenshot({ path: path.join(evidence, `${boundary}-dark-rtl.png`), fullPage: true });
+    } finally {
+      await page.evaluate(config => window.demoFixtureHost.update(config), hostConfig);
+      await retainedNavigation.dispose();
+    }
+    check('host configuration restored', await page.evaluate(() => window.demoFixtureHost.config), hostConfig);
     check('repository root uses classes', await nav.evaluate(node => node.hasAttribute('style')), false);
     await page.screenshot({ path: path.join(evidence, `${boundary}-desktop.png`), fullPage: true });
     await checkbox('320px navigation').check();
@@ -176,9 +202,16 @@ async function verify(boundary) {
         const box = button.getBoundingClientRect(); return box.left >= area.left && box.right <= area.right;
       });
     }), true);
-    await action('Pagina successiva').click();
+    await action('Next page').click();
     check('mobile action works', (await summary.textContent()).trim(), 'Page 2: items 4–6 of 23.');
     await page.screenshot({ path: path.join(evidence, `${boundary}-mobile.png`), fullPage: true });
+    const primarySummary = await summary.textContent();
+    await secondary.locator('nav').getByRole('button', { name: 'Next page', exact: true }).click();
+    await page.getByRole('button', { name: 'Independent RTL instance', exact: true }).click();
+    check('collapsed independent navigation inaccessible', await secondary.locator('nav').evaluate(node => node.closest('.fui-AccordionPanel').hasAttribute('inert')), true);
+    await page.getByRole('button', { name: 'Independent RTL instance', exact: true }).click();
+    check('independent page retained after collapse', (await secondary.locator('[data-pagination-demo=summary]').textContent()).trim(), 'Page 2: items 6–10 of 23.');
+    check('primary results isolated after secondary change', await summary.textContent(), primarySummary);
     check('console errors', errors, []);
     check('console warnings', warnings, []);
     return { boundary, url, checks, errors, warnings, browser: browser.version(), viewports: [{ width: 1440, height: 1100 }, { width: 320, height: 850 }] };
