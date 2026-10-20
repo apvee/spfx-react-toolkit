@@ -2,6 +2,14 @@
 
 Import the factories only from `@apvee/spfx-react-toolkit/property-pane/pickers`. React controls and JSON types remain available from `/controls/pickers`, `/controls` and the root; the root does not load native Property Pane factory runtime. The peer `@microsoft/sp-property-pane` supports SPFx >=1.18 <2, using the host's installed version. React 17 render/unmount is used, with the toolkit provider and scoped Fluent renderer/theme; no React 18 createRoot is required.
 
+## Native pane theme
+
+All eight native picker fields use the effective Fluent UI 9 tokens inherited by the SPFx custom-field container, including typography, spacing, borders and shadows. A private provider bridges the separate React root to body-mounted menus, tooltips and dialogs; it does not use the web-part section theme. Ordinary React pickers continue to follow their own provider.
+
+The bridge reads from the container's owning document. Connected containers with usable opaque hex/RGB surface and foreground tokens use the native snapshot, completing missing tokens with a matching neutral light/dark Fluent theme. A temporarily unavailable snapshot retains the last valid theme for that container; before the first valid snapshot, the fallback is neutral light. No REST/Graph request or persistent cache is involved.
+
+Native renders, host theme notifications, ancestor class/style changes, reparenting, stylesheet replacement/text changes and stylesheet loads refresh the snapshot without remounting the picker. Equivalent snapshots retain their identity. Unsignalled CSSOM-only edits such as `insertRule` in an existing stylesheet require a host notification or another native render; there is no polling. Observers, listeners and scheduled frames are released on disposal. The current anchor parser intentionally accepts opaque hex and comma-separated RGB/RGBA colors; unsupported formats retain the previous snapshot.
+
 ## Typed property values
 
 Use the exported JSON interfaces as web-part property types. Both single and multiple fields store **arrays**; no selection is `[]`.

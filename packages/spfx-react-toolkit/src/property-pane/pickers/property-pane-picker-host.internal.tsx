@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FluentProvider } from '@fluentui/react-components';
 import { RendererProvider } from '@griffel/react';
 import { createDOMRenderer } from '@griffel/core';
-import { useSPFxFluent9ThemeInfo } from '../../hooks/useSPFxFluent9ThemeInfo';
+import { usePropertyPanePickerTheme } from './usePropertyPanePickerTheme.internal';
 import { useSPFxContext } from '../../hooks/useSPFxContext';
 import { AutoSkeleton } from '../../controls/auto-skeleton/auto-skeleton';
 import type { PickerControlBoundaryProps } from '../../controls/pickers/picker-runtime-context.internal';
@@ -17,10 +17,12 @@ function PropertyPanePickerControlBoundary({ pending, children }: PickerControlB
     <div data-property-pane-picker-control="" aria-busy={false}>{children}</div>;
 }
 
-/** Small native-host wrapper, intentionally without WebPartShell layout/title/property editing. */
-export function PropertyPanePickerHost({ document, runtime, children }: { readonly document: Document; readonly runtime: PickerRequestCache; readonly children: React.ReactNode }): React.ReactElement {
+/** Native-only bridge: reads pane tokens outside this React root and carries them into body portals.
+ * Retains the owning document renderer, SPFx direction and mounted picker runtime. */
+export function PropertyPanePickerHost({ container, runtime, children }: { readonly container: HTMLElement; readonly runtime: PickerRequestCache; readonly children: React.ReactNode }): React.ReactElement {
+  const document = container.ownerDocument;
   const renderer = React.useMemo(() => createDOMRenderer(document), [document]);
-  const { theme } = useSPFxFluent9ThemeInfo(), { spfxContext } = useSPFxContext();
+  const theme = usePropertyPanePickerTheme(container), { spfxContext } = useSPFxContext();
   const dir = spfxContext.pageContext.cultureInfo.isRightToLeft ? 'rtl' : 'ltr';
   return <RendererProvider renderer={renderer} targetDocument={document}>
     <FluentProvider theme={theme} dir={dir} targetDocument={document}>

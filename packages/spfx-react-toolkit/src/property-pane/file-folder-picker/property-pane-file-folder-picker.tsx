@@ -18,7 +18,7 @@ import type { FileFolderPickerPropertyKey, PropertyPaneFileFolderPickerProps } f
  * @typeParam TProperties Web-part property bag containing an exact file/folder reference array.
  * @param targetProperty Safe direct array property key; nested paths and prototype names are rejected at runtime too.
  * @param props Initialized instance, stable field key, required JSON array, optional revision and React control options.
- * @returns Native custom field using the owning document's renderer/theme and SPFxWebPartProvider.
+ * @returns Native custom field using the owning document's renderer, native pane token theme and SPFxWebPartProvider.
  * @throws Invalid targetProperty or blank field key.
  * @example
  * PropertyPaneFileFolderPicker('documents', {
@@ -43,7 +43,7 @@ export function PropertyPaneFileFolderPicker<TProperties extends object>(
       onRender(domElement, _context, changeCallback) {
         mountOrUpdatePickerField(domElement, { owner: instance, key, token, render: runtime =>
           <SPFxWebPartProvider instance={instance}>
-            <PropertyPanePickerHost document={domElement.ownerDocument} runtime={runtime}>
+            <PropertyPanePickerHost container={domElement} runtime={runtime}>
               <PropertyPaneFileFolderPickerValueBridge controlProps={controlProps} value={value} valueRevision={valueRevision}
                 targetProperty={targetProperty} onChange={changeCallback} />
             </PropertyPanePickerHost>

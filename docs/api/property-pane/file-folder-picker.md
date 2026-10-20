@@ -1,5 +1,7 @@
 # PropertyPaneFileFolderPicker
 
+The native field follows the [Property Pane token bridge](pickers.md#native-pane-theme), independently of the web-part section theme. Its body-mounted Stage dialog uses the same native tokens. The existing File Picker SDK receives `default` or `dark` from that theme on each opening; an already-open Microsoft iframe is not reskinned live. Renderer, direction, focus, selections and SDK ownership remain unchanged.
+
 The native field renders the same outlined tag surface as the React control: individually removable tags, an empty selection action and a mode-specific icon (Attach, FolderOpen or FolderDocument). It has no separate Browse/clear-all buttons. Medium/Large use the native Fluent Input border and 32px/40px minimum height; tags can wrap in a narrow pane. The focus underline remains active while the hosted picker is open. Labels, hint/error associations, disabled/error styling, host theme and reduced motion follow the shared control. This presentation does not change JSON ownership, metadata leases or hydration behavior.
 
 Import the native factory separately from the React control:

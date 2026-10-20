@@ -42,6 +42,7 @@ function Case({ size, narrow, rtl, dark }: { size: 'medium' | 'large'; narrow: b
   </FluentProvider>;
 }
 function NativeCase() {
+  const [nativeDark, setNativeDark] = React.useState(false);
   const styles = useStyles();
   const target = React.useRef<HTMLDivElement>(null); // React DOM ref interoperability.
   const field = React.useRef<IPropertyPaneField<IPropertyPaneCustomFieldProps>>();
@@ -74,13 +75,13 @@ function NativeCase() {
     render();
   }
   React.useEffect(() => () => { if (target.current !== null) field.current?.properties.onDispose?.(target.current); }, []);
-  return <section className={mergeClasses(styles.card, styles.narrow)} aria-label="Native property pane simulation">
-    <h2>Native property pane lifecycle</h2><p>Actual native factory. SPFx pane open/close and property callback are simulated; accepted JSON is retained in this fixture only.</p>
+  return <FluentProvider theme={nativeDark ? webDarkTheme : webLightTheme}><section className={mergeClasses(styles.card, styles.narrow)} aria-label="Native property pane simulation">
+    <h2>Native property pane lifecycle</h2><Button onClick={() => setNativeDark(value => !value)}>Toggle native pane theme</Button><output aria-label="Native pane theme">{nativeDark ? 'dark' : 'light'}</output><p>Actual native factory. SPFx pane open/close and property callback are simulated; accepted JSON is retained in this fixture only.</p>
     <div className={styles.actions}><Button disabled={open} onClick={reopen}>Open native pane</Button><Button disabled={!open} onClick={close}>Close native pane</Button><Button disabled={!open} onClick={render}>Equivalent native onRender</Button></div>
     <div ref={target} />
     <p role="status">Native pane: {open ? 'open' : 'closed'}. Native events: {events}. {reopenEvidence}</p>
     <output className={styles.json} aria-label="Native complete saved JSON">{json}</output>
-  </section>;
+  </section></FluentProvider>;
 }
 function Fixture() {
   const styles = useStyles();

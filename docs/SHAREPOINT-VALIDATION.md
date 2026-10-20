@@ -2,6 +2,19 @@
 
 This is a reproducible manual integration checklist. These authenticated tenant checks have **not been executed** as part of the local repository verification; no simulated result counts as a tenant pass. Build/test/package success verifies local behavior and artifacts, not permission grants, SharePoint hosts or remote transaction ordering. Preparing or running these checks does not authorize deploying or publishing the solution.
 
+## Property Pane picker theme verification — 2026-10-20
+
+The following focused authenticated check was executed on `apveelabs.sharepoint.com/sites/apvee-content-flow-translator-demo` with SPFx 1.21.1. It does not certify the other checklists in this guide.
+
+- Dark web-part section and light native Property Pane: all seven metadata/principal pickers were opened as both Combobox and TagPicker. Each native field and its body-mounted menu inherited `colorNeutralBackground1: #ffffff`; the native foreground was `#242424`. The ordinary React FileFolderPicker retained the section's `#292929` background.
+- SitePicker and ListPicker temporarily selected the current collection and Documents to expose the dependent Fields, Views, Items and Content types fields. Switching presentation retained those selections. They were removed afterward, restoring the initially empty selection and Combobox/multiple configuration.
+- Native FileFolderPicker opened the real Microsoft FilePicker.aspx surface. The outer Stage portalled into body with the native light theme, and the SDK URL contained `theme: default`. The document table loaded successfully. Cancel returned to the native trigger without changing the empty selection. No upload, permission grant or Save was performed.
+- Closing/reopening the pane retained the restored empty values and correct native light theme. No transient error or thematic flicker was observed during these actions.
+
+Local browser fixtures additionally checked all fourteen Combobox/TagPicker combinations under light/dark native providers contrasted with a dark ordinary React provider; equivalent theme changes retained input IDs, selected labels and request counters. FileFolderPicker's native Stage followed both light and dark tokens and retained three saved references through native equivalent renders and close/reopen. Nine targeted theme tests cover detached/secondary-document reads, typed tokens, fallback, reparenting, coalescing, stylesheet changes and disposal; the combined scoped regression run passed 77 tests.
+
+Tenant-native live light/dark switching and high contrast were not available for this run. CSSOM-only edits without host notification/native render and live reskinning of an already-open Microsoft iframe are not claimed. Theme changes create no remote requests; browser fixture counters verify this separately from authenticated endpoint activity.
+
 ## Prerequisites and debug setup
 
 Use a test tenant/site you can edit, an authenticated account and a modern page with a Top placeholder. Record tenant/site URLs, account role, Node version, library package version and SPFx 1.21.1. Prepare a disposable `Tasks` list with a Title column and at least two pages of items. Use separate test keys/files; list writes, OneDrive writes, site collection writes and tenant key-value writes change live test data.

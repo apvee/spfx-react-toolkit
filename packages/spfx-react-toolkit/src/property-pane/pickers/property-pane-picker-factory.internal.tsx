@@ -23,7 +23,7 @@ export function createPropertyPanePicker<P extends object, V extends PickerValue
         const { instance, key, value, valueRevision } = props;
         mountOrUpdatePickerField(domElement, { owner: instance, key, token, render: runtime =>
           <SPFxWebPartProvider instance={instance}>
-            <PropertyPanePickerHost document={domElement.ownerDocument} runtime={runtime}>
+            <PropertyPanePickerHost container={domElement} runtime={runtime}>
               <PropertyPanePickerValueBridge<V, T, C> Control={Control} controlProps={controlProps} value={value} valueRevision={valueRevision}
                 validate={validate} targetProperty={targetProperty} onChange={changeCallback} />
             </PropertyPanePickerHost>
