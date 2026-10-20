@@ -45,3 +45,13 @@ DataGrid public types: `DataGridProps`, `DataGridStrings`, `DataGridSparklineSum
 ## DescriptionList
 
 `DescriptionList` is the single compound value with `DescriptionList.Item`. Public types are `DescriptionListEntry`, `DescriptionListLayout`, `DescriptionListProps` and `DescriptionListItemProps`. See the [Description List reference](./description-list.md) for all members, items/JSX composition, Fluent slots, native semantics and 480px named-container responsiveness. Import from the root, `/controls` or `/controls/description-list`; there is no flat Item runtime export.
+
+## SharePoint pickers
+
+[React pickers](pickers.md) and [native Property Pane pickers](../property-pane/pickers.md) cover SitePicker, ListPicker, FieldPicker, ViewPicker, ContentTypePicker, ListItemPicker and PrincipalPicker, with JSON references, consumer options and remote discovery.
+
+Picker public contracts: `SitePicker`, `ListPicker`, `FieldPicker`, `ViewPicker`, `ContentTypePicker`, `ListItemPicker`, `PrincipalPicker`, `PickerOption`, `PickerSelectionEvent`, `PickerSelectionData`, `PickerProps`, `PickerInitialSuggestions`, `WebPickerSource`, `SearchPickerOptions`, `PickerOrderBy`, `SitePickerOption`, `SitePickerProps`, `ListPickerOption`, `ListPickerProps`, `FieldPickerOption`, `FieldPickerProps`, `ViewPickerOption`, `ViewPickerProps`, `ContentTypePickerOption`, `ContentTypePickerProps`, `ListItemPickerOption`, `ListItemPickerProps`, `PickerGroupReference`, `PrincipalType`, `UserIdentityResolution`, `UserPrincipal`, `PrincipalPickerOption`, `PrincipalPickerInitialPrincipal`, `PrincipalUserScope`, `PrincipalInitialSuggestions`, `PrincipalPickerProps`, `PickerValueLabel`, `SitePickerValue`, `ListPickerValue`, `FieldPickerValue`, `ViewPickerValue`, `ContentTypePickerValue`, `PickerCustomItemKey`, `ListItemPickerValueBase`, `SharePointItemValue`, `SharePointFileValue`, `SharePointFolderValue`, `ListItemPickerValue`, `EntraObjectIdentity`, `SharePointPrincipalIdentity`, `UserPrincipalValue`, `SharePointGroupValue`, `EntraGroupValue`, `UnvalidatedEmailValue`, `PrincipalPickerValue`, `PickerValue`, `PickerSelection`. See [usage and member reference](pickers.md).
+
+## FileFolderPicker
+
+[FileFolderPicker](file-folder-picker.md) and its [Property Pane field](../property-pane/file-folder-picker.md) use Microsoft hosted v8 for existing SharePoint and OneDrive Business files/folders. Public React contracts: `FileFolderPickerProps`, `FileFolderPickerPreset`, `FileFolderPickerScope`, `FileFolderPickerInitialLocation`, `FileFolderPickerValue`, `FileFolderPickerOption`, `FileFolderPickerChangeData`. Native contracts: `PropertyPaneFileFolderPickerProps`, `FileFolderPickerPropertyKey`.

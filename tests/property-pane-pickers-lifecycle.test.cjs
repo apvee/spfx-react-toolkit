@@ -1,0 +1,40 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { createHarness } = require('./services-test-harness.cjs');
+const h = createHarness();
+test('native owner/document leases share actual requests and the final disposal clears all results', async () => {
+  const { acquirePropertyPanePickerRuntime } = h.load('property-pane/pickers/property-pane-picker-runtime.internal.ts');
+  const owner = {}, other = {};
+  const first = acquirePropertyPanePickerRuntime(owner, document), second = acquirePropertyPanePickerRuntime(owner, document);
+  assert.equal(first.runtime, second.runtime);
+  let calls = 0;
+  const request = () => first.runtime.request('same-query', async () => ++calls);
+  assert.equal(await request(), 1);
+  first.release(); first.release();
+  assert.equal(await second.runtime.request('same-query', async () => ++calls), 1);
+  const isolated = acquirePropertyPanePickerRuntime(other, document);
+  assert.notEqual(isolated.runtime, second.runtime);
+  second.release();
+  await assert.rejects(second.runtime.request('same-query', async () => 0), /disposed/);
+  const reopened = acquirePropertyPanePickerRuntime(owner, document);
+  assert.notEqual(reopened.runtime, second.runtime);
+  assert.equal(await reopened.runtime.request('same-query', async () => ++calls), 2);
+  reopened.release(); isolated.release();
+});
+test('same detached DOM owner/key preserves root state and stale factory disposal cannot unmount the latest session', () => {
+  const { mountOrUpdatePickerField, disposePickerField } = h.load('property-pane/pickers/property-pane-picker.internal.tsx');
+  const dom = document.createElement('div'), owner = {};
+  let mounts = 0, disposals = 0;
+  function Probe({ label }) { h.React.useEffect(() => { mounts++; return () => disposals++; }, []); return h.React.createElement('input', { defaultValue: label }); }
+  const firstToken = {}, secondToken = {};
+  const first = { owner, key: 'field', token: firstToken, render: () => h.React.createElement(Probe, { label: 'Initial' }) };
+  h.act(() => { mountOrUpdatePickerField(dom, first); });
+  dom.querySelector('input').value = 'Draft';
+  h.act(() => { mountOrUpdatePickerField(dom, { ...first, token: secondToken, render: () => h.React.createElement(Probe, { label: 'New label' }) }); });
+  assert.equal(mounts, 1);
+  assert.equal(dom.querySelector('input').value, 'Draft');
+  h.act(() => disposePickerField(firstToken, dom));
+  assert.equal(disposals, 0);
+  h.act(() => disposePickerField(secondToken, dom));
+  assert.equal(disposals, 1);
+});

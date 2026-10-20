@@ -148,7 +148,7 @@ for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invok
 }
 console.log('Verified dedicated root/domain/legacy Imports scenario (no duplicate export coverage).');
 
-const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination', 'DescriptionList'].includes(item.name)).map(item => item.name);
+const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination', 'DescriptionList', 'SitePicker', 'ListPicker', 'FieldPicker', 'ViewPicker', 'ContentTypePicker', 'ListItemPicker', 'PrincipalPicker', 'FileFolderPicker'].includes(item.name)).map(item => item.name);
 assertCovered('Controls', controlSymbols, registrySymbols);
 const descriptionListPanel = read(path.join(panelsPath, 'DescriptionListPanel.tsx'));
 for (const marker of ['DescriptionList.Item', 'items=', 'layout=', 'key={entry.id}',
@@ -222,4 +222,11 @@ console.log('Verified Stage compound modes, dimensions, Form and native popup sc
 const paginationPanel = read(path.join(panelsPath, 'PaginationPanel.tsx'));
 for (const marker of ['Pagination', 'onPaginationChange', 'pageIndex', 'pageSize', 'totalItems', 'hasNextPage', 'hasPreviousPage', 'loading', 'data-pagination-demo="summary"']) {
   if (!paginationPanel.includes(marker)) throw new Error(`Observable Pagination scenario missing ${marker}`);
+}
+
+// Native picker APIs have a live factory and native field in the sample webpart.
+for (const symbol of ['SitePicker', 'ListPicker', 'FieldPicker', 'ViewPicker', 'ContentTypePicker', 'ListItemPicker', 'PrincipalPicker', 'FileFolderPicker']) {
+  const native = `PropertyPane${symbol}`;
+  if (!registrySymbols.has(native)) throw new Error(`Missing native picker scenario: ${native}`);
+  if (!read(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/SpFxReactToolkitTestWebPart.ts')).includes(`${native}(`)) throw new Error(`Missing live native picker field: ${native}`);
 }

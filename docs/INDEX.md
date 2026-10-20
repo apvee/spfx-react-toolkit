@@ -239,3 +239,10 @@ Public pure helper functions for SPFx context mapping, permission checks, API pe
 ---
 
 *Generated from source API metadata and public documentation.*
+
+## SharePoint pickers
+
+[React pickers](api/controls/pickers.md) and [native Property Pane pickers](api/property-pane/pickers.md) cover SitePicker, ListPicker, FieldPicker, ViewPicker, ContentTypePicker, ListItemPicker and PrincipalPicker, with JSON references, consumer options and remote discovery.
+
+- [Hosted FileFolderPicker](api/controls/file-folder-picker.md): React source restrictions, metadata references, authentication and lifecycle.
+- [PropertyPaneFileFolderPicker](api/property-pane/file-folder-picker.md): native JSON arrays and retained drafts.

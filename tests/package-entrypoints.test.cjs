@@ -10,6 +10,10 @@ const aliases = {
   './helpers': 'lib/helpers/index', './services': 'lib/services/index',
   './styles': 'lib/styles/index', './styles/useSx': 'lib/hooks/useSx',
   './hooks/useStableCallback': 'lib/hooks/useStableCallback',
+  './controls/file-folder-picker': 'lib/controls/file-folder-picker/index',
+  './property-pane/file-folder-picker': 'lib/property-pane/file-folder-picker/index',
+  './controls/pickers': 'lib/controls/pickers/index',
+  './property-pane/pickers': 'lib/property-pane/pickers/index',
   './controls': 'lib/controls/index', './controls/formatted-text': 'lib/controls/formatted-text/index',
   './controls/relative-time': 'lib/controls/relative-time/index',
   './controls/auto-skeleton': 'lib/controls/auto-skeleton/index',
@@ -23,7 +27,7 @@ const aliases = {
   './controls/pagination': 'lib/controls/pagination/index',
   './controls/description-list': 'lib/controls/description-list/index',
 };
-const files = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index', 'lib/controls/form/index', 'lib/controls/data-grid/index', 'lib/controls/web-part-shell/index', 'lib/controls/stage/index', 'lib/controls/pagination/index', 'lib/controls/description-list/index'].flatMap(base => ['.js', '.d.ts', '.js.map', '.d.ts.map'].map(ext => base + ext))];
+const files = [...inventory.files, ...['lib/controls/file-folder-picker/index','lib/property-pane/file-folder-picker/index','lib/controls/pickers/index','lib/property-pane/pickers/index', 'lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index', 'lib/controls/form/index', 'lib/controls/data-grid/index', 'lib/controls/web-part-shell/index', 'lib/controls/stage/index', 'lib/controls/pagination/index', 'lib/controls/description-list/index'].flatMap(base => ['.js', '.d.ts', '.js.map', '.d.ts.map'].map(ext => base + ext))];
 test('clean entrypoints select their canonical declarations before runtime', () => {
   for (const [alias, target] of Object.entries(aliases)) {
     assert.deepEqual(manifest.exports?.[alias], { types: './' + target + '.d.ts', default: './' + target + '.js' });
@@ -32,6 +36,10 @@ test('clean entrypoints select their canonical declarations before runtime', () 
   assert.deepEqual(manifest.typesVersions, { '*': {
     core: ['lib/core/index.d.ts'], hooks: ['lib/hooks/index.d.ts'], helpers: ['lib/helpers/index.d.ts'],
     services: ['lib/services/index.d.ts'], styles: ['lib/styles/index.d.ts'],
+    'controls/file-folder-picker': ['lib/controls/file-folder-picker/index.d.ts'],
+    'property-pane/file-folder-picker': ['lib/property-pane/file-folder-picker/index.d.ts'],
+    'controls/pickers': ['lib/controls/pickers/index.d.ts'],
+    'property-pane/pickers': ['lib/property-pane/pickers/index.d.ts'],
     controls: ['lib/controls/index.d.ts'], 'controls/formatted-text': ['lib/controls/formatted-text/index.d.ts'],
     'controls/relative-time': ['lib/controls/relative-time/index.d.ts'],
     'controls/auto-skeleton': ['lib/controls/auto-skeleton/index.d.ts'],

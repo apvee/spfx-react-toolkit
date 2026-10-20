@@ -134,7 +134,7 @@ try {
   const packed = JSON.parse(execFileSync('npm',['pack','--json','--pack-destination',temp],{cwd:library,encoding:'utf8'}))[0];
   assert.equal(packed.name,'@apvee/spfx-react-toolkit');
   for (const file of packed.files) {
-    assert.ok(/^(package\.json|README\.md|LICENSE|THIRD-PARTY-NOTICES\.md|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls)\/.+))$/.test(file.path), `Unexpected package file: ${file.path}`);
+    assert.ok(/^(package\.json|README\.md|LICENSE|THIRD-PARTY-NOTICES\.md|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls|property-pane)\/.+))$/.test(file.path), `Unexpected package file: ${file.path}`);
   }
   const packedPaths = new Set(packed.files.map(file => file.path));
   assert.ok(packedPaths.has('THIRD-PARTY-NOTICES.md'), 'Artwork attribution must ship');

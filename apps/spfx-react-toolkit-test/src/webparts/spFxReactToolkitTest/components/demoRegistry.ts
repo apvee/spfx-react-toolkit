@@ -23,6 +23,36 @@ const lazyPanel = (
 
 export const demoRegistry: readonly DemoRegistryEntry[] = [
   {
+    key: 'file-folder-picker', title: 'File and folder picker', iconName: 'Folder',
+    description: 'Microsoft v8 hosted picker with verified SharePoint and OneDrive Business boundaries.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-file-folder-picker' */ './panels/FileFolderPickerPanel')),
+    coverage: [
+      { symbol: 'FileFolderPicker', kind: 'read', notes: 'One live hosted v8 picker; source/kind/cardinality/presentation and consumer-owned JSON references.' },
+      { symbol: 'PropertyPaneFileFolderPicker', kind: 'host', notes: 'Native direct JSON arrays, independent hosted presentation and selection policy; source cascade resets explicitly.' },
+    ],
+  },
+  {
+    key: 'pickers', title: 'SharePoint pickers', iconName: 'Search',
+    description: 'Seven live React pickers and native Property Pane JSON fields.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-pickers' */ './panels/PickersPanel')),
+    coverage: [
+      { symbol: 'SitePicker', kind: 'read', notes: 'Live authenticated picker; configurable presentation, selection, consumer models and JSON diagnostics.' },
+      { symbol: 'ListPicker', kind: 'read', notes: 'Live authenticated picker; configurable presentation, selection, consumer models and JSON diagnostics.' },
+      { symbol: 'FieldPicker', kind: 'read', notes: 'Live authenticated picker; configurable presentation, selection, consumer models and JSON diagnostics.' },
+      { symbol: 'ContentTypePicker', kind: 'read', notes: 'Live site collection/list metadata picker; complete catalog, local filters and JSON diagnostics.' },
+      { symbol: 'ViewPicker', kind: 'read', notes: 'Live authenticated picker; configurable presentation, selection, consumer models and JSON diagnostics.' },
+      { symbol: 'ListItemPicker', kind: 'read', notes: 'Live authenticated picker; configurable presentation, selection, consumer models and JSON diagnostics.' },
+      { symbol: 'PrincipalPicker', kind: 'read', notes: 'Live authenticated picker; configurable presentation, selection, consumer models and JSON diagnostics.' },
+      { symbol: 'PropertyPaneSitePicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
+      { symbol: 'PropertyPaneListPicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
+      { symbol: 'PropertyPaneFieldPicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
+      { symbol: 'PropertyPaneContentTypePicker', kind: 'host', notes: 'Native site/list content type reference arrays with stable key and source cascade revision.' },
+      { symbol: 'PropertyPaneViewPicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
+      { symbol: 'PropertyPaneListItemPicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
+      { symbol: 'PropertyPanePrincipalPicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
+    ],
+  },
+  {
     key: 'web-part-shell',
     title: 'WebPartShell',
     iconName: 'Page',

@@ -326,3 +326,7 @@ node scripts/check-description-list-browser.cjs
 ```
 
 The focused runner records local source/compiled results separately. It installs no dependencies. Temporary loopback servers may require permission in a restricted environment. These checks do not establish authenticated SharePoint, Teams iframe or screen-reader behavior.
+
+## Picker Property Pane groups
+
+The sample Property Pane enables SPFx accordion groups. File picker options and diagnostics start collapsed and remain expandable; their saved values and selected references are independent of group expansion.

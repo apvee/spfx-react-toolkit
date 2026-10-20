@@ -203,3 +203,11 @@ Pagination uses the existing shared React, Fluent/icons and Griffel peers. It in
 ## DescriptionList imports
 
 Import `DescriptionList`, `DescriptionListEntry`, `DescriptionListLayout`, `DescriptionListProps` and `DescriptionListItemProps` from the root, `/controls` or `/controls/description-list`. All entries share the canonical implementation and declarations. Use `DescriptionList.Item` for compound composition; implementation, context and styling modules have no public alias. The control uses existing Fluent/Griffel peers and neither registers PnP features nor creates a renderer. See the [DescriptionList reference](./api/controls/description-list.md) for container-responsive layout and content contracts.
+
+## Picker entrypoints
+
+`@apvee/spfx-react-toolkit/controls/pickers` exports the seven React controls and JSON reference interfaces; these also flow through `/controls` and the root. `@apvee/spfx-react-toolkit/property-pane/pickers` exports the seven native factories plus their property-key contracts. Native factory runtime is isolated from root imports. New picker modules have no legacy wildcard aliases. See [React](api/controls/pickers.md) and [Property Pane](api/property-pane/pickers.md).
+
+## Hosted file/folder picker entries
+
+Import `FileFolderPicker` and its types from `@apvee/spfx-react-toolkit/controls/file-folder-picker` (also root or `/controls`). Import `PropertyPaneFileFolderPicker`, `PropertyPaneFileFolderPickerProps` and `FileFolderPickerPropertyKey` from `@apvee/spfx-react-toolkit/property-pane/file-folder-picker`; native factories are not root value exports. Both clean aliases resolve to canonical compiled implementations and retain existing React/Fluent/SPFx peers. No private sample SDK or MSAL dependency is added. See the [control guide](api/controls/file-folder-picker.md).

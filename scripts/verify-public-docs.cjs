@@ -92,7 +92,7 @@ assertDocumentedSurface(read('docs/api/hooks/react.md'), sxHook);
 assertContainsAll('docs/api/hooks/INDEX.md', ['useSx', 'useStableCallback'], 'React utility hooks');
 
 const controlSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts'));
-assertDocumentedSurface(read('docs/api/controls/formatted-text.md') + '\n' + read('docs/api/controls/relative-time.md') + '\n' + read('docs/api/controls/auto-skeleton.md') + '\n' + read('docs/api/controls/state-message.md') + '\n' + read('docs/api/controls/settings-group.md') + '\n' + read('docs/api/controls/accordion-group.md') + '\n' + read('docs/api/controls/form.md') + '\n' + read('docs/api/controls/data-grid.md') + '\n' + read('docs/api/controls/web-part-shell.md') + '\n' + read('docs/api/controls/stage.md') + '\n' + read('docs/api/controls/pagination.md') + '\n' + read('docs/api/controls/description-list.md'), controlSurface);
+assertDocumentedSurface(read('docs/api/controls/formatted-text.md') + '\n' + read('docs/api/controls/relative-time.md') + '\n' + read('docs/api/controls/auto-skeleton.md') + '\n' + read('docs/api/controls/state-message.md') + '\n' + read('docs/api/controls/settings-group.md') + '\n' + read('docs/api/controls/accordion-group.md') + '\n' + read('docs/api/controls/form.md') + '\n' + read('docs/api/controls/data-grid.md') + '\n' + read('docs/api/controls/web-part-shell.md') + '\n' + read('docs/api/controls/stage.md') + '\n' + read('docs/api/controls/pagination.md') + '\n' + read('docs/api/controls/description-list.md') + '\n' + read('docs/api/controls/pickers.md') + '\n' + read('docs/api/controls/file-folder-picker.md'), controlSurface);
 const formSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/form/index.ts'), { includeTypeMembers: true });
 assertDocumentedSurface(read('docs/api/controls/form.md'), formSurface);
 const gridSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/data-grid/index.ts'), { includeTypeMembers: true });
@@ -180,3 +180,8 @@ assertContainsAll('docs/PACKAGE-IMPORTS.md', [
   'CommonJS', 'sideEffects', '1,023', '512', 'PnP',
 ], 'facade imports and compatibility constraints');
 assert.ok(read('docs/INDEX.md').includes('./PACKAGE-IMPORTS.md'), 'Package import guide must be indexed');
+
+for (const family of ['pickers', 'file-folder-picker']) {
+  assertDocumentedSurface(read(`docs/api/controls/${family}.md`), collectPublicSurface(path.join(root, `packages/spfx-react-toolkit/src/controls/${family}/index.ts`), { includeTypeMembers: true }));
+  assertDocumentedSurface(read(`docs/api/property-pane/${family}.md`) + '\n' + read(`docs/api/controls/${family}.md`), collectPublicSurface(path.join(root, `packages/spfx-react-toolkit/src/property-pane/${family}/index.ts`)));
+}

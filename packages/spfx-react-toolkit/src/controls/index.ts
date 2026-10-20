@@ -11,3 +11,5 @@ export type { IWebPartShellProperties, WebPartShellProps, WebPartShellSurface, W
 export * from './stage';
 export * from './pagination';
 export * from './description-list';
+export * from './pickers';
+export * from './file-folder-picker';

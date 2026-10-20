@@ -13,6 +13,10 @@ const cleanAliases = Object.freeze({
   './helpers': 'lib/helpers/index', './services': 'lib/services/index',
   './styles': 'lib/styles/index', './styles/useSx': 'lib/hooks/useSx',
   './hooks/useStableCallback': 'lib/hooks/useStableCallback',
+  './controls/file-folder-picker': 'lib/controls/file-folder-picker/index',
+  './property-pane/file-folder-picker': 'lib/property-pane/file-folder-picker/index',
+  './controls/pickers': 'lib/controls/pickers/index',
+  './property-pane/pickers': 'lib/property-pane/pickers/index',
   './controls': 'lib/controls/index', './controls/formatted-text': 'lib/controls/formatted-text/index',
   './controls/relative-time': 'lib/controls/relative-time/index',
   './controls/auto-skeleton': 'lib/controls/auto-skeleton/index',
@@ -74,7 +78,7 @@ function collectPublishedFiles(directory = library) {
   visit(path.join(directory, 'lib'));
   for (const file of files) {
     assert.ok(fs.existsSync(path.join(directory, file)), `Missing published file: ${file}`);
-    assert.ok(/^(package\.json|README\.md|LICENSE|THIRD-PARTY-NOTICES\.md|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls)\/.+))$/.test(file), `Unexpected published file: ${file}`);
+    assert.ok(/^(package\.json|README\.md|LICENSE|THIRD-PARTY-NOTICES\.md|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls|property-pane)\/.+))$/.test(file), `Unexpected published file: ${file}`);
     if (!file.startsWith('lib/')) continue;
     const source = file.replace(/^lib\//, 'src/').replace(/\.(d\.ts|js)(\.map)?$/, '');
     assert.ok(fs.existsSync(path.join(directory, source + '.ts')) || fs.existsSync(path.join(directory, source + '.tsx')), `Published file lacks canonical source: ${file}`);
@@ -82,7 +86,7 @@ function collectPublishedFiles(directory = library) {
   return files.sort();
 }
 
-function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index', 'lib/controls/form/index', 'lib/controls/data-grid/index', 'lib/controls/web-part-shell/index', 'lib/controls/stage/index', 'lib/controls/pagination/index', 'lib/controls/description-list/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
+function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/controls/file-folder-picker/index','lib/property-pane/file-folder-picker/index','lib/controls/pickers/index','lib/property-pane/pickers/index', 'lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index', 'lib/controls/form/index', 'lib/controls/data-grid/index', 'lib/controls/web-part-shell/index', 'lib/controls/stage/index', 'lib/controls/pagination/index', 'lib/controls/description-list/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
   const contract = createEntrypointContract({ publishedFiles, cleanAliases });
   assert.deepEqual(manifest.exports, contract.exports, 'Package exports differ from the exact additive contract');
   // Object equality alone does not check condition priority.
