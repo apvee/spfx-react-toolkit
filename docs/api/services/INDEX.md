@@ -429,15 +429,26 @@ Returned methods:
 
 | Method | Description |
 |--------|-------------|
-| `ensureListReady(catalogUrl)` | Ensures the hidden `TenantKeyValueStore` list and required fields exist |
-| `get<T>(key, catalogUrl)` | Reads one item by key |
-| `list(catalogUrl)` | Lists stored key-value items ordered by key |
-| `save<T>(key, value, catalogUrl, description?)` | Creates or updates a key |
-| `remove(key, catalogUrl)` | Deletes a key when it exists |
+| `ensureListReady(catalogUrl)` | Explicitly provisions/repairs the hidden list, validates field types and indexed unique Title keys |
+| `get<T>(key, catalogUrl)` | Reads one unique key without provisioning; confirmed list/key absence returns undefined |
+| `list(catalogUrl)` | Reads all pages in Title order, validating continuation links and rejecting partial failures |
+| `save<T>(key, value, catalogUrl, description?)` | Ensures strict setup, then creates or conditionally updates using the observed ETag |
+| `remove(key, catalogUrl)` | Deletes with an observed ETag without provisioning; confirmed absence is a no-op |
 
 `SPFxTenantKeyValueStoreServiceItem<T>` contains `key`, `value`, `description`, and `id`.
 
-Provisioning is guarded per catalog URL so concurrent calls share the same in-flight setup promise. Values are serialized with `serializeTenantValue` and read with `deserializeTenantValue`. The [legacy tenant serialization limits](../helpers/INDEX.md#deserializetenantvalue) apply; the generic return type does not validate stored values. Actual catalog/list permissions determine whether requests succeed.
+Provisioning is shared per normalized catalog URL within each service instance. Schema/uniqueness failures reject and are retryable; data is never removed to repair existing duplicates. Separate instances recover list/field/item creation races through bounded validated rereads. Reads and deletion never repair schema; only confirmed list/key absence is empty. Failed probes, incompatible schema, duplicate keys and malformed/failed pages reject.
+
+Tenant writes preserve JSON-like strings using JSON quoting; bigint reads as exact decimal text, and Date remains ISO text. Existing raw values retain JSON-first interpretation and need no migration. Both list stores use this encoding for new writes; public legacy helpers remain unchanged and previously stored values retain their interpretation. See [tenant serialization and compatibility](../hooks/storage.md#serialization-and-saved-data-compatibility) for the complete format and limitations. T does not validate runtime data.
+
+Updates/deletion require an observed ETag (HTTP 412 conflicts reject without blind retry). This protects the service's snapshot-to-mutation interval, not a consumer's earlier get-to-save interval. Omitting description preserves it; an empty string clears it. Actual catalog/list permissions authorize requests. Construction performs no HTTP and the non-React service does not discover the catalog:
+
+```ts
+const store = createSPFxTenantKeyValueStoreService(context.spHttpClient);
+await store.save('my-app:version', '123', catalogUrl);
+const version = await store.get<unknown>('my-app:version', catalogUrl);
+if (typeof version?.value === 'string') console.log(version.value);
+```
 
 ## Site Key-Value Store Service
 
@@ -497,9 +508,9 @@ Provisioning uses a generic list (`BaseTemplate: 100`, `Hidden: true`, `NoCrawl:
 
 Existing-list write capability requires effective Add, Edit, and Delete Items grants on that list, including its unique permissions. An absent list additionally requires Manage Lists on the root web. This indicator does not authorize operations: SharePoint still enforces actual grants, schema-management rights, and item restrictions.
 
-Key equality follows SharePoint's field comparison and unique-column semantics, including case-insensitive matching; reads preserve stored Title casing. See [Microsoft's unique-column comparison rules](https://learn.microsoft.com/en-us/previous-versions/office/developer/sharepoint-2010/ee536168%28v%3Doffice.14%29). Updates use wildcard ETags and last-writer-wins semantics. Omitting the update description preserves it; an explicit empty string clears it. Creation recovery is bounded and requires a verified competing resource; 401/403 never recover. An item collision can attempt one MERGE only after confirming a unique schema and exact key. A delete 404 succeeds only after verifying absence.
+Key equality follows SharePoint's field comparison and unique-column semantics, including case-insensitive matching; reads preserve stored Title casing. See [Microsoft's unique-column comparison rules](https://learn.microsoft.com/en-us/previous-versions/office/developer/sharepoint-2010/ee536168%28v%3Doffice.14%29). Updates and deletion use observed ETags with a single-item snapshot/header fallback when collection metadata omits them. Missing/invalid ETags and HTTP 412 reject without wildcard overwrite or blind retry. Preconditions cover the service snapshot-to-mutation interval, not a consumer's earlier get-to-save interval. Omitting the update description preserves it; an explicit empty string clears it. Creation recovery is bounded and requires a verified competing resource; 401/403 never recover. An item collision can attempt one conditional MERGE only after confirming a unique schema and exact key; once validation succeeds its actual mutation error is propagated. A snapshot/deletion 404 succeeds only after verifying absence; a recreated key is never deleted.
 
-The [legacy tenant serialization limits](../helpers/INDEX.md#deserializetenantvalue) also apply here. Generic types do not validate runtime values. JSON-like strings can deserialize as numbers/booleans, dates remain strings, and bigint does not gain a lossless round trip. SharePoint's nullable empty Note values read as empty strings; a saved `null` remains the serialized string `'null'` and reads as `null`.
+New writes use the same [safe text/JSON encoding as the tenant store](../hooks/storage.md#serialization-and-saved-data-compatibility). Empty and JSON-like text is quoted; bigint reads as exact decimal string and Date as ISO string. Serialization errors reject before provisioning. Existing raw values retain legacy JSON-first interpretation, with no data migration: historical numeric/boolean strings can still read as primitives. The site-specific legacy mapping is preserved: SharePoint's nullable empty Note values read as empty strings; stored text `'null'` reads as legacy `null`. Generic T does not validate runtime data or reconstruct lost historical precision. Public legacy helper behavior is unchanged.
 
 The React [site store hook](../hooks/storage.md#usespfxsitekeyvaluestore) captures read failures in state and returns fallbacks; the standalone service rejects failed reads and writes. Only `save` and `ensureListReady` perform setup; `get`, `list`, `remove` and permission checks do not provision.
 

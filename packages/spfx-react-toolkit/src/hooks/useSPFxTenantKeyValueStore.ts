@@ -52,7 +52,7 @@ export interface SPFxTenantKeyValueStoreResult {
     readonly isLoading: boolean;
 
     /**
-     * Read error from the latest-started read; cleared when another read starts. Setup failures inside get/list return fallbacks without setting this error.
+     * Read error from the latest-started read; cleared when another read starts. Discovery, access, schema, item and paging failures publish this error and return the read fallback.
      */
     readonly error: Error | undefined;
 
@@ -68,27 +68,27 @@ export interface SPFxTenantKeyValueStoreResult {
     readonly writeError: Error | undefined;
 
     /**
-     * App catalog IsSiteAdmin indicator, checked asynchronously during mount/discovery or operations. SharePoint still enforces writes.
+     * Effective Add/Edit/Delete Items indicator for the catalog list. When absent, catalog web Manage Lists is also required. Initially false; checked on discovery and refreshed after operations. Failed checks return false; latest check wins. SharePoint enforces writes and schema repair can require additional permissions.
      */
     readonly canWrite: boolean;
 
     /**
      * Computed state: true when the SPHttpClient is available and
-     * the hook is ready to perform operations.
+     * operations can be requested. Does not imply completed discovery, an existing list or write authorization.
      */
     readonly isReady: boolean;
 
     /**
-     * Ensures setup, then reads a key. Setup failure returns undefined without publishing error; discovery/read failures publish error and return undefined.
+     * Reads without provisioning or repairing the list. Only a confirmed absent list/key is empty; discovery/access/schema/read failures publish error and return undefined.
      * @param key - Stored property key.
-     * @returns Item or undefined for absent keys or failed reads/setup.
+     * @returns Item or undefined for an absent list/key or failed read; inspect error to distinguish failures.
      * @throws When the SharePoint client is unavailable.
      */
     readonly get: <T = unknown>(key: string) => Promise<SPFxTenantKeyValueStoreItem<T> | undefined>;
 
     /**
-     * Ensures setup, then reads the first server page in Title order; does not follow continuation links. Setup failure returns [] silently; discovery/read failures publish error and return [].
-     * @returns First page of items, or an empty fallback.
+     * Reads every server page in Title order without provisioning. Discovery/access/schema/item/paging failures publish error and return []; no partial results are returned.
+     * @returns All items, an empty array for a confirmed absent list, or an empty fallback with error.
      * @throws When the SharePoint client is unavailable.
      */
     readonly list: () => Promise<SPFxTenantKeyValueStoreItem<unknown>[]>;
@@ -98,7 +98,9 @@ export interface SPFxTenantKeyValueStoreResult {
      * Auto-provisions the hidden list on first write if it doesn't exist.
      *
      * Smart serialization:
-     * - Primitives (string, number, boolean, null, bigint) → String(value)
+     * - Empty strings and strings that parse as JSON are JSON-quoted to preserve their text
+     * - bigint becomes quoted decimal text and reads as string without precision loss
+     * - Numbers/booleans and legacy null input retain their string representation
      * - Date objects → ISO 8601 string
      * - Objects/arrays → JSON.stringify(value)
      *
@@ -117,19 +119,19 @@ export interface SPFxTenantKeyValueStoreResult {
      *   await store.save<string>('apiEndpoint', 'https://api.example.com', 'Production API');
      *
      *   // Complex object
-     *   await store.save<FeatureFlags>('featureFlags', { enableChat: true, maxUsers: 1000 });
+     *   await store.save('featureFlags', { enableChat: true, maxUsers: 1000 });
      * };
      * ```
      * @returns Resolves after a successful write; updates preserve an omitted description and empty string clears it.
-     * @throws Client, catalog discovery, provisioning, serialization or write failures; operation failures also publish writeError.
+     * @throws Client, catalog discovery, schema, serialization, missing ETag or write/conflict failures; operation failures also publish writeError. No wildcard overwrite is performed.
      */
     readonly save: <T = unknown>(key: string, value: T, description?: string) => Promise<void>;
 
     /**
-     * Ensures list setup before deleting a key; an absent key is a no-op.
+     * Deletes without provisioning or schema repair. A confirmed absent list/key is a no-op; changes since the service snapshot reject using ETag preconditions.
      * @param key - Key to remove.
      * @returns Resolves after successful deletion or absent key.
-     * @throws Client, discovery, provisioning or deletion failures, also captured in writeError.
+     * @throws Client, discovery, schema, missing ETag or deletion/conflict failures, also captured in writeError.
      */
     readonly remove: (key: string) => Promise<void>;
 }
@@ -139,7 +141,15 @@ export interface SPFxTenantKeyValueStoreResult {
 // ═══════════════════════════════════════════════════════════════════════════
 
 /**
- * Manages a hidden TenantKeyValueStore list in the tenant app catalog. Discovery, permission lookup and setup run on mount; each operation can also ensure setup. Service readiness is cached per catalog URL. isReady indicates client availability, not completed discovery or write authorization. SharePoint enforces actual grants; canWrite uses the catalog IsSiteAdmin flag. Values use legacy tenant serialization: JSON-like strings may be coerced and Date/bigint types do not round-trip. Read setup failures return fallbacks silently; other read failures publish error. Write failures reject. Context changes reset state and obsolete/unmounted completions cannot publish it.
+ * Manages the hidden TenantKeyValueStore list in the tenant app catalog beneath an SPFx provider.
+ * Mount discovers the catalog and checks effective permissions without provisioning. Reads/removes
+ * never create or repair schema; save ensures validated fields and unique indexed keys. isReady
+ * means client availability only. canWrite is an asynchronous effective-permission indicator.
+ * New string writes preserve text and bigint reads as exact decimal text; Date remains ISO text.
+ * Existing raw data retains its legacy JSON-first interpretation, and T performs no validation.
+ * Read failures publish error and return fallbacks; write failures publish writeError and reject.
+ * ETag preconditions detect changes during mutations, not edits since a caller's earlier get().
+ * Context changes reset state; obsolete/unmounted completions cannot publish state.
  * @returns Client readiness, read/write state, permission indicator and CRUD methods.
  * @throws When called outside an SPFx provider.
  *
@@ -166,14 +176,12 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
     const [writeError, setWriteError] = useState<Error | undefined>(undefined);
     const [canWrite, setCanWrite] = useState<boolean>(false);
 
-    const permissionCheckedRef = useRef<boolean>(false);
     const operationRef = useRef({ service: tenantKeyValueStoreService, discover: discoverAppCatalogUrl,
-        reads: 0, writes: 0, readId: 0, writeId: 0 });
+        reads: 0, writes: 0, readId: 0, writeId: 0, permissionId: 0 });
     if (operationRef.current.service !== tenantKeyValueStoreService ||
         operationRef.current.discover !== discoverAppCatalogUrl) {
         operationRef.current = { service: tenantKeyValueStoreService, discover: discoverAppCatalogUrl,
-            reads: 0, writes: 0, readId: 0, writeId: 0 };
-        permissionCheckedRef.current = false;
+            reads: 0, writes: 0, readId: 0, writeId: 0, permissionId: 0 };
     }
     const currentOperation = operationRef.current;
     useEffect(() => {
@@ -191,32 +199,25 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
 
 
     /**
-     * Check and update write permission (executed once)
+     * Refresh the effective-permission indicator; only the latest check may publish.
      */
     const ensurePermissionChecked = useCallback((catalogUrl: string): void => {
-        if (permissionCheckedRef.current) return;
-        permissionCheckedRef.current = true;
         const identity = currentOperation;
+        const request = ++identity.permissionId;
         checkWritePermission(catalogUrl)
             .then(hasPermission => {
-                if (isMountedRef.current && operationRef.current === identity) {
+                if (isMountedRef.current && operationRef.current === identity && request === identity.permissionId) {
                     setCanWrite(hasPermission);
                 }
             })
             .catch(() => {
-                if (isMountedRef.current && operationRef.current === identity) {
+                if (isMountedRef.current && operationRef.current === identity && request === identity.permissionId) {
                     setCanWrite(false);
                 }
             });
     }, [checkWritePermission, isMountedRef, currentOperation]);
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Eager initialization: verify/provision list as soon as SPHttpClient is
-    // available, overlapping with component render. By the time the user
-    // triggers an operation, the service cache is already warm → zero latency.
-    // The service mutex handles the race if an operation fires while this init
-    // is still in-flight.
-    // ─────────────────────────────────────────────────────────────────────────
+    // Discovery and permission lookup are read-only; provisioning belongs to save.
     useEffect(() => {
         if (!tenantKeyValueStoreService) return;
 
@@ -224,10 +225,9 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
             .then(catalogUrl => {
                 if (!isMountedRef.current || operationRef.current !== currentOperation) return;
                 ensurePermissionChecked(catalogUrl);
-                return tenantKeyValueStoreService.ensureListReady(catalogUrl);
             })
             .catch(() => {
-                // Silently fail — operations will retry on demand via their own ensureListReady call
+                // Explicit operations retry discovery and publish failures in their own error channel.
             });
     }, [tenantKeyValueStoreService, discoverAppCatalogUrl, ensurePermissionChecked, isMountedRef, currentOperation]);
 
@@ -247,16 +247,9 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
         identity.reads++;
         if (isCurrent()) { setIsLoading(true); setError(undefined); }
 
+        let catalogUrl: string | undefined;
         try {
-            const catalogUrl = await discoverAppCatalogUrl();
-
-            // Ensure list exists (auto-provision if needed; fallback-safe for read-only users)
-            try {
-                await tenantKeyValueStoreService.ensureListReady(catalogUrl);
-            } catch {
-                // Provisioning may fail for read-only users — treat as "list not yet created"
-                return undefined;
-            }
+            catalogUrl = await discoverAppCatalogUrl();
 
             return await tenantKeyValueStoreService.get<T>(key, catalogUrl);
         } catch (err) {
@@ -268,9 +261,12 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
             return undefined;
         } finally {
             identity.reads--;
-            if (isCurrent()) setIsLoading(identity.reads > 0);
+            if (isCurrent()) {
+                setIsLoading(identity.reads > 0);
+                if (catalogUrl) ensurePermissionChecked(catalogUrl);
+            }
         }
-    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, isMountedRef, currentOperation]);
+    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, isMountedRef, currentOperation, ensurePermissionChecked]);
 
     const list = useCallback(async (): Promise<SPFxTenantKeyValueStoreItem<unknown>[]> => {
         if (!tenantKeyValueStoreService) {
@@ -284,16 +280,9 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
         identity.reads++;
         if (isCurrent()) { setIsLoading(true); setError(undefined); }
 
+        let catalogUrl: string | undefined;
         try {
-            const catalogUrl = await discoverAppCatalogUrl();
-
-            // Ensure list exists (auto-provision if needed; fallback-safe for read-only users)
-            try {
-                await tenantKeyValueStoreService.ensureListReady(catalogUrl);
-            } catch {
-                // Provisioning may fail for read-only users — treat as "list not yet created"
-                return [];
-            }
+            catalogUrl = await discoverAppCatalogUrl();
 
             return await tenantKeyValueStoreService.list(catalogUrl);
         } catch (err) {
@@ -305,9 +294,12 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
             return [];
         } finally {
             identity.reads--;
-            if (isCurrent()) setIsLoading(identity.reads > 0);
+            if (isCurrent()) {
+                setIsLoading(identity.reads > 0);
+                if (catalogUrl) ensurePermissionChecked(catalogUrl);
+            }
         }
-    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, isMountedRef, currentOperation]);
+    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, isMountedRef, currentOperation, ensurePermissionChecked]);
 
     const save = useCallback(async <T = unknown>(
         key: string,
@@ -325,8 +317,9 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
         identity.writes++;
         if (isCurrent()) { setIsWriting(true); setWriteError(undefined); }
 
+        let catalogUrl: string | undefined;
         try {
-            const catalogUrl = await discoverAppCatalogUrl();
+            catalogUrl = await discoverAppCatalogUrl();
             await tenantKeyValueStoreService.save<T>(key, value, catalogUrl, description);
         } catch (err) {
             if (isCurrent() && request === identity.writeId) {
@@ -337,9 +330,12 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
             throw err;
         } finally {
             identity.writes--;
-            if (isCurrent()) setIsWriting(identity.writes > 0);
+            if (isCurrent()) {
+                setIsWriting(identity.writes > 0);
+                if (catalogUrl) ensurePermissionChecked(catalogUrl);
+            }
         }
-    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, isMountedRef, currentOperation]);
+    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, isMountedRef, currentOperation, ensurePermissionChecked]);
 
     const remove = useCallback(async (key: string): Promise<void> => {
         if (!tenantKeyValueStoreService) {
@@ -353,8 +349,9 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
         identity.writes++;
         if (isCurrent()) { setIsWriting(true); setWriteError(undefined); }
 
+        let catalogUrl: string | undefined;
         try {
-            const catalogUrl = await discoverAppCatalogUrl();
+            catalogUrl = await discoverAppCatalogUrl();
             await tenantKeyValueStoreService.remove(key, catalogUrl);
         } catch (err) {
             if (isCurrent() && request === identity.writeId) {
@@ -365,9 +362,12 @@ export function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult {
             throw err;
         } finally {
             identity.writes--;
-            if (isCurrent()) setIsWriting(identity.writes > 0);
+            if (isCurrent()) {
+                setIsWriting(identity.writes > 0);
+                if (catalogUrl) ensurePermissionChecked(catalogUrl);
+            }
         }
-    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, isMountedRef, currentOperation]);
+    }, [tenantKeyValueStoreService, discoverAppCatalogUrl, isMountedRef, currentOperation, ensurePermissionChecked]);
 
     // Computed: ready when client is available
     const isReady = spHttpClient !== undefined;

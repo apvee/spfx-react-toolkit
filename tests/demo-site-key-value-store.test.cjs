@@ -51,7 +51,15 @@ function fixture(t, overrides = {}) {
     h.act(() => Simulate.click(button));
   }
   function rerender() { h.act(() => { require('react-dom').render(h.React.createElement(Component), view.container); }); }
-  return { ...h, ...view, calls, pageContext, flush, click, rerender };
+  function select(selector, value) {
+    const element = view.container.querySelector(selector); assert.ok(element, selector);
+    h.act(() => Simulate.change(element, { target: { value } }));
+  }
+  function input(index, value) {
+    const element = view.container.querySelectorAll('input')[index]; assert.ok(element);
+    h.act(() => Simulate.change(element, { target: { value } }));
+  }
+  return { ...h, ...view, calls, pageContext, flush, click, rerender, select, input };
 }
 for (const [action, method] of [['Save', 'save'], ['Remove', 'remove']]) {
   test(action + ' catches rejected writes and displays failure without success', async t => {
@@ -146,4 +154,38 @@ test('editing the selected key invalidates a pending read and does not issue ano
   assert.equal(f.calls.length, 1);
   assert.ok(!f.container.textContent.includes('obsolete-value'));
   assert.ok(!f.container.textContent.includes('Found '));
+});
+
+test('aligned site demo explicitly clears description and displays the read value type', async t => {
+  const f = fixture(t, { get: async () => ({ key: 'example', value: '', id: 1 }) });
+  f.select('[data-demo-variant="SitePanel"]', 'save'); f.input(2, '');
+  f.click('Save'); await f.flush();
+  assert.equal(f.calls[0][2], ''); assert.equal(f.calls[0][4], '');
+  f.click('Get'); await f.flush();
+  assert.match(f.container.textContent, /Value type.*string/);
+});
+
+test('aligned site demo sends exact bigint, JSON and Date values to the collection root', async t => {
+  const f = fixture(t); f.select('[data-demo-variant="SitePanel"]', 'save');
+  for (const [format, value, expected] of [
+    ['bigint', '9007199254740993', 9007199254740993n],
+    ['json', '{"enabled":true}', { enabled: true }],
+    ['date', '2026-01-02T03:04:05Z', new Date('2026-01-02T03:04:05Z')]
+  ]) {
+    f.select('[data-site-store-format]', format); f.input(1, value);
+    f.click('Save'); await f.flush();
+    assert.deepEqual(f.calls.at(-1)[2], expected);
+    assert.equal(f.calls.at(-1)[3], f.pageContext.site.absoluteUrl);
+  }
+});
+
+test('aligned site demo reports invalid JSON before writing and exposes write conflicts', async t => {
+  const f = fixture(t, { save: async () => { throw new Error('Precondition Failed'); } });
+  f.select('[data-demo-variant="SitePanel"]', 'save');
+  f.select('[data-site-store-format]', 'json'); f.input(1, '{invalid');
+  f.click('Save'); await f.flush();
+  assert.equal(f.calls.length, 0); assert.doesNotMatch(f.container.textContent, /Saved /);
+  f.select('[data-site-store-format]', 'text'); f.input(1, '123');
+  f.click('Save'); await f.flush();
+  assert.match(f.container.textContent, /Precondition Failed/); assert.doesNotMatch(f.container.textContent, /Saved /);
 });

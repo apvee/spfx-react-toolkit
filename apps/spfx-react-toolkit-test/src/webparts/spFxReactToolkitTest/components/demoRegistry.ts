@@ -333,7 +333,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     description: 'Collection-root key-value store shared by subsites, with manual CRUD.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-site' */ './panels/SitePanel')),
     coverage: [
-      { symbol: 'useSPFxSiteKeyValueStore', kind: 'write', notes: 'Manual collection-root CRUD using disposable site demo keys.' },
+      { symbol: 'useSPFxSiteKeyValueStore', kind: 'write', notes: 'Manual collection-root CRUD, safe text/JSON/bigint/date readback and conflict errors; disposable keys and root/subsite isolation.' },
     ],
   },
   {
@@ -344,7 +344,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-tenant' */ './panels/TenantPanel')),
     coverage: [
       { symbol: 'useSPFxTenantProperty', kind: 'read', notes: 'Read tenant properties from the app catalog.' },
-      { symbol: 'useSPFxTenantKeyValueStore', kind: 'write', notes: 'REST-based tenant key-value store CRUD.' },
+      { symbol: 'useSPFxTenantKeyValueStore', kind: 'write', notes: 'Manual tenant CRUD, complete paging, effective permissions and observable text/JSON/bigint/date readback; reads never provision.' },
     ],
   },
   {

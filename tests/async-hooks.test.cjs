@@ -195,7 +195,7 @@ test('PnPSearch same-tick loadMore dispatches one page and superseded page canno
 test('AppCatalog cached URL invalidates with pageContext/client service identity', async (t) => {
     let client = {}, context = { tenant: 'a' };
     const ds = { a: deferred(), b: deferred() };
-    const hook = loadHook('useAppCatalogUrl.internal', 'useAppCatalogUrl', { './useSPFxSPHttpClient': { useSPFxSPHttpClient: () => ({ client }) }, './useSPFxPageContext': { useSPFxPageContext: () => context }, '../services/spfx-app-catalog.service': { createSPFxAppCatalogService: (_c, p) => ({ discoverUrl: () => ds[p.tenant].promise, canCurrentUserWrite: async () => true }) } });
+    const hook = loadHook('useAppCatalogUrl.internal', 'useAppCatalogUrl', { '../services/spfx-site-key-value-store.internal': { canWriteKeyValueStore: async () => true }, './useSPFxSPHttpClient': { useSPFxSPHttpClient: () => ({ client }) }, './useSPFxPageContext': { useSPFxPageContext: () => context }, '../services/spfx-app-catalog.service': { createSPFxAppCatalogService: (_c, p) => ({ discoverUrl: () => ds[p.tenant].promise, canCurrentUserWrite: async () => true }) } });
     const h = cleanup(t, mount(() => hook(), {}));
     const a = start(() => h.current.discoverAppCatalogUrl());
     client = {};
@@ -234,19 +234,19 @@ test('AsyncInvoke newer success is not replaced by an older failure and clearErr
     start(() => h.current.clearError());
     assert.equal(h.current.error, undefined);
 });
-test('TenantKV provisioning read fallback remains successful and write rejection propagates', async (t) => {
-    let ready = false;
+test('TenantKV mount and reads never provision and write rejection propagates', async (t) => {
+    let setupCalls = 0;
     const fail = new Error('write denied');
     const service = { ensureListReady: async () => {
-            if (!ready)
-                throw new Error('not provisioned');
+            setupCalls++;
+            throw new Error('not provisioned');
         }, get: async () => ({ key: 'x', value: 1 }), list: async () => [], save: async () => { throw fail; }, remove: async () => { throw fail; } };
     const hook = loadHook('useSPFxTenantKeyValueStore', 'useSPFxTenantKeyValueStore', catalogBoundary(service));
     const h = cleanup(t, mount(() => hook(), {}));
     await flush();
-    await settle(async () => { assert.equal(await h.current.get('x'), undefined); assert.deepEqual(await h.current.list(), []); });
+    await settle(async () => { assert.equal((await h.current.get('x')).value, 1); assert.deepEqual(await h.current.list(), []); });
+    assert.equal(setupCalls, 0);
     assert.equal(h.current.error, undefined);
-    ready = true;
     await settle(async () => { assert.equal((await h.current.get('x')).value, 1); assert.equal(await h.current.save('x', 1).catch(e => e), fail); });
     assert.equal(h.current.writeError, fail);
     assert.equal(h.current.isWriting, false);
@@ -375,7 +375,7 @@ test('OneDrive write errors propagate and successful missing creation writes onc
 test('AppCatalog resolved cache is cleared on service change before discovery', async (t) => {
     let context = { tenant: 'a' };
     const client = {};
-    const hook = loadHook('useAppCatalogUrl.internal', 'useAppCatalogUrl', { './useSPFxSPHttpClient': { useSPFxSPHttpClient: () => ({ client }) }, './useSPFxPageContext': { useSPFxPageContext: () => context }, '../services/spfx-app-catalog.service': { createSPFxAppCatalogService: (_c, p) => ({ discoverUrl: async () => 'catalog-' + p.tenant, canCurrentUserWrite: async () => true }) } });
+    const hook = loadHook('useAppCatalogUrl.internal', 'useAppCatalogUrl', { '../services/spfx-site-key-value-store.internal': { canWriteKeyValueStore: async () => true }, './useSPFxSPHttpClient': { useSPFxSPHttpClient: () => ({ client }) }, './useSPFxPageContext': { useSPFxPageContext: () => context }, '../services/spfx-app-catalog.service': { createSPFxAppCatalogService: (_c, p) => ({ discoverUrl: async () => 'catalog-' + p.tenant, canCurrentUserWrite: async () => true }) } });
     const h = cleanup(t, mount(() => hook(), {}));
     await settle(() => h.current.discoverAppCatalogUrl());
     assert.equal(h.current.appCatalogUrl, 'catalog-a');

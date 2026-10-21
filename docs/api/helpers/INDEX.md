@@ -298,6 +298,8 @@ function escapeODataValue(value: string): string;
 
 Escapes single quotes for OData string filters by replacing `'` with `''`.
 
+> These public helpers preserve the historical format. New tenant and site list-store writes additionally quote empty/JSON-like strings and bigint decimal text; see [list-store saved-data compatibility](../hooks/storage.md#serialization-and-saved-data-compatibility). Historical stored values and StorageEntity reads retain their existing interpretation, including each list store's documented legacy REST-null mapping.
+
 ### `serializeTenantValue`
 
 ```ts

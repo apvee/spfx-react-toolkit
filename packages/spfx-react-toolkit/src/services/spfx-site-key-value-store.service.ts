@@ -1,11 +1,10 @@
 import { SPHttpClient } from '@microsoft/sp-http';
-import { SPPermission } from '@microsoft/sp-page-context';
 
 import { createSPFxListKeyValueStoreService } from './spfx-list-key-value-store.internal';
-import { createSiteStoreSetup, normalizeSiteStoreUrl, siteStoreListUrl } from './spfx-site-key-value-store.internal';
+import { canWriteKeyValueStore } from './spfx-site-key-value-store.internal';
 
 /**
- * Stored key and deserialized value. T is an expected shape, not runtime validation; legacy tenant serialization can coerce JSON-like strings and does not preserve Date/bigint types.
+ * Stored key and deserialized value. T is an expected shape, not runtime validation; historical data keeps its JSON-first interpretation. New text preserves its value; bigint reads as exact decimal text and Date as ISO text. Legacy empty REST Note fields still read as empty strings.
  *
  * @example
  * ```ts
@@ -66,21 +65,21 @@ export interface SPFxSiteKeyValueStoreService {
    */
   list: (siteCollectionUrl: string) => Promise<SPFxSiteKeyValueStoreServiceItem<unknown>[]>;
   /**
-   * Creates or updates a key after ensuring setup. Updates use wildcard ETags and last-writer-wins semantics.
+   * Creates or updates a key after ensuring setup. Uses the observed item ETag; conflicts (HTTP 412) and missing ETags reject without a wildcard overwrite or blind retry. Creation collisions allow one validated conditional update and expose its actual error. This protects the service snapshot, not a consumer's earlier get().
    * @param key - Stored key.
-   * @param value - Value serialized by legacy tenant serialization.
+   * @param value - Value to encode: empty/JSON-like text is JSON-quoted, bigint becomes quoted decimal text and Date remains ISO text. Existing data is not rewritten. Circular values, nested bigint and invalid Date throw before provisioning; T does not validate runtime content.
    * @param siteCollectionUrl - Absolute site collection root URL (pageContext.site.absoluteUrl), never the current subsite.
    * @param description - Omitted preserves an existing description; empty string clears it.
    * @returns Resolves after the write succeeds.
-   * @throws Setup, serialization or request failures.
+   * @throws Setup, serialization, missing ETag, request or conflict failures.
    */
   save: <T = unknown>(key: string, value: T, siteCollectionUrl: string, description?: string) => Promise<void>;
   /**
-   * Deletes without provisioning; confirmed absent list/key is a no-op.
+   * Deletes using an observed ETag without provisioning; confirmed absent list/key is a no-op. Snapshot/deletion 404 is accepted only after rechecking key absence; concurrent changes reject.
    * @param key - Key to remove.
    * @param siteCollectionUrl - Absolute site collection root URL (pageContext.site.absoluteUrl), never the current subsite.
    * @returns Resolves after deletion or confirmed absence.
-   * @throws Request or schema failures.
+   * @throws Request/schema failures, missing ETag or concurrent changes.
    */
   remove: (key: string, siteCollectionUrl: string) => Promise<void>;
   /**
@@ -89,27 +88,6 @@ export interface SPFxSiteKeyValueStoreService {
    * @returns False for empty URLs or failed lookups; otherwise the effective-permission indicator.
    */
   canCurrentUserWrite: (siteCollectionUrl: string) => Promise<boolean>;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function readPermissionMask(data: unknown): Record<string, unknown> | undefined {
-  if (!isRecord(data)) return undefined;
-  if ('d' in data) {
-    return isRecord(data.d) && isRecord(data.d.EffectiveBasePermissions) ? data.d.EffectiveBasePermissions : undefined;
-  }
-  if ('EffectiveBasePermissions' in data) {
-    return isRecord(data.EffectiveBasePermissions) ? data.EffectiveBasePermissions : undefined;
-  }
-  return data;
-}
-
-function permissionWord(value: unknown): number | undefined {
-  if (typeof value !== 'number' && (typeof value !== 'string' || !/^\d+$/.test(value))) return undefined;
-  const number = Number(value);
-  return Number.isInteger(number) && number >= 0 && number <= 0xffffffff ? number : undefined;
 }
 
 /**
@@ -125,25 +103,7 @@ function permissionWord(value: unknown): number | undefined {
  */
 export function createSPFxSiteKeyValueStoreService(spHttpClient: SPHttpClient): SPFxSiteKeyValueStoreService {
   const store = createSPFxListKeyValueStoreService(spHttpClient, 'site');
-  const setup = createSiteStoreSetup(spHttpClient);
-  const canCurrentUserWrite = async (siteCollectionUrl: string): Promise<boolean> => {
-    try {
-      const url = normalizeSiteStoreUrl(siteCollectionUrl);
-      const exists = await setup.exists(url);
-      const response = await spHttpClient.get(
-        `${exists ? siteStoreListUrl(url) : `${url}/_api/web`}/effectiveBasePermissions`, SPHttpClient.configurations.v1
-      );
-      if (!response.ok) return false;
-      const data: unknown = await response.json();
-      const record = readPermissionMask(data);
-      if (!record) return false;
-      const High = permissionWord(record.High);
-      const Low = permissionWord(record.Low);
-      if (High === undefined || Low === undefined) return false;
-      const permissions = new SPPermission({ High, Low });
-      return permissions.hasAllPermissions(SPPermission.addListItems, SPPermission.editListItems, SPPermission.deleteListItems) &&
-        (exists || permissions.hasPermission(SPPermission.manageLists));
-    } catch { return false; }
-  };
+  const canCurrentUserWrite = (siteCollectionUrl: string): Promise<boolean> =>
+    canWriteKeyValueStore(spHttpClient, siteCollectionUrl, 'site');
   return { ...store, canCurrentUserWrite };
 }

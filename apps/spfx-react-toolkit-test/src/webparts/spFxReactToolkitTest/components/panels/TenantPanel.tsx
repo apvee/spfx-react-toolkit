@@ -5,6 +5,7 @@ import type { SPFxTenantKeyValueStoreItem } from '@apvee/spfx-react-toolkit';
 import { ActionResult, DemoCard, InfoGrid, JsonDetails, StatusBadge } from '../shared';
 import { useDemoStyles } from '../shared/demoStyles';
 type TenantAction = 'list' | 'get' | 'save' | 'remove';
+type TenantValueFormat = 'text' | 'json' | 'bigint' | 'date';
 const TenantPropertyScenario: React.FC<{
     readonly selector: (busy?: boolean) => React.ReactNode;
 }> = ({ selector }) => {
@@ -42,10 +43,11 @@ const TenantStoreScenario: React.FC<{
     const [action, setAction] = React.useState<TenantAction>('get');
     const [key, setKey] = React.useState('spfx-toolkit-tenant-demo-disposable');
     const [value, setValue] = React.useState('');
-    const [description, setDescription] = React.useState('Disposable SPFx React Toolkit site demo item');
+    const [format, setFormat] = React.useState<TenantValueFormat>('text');
+    const [description, setDescription] = React.useState('Disposable SPFx React Toolkit tenant demo item');
     // get changes when the hook's collection or client changes, including in-place PageContext changes.
     const identity = store.get;
-    const target = `${action}:${key}:${value}:${description}`;
+    const target = JSON.stringify([action, key, value, description, format]);
     const currentTarget = React.useRef(target);
     currentTarget.current = target;
     const currentIdentity = React.useRef(identity);
@@ -81,7 +83,8 @@ const TenantStoreScenario: React.FC<{
                     setOutcome({ identity, target, action, selectedItem, result: selectedItem ? `Found ${key}.` : `${key} not found.` });
             }
             else if (action === 'save') {
-                await store.save<string>(key, value, description || undefined);
+                const input: unknown = format === 'json' ? JSON.parse(value) : format === 'bigint' ? BigInt(value) : format === 'date' ? new Date(value) : value;
+                await store.save(key, input, description);
                 if (isCurrent())
                     setOutcome({ identity, target, action, result: `Saved ${key}.` });
             }
@@ -95,7 +98,7 @@ const TenantStoreScenario: React.FC<{
             if (isCurrent())
                 setOutcome({ identity, target, action, error: failure instanceof Error ? failure : new Error(String(failure)) });
         }
-    }, [identity, store, key, value, description, target]);
+    }, [identity, store, key, value, description, format, target]);
     const currentOutcome = outcome?.identity === identity && outcome.target === target ? outcome : undefined;
     const isRead = currentOutcome?.action === 'get' || currentOutcome?.action === 'list';
     // Reads resolve fallback values on failure. Only current rendered error state can distinguish failure from absence.
@@ -107,6 +110,7 @@ const TenantStoreScenario: React.FC<{
       {action !== 'list' && <Field label={"Key"}>
         <Input disabled={store.isWriting} value={key} onChange={(_, data) => setKey(data.value ?? '')}/>
       </Field>}
+      {action === 'save' && <Field label="Value format"><Select disabled={store.isWriting} select={{ 'data-tenant-store-format': true } as React.SelectHTMLAttributes<HTMLSelectElement>} value={format} onChange={(_, data) => setFormat(data.value as TenantValueFormat)}><option value="text">Text</option><option value="json">JSON</option><option value="bigint">Big integer</option><option value="date">Date (ISO)</option></Select></Field>}
       {action === 'save' && <Field label={"Value"}>
         <Input disabled={store.isWriting} value={value} onChange={(_, data) => setValue(data.value ?? '')}/>
       </Field>}
@@ -125,13 +129,14 @@ const TenantStoreScenario: React.FC<{
       </div>
       <MessageBar intent="info">
         <MessageBarBody>
-          All subsites share SiteKeyValueStore in the tenant. Actions run only when clicked.
+          All sites share TenantKeyValueStore in the tenant app catalog. Reads and removal never create the store.
           Use disposable keys beginning with spfx-toolkit-tenant-demo- and remove them after testing.
-          Saving may create the store; SharePoint enforces permissions. Can Write is an indicator.
+          Saving may create or repair the store; SharePoint enforces permissions and concurrent changes are reported.
+          Big integers read as exact decimal text and dates as ISO text. Can Write is an effective-permission indicator.
         </MessageBarBody>
       </MessageBar>
       {!error && currentOutcome?.selectedItem && <JsonDetails label="Selected tenant key-value item" value={currentOutcome.selectedItem}/>}
-      {!error && currentOutcome?.items && currentOutcome.items.length > 0 && <JsonDetails label="Site key-value items" value={currentOutcome.items}/>}
+      {!error && currentOutcome?.items && currentOutcome.items.length > 0 && <JsonDetails label="Tenant key-value items" value={currentOutcome.items}/>}
     </>}>
 
       {busy && <Label>Loading...</Label>}
@@ -139,6 +144,7 @@ const TenantStoreScenario: React.FC<{
       <InfoGrid rows={[
             { label: 'Selected key', value: !error ? currentOutcome?.selectedItem?.key : undefined },
             { label: 'Selected value', value: !error && currentOutcome?.selectedItem ? String(currentOutcome.selectedItem.value) : undefined },
+            { label: 'Value type', value: !error && currentOutcome?.selectedItem ? typeof currentOutcome.selectedItem.value : undefined },
         ]}/>
 
 
