@@ -33,6 +33,20 @@ const allowedBarrels = [
   ['hooks/index.d.ts', './useSPFxSiteKeyValueStore', './useSPFxTenantKeyValueStore'],
   ['services/index.d.ts', './spfx-site-key-value-store.service', './spfx-tenant-key-value-store.service'],
 ];
+for (const [name, addition] of [
+  ['hooks/index.d.ts', './useSPFxConfigurationStore'],
+  ['services/index.d.ts', './spfx-configuration-store.service'],
+]) {
+  test(`configuration export is narrowly additive in ${name}`, () => {
+    const original=baseline[name].declaration, line=`export * from '${addition}';`;
+    assert.doesNotThrow(()=>assertCompatibleDeclaration(name,original+'\n'+line,original,{requireConfigurationStoreAdditions:true}));
+    for(const changed of [original,original+'\n'+line+'\n'+line,original+`\nexport * from '${addition}.js';`,original+`\nexport { Unexpected } from '${addition}';`]) {
+      assert.throws(()=>assertCompatibleDeclaration(name,changed,original,{requireConfigurationStoreAdditions:true}));
+    }
+    const other='helpers/index.d.ts';
+    assert.throws(()=>assertCompatibleDeclaration(other,baseline[other].declaration+'\n'+line,baseline[other].declaration));
+  });
+}
 for (const [name, addition, historical] of allowedBarrels) {
   const original = baseline[name].declaration;
   const exportAll = `export * from '${addition}';`;
@@ -82,6 +96,7 @@ for (const [missingName] of allowedBarrels) {
     const fileBoundary = {
       ...fs,
       existsSync(file) {
+        if (file.endsWith('/src/hooks/useSPFxConfigurationStore.ts')) return false;
         if (file.endsWith('/src/hooks/useSx.ts')) return false;
         if (file.endsWith('/src/hooks/useSPFxPnPListById.ts')) return false;
         return file.endsWith('/src/hooks/useSPFxSiteKeyValueStore.ts') || fs.existsSync(file);
@@ -186,6 +201,7 @@ test('integrated verify-api requires webs registration even without other comple
   const fileBoundary = {
     ...fs,
     existsSync(file) {
+        if (file.endsWith('/src/hooks/useSPFxConfigurationStore.ts')) return false;
       if (file.includes('/src/hooks/')) return false;
       return fs.existsSync(file);
     },
@@ -299,6 +315,7 @@ for (const missing of [...pnpHookPaths, 'selector', 'factory']) {
     const fileBoundary = {
       ...fs,
       existsSync(file) {
+        if (file.endsWith('/src/hooks/useSPFxConfigurationStore.ts')) return false;
         if (file.endsWith('/src/hooks/useSx.ts')) return false;
         if (file.endsWith('/src/hooks/useSPFxSiteKeyValueStore.ts')) return false;
         if (file.endsWith('/src/hooks/useSPFxPnPListById.ts')) return true;
@@ -451,6 +468,7 @@ for (const [missingName] of styleBarrels) {
     const fileBoundary = {
       ...fs,
       existsSync(file) {
+        if (file.endsWith('/src/hooks/useSPFxConfigurationStore.ts')) return false;
         if (file.endsWith('/src/hooks/useSPFxSiteKeyValueStore.ts') || file.endsWith('/src/hooks/useSPFxPnPListById.ts')) return false;
         if (file.endsWith('/src/hooks/useSx.ts')) return true;
         return fs.existsSync(file);

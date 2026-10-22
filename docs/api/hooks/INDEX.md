@@ -20,7 +20,7 @@ Generic React hooks `useStableCallback` and `useSx` need no SPFx provider. useSx
 | [UI & Theming](./theming.md) | 4 | Theme, Fluent UI 9, and container info |
 | [User & Site](./user-site.md) | 5 | User, site, hub, and list information |
 | [Environment](./environment.md) | 4 | Environment detection, Teams, locale, and page type |
-| [Storage](./storage.md) | 6 | Browser, OneDrive, site collection and tenant storage |
+| [Storage](./storage.md) | 7 | Browser, OneDrive, site collection, tenant and layered configuration storage |
 | [Permissions](./permissions.md) | 2 | Permission checking |
 | [Performance & Diagnostics](./performance.md) | 3 | Logging, timing, correlation |
 
@@ -166,6 +166,7 @@ function ManualPermissionStatus() {
 | `useSPFxTenantProperty<T>(key)` | Tenant properties (read-only) | [View](./storage.md#usespfxtenantproperty) |
 | `useSPFxTenantKeyValueStore()` | Tenant key-value store | [View](./storage.md#usespfxtenantkeyvaluestore) |
 | `useSPFxSiteKeyValueStore()` | Collection root-web key-value store shared by subsites | [View](./storage.md#usespfxsitekeyvaluestore) |
+| `useSPFxConfigurationStore({ mode })` | Tenant/site configuration with site overrides and explicit mutation scopes | [View](./storage.md#usespfxconfigurationstore) |
 
 ### Permissions Hooks
 

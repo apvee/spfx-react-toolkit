@@ -176,6 +176,7 @@ Browser storage is instance-scoped; cloud stores use their documented user, coll
 | [`useSPFxTenantProperty`](./api/hooks/storage.md#usespfxtenantproperty) | `SPFxTenantPropertyResult<T>` | Tenant properties (read-only) |
 | [`useSPFxTenantKeyValueStore`](./api/hooks/storage.md#usespfxtenantkeyvaluestore) | `SPFxTenantKeyValueStoreResult` | Tenant-level key-value store |
 | [`useSPFxSiteKeyValueStore`](./api/hooks/storage.md#usespfxsitekeyvaluestore) | `SPFxSiteKeyValueStoreResult` | Collection root-web key-value store shared by subsites |
+| [`useSPFxConfigurationStore`](./api/hooks/storage.md#usespfxconfigurationstore) | `SPFxConfigurationStoreResult` | Tenant defaults, site overrides and explicitly scoped mutations |
 
 ### Permissions
 

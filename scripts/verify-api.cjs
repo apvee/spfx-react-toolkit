@@ -9,10 +9,11 @@ const baseline = require('../tests/fixtures/api-baseline.json');
 const requireApprovedAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts'));
 const requirePnPListAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts'));
 const requireSxAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSx.ts'));
+const requireConfigurationStoreAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxConfigurationStore.ts'));
 for (const [name, snapshot] of Object.entries(baseline)) {
   const current = fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib', name), 'utf8');
   assertCompatibleDeclaration(name, current, snapshot.declaration, {
-    requireApprovedAdditions, requirePnPListAdditions, requireSxAdditions,
+    requireApprovedAdditions, requirePnPListAdditions, requireSxAdditions, requireConfigurationStoreAdditions,
     requirePnPListWebsRegistration: true,
   });
 }

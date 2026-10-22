@@ -598,6 +598,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
     fs.copyFileSync(path.join(root, `tests/fixtures/sx-package-${mode}.ts`), path.join(consumer, `compatibility/sx-package-${mode}.ts`));
   }
   fs.copyFileSync(path.join(root, 'tests/fixtures/access-trim-package-consumer.tsx'), path.join(consumer, 'compatibility/access-trim-package-consumer.tsx'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/configuration-store-package-consumer.ts'), path.join(consumer, 'compatibility/configuration-store-package-consumer.ts'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/form-package-consumer.tsx'), path.join(consumer, 'compatibility/form-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/data-grid-package-consumer.tsx'), path.join(consumer, 'compatibility/data-grid-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/web-part-shell-package-consumer.tsx'), path.join(consumer, 'compatibility/web-part-shell-package-consumer.tsx'));
@@ -688,7 +689,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
     { args: ['run', 'bundle:ship'], prepareMetadata: true },
     { args: ['run', 'typecheck'] },
     { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node',
-      'compatibility/sx-package-public.ts', 'compatibility/sx-package-deep.ts'] },
+      'compatibility/sx-package-public.ts', 'compatibility/sx-package-deep.ts', 'compatibility/configuration-store-package-consumer.ts'] },
     { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/form-package-consumer.tsx'] },
     { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/data-grid-package-consumer.tsx'] },
     { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/description-list-package-consumer.tsx', 'compatibility/content-card-package-consumer.tsx', 'compatibility/access-trim-package-consumer.tsx'] },

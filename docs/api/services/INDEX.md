@@ -566,6 +566,57 @@ Returned method:
 
 `SPFxUserPhotoServiceOptions` accepts `userId`, `email`, and `size`. If no user identifier is supplied, the endpoint targets `/me`. The default size is `240x240`.
 
+## Configuration Store Service
+
+`createSPFxConfigurationStoreService(client, options)` composes the existing tenant/site list services without React or a new persistence format. Import from `@apvee/spfx-react-toolkit/services` or root. Construction makes no request. Required options are discriminated by mode:
+
+```ts
+type SPFxConfigurationStoreServiceOptions =
+  | { mode: 'tenant'; discoveryWebUrl: string; siteCollectionUrl?: never }
+  | { mode: 'site'; siteCollectionUrl: string; discoveryWebUrl?: never }
+  | { mode: 'layered'; discoveryWebUrl: string; siteCollectionUrl: string };
+```
+
+`discoveryWebUrl` is the current web from which to discover the tenant catalog, not the catalog URL itself. `siteCollectionUrl` must be the collection root. Required URLs are copied, trimmed and stripped of trailing slashes; empty/invalid mode dependencies throw synchronously. There are no per-operation URL overrides. Only enabled scopes may be read/listed/mutated.
+
+Canonical public types are exported by this service module and re-exported by the hook module:
+
+| Type | Contract |
+| --- | --- |
+| `SPFxConfigurationStoreScope` | Physical `tenant` or `site` destination. |
+| `SPFxConfigurationStoreMode` | Required `tenant`, `site` or `layered` read policy and scope restriction. |
+| `SPFxConfigurationStoreOptions` | Hook input with required `mode`; the provider supplies URLs/client. |
+| `SPFxConfigurationStoreTarget` | Required `scope` for one removal; no default or inferred destination. |
+| `SPFxConfigurationStoreSaveOptions` | Inherits required target `scope`; optional `description` preserves destination metadata when omitted and clears it when empty. |
+| `SPFxConfigurationStoreItem<T = unknown>` | Readonly `key`, `value: T`, `description: string \| undefined`, source-list `id` and physical `source`. T performs no runtime validation. |
+| `SPFxConfigurationStoreService` | The four Promise-based operations documented below; failures reject. |
+
+```ts
+const store = createSPFxConfigurationStoreService(context.spHttpClient, {
+  mode: 'layered',
+  discoveryWebUrl: context.pageContext.web.absoluteUrl,
+  siteCollectionUrl: context.pageContext.site.absoluteUrl,
+});
+await store.save('my-app:pageSize', 20, { scope: 'tenant' });
+await store.save('my-app:pageSize', 50, { scope: 'site', description: 'Local override' });
+const item = await store.get<number>('my-app:pageSize'); // value 50, source site
+const siteRows = await store.listScope('site'); // physical inventory, not effective merge
+await store.remove('my-app:pageSize', { scope: 'site' });
+```
+
+| Method | Observable behavior |
+| --- | --- |
+| `get<T>(key)` | Whole winning record plus `source`, or undefined for confirmed absence. Layered reads site first, then tenant only on absence. Site errors never enable fallback. |
+| `listScope(scope)` | Complete physical inventory with provenance. Preserves stored casing, order and legacy duplicates; page failures reject without partial data. |
+| `save<T>(key,value,{scope,description?})` | Explicit single destination; whole-value replacement. Only this operation may provision the chosen list. |
+| `remove(key,{scope})` | Explicit single destination, no provisioning. Site removal reveals tenant data on the next layered get. |
+
+All operation failures reject unchanged. Invalid scope/key/description arguments fail before I/O. Stored keys are forwarded without normalization, and the underlying server determines equality. No effective merged list, JSON-property merge, permission indicator, automatic read, global cache or multi-store transaction is provided. Item fields `key`, `value`, `description`, `id` and `source` describe one physical record; IDs are not globally unique. False, zero, empty text and legacy null values remain present overrides.
+
+Tenant discovery is lazy, uses a frozen scalar discovery-web URL and shares its in-flight Promise within the instance. Successful URLs use the existing catalog cache; a failed discovery can retry. Site operations, including a layered site hit, require no tenant discovery/access. Existing serialization, destination-local omitted/empty descriptions, schema enforcement and observed ETag conflicts are inherited unchanged. Serialization can fail after tenant discovery but before setup/item writes. See the [hook contract](../hooks/storage.md#usespfxconfigurationstore) for all types, examples, errors and compatibility limits.
+
+[View source](../../../packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts)
+
 ## Boundaries
 
 - Services may perform I/O.

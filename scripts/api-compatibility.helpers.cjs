@@ -67,7 +67,9 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   const pnpPaths = moduleName === 'hooks/index.d.ts' ? pnpHookPaths : [];
   const stablePaths = moduleName === 'hooks/index.d.ts' ? ['./useStableCallback'] : [];
   const sxPaths = moduleName === 'hooks/index.d.ts' ? ['./useSx'] : moduleName === 'helpers/index.d.ts' ? ['./styles'] : [];
-  const exportCounts = new Map([...(approvedPath ? [approvedPath] : []), ...pnpPaths, ...stablePaths, ...sxPaths].map(modulePath => [modulePath, 0]));
+  const configurationPaths = moduleName === 'hooks/index.d.ts' ? ['./useSPFxConfigurationStore']
+    : moduleName === 'services/index.d.ts' ? ['./spfx-configuration-store.service'] : [];
+  const exportCounts = new Map([...(approvedPath ? [approvedPath] : []), ...pnpPaths, ...stablePaths, ...sxPaths, ...configurationPaths].map(modulePath => [modulePath, 0]));
   const scopedCounts = approvedScopedStatements.map(() => 0);
   let selectorCount = 0;
   let factoryCount = 0;
@@ -143,6 +145,11 @@ function assertCompatibleDeclaration(moduleName, currentText, baselineText, opti
   if (options.requireSxAdditions) {
     for (const modulePath of sxPaths) {
       assert.equal(exportCounts.get(modulePath), 1, `Missing approved style export: ${moduleName}: ${modulePath}`);
+    }
+  }
+  if (options.requireConfigurationStoreAdditions) {
+    for (const modulePath of configurationPaths) {
+      assert.equal(exportCounts.get(modulePath), 1, `Missing approved configuration export: ${moduleName}: ${modulePath}`);
     }
   }
   if (options.requirePnPListAdditions) {

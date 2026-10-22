@@ -348,6 +348,16 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
+    key: 'configuration',
+    title: 'Configuration',
+    iconName: 'TableGroup',
+    description: 'Tenant defaults, site overrides and explicitly scoped changes.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-configuration' */ './panels/ConfigurationPanel')),
+    coverage: [
+      { symbol: 'useSPFxConfigurationStore', kind: 'write', notes: 'Manual tenant/site/layered reads, provenance, physical inventories and explicit destination writes/removal with disposable keys.' },
+    ],
+  },
+  {
     key: 'pnp',
     title: 'PnPjs',
     iconName: 'CloudDownload',
