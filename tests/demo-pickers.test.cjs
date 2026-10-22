@@ -77,7 +77,9 @@ test('global presentation and selection apply to all native pickers without chan
   const part = loadWebPart();
   part.properties = { pickerSites: [selectedSite], pickerLists: [selectedList] };
   const initial = part.getPropertyPaneConfiguration().pages[0].groups[0].groupFields;
+  assert.equal(initial.find(field => field.targetProperty === 'pickerSites').properties.colorfulTagAvatars, false);
   part.properties.pickerPresentation = 'tagPicker';
+  part.properties.pickerColorfulTagAvatars = true;
   part.properties.pickerMultiselect = false;
   part.onPropertyPaneFieldChanged('pickerPresentation', 'combobox', 'tagPicker');
   const fields = part.getPropertyPaneConfiguration().pages[0].groups[0].groupFields;
@@ -85,6 +87,7 @@ test('global presentation and selection apply to all native pickers without chan
     const field = fields.find(field => field.targetProperty === key);
     assert.equal(field.properties.presentation, 'tagPicker');
     assert.equal(field.properties.multiselect, false);
+    assert.equal(field.properties.colorfulTagAvatars, true);
     assert.equal(field.properties.key, initial.find(field => field.targetProperty === key).properties.key);
   }
   assert.deepEqual(part.properties.pickerSites, [selectedSite]);
@@ -93,6 +96,32 @@ test('global presentation and selection apply to all native pickers without chan
   assert.ok(settings.some(field => field.targetProperty === 'pickerPresentation'));
   assert.ok(settings.some(field => field.targetProperty === 'pickerMultiselect'));
   assert.equal(settings.filter(field => /Presentation|Multiselect/.test(field.targetProperty)).length, 2);
+});
+test('colorful avatar toggle refreshes all native picker descriptors without resetting selections', () => {
+  const part = loadWebPart();
+  part.properties = {
+    pickerPresentation: 'tagPicker', pickerSites: [selectedSite], pickerLists: [selectedList],
+    pickerFields: ['field'], pickerViews: ['view'], pickerContentTypes: ['contentType'],
+    pickerItems: ['item'], pickerPrincipals: ['principal'], fileFolderValues: ['file'],
+  };
+  const before = { ...part.properties };
+  const fields = () => part.getPropertyPaneConfiguration().pages[0].groups[0].groupFields;
+  const initial = fields();
+  for (const enabled of [true, false]) {
+    part.properties.pickerColorfulTagAvatars = enabled;
+    part.onPropertyPaneFieldChanged('pickerColorfulTagAvatars', !enabled, enabled);
+    assert.equal(part.refreshes, enabled ? 1 : 2, 'changing the toggle must refresh mounted descriptors immediately');
+    const updated = fields();
+    for (const key of ['pickerSites', 'pickerLists', 'pickerFields', 'pickerViews', 'pickerContentTypes', 'pickerItems', 'pickerPrincipals']) {
+      const field = updated.find(item => item.targetProperty === key);
+      const previous = initial.find(item => item.targetProperty === key);
+      assert.equal(field.properties.colorfulTagAvatars, enabled);
+      assert.equal(field.properties.key, previous.properties.key);
+      assert.equal(field.properties.valueRevision, previous.properties.valueRevision);
+      assert.equal(part.properties[key], before[key], `${key} references must survive cosmetic updates`);
+    }
+    assert.equal(part.properties.fileFolderValues, before.fileFolderValues);
+  }
 });
 test('global single mode keeps each first value and refreshes cascade once', () => {
   const part = loadWebPart();

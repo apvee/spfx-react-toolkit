@@ -23,7 +23,8 @@ const tooMany: PrincipalPickerProps = { initialSuggestions: { limit: 6 } };
 void [suggestions, tooMany];
 
 import type { SitePickerProps, ListPickerProps, FieldPickerProps, ViewPickerProps, ListItemPickerProps } from '../../packages/spfx-react-toolkit/src/controls/pickers/picker.types';
-const shared: Pick<SitePickerProps, 'availableOptions' | 'initialOptions' | 'defaultSelectedOptions' | 'initialSuggestions'> = {
+const shared: Pick<SitePickerProps, 'availableOptions' | 'initialOptions' | 'defaultSelectedOptions' | 'initialSuggestions' | 'colorfulTagAvatars'> = {
+  colorfulTagAvatars: true,
   defaultSelectedOptions: ['https://tenant.sharepoint.com/sites/hr'],
   initialOptions: [{ key: 'https://tenant.sharepoint.com/sites/hr', text: 'HR', url: 'https://tenant.sharepoint.com/sites/hr', value:{kind:'site',url:'https://tenant.sharepoint.com/sites/hr'} }],
   availableOptions: [], initialSuggestions: { limit: 5 }
@@ -36,6 +37,9 @@ const noHistory: PrincipalPickerProps = {initialSuggestions: {recentSelections: 
 // @ts-expect-error Site history is also removed.
 const noSiteHistory: SitePickerProps = {recentSelections: {enabled: true}};
 void [shared, others, noHistory, noSiteHistory];
+// @ts-expect-error Avatar coloring is a boolean opt-in, not an appearance string.
+const invalidAvatarColor: PrincipalPickerProps = { colorfulTagAvatars: 'colorful' };
+void invalidAvatarColor;
 
 import type { SitePickerValue, ListPickerValue, FieldPickerValue, ViewPickerValue, ListItemPickerValue, PrincipalPickerValue } from '../../packages/spfx-react-toolkit/src/controls/pickers/picker-values.types';
 import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';

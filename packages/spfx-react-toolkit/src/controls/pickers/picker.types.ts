@@ -49,6 +49,13 @@ export interface PickerProps<T extends PickerOption> extends SearchPickerOptions
    * Suggestions use Persona with name/metadata and category icon; user principals retain their user avatar.
    * Selected tags show name and category icon (user avatar for user principals). Combobox menus retain checked selections in Selezionato (single) or Selezionati (multiple), independent of the query. Clicking the current single value keeps it; clearable clears it. */
   readonly presentation?: 'combobox' | 'tagPicker';
+  /** Color resolved selected-tag avatars with Fluent's colorful palette. Defaults to false.
+   * Colors use the selected renderer key, retaining their identity across label changes.
+   * Photos/icons and avatar dimensions are preserved; suggestion avatars, Combobox and unresolved tags are unchanged.
+   * Property Pane counterparts inherit this option. It never changes selection, queries or saved values.
+   * @example <PrincipalPicker label="People" presentation="tagPicker" colorfulTagAvatars />
+   */
+  readonly colorfulTagAvatars?: boolean;
   /** Enable the built-in Combobox/TagPicker query input. Defaults to true. */
   readonly searchable?: boolean;
   /** Controlled stable renderer keys (including retained aliases). Empty selection is []; undefined selects uncontrolled mode. */

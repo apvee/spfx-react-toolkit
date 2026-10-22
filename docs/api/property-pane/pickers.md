@@ -151,3 +151,16 @@ PropertyPaneContentTypePicker('contentTypes', {
 Single selection still stores a `ContentTypePickerValue[]`. Supply `initialOptions` for selection display models and `availableOptions` for independent consumer menu choices; neither is persisted by the control. `valueRevision` can authoritatively replace a consumer draft after changing scope/site/list. Known models retain their labels; input-only AutoSkeleton applies only to the first hydration without models. Mounted equivalent updates reuse the shared runtime, and closing the last native field releases its in-memory cache.
 
 The test web part offers a content-type scope selector. Site CTs depend on exactly one selected site; list CTs also require exactly one selected list. A source change clears the demo's dependent CT reference; presentation changes retain values. The global **Picker modes** presentation/multiple settings apply to this seventh field as well. Scope changes are consumer configuration, not a mutation of SharePoint content-type definitions.
+
+## Colorful selected-tag avatars
+
+All seven native picker factories inherit `colorfulTagAvatars?: boolean` from `PickerProps`. Default false/omitted preserves current neutral avatars. With `presentation: 'tagPicker'` and `colorfulTagAvatars: true`, resolved selected-tag avatars use Fluent's colorful palette and stable selected renderer keys. Photos/icons are retained, suggestions stay unchanged, and unresolved tags without media remain without avatars. See the [React contract](../controls/pickers.md#colorful-selected-tag-avatars).
+
+```ts
+PropertyPanePrincipalPicker('principals', {
+  instance: this, key: 'principals', value: this.properties.principals ?? [],
+  label: 'People', presentation: 'tagPicker', colorfulTagAvatars: true,
+});
+```
+
+The flag is display configuration; JSON values and SPFx change/apply semantics are unchanged. Cosmetic updates preserve the mounted field, typed query and request cache. The sample **Picker modes** group provides a default-off toggle applying to all seven fields.

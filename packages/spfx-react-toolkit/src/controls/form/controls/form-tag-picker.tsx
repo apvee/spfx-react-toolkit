@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { mergeSettingsFieldIds } from '../../settings-field-context.internal';
-import { Field, Tag, TagPicker, TagPickerControl, TagPickerGroup, TagPickerInput, TagPickerList, TagPickerOption } from '@fluentui/react-components';
+import { Avatar, Field, Tag, TagPicker, TagPickerControl, TagPickerGroup, TagPickerInput, TagPickerList, TagPickerOption } from '@fluentui/react-components';
 import { mergeClasses } from '@griffel/react';
 import { renderContentSlot } from '../../content-slot.internal';
 import type { FieldValues } from 'react-hook-form';
@@ -22,6 +22,7 @@ export const FormTagPicker = React.forwardRef<HTMLInputElement, FormTagPickerPro
     children,
     className,
     codec,
+    colorfulTagAvatars,
     disabled,
     fieldProps,
     hint,
@@ -74,7 +75,7 @@ export const FormTagPicker = React.forwardRef<HTMLInputElement, FormTagPickerPro
     <TagPickerControl>
       <TagPickerGroup aria-label={accessibleName} aria-labelledby={binding.controlProps['aria-labelledby']}>
         {selected.map(value => <Tag key={value}
-          value={value} dismissible>{source.entries.find(option => option.value === value)?.label ?? getSelectionText(source, value)}</Tag>)}
+          value={value} dismissible media={colorfulTagAvatars ? <Avatar aria-hidden name={getSelectionText(source, value)} color="colorful" idForColor={value} /> : undefined}>{source.entries.find(option => option.value === value)?.label ?? getSelectionText(source, value)}</Tag>)}
       </TagPickerGroup>
       <TagPickerInput {...fieldControl} {...binding.controlProps}
         name={binding.name} aria-label={accessibleName}

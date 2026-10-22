@@ -30,6 +30,7 @@ export interface ISpFxReactToolkitTestWebPartProps extends IWebPartShellProperti
   fileFolderItemTypes?: 'files' | 'folders' | 'all';
   fileFolderMultiselect?: boolean;
   fileFolderSize?: 'medium' | 'large';
+  fileFolderColorfulTagAvatars?: boolean;
   fileFolderFolder?: string;
   fileFolderHint?: string;
   fileFolderSearchable?: boolean;
@@ -39,6 +40,7 @@ export interface ISpFxReactToolkitTestWebPartProps extends IWebPartShellProperti
   fileFolderInitialLibrary?: string;
   fileFolderInitialFolder?: string;
   pickerPresentation?: 'combobox' | 'tagPicker';
+  pickerColorfulTagAvatars?: boolean;
 
   pickerSites?: SitePickerValue[];
   pickerLists?: ListPickerValue[];
@@ -89,7 +91,7 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
       // Preset and functional options update the same field descriptor without resetting values or its revision.
       this.context.propertyPane.refresh(); return;
     }
-    if (propertyPath === 'pickerMultiselect' || propertyPath === 'pickerPresentation') {
+    if (propertyPath === 'pickerMultiselect' || propertyPath === 'pickerPresentation' || propertyPath === 'pickerColorfulTagAvatars') {
       if (propertyPath === 'pickerMultiselect' && newValue === false) {
         const previousSites = this.properties.pickerSites;
         const previousLists = this.properties.pickerLists;
@@ -163,7 +165,8 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     const modeProps = { multiselect: this.properties.pickerMultiselect ?? true,
-      presentation: this.properties.pickerPresentation ?? 'combobox' as const };
+      presentation: this.properties.pickerPresentation ?? 'combobox' as const,
+      colorfulTagAvatars: this.properties.pickerColorfulTagAvatars ?? false };
     const site = this.properties.pickerSites?.length === 1 ? this.properties.pickerSites[0] : undefined;
     const candidate = this.properties.pickerLists?.length === 1 ? this.properties.pickerLists[0] : undefined;
     const list = site !== undefined && candidate?.webUrl.toLowerCase().replace(/\/+$/, '') === site.url.toLowerCase().replace(/\/+$/, '') ? candidate : undefined;
@@ -224,7 +227,7 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
                 PropertyPaneDropdown('fileFolderItemTypes', { label: 'Selectable content', selectedKey: this.properties.fileFolderItemTypes ?? 'files', options: [{ key: 'files', text: 'Files' }, { key: 'folders', text: 'Folders' }, { key: 'all', text: 'Files and folders' }] }),
                 PropertyPaneToggle('fileFolderMultiselect', { label: 'Multiple file/folder selection', checked: this.properties.fileFolderMultiselect ?? false }),
                 PropertyPaneFileFolderPicker('fileFolderValues', { instance: this, key: 'file-folder-values', label: 'Selected files / folders', value: this.properties.fileFolderValues ?? [], valueRevision: this._fileFolderRevision,
-                  size: this.properties.fileFolderSize ?? 'medium', scope: fileFolderScope, itemTypes: this.properties.fileFolderItemTypes ?? 'files', multiselect: this.properties.fileFolderMultiselect ?? false, disabled: fileFolderDisabled,
+                  size: this.properties.fileFolderSize ?? 'medium', colorfulTagAvatars: this.properties.fileFolderColorfulTagAvatars ?? false, scope: fileFolderScope, itemTypes: this.properties.fileFolderItemTypes ?? 'files', multiselect: this.properties.fileFolderMultiselect ?? false, disabled: fileFolderDisabled,
                   ...fileFolderExperience, initialLocation: fileFolderInitialLocation,
                   searchable: this.properties.fileFolderSearchable ?? true,
                   extensions: this.properties.fileFolderItemTypes === 'folders' ? undefined : this.properties.fileFolderExtensions?.split(',').map(extension => extension.trim()).filter(Boolean),
@@ -247,6 +250,7 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
                 ] : []),
                 PropertyPaneTextField('fileFolderInitialFolder', { label: 'Initial folder (navigation only)' }),
                 PropertyPaneDropdown('fileFolderSize', { label: 'File/folder tag size', selectedKey: this.properties.fileFolderSize ?? 'medium', options: [{ key: 'medium', text: 'Medium' }, { key: 'large', text: 'Large' }] }),
+                PropertyPaneToggle('fileFolderColorfulTagAvatars', { label: 'Colorful file/folder tag avatars', checked: this.properties.fileFolderColorfulTagAvatars ?? false }),
                 PropertyPaneTextField('fileFolderHint', { label: 'Field description (hint)' }),
                 PropertyPaneLabel('file-folder-writes', { text: 'Optional actions write immediately. Cancel and Property Pane Discard cannot undo those writes.' }),
                 PropertyPaneToggle('fileFolderUpload', { label: 'Enable uploads', checked: this.properties.fileFolderUpload ?? false }),
@@ -270,6 +274,7 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
                 PropertyPaneDropdown('pickerContentTypeScope', { label: 'Content type scope', selectedKey: contentTypeScope,
                   options: [{ key: 'site', text: 'Site collection' }, { key: 'list', text: 'List' }] }),
                 PropertyPaneToggle('pickerMultiselect', { label: 'Multiple selection for all pickers', checked: modeProps.multiselect }),
+                PropertyPaneToggle('pickerColorfulTagAvatars', { label: 'Colorful tag avatars for all pickers', checked: modeProps.colorfulTagAvatars }),
               ],
             },
             {

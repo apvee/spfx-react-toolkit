@@ -53,7 +53,8 @@ export function FileFolderPicker(props: FileFolderPickerProps): React.ReactEleme
         const text = runtime.label(value);
         const Icon = value.kind === 'folder' ? FolderRegular : /^\.?pdf$/i.test(runtime.extension?.(value) ?? value.name?.split('.').pop() ?? '') ? DocumentPdfRegular : DocumentRegular;
         return <Tag key={fileFolderPickerIdentity(value)} value={fileFolderPickerIdentity(value)} dismissible disabled={props.disabled} className={styles.tag}
-          primaryText={{ className: styles.text, title: text }} media={<Avatar icon={<Icon />} aria-label={value.kind === 'folder' ? 'Cartella' : 'File'} />} dismissIcon={{ 'aria-label': `Rimuovi ${text}` }}>{text}</Tag>;
+          primaryText={{ className: styles.text, title: text }} media={<Avatar icon={<Icon />} aria-label={value.kind === 'folder' ? 'Cartella' : 'File'}
+            color={props.colorfulTagAvatars ? 'colorful' : undefined} idForColor={props.colorfulTagAvatars ? fileFolderPickerIdentity(value) : undefined} />} dismissIcon={{ 'aria-label': `Rimuovi ${text}` }}>{text}</Tag>;
       })}
     </TagGroup>}
     {runtime.values.length === 0 ? <button {...fieldProps} id={undefined} type="button" className={styles.placeholder} disabled={disabled || runtime.busy} onClick={runtime.browse}

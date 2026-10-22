@@ -1,5 +1,35 @@
 const test=require('node:test');const assert=require('node:assert/strict');const h=require('./fixtures/form-selection-harness.cjs');test.before(h.setup);test.after(h.cleanup);
 const options=[{value:'b',label:'Beta'},{value:'a',label:'Alpha'},{value:'c',label:'Blocked',disabled:true}];
+
+test('TagPicker adds colorful avatars only on opt-in without changing selection or query', () => {
+ const F = h.suite('TagPicker'); const { Avatar, Tag, TagGroup } = require('@fluentui/react-components');
+ let methods; const events = [];
+ function Owner({ colorfulTagAvatars, label = 'Alpha' }) {
+  methods = F.useForm({ defaultValues: { value: ['a'] } });
+  return h.React.createElement(F.Root, { methods, onSubmit() {} }, h.React.createElement(F.TagPicker, {
+   name: 'value', label: 'Tags', colorfulTagAvatars, options: [{ value: 'a', label }], onOptionSelect: () => events.push('selection'),
+  }));
+ }
+ const root = h.mount(h.React.createElement(Owner));
+ const reference = h.mount(h.React.createElement(TagGroup, { size: 'small' }, h.React.createElement(Tag, {
+  media: h.React.createElement(Avatar, { name: 'Alpha', color: 'colorful', idForColor: 'a', 'data-form-color-reference': true }),
+ }, 'Reference')));
+ try {
+  assert.equal(root.host.querySelector('.fui-Tag .fui-Avatar'), null);
+  const input = root.host.querySelector('input'); h.change(input, 'draft');
+  root.render(h.React.createElement(Owner, { colorfulTagAvatars: true }));
+  const color = root.host.querySelector('.fui-Tag .fui-Avatar'); assert.ok(color);
+  const colorClasses = color.querySelector('.fui-Avatar__initials').className;
+  assert.equal(colorClasses, document.querySelector('[data-form-color-reference] .fui-Avatar__initials').className);
+  root.render(h.React.createElement(Owner, { colorfulTagAvatars: true, label: 'Renamed' }));
+  assert.equal(root.host.querySelector('.fui-Tag .fui-Avatar__initials').className, colorClasses);
+  assert.equal(root.host.querySelector('input'), input); assert.equal(input.value, 'draft');
+  assert.deepEqual(methods.getValues('value'), ['a']); assert.deepEqual(events, []);
+  root.render(h.React.createElement(Owner, { colorfulTagAvatars: false }));
+  assert.equal(root.host.querySelector('.fui-Tag .fui-Avatar'), null);
+  assert.equal(input.value, 'draft');
+ } finally { reference.close(); root.close(); }
+});
 for(const member of ['CheckboxGroup','DropdownMulti','ComboboxMulti','TagPicker'])test(`${member} stores string identities and decoded arrays with actual refs`,()=>{const F=h.suite(member),ref=h.React.createRef();let f;const seen=[];f=h.owner(F,member,{value:['a']},{ref,label:'Choices',options,...(member==='CheckboxGroup'?{}:{open:true,...(member==='TagPicker'?{inline:true}:{inlinePopup:true})}),[member==='CheckboxGroup'?'onChange':'onOptionSelect']:()=>seen.push([...f.methods.getValues('value')])});try{assert.equal(ref.current.tagName,{CheckboxGroup:'DIV',DropdownMulti:'BUTTON',ComboboxMulti:'INPUT',TagPicker:'INPUT'}[member]);const node=member==='CheckboxGroup'?f.host.querySelector('input[value="b"]'):[...f.host.querySelectorAll('[role=option],[role=menuitemcheckbox]')].find(n=>n.textContent.includes('Beta'));if(member==='CheckboxGroup')h.act(()=>{node.checked=true;require('react-dom/test-utils').Simulate.change(node);});else h.click(node);assert.deepEqual(f.methods.getValues('value'),member==='CheckboxGroup'?['b','a']:['a','b']);assert.deepEqual(seen,[member==='CheckboxGroup'?['b','a']:['a','b']]);}finally{f.close();}});
 test('CheckboxGroup adapts only documented Fluent Checkbox children and composes callbacks after RHF',()=>{const F=h.suite('CheckboxGroup'),{Checkbox}=require('@fluentui/react-components');let f;const seen=[];function Custom(props){assert.equal(props.checked,undefined);assert.equal(props.disabled,undefined);assert.equal(props.onChange,undefined);return h.React.createElement('span',{'data-custom':'untouched'},'Custom');}f=h.owner(F,'CheckboxGroup',{value:[]},{label:'Choices',onChange:()=>seen.push(['top',[...f.methods.getValues('value')]]),children:[h.React.createElement(Checkbox,{key:'a',value:'a',label:'Alpha',onChange:()=>seen.push(['child',[...f.methods.getValues('value')]]),input:{onChange:()=>seen.push(['slot',[...f.methods.getValues('value')]])}}),h.React.createElement(Custom,{key:'custom',value:'custom'})]});try{h.act(()=>{const node=f.host.querySelector('input');node.checked=true;require('react-dom/test-utils').Simulate.change(node);});assert.deepEqual(seen,[['top',['a']],['child',['a']],['slot',['a']]]);assert.equal(f.host.querySelector('[data-custom]').textContent,'Custom');}finally{f.close();}});
 test('CheckboxGroup focuses first eligible checkbox and keeps group label/hint',async()=>{const F=h.suite('CheckboxGroup'),{Checkbox}=require('@fluentui/react-components');const f=h.owner(F,'CheckboxGroup',{value:[]},{label:'Choices',hint:'Help',rules:{validate:v=>v.length>0||'Choose'},children:[h.React.createElement(Checkbox,{key:'a',value:'a',label:'Disabled',disabled:true}),h.React.createElement('div',{key:'b','aria-hidden':'true'},h.React.createElement(Checkbox,{value:'b',label:'Hidden'})),h.React.createElement(Checkbox,{key:'c',value:'c',label:'Enabled'})]});try{await h.act(async()=>{await f.methods.trigger('value',{shouldFocus:true});});assert.equal(document.activeElement.value,'c');assert.ok(f.host.querySelector('[role=group]').getAttribute('aria-labelledby'));assert.ok(f.host.querySelector('[role=group]').getAttribute('aria-describedby'));}finally{f.close();}});

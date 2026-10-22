@@ -42,9 +42,10 @@ export function PickerRenderer<V extends PickerValue, T extends PickerOption<V>>
   const pinnedSections = (runtime.pinnedSections ?? []).map(section => ({ ...section, options: section.options.filter(available) })).filter(section => section.options.length > 0);
   const sections = runtime.sections.map(section => ({ ...section, options: section.options.filter(available) })).filter(section => section.options.length > 0);
   const count = pinnedSections.reduce((sum, section) => sum + section.options.length, 0) + (typedSearch ? rows.length : sections.reduce((sum, section) => sum + section.options.length, 0));
-  const avatar = (option: T): React.ReactElement => {
+  const avatar = (option: T, key: string): React.ReactElement => {
     const presentation = pickerPresentation(option), Icon = icons[presentation.icon];
     return <Avatar aria-hidden name={presentation.user ? option.text : undefined} shape={presentation.user ? 'circular' : 'square'}
+      color={props.colorfulTagAvatars ? 'colorful' : undefined} idForColor={props.colorfulTagAvatars ? key : undefined}
       image={presentation.imageUrl === undefined ? undefined : { src: presentation.imageUrl }} icon={presentation.user ? undefined : <Icon />} />;
   };
   const optionNode = (option: T): React.ReactElement => {
@@ -102,7 +103,7 @@ export function PickerRenderer<V extends PickerValue, T extends PickerOption<V>>
       <TagPickerControl className={sx(styles.control, props.controlClassName)}>
         <TagPickerGroup className={styles.tagGroup} aria-label={name} aria-labelledby={props['aria-labelledby']}>
           {runtime.selectedOptions.map(key => { const option = runtime.selectedItems.find(candidate => candidate.key === key);
-            return <Tag key={key} value={key} className={styles.tag} primaryText={{ className: styles.text, title: runtime.selectionText(key) }} dismissible disabled={disabled} media={option === undefined ? undefined : avatar(option)}>{runtime.selectionText(key)}</Tag>; })}
+            return <Tag key={key} value={key} className={styles.tag} primaryText={{ className: styles.text, title: runtime.selectionText(key) }} dismissible disabled={disabled} media={option === undefined ? undefined : avatar(option, key)}>{runtime.selectionText(key)}</Tag>; })}
         </TagPickerGroup>
         <TagPickerInput {...fieldProps} {...inputProps} autoComplete="off" id={props.id ?? fieldProps.id} value={runtime.query} readOnly={props.searchable === false}
           onChange={event => runtime.setQuery(event.currentTarget.value)} />

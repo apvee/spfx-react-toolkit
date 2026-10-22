@@ -15,6 +15,7 @@ const FileFolderPickerPanel: React.FC = () => {
   const [scope, setScope] = React.useState<FileFolderPickerScope>({ kind: 'siteCollection' });
   const [itemTypes, setItemTypes] = React.useState<'files' | 'folders' | 'all'>('files');
   const [multiple, setMultiple] = React.useState(false), [searchable, setSearchable] = React.useState(true);
+  const [colorfulTagAvatars, setColorfulTagAvatars] = React.useState(false);
   const [size, setSize] = React.useState<'medium' | 'large'>('medium'), [suffixes, setSuffixes] = React.useState('');
   const [limit, setLimit] = React.useState(''), [error, setError] = React.useState('');
   const [values, setValues] = React.useState<readonly FileFolderPickerValue[]>([]), [models, setModels] = React.useState<readonly FileFolderPickerOption[]>([]);
@@ -58,6 +59,7 @@ const FileFolderPickerPanel: React.FC = () => {
     {itemTypes !== 'folders' ? <Field label="File extensions (comma separated)"><Input value={suffixes} onChange={(_, data) => setSuffixes(data.value)} /></Field> : undefined}
     {multiple ? <Field label="Selection limit (empty: default)"><Input value={limit} onChange={(_, data) => setLimit(data.value)} /></Field> : undefined}
     <Field label="Tag size"><Select value={size} onChange={(_, data) => setSize(data.value === 'large' ? 'large' : 'medium')}><option>medium</option><option>large</option></Select></Field>
+    <Switch label="Colorful tag avatars" checked={colorfulTagAvatars} onChange={(_, data) => setColorfulTagAvatars(data.checked)} />
     <Switch label="Hosted search" checked={searchable} onChange={(_, data) => setSearchable(data.checked)} />
     <Field label="Field description (hint)"><Input value={hint} onChange={(_, data) => setHint(data.value)} /></Field>
     <p>Optional actions write immediately, before confirmation. Cancel cannot undo those writes.</p>
@@ -69,6 +71,7 @@ const FileFolderPickerPanel: React.FC = () => {
     <pre>{JSON.stringify(values, undefined, 2)}</pre>
   </DemoAccordionPanel></AccordionItem></Accordion>}>
     <FileFolderPicker preset={preset} uploadEnabled={uploadEnabled} createFolderEnabled={createFolderEnabled} hint={hint || undefined} onReady={() => setReady(count => count + 1)} label="FileFolderPicker" scope={scope} initialLocation={initialLocation} value={values} initialOptions={models} itemTypes={itemTypes} multiselect={multiple} size={size} searchable={searchable}
+      colorfulTagAvatars={colorfulTagAvatars}
       selectionLimit={multiple && limit.trim() ? Number(limit) : undefined} extensions={itemTypes === 'folders' ? undefined : suffixes.split(',').map(value => value.trim()).filter(Boolean)}
       onChange={data => { setValues(data.values); setModels(data.items); setReason(data.reason); setError(''); }} />
   </DemoCard>;

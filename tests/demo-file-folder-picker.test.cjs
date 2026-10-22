@@ -51,13 +51,17 @@ test('React and native new demos share preset intents and preset-only edits reta
  const change=(label,value)=>{const el=input(label);h.act(()=>{el.value=value;Simulate.change(el);});};
  try{
   const native=fields(loadPart()).find(f=>f.targetProperty==='fileFolderValues').properties;
-  for(const key of ['preset','itemTypes','multiselect','uploadEnabled','createFolderEnabled','searchable'])assert.equal(observed[key],native[key],key);
+  for(const key of ['preset','itemTypes','multiselect','uploadEnabled','createFolderEnabled','searchable','colorfulTagAvatars'])assert.equal(observed[key],native[key],key);
   const metadata=require('./fixtures/file-folder-picker/metadata.cjs').setup();
   const resolved=await metadata.load('scope').resolveFileFolderPickerScope({kind:'siteCollection'},undefined,metadata.context,metadata.cache);
   const compile=metadata.load('config').compileFileFolderPickerConfig,channel={origin:'https://tenant.sharepoint.com',channelId:'demo-parity'};
   assert.deepEqual(compile(resolved,observed,channel),compile(resolved,native,channel),'same library resolver yields identical hosted SDK JSON');
   assert.equal(observed.preset,'focused');h.act(()=>Simulate.click([...m.container.querySelectorAll('button')].find(b=>b.textContent==='Seed selection')));
-  const savedModels=observed.initialOptions;change('Preset','extended');assert.equal(observed.preset,'extended');assert.deepEqual(observed.value,[selected]);assert.equal(observed.initialOptions,savedModels);assert.equal(mounts,1);assert.equal(changes,1);
+  const savedModels=observed.initialOptions;
+  const colorful = input('Colorful tag avatars');
+  h.act(()=>{colorful.checked=true;Simulate.change(colorful);});
+  assert.equal(observed.colorfulTagAvatars,true);assert.deepEqual(observed.value,[selected]);assert.equal(observed.initialOptions,savedModels);
+  change('Preset','extended');assert.equal(observed.preset,'extended');assert.deepEqual(observed.value,[selected]);assert.equal(observed.initialOptions,savedModels);assert.equal(mounts,1);assert.equal(changes,1);
   for(const key of ['graphEnabled','claimsChallengeEnabled','visibleLocations','initialView','navigationPreset','localFilesMode','title','layout'])assert.equal(observed[key],undefined,key);
   assert.doesNotMatch(m.container.textContent,/Optional Graph|Request Recent|Initial native layout|Native tray|On this device label/);
   assert.equal(m.container.querySelector('[data-diagnostics]').querySelector('input,select,textarea'),null,'diagnostics are read-only');

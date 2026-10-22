@@ -3,7 +3,10 @@ import type { FileFolderPickerProps, FileFolderPickerScope, FileFolderPickerValu
 import type { JsonArrayPropertyKey } from '../../packages/spfx-react-toolkit/src/property-pane/property-pane-json-array-key.internal';
 import type { SitePickerValue } from '../../packages/spfx-react-toolkit/src/controls/pickers/picker-values.types';
 const defaults: FileFolderPickerProps = {};
-const controlled: FileFolderPickerProps = { value: [], size: 'large' };
+const controlled: FileFolderPickerProps = { value: [], size: 'large', colorfulTagAvatars: true };
+// @ts-expect-error The avatar flag is boolean, not a palette name.
+const invalidAvatarColor: FileFolderPickerProps = { colorfulTagAvatars: 'colorful' };
+void invalidAvatarColor;
 const uncontrolled: FileFolderPickerProps = { defaultValue: [], scope: { kind: 'siteCollection' } };
 declare const label: FieldProps['label'];
 const nativeLabel: FileFolderPickerProps = { label };
@@ -46,7 +49,7 @@ import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { PropertyPaneFileFolderPicker } from '../../packages/spfx-react-toolkit/src/property-pane/file-folder-picker';
 import type { FileFolderPickerPropertyKey, PropertyPaneFileFolderPickerProps } from '../../packages/spfx-react-toolkit/src/property-pane/file-folder-picker';
 declare const instance: BaseClientSideWebPart<Props>;
-const nativeProps: PropertyPaneFileFolderPickerProps<Props> = { instance, key: 'native-files', value: [], multiselect: false };
+const nativeProps: PropertyPaneFileFolderPickerProps<Props> = { instance, key: 'native-files', value: [], multiselect: false, colorfulTagAvatars: true };
 const nativeKey: FileFolderPickerPropertyKey<Props> = 'exact';
 PropertyPaneFileFolderPicker('exact', nativeProps);
 PropertyPaneFileFolderPicker('optional', nativeProps);

@@ -86,3 +86,16 @@ Native uploads and folder creation are immediate writes. The accepted-reference 
 ### Sample Preset menu
 
 The test web part offers only **Focused** and **Extended** in its Property Pane. Saved legacy demo configurations use Focused for both the displayed choice and the native control. Changing the preset preserves selected references, the field key and its value revision; old saved SDK fields are retained without passing them alongside a preset. The reusable Property Pane factory still supports the documented legacy contract when `preset` is omitted.
+
+## Colorful selected-tag avatars
+
+`PropertyPaneFileFolderPickerProps.colorfulTagAvatars?: boolean` inherits the [React FileFolderPicker contract](../controls/file-folder-picker.md#colorful-selected-tag-avatars). Default false/omitted preserves current icon avatars. True colors those existing avatars through Fluent's palette using the canonical saved identity; filenames can change without changing color. It preserves icons, sizes, the native field/session, saved references and the typed change callback. It does not style Microsoft's remote iframe or start metadata/authentication work.
+
+```ts
+PropertyPaneFileFolderPicker('documents', {
+  instance: this, key: 'documents', value: this.properties.documents ?? [],
+  label: 'Documents', colorfulTagAvatars: true,
+});
+```
+
+The native sample has a separate **Colorful file/folder tag avatars** toggle under **File picker options**, default off.

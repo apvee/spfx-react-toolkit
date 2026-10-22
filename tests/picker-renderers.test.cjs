@@ -45,19 +45,45 @@ test('selected tag avatars inherit Fluent dimensions for every picker size', () 
   }
 });
 
+test('colorful tag avatars opt in with stable keys while suggestion avatars retain their default', () => {
+  const { Avatar } = require('@fluentui/react-components');
+  let suggestionClasses;
+  for (const colorfulTagAvatars of [undefined, false, true]) {
+    for (const text of ['Risorse umane', 'Renamed collection']) {
+      const selected = { ...option, text };
+      const root = render('tagPicker', false, undefined, { colorfulTagAvatars }, {
+        selectedOptions: [option.key], selectedItems: [selected], selectionText: () => text,
+      });
+      const reference = h.mountComponent(() => React.createElement(Avatar, {
+        size: 16, shape: 'square', color: colorfulTagAvatars ? 'colorful' : undefined,
+        idForColor: colorfulTagAvatars ? 'hr' : undefined, 'data-color-reference': true,
+      }));
+      try {
+        assert.equal(root.container.querySelector('.fui-Tag .fui-Avatar__icon').className, document.querySelector('[data-color-reference] .fui-Avatar__icon').className);
+        const suggestion = document.querySelector('.fui-Persona .fui-Avatar__icon').className;
+        suggestionClasses ??= suggestion;
+        assert.equal(suggestion, suggestionClasses);
+        assert.equal(root.container.querySelector('.fui-Tag__primaryText').textContent, text);
+      } finally { reference.unmount(); root.unmount(); }
+    }
+  }
+});
+
 test('user photos and initials inherit tag sizing without changing their media or shape', () => {
-  for (const size of ['medium', 'large']) for (const imageUrl of [undefined, 'https://tenant.test/photo.png']) {
+  for (const size of ['medium', 'large']) for (const imageUrl of [undefined, 'https://tenant.test/photo.png']) for (const colorfulTagAvatars of [false, true]) {
     const user = { key: 'user-media', text: 'Ada Lovelace', kind: 'user', imageUrl,
       value: { kind: 'user', loginName: 'ada@tenant.test' } };
-    const root = render('tagPicker', false, undefined, { size }, {
+    const root = render('tagPicker', false, undefined, { size, colorfulTagAvatars }, {
       selectedOptions: [user.key], selectedItems: [user], selectionText: () => user.text,
     });
     const avatar = document.querySelector('.fui-Tag .fui-Avatar');
     const reference = h.mountComponent(() => React.createElement(require('@fluentui/react-components').Avatar, {
       size: size === 'large' ? 20 : 16, shape: 'circular', name: user.text,
+      color: colorfulTagAvatars ? 'colorful' : undefined, idForColor: colorfulTagAvatars ? user.key : undefined,
       image: imageUrl === undefined ? undefined : { src: imageUrl }, 'data-media-reference': true,
     }));
     assert.equal(avatar.className, document.querySelector('[data-media-reference]').className);
+    assert.equal(avatar.querySelector('.fui-Avatar__initials').className, document.querySelector('[data-media-reference] .fui-Avatar__initials').className);
     assert.equal(avatar.querySelector('img')?.getAttribute('src'), imageUrl);
     assert.ok(avatar.querySelector('.fui-Avatar__initials').textContent.length > 0);
     reference.unmount(); root.unmount();

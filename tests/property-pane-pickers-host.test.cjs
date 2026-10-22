@@ -39,7 +39,7 @@ for (const [file, name, sourceProps] of factories) {
     await flush();
     const requests = owner.requests, initializations = owner.graphInitializations;
     assert.ok(requests > 0, `${name} must exercise the counted mocked transport`);
-    const second = factory('values', { ...props, ...JSON.parse(JSON.stringify(sourceProps)), label: `${name} renamed`, value: [], availableOptions: [], valueRevision: 1 });
+    const second = factory('values', { ...props, ...JSON.parse(JSON.stringify(sourceProps)), label: `${name} renamed`, value: [], availableOptions: [], valueRevision: 1, colorfulTagAvatars: true });
     h.act(() => second.properties.onRender(dom, undefined, (...args) => changes.push(args)));
     await flush();
     assert.equal(dom.querySelector('input'), input);
@@ -77,10 +77,11 @@ test('actual native factory/provider/Fluent updates preserve input, client initi
   await flush();
   assert.equal(owner.graphInitializations, 1);
   assert.equal(owner.handlers.size, 1);
+  const originalTagColor = dom.querySelector('.fui-Tag .fui-Avatar__initials').className;
   const input = dom.querySelector('input');
   input.value = 'typed';
   h.act(() => require('react-dom/test-utils').Simulate.change(input, { target: { value: 'typed' }, currentTarget: { value: 'typed' } }));
-  const second = PropertyPanePrincipalPicker('principals', { ...props, label: 'Updated', availableOptions: [] });
+  const second = PropertyPanePrincipalPicker('principals', { ...props, label: 'Updated', availableOptions: [], colorfulTagAvatars: true });
   h.act(() => second.properties.onRender(dom, undefined, (...args) => changes.push(args)));
   await flush();
   assert.equal(dom.querySelector('input'), input);
@@ -88,6 +89,7 @@ test('actual native factory/provider/Fluent updates preserve input, client initi
   assert.equal(owner.graphInitializations, 1);
   assert.equal(owner.requests, 1);
   assert.equal(owner.refreshes, 0);
+  assert.notEqual(dom.querySelector('.fui-Tag .fui-Avatar__initials').className, originalTagColor);
   const dismiss = dom.querySelector('.fui-Tag__dismissIcon');
   assert.ok(dismiss);
   h.act(() => require('react-dom/test-utils').Simulate.click(dismiss));

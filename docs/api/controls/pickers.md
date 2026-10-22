@@ -480,3 +480,16 @@ Inherited selection, label, visual slots and source-web behavior follow `PickerP
 | `ContentTypePickerValue.scope` | Required site/list discriminator determining URL and list rules. |
 | `ContentTypePickerValue.webUrl` | Verified collection root for site scope, owning list web for list scope. |
 | `ContentTypePickerValue.listId` | Required list GUID in list scope, forbidden in site scope. |
+
+## Colorful selected-tag avatars
+
+All seven picker props inherit `PickerProps.colorfulTagAvatars?: boolean`. Omitted or false preserves the current neutral avatars. With true and `presentation="tagPicker"`, resolved selected tags use Fluent Avatar `color="colorful"`; the selected renderer key supplies `idForColor`, so renaming its label preserves its color. The finite Fluent palette can assign the same color to different identities.
+
+```tsx
+<PrincipalPicker label="People" presentation="tagPicker" colorfulTagAvatars />
+<SitePicker label="Sites" presentation="tagPicker" colorfulTagAvatars />
+```
+
+Existing user photos, category icons, avatar shape and inherited tag dimensions are retained. Color is most visible on initials/icons and photo fallbacks. Unresolved tags without media remain without an avatar. Suggestion/Persona rows and Combobox presentation keep their existing appearance. This is presentation only: toggling it retains selection, typed query and requests/cache; it neither writes values nor triggers a change event. The existing host provider/theme requirements apply; Fluent tokens provide the palette in the active theme.
+
+Every `PropertyPane*Picker` inherits the same flag. The **SharePoint pickers** demo exposes **Colorful tag avatars** in TagPicker presentation; the native **Picker modes** group has a separate toggle for all seven fields. Both default off.

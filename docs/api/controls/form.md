@@ -311,3 +311,13 @@ ComboboxMulti displays selected labels inside the input at rest. Focus switches 
 ObjectSection content and ArraySection item content stack direct fields with `gap.medium` (12px). Their description/error output uses `gap.small` (8px) from the content. Custom layout inside a caller-supplied wrapper remains caller-owned.
 
 The coordinated Fluent/Charts baseline uses Charts 9.3.27 and locks Tabster 8.8.0 with shared Keyborg 2.14.1. Preserve this compatible navigation subtree: Tabster 8.8.1 resolves Keyborg 3 alongside Fluent’s Keyborg 2 and the actual React 17 cleanup probe detects a registry collision. This lock selection satisfies Fluent’s published range; no overrides are used. Native providers may have distinct package versions, but must resolve the same shared contexts, theme and Griffel renderer.
+
+## Colorful TagPicker avatars
+
+`FormTagPickerProps.colorfulTagAvatars?: boolean` is an optional presentation flag, default false. Omission/false retains today's text-only selected tags. True adds a Fluent colorful avatar to each selected tag, using its string option identity as `idForColor` and its plain display text for initials. Missing/plain-text-free labels use Fluent's fallback icon; rich consumer labels are preserved alongside the avatar. Labels can change without changing the identity's color; the finite palette can repeat colors.
+
+```tsx
+<Order.TagPicker name="people" label="People" options={people} colorfulTagAvatars />
+```
+
+This uses the existing Form/Fluent providers and theme. It preserves the current input, typed query, RHF values, codec and selection events. The option does not recolor suggestions or the tag container. The sample's **Form → Variable field → TagPicker** exposes **Colorful tag avatars**, initially off, for direct comparison.

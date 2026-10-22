@@ -15,6 +15,7 @@ type Name = typeof names[number];
 const PickersPanel: React.FC = () => {
   const [name, setName] = React.useState<Name>('SitePicker');
   const [presentation, setPresentation] = React.useState<'combobox' | 'tagPicker'>('combobox');
+  const [colorfulTagAvatars, setColorfulTagAvatars] = React.useState(false);
   const [multi, setMulti] = React.useState(false), [searchable, setSearchable] = React.useState(true);
   const [webUrl, setWebUrl] = React.useState(''), [list, setList] = React.useState(''), [textField, setTextField] = React.useState('Title');
   const [includeCurrentSite, setIncludeCurrentSite] = React.useState(true), [includeHubSite, setIncludeHubSite] = React.useState(true);
@@ -37,7 +38,7 @@ const PickersPanel: React.FC = () => {
   ]));
   const update = <T extends PickerOption>(data: PickerSelectionData<T>): void => { setSelections(previous => ({ ...previous, [name]: data })); };
   const common = {
-    label: name, presentation, multiselect: multi, searchable, refreshKey: revision,
+    label: name, presentation, multiselect: multi, searchable, refreshKey: revision, colorfulTagAvatars,
     selectedOptions: selection?.selectedOptions ?? [],
     suggestionsHeader: header.trim() || undefined,
     emptyContent: customStatus ? 'No candidates: type at least two characters.' : undefined,
@@ -67,6 +68,7 @@ const PickersPanel: React.FC = () => {
     <Field label="Control"><Select value={name} onChange={(_, data) => { const candidate = names.find(value => value === data.value); if (candidate) setName(candidate); }}>{names.map(value => <option key={value}>{value}</option>)}</Select></Field>
     <Field label="Presentation"><Select value={presentation} onChange={(_, data) => setPresentation(data.value === 'tagPicker' ? 'tagPicker' : 'combobox')}><option value="combobox">Combobox</option><option value="tagPicker">TagPicker</option></Select></Field>
     <Switch label="Multiple selection" checked={multi} onChange={(_, data) => setMulti(data.checked)} />
+    <Switch label="Colorful tag avatars" checked={colorfulTagAvatars} disabled={presentation !== 'tagPicker'} onChange={(_, data) => setColorfulTagAvatars(data.checked)} />
     <Switch label="Search input" checked={searchable} onChange={(_, data) => setSearchable(data.checked)} />
     <Field label="Suggestion header (empty: default)"><Input value={header} onChange={(_, data) => setHeader(data.value)} /></Field>
     <Switch label="Customize status content" checked={customStatus} onChange={(_, data) => setCustomStatus(data.checked)} />

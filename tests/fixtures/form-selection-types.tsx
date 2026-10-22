@@ -20,7 +20,9 @@ const numbersCodec: FormValueCodec<number[], string[]> = { toControl: value => v
 <F.CheckboxGroup name="many" ref={group}><Checkbox value="a" label="Alpha" /></F.CheckboxGroup>;
 <F.DropdownMulti name="many" options={options} ref={button} />;
 <F.ComboboxMulti name="numbers" options={options} codec={numbersCodec} ref={input} />;
-<F.TagPicker name="many" label="Tags" options={options} ref={input} strings={{ noOptions: 'No matches' }} />;
+<F.TagPicker name="many" label="Tags" options={options} ref={input} colorfulTagAvatars strings={{ noOptions: 'No matches' }} />;
+// @ts-expect-error The avatar flag is boolean.
+<F.TagPicker name="many" label="Tags" options={options} colorfulTagAvatars="colorful" />;
 <F.TagPicker name="many" aria-label="Tags"><TagPickerOption value="a" text="Alpha">Alpha</TagPickerOption></F.TagPicker>;
 <F.Combobox name="text"><Option value="a">Alpha</Option></F.Combobox>;
 // @ts-expect-error full string writer cannot target literal fields without an explicit codec

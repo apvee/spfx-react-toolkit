@@ -229,6 +229,12 @@ type FormTagPickerAccessibleName = {
  * @example `<Order.TagPicker name="people" label="People" options={people} strings={{ noOptions: 'No people' }} />`
  */
 export type FormTagPickerProps<TInput extends FieldValues> = FormSelectionProps<TInput, string[], TagPickerProps, 'aria-label' | 'children' | 'defaultSelectedOptions' | 'defaultValue' | 'name' | 'noPopover' | 'selectedOptions' | 'value' | 'onChange' | 'onBlur' | 'id'> & FormTagPickerAccessibleName & {
+    /** Add a Fluent colorful initials/fallback avatar to each selected tag. Defaults to false, retaining text-only tags.
+     * Colors use the string option identity and remain stable when display labels change. Rich consumer labels are preserved.
+     * Only presentation changes; form values, query and selection callbacks are unaffected.
+     * @example <Order.TagPicker name="people" label="People" options={people} colorfulTagAvatars />
+     */
+    colorfulTagAvatars?: boolean;
     /** Additional descriptions for the native query input. */
     'aria-describedby'?: string;
     /** Input id shared with Fluent Field's label. */

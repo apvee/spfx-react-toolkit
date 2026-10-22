@@ -32,9 +32,11 @@ test('native direct-array field preserves Fluent input/provider/theme lifetime a
     await flush();
     const button = f.dom.querySelector('button'), boundary = f.dom.querySelector('[data-property-pane-picker-control]'), count = requests;
     assert.ok(button); assert.equal(f.owner.handlers.size, 1); assert.match(f.dom.textContent, /Live report/);
-    const second = f.render({ preset: 'extended', label: 'Renamed', hint: 'Hint', value: [{ ...value }] }); await flush();
+    const originalTagColor = f.dom.querySelector('.fui-Tag .fui-Avatar__icon').className;
+    const second = f.render({ preset: 'extended', label: 'Renamed', hint: 'Hint', value: [{ ...value }], colorfulTagAvatars: true }); await flush();
     assert.equal(f.dom.querySelector('button'), button); assert.equal(f.dom.querySelector('[data-property-pane-picker-control]'), boundary);
     assert.equal(f.owner.handlers.size, 1); assert.equal(requests, count); assert.deepEqual(f.changes, []);
+    assert.notEqual(f.dom.querySelector('.fui-Tag .fui-Avatar__icon').className, originalTagColor);
     h.act(() => require('react-dom/test-utils').Simulate.click(f.dom.querySelector('.fui-Tag')));
     assert.deepEqual(f.changes, [['files', [], true]]);
     f.render({ preset: 'extended', label: 'Old property bag', value: [{ ...value }] }); await flush();

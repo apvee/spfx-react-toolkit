@@ -107,6 +107,7 @@ const FormPanel: React.FC = () => {
   const sx = useSx(); const styles = useStyles(); const demo = useDemoStyles();
   const [family, setFamily] = React.useState<Family>('rules');
   const [adapter, setAdapter] = React.useState<Adapter>('Textarea');
+  const [colorfulTagAvatars, setColorfulTagAvatars] = React.useState(false);
   const [size, setSize] = React.useState(640); const [disabled, setDisabled] = React.useState(false);
   const [rtl, setRtl] = React.useState(false); const [fail, setFail] = React.useState(false);
   const [delay, setDelay] = React.useState(false); const pendingSave = React.useRef<(() => void) | undefined>(undefined);
@@ -171,7 +172,7 @@ const FormPanel: React.FC = () => {
       case 'CheckboxGroup': return <div data-form-control="CheckboxGroup"><Order.CheckboxGroup name="checks" label="Checkbox identities" options={choices} /></div>;
       case 'Combobox': return <div data-form-control="Combobox"><Order.Combobox name="combo" label="Editable identity" options={choices} /></div>;
       case 'ComboboxMulti': return <div data-form-control="ComboboxMulti"><Order.ComboboxMulti name="combos" label="Editable identities" options={choices} /></div>;
-      case 'TagPicker': return <div data-form-control="TagPicker"><Order.TagPicker name="tags" label="Identity tags" options={choices} strings={{ noOptions: { 'data-form-demo': 'slot-no-options', children: 'No available identities' } }} /></div>;
+      case 'TagPicker': return <div data-form-control="TagPicker"><Order.TagPicker name="tags" label="Identity tags" options={choices} colorfulTagAvatars={colorfulTagAvatars} strings={{ noOptions: { 'data-form-demo': 'slot-no-options', children: 'No available identities' } }} /></div>;
       case 'Rating': return <div data-form-control="Rating"><Order.Rating name="rating" label="Rating" max={5} /></div>;
       case 'ColorPicker': return <div data-form-control="ColorPicker"><Order.ColorPicker name="accent" label="Accent HSV"><ColorArea aria-label="Saturation and value" inputX={{ 'aria-label': 'Accent saturation' }} inputY={{ 'aria-label': 'Accent value' }} /><ColorSlider channel="hue" aria-label="Hue" /></Order.ColorPicker></div>;
       case 'SwatchPicker': return <div data-form-control="SwatchPicker"><Order.SwatchPicker name="swatch" label="Swatch identity"><ColorSwatch value="blue" color="#0078d4" aria-label="Blue" /><ColorSwatch value="red" color="#d13438" aria-label="Red" /></Order.SwatchPicker></div>;
@@ -192,6 +193,7 @@ const FormPanel: React.FC = () => {
         {family === 'rules' && <Field label="Field"><Select data-demo-variant="FormAdapter" data-form-demo="adapter" value={adapter} disabled={isSubmitting} onChange={(_, data) => changeAdapter(data.value)}>{Object.keys(adapterFields).map(value => <option key={value} value={value}>{value}</option>)}</Select></Field>}
         <Field label="Width"><Select data-form-demo="resize" value={size} onChange={(_, data) => setSize(Number(data.value))}>{[320, 500, 640, 900].map(value => <option key={value} value={value}>{value} px</option>)}</Select></Field>
         <Checkbox input={{ as: 'input', ...{ 'data-form-demo': 'disabled' } }} label="Disabled" checked={disabled} onChange={(_, data) => setDisabled(data.checked === true)} />
+        {family === 'rules' && adapter === 'TagPicker' && <Checkbox label="Colorful tag avatars" checked={colorfulTagAvatars} onChange={(_, data) => setColorfulTagAvatars(data.checked === true)} />}
       </>}
       commands={<><Checkbox input={{ as: 'input', ...{ 'data-form-demo': 'save-fail' } }} label="Simulate error" checked={fail} onChange={(_, data) => setFail(data.checked === true)} /><Button data-form-demo="new-record" disabled={isSubmitting} onClick={loadCurrentModel}>{family === 'schema' ? 'Reset quantity' : 'Load new report'}</Button>{isSubmitting && <Button data-form-demo="complete-save" onClick={() => pendingSave.current?.()}>Complete save</Button>}</>}
       status={<output data-form-demo="status" role="status">{status} · Saves: {count} · Dirty: {String(isDirty)}</output>}

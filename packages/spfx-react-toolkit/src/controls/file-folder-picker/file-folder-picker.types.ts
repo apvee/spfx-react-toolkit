@@ -132,6 +132,12 @@ interface FileFolderPickerCommonProps extends Pick<FieldProps,
   readonly disabled?: boolean;
   /** Native tag/avatar size; defaults to medium. Small is unsupported. */
   readonly size?: 'medium' | 'large';
+  /** Color selected file/folder tag avatars with Fluent's colorful palette. Defaults to false.
+   * Uses the canonical tenant/endpoint/drive/item identity, so renames preserve color. Icons and sizes are unchanged.
+   * Inherited by PropertyPaneFileFolderPicker; does not style Microsoft's hosted iframe or alter saved references.
+   * @example <FileFolderPicker label="Documents" colorfulTagAvatars />
+   */
+  readonly colorfulTagAvatars?: boolean;
   /** Verified selection restriction; defaults to the current site collection. */
   readonly scope?: FileFolderPickerScope;
   /** Initial hosted navigation within scope; omission starts at the scope root. */

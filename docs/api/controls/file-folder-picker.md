@@ -248,3 +248,15 @@ Automated config/auth/lifecycle tests and browser/tenant acceptance are separate
 React and Property Pane use the same preset contract and source-aware configuration. New scenarios start with explicit focused. Choose extended to exercise service-owned navigation, while retaining the same accepted source. The ordinary demo exposes functional choices rather than SDK/authentication switches; advanced diagnostics report applied settings and JSON references without becoming a second configurator. The sample Property Pane offers only focused and extended. Saved legacy sample configurations display and use focused until extended is selected; saved references and old SDK settings are retained. This sample policy does not remove the reusable control’s legacy contract. Explicit effective-source changes in the demo clear dependent starting-location settings; preset-only and cosmetic updates retain them. The reusable control leaves consumer-owned source/selection updates to the consumer.
 
 The validation guide distinguishes route navigation, empty content, denied resources and tooling limitations. A successful token acquisition alone does not establish a working Media route or a successful file selection.
+
+## Colorful selected-tag avatars
+
+`FileFolderPickerProps.colorfulTagAvatars?: boolean` defaults to false. Enable it to use Fluent's colorful palette for the existing file/folder icon avatars:
+
+```tsx
+<FileFolderPicker label="Documents" colorfulTagAvatars />
+```
+
+Fluent `idForColor` receives the canonical tenant/endpoint/drive/item identity, excluding display-name snapshots and enrichment. Renaming a selected file preserves its color; the finite palette does not guarantee unique colors. File/folder icons, dimensions, removal behavior and saved JSON references are retained. Changes affect only outer selected tags, preserve the open session and do not recolor Microsoft's hosted iframe, request metadata or emit selection changes. Palette colors follow the existing Fluent host theme.
+
+`PropertyPaneFileFolderPickerProps.colorfulTagAvatars` inherits the same contract. The React demo exposes **Colorful tag avatars** under **Options**; the native **File picker options** group exposes its independent toggle. Both default off.

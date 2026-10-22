@@ -39,6 +39,27 @@ test('selected tags remove individually; browsing icon and labels reflect each i
   }
   assert.equal(new Set(icons).size, 3, 'file, folder and mixed sources use distinct icons');
 });
+
+test('file tag avatar color is optional and stable across display-name changes', () => {
+  const { Avatar, Tag, TagGroup } = require('@fluentui/react-components');
+  for (const colorfulTagAvatars of [undefined, false, true]) {
+    for (const name of ['Report.pdf', 'Renamed.pdf']) {
+      const s = setup(); s.runtime.values = [{ ...value, name }];
+      const root = s.mount({ colorfulTagAvatars });
+      const reference = s.h.mountComponent(() => s.h.React.createElement(TagGroup, { size: 'extra-small' },
+        s.h.React.createElement(Tag, { media: s.h.React.createElement(Avatar, {
+          color: colorfulTagAvatars ? 'colorful' : undefined,
+          idForColor: colorfulTagAvatars ? '["11111111-1111-4111-8111-111111111111","https://tenant.sharepoint.com/_api/v2.0","drive","one"]' : undefined,
+          'data-file-color-reference': true,
+        }) }, 'Reference')));
+      try {
+        assert.equal(root.container.querySelector('.fui-Tag .fui-Avatar__icon').className, document.querySelector('[data-file-color-reference] .fui-Avatar__icon').className);
+        assert.equal(root.container.querySelector('.fui-Tag__primaryText').textContent, name);
+        assert.deepEqual(s.actions, []);
+      } finally { reference.unmount(); root.unmount(); s.h.close(); }
+    }
+  }
+});
 test('busy and disabled surfaces preserve tags and cannot start another opening', () => {
   const s = setup(); s.runtime.values = [value]; s.runtime.busy = true;
   const m = s.mount({ disabled: true, validationState: 'error', validationMessage: 'Invalid source' });

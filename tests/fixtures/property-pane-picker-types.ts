@@ -19,9 +19,9 @@ interface WebPartProperties {
   mixed: (SitePickerValue | ListPickerValue)[];
 }
 declare const instance: BaseClientSideWebPart<WebPartProperties>;
-PropertyPaneSitePicker('sites', {instance,key:'sites-field',value:[]});
+PropertyPaneSitePicker('sites', {instance,key:'sites-field',value:[],colorfulTagAvatars:true});
 PropertyPaneListPicker('lists', {instance,key:'lists-field',value:[],initialCatalogLimit:30});
-PropertyPanePrincipalPicker('principals', {instance,key:'principals-field',value:[],userIdentity:{mode:'both',ensureUser:false}});
+PropertyPanePrincipalPicker('principals', {instance,key:'principals-field',value:[],colorfulTagAvatars:false,userIdentity:{mode:'both',ensureUser:false}});
 // @ts-expect-error Wrong property domain is rejected.
 PropertyPaneSitePicker('principals', {instance,key:'bad-field',value:[]});
 // @ts-expect-error Scalar property is rejected.
