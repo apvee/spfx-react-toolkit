@@ -282,7 +282,7 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
               groupFields: [
                 PropertyPaneLabel('picker-modes-help', { text: 'Global settings apply to all seven pickers. Single mode keeps the first selected value. Cascading fields require exactly one site and one list.' }),
                 PropertyPaneDropdown('pickerPresentation', { label: 'Presentation for all pickers', selectedKey: modeProps.presentation,
-                  options: [{ key: 'combobox', text: 'Combobox' }, { key: 'tagPicker', text: 'TagPicker' }] }),
+                  options: [{ key: 'combobox', text: 'Dropdown' }, { key: 'tagPicker', text: 'TagPicker' }] }),
                 PropertyPaneDropdown('pickerContentTypeScope', { label: 'Content type scope', selectedKey: contentTypeScope,
                   options: [{ key: 'site', text: 'Site collection' }, { key: 'list', text: 'List' }] }),
                 PropertyPaneToggle('pickerMultiselect', { label: 'Multiple selection for all pickers', checked: modeProps.multiselect }),

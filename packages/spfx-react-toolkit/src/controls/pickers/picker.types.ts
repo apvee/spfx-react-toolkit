@@ -15,7 +15,7 @@ export interface PickerOption<TValue extends PickerValue = PickerValue> {
   /** Minimal JSON reference. Must agree with the option identity; other metadata is never persisted automatically. */
   readonly value: TValue;
 }
-/** Native Fluent Combobox/TagPicker event passed for explicit picker actions.
+/** Native Fluent picker event (historical Combobox-compatible union) passed for explicit picker actions.
  * @example const handle = (event: PickerSelectionEvent) => console.log(event.type);
  */
 export type PickerSelectionEvent =
@@ -43,7 +43,7 @@ export interface PickerSelectionData<T extends PickerOption> {
  * Rendering requires a nonblank plain string label or explicit `aria-label`/`aria-labelledby`;
  * JSX and object labels require explicit ARIA naming even when they display text.
  * The renderer throws TypeError when neither naming input is supplied.
- * Single Combobox offers native clearable selection through the validated clear event; multiple Combobox deselects options and TagPicker dismisses tags. No default separate bulk-clear button is rendered.
+ * Single Dropdown offers native clearable selection through the validated clear event; multiple Dropdown deselects options and TagPicker dismisses tags. No default separate bulk-clear button is rendered.
  * @example const props: PickerProps<SitePickerOption> = { label: 'Site', presentation: 'combobox', availableOptions: [] };
  * @example
  * ```tsx
@@ -54,16 +54,22 @@ export interface PickerProps<T extends PickerOption> extends SearchPickerOptions
   'label' | 'hint' | 'required' | 'validationMessage' | 'validationState'> {
   /** Presentation only; changing this retains selection, data and request runtime. Default varies by picker.
    * Suggestions use Persona with name/metadata and category icon; user principals retain their user avatar.
-   * Selected tags show name and category icon (user avatar for user principals). Combobox menus retain checked selections in Selezionato (single) or Selezionati (multiple), independent of the query. Clicking the current single value keeps it; clearable clears it. */
+   * The historical combobox value renders Fluent Dropdown: a persistent selection button and, when searchable,
+   * a separate popup SearchBox. One selection displays its name/media; multiple selections display an Italian count.
+   * Dropdown menus retain checked selections in Selezionato (single) or Selezionati (multiple), independent of query.
+   * Clicking the current single value keeps it; native clearable clears it. Accepted single selection closes the popup;
+   * asynchronous refusal preserves it. TagPicker keeps removable tags and its input, excluding selected identities from popup rows.
+   * No dropdown presentation value is exposed. */
   readonly presentation?: 'combobox' | 'tagPicker';
   /** Color resolved selected-tag avatars with Fluent's colorful palette. Defaults to false.
+   * The default palette uses the theme brand color for entity icons and neutral user initials.
    * Colors use the selected renderer key, retaining their identity across label changes.
-   * Photos/icons and avatar dimensions are preserved; suggestion avatars, Combobox and unresolved tags are unchanged.
+   * Photos/icons and avatar dimensions are preserved; suggestion avatars, Dropdown and unresolved tags are unchanged.
    * Property Pane counterparts inherit this option. It never changes selection, queries or saved values.
    * @example <PrincipalPicker label="People" presentation="tagPicker" colorfulTagAvatars />
    */
   readonly colorfulTagAvatars?: boolean;
-  /** Enable the built-in Combobox/TagPicker query input. Defaults to true. */
+  /** Enable popup SearchBox in Dropdown or the TagPicker query input. Defaults to true; false omits popup search. */
   readonly searchable?: boolean;
   /** Controlled stable renderer keys (including retained aliases). Empty selection is []; undefined selects uncontrolled mode. */
   readonly selectedOptions?: readonly string[];
@@ -92,27 +98,27 @@ export interface PickerProps<T extends PickerOption> extends SearchPickerOptions
   /** Local suggestion/search transformation; changing it recomputes the projection, without server refetch.
    * Mandatory type/scope filters, selected exclusion, deduplication and the pre-search limit apply again afterward. */
   readonly filterOptions?: (options: readonly T[]) => readonly T[];
-  /** Fluent input size; defaults to medium. */
+  /** Fluent selection control size; defaults to medium. */
   readonly size?: 'medium' | 'large';
-  /** Disables input and explicit selection/resolution actions. Defaults to false. */
+  /** Disables the control and explicit selection/resolution actions. Defaults to false. */
   readonly disabled?: boolean;
-  /** Input placeholder. Omission uses the control search prompt. */
+  /** Search placeholder (including picker-specific overrides); when searchable, omission shows “Digita almeno N caratteri per cercare” using minimumSearchLength. Dropdown keeps a separate fixed empty selection prompt: Seleziona un elemento / Seleziona elementi. */
   readonly placeholder?: string;
   /** Optional CSS class on the outer field region. */
   readonly className?: string;
-  /** Optional CSS class on the native Combobox or TagPicker root. */
+  /** Optional CSS class on the native Dropdown or TagPicker root. */
   readonly controlClassName?: string;
-  /** Optional stable input DOM ID. Omission uses a generated Fluent Field association; this is not an entity ID. */
+  /** Optional stable selection trigger/input DOM ID. Omission uses a generated Fluent Field association; this is not an entity ID. */
   readonly id?: string;
-  /** Explicit accessible input name, required with JSX/object labels unless aria-labelledby is supplied.
+  /** Explicit accessible selection trigger/input name, required with JSX/object labels unless aria-labelledby is supplied.
    * Omission uses a plain string label; a supplied aria-label takes precedence over that label. */
   readonly 'aria-label'?: string;
-  /** DOM ID references naming the input; forwarded to the native Fluent input.
+  /** DOM ID references naming the Dropdown trigger or TagPicker input; popup search has its own name.
    * Supply this or aria-label when no nonblank plain string label is available. */
   readonly 'aria-labelledby'?: string;
   /** Literal presentation slots, fixed inner span/div; the control owns status/semantic shells. */
   readonly suggestionsHeader?: ContentSlot<'span'>;
-  /** Literal div content for minimum-character prompts and complete searches with no new choices. Omission distinguishes no matches from matches already selected or pinned; contextual rows never suppress query feedback. False hides only presentation, preserving the status shell. */
+  /** Literal div content for custom initial/below-minimum guidance and complete searches with no new choices. Omission keeps minimum-character guidance in the search placeholder only, then distinguishes no matches from matches already selected or pinned; contextual rows never suppress query feedback. False hides only presentation, preserving the status shell. */
   readonly emptyContent?: ContentSlot<'div'>;
   /** Literal div content during loading, including eligible typed-query debounce. Omission shows “Ricerca in corso…” for typed search and “Caricamento…” for initial loading. False hides its content. */
   readonly loadingContent?: ContentSlot<'div'>;
@@ -137,7 +143,7 @@ export interface PickerProps<T extends PickerOption> extends SearchPickerOptions
    * External validationMessage overrides only the displayed message, not this acceptance decision. */
   readonly validateSelection?: (items: readonly T[]) => string | undefined | Promise<string | undefined>;
   /** Defaults to change: validates selection, removal and clear before committing.
-   * Blur instead validates retained models after input blur when no confirmation is pending;
+   * Blur instead validates retained models after focus exits the entire control and owned popup when no confirmation is pending;
    * it does not revoke an existing selection. Explicit ID resolution, when available, always
    * validates before committing, including in blur mode. Consumer Promises are not cancelled. */
   readonly validationTrigger?: 'change' | 'blur';
@@ -553,7 +559,7 @@ export interface PrincipalInitialSuggestions extends PickerInitialSuggestions {
 export interface PrincipalPickerProps extends PickerProps<PrincipalPickerOption> {
   /** Optional current user plus shared five-item pre-search policy.
    * showDefaultSuggestions=false suppresses all pre-search sources and their lazy retrieval.
-   * Empty candidates show “Digita almeno 2 caratteri per cercare” (configured larger minimum is reflected).
+   * Search placeholder shows “Digita almeno 2 caratteri per cercare” (configured larger minimum is reflected); there is no duplicate minimum-character status row.
    */
   readonly initialSuggestions?: PrincipalInitialSuggestions;
   /** Lazy delegated Graph personal suggestions on opening an empty-query menu. Default false.
@@ -612,7 +618,7 @@ export interface ContentTypePickerOption extends PickerOption<ContentTypePickerV
 }
 /** Read-only collection or list content type picker. Requires an SPFx toolkit provider with SPHttpClient.
  * Inherits PickerProps selection arrays, model seeds, independent consumer candidates, callbacks,
- * accessibility and slots. Defaults to single Combobox, complete Name/ID ascending catalog, local
+ * accessibility and slots. Defaults to single Dropdown (historical combobox presentation), complete Name/ID ascending catalog, local
  * case-insensitive name-prefix search, and includeHidden=true. No personal/recent source is added.
  * webUrl inherits the provider web; site scope resolves its collection root even from a subweb.
  * List strings are exact titles; use the existing typed selector for IDs/paths/URLs.

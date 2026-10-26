@@ -319,7 +319,7 @@ test('metadata initial catalog loads on open, caps after consumer dedup and keep
     h.act(() => root.current.setOpen(true)); await flush(h);
     const options = root.current.sections.flatMap(s => s.options);
     assert.equal(options.length, 30); assert.equal(options[0].text, 'Consumer first');
-    assert.match(root.current.catalogHint, /Sono disponibili altri elementi/);
+    assert.equal(root.current.catalogHint, 'Sono disponibili altri elementi.');
     root.render({ ...props, label: 'Cosmetic', availableOptions: [{ ...rows[0], text: 'Renamed' }] }); await flush(h);
     assert.equal(requests.filter(q => q === '').length, 1);
     h.act(() => root.current.setQuery('outside')); await flush(h);
@@ -811,5 +811,83 @@ test('ContentType consumer models override equivalent catalog rows and update la
     assert.equal(root.current.selectedItems[0].text, 'Selected'); assert.equal(calls.length, count);
     await h.act(async () => root.current.remove({ type: 'click' }, 'retained'));
     assert.deepEqual(root.current.selectedOptions, []);
+  } finally { root.unmount(); }
+});
+
+
+test('selection acceptance is explicit for controlled consumers even when props are retained or synchronously updated', async () => {
+  for (const update of [false, true]) {
+    const h = createHarness(), { usePickerRuntime } = h.load('controls/pickers/usePickerRuntime.internal.ts');
+    const changes = [];
+    const props = { selectedOptions: [], availableOptions: [option('a')], onOptionSelect: (_event, data) => {
+      changes.push(data.selectedOptions);
+      if (update) root.render({ ...props, selectedOptions: data.selectedOptions });
+    } };
+    const root = h.mount(p => usePickerRuntime(p, source(), { multiselect: false }), props);
+    try {
+      h.act(() => root.current.setQuery('query'));
+      let accepted;
+      await h.act(async () => { accepted = await root.current.select({ type: 'click' }, 'a'); });
+      assert.equal(accepted, true);
+      assert.deepEqual(changes, [['a']]);
+      assert.deepEqual(root.current.selectedOptions, update ? ['a'] : []);
+      assert.equal(root.current.query, '');
+    } finally { root.unmount(); }
+  }
+});
+
+test('refused selection returns false and preserves query and existing selection', async () => {
+  for (const scenario of ['missing', 'disabled', 'limit', 'verification', 'confirmation', 'validation']) {
+    const h = createHarness(), { usePickerRuntime } = h.load('controls/pickers/usePickerRuntime.internal.ts');
+    const changes = [];
+    const src = source({ verifyCandidate: async candidate => scenario === 'verification' ? undefined : candidate,
+      confirm: scenario === 'confirmation' ? async () => [] : undefined });
+    const root = h.mount(p => usePickerRuntime(p, src, { multiselect: true }), {
+      defaultSelectedOptions: ['a'], initialOptions: [option('a')], availableOptions: [option('b')], disabled: scenario === 'disabled',
+      selectionLimit: scenario === 'limit' ? 1 : undefined,
+      validateSelection: scenario === 'validation' ? () => 'Refused' : undefined,
+      onOptionSelect: (_event, data) => changes.push(data),
+    });
+    try {
+      h.act(() => root.current.setQuery('query'));
+      let accepted;
+      await h.act(async () => { accepted = await root.current.select({ type: 'click' }, scenario === 'missing' ? 'missing' : 'b'); });
+      assert.equal(accepted, false, scenario);
+      assert.equal(root.current.query, 'query', scenario);
+      assert.deepEqual(root.current.selectedOptions, ['a'], scenario);
+      assert.deepEqual(changes, [], scenario);
+    } finally { root.unmount(); }
+  }
+});
+
+test('pending and invalidated selection attempts return false without accepting stale work', async () => {
+  const h = createHarness(), { usePickerRuntime } = h.load('controls/pickers/usePickerRuntime.internal.ts');
+  let finish, emitted = 0;
+  const src = source({ verifyCandidate: () => new Promise(resolve => { finish = resolve; }) });
+  const props = { availableOptions: [option('a')], onOptionSelect: () => emitted++ };
+  const root = h.mount(p => usePickerRuntime(p, src, { multiselect: false }), props);
+  try {
+    let pending, accepted;
+    h.act(() => { pending = root.current.select({ type: 'click' }, 'a'); });
+    await h.act(async () => { accepted = await root.current.select({ type: 'click' }, 'a'); });
+    assert.equal(accepted, false, 'confirming guard');
+    root.render({ ...props, selectedOptions: ['replacement'] });
+    await h.act(async () => { finish(option('a')); accepted = await pending; });
+    assert.equal(accepted, false, 'selection revision invalidates the action');
+    assert.equal(emitted, 0);
+  } finally { root.unmount(); }
+});
+
+test('selected aliases exclude pinned current and hub rows and typed results across canonical URL variants', async () => {
+  const h = createHarness(), { usePickerRuntime } = h.load('controls/pickers/usePickerRuntime.internal.ts');
+  const selected = { ...option('current'), key: 'retained', url: 'https://tenant.test/sites/CURRENT/', value: { kind: 'site', url: 'https://tenant.test/sites/CURRENT/' } };
+  const src = source({ persistentSuggestions: true, personalSuggestions: async () => ({ currentSite: [option('current')], hubSite: [{ ...option('current'), key: 'hub-alias' }], completeness: 'complete' }),
+    discover: async () => ({ options: [{ ...option('current'), key: 'search-alias' }, option('other')], completeness: 'complete' }) });
+  const root = h.mount(p => usePickerRuntime(p, src, { multiselect: true }), { defaultSelectedOptions: ['retained'], initialOptions: [selected], debounceMs: 0 });
+  try {
+    h.act(() => { root.current.setOpen(true); root.current.setQuery('current'); }); await flush(h);
+    assert.deepEqual(root.current.pinnedSections, []);
+    assert.deepEqual(root.current.searchOptions.map(row => row.key), ['other']);
+    assert.equal(root.current.searchFeedback.matchesVisibleChoices, true);
   } finally { root.unmount(); }
 });

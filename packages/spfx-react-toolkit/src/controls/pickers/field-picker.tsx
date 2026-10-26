@@ -7,7 +7,7 @@ import { usePickerRuntime } from './usePickerRuntime.internal';
 import { PickerRenderer } from './picker-renderer.internal';
 
 /** Search list fields or site columns beneath an SPFx provider, with icons based on verified field types.
- * Defaults: Combobox, multiple selection, hidden/read-only included, Title ascending.
+ * Defaults: Dropdown (historical combobox presentation), multiple selection, hidden/read-only included, Title ascending.
  * Opening the menu loads all matching fields, following native paging. Typed search filters the complete memory-cached catalog locally, case-insensitively; no initial display limit.
  * @param props List selector (omitted for site columns), references and Fluent options.
  * @returns A native Fluent Field and picker; blank clearing emits an empty array.

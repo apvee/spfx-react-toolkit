@@ -7,7 +7,7 @@ import { usePickerRuntime } from './usePickerRuntime.internal';
 import { PickerRenderer } from './picker-renderer.internal';
 
 /** Search public/personal SharePoint list views through an SPFx provider.
- * Defaults: Combobox, single selection, Title ascending; a list is required.
+ * Defaults: Dropdown (historical combobox presentation), single selection, Title ascending; a list is required.
  * Opening the menu loads all matching views, following native paging. Typed search filters the complete memory-cached catalog locally, case-insensitively; no initial display limit.
  * @param props Exact toolkit list selector, filters, reference models and presentation.
  * @returns A native Fluent Field and view picker; selection values always remain scoped arrays.

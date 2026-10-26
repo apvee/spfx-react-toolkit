@@ -23,16 +23,18 @@ const factories = [
   ['principal', 'Principal', {}],
 ];
 for (const [file, name, sourceProps] of factories) {
-  test(`${name} native factory preserves input, provider and requests for equivalent updates and authoritative reset`, async () => {
+  test(`${name} native factory preserves Dropdown trigger, query, provider and requests for equivalent updates and authoritative reset`, async () => {
     const factory = h.load(`property-pane/pickers/property-pane-${file}-picker.ts`)[`PropertyPane${name}Picker`];
     const owner = h.host(name), dom = document.createElement('div'), changes = [];
-    const props = { ...sourceProps, instance: owner.instance, key: `${file}-field`, value: [], label: name, debounceMs: 0 };
+    const props = { ...sourceProps, instance: owner.instance, key: `${file}-field`, value: [], label: name, presentation: 'combobox', debounceMs: 0 };
     const first = factory('values', props);
     h.act(() => first.properties.onRender(dom, undefined, (...args) => changes.push(args)));
     await flush();
-    const input = dom.querySelector('input');
-    assert.ok(input);
-    h.act(() => input.click());
+    const trigger = dom.querySelector('.fui-Dropdown__button');
+    assert.ok(trigger);
+    h.act(() => trigger.click());
+    const input = dom.ownerDocument.querySelector('.fui-SearchBox input');
+    assert.ok(input, 'search is in the owning-document popup portal');
     input.value = 'typed';
     h.act(() => require('react-dom/test-utils').Simulate.change(input, { target: { value: 'typed' }, currentTarget: { value: 'typed' } }));
     await h.act(async () => { await new Promise(resolve => setTimeout(resolve, 5)); });
@@ -42,7 +44,8 @@ for (const [file, name, sourceProps] of factories) {
     const second = factory('values', { ...props, ...JSON.parse(JSON.stringify(sourceProps)), label: `${name} renamed`, value: [], availableOptions: [], valueRevision: 1, colorfulTagAvatars: true });
     h.act(() => second.properties.onRender(dom, undefined, (...args) => changes.push(args)));
     await flush();
-    assert.equal(dom.querySelector('input'), input);
+    assert.equal(dom.querySelector('.fui-Dropdown__button'), trigger);
+    assert.equal(dom.ownerDocument.querySelector('.fui-SearchBox input'), input);
     assert.equal(input.value, 'typed');
     assert.equal(owner.requests, requests);
     assert.equal(owner.graphInitializations, initializations);
@@ -54,15 +57,18 @@ for (const [file, name, sourceProps] of factories) {
       latest = factory('values', { ...props, list: { kind: 'id', id: '33333333-3333-4333-8333-333333333333' }, value: [], valueRevision: 2 });
       h.act(() => latest.properties.onRender(dom, undefined, (...args) => changes.push(args)));
       await flush();
-      assert.equal(dom.querySelector('input'), input);
+      assert.equal(dom.querySelector('.fui-Dropdown__button'), trigger);
+      assert.equal(dom.ownerDocument.querySelector('.fui-SearchBox input'), input);
       assert.equal(input.value, 'typed');
       assert.deepEqual(changes, []);
       assert.equal(owner.handlers.size, 1);
       h.act(() => second.properties.onDispose(dom));
-      assert.equal(dom.querySelector('input'), input);
+      assert.equal(dom.querySelector('.fui-Dropdown__button'), trigger);
+      assert.equal(dom.ownerDocument.querySelector('.fui-SearchBox input'), input);
     }
     h.act(() => first.properties.onDispose(dom));
-    assert.equal(dom.querySelector('input'), input);
+    assert.equal(dom.querySelector('.fui-Dropdown__button'), trigger);
+    assert.equal(dom.ownerDocument.querySelector('.fui-SearchBox input'), input);
     h.act(() => latest.properties.onDispose(dom));
     assert.equal(owner.handlers.size, 0);
     assert.equal(dom.textContent, '');

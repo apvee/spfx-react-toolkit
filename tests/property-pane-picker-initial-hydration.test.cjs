@@ -106,14 +106,14 @@ test('mixed native selections keep known labels visible while unknown references
     assert.deepEqual(f.changes, []);
   } finally { f.close(); }
 });
-test('successful initial hydration ends skeleton without replacing native input or persisting live text; remount repeats', async () => {
+test('successful initial hydration ends skeleton without replacing native Dropdown trigger or persisting live text; remount repeats', async () => {
   const f = mount(cases[1], { presentation: 'combobox' });
   try {
-    await flush(); const control = boundary(f), input = f.dom.querySelector('input');
+    await flush(); const control = boundary(f), input = f.dom.querySelector('.fui-Dropdown__button');
     assert.equal(control.getAttribute('aria-busy'), 'true');
     await h.act(async () => f.request.resolve({ ok: true, status: 200, json: async () => ({ Id: listId, Title: 'Live projects', BaseTemplate: 100, Hidden: false }) })); await flush();
-    assert.equal(control.getAttribute('aria-busy'), 'false'); assert.equal(f.dom.querySelector('input'), input);
-    assert.equal(input.value, 'Live projects'); assert.deepEqual(f.changes, []); assert.equal(f.props.value[0].text, undefined);
+    assert.equal(control.getAttribute('aria-busy'), 'false'); assert.equal(f.dom.querySelector('.fui-Dropdown__button'), input);
+    assert.equal(input.textContent, 'Live projects'); assert.deepEqual(f.changes, []); assert.equal(f.props.value[0].text, undefined);
   } finally { f.close(); }
   const remounted = mount(cases[1]);
   try { await flush(); assert.equal(boundary(remounted).getAttribute('aria-busy'), 'true'); }
@@ -175,11 +175,11 @@ for (const entry of cases.filter(entry => entry[0] === 'content-type')) {
       }});
     });
     try {
-      await flush(); const input = f.dom.querySelector('input'), control = boundary(f);
+      await flush(); const input = f.dom.querySelector('.fui-Dropdown__button'), control = boundary(f);
       assert.equal(control.getAttribute('aria-busy'),'true');
       await h.act(async () => response.resolve({StringId:reference.contentTypeId,Name:'Live invoice',Group:'Demo',Description:'Read-only metadata',Hidden:false,ReadOnly:true,Sealed:true})); await flush();
       assert.equal(control.getAttribute('aria-busy'),'false');
-      assert.equal(f.dom.querySelector('input'),input); assert.equal(input.value,'Live invoice');
+      assert.equal(f.dom.querySelector('.fui-Dropdown__button'),input); assert.equal(input.textContent,'Live invoice');
       assert.deepEqual(f.props.value,[reference]); assert.deepEqual(f.changes,[]);
       f.render({presentation:'tagPicker'}); await flush();
       assert.equal(boundary(f),control,'presentation updates keep the native control boundary mounted');

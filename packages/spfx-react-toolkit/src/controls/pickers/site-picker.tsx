@@ -9,7 +9,7 @@ import { usePickerRuntime } from './usePickerRuntime.internal';
 import { PickerRenderer } from './picker-renderer.internal';
 
 /** Search site collections or hubs with the provider's authenticated clients and memory-only query caching.
- * Defaults: site collection mode, Combobox, single selection, Title ascending. Initial menu includes consumer options, current collection and associated hub; includeCurrentSite/includeHubSite both default true.
+ * Defaults: site collection mode, Dropdown (historical combobox presentation), single selection, Title ascending. Initial menu includes consumer options, current collection and associated hub; includeCurrentSite/includeHubSite both default true.
  * @param props Site mode/scope, models, selection and presentation options. KQL is supported only in mode="site".
  * @returns A native Fluent Field and site picker; changing display props retains its runtime.
  * @example <SitePicker label="Sito" mode="site" includeCurrentSite includeHubSite />

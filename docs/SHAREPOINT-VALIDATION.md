@@ -530,3 +530,15 @@ The [EditableText guide](./api/controls/editable-text.md) documents the caller-o
 | Persistence and final flush | Caller saves canonical HTML plus search text only after effective input; latest policy/callback governs Edit exit and pending IME flush. | NOT EXECUTED |
 | Isolation | Separate fixture has two policies and a Shell title; editing, undo and policy changes affect only their owner. Supply the actual web part instance. | NOT EXECUTED |
 | Host boundaries | Keyboard toolbar/shortcuts, screen-reader naming, IME, live theme/RTL and popup/renderer ownerDocument remain correct in SharePoint/Teams/iframe hosts. | NOT EXECUTED |
+
+
+### Dropdown presentation migration — 2026-10-26
+
+Authenticated SharePoint/Teams/Property Pane and screen-reader checks for the new Dropdown presentation are **NOT EXECUTED**. Earlier Combobox results above describe the previous implementation. Local compiled Fluent/React fixture checks use simulated SDK/REST responses and do not establish tenant behavior.
+
+- Exercise all seven React and native fields with historical `presentation="combobox"`, single/multiple and medium/large controls. Verify the persistent selection button, popup search, fixed empty invitation, search placeholder overrides and selection count.
+- Search while selected, clear only the query, reactivate the current single row, replace/clear single selection, and remove multi selections from Selezionati. Compare TagPicker: selected tags must not be repeated in suggestion, search or contextual rows.
+- Verify arrows/Enter, editable Home/End/spaces, IME, Escape focus restoration and Tab/Shift+Tab without an implicit commit. Internal trigger/search/clear/action focus transitions must not run blur validation; outside exit must validate once.
+- Delay and refuse selection validation: pending focus remains stable; refusal retains query/popup without a change; acceptance closes single only. Dismiss and reopen during pending work, checking outside focus and the newer popup session.
+- Test light/dark native pane theme, RTL, narrow viewport, long labels/metadata, visible clear/chevron/media, disabled/required/searchable=false, limit, partial feedback, retry and loadMore. Body portals must inherit their own document/theme.
+- Reopen the real nonreactive pane, Apply an accepted draft, discard another, and check authoritative reset and initial hydration without rewriting saved JSON. Record actual tenant/account, browser, permissions and assistive technology separately.

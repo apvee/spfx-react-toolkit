@@ -339,7 +339,7 @@ export function usePickerRuntime<V extends PickerValue, T extends PickerOption<V
     currentUser: personalData?.currentUser, people: personalData?.people, groups: personalData?.groups,
     selected: selectedItems, selectedValues: [...knownSelectedValues, ...pinnedValues], context, accepts: acceptsOption, filterOptions: props.filterOptions, limit: initialLimit, showDefaultSuggestions: props.showDefaultSuggestions });
   const catalogMore = catalogEnabled && !source.completeCatalog && permitted([...(consumerOptions ?? []), ...(visibleCatalog?.options ?? [])]).length > (catalogLimit ?? 30);
-  const catalogHint = query.trim() === '' && catalogMore ? (props.searchable === false ? 'Sono disponibili altri elementi.' : `Sono disponibili altri elementi. Digita almeno ${minimum} caratteri per cercare.`) : undefined;
+  const catalogHint = query.trim() === '' && catalogMore ? 'Sono disponibili altri elementi.' : undefined;
   // Match/filter once before removing choices already represented by selections or fixed sections.
   const searchMatches = permitted(visible?.page?.options ?? [], false);
   const searchOptions = searchMatches.filter(option => !pickerIdentityAliases(option.value, context).some(alias => selectedAliases.has(alias) || pinnedAliases.has(alias)));
@@ -366,34 +366,36 @@ export function usePickerRuntime<V extends PickerValue, T extends PickerOption<V
   });
   const remove = useStableCallback((event: PickerSelectionEvent, key: string) => reduceSelection(event, selectedOptions.filter(item => item !== key), 'remove', key));
   const clear = useStableCallback((event: PickerSelectionEvent) => reduceSelection(event, [], 'clear'));
-  const select = useStableCallback(async (event: PickerSelectionEvent, key: string) => {
-    if (props.disabled || confirming) return;
-    if (selectedOptions.includes(key)) { await remove(event, key); return; }
+  const select = useStableCallback(async (event: PickerSelectionEvent, key: string): Promise<boolean> => {
+    if (props.disabled || confirming) return false;
+    if (selectedOptions.includes(key)) { await remove(event, key); return false; }
     const candidate = projectedModels.options.get(key) ?? searchOptions.find(option => option.key === key) ?? [...pinnedSections, ...sections].flatMap(section => section.options).find(option => option.key === key);
-    if (candidate === undefined || !source.accepts(candidate)) return;
+    if (candidate === undefined || !source.accepts(candidate)) return false;
     const next = multi ? [...selectedOptions, key] : [key];
-    if (next.length > limit) { setValidation('Il limite di selezione è stato raggiunto.'); return; }
+    if (next.length > limit) { setValidation('Il limite di selezione è stato raggiunto.'); return false; }
     const token = ++active.current.action;
     validationGeneration.current++;
     const current = active.current.binding;
     setConfirming(true); setFailure(undefined);
     try {
       const verified = await source.verifyCandidate(candidate, request());
-      if (!active.current.mounted || active.current.binding !== current || active.current.action !== token) return;
+      if (!active.current.mounted || active.current.binding !== current || active.current.action !== token) return false;
       if (verified === undefined) throw new Error('Il candidato non appartiene all’ambito configurato.');
       const confirmed = source.confirm === undefined ? [verified] : await source.confirm([verified], request(), 'selection');
-      if (!active.current.mounted || active.current.binding !== current || active.current.action !== token) return;
+      if (!active.current.mounted || active.current.binding !== current || active.current.action !== token) return false;
       const replacement = confirmed[0];
       if (replacement === undefined) throw new Error('La risoluzione del candidato è incompleta.');
       const nextItems = next.flatMap(item => item === key ? [{ ...replacement, key }] : selectedItems.filter(option => option.key === item));
       const message = props.validationTrigger === 'blur' ? undefined : await props.validateSelection?.(nextItems);
-      if (!active.current.mounted || active.current.binding !== current || active.current.action !== token) return;
+      if (!active.current.mounted || active.current.binding !== current || active.current.action !== token) return false;
       setValidation(message);
-      if (message) return;
+      if (message) return false;
       adopt(nextItems); setQuery('');
       emit(event, next, nextItems, 'selection', key);
+      return true;
     } catch (error) {
       if (active.current.mounted && active.current.binding === current && active.current.action === token) { const failure = errorOf(error); setFailure(failure); report(failure, 'validate'); }
+      return false;
     } finally { if (active.current.mounted && active.current.binding === current && active.current.action === token) setConfirming(false); }
   });
   const resolve = useStableCallback(async (event: PickerSelectionEvent) => {

@@ -11,7 +11,7 @@ import { createPropertyPanePicker } from './property-pane-picker-factory.interna
  * Forwards the React control's filters, local complete-catalog search and defaults. Selection never provisions a content type or enables list content types.
  * The host owns apply/persistence; arrays contain validated JSON references, including in single selection.
  * Same owner/key/DOM updates preserve root, selection/query state and equivalent request cache.
- * Initial unlabeled selections use input-only AutoSkeleton during hydration; available labels stay visible. Search/refresh and later updates do not restart the skeleton.
+ * Initial unlabeled selections use selection-control AutoSkeleton during hydration; available labels stay visible. Search/refresh and later updates do not restart the skeleton.
  * @typeParam TProperties Web-part property bag with a compatible direct ContentTypePickerValue array.
  * @param targetProperty Eligible direct array property name, with no nested path or untyped element domain.
  * @param props Initialized web-part instance, stable field key, authoritative value and control options.

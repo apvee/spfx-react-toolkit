@@ -1,4 +1,4 @@
-import { makeStyles } from '@griffel/react';
+import { makeStyles, shorthands } from '@griffel/react';
 import { tokens } from '@fluentui/react-theme';
 
 /** Uses the host renderer; no CSS insertion or renderer creation at module evaluation. */
@@ -11,5 +11,11 @@ export const usePickerStyles = makeStyles({
   text: { maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 },
   status: { padding: tokens.spacingHorizontalS, whiteSpace: 'normal' },
   actions: { display: 'flex', flexWrap: 'wrap', gap: tokens.spacingHorizontalXS, marginTop: tokens.spacingVerticalXS },
+  selection: { display: 'flex', alignItems: 'center', gap: tokens.spacingHorizontalS, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+  surface: { display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: tokens.colorNeutralBackground1 },
+  surfaceContent: { display: 'flex', flexDirection: 'column', minHeight: 0, maxHeight: 'min(320px, 80vh)', overflow: 'hidden' },
+  dropdownList: { minHeight: 0, overflowY: 'auto', boxShadow: 'none', ...shorthands.borderWidth('0') },
+  search: { flexShrink: 0, maxWidth: 'none', margin: tokens.spacingHorizontalS, minWidth: 0 },
+  hidden: { display: 'none' },
   list: { maxHeight: 'min(320px, 80vh)', overflowY: 'auto' },
 });

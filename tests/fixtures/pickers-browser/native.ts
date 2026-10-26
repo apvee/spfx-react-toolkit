@@ -19,11 +19,13 @@ export function createNativeFixture(target: HTMLElement) {
   let current: { name: Name; mode: Mode; changed: boolean; scope: 'site' | 'list'; refreshKey: number; presentation: 'combobox' | 'tagPicker' } | undefined;
   const values: Record<string, readonly PickerValue[]> = {};
   const changes: { target: string; value: readonly PickerValue[]; valid: boolean }[] = [];
+  const validationCalls: string[] = [];
+  const validateSelection = (): undefined => { validationCalls.push(current?.name ?? 'disposed'); return undefined; };
   function render(): void {
     if (current === undefined) throw new Error('Native fixture is not mounted');
     const { name, mode, changed, scope, refreshKey, presentation } = current;
     const index = changed ? 2 : 0;
-    const common = { instance, key: 'native-browser-field', label: `Native ${name}`, hint: 'Native hydration hint', debounceMs: 0, refreshKey, multiselect: mode === 'mixed', presentation };
+    const common = { instance, key: 'native-browser-field', label: `Native ${name}`, hint: 'Native hydration hint', debounceMs: 0, refreshKey, multiselect: mode === 'mixed', presentation, validationTrigger: 'blur' as const, validateSelection };
     switch (name) {
       case 'SitePicker': {
         const value = selection(sites[index].value, sites[1].value, mode); values.current = value;
@@ -59,7 +61,7 @@ export function createNativeFixture(target: HTMLElement) {
     field.properties.onRender(target, undefined, (property, value, valid) => changes.push({ target: property, value, valid }));
   }
   return {
-    requests, values, changes, blockReads, releaseReads,
+    requests, values, changes, validationCalls, blockReads, releaseReads,
     mount(name: Name, mode: Mode = 'unresolved', presentation: 'combobox' | 'tagPicker' = 'tagPicker') {
       this.dispose(); current = { name, mode, changed: false, scope: 'site', refreshKey: 0, presentation }; render();
     },
