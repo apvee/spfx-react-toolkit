@@ -31,7 +31,7 @@ async function palette(page) {
   const toolbar = page.locator('[data-title-toolbar]');
   const direct = toolbar.getByRole('button', { name: 'Theme color', exact: true });
   if (await direct.isVisible()) await direct.click();
-  else { await toolbar.getByRole('button', { name: 'More title formatting', exact: true }).click(); await page.getByRole('menuitem', { name: 'Theme color', exact: true }).click(); }
+  else { await toolbar.getByRole('button', { name: 'More text formatting', exact: true }).click(); await page.getByRole('menuitem', { name: 'Theme color', exact: true }).click(); }
   await settlePalette(page);
 }
 async function checkColorOverflowResize(page, editable, boundary) {
@@ -45,7 +45,7 @@ async function checkColorOverflowResize(page, editable, boundary) {
     await settle(page); await page.waitForTimeout(350);
     check(`${boundary}/${dir} color becomes direct while More remains`,
       await toolbar.getByRole('button', { name: 'Theme color', exact: true }).isVisible()
-        && await toolbar.getByRole('button', { name: 'More title formatting', exact: true }).isVisible(), true);
+        && await toolbar.getByRole('button', { name: 'More text formatting', exact: true }).isVisible(), true);
     check(`${boundary}/${dir} removed overflow palette closes`, await page.locator('[data-title-color-picker]').count(), 0);
     await page.evaluate(() => window.shellFixture.render({ width: 296 }));
     await settle(page); await page.waitForTimeout(350);
@@ -148,6 +148,11 @@ async function checkColorOverflowResize(page, editable, boundary) {
               fs.writeFileSync(path.join(output, `${boundary}-${zoom * 100}-${dir}.png`), Buffer.from(shot.data, 'base64')); await session.detach();
               await native.keyboard.press('Escape');
             }
+            await native.goto(`${server.url}/?scenario=editable-text`);
+            await native.locator('[data-editable-text-demo=mode]').selectOption('edit');
+            const standalone = native.locator('[data-editable-text-demo=preview] [contenteditable=true]');
+            await standalone.waitFor(); await standalone.focus(); await settle(native);
+            check(`${boundary}/${zoom} standalone toolbar fits native zoom`, await native.locator('[data-title-toolbar]').evaluate(element => { const rect = element.getBoundingClientRect(); return rect.left >= -1 && rect.right <= innerWidth + 1; }), true);
             metrics.push(await native.evaluate(() => ({ dpr: devicePixelRatio, width: innerWidth })));
           } finally { await context?.close(); fs.rmSync(profile, { recursive: true, force: true }); }
         }

@@ -44,7 +44,7 @@ async function checkWebPartShellBrowser(page, record) {
   const button = name => toolbar().getByRole('button', { name, exact: true });
   const command = async name => {
     if (await button(name).isVisible()) await button(name).click();
-    else { await button('More title formatting').click(); await page.getByRole('menuitem', { name, exact: true }).or(page.getByRole('menuitemcheckbox', { name, exact: true })).click(); }
+    else { await button('More text formatting').click(); await page.getByRole('menuitem', { name, exact: true }).or(page.getByRole('menuitemcheckbox', { name, exact: true })).click(); }
   };
   const toolbarGeometry = [];
   const geometry = async () => toolbar().evaluate(e => {
@@ -193,7 +193,7 @@ async function checkWebPartShellBrowser(page, record) {
   await capture('forced-colors'); await page.emulateMedia({ forcedColors: 'none' });
 
   await page.getByRole('button', { name: 'Enter page Edit mode', exact: true }).click(); await editable.waitFor();
-  await check('Edit requests actual async engine assets', requests.some(request => request.includes('web-part-title-editor')), true);
+  await check('Edit requests actual async engine assets', requests.some(request => request.includes('editable-text-editor')), true);
   // Begin narrow before the first toolbar mount, then repeatedly recover the full
   // row. Hidden items must never redefine the intrinsic full-content footprint.
   await page.setViewportSize({ width: 320, height: 900 }); await render({ width: 320 });
@@ -214,7 +214,7 @@ async function checkWebPartShellBrowser(page, record) {
       // be reachable through Fluent's actual overflow menu.
       if (size >= 640) await check(`${cycle}/${dir}/${size}: widening recovers every command`, settled.overflow, false);
       if (size === 500 && settled.overflow) {
-        await button('More title formatting').click();
+        await button('More text formatting').click();
         for (const name of ['Heading', 'Bold', 'Italic', 'Underline', 'Theme color', 'Clear formatting', 'Spacing']) {
           const direct = toolbar().getByRole(name === 'Heading' ? 'combobox' : 'button', { name, exact: true });
           const menu = page.getByRole('menuitem', { name, exact: true }).or(page.getByRole('menuitemcheckbox', { name, exact: true }));
@@ -262,7 +262,7 @@ async function checkWebPartShellBrowser(page, record) {
   }
   fs.writeFileSync(path.join(output, `${label}-shell-toolbar-geometry.json`), JSON.stringify(toolbarGeometry, null, 2));
   await page.setViewportSize({ width: 320, height: 900 }); await render({ width: 320, dir: 'rtl' });
-  await selectRange(0, 5); await button('More title formatting').click();
+  await selectRange(0, 5); await button('More text formatting').click();
   await check('Narrow RTL overflow excludes painter', await page.getByRole('menuitemcheckbox', { name: 'Format painter', exact: true }).count(), 0);
   // The larger preset can wrap the header action, leaving Italic visible.
   // Underline remains overflowed in this native layout and exercises the menu.
@@ -437,7 +437,7 @@ async function checkWebPartShellBrowser(page, record) {
   const retryPage = await retryContext.newPage(); const injectedErrors = []; let aborted;
   retryPage.on('console', message => { if (['error', 'warning'].includes(message.type())) injectedErrors.push(message.text()); });
   retryPage.on('pageerror', error => injectedErrors.push(error.message));
-  await retryPage.route('**/*web-part-title-editor*js', async route => {
+  await retryPage.route('**/*editable-text-editor*js', async route => {
     if (!aborted) { aborted = route.request().url(); await route.abort('failed'); } else await route.continue();
   });
   try {
@@ -450,10 +450,10 @@ async function checkWebPartShellBrowser(page, record) {
     await check('Loader retry mounts actual editor', await retryPage.locator('[contenteditable]').count(), 1);
     await check('Loader failure never remounts children', await retryPage.evaluate(() => window.shellFixture.observe().mounts), 1);
     await check('Loader retry retains child note', await retryPage.locator('[data-shell-demo="note"]').inputValue(), 'Retry retained note');
-    await check('Injected loader failure was exact editor chunk', Boolean(aborted && aborted.includes('web-part-title-editor')), true);
+    await check('Injected loader failure was exact editor chunk', Boolean(aborted && aborted.includes('editable-text-editor')), true);
     await retryPage.screenshot({ path: path.join(output, `${label}-shell-loader-retry.png`) });
   } finally { await retryContext.close(); }
-  await check('Retry scenario has only exact injected chunk diagnostics', injectedErrors.length > 0 && injectedErrors.every(message => message === 'Failed to load resource: net::ERR_FAILED' || (message.startsWith('Loading chunk web-part-title-editor failed.') && message.includes(aborted)) || (message.startsWith('The above error occurred in one of your React components:') && message.includes('TitleEditorBoundary'))), true);
+  await check('Retry scenario has only exact injected chunk diagnostics', injectedErrors.length > 0 && injectedErrors.every(message => message === 'Failed to load resource: net::ERR_FAILED' || (message.startsWith('Loading chunk editable-text-editor failed.') && message.includes(aborted)) || (message.startsWith('The above error occurred in one of your React components:') && message.includes('EditableTextEditorBoundary'))), true);
   fs.writeFileSync(path.join(output, `${label}-shell-input-boundaries.json`), JSON.stringify({
     browserRouting: 'Browser plugin not available', input: ['Chromium mouse clicks, keyboard typing/shortcuts/Shift range selection', 'DOM Selection API range selection with actual selectionchange', 'Synthetic ClipboardEvent using native DataTransfer', 'Chromium CDP Input.imeSetComposition + Input.insertText; not physical OS IME'],
     physicalIME: 'NOT EXECUTED', touchHardware: 'NOT EXECUTED', screenReader: 'NOT EXECUTED', nativeTenantCommandParity: 'NOT EXECUTED', tenantSaveReload: 'NOT EXECUTED', injectedFailure: { aborted, errors: injectedErrors }, requests, final: await observations()

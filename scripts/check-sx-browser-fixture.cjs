@@ -944,6 +944,7 @@ async function runGroups() {
       await require('./stage-browser.helpers.cjs').checkStageBrowser(page, { url, output, label, boundary: 'source', check, consoleMessages });
     } else if (process.env.SX_BROWSER_SHELL_ONLY === '1') {
       await require('./web-part-shell-browser.helpers.cjs').checkWebPartShellBrowser(page, { url, output, label, boundary: 'source', check, consoleMessages });
+      await require('./editable-text-browser.helpers.cjs').checkEditableTextBrowser(page, { url, output, label, check });
     } else if (process.env.DATA_GRID_CHART_PROBE === '1') {
       await require('./data-grid-browser.helpers.cjs').exerciseDataGridChartProbe({ page, url, output, label, boundary: 'source', check, consoleMessages, pageErrors: chartProbePageErrors });
     } else if (process.env.SX_BROWSER_DATA_GRID_ONLY === '1') {

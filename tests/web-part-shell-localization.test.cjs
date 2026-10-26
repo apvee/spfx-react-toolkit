@@ -6,6 +6,12 @@ const locales = require('./fixtures/sharepoint-ui-locales.json');
 // Reviewed individual lexical overlaps, not a language-wide permission to copy English.
 // Each entry binds culture, exact field and exact spelling; the final column records why.
 const intentionalSharedTerms = [
+  ['ca-ES', 'editorLabel', 'Text', 'Catalan noun text'],
+  ['cs-CZ', 'editorLabel', 'Text', 'Czech noun text'],
+  ['de-DE', 'editorLabel', 'Text', 'German noun Text'],
+  ['ro-RO', 'editorLabel', 'Text', 'Romanian noun text'],
+  ['sk-SK', 'editorLabel', 'Text', 'Slovak noun text'],
+  ['sv-SE', 'editorLabel', 'Text', 'Swedish noun text'],
   ['ca-ES', 'normal', 'Normal', 'Catalan adjective for ordinary formatting'],
   ['cy-GB', 'colorNames.brown', 'Brown', 'Established Welsh colour adjective brown'],
   ['da-DK', 'normal', 'Normal', 'Danish adjective for ordinary formatting'],
@@ -52,17 +58,17 @@ function assertTranslatedLabels(culture, strings, english) {
 function fixture(t) {
   const h = createHarness();
   t.after(() => h.close());
-  return h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  return h.load('controls/editable-text/localization/editable-text-locales.internal.ts');
 }
-test('all 50 supported UI cultures have complete distinct catalogs and typed interpolation', t => {
+test('common editor resources retain 50 complete translated catalogs and typed interpolation', t => {
   const api = fixture(t);
   assert.equal(locales.cultures.length, 50);
-  assert.deepEqual(Object.keys(api.webPartShellLocaleCatalogs).sort(), [...locales.cultures].sort());
-  const english = api.resolveWebPartShellStrings('en-US');
+  assert.deepEqual(Object.keys(api.editableTextLocaleCatalogs).sort(), [...locales.cultures].sort());
+  const english = api.resolveEditableTextStrings('en-US');
   for (const culture of locales.cultures) {
-    const strings = api.resolveWebPartShellStrings(culture);
+    const strings = api.resolveEditableTextStrings(culture);
     assertTranslatedLabels(culture, strings, english);
-    assert.equal(strings, api.webPartShellLocaleCatalogs[culture]);
+    assert.equal(strings, api.editableTextLocaleCatalogs[culture]);
     assert.deepEqual(Object.keys(strings).sort(), Object.keys(english).sort(), culture);
     for (const [key, value] of Object.entries(strings)) {
       if (typeof value === 'string') {
@@ -84,13 +90,14 @@ test('all 50 supported UI cultures have complete distinct catalogs and typed int
     }
     if (culture !== 'en-US') {
       assert.notEqual(strings, english, culture);
-      assert.notEqual(strings.titleEditorLoadError, english.titleEditorLoadError, culture);
-      assert.notEqual(strings.savedTitleFormattingWarning, english.savedTitleFormattingWarning, culture);
+      assert.notEqual(strings.editorLoadError, english.editorLoadError, culture);
+      assert.notEqual(strings.savedFormattingWarning, english.savedFormattingWarning, culture);
     }
   }
 });
 test('UI culture resolver normalizes case and separators and permits only explicit aliases', t => {
-  const api = fixture(t);
+  const h = createHarness(); t.after(() => h.close());
+  const api = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
   for (const [input, culture] of [['IT_it', 'it-IT'], [' fr-fr ', 'fr-FR'], ['en-GB', 'en-US'], ['de-AT', 'de-DE'],
     ['zh-Hans', 'zh-CN'], ['zh-SG', 'zh-CN'], ['zh-Hant', 'zh-TW'], ['zh-HK', 'zh-TW'],
     ['sr-Latn', 'sr-Latn-RS'], ['sr-Cyrl', 'sr-Cyrl-RS'], ['pt-BR', 'pt-BR'], ['pt-PT', 'pt-PT'],
@@ -103,20 +110,20 @@ test('UI culture resolver normalizes case and separators and permits only explic
 });
 test('different instances resolve independently without changing existing resources', t => {
   const api = fixture(t);
-  const italian = api.resolveWebPartShellStrings('it-IT');
-  const original = italian.titlePlaceholder;
-  const arabic = api.resolveWebPartShellStrings('ar-SA');
-  const english = api.resolveWebPartShellStrings('en-US');
-  assert.notEqual(italian.titlePlaceholder, arabic.titlePlaceholder);
-  assert.notEqual(english.titlePlaceholder, arabic.titlePlaceholder);
-  assert.equal(italian.titlePlaceholder, original);
+  const italian = api.resolveEditableTextStrings('it-IT');
+  const original = italian.placeholder;
+  const arabic = api.resolveEditableTextStrings('ar-SA');
+  const english = api.resolveEditableTextStrings('en-US');
+  assert.notEqual(italian.placeholder, arabic.placeholder);
+  assert.notEqual(english.placeholder, arabic.placeholder);
+  assert.equal(italian.placeholder, original);
   assert.ok(Object.isFrozen(italian));
   assert.ok(Object.isFrozen(italian.colorNames));
 });
 test('formatters preserve literal inputs without interpreting replacement syntax or embedded placeholders', t => {
   const api = fixture(t);
   for (const culture of locales.cultures) {
-    const strings = api.resolveWebPartShellStrings(culture);
+    const strings = api.resolveEditableTextStrings(culture);
     const label = '$& {shortcut}';
     const shortcut = '$` $\' {label}';
     const formatted = strings.formattingShortcut(label, shortcut);
@@ -128,7 +135,7 @@ test('formatters preserve literal inputs without interpreting replacement syntax
 test('each locale resource declares all interpolation tokens exactly once', () => {
   const fs = require('node:fs');
   const path = require('node:path');
-  const root = path.join(__dirname, '../packages/spfx-react-toolkit/src/controls/web-part-shell/localization/locales');
+  const root = path.join(__dirname, '../packages/spfx-react-toolkit/src/controls/editable-text/localization/locales');
   for (const culture of locales.cultures) {
     const source = fs.readFileSync(path.join(root, `${culture}.ts`), 'utf8');
     for (const [key, tokens] of [
@@ -145,8 +152,8 @@ test('each locale resource declares all interpolation tokens exactly once', () =
 
 test('translation validator rejects copied English UI and colour labels and duplicate colour names', t => {
   const api = fixture(t);
-  const italian = api.resolveWebPartShellStrings('it-IT');
-  const english = api.resolveWebPartShellStrings('en-US');
+  const italian = api.resolveEditableTextStrings('it-IT');
+  const english = api.resolveEditableTextStrings('en-US');
   assert.throws(() => assertTranslatedLabels('it-IT', { ...italian, bold: english.bold }, english),
     /it-IT\.bold: unapproved English label "Bold"/);
   assert.throws(() => assertTranslatedLabels('it-IT', {
@@ -159,12 +166,12 @@ test('translation validator rejects copied English UI and colour labels and dupl
   assert.throws(() => assertTranslatedLabels('it-IT', { ...italian, normal: english.normal }, english),
     /it-IT\.normal: unapproved English label "Normal"/);
   assert.throws(() => assertTranslatedLabels('da-DK', {
-    ...api.resolveWebPartShellStrings('da-DK'), colorNames: { ...api.resolveWebPartShellStrings('da-DK').colorNames, brown: 'Brown' },
+    ...api.resolveEditableTextStrings('da-DK'), colorNames: { ...api.resolveEditableTextStrings('da-DK').colorNames, brown: 'Brown' },
   }, english), /da-DK\.colorNames\.brown: unapproved English label "Brown"/);
 });
 test('intentional shared spelling approvals are exact, justified and still present in their catalogs', t => {
   const api = fixture(t);
-  const englishLabels = new Map(scalarLabels(api.resolveWebPartShellStrings('en-US')));
+  const englishLabels = new Map(scalarLabels(api.resolveEditableTextStrings('en-US')));
   const seen = new Set();
   for (const [culture, key, value, reason] of intentionalSharedTerms) {
     assert.ok(locales.cultures.includes(culture), culture);
@@ -172,10 +179,29 @@ test('intentional shared spelling approvals are exact, justified and still prese
     assert.equal(typeof reason, 'string');
     assert.ok(reason.trim(), `${culture}.${key}: missing lexical justification`);
     assert.equal(englishLabels.get(key), value, `${culture}.${key}: stale English spelling`);
-    assert.equal(new Map(scalarLabels(api.resolveWebPartShellStrings(culture))).get(key), value,
+    assert.equal(new Map(scalarLabels(api.resolveEditableTextStrings(culture))).get(key), value,
       `${culture}.${key}: stale local spelling`);
     const identity = JSON.stringify([culture, key, value]);
     assert.ok(!seen.has(identity), `duplicate approval ${identity}`);
     seen.add(identity);
+  }
+});
+
+test('shell catalogs own only title name and placeholder and share the generic culture resolver', t => {
+  const h = createHarness(); t.after(() => h.close());
+  const shell = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  const common = h.load('controls/editable-text/localization/editable-text-locales.internal.ts');
+  for (const culture of locales.cultures) {
+    assert.deepEqual(Object.keys(shell.webPartShellLocaleCatalogs[culture]).sort(), ['titleEditorLabel', 'titlePlaceholder']);
+    assert.ok(shell.webPartShellLocaleCatalogs[culture].titleEditorLabel.trim());
+    assert.ok(shell.webPartShellLocaleCatalogs[culture].titlePlaceholder.trim());
+    assert.ok(Object.isFrozen(shell.webPartShellLocaleCatalogs[culture]));
+    if (culture !== 'en-US') {
+      assert.notEqual(shell.webPartShellLocaleCatalogs[culture].titleEditorLabel, 'Web part title');
+      assert.notEqual(shell.webPartShellLocaleCatalogs[culture].titlePlaceholder, 'Add a title');
+    }
+  }
+  for (const locale of [...locales.cultures, 'IT_it', 'zh-Hant-HK', 'sr', 'unknown', undefined]) {
+    assert.equal(shell.resolveWebPartShellStrings(locale), shell.webPartShellLocaleCatalogs[common.resolveEditableTextLocaleName(locale)]);
   }
 });

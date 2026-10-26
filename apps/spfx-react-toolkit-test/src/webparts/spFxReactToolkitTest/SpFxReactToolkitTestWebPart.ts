@@ -18,7 +18,7 @@ import { WebPartShellDemoHost } from './components/WebPartShellDemoHost';
 import SpFxReactToolkitTest from './components/SpFxReactToolkitTest';
 
 import { PropertyPaneFileFolderPicker } from '@apvee/spfx-react-toolkit/property-pane/file-folder-picker';
-import type { FileFolderPickerValue, FileFolderPickerScope } from '@apvee/spfx-react-toolkit/controls/file-folder-picker';
+import type { FileFolderPickerValue, FileFolderPickerScope, FileFolderPickerProps } from '@apvee/spfx-react-toolkit/controls/file-folder-picker';
 import { PropertyPaneSitePicker, PropertyPaneListPicker, PropertyPaneFieldPicker, PropertyPaneViewPicker, PropertyPaneContentTypePicker, PropertyPaneListItemPicker, PropertyPanePrincipalPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
 import type { SitePickerValue, ListPickerValue, FieldPickerValue, ViewPickerValue, ContentTypePickerValue, ListItemPickerValue, PrincipalPickerValue } from '@apvee/spfx-react-toolkit';
 
@@ -35,6 +35,7 @@ export interface ISpFxReactToolkitTestWebPartProps extends IWebPartShellProperti
   fileFolderHint?: string;
   fileFolderSearchable?: boolean;
   fileFolderExtensions?: string;
+  fileFolderCategory?: FileFolderPickerProps['fileCategory'] | '';
   fileFolderSelectionLimit?: string;
   fileFolderInitialWeb?: string;
   fileFolderInitialLibrary?: string;
@@ -87,6 +88,8 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
       }
       this.context.propertyPane.refresh(); return;
     }
+    if (propertyPath === 'fileFolderCategory' && newValue) delete this.properties.fileFolderExtensions;
+    if (propertyPath === 'fileFolderItemTypes' && newValue === 'folders') delete this.properties.fileFolderCategory;
     if (propertyPath.startsWith('fileFolder')) {
       // Preset and functional options update the same field descriptor without resetting values or its revision.
       this.context.propertyPane.refresh(); return;
@@ -177,6 +180,7 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
     const fileFolderScope: FileFolderPickerScope = fileFolderKind === 'oneDrive' ? { kind: 'oneDrive', folder: this.properties.fileFolderFolder || undefined } :
       fileFolderKind === 'folder' ? { kind: 'folder', webUrl: list?.webUrl ?? this.context.pageContext.web.absoluteUrl, list: listTarget ?? '', folder: this.properties.fileFolderFolder ?? '' } :
       fileFolderKind === 'library' ? { kind: 'library', webUrl: list?.webUrl ?? this.context.pageContext.web.absoluteUrl, list: listTarget ?? '' } : { kind: 'siteCollection', siteUrl: site?.url };
+    const fileFolderCategory = this.properties.fileFolderItemTypes === 'folders' ? undefined : this.properties.fileFolderCategory || undefined;
     const fileFolderDisabled = (fileFolderKind === 'library' || fileFolderKind === 'folder') && listTarget === undefined;
     const savedFileFolderPreset = fileFolderDemoPreset(this.properties);
     const fileFolderPreset = savedFileFolderPreset === 'legacy' ? 'focused' : savedFileFolderPreset;
@@ -230,7 +234,8 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
                   size: this.properties.fileFolderSize ?? 'medium', colorfulTagAvatars: this.properties.fileFolderColorfulTagAvatars ?? false, scope: fileFolderScope, itemTypes: this.properties.fileFolderItemTypes ?? 'files', multiselect: this.properties.fileFolderMultiselect ?? false, disabled: fileFolderDisabled,
                   ...fileFolderExperience, initialLocation: fileFolderInitialLocation,
                   searchable: this.properties.fileFolderSearchable ?? true,
-                  extensions: this.properties.fileFolderItemTypes === 'folders' ? undefined : this.properties.fileFolderExtensions?.split(',').map(extension => extension.trim()).filter(Boolean),
+                  fileCategory: fileFolderCategory,
+                  extensions: this.properties.fileFolderItemTypes === 'folders' || fileFolderCategory !== undefined ? undefined : this.properties.fileFolderExtensions?.split(',').map(extension => extension.trim()).filter(Boolean),
                   selectionLimit: this.properties.fileFolderMultiselect && this.properties.fileFolderSelectionLimit?.trim() ? Number(this.properties.fileFolderSelectionLimit) : undefined,
                   uploadEnabled: this.properties.fileFolderUpload ?? false, createFolderEnabled: this.properties.fileFolderCreateFolder ?? false,
                   hint: fileFolderDisabled ? 'Select exactly one site and one document library above.' : this.properties.fileFolderHint || undefined }),
@@ -241,7 +246,14 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
               isCollapsed: true,
               groupFields: [
                 ...(this.properties.fileFolderMultiselect ? [PropertyPaneTextField('fileFolderSelectionLimit', { label: 'Selection limit (empty: default)' })] : []),
-                ...(this.properties.fileFolderItemTypes !== 'folders' ? [PropertyPaneTextField('fileFolderExtensions', { label: 'File extensions (comma separated)' })] : []),
+                ...(this.properties.fileFolderItemTypes !== 'folders' ? [
+                  PropertyPaneDropdown('fileFolderCategory', { label: 'File category', selectedKey: fileFolderCategory ?? '', options: [
+                    { key: '', text: 'Unrestricted / custom extensions' }, { key: 'images', text: 'Images' }, { key: 'video', text: 'Video' },
+                    { key: 'audio', text: 'Audio' }, { key: 'media', text: 'Media' }, { key: 'documents', text: 'Documents' },
+                  ] }),
+                  PropertyPaneTextField('fileFolderExtensions', { label: 'File extensions (comma separated)', disabled: fileFolderCategory !== undefined }),
+                  PropertyPaneLabel('file-folder-category-help', { text: 'A category replaces custom extensions and checks file suffixes. Mixed mode keeps folders selectable. Policy changes preserve selected references.' }),
+                ] : []),
                 PropertyPaneLabel('file-folder-initial-help', { text: 'Changing source clears the optional starting location. OneDrive accepts a folder only.' }),
                 PropertyPaneToggle('fileFolderSearchable', { label: 'Hosted search', checked: this.properties.fileFolderSearchable ?? true }),
                 ...(fileFolderKind !== 'oneDrive' ? [

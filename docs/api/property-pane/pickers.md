@@ -46,6 +46,8 @@ const groupFields = [
 
 `PickerPropertyKey<TProperties,TValue>` accepts only direct safe array properties with the exact domain. Optional arrays are supported; scalar, mixed/untyped arrays, nested path strings and prototype-related names are rejected by types and runtime. `PropertyPanePickerProps<TProperties,TControlProps,TValue>` inherits the matching React props except renderer selected/default keys, defaultPrincipals and onOptionSelect. Native `value` is authoritative; initialOptions provides display models, availableOptions provides independent menu candidates. Models and clients are not stored in the property value.
 
+The seven native fields inherit the [React picker naming and validation contract](../controls/pickers.md#shared-contract). Supply a nonblank plain string `label`, or explicit `aria-label`/`aria-labelledby`; JSX and object labels require explicit ARIA naming. `validateSelection` can veto selection, removal, clear or explicit resolution before a new value is emitted; `validationMessage` overrides display only. `validationTrigger="blur"` defers ordinary gesture validation to input blur, but explicit ID resolution always validates before committing. Validation errors preserve the previous value and use the existing error channels.
+
 ## Seven fields
 
 | Factory | JSON domain | Default presentation / selection |

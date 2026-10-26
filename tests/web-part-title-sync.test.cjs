@@ -91,19 +91,19 @@ test('oversized canonical draft is retained with Fluent error and no partial pat
   const { h, host, fixture, editor, writes } = await mounted(t);
   h.act(() => editor.commands.setContent({ type: 'doc', content: [{ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: '&'.repeat(14000) }] }] }));
   assert.equal(editor.getText().length, 14000); assert.equal(writes(), 0); assert.equal(host.properties.title, 'initial');
-  assert.ok(fixture.container.textContent.includes('Title is too large'));
+  assert.ok(fixture.container.textContent.includes('Text is too large'));
   h.act(() => editor.commands.setContent('<h2>Fits</h2>'));
   assert.equal(host.properties.titleHTML, '<h2>Fits</h2>'); assert.equal(host.properties.title, 'Fits'); assert.equal(writes(), 1);
-  assert.ok(!fixture.container.textContent.includes('Title is too large'));
+  assert.ok(!fixture.container.textContent.includes('Text is too large'));
 });
 
 test('latest callback receives final flush and stale callbacks are ignored after unmount', async t => {
   const h = createHarness(); t.after(() => h.close());
   const ReactDOM = require('react-dom');
-  const { WebPartTitleEditor } = h.load('controls/web-part-shell/title/web-part-title-editor.internal.tsx');
+  const { EditableTextEditor } = h.load('controls/editable-text/editable-text-editor.internal.tsx');
   const doc = { type: 'heading', level: 2, content: [{ type: 'text', text: 'start' }] };
   const container = document.createElement('div'); document.body.appendChild(container); const calls = [];
-  const render = callback => h.act(() => ReactDOM.render(h.React.createElement(WebPartTitleEditor, { document: doc, onDocumentChange: callback, ariaLabel: 'Title', placeholder: 'Add' }), container));
+  const render = callback => h.act(() => ReactDOM.render(h.React.createElement(EditableTextEditor, { document: doc, onDocumentChange: callback, sourceKey: 'start', policy: h.load('controls/editable-text/editable-text-policy.internal.ts').resolveEditableTextBlockPolicy(undefined, 'h2'), strings: h.load('controls/editable-text/localization/editable-text-locales.internal.ts').resolveEditableTextStrings('en-US'), ariaLabel: 'Title', placeholder: 'Add' }), container));
   render(() => calls.push('old')); const editor = container.querySelector('[contenteditable]').editor;
   render(document => calls.push(document.content[0].text));
   h.act(() => { editor.view.dom.dispatchEvent(new h.window.CompositionEvent('compositionstart', { bubbles: true })); editor.commands.insertContent('new '); });
@@ -113,9 +113,9 @@ test('latest callback receives final flush and stale callbacks are ignored after
 
 test('lazy loader is unused in Read/hidden Edit; chunk failure and retry stay local preserving children', async t => {
   const h = createHarness(); t.after(() => h.close());
-  const module = h.load('controls/web-part-shell/title/web-part-title-editor.internal.tsx');
-  const real = module.WebPartTitleEditor; let loads = 0;
-  Object.defineProperty(module, 'WebPartTitleEditor', { configurable: true, get() { loads++; throw new Error('test chunk failure'); } });
+  const module = h.load('controls/editable-text/editable-text-editor.internal.tsx');
+  const real = module.EditableTextEditor; let loads = 0;
+  Object.defineProperty(module, 'EditableTextEditor', { configurable: true, get() { loads++; throw new Error('test chunk failure'); } });
   let mounts = 0;
   function Child() { h.React.useEffect(() => { mounts++; }, []); return h.React.createElement('input', { defaultValue: 'draft' }); }
   const host = h.instance('lazy'); const fixture = h.mount(host, h.React.createElement(Child));
@@ -125,10 +125,10 @@ test('lazy loader is unused in Read/hidden Edit; chunk failure and retry stay lo
   const oldError = console.error; console.error = (...args) => { if (!args.some(arg => String(arg).includes('test chunk failure') || String(arg).includes('The above error occurred'))) oldError(...args); };
   try {
     host.properties.showTitle = true; fixture.render();
-    assert.ok(fixture.container.textContent.includes('Loading title editor')); await h.settle();
-    assert.ok(fixture.container.textContent.includes('Title editor could not load')); assert.equal(loads, 1);
+    assert.ok(fixture.container.textContent.includes('Loading text editor')); await h.settle();
+    assert.ok(fixture.container.textContent.includes('Text editor could not load')); assert.equal(loads, 1);
     assert.equal(fixture.container.querySelector('input'), child); assert.equal(child.value, 'retained'); assert.equal(mounts, 1);
-    Object.defineProperty(module, 'WebPartTitleEditor', { configurable: true, value: real });
+    Object.defineProperty(module, 'EditableTextEditor', { configurable: true, value: real });
     h.act(() => Array.from(fixture.container.querySelectorAll('button')).find(button => button.textContent === 'Retry').click());
     await h.settle(); assert.ok(h.editor(fixture)); assert.equal(mounts, 1);
   } finally { console.error = oldError; }
@@ -140,8 +140,8 @@ test('application and Read-renderer errors are not swallowed by the editor bound
   try {
     const host = h.instance('error'); function Child() { throw new Error('app failure'); }
     assert.throws(() => h.mount(host, h.React.createElement(Child)), /app failure/);
-    const renderer = h.load('controls/web-part-shell/title/web-part-title-renderer.internal.tsx');
-    renderer.WebPartTitleReadRenderer = () => { throw new Error('renderer failure'); };
+    const renderer = h.load('controls/editable-text/editable-text-renderer.internal.tsx');
+    renderer.EditableTextReadRenderer = () => { throw new Error('renderer failure'); };
     assert.throws(() => h.mount(host, 'Child'), /renderer failure/);
   } finally { console.error = oldError; }
   // Keep actual failures visible to React and the host; no property repair/write was performed.

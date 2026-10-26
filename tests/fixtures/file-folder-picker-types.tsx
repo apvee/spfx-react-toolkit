@@ -112,3 +112,11 @@ const presetBoth: FileFolderPickerProps = { preset: 'focused', value: [], defaul
 // @ts-expect-error Presets do not make scalar web-part properties eligible.
 PropertyPaneFileFolderPicker('scalar', nativeFocused);
 void [focused, extended, configurationFocused, unknownPreset, mixedGraph, mixedNavigation, nativeMixed, configurationMixed, presetBoth];
+
+import type { FileFolderPickerFileCategory } from '../../packages/spfx-react-toolkit/src/controls/file-folder-picker';
+const category: FileFolderPickerFileCategory = 'images';
+const categoryControl: FileFolderPickerProps = { preset: 'focused', fileCategory: category };
+const categoryNative: PropertyPaneFileFolderPickerProps<Props> = { instance, key: 'category', value: [], fileCategory: 'media' };
+// @ts-expect-error Categories are a bounded union.
+const invalidCategory: FileFolderPickerProps = { fileCategory: 'stockImages' };
+void [categoryControl, categoryNative, invalidCategory];

@@ -15,8 +15,11 @@ export interface IWebPartShellProperties {
    * `titleHTML` is absent; metadata searchability requires `getWebPartShellPropertiesMetadata`. */
   title: string;
   /** Authoritative toolkit rich-title HTML; defined empty means an empty title.
-   * Saved HTML is normalized to the bounded title format for rendering; invalid input
-   * falls back to the plain title without a mount-time property rewrite.
+   * Saved HTML is normalized to one paragraph or H1-H4 block with supported inline formatting.
+   * Input and canonical output are limited to 65,536 UTF-8 bytes; parser nesting is limited
+   * to depth 32. Invalid or oversized input falls back to the plain title without a
+   * mount-time property rewrite. See the WebPartShell guide's Title authority and HTML
+   * protocol section for accepted tags and semantic class markers.
    * Title edits publish normalized safe markup together with the plain title.
    * Colors are stable semantic IDs resolved from the current Fluent theme;
    * UI-language changes never translate author content or rewrite these IDs. */

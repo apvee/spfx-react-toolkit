@@ -38,7 +38,7 @@ The field composes the existing WebPart provider, native mount/update/dispose la
 
 Closing the last native field releases its in-memory metadata cache and cancels its owned remote session. Reopening creates a fresh cache and uses the consumer's saved JSON values. No token storage, selection history or browser persistence is introduced. Use stable array references where practical, but equivalent recreated arrays must not cause an unnecessary remount.
 
-The new factory uses a small direct-array value bridge because the older bridge requires `PickerValue` renderer aliases and Combobox selection events. Authentication, metadata clients, scope resolution and native hosting remain shared toolkit capabilities. Source, kind, extension, cardinality and returned-item restrictions are identical between React and Property Pane.
+The new factory uses a small direct-array value bridge because the older bridge requires `PickerValue` renderer aliases and Combobox selection events. Authentication, metadata clients, scope resolution and native hosting remain shared toolkit capabilities. Source, kind, category, extension, cardinality and returned-item restrictions are identical between React and Property Pane.
 
 See [SharePoint validation](../../SHAREPOINT-VALIDATION.md) for required real-host dialog, scope, authentication and reopen checks. Local simulations do not establish tenant permissions or Microsoft's internal API traffic.
 
@@ -86,6 +86,22 @@ Native uploads and folder creation are immediate writes. The accepted-reference 
 ### Sample Preset menu
 
 The test web part offers only **Focused** and **Extended** in its Property Pane. Saved legacy demo configurations use Focused for both the displayed choice and the native control. Changing the preset preserves selected references, the field key and its value revision; old saved SDK fields are retained without passing them alongside a preset. The reusable Property Pane factory still supports the documented legacy contract when `preset` is omitted.
+
+## File category policy
+
+The native factory accepts the same optional `fileCategory: 'images' | 'video' | 'audio' | 'media' | 'documents'` as [React](../controls/file-folder-picker.md#file-categories), in preset and legacy configurations. Omission imposes no category restriction. A category cannot be combined with nonempty `extensions` or folders-only mode; mixed mode filters files while retaining folders. The toolkit checks authoritative metadata suffixes against a conservative catalog, independently of the hosted category filter, without content or MIME inspection. It does not promise exact equivalence with Microsoft's category catalog.
+
+```ts
+PropertyPaneFileFolderPicker('documents', {
+  instance: this, key: 'documents', value: this.properties.documents ?? [],
+  label: 'Project documents', preset: 'focused', fileCategory: 'documents',
+  itemTypes: 'files', multiselect: true,
+});
+```
+
+The sample's **File category** menu clears incompatible custom extensions and disables their input while a category is active. Choosing folders-only clears the category. Category changes preserve saved references and the native value revision; pending picks still follow the shared policy invalidation rules. Source changes continue to use the sample's explicit reset behavior.
+
+In mixed mode (`itemTypes: 'all'`), the SDK filter includes the selected semantic category **and** `folder` explicitly, so the category does not disable folder confirmation. Toolkit validation still applies the category only to files.
 
 ## Colorful selected-tag avatars
 

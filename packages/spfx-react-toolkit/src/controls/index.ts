@@ -19,3 +19,6 @@ export * from './entra-group-trim';
 export * from './pickers';
 
 export * from './file-folder-picker';
+
+export { EditableText } from './editable-text';
+export type { EditableTextProps, EditableTextChangeData, EditableTextBlock } from './editable-text';

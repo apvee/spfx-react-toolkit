@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Accordion, AccordionHeader, AccordionItem, Button, Field, Input, Select, Switch } from '@fluentui/react-components';
 import { FileFolderPicker, useSPFxPageContext } from '@apvee/spfx-react-toolkit';
-import type { FileFolderPickerScope, FileFolderPickerValue, FileFolderPickerOption, FileFolderPickerInitialLocation, FileFolderPickerPreset } from '@apvee/spfx-react-toolkit';
+import type { FileFolderPickerScope, FileFolderPickerValue, FileFolderPickerOption, FileFolderPickerInitialLocation, FileFolderPickerPreset, FileFolderPickerProps } from '@apvee/spfx-react-toolkit';
 import { DemoCard } from '../shared/DemoCard';
 import { DemoAccordionPanel } from '../shared/DemoAccordionPanel';
 
@@ -14,6 +14,7 @@ const FileFolderPickerPanel: React.FC = () => {
   const [initialLocation, setInitialLocation] = React.useState<FileFolderPickerInitialLocation>();
   const [scope, setScope] = React.useState<FileFolderPickerScope>({ kind: 'siteCollection' });
   const [itemTypes, setItemTypes] = React.useState<'files' | 'folders' | 'all'>('files');
+  const [fileCategory, setFileCategory] = React.useState<FileFolderPickerProps['fileCategory']>();
   const [multiple, setMultiple] = React.useState(false), [searchable, setSearchable] = React.useState(true);
   const [colorfulTagAvatars, setColorfulTagAvatars] = React.useState(false);
   const [size, setSize] = React.useState<'medium' | 'large'>('medium'), [suffixes, setSuffixes] = React.useState('');
@@ -47,7 +48,7 @@ const FileFolderPickerPanel: React.FC = () => {
     {kind === 'library' || kind === 'folder' ? <Field label="Existing document library title"><Input value={list} onChange={(_, data) => setList(data.value)} autoComplete="off" /></Field> : undefined}
     {kind === 'folder' || kind === 'oneDrive' ? <Field label="Existing folder path"><Input value={folder} onChange={(_, data) => setFolder(data.value)} autoComplete="off" /></Field> : undefined}
     <Field label="Preset"><Select value={preset} onChange={(_, data) => setPreset(data.value === 'extended' ? 'extended' : 'focused')}><option value="focused">Focused</option><option value="extended">Extended</option></Select></Field>
-    <Field label="Selectable items"><Select value={itemTypes} onChange={(_, data) => setItemTypes(data.value === 'folders' ? 'folders' : data.value === 'all' ? 'all' : 'files')}><option value="files">Files</option><option value="folders">Folders</option><option value="all">Files and folders</option></Select></Field>
+    <Field label="Selectable items"><Select value={itemTypes} onChange={(_, data) => { setItemTypes(data.value === 'folders' ? 'folders' : data.value === 'all' ? 'all' : 'files'); if (data.value === 'folders') setFileCategory(undefined); }}><option value="files">Files</option><option value="folders">Folders</option><option value="all">Files and folders</option></Select></Field>
     <Switch label="Multiple selection" checked={multiple} onChange={(_, data) => setMultiple(data.checked)} />
     <Accordion collapsible><AccordionItem value="options"><AccordionHeader>Options</AccordionHeader><DemoAccordionPanel>
     {kind !== 'oneDrive' ? <>
@@ -56,7 +57,14 @@ const FileFolderPickerPanel: React.FC = () => {
     </> : undefined}
     <Field label="Initial folder (navigation only)"><Input value={startFolder} onChange={(_, data) => setStartFolder(data.value)} /></Field>
     <p>Apply source also applies the optional starting location. Changing source clears the starting-location fields. A SharePoint starting folder requires a starting library; OneDrive accepts a folder only.</p>
-    {itemTypes !== 'folders' ? <Field label="File extensions (comma separated)"><Input value={suffixes} onChange={(_, data) => setSuffixes(data.value)} /></Field> : undefined}
+    {itemTypes !== 'folders' ? <>
+      <Field label="File category"><Select value={fileCategory ?? ''} onChange={(_, data) => {
+        const category = (['images', 'video', 'audio', 'media', 'documents'] as const).find(value => value === data.value);
+        setFileCategory(category); if (category) setSuffixes('');
+      }}><option value="">Unrestricted / custom extensions</option><option value="images">Images</option><option value="video">Video</option><option value="audio">Audio</option><option value="media">Media</option><option value="documents">Documents</option></Select></Field>
+      <Field label="File extensions (comma separated)"><Input disabled={fileCategory !== undefined} value={suffixes} onChange={(_, data) => setSuffixes(data.value)} /></Field>
+      <p>A category replaces custom extensions and checks file suffixes. In mixed mode folders remain selectable. Changing this policy preserves selected references.</p>
+    </> : undefined}
     {multiple ? <Field label="Selection limit (empty: default)"><Input value={limit} onChange={(_, data) => setLimit(data.value)} /></Field> : undefined}
     <Field label="Tag size"><Select value={size} onChange={(_, data) => setSize(data.value === 'large' ? 'large' : 'medium')}><option>medium</option><option>large</option></Select></Field>
     <Switch label="Colorful tag avatars" checked={colorfulTagAvatars} onChange={(_, data) => setColorfulTagAvatars(data.checked)} />
@@ -71,8 +79,8 @@ const FileFolderPickerPanel: React.FC = () => {
     <pre>{JSON.stringify(values, undefined, 2)}</pre>
   </DemoAccordionPanel></AccordionItem></Accordion>}>
     <FileFolderPicker preset={preset} uploadEnabled={uploadEnabled} createFolderEnabled={createFolderEnabled} hint={hint || undefined} onReady={() => setReady(count => count + 1)} label="FileFolderPicker" scope={scope} initialLocation={initialLocation} value={values} initialOptions={models} itemTypes={itemTypes} multiselect={multiple} size={size} searchable={searchable}
-      colorfulTagAvatars={colorfulTagAvatars}
-      selectionLimit={multiple && limit.trim() ? Number(limit) : undefined} extensions={itemTypes === 'folders' ? undefined : suffixes.split(',').map(value => value.trim()).filter(Boolean)}
+      fileCategory={itemTypes === 'folders' ? undefined : fileCategory} colorfulTagAvatars={colorfulTagAvatars}
+      selectionLimit={multiple && limit.trim() ? Number(limit) : undefined} extensions={itemTypes === 'folders' || fileCategory !== undefined ? undefined : suffixes.split(',').map(value => value.trim()).filter(Boolean)}
       onChange={data => { setValues(data.values); setModels(data.items); setReason(data.reason); setError(''); }} />
   </DemoCard>;
 };

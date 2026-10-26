@@ -16,6 +16,10 @@ type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K>
  * Stable root/client/query runtime is preserved on prop updates, and original unresolved references are retained.
  * Available labels remain visible during hydration. Initial selections without display labels/models use AutoSkeleton only for the input region until initial hydration settles; later searches, refreshes and updates do not reactivate it.
  * Empty selections and mixed selections with known labels keep the normal input. Real terminal errors remain visible; no property is rewritten by hydration.
+ * Inherits the React picker's accessible-name check: JSX/object labels require explicit
+ * aria-label or aria-labelledby; otherwise supply a nonblank plain string label.
+ * validateSelection can veto an action before a value is emitted; validationMessage only
+ * overrides its displayed message. Explicit ID resolution validates even in blur mode.
  * @example type Props = PropertyPanePickerProps<{sites:SitePickerValue[]}, SitePickerProps, SitePickerValue>;
  */
 export type PropertyPanePickerProps<TProperties extends object, TControlProps, TValue extends PickerValue> =

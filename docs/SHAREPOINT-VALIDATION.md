@@ -15,6 +15,14 @@ Local browser fixtures additionally checked all fourteen Combobox/TagPicker comb
 
 Tenant-native live light/dark switching and high contrast were not available for this run. CSSOM-only edits without host notification/native render and live reskinning of an already-open Microsoft iframe are not claimed. Theme changes create no remote requests; browser fixture counters verify this separately from authenticated endpoint activity.
 
+## FileFolderPicker categories — 2026-10-20
+
+Focused authenticated workbench checks were executed on the same test site for React and the native field. Each of `images`, `video`, `audio`, `media` and `documents` was opened with the expected v8 semantic filter. Documents allowed selection of `Document.docx` in both surfaces; the other four filters excluded that document from the hosted list while preserving the previously selected outer tag. The native document selection remained after closing/reopening the Property Pane. These are filtering/retention observations, not positive media-format coverage: matching image/video/audio files were not selected in this run.
+
+Mixed mode now sends the semantic category plus `folder` explicitly; using the category alone left a visible folder unconfirmable in the observed SDK surface. The final configuration was observed as `['document', 'folder']`, and the current user's OneDrive loaded its folders successfully. Browser automation could read but could not operate those cross-origin iframe controls, so mixed folder confirmation in that surface remains **not executed**. Local acceptance/configuration tests cover mixed file/folder batches, category mismatch rejection, authoritative renames, consumer display seeds, native option updates and retained selections.
+
+The focused suite passed 93 tests, followed by library/app builds, typecheck, lint, example coverage and public-doc checks. No tenant files were created, moved or deleted by this task, no permission grants/uploads were performed, and no workbench Save was used. Initial empty selections, site collection/files/single native configuration, omitted category and the Styles/Scrollbar tab were restored.
+
 ## Tenant and site collection stores — 2026-10-21
 
 Focused authenticated checks ran through the sample's Site and Tenant panels in the collection roots `apveelabs.sharepoint.com/sites/apvee-content-flow-translator-demo` and `apveelabs.sharepoint.com/sites/Site-B`, signed in as Fabio Franzini. The library was rebuilt and the sample serve process restarted before testing. These observations cover the current account's successful operations; restricted-account permissions and request headers/statuses were not independently audited.
@@ -510,3 +518,15 @@ Authenticated preset observations on 2026-10-20: both React and Property Pane op
 After building the library and app and restarting serve, an authenticated temporary workbench verified the default and enabled appearances. `Form.TagPicker` initially rendered its selected Italy tag without an avatar; enabling **Colorful tag avatars** added a colorful initials avatar while the form remained `Dirty: false`, with zero saves. React SitePicker retained the selected current collection while its icon avatar changed from neutral to colorful and back. The FileFolderPicker demo exposed the option under **Options**, initially off. The temporary tab was closed without workbench Save, content writes or permission changes; the user's original tab was retained.
 
 Local behavioral and type checks cover all seven shared picker domains, FileFolderPicker, Form.TagPicker and the native Property Pane counterparts, including stable identity colors, unchanged defaults, photos, dimensions, retained query/selection and descriptor updates. A selected FileFolderPicker avatar and native Property Pane appearance were not replayed in this authenticated run; their coverage is automated. Exhaustive theme, RTL and forced-colors combinations were not executed. See the [picker API](api/controls/pickers.md#colorful-selected-tag-avatars), [FileFolderPicker API](api/controls/file-folder-picker.md#colorful-selected-tag-avatars) and [Form API](api/controls/form.md#colorful-tagpicker-avatars).
+
+## EditableText standalone region — pending host validation
+
+The [EditableText guide](./api/controls/editable-text.md) documents the caller-owned contract. Local controlled-demo DOM tests and compiled library/app builds are separate from authenticated host evidence.
+
+| Scenario | Expected observation | Host status |
+| --- | --- | --- |
+| Four policies and Read/Edit | H2 becomes p in paragraph policy without property writes; raw source stays H2 until user input. Root is stable and Read ends its editor. | NOT EXECUTED |
+| H2, fallback and empty | Undefined HTML uses literal fallback; defined empty remains empty after save/reload. | NOT EXECUTED |
+| Persistence and final flush | Caller saves canonical HTML plus search text only after effective input; latest policy/callback governs Edit exit and pending IME flush. | NOT EXECUTED |
+| Isolation | Separate fixture has two policies and a Shell title; editing, undo and policy changes affect only their owner. Supply the actual web part instance. | NOT EXECUTED |
+| Host boundaries | Keyboard toolbar/shortcuts, screen-reader naming, IME, live theme/RTL and popup/renderer ownerDocument remain correct in SharePoint/Teams/iframe hosts. | NOT EXECUTED |

@@ -156,7 +156,7 @@ test('returned conditional factories remain deferred until the returned function
 
 test('reviewed control style definitions are local but actual renderer allocation stays forbidden', () => {
   const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
-  for (const path of ['controls/file-folder-picker/file-folder-picker.styles.internal.ts', 'controls/formatted-text/formatted-text.styles.internal.ts', 'controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts', 'controls/cards/card.styles.internal.ts', 'controls/web-part-shell/title/web-part-title-color-picker.internal.tsx']) {
+  for (const path of ['controls/file-folder-picker/file-folder-picker.styles.internal.ts', 'controls/formatted-text/formatted-text.styles.internal.ts', 'controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts', 'controls/cards/card.styles.internal.ts', 'controls/editable-text/editable-text-color-picker.internal.tsx', 'controls/editable-text/editable-text-editor.internal.tsx', 'controls/editable-text/editable-text-styles.internal.ts', 'controls/editable-text/editable-text-toolbar.internal.tsx']) {
     const module = expression => ({ path, externalImports: [], topLevelInitializations: [{ expression }] });
     assert.deepEqual(checkSourceRules({ edges: [], modules: [module('makeStyles({ root: {} })')] }, []), []);
     assert.equal(checkSourceRules({ edges: [], modules: [module('createDOMRenderer()')] }, [])[0].kind, 'package-global-renderer');

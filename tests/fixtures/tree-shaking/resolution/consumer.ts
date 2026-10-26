@@ -281,3 +281,9 @@ const invalidSiteKey: PickerPropertyKey<PickerPropsBag, SitePickerValue> = 'titl
 const nativeValues: NativePrincipalValue[] = [{ kind: 'user', loginName: 'alice@tenant.com' }];
 const rootValues: RootPrincipalValue[] = nativeValues, controlValues: ControlPrincipalValue[] = rootValues, domainValues: DomainPrincipalValue[] = controlValues;
 void [pickerImports, siteKey, invalidSiteKey, domainValues, invalidRootNativePicker];
+
+import { EditableText as rootEditable, type EditableTextProps as RootEditableProps, type EditableTextBlock as RootEditableBlock, type EditableTextChangeData as RootEditableChange } from '@apvee/spfx-react-toolkit';
+import { EditableText as domainEditable, type EditableTextProps as DomainEditableProps, type EditableTextBlock as DomainEditableBlock, type EditableTextChangeData as DomainEditableChange } from '@apvee/spfx-react-toolkit/controls';
+import { EditableText as controlEditable, type EditableTextProps as ControlEditableProps, type EditableTextBlock as ControlEditableBlock, type EditableTextChangeData as ControlEditableChange } from '@apvee/spfx-react-toolkit/controls/editable-text';
+export const editableAliases: typeof rootEditable[] = [domainEditable, controlEditable];
+export type EditableAliases = [RootEditableProps, DomainEditableProps, ControlEditableProps, RootEditableBlock, DomainEditableBlock, ControlEditableBlock, RootEditableChange, DomainEditableChange, ControlEditableChange];

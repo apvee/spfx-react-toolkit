@@ -99,3 +99,37 @@ test('successful verified personal authentication cannot authorize personal or G
  }
  session.cancel();assert.deepEqual(await result,{status:'cancelled'});
 });
+
+test('category acceptance uses authoritative case-insensitive filename, keeps folders, rejects mismatches atomically', async () => {
+  for (const [category, name] of Object.entries({ images: 'Photo.JPG', video: 'Movie.MP4', audio: 'Track.MP3', media: 'Track.WAV', documents: 'Report.DOCX' })) {
+    const s = await state(); s.items.FileA.name = name;
+    const before = s.calls.length;
+    const options = await pick(s, ['FileA', 'Folder'], { fileCategory: category, itemTypes: 'all', multiselect: true });
+    assert.equal(options[0].text, name); assert.equal(options[1].value.kind, 'folder');
+    assert.equal(s.calls.slice(before).filter(uri => uri.includes('/items/FileA')).length, 1);
+    assert.equal(s.load('results').fileFolderPickerOptionMatchesPolicy(options[0], { fileCategory: category }), true);
+    assert.equal(s.load('results').fileFolderPickerOptionMatchesPolicy(options[0], { fileCategory: category === 'images' ? 'audio' : 'images' }), false);
+    s.items.FileA.name = 'renamed.exe';
+    await assert.rejects(pick(s, ['Folder', 'FileA'], { fileCategory: category, itemTypes: 'all', multiselect: true }), /category/i);
+  }
+  const s = await state(); s.items.FileA.name = 'unknown'; s.items.FileA.file = { mimeType: 'image/png' };
+  await assert.rejects(pick(s, ['FileA'], { fileCategory: 'images' }), /category/i);
+  assert.equal((await pick(s, ['FileA']))[0].text, 'unknown');
+});
+
+test('category mismatches map to the shared sanitized selection policy error', () => {
+  const s = setup();
+  const errors = s.h.load('controls/file-folder-picker/file-folder-picker-errors.internal.ts');
+  assert.equal(errors.fileFolderPickerFailure(new Error('Selected file does not match the configured category.'), 'selection-invalid').code, 'selection-policy');
+});
+
+test('category hydration retains authoritative labels for incompatible saved values but excludes native preselection', async () => {
+  const s = await state(); s.items.FileA.name = 'Renamed.exe';
+  const value = { kind: 'file', tenantId: ids.tenant, endpoint, driveId: 'b!Drive', itemId: 'FileA', name: 'old.png' };
+  const option = await s.load('results').resolveFileFolderPickerValue(value, s.scope, s.context, s.cache, { fileCategory: 'images' });
+  assert.equal(option.text, 'Renamed.exe');
+  assert.equal(s.load('results').fileFolderPickerOptionMatchesPolicy(option, { fileCategory: 'images' }), false);
+  const config = s.load('config').compileFileFolderPickerConfig(s.scope, { fileCategory: 'images', sourceItems: [option] }, { origin: 'https://tenant.sharepoint.com', channelId: 'category' });
+  assert.equal(config.selection.sourceItems, undefined);
+  await assert.rejects(pick(s, ['FileA'], { fileCategory: 'images' }), /category/i);
+});

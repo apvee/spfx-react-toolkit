@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { createHarness } = require('./fixtures/web-part-shell/title-toolbar-harness.cjs');
-const base = 'controls/web-part-shell/title/';
+const base = 'controls/editable-text/';
 async function setup(t, html) {
   const h = createHarness(); t.after(() => h.close());
   const host = h.instance('toolbar'); host.displayMode = 2;
@@ -15,7 +15,7 @@ function button(label) { return label === 'Brand' ? document.querySelector('[dat
 test('Fluent toolbar edits the selected range through the existing publisher and selection alone does not write', async t => {
   const { h, host, editor } = await setup(t);
   h.act(() => { editor.commands.setTextSelection({ from: 2, to: 5 }); editor.view.dom.dispatchEvent(new h.window.FocusEvent('focusin', { bubbles: true })); });
-  assert.ok(document.querySelector('[role="toolbar"][aria-label="Title formatting"]'), 'Edit focus reveals the Fluent title toolbar');
+  assert.ok(document.querySelector('[role="toolbar"][aria-label="Text formatting"]'), 'Edit focus reveals the Fluent title toolbar');
   assert.equal(host.properties.titleHTML, undefined);
   const bold = button('Bold'); assert.ok(bold);
   h.act(() => bold.click());
@@ -26,13 +26,13 @@ test('Fluent toolbar edits the selected range through the existing publisher and
 
 test('format state reports actual mixed selection and collapsed stored marks', async t => {
   const { h, editor } = await setup(t, '<h3><strong><span class="wps-color-brand wps-size-28">AB</span></strong>C</h3>');
-  const p = h.load(base + 'web-part-title-formatting.internal.ts');
+  const p = h.load(base + 'editable-text-formatting.internal.ts');
   h.act(() => editor.commands.setTextSelection({ from: 1, to: 4 }));
-  const mixed = p.readTitleSelectionFormat(editor);
+  const mixed = p.readEditableTextSelectionFormat(editor);
   assert.equal(mixed.bold, 'mixed'); assert.equal(mixed.size, 'mixed'); assert.equal(mixed.color, 'mixed');
   assert.equal(mixed.block.type, 'heading'); assert.equal(mixed.block.level, 3);
   h.act(() => { editor.commands.setTextSelection(4); editor.commands.setMark('titleStyle', { size: 37, color: 'subtle' }); editor.commands.toggleItalic(); });
-  const caret = p.readTitleSelectionFormat(editor);
+  const caret = p.readEditableTextSelectionFormat(editor);
   assert.equal(caret.size, 37); assert.equal(caret.color, 'subtle'); assert.equal(caret.italic, true);
 });
 
@@ -40,21 +40,21 @@ test('format state reports actual mixed selection and collapsed stored marks', a
 
 test('clear removes only selection overrides and block spacing while preserving heading and text', async t => {
   const { h, editor } = await setup(t, '<h3 class="wps-line-20 wps-space-before wps-space-after"><strong><em><u><span class="wps-color-brand wps-size-28">ABCD</span></u></em></strong></h3>');
-  const p = h.load(base + 'web-part-title-formatting.internal.ts');
-  h.act(() => { editor.commands.setTextSelection({ from: 2, to: 4 }); p.clearTitleFormat(editor); });
+  const p = h.load(base + 'editable-text-formatting.internal.ts');
+  h.act(() => { editor.commands.setTextSelection({ from: 2, to: 4 }); p.clearEditableTextFormat(editor); });
   assert.equal(editor.getHTML(), '<h3><strong><em><u><span class="wps-color-brand wps-size-28">A</span></u></em></strong>BC<strong><em><u><span class="wps-color-brand wps-size-28">D</span></u></em></strong></h3>');
   h.act(() => editor.commands.undo()); assert.match(editor.getHTML(), /wps-line-20 wps-space-before wps-space-after/);
 });
 
 test('integer size validation rejects invalid and fractional values without changing format', async t => {
   const { h, editor, host } = await setup(t);
-  const p = h.load(base + 'web-part-title-formatting.internal.ts');
+  const p = h.load(base + 'editable-text-formatting.internal.ts');
   h.act(() => editor.commands.setTextSelection({ from: 1, to: 8 }));
   for (const value of ['', '7', '97', '20.5', '1e1', 'no']) {
-    h.act(() => assert.equal(p.setTitleFontSize(editor, value), false));
+    h.act(() => assert.equal(p.setEditableTextFontSize(editor, value), false));
     assert.equal(host.properties.titleHTML, undefined);
   }
-  h.act(() => assert.equal(p.setTitleFontSize(editor, '37'), true));
+  h.act(() => assert.equal(p.setEditableTextFontSize(editor, '37'), true));
   assert.equal(host.properties.titleHTML, '<h2><span class="wps-size-37">initial</span></h2>');
 });
 
@@ -116,7 +116,7 @@ test('font picker follows Fluent presets and live theme tokens without writing i
   h.act(() => editor.commands.setMark('titleStyle', { size: 37 }));
   fixture.render(host, { theme: { fontSizeHero700: '44px' } }); await h.settle();
   assert.equal(button('Font size').value, '44', 'toolbar reads inherited whole-title size, not a native stored-caret override');
-  assert.equal(h.load(base + 'web-part-title-formatting.internal.ts').readTitleSelectionFormat(editor).size, 37);
+  assert.equal(h.load(base + 'editable-text-formatting.internal.ts').readEditableTextSelectionFormat(editor).size, 37);
 });
 
 test('default line spacing removes only its override and undo restores it', async t => {
@@ -131,11 +131,11 @@ test('default line spacing removes only its override and undo restores it', asyn
 
 test('collapsed clear removes all title marks while preserving text, heading and its undo boundary', async t => {
   const { h, editor } = await setup(t, '<h4><strong>AB</strong><em>CD</em></h4>');
-  const p = h.load(base + 'web-part-title-formatting.internal.ts');
+  const p = h.load(base + 'editable-text-formatting.internal.ts');
   h.act(() => editor.commands.setTextSelection(5));
-  assert.equal(p.readTitleSelectionFormat(editor).italic, true);
-  h.act(() => p.clearTitleFormat(editor));
-  assert.equal(p.readTitleSelectionFormat(editor).italic, false);
+  assert.equal(p.readEditableTextSelectionFormat(editor).italic, true);
+  h.act(() => p.clearEditableTextFormat(editor));
+  assert.equal(p.readEditableTextSelectionFormat(editor).italic, false);
   assert.deepEqual(editor.state.storedMarks, []);
   assert.equal(editor.getHTML(), '<h4>ABCD</h4>');
   h.act(() => editor.commands.undo());
@@ -348,7 +348,7 @@ test('picker deduplicates host tokens while retaining Automatic and the active s
 
 test('localized toolbar commands and palette labels update with the same editor selection', async t => {
   const { h, host, editor, fixture } = await setup(t);
-  const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  const { resolveEditableTextStrings: strings } = h.load('controls/editable-text/localization/editable-text-locales.internal.ts');
   h.act(() => editor.commands.setTextSelection({ from: 2, to: 5 })); reveal(h, editor);
   host.context.pageContext.cultureInfo.currentUICultureName = 'it-IT'; fixture.render(host); await h.settle();
   click(h, button(strings('it-IT').themeColor));
@@ -364,7 +364,7 @@ test('localized toolbar commands and palette labels update with the same editor 
 
 test('compact heading presentation retains its complete localized value across command updates', async t => {
   const { h, host, editor, fixture } = await setup(t);
-  const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  const { resolveEditableTextStrings: strings } = h.load('controls/editable-text/localization/editable-text-locales.internal.ts');
   host.context.pageContext.cultureInfo.currentUICultureName = 'de-DE'; fixture.render(host); await h.settle();
   h.act(() => editor.commands.setTextSelection({ from: 2, to: 5 })); reveal(h, editor);
   const heading = button(strings('de-DE').heading);
@@ -390,7 +390,7 @@ test('palette sections preserve ordered accessible groups and each swatch belong
 
 test('font-size expand action uses the current localized name without Fluent English prefixes', async t => {
   const { h, host, editor, fixture } = await setup(t);
-  const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  const { resolveEditableTextStrings: strings } = h.load('controls/editable-text/localization/editable-text-locales.internal.ts');
   reveal(h, editor);
   for (const culture of ['it-IT', 'de-DE', 'ar-SA']) {
     host.context.pageContext.cultureInfo.currentUICultureName = culture;

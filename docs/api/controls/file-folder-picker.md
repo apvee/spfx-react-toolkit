@@ -67,6 +67,29 @@ Folder inputs preserve literal spaces, apostrophes, `#`, `%` and Unicode. They a
 
 A collection begins browsing at its verified root web. This does not promise enumeration of all subweb libraries by Microsoft's UI. Multiple arbitrary source roots, personal Microsoft accounts and other tenants are unsupported.
 
+## File categories
+
+`FileFolderPickerFileCategory` is the public union used by `fileCategory`, a shared flat prop for React and Property Pane, with or without a preset. Omission leaves files unrestricted unless `extensions` is supplied. Choose one of `images`, `video`, `audio`, `media` or `documents`; `media` includes images, video and audio. Supply either a category or a nonempty extension list. An empty `extensions` array imposes no extra restriction and may accompany a category. Categories are incompatible with `itemTypes="folders"`; `itemTypes="all"` applies the category only to files and keeps folders selectable.
+
+```tsx
+<FileFolderPicker preset="focused" label="Project media" scope={{ kind: 'siteCollection' }}
+  itemTypes="all" fileCategory="media" multiselect />
+```
+
+The hosted picker receives the requested category filter. Before accepting returned files, the toolkit independently checks the suffix of the authoritative metadata name against its conservative extension catalog. Unknown, missing or mismatching suffixes are rejected; supplied display labels do not prove eligibility. This catalog does not promise exact equivalence with every file Microsoft may display for a category, and it does not inspect file content or verify MIME types. Use `extensions` when a precise suffix allowlist is required. Existing selected references remain consumer-owned and visible when the category changes; the control does not silently clear them or emit a change during hydration. A changed category invalidates stale pending selections.
+
+The catalog contains the following case-insensitive suffixes (without the leading dot):
+
+| Category | Accepted suffixes |
+| --- | --- |
+| `images` | jpg, jpeg, jfif, png, gif, bmp, tif, tiff, webp, svg, ico, heic, heif, avif |
+| `video` | mp4, m4v, mov, wmv, avi, mkv, webm, mpg, mpeg, 3gp, 3g2, m2ts, ts, mts, ogv |
+| `audio` | mp3, wav, m4a, aac, flac, ogg, oga, wma, aif, aiff, opus, mid, midi |
+| `media` | All suffixes listed for images, video and audio. |
+| `documents` | pdf, doc, docx, docm, dot, dotx, dotm, xls, xlsx, xlsm, xlsb, xlt, xltx, xltm, ppt, pptx, pptm, pot, potx, potm, pps, ppsx, ppsm, odt, ods, odp, rtf, txt, csv |
+
+The React demo and native Property Pane expose a **File category** menu. Choosing a category clears the demo's custom extension setting and disables its extension input. Choosing folders-only clears the category; mixed mode retains it. These policy changes preserve selected references. The existing explicit source-change/reset actions retain their selection-clearing behavior.
+
 ## Props and state
 
 `FileFolderPickerProps` defines control configuration and selection ownership. `FileFolderPickerScope` defines selectable provenance; `FileFolderPickerInitialLocation` defines initial navigation. `FileFolderPickerChangeData` is the explicit-action callback payload. `FileFolderPickerValue` and `FileFolderPickerOption` separate persisted references from display models.
@@ -79,7 +102,8 @@ A collection begins browsing at its verified root web. This does not promise enu
 | `itemTypes` | `files`; also `folders` and `all`. |
 | `multiselect` | `false`; single picks replace, multiple picks append and deduplicate. |
 | `selectionLimit` | Optional positive integer; single mode always permits at most one. Existing conflicting values remain visible for removal. |
-| `extensions` | Unrestricted file suffixes; case-insensitive, e.g. `.pdf`. Invalid in folder-only mode. |
+| `fileCategory` | Unrestricted; accepts `images`, `video`, `audio`, `media` or `documents`. Mutually exclusive with nonempty `extensions`; invalid in folder-only mode. |
+| `extensions` | Unrestricted file suffixes; case-insensitive, e.g. `.pdf`. Invalid in folder-only mode or alongside a category when nonempty. |
 | `searchable` | `true`, controlling hosted search. |
 | `browseLabel` | Plain opening-action tooltip/accessibility label. Default: `Sfoglia file…`, `Sfoglia cartelle…` or `Sfoglia file e cartelle…`, according to `itemTypes`. |
 | `size` | `medium`; also `large`. Selected tag media follow native Fluent sizing. |
@@ -238,7 +262,7 @@ For a consumer choosing an all-sites read grant use AllSites.Read instead; add w
 
 ## Explicit compatibility gates
 
-The [current v8 schema](https://learn.microsoft.com/en-us/onedrive/developer/controls/file-pickers/v8-schema?view=odsp-graph-online) contains additional options whose presence does not establish their complete message/result contracts. Local-file pick, draft-selection payloads, custom/formatter commands, host-rendered tray/navigation, account switching and download/share/move/save results are not exposed as supported toolkit actions. No guessed callbacks or inert configuration flags are forwarded. Copy has a schema block without a copy action enum. Substrate, parent/configure protocol and SDK timeout overrides remain internal research gates. Consumer-only photos are outside SPFx Business support; site/list/listItem/Syntex domains require different result models and cannot be coerced into file/folder references. File/media category combinations need verified filter semantics; use existing extension filters for enforced file suffixes.
+The [current v8 schema](https://learn.microsoft.com/en-us/onedrive/developer/controls/file-pickers/v8-schema?view=odsp-graph-online) contains additional options whose presence does not establish their complete message/result contracts. Local-file pick, draft-selection payloads, custom/formatter commands, host-rendered tray/navigation, account switching and download/share/move/save results are not exposed as supported toolkit actions. No guessed callbacks or inert configuration flags are forwarded. Copy has a schema block without a copy action enum. Substrate, parent/configure protocol and SDK timeout overrides remain internal research gates. Consumer-only photos are outside SPFx Business support; site/list/listItem/Syntex domains require different result models and cannot be coerced into file/folder references. Only one file category is supported at a time; arbitrary category combinations are not exposed. Use extension filters for an explicit suffix allowlist.
 
 Automated config/auth/lifecycle tests and browser/tenant acceptance are separate evidence. Enabling a capability does not prove service availability, tenant grants or actual internal API behavior; see the [validation guide](../../SHAREPOINT-VALIDATION.md).
 
@@ -248,6 +272,8 @@ Automated config/auth/lifecycle tests and browser/tenant acceptance are separate
 React and Property Pane use the same preset contract and source-aware configuration. New scenarios start with explicit focused. Choose extended to exercise service-owned navigation, while retaining the same accepted source. The ordinary demo exposes functional choices rather than SDK/authentication switches; advanced diagnostics report applied settings and JSON references without becoming a second configurator. The sample Property Pane offers only focused and extended. Saved legacy sample configurations display and use focused until extended is selected; saved references and old SDK settings are retained. This sample policy does not remove the reusable control’s legacy contract. Explicit effective-source changes in the demo clear dependent starting-location settings; preset-only and cosmetic updates retain them. The reusable control leaves consumer-owned source/selection updates to the consumer.
 
 The validation guide distinguishes route navigation, empty content, denied resources and tooling limitations. A successful token acquisition alone does not establish a working Media route or a successful file selection.
+
+In mixed mode (`itemTypes: 'all'`), the SDK filter includes the selected semantic category **and** `folder` explicitly, so the category does not disable folder confirmation. Toolkit validation still applies the category only to files.
 
 ## Colorful selected-tag avatars
 

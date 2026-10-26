@@ -6,3 +6,5 @@ export { useSPFxDisplayMode } from '../../../packages/spfx-react-toolkit/lib/hoo
 export { useSPFxFluent9ThemeInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxFluent9ThemeInfo';
 export { useSx } from '../../../packages/spfx-react-toolkit/lib/hooks/useSx';
 export * from '../../../packages/spfx-react-toolkit/lib/helpers/styles';
+
+export * from '../../../packages/spfx-react-toolkit/lib/controls/editable-text';

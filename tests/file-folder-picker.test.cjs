@@ -38,8 +38,11 @@ test('controlled authoritative updates retain labels, do not emit and diagnose i
 for (const scenario of [
  { name: 'unrestricted files', props: {}, validation: undefined },
  { name: 'case-insensitive extensions', props: { extensions: ['.PDF'] }, validation: undefined },
+ { name: 'matching document category', props: { fileCategory: 'documents' }, validation: undefined },
  { name: 'mismatching extension', props: { extensions: ['.png'] }, validation: /selezione contiene elementi incompatibili/i },
+ { name: 'mismatching category', props: { fileCategory: 'images' }, validation: /selezione contiene elementi incompatibili/i },
  { name: 'folder-only mode', props: { itemTypes: 'folders' }, validation: /selezione contiene elementi incompatibili/i },
+ { name: 'conflicting category and extension', props: { fileCategory: 'documents', extensions: ['.pdf'] }, validation: /configurazione.+non valida/i },
  { name: 'invalid selection limit', props: { selectionLimit: 0 }, validation: /configurazione.+non valida/i },
 ]) {
  test(`current file policy handles ${scenario.name} without changing consumer-owned selection`, async () => {

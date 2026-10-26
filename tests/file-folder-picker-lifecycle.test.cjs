@@ -41,6 +41,7 @@ function setup({ pendingToken = false, renderedControl = false, autoFrame = true
     } },
     './file-folder-picker-navigation.internal': { postFileFolderPicker() { state.posts++; } },
   });
+  resultsBoundary.fileFolderPickerFileMatchesPolicy = h.load('controls/file-folder-picker/file-folder-picker-results.internal.ts').fileFolderPickerFileMatchesPolicy;
   resultsBoundary.normalizeFileFolderPickerItemPolicy = h.load('controls/file-folder-picker/file-folder-picker-results.internal.ts').normalizeFileFolderPickerItemPolicy;
   const actualHook = h.load('controls/file-folder-picker/useFileFolderPicker.internal.ts').useFileFolderPicker;
   const hook = props => {
@@ -383,4 +384,40 @@ test('equivalent extension casing/order preserves sessions while changed or inva
    assert.equal(m.current.busy,equivalent);assert.equal(env.state.disposals,equivalent?0:1);
   }finally{m.unmount();env.close();}
  }
+});
+
+test('category updates retain removable selections, flag incompatibility and cancel stale openings without extra sessions', async () => {
+  const env = setup(), changes = [], props = { preset: 'focused', fileCategory: 'documents', defaultValue: [value], onChange: d => changes.push(d) };
+  const m = env.h.mount(env.hook, props);
+  try {
+    await flush(env.h); env.h.act(() => m.current.browse()); await flush(env.h);
+    assert.equal(m.current.busy, true); assert.equal(env.state.sessions, 1);
+    m.render({ ...props, label: 'Equivalent' }); await flush(env.h);
+    assert.equal(m.current.busy, true); assert.equal(env.state.disposals, 0);
+    m.render({ ...props, fileCategory: 'images' }); await flush(env.h);
+    assert.equal(m.current.busy, false); assert.ok(env.state.disposals > 0);
+    assert.deepEqual(m.current.values, [value]); assert.match(m.current.validation, /categoria/i); assert.equal(changes.length, 0);
+    env.h.act(() => m.current.remove(value)); await flush(env.h);
+    assert.equal(m.current.values.length, 0); assert.equal(changes.length, 1);
+  } finally { m.unmount(); env.close(); }
+});
+
+test('category validation uses hydrated authoritative names even without a saved name or with a misleading display seed', async () => {
+  const env = setup(), saved = { ...value, name: undefined }, authoritative = { value: saved, text: 'Changed.exe' };
+  env.state.hydratedItems.push(authoritative);
+  const m = env.h.mount(env.hook, { fileCategory: 'images', value: [saved], initialOptions: [{ value: saved, text: 'Display.png' }] });
+  try { await flush(env.h); assert.match(m.current.validation, /categoria/i); assert.deepEqual(m.current.values, [{ kind: saved.kind, tenantId: saved.tenantId, endpoint: saved.endpoint, driveId: saved.driveId, itemId: saved.itemId }]); }
+  finally { m.unmount(); env.close(); }
+});
+
+test('removing another value cannot promote consumer display labels into authoritative category models', async () => {
+  const env = setup(), second = { ...value, itemId: 'TWO' };
+  env.state.hydratedItems.push({ value, text: 'Changed.exe' }, { value: second, text: 'Second.png' });
+  const m = env.h.mount(env.hook, { fileCategory: 'images', defaultValue: [value, second], multiselect: true, initialOptions: [{ value, text: 'Display.png' }] });
+  try {
+    await flush(env.h); assert.match(m.current.validation, /categoria/i);
+    env.h.act(() => m.current.remove(second));
+    assert.match(m.current.validation, /categoria/i);
+    assert.deepEqual(m.current.values, [value]);
+  } finally { m.unmount(); env.close(); }
 });

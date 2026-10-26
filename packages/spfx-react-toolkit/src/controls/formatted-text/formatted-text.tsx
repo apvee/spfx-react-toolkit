@@ -17,13 +17,28 @@ import type { FormattedTextProps } from './formatted-text.types';
  * Uses the host's Fluent theme and Griffel renderer; no SPFx provider is required.
  * Valid maxLines applies block clamp layout without changing the tag and wins over truncate/wrap.
  * Unsafe Markdown links preserve their label; raw HTML and unsupported document syntax stay literal.
+ * Strings in arrays and `React.Fragment` receive Markdown. Use a fragment to group strings with JSX
+ * actions: a wrapper such as `<span>` leaves descendant strings unparsed, even with `markdown={true}`.
  * Arbitrary JSX remains untouched. Ellipsis needs constrained width and suitable element layout.
+ * Each owned string above 64 KiB UTF-8 falls back literally before parsing. More than 2,000
+ * original AST nodes or depth above 32 (root depth 1) also returns the complete string literally.
+ * Node/depth checks run after parsing and do not bound parser work; see the FormattedText guide.
  * @param props Native text attributes, presentation options and owned content.
  * @returns A semantic text root, including when children render nothing.
  * @example
  * ```tsx
  * <FormattedText as="h2" variant="title2" maxLines={2}>
  *   Read the **updates** in [documentation](./docs).
+ * </FormattedText>
+ * ```
+ * @example
+ * ```tsx
+ * <FormattedText>
+ *   <React.Fragment>
+ *     {'**Project update** '}
+ *     <button type="button">Open project</button>
+ *     {' *review available*'}
+ *   </React.Fragment>
  * </FormattedText>
  * ```
  */

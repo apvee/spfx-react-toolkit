@@ -4,13 +4,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const harness = require('./fixtures/formatted-text-harness.cjs');
 const { cssRules } = require('./fixtures/sx-harness.cjs');
-const base = '../packages/spfx-react-toolkit/src/controls/web-part-shell/title/';
+const base = '../packages/spfx-react-toolkit/src/controls/editable-text/';
 let api, codec, styles, React, ReactDOM, act, renderer, host, dom;
 test.before(async () => {
   dom = harness.createSxDom();
-  api = await harness.loadModule(path.resolve(__dirname, base + 'web-part-title-renderer.internal.tsx'));
-  codec = await harness.loadModule(path.resolve(__dirname, base + 'web-part-title-codec.internal.ts'));
-  styles = await harness.loadModule(path.resolve(__dirname, base + 'web-part-title-styles.internal.ts'));
+  api = await harness.loadModule(path.resolve(__dirname, base + 'editable-text-renderer.internal.tsx'));
+  codec = await harness.loadModule(path.resolve(__dirname, base + 'editable-text-codec.internal.ts'));
+  styles = await harness.loadModule(path.resolve(__dirname, base + 'editable-text-styles.internal.ts'));
   React = require('react'); ReactDOM = require('react-dom'); ({ act } = require('react-dom/test-utils'));
   renderer = require('@griffel/core').createDOMRenderer(document);
   host = document.createElement('div'); document.body.appendChild(host);
@@ -23,7 +23,7 @@ function render(document, theme = require('@fluentui/react-theme').webLightTheme
   const { RendererProvider } = require('@griffel/react');
   const { FluentProvider } = require('@fluentui/react-provider');
   act(() => { ReactDOM.render(React.createElement(RendererProvider, { renderer },
-    React.createElement(FluentProvider, { theme, dir, 'data-provider': '' }, React.createElement(api.WebPartTitleReadRenderer, { document }))), host); });
+    React.createElement(FluentProvider, { theme, dir, 'data-provider': '' }, React.createElement(api.EditableTextReadRenderer, { document }))), host); });
   return host.querySelector('h1,h2,h3,h4,p');
 }
 const content = [{ type: 'text', text: 'Title' }];
@@ -107,7 +107,7 @@ test('theme palette updates under light, dark, high contrast and RTL without cha
   for (const [role, token] of [['primary','colorNeutralForeground1'],['subtle','colorNeutralForeground2'],['brand','colorBrandForeground1'],['neutralMuted','colorNeutralForeground3'],['brandAlt','colorBrandForeground2'],['red','colorPaletteRedForeground3'],['orange','colorPaletteDarkOrangeForeground3'],['yellow','colorPaletteYellowForeground3'],['green','colorPaletteGreenForeground3'],['teal','colorPaletteTealForeground2'],['blue','colorPaletteBlueForeground2'],['purple','colorPalettePurpleForeground2'],['pink','colorPalettePinkForeground2'],['brown','colorPaletteBrownForeground2']]) assert.match(rules, new RegExp('\\.wps-color-' + role + '[^{]*\\{color:var\\(--' + token + '\\)'));
 });
 test('only protocol attributes survive hostile imported markup', () => {
-  const parsed = codec.parseTitleHTML('<h2 id="unsafe" onclick="bad()" style="color:red"><span class="alien" title="unsafe">Safe</span><script>bad()</script></h2>', document);
+  const parsed = codec.parseEditableTextHTML('<h2 id="unsafe" onclick="bad()" style="color:red"><span class="alien" title="unsafe">Safe</span><script>bad()</script></h2>', document, 'h2');
   const block = render({ ...parsed.document, id: 'not-forwarded', style: { color: 'red' }, onClick: () => { throw new Error('not-forwarded'); } });
   assert.equal(block.textContent, 'Safe');
   for (const node of [block.parentElement, block, ...block.querySelectorAll('*')]) {
@@ -116,17 +116,17 @@ test('only protocol attributes survive hostile imported markup', () => {
 });
 test('invalid AST throws rather than fallback rendering and Read modules never import engine or properties', () => {
   const previousConsoleError = console.error;
-  const preventExpected = event => { if (event.error?.message === 'Invalid title document') event.preventDefault(); };
+  const preventExpected = event => { if (event.error?.message === 'Invalid editable text document') event.preventDefault(); };
   window.addEventListener('error', preventExpected);
   console.error = () => {};
-  try { assert.throws(() => render({ type: 'heading', level: 5, content }), /Invalid title document/); }
+  try { assert.throws(() => render({ type: 'heading', level: 5, content }), /Invalid editable text document/); }
   finally { console.error = previousConsoleError; window.removeEventListener('error', preventExpected); }
   assert.equal(render({ type: 'paragraph', content }).textContent, 'Title');
-  for (const name of ['web-part-title-renderer.internal.tsx', 'web-part-title-styles.internal.ts']) {
+  for (const name of ['editable-text-renderer.internal.tsx', 'editable-text-styles.internal.ts']) {
     const source = fs.readFileSync(path.resolve(__dirname, base + name), 'utf8');
     assert.doesNotMatch(source, /@tiptap|prosemirror|dangerouslySetInnerHTML|useSPFxProperties|createDOMRenderer/);
   }
-  assert.equal(typeof styles.useWebPartTitleStyles, 'function');
+  assert.equal(typeof styles.useEditableTextStyles, 'function');
 });
 
 test('shared editor wrapper scopes identical markers and repeated rendering reuses host CSS', () => {
@@ -134,7 +134,7 @@ test('shared editor wrapper scopes identical markers and repeated rendering reus
   const { FluentProvider } = require('@fluentui/react-provider');
   const { webLightTheme } = require('@fluentui/react-theme');
   function EditorDocumentProbe() {
-    const classes = styles.useWebPartTitleStyles();
+    const classes = styles.useEditableTextStyles();
     return React.createElement('div', { className: classes.root, 'data-editor-wrapper': '' },
       React.createElement('div', {}, React.createElement('p', { className: 'wps-line-16' },
         React.createElement('span', { className: 'wps-size-96 wps-color-subtle' }, 'Draft'))));
@@ -155,16 +155,16 @@ test('shared editor wrapper scopes identical markers and repeated rendering reus
 });
 
 test('derived title colors use the same foreground-only class resolver as swatches', async () => {
-  const format = await harness.loadModule(path.resolve(__dirname, base + 'web-part-title-format.internal.ts'));
+  const format = await harness.loadModule(path.resolve(__dirname, base + 'editable-text-format.internal.ts'));
   render({ type: 'paragraph', content: [{ type: 'text', text: 'Mixed', marks: { color: 'yellowGreen' } }] });
   const rules = cssRules(renderer).join('\n').replace(/:\s+/g, ':').replace(/\{\s+/g, '{');
-  for (const { id } of format.titleColorDescriptors) {
-    const source = format.titleFormatRegistry.colors[id];
+  for (const { id } of format.editableTextColorDescriptors) {
+    const source = format.editableTextFormatRegistry.colors[id];
     const sources = typeof source === 'string' ? [source] : [source.first, source.second];
     for (const token of sources) assert.match(token, /^color.*Foreground/);
-    const expected = format.getTitleColorCss(id);
+    const expected = format.getEditableTextColorCss(id);
     assert.ok(rules.replace(/\s+/g, '').includes('.wps-color-' + id + '{color:' + expected.replace(/\s+/g, '')), id);
   }
-  assert.equal(format.getTitleColorCss('yellowGreen'), 'color-mix(in srgb, var(--colorPaletteYellowForeground3) 73%, var(--colorPaletteGreenForeground3))');
+  assert.equal(format.getEditableTextColorCss('yellowGreen'), 'color-mix(in srgb, var(--colorPaletteYellowForeground3) 73%, var(--colorPaletteGreenForeground3))');
   assert.ok(!host.querySelector('[style]'));
 });

@@ -89,7 +89,11 @@ const FormattedTextExamples: React.FC<{ directionControl: React.ReactNode }> = (
         <FormattedText data-formatted-text-demo="preview" ref={rootRef} as={as} variant={variant} font={font} align={align}
           markdown={markdown} subtle={subtle} highlight={highlight} italic={italic} underline={underline} strikethrough={strikethrough}
           wrap={wrap} truncate={truncate} maxLines={maxLines || undefined}
-          onClick={() => setClicks(value => value + 1)}>{contentMode === 'jsx' ? <span data-formatted-text-demo="mixed-jsx">{'**Project update** '}<Button type="button">Open project</Button><React.Fragment>{' *review available*'}</React.Fragment></span> : source}</FormattedText>
+          onClick={() => setClicks(value => value + 1)}>{contentMode === 'jsx' ? <React.Fragment>
+            {'**Project update** '}
+            <Button data-formatted-text-demo="mixed-jsx" type="button">Open project</Button>
+            <React.Fragment>{' *review available*'}</React.Fragment>
+          </React.Fragment> : source}</FormattedText>
       </div>
   </DemoCard>;
 };

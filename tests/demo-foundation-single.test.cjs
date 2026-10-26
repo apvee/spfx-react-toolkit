@@ -63,12 +63,32 @@ test('RelativeTime diagnostic variants change the same single actual time or fal
   f.select('[data-demo-variant="relative-time"]','slot');assert.equal(f.view.container.querySelectorAll('[data-relative-time-demo="fallback-slot"]').length,1);
   f.select('[data-demo-variant="relative-time"]','event');assert.equal(f.view.container.querySelectorAll('time').length,1);
 });
-test('FormattedText selected JSX updates the actual subject without mounting a comparison',t=>{
-  const f=fixture(t,'FormattedText');f.one();f.open();assert.equal(f.view.container.querySelectorAll('[data-formatted-text-demo="preview"]').length,1);
-  f.select('[data-demo-variant="formatted-text"]','jsx');const subject=f.view.container.querySelector('[data-demo-subject]');assert.ok(subject.querySelector('[data-formatted-text-demo="mixed-jsx"] button'));
-  f.h.act(()=>Simulate.click(subject.querySelector('[data-formatted-text-demo="mixed-jsx"] button')));
-  assert.match(f.view.container.querySelector('[data-formatted-text-demo="observations"]').textContent,/Preview clicks: 1\./, 'one bubbled JSX activation is counted once');
-  f.select('[data-demo-variant="formatted-text"]','text');assert.equal(subject.querySelector('[data-formatted-text-demo="mixed-jsx"]'),null);
+test('FormattedText mixed JSX parses Markdown and preserves the action and Markdown toggle', t => {
+  const f = fixture(t, 'FormattedText');
+  f.one();
+  f.open();
+  assert.equal(f.view.container.querySelectorAll('[data-formatted-text-demo="preview"]').length, 1);
+  f.select('[data-demo-variant="formatted-text"]', 'jsx');
+  const subject = f.view.container.querySelector('[data-demo-subject]');
+  assert.equal(subject.querySelector('strong')?.textContent, 'Project update');
+  assert.equal(subject.querySelector('em')?.textContent, 'review available');
+  const button = subject.querySelector('button');
+  assert.equal(button?.textContent, 'Open project');
+  f.h.act(() => Simulate.click(button));
+  assert.match(f.view.container.querySelector('[data-formatted-text-demo="observations"]').textContent,
+    /Preview clicks: 1\./, 'one bubbled JSX activation is counted once');
+  const markdown = f.view.container.querySelector('[data-formatted-text-demo="markdown"]');
+  f.h.act(() => { markdown.checked = false; Simulate.change(markdown); });
+  assert.equal(Boolean(subject.querySelector('strong, em')), false);
+  assert.equal(subject.textContent, '**Project update** Open project *review available*');
+  assert.equal(subject.querySelector('button')?.textContent, 'Open project');
+  f.h.act(() => { markdown.checked = true; Simulate.change(markdown); });
+  assert.equal(subject.querySelector('strong')?.textContent, 'Project update');
+  assert.equal(subject.querySelector('em')?.textContent, 'review available');
+  assert.equal(subject.querySelector('button')?.textContent, 'Open project');
+  f.select('[data-demo-variant="formatted-text"]', 'text');
+  assert.equal(subject.querySelector('button'), null);
+  assert.equal(subject.querySelector('strong')?.textContent, 'intranet project');
 });
 test('AutoSkeleton and StateMessage retain a single real subject in diagnostics',t=>{
   for(const name of ['AutoSkeleton','StateMessage']){const f=fixture(t,name);f.one();f.open();const marker=name==='AutoSkeleton'?'data-auto-skeleton-demo':'data-state-message-demo';assert.equal(f.view.container.querySelectorAll(`[${marker}="preview"]`).length,1);f.view.unmount();f.h.close();}

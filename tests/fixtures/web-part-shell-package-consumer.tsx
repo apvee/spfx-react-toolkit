@@ -44,3 +44,10 @@ declare const legacyAction: React.ReactNode;
 interface OtherProperties extends IWebPartShellProperties { otherId: string; }
 // @ts-expect-error Explicit application generics must still match the instance property contract.
 <Shell<OtherProperties> instance={instance} />;
+
+// @ts-expect-error The shared editor implementation also remains private.
+import {} from '@apvee/spfx-react-toolkit/controls/editable-text/editable-text-editor.internal';
+// @ts-expect-error Retired title support paths do not become public aliases.
+import {} from '@apvee/spfx-react-toolkit/controls/web-part-shell/title/web-part-title-color-picker.internal';
+// @ts-expect-error Retired title toolbar paths remain private.
+import {} from '@apvee/spfx-react-toolkit/controls/web-part-shell/title/web-part-title-toolbar.internal';

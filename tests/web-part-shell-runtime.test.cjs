@@ -43,6 +43,7 @@ test('native ref, attributes, events, className and caller style reach the div r
   const ref = h.React.createRef(); let clicks = 0;
   const fixture = h.mount(h.instance(), 'Content', { ref, id: 'shell', className: 'consumer', 'aria-label': 'Workspace', 'data-owned': 'yes', style: { width: 333 }, onClick: () => clicks++ });
   assert.equal(ref.current, fixture.container.querySelector('#shell')); assert.equal(ref.current.tagName, 'DIV');
+  assert.equal(ref.current.hasAttribute('ownerdocument'), false);
   assert.equal(ref.current.getAttribute('aria-label'), 'Workspace'); assert.equal(ref.current.dataset.owned, 'yes');
   assert.ok(ref.current.classList.contains('consumer')); assert.equal(ref.current.style.width, '333px');
   h.act(() => ref.current.click()); assert.equal(clicks, 1);
@@ -196,4 +197,35 @@ test('action slots keep providers, refs, title and child identity across shell u
   assert.ok(fixture.container.querySelector('[data-web-part-shell-body]').previousElementSibling, 'legacy empty-string header stays present');
   fixture.render(host, { action: h.React.createElement(h.React.Fragment) });
   assert.ok(fixture.container.querySelector('[data-web-part-shell-body]').previousElementSibling, 'legacy empty-fragment header stays present');
+}));
+
+// The shell must delegate its title policy and lifecycle to the real common control.
+test('title delegates to EditableText with H1–H4/p, H2 fallback and no hidden mount', () => run(h => {
+  const { EditableText } = h.load('controls/editable-text/editable-text.tsx');
+  const render = EditableText.render; const calls = [];
+  EditableText.render = function(props, ref) { calls.push(props); return render(props, ref); };
+  try {
+    const host = h.instance('shared-title');
+    host.context.pageContext.cultureInfo.currentUICultureName = 'IT_it';
+    host.properties.title = '<Literal>';
+    const fixture = h.mount(host, 'Child', { action: h.React.createElement('button', {}, 'Action') });
+    assert.ok(calls.length > 0, 'the common control handles the title');
+    const props = calls.at(-1);
+    assert.deepEqual(props.allowedBlocks, ['h1', 'h2', 'h3', 'h4', 'p']);
+    assert.equal(props.defaultBlock, 'h2'); assert.equal(props.mode, 'read');
+    assert.equal(props.locale, 'IT_it'); assert.equal(props['aria-label'], 'Titolo della web part');
+    assert.equal(props.placeholder, 'Aggiungi un titolo');
+    assert.equal(fixture.container.querySelector('h2').textContent, '<Literal>');
+    for (const block of ['h1', 'h2', 'h3', 'h4', 'p']) {
+      host.properties.titleHTML = `<${block}>Saved</${block}>`; fixture.render();
+      assert.equal(fixture.container.querySelector(block).textContent, 'Saved');
+    }
+    host.properties.showTitle = false; fixture.render();
+    assert.equal(fixture.container.querySelector('[aria-label]'), null);
+    const hidden = h.instance('initially-hidden'); hidden.properties.showTitle = false; hidden.displayMode = 2;
+    const before = calls.length; const hiddenFixture = h.mount(hidden, 'Hidden child');
+    assert.equal(calls.length, before, 'hidden Edit never mounts the common control');
+    assert.equal(hiddenFixture.container.querySelector('[contenteditable]'), null);
+    assert.ok(fixture.container.textContent.includes('ActionChild'));
+  } finally { EditableText.render = render; }
 }));

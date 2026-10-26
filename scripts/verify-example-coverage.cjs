@@ -166,7 +166,7 @@ for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invok
 }
 console.log('Verified selectable root/domain/legacy Imports and dedicated equivalence fixture.');
 
-const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination', 'DescriptionList', 'ContentCard', 'PreviewCard', 'SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGroupTrim'].includes(item.name)).map(item => item.name);
+const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['EditableText', 'FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination', 'DescriptionList', 'ContentCard', 'PreviewCard', 'SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGroupTrim'].includes(item.name)).map(item => item.name);
 assertCovered('Controls', controlSymbols, registrySymbols);
 const descriptionListPanel = scenarioSource('DescriptionList');
 for (const marker of ['DescriptionList.Item', 'items=', 'layout=', 'key={entry.id}',
@@ -176,6 +176,14 @@ for (const marker of ['DescriptionList.Item', 'items=', 'layout=', 'key={entry.i
   'data-description-list-demo="inspect-ref"', 'data-description-list-demo="counter"']) {
   if (!descriptionListPanel.includes(marker)) throw new Error(`DescriptionList interactive example missing ${marker}`);
 }
+const editableTextPanel = scenarioSource('EditableText');
+for (const marker of ['<EditableText ', 'allowedBlocks=', 'onChange=', 'data-editable-text-demo="preview"',
+  'data-editable-text-demo="h2"', 'data-editable-text-demo="fallback"', 'data-editable-text-demo="empty"',
+  "'data-editable-text-demo': 'mode'", "'data-editable-text-demo': 'preset'", "'data-editable-text-demo': 'locale'",
+  'data-editable-text-demo="stored"', 'data-editable-text-demo="callback"']) {
+  if (!editableTextPanel.includes(marker)) throw new Error(`EditableText interactive example missing ${marker}`);
+}
+if ((editableTextPanel.match(/<EditableText /g) || []).length !== 1) throw new Error('EditableText product must mount exactly one subject');
 const textPanel = scenarioSource('FormattedText');
 for (const marker of ['FormattedText', 'maxLines', 'markdown', 'subtle', 'highlight', 'variant', 'as', 'font', 'align', 'wrap', 'truncate', 'italic', 'underline', 'strikethrough', 'ref', 'onClick']) {
   if (!textPanel.includes(marker)) throw new Error(`FormattedText interactive example missing ${marker}`);
@@ -259,7 +267,7 @@ if (!cardsIsolation.includes('name="independent"') || !cardsIsolation.includes('
 console.log('Verified selectable single Cards, image lifecycle and versioned native/isolation conformance coverage.');
 
 
-for (const name of ['Cards', 'Stage', 'Form', 'DataGrid', 'Groups', 'Pagination', 'DescriptionList', 'Styles', 'Imports', 'RelativeTime', 'FormattedText', 'AutoSkeleton', 'StateMessage', 'WebPartShell', 'Providers', 'Context']) {
+for (const name of ['Cards', 'Stage', 'Form', 'DataGrid', 'Groups', 'Pagination', 'DescriptionList', 'Styles', 'Imports', 'RelativeTime', 'FormattedText', 'EditableText', 'AutoSkeleton', 'StateMessage', 'WebPartShell', 'Providers', 'Context']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
   if (!product.includes('data-demo-variant') && !['ReactHooks'].includes(name)) throw new Error(`${name} selectable product variant missing`);

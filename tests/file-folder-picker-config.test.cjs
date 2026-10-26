@@ -117,3 +117,17 @@ test('preset configuration rejects Graph opt-out and legacy empty navigation arr
     assert.deepEqual(props, before);
   }
 });
+
+test('file categories compile to native semantic filters without altering scope or mixed selection', async () => {
+  for (const [category, filter] of Object.entries({ images: 'photo', video: 'video', audio: 'audio', media: 'media', documents: 'document' })) {
+    for (const preset of [undefined, 'focused', 'extended']) {
+      const { config } = await configured({ preset, fileCategory: category, itemTypes: 'all', extensions: [] });
+      assert.deepEqual(config.typesAndSources.filters, [filter, 'folder']);
+      assert.equal(config.typesAndSources.mode, 'all');
+      assert.equal(config.typesAndSources.locations.sharePoint.byPath.list, rootPath);
+    }
+  }
+  for (const props of [{ fileCategory: 'invalid' }, { fileCategory: 'images', extensions: ['.png'] }, { fileCategory: 'images', itemTypes: 'folders' }]) {
+    await assert.rejects(configured(props), /category/i);
+  }
+});

@@ -1,18 +1,18 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { createHarness } = require('./fixtures/web-part-shell/title-editor-harness.cjs');
-const base = 'controls/web-part-shell/title/';
+const base = 'controls/editable-text/';
 
 test('adapter round-trips finite block attributes, breaks, marks and rejects invalid engine input', t => {
   const h = createHarness(); t.after(() => h.close());
-  const adapter = h.load(base + 'web-part-title-editor-adapter.internal.ts');
+  const adapter = h.load(base + 'editable-text-editor-adapter.internal.ts');
   const doc = { type: 'heading', level: 4, lineSpacing: 2.4, spaceBefore: true, spaceAfter: true,
     content: [{ type: 'text', text: 'Title', marks: { bold: true, italic: true, underline: true, size: 96, color: 'brand' } }, { type: 'hardBreak' }] };
-  assert.deepEqual(adapter.editorContentToTitleDocument(adapter.titleDocumentToEditorContent(doc)), doc);
+  assert.deepEqual(adapter.editorContentToEditableTextDocument(adapter.editableTextDocumentToEditorContent(doc)), doc);
   for (const content of [{ type: 'doc', content: [] }, { type: 'doc', content: [{ type: 'heading', attrs: { level: 5 } }] },
     { type: 'doc', content: [{ type: 'paragraph', attrs: { lineSpacing: 1.5 } }] },
     { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'X', marks: [{ type: 'titleStyle', attrs: { color: '#fff' } }] }] }] }]) {
-    assert.throws(() => adapter.editorContentToTitleDocument(content), /Invalid/);
+    assert.throws(() => adapter.editorContentToEditableTextDocument(content), /Invalid/);
   }
 });
 
@@ -113,10 +113,11 @@ test('lazy editor failure and Retry follow current UI culture without touching t
   let fixture;
   try { fixture = h.mount(host, 'Child'); await h.settle(); } finally { console.error = logError; }
   const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
-  assert.ok(fixture.container.textContent.includes(strings('it-IT').titleEditorLoadError));
+  const { resolveEditableTextStrings: commonStrings } = h.load('controls/editable-text/localization/editable-text-locales.internal.ts');
+  assert.ok(fixture.container.textContent.includes(commonStrings('it-IT').editorLoadError));
   host.context.pageContext.cultureInfo.currentUICultureName = 'he-IL'; fixture.render(host); await h.settle();
-  assert.ok(fixture.container.textContent.includes(strings('he-IL').titleEditorLoadError));
-  const retry = [...fixture.container.querySelectorAll('button')].find(node => node.textContent === strings('he-IL').retry);
+  assert.ok(fixture.container.textContent.includes(commonStrings('he-IL').editorLoadError));
+  const retry = [...fixture.container.querySelectorAll('button')].find(node => node.textContent === commonStrings('he-IL').retry);
   assert.ok(retry); h.act(() => retry.click()); await h.settle();
   assert.ok(h.editor(fixture));
   assert.equal(h.editor(fixture).view.dom.getAttribute('aria-label'), strings('he-IL').titleEditorLabel);

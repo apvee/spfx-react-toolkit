@@ -206,6 +206,10 @@
       "types": "./lib/controls/data-grid/index.d.ts",
       "default": "./lib/controls/data-grid/index.js"
     },
+    "./controls/editable-text": {
+      "types": "./lib/controls/editable-text/index.d.ts",
+      "default": "./lib/controls/editable-text/index.js"
+    },
     "./controls/web-part-shell": {
       "types": "./lib/controls/web-part-shell/index.d.ts",
       "default": "./lib/controls/web-part-shell/index.js"
@@ -1974,6 +1978,9 @@
       ],
       "controls/data-grid": [
         "lib/controls/data-grid/index.d.ts"
+      ],
+      "controls/editable-text": [
+        "lib/controls/editable-text/index.d.ts"
       ],
       "controls/web-part-shell": [
         "lib/controls/web-part-shell/index.d.ts"

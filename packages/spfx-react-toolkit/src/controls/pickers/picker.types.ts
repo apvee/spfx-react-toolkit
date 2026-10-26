@@ -40,8 +40,15 @@ export interface PickerSelectionData<T extends PickerOption> {
   readonly optionText?: string;
 }
 /** Native Fluent Field label/hint/validation slots keep their peer contracts.
+ * Rendering requires a nonblank plain string label or explicit `aria-label`/`aria-labelledby`;
+ * JSX and object labels require explicit ARIA naming even when they display text.
+ * The renderer throws TypeError when neither naming input is supplied.
  * Single Combobox offers native clearable selection through the validated clear event; multiple Combobox deselects options and TagPicker dismisses tags. No default separate bulk-clear button is rendered.
  * @example const props: PickerProps<SitePickerOption> = { label: 'Site', presentation: 'combobox', availableOptions: [] };
+ * @example
+ * ```tsx
+ * <SitePicker label={<span>Site</span>} aria-label="Site" />
+ * ```
  */
 export interface PickerProps<T extends PickerOption> extends SearchPickerOptions, Pick<FieldProps,
   'label' | 'hint' | 'required' | 'validationMessage' | 'validationState'> {
@@ -97,9 +104,11 @@ export interface PickerProps<T extends PickerOption> extends SearchPickerOptions
   readonly controlClassName?: string;
   /** Optional stable input DOM ID. Omission uses a generated Fluent Field association; this is not an entity ID. */
   readonly id?: string;
-  /** Optional accessible input name for controls without a visible Field label. */
+  /** Explicit accessible input name, required with JSX/object labels unless aria-labelledby is supplied.
+   * Omission uses a plain string label; a supplied aria-label takes precedence over that label. */
   readonly 'aria-label'?: string;
-  /** Optional DOM ID references naming the input; forwarded to the native Fluent input. */
+  /** DOM ID references naming the input; forwarded to the native Fluent input.
+   * Supply this or aria-label when no nonblank plain string label is available. */
   readonly 'aria-labelledby'?: string;
   /** Literal presentation slots, fixed inner span/div; the control owns status/semantic shells. */
   readonly suggestionsHeader?: ContentSlot<'span'>;
@@ -121,9 +130,16 @@ export interface PickerProps<T extends PickerOption> extends SearchPickerOptions
   readonly operation: 'load' | 'search' | 'resolve' | 'validate';
   /** Optional failed personal or contextual Site suggestion source; absent for ordinary REST query failures. */
   readonly suggestionSource?: 'people' | 'memberOf' | 'currentUser' | 'currentSite' | 'hubSite' }) => void;
-  /** Display validation override; external validationMessage takes precedence. Undefined/empty means valid. */
+  /** Validates resolved models before an action commits, according to validationTrigger.
+   * Undefined/empty string accepts; a nonempty message blocks the action without changing selection
+   * or calling onOptionSelect. Promises are awaited. Throws/rejections report through onError
+   * and the failure UI without committing. Omission adds no custom validation.
+   * External validationMessage overrides only the displayed message, not this acceptance decision. */
   readonly validateSelection?: (items: readonly T[]) => string | undefined | Promise<string | undefined>;
-  /** Validation timing; defaults to change. Change validates selection, remove, clear and explicit resolution. Blur validates retained models after focus leaves the input. */
+  /** Defaults to change: validates selection, removal and clear before committing.
+   * Blur instead validates retained models after input blur when no confirmation is pending;
+   * it does not revoke an existing selection. Explicit ID resolution, when available, always
+   * validates before committing, including in blur mode. Consumer Promises are not cancelled. */
   readonly validationTrigger?: 'change' | 'blur';
 }
 /** Shared pre-search policy for every picker and Property Pane counterpart.
@@ -204,7 +220,7 @@ export interface ListPickerOption extends PickerOption<ListPickerValue> {
   readonly title: string;
   /** Optional server-relative root-folder navigation snapshot, never canonical identity. */
   readonly rootFolderUrl?: string;
-  /** Optional numeric list template or template set (OR). Omission allows all; a raw filter overrides this convenience filter. */
+  /** Required numeric SharePoint BaseTemplate metadata for this list; not a query filter. */
   readonly baseTemplate: number;
   /** Required hidden metadata flag used by convenience filters. */
   readonly hidden: boolean;
@@ -276,7 +292,7 @@ export interface FieldPickerProps extends PickerProps<FieldPickerOption>, WebPic
 export interface ViewPickerOption extends PickerOption<ViewPickerValue> {
   /** Effective source web/list identity, required for validating supplied candidates. */
   readonly webUrl: string;
-  /** Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. */
+  /** Required source list GUID, agreeing with the JSON reference; views always belong to a list. */
   readonly listId: string;
   /** Required native scoped identifier: GUID for Entra/list/field/view, positive safe integer for SharePoint principals. Must agree with the JSON reference. */
   readonly id: string;
@@ -314,7 +330,7 @@ export interface ListItemPickerOption extends PickerOption<ListItemPickerValue> 
   readonly fileExtension?: string;
   /** Effective source web/list identity, required for validating supplied candidates. */
   readonly webUrl: string;
-  /** Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. */
+  /** Required source list GUID for the item, file or folder, agreeing with the JSON reference. */
   readonly listId: string;
   /** Required positive safe integer SharePoint item ID, scoped to the web/list. Always retained even with a custom key. */
   readonly itemId: number;
@@ -329,7 +345,7 @@ export interface ListItemPickerOption extends PickerOption<ListItemPickerValue> 
  * @example <ListItemPicker label="Item" list="Projects" textField="Title" searchMode="contains" />
  */
 export interface ListItemPickerProps extends PickerProps<ListItemPickerOption>, WebPickerSource, SearchPickerOptions {
-  /** Required exact list title or existing toolkit selector for item/view queries; optional for FieldPicker, where absence queries site columns. String GUIDs are still titles. */
+  /** Required exact list title or existing toolkit selector for item queries. String GUIDs are still titles. */
   readonly list: string | SPFxPnPListSelector;
   /** Include folder candidates. Default false; folders stay distinguishable from files and list records. */
   readonly includeFolders?: boolean;

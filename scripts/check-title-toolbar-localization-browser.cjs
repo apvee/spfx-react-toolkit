@@ -36,7 +36,9 @@ async function serve(directory) {
 if (require.main === module) (async () => {
   fs.mkdirSync(output, { recursive: true });
   const resources = await harness.loadModule('packages/spfx-react-toolkit/src/controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
-  const { titleColorDescriptors } = await harness.loadModule('packages/spfx-react-toolkit/src/controls/web-part-shell/title/web-part-title-format.internal.ts');
+  const common = await harness.loadModule('packages/spfx-react-toolkit/src/controls/editable-text/localization/editable-text-locales.internal.ts');
+  const stringsFor = culture => { const text = common.resolveEditableTextStrings(culture); return { ...resources.resolveWebPartShellStrings(culture), ...text, titleFormattingControls: text.formattingControls, moreTitleFormatting: text.moreFormatting }; };
+  const { editableTextColorDescriptors: titleColorDescriptors } = await harness.loadModule('packages/spfx-react-toolkit/src/controls/editable-text/editable-text-format.internal.ts');
   const cultures = require('../tests/fixtures/sharepoint-ui-locales.json').cultures;
   check('50 actual culture catalogs', Object.keys(resources.webPartShellLocaleCatalogs).sort(), [...cultures].sort());
   const browser = await chromium.launch({ executablePath: process.env.SX_BROWSER_EXECUTABLE || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
@@ -57,7 +59,7 @@ if (require.main === module) (async () => {
         const original = await page.evaluate(() => window.shellFixture.observe());
         const toolbar = page.locator('[data-title-toolbar]');
         for (const culture of process.env.TITLE_LOCALIZATION_SKIP_CATALOGS === '1' ? [] : cultures) {
-          const strings = resources.resolveWebPartShellStrings(culture);
+          const strings = stringsFor(culture);
           await render({ uiCulture: culture });
           check(`${boundary}/${culture} editor identity`, await editable.evaluate((element, original) => element === original, identity), true);
           check(`${boundary}/${culture} editor accessible name`, await editable.getAttribute('aria-label'), strings.titleEditorLabel);
@@ -129,7 +131,7 @@ if (require.main === module) (async () => {
         check(`${boundary} author content remains literal`, await editable.textContent(), 'Author content');
         check(`${boundary} second instance language independent`, await page.locator('[data-shell-root=second] [contenteditable=true]').getAttribute('aria-label'), resources.resolveWebPartShellStrings('it-IT').titleEditorLabel);
         await render({ uiCulture: 'en-US' });
-        const english = resources.resolveWebPartShellStrings('en-US');
+        const english = stringsFor('en-US');
         await editable.focus(); await page.keyboard.press('Meta+a');
         await toolbar.getByRole('button', { name: english.themeColor, exact: true }).click();
         await page.locator('[data-title-color=red]').click();

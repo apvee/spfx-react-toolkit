@@ -10,7 +10,7 @@ const { buildConfig, statsOptions, collectEmittedModules, renderConsumer, readRu
 const root = path.resolve(__dirname, '..');
 const base = 'https://tenant.test/sites/standalone';
 const toolkit = '@apvee/spfx-react-toolkit';
-const scenarios = ['context', 'list', 'search', 'batch', 'providers', 'styles', 'form', 'data-grid', 'web-part-shell', 'stage', 'pagination', 'description-list', 'content-card', 'preview-card', 'sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'];
+const scenarios = ['context', 'list', 'search', 'batch', 'providers', 'styles', 'form', 'data-grid', 'editable-text', 'web-part-shell', 'stage', 'pagination', 'description-list', 'content-card', 'preview-card', 'sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'];
 const accessTrimScenarios = ['sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'];
 const variants = ['root', 'domain', 'leaf'];
 const leaf = { context: 'spfx-pnp-context.service', list: 'spfx-pnp-list.service', search: 'spfx-pnp-search.service', batch: 'spfx-pnp.service' };
@@ -28,11 +28,11 @@ function buildRuntimeConfig(consumerRoot, entry, outputDir, browserUi) {
 }
 
 async function compileProbe({ consumerRoot, outputDir, scenario, variant }) {
-  if (!scenarios.includes(scenario) || !(['form', 'data-grid', 'web-part-shell', 'stage', 'pagination', 'description-list', 'content-card', 'preview-card', 'sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'].includes(scenario) ? ['root', 'domain', 'control'] : variants).includes(variant)) throw new Error('Unknown production runtime probe');
-  const ui = scenario === 'providers' || scenario === 'styles' || scenario === 'form' || scenario === 'data-grid' || scenario === 'web-part-shell' || scenario === 'stage' || scenario === 'pagination' || scenario === 'description-list' || scenario === 'content-card' || scenario === 'preview-card' || accessTrimScenarios.includes(scenario);
+  if (!scenarios.includes(scenario) || !(['form', 'data-grid', 'editable-text', 'web-part-shell', 'stage', 'pagination', 'description-list', 'content-card', 'preview-card', 'sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'].includes(scenario) ? ['root', 'domain', 'control'] : variants).includes(variant)) throw new Error('Unknown production runtime probe');
+  const ui = scenario === 'providers' || scenario === 'styles' || scenario === 'form' || scenario === 'data-grid' || (scenario === 'web-part-shell' || scenario === 'editable-text') || scenario === 'stage' || scenario === 'pagination' || scenario === 'description-list' || scenario === 'content-card' || scenario === 'preview-card' || accessTrimScenarios.includes(scenario);
   const fixture = ui ? `${scenario}.tsx` : `pnp-${scenario}.ts`;
   const specifier = toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/services' : '/lib/services/' + leaf[scenario]);
-  const imports = ['form', 'data-grid', 'web-part-shell', 'stage', 'pagination', 'description-list', 'content-card', 'preview-card', 'sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'].includes(scenario) ? { TOOLKIT: toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/controls' : '/controls/' + scenario) } : ui ? scenario === 'providers' ? {
+  const imports = ['form', 'data-grid', 'editable-text', 'web-part-shell', 'stage', 'pagination', 'description-list', 'content-card', 'preview-card', 'sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'].includes(scenario) ? { TOOLKIT: toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/controls' : '/controls/' + scenario) } : ui ? scenario === 'providers' ? {
     PROVIDER: toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/core' : '/lib/core/provider-webpart'),
     CONTEXT: toolkit + (variant === 'root' ? '/hooks' : ''),
     PROPERTIES: toolkit + (variant === 'root' ? '/lib/hooks/useSPFxProperties' : '/hooks'),
@@ -49,7 +49,7 @@ async function compileProbe({ consumerRoot, outputDir, scenario, variant }) {
   const supportFixture = accessTrimScenarios.includes(scenario) ? fs.readFileSync(path.join(root, 'tests/fixtures/tree-shaking/runtime/access-trim-probe.tsx'), 'utf8') : undefined;
   if (supportFixture !== undefined) fs.writeFileSync(path.join(path.dirname(entry), 'access-trim-probe.tsx'), supportFixture);
   const config = buildRuntimeConfig(consumerRoot, entry, outputDir, ui);
-  if (scenario === 'web-part-shell') config.output.publicPath = '/production-assets/';
+  if (scenario === 'web-part-shell' || scenario === 'editable-text') config.output.publicPath = '/production-assets/';
   const stats = await new Promise((resolve, reject) => {
     const compiler = webpack(config);
     compiler.run((error, result) => compiler.close(closeError => error || closeError ? reject(error || closeError) : resolve(result)));
@@ -91,6 +91,7 @@ function installHostAdapter(consumerRoot, scenario) {
     if (trimHost && request === '@microsoft/sp-core-library') return { DisplayMode: { Read: 1, Edit: 2 }, _SPKillSwitch: { isActivated: () => false } };
     if (trimHost && request === '@microsoft/sp-page-context') return { PageContext: { serviceKey: trimHost.page }, SPPermission: original.call(this, permissionPath, parent, false).default };
     if (trimHost && request === '@microsoft/sp-http') return { SPHttpClient: { serviceKey: trimHost.sp, configurations: { v1: trimHost.v1 } }, MSGraphClientFactory: { serviceKey: trimHost.graph } };
+    if (scenario === 'editable-text' && request.startsWith('@microsoft/sp-')) throw new Error('Standalone EditableText requested SPFx: ' + request);
     if(host[request]) return host[request];
     if (/^(react|react-dom)(\/|$)/.test(request)) return original.call(this,consumerRequire.resolve(request),parent,isMain);
     if(scenario === 'web-part-shell' && request === '@microsoft/sp-core-library') return {DisplayMode:{Read:1,Edit:2}};
@@ -113,21 +114,21 @@ async function runProbe(scenario, bundlePath, consumerRoot) {
   Object.defineProperty(global,'navigator',{value:dom.window.navigator,configurable:true});
   global.HTMLElement=dom.window.HTMLElement;global.localStorage=dom.window.localStorage;global.sessionStorage=dom.window.sessionStorage;
   window.requestAnimationFrame=callback=>setTimeout(callback,0);window.cancelAnimationFrame=clearTimeout;
-  if(scenario==='providers'||scenario==='styles'||scenario==='form'||scenario==='data-grid'||scenario==='web-part-shell'||scenario==='stage'||scenario==='pagination'||scenario==='description-list'||scenario==='content-card'||scenario==='preview-card'||accessTrimScenarios.includes(scenario)) {
-    if (scenario === 'form' || scenario === 'data-grid' || scenario === 'web-part-shell' || scenario === 'stage' || scenario === 'pagination' || scenario === 'description-list' || scenario === 'content-card' || scenario === 'preview-card') {
+  if(scenario==='providers'||scenario==='styles'||scenario==='form'||scenario==='data-grid'||(scenario==='web-part-shell'||scenario==='editable-text')||scenario==='stage'||scenario==='pagination'||scenario==='description-list'||scenario==='content-card'||scenario==='preview-card'||accessTrimScenarios.includes(scenario)) {
+    if (scenario === 'form' || scenario === 'data-grid' || (scenario === 'web-part-shell' || scenario === 'editable-text') || scenario === 'stage' || scenario === 'pagination' || scenario === 'description-list' || scenario === 'content-card' || scenario === 'preview-card') {
       for (const name of ['Node', 'NodeFilter', 'Element', 'Event', 'CustomEvent', 'File', 'FileList', 'MutationObserver']) global[name] = dom.window[name];
       window.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
       // JSDOM 15 predates the browser WebCrypto API used by native Tabster.
       // Supply the actual host implementation rather than a random-ID stub.
       Object.defineProperty(window, 'crypto', { value: crypto.webcrypto });
-      if (scenario === 'data-grid' || scenario === 'web-part-shell' || scenario === 'stage' || scenario === 'pagination' || scenario === 'description-list' || scenario === 'content-card' || scenario === 'preview-card') {
+      if (scenario === 'data-grid' || (scenario === 'web-part-shell' || scenario === 'editable-text') || scenario === 'stage' || scenario === 'pagination' || scenario === 'description-list' || scenario === 'content-card' || scenario === 'preview-card') {
         // JSDOM 15 lacks Range geometry, as in the existing AutoSkeleton Node
         // harness. Real overlay rectangles/inert behavior are browser gates.
         document.createRange = () => ({ selectNodeContents() {}, getClientRects() { return []; } });
       }
     }
     const assetRequests = [];
-    if (scenario === 'web-part-shell') {
+    if (scenario === 'web-part-shell' || scenario === 'editable-text') {
       // JSDOM15 has no Selection implementation. The legacy null sentinel means
       // no selection, as in the dependency lifecycle probe; native focus is Task9.
       document.getSelection = () => null;
@@ -214,7 +215,7 @@ async function runProbe(scenario, bundlePath, consumerRoot) {
 }
 
 function productionRuntimeCases() {
-  return scenarios.flatMap(scenario => (['form', 'data-grid', 'web-part-shell', 'stage', 'pagination', 'description-list', 'content-card', 'preview-card', 'sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'].includes(scenario) ? ['root', 'domain', 'control'] : variants).map(variant => ({ scenario, variant })));
+  return scenarios.flatMap(scenario => (['form', 'data-grid', 'editable-text', 'web-part-shell', 'stage', 'pagination', 'description-list', 'content-card', 'preview-card', 'sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'].includes(scenario) ? ['root', 'domain', 'control'] : variants).map(variant => ({ scenario, variant })));
 }
 async function verifyProductionRuntime({ consumerRoot, outputDir }) {
   consumerRoot = fs.realpathSync(consumerRoot); outputDir = path.resolve(outputDir);

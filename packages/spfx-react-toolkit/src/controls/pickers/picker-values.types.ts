@@ -24,9 +24,9 @@ export interface SitePickerValue extends PickerValueLabel {
 export interface ListPickerValue extends PickerValueLabel {
   /** Required discriminant selecting the entity or reference variant; never inferred from a display name. */
   readonly kind: 'list';
-  /** Absolute HTTP(S) source web URL. Omission, when allowed, uses the provider current web; never inferred from a display label. */
+  /** Required absolute HTTP(S) source web URL; serialized values have no provider-current-web default. */
   readonly webUrl: string;
-  /** Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. */
+  /** Required list GUID scoped to webUrl; lists have no site-column variant. */
   readonly listId: string;
 }
 /** Serializable field reference; listId is absent only for site columns.
@@ -50,9 +50,9 @@ export interface FieldPickerValue extends PickerValueLabel {
 export interface ViewPickerValue extends PickerValueLabel {
   /** Required discriminant selecting the entity or reference variant; never inferred from a display name. */
   readonly kind: 'view';
-  /** Absolute HTTP(S) source web URL. Omission, when allowed, uses the provider current web; never inferred from a display label. */
+  /** Required absolute HTTP(S) source web URL; serialized values have no provider-current-web default. */
   readonly webUrl: string;
-  /** Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. */
+  /** Required source list GUID; views always belong to a list in webUrl. */
   readonly listId: string;
   /** Required view GUID within its source list. */
   readonly viewId: string;
@@ -96,9 +96,9 @@ export interface PickerCustomItemKey {
  * @example const item: ListItemPickerValueBase = { webUrl: 'https://tenant.sharepoint.com/sites/hr', listId: '11111111-1111-4111-8111-111111111111', itemId: 42 };
  */
 export interface ListItemPickerValueBase extends PickerValueLabel {
-  /** Absolute HTTP(S) source web URL. Omission, when allowed, uses the provider current web; never inferred from a display label. */
+  /** Required absolute HTTP(S) source web URL; serialized values have no provider-current-web default. */
   readonly webUrl: string;
-  /** Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. */
+  /** Required source list GUID for the item, file or folder, scoped to webUrl. */
   readonly listId: string;
   /** Required positive safe integer SharePoint item ID, scoped to the web/list. Always retained even with a custom key. */
   readonly itemId: number;

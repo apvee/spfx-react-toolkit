@@ -115,14 +115,20 @@ test('a real Webpack alias to a toolkit package at an arbitrary path is rejected
   } finally {fs.rmSync(directory,{recursive:true,force:true});}
 });
 
-test('canonical runtime matrix includes all 51 installed probes and all three trim aliases', () => {
+test('canonical runtime matrix includes all 54 installed probes and all three trim aliases', () => {
   const { productionRuntimeCases } = require('../scripts/verify-production-runtime.cjs');
   const cases = productionRuntimeCases();
-  assert.equal(cases.length, 51);
-  assert.equal(new Set(cases.map(item => `${item.scenario}/${item.variant}`)).size, 51);
+  assert.equal(cases.length, 54);
+  assert.equal(new Set(cases.map(item => `${item.scenario}/${item.variant}`)).size, 54);
   for (const family of ['sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim']) {
     assert.deepEqual(cases.filter(item => item.scenario === family).map(item => item.variant), ['root', 'domain', 'control']);
     const template = fs.readFileSync(path.resolve(__dirname, `fixtures/tree-shaking/runtime/${family}.tsx`), 'utf8');
     assert.match(template, /from '__TOOLKIT__'/); assert.match(template, /SPFxWebPartProvider/); assert.match(template, /runTrimProbe/);
   }
+});
+
+
+test('standalone EditableText is a complete root/domain/control runtime scenario', () => {
+  const { productionRuntimeCases } = require('../scripts/verify-production-runtime.cjs');
+  assert.deepEqual(productionRuntimeCases().filter(item => item.scenario === 'editable-text').map(item => item.variant), ['root', 'domain', 'control']);
 });

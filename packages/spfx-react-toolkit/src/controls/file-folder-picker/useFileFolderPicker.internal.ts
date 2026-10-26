@@ -10,7 +10,7 @@ import { createPickerRequestCache } from '../pickers/picker-request-cache.intern
 import { validateFileFolderPickerValues } from './file-folder-picker-values.internal';
 import { fileFolderPickerIdentity } from './file-folder-picker-identity.internal';
 import { resolveFileFolderPickerScope } from './file-folder-picker-scope.internal';
-import { normalizeFileFolderPickerItemPolicy, resolveFileFolderPickerItems, resolveFileFolderPickerValue } from './file-folder-picker-results.internal';
+import { fileFolderPickerFileMatchesPolicy, normalizeFileFolderPickerItemPolicy, resolveFileFolderPickerItems, resolveFileFolderPickerValue } from './file-folder-picker-results.internal';
 import { compileFileFolderPickerConfig } from './file-folder-picker-config.internal';
 import { resolveFileFolderPickerExperience } from './file-folder-picker-presets.internal';
 import type { ResolvedFileFolderPickerExperience } from './file-folder-picker-presets.internal';
@@ -83,7 +83,7 @@ export function useFileFolderPicker(props: FileFolderPickerProps): FileFolderPic
   }
   const models = new Map([...resolved, ...seeds].map(option => [fileFolderPickerIdentity(option.value), option]));
   const label = (value: FileFolderPickerValue): string => models.get(fileFolderPickerIdentity(value))?.text ?? value.name ?? 'Elemento non risolto';
-  const valuesSignature = JSON.stringify(values), policySignature = canonicalConfiguration([props.scope, props.itemTypes ?? 'files', !!props.multiselect, props.selectionLimit, extensionPolicySignature(props.extensions), props.requiredAccess ?? 'read']);
+  const valuesSignature = JSON.stringify(values), policySignature = canonicalConfiguration([props.scope, props.itemTypes ?? 'files', !!props.multiselect, props.selectionLimit, extensionPolicySignature(props.extensions), props.fileCategory, props.requiredAccess ?? 'read']);
   const session = React.useRef<FileFolderPickerSession>();
   const browseButton = React.useRef<HTMLButtonElement>(null); // React DOM ref contract uses null before mount.
   const restoreFocus = React.useRef(false);
@@ -118,7 +118,8 @@ export function useFileFolderPicker(props: FileFolderPickerProps): FileFolderPic
     if (props.disabled || invalid !== undefined) return;
     const confirmed = uniqueValues(next), map = new Map([...models.values(), ...picked].map(option => [fileFolderPickerIdentity(option.value), option]));
     if (!controlled) setDraft(confirmed);
-    setResolved([...map.values()]); setError(undefined);
+    // Consumer seeds participate in display payloads, never in authoritative policy models.
+    setResolved([...new Map([...resolved, ...picked].map(option => [fileFolderPickerIdentity(option.value), option])).values()]); setError(undefined);
     props.onChange?.({ reason, values: confirmed, items: confirmed.flatMap(value => { const model = map.get(fileFolderPickerIdentity(value)); return model === undefined ? [] : [model]; }), unresolvedValues: confirmed.filter(value => !map.has(fileFolderPickerIdentity(value))) });
   });
   const remove = useStableCallback((value: FileFolderPickerValue) => { if (!props.disabled && invalid === undefined) emit('remove', values.filter(candidate => fileFolderPickerIdentity(candidate) !== fileFolderPickerIdentity(value))); });
@@ -195,11 +196,15 @@ export function useFileFolderPicker(props: FileFolderPickerProps): FileFolderPic
   let policyFailure: string | undefined;
   try {
     const policy = normalizeFileFolderPickerItemPolicy(props);
-    if (values.some(value => (policy.itemTypes === 'files' && value.kind !== 'file') || (policy.itemTypes === 'folders' && value.kind !== 'folder') ||
-      (value.kind === 'file' && policy.extensions.length > 0 && value.name !== undefined && !policy.extensions.some(extension => value.name?.toLowerCase().endsWith(extension))))) {
-      policyFailure = 'La selezione contiene elementi incompatibili con il tipo o le estensioni configurate. Rimuovili o sostituiscili.';
+    if (values.some(value => {
+      // Display seeds may override labels, never the authoritative policy name.
+      const name = resolved.find(option => fileFolderPickerIdentity(option.value) === fileFolderPickerIdentity(value))?.text ?? value.name;
+      return (policy.itemTypes === 'files' && value.kind !== 'file') || (policy.itemTypes === 'folders' && value.kind !== 'folder') ||
+        (value.kind === 'file' && name !== undefined && !fileFolderPickerFileMatchesPolicy(name, policy));
+    })) {
+      policyFailure = 'La selezione contiene elementi incompatibili con il tipo, la categoria o le estensioni configurate. Rimuovili o sostituiscili.';
     }
-  } catch { policyFailure = 'Configurazione del tipo, delle estensioni o del limite di selezione non valida.'; }
+  } catch { policyFailure = 'Configurazione del tipo, della categoria, delle estensioni o del limite di selezione non valida.'; }
   const validation = invalid ?? policyFailure ?? (maximum !== undefined && values.length > maximum ? 'La selezione supera il limite configurato. Rimuovi gli elementi in eccesso.' : undefined);
   return { values, label, extension: (value: FileFolderPickerValue): string | undefined => models.get(fileFolderPickerIdentity(value))?.extension ?? value.name?.split('.').pop(), remove, browse, browseButton, busy, error: error?.message, hydrating: hydrating && !values.some(value => models.has(fileFolderPickerIdentity(value)) || value.name !== undefined), dialog, attachFrame, cancel, validation,
     ready: auth.isReady && context.spClient !== undefined, initError: auth.initError === undefined ? undefined : new FileFolderPickerError('auth-provider').message };

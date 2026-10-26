@@ -16,6 +16,7 @@ export type FileFolderPickerConfigurationProps = DistributiveOmit<FileFolderPick
 export function compileFileFolderPickerConfig(scope: ResolvedFileFolderPickerScope, input: FileFolderPickerConfigurationProps, channel: { readonly origin: string; readonly channelId: string; readonly theme?: 'default' | 'dark' }, experience: ResolvedFileFolderPickerExperience = resolveFileFolderPickerExperience(input)): FilePickerV8Configuration {
   const props = experience.options;
   const policy = normalizeFileFolderPickerItemPolicy(props);
+  const filters: NonNullable<FilePickerV8Configuration['typesAndSources']['filters']> = policy.fileCategory === undefined ? policy.extensions : [policy.fileCategory === 'images' ? 'photo' : policy.fileCategory === 'documents' ? 'document' : policy.fileCategory, ...(policy.itemTypes === 'all' ? ['folder' as const] : [])];
   const origin = new URL(channel.origin);
   if (!['http:', 'https:'].includes(origin.protocol) || origin.origin !== channel.origin || !channel.channelId.trim()) throw new Error('Invalid picker messaging channel.');
   const initial: FilePickerPath = { web: scope.initial.webUrl, ...(scope.initial.listPath === undefined ? {} : { list: scope.initial.listPath }), ...(scope.initial.folderPath === undefined ? {} : { folder: scope.initial.folderPath }) };
@@ -54,7 +55,7 @@ export function compileFileFolderPickerConfig(scope: ResolvedFileFolderPickerSco
     ...(visible.includes('site') || view === 'site' ? { pivots: { site: { byPath: { web: siteUrl } } } } : {}),
     search: { enabled: props.searchable ?? true },
     authentication: { enabled: true, tokens: { sharePoint: true, graph: experience.authentication.graphEnabled, substrate: false }, claimsChallenge: { enabled: experience.authentication.claimsChallengeEnabled } },
-    typesAndSources: { mode: policy.itemTypes, ...(policy.extensions.length === 0 ? {} : { filters: policy.extensions }), locations: oneDrive ? { oneDrive: {} } : { sharePoint: { byPath: restriction } }, access: { mode: props.requiredAccess ?? 'read' }, pivots: { oneDrive: visible.includes('myFiles'), recent: visible.includes('recent'), shared: visible.includes('shared'), sharedLibraries: visible.includes('quickAccess'), myOrganization: visible.includes('organization'), site: visible.includes('site') } },
+    typesAndSources: { mode: policy.itemTypes, ...(filters.length === 0 ? {} : { filters }), locations: oneDrive ? { oneDrive: {} } : { sharePoint: { byPath: restriction } }, access: { mode: props.requiredAccess ?? 'read' }, pivots: { oneDrive: visible.includes('myFiles'), recent: visible.includes('recent'), shared: visible.includes('shared'), sharedLibraries: visible.includes('quickAccess'), myOrganization: visible.includes('organization'), site: visible.includes('site') } },
     selection: { mode: policy.multiselect ? 'multiple' : 'single', ...(policy.maximumCount === undefined ? {} : { maximumCount: policy.maximumCount }), ...(props.retainSelectionOnNavigate === undefined ? (policy.multiselect ? { enablePersistence: true } : {}) : { enablePersistence: props.retainSelectionOnNavigate }), ...(preselection.length === 0 ? {} : { sourceItems: preselection }) },
     commands: {
       pick: { action: 'select' as const, ...(selectLabel === undefined ? {} : { label: selectLabel }), select: { urls: { download: false } } },
@@ -88,7 +89,7 @@ export interface FilePickerV8Configuration {
   readonly search: { readonly enabled: boolean };
   readonly authentication: { readonly enabled: boolean; readonly tokens: { readonly sharePoint: boolean; readonly graph: boolean; readonly substrate: boolean }; readonly claimsChallenge: { readonly enabled: boolean } };
   readonly typesAndSources: {
-    readonly mode: 'files' | 'folders' | 'all'; readonly filters?: readonly `.${string}`[];
+    readonly mode: 'files' | 'folders' | 'all'; readonly filters?: readonly (`.${string}` | 'photo' | 'video' | 'audio' | 'media' | 'document' | 'folder')[];
     readonly locations: { readonly sharePoint?: { readonly byPath: FilePickerPath }; readonly oneDrive?: Readonly<Record<string, never>> };
     readonly access: { readonly mode: 'read' | 'read-write' };
     readonly pivots: { readonly oneDrive: boolean; readonly recent: boolean; readonly shared: boolean; readonly sharedLibraries: boolean; readonly myOrganization: boolean; readonly site: boolean };

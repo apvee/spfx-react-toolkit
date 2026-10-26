@@ -64,6 +64,8 @@ Authors edit the title on the canvas in SPFx Edit mode. The property pane toggle
 ## Public API
 
 ```typescript
+import type { WebPartShellProps as PublicWebPartShellProps } from '@apvee/spfx-react-toolkit';
+
 interface IWebPartShellProperties {
   title: string;
   titleHTML?: string;
@@ -78,7 +80,7 @@ interface WebPartShellProps<TProperties extends IWebPartShellProperties>
   padding?: WebPartShellPadding;
   theme?: Theme;
   dir?: 'ltr' | 'rtl';
-  action?: React.ReactNode;
+  action?: PublicWebPartShellProps<TProperties>['action'];
   children?: React.ReactNode;
   dangerouslySetInnerHTML?: never;
 }
@@ -89,7 +91,7 @@ WebPartShell<TProperties extends IWebPartShellProperties>(
 function getWebPartShellPropertiesMetadata(): IWebPartPropertiesMetadata;
 ```
 
-`Theme` comes from `@fluentui/react-theme`. `BaseClientSideWebPart` and `IWebPartPropertiesMetadata` come from `@microsoft/sp-webpart-base`.
+`Theme` comes from `@fluentui/react-theme`. `BaseClientSideWebPart` and `IWebPartPropertiesMetadata` come from `@microsoft/sp-webpart-base`. The illustrative `action` member derives from the exported props type: it accepts shorthand or fixed `div` props/render slots, including an inner-container ref. The private slot type is not a consumer import.
 
 | Member | Contract |
 | --- | --- |
@@ -244,3 +246,7 @@ Local Chrome acceptance covers both source and compiled-library fixtures. `scrip
 An empty props object requests the header/action container even when the persisted title is hidden. Booleans, undefined and legacy null suppress action content. Callbacks execute only during ordinary rendering, may run more than once, and are never invoked for presence inspection. Static strings are literal. `as` can only repeat div; raw HTML and unsupported native keys are discarded. JSX/callback subtrees remain caller-owned, and React 17 erased `ReactNode` types can bypass literal-object restrictions. The persisted title protocol, title editor, provider ownership and body lifecycle remain unchanged.
 
 [View public source](../../../packages/spfx-react-toolkit/src/controls/web-part-shell/index.ts)
+
+## Reusing formatted regions
+
+The Shell-owned title delegates to [EditableText](./editable-text.md), using the same HTML protocol and localized editor. For another independent formatted block in Shell children, render EditableText and persist its HTML/plain text through caller-side `useSPFxProperties`; the guide shows the real hook signatures. The generic control owns a block-capable div and does not fit arbitrary inline action/label/trigger slots. Shell title metadata, property authority and provider behavior remain Shell concerns.

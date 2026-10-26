@@ -14,6 +14,12 @@ import { SitePicker, PrincipalPicker } from '@apvee/spfx-react-toolkit/controls/
 
 `PickerProps<T>` extends the native Fluent Field label, hint, required, validationMessage and validationState contracts. `PickerOption<TValue>` is `{ key, text, value }` plus domain display metadata. Keys are stable opaque renderer aliases; canonical identity comes from the validated scoped value, never a display label. Generated keys carry a versioned JSON reference and can hydrate without a display model. An arbitrary consumer key needs a model; missing models remain unresolved.
 
+The picker additionally requires an accessible input name: a nonblank plain string `label`, or explicit `aria-label`/`aria-labelledby`. JSX and Fluent object labels retain their native slot types, but require explicit ARIA naming even when they display text. The renderer throws `TypeError` if neither naming input is supplied. A supplied `aria-label` takes precedence over the plain label, so an empty override without `aria-labelledby` also fails this check. Consumers own the referenced IDs and meaningful accessible text.
+
+```tsx
+<SitePicker label={<span>Site</span>} aria-label="Site" />
+```
+
 | Input | Purpose | Updates |
 | --- | --- | --- |
 | `selectedOptions` | Controlled selection keys; `[]` clears | Authoritative; omission enables uncontrolled mode |
@@ -78,7 +84,11 @@ Multiple Combobox menus always include **Selezionati**, independent of the typed
 
 `onOptionSelect(event, data)` runs only for accepted explicit `selection`, `remove`, `clear` and `resolve` actions. `PickerSelectionEvent` is the native Fluent event; `PickerSelectionData` contains ordered selectedOptions, resolved selectedItems/selectedValues, unresolvedOptions and the optional affected key/text. Hydration and prop updates emit no change event. Resolved React selectedValues may be a subset when unresolved keys exist: consumers must not replace persisted references with that subset. The native Property Pane bridge retains the complete reference array.
 
-`validateSelection` returns a message or Promise; omission means no custom validation. `validationTrigger` defaults to change; removal/clear are also validated. Blur validates retained models without cancelling a pending confirmation. External validationMessage has display precedence. `onError(error, details)` identifies transport, operation and optional personal suggestion source. Empty responses, partial sources and failures are distinct. Source failures remain visible beside healthy rows with a retry action. Bounded-result warnings remain visible beside rows and ask for narrower criteria instead of offering retry; failed requests are retried only after an explicit retry/refresh, cache eviction or a new lifetime.
+`validateSelection(items)` receives the proposed resolved models, excluding unresolved aliases. Returning `undefined` or an empty string accepts the validated action; a nonempty message vetoes it, preserving selection and emitting no `onOptionSelect`. Promises are awaited. A throw or rejection uses the failure UI and `onError`, without committing: selection/remove/clear and blur report operation `validate`, while explicit resolution reports `resolve`. Omission means no custom validation. External `validationMessage` has display precedence only; it does not override the validator's acceptance decision.
+
+`validationTrigger` defaults to `change`, validating selection, removal and clear before committing. With `blur`, those gestures commit without custom change validation; input blur validates the retained models when no confirmation is pending, without revoking an existing selection. Explicit ID resolution, when available, always validates before committing, including in blur mode. Consumer Promises are not cancelled.
+
+`onError(error, details)` identifies transport, operation and optional personal suggestion source. Empty responses, partial sources and failures are distinct. Source failures remain visible beside healthy rows with a retry action. Bounded-result warnings remain visible beside rows and ask for narrower criteria instead of offering retry; failed requests are retried only after an explicit retry/refresh, cache eviction or a new lifetime.
 
 `WebPickerSource`, `SearchPickerOptions`, `PickerOrderBy` and `PickerInitialSuggestions` are the shared source/query/policy types. Native and React counterparts use the same defaults below.
 
@@ -137,7 +147,7 @@ For file candidates, typed search matches either the configured display field or
 
 Text, Note and calculated text (verified OutputType) match the REST EntityPropertyName locally with case-insensitive startsWith/contains; other field types match their FieldValuesAsText projection. SharePoint REST does not support `tolower`/`toupper`, and CAML does not establish the required casing contract, so generated string predicates are not sent. Raw consumer filters, folder policy and ordering remain server-side. Each search page scans at most five native REST pages (up to 1000 candidates at page size 200); a continuation and partial status allow further loading. Incomplete scans are never presented as complete. Large or threshold-limited lists may require narrower indexed filters. A custom key must have unique finite-number/string values; duplicates or an unfinished uniqueness scan leave the value unresolved. Numeric `1` differs from string `'1'`.
 
-A library row becomes `file` or `folder` only with verified FSObjType and File/Folder UniqueId, otherwise ordinary list rows remain `item`. Icons distinguish records, folders, generic files and known extensions such as PDF. Empty display fields use an Item ID fallback label.
+A library row becomes `file` or `folder` only with verified FSObjType and File/Folder UniqueId, otherwise ordinary list rows remain `item`. Icons distinguish records, folders, generic files and known extensions such as PDF. Files use the verified filename when their configured display value is absent, empty or whitespace. For ordinary records and folders, only an absent/null display value uses the Item ID fallback; defined empty or whitespace strings retain their existing value.
 
 ```tsx
 <ListItemPicker label="Projects" list="Projects" textField="Title" keyField="ExternalCode" searchMode="contains" />
@@ -274,8 +284,8 @@ Source contracts below supplement the examples. Inherited Fluent Field members r
 | `PickerProps.className` | Optional CSS class on the outer field region. |
 | `PickerProps.controlClassName` | Optional CSS class on the native Combobox or TagPicker root. |
 | `PickerProps.id` | Optional stable input DOM ID. Omission uses a generated Fluent Field association; this is not an entity ID. |
-| `PickerProps.'aria-label'` | Optional accessible input name for controls without a visible Field label. |
-| `PickerProps.'aria-labelledby'` | Optional DOM ID references naming the input; forwarded to the native Fluent input. |
+| `PickerProps.'aria-label'` | Explicit input name; required with JSX/object labels unless aria-labelledby is supplied. Takes precedence over a plain string label. |
+| `PickerProps.'aria-labelledby'` | Explicit input naming IDs; supply this or aria-label when no nonblank plain string label is available. Forwarded to the native input. |
 | `PickerProps.suggestionsHeader` | Literal presentation slots, fixed inner span/div; the control owns status/semantic shells. |
 | `PickerProps.emptyContent` | Literal div content for minimum-character prompts and complete empty/no-other-result states; omission shows the current-query default described under Search feedback. False hides only presentation, preserving the status shell. |
 | `PickerProps.loadingContent` | Literal div content while an eligible typed query waits for debounce or loads; omission shows “Ricerca in corso…”. False hides its content. |
@@ -283,8 +293,8 @@ Source contracts below supplement the examples. Inherited Fluent Field members r
 | `PickerProps.tooltip` | Optional native Fluent Tooltip content, relationship and positioning. Omission renders no tooltip; it does not replace the accessible input label. |
 | `PickerProps.refreshKey` | Explicit invalidation token; unchanged token never requests an automatic refresh. |
 | `PickerProps.onError` | Called with the Error and transport/operation metadata for failed asynchronous work; suggestionSource identifies a personal or contextual Site source. Return value is ignored; consumer options remain independent. |
-| `PickerProps.validateSelection` | Display validation override; external validationMessage takes precedence. Undefined/empty means valid. |
-| `PickerProps.validationTrigger` | Validation timing; defaults to change. Change validates selection, remove, clear and explicit resolution. Blur validates retained models after focus leaves the input. |
+| `PickerProps.validateSelection` | Validates resolved models; undefined/empty string accepts, a nonempty message vetoes without selection change or callback. Promises are awaited; throws/rejections use the failure channels. validationMessage overrides display only. |
+| `PickerProps.validationTrigger` | change (default) validates selection/remove/clear before commit. blur validates retained models on input blur when no confirmation is pending. Explicit ID resolution always validates, including in blur mode. |
 | `PickerInitialSuggestions.limit` | Total pre-search suggestions, integer 1–5, default 5. Search results use suggestionsLimit instead. |
 | `WebPickerSource.webUrl` | Absolute HTTP(S) source web URL. Omission, when allowed, uses the provider current web; never inferred from a display label. |
 | `SearchPickerOptions.minimumSearchLength` | Defaults to 2 for all pickers; shorter typed inputs show the minimum-character prompt and never initiate typed search. Values below 2 are invalid. |
@@ -308,7 +318,7 @@ Source contracts below supplement the examples. Inherited Fluent Field members r
 | `ListPickerOption.id` | Required native scoped identifier: GUID for Entra/list/field/view, positive safe integer for SharePoint principals. Must agree with the JSON reference. |
 | `ListPickerOption.title` | Required plain metadata title from the source; a consumer display alias may use a different text. |
 | `ListPickerOption.rootFolderUrl` | Optional server-relative root-folder navigation snapshot, never canonical identity. |
-| `ListPickerOption.baseTemplate` | Optional numeric list template or template set (OR). Omission allows all; a raw filter overrides this convenience filter. |
+| `ListPickerOption.baseTemplate` | Required numeric SharePoint BaseTemplate metadata for this list; not a query filter. |
 | `ListPickerOption.hidden` | Required hidden metadata flag used by convenience filters. |
 | `ListPickerProps.initialCatalogLimit` | Maximum scoped initial available options, default 30, integer 1–200. Selected rows are separate; showDefaultSuggestions=false suppresses loading. |
 | `ListPickerProps.baseTemplate` | Optional numeric list template or template set (OR). Omission allows all; a raw filter overrides this convenience filter. |
@@ -334,7 +344,7 @@ Source contracts below supplement the examples. Inherited Fluent Field members r
 | `FieldPickerProps.orderBy` | Optional server ordering. Metadata defaults to Title ascending; item search defaults to Id ascending. Continuations preserve ordering. |
 | `FieldPickerProps.showBlankOption` | Shows the explicit clear action. Defaults to false; clearing emits an empty array, never a synthetic domain reference. |
 | `ViewPickerOption.webUrl` | Effective source web/list identity, required for validating supplied candidates. |
-| `ViewPickerOption.listId` | Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. |
+| `ViewPickerOption.listId` | Required source list GUID, agreeing with the JSON reference; views always belong to a list. |
 | `ViewPickerOption.id` | Required native scoped identifier: GUID for Entra/list/field/view, positive safe integer for SharePoint principals. Must agree with the JSON reference. |
 | `ViewPickerOption.title` | Required plain metadata title from the source; a consumer display alias may use a different text. |
 | `ViewPickerOption.defaultView` | Required DefaultView metadata flag. |
@@ -348,14 +358,14 @@ Source contracts below supplement the examples. Inherited Fluent Field members r
 | `ListItemPickerOption.kind` | Verified entity kind, matching value.kind. Library origin alone does not identify a file. |
 | `ListItemPickerOption.fileExtension` | Optional file extension for file-specific presentation, not inferred identity. |
 | `ListItemPickerOption.webUrl` | Effective source web/list identity, required for validating supplied candidates. |
-| `ListItemPickerOption.listId` | Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. |
+| `ListItemPickerOption.listId` | Required source list GUID for the item, file or folder, agreeing with the JSON reference. |
 | `ListItemPickerOption.itemId` | Required positive safe integer SharePoint item ID, scoped to the web/list. Always retained even with a custom key. |
 | `ListItemPickerOption.keyField` | Effective key field, Id when omitted; validated against value.customKey or itemId. |
 | `ListItemPickerOption.keyValue` | Required typed custom-key value, or numeric itemId for the default Id key. Must agree with value.customKey when present. |
 | `ListItemPickerOption.fields` | Required read-only source field snapshot for consumer display logic. Never included in serialized picker values automatically. |
-| `ListItemPickerProps.list` | Required exact list title or existing toolkit selector for item/view queries; optional for FieldPicker, where absence queries site columns. String GUIDs are still titles. |
+| `ListItemPickerProps.list` | Required exact list title or existing toolkit selector for item queries. String GUIDs are still titles. |
 | `ListItemPickerProps.includeFolders` | Include folder candidates. Default false; folders stay distinguishable from files and list records. |
-| `ListItemPickerProps.textField` | Required internal name of the item display/search field. Empty values use an Item ID fallback label; field metadata determines safe query handling. |
+| `ListItemPickerProps.textField` | Required internal display/search field. Files also match their filename and use it for absent, empty or whitespace display values. Other missing values use an Item ID fallback; defined empty/whitespace record or folder values are preserved. Field metadata determines safe query handling. |
 | `ListItemPickerProps.keyField` | Defaults to Id; custom fields must contain unique string/number values. |
 | `ListItemPickerProps.filter` | Optional SharePoint OData filter ANDed with typed search and exact candidate identity. Field/list convenience filters are overridden; scope restrictions still apply. |
 | `ListItemPickerProps.orderBy` | Optional server ordering. Metadata defaults to Title ascending; item search defaults to Id ascending. Continuations preserve ordering. |
@@ -412,21 +422,21 @@ Source contracts below supplement the examples. Inherited Fluent Field members r
 | `SitePickerValue.url` | Absolute normalized site collection URL. |
 | `SitePickerValue.siteId` | Site collection GUID, when returned/verified. |
 | `ListPickerValue.kind` | Required discriminant selecting the entity or reference variant; never inferred from a display name. |
-| `ListPickerValue.webUrl` | Absolute HTTP(S) source web URL. Omission, when allowed, uses the provider current web; never inferred from a display label. |
-| `ListPickerValue.listId` | Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. |
+| `ListPickerValue.webUrl` | Required absolute HTTP(S) source web URL; serialized values have no provider-current-web default. |
+| `ListPickerValue.listId` | Required list GUID scoped to webUrl; lists have no site-column variant. |
 | `FieldPickerValue.kind` | Required discriminant selecting the entity or reference variant; never inferred from a display name. |
 | `FieldPickerValue.webUrl` | Absolute HTTP(S) source web URL. Omission, when allowed, uses the provider current web; never inferred from a display label. |
 | `FieldPickerValue.listId` | Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. |
 | `FieldPickerValue.fieldId` | Required field GUID within the source web/list. |
 | `FieldPickerValue.internalName` | Required field internal name, agreeing with the JSON reference; distinct from a REST EntityPropertyName. |
 | `ViewPickerValue.kind` | Required discriminant selecting the entity or reference variant; never inferred from a display name. |
-| `ViewPickerValue.webUrl` | Absolute HTTP(S) source web URL. Omission, when allowed, uses the provider current web; never inferred from a display label. |
-| `ViewPickerValue.listId` | Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. |
+| `ViewPickerValue.webUrl` | Required absolute HTTP(S) source web URL; serialized values have no provider-current-web default. |
+| `ViewPickerValue.listId` | Required source list GUID; views always belong to a list in webUrl. |
 | `ViewPickerValue.viewId` | Required view GUID within its source list. |
 | `PickerCustomItemKey.field` | Verified internal field name; must select unique finite-number/string values. |
 | `PickerCustomItemKey.value` | String/number discriminator is retained; numeric 1 differs from string '1'. |
-| `ListItemPickerValueBase.webUrl` | Absolute HTTP(S) source web URL. Omission, when allowed, uses the provider current web; never inferred from a display label. |
-| `ListItemPickerValueBase.listId` | Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. |
+| `ListItemPickerValueBase.webUrl` | Required absolute HTTP(S) source web URL; serialized values have no provider-current-web default. |
+| `ListItemPickerValueBase.listId` | Required source list GUID for the item, file or folder, scoped to webUrl. |
 | `ListItemPickerValueBase.itemId` | Required positive safe integer SharePoint item ID, scoped to the web/list. Always retained even with a custom key. |
 | `ListItemPickerValueBase.customKey` | Custom key pair; omission uses authoritative itemId (Id). |
 | `SharePointItemValue.kind` | Required discriminant selecting the entity or reference variant; never inferred from a display name. |

@@ -1,3 +1,10 @@
+/** File category mapped to the Microsoft v8 semantic filter. Omission leaves files unrestricted.
+ * Toolkit acceptance checks a documented, case-insensitive suffix catalog against the authoritative metadata name;
+ * it does not inspect bytes or promise Microsoft's complete internal classification. Media combines images, video and audio.
+ * @example const category: FileFolderPickerFileCategory = 'images';
+ */
+export type FileFolderPickerFileCategory = 'images' | 'video' | 'audio' | 'media' | 'documents';
+
 import type { FieldProps } from '@fluentui/react-components';
 import type { SPFxPnPListSelector } from '../../services/spfx-pnp-list.service';
 
@@ -148,7 +155,12 @@ interface FileFolderPickerCommonProps extends Pick<FieldProps,
   readonly multiselect?: boolean;
   /** Optional positive integer maximum; effective single-selection maximum is one. */
   readonly selectionLimit?: number;
-  /** Optional case-insensitive file suffixes such as .pdf; empty/omitted means unrestricted. */
+  /** Optional semantic file category; omitted means unrestricted. Incompatible with nonempty extensions or folders-only mode.
+   * In mixed mode folders remain selectable. A filter change retains existing values and reports incompatible files.
+   * Confirmed files must match the toolkit's documented suffix catalog using authoritative metadata; no content sniffing.
+   */
+  readonly fileCategory?: FileFolderPickerFileCategory;
+  /** Optional case-insensitive file suffixes such as .pdf; empty/omitted means unrestricted. Cannot combine nonempty with fileCategory. */
   readonly extensions?: readonly string[];
   /** Enable hosted search; defaults to true. */
   readonly searchable?: boolean;
@@ -206,11 +218,21 @@ interface FileFolderPickerLegacyOptions {
   /** Initial SharePoint internal field sort. Omitted means service order; ascending defaults true.
    * @deprecated Presets use service order. Retaining an initial sort requires a consumer choice to remain on legacy.
    */
-  readonly initialSort?: { readonly fieldName: string; readonly ascending?: boolean };
+  readonly initialSort?: {
+    /** Required SharePoint internal field name for the initial native sort. */
+    readonly fieldName: string;
+    /** Initial sort direction; omission defaults to true (ascending). */
+    readonly ascending?: boolean
+  };
   /** Initial native field/value filter, not an enforced acceptance boundary. Omitted means no initial filter.
    * @deprecated Presets use no initial filter. Retaining this presentation filter requires a consumer choice to remain on legacy.
    */
-  readonly initialFilter?: { readonly fieldName: string; readonly value: string };
+  readonly initialFilter?: {
+    /** Required SharePoint internal field name for the initial native UI filter, not an acceptance boundary. */
+    readonly fieldName: string;
+    /** Required initial native filter value; changes the initial UI without enforcing accepted-reference scope. */
+    readonly value: string
+  };
   /** Explicit native pivots; omission derives source defaults. Pivots never broaden accepted scope.
    * Availability and token requirements depend on the hosted service; Graph is not enabled implicitly.
    * With visible SharePoint navigation, explicitly requesting myFiles/recent/shared permits lazy

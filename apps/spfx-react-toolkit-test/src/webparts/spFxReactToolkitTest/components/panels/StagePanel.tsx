@@ -58,10 +58,10 @@ export const StageExample: React.FC<{ instance: string }> = ({ instance }) => {
   const [request, setRequest] = React.useState('No request');
   const [status, setStatus] = React.useState('Not saved');
   const [saveCount, setSaveCount] = React.useState(0);
-  const [mountCount, setMountCount] = React.useState(0);
+  const [openCount, setOpenCount] = React.useState(0);
   const [actionCount, setActionCount] = React.useState(0);
   const pendingSave = React.useRef<(() => void) | undefined>(undefined);
-  React.useEffect(() => { if (open) setMountCount(value => value + 1); }, [open]);
+  React.useEffect(() => { if (open) setOpenCount(value => value + 1); }, [open]);
   const onOpenChange = (_event: StageOpenChangeEvent, data: StageOpenChangeData): void => {
     setRequest(`${data.reason}: ${String(data.open)}`);
     if (!data.open && isSubmitting) {
@@ -136,7 +136,8 @@ export const StageExample: React.FC<{ instance: string }> = ({ instance }) => {
 
     <output data-stage-demo="request" className={styles.output}>{request}</output>
     <output data-stage-demo="save-count">Save callbacks: {saveCount}</output>
-    <output data-stage-demo="mount-count">Surface mounts: {mountCount}</output>
+    {/* Legacy automation selector; this product counter counts open sessions. */}
+    <output data-stage-demo="mount-count">Open sessions: {openCount}</output>
     </>}>
     <Stage {...surfaceOptions} open={open} onOpenChange={onOpenChange} dismissMode={dismissMode} unmountOnClose={!retain}
       data-stage-demo="surface" data-stage-instance={instance}>

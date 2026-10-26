@@ -92,11 +92,13 @@ assertDocumentedSurface(read('docs/api/hooks/react.md'), sxHook);
 assertContainsAll('docs/api/hooks/INDEX.md', ['useSx', 'useStableCallback'], 'React utility hooks');
 
 const controlSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts'));
-assertDocumentedSurface(read('docs/api/controls/formatted-text.md') + '\n' + read('docs/api/controls/relative-time.md') + '\n' + read('docs/api/controls/auto-skeleton.md') + '\n' + read('docs/api/controls/state-message.md') + '\n' + read('docs/api/controls/settings-group.md') + '\n' + read('docs/api/controls/accordion-group.md') + '\n' + read('docs/api/controls/form.md') + '\n' + read('docs/api/controls/data-grid.md') + '\n' + read('docs/api/controls/web-part-shell.md') + '\n' + read('docs/api/controls/stage.md') + '\n' + read('docs/api/controls/pagination.md') + '\n' + read('docs/api/controls/description-list.md') + '\n' + read('docs/api/controls/content-card.md') + '\n' + read('docs/api/controls/preview-card.md') + '\n' + ['sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim', 'pickers', 'file-folder-picker'].map(name => read(`docs/api/controls/${name}.md`)).join('\n'), controlSurface);
+assertDocumentedSurface(read('docs/api/controls/formatted-text.md') + '\n' + read('docs/api/controls/relative-time.md') + '\n' + read('docs/api/controls/auto-skeleton.md') + '\n' + read('docs/api/controls/state-message.md') + '\n' + read('docs/api/controls/settings-group.md') + '\n' + read('docs/api/controls/accordion-group.md') + '\n' + read('docs/api/controls/form.md') + '\n' + read('docs/api/controls/data-grid.md') + '\n' + read('docs/api/controls/web-part-shell.md') + '\n' + read('docs/api/controls/stage.md') + '\n' + read('docs/api/controls/pagination.md') + '\n' + read('docs/api/controls/description-list.md') + '\n' + read('docs/api/controls/content-card.md') + '\n' + read('docs/api/controls/preview-card.md') + '\n' + ['sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim', 'pickers', 'file-folder-picker', 'editable-text'].map(name => read(`docs/api/controls/${name}.md`)).join('\n'), controlSurface);
 const formSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/form/index.ts'), { includeTypeMembers: true });
 assertDocumentedSurface(read('docs/api/controls/form.md'), formSurface);
 const gridSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/data-grid/index.ts'), { includeTypeMembers: true });
 assertDocumentedSurface(read('docs/api/controls/data-grid.md'), gridSurface);
+const editableTextSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/editable-text/index.ts'), { includeTypeMembers: true });
+assertDocumentedSurface(read('docs/api/controls/editable-text.md'), editableTextSurface);
 const shellSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/web-part-shell/index.ts'), { includeTypeMembers: true });
 assertDocumentedSurface(read('docs/api/controls/web-part-shell.md'), shellSurface);
 const descriptionListSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/description-list/index.ts'), { includeTypeMembers: true });
@@ -176,7 +178,7 @@ for (const documentPath of ['README.md', 'packages/spfx-react-toolkit/README.md'
   }
 }
 assert.deepStrictEqual(brokenLinks, [], `Broken public documentation links:\n${brokenLinks.join('\n')}`);
-console.log(`public docs verification passed (${styleSurface.length} qualified style exports with source JSDoc, historical helper/service inventory, WebPartShell surface/JSDoc and relative links)`);
+console.log(`public docs verification passed (${styleSurface.length} qualified style exports with source JSDoc, historical helper/service inventory, WebPartShell/EditableText surface/JSDoc and relative links)`);
 
 const facadeSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/styles/index.ts'));
 assert.deepStrictEqual(facadeSurface.map(item => item.name).sort(),

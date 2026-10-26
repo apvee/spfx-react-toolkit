@@ -3,6 +3,9 @@ import * as ReactDOM from 'react-dom';
 import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { RendererProvider } from '@griffel/react';
 import { createDOMRenderer } from '@griffel/core';
+import { mountDemoFixture } from '../demo-fixture-host';
+import EditableTextPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/EditableTextPanel';
+import { EditableTextIsolationFixture } from '../demo-control-isolation/editable-text-regressions';
 import { createTheme } from '@fluentui/react';
 import { WebPartShell, useSx, width, type IWebPartShellProperties, type WebPartShellProps } from '@apvee/spfx-react-toolkit';
 import { WebPartShellDemoHost } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/WebPartShellDemoHost';
@@ -37,6 +40,8 @@ interface ShellFixture {
 declare global { interface Window { shellFixture: ShellFixture; } }
 
 export function mountShellFixture(boundary: 'source' | 'compiled'): void {
+  const scenario = new URLSearchParams(location.search).get('scenario');
+  if (scenario === 'editable-text') { mountDemoFixture(<EditableTextPanel />); return; }
   const root = document.getElementById('root');
   if (!root) throw new Error('Shell fixture root missing');
   const renderer = createDOMRenderer(document);
@@ -92,5 +97,10 @@ export function mountShellFixture(boundary: 'source' | 'compiled'): void {
     for (const handler of sdkHandlers) handler(state.theme === 'light' ? 'default' : state.theme === 'highContrast' ? 'contrast' : 'dark');
   };
   window.shellFixture = { render, observe: () => ({ properties: { ...hosts[0].properties }, otherProperties: { ...hosts[1].properties }, refreshes: [...refreshes], mounts, cleanups, subscriptions: subscriptions.map(set => set.size) }) };
+  if (scenario === 'editable-text-regressions') {
+    hosts[0].displayMode = 2;
+    mountDemoFixture(<EditableTextIsolationFixture instance={hosts[0] as unknown as BaseClientSideWebPart<IWebPartShellProperties>} />);
+    return;
+  }
   render({});
 }

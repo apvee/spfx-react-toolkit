@@ -101,7 +101,7 @@ Section props retain the required title-or-`aria-label`-or-`aria-labelledby` uni
 
 TagPicker uses only a plain string label for automatic input/tag-group naming. Object, JSX and callback labels require explicit `aria-label`; the toolkit does not extract their text. `noOptionsContent ?? strings.noOptions ?? 'No options match the current query.'` retains nullish fallback and the status shell for boolean/empty content. These slots apply only to data-backed options with no available matches; custom option children still own filtering.
 
-The [existing peers](#dependencies) provide slot resolution and native semantics; no provider or dependency is added. Options, value codecs, `formatFiles`, array `renderItem`, validation messages and localized action/accessible-name strings retain their existing domain contracts. The Form sample's Notes field observes inner refs, click events and a stateful callback hint; Address, DateTime and empty tag results exercise the other slots. Static sample checks do not establish browser or authenticated SharePoint execution.
+The [existing peers](#dependencies) provide slot resolution and native semantics; no provider or dependency is added. Options, value codecs, `formatFiles`, array `renderItem`, validation messages and localized action/accessible-name strings retain their existing domain contracts. The Form sample's Notes field exposes inner label/hint refs, label click events and a static hint. DateTime's time label demonstrates a render callback; Address and empty tag results exercise other slots. The versioned conformance fixture retains the separate stateful callback-hint scenario. Static sample checks do not establish browser or authenticated SharePoint execution.
 
 ## Input, output and validation ownership
 

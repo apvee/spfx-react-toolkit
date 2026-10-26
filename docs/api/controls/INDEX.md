@@ -62,4 +62,8 @@ Picker public contracts: `SitePicker`, `ListPicker`, `FieldPicker`, `ViewPicker`
 
 ## FileFolderPicker
 
-[FileFolderPicker](file-folder-picker.md) and its [Property Pane field](../property-pane/file-folder-picker.md) use Microsoft hosted v8 for existing SharePoint and OneDrive Business files/folders. Public React contracts: `FileFolderPickerProps`, `FileFolderPickerPreset`, `FileFolderPickerScope`, `FileFolderPickerInitialLocation`, `FileFolderPickerValue`, `FileFolderPickerOption`, `FileFolderPickerChangeData`. Native contracts: `PropertyPaneFileFolderPickerProps`, `FileFolderPickerPropertyKey`.
+[FileFolderPicker](file-folder-picker.md) and its [Property Pane field](../property-pane/file-folder-picker.md) use Microsoft hosted v8 for existing SharePoint and OneDrive Business files/folders. Public React contracts: `FileFolderPickerProps` (including the shared `fileCategory` policy), `FileFolderPickerPreset`, `FileFolderPickerFileCategory`, `FileFolderPickerScope`, `FileFolderPickerInitialLocation`, `FileFolderPickerValue`, `FileFolderPickerOption`, `FileFolderPickerChangeData`. Native contracts: `PropertyPaneFileFolderPickerProps`, `FileFolderPickerPropertyKey`.
+
+## EditableText
+
+[EditableText](./editable-text.md) owns one controlled formatted block with Read/Edit and finite semantic block policy. Public exports: `EditableText`, `EditableTextProps`, `EditableTextBlock`, `EditableTextChangeData`. It uses the host Fluent/Griffel peers without requiring SPFx; callers own persistence.

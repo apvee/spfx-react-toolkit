@@ -77,14 +77,22 @@ Links use Fluent `Link` from `@fluentui/react-components`, preserving `href` and
 
 Arrays and `React.Fragment` children are visited; other React elements keep their identity, props, refs and children. Markdown delimiters never combine across separate string children or JSX elements.
 
+When grouping Markdown strings with JSX actions, use `React.Fragment` (or `<>...</>`). A wrapper such as `<span>` is preserved together with all its descendants, so `markdown={true}` does not interpret strings inside it. This rule concerns child wrappers; the control's own `as="span"` root still interprets its direct string children normally.
+
 ```tsx
 <FormattedText as="p">
-  {'**Parsed string** '}
-  <button type="button" onClick={() => console.log('clicked')}>Authored JSX</button>
-  <React.Fragment>{' *parsed fragment string*'}</React.Fragment>
+  <React.Fragment>
+    {'**Project update** '}
+    <button type="button" onClick={() => console.log('clicked')}>Open project</button>
+    {' *review available*'}
+  </React.Fragment>
 </FormattedText>
+// The child span preserves its contents: the asterisks remain visible.
+<FormattedText markdown={true}><span>{'**Literal inside JSX**'}</span></FormattedText>
 <FormattedText markdown={false}>**Literal delimiters**</FormattedText>
 ```
+
+The fragment example renders “Project update” in bold, keeps the authored button, and renders “review available” in italics. The sample's **Text and JSX action** mode uses this composition; turning Markdown off shows the delimiters while retaining the button.
 
 Strings above 64 KiB of UTF-8 bytes fall back before parsing. More than 2,000 original AST nodes, depth above 32 (root depth 1), unexpected node structure or parser errors also trigger complete literal fallback. Node/depth limits are checked after parsing and do not bound the parser's own work. No global text cache is maintained.
 

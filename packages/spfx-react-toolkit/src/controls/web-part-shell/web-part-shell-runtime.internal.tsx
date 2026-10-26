@@ -8,8 +8,6 @@ import { useSPFxDisplayMode } from '../../hooks/useSPFxDisplayMode';
 import { useSPFxContext } from '../../core/context.internal';
 import { useSPFxFluent9ThemeInfo } from '../../hooks/useSPFxFluent9ThemeInfo';
 import { isSingleWebPartAppPage, resolveSPFxTeamsSdk, resolveWebPartShellSurface } from '../../helpers/spfx-host-context.internal';
-import { resolveWebPartShellStrings } from './localization/web-part-shell-locales.internal';
-import type { WebPartShellStrings } from './localization/web-part-shell-strings.internal';
 import { WebPartTitle } from './title/web-part-title.internal';
 import { useWebPartShellLayoutStyles, useWebPartShellProviderStyles } from './web-part-shell.styles.internal';
 import type { IWebPartShellProperties, WebPartShellProps } from './web-part-shell.types';
@@ -19,8 +17,8 @@ type RuntimeProps = Omit<WebPartShellProps<IWebPartShellProperties>, 'instance'>
   rootRef: React.ForwardedRef<HTMLDivElement>;
 };
 
-function ShellLayout(props: RuntimeProps & { resolvedSurface: 'section' | 'application'; strings: WebPartShellStrings }): React.ReactElement {
-  const { ownerDocument, rootRef, resolvedSurface, strings, padding = 'auto',
+function ShellLayout(props: Omit<RuntimeProps, 'ownerDocument'> & { resolvedSurface: 'section' | 'application'; locale: string | undefined }): React.ReactElement {
+  const { rootRef, resolvedSurface, locale, padding = 'auto',
     action, children, className, style, ...nativeProps } = props;
   delete nativeProps.dangerouslySetInnerHTML;
   delete nativeProps.surface;
@@ -43,7 +41,7 @@ function ShellLayout(props: RuntimeProps & { resolvedSurface: 'section' | 'appli
       {hasHeader && <div className={styles.header}>
         <div className={styles.title}>
           <WebPartTitle title={properties?.title ?? ''} titleHTML={properties?.titleHTML}
-            showTitle={showTitle} editing={isEdit} onChange={changeTitle} ownerDocument={ownerDocument} strings={strings} />
+            showTitle={showTitle} editing={isEdit} onChange={changeTitle} locale={locale} />
         </div>
         <div className={styles.actions}>{renderContentSlot(action, 'div', sx, { shorthand: 'preserve' })}</div>
       </div>}
@@ -66,7 +64,8 @@ export function WebPartShellRuntime(props: RuntimeProps): React.ReactElement {
   const surface = resolveWebPartShellSurface(props.surface ?? 'auto', resolveSPFxTeamsSdk(spfxContext) !== undefined,
     isSingleWebPartAppPage(spfxContext.pageContext));
   const styles = useWebPartShellProviderStyles(dir);
-  return <FluentProvider theme={theme} dir={dir} targetDocument={props.ownerDocument} className={styles.provider}>
-    <ShellLayout {...props} resolvedSurface={surface} strings={resolveWebPartShellStrings(spfxContext.pageContext.cultureInfo.currentUICultureName)} />
+  const { ownerDocument, ...layoutProps } = props;
+  return <FluentProvider theme={theme} dir={dir} targetDocument={ownerDocument} className={styles.provider}>
+    <ShellLayout {...layoutProps} resolvedSurface={surface} locale={spfxContext.pageContext.cultureInfo.currentUICultureName} />
   </FluentProvider>;
 }

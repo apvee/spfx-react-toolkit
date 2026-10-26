@@ -99,6 +99,7 @@ async function thumbInteractions(axis) {
   }
   if (process.env.STYLES_PANEL_SHELL_ONLY === '1') {
     await require('./web-part-shell-browser.helpers.cjs').checkWebPartShellBrowser(page, { url, output, label, boundary: 'compiled', check, consoleMessages });
+    await require('./editable-text-browser.helpers.cjs').checkEditableTextBrowser(page, { url, output, label, check });
     check('Shell console health', consoleMessages, []);
     check('Shell page errors', pageErrors, []);
     return;

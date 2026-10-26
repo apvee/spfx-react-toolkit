@@ -128,7 +128,7 @@
       "^@apvee/spfx-react-toolkit/lib/controls/web-part-shell/"
     ],
     "editor": [
-      "^@apvee/spfx-react-toolkit/lib/controls/web-part-shell/title/web-part-title-(editor(?:-adapter)?|extensions|toolbar)\\.internal\\.js$"
+      "^@apvee/spfx-react-toolkit/lib/controls/editable-text/editable-text-(editor(?:-adapter)?|extensions|toolbar|color-picker)\\.internal\\.js$"
     ],
     "tiptap": [
       "^@tiptap/"
@@ -180,6 +180,9 @@
     ],
     "entra-group-trim": [
       "^@apvee/spfx-react-toolkit/lib/controls/entra-group-trim/"
+    ],
+    "editable-text": [
+      "^@apvee/spfx-react-toolkit/lib/controls/editable-text/"
     ]
   },
   "fixtures": [
@@ -239,7 +242,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": []
     },
@@ -304,7 +308,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": []
     },
@@ -364,7 +369,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": []
     },
@@ -430,7 +436,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [],
       "retainedDescriptors": {
@@ -499,7 +506,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "pnp"
@@ -557,7 +565,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -618,7 +627,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -678,7 +688,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "pnp",
@@ -747,7 +758,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -811,7 +823,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": []
     },
@@ -857,7 +870,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": []
     },
@@ -901,7 +915,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": []
     },
@@ -948,7 +963,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -1012,7 +1028,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": []
     },
@@ -1058,7 +1075,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -1105,7 +1123,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "styles-engine"
@@ -1164,7 +1183,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "formatted-text",
@@ -1228,7 +1248,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "relative-time",
@@ -1289,7 +1310,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "iana-lookup"
@@ -1350,7 +1372,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": []
     },
@@ -1408,7 +1431,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "auto-skeleton",
@@ -1466,7 +1490,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "state-message",
@@ -1529,7 +1554,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "settings-group",
@@ -1589,7 +1615,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "accordion-group",
@@ -1647,7 +1674,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1709,7 +1737,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "form",
@@ -1774,7 +1803,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "data-grid",
@@ -1837,7 +1867,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "data-grid",
@@ -1893,7 +1924,8 @@
         "shell",
         "editor",
         "tiptap",
-        "prosemirror"
+        "prosemirror",
+        "editable-text"
       ],
       "forbiddenInitialModuleGroups": [
         "editor",
@@ -1948,7 +1980,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": []
     },
@@ -1997,7 +2030,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "stage",
@@ -2056,7 +2090,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "pagination",
@@ -2117,7 +2152,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "description-list",
@@ -2178,7 +2214,8 @@
         "card-image",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "content-card",
@@ -2240,7 +2277,8 @@
         "content-card",
         "sharepoint-permission-trim",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ],
       "requiredModuleGroups": [
         "preview-card",
@@ -2330,7 +2368,8 @@
         "card-frame",
         "card-image",
         "sharepoint-group-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ]
     },
     {
@@ -2411,7 +2450,8 @@
         "card-frame",
         "card-image",
         "sharepoint-permission-trim",
-        "entra-group-trim"
+        "entra-group-trim",
+        "editable-text"
       ]
     },
     {
@@ -2492,7 +2532,66 @@
         "card-frame",
         "card-image",
         "sharepoint-permission-trim",
-        "sharepoint-group-trim"
+        "sharepoint-group-trim",
+        "editable-text"
+      ]
+    },
+    {
+      "id": "editable-text",
+      "template": "editable-text.tsx",
+      "variants": {
+        "root": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit"
+          }
+        },
+        "domain": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls"
+          }
+        },
+        "control": {
+          "imports": {
+            "TOOLKIT": "@apvee/spfx-react-toolkit/controls/editable-text"
+          }
+        }
+      },
+      "forbiddenModuleGroups": [
+        "form",
+        "data-grid",
+        "charts",
+        "d3",
+        "editor-menus",
+        "react-hook-form",
+        "form-resolver",
+        "form-schema",
+        "form-date",
+        "form-time",
+        "stage",
+        "pagination",
+        "description-list",
+        "content-card",
+        "preview-card",
+        "card-frame",
+        "card-image",
+        "sharepoint-permission-trim",
+        "sharepoint-group-trim",
+        "entra-group-trim",
+        "shell",
+        "provider",
+        "pnp",
+        "spfx-runtime"
+      ],
+      "requiredModuleGroups": [
+        "editable-text",
+        "editor",
+        "tiptap",
+        "prosemirror"
+      ],
+      "forbiddenInitialModuleGroups": [
+        "editor",
+        "tiptap",
+        "prosemirror"
       ]
     }
   ],
@@ -2830,6 +2929,18 @@
     {
       "candidate": "entra-group-trim/domain",
       "reference": "entra-group-trim/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "editable-text/root",
+      "reference": "editable-text/control",
+      "metric": "gzip",
+      "maxIncreaseBytes": 0
+    },
+    {
+      "candidate": "editable-text/domain",
+      "reference": "editable-text/control",
       "metric": "gzip",
       "maxIncreaseBytes": 0
     }

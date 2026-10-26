@@ -1,3 +1,4 @@
+import { resolveEditableTextLocaleName } from '../../editable-text/localization/editable-text-locales.internal';
 import type { WebPartShellStrings } from './web-part-shell-strings.internal';
 import { strings as arSAStrings } from './locales/ar-SA';
 import { strings as azLatnAZStrings } from './locales/az-Latn-AZ';
@@ -104,95 +105,7 @@ export const webPartShellLocaleCatalogs: Readonly<Record<string, WebPartShellStr
   'zh-TW': zhTWStrings,
 });
 
-const exactCatalogs: Readonly<Record<string, WebPartShellStrings>> = Object.freeze(Object.fromEntries(
-  Object.entries(webPartShellLocaleCatalogs).map(([culture, strings]) => [culture.toLowerCase(), strings])
-));
-
-// No prefix matching: ambiguous languages and unsupported scripts retain the en-US fallback.
-const safeAliases: Readonly<Record<string, string>> = Object.freeze({
-  'ar': 'ar-SA',
-  'bg': 'bg-BG',
-  'ca': 'ca-ES',
-  'cs': 'cs-CZ',
-  'cy': 'cy-GB',
-  'da': 'da-DK',
-  'de': 'de-DE',
-  'el': 'el-GR',
-  'en': 'en-US',
-  'es': 'es-ES',
-  'et': 'et-EE',
-  'eu': 'eu-ES',
-  'fi': 'fi-FI',
-  'fr': 'fr-FR',
-  'ga': 'ga-IE',
-  'gl': 'gl-ES',
-  'he': 'he-IL',
-  'hi': 'hi-IN',
-  'hr': 'hr-HR',
-  'hu': 'hu-HU',
-  'id': 'id-ID',
-  'it': 'it-IT',
-  'ja': 'ja-JP',
-  'kk': 'kk-KZ',
-  'ko': 'ko-KR',
-  'lt': 'lt-LT',
-  'lv': 'lv-LV',
-  'mk': 'mk-MK',
-  'ms': 'ms-MY',
-  'nb': 'nb-NO',
-  'nl': 'nl-NL',
-  'pl': 'pl-PL',
-  'prs': 'prs-AF',
-  'ro': 'ro-RO',
-  'ru': 'ru-RU',
-  'sk': 'sk-SK',
-  'sl': 'sl-SI',
-  'sv': 'sv-SE',
-  'th': 'th-TH',
-  'tr': 'tr-TR',
-  'uk': 'uk-UA',
-  'vi': 'vi-VN',
-  'en-gb': 'en-US',
-  'en-au': 'en-US',
-  'en-ca': 'en-US',
-  'en-nz': 'en-US',
-  'en-ie': 'en-US',
-  'en-za': 'en-US',
-  'de-at': 'de-DE',
-  'de-ch': 'de-DE',
-  'fr-ca': 'fr-FR',
-  'fr-be': 'fr-FR',
-  'fr-ch': 'fr-FR',
-  'nl-be': 'nl-NL',
-  'es-mx': 'es-ES',
-  'es-ar': 'es-ES',
-  'es-cl': 'es-ES',
-  'es-co': 'es-ES',
-  'es-pe': 'es-ES',
-  'zh-hans': 'zh-CN',
-  'zh-hans-cn': 'zh-CN',
-  'zh-hans-sg': 'zh-CN',
-  'zh-sg': 'zh-CN',
-  'zh-hant': 'zh-TW',
-  'zh-hant-tw': 'zh-TW',
-  'zh-hant-hk': 'zh-TW',
-  'zh-hant-mo': 'zh-TW',
-  'zh-hk': 'zh-TW',
-  'zh-mo': 'zh-TW',
-  'sr-latn': 'sr-Latn-RS',
-  'sr-latn-ba': 'sr-Latn-RS',
-  'sr-latn-me': 'sr-Latn-RS',
-  'sr-cyrl': 'sr-Cyrl-RS',
-  'sr-cyrl-ba': 'sr-Cyrl-RS',
-  'sr-cyrl-me': 'sr-Cyrl-RS',
-  'az-latn': 'az-Latn-AZ',
-  'bs-latn': 'bs-Latn-BA',
-});
-
-/** Resolve only the supplied SharePoint UI culture; never inspect regional culture or browser state. */
+/** Use the shared culture policy for title names; never read browser or regional state. */
 export function resolveWebPartShellStrings(uiCulture: string | undefined): WebPartShellStrings {
-  const normalized = typeof uiCulture === 'string' ? uiCulture.trim().replace(/_/g, '-').toLowerCase() : '';
-  if (Object.prototype.hasOwnProperty.call(exactCatalogs, normalized)) return exactCatalogs[normalized];
-  const alias = Object.prototype.hasOwnProperty.call(safeAliases, normalized) ? safeAliases[normalized] : undefined;
-  return (alias && webPartShellLocaleCatalogs[alias]) || webPartShellLocaleCatalogs['en-US'];
+  return webPartShellLocaleCatalogs[resolveEditableTextLocaleName(uiCulture)];
 }

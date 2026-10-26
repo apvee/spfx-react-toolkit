@@ -15,6 +15,7 @@ The package publishes ESNext JavaScript for a bundler and TypeScript declaration
 | `/controls/web-part-shell` | Canonical WebPartShell, generic props/persisted types and pure metadata helper |
 | `/controls/form` | Canonical `Form`, `createForm` and public types; compound adapters remain private implementations |
 | `/controls/auto-skeleton` | Canonical `AutoSkeleton` and `AutoSkeletonProps` |
+| `/controls/editable-text` | Canonical `EditableText`, `EditableTextProps`, `EditableTextBlock` and `EditableTextChangeData`; engine/AST/codec remain private |
 | `/controls/formatted-text` | Canonical `FormattedText` and its three public types |
 | `/controls/relative-time` | Canonical `RelativeTime` and `RelativeTimeProps` |
 | `/controls/settings-group` | Canonical `SettingsGroup` compound Item and public types |
@@ -219,3 +220,7 @@ The cards use the existing shared React/Fluent/Griffel peers and host renderer, 
 ## Hosted file/folder picker entries
 
 Import `FileFolderPicker` and its types from `@apvee/spfx-react-toolkit/controls/file-folder-picker` (also root or `/controls`). Import `PropertyPaneFileFolderPicker`, `PropertyPaneFileFolderPickerProps` and `FileFolderPickerPropertyKey` from `@apvee/spfx-react-toolkit/property-pane/file-folder-picker`; native factories are not root value exports. Both clean aliases resolve to canonical compiled implementations and retain existing React/Fluent/SPFx peers. No private sample SDK or MSAL dependency is added. See the [control guide](api/controls/file-folder-picker.md).
+
+## Standalone formatted editing
+
+[EditableText](./api/controls/editable-text.md) is available through root, `/controls` and `/controls/editable-text` with identical public symbols. Read uses the safe renderer; Edit lazily loads the private engine. A standalone narrow consumer requires shared React/Fluent/Griffel peers, without an SPFx provider. Historical `/lib/...` compatibility does not expose the new private editable-text modules.

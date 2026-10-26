@@ -6,7 +6,7 @@ const ts = require('typescript');
 const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
 
 test('all demo panels inherit theme and default direction; theme diagnostics remain', () => {
-  for (const name of ['AutoSkeleton', 'Cards', 'DataGrid', 'DescriptionList', 'Form', 'FormattedText', 'Groups', 'Imports', 'Pagination', 'RelativeTime', 'Stage', 'StateMessage', 'Styles', 'WebPartShell']) {
+  for (const name of ['AutoSkeleton', 'Cards', 'DataGrid', 'DescriptionList', 'Form', 'EditableText', 'FormattedText', 'Groups', 'Imports', 'Pagination', 'RelativeTime', 'Stage', 'StateMessage', 'Styles', 'WebPartShell']) {
     const source = fs.readFileSync(path.join(base, `panels/${name}Panel.tsx`), 'utf8');
     assert.doesNotMatch(source, /webLightTheme|webDarkTheme|teamsDarkTheme|teamsHighContrastTheme|getTeamsFluentTheme|setDark|setThemeChoice|theme=|Dark theme/);
     assert.doesNotMatch(source, /dir=\{rtl \? 'rtl' : 'ltr'\}/);

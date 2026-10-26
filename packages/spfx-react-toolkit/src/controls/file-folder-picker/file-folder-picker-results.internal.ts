@@ -1,4 +1,4 @@
-import type { FileFolderPickerOption, FileFolderPickerValue } from './file-folder-picker.types';
+import type { FileFolderPickerOption, FileFolderPickerValue, FileFolderPickerFileCategory } from './file-folder-picker.types';
 import { copyFileFolderPickerValue } from './file-folder-picker-values.internal';
 import { fileFolderPickerIdentity } from './file-folder-picker-identity.internal';
 import type { PickerSourceContext, PickerSourceRequest } from '../pickers/picker-source.types.internal';
@@ -9,6 +9,7 @@ import type { ResolvedFileFolderPickerScope } from './file-folder-picker-scope.i
 
 export interface FileFolderPickerItemPolicy {
   readonly itemTypes?: 'files' | 'folders' | 'all';
+  readonly fileCategory?: FileFolderPickerFileCategory;
   readonly extensions?: readonly string[];
   readonly multiselect?: boolean;
   readonly selectionLimit?: number;
@@ -19,13 +20,36 @@ export interface FileFolderPickerItemPolicy {
 }
 export interface NormalizedFileFolderPickerItemPolicy {
   readonly itemTypes: 'files' | 'folders' | 'all';
+  readonly fileCategory?: FileFolderPickerFileCategory;
   readonly extensions: readonly `.${string}`[];
   readonly multiselect: boolean;
   readonly maximumCount?: number;
 }
+// No existing toolkit classifier covers these categories. This bounded suffix catalog
+// is selection policy, not content validation or a mirror of Microsoft's undocumented taxonomy.
+const categorySuffixes = {
+  images: ['jpg', 'jpeg', 'jfif', 'png', 'gif', 'bmp', 'tif', 'tiff', 'webp', 'svg', 'ico', 'heic', 'heif', 'avif'],
+  video: ['mp4', 'm4v', 'mov', 'wmv', 'avi', 'mkv', 'webm', 'mpg', 'mpeg', '3gp', '3g2', 'm2ts', 'ts', 'mts', 'ogv'],
+  audio: ['mp3', 'wav', 'm4a', 'aac', 'flac', 'ogg', 'oga', 'wma', 'aif', 'aiff', 'opus', 'mid', 'midi'],
+  documents: ['pdf', 'doc', 'docx', 'docm', 'dot', 'dotx', 'dotm', 'xls', 'xlsx', 'xlsm', 'xlsb', 'xlt', 'xltx', 'xltm', 'ppt', 'pptx', 'pptm', 'pot', 'potx', 'potm', 'pps', 'ppsx', 'ppsm', 'odt', 'ods', 'odp', 'rtf', 'txt', 'csv'],
+} satisfies Readonly<Record<Exclude<FileFolderPickerFileCategory, 'media'>, readonly string[]>>;
+/** Shared by acceptance, cached model preselection and current-value validation. */
+export function fileFolderPickerFileMatchesPolicy(name: string, policy: NormalizedFileFolderPickerItemPolicy): boolean {
+  const lower = name.toLowerCase();
+  if (policy.fileCategory !== undefined) {
+    const suffix = lower.slice(lower.lastIndexOf('.') + 1);
+    if (!lower.includes('.')) return false;
+    return policy.fileCategory === 'media'
+      ? categorySuffixes.images.includes(suffix) || categorySuffixes.video.includes(suffix) || categorySuffixes.audio.includes(suffix)
+      : categorySuffixes[policy.fileCategory].includes(suffix);
+  }
+  return policy.extensions.length === 0 || policy.extensions.some(extension => lower.endsWith(extension));
+}
 export function normalizeFileFolderPickerItemPolicy(policy: FileFolderPickerItemPolicy): NormalizedFileFolderPickerItemPolicy {
   const itemTypes = policy.itemTypes ?? 'files';
   if (itemTypes !== 'files' && itemTypes !== 'folders' && itemTypes !== 'all') throw new Error('Invalid picker item mode.');
+  const fileCategory = policy.fileCategory;
+  if (fileCategory !== undefined && !['images', 'video', 'audio', 'media', 'documents'].includes(fileCategory)) throw new Error('Invalid picker file category.');
   const multiselect = policy.multiselect ?? false;
   const limit = policy.selectionLimit;
   if (limit !== undefined && (!Number.isSafeInteger(limit) || limit < 1)) throw new Error('Invalid picker selection limit.');
@@ -35,8 +59,9 @@ export function normalizeFileFolderPickerItemPolicy(policy: FileFolderPickerItem
     const normalized = extension.toLowerCase() as `.${string}`;
     if (!extensions.includes(normalized)) extensions.push(normalized);
   }
+  if (fileCategory !== undefined && (extensions.length > 0 || itemTypes === 'folders')) throw new Error('File category cannot combine with extensions or folders-only mode.');
   if (itemTypes === 'folders' && extensions.length > 0) throw new Error('Folder mode cannot filter file extensions.');
-  return { itemTypes, extensions, multiselect, maximumCount: multiselect ? limit : 1 };
+  return { itemTypes, ...(fileCategory === undefined ? {} : { fileCategory }), extensions, multiselect, maximumCount: multiselect ? limit : 1 };
 }
 // Weak provenance stamps do not keep models/cache alive; caller-created seed objects are never stamped.
 interface VerifiedOptionStamp {
@@ -61,7 +86,7 @@ function current(policy: FileFolderPickerItemPolicy): void {
 }
 function acceptsKindAndSuffix(kind: FileFolderPickerValue['kind'], name: string, policy: NormalizedFileFolderPickerItemPolicy): void {
   if ((policy.itemTypes === 'files' && kind !== 'file') || (policy.itemTypes === 'folders' && kind !== 'folder')) throw new Error('Selected item type is not allowed by the picker mode.');
-  if (kind === 'file' && policy.extensions.length > 0 && !policy.extensions.some(extension => name.toLowerCase().endsWith(extension))) throw new Error('Selected file extension is not allowed.');
+  if (kind === 'file' && !fileFolderPickerFileMatchesPolicy(name, policy)) throw new Error(policy.fileCategory === undefined ? 'Selected file extension is not allowed.' : 'Selected file does not match the configured category.');
 }
 export function fileFolderPickerOptionMatchesPolicy(option: FileFolderPickerOption, policy: FileFolderPickerItemPolicy): boolean {
   try { acceptsKindAndSuffix(option.value.kind, option.text, normalizeFileFolderPickerItemPolicy(policy)); return true; } catch { return false; }
@@ -141,14 +166,15 @@ export async function resolveFileFolderPickerItems(rawItems: readonly unknown[],
   if (normalized.maximumCount !== undefined && seen.size > normalized.maximumCount) throw new Error('Picker selection exceeds the configured limit, including retained values.');
   return unique;
 }
-/** Hydration is cached/read-only. Missing, unreadable or ineligible references stay unresolved in the caller. */
+/** Hydration is cached/read-only. Out-of-category models remain available for labels/validation; confirmation and preselection stay strict. */
 export async function resolveFileFolderPickerValue(value: FileFolderPickerValue, scope: ResolvedFileFolderPickerScope, context: PickerSourceContext, cache: PickerRequestCache, policy: FileFolderPickerItemPolicy = {}): Promise<FileFolderPickerOption | undefined> {
   try {
     assertFileFolderPickerSource(scope, context);
     current(policy);
     const reference = copyFileFolderPickerValue(value);
     if (reference.tenantId.toLowerCase() !== scope.tenantId) return undefined;
-    const option = await resolveItem({ id: reference.itemId, parentReference: { driveId: reference.driveId }, '@sharePoint.endpoint': reference.endpoint }, scope, fileFolderRequest(context, cache), normalizeFileFolderPickerItemPolicy(policy));
+    const normalized = normalizeFileFolderPickerItemPolicy(policy);
+    const option = await resolveItem({ id: reference.itemId, parentReference: { driveId: reference.driveId }, '@sharePoint.endpoint': reference.endpoint }, scope, fileFolderRequest(context, cache), { ...normalized, fileCategory: undefined });
     current(policy);
     return option.value.kind === reference.kind ? option : undefined;
   } catch { return undefined; }

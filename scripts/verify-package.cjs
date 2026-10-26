@@ -200,14 +200,17 @@ try {
     'controls/stage/stage-drawer.internal',
     'controls/stage/stage-drawer-trigger.internal',
     'controls/stage/stage-popover.internal',
+    'controls/editable-text/index',
+    'controls/editable-text/editable-text',
+    'controls/editable-text/editable-text.types',
+    'controls/editable-text/editable-text-editor.internal',
+    'controls/editable-text/editable-text-extensions.internal',
     'controls/web-part-shell/index',
     'controls/web-part-shell/web-part-shell',
     'controls/web-part-shell/web-part-shell.types',
     'controls/web-part-shell/web-part-shell-metadata',
     'controls/web-part-shell/web-part-shell-runtime.internal',
     'controls/web-part-shell/title/web-part-title.internal',
-    'controls/web-part-shell/title/web-part-title-editor.internal',
-    'controls/web-part-shell/title/web-part-title-extensions.internal',
     'controls/form/index',
     'controls/form/form',
     'controls/form/create-form',
@@ -601,6 +604,7 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   fs.copyFileSync(path.join(root, 'tests/fixtures/configuration-store-package-consumer.ts'), path.join(consumer, 'compatibility/configuration-store-package-consumer.ts'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/form-package-consumer.tsx'), path.join(consumer, 'compatibility/form-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/data-grid-package-consumer.tsx'), path.join(consumer, 'compatibility/data-grid-package-consumer.tsx'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/editable-text-package-consumer.tsx'), path.join(consumer, 'compatibility/editable-text-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/web-part-shell-package-consumer.tsx'), path.join(consumer, 'compatibility/web-part-shell-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/content-card-package-consumer.tsx'), path.join(consumer, 'compatibility/content-card-package-consumer.tsx'));
   fs.copyFileSync(path.join(root, 'tests/fixtures/description-list-package-consumer.tsx'), path.join(consumer, 'compatibility/description-list-package-consumer.tsx'));

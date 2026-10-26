@@ -27,8 +27,8 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     description: 'Microsoft v8 hosted picker with verified SharePoint and OneDrive Business boundaries.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-file-folder-picker' */ './panels/FileFolderPickerPanel')),
     coverage: [
-      { symbol: 'FileFolderPicker', kind: 'read', notes: 'One live hosted v8 picker; source/kind/cardinality/presentation, optional colorful tag avatars and consumer-owned JSON references.' },
-      { symbol: 'PropertyPaneFileFolderPicker', kind: 'host', notes: 'Native direct JSON arrays, independent hosted presentation, optional colorful tag avatars and selection policy; source cascade resets explicitly.' },
+      { symbol: 'FileFolderPicker', kind: 'read', notes: 'One live hosted v8 picker; source/kind/category/cardinality/presentation, optional colorful tag avatars and consumer-owned JSON references.' },
+      { symbol: 'PropertyPaneFileFolderPicker', kind: 'host', notes: 'Native direct JSON arrays, independent hosted presentation, optional colorful tag avatars and category/selection policy; source cascade resets explicitly.' },
     ],
   },
   {
@@ -157,6 +157,16 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-relative-time' */ './panels/RelativeTimePanel')),
     coverage: [
       { symbol: 'RelativeTime', kind: 'snapshot', notes: 'Editable props, fixed/live/frozen clock, tooltip, fallback, native ref/click and FormattedText/Badge composition.' },
+    ],
+  },
+  {
+    key: 'editable-text',
+    title: 'EditableText',
+    iconName: 'Font',
+    description: 'Controlled formatted block with Read/Edit modes and live block policy.',
+    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-editable-text' */ './panels/EditableTextPanel')),
+    coverage: [
+      { symbol: 'EditableText', kind: 'snapshot', notes: 'One controlled React subject, four block presets, Read/Edit, source/fallback/empty commands, visible projection versus stored input and collapsed locale/callback diagnostics.' },
     ],
   },
   {
