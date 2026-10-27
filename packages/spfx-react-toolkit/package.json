@@ -1,7 +1,7 @@
 {
   "name": "@apvee/spfx-react-toolkit",
   "version": "3.0.0",
-  "description": "Comprehensive React runtime and hooks library for SharePoint Framework (SPFx)",
+  "description": "React controls, hooks, providers, helpers and services for SharePoint Framework (SPFx), with Fluent UI 9 and Property Pane pickers.",
   "private": false,
   "engines": {
     "node": ">=22.14.0 < 23.0.0"
