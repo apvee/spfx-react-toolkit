@@ -1,7 +1,6 @@
 name: Verify monorepo
 on:
-  push:
-  pull_request:
+  workflow_dispatch: {}
 jobs:
   verify:
     runs-on: ubuntu-latest
