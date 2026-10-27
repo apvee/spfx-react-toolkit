@@ -1,0 +1,25 @@
+{
+  "empty": "Andmed pole saadaval",
+  "noResults": "Tulemusi ei leitud",
+  "noVisibleColumns": "Nähtavaid veerge pole",
+  "loading": "Laadimine",
+  "actions": "Toimingud",
+  "moreActions": "Veel toiminguid",
+  "yes": "Jah",
+  "no": "Ei",
+  "noTags": "Silte pole",
+  "noObservations": "Vaatlusi pole",
+  "invalidValue": "Sobimatu väärtus",
+  "selectAllRows": "Vali kõik read",
+  "retry": "Proovi uuesti",
+  "selectRowTemplate": "Vali rida {rowId}",
+  "sparklineSummaryTemplate": "Esimene {first}; Viimane {last}; Miinimum {minimum}; Maksimum {maximum}; Keskmine {average}; Muutus {change}; Muutuse protsent {changePercent}",
+  "tagOverflow": {
+    "one": "Näita veel {count} silti",
+    "other": "Näita veel {count} silti"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} hääl",
+    "other": "{formattedCount} häält"
+  }
+}

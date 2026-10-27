@@ -1,0 +1,25 @@
+{
+  "empty": "Деректер жоқ",
+  "noResults": "Нәтижелер табылмады",
+  "noVisibleColumns": "Көрінетін бағандар жоқ",
+  "loading": "Жүктелуде",
+  "actions": "Әрекеттер",
+  "moreActions": "Қосымша әрекеттер",
+  "yes": "Иә",
+  "no": "Жоқ",
+  "noTags": "Тегтер жоқ",
+  "noObservations": "Бақылаулар жоқ",
+  "invalidValue": "Жарамсыз мән",
+  "selectAllRows": "Барлық жолдарды таңдау",
+  "retry": "Қайталап көру",
+  "selectRowTemplate": "{rowId} жолын таңдау",
+  "sparklineSummaryTemplate": "Бірінші {first}; Соңғы {last}; Ең кіші {minimum}; Ең үлкен {maximum}; Орташа {average}; Өзгеріс {change}; Пайыздық өзгеріс {changePercent}",
+  "tagOverflow": {
+    "one": "Тағы {count} тегті көрсету",
+    "other": "Тағы {count} тегті көрсету"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} дауыс",
+    "other": "{formattedCount} дауыс"
+  }
+}

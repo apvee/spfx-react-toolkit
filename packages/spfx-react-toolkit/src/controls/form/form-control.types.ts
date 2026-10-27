@@ -404,7 +404,7 @@ export type FormDatePickerControlProps = FormDateTimeNativeInputProps & {
   appearance?: InputProps['appearance'];
   /** Allows direct date text entry. Defaults to `false`. Uncommitted or rejected text blocks validation and submission until corrected, cleared, or reset. */
   allowTextInput?: boolean;
-  /** Localized error for text that does not match the committed date. Defaults to `Complete or correct the date before submitting.` Domain constraints remain owned by rules, schema, or resolver. */
+  /** Localized error for text that does not match the committed date. Omission inherits the per-form `dateInputValidationMessage` from the native resource or hook dictionary. Domain constraints remain owned by rules, schema, or resolver. */
   inputValidationMessage?: string;
   /** Allows disabled calendar elements to receive focus. Defaults to `false`. */
   allFocusable?: boolean;
@@ -587,7 +587,7 @@ export type FormTimePickerControlProps = FormDateTimeNativeInputProps & {
   disabled?: boolean;
   /** Exclusive end hour for generated options. */
   endHour?: FormTimePickerHour;
-  /** Localized error for rejected or uncommitted time text; defaults to Complete or correct the time before submitting. Domain validation stays in rules/schema/resolver. */
+  /** Localized error for rejected or uncommitted time text; omission inherits the per-form `timeInputValidationMessage` from the native resource or hook dictionary. Domain validation stays in rules/schema/resolver. */
   inputValidationMessage?: string;
   /** Allows freeform time entry. */
   freeform?: boolean;
@@ -664,9 +664,9 @@ export type FormFileInputProps<TInput extends FieldValues> = FormControlProps<
   // eslint-disable-next-line @rushstack/no-new-null
   FileList | null
 > & Omit<React.InputHTMLAttributes<HTMLInputElement>, keyof FormFieldPresentationProps | 'children' | 'defaultValue' | 'name' | 'type' | 'value'> & {
-  /** Localized visible action that opens the native file chooser; defaults to Browse. */
+  /** Localized visible action that opens the native file chooser; omission inherits per-form `fileInput.browseLabel`. */
   browseLabel?: string;
-  /** Localized accessible label for clearing the native selection; defaults to Clear. */
+  /** Localized accessible label for clearing the native selection; omission inherits per-form `fileInput.clearLabel`. */
   clearLabel?: string;
   /** Formats the actual live native files; defaults to comma-separated file names. */
   formatFiles?: (files: FileList) => React.ReactNode;

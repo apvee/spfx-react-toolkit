@@ -218,12 +218,15 @@ function checkFixture(item, fixture, contract) {
   return failures;
 }
 function buildConfig(consumerRoot, entry, directory, attribution) {
+  const nativePackageRoot = path.join(consumerRoot, 'node_modules', toolkit);
+  const nativeAliases = fs.existsSync(path.join(nativePackageRoot, 'localization/resources.json'))
+    ? require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: nativePackageRoot }) : {};
   return { context: consumerRoot, mode: 'production', devtool: false, cache: false, entry: { main: entry },
     output: { path: directory, filename: 'entry.js', chunkFilename: '[id].[contenthash].js', library: { type: 'commonjs2' }, clean: true },
     // Native Fluent packages may legitimately nest dependencies with different
     // minimum versions. Standard Node hierarchy resolves those owning packages;
     // installed-origin checks below still reject workspace toolkit resolution.
-    resolve: { extensions: ['.tsx', '.ts', '.js'], modules: ['node_modules'] },
+    resolve: { extensions: ['.tsx', '.ts', '.js'], modules: ['node_modules'], alias: nativeAliases },
     externals: [({ request }, done) => /^(react|react-dom)(\/|$)/.test(request || '') || /^@microsoft\/sp-/.test(request || '') ? done(null, `commonjs ${request}`) : done()],
     module: { rules: [{ test: /\.tsx?$/, use: path.join(root, 'scripts/sx-browser-typescript-loader.cjs') }] },
     optimization: { usedExports: true, minimize: true, concatenateModules: !attribution, moduleIds: 'deterministic', chunkIds: 'deterministic' } };
@@ -308,7 +311,7 @@ async function measureTreeShaking({ consumerRoot, outputDir, contract, mode, att
       }
       const directory = path.join(outputDir, 'assets', fixture.id, variantId);
       const config = buildConfig(consumerRoot, entry, directory, attribution);
-      const normalizedConfig = { ...config, context: '<consumer>', entry: { main: slash(path.relative(consumerRoot, entry)) }, output: { ...config.output, path: '<output>' }, module: { rules: [{ test: '\\.tsx?$', use: 'scripts/sx-browser-typescript-loader.cjs' }] }, externals: ['react/react-dom and @microsoft/sp-* host externals'] };
+      const normalizedConfig = { ...config, context: '<consumer>', entry: { main: slash(path.relative(consumerRoot, entry)) }, output: { ...config.output, path: '<output>' }, resolve: { ...config.resolve, alias: Object.fromEntries(Object.entries(config.resolve.alias).map(([id, target]) => [id, slash(path.relative(consumerRoot, target))])) }, module: { rules: [{ test: '\\.tsx?$', use: 'scripts/sx-browser-typescript-loader.cjs' }] }, externals: ['react/react-dom and @microsoft/sp-* host externals'] };
       const stats = await compile(config);
       const detail = stats.toJson(statsOptions());
       const statsFile = `${fixture.id}-${variantId}-stats.json.gz`;

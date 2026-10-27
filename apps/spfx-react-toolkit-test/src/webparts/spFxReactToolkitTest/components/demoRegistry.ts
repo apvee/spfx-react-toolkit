@@ -27,7 +27,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     description: 'Microsoft v8 hosted picker with verified SharePoint and OneDrive Business boundaries.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-file-folder-picker' */ './panels/FileFolderPickerPanel')),
     coverage: [
-      { symbol: 'FileFolderPicker', kind: 'read', notes: 'One live hosted v8 picker; source/kind/category/cardinality/presentation, optional colorful tag avatars and consumer-owned JSON references.' },
+      { symbol: 'FileFolderPicker', kind: 'read', notes: 'One live hosted v8 picker; custom browse dictionary, source/kind/category/cardinality/presentation, optional colorful tag avatars and consumer-owned JSON references.' },
       { symbol: 'PropertyPaneFileFolderPicker', kind: 'host', notes: 'Native direct JSON arrays, independent hosted presentation, optional colorful tag avatars and category/selection policy; source cascade resets explicitly.' },
     ],
   },
@@ -36,13 +36,13 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     description: 'Seven live React pickers and native Property Pane JSON fields.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-pickers' */ './panels/PickersPanel')),
     coverage: [
-      { symbol: 'SitePicker', kind: 'read', notes: 'Live authenticated picker; configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
-      { symbol: 'ListPicker', kind: 'read', notes: 'Live authenticated picker; configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
-      { symbol: 'FieldPicker', kind: 'read', notes: 'Live authenticated picker; configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
-      { symbol: 'ContentTypePicker', kind: 'read', notes: 'Live site collection/list metadata picker; complete catalog, local filters, optional colorful tag avatars and JSON diagnostics.' },
-      { symbol: 'ViewPicker', kind: 'read', notes: 'Live authenticated picker; configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
-      { symbol: 'ListItemPicker', kind: 'read', notes: 'Live authenticated picker; configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
-      { symbol: 'PrincipalPicker', kind: 'read', notes: 'Live authenticated picker; configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
+      { symbol: 'SitePicker', kind: 'read', notes: 'Live authenticated picker; native/default or per-instance search/status dictionary, configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
+      { symbol: 'ListPicker', kind: 'read', notes: 'Live authenticated picker; native/default or per-instance search/status dictionary, configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
+      { symbol: 'FieldPicker', kind: 'read', notes: 'Live authenticated picker; native/default or per-instance search/status dictionary, configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
+      { symbol: 'ContentTypePicker', kind: 'read', notes: 'Live site collection/list metadata picker with per-instance strings; complete catalog, local filters, optional colorful tag avatars and JSON diagnostics.' },
+      { symbol: 'ViewPicker', kind: 'read', notes: 'Live authenticated picker; native/default or per-instance search/status dictionary, configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
+      { symbol: 'ListItemPicker', kind: 'read', notes: 'Live authenticated picker; native/default or per-instance search/status dictionary, configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
+      { symbol: 'PrincipalPicker', kind: 'read', notes: 'Live authenticated picker; native/default or per-instance search/status dictionary, configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
       { symbol: 'PropertyPaneSitePicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
       { symbol: 'PropertyPaneListPicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
       { symbol: 'PropertyPaneFieldPicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
@@ -88,7 +88,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     iconName: 'ChevronRight',
     description: 'Controlled page, cursor and load-more requests with real consumer-owned results.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-pagination' */ './panels/PaginationPanel')),
-    coverage: [{ symbol: 'Pagination', kind: 'snapshot', notes: 'Four modes, actual paged rows, filter/page-size/total resets, deterministic pending completion, localized labels, native form/ref/hidden, host theme/RTL and independent instances.' }],
+    coverage: [{ symbol: 'Pagination', kind: 'snapshot', notes: 'Four modes, actual paged rows, filter/page-size/total resets, deterministic pending completion, native and overridden labels, native form/ref/hidden, host theme/RTL and independent instances.' }],
   },
   {
     key: 'data-grid',
@@ -97,7 +97,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     description: 'One compact grid with selectable APIs and column presets, controlled sort and selection.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-data-grid' */ './panels/DataGridPanel')),
     coverage: [
-      { symbol: 'DataGrid', kind: 'snapshot', notes: 'Dynamic valid/missing/invalid values, native cells, absolute dates and localized statuses.' },
+      { symbol: 'DataGrid', kind: 'snapshot', notes: 'Dynamic valid/missing/invalid values, native cells, absolute dates with unchanged Intl locale and configurable UI strings.' },
       { symbol: 'createDataGrid', kind: 'snapshot', notes: 'Selectable compact column/API presets, controlled selection/sort and activation; full-family/chart conformance in versioned fixtures.' },
     ],
   },
@@ -109,7 +109,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-form' */ './panels/FormPanel')),
     coverage: [
       { symbol: 'Form', kind: 'snapshot', notes: 'Selectable dynamic, typed, object, array and schema form; optional colorful TagPicker avatars; conformance comparisons in versioned fixtures.' },
-      { symbol: 'createForm', kind: 'snapshot', notes: '22 adapters, automatic SettingsGroup field labels/hints, suite hooks, four compositions, rules/schema, native files, drafts, reset, pending save and retries.' },
+      { symbol: 'createForm', kind: 'snapshot', notes: '22 adapters, automatic SettingsGroup field labels/hints, hook-level labels/failure dictionary, four compositions, rules/schema, native files, drafts, reset, pending save and retries.' },
     ],
   },
   {
@@ -118,7 +118,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     iconName: 'OpenPane',
     description: 'Explicit Dialog, Drawer and Popover surfaces with shared content and guarded forms.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-stage' */ './panels/StagePanel')),
-    coverage: [{ symbol: 'Stage', kind: 'snapshot', notes: 'Three presentations, sizes, literal/JSX headers, scroll, retention, nested popups, guarded Form save/reset, host theme/RTL and selectable Card isolation.' }],
+    coverage: [{ symbol: 'Stage', kind: 'snapshot', notes: 'Three presentations, sizes, literal/JSX headers, native/custom close dictionary, scroll, retention, nested popups, guarded Form save/reset, host theme/RTL and selectable Card isolation.' }],
   },
   {
     key: 'groups',
@@ -166,7 +166,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     description: 'Controlled formatted block with Read/Edit modes and live block policy.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-editable-text' */ './panels/EditableTextPanel')),
     coverage: [
-      { symbol: 'EditableText', kind: 'snapshot', notes: 'One controlled React subject, four block presets, Read/Edit, source/fallback/empty commands, visible projection versus stored input and collapsed locale/callback diagnostics.' },
+      { symbol: 'EditableText', kind: 'snapshot', notes: 'One controlled React subject, four block presets, Read/Edit, source/fallback/empty commands, visible projection versus stored input and collapsed dictionary/callback diagnostics.' },
     ],
   },
   {

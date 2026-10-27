@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Das Formular konnte nicht gesendet werden. Versuchen Sie es erneut.",
+  "dateInputValidationMessage": "Vervollständigen oder korrigieren Sie das Datum vor dem Senden.",
+  "timeInputValidationMessage": "Vervollständigen oder korrigieren Sie die Uhrzeit vor dem Senden.",
+  "tagPicker": {
+    "noOptions": "Keine Optionen entsprechen der aktuellen Suche."
+  },
+  "fileInput": {
+    "browseLabel": "Durchsuchen",
+    "clearLabel": "Löschen"
+  },
+  "arraySection": {
+    "add": "Element hinzufügen",
+    "empty": "Keine Elemente",
+    "itemLabelTemplate": "Element {position}",
+    "removeTemplate": "{label} entfernen",
+    "moveUpTemplate": "{label} nach oben verschieben",
+    "moveDownTemplate": "{label} nach unten verschieben",
+    "addedTemplate": "{label} hinzugefügt",
+    "removedTemplate": "{label} entfernt",
+    "movedTemplate": "{label} an Position {position} von {total} verschoben"
+  },
+  "datePicker": {
+    "months": [
+      "Januar",
+      "Februar",
+      "März",
+      "April",
+      "Mai",
+      "Juni",
+      "Juli",
+      "August",
+      "September",
+      "Oktober",
+      "November",
+      "Dezember"
+    ],
+    "shortMonths": [
+      "Jan",
+      "Feb",
+      "Mär",
+      "Apr",
+      "Mai",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Dez"
+    ],
+    "days": [
+      "Sonntag",
+      "Montag",
+      "Dienstag",
+      "Mittwoch",
+      "Donnerstag",
+      "Freitag",
+      "Samstag"
+    ],
+    "shortDays": [
+      "So",
+      "Mo",
+      "Di",
+      "Mi",
+      "Do",
+      "Fr",
+      "Sa"
+    ],
+    "goToToday": "Zu heute wechseln",
+    "prevMonthAriaLabel": "Vorheriger Monat",
+    "nextMonthAriaLabel": "Nächster Monat",
+    "prevYearAriaLabel": "Vorheriges Jahr",
+    "nextYearAriaLabel": "Nächstes Jahr",
+    "prevYearRangeAriaLabel": "Vorheriger Jahresbereich",
+    "nextYearRangeAriaLabel": "Nächster Jahresbereich",
+    "monthPickerHeaderAriaLabel": "{0}, Jahr ändern",
+    "yearPickerHeaderAriaLabel": "{0}, Monat ändern",
+    "closeButtonAriaLabel": "Schließen",
+    "weekNumberFormatString": "Wochennummer {0}",
+    "selectedDateFormatString": "Ausgewähltes Datum {0}",
+    "todayDateFormatString": "Heutiges Datum {0}",
+    "dayMarkedAriaLabel": "markiert"
+  }
+}

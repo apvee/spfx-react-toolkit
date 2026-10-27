@@ -23,8 +23,8 @@ import type { EditableTextBlockPolicy } from './editable-text-policy.internal';
 import { resolveEditableTextBlockPolicy } from './editable-text-policy.internal';
 import type { EditableTextSelectionFormat } from './editable-text-formatting.internal';
 import { EditableTextColorPicker } from './editable-text-color-picker.internal';
-import { resolveEditableTextStrings } from './localization/editable-text-locales.internal';
-import type { EditableTextStrings } from './localization/editable-text-strings.internal';
+import { resolveEditableTextStrings } from './localization/editable-text-strings.internal';
+import type { EditableTextStrings } from './editable-text.types';
 
 const useToolbarStyles = makeStyles({
   surface: { padding: '2px', maxWidth: 'calc(100vw - 16px)', boxSizing: 'border-box' },

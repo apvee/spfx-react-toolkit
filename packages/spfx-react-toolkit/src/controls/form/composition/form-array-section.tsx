@@ -20,15 +20,6 @@ import * as container from '../../../helpers/styles/container';
 import * as responsive from '../../../helpers/styles/responsive';
 import * as alignItems from '../../../helpers/styles/align-items';
 
-const defaultStrings = {
-    add: 'Add item', empty: 'No items',
-    remove: (label: string): string => `Remove ${label}`,
-    moveUp: (label: string): string => `Move ${label} up`,
-    moveDown: (label: string): string => `Move ${label} down`,
-    added: (label: string): string => `${label} added`,
-    removed: (label: string): string => `${label} removed`,
-    moved: (label: string, position: number, total: number): string => `${label} moved to position ${position} of ${total}`,
-};
 type PendingFocus = { before: string; resetVersion: number } & (
     { type: 'add'; index: number }
     | { type: 'remove'; keys: readonly string[]; announcement: string }
@@ -42,15 +33,16 @@ function ArraySectionContent<TInput extends FieldValues, TPath extends FormArray
     resolvedName: string;
 }): React.ReactElement {
     const { createItem, renderItem, minItems = 0, maxItems, removable = true, reorderable = false, itemLabel, strings: overrides, title, description, appearance = 'filled', className, 'aria-describedby': describedBy, ...native } = section;
+    const familyStrings = useFormRuntimeContext().strings.arraySection;
     const strings = {
-        add: overrides?.add ?? defaultStrings.add,
-        empty: overrides?.empty ?? defaultStrings.empty,
-        remove: overrides?.remove ?? defaultStrings.remove,
-        moveUp: overrides?.moveUp ?? defaultStrings.moveUp,
-        moveDown: overrides?.moveDown ?? defaultStrings.moveDown,
-        added: overrides?.added ?? defaultStrings.added,
-        removed: overrides?.removed ?? defaultStrings.removed,
-        moved: overrides?.moved ?? defaultStrings.moved,
+        add: overrides?.add ?? familyStrings.add,
+        empty: overrides?.empty ?? familyStrings.empty,
+        remove: overrides?.remove ?? familyStrings.remove,
+        moveUp: overrides?.moveUp ?? familyStrings.moveUp,
+        moveDown: overrides?.moveDown ?? familyStrings.moveDown,
+        added: overrides?.added ?? familyStrings.added,
+        removed: overrides?.removed ?? familyStrings.removed,
+        moved: overrides?.moved ?? familyStrings.moved,
     };
     const sx = useSx(), styles = useFormSectionsStyles();
     const descriptionId = useId('form-array-description'), errorId = useId('form-array-error');
@@ -67,7 +59,7 @@ function ArraySectionContent<TInput extends FieldValues, TPath extends FormArray
     }), [methods, resolvedName]);
     const [announcement, setAnnouncement] = React.useState({ text: '', version: 0 });
     const announce = (text: string): void => setAnnouncement(previous => ({ text, version: previous.version + 1 }));
-    const itemName = (item: typeof context.items[number]): string => itemLabel?.(item) ?? `Item ${item.index + 1}`;
+    const itemName = (item: typeof context.items[number]): string => itemLabel?.(item) ?? familyStrings.itemLabel(item.index + 1);
     const keySignature = context.items.map(item => item.key).join('|');
     const itemRoot = (key: string): HTMLElement | undefined => Array.from(root.current?.querySelectorAll<HTMLElement>('[data-form-array-item]') ?? []).find(element => element.getAttribute('data-form-array-item') === key);
     const focusItem = (key: string): boolean => {

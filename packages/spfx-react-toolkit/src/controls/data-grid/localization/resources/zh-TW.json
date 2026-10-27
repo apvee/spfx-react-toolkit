@@ -1,0 +1,23 @@
+{
+  "empty": "沒有可用資料",
+  "noResults": "找不到結果",
+  "noVisibleColumns": "沒有可見欄",
+  "loading": "載入中",
+  "actions": "動作",
+  "moreActions": "更多動作",
+  "yes": "是",
+  "no": "否",
+  "noTags": "沒有標籤",
+  "noObservations": "沒有觀測資料",
+  "invalidValue": "無效值",
+  "selectAllRows": "選取所有列",
+  "retry": "重試",
+  "selectRowTemplate": "選取列 {rowId}",
+  "sparklineSummaryTemplate": "首值 {first}; 末值 {last}; 最小值 {minimum}; 最大值 {maximum}; 平均值 {average}; 變化 {change}; 變化百分比 {changePercent}",
+  "tagOverflow": {
+    "other": "再顯示 {count} 個標籤"
+  },
+  "ratingCount": {
+    "other": "{formattedCount} 票"
+  }
+}

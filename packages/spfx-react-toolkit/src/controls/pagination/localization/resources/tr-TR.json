@@ -1,0 +1,9 @@
+{
+  "pagination": "Sayfalama",
+  "firstPage": "İlk sayfa",
+  "previousPage": "Önceki sayfa",
+  "nextPage": "Sonraki sayfa",
+  "lastPage": "Son sayfa",
+  "loadMore": "Daha fazla yükle",
+  "loading": "Yükleniyor"
+}

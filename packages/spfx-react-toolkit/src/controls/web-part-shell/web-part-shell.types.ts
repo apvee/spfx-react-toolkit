@@ -1,3 +1,4 @@
+import type { EditableTextStringsOverride } from '../editable-text/editable-text.types';
 import type { ContentSlot } from '../content-slot.types.internal';
 import type * as React from 'react';
 import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
@@ -46,12 +47,27 @@ export type WebPartShellSurface = 'auto' | 'section' | 'application';
  */
 export type WebPartShellPadding = 'auto' | 'none' | 'small' | 'medium' | 'large';
 
+/**
+ * Shell-owned title naming, independent of editor command dictionaries. Native
+ * SPFx resources supply omitted override fields; these labels never alter author
+ * title content or persisted properties. Empty placeholders suppress the hint.
+ * An empty editor label still requires a valid accessible name in Edit.
+ * @example
+ * const labels: WebPartShellStrings = { titleEditorLabel: 'Section title', titlePlaceholder: 'Add a heading' };
+ */
+export interface WebPartShellStrings {
+  /** Accessible name passed to the actual title editor textbox. */
+  readonly titleEditorLabel: string;
+  /** Literal empty title hint, never serialized or used as the accessible name. */
+  readonly titlePlaceholder: string;
+}
+
 /** Actual SPFx web-part shell options and native div attributes. Composes the toolkit
  * SPFx and Fluent providers internally, waiting for ServiceScope readiness. The host
  * must supply its document's Griffel renderer. No editor engine types are public.
- * Title editor labels, color tooltips and recovery messages follow the instance's
- * `pageContext.cultureInfo.currentUICultureName`, with English fallback for unsupported
- * cultures. Theme-color identifiers and author content remain language-independent.
+ * Native SPFx resources select title/editor labels. Instance dictionaries can
+ * override shell naming and editor commands independently. Theme-color identifiers
+ * and author content remain language-independent.
  * The editor offers 12 theme tones and 10 standard hues from foreground tokens
  * and fixed theme-derived mixes, without custom HEX colors. Coincident values
  * are deduplicated while preserving the selected semantic color.
@@ -77,6 +93,13 @@ export interface WebPartShellProps<TProperties extends IWebPartShellProperties>
   theme?: Theme;
   /** Direction override; otherwise ancestor Fluent direction or SPFx locale. */
   dir?: 'ltr' | 'rtl';
+  /** Shell title naming overrides. Omitted/undefined fields inherit native SPFx resources;
+   * empty hints suppress the placeholder. Changes preserve title draft/history without writes. */
+  strings?: Partial<WebPartShellStrings>;
+  /** Editor command, color, loading and recovery labels, merged with native resources.
+   * Independent of shell naming: titlePlaceholder/titleEditorLabel remain owned by strings.
+   * Replacing this dictionary preserves the live title editor and never writes properties. */
+  titleEditorStrings?: EditableTextStringsOverride;
   /** Header actions as shorthand or div props/render slot under both providers. Shorthand retains its DOM; slot ref targets the inner div. Empty objects request a header; callbacks run only during rendering. Persisted title/editor and body identity are independent. */
   action?: ContentSlot<'div'>;
   /** Content whose mounted identity is preserved through title Read/Edit and same-instance

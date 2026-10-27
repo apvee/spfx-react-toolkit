@@ -1,0 +1,9 @@
+{
+  "pagination": "페이지 매김",
+  "firstPage": "첫 페이지",
+  "previousPage": "이전 페이지",
+  "nextPage": "다음 페이지",
+  "lastPage": "마지막 페이지",
+  "loadMore": "더 불러오기",
+  "loading": "불러오는 중"
+}

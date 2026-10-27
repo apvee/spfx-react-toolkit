@@ -120,3 +120,16 @@ const categoryNative: PropertyPaneFileFolderPickerProps<Props> = { instance, key
 // @ts-expect-error Categories are a bounded union.
 const invalidCategory: FileFolderPickerProps = { fileCategory: 'stockImages' };
 void [categoryControl, categoryNative, invalidCategory];
+
+import type { FileFolderPickerStrings, FileFolderPickerStringsOverride } from '../../packages/spfx-react-toolkit/src/controls/file-folder-picker/file-folder-picker-strings.types';
+declare const fullFileStrings: FileFolderPickerStrings;
+const fileStrings: FileFolderPickerStringsOverride = { labels: { removeItem: name => `Remove ${name}` }, errors: { 'selection-policy': 'Invalid choice' } };
+const localizedFile: FileFolderPickerProps = { preset: 'focused', strings: fileStrings };
+const fullyLocalizedFile: FileFolderPickerProps = { strings: fullFileStrings };
+declare const fileInstance: PropertyPaneFileFolderPickerProps<{ files: FileFolderPickerValue[] }>['instance'];
+const localizedPaneFile: PropertyPaneFileFolderPickerProps<{ files: FileFolderPickerValue[] }> = { instance: fileInstance, key: 'files', value: [], strings: fileStrings };
+// @ts-expect-error Strings cannot re-enable forbidden legacy preset labels.
+const localizedLegacyTitle: FileFolderPickerProps = { preset: 'focused', strings: fileStrings, title: 'Legacy' };
+// @ts-expect-error Safe error keys remain a closed set.
+const invalidFileStrings: FileFolderPickerStringsOverride = { errors: { backend: 'Raw error' } };
+void [localizedFile, fullyLocalizedFile, localizedPaneFile, localizedLegacyTitle, invalidFileStrings];

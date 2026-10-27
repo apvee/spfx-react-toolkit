@@ -1,62 +1,53 @@
-import type { EditableTextColor } from '../editable-text-document.types.internal';
+import type { EditableTextStrings, EditableTextStringsOverride } from '../editable-text.types';
+import type { EditableTextResource } from './editable-text-resource.types.internal';
+import { nativeEditableTextResource } from './editable-text-native.internal';
+import { formatResourceTemplate } from '../../../localization/resource-formatters.internal';
 
-/** Control-owned resources. Author content and persisted formatting identifiers are never translated. */
-export interface EditableTextStrings {
-  readonly editorLoadError: string;
-  readonly retry: string;
-  readonly savedFormattingWarning: string;
-  readonly loadingEditor: string;
-  readonly editorLabel: string;
-  readonly placeholder: string;
-  readonly tooLargeError: string;
-  readonly moreFormatting: string;
-  readonly heading: string;
-  readonly normal: string;
-  readonly bold: string;
-  readonly italic: string;
-  readonly underline: string;
-  readonly themeColor: string;
-  readonly clearFormatting: string;
-  readonly spacing: string;
-  readonly defaultLineSpacing: string;
-  readonly spaceBefore: string;
-  readonly spaceAfter: string;
-  readonly formattingControls: string;
-  readonly formatting: string;
-  readonly fontSize: string;
-  readonly mixed: string;
-  readonly themeColorGroup: string;
-  readonly automatic: string;
-  readonly themeColors: string;
-  readonly paletteColors: string;
-  readonly colorNames: Readonly<Record<EditableTextColor, string>>;
-  readonly headingLevel: (level: number) => string;
-  readonly lineSpacingValue: (value: number) => string;
-  readonly formattingShortcut: (label: string, shortcut: string) => string;
-  readonly mixedFormatting: (label: string) => string;
+/** Compose formatter callbacks once from native data without leaking translator metadata. */
+export function defineEditableTextStrings(resource: EditableTextResource): EditableTextStrings {
+  const { headingLevelTemplate, lineSpacingValueTemplate, formattingShortcutTemplate, mixedFormattingTemplate } = resource;
+  // Select only public observable fields: native metadata is loader-owned.
+  return Object.freeze({
+    editorLoadError: resource.editorLoadError,
+    retry: resource.retry,
+    savedFormattingWarning: resource.savedFormattingWarning,
+    loadingEditor: resource.loadingEditor,
+    placeholder: resource.placeholder,
+    tooLargeError: resource.tooLargeError,
+    moreFormatting: resource.moreFormatting,
+    heading: resource.heading,
+    normal: resource.normal,
+    bold: resource.bold,
+    italic: resource.italic,
+    underline: resource.underline,
+    themeColor: resource.themeColor,
+    clearFormatting: resource.clearFormatting,
+    spacing: resource.spacing,
+    defaultLineSpacing: resource.defaultLineSpacing,
+    spaceBefore: resource.spaceBefore,
+    spaceAfter: resource.spaceAfter,
+    formattingControls: resource.formattingControls,
+    formatting: resource.formatting,
+    fontSize: resource.fontSize,
+    mixed: resource.mixed,
+    themeColorGroup: resource.themeColorGroup,
+    automatic: resource.automatic,
+    themeColors: resource.themeColors,
+    paletteColors: resource.paletteColors,
+    colorNames: Object.freeze({ ...resource.colorNames }),
+    headingLevel: (level: number): string => formatResourceTemplate(headingLevelTemplate, { level }),
+    lineSpacingValue: (value: number): string => formatResourceTemplate(lineSpacingValueTemplate, { value }),
+    formattingShortcut: (label: string, shortcut: string): string => formatResourceTemplate(formattingShortcutTemplate, { label, shortcut }),
+    mixedFormatting: (label: string): string => formatResourceTemplate(mixedFormattingTemplate, { label }),
+  });
 }
 
-type FormattedKeys = 'headingLevel' | 'lineSpacingValue' | 'formattingShortcut' | 'mixedFormatting';
-/** Templates keep grammatical word order in each catalog; command shortcuts remain explicit inputs. */
-export type EditableTextStringResource = Omit<EditableTextStrings, FormattedKeys> & {
-  readonly headingLevelTemplate: `${string}{level}${string}`;
-  readonly lineSpacingValueTemplate: `${string}{value}${string}`;
-  readonly formattingShortcutTemplate:
-    | `${string}{label}${string}{shortcut}${string}`
-    | `${string}{shortcut}${string}{label}${string}`;
-  readonly mixedFormattingTemplate: `${string}{label}${string}`;
-};
+const nativeStrings = defineEditableTextStrings(nativeEditableTextResource);
 
-/** Construct an immutable, instance-independent catalog from a fully typed resource. */
-export function defineEditableTextStrings(resource: EditableTextStringResource): EditableTextStrings {
-  const { headingLevelTemplate, lineSpacingValueTemplate, formattingShortcutTemplate, mixedFormattingTemplate, ...labels } = resource;
-  return Object.freeze({
-    ...labels,
-    colorNames: Object.freeze({ ...resource.colorNames }),
-    headingLevel: (level: number): string => headingLevelTemplate.replace('{level}', String(level)),
-    lineSpacingValue: (value: number): string => lineSpacingValueTemplate.replace('{value}', String(value)),
-    formattingShortcut: (label: string, shortcut: string): string => formattingShortcutTemplate
-      .replace(/\{(label|shortcut)\}/g, (_match, token: string) => token === 'label' ? label : shortcut),
-    mixedFormatting: (label: string): string => mixedFormattingTemplate.replace('{label}', () => label),
-  });
+/** Defined own overrides win; nested color names inherit individually. */
+export function resolveEditableTextStrings(overrides?: EditableTextStringsOverride): EditableTextStrings {
+  if (!overrides) return nativeStrings;
+  const defined = Object.fromEntries(Object.entries(overrides).filter(([key, value]) => key !== 'colorNames' && value !== undefined));
+  const colors = Object.fromEntries(Object.entries(overrides.colorNames ?? {}).filter(([, value]) => value !== undefined));
+  return { ...nativeStrings, ...defined, colorNames: { ...nativeStrings.colorNames, ...colors } };
 }

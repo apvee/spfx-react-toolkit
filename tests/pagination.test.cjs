@@ -332,3 +332,24 @@ test('Load more has no idle icon and shows only progress during loading', () => 
     assert.equal(f.host.querySelector('[role="progressbar"]'), null);
   } finally { f.close(); }
 });
+
+
+test('host-native Italian labels support trimmed partial and complete instance dictionaries', async () => {
+  const { Pagination: ItalianPagination } = await harness.loadModule('packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx', { nativeCulture: 'it-IT' });
+  const english = Pagination;
+  Pagination = ItalianPagination;
+  const italian = mount({ pagination: pages(1), loading: true, strings: { nextPage: ' Avanti ', previousPage: '  ', loading: undefined } });
+  Pagination = english;
+  const other = mount({ pagination: pages(1), strings: { nextPage: 'Other next' } });
+  try {
+    assert.equal(italian.host.querySelector('nav').getAttribute('aria-label'), 'Paginazione');
+    assert.ok(button(italian, 'Avanti')); assert.ok(button(italian, 'Pagina precedente'));
+    assert.ok(italian.host.querySelector('[role=progressbar][aria-label="Caricamento"]'));
+    assert.ok(button(other, 'Other next')); assert.ok(button(other, 'Previous page'));
+    const full = { pagination: 'Custom nav', firstPage: 'Start', previousPage: 'Back', nextPage: 'Ahead', lastPage: 'End', loadMore: 'Append', loading: 'Wait' };
+    Pagination = ItalianPagination;
+    italian.render({ pagination: { type: 'loadMore', hasNextPage: true }, strings: full, loading: true });
+    assert.ok(button(italian, 'Append')); assert.equal(italian.host.querySelector('nav').getAttribute('aria-label'), 'Custom nav');
+    assert.ok(italian.host.querySelector('[role=progressbar][aria-label="Wait"]'));
+  } finally { Pagination = english; italian.close(); other.close(); }
+});

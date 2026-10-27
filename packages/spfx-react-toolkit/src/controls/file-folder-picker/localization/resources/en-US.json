@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Browse files…",
+    "folders": "Browse folders…",
+    "all": "Browse files and folders…"
+  },
+  "placeholders": {
+    "files": "Select files…",
+    "folders": "Select folders…",
+    "all": "Select files or folders…"
+  },
+  "labels": {
+    "selection": "File and folder selection",
+    "file": "File",
+    "folder": "Folder",
+    "unresolvedItem": "Unresolved item",
+    "removeItem": "Remove {name}"
+  },
+  "validation": {
+    "invalidReferences": "Invalid file/folder references.",
+    "controlledModeChanged": "Controlled mode cannot change while the control is mounted.",
+    "incompatibleItems": "The selection contains items incompatible with the configured type, category or extensions. Remove or replace them.",
+    "invalidPolicy": "Invalid selection type, category, extensions or limit configuration.",
+    "selectionLimitExceeded": "The selection exceeds the configured limit. Remove the extra items."
+  },
+  "errors": {
+    "configuration": "Invalid picker configuration. Check the source, types, category and limits; use the preset without legacy options.",
+    "auth-resource": "The picker requested an authentication resource that is not allowed by the configuration.",
+    "auth-type": "The picker requested an authentication type that is not supported by the configuration.",
+    "auth-challenge": "The picker requires an additional authentication check that is not supported.",
+    "auth-provider": "Could not obtain the SharePoint token. Try again; if the problem persists, check your access and existing permissions.",
+    "selection-identity": "Could not verify the selected item's identity. Reopen the picker and try again.",
+    "selection-scope": "The selected item is outside the allowed site, library or folder.",
+    "selection-policy": "The selection does not meet the allowed type, category, extensions or item count.",
+    "selection-unavailable": "The selected item is unavailable or inaccessible.",
+    "selection-invalid": "Could not verify the selection. No new items were added.",
+    "onedrive-unavailable": "The current user's OneDrive is unavailable or inaccessible. Check that the drive exists and try again.",
+    "opening": "Could not open the picker. Check the configuration and access to the source, then try again.",
+    "timeout": "The picker did not respond in time. Close it and try again.",
+    "communication": "Communication with the picker was interrupted. Reopen it and try again."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "The optional authentication feature did not respond in time. Try again.",
+    "unsupportedCommand": "This integration does not support that command.",
+    "optionalGraphAuthenticationFailed": "Could not authenticate the optional Microsoft Graph feature.",
+    "optionalPersonalAuthenticationFailed": "Could not authenticate the optional personal destination."
+  }
+}

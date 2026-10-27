@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "انتخاب یک مورد",
+    "selectMany": "انتخاب موارد",
+    "search": "جستجو…",
+    "clearSelection": "پاک کردن انتخاب",
+    "clearSearch": "پاک کردن جستجو",
+    "options": "گزینه‌ها",
+    "searchOptions": "جستجوی گزینه‌ها",
+    "selectedOne": "مورد انتخاب‌شده",
+    "selectedMany": "موارد انتخاب‌شده",
+    "noSelection": "هیچ موردی انتخاب نشده",
+    "resolveIds": "شناسایی شناسه‌ها",
+    "moreResults": "نتایج بیشتر",
+    "retry": "تلاش دوباره",
+    "namedOptions": "{name}: گزینه‌ها",
+    "namedSearch": "{name}: جستجو",
+    "selectedCount": {
+      "one": "{count} مورد انتخاب شده",
+      "other": "{count} مورد انتخاب شده"
+    },
+    "minimumSearchLength": {
+      "one": "برای جستجو حداقل {count} حرف بنویسید",
+      "other": "برای جستجو حداقل {count} حرف بنویسید"
+    }
+  },
+  "status": {
+    "searching": "در حال جستجو…",
+    "loading": "در حال بارگذاری…",
+    "partialSearch": "جستجو ناتمام است: جستجوی خود را دقیق‌تر سازید.",
+    "noOtherResults": "نتیجهٔ دیگری برای این جستجو وجود ندارد",
+    "noResults": "نتیجه‌ای برای این جستجو وجود ندارد",
+    "noOptions": "گزینه‌ای موجود نیست.",
+    "moreItemsAvailable": "موارد بیشتری موجود است.",
+    "partialSuggestions": "پیشنهادها ناتمام است: بعضی منابع در دسترس نیست.",
+    "unresolvedValue": "مقدار شناسایی‌نشده",
+    "partialHubs": "فهرست مراکز ناتمام است: ساحه را محدود کنید یا از حالت سایت استفاده کنید.",
+    "partialSiteCollections": "جستجوی مجموعه‌های سایت ناتمام است (حداکثر 1000 نتیجه): معیارها را محدود کنید."
+  },
+  "sections": {
+    "consumer": "گزینه‌های ارائه‌شده",
+    "currentSite": "سایت فعلی",
+    "hubSite": "مرکز مرتبط",
+    "catalog": "گزینه‌های موجود",
+    "currentUser": "شما",
+    "people": "اشخاص پیشنهادی",
+    "memberOf": "گروه‌های شما"
+  },
+  "metadata": {
+    "documentLibrary": "کتابخانهٔ اسناد",
+    "sharePointList": "فهرست SharePoint",
+    "personalView": "نمای شخصی",
+    "publicView": "نمای عمومی",
+    "field": "فیلد",
+    "itemDescription": "مورد · شناسه {id}",
+    "file": "فایل",
+    "fileWithExtension": "فایل {extension}",
+    "folder": "پوشه",
+    "sharePointGroup": "گروه SharePoint · SharePoint",
+    "securityGroup": "گروه امنیتی · Entra",
+    "distributionList": "فهرست توزیع · Entra",
+    "unvalidatedEmail": "ایمیل تأییدنشده",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "حد انتخاب تکمیل شده است.",
+    "selectionLimitExceeded": "انتخاب از حد تنظیم‌شده بیشتر است.",
+    "unresolvedValues": "بعضی مقادیر انتخاب‌شده شناسایی نشده است.",
+    "outOfScopeValues": "انتخاب شامل مقادیر خارج از ساحهٔ تنظیم‌شده است.",
+    "resolveRequiredUserIds": "شناسه‌های مورد نیاز کاربران انتخاب‌شده را شناسایی کنید."
+  },
+  "errors": {
+    "candidateOutOfScope": "مورد پیشنهادی خارج از ساحهٔ تنظیم‌شده است.",
+    "incompleteCandidateResolution": "مورد پیشنهادی به‌طور کامل شناسایی نشد.",
+    "resolutionFailed": "شناسایی ناکام شد.",
+    "graphUnavailable": "سرویس‌گیرندهٔ Microsoft Graph در دسترس نیست."
+  }
+}

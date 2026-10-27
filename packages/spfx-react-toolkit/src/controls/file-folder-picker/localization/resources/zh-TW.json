@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "瀏覽檔案…",
+    "folders": "瀏覽資料夾…",
+    "all": "瀏覽檔案與資料夾…"
+  },
+  "placeholders": {
+    "files": "選取檔案…",
+    "folders": "選取資料夾…",
+    "all": "選取檔案或資料夾…"
+  },
+  "labels": {
+    "selection": "檔案與資料夾選取",
+    "file": "檔案",
+    "folder": "資料夾",
+    "unresolvedItem": "未解析的項目",
+    "removeItem": "移除 {name}"
+  },
+  "validation": {
+    "invalidReferences": "檔案或資料夾參照無效。",
+    "controlledModeChanged": "控制項掛接期間無法變更受控模式。",
+    "incompatibleItems": "選取內容包含與設定的類型、類別或副檔名不相容的項目。請移除或取代這些項目。",
+    "invalidPolicy": "選取類型、類別、副檔名或數量限制的設定無效。",
+    "selectionLimitExceeded": "選取內容超過設定的數量限制。請移除多餘的項目。"
+  },
+  "errors": {
+    "configuration": "選擇器設定無效。請檢查來源、類型、類別與數量限制；使用預設集時請勿搭配舊版選項。",
+    "auth-resource": "選擇器要求了設定不允許的驗證資源。",
+    "auth-type": "選擇器要求了設定不支援的驗證類型。",
+    "auth-challenge": "選擇器需要額外的驗證檢查，但不支援此檢查。",
+    "auth-provider": "無法取得 SharePoint 權杖。請重試；如果問題持續發生，請檢查您的存取權與現有權限。",
+    "selection-identity": "無法驗證所選項目的身分。請重新開啟選擇器並重試。",
+    "selection-scope": "所選項目不屬於允許的網站、文件庫或資料夾。",
+    "selection-policy": "選取內容不符合允許的類型、類別、副檔名或項目數量要求。",
+    "selection-unavailable": "所選項目無法使用或無法存取。",
+    "selection-invalid": "無法驗證選取內容。未新增任何項目。",
+    "onedrive-unavailable": "目前使用者的 OneDrive 無法使用或無法存取。請檢查磁碟機是否存在，然後重試。",
+    "opening": "無法開啟選擇器。請檢查設定及來源的存取權，然後重試。",
+    "timeout": "選擇器未及時回應。請將其關閉並重試。",
+    "communication": "與選擇器的通訊已中斷。請重新開啟並重試。"
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "選用驗證功能未及時回應。請重試。",
+    "unsupportedCommand": "此整合不支援該命令。",
+    "optionalGraphAuthenticationFailed": "無法驗證選用的 Microsoft Graph 功能。",
+    "optionalPersonalAuthenticationFailed": "無法驗證選用的個人目的地。"
+  }
+}

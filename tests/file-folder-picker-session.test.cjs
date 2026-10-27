@@ -229,3 +229,18 @@ test('optional discovery timing out cannot acquire a late token or publish sourc
  resolveDiscovery(['https://tenant-my.sharepoint.com']);await tick();assert.equal(x.calls.length,0);assert.deepEqual(failures,[]);assert.equal(events.length,count);
  x.command('source',{command:'authenticate',resource:'https://tenant.sharepoint.com'});await tick();assert.equal(x.calls.length,1);x.session.cancel();await result;
 });
+
+test('concurrent sessions project safe instance strings after raw error classification', async t => {
+  const failures = [];
+  const a = host({ strings: { errors: { 'selection-scope': 'Outside A' }, protocol: { unsupportedCommand: 'Unknown A' } }, onError: error => failures.push(error), validatePick: async () => { throw new Error('Outside allowed scope PRIVATE TOKEN 403'); } });
+  const b = host({ strings: { errors: { 'selection-scope': 'Outside B' }, protocol: { unsupportedCommand: 'Unknown B' } }, onError: error => failures.push(error), validatePick: async () => { throw new Error('Outside allowed scope PRIVATE CLAIMS 403'); } });
+  t.after(() => { a.session.cancel(); b.session.cancel(); });
+  const outcomes = [a.session.run(), b.session.run()]; a.initialize(); b.initialize();
+  a.command('pick', { command: 'pick', items: [{}] }); b.command('pick', { command: 'pick', items: [{}] });
+  a.command('unknown', { command: 'unknown' }); b.command('unknown', { command: 'unknown' }); await tick();
+  assert.deepEqual(failures.map(error => [error.code, error.message]), [['selection-scope', 'Outside A'], ['selection-scope', 'Outside B']]);
+  assert.equal(a.sent.find(message => message.id === 'unknown' && message.type === 'result').data.error.message, 'Unknown A');
+  assert.equal(b.sent.find(message => message.id === 'unknown' && message.type === 'result').data.error.message, 'Unknown B');
+  assert.doesNotMatch(JSON.stringify([...a.sent, ...b.sent]), /PRIVATE|TOKEN|CLAIMS|403/);
+  a.session.cancel(); b.session.cancel(); await Promise.all(outcomes);
+});

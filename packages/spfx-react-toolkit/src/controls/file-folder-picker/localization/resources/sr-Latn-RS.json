@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Pregledaj datoteke…",
+    "folders": "Pregledaj fascikle…",
+    "all": "Pregledaj datoteke i fascikle…"
+  },
+  "placeholders": {
+    "files": "Izaberi datoteke…",
+    "folders": "Izaberi fascikle…",
+    "all": "Izaberi datoteke ili fascikle…"
+  },
+  "labels": {
+    "selection": "Izbor datoteka i fascikli",
+    "file": "Datoteka",
+    "folder": "Fascikla",
+    "unresolvedItem": "Nerazrešena stavka",
+    "removeItem": "Ukloni {name}"
+  },
+  "validation": {
+    "invalidReferences": "Nevažeće reference na datoteke ili fascikle.",
+    "controlledModeChanged": "Kontrolisani režim ne može da se promeni dok je kontrola montirana.",
+    "incompatibleItems": "Izbor sadrži stavke koje nisu kompatibilne sa podešenim tipom, kategorijom ili oznakama tipa datoteke. Uklonite ih ili zamenite.",
+    "invalidPolicy": "Nevažeća konfiguracija tipa, kategorije, oznaka tipa datoteke ili ograničenja izbora.",
+    "selectionLimitExceeded": "Izbor premašuje podešeno ograničenje. Uklonite suvišne stavke."
+  },
+  "errors": {
+    "configuration": "Nevažeća konfiguracija birača. Proverite izvor, tipove, kategoriju i ograničenja; koristite unapred podešenu konfiguraciju bez zastarelih opcija.",
+    "auth-resource": "Birač je zatražio resurs za potvrdu identiteta koji nije dozvoljen konfiguracijom.",
+    "auth-type": "Birač je zatražio tip potvrde identiteta koji konfiguracija ne podržava.",
+    "auth-challenge": "Birač zahteva dodatnu proveru identiteta koja nije podržana.",
+    "auth-provider": "Nije moguće dobiti SharePoint token. Pokušajte ponovo; ako problem potraje, proverite pristup i postojeće dozvole.",
+    "selection-identity": "Nije moguće proveriti identitet izabrane stavke. Ponovo otvorite birač i pokušajte još jednom.",
+    "selection-scope": "Izabrana stavka je izvan dozvoljene lokacije, biblioteke ili fascikle.",
+    "selection-policy": "Izbor ne ispunjava zahteve za dozvoljeni tip, kategoriju, oznake tipa datoteke ili broj stavki.",
+    "selection-unavailable": "Izabrana stavka nije dostupna ili joj nije moguće pristupiti.",
+    "selection-invalid": "Nije moguće proveriti izbor. Nisu dodate nove stavke.",
+    "onedrive-unavailable": "OneDrive trenutnog korisnika nije dostupan ili mu nije moguće pristupiti. Proverite da li disk postoji i pokušajte ponovo.",
+    "opening": "Nije moguće otvoriti birač. Proverite konfiguraciju i pristup izvoru pa pokušajte ponovo.",
+    "timeout": "Birač nije odgovorio na vreme. Zatvorite ga i pokušajte ponovo.",
+    "communication": "Komunikacija sa biračem je prekinuta. Ponovo ga otvorite i pokušajte još jednom."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Opcionalna funkcija potvrde identiteta nije odgovorila na vreme. Pokušajte ponovo.",
+    "unsupportedCommand": "Ova integracija ne podržava tu komandu.",
+    "optionalGraphAuthenticationFailed": "Nije moguće potvrditi identitet opcionalne funkcije Microsoft Graph.",
+    "optionalPersonalAuthenticationFailed": "Nije moguće potvrditi identitet opcionalnog ličnog odredišta."
+  }
+}

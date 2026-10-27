@@ -28,6 +28,162 @@ export interface EditableTextChangeData {
   readonly text: string;
 }
 
+/**
+ * Accessible swatch names keyed by the editor's stable semantic colors. These
+ * labels never change persisted color identifiers or theme-derived values.
+ * Every member is required in a complete dictionary; use Partial for overrides.
+ * @example
+ * const customizeColors = (names: EditableTextColorNames): EditableTextColorNames =>
+ *   ({ ...names, red: 'Danger', brand: 'Accent' });
+ */
+export interface EditableTextColorNames {
+  /** Neutral tone 2 semantic color tooltip and accessible swatch name. */
+  readonly neutralDark: string;
+  /** Neutral tone 5 semantic color tooltip and accessible swatch name. */
+  readonly neutralLight: string;
+  /** Neutral tone 6 semantic color tooltip and accessible swatch name. */
+  readonly neutralLighter: string;
+  /** Brand tone 1 semantic color tooltip and accessible swatch name. */
+  readonly brandDarkest: string;
+  /** Brand tone 2 semantic color tooltip and accessible swatch name. */
+  readonly brandDarker: string;
+  /** Brand tone 3 semantic color tooltip and accessible swatch name. */
+  readonly brandDark: string;
+  /** Brand tone 6 semantic color tooltip and accessible swatch name. */
+  readonly brandLight: string;
+  /** Dark red semantic color tooltip and accessible swatch name. */
+  readonly darkRed: string;
+  /** Amber semantic color tooltip and accessible swatch name. */
+  readonly amber: string;
+  /** Yellow green semantic color tooltip and accessible swatch name. */
+  readonly yellowGreen: string;
+  /** Cyan semantic color tooltip and accessible swatch name. */
+  readonly cyan: string;
+  /** Navy blue semantic color tooltip and accessible swatch name. */
+  readonly navy: string;
+  /** Primary text color semantic color tooltip and accessible swatch name. */
+  readonly primary: string;
+  /** Secondary text color semantic color tooltip and accessible swatch name. */
+  readonly subtle: string;
+  /** Brand color semantic color tooltip and accessible swatch name. */
+  readonly brand: string;
+  /** Muted text color semantic color tooltip and accessible swatch name. */
+  readonly neutralMuted: string;
+  /** Alternate brand color semantic color tooltip and accessible swatch name. */
+  readonly brandAlt: string;
+  /** Red semantic color tooltip and accessible swatch name. */
+  readonly red: string;
+  /** Orange semantic color tooltip and accessible swatch name. */
+  readonly orange: string;
+  /** Yellow semantic color tooltip and accessible swatch name. */
+  readonly yellow: string;
+  /** Green semantic color tooltip and accessible swatch name. */
+  readonly green: string;
+  /** Teal semantic color tooltip and accessible swatch name. */
+  readonly teal: string;
+  /** Blue semantic color tooltip and accessible swatch name. */
+  readonly blue: string;
+  /** Purple semantic color tooltip and accessible swatch name. */
+  readonly purple: string;
+  /** Pink semantic color tooltip and accessible swatch name. */
+  readonly pink: string;
+  /** Brown semantic color tooltip and accessible swatch name. */
+  readonly brown: string;
+}
+
+/**
+ * Complete observable editor UI dictionary. Omitted prop fields resolve from the
+ * host-selected native SPFx resource. Labels do not translate saved author text,
+ * configure direction or replace the caller's required textbox name. Formatter
+ * callbacks run during rendering and must return strings without side effects.
+ * @example
+ * const customize = (labels: EditableTextStrings): EditableTextStrings => ({
+ *   ...labels, bold: 'Strong', headingLevel: level => `Heading ${level}`,
+ *   colorNames: { ...labels.colorNames, red: 'Danger' },
+ * });
+ */
+export interface EditableTextStrings {
+  /** Error shown when the lazy editor chunk fails to load. */
+  readonly editorLoadError: string;
+  /** Button label that retries the failed editor chunk. */
+  readonly retry: string;
+  /** Warning shown when saved markup falls back to literal text. */
+  readonly savedFormattingWarning: string;
+  /** Spinner label while the editor chunk loads. */
+  readonly loadingEditor: string;
+  /** Empty editor hint when the direct placeholder prop is omitted; never an accessible name. */
+  readonly placeholder: string;
+  /** Error shown when the live draft exceeds the serialized size limit. */
+  readonly tooLargeError: string;
+  /** Accessible name and tooltip for overflow formatting commands. */
+  readonly moreFormatting: string;
+  /** Heading selector and overflow submenu label. */
+  readonly heading: string;
+  /** Paragraph option label. */
+  readonly normal: string;
+  /** Bold command label and accessible name. */
+  readonly bold: string;
+  /** Italic command label and accessible name. */
+  readonly italic: string;
+  /** Underline command label and accessible name. */
+  readonly underline: string;
+  /** Color command label and accessible name. */
+  readonly themeColor: string;
+  /** Clear-formatting command label. */
+  readonly clearFormatting: string;
+  /** Spacing command label. */
+  readonly spacing: string;
+  /** Default line spacing option label. */
+  readonly defaultLineSpacing: string;
+  /** Space-before toggle label. */
+  readonly spaceBefore: string;
+  /** Space-after toggle label. */
+  readonly spaceAfter: string;
+  /** Accessible name of the formatting popup. */
+  readonly formattingControls: string;
+  /** Accessible name of its toolbar. */
+  readonly formatting: string;
+  /** Font size combobox and expand-button accessible name. */
+  readonly fontSize: string;
+  /** Mixed font-size placeholder. */
+  readonly mixed: string;
+  /** Accessible name of the color picker. */
+  readonly themeColorGroup: string;
+  /** Automatic color option and section label. */
+  readonly automatic: string;
+  /** Theme swatch section label. */
+  readonly themeColors: string;
+  /** Standard swatch section label. */
+  readonly paletteColors: string;
+  /** Accessible swatch labels; complete dictionaries require every semantic color. */
+  readonly colorNames: EditableTextColorNames;
+  /** Formats an offered heading level (1–4) into its selector label. */
+  readonly headingLevel: (level: number) => string;
+  /** Formats an offered numeric line-spacing multiplier into its menu label. */
+  readonly lineSpacingValue: (value: number) => string;
+  /** Combines a translated command label and literal keyboard shortcut for a tooltip. */
+  readonly formattingShortcut: (label: string, shortcut: string) => string;
+  /** Describes a command or group with mixed selection formatting using its label. */
+  readonly mixedFormatting: (label: string) => string;
+}
+
+/**
+ * Partial instance dictionary with independently optional semantic color names.
+ * Omitted or undefined fields inherit native SPFx labels; empty strings remain
+ * intentional overrides. Direct placeholder and ARIA props retain precedence.
+ * Replacing this dictionary preserves the editor, draft, selection and undo
+ * history and never invokes onChange. No provider or translation service is needed.
+ * @example
+ * const labels: EditableTextStringsOverride = {
+ *   placeholder: 'Write a summary', colorNames: { brand: 'Accent' },
+ *   formattingShortcut: (label, shortcut) => `${label}: ${shortcut}`,
+ * };
+ */
+export type EditableTextStringsOverride = Partial<Omit<EditableTextStrings, 'colorNames'>> & {
+  /** Overrides individual semantic swatch names; omitted colors retain native labels. */
+  readonly colorNames?: Partial<EditableTextColorNames>;
+};
+
 type EditableTextNativeProps = Omit<React.HTMLAttributes<HTMLDivElement>,
   'children' | 'dangerouslySetInnerHTML' | 'contentEditable' | 'suppressContentEditableWarning' |
   'defaultValue' | 'role' | 'dir' | 'onChange' | 'placeholder' | 'aria-label' | 'aria-labelledby' | 'aria-describedby'>;
@@ -104,16 +260,17 @@ export type EditableTextProps = EditableTextNativeProps & {
    */
   placeholder?: string;
   /**
-   * UI culture for toolbar, hints and errors, with the toolkit's 50-culture
-   * resolver/aliases and en-US fallback. Omission uses en-US. Does not translate
-   * content or set direction; configure direction on FluentProvider. Live
-   * locale changes retain editor, draft, selection and history.
+   * Instance UI labels and pure formatting callbacks over native SPFx resources.
+   * Omitted/undefined fields use native labels; colorNames merges by semantic
+   * field. Empty strings remain intentional. Direct placeholder wins over the
+   * dictionary hint. Changes preserve draft, selection and history without
+   * publishing onChange; saved author content and host direction are unchanged.
    */
-  locale?: string;
+  strings?: EditableTextStringsOverride;
   /**
    * Accessible name on the actual Edit textbox, or on the Read root. Edit
    * requires this or aria-labelledby to contain non-whitespace text. Omission
-   * supplies no implicit name; placeholder and locale do not replace it.
+   * supplies no implicit name; placeholder and dictionaries do not replace it.
    */
   'aria-label'?: string;
   /**

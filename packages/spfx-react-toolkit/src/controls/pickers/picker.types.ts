@@ -1,3 +1,4 @@
+import type { PickersStringsOverride } from './pickers-strings.types';
 import type { FieldProps, ComboboxProps, TagPickerProps, TooltipProps } from '@fluentui/react-components';
 import type { SPFxPnPListSelector } from '../../services/spfx-pnp-list.service';
 import type { ContentSlot } from '../content-slot.types.internal';
@@ -52,11 +53,13 @@ export interface PickerSelectionData<T extends PickerOption> {
  */
 export interface PickerProps<T extends PickerOption> extends SearchPickerOptions, Pick<FieldProps,
   'label' | 'hint' | 'required' | 'validationMessage' | 'validationState'> {
+  /** Optional instance UI dictionary. Known nested leaves merge with native SPFx resources; direct labels/content/Field messages win. Undefined retains native defaults; empty strings remain explicit. */
+  readonly strings?: PickersStringsOverride;
   /** Presentation only; changing this retains selection, data and request runtime. Default varies by picker.
    * Suggestions use Persona with name/metadata and category icon; user principals retain their user avatar.
    * The historical combobox value renders Fluent Dropdown: a persistent selection button and, when searchable,
-   * a separate popup SearchBox. One selection displays its name/media; multiple selections display an Italian count.
-   * Dropdown menus retain checked selections in Selezionato (single) or Selezionati (multiple), independent of query.
+   * a separate popup SearchBox. One selection displays its name/media; multiple selections display a native localized count.
+   * Dropdown menus retain checked selections in native localized single/multiple selected-item groups, independent of query.
    * Clicking the current single value keeps it; native clearable clears it. Accepted single selection closes the popup;
    * asynchronous refusal preserves it. TagPicker keeps removable tags and its input, excluding selected identities from popup rows.
    * No dropdown presentation value is exposed. */
@@ -102,7 +105,7 @@ export interface PickerProps<T extends PickerOption> extends SearchPickerOptions
   readonly size?: 'medium' | 'large';
   /** Disables the control and explicit selection/resolution actions. Defaults to false. */
   readonly disabled?: boolean;
-  /** Search placeholder (including picker-specific overrides); when searchable, omission shows “Digita almeno N caratteri per cercare” using minimumSearchLength. Dropdown keeps a separate fixed empty selection prompt: Seleziona un elemento / Seleziona elementi. */
+  /** Search placeholder (including picker-specific overrides); when searchable, omission uses strings.labels.minimumSearchLength(minimumSearchLength). Dropdown uses a separate native localized empty selection prompt from strings.labels.selectOne/selectMany. */
   readonly placeholder?: string;
   /** Optional CSS class on the outer field region. */
   readonly className?: string;
@@ -120,7 +123,7 @@ export interface PickerProps<T extends PickerOption> extends SearchPickerOptions
   readonly suggestionsHeader?: ContentSlot<'span'>;
   /** Literal div content for custom initial/below-minimum guidance and complete searches with no new choices. Omission keeps minimum-character guidance in the search placeholder only, then distinguishes no matches from matches already selected or pinned; contextual rows never suppress query feedback. False hides only presentation, preserving the status shell. */
   readonly emptyContent?: ContentSlot<'div'>;
-  /** Literal div content during loading, including eligible typed-query debounce. Omission shows “Ricerca in corso…” for typed search and “Caricamento…” for initial loading. False hides its content. */
+  /** Literal div content during loading, including eligible typed-query debounce. Omission uses strings.status.searching for typed search and strings.status.loading for initial loading. False hides its content. */
   readonly loadingContent?: ContentSlot<'div'>;
   /** Literal div content for request or identity failures; omission shows the error message. Typed-query and contextual-source failures remain independent alongside healthy rows. False hides content; retry remains an independent action. */
   readonly errorContent?: ContentSlot<'div'>;

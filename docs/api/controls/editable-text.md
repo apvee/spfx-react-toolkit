@@ -1,8 +1,8 @@
 # EditableText
 
-`EditableText` owns one formatted block with hard breaks. It is controlled React UI, independent of SPFx. Read mode renders safe content; Edit loads the private editor on demand. The caller owns the saved HTML and reflects user changes into `value`. Mounting, loading external content and changing configuration never save normalized HTML automatically.
+`EditableText` owns one formatted block with hard breaks. It is controlled React UI with no SPFx provider requirement. Native SPFx AMD resources supply its UI labels. Read mode renders safe content; Edit loads the private editor on demand. The caller owns the saved HTML and reflects user changes into `value`. Mounting, loading external content and changing configuration never save normalized HTML automatically.
 
-Import `EditableText`, `EditableTextProps`, `EditableTextBlock` and `EditableTextChangeData` from `@apvee/spfx-react-toolkit`, `/controls` or `/controls/editable-text`. These resolve to the same public implementation and types. There are no public engine, AST, codec, toolbar slot or plugin exports.
+Import `EditableText`, `EditableTextProps`, `EditableTextBlock`, `EditableTextChangeData`, `EditableTextStrings`, `EditableTextColorNames` and `EditableTextStringsOverride` from `@apvee/spfx-react-toolkit`, `/controls` or `/controls/editable-text`. These resolve to the same public implementation and types. There are no public engine, AST, codec, toolbar slot or plugin exports.
 
 ## React usage
 
@@ -30,7 +30,7 @@ export function ProjectSummary(): React.ReactElement {
     mode: editing ? 'edit' : 'read', value: html,
     fallbackText: 'Project summary', allowedBlocks: headings,
     'aria-label': 'Project summary', 'aria-describedby': 'summary-help',
-    onChange: change,
+    onChange: change, strings: { bold: 'Strong', colorNames: { red: 'Danger' } },
   };
   return <section>
     <button type="button" onClick={() => setEditing(value => !value)}>Toggle editing</button>
@@ -58,7 +58,7 @@ The stable native `div` owns a `p` or H1–H4 region. Place it in a block-capabl
 | `EditableTextProps.allowedBlocks` | Optional readonly `EditableTextBlock[]`; omitted allows p and H1–H4. Membership controls every Read/Edit input path. Order and duplicate entries do not matter. A singleton hides the block selector. |
 | `EditableTextProps.defaultBlock` | Optional initial/fallback/empty block and excluded-block conversion target. Defaults to p when admitted, otherwise the lowest admitted heading. Must belong to the allowed set. |
 | `EditableTextProps.placeholder` | Optional literal empty-editor hint. Omission uses localized generic text; `''` suppresses it. Never saved or used as the accessible name; no Read effect. |
-| `EditableTextProps.locale` | Optional toolbar/hint/error culture, default en-US; uses the existing 50-culture aliases/resolver with en-US fallback. Does not translate author content or set direction. |
+| `EditableTextProps.strings` | Optional `EditableTextStringsOverride`: instance labels and formatter callbacks over native SPFx resources. Nested color names merge individually; omitted/undefined fields inherit native labels and empty strings remain intentional. |
 | `EditableTextProps.'aria-label'` | Optional in Read; in Edit this or `aria-labelledby` must contain non-whitespace text. Routed to the actual Edit textbox or Read root. No implicit name. |
 | `EditableTextProps.'aria-labelledby'` | Optional space-separated IDs, with the same Edit requirement. Caller supplies referenced labeling elements. Omission creates no association. |
 | `EditableTextProps.'aria-describedby'` | Optional description IDs on the actual Edit textbox or Read root. Caller supplies the description elements. Omission creates no association. |
@@ -69,9 +69,77 @@ Runtime validation throws `TypeError` for invalid strings, mode, callback, acces
 
 For example, `<h2>Project</h2>` under `allowedBlocks={['p']}` renders a paragraph. Stored input remains the original H2 until a user edit publishes a paragraph. This is valid policy conversion, not an import error or fallback. Read and Edit initialization, paste, external replacement and reset use the same finite policy. Font size, emphasis, color and line spacing are independent of the semantic block choice.
 
+## UI dictionaries and migration
+
+`locale` has been removed in this major API migration. Configure the package's native SPFx localized resources in the consuming solution; SPFx selects one culture when loading its AMD module. Changing `pageContext` or a browser locale at runtime does not reload that module. The 50 canonical translator catalogs remain package build inputs. Outside the SPFx loader, the host must provide an explicit resource-module adapter even when supplying a complete custom dictionary.
+
+Use `strings={{ bold: 'Strong', colorNames: { red: 'Danger' } }}` for per-instance overrides. `EditableTextStrings` is a complete dictionary and `EditableTextStringsOverride` is partial except for its independently partial `colorNames`. `EditableTextColorNames` has only public semantic fields and no private editor/AST dependency. `EditableTextStringsOverride.colorNames` overrides individual entries; its omission inherits all names. Complete dictionaries require every label, formatter and color; partial dictionaries inherit omitted/undefined fields. Empty strings are retained as explicit values. Direct `placeholder` takes precedence, including `''` to suppress the hint. Direct ARIA props alone name the textbox; dictionary hints cannot satisfy Edit's accessible-name requirement.
+
+Formatter callbacks receive heading levels 1–4, numeric line spacing, a translated label plus literal shortcut, or a mixed-state label. They return UI strings, run during rendering and must be pure. Defaults use the selected native catalog's templates, preserving literal inserted labels and shortcuts. Replacing a dictionary updates toolbar/color/hint/loading/recovery labels on the existing editor without publishing `onChange`, changing author content, resetting selection or clearing undo history. Two instances can use different dictionaries under the same native culture. The sample dictionary selector demonstrates native labels, a complete Italian `EditableTextStrings` dictionary (all callbacks and semantic color names), and partial project-label overrides on the same subject. Theme and direction remain host concerns.
+
+| Dictionary member | Observable behavior |
+| --- | --- |
+| `EditableTextStrings.editorLoadError` | Error shown when the lazy editor chunk fails to load. |
+| `EditableTextStrings.retry` | Button label that retries the failed editor chunk. |
+| `EditableTextStrings.savedFormattingWarning` | Warning shown when saved markup falls back to literal text. |
+| `EditableTextStrings.loadingEditor` | Spinner label while the editor chunk loads. |
+| `EditableTextStrings.placeholder` | Empty editor hint when the direct placeholder prop is omitted; never an accessible name. |
+| `EditableTextStrings.tooLargeError` | Error shown when the live draft exceeds the serialized size limit. |
+| `EditableTextStrings.moreFormatting` | Accessible name and tooltip for overflow formatting commands. |
+| `EditableTextStrings.heading` | Heading selector and overflow submenu label. |
+| `EditableTextStrings.normal` | Paragraph option label. |
+| `EditableTextStrings.bold` | Bold command label and accessible name. |
+| `EditableTextStrings.italic` | Italic command label and accessible name. |
+| `EditableTextStrings.underline` | Underline command label and accessible name. |
+| `EditableTextStrings.themeColor` | Color command label and accessible name. |
+| `EditableTextStrings.clearFormatting` | Clear-formatting command label. |
+| `EditableTextStrings.spacing` | Spacing command label. |
+| `EditableTextStrings.defaultLineSpacing` | Default line spacing option label. |
+| `EditableTextStrings.spaceBefore` | Space-before toggle label. |
+| `EditableTextStrings.spaceAfter` | Space-after toggle label. |
+| `EditableTextStrings.formattingControls` | Accessible name of the formatting popup. |
+| `EditableTextStrings.formatting` | Accessible name of its toolbar. |
+| `EditableTextStrings.fontSize` | Font size combobox and expand-button accessible name. |
+| `EditableTextStrings.mixed` | Mixed font-size placeholder. |
+| `EditableTextStrings.themeColorGroup` | Accessible name of the color picker. |
+| `EditableTextStrings.automatic` | Automatic color option and section label. |
+| `EditableTextStrings.themeColors` | Theme swatch section label. |
+| `EditableTextStrings.paletteColors` | Standard swatch section label. |
+| `EditableTextStrings.colorNames` | Accessible swatch labels; complete dictionaries require every semantic color. |
+| `EditableTextStrings.headingLevel` | Formats an offered heading level (1–4) into its selector label. |
+| `EditableTextStrings.lineSpacingValue` | Formats an offered numeric line-spacing multiplier into its menu label. |
+| `EditableTextStrings.formattingShortcut` | Combines a translated command label and literal keyboard shortcut for a tooltip. |
+| `EditableTextStrings.mixedFormatting` | Describes a command or group with mixed selection formatting using its label. |
+| `EditableTextColorNames.neutralDark` | Neutral tone 2 semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.neutralLight` | Neutral tone 5 semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.neutralLighter` | Neutral tone 6 semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.brandDarkest` | Brand tone 1 semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.brandDarker` | Brand tone 2 semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.brandDark` | Brand tone 3 semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.brandLight` | Brand tone 6 semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.darkRed` | Dark red semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.amber` | Amber semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.yellowGreen` | Yellow green semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.cyan` | Cyan semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.navy` | Navy blue semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.primary` | Primary text color semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.subtle` | Secondary text color semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.brand` | Brand color semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.neutralMuted` | Muted text color semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.brandAlt` | Alternate brand color semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.red` | Red semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.orange` | Orange semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.yellow` | Yellow semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.green` | Green semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.teal` | Teal semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.blue` | Blue semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.purple` | Purple semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.pink` | Pink semantic color tooltip and accessible swatch name. |
+| `EditableTextColorNames.brown` | Brown semantic color tooltip and accessible swatch name. |
+
 ## Controlled updates, history and composition
 
-Canonical echoes preserve the current selection and history. Actual external source replacement (`value`/`fallbackText`) establishes a new undo baseline. A membership change reconciles the live draft, retaining the editor, text, marks and valid selection while resetting undo, even if the current block is still admitted. Reordering/duplicates do not reset it. Changing only `defaultBlock` preserves history and a nonempty admitted block. Placeholder and locale updates preserve the draft, selection and history. None of these configuration operations emits a callback.
+Canonical echoes preserve the current selection and history. Actual external source replacement (`value`/`fallbackText`) establishes a new undo baseline. A membership change reconciles the live draft, retaining the editor, text, marks and valid selection while resetting undo, even if the current block is still admitted. Reordering/duplicates do not reset it. Changing only `defaultBlock` preserves history and a nonempty admitted block. Placeholder and dictionary updates preserve the draft, selection and history. None of these configuration operations emits a callback.
 
 During IME composition the latest committed policy applies after composition. An Edit→Read transition finishes pending Edit input with the current policy and latest provided callback, including when all three change in the same render. If Read omits its optional callback, only that final pending Edit flush uses the last committed Edit callback. Read then originates no changes. A configuration-only exit publishes nothing. Effective deletion emits `{ html: '', text: '' }`; formatting an empty document prepares future typing without publishing empty markup.
 

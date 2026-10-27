@@ -1,0 +1,9 @@
+{
+  "pagination": "Puslapiavimas",
+  "firstPage": "Pirmas puslapis",
+  "previousPage": "Ankstesnis puslapis",
+  "nextPage": "Kitas puslapis",
+  "lastPage": "Paskutinis puslapis",
+  "loadMore": "Įkelti daugiau",
+  "loading": "Įkeliama"
+}

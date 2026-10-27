@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Duyệt tệp…",
+    "folders": "Duyệt thư mục…",
+    "all": "Duyệt tệp và thư mục…"
+  },
+  "placeholders": {
+    "files": "Chọn tệp…",
+    "folders": "Chọn thư mục…",
+    "all": "Chọn tệp hoặc thư mục…"
+  },
+  "labels": {
+    "selection": "Lựa chọn tệp và thư mục",
+    "file": "Tệp",
+    "folder": "Thư mục",
+    "unresolvedItem": "Mục chưa được xác định",
+    "removeItem": "Loại bỏ {name}"
+  },
+  "validation": {
+    "invalidReferences": "Tham chiếu tệp hoặc thư mục không hợp lệ.",
+    "controlledModeChanged": "Không thể thay đổi chế độ được điều khiển khi điều khiển đang được gắn.",
+    "incompatibleItems": "Lựa chọn chứa các mục không tương thích với loại, danh mục hoặc phần mở rộng đã cấu hình. Hãy loại bỏ hoặc thay thế các mục đó.",
+    "invalidPolicy": "Cấu hình loại, danh mục, phần mở rộng hoặc giới hạn lựa chọn không hợp lệ.",
+    "selectionLimitExceeded": "Lựa chọn vượt quá giới hạn đã cấu hình. Hãy loại bỏ các mục thừa."
+  },
+  "errors": {
+    "configuration": "Cấu hình bộ chọn không hợp lệ. Hãy kiểm tra nguồn, loại, danh mục và giới hạn; sử dụng thiết lập sẵn mà không kèm các tùy chọn cũ.",
+    "auth-resource": "Bộ chọn đã yêu cầu một tài nguyên xác thực không được cấu hình cho phép.",
+    "auth-type": "Bộ chọn đã yêu cầu một loại xác thực không được cấu hình hỗ trợ.",
+    "auth-challenge": "Bộ chọn yêu cầu một bước kiểm tra xác thực bổ sung không được hỗ trợ.",
+    "auth-provider": "Không thể lấy mã thông báo SharePoint. Hãy thử lại; nếu sự cố vẫn tiếp diễn, hãy kiểm tra quyền truy nhập và các quyền hiện có.",
+    "selection-identity": "Không thể xác minh danh tính của mục đã chọn. Hãy mở lại bộ chọn rồi thử lại.",
+    "selection-scope": "Mục đã chọn nằm ngoài site, thư viện hoặc thư mục được phép.",
+    "selection-policy": "Lựa chọn không đáp ứng các yêu cầu về loại, danh mục, phần mở rộng hoặc số lượng mục được phép.",
+    "selection-unavailable": "Mục đã chọn không khả dụng hoặc không thể truy nhập.",
+    "selection-invalid": "Không thể xác minh lựa chọn. Không có mục mới nào được thêm.",
+    "onedrive-unavailable": "OneDrive của người dùng hiện tại không khả dụng hoặc không thể truy nhập. Hãy kiểm tra xem ổ đĩa có tồn tại hay không rồi thử lại.",
+    "opening": "Không thể mở bộ chọn. Hãy kiểm tra cấu hình và quyền truy nhập vào nguồn rồi thử lại.",
+    "timeout": "Bộ chọn không phản hồi kịp thời. Hãy đóng bộ chọn rồi thử lại.",
+    "communication": "Kết nối với bộ chọn đã bị gián đoạn. Hãy mở lại bộ chọn rồi thử lại."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Tính năng xác thực tùy chọn không phản hồi kịp thời. Hãy thử lại.",
+    "unsupportedCommand": "Tích hợp này không hỗ trợ lệnh đó.",
+    "optionalGraphAuthenticationFailed": "Không thể xác thực tính năng Microsoft Graph tùy chọn.",
+    "optionalPersonalAuthenticationFailed": "Không thể xác thực đích cá nhân tùy chọn."
+  }
+}

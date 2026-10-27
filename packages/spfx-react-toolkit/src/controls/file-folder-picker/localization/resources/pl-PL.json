@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Przeglądaj pliki…",
+    "folders": "Przeglądaj foldery…",
+    "all": "Przeglądaj pliki i foldery…"
+  },
+  "placeholders": {
+    "files": "Wybierz pliki…",
+    "folders": "Wybierz foldery…",
+    "all": "Wybierz pliki lub foldery…"
+  },
+  "labels": {
+    "selection": "Wybór plików i folderów",
+    "file": "Plik",
+    "folder": "Folder",
+    "unresolvedItem": "Nierozpoznany element",
+    "removeItem": "Usuń {name}"
+  },
+  "validation": {
+    "invalidReferences": "Nieprawidłowe odwołania do plików lub folderów.",
+    "controlledModeChanged": "Trybu kontrolowanego nie można zmienić, gdy kontrolka jest zamontowana.",
+    "incompatibleItems": "Wybór zawiera elementy niezgodne ze skonfigurowanym typem, kategorią lub rozszerzeniami. Usuń je lub zastąp.",
+    "invalidPolicy": "Nieprawidłowa konfiguracja typu, kategorii, rozszerzeń lub limitu wyboru.",
+    "selectionLimitExceeded": "Wybór przekracza skonfigurowany limit. Usuń nadmiarowe elementy."
+  },
+  "errors": {
+    "configuration": "Nieprawidłowa konfiguracja selektora. Sprawdź źródło, typy, kategorię i limity; użyj ustawienia wstępnego bez starszych opcji.",
+    "auth-resource": "Selektor zażądał zasobu uwierzytelniania niedozwolonego przez konfigurację.",
+    "auth-type": "Selektor zażądał typu uwierzytelniania nieobsługiwanego przez konfigurację.",
+    "auth-challenge": "Selektor wymaga dodatkowego sprawdzenia uwierzytelniania, które nie jest obsługiwane.",
+    "auth-provider": "Nie udało się uzyskać tokenu SharePoint. Spróbuj ponownie; jeśli problem nadal występuje, sprawdź swój dostęp i istniejące uprawnienia.",
+    "selection-identity": "Nie udało się zweryfikować tożsamości wybranego elementu. Otwórz selektor ponownie i spróbuj jeszcze raz.",
+    "selection-scope": "Wybrany element znajduje się poza dozwoloną witryną, biblioteką lub folderem.",
+    "selection-policy": "Wybór nie spełnia wymagań dotyczących dozwolonego typu, kategorii, rozszerzeń lub liczby elementów.",
+    "selection-unavailable": "Wybrany element jest niedostępny lub nie można uzyskać do niego dostępu.",
+    "selection-invalid": "Nie udało się zweryfikować wyboru. Nie dodano żadnych nowych elementów.",
+    "onedrive-unavailable": "OneDrive bieżącego użytkownika jest niedostępny lub nie można uzyskać do niego dostępu. Sprawdź, czy dysk istnieje, i spróbuj ponownie.",
+    "opening": "Nie udało się otworzyć selektora. Sprawdź konfigurację i dostęp do źródła, a następnie spróbuj ponownie.",
+    "timeout": "Selektor nie odpowiedział w wyznaczonym czasie. Zamknij go i spróbuj ponownie.",
+    "communication": "Komunikacja z selektorem została przerwana. Otwórz go ponownie i spróbuj jeszcze raz."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Opcjonalna funkcja uwierzytelniania nie odpowiedziała w wyznaczonym czasie. Spróbuj ponownie.",
+    "unsupportedCommand": "Ta integracja nie obsługuje tego polecenia.",
+    "optionalGraphAuthenticationFailed": "Nie udało się uwierzytelnić opcjonalnej funkcji Microsoft Graph.",
+    "optionalPersonalAuthenticationFailed": "Nie udało się uwierzytelnić opcjonalnej lokalizacji osobistej."
+  }
+}

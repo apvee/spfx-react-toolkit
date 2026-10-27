@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "فورم ارسال نشد. لطفاً دوباره تلاش کنید.",
+  "dateInputValidationMessage": "پیش از ارسال، تاریخ را تکمیل یا اصلاح کنید.",
+  "timeInputValidationMessage": "پیش از ارسال، وقت را تکمیل یا اصلاح کنید.",
+  "tagPicker": {
+    "noOptions": "هیچ گزینه‌ای با جستجوی فعلی مطابقت ندارد."
+  },
+  "fileInput": {
+    "browseLabel": "مرور",
+    "clearLabel": "پاک کردن"
+  },
+  "arraySection": {
+    "add": "افزودن مورد",
+    "empty": "موردی وجود ندارد",
+    "itemLabelTemplate": "مورد {position}",
+    "removeTemplate": "حذف {label}",
+    "moveUpTemplate": "انتقال {label} به بالا",
+    "moveDownTemplate": "انتقال {label} به پایین",
+    "addedTemplate": "{label} افزوده شد",
+    "removedTemplate": "{label} حذف شد",
+    "movedTemplate": "{label} به موقعیت {position} از {total} انتقال یافت"
+  },
+  "datePicker": {
+    "months": [
+      "جنوری",
+      "فبروری",
+      "مارچ",
+      "اپریل",
+      "می",
+      "جون",
+      "جولای",
+      "اگست",
+      "سپتمبر",
+      "اکتوبر",
+      "نومبر",
+      "دسمبر"
+    ],
+    "shortMonths": [
+      "جنوری",
+      "فبروری",
+      "مارچ",
+      "اپریل",
+      "می",
+      "جون",
+      "جولای",
+      "اگست",
+      "سپتمبر",
+      "اکتوبر",
+      "نومبر",
+      "دسمبر"
+    ],
+    "days": [
+      "یکشنبه",
+      "دوشنبه",
+      "سه‌شنبه",
+      "چهارشنبه",
+      "پنجشنبه",
+      "جمعه",
+      "شنبه"
+    ],
+    "shortDays": [
+      "یکشنبه",
+      "دوشنبه",
+      "سه‌شنبه",
+      "چهارشنبه",
+      "پنجشنبه",
+      "جمعه",
+      "شنبه"
+    ],
+    "goToToday": "رفتن به امروز",
+    "prevMonthAriaLabel": "ماه قبلی",
+    "nextMonthAriaLabel": "ماه بعدی",
+    "prevYearAriaLabel": "سال قبلی",
+    "nextYearAriaLabel": "سال بعدی",
+    "prevYearRangeAriaLabel": "محدودهٔ سال‌های قبلی",
+    "nextYearRangeAriaLabel": "محدودهٔ سال‌های بعدی",
+    "monthPickerHeaderAriaLabel": "{0}، تغییر سال",
+    "yearPickerHeaderAriaLabel": "{0}، تغییر ماه",
+    "closeButtonAriaLabel": "بستن",
+    "weekNumberFormatString": "شمارهٔ هفته {0}",
+    "selectedDateFormatString": "تاریخ انتخاب‌شده {0}",
+    "todayDateFormatString": "تاریخ امروز {0}",
+    "dayMarkedAriaLabel": "نشانی‌شده"
+  }
+}

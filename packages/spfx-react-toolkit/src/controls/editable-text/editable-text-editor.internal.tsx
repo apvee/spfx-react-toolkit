@@ -12,8 +12,8 @@ import { normalizeEditableTextDocument } from './editable-text-policy.internal';
 import type { EditableTextBlockPolicy } from './editable-text-policy.internal';
 import { useEditableTextStyles } from './editable-text-styles.internal';
 import { EditableTextToolbar } from './editable-text-toolbar.internal';
-import { resolveEditableTextStrings } from './localization/editable-text-locales.internal';
-import type { EditableTextStrings } from './localization/editable-text-strings.internal';
+import { resolveEditableTextStrings } from './localization/editable-text-strings.internal';
+import type { EditableTextStrings } from './editable-text.types';
 import type { EditableTextDocument } from './editable-text-document.types.internal';
 
 const useEditorStyles = makeStyles({ root: {

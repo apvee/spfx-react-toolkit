@@ -124,9 +124,15 @@ async function interact(page, key) {
     case 'data-grid': { const row = panel.locator('#data-grid-main .fui-DataGridBody > [role=row]').first(); const before = (await row.boundingBox()).height; await panel.locator('#dg-size').selectOption('small'); check('DataGrid actual row height follows size', (await row.boundingBox()).height < before, true); break; }
     case 'form': {
       const title = panel.getByLabel('Title', { exact: false });
-      await title.fill(''); await panel.locator('[data-form-demo=submit]').click();
-      check('Form actual required rule blocks submit', (await panel.locator('[data-form-demo=status]').textContent()).includes('Controlla'), true);
-      await title.fill('Report integrato'); await panel.locator('[data-form-demo=submit]').click();
+      const requiredError = panel.getByText('Title is required', { exact: true });
+      // onBlur validation changes the button position. Complete that user action
+      // before clicking so mousedown and mouseup reach the same submit button.
+      await title.fill(''); await title.press('Tab'); await requiredError.waitFor();
+      await panel.locator('[data-form-demo=submit]').click();
+      await page.waitForFunction(() => document.querySelector('[data-form-demo=status]')?.textContent.includes('Check the required fields.'));
+      check('Form actual required rule blocks submit', (await panel.locator('[data-form-demo=status]').textContent()).includes('Check the required fields.'), true);
+      await title.fill('Report integrato'); await title.press('Tab'); await requiredError.waitFor({ state: 'hidden' });
+      await panel.locator('[data-form-demo=submit]').click();
       await page.waitForFunction(() => document.querySelector('[data-form-demo=status]')?.textContent.includes('Saved'));
       check('Form actual valid record saved', (await panel.locator('[data-form-demo=status]').textContent()).includes('Saved'), true); break;
     }
@@ -158,6 +164,29 @@ async function interact(page, key) {
         await region.focus(); const initial = await region.evaluate(element => element.scrollLeft); await page.keyboard.press('ArrowRight');
         await page.waitForFunction(({ name, initial }) => [...document.querySelectorAll('[role=region]')].find(element => element.getAttribute('aria-label') === name)?.scrollLeft > initial, { name, initial });
       }
+      break;
+    }
+    case 'file-folder-picker': {
+      await panel.getByRole('switch', { name: 'Custom browse text', exact: true }).check();
+      await page.waitForFunction(() => document.querySelector('[role=tabpanel] button[aria-haspopup=dialog]')?.getAttribute('aria-label') === 'Choose report attachments…');
+      check('File picker per-instance browse dictionary', await panel.locator('button[aria-haspopup=dialog]').getAttribute('aria-label'), 'Choose report attachments…');
+      break;
+    }
+    case 'pickers': {
+      await panel.getByRole('switch', { name: 'Custom search and status text', exact: true }).check();
+      await panel.getByText('Choose source content', { exact: true }).waitFor();
+      check('Picker per-instance prompt dictionary', await panel.getByText('Choose source content', { exact: true }).count(), 1);
+      break;
+    }
+    case 'editable-text': {
+      const before = await panel.locator('[data-editable-text-demo=stored]').textContent();
+      await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click();
+      await panel.locator('[data-editable-text-demo=strings]').selectOption('custom');
+      check('Editor dictionary retains stored content', await panel.locator('[data-editable-text-demo=stored]').textContent(), before);
+      break;
+    }
+    case 'configuration': {
+      check('Configuration form visible', await panel.locator('input').count() > 0, true);
       break;
     }
     case 'providers': await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click(); check('Provider disclosure', await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).getAttribute('aria-expanded'), 'true'); break;
@@ -217,6 +246,65 @@ async function liveTheme(page) {
     check('Actual registered tab count', await page.getByRole('tab').count(), entries.length);
     check('Coverage detailed default collapsed', await page.getByRole('button', { name: 'Detailed package coverage', exact: true }).getAttribute('aria-expanded'), 'false');
     await page.screenshot({ path: path.join(output, 'initial-viewport.png') });
+    if (process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1') {
+      for (const key of ['file-folder-picker', 'pickers', 'pagination', 'data-grid', 'form', 'stage', 'web-part-shell', 'editable-text']) {
+        await select(page, key);
+        try { await interact(page, key); } catch (error) {
+          fs.writeFileSync(path.join(output, 'localization-debug.json'), JSON.stringify(await page.getByRole('tabpanel').evaluate(panel => ({ key: panel.textContent?.slice(0, 6000), controls: [...panel.querySelectorAll('input,textarea,button,form')].map(element => ({ tag: element.tagName, name: element.getAttribute('name'), type: element.getAttribute('type'), disabled: element.disabled, value: element.value, text: element.tagName === 'BUTTON' ? element.textContent : undefined, noValidate: element.noValidate })) })), undefined, 2));
+          throw error;
+        }
+        const panel = page.getByRole('tabpanel');
+        if (key === 'data-grid') {
+          await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click();
+          await panel.locator('#dg-strings').check();
+          await page.getByLabel('Select every document', { exact: true }).waitFor();
+          check('DataGrid custom selection dictionary', await page.getByLabel('Select every document', { exact: true }).count(), 1);
+        } else if (key === 'form') {
+          await panel.getByLabel('Custom labels and failure text', { exact: true }).check();
+          await panel.getByLabel('Simulate error', { exact: true }).check();
+          await panel.locator('[data-form-demo=submit]').click();
+          await panel.getByText('The report could not be saved. Please retry.', { exact: true }).waitFor();
+          check('Form hook-owned failure dictionary', await panel.getByText('The report could not be saved. Please retry.', { exact: true }).count(), 1);
+        } else if (key === 'stage') {
+          await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click();
+          await panel.getByLabel('Custom close text', { exact: true }).check();
+          await panel.locator('[data-stage-demo=trigger]').click();
+          await page.getByRole('button', { name: 'Dismiss A', exact: true }).click();
+          check('Stage custom close dictionary', await page.locator('.fui-PopoverSurface').count(), 0);
+        } else if (key === 'web-part-shell') {
+          await panel.getByRole('switch', { name: 'Show title', exact: true }).check();
+          await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click();
+          await panel.getByRole('switch', { name: 'Custom title naming', exact: true }).check();
+          await page.locator('[aria-label="Project section heading"]').waitFor();
+          check('Shell custom title naming dictionary', await page.locator('[aria-label="Project section heading"]').count(), 1);
+        } else if (key === 'editable-text') {
+          const before = await panel.locator('[data-editable-text-demo=stored]').textContent();
+          await panel.locator('[data-editable-text-demo=mode]').selectOption('edit');
+          const editor = panel.locator('[contenteditable=true]');
+          await editor.waitFor();
+          await panel.locator('[data-editable-text-demo=strings]').selectOption('italian');
+          await editor.focus();
+          await page.getByRole('toolbar', { name: 'Formattazione del testo', exact: true }).waitFor();
+          check('Editor full dictionary toolbar label', await page.getByRole('toolbar', { name: 'Formattazione del testo', exact: true }).count(), 1);
+          check('Editor full dictionary retains source', await panel.locator('[data-editable-text-demo=stored]').textContent(), before);
+        }
+        await capture(page, `localization-${key}`);
+        console.log(`Verified localization: ${key}`);
+      }
+      // This fixture deliberately refuses native authentication, and the Form
+      // scenario deliberately throws to exercise its localized failure boundary.
+      // Compare exact messages/counts; stack locations vary with bundle and port.
+      const expectedMessages = [
+        'Failed to consume AadTokenProviderFactory: Error: Native authentication is unavailable in this local fixture',
+        'Unexpected Form failure: Error: Simulated save failure',
+      ];
+      const isExpectedDiagnostic = message => message.type === 'error' && expectedMessages.includes(message.text.split('\n')[0]);
+      for (const expected of expectedMessages)
+        check(`Intentional localization diagnostic occurs once: ${expected}`, diagnostics.filter(message => message.type === 'error' && message.text.split('\n')[0] === expected).length, 1);
+      check('Unexpected localization browser/network diagnostics', diagnostics.filter(message => !isExpectedDiagnostic(message)), []);
+      console.log(`Eight actual sample localization families: ${checks.length} checks PASS.`);
+      return;
+    }
     if (process.env.DEMO_PRESENTATION_TRIMS_ONLY === '1') {
       const { accessTrimsBrowser } = require('./access-trims-browser.helpers.cjs');
       await accessTrimsBrowser({ page, check, select, singleExample, labels, overflow, capture });
@@ -408,7 +496,7 @@ async function liveTheme(page) {
     check('Unexpected app/browser/network diagnostics', diagnostics.filter(message => !(message.type === 'warning' && message.text === nativeColorWarning)), []);
     console.log(`Integrated actual app: ${checks.length} PASS checks; ${screenshots.length} screenshots; native 200% proved.`);
   } finally {
-    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: `actual app/registry/lazy panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, metrics, screenshots }, undefined, 2));
+    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: `actual app/registry/lazy panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, metrics, screenshots }, undefined, 2));
     await browser?.close(); await new Promise(resolve => server.close(resolve));
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

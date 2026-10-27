@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Formuläret kunde inte skickas. Försök igen.",
+  "dateInputValidationMessage": "Fyll i eller korrigera datumet innan du skickar.",
+  "timeInputValidationMessage": "Fyll i eller korrigera tiden innan du skickar.",
+  "tagPicker": {
+    "noOptions": "Inga alternativ matchar den aktuella sökningen."
+  },
+  "fileInput": {
+    "browseLabel": "Bläddra",
+    "clearLabel": "Rensa"
+  },
+  "arraySection": {
+    "add": "Lägg till objekt",
+    "empty": "Inga objekt",
+    "itemLabelTemplate": "Objekt {position}",
+    "removeTemplate": "Ta bort {label}",
+    "moveUpTemplate": "Flytta {label} uppåt",
+    "moveDownTemplate": "Flytta {label} nedåt",
+    "addedTemplate": "Tillagt: {label}",
+    "removedTemplate": "Borttaget: {label}",
+    "movedTemplate": "{label} flyttades till position {position} av {total}"
+  },
+  "datePicker": {
+    "months": [
+      "januari",
+      "februari",
+      "mars",
+      "april",
+      "maj",
+      "juni",
+      "juli",
+      "augusti",
+      "september",
+      "oktober",
+      "november",
+      "december"
+    ],
+    "shortMonths": [
+      "jan.",
+      "feb.",
+      "mars",
+      "apr.",
+      "maj",
+      "juni",
+      "juli",
+      "aug.",
+      "sep.",
+      "okt.",
+      "nov.",
+      "dec."
+    ],
+    "days": [
+      "söndag",
+      "måndag",
+      "tisdag",
+      "onsdag",
+      "torsdag",
+      "fredag",
+      "lördag"
+    ],
+    "shortDays": [
+      "sön",
+      "mån",
+      "tis",
+      "ons",
+      "tors",
+      "fre",
+      "lör"
+    ],
+    "goToToday": "Gå till idag",
+    "prevMonthAriaLabel": "Föregående månad",
+    "nextMonthAriaLabel": "Nästa månad",
+    "prevYearAriaLabel": "Föregående år",
+    "nextYearAriaLabel": "Nästa år",
+    "prevYearRangeAriaLabel": "Föregående årsintervall",
+    "nextYearRangeAriaLabel": "Nästa årsintervall",
+    "monthPickerHeaderAriaLabel": "{0}, ändra år",
+    "yearPickerHeaderAriaLabel": "{0}, ändra månad",
+    "closeButtonAriaLabel": "Stäng",
+    "weekNumberFormatString": "Veckonummer {0}",
+    "selectedDateFormatString": "Valt datum {0}",
+    "todayDateFormatString": "Dagens datum {0}",
+    "dayMarkedAriaLabel": "markerat"
+  }
+}

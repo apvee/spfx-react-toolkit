@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Bladeren naar bestanden…",
+    "folders": "Bladeren naar mappen…",
+    "all": "Bladeren naar bestanden en mappen…"
+  },
+  "placeholders": {
+    "files": "Bestanden selecteren…",
+    "folders": "Mappen selecteren…",
+    "all": "Bestanden of mappen selecteren…"
+  },
+  "labels": {
+    "selection": "Bestands- en mapselectie",
+    "file": "Bestand",
+    "folder": "Map",
+    "unresolvedItem": "Niet-omgezet item",
+    "removeItem": "{name} verwijderen"
+  },
+  "validation": {
+    "invalidReferences": "Ongeldige bestands- of mapverwijzingen.",
+    "controlledModeChanged": "De beheerde modus kan niet veranderen zolang het besturingselement is gekoppeld.",
+    "incompatibleItems": "De selectie bevat items die niet compatibel zijn met het ingestelde type, de categorie of de extensies. Verwijder of vervang deze.",
+    "invalidPolicy": "Ongeldige configuratie voor selectietype, categorie, extensies of limiet.",
+    "selectionLimitExceeded": "De selectie overschrijdt de ingestelde limiet. Verwijder de overtollige items."
+  },
+  "errors": {
+    "configuration": "Ongeldige configuratie van de kiezer. Controleer de bron, typen, categorie en limieten; gebruik de voorinstelling zonder verouderde opties.",
+    "auth-resource": "De kiezer heeft een verificatiebron aangevraagd die niet is toegestaan door de configuratie.",
+    "auth-type": "De kiezer heeft een verificatietype aangevraagd dat niet wordt ondersteund door de configuratie.",
+    "auth-challenge": "De kiezer vereist een extra verificatiecontrole die niet wordt ondersteund.",
+    "auth-provider": "Het SharePoint-token kan niet worden opgehaald. Probeer het opnieuw; controleer uw toegang en bestaande machtigingen als het probleem aanhoudt.",
+    "selection-identity": "De identiteit van het geselecteerde item kan niet worden gecontroleerd. Open de kiezer opnieuw en probeer het nogmaals.",
+    "selection-scope": "Het geselecteerde item valt buiten de toegestane site, bibliotheek of map.",
+    "selection-policy": "De selectie voldoet niet aan het toegestane type, de categorie, de extensies of het aantal items.",
+    "selection-unavailable": "Het geselecteerde item is niet beschikbaar of niet toegankelijk.",
+    "selection-invalid": "De selectie kan niet worden gecontroleerd. Er zijn geen nieuwe items toegevoegd.",
+    "onedrive-unavailable": "OneDrive van de huidige gebruiker is niet beschikbaar of niet toegankelijk. Controleer of het station bestaat en probeer het opnieuw.",
+    "opening": "De kiezer kan niet worden geopend. Controleer de configuratie en de toegang tot de bron en probeer het opnieuw.",
+    "timeout": "De kiezer heeft niet op tijd gereageerd. Sluit deze en probeer het opnieuw.",
+    "communication": "De communicatie met de kiezer is onderbroken. Open deze opnieuw en probeer het nogmaals."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "De optionele verificatiefunctie heeft niet op tijd gereageerd. Probeer het opnieuw.",
+    "unsupportedCommand": "Deze integratie ondersteunt die opdracht niet.",
+    "optionalGraphAuthenticationFailed": "De optionele Microsoft Graph-functie kan niet worden geverifieerd.",
+    "optionalPersonalAuthenticationFailed": "De optionele persoonlijke bestemming kan niet worden geverifieerd."
+  }
+}

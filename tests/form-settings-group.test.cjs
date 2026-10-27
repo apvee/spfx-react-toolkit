@@ -68,7 +68,7 @@ test('standalone unnamed TagPicker is rejected and context-named TagPicker is ac
  const f=fixture('TagPicker');try{assert.ok(texts(f.host.querySelector('[role=listbox]'),'aria-labelledby').includes('Setting title'));}finally{f.close();}
 });
 test('public field composition types permit inherited TagPicker naming',()=>{
- const ts=require('typescript'),path=require('node:path');const program=ts.createProgram([path.resolve(__dirname,'fixtures/form-settings-types.tsx')],{noEmit:true,strict:true,skipLibCheck:true,target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.ESNext,moduleResolution:ts.ModuleResolutionKind.NodeJs,jsx:ts.JsxEmit.React,lib:['lib.es2020.d.ts','lib.dom.d.ts']});const diagnostics=ts.getPreEmitDiagnostics(program);assert.equal(diagnostics.length,0,ts.formatDiagnosticsWithColorAndContext(diagnostics,{getCanonicalFileName:f=>f,getCurrentDirectory:()=>process.cwd(),getNewLine:()=> '\n'}));
+ const ts=require('typescript'),path=require('node:path');const program=ts.createProgram([path.resolve(__dirname, '../packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts'), path.resolve(__dirname,'fixtures/form-settings-types.tsx')],{noEmit:true,strict:true,skipLibCheck:true,target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.ESNext,moduleResolution:ts.ModuleResolutionKind.NodeJs,jsx:ts.JsxEmit.React,lib:['lib.es2020.d.ts','lib.dom.d.ts']});const diagnostics=ts.getPreEmitDiagnostics(program);assert.equal(diagnostics.length,0,ts.formatDiagnosticsWithColorAndContext(diagnostics,{getCanonicalFileName:f=>f,getCurrentDirectory:()=>process.cwd(),getNewLine:()=> '\n'}));
 });
 test('field rows reject absent built-in owners, including custom-only bindings',()=>{
  const F=api.createForm();const original=console.error;console.error=()=>{};

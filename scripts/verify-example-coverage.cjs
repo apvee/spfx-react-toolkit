@@ -179,7 +179,7 @@ for (const marker of ['DescriptionList.Item', 'items=', 'layout=', 'key={entry.i
 const editableTextPanel = scenarioSource('EditableText');
 for (const marker of ['<EditableText ', 'allowedBlocks=', 'onChange=', 'data-editable-text-demo="preview"',
   'data-editable-text-demo="h2"', 'data-editable-text-demo="fallback"', 'data-editable-text-demo="empty"',
-  "'data-editable-text-demo': 'mode'", "'data-editable-text-demo': 'preset'", "'data-editable-text-demo': 'locale'",
+  "'data-editable-text-demo': 'mode'", "'data-editable-text-demo': 'preset'", "'data-editable-text-demo': 'strings'",
   'data-editable-text-demo="stored"', 'data-editable-text-demo="callback"']) {
   if (!editableTextPanel.includes(marker)) throw new Error(`EditableText interactive example missing ${marker}`);
 }
@@ -227,7 +227,7 @@ for (const name of ['Text', 'Number', 'Boolean', 'Date', 'DateTime', 'Badge', 'I
 console.log('Verified DataGrid presets plus versioned full-family/native/chart conformance coverage.');
 
 const shellPanel = scenarioSource('WebPartShell');
-for (const marker of ['show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'note', 'increment', 'observations']) {
+for (const marker of ['show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'strings', 'title-editor-strings', 'note', 'increment', 'observations']) {
   if (!shellPanel.includes(`data-shell-demo="${marker}"`)) throw new Error(`WebPartShell sample missing ${marker}`);
 }
 const shellHost = read(path.join(path.dirname(registryPath), 'WebPartShellDemoHost.tsx'));
@@ -292,4 +292,17 @@ console.log('Verified actual trim scenarios and scoped Context configuration; ex
 
 for (const marker of ['<EntraGroupTrim groups={[{ name: applied.group }]}', 'Permission AND Entra membership']) {
   if (!read(path.join(panelsPath, 'SharePointPermissionTrimPanel.tsx')).includes(marker)) throw new Error(`Permission/Entra AND sample missing ${marker}`);
+}
+
+// Each migrated family retains an observable override on its existing live subject.
+for (const [panel, marker] of [
+  ['PaginationPanel.tsx', 'data-pagination-demo="localization"'],
+  ['DataGridPanel.tsx', 'id="dg-strings"'],
+  ['StagePanel.tsx', 'data-stage-demo="strings"'],
+  ['FormPanel.tsx', "'data-form-demo': 'strings'"],
+  ['PickersPanel.tsx', 'data-picker-demo="strings"'],
+  ['FileFolderPickerPanel.tsx', 'data-file-picker-demo="strings"'],
+]) {
+  const source = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels', panel), 'utf8');
+  if (!source.includes(marker) || !/strings[=:]/.test(source)) throw new Error(`${panel}: native/family dictionary override must remain observable`);
 }

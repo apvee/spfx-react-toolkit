@@ -1,0 +1,9 @@
+{
+  "pagination": "Sivutus",
+  "firstPage": "Ensimmäinen sivu",
+  "previousPage": "Edellinen sivu",
+  "nextPage": "Seuraava sivu",
+  "lastPage": "Viimeinen sivu",
+  "loadMore": "Lataa lisää",
+  "loading": "Ladataan"
+}

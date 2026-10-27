@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Button, Field, Input, Select } from '@fluentui/react-components';
-import { EditableText, type EditableTextBlock, type EditableTextChangeData } from '@apvee/spfx-react-toolkit';
+import { EditableText, type EditableTextBlock, type EditableTextChangeData, type EditableTextStringsOverride } from '@apvee/spfx-react-toolkit';
 import { DemoCard } from '../shared/DemoCard';
+import { italianEditableTextStrings } from './editable-text-italian-strings';
 
 const presets = ['all', 'paragraph', 'headings', 'h2-h4'] as const;
 type Preset = typeof presets[number];
@@ -11,6 +12,7 @@ const blocks: Record<Preset, readonly EditableTextBlock[] | undefined> = {
   headings: ['h1', 'h2', 'h3', 'h4'],
   'h2-h4': ['h2', 'h3', 'h4'],
 };
+const customStrings: EditableTextStringsOverride = { bold: 'Strong', italic: 'Slanted', themeColor: 'Ink', formattingControls: 'Project text formatting', colorNames: { red: 'Alert red' } };
 const initialHTML = '<h2><strong>Project</strong> update</h2>';
 
 /** Pure React controlled example; SPFx persistence remains a caller concern. */
@@ -20,7 +22,7 @@ const EditableTextPanel: React.FC = () => {
   const [preset, setPreset] = React.useState<Preset>('all');
   const [fallback, setFallback] = React.useState('Literal <h2>fallback</h2>');
   const [placeholder, setPlaceholder] = React.useState('Write a project update');
-  const [locale, setLocale] = React.useState('en-US');
+  const [dictionary, setDictionary] = React.useState('native');
   const [lastChange, setLastChange] = React.useState<EditableTextChangeData>();
   const [changes, setChanges] = React.useState(0);
   const onChange = React.useCallback((data: EditableTextChangeData) => {
@@ -50,14 +52,14 @@ const EditableTextPanel: React.FC = () => {
       <p>The live subject below is the visible policy projection. Normalization does not rewrite the stored input; a user change saves its canonical HTML into React state.</p>
     </>}
     diagnostics={<>
-      <Field label="Editor language"><Select select={{ as: 'select', ...{ 'data-editable-text-demo': 'locale' } }} value={locale} onChange={event => setLocale(event.target.value)}>
-        <option value="en-US">English</option><option value="it-IT">Italiano</option><option value="fr-FR">Français</option>
+      <Field label="Editor dictionary"><Select select={{ as: 'select', ...{ 'data-editable-text-demo': 'strings' } }} value={dictionary} onChange={event => setDictionary(event.target.value)}>
+        <option value="native">Native SPFx labels</option><option value="italian">Italiano · complete dictionary</option><option value="custom">Project labels · partial dictionary</option>
       </Select></Field>
       <p>Last user callback: <code data-editable-text-demo="callback">{lastChange === undefined ? 'No user changes' : JSON.stringify(lastChange)}</code></p>
-      <p>Preset changes retain this control and its source. Switching to Read destroys its editor session. Locale changes translate commands, not content.</p>
+      <p>Preset changes retain this control and its source. Switching to Read destroys its editor session. Dictionary changes update commands without changing content or publishing a callback.</p>
     </>}>
     <EditableText data-editable-text-demo="preview" aria-label="Project update visible policy projection" mode={mode} value={html}
-      fallbackText={fallback} allowedBlocks={blocks[preset]} placeholder={placeholder} locale={locale} onChange={onChange} />
+      fallbackText={fallback} allowedBlocks={blocks[preset]} placeholder={placeholder} strings={dictionary === 'italian' ? italianEditableTextStrings : dictionary === 'custom' ? customStrings : undefined} onChange={onChange} />
   </DemoCard>;
 };
 export default EditableTextPanel;

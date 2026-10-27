@@ -134,7 +134,7 @@ Rating displays only filled marigold stars. Its numeric value and optional vote 
   strings={{ ratingCount: (count, formattedCount) => `${formattedCount} ${count === 1 ? 'voto' : 'voti'}` }} />
 ```
 
-`formattedCount` follows the column or grid locale; `count` remains the original number for pluralization. Default UI labels are English, independently of the numeric locale.
+`formattedCount` follows the column or grid locale; `count` remains the original number for pluralization. SPFx selects native UI labels independently of the numeric locale.
 
 Common options include `id`, `header`, `headerAriaLabel`, `headerTooltip`, `tooltip`, `placeholder`, `invalidPlaceholder`, `sortable`, `width`, `minWidth` and `locale`. Numeric map keys require a `ReadonlyMap`, preserving numeric versus string identity. Tags require a mapping or paired label/identity callbacks. The callback pair supports scalar and object tags; object tags require the pair so identities are explicit. A matching mapping presentation takes precedence over the callback label. Scalar tags with a declared mapping retain their original scalar IDs. People and tag IDs must be unique within each cell; duplicates render invalid data because native overflow requires unique identities. Objects are never implicitly stringified. Custom content can compose other toolkit controls explicitly.
 
@@ -250,12 +250,12 @@ Localized status and cell strings.
 | `DataGridStrings.no` | False label shared by text, icon and tooltip. |
 | `DataGridStrings.noTags` | Empty tag list label. |
 | `DataGridStrings.tagOverflow` | Accessible trigger label for hidden tags. |
-| `DataGridStrings.ratingCount` | Accessible localized vote count when count is explicitly supplied, receiving its original number and locale-formatted text. Defaults to "1 vote" or "N votes". |
+| `DataGridStrings.ratingCount` | Accessible localized vote count when count is explicitly supplied, receiving its original number and locale-formatted text. Defaults to the native resource vote-count forms. |
 | `DataGridStrings.noObservations` | Empty chart series label. |
 | `DataGridStrings.invalidValue` | Invalid present cell data label. |
 | `DataGridStrings.selectAllRows` | Select all supplied rows. |
 | `DataGridStrings.selectRow` | Accessible selection label for an original row ID. |
-| `DataGridStrings.sparklineSummary` | Accessible chart summary from locale-formatted original observations. Defaults to English metric labels. Derived metrics independently use an em dash when unavailable; showValue=false does not suppress this summary. |
+| `DataGridStrings.sparklineSummary` | Accessible chart summary from locale-formatted original observations. Defaults to host-selected native metric labels. Derived metrics independently use an em dash when unavailable; showValue=false does not suppress this summary. |
 | `DataGridStrings.retry` | Retry label. |
 
 ### `DataGridSparklineSummaryText`
@@ -696,3 +696,17 @@ Custom content preserves original source and JSX identity.
 | Member | Contract |
 | --- | --- |
 | `DataGridCustomOptions.renderCell` | Renders one valid value with original row identity. |
+
+## Native UI localization
+
+SPFx selects the DataGrid native resource from the host UI culture after the host registers its toolkit resource ID through the localization configuration CLI. `strings?: Partial<DataGridStrings>` replaces static labels and callbacks per grid instance. Omitted or undefined entries and blank static strings retain that baseline; nonblank strings preserve surrounding whitespace. Invalid override object/member types throw. A complete dictionary replaces every owned label.
+
+Root and column `locale`, `format` and `timeZone` still govern data formatting independently of the UI resource. The source resource culture selects default plural grammar. `ratingCount` receives the original numeric count and its locale-formatted text; `tagOverflow` receives the original hidden count; `sparklineSummary` receives the existing formatted metrics. Source rows, mapped labels, dates, relative time text and callback arguments are unchanged.
+
+```tsx
+<Grid items={rows} getRowId={row => row.id} columns={columns} locale="it-IT"
+  strings={{ empty: 'No records', ratingCount: (count, formattedCount) =>
+    `${formattedCount} ${count === 1 ? 'vote' : 'votes'}` }} />
+```
+
+This example keeps Italian data formatting with an English vote label; omitted labels use the host resource. No additional provider is required.

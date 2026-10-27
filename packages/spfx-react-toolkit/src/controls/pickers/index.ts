@@ -7,3 +7,4 @@ export { ListItemPicker } from './list-item-picker';
 export { PrincipalPicker } from './principal-picker';
 export type * from './picker.types';
 export type * from './picker-values.types';
+export type { PickersStrings, PickersStringsOverride } from './pickers-strings.types';

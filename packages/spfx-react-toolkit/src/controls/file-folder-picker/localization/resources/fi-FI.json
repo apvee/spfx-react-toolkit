@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Selaa tiedostoja…",
+    "folders": "Selaa kansioita…",
+    "all": "Selaa tiedostoja ja kansioita…"
+  },
+  "placeholders": {
+    "files": "Valitse tiedostoja…",
+    "folders": "Valitse kansioita…",
+    "all": "Valitse tiedostoja tai kansioita…"
+  },
+  "labels": {
+    "selection": "Tiedostojen ja kansioiden valinta",
+    "file": "Tiedosto",
+    "folder": "Kansio",
+    "unresolvedItem": "Selvittämätön kohde",
+    "removeItem": "Poista {name}"
+  },
+  "validation": {
+    "invalidReferences": "Virheellisiä tiedosto- tai kansioviittauksia.",
+    "controlledModeChanged": "Ohjattua tilaa ei voi vaihtaa, kun ohjausobjekti on liitetty.",
+    "incompatibleItems": "Valinta sisältää kohteita, jotka eivät ole yhteensopivia määritetyn tyypin, luokan tai tiedostotunnisteiden kanssa. Poista tai korvaa ne.",
+    "invalidPolicy": "Valinnan tyypin, luokan, tiedostotunnisteiden tai rajan määritys on virheellinen.",
+    "selectionLimitExceeded": "Valinta ylittää määritetyn rajan. Poista ylimääräiset kohteet."
+  },
+  "errors": {
+    "configuration": "Valitsimen määritys on virheellinen. Tarkista lähde, tyypit, luokka ja rajat; käytä esiasetusta ilman vanhoja asetuksia.",
+    "auth-resource": "Valitsin pyysi todennusresurssia, jota määritys ei salli.",
+    "auth-type": "Valitsin pyysi todennustyyppiä, jota määritys ei tue.",
+    "auth-challenge": "Valitsin edellyttää ylimääräistä todennustarkistusta, jota ei tueta.",
+    "auth-provider": "SharePoint-tunnusta ei voitu noutaa. Yritä uudelleen; jos ongelma jatkuu, tarkista pääsysi ja nykyiset käyttöoikeudet.",
+    "selection-identity": "Valitun kohteen tunnistetietoja ei voitu vahvistaa. Avaa valitsin uudelleen ja yritä uudelleen.",
+    "selection-scope": "Valittu kohde ei kuulu sallittuun sivustoon, kirjastoon tai kansioon.",
+    "selection-policy": "Valinta ei täytä sallittua tyyppiä, luokkaa, tiedostotunnisteita tai kohteiden määrää koskevia vaatimuksia.",
+    "selection-unavailable": "Valittu kohde ei ole käytettävissä tai sitä ei voi käyttää.",
+    "selection-invalid": "Valintaa ei voitu vahvistaa. Uusia kohteita ei lisätty.",
+    "onedrive-unavailable": "Nykyisen käyttäjän OneDrive ei ole käytettävissä tai sitä ei voi käyttää. Tarkista, että asema on olemassa, ja yritä uudelleen.",
+    "opening": "Valitsinta ei voitu avata. Tarkista määritys ja lähteen käyttöoikeus ja yritä uudelleen.",
+    "timeout": "Valitsin ei vastannut ajoissa. Sulje se ja yritä uudelleen.",
+    "communication": "Yhteys valitsimeen katkesi. Avaa se uudelleen ja yritä uudelleen."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Valinnainen todennustoiminto ei vastannut ajoissa. Yritä uudelleen.",
+    "unsupportedCommand": "Tämä integrointi ei tue kyseistä komentoa.",
+    "optionalGraphAuthenticationFailed": "Valinnaista Microsoft Graph -toimintoa ei voitu todentaa.",
+    "optionalPersonalAuthenticationFailed": "Valinnaista henkilökohtaista kohdetta ei voitu todentaa."
+  }
+}

@@ -13,6 +13,7 @@ const names = ['SitePicker', 'ListPicker', 'FieldPicker', 'ViewPicker', 'Content
 type Name = typeof names[number];
 /** One active live example. Diagnostics are consumer-owned state, never picker-managed persistence. */
 const PickersPanel: React.FC = () => {
+  const [customStrings, setCustomStrings] = React.useState(false);
   const [name, setName] = React.useState<Name>('SitePicker');
   const [presentation, setPresentation] = React.useState<'combobox' | 'tagPicker'>('combobox');
   const [colorfulTagAvatars, setColorfulTagAvatars] = React.useState(false);
@@ -38,6 +39,7 @@ const PickersPanel: React.FC = () => {
   ]));
   const update = <T extends PickerOption>(data: PickerSelectionData<T>): void => { setSelections(previous => ({ ...previous, [name]: data })); };
   const common = {
+    strings: customStrings ? { labels: { selectOne: 'Choose source content', selectMany: 'Choose source content', search: 'Find a source item', retry: 'Try this source again' }, status: { noOptions: 'No matching source items' } } : undefined,
     label: name, presentation, multiselect: multi, searchable, refreshKey: revision, colorfulTagAvatars,
     selectedOptions: selection?.selectedOptions ?? [],
     suggestionsHeader: header.trim() || undefined,
@@ -65,6 +67,7 @@ const PickersPanel: React.FC = () => {
   }
   const values: readonly PickerValue[] = selection?.selectedValues ?? [];
   return <DemoCard title="SharePoint pickers" iconName="Search" description="One live authenticated picker; the Property Pane exposes the seven corresponding native fields." contentPlacement="configuration" controls={<>
+    <Switch data-picker-demo="strings" label="Custom search and status text" checked={customStrings} onChange={(_, data) => setCustomStrings(data.checked)} />
     <Field label="Control"><Select value={name} onChange={(_, data) => { const candidate = names.find(value => value === data.value); if (candidate) setName(candidate); }}>{names.map(value => <option key={value}>{value}</option>)}</Select></Field>
     <Field label="Presentation"><Select value={presentation} onChange={(_, data) => setPresentation(data.value === 'tagPicker' ? 'tagPicker' : 'combobox')}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
     <Switch label="Multiple selection" checked={multi} onChange={(_, data) => setMulti(data.checked)} />

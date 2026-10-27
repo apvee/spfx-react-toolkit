@@ -106,7 +106,7 @@ test('explicit both-ID resolution started before Graph readiness commits once af
   try {
     await flush(f.h);
     assert.equal(f.runtime.selectedItems.length, 1);
-    const resolve = [...f.dom.querySelectorAll('button')].find(button => button.textContent === 'Risolvi ID');
+    const resolve = [...f.dom.querySelectorAll('button')].find(button => button.textContent === 'Resolve IDs');
     assert.ok(resolve);
     f.h.act(() => require('react-dom/test-utils').Simulate.click(resolve)); await flush(f.h);
     assert.equal(f.runtime.confirming, true);
@@ -129,7 +129,7 @@ test('terminal Graph initialization failure settles Graph-dependent selection an
   try {
     await flush(f.h); await f.reject(); await flush(f.h);
     assert.equal(f.runtime.loading, false);
-    assert.match(f.runtime.validation, /non sono risolti/);
+    assert.match(f.runtime.validation, /unresolved/);
     assert.deepEqual(f.errors.map(error => error.message), ['Graph initialization denied']);
     assert.equal(f.errors[0].source, 'graph');
     assert.deepEqual(f.graphCalls, []);

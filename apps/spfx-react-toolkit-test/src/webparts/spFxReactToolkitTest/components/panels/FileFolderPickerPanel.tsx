@@ -8,6 +8,7 @@ import { DemoAccordionPanel } from '../shared/DemoAccordionPanel';
 /** One real hosted picker; configuration changes do not create content or request consent. */
 const FileFolderPickerPanel: React.FC = () => {
   const page = useSPFxPageContext();
+  const [customStrings, setCustomStrings] = React.useState(false);
   const [kind, setKind] = React.useState<FileFolderPickerScope['kind']>('siteCollection');
   const [web, setWeb] = React.useState(''), [list, setList] = React.useState(''), [folder, setFolder] = React.useState('');
   const [startWeb, setStartWeb] = React.useState(''), [startList, setStartList] = React.useState(''), [startFolder, setStartFolder] = React.useState('');
@@ -39,6 +40,7 @@ const FileFolderPickerPanel: React.FC = () => {
     setScope(next); setValues([]); setModels([]); setError(''); setReason('Source changed explicitly');
   };
   return <DemoCard title="File and folder picker" iconName="Folder" description="Microsoft hosted File Picker v8; select existing content with verified source boundaries." controls={<>
+    <Switch data-file-picker-demo="strings" label="Custom browse text" checked={customStrings} onChange={(_, data) => setCustomStrings(data.checked)} />
     <Field label="Source"><Select value={kind} onChange={(_, data) => { const candidate = (['siteCollection', 'library', 'folder', 'oneDrive'] as const).find(value => value === data.value); if (candidate && candidate !== kind) {
         setKind(candidate); setStartWeb(''); setStartList(''); setStartFolder('');
       } }}>
@@ -78,7 +80,7 @@ const FileFolderPickerPanel: React.FC = () => {
     <p>Applied source: {JSON.stringify(scope)}. Preset: {preset}. Last action: {reason}. Ready notifications: {ready}.</p>
     <pre>{JSON.stringify(values, undefined, 2)}</pre>
   </DemoAccordionPanel></AccordionItem></Accordion>}>
-    <FileFolderPicker preset={preset} uploadEnabled={uploadEnabled} createFolderEnabled={createFolderEnabled} hint={hint || undefined} onReady={() => setReady(count => count + 1)} label="FileFolderPicker" scope={scope} initialLocation={initialLocation} value={values} initialOptions={models} itemTypes={itemTypes} multiselect={multiple} size={size} searchable={searchable}
+    <FileFolderPicker strings={customStrings ? { browse: { files: 'Choose report attachments…', folders: 'Choose a report folder…', all: 'Choose report content…' } } : undefined} preset={preset} uploadEnabled={uploadEnabled} createFolderEnabled={createFolderEnabled} hint={hint || undefined} onReady={() => setReady(count => count + 1)} label="FileFolderPicker" scope={scope} initialLocation={initialLocation} value={values} initialOptions={models} itemTypes={itemTypes} multiselect={multiple} size={size} searchable={searchable}
       fileCategory={itemTypes === 'folders' ? undefined : fileCategory} colorfulTagAvatars={colorfulTagAvatars}
       selectionLimit={multiple && limit.trim() ? Number(limit) : undefined} extensions={itemTypes === 'folders' || fileCategory !== undefined ? undefined : suffixes.split(',').map(value => value.trim()).filter(Boolean)}
       onChange={data => { setValues(data.values); setModels(data.items); setReason(data.reason); setError(''); }} />

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { resolveFormStrings } from './form-strings.internal';
 import { FormProvider, useForm as useReactHookForm } from 'react-hook-form';
 import type { FieldValues, Resolver } from 'react-hook-form';
 import type { FormMethods, FormRootProps, FormSuite, FormUseFieldProps, FormUseFormProps, ScopedFormSuite, UntypedFormSuite } from './form.types';
@@ -36,9 +37,9 @@ import { FormRuntimeContext, useFormRuntimeContext } from './form-context.intern
 import { FieldPathScope, joinFieldPath } from './field-path.internal';
 import { assertFormValues, requireFormMethodsMetadata, useFormMethods, useFormResetSynchronization, useFormResetDefaultsBridge } from './form-methods.internal';
 import type { FormInputValidators } from './form-methods.internal';
-import { normalizeFormRules, reportFormFailure, resolveFormOptions, snapshotFormOutput, unexpectedFormFailureMessage, withFormInputValidation } from './form-validation.internal';
+import { normalizeFormRules, reportFormFailure, resolveFormOptions, snapshotFormOutput, withFormInputValidation } from './form-validation.internal';
 import { useAbsoluteFormField, useFormField } from './use-form-field';
-const initializationKeys = ['mode', 'reValidateMode', 'defaultValues', 'values', 'errors', 'resetOptions', 'resolver', 'schema', 'context', 'shouldFocusError', 'shouldUnregister', 'shouldUseNativeValidation', 'progressive', 'criteriaMode', 'delayError', 'formControl', 'validate'] as const;
+const initializationKeys = ['strings', 'mode', 'reValidateMode', 'defaultValues', 'values', 'errors', 'resetOptions', 'resolver', 'schema', 'context', 'shouldFocusError', 'shouldUnregister', 'shouldUseNativeValidation', 'progressive', 'criteriaMode', 'delayError', 'formControl', 'validate'] as const;
 type FrameProps<TInput extends FieldValues, TContext, TOutput> = Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit' | 'onInvalid'> & {
     methods: FormMethods<TInput, TContext, TOutput>;
     disabled?: boolean;
@@ -50,16 +51,25 @@ type RuntimeRootProps<TInput extends FieldValues, TContext, TOutput> = FormRootP
 export function createFormSuiteRuntime<TInput extends FieldValues, TContext, TOutput, TBound extends boolean>(boundResolver?: Resolver<TInput, TContext, TOutput>): FormSuite<TInput, TContext, TOutput, TBound> {
     const suiteIdentity = Symbol('FormSuite');
     function useSuiteForm(props?: FormUseFormProps<TInput, TContext, TOutput, TBound>): FormMethods<TInput, TContext, TOutput> {
+        const strings = React.useMemo(() => resolveFormStrings(props?.strings), [props?.strings]);
+        const committedStrings = React.useRef(strings);
+        const getStrings = React.useCallback(() => committedStrings.current, []);
+        const getUnexpectedFailure = React.useCallback(() => getStrings().unexpectedFailure, [getStrings]);
         const options = resolveFormOptions(props, boundResolver);
         const [inputValidators] = React.useState<FormInputValidators>(() => new Map());
-        const resolver = React.useMemo(() => options.resolver === undefined ? undefined : withFormInputValidation(options.resolver, inputValidators), [options.resolver, inputValidators]);
+        const resolver = React.useMemo(() => options.resolver === undefined ? undefined : withFormInputValidation(options.resolver, inputValidators, getUnexpectedFailure), [options.resolver, inputValidators, getUnexpectedFailure]);
         const defaultsBridge = useFormResetDefaultsBridge<TInput, TContext, TOutput>(options.defaultValues);
         const methods = useReactHookForm<TInput, TContext, TOutput>({ ...options,
             resetOptions: defaultsBridge.resetOptions,
             ...(defaultsBridge.defaultValues === undefined ? {} : { defaultValues: defaultsBridge.defaultValues }),
             ...(resolver === undefined ? {} : { resolver }) });
         assertFormValues(methods.getValues());
-        const enhanced = useFormMethods(methods, suiteIdentity, inputValidators, options.resolver !== undefined, normalizeFormRules);
+        const enhanced = useFormMethods(methods, suiteIdentity, inputValidators, options.resolver !== undefined, normalizeFormRules, getStrings);
+        React.useLayoutEffect(() => {
+            if (committedStrings.current === strings) return;
+            committedStrings.current = strings;
+            for (const listener of requireFormMethodsMetadata(methods).stringsListeners) listener();
+        }, [methods, strings]);
         useFormResetSynchronization(methods, options, defaultsBridge);
         return enhanced;
     }
@@ -168,7 +178,14 @@ export function createFormSuiteRuntime<TInput extends FieldValues, TContext, TOu
     }
     const Frame = React.forwardRef<HTMLFormElement, FrameProps<TInput, TContext, TOutput>>(function FormFrame(props, ref) {
         const { methods, children, onSubmit, onInvalid, onReset, noValidate = true, disabled, ...native } = props;
-        const runtime = React.useMemo(() => ({ methods: methods as unknown as FormMethods<FieldValues, unknown, unknown>, disabled: disabled === true || methods.formState.disabled, Fields: fields, createScopedFields }), [methods, disabled, methods.formState.disabled]);
+        const metadata = requireFormMethodsMetadata(methods);
+        const [, refreshStrings] = React.useReducer((version: number) => version + 1, 0);
+        React.useLayoutEffect(() => {
+            metadata.stringsListeners.add(refreshStrings);
+            return () => { metadata.stringsListeners.delete(refreshStrings); };
+        }, [metadata]);
+        const strings = metadata.getStrings();
+        const runtime = React.useMemo(() => ({ strings, methods: methods as unknown as FormMethods<FieldValues, unknown, unknown>, disabled: disabled === true || methods.formState.disabled, Fields: fields, createScopedFields }), [methods, disabled, methods.formState.disabled, strings]);
         const active = React.useRef(false);
         const submit = methods.handleSubmit(async (value) => {
             try {
@@ -176,7 +193,7 @@ export function createFormSuiteRuntime<TInput extends FieldValues, TContext, TOu
             }
             catch (error) {
                 reportFormFailure(error);
-                methods.setError('root.submit', { type: 'unexpected', message: unexpectedFormFailureMessage });
+                methods.setError('root.submit', { type: 'unexpected', message: requireFormMethodsMetadata(methods).getStrings().unexpectedFailure });
             }
         }, async (errors) => {
             try {
@@ -184,7 +201,7 @@ export function createFormSuiteRuntime<TInput extends FieldValues, TContext, TOu
             }
             catch (error) {
                 reportFormFailure(error);
-                methods.setError('root.submit', { type: 'unexpected', message: unexpectedFormFailureMessage });
+                methods.setError('root.submit', { type: 'unexpected', message: requireFormMethodsMetadata(methods).getStrings().unexpectedFailure });
             }
         });
         const releaseSubmission = (): void => { active.current = false; };

@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Пішінді жіберу мүмкін болмады. Қайталап көріңіз.",
+  "dateInputValidationMessage": "Жібермес бұрын күнді толықтырыңыз немесе түзетіңіз.",
+  "timeInputValidationMessage": "Жібермес бұрын уақытты толықтырыңыз немесе түзетіңіз.",
+  "tagPicker": {
+    "noOptions": "Ағымдағы сұрауға сәйкес параметрлер жоқ."
+  },
+  "fileInput": {
+    "browseLabel": "Шолу",
+    "clearLabel": "Тазалау"
+  },
+  "arraySection": {
+    "add": "Элемент қосу",
+    "empty": "Элементтер жоқ",
+    "itemLabelTemplate": "{position}-элемент",
+    "removeTemplate": "{label} элементін жою",
+    "moveUpTemplate": "{label} элементін жоғары жылжыту",
+    "moveDownTemplate": "{label} элементін төмен жылжыту",
+    "addedTemplate": "Қосылды: {label}",
+    "removedTemplate": "Жойылды: {label}",
+    "movedTemplate": "{label} элементі {total} орынның {position}-орнына жылжытылды"
+  },
+  "datePicker": {
+    "months": [
+      "Қаңтар",
+      "Ақпан",
+      "Наурыз",
+      "Сәуір",
+      "Мамыр",
+      "Маусым",
+      "Шілде",
+      "Тамыз",
+      "Қыркүйек",
+      "Қазан",
+      "Қараша",
+      "Желтоқсан"
+    ],
+    "shortMonths": [
+      "қаң.",
+      "ақп.",
+      "нау.",
+      "сәу.",
+      "мам.",
+      "мау.",
+      "шіл.",
+      "там.",
+      "қыр.",
+      "қаз.",
+      "қар.",
+      "жел."
+    ],
+    "days": [
+      "жексенбі",
+      "дүйсенбі",
+      "сейсенбі",
+      "сәрсенбі",
+      "бейсенбі",
+      "жұма",
+      "сенбі"
+    ],
+    "shortDays": [
+      "жс",
+      "дс",
+      "сс",
+      "ср",
+      "бс",
+      "жм",
+      "сб"
+    ],
+    "goToToday": "Бүгінгі күнге өту",
+    "prevMonthAriaLabel": "Алдыңғы ай",
+    "nextMonthAriaLabel": "Келесі ай",
+    "prevYearAriaLabel": "Алдыңғы жыл",
+    "nextYearAriaLabel": "Келесі жыл",
+    "prevYearRangeAriaLabel": "Алдыңғы жылдар ауқымы",
+    "nextYearRangeAriaLabel": "Келесі жылдар ауқымы",
+    "monthPickerHeaderAriaLabel": "{0}, жылды өзгерту",
+    "yearPickerHeaderAriaLabel": "{0}, айды өзгерту",
+    "closeButtonAriaLabel": "Жабу",
+    "weekNumberFormatString": "Апта нөмірі {0}",
+    "selectedDateFormatString": "Таңдалған күн {0}",
+    "todayDateFormatString": "Бүгінгі күн {0}",
+    "dayMarkedAriaLabel": "белгіленген"
+  }
+}

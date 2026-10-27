@@ -47,6 +47,7 @@ export const StageExample: React.FC<{ instance: string }> = ({ instance }) => {
   const [jsx, setJsx] = React.useState(false);
   const [icon, setIcon] = React.useState(true);
   const [description, setDescription] = React.useState(true);
+  const [customStrings, setCustomStrings] = React.useState(false);
   const [closeButton, setCloseButton] = React.useState(true);
   const [footer, setFooter] = React.useState(true);
   const [retain, setRetain] = React.useState(false);
@@ -126,6 +127,7 @@ export const StageExample: React.FC<{ instance: string }> = ({ instance }) => {
       <Checkbox data-stage-demo="long-text" label="Long title and description" checked={longText} onChange={(_, data) => setLongText(data.checked === true)} />
       <Checkbox data-stage-demo="icon" label="Icon" checked={icon} onChange={(_, data) => setIcon(data.checked === true)} />
       <Checkbox data-stage-demo="description" label="Description" checked={description} onChange={(_, data) => setDescription(data.checked === true)} />
+      <Checkbox data-stage-demo="strings" label="Custom close text" checked={customStrings} onChange={(_, data) => setCustomStrings(data.checked === true)} />
       <Checkbox data-stage-demo="close" label="Header X" checked={closeButton} onChange={(_, data) => setCloseButton(data.checked === true)} />
       <Checkbox data-stage-demo="footer-toggle" label="Footer" checked={footer} onChange={(_, data) => setFooter(data.checked === true)} />
       <Checkbox data-stage-demo="retention" label="Retain after close" checked={retain} onChange={(_, data) => setRetain(data.checked === true)} />
@@ -145,7 +147,7 @@ export const StageExample: React.FC<{ instance: string }> = ({ instance }) => {
         className={sx(styles.form, flex.column, flexItem.grow, minHeight.zero, width.full, gap.medium)}>
         <Stage.Header data-stage-demo="header" title={{ ref: titleSlotRef, 'data-stage-demo': 'title-slot', children: jsx ? <em data-stage-demo="jsx-title">{titleText}</em> : titleText }}
           description={description ? (jsx ? <span data-stage-demo="jsx-description">Editable <strong>profile</strong></span> : descriptionText) : undefined}
-          icon={icon ? { children: (Tag, props) => <Tag {...props}><Info24Regular data-stage-demo="callback-icon" width={80} height={80} /></Tag> } : undefined} showCloseButton={closeButton} closeLabel={`Close ${instance}`}
+          icon={icon ? { children: (Tag, props) => <Tag {...props}><Info24Regular data-stage-demo="callback-icon" width={80} height={80} /></Tag> } : undefined} showCloseButton={closeButton} strings={customStrings ? { closeLabel: `Dismiss ${instance}` } : undefined} closeLabel={customStrings ? undefined : `Close ${instance}`}
           action={{ children: (Tag, props) => <Tag {...props} data-stage-demo="action-slot">
             <Button type="button" className={sx(minWidth.zero)} icon={<ArrowRight20Regular />} data-stage-demo="header-action" onClick={() => setActionCount(value => value + 1)}>
               <span className={sx(minWidth.zero, text.truncate)}>Share</span>

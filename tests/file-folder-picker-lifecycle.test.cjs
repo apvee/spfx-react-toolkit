@@ -39,7 +39,7 @@ function setup({ pendingToken = false, renderedControl = false, autoFrame = true
       if(realSession)return h.load('controls/file-folder-picker/file-folder-picker-session.internal.ts').createFileFolderPickerSession(options);
       return { run: () => outcome.promise, dispose() { state.disposals++; outcome.resolve({ status: 'cancelled' }); } };
     } },
-    './file-folder-picker-navigation.internal': { postFileFolderPicker() { state.posts++; } },
+    './file-folder-picker-navigation.internal': { postFileFolderPicker(_document, _name, _baseUrl, _config, _token, culture) { state.posts++; state.navigationCulture = culture; } },
   });
   resultsBoundary.fileFolderPickerFileMatchesPolicy = h.load('controls/file-folder-picker/file-folder-picker-results.internal.ts').fileFolderPickerFileMatchesPolicy;
   resultsBoundary.normalizeFileFolderPickerItemPolicy = h.load('controls/file-folder-picker/file-folder-picker-results.internal.ts').normalizeFileFolderPickerItemPolicy;
@@ -95,7 +95,7 @@ test('incompatible controlled item kinds remain visible with validation and with
     await flush(env.h);
     assert.equal(mounted.current.values.length, 1);
     assert.equal(mounted.current.values[0].kind, 'folder');
-    assert.match(mounted.current.validation, /incompatibili/);
+    assert.match(mounted.current.validation, /incompatible/);
     assert.equal(changes.length, 0);
   } finally { mounted.unmount(); env.close(); }
 });
@@ -290,7 +290,7 @@ test('invalid structural configuration is reported before dialog, scope reads or
    await flush(env.h);const reads=env.state.scopeRequests.length;
    env.h.act(()=>m.current.browse());await flush(env.h);
    assert.equal(m.current.dialog,undefined);assert.equal(m.current.busy,false);assert.equal(env.state.sessions,0);assert.equal(env.state.scopeRequests.length,reads);assert.equal(env.state.tokenCalls.length,0);
-   assert.equal(errors[0].code,'configuration');assert.match(m.current.error,/configurazione/i);assert.doesNotMatch(m.current.error,/PRIVATE|token SharePoint/);assert.deepEqual(m.current.values,[value]);
+   assert.equal(errors[0].code,'configuration');assert.match(m.current.error,/configuration/i);assert.doesNotMatch(m.current.error,/PRIVATE|token SharePoint/);assert.deepEqual(m.current.values,[value]);
   }finally{m.unmount();env.close();}
  }
 });
@@ -396,7 +396,7 @@ test('category updates retain removable selections, flag incompatibility and can
     assert.equal(m.current.busy, true); assert.equal(env.state.disposals, 0);
     m.render({ ...props, fileCategory: 'images' }); await flush(env.h);
     assert.equal(m.current.busy, false); assert.ok(env.state.disposals > 0);
-    assert.deepEqual(m.current.values, [value]); assert.match(m.current.validation, /categoria/i); assert.equal(changes.length, 0);
+    assert.deepEqual(m.current.values, [value]); assert.match(m.current.validation, /category/i); assert.equal(changes.length, 0);
     env.h.act(() => m.current.remove(value)); await flush(env.h);
     assert.equal(m.current.values.length, 0); assert.equal(changes.length, 1);
   } finally { m.unmount(); env.close(); }
@@ -406,7 +406,7 @@ test('category validation uses hydrated authoritative names even without a saved
   const env = setup(), saved = { ...value, name: undefined }, authoritative = { value: saved, text: 'Changed.exe' };
   env.state.hydratedItems.push(authoritative);
   const m = env.h.mount(env.hook, { fileCategory: 'images', value: [saved], initialOptions: [{ value: saved, text: 'Display.png' }] });
-  try { await flush(env.h); assert.match(m.current.validation, /categoria/i); assert.deepEqual(m.current.values, [{ kind: saved.kind, tenantId: saved.tenantId, endpoint: saved.endpoint, driveId: saved.driveId, itemId: saved.itemId }]); }
+  try { await flush(env.h); assert.match(m.current.validation, /category/i); assert.deepEqual(m.current.values, [{ kind: saved.kind, tenantId: saved.tenantId, endpoint: saved.endpoint, driveId: saved.driveId, itemId: saved.itemId }]); }
   finally { m.unmount(); env.close(); }
 });
 
@@ -415,9 +415,25 @@ test('removing another value cannot promote consumer display labels into authori
   env.state.hydratedItems.push({ value, text: 'Changed.exe' }, { value: second, text: 'Second.png' });
   const m = env.h.mount(env.hook, { fileCategory: 'images', defaultValue: [value, second], multiselect: true, initialOptions: [{ value, text: 'Display.png' }] });
   try {
-    await flush(env.h); assert.match(m.current.validation, /categoria/i);
+    await flush(env.h); assert.match(m.current.validation, /category/i);
     env.h.act(() => m.current.remove(second));
-    assert.match(m.current.validation, /categoria/i);
+    assert.match(m.current.validation, /category/i);
     assert.deepEqual(m.current.values, [value]);
+  } finally { m.unmount(); env.close(); }
+});
+
+test('dictionary overrides localize Field and onError while hosted navigation keeps SPFx UI culture', async () => {
+  const env = setup(), observed = [];
+  // Observe the actual navigation arguments without changing the native page culture.
+  const props = { strings: { errors: { 'selection-scope': 'Choose from this source', 'auth-provider': 'Sign in again' }, validation: { incompatibleItems: 'Remove unsupported choices' } }, onError: error => observed.push(error) };
+  const m = env.h.mount(env.hook, props);
+  try {
+    env.h.act(() => m.current.browse()); await flush(env.h);
+    env.h.act(() => env.state.sessionOptions.onError(new Error('Outside configured scope PRIVATE CLAIMS 403')));
+    assert.equal(m.current.error, 'Choose from this source');
+    assert.equal(observed[0].code, 'selection-scope'); assert.equal(observed[0].message, m.current.error);
+    assert.equal(env.state.sessionOptions.strings.errors['selection-scope'], 'Choose from this source');
+    assert.doesNotMatch(m.current.error, /PRIVATE|CLAIMS|403/);
+    assert.equal(env.state.navigationCulture, 'it-it');
   } finally { m.unmount(); env.close(); }
 });

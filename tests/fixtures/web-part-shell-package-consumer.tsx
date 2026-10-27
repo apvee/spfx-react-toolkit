@@ -51,3 +51,12 @@ import {} from '@apvee/spfx-react-toolkit/controls/editable-text/editable-text-e
 import {} from '@apvee/spfx-react-toolkit/controls/web-part-shell/title/web-part-title-color-picker.internal';
 // @ts-expect-error Retired title toolbar paths remain private.
 import {} from '@apvee/spfx-react-toolkit/controls/web-part-shell/title/web-part-title-toolbar.internal';
+
+import type { WebPartShellStrings as RootStrings } from '@apvee/spfx-react-toolkit';
+import type { WebPartShellStrings as DomainStrings } from '@apvee/spfx-react-toolkit/controls';
+import type { WebPartShellStrings as ControlStrings } from '@apvee/spfx-react-toolkit/controls/web-part-shell';
+export type Strings = [RootStrings, DomainStrings, ControlStrings];
+export const naming: Partial<RootStrings> = { titleEditorLabel: 'Section title' };
+<Shell instance={instance} strings={naming} titleEditorStrings={{ bold: 'Strong', colorNames: { red: 'Danger' } }} />;
+// @ts-expect-error Editor language is loader-selected or provided through dictionaries.
+<Shell instance={instance} titleEditorStrings={{ locale: 'it-IT' }} />;

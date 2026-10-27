@@ -1,3 +1,4 @@
+import { PickerMessageError } from './picker-message.internal';
 import type { SitePickerProps, SitePickerOption } from './picker.types';
 import type { SitePickerValue } from './picker-values.types';
 import type { PickerSourceContext, PickerSourceRequest, PickerPersonalSuggestions } from './picker-source.types.internal';
@@ -63,7 +64,7 @@ export function createSitePickerSource(props: SitePickerProps, context: PickerSo
       const next = offset + request.pageSize;
       return { options: all.slice(offset, next), continuation: next < all.length ? JSON.stringify({ source: identity, query: request.query, scope: cursorScope(request), offset: next }) : undefined,
         completeness: next < all.length || result.partial ? 'partial' as const : 'complete' as const,
-        errors: result.partial ? [{ source: 'sharePoint' as const, retryable: false, error: new Error('Elenco hub parziale: limita l’ambito o usa la modalità site.') }] : undefined };
+        errors: result.partial ? [{ source: 'sharePoint' as const, retryable: false, error: new PickerMessageError({ group: 'status', key: 'partialHubs' }) }] : undefined };
     }
     if (search === undefined) throw new Error('SharePoint search transport is not ready.');
     const associatedHub = mode === 'associatedSites' ? await association(request) : undefined;
@@ -100,7 +101,7 @@ export function createSitePickerSource(props: SitePickerProps, context: PickerSo
     const next = offset + request.pageSize;
     return { options: result.options.slice(offset, next), continuation: next < result.options.length ? JSON.stringify({ source: identity, query, scope: cursorScope(request), offset: next }) : undefined,
       completeness: next < result.options.length || result.partial ? 'partial' as const : 'complete' as const,
-      errors: result.partial ? [{ source: 'sharePoint' as const, retryable: false, error: new Error('Ricerca site collection parziale (massimo 1000 risultati): restringi i criteri.') }] : undefined };
+      errors: result.partial ? [{ source: 'sharePoint' as const, retryable: false, error: new PickerMessageError({ group: 'status', key: 'partialSiteCollections' }) }] : undefined };
 
   }
   const source = createMetadataPickerSource<SitePickerValue, SitePickerOption>({ identity, context, kinds: ['site'], accepts, discover,

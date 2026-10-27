@@ -31,3 +31,8 @@ export * from '../../../packages/spfx-react-toolkit/lib/controls/sharepoint-grou
 export * from '../../../packages/spfx-react-toolkit/lib/controls/entra-group-trim';
 export { useSPFxCrossSitePermissions } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxCrossSitePermissions';
 export { useSPFxPermissions } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPermissions';
+
+export * from '../../../packages/spfx-react-toolkit/lib/controls/editable-text';
+export * from '../../../packages/spfx-react-toolkit/lib/controls/pickers';
+export * from '../../../packages/spfx-react-toolkit/lib/controls/file-folder-picker';
+export { useSPFxConfigurationStore } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxConfigurationStore';

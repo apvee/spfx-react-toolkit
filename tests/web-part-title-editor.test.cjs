@@ -55,19 +55,19 @@ test('engine refuses transactions with invalid protocol attributes without write
   assert.equal(editor.getHTML(), '<h2>initial</h2>'); assert.equal(host.properties.titleHTML, undefined);
 });
 
-test('UI culture changes update editor labels and empty placeholders without replacing view state', async t => {
+test('dictionary changes update editor labels and empty placeholders without replacing view state', async t => {
   const h = createHarness(); t.after(() => h.close());
   const host = h.instance('locale-retention'); host.displayMode = 2;
   host.context.pageContext.cultureInfo.currentUICultureName = 'it-IT';
   host.context.pageContext.cultureInfo.currentCultureName = 'de-DE';
-  const fixture = h.mount(host, 'Child'); await h.settle();
+  const fixture = h.mount(host, 'Child', { strings: require('./fixtures/localization/editor-dictionaries.cjs').shellDictionary('it-IT') }); await h.settle();
   const editor = h.editor(fixture); const view = editor.view;
-  const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  const strings = require('./fixtures/localization/editor-dictionaries.cjs').shellDictionary;
   assert.equal(view.dom.getAttribute('aria-label'), strings('it-IT').titleEditorLabel);
   h.act(() => { editor.commands.setTextSelection({ from: 2, to: 5 }); editor.commands.toggleBold(); });
   const saved = host.properties.titleHTML;
   host.context.pageContext.cultureInfo.currentUICultureName = 'ar-SA';
-  fixture.render(host); await h.settle();
+  fixture.render(host, { strings: strings(host.context.pageContext.cultureInfo.currentUICultureName), titleEditorStrings: require('./fixtures/localization/editor-dictionaries.cjs').editorDictionary(h, host.context.pageContext.cultureInfo.currentUICultureName) }); await h.settle();
   assert.equal(h.editor(fixture), editor); assert.equal(editor.view, view);
   assert.equal(view.dom.getAttribute('aria-label'), strings('ar-SA').titleEditorLabel);
   assert.equal(editor.state.selection.from, 2); assert.equal(editor.state.selection.to, 5);
@@ -77,29 +77,29 @@ test('UI culture changes update editor labels and empty placeholders without rep
   assert.equal(view.dom.querySelector('[data-placeholder]').getAttribute('data-placeholder'), strings('ar-SA').titlePlaceholder);
   const emptySaved = host.properties.titleHTML;
   host.context.pageContext.cultureInfo.currentUICultureName = 'de-DE';
-  fixture.render(host); await h.settle();
+  fixture.render(host, { strings: strings(host.context.pageContext.cultureInfo.currentUICultureName), titleEditorStrings: require('./fixtures/localization/editor-dictionaries.cjs').editorDictionary(h, host.context.pageContext.cultureInfo.currentUICultureName) }); await h.settle();
   assert.equal(view.dom.querySelector('[data-placeholder]').getAttribute('data-placeholder'), strings('de-DE').titlePlaceholder);
   assert.equal(host.properties.titleHTML, emptySaved);
 });
 
-test('two shell instances resolve UI language independently and preserve author text', async t => {
+test('two shell instances resolve dictionaries independently and preserve author text', async t => {
   const h = createHarness(); t.after(() => h.close());
   const first = h.instance('locale-it'); first.displayMode = 2;
   const second = h.instance('locale-he'); second.displayMode = 2;
   first.context.pageContext.cultureInfo.currentUICultureName = 'it-IT';
   second.context.pageContext.cultureInfo.currentUICultureName = 'he-IL';
-  const a = h.mount(first, 'A'); const b = h.mount(second, 'B'); await h.settle();
-  const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
+  const a = h.mount(first, 'A', { strings: require('./fixtures/localization/editor-dictionaries.cjs').shellDictionary('it-IT') }); const b = h.mount(second, 'B', { strings: require('./fixtures/localization/editor-dictionaries.cjs').shellDictionary('he-IL') }); await h.settle();
+  const strings = require('./fixtures/localization/editor-dictionaries.cjs').shellDictionary;
   assert.equal(h.editor(a).view.dom.getAttribute('aria-label'), strings('it-IT').titleEditorLabel);
   assert.equal(h.editor(b).view.dom.getAttribute('aria-label'), strings('he-IL').titleEditorLabel);
   assert.equal(h.editor(a).getText(), 'initial'); assert.equal(h.editor(b).getText(), 'initial');
   assert.equal(first.properties.titleHTML, undefined); assert.equal(second.properties.titleHTML, undefined);
-  first.context.pageContext.cultureInfo.currentUICultureName = 'unknown'; a.render(first); await h.settle();
+  first.context.pageContext.cultureInfo.currentUICultureName = 'unknown'; a.render(first, { strings: strings('en-US') }); await h.settle();
   assert.equal(h.editor(a).view.dom.getAttribute('aria-label'), strings('en-US').titleEditorLabel);
   assert.equal(h.editor(b).view.dom.getAttribute('aria-label'), strings('he-IL').titleEditorLabel);
 });
 
-test('lazy editor failure and Retry follow current UI culture without touching title content', async t => {
+test('lazy editor failure and Retry follow current dictionaries without touching title content', async t => {
   const React = require('react'); const originalLazy = React.lazy;
   // Simulate a failed engine chunk at its existing lazy boundary. Retry restores
   // the real lazy loader, so the test also proves recovery through that boundary.
@@ -111,11 +111,11 @@ test('lazy editor failure and Retry follow current UI culture without touching t
   host.context.pageContext.cultureInfo.currentUICultureName = 'it-IT';
   const logError = console.error; console.error = () => {};
   let fixture;
-  try { fixture = h.mount(host, 'Child'); await h.settle(); } finally { console.error = logError; }
-  const { resolveWebPartShellStrings: strings } = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
-  const { resolveEditableTextStrings: commonStrings } = h.load('controls/editable-text/localization/editable-text-locales.internal.ts');
+  try { fixture = h.mount(host, 'Child', { strings: require('./fixtures/localization/editor-dictionaries.cjs').shellDictionary('it-IT'), titleEditorStrings: require('./fixtures/localization/editor-dictionaries.cjs').editorDictionary(h, 'it-IT') }); await h.settle(); } finally { console.error = logError; }
+  const strings = require('./fixtures/localization/editor-dictionaries.cjs').shellDictionary;
+  const commonStrings = culture => require('./fixtures/localization/editor-dictionaries.cjs').editorDictionary(h, culture);
   assert.ok(fixture.container.textContent.includes(commonStrings('it-IT').editorLoadError));
-  host.context.pageContext.cultureInfo.currentUICultureName = 'he-IL'; fixture.render(host); await h.settle();
+  host.context.pageContext.cultureInfo.currentUICultureName = 'he-IL'; fixture.render(host, { strings: strings(host.context.pageContext.cultureInfo.currentUICultureName), titleEditorStrings: require('./fixtures/localization/editor-dictionaries.cjs').editorDictionary(h, host.context.pageContext.cultureInfo.currentUICultureName) }); await h.settle();
   assert.ok(fixture.container.textContent.includes(commonStrings('he-IL').editorLoadError));
   const retry = [...fixture.container.querySelectorAll('button')].find(node => node.textContent === commonStrings('he-IL').retry);
   assert.ok(retry); h.act(() => retry.click()); await h.settle();

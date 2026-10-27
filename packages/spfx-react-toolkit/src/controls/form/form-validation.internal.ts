@@ -1,3 +1,4 @@
+import { nativeFormResource } from './localization/form-native.internal';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 import { get, set } from 'react-hook-form';
@@ -21,6 +22,7 @@ export function resolveFormOptions<TInput extends FieldValues, TContext, TOutput
     assertFormValues(supplied.defaultValues);
     assertFormValues(supplied.values);
     const { schema, ...options } = supplied;
+    delete options.strings;
     for (const key of Object.keys(options) as Array<keyof typeof options>)
         if (options[key] === undefined)
             delete options[key];
@@ -28,14 +30,14 @@ export function resolveFormOptions<TInput extends FieldValues, TContext, TOutput
     return resolver === undefined ? options : { ...options, resolver };
 }
 /** Generic fallback for unexpected failures; expected service errors remain consumer-owned. */
-export const unexpectedFormFailureMessage = 'Unable to submit the form. Please try again.';
+export const unexpectedFormFailureMessage = nativeFormResource.unexpectedFailure;
 /** Retains the original exception for development diagnostics without a parallel error store. */
 export function reportFormFailure(error: unknown): void {
     if (process.env.NODE_ENV !== 'production')
         console.error('Unexpected Form failure:', error);
 }
 /** Contains resolver exceptions in a non-root error that survives RHF's root-error clearing. */
-export function withFormInputValidation<TInput extends FieldValues, TContext, TOutput>(resolver: Resolver<TInput, TContext, TOutput>, validators: FormInputValidators): Resolver<TInput, TContext, TOutput> {
+export function withFormInputValidation<TInput extends FieldValues, TContext, TOutput>(resolver: Resolver<TInput, TContext, TOutput>, validators: FormInputValidators, getUnexpectedFailure: () => string = () => unexpectedFormFailureMessage): Resolver<TInput, TContext, TOutput> {
     return async (values, context, options) => {
         try {
             const result = await resolver(values, context, options);
@@ -52,13 +54,13 @@ export function withFormInputValidation<TInput extends FieldValues, TContext, TO
             reportFormFailure(error);
             // RHF removes errors.root before deciding whether onValid can run. Keep a real non-root blocker.
             const errors: FieldErrors<TInput> = {};
-            set(errors, '__formValidation', { type: 'unexpected', message: unexpectedFormFailureMessage });
+            set(errors, '__formValidation', { type: 'unexpected', message: getUnexpectedFailure() });
             return { values: {}, errors };
         }
     };
 }
 /** Contains custom validator failures at their boundary; expected validation results are unchanged. */
-export function normalizeFormRules<TInput extends FieldValues>(rules: RegisterOptions<TInput> | undefined, internalValidator?: (value: unknown) => true | string): RegisterOptions<TInput> | undefined {
+export function normalizeFormRules<TInput extends FieldValues>(rules: RegisterOptions<TInput> | undefined, internalValidator?: (value: unknown) => true | string, getUnexpectedFailure: () => string = () => unexpectedFormFailureMessage): RegisterOptions<TInput> | undefined {
     if (rules === undefined && internalValidator === undefined)
         return undefined;
     type Validator = NonNullable<RegisterOptions<TInput>['validate']>;
@@ -69,7 +71,7 @@ export function normalizeFormRules<TInput extends FieldValues>(rules: RegisterOp
         }
         catch (error) {
             reportFormFailure(error);
-            return unexpectedFormFailureMessage;
+            return getUnexpectedFailure();
         }
     }) as ValidateFunction;
     const source = rules?.validate;

@@ -148,7 +148,7 @@ test('DatePicker uses copied readonly localization strings and formatting with t
 });
 test('public date/time types preserve nullable models, refs, callbacks and scoped DateTime parts', () => {
   const ts = require('typescript'); const path = require('node:path');
-  const program = ts.createProgram([path.resolve(__dirname, 'fixtures/form-date-time-types.tsx')], { noEmit: true, strict: true, skipLibCheck: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.NodeJs, jsx: ts.JsxEmit.React, lib: ['lib.es2020.d.ts', 'lib.dom.d.ts'] });
+  const program = ts.createProgram([path.resolve(__dirname, '../packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts'), path.resolve(__dirname, 'fixtures/form-date-time-types.tsx')], { noEmit: true, strict: true, skipLibCheck: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.NodeJs, jsx: ts.JsxEmit.React, lib: ['lib.es2020.d.ts', 'lib.dom.d.ts'] });
   const diagnostics = ts.getPreEmitDiagnostics(program);
   assert.equal(diagnostics.length, 0, ts.formatDiagnosticsWithColorAndContext(diagnostics, { getCanonicalFileName: file => file, getCurrentDirectory: () => process.cwd(), getNewLine: () => '\n' }));
 });
@@ -251,4 +251,22 @@ test('DateTime part label slots use native Field associations without changing p
  const f = mount(React.createElement(Owner));
  try { for (const ref of [dateRef, timeRef]) { assert.equal(ref.current.tagName, 'SPAN'); const label = ref.current.closest('label'); assert.equal(document.getElementById(label.htmlFor).tagName, 'INPUT'); } assert.ok(f.host.querySelector('[role="group"]')); assert.deepEqual(methods.getValues('value'), { date: initialDate, time: initialTime }); }
  finally { f.close(); }
+});
+
+test('Form dictionary supplies date/time incomplete-draft messages while direct messages win', async () => {
+ for (const member of ['DatePicker','TimePicker']) for (const direct of [false,true]) {
+  const F=api.createForm();let methods;
+  function Owner(){methods=F.useForm({defaultValues:{value:null},strings:{dateInputValidationMessage:'Family date incomplete',timeInputValidationMessage:'Family time incomplete'}});return React.createElement(F.Root,{methods,onSubmit:()=>{}},React.createElement(F[member],{name:'value',allowTextInput:true,open:false,...(direct?{inputValidationMessage:'Direct incomplete'}:{})}));}
+  const f=mount(React.createElement(Owner));
+  try{change(f.host.querySelector('input'),'bad draft');await blur(f.host.querySelector('input'));await act(async()=>{await methods.trigger();});assert.equal(methods.getFieldState('value').error.message,direct?'Direct incomplete':`Family ${member==='DatePicker'?'date':'time'} incomplete`);assert.equal(f.host.querySelector('input').value,'bad draft');assert.equal(methods.getValues('value'),null);}finally{f.close();}
+ }
+});
+
+test('DatePicker native Italian calendar and partial family overrides retain all compat labels and strict parsing', async () => {
+ const localized=await harness.loadModule('packages/spfx-react-toolkit/src/controls/form/index.ts',{reactHookForm:true,nativeCulture:'it-IT'});
+ const native=require('../packages/spfx-react-toolkit/src/controls/form/localization/resources/it-IT.json');
+ const F=localized.createForm();let methods;
+ function Owner(){methods=F.useForm({defaultValues:{date:initialDate},strings:{datePicker:{goToToday:'Family today'}}});return React.createElement(F.Root,{methods,onSubmit:()=>{}},React.createElement(F.DatePicker,{name:'date',allowTextInput:true,open:true,inlinePopup:true}));}
+ const f=mount(React.createElement(Owner));
+ try{assert.ok(f.host.textContent.includes('Family today'));assert.ok(f.host.querySelector(`button[title="${native.datePicker.nextMonthAriaLabel} ${native.datePicker.months[8]}"]`));assert.ok(f.host.querySelector(`button[title="${native.datePicker.prevMonthAriaLabel} ${native.datePicker.months[6]}"]`));assert.ok(f.host.textContent.includes(native.datePicker.months[7]));assert.equal(f.host.querySelector('input').value,'2026-08-30');assert.deepEqual(methods.getValues('date'),initialDate);}finally{f.close();}
 });

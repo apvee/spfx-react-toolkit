@@ -19,8 +19,8 @@ export const EditableTextIsolationFixture: React.FC<{ instance: BaseClientSideWe
     <button data-editable-isolation="narrow" onClick={() => setNarrow(value => !value)}>Toggle narrow editors</button>
     <div className={sx(width.px(narrow ? 160 : 900))}>
     <EditableText ref={capture} className="editable-consumer-class" style={consumerStyle} onClick={() => setClicks(count => count + 1)}
-      data-editable-isolation="paragraph" mode="edit" aria-label="Paragraph editor" locale="it-IT" value={paragraph} allowedBlocks={['p']} onChange={data => setParagraph(data.html)} />
-    <EditableText data-editable-isolation="headings" mode="edit" aria-label="Heading editor" locale="fr-FR" value={heading} allowedBlocks={['h2', 'h4']} onChange={data => setHeading(data.html)} />
+      data-editable-isolation="paragraph" mode="edit" aria-label="Paragraph editor" strings={{ formattingControls: 'Controlli di formattazione del testo', moreFormatting: 'Altre opzioni di formattazione del testo', heading: 'Intestazione' }} value={paragraph} allowedBlocks={['p']} onChange={data => setParagraph(data.html)} />
+    <EditableText data-editable-isolation="headings" mode="edit" aria-label="Heading editor" strings={{ formattingControls: 'Commandes de mise en forme du texte', moreFormatting: 'Autres options de mise en forme du texte', heading: 'Titre', headingLevel: level => `Titre ${level}` }} value={heading} allowedBlocks={['h2', 'h4']} onChange={data => setHeading(data.html)} />
     </div>
     <output data-editable-isolation="native">{JSON.stringify({ hasRef, clicks })}</output>
     <output data-editable-isolation="values">{JSON.stringify({ paragraph, heading })}</output>

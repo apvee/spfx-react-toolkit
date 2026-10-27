@@ -75,7 +75,7 @@ test('Array-root errors are available to headless renderer', async () => {
   try {await h.act(async()=>{await f.methods.trigger('rows');}); assert.equal(f.array.error,'Add a row'); assert.deepEqual(f.array.errors,['Add a row']);}finally {f.close();}
 });
 test('Composition declarations infer actual object/item models and reject primitive arrays', () => {
-  const program=ts.createProgram([path.resolve(__dirname,'fixtures/form-composition-types.tsx')],{noEmit:true,strict:true,skipLibCheck:true,target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.ESNext,moduleResolution:ts.ModuleResolutionKind.NodeJs,jsx:ts.JsxEmit.React,lib:['lib.es2020.d.ts','lib.dom.d.ts']});
+  const program=ts.createProgram([path.resolve(__dirname, '../packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts'), path.resolve(__dirname,'fixtures/form-composition-types.tsx')],{noEmit:true,strict:true,skipLibCheck:true,target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.ESNext,moduleResolution:ts.ModuleResolutionKind.NodeJs,jsx:ts.JsxEmit.React,lib:['lib.es2020.d.ts','lib.dom.d.ts']});
   const diagnostics=ts.getPreEmitDiagnostics(program);
   assert.equal(diagnostics.length,0,ts.formatDiagnosticsWithColorAndContext(diagnostics,{getCanonicalFileName:file=>file,getCurrentDirectory:()=>process.cwd(),getNewLine:()=> '\n'}));
 });

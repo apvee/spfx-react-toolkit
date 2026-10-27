@@ -333,3 +333,28 @@ test('slot defaults preserve nullish status, error presence and suppressed callb
   fixture.update({ hiddenColumnIds: new Set(['name', 'value']), error: true });
   assert.match(fixture.host.querySelector('[role=status]').textContent, /No visible columns/); assert.ok(fixture.host.querySelector('.fui-MessageBar')); assert.equal(calls, 0);
 });
+
+
+test('host-native grid status, partial and full dictionaries remain independent of formatting locale', async () => {
+  const { createDataGrid: createItalianGrid } = await harness.loadModule('packages/spfx-react-toolkit/src/controls/data-grid/create-data-grid.ts', { nativeCulture: 'it-IT' });
+  const Grid = createItalianGrid();
+  const columns = Grid.defineColumns(c => [c.number({ id: 'value', header: 'Value', field: 'value' })]);
+  const props = { items: [], getRowId: row => row.id, columns, locale: 'en-US' };
+  const italian = mount(React.createElement(Grid, props));
+  const other = owner({ items: [], props: { strings: { empty: 'Other empty' } } });
+  assert.match(italian.host.textContent, /Nessun dato disponibile/);
+  assert.match(other.host.textContent, /Other empty/);
+  italian.render(React.createElement(Grid, { ...props, strings: { empty: '  Custom empty  ', retry: ' ' } }));
+  assert.match(italian.host.textContent, /  Custom empty  /);
+  italian.render(React.createElement(Grid, { ...props, items: [{ id: 1, value: 12345.5 }], locale: 'it-IT', strings: { empty: 'Empty in English' } }));
+  assert.match(italian.host.textContent, /12[.]345,5/);
+  const state = await harness.loadModule('packages/spfx-react-toolkit/src/controls/data-grid/state-validation.internal.ts', { nativeCulture: 'it-IT' });
+  const baseline = state.resolveDataGridStrings();
+  const full = Object.fromEntries(Object.entries(baseline).map(([key, value]) => [key, typeof value === 'function' ? () => `custom ${key}` : `custom ${key}`]));
+  const resolved = state.resolveDataGridStrings(full);
+  for (const key of Object.keys(full)) assert.equal(typeof resolved[key] === 'function' ? resolved[key]() : resolved[key], `custom ${key}`);
+  assert.equal(state.resolveDataGridStrings({ yes: '  True  ', no: '  ', empty: undefined }).yes, '  True  ');
+  assert.equal(state.resolveDataGridStrings({ no: '  ' }).no, 'No');
+  assert.equal(state.resolveDataGridStrings({ empty: '  ' }).empty, 'Nessun dato disponibile');
+  for (const overrides of [null, [], 'bad', { yes: 1 }, { ratingCount: 'bad' }]) assert.throws(() => state.resolveDataGridStrings(overrides), TypeError);
+});

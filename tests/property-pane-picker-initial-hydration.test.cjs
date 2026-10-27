@@ -56,8 +56,8 @@ for (const entry of cases) {
       await flush();
       const control = boundary(f), input = f.dom.querySelector('input');
       assert.equal(control.getAttribute('aria-busy'), 'true');
-      assert.match(control.textContent, /Caricamento/);
-      assert.doesNotMatch(f.dom.textContent, /Valore non risolto|Alcuni valori selezionati non sono risolti/);
+      assert.match(control.textContent, /Loading/);
+      assert.doesNotMatch(f.dom.textContent, /Unresolved value|Some selected values are unresolved/);
       assert.equal(control.querySelector('label'), null);
       assert.match(f.dom.textContent, /Native hint/);
       f.render({ label: 'Renamed label', hint: 'Updated hint' }); await flush();
@@ -65,12 +65,12 @@ for (const entry of cases) {
       assert.equal(control.getAttribute('aria-busy'), 'true');
       await h.act(async () => f.request.reject(new Error('Hydration unavailable'))); await flush();
       assert.equal(control.getAttribute('aria-busy'), 'false');
-      assert.match(f.dom.textContent, /Valore non risolto/);
+      assert.match(f.dom.textContent, /Unresolved value/);
       assert.match(f.dom.querySelector('.fui-Field__validationMessage').textContent, /Hydration unavailable|Missing REST string id/);
       assert.equal(control.querySelector('.fui-Field__validationMessage'), null);
-      assert.ok([...f.dom.querySelectorAll('button')].some(button => button.textContent === 'Riprova'));
+      assert.ok([...f.dom.querySelectorAll('button')].some(button => button.textContent === 'Retry'));
       assert.equal(f.dom.querySelector('input'), input);
-      h.act(() => require('react-dom/test-utils').Simulate.click([...f.dom.querySelectorAll('button')].find(button => button.textContent === 'Riprova'))); await flush();
+      h.act(() => require('react-dom/test-utils').Simulate.click([...f.dom.querySelectorAll('button')].find(button => button.textContent === 'Retry'))); await flush();
       assert.equal(control.getAttribute('aria-busy'), 'false', 'retry never restarts the initial skeleton');
       f.render({ value: [{ ...reference }], valueRevision: 2, webUrl: 'https://tenant.test/sites/other' }); await flush();
       assert.equal(control.getAttribute('aria-busy'), 'false', 'authoritative/source updates never restart it');
@@ -101,8 +101,8 @@ test('mixed native selections keep known labels visible while unknown references
   try {
     await flush();
     assert.equal(boundary(f).getAttribute('aria-busy'), 'false');
-    assert.match(boundary(f).textContent, /Saved projects/); assert.match(boundary(f).textContent, /Caricamento/);
-    assert.doesNotMatch(f.dom.textContent, /Valore non risolto|Alcuni valori selezionati non sono risolti/);
+    assert.match(boundary(f).textContent, /Saved projects/); assert.match(boundary(f).textContent, /Loading/);
+    assert.doesNotMatch(f.dom.textContent, /Unresolved value|Some selected values are unresolved/);
     assert.deepEqual(f.changes, []);
   } finally { f.close(); }
 });
@@ -135,7 +135,7 @@ test('Graph-dependent initial selection stays pending through native client init
     assert.equal(boundary(f).getAttribute('aria-busy'), 'true');
     f.render({ hint: 'Graph still initializing' }); await flush();
     assert.equal(boundary(f).getAttribute('aria-busy'), 'true');
-    assert.doesNotMatch(f.dom.textContent, /non risolti|Valore non risolto/);
+    assert.doesNotMatch(f.dom.textContent, /unresolved|Unresolved value/);
     await h.act(async () => graph.reject(new Error('Graph initialization denied'))); await flush();
     assert.equal(boundary(f).getAttribute('aria-busy'), 'false');
     assert.match(f.dom.querySelector('.fui-Field__validationMessage').textContent, /Graph initialization denied/);
@@ -157,10 +157,10 @@ for (const change of ['value', 'source', 'revision']) {
 }
 test('blank labels do not conceal pending unknown selections and malformed available models use validation feedback', async () => {
   const f = mount(cases[1], { value: [{ ...cases[1][3], text: '   ' }] });
-  try { await flush(); assert.equal(boundary(f).getAttribute('aria-busy'), 'true'); assert.match(boundary(f).textContent, /Caricamento/); }
+  try { await flush(); assert.equal(boundary(f).getAttribute('aria-busy'), 'true'); assert.match(boundary(f).textContent, /Loading/); }
   finally { f.close(); }
   const invalid = mount(cases[1], { availableOptions: [{ key: 'bad', text: 'Invalid', value: { kind: 'list' } }] });
-  try { await flush(); assert.ok(invalid.dom.querySelector('input')); assert.ok([...invalid.dom.querySelectorAll('button')].some(button => button.textContent === 'Riprova')); assert.deepEqual(invalid.changes, []); }
+  try { await flush(); assert.ok(invalid.dom.querySelector('input')); assert.ok([...invalid.dom.querySelectorAll('button')].some(button => button.textContent === 'Retry')); assert.deepEqual(invalid.changes, []); }
   finally { invalid.close(); }
 });
 

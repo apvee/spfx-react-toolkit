@@ -1,3 +1,5 @@
+import { resolvePickersStrings } from './pickers-strings.internal';
+import type { PickersStrings } from './pickers-strings.types';
 import * as React from 'react';
 import { Dropdown, SearchBox, mergeClasses, useId } from '@fluentui/react-components';
 import type { DropdownProps, Listbox } from '@fluentui/react-components';
@@ -8,6 +10,7 @@ import { usePickerStyles } from './picker-styles.internal';
 type KeyboardHandler = React.KeyboardEventHandler<HTMLElement>;
 type NativeListboxProps = React.ComponentPropsWithRef<typeof Listbox>;
 interface PickerDropdownProps {
+  readonly strings?: PickersStrings;
   readonly fieldProps: Pick<DropdownProps, 'id' | 'aria-label' | 'aria-labelledby' | 'aria-describedby' | 'aria-invalid' | 'aria-required'>;
   readonly runtime: {
     readonly open: boolean; readonly query: string; readonly confirming?: boolean; readonly selectedOptions: readonly string[];
@@ -65,7 +68,7 @@ function DropdownSurface({ nativeProps, NativeListbox, popupRef, className, list
 }
 
 /** Private Dropdown presentation for the historical `combobox` API value. */
-export function PickerDropdown({ fieldProps, runtime, multiselect, disabled, searchable, size, className, selectionText, selectionMedia,
+export function PickerDropdown({ strings = resolvePickersStrings(), fieldProps, runtime, multiselect, disabled, searchable, size, className, selectionText, selectionMedia,
   searchPlaceholder, name, contains, popupRef, children }: PickerDropdownProps): React.ReactElement {
   const styles = usePickerStyles(), searchId = useId('picker-search');
   // React/Fluent DOM ref contracts use null for detached nodes.
@@ -110,7 +113,7 @@ export function PickerDropdown({ fieldProps, runtime, multiselect, disabled, sea
   };
   return <Dropdown {...fieldProps} disabled={disabled} aria-disabled={disabled || runtime.confirming || undefined} size={size} className={className}
     // Native viewport sizing constrains the outer surface; the inner content retains the toolkit height cap.
-    positioning={{ autoSize: true }} value={selectionText} placeholder={multiselect ? 'Seleziona elementi' : 'Seleziona un elemento'}
+    positioning={{ autoSize: true }} value={selectionText} placeholder={multiselect ? strings.labels.selectMany : strings.labels.selectOne}
     multiselect={multiselect} selectedOptions={[...runtime.selectedOptions]} clearable={!multiselect} open={runtime.open}
     onOpenChange={(event, data) => {
       if (!data.open) {
@@ -129,12 +132,12 @@ export function PickerDropdown({ fieldProps, runtime, multiselect, disabled, sea
         if (runtime.open && event.key === 'F2' && searchable) { event.preventDefault(); event.stopPropagation(); searchRef.current?.focus(); return; }
         if (runtime.confirming && event.key !== 'Escape' && event.key !== 'Tab') { event.preventDefault(); event.stopPropagation(); }
       }, children: (_, nativeProps) => <DropdownTrigger nativeProps={nativeProps} bind={bind} media={selectionMedia} className={styles.selection} textClassName={styles.text} /> }}
-    clearButton={{ 'aria-label': 'Cancella selezione', disabled: runtime.confirming }}
-    listbox={{ 'aria-label': name === undefined ? 'Opzioni' : `${name}: opzioni`, children: (NativeListbox, nativeProps) =>
+    clearButton={{ 'aria-label': strings.labels.clearSelection, disabled: runtime.confirming }}
+    listbox={{ 'aria-label': name === undefined ? strings.labels.options : strings.labels.namedOptions(name), children: (NativeListbox, nativeProps) =>
       <DropdownSurface nativeProps={nativeProps} NativeListbox={NativeListbox} popupRef={popupRef}
         className={mergeClasses(styles.surface, !runtime.open && styles.hidden)} listClassName={styles.dropdownList}>
-        {searchable ? <SearchBox id={searchId} required={false} aria-required={false} aria-invalid={false} aria-label={name === undefined ? 'Cerca opzioni' : `${name}: cerca`} className={styles.search} size={size} value={runtime.query} placeholder={searchPlaceholder}
-          dismiss={{ 'aria-label': 'Cancella ricerca', 'aria-disabled': runtime.confirming || undefined, onClickCapture: event => { if (runtime.confirming) { event.preventDefault(); event.stopPropagation(); } } }}
+        {searchable ? <SearchBox id={searchId} required={false} aria-required={false} aria-invalid={false} aria-label={name === undefined ? strings.labels.searchOptions : strings.labels.namedSearch(name)} className={styles.search} size={size} value={runtime.query} placeholder={searchPlaceholder}
+          dismiss={{ 'aria-label': strings.labels.clearSearch, 'aria-disabled': runtime.confirming || undefined, onClickCapture: event => { if (runtime.confirming) { event.preventDefault(); event.stopPropagation(); } } }}
           // Search owns its name; Field injects aria-labelledby even when an independent aria-label is provided.
           input={{ ref: searchRef, 'aria-labelledby': undefined, autoComplete: 'off', readOnly: runtime.confirming, 'aria-disabled': runtime.confirming || undefined,
             'aria-controls': nativeProps.id,

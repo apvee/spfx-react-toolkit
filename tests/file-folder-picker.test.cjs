@@ -31,7 +31,7 @@ test('uncontrolled selection preserves unresolved references; tag removal emits 
 });
 test('controlled authoritative updates retain labels, do not emit and diagnose incompatible cardinality',async()=>{
  const events=[];const next={...value,itemId:'TWO',name:'Other.pdf'};const mounted=h.mount(hook(),{value:[value,next],onChange:d=>events.push(d),initialOptions:[{value,text:'Known report'}]});await flush();
- assert.match(mounted.current.validation,/selezione supera il limite/i);assert.equal(mounted.current.label(value),'Known report');assert.equal(mounted.current.values.length,2);assert.equal(events.length,0);
+ assert.match(mounted.current.validation,/selection exceeds the configured limit/i);assert.equal(mounted.current.label(value),'Known report');assert.equal(mounted.current.values.length,2);assert.equal(events.length,0);
  mounted.render({value:[value],initialOptions:[{value,text:'Updated report'}],onChange:d=>events.push(d)});assert.equal(mounted.current.label(value),'Updated report');assert.equal(mounted.current.validation,undefined);
  h.act(()=>mounted.current.remove(value));assert.equal(events[0].reason,'remove');assert.deepEqual(events[0].values,[]);assert.equal(mounted.current.values.length,1);mounted.unmount();
 });
@@ -39,11 +39,11 @@ for (const scenario of [
  { name: 'unrestricted files', props: {}, validation: undefined },
  { name: 'case-insensitive extensions', props: { extensions: ['.PDF'] }, validation: undefined },
  { name: 'matching document category', props: { fileCategory: 'documents' }, validation: undefined },
- { name: 'mismatching extension', props: { extensions: ['.png'] }, validation: /selezione contiene elementi incompatibili/i },
- { name: 'mismatching category', props: { fileCategory: 'images' }, validation: /selezione contiene elementi incompatibili/i },
- { name: 'folder-only mode', props: { itemTypes: 'folders' }, validation: /selezione contiene elementi incompatibili/i },
- { name: 'conflicting category and extension', props: { fileCategory: 'documents', extensions: ['.pdf'] }, validation: /configurazione.+non valida/i },
- { name: 'invalid selection limit', props: { selectionLimit: 0 }, validation: /configurazione.+non valida/i },
+ { name: 'mismatching extension', props: { extensions: ['.png'] }, validation: /selection contains items incompatible/i },
+ { name: 'mismatching category', props: { fileCategory: 'images' }, validation: /selection contains items incompatible/i },
+ { name: 'folder-only mode', props: { itemTypes: 'folders' }, validation: /selection contains items incompatible/i },
+ { name: 'conflicting category and extension', props: { fileCategory: 'documents', extensions: ['.pdf'] }, validation: /Invalid.+configuration/i },
+ { name: 'invalid selection limit', props: { selectionLimit: 0 }, validation: /Invalid.+configuration/i },
 ]) {
  test(`current file policy handles ${scenario.name} without changing consumer-owned selection`, async () => {
   const events = [];

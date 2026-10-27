@@ -9,7 +9,8 @@ function selectFixture(env) {
   let selected;
   const webpack = config => { selected = config; };
   webpack.NormalModuleReplacementPlugin = class {};
-  const buildRequire = name => name === 'webpack' ? webpack : require(name);
+  const scriptRequire = require('node:module').createRequire(script);
+  const buildRequire = name => name === 'webpack' ? webpack : scriptRequire(name);
   buildRequire.resolve = require.resolve;
   vm.runInNewContext(fs.readFileSync(script, 'utf8'), {
     require: buildRequire, __dirname: path.dirname(script), process: { env }, console,

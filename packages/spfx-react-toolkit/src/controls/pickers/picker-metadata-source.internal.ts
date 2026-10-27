@@ -1,3 +1,4 @@
+import { PickerMessageError } from './picker-message.internal';
 import type { PickerOption } from './picker.types';
 import type { PickerValue } from './picker-values.types';
 import type { PickerSource, PickerSourceContext, PickerSourcePage, PickerSourceRequest } from './picker-source.types.internal';
@@ -56,7 +57,7 @@ export function createMetadataPickerSource<V extends PickerValue, T extends Pick
           const option = await config.read(value as V, request, false);
           if (option === undefined) unresolved.push({ value: input });
           else resolved.push({ value: option.value, option });
-        } catch (error) { unresolved.push({ value: input, error: error instanceof Error ? error : new Error('Resolution failed.') }); }
+        } catch (error) { unresolved.push({ value: input, error: error instanceof Error ? error : new PickerMessageError({ group: 'errors', key: 'resolutionFailed' }) }); }
       }
       return { resolved, unresolved };
     },

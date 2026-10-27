@@ -1,0 +1,23 @@
+{
+  "empty": "没有可用数据",
+  "noResults": "未找到结果",
+  "noVisibleColumns": "没有可见列",
+  "loading": "正在加载",
+  "actions": "操作",
+  "moreActions": "更多操作",
+  "yes": "是",
+  "no": "否",
+  "noTags": "没有标签",
+  "noObservations": "没有观测数据",
+  "invalidValue": "无效值",
+  "selectAllRows": "选择所有行",
+  "retry": "重试",
+  "selectRowTemplate": "选择行 {rowId}",
+  "sparklineSummaryTemplate": "首值 {first}; 末值 {last}; 最小值 {minimum}; 最大值 {maximum}; 平均值 {average}; 变化 {change}; 变化百分比 {changePercent}",
+  "tagOverflow": {
+    "other": "再显示 {count} 个标签"
+  },
+  "ratingCount": {
+    "other": "{formattedCount} 票"
+  }
+}

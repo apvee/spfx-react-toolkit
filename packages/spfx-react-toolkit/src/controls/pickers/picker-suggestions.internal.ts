@@ -1,3 +1,5 @@
+import { resolvePickersStrings } from './pickers-strings.internal';
+import type { PickersStrings } from './pickers-strings.types';
 import type { PickerOption } from './picker.types';
 import type { PickerValue } from './picker-values.types';
 import { canonicalPickerIdentity, pickerIdentityAliases } from './picker-identity.internal';
@@ -10,6 +12,7 @@ export interface PickerSuggestionSection<T extends PickerOption> {
   readonly options: readonly T[];
 }
 export interface PickerSuggestionInput<T extends PickerOption> {
+  readonly strings?: PickersStrings;
   readonly consumer?: readonly T[];
   readonly catalog?: readonly T[];
   readonly catalogLimit?: number;
@@ -30,18 +33,19 @@ export interface PickerSuggestionInput<T extends PickerOption> {
 
 /** Pure composition; failures in one external source do not erase consumer candidates. */
 export function composePickerSuggestions<T extends PickerOption>(input: PickerSuggestionInput<T>): readonly PickerSuggestionSection<T>[] {
+  const strings = input.strings ?? resolvePickersStrings();
   if (input.showDefaultSuggestions === false) return [];
   const limit = input.completeCatalog ? Number.MAX_SAFE_INTEGER : input.catalogLimit ?? input.limit ?? 5;
   if (!input.completeCatalog && (!Number.isSafeInteger(limit) || limit < 1 || limit > (input.catalogLimit === undefined ? 5 : 200))) throw new RangeError('Invalid initial suggestion/catalog limit.');
   const excluded = new Set([...(input.selected ?? []).map(option => option.value), ...(input.selectedValues ?? [])].flatMap(value => pickerIdentityAliases(value, input.context)));
   const sourceRows: readonly [PickerSuggestionSection<T>['source'], string, readonly T[]][] = [
-    ['consumer', 'Opzioni del consumer', input.consumer ?? []],
-    ['currentSite', 'Sito corrente', input.currentSite ?? []],
-    ['hubSite', 'Hub associato', input.hubSite ?? []],
-    ['catalog', 'Opzioni disponibili', input.catalog ?? []],
-    ['currentUser', 'Tu', input.currentUser ?? []],
-    ['people', 'Persone suggerite', input.people ?? []],
-    ['memberOf', 'I tuoi gruppi', input.groups ?? []],
+    ['consumer', strings.sections.consumer, input.consumer ?? []],
+    ['currentSite', strings.sections.currentSite, input.currentSite ?? []],
+    ['hubSite', strings.sections.hubSite, input.hubSite ?? []],
+    ['catalog', strings.sections.catalog, input.catalog ?? []],
+    ['currentUser', strings.sections.currentUser, input.currentUser ?? []],
+    ['people', strings.sections.people, input.people ?? []],
+    ['memberOf', strings.sections.memberOf, input.groups ?? []],
   ];
   const sections: PickerSuggestionSection<T>[] = [];
   let count = 0;

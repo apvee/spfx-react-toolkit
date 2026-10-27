@@ -38,6 +38,47 @@ test('mixed runtime and erased reexports sharing a specifier retain separate edg
 test('unresolved external packages are reported', () => {
   assert.ok(audit().issues.some(i=>i.kind==='unresolved-module' && i.specifier==='missing-external-registration'));
 });
+test('exact native resource inventory IDs resolve externally without package metadata in the audited source root', () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const inventory = require('../packages/spfx-react-toolkit/localization/resources.json');
+  const ids = inventory.resources.map(resource => resource.id);
+  assert.equal(ids.length, 8);
+  const unknown = 'ApveeSpfxReactToolkitUnreviewedStrings';
+  const directory = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'graph-native-resources-')));
+  try {
+    fs.writeFileSync(path.join(directory, 'index.ts'), [...ids, unknown].map((id, index) =>
+      `import * as resource${index} from '${id}';\nexport const value${index} = resource${index};`).join('\n'));
+    const report = auditImportGraph({ sourceRoot: directory, entrypoints: ['index.ts'] });
+    for (const id of ids) {
+      const edge = report.edges.find(item => item.specifier === id);
+      assert.equal(edge.resolvedTarget, id, id);
+      assert.equal(edge.kind, 'import', id);
+      assert.ok(!report.issues.some(issue => issue.kind === 'unresolved-module' && issue.specifier === id), id);
+    }
+    assert.deepEqual(report.issues.filter(issue => issue.kind === 'unresolved-module').map(issue => issue.specifier), [unknown]);
+    assert.equal(report.edges.find(item => item.specifier === unknown).resolvedTarget, null);
+    assert.deepEqual(report.publicExports.find(item => item.name === 'value0').dependencies, ids.slice().sort());
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});
+
+test('only the five reviewed native string adapters receive manual resource classification', () => {
+  const { reviewModuleEffects } = require('../scripts/audit-import-graph.cjs');
+  const module = path => ({ path, externalImports: [], topLevelInitializations: [{ expression: '{}' }], effects: { classification: 'review-required' } });
+  for (const file of [
+    'controls/editable-text/localization/editable-text-strings.internal.ts',
+    'controls/web-part-shell/localization/web-part-shell-strings.internal.ts',
+    'controls/pickers/pickers-strings.internal.ts',
+    'controls/file-folder-picker/file-folder-picker-strings.internal.ts',
+    'controls/form/form-strings.internal.ts',
+  ]) assert.equal(reviewModuleEffects(module(file)).classification, 'local-resource-allocation', file);
+  for (const file of [
+    'controls/form/unreviewed-strings.internal.ts',
+    'controls/form/localization/form-strings.internal.ts',
+    'controls/stage/stage-strings.internal.ts',
+    'controls/unreviewed/unreviewed-strings.internal.ts',
+  ]) assert.equal(reviewModuleEffects(module(file)).classification, 'review-required', file);
+});
 test('renamed imported namespaces retain runtime leaves and dependencies', () => {
   const report = auditImportGraph({sourceRoot,entrypoints:['namespace-alias.ts']});
   const value = report.publicExports.find(e=>e.name==='renamed.value');

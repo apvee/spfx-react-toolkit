@@ -1,3 +1,5 @@
+import { resolveFileFolderPickerStrings } from './file-folder-picker-strings.internal';
+import type { FileFolderPickerStringsOverride } from './file-folder-picker-strings.types';
 import { FileFolderPickerError, fileFolderPickerFailure } from './file-folder-picker-errors.internal';
 import type { FileFolderPickerOption } from './file-folder-picker.types';
 import { isFilePickerInitialize, readFilePickerCommand, readFilePickerTokenRequest, isFilePickerPageLoaded } from './file-folder-picker-protocol.internal';
@@ -9,6 +11,7 @@ export type FileFolderPickerSessionResult =
   | { readonly status: 'picked'; readonly items: readonly FileFolderPickerOption[] }
   | { readonly status: 'cancelled' };
 export interface FileFolderPickerSessionOptions {
+  readonly strings?: FileFolderPickerStringsOverride;
   readonly ownerWindow: Window;
   readonly contentWindow: Window;
   readonly trustedOrigin: string;
@@ -39,6 +42,7 @@ export interface FileFolderPickerSession {
 
 /** One opening owns one channel/port and at most one accepted confirmation. No token or payload logging. */
 export function createFileFolderPickerSession(options: FileFolderPickerSessionOptions): FileFolderPickerSession {
+  const strings = resolveFileFolderPickerStrings(options.strings);
   let active = true, started = false, confirming = false, ready = false, portEpoch = 0;
   const challengedResources = new Set<string>();
   const diagnosticKeys = new Set<string>();
@@ -86,7 +90,7 @@ export function createFileFolderPickerSession(options: FileFolderPickerSessionOp
     const epoch = ++portEpoch;
     if (handshakeTimer !== undefined) clearTimeout(handshakeTimer);
     port = event.ports[0];
-    port.onmessage = event => { command(event.data, epoch).catch(() => fail(new FileFolderPickerError('communication'))); };
+    port.onmessage = event => { command(event.data, epoch).catch(() => fail(new FileFolderPickerError('communication', strings))); };
     port.start(); post({ type: 'activate' });
   }
   async function command(input: unknown, epoch: number): Promise<void> {
@@ -109,9 +113,9 @@ export function createFileFolderPickerSession(options: FileFolderPickerSessionOp
     const reply = (data: unknown): void => { if (current()) post(data); };
     const timer = setTimeout(() => {
       if (!current()) return;
-      if (!optionalAuthentication) { fail(new FileFolderPickerError('timeout')); return; }
+      if (!optionalAuthentication) { fail(new FileFolderPickerError('timeout', strings)); return; }
       reply({ type: 'result', id: envelope.id, data: { result: 'error', error: {
-        code: 'unableToObtainToken', message: 'La funzionalità di autenticazione opzionale non ha risposto in tempo. Riprova.',
+        code: 'unableToObtainToken', message: strings.protocol.optionalAuthenticationTimeout,
       } } });
       expired = true;
       commandTimers.delete(timer);
@@ -138,11 +142,11 @@ export function createFileFolderPickerSession(options: FileFolderPickerSessionOp
             const resolveOrigins = options.resolveAuxiliaryAuthenticationOrigins;
             // Discovery belongs to the opening; a replacement port can await the same queued work.
             auxiliaryOrigins ??= Promise.resolve().then(() => {
-              if (!active) throw new FileFolderPickerError('auth-resource');
+              if (!active) throw new FileFolderPickerError('auth-resource', strings);
               return resolveOrigins();
             });
             let origins: readonly string[];
-            try { origins = await auxiliaryOrigins; } catch { throw new FileFolderPickerError('auth-resource'); }
+            try { origins = await auxiliaryOrigins; } catch { throw new FileFolderPickerError('auth-resource', strings); }
             if (!current()) return;
             request = readFilePickerTokenRequest(envelope.data, [...options.allowedResourceOrigins, ...origins], { ...options, onDiagnostic: event => { if (current()) diagnostic(describeFilePickerAuthentication(event.stage, envelope.data, options.allowedResourceOrigins), epoch); } });
           }
@@ -151,7 +155,7 @@ export function createFileFolderPickerSession(options: FileFolderPickerSessionOp
           if (request.claims !== undefined) {
             if (challengedResources.has(request.resource)) {
               diagnostic(describeFilePickerAuthentication('claims-denied', envelope.data, options.allowedResourceOrigins), epoch);
-              throw new FileFolderPickerError('auth-challenge');
+              throw new FileFolderPickerError('auth-challenge', strings);
             }
             challengedResources.add(request.resource);
           }
@@ -159,12 +163,12 @@ export function createFileFolderPickerSession(options: FileFolderPickerSessionOp
           try { token = await options.requestToken(request); } catch {
             if (!current()) return;
             diagnostic(describeFilePickerAuthentication('provider-failed', envelope.data, options.allowedResourceOrigins), epoch);
-            throw new FileFolderPickerError('auth-provider');
+            throw new FileFolderPickerError('auth-provider', strings);
           }
           if (!current()) return;
           if (typeof token !== 'string' || token.length === 0) {
             diagnostic(describeFilePickerAuthentication('provider-failed', envelope.data, options.allowedResourceOrigins), epoch);
-            throw new FileFolderPickerError('auth-provider');
+            throw new FileFolderPickerError('auth-provider', strings);
           }
           reply({ type: 'result', id: envelope.id, data: { result: 'token', token } });
           diagnostic(describeFilePickerAuthentication('token-supplied', envelope.data, options.allowedResourceOrigins), epoch);
@@ -183,19 +187,19 @@ export function createFileFolderPickerSession(options: FileFolderPickerSessionOp
           break;
         }
         default:
-          reply({ type: 'result', id: envelope.id, data: { result: 'error', error: { code: 'unsupportedCommand', message: 'This integration does not support that command.' } } });
+          reply({ type: 'result', id: envelope.id, data: { result: 'error', error: { code: 'unsupportedCommand', message: strings.protocol.unsupportedCommand } } });
       }
     } catch (failure) {
       // Do not reflect native payloads/provider error strings: they can contain claims or other sensitive data.
       if (!current()) return;
-      const error = fileFolderPickerFailure(failure, authentication ? 'auth-provider' : 'selection-invalid');
+      const error = fileFolderPickerFailure(failure, authentication ? 'auth-provider' : 'selection-invalid', strings);
       // Microsoft may request optional audiences (for example MySite) even with their pivots disabled.
       // Deny that individual request without claiming authentication of our configured source failed.
       const optionalFailure = optionalAuthentication || auxiliaryAuthentication || (authentication && tokenRequest !== undefined && !options.allowedResourceOrigins.includes(tokenRequest.resource));
       if (active && epoch === portEpoch && error.code !== 'auth-resource' && !optionalFailure) options.onError?.(error);
       reply({ type: 'result', id: envelope.id, data: { result: 'error', error: {
         code: authentication ? 'unableToObtainToken' : 'unusableItem',
-        message: audience === 'graph' ? 'Non è stato possibile autenticare la funzionalità Microsoft Graph opzionale.' : optionalFailure ? 'Non è stato possibile autenticare la destinazione personale opzionale.' : error.message,
+        message: audience === 'graph' ? strings.protocol.optionalGraphAuthenticationFailed : optionalFailure ? strings.protocol.optionalPersonalAuthenticationFailed : error.message,
       } } });
     } finally {
       if (ownsConfirmation && !success && epoch === portEpoch) releaseConfirmation();
@@ -207,7 +211,7 @@ export function createFileFolderPickerSession(options: FileFolderPickerSessionOp
       if (started || !active) return result;
       started = true;
       options.ownerWindow.addEventListener('message', initialize);
-      handshakeTimer = setTimeout(() => fail(new FileFolderPickerError('timeout')), options.handshakeTimeoutMs ?? 30000);
+      handshakeTimer = setTimeout(() => fail(new FileFolderPickerError('timeout', strings)), options.handshakeTimeoutMs ?? 30000);
       closeTimer = setInterval(() => { if (options.contentWindow.closed) cancel(); }, options.closePollMs ?? 500);
       return result;
     },

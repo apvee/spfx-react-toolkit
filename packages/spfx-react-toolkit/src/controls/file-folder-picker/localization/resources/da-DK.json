@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Gennemse filer…",
+    "folders": "Gennemse mapper…",
+    "all": "Gennemse filer og mapper…"
+  },
+  "placeholders": {
+    "files": "Vælg filer…",
+    "folders": "Vælg mapper…",
+    "all": "Vælg filer eller mapper…"
+  },
+  "labels": {
+    "selection": "Valg af filer og mapper",
+    "file": "Fil",
+    "folder": "Mappe",
+    "unresolvedItem": "Uafklaret element",
+    "removeItem": "Fjern {name}"
+  },
+  "validation": {
+    "invalidReferences": "Ugyldige fil- eller mappereferencer.",
+    "controlledModeChanged": "Den kontrollerede tilstand kan ikke ændres, mens kontrolelementet er monteret.",
+    "incompatibleItems": "Valget indeholder elementer, som ikke er kompatible med den konfigurerede type, kategori eller filtypenavne. Fjern eller erstat dem.",
+    "invalidPolicy": "Ugyldig konfiguration af valgtype, kategori, filtypenavne eller grænse.",
+    "selectionLimitExceeded": "Valget overskrider den konfigurerede grænse. Fjern de overskydende elementer."
+  },
+  "errors": {
+    "configuration": "Ugyldig konfiguration af vælgeren. Kontrollér kilden, typerne, kategorien og grænserne; brug forudindstillingen uden ældre indstillinger.",
+    "auth-resource": "Vælgeren anmodede om en godkendelsesressource, som konfigurationen ikke tillader.",
+    "auth-type": "Vælgeren anmodede om en godkendelsestype, som konfigurationen ikke understøtter.",
+    "auth-challenge": "Vælgeren kræver en yderligere godkendelseskontrol, som ikke understøttes.",
+    "auth-provider": "SharePoint-tokenet kunne ikke hentes. Prøv igen; hvis problemet fortsætter, skal du kontrollere din adgang og de eksisterende tilladelser.",
+    "selection-identity": "Det valgte elements identitet kunne ikke bekræftes. Åbn vælgeren igen, og prøv igen.",
+    "selection-scope": "Det valgte element er uden for det tilladte websted, bibliotek eller den tilladte mappe.",
+    "selection-policy": "Valget overholder ikke den tilladte type, kategori, filtypenavne eller antal elementer.",
+    "selection-unavailable": "Det valgte element er utilgængeligt eller kan ikke tilgås.",
+    "selection-invalid": "Valget kunne ikke bekræftes. Der blev ikke tilføjet nye elementer.",
+    "onedrive-unavailable": "Den aktuelle brugers OneDrive er utilgængeligt eller kan ikke tilgås. Kontrollér, at drevet findes, og prøv igen.",
+    "opening": "Vælgeren kunne ikke åbnes. Kontrollér konfigurationen og adgangen til kilden, og prøv igen.",
+    "timeout": "Vælgeren svarede ikke i tide. Luk den, og prøv igen.",
+    "communication": "Kommunikationen med vælgeren blev afbrudt. Åbn den igen, og prøv igen."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Den valgfrie godkendelsesfunktion svarede ikke i tide. Prøv igen.",
+    "unsupportedCommand": "Denne integration understøtter ikke den kommando.",
+    "optionalGraphAuthenticationFailed": "Den valgfrie Microsoft Graph-funktion kunne ikke godkendes.",
+    "optionalPersonalAuthenticationFailed": "Den valgfrie personlige destination kunne ikke godkendes."
+  }
+}

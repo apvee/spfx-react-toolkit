@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "無法提交表單。請重試。",
+  "dateInputValidationMessage": "提交前請補齊或更正日期。",
+  "timeInputValidationMessage": "提交前請補齊或更正時間。",
+  "tagPicker": {
+    "noOptions": "沒有符合目前查詢的選項。"
+  },
+  "fileInput": {
+    "browseLabel": "瀏覽",
+    "clearLabel": "清除"
+  },
+  "arraySection": {
+    "add": "新增項目",
+    "empty": "沒有項目",
+    "itemLabelTemplate": "項目 {position}",
+    "removeTemplate": "移除 {label}",
+    "moveUpTemplate": "上移 {label}",
+    "moveDownTemplate": "下移 {label}",
+    "addedTemplate": "已新增 {label}",
+    "removedTemplate": "已移除 {label}",
+    "movedTemplate": "已將 {label} 移至第 {position} 項，共 {total} 項"
+  },
+  "datePicker": {
+    "months": [
+      "1月",
+      "2月",
+      "3月",
+      "4月",
+      "5月",
+      "6月",
+      "7月",
+      "8月",
+      "9月",
+      "10月",
+      "11月",
+      "12月"
+    ],
+    "shortMonths": [
+      "1月",
+      "2月",
+      "3月",
+      "4月",
+      "5月",
+      "6月",
+      "7月",
+      "8月",
+      "9月",
+      "10月",
+      "11月",
+      "12月"
+    ],
+    "days": [
+      "星期日",
+      "星期一",
+      "星期二",
+      "星期三",
+      "星期四",
+      "星期五",
+      "星期六"
+    ],
+    "shortDays": [
+      "週日",
+      "週一",
+      "週二",
+      "週三",
+      "週四",
+      "週五",
+      "週六"
+    ],
+    "goToToday": "移至今天",
+    "prevMonthAriaLabel": "上個月",
+    "nextMonthAriaLabel": "下個月",
+    "prevYearAriaLabel": "上一年",
+    "nextYearAriaLabel": "下一年",
+    "prevYearRangeAriaLabel": "上一個年份範圍",
+    "nextYearRangeAriaLabel": "下一個年份範圍",
+    "monthPickerHeaderAriaLabel": "{0}，變更年份",
+    "yearPickerHeaderAriaLabel": "{0}，變更月份",
+    "closeButtonAriaLabel": "關閉",
+    "weekNumberFormatString": "第 {0} 週",
+    "selectedDateFormatString": "所選日期 {0}",
+    "todayDateFormatString": "今天的日期 {0}",
+    "dayMarkedAriaLabel": "已標記"
+  }
+}

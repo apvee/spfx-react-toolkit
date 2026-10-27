@@ -1,0 +1,81 @@
+{
+  "labels": {
+    "selectOne": "בחירת פריט",
+    "selectMany": "בחירת פריטים",
+    "search": "חיפוש…",
+    "clearSelection": "ניקוי הבחירה",
+    "clearSearch": "ניקוי החיפוש",
+    "options": "אפשרויות",
+    "searchOptions": "חיפוש אפשרויות",
+    "selectedOne": "פריט שנבחר",
+    "selectedMany": "פריטים שנבחרו",
+    "noSelection": "אין בחירה",
+    "resolveIds": "פתרון מזהים",
+    "moreResults": "תוצאות נוספות",
+    "retry": "ניסיון חוזר",
+    "namedOptions": "{name}: אפשרויות",
+    "namedSearch": "{name}: חיפוש",
+    "selectedCount": {
+      "one": "נבחר {count} פריט",
+      "two": "נבחרו {count} פריטים",
+      "other": "נבחרו {count} פריטים"
+    },
+    "minimumSearchLength": {
+      "one": "יש להקליד לפחות {count} תו לחיפוש",
+      "two": "יש להקליד לפחות {count} תווים לחיפוש",
+      "other": "יש להקליד לפחות {count} תווים לחיפוש"
+    }
+  },
+  "status": {
+    "searching": "מתבצע חיפוש…",
+    "loading": "בטעינה…",
+    "partialSearch": "חיפוש חלקי: יש למקד את החיפוש.",
+    "noOtherResults": "אין תוצאות נוספות לחיפוש זה",
+    "noResults": "אין תוצאות לחיפוש זה",
+    "noOptions": "אין אפשרויות זמינות.",
+    "moreItemsAvailable": "קיימים פריטים נוספים.",
+    "partialSuggestions": "הצעות חלקיות: חלק מהמקורות אינם זמינים.",
+    "unresolvedValue": "ערך שלא נפתר",
+    "partialHubs": "רשימת רכזות חלקית: יש לצמצם את הטווח או להשתמש במצב אתר.",
+    "partialSiteCollections": "חיפוש חלקי באוספי אתרים (עד 1000 תוצאות): יש לצמצם את הקריטריונים."
+  },
+  "sections": {
+    "consumer": "אפשרויות שסופקו",
+    "currentSite": "האתר הנוכחי",
+    "hubSite": "הרכזת המשויכת",
+    "catalog": "אפשרויות זמינות",
+    "currentUser": "אתה",
+    "people": "אנשים מוצעים",
+    "memberOf": "הקבוצות שלך"
+  },
+  "metadata": {
+    "documentLibrary": "ספריית מסמכים",
+    "sharePointList": "רשימת SharePoint",
+    "personalView": "תצוגה אישית",
+    "publicView": "תצוגה ציבורית",
+    "field": "שדה",
+    "itemDescription": "פריט · מזהה {id}",
+    "file": "קובץ",
+    "fileWithExtension": "קובץ {extension}",
+    "folder": "תיקייה",
+    "sharePointGroup": "קבוצת SharePoint · SharePoint",
+    "securityGroup": "קבוצת אבטחה · Entra",
+    "distributionList": "רשימת תפוצה · Entra",
+    "unvalidatedEmail": "דואר אלקטרוני שלא אומת",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "הגעת למגבלת הבחירה.",
+    "selectionLimitExceeded": "הבחירה חורגת מהמגבלה שהוגדרה.",
+    "unresolvedValues": "חלק מהערכים שנבחרו לא נפתרו.",
+    "outOfScopeValues": "הבחירה כוללת ערכים מחוץ לטווח שהוגדר.",
+    "resolveRequiredUserIds": "יש לפתור את המזהים הנדרשים עבור המשתמשים שנבחרו."
+  },
+  "errors": {
+    "candidateOutOfScope": "המועמד נמצא מחוץ לטווח שהוגדר.",
+    "incompleteCandidateResolution": "לא ניתן היה לפתור את המועמד במלואו.",
+    "resolutionFailed": "פתרון המזהים נכשל.",
+    "graphUnavailable": "לקוח Microsoft Graph אינו זמין."
+  }
+}

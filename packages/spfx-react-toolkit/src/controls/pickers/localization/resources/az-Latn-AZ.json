@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Element seçin",
+    "selectMany": "Elementlər seçin",
+    "search": "Axtar…",
+    "clearSelection": "Seçimi təmizlə",
+    "clearSearch": "Axtarışı təmizlə",
+    "options": "Seçimlər",
+    "searchOptions": "Seçimlərdə axtar",
+    "selectedOne": "Seçilmiş element",
+    "selectedMany": "Seçilmiş elementlər",
+    "noSelection": "Seçim yoxdur",
+    "resolveIds": "ID-ləri həll et",
+    "moreResults": "Daha çox nəticə",
+    "retry": "Yenidən cəhd et",
+    "namedOptions": "{name}: Seçimlər",
+    "namedSearch": "{name}: Axtar",
+    "selectedCount": {
+      "one": "{count} element seçilib",
+      "other": "{count} element seçilib"
+    },
+    "minimumSearchLength": {
+      "one": "Axtarmaq üçün ən azı {count} simvol yazın",
+      "other": "Axtarmaq üçün ən azı {count} simvol yazın"
+    }
+  },
+  "status": {
+    "searching": "Axtarılır…",
+    "loading": "Yüklənir…",
+    "partialSearch": "Axtarış qisməndir: axtarışınızı dəqiqləşdirin.",
+    "noOtherResults": "Bu axtarış üçün başqa nəticə yoxdur",
+    "noResults": "Bu axtarış üçün nəticə yoxdur",
+    "noOptions": "Mövcud seçim yoxdur.",
+    "moreItemsAvailable": "Daha çox element mövcuddur.",
+    "partialSuggestions": "Təkliflər qisməndir: bəzi mənbələr əlçatan deyil.",
+    "unresolvedValue": "Həll edilməmiş dəyər",
+    "partialHubs": "Mərkəz siyahısı qisməndir: əhatə dairəsini daraldın və ya sayt rejimindən istifadə edin.",
+    "partialSiteCollections": "Sayt kolleksiyası axtarışı qisməndir (ən çox 1000 nəticə): meyarlarınızı daraldın."
+  },
+  "sections": {
+    "consumer": "Təqdim edilmiş seçimlər",
+    "currentSite": "Cari sayt",
+    "hubSite": "Əlaqəli mərkəz",
+    "catalog": "Mövcud seçimlər",
+    "currentUser": "Siz",
+    "people": "Təklif olunan şəxslər",
+    "memberOf": "Qruplarınız"
+  },
+  "metadata": {
+    "documentLibrary": "Sənəd kitabxanası",
+    "sharePointList": "SharePoint siyahısı",
+    "personalView": "Şəxsi görünüş",
+    "publicView": "İctimai görünüş",
+    "field": "Sahə",
+    "itemDescription": "Element · ID {id}",
+    "file": "Fayl",
+    "fileWithExtension": "{extension} faylı",
+    "folder": "Qovluq",
+    "sharePointGroup": "SharePoint qrupu · SharePoint",
+    "securityGroup": "Təhlükəsizlik qrupu · Entra",
+    "distributionList": "Paylama siyahısı · Entra",
+    "unvalidatedEmail": "Təsdiqlənməmiş e-poçt",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Seçim həddinə çatılıb.",
+    "selectionLimitExceeded": "Seçim təyin edilmiş həddi aşır.",
+    "unresolvedValues": "Bəzi seçilmiş dəyərlər həll edilməyib.",
+    "outOfScopeValues": "Seçimdə təyin edilmiş əhatə dairəsindən kənar dəyərlər var.",
+    "resolveRequiredUserIds": "Seçilmiş istifadəçilər üçün tələb olunan ID-ləri həll edin."
+  },
+  "errors": {
+    "candidateOutOfScope": "Namizəd təyin edilmiş əhatə dairəsindən kənardadır.",
+    "incompleteCandidateResolution": "Namizəd tam həll edilə bilmədi.",
+    "resolutionFailed": "Həll etmə uğursuz oldu.",
+    "graphUnavailable": "Microsoft Graph müştərisi əlçatan deyil."
+  }
+}

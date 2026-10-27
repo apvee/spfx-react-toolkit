@@ -7,16 +7,65 @@ import { mountDemoFixture } from '../demo-fixture-host';
 import EditableTextPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/EditableTextPanel';
 import { EditableTextIsolationFixture } from '../demo-control-isolation/editable-text-regressions';
 import { createTheme } from '@fluentui/react';
-import { WebPartShell, useSx, width, type IWebPartShellProperties, type WebPartShellProps } from '@apvee/spfx-react-toolkit';
+import { WebPartShell, useSx, width, type IWebPartShellProperties, type WebPartShellProps, type EditableTextStrings, type EditableTextStringsOverride } from '@apvee/spfx-react-toolkit';
 import { WebPartShellDemoHost } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/WebPartShellDemoHost';
 import WebPartShellPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/WebPartShellPanel';
 
 type HostName = 'SharePoint' | 'SingleWebPartAppPage' | 'Teams' | 'Office' | 'Outlook';
 type ThemeName = 'light' | 'dark' | 'highContrast';
+type EditorDictionaryResource = Omit<EditableTextStrings, 'headingLevel' | 'lineSpacingValue' | 'formattingShortcut' | 'mixedFormatting'> & {
+  headingLevelTemplate: string; lineSpacingValueTemplate: string;
+  formattingShortcutTemplate: string; mixedFormattingTemplate: string;
+};
+
+// Test-only caller dictionaries derive from canonical JSON supplied by the runner.
+// Native loader selection has separate AMD tests; changing this data preserves the UI instance.
+function editorDictionary(resource: EditorDictionaryResource | undefined): EditableTextStringsOverride | undefined {
+  if (!resource) return undefined;
+  const template = (value: string, tokens: Record<string, string | number>): string =>
+    value.replace(/\{([^{}]+)\}/g, (_match, key: string) => String(tokens[key]));
+  return {
+    editorLoadError: resource.editorLoadError,
+    retry: resource.retry,
+    savedFormattingWarning: resource.savedFormattingWarning,
+    loadingEditor: resource.loadingEditor,
+    placeholder: resource.placeholder,
+    tooLargeError: resource.tooLargeError,
+    moreFormatting: resource.moreFormatting,
+    heading: resource.heading,
+    normal: resource.normal,
+    bold: resource.bold,
+    italic: resource.italic,
+    underline: resource.underline,
+    themeColor: resource.themeColor,
+    clearFormatting: resource.clearFormatting,
+    spacing: resource.spacing,
+    defaultLineSpacing: resource.defaultLineSpacing,
+    spaceBefore: resource.spaceBefore,
+    spaceAfter: resource.spaceAfter,
+    formattingControls: resource.formattingControls,
+    formatting: resource.formatting,
+    fontSize: resource.fontSize,
+    mixed: resource.mixed,
+    themeColorGroup: resource.themeColorGroup,
+    automatic: resource.automatic,
+    themeColors: resource.themeColors,
+    paletteColors: resource.paletteColors,
+    colorNames: resource.colorNames,
+    headingLevel: level => template(resource.headingLevelTemplate, { level }),
+    lineSpacingValue: value => template(resource.lineSpacingValueTemplate, { value }),
+    formattingShortcut: (label, shortcut) => template(resource.formattingShortcutTemplate, { label, shortcut }),
+    mixedFormatting: label => template(resource.mixedFormattingTemplate, { label }),
+  };
+}
+
 interface FixturePatch {
   mode?: 'Read' | 'Edit'; host?: HostName; theme?: ThemeName; dir?: 'ltr' | 'rtl';
   width?: number; otherWidth?: number;
   uiCulture?: string; otherUiCulture?: string; regionalCulture?: string;
+  strings?: WebPartShellProps<IWebPartShellProperties>['strings'];
+  otherStrings?: WebPartShellProps<IWebPartShellProperties>['strings'];
+  titleEditorResource?: EditorDictionaryResource; otherTitleEditorResource?: EditorDictionaryResource;
   surface?: WebPartShellProps<IWebPartShellProperties>['surface'];
   padding?: WebPartShellProps<IWebPartShellProperties>['padding'];
   fluentTheme?: WebPartShellProps<IWebPartShellProperties>['theme'];
@@ -69,10 +118,10 @@ export function mountShellFixture(boundary: 'source' | 'compiled'): void {
     const second = hosts[1] as unknown as BaseClientSideWebPart<IWebPartShellProperties>;
     return <RendererProvider renderer={renderer} targetDocument={document}>
       <div className={sx(width.px(state.width))} data-shell-region="first">
-        <WebPartShellDemoHost instance={first} surface={state.surface} padding={state.padding} theme={state.fluentTheme} dir={state.dir} data-shell-root="first"><PersistentChild /></WebPartShellDemoHost>
+        <WebPartShellDemoHost instance={first} surface={state.surface} padding={state.padding} theme={state.fluentTheme} dir={state.dir} strings={state.strings} titleEditorStrings={editorDictionary(state.titleEditorResource)} data-shell-root="first"><PersistentChild /></WebPartShellDemoHost>
       </div>
       <div className={sx(width.px(state.otherWidth))} data-shell-region="second">
-        <WebPartShell instance={second} data-shell-root="second"><input aria-label="Other child" defaultValue="Other state" /></WebPartShell>
+        <WebPartShell instance={second} strings={state.otherStrings} titleEditorStrings={editorDictionary(state.otherTitleEditorResource)} data-shell-root="second"><input aria-label="Other child" defaultValue="Other state" /></WebPartShell>
       </div>
       <p data-fixture-boundary="">{boundary}: real provider/store/hooks; SPFx services and SDK only. Local fixture, not authenticated SharePoint validation.</p>
       <button data-fixture-mode="" onClick={() => render({ mode: state.mode === 'Read' ? 'Edit' : 'Read' })}>{state.mode === 'Read' ? 'Enter page Edit mode' : 'Return to page Read mode'}</button>

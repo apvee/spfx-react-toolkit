@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { StageStrings } from '../../packages/spfx-react-toolkit/src/controls/stage';
 import type {
   StageProps, StageHeaderProps, StageBodyProps, StageFooterProps, StageOpenChangeEvent,
   StageOpenChangeReason, StagePresentation, StageSize, StageDrawerPosition,
@@ -112,3 +113,10 @@ const conditionalSlot: React.ReactNode = false;
 <Stage.Header title={() => <span>Direct callback</span>} />;
 
 <Stage.Header title="Icon sizing" icon={{ children: (Tag, props) => <Tag {...props}><svg width={80} height={80} /></Tag> }} description={{ children: <> {false} </> }} />;
+
+const localizedStage: StageStrings = { closeLabel: 'Dismiss' };
+const localizedHeader: StageHeaderProps = { title: 'Profile', strings: localizedStage, closeLabel: 'Close profile' };
+const partialHeader: StageHeaderProps = { title: 'Profile', strings: { closeLabel: undefined } };
+// @ts-expect-error Stage dictionary values remain strings.
+const invalidStageStrings: StageHeaderProps = { title: 'Profile', strings: { closeLabel: 12 } };
+void [localizedHeader, partialHeader, invalidStageStrings];

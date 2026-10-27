@@ -1,10 +1,10 @@
-/** Shell-owned title naming; common editor resources belong to EditableText. */
-export interface WebPartShellStrings {
-  readonly titleEditorLabel: string;
-  readonly titlePlaceholder: string;
-}
+import type { WebPartShellStrings } from '../web-part-shell.types';
+import { nativeWebPartShellResource } from './web-part-shell-native.internal';
 
-/** Construct immutable, instance-independent title naming resources. */
-export function defineWebPartShellStrings(resource: WebPartShellStrings): WebPartShellStrings {
-  return Object.freeze({ ...resource });
+/** Shell naming resolves independently of common editor controls. */
+export function resolveWebPartShellStrings(overrides?: Partial<WebPartShellStrings>): WebPartShellStrings {
+  return {
+    titleEditorLabel: overrides?.titleEditorLabel ?? nativeWebPartShellResource.titleEditorLabel,
+    titlePlaceholder: overrides?.titlePlaceholder ?? nativeWebPartShellResource.titlePlaceholder,
+  };
 }

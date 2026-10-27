@@ -1,0 +1,25 @@
+{
+  "empty": "Kullanılabilir veri yok",
+  "noResults": "Sonuç bulunamadı",
+  "noVisibleColumns": "Görünür sütun yok",
+  "loading": "Yükleniyor",
+  "actions": "İşlemler",
+  "moreActions": "Diğer işlemler",
+  "yes": "Evet",
+  "no": "Hayır",
+  "noTags": "Etiket yok",
+  "noObservations": "Gözlem yok",
+  "invalidValue": "Geçersiz değer",
+  "selectAllRows": "Tüm satırları seç",
+  "retry": "Yeniden dene",
+  "selectRowTemplate": "{rowId} satırını seç",
+  "sparklineSummaryTemplate": "İlk {first}; Son {last}; En düşük {minimum}; En yüksek {maximum}; Ortalama {average}; Değişim {change}; Yüzde değişim {changePercent}",
+  "tagOverflow": {
+    "one": "{count} etiket daha göster",
+    "other": "{count} etiket daha göster"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} oy",
+    "other": "{formattedCount} oy"
+  }
+}

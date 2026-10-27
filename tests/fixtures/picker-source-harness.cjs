@@ -1,7 +1,7 @@
 const { createHarness } = require('../services-test-harness.cjs');
 const previous = new Map();
-function createPickerHarness(boundaries) {
-  const harness = createHarness(boundaries);
+function createPickerHarness(boundaries, options) {
+  const harness = createHarness(boundaries, options);
   for (const key of ['NodeFilter', 'HTMLElement', 'HTMLInputElement', 'Element', 'Node', 'Event', 'CustomEvent', 'MouseEvent', 'KeyboardEvent']) {
     if (!previous.has(key)) previous.set(key, Object.getOwnPropertyDescriptor(global, key));
     Object.defineProperty(global, key, { configurable: true, writable: true, value: window[key] });

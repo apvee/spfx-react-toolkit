@@ -1,10 +1,12 @@
 import * as React from 'react';
+import type { FormStrings } from './form-strings.types';
 import type { FieldValues } from 'react-hook-form';
 import type { FormMethods, ScopedFormSuite } from './form.types';
 /** Private provider data; no values/dirty/touched state is duplicated here. */
 export interface FormRuntimeContextValue {
     methods: FormMethods<FieldValues, unknown, unknown>;
     disabled: boolean;
+    strings: FormStrings;
     Fields: ScopedFormSuite<FieldValues>;
     createScopedFields: (usePrefix: () => string) => ScopedFormSuite<FieldValues>;
 }

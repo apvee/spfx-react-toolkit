@@ -17,8 +17,8 @@ type RuntimeProps = Omit<WebPartShellProps<IWebPartShellProperties>, 'instance'>
   rootRef: React.ForwardedRef<HTMLDivElement>;
 };
 
-function ShellLayout(props: Omit<RuntimeProps, 'ownerDocument'> & { resolvedSurface: 'section' | 'application'; locale: string | undefined }): React.ReactElement {
-  const { rootRef, resolvedSurface, locale, padding = 'auto',
+function ShellLayout(props: Omit<RuntimeProps, 'ownerDocument'> & { resolvedSurface: 'section' | 'application' }): React.ReactElement {
+  const { rootRef, resolvedSurface, strings, titleEditorStrings, padding = 'auto',
     action, children, className, style, ...nativeProps } = props;
   delete nativeProps.dangerouslySetInnerHTML;
   delete nativeProps.surface;
@@ -41,7 +41,7 @@ function ShellLayout(props: Omit<RuntimeProps, 'ownerDocument'> & { resolvedSurf
       {hasHeader && <div className={styles.header}>
         <div className={styles.title}>
           <WebPartTitle title={properties?.title ?? ''} titleHTML={properties?.titleHTML}
-            showTitle={showTitle} editing={isEdit} onChange={changeTitle} locale={locale} />
+            showTitle={showTitle} editing={isEdit} onChange={changeTitle} strings={strings} titleEditorStrings={titleEditorStrings} />
         </div>
         <div className={styles.actions}>{renderContentSlot(action, 'div', sx, { shorthand: 'preserve' })}</div>
       </div>}
@@ -66,6 +66,6 @@ export function WebPartShellRuntime(props: RuntimeProps): React.ReactElement {
   const styles = useWebPartShellProviderStyles(dir);
   const { ownerDocument, ...layoutProps } = props;
   return <FluentProvider theme={theme} dir={dir} targetDocument={ownerDocument} className={styles.provider}>
-    <ShellLayout {...layoutProps} resolvedSurface={surface} locale={spfxContext.pageContext.cultureInfo.currentUICultureName} />
+    <ShellLayout {...layoutProps} resolvedSurface={surface} />
   </FluentProvider>;
 }

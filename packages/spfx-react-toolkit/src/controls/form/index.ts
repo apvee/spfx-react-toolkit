@@ -1,4 +1,5 @@
 export { Form } from './form';
+export type { FormStrings, FormStringsOverride } from './form-strings.types';
 export { createForm } from './create-form';
 export type { CreateForm, FormErrors, FormMethods, FormRootProps, FormUseFormProps, FormValidationProps, FormSchemaValidation, FormResolverValidation, FormWithoutValidation, FormFieldResult, FormUseFieldProps, FormErrorProps, FormSubmitProps, FormResetProps, FormSuite, ScopedFormSuite, UntypedFormSuite } from './form.types';
 export type { CompatibleFieldPath, FormFieldPresentationProps, FormControlProps, FormInputProps, FormInputType, FormTextareaProps, FormSearchBoxProps, FormCheckboxProps, FormSwitchProps, FormSpinButtonProps, FormSliderProps } from './form-control.types';

@@ -1,0 +1,9 @@
+{
+  "pagination": "การแบ่งหน้า",
+  "firstPage": "หน้าแรก",
+  "previousPage": "หน้าก่อนหน้า",
+  "nextPage": "หน้าถัดไป",
+  "lastPage": "หน้าสุดท้าย",
+  "loadMore": "โหลดเพิ่มเติม",
+  "loading": "กำลังโหลด"
+}

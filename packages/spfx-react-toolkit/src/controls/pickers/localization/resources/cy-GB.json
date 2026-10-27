@@ -1,0 +1,87 @@
+{
+  "labels": {
+    "selectOne": "Dewis eitem",
+    "selectMany": "Dewis eitemau",
+    "search": "Chwilio…",
+    "clearSelection": "Clirio'r dewis",
+    "clearSearch": "Clirio'r chwiliad",
+    "options": "Opsiynau",
+    "searchOptions": "Chwilio opsiynau",
+    "selectedOne": "Eitem a ddewiswyd",
+    "selectedMany": "Eitemau a ddewiswyd",
+    "noSelection": "Dim dewis",
+    "resolveIds": "Datrys IDau",
+    "moreResults": "Rhagor o ganlyniadau",
+    "retry": "Ailgynnig",
+    "namedOptions": "{name}: Opsiynau",
+    "namedSearch": "{name}: Chwilio",
+    "selectedCount": {
+      "zero": "Eitemau a ddewiswyd: {count}",
+      "one": "Eitemau a ddewiswyd: {count}",
+      "two": "Eitemau a ddewiswyd: {count}",
+      "few": "Eitemau a ddewiswyd: {count}",
+      "many": "Eitemau a ddewiswyd: {count}",
+      "other": "Eitemau a ddewiswyd: {count}"
+    },
+    "minimumSearchLength": {
+      "zero": "I chwilio, teipiwch o leiaf {count} nod",
+      "one": "I chwilio, teipiwch o leiaf {count} nod",
+      "two": "I chwilio, teipiwch o leiaf {count} nod",
+      "few": "I chwilio, teipiwch o leiaf {count} nod",
+      "many": "I chwilio, teipiwch o leiaf {count} nod",
+      "other": "I chwilio, teipiwch o leiaf {count} nod"
+    }
+  },
+  "status": {
+    "searching": "Wrthi'n chwilio…",
+    "loading": "Wrthi'n llwytho…",
+    "partialSearch": "Chwiliad rhannol: mireiniwch eich chwiliad.",
+    "noOtherResults": "Dim canlyniadau eraill ar gyfer y chwiliad hwn",
+    "noResults": "Dim canlyniadau ar gyfer y chwiliad hwn",
+    "noOptions": "Dim opsiynau ar gael.",
+    "moreItemsAvailable": "Mae rhagor o eitemau ar gael.",
+    "partialSuggestions": "Awgrymiadau rhannol: nid yw rhai ffynonellau ar gael.",
+    "unresolvedValue": "Gwerth heb ei ddatrys",
+    "partialHubs": "Rhestr ganolfannau rannol: cyfyngwch y cwmpas neu defnyddiwch fodd safle.",
+    "partialSiteCollections": "Chwiliad rhannol o gasgliadau safleoedd (uchafswm o 1000 canlyniad): cyfyngwch eich meini prawf."
+  },
+  "sections": {
+    "consumer": "Opsiynau a ddarparwyd",
+    "currentSite": "Safle cyfredol",
+    "hubSite": "Canolfan gysylltiedig",
+    "catalog": "Opsiynau sydd ar gael",
+    "currentUser": "Chi",
+    "people": "Pobl a awgrymir",
+    "memberOf": "Eich grwpiau"
+  },
+  "metadata": {
+    "documentLibrary": "Llyfrgell ddogfennau",
+    "sharePointList": "Rhestr SharePoint",
+    "personalView": "Gwedd bersonol",
+    "publicView": "Gwedd gyhoeddus",
+    "field": "Maes",
+    "itemDescription": "Eitem · ID {id}",
+    "file": "Ffeil",
+    "fileWithExtension": "Ffeil {extension}",
+    "folder": "Ffolder",
+    "sharePointGroup": "Grŵp SharePoint · SharePoint",
+    "securityGroup": "Grŵp diogelwch · Entra",
+    "distributionList": "Rhestr ddosbarthu · Entra",
+    "unvalidatedEmail": "E-bost heb ei ddilysu",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Cyrhaeddwyd y terfyn dewis.",
+    "selectionLimitExceeded": "Mae'r dewis yn fwy na'r terfyn a ffurfweddwyd.",
+    "unresolvedValues": "Mae rhai gwerthoedd a ddewiswyd heb eu datrys.",
+    "outOfScopeValues": "Mae'r dewis yn cynnwys gwerthoedd y tu allan i'r cwmpas a ffurfweddwyd.",
+    "resolveRequiredUserIds": "Datryswch yr IDau gofynnol ar gyfer y defnyddwyr a ddewiswyd."
+  },
+  "errors": {
+    "candidateOutOfScope": "Mae'r ymgeisydd y tu allan i'r cwmpas a ffurfweddwyd.",
+    "incompleteCandidateResolution": "Ni ellid datrys yr ymgeisydd yn llawn.",
+    "resolutionFailed": "Methodd y datrys.",
+    "graphUnavailable": "Nid yw cleient Microsoft Graph ar gael."
+  }
+}

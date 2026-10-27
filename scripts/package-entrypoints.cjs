@@ -37,6 +37,32 @@ const cleanAliases = Object.freeze({
   './controls/entra-group-trim': 'lib/controls/entra-group-trim/index',
 });
 
+/** Exact build-only contract for native resource assets and the installed setup CLI. */
+function getLocalizationPackageContract(directory = library) {
+  const file = path.join(directory, 'localization/resources.json');
+  if (!fs.existsSync(file)) return { extraFiles: [], nativeIds: new Set(), assetSources: new Map() };
+  const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.equal(data.schemaVersion, 1, 'Unsupported localization inventory');
+  assert.ok(Array.isArray(data.resources), 'Localization resources must be an array');
+  const nativeIds = new Set();
+  const assetSources = new Map();
+  for (const resource of data.resources) {
+    assert.match(resource.id, /^ApveeSpfxReactToolkit[A-Za-z0-9]+Strings$/);
+    assert.ok(!nativeIds.has(resource.id), `Duplicate native resource ID: ${resource.id}`);
+    nativeIds.add(resource.id);
+    const match = /^lib\/controls\/([a-z]+(?:-[a-z]+)*)\/loc\/\{locale\}\.js$/.exec(resource.path);
+    assert.ok(match, `Invalid native resource path: ${resource.path}`);
+    assert.ok(Array.isArray(resource.locales) && resource.locales.includes('en-US'), 'Native resources need en-US');
+    for (const culture of resource.locales) {
+      assert.match(culture, /^[a-z]{2,3}(?:-[A-Z][a-z]{3})?-[A-Z]{2}$/);
+      const asset = resource.path.replace('{locale}', culture.toLowerCase());
+      assert.ok(!assetSources.has(asset), `Duplicate native resource asset: ${asset}`);
+      assetSources.set(asset, `src/controls/${match[1]}/localization/resources/${culture}.json`);
+    }
+  }
+  return { extraFiles: ['cli/spfx-react-toolkit.cjs', 'localization/resources.json'], nativeIds, assetSources };
+}
+
 /** Derive explicit exports without changing the frozen historical inventory. */
 function createEntrypointContract({ publishedFiles, cleanAliases: aliases = cleanAliases }) {
   assert.deepEqual(aliases, cleanAliases, 'Unapproved clean alias contract');
@@ -73,7 +99,8 @@ function createEntrypointContract({ publishedFiles, cleanAliases: aliases = clea
 }
 
 function collectPublishedFiles(directory = library) {
-  const files = ['LICENSE', 'README.md', 'THIRD-PARTY-NOTICES.md', 'package.json'];
+  const localization = getLocalizationPackageContract(directory);
+  const files = ['LICENSE', 'README.md', 'THIRD-PARTY-NOTICES.md', 'package.json', ...localization.extraFiles];
   function visit(folder) {
     for (const entry of fs.readdirSync(folder, { withFileTypes: true })) {
       const file = path.join(folder, entry.name);
@@ -84,8 +111,12 @@ function collectPublishedFiles(directory = library) {
   visit(path.join(directory, 'lib'));
   for (const file of files) {
     assert.ok(fs.existsSync(path.join(directory, file)), `Missing published file: ${file}`);
-    assert.ok(/^(package\.json|README\.md|LICENSE|THIRD-PARTY-NOTICES\.md|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls|property-pane)\/.+))$/.test(file), `Unexpected published file: ${file}`);
+    assert.ok(localization.extraFiles.includes(file) || /^(package\.json|README\.md|LICENSE|THIRD-PARTY-NOTICES\.md|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls|property-pane|localization)\/.+))$/.test(file), `Unexpected published file: ${file}`);
     if (!file.startsWith('lib/')) continue;
+    if (localization.assetSources.has(file)) {
+      assert.ok(fs.existsSync(path.join(directory, localization.assetSources.get(file))), `Native resource lacks canonical translator source: ${file}`);
+      continue;
+    }
     const source = file.replace(/^lib\//, 'src/').replace(/\.(d\.ts|js)(\.map)?$/, '');
     assert.ok(fs.existsSync(path.join(directory, source + '.ts')) || fs.existsSync(path.join(directory, source + '.tsx')), `Published file lacks canonical source: ${file}`);
   }
@@ -195,4 +226,4 @@ function main(args = process.argv.slice(2)) {
   console.log(`Package entrypoints passed: ${Object.keys(manifest.exports).length} exact exports, ${inventory.files.length} historical packed files.`);
 }
 if (require.main === module) main();
-module.exports = { createEntrypointContract, assertEntrypointContract, collectPublishedFiles, verifyConsumerResolution, cleanAliases, main };
+module.exports = { createEntrypointContract, assertEntrypointContract, collectPublishedFiles, verifyConsumerResolution, getLocalizationPackageContract, cleanAliases, main };

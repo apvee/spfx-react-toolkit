@@ -34,7 +34,8 @@ export interface DataGridSparklineSummaryText {
     changePercent: string;
 }
 /** Localized status and cell strings. Root strings accepts partial overrides; omitted
- * members and blank static strings retain English fallbacks, independently of locale.
+ * members and blank static strings retain host-selected native resources, independently of the data locale. Nonblank static
+ * strings retain whitespace; invalid object/member types throw. No toolkit provider is required.
  * @example
  * ```tsx
  * const strings: Partial<DataGridStrings> = { empty: 'Nessun dato', noResults: 'Nessun risultato' };
@@ -63,7 +64,7 @@ export interface DataGridStrings {
     noTags: string;
     /** Accessible trigger label for hidden tags. */
     tagOverflow: (count: number) => string;
-    /** Accessible vote count when a rating column explicitly supplies count. Defaults to "1 vote" or "N votes".
+    /** Accessible vote count when a rating column explicitly supplies count. Defaults to the native resource vote-count forms.
      * @param count Original non-negative whole number of votes, including zero.
      * @param formattedCount Count formatted with the column or grid locale.
      * @returns Localized count text, distinct from the rating value and maximum.
@@ -78,7 +79,7 @@ export interface DataGridStrings {
     /** Accessible selection label for an original row ID. */
     selectRow: (rowId: DataGridRowId) => string;
     /** Accessible chart summary from locale-formatted original observations.
-     * Defaults to English metric labels. Derived metrics independently use an em dash
+     * Defaults to host-selected native metric labels. Derived metrics independently use an em dash
      * when unavailable; showValue=false does not suppress this summary.
      */
     sparklineSummary: (values: DataGridSparklineSummaryText) => string;
@@ -143,7 +144,7 @@ export type DataGridProps<TItem extends object> = Omit<
     containerWidthOffset?: FluentDataGridProps['containerWidthOffset'];
     /** Root Intl locale fallback; omission uses the host Intl default. Column locale overrides it. Invalid Intl locales throw. */
     locale?: DataGridLocale;
-    /** Overrides selected localized strings; omitted members and blank static strings retain English defaults. locale does not translate these strings. */
+    /** Overrides selected localized strings; omitted members and blank static strings retain the host-selected native baseline. Nonblank whitespace is preserved; invalid types throw. locale governs data formatting independently. */
     strings?: Partial<DataGridStrings>;
     /** Initial or refresh loading status. Reuses AutoSkeleton over type-aware,
      * rounded rectangle templates for every visible column and at least four rows.

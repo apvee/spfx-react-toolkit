@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useFormRuntimeContext } from '../form-context.internal';
 import { mergeSettingsFieldIds } from '../../settings-field-context.internal';
 import { Avatar, Field, Tag, TagPicker, TagPickerControl, TagPickerGroup, TagPickerInput, TagPickerList, TagPickerOption } from '@fluentui/react-components';
 import { mergeClasses } from '@griffel/react';
@@ -56,7 +57,8 @@ export const FormTagPicker = React.forwardRef<HTMLInputElement, FormTagPickerPro
     previous.current = { value: valueKey, reset: binding.resetVersion };
     if (reset ? !binding.resetPreservesValues : changed) setQuery('');
   }, [binding.resetVersion, binding.resetPreservesValues, valueKey]);
-  const emptyContent = noOptionsContent ?? strings?.noOptions ?? 'No options match the current query.';
+  const familyStrings = useFormRuntimeContext().strings;
+  const emptyContent = noOptionsContent ?? strings?.noOptions ?? familyStrings.tagPicker.noOptions;
   const normalizedQuery = query.trim().toLocaleLowerCase();
   const available = source.entries.filter(option => !selected.includes(option.value) && getOptionText(option).toLocaleLowerCase().includes(normalizedQuery));
   const accessibleName = ariaLabel ?? (typeof label === 'string' ? label : undefined);

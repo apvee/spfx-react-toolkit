@@ -105,7 +105,7 @@ The React demo and native Property Pane expose a **File category** menu. Choosin
 | `fileCategory` | Unrestricted; accepts `images`, `video`, `audio`, `media` or `documents`. Mutually exclusive with nonempty `extensions`; invalid in folder-only mode. |
 | `extensions` | Unrestricted file suffixes; case-insensitive, e.g. `.pdf`. Invalid in folder-only mode or alongside a category when nonempty. |
 | `searchable` | `true`, controlling hosted search. |
-| `browseLabel` | Plain opening-action tooltip/accessibility label. Default: `Sfoglia file…`, `Sfoglia cartelle…` or `Sfoglia file e cartelle…`, according to `itemTypes`. |
+| `browseLabel` | Plain opening-action tooltip/accessibility label. Native localized default from `strings.browse` according to `itemTypes` (English: Browse files…, Browse folders…, Browse files and folders…). |
 | `size` | `medium`; also `large`. Selected tag media follow native Fluent sizing. |
 | `disabled` | `false`; prevents opening and selection mutation. |
 | `label`, `hint`, `required`, `validationMessage`, `validationState` | Native Fluent Field contracts; `id`, `className`, `controlClassName` and accessible-name attributes apply to the owned surface. |
@@ -286,3 +286,35 @@ In mixed mode (`itemTypes: 'all'`), the SDK filter includes the selected semanti
 Fluent `idForColor` receives the canonical tenant/endpoint/drive/item identity, excluding display-name snapshots and enrichment. Renaming a selected file preserves its color; the finite palette does not guarantee unique colors. File/folder icons, dimensions, removal behavior and saved JSON references are retained. Changes affect only outer selected tags, preserve the open session and do not recolor Microsoft's hosted iframe, request metadata or emit selection changes. Palette colors follow the existing Fluent host theme.
 
 `PropertyPaneFileFolderPickerProps.colorfulTagAvatars` inherits the same contract. The React demo exposes **Colorful tag avatars** under **Options**; the native **File picker options** group exposes its independent toggle. Both default off.
+
+## Native localization and instance strings
+
+SPFx selects the toolkit's FileFolderPicker resource from the host UI culture, with English fallback. `FileFolderPickerProps.strings` customizes one control's owned surface and safe lifecycle messages. `FileFolderPickerStrings` is the complete dictionary and `FileFolderPickerStringsOverride` contains optional known groups/leaves. Both are exported from the file-picker family entry, `/controls` and the package root. The Property Pane wrapper inherits and forwards the same prop.
+
+```tsx
+import { FileFolderPicker } from '@apvee/spfx-react-toolkit/controls/file-folder-picker';
+import type { FileFolderPickerStringsOverride } from '@apvee/spfx-react-toolkit/controls/file-folder-picker';
+
+const strings: FileFolderPickerStringsOverride = {
+  browse: { files: 'Choose documents' },
+  placeholders: { files: 'Add document references' },
+  labels: { removeItem: name => `Remove ${name}` },
+  errors: { timeout: 'Reopen the document chooser and retry.' },
+};
+<FileFolderPicker preset="focused" label="Documents" strings={strings} />;
+```
+
+| Group | Members / behavior |
+| --- | --- |
+| `FileFolderPickerStrings.browse`, `FileFolderPickerStringsOverride.browse` | `files`, `folders`, `all`: opening action, owned dialog header and iframe title. Direct `browseLabel` takes precedence. |
+| `FileFolderPickerStrings.placeholders`, `FileFolderPickerStringsOverride.placeholders` | `files`, `folders`, `all`: empty selection action according to `itemTypes`. |
+| `FileFolderPickerStrings.labels`, `FileFolderPickerStringsOverride.labels` | `selection`, `file`, `folder`, `unresolvedItem`, and `removeItem(name)`. The callback receives the caller/source item name literally and returns plain accessible text. |
+| `FileFolderPickerStrings.validation`, `FileFolderPickerStringsOverride.validation` | `invalidReferences`, `controlledModeChanged`, `incompatibleItems`, `invalidPolicy`, `selectionLimitExceeded`. |
+| `FileFolderPickerStrings.errors`, `FileFolderPickerStringsOverride.errors` | Safe text indexed by stable codes: `configuration`, `auth-resource`, `auth-type`, `auth-challenge`, `auth-provider`, `selection-identity`, `selection-scope`, `selection-policy`, `selection-unavailable`, `selection-invalid`, `onedrive-unavailable`, `opening`, `timeout`, `communication`. |
+| `FileFolderPickerStrings.protocol`, `FileFolderPickerStringsOverride.protocol` | `optionalAuthenticationTimeout`, `unsupportedCommand`, `optionalGraphAuthenticationFailed`, `optionalPersonalAuthenticationFailed`: toolkit-authored hosted reply text. |
+
+Known nested leaves merge with native defaults; omitted/`undefined` leaves retain them and empty strings remain explicit overrides. A complete dictionary includes all members and the `removeItem` callback and can use the same prop. Direct accessibility names, `browseLabel`, Field labels/hints/validation and caller display names keep their existing precedence. Empty localized error text still preserves the Field's error state. Dictionary changes do not reset saved references or restart an active session.
+
+Raw diagnostic errors are classified before their stable code selects the instance's safe message. Field feedback, `onError` and hosted replies never interpolate provider errors, tokens, claims or HTTP payloads. Error codes, protocol result/error discriminants and atomic selection validation are unchanged. An opening keeps its own protocol dictionary through asynchronous completion; another picker instance cannot replace it.
+
+Microsoft's hosted UI retains the SPFx page's UI culture, independently of toolkit overrides. Browser dialogs retain their own localization authority. No locale selector or legacy native-label capability is added: preset restrictions on `title`, `selectLabel`, `cancelLabel` and other legacy options still apply. Dictionary fields customize only the toolkit-owned messages documented here.

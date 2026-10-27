@@ -1,4 +1,5 @@
 import type * as React from 'react';
+import type { FormStringsOverride } from './form-strings.types';
 import type { ButtonProps } from '@fluentui/react-components';
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 import type { FieldError, FieldErrors, FieldPath, FieldValues, FormState, RegisterOptions, Resolver, UseFormProps, UseFormReturn } from 'react-hook-form';
@@ -80,7 +81,13 @@ export type FormValidationProps<TInput extends FieldValues, TContext, TOutput> =
  * Async producers own expected loading failures. No whole-model coercion or record merge occurs.
  * @example `Order.useForm({ defaultValues: { reference: '' }, mode: 'onBlur' });`
  */
-export type FormUseFormProps<TInput extends FieldValues, TContext = unknown, TOutput = TInput, TBound extends boolean = false> = Omit<UseFormProps<TInput, TContext, TOutput>, 'resolver'> & (TBound extends true ? {
+export type FormUseFormProps<TInput extends FieldValues, TContext = unknown, TOutput = TInput, TBound extends boolean = false> = Omit<UseFormProps<TInput, TContext, TOutput>, 'resolver'> & {
+    /** UI dictionary owned by this hook/initializing Root. Omission uses native SPFx resources.
+     * Updates affect future failures; stored errors retain their event text. No reset/revalidation occurs.
+     * @example `Order.useForm({ strings: { unexpectedFailure: 'Please retry.' } });`
+     */
+    strings?: FormStringsOverride;
+} & (TBound extends true ? {
     /** The factory-bound schema cannot be replaced. */
     schema?: never;
     /** The factory-bound resolver cannot be replaced. */

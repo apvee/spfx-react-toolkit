@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Избери елемент",
+    "selectMany": "Избери елементи",
+    "search": "Търсене…",
+    "clearSelection": "Изчисти избора",
+    "clearSearch": "Изчисти търсенето",
+    "options": "Опции",
+    "searchOptions": "Търси опции",
+    "selectedOne": "Избран елемент",
+    "selectedMany": "Избрани елементи",
+    "noSelection": "Няма избрани елементи",
+    "resolveIds": "Разпознай идентификаторите",
+    "moreResults": "Още резултати",
+    "retry": "Опитай отново",
+    "namedOptions": "{name}: Опции",
+    "namedSearch": "{name}: Търсене",
+    "selectedCount": {
+      "one": "Избран е {count} елемент",
+      "other": "Избрани са {count} елемента"
+    },
+    "minimumSearchLength": {
+      "one": "Въведете поне {count} знак за търсене",
+      "other": "Въведете поне {count} знака за търсене"
+    }
+  },
+  "status": {
+    "searching": "Търсене…",
+    "loading": "Зареждане…",
+    "partialSearch": "Частично търсене: уточнете търсенето.",
+    "noOtherResults": "Няма други резултати за това търсене",
+    "noResults": "Няма резултати за това търсене",
+    "noOptions": "Няма налични опции.",
+    "moreItemsAvailable": "Налични са още елементи.",
+    "partialSuggestions": "Частични предложения: някои източници са недостъпни.",
+    "unresolvedValue": "Неразпозната стойност",
+    "partialHubs": "Частичен списък на концентратори: ограничете обхвата или използвайте режим за сайт.",
+    "partialSiteCollections": "Частично търсене на колекции от сайтове (максимум 1000 резултата): ограничете критериите."
+  },
+  "sections": {
+    "consumer": "Предоставени опции",
+    "currentSite": "Текущ сайт",
+    "hubSite": "Свързан концентратор",
+    "catalog": "Налични опции",
+    "currentUser": "Вие",
+    "people": "Предложени хора",
+    "memberOf": "Вашите групи"
+  },
+  "metadata": {
+    "documentLibrary": "Библиотека с документи",
+    "sharePointList": "Списък на SharePoint",
+    "personalView": "Личен изглед",
+    "publicView": "Публичен изглед",
+    "field": "Поле",
+    "itemDescription": "Елемент · ИД {id}",
+    "file": "Файл",
+    "fileWithExtension": "Файл {extension}",
+    "folder": "Папка",
+    "sharePointGroup": "Група на SharePoint · SharePoint",
+    "securityGroup": "Група за защита · Entra",
+    "distributionList": "Списък за разпространение · Entra",
+    "unvalidatedEmail": "Непроверен имейл",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Достигнат е лимитът за избор.",
+    "selectionLimitExceeded": "Изборът надвишава зададения лимит.",
+    "unresolvedValues": "Някои избрани стойности не са разпознати.",
+    "outOfScopeValues": "Изборът съдържа стойности извън зададения обхват.",
+    "resolveRequiredUserIds": "Разпознайте необходимите идентификатори за избраните потребители."
+  },
+  "errors": {
+    "candidateOutOfScope": "Кандидатът е извън зададения обхват.",
+    "incompleteCandidateResolution": "Кандидатът не можа да бъде напълно разпознат.",
+    "resolutionFailed": "Разпознаването е неуспешно.",
+    "graphUnavailable": "Клиентът на Microsoft Graph е недостъпен."
+  }
+}

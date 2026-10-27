@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Dosyalara göz at…",
+    "folders": "Klasörlere göz at…",
+    "all": "Dosyalara ve klasörlere göz at…"
+  },
+  "placeholders": {
+    "files": "Dosya seç…",
+    "folders": "Klasör seç…",
+    "all": "Dosya veya klasör seç…"
+  },
+  "labels": {
+    "selection": "Dosya ve klasör seçimi",
+    "file": "Dosya",
+    "folder": "Klasör",
+    "unresolvedItem": "Çözümlenemeyen öğe",
+    "removeItem": "{name} öğesini kaldır"
+  },
+  "validation": {
+    "invalidReferences": "Geçersiz dosya veya klasör başvuruları.",
+    "controlledModeChanged": "Denetim bağlıyken kontrollü mod değiştirilemez.",
+    "incompatibleItems": "Seçimde, yapılandırılan tür, kategori veya uzantılarla uyumlu olmayan öğeler var. Bunları kaldırın veya değiştirin.",
+    "invalidPolicy": "Seçim türü, kategori, uzantılar veya sınır yapılandırması geçersiz.",
+    "selectionLimitExceeded": "Seçim, yapılandırılan sınırı aşıyor. Fazla öğeleri kaldırın."
+  },
+  "errors": {
+    "configuration": "Seçici yapılandırması geçersiz. Kaynağı, türleri, kategoriyi ve sınırları denetleyin; ön ayarı eski seçenekler olmadan kullanın.",
+    "auth-resource": "Seçici, yapılandırmanın izin vermediği bir kimlik doğrulama kaynağı istedi.",
+    "auth-type": "Seçici, yapılandırmanın desteklemediği bir kimlik doğrulama türü istedi.",
+    "auth-challenge": "Seçici, desteklenmeyen ek bir kimlik doğrulama denetimi gerektiriyor.",
+    "auth-provider": "SharePoint belirteci alınamadı. Yeniden deneyin; sorun devam ederse erişiminizi ve mevcut izinleri denetleyin.",
+    "selection-identity": "Seçilen öğenin kimliği doğrulanamadı. Seçiciyi yeniden açıp tekrar deneyin.",
+    "selection-scope": "Seçilen öğe, izin verilen site, kitaplık veya klasörün dışında.",
+    "selection-policy": "Seçim, izin verilen tür, kategori, uzantılar veya öğe sayısı koşullarını karşılamıyor.",
+    "selection-unavailable": "Seçilen öğe kullanılamıyor veya öğeye erişilemiyor.",
+    "selection-invalid": "Seçim doğrulanamadı. Yeni öğe eklenmedi.",
+    "onedrive-unavailable": "Geçerli kullanıcının OneDrive’ı kullanılamıyor veya erişilemiyor. Sürücünün var olduğunu denetleyip yeniden deneyin.",
+    "opening": "Seçici açılamadı. Yapılandırmayı ve kaynağa erişimi denetleyip yeniden deneyin.",
+    "timeout": "Seçici zamanında yanıt vermedi. Kapatıp yeniden deneyin.",
+    "communication": "Seçiciyle iletişim kesildi. Yeniden açıp tekrar deneyin."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "İsteğe bağlı kimlik doğrulama özelliği zamanında yanıt vermedi. Yeniden deneyin.",
+    "unsupportedCommand": "Bu tümleştirme, bu komutu desteklemiyor.",
+    "optionalGraphAuthenticationFailed": "İsteğe bağlı Microsoft Graph özelliğinin kimliği doğrulanamadı.",
+    "optionalPersonalAuthenticationFailed": "İsteğe bağlı kişisel hedefin kimliği doğrulanamadı."
+  }
+}

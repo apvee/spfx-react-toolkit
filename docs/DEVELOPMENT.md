@@ -118,6 +118,18 @@ npm run serve
 
 Trusting the certificate affects your local development certificate store. Configure the app's tenant URLs before opening the authenticated workbench. See [SharePoint validation](./SHAREPOINT-VALIDATION.md) for exact host entry points and manual checks. The repository VS Code launch configuration points at the app workspace; its TypeScript SDK points at root `node_modules`.
 
+### Hosted workbench bootstrap and debug culture
+
+The hosted workbench can attempt automatic manifest discovery on the default port 4321 while your configured debug manifest loads on another port. An error naming that fallback alone is not the readiness result for the configured manifest. After **Load debug scripts**, dismiss the fallback warning if present, open the web part toolbox, confirm **SPFxReactToolkitTest**, insert it and wait for its tabs to render. An error for the configured manifest, a missing toolbox entry after registration, or a failing component load requires separate investigation; do not ignore arbitrary loader errors or bypass certificate warnings.
+
+For native Italian resources, append `locale=it-it` to the actual hosted workbench URL, for example:
+
+```text
+https://apveelabs.sharepoint.com/sites/apvee-content-flow-translator-demo/_layouts/15/workbench.aspx?debug=true&noredir=true&debugManifestsFile=https%3A%2F%2Flocalhost%3A4322%2Ftemp%2Fbuild%2Fmanifests.js&locale=it-it
+```
+
+The generated SPFx debug manifest reads this page parameter. It is distinct from per-instance React `strings` and does not change account language settings. In the authenticated 2026-10-27 check, all eight toolkit assets used `_it-it.js`, Context showed UI Locale `it-IT` / Locale `en-US`, and DataGrid retained its explicitly configured en-US number format. See [host observations](./SHAREPOINT-VALIDATION.md#cold-start-and-native-italian-follow-up--2026-10-27).
+
 ## Package shape
 
 `npm run pack:library` writes `artifacts/apvee-spfx-react-toolkit-2.1.0.tgz` for the current package version. The tarball contains package metadata, README, LICENSE and compiled `lib/index.*`, `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services`, `lib/utils`, `lib/styles`, `lib/controls`. Entry points remain `lib/index.js` and `lib/index.d.ts`. The app, SPFx manifests, source, tests, config and repository docs are excluded. Source maps point back to source paths; source is not embedded in the tarball.
@@ -373,6 +385,8 @@ To run the shared trim browser acceptance against both actual implementations, b
 
 ## EditableText sample
 
-The `editable-text` registry entry loads `spfx-demo-editable-text` and consumes the library’s compiled public exports. [EditableText](./api/controls/editable-text.md) has one React-controlled subject under DemoCard. Four block presets and Read/Edit retain that root; H2, literal fallback and authoritative empty commands expose source authority. Stored HTML is displayed separately from the actual policy-projected subject; locale and callback diagnostics start collapsed. No SPFx hooks or private parser imports are used in this panel. The separate versioned isolation fixture accepts a real web part instance and mounts two policies with the Shell title.
+The `editable-text` registry entry loads `spfx-demo-editable-text` and consumes the library’s compiled public exports. [EditableText](./api/controls/editable-text.md) has one React-controlled subject under DemoCard. Four block presets and Read/Edit retain that root; H2, literal fallback and authoritative empty commands expose source authority. Stored HTML is displayed separately from the actual policy-projected subject; dictionary and callback diagnostics start collapsed. No SPFx hooks or private parser imports are used in this panel. The separate versioned isolation fixture accepts a real web part instance and mounts two policies with the Shell title.
 
 Run `node --test tests/demo-editable-text.test.cjs tests/demo-web-part-shell.test.cjs tests/demo-foundation-single.test.cjs`, `npm run verify:public-docs` and `npm run verify:examples` for scoped demo/docs checks. Rebuild with `npm run build:library` before `npm run build:app`; restart a running serve process before evaluating recompiled library behavior. Automated DOM checks and compilation do not establish authenticated SharePoint or actual IME behavior.
+
+See [native SPFx localization and consumer setup](./LOCALIZATION.md) for per-family resources, postinstall registration, typed overrides and the EditableText locale migration.

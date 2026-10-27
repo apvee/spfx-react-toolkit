@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Nepavyko pateikti formos. Bandykite dar kartą.",
+  "dateInputValidationMessage": "Prieš pateikdami užpildykite arba pataisykite datą.",
+  "timeInputValidationMessage": "Prieš pateikdami užpildykite arba pataisykite laiką.",
+  "tagPicker": {
+    "noOptions": "Nėra parinkčių, atitinkančių dabartinę užklausą."
+  },
+  "fileInput": {
+    "browseLabel": "Naršyti",
+    "clearLabel": "Išvalyti"
+  },
+  "arraySection": {
+    "add": "Pridėti elementą",
+    "empty": "Nėra elementų",
+    "itemLabelTemplate": "Elementas {position}",
+    "removeTemplate": "Pašalinti {label}",
+    "moveUpTemplate": "Perkelti {label} aukštyn",
+    "moveDownTemplate": "Perkelti {label} žemyn",
+    "addedTemplate": "Pridėta: {label}",
+    "removedTemplate": "Pašalinta: {label}",
+    "movedTemplate": "Elementas {label} perkeltas į poziciją {position} iš {total}"
+  },
+  "datePicker": {
+    "months": [
+      "sausis",
+      "vasaris",
+      "kovas",
+      "balandis",
+      "gegužė",
+      "birželis",
+      "liepa",
+      "rugpjūtis",
+      "rugsėjis",
+      "spalis",
+      "lapkritis",
+      "gruodis"
+    ],
+    "shortMonths": [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12"
+    ],
+    "days": [
+      "sekmadienis",
+      "pirmadienis",
+      "antradienis",
+      "trečiadienis",
+      "ketvirtadienis",
+      "penktadienis",
+      "šeštadienis"
+    ],
+    "shortDays": [
+      "sk",
+      "pr",
+      "an",
+      "tr",
+      "kt",
+      "pn",
+      "št"
+    ],
+    "goToToday": "Pereiti į šiandieną",
+    "prevMonthAriaLabel": "Ankstesnis mėnuo",
+    "nextMonthAriaLabel": "Kitas mėnuo",
+    "prevYearAriaLabel": "Ankstesni metai",
+    "nextYearAriaLabel": "Kiti metai",
+    "prevYearRangeAriaLabel": "Ankstesnis metų intervalas",
+    "nextYearRangeAriaLabel": "Kitas metų intervalas",
+    "monthPickerHeaderAriaLabel": "{0}, keisti metus",
+    "yearPickerHeaderAriaLabel": "{0}, keisti mėnesį",
+    "closeButtonAriaLabel": "Uždaryti",
+    "weekNumberFormatString": "Savaitės numeris {0}",
+    "selectedDateFormatString": "Pasirinkta data {0}",
+    "todayDateFormatString": "Šios dienos data {0}",
+    "dayMarkedAriaLabel": "pažymėta"
+  }
+}

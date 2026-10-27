@@ -1,0 +1,83 @@
+{
+  "labels": {
+    "selectOne": "Виберіть елемент",
+    "selectMany": "Виберіть елементи",
+    "search": "Пошук…",
+    "clearSelection": "Очистити вибір",
+    "clearSearch": "Очистити пошук",
+    "options": "Параметри",
+    "searchOptions": "Пошук параметрів",
+    "selectedOne": "Вибраний елемент",
+    "selectedMany": "Вибрані елементи",
+    "noSelection": "Нічого не вибрано",
+    "resolveIds": "Розпізнати ідентифікатори",
+    "moreResults": "Інші результати",
+    "retry": "Повторити",
+    "namedOptions": "{name}: Параметри",
+    "namedSearch": "{name}: Пошук",
+    "selectedCount": {
+      "one": "Вибрано {count} елемент",
+      "few": "Вибрано {count} елементи",
+      "many": "Вибрано {count} елементів",
+      "other": "Вибрано {count} елемента"
+    },
+    "minimumSearchLength": {
+      "one": "Введіть щонайменше {count} символ для пошуку",
+      "few": "Введіть щонайменше {count} символи для пошуку",
+      "many": "Введіть щонайменше {count} символів для пошуку",
+      "other": "Введіть щонайменше {count} символа для пошуку"
+    }
+  },
+  "status": {
+    "searching": "Триває пошук…",
+    "loading": "Завантаження…",
+    "partialSearch": "Неповний пошук: уточніть запит.",
+    "noOtherResults": "Немає інших результатів для цього пошуку",
+    "noResults": "Немає результатів для цього пошуку",
+    "noOptions": "Немає доступних варіантів.",
+    "moreItemsAvailable": "Доступні додаткові елементи.",
+    "partialSuggestions": "Неповні пропозиції: деякі джерела недоступні.",
+    "unresolvedValue": "Нерозпізнане значення",
+    "partialHubs": "Неповний список центрів: звузьте область або скористайтеся режимом сайту.",
+    "partialSiteCollections": "Неповний пошук колекцій сайтів (щонайбільше 1000 результатів): звузьте критерії."
+  },
+  "sections": {
+    "consumer": "Надані варіанти",
+    "currentSite": "Поточний сайт",
+    "hubSite": "Пов'язаний центр",
+    "catalog": "Доступні варіанти",
+    "currentUser": "Ви",
+    "people": "Рекомендовані люди",
+    "memberOf": "Ваші групи"
+  },
+  "metadata": {
+    "documentLibrary": "Бібліотека документів",
+    "sharePointList": "Список SharePoint",
+    "personalView": "Особисте подання",
+    "publicView": "Загальнодоступне подання",
+    "field": "Поле",
+    "itemDescription": "Елемент · Ідентифікатор {id}",
+    "file": "Файл",
+    "fileWithExtension": "Файл {extension}",
+    "folder": "Папка",
+    "sharePointGroup": "Група SharePoint · SharePoint",
+    "securityGroup": "Група безпеки · Entra",
+    "distributionList": "Список розсилки · Entra",
+    "unvalidatedEmail": "Неперевірена електронна пошта",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Досягнуто ліміту вибору.",
+    "selectionLimitExceeded": "Вибір перевищує налаштований ліміт.",
+    "unresolvedValues": "Деякі вибрані значення не розпізнано.",
+    "outOfScopeValues": "Вибір містить значення поза налаштованою областю.",
+    "resolveRequiredUserIds": "Розпізнайте потрібні ідентифікатори вибраних користувачів."
+  },
+  "errors": {
+    "candidateOutOfScope": "Кандидат перебуває поза налаштованою областю.",
+    "incompleteCandidateResolution": "Не вдалося повністю розпізнати кандидата.",
+    "resolutionFailed": "Не вдалося виконати розпізнавання.",
+    "graphUnavailable": "Клієнт Microsoft Graph недоступний."
+  }
+}

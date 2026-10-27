@@ -230,9 +230,9 @@ export type FormArraySectionProps<TInput extends FieldValues, TPath extends Form
     removable?: boolean;
     /** Show Move actions; defaults to false. Boundary actions are disabled. */
     reorderable?: boolean;
-    /** Accessible list-item name used in actions and announcements; default Item plus one-based index. */
+    /** Accessible list-item name used in actions and announcements; omission uses the per-form `arraySection.itemLabel` formatter with the one-based index. */
     itemLabel?: (item: FormArrayItemContext<FormArrayItemValue<TInput, TPath>>) => string;
-    /** Localized action, empty and status text; omitted members use English defaults. */
+    /** Localized action, empty and status text; omitted members inherit the per-form `arraySection` dictionary. */
     strings?: FormArraySectionStrings;
 };
 /** Generic ObjectSection member with path-specific relative child inference.

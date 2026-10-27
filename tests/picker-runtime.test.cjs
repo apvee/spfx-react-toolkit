@@ -139,7 +139,7 @@ test('typed search adopts consumer identity models and reports retained source c
   await h.act(async () => root.current.select({ type: 'click' }, 'a'));
   root.render({ props, source: source({ identity: 'other-scope', accepts: () => false }) });
   assert.deepEqual(root.current.selectedOptions, ['a']);
-  assert.match(root.current.validation, /ambito/);
+  assert.match(root.current.validation, /scope/);
   root.unmount();
 });
 test('native authoritative revision cancels pending confirmation without replacing source or cache', async () => {
@@ -243,7 +243,7 @@ test('seeded selections undergo read-only scope verification even with complete 
   assert.deepEqual(root.current.selectedItems, []);
   assert.deepEqual(root.current.unresolvedOptions, ['subweb']);
   assert.deepEqual(root.current.selectedOptions, ['subweb']);
-  assert.match(root.current.validation, /risolti|ambito/);
+  assert.match(root.current.validation, /unresolved|scope/);
   root.unmount();
 });
 
@@ -319,7 +319,7 @@ test('metadata initial catalog loads on open, caps after consumer dedup and keep
     h.act(() => root.current.setOpen(true)); await flush(h);
     const options = root.current.sections.flatMap(s => s.options);
     assert.equal(options.length, 30); assert.equal(options[0].text, 'Consumer first');
-    assert.equal(root.current.catalogHint, 'Sono disponibili altri elementi.');
+    assert.equal(root.current.catalogHint, 'More items are available.');
     root.render({ ...props, label: 'Cosmetic', availableOptions: [{ ...rows[0], text: 'Renamed' }] }); await flush(h);
     assert.equal(requests.filter(q => q === '').length, 1);
     h.act(() => root.current.setQuery('outside')); await flush(h);
@@ -350,7 +350,7 @@ test('pending selected scope and hydration do not flash unresolved errors but te
   let hydrate;
   const missing = source({ hydrate: () => new Promise(resolve => { hydrate = resolve; }) });
   const pending = h.mount(p => usePickerRuntime(p, missing, { multiselect: true }), { defaultSelectedOptions: ['missing'] });
-  try { await flush(h); assert.equal(pending.current.validation, undefined); assert.equal(pending.current.loading, true); await h.act(async () => hydrate({ resolved: [], unresolved: [{ key: 'missing' }] })); assert.match(pending.current.validation, /non sono risolti/); assert.equal(pending.current.loading, false); }
+  try { await flush(h); assert.equal(pending.current.validation, undefined); assert.equal(pending.current.loading, true); await h.act(async () => hydrate({ resolved: [], unresolved: [{ key: 'missing' }] })); assert.match(pending.current.validation, /unresolved/); assert.equal(pending.current.loading, false); }
   finally { pending.unmount(); }
 });
 test('a settled rejected selection remains invalid while another identity is pending', async () => {
@@ -358,7 +358,7 @@ test('a settled rejected selection remains invalid while another identity is pen
   let finish;
   const src = source({ preflight: true, verifyCandidate: async o => o.key === 'a' ? undefined : await new Promise(resolve => { finish = resolve; }) });
   const root = h.mount(p => usePickerRuntime(p, src, { multiselect: true }), { selectedOptions: ['a'], initialOptions: [option('a'), option('b')] });
-  try { await flush(h); assert.match(root.current.validation, /non sono risolti/); root.render({ selectedOptions: ['a', 'b'], initialOptions: [option('a'), option('b')] }); await flush(h); assert.equal(root.current.loading, true); assert.match(root.current.validation, /non sono risolti/); await h.act(async () => finish(option('b'))); }
+  try { await flush(h); assert.match(root.current.validation, /unresolved/); root.render({ selectedOptions: ['a', 'b'], initialOptions: [option('a'), option('b')] }); await flush(h); assert.equal(root.current.loading, true); assert.match(root.current.validation, /unresolved/); await h.act(async () => finish(option('b'))); }
   finally { root.unmount(); }
 });
 
@@ -392,7 +392,7 @@ test('catalog selection and limit updates reuse pages and retain source partial 
     h.act(() => root.current.setOpen(true)); await flush(h);
     root.render({ selectedOptions: ['entry0'], initialOptions: [rows[0]], initialCatalogLimit: 40 }); await flush(h);
     assert.equal(calls, 1); assert.equal(root.current.sections.flatMap(s => s.options).length, 34);
-    assert.match(root.current.warning, /parziale/);
+    assert.match(root.current.warning, /partial/i);
     assert.deepEqual(root.current.selectedOptions, ['entry0']);
   } finally { root.unmount(); }
 });
@@ -403,7 +403,7 @@ test('catalog filters once, fills after selected exclusion and remains bounded w
   const rows = Array.from({ length: 35 }, (_, i) => option(`entry${i}`));
   const src = source({ discover: async req => { requests++; return { options: req.continuation ? rows.slice(20) : rows.slice(0, 20), continuation: req.continuation ? undefined : 'next', completeness: req.continuation ? 'complete' : 'partial' }; } });
   const root = h.mount(p => usePickerRuntime(p, src, { multiselect: true, initialCatalogLimit: 30 }), { defaultSelectedOptions: ['entry0', 'entry1'], initialOptions: rows.slice(0, 2), filterOptions: options => options.slice(1) });
-  try { h.act(() => root.current.setOpen(true)); await flush(h); const result = root.current.sections.flatMap(s => s.options); assert.equal(requests, 2); assert.equal(result.length, 30); assert.equal(result[0].key, 'entry3'); assert.match(root.current.catalogHint, /altri elementi/); }
+  try { h.act(() => root.current.setOpen(true)); await flush(h); const result = root.current.sections.flatMap(s => s.options); assert.equal(requests, 2); assert.equal(result.length, 30); assert.equal(result[0].key, 'entry3'); assert.match(root.current.catalogHint, /More items/); }
   finally { root.unmount(); }
 });
 test('stale hydration cannot publish unresolved validation after source binding changes', async () => {

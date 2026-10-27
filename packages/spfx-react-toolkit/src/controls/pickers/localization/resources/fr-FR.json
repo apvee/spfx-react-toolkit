@@ -1,0 +1,81 @@
+{
+  "labels": {
+    "selectOne": "Sélectionner un élément",
+    "selectMany": "Sélectionner des éléments",
+    "search": "Rechercher…",
+    "clearSelection": "Effacer la sélection",
+    "clearSearch": "Effacer la recherche",
+    "options": "Options",
+    "searchOptions": "Rechercher des options",
+    "selectedOne": "Élément sélectionné",
+    "selectedMany": "Éléments sélectionnés",
+    "noSelection": "Aucune sélection",
+    "resolveIds": "Résoudre les identifiants",
+    "moreResults": "Autres résultats",
+    "retry": "Réessayer",
+    "namedOptions": "{name}: Options",
+    "namedSearch": "{name}: Rechercher",
+    "selectedCount": {
+      "one": "{count} élément sélectionné",
+      "many": "{count} éléments sélectionnés",
+      "other": "{count} éléments sélectionnés"
+    },
+    "minimumSearchLength": {
+      "one": "Saisissez au moins {count} caractère pour rechercher",
+      "many": "Saisissez au moins {count} caractères pour rechercher",
+      "other": "Saisissez au moins {count} caractères pour rechercher"
+    }
+  },
+  "status": {
+    "searching": "Recherche…",
+    "loading": "Chargement…",
+    "partialSearch": "Recherche partielle : affinez votre recherche.",
+    "noOtherResults": "Aucun autre résultat pour cette recherche",
+    "noResults": "Aucun résultat pour cette recherche",
+    "noOptions": "Aucune option disponible.",
+    "moreItemsAvailable": "D'autres éléments sont disponibles.",
+    "partialSuggestions": "Suggestions partielles : certaines sources sont indisponibles.",
+    "unresolvedValue": "Valeur non résolue",
+    "partialHubs": "Liste de hubs partielle : réduisez l'étendue ou utilisez le mode site.",
+    "partialSiteCollections": "Recherche partielle de collections de sites (1000 résultats maximum) : affinez vos critères."
+  },
+  "sections": {
+    "consumer": "Options fournies",
+    "currentSite": "Site actuel",
+    "hubSite": "Hub associé",
+    "catalog": "Options disponibles",
+    "currentUser": "Vous",
+    "people": "Personnes suggérées",
+    "memberOf": "Vos groupes"
+  },
+  "metadata": {
+    "documentLibrary": "Bibliothèque de documents",
+    "sharePointList": "Liste SharePoint",
+    "personalView": "Vue personnelle",
+    "publicView": "Vue publique",
+    "field": "Champ",
+    "itemDescription": "Élément · ID {id}",
+    "file": "Fichier",
+    "fileWithExtension": "Fichier {extension}",
+    "folder": "Dossier",
+    "sharePointGroup": "Groupe SharePoint · SharePoint",
+    "securityGroup": "Groupe de sécurité · Entra",
+    "distributionList": "Liste de distribution · Entra",
+    "unvalidatedEmail": "Adresse e-mail non vérifiée",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "La limite de sélection est atteinte.",
+    "selectionLimitExceeded": "La sélection dépasse la limite configurée.",
+    "unresolvedValues": "Certaines valeurs sélectionnées ne sont pas résolues.",
+    "outOfScopeValues": "La sélection contient des valeurs hors de l'étendue configurée.",
+    "resolveRequiredUserIds": "Résolvez les identifiants requis pour les utilisateurs sélectionnés."
+  },
+  "errors": {
+    "candidateOutOfScope": "Le candidat se trouve hors de l'étendue configurée.",
+    "incompleteCandidateResolution": "Le candidat n'a pas pu être entièrement résolu.",
+    "resolutionFailed": "La résolution a échoué.",
+    "graphUnavailable": "Le client Microsoft Graph est indisponible."
+  }
+}

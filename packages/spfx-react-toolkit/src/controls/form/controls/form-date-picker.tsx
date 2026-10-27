@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useFormRuntimeContext } from '../form-context.internal';
+import { mergeFormStringFields } from '../form-strings.internal';
 import { Field } from '@fluentui/react-components';
 import { useDatePicker_unstable, useDatePickerStyles_unstable, renderDatePicker_unstable } from '@fluentui/react-datepicker-compat';
 import type { DatePickerProps, CalendarStrings } from '@fluentui/react-datepicker-compat';
@@ -77,7 +79,10 @@ const LocalDatePicker = React.forwardRef<HTMLInputElement, DatePickerProps & { d
  * Reset clears drafts unless this owner's value is explicitly preserved.
  * @example `<Order.DatePicker name="date" label="Date" allowTextInput formatDate={formatDate} parseDateFromString={parseDate} />`
  */
-export const FormDatePicker = React.forwardRef<HTMLInputElement, FormDatePickerProps<FieldValues>>(function FormDatePicker({ className, disabled, fieldProps, hint, id, label, name, orientation, required, rules, allowTextInput, formatDate = defaultFormatDate, parseDateFromString, minDate, maxDate, dateTimeFormatter, strings, inputValidationMessage = 'Complete or correct the date before submitting.', onBlur, onSelectDate, onValidationResult, ...props }, ref) {
+export const FormDatePicker = React.forwardRef<HTMLInputElement, FormDatePickerProps<FieldValues>>(function FormDatePicker({ className, disabled, fieldProps, hint, id, label, name, orientation, required, rules, allowTextInput, formatDate = defaultFormatDate, parseDateFromString, minDate, maxDate, dateTimeFormatter, strings: suppliedStrings, inputValidationMessage: suppliedInputValidationMessage, onBlur, onSelectDate, onValidationResult, ...props }, ref) {
+  const familyStrings = useFormRuntimeContext().strings;
+  const inputValidationMessage = suppliedInputValidationMessage ?? familyStrings.dateInputValidationMessage;
+  const strings = mergeFormStringFields(familyStrings.datePicker, suppliedStrings);
   const [draft, setDraft] = React.useState<string>();
   const draftRef = React.useRef<string>();
   const updateDraft = (text: string | undefined): void => { draftRef.current = text; setDraft(text); };

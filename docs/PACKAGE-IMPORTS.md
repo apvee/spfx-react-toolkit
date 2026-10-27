@@ -174,7 +174,7 @@ The complete family retains all 22 adapters and visual sections. The Form and cr
 import { WebPartShell, getWebPartShellPropertiesMetadata } from '@apvee/spfx-react-toolkit';
 import { WebPartShell as DomainShell } from '@apvee/spfx-react-toolkit/controls';
 import { WebPartShell as ControlShell, type IWebPartShellProperties,
-  type WebPartShellProps, type WebPartShellSurface, type WebPartShellPadding
+  type WebPartShellProps, type WebPartShellSurface, type WebPartShellPadding, type WebPartShellStrings
 } from '@apvee/spfx-react-toolkit/controls/web-part-shell';
 ```
 
@@ -224,3 +224,5 @@ Import `FileFolderPicker` and its types from `@apvee/spfx-react-toolkit/controls
 ## Standalone formatted editing
 
 [EditableText](./api/controls/editable-text.md) is available through root, `/controls` and `/controls/editable-text` with identical public symbols. Read uses the safe renderer; Edit lazily loads the private engine. A standalone narrow consumer requires shared React/Fluent/Griffel peers, without an SPFx provider. Historical `/lib/...` compatibility does not expose the new private editable-text modules.
+
+See [native SPFx localization and consumer setup](./LOCALIZATION.md) for per-family resources, postinstall registration, typed overrides and the EditableText locale migration.

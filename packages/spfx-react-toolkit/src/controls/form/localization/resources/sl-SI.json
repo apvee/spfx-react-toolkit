@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Obrazca ni bilo mogoče poslati. Poskusite znova.",
+  "dateInputValidationMessage": "Pred pošiljanjem dopolnite ali popravite datum.",
+  "timeInputValidationMessage": "Pred pošiljanjem dopolnite ali popravite čas.",
+  "tagPicker": {
+    "noOptions": "Nobena možnost se ne ujema s trenutnim iskanjem."
+  },
+  "fileInput": {
+    "browseLabel": "Prebrskaj",
+    "clearLabel": "Počisti"
+  },
+  "arraySection": {
+    "add": "Dodaj element",
+    "empty": "Ni elementov",
+    "itemLabelTemplate": "Element {position}",
+    "removeTemplate": "Odstrani {label}",
+    "moveUpTemplate": "Premakni {label} navzgor",
+    "moveDownTemplate": "Premakni {label} navzdol",
+    "addedTemplate": "Dodano: {label}",
+    "removedTemplate": "Odstranjeno: {label}",
+    "movedTemplate": "Element {label} je premaknjen na mesto {position} od {total}"
+  },
+  "datePicker": {
+    "months": [
+      "januar",
+      "februar",
+      "marec",
+      "april",
+      "maj",
+      "junij",
+      "julij",
+      "avgust",
+      "september",
+      "oktober",
+      "november",
+      "december"
+    ],
+    "shortMonths": [
+      "jan.",
+      "feb.",
+      "mar.",
+      "apr.",
+      "maj",
+      "jun.",
+      "jul.",
+      "avg.",
+      "sep.",
+      "okt.",
+      "nov.",
+      "dec."
+    ],
+    "days": [
+      "nedelja",
+      "ponedeljek",
+      "torek",
+      "sreda",
+      "četrtek",
+      "petek",
+      "sobota"
+    ],
+    "shortDays": [
+      "ned.",
+      "pon.",
+      "tor.",
+      "sre.",
+      "čet.",
+      "pet.",
+      "sob."
+    ],
+    "goToToday": "Pojdi na današnji dan",
+    "prevMonthAriaLabel": "Prejšnji mesec",
+    "nextMonthAriaLabel": "Naslednji mesec",
+    "prevYearAriaLabel": "Prejšnje leto",
+    "nextYearAriaLabel": "Naslednje leto",
+    "prevYearRangeAriaLabel": "Prejšnji razpon let",
+    "nextYearRangeAriaLabel": "Naslednji razpon let",
+    "monthPickerHeaderAriaLabel": "{0}, spremeni leto",
+    "yearPickerHeaderAriaLabel": "{0}, spremeni mesec",
+    "closeButtonAriaLabel": "Zapri",
+    "weekNumberFormatString": "Številka tedna {0}",
+    "selectedDateFormatString": "Izbrani datum {0}",
+    "todayDateFormatString": "Današnji datum {0}",
+    "dayMarkedAriaLabel": "označeno"
+  }
+}

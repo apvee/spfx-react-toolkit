@@ -1,0 +1,81 @@
+{
+  "labels": {
+    "selectOne": "Selecciona un element",
+    "selectMany": "Selecciona elements",
+    "search": "Cerca…",
+    "clearSelection": "Esborra la selecció",
+    "clearSearch": "Esborra la cerca",
+    "options": "Opcions",
+    "searchOptions": "Cerca opcions",
+    "selectedOne": "Element seleccionat",
+    "selectedMany": "Elements seleccionats",
+    "noSelection": "Cap selecció",
+    "resolveIds": "Resol els identificadors",
+    "moreResults": "Més resultats",
+    "retry": "Torna-ho a provar",
+    "namedOptions": "{name}: Opcions",
+    "namedSearch": "{name}: Cerca",
+    "selectedCount": {
+      "one": "{count} element seleccionat",
+      "many": "{count} elements seleccionats",
+      "other": "{count} elements seleccionats"
+    },
+    "minimumSearchLength": {
+      "one": "Escriviu almenys {count} caràcter per cercar",
+      "many": "Escriviu almenys {count} caràcters per cercar",
+      "other": "Escriviu almenys {count} caràcters per cercar"
+    }
+  },
+  "status": {
+    "searching": "S'està cercant…",
+    "loading": "S'està carregant…",
+    "partialSearch": "Cerca parcial: afineu la cerca.",
+    "noOtherResults": "No hi ha més resultats per a aquesta cerca",
+    "noResults": "No hi ha resultats per a aquesta cerca",
+    "noOptions": "No hi ha opcions disponibles.",
+    "moreItemsAvailable": "Hi ha més elements disponibles.",
+    "partialSuggestions": "Suggeriments parcials: algunes fonts no estan disponibles.",
+    "unresolvedValue": "Valor no resolt",
+    "partialHubs": "Llista parcial de concentradors: restringiu l'àmbit o utilitzeu el mode de lloc.",
+    "partialSiteCollections": "Cerca parcial de col·leccions de llocs (màxim 1000 resultats): restringiu els criteris."
+  },
+  "sections": {
+    "consumer": "Opcions proporcionades",
+    "currentSite": "Lloc actual",
+    "hubSite": "Concentrador associat",
+    "catalog": "Opcions disponibles",
+    "currentUser": "Vós",
+    "people": "Persones suggerides",
+    "memberOf": "Els vostres grups"
+  },
+  "metadata": {
+    "documentLibrary": "Biblioteca de documents",
+    "sharePointList": "Llista del SharePoint",
+    "personalView": "Visualització personal",
+    "publicView": "Visualització pública",
+    "field": "Camp",
+    "itemDescription": "Element · ID {id}",
+    "file": "Fitxer",
+    "fileWithExtension": "Fitxer {extension}",
+    "folder": "Carpeta",
+    "sharePointGroup": "Grup del SharePoint · SharePoint",
+    "securityGroup": "Grup de seguretat · Entra",
+    "distributionList": "Llista de distribució · Entra",
+    "unvalidatedEmail": "Correu electrònic no verificat",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "S'ha arribat al límit de selecció.",
+    "selectionLimitExceeded": "La selecció supera el límit configurat.",
+    "unresolvedValues": "Alguns valors seleccionats no s'han resolt.",
+    "outOfScopeValues": "La selecció conté valors fora de l'àmbit configurat.",
+    "resolveRequiredUserIds": "Resoleu els identificadors necessaris per als usuaris seleccionats."
+  },
+  "errors": {
+    "candidateOutOfScope": "El candidat és fora de l'àmbit configurat.",
+    "incompleteCandidateResolution": "No s'ha pogut resoldre completament el candidat.",
+    "resolutionFailed": "La resolució ha fallat.",
+    "graphUnavailable": "El client del Microsoft Graph no està disponible."
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "labels": {
+    "selectOne": "Wybierz element",
+    "selectMany": "Wybierz elementy",
+    "search": "Szukaj…",
+    "clearSelection": "Wyczyść zaznaczenie",
+    "clearSearch": "Wyczyść wyszukiwanie",
+    "options": "Opcje",
+    "searchOptions": "Wyszukaj opcje",
+    "selectedOne": "Wybrany element",
+    "selectedMany": "Wybrane elementy",
+    "noSelection": "Brak zaznaczenia",
+    "resolveIds": "Rozpoznaj identyfikatory",
+    "moreResults": "Więcej wyników",
+    "retry": "Ponów próbę",
+    "namedOptions": "{name}: Opcje",
+    "namedSearch": "{name}: Szukaj",
+    "selectedCount": {
+      "one": "Wybrano {count} element",
+      "few": "Wybrano {count} elementy",
+      "many": "Wybrano {count} elementów",
+      "other": "Wybrano {count} elementu"
+    },
+    "minimumSearchLength": {
+      "one": "Wpisz co najmniej {count} znak, aby wyszukać",
+      "few": "Wpisz co najmniej {count} znaki, aby wyszukać",
+      "many": "Wpisz co najmniej {count} znaków, aby wyszukać",
+      "other": "Wpisz co najmniej {count} znaku, aby wyszukać"
+    }
+  },
+  "status": {
+    "searching": "Wyszukiwanie…",
+    "loading": "Wczytywanie…",
+    "partialSearch": "Częściowe wyszukiwanie: uściślij wyszukiwanie.",
+    "noOtherResults": "Brak innych wyników tego wyszukiwania",
+    "noResults": "Brak wyników tego wyszukiwania",
+    "noOptions": "Brak dostępnych opcji.",
+    "moreItemsAvailable": "Dostępne są kolejne elementy.",
+    "partialSuggestions": "Częściowe sugestie: niektóre źródła są niedostępne.",
+    "unresolvedValue": "Nierozpoznana wartość",
+    "partialHubs": "Częściowa lista centrów: zawęź zakres lub użyj trybu witryny.",
+    "partialSiteCollections": "Częściowe wyszukiwanie zbiorów witryn (maksymalnie 1000 wyników): zawęź kryteria."
+  },
+  "sections": {
+    "consumer": "Dostarczone opcje",
+    "currentSite": "Bieżąca witryna",
+    "hubSite": "Powiązane centrum",
+    "catalog": "Dostępne opcje",
+    "currentUser": "Ty",
+    "people": "Sugerowane osoby",
+    "memberOf": "Twoje grupy"
+  },
+  "metadata": {
+    "documentLibrary": "Biblioteka dokumentów",
+    "sharePointList": "Lista SharePoint",
+    "personalView": "Widok osobisty",
+    "publicView": "Widok publiczny",
+    "field": "Pole",
+    "itemDescription": "Element · ID {id}",
+    "file": "Plik",
+    "fileWithExtension": "Plik {extension}",
+    "folder": "Folder",
+    "sharePointGroup": "Grupa SharePoint · SharePoint",
+    "securityGroup": "Grupa zabezpieczeń · Entra",
+    "distributionList": "Lista dystrybucyjna · Entra",
+    "unvalidatedEmail": "Niezweryfikowany adres e-mail",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Osiągnięto limit wyboru.",
+    "selectionLimitExceeded": "Wybór przekracza skonfigurowany limit.",
+    "unresolvedValues": "Niektóre wybrane wartości nie zostały rozpoznane.",
+    "outOfScopeValues": "Wybór zawiera wartości spoza skonfigurowanego zakresu.",
+    "resolveRequiredUserIds": "Rozpoznaj wymagane identyfikatory wybranych użytkowników."
+  },
+  "errors": {
+    "candidateOutOfScope": "Kandydat jest poza skonfigurowanym zakresem.",
+    "incompleteCandidateResolution": "Nie udało się w pełni rozpoznać kandydata.",
+    "resolutionFailed": "Rozpoznawanie nie powiodło się.",
+    "graphUnavailable": "Klient Microsoft Graph jest niedostępny."
+  }
+}

@@ -21,7 +21,7 @@ if (chartProbe && !gridOnly) throw new Error('DATA_GRID_CHART_PROBE=1 requires S
 const actualCharts = path.join(root, 'node_modules/@fluentui/react-charts/lib/index.js');
 const entry = path.join(fixture, cardsOnly ? 'cards.tsx' : descriptionListOnly ? 'description-list.tsx' : paginationOnly ? 'pagination.tsx' : stageOnly ? 'stage.tsx' : shellOnly ? 'web-part-shell.tsx' : gridOnly ? 'data-grid.tsx' : 'index.tsx');
 const boundary = path.join(fixture, cardsOnly ? 'cards-toolkit-boundary.ts' : descriptionListOnly ? 'description-list-toolkit-boundary.ts' : paginationOnly ? 'pagination-toolkit-boundary.ts' : stageOnly ? 'stage-toolkit-boundary.ts' : shellOnly ? 'web-part-shell-toolkit-boundary.ts' : gridOnly ? 'data-grid-toolkit-boundary.ts' : 'form-toolkit-boundary.ts');
-const program = ts.createProgram([entry, ...(chartProbe ? [path.join(fixture, 'data-grid-chart-probe.tsx')] : [])], {
+const program = ts.createProgram([entry, path.join(root, 'packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts'), ...(chartProbe ? [path.join(fixture, 'data-grid-chart-probe.tsx')] : [])], {
   noEmit: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext,
   moduleResolution: ts.ModuleResolutionKind.NodeJs, jsx: ts.JsxEmit.React,
   baseUrl: root, paths: { '@apvee/spfx-react-toolkit': [path.relative(root, boundary)], '@data-grid/actual-charts': ['node_modules/@fluentui/react-charts/dist/index.d.ts'] },
@@ -36,6 +36,7 @@ if (diagnostics.length) {
 } else {
   webpack({ mode: 'development', devtool: 'source-map', entry,
     output: { path: output, filename: 'fixture.js' }, resolve: { extensions: ['.tsx', '.ts', '.js'], alias: {
+      ...require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
       '@apvee/spfx-react-toolkit$': boundary,
       ...(shellOnly ? { '@microsoft/sp-core-library$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts'), '@microsoft/sp-component-base$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts') } : {}),
       ...(chartProbe ? { '@fluentui/react-charts$': path.join(fixture, 'data-grid-chart-probe.tsx'), '@data-grid/actual-charts$': actualCharts } : {}),

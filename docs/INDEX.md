@@ -251,3 +251,5 @@ Public pure helper functions for SPFx context mapping, permission checks, API pe
 
 - [Hosted FileFolderPicker](api/controls/file-folder-picker.md): React source restrictions, metadata references, authentication and lifecycle.
 - [PropertyPaneFileFolderPicker](api/property-pane/file-folder-picker.md): native JSON arrays and retained drafts.
+
+See [native SPFx localization and consumer setup](./LOCALIZATION.md) for per-family resources, postinstall registration, typed overrides and the EditableText locale migration.

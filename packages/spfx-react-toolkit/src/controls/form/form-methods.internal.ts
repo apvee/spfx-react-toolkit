@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { FormStrings } from './form-strings.types';
 import type { FieldValues, RegisterOptions, UseFormReturn, UseFormProps } from 'react-hook-form';
 import type { normalizeFormRules } from './form-validation.internal';
 import type { FormMethods } from './form.types';
@@ -30,6 +31,10 @@ export type FormInputValidators = Map<symbol, {
 /** Suite identity and lifecycle metadata; no form values are stored here. */
 export interface FormMethodsMetadata {
     suiteIdentity: symbol;
+    /** Latest committed dictionary owned by the useForm instance. */
+    getStrings: () => FormStrings;
+    /** Mounted Roots observe only committed dictionary changes. */
+    stringsListeners: Set<() => void>;
     hasResolver: boolean;
     isResetting: boolean;
     /** Synchronous public writes can broadcast unnamed values without resetting RHF. */
@@ -287,11 +292,11 @@ export function formResetTargets(event: FormResetEvent, name: string): boolean {
     return event.name === undefined || event.name === name || name.startsWith(`${event.name}.`);
 }
 /** Enhances public reset/register/value boundaries while preserving RHF's state engine. */
-export function useFormMethods<TInput extends FieldValues, TContext, TOutput>(methods: UseFormReturn<TInput, TContext, TOutput>, suiteIdentity: symbol, inputValidators: FormInputValidators, hasResolver: boolean, normalizeRules: typeof normalizeFormRules): FormMethods<TInput, TContext, TOutput> {
+export function useFormMethods<TInput extends FieldValues, TContext, TOutput>(methods: UseFormReturn<TInput, TContext, TOutput>, suiteIdentity: symbol, inputValidators: FormInputValidators, hasResolver: boolean, normalizeRules: typeof normalizeFormRules, getStrings: () => FormStrings): FormMethods<TInput, TContext, TOutput> {
     const metadata = React.useMemo<FormMethodsMetadata>(() => {
         const setValue = methods.setValue;
         return {
-            suiteIdentity, inputValidators, hasResolver, isResetting: false, valueWriteDepth: 0,
+            suiteIdentity, getStrings, stringsListeners: new Set(), inputValidators, hasResolver, isResetting: false, valueWriteDepth: 0,
             resetOwners: new Map(), mountedResetOwners: new Map(), resetOwnerRegistrations: new Map(),
             resetArrays: new Map(), pendingOwnerResets: new Map(),
             resetTextReaders: new Map(), resetTextSnapshots: new Map(), listeners: new Set(),
@@ -338,7 +343,7 @@ export function useFormMethods<TInput extends FieldValues, TContext, TOutput>(me
             assertFormFieldName(name);
             if (metadata.hasResolver && options && ['required', 'min', 'max', 'minLength', 'maxLength', 'pattern', 'validate'].some(key => Object.prototype.hasOwnProperty.call(options, key)))
                 throw new TypeError('Form field rules cannot accompany a schema/resolver validation owner.');
-            return originals.current.register(name, normalizeRules(options as RegisterOptions<TInput> | undefined) as typeof options);
+            return originals.current.register(name, normalizeRules(options as RegisterOptions<TInput> | undefined, undefined, () => metadata.getStrings().unexpectedFailure) as typeof options);
         }) as typeof methods.register,
         setValues: ((values, options) => {
             if (typeof values !== 'function') assertFormValues(values);

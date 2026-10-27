@@ -33,3 +33,18 @@ declare const scalarSchema: StandardSchemaV1<string, number>;
 // @ts-expect-error Form initialization requires a record-shaped input model
 createForm(scalarSchema);
 void React;
+const localized = F.useForm({ strings: { unexpectedFailure: 'Try again', datePicker: { goToToday: 'Today' }, arraySection: { itemLabel: position => `Row ${position}`, remove: label => `Delete ${label}` } } });
+<F.Root strings={{ fileInput: { browseLabel: 'Choose' } }} onSubmit={() => {}} />;
+<F.Root methods={localized} onSubmit={() => {}} />;
+// @ts-expect-error external methods own localization
+<F.Root methods={localized} strings={{ unexpectedFailure: 'Conflict' }} onSubmit={() => {}} />;
+// @ts-expect-error array action callback must return text
+F.useForm({ strings: { arraySection: { remove: () => 42 } } });
+// @ts-expect-error unknown nested fields are not dictionary members
+F.useForm({ strings: { fileInput: { unknown: 'Unknown' } } });
+import type { FormStrings, FormStringsOverride } from '../../packages/spfx-react-toolkit/src/controls/form';
+function customizeFormStrings(strings: FormStrings): FormStrings {
+  return { ...strings, unexpectedFailure: 'Please retry.', arraySection: { ...strings.arraySection, itemLabel: position => `Row ${position}` } };
+}
+const nestedStrings: FormStringsOverride = { tagPicker: { noOptions: { children: 'No results' } }, datePicker: { goToToday: 'Today' } };
+void customizeFormStrings; void nestedStrings;

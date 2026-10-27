@@ -1,5 +1,5 @@
 // Deterministic native transport boundaries only. Real providers/hooks/adapters decide access.
-import { PageContext, SPHttpClient, MSGraphClientFactory } from './spfx-services';
+import { PageContext, SPHttpClient, MSGraphClientFactory, AadTokenProviderFactory } from './spfx-services';
 export const fixturePage = {
   site: { absoluteUrl: 'https://simulated.invalid/sites/demo' },
   web: { absoluteUrl: 'https://simulated.invalid/sites/demo', serverRelativeUrl: '/sites/demo' },
@@ -35,6 +35,7 @@ const graph = { api: (url: string) => ({
 }) };
 const factory = { getClient: async () => graph };
 export function nativeFixtureService(key: unknown, themeService: unknown): unknown {
+  if (key === AadTokenProviderFactory.serviceKey) throw new Error('Native authentication is unavailable in this local fixture');
   if (key === PageContext.serviceKey) return fixturePage;
   if (key === SPHttpClient.serviceKey) return sp;
   if (key === MSGraphClientFactory.serviceKey) return factory;

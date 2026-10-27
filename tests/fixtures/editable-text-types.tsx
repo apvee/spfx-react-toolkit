@@ -1,3 +1,4 @@
+/// <reference path="../../packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts" />
 import * as React from 'react';
 import { EditableText } from '../../packages/spfx-react-toolkit/src/controls/editable-text/editable-text';
 import type { EditableTextProps, EditableTextBlock, EditableTextChangeData } from '../../packages/spfx-react-toolkit/src/controls/editable-text/editable-text.types';
@@ -38,3 +39,21 @@ const theme: EditableTextProps = { theme: {} };
 // @ts-expect-error Owner document comes from host context and the mounted root.
 const owner: EditableTextProps = { ownerDocument: document };
 void [read, labelled, element, missingChange, missingName, unsupported, children, html, editable, role, uncontrolled, suppress, direction, engine, instance, theme, owner];
+
+import type { EditableTextStrings, EditableTextColorNames, EditableTextStringsOverride } from '../../packages/spfx-react-toolkit/src/controls/editable-text';
+const colors: Partial<EditableTextColorNames> = { red: 'Danger', brand: 'Accent' };
+const dictionary: EditableTextStringsOverride = { bold: 'Strong', colorNames: colors, headingLevel: level => `Heading ${level}`, formattingShortcut: (label, shortcut) => `${label}: ${shortcut}` };
+declare const fullDictionary: EditableTextStrings;
+const custom: EditableTextProps = { strings: dictionary };
+const complete: EditableTextProps = { strings: fullDictionary };
+// @ts-expect-error Runtime language selection was replaced by SPFx resources and dictionaries.
+const removedLocale: EditableTextProps = { locale: 'it-IT' };
+// @ts-expect-error Color names use public semantic fields, never arbitrary keys.
+const invalidColor: EditableTextStringsOverride = { colorNames: { invented: 'Custom' } };
+// @ts-expect-error Dictionary hints never supply an implicit accessible name.
+const unnamedCustom: EditableTextProps = { mode: 'edit', strings: dictionary, onChange: change };
+void [custom, complete, removedLocale, invalidColor, unnamedCustom];
+
+// @ts-expect-error No dictionary can supply an implicit standalone textbox name.
+const implicitName: EditableTextStringsOverride = { editorLabel: 'Text' };
+void implicitName;

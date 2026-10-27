@@ -1,0 +1,77 @@
+{
+  "labels": {
+    "selectOne": "Pilih satu item",
+    "selectMany": "Pilih item",
+    "search": "Cari…",
+    "clearSelection": "Kosongkan pilihan",
+    "clearSearch": "Kosongkan carian",
+    "options": "Pilihan",
+    "searchOptions": "Cari pilihan",
+    "selectedOne": "Item dipilih",
+    "selectedMany": "Item dipilih",
+    "noSelection": "Tiada pilihan",
+    "resolveIds": "Padankan ID",
+    "moreResults": "Hasil lain",
+    "retry": "Cuba lagi",
+    "namedOptions": "{name}: Pilihan",
+    "namedSearch": "{name}: Cari",
+    "selectedCount": {
+      "other": "{count} item dipilih"
+    },
+    "minimumSearchLength": {
+      "other": "Taip sekurang-kurangnya {count} aksara untuk mencari"
+    }
+  },
+  "status": {
+    "searching": "Sedang mencari…",
+    "loading": "Sedang memuatkan…",
+    "partialSearch": "Carian separa: perincikan carian anda.",
+    "noOtherResults": "Tiada hasil lain untuk carian ini",
+    "noResults": "Tiada hasil untuk carian ini",
+    "noOptions": "Tiada pilihan tersedia.",
+    "moreItemsAvailable": "Terdapat lebih banyak item tersedia.",
+    "partialSuggestions": "Cadangan separa: sesetengah sumber tidak tersedia.",
+    "unresolvedValue": "Nilai belum dipadankan",
+    "partialHubs": "Senarai hab separa: kecilkan skop atau gunakan mod laman.",
+    "partialSiteCollections": "Carian koleksi laman separa (maksimum 1000 hasil): kecilkan kriteria anda."
+  },
+  "sections": {
+    "consumer": "Pilihan yang disediakan",
+    "currentSite": "Laman semasa",
+    "hubSite": "Hab berkaitan",
+    "catalog": "Pilihan tersedia",
+    "currentUser": "Anda",
+    "people": "Orang yang dicadangkan",
+    "memberOf": "Kumpulan anda"
+  },
+  "metadata": {
+    "documentLibrary": "Pustaka dokumen",
+    "sharePointList": "Senarai SharePoint",
+    "personalView": "Pandangan peribadi",
+    "publicView": "Pandangan awam",
+    "field": "Medan",
+    "itemDescription": "Item · ID {id}",
+    "file": "Fail",
+    "fileWithExtension": "Fail {extension}",
+    "folder": "Folder",
+    "sharePointGroup": "Kumpulan SharePoint · SharePoint",
+    "securityGroup": "Kumpulan keselamatan · Entra",
+    "distributionList": "Senarai edaran · Entra",
+    "unvalidatedEmail": "E-mel belum disahkan",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Had pilihan telah dicapai.",
+    "selectionLimitExceeded": "Pilihan melebihi had yang dikonfigurasi.",
+    "unresolvedValues": "Sesetengah nilai dipilih belum dipadankan.",
+    "outOfScopeValues": "Pilihan mengandungi nilai di luar skop yang dikonfigurasi.",
+    "resolveRequiredUserIds": "Padankan ID yang diperlukan bagi pengguna dipilih."
+  },
+  "errors": {
+    "candidateOutOfScope": "Calon berada di luar skop yang dikonfigurasi.",
+    "incompleteCandidateResolution": "Calon tidak dapat dipadankan sepenuhnya.",
+    "resolutionFailed": "Pemadanan gagal.",
+    "graphUnavailable": "Klien Microsoft Graph tidak tersedia."
+  }
+}

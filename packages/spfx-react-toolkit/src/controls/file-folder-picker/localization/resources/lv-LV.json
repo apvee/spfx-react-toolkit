@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Pārlūkot failus…",
+    "folders": "Pārlūkot mapes…",
+    "all": "Pārlūkot failus un mapes…"
+  },
+  "placeholders": {
+    "files": "Atlasīt failus…",
+    "folders": "Atlasīt mapes…",
+    "all": "Atlasīt failus vai mapes…"
+  },
+  "labels": {
+    "selection": "Failu un mapju atlase",
+    "file": "Fails",
+    "folder": "Mape",
+    "unresolvedItem": "Neatrisināts vienums",
+    "removeItem": "Noņemt {name}"
+  },
+  "validation": {
+    "invalidReferences": "Nederīgas failu vai mapju atsauces.",
+    "controlledModeChanged": "Kontrolēto režīmu nevar mainīt, kamēr vadīkla ir montēta.",
+    "incompatibleItems": "Atlasē ir vienumi, kas nav saderīgi ar konfigurēto tipu, kategoriju vai paplašinājumiem. Noņemiet vai aizstājiet tos.",
+    "invalidPolicy": "Nederīga atlases tipa, kategorijas, paplašinājumu vai ierobežojuma konfigurācija.",
+    "selectionLimitExceeded": "Atlase pārsniedz konfigurēto ierobežojumu. Noņemiet liekos vienumus."
+  },
+  "errors": {
+    "configuration": "Nederīga atlasītāja konfigurācija. Pārbaudiet avotu, tipus, kategoriju un ierobežojumus; izmantojiet sākotnējo iestatījumu bez mantotajām opcijām.",
+    "auth-resource": "Atlasītājs pieprasīja autentifikācijas resursu, ko konfigurācija neatļauj.",
+    "auth-type": "Atlasītājs pieprasīja autentifikācijas tipu, ko konfigurācija neatbalsta.",
+    "auth-challenge": "Atlasītājam ir nepieciešama papildu autentifikācijas pārbaude, kas netiek atbalstīta.",
+    "auth-provider": "Neizdevās iegūt SharePoint pilnvaru. Mēģiniet vēlreiz; ja problēma joprojām pastāv, pārbaudiet savu piekļuvi un esošās atļaujas.",
+    "selection-identity": "Neizdevās pārbaudīt atlasītā vienuma identitāti. Atveriet atlasītāju atkārtoti un mēģiniet vēlreiz.",
+    "selection-scope": "Atlasītais vienums atrodas ārpus atļautās vietnes, bibliotēkas vai mapes.",
+    "selection-policy": "Atlase neatbilst atļautā tipa, kategorijas, paplašinājumu vai vienumu skaita prasībām.",
+    "selection-unavailable": "Atlasītais vienums nav pieejams vai tam nevar piekļūt.",
+    "selection-invalid": "Neizdevās pārbaudīt atlasi. Netika pievienots neviens jauns vienums.",
+    "onedrive-unavailable": "Pašreizējā lietotāja OneDrive nav pieejams vai tam nevar piekļūt. Pārbaudiet, vai disks pastāv, un mēģiniet vēlreiz.",
+    "opening": "Neizdevās atvērt atlasītāju. Pārbaudiet konfigurāciju un piekļuvi avotam, pēc tam mēģiniet vēlreiz.",
+    "timeout": "Atlasītājs neatbildēja laikus. Aizveriet to un mēģiniet vēlreiz.",
+    "communication": "Saziņa ar atlasītāju tika pārtraukta. Atveriet to atkārtoti un mēģiniet vēlreiz."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Neobligātais autentifikācijas līdzeklis neatbildēja laikus. Mēģiniet vēlreiz.",
+    "unsupportedCommand": "Šī integrācija neatbalsta šo komandu.",
+    "optionalGraphAuthenticationFailed": "Neizdevās autentificēt neobligāto Microsoft Graph līdzekli.",
+    "optionalPersonalAuthenticationFailed": "Neizdevās autentificēt neobligāto personisko galamērķi."
+  }
+}

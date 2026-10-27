@@ -259,3 +259,22 @@ test('missing and invalid presentation slots retain outer text spans and nullish
     assert.equal(render(col('sparkline'), {}).textContent, strings.noObservations);
     assert.equal(render(col('custom', { renderCell: () => React.createElement('strong', {}, 'Unchanged custom'), placeholder: { children: 'Missing custom' } }), { value: 'valid' }).querySelector('strong').parentElement.classList.contains('fui-FluentProvider'), true);
 });
+
+
+test('native UI grammar stays separate from Italian rating formatting and tag callbacks retain counts', async () => {
+    const italian = await harness.loadModule('packages/spfx-react-toolkit/src/controls/data-grid/state-validation.internal.ts', { nativeCulture: 'it-IT' });
+    const french = await harness.loadModule('packages/spfx-react-toolkit/src/controls/data-grid/state-validation.internal.ts', { nativeCulture: 'fr-FR' });
+    const baseline = italian.resolveDataGridStrings();
+    render(col('rating', { locale: 'it-IT', max: 5, count: 12345 }), { value: 4.5 }, 7, stateValidation.resolveDataGridStrings());
+    assert.equal(host.querySelector('.fui-RatingDisplay').getAttribute('aria-label'), '4,5/5, 12.345 votes', 'English UI dictionary with Italian numbers');
+    render(col('rating', { locale: 'it-IT', max: 5, count: 12345 }), { value: 4.5 }, 7, baseline);
+    assert.equal(host.querySelector('.fui-RatingDisplay').getAttribute('aria-label'), '4,5/5, 12.345 voti');
+    assert.equal(french.resolveDataGridStrings().ratingCount(0, '0'), '0 vote', 'Resource source culture chooses French zero grammar');
+    assert.equal(baseline.selectRow('$&{rowId}'), 'Seleziona la riga $&{rowId}', 'Template substitution preserves caller data literally');
+    let hiddenCount;
+    const custom = italian.resolveDataGridStrings({ tagOverflow: count => { hiddenCount = count; return `Hidden ${count}`; } });
+    render(col('tags', { values: { a: { label: 'Alpha' }, b: { label: 'Beta' }, c: { label: 'Gamma' } }, maxVisible: 1 }), { value: ['a', 'b', 'c'] }, 7, custom);
+    assert.equal(hiddenCount, 2); assert.equal(host.querySelector('button').getAttribute('aria-label'), 'Hidden 2');
+    assert.equal(baseline.tagOverflow(1), 'Mostra 1 altro tag');
+    assert.equal(baseline.tagOverflow(2), 'Mostra altri 2 tag');
+});

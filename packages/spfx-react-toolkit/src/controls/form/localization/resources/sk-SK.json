@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Formulár sa nepodarilo odoslať. Skúste to znova.",
+  "dateInputValidationMessage": "Pred odoslaním doplňte alebo opravte dátum.",
+  "timeInputValidationMessage": "Pred odoslaním doplňte alebo opravte čas.",
+  "tagPicker": {
+    "noOptions": "Aktuálnemu dopytu nezodpovedajú žiadne možnosti."
+  },
+  "fileInput": {
+    "browseLabel": "Prehľadávať",
+    "clearLabel": "Vymazať"
+  },
+  "arraySection": {
+    "add": "Pridať položku",
+    "empty": "Žiadne položky",
+    "itemLabelTemplate": "Položka {position}",
+    "removeTemplate": "Odstrániť {label}",
+    "moveUpTemplate": "Presunúť {label} nahor",
+    "moveDownTemplate": "Presunúť {label} nadol",
+    "addedTemplate": "Pridané: {label}",
+    "removedTemplate": "Odstránené: {label}",
+    "movedTemplate": "Položka {label} bola presunutá na pozíciu {position} z {total}"
+  },
+  "datePicker": {
+    "months": [
+      "január",
+      "február",
+      "marec",
+      "apríl",
+      "máj",
+      "jún",
+      "júl",
+      "august",
+      "september",
+      "október",
+      "november",
+      "december"
+    ],
+    "shortMonths": [
+      "jan",
+      "feb",
+      "mar",
+      "apr",
+      "máj",
+      "jún",
+      "júl",
+      "aug",
+      "sep",
+      "okt",
+      "nov",
+      "dec"
+    ],
+    "days": [
+      "nedeľa",
+      "pondelok",
+      "utorok",
+      "streda",
+      "štvrtok",
+      "piatok",
+      "sobota"
+    ],
+    "shortDays": [
+      "ne",
+      "po",
+      "ut",
+      "st",
+      "št",
+      "pi",
+      "so"
+    ],
+    "goToToday": "Prejsť na dnešok",
+    "prevMonthAriaLabel": "Predchádzajúci mesiac",
+    "nextMonthAriaLabel": "Ďalší mesiac",
+    "prevYearAriaLabel": "Predchádzajúci rok",
+    "nextYearAriaLabel": "Ďalší rok",
+    "prevYearRangeAriaLabel": "Predchádzajúci rozsah rokov",
+    "nextYearRangeAriaLabel": "Ďalší rozsah rokov",
+    "monthPickerHeaderAriaLabel": "{0}, zmeniť rok",
+    "yearPickerHeaderAriaLabel": "{0}, zmeniť mesiac",
+    "closeButtonAriaLabel": "Zavrieť",
+    "weekNumberFormatString": "Číslo týždňa {0}",
+    "selectedDateFormatString": "Vybraný dátum {0}",
+    "todayDateFormatString": "Dnešný dátum {0}",
+    "dayMarkedAriaLabel": "označené"
+  }
+}

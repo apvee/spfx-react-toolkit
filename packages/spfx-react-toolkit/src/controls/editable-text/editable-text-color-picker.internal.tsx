@@ -3,7 +3,7 @@ import { ColorSwatch, SwatchPicker, Tooltip } from '@fluentui/react-components';
 import { ThemeContext_unstable } from '@fluentui/react-shared-contexts';
 import { tokens } from '@fluentui/react-theme';
 import { makeStyles } from '@griffel/react';
-import type { EditableTextStrings } from './localization/editable-text-strings.internal';
+import type { EditableTextStrings } from './editable-text.types';
 import { getEditableTextColorCss, getEditableTextPickerColors, isEditableTextColor } from './editable-text-format.internal';
 import type { EditableTextColor } from './editable-text-document.types.internal';
 

@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "एक आइटम चुनें",
+    "selectMany": "आइटम चुनें",
+    "search": "खोजें…",
+    "clearSelection": "चयन साफ़ करें",
+    "clearSearch": "खोज साफ़ करें",
+    "options": "विकल्प",
+    "searchOptions": "विकल्प खोजें",
+    "selectedOne": "चुना गया आइटम",
+    "selectedMany": "चुने गए आइटम",
+    "noSelection": "कोई चयन नहीं",
+    "resolveIds": "आईडी का समाधान करें",
+    "moreResults": "और परिणाम",
+    "retry": "पुनः प्रयास करें",
+    "namedOptions": "{name}: विकल्प",
+    "namedSearch": "{name}: खोजें",
+    "selectedCount": {
+      "one": "{count} आइटम चुना गया",
+      "other": "{count} आइटम चुने गए"
+    },
+    "minimumSearchLength": {
+      "one": "खोजने के लिए कम से कम {count} वर्ण टाइप करें",
+      "other": "खोजने के लिए कम से कम {count} वर्ण टाइप करें"
+    }
+  },
+  "status": {
+    "searching": "खोज जारी है…",
+    "loading": "लोड हो रहा है…",
+    "partialSearch": "आंशिक खोज: अपनी खोज और स्पष्ट करें।",
+    "noOtherResults": "इस खोज के लिए कोई अन्य परिणाम नहीं है",
+    "noResults": "इस खोज के लिए कोई परिणाम नहीं है",
+    "noOptions": "कोई विकल्प उपलब्ध नहीं है।",
+    "moreItemsAvailable": "और आइटम उपलब्ध हैं।",
+    "partialSuggestions": "आंशिक सुझाव: कुछ स्रोत उपलब्ध नहीं हैं।",
+    "unresolvedValue": "अनसुलझा मान",
+    "partialHubs": "आंशिक हब सूची: दायरा सीमित करें या साइट मोड का उपयोग करें।",
+    "partialSiteCollections": "आंशिक साइट संग्रह खोज (अधिकतम 1000 परिणाम): अपने मापदंड सीमित करें।"
+  },
+  "sections": {
+    "consumer": "प्रदान किए गए विकल्प",
+    "currentSite": "वर्तमान साइट",
+    "hubSite": "संबद्ध हब",
+    "catalog": "उपलब्ध विकल्प",
+    "currentUser": "आप",
+    "people": "सुझाए गए लोग",
+    "memberOf": "आपके समूह"
+  },
+  "metadata": {
+    "documentLibrary": "दस्तावेज़ लाइब्रेरी",
+    "sharePointList": "SharePoint सूची",
+    "personalView": "व्यक्तिगत दृश्य",
+    "publicView": "सार्वजनिक दृश्य",
+    "field": "फ़ील्ड",
+    "itemDescription": "आइटम · आईडी {id}",
+    "file": "फ़ाइल",
+    "fileWithExtension": "{extension} फ़ाइल",
+    "folder": "फ़ोल्डर",
+    "sharePointGroup": "SharePoint समूह · SharePoint",
+    "securityGroup": "सुरक्षा समूह · Entra",
+    "distributionList": "वितरण सूची · Entra",
+    "unvalidatedEmail": "असत्यापित ईमेल",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "चयन सीमा पूरी हो गई है।",
+    "selectionLimitExceeded": "चयन कॉन्फ़िगर की गई सीमा से अधिक है।",
+    "unresolvedValues": "कुछ चुने गए मान अनसुलझे हैं।",
+    "outOfScopeValues": "चयन में कॉन्फ़िगर किए गए दायरे से बाहर के मान हैं।",
+    "resolveRequiredUserIds": "चुने गए उपयोगकर्ताओं के लिए आवश्यक आईडी का समाधान करें।"
+  },
+  "errors": {
+    "candidateOutOfScope": "उम्मीदवार कॉन्फ़िगर किए गए दायरे से बाहर है।",
+    "incompleteCandidateResolution": "उम्मीदवार का पूरी तरह समाधान नहीं किया जा सका।",
+    "resolutionFailed": "समाधान विफल रहा।",
+    "graphUnavailable": "Microsoft Graph क्लाइंट उपलब्ध नहीं है।"
+  }
+}

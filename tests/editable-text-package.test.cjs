@@ -9,7 +9,7 @@ const root = path.resolve(__dirname, '..');
 const library = path.join(root, 'packages/spfx-react-toolkit');
 const manifest = require('../packages/spfx-react-toolkit/package.json');
 
-test('EditableText has one explicit canonical alias and exactly four public exports', () => {
+test('EditableText has one explicit canonical alias and exactly seven public exports', () => {
   assert.deepEqual(manifest.exports['./controls/editable-text'], { types: './lib/controls/editable-text/index.d.ts', default: './lib/controls/editable-text/index.js' });
   assert.deepEqual(manifest.typesVersions['*']['controls/editable-text'], ['lib/controls/editable-text/index.d.ts']);
   for (const key of Object.keys(manifest.exports)) {
@@ -18,7 +18,7 @@ test('EditableText has one explicit canonical alias and exactly four public expo
   }
 });
 
-test('packed declarations preserve all four canonical exports and exclude internal types', () => {
+test('packed declarations preserve all seven canonical exports and exclude internal types', () => {
   fs.mkdirSync(path.join(root, 'temp'), { recursive: true });
   const directory = fs.mkdtempSync(path.join(root, 'temp/editable-text-package-'));
   try {
@@ -41,12 +41,12 @@ test('packed declarations preserve all four canonical exports and exclude intern
       assert.equal(program.getSourceFiles().filter(source => /[/\\]editable-text[/\\].*\.internal\.d\.ts$/.test(source.fileName)).length, 0, 'Public declarations must not resolve private AST or engine declarations');
       const checker = program.getTypeChecker(), source = program.getSourceFile(fixture), definitions = {};
       const index = program.getSourceFile(path.join(installed, 'lib/controls/editable-text/index.d.ts'));
-      assert.deepEqual(checker.getExportsOfModule(checker.getSymbolAtLocation(index)).map(symbol => symbol.name).sort(), ['EditableText', 'EditableTextBlock', 'EditableTextChangeData', 'EditableTextProps']);
+      assert.deepEqual(checker.getExportsOfModule(checker.getSymbolAtLocation(index)).map(symbol => symbol.name).sort(), ['EditableText', 'EditableTextBlock', 'EditableTextChangeData', 'EditableTextColorNames', 'EditableTextProps', 'EditableTextStrings', 'EditableTextStringsOverride']);
       for (const node of source.statements.filter(ts.isImportDeclaration)) for (const element of node.importClause?.namedBindings?.elements ?? []) {
         const symbol = checker.getSymbolAtLocation(element.name);
         definitions[element.name.text] = checker.getAliasedSymbol(symbol).declarations;
       }
-      for (const family of [['rootText', 'domainText', 'controlText'], ['RootProps', 'DomainProps', 'ControlProps'], ['RootBlock', 'DomainBlock', 'ControlBlock'], ['RootChange', 'DomainChange', 'ControlChange']]) {
+      for (const family of [['rootText', 'domainText', 'controlText'], ['RootProps', 'DomainProps', 'ControlProps'], ['RootBlock', 'DomainBlock', 'ControlBlock'], ['RootChange', 'DomainChange', 'ControlChange'], ['RootStrings', 'DomainStrings', 'ControlStrings'], ['RootColors', 'DomainColors', 'ControlColors'], ['RootOverride', 'DomainOverride', 'ControlOverride']]) {
         assert.deepEqual(definitions[family[0]], definitions[family[1]]);
         assert.deepEqual(definitions[family[0]], definitions[family[2]]);
       }
@@ -55,7 +55,7 @@ test('packed declarations preserve all four canonical exports and exclude intern
 });
 
 
-test('actual packed standalone Read/Edit loads only its engine and isolates two regions', async () => {
+test('actual packed Read/Edit uses explicit resource adapters, loads only its engine and isolates two regions', async () => {
   const { compileProbe, executeProbe } = require('../scripts/verify-production-runtime.cjs');
   fs.mkdirSync(path.join(root, 'temp'), { recursive: true });
   const directory = fs.mkdtempSync(path.join(root, 'temp/editable-text-runtime-'));

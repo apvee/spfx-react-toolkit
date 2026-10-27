@@ -5,6 +5,7 @@ const webpack = require('webpack');
 const base = require('./formatted-text-harness.cjs');
 const root = path.resolve(__dirname, '../..');
 const temporary = [];
+const { nativeResourceAliases } = require('../../scripts/localization-webpack.internal.cjs');
 let chartFailure = false;
 let attempts = 0;
 /** Test-only fault seam. All successful renders delegate to the official Charts component. */
@@ -15,14 +16,14 @@ function Sparkline(props) {
 }
 function setChartFailure(failed) { chartFailure = failed; }
 function chartAttempts() { return attempts; }
-async function loadChartFaultModule(entry) {
+async function loadChartFaultModule(entry, { nativeCulture = 'en-US', nativeOverrides = {} } = {}) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'data-grid-chart-fault-'));
   temporary.push(directory);
   const compiler = webpack({
     mode: 'development', target: 'node', devtool: false,
     entry: path.resolve(root, entry),
     output: { path: directory, filename: 'module.cjs', library: { type: 'commonjs2' } },
-    resolve: { extensions: ['.tsx', '.ts', '.js'] },
+    resolve: { extensions: ['.tsx', '.ts', '.js'], alias: nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit'), culture: nativeCulture, overrides: nativeOverrides, outputDirectory: directory }) },
     externals: [({ request }, callback) => {
       if (request === '@fluentui/react-charts') callback(null, `commonjs ${__filename}`);
       else if (/^(react(?:-dom)?(?:\/|$)|@fluentui\/|@griffel\/)/.test(request || '')) callback(null, `commonjs ${require.resolve(request, { paths: [root] })}`);

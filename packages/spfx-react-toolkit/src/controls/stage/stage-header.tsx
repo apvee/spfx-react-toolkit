@@ -8,6 +8,7 @@ import * as text from '../../helpers/styles/text';
 import { useStageContext } from './stage-context.internal';
 import { useStageStyles } from './stage.styles.internal';
 import type { StageHeaderProps } from './stage.types';
+import { nativeStageResource } from './localization/stage-native.internal';
 
 /** Render Stage's semantic heading, supporting text, decorative icon and caller action.
  * Strings remain literal; caller JSX, refs and handlers are preserved. Requires an owning
@@ -25,7 +26,7 @@ import type { StageHeaderProps } from './stage.types';
  * ```
  */
 export const StageHeader = React.forwardRef<HTMLDivElement, StageHeaderProps>(({
-  title, description, icon, action, headingLevel = 2, showCloseButton = true, closeLabel = 'Close', className, ...nativeProps
+  title, description, icon, action, headingLevel = 2, showCloseButton = true, closeLabel, strings, className, ...nativeProps
 }, ref) => {
   // The public type forbids raw HTML, but untyped callers still reach the DOM boundary.
   const attributes: React.HTMLAttributes<HTMLDivElement> = nativeProps;
@@ -51,7 +52,7 @@ export const StageHeader = React.forwardRef<HTMLDivElement, StageHeaderProps>(({
         action={hasGroupContent(action) ? { className: styles.actions, children:
           renderContentSlot(action, 'div', sx, { shorthand: 'preserve', className: styles.actionContent })
         } : undefined} />
-      {showCloseButton && <Button data-stage-close="" className={styles.close} appearance="subtle" aria-label={closeLabel} icon={<Dismiss24Regular />}
+      {showCloseButton && <Button data-stage-close="" className={styles.close} appearance="subtle" aria-label={closeLabel ?? strings?.closeLabel ?? nativeStageResource.closeLabel} icon={<Dismiss24Regular />}
         onClick={event => controller.requestOpenChange(event, { open: false, reason: 'closeButton' })} />}
     </Card>
   </div>;

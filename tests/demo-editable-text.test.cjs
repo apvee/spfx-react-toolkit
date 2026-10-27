@@ -35,7 +35,7 @@ function fixture(t) {
   const find = marker => { const node = container.querySelector(`[data-editable-text-demo="${marker}"]`); assert.ok(node, marker); return node; };
   const select = (marker, value) => h.act(() => Simulate.change(find(marker), { target: { value } }));
   const click = marker => h.act(() => Simulate.click(find(marker)));
-  return { h, container, find, select, click };
+  return { h, container, find, select, click, load };
 }
 test('EditableText has one exact lazy registry entry and a separate multi-instance fixture', () => {
   const registry = fs.readFileSync(path.join(base, 'demoRegistry.ts'), 'utf8');
@@ -74,7 +74,35 @@ test('single controlled subject projects four policies without changing the stor
   const diagnostics = Array.from(f.container.querySelectorAll('button')).find(node => node.textContent.includes('Advanced diagnostics'));
   assert.equal(diagnostics.getAttribute('aria-expanded'), 'false');
   f.h.act(() => Simulate.click(diagnostics));
-  assert.match(f.find('callback').textContent, /"html".*Draft/); assert.equal(f.find('locale').value, 'en-US');
+  assert.match(f.find('callback').textContent, /"html".*Draft/); assert.equal(f.find('strings').value, 'native');
+});
+
+test('native, complete Italian and partial dictionaries update one editing session without publishing', async t => {
+  const f = fixture(t);
+  assert.deepEqual([...f.find('strings').options].map(option => option.value), ['native', 'italian', 'custom']);
+  f.select('mode', 'edit'); await f.h.settle();
+  const root = f.find('preview'), editor = root.querySelector('[contenteditable="true"]').editor, view = editor.view;
+  f.h.act(() => editor.commands.insertContent('Draft '));
+  f.h.act(() => editor.commands.setTextSelection({ from: 2, to: 5 }));
+  const html = editor.getHTML(), stored = f.find('stored').textContent, status = f.find('status').textContent;
+  f.h.act(() => view.dom.dispatchEvent(new f.h.window.FocusEvent('focusin', { bubbles: true }))); await f.h.settle();
+  for (const [value, name] of [['italian', 'Controlli di formattazione del testo'], ['custom', 'Project text formatting'], ['native', 'Text formatting controls']]) {
+    f.select('strings', value); await f.h.settle();
+    assert.ok(document.querySelector(`[data-title-toolbar][aria-label="${name}"]`), name);
+    assert.equal(f.find('preview'), root); assert.equal(root.querySelector('[contenteditable="true"]').editor, editor); assert.equal(editor.view, view);
+    assert.equal(editor.getHTML(), html); assert.equal(editor.state.selection.from, 2); assert.equal(editor.state.selection.to, 5);
+    assert.equal(f.find('stored').textContent, stored); assert.equal(f.find('status').textContent, status);
+  }
+  const full = f.load(path.join(base, 'panels/editable-text-italian-strings.ts')).italianEditableTextStrings;
+  const canonical = require('../packages/spfx-react-toolkit/src/controls/editable-text/localization/resources/it-IT.json');
+  for (const [key, value] of Object.entries(canonical)) {
+    if (key === 'editorLabel' || key.endsWith('Template')) continue;
+    assert.deepEqual(full[key], value, key);
+  }
+  assert.equal(full.headingLevel(3), 'Intestazione 3'); assert.equal(full.lineSpacingValue(1.5), 'Interlinea 1.5');
+  const literal = '$& {shortcut}'; assert.equal(full.formattingShortcut(literal, 'Ctrl+B'), `${literal} (Ctrl+B)`);
+  assert.equal(full.mixedFormatting(literal), `${literal}: formattazione mista`);
+  f.h.act(() => editor.commands.undo()); assert.notEqual(editor.getHTML(), html, 'dictionary switching preserves actual undo history');
 });
 
 test('multi-instance fixture and public guide examples compile against the real compiled API', () => {
@@ -92,7 +120,7 @@ test('multi-instance fixture and public guide examples compile against the real 
   host.getSourceFile = (file, languageVersion, onError, shouldCreateNewSourceFile) => virtual.has(file)
     ? ts.createSourceFile(file, virtual.get(file), languageVersion, true, ts.ScriptKind.TSX)
     : getSourceFile(file, languageVersion, onError, shouldCreateNewSourceFile);
-  const program = ts.createProgram([path.join(__dirname, 'fixtures/demo-control-isolation/editable-text-regressions.tsx'), ...virtual.keys()], options, host);
+  const program = ts.createProgram([path.join(__dirname, 'fixtures/demo-control-isolation/editable-text-regressions.tsx'), path.join(base, 'panels/editable-text-italian-strings.ts'), ...virtual.keys()], options, host);
   const diagnostics = ts.getPreEmitDiagnostics(program);
   assert.equal(diagnostics.length, 0, ts.formatDiagnosticsWithColorAndContext(diagnostics, {
     getCanonicalFileName: file => file, getCurrentDirectory: () => process.cwd(), getNewLine: () => '\n',

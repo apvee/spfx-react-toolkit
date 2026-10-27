@@ -1,0 +1,77 @@
+{
+  "labels": {
+    "selectOne": "Chọn một mục",
+    "selectMany": "Chọn các mục",
+    "search": "Tìm kiếm…",
+    "clearSelection": "Xóa lựa chọn",
+    "clearSearch": "Xóa tìm kiếm",
+    "options": "Tùy chọn",
+    "searchOptions": "Tìm tùy chọn",
+    "selectedOne": "Mục đã chọn",
+    "selectedMany": "Các mục đã chọn",
+    "noSelection": "Chưa chọn",
+    "resolveIds": "Phân giải ID",
+    "moreResults": "Kết quả khác",
+    "retry": "Thử lại",
+    "namedOptions": "{name}: Tùy chọn",
+    "namedSearch": "{name}: Tìm kiếm",
+    "selectedCount": {
+      "other": "Đã chọn {count} mục"
+    },
+    "minimumSearchLength": {
+      "other": "Nhập ít nhất {count} ký tự để tìm kiếm"
+    }
+  },
+  "status": {
+    "searching": "Đang tìm kiếm…",
+    "loading": "Đang tải…",
+    "partialSearch": "Tìm kiếm chưa đầy đủ: hãy thu hẹp tìm kiếm.",
+    "noOtherResults": "Không có kết quả khác cho tìm kiếm này",
+    "noResults": "Không có kết quả cho tìm kiếm này",
+    "noOptions": "Không có tùy chọn khả dụng.",
+    "moreItemsAvailable": "Có thêm các mục khả dụng.",
+    "partialSuggestions": "Gợi ý chưa đầy đủ: một số nguồn không khả dụng.",
+    "unresolvedValue": "Giá trị chưa được phân giải",
+    "partialHubs": "Danh sách hub chưa đầy đủ: thu hẹp phạm vi hoặc dùng chế độ site.",
+    "partialSiteCollections": "Tìm kiếm tuyển tập site chưa đầy đủ (tối đa 1000 kết quả): thu hẹp tiêu chí."
+  },
+  "sections": {
+    "consumer": "Tùy chọn được cung cấp",
+    "currentSite": "Site hiện tại",
+    "hubSite": "Hub liên kết",
+    "catalog": "Tùy chọn khả dụng",
+    "currentUser": "Bạn",
+    "people": "Người được đề xuất",
+    "memberOf": "Nhóm của bạn"
+  },
+  "metadata": {
+    "documentLibrary": "Thư viện tài liệu",
+    "sharePointList": "Danh sách SharePoint",
+    "personalView": "Dạng xem cá nhân",
+    "publicView": "Dạng xem công khai",
+    "field": "Trường",
+    "itemDescription": "Mục · ID {id}",
+    "file": "Tệp",
+    "fileWithExtension": "Tệp {extension}",
+    "folder": "Thư mục",
+    "sharePointGroup": "Nhóm SharePoint · SharePoint",
+    "securityGroup": "Nhóm bảo mật · Entra",
+    "distributionList": "Danh sách phân phối · Entra",
+    "unvalidatedEmail": "Email chưa xác minh",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Đã đạt giới hạn lựa chọn.",
+    "selectionLimitExceeded": "Lựa chọn vượt quá giới hạn đã cấu hình.",
+    "unresolvedValues": "Một số giá trị đã chọn chưa được phân giải.",
+    "outOfScopeValues": "Lựa chọn chứa giá trị ngoài phạm vi đã cấu hình.",
+    "resolveRequiredUserIds": "Phân giải các ID cần thiết cho người dùng đã chọn."
+  },
+  "errors": {
+    "candidateOutOfScope": "Ứng viên nằm ngoài phạm vi đã cấu hình.",
+    "incompleteCandidateResolution": "Không thể phân giải đầy đủ ứng viên.",
+    "resolutionFailed": "Phân giải không thành công.",
+    "graphUnavailable": "Máy khách Microsoft Graph không khả dụng."
+  }
+}

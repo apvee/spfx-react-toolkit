@@ -68,6 +68,8 @@ const DataGridPanel: React.FC = () => {
   const [sort, setSort] = React.useState<DataGridProps<DemoRow>['sortState']>();
   const [page, setPage] = React.useState(false);
   const [hidden, setHidden] = React.useState(false);
+  const [customStrings, setCustomStrings] = React.useState(false);
+  const gridStrings = customStrings ? { selectAllRows: 'Select every document', selectRow: (id: string | number) => `Select document ${id}`, empty: 'No team documents', loading: 'Fetching documents' } : undefined;
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [empty, setEmpty] = React.useState(false);
@@ -118,6 +120,7 @@ const DataGridPanel: React.FC = () => {
           <Field label="Direction"><Select id="dg-dir" value={dir} onChange={event => setDir(event.target.value === 'rtl' ? 'rtl' : event.target.value === 'ltr' ? 'ltr' : 'host')}><option value="host">Host</option><option value="ltr">LTR</option><option value="rtl">RTL</option></Select></Field>
           <Checkbox id="dg-page" label="Supply first row only" checked={page} onChange={(_event, data) => setPage(data.checked === true)} />
           <Checkbox id="dg-hidden" label="Hide all columns" checked={hidden} onChange={(_event, data) => setHidden(data.checked === true)} />
+          <Checkbox id="dg-strings" label="Custom UI strings (number/date locale stays en-US)" checked={customStrings} onChange={(_event, data) => setCustomStrings(data.checked === true)} />
           <Checkbox id="dg-loading" label="Loading" checked={loading} onChange={(_event, data) => setLoading(data.checked === true)} />
           <Checkbox id="dg-error" label="Error" checked={error} onChange={(_event, data) => setError(data.checked === true)} />
           <Checkbox id="dg-empty" label="Empty rows" checked={empty} onChange={(_event, data) => setEmpty(data.checked === true)} />
@@ -142,7 +145,7 @@ const DataGridPanel: React.FC = () => {
         </>}>
         <div className={styles.scroll} role="region" aria-label="DataGrid preview scroll" tabIndex={0}>
           <div id="dg-frame" className={sx(flex.column, gap.large, width.px(size), gridStyles.frame)}>
-            {api === 'dynamic' ? <DataGrid id="data-grid-main" aria-label="Dynamic data" ref={gridRef} items={visibleDynamicRows} getRowId={row => String(row.id)} size={gridSize}
+            {api === 'dynamic' ? <DataGrid id="data-grid-main" strings={gridStrings} aria-label="Dynamic data" ref={gridRef} items={visibleDynamicRows} getRowId={row => String(row.id)} size={gridSize}
               selectionMode={selectionMode} selectedItems={selected} onSelectionChange={(_event, data) => { setSelected(new Set(data.selectedItems)); setOutcome(`Selection changed: ${data.selectedItems.size} selected`); }}
               hiddenColumnIds={hiddenIds} resizableColumns={resizable} loading={loading} emptyState={emptyState}
               error={error ? { ref: errorSlotRef, children: <p>Consumer-owned loading error</p> } : undefined}
@@ -154,13 +157,13 @@ const DataGridPanel: React.FC = () => {
               <DataGrid.NumberColumn id="number" header="Total" field="number" placeholder={suppressSlots ? false : 'Missing number'} invalidPlaceholder="Invalid number" />
               <DataGrid.BooleanColumn id="enabled" header="Enabled" field="enabled" placeholder={suppressSlots ? false : undefined} />
               <DataGrid.TextColumn id="status" header="Status" field="status" placeholder={suppressSlots ? false : 'Missing status'} />
-            </DataGrid> : api === 'descriptors' ? <Grid id="data-grid-main" ref={gridRef} aria-label="Team documents" items={visibleRows} getRowId={row => row.id} locale="en-US"
+            </DataGrid> : api === 'descriptors' ? <Grid id="data-grid-main" strings={gridStrings} ref={gridRef} aria-label="Team documents" items={visibleRows} getRowId={row => row.id} locale="en-US"
               size={gridSize} selectionMode={selectionMode} selectedItems={selected} onSelectionChange={(_event, data) => { setSelected(new Set(data.selectedItems)); setOutcome(`Selection changed: ${data.selectedItems.size} selected`); }}
               sortState={sort} onSortChange={(_event, next) => { setSort(next); setOutcome(`Sort requested: ${next.sortColumn}, ${next.sortDirection}`); }} resizableColumns={resizable} hiddenColumnIds={hiddenIds}
               loading={loading} error={error ? { ref: errorSlotRef, children: <p>Consumer-owned loading error</p> } : undefined} emptyState={emptyState}
               emptyContent={suppressSlots ? false : customStatusSlots ? { children: 'Consumer-owned empty slot' } : undefined}
               noResultsContent={suppressSlots ? false : customStatusSlots ? { children: (Component, nativeProps) => <Component {...nativeProps}>Consumer-owned no-results slot</Component> } : undefined}
-              onRowActivate={selectionMode === undefined ? (_event, data) => setActivation(JSON.stringify({ rowId: data.rowId })) : undefined} onRetry={() => { setRetries(value => value + 1); setError(false); }} columns={descriptorColumns} /> : <Grid id="data-grid-main" ref={gridRef} aria-label="Team documents" items={visibleRows} getRowId={row => row.id} locale="en-US"
+              onRowActivate={selectionMode === undefined ? (_event, data) => setActivation(JSON.stringify({ rowId: data.rowId })) : undefined} onRetry={() => { setRetries(value => value + 1); setError(false); }} columns={descriptorColumns} /> : <Grid id="data-grid-main" strings={gridStrings} ref={gridRef} aria-label="Team documents" items={visibleRows} getRowId={row => row.id} locale="en-US"
               size={gridSize} selectionMode={selectionMode} selectedItems={selected} onSelectionChange={(_event, data) => { setSelected(new Set(data.selectedItems)); setOutcome(`Selection changed: ${data.selectedItems.size} selected`); }}
               sortState={sort} onSortChange={(_event, next) => { setSort(next); setOutcome(`Sort requested: ${next.sortColumn}, ${next.sortDirection}`); }} resizableColumns={resizable} hiddenColumnIds={hiddenIds}
               loading={loading} error={error ? { ref: errorSlotRef, children: <p>Consumer-owned loading error</p> } : undefined} emptyState={emptyState}

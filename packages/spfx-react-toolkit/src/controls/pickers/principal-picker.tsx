@@ -1,3 +1,4 @@
+import { PickerMessageError } from './picker-message.internal';
 import * as React from 'react';
 import type { MSGraphClientV3 } from '@microsoft/sp-http';
 import { useSPFxServiceScope } from '../../hooks/useSPFxServiceScope';
@@ -33,7 +34,7 @@ function createPrincipalGraphAccess(): PrincipalGraphAccess {
       return new Promise<MSGraphClientV3>((resolve, reject) => { waiters.add({ resolve, reject }); });
     },
     publish(client, initializing, error) {
-      current = initializing ? undefined : client !== undefined ? { client } : { error: error ?? new Error('Microsoft Graph client is unavailable.') };
+      current = initializing ? undefined : client !== undefined ? { client } : { error: error ?? new PickerMessageError({ group: 'errors', key: 'graphUnavailable' }) };
       settle();
     },
     dispose() { current = { error: new Error('Principal Graph dependency was disposed.') }; settle(); },

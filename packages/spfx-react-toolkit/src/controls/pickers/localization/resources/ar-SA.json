@@ -1,0 +1,87 @@
+{
+  "labels": {
+    "selectOne": "تحديد عنصر",
+    "selectMany": "تحديد عناصر",
+    "search": "بحث…",
+    "clearSelection": "مسح التحديد",
+    "clearSearch": "مسح البحث",
+    "options": "الخيارات",
+    "searchOptions": "البحث في الخيارات",
+    "selectedOne": "العنصر المحدد",
+    "selectedMany": "العناصر المحددة",
+    "noSelection": "لا يوجد تحديد",
+    "resolveIds": "حلّ المعرّفات",
+    "moreResults": "المزيد من النتائج",
+    "retry": "إعادة المحاولة",
+    "namedOptions": "{name}: الخيارات",
+    "namedSearch": "{name}: بحث",
+    "selectedCount": {
+      "zero": "تم تحديد {count} عنصر",
+      "one": "تم تحديد {count} عنصر",
+      "two": "تم تحديد {count} من العناصر",
+      "few": "تم تحديد {count} عناصر",
+      "many": "تم تحديد {count} عنصرًا",
+      "other": "تم تحديد {count} عنصر"
+    },
+    "minimumSearchLength": {
+      "zero": "اكتب {count} حرفًا على الأقل للبحث",
+      "one": "اكتب {count} حرفًا على الأقل للبحث",
+      "two": "اكتب {count} من الأحرف على الأقل للبحث",
+      "few": "اكتب {count} أحرف على الأقل للبحث",
+      "many": "اكتب {count} حرفًا على الأقل للبحث",
+      "other": "اكتب {count} حرفًا على الأقل للبحث"
+    }
+  },
+  "status": {
+    "searching": "جارٍ البحث…",
+    "loading": "جارٍ التحميل…",
+    "partialSearch": "البحث غير مكتمل: حدّد بحثك بدقة أكبر.",
+    "noOtherResults": "لا توجد نتائج أخرى لهذا البحث",
+    "noResults": "لا توجد نتائج لهذا البحث",
+    "noOptions": "لا توجد خيارات متاحة.",
+    "moreItemsAvailable": "تتوفر عناصر إضافية.",
+    "partialSuggestions": "الاقتراحات غير مكتملة: بعض المصادر غير متاحة.",
+    "unresolvedValue": "قيمة لم يتم حلّها",
+    "partialHubs": "قائمة المراكز غير مكتملة: ضيّق النطاق أو استخدم وضع الموقع.",
+    "partialSiteCollections": "البحث في مجموعات المواقع غير مكتمل (الحد الأقصى 1000 نتيجة): ضيّق معاييرك."
+  },
+  "sections": {
+    "consumer": "الخيارات المقدمة",
+    "currentSite": "الموقع الحالي",
+    "hubSite": "المركز المرتبط",
+    "catalog": "الخيارات المتاحة",
+    "currentUser": "أنت",
+    "people": "الأشخاص المقترحون",
+    "memberOf": "مجموعاتك"
+  },
+  "metadata": {
+    "documentLibrary": "مكتبة مستندات",
+    "sharePointList": "قائمة SharePoint",
+    "personalView": "طريقة عرض شخصية",
+    "publicView": "طريقة عرض عامة",
+    "field": "حقل",
+    "itemDescription": "عنصر · المعرّف {id}",
+    "file": "ملف",
+    "fileWithExtension": "ملف {extension}",
+    "folder": "مجلد",
+    "sharePointGroup": "مجموعة SharePoint · SharePoint",
+    "securityGroup": "مجموعة أمان · Entra",
+    "distributionList": "قائمة توزيع · Entra",
+    "unvalidatedEmail": "بريد إلكتروني لم يتم التحقق منه",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "تم بلوغ حد التحديد.",
+    "selectionLimitExceeded": "يتجاوز التحديد الحد المكوّن.",
+    "unresolvedValues": "لم يتم حلّ بعض القيم المحددة.",
+    "outOfScopeValues": "يحتوي التحديد على قيم خارج النطاق المكوّن.",
+    "resolveRequiredUserIds": "حلّ المعرّفات المطلوبة للمستخدمين المحددين."
+  },
+  "errors": {
+    "candidateOutOfScope": "العنصر المرشح خارج النطاق المكوّن.",
+    "incompleteCandidateResolution": "تعذّر حلّ العنصر المرشح بالكامل.",
+    "resolutionFailed": "فشل الحلّ.",
+    "graphUnavailable": "عميل Microsoft Graph غير متاح."
+  }
+}

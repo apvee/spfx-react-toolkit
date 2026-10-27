@@ -1,0 +1,25 @@
+{
+  "empty": "Δεν υπάρχουν διαθέσιμα δεδομένα",
+  "noResults": "Δεν βρέθηκαν αποτελέσματα",
+  "noVisibleColumns": "Δεν υπάρχουν ορατές στήλες",
+  "loading": "Φόρτωση",
+  "actions": "Ενέργειες",
+  "moreActions": "Περισσότερες ενέργειες",
+  "yes": "Ναι",
+  "no": "Όχι",
+  "noTags": "Δεν υπάρχουν ετικέτες",
+  "noObservations": "Δεν υπάρχουν παρατηρήσεις",
+  "invalidValue": "Μη έγκυρη τιμή",
+  "selectAllRows": "Επιλογή όλων των γραμμών",
+  "retry": "Επανάληψη",
+  "selectRowTemplate": "Επιλογή γραμμής {rowId}",
+  "sparklineSummaryTemplate": "Πρώτη τιμή {first}; Τελευταία τιμή {last}; Ελάχιστο {minimum}; Μέγιστο {maximum}; Μέσος όρος {average}; Μεταβολή {change}; Ποσοστό μεταβολής {changePercent}",
+  "tagOverflow": {
+    "one": "Εμφάνιση {count} επιπλέον ετικέτας",
+    "other": "Εμφάνιση {count} επιπλέον ετικετών"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} ψήφος",
+    "other": "{formattedCount} ψήφοι"
+  }
+}

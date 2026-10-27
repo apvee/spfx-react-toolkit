@@ -83,8 +83,8 @@ test('actual Shell panel inherits custom host tokens and retains inputs/counters
   try {
     const first = view.container.querySelector('[data-instance="0"]');
     const second = view.container.querySelector('[data-instance="1"]');
-    assert.match(first.querySelector('[data-shell-demo="ui-culture"]').textContent, /Title editor language: it-IT/);
-    assert.match(second.querySelector('[data-shell-demo="ui-culture"]').textContent, /Title editor language: it-IT/);
+    assert.match(first.querySelector('[data-shell-demo="ui-culture"]').textContent, /Native SPFx resource labels/);
+    assert.match(second.querySelector('[data-shell-demo="ui-culture"]').textContent, /Native SPFx resource labels/);
     const diagnosticsTrigger = Array.from(first.querySelectorAll('button')).find(button => button.textContent.includes('Advanced diagnostics'));
     assert.equal(diagnosticsTrigger.getAttribute('aria-expanded'), 'false', 'advanced Shell controls start closed');
     const direction = first.querySelector('select[data-shell-demo="direction"]');
@@ -98,7 +98,7 @@ test('actual Shell panel inherits custom host tokens and retains inputs/counters
     h.act(() => { update({ ...custom, colorBrandBackground: '#cd5678' }); });
     assert.equal(first.querySelector('[data-token]').getAttribute('data-token'), '#cd5678');
     assert.equal(second.querySelector('[data-token]').getAttribute('data-token'), '#12abcd');
-    assert.match(first.querySelector('[data-shell-demo="ui-culture"]').textContent, /Title editor language: it-IT/);
+    assert.match(first.querySelector('[data-shell-demo="ui-culture"]').textContent, /Native SPFx resource labels/);
     assert.equal(first.querySelector('input[data-shell-demo="note"]'), input);
     assert.equal(input.value, 'Retained custom theme note'); assert.equal(document.activeElement, input);
     assert.match(first.querySelector('[data-shell-demo="observations"]').textContent, /"count":1/);

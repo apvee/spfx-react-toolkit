@@ -6,10 +6,11 @@ const path = require('node:path');
 const {execFileSync, spawnSync} = require('node:child_process');
 const ts = require('typescript');
 const { collectPublicSurface } = require('./public-surface.helpers.cjs');
-const { assertEntrypointContract, verifyConsumerResolution } = require('./package-entrypoints.cjs');
+const { assertEntrypointContract, verifyConsumerResolution, getLocalizationPackageContract } = require('./package-entrypoints.cjs');
 const {createRequire} = require('node:module');
 const {measureTreeShaking, runInstalledGates, verifyContractMutations} = require('./bundle-contract.internal.cjs');
 const {verifyProductionRuntime} = require('./verify-production-runtime.cjs');
+const {verifyLocalizationPackage} = require('./verify-localization-package.cjs');
 const root = path.resolve(__dirname, '..');
 const library = path.join(root, 'packages/spfx-react-toolkit');
 const app = path.join(root, 'apps/spfx-react-toolkit-test');
@@ -133,10 +134,12 @@ try {
   run(['run','build:library'],root);
   const packed = JSON.parse(execFileSync('npm',['pack','--json','--pack-destination',temp],{cwd:library,encoding:'utf8'}))[0];
   assert.equal(packed.name,'@apvee/spfx-react-toolkit');
+  const localization = getLocalizationPackageContract();
   for (const file of packed.files) {
-    assert.ok(/^(package\.json|README\.md|LICENSE|THIRD-PARTY-NOTICES\.md|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls|property-pane)\/.+))$/.test(file.path), `Unexpected package file: ${file.path}`);
+    assert.ok(localization.extraFiles.includes(file.path) || /^(package\.json|README\.md|LICENSE|THIRD-PARTY-NOTICES\.md|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls|property-pane|localization)\/.+))$/.test(file.path), `Unexpected package file: ${file.path}`);
   }
   const packedPaths = new Set(packed.files.map(file => file.path));
+  for (const file of [...localization.extraFiles, ...localization.assetSources.keys()]) assert.ok(packedPaths.has(file), `Missing localization package file: ${file}`);
   assert.ok(packedPaths.has('THIRD-PARTY-NOTICES.md'), 'Artwork attribution must ship');
   assertEntrypointContract(JSON.parse(fs.readFileSync(path.join(library, 'package.json'), 'utf8')), [...packedPaths]);
   fs.writeFileSync(path.join(evidence, 'pack.json'), JSON.stringify(packed, null, 2));
@@ -292,6 +295,13 @@ try {
   }
   const consumer = path.join(temp,'consumer'); fs.mkdirSync(consumer);
   for (const name of ['src','config','sharepoint','teams','gulpfile.js','tsconfig.json','.eslintrc.js']) fs.cpSync(path.join(app,name),path.join(consumer,name),{recursive:true});
+  // The copied sample's eight toolkit mappings target the workspace layout.
+  // This is a newly created consumer: let its real postinstall register paths
+  // relative to its own installation while retaining all consumer resources.
+  const consumerConfigFile = path.join(consumer, 'config/config.json');
+  const consumerConfig = JSON.parse(fs.readFileSync(consumerConfigFile, 'utf8'));
+  for (const id of localization.nativeIds) delete consumerConfig.localizedResources[id];
+  fs.writeFileSync(consumerConfigFile, JSON.stringify(consumerConfig, undefined, 2) + '\n');
   const manifest = JSON.parse(fs.readFileSync(path.join(app,'package.json'),'utf8'));
   manifest.name='isolated-spfx-toolkit-consumer';
   assert.equal(manifest.workspaces, undefined, 'External consumer cannot contain workspaces');
@@ -702,7 +712,10 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   const productionReports = await runInstalledGates({consumerRoot:fs.realpathSync(consumer),outputDir:evidence,failures:consumerFailures,
     bundle:options=>measureTreeShaking({...options,mode:'enforce',contract:JSON.parse(fs.readFileSync(path.join(root,'tests/fixtures/tree-shaking/contract.json')))}),
     runtime:verifyProductionRuntime,mutations:verifyContractMutations,
-    independent:async()=>{for (const step of consumerSteps) {
+    independent:async()=>{
+      try { await verifyLocalizationPackage({consumerRoot:fs.realpathSync(consumer),outputDir:path.join(evidence,'localization')}); }
+      catch (error) { consumerFailures.push({ args: ['localization-spfx-matrix'], message: error.message }); }
+      for (const step of consumerSteps) {
       try { run(step.args, consumer, step); }
       catch (error) { consumerFailures.push({ args: step.args, message: error.message }); }
     }}

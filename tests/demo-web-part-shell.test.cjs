@@ -31,7 +31,7 @@ test('Shell panel is registered and makes persisted state and surface options ob
   assert.match(registry, /key: 'web-part-shell'/);
   for (const symbol of ['WebPartShell', 'getWebPartShellPropertiesMetadata']) assert.ok(registry.includes(`symbol: '${symbol}'`));
   const panel = read(`${base}components/panels/WebPartShellPanel.tsx`);
-  for (const marker of ['show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'action-slot-toggle', 'note', 'increment', 'observations']) assert.ok(panel.includes(`data-shell-demo="${marker}"`) || panel.includes(`'data-shell-demo': '${marker}'`), marker);
+  for (const marker of ['show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'action-slot-toggle', 'strings', 'title-editor-strings', 'note', 'increment', 'observations']) assert.ok(panel.includes(`data-shell-demo="${marker}"`) || panel.includes(`'data-shell-demo': '${marker}'`), marker);
   assert.match(panel, /useSPFxProperties/);
   assert.doesNotMatch(panel, /<WebPartShell |style=/);
 });

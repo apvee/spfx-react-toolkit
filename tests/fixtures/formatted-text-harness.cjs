@@ -5,9 +5,10 @@ const webpack = require('webpack');
 const { createSxDom } = require('./sx-harness.cjs');
 const root = path.resolve(__dirname, '../..');
 const bundles = [];
+const { nativeResourceAliases } = require('../../scripts/localization-webpack.internal.cjs');
 
 /** Compile actual TS/ESM source while keeping the host's React and Fluent instances. */
-async function loadModule(entryPath, { parserFailure = false, reactHookForm = false } = {}) {
+async function loadModule(entryPath, { parserFailure = false, reactHookForm = false, nativeCulture = 'en-US', nativeOverrides = {} } = {}) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'formatted-text-'));
   bundles.push(directory);
   const output = path.join(directory, 'module.cjs');
@@ -17,7 +18,10 @@ async function loadModule(entryPath, { parserFailure = false, reactHookForm = fa
     mode: 'development', target: 'node', devtool: false,
     entry: path.resolve(root, entryPath),
     output: { path: directory, filename: 'module.cjs', library: { type: 'commonjs2' } },
-    resolve: { extensions: ['.tsx', '.ts', '.js'], alias: parserFailure ? { 'remark-parse$': parserDouble } : {} },
+    resolve: { extensions: ['.tsx', '.ts', '.js'], alias: {
+      ...nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit'), culture: nativeCulture, overrides: nativeOverrides, outputDirectory: directory }),
+      ...(parserFailure ? { 'remark-parse$': parserDouble } : {}),
+    } },
     externals: [({ request }, callback) => {
       if (/^(react(?:-dom)?(?:\/|$)|@fluentui\/|@griffel\/)/.test(request || '') ||
           (reactHookForm && /^react-hook-form(?:\/|$)/.test(request || ''))) {

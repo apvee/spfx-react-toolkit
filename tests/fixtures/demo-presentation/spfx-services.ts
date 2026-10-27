@@ -13,3 +13,6 @@ export class HttpClient { static configurations = { v1: {} }; }
 export class SPHttpClient { static configurations = { v1: {} }; static serviceKey = 'trim-sp-http'; }
 export class MSGraphClientFactory { static serviceKey = 'trim-graph-factory'; }
 export class AadHttpClient { static configurations = { v1: {} }; }
+
+// Native authentication transport is intentionally unavailable in this local fixture.
+export class AadTokenProviderFactory { static serviceKey = 'fixture-aad-token-factory'; }

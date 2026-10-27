@@ -1,3 +1,4 @@
+import type { FileFolderPickerStringsOverride } from './file-folder-picker-strings.types';
 /** File category mapped to the Microsoft v8 semantic filter. Omission leaves files unrestricted.
  * Toolkit acceptance checks a documented, case-insensitive suffix catalog against the authoritative metadata name;
  * it does not inspect bytes or promise Microsoft's complete internal classification. Media combines images, video and audio.
@@ -125,6 +126,8 @@ export interface FileFolderPickerChangeData {
 
 interface FileFolderPickerCommonProps extends Pick<FieldProps,
   'label' | 'hint' | 'required' | 'validationMessage' | 'validationState'> {
+  /** Optional instance UI dictionary. Known nested leaves merge with native SPFx resources; direct labels/content/Field messages win. Undefined retains native defaults; empty strings remain explicit. */
+  readonly strings?: FileFolderPickerStringsOverride;
   /** Optional root ID; owned controls retain their accessible associations. */
   readonly id?: string;
   /** Optional root CSS class. */
@@ -173,7 +176,7 @@ interface FileFolderPickerCommonProps extends Pick<FieldProps,
   readonly createFolderEnabled?: boolean;
   /** Called once when the service reports page-loaded for this opening. No selection is committed. */
   readonly onReady?: () => void;
-  /** Plain opening-action tooltip/accessibility label. Defaults to Sfoglia file…, Sfoglia cartelle… or Sfoglia file e cartelle… according to itemTypes. */
+  /** Plain opening-action tooltip/accessibility label. Omission uses the native localized strings.browse entry for itemTypes; a defined browseLabel takes precedence and also names the owned dialog/iframe. */
   readonly browseLabel?: string;
   /** Optional reactive selected-model seeds; never candidates, scope authority or persistence. */
   readonly initialOptions?: readonly FileFolderPickerOption[];

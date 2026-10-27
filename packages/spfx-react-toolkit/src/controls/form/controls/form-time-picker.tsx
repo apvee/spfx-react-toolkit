@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useFormRuntimeContext } from '../form-context.internal';
 import { Field } from '@fluentui/react-components';
 import { useMergedRefs } from '@fluentui/react-utilities';
 import { TimePicker, formatDateToTimeString as formatCompatTime } from '@fluentui/react-timepicker-compat';
@@ -12,7 +13,9 @@ import { useFieldAdapter } from '../use-field-adapter.internal';
  * Ref targets the input; selection/blur callbacks follow RHF writes/touches.
  * @example `<Order.TimePicker name="time" label="Time" freeform hourCycle="h23" increment={15} />`
  */
-export const FormTimePicker = React.forwardRef<HTMLInputElement, FormTimePickerProps<FieldValues>>(function FormTimePicker({ className, disabled, fieldProps, hint, id, label, name, orientation, required, rules, dateAnchor, formatDateToTimeString, hourCycle, showSeconds, parseTimeStringToDate, inputValidationMessage = 'Complete or correct the time before submitting.', onBlur, onTimeChange, onOpenChange, ...props }, ref) {
+export const FormTimePicker = React.forwardRef<HTMLInputElement, FormTimePickerProps<FieldValues>>(function FormTimePicker({ className, disabled, fieldProps, hint, id, label, name, orientation, required, rules, dateAnchor, formatDateToTimeString, hourCycle, showSeconds, parseTimeStringToDate, inputValidationMessage: suppliedInputValidationMessage, onBlur, onTimeChange, onOpenChange, ...props }, ref) {
+  const familyStrings = useFormRuntimeContext().strings;
+  const inputValidationMessage = suppliedInputValidationMessage ?? familyStrings.timeInputValidationMessage;
   const [draft, setDraft] = React.useState<string>();
   const draftRef = React.useRef<string>();
   const rejected = React.useRef(false);

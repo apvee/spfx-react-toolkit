@@ -184,3 +184,5 @@ The [integrated demo](./docs/DEVELOPMENT.md#integrated-demo-presentation-checks)
 ## Access trims
 
 [SharePointPermissionTrim](./docs/api/controls/sharepoint-permission-trim.md), [SharePointGroupTrim](./docs/api/controls/sharepoint-group-trim.md) and [EntraGroupTrim](./docs/api/controls/entra-group-trim.md) mount caller content only for a current positive permission/membership decision. Direct Loading/Fallback/ErrorFallback branches distinguish pending, denied and failed checks. The matching SPFx provider supplies native clients. The lazy sample exposes editable targets, repeat checks and protected mount counters; the Context panel also demonstrates scoped permissions. Server authorization remains required.
+
+See [native SPFx localization and consumer setup](./docs/LOCALIZATION.md) for per-family resources, postinstall registration, typed overrides and the EditableText locale migration.

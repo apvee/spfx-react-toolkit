@@ -1,0 +1,77 @@
+{
+  "labels": {
+    "selectOne": "Pilih satu item",
+    "selectMany": "Pilih item",
+    "search": "Cari…",
+    "clearSelection": "Hapus pilihan",
+    "clearSearch": "Hapus pencarian",
+    "options": "Opsi",
+    "searchOptions": "Cari opsi",
+    "selectedOne": "Item yang dipilih",
+    "selectedMany": "Item yang dipilih",
+    "noSelection": "Tidak ada pilihan",
+    "resolveIds": "Identifikasi ID",
+    "moreResults": "Hasil lainnya",
+    "retry": "Coba lagi",
+    "namedOptions": "{name}: Opsi",
+    "namedSearch": "{name}: Cari",
+    "selectedCount": {
+      "other": "{count} item dipilih"
+    },
+    "minimumSearchLength": {
+      "other": "Ketik setidaknya {count} karakter untuk mencari"
+    }
+  },
+  "status": {
+    "searching": "Mencari…",
+    "loading": "Memuat…",
+    "partialSearch": "Pencarian sebagian: persempit pencarian Anda.",
+    "noOtherResults": "Tidak ada hasil lain untuk pencarian ini",
+    "noResults": "Tidak ada hasil untuk pencarian ini",
+    "noOptions": "Tidak ada opsi yang tersedia.",
+    "moreItemsAvailable": "Masih ada item lain yang tersedia.",
+    "partialSuggestions": "Saran sebagian: beberapa sumber tidak tersedia.",
+    "unresolvedValue": "Nilai belum teridentifikasi",
+    "partialHubs": "Daftar hub sebagian: persempit cakupan atau gunakan mode situs.",
+    "partialSiteCollections": "Pencarian kumpulan situs sebagian (maksimal 1000 hasil): persempit kriteria Anda."
+  },
+  "sections": {
+    "consumer": "Opsi yang disediakan",
+    "currentSite": "Situs saat ini",
+    "hubSite": "Hub terkait",
+    "catalog": "Opsi yang tersedia",
+    "currentUser": "Anda",
+    "people": "Orang yang disarankan",
+    "memberOf": "Grup Anda"
+  },
+  "metadata": {
+    "documentLibrary": "Pustaka dokumen",
+    "sharePointList": "Daftar SharePoint",
+    "personalView": "Tampilan pribadi",
+    "publicView": "Tampilan publik",
+    "field": "Bidang",
+    "itemDescription": "Item · ID {id}",
+    "file": "File",
+    "fileWithExtension": "File {extension}",
+    "folder": "Folder",
+    "sharePointGroup": "Grup SharePoint · SharePoint",
+    "securityGroup": "Grup keamanan · Entra",
+    "distributionList": "Daftar distribusi · Entra",
+    "unvalidatedEmail": "Email belum diverifikasi",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Batas pilihan telah tercapai.",
+    "selectionLimitExceeded": "Pilihan melebihi batas yang dikonfigurasi.",
+    "unresolvedValues": "Beberapa nilai yang dipilih belum teridentifikasi.",
+    "outOfScopeValues": "Pilihan berisi nilai di luar cakupan yang dikonfigurasi.",
+    "resolveRequiredUserIds": "Identifikasi ID yang diperlukan untuk pengguna yang dipilih."
+  },
+  "errors": {
+    "candidateOutOfScope": "Kandidat berada di luar cakupan yang dikonfigurasi.",
+    "incompleteCandidateResolution": "Kandidat tidak dapat diidentifikasi sepenuhnya.",
+    "resolutionFailed": "Identifikasi gagal.",
+    "graphUnavailable": "Klien Microsoft Graph tidak tersedia."
+  }
+}

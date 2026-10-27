@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Не удалось отправить форму. Повторите попытку.",
+  "dateInputValidationMessage": "Заполните или исправьте дату перед отправкой.",
+  "timeInputValidationMessage": "Заполните или исправьте время перед отправкой.",
+  "tagPicker": {
+    "noOptions": "Нет вариантов, соответствующих текущему запросу."
+  },
+  "fileInput": {
+    "browseLabel": "Обзор",
+    "clearLabel": "Очистить"
+  },
+  "arraySection": {
+    "add": "Добавить элемент",
+    "empty": "Нет элементов",
+    "itemLabelTemplate": "Элемент {position}",
+    "removeTemplate": "Удалить {label}",
+    "moveUpTemplate": "Переместить {label} вверх",
+    "moveDownTemplate": "Переместить {label} вниз",
+    "addedTemplate": "Добавлен элемент: {label}",
+    "removedTemplate": "Удалён элемент: {label}",
+    "movedTemplate": "Элемент {label} перемещён на позицию {position} из {total}"
+  },
+  "datePicker": {
+    "months": [
+      "январь",
+      "февраль",
+      "март",
+      "апрель",
+      "май",
+      "июнь",
+      "июль",
+      "август",
+      "сентябрь",
+      "октябрь",
+      "ноябрь",
+      "декабрь"
+    ],
+    "shortMonths": [
+      "янв.",
+      "февр.",
+      "март",
+      "апр.",
+      "май",
+      "июнь",
+      "июль",
+      "авг.",
+      "сент.",
+      "окт.",
+      "нояб.",
+      "дек."
+    ],
+    "days": [
+      "воскресенье",
+      "понедельник",
+      "вторник",
+      "среда",
+      "четверг",
+      "пятница",
+      "суббота"
+    ],
+    "shortDays": [
+      "вс",
+      "пн",
+      "вт",
+      "ср",
+      "чт",
+      "пт",
+      "сб"
+    ],
+    "goToToday": "Перейти к сегодняшнему дню",
+    "prevMonthAriaLabel": "Предыдущий месяц",
+    "nextMonthAriaLabel": "Следующий месяц",
+    "prevYearAriaLabel": "Предыдущий год",
+    "nextYearAriaLabel": "Следующий год",
+    "prevYearRangeAriaLabel": "Предыдущий диапазон лет",
+    "nextYearRangeAriaLabel": "Следующий диапазон лет",
+    "monthPickerHeaderAriaLabel": "{0}, изменить год",
+    "yearPickerHeaderAriaLabel": "{0}, изменить месяц",
+    "closeButtonAriaLabel": "Закрыть",
+    "weekNumberFormatString": "Номер недели {0}",
+    "selectedDateFormatString": "Выбранная дата {0}",
+    "todayDateFormatString": "Сегодняшняя дата {0}",
+    "dayMarkedAriaLabel": "отмечено"
+  }
+}

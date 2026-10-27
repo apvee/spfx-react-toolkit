@@ -9,6 +9,7 @@ const output = path.join(root, `temp/migrated-slots-${mode}`);
 webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 'index.tsx'),
   output: { path: output, filename: 'fixture.js' },
   resolve: { extensions: ['.tsx', '.ts', '.js'], alias: {
+    ...require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
     '@apvee/spfx-react-toolkit$': path.join(fixture, `${mode}-boundary.ts`),
     'react/jsx-runtime$': require.resolve('react/jsx-runtime.js'),
   } },

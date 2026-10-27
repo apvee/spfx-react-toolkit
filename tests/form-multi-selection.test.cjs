@@ -97,3 +97,10 @@ test('TagPicker suppresses empty-message callbacks when options or custom childr
   finally { f.close(); }
  }
 });
+
+test('Form TagPicker dictionary preserves direct slot and leaf-string precedence including empty content',()=>{
+ const F=h.suite('TagPicker');let methods;
+ function Owner({leaf,direct}){methods=F.useForm({defaultValues:{value:[]},strings:{tagPicker:{noOptions:'Family empty'}}});return h.React.createElement(F.Root,{methods,onSubmit:()=>{}},h.React.createElement(F.TagPicker,{name:'value',label:'Tags',options:[],open:true,inline:true,strings:leaf,noOptionsContent:direct}));}
+ const f=h.mount(h.React.createElement(Owner));
+ try{assert.ok(f.host.textContent.includes('Family empty'));f.render(h.React.createElement(Owner,{leaf:{noOptions:'Leaf empty'}}));assert.ok(f.host.textContent.includes('Leaf empty'));f.render(h.React.createElement(Owner,{leaf:{noOptions:'Leaf empty'},direct:{children:'Direct empty'}}));assert.ok(f.host.textContent.includes('Direct empty'));f.render(h.React.createElement(Owner,{direct:''}));assert.ok(!f.host.textContent.includes('Family empty'));f.render(h.React.createElement(Owner,{direct:false}));assert.ok(!f.host.textContent.includes('Family empty'));assert.deepEqual(methods.getValues('value'),[]);}finally{f.close();}
+});

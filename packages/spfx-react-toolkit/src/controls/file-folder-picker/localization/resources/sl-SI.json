@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Prebrskaj datoteke…",
+    "folders": "Prebrskaj mape…",
+    "all": "Prebrskaj datoteke in mape…"
+  },
+  "placeholders": {
+    "files": "Izberi datoteke…",
+    "folders": "Izberi mape…",
+    "all": "Izberi datoteke ali mape…"
+  },
+  "labels": {
+    "selection": "Izbira datotek in map",
+    "file": "Datoteka",
+    "folder": "Mapa",
+    "unresolvedItem": "Nerazrešen element",
+    "removeItem": "Odstrani {name}"
+  },
+  "validation": {
+    "invalidReferences": "Neveljavni sklici na datoteke ali mape.",
+    "controlledModeChanged": "Nadzorovanega načina ni mogoče spremeniti, dokler je kontrolnik nameščen.",
+    "incompatibleItems": "Izbor vsebuje elemente, ki niso združljivi z nastavljenim tipom, kategorijo ali priponami. Odstranite jih ali zamenjajte.",
+    "invalidPolicy": "Neveljavna nastavitev tipa, kategorije, pripon ali omejitve izbora.",
+    "selectionLimitExceeded": "Izbor presega nastavljeno omejitev. Odstranite odvečne elemente."
+  },
+  "errors": {
+    "configuration": "Neveljavna konfiguracija izbirnika. Preverite vir, tipe, kategorijo in omejitve; uporabite prednastavitev brez starejših možnosti.",
+    "auth-resource": "Izbirnik je zahteval vir za preverjanje pristnosti, ki ga konfiguracija ne dovoljuje.",
+    "auth-type": "Izbirnik je zahteval vrsto preverjanja pristnosti, ki je konfiguracija ne podpira.",
+    "auth-challenge": "Izbirnik zahteva dodatno preverjanje pristnosti, ki ni podprto.",
+    "auth-provider": "Žetona SharePoint ni bilo mogoče pridobiti. Poskusite znova; če težava ostaja, preverite dostop in obstoječa dovoljenja.",
+    "selection-identity": "Identitete izbranega elementa ni bilo mogoče preveriti. Znova odprite izbirnik in poskusite znova.",
+    "selection-scope": "Izbrani element je zunaj dovoljenega mesta, knjižnice ali mape.",
+    "selection-policy": "Izbor ne izpolnjuje zahtev glede dovoljenega tipa, kategorije, pripon ali števila elementov.",
+    "selection-unavailable": "Izbrani element ni na voljo ali ni dostopen.",
+    "selection-invalid": "Izbora ni bilo mogoče preveriti. Dodan ni bil noben nov element.",
+    "onedrive-unavailable": "OneDrive trenutnega uporabnika ni na voljo ali ni dostopen. Preverite, ali pogon obstaja, in poskusite znova.",
+    "opening": "Izbirnika ni bilo mogoče odpreti. Preverite konfiguracijo in dostop do vira ter poskusite znova.",
+    "timeout": "Izbirnik se ni pravočasno odzval. Zaprite ga in poskusite znova.",
+    "communication": "Komunikacija z izbirnikom je bila prekinjena. Znova ga odprite in poskusite znova."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Izbirna funkcija preverjanja pristnosti se ni pravočasno odzvala. Poskusite znova.",
+    "unsupportedCommand": "Ta integracija ne podpira tega ukaza.",
+    "optionalGraphAuthenticationFailed": "Izbirne funkcije Microsoft Graph ni bilo mogoče overiti.",
+    "optionalPersonalAuthenticationFailed": "Izbirnega osebnega cilja ni bilo mogoče overiti."
+  }
+}

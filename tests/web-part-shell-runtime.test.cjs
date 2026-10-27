@@ -213,8 +213,8 @@ test('title delegates to EditableText with H1–H4/p, H2 fallback and no hidden 
     const props = calls.at(-1);
     assert.deepEqual(props.allowedBlocks, ['h1', 'h2', 'h3', 'h4', 'p']);
     assert.equal(props.defaultBlock, 'h2'); assert.equal(props.mode, 'read');
-    assert.equal(props.locale, 'IT_it'); assert.equal(props['aria-label'], 'Titolo della web part');
-    assert.equal(props.placeholder, 'Aggiungi un titolo');
+    assert.equal(props.locale, undefined); assert.equal(props['aria-label'], 'Web part title');
+    assert.equal(props.placeholder, 'Add a title');
     assert.equal(fixture.container.querySelector('h2').textContent, '<Literal>');
     for (const block of ['h1', 'h2', 'h3', 'h4', 'p']) {
       host.properties.titleHTML = `<${block}>Saved</${block}>`; fixture.render();

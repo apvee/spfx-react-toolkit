@@ -1,3 +1,4 @@
+import { resolveFileFolderPickerStrings } from './file-folder-picker-strings.internal';
 import * as React from 'react';
 import { Avatar, Button, Field, Tag, TagGroup, Tooltip, mergeClasses, useInputStyles_unstable } from '@fluentui/react-components';
 import { resolveShorthand } from '@fluentui/react-utilities';
@@ -23,14 +24,15 @@ import type { FileFolderPickerProps } from './file-folder-picker.types';
  * ```
  */
 export function FileFolderPicker(props: FileFolderPickerProps): React.ReactElement {
+  const strings = resolveFileFolderPickerStrings(props.strings);
   const styles = useFileFolderPickerStyles(), runtime = useFileFolderPicker(props);
   const Boundary = React.useContext(PickerControlBoundaryContext);
   const mode = props.itemTypes ?? 'files';
-  const browseLabel = props.browseLabel ?? (mode === 'folders' ? 'Sfoglia cartelle…' : mode === 'all' ? 'Sfoglia file e cartelle…' : 'Sfoglia file…');
-  const placeholder = mode === 'folders' ? 'Seleziona cartelle…' : mode === 'all' ? 'Seleziona file o cartelle…' : 'Seleziona file…';
+  const browseLabel = props.browseLabel ?? strings.browse[mode];
+  const placeholder = strings.placeholders[mode];
   const BrowseIcon = mode === 'folders' ? FolderOpenRegular : mode === 'all' ? FolderDocumentRegular : AttachRegular;
   const disabled = props.disabled || !runtime.ready;
-  const validationState = props.validationState ?? (runtime.validation || runtime.error || runtime.initError ? 'error' : undefined);
+  const validationState = props.validationState ?? (runtime.validation !== undefined || runtime.error !== undefined || runtime.initError !== undefined ? 'error' : undefined);
   // Borrow only the native Input style state: the surface remains a group of real buttons/tags,
   // with no hidden/read-only input or editable-text semantics. Fluent owns exact border states,
   // dimensions, contrast and focus animation; only tag layout and the open-session underline extend it.
@@ -42,10 +44,10 @@ export function FileFolderPicker(props: FileFolderPickerProps): React.ReactEleme
   };
   useInputStyles_unstable(inputStyleState);
   const content = (fieldProps: FieldControlProps): React.ReactElement => <div className={styles.region}>
-    <div role="group" aria-label={props['aria-label'] ?? 'Selezione file e cartelle'} aria-busy={runtime.busy} aria-disabled={props.disabled || undefined}
+    <div role="group" aria-label={props['aria-label'] ?? strings.labels.selection} aria-busy={runtime.busy} aria-disabled={props.disabled || undefined}
       className={mergeClasses(inputStyleState.root.className, styles.control, runtime.busy && !props.disabled && styles.open, props.controlClassName)}>
     <div className={styles.selection}>
-    {runtime.values.length === 0 ? undefined : <TagGroup className={styles.tags} size={props.size === 'large' ? 'small' : 'extra-small'} disabled={props.disabled} aria-label={props['aria-label'] ?? 'Selezione file e cartelle'} onDismiss={(_, data) => {
+    {runtime.values.length === 0 ? undefined : <TagGroup className={styles.tags} size={props.size === 'large' ? 'small' : 'extra-small'} disabled={props.disabled} aria-label={props['aria-label'] ?? strings.labels.selection} onDismiss={(_, data) => {
       const value = runtime.values.find(candidate => fileFolderPickerIdentity(candidate) === data.value);
       if (value !== undefined) runtime.remove(value);
     }}>
@@ -53,8 +55,8 @@ export function FileFolderPicker(props: FileFolderPickerProps): React.ReactEleme
         const text = runtime.label(value);
         const Icon = value.kind === 'folder' ? FolderRegular : /^\.?pdf$/i.test(runtime.extension?.(value) ?? value.name?.split('.').pop() ?? '') ? DocumentPdfRegular : DocumentRegular;
         return <Tag key={fileFolderPickerIdentity(value)} value={fileFolderPickerIdentity(value)} dismissible disabled={props.disabled} className={styles.tag}
-          primaryText={{ className: styles.text, title: text }} media={<Avatar icon={<Icon />} aria-label={value.kind === 'folder' ? 'Cartella' : 'File'}
-            color={props.colorfulTagAvatars ? 'colorful' : undefined} idForColor={props.colorfulTagAvatars ? fileFolderPickerIdentity(value) : undefined} />} dismissIcon={{ 'aria-label': `Rimuovi ${text}` }}>{text}</Tag>;
+          primaryText={{ className: styles.text, title: text }} media={<Avatar icon={<Icon />} aria-label={value.kind === 'folder' ? strings.labels.folder : strings.labels.file}
+            color={props.colorfulTagAvatars ? 'colorful' : undefined} idForColor={props.colorfulTagAvatars ? fileFolderPickerIdentity(value) : undefined} />} dismissIcon={{ 'aria-label': strings.labels.removeItem(text) }}>{text}</Tag>;
       })}
     </TagGroup>}
     {runtime.values.length === 0 ? <button {...fieldProps} id={undefined} type="button" className={styles.placeholder} disabled={disabled || runtime.busy} onClick={runtime.browse}

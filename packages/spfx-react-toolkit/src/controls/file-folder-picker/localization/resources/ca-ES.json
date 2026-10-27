@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Explora fitxers…",
+    "folders": "Explora carpetes…",
+    "all": "Explora fitxers i carpetes…"
+  },
+  "placeholders": {
+    "files": "Selecciona fitxers…",
+    "folders": "Selecciona carpetes…",
+    "all": "Selecciona fitxers o carpetes…"
+  },
+  "labels": {
+    "selection": "Selecció de fitxers i carpetes",
+    "file": "Fitxer",
+    "folder": "Carpeta",
+    "unresolvedItem": "Element sense resoldre",
+    "removeItem": "Suprimeix {name}"
+  },
+  "validation": {
+    "invalidReferences": "Referències de fitxers o carpetes no vàlides.",
+    "controlledModeChanged": "El mode controlat no pot canviar mentre el control està muntat.",
+    "incompatibleItems": "La selecció conté elements incompatibles amb el tipus, la categoria o les extensions configurats. Suprimiu-los o substituïu-los.",
+    "invalidPolicy": "La configuració del tipus, la categoria, les extensions o el límit de selecció no és vàlida.",
+    "selectionLimitExceeded": "La selecció supera el límit configurat. Suprimiu els elements sobrants."
+  },
+  "errors": {
+    "configuration": "La configuració del selector no és vàlida. Comproveu l’origen, els tipus, la categoria i els límits; utilitzeu el valor predefinit sense opcions heretades.",
+    "auth-resource": "El selector ha sol·licitat un recurs d’autenticació no permès per la configuració.",
+    "auth-type": "El selector ha sol·licitat un tipus d’autenticació no admès per la configuració.",
+    "auth-challenge": "El selector requereix una comprovació d’autenticació addicional que no s’admet.",
+    "auth-provider": "No s’ha pogut obtenir el testimoni del SharePoint. Torneu-ho a provar; si el problema persisteix, comproveu l’accés i els permisos existents.",
+    "selection-identity": "No s’ha pogut verificar la identitat de l’element seleccionat. Torneu a obrir el selector i torneu-ho a provar.",
+    "selection-scope": "L’element seleccionat és fora del lloc, la biblioteca o la carpeta permesos.",
+    "selection-policy": "La selecció no compleix els requisits de tipus, categoria, extensions o nombre d’elements permesos.",
+    "selection-unavailable": "L’element seleccionat no està disponible o no és accessible.",
+    "selection-invalid": "No s’ha pogut verificar la selecció. No s’hi ha afegit cap element nou.",
+    "onedrive-unavailable": "El OneDrive de l’usuari actual no està disponible o no és accessible. Comproveu que la unitat existeix i torneu-ho a provar.",
+    "opening": "No s’ha pogut obrir el selector. Comproveu la configuració i l’accés a l’origen i torneu-ho a provar.",
+    "timeout": "El selector no ha respost a temps. Tanqueu-lo i torneu-ho a provar.",
+    "communication": "La comunicació amb el selector s’ha interromput. Torneu-lo a obrir i torneu-ho a provar."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "La funció d’autenticació opcional no ha respost a temps. Torneu-ho a provar.",
+    "unsupportedCommand": "Aquesta integració no admet aquesta ordre.",
+    "optionalGraphAuthenticationFailed": "No s’ha pogut autenticar la funció opcional del Microsoft Graph.",
+    "optionalPersonalAuthenticationFailed": "No s’ha pogut autenticar la destinació personal opcional."
+  }
+}

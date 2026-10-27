@@ -93,3 +93,14 @@ test('content type bridge keeps canonical scope identities and emits fresh valid
   assert.deepEqual(old, []);
   root.unmount();
 });
+
+test('property pane picker forwards instance strings without changing JSON selection ownership', () => {
+  const root = fixture([a], () => {});
+  const strings = { labels: { clearSelection: 'Clear wrapper selection' } };
+  try {
+    const before = [...root.current.selectedOptions];
+    root.render({ controlProps: { strings } });
+    assert.equal(root.current.strings, strings);
+    assert.deepEqual(root.current.selectedOptions, before);
+  } finally { root.unmount(); }
+});

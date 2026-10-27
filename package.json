@@ -29,7 +29,8 @@
     "pack:library": "npm run build:library && node scripts/pack-library.cjs",
     "prepublishOnly": "npm run clean && npm run build && npm run verify",
     "verify:import-graph": "node scripts/audit-import-graph.cjs .docs/maintenance/evidence/tree-shaking/import-graph.json",
-    "verify:bundle-contract": "node scripts/verify-bundle-contract.cjs"
+    "verify:bundle-contract": "node scripts/verify-bundle-contract.cjs",
+    "verify:localization": "node scripts/localization-resources.cjs --check-inventory && node --test tests/localization-resources.test.cjs tests/localization-inventory.test.cjs tests/configure-localization.test.cjs tests/localization-lifecycle.test.cjs tests/localization-native-boundaries.test.cjs"
   },
   "devDependencies": {
     "typescript": "5.3.3",

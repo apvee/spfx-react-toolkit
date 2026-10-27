@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Examinar ficheiros…",
+    "folders": "Examinar cartafoles…",
+    "all": "Examinar ficheiros e cartafoles…"
+  },
+  "placeholders": {
+    "files": "Seleccionar ficheiros…",
+    "folders": "Seleccionar cartafoles…",
+    "all": "Seleccionar ficheiros ou cartafoles…"
+  },
+  "labels": {
+    "selection": "Selección de ficheiros e cartafoles",
+    "file": "Ficheiro",
+    "folder": "Cartafol",
+    "unresolvedItem": "Elemento sen resolver",
+    "removeItem": "Quitar {name}"
+  },
+  "validation": {
+    "invalidReferences": "Referencias de ficheiros ou cartafoles non válidas.",
+    "controlledModeChanged": "O modo controlado non pode cambiar mentres o control está montado.",
+    "incompatibleItems": "A selección contén elementos incompatibles co tipo, a categoría ou as extensións configurados. Quíteos ou substitúaos.",
+    "invalidPolicy": "A configuración do tipo, a categoría, as extensións ou o límite de selección non é válida.",
+    "selectionLimitExceeded": "A selección supera o límite configurado. Quite os elementos sobrantes."
+  },
+  "errors": {
+    "configuration": "A configuración do selector non é válida. Comprobe a orixe, os tipos, a categoría e os límites; use a predefinición sen opcións herdadas.",
+    "auth-resource": "O selector solicitou un recurso de autenticación non permitido pola configuración.",
+    "auth-type": "O selector solicitou un tipo de autenticación non admitido pola configuración.",
+    "auth-challenge": "O selector require unha comprobación de autenticación adicional que non se admite.",
+    "auth-provider": "Non se puido obter o token de SharePoint. Ténteo de novo; se o problema persiste, comprobe o acceso e os permisos existentes.",
+    "selection-identity": "Non se puido verificar a identidade do elemento seleccionado. Abra de novo o selector e ténteo outra vez.",
+    "selection-scope": "O elemento seleccionado está fóra do sitio, da biblioteca ou do cartafol permitidos.",
+    "selection-policy": "A selección non cumpre os requisitos de tipo, categoría, extensións ou número de elementos permitidos.",
+    "selection-unavailable": "O elemento seleccionado non está dispoñible ou non é accesible.",
+    "selection-invalid": "Non se puido verificar a selección. Non se engadiu ningún elemento novo.",
+    "onedrive-unavailable": "O OneDrive do usuario actual non está dispoñible ou non é accesible. Comprobe que a unidade existe e ténteo de novo.",
+    "opening": "Non se puido abrir o selector. Comprobe a configuración e o acceso á orixe e ténteo de novo.",
+    "timeout": "O selector non respondeu a tempo. Pécheo e ténteo de novo.",
+    "communication": "Interrompeuse a comunicación co selector. Ábrao de novo e ténteo outra vez."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "A función de autenticación opcional non respondeu a tempo. Ténteo de novo.",
+    "unsupportedCommand": "Esta integración non admite esa orde.",
+    "optionalGraphAuthenticationFailed": "Non se puido autenticar a función opcional de Microsoft Graph.",
+    "optionalPersonalAuthenticationFailed": "Non se puido autenticar o destino persoal opcional."
+  }
+}

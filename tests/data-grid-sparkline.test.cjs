@@ -26,7 +26,7 @@ test.after(async () => { if (host) {
     act(() => { ReactDOM.unmountComponentAtNode(host); });
     host.remove();
 } await harness.cleanup(); });
-function render(raw, { color = '#0067b8', showValue = true, dir = 'ltr', theme = fluent.webLightTheme, adapter = api.DataGridSparklineCell } = {}) { const { RendererProvider } = require('@griffel/react'); const item = { raw }; const column = { kind: 'sparkline', id: 'trend', options: { color, showValue }, tooltip: () => undefined }; const classified = values.classifyDataGridValue(column, raw, item); assert.equal(classified.status, 'valid'); const context = { column, item, rowId: 'original', value: classified, locale: 'en-US', strings }; act(() => { ReactDOM.render(React.createElement(RendererProvider, { renderer }, React.createElement(fluent.FluentProvider, { theme, dir }, React.createElement(adapter, { column, context, value: classified.value }))), host); }); return host.querySelector('svg'); }
+function render(raw, { color = '#0067b8', showValue = true, dir = 'ltr', theme = fluent.webLightTheme, adapter = api.DataGridSparklineCell, locale = 'en-US', cellStrings = strings } = {}) { const { RendererProvider } = require('@griffel/react'); const item = { raw }; const column = { kind: 'sparkline', id: 'trend', options: { color, showValue }, tooltip: () => undefined }; const classified = values.classifyDataGridValue(column, raw, item); assert.equal(classified.status, 'valid'); const context = { column, item, rowId: 'original', value: classified, locale, strings: cellStrings }; act(() => { ReactDOM.render(React.createElement(RendererProvider, { renderer }, React.createElement(fluent.FluentProvider, { theme, dir }, React.createElement(adapter, { column, context, value: classified.value }))), host); }); return host.querySelector('svg'); }
 test('official chart remounts when plot data change and preserves SVG on color theme RTL-only updates', () => {
     const first = render([1, 2, 1]);
     const firstPath = first.querySelector('path.line').getAttribute('d');
@@ -109,4 +109,18 @@ test('large official chart series has finite coordinates and keeps original summ
     const summary = host.querySelector('[role=img]').getAttribute('aria-label');
     assert.match(summary, /Minimum -10.*Maximum 8/);
     assert.equal(raw.length, 20000);
+});
+
+
+test('custom English chart summaries keep Italian formatted metrics and original numeric callback data', async () => {
+    const state = await harness.loadModule('packages/spfx-react-toolkit/src/controls/data-grid/state-validation.internal.ts', { nativeCulture: 'it-IT' });
+    let formatted, received;
+    const cellStrings = state.resolveDataGridStrings({ sparklineSummary: values => { formatted = values; return `English latest ${values.last}`; } });
+    render([10000.5, 20000.5], { locale: 'it-IT', cellStrings, color: data => { received = data; return '#0067b8'; } });
+    assert.equal(host.querySelector('[role=img]').getAttribute('aria-label'), 'English latest 20.000,5');
+    assert.equal(formatted.first, '10.000,5'); assert.equal(formatted.last, '20.000,5');
+    assert.equal(received.summary.first, 10000.5); assert.equal(received.summary.last, 20000.5);
+    assert.deepEqual(received.item.raw, [10000.5, 20000.5]);
+    render([10000.5, 20000.5], { locale: 'it-IT', cellStrings: state.resolveDataGridStrings() });
+    assert.match(host.querySelector('[role=img]').getAttribute('aria-label'), /Primo 10[.]000,5; Ultimo 20[.]000,5/);
 });

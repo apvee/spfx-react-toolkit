@@ -1,0 +1,27 @@
+{
+  "empty": "Нема доступних података",
+  "noResults": "Нема пронађених резултата",
+  "noVisibleColumns": "Нема видљивих колона",
+  "loading": "Учитавање",
+  "actions": "Радње",
+  "moreActions": "Још радњи",
+  "yes": "Да",
+  "no": "Не",
+  "noTags": "Нема ознака",
+  "noObservations": "Нема посматрања",
+  "invalidValue": "Неважећа вредност",
+  "selectAllRows": "Изабери све редове",
+  "retry": "Покушај поново",
+  "selectRowTemplate": "Изабери ред {rowId}",
+  "sparklineSummaryTemplate": "Прва вредност {first}; Последња вредност {last}; Минимум {minimum}; Максимум {maximum}; Просек {average}; Промена {change}; Процентуална промена {changePercent}",
+  "tagOverflow": {
+    "one": "Прикажи још {count} ознаку",
+    "few": "Прикажи још {count} ознаке",
+    "other": "Прикажи још {count} ознака"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} глас",
+    "few": "{formattedCount} гласа",
+    "other": "{formattedCount} гласова"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Bla gjennom filer…",
+    "folders": "Bla gjennom mapper…",
+    "all": "Bla gjennom filer og mapper…"
+  },
+  "placeholders": {
+    "files": "Velg filer…",
+    "folders": "Velg mapper…",
+    "all": "Velg filer eller mapper…"
+  },
+  "labels": {
+    "selection": "Fil- og mappevalg",
+    "file": "Fil",
+    "folder": "Mappe",
+    "unresolvedItem": "Uavklart element",
+    "removeItem": "Fjern {name}"
+  },
+  "validation": {
+    "invalidReferences": "Ugyldige fil- eller mappereferanser.",
+    "controlledModeChanged": "Kontrollert modus kan ikke endres mens kontrollen er montert.",
+    "incompatibleItems": "Utvalget inneholder elementer som ikke er kompatible med den konfigurerte typen, kategorien eller filtypene. Fjern eller erstatt dem.",
+    "invalidPolicy": "Ugyldig konfigurasjon av utvalgstype, kategori, filtyper eller grense.",
+    "selectionLimitExceeded": "Utvalget overskrider den konfigurerte grensen. Fjern de overflødige elementene."
+  },
+  "errors": {
+    "configuration": "Ugyldig velgerkonfigurasjon. Kontroller kilden, typene, kategorien og grensene; bruk forhåndsinnstillingen uten eldre alternativer.",
+    "auth-resource": "Velgeren ba om en godkjenningsressurs som ikke er tillatt i konfigurasjonen.",
+    "auth-type": "Velgeren ba om en godkjenningstype som ikke støttes av konfigurasjonen.",
+    "auth-challenge": "Velgeren krever en ekstra godkjenningskontroll som ikke støttes.",
+    "auth-provider": "Kunne ikke hente SharePoint-tokenet. Prøv på nytt; hvis problemet vedvarer, kontrollerer du tilgangen og de eksisterende tillatelsene.",
+    "selection-identity": "Kunne ikke bekrefte identiteten til det valgte elementet. Åpne velgeren på nytt og prøv igjen.",
+    "selection-scope": "Det valgte elementet er utenfor det tillatte nettstedet, biblioteket eller den tillatte mappen.",
+    "selection-policy": "Utvalget oppfyller ikke kravene til tillatt type, kategori, filtyper eller antall elementer.",
+    "selection-unavailable": "Det valgte elementet er utilgjengelig eller kan ikke åpnes.",
+    "selection-invalid": "Kunne ikke bekrefte utvalget. Ingen nye elementer ble lagt til.",
+    "onedrive-unavailable": "OneDrive for gjeldende bruker er utilgjengelig eller kan ikke åpnes. Kontroller at stasjonen finnes, og prøv på nytt.",
+    "opening": "Kunne ikke åpne velgeren. Kontroller konfigurasjonen og tilgangen til kilden, og prøv på nytt.",
+    "timeout": "Velgeren svarte ikke i tide. Lukk den og prøv på nytt.",
+    "communication": "Kommunikasjonen med velgeren ble avbrutt. Åpne den på nytt og prøv igjen."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Den valgfrie godkjenningsfunksjonen svarte ikke i tide. Prøv på nytt.",
+    "unsupportedCommand": "Denne integrasjonen støtter ikke den kommandoen.",
+    "optionalGraphAuthenticationFailed": "Kunne ikke godkjenne den valgfrie Microsoft Graph-funksjonen.",
+    "optionalPersonalAuthenticationFailed": "Kunne ikke godkjenne det valgfrie personlige målet."
+  }
+}

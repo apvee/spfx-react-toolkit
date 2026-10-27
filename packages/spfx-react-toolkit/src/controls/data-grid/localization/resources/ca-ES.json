@@ -1,0 +1,27 @@
+{
+  "empty": "No hi ha dades disponibles",
+  "noResults": "No s'ha trobat cap resultat",
+  "noVisibleColumns": "No hi ha columnes visibles",
+  "loading": "S'està carregant",
+  "actions": "Accions",
+  "moreActions": "Més accions",
+  "yes": "Sí",
+  "no": "No",
+  "noTags": "No hi ha etiquetes",
+  "noObservations": "No hi ha observacions",
+  "invalidValue": "Valor no vàlid",
+  "selectAllRows": "Selecciona totes les files",
+  "retry": "Torna-ho a provar",
+  "selectRowTemplate": "Selecciona la fila {rowId}",
+  "sparklineSummaryTemplate": "Primer {first}; Últim {last}; Mínim {minimum}; Màxim {maximum}; Mitjana {average}; Canvi {change}; Percentatge de canvi {changePercent}",
+  "tagOverflow": {
+    "one": "Mostra {count} etiqueta més",
+    "many": "Mostra {count} etiquetes més",
+    "other": "Mostra {count} etiquetes més"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} vot",
+    "many": "{formattedCount} vots",
+    "other": "{formattedCount} vots"
+  }
+}

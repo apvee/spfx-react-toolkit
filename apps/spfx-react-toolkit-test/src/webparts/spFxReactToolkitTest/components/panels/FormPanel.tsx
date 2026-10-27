@@ -109,6 +109,8 @@ const FormPanel: React.FC = () => {
   const [adapter, setAdapter] = React.useState<Adapter>('Textarea');
   const [colorfulTagAvatars, setColorfulTagAvatars] = React.useState(false);
   const [size, setSize] = React.useState(640); const [disabled, setDisabled] = React.useState(false);
+  const [customStrings, setCustomStrings] = React.useState(false);
+  const formStrings = customStrings ? { unexpectedFailure: 'The report could not be saved. Please retry.', fileInput: { browseLabel: 'Attach report', clearLabel: 'Remove attachment' }, arraySection: { add: 'Add report line' } } : undefined;
   const [rtl, setRtl] = React.useState(false); const [fail, setFail] = React.useState(false);
   const [delay, setDelay] = React.useState(false); const pendingSave = React.useRef<(() => void) | undefined>(undefined);
   const [count, setCount] = React.useState(0); const [status, setStatus] = React.useState('Ready to edit.');
@@ -117,9 +119,9 @@ const FormPanel: React.FC = () => {
   const slotLabelRef = React.useMemo(() => React.createRef<HTMLSpanElement>(), []);
   const slotHintRef = React.useMemo(() => React.createRef<HTMLDivElement>(), []);
   const formRef = React.useMemo(() => React.createRef<HTMLFormElement>(), []);
-  const methods = Order.useForm({ defaultValues: createRecord('Quarterly report'), mode: 'onBlur' });
-  const schemaMethods = Numeric.useForm({ defaultValues: { quantity: '12' } });
-  const dynamicMethods = Form.useForm({ defaultValues: { dynamic: 'Quarterly report' } });
+  const methods = Order.useForm({ defaultValues: createRecord('Quarterly report'), mode: 'onBlur', strings: formStrings });
+  const schemaMethods = Numeric.useForm({ defaultValues: { quantity: '12' }, strings: formStrings });
+  const dynamicMethods = Form.useForm({ defaultValues: { dynamic: 'Quarterly report' }, strings: formStrings });
   const values = methods.watch(); const { dirtyFields, touchedFields, errors } = methods.formState;
   const recordDirty = methods.formState.isDirty;
   const schemaDirty = schemaMethods.formState.isDirty;
@@ -187,6 +189,7 @@ const FormPanel: React.FC = () => {
   return <section data-form-demo="panel" className={demo.panel}><FluentProvider dir={rtl ? 'rtl' : undefined}>
     <DemoCard title="Form" iconName="Edit" description="Edit the report and try one field at a time in the same form."
       controls={<>
+        <Checkbox input={{ as: 'input', ...{ 'data-form-demo': 'strings' } }} label="Custom labels and failure text" checked={customStrings} onChange={(_, data) => setCustomStrings(data.checked === true)} />
         <Field label="Example"><Select data-demo-variant="Family" data-form-demo="mode" value={family} disabled={isSubmitting} onChange={(_, data) => {
           if (data.value === 'rules' || data.value === 'object' || data.value === 'array' || data.value === 'schema' || data.value === 'dynamic') { if (data.value === 'schema') schemaMethods.reset({ quantity: '12' }); if (data.value === 'dynamic') dynamicMethods.reset({ dynamic: 'Quarterly report' }); setFamily(data.value); setStatus(data.value === 'schema' || data.value === 'dynamic' ? 'New model for the selected family.' : 'Report model preserved.'); }
         }}><option value="rules">Variable field</option><option value="object">Object</option><option value="array">Ordered rows</option><option value="schema">Numeric schema</option><option value="dynamic">Dynamic form</option></Select></Field>

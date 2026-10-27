@@ -22,9 +22,11 @@ const formatFileNames = (files: FileList): string => Array.from(files, file => f
  * @example `<Order.FileInput name="attachments" label="Attachments" multiple />`
  */
 export const FormFileInput = React.forwardRef<HTMLInputElement, FormFileInputProps<FieldValues>>(function FormFileInput(
-  { browseLabel = 'Browse', className, clearLabel = 'Clear', disabled, fieldProps, formatFiles = formatFileNames, hint, id, label, name, onBlur, onChange, orientation, required, rules, ...props }, ref
+  { browseLabel: suppliedBrowseLabel, className, clearLabel: suppliedClearLabel, disabled, fieldProps, formatFiles = formatFileNames, hint, id, label, name, onBlur, onChange, orientation, required, rules, ...props }, ref
 ) {
-  const { methods } = useFormRuntimeContext();
+  const { methods, strings } = useFormRuntimeContext();
+  const browseLabel = suppliedBrowseLabel ?? strings.fileInput.browseLabel;
+  const clearLabel = suppliedClearLabel ?? strings.fileInput.clearLabel;
   // The browser native file API explicitly uses null for an empty selection.
   // eslint-disable-next-line @rushstack/no-new-null
   const binding = useFieldAdapter<FieldValues, FileList | null>({ describedBy: props['aria-describedby'], className, disabled, fieldProps, hint, id, label, name, orientation, ref, required, rules });

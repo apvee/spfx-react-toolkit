@@ -1,0 +1,81 @@
+{
+  "labels": {
+    "selectOne": "Selecione um item",
+    "selectMany": "Selecione itens",
+    "search": "Pesquisar…",
+    "clearSelection": "Limpar seleção",
+    "clearSearch": "Limpar pesquisa",
+    "options": "Opções",
+    "searchOptions": "Pesquisar opções",
+    "selectedOne": "Item selecionado",
+    "selectedMany": "Itens selecionados",
+    "noSelection": "Nenhuma seleção",
+    "resolveIds": "Resolver IDs",
+    "moreResults": "Mais resultados",
+    "retry": "Tentar novamente",
+    "namedOptions": "{name}: Opções",
+    "namedSearch": "{name}: Pesquisar",
+    "selectedCount": {
+      "one": "{count} item selecionado",
+      "many": "{count} itens selecionados",
+      "other": "{count} itens selecionados"
+    },
+    "minimumSearchLength": {
+      "one": "Digite pelo menos {count} caractere para pesquisar",
+      "many": "Digite pelo menos {count} caracteres para pesquisar",
+      "other": "Digite pelo menos {count} caracteres para pesquisar"
+    }
+  },
+  "status": {
+    "searching": "Pesquisando…",
+    "loading": "Carregando…",
+    "partialSearch": "Pesquisa parcial: refine sua pesquisa.",
+    "noOtherResults": "Nenhum outro resultado para esta pesquisa",
+    "noResults": "Nenhum resultado para esta pesquisa",
+    "noOptions": "Nenhuma opção disponível.",
+    "moreItemsAvailable": "Há mais itens disponíveis.",
+    "partialSuggestions": "Sugestões parciais: algumas fontes estão indisponíveis.",
+    "unresolvedValue": "Valor não resolvido",
+    "partialHubs": "Lista parcial de hubs: restrinja o escopo ou use o modo de site.",
+    "partialSiteCollections": "Pesquisa parcial de coleções de sites (máximo de 1000 resultados): restrinja seus critérios."
+  },
+  "sections": {
+    "consumer": "Opções fornecidas",
+    "currentSite": "Site atual",
+    "hubSite": "Hub associado",
+    "catalog": "Opções disponíveis",
+    "currentUser": "Você",
+    "people": "Pessoas sugeridas",
+    "memberOf": "Seus grupos"
+  },
+  "metadata": {
+    "documentLibrary": "Biblioteca de documentos",
+    "sharePointList": "Lista do SharePoint",
+    "personalView": "Exibição pessoal",
+    "publicView": "Exibição pública",
+    "field": "Campo",
+    "itemDescription": "Item · ID {id}",
+    "file": "Arquivo",
+    "fileWithExtension": "Arquivo {extension}",
+    "folder": "Pasta",
+    "sharePointGroup": "Grupo do SharePoint · SharePoint",
+    "securityGroup": "Grupo de segurança · Entra",
+    "distributionList": "Lista de distribuição · Entra",
+    "unvalidatedEmail": "Email não verificado",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "O limite de seleção foi atingido.",
+    "selectionLimitExceeded": "A seleção excede o limite configurado.",
+    "unresolvedValues": "Alguns valores selecionados não foram resolvidos.",
+    "outOfScopeValues": "A seleção contém valores fora do escopo configurado.",
+    "resolveRequiredUserIds": "Resolva os IDs necessários dos usuários selecionados."
+  },
+  "errors": {
+    "candidateOutOfScope": "O candidato está fora do escopo configurado.",
+    "incompleteCandidateResolution": "Não foi possível resolver completamente o candidato.",
+    "resolutionFailed": "A resolução falhou.",
+    "graphUnavailable": "O cliente do Microsoft Graph está indisponível."
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "labels": {
+    "selectOne": "項目を選択",
+    "selectMany": "複数の項目を選択",
+    "search": "検索…",
+    "clearSelection": "選択をクリア",
+    "clearSearch": "検索をクリア",
+    "options": "選択肢",
+    "searchOptions": "選択肢を検索",
+    "selectedOne": "選択した項目",
+    "selectedMany": "選択した項目",
+    "noSelection": "選択なし",
+    "resolveIds": "ID を解決",
+    "moreResults": "その他の結果",
+    "retry": "再試行",
+    "namedOptions": "{name}: 選択肢",
+    "namedSearch": "{name}: 検索",
+    "selectedCount": {
+      "other": "{count} 件の項目を選択済み"
+    },
+    "minimumSearchLength": {
+      "other": "検索するには少なくとも {count} 文字入力してください"
+    }
+  },
+  "status": {
+    "searching": "検索中…",
+    "loading": "読み込み中…",
+    "partialSearch": "検索結果が一部のみです。検索条件を絞り込んでください。",
+    "noOtherResults": "この検索の他の結果はありません",
+    "noResults": "この検索の結果はありません",
+    "noOptions": "利用できる選択肢はありません。",
+    "moreItemsAvailable": "他の項目も利用できます。",
+    "partialSuggestions": "候補が一部のみです。一部のソースを利用できません。",
+    "unresolvedValue": "未解決の値",
+    "partialHubs": "ハブの一覧が一部のみです。範囲を絞るか、サイトモードを使用してください。",
+    "partialSiteCollections": "サイトコレクションの検索結果が一部のみです（最大 1000 件）。条件を絞り込んでください。"
+  },
+  "sections": {
+    "consumer": "提供された選択肢",
+    "currentSite": "現在のサイト",
+    "hubSite": "関連付けられたハブ",
+    "catalog": "利用できる選択肢",
+    "currentUser": "自分",
+    "people": "おすすめのユーザー",
+    "memberOf": "自分のグループ"
+  },
+  "metadata": {
+    "documentLibrary": "ドキュメントライブラリ",
+    "sharePointList": "SharePoint リスト",
+    "personalView": "個人用ビュー",
+    "publicView": "パブリックビュー",
+    "field": "フィールド",
+    "itemDescription": "項目 · ID {id}",
+    "file": "ファイル",
+    "fileWithExtension": "{extension} ファイル",
+    "folder": "フォルダー",
+    "sharePointGroup": "SharePoint グループ · SharePoint",
+    "securityGroup": "セキュリティグループ · Entra",
+    "distributionList": "配布リスト · Entra",
+    "unvalidatedEmail": "未確認のメールアドレス",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "選択数の上限に達しました。",
+    "selectionLimitExceeded": "選択数が設定された上限を超えています。",
+    "unresolvedValues": "選択した値の一部が未解決です。",
+    "outOfScopeValues": "選択内容に設定範囲外の値が含まれています。",
+    "resolveRequiredUserIds": "選択したユーザーに必要な ID を解決してください。"
+  },
+  "errors": {
+    "candidateOutOfScope": "候補が設定された範囲外です。",
+    "incompleteCandidateResolution": "候補を完全に解決できませんでした。",
+    "resolutionFailed": "解決に失敗しました。",
+    "graphUnavailable": "Microsoft Graph クライアントを利用できません。"
+  }
+}

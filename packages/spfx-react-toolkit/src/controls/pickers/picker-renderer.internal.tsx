@@ -1,3 +1,4 @@
+import { resolvePickersStrings } from './pickers-strings.internal';
 import * as React from 'react';
 import { Avatar, Button, Field, Option, OptionGroup, Persona, Tag, TagPicker, TagPickerControl, TagPickerGroup, TagPickerInput, TagPickerList, TagPickerOption, TagPickerOptionGroup, Tooltip, useId } from '@fluentui/react-components';
 import { AppsListRegular, CalendarRegular, CheckboxCheckedRegular, DocumentPdfRegular, DocumentRegular, EyeRegular, FolderRegular, GlobeRegular, LinkRegular, MailRegular, MoneyRegular, NumberSymbolRegular, OptionsRegular, PeopleTeamRegular, PersonRegular, TextAlignLeftRegular, TextBulletListSquareRegular } from '@fluentui/react-icons';
@@ -28,6 +29,7 @@ export interface PickerRendererProps<V extends PickerValue, T extends PickerOpti
 
 /** Native Fluent renderer; semantic labels/status/actions remain control owned. */
 export function PickerRenderer<V extends PickerValue, T extends PickerOption<V>>({ props, runtime, defaultPresentation, defaultMultiselect, showBlankOption }: PickerRendererProps<V, T>): React.ReactElement {
+  const strings = resolvePickersStrings(props.strings);
   const styles = usePickerStyles(), sx = useSx(), statusId = useId('picker-status');
   const ControlBoundary = React.useContext(PickerControlBoundaryContext);
   const wrapControl = (children: React.ReactElement): React.ReactElement => ControlBoundary === undefined ? children :
@@ -68,13 +70,13 @@ export function PickerRenderer<V extends PickerValue, T extends PickerOption<V>>
   const sections = runtime.sections.map(section => ({ ...section, options: section.options.filter(available) })).filter(section => section.options.length > 0);
   const count = pinnedSections.reduce((sum, section) => sum + section.options.length, 0) + (typedSearch ? rows.length : sections.reduce((sum, section) => sum + section.options.length, 0));
   const avatar = (option: T, key: string): React.ReactElement => {
-    const presentation = pickerPresentation(option), Icon = icons[presentation.icon];
+    const presentation = pickerPresentation(option, strings), Icon = icons[presentation.icon];
     return <Avatar aria-hidden size={tag ? undefined : props.size === 'large' ? 24 : 20} name={presentation.user ? option.text : undefined} shape="square"
       color={tag && props.colorfulTagAvatars ? 'colorful' : presentation.user ? undefined : 'brand'} idForColor={tag && props.colorfulTagAvatars ? key : undefined}
       image={presentation.imageUrl === undefined ? undefined : { src: presentation.imageUrl }} icon={presentation.user ? undefined : <Icon />} />;
   };
   const optionNode = (option: T): React.ReactElement => {
-    const presentation = pickerPresentation(option), Icon = icons[presentation.icon];
+    const presentation = pickerPresentation(option, strings), Icon = icons[presentation.icon];
     const content = <Persona name={option.text} title={presentation.description} secondaryText={{ children: presentation.secondary, className: styles.text, title: presentation.secondary }}
       primaryText={{ className: styles.text, title: option.text }} className={styles.persona} size="extra-small" textAlignment="center"
       avatar={{ size: 24, shape: 'square', color: presentation.user ? undefined : 'brand', name: presentation.user ? option.text : undefined,
@@ -84,15 +86,15 @@ export function PickerRenderer<V extends PickerValue, T extends PickerOption<V>>
         // Fluent requires null to omit the check column for unselected single options; selected rows retain the native check.
         checkIcon={multi || runtime.selectedOptions.includes(option.key) ? undefined : null}>{content}</Option>;
   };
-  const prompt = `Digita almeno ${runtime.minimum} caratteri per cercare`;
+  const prompt = strings.labels.minimumSearchLength(runtime.minimum);
   const feedback = runtime.searchFeedback;
-  const searchStatus = feedback.phase === 'pending' ? props.loadingContent ?? 'Ricerca in corso…' :
+  const searchStatus = feedback.phase === 'pending' ? props.loadingContent ?? strings.status.searching :
     feedback.phase === 'error' ? props.errorContent ?? feedback.error?.message :
-    feedback.phase === 'partial' ? feedback.warning ?? 'Ricerca parziale: affina la ricerca.' :
-    feedback.phase === 'complete' && rows.length === 0 ? props.emptyContent ?? (feedback.matchesVisibleChoices ? 'Nessun altro risultato per questa ricerca' : 'Nessun risultato per questa ricerca') : undefined;
+    feedback.phase === 'partial' ? feedback.warning ?? strings.status.partialSearch :
+    feedback.phase === 'complete' && rows.length === 0 ? props.emptyContent ?? (feedback.matchesVisibleChoices ? strings.status.noOtherResults : strings.status.noResults) : undefined;
   const belowMinimum = props.searchable !== false && runtime.query.trim().length > 0 && !typedSearch;
-  const status = typedSearch ? searchStatus : belowMinimum ? props.emptyContent : runtime.loading ? props.loadingContent ?? 'Caricamento…' : runtime.error !== undefined ? props.errorContent ?? runtime.error.message : runtime.warning !== undefined ? runtime.warning :
-    runtime.catalogHint !== undefined ? runtime.catalogHint : count === 0 ? props.emptyContent ?? (props.searchable === false ? 'Nessuna opzione disponibile.' : undefined) : undefined;
+  const status = typedSearch ? searchStatus : belowMinimum ? props.emptyContent : runtime.loading ? props.loadingContent ?? strings.status.loading : runtime.error !== undefined ? props.errorContent ?? runtime.error.message : runtime.warning !== undefined ? runtime.warning :
+    runtime.catalogHint !== undefined ? runtime.catalogHint : count === 0 ? props.emptyContent ?? (props.searchable === false ? strings.status.noOptions : undefined) : undefined;
   // Contextual metadata failures do not replace feedback for the active typed query.
   const queryFeedback = typedSearch || belowMinimum;
   const additionalError = queryFeedback ? runtime.contextualError ?? (runtime.error !== feedback.error ? runtime.error : undefined) : undefined;
@@ -103,7 +105,7 @@ export function PickerRenderer<V extends PickerValue, T extends PickerOption<V>>
   </div>;
   const options = <>
     {props.suggestionsHeader === undefined ? undefined : <div role="presentation" className={styles.status}>{renderContentSlot(props.suggestionsHeader, 'span', sx, { shorthand: 'preserve' })}</div>}
-    {!tag && runtime.selectedOptions.length > 0 ? <OptionGroup label={multi ? 'Selezionati' : 'Selezionato'}>{runtime.selectedOptions.map(key => {
+    {!tag && runtime.selectedOptions.length > 0 ? <OptionGroup label={multi ? strings.labels.selectedMany : strings.labels.selectedOne}>{runtime.selectedOptions.map(key => {
       const option = runtime.selectedItems.find(item => item.key === key);
       return option === undefined ? <Option key={key} value={key} text={runtime.selectionText(key)}>{runtime.selectionText(key)}</Option> : optionNode(option);
     })}</OptionGroup> : undefined}
@@ -115,12 +117,12 @@ export function PickerRenderer<V extends PickerValue, T extends PickerOption<V>>
       <OptionGroup key={section.source} label={section.label}>{section.options.map(optionNode)}</OptionGroup>)}
     {statusContent}
   </>;
-  const searchPlaceholder = props.placeholder ?? (props.searchable === false ? 'Cerca…' : prompt);
+  const searchPlaceholder = props.placeholder ?? (props.searchable === false ? strings.labels.search : prompt);
   const inputProps = { 'aria-label': name, 'aria-labelledby': props['aria-labelledby'], placeholder: searchPlaceholder };
-  const selectionText = multi && runtime.selectedOptions.length > 1 ? `${runtime.selectedOptions.length} elementi selezionati` : runtime.selectedOptions.map(runtime.selectionText).join(', ');
+  const selectionText = multi && runtime.selectedOptions.length > 1 ? strings.labels.selectedCount(runtime.selectedOptions.length) : runtime.selectedOptions.map(runtime.selectionText).join(', ');
   const selected = runtime.selectedOptions.length === 1 ? runtime.selectedItems.find(item => item.key === runtime.selectedOptions[0]) : undefined;
   const control = <div ref={boundaryRef} onBlur={onBlur} onFocus={() => { blurVersion.current++; }}><Field className={sx(styles.root, props.className)} label={props.id === undefined ? props.label : resolveShorthand(props.label, { defaultProps: { htmlFor: props.id } })} hint={props.hint} required={props.required}
-    validationState={props.validationState ?? (runtime.validation ? 'error' : undefined)} validationMessage={props.validationMessage ?? runtime.validation}>
+    validationState={props.validationState ?? (runtime.validation !== undefined ? 'error' : undefined)} validationMessage={props.validationMessage ?? runtime.validation}>
     {fieldProps => {
       const describedBy = [fieldProps['aria-describedby'], statusContent === undefined ? undefined : statusId].filter(Boolean).join(' ') || undefined;
       return <>{wrapControl(tag ? <TagPicker open={runtime.open} onOpenChange={(event, data) => { if (event.type !== 'blur') runtime.setOpen(data.open); }} disabled={props.disabled} size={props.size}
@@ -139,15 +141,15 @@ export function PickerRenderer<V extends PickerValue, T extends PickerOption<V>>
       </TagPickerControl>
       <TagPickerList ref={popupRef} className={styles.list}>{options}</TagPickerList>
     </TagPicker> : <PickerDropdown fieldProps={{ ...fieldProps, 'aria-label': name, 'aria-labelledby': props['aria-labelledby'], 'aria-describedby': describedBy, id: props.id ?? fieldProps.id }}
-      runtime={runtime} multiselect={multi} disabled={props.disabled} searchable={props.searchable !== false} size={props.size}
+      strings={strings} runtime={runtime} multiselect={multi} disabled={props.disabled} searchable={props.searchable !== false} size={props.size}
       className={sx(styles.control, props.controlClassName)} selectionText={selectionText}
       selectionMedia={selected === undefined ? undefined : avatar(selected, selected.key)} searchPlaceholder={searchPlaceholder}
       name={name} contains={contains} popupRef={popupRef}>{options}</PickerDropdown>)}
     <div ref={actionsRef} className={styles.actions}>
-      {showBlankOption ? <Button size="small" disabled={disabled} onClick={event => { void runtime.clear(event); }}>Nessuna selezione</Button> : undefined}
-      {runtime.error !== undefined ? <Button size="small" disabled={disabled} onClick={runtime.retry}>Riprova</Button> : undefined}
-      {runtime.canResolve ? <Button size="small" disabled={disabled || runtime.unresolvedOptions.length > 0} onClick={event => { void runtime.resolve(event); }}>Risolvi ID</Button> : undefined}
-      {runtime.continuation !== undefined ? <Button size="small" disabled={disabled || runtime.loading} onClick={() => { void runtime.loadMore(); }}>Altri risultati</Button> : undefined}
+      {showBlankOption ? <Button size="small" disabled={disabled} onClick={event => { void runtime.clear(event); }}>{strings.labels.noSelection}</Button> : undefined}
+      {runtime.error !== undefined ? <Button size="small" disabled={disabled} onClick={runtime.retry}>{strings.labels.retry}</Button> : undefined}
+      {runtime.canResolve ? <Button size="small" disabled={disabled || runtime.unresolvedOptions.length > 0} onClick={event => { void runtime.resolve(event); }}>{strings.labels.resolveIds}</Button> : undefined}
+      {runtime.continuation !== undefined ? <Button size="small" disabled={disabled || runtime.loading} onClick={() => { void runtime.loadMore(); }}>{strings.labels.moreResults}</Button> : undefined}
     </div></>; }}
   </Field></div>;
   return props.tooltip === undefined ? control : <Tooltip {...props.tooltip}>{control}</Tooltip>;

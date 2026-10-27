@@ -1,0 +1,83 @@
+{
+  "labels": {
+    "selectOne": "Выберите элемент",
+    "selectMany": "Выберите элементы",
+    "search": "Поиск…",
+    "clearSelection": "Очистить выбор",
+    "clearSearch": "Очистить поиск",
+    "options": "Параметры",
+    "searchOptions": "Поиск параметров",
+    "selectedOne": "Выбранный элемент",
+    "selectedMany": "Выбранные элементы",
+    "noSelection": "Нет выбранных элементов",
+    "resolveIds": "Найти объекты по идентификаторам",
+    "moreResults": "Другие результаты",
+    "retry": "Повторить",
+    "namedOptions": "{name}: Параметры",
+    "namedSearch": "{name}: Поиск",
+    "selectedCount": {
+      "one": "Выбран {count} элемент",
+      "few": "Выбрано {count} элемента",
+      "many": "Выбрано {count} элементов",
+      "other": "Выбрано {count} элемента"
+    },
+    "minimumSearchLength": {
+      "one": "Введите не менее {count} символа для поиска",
+      "few": "Введите не менее {count} символов для поиска",
+      "many": "Введите не менее {count} символов для поиска",
+      "other": "Введите не менее {count} символа для поиска"
+    }
+  },
+  "status": {
+    "searching": "Поиск…",
+    "loading": "Загрузка…",
+    "partialSearch": "Неполный поиск: уточните запрос.",
+    "noOtherResults": "Нет других результатов для этого поиска",
+    "noResults": "Нет результатов для этого поиска",
+    "noOptions": "Нет доступных вариантов.",
+    "moreItemsAvailable": "Доступны дополнительные элементы.",
+    "partialSuggestions": "Неполные предложения: некоторые источники недоступны.",
+    "unresolvedValue": "Неопознанное значение",
+    "partialHubs": "Неполный список концентраторов: сузьте область или используйте режим сайта.",
+    "partialSiteCollections": "Неполный поиск семейств сайтов (не более 1000 результатов): сузьте критерии."
+  },
+  "sections": {
+    "consumer": "Предоставленные варианты",
+    "currentSite": "Текущий сайт",
+    "hubSite": "Связанный концентратор",
+    "catalog": "Доступные варианты",
+    "currentUser": "Вы",
+    "people": "Рекомендуемые люди",
+    "memberOf": "Ваши группы"
+  },
+  "metadata": {
+    "documentLibrary": "Библиотека документов",
+    "sharePointList": "Список SharePoint",
+    "personalView": "Личное представление",
+    "publicView": "Общее представление",
+    "field": "Поле",
+    "itemDescription": "Элемент · ИД {id}",
+    "file": "Файл",
+    "fileWithExtension": "Файл {extension}",
+    "folder": "Папка",
+    "sharePointGroup": "Группа SharePoint · SharePoint",
+    "securityGroup": "Группа безопасности · Entra",
+    "distributionList": "Список рассылки · Entra",
+    "unvalidatedEmail": "Неподтверждённая электронная почта",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Достигнут предел выбора.",
+    "selectionLimitExceeded": "Выбор превышает установленный предел.",
+    "unresolvedValues": "Для некоторых выбранных значений не найдены соответствующие объекты.",
+    "outOfScopeValues": "Выбор содержит значения вне настроенной области.",
+    "resolveRequiredUserIds": "Найдите необходимые идентификаторы выбранных пользователей."
+  },
+  "errors": {
+    "candidateOutOfScope": "Кандидат находится вне настроенной области.",
+    "incompleteCandidateResolution": "Не удалось полностью определить кандидата.",
+    "resolutionFailed": "Не удалось найти соответствующие объекты.",
+    "graphUnavailable": "Клиент Microsoft Graph недоступен."
+  }
+}

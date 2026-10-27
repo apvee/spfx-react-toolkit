@@ -49,7 +49,7 @@ Select controlled or uncontrolled ownership once per mount; changing ownership t
 | `StageHeaderProps.action` | `div` content slot | Optional caller action, before the owned Close button; no automatic dismissal. |
 | `StageHeaderProps.headingLevel` | `StageHeadingLevel` | 2; semantic level independent of visual typography. |
 | `StageHeaderProps.showCloseButton` | `boolean` | true; hiding X does not change dismissal policy. |
-| `StageHeaderProps.closeLabel` | `string` | Close; supply a localized accessible label, for example Chiudi. |
+| `StageHeaderProps.closeLabel` | `string` | Overrides `strings.closeLabel` and the host-selected native label. Explicit empty/whitespace values are preserved. |
 
 Strings are literal: `**Profile**` remains `**Profile**`, with no Markdown parsing. In Dialog, Drawer and Popover, a direct title string or a title props object's string `children` occupies at most one line with ellipsis; equivalent description strings occupy at most two lines with ellipsis. Truncation is visual: the complete text remains in the DOM, and the owned heading/description IDs and accessible associations are preserved. Text block margins and title-description gap are zero. JSX and render callback output remain caller-owned presentation, retain their props, refs, handlers and explicit styling, and inherit wrapper presets when they supply no override; Stage does not apply the string line limits to them. Do not nest headings or block markup in the title.
 
@@ -195,3 +195,21 @@ Titles, descriptions and icons accept React content or a native `span` props obj
 The heading/Label, generated IDs, native trigger and Stage Close remain owned by the control. A slot ref points to its inner container. Strings/JSX shorthand retain their existing DOM and literal formatting; props objects explicitly request an inner container even with empty children. Booleans and absent values suppress content; zero remains visible. Tags cannot replace headings, Labels or triggers; raw HTML is unsupported. Phrasing slots must contain appropriate noninteractive content (especially inside accordion triggers). The existing Fluent theme/host renderer is still required.
 
 Empty or whitespace-only static description objects/fragments do not create accessible description associations unless explicitly named with aria-label/aria-labelledby. Whitespace shorthand retains the control's existing presence behavior. Object/callback icon containers fill the owned shell; their direct SVG children retain 24px header/20px group-item sizing (Stage headers use 24px), even with larger authored SVG dimensions. Callback output and custom components remain caller-owned and opaque.
+
+## Native UI localization
+
+SPFx selects the Stage native resource from the host UI culture after the host registers its toolkit resource ID through the localization configuration CLI. `Stage.Header` accepts `strings?: Partial<StageStrings>`; the only owned label is `StageStrings.closeLabel`, the close button accessible name. Omitted/undefined dictionary values use that native label. An explicit direct `closeLabel` prop takes precedence over the dictionary, including empty or whitespace values. Dictionary strings also preserve explicit empty/whitespace values. These overrides are independent per Header and require no toolkit provider.
+
+```tsx
+<Stage presentation="dialog">
+  <Stage.Header title="Profile" strings={{ closeLabel: 'Dismiss profile' }} />
+  <Stage.Body>Profile details</Stage.Body>
+</Stage>
+```
+
+Title, description, action content and close-request callbacks keep their existing contracts.
+
+| API | Type | Behavior |
+| --- | --- | --- |
+| `StageHeaderProps.strings` | `Partial<StageStrings>` | Optional per-Header dictionary over the native baseline. |
+| `StageStrings.closeLabel` | `string` | Close-button accessible name; the direct prop wins. |

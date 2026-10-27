@@ -103,7 +103,7 @@ test('latest callback receives final flush and stale callbacks are ignored after
   const { EditableTextEditor } = h.load('controls/editable-text/editable-text-editor.internal.tsx');
   const doc = { type: 'heading', level: 2, content: [{ type: 'text', text: 'start' }] };
   const container = document.createElement('div'); document.body.appendChild(container); const calls = [];
-  const render = callback => h.act(() => ReactDOM.render(h.React.createElement(EditableTextEditor, { document: doc, onDocumentChange: callback, sourceKey: 'start', policy: h.load('controls/editable-text/editable-text-policy.internal.ts').resolveEditableTextBlockPolicy(undefined, 'h2'), strings: h.load('controls/editable-text/localization/editable-text-locales.internal.ts').resolveEditableTextStrings('en-US'), ariaLabel: 'Title', placeholder: 'Add' }), container));
+  const render = callback => h.act(() => ReactDOM.render(h.React.createElement(EditableTextEditor, { document: doc, onDocumentChange: callback, sourceKey: 'start', policy: h.load('controls/editable-text/editable-text-policy.internal.ts').resolveEditableTextBlockPolicy(undefined, 'h2'), strings: h.load('controls/editable-text/localization/editable-text-strings.internal.ts').resolveEditableTextStrings(), ariaLabel: 'Title', placeholder: 'Add' }), container));
   render(() => calls.push('old')); const editor = container.querySelector('[contenteditable]').editor;
   render(document => calls.push(document.content[0].text));
   h.act(() => { editor.view.dom.dispatchEvent(new h.window.CompositionEvent('compositionstart', { bubbles: true })); editor.commands.insertContent('new '); });

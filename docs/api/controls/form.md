@@ -99,7 +99,7 @@ Native Label/hint IDs, `htmlFor`, required/disabled state and validation precede
 
 Section props retain the required title-or-`aria-label`-or-`aria-labelledby` union. Empty static title objects require an explicit outer name; opaque callbacks/custom components must render meaningful content. Empty description objects render their inner container without adding an empty fieldset description reference. Callbacks are never evaluated to discover semantic presence.
 
-TagPicker uses only a plain string label for automatic input/tag-group naming. Object, JSX and callback labels require explicit `aria-label`; the toolkit does not extract their text. `noOptionsContent ?? strings.noOptions ?? 'No options match the current query.'` retains nullish fallback and the status shell for boolean/empty content. These slots apply only to data-backed options with no available matches; custom option children still own filtering.
+TagPicker uses only a plain string label for automatic input/tag-group naming. Object, JSX and callback labels require explicit `aria-label`; the toolkit does not extract their text. `noOptionsContent ?? strings.noOptions ?? familyStrings.tagPicker.noOptions` retains nullish fallback and the status shell for boolean/empty content. These slots apply only to data-backed options with no available matches; custom option children still own filtering.
 
 The [existing peers](#dependencies) provide slot resolution and native semantics; no provider or dependency is added. Options, value codecs, `formatFiles`, array `renderItem`, validation messages and localized action/accessible-name strings retain their existing domain contracts. The Form sample's Notes field exposes inner label/hint refs, label click events and a static hint. DateTime's time label demonstrates a render callback; Address and empty tag results exercise other slots. The versioned conformance fixture retains the separate stateful callback-hint scenario. Static sample checks do not establish browser or authenticated SharePoint execution.
 
@@ -321,3 +321,40 @@ The coordinated Fluent/Charts baseline uses Charts 9.3.27 and locks Tabster 8.8.
 ```
 
 This uses the existing Form/Fluent providers and theme. It preserves the current input, typed query, RHF values, codec and selection events. The option does not recolor suggestions or the tag container. The sample's **Form → Variable field → TagPicker** exposes **Colorful tag avatars**, initially off, for direct comparison.
+
+## Localization
+
+Form uses its native SPFx `ApveeSpfxReactToolkitFormStrings` resource by default. Configure a partial `FormStringsOverride` through `FormUseFormProps.strings` on the owning `useForm`, or on a Root that initializes its own methods. A Root supplied with `methods` inherits that hook's dictionary and rejects a separate `strings` option. Localization options are removed before RHF initialization.
+
+```tsx
+const Order = createForm<{ attachments: FileList | null }>();
+function OrderForm() {
+  const methods = Order.useForm({
+    defaultValues: { attachments: null },
+    strings: {
+      unexpectedFailure: 'Please retry saving your order.',
+      fileInput: { browseLabel: 'Choose attachments', clearLabel: 'Remove attachments' },
+      datePicker: { goToToday: 'Today' },
+      arraySection: { itemLabel: position => `Row ${position}` },
+    },
+  });
+  return <Order.Root methods={methods} onSubmit={save}>
+    <Order.FileInput name="attachments" label="Attachments" />
+  </Order.Root>;
+}
+```
+
+`FormStrings` is the resolved dictionary. `FormStringsOverride` accepts only known optional fields. Nested groups merge field by field; calendar arrays replace whole arrays (months start with January, weekdays with Sunday). Explicit empty strings remain empty.
+
+| Group | Purpose and precedence |
+| --- | --- |
+| `FormStrings.unexpectedFailure`, `FormStringsOverride.unexpectedFailure` | Unexpected resolver, rule, submit and invalid-callback failures. Expected rule/resolver messages and errors installed with `setError` remain caller-owned. |
+| `FormStrings.datePicker`, `FormStringsOverride.datePicker` | Full calendar names, navigation labels and accessible format strings, using `FormDatePickerStrings`. Direct DatePicker `strings` fields win. |
+| `FormStrings.dateInputValidationMessage`, `FormStrings.timeInputValidationMessage`, `FormStringsOverride.dateInputValidationMessage`, `FormStringsOverride.timeInputValidationMessage` | Incomplete manual draft messages. Direct `inputValidationMessage` wins. |
+| `FormStrings.tagPicker`, `FormStringsOverride.tagPicker` (`noOptions`) | Existing `FormTagPickerStrings` content slot. Direct `noOptionsContent`, then leaf `strings.noOptions`, then family content applies. Empty/boolean content retains the owned status region. |
+| `FormStrings.fileInput`, `FormStringsOverride.fileInput` (`browseLabel`, `clearLabel`) | File chooser action labels. Direct control labels win. File names and `formatFiles` remain caller content. |
+| `FormStrings.arraySection`, `FormStringsOverride.arraySection` | Existing `FormArraySectionStrings` text/callbacks plus `itemLabel(position)` for one-based default item names. Leaf `strings` fields and direct full-item `itemLabel` win. Action callbacks receive literal labels; native templates preserve dollar/braced caller text. |
+
+Hook metadata isolates each form and publishes the dictionary at React commit. Asynchronous resolver/rule/submit failures read the latest committed dictionary when the failure is created, including hook methods used outside a mounted Root. Stored errors and announcements are event snapshots: changing `strings` does not rewrite them, reset values, rerun validation, or alter dirty/touched state. The next validation/submission uses current text.
+
+UI localization does not change strict default date parsing, caller parsers/formatters, time anchors/hour cycles, browser-native file selection, RHF error contracts, array focus behavior, or domain values. The existing RHF and Fluent compat peers remain required. Authenticated SharePoint rendering requires native resource registration in the host.

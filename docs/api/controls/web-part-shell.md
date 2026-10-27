@@ -80,6 +80,8 @@ interface WebPartShellProps<TProperties extends IWebPartShellProperties>
   padding?: WebPartShellPadding;
   theme?: Theme;
   dir?: 'ltr' | 'rtl';
+  strings?: Partial<WebPartShellStrings>;
+  titleEditorStrings?: EditableTextStringsOverride;
   action?: PublicWebPartShellProps<TProperties>['action'];
   children?: React.ReactNode;
   dangerouslySetInnerHTML?: never;
@@ -103,6 +105,10 @@ function getWebPartShellPropertiesMetadata(): IWebPartPropertiesMetadata;
 | `WebPartShellProps.padding` | Defaults to auto; explicit none/small/medium/large uses the existing Fluent spacing scale. |
 | `WebPartShellProps.theme` | Explicit Fluent theme tokens override ancestor and host tokens. |
 | `WebPartShellProps.dir` | Explicit LTR/RTL overrides ancestor Fluent direction and SPFx culture direction. |
+| `WebPartShellProps.strings` | Optional partial shell title naming over native SPFx labels; see UI dictionaries below. |
+| `WebPartShellProps.titleEditorStrings` | Optional independent editor label/formatter dictionary; preserves title draft and history. |
+| `WebPartShellStrings.titleEditorLabel` | Required complete-dictionary accessible name; partial omission inherits the native resource. Must be nonempty in Edit. |
+| `WebPartShellStrings.titlePlaceholder` | Required complete-dictionary literal empty-title hint; partial omission inherits native text and an empty string suppresses it. |
 | `WebPartShellProps.action` | Header action content slot under both providers; shorthand retains its DOM. |
 | `WebPartShellProps.children` | Application content; its mounted identity survives title mode and visibility changes. |
 | `WebPartShellProps.dangerouslySetInnerHTML` | Disallowed; untyped injection is discarded. |
@@ -198,15 +204,17 @@ const properties: IWebPartShellProperties = {
 };
 ```
 
-The control ships complete private catalogs for the [50 SharePoint UI cultures listed by Microsoft](https://support.microsoft.com/en-au/sharepoint/platform/languages-supported-by-sharepoint), recorded in the versioned [culture fixture](../../../tests/fixtures/sharepoint-ui-locales.json). The runtime reads `instance.context.pageContext.cultureInfo.currentUICultureName`, independently of the regional `currentCultureName`. Catalog selection normalizes case/separators, uses exact culture and explicit supported aliases, and falls back to `en-US` for absent or unsupported values. Portuguese regional variants, Chinese variants and Serbian scripts remain distinct. No extra locale prop, SPFx AMD string resource configuration or translation service is required.
+Native SPFx AMD modules supply the Shell naming and common editor labels from the 50 canonical SharePoint UI-culture catalogs. Configure the package localized resources in the consuming solution; SPFx selects the modules when loading the page. Changing the instance pageContext or regional culture at runtime does not replace an already loaded native module. Hosts outside the SPFx loader need an explicit module adapter.
 
-Localization covers the editor and floating toolbar, every color name, overflow menus, heading/size/spacing choices, mixed-state and shortcut descriptions, empty-title placeholder, loading label, Retry, invalid-saved-title warning and oversized-draft error. Labels belong to each shell instance. Language updates preserve the existing editor view, author content, stored semantic color IDs, selection and undo history without publishing properties. Direction follows the existing `dir`/ancestor/SPFx contract separately from the UI language.
+`WebPartShellStrings` contains `titleEditorLabel` (the actual title textbox's accessible name) and `titlePlaceholder` (the literal empty title hint). Set `strings?: Partial<WebPartShellStrings>` to override either independently. Set `titleEditorStrings?: EditableTextStringsOverride` to customize common toolbar, swatch, formatter, loading and recovery labels using the [EditableText dictionary contract](./editable-text.md#ui-dictionaries-and-migration). Omitted/undefined fields inherit native labels; an empty titlePlaceholder suppresses the hint. A nonempty titleEditorLabel remains required in Edit. A complete WebPartShellStrings value has both fields.
+
+For example: `<WebPartShell instance={this} strings={{ titleEditorLabel: 'Section heading', titlePlaceholder: 'Add a heading' }} titleEditorStrings={{ bold: 'Strong', colorNames: { red: 'Danger' } }} />`. Both dictionaries are per instance. Shell naming takes precedence over the editor dictionary's generic placeholder; the editor dictionary cannot replace the shell-owned accessible name. Live replacement retains the editor view, draft, marks, selection, undo and stored author content without publishing properties. Direction follows the existing dir/ancestor/SPFx contract separately.
 
 Translation key/placeholder checks and browser tests establish resource coverage and UI binding; they do not certify native-speaker linguistic quality. Authenticated SharePoint and screen-reader checks remain separate from local browser results.
 
 ## Editing and recovery
 
-All author UI uses Fluent UI 9: floating Popover/Toolbar, heading Dropdown, validated font-size Combobox, finite theme SwatchPicker, spacing Menu, clear formatting, Overflow commands, Spinner and MessageBar. Tiptap manages only the contenteditable engine. All control-owned labels, tooltips, accessible names, placeholders and recovery messages follow the instance’s SharePoint UI culture. Browser spellcheck remains available; author text and consumer-owned content are never translated.
+All author UI uses Fluent UI 9: floating Popover/Toolbar, heading Dropdown, validated font-size Combobox, finite theme SwatchPicker, spacing Menu, clear formatting, Overflow commands, Spinner and MessageBar. Tiptap manages only the contenteditable engine. All control-owned labels, tooltips, accessible names, placeholders and recovery messages use native SPFx labels and the instance dictionaries. Browser spellcheck remains available; author text and consumer-owned content are never translated.
 
 With a selected text range, inline formatting applies to that range. Without a text selection, bold, italic, underline, font size, color and Clear apply to the entire title while preserving the caret position. Ctrl/Cmd+B/I/U follows the same scope. Mixed emphasis becomes uniform on the first action and is removed on the next action; toolbar state describes the whole title at a caret. Color and size changes preserve each text run's unrelated overrides. An empty title stores formatting for subsequent typing without publishing empty-title properties.
 

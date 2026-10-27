@@ -1,0 +1,81 @@
+{
+  "labels": {
+    "selectOne": "Seleccionar un elemento",
+    "selectMany": "Seleccionar elementos",
+    "search": "Buscar…",
+    "clearSelection": "Borrar selección",
+    "clearSearch": "Borrar búsqueda",
+    "options": "Opciones",
+    "searchOptions": "Buscar opciones",
+    "selectedOne": "Elemento seleccionado",
+    "selectedMany": "Elementos seleccionados",
+    "noSelection": "Ninguna selección",
+    "resolveIds": "Resolver identificadores",
+    "moreResults": "Más resultados",
+    "retry": "Reintentar",
+    "namedOptions": "{name}: Opciones",
+    "namedSearch": "{name}: Buscar",
+    "selectedCount": {
+      "one": "{count} elemento seleccionado",
+      "many": "{count} elementos seleccionados",
+      "other": "{count} elementos seleccionados"
+    },
+    "minimumSearchLength": {
+      "one": "Escriba al menos {count} carácter para buscar",
+      "many": "Escriba al menos {count} caracteres para buscar",
+      "other": "Escriba al menos {count} caracteres para buscar"
+    }
+  },
+  "status": {
+    "searching": "Buscando…",
+    "loading": "Cargando…",
+    "partialSearch": "Búsqueda parcial: refine la búsqueda.",
+    "noOtherResults": "No hay más resultados para esta búsqueda",
+    "noResults": "No hay resultados para esta búsqueda",
+    "noOptions": "No hay opciones disponibles.",
+    "moreItemsAvailable": "Hay más elementos disponibles.",
+    "partialSuggestions": "Sugerencias parciales: algunas fuentes no están disponibles.",
+    "unresolvedValue": "Valor sin resolver",
+    "partialHubs": "Lista parcial de centros: limite el ámbito o utilice el modo de sitio.",
+    "partialSiteCollections": "Búsqueda parcial de colecciones de sitios (máximo de 1000 resultados): restrinja los criterios."
+  },
+  "sections": {
+    "consumer": "Opciones proporcionadas",
+    "currentSite": "Sitio actual",
+    "hubSite": "Centro asociado",
+    "catalog": "Opciones disponibles",
+    "currentUser": "Usted",
+    "people": "Personas sugeridas",
+    "memberOf": "Sus grupos"
+  },
+  "metadata": {
+    "documentLibrary": "Biblioteca de documentos",
+    "sharePointList": "Lista de SharePoint",
+    "personalView": "Vista personal",
+    "publicView": "Vista pública",
+    "field": "Campo",
+    "itemDescription": "Elemento · ID {id}",
+    "file": "Archivo",
+    "fileWithExtension": "Archivo {extension}",
+    "folder": "Carpeta",
+    "sharePointGroup": "Grupo de SharePoint · SharePoint",
+    "securityGroup": "Grupo de seguridad · Entra",
+    "distributionList": "Lista de distribución · Entra",
+    "unvalidatedEmail": "Correo electrónico no verificado",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Se ha alcanzado el límite de selección.",
+    "selectionLimitExceeded": "La selección supera el límite configurado.",
+    "unresolvedValues": "Algunos valores seleccionados no están resueltos.",
+    "outOfScopeValues": "La selección contiene valores fuera del ámbito configurado.",
+    "resolveRequiredUserIds": "Resuelva los identificadores necesarios de los usuarios seleccionados."
+  },
+  "errors": {
+    "candidateOutOfScope": "El candidato está fuera del ámbito configurado.",
+    "incompleteCandidateResolution": "No se ha podido resolver completamente el candidato.",
+    "resolutionFailed": "La resolución ha fallado.",
+    "graphUnavailable": "El cliente de Microsoft Graph no está disponible."
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Hautatu elementu bat",
+    "selectMany": "Hautatu elementuak",
+    "search": "Bilatu…",
+    "clearSelection": "Garbitu hautapena",
+    "clearSearch": "Garbitu bilaketa",
+    "options": "Aukerak",
+    "searchOptions": "Bilatu aukerak",
+    "selectedOne": "Hautatutako elementua",
+    "selectedMany": "Hautatutako elementuak",
+    "noSelection": "Ez dago hautapenik",
+    "resolveIds": "Ebatzi IDak",
+    "moreResults": "Emaitza gehiago",
+    "retry": "Saiatu berriro",
+    "namedOptions": "{name}: Aukerak",
+    "namedSearch": "{name}: Bilatu",
+    "selectedCount": {
+      "one": "{count} elementu hautatuta",
+      "other": "{count} elementu hautatuta"
+    },
+    "minimumSearchLength": {
+      "one": "Idatzi gutxienez {count} karaktere bilatzeko",
+      "other": "Idatzi gutxienez {count} karaktere bilatzeko"
+    }
+  },
+  "status": {
+    "searching": "Bilatzen…",
+    "loading": "Kargatzen…",
+    "partialSearch": "Bilaketa partziala: zehaztu bilaketa.",
+    "noOtherResults": "Ez dago beste emaitzarik bilaketa honetarako",
+    "noResults": "Ez dago emaitzarik bilaketa honetarako",
+    "noOptions": "Ez dago aukerarik erabilgarri.",
+    "moreItemsAvailable": "Elementu gehiago daude erabilgarri.",
+    "partialSuggestions": "Iradokizun partzialak: iturri batzuk ez daude erabilgarri.",
+    "unresolvedValue": "Ebatzi gabeko balioa",
+    "partialHubs": "Huben zerrenda partziala: murriztu eremua edo erabili gune modua.",
+    "partialSiteCollections": "Gune-bildumen bilaketa partziala (gehienez 1000 emaitza): murriztu irizpideak."
+  },
+  "sections": {
+    "consumer": "Emandako aukerak",
+    "currentSite": "Uneko gunea",
+    "hubSite": "Erlazionatutako huba",
+    "catalog": "Aukera erabilgarriak",
+    "currentUser": "Zu",
+    "people": "Iradokitako pertsonak",
+    "memberOf": "Zure taldeak"
+  },
+  "metadata": {
+    "documentLibrary": "Dokumentu-liburutegia",
+    "sharePointList": "SharePoint zerrenda",
+    "personalView": "Ikuspegi pertsonala",
+    "publicView": "Ikuspegi publikoa",
+    "field": "Eremua",
+    "itemDescription": "Elementua · IDa {id}",
+    "file": "Fitxategia",
+    "fileWithExtension": "{extension} fitxategia",
+    "folder": "Karpeta",
+    "sharePointGroup": "SharePoint taldea · SharePoint",
+    "securityGroup": "Segurtasun-taldea · Entra",
+    "distributionList": "Banaketa-zerrenda · Entra",
+    "unvalidatedEmail": "Egiaztatu gabeko helbide elektronikoa",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Hautapen-mugara iritsi da.",
+    "selectionLimitExceeded": "Hautapenak konfiguratutako muga gainditzen du.",
+    "unresolvedValues": "Hautatutako balio batzuk ebatzi gabe daude.",
+    "outOfScopeValues": "Hautapenak konfiguratutako eremutik kanpoko balioak ditu.",
+    "resolveRequiredUserIds": "Ebatzi hautatutako erabiltzaileen beharrezko IDak."
+  },
+  "errors": {
+    "candidateOutOfScope": "Hautagaia konfiguratutako eremutik kanpo dago.",
+    "incompleteCandidateResolution": "Ezin izan da hautagaia guztiz ebatzi.",
+    "resolutionFailed": "Ebazpenak huts egin du.",
+    "graphUnavailable": "Microsoft Graph bezeroa ez dago erabilgarri."
+  }
+}

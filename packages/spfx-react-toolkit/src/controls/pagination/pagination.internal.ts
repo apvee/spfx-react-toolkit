@@ -1,19 +1,15 @@
 import type { PaginationState, PaginationStrings } from './pagination.types';
-
-const defaults: PaginationStrings = {
-  pagination: 'Pagination', firstPage: 'First page', previousPage: 'Previous page',
-  nextPage: 'Next page', lastPage: 'Last page', loadMore: 'Load more', loading: 'Loading',
-};
+import { nativePaginationResource } from './localization/pagination-native.internal';
 
 export function resolvePaginationStrings(strings?: Partial<PaginationStrings>): PaginationStrings {
   return {
-    pagination: strings?.pagination?.trim() || defaults.pagination,
-    firstPage: strings?.firstPage?.trim() || defaults.firstPage,
-    previousPage: strings?.previousPage?.trim() || defaults.previousPage,
-    nextPage: strings?.nextPage?.trim() || defaults.nextPage,
-    lastPage: strings?.lastPage?.trim() || defaults.lastPage,
-    loadMore: strings?.loadMore?.trim() || defaults.loadMore,
-    loading: strings?.loading?.trim() || defaults.loading,
+    pagination: strings?.pagination?.trim() || nativePaginationResource.pagination,
+    firstPage: strings?.firstPage?.trim() || nativePaginationResource.firstPage,
+    previousPage: strings?.previousPage?.trim() || nativePaginationResource.previousPage,
+    nextPage: strings?.nextPage?.trim() || nativePaginationResource.nextPage,
+    lastPage: strings?.lastPage?.trim() || nativePaginationResource.lastPage,
+    loadMore: strings?.loadMore?.trim() || nativePaginationResource.loadMore,
+    loading: strings?.loading?.trim() || nativePaginationResource.loading,
   };
 }
 

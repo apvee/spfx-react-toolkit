@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Vormi ei saa saata. Proovige uuesti.",
+  "dateInputValidationMessage": "Enne saatmist sisestage täielik või õige kuupäev.",
+  "timeInputValidationMessage": "Enne saatmist sisestage täielik või õige kellaaeg.",
+  "tagPicker": {
+    "noOptions": "Ükski valik ei vasta praegusele päringule."
+  },
+  "fileInput": {
+    "browseLabel": "Sirvi",
+    "clearLabel": "Tühjenda"
+  },
+  "arraySection": {
+    "add": "Lisa üksus",
+    "empty": "Üksusi pole",
+    "itemLabelTemplate": "Üksus {position}",
+    "removeTemplate": "Eemalda {label}",
+    "moveUpTemplate": "Liiguta {label} üles",
+    "moveDownTemplate": "Liiguta {label} alla",
+    "addedTemplate": "Lisatud: {label}",
+    "removedTemplate": "Eemaldatud: {label}",
+    "movedTemplate": "{label} on liigutatud kohale {position}, kokku {total}"
+  },
+  "datePicker": {
+    "months": [
+      "jaanuar",
+      "veebruar",
+      "märts",
+      "aprill",
+      "mai",
+      "juuni",
+      "juuli",
+      "august",
+      "september",
+      "oktoober",
+      "november",
+      "detsember"
+    ],
+    "shortMonths": [
+      "jaanuar",
+      "veebruar",
+      "märts",
+      "aprill",
+      "mai",
+      "juuni",
+      "juuli",
+      "august",
+      "september",
+      "oktoober",
+      "november",
+      "detsember"
+    ],
+    "days": [
+      "pühapäev",
+      "esmaspäev",
+      "teisipäev",
+      "kolmapäev",
+      "neljapäev",
+      "reede",
+      "laupäev"
+    ],
+    "shortDays": [
+      "P",
+      "E",
+      "T",
+      "K",
+      "N",
+      "R",
+      "L"
+    ],
+    "goToToday": "Mine tänasele päevale",
+    "prevMonthAriaLabel": "Eelmine kuu",
+    "nextMonthAriaLabel": "Järgmine kuu",
+    "prevYearAriaLabel": "Eelmine aasta",
+    "nextYearAriaLabel": "Järgmine aasta",
+    "prevYearRangeAriaLabel": "Eelmine aastavahemik",
+    "nextYearRangeAriaLabel": "Järgmine aastavahemik",
+    "monthPickerHeaderAriaLabel": "{0}, muuda aastat",
+    "yearPickerHeaderAriaLabel": "{0}, muuda kuud",
+    "closeButtonAriaLabel": "Sule",
+    "weekNumberFormatString": "Nädala number {0}",
+    "selectedDateFormatString": "Valitud kuupäev {0}",
+    "todayDateFormatString": "Tänane kuupäev {0}",
+    "dayMarkedAriaLabel": "märgitud"
+  }
+}

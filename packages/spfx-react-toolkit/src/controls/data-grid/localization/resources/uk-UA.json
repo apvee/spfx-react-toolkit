@@ -1,0 +1,29 @@
+{
+  "empty": "Немає доступних даних",
+  "noResults": "Результатів не знайдено",
+  "noVisibleColumns": "Немає видимих стовпців",
+  "loading": "Завантаження",
+  "actions": "Дії",
+  "moreActions": "Інші дії",
+  "yes": "Так",
+  "no": "Ні",
+  "noTags": "Немає тегів",
+  "noObservations": "Немає спостережень",
+  "invalidValue": "Неприпустиме значення",
+  "selectAllRows": "Вибрати всі рядки",
+  "retry": "Повторити",
+  "selectRowTemplate": "Вибрати рядок {rowId}",
+  "sparklineSummaryTemplate": "Перше значення {first}; Останнє значення {last}; Мінімум {minimum}; Максимум {maximum}; Середнє {average}; Зміна {change}; Зміна у відсотках {changePercent}",
+  "tagOverflow": {
+    "one": "Показати ще {count} тег",
+    "few": "Показати ще {count} теги",
+    "many": "Показати ще {count} тегів",
+    "other": "Показати ще {count} тега"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} голос",
+    "few": "{formattedCount} голоси",
+    "many": "{formattedCount} голосів",
+    "other": "{formattedCount} голосу"
+  }
+}

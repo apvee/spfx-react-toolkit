@@ -4,11 +4,13 @@ import { WebPartShell, useSPFxProperties, type IWebPartShellProperties, type Web
 
 export interface ShellDemoOptions {
   actionSlot: boolean;
+  customNaming: boolean;
+  customEditor: boolean;
   dir: 'host' | 'ltr' | 'rtl';
   surface: 'auto' | 'section' | 'application';
   padding: 'auto' | 'none' | 'small' | 'medium' | 'large';
 }
-const defaults: ShellDemoOptions = { actionSlot: false, dir: 'host', surface: 'auto', padding: 'auto' };
+const defaults: ShellDemoOptions = { actionSlot: false, customNaming: false, customEditor: false, dir: 'host', surface: 'auto', padding: 'auto' };
 const ShellDemoContext = React.createContext({ options: defaults, update: (_patch: Partial<ShellDemoOptions>): void => {} });
 export const useShellDemoOptions = (): React.ContextType<typeof ShellDemoContext> => React.useContext(ShellDemoContext);
 
@@ -25,6 +27,8 @@ export function WebPartShellDemoHost(props: WebPartShellProps<IWebPartShellPrope
   const update = React.useCallback((patch: Partial<ShellDemoOptions>): void => setOptions(previous => ({ ...previous, ...patch })), []);
   return <ShellDemoContext.Provider value={{ options, update }}>
     <WebPartShell {...props} surface={props.surface ?? options.surface} padding={props.padding ?? options.padding}
+      strings={props.strings ?? (options.customNaming ? { titleEditorLabel: 'Project section heading', titlePlaceholder: 'Add a project heading' } : undefined)}
+      titleEditorStrings={props.titleEditorStrings ?? (options.customEditor ? { bold: 'Strong', formattingControls: 'Project heading controls', colorNames: { red: 'Alert red' } } : undefined)}
       dir={props.dir ?? (options.dir === 'host' ? undefined : options.dir)} action={options.actionSlot ? { 'data-shell-demo': 'action-slot',
         children: (Component, slotProps) => <Component {...slotProps}><ShellDemoAction /></Component> } : <ShellDemoAction />} />
   </ShellDemoContext.Provider>;

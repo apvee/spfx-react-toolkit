@@ -206,6 +206,21 @@ export type StageProps = StageCommonProps & StageStateProps & (
   }
 );
 
+/** Owned Stage UI labels. SPFx selects the native resource baseline without a toolkit provider.
+ * Supply a partial dictionary to `Stage.Header.strings`. Omitted/undefined members use
+ * that baseline; explicit empty and whitespace strings are preserved. Header's direct
+ * `closeLabel` prop takes precedence. Caller title/description/action content is unchanged.
+ * @example
+ * ```tsx
+ * const strings: StageStrings = { closeLabel: 'Dismiss profile' };
+ * <Stage presentation="dialog"><Stage.Header title="Profile" strings={strings} /></Stage>
+ * ```
+ */
+export interface StageStrings {
+  /** Accessible name of the close button. Omission through a partial dictionary uses the host resource. */
+  readonly closeLabel: string;
+}
+
 /** Header div attributes and named content slots; strings are literal, JSX is preserved.
  * Named props accept shorthand, fixed-tag native props or children render callbacks.
  * Objects request inner containers; refs identify those containers, not the heading or ID shell.
@@ -237,8 +252,11 @@ export interface StageHeaderProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   headingLevel?: StageHeadingLevel;
   /** Show the final close button; defaults to true. When hidden, provide a visible modal exit. */
   showCloseButton?: boolean;
-  /** Accessible close-button label; defaults to Close and is consumer-localizable. */
+  /** Accessible close-button label. Overrides strings and the host resource; explicit empty/whitespace values are preserved. */
   closeLabel?: string;
+  /** Optional per-Header UI dictionary. Omitted/undefined members use the host-selected
+   * native resource; explicit empty/whitespace strings are preserved. Direct closeLabel wins. */
+  strings?: Partial<StageStrings>;
 }
 
 /** Scrollable Body div and caller-owned children; raw HTML is unsupported. Requires

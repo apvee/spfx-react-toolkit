@@ -112,3 +112,14 @@ test('native preset changes preserve nonreactive draft, authoritative epoch, and
     assert.equal(f.changes.length, 1);
   } finally { f.close(); }
 });
+
+test('file property pane forwards instance strings and keeps saved references unchanged', () => {
+  const f = setup();
+  const strings = { browse: { files: 'Choose attachments' }, errors: { timeout: 'Try again' } };
+  try {
+    f.render({ strings });
+    assert.equal(observed.props.strings, strings);
+    assert.deepEqual(observed.props.value, [value]);
+    assert.equal(f.changes.length, 0);
+  } finally { f.close(); }
+});

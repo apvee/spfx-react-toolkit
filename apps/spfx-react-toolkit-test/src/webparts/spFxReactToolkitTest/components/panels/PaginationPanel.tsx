@@ -81,7 +81,7 @@ export const PaginationExample: React.FC<{ instance: string; initialRtl?: boolea
       </>} status={<output aria-live="polite">Last request: {request}</output>} diagnostics={<>
         <Checkbox data-pagination-demo="hidden" label="Hide navigation" checked={hidden} onChange={(_event, data) => setHidden(data.checked === true)} />
         <Checkbox data-pagination-demo="rtl" label="RTL override (unchecked inherits host)" checked={rtl} onChange={(_event, data) => setRtl(data.checked === true)} />
-        <Checkbox data-pagination-demo="localization" label="Custom English labels" checked={localized} onChange={(_event, data) => setLocalized(data.checked === true)} />
+        <Checkbox data-pagination-demo="localization" label="Custom labels (unchecked: SPFx defaults)" checked={localized} onChange={(_event, data) => setLocalized(data.checked === true)} />
         <Checkbox data-pagination-demo="narrow" label="320px navigation" checked={narrow} onChange={(_event, data) => setNarrow(data.checked === true)} />
 
             <Button type="button" data-pagination-demo="inspect-ref" onClick={() => setObservedRef(`${navRef.current?.tagName ?? 'absent'}; hidden=${String(navRef.current?.hidden)}; busy=${navRef.current?.getAttribute('aria-busy') ?? 'absent'}`)}>Inspect navigation ref</Button>
@@ -101,7 +101,7 @@ export const PaginationExample: React.FC<{ instance: string; initialRtl?: boolea
         <div className={sx(flex.column, gap.small)}>
           <div className={narrow ? sx(width.full, maxWidth.px(320)) : sx(width.full)}>
             <Pagination data-pagination-demo="navigation" ref={navRef} hidden={hidden} size={size} appearance={appearance}
-              pagination={pagination} loading={pending !== undefined} strings={localized ? customEnglishStrings : { pagination: '', loading: '' }}
+              pagination={pagination} loading={pending !== undefined} strings={localized ? customEnglishStrings : undefined}
               aria-label={`${instance} order navigation`} onPaginationChange={(_event, data) => {
                 setRequest(JSON.stringify(data));
                 if (manual) setPending(data); else apply(data);

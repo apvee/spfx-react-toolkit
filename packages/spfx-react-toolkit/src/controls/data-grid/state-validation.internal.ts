@@ -1,5 +1,7 @@
 import type { DataGridProps, DataGridStrings, DataGridSparklineSummaryText } from './data-grid.types';
 import type { ResolvedDataGridColumn } from './column-normalization.internal';
+import { nativeDataGridResource } from './localization/data-grid-native.internal';
+import { formatResourcePlural, formatResourceTemplate } from '../../localization/resource-formatters.internal';
 export function resolveVisibleDataGridColumns<T extends object>(columns: readonly ResolvedDataGridColumn<T>[], hidden?: ReadonlySet<string>): readonly ResolvedDataGridColumn<T>[] {
   return hidden === undefined ? columns : Object.freeze(columns.filter(column => !hidden.has(column.id)));
 }
@@ -11,28 +13,31 @@ export function validateDataGridInteraction<T extends object>(props: Pick<DataGr
     throw new TypeError('DataGrid row activation and selection are mutually exclusive');
 }
 
-/** English fallbacks are presentation, independently of the Intl data locale. */
-const defaultStrings: DataGridStrings = Object.freeze({
-  yes: 'Yes', no: 'No', noTags: 'No tags',
-  tagOverflow: (count: number): string => count === 1 ? 'Show 1 more tag' : `Show ${count} more tags`,
-  ratingCount: (count: number, formattedCount: string): string => `${formattedCount} ${count === 1 ? 'vote' : 'votes'}`,
-  noObservations: 'No observations', noVisibleColumns: 'No visible columns',
-  actions: 'Actions', moreActions: 'More actions', loading: 'Loading',
-  empty: 'No data available', noResults: 'No results found', invalidValue: 'Invalid value',
-  retry: 'Retry', selectAllRows: 'Select all rows',
-  selectRow: (rowId: string | number): string => `Select row ${rowId}`,
-  sparklineSummary: (values: DataGridSparklineSummaryText): string =>
-    `First ${values.first}; last ${values.last}; minimum ${values.minimum}; maximum ${values.maximum}; average ${values.average}; change ${values.change}; change percent ${values.changePercent}`,
-});
+/** Native UI grammar is independent of column/root Intl data formatting. */
+function nativeDataGridStrings(): DataGridStrings {
+  const resource = nativeDataGridResource;
+  return {
+    yes: resource.yes, no: resource.no, noTags: resource.noTags,
+    tagOverflow: (count: number): string => formatResourcePlural(resource.tagOverflow, resource.__locale, count),
+    ratingCount: (count: number, formattedCount: string): string =>
+      formatResourcePlural(resource.ratingCount, resource.__locale, count, { formattedCount }),
+    noObservations: resource.noObservations, noVisibleColumns: resource.noVisibleColumns,
+    actions: resource.actions, moreActions: resource.moreActions, loading: resource.loading,
+    empty: resource.empty, noResults: resource.noResults, invalidValue: resource.invalidValue,
+    retry: resource.retry, selectAllRows: resource.selectAllRows,
+    selectRow: (rowId: string | number): string => formatResourceTemplate(resource.selectRowTemplate, { rowId }),
+    sparklineSummary: (values: DataGridSparklineSummaryText): string => formatResourceTemplate(resource.sparklineSummaryTemplate, { ...values }),
+  };
+}
 export function resolveDataGridStrings(overrides?: Partial<DataGridStrings>): DataGridStrings {
-  const result = { ...defaultStrings };
+  const result = nativeDataGridStrings();
   if (overrides === undefined) return result;
   // Nullable caller input is an untyped external configuration boundary.
   if (typeof overrides !== 'object' || overrides === null || Array.isArray(overrides)) throw new TypeError('DataGrid strings must be an override object');
-  for (const key of Object.keys(defaultStrings) as (keyof typeof defaultStrings)[]) {
+  for (const key of Object.keys(result) as (keyof DataGridStrings)[]) {
     const value = overrides[key];
     if (value === undefined) continue;
-    if (typeof value !== typeof defaultStrings[key]) throw new TypeError(`DataGrid strings.${key} has an invalid type`);
+    if (typeof value !== typeof result[key]) throw new TypeError(`DataGrid strings.${key} has an invalid type`);
     if (typeof value === 'string' && value.trim().length === 0) continue;
     Object.assign(result, { [key]: value });
   }

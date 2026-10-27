@@ -279,3 +279,30 @@ test('Header object/callback icons retain 24px sizing for authored SVG dimension
     try { assertIconSizing(f.host.querySelector('[data-sized-icon]'), 24); } finally { f.close(); }
   }
 });
+
+
+test('host-native Stage label accepts instance strings while direct closeLabel retains precedence', async () => {
+  const italian = await harness.loadModule('tests/fixtures/stage-parts-entry.tsx', { nativeCulture: 'it-IT' });
+  function ItalianOwner({ children }) {
+    const value = italian.useStageContextValue(controller);
+    return React.createElement(italian.StageContext.Provider, { value }, children);
+  }
+  const tree = props => React.createElement(ItalianOwner, {}, React.createElement(italian.StageHeader, { title: 'Title', ...props }));
+  const first = mount(tree({}));
+  const other = mount(React.createElement(Owner, {}, React.createElement(parts.StageHeader, { title: 'Other', strings: { closeLabel: 'Other close' } })));
+  try {
+    assert.equal(first.host.querySelector('[data-stage-close]').getAttribute('aria-label'), 'Chiudi');
+    assert.equal(other.host.querySelector('[data-stage-close]').getAttribute('aria-label'), 'Other close');
+    first.render(tree({ strings: { closeLabel: 'Dictionary close' } }));
+    assert.equal(first.host.querySelector('[data-stage-close]').getAttribute('aria-label'), 'Dictionary close');
+    first.render(tree({ strings: { closeLabel: 'Dictionary close' }, closeLabel: 'Direct close' }));
+    assert.equal(first.host.querySelector('[data-stage-close]').getAttribute('aria-label'), 'Direct close');
+    first.render(tree({ strings: { closeLabel: undefined }, closeLabel: '' }));
+    assert.equal(first.host.querySelector('[data-stage-close]').getAttribute('aria-label'), '', 'Existing direct blank label is preserved');
+    first.render(tree({ strings: { closeLabel: '  ' } }));
+    assert.equal(first.host.querySelector('[data-stage-close]').getAttribute('aria-label'), '  ', 'Dictionary strings preserve explicit whitespace');
+    first.render(tree({ strings: { closeLabel: undefined } }));
+    assert.equal(first.host.querySelector('[data-stage-close]').getAttribute('aria-label'), 'Chiudi');
+    assert.equal(first.host.querySelector('[data-stage-header]').hasAttribute('strings'), false);
+  } finally { first.close(); other.close(); }
+});

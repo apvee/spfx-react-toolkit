@@ -8,6 +8,7 @@ const output = path.join(root, source ? 'temp/demo-presentation-source-browser' 
 webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 'index.tsx'),
   output: { path: output, filename: 'fixture.js', chunkFilename: '[name].js', publicPath: '/' },
   resolve: { extensions: ['.tsx', '.ts', '.js'], alias: {
+    ...require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
     '@apvee/spfx-react-toolkit$': path.join(fixture, source ? 'toolkit-source-boundary.ts' : 'toolkit-boundary.ts'),
     '@apvee/spfx-react-toolkit/hooks$': path.join(root, 'packages/spfx-react-toolkit/lib/hooks/useStableCallback.js'),
     '@apvee/spfx-react-toolkit/styles$': path.join(root, 'packages/spfx-react-toolkit/lib/styles/index.js'),

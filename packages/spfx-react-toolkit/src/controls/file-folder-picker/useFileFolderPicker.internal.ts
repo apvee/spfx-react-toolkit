@@ -1,3 +1,4 @@
+import { resolveFileFolderPickerStrings } from './file-folder-picker-strings.internal';
 import { FileFolderPickerError, fileFolderPickerFailure } from './file-folder-picker-errors.internal';
 import * as React from 'react';
 import { useFileFolderPickerTheme } from './useFileFolderPickerTheme.internal';
@@ -62,6 +63,7 @@ interface FileFolderPickerRuntime {
 }
 /** Selection ownership and hosted session are separate; hydration never emits or rewrites saved references. */
 export function useFileFolderPicker(props: FileFolderPickerProps): FileFolderPickerRuntime {
+  const strings = resolveFileFolderPickerStrings(props.strings);
   const theme = useFileFolderPickerTheme();
   const sourceContext = usePickerSourceContext(), page = useSPFxPageContext(), auth = useSPFxAadTokenProvider();
   const context = React.useMemo(() => ({ ...sourceContext, tokenProvider: auth.tokenProvider }), [sourceContext, auth.tokenProvider]);
@@ -74,15 +76,15 @@ export function useFileFolderPicker(props: FileFolderPickerProps): FileFolderPic
   });
   let invalid: string | undefined, values = draft;
   try { if (controlled && props.value !== undefined) values = uniqueValues(props.value); }
-  catch { invalid = 'Riferimenti file/cartelle non validi.'; }
-  if (controlled !== (props.value !== undefined)) invalid = 'La modalità controllata non può cambiare durante il montaggio.';
+  catch { invalid = strings.validation.invalidReferences; }
+  if (controlled !== (props.value !== undefined)) invalid = strings.validation.controlledModeChanged;
   const [resolved, setResolved] = React.useState<readonly FileFolderPickerOption[]>([]);
   const seeds: FileFolderPickerOption[] = [];
   for (const option of props.initialOptions ?? []) {
     try { if (typeof option.text !== 'string' || !option.text.trim()) continue; uniqueValues([option.value]); seeds.push(option); } catch { /* Invalid display seeds never replace saved references. */ }
   }
   const models = new Map([...resolved, ...seeds].map(option => [fileFolderPickerIdentity(option.value), option]));
-  const label = (value: FileFolderPickerValue): string => models.get(fileFolderPickerIdentity(value))?.text ?? value.name ?? 'Elemento non risolto';
+  const label = (value: FileFolderPickerValue): string => models.get(fileFolderPickerIdentity(value))?.text ?? value.name ?? strings.labels.unresolvedItem;
   const valuesSignature = JSON.stringify(values), policySignature = canonicalConfiguration([props.scope, props.itemTypes ?? 'files', !!props.multiselect, props.selectionLimit, extensionPolicySignature(props.extensions), props.fileCategory, props.requiredAccess ?? 'read']);
   const session = React.useRef<FileFolderPickerSession>();
   const browseButton = React.useRef<HTMLButtonElement>(null); // React DOM ref contract uses null before mount.
@@ -102,7 +104,7 @@ export function useFileFolderPicker(props: FileFolderPickerProps): FileFolderPic
   React.useLayoutEffect(() => { cancel(); }, [policySignature, valuesSignature, authoritativeEpoch, context, props.disabled, invalid, cancel]);
   React.useEffect(() => () => { mounted.current = false; cancel(); }, [cancel]);
   const onReady = useStableCallback(() => props.onReady?.());
-  const report = useStableCallback((failure: Error) => { if (mounted.current) { const error = fileFolderPickerFailure(failure, 'selection-invalid'); setError(error); props.onError?.(error); } });
+  const report = useStableCallback((failure: Error) => { if (mounted.current) { const error = fileFolderPickerFailure(failure, 'selection-invalid', strings); setError(error); props.onError?.(error); } });
   React.useEffect(() => {
     let current = true;
     if (values.length === 0 || invalid !== undefined || context.spClient === undefined) { setHydrating(false); return; }
@@ -130,15 +132,15 @@ export function useFileFolderPicker(props: FileFolderPickerProps): FileFolderPic
       const scope = await resolveFileFolderPickerScope(openingProps.scope, openingProps.initialLocation, context, localCache, openingProps.initialLocationFallback);
       if (!current()) return;
       const provider = auth.tokenProvider;
-      if (provider === undefined) throw new FileFolderPickerError('auth-provider');
+      if (provider === undefined) throw new FileFolderPickerError('auth-provider', strings);
       const config = compileFileFolderPickerConfig(scope, { sourceItems }, { origin: document.location.origin, channelId: name, theme: openingTheme }, experience);
       const authenticationDiagnostic = filePickerDebugObserver(document);
       const personalNavigationRequested = scope.kind !== 'oneDrive' && experience.authentication.auxiliaryPersonalResourceEnabled;
-      const opened = createFileFolderPickerSession({ ownerWindow: document.defaultView ?? window, contentWindow, trustedOrigin: new URL(scope.baseUrl).origin, channelId: name,
+      const opened = createFileFolderPickerSession({ strings, ownerWindow: document.defaultView ?? window, contentWindow, trustedOrigin: new URL(scope.baseUrl).origin, channelId: name,
         allowedResourceOrigins: scope.allowedResourceOrigins, graphEnabled: experience.authentication.graphEnabled, claimsChallengeEnabled: experience.authentication.claimsChallengeEnabled, onReady, closeWindow: false, onError: failure => { if (current()) report(failure); },
         onAuthenticationDiagnostic: authenticationDiagnostic === undefined ? undefined : event => { if (current()) authenticationDiagnostic(event); },
         resolveAuxiliaryAuthenticationOrigins: personalNavigationRequested ? async () => {
-          if (!current()) throw new FileFolderPickerError('auth-resource');
+          if (!current()) throw new FileFolderPickerError('auth-resource', strings);
           // Independently verify the current user's personal drive; native commands cannot introduce trust.
           // Keep these token audiences separate from scope.allowedResourceOrigins and all result checks.
           const personal = await resolveFileFolderPickerScope({ kind: 'oneDrive' }, undefined, context, localCache);
@@ -154,9 +156,9 @@ export function useFileFolderPicker(props: FileFolderPickerProps): FileFolderPic
       outcome.catch(() => undefined);
       const beforeNavigation = await Promise.race([
         provider.getToken(scope.resource).then(token => {
-          if (!token) throw new FileFolderPickerError('auth-provider');
+          if (!token) throw new FileFolderPickerError('auth-provider', strings);
           return { token };
-        }, () => { throw new FileFolderPickerError('auth-provider'); }),
+        }, () => { throw new FileFolderPickerError('auth-provider', strings); }),
         outcome.then(outcome => ({ outcome })),
       ]);
       if (!current() || 'outcome' in beforeNavigation || contentWindow.closed) return;
@@ -166,7 +168,7 @@ export function useFileFolderPicker(props: FileFolderPickerProps): FileFolderPic
       if (current() && result.status === 'cancelled') setError(undefined);
       if (current() && result.status === 'picked') emit('pick', openingProps.multiselect ? [...openingValues, ...result.items.map(option => option.value)] : result.items.map(option => option.value), result.items);
     } catch (failure) {
-      if (current()) report(fileFolderPickerFailure(failure, 'opening'));
+      if (current()) report(fileFolderPickerFailure(failure, 'opening', strings));
     } finally {
       if (current()) {
         session.current?.dispose(); session.current = undefined;
@@ -178,7 +180,7 @@ export function useFileFolderPicker(props: FileFolderPickerProps): FileFolderPic
     if (props.disabled || busy || invalid !== undefined) return;
     let experience: ResolvedFileFolderPickerExperience;
     try { experience = resolveFileFolderPickerExperience(props); }
-    catch { report(new FileFolderPickerError('configuration')); return; }
+    catch { report(new FileFolderPickerError('configuration', strings)); return; }
     cancel(); setError(undefined);
     const document = browseButton.current?.ownerDocument ?? window.document, owner = document.defaultView ?? window;
     const crypto = owner.crypto;
@@ -202,10 +204,10 @@ export function useFileFolderPicker(props: FileFolderPickerProps): FileFolderPic
       return (policy.itemTypes === 'files' && value.kind !== 'file') || (policy.itemTypes === 'folders' && value.kind !== 'folder') ||
         (value.kind === 'file' && name !== undefined && !fileFolderPickerFileMatchesPolicy(name, policy));
     })) {
-      policyFailure = 'La selezione contiene elementi incompatibili con il tipo, la categoria o le estensioni configurate. Rimuovili o sostituiscili.';
+      policyFailure = strings.validation.incompatibleItems;
     }
-  } catch { policyFailure = 'Configurazione del tipo, della categoria, delle estensioni o del limite di selezione non valida.'; }
-  const validation = invalid ?? policyFailure ?? (maximum !== undefined && values.length > maximum ? 'La selezione supera il limite configurato. Rimuovi gli elementi in eccesso.' : undefined);
-  return { values, label, extension: (value: FileFolderPickerValue): string | undefined => models.get(fileFolderPickerIdentity(value))?.extension ?? value.name?.split('.').pop(), remove, browse, browseButton, busy, error: error?.message, hydrating: hydrating && !values.some(value => models.has(fileFolderPickerIdentity(value)) || value.name !== undefined), dialog, attachFrame, cancel, validation,
-    ready: auth.isReady && context.spClient !== undefined, initError: auth.initError === undefined ? undefined : new FileFolderPickerError('auth-provider').message };
+  } catch { policyFailure = strings.validation.invalidPolicy; }
+  const validation = invalid ?? policyFailure ?? (maximum !== undefined && values.length > maximum ? strings.validation.selectionLimitExceeded : undefined);
+  return { values, label, extension: (value: FileFolderPickerValue): string | undefined => models.get(fileFolderPickerIdentity(value))?.extension ?? value.name?.split('.').pop(), remove, browse, browseButton, busy, error: error === undefined ? undefined : strings.errors[error.code], hydrating: hydrating && !values.some(value => models.has(fileFolderPickerIdentity(value)) || value.name !== undefined), dialog, attachFrame, cancel, validation,
+    ready: auth.isReady && context.spClient !== undefined, initError: auth.initError === undefined ? undefined : new FileFolderPickerError('auth-provider', strings).message };
 }

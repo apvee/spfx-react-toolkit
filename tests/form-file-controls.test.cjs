@@ -37,6 +37,13 @@ test('FileInput disabled ancestry guards Browse, Clear and native events', () =>
  } finally { f.close(); }
 });
 test('FileInput types enforce full nullable domain, native callbacks and actual ref', () => {
- const ts = require('typescript'); const path = require('node:path'); const program = ts.createProgram([path.resolve(__dirname, 'fixtures/form-file-types.tsx')], { noEmit: true, strict: true, skipLibCheck: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.NodeJs, jsx: ts.JsxEmit.React, lib: ['lib.es2020.d.ts', 'lib.dom.d.ts'] });
+ const ts = require('typescript'); const path = require('node:path'); const program = ts.createProgram([path.resolve(__dirname, '../packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts'), path.resolve(__dirname, 'fixtures/form-file-types.tsx')], { noEmit: true, strict: true, skipLibCheck: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.NodeJs, jsx: ts.JsxEmit.React, lib: ['lib.es2020.d.ts', 'lib.dom.d.ts'] });
  const diagnostics = ts.getPreEmitDiagnostics(program); assert.equal(diagnostics.length, 0, ts.formatDiagnosticsWithColorAndContext(diagnostics, { getCanonicalFileName: f => f, getCurrentDirectory: () => process.cwd(), getNewLine: () => '\n' }));
+});
+
+test('Form file dictionary supplies Browse and Clear with explicit direct-label precedence', () => {
+ const F=api.createForm();let methods;
+ function Owner({direct=false}) {methods=F.useForm({defaultValues:{attachments:null},strings:{fileInput:{browseLabel:'Choose files',clearLabel:'Remove selection'}}});return React.createElement(F.Root,{methods,onSubmit:()=>{}},React.createElement(F.FileInput,{name:'attachments',...(direct?{browseLabel:'',clearLabel:'Direct clear'}:{})}));}
+ const f=harness.mount(React.createElement(Owner));
+ try {assert.equal(f.host.querySelector('button').textContent,'Choose files');const node=f.host.querySelector('input');choose(node,files(['a.txt']));assert.ok([...f.host.querySelectorAll('button')].some(button=>button.textContent==='Remove selection'));f.render(React.createElement(Owner,{direct:true}));assert.equal(f.host.querySelector('button').textContent,'');assert.ok([...f.host.querySelectorAll('button')].some(button=>button.textContent==='Direct clear'));assert.equal(f.host.querySelector('input'),node);assert.equal(methods.getValues('attachments').length,1);}finally{f.close();}
 });

@@ -9,6 +9,7 @@ webpack({
   mode: 'development', devtool: 'source-map', entry: path.join(fixture, 'index.tsx'),
   output: { path: output, filename: 'fixture.js' },
   resolve: { extensions: ['.tsx', '.ts', '.js'], alias: {
+    ...require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
     '@apvee/spfx-react-toolkit/controls/file-folder-picker$': path.join(root, 'packages/spfx-react-toolkit/lib/controls/file-folder-picker/index.js'),
     '@apvee/spfx-react-toolkit/property-pane/file-folder-picker$': path.join(root, 'packages/spfx-react-toolkit/lib/property-pane/file-folder-picker/index.js'),
     '@microsoft/sp-property-pane$': sdk, '@microsoft/sp-http$': sdk, '@microsoft/sp-page-context$': sdk,

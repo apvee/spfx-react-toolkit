@@ -63,7 +63,7 @@ test('JS Edit validates a nonempty accessible name, callback and finite configur
 
 test('Edit fallback and localized placeholder remain distinct from the textbox accessible name', async t => {
   const h = createHarness(); t.after(() => h.close());
-  const f = h.mount({ mode: 'edit', value: '', locale: 'it-IT', 'aria-label': undefined, 'aria-labelledby': 'label-id' }); await h.settle();
+  const f = h.mount({ mode: 'edit', value: '', strings: { placeholder: 'Suggerimento' }, 'aria-label': undefined, 'aria-labelledby': 'label-id' }); await h.settle();
   const e = f.editor; assert.equal(e.getHTML(), '<p></p>'); assert.equal(e.view.dom.getAttribute('aria-labelledby'), 'label-id');
   const placeholder = e.view.dom.querySelector('[data-placeholder]')?.getAttribute('data-placeholder'); assert.ok(placeholder);
   f.render({ placeholder: 'Literal placeholder' }); assert.equal(e.view.dom.querySelector('[data-placeholder]').getAttribute('data-placeholder'), 'Literal placeholder');
@@ -85,7 +85,7 @@ test('configuration rerenders reconcile live draft without stale-source replacem
   const h = createHarness(); t.after(() => h.close());
   const f = h.mount({ mode: 'edit', value: '<p>Initial</p>' }); await h.settle(); const e = f.editor, view = e.view;
   h.act(() => e.commands.insertContent('Draft ')); const count = f.calls.length;
-  f.render({ allowedBlocks: ['h4', 'h2'], locale: 'fr-FR', placeholder: 'New' });
+  f.render({ allowedBlocks: ['h4', 'h2'], strings: { bold: 'Gras' }, placeholder: 'New' });
   assert.equal(f.editor, e); assert.equal(e.view, view); assert.equal(e.getHTML(), '<h2>Draft Initial</h2>'); assert.equal(f.calls.length, count);
   f.render({ allowedBlocks: ['h2', 'h4', 'h2'], defaultBlock: 'h4' });
   assert.equal(e.getHTML(), '<h2>Draft Initial</h2>'); assert.equal(f.calls.length, count);

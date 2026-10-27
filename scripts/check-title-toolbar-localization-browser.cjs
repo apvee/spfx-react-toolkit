@@ -35,12 +35,16 @@ async function serve(directory) {
 }
 if (require.main === module) (async () => {
   fs.mkdirSync(output, { recursive: true });
-  const resources = await harness.loadModule('packages/spfx-react-toolkit/src/controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
-  const common = await harness.loadModule('packages/spfx-react-toolkit/src/controls/editable-text/localization/editable-text-locales.internal.ts');
-  const stringsFor = culture => { const text = common.resolveEditableTextStrings(culture); return { ...resources.resolveWebPartShellStrings(culture), ...text, titleFormattingControls: text.formattingControls, moreTitleFormatting: text.moreFormatting }; };
+  const resources = Object.fromEntries(require('../tests/fixtures/sharepoint-ui-locales.json').cultures.map(culture => [culture,
+    require(`../packages/spfx-react-toolkit/src/controls/web-part-shell/localization/resources/${culture}.json`)]));
+  const editorResources = Object.fromEntries(Object.keys(resources).map(culture => [culture,
+    require(`../packages/spfx-react-toolkit/src/controls/editable-text/localization/resources/${culture}.json`)]));
+  const common = await harness.loadModule('packages/spfx-react-toolkit/src/controls/editable-text/localization/editable-text-strings.internal.ts');
+  const stringsFor = culture => { const text = common.defineEditableTextStrings(editorResources[culture]); return { ...resources[culture], ...text, titleFormattingControls: text.formattingControls, moreTitleFormatting: text.moreFormatting }; };
+  const dictionaryPatch = culture => ({ strings: resources[culture], titleEditorResource: editorResources[culture] });
   const { editableTextColorDescriptors: titleColorDescriptors } = await harness.loadModule('packages/spfx-react-toolkit/src/controls/editable-text/editable-text-format.internal.ts');
   const cultures = require('../tests/fixtures/sharepoint-ui-locales.json').cultures;
-  check('50 actual culture catalogs', Object.keys(resources.webPartShellLocaleCatalogs).sort(), [...cultures].sort());
+  check('50 canonical dictionary catalogs', Object.keys(resources).sort(), [...cultures].sort());
   const browser = await chromium.launch({ executablePath: process.env.SX_BROWSER_EXECUTABLE || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
   try {
     for (const boundary of ['source', 'compiled']) {
@@ -52,7 +56,7 @@ if (require.main === module) (async () => {
       try {
         await page.goto(server.url);
         const render = async patch => { await page.evaluate(value => window.shellFixture.render(value), patch); await settle(page); };
-        await render({ mode: 'Edit', uiCulture: 'en-US', otherUiCulture: 'it-IT', width: 900,
+        await render({ mode: 'Edit', ...dictionaryPatch('en-US'), otherStrings: resources['it-IT'], otherTitleEditorResource: editorResources['it-IT'], width: 900,
           properties: { title: 'Author content', titleHTML: '<h2><strong>Author content</strong></h2>', showTitle: true } });
         const editable = page.locator('[data-shell-root=first] [contenteditable=true]'); await editable.waitFor();
         const identity = await editable.elementHandle();
@@ -60,7 +64,7 @@ if (require.main === module) (async () => {
         const toolbar = page.locator('[data-title-toolbar]');
         for (const culture of process.env.TITLE_LOCALIZATION_SKIP_CATALOGS === '1' ? [] : cultures) {
           const strings = stringsFor(culture);
-          await render({ uiCulture: culture });
+          await render(dictionaryPatch(culture));
           check(`${boundary}/${culture} editor identity`, await editable.evaluate((element, original) => element === original, identity), true);
           check(`${boundary}/${culture} editor accessible name`, await editable.getAttribute('aria-label'), strings.titleEditorLabel);
           await editable.focus(); await toolbar.waitFor();
@@ -125,12 +129,12 @@ if (require.main === module) (async () => {
             await page.screenshot({ path: path.join(output, `${boundary}-${culture}-palette.png`) });
             await page.keyboard.press('Escape'); await palette.waitFor({ state: 'hidden' });
           }
-          if ((cultures.indexOf(culture) + 1) % 10 === 0) console.log(`${boundary}: ${cultures.indexOf(culture) + 1}/50 UI cultures checked.`);
+          if ((cultures.indexOf(culture) + 1) % 10 === 0) console.log(`${boundary}: ${cultures.indexOf(culture) + 1}/50 dictionary cultures checked.`);
         }
-        check(`${boundary} language changes do not publish`, (await page.evaluate(() => window.shellFixture.observe())).refreshes, original.refreshes);
+        check(`${boundary} dictionary changes do not publish`, (await page.evaluate(() => window.shellFixture.observe())).refreshes, original.refreshes);
         check(`${boundary} author content remains literal`, await editable.textContent(), 'Author content');
-        check(`${boundary} second instance language independent`, await page.locator('[data-shell-root=second] [contenteditable=true]').getAttribute('aria-label'), resources.resolveWebPartShellStrings('it-IT').titleEditorLabel);
-        await render({ uiCulture: 'en-US' });
+        check(`${boundary} second instance dictionary independent`, await page.locator('[data-shell-root=second] [contenteditable=true]').getAttribute('aria-label'), resources['it-IT'].titleEditorLabel);
+        await render(dictionaryPatch('en-US'));
         const english = stringsFor('en-US');
         await editable.focus(); await page.keyboard.press('Meta+a');
         await toolbar.getByRole('button', { name: english.themeColor, exact: true }).click();
@@ -162,7 +166,7 @@ if (require.main === module) (async () => {
           }), true);
         }
         await identity.dispose();
-        console.log(`${boundary}: locale/tooltips/selection/geometry checks passed.`);
+        console.log(`${boundary}: dictionary/tooltips/selection/geometry checks passed.`);
       } catch (error) {
         await page.screenshot({ path: path.join(output, `${boundary}-failure.png`), fullPage: true });
         fs.writeFileSync(path.join(output, `${boundary}-failure.html`), await page.content());

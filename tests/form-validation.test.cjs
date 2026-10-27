@@ -161,3 +161,73 @@ for (const control of ['native', 'Input']) test(`ordinary callback retains RHF v
     mode = 'valid'; await submit(f.host); assert.equal(saves, 1); assert.equal(methods.getFieldState('title').error, undefined); assert.equal(methods.formState.isSubmitting, false);
   } finally { f.close(); }
 });
+
+test('hook-owned localization works outside Root and async failures read latest committed strings without rewriting snapshots', async () => {
+  const F = api.createForm(); let methods; let reject; let validations = 0;
+  function Owner({ message }) {
+    methods = F.useForm({ defaultValues: { title: 'Keep' }, strings: { unexpectedFailure: message }, resolver: async () => { validations++; await new Promise((_resolve, failure) => { reject = failure; }); } });
+    void methods.formState.errors;
+    return React.createElement('span');
+  }
+  const f = mount(React.createElement(Owner, { message: 'First failure' }));
+  try {
+    let pending; act(() => { pending = methods.trigger(); });
+    f.render(React.createElement(Owner, { message: 'Latest failure' }));
+    assert.equal(validations, 1); assert.equal(methods.control._options.strings, undefined);
+    await act(async () => { reject(new Error('Defect')); await pending; });
+    assert.equal(methods.formState.errors.__formValidation.message, 'Latest failure');
+    f.render(React.createElement(Owner, { message: 'Next failure' }));
+    assert.equal(methods.formState.errors.__formValidation.message, 'Latest failure');
+    assert.equal(validations, 1); assert.deepEqual(methods.getValues(), { title: 'Keep' });
+  } finally { f.close(); }
+});
+
+test('Root localization owns submit failures while field and caller errors retain their messages', async () => {
+  const F = api.createForm(); let methods; let message = 'Localized save';
+  function Owner() { methods = F.useForm({ defaultValues: { title: '' }, strings: { unexpectedFailure: message } }); void methods.formState.errors; return React.createElement(F.Root, { methods, onSubmit: () => { throw new Error('Save'); } }, React.createElement('input', methods.register('title', { validate: () => true })), React.createElement(F.Error)); }
+  const f = mount(React.createElement(Owner));
+  try { await submit(f.host); assert.equal(methods.formState.errors.root.submit.message, 'Localized save'); act(() => methods.setError('title', { message: 'Domain text' })); message = 'Changed save'; f.render(React.createElement(Owner)); assert.equal(methods.formState.errors.title.message, 'Domain text'); assert.equal(methods.formState.errors.root.submit.message, 'Localized save'); }
+  finally { f.close(); }
+});
+
+test('native rule failures outside Root use their own committed dictionary and preserve expected messages', async () => {
+  const F = api.createForm(); const methods = {}; let reject; let fail = true;
+  function Owner({ id, message }) {
+    const current = F.useForm({ defaultValues: { title: '' }, strings: { unexpectedFailure: message } });
+    methods[id] = current; void current.formState.errors;
+    return React.createElement('input', current.register('title', { validate: () => id === 'first' && fail ? new Promise((_resolve, failure) => { reject = failure; }) : 'Domain validation' }));
+  }
+  const first = mount(React.createElement(Owner, { id: 'first', message: 'First' }));
+  const second = mount(React.createElement(Owner, { id: 'second', message: 'Isolated' }));
+  try {
+    let pending; act(() => { pending = methods.first.trigger(); });
+    first.render(React.createElement(Owner, { id: 'first', message: 'Updated first' }));
+    await act(async () => { reject(new Error('Async rule')); await pending; await methods.second.trigger(); });
+    assert.equal(methods.first.getFieldState('title').error.message, 'Updated first');
+    assert.equal(methods.second.getFieldState('title').error.message, 'Domain validation');
+    fail = false;
+    await act(async () => { await methods.first.trigger(); });
+    assert.equal(methods.first.getFieldState('title').error.message, 'Domain validation');
+  } finally { second.close(); first.close(); }
+});
+
+test('external methods reject a competing Root localization owner', () => {
+  const F = api.createForm();
+  function Bad() { const methods = F.useForm({ strings: { unexpectedFailure: 'Owner' } }); return React.createElement(F.Root, { methods, strings: { unexpectedFailure: 'Conflict' }, onSubmit: () => {} }); }
+  assert.throws(() => mount(React.createElement(Bad)), /initialization options/);
+});
+
+for (const callback of ['submit', 'invalid']) test(`pending ${callback} failures use the latest committed dictionary and retain isolated form text`, async () => {
+ const F=api.createForm();let methods;let reject;let message='Before';
+ const fail=()=>new Promise((_resolve,failure)=>{reject=failure;});
+ function Owner(){methods=F.useForm({defaultValues:{title:''},strings:{unexpectedFailure:message}});void methods.formState.errors;return React.createElement(F.Root,{methods,onSubmit:callback==='submit'?fail:()=>{},onInvalid:callback==='invalid'?fail:undefined},React.createElement(F.Input,{name:'title',rules:callback==='invalid'?{required:'Expected required'}:undefined}));}
+ const f=mount(React.createElement(Owner));
+ try{await act(async()=>{f.host.querySelector('form').dispatchEvent(new window.Event('submit',{bubbles:true,cancelable:true}));await Promise.resolve();});assert.equal(typeof reject,'function');message='Committed while pending';f.render(React.createElement(Owner));await act(async()=>{reject(new Error(callback));await new Promise(resolve=>setTimeout(resolve,0));});assert.equal(methods.formState.errors.root.submit.message,'Committed while pending');if(callback==='invalid')assert.equal(methods.getFieldState('title').error.message,'Expected required');assert.equal(methods.formState.isSubmitting,false);}finally{f.close();}
+});
+
+test('inline dictionaries refresh committed context without render loops, validation, reset or state rewriting', async () => {
+ const F=api.createForm();let methods;let renders=0;let validations=0;
+ function Owner({caption}){renders++;methods=F.useForm({defaultValues:{title:''},strings:{fileInput:{browseLabel:caption}}});void methods.formState.errors;return React.createElement(F.Root,{methods,onSubmit:()=>{}},React.createElement(F.Input,{name:'title',rules:{validate:()=>{validations++;return true;}}}),React.createElement(F.FileInput,{name:'attachments',label:'Attachments'}));}
+ const f=mount(React.createElement(Owner,{caption:'Before context'}));
+ try{act(()=>{methods.setValue('title','Draft',{shouldDirty:true,shouldTouch:true});methods.setError('title',{message:'Domain error'});});const before=renders;const error=methods.getFieldState('title').error;const input=f.host.querySelector('input[name="title"]');f.render(React.createElement(Owner,{caption:'After context'}));assert.ok(f.host.textContent.includes('After context'));assert.equal(f.host.querySelector('input[name="title"]'),input);assert.equal(methods.getValues('title'),'Draft');assert.equal(methods.getFieldState('title').isDirty,true);assert.equal(methods.getFieldState('title').isTouched,true);assert.equal(methods.getFieldState('title').error,error);assert.equal(validations,0);assert.ok(renders-before<3,`Unexpected owner renders: ${renders-before}`);}finally{f.close();}
+});

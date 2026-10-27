@@ -5,7 +5,7 @@ const value = { kind: 'file', tenantId: '11111111-1111-4111-8111-111111111111', 
 function setup() {
   const actions = [];
   const runtime = { values: [], label: v => v.name, extension: () => '.pdf', remove: v => actions.push(v.itemId), browse: () => actions.push('browse'), browseButton: { current: null }, busy: false, ready: true, cancel() {}, attachFrame() {} };
-  const h = createPickerHarness({ './useFileFolderPicker.internal': { useFileFolderPicker: () => runtime } });
+  const h = createPickerHarness({ './useFileFolderPicker.internal': { useFileFolderPicker: () => runtime } }, { nativeCulture: 'it-IT' });
   const { FileFolderPicker } = h.load('controls/file-folder-picker/file-folder-picker.tsx');
   return { h, runtime, actions, mount: props => h.mountComponent(() => h.React.createElement(FileFolderPicker, props)) };
 }
@@ -118,4 +118,25 @@ test('consumer hint and source icon stay unchanged while opening without automat
     assert.ok(m.container.querySelector('button[aria-haspopup] svg'));
     assert.equal(m.container.querySelector('[role="status"]'), null);
   } finally { m.unmount(); s.h.close(); }
+});
+
+test('instance browse/placeholder/removal dictionaries preserve literal names and direct browse labels', () => {
+  const s = setup(); s.runtime.values = [{ ...value, name: '$& {name}' }];
+  const m = s.mount({ browseLabel: 'Direct browse', strings: { browse: { files: 'Dictionary browse' }, labels: { selection: 'Custom selection', removeItem: name => `Delete ${name}`, file: 'Document' } } });
+  try {
+    assert.equal(m.container.querySelector('button[aria-haspopup="dialog"]').getAttribute('aria-label'), 'Direct browse');
+    assert.equal(m.container.querySelector('[role="group"]').getAttribute('aria-label'), 'Custom selection');
+    assert.equal(m.container.querySelector('.fui-Tag__dismissIcon').getAttribute('aria-label'), 'Delete $& {name}');
+    assert.match(m.container.textContent, /\$& \{name\}/);
+  } finally { m.unmount(); s.h.close(); }
+  const empty = setup(); const root = empty.mount({ strings: { placeholders: { files: 'Pick a document' }, browse: { files: 'Choose' } } });
+  try { assert.match(root.container.textContent, /Pick a document/); assert.equal(root.container.querySelector('button[aria-haspopup="dialog"]').getAttribute('aria-label'), 'Choose'); }
+  finally { root.unmount(); empty.h.close(); }
+});
+
+test('empty localized error text retains Field error semantics', () => {
+  const s = setup(); s.runtime.error = '';
+  const m = s.mount({});
+  try { assert.ok(m.container.querySelector('.fui-Field')); assert.equal(m.container.querySelector('.fui-Input').querySelector('button').getAttribute('aria-invalid'), 'true'); }
+  finally { m.unmount(); s.h.close(); }
 });

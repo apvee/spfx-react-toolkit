@@ -348,9 +348,9 @@ test('picker deduplicates host tokens while retaining Automatic and the active s
 
 test('localized toolbar commands and palette labels update with the same editor selection', async t => {
   const { h, host, editor, fixture } = await setup(t);
-  const { resolveEditableTextStrings: strings } = h.load('controls/editable-text/localization/editable-text-locales.internal.ts');
+  const strings = culture => require('./fixtures/localization/editor-dictionaries.cjs').editorDictionary(h, culture);
   h.act(() => editor.commands.setTextSelection({ from: 2, to: 5 })); reveal(h, editor);
-  host.context.pageContext.cultureInfo.currentUICultureName = 'it-IT'; fixture.render(host); await h.settle();
+  fixture.render(host, { titleEditorStrings: strings('it-IT') }); await h.settle();
   click(h, button(strings('it-IT').themeColor));
   for (const swatch of document.querySelectorAll('[data-title-color]')) {
     const id = swatch.getAttribute('data-title-color');
@@ -364,8 +364,8 @@ test('localized toolbar commands and palette labels update with the same editor 
 
 test('compact heading presentation retains its complete localized value across command updates', async t => {
   const { h, host, editor, fixture } = await setup(t);
-  const { resolveEditableTextStrings: strings } = h.load('controls/editable-text/localization/editable-text-locales.internal.ts');
-  host.context.pageContext.cultureInfo.currentUICultureName = 'de-DE'; fixture.render(host); await h.settle();
+  const strings = culture => require('./fixtures/localization/editor-dictionaries.cjs').editorDictionary(h, culture);
+  fixture.render(host, { titleEditorStrings: strings('de-DE') }); await h.settle();
   h.act(() => editor.commands.setTextSelection({ from: 2, to: 5 })); reveal(h, editor);
   const heading = button(strings('de-DE').heading);
   assert.equal(heading.getAttribute('value'), strings('de-DE').headingLevel(2));
@@ -390,11 +390,10 @@ test('palette sections preserve ordered accessible groups and each swatch belong
 
 test('font-size expand action uses the current localized name without Fluent English prefixes', async t => {
   const { h, host, editor, fixture } = await setup(t);
-  const { resolveEditableTextStrings: strings } = h.load('controls/editable-text/localization/editable-text-locales.internal.ts');
+  const strings = culture => require('./fixtures/localization/editor-dictionaries.cjs').editorDictionary(h, culture);
   reveal(h, editor);
   for (const culture of ['it-IT', 'de-DE', 'ar-SA']) {
-    host.context.pageContext.cultureInfo.currentUICultureName = culture;
-    fixture.render(host); await h.settle();
+    fixture.render(host, { titleEditorStrings: strings(culture) }); await h.settle();
     const expand = document.querySelector('.fui-Combobox__expandIcon');
     assert.equal(expand.getAttribute('aria-label'), strings(culture).fontSize);
     assert.equal(button(strings(culture).fontSize).getAttribute('role'), 'combobox');

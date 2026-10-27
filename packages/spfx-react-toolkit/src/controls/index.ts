@@ -7,7 +7,7 @@ export * from './accordion-group';
 export * from './form';
 export * from './data-grid';
 export { WebPartShell, getWebPartShellPropertiesMetadata } from './web-part-shell';
-export type { IWebPartShellProperties, WebPartShellProps, WebPartShellSurface, WebPartShellPadding } from './web-part-shell';
+export type { IWebPartShellProperties, WebPartShellProps, WebPartShellSurface, WebPartShellPadding, WebPartShellStrings } from './web-part-shell';
 export * from './stage';
 export * from './pagination';
 export * from './description-list';
@@ -21,4 +21,4 @@ export * from './pickers';
 export * from './file-folder-picker';
 
 export { EditableText } from './editable-text';
-export type { EditableTextProps, EditableTextChangeData, EditableTextBlock } from './editable-text';
+export type { EditableTextProps, EditableTextChangeData, EditableTextBlock, EditableTextStrings, EditableTextColorNames, EditableTextStringsOverride } from './editable-text';

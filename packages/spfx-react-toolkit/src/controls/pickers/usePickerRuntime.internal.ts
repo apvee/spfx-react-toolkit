@@ -1,3 +1,5 @@
+import { resolvePickersStrings } from './pickers-strings.internal';
+import { PickerMessageError, projectPickerError } from './picker-message.internal';
 import { useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useStableCallback } from '../../hooks/useStableCallback';
 import type { PickerValue } from './picker-values.types';
@@ -35,6 +37,14 @@ function modelSignature(options: readonly PickerOption[]): string {
 
 /** Pure projections with effect-owned discovery, hydration and explicit transactional confirmation. */
 export function usePickerRuntime<V extends PickerValue, T extends PickerOption<V>>(props: PickerProps<T> & PrincipalDefaults, source: PickerSource<V, T>, defaults: RuntimeDefaults) {
+  const strings = resolvePickersStrings(props.strings);
+  const projectedErrors = new Map<Error, Error>();
+  const projectError = (error: Error | undefined): Error | undefined => {
+    if (error === undefined) return undefined;
+    const projected = projectedErrors.get(error) ?? projectPickerError(error, strings) ?? error;
+    projectedErrors.set(error, projected);
+    return projected;
+  };
   const catalogLimit = defaults.initialCatalogLimit === undefined ? undefined : checkInteger(defaults.initialCatalogLimit, 'initialCatalogLimit', 1, 200);
   const minimum = checkInteger(props.minimumSearchLength ?? 2, 'minimumSearchLength', 2);
   const debounce = checkInteger(props.debounceMs ?? 300, 'debounceMs', 0);
@@ -90,7 +100,7 @@ export function usePickerRuntime<V extends PickerValue, T extends PickerOption<V
   const [preflight, setPreflight] = useState<{ readonly binding: typeof binding; readonly revision: number; readonly permitted: ReadonlySet<string>; readonly settled: ReadonlySet<string> }>();
   const [personal, setPersonal] = useState<{ readonly binding: typeof binding; readonly revision: number; readonly data: PickerPersonalSuggestions<T>; readonly error?: Error }>();
   const [failure, setFailure] = useState<Error>();
-  const [validation, setValidation] = useState<string>();
+  const [validation, setValidation] = useState<string | { readonly messageKey: keyof typeof strings.validation }>();
   const [unresolvedLabels, setUnresolvedLabels] = useState<ReadonlyMap<string, string>>(() => new Map(props.defaultPrincipals?.flatMap((principal, index) => principal.text === undefined ? [] : [[principal.kind === 'displayOnly' ? principal.key : `principal-initial:${index}`, principal.text] as const])));
   // Native-only initial presentation: a changed source/reference/epoch closes this cycle permanently.
   // Readiness/client initialization is deliberately absent: Graph-dependent hydration may still be waiting.
@@ -122,7 +132,7 @@ export function usePickerRuntime<V extends PickerValue, T extends PickerOption<V
   };
   const report = useStableCallback((error: Error, operation: 'load' | 'search' | 'resolve' | 'validate', suggestionSource?: 'people' | 'memberOf' | 'currentUser' | 'currentSite' | 'hubSite', transport?: 'sharePoint' | 'graph') => {
     const errorTransport = 'pickerSource' in error && (error.pickerSource === 'graph' || error.pickerSource === 'sharePoint') ? error.pickerSource : undefined;
-    props.onError?.(error, { source: transport ?? errorTransport ?? (suggestionSource === 'people' || suggestionSource === 'memberOf' ? 'graph' : source.transport), operation, suggestionSource });
+    props.onError?.(projectError(error) ?? error, { source: transport ?? errorTransport ?? (suggestionSource === 'people' || suggestionSource === 'memberOf' ? 'graph' : source.transport), operation, suggestionSource });
   });
   const adopt = useStableCallback((options: readonly T[]) => {
     setModels(previous => {
@@ -328,18 +338,18 @@ export function usePickerRuntime<V extends PickerValue, T extends PickerOption<V
   }, [binding, source.ready, catalogEnabled, catalogLimit, open, query, selectedSignature, consumerSignature, props.filterOptions, retryRevision, adopt, report]);
   // Contextual sites are fixed navigation choices, outside the ordinary five suggestions.
   // Reuse the canonical guards and consumer model precedence before composing their sections.
-  const pinnedSections = source.persistentSuggestions ? composePickerSuggestions({
+  const pinnedSections = source.persistentSuggestions ? composePickerSuggestions({ strings,
     currentSite: permitted(personalData?.currentSite ?? []), hubSite: permitted(personalData?.hubSite ?? []),
     selected: selectedItems, selectedValues: knownSelectedValues, context, accepts: acceptsOption, showDefaultSuggestions: props.showDefaultSuggestions,
   }) : [];
   const pinnedValues = pinnedSections.flatMap(section => section.options.map(option => option.value));
   const pinnedAliases = new Set(pinnedValues.flatMap(value => pickerIdentityAliases(value, context)));
-  const sections = composePickerSuggestions({ consumer: consumerOptions, catalog: catalogEnabled ? visibleCatalog?.options : undefined, catalogLimit, completeCatalog: source.completeCatalog,
+  const sections = composePickerSuggestions({ strings, consumer: consumerOptions, catalog: catalogEnabled ? visibleCatalog?.options : undefined, catalogLimit, completeCatalog: source.completeCatalog,
     currentSite: source.persistentSuggestions ? undefined : personalData?.currentSite, hubSite: source.persistentSuggestions ? undefined : personalData?.hubSite,
     currentUser: personalData?.currentUser, people: personalData?.people, groups: personalData?.groups,
     selected: selectedItems, selectedValues: [...knownSelectedValues, ...pinnedValues], context, accepts: acceptsOption, filterOptions: props.filterOptions, limit: initialLimit, showDefaultSuggestions: props.showDefaultSuggestions });
   const catalogMore = catalogEnabled && !source.completeCatalog && permitted([...(consumerOptions ?? []), ...(visibleCatalog?.options ?? [])]).length > (catalogLimit ?? 30);
-  const catalogHint = query.trim() === '' && catalogMore ? 'Sono disponibili altri elementi.' : undefined;
+  const catalogHint = query.trim() === '' && catalogMore ? strings.status.moreItemsAvailable : undefined;
   // Match/filter once before removing choices already represented by selections or fixed sections.
   const searchMatches = permitted(visible?.page?.options ?? [], false);
   const searchOptions = searchMatches.filter(option => !pickerIdentityAliases(option.value, context).some(alias => selectedAliases.has(alias) || pinnedAliases.has(alias)));
@@ -372,7 +382,7 @@ export function usePickerRuntime<V extends PickerValue, T extends PickerOption<V
     const candidate = projectedModels.options.get(key) ?? searchOptions.find(option => option.key === key) ?? [...pinnedSections, ...sections].flatMap(section => section.options).find(option => option.key === key);
     if (candidate === undefined || !source.accepts(candidate)) return false;
     const next = multi ? [...selectedOptions, key] : [key];
-    if (next.length > limit) { setValidation('Il limite di selezione è stato raggiunto.'); return false; }
+    if (next.length > limit) { setValidation({ messageKey: 'selectionLimitReached' }); return false; }
     const token = ++active.current.action;
     validationGeneration.current++;
     const current = active.current.binding;
@@ -380,11 +390,11 @@ export function usePickerRuntime<V extends PickerValue, T extends PickerOption<V
     try {
       const verified = await source.verifyCandidate(candidate, request());
       if (!active.current.mounted || active.current.binding !== current || active.current.action !== token) return false;
-      if (verified === undefined) throw new Error('Il candidato non appartiene all’ambito configurato.');
+      if (verified === undefined) throw new PickerMessageError({ group: 'errors', key: 'candidateOutOfScope' });
       const confirmed = source.confirm === undefined ? [verified] : await source.confirm([verified], request(), 'selection');
       if (!active.current.mounted || active.current.binding !== current || active.current.action !== token) return false;
       const replacement = confirmed[0];
-      if (replacement === undefined) throw new Error('La risoluzione del candidato è incompleta.');
+      if (replacement === undefined) throw new PickerMessageError({ group: 'errors', key: 'incompleteCandidateResolution' });
       const nextItems = next.flatMap(item => item === key ? [{ ...replacement, key }] : selectedItems.filter(option => option.key === item));
       const message = props.validationTrigger === 'blur' ? undefined : await props.validateSelection?.(nextItems);
       if (!active.current.mounted || active.current.binding !== current || active.current.action !== token) return false;
@@ -441,23 +451,23 @@ export function usePickerRuntime<V extends PickerValue, T extends PickerOption<V
   const activeCatalog = query.trim() === '' && catalogEnabled ? visibleCatalog : undefined;
   const sourceErrors = visible?.page?.errors ?? activeCatalog?.errors ?? [];
   const sourceFailure = sourceErrors.find(entry => entry.retryable !== false)?.error ?? activeCatalog?.error ?? visiblePersonal?.error ?? personalData?.errors?.[0]?.error;
-  const warnings = [...new Set(sourceErrors.filter(entry => entry.retryable === false).map(entry => entry.error.message))];
-  const warning = warnings.length > 0 ? warnings.join(' ') : sourceFailure === undefined && (visible?.page?.completeness === 'partial' && visible.page.continuation === undefined || personalData?.completeness === 'partial' || activeCatalog?.partial && !catalogMore) ? 'Ricerca parziale: affina la ricerca.' : undefined;
+  const warnings = [...new Set(sourceErrors.filter(entry => entry.retryable === false).map(entry => projectError(entry.error)?.message))];
+  const warning = warnings.length > 0 ? warnings.join(' ') : sourceFailure === undefined && (visible?.page?.completeness === 'partial' && visible.page.continuation === undefined || personalData?.completeness === 'partial' || activeCatalog?.partial && !catalogMore) ? strings.status.partialSearch : undefined;
   const contextualError = visiblePersonal?.error ?? personalData?.errors?.[0]?.error;
-  const contextualWarning = contextualError === undefined && personalData?.completeness === 'partial' ? 'Suggerimenti parziali: alcune sorgenti non sono disponibili.' : undefined;
+  const contextualWarning = contextualError === undefined && personalData?.completeness === 'partial' ? strings.status.partialSuggestions : undefined;
   const searchError = visible?.error ?? visible?.page?.errors?.find(entry => entry.retryable !== false)?.error;
-  const searchWarnings = [...new Set((visible?.page?.errors ?? []).filter(entry => entry.retryable === false).map(entry => entry.error.message))];
+  const searchWarnings = [...new Set((visible?.page?.errors ?? []).filter(entry => entry.retryable === false).map(entry => projectError(entry.error)?.message))];
   const searchFeedback: PickerSearchFeedback = {
     phase: !searchActive ? 'idle' : searchPending ? 'pending' : searchError !== undefined ? 'error' : visible?.page?.completeness === 'partial' ? 'partial' : visible?.page === undefined ? 'idle' : 'complete',
-    matchesVisibleChoices, error: searchError, warning: searchWarnings.length > 0 ? searchWarnings.join(' ') : undefined,
+    matchesVisibleChoices, error: projectError(searchError), warning: searchWarnings.length > 0 ? searchWarnings.join(' ') : undefined,
   };
   const hydrationFailure = hydrated?.epoch === verificationEpoch ? missingModels.map(key => hydrated.errors.get(key)).find(error => error !== undefined) : undefined;
   const selectionText = (key: string): string => knownReferences === undefined ?
-    projectedModels.options.get(key)?.text ?? unresolvedLabels.get(key) ?? 'Valore non risolto' :
-    nativeSelectionLabel(key) ?? (pendingHydration.includes(key) ? 'Caricamento…' : 'Valore non risolto');
-  return { query, setQuery, open, setOpen, initialHydrationPending, selectedOptions, selectedItems, unresolvedOptions, pinnedSections, sections, searchOptions, searchFeedback, contextualError, contextualWarning, confirming, selectionText, catalogHint, canResolve: source.confirm !== undefined && missingIdentity,
-    loading: confirming || pendingKeys.size > 0 || searchPending || preflightPending || personalPending || (catalogEnabled && open && query.trim() === '' && source.ready && visibleCatalog === undefined), warning, error: failure ?? visible?.error ?? projectedModels.errors[0] ?? hydrationFailure ?? sourceFailure,
+    projectedModels.options.get(key)?.text ?? unresolvedLabels.get(key) ?? strings.status.unresolvedValue :
+    nativeSelectionLabel(key) ?? (pendingHydration.includes(key) ? strings.status.loading : strings.status.unresolvedValue);
+  return { query, setQuery, open, setOpen, initialHydrationPending, selectedOptions, selectedItems, unresolvedOptions, pinnedSections, sections, searchOptions, searchFeedback, contextualError: projectError(contextualError), contextualWarning, confirming, selectionText, catalogHint, canResolve: source.confirm !== undefined && missingIdentity,
+    loading: confirming || pendingKeys.size > 0 || searchPending || preflightPending || personalPending || (catalogEnabled && open && query.trim() === '' && source.ready && visibleCatalog === undefined), warning, error: projectError(failure ?? visible?.error ?? projectedModels.errors[0] ?? hydrationFailure ?? sourceFailure),
     partial: visible?.page?.completeness === 'partial' || personalData?.completeness === 'partial', continuation: visible?.page?.continuation,
-    validation: selectedOptions.length > limit ? 'La selezione supera il limite configurato.' : knownReferences !== undefined && hydrationFailure !== undefined ? hydrationFailure.message : terminalUnresolved.length > 0 ? 'Alcuni valori selezionati non sono risolti.' : selectedItems.some(option => !acceptsOption(option)) ? 'La selezione contiene valori fuori dall’ambito configurato.' : missingIdentity ? 'Risolvi gli ID richiesti per gli utenti selezionati.' : validation,
+    validation: selectedOptions.length > limit ? strings.validation.selectionLimitExceeded : knownReferences !== undefined && hydrationFailure !== undefined ? projectError(hydrationFailure)?.message : terminalUnresolved.length > 0 ? strings.validation.unresolvedValues : selectedItems.some(option => !acceptsOption(option)) ? strings.validation.outOfScopeValues : missingIdentity ? strings.validation.resolveRequiredUserIds : typeof validation === 'string' ? validation : validation === undefined ? undefined : strings.validation[validation.messageKey],
     minimum, select, remove, clear, resolve, retry, loadMore, blur };
 }

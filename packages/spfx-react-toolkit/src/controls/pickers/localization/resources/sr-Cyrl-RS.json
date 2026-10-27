@@ -1,0 +1,81 @@
+{
+  "labels": {
+    "selectOne": "Изабери ставку",
+    "selectMany": "Изабери ставке",
+    "search": "Претражи…",
+    "clearSelection": "Обриши избор",
+    "clearSearch": "Обриши претрагу",
+    "options": "Опције",
+    "searchOptions": "Претражи опције",
+    "selectedOne": "Изабрана ставка",
+    "selectedMany": "Изабране ставке",
+    "noSelection": "Нема избора",
+    "resolveIds": "Разреши идентификаторе",
+    "moreResults": "Још резултата",
+    "retry": "Покушај поново",
+    "namedOptions": "{name}: Опције",
+    "namedSearch": "{name}: Претражи",
+    "selectedCount": {
+      "one": "Изабрана је {count} ставка",
+      "few": "Изабране су {count} ставке",
+      "other": "Изабрано је {count} ставки"
+    },
+    "minimumSearchLength": {
+      "one": "Унесите најмање {count} знак за претрагу",
+      "few": "Унесите најмање {count} знака за претрагу",
+      "other": "Унесите најмање {count} знакова за претрагу"
+    }
+  },
+  "status": {
+    "searching": "Претраживање…",
+    "loading": "Учитавање…",
+    "partialSearch": "Делимична претрага: прецизирајте претрагу.",
+    "noOtherResults": "Нема других резултата за ову претрагу",
+    "noResults": "Нема резултата за ову претрагу",
+    "noOptions": "Нема доступних опција.",
+    "moreItemsAvailable": "Доступно је још ставки.",
+    "partialSuggestions": "Делимични предлози: неки извори нису доступни.",
+    "unresolvedValue": "Неразрешена вредност",
+    "partialHubs": "Делимичан списак чворишта: сузите опсег или користите режим локације.",
+    "partialSiteCollections": "Делимична претрага колекција локација (највише 1000 резултата): сузите критеријуме."
+  },
+  "sections": {
+    "consumer": "Понуђене опције",
+    "currentSite": "Тренутна локација",
+    "hubSite": "Повезано чвориште",
+    "catalog": "Доступне опције",
+    "currentUser": "Ви",
+    "people": "Предложене особе",
+    "memberOf": "Ваше групе"
+  },
+  "metadata": {
+    "documentLibrary": "Библиотека докумената",
+    "sharePointList": "SharePoint листа",
+    "personalView": "Лични приказ",
+    "publicView": "Јавни приказ",
+    "field": "Поље",
+    "itemDescription": "Ставка · ID {id}",
+    "file": "Датотека",
+    "fileWithExtension": "Датотека {extension}",
+    "folder": "Фасцикла",
+    "sharePointGroup": "SharePoint група · SharePoint",
+    "securityGroup": "Безбедносна група · Entra",
+    "distributionList": "Листа за дистрибуцију · Entra",
+    "unvalidatedEmail": "Непотврђена е-пошта",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Достигнуто је ограничење избора.",
+    "selectionLimitExceeded": "Избор премашује подешено ограничење.",
+    "unresolvedValues": "Неке изабране вредности нису разрешене.",
+    "outOfScopeValues": "Избор садржи вредности изван подешеног опсега.",
+    "resolveRequiredUserIds": "Разрешите потребне идентификаторе за изабране кориснике."
+  },
+  "errors": {
+    "candidateOutOfScope": "Кандидат је изван подешеног опсега.",
+    "incompleteCandidateResolution": "Кандидат није могао да буде потпуно разрешен.",
+    "resolutionFailed": "Разрешавање није успело.",
+    "graphUnavailable": "Клијент Microsoft Graph није доступан."
+  }
+}

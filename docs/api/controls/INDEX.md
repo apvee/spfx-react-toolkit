@@ -34,7 +34,7 @@ DataGrid public types: `DataGridProps`, `DataGridStrings`, `DataGridSparklineSum
 
 ## WebPartShell
 
-`WebPartShell`, `IWebPartShellProperties`, `WebPartShellProps`, `WebPartShellSurface`, `WebPartShellPadding` and `getWebPartShellPropertiesMetadata` compose an actual web part with providers, adaptive spacing and a persisted inline title. See the [WebPartShell reference](./web-part-shell.md) for every member, metadata, editor protocol and host limits. Import from the root, `/controls` or `/controls/web-part-shell`.
+`WebPartShell`, `IWebPartShellProperties`, `WebPartShellProps`, `WebPartShellSurface`, `WebPartShellPadding`, `WebPartShellStrings` and `getWebPartShellPropertiesMetadata` compose an actual web part with providers, adaptive spacing and a persisted inline title. See the [WebPartShell reference](./web-part-shell.md) for every member, metadata, editor protocol and host limits. Import from the root, `/controls` or `/controls/web-part-shell`.
 
 ## Stage
 
@@ -66,4 +66,15 @@ Picker public contracts: `SitePicker`, `ListPicker`, `FieldPicker`, `ViewPicker`
 
 ## EditableText
 
-[EditableText](./editable-text.md) owns one controlled formatted block with Read/Edit and finite semantic block policy. Public exports: `EditableText`, `EditableTextProps`, `EditableTextBlock`, `EditableTextChangeData`. It uses the host Fluent/Griffel peers without requiring SPFx; callers own persistence.
+[EditableText](./editable-text.md) owns one controlled formatted block with Read/Edit and finite semantic block policy. Public exports: `EditableText`, `EditableTextProps`, `EditableTextBlock`, `EditableTextChangeData`, `EditableTextStrings`, `EditableTextColorNames`, `EditableTextStringsOverride`. It uses the host Fluent/Griffel peers without requiring an SPFx provider; native AMD resources require the SPFx loader or an explicit host adapter. Callers own persistence.
+
+See [native SPFx localization and consumer setup](../../LOCALIZATION.md) for per-family resources, postinstall registration, typed overrides and the EditableText locale migration.
+
+Native localization dictionary types are documented with their owning controls:
+
+| Family | Public dictionary contracts |
+| --- | --- |
+| [Form](./form.md) | `FormStrings`, `FormStringsOverride` |
+| [Stage](./stage.md) | `StageStrings` |
+| [Pickers](./pickers.md) | `PickersStrings`, `PickersStringsOverride` |
+| [FileFolderPicker](./file-folder-picker.md) | `FileFolderPickerStrings`, `FileFolderPickerStringsOverride` |

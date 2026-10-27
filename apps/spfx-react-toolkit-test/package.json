@@ -13,7 +13,8 @@
     "serve": "gulp serve",
     "trust-dev-cert": "gulp trust-dev-cert",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "lint": "eslint src --ext .ts,.tsx"
+    "lint": "eslint src --ext .ts,.tsx",
+    "postinstall": "spfx-react-toolkit configure-localization"
   },
   "dependencies": {
     "@microsoft/sp-application-base": "1.21.1",

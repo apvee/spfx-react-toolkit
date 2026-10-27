@@ -56,7 +56,7 @@ test('exact dependency baseline preserves the fixed host and supported React pee
 test('React17/TS5.3 infer distinct input/output, controller, array and compat callback types', () => {
   const ts = hostRequire('typescript');
   const fixture = dependencyRoot === root ? path.join(__dirname, 'fixtures/form-dependency-types.tsx') : path.join(dependencyRoot, 'types.tsx');
-  const program = ts.createProgram([fixture], {
+  const program = ts.createProgram([path.resolve(__dirname, '../packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts'), fixture], {
     noEmit: true, strict: true, skipLibCheck: true, target: ts.ScriptTarget.ES2020,
     module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.NodeJs,
     jsx: ts.JsxEmit.React, lib: ['lib.es2020.d.ts', 'lib.dom.d.ts'],

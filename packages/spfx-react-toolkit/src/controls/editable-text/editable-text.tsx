@@ -5,8 +5,8 @@ import { getNativeElementProps } from '@fluentui/react-utilities';
 import { getEditableTextPlainText, resolveEditableTextValue, serializeEditableTextDocument } from './editable-text-codec.internal';
 import { resolveEditableTextBlockPolicy } from './editable-text-policy.internal';
 import { EditableTextReadRenderer } from './editable-text-renderer.internal';
-import { resolveEditableTextStrings } from './localization/editable-text-locales.internal';
-import type { EditableTextStrings } from './localization/editable-text-strings.internal';
+import { resolveEditableTextStrings } from './localization/editable-text-strings.internal';
+import type { EditableTextStrings } from './editable-text.types';
 import type { EditableTextDocument } from './editable-text-document.types.internal';
 import type { EditableTextProps } from './editable-text.types';
 
@@ -28,14 +28,14 @@ class EditableTextEditorBoundary extends React.Component<{
   }
 }
 
-const ownedProps = ['value', 'fallbackText', 'mode', 'onChange', 'allowedBlocks', 'defaultBlock', 'placeholder', 'locale',
+const ownedProps = ['value', 'fallbackText', 'mode', 'onChange', 'allowedBlocks', 'defaultBlock', 'placeholder', 'strings', 'locale',
   'children', 'dangerouslySetInnerHTML', 'contentEditable', 'suppressContentEditableWarning', 'defaultValue', 'role', 'dir', 'as'];
 
 function validateProps(props: EditableTextProps): void {
   if (props.mode !== undefined && props.mode !== 'read' && props.mode !== 'edit') {
     throw new TypeError('EditableText mode must be read or edit');
   }
-  for (const key of ['value', 'fallbackText', 'placeholder', 'locale', 'aria-label', 'aria-labelledby', 'aria-describedby'] as const) {
+  for (const key of ['value', 'fallbackText', 'placeholder', 'aria-label', 'aria-labelledby', 'aria-describedby'] as const) {
     if (props[key] !== undefined && typeof props[key] !== 'string') throw new TypeError(`EditableText ${key} must be a string`);
   }
   if (props.onChange !== undefined && typeof props.onChange !== 'function') throw new TypeError('EditableText onChange must be a function');
@@ -53,6 +53,8 @@ function validateProps(props: EditableTextProps): void {
  * private engine with per-instance draft/history and a local load-error Retry.
  * Normalization never persists data. Requires a browser document and the host's
  * Fluent/Griffel context for theme, direction and popups; no SPFx provider needed.
+ * Configure native localized resource modules in SPFx; other hosts must supply
+ * an explicit module adapter, including when every label is overridden.
  * Place the control in a block-capable container. See EditableTextProps for the
  * value protocol, controlled changes, limits and runtime TypeError conditions.
  *
@@ -106,7 +108,7 @@ export const EditableText = React.forwardRef<HTMLDivElement, EditableTextProps>(
   [props.value, fallbackText, ownerDocument, policy.membershipKey, policy.defaultBlock]);
   // Configuration is deliberately excluded: the editor reconciles its live draft.
   const sourceKey = JSON.stringify([props.value, fallbackText]);
-  const strings = resolveEditableTextStrings(props.locale);
+  const strings = React.useMemo(() => resolveEditableTextStrings(props.strings), [props.strings]);
   const publish = React.useCallback((document: EditableTextDocument): void => {
     // Read may omit its callback while a committed Edit session finishes once.
     const callback = props.onChange ?? lastEditCallback.current;

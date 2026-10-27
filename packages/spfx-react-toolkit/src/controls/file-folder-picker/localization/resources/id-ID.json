@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Telusuri berkas…",
+    "folders": "Telusuri folder…",
+    "all": "Telusuri berkas dan folder…"
+  },
+  "placeholders": {
+    "files": "Pilih berkas…",
+    "folders": "Pilih folder…",
+    "all": "Pilih berkas atau folder…"
+  },
+  "labels": {
+    "selection": "Pemilihan berkas dan folder",
+    "file": "Berkas",
+    "folder": "Folder",
+    "unresolvedItem": "Item yang belum dikenali",
+    "removeItem": "Hapus {name}"
+  },
+  "validation": {
+    "invalidReferences": "Referensi berkas atau folder tidak valid.",
+    "controlledModeChanged": "Mode terkontrol tidak dapat diubah selama kontrol terpasang.",
+    "incompatibleItems": "Pilihan berisi item yang tidak kompatibel dengan jenis, kategori, atau ekstensi yang dikonfigurasi. Hapus atau ganti item tersebut.",
+    "invalidPolicy": "Konfigurasi jenis, kategori, ekstensi, atau batas pilihan tidak valid.",
+    "selectionLimitExceeded": "Pilihan melebihi batas yang dikonfigurasi. Hapus item yang berlebih."
+  },
+  "errors": {
+    "configuration": "Konfigurasi pemilih tidak valid. Periksa sumber, jenis, kategori, dan batas; gunakan prasetel tanpa opsi lama.",
+    "auth-resource": "Pemilih meminta sumber daya autentikasi yang tidak diizinkan oleh konfigurasi.",
+    "auth-type": "Pemilih meminta jenis autentikasi yang tidak didukung oleh konfigurasi.",
+    "auth-challenge": "Pemilih memerlukan pemeriksaan autentikasi tambahan yang tidak didukung.",
+    "auth-provider": "Token SharePoint tidak dapat diperoleh. Coba lagi; jika masalah berlanjut, periksa akses dan izin yang ada.",
+    "selection-identity": "Identitas item yang dipilih tidak dapat diverifikasi. Buka kembali pemilih dan coba lagi.",
+    "selection-scope": "Item yang dipilih berada di luar situs, pustaka, atau folder yang diizinkan.",
+    "selection-policy": "Pilihan tidak memenuhi persyaratan jenis, kategori, ekstensi, atau jumlah item yang diizinkan.",
+    "selection-unavailable": "Item yang dipilih tidak tersedia atau tidak dapat diakses.",
+    "selection-invalid": "Pilihan tidak dapat diverifikasi. Tidak ada item baru yang ditambahkan.",
+    "onedrive-unavailable": "OneDrive pengguna saat ini tidak tersedia atau tidak dapat diakses. Pastikan drive tersebut ada, lalu coba lagi.",
+    "opening": "Pemilih tidak dapat dibuka. Periksa konfigurasi dan akses ke sumber, lalu coba lagi.",
+    "timeout": "Pemilih tidak merespons tepat waktu. Tutup, lalu coba lagi.",
+    "communication": "Komunikasi dengan pemilih terputus. Buka kembali, lalu coba lagi."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Fitur autentikasi opsional tidak merespons tepat waktu. Coba lagi.",
+    "unsupportedCommand": "Integrasi ini tidak mendukung perintah tersebut.",
+    "optionalGraphAuthenticationFailed": "Fitur Microsoft Graph opsional tidak dapat diautentikasi.",
+    "optionalPersonalAuthenticationFailed": "Tujuan pribadi opsional tidak dapat diautentikasi."
+  }
+}

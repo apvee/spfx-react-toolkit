@@ -1,3 +1,4 @@
+/// <reference path="../../packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts" />
 import * as React from 'react';
 import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { WebPartShell, getWebPartShellPropertiesMetadata } from '../../packages/spfx-react-toolkit/src/controls/web-part-shell/index';
@@ -32,3 +33,5 @@ const metadata = getWebPartShellPropertiesMetadata(); metadata.title.isSearchabl
 <WebPartShell instance={instance} action={{ dangerouslySetInnerHTML: { __html: 'unsafe' } }} />;
 // @ts-expect-error callbacks belong inside slot objects
 <WebPartShell instance={instance} action={() => 'Action'} />;
+
+<WebPartShell instance={instance} strings={{ titleEditorLabel: 'Title', titlePlaceholder: '' }} titleEditorStrings={{ bold: 'Strong', colorNames: { red: 'Danger' } }} />;

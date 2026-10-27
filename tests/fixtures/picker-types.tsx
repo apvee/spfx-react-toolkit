@@ -169,3 +169,17 @@ const listContentTypeControl = <ContentTypePicker label="List content type" scop
 // @ts-expect-error The public component retains the list-scope selector requirement.
 const invalidContentTypeControl = <ContentTypePicker label="Content type" scope="list" />;
 void [siteContentTypeControl, listContentTypeControl, invalidContentTypeControl];
+
+import type { PickersStrings, PickersStringsOverride } from '../../packages/spfx-react-toolkit/src/controls/pickers/pickers-strings.types';
+import type { PropertyPanePickerProps } from '../../packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-picker.types';
+declare const fullPickerStrings: PickersStrings;
+const pickerStrings: PickersStringsOverride = { labels: { namedSearch: name => `Find ${name}`, selectedCount: count => `${count} chosen` }, metadata: { fieldDescription: (name, type) => `${name}: ${type}` } };
+const localizedSite: SitePickerProps = { strings: pickerStrings };
+const fullyLocalizedSite: SitePickerProps = { strings: fullPickerStrings };
+declare const pickerInstance: PropertyPanePickerProps<{ sites: import('../../packages/spfx-react-toolkit/src/controls/pickers/picker-values.types').SitePickerValue[] }, SitePickerProps, import('../../packages/spfx-react-toolkit/src/controls/pickers/picker-values.types').SitePickerValue>['instance'];
+const paneLocalized: PropertyPanePickerProps<{ sites: import('../../packages/spfx-react-toolkit/src/controls/pickers/picker-values.types').SitePickerValue[] }, SitePickerProps, import('../../packages/spfx-react-toolkit/src/controls/pickers/picker-values.types').SitePickerValue> = { instance: pickerInstance, key: 'sites', value: [], strings: pickerStrings };
+// @ts-expect-error Formatted messages require typed callbacks, not translator templates.
+const invalidPickerStrings: PickersStringsOverride = { labels: { namedSearch: '{name}' } };
+// @ts-expect-error Only known nested keys are accepted.
+const unknownPickerStrings: PickersStringsOverride = { status: { customStatus: 'unknown' } };
+void [localizedSite, fullyLocalizedSite, paneLocalized, invalidPickerStrings, unknownPickerStrings];

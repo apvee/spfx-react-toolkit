@@ -110,7 +110,7 @@ export function useFieldAdapter<TInput extends FieldValues, TValue>(options: Fie
         metadata.inputValidators.set(owner, registration);
         return () => { if (metadata.inputValidators.get(owner) === registration) metadata.inputValidators.delete(owner); };
     }, [metadata, name, owner, options.validateInput, validateInput]);
-    const { field, fieldState } = useController({ control: methods.control, name, disabled, rules: normalizeFormRules(options.rules as RegisterOptions<FieldValues> | undefined, metadata.hasResolver || options.validateInput === undefined ? undefined : validateInput) });
+    const { field, fieldState } = useController({ control: methods.control, name, disabled, rules: normalizeFormRules(options.rules as RegisterOptions<FieldValues> | undefined, metadata.hasResolver || options.validateInput === undefined ? undefined : validateInput, () => metadata.getStrings().unexpectedFailure) });
     const inheritedSettingsField = React.useContext(SettingsFieldContext);
     const settingsField = options.inheritSettingsField === false ? undefined : inheritedSettingsField;
     if (settingsField && (options.label !== undefined || options.hint !== undefined || options.fieldProps?.hint !== undefined || (options.fieldProps !== undefined && 'label' in options.fieldProps && options.fieldProps.label !== undefined))) {

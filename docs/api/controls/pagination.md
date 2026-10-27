@@ -30,7 +30,7 @@ The native root is `nav`, with an `HTMLElement` ref. Native attributes, events, 
 | `PaginationProps.loading` | `boolean` | false; disables all actions and shows an accessible spinner. |
 | `PaginationProps.size` | `PaginationSize` | medium; matches native Fluent Button small/medium/large sizing. |
 | `PaginationProps.appearance` | `ButtonProps['appearance']` | subtle; native Fluent appearance applied to every action, including Load more and loading buttons. |
-| `PaginationProps.strings` | `Partial<PaginationStrings>` | Localized text overrides with English fallback for absent or blank labels. |
+| `PaginationProps.strings` | `Partial<PaginationStrings>` | Localized text overrides with the host-selected native baseline for absent or blank labels. |
 
 `appearance` supports `'primary' | 'secondary' | 'outline' | 'subtle' | 'transparent'`. Omit it to retain subtle navigation, or use `appearance="outline"` for bordered actions. Fluent owns theme, interaction and disabled colors; appearance does not change button size, request semantics or spinner placement.
 
@@ -107,7 +107,7 @@ Load-more data contains only `{ type: 'loadMore' }`. Each available click emits 
 
 ## PaginationStrings
 
-| Member | English default | Purpose |
+| Member | en-US resource example | Purpose |
 | --- | --- | --- |
 | `PaginationStrings.pagination` | Pagination | Navigation landmark and group accessible name. |
 | `PaginationStrings.firstPage` | First page | First action accessible name. |
@@ -117,7 +117,7 @@ Load-more data contains only `{ type: 'loadMore' }`. Each available click emits 
 | `PaginationStrings.loadMore` | Load more | Visible label and accessible name. |
 | `PaginationStrings.loading` | Loading | Spinner accessible name. |
 
-Labels are trimmed; missing, undefined or whitespace-only overrides use English defaults. The navigation contains one labeled group and native Fluent buttons. It does not move focus or announce fetched results automatically.
+SPFx selects the native Pagination resource from the host UI culture. Labels are trimmed; missing, undefined or whitespace-only overrides use that native baseline. The table shows the en-US resource values. The navigation contains one labeled group and native Fluent buttons. It does not move focus or announce fetched results automatically.
 
 ## Validation and dependencies
 
@@ -130,3 +130,12 @@ No SPFx provider or new dependency is required. The control uses existing shared
 The lazy Pagination tab shows one small result list and its navigation. Mode, page size, filter, size/appearance and explicit pending completion drive the current result. Configuration/status/diagnostics share one outline card. The separate enclosing-form/native/isolation comparisons remain in the [versioned regression fixture](../../../tests/fixtures/demo-control-isolation/pagination-regressions.tsx). Source/compiled runners exercise the product route before the preserved regression scenarios; local execution does not establish authenticated host behavior.
 
 Authenticated SharePoint, Teams/iframe and screen-reader validation is **NOT EXECUTED** until separately recorded. Static demo checks do not establish rendered or tenant behavior.
+
+## Native UI localization
+
+Pagination requires the host to register its toolkit resource ID through the localization configuration CLI. SPFx selects the UI resource; no toolkit provider is required. `strings?: Partial<PaginationStrings>` overrides labels per instance. Overrides are trimmed, and omitted, undefined or blank labels use the selected resource. A complete `PaginationStrings` dictionary replaces every owned label. This does not translate result summaries or change controlled navigation callbacks.
+
+```tsx
+<Pagination pagination={{ type: 'cursor', hasPreviousPage: false, hasNextPage: true }}
+  strings={{ nextPage: 'Next batch', loading: 'Fetching results' }} />
+```

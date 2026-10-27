@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Формуларот не може да се испрати. Обидете се повторно.",
+  "dateInputValidationMessage": "Дополнете или поправете го датумот пред испраќање.",
+  "timeInputValidationMessage": "Дополнете или поправете го времето пред испраќање.",
+  "tagPicker": {
+    "noOptions": "Нема опции што одговараат на тековното пребарување."
+  },
+  "fileInput": {
+    "browseLabel": "Прегледај",
+    "clearLabel": "Исчисти"
+  },
+  "arraySection": {
+    "add": "Додај ставка",
+    "empty": "Нема ставки",
+    "itemLabelTemplate": "Ставка {position}",
+    "removeTemplate": "Отстрани {label}",
+    "moveUpTemplate": "Помести {label} нагоре",
+    "moveDownTemplate": "Помести {label} надолу",
+    "addedTemplate": "Додадено: {label}",
+    "removedTemplate": "Отстрането: {label}",
+    "movedTemplate": "Ставката {label} е поместена на позиција {position} од {total}"
+  },
+  "datePicker": {
+    "months": [
+      "јануари",
+      "февруари",
+      "март",
+      "април",
+      "мај",
+      "јуни",
+      "јули",
+      "август",
+      "септември",
+      "октомври",
+      "ноември",
+      "декември"
+    ],
+    "shortMonths": [
+      "јан.",
+      "фев.",
+      "мар.",
+      "апр.",
+      "мај",
+      "јун.",
+      "јул.",
+      "авг.",
+      "сеп.",
+      "окт.",
+      "ное.",
+      "дек."
+    ],
+    "days": [
+      "недела",
+      "понеделник",
+      "вторник",
+      "среда",
+      "четврток",
+      "петок",
+      "сабота"
+    ],
+    "shortDays": [
+      "нед.",
+      "пон.",
+      "вто.",
+      "сре.",
+      "чет.",
+      "пет.",
+      "саб."
+    ],
+    "goToToday": "Оди на денешниот датум",
+    "prevMonthAriaLabel": "Претходен месец",
+    "nextMonthAriaLabel": "Следен месец",
+    "prevYearAriaLabel": "Претходна година",
+    "nextYearAriaLabel": "Следна година",
+    "prevYearRangeAriaLabel": "Претходен опсег на години",
+    "nextYearRangeAriaLabel": "Следен опсег на години",
+    "monthPickerHeaderAriaLabel": "{0}, смени година",
+    "yearPickerHeaderAriaLabel": "{0}, смени месец",
+    "closeButtonAriaLabel": "Затвори",
+    "weekNumberFormatString": "Број на неделата {0}",
+    "selectedDateFormatString": "Избран датум {0}",
+    "todayDateFormatString": "Денешен датум {0}",
+    "dayMarkedAriaLabel": "означено"
+  }
+}

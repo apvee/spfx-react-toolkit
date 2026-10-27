@@ -1,7 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { createPickerHarness } = require('./fixtures/picker-source-harness.cjs');
-const h = createPickerHarness();
+// Existing scenarios use an Italian SPFx host. Localization-specific tests also cover English below.
+const h = createPickerHarness(undefined, { nativeCulture: 'it-IT' });
 const React = h.React;
 // JSDOM 15 omits Web Crypto, which native Tabster initializes when focus moves.
 if (!window.crypto) Object.defineProperty(window, 'crypto', { configurable: true, value: require('node:crypto').webcrypto });
@@ -175,7 +176,7 @@ test('multiple Combobox keeps selected resolved and unresolved rows checked and 
     const selected = [...document.querySelectorAll('[role="menuitemcheckbox"]')];
     assert.equal(selected.length, 2);
     assert.ok(selected.every(row => row.getAttribute('aria-checked') === 'true'));
-    assert.match(document.body.textContent, /Selezionati/);
+    assert.match(document.body.textContent, /Elementi selezionati/);
     h.act(() => selected[1].click());
     assert.deepEqual(removed, ['missing']);
   } finally { root.unmount(); }
@@ -186,7 +187,7 @@ test('single Combobox shows one checked selected row before suggestions even dur
     const actions = [];
     const root = render('combobox', false, undefined, {}, { query, selectedOptions: ['hr'], selectedItems: [option], searchOptions: [option], selectionText: () => option.text, select: () => actions.push('select'), remove: () => actions.push('remove'), clear: () => actions.push('clear') });
     try {
-      assert.match(document.body.textContent, /Selezionato/);
+      assert.match(document.body.textContent, /Elemento selezionato/);
       const rows = [...document.querySelectorAll('[role="option"]')];
       assert.equal(rows.length, 1, 'selected identity must not be repeated in suggestions/search');
       assert.equal(rows[0].getAttribute('aria-selected'), 'true');
@@ -567,7 +568,7 @@ test('popup search has a distinct stable identity and search name while Field la
       assert.equal(trigger.id, explicitId ?? document.querySelector('label').htmlFor);
       assert.ok(search.id); assert.notEqual(search.id, trigger.id);
       const name = search.getAttribute('aria-labelledby')?.split(' ').map(id => document.getElementById(id)?.textContent).join(' ') ?? search.getAttribute('aria-label');
-      assert.equal(name, 'Sito: cerca');
+      assert.equal(name, 'Sito: Cerca');
       assert.equal(search.required, false); assert.equal(search.getAttribute('aria-required'), 'false');
       assert.equal(trigger.getAttribute('aria-required'), 'true');
       assert.equal(trigger.getAttribute('aria-invalid'), 'true'); assert.equal(search.getAttribute('aria-invalid'), 'false');
@@ -618,4 +619,39 @@ test('minimum search guidance lives in the search placeholder without a duplicat
       assert.doesNotMatch(document.body.textContent, /Digita almeno/);
     } finally { root.unmount(); }
   }
+});
+
+test('instance strings localize accessible defaults while direct content retains priority', () => {
+  const first = render('combobox', false, undefined, { strings: { labels: { clearSelection: 'Clear A', namedOptions: name => `${name} options A`, minimumSearchLength: count => `Enter ${count} A` }, status: { noResults: 'Empty A' } } }, { query: 'xyz', sections: [], searchOptions: [] });
+  try {
+    assert.equal(document.querySelector('.fui-Dropdown__clearButton').getAttribute('aria-label'), 'Clear A');
+    assert.equal(document.querySelector('[role="listbox"]').getAttribute('aria-label'), 'Sito options A');
+    assert.match(document.body.textContent, /Empty A/);
+  } finally { first.unmount(); }
+  const second = render('tagPicker', false, undefined, { emptyContent: 'Caller empty', strings: { status: { noResults: 'Empty B' } } }, { query: 'xyz', sections: [], searchOptions: [] });
+  try { assert.match(document.body.textContent, /Caller empty/); assert.doesNotMatch(document.body.textContent, /Empty A|Empty B/); }
+  finally { second.unmount(); }
+});
+
+test('empty localized validation text retains error semantics', () => {
+  const root = render('tagPicker', false, undefined, {}, { validation: '' });
+  try { assert.equal(root.container.querySelector('input').getAttribute('aria-invalid'), 'true'); }
+  finally { root.unmount(); }
+});
+
+test('instance search prompts/loading/partial text follow state and direct content slots win', () => {
+  const strings = { labels: { minimumSearchLength: count => `At least ${count} custom` }, status: { loading: 'Initial custom', searching: 'Searching custom', partialSearch: 'Partial custom' } };
+  for (const [patch, props, expected] of [
+    [{ loading: true }, {}, 'Initial custom'],
+    [{ query: 'query', searchFeedback: { phase: 'pending' } }, {}, 'Searching custom'],
+    [{ query: 'query', searchFeedback: { phase: 'partial' } }, {}, 'Partial custom'],
+    [{ query: 'query', searchFeedback: { phase: 'pending' } }, { loadingContent: 'Caller loading' }, 'Caller loading'],
+  ]) {
+    const root = render('tagPicker', false, undefined, { strings, ...props }, patch);
+    try { assert.equal(document.querySelector('[role="status"]').textContent, expected); assert.equal(root.container.querySelector('input').placeholder, 'At least 2 custom'); }
+    finally { root.unmount(); }
+  }
+  const root = render('tagPicker', false, undefined, { strings, placeholder: 'Direct prompt' });
+  try { assert.equal(root.container.querySelector('input').placeholder, 'Direct prompt'); }
+  finally { root.unmount(); }
 });

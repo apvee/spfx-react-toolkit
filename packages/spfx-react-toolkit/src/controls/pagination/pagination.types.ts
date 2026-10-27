@@ -10,27 +10,27 @@ import type { ButtonProps } from '@fluentui/react-components';
 export type PaginationSize = NonNullable<ButtonProps['size']>;
 
 /** Visible and accessible labels for all navigation modes. Supply a partial object through
- * `PaginationProps.strings`; missing/undefined/blank entries fall back to English and
- * supplied values are trimmed. No locale detection or translation is performed.
+ * `PaginationProps.strings`; missing/undefined/blank entries fall back to the host-selected native resource and
+ * supplied values are trimmed. SPFx selects the UI resource independently of controlled data.
  * @example
  * ```ts
  * const strings: Partial<PaginationStrings> = { nextPage: 'Pagina successiva', loading: 'Caricamento' };
  * ```
  */
 export interface PaginationStrings {
-  /** Accessible name of the navigation landmark and group. Default: Pagination. */
+  /** Accessible name of the navigation landmark and group. Native resource label; en-US: Pagination. */
   readonly pagination: string;
-  /** Accessible first-page action name. Default: First page. */
+  /** Accessible first-page action name. Native resource label; en-US: First page. */
   readonly firstPage: string;
-  /** Accessible previous-page/cursor action name. Default: Previous page. */
+  /** Accessible previous-page/cursor action name. Native resource label; en-US: Previous page. */
   readonly previousPage: string;
-  /** Accessible next-page/cursor action name. Default: Next page. */
+  /** Accessible next-page/cursor action name. Native resource label; en-US: Next page. */
   readonly nextPage: string;
-  /** Accessible last-page action name. Default: Last page. */
+  /** Accessible last-page action name. Native resource label; en-US: Last page. */
   readonly lastPage: string;
-  /** Visible incremental action label. Default: Load more. */
+  /** Visible incremental action label. Native resource label; en-US: Load more. */
   readonly loadMore: string;
-  /** Accessible progress name. Default: Loading. */
+  /** Accessible progress name. Native resource label; en-US: Loading. */
   readonly loading: string;
 }
 
@@ -161,6 +161,6 @@ export type PaginationProps = Omit<React.ComponentPropsWithoutRef<'nav'>, 'child
   readonly size?: PaginationSize;
   /** Native Fluent Button appearance for every navigation action, including Load more. Default: subtle. */
   readonly appearance?: ButtonProps['appearance'];
-  /** Partial localized labels. Missing, blank or undefined values use English defaults. */
+  /** Partial localized labels. Missing, blank or undefined values use the host-selected native resource. Supplied values are trimmed. */
   readonly strings?: Partial<PaginationStrings>;
 };

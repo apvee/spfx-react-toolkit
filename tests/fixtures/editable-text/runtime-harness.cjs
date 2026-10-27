@@ -3,6 +3,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const ts = require('typescript');
 const { JSDOM } = require('jsdom');
+const { createNativeResources } = require('../localization/native-resources.cjs');
 
 // ReactDOM and Fluent capture browser globals at import time. This fixture has
 // no provider/Shell loader and rejects those dependencies instead of stubbing them.
@@ -34,6 +35,7 @@ require('node:test').after(() => {
 });
 
 function createHarness(options = {}) {
+  const nativeResources = createNativeResources({ culture: options.nativeCulture ?? 'en-US' });
   const sourceRoot = path.resolve(__dirname, '../../../packages/spfx-react-toolkit/src');
   const cache = new Map(), imports = [], fixtures = new Set(), measurements = [];
   function installMeasurements(target) {
@@ -62,6 +64,7 @@ function createHarness(options = {}) {
     } }).outputText;
     function sourceRequire(specifier) {
       imports.push(specifier);
+      if (specifier.startsWith('ApveeSpfxReactToolkit')) return nativeResources.require(specifier);
       if (/spfx|web-part-shell|@microsoft\/sp-/.test(specifier)) throw new Error('Standalone dependency violation: ' + specifier);
       if (specifier.endsWith('/editable-text-editor.internal')) {
         engineLoads++;
@@ -102,7 +105,7 @@ function createHarness(options = {}) {
     };
     fixtures.add(fixture); fixture.render(); return fixture;
   }
-  return { React, act, load, mount, imports, window: dom.window, get engineLoads() { return engineLoads; },
+  return { React, act, load, mount, imports, nativeResources, window: dom.window, get engineLoads() { return engineLoads; },
     async settle() { await reactAct(async () => { await new Promise(resolve => setTimeout(resolve, 30)); }); },
     secondaryDocument() {
       const second = new JSDOM('<!doctype html><body></body>', { url: 'https://second.test', pretendToBeVisual: true });

@@ -378,9 +378,9 @@ export interface DataGridNumberOptions {
 export interface DataGridBooleanOptions {
     /** Text or a vertically centered native 20px informative icon; defaults to text. */
     display?: 'text' | 'icon';
-    /** Visible and accessible true label; omission uses strings.yes (English default Yes). */
+    /** Visible and accessible true label; omission uses strings.yes from the host-selected native resource or grid override. */
     trueLabel?: string;
-    /** Visible and accessible false label; omission uses strings.no (English default No). */
+    /** Visible and accessible false label; omission uses strings.no from the host-selected native resource or grid override. */
     falseLabel?: string;
 }
 /** Absolute calendar or instant presentation.

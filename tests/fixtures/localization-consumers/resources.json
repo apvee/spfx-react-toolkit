@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "resources": [
+    {
+      "id": "ApveeSpfxReactToolkitPaginationStrings",
+      "path": "lib/controls/pagination/loc/{locale}.js",
+      "locales": ["en-US", "it-IT"]
+    },
+    {
+      "id": "ApveeSpfxReactToolkitStageStrings",
+      "path": "lib/controls/stage/loc/{locale}.js",
+      "locales": ["en-US", "it-IT"]
+    }
+  ]
+}

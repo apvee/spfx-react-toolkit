@@ -55,57 +55,32 @@ function assertTranslatedLabels(culture, strings, english) {
     `${culture}.${key}: unapproved English label ${JSON.stringify(value)}`);
   }
 }
-function fixture(t) {
+function catalog(culture) {
+  const resource = require(`../packages/spfx-react-toolkit/src/controls/editable-text/localization/resources/${culture}.json`);
   const h = createHarness();
-  t.after(() => h.close());
-  return h.load('controls/editable-text/localization/editable-text-locales.internal.ts');
+  try { return h.load('controls/editable-text/localization/editable-text-strings.internal.ts').defineEditableTextStrings(resource); }
+  finally { h.close(); }
 }
-test('common editor resources retain 50 complete translated catalogs and typed interpolation', t => {
-  const api = fixture(t);
+function fixture() {
+  return { resolveEditableTextStrings: catalog };
+}
+test('common editor resources retain 50 complete translated catalogs and typed interpolation', () => {
   assert.equal(locales.cultures.length, 50);
-  assert.deepEqual(Object.keys(api.editableTextLocaleCatalogs).sort(), [...locales.cultures].sort());
-  const english = api.resolveEditableTextStrings('en-US');
+  const english = catalog('en-US');
   for (const culture of locales.cultures) {
-    const strings = api.resolveEditableTextStrings(culture);
-    assertTranslatedLabels(culture, strings, english);
-    assert.equal(strings, api.editableTextLocaleCatalogs[culture]);
-    assert.deepEqual(Object.keys(strings).sort(), Object.keys(english).sort(), culture);
-    for (const [key, value] of Object.entries(strings)) {
-      if (typeof value === 'string') {
-        assert.ok(value.trim(), `${culture}.${key}`);
-        assert.doesNotMatch(value, /TODO|PLACEHOLDER|\{(?:level|value|label|shortcut)\}/, `${culture}.${key}`);
-      }
-    }
-    assert.deepEqual(Object.keys(strings.colorNames).sort(), Object.keys(english.colorNames).sort(), culture);
-    for (const name of Object.values(strings.colorNames)) assert.ok(name.trim(), culture);
+    const strings = catalog(culture);
+    assertTranslatedLabels(culture, { ...strings, editorLabel: require(`../packages/spfx-react-toolkit/src/controls/editable-text/localization/resources/${culture}.json`).editorLabel }, { ...english, editorLabel: require('../packages/spfx-react-toolkit/src/controls/editable-text/localization/resources/en-US.json').editorLabel });
+    assert.deepEqual(Object.keys(strings).sort(), Object.keys(english).sort());
+    assert.equal(Object.keys(strings.colorNames).length, 26);
     for (const [key, args, expected] of [
       ['headingLevel', [4], ['4']], ['lineSpacingValue', [1.4], ['1.4']],
       ['formattingShortcut', ['AUTHOR_LABEL', 'Ctrl/Cmd+B'], ['AUTHOR_LABEL', 'Ctrl/Cmd+B']],
       ['mixedFormatting', ['AUTHOR_LABEL'], ['AUTHOR_LABEL']]
     ]) {
       const value = strings[key](...args);
-      assert.equal(typeof value, 'string');
-      for (const token of expected) assert.ok(value.includes(token), `${culture}.${key}: ${value}`);
+      for (const token of expected) assert.ok(value.includes(token), `${culture}.${key}`);
       assert.doesNotMatch(value, /\{(?:level|value|label|shortcut)\}/);
     }
-    if (culture !== 'en-US') {
-      assert.notEqual(strings, english, culture);
-      assert.notEqual(strings.editorLoadError, english.editorLoadError, culture);
-      assert.notEqual(strings.savedFormattingWarning, english.savedFormattingWarning, culture);
-    }
-  }
-});
-test('UI culture resolver normalizes case and separators and permits only explicit aliases', t => {
-  const h = createHarness(); t.after(() => h.close());
-  const api = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
-  for (const [input, culture] of [['IT_it', 'it-IT'], [' fr-fr ', 'fr-FR'], ['en-GB', 'en-US'], ['de-AT', 'de-DE'],
-    ['zh-Hans', 'zh-CN'], ['zh-SG', 'zh-CN'], ['zh-Hant', 'zh-TW'], ['zh-HK', 'zh-TW'],
-    ['sr-Latn', 'sr-Latn-RS'], ['sr-Cyrl', 'sr-Cyrl-RS'], ['pt-BR', 'pt-BR'], ['pt-PT', 'pt-PT'],
-    ['az-Latn', 'az-Latn-AZ'], ['bs-Latn', 'bs-Latn-BA'], ['nb', 'nb-NO']]) {
-    assert.equal(api.resolveWebPartShellStrings(input), api.webPartShellLocaleCatalogs[culture], input);
-  }
-  for (const input of [undefined, '', 'xx-XX', 'pt', 'zh', 'sr', 'az-Cyrl-AZ', 'sr-Arab-RS', 'pt-AO', 'zh-JP', 'constructor', '__proto__', 42, {}]) {
-    assert.equal(api.resolveWebPartShellStrings(input), api.webPartShellLocaleCatalogs['en-US'], String(input));
   }
 });
 test('different instances resolve independently without changing existing resources', t => {
@@ -135,16 +110,14 @@ test('formatters preserve literal inputs without interpreting replacement syntax
 test('each locale resource declares all interpolation tokens exactly once', () => {
   const fs = require('node:fs');
   const path = require('node:path');
-  const root = path.join(__dirname, '../packages/spfx-react-toolkit/src/controls/editable-text/localization/locales');
+  const root = path.join(__dirname, '../packages/spfx-react-toolkit/src/controls/editable-text/localization/resources');
   for (const culture of locales.cultures) {
-    const source = fs.readFileSync(path.join(root, `${culture}.ts`), 'utf8');
+    const source = JSON.parse(fs.readFileSync(path.join(root, `${culture}.json`), 'utf8'));
     for (const [key, tokens] of [
       ['headingLevelTemplate', ['level']], ['lineSpacingValueTemplate', ['value']],
       ['formattingShortcutTemplate', ['label', 'shortcut']], ['mixedFormattingTemplate', ['label']]
     ]) {
-      const match = source.match(new RegExp(`\\b${key}: ("(?:[^"\\\\]|\\\\.)*"),`));
-      assert.ok(match, `${culture}.${key}`);
-      const template = JSON.parse(match[1]);
+      const template = source[key];
       assert.deepEqual([...template.matchAll(/\{([^}]+)\}/g)].map(item => item[1]).sort(), tokens.sort(), `${culture}.${key}`);
     }
   }
@@ -171,7 +144,7 @@ test('translation validator rejects copied English UI and colour labels and dupl
 });
 test('intentional shared spelling approvals are exact, justified and still present in their catalogs', t => {
   const api = fixture(t);
-  const englishLabels = new Map(scalarLabels(api.resolveEditableTextStrings('en-US')));
+  const englishLabels = new Map(scalarLabels({ ...api.resolveEditableTextStrings('en-US'), editorLabel: require('../packages/spfx-react-toolkit/src/controls/editable-text/localization/resources/en-US.json').editorLabel }));
   const seen = new Set();
   for (const [culture, key, value, reason] of intentionalSharedTerms) {
     assert.ok(locales.cultures.includes(culture), culture);
@@ -179,7 +152,7 @@ test('intentional shared spelling approvals are exact, justified and still prese
     assert.equal(typeof reason, 'string');
     assert.ok(reason.trim(), `${culture}.${key}: missing lexical justification`);
     assert.equal(englishLabels.get(key), value, `${culture}.${key}: stale English spelling`);
-    assert.equal(new Map(scalarLabels(api.resolveEditableTextStrings(culture))).get(key), value,
+    assert.equal(new Map(scalarLabels({ ...api.resolveEditableTextStrings(culture), editorLabel: require(`../packages/spfx-react-toolkit/src/controls/editable-text/localization/resources/${culture}.json`).editorLabel })).get(key), value,
       `${culture}.${key}: stale local spelling`);
     const identity = JSON.stringify([culture, key, value]);
     assert.ok(!seen.has(identity), `duplicate approval ${identity}`);
@@ -187,21 +160,16 @@ test('intentional shared spelling approvals are exact, justified and still prese
   }
 });
 
-test('shell catalogs own only title name and placeholder and share the generic culture resolver', t => {
-  const h = createHarness(); t.after(() => h.close());
-  const shell = h.load('controls/web-part-shell/localization/web-part-shell-locales.internal.ts');
-  const common = h.load('controls/editable-text/localization/editable-text-locales.internal.ts');
+test('shell native dictionaries own naming and remain independent of editor dictionaries', t => {
+  const h = createHarness(undefined, { nativeCulture: 'it-IT' }); t.after(() => h.close());
+  const api = h.load('controls/web-part-shell/localization/web-part-shell-strings.internal.ts');
+  const native = api.resolveWebPartShellStrings(); const custom = api.resolveWebPartShellStrings({ titleEditorLabel: 'Our title', titlePlaceholder: '' });
+  assert.equal(native.titleEditorLabel, 'Titolo della web part'); assert.equal(custom.titleEditorLabel, 'Our title'); assert.equal(custom.titlePlaceholder, '');
+  assert.equal(api.resolveWebPartShellStrings({ titleEditorLabel: undefined }).titleEditorLabel, native.titleEditorLabel);
+  assert.deepEqual(Object.keys(custom).sort(), ['titleEditorLabel', 'titlePlaceholder']);
   for (const culture of locales.cultures) {
-    assert.deepEqual(Object.keys(shell.webPartShellLocaleCatalogs[culture]).sort(), ['titleEditorLabel', 'titlePlaceholder']);
-    assert.ok(shell.webPartShellLocaleCatalogs[culture].titleEditorLabel.trim());
-    assert.ok(shell.webPartShellLocaleCatalogs[culture].titlePlaceholder.trim());
-    assert.ok(Object.isFrozen(shell.webPartShellLocaleCatalogs[culture]));
-    if (culture !== 'en-US') {
-      assert.notEqual(shell.webPartShellLocaleCatalogs[culture].titleEditorLabel, 'Web part title');
-      assert.notEqual(shell.webPartShellLocaleCatalogs[culture].titlePlaceholder, 'Add a title');
-    }
-  }
-  for (const locale of [...locales.cultures, 'IT_it', 'zh-Hant-HK', 'sr', 'unknown', undefined]) {
-    assert.equal(shell.resolveWebPartShellStrings(locale), shell.webPartShellLocaleCatalogs[common.resolveEditableTextLocaleName(locale)]);
+    const resource = require(`../packages/spfx-react-toolkit/src/controls/web-part-shell/localization/resources/${culture}.json`);
+    assert.deepEqual(Object.keys(resource).sort(), ['titleEditorLabel', 'titlePlaceholder']);
+    assert.ok(resource.titleEditorLabel.trim()); assert.ok(resource.titlePlaceholder.trim());
   }
 });
