@@ -23,7 +23,7 @@ test('packed declarations preserve app properties, canonical aliases and exclude
   fs.mkdirSync(path.join(root, 'temp'), { recursive: true });
   const directory = fs.mkdtempSync(path.join(root, 'temp/web-part-shell-package-'));
   try {
-    const packed = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', directory, '--cache', '/private/tmp/web-part-shell-npm-cache'], { cwd: library, encoding: 'utf8' }))[0];
+    const packed = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', directory, '--cache', path.join(directory, '.npm-cache')], { cwd: library, encoding: 'utf8' }))[0];
     const installed = path.join(directory, 'node_modules/@apvee/spfx-react-toolkit');
     fs.mkdirSync(installed, { recursive: true });
     execFileSync('tar', ['-xzf', path.join(directory, packed.filename), '-C', installed, '--strip-components=1']);
@@ -73,7 +73,7 @@ test('actual packed runtime requests no editor chunk in Read and loads and destr
   fs.mkdirSync(path.join(root, 'temp'), { recursive: true });
   const directory = fs.mkdtempSync(path.join(root, 'temp/web-part-shell-runtime-'));
   try {
-    const packed = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', directory, '--cache', '/private/tmp/web-part-shell-npm-cache'], { cwd: library, encoding: 'utf8' }))[0];
+    const packed = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', directory, '--cache', path.join(directory, '.npm-cache')], { cwd: library, encoding: 'utf8' }))[0];
     const installed = path.join(directory, 'node_modules/@apvee/spfx-react-toolkit');
     fs.mkdirSync(installed, { recursive: true });
     execFileSync('tar', ['-xzf', path.join(directory, packed.filename), '-C', installed, '--strip-components=1']);

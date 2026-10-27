@@ -22,7 +22,7 @@ test('packed declarations preserve all seven canonical exports and exclude inter
   fs.mkdirSync(path.join(root, 'temp'), { recursive: true });
   const directory = fs.mkdtempSync(path.join(root, 'temp/editable-text-package-'));
   try {
-    const packed = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', directory, '--cache', '/private/tmp/editable-text-npm-cache'], { cwd: library, encoding: 'utf8' }))[0];
+    const packed = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', directory, '--cache', path.join(directory, '.npm-cache')], { cwd: library, encoding: 'utf8' }))[0];
     const installed = path.join(directory, 'node_modules/@apvee/spfx-react-toolkit');
     fs.mkdirSync(installed, { recursive: true });
     execFileSync('tar', ['-xzf', path.join(directory, packed.filename), '-C', installed, '--strip-components=1']);
@@ -60,7 +60,7 @@ test('actual packed Read/Edit uses explicit resource adapters, loads only its en
   fs.mkdirSync(path.join(root, 'temp'), { recursive: true });
   const directory = fs.mkdtempSync(path.join(root, 'temp/editable-text-runtime-'));
   try {
-    const packed = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', directory, '--cache', '/private/tmp/editable-text-npm-cache'], { cwd: library, encoding: 'utf8' }))[0];
+    const packed = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', directory, '--cache', path.join(directory, '.npm-cache')], { cwd: library, encoding: 'utf8' }))[0];
     const installed = path.join(directory, 'node_modules/@apvee/spfx-react-toolkit');
     fs.mkdirSync(installed, { recursive: true });
     execFileSync('tar', ['-xzf', path.join(directory, packed.filename), '-C', installed, '--strip-components=1']);

@@ -51,7 +51,7 @@ test('packed DescriptionList declarations resolve canonical exports and mutually
   try {
     const packed = JSON.parse(execFileSync('npm', [
       'pack', '--ignore-scripts', '--json', '--pack-destination', directory,
-      '--cache', '/private/tmp/description-list-npm-cache',
+      '--cache', path.join(directory, '.npm-cache'),
     ], { cwd: library, encoding: 'utf8' }))[0];
     const installed = path.join(directory, 'node_modules/@apvee/spfx-react-toolkit');
     fs.mkdirSync(installed, { recursive: true });
