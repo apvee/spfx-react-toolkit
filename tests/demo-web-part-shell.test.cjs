@@ -31,7 +31,7 @@ test('Shell panel is registered and makes persisted state and surface options ob
   assert.match(registry, /key: 'web-part-shell'/);
   for (const symbol of ['WebPartShell', 'getWebPartShellPropertiesMetadata']) assert.ok(registry.includes(`symbol: '${symbol}'`));
   const panel = read(`${base}components/panels/WebPartShellPanel.tsx`);
-  for (const marker of ['show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'action-slot-toggle', 'strings', 'title-editor-strings', 'note', 'increment', 'observations']) assert.ok(panel.includes(`data-shell-demo="${marker}"`) || panel.includes(`'data-shell-demo': '${marker}'`), marker);
+  for (const marker of ['appearance', 'card-size', 'title-position', 'show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'action-slot-toggle', 'strings', 'title-editor-strings', 'note', 'increment', 'observations']) assert.ok(panel.includes(`data-shell-demo="${marker}"`) || panel.includes(`'data-shell-demo': '${marker}'`), marker);
   assert.match(panel, /useSPFxProperties/);
   assert.doesNotMatch(panel, /<WebPartShell |style=/);
 });
@@ -45,4 +45,21 @@ test('isolated source and compiled Shell routes keep real hooks and use shared b
   assert.match(read('tests/fixtures/sx-browser/web-part-shell-toolkit-boundary.ts'), /src\/controls\/web-part-shell/);
   assert.match(read('tests/fixtures/styles-panel-browser/web-part-shell-toolkit-boundary.ts'), /lib\/controls\/web-part-shell/);
   assert.match(read('scripts/build-styles-panel-browser.cjs'), /plugins:\s*shellOnly(?:\s*\|\|\s*stageOnly)?\s*\?\s*\[\]/);
+});
+
+test('sample forwards typed Card options with explicit consumer props taking precedence', () => {
+  const host = read(`${base}components/WebPartShellDemoHost.tsx`);
+  assert.match(host, /appearance: WebPartShellProps<IWebPartShellProperties>\['appearance'\]/);
+  assert.match(host, /titlePosition: WebPartShellProps<IWebPartShellProperties>\['titlePosition'\]/);
+  assert.match(host, /appearance: 'subtle'/);
+  assert.match(host, /titlePosition: 'outside'/);
+  assert.match(host, /appearance=\{props\.appearance \?\? options\.appearance\}/);
+  assert.match(host, /titlePosition=\{props\.titlePosition \?\? options\.titlePosition\}/);
+  assert.match(host, /size: WebPartShellProps<IWebPartShellProperties>\['size'\]/);
+  assert.match(host, /size: 'medium'/);
+  assert.match(host, /size=\{props\.size \?\? options\.size\}/);
+  const fixture = read('tests/fixtures/web-part-shell-browser/host.tsx');
+  assert.match(fixture, /size=\{state\.size\}/);
+  assert.match(fixture, /appearance=\{state\.appearance\}/);
+  assert.match(fixture, /titlePosition=\{state\.titlePosition\}/);
 });

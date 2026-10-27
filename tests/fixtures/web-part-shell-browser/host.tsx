@@ -66,6 +66,9 @@ interface FixturePatch {
   strings?: WebPartShellProps<IWebPartShellProperties>['strings'];
   otherStrings?: WebPartShellProps<IWebPartShellProperties>['strings'];
   titleEditorResource?: EditorDictionaryResource; otherTitleEditorResource?: EditorDictionaryResource;
+  size?: WebPartShellProps<IWebPartShellProperties>['size'];
+  appearance?: WebPartShellProps<IWebPartShellProperties>['appearance'];
+  titlePosition?: WebPartShellProps<IWebPartShellProperties>['titlePosition'];
   surface?: WebPartShellProps<IWebPartShellProperties>['surface'];
   padding?: WebPartShellProps<IWebPartShellProperties>['padding'];
   fluentTheme?: WebPartShellProps<IWebPartShellProperties>['theme'];
@@ -118,7 +121,7 @@ export function mountShellFixture(boundary: 'source' | 'compiled'): void {
     const second = hosts[1] as unknown as BaseClientSideWebPart<IWebPartShellProperties>;
     return <RendererProvider renderer={renderer} targetDocument={document}>
       <div className={sx(width.px(state.width))} data-shell-region="first">
-        <WebPartShellDemoHost instance={first} surface={state.surface} padding={state.padding} theme={state.fluentTheme} dir={state.dir} strings={state.strings} titleEditorStrings={editorDictionary(state.titleEditorResource)} data-shell-root="first"><PersistentChild /></WebPartShellDemoHost>
+        <WebPartShellDemoHost instance={first} surface={state.surface} padding={state.padding} appearance={state.appearance} size={state.size} titlePosition={state.titlePosition} theme={state.fluentTheme} dir={state.dir} strings={state.strings} titleEditorStrings={editorDictionary(state.titleEditorResource)} data-shell-root="first"><PersistentChild /></WebPartShellDemoHost>
       </div>
       <div className={sx(width.px(state.otherWidth))} data-shell-region="second">
         <WebPartShell instance={second} strings={state.otherStrings} titleEditorStrings={editorDictionary(state.otherTitleEditorResource)} data-shell-root="second"><input aria-label="Other child" defaultValue="Other state" /></WebPartShell>

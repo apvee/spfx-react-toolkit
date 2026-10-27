@@ -65,6 +65,7 @@ Authors edit the title on the canvas in SPFx Edit mode. The property pane toggle
 
 ```typescript
 import type { WebPartShellProps as PublicWebPartShellProps } from '@apvee/spfx-react-toolkit';
+import type { CardProps } from '@fluentui/react-components';
 
 interface IWebPartShellProperties {
   title: string;
@@ -73,11 +74,17 @@ interface IWebPartShellProperties {
 }
 type WebPartShellSurface = 'auto' | 'section' | 'application';
 type WebPartShellPadding = 'auto' | 'none' | 'small' | 'medium' | 'large';
+type WebPartShellAppearance = NonNullable<CardProps['appearance']>;
+type WebPartShellSize = NonNullable<CardProps['size']>;
+type WebPartShellTitlePosition = 'outside' | 'inside';
 interface WebPartShellProps<TProperties extends IWebPartShellProperties>
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'dangerouslySetInnerHTML'> {
   instance: BaseClientSideWebPart<TProperties>;
   surface?: WebPartShellSurface;
   padding?: WebPartShellPadding;
+  appearance?: WebPartShellAppearance;
+  size?: WebPartShellSize;
+  titlePosition?: WebPartShellTitlePosition;
   theme?: Theme;
   dir?: 'ltr' | 'rtl';
   strings?: Partial<WebPartShellStrings>;
@@ -99,18 +106,21 @@ function getWebPartShellPropertiesMetadata(): IWebPartPropertiesMetadata;
 | --- | --- |
 | `IWebPartShellProperties.title` | Searchable plain title; literal H2 fallback when rich HTML is absent or invalid. |
 | `IWebPartShellProperties.titleHTML` | Authoritative toolkit HTML when defined, including the empty string. |
-| `IWebPartShellProperties.showTitle` | Undefined means true. False hides title/editor without deleting saved values. |
+| `IWebPartShellProperties.showTitle` | Undefined means true. False removes the entire title/editor/action header and its gap without deleting saved values or resetting the body. |
 | `WebPartShellProps.instance` | Actual SPFx instance, supplying properties, lifecycle, ServiceScope and owner document. |
 | `WebPartShellProps.surface` | Defaults to auto; section/application override host detection. |
 | `WebPartShellProps.padding` | Defaults to auto; explicit none/small/medium/large uses the existing Fluent spacing scale. |
+| `WebPartShellProps.appearance` | Defaults to subtle, rendering no Card. Other native Card appearances render a vertical, noninteractive Card around the body and optional inside header. |
+| `WebPartShellProps.size` | Native small/medium/large Card size, default medium; ignored with subtle. Controls Card inner spacing/radius, never outer surface padding. Size changes preserve Card/header/body identity. |
+| `WebPartShellProps.titlePosition` | Defaults to outside. Inside moves the complete title/action header into Card; ignored when appearance is subtle. |
 | `WebPartShellProps.theme` | Explicit Fluent theme tokens override ancestor and host tokens. |
 | `WebPartShellProps.dir` | Explicit LTR/RTL overrides ancestor Fluent direction and SPFx culture direction. |
 | `WebPartShellProps.strings` | Optional partial shell title naming over native SPFx labels; see UI dictionaries below. |
 | `WebPartShellProps.titleEditorStrings` | Optional independent editor label/formatter dictionary; preserves title draft and history. |
 | `WebPartShellStrings.titleEditorLabel` | Required complete-dictionary accessible name; partial omission inherits the native resource. Must be nonempty in Edit. |
 | `WebPartShellStrings.titlePlaceholder` | Required complete-dictionary literal empty-title hint; partial omission inherits native text and an empty string suppresses it. |
-| `WebPartShellProps.action` | Header action content slot under both providers; shorthand retains its DOM. |
-| `WebPartShellProps.children` | Application content; its mounted identity survives title mode and visibility changes. |
+| `WebPartShellProps.action` | Header action content slot under both providers; shorthand retains its DOM. Hidden with the whole header when showTitle is false; hidden callbacks are not evaluated. |
+| `WebPartShellProps.children` | Application content; its mounted identity survives ordinary rerenders, title mode/visibility, title position and changes among non-subtle appearances. Switching between subtle and a Card may remount it. |
 | `WebPartShellProps.dangerouslySetInnerHTML` | Disallowed; untyped injection is discarded. |
 
 Native div attributes/events, `className`, consumer-provided `style` and the native div ref are forwarded to the shell layout root. The native `title` tooltip attribute is omitted from the props contract because title content belongs to persisted properties. There are no public editor options, engine types, title variants or new SPFx base classes.
@@ -119,19 +129,48 @@ Native div attributes/events, `className`, consumer-provided `style` and the nat
 
 Every call returns a fresh map and nested descriptor: `{ title: { isSearchablePlainText: true } }`. Compose it additively with the web part's own metadata as in the example. The helper has no Property Pane runtime dependency and does not mutate consumer metadata. `titleHTML` remains ordinary data; the helper does not classify it as `isHtmlString`. Search indexing and host save/reload still require authenticated SharePoint validation.
 
+## Card appearance and title position
+
+`WebPartShellAppearance` uses the native Fluent `CardProps['appearance']` values: `subtle`, `filled`, `filled-alternative` and `outline`. The Shell default is `subtle`, which deliberately renders no Card. `WebPartShellSize` follows `CardProps['size']`: `small`, `medium` (default) and `large`. `WebPartShellTitlePosition` accepts `outside` (default) and `inside`; title and actions always move as one header. All three are optional React props. They add no persisted keys to `IWebPartShellProperties`, and mapping them to a consumer's Property Pane is optional. With subtle, size and titlePosition have no visual effect.
+
+```tsx
+import { WebPartShell, type WebPartShellAppearance, type WebPartShellSize,
+  type WebPartShellTitlePosition } from '@apvee/spfx-react-toolkit';
+
+const appearance: WebPartShellAppearance = 'outline';
+const size: WebPartShellSize = 'large';
+const titlePosition: WebPartShellTitlePosition = 'inside';
+
+// Inside the consumer web part's render method:
+<WebPartShell instance={this} appearance={appearance} size={size} titlePosition={titlePosition}
+  action={<Button>Refresh</Button>}><MyContent /></WebPartShell>;
+```
+
+| Appearance and position | Rendered composition |
+| --- | --- |
+| subtle, either position | Existing header followed by body; no Card. |
+| filled / filled-alternative / outline, outside | Header outside and before the Card; body inside Card. |
+| filled / filled-alternative / outline, inside | One Card containing header and body. |
+
+The Card uses native size (medium by default), vertical layout, visual styling and `focusMode="off"`. Small/medium/large supply native inner padding and gap of 8/12/16px respectively, together with the corresponding Fluent border radius. It does not add selection or a focus trap; child controls retain their own interaction. Its native overflow policy applies to caller-owned content. The title toolbar and menus retain their existing Fluent portals and owner document. Native root attributes/events, `className`, caller `style` and ref still target the outer Shell div, not the Card. No automatic accessible-name association between the custom title and Card is added.
+
+Shell `padding` remains the outer inset around the whole composition. A visible Card independently supplies the selected size's native inner padding and header/body gap. `padding="none"` removes the outer inset, not the Card's inner padding. The outer header-to-Card gap remains the existing medium Shell gap for every Card size. Hiding the header removes its gap; Card inner padding remains.
+
+Changing size preserves the Card, header/editor/actions and body state. Changing among filled, filled-alternative and outline keeps Card/body state. Changing titlePosition keeps the Card/body but can recreate the header, its actions and the title editor. Switching between subtle and a Card can recreate body content as its React ancestry changes. Consumers should keep state that must survive those structural changes outside that subtree. No title properties are reset by these presentation changes; removing an active title editor retains its established pending-edit flush behavior.
+
 ## Surface, theme and lifecycle
 
 Auto surface selects application when the SPFx Microsoft 365 SDK is present or the guarded optional `legacyPageContext.pageLayoutType` equals exactly `SingleWebPartAppPage`. SDK presence is enough before asynchronous context acquisition completes. Missing, malformed or unknown legacy metadata falls back to section; the legacy field is not a stable detection guarantee. Use `surface="application"` when an application host lacks that signal. Surface detection uses neither viewport width nor manifest/form-factor inference, REST or polling.
 
 Section adds zero automatic padding and a transparent background, including the Fluent wrapper. Application uses the existing medium spacing (12px) below 640px container inline-size and large spacing (16px) from 640px. Explicit padding wins. The container query measures the shell root, separately from its padded content; it is not a viewport breakpoint. Layout uses natural height and a wrapping title/action header. The shell adds no scroll lock, sticky header or SharePoint canvas sizing.
 
-Header and body are separated by `gap.medium` (12px with the default Fluent theme) in every surface, including SharePoint sections. This internal gap is independent of outer padding. Hiding the title retains the gap when header actions are present; hiding it without actions removes the empty header and its gap. Content remains mounted when title visibility changes.
+Without Card, header and body are separated by `gap.medium` (12px with the default Fluent theme) in every surface, including SharePoint sections. This gap is independent of outer padding. With Card, the header is separated from the Card or from its inner body according to titlePosition. `showTitle=false` removes the complete header, its actions and its gap in either placement. Content remains mounted when title visibility changes. An empty title with showTitle=true still permits actions and the Edit placeholder.
 
 The title and header actions are vertically centered within their wrapping row using `alignItems.center`.
 
 Theme tokens merge host, then the nearest ancestor Fluent theme, then the explicit theme override. Missing partial ancestor tokens come from the host; without a host theme, the hook supplies a light fallback. Direction resolves explicit `dir`, then an actual ancestor FluentProvider, then SPFx `cultureInfo.isRightToLeft`. A low-level Fluent context without the provider theme-class context does not establish ancestor direction. The shell supplies `targetDocument` from `instance.context.domElement.ownerDocument` and inherits Griffel's renderer. The host must supply a renderer for that document, including iframe hosts; the shell creates no renderer.
 
-Same-instance rerenders preserve application content and actions. A different `instanceId` resets the keyed runtime subtree. Hiding or emptying the title leaves actions and children mounted. Title Read/Edit changes mount/destroy only the editor. The existing SPFx provider owns service readiness, instance isolation and subscriptions; dispose the React root in the web part's `onDispose`.
+Ordinary same-instance rerenders preserve application content and actions. A different `instanceId` resets the keyed runtime subtree. Hiding the title unmounts the header/editor/actions while preserving children; showing it creates a fresh header. Emptying a visible title keeps its actions. Title Read/Edit changes mount/destroy only the editor. Appearance and placement have the structural remount boundaries described above. The existing SPFx provider owns service readiness, instance isolation and subscriptions; dispose the React root in the web part's `onDispose`.
 
 ## Title authority and HTML protocol
 
@@ -236,7 +275,7 @@ Root, `/controls` and `/controls/web-part-shell` share canonical component/type/
 
 ## Sample and verification limits
 
-The actual sample root uses the shell, manifest defaults, searchable metadata and a show-title pane toggle. Its lazy **WebPartShell** panel makes surfaces/padding, inherited host theme/direction, property replacement, visibility and preserved child/action state observable. Dedicated browser fixtures cover native ref, event and style forwarding. Build the library before the app and restart an active serve after library changes. See [development checks](../../DEVELOPMENT.md#webpartshell-development) and the [authenticated checklist](../../SHAREPOINT-VALIDATION.md#webpartshell).
+The actual sample root uses the shell, manifest defaults, searchable metadata and a show-title pane toggle. Its lazy **WebPartShell** panel makes appearance, Card size, title position, surfaces/padding, inherited host theme/direction, property replacement and visibility observable. Its note/counter show retained body state or the documented structural reset. After hiding the header action, restore visibility using the body Show title switch or existing pane toggle. Dedicated browser fixtures cover native ref, event and style forwarding. Build the library before the app and restart an active serve after library changes. See [development checks](../../DEVELOPMENT.md#webpartshell-development) and the [authenticated checklist](../../SHAREPOINT-VALIDATION.md#webpartshell).
 
 Local Chrome acceptance covers both source and compiled-library fixtures. `scripts/check-title-toolbar-localization-browser.cjs` checks the 50 UI catalogs, color tooltips, instance isolation and narrow/RTL layouts; `scripts/check-title-toolbar-geometry-browser.cjs` checks foreground rendering, whole-title formatting, overflow, themes, forced colors and native 200% zoom. These fixtures mount real providers/hooks with service doubles; composition events use CDP and paste uses a synthetic ClipboardEvent, alongside actual mouse/keyboard interactions. They establish local behavior, not authenticated host save/reload/search, live Teams/Office/Outlook behavior, device IME, touch or screen-reader acceptance. Those checks remain NOT EXECUTED until their own host observations are recorded. Catalog completeness and localized UI bindings do not establish native-speaker certification of the translations.
 
@@ -251,7 +290,7 @@ Local Chrome acceptance covers both source and compiled-library fixtures. `scrip
 }}><MyContent /></WebPartShell>
 ```
 
-An empty props object requests the header/action container even when the persisted title is hidden. Booleans, undefined and legacy null suppress action content. Callbacks execute only during ordinary rendering, may run more than once, and are never invoked for presence inspection. Static strings are literal. `as` can only repeat div; raw HTML and unsupported native keys are discarded. JSX/callback subtrees remain caller-owned, and React 17 erased `ReactNode` types can bypass literal-object restrictions. The persisted title protocol, title editor, provider ownership and body lifecycle remain unchanged.
+When showTitle is true, an empty props object requests the action container. `showTitle=false` suppresses the entire header regardless of the action value; callbacks are not evaluated and actions are unmounted. Booleans, undefined and legacy null suppress action content. Callbacks execute only during visible rendering, may run more than once, and are never invoked for presence inspection. Static strings are literal. `as` can only repeat div; raw HTML and unsupported native keys are discarded. JSX/callback subtrees remain caller-owned, and React 17 erased `ReactNode` types can bypass literal-object restrictions. Appearance/position do not change the persisted title protocol or provider ownership; their mount boundaries are documented above.
 
 [View public source](../../../packages/spfx-react-toolkit/src/controls/web-part-shell/index.ts)
 

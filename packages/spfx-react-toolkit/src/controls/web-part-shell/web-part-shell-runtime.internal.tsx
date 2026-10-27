@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { FluentProvider } from '@fluentui/react-components';
+import { Card, FluentProvider } from '@fluentui/react-components';
 import { ThemeContext_unstable, useFluent_unstable, useThemeClassName_unstable } from '@fluentui/react-shared-contexts';
-import { hasContentSlot, inspectContentSlot, renderContentSlot } from '../content-slot.internal';
+import { renderContentSlot } from '../content-slot.internal';
 import { useSx } from '../../hooks/useSx';
 import { useSPFxProperties } from '../../hooks/useSPFxProperties';
 import { useSPFxDisplayMode } from '../../hooks/useSPFxDisplayMode';
@@ -19,7 +19,7 @@ type RuntimeProps = Omit<WebPartShellProps<IWebPartShellProperties>, 'instance'>
 
 function ShellLayout(props: Omit<RuntimeProps, 'ownerDocument'> & { resolvedSurface: 'section' | 'application' }): React.ReactElement {
   const { rootRef, resolvedSurface, strings, titleEditorStrings, padding = 'auto',
-    action, children, className, style, ...nativeProps } = props;
+    appearance = 'subtle', size = 'medium', titlePosition = 'outside', action, children, className, style, ...nativeProps } = props;
   delete nativeProps.dangerouslySetInnerHTML;
   delete nativeProps.surface;
   delete nativeProps.theme;
@@ -29,23 +29,27 @@ function ShellLayout(props: Omit<RuntimeProps, 'ownerDocument'> & { resolvedSurf
   const styles = useWebPartShellLayoutStyles(resolvedSurface, padding);
   const sx = useSx();
   const showTitle = properties?.showTitle ?? true;
-  const actionInspection = inspectContentSlot(action);
-  const hasHeader = showTitle || (actionInspection.kind === 'shorthand'
-    ? React.Children.toArray(actionInspection.children).length > 0 : hasContentSlot(action));
   const changeTitle = React.useCallback((update: { title: string; titleHTML: string }): void => {
     setProperties(update);
   }, [setProperties]);
+  const header = showTitle && <div key="header" className={styles.header} data-web-part-shell-header="">
+    <div className={styles.title}>
+      <WebPartTitle title={properties?.title ?? ''} titleHTML={properties?.titleHTML}
+        showTitle={showTitle} editing={isEdit} onChange={changeTitle} strings={strings} titleEditorStrings={titleEditorStrings} />
+    </div>
+    <div className={styles.actions}>{renderContentSlot(action, 'div', sx, { shorthand: 'preserve' })}</div>
+  </div>;
+  const body = <div key="body" className={styles.body} data-web-part-shell-body="">{children}</div>;
+  const hasCard = appearance !== 'subtle';
   return <div {...nativeProps} ref={rootRef} className={[styles.root, className].filter(Boolean).join(' ')} style={style}
     data-web-part-shell-surface={resolvedSurface}>
     <div className={styles.content} data-web-part-shell-content="">
-      {hasHeader && <div className={styles.header}>
-        <div className={styles.title}>
-          <WebPartTitle title={properties?.title ?? ''} titleHTML={properties?.titleHTML}
-            showTitle={showTitle} editing={isEdit} onChange={changeTitle} strings={strings} titleEditorStrings={titleEditorStrings} />
-        </div>
-        <div className={styles.actions}>{renderContentSlot(action, 'div', sx, { shorthand: 'preserve' })}</div>
-      </div>}
-      <div className={styles.body} data-web-part-shell-body="">{children}</div>
+      {(!hasCard || titlePosition === 'outside') && header}
+      {hasCard ? <Card key="card" appearance={appearance} size={size} orientation="vertical" focusMode="off"
+        data-web-part-shell-card="">
+        {titlePosition === 'inside' && header}
+        {body}
+      </Card> : body}
     </div>
   </div>;
 }

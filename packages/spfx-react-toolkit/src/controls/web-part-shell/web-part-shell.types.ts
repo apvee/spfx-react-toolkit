@@ -2,6 +2,7 @@ import type { EditableTextStringsOverride } from '../editable-text/editable-text
 import type { ContentSlot } from '../content-slot.types.internal';
 import type * as React from 'react';
 import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+import type { CardProps } from '@fluentui/react-components';
 import type { Theme } from '@fluentui/react-theme';
 
 /** Persisted title properties owned by WebPartShell. Extend with application properties.
@@ -25,13 +26,15 @@ export interface IWebPartShellProperties {
    * Colors are stable semantic IDs resolved from the current Fluent theme;
    * UI-language changes never translate author content or rewrite these IDs. */
   titleHTML?: string;
-  /** Display the title; undefined behaves as true without a property write. */
+  /** Display the complete title/action header; undefined behaves as true without a property write.
+   * False unmounts the header and suppresses action render callbacks. */
   showTitle?: boolean;
 }
 
 /** Host surface policy: `auto` detects Teams or a single-web-part app page as `application`;
- * other hosts use `section`. `section` adds no background or automatic inset; `application`
- * uses the themed application surface. Omission defaults to `auto`.
+ * other hosts use `section`. Both wrappers remain transparent. `section` adds no
+ * automatic inset; `application` enables responsive automatic outer padding.
+ * Card appearance controls the optional visual surface. Omission defaults to `auto`.
  * @example
  * ```ts
  * const surface: WebPartShellSurface = 'section';
@@ -46,6 +49,38 @@ export type WebPartShellSurface = 'auto' | 'section' | 'application';
  * ```
  */
 export type WebPartShellPadding = 'auto' | 'none' | 'small' | 'medium' | 'large';
+
+/** Native Fluent Card appearance, defaulting to `subtle`. Subtle renders no Card;
+ * filled, filled-alternative and outline use a vertical Card with focusMode off.
+ * Card size defaults to medium and can be selected independently.
+ * Card spacing and visual treatment follow the host Fluent theme.
+ * @example
+ * ```ts
+ * const appearance: WebPartShellAppearance = 'outline';
+ * ```
+ */
+export type WebPartShellAppearance = NonNullable<CardProps['appearance']>;
+
+/** Native Fluent Card size: small, medium or large. Omission defaults to medium.
+ * Controls the Card's native padding, gap and radius; outer surface padding is independent.
+ * Subtle appearance ignores size because it renders no Card. Size updates preserve
+ * the Card, header/editor and body identity without writing persisted properties.
+ * @example
+ * ```ts
+ * const size: WebPartShellSize = 'small';
+ * ```
+ */
+export type WebPartShellSize = NonNullable<CardProps['size']>;
+
+/** Placement of the complete title/action header relative to a rendered Card.
+ * Defaults to outside. Subtle ignores this option because it has no Card.
+ * Changing placement can remount the header while preserving body state.
+ * @example
+ * ```ts
+ * const titlePosition: WebPartShellTitlePosition = 'inside';
+ * ```
+ */
+export type WebPartShellTitlePosition = 'outside' | 'inside';
 
 /**
  * Shell-owned title naming, independent of editor command dictionaries. Native
@@ -78,7 +113,7 @@ export interface WebPartShellStrings {
  * @template TProperties Web part properties extending the shell's three owned keys.
  * @example
  * ```tsx
- * <WebPartShell instance={this} padding="small"><MyContent /></WebPartShell>
+ * <WebPartShell instance={this} padding="small" appearance="outline" size="small" titlePosition="inside"><MyContent /></WebPartShell>
  * ```
  */
 export interface WebPartShellProps<TProperties extends IWebPartShellProperties>
@@ -87,8 +122,20 @@ export interface WebPartShellProps<TProperties extends IWebPartShellProperties>
   instance: BaseClientSideWebPart<TProperties>;
   /** Override host surface detection; default auto. */
   surface?: WebPartShellSurface;
-  /** Override automatic surface spacing; default auto. */
+  /** Override outer surface spacing; default auto. Native Card owns its inner spacing. */
   padding?: WebPartShellPadding;
+  /** Optional native Card presentation; default subtle renders no Card. These are React
+   * options, not persisted shell properties. Non-subtle changes preserve Card/body identity;
+   * switching between subtle and a Card can remount body content. Card owns inner spacing. */
+  appearance?: WebPartShellAppearance;
+  /** Native Card size; omitted/undefined defaults to medium. Small, medium and large
+   * control native Card padding, gap and radius only, independently of outer padding.
+   * Subtle ignores size. Updates preserve Card, header/editor and body state without
+   * writing persisted properties. */
+  size?: WebPartShellSize;
+  /** Complete header placement; default outside. Inside moves title and actions into the
+   * Card; subtle ignores placement. Placement changes can remount the header only. */
+  titlePosition?: WebPartShellTitlePosition;
   /** Explicit Fluent theme; takes precedence over ancestor and live host themes. */
   theme?: Theme;
   /** Direction override; otherwise ancestor Fluent direction or SPFx locale. */
@@ -100,10 +147,16 @@ export interface WebPartShellProps<TProperties extends IWebPartShellProperties>
    * Independent of shell naming: titlePlaceholder/titleEditorLabel remain owned by strings.
    * Replacing this dictionary preserves the live title editor and never writes properties. */
   titleEditorStrings?: EditableTextStringsOverride;
-  /** Header actions as shorthand or div props/render slot under both providers. Shorthand retains its DOM; slot ref targets the inner div. Empty objects request a header; callbacks run only during rendering. Persisted title/editor and body identity are independent. */
+  /** Header actions as shorthand or div props/render slot under both providers.
+   * Shorthand retains its DOM; slot ref targets the inner div. Visible-header objects
+   * request the inner action container; callbacks run only when showTitle is true.
+   * False showTitle unmounts title and actions together. Persisted title/editor and
+   * body identity are independent. */
   action?: ContentSlot<'div'>;
   /** Content whose mounted identity is preserved through title Read/Edit and same-instance
-   * rerenders. A different `instanceId` resets the subtree; omission leaves an empty body. */
+   * rerenders, header visibility/placement, Card size and non-subtle appearance updates. Switching between
+   * subtle and a Card can remount children. A different `instanceId` resets the subtree;
+   * omission leaves an empty body. */
   children?: React.ReactNode;
   /** HTML injection is unavailable; the shell owns the title content pathway. */
   dangerouslySetInnerHTML?: never;

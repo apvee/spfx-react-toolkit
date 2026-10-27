@@ -7,7 +7,7 @@ export * from './accordion-group';
 export * from './form';
 export * from './data-grid';
 export { WebPartShell, getWebPartShellPropertiesMetadata } from './web-part-shell';
-export type { IWebPartShellProperties, WebPartShellProps, WebPartShellSurface, WebPartShellPadding, WebPartShellStrings } from './web-part-shell';
+export type { IWebPartShellProperties, WebPartShellProps, WebPartShellSurface, WebPartShellPadding, WebPartShellAppearance, WebPartShellSize, WebPartShellTitlePosition, WebPartShellStrings } from './web-part-shell';
 export * from './stage';
 export * from './pagination';
 export * from './description-list';

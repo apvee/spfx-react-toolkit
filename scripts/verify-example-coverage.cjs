@@ -227,7 +227,7 @@ for (const name of ['Text', 'Number', 'Boolean', 'Date', 'DateTime', 'Badge', 'I
 console.log('Verified DataGrid presets plus versioned full-family/native/chart conformance coverage.');
 
 const shellPanel = scenarioSource('WebPartShell');
-for (const marker of ['show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'strings', 'title-editor-strings', 'note', 'increment', 'observations']) {
+for (const marker of ['appearance', 'card-size', 'title-position', 'show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'strings', 'title-editor-strings', 'note', 'increment', 'observations']) {
   if (!shellPanel.includes(`data-shell-demo="${marker}"`)) throw new Error(`WebPartShell sample missing ${marker}`);
 }
 const shellHost = read(path.join(path.dirname(registryPath), 'WebPartShellDemoHost.tsx'));

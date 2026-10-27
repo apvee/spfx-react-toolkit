@@ -60,3 +60,26 @@ export const naming: Partial<RootStrings> = { titleEditorLabel: 'Section title' 
 <Shell instance={instance} strings={naming} titleEditorStrings={{ bold: 'Strong', colorNames: { red: 'Danger' } }} />;
 // @ts-expect-error Editor language is loader-selected or provided through dictionaries.
 <Shell instance={instance} titleEditorStrings={{ locale: 'it-IT' }} />;
+
+import type { WebPartShellAppearance as RootAppearance, WebPartShellTitlePosition as RootTitlePosition } from '@apvee/spfx-react-toolkit';
+import type { WebPartShellAppearance as DomainAppearance, WebPartShellTitlePosition as DomainTitlePosition } from '@apvee/spfx-react-toolkit/controls';
+import type { WebPartShellAppearance as ControlAppearance, WebPartShellTitlePosition as ControlTitlePosition } from '@apvee/spfx-react-toolkit/controls/web-part-shell';
+export const appearanceAliases: RootAppearance[] & DomainAppearance[] & ControlAppearance[] = ['subtle', 'filled', 'filled-alternative', 'outline'];
+export const positionAliases: RootTitlePosition[] & DomainTitlePosition[] & ControlTitlePosition[] = ['outside', 'inside'];
+<Shell instance={instance} appearance={appearanceAliases[0]} titlePosition={positionAliases[0]} />;
+export const cardProps: WebPartShellProps<Properties> = { instance, appearance: 'filled', titlePosition: 'inside' };
+export const domainCardProps: DomainProps<Properties> = cardProps;
+export const controlCardProps: ControlProps<Properties> = cardProps;
+export const legacyProperties: IWebPartShellProperties = { title: 'Existing persisted properties' };
+// @ts-expect-error Appearance is bounded by the native Card contract.
+<Shell instance={instance} appearance="transparent" />;
+// @ts-expect-error Header placement is bounded to inside or outside.
+<Shell instance={instance} titlePosition="above" />;
+
+import type { WebPartShellSize as RootSize } from '@apvee/spfx-react-toolkit';
+import type { WebPartShellSize as DomainSize } from '@apvee/spfx-react-toolkit/controls';
+import type { WebPartShellSize as ControlSize } from '@apvee/spfx-react-toolkit/controls/web-part-shell';
+export const sizeAliases: RootSize[] & DomainSize[] & ControlSize[] = ['small', 'medium', 'large'];
+<Shell instance={instance} appearance="filled" size={sizeAliases[0]} />;
+// @ts-expect-error Size is bounded by the native Card contract.
+<Shell instance={instance} size="huge" />;

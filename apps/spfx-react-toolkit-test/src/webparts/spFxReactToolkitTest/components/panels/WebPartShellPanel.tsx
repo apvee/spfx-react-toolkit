@@ -20,6 +20,13 @@ const WebPartShellPanel: React.FC = () => {
       <Switch label="Show title" data-shell-demo="show-title" checked={properties?.showTitle ?? true} onChange={(_event, data) => setProperties({ showTitle: data.checked })} />
 
 
+      <Field label="Appearance"><Select data-shell-demo="appearance" value={options.appearance} onChange={event => update({ appearance: event.target.value === 'filled' ? 'filled' : event.target.value === 'filled-alternative' ? 'filled-alternative' : event.target.value === 'outline' ? 'outline' : 'subtle' })}>
+        {(['subtle', 'filled', 'filled-alternative', 'outline'] as const).map(value => <option key={value} value={value}>{value}</option>)}
+      </Select></Field>
+      <Field label="Card size"><Select data-shell-demo="card-size" value={options.size} onChange={event => update({ size: event.target.value === 'small' ? 'small' : event.target.value === 'large' ? 'large' : 'medium' })}>
+        {(['small', 'medium', 'large'] as const).map(value => <option key={value} value={value}>{value}</option>)}
+      </Select></Field>
+      <Field label="Title position"><Select data-shell-demo="title-position" value={options.titlePosition} onChange={event => update({ titlePosition: event.target.value === 'inside' ? 'inside' : 'outside' })}><option value="outside">Outside</option><option value="inside">Inside</option></Select></Field>
       <Field label="Surface"><Select select={{ as: 'select', ...{ 'data-shell-demo': 'surface', 'data-demo-variant': 'web-part-shell' } }} value={options.surface} onChange={event => update({ surface: event.target.value === 'section' ? 'section' : event.target.value === 'application' ? 'application' : 'auto' })}><option value="auto">Auto</option><option value="section">Section</option><option value="application">Application</option></Select></Field>
       <Field label="Spacing"><Select data-shell-demo="padding" value={options.padding} onChange={event => update({ padding: event.target.value === 'none' ? 'none' : event.target.value === 'small' ? 'small' : event.target.value === 'medium' ? 'medium' : event.target.value === 'large' ? 'large' : 'auto' })}>
         {(['auto', 'none', 'small', 'medium', 'large'] as const).map(value => <option key={value} value={value}>{value}</option>)}

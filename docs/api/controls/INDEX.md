@@ -34,7 +34,7 @@ DataGrid public types: `DataGridProps`, `DataGridStrings`, `DataGridSparklineSum
 
 ## WebPartShell
 
-`WebPartShell`, `IWebPartShellProperties`, `WebPartShellProps`, `WebPartShellSurface`, `WebPartShellPadding`, `WebPartShellStrings` and `getWebPartShellPropertiesMetadata` compose an actual web part with providers, adaptive spacing and a persisted inline title. See the [WebPartShell reference](./web-part-shell.md) for every member, metadata, editor protocol and host limits. Import from the root, `/controls` or `/controls/web-part-shell`.
+`WebPartShell`, `IWebPartShellProperties`, `WebPartShellProps`, `WebPartShellSurface`, `WebPartShellPadding`, `WebPartShellAppearance`, `WebPartShellSize`, `WebPartShellTitlePosition`, `WebPartShellStrings` and `getWebPartShellPropertiesMetadata` compose an actual web part with providers, adaptive spacing and a persisted inline title. Optional React appearance/size/titlePosition props select a native Card wrapper, its size and whole-header placement; subtle defaults to no Card. showTitle=false hides both title and actions. See the [WebPartShell reference](./web-part-shell.md) for every member, metadata, editor protocol, structural mount boundaries and host limits. Import from the root, `/controls` or `/controls/web-part-shell`.
 
 ## Stage
 

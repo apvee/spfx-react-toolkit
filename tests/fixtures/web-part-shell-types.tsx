@@ -35,3 +35,26 @@ const metadata = getWebPartShellPropertiesMetadata(); metadata.title.isSearchabl
 <WebPartShell instance={instance} action={() => 'Action'} />;
 
 <WebPartShell instance={instance} strings={{ titleEditorLabel: 'Title', titlePlaceholder: '' }} titleEditorStrings={{ bold: 'Strong', colorNames: { red: 'Danger' } }} />;
+
+import type { WebPartShellAppearance, WebPartShellTitlePosition } from '../../packages/spfx-react-toolkit/src/controls/web-part-shell/index';
+import type { WebPartShellAppearance as ControlsAppearance, WebPartShellTitlePosition as ControlsPosition } from '../../packages/spfx-react-toolkit/src/controls/index';
+import type { WebPartShellAppearance as RootAppearance, WebPartShellTitlePosition as RootPosition } from '../../packages/spfx-react-toolkit/src/index';
+const appearances: WebPartShellAppearance[] = ['subtle', 'filled', 'filled-alternative', 'outline'];
+const positions: WebPartShellTitlePosition[] = ['outside', 'inside'];
+const exportedAppearances: ControlsAppearance[] & RootAppearance[] = appearances;
+const exportedPositions: ControlsPosition[] & RootPosition[] = positions;
+<WebPartShell instance={instance} appearance={exportedAppearances[0]} titlePosition={exportedPositions[0]} />;
+const legacyProperties: IWebPartShellProperties = { title: 'Existing persisted properties' };
+void legacyProperties;
+// @ts-expect-error invalid Card appearance
+<WebPartShell instance={instance} appearance="transparent" />;
+// @ts-expect-error invalid title position
+<WebPartShell instance={instance} titlePosition="above" />;
+
+import type { WebPartShellSize } from '../../packages/spfx-react-toolkit/src/controls/web-part-shell/index';
+import type { WebPartShellSize as ControlsSize } from '../../packages/spfx-react-toolkit/src/controls/index';
+import type { WebPartShellSize as RootSize } from '../../packages/spfx-react-toolkit/src/index';
+const sizes: WebPartShellSize[] & ControlsSize[] & RootSize[] = ['small', 'medium', 'large'];
+<WebPartShell instance={instance} appearance="filled" size={sizes[0]} />;
+// @ts-expect-error invalid native Card size
+<WebPartShell instance={instance} size="huge" />;

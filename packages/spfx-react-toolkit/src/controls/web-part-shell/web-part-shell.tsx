@@ -14,15 +14,21 @@ function WebPartShellRender<TProperties extends IWebPartShellProperties>(
 // Explicit base instantiation below prevents slot-union expansion during React 17 inference;
 // it preserves the public generic instance contract and the original render function.
 /** Compose SPFx and Fluent providers for an actual web part and its stable content.
- * Same-instance rerenders and title Read/Edit retain children; a new instanceId resets them.
+ * Same-instance rerenders, title Read/Edit, visibility/placement, Card size and non-subtle appearance
+ * updates retain children; a new instanceId resets them. Subtle/Card transitions can remount children.
  * The existing provider waits for ServiceScope readiness and isolates runtime state.
  * Theme precedence is explicit override, ancestor Fluent, live host, then light fallback.
  * Uses the web part ownerDocument and inherited Griffel renderer; hosts must supply a
- * renderer for that document. Section adds no inset/background; application auto padding
+ * renderer for that document. Subtle (default) adds no Card. Filled, filled-alternative
+ * and outline render a native vertical Card with focusMode off; size defaults to medium. Title placement
+ * defaults to outside; inside places the complete header into Card. Subtle ignores placement and size.
+ * Section adds no outer inset; application auto padding
  * is medium below a 640px container inline size and large from 640px.
- * Header and body have medium (12px) theme spacing, including in sections.
+ * Shell owns outer padding and header/body spacing; native Card owns its inner spacing.
  * Title and header actions are vertically centered within their wrapping row.
- * Hiding the title without header actions removes the header and its gap.
+ * Hiding the title removes the complete header and its gap without evaluating action callbacks.
+ * Header placement changes can remount the header. Appearance/size/titlePosition are optional React
+ * options; no additional persisted properties are required.
  * Native div attributes/events, className, caller style and ref reach the shell root.
  * No normalized/default title property is written at mount.
  * @param props Web part instance, surface/theme options and native div attributes.
@@ -31,7 +37,7 @@ function WebPartShellRender<TProperties extends IWebPartShellProperties>(
  * ```tsx
  * interface Properties extends IWebPartShellProperties { listId: string; }
  * // Inside a BaseClientSideWebPart<Properties> render method:
- * ReactDom.render(<WebPartShell instance={this} action={<Button>Refresh</Button>}>
+ * ReactDom.render(<WebPartShell instance={this} appearance="filled" size="small" titlePosition="inside" action={<Button>Refresh</Button>}>
  *   <MyContent />
  * </WebPartShell>, this.domElement);
  * ```

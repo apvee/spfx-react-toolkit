@@ -405,7 +405,8 @@ async function checkWebPartShellBrowser(page, record) {
   await check('Defined empty rich title preserved', await savedHTML(), '');
   await root.locator('[data-shell-demo="action"]').click();
   await check('Hook action hides editor', await editable.count(), 0);
-  await check('Hidden title with actions retains header/body gap', await headerGap(root), 12);
+  await check('Hidden title removes the complete action header', await root.locator('[data-web-part-shell-header], [data-shell-demo="action"]').count(), 0);
+  await check('Hidden title with actions leaves no blank gap', await root.locator('[data-web-part-shell-body]').evaluate(body => body.getBoundingClientRect().top - body.parentElement.getBoundingClientRect().top), 0);
   await root.locator('[data-shell-demo="show-title"]').check(); await editable.waitFor();
   await check('Panel can recover hidden title', await editable.count(), 1);
   await render({ mode: 'Read' });
@@ -430,6 +431,204 @@ async function checkWebPartShellBrowser(page, record) {
   await check('Actual sample inherits host theme', await root.evaluate(e => getComputedStyle(e).getPropertyValue('--colorNeutralForeground1').trim()), '#ffffff');
   await render({ theme: 'light' });
   await capture('sample-controls');
+
+  // Card is a structural boundary: subtle/Card transitions may remount the body.
+  // These scenarios follow the legacy lifetime assertions and establish their
+  // own baseline after the first transition. All non-subtle updates preserve it.
+  await render({ host: 'SharePoint', mode: 'Read', theme: 'light', dir: 'ltr', width: 900,
+    appearance: undefined, size: undefined, titlePosition: undefined, properties: { title: 'Card project heading', titleHTML: undefined, showTitle: true } });
+  await root.evaluate(element => { window.__shellCardOuterRoot = element; });
+  await other.getByRole('textbox', { name: 'Other child', exact: true }).fill('Independent Card state');
+  const appearanceSelect = () => root.locator('[data-shell-demo="appearance"]');
+  const positionSelect = () => root.locator('[data-shell-demo="title-position"]');
+  const sizeSelect = () => root.locator('[data-shell-demo="card-size"]');
+  const card = () => root.locator('[data-web-part-shell-card]');
+  const cardHeader = () => root.locator('[data-web-part-shell-header]');
+  await check('Actual sample defaults to subtle', await appearanceSelect().inputValue(), 'subtle');
+  await check('Actual sample defaults Card size to medium', await sizeSelect().inputValue(), 'medium');
+  await check('Actual sample defaults title outside', await positionSelect().inputValue(), 'outside');
+  await check('Default subtle has no Card', await card().count(), 0);
+  await positionSelect().selectOption('inside');
+  await check('Subtle ignores inside placement', await cardHeader().evaluate(header => header.parentElement.hasAttribute('data-web-part-shell-content')), true);
+  for (const size of ['small', 'medium', 'large']) {
+    await sizeSelect().selectOption(size);
+    await check(`Subtle ignores ${size} Card size`, [await card().count(), await root.getAttribute('size')], [0, null]);
+  }
+  await sizeSelect().selectOption('medium');
+  await appearanceSelect().selectOption('filled');
+  await check('Actual sample creates native Fluent Card', await card().evaluate(element => element.classList.contains('fui-Card')), true);
+  await check('Options survive subtle/Card body remount', await positionSelect().inputValue(), 'inside');
+  await root.locator('[data-shell-demo="note"]').fill('Card persistent note');
+  await root.locator('[data-shell-demo="increment"]').click();
+  const cardBaseline = await observations();
+  const retainedCardState = async name => {
+    await check(`${name}: body note retained`, await root.locator('[data-shell-demo="note"]').inputValue(), 'Card persistent note');
+    await check(`${name}: body counter retained`, JSON.parse(await root.locator('[data-shell-demo="observations"]').textContent()).count, 1);
+    await check(`${name}: body lifetime retained`, [(await observations()).mounts, (await observations()).cleanups], [cardBaseline.mounts, cardBaseline.cleanups]);
+    await check(`${name}: outer root retained`, await root.evaluate(element => element === window.__shellCardOuterRoot), true);
+    await check(`${name}: second instance state isolated`, await other.getByRole('textbox', { name: 'Other child', exact: true }).inputValue(), 'Independent Card state');
+  };
+  for (const appearance of ['filled', 'filled-alternative', 'outline']) {
+    await appearanceSelect().selectOption(appearance);
+    for (const position of ['outside', 'inside']) {
+      await positionSelect().selectOption(position);
+      const name = `${appearance}/${position}`;
+      await check(`${name}: one native Card and body`, [await card().count(), await card().locator('[data-web-part-shell-body]').count()], [1, 1]);
+      await check(`${name}: complete header in requested region`, await cardHeader().evaluate((header, inside) => header.parentElement.hasAttribute(inside ? 'data-web-part-shell-card' : 'data-web-part-shell-content'), position === 'inside'), true);
+      const recipe = await card().evaluate((element, selectedAppearance) => {
+        const css = getComputedStyle(element), after = getComputedStyle(element, '::after');
+        const backgroundToken = selectedAppearance === 'filled' ? '--colorNeutralBackground1'
+          : selectedAppearance === 'filled-alternative' ? '--colorNeutralBackground2' : '--colorTransparentBackground';
+        const strokeToken = selectedAppearance === 'outline' ? '--colorNeutralStroke1' : '--colorTransparentStroke';
+        // Canvas uses the browser's color parser without changing document styles;
+        // normalize token hex/transparent and computed rgb/rgba to the same form.
+        const context = document.createElement('canvas').getContext('2d');
+        if (!context) throw new Error('Native Card recipe check requires a 2D color context');
+        const normalize = value => {
+          if (!CSS.supports('color', value)) throw new Error(`Invalid native Card color: ${value}`);
+          context.fillStyle = value;
+          return context.fillStyle;
+        };
+        return {
+          background: normalize(css.backgroundColor),
+          expectedBackground: normalize(css.getPropertyValue(backgroundToken).trim()),
+          shadow: css.boxShadow,
+          stroke: ['borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor'].map(property => normalize(after[property])),
+          expectedStroke: normalize(css.getPropertyValue(strokeToken).trim()),
+        };
+      }, appearance);
+      await check(`${name}: native appearance background recipe`, recipe.background, recipe.expectedBackground);
+      await check(`${name}: native appearance shadow recipe`, recipe.shadow === 'none', appearance === 'outline');
+      await check(`${name}: native appearance border recipe`, recipe.stroke, Array(4).fill(recipe.expectedStroke));
+      await check(`${name}: native medium vertical spacing`, await card().evaluate(element => {
+        const css = getComputedStyle(element);
+        return [css.paddingTop, css.paddingRight, css.paddingBottom, css.paddingLeft, css.rowGap, css.flexDirection];
+      }), ['12px', '12px', '12px', '12px', '12px', 'column']);
+      await check(`${name}: existing small outer padding retained`, await root.locator('[data-web-part-shell-content]').evaluate(element => getComputedStyle(element).paddingInlineStart), '8px');
+      await check(`${name}: header gap`, position === 'inside' ? await headerGap(root) : await card().evaluate(element => element.getBoundingClientRect().top - element.previousElementSibling.getBoundingClientRect().bottom), 12);
+      await root.locator('[data-shell-demo="action"]').click();
+      await check(`${name}: hidden removes full header/action`, await root.locator('[data-web-part-shell-header], [data-shell-demo="action"]').count(), 0);
+      await check(`${name}: hidden body is first Card child without header gap`, await card().evaluate(element => {
+        const css = getComputedStyle(element), body = element.querySelector('[data-web-part-shell-body]');
+        return element.firstElementChild === body && Math.abs(body.getBoundingClientRect().top - element.getBoundingClientRect().top - parseFloat(css.borderTopWidth) - parseFloat(css.paddingTop)) < 1;
+      }), true);
+      await root.locator('[data-shell-demo="show-title"]').check();
+      await check(`${name}: body switch restores full header/action`, [await cardHeader().count(), await root.locator('[data-shell-demo="action"]').count()], [1, 1]);
+      await retainedCardState(name);
+      await capture(`card-${appearance}-${position}`);
+    }
+  }
+  // Each native size changes only the Card recipe. Compare identity within a
+  // fixed header placement because changing placement can remount the header.
+  for (const position of ['outside', 'inside']) {
+    await positionSelect().selectOption(position);
+    await root.evaluate(element => {
+      window.__shellSizeCard = element.querySelector('[data-web-part-shell-card]');
+      window.__shellSizeHeader = element.querySelector('[data-web-part-shell-header]');
+      window.__shellSizeBody = element.querySelector('[data-web-part-shell-body]');
+    });
+    for (const [size, spacing, radius] of [['small', '8px', '2px'], ['medium', '12px', '4px'], ['large', '16px', '6px']]) {
+      await sizeSelect().selectOption(size);
+      const name = `Card ${position}/${size}`;
+      const recipe = await card().evaluate(element => {
+        const css = getComputedStyle(element);
+        return [css.paddingTop, css.paddingRight, css.paddingBottom, css.paddingLeft, css.rowGap, css.borderTopLeftRadius, css.getPropertyValue('--fui-Card--size').trim()];
+      });
+      await check(`${name}: native size padding/gap/radius`, recipe, [spacing, spacing, spacing, spacing, spacing, radius, spacing]);
+      await check(`${name}: outer inset unchanged`, await root.locator('[data-web-part-shell-content]').evaluate(element => getComputedStyle(element).paddingInlineStart), '8px');
+      await check(`${name}: header spacing`, position === 'inside' ? await headerGap(root) : await card().evaluate(element => element.getBoundingClientRect().top - element.previousElementSibling.getBoundingClientRect().bottom), position === 'inside' ? parseFloat(spacing) : 12);
+      await check(`${name}: Card/header/body identity retained`, await root.evaluate(element =>
+        element.querySelector('[data-web-part-shell-card]') === window.__shellSizeCard &&
+        element.querySelector('[data-web-part-shell-header]') === window.__shellSizeHeader &&
+        element.querySelector('[data-web-part-shell-body]') === window.__shellSizeBody), true);
+      await check(`${name}: size never reaches root attribute`, await root.getAttribute('size'), null);
+      await retainedCardState(name);
+    }
+  }
+  await sizeSelect().selectOption('medium');
+  // Surface spacing belongs outside the native Card border. The Card owns a
+  // distinct 12px inner inset in every responsive/explicit padding combination.
+  for (const [width, padding, expectedInset] of [[320, 'auto', 12], [640, 'auto', 16], [900, 'small', 8]]) {
+    await render({ surface: 'application', padding, width });
+    for (const position of ['inside', 'outside']) {
+      await positionSelect().selectOption(position);
+      const measured = await root.evaluate(element => {
+        const shellBounds = element.getBoundingClientRect();
+        const cardElement = element.querySelector('[data-web-part-shell-card]');
+        const cardBounds = cardElement.getBoundingClientRect();
+        const header = element.querySelector('[data-web-part-shell-header]');
+        const inside = header.parentElement === cardElement;
+        const css = getComputedStyle(cardElement);
+        return {
+          left: cardBounds.left - shellBounds.left,
+          right: shellBounds.right - cardBounds.right,
+          bottom: shellBounds.bottom - cardBounds.bottom,
+          top: (inside ? cardBounds : header.getBoundingClientRect()).top - shellBounds.top,
+          inner: [css.paddingTop, css.paddingRight, css.paddingBottom, css.paddingLeft],
+          outsideHeaderGap: inside ? undefined : cardBounds.top - header.getBoundingClientRect().bottom,
+        };
+      });
+      const name = `Card ${position} application ${width}px/${padding}`;
+      await check(`${name}: border detached by outer surface padding`, [measured.left, measured.right, measured.top, measured.bottom], [expectedInset, expectedInset, expectedInset, expectedInset]);
+      await check(`${name}: native inner padding stays distinct`, measured.inner, ['12px', '12px', '12px', '12px']);
+      if (position === 'outside') await check(`${name}: top follows outside header and gap`, measured.outsideHeaderGap, 12);
+      await retainedCardState(name);
+    }
+  }
+  await render({ surface: undefined, padding: undefined, width: 900 });
+
+  // Explicit fixture caller props override live demo choices, then release back
+  // to the unchanged options held above the Shell's structural boundary.
+  await render({ appearance: 'filled', size: 'small', titlePosition: 'outside' });
+  await appearanceSelect().selectOption('filled-alternative');
+  await positionSelect().selectOption('inside');
+  await sizeSelect().selectOption('large');
+  await check('Explicit consumer size wins over sample option', await card().evaluate(element => getComputedStyle(element).paddingTop), '8px');
+  await check('Explicit consumer title placement wins over sample option', await cardHeader().evaluate(header => header.parentElement.hasAttribute('data-web-part-shell-content')), true);
+  const forcedBackground = await card().evaluate(element => getComputedStyle(element).backgroundColor);
+  await render({ appearance: undefined, size: undefined, titlePosition: undefined });
+  await check('Releasing consumer size restores selected large', await card().evaluate(element => getComputedStyle(element).paddingTop), '16px');
+  await sizeSelect().selectOption('medium');
+  await check('Releasing consumer appearance restores selected alternative', await card().evaluate(element => getComputedStyle(element).backgroundColor) !== forcedBackground, true);
+  await check('Releasing consumer placement restores selected inside', await cardHeader().evaluate(header => header.parentElement.hasAttribute('data-web-part-shell-card')), true);
+  await render({ mode: 'Edit' });
+  await editable.waitFor();
+  await editable.evaluate(element => { window.__shellSizeEditor = element; });
+  await root.evaluate(element => { window.__shellSizeEditorHeader = element.querySelector('[data-web-part-shell-header]'); });
+  const sizeProperties = (await observations()).properties;
+  for (const size of ['small', 'medium', 'large', 'medium']) {
+    await sizeSelect().selectOption(size);
+    await check(`Size ${size} retains editor DOM`, await editable.evaluate(element => element === window.__shellSizeEditor), true);
+    await check(`Size ${size} retains editor header`, await cardHeader().evaluate(element => element === window.__shellSizeEditorHeader), true);
+    await check(`Size ${size} does not write properties`, (await observations()).properties, sizeProperties);
+    await retainedCardState(`Edit size ${size}`);
+  }
+  for (const dir of ['ltr', 'rtl']) {
+    await page.setViewportSize({ width: 320, height: 900 });
+    await render({ mode: 'Edit', width: 320, dir, properties: { title: 'Alpha Beta Gamma', titleHTML: '<h2>Alpha Beta Gamma</h2>' } });
+    await editable.waitFor(); await selectRange(0, 5);
+    await check(`Narrow Card ${dir}: title editor remains inside Card`, await editable.evaluate(element => Boolean(element.closest('[data-web-part-shell-card]'))), true);
+    await check(`Narrow Card ${dir}: toolbar is portaled outside Card`, await toolbar().evaluate(element => !element.closest('[data-web-part-shell-card]')), true);
+    const bounds = await geometry();
+    await check(`Narrow Card ${dir}: toolbar fits viewport`, bounds.left >= -1 && bounds.right <= bounds.viewport + 1, true);
+    await button('More text formatting').click();
+    await check(`Narrow Card ${dir}: overflow menu opens`, await page.getByRole('menuitemcheckbox', { name: 'Underline', exact: true }).isVisible(), true);
+    await page.getByRole('menuitemcheckbox', { name: 'Underline', exact: true }).click();
+    await waitHTML('<u>'); await focusProof(`Narrow Card ${dir} underline`);
+    await retainedCardState(`Narrow Card ${dir}`);
+    await capture(`card-narrow-${dir}`);
+    // Native checkbox commands retain the popup. Dismiss the complete editing
+    // surface so the next direction starts with a closed More menu.
+    await page.locator('[data-fixture-outside]').click();
+    await toolbar().waitFor({ state: 'detached' });
+  }
+  await page.setViewportSize({ width: 1210, height: 900 });
+  await render({ mode: 'Read', width: 900, dir: 'ltr' });
+  await appearanceSelect().selectOption('subtle');
+  await check('Returning sample to subtle removes native Card', await card().count(), 0);
+  await check('Returning subtle keeps live appearance/placement choices', [await appearanceSelect().inputValue(), await positionSelect().inputValue()], ['subtle', 'inside']);
+  await check('Structural Card/subtle transitions retain outer root', await root.evaluate(element => element === window.__shellCardOuterRoot), true);
+  await check('Structural transitions retain independent instance', await other.getByRole('textbox', { name: 'Other child', exact: true }).inputValue(), 'Independent Card state');
 
   // Fresh page isolates the exact intentionally failed lazy request; normal-page
   // console/page errors remain clean. Retry requests the real chunk afterward.

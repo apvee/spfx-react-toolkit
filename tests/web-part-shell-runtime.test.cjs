@@ -49,7 +49,7 @@ test('native ref, attributes, events, className and caller style reach the div r
   h.act(() => ref.current.click()); assert.equal(clicks, 1);
 }));
 
-test('persisted title defaults render without writes, authoritative empty HTML and hidden title retain actions/children', () => run(h => {
+test('persisted defaults render without writes, authoritative empty HTML and hidden title removes the whole header', () => run(h => {
   const host = h.instance(); host.properties = { title: '<Literal>', listId: 'list' }; let refreshes = 0;
   host.context.propertyPane.refresh = () => refreshes++;
   const fixture = h.mount(host, 'Child', { action: h.React.createElement('button', {}, 'Action') });
@@ -58,7 +58,7 @@ test('persisted title defaults render without writes, authoritative empty HTML a
   host.properties.titleHTML = ''; fixture.render(); assert.equal(fixture.container.querySelector('h2'), null);
   host.properties.titleHTML = '<h3>Rich</h3>'; fixture.render(); assert.equal(fixture.container.querySelector('h3').textContent, 'Rich');
   host.properties.showTitle = false; fixture.render(); assert.equal(fixture.container.querySelector('h3'), null);
-  assert.ok(fixture.container.textContent.includes('ActionChild')); assert.equal(refreshes, 0);
+  assert.equal(fixture.container.textContent, 'Child'); assert.equal(refreshes, 0);
 }));
 
 test('two Shell providers isolate property updates and cleanup', () => run(h => {
@@ -88,7 +88,7 @@ test('header/body spacing retains the body when title visibility changes and omi
   fixture.render(host, { action: false });
   assert.equal(body.previousElementSibling, null);
   fixture.render(host, { action: h.React.createElement('button', {}, 'Action') });
-  assert.equal(body.previousElementSibling.textContent, 'Action');
+  assert.equal(body.previousElementSibling, null);
   assert.equal(body.querySelector('input'), input);
   host.properties.showTitle = true; fixture.render();
   assert.equal(body.previousElementSibling.textContent, 'initialAction');
@@ -176,7 +176,8 @@ test('untyped HTML injection is discarded and shell modules create no renderer o
 test('action slots keep providers, refs, title and child identity across shell updates', () => run(h => {
   const ref = h.React.createRef(), actionRef = h.React.createRef(); let callbacks = 0;
   const { useSPFxProperties } = h.load('hooks/useSPFxProperties.ts');
-  function Action() { return h.React.createElement('button', {}, useSPFxProperties().properties.title); }
+  let shellProperties;
+  function Action() { shellProperties = useSPFxProperties(); return h.React.createElement('button', {}, shellProperties.properties.title); }
   const host = h.instance();
   const action = { ref: actionRef, className: 'slot-action', children: (Component, props) => {
     callbacks++; return h.React.createElement(Component, props, h.React.createElement(Action));
@@ -189,14 +190,16 @@ test('action slots keep providers, refs, title and child identity across shell u
   for (const mode of [2, 1]) { host.displayMode = mode; fixture.render(); }
   assert.equal(ref.current, root); assert.equal(actionRef.current.querySelector('button'), button);
   assert.equal(fixture.container.querySelector('input'), input); assert.equal(input.value, 'unsaved');
-  host.properties.showTitle = false; fixture.render(host, { ref, action: { children: '' } });
-  assert.ok(fixture.container.querySelector('[data-web-part-shell-body]').previousElementSibling);
-  fixture.render(host, { action: { children: () => undefined } });
-  assert.ok(fixture.container.querySelector('[data-web-part-shell-body]').previousElementSibling, 'opaque empty callback retains requested header');
-  fixture.render(host, { action: '' });
-  assert.ok(fixture.container.querySelector('[data-web-part-shell-body]').previousElementSibling, 'legacy empty-string header stays present');
-  fixture.render(host, { action: h.React.createElement(h.React.Fragment) });
-  assert.ok(fixture.container.querySelector('[data-web-part-shell-body]').previousElementSibling, 'legacy empty-fragment header stays present');
+  const before = callbacks;
+  h.act(() => shellProperties.setProperties({ showTitle: false }));
+  fixture.render(host, { ref, action });
+  assert.equal(callbacks, before, 'hidden action callbacks are not evaluated');
+  assert.equal(actionRef.current, null);
+  assert.equal(fixture.container.querySelector('[data-web-part-shell-header]'), null);
+  for (const hiddenAction of [{ children: '' }, { children: () => { throw new Error('hidden callback'); } }, '', h.React.createElement(h.React.Fragment)]) {
+    fixture.render(host, { action: hiddenAction });
+    assert.equal(fixture.container.querySelector('[data-web-part-shell-body]').previousElementSibling, null);
+  }
 }));
 
 // The shell must delegate its title policy and lifecycle to the real common control.
@@ -226,6 +229,109 @@ test('title delegates to EditableText with H1–H4/p, H2 fallback and no hidden 
     const before = calls.length; const hiddenFixture = h.mount(hidden, 'Hidden child');
     assert.equal(calls.length, before, 'hidden Edit never mounts the common control');
     assert.equal(hiddenFixture.container.querySelector('[contenteditable]'), null);
-    assert.ok(fixture.container.textContent.includes('ActionChild'));
+    assert.equal(fixture.container.textContent, 'Child');
   } finally { EditableText.render = render; }
+}));
+
+for (const appearance of ['subtle', 'filled', 'filled-alternative', 'outline']) {
+  for (const titlePosition of ['outside', 'inside']) {
+    test(`appearance ${appearance} / title ${titlePosition} uses native Card only when requested`, () => run(h => {
+      const host = h.instance(); const ref = h.React.createRef();
+      const fixture = h.mount(host, 'Body', { appearance, titlePosition, ref, id: 'shell', action: h.React.createElement('button', {}, 'Action') });
+      const root = ref.current;
+      const card = root.querySelector('[data-web-part-shell-card]');
+      const header = root.querySelector('[data-web-part-shell-header]');
+      const body = root.querySelector('[data-web-part-shell-body]');
+      assert.ok(header); assert.equal(header.textContent, 'initialAction');
+      assert.equal(root.getAttribute('appearance'), null); assert.equal(root.getAttribute('titlePosition'), null);
+      assert.equal(root.id, 'shell'); assert.equal(root.tagName, 'DIV');
+      if (appearance === 'subtle') {
+        assert.equal(card, null); assert.equal(header.parentElement, body.parentElement);
+      } else {
+        assert.ok(card.classList.contains('fui-Card'), 'the real Fluent Card renders');
+        assert.equal(card.contains(body), true);
+        assert.equal(card.contains(header), titlePosition === 'inside');
+        assert.equal(card.hasAttribute('tabindex'), false, 'focusMode off avoids a Card focus stop');
+        assert.equal(card.querySelector('[style]'), null);
+      }
+      host.properties.showTitle = false; fixture.render();
+      assert.equal(root.querySelector('[data-web-part-shell-header]'), null);
+      assert.equal(root.querySelector('[data-web-part-shell-body]'), body);
+      assert.equal(root.querySelector('[data-web-part-shell-card]'), card);
+    }));
+  }
+}
+
+test('initial hidden header suppresses action callbacks for all presentations', () => run(h => {
+  const host = h.instance(); host.properties.showTitle = false;
+  const action = { children: () => { throw new Error('hidden callback evaluated'); } };
+  const fixture = h.mount(host, 'Body', { action });
+  for (const appearance of ['subtle', 'filled', 'filled-alternative', 'outline']) {
+    for (const titlePosition of ['outside', 'inside']) {
+      fixture.render(host, { action, appearance, titlePosition });
+      assert.equal(fixture.container.querySelector('[data-web-part-shell-header]'), null);
+    }
+  }
+}));
+
+test('default subtle has no Card and non-subtle updates preserve Card, body DOM and local state', () => run(h => {
+  let mounts = 0;
+  function Child() {
+    const [count, setCount] = h.React.useState(0);
+    h.React.useEffect(() => { mounts++; }, []);
+    return h.React.createElement('button', { 'data-state': '', onClick: () => setCount(value => value + 1) }, count);
+  }
+  const host = h.instance(); const ref = h.React.createRef();
+  const fixture = h.mount(host, h.React.createElement(Child), { ref });
+  assert.equal(fixture.container.querySelector('.fui-Card'), null);
+  const root = ref.current;
+  fixture.render(host, { ref, appearance: 'filled' });
+  const card = root.querySelector('[data-web-part-shell-card]'); assert.ok(card);
+  assert.equal(card.contains(root.querySelector('[data-web-part-shell-header]')), false, 'omitted titlePosition defaults outside');
+  const body = root.querySelector('[data-web-part-shell-body]'); const button = body.querySelector('button');
+  h.act(() => button.click()); const afterCardMounts = mounts;
+  const appearances = new Set();
+  for (const appearance of ['filled', 'outline', 'filled-alternative', 'filled']) {
+    for (const titlePosition of ['inside', 'outside']) {
+      for (const showTitle of [false, true]) {
+        host.properties.showTitle = showTitle;
+        fixture.render(host, { ref, appearance, titlePosition });
+        assert.equal(ref.current, root); assert.equal(root.querySelector('[data-web-part-shell-card]'), card);
+        assert.equal(root.querySelector('[data-web-part-shell-body]'), body); assert.equal(body.querySelector('button'), button);
+        assert.equal(button.textContent, '1'); assert.equal(mounts, afterCardMounts);
+        appearances.add(card.className);
+      }
+    }
+  }
+  assert.equal(appearances.size, 3, 'native appearances change Card styles');
+}));
+
+test('native Card sizes default to medium and preserve Card, header, body and child state', () => run(h => {
+  let mounts = 0;
+  function Child() {
+    const [count, setCount] = h.React.useState(0);
+    h.React.useEffect(() => { mounts++; }, []);
+    return h.React.createElement('button', { 'data-size-state': '', onClick: () => setCount(value => value + 1) }, count);
+  }
+  const host = h.instance(); const ref = h.React.createRef();
+  const fixture = h.mount(host, h.React.createElement(Child), { ref, appearance: 'filled', titlePosition: 'inside' });
+  const root = ref.current, card = root.querySelector('[data-web-part-shell-card]');
+  const header = root.querySelector('[data-web-part-shell-header]'), body = root.querySelector('[data-web-part-shell-body]');
+  const button = body.querySelector('button'); h.act(() => button.click());
+  const defaultClasses = card.className, classes = new Set();
+  for (const size of ['small', 'medium', 'large', undefined]) {
+    fixture.render(host, { ref, appearance: 'filled', titlePosition: 'inside', size });
+    assert.equal(root.hasAttribute('size'), false, 'size is consumed before native div forwarding');
+    assert.equal(ref.current, root); assert.equal(root.querySelector('[data-web-part-shell-card]'), card);
+    assert.equal(root.querySelector('[data-web-part-shell-header]'), header);
+    assert.equal(root.querySelector('[data-web-part-shell-body]'), body);
+    assert.equal(body.querySelector('button'), button); assert.equal(button.textContent, '1'); assert.equal(mounts, 1);
+    if (size === 'medium' || size === undefined) assert.equal(card.className, defaultClasses, 'omission uses native medium');
+    classes.add(card.className);
+  }
+  assert.equal(classes.size, 3, 'native size classes differ for small, medium and large');
+  fixture.render(host, { ref, size: 'large' });
+  assert.equal(root.querySelector('[data-web-part-shell-card]'), null, 'subtle ignores size');
+  assert.equal(root.hasAttribute('size'), false);
+  assert.deepEqual(Object.keys(host.properties).sort(), ['extra', 'title']);
 }));
