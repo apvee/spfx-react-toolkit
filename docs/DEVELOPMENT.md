@@ -71,6 +71,12 @@ npm run build:app
 | `npm run bundle:ship` | Builds library, then app `gulp bundle --ship` |
 | `npm run package:solution` | Ship bundle, then app `gulp package-solution --ship` |
 
+## GitHub Actions
+
+The `Verify monorepo` workflow in `.github/workflows/verify.yml` runs only through `workflow_dispatch`. Pushes and pull request updates do not start it automatically. To run the complete installation, build, verification and package checks, open **Actions > Verify monorepo > Run workflow**, select the branch to verify and start the run.
+
+[GitHub requires the workflow with its manual trigger to be present on the repository's default branch](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow) before manual dispatch is available. Merging this change into another branch alone does not enable the button. Changing the triggers does not cancel runs that have already started.
+
 ## Verification scope
 
 For localized changes, run only the tests covering the modified behavior, affected modules and directly affected consumers. Use relevant workspace/static checks where needed. Mechanical and documentation-only edits normally need diff, whitespace and consistency checks. Apply this scope during implementation and at ordinary task completion; completing a task is not a request for repository-wide review.
