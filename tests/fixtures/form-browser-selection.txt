@@ -1,0 +1,1 @@
+Native browser file selection used by the Form source and compiled sample checkpoints.

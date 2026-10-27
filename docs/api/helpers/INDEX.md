@@ -1,8 +1,8 @@
 # Helpers API Reference
 
-> Pure functions for mapping SPFx context data, checking permissions, building keys and Graph paths, serializing tenant values, and converting themes.
+> Non-React functions for mapping SPFx context data, checking permissions, building keys and Graph paths, serializing tenant values, and converting themes.
 
-Helpers are public non-React utilities exported from `@apvee/spfx-react-toolkit`. They do not read React context, do not perform I/O, and do not manage provider state.
+Helpers are public non-React utilities exported from `@apvee/spfx-react-toolkit` and `/helpers`. They do not read React context, send network requests or manage provider state. Most map only their inputs; API token evaluation also reads the current clock to check `exp`/`nbf`. Theme helpers may return shared Fluent objects, which callers must treat as immutable. The styles facade also exposes the React `useSx` hook; composing descriptors can insert CSS through the existing renderer.
 
 ## Styles and useSx
 
@@ -118,11 +118,28 @@ function getSPFxLocaleInfo(pageContext: PageContext): {
     readonly daylightOffset: number;
     readonly standardOffset: number;
   } | undefined;
+  readonly ianaTimeZone?: string;
   readonly isRtl: boolean;
 }
 ```
 
-Maps culture, UI culture, timezone, and right-to-left metadata from `PageContext`.
+Maps culture, UI culture, timezone, and right-to-left metadata from `PageContext`. `getSPFxLocaleInfo` returns optional readonly `ianaTimeZone` in addition to the unchanged raw `timeZone` object, preserved by reference. No parameters were added.
+
+`ianaTimeZone` is derived solely from `timeZone.id` through a private static lookup. It represents the standard numeric group using CLDR territory `001`; it does not identify a physical city, infer from culture/offset/description, or perform network calls. Group 4 is `Europe/Berlin`, 13 is `America/Los_Angeles`, and 17 is `Pacific/Auckland`. Missing, noninteger, nonfinite, unknown and excluded IDs return undefined, which means unavailable mapping rather than UTC.
+
+The audited 111-candidate inventory includes 104 verified groups; IDs 7, 16, 30, 32, 41, 81 and 92 are excluded. It is not a promise of complete current SharePoint Online coverage. SharePoint Server permits customized `TIMEZONE.XML`; standard IDs cannot prove equivalence to those rules. IANA aliases from the pinned CLDR release are retained, and consumers require suitable Intl time-zone data.
+
+The [versioned audit fixture](../../../tests/fixtures/spfx-time-zone-mapping.json) records every candidate's status/reason, source revisions, snapshot SHA-256 values and license notices. Sources are [PnP Core revision b6ff7b3](https://raw.githubusercontent.com/pnp/pnpcore/b6ff7b30dc8a1dfa8202bca50b75a08e3d3d6c43/src/sdk/PnP.Core/Model/SharePoint/Core/Internal/TimeZone.cs), [CLDR release 48 revision acd6d88](https://raw.githubusercontent.com/unicode-org/cldr/acd6d88ae493633240e19a87a721076a8a75c310/common/supplemental/windowsZones.xml), and [Microsoft numeric groups](https://learn.microsoft.com/en-us/openspecs/sharepoint_protocols/ms-wssfo2/4b41f00e-6782-40f0-9db2-172502446d4c) published 2024-01-17 and snapshotted 2026-10-08. PnP MIT and Unicode-3.0 notices accompany the fixture and derived source.
+
+```tsx
+const info = getSPFxLocaleInfo(pageContext);
+// Explicit policy: no site-zone date when the standard mapping is unavailable.
+const fullDate = info.ianaTimeZone
+  ? new Intl.DateTimeFormat(info.uiLocale, { timeZone: info.ianaTimeZone, dateStyle: 'full' }).format(modified)
+  : 'Site time zone unavailable';
+```
+
+Alternatively, passing undefined to [RelativeTime](../controls/relative-time.md) uses the runtime zone; label that fallback explicitly. The [locale hook](../hooks/environment.md#usespfxlocaleinfo) exposes the same result under an SPFx provider.
 
 ### `getSPFxEnvironmentInfo`
 
@@ -139,7 +156,7 @@ function getSPFxEnvironmentInfo(pageContext: PageContext): {
 }
 ```
 
-Detects host environment from the page URL, legacy page context, and available SPFx SDK objects.
+Maps only the supplied `PageContext`: URL substrings identify local/workbench, `legacyPageContext.isOnPremises` identifies on-premises, and SDK-shaped fields on that object set Teams/Office/Outlook flags. Category precedence is Local, Teams, Outlook, Office, SharePointOnPrem, SharePoint. Flags can overlap. This synchronous heuristic does not acquire SDK context or read the provider’s native context; use [`useSPFxEnvironmentInfo`](../hooks/environment.md#usespfxenvironmentinfo) for the asynchronous host-aware React result.
 
 ### `getSPFxPageTypeInfo`
 
@@ -187,6 +204,8 @@ function hasSPFxPermission(
 Returns `false` when `permissionSet` is undefined. Otherwise delegates to `SPPermission.hasPermission(permission)`.
 
 ## API Permission Precheck Helpers
+
+See the [complete precheck helper reference](./api-permission-precheck.md) for signatures, all public configuration/result/status types, constants, defaults and diagnostic limits.
 
 Import:
 
@@ -281,6 +300,8 @@ function escapeODataValue(value: string): string;
 
 Escapes single quotes for OData string filters by replacing `'` with `''`.
 
+> These public helpers preserve the historical format. New tenant and site list-store writes additionally quote empty/JSON-like strings and bigint decimal text; see [list-store saved-data compatibility](../hooks/storage.md#serialization-and-saved-data-compatibility). Historical stored values and StorageEntity reads retain their existing interpretation, including each list store's documented legacy REST-null mapping.
+
 ### `serializeTenantValue`
 
 ```ts
@@ -329,7 +350,7 @@ Builds Microsoft Graph app-root content paths:
 | `('settings.json')` | `/me/drive/special/approot:/settings.json:/content` |
 | `('settings.json', 'dashboard')` | `/me/drive/special/approot:/dashboard/settings.json:/content` |
 
-Folder names are sanitized by replacing characters outside `a-z`, `A-Z`, `0-9`, `-`, and `_` with `-`.
+Folder names are sanitized by replacing characters outside `a-z`, `A-Z`, `0-9`, `-`, and `_` with `-`. Omitted or empty folder uses the app root. File names are interpolated unchanged, without path encoding or validation; provide a path-safe name. The helper does not create folders or perform I/O.
 
 ### `buildUserPhotoEndpoint`
 
@@ -349,7 +370,7 @@ Builds Microsoft Graph profile photo endpoints:
 | `{ email }` | `/users/{email}` |
 | omitted | `/me` |
 
-The default size is `240x240`.
+The default size is `240x240`; the full endpoint ends in `/photos/<size>/$value`. Nonempty `userId` takes precedence over `email`; identifiers are interpolated unchanged without encoding or validation.
 
 ## Theme Helpers
 
@@ -398,3 +419,5 @@ function getTeamsFluentTheme(teamsThemeName: string | undefined): Theme;
 | `dark` | `teamsDarkTheme` |
 | `contrast`, `highcontrast` | `teamsHighContrastTheme` |
 | `default`, undefined, other values | `teamsLightTheme` |
+
+Names are matched case-insensitively without trimming surrounding whitespace. Returned themes are shared Fluent objects; do not mutate them.

@@ -28,7 +28,7 @@ These hooks provide access to SPFx HTTP clients for making API calls with automa
 
 ### State Management Pattern
 
-All hooks follow a consistent pattern:
+The four request-client hooks (`HttpClient`, `SPHttpClient`, `AadHttpClient` and `MSGraphClient`) follow this pattern:
 
 | Property | Sync Hooks | Async Hooks | Description |
 |----------|------------|-------------|-------------|
@@ -41,13 +41,13 @@ All hooks follow a consistent pattern:
 | `isInitializing` | ❌ | ✅ | Client being initialized |
 | `initError` | ❌ | ✅ | Initialization error |
 
-`useSPFxApiPermissionPrecheck` returns permission-specific state instead of a client. Its result includes `configurationState`, `available`, `missing`, `warnings`, `unknown`, `check()`, `retry()`, and `retryWithoutCache()`.
+`useSPFxAadTokenProvider` exposes `tokenProvider`, readiness and initialization state, without `invoke` or invocation state. `useSPFxApiPermissionPrecheck` returns permission-specific state instead of a client. Its result includes `configurationState`, `available`, `missing`, `warnings`, `unknown`, `check()`, `retry()`, and `retryWithoutCache()`.
 
 ---
 
 ## Concurrent invocations
 
-The HTTP, SharePoint REST, AadHttpClient and Graph client hooks use the same invocation tracker. `isLoading` remains true while any invocation on the current client is pending. Starting an invocation clears displayed error; only the latest-started invocation can publish an error. Client replacement and unmount ignore obsolete UI updates while caller promises still resolve/reject. `clearError()` does not cancel requests. Initialization flags/errors are separate from invocation state.
+The HTTP, SharePoint REST, AadHttpClient and Graph client hooks use the same invocation tracker. `isLoading` remains true while any invocation on the current client is pending. Starting an invocation clears displayed error; only the latest-started invocation can publish an error. Client replacement and unmount ignore obsolete UI updates while caller promises still resolve/reject. `clearError()` does not cancel requests. Initialization flags/errors are separate from invocation state. Calls made directly on `client` bypass that tracker. Callback/request rejections are normalized to `Error` and rethrown, so catch returned promises. The hook does not check HTTP `response.ok`: callbacks must reject unsuccessful HTTP responses themselves.
 
 ## useSPFxHttpClient
 
@@ -99,7 +99,7 @@ import { HttpClient } from '@microsoft/sp-http';
 
 function WeatherWidget() {
   const { invoke, isLoading, error, clearError, isReady } = useSPFxHttpClient();
-  const [weather, setWeather] = React.useState<any>(null);
+  const [weather, setWeather] = React.useState<{ main?: { temp?: number } }>();
   
   const loadWeather = () => {
     invoke(client =>
@@ -172,7 +172,7 @@ function useSPFxSPHttpClient(initialBaseUrl?: string): SPFxSPHttpClientInfo
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `initialBaseUrl` | `string` | No | Base URL for requests (default: current site) |
+| `initialBaseUrl` | `string` | No | Initial consumer base web URL; omitted/blank uses the current web |
 
 ### Returns
 
@@ -196,7 +196,7 @@ interface SPFxSPHttpClientInfo {
   /** Set or change the base URL (for cross-site queries) */
   readonly setBaseUrl: (url: string) => void;
   
-  /** Current base URL (site absolute URL) */
+  /** Current consumer base web URL */
   readonly baseUrl: string;
   
   /** True when client is ready for use */
@@ -292,6 +292,8 @@ function TaskList() {
 }
 ```
 
+`initialBaseUrl` is captured once, trimmed and stripped of one trailing slash. Later prop changes do not reset it. `setBaseUrl` applies the same whitespace/trailing-slash normalization; it changes only the URL exposed to the consumer, not the native client or URLs inside an invocation.
+
 ### Example: Cross-Site Query
 
 Use the intended URL directly for the request. `setBaseUrl()` updates state for subsequent renders; the current callback still captures the earlier `baseUrl`.
@@ -356,7 +358,7 @@ function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpClientInf
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `initialResourceUrl` | `string` | No | Resource URI for the Azure AD app |
+| `initialResourceUrl` | `string` | No | Initial resource URI or application ID; omitted/empty leaves the client unavailable |
 
 ### Returns
 
@@ -398,6 +400,8 @@ interface SPFxAadHttpClientInfo {
 
 Provides `AadHttpClient` for calling custom Azure AD secured APIs. Requires API permissions to be configured in SharePoint admin center.
 
+`initialResourceUrl` is captured once; use `setResourceUrl` for later changes. The resource selects token acquisition; callers still construct the API request URL.
+
 **Async Initialization**: Unlike sync hooks, the AAD client requires async initialization via `factory.getClient()`. Use `isInitializing`, `initError`, and `isReady` to track initialization state.
 
 ### Prerequisites
@@ -433,7 +437,7 @@ function CustomApiWidget() {
     isReady 
   } = useSPFxAadHttpClient('https://contoso-api.azurewebsites.net');
   
-  const [data, setData] = React.useState(null);
+  const [data, setData] = React.useState<unknown>(undefined);
   
   const loadData = () => {
     invoke(client =>
@@ -477,7 +481,7 @@ function DynamicApiSelector() {
     clearError 
   } = useSPFxAadHttpClient();
   
-  const [data, setData] = React.useState(null);
+  const [data, setData] = React.useState<unknown>(undefined);
   
   const loadFromApi = (apiUrl: string) => {
     clearError();
@@ -605,6 +609,8 @@ function useSPFxApiPermissionPrecheck(
 | `options` | `SPFxApiPermissionPrecheckOptions` | No | Check behavior such as passive mode, cache usage, audience validation, and timeout |
 
 ### Options
+
+Configuration and result member types are documented in the [precheck helper reference](../helpers/api-permission-precheck.md). Scope matching is case-sensitive, and optional failures do not block readiness.
 
 | Option | Default | Description |
 |--------|---------|-------------|
@@ -747,7 +753,7 @@ interface SPFxMSGraphClientInfo {
 
 Provides `MSGraphClientV3` for authenticated Microsoft Graph API access. Requires appropriate Graph permissions granted by admin.
 
-**Async Initialization**: The Graph client requires async initialization via `factory.getClient('3')`. Use `isInitializing`, `initError`, and `isReady` to track initialization state.
+**Async Initialization**: The Graph client requires async initialization via `factory.getClient('3')`. Use `isInitializing`, `initError`, and `isReady` to track initialization state. When the provider's consumed factory changes, the previous client and its invocation loading/error state are hidden during render. The hook initializes the replacement factory, publishes only its current result and ignores obsolete or unmounted initialization completions. Initialization failure appears through `initError`; invocation failures remain separate in `error`. A newly mounted hook initializes again; it does not persist clients or grants across mounts.
 
 ### Prerequisites
 
@@ -932,6 +938,7 @@ function UpcomingEvents() {
 - [Permissions Hooks](./permissions.md) - Permission checking
 - [Context Hooks](./context.md) - Context access
 
----
 
-*Generated from JSDoc comments. Last updated: February 2, 2026*
+## Access trim consumers
+
+[SharePointPermissionTrim](../controls/sharepoint-permission-trim.md) and [SharePointGroupTrim](../controls/sharepoint-group-trim.md) reuse the provider's native SPHttpClient. [EntraGroupTrim](../controls/entra-group-trim.md) reuses MSGraphClientV3. Their samples invoke actual native reads; configured User.Read and GroupMember.Read.All requests need separate tenant approval and do not prove hidden membership completeness. Client/provider identity changes invalidate prior asynchronous decisions. See the [host checklist](../../SHAREPOINT-VALIDATION.md).

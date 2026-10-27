@@ -1,0 +1,25 @@
+{
+  "empty": "Няма налични данни",
+  "noResults": "Няма намерени резултати",
+  "noVisibleColumns": "Няма видими колони",
+  "loading": "Зареждане",
+  "actions": "Действия",
+  "moreActions": "Още действия",
+  "yes": "Да",
+  "no": "Не",
+  "noTags": "Няма етикети",
+  "noObservations": "Няма наблюдения",
+  "invalidValue": "Невалидна стойност",
+  "selectAllRows": "Избери всички редове",
+  "retry": "Опитай отново",
+  "selectRowTemplate": "Избери ред {rowId}",
+  "sparklineSummaryTemplate": "Първа стойност {first}; Последна стойност {last}; Минимум {minimum}; Максимум {maximum}; Средна стойност {average}; Промяна {change}; Процентна промяна {changePercent}",
+  "tagOverflow": {
+    "one": "Покажи още {count} етикет",
+    "other": "Покажи още {count} етикета"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} глас",
+    "other": "{formattedCount} гласа"
+  }
+}

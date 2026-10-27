@@ -7,8 +7,17 @@ import { createSPFxPnPSearchService } from '../services/spfx-pnp-search.service'
 import type { ISearchBuilder } from '@pnp/sp/search';
 
 /**
- * Type alias for SearchQueryBuilder function
- * Uses ISearchBuilder interface from PnPjs
+ * Configures a PnP search builder without executing the query. Reachable through the public search callback contract.
+ * @param builder - Search builder with the hook's default selected properties/refiners.
+ * @returns Builder to execute; paging and request refinement filters are applied afterward.
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const build: SearchQueryBuilderFn = builder => builder.text('training');
+ * const search = useSPFxPnPSearch();
+ * const onSearch = () => search.search(build);
+ * ```
  */
 type SearchQueryBuilderFn = (builder: ISearchBuilder) => ISearchBuilder;
 
@@ -65,6 +74,13 @@ export const SearchVerticals = {
 
 /**
  * Options for configuring the useSPFxPnPSearch hook.
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const options: UseSPFxPnPSearchOptions = { refiners: 'FileType', pageSize: 25 };
+ * const search = useSPFxPnPSearch(options);
+ * ```
  */
 export interface UseSPFxPnPSearchOptions {
   /**
@@ -74,6 +90,7 @@ export interface UseSPFxPnPSearchOptions {
    * @default 50
    * @example
    * ```tsx
+   * // Inside a React component beneath a matching host-specific SPFx provider:
    * const { search } = useSPFxPnPSearch({ pageSize: 100 });
    * ```
    */
@@ -85,6 +102,7 @@ export interface UseSPFxPnPSearchOptions {
    * 
    * @example
    * ```tsx
+   * // Inside a React component beneath a matching host-specific SPFx provider:
    * useSPFxPnPSearch({
    *   selectProperties: ['Title', 'Path', 'Author', 'FileType']
    * });
@@ -98,36 +116,49 @@ export interface UseSPFxPnPSearchOptions {
    * 
    * @example
    * ```tsx
+   * // Inside a React component beneath a matching host-specific SPFx provider:
    * useSPFxPnPSearch({
-   *   refiners: 'FileType,Author,ModifiedBy'
+   *   refiners: 'FileType,DisplayAuthor,ModifiedBy'
    * });
    * ```
    */
   refiners?: string;
+  /**
+   * Combines multiple selected values in the same facet with AND or OR.
+   * Different facets always combine with AND. Changing this option resets the
+   * current search and selected filters; run `search()` again afterward.
+   * @default 'and'
+   * @example
+   * ```tsx
+   * // Inside a React component beneath a matching host-specific SPFx provider:
+   * useSPFxPnPSearch({ refiners: 'FileType,Size', refinerOperator: 'or' });
+   * // Selecting PDF and DOCX includes either type; a Size filter still applies.
+   * ```
+   */
+  refinerOperator?: 'and' | 'or';
 }
 
 /**
  * Represents a single search result with parsed data and raw cells.
- * 
+ *
  * @template T - The type of the parsed result data (default: Record<string, string>)
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component using the host Fluent renderer:
+ * const search = useSPFxPnPSearch<{ Title: string }>();
+ * const result: SearchResult<{ Title: string }> | undefined = search.results[0];
+ * console.log(result?.data.Title);
+ * ```
  */
 export interface SearchResult<T = Record<string, string>> {
   /**
-   * Unique identifier for the result.
-   * Computed from Path or DocId.
+   * DocId converted to a string, then Path, otherwise a random fallback. Not stable when both fields are absent.
    */
   id: string;
   
   /**
-   * Parsed result data as a typed object.
-   * Cells array converted to key-value object for convenience.
-   * 
-   * @example
-   * ```tsx
-   * result.data.Title      // "My Document"
-   * result.data.Path       // "https://..."
-   * result.data.FileType   // "docx"
-   * ```
+   * PnP ISearchResult cast to T; the hook does not convert cells or validate the data.
    */
   data: T;
   
@@ -138,13 +169,21 @@ export interface SearchResult<T = Record<string, string>> {
   raw: unknown;
   
   /**
-   * Relevance rank score (higher = more relevant).
+   * Integer parsed from a truthy Rank value; undefined when missing or zero.
    */
   rank?: number;
 }
 
 /**
  * Represents a single refiner (facet) with its entries.
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const search = useSPFxPnPSearch({ refiners: 'FileType' });
+ * const facet: SearchRefiner | undefined = search.refiners.find(item => item.name === 'FileType');
+ * const onFilter = () => facet?.entries[0] && search.applyRefiner(facet.name, facet.entries[0].token);
+ * ```
  */
 export interface SearchRefiner {
   /**
@@ -167,7 +206,9 @@ export interface SearchRefiner {
     count: number;
     
     /**
-     * Refinement token for filtering.
+     * SharePoint refinement token for filtering: a quoted string, native
+     * numeric/date scalar or FQL expression such as `range(...)`.
+     * Pass unchanged to `applyRefiner`; use `value` only for display.
      */
     token: string;
   }>;
@@ -175,54 +216,30 @@ export interface SearchRefiner {
 
 /**
  * Return type for the useSPFxPnPSearch hook.
- * 
+ *
  * @template T - The type of the search result data
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const search: SPFxPnPSearchInfo<{ Title: string }> = useSPFxPnPSearch({ pageSize: 25 });
+ * console.log(search.results, search.totalResults);
+ * ```
  */
 export interface SPFxPnPSearchInfo<T = Record<string, string>> {
   /**
-   * Executes a search query using SharePoint Search API.
-   * 
-   * Supports both simple text queries and advanced SearchQueryBuilder patterns.
-   * The hook automatically applies default options (selectProperties, refiners, pageSize)
-   * before passing the builder to the callback, allowing user overrides.
-   * 
-   * @param query - Search query text or builder callback
-   * @param options - Optional query-specific options (pageSize override)
-   * @returns Promise resolving to array of parsed search results
-   * 
-   * @example Simple text query
-   * ```tsx
-   * const { search, results } = useSPFxPnPSearch();
-   * 
-   * await search("ContentType:Document");
-   * // results contains all documents
-   * ```
-   * 
-   * @example Advanced builder query
-   * ```tsx
-   * await search(builder => 
-   *   builder
-   *     .text("training")
-   *     .sourceId(SearchVerticals.Videos)
-   *     .selectProperties('Title', 'Path', 'FileType')
-   *     .rowLimit(100)
-   *     .sortList({ Property: 'LastModifiedTime', Direction: 1 })
-   * );
-   * ```
-   * 
-   * @example With verticals
-   * ```tsx
-   * // Search only people
-   * search(builder => 
-   *   builder
-   *     .text("john")
-   *     .sourceId(SearchVerticals.People)
-   * );
-   * ```
+   * Starts a replacement search, clearing selected filters and resetting the offset. Builder selectProperties/refiners can override defaults; row limit is applied afterward.
+   * @param query - Text or fluent builder transform.
+   * @param options - Optional page-size override.
+   * @returns New result page even for obsolete completions.
+   * @throws Uninitialized context, builder or request failures; current failures publish error.
    */
   search: (
     query: string | SearchQueryBuilderFn,
-    options?: { pageSize?: number }
+    options?: {
+      /** Row limit for this search; overrides the hook default and builder rowLimit. */
+      pageSize?: number
+    }
   ) => Promise<SearchResult<T>[]>;
   
   /**
@@ -234,10 +251,14 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
    * 
    * @example
    * ```tsx
+   * // Inside a React component beneath a matching host-specific SPFx provider:
    * const { suggest } = useSPFxPnPSearch();
-   * 
-   * const suggestions = await suggest("my qu");
-   * // → ["my query", "my question", "my quick start"]
+   *
+   * // Call this handler from an event or an effect; do not request during render.
+   * const run = async () => {
+   *   const suggestions = await suggest("my qu");
+   *   // → ["my query", "my question", "my quick start"]
+   * };
    * ```
    */
   suggest: (queryText: string) => Promise<string[]>;
@@ -279,37 +300,16 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
   error: Error | undefined;
   
   /**
-   * Loads the next page of results using the last query.
-   * Automatically appends new results to the existing results array.
-   * 
-   * @returns Promise resolving to the newly loaded results
-   * @throws Error if no previous search was executed
-   * @throws Error if no pageSize was specified
-   * 
-   * @example
-   * ```tsx
-   * const { results, hasMore, loadMore, loadingMore } = useSPFxPnPSearch({ pageSize: 50 });
-   * 
-   * return (
-   *   <div>
-   *     {results.map(r => <ResultCard key={r.id} result={r} />)}
-   *     {hasMore && (
-   *       <button onClick={loadMore} disabled={loadingMore}>
-   *         Load More
-   *       </button>
-   *     )}
-   *   </div>
-   * );
-   * ```
+   * Appends the next page for the current query/filters; returns [] while a replacement or page request is pending.
+   * @returns New page.
+   * @throws No previous search, a falsy page size, uninitialized context or request failure.
    */
   loadMore: () => Promise<SearchResult<T>[]>;
   
   /**
-   * Re-executes the last search with the same parameters.
-   * Resets pagination state and replaces current results.
-   * 
-   * @returns Promise resolving when refetch is complete
-   * @throws Error if no previous search was executed
+   * Repeats the current query/filters from the first page, replacing results after success.
+   * @returns Resolves after search success.
+   * @throws No previous search, uninitialized context or request failure.
    */
   refetch: () => Promise<void>;
   
@@ -317,23 +317,29 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
    * Applies a refiner filter to the current search query.
    * Uses SharePoint's RefinementFilters API for semantic filtering.
    * Automatically re-executes the search with the new filter.
+   * Selecting the same token again removes that filter.
+   * Multiple values in one facet use `options.refinerOperator` (default AND).
+   * Different facets always combine with AND. String, numeric and date/range
+   * tokens are passed as native FQL operands without replacing property names.
    * 
    * @param refinerName - Name of the refiner (managed property)
-   * @param refinerValue - Value to filter by
+   * @param refinerValue - The entry's `token` from SharePoint, including any FQL quotes;
+   * do not pass the display `value`
    * @returns Promise resolving when filtered search is complete
    * 
    * @example
    * ```tsx
+   * // Inside a React component beneath a matching host-specific SPFx provider:
    * const { refiners, applyRefiner } = useSPFxPnPSearch({
-   *   refiners: 'FileType,Author'
+   *   refiners: 'FileType,DisplayAuthor'
    * });
-   * 
+   *
    * // After initial search, show refiners
    * {refiners.map(refiner => (
    *   <div key={refiner.name}>
    *     <h3>{refiner.name}</h3>
    *     {refiner.entries.map(entry => (
-   *       <button onClick={() => applyRefiner(refiner.name, entry.value)}>
+   *       <button onClick={() => applyRefiner(refiner.name, entry.token)}>
    *         {entry.value} ({entry.count})
    *       </button>
    *     ))}
@@ -345,6 +351,7 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
   
   /**
    * Clears the current error state.
+   * @returns No value; initialization/context errors remain separate.
    */
   clearError: () => void;
 }
@@ -352,226 +359,18 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
 
 
 /**
- * Hook for working with SharePoint Search using PnPjs fluent API.
- * Provides search execution, suggestions, refiners, pagination, and state management.
- * 
- * **Key Features**:
- * - ✅ Native PnPjs SearchQueryBuilder - full type-safe query building
- * - ✅ Auto-parsing of Cells to typed objects
- * - ✅ Search suggestions (autocomplete)
- * - ✅ Refiners (facets) support
- * - ✅ Pagination with loadMore() and hasMore
- * - ✅ Verticals support (People, Videos, Sites, etc.)
- * - ✅ Cross-site search via PnPContextInfo
- * - ✅ Local state management per component instance
- * - ✅ ES5 compatibility (IE11 support)
- * 
- * @template T - The type of the search result data (default: Record<string, string>)
- * @param options - Optional configuration (pageSize, selectProperties, refiners)
- * @param pnpContext - Optional PnP context for cross-site scenarios
- * @returns Object containing search method, results, loading states, and actions
- * 
- * @example Basic text search
+ * Runs explicit SharePoint searches with paging, suggestions and refinement tokens; no search runs on mount. Options/client changes reset results and filters. Latest replacement queries publish state; obsolete/unmounted completions still settle their promises. T is a cast of PnP result data without conversion or runtime validation. Server permissions and search configuration control available results/facets.
+ * @typeParam T - Expected result data fields.
+ * @param options - Default row limit (50), selected properties, refiners and within-facet operator (and).
+ * @param pnpContext - Optional selected-web context; the default context hook still runs.
+ * @returns Search results, totals/facets, state and explicit operations.
+ * @throws Missing SPFx provider or default-context resolution failures. Methods reject failed requests.
+ *
+ * @example
  * ```tsx
- * import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
- * 
- * function DocumentSearch() {
- *   const { search, results, loading } = useSPFxPnPSearch({ pageSize: 50 });
- * 
- *   useEffect(() => {
- *     search("ContentType:Document");
- *   }, [search]);
- * 
- *   if (loading) return <Spinner />;
- * 
- *   return (
- *     <ul>
- *       {results.map(result => (
- *         <li key={result.id}>
- *           <a href={result.data.Path}>{result.data.Title}</a>
- *         </li>
- *       ))}
- *     </ul>
- *   );
- * }
- * ```
- * 
- * @example Advanced search with builder
- * ```tsx
- * interface Document {
- *   Title: string;
- *   Path: string;
- *   FileType: string;
- *   Author: string;
- *   LastModifiedTime: string;
- * }
- * 
- * function AdvancedSearch() {
- *   const { search, results } = useSPFxPnPSearch<Document>({
- *     selectProperties: ['Title', 'Path', 'FileType', 'Author', 'LastModifiedTime'],
- *     pageSize: 100
- *   });
- * 
- *   useEffect(() => {
- *     search(builder => 
- *       builder
- *         .text("training")
- *         .rowLimit(100)
- *         .sortList({ Property: 'LastModifiedTime', Direction: 1 })
- *     );
- *   }, [search]);
- * 
- *   return (
- *     <div>
- *       {results.map(doc => (
- *         <DocumentCard key={doc.id} document={doc.data} />
- *       ))}
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Search with verticals
- * ```tsx
- * import { SearchVerticals } from '@apvee/spfx-react-toolkit';
- * 
- * function PeopleSearch() {
- *   const { search, results } = useSPFxPnPSearch({
- *     selectProperties: ['PreferredName', 'WorkEmail', 'PictureURL', 'JobTitle']
- *   });
- * 
- *   useEffect(() => {
- *     search(builder => 
- *       builder
- *         .text("john")
- *         .sourceId(SearchVerticals.People)
- *     );
- *   }, [search]);
- * 
- *   return (
- *     <div>
- *       {results.map(person => (
- *         <Persona
- *           key={person.id}
- *           text={person.data.PreferredName}
- *           secondaryText={person.data.JobTitle}
- *           imageUrl={person.data.PictureURL}
- *         />
- *       ))}
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Pagination with loadMore
- * ```tsx
- * function PaginatedSearch() {
- *   const {
- *     search,
- *     results,
- *     hasMore,
- *     loadMore,
- *     loadingMore
- *   } = useSPFxPnPSearch({ pageSize: 20 });
- * 
- *   useEffect(() => {
- *     search("report");
- *   }, [search]);
- * 
- *   return (
- *     <div>
- *       {results.map(r => <ResultCard key={r.id} result={r} />)}
- *       {hasMore && (
- *         <button onClick={loadMore} disabled={loadingMore}>
- *           {loadingMore ? 'Loading...' : 'Load More'}
- *         </button>
- *       )}
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Refiners (facets) filtering
- * ```tsx
- * function RefinedSearch() {
- *   const {
- *     search,
- *     results,
- *     refiners,
- *     applyRefiner
- *   } = useSPFxPnPSearch({
- *     refiners: 'FileType,Author',
- *     pageSize: 50
- *   });
- * 
- *   useEffect(() => {
- *     search("document");
- *   }, [search]);
- * 
- *   return (
- *     <div style={{ display: 'flex' }}>
- *       {/* Sidebar with refiners *\/}
- *       <div>
- *         {refiners.map(refiner => (
- *           <div key={refiner.name}>
- *             <h4>{refiner.name}</h4>
- *             {refiner.entries.map(entry => (
- *               <button
- *                 key={entry.value}
- *                 onClick={() => applyRefiner(refiner.name, entry.value)}
- *               >
- *                 {entry.value} ({entry.count})
- *               </button>
- *             ))}
- *           </div>
- *         ))}
- *       </div>
- *       
- *       {/* Results *\/}
- *       <div>
- *         {results.map(r => <ResultCard key={r.id} result={r} />)}
- *       </div>
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Search suggestions (autocomplete)
- * ```tsx
- * function SearchBox() {
- *   const { search, suggest } = useSPFxPnPSearch();
- *   const [query, setQuery] = React.useState('');
- *   const [suggestions, setSuggestions] = React.useState<string[]>([]);
- * 
- *   const handleInputChange = async (text: string) => {
- *     setQuery(text);
- *     if (text.length > 2) {
- *       const results = await suggest(text);
- *       setSuggestions(results);
- *     }
- *   };
- * 
- *   const handleSearch = () => {
- *     search(query);
- *     setSuggestions([]);
- *   };
- * 
- *   return (
- *     <div>
- *       <input
- *         value={query}
- *         onChange={(e) => handleInputChange(e.target.value)}
- *         onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
- *       />
- *       {suggestions.length > 0 && (
- *         <ul>
- *           {suggestions.map((s, i) => (
- *             <li key={i} onClick={() => setQuery(s)}>{s}</li>
- *           ))}
- *         </ul>
- *       )}
- *     </div>
- *   );
+ * function SearchDocuments() {
+ *   const search = useSPFxPnPSearch<{ Title: string }>({ pageSize: 25, refiners: 'FileType' });
+ *   return <button onClick={() => search.search('ContentType:Document')} disabled={search.loading}>Search</button>;
  * }
  * ```
  */
@@ -587,12 +386,14 @@ export function useSPFxPnPSearch<T = Record<string, string>>(
   // replace its identity on every state update.
   const selectPropertiesKey = JSON.stringify(options?.selectProperties);
   const defaultRefiners = options?.refiners;
+  const defaultRefinerOperator = options?.refinerOperator ?? 'and';
   const service = useMemo(() => sp && context?.isInitialized
     ? createSPFxPnPSearchService<T>(sp, {
       pageSize: defaultPageSize,
       selectProperties: selectPropertiesKey ? JSON.parse(selectPropertiesKey) as string[] : undefined,
-      refiners: defaultRefiners
-    }) : undefined, [sp, context?.isInitialized, defaultPageSize, selectPropertiesKey, defaultRefiners]);
+      refiners: defaultRefiners,
+      refinerOperator: defaultRefinerOperator
+    }) : undefined, [sp, context?.isInitialized, defaultPageSize, selectPropertiesKey, defaultRefiners, defaultRefinerOperator]);
 
   const [results, setResults] = useState<SearchResult<T>[]>([]);
   const [totalResults, setTotalResults] = useState(0);

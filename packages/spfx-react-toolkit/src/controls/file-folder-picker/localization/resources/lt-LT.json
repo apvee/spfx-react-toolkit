@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Naršyti failus…",
+    "folders": "Naršyti aplankus…",
+    "all": "Naršyti failus ir aplankus…"
+  },
+  "placeholders": {
+    "files": "Pasirinkti failus…",
+    "folders": "Pasirinkti aplankus…",
+    "all": "Pasirinkti failus arba aplankus…"
+  },
+  "labels": {
+    "selection": "Failų ir aplankų pasirinkimas",
+    "file": "Failas",
+    "folder": "Aplankas",
+    "unresolvedItem": "Neatpažintas elementas",
+    "removeItem": "Pašalinti {name}"
+  },
+  "validation": {
+    "invalidReferences": "Netinkamos failų arba aplankų nuorodos.",
+    "controlledModeChanged": "Valdomojo režimo negalima keisti, kol valdiklis yra prijungtas.",
+    "incompatibleItems": "Pasirinkime yra elementų, nesuderinamų su sukonfigūruotu tipu, kategorija arba plėtiniais. Pašalinkite arba pakeiskite juos.",
+    "invalidPolicy": "Netinkama pasirinkimo tipo, kategorijos, plėtinių arba ribos konfigūracija.",
+    "selectionLimitExceeded": "Pasirinkimas viršija sukonfigūruotą ribą. Pašalinkite perteklinius elementus."
+  },
+  "errors": {
+    "configuration": "Netinkama parinkiklio konfigūracija. Patikrinkite šaltinį, tipus, kategoriją ir ribas; naudokite išankstinį nustatymą be senstelėjusių parinkčių.",
+    "auth-resource": "Parinkiklis paprašė autentifikavimo ištekliaus, kurio konfigūracija neleidžia.",
+    "auth-type": "Parinkiklis paprašė autentifikavimo tipo, kurio konfigūracija nepalaiko.",
+    "auth-challenge": "Parinkikliui reikia papildomo autentifikavimo patikrinimo, kuris nepalaikomas.",
+    "auth-provider": "Nepavyko gauti SharePoint atpažinimo ženklo. Bandykite dar kartą; jei problema išlieka, patikrinkite prieigą ir esamas teises.",
+    "selection-identity": "Nepavyko patikrinti pasirinkto elemento tapatybės. Iš naujo atidarykite parinkiklį ir bandykite dar kartą.",
+    "selection-scope": "Pasirinktas elementas nepriklauso leidžiamai svetainei, bibliotekai arba aplankui.",
+    "selection-policy": "Pasirinkimas neatitinka leidžiamo tipo, kategorijos, plėtinių arba elementų skaičiaus reikalavimų.",
+    "selection-unavailable": "Pasirinktas elementas nepasiekiamas arba prieiga prie jo negalima.",
+    "selection-invalid": "Nepavyko patikrinti pasirinkimo. Naujų elementų nepridėta.",
+    "onedrive-unavailable": "Dabartinio vartotojo OneDrive nepasiekiamas arba prieiga prie jo negalima. Patikrinkite, ar diskas yra, ir bandykite dar kartą.",
+    "opening": "Nepavyko atidaryti parinkiklio. Patikrinkite konfigūraciją bei prieigą prie šaltinio ir bandykite dar kartą.",
+    "timeout": "Parinkiklis laiku neatsakė. Uždarykite jį ir bandykite dar kartą.",
+    "communication": "Ryšys su parinkikliu nutrūko. Iš naujo jį atidarykite ir bandykite dar kartą."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Pasirinktinė autentifikavimo funkcija laiku neatsakė. Bandykite dar kartą.",
+    "unsupportedCommand": "Ši integracija nepalaiko šios komandos.",
+    "optionalGraphAuthenticationFailed": "Nepavyko autentifikuoti pasirinktinės Microsoft Graph funkcijos.",
+    "optionalPersonalAuthenticationFailed": "Nepavyko autentifikuoti pasirinktinės asmeninės paskirties vietos."
+  }
+}

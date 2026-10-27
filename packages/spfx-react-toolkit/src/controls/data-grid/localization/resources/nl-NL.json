@@ -1,0 +1,25 @@
+{
+  "empty": "Geen gegevens beschikbaar",
+  "noResults": "Geen resultaten gevonden",
+  "noVisibleColumns": "Geen zichtbare kolommen",
+  "loading": "Laden",
+  "actions": "Acties",
+  "moreActions": "Meer acties",
+  "yes": "Ja",
+  "no": "Nee",
+  "noTags": "Geen tags",
+  "noObservations": "Geen waarnemingen",
+  "invalidValue": "Ongeldige waarde",
+  "selectAllRows": "Alle rijen selecteren",
+  "retry": "Opnieuw proberen",
+  "selectRowTemplate": "Rij {rowId} selecteren",
+  "sparklineSummaryTemplate": "Eerste {first}; Laatste {last}; Minimum {minimum}; Maximum {maximum}; Gemiddelde {average}; Verandering {change}; Procentuele verandering {changePercent}",
+  "tagOverflow": {
+    "one": "Nog {count} tag tonen",
+    "other": "Nog {count} tags tonen"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} stem",
+    "other": "{formattedCount} stemmen"
+  }
+}

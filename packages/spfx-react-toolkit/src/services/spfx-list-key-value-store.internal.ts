@@ -12,8 +12,6 @@ import {
   readSiteStorePage, resolveSiteStorePageUrl, siteStoreListUrl
 } from './spfx-site-key-value-store.internal';
 
-const LIST_TITLE = 'TenantKeyValueStore';
-
 export interface SPFxListKeyValueStoreItem<T = unknown> {
   readonly key: string;
   readonly value: T;
@@ -34,44 +32,39 @@ interface ListItemResponse {
   Title: string;
   Value: string;
   Description?: string;
-}
-
-interface ListItemsResponse {
-  value: ListItemResponse[];
-}
-
-interface FieldsCheckResponse {
-  value: Array<{ InternalName: string }>;
-}
-
-function getListApiUrl(webUrl: string): string {
-  return `${webUrl}/_api/web/lists/getByTitle('${LIST_TITLE}')`;
+  etag?: string;
 }
 
 function encodeQueryValue(value: string): string {
   return encodeURIComponent(value).replace(/'/g, '%27');
 }
 
-async function createField(
-  spHttpClient: SPHttpClient,
-  listApiUrl: string,
-  fieldTitle: string
-): Promise<void> {
-  const response: SPHttpClientResponse = await spHttpClient.post(
-    `${listApiUrl}/fields`,
-    SPHttpClient.configurations.v1,
-    {
-      body: JSON.stringify({
-        FieldTypeKind: 3,
-        Title: fieldTitle
-      })
+function serializeStoreValue(value: unknown): string {
+  if (typeof value === 'bigint') return JSON.stringify(String(value));
+  if (typeof value === 'string') {
+    // Empty Note text is returned as null by SharePoint; quote it to preserve a new empty string.
+    if (value === '') return JSON.stringify(value);
+    try {
+      JSON.parse(value);
+      return JSON.stringify(value);
+    } catch {
+      return value;
     }
-  );
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Failed to create ${fieldTitle} field: ${response.statusText}. ${errorText}`);
   }
+  return serializeTenantValue(value);
+}
+
+class MutationSnapshotError extends Error {
+  public constructor(public readonly status: number, statusText: string) {
+    super(`Failed to read item for mutation: ${statusText}`);
+  }
+}
+
+function requireItemEtag(etag: string | undefined): string {
+  if (!etag || etag === '*' || /[\r\n]/.test(etag)) {
+    throw new Error('A valid item ETag is required for a key-value store mutation.');
+  }
+  return etag;
 }
 
 function mapItem<T>(raw: ListItemResponse): SPFxListKeyValueStoreItem<T> {
@@ -87,131 +80,10 @@ export function createSPFxListKeyValueStoreService(
   spHttpClient: SPHttpClient,
   profile: 'tenant' | 'site'
 ): SPFxListKeyValueStoreService {
-  const site = profile === 'site' ? createSiteStoreSetup(spHttpClient) : undefined;
-  const normalize = (url: string): string => site ? normalizeSiteStoreUrl(url) : url;
-  const listApi = (url: string): string => site ? siteStoreListUrl(url) : getListApiUrl(url);
-
-  const listProvisioned = new Map<string, boolean>();
-  const provisioningPromises = new Map<string, Promise<void>>();
-
-  const ensureListReady = (webUrl: string): Promise<void> => {
-    if (site) return site.ensure(webUrl);
-    if (listProvisioned.get(webUrl)) {
-      return Promise.resolve();
-    }
-
-    const provisioningPromise = provisioningPromises.get(webUrl);
-    if (provisioningPromise) {
-      return provisioningPromise;
-    }
-
-    const doProvision = async (): Promise<void> => {
-      const listApiUrl = listApi(webUrl);
-
-      const listResponse: SPHttpClientResponse = await spHttpClient.get(
-        `${listApiUrl}?$select=Id`,
-        SPHttpClient.configurations.v1
-      );
-
-      const listExists = listResponse.status !== 404;
-
-      if (listExists && !listResponse.ok) {
-        throw new Error(`Failed to check list existence: ${listResponse.statusText}`);
-      }
-
-      if (listExists) {
-        const fieldsResponse: SPHttpClientResponse = await spHttpClient.get(
-          `${listApiUrl}/fields?$filter=InternalName eq 'Value' or InternalName eq 'Description'&$select=InternalName`,
-          SPHttpClient.configurations.v1
-        );
-
-        if (!fieldsResponse.ok) {
-          throw new Error(`Failed to check list fields: ${fieldsResponse.statusText}`);
-        }
-
-        const fields: FieldsCheckResponse = await fieldsResponse.json();
-        const existingFields = fields.value.map(function(field): string {
-          return field.InternalName;
-        });
-        const hasValue = existingFields.includes('Value');
-        const hasDescription = existingFields.includes('Description');
-
-        if (hasValue && hasDescription) {
-          return;
-        }
-
-        if (!hasValue) {
-          await createField(spHttpClient, listApiUrl, 'Value');
-        }
-
-        if (!hasDescription) {
-          await createField(spHttpClient, listApiUrl, 'Description');
-        }
-
-        return;
-      }
-
-      const createListResponse: SPHttpClientResponse = await spHttpClient.post(
-        `${webUrl}/_api/web/lists`,
-        SPHttpClient.configurations.v1,
-        {
-          body: JSON.stringify({
-            BaseTemplate: 100,
-            Title: LIST_TITLE,
-            Hidden: true,
-            NoCrawl: true
-          })
-        }
-      );
-
-      if (!createListResponse.ok) {
-        const errorText = await createListResponse.text();
-        throw new Error(`Failed to create list: ${createListResponse.statusText}. ${errorText}`);
-      }
-
-      const createdListApiUrl = listApi(webUrl);
-
-      await createField(spHttpClient, createdListApiUrl, 'Value');
-      await createField(spHttpClient, createdListApiUrl, 'Description');
-
-      const titleResponse: SPHttpClientResponse = await spHttpClient.post(
-        `${createdListApiUrl}/fields/getByInternalNameOrTitle('Title')`,
-        SPHttpClient.configurations.v1,
-        {
-          headers: {
-            'X-HTTP-Method': 'MERGE',
-            'If-Match': '*'
-          },
-          body: JSON.stringify({
-            Indexed: true,
-            EnforceUniqueValues: true
-          })
-        }
-      );
-
-      if (!titleResponse.ok) {
-        console.warn('Failed to set Title uniqueness constraint. It may already be configured.');
-      }
-    };
-
-    const cleanupMutex = (): void => {
-      provisioningPromises.delete(webUrl);
-    };
-
-    const nextProvisioningPromise = doProvision()
-      .then(function(): void {
-        listProvisioned.set(webUrl, true);
-        cleanupMutex();
-      })
-      .catch(function(error: Error): never {
-        cleanupMutex();
-        throw error;
-      });
-
-    provisioningPromises.set(webUrl, nextProvisioningPromise);
-
-    return nextProvisioningPromise;
-  };
+  const setup = createSiteStoreSetup(spHttpClient, profile);
+  const normalize = (url: string): string => normalizeSiteStoreUrl(url, profile);
+  const listApi = (url: string): string => siteStoreListUrl(url, profile);
+  const ensureListReady = setup.ensure;
 
   const findItemByKey = async (
     webUrl: string,
@@ -221,7 +93,7 @@ export function createSPFxListKeyValueStoreService(
     const query = [
       `$filter=${encodeQueryValue(filter)}`,
       `$select=${encodeQueryValue('Id,Title,Value,Description')}`,
-      site ? '$top=2' : '$top=1'
+      '$top=2'
     ].join('&');
     const response: SPHttpClientResponse = await spHttpClient.get(
       `${listApi(webUrl)}/items?${query}`,
@@ -232,15 +104,27 @@ export function createSPFxListKeyValueStoreService(
       throw new Error(`Failed to find item: ${response.statusText}`);
     }
 
-    const data: ListItemsResponse = await response.json();
-    if (site) {
-      const page = readSiteStorePage(data);
-      if (page.next || page.rows.length > 1) {
-        throw new Error('Site store key lookup requires one exact unique key.');
-      }
-      return page.rows[0];
+    const data: unknown = await response.json();
+    const page = readSiteStorePage(data, profile);
+    if (page.next || page.rows.length > 1) {
+      throw new Error(`${profile === 'site' ? 'Site' : 'Tenant'} store key lookup requires one exact unique key.`);
     }
-    return data.value.length > 0 ? data.value[0] : undefined;
+    return page.rows[0];
+  };
+
+  const mutationItem = async (item: ListItemResponse, webUrl: string): Promise<ListItemResponse & { etag: string }> => {
+    if (item.etag !== undefined) return { ...item, etag: requireItemEtag(item.etag) };
+    const response = await spHttpClient.get(
+      `${listApi(webUrl)}/items(${item.Id})?$select=Id,Title,Value,Description`, SPHttpClient.configurations.v1
+    );
+    if (!response.ok) throw new MutationSnapshotError(response.status, response.statusText);
+    const data: unknown = await response.json();
+    const snapshot = readSiteStorePage({ value: [data] }, profile).rows[0];
+    if (snapshot.Id !== item.Id || snapshot.Title !== item.Title) {
+      throw new Error(`${profile === 'site' ? 'Site' : 'Tenant'} store key changed before mutation. Reload and retry.`);
+    }
+    const etag = response.headers?.get('ETag') ?? snapshot.etag;
+    return { ...snapshot, etag: requireItemEtag(etag) };
   };
 
   const get = async <T = unknown>(
@@ -248,7 +132,7 @@ export function createSPFxListKeyValueStoreService(
     webUrl: string
   ): Promise<SPFxListKeyValueStoreItem<T> | undefined> => {
     webUrl = normalize(webUrl);
-    if (site && !await site.probe(webUrl)) return undefined;
+    if (!await setup.probe(webUrl)) return undefined;
     const raw = await findItemByKey(webUrl, key);
 
     return raw ? mapItem<T>(raw) : undefined;
@@ -256,7 +140,7 @@ export function createSPFxListKeyValueStoreService(
 
   const list = async (webUrl: string): Promise<SPFxListKeyValueStoreItem<unknown>[]> => {
     webUrl = normalize(webUrl);
-    if (site && !await site.probe(webUrl)) return [];
+    if (!await setup.probe(webUrl)) return [];
     const initialUrl = `${listApi(webUrl)}/items?$select=Id,Title,Value,Description&$orderby=Title`;
     const response: SPHttpClientResponse = await spHttpClient.get(
       `${listApi(webUrl)}/items?$select=Id,Title,Value,Description&$orderby=Title`,
@@ -267,27 +151,21 @@ export function createSPFxListKeyValueStoreService(
       throw new Error(`Failed to list items: ${response.statusText}`);
     }
 
-    const data: ListItemsResponse = await response.json();
-    if (site) {
-      const rows: ListItemResponse[] = [];
-      let page = readSiteStorePage(data);
-      let currentUrl = initialUrl;
-      const seen = new Set<string>([new URL(initialUrl).href]);
+    const data: unknown = await response.json();
+    const rows: ListItemResponse[] = [];
+    let page = readSiteStorePage(data, profile);
+    let currentUrl = initialUrl;
+    const seen = new Set<string>([new URL(initialUrl).href]);
+    rows.push(...page.rows);
+    while (page.next) {
+      currentUrl = resolveSiteStorePageUrl(page.next, currentUrl, initialUrl, seen, profile);
+      seen.add(currentUrl);
+      const nextResponse = await spHttpClient.get(currentUrl, SPHttpClient.configurations.v1);
+      if (!nextResponse.ok) throw new Error(`Failed to list items: ${nextResponse.statusText}`);
+      page = readSiteStorePage(await nextResponse.json(), profile);
       rows.push(...page.rows);
-      while (page.next) {
-        currentUrl = resolveSiteStorePageUrl(page.next, currentUrl, initialUrl, seen);
-        seen.add(currentUrl);
-        const nextResponse = await spHttpClient.get(currentUrl, SPHttpClient.configurations.v1);
-        if (!nextResponse.ok) throw new Error(`Failed to list items: ${nextResponse.statusText}`);
-        page = readSiteStorePage(await nextResponse.json());
-        rows.push(...page.rows);
-      }
-      return rows.map(raw => mapItem<unknown>(raw));
     }
-
-    return data.value.map(function(raw): SPFxListKeyValueStoreItem<unknown> {
-      return mapItem<unknown>(raw);
-    });
+    return rows.map(raw => mapItem<unknown>(raw));
   };
 
   const save = async <T = unknown>(
@@ -297,23 +175,23 @@ export function createSPFxListKeyValueStoreService(
     description?: string
   ): Promise<void> => {
     webUrl = normalize(webUrl);
+    const serializedValue = serializeStoreValue(value);
     await ensureListReady(webUrl);
-
-    const serializedValue = serializeTenantValue(value);
     const existing = await findItemByKey(webUrl, key);
 
     const updateItem = async (item: ListItemResponse): Promise<void> => {
+      const snapshot = await mutationItem(item, webUrl);
       const updateResponse: SPHttpClientResponse = await spHttpClient.post(
         `${listApi(webUrl)}/items(${item.Id})`,
         SPHttpClient.configurations.v1,
         {
           headers: {
             'X-HTTP-Method': 'MERGE',
-            'If-Match': '*'
+            'If-Match': snapshot.etag
           },
           body: JSON.stringify({
             Value: serializedValue,
-            Description: description ?? item.Description ?? ''
+            Description: description ?? snapshot.Description ?? ''
           })
         }
       );
@@ -343,14 +221,15 @@ export function createSPFxListKeyValueStoreService(
     if (!createResponse.ok) {
       const errorText = await createResponse.text();
       const original = new Error(`Failed to create item: ${createResponse.statusText}. ${errorText}`);
-      if (site && mayRecoverSiteStoreCreation(createResponse)) {
+      if (mayRecoverSiteStoreCreation(createResponse)) {
+        let concurrent: ListItemResponse | undefined;
         try {
-          await site.fields(webUrl, true);
-          const concurrent = await findItemByKey(webUrl, key);
+          await setup.fields(webUrl, true);
+          concurrent = await findItemByKey(webUrl, key);
           if (!concurrent) throw original;
-          await updateItem(concurrent);
-          return;
         } catch { throw original; }
+        await updateItem(concurrent);
+        return;
       }
       throw original;
     }
@@ -358,11 +237,7 @@ export function createSPFxListKeyValueStoreService(
 
   const remove = async (key: string, webUrl: string): Promise<void> => {
     webUrl = normalize(webUrl);
-    if (site) {
-      if (!await site.probe(webUrl)) return;
-    } else {
-      await ensureListReady(webUrl);
-    }
+    if (!await setup.probe(webUrl)) return;
 
     const existing = await findItemByKey(webUrl, key);
 
@@ -370,13 +245,24 @@ export function createSPFxListKeyValueStoreService(
       return;
     }
 
+    let snapshot: ListItemResponse & { etag: string };
+    try {
+      snapshot = await mutationItem(existing, webUrl);
+    } catch (error) {
+      if (error instanceof MutationSnapshotError && error.status === 404) {
+        try {
+          if (!await setup.probe(webUrl) || !await findItemByKey(webUrl, key)) return;
+        } catch { throw error; }
+      }
+      throw error;
+    }
     const deleteResponse: SPHttpClientResponse = await spHttpClient.post(
       `${listApi(webUrl)}/items(${existing.Id})`,
       SPHttpClient.configurations.v1,
       {
         headers: {
           'X-HTTP-Method': 'DELETE',
-          'If-Match': '*'
+          'If-Match': snapshot.etag
         }
       }
     );
@@ -384,9 +270,9 @@ export function createSPFxListKeyValueStoreService(
     if (!deleteResponse.ok) {
       const errorText = await deleteResponse.text();
       const original = new Error(`Failed to remove item: ${deleteResponse.statusText}. ${errorText}`);
-      if (site && deleteResponse.status === 404) {
+      if (deleteResponse.status === 404) {
         try {
-          if (!await site.probe(webUrl) || !await findItemByKey(webUrl, key)) return;
+          if (!await setup.probe(webUrl) || !await findItemByKey(webUrl, key)) return;
         } catch { throw original; }
       }
       throw original;

@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Unable to submit the form. Please try again.",
+  "dateInputValidationMessage": "Complete or correct the date before submitting.",
+  "timeInputValidationMessage": "Complete or correct the time before submitting.",
+  "tagPicker": {
+    "noOptions": "No options match the current query."
+  },
+  "fileInput": {
+    "browseLabel": "Browse",
+    "clearLabel": "Clear"
+  },
+  "arraySection": {
+    "add": "Add item",
+    "empty": "No items",
+    "itemLabelTemplate": "Item {position}",
+    "removeTemplate": "Remove {label}",
+    "moveUpTemplate": "Move {label} up",
+    "moveDownTemplate": "Move {label} down",
+    "addedTemplate": "{label} added",
+    "removedTemplate": "{label} removed",
+    "movedTemplate": "{label} moved to position {position} of {total}"
+  },
+  "datePicker": {
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "shortMonths": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "days": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "shortDays": [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ],
+    "goToToday": "Go to today",
+    "prevMonthAriaLabel": "Previous month",
+    "nextMonthAriaLabel": "Next month",
+    "prevYearAriaLabel": "Previous year",
+    "nextYearAriaLabel": "Next year",
+    "prevYearRangeAriaLabel": "Previous year range",
+    "nextYearRangeAriaLabel": "Next year range",
+    "monthPickerHeaderAriaLabel": "{0}, change year",
+    "yearPickerHeaderAriaLabel": "{0}, change month",
+    "closeButtonAriaLabel": "Close",
+    "weekNumberFormatString": "Week number {0}",
+    "selectedDateFormatString": "Selected date {0}",
+    "todayDateFormatString": "Today's date {0}",
+    "dayMarkedAriaLabel": "marked"
+  }
+}

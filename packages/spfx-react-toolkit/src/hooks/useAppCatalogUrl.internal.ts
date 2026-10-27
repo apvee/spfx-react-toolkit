@@ -6,6 +6,7 @@ import { useSPFxSPHttpClient } from './useSPFxSPHttpClient';
 import { useSPFxPageContext } from './useSPFxPageContext';
 import type { SPHttpClient } from '@microsoft/sp-http';
 import { createSPFxAppCatalogService } from '../services/spfx-app-catalog.service';
+import { canWriteKeyValueStore } from '../services/spfx-site-key-value-store.internal';
 
 /**
  * Return type for useAppCatalogUrl internal hook
@@ -17,7 +18,7 @@ export interface AppCatalogUrlInfo {
   readonly spHttpClient: SPHttpClient | undefined;
   /** Discover and return the tenant app catalog URL (cached after first call) */
   readonly discoverAppCatalogUrl: () => Promise<string>;
-  /** Check if current user is Site Collection Admin on the app catalog */
+  /** Check effective Add/Edit/Delete Items on TenantKeyValueStore, or catalog creation permissions when absent */
   readonly checkWritePermission: (catalogUrl: string) => Promise<boolean>;
   /** Ref tracking component mounted state */
   readonly isMountedRef: React.MutableRefObject<boolean>;
@@ -82,8 +83,8 @@ export function useAppCatalogUrl(): AppCatalogUrlInfo {
   }, [spHttpClient, pageContext, appCatalogService]);
 
   const checkWritePermission = useCallback(async (catalogUrl: string): Promise<boolean> => {
-    return appCatalogService.canCurrentUserWrite(catalogUrl);
-  }, [appCatalogService]);
+    return spHttpClient ? canWriteKeyValueStore(spHttpClient, catalogUrl, 'tenant') : false;
+  }, [spHttpClient, appCatalogService]);
 
   return useMemo(() => ({
     appCatalogUrl,

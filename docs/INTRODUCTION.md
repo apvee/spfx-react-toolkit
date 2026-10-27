@@ -1,6 +1,6 @@
 # SPFx React Toolkit
 
-> A comprehensive React runtime and hooks library for SharePoint Framework (SPFx) with 46 type-safe hooks
+> React controls, four host providers, 46 type-safe hooks, helpers and services for SharePoint Framework (SPFx)
 
 ## Overview
 
@@ -24,13 +24,31 @@ npm install @apvee/spfx-react-toolkit
 
 The consuming SPFx project supplies compatible React, ReactDOM and SPFx runtime packages. PnPjs hooks/services use `@pnp/core`, `@pnp/queryable` and `@pnp/sp` v4 peers. Check the host's dependency versions rather than relying on npm to choose a newer SPFx toolchain.
 
-Fluent and Griffel integration requires shared peers `@griffel/core` (`^1.19.2`), `@griffel/react` (`^1.5.30`), `@fluentui/react-shared-contexts` (`^9.25.2`), `@fluentui/react-migration-v8-v9` (`^9.9.12`), `@fluentui/react-theme` (`^9.2.0`) and `@fluentui/react-utilities` (`^9.25.1`). Token-based `useSx` selections need theme variables in scope, usually from the host’s existing FluentProvider. The optional provider package used by the sample is `@fluentui/react-provider@9.22.8`; no new provider is required by useSx.
+Fluent and Griffel integration requires shared peers `@fluentui/react-components` (`^9.74.9`), `@fluentui/react-charts` (`^9.3.27`), `@griffel/core` (`^1.21.4`), `@griffel/react` (`^1.7.8`), `@fluentui/react-shared-contexts` (`^9.26.4`), `@fluentui/react-migration-v8-v9` (`^9.10.20`), `@fluentui/react-theme` (`^9.2.2`) and `@fluentui/react-utilities` (`^9.26.7`). Token-based `useSx` selections need theme variables in scope, usually from the host’s existing FluentProvider. The optional provider package used by the sample is `@fluentui/react-provider@9.22.8`; no new provider is required by useSx.
+
+The package also declares `react-hook-form` (`>=7.87.0 <8.0.0`), `@fluentui/react-datepicker-compat` (`>=0.6.16 <1.0.0`), `@fluentui/react-timepicker-compat` (`>=0.4.21 <1.0.0`) and `@fluentui/react-icons` (`>=2.0.312 <3.0.0`) as mandatory peers. The native Property Pane factories use the host's `@microsoft/sp-property-pane` (`>=1.18.0 <2.0.0`). Modern npm can install missing peers automatically; keep the host's compatible versions and shared runtime identities. See [Form dependencies](./api/controls/form.md#dependencies) for the tested baseline.
+
+### Register localized UI resources
+
+In the consuming SPFx application's `package.json`, add `"postinstall": "spfx-react-toolkit configure-localization"` (or append the command to its existing postinstall), then run once from that application:
+
+```bash
+npx --no-install spfx-react-toolkit configure-localization
+```
+
+This registers the eight native resource IDs in `config/config.json`. Typed `strings` overrides merge with those resources and still require their SPFx loader mappings. See [Localization](./LOCALIZATION.md) for monorepo setup, checks, culture selection and the removed `EditableText.locale` prop.
 
 The repository is an npm workspace monorepo: [library source](../packages/spfx-react-toolkit/src/index.ts) builds with TypeScript to ESNext `lib`; the private [SPFx sample](../apps/spfx-react-toolkit-test/package.json) bundles with SPFx 1.21.1 Gulp. See [Development](./DEVELOPMENT.md) and [SharePoint validation](./SHAREPOINT-VALIDATION.md). Library changes require a library rebuild and a serve restart.
 
 ## Generic React styles
 
 `const sx = useSx()` returns a class composer: `sx(flex.row, gap.medium, presets.canvas, padding.medium)`. Import these names from the package root and call the hook inside a component. See [Styles and useSx](./api/helpers/styles.md) and [React utility hooks](./api/hooks/react.md) for the full contracts. The lazy Styles sample panel exercises layout, catalog selections, queries, states and scrolling.
+
+## Controls and Property Pane fields
+
+The [controls reference](./api/controls/INDEX.md) covers text/editing, loading and state messages, settings/disclosure groups, Form, DataGrid, Stage, navigation, metadata lists, cards, access trims and SharePoint pickers. Use `WebPartShell` with an actual web part instance for integrated providers and an editable title. Generic controls document their own provider and resource requirements.
+
+Native [Property Pane pickers](./api/property-pane/pickers.md) and [file/folder picker](./api/property-pane/file-folder-picker.md) use dedicated `/property-pane/...` imports. Their factories are not root value exports.
 
 ## Quick Start
 
@@ -43,6 +61,10 @@ import { SPFxWebPartProvider } from '@apvee/spfx-react-toolkit';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
+
+interface IMyWebPartProps {
+  title: string;
+}
 
 export default class MyWebPart extends BaseClientSideWebPart<IMyWebPartProps> {
   public render(): void {
@@ -63,6 +85,7 @@ export default class MyWebPart extends BaseClientSideWebPart<IMyWebPartProps> {
 ### 2. Use Hooks in Your Components
 
 ```tsx
+import * as React from 'react';
 import { 
   useSPFxPageContext, 
   useSPFxProperties, 
@@ -170,6 +193,7 @@ const MyComponent: React.FC = () => {
 | [`useSPFxTenantProperty`](./api/hooks/storage.md#usespfxtenantproperty) | Tenant properties (read-only) |
 | [`useSPFxTenantKeyValueStore`](./api/hooks/storage.md#usespfxtenantkeyvaluestore) | Tenant-level key-value store |
 | [`useSPFxSiteKeyValueStore`](./api/hooks/storage.md#usespfxsitekeyvaluestore) | Collection root-web key-value store shared by subsites |
+| [`useSPFxConfigurationStore`](./api/hooks/storage.md#usespfxconfigurationstore) | Tenant defaults, site overrides and explicitly scoped writes |
 
 ### Permissions
 | Hook | Description |
@@ -190,7 +214,7 @@ Hooks are the React API. Helpers and services are public non-React APIs for comp
 
 ### Helpers
 
-Helpers are pure functions. They do not perform I/O and do not read provider state.
+Helpers do not send network requests or read provider state. Most map only their supplied inputs; API permission token evaluation also checks the current clock, and theme helpers can return shared immutable objects. The styles facade additionally exports the React `useSx` hook, whose composer uses the existing renderer to insert CSS.
 
 | Helper group | Examples | Documentation |
 |--------------|----------|---------------|
@@ -208,6 +232,7 @@ Services perform reusable I/O operations with dependencies supplied by the calle
 | PnPjs services | `createSPFxPnPContextService`, `createSPFxPnPListService`, `createSPFxPnPSearchService` | [Services API](./api/services/INDEX.md) |
 | Tenant services | `createSPFxAppCatalogService`, `createSPFxTenantPropertyService`, `createSPFxTenantKeyValueStoreService` | [Services API](./api/services/INDEX.md) |
 | Site collection service | `createSPFxSiteKeyValueStoreService` | [Services API](./api/services/INDEX.md#createspfxsitekeyvaluestoreservice) |
+| Configuration service | `createSPFxConfigurationStoreService` | [Services API](./api/services/INDEX.md#configuration-store-service) |
 | Graph services | `createSPFxOneDriveAppDataService`, `createSPFxUserPhotoService` | [Services API](./api/services/INDEX.md) |
 | API permission precheck services | `createSPFxApiPermissionPrecheckService` | [Services API](./api/services/INDEX.md) |
 

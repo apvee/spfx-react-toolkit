@@ -5,6 +5,70 @@ const path = require('node:path');
 const os = require('node:os');
 const { executeProbe, runRuntimeMatrix } = require('../scripts/verify-production-runtime.cjs');
 
+test('Node-executed production UI uses the browser context through legacy node-conditioned peers', async () => {
+  const webpack = require('webpack');
+  const { buildRuntimeConfig } = require('../scripts/verify-production-runtime.cjs');
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'runtime-module-context-'));
+  try {
+    const shared = path.join(directory, 'node_modules/shared-context');
+    const owner = path.join(directory, 'node_modules/legacy-provider');
+    fs.mkdirSync(shared, { recursive: true }); fs.mkdirSync(owner, { recursive: true });
+    fs.writeFileSync(path.join(shared, 'package.json'), JSON.stringify({ name: 'shared-context', exports: { import: './esm.js', require: './commonjs.cjs' } }));
+    fs.writeFileSync(path.join(shared, 'esm.js'), 'export const context = {};');
+    fs.writeFileSync(path.join(shared, 'commonjs.cjs'), 'exports.context = {};');
+    fs.writeFileSync(path.join(owner, 'package.json'), JSON.stringify({ name: 'legacy-provider', main: './commonjs.cjs', module: './esm.js', exports: { '.': { node: './commonjs.cjs', import: './esm.js', require: './commonjs.cjs' } } }));
+    fs.writeFileSync(path.join(owner, 'esm.js'), "export { context } from 'shared-context';");
+    fs.writeFileSync(path.join(owner, 'commonjs.cjs'), "exports.context = require('shared-context').context;");
+    const entry = path.join(directory, 'entry.js');
+    fs.writeFileSync(entry, "import { context } from 'shared-context'; import { context as provided } from 'legacy-provider'; export const sameContext = context === provided;");
+    const output = path.join(directory, 'output');
+    const stats = await new Promise((resolve, reject) => {
+      const compiler = webpack(buildRuntimeConfig(directory, entry, output, true));
+      compiler.run((error, result) => compiler.close(closeError => error || closeError ? reject(error || closeError) : resolve(result)));
+    });
+    assert.equal(stats.hasErrors(), false, stats.toString({ all: false, errors: true }));
+    assert.equal(require(path.join(output, 'entry.js')).sameContext, true, 'browser module graph must not split conditional contexts');
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});
+
+test('UI runtime supplies genuine WebCrypto to the JSDOM browser boundary', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'runtime-crypto-'));
+  try {
+    fs.writeFileSync(path.join(directory, 'package.json'), JSON.stringify({ name: 'runtime-crypto' }));
+    fs.mkdirSync(path.join(directory, 'node_modules'), { recursive: true });
+    for (const name of ['react', 'react-dom']) fs.symlinkSync(path.dirname(require.resolve(name + '/package.json')), path.join(directory, 'node_modules', name));
+    const fixture = path.join(directory, 'probe.cjs');
+    fs.writeFileSync(fixture, `exports.run = async ({ assert }) => {
+      assert.equal(window.crypto, require('node:crypto').webcrypto);
+      const bytes = new Uint8Array(16);
+      assert.equal(window.crypto.getRandomValues(bytes), bytes);
+      assert.equal(bytes.byteLength, 16);
+      return { assertions: ['actual browser WebCrypto API is available'] };
+    };`);
+    assert.equal(executeProbe(fixture, 'form', directory).exit, 0);
+    assert.equal(executeProbe(fixture, 'data-grid', directory).exit, 0);
+    assert.equal(executeProbe(fixture, 'stage', directory).exit, 0);
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});
+
+test('service runtime loads a real asynchronous chunk in Node without a browser script URL', async () => {
+  const webpack = require('webpack');
+  const { buildRuntimeConfig } = require('../scripts/verify-production-runtime.cjs');
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'runtime-service-chunk-'));
+  try {
+    const entry = path.join(directory, 'entry.js');
+    fs.writeFileSync(entry, "export async function loadBatch() { return (await import('./batch.js')).value; }");
+    fs.writeFileSync(path.join(directory, 'batch.js'), 'export const value = 42;');
+    const output = path.join(directory, 'output');
+    const stats = await new Promise((resolve, reject) => {
+      const compiler = webpack(buildRuntimeConfig(directory, entry, output, false));
+      compiler.run((error, result) => compiler.close(closeError => error || closeError ? reject(error || closeError) : resolve(result)));
+    });
+    assert.equal(stats.hasErrors(), false, stats.toString({ all: false, errors: true }));
+    assert.equal(await require(path.join(output, 'entry.js')).loadBatch(), 42);
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});
+
 test('a fresh process executes emitted fixture bytes and reports HTTP observations', () => {
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'runtime-process-unit-'));
   try {
@@ -49,4 +113,22 @@ test('a real Webpack alias to a toolkit package at an arbitrary path is rejected
     fs.cpSync(copy,path.join(consumer,'node_modules/@apvee/spfx-react-toolkit'),{recursive:true});
     assert.doesNotThrow(()=>assertToolkitOrigin({chunks:[{id:1,modules:[{nameForCondition:path.join(consumer,'node_modules/@apvee/spfx-react-toolkit/lib/index.js')}]}]},consumer));
   } finally {fs.rmSync(directory,{recursive:true,force:true});}
+});
+
+test('canonical runtime matrix includes all 54 installed probes and all three trim aliases', () => {
+  const { productionRuntimeCases } = require('../scripts/verify-production-runtime.cjs');
+  const cases = productionRuntimeCases();
+  assert.equal(cases.length, 54);
+  assert.equal(new Set(cases.map(item => `${item.scenario}/${item.variant}`)).size, 54);
+  for (const family of ['sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim']) {
+    assert.deepEqual(cases.filter(item => item.scenario === family).map(item => item.variant), ['root', 'domain', 'control']);
+    const template = fs.readFileSync(path.resolve(__dirname, `fixtures/tree-shaking/runtime/${family}.tsx`), 'utf8');
+    assert.match(template, /from '__TOOLKIT__'/); assert.match(template, /SPFxWebPartProvider/); assert.match(template, /runTrimProbe/);
+  }
+});
+
+
+test('standalone EditableText is a complete root/domain/control runtime scenario', () => {
+  const { productionRuntimeCases } = require('../scripts/verify-production-runtime.cjs');
+  assert.deepEqual(productionRuntimeCases().filter(item => item.scenario === 'editable-text').map(item => item.variant), ['root', 'domain', 'control']);
 });

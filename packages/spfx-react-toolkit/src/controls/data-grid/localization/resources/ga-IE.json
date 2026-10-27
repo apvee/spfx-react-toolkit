@@ -1,0 +1,31 @@
+{
+  "empty": "Níl aon sonraí ar fáil",
+  "noResults": "Níor aimsíodh torthaí ar bith",
+  "noVisibleColumns": "Níl aon cholún infheicthe",
+  "loading": "Á lódáil",
+  "actions": "Gníomhartha",
+  "moreActions": "Tuilleadh gníomhartha",
+  "yes": "Tá",
+  "no": "Níl",
+  "noTags": "Níl aon chlib ann",
+  "noObservations": "Níl aon bhreathnóireacht ann",
+  "invalidValue": "Luach neamhbhailí",
+  "selectAllRows": "Roghnaigh gach ró",
+  "retry": "Bain triail eile as",
+  "selectRowTemplate": "Roghnaigh ró {rowId}",
+  "sparklineSummaryTemplate": "An chéad luach {first}; An luach deireanach {last}; Íosmhéid {minimum}; Uasmhéid {maximum}; Meán {average}; Athrú {change}; Athrú céatadáin {changePercent}",
+  "tagOverflow": {
+    "one": "Taispeáin {count} chlib eile",
+    "two": "Taispeáin {count} chlib eile",
+    "few": "Taispeáin {count} chlib eile",
+    "many": "Taispeáin {count} gclib eile",
+    "other": "Taispeáin {count} clib eile"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} vóta",
+    "two": "{formattedCount} vóta",
+    "few": "{formattedCount} vóta",
+    "many": "{formattedCount} vóta",
+    "other": "{formattedCount} vóta"
+  }
+}

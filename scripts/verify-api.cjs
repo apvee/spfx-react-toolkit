@@ -3,20 +3,33 @@ const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
 const { assertCompatibleDeclaration, assertCompatiblePackageContract } = require('./api-compatibility.helpers.cjs');
-const { assertEntrypointContract, collectPublishedFiles } = require('./package-entrypoints.cjs');
+const { assertEntrypointContract, collectPublishedFiles, getLocalizationPackageContract } = require('./package-entrypoints.cjs');
 const root = path.resolve(__dirname, '..');
 const baseline = require('../tests/fixtures/api-baseline.json');
 const requireApprovedAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts'));
 const requirePnPListAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts'));
 const requireSxAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSx.ts'));
+const requireConfigurationStoreAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxConfigurationStore.ts'));
 for (const [name, snapshot] of Object.entries(baseline)) {
   const current = fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib', name), 'utf8');
   assertCompatibleDeclaration(name, current, snapshot.declaration, {
-    requireApprovedAdditions, requirePnPListAdditions, requireSxAdditions,
+    requireApprovedAdditions, requirePnPListAdditions, requireSxAdditions, requireConfigurationStoreAdditions,
     requirePnPListWebsRegistration: true,
   });
 }
+assertCompatibleDeclaration('index.d.ts', fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib/index.d.ts'), 'utf8'), baseline['index.d.ts'].declaration, { requireControlsAdditions: true });
+for (const name of ['hooks/useSPFxLocaleInfo.d.ts', 'helpers/spfx-page-context.helpers.d.ts']) {
+  assertCompatibleDeclaration(name, fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib', name), 'utf8'), baseline[name].declaration, { requireIanaAdditions: true });
+}
+for (const name of ['hooks/useSPFxPnPSearch.d.ts', 'services/spfx-pnp-search.service.d.ts']) {
+  assertCompatibleDeclaration(name, fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib', name), 'utf8'),
+    baseline[name].declaration, { requireSearchRefinerOperator: true });
+}
+assertCompatibleDeclaration('hooks/useSPFxCrossSitePermissions.d.ts',
+  fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib/hooks/useSPFxCrossSitePermissions.d.ts'), 'utf8'),
+  baseline['hooks/useSPFxCrossSitePermissions.d.ts'].declaration, { requireScopedPermissionsAdditions: true });
 const manifest = require('../packages/spfx-react-toolkit/package.json');
+const nativeResourceIds = getLocalizationPackageContract().nativeIds;
 const originalPackage = require('../tests/fixtures/package-baseline.json');
 assertCompatiblePackageContract(manifest, originalPackage);
 assertEntrypointContract(manifest, collectPublishedFiles());
@@ -29,6 +42,7 @@ const declaredPackages = new Set([
 ]);
 function verifyImport(specifier, file) {
   if (specifier.startsWith('.')) return;
+  if (nativeResourceIds.has(specifier)) return;
   const packageName = specifier.startsWith('@')
     ? specifier.split('/').slice(0, 2).join('/')
     : specifier.split('/')[0];
@@ -58,4 +72,4 @@ function verifyPublishedImports(directory) {
   }
 }
 verifyPublishedImports(path.join(root, 'packages/spfx-react-toolkit/lib'));
-console.log(`API compatibility passed: ${Object.keys(baseline).length} declaration modules, name/version/entry paths preserved.`);
+console.log(`API compatibility passed: ${Object.keys(baseline).length} declaration modules, approved version ${manifest.version}, name/entry paths preserved.`);

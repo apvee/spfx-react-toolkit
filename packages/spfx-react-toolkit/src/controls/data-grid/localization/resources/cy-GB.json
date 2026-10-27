@@ -1,0 +1,33 @@
+{
+  "empty": "Dim data ar gael",
+  "noResults": "Heb ganfod canlyniadau",
+  "noVisibleColumns": "Dim colofnau gweladwy",
+  "loading": "Wrthi'n llwytho",
+  "actions": "Camau gweithredu",
+  "moreActions": "Rhagor o gamau gweithredu",
+  "yes": "Ie",
+  "no": "Na",
+  "noTags": "Dim tagiau",
+  "noObservations": "Dim arsylwadau",
+  "invalidValue": "Gwerth annilys",
+  "selectAllRows": "Dewis pob rhes",
+  "retry": "Ailgynnig",
+  "selectRowTemplate": "Dewis rhes {rowId}",
+  "sparklineSummaryTemplate": "Cyntaf {first}; Olaf {last}; Lleiafswm {minimum}; Uchafswm {maximum}; Cyfartaledd {average}; Newid {change}; Canran y newid {changePercent}",
+  "tagOverflow": {
+    "zero": "Dangos {count} yn rhagor o dagiau",
+    "one": "Dangos {count} yn rhagor o dagiau",
+    "two": "Dangos {count} yn rhagor o dagiau",
+    "few": "Dangos {count} yn rhagor o dagiau",
+    "many": "Dangos {count} yn rhagor o dagiau",
+    "other": "Dangos {count} yn rhagor o dagiau"
+  },
+  "ratingCount": {
+    "zero": "Pleidleisiau: {formattedCount}",
+    "one": "Pleidleisiau: {formattedCount}",
+    "two": "Pleidleisiau: {formattedCount}",
+    "few": "Pleidleisiau: {formattedCount}",
+    "many": "Pleidleisiau: {formattedCount}",
+    "other": "Pleidleisiau: {formattedCount}"
+  }
+}

@@ -2,8 +2,8 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const { test } = require('node:test');
 const { Simulate } = require('react-dom/test-utils');
+const { FluentProvider, webLightTheme } = require('@fluentui/react-components');
 const { createHarness } = require('./services-test-harness.cjs');
-require('@fluentui/react').registerIcons({ icons: { BulletedList: 'list', Info: 'info', InfoSolid: 'info', ErrorBadge: 'error', Cancel: 'cancel' } });
 const demo = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demos/PnPListAccessDemo.tsx');
 const modes = [
   ['Id', 'id', 'id', 'List GUID', 'Query by GUID', '11111111-2222-3333-4444-555555555555'],
@@ -30,8 +30,11 @@ function fixture(t) {
   const h = createHarness(boundaries);
   boundaries['@apvee/spfx-react-toolkit'] = Object.assign({}, ...modes.map(([suffix]) => h.load('hooks/useSPFxPnPListBy' + suffix + '.ts')));
   t.after(h.close);
+  // JSDOM has no layout observer; messages still use the actual Fluent DOM.
+  window.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
   t.mock.method(window, 'setTimeout', (callback, delay) => setTimeout(callback, delay));
-  const view = h.mountComponent(h.load(demo).PnPListAccessDemo);
+  const Component = h.load(demo).PnPListAccessDemo;
+  const view = h.mountComponent(() => h.React.createElement(FluentProvider, { theme: webLightTheme }, h.React.createElement(Component)));
   const flush = async () => h.act(async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); await new Promise(r => setTimeout(r, 0)); });
   function button(name) { const element = Array.from(view.container.querySelectorAll('button')).find(b => b.textContent === name); assert.ok(element, name); return element; }
   function input(label, value) {
@@ -40,7 +43,8 @@ function fixture(t) {
     const field = view.container.querySelector('#' + labelNode.htmlFor);
     h.act(() => Simulate.change(field, { target: { value } }));
   }
-  return { ...h, ...view, factories, calls, context, flush, button, input,
+  function select(method) { h.act(() => Simulate.change(view.container.querySelector('select'), { target: { value: method } })); }
+  return { ...h, ...view, select, factories, calls, context, flush, button, input,
     click: name => h.act(() => Simulate.click(button(name))),
     succeed: async items => { await h.act(async () => { resolve({ items, hasMore: false, nextSkip: items.length, effectivePageSize: 10 }); }); await flush(); },
     fail: async () => { await h.act(async () => { reject(new Error('Read denied')); }); await flush(); },
@@ -49,9 +53,10 @@ function fixture(t) {
 test('all three concrete modes mount without queries and blank inputs disable actions', async t => {
   const f = fixture(t); await f.flush();
   assert.deepEqual(f.calls, []);
-  assert.deepEqual(f.factories.map(x => x.target.kind).sort(), ['id', 'path', 'url']);
+  assert.deepEqual(f.factories.map(x => x.target.kind), ['id']);
   assert.ok(f.factories.every(x => x.sp === f.context.sp && x.size === 10));
-  for (const [, , , label, action] of modes) {
+  for (const [, kind, , label, action] of modes) {
+    f.select(kind);
     assert.equal(f.button(action).disabled, true);
     f.input(label, '   ');
     assert.equal(f.button(action).disabled, true);
@@ -61,6 +66,7 @@ test('all three concrete modes mount without queries and blank inputs disable ac
 for (const [suffix, kind, field, label, action, value] of modes) {
   test(suffix + ' forwards input and first-page query, displays pending/results/error and recovers', async t => {
     const f = fixture(t);
+    f.select(kind);
     f.input(label, value);
     assert.equal(f.button(action).disabled, false);
     assert.deepEqual(f.calls, []);
@@ -81,3 +87,18 @@ for (const [suffix, kind, field, label, action, value] of modes) {
     assert.ok(f.container.textContent.includes('No items loaded.'));
   });
 }
+
+test('list query sections keep query inputs separate from commands without blank service previews', t => {
+  const f = fixture(t);
+  assert.equal(f.container.querySelectorAll('[aria-label$=" preview"]').length, 0);
+  assert.equal(f.container.querySelectorAll('[data-demo-section]').length, 1);
+  for (const [suffix, kind, , , action] of modes) {
+    f.select(kind);
+    const section = f.container.querySelector(`[data-demo-section][aria-label="useSPFxPnPListBy${suffix}"]`);
+    assert.ok(section);
+    assert.ok(section.querySelector(`[aria-label="useSPFxPnPListBy${suffix} configuration"] input`));
+    const commands = section.querySelector(`[aria-label="useSPFxPnPListBy${suffix} commands"]`);
+    assert.equal(commands.querySelectorAll('input').length, 0);
+    assert.equal(commands.textContent, action);
+  }
+});

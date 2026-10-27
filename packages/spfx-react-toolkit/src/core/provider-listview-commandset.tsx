@@ -7,19 +7,24 @@ import { SPFxProviderBase } from './provider-base.internal';
 import type { SPFxComponent } from './types';
 
 /**
- * Props for the SPFx ListView Command Set-specific provider component.
+ * Inputs for SPFxListViewCommandSetProvider. Pass the initialized ListView Command Set instance and a subtree using toolkit hooks. The provider waits for ServiceScope readiness and owns an isolated runtime store; omitted children render no application content.
  *
- * @template TProps - The properties type for the ListView Command Set.
- * @public
+ * @typeParam TProps - Properties type of the supplied SPFx host instance.
+ *
+ * @example
+ * ```tsx
+ * // In the ListView Command Set instance's render or mounting method:
+ * const element = <SPFxListViewCommandSetProvider instance={this}><MyComponent /></SPFxListViewCommandSetProvider>;
+ * ```
  */
 export interface SPFxListViewCommandSetProviderProps<TProps extends {} = {}> {
   /**
-   * The SPFx ListView Command Set instance.
+   * Required, initialized ListView Command Set instance supplying context, properties and lifecycle integration.
    */
   instance: BaseListViewCommandSet<TProps>;
 
   /**
-   * The children to render within the provider.
+   * Optional React subtree receiving host context, theme and isolated runtime state. Descendants mount after service-scope readiness; omission renders no application content.
    */
   children?: React.ReactNode;
 }
@@ -38,7 +43,7 @@ export interface SPFxListViewCommandSetProviderProps<TProps extends {} = {}> {
  * ```tsx
  * import * as React from 'react';
  * import * as ReactDom from 'react-dom';
- * import { SPFxListViewCommandSetProvider } from 'spfx-react-toolkit';
+ * import { SPFxListViewCommandSetProvider } from '@apvee/spfx-react-toolkit';
  *
  * export default class MyCommandSet extends BaseListViewCommandSet<IMyProps> {
  *   public onExecute(event: IListViewCommandSetExecuteEventParameters): void {

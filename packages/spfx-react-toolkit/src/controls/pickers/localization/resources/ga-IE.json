@@ -1,0 +1,85 @@
+{
+  "labels": {
+    "selectOne": "Roghnaigh mír",
+    "selectMany": "Roghnaigh míreanna",
+    "search": "Cuardaigh…",
+    "clearSelection": "Glan an roghnú",
+    "clearSearch": "Glan an cuardach",
+    "options": "Roghanna",
+    "searchOptions": "Cuardaigh roghanna",
+    "selectedOne": "Mír roghnaithe",
+    "selectedMany": "Míreanna roghnaithe",
+    "noSelection": "Níl aon roghnú",
+    "resolveIds": "Réitigh aitheantóirí",
+    "moreResults": "Tuilleadh torthaí",
+    "retry": "Bain triail eile as",
+    "namedOptions": "{name}: Roghanna",
+    "namedSearch": "{name}: Cuardaigh",
+    "selectedCount": {
+      "one": "{count} mhír roghnaithe",
+      "two": "{count} mhír roghnaithe",
+      "few": "{count} mhír roghnaithe",
+      "many": "{count} mír roghnaithe",
+      "other": "{count} mír roghnaithe"
+    },
+    "minimumSearchLength": {
+      "one": "Clóscríobh {count} charachtar ar a laghad chun cuardach a dhéanamh",
+      "two": "Clóscríobh {count} charachtar ar a laghad chun cuardach a dhéanamh",
+      "few": "Clóscríobh {count} charachtar ar a laghad chun cuardach a dhéanamh",
+      "many": "Clóscríobh {count} gcarachtar ar a laghad chun cuardach a dhéanamh",
+      "other": "Clóscríobh {count} carachtar ar a laghad chun cuardach a dhéanamh"
+    }
+  },
+  "status": {
+    "searching": "Á chuardach…",
+    "loading": "Á lódáil…",
+    "partialSearch": "Cuardach páirteach: beachtaigh do chuardach.",
+    "noOtherResults": "Níl torthaí eile ar an gcuardach seo",
+    "noResults": "Níl torthaí ar an gcuardach seo",
+    "noOptions": "Níl aon rogha ar fáil.",
+    "moreItemsAvailable": "Tá tuilleadh míreanna ar fáil.",
+    "partialSuggestions": "Moltaí páirteacha: níl roinnt foinsí ar fáil.",
+    "unresolvedValue": "Luach gan réiteach",
+    "partialHubs": "Liosta páirteach de mhoil: cúnghaigh an scóip nó úsáid mód suímh.",
+    "partialSiteCollections": "Cuardach páirteach ar bhailiúcháin suíomhanna (1000 toradh ar a mhéad): cúnghaigh do chritéir."
+  },
+  "sections": {
+    "consumer": "Roghanna curtha ar fáil",
+    "currentSite": "An suíomh reatha",
+    "hubSite": "An mol gaolmhar",
+    "catalog": "Roghanna atá ar fáil",
+    "currentUser": "Tusa",
+    "people": "Daoine molta",
+    "memberOf": "Do ghrúpaí"
+  },
+  "metadata": {
+    "documentLibrary": "Leabharlann doiciméad",
+    "sharePointList": "Liosta SharePoint",
+    "personalView": "Amharc pearsanta",
+    "publicView": "Amharc poiblí",
+    "field": "Réimse",
+    "itemDescription": "Mír · Aitheantóir {id}",
+    "file": "Comhad",
+    "fileWithExtension": "Comhad {extension}",
+    "folder": "Fillteán",
+    "sharePointGroup": "Grúpa SharePoint · SharePoint",
+    "securityGroup": "Grúpa slándála · Entra",
+    "distributionList": "Liosta dáilte · Entra",
+    "unvalidatedEmail": "Ríomhphost gan fíorú",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Tá an teorainn roghnúcháin sroichte.",
+    "selectionLimitExceeded": "Sáraíonn an roghnú an teorainn chumraithe.",
+    "unresolvedValues": "Tá roinnt luachanna roghnaithe gan réiteach.",
+    "outOfScopeValues": "Tá luachanna lasmuigh den scóip chumraithe sa roghnú.",
+    "resolveRequiredUserIds": "Réitigh na haitheantóirí riachtanacha do na húsáideoirí roghnaithe."
+  },
+  "errors": {
+    "candidateOutOfScope": "Tá an t-iarrthóir lasmuigh den scóip chumraithe.",
+    "incompleteCandidateResolution": "Níorbh fhéidir an t-iarrthóir a réiteach go hiomlán.",
+    "resolutionFailed": "Theip ar an réiteach.",
+    "graphUnavailable": "Níl cliant Microsoft Graph ar fáil."
+  }
+}

@@ -8,84 +8,53 @@ import { useSPFxSPHttpClient } from './useSPFxSPHttpClient';
 
 /**
  * Return type for useSPFxHubSiteInfo hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const hub: SPFxHubSiteInfo = useSPFxHubSiteInfo();
+ * console.log(hub.hubSiteUrl, hub.isLoading);
+ * ```
  */
 export interface SPFxHubSiteInfo {
-  /** Whether the current site is associated with a hub site */
+  /**
+   * Whether legacy metadata associates this site with a nonempty, nonzero hub ID; does not mean the current site is itself the hub.
+   */
   readonly isHubSite: boolean;
   
   /** Hub site ID (GUID) if associated, undefined otherwise */
   readonly hubSiteId: string | undefined;
   
-  /** Hub site URL (fetched via REST API) */
+  /**
+   * Last resolved hub URL; initially undefined. It is not automatically cleared when association changes.
+   */
   readonly hubSiteUrl: string | undefined;
   
-  /** Whether hub site URL is being loaded */
+  /**
+   * Whether a started hub URL request is pending; initially false before the effect starts.
+   */
   readonly isLoading: boolean;
   
-  /** Error during hub site URL fetch */
+  /**
+   * Last fetch/parsing error; cleared when a new request starts, but not automatically cleared when association disappears.
+   */
   readonly error: Error | undefined;
 }
 
 /**
- * Hook for Hub Site information
- * 
- * Provides information about SharePoint Hub Site association:
- * - isHubSite: Whether site is associated with a hub
- * - hubSiteId: Unique hub site identifier (GUID) from pageContext
- * - hubSiteUrl: Hub site URL (fetched via REST API)
- * - isLoading: Loading state for hub URL fetch
- * - error: Error during hub URL fetch
- * 
- * Hub Sites are modern SharePoint feature that allow:
- * - Unified navigation across related sites
- * - Shared branding and theming
- * - Content rollup from associated sites
- * - Centralized search and navigation
- * 
- * Use this hook to:
- * - Detect hub site association
- * - Get hub site ID and URL
- * - Implement hub-aware navigation
- * 
- * Note: hubSiteUrl is fetched asynchronously via REST API when isHubSite is true.
- * 
- * @returns Hub site information (isHubSite, hubSiteId, hubSiteUrl, isLoading, error)
- * 
+ * Reads legacy hubSiteId and considers any nonempty, nonzero GUID associated with a hub. Uses the host current-site URL when legacy metadata says the current site is the hub and supplies that URL; otherwise requests /_api/web/hubsitedata(false) and decodes its nested JSON. Initial loading is false until the effect starts. Requests are not cancelled and stale completions are not suppressed; URL/error state may persist after association changes. Treat hubSiteUrl as optional and handle errors before using it. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns Hub association, optional URL/ID, asynchronous loading state and optional error.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
- *   const { isHubSite, hubSiteId, hubSiteUrl, isLoading } = useSPFxHubSiteInfo();
- *   
- *   if (!isHubSite) {
- *     return <div>Not part of a hub site</div>;
- *   }
- *   
- *   if (isLoading) {
- *     return <Spinner label="Loading hub info..." />;
- *   }
- *   
- *   return (
- *     <div>
- *       <h3>Hub Site Info</h3>
- *       <p>Hub ID: {hubSiteId}</p>
- *       <a href={hubSiteUrl}>Go to Hub</a>
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Hub-aware navigation
- * ```tsx
- * function HubNavigation() {
- *   const { isHubSite, hubSiteUrl, isLoading } = useSPFxHubSiteInfo();
- *   
- *   if (!isHubSite || isLoading) return null;
- *   
- *   return (
- *     <nav>
- *       <a href={hubSiteUrl}>← Back to Hub</a>
- *     </nav>
- *   );
+ * function HubLink() {
+ *   const hub = useSPFxHubSiteInfo();
+ *   if (hub.error) return <span>{hub.error.message}</span>;
+ *   if (hub.isLoading) return <span>Loading hub</span>;
+ *   if (!hub.isHubSite || !hub.hubSiteUrl) return <span>Hub unavailable</span>;
+ *   return <a href={hub.hubSiteUrl}>Visit hub</a>;
  * }
  * ```
  */

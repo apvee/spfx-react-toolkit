@@ -7,6 +7,11 @@ import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
  * SharePoint page types
+ *
+ * @example
+ * ```tsx
+ * const type: SPFxPageType = 'sitePage';
+ * ```
  */
 export type SPFxPageType = 
   | 'sitePage'          // Modern site page
@@ -19,6 +24,13 @@ export type SPFxPageType =
 
 /**
  * Return type for useSPFxPageType hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const page: SPFxPageTypeInfo = useSPFxPageType();
+ * console.log(page.pageType, page.isModernPage);
+ * ```
  */
 export interface SPFxPageTypeInfo {
   /** Current page type */
@@ -41,61 +53,16 @@ export interface SPFxPageTypeInfo {
 }
 
 /**
- * Hook for SharePoint page type detection
- * 
- * Detects the current SharePoint page type:
- * - sitePage: Modern site page (Site Pages library)
- * - webPartPage: Classic web part page
- * - listPage: List view page
- * - listFormPage: List form (new/edit/display item)
- * - profilePage: User profile page
- * - searchPage: Search results page
- * - unknown: Unable to determine
- * 
- * Helper flags provided:
- * - isModernPage: True for modern site pages
- * - isSitePage: True for site pages
- * - isListPage: True for list views
- * - isListFormPage: True for list forms
- * - isWebPartPage: True for classic web part pages
- * 
- * Use this hook for:
- * - Conditional rendering based on page type
- * - Feature availability checks (e.g., modern-only features)
- * - Page-specific behavior
- * - Analytics/telemetry
- * 
- * @returns Page type information
- * 
+ * Classifies supplied modern page-type text, then legacy page type/list/form metadata. Missing or unrecognized metadata yields unknown. isModernPage is derived from the sitePage category and is not independent proof of page capabilities; no network detection occurs. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns Best-effort page category and category-specific flags.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
- *   const { pageType, isModernPage, isSitePage } = useSPFxPageType();
- *   
- *   if (!isModernPage) {
- *     return <div>This feature requires a modern page</div>;
- *   }
- *   
- *   return (
- *     <div>
- *       <h3>Page Type: {pageType}</h3>
- *       {isSitePage && <ModernPageFeature />}
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Conditional features
- * ```tsx
- * function ConditionalUI() {
- *   const { isListPage, isListFormPage } = useSPFxPageType();
- *   
- *   return (
- *     <div>
- *       {isListPage && <ListViewCustomizer />}
- *       {isListFormPage && <FormFieldCustomizer />}
- *     </div>
- *   );
+ * function PageLabel() {
+ *   const { pageType } = useSPFxPageType();
+ *   return <span>{pageType}</span>;
  * }
  * ```
  */

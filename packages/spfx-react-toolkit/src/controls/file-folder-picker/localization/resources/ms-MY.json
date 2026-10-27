@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Semak lalu fail…",
+    "folders": "Semak lalu folder…",
+    "all": "Semak lalu fail dan folder…"
+  },
+  "placeholders": {
+    "files": "Pilih fail…",
+    "folders": "Pilih folder…",
+    "all": "Pilih fail atau folder…"
+  },
+  "labels": {
+    "selection": "Pemilihan fail dan folder",
+    "file": "Fail",
+    "folder": "Folder",
+    "unresolvedItem": "Item yang belum dikenal pasti",
+    "removeItem": "Alih keluar {name}"
+  },
+  "validation": {
+    "invalidReferences": "Rujukan fail atau folder tidak sah.",
+    "controlledModeChanged": "Mod terkawal tidak boleh diubah semasa kawalan dipasang.",
+    "incompatibleItems": "Pilihan mengandungi item yang tidak serasi dengan jenis, kategori atau sambungan yang dikonfigurasikan. Alih keluar atau gantikan item tersebut.",
+    "invalidPolicy": "Konfigurasi jenis, kategori, sambungan atau had pilihan tidak sah.",
+    "selectionLimitExceeded": "Pilihan melebihi had yang dikonfigurasikan. Alih keluar item yang berlebihan."
+  },
+  "errors": {
+    "configuration": "Konfigurasi pemilih tidak sah. Semak sumber, jenis, kategori dan had; gunakan praset tanpa opsyen legasi.",
+    "auth-resource": "Pemilih meminta sumber pengesahan yang tidak dibenarkan oleh konfigurasi.",
+    "auth-type": "Pemilih meminta jenis pengesahan yang tidak disokong oleh konfigurasi.",
+    "auth-challenge": "Pemilih memerlukan semakan pengesahan tambahan yang tidak disokong.",
+    "auth-provider": "Token SharePoint tidak dapat diperoleh. Cuba lagi; jika masalah berterusan, semak akses dan keizinan sedia ada anda.",
+    "selection-identity": "Identiti item yang dipilih tidak dapat disahkan. Buka semula pemilih dan cuba lagi.",
+    "selection-scope": "Item yang dipilih berada di luar laman, pustaka atau folder yang dibenarkan.",
+    "selection-policy": "Pilihan tidak memenuhi keperluan jenis, kategori, sambungan atau bilangan item yang dibenarkan.",
+    "selection-unavailable": "Item yang dipilih tidak tersedia atau tidak boleh dicapai.",
+    "selection-invalid": "Pilihan tidak dapat disahkan. Tiada item baharu ditambahkan.",
+    "onedrive-unavailable": "OneDrive pengguna semasa tidak tersedia atau tidak boleh dicapai. Pastikan pemacu wujud dan cuba lagi.",
+    "opening": "Pemilih tidak dapat dibuka. Semak konfigurasi dan akses kepada sumber, kemudian cuba lagi.",
+    "timeout": "Pemilih tidak memberikan respons dalam masa yang ditetapkan. Tutup pemilih dan cuba lagi.",
+    "communication": "Komunikasi dengan pemilih terputus. Buka semula pemilih dan cuba lagi."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Ciri pengesahan pilihan tidak memberikan respons dalam masa yang ditetapkan. Cuba lagi.",
+    "unsupportedCommand": "Penyepaduan ini tidak menyokong perintah tersebut.",
+    "optionalGraphAuthenticationFailed": "Ciri Microsoft Graph pilihan tidak dapat disahkan.",
+    "optionalPersonalAuthenticationFailed": "Destinasi peribadi pilihan tidak dapat disahkan."
+  }
+}

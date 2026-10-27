@@ -95,7 +95,7 @@ export interface SPFxHubSiteInfo {
 }
 ```
 
-Loads hub information when available. Inspect isLoading/error and optional hubSiteId/hubSiteUrl rather than assuming every site is connected to a hub.
+`isHubSite` means legacy metadata associates the site with a nonempty, nonzero hub ID; it does not mean the current site is the hub itself. The hook uses current-site metadata when the current site is identified as the hub, otherwise reads `/_api/web/hubsitedata(false)`. Loading starts in an effect. Requests are not cancelled or guarded against stale completion, and previously resolved URL/error state can remain when association changes. Check `isHubSite`, `isLoading`, `error` and the optional URL together before rendering a link.
 
 [View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts)
 

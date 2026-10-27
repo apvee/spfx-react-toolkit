@@ -22,6 +22,14 @@
   "externals": {},
   "localizedResources": {
     "SpFxReactToolkitTestWebPartStrings": "lib/webparts/spFxReactToolkitTest/loc/{locale}.js",
-    "SpFxReactToolkitTestApplicationCustomizerStrings": "lib/extensions/spFxReactToolkitTest/loc/{locale}.js"
+    "SpFxReactToolkitTestApplicationCustomizerStrings": "lib/extensions/spFxReactToolkitTest/loc/{locale}.js",
+    "ApveeSpfxReactToolkitDataGridStrings": "../../node_modules/@apvee/spfx-react-toolkit/lib/controls/data-grid/loc/{locale}.js",
+    "ApveeSpfxReactToolkitEditableTextStrings": "../../node_modules/@apvee/spfx-react-toolkit/lib/controls/editable-text/loc/{locale}.js",
+    "ApveeSpfxReactToolkitFileFolderPickerStrings": "../../node_modules/@apvee/spfx-react-toolkit/lib/controls/file-folder-picker/loc/{locale}.js",
+    "ApveeSpfxReactToolkitFormStrings": "../../node_modules/@apvee/spfx-react-toolkit/lib/controls/form/loc/{locale}.js",
+    "ApveeSpfxReactToolkitPaginationStrings": "../../node_modules/@apvee/spfx-react-toolkit/lib/controls/pagination/loc/{locale}.js",
+    "ApveeSpfxReactToolkitPickersStrings": "../../node_modules/@apvee/spfx-react-toolkit/lib/controls/pickers/loc/{locale}.js",
+    "ApveeSpfxReactToolkitStageStrings": "../../node_modules/@apvee/spfx-react-toolkit/lib/controls/stage/loc/{locale}.js",
+    "ApveeSpfxReactToolkitWebPartShellStrings": "../../node_modules/@apvee/spfx-react-toolkit/lib/controls/web-part-shell/loc/{locale}.js"
   }
 }

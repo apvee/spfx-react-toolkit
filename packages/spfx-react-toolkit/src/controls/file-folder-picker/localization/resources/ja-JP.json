@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "ファイルを参照…",
+    "folders": "フォルダーを参照…",
+    "all": "ファイルとフォルダーを参照…"
+  },
+  "placeholders": {
+    "files": "ファイルを選択…",
+    "folders": "フォルダーを選択…",
+    "all": "ファイルまたはフォルダーを選択…"
+  },
+  "labels": {
+    "selection": "ファイルとフォルダーの選択",
+    "file": "ファイル",
+    "folder": "フォルダー",
+    "unresolvedItem": "解決されていない項目",
+    "removeItem": "{name} を削除"
+  },
+  "validation": {
+    "invalidReferences": "ファイルまたはフォルダーの参照が無効です。",
+    "controlledModeChanged": "コントロールがマウントされている間は、制御モードを変更できません。",
+    "incompatibleItems": "選択内容に、設定された種類、カテゴリ、または拡張子と互換性のない項目が含まれています。削除または置換してください。",
+    "invalidPolicy": "選択する種類、カテゴリ、拡張子、または上限の設定が無効です。",
+    "selectionLimitExceeded": "選択内容が設定された上限を超えています。余分な項目を削除してください。"
+  },
+  "errors": {
+    "configuration": "ピッカーの設定が無効です。ソース、種類、カテゴリ、および上限を確認してください。プリセットは従来のオプションを指定せずに使用してください。",
+    "auth-resource": "ピッカーが設定で許可されていない認証リソースを要求しました。",
+    "auth-type": "ピッカーが設定でサポートされていない認証の種類を要求しました。",
+    "auth-challenge": "ピッカーには、サポートされていない追加の認証チェックが必要です。",
+    "auth-provider": "SharePoint トークンを取得できませんでした。もう一度お試しください。問題が解決しない場合は、アクセスと既存のアクセス許可を確認してください。",
+    "selection-identity": "選択した項目の ID を検証できませんでした。ピッカーを開き直して、もう一度お試しください。",
+    "selection-scope": "選択した項目は、許可されたサイト、ライブラリ、またはフォルダーの範囲外です。",
+    "selection-policy": "選択内容が、許可された種類、カテゴリ、拡張子、または項目数の要件を満たしていません。",
+    "selection-unavailable": "選択した項目は利用できないか、アクセスできません。",
+    "selection-invalid": "選択内容を検証できませんでした。新しい項目は追加されていません。",
+    "onedrive-unavailable": "現在のユーザーの OneDrive は利用できないか、アクセスできません。ドライブが存在することを確認して、もう一度お試しください。",
+    "opening": "ピッカーを開けませんでした。設定とソースへのアクセスを確認して、もう一度お試しください。",
+    "timeout": "ピッカーが時間内に応答しませんでした。閉じてから、もう一度お試しください。",
+    "communication": "ピッカーとの通信が中断されました。開き直して、もう一度お試しください。"
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "オプションの認証機能が時間内に応答しませんでした。もう一度お試しください。",
+    "unsupportedCommand": "この統合では、このコマンドはサポートされていません。",
+    "optionalGraphAuthenticationFailed": "オプションの Microsoft Graph 機能を認証できませんでした。",
+    "optionalPersonalAuthenticationFailed": "オプションの個人用の宛先を認証できませんでした。"
+  }
+}

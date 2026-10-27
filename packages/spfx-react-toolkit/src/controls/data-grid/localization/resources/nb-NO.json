@@ -1,0 +1,25 @@
+{
+  "empty": "Ingen tilgjengelige data",
+  "noResults": "Ingen resultater funnet",
+  "noVisibleColumns": "Ingen synlige kolonner",
+  "loading": "Laster inn",
+  "actions": "Handlinger",
+  "moreActions": "Flere handlinger",
+  "yes": "Ja",
+  "no": "Nei",
+  "noTags": "Ingen merker",
+  "noObservations": "Ingen observasjoner",
+  "invalidValue": "Ugyldig verdi",
+  "selectAllRows": "Velg alle rader",
+  "retry": "Prøv igjen",
+  "selectRowTemplate": "Velg rad {rowId}",
+  "sparklineSummaryTemplate": "Første {first}; Siste {last}; Minimum {minimum}; Maksimum {maximum}; Gjennomsnitt {average}; Endring {change}; Prosentvis endring {changePercent}",
+  "tagOverflow": {
+    "one": "Vis {count} merke til",
+    "other": "Vis {count} merker til"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} stemme",
+    "other": "{formattedCount} stemmer"
+  }
+}

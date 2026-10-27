@@ -15,9 +15,11 @@ import type { PnPContextInfo } from './useSPFxPnPContext';
  * @returns List query methods, items, loading states, error and CRUD operations
  * @example
  * ```tsx
+ * // Inside a React component using the host Fluent renderer:
  * const { query, items, error } = useSPFxPnPListById<{ Id: number; Title: string }>('11111111-2222-3333-4444-555555555555', { pageSize: 50 });
  * // Call query() from an event handler or effect when data is needed.
  * ```
+ * @throws When called outside an SPFx provider.
  */
 export function useSPFxPnPListById<T = unknown>(
   id: string,

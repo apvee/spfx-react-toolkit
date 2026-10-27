@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Arakatu fitxategiak…",
+    "folders": "Arakatu karpetak…",
+    "all": "Arakatu fitxategiak eta karpetak…"
+  },
+  "placeholders": {
+    "files": "Hautatu fitxategiak…",
+    "folders": "Hautatu karpetak…",
+    "all": "Hautatu fitxategiak edo karpetak…"
+  },
+  "labels": {
+    "selection": "Fitxategien eta karpeten hautaketa",
+    "file": "Fitxategia",
+    "folder": "Karpeta",
+    "unresolvedItem": "Ebatzi gabeko elementua",
+    "removeItem": "Kendu {name}"
+  },
+  "validation": {
+    "invalidReferences": "Fitxategien edo karpeten erreferentziak ez dira baliozkoak.",
+    "controlledModeChanged": "Modu kontrolatua ezin da aldatu kontrola muntatuta dagoen bitartean.",
+    "incompatibleItems": "Hautaketak konfiguratutako mota, kategoria edo luzapenekin bateragarriak ez diren elementuak ditu. Kendu edo ordeztu itzazu.",
+    "invalidPolicy": "Hautaketaren mota, kategoria, luzapen edo mugaren konfigurazioa ez da baliozkoa.",
+    "selectionLimitExceeded": "Hautaketak konfiguratutako muga gainditzen du. Kendu soberako elementuak."
+  },
+  "errors": {
+    "configuration": "Hautatzailearen konfigurazioa ez da baliozkoa. Egiaztatu iturburua, motak, kategoria eta mugak; erabili aurrezarpena aukera zaharkiturik gabe.",
+    "auth-resource": "Hautatzaileak konfigurazioak onartzen ez duen autentifikazio-baliabide bat eskatu du.",
+    "auth-type": "Hautatzaileak konfigurazioak onartzen ez duen autentifikazio mota bat eskatu du.",
+    "auth-challenge": "Hautatzaileak onartzen ez den autentifikazio-egiaztapen gehigarri bat behar du.",
+    "auth-provider": "Ezin izan da SharePoint tokena lortu. Saiatu berriro; arazoak jarraitzen badu, egiaztatu sarbidea eta dauden baimenak.",
+    "selection-identity": "Ezin izan da hautatutako elementuaren identitatea egiaztatu. Ireki berriro hautatzailea eta saiatu berriro.",
+    "selection-scope": "Hautatutako elementua baimendutako gune, liburutegi edo karpetatik kanpo dago.",
+    "selection-policy": "Hautaketak ez ditu betetzen baimendutako mota, kategoria, luzapen edo elementu kopuruaren baldintzak.",
+    "selection-unavailable": "Hautatutako elementua ez dago erabilgarri edo ezin da atzitu.",
+    "selection-invalid": "Ezin izan da hautaketa egiaztatu. Ez da elementu berririk gehitu.",
+    "onedrive-unavailable": "Uneko erabiltzailearen OneDrive ez dago erabilgarri edo ezin da atzitu. Egiaztatu unitatea badagoela eta saiatu berriro.",
+    "opening": "Ezin izan da hautatzailea ireki. Egiaztatu konfigurazioa eta iturbururako sarbidea, eta saiatu berriro.",
+    "timeout": "Hautatzaileak ez du garaiz erantzun. Itxi eta saiatu berriro.",
+    "communication": "Hautatzailearekiko komunikazioa eten egin da. Ireki berriro eta saiatu berriro."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Aukerako autentifikazio-eginbideak ez du garaiz erantzun. Saiatu berriro.",
+    "unsupportedCommand": "Integrazio honek ez du komando hori onartzen.",
+    "optionalGraphAuthenticationFailed": "Ezin izan da aukerako Microsoft Graph eginbidea autentifikatu.",
+    "optionalPersonalAuthenticationFailed": "Ezin izan da aukerako helmuga pertsonala autentifikatu."
+  }
+}

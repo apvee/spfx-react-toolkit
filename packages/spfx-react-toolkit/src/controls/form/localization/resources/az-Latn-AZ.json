@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Formanı göndərmək mümkün olmadı. Yenidən cəhd edin.",
+  "dateInputValidationMessage": "Göndərməzdən əvvəl tarixi tamamlayın və ya düzəldin.",
+  "timeInputValidationMessage": "Göndərməzdən əvvəl vaxtı tamamlayın və ya düzəldin.",
+  "tagPicker": {
+    "noOptions": "Cari sorğuya uyğun seçim yoxdur."
+  },
+  "fileInput": {
+    "browseLabel": "Gözdən keçir",
+    "clearLabel": "Təmizlə"
+  },
+  "arraySection": {
+    "add": "Element əlavə et",
+    "empty": "Element yoxdur",
+    "itemLabelTemplate": "Element {position}",
+    "removeTemplate": "{label} elementini sil",
+    "moveUpTemplate": "{label} elementini yuxarı köçür",
+    "moveDownTemplate": "{label} elementini aşağı köçür",
+    "addedTemplate": "Əlavə edildi: {label}",
+    "removedTemplate": "Silindi: {label}",
+    "movedTemplate": "{label} elementi {total} mövqedən {position} nömrəli mövqeyə köçürüldü"
+  },
+  "datePicker": {
+    "months": [
+      "yanvar",
+      "fevral",
+      "mart",
+      "aprel",
+      "may",
+      "iyun",
+      "iyul",
+      "avqust",
+      "sentyabr",
+      "oktyabr",
+      "noyabr",
+      "dekabr"
+    ],
+    "shortMonths": [
+      "yan",
+      "fev",
+      "mar",
+      "apr",
+      "may",
+      "iyn",
+      "iyl",
+      "avq",
+      "sen",
+      "okt",
+      "noy",
+      "dek"
+    ],
+    "days": [
+      "bazar",
+      "bazar ertəsi",
+      "çərşənbə axşamı",
+      "çərşənbə",
+      "cümə axşamı",
+      "cümə",
+      "şənbə"
+    ],
+    "shortDays": [
+      "B.",
+      "B.E.",
+      "Ç.A.",
+      "Ç.",
+      "C.A.",
+      "C.",
+      "Ş."
+    ],
+    "goToToday": "Bu günə keç",
+    "prevMonthAriaLabel": "Əvvəlki ay",
+    "nextMonthAriaLabel": "Növbəti ay",
+    "prevYearAriaLabel": "Əvvəlki il",
+    "nextYearAriaLabel": "Növbəti il",
+    "prevYearRangeAriaLabel": "Əvvəlki il aralığı",
+    "nextYearRangeAriaLabel": "Növbəti il aralığı",
+    "monthPickerHeaderAriaLabel": "{0}, ili dəyiş",
+    "yearPickerHeaderAriaLabel": "{0}, ayı dəyiş",
+    "closeButtonAriaLabel": "Bağla",
+    "weekNumberFormatString": "Həftə nömrəsi {0}",
+    "selectedDateFormatString": "Seçilmiş tarix {0}",
+    "todayDateFormatString": "Bugünkü tarix {0}",
+    "dayMarkedAriaLabel": "işarələnib"
+  }
+}

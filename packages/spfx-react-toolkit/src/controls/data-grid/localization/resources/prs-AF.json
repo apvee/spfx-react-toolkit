@@ -1,0 +1,25 @@
+{
+  "empty": "معلوماتی موجود نیست",
+  "noResults": "نتیجه‌ای یافت نشد",
+  "noVisibleColumns": "هیچ ستون قابل دید وجود ندارد",
+  "loading": "در حال بارگذاری",
+  "actions": "عملیات",
+  "moreActions": "عملیات بیشتر",
+  "yes": "بلی",
+  "no": "نخیر",
+  "noTags": "برچسبی وجود ندارد",
+  "noObservations": "مشاهده‌ای وجود ندارد",
+  "invalidValue": "مقدار نامعتبر",
+  "selectAllRows": "انتخاب همهٔ ردیف‌ها",
+  "retry": "تلاش دوباره",
+  "selectRowTemplate": "انتخاب ردیف {rowId}",
+  "sparklineSummaryTemplate": "نخستین {first}; آخرین {last}; کمترین {minimum}; بیشترین {maximum}; میانگین {average}; تغییر {change}; فیصدی تغییر {changePercent}",
+  "tagOverflow": {
+    "one": "نمایش {count} برچسب دیگر",
+    "other": "نمایش {count} برچسب دیگر"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} رأی",
+    "other": "{formattedCount} رأی"
+  }
+}

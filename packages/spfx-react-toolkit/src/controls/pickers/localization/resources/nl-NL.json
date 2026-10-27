@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Selecteer een item",
+    "selectMany": "Selecteer items",
+    "search": "Zoeken…",
+    "clearSelection": "Selectie wissen",
+    "clearSearch": "Zoekopdracht wissen",
+    "options": "Opties",
+    "searchOptions": "Opties zoeken",
+    "selectedOne": "Geselecteerd item",
+    "selectedMany": "Geselecteerde items",
+    "noSelection": "Geen selectie",
+    "resolveIds": "ID's opzoeken",
+    "moreResults": "Meer resultaten",
+    "retry": "Opnieuw proberen",
+    "namedOptions": "{name}: Opties",
+    "namedSearch": "{name}: Zoeken",
+    "selectedCount": {
+      "one": "{count} item geselecteerd",
+      "other": "{count} items geselecteerd"
+    },
+    "minimumSearchLength": {
+      "one": "Typ ten minste {count} teken om te zoeken",
+      "other": "Typ ten minste {count} tekens om te zoeken"
+    }
+  },
+  "status": {
+    "searching": "Zoeken…",
+    "loading": "Laden…",
+    "partialSearch": "Gedeeltelijke zoekresultaten: verfijn uw zoekopdracht.",
+    "noOtherResults": "Geen andere resultaten voor deze zoekopdracht",
+    "noResults": "Geen resultaten voor deze zoekopdracht",
+    "noOptions": "Geen opties beschikbaar.",
+    "moreItemsAvailable": "Er zijn meer items beschikbaar.",
+    "partialSuggestions": "Gedeeltelijke suggesties: sommige bronnen zijn niet beschikbaar.",
+    "unresolvedValue": "Niet-herkende waarde",
+    "partialHubs": "Gedeeltelijke hublijst: beperk het bereik of gebruik de sitemodus.",
+    "partialSiteCollections": "Gedeeltelijke zoekresultaten voor siteverzamelingen (maximaal 1000 resultaten): beperk uw criteria."
+  },
+  "sections": {
+    "consumer": "Aangeleverde opties",
+    "currentSite": "Huidige site",
+    "hubSite": "Gekoppelde hub",
+    "catalog": "Beschikbare opties",
+    "currentUser": "U",
+    "people": "Voorgestelde personen",
+    "memberOf": "Uw groepen"
+  },
+  "metadata": {
+    "documentLibrary": "Documentbibliotheek",
+    "sharePointList": "SharePoint-lijst",
+    "personalView": "Persoonlijke weergave",
+    "publicView": "Openbare weergave",
+    "field": "Veld",
+    "itemDescription": "Item · ID {id}",
+    "file": "Bestand",
+    "fileWithExtension": "{extension}-bestand",
+    "folder": "Map",
+    "sharePointGroup": "SharePoint-groep · SharePoint",
+    "securityGroup": "Beveiligingsgroep · Entra",
+    "distributionList": "Distributielijst · Entra",
+    "unvalidatedEmail": "Niet-geverifieerde e-mail",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "De selectielimiet is bereikt.",
+    "selectionLimitExceeded": "De selectie overschrijdt de ingestelde limiet.",
+    "unresolvedValues": "Sommige geselecteerde waarden zijn niet herkend.",
+    "outOfScopeValues": "De selectie bevat waarden buiten het ingestelde bereik.",
+    "resolveRequiredUserIds": "Zoek de vereiste ID's op voor de geselecteerde gebruikers."
+  },
+  "errors": {
+    "candidateOutOfScope": "De kandidaat valt buiten het ingestelde bereik.",
+    "incompleteCandidateResolution": "De kandidaat kan niet volledig worden herkend.",
+    "resolutionFailed": "Het opzoeken is mislukt.",
+    "graphUnavailable": "De Microsoft Graph-client is niet beschikbaar."
+  }
+}

@@ -47,3 +47,5 @@ without CSS mocks. It records actual rules, insertion-cache entries and factory
 cache sizes before/cold/identical/repeated/1000-distinct/unmount steps. It does not
 establish browser computed CSS, rendering performance, heap consumption, garbage
 collection of discarded renderers, or tenant behavior.
+
+`baseline.json` preserves the legacy style measurement metadata used by `scripts/measure-sx-bundle.cjs`. It remains versioned independently of local `.docs/` evidence; the canonical production contract and baseline remain under `tests/fixtures/tree-shaking/`.

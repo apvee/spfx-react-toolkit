@@ -20,26 +20,103 @@ import {
 import { useSPFxAadTokenProvider } from './useSPFxAadTokenProvider';
 import { useSPFxInstanceInfo } from './useSPFxInstanceInfo';
 
+/**
+ * Controls automatic checks, authentication interaction and token evaluation.
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const options: SPFxApiPermissionPrecheckOptions = { autoCheck: false, mode: 'passive', timeoutMs: 10000 };
+ * const permissions = useSPFxApiPermissionPrecheck({ graph: ['User.Read'] }, options);
+ * ```
+ */
 export interface SPFxApiPermissionPrecheckOptions {
+  /**
+   * Automatically checks when the token provider is ready and requirements/options change; defaults to true.
+   */
   readonly autoCheck?: boolean;
+  /**
+   * Defaults to passive: resource acquisition is sequential and available popup/redirect events are cancelled for the check. interactiveAllowed does not install that guard; the provider controls actual interaction.
+   */
   readonly mode?: SPFxApiPermissionPrecheckMode;
+  /**
+   * Allows cached tokens unless false; defaults to true.
+   */
   readonly useCachedToken?: boolean;
+  /**
+   * Checks expected audiences unless false; defaults to true.
+   */
   readonly validateAudience?: boolean;
+  /**
+   * Per-resource token acquisition timeout in milliseconds; defaults to 15000. Does not cancel the underlying provider request.
+   */
   readonly timeoutMs?: number;
 }
 
+/**
+ * Permission diagnostics and retry operations. The latest-started check publishes state; obsolete/unmounted completions still settle their promises but cannot publish results. Diagnostics do not grant access.
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const permissions: SPFxApiPermissionPrecheckResult = useSPFxApiPermissionPrecheck({ graph: ['User.Read'] });
+ * console.log(permissions.configurationState, permissions.missing);
+ * ```
+ */
 export interface SPFxApiPermissionPrecheckResult {
+  /**
+   * True while the latest check is pending.
+   */
   readonly isChecking: boolean;
+  /**
+   * True when every required evaluated result is available. Empty/no-required results also yield true, even while configurationState is idle/checking; does not establish server authorization.
+   */
   readonly isConfigured: boolean;
+  /**
+   * Aggregate diagnostic state, including idle, checking and actionRequired.
+   */
   readonly configurationState: SPFxApiPermissionConfigurationState;
+  /**
+   * Requirements evaluated as available.
+   */
   readonly available: readonly SPFxApiPermissionSummary[];
+  /**
+   * Required unavailable requirements with actionable missing/blocked access diagnostics.
+   */
   readonly missing: readonly SPFxApiPermissionSummary[];
+  /**
+   * All unavailable optional requirements; they do not block isConfigured.
+   */
   readonly warnings: readonly SPFxApiPermissionSummary[];
+  /**
+   * Required unavailable requirements without an actionable missing-permission diagnosis.
+   */
   readonly unknown: readonly SPFxApiPermissionSummary[];
+  /**
+   * Detailed per-scope diagnostics; no raw tokens are included.
+   */
   readonly results: readonly SPFxApiPermissionCheckResult[];
+  /**
+   * Token-provider initialization error, independent of per-scope check diagnostics.
+   */
   readonly tokenProviderError: Error | undefined;
+  /**
+   * Runs a check with the configured cache preference.
+   * @returns Per-scope diagnostics, including unavailable-provider results.
+   * @throws Unexpected normalization or authentication-event registration failures.
+   */
   readonly check: () => Promise<readonly SPFxApiPermissionCheckResult[]>;
+  /**
+   * Repeats check with the configured cache preference.
+   * @returns Fresh diagnostics.
+   * @throws Unexpected check failures.
+   */
   readonly retry: () => Promise<readonly SPFxApiPermissionCheckResult[]>;
+  /**
+   * Repeats check requesting uncached tokens; the passive/interactive mode still applies.
+   * @returns Fresh diagnostics.
+   * @throws Unexpected check failures.
+   */
   readonly retryWithoutCache: () => Promise<readonly SPFxApiPermissionCheckResult[]>;
 }
 
@@ -58,6 +135,21 @@ interface PassiveAuthEventObserverInfo {
   readonly componentId: string;
 }
 
+/**
+ * Checks delegated scopes using the provider's AadTokenProvider. Auto-check defaults to true and mode to passive. Requirement/provider changes reset results; latest checks publish state, without cancelling underlying requests. Token failures become diagnostics.
+ * @param config - Graph/custom API requirements; keep data immutable when changing requirements.
+ * @param options - Optional automation, interaction, cache, audience and timeout settings.
+ * @returns Aggregate state, detailed diagnostics and explicit retry methods.
+ * @throws When called outside an SPFx provider.
+ *
+ * @example
+ * ```tsx
+ * function PermissionStatus() {
+ *   const permissions = useSPFxApiPermissionPrecheck({ graph: ['User.Read'] });
+ *   return <span>{permissions.configurationState}</span>;
+ * }
+ * ```
+ */
 export function useSPFxApiPermissionPrecheck(
   config: SPFxApiPermissionPrecheckConfig,
   options?: SPFxApiPermissionPrecheckOptions

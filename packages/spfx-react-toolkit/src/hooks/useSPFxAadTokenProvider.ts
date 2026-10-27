@@ -8,6 +8,13 @@ import { useSPFxServiceScope } from './useSPFxServiceScope';
 
 /**
  * Return type for useSPFxAadTokenProvider hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const info: SPFxAadTokenProviderInfo = useSPFxAadTokenProvider();
+ * console.log(info.isReady, info.initError);
+ * ```
  */
 export interface SPFxAadTokenProviderInfo {
   /**
@@ -37,13 +44,17 @@ export interface SPFxAadTokenProviderInfo {
 }
 
 /**
- * Hook to access SPFx AadTokenProvider with built-in state management.
+ * Acquires the SPFx AadTokenProvider asynchronously from ServiceScope. Factory consumption and provider acquisition failures are captured in initError. No token is acquired by this hook itself.
+ * @returns Provider, initialization state and readiness.
+ * @throws When called outside an SPFx provider.
  *
- * @remarks
- * This hook consumes AadTokenProviderFactory from SPFx ServiceScope using
- * dependency injection. The factory is consumed lazily and cached. The
- * factory.getTokenProvider() method is then called asynchronously to obtain
- * the AadTokenProvider instance.
+ * @example
+ * ```tsx
+ * function TokenStatus() {
+ *   const { isReady, initError } = useSPFxAadTokenProvider();
+ *   return <span>{initError?.message ?? (isReady ? 'Ready' : 'Initializing')}</span>;
+ * }
+ * ```
  */
 export function useSPFxAadTokenProvider(): SPFxAadTokenProviderInfo {
   const { consume } = useSPFxServiceScope();

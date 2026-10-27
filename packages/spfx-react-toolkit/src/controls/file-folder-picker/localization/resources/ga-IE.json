@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Brabhsáil comhaid…",
+    "folders": "Brabhsáil fillteáin…",
+    "all": "Brabhsáil comhaid agus fillteáin…"
+  },
+  "placeholders": {
+    "files": "Roghnaigh comhaid…",
+    "folders": "Roghnaigh fillteáin…",
+    "all": "Roghnaigh comhaid nó fillteáin…"
+  },
+  "labels": {
+    "selection": "Roghnú comhad agus fillteán",
+    "file": "Comhad",
+    "folder": "Fillteán",
+    "unresolvedItem": "Mír gan réiteach",
+    "removeItem": "Bain {name}"
+  },
+  "validation": {
+    "invalidReferences": "Tagairtí neamhbhailí do chomhaid nó d’fhillteáin.",
+    "controlledModeChanged": "Ní féidir an mód rialaithe a athrú fad atá an rialtán suite.",
+    "incompatibleItems": "Tá míreanna sa roghnú nach bhfuil comhoiriúnach leis an gcineál, leis an gcatagóir nó leis na hiarmhíreanna atá cumraithe. Bain iad nó cuir míreanna eile ina n-áit.",
+    "invalidPolicy": "Cumraíocht neamhbhailí don chineál, don chatagóir, do na hiarmhíreanna nó don teorainn roghnúcháin.",
+    "selectionLimitExceeded": "Sáraíonn an roghnú an teorainn chumraithe. Bain na míreanna breise."
+  },
+  "errors": {
+    "configuration": "Cumraíocht neamhbhailí don roghnóir. Seiceáil an fhoinse, na cineálacha, an chatagóir agus na teorainneacha; úsáid an réamhshocrú gan roghanna oidhreachta.",
+    "auth-resource": "D’iarr an roghnóir acmhainn fíordheimhnithe nach gceadaítear sa chumraíocht.",
+    "auth-type": "D’iarr an roghnóir cineál fíordheimhnithe nach dtacaítear leis sa chumraíocht.",
+    "auth-challenge": "Teastaíonn seiceáil bhreise fíordheimhnithe ón roghnóir nach dtacaítear léi.",
+    "auth-provider": "Níorbh fhéidir an comhartha SharePoint a fháil. Bain triail eile as; má leanann an fhadhb, seiceáil do rochtain agus na ceadanna atá ann.",
+    "selection-identity": "Níorbh fhéidir aitheantas na míre roghnaithe a dheimhniú. Oscail an roghnóir arís agus bain triail eile as.",
+    "selection-scope": "Tá an mhír roghnaithe lasmuigh den suíomh, den leabharlann nó den fhillteán atá ceadaithe.",
+    "selection-policy": "Ní chomhlíonann an roghnú na ceanglais maidir leis an gcineál, an chatagóir, na hiarmhíreanna nó líon na míreanna atá ceadaithe.",
+    "selection-unavailable": "Níl an mhír roghnaithe ar fáil nó ní féidir rochtain a fháil uirthi.",
+    "selection-invalid": "Níorbh fhéidir an roghnú a dheimhniú. Níor cuireadh aon mhír nua leis.",
+    "onedrive-unavailable": "Níl OneDrive an úsáideora reatha ar fáil nó ní féidir rochtain a fháil air. Seiceáil go bhfuil an tiomántán ann agus bain triail eile as.",
+    "opening": "Níorbh fhéidir an roghnóir a oscailt. Seiceáil an chumraíocht agus an rochtain ar an bhfoinse, ansin bain triail eile as.",
+    "timeout": "Níor fhreagair an roghnóir in am. Dún é agus bain triail eile as.",
+    "communication": "Cuireadh isteach ar an gcumarsáid leis an roghnóir. Oscail arís é agus bain triail eile as."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Níor fhreagair an ghné roghnach fíordheimhnithe in am. Bain triail eile as.",
+    "unsupportedCommand": "Ní thacaíonn an comhtháthú seo leis an ordú sin.",
+    "optionalGraphAuthenticationFailed": "Níorbh fhéidir an ghné roghnach Microsoft Graph a fhíordheimhniú.",
+    "optionalPersonalAuthenticationFailed": "Níorbh fhéidir an ceann scríbe pearsanta roghnach a fhíordheimhniú."
+  }
+}

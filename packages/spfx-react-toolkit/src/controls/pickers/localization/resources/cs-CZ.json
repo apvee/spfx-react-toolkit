@@ -1,0 +1,83 @@
+{
+  "labels": {
+    "selectOne": "Vybrat položku",
+    "selectMany": "Vybrat položky",
+    "search": "Hledat…",
+    "clearSelection": "Vymazat výběr",
+    "clearSearch": "Vymazat hledání",
+    "options": "Možnosti",
+    "searchOptions": "Hledat možnosti",
+    "selectedOne": "Vybraná položka",
+    "selectedMany": "Vybrané položky",
+    "noSelection": "Žádný výběr",
+    "resolveIds": "Rozpoznat ID",
+    "moreResults": "Další výsledky",
+    "retry": "Zkusit znovu",
+    "namedOptions": "{name}: Možnosti",
+    "namedSearch": "{name}: Hledat",
+    "selectedCount": {
+      "one": "Vybrána {count} položka",
+      "few": "Vybrány {count} položky",
+      "many": "Vybráno {count} položky",
+      "other": "Vybráno {count} položek"
+    },
+    "minimumSearchLength": {
+      "one": "Pro hledání zadejte alespoň {count} znak",
+      "few": "Pro hledání zadejte alespoň {count} znaky",
+      "many": "Pro hledání zadejte alespoň {count} znaku",
+      "other": "Pro hledání zadejte alespoň {count} znaků"
+    }
+  },
+  "status": {
+    "searching": "Hledání…",
+    "loading": "Načítání…",
+    "partialSearch": "Částečné hledání: upřesněte hledání.",
+    "noOtherResults": "Žádné další výsledky pro toto hledání",
+    "noResults": "Žádné výsledky pro toto hledání",
+    "noOptions": "Nejsou k dispozici žádné možnosti.",
+    "moreItemsAvailable": "Jsou k dispozici další položky.",
+    "partialSuggestions": "Částečné návrhy: některé zdroje nejsou dostupné.",
+    "unresolvedValue": "Nerozpoznaná hodnota",
+    "partialHubs": "Částečný seznam center: zužte rozsah nebo použijte režim webu.",
+    "partialSiteCollections": "Částečné hledání kolekcí webů (nejvýše 1000 výsledků): zužte kritéria."
+  },
+  "sections": {
+    "consumer": "Poskytnuté možnosti",
+    "currentSite": "Aktuální web",
+    "hubSite": "Přidružené centrum",
+    "catalog": "Dostupné možnosti",
+    "currentUser": "Vy",
+    "people": "Navrhovaní lidé",
+    "memberOf": "Vaše skupiny"
+  },
+  "metadata": {
+    "documentLibrary": "Knihovna dokumentů",
+    "sharePointList": "Seznam SharePointu",
+    "personalView": "Osobní zobrazení",
+    "publicView": "Veřejné zobrazení",
+    "field": "Pole",
+    "itemDescription": "Položka · ID {id}",
+    "file": "Soubor",
+    "fileWithExtension": "Soubor {extension}",
+    "folder": "Složka",
+    "sharePointGroup": "Skupina SharePointu · SharePoint",
+    "securityGroup": "Skupina zabezpečení · Entra",
+    "distributionList": "Distribuční seznam · Entra",
+    "unvalidatedEmail": "Neověřený e-mail",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Byl dosažen limit výběru.",
+    "selectionLimitExceeded": "Výběr překračuje nastavený limit.",
+    "unresolvedValues": "Některé vybrané hodnoty nebyly rozpoznány.",
+    "outOfScopeValues": "Výběr obsahuje hodnoty mimo nastavený rozsah.",
+    "resolveRequiredUserIds": "Vyhledejte požadovaná ID vybraných uživatelů."
+  },
+  "errors": {
+    "candidateOutOfScope": "Kandidát je mimo nastavený rozsah.",
+    "incompleteCandidateResolution": "Kandidáta se nepodařilo plně rozpoznat.",
+    "resolutionFailed": "Rozpoznání se nezdařilo.",
+    "graphUnavailable": "Klient Microsoft Graph není dostupný."
+  }
+}

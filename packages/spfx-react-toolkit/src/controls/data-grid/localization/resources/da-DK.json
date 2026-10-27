@@ -1,0 +1,25 @@
+{
+  "empty": "Ingen tilgængelige data",
+  "noResults": "Ingen resultater fundet",
+  "noVisibleColumns": "Ingen synlige kolonner",
+  "loading": "Indlæser",
+  "actions": "Handlinger",
+  "moreActions": "Flere handlinger",
+  "yes": "Ja",
+  "no": "Nej",
+  "noTags": "Ingen mærker",
+  "noObservations": "Ingen observationer",
+  "invalidValue": "Ugyldig værdi",
+  "selectAllRows": "Vælg alle rækker",
+  "retry": "Prøv igen",
+  "selectRowTemplate": "Vælg række {rowId}",
+  "sparklineSummaryTemplate": "Første {first}; Sidste {last}; Minimum {minimum}; Maksimum {maximum}; Gennemsnit {average}; Ændring {change}; Ændring i procent {changePercent}",
+  "tagOverflow": {
+    "one": "Vis {count} mærke mere",
+    "other": "Vis {count} mærker mere"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} stemme",
+    "other": "{formattedCount} stemmer"
+  }
+}

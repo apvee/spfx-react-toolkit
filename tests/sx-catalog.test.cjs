@@ -83,7 +83,7 @@ test('theme reference policy catches strings and template fragments while allowi
 function declarations(f, inputs) {
   return Object.fromEntries(f.load('normalize.internal').normalizeSxInputs(inputs)[0].declarations.map(({ property, value }) => [property, value]));
 }
-// Literal oracles from react-theme 9.2.0 / tokens 1.0.0-alpha.22, independent of our factories.
+// Literal oracles from react-theme 9.2.2 / tokens 1.0.0-alpha.24, independent of our factories.
 const typographyOracle = {
   body1: ['Base300', 'Regular'], body1Strong: ['Base300', 'Semibold'], body1Stronger: ['Base300', 'Bold'],
   body2: ['Base400', 'Regular'], caption1: ['Base200', 'Regular'], caption1Strong: ['Base200', 'Semibold'],
@@ -149,8 +149,8 @@ test('preset and foreground overrides resolve property by property in argument o
 });
 test('every catalog color token exists in the installed light dark and high contrast floor', () => {
   const theme = require('@fluentui/react-theme');
-  assert.equal(require('@fluentui/react-theme/package.json').version, '9.2.0');
-  assert.equal(require('@fluentui/tokens/package.json').version, '1.0.0-alpha.22');
+  assert.equal(require('@fluentui/react-theme/package.json').version, '9.2.2');
+  assert.equal(require('@fluentui/tokens/package.json').version, '1.0.0-alpha.24');
   const tokens = [...Object.values(foregroundOracle), ...Object.values(backgroundOracle), ...Object.values(presetOracle).flat(),
     'colorNeutralStroke1', 'colorNeutralStroke2', 'colorBrandStroke1', 'colorNeutralStrokeDisabled', 'colorNeutralStrokeAccessible'];
   for (const name of ['webLightTheme', 'webDarkTheme', 'teamsHighContrastTheme']) {

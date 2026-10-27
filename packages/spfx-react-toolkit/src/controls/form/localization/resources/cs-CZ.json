@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Formulář nelze odeslat. Zkuste to znovu.",
+  "dateInputValidationMessage": "Před odesláním doplňte nebo opravte datum.",
+  "timeInputValidationMessage": "Před odesláním doplňte nebo opravte čas.",
+  "tagPicker": {
+    "noOptions": "Aktuálnímu dotazu neodpovídají žádné možnosti."
+  },
+  "fileInput": {
+    "browseLabel": "Procházet",
+    "clearLabel": "Vymazat"
+  },
+  "arraySection": {
+    "add": "Přidat položku",
+    "empty": "Žádné položky",
+    "itemLabelTemplate": "Položka {position}",
+    "removeTemplate": "Odebrat {label}",
+    "moveUpTemplate": "Přesunout {label} nahoru",
+    "moveDownTemplate": "Přesunout {label} dolů",
+    "addedTemplate": "Přidáno: {label}",
+    "removedTemplate": "Odebráno: {label}",
+    "movedTemplate": "Položka {label} byla přesunuta na pozici {position} z {total}"
+  },
+  "datePicker": {
+    "months": [
+      "leden",
+      "únor",
+      "březen",
+      "duben",
+      "květen",
+      "červen",
+      "červenec",
+      "srpen",
+      "září",
+      "říjen",
+      "listopad",
+      "prosinec"
+    ],
+    "shortMonths": [
+      "led",
+      "úno",
+      "bře",
+      "dub",
+      "kvě",
+      "čvn",
+      "čvc",
+      "srp",
+      "zář",
+      "říj",
+      "lis",
+      "pro"
+    ],
+    "days": [
+      "neděle",
+      "pondělí",
+      "úterý",
+      "středa",
+      "čtvrtek",
+      "pátek",
+      "sobota"
+    ],
+    "shortDays": [
+      "ne",
+      "po",
+      "út",
+      "st",
+      "čt",
+      "pá",
+      "so"
+    ],
+    "goToToday": "Přejít na dnešek",
+    "prevMonthAriaLabel": "Předchozí měsíc",
+    "nextMonthAriaLabel": "Další měsíc",
+    "prevYearAriaLabel": "Předchozí rok",
+    "nextYearAriaLabel": "Další rok",
+    "prevYearRangeAriaLabel": "Předchozí rozsah let",
+    "nextYearRangeAriaLabel": "Další rozsah let",
+    "monthPickerHeaderAriaLabel": "{0}, změnit rok",
+    "yearPickerHeaderAriaLabel": "{0}, změnit měsíc",
+    "closeButtonAriaLabel": "Zavřít",
+    "weekNumberFormatString": "Číslo týdne {0}",
+    "selectedDateFormatString": "Vybrané datum {0}",
+    "todayDateFormatString": "Dnešní datum {0}",
+    "dayMarkedAriaLabel": "označeno"
+  }
+}

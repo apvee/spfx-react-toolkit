@@ -91,6 +91,44 @@ const sxHook = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit
 assertDocumentedSurface(read('docs/api/hooks/react.md'), sxHook);
 assertContainsAll('docs/api/hooks/INDEX.md', ['useSx', 'useStableCallback'], 'React utility hooks');
 
+const controlSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts'));
+assertDocumentedSurface(read('docs/api/controls/formatted-text.md') + '\n' + read('docs/api/controls/relative-time.md') + '\n' + read('docs/api/controls/auto-skeleton.md') + '\n' + read('docs/api/controls/state-message.md') + '\n' + read('docs/api/controls/settings-group.md') + '\n' + read('docs/api/controls/accordion-group.md') + '\n' + read('docs/api/controls/form.md') + '\n' + read('docs/api/controls/data-grid.md') + '\n' + read('docs/api/controls/web-part-shell.md') + '\n' + read('docs/api/controls/stage.md') + '\n' + read('docs/api/controls/pagination.md') + '\n' + read('docs/api/controls/description-list.md') + '\n' + read('docs/api/controls/content-card.md') + '\n' + read('docs/api/controls/preview-card.md') + '\n' + ['sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim', 'pickers', 'file-folder-picker', 'editable-text'].map(name => read(`docs/api/controls/${name}.md`)).join('\n'), controlSurface);
+const formSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/form/index.ts'), { includeTypeMembers: true });
+assertDocumentedSurface(read('docs/api/controls/form.md'), formSurface);
+const gridSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/data-grid/index.ts'), { includeTypeMembers: true });
+assertDocumentedSurface(read('docs/api/controls/data-grid.md'), gridSurface);
+const editableTextSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/editable-text/index.ts'), { includeTypeMembers: true });
+assertDocumentedSurface(read('docs/api/controls/editable-text.md'), editableTextSurface);
+const shellSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/web-part-shell/index.ts'), { includeTypeMembers: true });
+assertDocumentedSurface(read('docs/api/controls/web-part-shell.md'), shellSurface);
+const descriptionListSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/description-list/index.ts'), { includeTypeMembers: true });
+assertDocumentedSurface(read('docs/api/controls/description-list.md'), descriptionListSurface);
+assertContainsAll('docs/api/controls/description-list.md', [
+  'DescriptionListProps.items', 'DescriptionListProps.children', 'DescriptionListProps.layout',
+  'DescriptionListEntry.id', 'DescriptionListEntry.label', 'DescriptionListEntry.value',
+  'DescriptionListItemProps.label', 'DescriptionListItemProps.children',
+], 'DescriptionList content members');
+for (const control of ['content-card', 'preview-card']) {
+  const surface = collectPublicSurface(path.join(root, `packages/spfx-react-toolkit/src/controls/${control}/index.ts`), { includeTypeMembers: true });
+  assertDocumentedSurface(read(`docs/api/controls/${control}.md`), surface);
+}
+// PreviewCard extends the toolkit content props; the collector checks its own members only.
+assertContainsAll('docs/api/controls/preview-card.md', [
+  'ContentCardProps', 'title', 'headingLevel', 'description', 'icon', 'headerActions', 'children', 'footer', 'actions',
+], 'inherited PreviewCard content contract');
+const paginationSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/pagination/index.ts'), { includeTypeMembers: true });
+assertDocumentedSurface(read('docs/api/controls/pagination.md'), paginationSurface);
+const stageSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/stage/index.ts'), { includeTypeMembers: true });
+assertDocumentedSurface(read('docs/api/controls/stage.md'), stageSurface);
+// The collector does not follow StageProps' referenced common/state types.
+// Require those qualified members explicitly without broadening the shared collector.
+assertContainsAll('docs/api/controls/stage.md', [
+  'StageProps.children', 'StageProps.open', 'StageProps.defaultOpen', 'StageProps.onOpenChange',
+  'StageProps.dismissMode', 'StageProps.unmountOnClose', 'StageProps.mountNode',
+], 'referenced StageProps common/state members');
+assertDocumentedSurface(read('docs/api/hooks/environment.md'), collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts')));
+assertContainsAll('docs/api/controls/INDEX.md', controlSurface.map(item => item.name), 'control exports');
+
 const hooksIndex = read('docs/api/hooks/INDEX.md');
 for (const staleHook of ['useSPFxPropertyPane', 'useSPFxPnPSP', 'useSPFxPnPGraph']) {
   assert.ok(!hooksIndex.includes(staleHook), `docs/api/hooks/INDEX.md contains stale hook ${staleHook}`);
@@ -99,6 +137,7 @@ for (const staleHook of ['useSPFxPropertyPane', 'useSPFxPnPSP', 'useSPFxPnPGraph
 const publicDocLinks = [
   './api/helpers/INDEX.md',
   './api/services/INDEX.md',
+  './api/controls/INDEX.md',
 ];
 
 for (const link of publicDocLinks) {
@@ -139,7 +178,7 @@ for (const documentPath of ['README.md', 'packages/spfx-react-toolkit/README.md'
   }
 }
 assert.deepStrictEqual(brokenLinks, [], `Broken public documentation links:\n${brokenLinks.join('\n')}`);
-console.log(`public docs verification passed (${styleSurface.length} qualified style exports with source JSDoc, historical helper/service inventory and relative links)`);
+console.log(`public docs verification passed (${styleSurface.length} qualified style exports with source JSDoc, historical helper/service inventory, WebPartShell/EditableText surface/JSDoc and relative links)`);
 
 const facadeSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/styles/index.ts'));
 assert.deepStrictEqual(facadeSurface.map(item => item.name).sort(),
@@ -151,3 +190,18 @@ assertContainsAll('docs/PACKAGE-IMPORTS.md', [
   'CommonJS', 'sideEffects', '1,023', '512', 'PnP',
 ], 'facade imports and compatibility constraints');
 assert.ok(read('docs/INDEX.md').includes('./PACKAGE-IMPORTS.md'), 'Package import guide must be indexed');
+
+for (const family of ['sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim', 'pickers', 'file-folder-picker']) {
+  assertDocumentedSurface(read(`docs/api/controls/${family}.md`), collectPublicSurface(path.join(root, `packages/spfx-react-toolkit/src/controls/${family}/index.ts`), { includeTypeMembers: true }));
+}
+assertContainsAll('docs/api/controls/sharepoint-permission-trim.md', ['SPFxScopedPermissionsOptions', ...['scope', 'webUrl', 'listId', 'listTitle', 'listPath', 'itemId', 'folderPath'].map(member => `SharePointPermissionTrimProps.${member}`)], 'inherited scoped permission contract');
+assertDocumentedSurface(read('docs/api/hooks/permissions.md'), collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts'), { includeTypeMembers: true }));
+console.log('Verified all three trim family surfaces and scoped permission overload.');
+
+assertContainsAll('docs/api/hooks/permissions.md', ['scope', 'webUrl', 'listId', 'listTitle', 'listPath', 'itemId', 'folderPath'].map(member => `SPFxScopedPermissionsOptions.${member}`), 'scoped hook inherited selectors');
+
+const nativePickerSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/property-pane/pickers/index.ts'));
+assertDocumentedSurface(read('docs/api/property-pane/pickers.md') + '\n' + read('docs/api/controls/pickers.md'), nativePickerSurface);
+
+const nativeFileFolderSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/property-pane/file-folder-picker/index.ts'));
+assertDocumentedSurface(read('docs/api/property-pane/file-folder-picker.md') + '\n' + read('docs/api/controls/file-folder-picker.md'), nativeFileFolderSurface);

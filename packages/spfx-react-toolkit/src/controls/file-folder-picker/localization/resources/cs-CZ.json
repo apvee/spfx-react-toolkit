@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Procházet soubory…",
+    "folders": "Procházet složky…",
+    "all": "Procházet soubory a složky…"
+  },
+  "placeholders": {
+    "files": "Vybrat soubory…",
+    "folders": "Vybrat složky…",
+    "all": "Vybrat soubory nebo složky…"
+  },
+  "labels": {
+    "selection": "Výběr souborů a složek",
+    "file": "Soubor",
+    "folder": "Složka",
+    "unresolvedItem": "Nerozpoznaná položka",
+    "removeItem": "Odebrat {name}"
+  },
+  "validation": {
+    "invalidReferences": "Neplatné odkazy na soubory nebo složky.",
+    "controlledModeChanged": "Řízený režim nelze změnit, dokud je ovládací prvek připojený.",
+    "incompatibleItems": "Výběr obsahuje položky nekompatibilní s nastaveným typem, kategorií nebo příponami. Odeberte je nebo nahraďte.",
+    "invalidPolicy": "Neplatná konfigurace typu, kategorie, přípon nebo limitu výběru.",
+    "selectionLimitExceeded": "Výběr překračuje nastavený limit. Odeberte nadbytečné položky."
+  },
+  "errors": {
+    "configuration": "Neplatná konfigurace výběru. Zkontrolujte zdroj, typy, kategorii a limity; použijte předvolbu bez starších možností.",
+    "auth-resource": "Výběr požádal o prostředek ověřování, který konfigurace nepovoluje.",
+    "auth-type": "Výběr požádal o typ ověřování, který konfigurace nepodporuje.",
+    "auth-challenge": "Výběr vyžaduje dodatečnou kontrolu ověřování, která není podporována.",
+    "auth-provider": "Nepodařilo se získat token SharePointu. Zkuste to znovu; pokud problém přetrvává, zkontrolujte přístup a stávající oprávnění.",
+    "selection-identity": "Nepodařilo se ověřit identitu vybrané položky. Znovu otevřete výběr a zkuste to znovu.",
+    "selection-scope": "Vybraná položka je mimo povolený web, knihovnu nebo složku.",
+    "selection-policy": "Výběr neodpovídá povolenému typu, kategorii, příponám nebo počtu položek.",
+    "selection-unavailable": "Vybraná položka není dostupná nebo k ní nelze získat přístup.",
+    "selection-invalid": "Nepodařilo se ověřit výběr. Nebyly přidány žádné nové položky.",
+    "onedrive-unavailable": "OneDrive aktuálního uživatele není dostupný nebo k němu nelze získat přístup. Zkontrolujte, zda jednotka existuje, a zkuste to znovu.",
+    "opening": "Výběr se nepodařilo otevřít. Zkontrolujte konfiguraci a přístup ke zdroji a zkuste to znovu.",
+    "timeout": "Výběr neodpověděl včas. Zavřete ho a zkuste to znovu.",
+    "communication": "Komunikace s výběrem byla přerušena. Znovu ho otevřete a zkuste to znovu."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Volitelná funkce ověřování neodpověděla včas. Zkuste to znovu.",
+    "unsupportedCommand": "Tato integrace nepodporuje tento příkaz.",
+    "optionalGraphAuthenticationFailed": "Nepodařilo se ověřit volitelnou funkci Microsoft Graph.",
+    "optionalPersonalAuthenticationFailed": "Nepodařilo se ověřit volitelné osobní umístění."
+  }
+}

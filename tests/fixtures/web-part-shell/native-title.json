@@ -1,0 +1,5 @@
+{
+  "html": "<h2 style=\"line-height:1.4;\">Titolo <i><span class=\"fontColorBlue\"><strong><u>News</u></strong></span></i></h2>",
+  "plain": "Titolo News",
+  "canonicalHTML": "<h2 class=\"wps-line-14\">Titolo <strong><em><u><span class=\"wps-color-brand\">News</span></u></em></strong></h2>"
+}

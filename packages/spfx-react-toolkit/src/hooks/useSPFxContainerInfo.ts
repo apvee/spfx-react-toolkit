@@ -8,43 +8,37 @@ import type { ContainerSize } from '../core/types';
 
 /**
  * Return type for useSPFxContainerInfo hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const container: SPFxContainerInfo = useSPFxContainerInfo();
+ * console.log(container.size?.width);
+ * ```
  */
 export interface SPFxContainerInfo {
-  /** Container DOM element */
+  /**
+   * Provider container DOM element, or undefined when the host supplies none.
+   */
   readonly element: HTMLElement | undefined;
   
-  /** Container size (width/height in pixels) */
+  /**
+   * Observed content-box dimensions in CSS pixels; undefined before observation or without an element/ResizeObserver.
+   */
   readonly size: ContainerSize | undefined;
 }
 
 /**
- * Hook to access container element and its size
- * 
- * Automatically tracks container size changes using ResizeObserver
- * Updates in real-time when container is resized
- * 
- * Useful for:
- * - Responsive layouts
- * - Dynamic content sizing
- * - Breakpoint calculations
- * - Canvas/chart dimensions
- * 
- * @returns Container element and size
- * 
- * @see {@link useSPFxContainerSize} for responsive breakpoint categories (small/medium/large)
- * 
+ * Reads the provider container element and observes its content-box size using the element document's ResizeObserver. Size arrives asynchronously and is undefined before observation, when the element is absent, or when its document lacks ResizeObserver. Observation disconnects on element replacement/unmount; no polyfill is installed. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns Container element and optional content-box width/height in CSS pixels.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
- *   const { element, size } = useSPFxContainerInfo();
- *   
- *   return (
- *     <div>
- *       {size && (
- *         <p>Container: {size.width}px × {size.height}px</p>
- *       )}
- *     </div>
- *   );
+ * function ContainerLabel() {
+ *   const { size } = useSPFxContainerInfo();
+ *   return <span>{size ? `${size.width} × ${size.height}` : 'Size unavailable'}</span>;
  * }
  * ```
  */

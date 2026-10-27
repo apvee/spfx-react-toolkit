@@ -191,7 +191,7 @@ async function main() {
     }
   }
   cssGrowth();
-  const baselineMetadata = JSON.parse(fs.readFileSync(path.join(root, '.docs/maintenance/evidence/use-sx/baseline.json')));
+  const baselineMetadata = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/sx-bundle/baseline.json')));
   report.baselineShip = shipCapture(path.join(root, 'artifacts/sx-baseline/dist'), baselineMetadata.files.filter(f => f.currentBuild).map(f => f.name));
   report.baselineShip.status = baselineMetadata.commands;
   if (process.env.SX_MEASURE_SKIP_SHIP !== '1') {

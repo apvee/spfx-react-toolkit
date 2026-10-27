@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es2020", "module": "esnext", "moduleResolution": "node", "jsx": "react",
+    "lib": ["es2020", "dom"], "strict": true, "skipLibCheck": true, "noEmit": true,
+    "baseUrl": "../../..",
+    "paths": {
+      "@apvee/spfx-react-toolkit/controls/file-folder-picker": ["packages/spfx-react-toolkit/lib/controls/file-folder-picker/index"],
+      "@apvee/spfx-react-toolkit/property-pane/file-folder-picker": ["packages/spfx-react-toolkit/lib/property-pane/file-folder-picker/index"]
+    }
+  },
+  "include": ["*.ts", "*.tsx"]
+}

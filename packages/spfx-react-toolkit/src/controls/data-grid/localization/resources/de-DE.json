@@ -1,0 +1,25 @@
+{
+  "empty": "Keine Daten verfügbar",
+  "noResults": "Keine Ergebnisse gefunden",
+  "noVisibleColumns": "Keine sichtbaren Spalten",
+  "loading": "Wird geladen",
+  "actions": "Aktionen",
+  "moreActions": "Weitere Aktionen",
+  "yes": "Ja",
+  "no": "Nein",
+  "noTags": "Keine Tags",
+  "noObservations": "Keine Beobachtungen",
+  "invalidValue": "Ungültiger Wert",
+  "selectAllRows": "Alle Zeilen auswählen",
+  "retry": "Erneut versuchen",
+  "selectRowTemplate": "Zeile {rowId} auswählen",
+  "sparklineSummaryTemplate": "Erster Wert {first}; Letzter Wert {last}; Minimum {minimum}; Maximum {maximum}; Durchschnitt {average}; Änderung {change}; Prozentuale Änderung {changePercent}",
+  "tagOverflow": {
+    "one": "{count} weiteres Tag anzeigen",
+    "other": "{count} weitere Tags anzeigen"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} Stimme",
+    "other": "{formattedCount} Stimmen"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Methu cyflwyno'r ffurflen. Rhowch gynnig arall arni.",
+  "dateInputValidationMessage": "Cwblhewch neu gywirwch y dyddiad cyn cyflwyno.",
+  "timeInputValidationMessage": "Cwblhewch neu gywirwch yr amser cyn cyflwyno.",
+  "tagPicker": {
+    "noOptions": "Nid oes unrhyw opsiynau'n cyfateb i'r ymholiad cyfredol."
+  },
+  "fileInput": {
+    "browseLabel": "Pori",
+    "clearLabel": "Clirio"
+  },
+  "arraySection": {
+    "add": "Ychwanegu eitem",
+    "empty": "Dim eitemau",
+    "itemLabelTemplate": "Eitem {position}",
+    "removeTemplate": "Tynnu {label}",
+    "moveUpTemplate": "Symud {label} i fyny",
+    "moveDownTemplate": "Symud {label} i lawr",
+    "addedTemplate": "Ychwanegwyd {label}",
+    "removedTemplate": "Tynnwyd {label}",
+    "movedTemplate": "Symudwyd {label} i safle {position} o {total}"
+  },
+  "datePicker": {
+    "months": [
+      "Ionawr",
+      "Chwefror",
+      "Mawrth",
+      "Ebrill",
+      "Mai",
+      "Mehefin",
+      "Gorffennaf",
+      "Awst",
+      "Medi",
+      "Hydref",
+      "Tachwedd",
+      "Rhagfyr"
+    ],
+    "shortMonths": [
+      "Ion",
+      "Chw",
+      "Maw",
+      "Ebr",
+      "Mai",
+      "Meh",
+      "Gor",
+      "Awst",
+      "Medi",
+      "Hyd",
+      "Tach",
+      "Rhag"
+    ],
+    "days": [
+      "Dydd Sul",
+      "Dydd Llun",
+      "Dydd Mawrth",
+      "Dydd Mercher",
+      "Dydd Iau",
+      "Dydd Gwener",
+      "Dydd Sadwrn"
+    ],
+    "shortDays": [
+      "Sul",
+      "Llun",
+      "Maw",
+      "Mer",
+      "Iau",
+      "Gwe",
+      "Sad"
+    ],
+    "goToToday": "Mynd i heddiw",
+    "prevMonthAriaLabel": "Mis blaenorol",
+    "nextMonthAriaLabel": "Mis nesaf",
+    "prevYearAriaLabel": "Blwyddyn flaenorol",
+    "nextYearAriaLabel": "Blwyddyn nesaf",
+    "prevYearRangeAriaLabel": "Ystod flynyddoedd flaenorol",
+    "nextYearRangeAriaLabel": "Ystod flynyddoedd nesaf",
+    "monthPickerHeaderAriaLabel": "{0}, newid blwyddyn",
+    "yearPickerHeaderAriaLabel": "{0}, newid mis",
+    "closeButtonAriaLabel": "Cau",
+    "weekNumberFormatString": "Rhif wythnos {0}",
+    "selectedDateFormatString": "Dyddiad a ddewiswyd {0}",
+    "todayDateFormatString": "Dyddiad heddiw {0}",
+    "dayMarkedAriaLabel": "wedi'i farcio"
+  }
+}

@@ -345,7 +345,3 @@ Container size changes are observed and available via `useSPFxContainerSize`.
 - [Types](./types.md) - Core type definitions
 - [Context Hooks](../hooks/context.md) - Hooks for accessing context
 - [Properties Hooks](../hooks/properties.md) - Property management hooks
-
----
-
-*Generated from JSDoc comments. Last updated: January 31, 2026*

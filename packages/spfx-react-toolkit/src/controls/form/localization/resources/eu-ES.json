@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Ezin izan da inprimakia bidali. Saiatu berriro.",
+  "dateInputValidationMessage": "Osatu edo zuzendu data bidali aurretik.",
+  "timeInputValidationMessage": "Osatu edo zuzendu ordua bidali aurretik.",
+  "tagPicker": {
+    "noOptions": "Ez dago uneko bilaketarekin bat datorren aukerarik."
+  },
+  "fileInput": {
+    "browseLabel": "Arakatu",
+    "clearLabel": "Garbitu"
+  },
+  "arraySection": {
+    "add": "Gehitu elementua",
+    "empty": "Ez dago elementurik",
+    "itemLabelTemplate": "{position}. elementua",
+    "removeTemplate": "Kendu {label}",
+    "moveUpTemplate": "Eraman {label} gora",
+    "moveDownTemplate": "Eraman {label} behera",
+    "addedTemplate": "Gehituta: {label}",
+    "removedTemplate": "Kenduta: {label}",
+    "movedTemplate": "{label} {position}. kokapenera mugitu da; guztira {total} daude"
+  },
+  "datePicker": {
+    "months": [
+      "urtarrila",
+      "otsaila",
+      "martxoa",
+      "apirila",
+      "maiatza",
+      "ekaina",
+      "uztaila",
+      "abuztua",
+      "iraila",
+      "urria",
+      "azaroa",
+      "abendua"
+    ],
+    "shortMonths": [
+      "urt.",
+      "ots.",
+      "mar.",
+      "api.",
+      "mai.",
+      "eka.",
+      "uzt.",
+      "abu.",
+      "ira.",
+      "urr.",
+      "aza.",
+      "abe."
+    ],
+    "days": [
+      "igandea",
+      "astelehena",
+      "asteartea",
+      "asteazkena",
+      "osteguna",
+      "ostirala",
+      "larunbata"
+    ],
+    "shortDays": [
+      "ig.",
+      "al.",
+      "ar.",
+      "az.",
+      "og.",
+      "or.",
+      "lr."
+    ],
+    "goToToday": "Joan gaurko egunera",
+    "prevMonthAriaLabel": "Aurreko hilabetea",
+    "nextMonthAriaLabel": "Hurrengo hilabetea",
+    "prevYearAriaLabel": "Aurreko urtea",
+    "nextYearAriaLabel": "Hurrengo urtea",
+    "prevYearRangeAriaLabel": "Aurreko urte-tartea",
+    "nextYearRangeAriaLabel": "Hurrengo urte-tartea",
+    "monthPickerHeaderAriaLabel": "{0}, aldatu urtea",
+    "yearPickerHeaderAriaLabel": "{0}, aldatu hilabetea",
+    "closeButtonAriaLabel": "Itxi",
+    "weekNumberFormatString": "{0}. astea",
+    "selectedDateFormatString": "Hautatutako data {0}",
+    "todayDateFormatString": "Gaurko data {0}",
+    "dayMarkedAriaLabel": "markatuta"
+  }
+}

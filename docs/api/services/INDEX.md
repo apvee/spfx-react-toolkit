@@ -26,6 +26,7 @@ Hooks remain the recommended React API. Use services when you need the same core
 | `createSPFxTenantPropertyService` | `SPHttpClient` |
 | `createSPFxTenantKeyValueStoreService` | `SPHttpClient` |
 | `createSPFxSiteKeyValueStoreService` | `SPHttpClient` |
+| `createSPFxConfigurationStoreService` | `SPHttpClient`, required tenant/site/layered options |
 | `createSPFxOneDriveAppDataService` | `MSGraphClientV3` |
 | `createSPFxUserPhotoService` | `MSGraphClientV3` |
 | `createSPFxApiPermissionPrecheckService` | `SPFxAadTokenProviderLike` |
@@ -148,7 +149,7 @@ Returned `SPFxPnPContextService` methods:
 
 | Method | Description |
 |--------|-------------|
-| `resolveSiteUrl(siteUrl?)` | Resolves undefined to the current web URL, server-relative URLs to the current origin, and trims trailing slash |
+| `resolveSiteUrl(siteUrl?)` | Resolves omitted/empty input to the current web unchanged; supplied server-relative URLs use the current origin, and supplied URLs lose one trailing slash |
 | `createSPFI(siteUrl?, config?)` | Creates a configured PnPjs `SPFI` instance |
 | `getConfigKey(config?)` | Returns a JSON string key for memoizing config |
 
@@ -173,7 +174,7 @@ Returned methods:
 | `invoke(fn)` | Runs `fn(sp)` and returns its result |
 | `batch(fn)` | Creates a batched `SPFI`, executes the batch, and returns the result of `fn` |
 
-The caller owns the provided `SPFI` instance and its configuration.
+The `sp` property is the exact supplied client; the caller owns its configuration. The factory makes no request. `invoke` forwards callback failures. `batch` calls the callback to queue requests, executes the batch, then awaits its result. Queue work before awaiting its request results: requests queued after an `await` may miss execution. Batch execution failures reject, and successful writes are not rolled back.
 
 ## PnP List Service
 
@@ -286,7 +287,33 @@ Returned methods:
 | `search(query, options?)` | Runs SharePoint Search from a text query or query builder |
 | `suggest(queryText)` | Returns query suggestions |
 
-Default options can set `pageSize`, `selectProperties`, and `refiners`. Per-request options can set `pageSize`, `startRow`, and refinement filters.
+Default options can set `pageSize`, `selectProperties`, `refiners`, and `refinerOperator`. Per-request options can set `pageSize`, `startRow`, refinement filters, and a `refinerOperator` override.
+
+`refinementFilters` maps managed-property names to arrays of server-returned string refinement tokens. Use each entry's `token`, including any FQL quote delimiters, rather than its display `value`. The service handles tokens generically:
+
+| Input | Emitted operand |
+| --- | --- |
+| Quoted string or quoted hex token | Unchanged, without `equals(...)` |
+| Unquoted hex token (`ǂǂ...`) | Quoted once |
+| Numeric or ISO date scalar | Unchanged |
+| Native FQL expression (`range(...)`, `datetime(...)`, etc.) | Unchanged; SharePoint validates it |
+| Legacy unquoted text | `equals("value")`, escaping quotes and backslashes |
+
+`refinerOperator: 'and' | 'or'` defaults to `'and'`. It controls values within each property; different properties always combine with AND. OR groups a property's operands as `Property:or(token1,token2)`, including numeric/date intervals. A request override takes precedence over the service default. Empty arrays contribute no restriction. For person facets, the sample requests `DisplayAuthor`; `Author` can still be selected as result metadata. Property names are preserved without automatic remapping.
+
+```ts
+const service = createSPFxPnPSearchService(sp, {
+  refiners: 'FileType,DisplayAuthor,Size,Write', refinerOperator: 'or'
+});
+const response = await service.search('*');
+const fileType = response.refiners.find(refiner => refiner.name === 'FileType');
+const pdf = fileType?.entries.find(entry => entry.value === 'pdf');
+if (pdf?.token) {
+  await service.search('*', {
+    refinementFilters: new Map([['FileType', [pdf.token]]])
+  });
+}
+```
 
 `SPFxPnPSearchResponse<T>` contains `results`, `totalResults`, and `refiners`.
 
@@ -403,15 +430,26 @@ Returned methods:
 
 | Method | Description |
 |--------|-------------|
-| `ensureListReady(catalogUrl)` | Ensures the hidden `TenantKeyValueStore` list and required fields exist |
-| `get<T>(key, catalogUrl)` | Reads one item by key |
-| `list(catalogUrl)` | Lists stored key-value items ordered by key |
-| `save<T>(key, value, catalogUrl, description?)` | Creates or updates a key |
-| `remove(key, catalogUrl)` | Deletes a key when it exists |
+| `ensureListReady(catalogUrl)` | Explicitly provisions/repairs the hidden list, validates field types and indexed unique Title keys |
+| `get<T>(key, catalogUrl)` | Reads one unique key without provisioning; confirmed list/key absence returns undefined |
+| `list(catalogUrl)` | Reads all pages in Title order, validating continuation links and rejecting partial failures |
+| `save<T>(key, value, catalogUrl, description?)` | Ensures strict setup, then creates or conditionally updates using the observed ETag |
+| `remove(key, catalogUrl)` | Deletes with an observed ETag without provisioning; confirmed absence is a no-op |
 
 `SPFxTenantKeyValueStoreServiceItem<T>` contains `key`, `value`, `description`, and `id`.
 
-Provisioning is guarded per catalog URL so concurrent calls share the same in-flight setup promise. Values are serialized with `serializeTenantValue` and read with `deserializeTenantValue`. The [legacy tenant serialization limits](../helpers/INDEX.md#deserializetenantvalue) apply; the generic return type does not validate stored values. Actual catalog/list permissions determine whether requests succeed.
+Provisioning is shared per normalized catalog URL within each service instance. Schema/uniqueness failures reject and are retryable; data is never removed to repair existing duplicates. Separate instances recover list/field/item creation races through bounded validated rereads. Reads and deletion never repair schema; only confirmed list/key absence is empty. Failed probes, incompatible schema, duplicate keys and malformed/failed pages reject.
+
+Tenant writes preserve JSON-like strings using JSON quoting; bigint reads as exact decimal text, and Date remains ISO text. Existing raw values retain JSON-first interpretation and need no migration. Both list stores use this encoding for new writes; public legacy helpers remain unchanged and previously stored values retain their interpretation. See [tenant serialization and compatibility](../hooks/storage.md#serialization-and-saved-data-compatibility) for the complete format and limitations. T does not validate runtime data.
+
+Updates/deletion require an observed ETag (HTTP 412 conflicts reject without blind retry). This protects the service's snapshot-to-mutation interval, not a consumer's earlier get-to-save interval. Omitting description preserves it; an empty string clears it. Actual catalog/list permissions authorize requests. Construction performs no HTTP and the non-React service does not discover the catalog:
+
+```ts
+const store = createSPFxTenantKeyValueStoreService(context.spHttpClient);
+await store.save('my-app:version', '123', catalogUrl);
+const version = await store.get<unknown>('my-app:version', catalogUrl);
+if (typeof version?.value === 'string') console.log(version.value);
+```
 
 ## Site Key-Value Store Service
 
@@ -471,9 +509,9 @@ Provisioning uses a generic list (`BaseTemplate: 100`, `Hidden: true`, `NoCrawl:
 
 Existing-list write capability requires effective Add, Edit, and Delete Items grants on that list, including its unique permissions. An absent list additionally requires Manage Lists on the root web. This indicator does not authorize operations: SharePoint still enforces actual grants, schema-management rights, and item restrictions.
 
-Key equality follows SharePoint's field comparison and unique-column semantics, including case-insensitive matching; reads preserve stored Title casing. See [Microsoft's unique-column comparison rules](https://learn.microsoft.com/en-us/previous-versions/office/developer/sharepoint-2010/ee536168%28v%3Doffice.14%29). Updates use wildcard ETags and last-writer-wins semantics. Omitting the update description preserves it; an explicit empty string clears it. Creation recovery is bounded and requires a verified competing resource; 401/403 never recover. An item collision can attempt one MERGE only after confirming a unique schema and exact key. A delete 404 succeeds only after verifying absence.
+Key equality follows SharePoint's field comparison and unique-column semantics, including case-insensitive matching; reads preserve stored Title casing. See [Microsoft's unique-column comparison rules](https://learn.microsoft.com/en-us/previous-versions/office/developer/sharepoint-2010/ee536168%28v%3Doffice.14%29). Updates and deletion use observed ETags with a single-item snapshot/header fallback when collection metadata omits them. Missing/invalid ETags and HTTP 412 reject without wildcard overwrite or blind retry. Preconditions cover the service snapshot-to-mutation interval, not a consumer's earlier get-to-save interval. Omitting the update description preserves it; an explicit empty string clears it. Creation recovery is bounded and requires a verified competing resource; 401/403 never recover. An item collision can attempt one conditional MERGE only after confirming a unique schema and exact key; once validation succeeds its actual mutation error is propagated. A snapshot/deletion 404 succeeds only after verifying absence; a recreated key is never deleted.
 
-The [legacy tenant serialization limits](../helpers/INDEX.md#deserializetenantvalue) also apply here. Generic types do not validate runtime values. JSON-like strings can deserialize as numbers/booleans, dates remain strings, and bigint does not gain a lossless round trip. SharePoint's nullable empty Note values read as empty strings; a saved `null` remains the serialized string `'null'` and reads as `null`.
+New writes use the same [safe text/JSON encoding as the tenant store](../hooks/storage.md#serialization-and-saved-data-compatibility). Empty and JSON-like text is quoted; bigint reads as exact decimal string and Date as ISO string. Serialization errors reject before provisioning. Existing raw values retain legacy JSON-first interpretation, with no data migration: historical numeric/boolean strings can still read as primitives. The site-specific legacy mapping is preserved: SharePoint's nullable empty Note values read as empty strings; stored text `'null'` reads as legacy `null`. Generic T does not validate runtime data or reconstruct lost historical precision. Public legacy helper behavior is unchanged.
 
 The React [site store hook](../hooks/storage.md#usespfxsitekeyvaluestore) captures read failures in state and returns fallbacks; the standalone service rejects failed reads and writes. Only `save` and `ensureListReady` perform setup; `get`, `list`, `remove` and permission checks do not provision.
 
@@ -503,6 +541,8 @@ Returned methods:
 
 `read` returns `{ data: undefined, isNotFound: true }` for recognized not-found Graph errors. It throws JSON parse errors for invalid stored content and rethrows non-not-found Graph errors.
 
+Reads first obtain complete Graph metadata, without projecting away the download annotation, and immediately fetch the preauthenticated HTTPS `@microsoft.graph.downloadUrl` with `credentials: 'omit'`, without Graph authorization headers. This follows [Microsoft's browser download guidance](https://learn.microsoft.com/en-us/graph/api/driveitem-get-content?view=graph-rest-1.0#downloading-files-in-javascript-apps) and avoids the authenticated `/content` redirect/CORS failure. Missing or invalid download metadata and unsuccessful HTTP downloads are errors. Native `fetch` is required. Writes retain the Graph `/content` endpoint.
+
 ## User Photo Service
 
 ### `createSPFxUserPhotoService`
@@ -526,6 +566,57 @@ Returned method:
 | `getPhotoBlob(options?)` | Gets a profile photo blob from Microsoft Graph |
 
 `SPFxUserPhotoServiceOptions` accepts `userId`, `email`, and `size`. If no user identifier is supplied, the endpoint targets `/me`. The default size is `240x240`.
+
+## Configuration Store Service
+
+`createSPFxConfigurationStoreService(client, options)` composes the existing tenant/site list services without React or a new persistence format. Import from `@apvee/spfx-react-toolkit/services` or root. Construction makes no request. Required options are discriminated by mode:
+
+```ts
+type SPFxConfigurationStoreServiceOptions =
+  | { mode: 'tenant'; discoveryWebUrl: string; siteCollectionUrl?: never }
+  | { mode: 'site'; siteCollectionUrl: string; discoveryWebUrl?: never }
+  | { mode: 'layered'; discoveryWebUrl: string; siteCollectionUrl: string };
+```
+
+`discoveryWebUrl` is the current web from which to discover the tenant catalog, not the catalog URL itself. `siteCollectionUrl` must be the collection root. Required URLs are copied, trimmed and stripped of trailing slashes; empty/invalid mode dependencies throw synchronously. There are no per-operation URL overrides. Only enabled scopes may be read/listed/mutated.
+
+Canonical public types are exported by this service module and re-exported by the hook module:
+
+| Type | Contract |
+| --- | --- |
+| `SPFxConfigurationStoreScope` | Physical `tenant` or `site` destination. |
+| `SPFxConfigurationStoreMode` | Required `tenant`, `site` or `layered` read policy and scope restriction. |
+| `SPFxConfigurationStoreOptions` | Hook input with required `mode`; the provider supplies URLs/client. |
+| `SPFxConfigurationStoreTarget` | Required `scope` for one removal; no default or inferred destination. |
+| `SPFxConfigurationStoreSaveOptions` | Inherits required target `scope`; optional `description` preserves destination metadata when omitted and clears it when empty. |
+| `SPFxConfigurationStoreItem<T = unknown>` | Readonly `key`, `value: T`, `description: string \| undefined`, source-list `id` and physical `source`. T performs no runtime validation. |
+| `SPFxConfigurationStoreService` | The four Promise-based operations documented below; failures reject. |
+
+```ts
+const store = createSPFxConfigurationStoreService(context.spHttpClient, {
+  mode: 'layered',
+  discoveryWebUrl: context.pageContext.web.absoluteUrl,
+  siteCollectionUrl: context.pageContext.site.absoluteUrl,
+});
+await store.save('my-app:pageSize', 20, { scope: 'tenant' });
+await store.save('my-app:pageSize', 50, { scope: 'site', description: 'Local override' });
+const item = await store.get<number>('my-app:pageSize'); // value 50, source site
+const siteRows = await store.listScope('site'); // physical inventory, not effective merge
+await store.remove('my-app:pageSize', { scope: 'site' });
+```
+
+| Method | Observable behavior |
+| --- | --- |
+| `get<T>(key)` | Whole winning record plus `source`, or undefined for confirmed absence. Layered reads site first, then tenant only on absence. Site errors never enable fallback. |
+| `listScope(scope)` | Complete physical inventory with provenance. Preserves stored casing, order and legacy duplicates; page failures reject without partial data. |
+| `save<T>(key,value,{scope,description?})` | Explicit single destination; whole-value replacement. Only this operation may provision the chosen list. |
+| `remove(key,{scope})` | Explicit single destination, no provisioning. Site removal reveals tenant data on the next layered get. |
+
+All operation failures reject unchanged. Invalid scope/key/description arguments fail before I/O. Stored keys are forwarded without normalization, and the underlying server determines equality. No effective merged list, JSON-property merge, permission indicator, automatic read, global cache or multi-store transaction is provided. Item fields `key`, `value`, `description`, `id` and `source` describe one physical record; IDs are not globally unique. False, zero, empty text and legacy null values remain present overrides.
+
+Tenant discovery is lazy, uses a frozen scalar discovery-web URL and shares its in-flight Promise within the instance. Successful URLs use the existing catalog cache; a failed discovery can retry. Site operations, including a layered site hit, require no tenant discovery/access. Existing serialization, destination-local omitted/empty descriptions, schema enforcement and observed ETag conflicts are inherited unchanged. Serialization can fail after tenant discovery but before setup/item writes. See the [hook contract](../hooks/storage.md#usespfxconfigurationstore) for all types, examples, errors and compatibility limits.
+
+[View source](../../../packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts)
 
 ## Boundaries
 

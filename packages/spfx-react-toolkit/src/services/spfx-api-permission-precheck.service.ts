@@ -9,27 +9,92 @@ import {
   type SPFxApiPermissionRequirement
 } from '../helpers/spfx-api-permission-precheck.helpers';
 
+/**
+ * Minimal token acquisition contract accepted by permission diagnostics. Tokens are used locally and are not included in diagnostic results.
+ *
+ * @example
+ * ```ts
+ * const provider: SPFxAadTokenProviderLike = spfxTokenProvider;
+ * ```
+ */
 export interface SPFxAadTokenProviderLike {
+  /**
+   * Acquires an access token; acquisition failures reject.
+   * @param resourceEndpoint - Resource URL or application identifier.
+   * @param options - Cache preference and optional claims passed to the provider.
+   * @returns The access token.
+   */
   getToken(
     resourceEndpoint: string,
-    options?: { readonly useCachedToken?: boolean; readonly claims?: string }
+    options?: {
+      /** Whether the provider may reuse a cached token; omitted follows its native default. */
+      readonly useCachedToken?: boolean;
+      /** Optional claims challenge passed to the native provider. */
+      readonly claims?: string
+    }
   ): Promise<string>;
 }
 
+/**
+ * Controls token acquisition and delegated-scope evaluation.
+ *
+ * @example
+ * ```ts
+ * const options: SPFxApiPermissionPrecheckServiceOptions = { useCachedToken: false, timeoutMs: 10000 };
+ * ```
+ */
 export interface SPFxApiPermissionPrecheckServiceOptions {
+  /**
+   * Allows cached tokens unless false; defaults to true.
+   */
   readonly useCachedToken?: boolean;
+  /**
+   * Checks expected audiences unless false; defaults to true.
+   */
   readonly validateAudience?: boolean;
+  /**
+   * Acquisition timeout in milliseconds; defaults to 15000. Timing out does not cancel the provider request.
+   */
   readonly timeoutMs?: number;
+  /**
+   * Acquires each resource group in sequence when true; otherwise acquires groups concurrently.
+   */
   readonly sequentialResourceAcquisition?: boolean;
 }
 
+/**
+ * Non-React delegated-scope diagnostics using one token acquisition per resource endpoint. Invalid requirements and acquisition failures become diagnostic results; this does not grant permissions.
+ *
+ * @example
+ * ```ts
+ * const service: SPFxApiPermissionPrecheckService = createSPFxApiPermissionPrecheckService(provider);
+ * const results = await service.check({ graph: ['User.Read'] });
+ * ```
+ */
 export interface SPFxApiPermissionPrecheckService {
+  /**
+   * Checks configured scopes without returning raw tokens.
+   * @param config - Graph and custom API requirements.
+   * @param options - Optional acquisition and audience checks.
+   * @returns Per-scope diagnostics, including invalid requirements and token failures.
+   */
   check(
     config: SPFxApiPermissionPrecheckConfig,
     options?: SPFxApiPermissionPrecheckServiceOptions
   ): Promise<readonly SPFxApiPermissionCheckResult[]>;
 }
 
+/**
+ * Creates permission diagnostics without React state or provider context.
+ * @param tokenProvider - Initialized token provider owned by the caller.
+ * @returns A service that evaluates delegated scopes from token payloads.
+ *
+ * @example
+ * ```ts
+ * const service = createSPFxApiPermissionPrecheckService(provider);
+ * const results = await service.check({ graph: ['User.Read'] });
+ * ```
+ */
 export function createSPFxApiPermissionPrecheckService(
   tokenProvider: SPFxAadTokenProviderLike
 ): SPFxApiPermissionPrecheckService {

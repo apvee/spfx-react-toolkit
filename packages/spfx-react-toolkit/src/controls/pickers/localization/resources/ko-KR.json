@@ -1,0 +1,77 @@
+{
+  "labels": {
+    "selectOne": "항목 선택",
+    "selectMany": "여러 항목 선택",
+    "search": "검색…",
+    "clearSelection": "선택 지우기",
+    "clearSearch": "검색 지우기",
+    "options": "옵션",
+    "searchOptions": "옵션 검색",
+    "selectedOne": "선택한 항목",
+    "selectedMany": "선택한 항목",
+    "noSelection": "선택 항목 없음",
+    "resolveIds": "ID 확인",
+    "moreResults": "추가 결과",
+    "retry": "다시 시도",
+    "namedOptions": "{name}: 옵션",
+    "namedSearch": "{name}: 검색",
+    "selectedCount": {
+      "other": "항목 {count}개 선택됨"
+    },
+    "minimumSearchLength": {
+      "other": "검색하려면 최소 {count}자를 입력하세요"
+    }
+  },
+  "status": {
+    "searching": "검색 중…",
+    "loading": "불러오는 중…",
+    "partialSearch": "검색 결과가 일부만 표시됩니다. 검색 범위를 좁히세요.",
+    "noOtherResults": "이 검색에 대한 추가 결과가 없습니다",
+    "noResults": "이 검색에 대한 결과가 없습니다",
+    "noOptions": "사용 가능한 옵션이 없습니다.",
+    "moreItemsAvailable": "더 많은 항목이 있습니다.",
+    "partialSuggestions": "제안이 일부만 표시됩니다. 일부 원본을 사용할 수 없습니다.",
+    "unresolvedValue": "확인되지 않은 값",
+    "partialHubs": "허브 목록이 일부만 표시됩니다. 범위를 좁히거나 사이트 모드를 사용하세요.",
+    "partialSiteCollections": "사이트 모음 검색 결과가 일부만 표시됩니다(최대 1000개). 조건을 좁히세요."
+  },
+  "sections": {
+    "consumer": "제공된 옵션",
+    "currentSite": "현재 사이트",
+    "hubSite": "연결된 허브",
+    "catalog": "사용 가능한 옵션",
+    "currentUser": "나",
+    "people": "추천 사용자",
+    "memberOf": "내 그룹"
+  },
+  "metadata": {
+    "documentLibrary": "문서 라이브러리",
+    "sharePointList": "SharePoint 목록",
+    "personalView": "개인 보기",
+    "publicView": "공용 보기",
+    "field": "필드",
+    "itemDescription": "항목 · ID {id}",
+    "file": "파일",
+    "fileWithExtension": "{extension} 파일",
+    "folder": "폴더",
+    "sharePointGroup": "SharePoint 그룹 · SharePoint",
+    "securityGroup": "보안 그룹 · Entra",
+    "distributionList": "메일 그룹 · Entra",
+    "unvalidatedEmail": "확인되지 않은 이메일",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "선택 한도에 도달했습니다.",
+    "selectionLimitExceeded": "선택한 항목 수가 설정된 한도를 초과합니다.",
+    "unresolvedValues": "선택한 값 중 일부가 확인되지 않았습니다.",
+    "outOfScopeValues": "선택 항목에 설정된 범위 밖의 값이 포함되어 있습니다.",
+    "resolveRequiredUserIds": "선택한 사용자의 필수 ID를 확인하세요."
+  },
+  "errors": {
+    "candidateOutOfScope": "후보가 설정된 범위 밖에 있습니다.",
+    "incompleteCandidateResolution": "후보를 완전히 확인할 수 없습니다.",
+    "resolutionFailed": "확인에 실패했습니다.",
+    "graphUnavailable": "Microsoft Graph 클라이언트를 사용할 수 없습니다."
+  }
+}

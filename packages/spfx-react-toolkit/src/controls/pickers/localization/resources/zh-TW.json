@@ -1,0 +1,77 @@
+{
+  "labels": {
+    "selectOne": "選取一個項目",
+    "selectMany": "選取項目",
+    "search": "搜尋…",
+    "clearSelection": "清除選取項目",
+    "clearSearch": "清除搜尋",
+    "options": "選項",
+    "searchOptions": "搜尋選項",
+    "selectedOne": "所選項目",
+    "selectedMany": "所選項目",
+    "noSelection": "未選取",
+    "resolveIds": "解析 ID",
+    "moreResults": "更多結果",
+    "retry": "重試",
+    "namedOptions": "{name}: 選項",
+    "namedSearch": "{name}: 搜尋",
+    "selectedCount": {
+      "other": "已選取 {count} 個項目"
+    },
+    "minimumSearchLength": {
+      "other": "輸入至少 {count} 個字元以搜尋"
+    }
+  },
+  "status": {
+    "searching": "正在搜尋…",
+    "loading": "載入中…",
+    "partialSearch": "搜尋不完整：請縮小搜尋範圍。",
+    "noOtherResults": "此搜尋沒有其他結果",
+    "noResults": "此搜尋沒有結果",
+    "noOptions": "沒有可用選項。",
+    "moreItemsAvailable": "還有更多可用項目。",
+    "partialSuggestions": "建議不完整：某些來源無法使用。",
+    "unresolvedValue": "未解析的值",
+    "partialHubs": "中樞清單不完整：請縮小範圍或使用網站模式。",
+    "partialSiteCollections": "網站集合搜尋不完整（最多 1000 筆結果）：請縮小條件範圍。"
+  },
+  "sections": {
+    "consumer": "提供的選項",
+    "currentSite": "目前的網站",
+    "hubSite": "關聯的中樞",
+    "catalog": "可用選項",
+    "currentUser": "您",
+    "people": "建議的人員",
+    "memberOf": "您的群組"
+  },
+  "metadata": {
+    "documentLibrary": "文件庫",
+    "sharePointList": "SharePoint 清單",
+    "personalView": "個人檢視",
+    "publicView": "公用檢視",
+    "field": "欄位",
+    "itemDescription": "項目 · ID {id}",
+    "file": "檔案",
+    "fileWithExtension": "{extension} 檔案",
+    "folder": "資料夾",
+    "sharePointGroup": "SharePoint 群組 · SharePoint",
+    "securityGroup": "安全性群組 · Entra",
+    "distributionList": "通訊群組清單 · Entra",
+    "unvalidatedEmail": "未驗證的電子郵件",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "已達到選取數量上限。",
+    "selectionLimitExceeded": "選取數量超過設定的上限。",
+    "unresolvedValues": "某些所選值尚未解析。",
+    "outOfScopeValues": "選取內容包含超出設定範圍的值。",
+    "resolveRequiredUserIds": "請解析所選使用者所需的 ID。"
+  },
+  "errors": {
+    "candidateOutOfScope": "候選項目超出設定的範圍。",
+    "incompleteCandidateResolution": "無法完整解析候選項目。",
+    "resolutionFailed": "解析失敗。",
+    "graphUnavailable": "Microsoft Graph 用戶端無法使用。"
+  }
+}

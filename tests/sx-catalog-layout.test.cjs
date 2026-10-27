@@ -104,10 +104,10 @@ test('dimension facades use literal lengths and reject invalid pixels', () => {
   }
 });
 
-test('spacing references exist at the exact react-theme 9.2.0 dependency floor', () => {
+test('spacing references exist at the exact react-theme 9.2.2 dependency floor', () => {
   const themePackage = require('@fluentui/react-theme/package.json');
-  assert.equal(themePackage.version, '9.2.0');
-  assert.equal(themePackage.dependencies['@fluentui/tokens'], '1.0.0-alpha.22');
+  assert.equal(themePackage.version, '9.2.2');
+  assert.equal(themePackage.dependencies['@fluentui/tokens'], '1.0.0-alpha.24');
   const { tokens } = require('@fluentui/react-theme');
   for (const [, verticalToken, horizontalToken] of scales) {
     for (const reference of [verticalToken, horizontalToken]) {

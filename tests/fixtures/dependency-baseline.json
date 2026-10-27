@@ -1,0 +1,45 @@
+{
+  "provenance": {
+    "date": "2026-10-09",
+    "registry": "https://registry.npmjs.org",
+    "source": "Approved DataGrid plan and fresh npm view metadata; runtime acceptance tested independently."
+  },
+  "fixed": {
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "typescript": "5.3.3",
+    "@types/react": "17.0.45",
+    "@types/react-dom": "17.0.17",
+    "react-hook-form": "7.87.0",
+    "@hookform/resolvers": "5.9.1",
+    "@standard-schema/spec": "1.1.0",
+    "@fluentui/react-datepicker-compat": "0.6.16",
+    "@fluentui/react-timepicker-compat": "0.4.21",
+    "@fluentui/react-calendar-compat": "0.3.11",
+    "@fluentui/react-icons": "2.0.312"
+  },
+  "previous": {
+    "@fluentui/react-components": "9.72.3",
+    "@fluentui/react-shared-contexts": "9.25.2",
+    "@fluentui/react-utilities": "9.25.1",
+    "@fluentui/react-theme": "9.2.0",
+    "@griffel/react": "1.5.30",
+    "@griffel/core": "1.19.2",
+    "@fluentui/react-migration-v8-v9": "9.9.12"
+  },
+  "transitive": {
+    "tabster": "8.8.0",
+    "keyborg": "2.14.1"
+  },
+  "transitiveReason": "Tabster 8.8.0 satisfies Fluent react-tabster 9.26.18's ^8.8.0 range and shares Keyborg 2.14.1. Tabster 8.8.1 introduces Keyborg 3, colliding with Fluent's Keyborg 2 window registry and emitting disposal errors; preserve the tested lock resolution without overriding published ranges.",
+  "shared": {
+    "@fluentui/react-components": "9.74.9",
+    "@fluentui/react-charts": "9.3.27",
+    "@fluentui/react-shared-contexts": "9.26.4",
+    "@fluentui/react-utilities": "9.26.7",
+    "@fluentui/react-theme": "9.2.2",
+    "@griffel/react": "1.7.8",
+    "@griffel/core": "1.21.4",
+    "@fluentui/react-migration-v8-v9": "9.10.20"
+  }
+}

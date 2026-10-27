@@ -71,5 +71,6 @@ export * from './useSPFxUserInfo';
 export * from './useSPFxUserPhoto';
 export * from './useSPFxContext';
 export * from './useSPFxSiteKeyValueStore';
+export * from './useSPFxConfigurationStore';
 export * from './useStableCallback';
 export * from './useSx';

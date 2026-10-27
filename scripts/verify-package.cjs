@@ -6,10 +6,11 @@ const path = require('node:path');
 const {execFileSync, spawnSync} = require('node:child_process');
 const ts = require('typescript');
 const { collectPublicSurface } = require('./public-surface.helpers.cjs');
-const { assertEntrypointContract, verifyConsumerResolution } = require('./package-entrypoints.cjs');
+const { assertEntrypointContract, verifyConsumerResolution, getLocalizationPackageContract } = require('./package-entrypoints.cjs');
 const {createRequire} = require('node:module');
 const {measureTreeShaking, runInstalledGates, verifyContractMutations} = require('./bundle-contract.internal.cjs');
 const {verifyProductionRuntime} = require('./verify-production-runtime.cjs');
+const {verifyLocalizationPackage} = require('./verify-localization-package.cjs');
 const root = path.resolve(__dirname, '..');
 const library = path.join(root, 'packages/spfx-react-toolkit');
 const app = path.join(root, 'apps/spfx-react-toolkit-test');
@@ -46,7 +47,9 @@ function run(args, cwd, { prepareMetadata = false } = {}) {
   const output = stripAnsi(stdout + '\n' + stderr);
   const failureMarkers = output.match(/The build failed[^\n]*|Exiting with exit code:\s*[1-9]\d*[^\n]*|Error - [^\n]*/g) ?? [];
   const warnings = output.split('\n').filter(line => /\bwarn(?:ing)?\b|Browserslist:|\[baseline-browser-mapping\]/i.test(line));
-  const label = `${String(commandResults.length + 1).padStart(2, '0')}-${args.join('-').replace(/[^a-zA-Z0-9-]/g, '')}`;
+  // The shared-peer command can exceed the filesystem's filename limit. The
+  // sequence keeps truncated names unique; commands.json retains every argument.
+  const label = `${String(commandResults.length + 1).padStart(2, '0')}-${args.join('-').replace(/[^a-zA-Z0-9-]/g, '').slice(0, 160)}`;
   fs.writeFileSync(path.join(evidence, label + '.stdout.log'), stdout);
   fs.writeFileSync(path.join(evidence, label + '.stderr.log'), stderr);
   commandResults.push({ args, command, commandArgs, cwd, prepareMetadata, metadataAdvisoryRouting: prepareMetadata, status: result.status, signal: result.signal, durationMs:Date.now()-commandStart,
@@ -56,6 +59,19 @@ function run(args, cwd, { prepareMetadata = false } = {}) {
   assert.equal(result.status, 0, `npm ${args.join(' ')} failed; evidence: ${evidence}`);
   assert.deepEqual(failureMarkers, [], `npm ${args.join(' ')} reported subprocess failure despite wrapper status ${result.status}; evidence: ${evidence}`);
   return stdout;
+}
+
+function resolvePackageManifest(from, name) {
+  // Some compat/icon peers intentionally do not export package.json. Locate
+  // metadata from their real runtime entry without bypassing runtime exports.
+  let directory = path.dirname(from.resolve(name));
+  while (true) {
+    const file = path.join(directory, 'package.json');
+    if (fs.existsSync(file) && JSON.parse(fs.readFileSync(file, 'utf8')).name === name) return file;
+    const parent = path.dirname(directory);
+    assert.notEqual(parent, directory, `Missing package metadata: ${name}`);
+    directory = parent;
+  }
 }
 
 function assertPackedImports(packedPaths) {
@@ -83,14 +99,14 @@ function assertPackedImports(packedPaths) {
 
 function assertEmittedStyleJSDoc(packedPaths) {
   const styleEntry = path.join(library, 'src/helpers/styles/index.ts');
-  const surface = [...collectPublicSurface(styleEntry), ...collectPublicSurface(path.join(library, 'src/hooks/useSx.ts'))];
+  const surface = [...collectPublicSurface(path.join(library, 'src/controls/index.ts')), ...collectPublicSurface(styleEntry), ...collectPublicSurface(path.join(library, 'src/hooks/useSx.ts'))];
   function findDeclaration(source, name) {
     return source.statements.find(node => node.name?.text === name ||
       (ts.isVariableStatement(node) && node.declarationList.declarations.some(declaration => declaration.name.text === name)));
   }
   const normalizeDocs = (node, source) => (node.jsDoc ?? []).map(doc => doc.getText(source).replace(/\s+/g, ' ').trim()).join(' ');
   for (const declaration of surface) {
-    const relative = path.relative(path.join(library, 'src'), declaration.filePath).replace(/\.ts$/, '.d.ts');
+    const relative = path.relative(path.join(library, 'src'), declaration.filePath).replace(/\.tsx?$/, '.d.ts');
     const packedFile = 'lib/' + relative.split(path.sep).join('/');
     assert.ok(packedPaths.has(packedFile), `Missing documented style declaration: ${packedFile}`);
     const emittedSource = ts.createSourceFile(packedFile, fs.readFileSync(path.join(library, packedFile), 'utf8'), ts.ScriptTarget.Latest, true);
@@ -118,16 +134,130 @@ try {
   run(['run','build:library'],root);
   const packed = JSON.parse(execFileSync('npm',['pack','--json','--pack-destination',temp],{cwd:library,encoding:'utf8'}))[0];
   assert.equal(packed.name,'@apvee/spfx-react-toolkit');
+  const localization = getLocalizationPackageContract();
   for (const file of packed.files) {
-    assert.ok(/^(package\.json|README\.md|LICENSE|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles)\/.+))$/.test(file.path), `Unexpected package file: ${file.path}`);
+    assert.ok(localization.extraFiles.includes(file.path) || /^(package\.json|README\.md|LICENSE|THIRD-PARTY-NOTICES\.md|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls|property-pane|localization)\/.+))$/.test(file.path), `Unexpected package file: ${file.path}`);
   }
   const packedPaths = new Set(packed.files.map(file => file.path));
+  for (const file of [...localization.extraFiles, ...localization.assetSources.keys()]) assert.ok(packedPaths.has(file), `Missing localization package file: ${file}`);
+  assert.ok(packedPaths.has('THIRD-PARTY-NOTICES.md'), 'Artwork attribution must ship');
   assertEntrypointContract(JSON.parse(fs.readFileSync(path.join(library, 'package.json'), 'utf8')), [...packedPaths]);
   fs.writeFileSync(path.join(evidence, 'pack.json'), JSON.stringify(packed, null, 2));
   assertPackedImports(packedPaths);
   const documentedDeclarations = assertEmittedStyleJSDoc(packedPaths);
+  for (const module of ['hooks/useSPFxCrossSitePermissions', 'services/spfx-permission-target.types', 'controls/sharepoint-permission-trim/sharepoint-permission-trim', 'controls/sharepoint-permission-trim/sharepoint-permission-trim.types', 'controls/sharepoint-group-trim/sharepoint-group-trim', 'controls/sharepoint-group-trim/sharepoint-group-trim.types', 'controls/entra-group-trim/entra-group-trim', 'controls/entra-group-trim/entra-group-trim.types']) {
+    const declaration = `lib/${module}.d.ts`;
+    assert.ok(packedPaths.has(declaration), `Missing trim declaration: ${declaration}`);
+    assert.match(fs.readFileSync(path.join(library, declaration), 'utf8'), /@example/, `Missing emitted trim JSDoc: ${declaration}`);
+  }
   // Both the public entry points and their persistence/client dependencies must ship.
   for (const module of [
+    'controls/sharepoint-permission-trim/index',
+    'controls/sharepoint-permission-trim/sharepoint-permission-trim',
+    'controls/sharepoint-permission-trim/sharepoint-permission-trim.types',
+    'controls/sharepoint-group-trim/index',
+    'controls/sharepoint-group-trim/sharepoint-group-trim',
+    'controls/sharepoint-group-trim/sharepoint-group-trim.types',
+    'controls/entra-group-trim/index',
+    'controls/entra-group-trim/entra-group-trim',
+    'controls/entra-group-trim/entra-group-trim.types',
+    'controls/access-trim-children.internal',
+    'hooks/useAccessRequest.internal',
+    'hooks/useSPFxCrossSitePermissions',
+    'services/spfx-permission-target.types',
+    'services/spfx-scoped-permissions.internal',
+    'services/spfx-sharepoint-groups.internal',
+    'services/spfx-entra-groups.internal',
+    'helpers/spfx-list-target.helpers.internal',
+    'controls/content-slot.internal',
+    'controls/content-slot.types.internal',
+    'controls/content-card/index',
+    'controls/content-card/content-card',
+    'controls/content-card/content-card.types',
+    'controls/preview-card/index',
+    'controls/preview-card/preview-card',
+    'controls/preview-card/preview-card.types',
+    'controls/cards/card-frame.internal',
+    'controls/cards/card-image.internal',
+    'controls/cards/card-text.internal',
+    'controls/cards/card.styles.internal',
+    'controls/description-list/index',
+    'controls/description-list/description-list',
+    'controls/description-list/description-list.types',
+    'controls/description-list/description-list.styles.internal',
+    'controls/pagination/index',
+    'controls/pagination/pagination',
+    'controls/pagination/pagination.types',
+    'controls/pagination/pagination.internal',
+    'controls/pagination/pagination.styles.internal',
+    'controls/stage/index',
+    'controls/stage/stage',
+    'controls/stage/stage.types',
+    'controls/stage/stage-controller.internal',
+    'controls/stage/stage-context.internal',
+    'controls/stage/stage-header',
+    'controls/stage/stage-body',
+    'controls/stage/stage-footer',
+    'controls/stage/stage.styles.internal',
+    'controls/stage/stage-dialog.internal',
+    'controls/stage/stage-drawer.internal',
+    'controls/stage/stage-drawer-trigger.internal',
+    'controls/stage/stage-popover.internal',
+    'controls/editable-text/index',
+    'controls/editable-text/editable-text',
+    'controls/editable-text/editable-text.types',
+    'controls/editable-text/editable-text-editor.internal',
+    'controls/editable-text/editable-text-extensions.internal',
+    'controls/web-part-shell/index',
+    'controls/web-part-shell/web-part-shell',
+    'controls/web-part-shell/web-part-shell.types',
+    'controls/web-part-shell/web-part-shell-metadata',
+    'controls/web-part-shell/web-part-shell-runtime.internal',
+    'controls/web-part-shell/title/web-part-title.internal',
+    'controls/form/index',
+    'controls/form/form',
+    'controls/form/create-form',
+    'controls/form/form.types',
+    'controls/form/form-control.types',
+    'controls/form/form-value.types',
+    'controls/form/form-composition.types',
+    'controls/group-header.internal',
+    'controls/settings-group/index',
+    'controls/settings-group/settings-group',
+    'controls/settings-group/settings-group.types',
+    'controls/settings-group/settings-group.styles.internal',
+    'controls/accordion-group/index',
+    'controls/accordion-group/accordion-group',
+    'controls/accordion-group/accordion-group.types',
+    'controls/accordion-group/accordion-group.styles.internal',
+    'controls/state-message/index',
+    'controls/state-message/state-message',
+    'controls/state-message/state-message.types',
+    'controls/state-message/state-message.styles.internal',
+    'controls/state-message/state-message-theme.internal',
+    'controls/state-message/illustrations/illustration-registry.internal',
+    'controls/state-message/illustrations/default-illustration',
+    'controls/state-message/illustrations/empty-illustration',
+    'controls/state-message/illustrations/error-illustration',
+    'controls/state-message/illustrations/thanks-illustration',
+    'controls/state-message/illustrations/hello-illustration',
+    'controls/auto-skeleton/index',
+    'controls/auto-skeleton/auto-skeleton',
+    'controls/auto-skeleton/auto-skeleton.types',
+    'controls/auto-skeleton/auto-skeleton.styles.internal',
+    'controls/auto-skeleton/auto-skeleton-geometry.internal',
+    'controls/auto-skeleton/use-auto-skeleton.internal',
+    'controls/relative-time/index',
+    'controls/relative-time/relative-time',
+    'controls/relative-time/relative-time.types',
+    'controls/relative-time/relative-time.internal',
+    'helpers/spfx-time-zone.internal',
+    'controls/index',
+    'controls/formatted-text/index',
+    'controls/formatted-text/formatted-text',
+    'controls/formatted-text/formatted-text.types',
+    'controls/formatted-text/formatted-text.styles.internal',
+    'controls/formatted-text/formatted-text-content.internal',
     'hooks/useSx',
     'helpers/styles/index',
     'helpers/styles/types',
@@ -165,10 +295,21 @@ try {
   }
   const consumer = path.join(temp,'consumer'); fs.mkdirSync(consumer);
   for (const name of ['src','config','sharepoint','teams','gulpfile.js','tsconfig.json','.eslintrc.js']) fs.cpSync(path.join(app,name),path.join(consumer,name),{recursive:true});
+  // The copied sample's eight toolkit mappings target the workspace layout.
+  // This is a newly created consumer: let its real postinstall register paths
+  // relative to its own installation while retaining all consumer resources.
+  const consumerConfigFile = path.join(consumer, 'config/config.json');
+  const consumerConfig = JSON.parse(fs.readFileSync(consumerConfigFile, 'utf8'));
+  for (const id of localization.nativeIds) delete consumerConfig.localizedResources[id];
+  fs.writeFileSync(consumerConfigFile, JSON.stringify(consumerConfig, undefined, 2) + '\n');
   const manifest = JSON.parse(fs.readFileSync(path.join(app,'package.json'),'utf8'));
   manifest.name='isolated-spfx-toolkit-consumer';
   assert.equal(manifest.workspaces, undefined, 'External consumer cannot contain workspaces');
   manifest.dependencies['@apvee/spfx-react-toolkit']='file:'+path.join(temp,packed.filename);
+  const libraryManifest = JSON.parse(fs.readFileSync(path.join(library, 'package.json'), 'utf8'));
+  for (const peer of [...Object.keys(require('../tests/fixtures/dependency-baseline.json').shared), 'react-hook-form', '@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-icons']) {
+    assert.equal(manifest.dependencies[peer], libraryManifest.devDependencies[peer], `Independent consumer must explicitly provision tested shared peer: ${peer}`);
+  }
   fs.writeFileSync(path.join(consumer,'package.json'),JSON.stringify(manifest,null,2));
   // Seed locked transitive versions while npm replaces workspace identities with the tarball.
   const lock=JSON.parse(fs.readFileSync(path.join(root,'package-lock.json'),'utf8'));
@@ -469,6 +610,14 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   for (const mode of ['public', 'deep']) {
     fs.copyFileSync(path.join(root, `tests/fixtures/sx-package-${mode}.ts`), path.join(consumer, `compatibility/sx-package-${mode}.ts`));
   }
+  fs.copyFileSync(path.join(root, 'tests/fixtures/access-trim-package-consumer.tsx'), path.join(consumer, 'compatibility/access-trim-package-consumer.tsx'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/configuration-store-package-consumer.ts'), path.join(consumer, 'compatibility/configuration-store-package-consumer.ts'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/form-package-consumer.tsx'), path.join(consumer, 'compatibility/form-package-consumer.tsx'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/data-grid-package-consumer.tsx'), path.join(consumer, 'compatibility/data-grid-package-consumer.tsx'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/editable-text-package-consumer.tsx'), path.join(consumer, 'compatibility/editable-text-package-consumer.tsx'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/web-part-shell-package-consumer.tsx'), path.join(consumer, 'compatibility/web-part-shell-package-consumer.tsx'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/content-card-package-consumer.tsx'), path.join(consumer, 'compatibility/content-card-package-consumer.tsx'));
+  fs.copyFileSync(path.join(root, 'tests/fixtures/description-list-package-consumer.tsx'), path.join(consumer, 'compatibility/description-list-package-consumer.tsx'));
   run(['install','--no-audit','--no-fund'],consumer);
   assert.equal(fs.lstatSync(path.join(consumer,'node_modules/@apvee/spfx-react-toolkit')).isSymbolicLink(),false);
   const installedPackage = JSON.parse(fs.readFileSync(path.join(consumer, 'node_modules/@apvee/spfx-react-toolkit/package.json'), 'utf8'));
@@ -478,11 +627,12 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   const hostRequire = createRequire(path.join(consumer, 'package.json'));
   const libraryRequire = createRequire(path.join(consumer, 'node_modules/@apvee/spfx-react-toolkit/package.json'));
   const sharedPackages = ['@griffel/core', '@griffel/react', '@fluentui/react-shared-contexts',
-    '@fluentui/react-migration-v8-v9', '@fluentui/react-theme', '@fluentui/react-utilities'];
+    '@fluentui/react-migration-v8-v9', '@fluentui/react-theme', '@fluentui/react-utilities', '@fluentui/react-components', '@fluentui/react-charts', 'react-hook-form',
+    '@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-calendar-compat', '@fluentui/react-icons'];
   const sharedPaths = {};
   for (const name of sharedPackages) {
-    const hostPath = fs.realpathSync(hostRequire.resolve(name + '/package.json'));
-    assert.equal(hostPath, fs.realpathSync(libraryRequire.resolve(name + '/package.json')), `${name} must be shared with the consumer`);
+    const hostPath = fs.realpathSync(resolvePackageManifest(hostRequire, name));
+    assert.equal(hostPath, fs.realpathSync(resolvePackageManifest(libraryRequire, name)), `${name} must be shared with the consumer`);
     assert.equal(fs.realpathSync(hostRequire.resolve(name)), fs.realpathSync(libraryRequire.resolve(name)), `${name} must share its runtime entry`);
     assert.ok(hostPath.startsWith(fs.realpathSync(path.join(consumer, 'node_modules')) + path.sep), `${name} must reside inside the isolated consumer`);
     const installedManifest = JSON.parse(fs.readFileSync(hostPath, 'utf8'));
@@ -505,6 +655,31 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
   const providerRequire = createRequire(hostRequire.resolve('@fluentui/react-provider/package.json'));
   assert.equal(fs.realpathSync(providerRequire.resolve('@fluentui/react-shared-contexts')),
     fs.realpathSync(hostRequire.resolve('@fluentui/react-shared-contexts')), 'FluentProvider must use the shared contexts');
+  // Compat dependencies and the official schema resolver must reach the same
+  // host runtimes even when resolved from their own package location.
+  const nestedRuntimePaths = {};
+  for (const owner of ['@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-calendar-compat', '@fluentui/react-charts', '@fluentui/chart-utilities', '@fluentui/react-table', '@hookform/resolvers']) {
+    const from = createRequire(hostRequire.resolve(owner));
+    const peers = owner === '@hookform/resolvers' ? ['react', 'react-hook-form']
+      : ['react', 'react-dom', '@griffel/core', '@griffel/react', '@fluentui/react-shared-contexts', '@fluentui/react-utilities', '@fluentui/react-theme'];
+    nestedRuntimePaths[owner] = {};
+    for (const peer of peers) {
+      const actual = fs.realpathSync(from.resolve(peer));
+      assert.equal(actual, fs.realpathSync(hostRequire.resolve(peer)), `${owner} must share host ${peer}`);
+      nestedRuntimePaths[owner][peer] = actual;
+    }
+  }
+  // Fluent's navigation hook and Tabster must operate on the same keyboard
+  // registry. Tabster 8.8.1 introduces a second Keyborg major; the tested lock
+  // selects compatible 8.8.0 within Fluent's published ^8.8.0 requirement.
+  const tabsterRequire = createRequire(hostRequire.resolve('tabster'));
+  const fluentTabsterRequire = createRequire(hostRequire.resolve('@fluentui/react-tabster'));
+  assert.equal(fs.realpathSync(tabsterRequire.resolve('keyborg')),
+    fs.realpathSync(fluentTabsterRequire.resolve('keyborg')), 'Tabster must share Fluent Keyborg registry');
+  assert.equal(libraryRequire('react-hook-form').useForm, hostRequire('react-hook-form').useForm, 'RHF implementation must share host identity');
+  const datePickerRequire = createRequire(hostRequire.resolve('@fluentui/react-datepicker-compat'));
+  assert.equal(fs.realpathSync(datePickerRequire.resolve('@fluentui/react-calendar-compat')), fs.realpathSync(hostRequire.resolve('@fluentui/react-calendar-compat')), 'DatePicker must share host calendar');
+  fs.writeFileSync(path.join(evidence, 'form-runtime-identity.json'), JSON.stringify(nestedRuntimePaths, null, 2));
   const packageTree = run(['ls', '--parseable', '--all', ...sharedPackages], consumer);
   const installedPaths = new Map(sharedPackages.map(name => [name, new Set()]));
   for (const installedPath of packageTree.trim().split('\n')) {
@@ -528,13 +703,19 @@ export function useCallbackContracts(): { text: string; pending: Promise<{ id: n
     { args: ['run', 'bundle:ship'], prepareMetadata: true },
     { args: ['run', 'typecheck'] },
     { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node',
-      'compatibility/sx-package-public.ts', 'compatibility/sx-package-deep.ts'] },
+      'compatibility/sx-package-public.ts', 'compatibility/sx-package-deep.ts', 'compatibility/configuration-store-package-consumer.ts'] },
+    { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/form-package-consumer.tsx'] },
+    { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/data-grid-package-consumer.tsx'] },
+    { args: ['exec', '--', 'tsc', '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', 'compatibility/description-list-package-consumer.tsx', 'compatibility/content-card-package-consumer.tsx', 'compatibility/access-trim-package-consumer.tsx'] },
     { args: ['run', 'package:solution'], prepareMetadata: true },
   ];
   const productionReports = await runInstalledGates({consumerRoot:fs.realpathSync(consumer),outputDir:evidence,failures:consumerFailures,
     bundle:options=>measureTreeShaking({...options,mode:'enforce',contract:JSON.parse(fs.readFileSync(path.join(root,'tests/fixtures/tree-shaking/contract.json')))}),
     runtime:verifyProductionRuntime,mutations:verifyContractMutations,
-    independent:async()=>{for (const step of consumerSteps) {
+    independent:async()=>{
+      try { await verifyLocalizationPackage({consumerRoot:fs.realpathSync(consumer),outputDir:path.join(evidence,'localization')}); }
+      catch (error) { consumerFailures.push({ args: ['localization-spfx-matrix'], message: error.message }); }
+      for (const step of consumerSteps) {
       try { run(step.args, consumer, step); }
       catch (error) { consumerFailures.push({ args: step.args, message: error.message }); }
     }}

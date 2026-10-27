@@ -6,10 +6,12 @@
 
 ## Table of Contents
 
+- [Controls](#controls)
 - [Core](#core)
   - [Providers](#providers)
   - [Types](#types)
 - [Hooks](#hooks)
+  - [React Utilities](#react-utilities)
   - [Context & Metadata](#context--metadata)
   - [Properties & Display](#properties--display)
   - [HTTP Clients](#http-clients)
@@ -22,8 +24,37 @@
   - [Performance & Diagnostics](#performance--diagnostics)
 - [Services](#services)
 - [Helpers](#helpers)
+- [Access trims](#access-trims)
+- [SharePoint pickers](#sharepoint-pickers)
+- [Localization](./LOCALIZATION.md)
 
 ---
+
+## Controls
+
+- [Stage](./api/controls/stage.md) — explicit Dialog/Drawer/Popover with compound Header, Body and Footer, controlled requests and form composition.
+
+- [WebPartShell](./api/controls/web-part-shell.md) — actual web part provider composition, adaptive surface and inline rich title with searchable plain metadata.
+
+- [Form and createForm](./api/controls/form.md) — typed React Hook Form binding, validation, reset, settings field composition and structured sections.
+
+- [SettingsGroup](./api/controls/settings-group.md) — caller-owned preferences and automatic Form field names/hints in a Fluent Card.
+- [AccordionGroup](./api/controls/accordion-group.md) — optional details with controlled/uncontrolled disclosure and retained state.
+
+- [StateMessage](./api/controls/state-message.md) — section states, artwork and actions.
+
+| Component / types | Description | Documentation |
+| --- | --- | --- |
+| `AutoSkeleton`, `AutoSkeletonProps` | Mounted HTML geometry, loading overlays and persistent child state | [AutoSkeleton](./api/controls/auto-skeleton.md) |
+| `RelativeTime`, `RelativeTimeProps` | Localized relative instants, full-date descriptions and clock modes | [RelativeTime](./api/controls/relative-time.md) |
+| `FormattedText`, `FormattedTextProps`, `FormattedTextVariant`, `FormattedTextSemanticElement` | Native text elements, typography, inline Markdown and overflow | [Controls](./api/controls/INDEX.md), [FormattedText](./api/controls/formatted-text.md) |
+| `EditableText` | Safe HTML read rendering and lazy, policy-bounded editing | [EditableText](./api/controls/editable-text.md) |
+| `DataGrid`, `createDataGrid` | Typed columns, controlled selection/sort intent and native cells | [DataGrid](./api/controls/data-grid.md) |
+| `Pagination` | Controlled pages, cursors and load-more requests | [Pagination](./api/controls/pagination.md) |
+| `DescriptionList` | Data or compound term/definition composition | [DescriptionList](./api/controls/description-list.md) |
+| `ContentCard`, `PreviewCard` | Native Fluent cards with content slots and optional preview media | [ContentCard](./api/controls/content-card.md), [PreviewCard](./api/controls/preview-card.md) |
+
+The [controls index](./api/controls/INDEX.md) lists the complete public control and type surface. Native Property Pane factories have [dedicated imports and guides](#sharepoint-pickers).
 
 ## Core
 
@@ -141,7 +172,7 @@ Detect environment and platform capabilities.
 |------|---------|-------------|
 | [`useSPFxEnvironmentInfo`](./api/hooks/environment.md#usespfxenvironmentinfo) | `SPFxEnvironmentInfo` | Environment type detection |
 | [`useSPFxTeams`](./api/hooks/environment.md#usespfxteams) | `SPFxTeamsInfo` | Microsoft Teams context |
-| [`useSPFxLocaleInfo`](./api/hooks/environment.md#usespfxlocaleinfo) | `SPFxLocaleInfo` | Locale and timezone |
+| [`useSPFxLocaleInfo`](./api/hooks/environment.md#usespfxlocaleinfo) | `SPFxLocaleInfo` | Locale, raw timezone and optional representative IANA zone |
 | [`useSPFxPageType`](./api/hooks/environment.md#usespfxpagetype) | `SPFxPageTypeInfo` | Page type detection |
 
 ### Storage
@@ -156,6 +187,7 @@ Browser storage is instance-scoped; cloud stores use their documented user, coll
 | [`useSPFxTenantProperty`](./api/hooks/storage.md#usespfxtenantproperty) | `SPFxTenantPropertyResult<T>` | Tenant properties (read-only) |
 | [`useSPFxTenantKeyValueStore`](./api/hooks/storage.md#usespfxtenantkeyvaluestore) | `SPFxTenantKeyValueStoreResult` | Tenant-level key-value store |
 | [`useSPFxSiteKeyValueStore`](./api/hooks/storage.md#usespfxsitekeyvaluestore) | `SPFxSiteKeyValueStoreResult` | Collection root-web key-value store shared by subsites |
+| [`useSPFxConfigurationStore`](./api/hooks/storage.md#usespfxconfigurationstore) | `SPFxConfigurationStoreResult` | Tenant defaults, site overrides and explicitly scoped mutations |
 
 ### Permissions
 
@@ -187,6 +219,7 @@ Public non-React service factories for composing SPFx, PnPjs, SharePoint REST, a
 | PnPjs services | Context, invoke/batch, list CRUD, and search | [services/INDEX.md](./api/services/INDEX.md) |
 | Tenant services | App catalog discovery, tenant properties, tenant key-value store | [services/INDEX.md](./api/services/INDEX.md) |
 | Site collection service | `createSPFxSiteKeyValueStoreService`: root-web storage shared by subsites | [services/INDEX.md](./api/services/INDEX.md#createspfxsitekeyvaluestoreservice) |
+| Configuration service | `createSPFxConfigurationStoreService`: tenant defaults, site overrides and scoped mutations | [services/INDEX.md](./api/services/INDEX.md#configuration-store-service) |
 | Graph services | OneDrive app data and user photos | [services/INDEX.md](./api/services/INDEX.md) |
 | API permission precheck service | Token-provider-based delegated scope checks with remediation entries for `webApiPermissionRequests` | [services/INDEX.md](./api/services/INDEX.md) |
 
@@ -194,7 +227,7 @@ Public non-React service factories for composing SPFx, PnPjs, SharePoint REST, a
 
 ## Helpers
 
-Public pure helper functions for SPFx context mapping, permission checks, API permission precheck normalization and summarization, storage keys, tenant value serialization, Graph paths, and theme conversion.
+Public non-React helper functions for SPFx context mapping, permission checks, API permission precheck normalization and summarization, storage keys, tenant value serialization, Graph paths, and theme conversion.
 
 | Module | Description | Documentation |
 |--------|-------------|---------------|
@@ -210,6 +243,7 @@ Public pure helper functions for SPFx context mapping, permission checks, API pe
 - [Introduction & Quick Start](./INTRODUCTION.md)
 - [Workspace Development](./DEVELOPMENT.md)
 - [SharePoint Validation](./SHAREPOINT-VALIDATION.md)
+- [Controls Module](./api/controls/INDEX.md)
 - [Core Module](./api/core/INDEX.md)
 - [Hooks Module](./api/hooks/INDEX.md)
 - [Services Module](./api/services/INDEX.md)
@@ -217,4 +251,17 @@ Public pure helper functions for SPFx context mapping, permission checks, API pe
 
 ---
 
-*Generated from source API metadata and public documentation.*
+This reference is maintained alongside the source; `npm run verify:public-docs` checks export coverage, selected JSDoc contracts and local links. Behavior and example correctness also require comparison with the implementation.
+
+## Access trims
+
+[SharePointPermissionTrim](./api/controls/sharepoint-permission-trim.md), [SharePointGroupTrim](./api/controls/sharepoint-group-trim.md) and [EntraGroupTrim](./api/controls/entra-group-trim.md) mount caller content only for a current positive permission/membership decision. Direct Loading/Fallback/ErrorFallback branches distinguish pending, denied and failed checks. The matching SPFx provider supplies native clients. The lazy sample exposes editable targets, repeat checks and protected mount counters; the Context panel also demonstrates scoped permissions. Server authorization remains required.
+
+## SharePoint pickers
+
+[React pickers](api/controls/pickers.md) and [native Property Pane pickers](api/property-pane/pickers.md) cover SitePicker, ListPicker, FieldPicker, ViewPicker, ContentTypePicker, ListItemPicker and PrincipalPicker, with JSON references, consumer options and remote discovery.
+
+- [Hosted FileFolderPicker](api/controls/file-folder-picker.md): React source restrictions, metadata references, authentication and lifecycle.
+- [PropertyPaneFileFolderPicker](api/property-pane/file-folder-picker.md): native JSON arrays and retained drafts.
+
+See [native SPFx localization and consumer setup](./LOCALIZATION.md) for per-family resources, postinstall registration, typed overrides and the EditableText locale migration.

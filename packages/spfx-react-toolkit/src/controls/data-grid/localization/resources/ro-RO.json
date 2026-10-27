@@ -1,0 +1,27 @@
+{
+  "empty": "Nu există date disponibile",
+  "noResults": "Nu s-au găsit rezultate",
+  "noVisibleColumns": "Nu există coloane vizibile",
+  "loading": "Se încarcă",
+  "actions": "Acțiuni",
+  "moreActions": "Mai multe acțiuni",
+  "yes": "Da",
+  "no": "Nu",
+  "noTags": "Nu există etichete",
+  "noObservations": "Nu există observații",
+  "invalidValue": "Valoare nevalidă",
+  "selectAllRows": "Selectează toate rândurile",
+  "retry": "Reîncearcă",
+  "selectRowTemplate": "Selectează rândul {rowId}",
+  "sparklineSummaryTemplate": "Prima valoare {first}; Ultima valoare {last}; Minim {minimum}; Maxim {maximum}; Medie {average}; Variație {change}; Variație procentuală {changePercent}",
+  "tagOverflow": {
+    "one": "Afișează încă {count} etichetă",
+    "few": "Afișează încă {count} etichete",
+    "other": "Afișează încă {count} de etichete"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} vot",
+    "few": "{formattedCount} voturi",
+    "other": "{formattedCount} de voturi"
+  }
+}

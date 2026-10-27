@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Sfoglia file…",
+    "folders": "Sfoglia cartelle…",
+    "all": "Sfoglia file e cartelle…"
+  },
+  "placeholders": {
+    "files": "Seleziona file…",
+    "folders": "Seleziona cartelle…",
+    "all": "Seleziona file o cartelle…"
+  },
+  "labels": {
+    "selection": "Selezione file e cartelle",
+    "file": "File",
+    "folder": "Cartella",
+    "unresolvedItem": "Elemento non risolto",
+    "removeItem": "Rimuovi {name}"
+  },
+  "validation": {
+    "invalidReferences": "Riferimenti file/cartelle non validi.",
+    "controlledModeChanged": "La modalità controllata non può cambiare durante il montaggio.",
+    "incompatibleItems": "La selezione contiene elementi incompatibili con il tipo, la categoria o le estensioni configurate. Rimuovili o sostituiscili.",
+    "invalidPolicy": "Configurazione del tipo, della categoria, delle estensioni o del limite di selezione non valida.",
+    "selectionLimitExceeded": "La selezione supera il limite configurato. Rimuovi gli elementi in eccesso."
+  },
+  "errors": {
+    "configuration": "Configurazione del selettore non valida. Verifica sorgente, tipi, categoria e limiti; usa il preset senza opzioni legacy.",
+    "auth-resource": "Il selettore ha richiesto una risorsa di autenticazione non consentita dalla configurazione.",
+    "auth-type": "Il selettore ha richiesto un tipo di autenticazione non supportato dalla configurazione.",
+    "auth-challenge": "Il selettore richiede una verifica di autenticazione aggiuntiva non supportata.",
+    "auth-provider": "Non è stato possibile ottenere il token SharePoint. Riprova; se il problema persiste, verifica l’accesso e i permessi esistenti.",
+    "selection-identity": "Non è stato possibile verificare l’identità dell’elemento selezionato. Riapri il selettore e riprova.",
+    "selection-scope": "L’elemento selezionato non appartiene al sito, alla raccolta o alla cartella consentiti.",
+    "selection-policy": "La selezione non rispetta il tipo, la categoria, le estensioni o il numero di elementi consentiti.",
+    "selection-unavailable": "L’elemento selezionato non è disponibile o non è accessibile.",
+    "selection-invalid": "Non è stato possibile verificare la selezione. Nessun nuovo elemento è stato aggiunto.",
+    "onedrive-unavailable": "OneDrive dell’utente corrente non è disponibile o non è accessibile. Verifica che il drive esista e riprova.",
+    "opening": "Impossibile aprire il selettore. Verifica la configurazione e l’accesso alla sorgente, quindi riprova.",
+    "timeout": "Il selettore non ha risposto in tempo. Chiudilo e riprova.",
+    "communication": "La comunicazione con il selettore è stata interrotta. Riaprilo e riprova."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "La funzionalità di autenticazione opzionale non ha risposto in tempo. Riprova.",
+    "unsupportedCommand": "Questa integrazione non supporta questo comando.",
+    "optionalGraphAuthenticationFailed": "Non è stato possibile autenticare la funzionalità Microsoft Graph opzionale.",
+    "optionalPersonalAuthenticationFailed": "Non è stato possibile autenticare la destinazione personale opzionale."
+  }
+}

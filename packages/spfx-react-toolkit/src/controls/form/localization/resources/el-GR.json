@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Δεν ήταν δυνατή η υποβολή της φόρμας. Δοκιμάστε ξανά.",
+  "dateInputValidationMessage": "Συμπληρώστε ή διορθώστε την ημερομηνία πριν από την υποβολή.",
+  "timeInputValidationMessage": "Συμπληρώστε ή διορθώστε την ώρα πριν από την υποβολή.",
+  "tagPicker": {
+    "noOptions": "Καμία επιλογή δεν αντιστοιχεί στο τρέχον ερώτημα."
+  },
+  "fileInput": {
+    "browseLabel": "Αναζήτηση αρχείων",
+    "clearLabel": "Εκκαθάριση"
+  },
+  "arraySection": {
+    "add": "Προσθήκη στοιχείου",
+    "empty": "Δεν υπάρχουν στοιχεία",
+    "itemLabelTemplate": "Στοιχείο {position}",
+    "removeTemplate": "Κατάργηση {label}",
+    "moveUpTemplate": "Μετακίνηση {label} επάνω",
+    "moveDownTemplate": "Μετακίνηση {label} κάτω",
+    "addedTemplate": "Προστέθηκε: {label}",
+    "removedTemplate": "Καταργήθηκε: {label}",
+    "movedTemplate": "Το στοιχείο {label} μετακινήθηκε στη θέση {position} από {total}"
+  },
+  "datePicker": {
+    "months": [
+      "Ιανουαρίου",
+      "Φεβρουαρίου",
+      "Μαρτίου",
+      "Απριλίου",
+      "Μαΐου",
+      "Ιουνίου",
+      "Ιουλίου",
+      "Αυγούστου",
+      "Σεπτεμβρίου",
+      "Οκτωβρίου",
+      "Νοεμβρίου",
+      "Δεκεμβρίου"
+    ],
+    "shortMonths": [
+      "Ιαν",
+      "Φεβ",
+      "Μαρ",
+      "Απρ",
+      "Μαΐ",
+      "Ιουν",
+      "Ιουλ",
+      "Αυγ",
+      "Σεπ",
+      "Οκτ",
+      "Νοε",
+      "Δεκ"
+    ],
+    "days": [
+      "Κυριακή",
+      "Δευτέρα",
+      "Τρίτη",
+      "Τετάρτη",
+      "Πέμπτη",
+      "Παρασκευή",
+      "Σάββατο"
+    ],
+    "shortDays": [
+      "Κυρ",
+      "Δευ",
+      "Τρί",
+      "Τετ",
+      "Πέμ",
+      "Παρ",
+      "Σάβ"
+    ],
+    "goToToday": "Μετάβαση στη σημερινή ημέρα",
+    "prevMonthAriaLabel": "Προηγούμενος μήνας",
+    "nextMonthAriaLabel": "Επόμενος μήνας",
+    "prevYearAriaLabel": "Προηγούμενο έτος",
+    "nextYearAriaLabel": "Επόμενο έτος",
+    "prevYearRangeAriaLabel": "Προηγούμενο εύρος ετών",
+    "nextYearRangeAriaLabel": "Επόμενο εύρος ετών",
+    "monthPickerHeaderAriaLabel": "{0}, αλλαγή έτους",
+    "yearPickerHeaderAriaLabel": "{0}, αλλαγή μήνα",
+    "closeButtonAriaLabel": "Κλείσιμο",
+    "weekNumberFormatString": "Αριθμός εβδομάδας {0}",
+    "selectedDateFormatString": "Επιλεγμένη ημερομηνία {0}",
+    "todayDateFormatString": "Σημερινή ημερομηνία {0}",
+    "dayMarkedAriaLabel": "επισημασμένη"
+  }
+}

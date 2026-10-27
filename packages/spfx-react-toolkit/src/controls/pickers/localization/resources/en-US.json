@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Select an item",
+    "selectMany": "Select items",
+    "search": "Search…",
+    "clearSelection": "Clear selection",
+    "clearSearch": "Clear search",
+    "options": "Options",
+    "namedOptions": "{name}: options",
+    "searchOptions": "Search options",
+    "namedSearch": "{name}: search",
+    "selectedOne": "Selected item",
+    "selectedMany": "Selected items",
+    "noSelection": "No selection",
+    "retry": "Retry",
+    "resolveIds": "Resolve IDs",
+    "moreResults": "More results",
+    "selectedCount": {
+      "one": "{count} item selected",
+      "other": "{count} items selected"
+    },
+    "minimumSearchLength": {
+      "one": "Type at least {count} character to search",
+      "other": "Type at least {count} characters to search"
+    }
+  },
+  "status": {
+    "searching": "Searching…",
+    "loading": "Loading…",
+    "partialSearch": "Partial search: refine your search.",
+    "noOtherResults": "No other results for this search",
+    "noResults": "No results for this search",
+    "noOptions": "No options available.",
+    "moreItemsAvailable": "More items are available.",
+    "partialSuggestions": "Partial suggestions: some sources are unavailable.",
+    "unresolvedValue": "Unresolved value",
+    "partialHubs": "Partial hub list: narrow the scope or use site mode.",
+    "partialSiteCollections": "Partial site collection search (maximum 1000 results): narrow your criteria."
+  },
+  "sections": {
+    "consumer": "Provided options",
+    "currentSite": "Current site",
+    "hubSite": "Associated hub",
+    "catalog": "Available options",
+    "currentUser": "You",
+    "people": "Suggested people",
+    "memberOf": "Your groups"
+  },
+  "metadata": {
+    "documentLibrary": "Document library",
+    "sharePointList": "SharePoint list",
+    "personalView": "Personal view",
+    "publicView": "Public view",
+    "field": "Field",
+    "fieldDescription": "{internalName} · {type}",
+    "itemDescription": "Item · ID {id}",
+    "file": "File",
+    "fileWithExtension": "File {extension}",
+    "folder": "Folder",
+    "sharePointGroup": "SharePoint group · SharePoint",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "securityGroup": "Security group · Entra",
+    "distributionList": "Distribution list · Entra",
+    "unvalidatedEmail": "Unverified email"
+  },
+  "validation": {
+    "selectionLimitReached": "The selection limit has been reached.",
+    "selectionLimitExceeded": "The selection exceeds the configured limit.",
+    "unresolvedValues": "Some selected values are unresolved.",
+    "outOfScopeValues": "The selection contains values outside the configured scope.",
+    "resolveRequiredUserIds": "Resolve the required IDs for the selected users."
+  },
+  "errors": {
+    "candidateOutOfScope": "The candidate is outside the configured scope.",
+    "incompleteCandidateResolution": "The candidate could not be fully resolved.",
+    "resolutionFailed": "Resolution failed.",
+    "graphUnavailable": "Microsoft Graph client is unavailable."
+  }
+}

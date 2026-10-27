@@ -7,11 +7,18 @@ import { createSPFxOneDriveAppDataService } from '../services/spfx-onedrive-app-
 
 /**
  * Return type for useSPFxOneDriveAppData hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const file: SPFxOneDriveAppDataResult<{ theme: string }> = useSPFxOneDriveAppData('settings.json');
+ * console.log(file.data?.theme, file.isNotFound);
+ * ```
+ * @template T - Expected application data shape; no runtime validation is performed.
  */
 export interface SPFxOneDriveAppDataResult<T> {
-  /** 
-   * The loaded data from OneDrive.
-   * Undefined if not loaded yet or on error.
+  /**
+   * Current parsed data or fallback, initially defaultValue. Failed reloads preserve previous data; inspect error/isReady.
    */
   readonly data: T | undefined;
 
@@ -21,9 +28,8 @@ export interface SPFxOneDriveAppDataResult<T> {
    */
   readonly isLoading: boolean;
 
-  /** 
-   * Last error from read operations.
-   * Cleared on successful load or write.
+  /**
+   * Error from the latest-started read; cleared when a read starts or the latest write succeeds.
    */
   readonly error: Error | undefined;
 
@@ -39,268 +45,83 @@ export interface SPFxOneDriveAppDataResult<T> {
    */
   readonly isWriting: boolean;
 
-  /** 
-   * Last error from write operations.
-   * Cleared on successful write or load.
+  /**
+   * Error from the latest operation when it was a write; cleared when a new write starts or the target changes. Reads do not clear it.
    */
   readonly writeError: Error | undefined;
 
-  /** 
-   * Manually load/reload the file from OneDrive.
-   * Updates data, isLoading, and error states.
-   * 
-   * @returns Promise that resolves when load completes
-   * 
+  /**
+   * Reads Graph metadata and downloads JSON via native fetch without authorization headers/cookies. Missing metadata uses defaultValue; failed reads publish error and resolve. Unavailable clients or empty file names skip the read.
+   * @returns Resolves after the read attempt; inspect error and isNotFound.
    * @example
    * ```tsx
-   * const { data, load } = useSPFxOneDriveAppData<Config>('config.json', undefined, false);
-   * 
-   * // Load on button click
-   * <button onClick={load}>Refresh</button>
+   * // Inside a React component using the host Fluent renderer:
+   * const file = useSPFxOneDriveAppData<{ theme: string }>('settings.json', { autoFetch: false });
+   * return <button onClick={file.load}>Refresh</button>;
    * ```
    */
   readonly load: () => Promise<void>;
 
-  /** 
-   * Write data to OneDrive file.
-   * Creates file if it doesn't exist, updates if it does.
-   * Updates isWriting and writeError states.
-   * 
-   * @param content - Data to write (will be JSON.stringify'd)
-   * @returns Promise that resolves when write completes
-   * 
-   * @example
-   * ```tsx
-   * const { write, isWriting } = useSPFxOneDriveAppData<Config>('config.json');
-   * 
-   * const handleSave = async () => {
-   *   await write({ theme: 'dark', language: 'en' });
-   * };
-   * ```
+  /**
+   * Creates or replaces JSON file content and publishes successful data when the request is current.
+   * @param content - JSON-serializable data to write.
+   * @returns Resolves after the write succeeds.
+   * @throws Missing/initializing client, empty fileName, serialization or Graph failures.
    */
   readonly write: (content: T) => Promise<void>;
 
-  /** 
-   * Computed state: true if data is loaded successfully.
-   * Equivalent to: !isLoading && !error && data !== undefined
-   * 
-   * Useful for conditional rendering:
-   * ```tsx
-   * if (!isReady) return <Spinner />;
-   * return <div>{data.title}</div>;
-   * ```
+  /**
+   * True when !isLoading, no read error and data is defined; fallback/default data can satisfy this without a successful server read, and write status is independent.
    */
   readonly isReady: boolean;
 }
 
 /**
  * Optional configuration for useSPFxOneDriveAppData.
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const options: SPFxOneDriveAppDataOptions<{ theme: string }> = { folder: 'dashboard', defaultValue: { theme: 'dark' }, createIfMissing: true };
+ * const file = useSPFxOneDriveAppData('settings.json', options);
+ * ```
+ * @template T - Expected application data shape; no runtime validation is performed.
  */
 export interface SPFxOneDriveAppDataOptions<T> {
-  /** Optional folder/namespace identifier for file organization. */
+  /**
+   * Optional folder namespace; characters other than letters, digits, hyphens and underscores become hyphens. fileName is not sanitized.
+   */
   folder?: string;
 
   /** Whether to automatically load file on mount. Default: true */
   autoFetch?: boolean;
 
   /**
-   * Default value to use when the file is missing (404).
-   * If provided, load() will set data to this value and will not set error.
+   * Initial/fallback data when a file is confirmed missing. Changing it alone does not reset current data; future missing reads use the latest value.
    */
   defaultValue?: T;
 
   /**
-   * If true, when the file is missing (404) and defaultValue is provided,
-   * the hook will attempt to create the file by writing defaultValue.
+   * Defaults to false. After a current confirmed missing read, writes a defined defaultValue once per load attempt; failed downloads do not trigger creation.
    */
   createIfMissing?: boolean;
 }
 
 /**
- * Hook to manage JSON files in user's OneDrive approot folder
- * 
- * Provides unified read/write operations for JSON data stored in OneDrive's special
- * approot folder (accessible per-app, user-scoped storage).
- * 
- * Features:
- * - Automatic JSON serialization/deserialization
- * - Separate loading states for read/write operations
- * - Optional auto-fetch on mount
- * - Folder/namespace support for file organization
- * - Type-safe with TypeScript generics
- * - Memory leak safe with mounted state tracking
- * - Error handling for both read and write operations
- * 
- * Requirements:
- * - Microsoft Graph permissions: Files.ReadWrite or Files.ReadWrite.AppFolder
- * - User must be authenticated
- * 
- * @param fileName - Name of the JSON file (e.g., 'config.json', 'settings.json')
- * @param folder - Optional folder/namespace identifier for file organization.
- *                 Will be sanitized to prevent path traversal.
- *                 Examples: 'my-app', instanceId (GUID), 'config-v2'
- * @param autoFetch - Whether to automatically load file on mount. Default: true
- * 
- * @returns Object with data, loading states, error states, and read/write functions
- * 
- * @example Basic usage - auto-fetch from root
+ * Manages JSON content in the authenticated user's OneDrive app root. Requires Graph permissions for the requested read/write operations and native fetch for preauthenticated downloads. T is an expected shape without runtime validation. Auto-load defaults to true; target changes reset state and obsolete completions cannot publish it. Read failures publish error and resolve; writes reject and publish writeError. Recognized missing metadata returns fallback data without an error.
+ * @typeParam T - Expected JSON data shape.
+ * @param fileName - File name, passed into the Graph path without sanitization.
+ * @param options - Folder, auto-load, fallback and missing-file creation settings.
+ * @returns Read/write state and explicit load/write methods.
+ * @throws When called outside an SPFx provider.
+ *
+ * @example
  * ```tsx
- * import type { MyConfig } from './types';
- * 
- * function ConfigPanel() {
- *   const { data, isLoading, error, write, isWriting } = 
- *     useSPFxOneDriveAppData<MyConfig>('config.json');
- *   
- *   if (isLoading) return <Spinner label="Loading configuration..." />;
- *   if (error) return <MessageBar messageBarType={MessageBarType.error}>
- *     Failed to load: {error.message}
- *   </MessageBar>;
- *   
- *   const handleSave = async (newConfig: MyConfig) => {
- *     try {
- *       await write(newConfig);
- *       console.log('Saved successfully!');
- *     } catch (err) {
- *       console.error('Save failed:', err);
- *     }
- *   };
- *   
- *   return (
- *     <div>
- *       <TextField 
- *         value={data?.title} 
- *         onChange={(_, val) => handleSave({ ...data, title: val })}
- *         disabled={isWriting}
- *       />
- *       {isWriting && <Spinner label="Saving..." />}
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example With folder namespace
- * ```tsx
- * // Store files in a dedicated folder
- * const { data, write } = useSPFxOneDriveAppData<State>(
- *   'state.json',
- *   'my-app-v2'  // Files stored in approot:/my-app-v2/state.json
- * );
- * ```
- * 
- * @example Per-instance storage (multi-instance support)
- * ```tsx
- * // Each WebPart instance has its own data
- * const { id } = useSPFxInstanceInfo();
- * const { data, write } = useSPFxOneDriveAppData<Settings>(
- *   'settings.json',
- *   id  // Files stored in approot:/abc-123-guid/settings.json
- * );
- * ```
- * 
- * @example Lazy loading (manual load)
- * ```tsx
- * const { data, load, isLoading, write } = useSPFxOneDriveAppData<Cache>(
- *   'cache.json',
- *   'my-app',
- *   false  // Don't auto-fetch
- * );
- * 
- * return (
- *   <div>
- *     <button onClick={load} disabled={isLoading}>
- *       {isLoading ? 'Loading...' : 'Load Cache'}
- *     </button>
- *     {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
- *   </div>
- * );
- * ```
- * 
- * @example Multiple files in same namespace
- * ```tsx
- * function MyApp() {
- *   const config = useSPFxOneDriveAppData<Config>('config.json', 'myapp');
- *   const state = useSPFxOneDriveAppData<State>('state.json', 'myapp');
- *   const cache = useSPFxOneDriveAppData<Cache>('cache.json', 'myapp');
- *   
- *   // All files stored in approot:/myapp/
- *   // Easy to manage and clean up as a group
- * }
- * ```
- * 
- * @example Error handling and retry
- * ```tsx
- * function DataManager() {
- *   const { data, error, load, writeError, write, isReady } = 
- *     useSPFxOneDriveAppData<MyData>('data.json');
- *   
- *   if (error) {
- *     return (
- *       <MessageBar 
- *         messageBarType={MessageBarType.error}
- *         actions={<button onClick={load}>Retry</button>}
- *       >
- *         Load failed: {error.message}
- *       </MessageBar>
- *     );
- *   }
- *   
- *   if (writeError) {
- *     return (
- *       <MessageBar messageBarType={MessageBarType.warning}>
- *         Save failed: {writeError.message}
- *       </MessageBar>
- *     );
- *   }
- *   
- *   if (!isReady) return <Spinner />;
- *   
- *   return <DataDisplay data={data} onSave={write} />;
- * }
- * ```
- * 
- * @example CRUD-like operations
- * ```tsx
- * interface TodoList {
- *   items: Array<{ id: string; text: string; done: boolean }>;
- * }
- * 
- * function TodoApp() {
- *   const { data, write, isLoading, isWriting } = 
- *     useSPFxOneDriveAppData<TodoList>('todos.json', 'todo-app');
- *   
- *   const addTodo = async (text: string) => {
- *     const newItem = { id: crypto.randomUUID(), text, done: false };
- *     await write({
- *       items: [...(data?.items ?? []), newItem]
- *     });
- *   };
- *   
- *   const toggleTodo = async (id: string) => {
- *     await write({
- *       items: data?.items.map(item => 
- *         item.id === id ? { ...item, done: !item.done } : item
- *       ) ?? []
- *     });
- *   };
- *   
- *   const deleteTodo = async (id: string) => {
- *     await write({
- *       items: data?.items.filter(item => item.id !== id) ?? []
- *     });
- *   };
- *   
- *   if (isLoading) return <Spinner />;
- *   
- *   return (
- *     <div>
- *       <TodoList 
- *         items={data?.items ?? []} 
- *         onToggle={toggleTodo}
- *         onDelete={deleteTodo}
- *       />
- *       <AddTodoForm onAdd={addTodo} disabled={isWriting} />
- *     </div>
- *   );
+ * function Settings() {
+ *   const file = useSPFxOneDriveAppData<{ theme: string }>('settings.json', {
+ *     folder: 'dashboard', autoFetch: false, defaultValue: { theme: 'dark' }
+ *   });
+ *   return <button onClick={file.load} disabled={file.isLoading}>Load settings</button>;
  * }
  * ```
  */

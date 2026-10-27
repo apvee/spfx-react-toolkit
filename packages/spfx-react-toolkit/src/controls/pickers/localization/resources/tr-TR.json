@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Bir öğe seçin",
+    "selectMany": "Öğeler seçin",
+    "search": "Ara…",
+    "clearSelection": "Seçimi temizle",
+    "clearSearch": "Aramayı temizle",
+    "options": "Seçenekler",
+    "searchOptions": "Seçeneklerde ara",
+    "selectedOne": "Seçilen öğe",
+    "selectedMany": "Seçilen öğeler",
+    "noSelection": "Seçim yok",
+    "resolveIds": "Kimlikleri çözümle",
+    "moreResults": "Diğer sonuçlar",
+    "retry": "Yeniden dene",
+    "namedOptions": "{name}: Seçenekler",
+    "namedSearch": "{name}: Ara",
+    "selectedCount": {
+      "one": "{count} öğe seçildi",
+      "other": "{count} öğe seçildi"
+    },
+    "minimumSearchLength": {
+      "one": "Aramak için en az {count} karakter yazın",
+      "other": "Aramak için en az {count} karakter yazın"
+    }
+  },
+  "status": {
+    "searching": "Aranıyor…",
+    "loading": "Yükleniyor…",
+    "partialSearch": "Kısmi arama: aramanızı daraltın.",
+    "noOtherResults": "Bu arama için başka sonuç yok",
+    "noResults": "Bu arama için sonuç yok",
+    "noOptions": "Kullanılabilir seçenek yok.",
+    "moreItemsAvailable": "Daha fazla öğe mevcut.",
+    "partialSuggestions": "Kısmi öneriler: bazı kaynaklar kullanılamıyor.",
+    "unresolvedValue": "Çözümlenmemiş değer",
+    "partialHubs": "Kısmi merkez listesi: kapsamı daraltın veya site modunu kullanın.",
+    "partialSiteCollections": "Kısmi site koleksiyonu araması (en fazla 1000 sonuç): ölçütlerinizi daraltın."
+  },
+  "sections": {
+    "consumer": "Sağlanan seçenekler",
+    "currentSite": "Geçerli site",
+    "hubSite": "İlişkili merkez",
+    "catalog": "Kullanılabilir seçenekler",
+    "currentUser": "Siz",
+    "people": "Önerilen kişiler",
+    "memberOf": "Gruplarınız"
+  },
+  "metadata": {
+    "documentLibrary": "Belge kitaplığı",
+    "sharePointList": "SharePoint listesi",
+    "personalView": "Kişisel görünüm",
+    "publicView": "Genel görünüm",
+    "field": "Alan",
+    "itemDescription": "Öğe · Kimlik {id}",
+    "file": "Dosya",
+    "fileWithExtension": "{extension} dosyası",
+    "folder": "Klasör",
+    "sharePointGroup": "SharePoint grubu · SharePoint",
+    "securityGroup": "Güvenlik grubu · Entra",
+    "distributionList": "Dağıtım listesi · Entra",
+    "unvalidatedEmail": "Doğrulanmamış e-posta",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Seçim sınırına ulaşıldı.",
+    "selectionLimitExceeded": "Seçim, yapılandırılan sınırı aşıyor.",
+    "unresolvedValues": "Seçilen bazı değerler çözümlenmemiş.",
+    "outOfScopeValues": "Seçim, yapılandırılan kapsamın dışında değerler içeriyor.",
+    "resolveRequiredUserIds": "Seçilen kullanıcılar için gereken kimlikleri çözümleyin."
+  },
+  "errors": {
+    "candidateOutOfScope": "Aday, yapılandırılan kapsamın dışında.",
+    "incompleteCandidateResolution": "Aday tam olarak çözümlenemedi.",
+    "resolutionFailed": "Çözümleme başarısız oldu.",
+    "graphUnavailable": "Microsoft Graph istemcisi kullanılamıyor."
+  }
+}

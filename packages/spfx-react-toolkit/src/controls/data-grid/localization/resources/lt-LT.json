@@ -1,0 +1,29 @@
+{
+  "empty": "Nėra duomenų",
+  "noResults": "Rezultatų nerasta",
+  "noVisibleColumns": "Nėra matomų stulpelių",
+  "loading": "Įkeliama",
+  "actions": "Veiksmai",
+  "moreActions": "Daugiau veiksmų",
+  "yes": "Taip",
+  "no": "Ne",
+  "noTags": "Nėra žymų",
+  "noObservations": "Nėra stebėjimų",
+  "invalidValue": "Netinkama reikšmė",
+  "selectAllRows": "Pasirinkti visas eilutes",
+  "retry": "Bandyti dar kartą",
+  "selectRowTemplate": "Pasirinkti eilutę {rowId}",
+  "sparklineSummaryTemplate": "Pirma reikšmė {first}; Paskutinė reikšmė {last}; Mažiausia {minimum}; Didžiausia {maximum}; Vidurkis {average}; Pokytis {change}; Procentinis pokytis {changePercent}",
+  "tagOverflow": {
+    "one": "Rodyti dar {count} žymą",
+    "few": "Rodyti dar {count} žymas",
+    "many": "Rodyti dar {count} žymos",
+    "other": "Rodyti dar {count} žymų"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} balsas",
+    "few": "{formattedCount} balsai",
+    "many": "{formattedCount} balso",
+    "other": "{formattedCount} balsų"
+  }
+}

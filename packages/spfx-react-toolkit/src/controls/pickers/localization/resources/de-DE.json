@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Element auswählen",
+    "selectMany": "Elemente auswählen",
+    "search": "Suchen…",
+    "clearSelection": "Auswahl löschen",
+    "clearSearch": "Suche löschen",
+    "options": "Optionen",
+    "searchOptions": "Optionen suchen",
+    "selectedOne": "Ausgewähltes Element",
+    "selectedMany": "Ausgewählte Elemente",
+    "noSelection": "Keine Auswahl",
+    "resolveIds": "IDs auflösen",
+    "moreResults": "Weitere Ergebnisse",
+    "retry": "Erneut versuchen",
+    "namedOptions": "{name}: Optionen",
+    "namedSearch": "{name}: Suchen",
+    "selectedCount": {
+      "one": "{count} Element ausgewählt",
+      "other": "{count} Elemente ausgewählt"
+    },
+    "minimumSearchLength": {
+      "one": "Geben Sie zum Suchen mindestens {count} Zeichen ein",
+      "other": "Geben Sie zum Suchen mindestens {count} Zeichen ein"
+    }
+  },
+  "status": {
+    "searching": "Suche läuft…",
+    "loading": "Wird geladen…",
+    "partialSearch": "Unvollständige Suche: grenzen Sie die Suche ein.",
+    "noOtherResults": "Keine weiteren Ergebnisse für diese Suche",
+    "noResults": "Keine Ergebnisse für diese Suche",
+    "noOptions": "Keine Optionen verfügbar.",
+    "moreItemsAvailable": "Weitere Elemente sind verfügbar.",
+    "partialSuggestions": "Unvollständige Vorschläge: einige Quellen sind nicht verfügbar.",
+    "unresolvedValue": "Nicht aufgelöster Wert",
+    "partialHubs": "Unvollständige Hubliste: grenzen Sie den Bereich ein oder verwenden Sie den Websitemodus.",
+    "partialSiteCollections": "Unvollständige Suche nach Websitesammlungen (höchstens 1000 Ergebnisse): grenzen Sie die Kriterien ein."
+  },
+  "sections": {
+    "consumer": "Bereitgestellte Optionen",
+    "currentSite": "Aktuelle Website",
+    "hubSite": "Zugeordneter Hub",
+    "catalog": "Verfügbare Optionen",
+    "currentUser": "Sie",
+    "people": "Vorgeschlagene Personen",
+    "memberOf": "Ihre Gruppen"
+  },
+  "metadata": {
+    "documentLibrary": "Dokumentbibliothek",
+    "sharePointList": "SharePoint-Liste",
+    "personalView": "Persönliche Ansicht",
+    "publicView": "Öffentliche Ansicht",
+    "field": "Feld",
+    "itemDescription": "Element · ID {id}",
+    "file": "Datei",
+    "fileWithExtension": "{extension}-Datei",
+    "folder": "Ordner",
+    "sharePointGroup": "SharePoint-Gruppe · SharePoint",
+    "securityGroup": "Sicherheitsgruppe · Entra",
+    "distributionList": "Verteilerliste · Entra",
+    "unvalidatedEmail": "Nicht bestätigte E-Mail-Adresse",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Das Auswahllimit wurde erreicht.",
+    "selectionLimitExceeded": "Die Auswahl überschreitet das konfigurierte Limit.",
+    "unresolvedValues": "Einige ausgewählte Werte sind nicht aufgelöst.",
+    "outOfScopeValues": "Die Auswahl enthält Werte außerhalb des konfigurierten Bereichs.",
+    "resolveRequiredUserIds": "Lösen Sie die erforderlichen IDs für die ausgewählten Benutzer auf."
+  },
+  "errors": {
+    "candidateOutOfScope": "Der Kandidat liegt außerhalb des konfigurierten Bereichs.",
+    "incompleteCandidateResolution": "Der Kandidat konnte nicht vollständig aufgelöst werden.",
+    "resolutionFailed": "Die Auflösung ist fehlgeschlagen.",
+    "graphUnavailable": "Der Microsoft Graph-Client ist nicht verfügbar."
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Az űrlapot nem sikerült elküldeni. Próbálja újra.",
+  "dateInputValidationMessage": "Küldés előtt egészítse ki vagy javítsa a dátumot.",
+  "timeInputValidationMessage": "Küldés előtt egészítse ki vagy javítsa az időpontot.",
+  "tagPicker": {
+    "noOptions": "Nincs a jelenlegi keresésnek megfelelő lehetőség."
+  },
+  "fileInput": {
+    "browseLabel": "Tallózás",
+    "clearLabel": "Törlés"
+  },
+  "arraySection": {
+    "add": "Elem hozzáadása",
+    "empty": "Nincsenek elemek",
+    "itemLabelTemplate": "{position}. elem",
+    "removeTemplate": "{label} eltávolítása",
+    "moveUpTemplate": "{label} feljebb helyezése",
+    "moveDownTemplate": "{label} lejjebb helyezése",
+    "addedTemplate": "Hozzáadva: {label}",
+    "removedTemplate": "Eltávolítva: {label}",
+    "movedTemplate": "{label} áthelyezve a(z) {position}. helyre, összesen {total} elemből"
+  },
+  "datePicker": {
+    "months": [
+      "január",
+      "február",
+      "március",
+      "április",
+      "május",
+      "június",
+      "július",
+      "augusztus",
+      "szeptember",
+      "október",
+      "november",
+      "december"
+    ],
+    "shortMonths": [
+      "jan.",
+      "febr.",
+      "márc.",
+      "ápr.",
+      "máj.",
+      "jún.",
+      "júl.",
+      "aug.",
+      "szept.",
+      "okt.",
+      "nov.",
+      "dec."
+    ],
+    "days": [
+      "vasárnap",
+      "hétfő",
+      "kedd",
+      "szerda",
+      "csütörtök",
+      "péntek",
+      "szombat"
+    ],
+    "shortDays": [
+      "V",
+      "H",
+      "K",
+      "Sze",
+      "Cs",
+      "P",
+      "Szo"
+    ],
+    "goToToday": "Ugrás a mai napra",
+    "prevMonthAriaLabel": "Előző hónap",
+    "nextMonthAriaLabel": "Következő hónap",
+    "prevYearAriaLabel": "Előző év",
+    "nextYearAriaLabel": "Következő év",
+    "prevYearRangeAriaLabel": "Előző évtartomány",
+    "nextYearRangeAriaLabel": "Következő évtartomány",
+    "monthPickerHeaderAriaLabel": "{0}, év módosítása",
+    "yearPickerHeaderAriaLabel": "{0}, hónap módosítása",
+    "closeButtonAriaLabel": "Bezárás",
+    "weekNumberFormatString": "Hét száma: {0}",
+    "selectedDateFormatString": "Kiválasztott dátum: {0}",
+    "todayDateFormatString": "Mai dátum: {0}",
+    "dayMarkedAriaLabel": "megjelölve"
+  }
+}

@@ -314,7 +314,3 @@ function MyComponent() {
 - [Context Hooks](./context.md) - Context access
 - [Storage Hooks](./storage.md) - Persistent storage
 - [Providers](../core/providers.md) - Provider components
-
----
-
-*Generated from JSDoc comments. Last updated: January 31, 2026*

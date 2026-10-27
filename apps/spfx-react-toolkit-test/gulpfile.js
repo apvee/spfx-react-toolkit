@@ -10,6 +10,31 @@ process.env.SASS_PATH = [dependencyRoot, process.env.SASS_PATH].filter(Boolean).
 
 build.addSuppression(`Warning - [sass] The local CSS class 'ms-Grid' is not camelCase and will not be type-safe.`);
 
+build.configureWebpack.mergeConfig({
+  additionalConfiguration: (configuration) => {
+    const keyborgRoot = path.dirname(require.resolve('keyborg/package.json'));
+    configuration.module = configuration.module || {};
+    configuration.module.rules = configuration.module.rules || [];
+    // SharePoint and other solutions have independently bundled Keyborg copies.
+    // Keep the tested ID-collision fix confined to this sample's webpack build.
+    configuration.module.rules.push({
+      include: [path.join(keyborgRoot, 'dist/index.js'), path.join(keyborgRoot, 'dist/index.cjs')],
+      use: path.join(__dirname, 'config/keyborg-instance-id-loader.cjs'),
+    });
+    const serve = require('./config/serve.json');
+    const origin = `${serve.https ? 'https' : 'http'}://${serve.hostname || 'localhost'}:${serve.port || 4321}`;
+    for (const plugin of configuration.plugins || []) {
+      const options = plugin._options;
+      // SPFx 1.21.1 omits this origin when constructing its cumulative manifest processor.
+      // Keep this version-specific workaround confined to debug manifests.
+      if (options && !options.production && options.cumulativeManifestProcessor) {
+        options.cumulativeManifestProcessor._options.baseUrl = origin;
+      }
+    }
+    return configuration;
+  }
+});
+
 var getTasks = build.rig.getTasks;
 build.rig.getTasks = function () {
   var result = getTasks.call(build.rig);

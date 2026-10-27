@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
 const { collectPublicSurface } = require('./public-surface.helpers.cjs');
+const { getLocalizationPackageContract } = require('./package-entrypoints.cjs');
 const slash = value => value.split(path.sep).join('/');
 function sourceFiles(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap(item => item.isDirectory()
@@ -9,6 +10,10 @@ function sourceFiles(directory) {
 }
 function auditImportGraph({ sourceRoot, entrypoints }) {
   sourceRoot = path.resolve(sourceRoot);
+  // SPFx supplies these exact native bindings at runtime; fixture source roots
+  // need no package metadata of their own. Unknown external IDs still resolve
+  // through TypeScript and retain the unresolved-module failure below.
+  const nativeResourceIds = getLocalizationPackageContract().nativeIds;
   const files = sourceFiles(sourceRoot);
   const relative = file => slash(path.relative(sourceRoot, file));
   const options = { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.NodeJs, jsx: ts.JsxEmit.React, skipLibCheck: true };
@@ -18,6 +23,7 @@ function auditImportGraph({ sourceRoot, entrypoints }) {
   program.emit(undefined, (name, text, bom, error, sources) => { if (name.endsWith('.js')) for (const source of sources ?? []) emittedSources.set(source.fileName, text); });
   const edges = [], modules = [], issues = [], publicExports = [];
   function resolve(from, specifier) {
+    if (nativeResourceIds.has(specifier)) return specifier;
     const result = ts.resolveModuleName(specifier, from, options, ts.sys).resolvedModule;
     return result && (specifier.startsWith('.') ? relative(result.resolvedFileName) : specifier);
   }
@@ -182,7 +188,7 @@ function auditImportGraph({ sourceRoot, entrypoints }) {
 // Enforced source boundaries are separate from the descriptive audit. Effects
 // metadata owns bare external registrations; local allocations are not thereby
 // claimed pure, and runtime renderers/registries must remain feature-local.
-function hasImmediateRendererCall(expression) {
+function hasImmediateRendererCall(expression, allowLocalStyles = false) {
   const source = ts.createSourceFile('initializer.ts', `const value = (${expression});`, ts.ScriptTarget.Latest, true);
   const renderer = /^(createDOMRenderer|createRenderer|makeStyles|insertCSSRules|registerRenderer|createRegistry|registerFeature)$/;
   function unwrap(node) { return ts.isParenthesizedExpression(node) ? unwrap(node.expression) : node; }
@@ -211,7 +217,7 @@ function hasImmediateRendererCall(expression) {
       const callee = unwrap(node.expression);
       const invoked=callables(callee);
       const name = ts.isIdentifier(callee) ? callee.text : ts.isPropertyAccessExpression(callee) ? callee.name.text : '';
-      if (renderer.test(name)) return true;
+      if (renderer.test(name) && !(allowLocalStyles && name === 'makeStyles')) return true;
       for (const factory of invoked) {
         const immediateDefault = factory.parameters.some((parameter, index) => {
           const argument = node.arguments[index] && unwrap(node.arguments[index]);
@@ -237,7 +243,7 @@ function checkSourceRules(report, sideEffects) {
     const registrations = module.externalImports.filter(edge => edge.kind === 'bare-import');
     const emittedPath = './lib/' + module.path.replace(/\.tsx?$/, '.js');
     if (registrations.length && !classified.has(emittedPath)) issues.push({ kind: 'unclassified-external-registration', from: module.path, specifiers: registrations.map(edge => edge.specifier) });
-    if (module.topLevelInitializations.some(item => hasImmediateRendererCall(item.expression))) issues.push({ kind: 'package-global-renderer', from: module.path });
+    if (module.topLevelInitializations.some(item => hasImmediateRendererCall(item.expression, ['controls/file-folder-picker/file-folder-picker.styles.internal.ts', 'controls/pickers/picker-styles.internal.ts', 'controls/formatted-text/formatted-text.styles.internal.ts', 'controls/auto-skeleton/auto-skeleton.styles.internal.ts', 'controls/state-message/state-message.styles.internal.ts', 'controls/group-header.internal.tsx', 'controls/settings-group/settings-group.styles.internal.ts', 'controls/accordion-group/accordion-group.styles.internal.ts', 'controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts', 'controls/data-grid/data-grid.styles.internal.ts', 'controls/web-part-shell/web-part-shell.styles.internal.ts', 'controls/editable-text/editable-text-styles.internal.ts', 'controls/editable-text/editable-text-editor.internal.tsx', 'controls/editable-text/editable-text-toolbar.internal.tsx', 'controls/editable-text/editable-text-color-picker.internal.tsx', 'controls/stage/stage.styles.internal.ts', 'controls/pagination/pagination.styles.internal.ts', 'controls/description-list/description-list.styles.internal.ts', 'controls/cards/card.styles.internal.ts'].includes(module.path)))) issues.push({ kind: 'package-global-renderer', from: module.path });
   }
   return issues;
 }
@@ -246,6 +252,14 @@ function inspectBuild(sourceRoot, libRoot) {
     const stem = slash(path.relative(sourceRoot, file)).replace(/\.tsx?$/, '');
     return [stem + '.js', stem + '.d.ts'];
   }));
+  // Native AMD assets are generated from the exact package inventory, not TS.
+  const inventoryPath = path.join(path.dirname(libRoot), 'localization/resources.json');
+  if (fs.existsSync(inventoryPath)) {
+    const inventory = JSON.parse(fs.readFileSync(inventoryPath, 'utf8'));
+    for (const resource of inventory.resources) {
+      for (const locale of resource.locales) expected.add(resource.path.replace(/^lib\//, '').replace('{locale}', locale.toLowerCase()));
+    }
+  }
   const actual = [];
   function walk(dir) { for (const item of fs.readdirSync(dir, { withFileTypes: true })) item.isDirectory() ? walk(path.join(dir, item.name)) : actual.push(slash(path.relative(libRoot, path.join(dir, item.name)))); }
   walk(libRoot);
@@ -254,36 +268,91 @@ function inspectBuild(sourceRoot, libRoot) {
   const commonJS = actual.filter(file => file.endsWith('.js') && /\b(?:module\.exports|exports\.)/.test(fs.readFileSync(path.join(libRoot, file), 'utf8')));
   return { stale, missing, commonJS, expectedFiles: expected.size, actualFiles: actual.length };
 }
+function reviewModuleEffects(module) {
+  // These classifications record the manual source review for this baseline.
+  // Unknown/new effectful modules retain review-required rather than inheriting
+  // a broad declaration that all toolkit code is pure.
+  const observed = module.topLevelInitializations;
+  const hasRegistration = module.externalImports.some(e => e.kind === 'bare-import');
+  let manual = { classification: 'definitions-only', rationale: 'Manual review: declarations and imported bindings; no observed top-level allocation/registration. This does not certify transitive dependency purity.' };
+  if (hasRegistration) manual = { classification: 'feature-registration', rationale: 'Manual review: PnP feature modules augment prototypes; retain evaluation only for consumers of the owning feature.' };
+  else if (observed.length && /^helpers\/styles\//.test(module.path)) manual = { classification: 'local-allocation', rationale: 'Manual review: descriptors/recipes copy and freeze local data; brand Symbol, WeakMap cache and priority tables allocate local state. No renderer/CSS/DOM work runs at module evaluation; shared brand/cache identity must survive consumer composition.' };
+  else if (observed.length && ['core/context.internal.tsx', 'core/state.internal.tsx'].includes(module.path)) manual = { classification: 'local-context-allocation', rationale: 'Manual review: React.createContext allocates local context objects and development displayName assignments mutate those objects only; provider runtime stores remain instance-owned.' };
+  else if (observed.length && module.path === 'core/teams-runtime.internal.ts') manual = { classification: 'local-cache-allocation', rationale: 'Manual source review: WeakMap keys SDK identity and holds per-store subscriptions. SDK handler registration and theme requests are deferred to acquisition; cleanup removes store references. No window registry or module-evaluation SDK call.' };
+  else if (observed.length && module.path === 'helpers/spfx-api-permission-precheck.helpers.ts') manual = { classification: 'local-allocation', rationale: 'Manual review: Sets of expected audiences/statuses are local lookup data; requests and diagnostics run only in exported functions.' };
+  else if (observed.length && module.path === 'controls/formatted-text/formatted-text-content.internal.tsx') manual = { classification: 'local-parser-allocation', rationale: 'Manual review: unified processor configures its own parser/plugins only; no DOM, renderer, external registration or text cache.' };
+  else if (observed.length && module.path === 'controls/pickers/picker-styles.internal.ts') manual = { classification: 'local-style-allocation', rationale: 'Manual source review: picker-owned token rules only; mounted Griffel hook uses the host renderer. No renderer creation, CSS insertion, external registration or PURE annotation at module evaluation.' };
+  else if (observed.length && module.path === 'controls/auto-skeleton/auto-skeleton.styles.internal.ts') manual = { classification: 'local-style-allocation', rationale: 'makeStyles defines local rules; renderer and insertion happen only through mounted hooks, no package renderer.' };
+  else if (observed.length && module.path === 'controls/formatted-text/formatted-text.styles.internal.ts') manual = { classification: 'local-style-allocation', rationale: 'Manual review: makeStyles defines component-owned rules; renderer/context/CSS work happens through the hook, no package-wide renderer or registry.' };
+  else if (observed.length && module.path === 'controls/description-list/description-list.tsx') manual = { classification: 'local-component-allocation', rationale: 'Manual review: createContext, forwardRef and Object.assign define local components/context only. Rendering uses host styles; no subscriptions, external registrations or package renderer.' };
+  else if (observed.length && module.path === 'controls/cards/card.styles.internal.ts') manual = { classification: 'local-style-allocation', rationale: 'Manual source review: makeStyles allocates component-owned token/selector rules only. Native Card variables remain host-owned; renderer access and CSS insertion happen through mounted hooks. No package renderer, feature registry or PURE annotation.' };
+  else if (observed.length && ['controls/content-card/content-card.tsx', 'controls/preview-card/preview-card.tsx', 'controls/cards/card-frame.internal.tsx'].includes(module.path)) manual = { classification: 'local-component-allocation', rationale: 'Manual source review: forwardRef/displayName define local components. Slots, image state, native Card behavior and host styles execute only during mounted rendering. No external registration, global renderer or PURE masking.' };
+  else if (observed.length && ['controls/access-trim-children.internal.tsx', 'hooks/useAccessRequest.internal.ts', 'controls/sharepoint-permission-trim/sharepoint-permission-trim.tsx', 'controls/sharepoint-group-trim/sharepoint-group-trim.tsx', 'controls/entra-group-trim/entra-group-trim.tsx'].includes(module.path)) manual = { classification: 'local-component-or-cache-allocation', rationale: 'Manual source review: family marker Symbols, compound components and the provider-keyed inflight WeakMap allocate local identity only. No HTTP, registration, renderer, CSS insertion or settled-decision cache occurs at module evaluation.' };
+  else if (observed.length && module.path === 'controls/formatted-text/formatted-text.tsx') manual = { classification: 'local-component-allocation', rationale: 'Manual review: forwardRef creates a local component; descriptors/styles and parsing run when it renders.' };
+  else if (observed.length && module.path === 'helpers/spfx-time-zone.internal.ts') manual = { classification: 'local-data-allocation', rationale: 'Audited readonly IANA lookup is a local object literal, no DOM/renderer/requests/registration.' };
+  else if (observed.length && module.path === 'controls/auto-skeleton/auto-skeleton.tsx') manual = { classification: 'local-component-allocation', rationale: 'forwardRef defines the component; DOM measurement, subscriptions and geometry classes run only when mounted with per-instance cleanup.' };
+  else if (observed.length && module.path === 'controls/relative-time/relative-time.tsx') manual = { classification: 'local-component-allocation', rationale: 'forwardRef defines a component; formatter/timers/visibility hooks run only when mounted, with per-instance cleanup.' };
+  else if (observed.length && module.path === 'controls/state-message/state-message.styles.internal.ts') manual = { classification: 'local-style-allocation', rationale: 'Component-owned makeStyles definitions; insertion only through mounted hooks with host renderer.' };
+  else if (observed.length && module.path === 'controls/state-message/state-message.tsx') manual = { classification: 'local-component-allocation', rationale: 'forwardRef and immutable descriptors allocate local definitions; theme reading and artwork rendering only run when mounted.' };
+  else if (observed.length && module.path === 'controls/editable-text/editable-text-color-picker.internal.tsx') manual = { classification: 'local-style-allocation', rationale: 'Manual source review: makeStyles defines picker-owned token rules. The mounted useStyles hook reads the shared host renderer and inserts CSS; this module creates no renderer or registry at evaluation.' };
+  else if (observed.length && ['controls/group-header.internal.tsx', 'controls/settings-group/settings-group.styles.internal.ts', 'controls/accordion-group/accordion-group.styles.internal.ts', 'controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts', 'controls/data-grid/data-grid.styles.internal.ts', 'controls/web-part-shell/web-part-shell.styles.internal.ts', 'controls/editable-text/editable-text-styles.internal.ts', 'controls/editable-text/editable-text-editor.internal.tsx', 'controls/editable-text/editable-text-toolbar.internal.tsx', 'controls/stage/stage.styles.internal.ts', 'controls/pagination/pagination.styles.internal.ts', 'controls/description-list/description-list.styles.internal.ts', 'controls/cards/card.styles.internal.ts'].includes(module.path)) manual = { classification: 'local-style-allocation', rationale: 'Manual review: makeStyles defines component-local token/selector rules; useSx reads the host renderer only during mounted rendering, with no package renderer or external registration.' };
+  else if (observed.length && ['controls/settings-group/settings-group.tsx', 'controls/accordion-group/accordion-group.tsx'].includes(module.path)) manual = { classification: 'local-component-allocation', rationale: 'Manual review: forwardRef and Object.assign allocate local compound component definitions; immutable responsive descriptors hold data, while parsing/context/motion run only on render.' };
+  else if (observed.length && ['controls/form/form-context.internal.tsx', 'controls/form/field-path.internal.tsx', 'controls/settings-field-context.internal.tsx'].includes(module.path)) manual = { classification: 'local-context-allocation', rationale: 'Manual review: React contexts allocate local identity; methods, prefixes, disabled scopes and settings label relationships are supplied by mounted providers. No external registration or renderer creation.' };
+  else if (observed.length && module.path === 'controls/form/form-methods.internal.ts') manual = { classification: 'local-cache-allocation', rationale: 'Manual review: WeakMap stores metadata keyed by individual RHF methods; reset wrappers and validators are installed per form instance. The legacy null file literal denotes cleared native selection. No package registry, renderer or external registration.' };
+  else if (observed.length && ['controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts', 'controls/data-grid/data-grid.styles.internal.ts'].includes(module.path)) manual = { classification: 'local-style-allocation', rationale: 'Manual review: makeStyles defines adapter-owned rules. CSS insertion runs only through mounted hooks using the shared host renderer; there is no package-wide renderer.' };
+  else if (observed.length && ['controls/form/form.tsx', 'controls/form/form-error.tsx', 'controls/form/form-reset.tsx', 'controls/form/form-submit.tsx',
+    'controls/form/controls/form-input.tsx', 'controls/form/controls/form-textarea.tsx', 'controls/form/controls/form-search-box.tsx',
+    'controls/form/controls/form-checkbox.tsx', 'controls/form/controls/form-switch.tsx', 'controls/form/controls/form-spin-button.tsx',
+    'controls/form/controls/form-slider.tsx', 'controls/form/controls/form-select.tsx', 'controls/form/controls/form-radio-group.tsx',
+    'controls/form/controls/form-dropdown.tsx', 'controls/form/controls/form-dropdown-multi.tsx', 'controls/form/controls/form-checkbox-group.tsx',
+    'controls/form/controls/form-combobox.tsx', 'controls/form/controls/form-combobox-multi.tsx', 'controls/form/controls/form-tag-picker.tsx',
+    'controls/form/controls/form-rating.tsx', 'controls/form/controls/form-color-picker.tsx', 'controls/form/controls/form-swatch-picker.tsx',
+    'controls/form/controls/form-date-picker.tsx', 'controls/form/controls/form-time-picker.tsx', 'controls/form/controls/form-date-time.tsx',
+    'controls/form/controls/form-file-input.tsx'].includes(module.path)) manual = { classification: 'local-component-allocation', rationale: 'Manual review: forwardRef and the complete compound suite allocate local component definitions. Field registration, parsing, validation, subscriptions and browser work run only for mounted forms. No external registration, package renderer or PURE masking; retaining the complete family is measured separately.' };
+  else if (observed.length && module.path === 'controls/form/composition/form-array-section.tsx') manual = { classification: 'local-data-allocation', rationale: 'Manual review: default labels and announcement formatters are local data/functions. Add/remove/reorder, DOM focus and announcements run only for mounted array sections; no renderer or external registration.' };
+  else if (observed.length && module.path === 'controls/data-grid/data-grid.tsx') manual = { classification: 'local-component-allocation', rationale: 'Manual source review: forwardRef/Object.assign construct the dynamic compound suite and its private per-family descriptor metadata; frozen loading rows and neutral sort data are local. Rendering, parsing, DOM events and host renderer use occur only when mounted. No external registry, renderer creation or PURE masking.' };
+  else if (observed.length && module.path === 'controls/data-grid/state-validation.internal.ts') manual = { classification: 'local-data-allocation', rationale: 'Manual source review: Object.freeze stores default strings and local formatter functions. Validation and per-grid resolution occur on invocation; no external registrations or renderer creation.' };
+  else if (observed.length && module.path === 'controls/web-part-shell/web-part-shell.tsx') manual = { classification: 'local-component-allocation', rationale: 'Manual source review: forwardRef defines Shell. Its existing provider, DOM work and title loader execute only for mounted instances; no package renderer or registry.' };
+  else if (observed.length && module.path === 'controls/editable-text/editable-text.tsx') manual = { classification: 'local-lazy-component-allocation', rationale: 'Manual source review: React.lazy creates stable component identity without invoking its import loader. Editor chunk loading occurs only for mounted Edit regions; no engine creation at evaluation.' };
+  else if (observed.length && module.path === 'controls/web-part-shell/title/web-part-title.internal.tsx') manual = { classification: 'local-data-allocation', rationale: 'Manual source review: titleBlocks is a finite local semantic-tag array. Native title/editor resources remain separate feature bindings; no catalog registry, renderer or DOM work at evaluation.' };
+  else if (observed.length && module.path === 'controls/editable-text/editable-text-policy.internal.ts') manual = { classification: 'local-data-allocation', rationale: 'Manual source review: canonicalBlocks is a finite local tag array. Validation and document normalization run only on invocation; no DOM, renderer, registration or engine work at evaluation.' };
+  else if (observed.length && [
+    'controls/editable-text/localization/editable-text-strings.internal.ts',
+    'controls/web-part-shell/localization/web-part-shell-strings.internal.ts',
+    'controls/pickers/pickers-strings.internal.ts',
+    'controls/file-folder-picker/file-folder-picker-strings.internal.ts',
+    'controls/form/form-strings.internal.ts',
+  ].includes(module.path)) manual = { classification: 'local-resource-allocation', rationale: 'Manual source review: each adapter reads only its own native SPFx resource binding and defines per-call known-field merges/template callbacks. No catalog registry, DOM, external registration, renderer or editor engine is created at evaluation.' };
+  else if (observed.length && module.path === 'controls/editable-text/editable-text-codec.internal.ts') manual = { classification: 'local-data-allocation', rationale: 'Manual source review: two Sets contain only parser tag names. HTML parsing runs on invocation using the supplied document; no DOM, renderer or external registration at evaluation.' };
+  else if (observed.length && module.path === 'controls/editable-text/editable-text-extensions.internal.ts') manual = { classification: 'local-extension-allocation', rationale: 'Manual source review: Tiptap Mark/Extension/HardBreak factories define private schema objects in the async module. Plugins and engine instances are created only by mounted editor calls; no global feature registry or renderer.' };
+  else if (observed.length && module.path === 'controls/pagination/pagination.internal.ts') manual = { classification: 'local-allocation', rationale: 'Manual source review: the own-family native resource supplies local label data; validation and label resolution run only during rendering. No external registration, renderer or CSS insertion.' };
+  else if (observed.length && module.path === 'controls/pagination/pagination.tsx') manual = { classification: 'local-component-allocation', rationale: 'Manual source review: forwardRef and displayName allocate a local component; navigation, host styling and event requests run only when mounted. No package renderer or external registration.' };
+  else if (observed.length && module.path === 'controls/stage/stage-context.internal.tsx') manual = { classification: 'local-context-allocation', rationale: 'Manual source review: React.createContext defines local identity; IDs, description registration and controller state belong to mounted Stage instances. No renderer or external registration.' };
+  else if (observed.length && ['controls/stage/stage.tsx', 'controls/stage/stage-header.tsx', 'controls/stage/stage-body.tsx', 'controls/stage/stage-footer.tsx'].includes(module.path)) manual = { classification: 'local-component-allocation', rationale: 'Manual source review: forwardRef/Object.assign define local compound components. Context, portals, DOM inert synchronization, focus, styles and requests execute only when mounted. No global renderer or feature registry.' };
+  else if (module.effects.classification === 'review-required') manual = { classification: 'review-required', rationale: 'New/unclassified top-level effects require an explicit review checkpoint.' };
+  return manual;
+}
 if (require.main === module) {
   const root = path.resolve(__dirname, '..');
   const sourceRoot = path.join(root, 'packages/spfx-react-toolkit/src');
   const output = path.resolve(process.argv[2] || '.docs/maintenance/evidence/tree-shaking/initial/import-graph.json');
-  const report = auditImportGraph({ sourceRoot, entrypoints: ['index.ts', 'core/index.ts', 'hooks/index.ts', 'services/index.ts', 'helpers/index.ts', 'helpers/styles/index.ts'] });
+  const report = auditImportGraph({ sourceRoot, entrypoints: ['index.ts', 'core/index.ts', 'hooks/index.ts', 'services/index.ts', 'helpers/index.ts', 'helpers/styles/index.ts', 'controls/index.ts', 'controls/formatted-text/index.ts', 'controls/relative-time/index.ts', 'controls/auto-skeleton/index.ts', 'controls/state-message/index.ts', 'controls/settings-group/index.ts', 'controls/accordion-group/index.ts', 'controls/form/index.ts', 'controls/data-grid/index.ts', 'controls/editable-text/index.ts', 'controls/web-part-shell/index.ts', 'controls/stage/index.ts', 'controls/pagination/index.ts', 'controls/description-list/index.ts', 'controls/sharepoint-permission-trim/index.ts', 'controls/sharepoint-group-trim/index.ts', 'controls/entra-group-trim/index.ts'] });
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/package.json')));
   report.peerDependencyContracts = manifest.peerDependencies;
+  report.runtimeDependencyContracts = manifest.dependencies;
   report.sourceRuleIssues = checkSourceRules(report, manifest.sideEffects);
   for (const module of report.modules) {
     for (const edge of module.externalImports) {
       const packageName = edge.specifier.startsWith('@') ? edge.specifier.split('/').slice(0, 2).join('/') : edge.specifier.split('/')[0];
       edge.peerPackage = packageName;
       edge.peerRange = manifest.peerDependencies[packageName] ?? null;
+      edge.runtimeDependencyRange = manifest.dependencies?.[packageName];
     }
-    // These classifications record the manual source review for this baseline.
-    // Unknown/new effectful modules retain review-required rather than inheriting
-    // a broad declaration that all toolkit code is pure.
-    const observed = module.topLevelInitializations;
-    const hasRegistration = module.externalImports.some(e => e.kind === 'bare-import');
-    let manual = { classification: 'definitions-only', rationale: 'Manual review: declarations and imported bindings; no observed top-level allocation/registration. This does not certify transitive dependency purity.' };
-    if (hasRegistration) manual = { classification: 'feature-registration', rationale: 'Manual review: PnP feature modules augment prototypes; retain evaluation only for consumers of the owning feature.' };
-    else if (observed.length && /^helpers\/styles\//.test(module.path)) manual = { classification: 'local-allocation', rationale: 'Manual review: descriptors/recipes copy and freeze local data; brand Symbol, WeakMap cache and priority tables allocate local state. No renderer/CSS/DOM work runs at module evaluation; shared brand/cache identity must survive consumer composition.' };
-    else if (observed.length && ['core/context.internal.tsx', 'core/state.internal.tsx'].includes(module.path)) manual = { classification: 'local-context-allocation', rationale: 'Manual review: React.createContext allocates local context objects and development displayName assignments mutate those objects only; provider runtime stores remain instance-owned.' };
-    else if (observed.length && module.path === 'helpers/spfx-api-permission-precheck.helpers.ts') manual = { classification: 'local-allocation', rationale: 'Manual review: Sets of expected audiences/statuses are local lookup data; requests and diagnostics run only in exported functions.' };
-    else if (module.effects.classification === 'review-required') manual = { classification: 'review-required', rationale: 'New/unclassified top-level effects require an explicit review checkpoint.' };
-    module.effects.manual = manual;
+    module.effects.manual = reviewModuleEffects(module);
   }
   report.build = inspectBuild(sourceRoot, path.join(root, 'packages/spfx-react-toolkit/lib'));
   fs.mkdirSync(path.dirname(output), { recursive: true }); fs.writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
   console.log(`Audit: ${report.modules.length} modules; ${report.publicExports.length} exports; ${report.issues.length} observations; build ${JSON.stringify(report.build)}`);
   if (report.sourceRuleIssues.length || report.build.stale.length || report.build.missing.length || report.build.commonJS.length || report.issues.some(i => ['missing-entrypoint', 'unresolved-module', 'unresolved-export', 'surface-discrepancy'].includes(i.kind))) process.exitCode = 1;
 }
-module.exports = { auditImportGraph, inspectBuild, checkSourceRules };
+module.exports = { auditImportGraph, inspectBuild, checkSourceRules, reviewModuleEffects };

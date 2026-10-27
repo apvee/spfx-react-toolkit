@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Seleccionar un elemento",
+    "selectMany": "Seleccionar elementos",
+    "search": "Buscar…",
+    "clearSelection": "Limpar a selección",
+    "clearSearch": "Limpar a busca",
+    "options": "Opcións",
+    "searchOptions": "Buscar opcións",
+    "selectedOne": "Elemento seleccionado",
+    "selectedMany": "Elementos seleccionados",
+    "noSelection": "Ningunha selección",
+    "resolveIds": "Resolver identificadores",
+    "moreResults": "Máis resultados",
+    "retry": "Tentar de novo",
+    "namedOptions": "{name}: Opcións",
+    "namedSearch": "{name}: Buscar",
+    "selectedCount": {
+      "one": "{count} elemento seleccionado",
+      "other": "{count} elementos seleccionados"
+    },
+    "minimumSearchLength": {
+      "one": "Escriba polo menos {count} carácter para buscar",
+      "other": "Escriba polo menos {count} caracteres para buscar"
+    }
+  },
+  "status": {
+    "searching": "Buscando…",
+    "loading": "Cargando…",
+    "partialSearch": "Busca parcial: afine a busca.",
+    "noOtherResults": "Non hai máis resultados para esta busca",
+    "noResults": "Non hai resultados para esta busca",
+    "noOptions": "Non hai opcións dispoñibles.",
+    "moreItemsAvailable": "Hai máis elementos dispoñibles.",
+    "partialSuggestions": "Suxestións parciais: algunhas fontes non están dispoñibles.",
+    "unresolvedValue": "Valor sen resolver",
+    "partialHubs": "Lista parcial de concentradores: limite o ámbito ou use o modo de sitio.",
+    "partialSiteCollections": "Busca parcial de coleccións de sitios (máximo 1000 resultados): restrinxa os criterios."
+  },
+  "sections": {
+    "consumer": "Opcións proporcionadas",
+    "currentSite": "Sitio actual",
+    "hubSite": "Concentrador asociado",
+    "catalog": "Opcións dispoñibles",
+    "currentUser": "Vostede",
+    "people": "Persoas suxeridas",
+    "memberOf": "Os seus grupos"
+  },
+  "metadata": {
+    "documentLibrary": "Biblioteca de documentos",
+    "sharePointList": "Lista de SharePoint",
+    "personalView": "Vista persoal",
+    "publicView": "Vista pública",
+    "field": "Campo",
+    "itemDescription": "Elemento · ID {id}",
+    "file": "Ficheiro",
+    "fileWithExtension": "Ficheiro {extension}",
+    "folder": "Cartafol",
+    "sharePointGroup": "Grupo de SharePoint · SharePoint",
+    "securityGroup": "Grupo de seguridade · Entra",
+    "distributionList": "Lista de distribución · Entra",
+    "unvalidatedEmail": "Correo electrónico sen verificar",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Alcanzouse o límite de selección.",
+    "selectionLimitExceeded": "A selección supera o límite configurado.",
+    "unresolvedValues": "Algúns valores seleccionados están sen resolver.",
+    "outOfScopeValues": "A selección contén valores fóra do ámbito configurado.",
+    "resolveRequiredUserIds": "Resolva os identificadores necesarios dos usuarios seleccionados."
+  },
+  "errors": {
+    "candidateOutOfScope": "O candidato está fóra do ámbito configurado.",
+    "incompleteCandidateResolution": "Non se puido resolver completamente o candidato.",
+    "resolutionFailed": "Fallou a resolución.",
+    "graphUnavailable": "O cliente de Microsoft Graph non está dispoñible."
+  }
+}

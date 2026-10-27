@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Επιλογή στοιχείου",
+    "selectMany": "Επιλογή στοιχείων",
+    "search": "Αναζήτηση…",
+    "clearSelection": "Εκκαθάριση επιλογής",
+    "clearSearch": "Εκκαθάριση αναζήτησης",
+    "options": "Επιλογές",
+    "searchOptions": "Αναζήτηση επιλογών",
+    "selectedOne": "Επιλεγμένο στοιχείο",
+    "selectedMany": "Επιλεγμένα στοιχεία",
+    "noSelection": "Καμία επιλογή",
+    "resolveIds": "Επίλυση αναγνωριστικών",
+    "moreResults": "Περισσότερα αποτελέσματα",
+    "retry": "Επανάληψη",
+    "namedOptions": "{name}: Επιλογές",
+    "namedSearch": "{name}: Αναζήτηση",
+    "selectedCount": {
+      "one": "{count} επιλεγμένο στοιχείο",
+      "other": "{count} επιλεγμένα στοιχεία"
+    },
+    "minimumSearchLength": {
+      "one": "Πληκτρολογήστε τουλάχιστον {count} χαρακτήρα για αναζήτηση",
+      "other": "Πληκτρολογήστε τουλάχιστον {count} χαρακτήρες για αναζήτηση"
+    }
+  },
+  "status": {
+    "searching": "Αναζήτηση…",
+    "loading": "Φόρτωση…",
+    "partialSearch": "Μερική αναζήτηση: περιορίστε την αναζήτησή σας.",
+    "noOtherResults": "Δεν υπάρχουν άλλα αποτελέσματα για αυτήν την αναζήτηση",
+    "noResults": "Δεν υπάρχουν αποτελέσματα για αυτήν την αναζήτηση",
+    "noOptions": "Δεν υπάρχουν διαθέσιμες επιλογές.",
+    "moreItemsAvailable": "Υπάρχουν περισσότερα διαθέσιμα στοιχεία.",
+    "partialSuggestions": "Μερικές προτάσεις: ορισμένες πηγές δεν είναι διαθέσιμες.",
+    "unresolvedValue": "Μη επιλυμένη τιμή",
+    "partialHubs": "Μερική λίστα διανομέων: περιορίστε το εύρος ή χρησιμοποιήστε τη λειτουργία τοποθεσίας.",
+    "partialSiteCollections": "Μερική αναζήτηση συλλογών τοποθεσιών (έως 1000 αποτελέσματα): περιορίστε τα κριτήριά σας."
+  },
+  "sections": {
+    "consumer": "Παρεχόμενες επιλογές",
+    "currentSite": "Τρέχουσα τοποθεσία",
+    "hubSite": "Συσχετισμένος διανομέας",
+    "catalog": "Διαθέσιμες επιλογές",
+    "currentUser": "Εσείς",
+    "people": "Προτεινόμενα άτομα",
+    "memberOf": "Οι ομάδες σας"
+  },
+  "metadata": {
+    "documentLibrary": "Βιβλιοθήκη εγγράφων",
+    "sharePointList": "Λίστα SharePoint",
+    "personalView": "Προσωπική προβολή",
+    "publicView": "Δημόσια προβολή",
+    "field": "Πεδίο",
+    "itemDescription": "Στοιχείο · Αναγνωριστικό {id}",
+    "file": "Αρχείο",
+    "fileWithExtension": "Αρχείο {extension}",
+    "folder": "Φάκελος",
+    "sharePointGroup": "Ομάδα SharePoint · SharePoint",
+    "securityGroup": "Ομάδα ασφαλείας · Entra",
+    "distributionList": "Λίστα διανομής · Entra",
+    "unvalidatedEmail": "Μη επαληθευμένο email",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Συμπληρώθηκε το όριο επιλογής.",
+    "selectionLimitExceeded": "Η επιλογή υπερβαίνει το καθορισμένο όριο.",
+    "unresolvedValues": "Ορισμένες επιλεγμένες τιμές δεν έχουν επιλυθεί.",
+    "outOfScopeValues": "Η επιλογή περιέχει τιμές εκτός του καθορισμένου εύρους.",
+    "resolveRequiredUserIds": "Επιλύστε τα απαιτούμενα αναγνωριστικά για τους επιλεγμένους χρήστες."
+  },
+  "errors": {
+    "candidateOutOfScope": "Το υποψήφιο στοιχείο είναι εκτός του καθορισμένου εύρους.",
+    "incompleteCandidateResolution": "Δεν ήταν δυνατή η πλήρης επίλυση του υποψήφιου στοιχείου.",
+    "resolutionFailed": "Η επίλυση απέτυχε.",
+    "graphUnavailable": "Το πρόγραμμα-πελάτης Microsoft Graph δεν είναι διαθέσιμο."
+  }
+}

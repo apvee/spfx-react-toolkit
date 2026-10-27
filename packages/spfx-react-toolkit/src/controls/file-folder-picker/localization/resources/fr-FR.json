@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Parcourir les fichiers…",
+    "folders": "Parcourir les dossiers…",
+    "all": "Parcourir les fichiers et dossiers…"
+  },
+  "placeholders": {
+    "files": "Sélectionner des fichiers…",
+    "folders": "Sélectionner des dossiers…",
+    "all": "Sélectionner des fichiers ou des dossiers…"
+  },
+  "labels": {
+    "selection": "Sélection de fichiers et de dossiers",
+    "file": "Fichier",
+    "folder": "Dossier",
+    "unresolvedItem": "Élément non résolu",
+    "removeItem": "Supprimer {name}"
+  },
+  "validation": {
+    "invalidReferences": "Références de fichiers ou de dossiers non valides.",
+    "controlledModeChanged": "Le mode contrôlé ne peut pas changer tant que le contrôle est monté.",
+    "incompatibleItems": "La sélection contient des éléments incompatibles avec le type, la catégorie ou les extensions configurés. Supprimez-les ou remplacez-les.",
+    "invalidPolicy": "Configuration du type, de la catégorie, des extensions ou de la limite de sélection non valide.",
+    "selectionLimitExceeded": "La sélection dépasse la limite configurée. Supprimez les éléments en trop."
+  },
+  "errors": {
+    "configuration": "Configuration du sélecteur non valide. Vérifiez la source, les types, la catégorie et les limites ; utilisez le préréglage sans options héritées.",
+    "auth-resource": "Le sélecteur a demandé une ressource d’authentification non autorisée par la configuration.",
+    "auth-type": "Le sélecteur a demandé un type d’authentification non pris en charge par la configuration.",
+    "auth-challenge": "Le sélecteur exige une vérification d’authentification supplémentaire qui n’est pas prise en charge.",
+    "auth-provider": "Impossible d’obtenir le jeton SharePoint. Réessayez ; si le problème persiste, vérifiez votre accès et les autorisations existantes.",
+    "selection-identity": "Impossible de vérifier l’identité de l’élément sélectionné. Rouvrez le sélecteur et réessayez.",
+    "selection-scope": "L’élément sélectionné se trouve en dehors du site, de la bibliothèque ou du dossier autorisés.",
+    "selection-policy": "La sélection ne respecte pas le type, la catégorie, les extensions ou le nombre d’éléments autorisés.",
+    "selection-unavailable": "L’élément sélectionné est indisponible ou inaccessible.",
+    "selection-invalid": "Impossible de vérifier la sélection. Aucun nouvel élément n’a été ajouté.",
+    "onedrive-unavailable": "Le OneDrive de l’utilisateur actuel est indisponible ou inaccessible. Vérifiez que le lecteur existe et réessayez.",
+    "opening": "Impossible d’ouvrir le sélecteur. Vérifiez la configuration et l’accès à la source, puis réessayez.",
+    "timeout": "Le sélecteur n’a pas répondu à temps. Fermez-le et réessayez.",
+    "communication": "La communication avec le sélecteur a été interrompue. Rouvrez-le et réessayez."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "La fonctionnalité d’authentification facultative n’a pas répondu à temps. Réessayez.",
+    "unsupportedCommand": "Cette intégration ne prend pas en charge cette commande.",
+    "optionalGraphAuthenticationFailed": "Impossible d’authentifier la fonctionnalité Microsoft Graph facultative.",
+    "optionalPersonalAuthenticationFailed": "Impossible d’authentifier la destination personnelle facultative."
+  }
+}

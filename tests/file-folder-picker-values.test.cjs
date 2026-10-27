@@ -1,0 +1,60 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { createHarness } = require('./services-test-harness.cjs');
+const h = createHarness();
+const load = () => h.load('controls/file-folder-picker/file-folder-picker-values.internal.ts');
+const identity = value => h.load('controls/file-folder-picker/file-folder-picker-identity.internal.ts').fileFolderPickerIdentity(value);
+const guid = '11111111-1111-4111-8111-111111111111';
+const value = { kind: 'file', tenantId: guid, endpoint: 'https://tenant.sharepoint.com/sites/HR/_api/v2.0', driveId: 'b!DriveA', itemId: '01ItemA' };
+test('file/folder references round-trip JSON with independently copied optional snapshots', () => {
+  const input = ['file', 'folder'].map(kind => ({ ...value, kind, name: 'A # %.pdf', webUrl: 'https://tenant.sharepoint.com/sites/HR/docs/A%20%23%20%25.pdf', sharePoint: { siteCollectionId: guid, webId: guid, listId: guid, listItemId: 1, uniqueId: guid } }));
+  const parsed = JSON.parse(JSON.stringify(input));
+  const result = load().validateFileFolderPickerValues(parsed);
+  assert.notEqual(result, parsed);
+  assert.notEqual(result[0], parsed[0]);
+  assert.notEqual(result[0].sharePoint, parsed[0].sharePoint);
+  assert.deepEqual(result, input);
+  assert.notEqual(result, input);
+  assert.notEqual(result[0], input[0]);
+  assert.notEqual(result[0].sharePoint, input[0].sharePoint);
+  assert.deepEqual(load().copyFileFolderPickerValue(value), value);
+  assert.deepEqual(load().validateFileFolderPickerValues([]), []);
+});
+test('identity normalizes tenant and endpoint only and preserves opaque case-sensitive IDs', () => {
+  const canonical = identity(value);
+  assert.equal(identity({ ...value, tenantId: guid.toUpperCase(), endpoint: 'https://TENANT.sharepoint.com/sites/HR/_api/v2.0/' }), canonical);
+  assert.equal(identity({ ...value, kind: 'folder', name: 'renamed', webUrl: 'https://tenant.sharepoint.com/new' }), canonical);
+  for (const changed of [{ driveId: 'b!driveA' }, { itemId: '01itemA' }, { endpoint: 'https://tenant.sharepoint.com/sites/hr/_api/v2.0' }, { tenantId: '22222222-2222-4222-8222-222222222222' }]) assert.notEqual(identity({ ...value, ...changed }), canonical);
+  assert.equal(load().copyFileFolderPickerValue({ ...value, endpoint: 'https://TENANT.sharepoint.com/sites/HR/_api/v2.0/' }).endpoint, value.endpoint);
+  assert.equal(load().copyFileFolderPickerValue({ ...value, endpoint: 'https://tenant-my.sharepoint.com/personal/user/_api/v2.0' }).driveId, value.driveId);
+  assert.notEqual(identity({ ...value, driveId: 'a|b', itemId: 'c' }), identity({ ...value, driveId: 'a', itemId: 'b|c' }));
+});
+test('rejects unknown fields, nonplain objects and accessors without reading them', () => {
+  let reads = 0;
+  const accessor = { ...value };
+  Object.defineProperty(accessor, 'name', { enumerable: true, get() { reads++; return 'bad'; } });
+  const hidden = { ...value };
+  Object.defineProperty(hidden, 'name', { value: 'hidden' });
+  const nested = { siteCollectionId: guid, webId: guid, listId: guid };
+  Object.defineProperty(nested, 'uniqueId', { enumerable: true, get() { reads++; return guid; } });
+  for (const bad of [accessor, hidden, Object.create(value), { ...value, extra: 1 }, { ...value, [Symbol('x')]: 1 }, { ...value, sharePoint: nested }, JSON.parse(JSON.stringify(value).replace('"kind"', '"__proto__":{},"kind"'))]) assert.throws(() => load().copyFileFolderPickerValue(bad), /Invalid/);
+  assert.equal(reads, 0);
+  const arrayAccessor = [];
+  Object.defineProperty(arrayAccessor, '0', { enumerable: true, get() { reads++; return value; } });
+  for (const input of [undefined, {}, Array(1), Object.assign([], { extra: 1 }), arrayAccessor]) assert.throws(() => load().validateFileFolderPickerValues(input), /Invalid/);
+  assert.equal(reads, 0);
+});
+test('rejects invalid identifiers, legacy references, numbers and foreign endpoint forms', () => {
+  const validate = input => load().validateFileFolderPickerValues([input]);
+  for (const patch of [{ kind: 'item' }, { tenantId: 'tenant' }, { driveId: '' }, { itemId: 1 }, { name: null }, { webUrl: 'javascript:alert(1)' }]) assert.throws(() => validate({ ...value, ...patch }), /Invalid/);
+  for (const listItemId of [0, -1, 1.5, Infinity, NaN, Number.MAX_SAFE_INTEGER + 1]) assert.throws(() => validate({ ...value, sharePoint: { siteCollectionId: guid, webId: guid, listId: guid, listItemId } }), /Invalid/);
+  for (const endpoint of ['https://graph.microsoft.com/v1.0', 'https://api.onedrive.com/v1.0', 'https://tenant.sharepoint.com.attacker.test/_api/v2.0', 'http://tenant.sharepoint.com/_api/v2.0', 'https://user@tenant.sharepoint.com/_api/v2.0', 'https://tenant.sharepoint.com:444/_api/v2.0', 'https://tenant.sharepoint.com:443/_api/v2.0', 'https://tenant.sharepoint.com/_api/v2.0?x=1', 'https://tenant.sharepoint.com/_api/v2.0#x', 'https://tenant.sharepoint.com/a/../_api/v2.0', 'https://tenant.sharepoint.com/a/%2e%2e/_api/v2.0', 'https://tenant.sharepoint.com\\a/_api/v2.0', ' https://tenant.sharepoint.com/_api/v2.0', 'https://tenant.sharepoint.com/_api/v2.0/drives']) assert.throws(() => validate({ ...value, endpoint }), /Invalid/, endpoint);
+  assert.throws(() => validate({ kind: 'file', webUrl: 'https://tenant.sharepoint.com', listId: guid, itemId: 1, uniqueId: guid }), /Invalid/);
+});
+test('navigation snapshots retain ordinary query and fragment without weakening endpoint validation', () => {
+  const {copyFileFolderPickerValue}=load();
+  const input={kind:'file',tenantId:'11111111-1111-4111-8111-111111111111',endpoint:'https://tenant.sharepoint.com/_api/v2.0',driveId:'b!d',itemId:'01F',webUrl:'https://tenant.sharepoint.com/sites/hr/Report.pdf?web=1#bookmark'};
+  const copied=copyFileFolderPickerValue(input);assert.deepEqual(copied,input);assert.notEqual(copied,input);
+  assert.throws(()=>copyFileFolderPickerValue({...input,endpoint:input.endpoint+'?web=1'}));
+  assert.throws(()=>copyFileFolderPickerValue({...input,webUrl:'javascript:alert(1)'}));
+});

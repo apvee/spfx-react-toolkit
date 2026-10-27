@@ -24,7 +24,11 @@ export interface SPFxFluent9ThemeInfo {
 }
 ```
 
-Converts the SPFx theme to Fluent UI 9 and uses the normalized Teams theme when supported. `isTeams` and optional `teamsTheme` describe that choice; there is no `isDark` field. A missing SPFx theme uses the light-theme fallback.
+Chooses a normalized application SDK theme when context acquisition succeeded and a theme is available, otherwise converts the SPFx theme, otherwise uses the light-theme fallback. SharePoint updates come from the existing provider subscription; Teams/Office/Outlook updates come from the live SDK dispatcher described in [environment hooks](./environment.md#usespfxteams).
+
+The legacy `isTeams` field equals SDK context support, including Office/Outlook; it does not classify the actual host or guarantee that an SDK theme is available. Optional `teamsTheme` is the normalized default/dark/highContrast theme. Use `useSPFxEnvironmentInfo` for host classification. There is no `isDark` field. The SDK's single-handler ownership and lack of unregister also apply here.
+
+[WebPartShell](../controls/web-part-shell.md) composes this hook with explicit theme > nearest ancestor Fluent tokens > host tokens, and explicit direction > actual ancestor Fluent direction > SPFx culture. It supplies the owner document but inherits the renderer; hosts must supply a matching Griffel renderer.
 
 [View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts)
 

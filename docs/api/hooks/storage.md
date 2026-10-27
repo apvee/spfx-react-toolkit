@@ -14,6 +14,7 @@ These hooks provide access to browser storage (localStorage, sessionStorage), On
 | [`useSPFxTenantProperty`](#usespfxtenantproperty) | `SPFxTenantPropertyResult` | Tenant properties (read-only) |
 | [`useSPFxTenantKeyValueStore`](#usespfxtenantkeyvaluestore) | `SPFxTenantKeyValueStoreResult` | Tenant-level key-value store |
 | [`useSPFxSiteKeyValueStore`](#usespfxsitekeyvaluestore) | `SPFxSiteKeyValueStoreResult` | Collection root-web key-value store shared by subsites |
+| [`useSPFxConfigurationStore`](#usespfxconfigurationstore) | `SPFxConfigurationStoreResult` | Explicit tenant/site scope with optional site overrides |
 
 ---
 
@@ -353,14 +354,20 @@ interface SPFxOneDriveAppDataResult<T> {
   /** Write data to OneDrive (upsert) */
   readonly write: (content: T) => Promise<void>;
   
-  /** True when data is loaded and ready */
+  /** True when data is defined, no read is pending and no read error exists */
   readonly isReady: boolean;
 }
 ```
 
+### Browser downloads
+
+Reads request the file's complete Graph metadata and immediately download its JSON from `@microsoft.graph.downloadUrl` using native `fetch` with `credentials: 'omit'`. The path lookup uses no `$select` projection, which can omit the download annotation. Graph authorization headers are not forwarded to the download host. This avoids the authenticated `/content` redirect that fails browser CORS preflight, as described in [Microsoft's download guidance](https://learn.microsoft.com/en-us/graph/api/driveitem-get-content?view=graph-rest-1.0#downloading-files-in-javascript-apps).
+
+Download URLs must be absolute HTTPS URLs and are used immediately rather than cached or logged. Only a missing-file response from Graph metadata sets `isNotFound`. Denied Graph requests, failed downloads (including download URL 404s) and invalid JSON remain errors, preventing `createIfMissing` from acting on an unavailable download URL. Writes continue to use the Graph `/content` endpoint. The consumer runtime must provide native `fetch`.
+
 ### Request ownership and lazy defaults
 
-`defaultValue` seeds `data` even with `autoFetch: false`; changing file, folder or Graph client seeds the new identity from the current default without forcing a lazy fetch. Changing an inline default alone does not reload. A current missing-file response is required before `createIfMissing` writes a default.
+`isReady` is exactly `!isLoading && !error && data !== undefined`; a seeded default can be ready before any read, and a pending write or write error does not itself make it false. `defaultValue` seeds `data` even with `autoFetch: false`; changing file, folder or Graph client seeds the new identity from the current default without forcing a lazy fetch. Changing an inline default alone does not reload. A current missing-file response is required before `createIfMissing` writes a default.
 
 Latest-started reads and writes own the local data/error state together. An older read, 404 or write completion cannot replace a newer write's local data. `isLoading` and `isWriting` track pending reads and writes separately for the current identity. Identity changes and unmount ignore obsolete completions. Requests still settle for their callers; remote writes are not cancelled or serialized. `load()` records read errors in `error`; `write()` records `writeError` and rejects on failure. These guards do not provide remote transaction ordering.
 
@@ -557,10 +564,7 @@ function TodoApp() {
 
 Access tenant-wide custom properties (read-only).
 
-> **Note:** Write and remove operations have been removed in v2.0.0. Microsoft has blocked the
-> SetStorageEntity and RemoveStorageEntity REST API endpoints. Tenant properties can only be
-> managed via PowerShell (`Set-PnPStorageEntity`, `Remove-PnPStorageEntity`).
-> For a read/write key-value store at tenant level, use [`useSPFxTenantKeyValueStore`](#usespfxtenantkeyvaluestore).
+This hook and `createSPFxTenantPropertyService` expose reads only; neither exports write/remove operations. Manage StorageEntity provisioning through your administrator’s supported tooling. For toolkit-managed read/write tenant configuration, use [`useSPFxTenantKeyValueStore`](#usespfxtenantkeyvaluestore).
 
 ### Signature
 
@@ -684,174 +688,100 @@ function ConfiguredWidget() {
 
 ## useSPFxTenantKeyValueStore
 
-Tenant-level key-value store backed by a hidden SharePoint list in the tenant app catalog. Provides CRUD operations (get, list, save, remove) using the existing string/JSON serialization format.
+Reads and writes shared tenant configuration in the hidden `TenantKeyValueStore` list in the tenant app catalog. Requires a matching host-specific SPFx provider, its authenticated `SPHttpClient`, page context, and a provisioned tenant app catalog. All applications share the same key namespace; use application-specific key prefixes.
 
-This hook is an alternative to tenant properties (StorageEntity) for scenarios requiring read/write access via REST, since Microsoft has blocked the SetStorageEntity and RemoveStorageEntity REST endpoints.
-
-### Signature
+### Signature and result
 
 ```typescript
 function useSPFxTenantKeyValueStore(): SPFxTenantKeyValueStoreResult
-```
 
-### Returns
-
-```typescript
 interface SPFxTenantKeyValueStoreResult {
-  /** Loading state for read operations */
   readonly isLoading: boolean;
-  /** Last error from read operations */
   readonly error: Error | undefined;
-  /** Loading state for write operations */
   readonly isWriting: boolean;
-  /** Last error from write operations */
   readonly writeError: Error | undefined;
-  /** Whether the current user can write (Site Collection Admin on app catalog) */
   readonly canWrite: boolean;
-  /** True when SPHttpClient is available */
   readonly isReady: boolean;
-
-  /** Get a single item by key */
   readonly get: <T = unknown>(key: string) => Promise<SPFxTenantKeyValueStoreItem<T> | undefined>;
-  /** List all items (sorted by key) */
   readonly list: () => Promise<SPFxTenantKeyValueStoreItem<unknown>[]>;
-  /** Create or update a key-value pair (auto-provisions list on first write) */
   readonly save: <T = unknown>(key: string, value: T, description?: string) => Promise<void>;
-  /** Remove an item by key (no-op if not found) */
   readonly remove: (key: string) => Promise<void>;
 }
 
 interface SPFxTenantKeyValueStoreItem<T = unknown> {
-  /** Property key */
   readonly key: string;
-  /** Deserialized property value */
   readonly value: T;
-  /** Optional description metadata */
   readonly description: string | undefined;
-  /** SharePoint list item ID */
   readonly id: number;
 }
 ```
 
-### Error and loading behavior
+### Initialization, permissions and errors
 
-Read operations remain pending until their service promises settle. `get()` returns `undefined` and `list()` returns `[]` on read failures while publishing `error`; these fallbacks alone cannot distinguish absence from failure. Writes publish `writeError` and reject their returned promises on failure. Handle write rejections in the caller.
+Mount discovers the catalog and checks permissions using read-only requests. `get`, `list` and `remove` never create the list or repair its schema. Only `save` (or the non-React service's explicit `ensureListReady`) provisions/repairs it.
 
-Read and write channels have independent pending counts: their loading flags remain true while any current-identity operation in that channel is pending. Starting an operation clears its channel error; only the latest-started operation may publish that error. Old catalog/service and unmounted completions do not update the current hook. The server still controls authorization and remote ordering.
+`isReady` retains its client-availability meaning: it does **not** mean discovery has finished, the list exists or the user can write. `canWrite` starts false and checks effective Add/Edit/Delete Items permissions on the list. If the list is confirmed absent, it checks those permissions plus Manage Lists on the catalog web. It refreshes after operations; failed checks return false and older checks cannot overwrite newer results. Schema repair can require additional permissions even when item-write permissions are present. SharePoint authorizes every request; this flag is only an indicator, not a security boundary or a guarantee of success.
 
-### Storage Details
+Only a confirmed missing list/key is considered absent. Access denials, server errors, incompatible fields, duplicate lookup results, malformed data and paging failures publish `error`; `get` returns `undefined` and `list` returns `[]` for compatibility. Inspect `error` to distinguish failure from absence. Missing client availability rejects the operation. Writes/removal publish `writeError` and reject; callers must handle rejections. Background discovery failures are retried and surfaced by explicit operations.
 
-The store uses a hidden list named `TenantKeyValueStore` in the tenant app catalog:
-- **Title** column: key (indexed, unique)
-- **Value** column: multiline text (stores serialized data)
-- **Description** column: multiline text (optional metadata)
+Read/write loading flags independently count pending operations. Starting an operation clears its channel error, and only the latest-started operation may publish an error. Obsolete contexts and unmounted completions cannot update hook state. Remote requests already dispatched are not cancelled.
 
-The list is auto-provisioned on the first `save()` call. Read operations (`get`, `list`) return `undefined`/`[]` gracefully if the list doesn't exist yet.
+### Storage, paging and concurrency
 
-### Serialization
+The list keeps its existing schema: `Title` (Text/key), `Value` (Note/serialized text), `Description` (Note/optional metadata). Setup verifies field types and requires indexed, unique Title keys on both existing and newly created lists. Failed uniqueness/schema checks reject and are retryable; existing data is never deleted to repair schema. Resolve pre-existing duplicate keys administratively before retrying a write. Concurrent setup is shared within each service instance per normalized catalog URL; separate instances recover creation races only after bounded schema rereads.
 
-| Input type | Stored as |
-|------------|-----------|
-| `string` | Raw string |
-| `number`, `boolean`, `bigint` | `String(value)` |
-| `null` | `"null"` |
-| `Date` | ISO 8601 string |
-| Objects/arrays | `JSON.stringify()` |
+`list()` follows all supported SharePoint continuation pages in server Title order. Links must stay on the same origin and list-items path, without credentials/fragments or repeated URLs. Failed later pages reject in the service and produce the hook's empty fallback plus `error`; partial data is never presented as a complete list. SharePoint list thresholds and the user's actual access still apply.
 
-Deserialization attempts `JSON.parse()` first; falls back to raw string. This legacy format does not preserve every input type: strings such as `"123"`, `"true"` or `"null"` become JSON primitives; a bigint may become a lossy number; dates remain ISO strings. The generic `T` is a compile-time annotation, not runtime validation. Existing stored values retain this format; validate read values in application code.
+`save()` updates existing keys and preserves an omitted description; `description: ''` clears it. Updates and deletion use the observed item's ETag, fetching a single-item snapshot if collection metadata omits it. A missing ETag fails safely; HTTP 412 conflicts reject without wildcard overwrite or blind retry. This detects changes between the service's snapshot and mutation, **not** edits since a consumer's earlier `get()` call. A concurrent creation can recover through one validated conditional update. Removal of a concurrently deleted key is accepted only after confirming absence.
 
-### Requirements
+### Serialization and saved-data compatibility
 
-- Tenant app catalog must be provisioned
-- **Read**: Requires the current user to have access to the catalog/list; actual tenant permissions apply
-- **Write/Remove**: Site Collection Administrator role on the tenant app catalog site
+No migration, new column or tagged envelope is required. Existing raw values keep their historical JSON-first interpretation, including REST Note `null` reading as legacy `null`. Previously ambiguous data cannot be reconstructed automatically: a historical raw `123` still reads as number `123`, even if the original caller supplied a string. Existing public legacy serialization helpers and StorageEntity reads remain unchanged. Both list stores use the safe encoding below for new writes, while preserving their respective historical read behavior.
 
-### Example: Basic CRUD
+New tenant and site `save()` values use:
+
+| Input | Storage/readback |
+|-------|------------------|
+| Empty text, or text that parses as JSON, such as `"123"`, `"true"`, `"null"` or JSON-looking text | JSON-quoted text; reads back as the original string |
+| Other text | Raw text; reads back unchanged |
+| `number`, `boolean`, legacy `null` input | Legacy string representation, decoded with `JSON.parse` |
+| `bigint` | JSON-quoted decimal text; reads as an exact **string**, without numeric precision loss |
+| `Date` | ISO text; reads as a **string**, not a Date instance |
+| Objects/arrays | `JSON.stringify`, then `JSON.parse` on read |
+
+Older JSON-first readers can read new strings and bigint text correctly. Generics describe the expected shape and do not validate runtime data. This remains a text/JSON store, not a lossless arbitrary-JavaScript serializer: nested bigint, circular objects and invalid Dates throw before provisioning. Non-JSON values such as undefined/functions, non-finite numbers and custom prototypes are not guaranteed to round-trip. Validate application configuration after reading.
+
+### Example: save and read text safely
 
 ```tsx
+import * as React from 'react';
 import { useSPFxTenantKeyValueStore } from '@apvee/spfx-react-toolkit';
 
 function TenantConfigEditor() {
-  const store = useSPFxTenantKeyValueStore();
-  const [value, setValue] = React.useState('');
-
-  const handleLoad = async () => {
-    const item = await store.get<string>('apiEndpoint');
-    if (item) setValue(item.value);
+  const { save, get, isReady, isWriting, error, writeError } = useSPFxTenantKeyValueStore();
+  const [text, setText] = React.useState<string>('');
+  const run = async (): Promise<void> => {
+    try {
+      await save('my-app:version', '123', 'Application version');
+      const item = await get<unknown>('my-app:version');
+      if (typeof item?.value === 'string') setText(item.value);
+    } catch {
+      // Write failures are rendered through writeError; reads use error + fallback.
+    }
   };
-
-  const handleSave = async () => {
-    await store.save<string>('apiEndpoint', value, 'Production API endpoint');
-  };
-
-  const handleDelete = async () => {
-    await store.remove('apiEndpoint');
-    setValue('');
-  };
-
-  return (
-    <Stack tokens={{ childrenGap: 10 }}>
-      <TextField value={value} onChange={(_, v) => setValue(v ?? '')} />
-      <Stack horizontal tokens={{ childrenGap: 5 }}>
-        <PrimaryButton onClick={handleLoad}>Load</PrimaryButton>
-        <PrimaryButton onClick={handleSave} disabled={store.isWriting}>Save</PrimaryButton>
-        <DefaultButton onClick={handleDelete}>Delete</DefaultButton>
-      </Stack>
-      {store.error && <MessageBar messageBarType={MessageBarType.error}>{store.error.message}</MessageBar>}
-    </Stack>
-  );
+  return <>
+    <button disabled={!isReady || isWriting} onClick={run}>Save and read</button>
+    <p>{text}</p>
+    {(error ?? writeError) && <p role="alert">{(error ?? writeError)?.message}</p>}
+  </>;
 }
 ```
 
-### Example: Heterogeneous Types
+For a bigint, `await save('my-app:identifier', BigInt('9007199254740993'))` is read using `get<string>()`. Reconstruct a BigInt or Date explicitly only after validating the returned text. Existing legacy numeric values may already have lost precision and are not silently rewritten.
 
-```tsx
-const store = useSPFxTenantKeyValueStore();
+### Demo and verification
 
-// String
-await store.save<string>('appVersion', '2.1.0');
-
-// Number
-await store.save<number>('maxUploadSize', 10485760);
-
-// Complex object
-interface FeatureFlags { enableChat: boolean; maxUsers: number; }
-await store.save<FeatureFlags>('featureFlags', { enableChat: true, maxUsers: 500 });
-
-// Read back with type safety
-const flags = await store.get<FeatureFlags>('featureFlags');
-if (flags?.value.enableChat) { /* ... */ }
-```
-
-### Example: Property Dashboard
-
-```tsx
-function AllPropertiesView() {
-  const store = useSPFxTenantKeyValueStore();
-  const [items, setItems] = React.useState<SPFxTenantKeyValueStoreItem<unknown>[]>([]);
-
-  React.useEffect(() => {
-    store.list().then(setItems);
-  }, []);
-
-  if (store.isLoading) return <Spinner />;
-
-  return (
-    <DetailsList
-      items={items.map(i => ({
-        key: i.key,
-        value: typeof i.value === 'object' ? JSON.stringify(i.value) : String(i.value),
-        description: i.description ?? '',
-      }))}
-      columns={[
-        { key: 'key', name: 'Key', fieldName: 'key', minWidth: 150 },
-        { key: 'value', name: 'Value', fieldName: 'value', minWidth: 200 },
-        { key: 'desc', name: 'Description', fieldName: 'description', minWidth: 200 },
-      ]}
-    />
-  );
-}
-```
+The **Tenant → Tenant storage** sample runs CRUD only on explicit Run. Select Text/JSON/Big integer/Date to exercise serialization and inspect the read value's type. Empty description clears metadata. The list result reports the total fetched count and previews the first ten entries. Use disposable keys and remove them afterward. Local automated tests execute the real hook and panel with simulated service boundaries; authenticated tenant checks are tracked separately in [SharePoint validation](../../SHAREPOINT-VALIDATION.md).
 
 ### Source
 
@@ -861,7 +791,7 @@ function AllPropertiesView() {
 
 ## useSPFxSiteKeyValueStore
 
-Shares a hidden `SiteKeyValueStore` in `pageContext.site.absoluteUrl`, the root web of the current site collection. Root pages and every subsite use the same data; another site collection has its own store. The current web URL and tenant app catalog are not used as this store's target. Existing tenant store APIs and behavior remain unchanged.
+Shares a hidden `SiteKeyValueStore` in `pageContext.site.absoluteUrl`, the root web of the current site collection. Root pages and every subsite use the same data; another site collection has its own store. The current web URL and tenant app catalog are not used as this store's target. New writes use the same safe encoding and ETag preconditions as the tenant store; historical site data keeps its previous interpretation without migration.
 
 ### Signature and public types
 
@@ -904,11 +834,17 @@ Mount checks permissions without provisioning or fetching values. `isReady` mean
 
 The root list uses generic list template 100, `Hidden: true`, `NoCrawl: true`, indexed unique `Title`, and multiline text `Value` and `Description`. Reads validate field types without repair. Writes reject incompatible schema or failed uniqueness enforcement without deleting existing data. `list` follows all continuation pages in server Title order and rejects incomplete, foreign or repeated continuations; a later-page failure becomes the hook's error/fallback, not partial success.
 
-Read access depends on actual root-web/list permissions. `canWrite` checks effective Add, Edit and Delete Items on an existing list, including unique list permissions. An absent list also requires Manage Lists on the root web. The hook refreshes this advisory indicator after successful writes. SharePoint enforces authorization, schema-management rights and item restrictions even when `canWrite` is true; subsite membership alone is insufficient.
+Read access depends on actual root-web/list permissions. `canWrite` checks effective Add, Edit and Delete Items on an existing list, including unique list permissions. An absent list also requires Manage Lists on the root web. The hook refreshes this advisory indicator on mount and after each current-identity read/write settles, including failures. Failed checks yield false; only the latest permission check can update state, and obsolete/unmounted operations never start a refresh. SharePoint enforces authorization, schema-management rights and item restrictions even when `canWrite` is true; subsite membership alone is insufficient.
 
-Keys follow SharePoint's case-insensitive server collation and unique-column comparison; returned keys retain stored Title casing. Updates use wildcard ETags with last-writer-wins behavior, without optimistic locking. Omitted update descriptions preserve existing metadata; `''` clears it.
+Keys follow SharePoint's case-insensitive server collation and unique-column comparison; returned keys retain stored Title casing. Updates and deletion require the observed item ETag. If collection metadata omits it, the service retrieves a fresh item snapshot and its header ETag, preserving metadata from that same snapshot. Missing/invalid ETags and HTTP 412 conflicts reject without a wildcard overwrite or blind retry. This protects the service's snapshot-to-mutation interval, not changes since a consumer's previous get(). Creation recovery allows one validated conditional update and exposes that update's actual failure. Snapshot/deletion 404 succeeds only after verifying absence; a recreated key is not deleted. Omitted update descriptions preserve existing metadata; `''` clears it.
 
-The [legacy serialization format](#serialization) applies: JSON-like strings can become primitives, dates remain strings, and bigint can lose precision. `T` provides no runtime validation or complete round-trip guarantee. For this site store, a blank SharePoint Note field returned as `Value: null` reads as `''`; the stored text `'null'` deserializes to `null`. Tenant mapping remains unchanged.
+New site writes use the [safe list-store encoding](#serialization-and-saved-data-compatibility): empty and JSON-like strings are JSON-quoted so their text survives readback; bigint becomes exact decimal **string**, Date remains ISO **string**, and JSON-compatible objects/arrays retain JSON encoding. Historical JSON-first readers can read these new values. Circular objects, nested bigint and invalid Dates throw before any setup request. Other non-JSON values/prototypes have no complete round-trip guarantee; `T` is not runtime validation.
+
+No existing rows, fields or public signatures are migrated. Historical raw `123`/`true` still decode as number/boolean, and any previously lost bigint precision cannot be reconstructed. The site-specific blank Note contract is preserved: REST `Value: null` reads as `''`, while the stored text `'null'` decodes to legacy `null`. New empty text is stored as `'""'`, avoiding SharePoint's empty-Note normalization. The tenant's historical REST-null behavior remains unchanged.
+
+### Observable sample
+
+The **Site** panel offers Text, JSON, Big integer and Date inputs for explicit Save. Read the key afterward to inspect the value and its runtime type; empty description explicitly clears metadata. Try Text `123`/empty text and Big integer `9007199254740993` to observe string-preserving/exact readback. Date reads as ISO string. List reports the complete count and previews the first ten entries. Conflicts/errors never appear as successful saves or missing records. Tests execute the actual panel/hook locally with simulated service boundaries; [authenticated root/subsite acceptance](../../SHAREPOINT-VALIDATION.md) remains separate.
 
 ### Example: Manual read and save
 
@@ -964,13 +900,84 @@ Use a disposable key prefix for testing and catch `remove` rejections just as fo
 
 ---
 
+## useSPFxConfigurationStore
+
+Resolves application configuration using the existing tenant and site collection lists. Requires a matching host-specific SPFx provider and its authenticated client/page context. It is additive: the existing tenant/site hooks, public signatures, lists, values and legacy decoding remain unchanged.
+
+```ts
+useSPFxConfigurationStore(options: SPFxConfigurationStoreOptions): SPFxConfigurationStoreResult;
+// options: { mode: 'tenant' | 'site' | 'layered' }; mode is required.
+```
+
+| Mode | Effective `get(key)` | Allowed physical scopes |
+| --- | --- | --- |
+| `tenant` | Tenant app catalog only | `tenant` |
+| `site` | Current site collection root only | `site` |
+| `layered` | Site first; tenant only after confirmed site absence | `tenant`, `site` |
+
+`site` always means `pageContext.site.absoluteUrl`, shared by any subsites. Tenant catalog discovery uses a snapshot of `pageContext.web.absoluteUrl`. Construction, mount and equivalent renders perform no reads, permission checks or provisioning. Tenant discovery is lazy and shared while pending within the service instance; failures can retry through an explicit operation. A layered site hit and site-targeted operations make no catalog requests.
+
+### Operations and state
+
+```ts
+get<T = unknown>(key: string): Promise<SPFxConfigurationStoreItem<T> | undefined>;
+listScope(scope: 'tenant' | 'site'): Promise<SPFxConfigurationStoreItem<unknown>[]>;
+save<T = unknown>(key: string, value: T, options: {
+  scope: 'tenant' | 'site'; description?: string;
+}): Promise<void>;
+remove(key: string, target: { scope: 'tenant' | 'site' }): Promise<void>;
+```
+
+Every mutation requires a physical scope, even in a single-store mode. Invalid/disabled scopes reject before I/O; no scope is inferred from permissions, availability or the source of an earlier read. There is no default write target or cross-scope failover.
+
+Items contain `key`, `value`, `description`, `id` and `source: 'tenant' | 'site'`. Metadata and server key casing come from the same winning record. IDs are source-list-local; `source` is provenance, not a routing instruction. `get` replaces the entire value by key, including objects/arrays; there is no JSON-property merge. A present site record wins even for `false`, `0`, `''` or legacy stored `null`. Only the absence of the **record** enables inheritance.
+
+`listScope` is a complete **physical inventory** of one store, preserving server order/casing and any legacy duplicate rows. It does not merge or deduplicate keys. A page failure rejects without partial output. There is no effective `list()`: SharePoint determines key equality, which a JavaScript Map/lowercase merge cannot faithfully reproduce for arbitrary saved keys. The existing unique-lookup error remains observable through `get`.
+
+State consists of `isReady`, `isLoading`, `error`, `isWriting`, `writeError`. `isReady` means the client and mode-specific local URLs are available; it does not establish successful discovery, schema or access. Read/write loading flags count all current-identity pending operations in their channel. Errors are cleared on starting another operation in the same channel; only the latest-started operation can publish its channel error. A mode/client/relevant URL change immediately hides obsolete state, and old/unmounted completions cannot publish current state. Retained callbacks keep their original targets.
+
+**All failed operations reject their promises.** Unlike the historical store hooks, failed reads also reject while publishing `error`; they never return absence-like fallbacks. Handle both read and write rejections. Non-Error rejections are normalized to Error for state while their original rejection is preserved. There is no cached `data`, `canWrite`, automatic load or refetch. SharePoint authorizes every request.
+
+### Example: tenant defaults and a site override
+
+```tsx
+import * as React from 'react';
+import { useSPFxConfigurationStore } from '@apvee/spfx-react-toolkit/hooks';
+import type { SPFxConfigurationStoreItem } from '@apvee/spfx-react-toolkit/hooks';
+
+function ConfigurationExample() {
+  const store = useSPFxConfigurationStore({ mode: 'layered' });
+  const [item, setItem] = React.useState<SPFxConfigurationStoreItem<number>>();
+  const run = async (): Promise<void> => {
+    try {
+      await store.save('my-app:pageSize', 20, { scope: 'tenant' });
+      await store.save('my-app:pageSize', 50, { scope: 'site' });
+      setItem(await store.get<number>('my-app:pageSize')); // 50, source site
+      await store.remove('my-app:pageSize', { scope: 'site' });
+      setItem(await store.get<number>('my-app:pageSize')); // 20, source tenant
+    } catch {
+      setItem(undefined); // Render the current hook error below.
+    }
+  };
+  return <>
+    <button disabled={!store.isReady || store.isLoading || store.isWriting} onClick={run}>Run configuration example</button>
+    <p>{item ? `${item.source}: ${item.value}` : 'No result'}</p>
+    {(store.error ?? store.writeError) && <p role="alert">{(store.error ?? store.writeError)?.message}</p>}
+  </>;
+}
+```
+
+This example intentionally writes configuration. Use your own key namespace and grants. Removing a site override reveals tenant data on the next read; removing tenant leaves an existing site override intact. Neither operation deletes both stores or writes a tombstone. A successful mutation remains successful if a subsequent explicit read fails.
+
+Only `save` can initialize/repair its selected list. Reads, inventories and removal never provision. Omitted description preserves existing **destination** metadata; `''` clears it. Creating a site override never copies the tenant description. Existing [safe serialization and saved-data compatibility](#serialization-and-saved-data-compatibility), nullable-Note differences and ETag preconditions apply unchanged. T is not runtime validation. A tenant serialization failure may occur after catalog discovery but before any setup/item writes. No cross-store transaction or caller get-to-save compare-and-swap is implied.
+
+The **Configuration** test web part tab exposes manual modes, effective Read, explicitly scoped Save/Remove and Physical inventory. Advanced diagnostics provide Text/JSON/Big integer/Date and description inputs; an empty description explicitly clears metadata. Results identify their current parameters, value type and source. Inventory reports the complete fetched count and previews ten rows. Use unique `spfx-toolkit-config-demo-<run>-` keys and remove them from every written scope. Local tests exercise the real hook/service facade with simulated boundaries; [authenticated checks](../../SHAREPOINT-VALIDATION.md#configuration-store) are separate.
+
+See the [non-React factory](../services/INDEX.md#configuration-store-service). Source: [hook](../../../packages/spfx-react-toolkit/src/hooks/useSPFxConfigurationStore.ts), [canonical types and service](../../../packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts).
+
 ## See Also
 
 - [HTTP Client Hooks](./http-clients.md) - API access
 - [PnPjs Hooks](./pnpjs.md) - SharePoint data access
 - [Context Hooks](./context.md) - SPFx context
 - [Performance Hooks](./performance.md) - Performance measurement & diagnostics
-
----
-
-*Maintained against public source declarations. Last updated: October 6, 2026*

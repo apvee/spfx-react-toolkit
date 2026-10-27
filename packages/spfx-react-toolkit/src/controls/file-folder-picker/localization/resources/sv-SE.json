@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Bläddra bland filer…",
+    "folders": "Bläddra bland mappar…",
+    "all": "Bläddra bland filer och mappar…"
+  },
+  "placeholders": {
+    "files": "Välj filer…",
+    "folders": "Välj mappar…",
+    "all": "Välj filer eller mappar…"
+  },
+  "labels": {
+    "selection": "Fil- och mappval",
+    "file": "Fil",
+    "folder": "Mapp",
+    "unresolvedItem": "Olöst objekt",
+    "removeItem": "Ta bort {name}"
+  },
+  "validation": {
+    "invalidReferences": "Ogiltiga fil- eller mappreferenser.",
+    "controlledModeChanged": "Det kontrollerade läget kan inte ändras medan kontrollen är monterad.",
+    "incompatibleItems": "Urvalet innehåller objekt som inte är kompatibla med den konfigurerade typen, kategorin eller filnamnstilläggen. Ta bort eller ersätt dem.",
+    "invalidPolicy": "Ogiltig konfiguration av urvalstyp, kategori, filnamnstillägg eller gräns.",
+    "selectionLimitExceeded": "Urvalet överskrider den konfigurerade gränsen. Ta bort de överflödiga objekten."
+  },
+  "errors": {
+    "configuration": "Ogiltig väljarkonfiguration. Kontrollera källan, typerna, kategorin och gränserna; använd förinställningen utan äldre alternativ.",
+    "auth-resource": "Väljaren begärde en autentiseringsresurs som inte tillåts av konfigurationen.",
+    "auth-type": "Väljaren begärde en autentiseringstyp som inte stöds av konfigurationen.",
+    "auth-challenge": "Väljaren kräver en ytterligare autentiseringskontroll som inte stöds.",
+    "auth-provider": "Det gick inte att hämta SharePoint-token. Försök igen; om problemet kvarstår kontrollerar du din åtkomst och de befintliga behörigheterna.",
+    "selection-identity": "Det gick inte att verifiera det valda objektets identitet. Öppna väljaren igen och försök på nytt.",
+    "selection-scope": "Det valda objektet ligger utanför den tillåtna webbplatsen, biblioteket eller mappen.",
+    "selection-policy": "Urvalet uppfyller inte kraven för tillåten typ, kategori, filnamnstillägg eller antal objekt.",
+    "selection-unavailable": "Det valda objektet är inte tillgängligt eller går inte att komma åt.",
+    "selection-invalid": "Det gick inte att verifiera urvalet. Inga nya objekt lades till.",
+    "onedrive-unavailable": "Den aktuella användarens OneDrive är inte tillgängligt eller går inte att komma åt. Kontrollera att enheten finns och försök igen.",
+    "opening": "Det gick inte att öppna väljaren. Kontrollera konfigurationen och åtkomsten till källan och försök igen.",
+    "timeout": "Väljaren svarade inte i tid. Stäng den och försök igen.",
+    "communication": "Kommunikationen med väljaren avbröts. Öppna den igen och försök på nytt."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Den valfria autentiseringsfunktionen svarade inte i tid. Försök igen.",
+    "unsupportedCommand": "Den här integreringen stöder inte det kommandot.",
+    "optionalGraphAuthenticationFailed": "Det gick inte att autentisera den valfria Microsoft Graph-funktionen.",
+    "optionalPersonalAuthenticationFailed": "Det gick inte att autentisera det valfria personliga målet."
+  }
+}

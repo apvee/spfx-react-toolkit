@@ -15,7 +15,9 @@
     "description": { "default": "SPFxReactToolkitTest description" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "SPFxReactToolkitTest"
+      "description": "SPFxReactToolkitTest",
+      "title": "SPFx React Toolkit",
+      "showTitle": true
     }
   }]
 }

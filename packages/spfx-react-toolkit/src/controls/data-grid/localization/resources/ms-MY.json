@@ -1,0 +1,23 @@
+{
+  "empty": "Tiada data tersedia",
+  "noResults": "Tiada hasil ditemukan",
+  "noVisibleColumns": "Tiada lajur kelihatan",
+  "loading": "Sedang memuatkan",
+  "actions": "Tindakan",
+  "moreActions": "Tindakan lain",
+  "yes": "Ya",
+  "no": "Tidak",
+  "noTags": "Tiada tag",
+  "noObservations": "Tiada pemerhatian",
+  "invalidValue": "Nilai tidak sah",
+  "selectAllRows": "Pilih semua baris",
+  "retry": "Cuba lagi",
+  "selectRowTemplate": "Pilih baris {rowId}",
+  "sparklineSummaryTemplate": "Pertama {first}; Terakhir {last}; Minimum {minimum}; Maksimum {maximum}; Purata {average}; Perubahan {change}; Peratus perubahan {changePercent}",
+  "tagOverflow": {
+    "other": "Tunjukkan {count} tag lagi"
+  },
+  "ratingCount": {
+    "other": "{formattedCount} undi"
+  }
+}

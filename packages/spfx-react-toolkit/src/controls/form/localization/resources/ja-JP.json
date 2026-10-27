@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "フォームを送信できませんでした。もう一度お試しください。",
+  "dateInputValidationMessage": "送信する前に日付を入力するか修正してください。",
+  "timeInputValidationMessage": "送信する前に時刻を入力するか修正してください。",
+  "tagPicker": {
+    "noOptions": "現在の検索に一致する選択肢はありません。"
+  },
+  "fileInput": {
+    "browseLabel": "参照",
+    "clearLabel": "クリア"
+  },
+  "arraySection": {
+    "add": "項目を追加",
+    "empty": "項目がありません",
+    "itemLabelTemplate": "項目 {position}",
+    "removeTemplate": "{label} を削除",
+    "moveUpTemplate": "{label} を上に移動",
+    "moveDownTemplate": "{label} を下に移動",
+    "addedTemplate": "{label} を追加しました",
+    "removedTemplate": "{label} を削除しました",
+    "movedTemplate": "{label} を全 {total} 項目中の {position} 番目に移動しました"
+  },
+  "datePicker": {
+    "months": [
+      "1月",
+      "2月",
+      "3月",
+      "4月",
+      "5月",
+      "6月",
+      "7月",
+      "8月",
+      "9月",
+      "10月",
+      "11月",
+      "12月"
+    ],
+    "shortMonths": [
+      "1月",
+      "2月",
+      "3月",
+      "4月",
+      "5月",
+      "6月",
+      "7月",
+      "8月",
+      "9月",
+      "10月",
+      "11月",
+      "12月"
+    ],
+    "days": [
+      "日曜日",
+      "月曜日",
+      "火曜日",
+      "水曜日",
+      "木曜日",
+      "金曜日",
+      "土曜日"
+    ],
+    "shortDays": [
+      "日",
+      "月",
+      "火",
+      "水",
+      "木",
+      "金",
+      "土"
+    ],
+    "goToToday": "今日に移動",
+    "prevMonthAriaLabel": "前の月",
+    "nextMonthAriaLabel": "次の月",
+    "prevYearAriaLabel": "前年",
+    "nextYearAriaLabel": "翌年",
+    "prevYearRangeAriaLabel": "前の年の範囲",
+    "nextYearRangeAriaLabel": "次の年の範囲",
+    "monthPickerHeaderAriaLabel": "{0}、年を変更",
+    "yearPickerHeaderAriaLabel": "{0}、月を変更",
+    "closeButtonAriaLabel": "閉じる",
+    "weekNumberFormatString": "第 {0} 週",
+    "selectedDateFormatString": "選択した日付 {0}",
+    "todayDateFormatString": "今日の日付 {0}",
+    "dayMarkedAriaLabel": "マークあり"
+  }
+}

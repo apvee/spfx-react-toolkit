@@ -1,0 +1,25 @@
+{
+  "empty": "No data available",
+  "noResults": "No results found",
+  "noVisibleColumns": "No visible columns",
+  "loading": "Loading",
+  "actions": "Actions",
+  "moreActions": "More actions",
+  "yes": "Yes",
+  "no": "No",
+  "noTags": "No tags",
+  "noObservations": "No observations",
+  "invalidValue": "Invalid value",
+  "selectAllRows": "Select all rows",
+  "retry": "Retry",
+  "selectRowTemplate": "Select row {rowId}",
+  "sparklineSummaryTemplate": "First {first}; last {last}; minimum {minimum}; maximum {maximum}; average {average}; change {change}; change percent {changePercent}",
+  "tagOverflow": {
+    "one": "Show {count} more tag",
+    "other": "Show {count} more tags"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} vote",
+    "other": "{formattedCount} votes"
+  }
+}

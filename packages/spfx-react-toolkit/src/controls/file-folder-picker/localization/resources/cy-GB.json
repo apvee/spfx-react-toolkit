@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Pori ffeiliau…",
+    "folders": "Pori ffolderi…",
+    "all": "Pori ffeiliau a ffolderi…"
+  },
+  "placeholders": {
+    "files": "Dewis ffeiliau…",
+    "folders": "Dewis ffolderi…",
+    "all": "Dewis ffeiliau neu ffolderi…"
+  },
+  "labels": {
+    "selection": "Dewis ffeiliau a ffolderi",
+    "file": "Ffeil",
+    "folder": "Ffolder",
+    "unresolvedItem": "Eitem heb ei datrys",
+    "removeItem": "Tynnu {name}"
+  },
+  "validation": {
+    "invalidReferences": "Cyfeiriadau annilys at ffeiliau neu ffolderi.",
+    "controlledModeChanged": "Ni ellir newid y modd rheoledig tra bo’r rheolydd wedi’i osod.",
+    "incompatibleItems": "Mae’r dewis yn cynnwys eitemau nad ydynt yn gydnaws â’r math, y categori neu’r estyniadau sydd wedi’u ffurfweddu. Tynnwch nhw neu rhowch eitemau eraill yn eu lle.",
+    "invalidPolicy": "Ffurfweddiad annilys ar gyfer math, categori, estyniadau neu derfyn y dewis.",
+    "selectionLimitExceeded": "Mae’r dewis yn fwy na’r terfyn sydd wedi’i ffurfweddu. Tynnwch yr eitemau ychwanegol."
+  },
+  "errors": {
+    "configuration": "Ffurfweddiad annilys y dewisydd. Gwiriwch y ffynhonnell, y mathau, y categori a’r terfynau; defnyddiwch y rhagosodiad heb opsiynau etifeddol.",
+    "auth-resource": "Gofynnodd y dewisydd am adnodd dilysu nad yw’r ffurfweddiad yn ei ganiatáu.",
+    "auth-type": "Gofynnodd y dewisydd am fath o ddilysu nad yw’r ffurfweddiad yn ei gefnogi.",
+    "auth-challenge": "Mae’r dewisydd angen gwiriad dilysu ychwanegol nad yw’n cael ei gefnogi.",
+    "auth-provider": "Methu cael y tocyn SharePoint. Rhowch gynnig arall arni; os yw’r broblem yn parhau, gwiriwch eich mynediad a’r caniatadau presennol.",
+    "selection-identity": "Methu gwirio hunaniaeth yr eitem a ddewiswyd. Agorwch y dewisydd eto a rhowch gynnig arall arni.",
+    "selection-scope": "Mae’r eitem a ddewiswyd y tu allan i’r safle, y llyfrgell neu’r ffolder a ganiateir.",
+    "selection-policy": "Nid yw’r dewis yn bodloni’r gofynion ar gyfer y math, y categori, yr estyniadau neu nifer yr eitemau a ganiateir.",
+    "selection-unavailable": "Nid yw’r eitem a ddewiswyd ar gael neu nid oes modd cael mynediad ati.",
+    "selection-invalid": "Methu gwirio’r dewis. Ni ychwanegwyd unrhyw eitemau newydd.",
+    "onedrive-unavailable": "Nid yw OneDrive y defnyddiwr presennol ar gael neu nid oes modd cael mynediad ato. Gwiriwch fod y gyriant yn bodoli a rhowch gynnig arall arni.",
+    "opening": "Methu agor y dewisydd. Gwiriwch y ffurfweddiad a’r mynediad at y ffynhonnell, yna rhowch gynnig arall arni.",
+    "timeout": "Ni ymatebodd y dewisydd mewn pryd. Caewch ef a rhowch gynnig arall arni.",
+    "communication": "Torrwyd y cyfathrebu â’r dewisydd. Agorwch ef eto a rhowch gynnig arall arni."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Ni ymatebodd y nodwedd dilysu ddewisol mewn pryd. Rhowch gynnig arall arni.",
+    "unsupportedCommand": "Nid yw’r integreiddiad hwn yn cefnogi’r gorchymyn hwnnw.",
+    "optionalGraphAuthenticationFailed": "Methu dilysu’r nodwedd Microsoft Graph ddewisol.",
+    "optionalPersonalAuthenticationFailed": "Methu dilysu’r gyrchfan bersonol ddewisol."
+  }
+}

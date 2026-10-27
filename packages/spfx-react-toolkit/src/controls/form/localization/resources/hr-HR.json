@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Obrazac nije moguće poslati. Pokušajte ponovno.",
+  "dateInputValidationMessage": "Dopunite ili ispravite datum prije slanja.",
+  "timeInputValidationMessage": "Dopunite ili ispravite vrijeme prije slanja.",
+  "tagPicker": {
+    "noOptions": "Nijedna mogućnost ne odgovara trenutačnom upitu."
+  },
+  "fileInput": {
+    "browseLabel": "Pregledaj",
+    "clearLabel": "Očisti"
+  },
+  "arraySection": {
+    "add": "Dodaj stavku",
+    "empty": "Nema stavki",
+    "itemLabelTemplate": "Stavka {position}",
+    "removeTemplate": "Ukloni {label}",
+    "moveUpTemplate": "Pomakni {label} gore",
+    "moveDownTemplate": "Pomakni {label} dolje",
+    "addedTemplate": "Dodano: {label}",
+    "removedTemplate": "Uklonjeno: {label}",
+    "movedTemplate": "Stavka {label} pomaknuta je na položaj {position} od {total}"
+  },
+  "datePicker": {
+    "months": [
+      "siječanj",
+      "veljača",
+      "ožujak",
+      "travanj",
+      "svibanj",
+      "lipanj",
+      "srpanj",
+      "kolovoz",
+      "rujan",
+      "listopad",
+      "studeni",
+      "prosinac"
+    ],
+    "shortMonths": [
+      "sij",
+      "velj",
+      "ožu",
+      "tra",
+      "svi",
+      "lip",
+      "srp",
+      "kol",
+      "ruj",
+      "lis",
+      "stu",
+      "pro"
+    ],
+    "days": [
+      "nedjelja",
+      "ponedjeljak",
+      "utorak",
+      "srijeda",
+      "četvrtak",
+      "petak",
+      "subota"
+    ],
+    "shortDays": [
+      "ned",
+      "pon",
+      "uto",
+      "sri",
+      "čet",
+      "pet",
+      "sub"
+    ],
+    "goToToday": "Idi na danas",
+    "prevMonthAriaLabel": "Prethodni mjesec",
+    "nextMonthAriaLabel": "Sljedeći mjesec",
+    "prevYearAriaLabel": "Prethodna godina",
+    "nextYearAriaLabel": "Sljedeća godina",
+    "prevYearRangeAriaLabel": "Prethodni raspon godina",
+    "nextYearRangeAriaLabel": "Sljedeći raspon godina",
+    "monthPickerHeaderAriaLabel": "{0}, promijeni godinu",
+    "yearPickerHeaderAriaLabel": "{0}, promijeni mjesec",
+    "closeButtonAriaLabel": "Zatvori",
+    "weekNumberFormatString": "Broj tjedna {0}",
+    "selectedDateFormatString": "Odabrani datum {0}",
+    "todayDateFormatString": "Današnji datum {0}",
+    "dayMarkedAriaLabel": "označeno"
+  }
+}

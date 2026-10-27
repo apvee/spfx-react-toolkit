@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Formulir tidak dapat dikirim. Silakan coba lagi.",
+  "dateInputValidationMessage": "Lengkapi atau perbaiki tanggal sebelum mengirim.",
+  "timeInputValidationMessage": "Lengkapi atau perbaiki waktu sebelum mengirim.",
+  "tagPicker": {
+    "noOptions": "Tidak ada opsi yang cocok dengan pencarian saat ini."
+  },
+  "fileInput": {
+    "browseLabel": "Telusuri",
+    "clearLabel": "Hapus"
+  },
+  "arraySection": {
+    "add": "Tambahkan item",
+    "empty": "Tidak ada item",
+    "itemLabelTemplate": "Item {position}",
+    "removeTemplate": "Hapus {label}",
+    "moveUpTemplate": "Pindahkan {label} ke atas",
+    "moveDownTemplate": "Pindahkan {label} ke bawah",
+    "addedTemplate": "{label} ditambahkan",
+    "removedTemplate": "{label} dihapus",
+    "movedTemplate": "{label} dipindahkan ke posisi {position} dari {total}"
+  },
+  "datePicker": {
+    "months": [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember"
+    ],
+    "shortMonths": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Mei",
+      "Jun",
+      "Jul",
+      "Agu",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Des"
+    ],
+    "days": [
+      "Minggu",
+      "Senin",
+      "Selasa",
+      "Rabu",
+      "Kamis",
+      "Jumat",
+      "Sabtu"
+    ],
+    "shortDays": [
+      "Min",
+      "Sen",
+      "Sel",
+      "Rab",
+      "Kam",
+      "Jum",
+      "Sab"
+    ],
+    "goToToday": "Ke hari ini",
+    "prevMonthAriaLabel": "Bulan sebelumnya",
+    "nextMonthAriaLabel": "Bulan berikutnya",
+    "prevYearAriaLabel": "Tahun sebelumnya",
+    "nextYearAriaLabel": "Tahun berikutnya",
+    "prevYearRangeAriaLabel": "Rentang tahun sebelumnya",
+    "nextYearRangeAriaLabel": "Rentang tahun berikutnya",
+    "monthPickerHeaderAriaLabel": "{0}, ubah tahun",
+    "yearPickerHeaderAriaLabel": "{0}, ubah bulan",
+    "closeButtonAriaLabel": "Tutup",
+    "weekNumberFormatString": "Nomor minggu {0}",
+    "selectedDateFormatString": "Tanggal yang dipilih {0}",
+    "todayDateFormatString": "Tanggal hari ini {0}",
+    "dayMarkedAriaLabel": "ditandai"
+  }
+}

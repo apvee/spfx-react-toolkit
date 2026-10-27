@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Velg et element",
+    "selectMany": "Velg elementer",
+    "search": "Søk…",
+    "clearSelection": "Tøm utvalg",
+    "clearSearch": "Tøm søk",
+    "options": "Alternativer",
+    "searchOptions": "Søk i alternativer",
+    "selectedOne": "Valgt element",
+    "selectedMany": "Valgte elementer",
+    "noSelection": "Ingen valg",
+    "resolveIds": "Slå opp ID-er",
+    "moreResults": "Flere resultater",
+    "retry": "Prøv igjen",
+    "namedOptions": "{name}: Alternativer",
+    "namedSearch": "{name}: Søk",
+    "selectedCount": {
+      "one": "{count} element valgt",
+      "other": "{count} elementer valgt"
+    },
+    "minimumSearchLength": {
+      "one": "Skriv minst {count} tegn for å søke",
+      "other": "Skriv minst {count} tegn for å søke"
+    }
+  },
+  "status": {
+    "searching": "Søker…",
+    "loading": "Laster inn…",
+    "partialSearch": "Delvis søk: presiser søket.",
+    "noOtherResults": "Ingen andre resultater for dette søket",
+    "noResults": "Ingen resultater for dette søket",
+    "noOptions": "Ingen tilgjengelige alternativer.",
+    "moreItemsAvailable": "Flere elementer er tilgjengelige.",
+    "partialSuggestions": "Delvise forslag: noen kilder er utilgjengelige.",
+    "unresolvedValue": "Verdi kunne ikke slås opp",
+    "partialHubs": "Delvis hubliste: begrens omfanget eller bruk nettstedsmodus.",
+    "partialSiteCollections": "Delvis søk etter nettstedssamlinger (maksimalt 1000 resultater): begrens kriteriene."
+  },
+  "sections": {
+    "consumer": "Oppgitte alternativer",
+    "currentSite": "Gjeldende nettsted",
+    "hubSite": "Tilknyttet hub",
+    "catalog": "Tilgjengelige alternativer",
+    "currentUser": "Du",
+    "people": "Foreslåtte personer",
+    "memberOf": "Dine grupper"
+  },
+  "metadata": {
+    "documentLibrary": "Dokumentbibliotek",
+    "sharePointList": "SharePoint-liste",
+    "personalView": "Personlig visning",
+    "publicView": "Offentlig visning",
+    "field": "Felt",
+    "itemDescription": "Element · ID {id}",
+    "file": "Fil",
+    "fileWithExtension": "{extension}-fil",
+    "folder": "Mappe",
+    "sharePointGroup": "SharePoint-gruppe · SharePoint",
+    "securityGroup": "Sikkerhetsgruppe · Entra",
+    "distributionList": "Distribusjonsliste · Entra",
+    "unvalidatedEmail": "Ubekreftet e-post",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Valggrensen er nådd.",
+    "selectionLimitExceeded": "Valget overskrider den konfigurerte grensen.",
+    "unresolvedValues": "Noen valgte verdier kunne ikke slås opp.",
+    "outOfScopeValues": "Valget inneholder verdier utenfor det konfigurerte omfanget.",
+    "resolveRequiredUserIds": "Slå opp de nødvendige ID-ene for de valgte brukerne."
+  },
+  "errors": {
+    "candidateOutOfScope": "Kandidaten er utenfor det konfigurerte omfanget.",
+    "incompleteCandidateResolution": "Kandidaten kunne ikke slås fullstendig opp.",
+    "resolutionFailed": "Oppslaget mislyktes.",
+    "graphUnavailable": "Microsoft Graph-klienten er utilgjengelig."
+  }
+}

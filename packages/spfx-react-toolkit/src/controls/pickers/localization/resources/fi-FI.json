@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Valitse kohde",
+    "selectMany": "Valitse kohteet",
+    "search": "Hae…",
+    "clearSelection": "Tyhjennä valinta",
+    "clearSearch": "Tyhjennä haku",
+    "options": "Vaihtoehdot",
+    "searchOptions": "Hae vaihtoehtoja",
+    "selectedOne": "Valittu kohde",
+    "selectedMany": "Valitut kohteet",
+    "noSelection": "Ei valintaa",
+    "resolveIds": "Selvitä tunnukset",
+    "moreResults": "Lisää tuloksia",
+    "retry": "Yritä uudelleen",
+    "namedOptions": "{name}: Vaihtoehdot",
+    "namedSearch": "{name}: Hae",
+    "selectedCount": {
+      "one": "{count} kohde valittu",
+      "other": "{count} kohdetta valittu"
+    },
+    "minimumSearchLength": {
+      "one": "Kirjoita vähintään {count} merkki hakua varten",
+      "other": "Kirjoita vähintään {count} merkkiä hakua varten"
+    }
+  },
+  "status": {
+    "searching": "Haetaan…",
+    "loading": "Ladataan…",
+    "partialSearch": "Osittainen haku: tarkenna hakua.",
+    "noOtherResults": "Ei muita tuloksia tälle haulle",
+    "noResults": "Ei tuloksia tälle haulle",
+    "noOptions": "Vaihtoehtoja ei ole saatavilla.",
+    "moreItemsAvailable": "Lisää kohteita on saatavilla.",
+    "partialSuggestions": "Osittaiset ehdotukset: jotkin lähteet eivät ole käytettävissä.",
+    "unresolvedValue": "Selvittämätön arvo",
+    "partialHubs": "Osittainen keskussivustojen luettelo: rajaa laajuutta tai käytä sivustotilaa.",
+    "partialSiteCollections": "Osittainen sivustokokoelmien haku (enintään 1000 tulosta): rajaa hakuehtoja."
+  },
+  "sections": {
+    "consumer": "Annetut vaihtoehdot",
+    "currentSite": "Nykyinen sivusto",
+    "hubSite": "Liitetty keskussivusto",
+    "catalog": "Saatavilla olevat vaihtoehdot",
+    "currentUser": "Sinä",
+    "people": "Ehdotetut henkilöt",
+    "memberOf": "Omat ryhmät"
+  },
+  "metadata": {
+    "documentLibrary": "Tiedostokirjasto",
+    "sharePointList": "SharePoint-luettelo",
+    "personalView": "Oma näkymä",
+    "publicView": "Julkinen näkymä",
+    "field": "Kenttä",
+    "itemDescription": "Kohde · tunnus {id}",
+    "file": "Tiedosto",
+    "fileWithExtension": "{extension}-tiedosto",
+    "folder": "Kansio",
+    "sharePointGroup": "SharePoint-ryhmä · SharePoint",
+    "securityGroup": "Käyttöoikeusryhmä · Entra",
+    "distributionList": "Jakeluluettelo · Entra",
+    "unvalidatedEmail": "Vahvistamaton sähköposti",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Valintaraja on saavutettu.",
+    "selectionLimitExceeded": "Valinta ylittää määritetyn rajan.",
+    "unresolvedValues": "Joitakin valittuja arvoja ei ole selvitetty.",
+    "outOfScopeValues": "Valinta sisältää määritetyn laajuuden ulkopuolisia arvoja.",
+    "resolveRequiredUserIds": "Selvitä valittujen käyttäjien tarvittavat tunnukset."
+  },
+  "errors": {
+    "candidateOutOfScope": "Ehdokas on määritetyn laajuuden ulkopuolella.",
+    "incompleteCandidateResolution": "Ehdokasta ei voitu selvittää kokonaan.",
+    "resolutionFailed": "Selvittäminen epäonnistui.",
+    "graphUnavailable": "Microsoft Graph -asiakas ei ole käytettävissä."
+  }
+}

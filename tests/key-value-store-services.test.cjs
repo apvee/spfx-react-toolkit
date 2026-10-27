@@ -3,208 +3,16 @@ const test = require('node:test');
 const { createHarness } = require('./services-test-harness.cjs');
 const { createScriptedSPHttpClient } = require('./fixtures/key-value-store-transport.cjs');
 
-const catalogUrl = 'https://tenant.test/sites/catalog';
 const listUrl = url => `${url}/_api/web/lists/getByTitle('TenantKeyValueStore')`;
-const fieldsUrl = url => `${listUrl(url)}/fields?$filter=InternalName eq 'Value' or InternalName eq 'Description'&$select=InternalName`;
-const itemsUrl = url => `${listUrl(url)}/items?$select=Id,Title,Value,Description&$orderby=Title`;
 const findUrl = (url, key) => {
   const encode = value => encodeURIComponent(value).replace(/'/g, '%27');
   return `${listUrl(url)}/items?$filter=${encode(`Title eq '${key.replace(/'/g, "''")}'`)}&$select=${encode('Id,Title,Value,Description')}&$top=1`;
 };
 const mergeHeaders = { 'X-HTTP-Method': 'MERGE', 'If-Match': '*' };
-
-function setup(factoryName = 'tenant') {
-  const transport = createScriptedSPHttpClient();
-  const configuration = {};
-  const harness = createHarness({ '@microsoft/sp-http': { SPHttpClient: { configurations: { v1: configuration } } } });
-  const createService = client => factoryName === 'tenant'
-    ? harness.load('services/spfx-tenant-key-value-store.service.ts').createSPFxTenantKeyValueStoreService(client)
-    : harness.load('services/spfx-list-key-value-store.internal.ts').createSPFxListKeyValueStoreService(client, 'tenant');
-  return { ...transport, configuration, createService, service: createService(transport.client) };
-}
-
-function enqueueReady(transport, url = catalogUrl, fields = ['Value', 'Description']) {
-  transport.enqueue('GET', `${listUrl(url)}?$select=Id`);
-  transport.enqueue('GET', fieldsUrl(url), { body: { value: fields.map(InternalName => ({ InternalName })) } });
-}
-
+const itemMergeHeaders = { 'X-HTTP-Method': 'MERGE', 'If-Match': '"3"' };
 function assertOptions(call, body, headers) {
   assert.deepEqual(call.options, { ...(headers ? { headers } : {}), ...(body ? { body: JSON.stringify(body) } : {}) });
 }
-
-function characterize(factoryName) {
-  const prefix = `${factoryName} tenant behavior: `;
-  test(prefix + 'new list setup preserves exact requests, bodies and warning-only uniqueness failure', async () => {
-    const t = setup(factoryName);
-    t.enqueue('GET', `${listUrl(catalogUrl)}?$select=Id`, { status: 404 });
-    t.enqueue('POST', `${catalogUrl}/_api/web/lists`);
-    t.enqueue('POST', `${listUrl(catalogUrl)}/fields`);
-    t.enqueue('POST', `${listUrl(catalogUrl)}/fields`);
-    t.enqueue('POST', `${listUrl(catalogUrl)}/fields/getByInternalNameOrTitle('Title')`, { status: 500 });
-    const warnings = [];
-    const originalWarn = console.warn;
-    console.warn = message => warnings.push(message);
-    try { await t.service.ensureListReady(catalogUrl); } finally { console.warn = originalWarn; }
-    assert.deepEqual(warnings, ['Failed to set Title uniqueness constraint. It may already be configured.']);
-    assertOptions(t.calls[1], { BaseTemplate: 100, Title: 'TenantKeyValueStore', Hidden: true, NoCrawl: true });
-    assertOptions(t.calls[2], { FieldTypeKind: 3, Title: 'Value' });
-    assertOptions(t.calls[3], { FieldTypeKind: 3, Title: 'Description' });
-    assertOptions(t.calls[4], { Indexed: true, EnforceUniqueValues: true }, mergeHeaders);
-    assert.ok(t.calls.every(call => call.configuration === t.configuration));
-    await t.service.ensureListReady(catalogUrl);
-    assert.equal(t.calls.length, 5);
-    t.assertDrained();
-  });
-
-  test(prefix + 'existing list repairs only missing fields in Value/Description order', async () => {
-    for (const fields of [[], ['Value'], ['Description'], ['Value', 'Description']]) {
-      const t = setup(factoryName);
-      enqueueReady(t, catalogUrl, fields);
-      const missing = ['Value', 'Description'].filter(field => !fields.includes(field));
-      for (const field of missing) t.enqueue('POST', `${listUrl(catalogUrl)}/fields`);
-      await t.service.ensureListReady(catalogUrl);
-      missing.forEach((field, index) => assertOptions(t.calls[index + 2], { FieldTypeKind: 3, Title: field }));
-      t.assertDrained();
-    }
-  });
-
-  test(prefix + 'get/list never provision, preserve escaping/raw slash URLs, ignore nextLink and retain coercion', async () => {
-    const t = setup(factoryName);
-    const url = catalogUrl + '/';
-    const key = "O'Brien & #/?";
-    t.enqueue('GET', findUrl(url, key), { body: { value: [{ Id: 3, Title: key, Value: '123', Description: '' }] } });
-    assert.deepEqual(await t.service.get(key, url), { id: 3, key, value: 123, description: undefined });
-    t.enqueue('GET', findUrl(url, 'absent'), { body: { value: [] } });
-    assert.equal(await t.service.get('absent', url), undefined);
-    t.enqueue('GET', itemsUrl(url), { body: {
-      value: [{ Id: 4, Title: 'bool', Value: 'true' }, { Id: 5, Title: 'text', Value: 'hello', Description: 'kept' }],
-      '@odata.nextLink': 'https://tenant.test/unused', 'odata.nextLink': 'https://tenant.test/also-unused'
-    } });
-    assert.deepEqual(await t.service.list(url), [
-      { id: 4, key: 'bool', value: true, description: undefined },
-      { id: 5, key: 'text', value: 'hello', description: 'kept' }
-    ]);
-    assert.equal(t.calls.length, 3);
-    assert.ok(t.calls.every(call => call.url.startsWith(url + '/_api/')));
-    assert.deepEqual(Object.keys(t.service), ['ensureListReady', 'get', 'list', 'save', 'remove']);
-    t.assertDrained();
-  });
-
-  test(prefix + 'save auto-provisions then creates with legacy serialization and description defaults', async () => {
-    const t = setup(factoryName);
-    enqueueReady(t);
-    const values = ['123', 'true', new Date('2026-01-02T03:04:05Z'), { enabled: true }];
-    const serialized = ['123', 'true', '2026-01-02T03:04:05.000Z', '{"enabled":true}'];
-    for (const [index, value] of values.entries()) {
-      t.enqueue('GET', findUrl(catalogUrl, 'key'), { body: { value: [] } });
-      t.enqueue('POST', `${listUrl(catalogUrl)}/items`);
-      await t.service.save('key', value, catalogUrl, index === 3 ? 'description' : undefined);
-      assertOptions(t.calls.at(-1), { Title: 'key', Value: serialized[index], Description: index === 3 ? 'description' : '' });
-    }
-    t.assertDrained();
-  });
-
-  test(prefix + 'MERGE preserves absent description, permits explicit empty override and uses wildcard ETag', async () => {
-    const t = setup(factoryName);
-    enqueueReady(t);
-    for (const [description, existingDescription, expected] of [[undefined, 'old', 'old'], ['', 'old', ''], ['new', 'old', 'new'], [undefined, undefined, '']]) {
-      t.enqueue('GET', findUrl(catalogUrl, 'key'), { body: { value: [{ Id: 7, Title: 'key', Value: '0', Description: existingDescription }] } });
-      t.enqueue('POST', `${listUrl(catalogUrl)}/items(7)`);
-      await t.service.save('key', 12, catalogUrl, description);
-      assertOptions(t.calls.at(-1), { Value: '12', Description: expected }, mergeHeaders);
-    }
-    t.assertDrained();
-  });
-
-  test(prefix + 'remove auto-provisions and deletes existing key; absent key is a no-op', async () => {
-    const t = setup(factoryName);
-    enqueueReady(t);
-    t.enqueue('GET', findUrl(catalogUrl, 'key'), { body: { value: [{ Id: 8, Title: 'key', Value: '0' }] } });
-    t.enqueue('POST', `${listUrl(catalogUrl)}/items(8)`);
-    await t.service.remove('key', catalogUrl);
-    assertOptions(t.calls.at(-1), undefined, { 'X-HTTP-Method': 'DELETE', 'If-Match': '*' });
-    t.enqueue('GET', findUrl(catalogUrl, 'absent'), { body: { value: [] } });
-    await t.service.remove('absent', catalogUrl);
-    t.assertDrained();
-  });
-
-  test(prefix + 'same-instance provisioning shares promise and separate raw URLs have isolated readiness', async () => {
-    const t = setup(factoryName);
-    let resolve;
-    t.enqueue('GET', `${listUrl(catalogUrl)}?$select=Id`, new Promise(done => { resolve = done; }));
-    t.enqueue('GET', fieldsUrl(catalogUrl), { body: { value: [{ InternalName: 'Value' }, { InternalName: 'Description' }] } });
-    const first = t.service.ensureListReady(catalogUrl);
-    assert.equal(t.service.ensureListReady(catalogUrl), first);
-    assert.equal(t.calls.length, 1);
-    resolve({});
-    await first;
-    await t.service.ensureListReady(catalogUrl);
-    for (const url of [catalogUrl + '/', 'https://tenant.test/sites/other']) {
-      enqueueReady(t, url);
-      await t.service.ensureListReady(url);
-    }
-    assert.equal(t.calls.length, 6);
-    t.assertDrained();
-  });
-
-  test(prefix + 'failed setup clears the mutex, retries, and separate factories do not share readiness', async () => {
-    const t = setup(factoryName);
-    t.enqueue('GET', `${listUrl(catalogUrl)}?$select=Id`, { status: 500, statusText: 'Broken' });
-    await assert.rejects(t.service.ensureListReady(catalogUrl), { message: 'Failed to check list existence: Broken' });
-    enqueueReady(t);
-    await t.service.ensureListReady(catalogUrl);
-    enqueueReady(t);
-    await t.createService(t.client).ensureListReady(catalogUrl);
-    t.assertDrained();
-  });
-
-  test(prefix + 'read errors retain original messages and do not swallow 404', async () => {
-    const t = setup(factoryName);
-    t.enqueue('GET', findUrl(catalogUrl, 'key'), { status: 404, statusText: 'Not Found', text: 'ignored' });
-    await assert.rejects(t.service.get('key', catalogUrl), { message: 'Failed to find item: Not Found' });
-    t.enqueue('GET', itemsUrl(catalogUrl), { status: 403, statusText: 'Forbidden', text: 'ignored' });
-    await assert.rejects(t.service.list(catalogUrl), { message: 'Failed to list items: Forbidden' });
-    t.assertDrained();
-  });
-
-  test(prefix + 'field check, list creation and field creation retain error text behavior', async () => {
-    for (const operation of ['fields', 'list', 'Value', 'Description']) {
-      const t = setup(factoryName);
-      if (operation === 'list') {
-        t.enqueue('GET', `${listUrl(catalogUrl)}?$select=Id`, { status: 404 });
-        t.enqueue('POST', `${catalogUrl}/_api/web/lists`, { status: 500, statusText: 'Broken', text: 'details' });
-      } else {
-        t.enqueue('GET', `${listUrl(catalogUrl)}?$select=Id`);
-        t.enqueue('GET', fieldsUrl(catalogUrl), operation === 'fields'
-          ? { status: 500, statusText: 'Broken', text: 'ignored' }
-          : { body: { value: [] } });
-        if (operation === 'Description') t.enqueue('POST', `${listUrl(catalogUrl)}/fields`);
-        if (operation !== 'fields') t.enqueue('POST', `${listUrl(catalogUrl)}/fields`, { status: 500, statusText: 'Broken', text: 'details' });
-      }
-      const message = operation === 'fields' ? 'Failed to check list fields: Broken'
-        : operation === 'list' ? 'Failed to create list: Broken. details'
-          : `Failed to create ${operation} field: Broken. details`;
-      await assert.rejects(t.service.ensureListReady(catalogUrl), { message });
-      t.assertDrained();
-    }
-  });
-
-  test(prefix + 'create, update and delete retain exact errors without recovery requests', async () => {
-    for (const operation of ['create', 'update', 'remove']) {
-      const t = setup(factoryName);
-      enqueueReady(t);
-      t.enqueue('GET', findUrl(catalogUrl, 'key'), { body: { value: operation === 'create' ? [] : [{ Id: 9, Title: 'key', Value: 'old' }] } });
-      t.enqueue('POST', `${listUrl(catalogUrl)}/items${operation === 'create' ? '' : '(9)'}`, { status: 500, statusText: 'Broken', text: 'details' });
-      await assert.rejects(operation === 'remove' ? t.service.remove('key', catalogUrl) : t.service.save('key', 1, catalogUrl), {
-        message: `Failed to ${operation} item: Broken. details`
-      });
-      t.assertDrained();
-    }
-  });
-}
-
-characterize('tenant');
-characterize('core');
 
 const SPPermission = createHarness({ '@microsoft/sp-core-library': { _SPKillSwitch: { isActivated: () => false } } }).load(require.resolve('@microsoft/sp-page-context/lib-commonjs/SPPermission')).default;
 const rootUrl = 'https://tenant.test/sites/root';
@@ -216,7 +24,7 @@ const schema = (unique = true) => [
   { InternalName: 'Title', FieldTypeKind: 2, Indexed: unique, EnforceUniqueValues: unique },
   { InternalName: 'Value', FieldTypeKind: 3 }, { InternalName: 'Description', FieldTypeKind: 3 }
 ];
-const row = (key = 'key', id = 7) => ({ Id: id, Title: key, Value: '123', Description: 'old' });
+const row = (key = 'key', id = 7) => ({ Id: id, Title: key, Value: '123', Description: 'old', '@odata.etag': '"3"' });
 function siteSetup() {
   const t = createScriptedSPHttpClient();
   const harness = createHarness({
@@ -371,12 +179,12 @@ test('site save shares CRUD serialization, description preservation, clear and e
     t.enqueue('GET', siteFind(rootUrl, key), { body: { value: [row(key)] } });
     t.enqueue('POST', `${siteList(rootUrl)}/items(7)`);
     await t.service.save(key, 'true', rootUrl, description);
-    assertOptions(t.calls.at(-1), { Value: 'true', Description: expected }, mergeHeaders);
+    assertOptions(t.calls.at(-1), { Value: '"true"', Description: expected }, itemMergeHeaders);
   }
   t.assertDrained();
 });
 
-test('site item collision performs at most one exact-key MERGE and preserves original failure otherwise', async () => {
+test('site item collision performs one conditional MERGE and preserves create failure only if recovery validation fails', async () => {
   for (const outcome of ['success', 'missing', 'merge-fails', 'lookup-fails', 'duplicate', 'forbidden']) {
     const t = siteSetup(); probe(t);
     t.enqueue('GET', siteFind(rootUrl, 'key'), { body: { value: [] } });
@@ -387,7 +195,7 @@ test('site item collision performs at most one exact-key MERGE and preserves ori
       if (outcome === 'success' || outcome === 'merge-fails') t.enqueue('POST', `${siteList(rootUrl)}/items(7)`, { status: outcome === 'success' ? 200 : 500 });
     }
     if (outcome === 'success') await t.service.save('key', 5, rootUrl);
-    else await assert.rejects(t.service.save('key', 5, rootUrl), { message: 'Failed to create item: Collision. original' });
+    else await assert.rejects(t.service.save('key', 5, rootUrl), { message: outcome === 'merge-fails' ? 'Failed to update item: OK. ' : 'Failed to create item: Collision. original' });
     t.assertDrained();
   }
 });
@@ -484,7 +292,7 @@ test('site respects SharePoint key collation and preserves server Title casing w
   t.enqueue('GET', siteFind(rootUrl, 'FEATURE'), { body: { value: [row('Feature')] } });
   t.enqueue('POST', `${siteList(rootUrl)}/items(7)`);
   await t.service.save('FEATURE', true, rootUrl);
-  assertOptions(t.calls.at(-1), { Value: 'true', Description: 'old' }, mergeHeaders);
+  assertOptions(t.calls.at(-1), { Value: 'true', Description: 'old' }, itemMergeHeaders);
   t.assertDrained();
 });
 
@@ -531,5 +339,93 @@ for (const stage of ['fields-denied', 'wrong-type', 'missing-title', 'field-crea
       // A failed recovery must not leave readiness or a pending setup cached.
       probe(t); await t.service.ensureListReady(rootUrl); t.assertDrained();
     }
+  });
+}
+
+test('site aligned writer preserves new text and bigint precision with historical JSON-first readers', async () => {
+  const t = siteSetup(); probe(t);
+  const legacyRead = createHarness().load('helpers/spfx-tenant-value.helpers.ts').deserializeTenantValue;
+  const values = ['', '123', 'true', 'null', '{"enabled":true}', '"quoted"', 'hello', 9007199254740993n, new Date('2026-01-02T03:04:05Z')];
+  const expected = ['', '123', 'true', 'null', '{"enabled":true}', '"quoted"', 'hello', '9007199254740993', '2026-01-02T03:04:05.000Z'];
+  for (const [index, value] of values.entries()) {
+    t.enqueue('GET', siteFind(rootUrl, 'key'), { body: { value: [] } });
+    t.enqueue('POST', `${siteList(rootUrl)}/items`);
+    await t.service.save('key', value, rootUrl);
+    const stored = JSON.parse(t.calls.at(-1).options.body).Value;
+    if (value === '') assert.equal(stored, '""');
+    assert.equal(legacyRead(stored), expected[index]);
+    probe(t);
+    t.enqueue('GET', siteFind(rootUrl, 'key'), { body: { value: [{ ...row(), Value: stored === '' ? null : stored }] } });
+    assert.equal((await t.service.get('key', rootUrl)).value, expected[index]);
+  }
+  t.assertDrained();
+});
+
+test('site aligned writer rejects serialization failures before making any request', async () => {
+  const t = siteSetup(), circular = {}; circular.self = circular;
+  for (const value of [circular, { number: 1n }, new Date('invalid')]) {
+    await assert.rejects(t.service.save('key', value, rootUrl));
+  }
+  assert.equal(t.calls.length, 0); t.assertDrained();
+});
+
+for (const method of ['save', 'remove']) {
+  test(`site aligned ${method} uses observed ETag and exposes conflicts without a retry`, async () => {
+    const t = siteSetup(); probe(t);
+    t.enqueue('GET', siteFind(rootUrl, 'key'), { body: { value: [row()] } });
+    t.enqueue('POST', `${siteList(rootUrl)}/items(7)`, { status: 412, statusText: 'Precondition Failed' });
+    await assert.rejects(method === 'save' ? t.service.save('key', 5, rootUrl) : t.service.remove('key', rootUrl), /Precondition Failed/);
+    assert.equal(t.calls.at(-1).options.headers['If-Match'], '"3"'); t.assertDrained();
+  });
+}
+
+test('site aligned mutation gets missing collection ETag from the same fresh item snapshot', async () => {
+  const t = siteSetup(); probe(t);
+  const item = { ...row(), '@odata.etag': undefined };
+  t.enqueue('GET', siteFind(rootUrl, 'key'), { body: { value: [item] } });
+  t.enqueue('GET', `${siteList(rootUrl)}/items(7)?$select=Id,Title,Value,Description`, {
+    ok: true, status: 200, headers: new Headers({ ETag: '"4"' }),
+    json: async () => ({ ...item, Description: 'fresh metadata' }), text: async () => ''
+  });
+  t.enqueue('POST', `${siteList(rootUrl)}/items(7)`);
+  await t.service.save('key', 5, rootUrl);
+  assert.equal(t.calls.at(-1).options.headers['If-Match'], '"4"');
+  assert.deepEqual(JSON.parse(t.calls.at(-1).options.body), { Value: '5', Description: 'fresh metadata' }); t.assertDrained();
+});
+
+for (const etag of [undefined, '*', '\r\ninvalid']) {
+  test(`site aligned mutation never uses an unavailable or unsafe ETag: ${JSON.stringify(etag)}`, async () => {
+    const t = siteSetup(); probe(t);
+    const item = { ...row(), '@odata.etag': etag };
+    t.enqueue('GET', siteFind(rootUrl, 'key'), { body: { value: [item] } });
+    if (etag === undefined) t.enqueue('GET', `${siteList(rootUrl)}/items(7)?$select=Id,Title,Value,Description`, { body: item });
+    await assert.rejects(t.service.save('key', 1, rootUrl), /ETag/);
+    assert.ok(t.calls.every(call => call.method === 'GET')); t.assertDrained();
+  });
+}
+
+test('site aligned recovery reports the actual conditional-update failure', async () => {
+  const t = siteSetup(); probe(t);
+  t.enqueue('GET', siteFind(rootUrl, 'key'), { body: { value: [] } });
+  t.enqueue('POST', `${siteList(rootUrl)}/items`, { status: 409, statusText: 'Create collision' });
+  t.enqueue('GET', siteFields(rootUrl), { body: { value: schema() } });
+  t.enqueue('GET', siteFind(rootUrl, 'key'), { body: { value: [row()] } });
+  t.enqueue('POST', `${siteList(rootUrl)}/items(7)`, { status: 412, statusText: 'Precondition Failed' });
+  await assert.rejects(t.service.save('key', 5, rootUrl), /Failed to update item: Precondition Failed/); t.assertDrained();
+});
+
+for (const outcome of ['absent', 'recreated', 'denied']) {
+  test(`site aligned remove verifies snapshot 404 before accepting absence: ${outcome}`, async () => {
+    const t = siteSetup(); probe(t);
+    t.enqueue('GET', siteFind(rootUrl, 'key'), { body: { value: [{ ...row(), '@odata.etag': undefined }] } });
+    t.enqueue('GET', `${siteList(rootUrl)}/items(7)?$select=Id,Title,Value,Description`, { status: 404, statusText: 'Snapshot missing' });
+    if (outcome === 'denied') t.enqueue('GET', `${siteList(rootUrl)}?$select=Id`, { status: 403 });
+    else {
+      probe(t);
+      t.enqueue('GET', siteFind(rootUrl, 'key'), { body: { value: outcome === 'absent' ? [] : [row('key', 8)] } });
+    }
+    if (outcome === 'absent') await t.service.remove('key', rootUrl);
+    else await assert.rejects(t.service.remove('key', rootUrl), /Failed to read item for mutation: Snapshot missing/);
+    assert.ok(t.calls.every(call => call.method === 'GET')); t.assertDrained();
   });
 }
