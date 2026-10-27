@@ -39,7 +39,7 @@ Generic React hooks `useStableCallback` and `useSx` need no SPFx provider. useSx
 
 | Hook | Description | Docs |
 |------|-------------|------|
-| `useSPFxContext()` | Full SPFx context object | [View](./context.md#usespfxcontext) |
+| `useSPFxContext()` | Instance ID, host kind and native SPFx context reference | [View](./context.md#usespfxcontext) |
 | `useSPFxPageContext()` | Page context information | [View](./context.md#usespfxpagecontext) |
 | `useSPFxServiceScope()` | SPFx service scope access | [View](./context.md#usespfxservicescope) |
 | `useSPFxInstanceInfo()` | Component instance details | [View](./context.md#usespfxinstanceinfo) |
@@ -82,7 +82,7 @@ function PermissionNotice() {
   });
 
   if (precheck.configurationState === 'ready') {
-    return null;
+    return <></>;
   }
 
   return (

@@ -281,6 +281,7 @@ Source contracts below supplement the examples. Inherited Fluent Field members r
 | `PickerSelectionData.optionValue` | Alias affected by a selection or removal; omitted for whole-selection actions. |
 | `PickerSelectionData.optionText` | Display text for the affected resolved model, when available. |
 | `PickerProps.presentation` | Presentation only; changing this retains selection, data and request runtime. Default varies by picker. Suggestions use Persona with name/metadata and category icon; user principals retain their user avatar. Selected tags show name and category icon (user avatar for user principals). |
+| `PickerProps.colorfulTagAvatars` | Optional selected-tag avatar palette; default false. Uses stable renderer keys; Dropdown and suggestion avatars are unchanged. |
 | `PickerProps.searchable` | Enable popup SearchBox in Dropdown or the TagPicker input. Defaults true. |
 | `PickerProps.selectedOptions` | Controlled stable renderer keys (including retained aliases). Empty selection is []; undefined selects uncontrolled mode. |
 | `PickerProps.defaultSelectedOptions` | Initial keys, read once per mount; changing them does not reset selection. |
@@ -302,7 +303,7 @@ Source contracts below supplement the examples. Inherited Fluent Field members r
 | `PickerProps.'aria-labelledby'` | Explicit selection trigger/input naming IDs; supply this or aria-label when no nonblank plain string label is available. Forwarded to the Dropdown button or TagPicker input. |
 | `PickerProps.suggestionsHeader` | Literal presentation slots, fixed inner span/div; the control owns status/semantic shells. |
 | `PickerProps.emptyContent` | Literal div content for explicit custom initial/below-minimum guidance and complete empty/no-other-result states; omission shows the current-query default described under Search feedback. False hides only presentation, preserving the status shell. |
-| `PickerProps.loadingContent` | Literal div content while an eligible typed query waits for debounce or loads; omission shows “Searching…”. False hides its content. |
+| `PickerProps.loadingContent` | Literal div content during initial loading or eligible typed-query debounce/loading. Omission uses the native loading or searching message for that state. False hides its content. |
 | `PickerProps.errorContent` | Literal div content for request or identity failures; omission shows the error message. Query and contextual-source failures remain independently visible. False hides content; retry remains an independent action. |
 | `PickerProps.tooltip` | Optional native Fluent Tooltip content, relationship and positioning. Omission renders no tooltip; it does not replace the accessible input label. |
 | `PickerProps.refreshKey` | Explicit invalidation token; unchanged token never requests an automatic refresh. |
@@ -439,7 +440,7 @@ Source contracts below supplement the examples. Inherited Fluent Field members r
 | `ListPickerValue.webUrl` | Required absolute HTTP(S) source web URL; serialized values have no provider-current-web default. |
 | `ListPickerValue.listId` | Required list GUID scoped to webUrl; lists have no site-column variant. |
 | `FieldPickerValue.kind` | Required discriminant selecting the entity or reference variant; never inferred from a display name. |
-| `FieldPickerValue.webUrl` | Absolute HTTP(S) source web URL. Omission, when allowed, uses the provider current web; never inferred from a display label. |
+| `FieldPickerValue.webUrl` | Required absolute HTTP(S) source web URL; serialized values have no provider-current-web default. |
 | `FieldPickerValue.listId` | Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. |
 | `FieldPickerValue.fieldId` | Required field GUID within the source web/list. |
 | `FieldPickerValue.internalName` | Required field internal name, agreeing with the JSON reference; distinct from a REST EntityPropertyName. |
@@ -462,7 +463,7 @@ Source contracts below supplement the examples. Inherited Fluent Field members r
 | `SharePointFolderValue.uniqueId` | Required verified File/Folder UniqueId GUID. Library origin alone does not establish file or folder identity. |
 | `SharePointFolderValue.serverRelativeUrl` | Optional server-relative navigation snapshot. Not canonical identity; must have one leading slash and no query, fragment or traversal segments. |
 | `EntraObjectIdentity.tenantId` | Required verified Entra tenant GUID on serialized identities; optional redundant display-model metadata must agree when provided. |
-| `EntraObjectIdentity.id` | Required native scoped identifier: GUID for Entra/list/field/view, positive safe integer for SharePoint principals. Must agree with the JSON reference. |
+| `EntraObjectIdentity.id` | Required Entra object GUID, scoped to tenantId. |
 | `SharePointPrincipalIdentity.siteCollectionUrl` | Required verified absolute site collection URL owning the numeric principal ID. |
 | `SharePointPrincipalIdentity.id` | Required positive safe integer principal ID scoped to its site collection. |
 | `UserPrincipalValue.kind` | Required discriminant selecting the entity or reference variant; never inferred from a display name. |

@@ -14,6 +14,7 @@ These hooks provide access to browser storage (localStorage, sessionStorage), On
 | [`useSPFxTenantProperty`](#usespfxtenantproperty) | `SPFxTenantPropertyResult` | Tenant properties (read-only) |
 | [`useSPFxTenantKeyValueStore`](#usespfxtenantkeyvaluestore) | `SPFxTenantKeyValueStoreResult` | Tenant-level key-value store |
 | [`useSPFxSiteKeyValueStore`](#usespfxsitekeyvaluestore) | `SPFxSiteKeyValueStoreResult` | Collection root-web key-value store shared by subsites |
+| [`useSPFxConfigurationStore`](#usespfxconfigurationstore) | `SPFxConfigurationStoreResult` | Explicit tenant/site scope with optional site overrides |
 
 ---
 
@@ -353,7 +354,7 @@ interface SPFxOneDriveAppDataResult<T> {
   /** Write data to OneDrive (upsert) */
   readonly write: (content: T) => Promise<void>;
   
-  /** True when data is loaded and ready */
+  /** True when data is defined, no read is pending and no read error exists */
   readonly isReady: boolean;
 }
 ```
@@ -366,7 +367,7 @@ Download URLs must be absolute HTTPS URLs and are used immediately rather than c
 
 ### Request ownership and lazy defaults
 
-`defaultValue` seeds `data` even with `autoFetch: false`; changing file, folder or Graph client seeds the new identity from the current default without forcing a lazy fetch. Changing an inline default alone does not reload. A current missing-file response is required before `createIfMissing` writes a default.
+`isReady` is exactly `!isLoading && !error && data !== undefined`; a seeded default can be ready before any read, and a pending write or write error does not itself make it false. `defaultValue` seeds `data` even with `autoFetch: false`; changing file, folder or Graph client seeds the new identity from the current default without forcing a lazy fetch. Changing an inline default alone does not reload. A current missing-file response is required before `createIfMissing` writes a default.
 
 Latest-started reads and writes own the local data/error state together. An older read, 404 or write completion cannot replace a newer write's local data. `isLoading` and `isWriting` track pending reads and writes separately for the current identity. Identity changes and unmount ignore obsolete completions. Requests still settle for their callers; remote writes are not cancelled or serialized. `load()` records read errors in `error`; `write()` records `writeError` and rejects on failure. These guards do not provide remote transaction ordering.
 
@@ -563,10 +564,7 @@ function TodoApp() {
 
 Access tenant-wide custom properties (read-only).
 
-> **Note:** Write and remove operations have been removed in v2.0.0. Microsoft has blocked the
-> SetStorageEntity and RemoveStorageEntity REST API endpoints. Tenant properties can only be
-> managed via PowerShell (`Set-PnPStorageEntity`, `Remove-PnPStorageEntity`).
-> For a read/write key-value store at tenant level, use [`useSPFxTenantKeyValueStore`](#usespfxtenantkeyvaluestore).
+This hook and `createSPFxTenantPropertyService` expose reads only; neither exports write/remove operations. Manage StorageEntity provisioning through your administrator’s supported tooling. For toolkit-managed read/write tenant configuration, use [`useSPFxTenantKeyValueStore`](#usespfxtenantkeyvaluestore).
 
 ### Signature
 
@@ -983,7 +981,3 @@ See the [non-React factory](../services/INDEX.md#configuration-store-service). S
 - [PnPjs Hooks](./pnpjs.md) - SharePoint data access
 - [Context Hooks](./context.md) - SPFx context
 - [Performance Hooks](./performance.md) - Performance measurement & diagnostics
-
----
-
-*Maintained against public source declarations. Last updated: October 6, 2026*

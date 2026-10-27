@@ -38,7 +38,7 @@ DataGrid public types: `DataGridProps`, `DataGridStrings`, `DataGridSparklineSum
 
 ## Stage
 
-`Stage` is the single value export with `Stage.Header`, `Stage.Body` and `Stage.Footer`. Its thirteen public types are `StagePresentation`, `StageSize`, `StageDismissMode`, `StageDrawerPosition`, `StageHeadingLevel`, `StageOpenChangeReason`, `StageOpenChangeEvent`, `StageOpenChangeData`, `StagePopoverPositioning`, `StageProps`, `StageHeaderProps`, `StageBodyProps` and `StageFooterProps`. See the [Stage reference](./stage.md) for every member, controlled requests, session retention, form composition and host limits. Import from the root, `/controls` or `/controls/stage`; there are no flat part exports.
+`Stage` is the single value export with `Stage.Header`, `Stage.Body` and `Stage.Footer`. Its fourteen public types are `StagePresentation`, `StageSize`, `StageDismissMode`, `StageDrawerPosition`, `StageHeadingLevel`, `StageOpenChangeReason`, `StageOpenChangeEvent`, `StageOpenChangeData`, `StagePopoverPositioning`, `StageProps`, `StageStrings`, `StageHeaderProps`, `StageBodyProps` and `StageFooterProps`. See the [Stage reference](./stage.md) for every member, controlled requests, session retention, form composition and host limits. Import from the root, `/controls` or `/controls/stage`; there are no flat part exports.
 
 ## Pagination
 
@@ -75,6 +75,10 @@ Native localization dictionary types are documented with their owning controls:
 | Family | Public dictionary contracts |
 | --- | --- |
 | [Form](./form.md) | `FormStrings`, `FormStringsOverride` |
+| [DataGrid](./data-grid.md) | `DataGridStrings` |
 | [Stage](./stage.md) | `StageStrings` |
+| [Pagination](./pagination.md) | `PaginationStrings` |
+| [WebPartShell](./web-part-shell.md) | `WebPartShellStrings` |
+| [EditableText](./editable-text.md) | `EditableTextStrings`, `EditableTextColorNames`, `EditableTextStringsOverride` |
 | [Pickers](./pickers.md) | `PickersStrings`, `PickersStringsOverride` |
 | [FileFolderPicker](./file-folder-picker.md) | `FileFolderPickerStrings`, `FileFolderPickerStringsOverride` |

@@ -1,6 +1,6 @@
 # SPFx React Toolkit
 
-React providers, 46 hooks, public helpers and services for SharePoint Framework. Each provider maintains runtime state for its SPFx instance. Hooks cover reusable React callbacks, typed class composition with useSx, context, properties, clients, PnPjs, themes, permissions, storage and diagnostics; helpers and services support composition outside React.
+React controls, four host providers, 46 hooks, public helpers and services for SharePoint Framework. Each provider maintains runtime state for its SPFx instance. Hooks cover reusable React callbacks, typed class composition with useSx, context, properties, clients, PnPjs, themes, permissions, storage and diagnostics; helpers and services support composition outside React.
 
 ![SPFx React Toolkit](https://raw.githubusercontent.com/apvee/spfx-react-toolkit/main/assets/banner.png)
 
@@ -12,7 +12,7 @@ npm install @apvee/spfx-react-toolkit "@fluentui/react-components@^9.74.9" "@flu
 
 The host supplies the React and SPFx runtimes. PnPjs APIs require the compatible `@pnp/core`, `@pnp/queryable` and `@pnp/sp` peers. Preserve versions compatible with your host; do not upgrade an existing SPFx toolchain just to install the toolkit.
 
-Form adds shared RHF and Fluent compat/icon peers. The tested React 17 / Fluent 9.74.9 baseline uses the following versions; preserve the compatible Fluent/Griffel subtree in the host lockfile:
+The package declares mandatory shared RHF and Fluent compat/icon peers used by Form. The tested React 17 / Fluent 9.74.9 baseline uses the following versions; preserve the compatible Fluent/Griffel subtree in the host lockfile:
 
 ```bash
 npm install react-hook-form@7.87.0 @fluentui/react-datepicker-compat@0.6.16 @fluentui/react-timepicker-compat@0.4.21 @fluentui/react-icons@2.0.312
@@ -47,6 +47,16 @@ export default class GreetingWebPart extends BaseClientSideWebPart<{}> {
 
 Choose `SPFxWebPartProvider`, `SPFxApplicationCustomizerProvider`, `SPFxFieldCustomizerProvider` or `SPFxListViewCommandSetProvider` to match the actual SPFx host. The sample includes real WebPart and Application Customizer entry points. Field Customizer and Command Set provider coverage currently checks exports; mounting those providers needs their corresponding hosts.
 
+## Localized UI setup
+
+In the consuming SPFx application's `package.json`, add `"postinstall": "spfx-react-toolkit configure-localization"` (or append it to the existing postinstall). Run once from that application after installing:
+
+```bash
+npx --no-install spfx-react-toolkit configure-localization
+```
+
+This registers the eight native resource IDs in `config/config.json`; later installs repeat setup. Controls using these resources need SPFx loader mappings even with complete `strings` overrides. A control that needs no SPFx React provider can still require native resources. See [Localization](./docs/LOCALIZATION.md) for monorepos, validation, culture selection and the removed `EditableText.locale` prop.
+
 ## Package imports
 
 Root imports remain supported. Clean `/controls`, `/controls/formatted-text`, `/core`, `/hooks`, `/helpers`, `/services`, `/styles`, `/styles/useSx` and `/hooks/useStableCallback` aliases resolve to canonical implementations; historical `/lib/...` imports remain available. The `/styles` facade exports descriptors, their public types and `useSx`. For example:
@@ -62,7 +72,7 @@ Use an ESM-aware bundler with package exports and sideEffects support. Shared Re
 
 [Stage](./docs/api/controls/stage.md) presents the same Header/Body/Footer content as an explicitly selected Dialog, Drawer or anchored Popover. Small is the default size; Dialog and Drawer also support full. Controlled open requests support dirty/pending form guards, with Form.Root inside the surface and Form.Submit in its Footer. Import the single compound Stage value from the root, `/controls` or `/controls/stage`.
 
-Stage uses existing shared Fluent/Griffel peers and inherits the host theme, direction and renderer without requiring an SPFx provider. The lazy Stage sample exercises modes, sizes, retained state, form submission and independent instances. Local browser execution and authenticated SharePoint/Teams/screen-reader validation are separate; host checks remain NOT EXECUTED until recorded.
+Stage uses existing shared Fluent/Griffel peers and inherits the host theme, direction and renderer without requiring an SPFx provider. The lazy Stage sample selects one presentation with editable size, retained state and form submission; independent-instance regressions live in the versioned fixture. Local browser execution and authenticated SharePoint/Teams/screen-reader validation are separate; host checks remain NOT EXECUTED until recorded.
 
 ## DataGrid
 
@@ -81,6 +91,10 @@ For generic editable records, [Form and createForm](./docs/api/controls/form.md)
 ## Site collection storage
 
 [`useSPFxSiteKeyValueStore`](./docs/api/hooks/storage.md#usespfxsitekeyvaluestore) shares one hidden `SiteKeyValueStore` in the collection root web across all subsites. The standalone [`createSPFxSiteKeyValueStoreService`](./docs/api/services/INDEX.md#createspfxsitekeyvaluestoreservice) accepts `pageContext.site.absoluteUrl` explicitly. Mount, reads and removal do not provision; `save` or explicit service `ensureListReady` can provision. Effective root-web/list grants apply, and `canWrite` is advisory. Hook read failures return fallbacks with `error`; writes reject and must be caught. Existing tenant storage remains in the tenant app catalog.
+
+## Layered configuration
+
+[`useSPFxConfigurationStore`](./docs/api/hooks/storage.md#usespfxconfigurationstore) and [`createSPFxConfigurationStoreService`](./docs/api/services/INDEX.md#configuration-store-service) provide explicit tenant, site or layered configuration. Layered reads use an existing site record as a whole and fall back to tenant defaults only after confirmed absence. Construction and mount perform no reads or provisioning. Mutations require an explicit enabled scope; read and write promises reject and expose separate error/loading state in the hook.
 
 ## Repository development
 
@@ -141,6 +155,10 @@ MIT — see [LICENSE](./LICENSE).
 
 Fluent and Griffel integration uses mandatory shared peer dependencies `@griffel/core` (`^1.21.4`), `@griffel/react` (`^1.7.8`), `@fluentui/react-shared-contexts` (`^9.26.4`), `@fluentui/react-migration-v8-v9` (`^9.10.20`), `@fluentui/react-theme` (`^9.2.2`), `@fluentui/react-components` (`^9.74.9`) `@fluentui/react-utilities` (`^9.26.7`) and `@fluentui/react-charts` (`^9.3.27`). The consuming project provides compatible shared packages; modern npm can install missing peers automatically. Existing compatible installations are reused. The SPFx test app declares these explicitly. Token-based styles need theme variables in scope; useSx needs no SPFx provider or new renderer. The sample uses optional `@fluentui/react-provider@9.22.8` for direction overrides that inherit the host theme. `tslib` is required by the SPFx packages that use it; this library’s ES2020 output does not import it.
 
+## Editable text
+
+[`EditableText`](./docs/api/controls/editable-text.md) renders controlled HTML in Read mode and loads a private editor in Edit mode. Block policies constrain rendering and effective edits; changes report canonical HTML and plain text for caller persistence. Import from the root, `/controls` or `/controls/editable-text`. Configure the native resource and use `strings` for per-instance UI text; the former `locale` prop has been removed.
+
 ## Formatted text
 
 [`FormattedText`](./docs/api/controls/formatted-text.md) renders a native text element with the existing typography catalog, restricted inline Markdown, highlight and bounded overflow. `as` defaults to `span` independently of `variant`; valid `maxLines` adds block clamp layout even on span. The control has no `inline` prop and needs no SPFx provider. Supply Fluent theme variables and shared peers, including `@fluentui/react-components` (`^9.74.9`). The library supplies unified/Remark runtime dependencies; disabling Markdown skips parsing but does not guarantee parser removal from the bundle.
@@ -153,7 +171,7 @@ import { FormattedText } from '@apvee/spfx-react-toolkit';
 <FormattedText maxLines={2} style={{ width: 240 }}>Long text in a clamped span...</FormattedText>
 ```
 
-The lazy **FormattedText** sample exercises its props, inherited host themes, narrow width, explicit RTL overrides, mixed JSX and ref/click observations. Authenticated SharePoint-host validation is separate and remains NOT EXECUTED until recorded.
+The lazy **FormattedText** sample selects one text scenario with editable typography/overflow, inherited host theme and optional direction/ref/click diagnostics. Authenticated SharePoint-host validation is separate and remains NOT EXECUTED until recorded.
 
 ## Web part shell
 
@@ -165,13 +183,13 @@ The author UI uses Fluent UI 9; the private Tiptap 3.30.3 engine loads only for 
 
 [Pagination](./docs/api/controls/pagination.md) supplies controlled known/unknown-total pages, cursor directions and load-more requests. The application owns rows, loading and result announcements; the control supplies accessible native Fluent navigation, localized labels, compact sizes and host theme/RTL styling. Import from the root, `/controls` or `/controls/pagination`. No new dependency or SPFx provider is required.
 
-The lazy Pagination sample runs real paged results, resets after filter/page-size/total changes, manual loading completion and independent component state and explicit direction overrides under the shared host theme. Local checks and authenticated SharePoint validation are separate; host checks remain NOT EXECUTED until recorded.
+The lazy Pagination sample selects one controlled mode with paged results, filter/page-size/total changes, manual loading completion and optional direction diagnostics. Independent-instance regressions live in the versioned fixture. Local checks and authenticated SharePoint validation are separate; host checks remain NOT EXECUTED until recorded.
 
 ## Description List
 
 [DescriptionList](./docs/api/controls/description-list.md) renders read-only metadata as native term/definition pairs. Use immutable items or `DescriptionList.Item` composition for rich Fluent values. Auto stacks below 480px and aligns columns inside the nearest `container.inlineSize` ancestor; explicit layouts override this. Import the compound value from the root, `/controls` or `/controls/description-list`. Existing Fluent/Griffel peers are reused; no SPFx provider is required.
 
-The lazy Description List sample exercises slots, literal/zero/empty values, resizing, nested containers, stable child state and independent component state, inherited host theme and explicit RTL overrides. Local verification and authenticated SharePoint/Teams/screen-reader checks are separate; host checks remain NOT EXECUTED until recorded.
+The lazy Description List sample presents one metadata list with selectable data/compound composition, layout/width/content controls and a retained child counter. Nested-container, pathological-value and independent-instance regressions live in the versioned fixture. Local verification and authenticated SharePoint/Teams/screen-reader checks are separate; host checks remain NOT EXECUTED until recorded.
 
 ## Content and preview cards
 

@@ -133,7 +133,9 @@ Authenticated SharePoint, Teams/iframe and screen-reader validation is **NOT EXE
 
 ## Native UI localization
 
-Pagination requires the host to register its toolkit resource ID through the localization configuration CLI. SPFx selects the UI resource; no toolkit provider is required. `strings?: Partial<PaginationStrings>` overrides labels per instance. Overrides are trimmed, and omitted, undefined or blank labels use the selected resource. A complete `PaginationStrings` dictionary replaces every owned label. This does not translate result summaries or change controlled navigation callbacks.
+Pagination requires the host to register its toolkit resource ID through the [localization configuration CLI](../../LOCALIZATION.md). SPFx selects the UI resource; no toolkit provider is required. Outside the SPFx loader, supply an explicit resource-module adapter: the native resource is a static dependency even when passing a complete dictionary.
+
+`strings?: Partial<PaginationStrings>` overrides labels per instance. Overrides are trimmed, and omitted, undefined or blank labels use the selected resource. A complete nonblank `PaginationStrings` dictionary replaces every owned label. This does not translate result summaries or change controlled navigation callbacks.
 
 ```tsx
 <Pagination pagination={{ type: 'cursor', hasPreviousPage: false, hasNextPage: true }}

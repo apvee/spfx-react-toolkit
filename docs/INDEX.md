@@ -11,6 +11,7 @@
   - [Providers](#providers)
   - [Types](#types)
 - [Hooks](#hooks)
+  - [React Utilities](#react-utilities)
   - [Context & Metadata](#context--metadata)
   - [Properties & Display](#properties--display)
   - [HTTP Clients](#http-clients)
@@ -23,6 +24,9 @@
   - [Performance & Diagnostics](#performance--diagnostics)
 - [Services](#services)
 - [Helpers](#helpers)
+- [Access trims](#access-trims)
+- [SharePoint pickers](#sharepoint-pickers)
+- [Localization](./LOCALIZATION.md)
 
 ---
 
@@ -44,6 +48,13 @@
 | `AutoSkeleton`, `AutoSkeletonProps` | Mounted HTML geometry, loading overlays and persistent child state | [AutoSkeleton](./api/controls/auto-skeleton.md) |
 | `RelativeTime`, `RelativeTimeProps` | Localized relative instants, full-date descriptions and clock modes | [RelativeTime](./api/controls/relative-time.md) |
 | `FormattedText`, `FormattedTextProps`, `FormattedTextVariant`, `FormattedTextSemanticElement` | Native text elements, typography, inline Markdown and overflow | [Controls](./api/controls/INDEX.md), [FormattedText](./api/controls/formatted-text.md) |
+| `EditableText` | Safe HTML read rendering and lazy, policy-bounded editing | [EditableText](./api/controls/editable-text.md) |
+| `DataGrid`, `createDataGrid` | Typed columns, controlled selection/sort intent and native cells | [DataGrid](./api/controls/data-grid.md) |
+| `Pagination` | Controlled pages, cursors and load-more requests | [Pagination](./api/controls/pagination.md) |
+| `DescriptionList` | Data or compound term/definition composition | [DescriptionList](./api/controls/description-list.md) |
+| `ContentCard`, `PreviewCard` | Native Fluent cards with content slots and optional preview media | [ContentCard](./api/controls/content-card.md), [PreviewCard](./api/controls/preview-card.md) |
+
+The [controls index](./api/controls/INDEX.md) lists the complete public control and type surface. Native Property Pane factories have [dedicated imports and guides](#sharepoint-pickers).
 
 ## Core
 
@@ -208,6 +219,7 @@ Public non-React service factories for composing SPFx, PnPjs, SharePoint REST, a
 | PnPjs services | Context, invoke/batch, list CRUD, and search | [services/INDEX.md](./api/services/INDEX.md) |
 | Tenant services | App catalog discovery, tenant properties, tenant key-value store | [services/INDEX.md](./api/services/INDEX.md) |
 | Site collection service | `createSPFxSiteKeyValueStoreService`: root-web storage shared by subsites | [services/INDEX.md](./api/services/INDEX.md#createspfxsitekeyvaluestoreservice) |
+| Configuration service | `createSPFxConfigurationStoreService`: tenant defaults, site overrides and scoped mutations | [services/INDEX.md](./api/services/INDEX.md#configuration-store-service) |
 | Graph services | OneDrive app data and user photos | [services/INDEX.md](./api/services/INDEX.md) |
 | API permission precheck service | Token-provider-based delegated scope checks with remediation entries for `webApiPermissionRequests` | [services/INDEX.md](./api/services/INDEX.md) |
 
@@ -215,7 +227,7 @@ Public non-React service factories for composing SPFx, PnPjs, SharePoint REST, a
 
 ## Helpers
 
-Public pure helper functions for SPFx context mapping, permission checks, API permission precheck normalization and summarization, storage keys, tenant value serialization, Graph paths, and theme conversion.
+Public non-React helper functions for SPFx context mapping, permission checks, API permission precheck normalization and summarization, storage keys, tenant value serialization, Graph paths, and theme conversion.
 
 | Module | Description | Documentation |
 |--------|-------------|---------------|
@@ -239,7 +251,7 @@ Public pure helper functions for SPFx context mapping, permission checks, API pe
 
 ---
 
-*Generated from source API metadata and public documentation.*
+This reference is maintained alongside the source; `npm run verify:public-docs` checks export coverage, selected JSDoc contracts and local links. Behavior and example correctness also require comparison with the implementation.
 
 ## Access trims
 

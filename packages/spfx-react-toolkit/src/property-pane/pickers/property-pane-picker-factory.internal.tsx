@@ -9,7 +9,7 @@ import { PropertyPanePickerHost } from './property-pane-picker-host.internal';
 import { PropertyPanePickerValueBridge } from './property-pane-picker-value.internal';
 import { mountOrUpdatePickerField, disposePickerField } from './property-pane-picker.internal';
 
-/** The six native factories share lifecycle and value semantics, with domain-specific validated JSON arrays. */
+/** The seven native factories share lifecycle and value semantics, with domain-specific validated JSON arrays. */
 export function createPropertyPanePicker<P extends object, V extends PickerValue, T extends PickerOption<V>, C extends PickerProps<T>>(targetProperty: string,
   props: Pick<PropertyPanePickerProps<P, C, V>, 'instance' | 'key' | 'value' | 'valueRevision'>, Control: React.ComponentType<C>, validate: (input: unknown) => readonly V[], controlProps: C): IPropertyPaneField<IPropertyPaneCustomFieldProps> {
   if (!targetProperty || /[.[\]]/.test(targetProperty) || ['__proto__', 'constructor', 'prototype'].includes(targetProperty)) throw new Error('Picker targetProperty must be a safe direct property name.');

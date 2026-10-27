@@ -242,7 +242,8 @@ function assertCompatiblePackageContract(manifest, originalPackage) {
   assert.equal(manifest.private, false);
   assert.deepEqual(manifest.files, [...originalPackage.files, 'lib/styles/**/*', 'lib/controls/**/*', 'THIRD-PARTY-NOTICES.md', 'lib/property-pane/**/*', 'cli/spfx-react-toolkit.cjs', 'localization/resources.json', 'lib/localization/**/*'], 'Published path allowlist changed outside approved public entries and native localization metadata');
   assert.equal(manifest.name, '@apvee/spfx-react-toolkit');
-  assert.equal(manifest.version, '2.1.0');
+  // The approved major release keeps the historical 2.1.0 fixtures as its compatibility baseline.
+  assert.equal(manifest.version, '3.0.0');
   assert.equal(manifest.main, 'lib/index.js');
   assert.equal(manifest.types, 'lib/index.d.ts');
   assertEntrypointContract(manifest);

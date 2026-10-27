@@ -109,7 +109,3 @@ import type {
 
 - [Hooks Module](../hooks/INDEX.md) - React hooks
 - [Introduction](../../INTRODUCTION.md) - Getting started
-
----
-
-*Generated from JSDoc comments. Last updated: January 31, 2026*

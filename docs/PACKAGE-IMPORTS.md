@@ -10,16 +10,26 @@ The package publishes ESNext JavaScript for a bundler and TypeScript declaration
 | `/controls` | Public controls and their types |
 | `/controls/content-card` | Canonical `ContentCard`, props, appearance and heading-level types |
 | `/controls/preview-card` | Canonical `PreviewCard`, props, appearance, heading-level, image and orientation types |
-| `/controls/stage` | Canonical `Stage` compound Header/Body/Footer and thirteen public types; no flat parts or private state/surface helpers |
+| `/controls/stage` | Canonical `Stage` compound Header/Body/Footer and fourteen public types; no flat parts or private state/surface helpers |
 | `/controls/pagination` | Canonical controlled page, cursor and load-more navigation; private validation and styling modules remain internal |
 | `/controls/web-part-shell` | Canonical WebPartShell, generic props/persisted types and pure metadata helper |
 | `/controls/form` | Canonical `Form`, `createForm` and public types; compound adapters remain private implementations |
+| `/controls/data-grid` | Canonical `DataGrid`, `createDataGrid`, column descriptors and public types |
 | `/controls/auto-skeleton` | Canonical `AutoSkeleton` and `AutoSkeletonProps` |
-| `/controls/editable-text` | Canonical `EditableText`, `EditableTextProps`, `EditableTextBlock` and `EditableTextChangeData`; engine/AST/codec remain private |
+| `/controls/editable-text` | Canonical `EditableText`, props, block/change and dictionary types; engine/AST/codec remain private |
 | `/controls/formatted-text` | Canonical `FormattedText` and its three public types |
 | `/controls/relative-time` | Canonical `RelativeTime` and `RelativeTimeProps` |
+| `/controls/state-message` | Canonical `StateMessage` and public state/artwork/content types |
+| `/controls/description-list` | Canonical `DescriptionList` compound Item, entries, layout and public props |
 | `/controls/settings-group` | Canonical `SettingsGroup` compound Item and public types |
 | `/controls/accordion-group` | Canonical `AccordionGroup` compound Item and public types |
+| `/controls/sharepoint-permission-trim` | Permission trim compound family and scoped permission contracts |
+| `/controls/sharepoint-group-trim` | SharePoint group membership trim compound family and types |
+| `/controls/entra-group-trim` | Entra group membership trim compound family and types |
+| `/controls/pickers` | Seven React SharePoint pickers, JSON references and shared contracts |
+| `/controls/file-folder-picker` | Hosted React file/folder picker and public contracts |
+| `/property-pane/pickers` | Seven native Property Pane picker factories and property-key contracts; separate from root values |
+| `/property-pane/file-folder-picker` | Native Property Pane file/folder factory and property-key contracts; separate from root values |
 | `/core` | Providers and public core types |
 | `/hooks` | All public hooks |
 | `/helpers` | Public helpers and descriptor namespaces |
@@ -53,7 +63,7 @@ The web part's Imports panel exercises the same behavior through three import fo
 - **Domain imports** use functional entry points such as `/hooks` and `/styles`.
 - **Legacy leaf imports** use historical paths to individual modules, such as `/lib/hooks/useSx`. A leaf is the individual implementation module rather than a root or domain barrel.
 
-The legacy card verifies compatibility for existing consumers after adding the new export map. Its captured callback must retain identity and read current state, and its styles must compose with descriptors imported through the root and domain entries beneath the same FluentProvider. All three forms resolve to the canonical implementations and contexts. The card is a compatibility scenario; new code can use the root, domain entries or clean narrow aliases such as `/styles/useSx`.
+Select one import form in the configuration card to mount its probe. Its captured callback must retain identity and read current state, and its styles must compose with descriptors imported through the other entries beneath the same FluentProvider. Changing the selected adapter mounts that adapter's probe; the current UI does not display three simultaneous cards. All forms resolve to canonical implementations and contexts. The legacy probe checks compatibility for existing consumers; new code can use the root, domain entries or clean narrow aliases such as `/styles/useSx`.
 
 The panel makes runtime compatibility observable. The separate installed-package bundle gate establishes tree shaking; the full demo bundle is not a minimal-consumer measurement.
 
@@ -88,6 +98,8 @@ Hooks must run unconditionally in stable component types. The callback reads com
 Use the package through a bundler that understands `exports`, ESM and `sideEffects`. The verified consumer uses Webpack 5.95.0 and TypeScript 5.3.3 with `moduleResolution: node`; `typesVersions` supplies clean-alias declaration resolution for that TypeScript mode. Export conditions also expose `types` before the JavaScript `default` target. The sample compiles the library first and consumes its `lib` output, without source path aliases.
 
 The tested baseline is Node 22.20.0, React/ReactDOM 17.0.1, SPFx 1.21.1 and PnPjs 4.17.0. Keep the declared SPFx, React, PnP, Griffel and Fluent peer contracts and share their instances with the host. Peer ranges are compatibility declarations, not evidence of a tested peer-version matrix. These additions do not provide native Node ESM execution, CommonJS output or a CommonJS runtime guarantee. Tests that execute a bundled Node probe verify that bundle and its adapter, not native package loading.
+
+Pagination, DataGrid, EditableText, WebPartShell, pickers, FileFolderPicker, Form and Stage statically import native SPFx localized modules. Register the eight resources using [consumer localization setup](./LOCALIZATION.md); complete `strings` overrides still merge with those modules. Absence of an SPFx React-provider requirement does not remove the resource-loader requirement. Standalone browser probes supply a test adapter for the emitted AMD dictionaries; they do not establish a plain-React production distribution.
 
 ## PnP registration migration
 
@@ -126,7 +138,7 @@ import { FormattedText as DomainText } from '@apvee/spfx-react-toolkit/controls'
 import { FormattedText as NarrowText, FormattedTextProps } from '@apvee/spfx-react-toolkit/controls/formatted-text';
 ```
 
-All three expose the canonical control. Its parser and style modules remain private. Consumer bundles using unrelated root APIs must eliminate the control and Remark dependencies; bundles using FormattedText include its parser and Fluent Link. `markdown={false}` skips parsing at runtime but does not guarantee parser removal from a bundle importing the control. The parser is a module-local processor, with no external PnP registration or separate provider. Shared `@fluentui/react-components` (`^9.72.3`), React/Griffel and theme/direction contracts still apply. See the [FormattedText reference](./api/controls/formatted-text.md) for props, safety rules, overflow and limitations.
+All three expose the canonical control. Its parser and style modules remain private. Consumer bundles using unrelated root APIs must eliminate the control and Remark dependencies; bundles using FormattedText include its parser and Fluent Link. `markdown={false}` skips parsing at runtime but does not guarantee parser removal from a bundle importing the control. The parser is a module-local processor, with no external PnP registration or separate provider. Shared `@fluentui/react-components` (`^9.74.9`), React/Griffel and theme/direction contracts still apply. See the [FormattedText reference](./api/controls/formatted-text.md) for props, safety rules, overflow and limitations.
 
 For lazy loading, prefer the relevant domain facade when only that domain is needed. A dynamic root namespace captured by a callback can make Webpack retain all exports. If keeping that namespace form, declare the used exports explicitly with `webpackExports` (for example `useSx`, `width`, `typography`); the lazy production fixture verifies that the control and Markdown parser are then excluded. Static named imports remain covered by the ordinary root/domain/leaf gates.
 
@@ -180,7 +192,7 @@ import { WebPartShell as ControlShell, type IWebPartShellProperties,
 
 All three aliases share the canonical component, generic declaration and metadata helper. The new editor, codec, title renderer and SDK broker modules remain private implementation paths; no wildcard export was added. Packed declarations resolve under TypeScript 5.3's Node10, Bundler and Node16 modes without public engine types. Historical compatibility paths and shared peer contracts remain in force.
 
-The production contract now measures 84 consumer cases, preserving historical inventories and numeric budgets. Unrelated consumers must exclude Shell/title editor/Tiptap/ProseMirror. Shell initial chunks contain the provider/layout/read-title path but exclude the editor engine; visible Edit requests its async asset. Metadata-only bundles retain the pure helper and exclude Shell runtime, providers, SPFx runtime, PnP, Griffel and editor. Optional Bubble/Floating menu modules are absent from emitted assets, although both dependencies are explicitly pinned for the React binding's installation compatibility.
+The production contract enumerates current consumer cases in `tests/fixtures/tree-shaking/contract.json`, preserving historical inventories and numeric budgets. The earlier 84-case checkpoint predates later control families. Unrelated consumers must exclude Shell/title editor/Tiptap/ProseMirror. Shell initial chunks contain the provider/layout/read-title path but exclude the editor engine; visible Edit requests its async asset. Metadata-only bundles retain the pure helper and exclude Shell runtime, providers, SPFx runtime, PnP, Griffel and editor. Optional Bubble/Floating menu modules are absent from emitted assets, although both dependencies are explicitly pinned for the React binding's installation compatibility.
 
 The async `@tiptap/extensions` root reports Placeholder/UndoRedo as used exports, but retains six unused root extension definitions (CharacterCount, DropCursor, Focus, GapCursor, Selection and TrailingNode) because of upstream factory effects. NodeJs/TypeScript 5.3 resolution uses root named exports; complete extension pruning is not guaranteed. Root/domain/control equality and initial engine exclusion are separate from absolute family cost.
 
@@ -195,7 +207,7 @@ import { Stage } from '@apvee/spfx-react-toolkit/controls/stage';
 import type { StageProps, StageOpenChangeData } from '@apvee/spfx-react-toolkit/controls/stage';
 ```
 
-The root, `/controls` and `/controls/stage` expose the same Stage implementation and instance-local context. Only Stage is a value export; use Stage.Header, Stage.Body and Stage.Footer. The thirteen public types and their members are covered in the [Stage reference](./api/controls/stage.md). Flat part exports and private state/surface helper types are not clean public imports. Stage shares existing Fluent/icons/Griffel peers and does not register PnP features or create a renderer. Package/import-graph/runtime gates establish packaging evidence separately from browser and authenticated host behavior.
+The root, `/controls` and `/controls/stage` expose the same Stage implementation and instance-local context. Only Stage is a value export; use Stage.Header, Stage.Body and Stage.Footer. The fourteen public types and their members are covered in the [Stage reference](./api/controls/stage.md). Flat part exports and private state/surface helper types are not clean public imports. Stage shares existing Fluent/icons/Griffel peers and does not register PnP features or create a renderer. Package/import-graph/runtime gates establish packaging evidence separately from browser and authenticated host behavior.
 
 ## Pagination entry
 
@@ -223,6 +235,6 @@ Import `FileFolderPicker` and its types from `@apvee/spfx-react-toolkit/controls
 
 ## Standalone formatted editing
 
-[EditableText](./api/controls/editable-text.md) is available through root, `/controls` and `/controls/editable-text` with identical public symbols. Read uses the safe renderer; Edit lazily loads the private engine. A standalone narrow consumer requires shared React/Fluent/Griffel peers, without an SPFx provider. Historical `/lib/...` compatibility does not expose the new private editable-text modules.
+[EditableText](./api/controls/editable-text.md) is available through root, `/controls` and `/controls/editable-text` with identical public symbols. Read uses the safe renderer; Edit lazily loads the private engine. A narrow consumer requires shared React/Fluent/Griffel peers and the native editor resource, without requiring an SPFx React provider. Historical `/lib/...` compatibility does not expose the new private editable-text modules.
 
 See [native SPFx localization and consumer setup](./LOCALIZATION.md) for per-family resources, postinstall registration, typed overrides and the EditableText locale migration.

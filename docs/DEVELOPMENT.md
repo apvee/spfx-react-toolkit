@@ -50,7 +50,7 @@ npm run build:app
 
 | Root command | Actual task |
 |--------------|-------------|
-| `npm run build:library` | Library workspace `tsc -p tsconfig.json` |
+| `npm run build:library` | Validates localization inventory, runs library `tsc -p tsconfig.json`, then emits AMD resource files |
 | `npm run build:app` | App workspace `gulp bundle` |
 | `npm run build` | Builds library, then app |
 | `npm run serve` | Builds library, then starts the app workspace with `gulp serve`; forwards arguments after `--` |
@@ -60,8 +60,11 @@ npm run build:app
 | `npm run lint` | Both workspaces run ESLint on source |
 | `npm run verify:examples` | Demo registry matches 46 hook and 4 provider exports plus public controls, the complete Form compound family and all style namespaces/scopes |
 | `npm run verify:runtime-store` | Runtime store behavior check using the local compiler |
-| `npm run verify:public-docs` | Qualified public style exports/JSDoc, historical helper/service coverage and local documentation link targets |
+| `npm run verify:public-docs` | Public control/style surfaces, selected source JSDoc/member coverage, helper/service inventories and local documentation link targets |
 | `npm run verify:api` | Public export/declaration compatibility checks |
+| `npm run verify:import-graph` | Audits public/internal imports and module evaluation boundaries |
+| `npm run verify:bundle-contract -- --consumer-root <directory>` | Runs the production bundle gate against an installed-package consumer |
+| `npm run verify:localization` | Checks the resource inventory and localization/consumer-CLI lifecycle boundaries |
 | `npm run verify` | Tests, typecheck, lint, example/runtime/docs/API and import-graph checks |
 | `npm run verify:package` | Fresh tarball consumer resolution, bundle/runtime/mutation gates and SPFx verification |
 | `npm run pack:library` | Builds library and runs npm pack into root `artifacts` |
@@ -132,7 +135,7 @@ The generated SPFx debug manifest reads this page parameter. It is distinct from
 
 ## Package shape
 
-`npm run pack:library` writes `artifacts/apvee-spfx-react-toolkit-2.1.0.tgz` for the current package version. The tarball contains package metadata, README, LICENSE and compiled `lib/index.*`, `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services`, `lib/utils`, `lib/styles`, `lib/controls`. Entry points remain `lib/index.js` and `lib/index.d.ts`. The app, SPFx manifests, source, tests, config and repository docs are excluded. Source maps point back to source paths; source is not embedded in the tarball.
+`npm run pack:library` writes `artifacts/apvee-spfx-react-toolkit-3.0.0.tgz` for the current package version. The tarball contains package metadata, README, LICENSE, `THIRD-PARTY-NOTICES.md`, the localization CLI and inventory (`cli/spfx-react-toolkit.cjs`, `localization/resources.json`), and compiled `lib/index.*`, `lib/core`, `lib/hooks`, `lib/helpers`, `lib/services`, `lib/utils`, `lib/styles`, `lib/controls`, `lib/property-pane` and `lib/localization`. The eight families' emitted AMD dictionaries ship under `lib/controls/*/loc`. Entry points remain `lib/index.js` and `lib/index.d.ts`. The app, SPFx manifests, source, tests, config and repository docs are excluded. Source maps point back to source paths; source is not embedded in the tarball.
 
 The isolated consumer probe covers all six public site-store symbols, the hook/service deep imports and existing tenant APIs. See [site storage](./api/hooks/storage.md#usespfxsitekeyvaluestore) and the [standalone service](./api/services/INDEX.md#createspfxsitekeyvaluestoreservice) for their contracts; the [real-host checklist](./SHAREPOINT-VALIDATION.md#site-collection-key-value-store) remains separate.
 
@@ -190,7 +193,7 @@ npm run verify
 npm run verify:package
 ```
 
-`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete 87-variant bundle contract (including WebPartShell/metadata, Form/createForm, existing controls and locale/page-context equivalents), the current canonical runtime-probe matrix and the canonical mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
+`verify` includes `verify:import-graph`. `verify:package` builds and installs the tarball in an isolated consumer, checks clean and preserved historical paths, runs the canonical complete bundle contract (including WebPartShell/metadata, Form/createForm, existing controls and locale/page-context equivalents), the current canonical runtime-probe matrix and the canonical mutation checks, and performs the consumer's independent TypeScript/lint/SPFx ship/solution checks. Installation/build warnings remain in evidence; a successful outer Gulp exit cannot override an inner failure marker. The package verifier writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` selects another evidence directory.
 
 Ordinary verification deletes the temporary consumer when it finishes. For diagnostics or an explicit baseline proposal, preserve a fresh installed consumer and read its recorded path before running the examples below. The bundle CLI requires `--consumer-root`; its default mode is `enforce`, its default contract is `tests/fixtures/tree-shaking/contract.json`, and its default output is `.docs/maintenance/evidence/tree-shaking/bundle-contract`:
 
@@ -204,7 +207,7 @@ node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUM
 
 If you set `SPFX_PACKAGE_EVIDENCE`, read `consumer-path.txt` from that evidence directory instead. Run diagnostic commands only after the preserved package verification succeeds.
 
-Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete contract of 87 variants and 46 comparisons; custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
+Check fixture IDs in the canonical contract before choosing an audit subset. Audit is diagnostic and cannot produce a primary gate PASS. Enforce and baseline writing require the canonical complete contract (currently 105 variants and 58 comparisons); custom/subset contracts, empty comparisons or weakened expectations cannot bypass that guard. `--contract PATH` exists for audit investigations, not alternative acceptance contracts. Attribution is an additional unoptimized diagnostic build, separate from optimized production totals.
 
 Normal verification never writes `tests/fixtures/tree-shaking/baseline.json`. To propose an explicit update after reviewing a complete passing run and its toolchain, package/lock/config/fixture hashes, emitted initial/async assets and raw/gzip/Brotli totals:
 
@@ -304,7 +307,7 @@ The fourteen exact private Tiptap 3.30.3 dependencies, public entrypoint and new
 
 ## Stage checks
 
-See [Stage](./api/controls/stage.md) for the public API and [authenticated checks](./SHAREPOINT-VALIDATION.md#stage). Run targeted Stage behavior/type tests with `node --test tests/stage*.test.cjs tests/demo-stage.test.cjs` after implementation changes; documentation-only changes need static docs/link checks. `npm run verify:public-docs` covers all thirteen public types and their qualified members; `npm run verify:examples` covers the lazy sample registry. Marker checks do not execute the sample.
+See [Stage](./api/controls/stage.md) for the public API and [authenticated checks](./SHAREPOINT-VALIDATION.md#stage). Run targeted Stage behavior/type tests with `node --test tests/stage*.test.cjs tests/demo-stage.test.cjs` after implementation changes; documentation-only changes need static docs/link checks. `npm run verify:public-docs` covers all fourteen public types and their qualified members; `npm run verify:examples` covers the lazy sample registry. Marker checks do not execute the sample.
 
 The source and compiled fixtures reuse the actual StagePanel. The Stage-only fixture commands are:
 

@@ -26,6 +26,7 @@ Hooks remain the recommended React API. Use services when you need the same core
 | `createSPFxTenantPropertyService` | `SPHttpClient` |
 | `createSPFxTenantKeyValueStoreService` | `SPHttpClient` |
 | `createSPFxSiteKeyValueStoreService` | `SPHttpClient` |
+| `createSPFxConfigurationStoreService` | `SPHttpClient`, required tenant/site/layered options |
 | `createSPFxOneDriveAppDataService` | `MSGraphClientV3` |
 | `createSPFxUserPhotoService` | `MSGraphClientV3` |
 | `createSPFxApiPermissionPrecheckService` | `SPFxAadTokenProviderLike` |
@@ -148,7 +149,7 @@ Returned `SPFxPnPContextService` methods:
 
 | Method | Description |
 |--------|-------------|
-| `resolveSiteUrl(siteUrl?)` | Resolves undefined to the current web URL, server-relative URLs to the current origin, and trims trailing slash |
+| `resolveSiteUrl(siteUrl?)` | Resolves omitted/empty input to the current web unchanged; supplied server-relative URLs use the current origin, and supplied URLs lose one trailing slash |
 | `createSPFI(siteUrl?, config?)` | Creates a configured PnPjs `SPFI` instance |
 | `getConfigKey(config?)` | Returns a JSON string key for memoizing config |
 
@@ -173,7 +174,7 @@ Returned methods:
 | `invoke(fn)` | Runs `fn(sp)` and returns its result |
 | `batch(fn)` | Creates a batched `SPFI`, executes the batch, and returns the result of `fn` |
 
-The caller owns the provided `SPFI` instance and its configuration.
+The `sp` property is the exact supplied client; the caller owns its configuration. The factory makes no request. `invoke` forwards callback failures. `batch` calls the callback to queue requests, executes the batch, then awaits its result. Queue work before awaiting its request results: requests queued after an `await` may miss execution. Batch execution failures reject, and successful writes are not rolled back.
 
 ## PnP List Service
 

@@ -1,6 +1,6 @@
 {
   "name": "spfx-react-toolkit-monorepo",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "private": true,
   "engines": {
     "node": ">=22.14.0 < 23.0.0"

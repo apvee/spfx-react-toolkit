@@ -55,7 +55,7 @@ An async invocation retains the closure with which it started, including across 
 
 ### Dependencies
 
-The toolkit declares `@fluentui/react-utilities@^9.25.1` as a mandatory shared peer, alongside its existing Fluent theme peers. Install compatible versions in the consuming host. No provider is required by this hook.
+The toolkit declares `@fluentui/react-utilities@^9.26.7` as a mandatory shared peer, alongside its existing Fluent theme peers. Install compatible versions in the consuming host. No provider is required by this hook.
 
 The underlying hook is exported and typed by Fluent UI 9, but its upstream source includes an `@internal` JSDoc annotation. The toolkit preserves the upstream behavior rather than maintaining a separate implementation.
 
@@ -89,6 +89,6 @@ export function Surface() {
 
 Use it at the top level of a component. The returned composer is an ordinary function usable multiple times during rendering. No SPFx provider or additional renderer is created. Theme-based selections need existing Fluent CSS variables, usually from the host's FluentProvider.
 
-See the [complete styles reference](../helpers/styles.md) for all qualified exports, mapping, numeric domains, state/query priority, external-class behavior, direction, container ancestor requirements, theme restrictions and cache growth. Shared peers are `@griffel/core@^1.19.2`, `@griffel/react@^1.5.30`, `@fluentui/react-shared-contexts@^9.25.2`, alongside the existing Fluent peers.
+See the [complete styles reference](../helpers/styles.md) for all qualified exports, mapping, numeric domains, state/query priority, external-class behavior, direction, container ancestor requirements, theme restrictions and cache growth. Shared peers are `@griffel/core@^1.21.4`, `@griffel/react@^1.7.8`, `@fluentui/react-shared-contexts@^9.26.4`, alongside the existing Fluent peers.
 
-The lazy **Styles** web part panel exercises the catalog, two independent query regions, viewport scopes, interaction states, themes and native scrolling. Local React/Griffel tests and browser observations are separate from authenticated SharePoint-host execution, which is **NOT EXECUTED** until recorded in the [host checklist](../../SHAREPOINT-VALIDATION.md#styles-and-usesx).
+The lazy **Styles** web part panel selects one active recipe for catalog, query, interaction or scrolling behavior under the host theme. The two independent query regions and simultaneous engine comparisons remain in the versioned conformance fixtures. Local React/Griffel tests and browser observations are separate from authenticated SharePoint-host execution, which is **NOT EXECUTED** until recorded in the [host checklist](../../SHAREPOINT-VALIDATION.md#styles-and-usesx).

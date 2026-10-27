@@ -72,4 +72,4 @@ function verifyPublishedImports(directory) {
   }
 }
 verifyPublishedImports(path.join(root, 'packages/spfx-react-toolkit/lib'));
-console.log(`API compatibility passed: ${Object.keys(baseline).length} declaration modules, name/version/entry paths preserved.`);
+console.log(`API compatibility passed: ${Object.keys(baseline).length} declaration modules, approved version ${manifest.version}, name/entry paths preserved.`);

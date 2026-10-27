@@ -35,7 +35,7 @@ export interface ListPickerValue extends PickerValueLabel {
 export interface FieldPickerValue extends PickerValueLabel {
   /** Required discriminant selecting the entity or reference variant; never inferred from a display name. */
   readonly kind: 'field';
-  /** Absolute HTTP(S) source web URL. Omission, when allowed, uses the provider current web; never inferred from a display label. */
+  /** Required absolute HTTP(S) source web URL; serialized values have no provider-current-web default. */
   readonly webUrl: string;
   /** Scoped list GUID, agreeing with the JSON reference. For site columns this is omitted. */
   readonly listId?: string;
@@ -145,7 +145,7 @@ export type ListItemPickerValue = SharePointItemValue | SharePointFileValue | Sh
 export interface EntraObjectIdentity {
   /** Required verified Entra tenant GUID on serialized identities; optional redundant display-model metadata must agree when provided. */
   readonly tenantId: string;
-  /** Required native scoped identifier: GUID for Entra/list/field/view, positive safe integer for SharePoint principals. Must agree with the JSON reference. */
+  /** Required Entra object GUID, scoped to tenantId. */
   readonly id: string; }
 /** SharePoint user/group ID belongs to one site collection, not to the tenant.
  * @example const identity: SharePointPrincipalIdentity = { siteCollectionUrl: 'https://tenant.sharepoint.com/sites/hr', id: 42 };

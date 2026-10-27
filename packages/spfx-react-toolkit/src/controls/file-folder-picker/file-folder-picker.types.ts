@@ -128,7 +128,7 @@ interface FileFolderPickerCommonProps extends Pick<FieldProps,
   'label' | 'hint' | 'required' | 'validationMessage' | 'validationState'> {
   /** Optional instance UI dictionary. Known nested leaves merge with native SPFx resources; direct labels/content/Field messages win. Undefined retains native defaults; empty strings remain explicit. */
   readonly strings?: FileFolderPickerStringsOverride;
-  /** Optional root ID; owned controls retain their accessible associations. */
+  /** Optional opening-button ID; the native Field label targets that button and owned controls retain their accessible associations. */
   readonly id?: string;
   /** Optional root CSS class. */
   readonly className?: string;
@@ -208,7 +208,7 @@ interface FileFolderPickerLegacyOptions {
    * @deprecated Choose focused or extended; presets own native presentation/navigation defaults. A custom override requires a consumer choice to remain on legacy.
    */
   readonly cancelLabel?: string;
-  /** Initial view, default location. Other views require current-user OneDrive Business scope and no initialLocation.
+  /** Initial view, default location. Other views require current-user OneDrive Business scope with neither a scope folder nor initialLocation.
    * @deprecated Use initialLocation with an explicit preset. Discovery entry views require a consumer choice to remain on legacy.
    */
   readonly initialView?: 'location' | 'myFiles' | 'recent' | 'shared' | 'site' | 'organization';

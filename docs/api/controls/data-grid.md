@@ -229,7 +229,7 @@ Controlled grid configuration. Input order is preserved.
 | `DataGridProps.loading` | AutoSkeleton over type-aware rounded templates for every visible column; at least four rows, stable varied geometry, real cell state preserved, no visible label/progress indicator. Selection/activation disabled until completion. |
 | `DataGridProps.error` | Consumer-owned error content. |
 | `DataGridProps.onRetry` | Retry intent without fetching. |
-| `DataGridProps.emptyState` | Selects compact, horizontally centered default empty/no-results text with native Fluent padding and natural height. |
+| `DataGridProps.emptyState` | Defaults to `empty`; choose `noResults` for the alternate message. Both use compact, horizontally centered default text with native Fluent padding and natural height. |
 | `DataGridProps.emptyContent` | Custom empty input content retaining its own presentation; can compose StateMessage. |
 | `DataGridProps.noResultsContent` | Custom no-results content retaining its own presentation; can compose StateMessage. |
 | `DataGridProps.onRowActivate` | Original row activation from unhandled click or Enter. |

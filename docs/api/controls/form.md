@@ -229,7 +229,7 @@ These declarations are exported from each Form entrypoint. Form-owned members ap
 | `FormErrors` | `FormErrors.__formValidation` |
 | `FormMethods` | `FormMethods.formState`, `FormMethods.formState.errors` |
 | `FormRootProps` | `FormRootProps.children`, `FormRootProps.onSubmit`, `FormRootProps.onInvalid`, `FormRootProps.disabled`, `FormRootProps.methods` |
-| `FormUseFormProps` | `FormUseFormProps.schema`, `FormUseFormProps.resolver` |
+| `FormUseFormProps` | `FormUseFormProps.schema`, `FormUseFormProps.resolver`, `FormUseFormProps.strings` |
 | `FormValidationProps` | Uses the adapter, binding or lifecycle contract above. |
 | `FormSchemaValidation` | `FormSchemaValidation.schema`, `FormSchemaValidation.resolver` |
 | `FormResolverValidation` | `FormResolverValidation.resolver`, `FormResolverValidation.schema` |
@@ -260,7 +260,7 @@ These declarations are exported from each Form entrypoint. Form-owned members ap
 | `FormCheckboxGroupProps` | `FormCheckboxGroupProps.onChange`, `FormCheckboxGroupProps.onBlur` |
 | `FormComboboxProps` | Uses the adapter, binding or lifecycle contract above. |
 | `FormComboboxMultiProps` | Uses the adapter, binding or lifecycle contract above. |
-| `FormTagPickerProps` | `FormTagPickerProps.'aria-describedby'`, `FormTagPickerProps.id`, `FormTagPickerProps.onChange`, `FormTagPickerProps.onBlur`, `FormTagPickerProps.noOptionsContent`, `FormTagPickerProps.strings` |
+| `FormTagPickerProps` | `FormTagPickerProps.colorfulTagAvatars`, `FormTagPickerProps.'aria-describedby'`, `FormTagPickerProps.id`, `FormTagPickerProps.onChange`, `FormTagPickerProps.onBlur`, `FormTagPickerProps.noOptionsContent`, `FormTagPickerProps.strings` |
 | `FormTagPickerStrings` | `FormTagPickerStrings.noOptions` |
 | `FormRatingProps` | Uses the adapter, binding or lifecycle contract above. |
 | `FormColorPickerProps` | Uses the adapter, binding or lifecycle contract above. |

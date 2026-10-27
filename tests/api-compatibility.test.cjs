@@ -393,6 +393,7 @@ test('permits only approved peer changes, exact additive entrypoints and styles 
   assert.doesNotThrow(() => assertCompatiblePackageContract(currentPackage, originalPackage));
 });
 for (const [label, mutate] of [
+  ['release version', manifest => { manifest.version = '2.1.0'; }],
   ['historical peer range', manifest => { manifest.peerDependencies.react = '^18.0.0'; }],
   ['new Griffel core peer range', manifest => { manifest.peerDependencies['@griffel/core'] = '^2.0.0'; }],
   ['new Griffel React peer removal', manifest => { delete manifest.peerDependencies['@griffel/react']; }],

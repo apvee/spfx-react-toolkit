@@ -37,7 +37,7 @@ export type SPFxComponent<TProps extends {} = {}> =
   | BaseFieldCustomizer<TProps>;
 
 /**
- * Union of the four supported SPFx host context types. Common context fields are available directly; kind is a separate metadata value and does not automatically narrow this union. Prefer host-specific context hooks when accessing WebPart or extension-only APIs.
+ * Union of the four supported SPFx host context types. Common context fields are available directly; kind is a separate metadata value and does not automatically narrow this union. When the matching provider is known, explicitly assert its native SPFx context type to access host-only APIs.
  *
  * @example
  * ```ts
@@ -107,7 +107,7 @@ export interface SPFxProviderProps<TProps extends {} = {}> {
 }
 
 /**
- * Static host metadata returned by useSPFxContext beneath a host-specific provider. Property and theme updates are exposed through dedicated runtime hooks. kind does not form a discriminated union with spfxContext; use host-specific context hooks for typed host fields.
+ * Static host metadata returned by useSPFxContext beneath a host-specific provider. Property and theme updates are exposed through dedicated runtime hooks. kind does not form a discriminated union with spfxContext; explicitly assert a known host context type for host-only fields.
  *
  * @example
  * ```tsx
@@ -122,7 +122,7 @@ export interface SPFxContextValue {
   readonly instanceId: string;
   
   /**
-   * Context reference of the supplied SPFx instance. Common fields are directly accessible; use a host-specific context hook for host-only fields.
+   * Context reference of the supplied SPFx instance. Common fields are directly accessible; explicitly assert the known native host context type for host-only fields.
    */
   readonly spfxContext: SPFxContextType;
   

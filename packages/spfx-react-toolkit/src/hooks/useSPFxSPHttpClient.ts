@@ -71,7 +71,7 @@ export interface SPFxSPHttpClientInfo {
    */
   readonly setBaseUrl: (url: string) => void;
   
-  /** Current base URL (site absolute URL) */
+  /** Consumer base web URL; initially the supplied URL or current web, with one trailing slash removed. */
   readonly baseUrl: string;
 
   /**

@@ -57,7 +57,7 @@ Changing the preset affects the next opening and preserves current labels, selec
 | Kind | Configuration |
 | --- | --- |
 | `siteCollection` | Optional `siteUrl`; omission uses `pageContext.site.absoluteUrl`, even in a subweb. |
-| `library` | Required `webUrl` and `list`, using the toolkit's title, GUID, URL or `SPFxPnPListSelector` conventions. |
+| `library` | Required `webUrl` and `list`: a string is an exact document-library title; use `SPFxPnPListSelector` for an explicit title, GUID, decoded path or URL. |
 | `folder` | Required `webUrl`, `list` and decoded library-relative or server-relative `folder`. |
 | `oneDrive` | Current authenticated user's OneDrive Business, discovered read-only; optional `folder`. No URL input or automatic provisioning. |
 
@@ -107,8 +107,10 @@ The React demo and native Property Pane expose a **File category** menu. Choosin
 | `searchable` | `true`, controlling hosted search. |
 | `browseLabel` | Plain opening-action tooltip/accessibility label. Native localized default from `strings.browse` according to `itemTypes` (English: Browse files…, Browse folders…, Browse files and folders…). |
 | `size` | `medium`; also `large`. Selected tag media follow native Fluent sizing. |
+| `colorfulTagAvatars` | `false`; enables the colorful palette on selected-tag avatars using canonical saved identities. |
+| `strings` | Native FileFolderPicker resource; supply known partial group/leaf overrides for one instance. |
 | `disabled` | `false`; prevents opening and selection mutation. |
-| `label`, `hint`, `required`, `validationMessage`, `validationState` | Native Fluent Field contracts; `id`, `className`, `controlClassName` and accessible-name attributes apply to the owned surface. |
+| `label`, `hint`, `required`, `validationMessage`, `validationState` | Native Fluent Field contracts. `id` identifies the opening button; `className` targets the outer Field and `controlClassName` the outlined surface. Accessible-name attributes name the opening actions. |
 | `onChange` | Optional callback for explicit accepted `pick`, `remove` or `clear` actions. |
 | `onError` | Optional current actionable error callback with a sanitized message; optional audience/Graph failures remain isolated from the configured source. No raw token, claims or message payload is exposed. |
 
@@ -204,7 +206,7 @@ The following SDK-facing props are legacy-only when `preset` is omitted, except 
 | --- | --- |
 | `title`, `selectLabel`, `cancelLabel` | Omit for Microsoft defaults; supplied strings cannot be blank. title changes only Microsoft's internal title. |
 | `layout`, `stickyHeaders` | Omit for service defaults; layout is details, compact-details or tiles. |
-| `initialView` | location. myFiles/recent/shared/site/organization require OneDrive Business scope and no initialLocation. Shared is service-dependent; a configured entry does not establish availability or nonempty results. |
+| `initialView` | location. myFiles/recent/shared/site/organization require OneDrive Business scope with neither a scope folder nor initialLocation. Shared is service-dependent; a configured entry does not establish availability or nonempty results. |
 | `initialSort`, `initialFilter` | Omit for service defaults. Use SharePoint internal fieldName; sort ascending defaults true. Filter is initial UI state, not an acceptance boundary. |
 | `initialLocationFallback` | error. scopeRoot falls back only for a missing initial folder (404), to the verified source root. Does not hide permission failures, invalid paths or a missing source. |
 | `visibleLocations` | Omission produces no requested pivots for SharePoint scopes and only myFiles for OneDrive. An explicit array, including [], replaces that default. Supported keys: myFiles/recent/shared/quickAccess/site/organization. Entries depend on source compatibility, Microsoft service availability and authentication policy; entry can keep a targeted pivot visible. |

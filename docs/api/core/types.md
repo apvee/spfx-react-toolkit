@@ -81,9 +81,8 @@ This type represents any SPFx component instance that can be passed to a provide
 ```typescript
 import type { SPFxComponent } from '@apvee/spfx-react-toolkit';
 
-function getInstanceId<T extends {}>(component: SPFxComponent<T>): string {
-  return component.context.instanceId;
-}
+// The union describes provider inputs; read metadata through public hooks.
+type TitledHost = SPFxComponent<{ title: string }>;
 ```
 
 ### Source
@@ -123,7 +122,7 @@ import type { WebPartContext } from '@microsoft/sp-webpart-base';
 function MyComponent() {
   const { spfxContext, kind } = useSPFxContext();
   
-  // Type narrowing for WebPart-specific properties
+  // The matching WebPart provider establishes this explicit assertion.
   if (kind === 'WebPart') {
     const wpContext = spfxContext as WebPartContext;
     console.log(wpContext.domElement); // WebPart-specific
@@ -166,11 +165,11 @@ interface ContainerSize {
 import { useSPFxContainerInfo } from '@apvee/spfx-react-toolkit';
 
 function MyComponent() {
-  const { width, height } = useSPFxContainerInfo();
+  const { size } = useSPFxContainerInfo();
   
   return (
     <div>
-      <p>Container: {width}x{height}px</p>
+      <p>{size ? `Container: ${size.width}x${size.height}px` : 'No container'}</p>
     </div>
   );
 }
@@ -266,7 +265,7 @@ interface SPFxContextValue {
 
 Contains only static metadata, no reactive state. The `spfxContext` property provides type-safe access to common SPFx context properties like `pageContext`, `serviceScope`, and `instanceId`.
 
-For component-specific properties, use type narrowing with the `kind` property.
+`kind` and `spfxContext` are separate fields, not a discriminated union: checking `kind` does not narrow the context type in TypeScript. Where the matching provider is known, explicitly assert its native SPFx context type, as in the `SPFxContextType` example above. No host-specific context hooks are exported.
 
 ### Example
 
@@ -313,7 +312,3 @@ import type {
 
 - [Providers](./providers.md) - Provider components
 - [Context Hooks](../hooks/context.md) - Hooks using these types
-
----
-
-*Generated from JSDoc comments. Last updated: January 31, 2026*

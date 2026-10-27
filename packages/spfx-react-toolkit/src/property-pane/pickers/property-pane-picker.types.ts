@@ -18,8 +18,9 @@ type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K>
  * Empty selections and mixed selections with known labels keep the normal control. Real terminal errors remain visible; no property is rewritten by hydration.
  * Inherits the React picker's accessible-name check: JSX/object labels require explicit
  * aria-label or aria-labelledby; otherwise supply a nonblank plain string label.
- * validateSelection can veto an action before a value is emitted; validationMessage only
- * overrides its displayed message. Explicit ID resolution validates even in blur mode.
+ * In default change mode, validateSelection can veto an action before a value is emitted.
+ * Blur mode validates already committed ordinary gestures without reverting them; explicit ID
+ * resolution still validates before emission. validationMessage overrides only displayed text.
  * Historical presentation combobox renders Dropdown with popup search; its trigger remains mounted through hydration.
  * Popup search and selection clear are separate. Blur validation runs after leaving the entire field and owned popup.
  * Selected tags stay in TagPicker rather than being duplicated in popup rows; colorfulTagAvatars affects tags only.

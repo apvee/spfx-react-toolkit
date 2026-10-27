@@ -56,7 +56,7 @@ import type { WebPartContext } from '@microsoft/sp-webpart-base';
 function MyComponent() {
   const { instanceId, spfxContext, kind } = useSPFxContext();
   
-  // Type narrowing for component-specific properties
+  // This assertion is valid when mounted under SPFxWebPartProvider.
   if (kind === 'WebPart') {
     const wpContext = spfxContext as WebPartContext;
     console.log(wpContext.domElement); // WebPart-specific
@@ -102,11 +102,10 @@ Provides access to SharePoint page context containing information about:
 - Site collection and web
 - Current user
 - Current list and list item (if applicable)
-- Teams context (if running in Teams)
 - Culture and locale settings
 - Permissions and capabilities
 
-This hook consumes `PageContext` from SPFx ServiceScope using dependency injection. The service is consumed lazily and cached for performance.
+This hook consumes `PageContext` from the provider’s ready SPFx ServiceScope and memoizes the native reference for that scope. It does not clone context, fetch data or independently observe every field mutation. Application SDK context is available through [`useSPFxTeams`](./environment.md#usespfxteams).
 
 ### Example
 
@@ -325,7 +324,3 @@ function MyComponent() {
 - [Providers](../core/providers.md) - Provider components
 - [Types](../core/types.md) - Type definitions
 - [Properties Hooks](./properties.md) - Property management
-
----
-
-*Generated from JSDoc comments. Last updated: January 31, 2026*

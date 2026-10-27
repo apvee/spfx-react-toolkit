@@ -1,8 +1,8 @@
 # Helpers API Reference
 
-> Pure functions for mapping SPFx context data, checking permissions, building keys and Graph paths, serializing tenant values, and converting themes.
+> Non-React functions for mapping SPFx context data, checking permissions, building keys and Graph paths, serializing tenant values, and converting themes.
 
-Helpers are public non-React utilities exported from `@apvee/spfx-react-toolkit`. They do not read React context, do not perform I/O, and do not manage provider state.
+Helpers are public non-React utilities exported from `@apvee/spfx-react-toolkit` and `/helpers`. They do not read React context, send network requests or manage provider state. Most map only their inputs; API token evaluation also reads the current clock to check `exp`/`nbf`. Theme helpers may return shared Fluent objects, which callers must treat as immutable. The styles facade also exposes the React `useSx` hook; composing descriptors can insert CSS through the existing renderer.
 
 ## Styles and useSx
 
@@ -156,7 +156,7 @@ function getSPFxEnvironmentInfo(pageContext: PageContext): {
 }
 ```
 
-Detects host environment from the page URL, legacy page context, and available SPFx SDK objects.
+Maps only the supplied `PageContext`: URL substrings identify local/workbench, `legacyPageContext.isOnPremises` identifies on-premises, and SDK-shaped fields on that object set Teams/Office/Outlook flags. Category precedence is Local, Teams, Outlook, Office, SharePointOnPrem, SharePoint. Flags can overlap. This synchronous heuristic does not acquire SDK context or read the provider’s native context; use [`useSPFxEnvironmentInfo`](../hooks/environment.md#usespfxenvironmentinfo) for the asynchronous host-aware React result.
 
 ### `getSPFxPageTypeInfo`
 
@@ -204,6 +204,8 @@ function hasSPFxPermission(
 Returns `false` when `permissionSet` is undefined. Otherwise delegates to `SPPermission.hasPermission(permission)`.
 
 ## API Permission Precheck Helpers
+
+See the [complete precheck helper reference](./api-permission-precheck.md) for signatures, all public configuration/result/status types, constants, defaults and diagnostic limits.
 
 Import:
 
@@ -348,7 +350,7 @@ Builds Microsoft Graph app-root content paths:
 | `('settings.json')` | `/me/drive/special/approot:/settings.json:/content` |
 | `('settings.json', 'dashboard')` | `/me/drive/special/approot:/dashboard/settings.json:/content` |
 
-Folder names are sanitized by replacing characters outside `a-z`, `A-Z`, `0-9`, `-`, and `_` with `-`.
+Folder names are sanitized by replacing characters outside `a-z`, `A-Z`, `0-9`, `-`, and `_` with `-`. Omitted or empty folder uses the app root. File names are interpolated unchanged, without path encoding or validation; provide a path-safe name. The helper does not create folders or perform I/O.
 
 ### `buildUserPhotoEndpoint`
 
@@ -368,7 +370,7 @@ Builds Microsoft Graph profile photo endpoints:
 | `{ email }` | `/users/{email}` |
 | omitted | `/me` |
 
-The default size is `240x240`.
+The default size is `240x240`; the full endpoint ends in `/photos/<size>/$value`. Nonempty `userId` takes precedence over `email`; identifiers are interpolated unchanged without encoding or validation.
 
 ## Theme Helpers
 
@@ -417,3 +419,5 @@ function getTeamsFluentTheme(teamsThemeName: string | undefined): Theme;
 | `dark` | `teamsDarkTheme` |
 | `contrast`, `highcontrast` | `teamsHighContrastTheme` |
 | `default`, undefined, other values | `teamsLightTheme` |
+
+Names are matched case-insensitively without trimming surrounding whitespace. Returned themes are shared Fluent objects; do not mutate them.

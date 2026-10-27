@@ -168,7 +168,7 @@ export interface WebPickerSource {
  * @example const search: SearchPickerOptions = { minimumSearchLength: 2, debounceMs: 300, suggestionsLimit: 50 };
  */
 export interface SearchPickerOptions {
-  /** Defaults to 2 for all pickers; shorter nonempty inputs show the minimum-character prompt and never initiate typed search. Values below 2 are invalid. */
+  /** Defaults to 2 for all pickers; shorter nonempty inputs never initiate typed search. The search placeholder supplies minimum-character guidance without a duplicate default status row. Values below 2 are invalid. */
   readonly minimumSearchLength?: number;
   /** Debounce for typed searches, including local Field/View/ContentType matching; default 300 ms. */
   readonly debounceMs?: number;
@@ -556,13 +556,13 @@ export interface PrincipalInitialSuggestions extends PickerInitialSuggestions {
  * Empty principalTypes disables suggestions. userIdentity applies only to users, never groups.
  * Graph/SharePoint permissions and available identities govern actual resolution; a matching SPFx provider is required.
  * @example
- * <PrincipalPicker principalTypes={['user', 'microsoft365Group']} presentation="tagPicker" multiselect
+ * <PrincipalPicker label="Principals" principalTypes={['user', 'microsoft365Group']} presentation="tagPicker" multiselect
  *   userIdentity={{ mode: 'both', webUrl: 'https://tenant.sharepoint.com/sites/projects', ensureUser: true }} />
  */
 export interface PrincipalPickerProps extends PickerProps<PrincipalPickerOption> {
   /** Optional current user plus shared five-item pre-search policy.
    * showDefaultSuggestions=false suppresses all pre-search sources and their lazy retrieval.
-   * Search placeholder shows “Digita almeno 2 caratteri per cercare” (configured larger minimum is reflected); there is no duplicate minimum-character status row.
+   * The localized search placeholder reflects minimumSearchLength; there is no duplicate default minimum-character status row.
    */
   readonly initialSuggestions?: PrincipalInitialSuggestions;
   /** Lazy delegated Graph personal suggestions on opening an empty-query menu. Default false.
@@ -626,7 +626,7 @@ export interface ContentTypePickerOption extends PickerOption<ContentTypePickerV
  * webUrl inherits the provider web; site scope resolves its collection root even from a subweb.
  * List strings are exact titles; use the existing typed selector for IDs/paths/URLs.
  * @example const site: ContentTypePickerProps = {label:'Content type',webUrl:'https://tenant.sharepoint.com/sites/hr/sub'};
- * @example const list: ContentTypePickerProps = {scope:'list',list:'Documents',contentTypeId:'0x0101',includeDescendants:true};
+ * @example const list: ContentTypePickerProps = {label:'List content type',scope:'list',list:'Documents',contentTypeId:'0x0101',includeDescendants:true};
  */
 export type ContentTypePickerProps = PickerProps<ContentTypePickerOption> & WebPickerSource & {
   /** Optional exact group match, case insensitive. Omission accepts all groups. */

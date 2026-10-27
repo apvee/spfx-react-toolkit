@@ -70,7 +70,7 @@ export interface PnPContextInfo {
 }
 ```
 
-The first argument is an optional site URL; the second is configuration. Undefined uses the current web; server-relative paths resolve from the current origin. Caching is optional and defaults to session storage when enabled. cache.timeout is applied through PnPjs expireFunc in milliseconds: absent timeout and 0 retain the legacy 300000ms fallback. Changing cache.keyFactory function identity rebuilds SPFI even if JSON configuration is unchanged; memoize custom factories for stability. batch configuration is reserved metadata, not an automatic request limit.
+The first argument is an optional site URL; the second is configuration. Omitted or empty URL uses the current web unchanged; supplied server-relative paths resolve from the current origin and supplied URLs lose one trailing slash. Caching is optional and defaults to session storage when enabled. cache.timeout is applied through PnPjs expireFunc in milliseconds: absent timeout and 0 retain the legacy 300000ms fallback. Changing cache.keyFactory function identity rebuilds SPFI even if JSON configuration is unchanged; memoize custom factories for stability. batch configuration is reserved metadata, not an automatic request limit.
 
 ```tsx
 import * as React from 'react';
@@ -118,7 +118,7 @@ export interface SPFxPnPListInfo<T = unknown> {
 }
 ```
 
-Creates list CRUD and query operations for the exact `listTitle`. Strings remain titles, even when they resemble a GUID or URL; they are not trimmed or auto-detected. It does not auto-query on mount: call query(). A new query or list/service identity supersedes prior data, errors, pages and pending CRUD/debounce refresh effects. loadMore is bound to the active query; duplicate simultaneous calls return an empty page without a second dispatch. Failed pages release the lock and retain the offset for retry. Caller promises retain their existing failure channels, detailed below. Remote CRUD operations are not undone when a completion becomes stale. Successful batch writes are not rolled back; inspect hook `error` and server data before retrying a partial batch.
+Creates list CRUD and query operations for the exact `listTitle`. Strings remain titles, even when they resemble a GUID or URL; they are not trimmed or auto-detected. It does not auto-query on mount: call query(). An explicit `.top()` in the query builder takes precedence over per-query `pageSize`, then the hook’s `pageSize`; without any limit SharePoint chooses the result size. `hasMore` is a count-equals-page-size heuristic, so a final empty request can be necessary. A new query or list/service identity supersedes prior data, errors, pages and pending CRUD/debounce refresh effects. loadMore is bound to the active query; duplicate simultaneous calls return an empty page without a second dispatch. Failed pages release the lock and retain the offset for retry. Caller promises retain their existing failure channels, detailed below. Remote CRUD operations are not undone when a completion becomes stale. Successful batch writes are not rolled back; inspect hook `error` and server data before retrying a partial batch.
 
 ```tsx
 import * as React from 'react';

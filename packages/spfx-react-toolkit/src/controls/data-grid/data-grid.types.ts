@@ -161,7 +161,7 @@ export type DataGridProps<TItem extends object> = Omit<
     error?: ContentSlot<'div'>;
     /** Called by the localized retry button when an error is displayed. Omission hides that button. No fetching or promise handling is performed. */
     onRetry?: () => void;
-    /** Selects the empty or no-results presentation. The default localized text
+    /** Selects the empty or no-results presentation; omission selects empty. The default localized text
      * is horizontally centered with Fluent medium block padding and natural height. */
     emptyState?: 'empty' | 'noResults';
     /** Custom empty input content, preserving its own presentation.

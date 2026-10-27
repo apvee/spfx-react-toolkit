@@ -13,7 +13,7 @@ import { Stage } from '@apvee/spfx-react-toolkit/controls/stage';
 </Stage>
 ```
 
-Import from the package root, `/controls` or `/controls/stage`; all share the canonical implementation. `Stage` is the only value export, with `Stage.Header`, `Stage.Body` and `Stage.Footer` compound members. There are no flat part exports or public Trigger. The thirteen public types are documented below; state-ownership and surface-attribute helper types remain internal to the public contract.
+Import from the package root, `/controls` or `/controls/stage`; all share the canonical implementation. `Stage` is the only value export, with `Stage.Header`, `Stage.Body` and `Stage.Footer` compound members. There are no flat part exports or public Trigger. The fourteen public types, including the `StageStrings` localization dictionary, are documented below; state-ownership and surface-attribute helper types remain internal to the public contract.
 
 ## StageProps
 
@@ -192,13 +192,15 @@ Titles, descriptions and icons accept React content or a native `span` props obj
 />
 ```
 
-The heading/Label, generated IDs, native trigger and Stage Close remain owned by the control. A slot ref points to its inner container. Strings/JSX shorthand retain their existing DOM and literal formatting; props objects explicitly request an inner container even with empty children. Booleans and absent values suppress content; zero remains visible. Tags cannot replace headings, Labels or triggers; raw HTML is unsupported. Phrasing slots must contain appropriate noninteractive content (especially inside accordion triggers). The existing Fluent theme/host renderer is still required.
+The heading, generated IDs, surface associations and Close button remain owned by Stage. A slot ref points to its inner container. Strings/JSX shorthand retain their existing DOM and literal formatting; props objects explicitly request an inner container even with empty children. Booleans and absent values suppress content; zero remains visible. Tags cannot replace the owned heading, surface or Close button; raw HTML is unsupported. Title, description and icon content must remain valid phrasing content; put application controls in `action`. The existing Fluent theme/host renderer is still required.
 
-Empty or whitespace-only static description objects/fragments do not create accessible description associations unless explicitly named with aria-label/aria-labelledby. Whitespace shorthand retains the control's existing presence behavior. Object/callback icon containers fill the owned shell; their direct SVG children retain 24px header/20px group-item sizing (Stage headers use 24px), even with larger authored SVG dimensions. Callback output and custom components remain caller-owned and opaque.
+A description props object with empty or whitespace-only static children adds no accessible surface-description association unless the object supplies aria-label/aria-labelledby. Render callbacks request that association without probing their output. Shorthand, including fragments, preserves the existing presence policy: empty text/fragments are absent, while whitespace text is present. Object/callback icon containers fill the owned shell; their direct SVG children retain the 24px header sizing, even with larger authored SVG dimensions. Callback output and custom components remain caller-owned and opaque.
 
 ## Native UI localization
 
-SPFx selects the Stage native resource from the host UI culture after the host registers its toolkit resource ID through the localization configuration CLI. `Stage.Header` accepts `strings?: Partial<StageStrings>`; the only owned label is `StageStrings.closeLabel`, the close button accessible name. Omitted/undefined dictionary values use that native label. An explicit direct `closeLabel` prop takes precedence over the dictionary, including empty or whitespace values. Dictionary strings also preserve explicit empty/whitespace values. These overrides are independent per Header and require no toolkit provider.
+SPFx selects the Stage native resource from the host UI culture after the host registers its toolkit resource ID through the [localization configuration CLI](../../LOCALIZATION.md). The native resource is a static module dependency: outside the SPFx loader, supply an explicit resource-module adapter even when passing `strings` or `closeLabel`. No toolkit provider is required, but overrides do not remove that module dependency.
+
+`Stage.Header` accepts `strings?: Partial<StageStrings>`; the only owned label is `StageStrings.closeLabel`, the close button accessible name. Omitted/undefined dictionary values use that native label. An explicit direct `closeLabel` prop takes precedence over the dictionary, including empty or whitespace values. Dictionary strings also preserve explicit empty/whitespace values. These overrides are independent per Header.
 
 ```tsx
 <Stage presentation="dialog">
