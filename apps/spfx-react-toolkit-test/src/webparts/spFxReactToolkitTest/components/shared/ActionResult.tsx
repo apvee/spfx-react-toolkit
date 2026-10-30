@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MessageBar, MessageBarType } from '@fluentui/react';
+import { MessageBar, MessageBarBody } from '@fluentui/react-components';
 
 export interface ActionResultProps {
   readonly result: string | undefined;
@@ -9,19 +9,19 @@ export interface ActionResultProps {
 export const ActionResult: React.FC<ActionResultProps> = ({ result, error }) => {
   if (error) {
     return (
-      <MessageBar messageBarType={MessageBarType.error}>
-        {error.message}
+      <MessageBar intent="error">
+        <MessageBarBody>{error.message}</MessageBarBody>
       </MessageBar>
     );
   }
 
   if (!result) {
-    return null;
+    return <></>;
   }
 
   return (
-    <MessageBar messageBarType={MessageBarType.success}>
-      {result}
+    <MessageBar intent="success">
+      <MessageBarBody>{result}</MessageBarBody>
     </MessageBar>
   );
 };

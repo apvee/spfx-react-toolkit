@@ -8,7 +8,6 @@ import { useSPFxAadTokenProvider } from '@apvee/spfx-react-toolkit/hooks';
 
 Requires the matching SPFx host provider. See [provider selection](../../../getting-started/choosing-a-provider.md).
 
-
 Access the SPFx `AadTokenProvider` directly when you need token acquisition behavior that is not covered by `AadHttpClient`.
 
 ## Signature
@@ -68,8 +67,8 @@ function TokenProbe() {
 }
 ```
 
+`tokenProvider` starts undefined and `isInitializing` starts true. Factory consumption and asynchronous provider acquisition failures populate `initError` and end initialization; `isReady` requires a provider with neither initialization nor error. Factory replacement resets acquisition and obsolete completions cannot publish. This hook does not request a token, check scopes or expose invocation state; direct `getToken` promises follow the native provider contract.
+
 ## Source
 
 [View source](../../../../packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts)
-
----

@@ -1,0 +1,9 @@
+{
+  "pagination": "Stronicowanie",
+  "firstPage": "Pierwsza strona",
+  "previousPage": "Poprzednia strona",
+  "nextPage": "Następna strona",
+  "lastPage": "Ostatnia strona",
+  "loadMore": "Wczytaj więcej",
+  "loading": "Wczytywanie"
+}

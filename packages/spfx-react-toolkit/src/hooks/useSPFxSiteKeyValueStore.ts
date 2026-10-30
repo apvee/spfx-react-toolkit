@@ -3,7 +3,20 @@ import { useSPFxSPHttpClient } from './useSPFxSPHttpClient';
 import { useSPFxPageContext } from './useSPFxPageContext';
 import { createSPFxSiteKeyValueStoreService } from '../services/spfx-site-key-value-store.service';
 
-/** A key and its deserialized value from the collection's root-web store. */
+/**
+ * A key and its deserialized value from the collection's root-web store.
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const store = useSPFxSiteKeyValueStore();
+ * const onLoad = async () => {
+ *   const item: SPFxSiteKeyValueStoreItem<boolean> | undefined = await store.get('featureEnabled');
+ *   console.log(item?.value);
+ * };
+ * ```
+ * @template T - Expected application data shape; no runtime validation is performed.
+ */
 export interface SPFxSiteKeyValueStoreItem<T = unknown> {
   /** Property key, stored in the Title column. */
   readonly key: string;
@@ -15,7 +28,16 @@ export interface SPFxSiteKeyValueStoreItem<T = unknown> {
   readonly id: number;
 }
 
-/** State and operations for a site collection key-value store. */
+/**
+ * State and operations for a site collection key-value store.
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const store: SPFxSiteKeyValueStoreResult = useSPFxSiteKeyValueStore();
+ * const onLoad = async () => console.log(await store.get<boolean>('featureEnabled'));
+ * ```
+ */
 export interface SPFxSiteKeyValueStoreResult {
   /** True while any read operation is pending. */
   readonly isLoading: boolean;
@@ -25,25 +47,54 @@ export interface SPFxSiteKeyValueStoreResult {
   readonly isWriting: boolean;
   /** Error from the latest-started write; cleared when another write starts. */
   readonly writeError: Error | undefined;
-  /** Effective write permission indicator, refreshed after successful writes. */
+  /** Effective write permission indicator, initially false; refreshed on mount and after each current-identity read/write succeeds or fails. Failed checks return false and only the latest check may publish. SharePoint still enforces grants and schema repair may need additional permissions. */
   readonly canWrite: boolean;
   /** True when the client and a nonempty collection root URL are available. */
   readonly isReady: boolean;
-  /** Reads a key without provisioning; failures set error and return undefined. */
+  /**
+   * Reads without provisioning; failed requests publish error and return undefined.
+   * @param key - Key to read.
+   * @returns An item, or undefined for absent keys/lists or caught read failures.
+   * @throws Not-ready operations reject; writes also reject request/setup failures.
+   */
   readonly get: <T = unknown>(key: string) => Promise<SPFxSiteKeyValueStoreItem<T> | undefined>;
-  /** Reads all keys without provisioning; failures set error and return an empty array. */
+  /**
+   * Reads all pages without provisioning; failed requests publish error and return [].
+   * @returns All items, or [] for absent lists or caught read failures.
+   * @throws Not-ready operations reject; writes also reject request/setup failures.
+   */
   readonly list: () => Promise<SPFxSiteKeyValueStoreItem<unknown>[]>;
-  /** Creates or updates a key, provisioning if needed; failures reject. */
+  /**
+   * Ensures setup, then writes with an observed item ETag; missing ETags and HTTP 412 conflicts publish writeError and reject without a blind overwrite. This is not compare-and-swap against a previous get().
+   * @param key - Key to create/update.
+   * @param value - Value to encode. Empty/JSON-like strings preserve their text, bigint reads as exact decimal string and Date as ISO string; T does not validate runtime content. Historical values keep their previous interpretation.
+   * @param description - Omitted preserves existing description; empty string clears it.
+   * @returns Resolves after successful write.
+   * @throws Not-ready operations reject; writes also reject request/setup failures.
+   */
   readonly save: <T = unknown>(key: string, value: T, description?: string) => Promise<void>;
-  /** Removes a key without creating a missing store; failures reject. */
+  /**
+   * Deletes without provisioning using an observed ETag; failures/conflicts publish writeError and reject. A missing list/key is a no-op only after confirmed absence.
+   * @param key - Key to delete.
+   * @returns Resolves after deletion or confirmed absence.
+   * @throws Not-ready operations reject; writes also reject request/setup failures.
+   */
   readonly remove: (key: string) => Promise<void>;
 }
 
 /**
- * Manages SiteKeyValueStore in pageContext.site.absoluteUrl, shared by all subsites.
- * Mount checks permissions without provisioning. SharePoint enforces actual grants;
- * canWrite is an indicator, not authorization. Not-ready operations reject.
- * Reads and writes retain their original collection/client across context changes.
+ * Manages SiteKeyValueStore in pageContext.site.absoluteUrl, shared by all subsites. Mount checks permissions without provisioning; every settled current-identity operation refreshes them. New writes preserve text and bigint precision without rewriting historical data; Date and bigint read as strings. Mutations use item ETags and reject conflicts rather than blindly overwriting. Legacy empty Note values still read as empty strings. canWrite is an indicator; SharePoint enforces grants. Read failures return fallbacks and publish error, writes reject and publish writeError. Not-ready operations reject. Old collection/client completions cannot publish current state.
+ * @returns Store readiness, read/write state and explicit operations.
+ * @throws When called outside an SPFx provider.
+ *
+ * @example
+ * ```tsx
+ * function SiteSetting() {
+ *   const store = useSPFxSiteKeyValueStore();
+ *   const load = async () => console.log(await store.get<boolean>('featureEnabled'));
+ *   return <button onClick={load} disabled={!store.isReady}>Load setting</button>;
+ * }
+ * ```
  */
 export function useSPFxSiteKeyValueStore(): SPFxSiteKeyValueStoreResult {
   const { client } = useSPFxSPHttpClient();
@@ -101,9 +152,12 @@ export function useSPFxSiteKeyValueStore(): SPFxSiteKeyValueStoreResult {
       return fallback;
     } finally {
       identity.reads--;
-      if (isCurrent()) setState(previous => isCurrent() ? { ...previous, isLoading: identity.reads > 0 } : previous);
+      if (isCurrent()) {
+        setState(previous => isCurrent() ? { ...previous, isLoading: identity.reads > 0 } : previous);
+        refreshPermission();
+      }
     }
-  }, [service, siteCollectionUrl, identity, isCurrent, initialState]);
+  }, [service, siteCollectionUrl, identity, isCurrent, initialState, refreshPermission]);
 
   const runWrite = useCallback(async (operation: () => Promise<void>): Promise<void> => {
     if (!service || !siteCollectionUrl) throw new Error('SPHttpClient and a nonempty site collection URL are required.');
@@ -112,7 +166,6 @@ export function useSPFxSiteKeyValueStore(): SPFxSiteKeyValueStoreResult {
     if (isCurrent()) setState(previous => isCurrent() ? { ...(previous.identity === identity ? previous : initialState), isWriting: true, writeError: undefined } : previous);
     try {
       await operation();
-      refreshPermission();
     } catch (failure) {
       if (isCurrent() && request === identity.writeId) {
         const writeError = failure instanceof Error ? failure : new Error(String(failure));
@@ -121,7 +174,10 @@ export function useSPFxSiteKeyValueStore(): SPFxSiteKeyValueStoreResult {
       throw failure;
     } finally {
       identity.writes--;
-      if (isCurrent()) setState(previous => isCurrent() ? { ...previous, isWriting: identity.writes > 0 } : previous);
+      if (isCurrent()) {
+        setState(previous => isCurrent() ? { ...previous, isWriting: identity.writes > 0 } : previous);
+        refreshPermission();
+      }
     }
   }, [service, siteCollectionUrl, identity, isCurrent, refreshPermission, initialState]);
 

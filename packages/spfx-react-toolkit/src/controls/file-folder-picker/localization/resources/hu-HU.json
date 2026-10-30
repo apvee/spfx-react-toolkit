@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Fájlok tallózása…",
+    "folders": "Mappák tallózása…",
+    "all": "Fájlok és mappák tallózása…"
+  },
+  "placeholders": {
+    "files": "Fájlok kiválasztása…",
+    "folders": "Mappák kiválasztása…",
+    "all": "Fájlok vagy mappák kiválasztása…"
+  },
+  "labels": {
+    "selection": "Fájlok és mappák kiválasztása",
+    "file": "Fájl",
+    "folder": "Mappa",
+    "unresolvedItem": "Fel nem oldott elem",
+    "removeItem": "{name} eltávolítása"
+  },
+  "validation": {
+    "invalidReferences": "Érvénytelen fájl- vagy mappahivatkozások.",
+    "controlledModeChanged": "A vezérelt mód nem változtatható meg, amíg a vezérlő csatlakoztatva van.",
+    "incompatibleItems": "A kijelölés a beállított típussal, kategóriával vagy kiterjesztésekkel nem kompatibilis elemeket tartalmaz. Távolítsa el vagy cserélje le őket.",
+    "invalidPolicy": "Érvénytelen a kijelölés típusának, kategóriájának, kiterjesztéseinek vagy korlátjának beállítása.",
+    "selectionLimitExceeded": "A kijelölés túllépi a beállított korlátot. Távolítsa el a felesleges elemeket."
+  },
+  "errors": {
+    "configuration": "Érvénytelen a választó beállítása. Ellenőrizze a forrást, a típusokat, a kategóriát és a korlátokat; használja az előbeállítást az örökölt beállítások nélkül.",
+    "auth-resource": "A választó olyan hitelesítési erőforrást kért, amelyet a konfiguráció nem engedélyez.",
+    "auth-type": "A választó olyan hitelesítési típust kért, amelyet a konfiguráció nem támogat.",
+    "auth-challenge": "A választó további, nem támogatott hitelesítési ellenőrzést igényel.",
+    "auth-provider": "Nem sikerült beszerezni a SharePoint-tokent. Próbálja újra; ha a probléma továbbra is fennáll, ellenőrizze a hozzáférését és a meglévő engedélyeket.",
+    "selection-identity": "Nem sikerült ellenőrizni a kiválasztott elem azonosságát. Nyissa meg újra a választót, és próbálja újra.",
+    "selection-scope": "A kiválasztott elem nem tartozik az engedélyezett webhelyhez, tárhoz vagy mappához.",
+    "selection-policy": "A kijelölés nem felel meg az engedélyezett típusra, kategóriára, kiterjesztésekre vagy elemszámra vonatkozó feltételeknek.",
+    "selection-unavailable": "A kiválasztott elem nem érhető el vagy nem hozzáférhető.",
+    "selection-invalid": "Nem sikerült ellenőrizni a kijelölést. Nem lett hozzáadva új elem.",
+    "onedrive-unavailable": "Az aktuális felhasználó OneDrive-ja nem érhető el vagy nem hozzáférhető. Ellenőrizze, hogy a meghajtó létezik-e, és próbálja újra.",
+    "opening": "Nem sikerült megnyitni a választót. Ellenőrizze a beállításokat és a forráshoz való hozzáférést, majd próbálja újra.",
+    "timeout": "A választó nem válaszolt időben. Zárja be, és próbálja újra.",
+    "communication": "Megszakadt a kommunikáció a választóval. Nyissa meg újra, és próbálja újra."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "A választható hitelesítési funkció nem válaszolt időben. Próbálja újra.",
+    "unsupportedCommand": "Ez az integráció nem támogatja ezt a parancsot.",
+    "optionalGraphAuthenticationFailed": "Nem sikerült hitelesíteni a választható Microsoft Graph-funkciót.",
+    "optionalPersonalAuthenticationFailed": "Nem sikerült hitelesíteni a választható személyes célhelyet."
+  }
+}

@@ -7,15 +7,30 @@ import { useSPFxInstanceInfo } from './useSPFxInstanceInfo';
 
 /**
  * Return type for storage hooks
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const storage: SPFxStorageHook<number> = useSPFxLocalStorage('pageSize', 25);
+ * const onIncrease = () => storage.setValue(value => value + 5);
+ * ```
+ * @template T - Expected application data shape; no runtime validation is performed.
  */
 export interface SPFxStorageHook<T> {
   /** Current value */
   readonly value: T;
   
-  /** Set new value */
+  /**
+   * Updates React state and attempts JSON persistence; storage/serialization failures are ignored. Function values are treated as updaters.
+   * @param value - Next value or pure updater receiving current state.
+   * @returns No value.
+   */
   readonly setValue: (value: T | ((prev: T) => T)) => void;
   
-  /** Remove value (reset to default) */
+  /**
+   * Attempts to delete the scoped storage entry and resets state to the latest defaultValue. Persistence failures are ignored.
+   * @returns No value.
+   */
   readonly remove: () => void;
 }
 
@@ -168,22 +183,22 @@ function useSPFxBrowserStorage<T>(
 
 /**
  * Hook to use localStorage scoped to SPFx instance
- * 
+ *
  * The storage key is automatically scoped to the SPFx instance ID,
  * ensuring isolation between different web parts/extensions.
- * 
+ *
  * Data persists across page reloads and sessions.
- * 
+ *
  * Use for:
  * - User preferences
  * - Form drafts
  * - Long-lived cache
  * - Settings
- * 
+ *
  * @param key - Storage key (will be prefixed with instance ID)
  * @param defaultValue - Fallback when initializing a key or removing its value. Changing it alone preserves the current value; remove uses the latest fallback.
  * @returns Storage hook with value, setValue, and remove
- * 
+ *
  * @example
  * ```tsx
  * function MyComponent() {
@@ -198,6 +213,8 @@ function useSPFxBrowserStorage<T>(
  *   );
  * }
  * ```
+ * @throws When called outside an SPFx provider.
+ * @template T - Expected application data shape; no runtime validation is performed.
  */
 export function useSPFxLocalStorage<T>(
   key: string,
@@ -208,22 +225,22 @@ export function useSPFxLocalStorage<T>(
 
 /**
  * Hook to use sessionStorage scoped to SPFx instance
- * 
+ *
  * The storage key is automatically scoped to the SPFx instance ID,
  * ensuring isolation between different web parts/extensions.
- * 
+ *
  * Data persists only for the current browser session/tab.
- * 
+ *
  * Use for:
  * - Temporary state
  * - Session-specific cache
  * - Tab-specific settings
  * - Wizard state
- * 
+ *
  * @param key - Storage key (will be prefixed with instance ID)
  * @param defaultValue - Fallback when initializing a key or removing its value. Changing it alone preserves the current value; remove uses the latest fallback.
  * @returns Storage hook with value, setValue, and remove
- * 
+ *
  * @example
  * ```tsx
  * function WizardComponent() {
@@ -237,6 +254,8 @@ export function useSPFxLocalStorage<T>(
  *   );
  * }
  * ```
+ * @throws When called outside an SPFx provider.
+ * @template T - Expected application data shape; no runtime validation is performed.
  */
 export function useSPFxSessionStorage<T>(
   key: string,

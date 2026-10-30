@@ -1,5 +1,11 @@
+import { FormFixture } from './form';
+import { StateMessageFixture } from './state-message';
+import { GroupsFixture } from './groups';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { FormattedTextFixture } from './formatted-text';
+import { RelativeTimeFixture } from './relative-time';
+import { AutoSkeletonFixture } from './auto-skeleton';
 import { createDOMRenderer, makeStyles, mergeClasses } from '@griffel/core';
 import { RendererProvider, useRenderer_unstable } from '@griffel/react';
 import { FluentProvider } from '@fluentui/react-provider';
@@ -204,12 +210,17 @@ function Fixture(props: FixtureConfig): React.ReactElement {
       {probe('logical', [width.px(75), declaration('paddingInlineStart', '13px', '0px')])}
       {probe('physical', [width.px(75), declaration('paddingLeft', '17px', '0px')])}
     </section>
+    <FormattedTextFixture />
+    <RelativeTimeFixture />
+    <AutoSkeletonFixture />
+    <StateMessageFixture />
+    <GroupsFixture />
   </>;
 }
 function render(patch: Partial<FixtureConfig>): void {
   config = { ...config, ...patch };
   ReactDOM.render(<RendererProvider renderer={renderer}>
-    <FluentProvider theme={config.theme === 'dark' ? webDarkTheme : config.theme === 'highContrast' ? teamsHighContrastTheme : webLightTheme} dir={config.dir}><Fixture {...config} /></FluentProvider>
+    <FluentProvider theme={config.theme === 'dark' ? webDarkTheme : config.theme === 'highContrast' ? teamsHighContrastTheme : webLightTheme} dir={config.dir}>{new URLSearchParams(window.location.search).has('form-only') ? <FormFixture /> : <Fixture {...config} />}</FluentProvider>
   </RendererProvider>, document.getElementById('root'));
 }
 window.sxFixture = { render, get config() { return config; } };

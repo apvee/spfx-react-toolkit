@@ -7,6 +7,13 @@ import type { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
 
 /**
  * Return type for useSPFxServiceScope hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const scope: SPFxServiceScopeInfo = useSPFxServiceScope();
+ * const client = scope.consume(HttpClient.serviceKey);
+ * ```
  */
 export interface SPFxServiceScopeInfo {
   /** 
@@ -16,98 +23,27 @@ export interface SPFxServiceScopeInfo {
   readonly serviceScope: ServiceScope | undefined;
   
   /**
-   * Consume a service from the ServiceScope
-   * 
-   * @param serviceKey - The service key to consume (from @microsoft/sp-core-library)
-   * @returns The service instance
-   * 
-   * @example
-   * ```tsx
-   * import { ServiceKey } from '@microsoft/sp-core-library';
-   * 
-   * const myService = consume<MyService>(MyService.serviceKey);
-   * myService.doSomething();
-   * ```
+   * Consumes a registered service from the native scope.
+   * @param serviceKey - The service key registered in the scope.
+   * @returns Native service instance.
+   * @throws Missing scope or native ServiceScope lifecycle/registration failures.
    */
   readonly consume: <T>(serviceKey: ServiceKey<T>) => T;
 }
 
 /**
- * Hook for SPFx ServiceScope (Dependency Injection)
- * 
- * ServiceScope is SPFx's dependency injection container that provides:
- * - Access to built-in SPFx services
- * - Access to custom registered services
- * - Service lifecycle management
- * - Service isolation per scope
- * 
- * Common built-in services available:
- * - PageContext (via @microsoft/sp-page-context)
- * - HttpClient (via @microsoft/sp-http)
- * - MSGraphClientFactory (via @microsoft/sp-http)
- * - SPPermission (via @microsoft/sp-page-context)
- * - EventAggregator (via @microsoft/sp-core-library)
- * 
- * Use this hook to:
- * - Consume custom services registered in your solution
- * - Access built-in SPFx services not exposed via context
- * - Implement advanced service-based architectures
- * - Create testable, decoupled components
- * 
- * Note: Most common services (HttpClient, GraphClient, etc.) 
- * have dedicated hooks (useSPFxHttpClient, useSPFxGraphClient).
- * Use this hook for custom services or advanced scenarios.
- * 
- * @returns ServiceScope information and consume helper
- * 
- * @example Consuming a custom service
+ * Reads the caller's SPFx dependency-injection scope and provides typed consumption. It does not create, register or finish services; consume follows the native ServiceScope lifecycle contract.
+ * @returns Optional native scope and a consume helper.
+ * @throws When called outside an SPFx provider.
+ *
+ * @example
  * ```tsx
- * import { ServiceKey } from '@microsoft/sp-core-library';
- * 
- * // Define service interface
- * interface IMyService {
- *   doSomething(): void;
- * }
- * 
- * // Service key (typically defined in service file)
- * const MyServiceKey = ServiceKey.create<IMyService>('my-solution:IMyService', IMyService);
- * 
- * function MyComponent() {
+ * import { HttpClient } from '@microsoft/sp-http';
+ *
+ * function ClientStatus() {
  *   const { consume } = useSPFxServiceScope();
- *   
- *   // Consume the service
- *   const myService = consume<IMyService>(MyServiceKey);
- *   
- *   const handleClick = () => {
- *     myService.doSomething();
- *   };
- *   
- *   return <button onClick={handleClick}>Do Something</button>;
- * }
- * ```
- * 
- * @example Accessing EventAggregator
- * ```tsx
- * import { ServiceKey } from '@microsoft/sp-core-library';
- * import { IEventAggregator } from '@microsoft/sp-core-library';
- * 
- * function MyComponent() {
- *   const { serviceScope } = useSPFxServiceScope();
- *   
- *   useEffect(() => {
- *     // Access EventAggregator service
- *     const eventAggregator = serviceScope.consume(
- *       ServiceKey.create<IEventAggregator>('EventAggregator', IEventAggregator)
- *     );
- *     
- *     const subscription = eventAggregator.subscribe('MyEvent', (args) => {
- *       console.log('Event received:', args);
- *     });
- *     
- *     return () => subscription.dispose();
- *   }, [serviceScope]);
- *   
- *   return <div>Listening for events...</div>;
+ *   const client = consume(HttpClient.serviceKey);
+ *   return <span>{client ? 'Client available' : 'Unavailable'}</span>;
  * }
  * ```
  */

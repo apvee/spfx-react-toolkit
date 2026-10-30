@@ -1,0 +1,83 @@
+{
+  "labels": {
+    "selectOne": "Izberi element",
+    "selectMany": "Izberi elemente",
+    "search": "Išči…",
+    "clearSelection": "Počisti izbor",
+    "clearSearch": "Počisti iskanje",
+    "options": "Možnosti",
+    "searchOptions": "Išči možnosti",
+    "selectedOne": "Izbrani element",
+    "selectedMany": "Izbrani elementi",
+    "noSelection": "Ni izbora",
+    "resolveIds": "Razreši ID-je",
+    "moreResults": "Več rezultatov",
+    "retry": "Poskusi znova",
+    "namedOptions": "{name}: Možnosti",
+    "namedSearch": "{name}: Išči",
+    "selectedCount": {
+      "one": "Izbran je {count} element",
+      "two": "Izbrana sta {count} elementa",
+      "few": "Izbrani so {count} elementi",
+      "other": "Izbranih je {count} elementov"
+    },
+    "minimumSearchLength": {
+      "one": "Za iskanje vnesite vsaj {count} znak",
+      "two": "Za iskanje vnesite vsaj {count} znaka",
+      "few": "Za iskanje vnesite vsaj {count} znake",
+      "other": "Za iskanje vnesite vsaj {count} znakov"
+    }
+  },
+  "status": {
+    "searching": "Iskanje…",
+    "loading": "Nalaganje…",
+    "partialSearch": "Delno iskanje: natančneje opredelite iskanje.",
+    "noOtherResults": "Ni drugih rezultatov za to iskanje",
+    "noResults": "Ni rezultatov za to iskanje",
+    "noOptions": "Ni razpoložljivih možnosti.",
+    "moreItemsAvailable": "Na voljo je več elementov.",
+    "partialSuggestions": "Delni predlogi: nekateri viri niso na voljo.",
+    "unresolvedValue": "Nerazrešena vrednost",
+    "partialHubs": "Delni seznam zvezdišč: zožite obseg ali uporabite način spletnega mesta.",
+    "partialSiteCollections": "Delno iskanje zbirk spletnih mest (največ 1000 rezultatov): zožite pogoje."
+  },
+  "sections": {
+    "consumer": "Podane možnosti",
+    "currentSite": "Trenutno spletno mesto",
+    "hubSite": "Povezano zvezdišče",
+    "catalog": "Razpoložljive možnosti",
+    "currentUser": "Vi",
+    "people": "Predlagane osebe",
+    "memberOf": "Vaše skupine"
+  },
+  "metadata": {
+    "documentLibrary": "Knjižnica dokumentov",
+    "sharePointList": "SharePointov seznam",
+    "personalView": "Osebni pogled",
+    "publicView": "Javni pogled",
+    "field": "Polje",
+    "itemDescription": "Element · ID {id}",
+    "file": "Datoteka",
+    "fileWithExtension": "Datoteka {extension}",
+    "folder": "Mapa",
+    "sharePointGroup": "SharePointova skupina · SharePoint",
+    "securityGroup": "Varnostna skupina · Entra",
+    "distributionList": "Seznam prejemnikov · Entra",
+    "unvalidatedEmail": "Nepreverjen e-poštni naslov",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Dosežena je omejitev izbora.",
+    "selectionLimitExceeded": "Izbor presega nastavljeno omejitev.",
+    "unresolvedValues": "Nekatere izbrane vrednosti niso razrešene.",
+    "outOfScopeValues": "Izbor vsebuje vrednosti zunaj nastavljenega obsega.",
+    "resolveRequiredUserIds": "Razrešite zahtevane ID-je za izbrane uporabnike."
+  },
+  "errors": {
+    "candidateOutOfScope": "Kandidat je zunaj nastavljenega obsega.",
+    "incompleteCandidateResolution": "Kandidata ni bilo mogoče v celoti razrešiti.",
+    "resolutionFailed": "Razreševanje ni uspelo.",
+    "graphUnavailable": "Odjemalec Microsoft Graph ni na voljo."
+  }
+}

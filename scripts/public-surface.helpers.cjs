@@ -12,7 +12,19 @@ function resolveModule(from, specifier) {
 }
 
 /** Collect leaf declarations reached by public exports, retaining qualified namespace names. */
-function collectPublicSurface(entryPath) {
+function collectPublicSurface(entryPath, { includeTypeMembers = false } = {}) {
+  function ownTypeMembers(type, prefix) {
+    if (ts.isTypeLiteralNode(type)) return type.members.flatMap(member => {
+      if (!member.name || ts.isComputedPropertyName(member.name)) return [];
+      const name = prefix + '.' + member.name.getText();
+      return [{ name, jsdoc: member.jsDoc?.some(doc => !!doc.comment || !!doc.tags?.length) ?? false },
+        ...(member.type ? ownTypeMembers(member.type, name) : [])];
+    });
+    if (ts.isIntersectionTypeNode(type) || ts.isUnionTypeNode(type)) return type.types.flatMap(child => ownTypeMembers(child, prefix));
+    if (ts.isParenthesizedTypeNode(type)) return ownTypeMembers(type.type, prefix);
+    if (ts.isConditionalTypeNode(type)) return [...ownTypeMembers(type.trueType, prefix), ...ownTypeMembers(type.falseType, prefix)];
+    return [];
+  }
   function visit(filePath, prefix, stack) {
     assert.ok(!stack.includes(filePath), `Cyclic public barrel: ${filePath}`);
     const source = ts.createSourceFile(filePath, fs.readFileSync(filePath, 'utf8'), ts.ScriptTarget.Latest, true);
@@ -27,7 +39,7 @@ function collectPublicSurface(entryPath) {
       signature: node.getText(source),
       members: ts.isInterfaceDeclaration(node) ? node.members
         .filter(member => member.name && !ts.isComputedPropertyName(member.name))
-        .map(member => ({ name: prefix + name + '.' + member.name.getText(source), jsdoc: member.jsDoc?.some(doc => !!doc.comment || !!doc.tags?.length) ?? false })) : [],
+        .map(member => ({ name: prefix + name + '.' + member.name.getText(source), jsdoc: member.jsDoc?.some(doc => !!doc.comment || !!doc.tags?.length) ?? false })) : includeTypeMembers && ts.isTypeAliasDeclaration(node) ? ownTypeMembers(node.type, prefix + name) : [],
     });
     for (const node of source.statements) {
       if (ts.isVariableStatement(node)) {

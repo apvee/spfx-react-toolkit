@@ -1,28 +1,45 @@
-# Authenticated SharePoint validation
+# Validate the toolkit in SharePoint
 
-[Documentation home](../../INDEX.md) · [Development](../INDEX.md) · [Setup](setup.md) · [Record results](#record-results)
+[Documentation home](../../INDEX.md) · [Development](../INDEX.md) · [Setup](setup.md)
 
-This section describes repeatable manual integration checks in a real, authenticated SharePoint host. Use it to observe provider lifecycle, remote requests, effective permissions, persistence and styling in the environment where the toolkit will run.
-
-Local tests, builds and simulated transport results establish their own checks; they do not establish tenant authentication, permission grants or actual host behavior. Each checklist becomes evidence only when a dated execution records what was observed in a specific environment and account.
+These procedures exercise actual SPFx host lifecycle, remote requests, effective grants, persistence, control interaction and localization. A checklist is execution evidence only when a dated result records its actual environment, account and observations. Builds, local tests and simulated transports establish separate boundaries.
 
 ## Prepare a validation run
 
-1. Follow the [host setup](setup.md) for the test tenant, account, sample build, local serve configuration and authenticated entry points.
-2. Choose the scenarios affected by the change using the table below. Check each scenario's prerequisites and prepare disposable test data where needed.
-3. Record expected and actual outcomes, evidence and cleanup for each scenario. Keep unavailable scenarios visible as NOT EXECUTED or BLOCKED.
+1. Follow [host setup](setup.md), build the library before the app and restart serve after library changes.
+2. Choose scenarios affected by the change, verify prerequisites and prepare disposable authorized data.
+3. Record expected/actual outcomes, evidence, cleanup and unavailable cases using the statuses below.
 
 ## Choose a scenario
 
 | Scenario | Checklist |
 | --- | --- |
-| Provider synchronization, two instances and cleanup | [Host and lifecycle](checklists/host-lifecycle.md) |
-| Concurrent calls, lists and search | [Async, list and search](checklists/async-lists-search.md) |
-| List title, ID, URL and path selectors | [List selector modes](checklists/list-selectors.md) |
-| Graph consent, OneDrive and tenant storage | [Graph and storage permissions](checklists/graph-storage-permissions.md) |
-| Collection-root storage and schema/concurrency boundaries | [Site collection store](checklists/site-key-value-store.md) |
-| Themes, classes, queries and scrollbars | [Styles and useSx](checklists/styling.md) |
-| Aliases, callbacks and renderer/provider identity | [Imports](checklists/imports.md) |
+| Host and lifecycle checks | [Host and lifecycle checks](checklists/host-lifecycle.md) |
+| Async, list and search checks | [Async, list and search checks](checklists/async-lists-search.md) |
+| List selector modes | [List selector modes](checklists/list-selectors.md) |
+| Graph and storage permissions | [Graph and storage permissions](checklists/graph-storage-permissions.md) |
+| Site collection key-value store | [Site collection key-value store](checklists/site-key-value-store.md) |
+| Configuration store | [Configuration store](checklists/configuration-store.md) |
+| Styles and useSx | [Styles and useSx](checklists/styling.md) |
+| Imports | [Imports](checklists/imports.md) |
+| FormattedText | [FormattedText](checklists/formatted-text.md) |
+| RelativeTime and site time zone | [RelativeTime and site time zone](checklists/relative-time.md) |
+| AutoSkeleton | [AutoSkeleton](checklists/auto-skeleton.md) |
+| DataGrid | [DataGrid](checklists/data-grid.md) |
+| Form | [Form](checklists/form.md) |
+| StateMessage | [StateMessage](checklists/state-message.md) |
+| SettingsGroup and AccordionGroup | [SettingsGroup and AccordionGroup](checklists/groups.md) |
+| WebPartShell | [WebPartShell](checklists/web-part-shell.md) |
+| Stage | [Stage](checklists/stage.md) |
+| Pagination | [Pagination](checklists/pagination.md) |
+| Description List | [Description List](checklists/description-list.md) |
+| Integrated demo presentation | [Integrated demo presentation](checklists/demo-presentation.md) |
+| Access trims and scoped permissions | [Access trims and scoped permissions](checklists/access-trims.md) |
+| Picker host acceptance | [Picker host acceptance](checklists/pickers.md) |
+| ContentTypePicker validation checklist | [ContentTypePicker validation checklist](checklists/content-type-picker.md) |
+| FileFolderPicker v8 acceptance | [FileFolderPicker v8 acceptance](checklists/file-folder-picker.md) |
+| EditableText standalone region | [EditableText standalone region](checklists/editable-text.md) |
+| Per-family localization migration | [Per-family localization migration](checklists/localization.md) |
 
 ## Record results
 

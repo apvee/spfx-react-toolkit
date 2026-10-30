@@ -1,126 +1,90 @@
+import { DemoCard } from '../shared/DemoCard';
+import { useDemoStyles } from '../shared/demoStyles';
+import { DemoIcon } from '../shared/DemoIcon';
+import { Button, Label, Link, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
 import * as React from 'react';
-import {
-  Stack,
-  PrimaryButton,
-  DefaultButton,
-  MessageBar,
-  MessageBarType,
-  Separator,
-  Label,
-  Icon,
-} from '@fluentui/react';
 import { useSPFxPnPSearch, SearchVerticals } from '@apvee/spfx-react-toolkit';
-
 /**
  * Example 4: Advanced Search with Builder and Verticals
  */
-export const PnPSearchAdvancedDemo: React.FC = () => {
-  const [selectedVertical, setSelectedVertical] = React.useState<string>('All');
-  
-  const {
-    search,
-    results,
-    totalResults,
-    loading,
-    loadMore,
-    hasMore,
-    error,
-    clearError,
-  } = useSPFxPnPSearch<{ 
-    Title: string; 
-    Path: string; 
-    Author: string; 
-    LastModifiedTime: string;
-    FileType: string;
-  }>({
-    pageSize: 5,
-    selectProperties: ['Title', 'Path', 'Author', 'LastModifiedTime', 'FileType']
-  });
+export const PnPSearchAdvancedDemo: React.FC<{
+    readonly selector?: (busy?: boolean) => React.ReactNode;
+}> = ({ selector }) => {
+    const demoStyles = useDemoStyles();
+    const [executedTarget, setExecutedTarget] = React.useState<string>();
+    const [selectedVertical, setSelectedVertical] = React.useState<string>('All');
+    const { search, results, totalResults, loading, loadMore, hasMore, error, clearError, } = useSPFxPnPSearch<{
+        Title: string;
+        Path: string;
+        Author: string;
+        LastModifiedTime: string;
+        FileType: string;
+    }>({
+        pageSize: 5,
+        selectProperties: ['Title', 'Path', 'Author', 'LastModifiedTime', 'FileType']
+    });
+    const getVerticalSourceId = (vertical: string): string | undefined => {
+        switch (vertical) {
+            case 'People': return SearchVerticals.People;
+            case 'Documents': return SearchVerticals.Documents;
+            case 'Pages': return SearchVerticals.Pages;
+            case 'Videos': return SearchVerticals.Videos;
+            default: return undefined;
+        }
+    };
+    const handleSearch = React.useCallback((query: string) => {
+        setExecutedTarget(selectedVertical);
+        search((builder) => {
+            let result = builder.text(query).sortList({ Property: 'LastModifiedTime', Direction: 1 });
+            const sourceId = getVerticalSourceId(selectedVertical);
+            if (sourceId)
+                result = result.sourceId(sourceId);
+            return result;
+        }).catch(err => console.error('Search error:', err));
+    }, [search, selectedVertical]);
+    return (<DemoCard title="Example 2: Advanced Search with Builder" description="Search a selected vertical with builder queries and pagination." iconName="SearchAndApps" controls={<>{selector?.(false)}
+    <div className={demoStyles.actions}>
+      {['All', 'Documents', 'Pages', 'People', 'Videos'].map((v) => (<Button key={v} onClick={() => setSelectedVertical(v)} appearance={selectedVertical === v ? "primary" : "secondary"}>{v}</Button>))}
+    </div>
 
-  const getVerticalSourceId = (vertical: string): string | undefined => {
-    switch (vertical) {
-      case 'People': return SearchVerticals.People;
-      case 'Documents': return SearchVerticals.Documents;
-      case 'Pages': return SearchVerticals.Pages;
-      case 'Videos': return SearchVerticals.Videos;
-      default: return undefined;
-    }
-  };
+  </>} contentPlacement="configuration" commands={<>
+    <Button appearance="primary" onClick={() => handleSearch('*')} disabled={loading}>{"Search All"}</Button>
+    <Button onClick={() => handleSearch('filetype:docx OR filetype:pdf')} disabled={loading}>{"Search Documents"}</Button>
+  </>} diagnostics={<>
+    <Label>
+      <DemoIcon name={"InfoSolid"}/>
+      Builder API with verticals (People, Documents, Pages, Videos) and pagination.
+    </Label>
+  </>}>
 
-  const handleSearch = React.useCallback((query: string) => {
-    search((builder) => {
-      let result = builder.text(query).sortList({ Property: 'LastModifiedTime', Direction: 1 });
-      const sourceId = getVerticalSourceId(selectedVertical);
-      if (sourceId) result = result.sourceId(sourceId);
-      return result;
-    }).catch(err => console.error('Search error:', err));
-  }, [search, selectedVertical]);
+    {loading ? <Label>Loading...</Label> : executedTarget !== selectedVertical ? <Label>Run the selected search.</Label> : <>
+    {error && (<MessageBar intent="error">
+      <MessageBarBody>
+        {error.message}
+      </MessageBarBody>
+      <MessageBarActions>
+        <Button aria-label="Dismiss message" onClick={clearError}>Dismiss</Button>
+      </MessageBarActions>
+    </MessageBar>)}
 
-  return (
-    <Stack tokens={{ childrenGap: 10 }} styles={{ root: { padding: '16px', border: '1px solid #edebe9', borderRadius: '4px' } }}>
-      <h3>
-        <Icon iconName="SearchAndApps" style={{ marginRight: '8px' }} />
-        Example 2: Advanced Search with Builder
-      </h3>
-      <Separator />
+    {totalResults !== undefined && (<MessageBar intent="info">
+      <MessageBarBody>
+        Found {totalResults} result{totalResults !== 1 ? 's' : ''} in &quot;{selectedVertical}&quot;
+      </MessageBarBody>
+    </MessageBar>)}
 
-      {error && (
-        <MessageBar messageBarType={MessageBarType.error} onDismiss={clearError}>
-          {error.message}
-        </MessageBar>
-      )}
+    {results.length > 0 && (<div className={demoStyles.panel}>
+      {results.map((result) => (<div className={demoStyles.panel} key={result.id}>
+        <div className={demoStyles.observations}>{result.data.Title || '(No Title)'}</div>
+        <Label>{result.data.Author} - {result.data.LastModifiedTime ? new Date(result.data.LastModifiedTime).toLocaleDateString() : 'N/A'}</Label>
+        <Link className={demoStyles.observations} href={result.data.Path} target="_blank" rel="noopener noreferrer">
+          {result.data.Path}
+        </Link>
+      </div>))}
+      {hasMore && (<Button appearance="primary" onClick={loadMore} disabled={loading}>{loading ? 'Loading...' : 'Load More'}</Button>)}
+    </div>)}
 
-      <Stack horizontal tokens={{ childrenGap: 6 }} wrap>
-        {['All', 'Documents', 'Pages', 'People', 'Videos'].map((v) => (
-          <DefaultButton
-            key={v}
-            text={v}
-            onClick={() => setSelectedVertical(v)}
-            primary={selectedVertical === v}
-          />
-        ))}
-      </Stack>
+    </>}
 
-      <Stack horizontal tokens={{ childrenGap: 6 }}>
-        <PrimaryButton
-          text="Search All"
-          onClick={() => handleSearch('*')}
-          disabled={loading}
-        />
-        <DefaultButton
-          text="Search Documents"
-          onClick={() => handleSearch('filetype:docx OR filetype:pdf')}
-          disabled={loading}
-        />
-      </Stack>
-
-      {totalResults !== undefined && (
-        <MessageBar messageBarType={MessageBarType.info}>
-          Found {totalResults} result{totalResults !== 1 ? 's' : ''} in &quot;{selectedVertical}&quot;
-        </MessageBar>
-      )}
-
-      {results.length > 0 && (
-        <Stack tokens={{ childrenGap: 6 }}>
-          {results.map((result) => (
-            <Stack key={result.id} tokens={{ childrenGap: 2 }} styles={{ root: { padding: '10px', backgroundColor: '#f3f2f1', borderRadius: '4px' } }}>
-              <div style={{ fontWeight: 600 }}>{result.data.Title || '(No Title)'}</div>
-              <Label>{result.data.Author} - {result.data.LastModifiedTime ? new Date(result.data.LastModifiedTime).toLocaleDateString() : 'N/A'}</Label>
-              <a href={result.data.Path} target="_blank" rel="noopener noreferrer" style={{ fontSize: '11px' }}>
-                {result.data.Path}
-              </a>
-            </Stack>
-          ))}
-          {hasMore && (
-            <PrimaryButton text={loading ? 'Loading...' : 'Load More'} onClick={loadMore} disabled={loading} />
-          )}
-        </Stack>
-      )}
-
-      <Label>
-        <Icon iconName="InfoSolid" style={{ marginRight: '4px', color: '#0078d4' }} />
-        Builder API with verticals (People, Documents, Pages, Videos) and pagination.
-      </Label>
-    </Stack>
-  );
+  </DemoCard>);
 };

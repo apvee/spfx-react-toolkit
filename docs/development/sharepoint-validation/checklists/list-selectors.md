@@ -1,9 +1,8 @@
 # List selector modes
 
-[Validation index](../INDEX.md). These procedures require an authenticated host; their presence is not an executed result.
+[Validation index](../INDEX.md) · [Setup](../setup.md)
 
-
-This is a guide template, not executed results. Every row starts **NOT EXECUTED**; authenticated evidence must record outcomes separately from unit, build and package checks. Use the PnP panel or an instrumented provider-wrapped component and the [list hook](../../../api/hooks/pnpjs.md#shared-list-hook-behavior-and-decoded-roots) / [service](../../../api/services/pnp-list.md#createspfxpnplistservice) contracts. Record the actual list GUID, title, root URL, configured client web, account grants and redacted Network requests. Use illustrative public paths only in shared examples; keep tenant-specific identifiers in private run evidence.
+This is a guide template, not executed results. Every row starts **NOT EXECUTED**; authenticated evidence must record outcomes separately from unit, build and package checks. Use the PnP panel or an instrumented provider-wrapped component and the [list hook](../../../api/hooks/pnpjs.md#shared-list-hook-behavior-and-decoded-roots) / [service](../../../api/services/pnp-list.md) contracts. Record the actual list GUID, title, root URL, configured client web, account grants and redacted Network requests. Use illustrative public paths only in shared examples; keep tenant-specific identifiers in private run evidence.
 
 | Check | Procedure and expected observation | Status |
 |-------|------------------------------------|--------|

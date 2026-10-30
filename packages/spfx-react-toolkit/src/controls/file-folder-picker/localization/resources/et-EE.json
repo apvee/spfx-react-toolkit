@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Sirvi faile…",
+    "folders": "Sirvi kaustu…",
+    "all": "Sirvi faile ja kaustu…"
+  },
+  "placeholders": {
+    "files": "Vali failid…",
+    "folders": "Vali kaustad…",
+    "all": "Vali failid või kaustad…"
+  },
+  "labels": {
+    "selection": "Failide ja kaustade valik",
+    "file": "Fail",
+    "folder": "Kaust",
+    "unresolvedItem": "Lahendamata üksus",
+    "removeItem": "Eemalda {name}"
+  },
+  "validation": {
+    "invalidReferences": "Vigased faili- või kaustaviited.",
+    "controlledModeChanged": "Juhitud režiimi ei saa muuta, kui juhtelement on ühendatud.",
+    "incompatibleItems": "Valik sisaldab üksusi, mis ei ühildu seadistatud tüübi, kategooria või laienditega. Eemaldage või asendage need.",
+    "invalidPolicy": "Valiku tüübi, kategooria, laiendite või piirangu seadistus on vigane.",
+    "selectionLimitExceeded": "Valik ületab seadistatud piirangu. Eemaldage üleliigsed üksused."
+  },
+  "errors": {
+    "configuration": "Valija seadistus on vigane. Kontrollige allikat, tüüpe, kategooriat ja piiranguid; kasutage eelseadistust ilma pärandsuvanditeta.",
+    "auth-resource": "Valija taotles autentimisressurssi, mida seadistus ei luba.",
+    "auth-type": "Valija taotles autentimistüüpi, mida seadistus ei toeta.",
+    "auth-challenge": "Valija vajab täiendavat autentimiskontrolli, mida ei toetata.",
+    "auth-provider": "SharePointi tõendit ei saanud hankida. Proovige uuesti; kui probleem püsib, kontrollige oma juurdepääsu ja olemasolevaid õigusi.",
+    "selection-identity": "Valitud üksuse identiteeti ei saanud kinnitada. Avage valija uuesti ja proovige uuesti.",
+    "selection-scope": "Valitud üksus ei kuulu lubatud saidile, teeki või kausta.",
+    "selection-policy": "Valik ei vasta lubatud tüübi, kategooria, laiendite või üksuste arvu nõuetele.",
+    "selection-unavailable": "Valitud üksus pole saadaval või sellele puudub juurdepääs.",
+    "selection-invalid": "Valikut ei saanud kontrollida. Uusi üksusi ei lisatud.",
+    "onedrive-unavailable": "Praeguse kasutaja OneDrive pole saadaval või sellele puudub juurdepääs. Kontrollige, kas ketas on olemas, ja proovige uuesti.",
+    "opening": "Valijat ei saanud avada. Kontrollige seadistust ja juurdepääsu allikale ning proovige uuesti.",
+    "timeout": "Valija ei vastanud õigel ajal. Sulgege see ja proovige uuesti.",
+    "communication": "Ühendus valijaga katkes. Avage see uuesti ja proovige uuesti."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Valikuline autentimisfunktsioon ei vastanud õigel ajal. Proovige uuesti.",
+    "unsupportedCommand": "See integratsioon ei toeta seda käsku.",
+    "optionalGraphAuthenticationFailed": "Valikulist Microsoft Graphi funktsiooni ei saanud autentida.",
+    "optionalPersonalAuthenticationFailed": "Valikulist isiklikku sihtkohta ei saanud autentida."
+  }
+}

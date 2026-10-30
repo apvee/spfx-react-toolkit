@@ -7,6 +7,13 @@ import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
  * Return type for useSPFxUserInfo hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const user: SPFxUserInfo = useSPFxUserInfo();
+ * console.log(user.displayName, user.email);
+ * ```
  */
 export interface SPFxUserInfo {
   /** User login name (e.g., "domain\\user" or email) */
@@ -18,39 +25,23 @@ export interface SPFxUserInfo {
   /** User email address (optional) */
   readonly email?: string;
   
-  /** Whether user is an external guest user */
+  /**
+   * Host external-guest flag; defaults to false when unavailable.
+   */
   readonly isExternal: boolean;
 }
 
 /**
- * Hook to access current user information
- * 
- * Provides:
- * - loginName: Login identifier
- * - displayName: Display name
- * - email: Email address
- * - isExternal: Whether user is a guest
- * 
- * Useful for:
- * - Personalization
- * - Authorization checks
- * - User-specific logging
- * - Display user information
- * 
- * @returns User information
- * 
+ * Maps current PageContext user metadata without I/O. Email remains optional; a missing external-guest flag defaults to false. These display values do not authorize a server operation. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns Login/display names, optional email and external-guest flag.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
- *   const { displayName, email, isExternal } = useSPFxUserInfo();
- *   
- *   return (
- *     <div>
- *       <h2>Welcome, {displayName}!</h2>
- *       {email && <p>Email: {email}</p>}
- *       {isExternal && <p>Guest User</p>}
- *     </div>
- *   );
+ * function UserLabel() {
+ *   const { displayName } = useSPFxUserInfo();
+ *   return <span>{displayName}</span>;
  * }
  * ```
  */

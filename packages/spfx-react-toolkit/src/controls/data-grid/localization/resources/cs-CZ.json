@@ -1,0 +1,29 @@
+{
+  "empty": "Nejsou k dispozici žádná data",
+  "noResults": "Nebyly nalezeny žádné výsledky",
+  "noVisibleColumns": "Žádné viditelné sloupce",
+  "loading": "Načítání",
+  "actions": "Akce",
+  "moreActions": "Další akce",
+  "yes": "Ano",
+  "no": "Ne",
+  "noTags": "Žádné štítky",
+  "noObservations": "Žádná pozorování",
+  "invalidValue": "Neplatná hodnota",
+  "selectAllRows": "Vybrat všechny řádky",
+  "retry": "Zkusit znovu",
+  "selectRowTemplate": "Vybrat řádek {rowId}",
+  "sparklineSummaryTemplate": "První {first}; Poslední {last}; Minimum {minimum}; Maximum {maximum}; Průměr {average}; Změna {change}; Procentuální změna {changePercent}",
+  "tagOverflow": {
+    "one": "Zobrazit {count} další štítek",
+    "few": "Zobrazit {count} další štítky",
+    "many": "Zobrazit dalších {count} štítku",
+    "other": "Zobrazit dalších {count} štítků"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} hlas",
+    "few": "{formattedCount} hlasy",
+    "many": "{formattedCount} hlasu",
+    "other": "{formattedCount} hlasů"
+  }
+}

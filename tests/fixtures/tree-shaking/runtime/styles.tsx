@@ -19,7 +19,7 @@ export function run({ReactDOM, act, assert}) {
     const sx=useSx(), other=useOtherSx();
     const currentRenderer=useRenderer_unstable(), {dir}=useFluent_unstable();
     const external=physical({renderer:currentRenderer,dir}).root;
-    observations[id]={first:sx(width.full,descriptor,external),second:other(width.full,descriptor,external)};
+    observations[id]={first:sx(width.full,descriptor,external),second:other(width.full,descriptor,external),dir};
     return <span className={observations[id].first}/>;
   }
   function view(dir) {
@@ -36,6 +36,8 @@ export function run({ReactDOM, act, assert}) {
   act(()=>ReactDOM.render(view('ltr'),container));
   assert.deepEqual(rules(renderer),before);assert.equal(observations.main.first,ltr);
   act(()=>ReactDOM.render(view('rtl'),container));
+  assert.equal(observations.main.dir,'rtl','Fluent direction must reach the actual consuming hook');
+  assert.equal(observations.other.dir,'rtl','Fluent direction must reach each renderer');
   assert.equal(observations.main.first,observations.main.second);
   assert.deepEqual(rules(renderer),rules(otherRenderer));
   assert.ok(Object.keys(renderer.insertionCache).length>0);

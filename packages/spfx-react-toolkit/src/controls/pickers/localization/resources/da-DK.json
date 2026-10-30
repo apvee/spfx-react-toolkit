@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Vælg et element",
+    "selectMany": "Vælg elementer",
+    "search": "Søg…",
+    "clearSelection": "Ryd markering",
+    "clearSearch": "Ryd søgning",
+    "options": "Valgmuligheder",
+    "searchOptions": "Søg i valgmuligheder",
+    "selectedOne": "Valgt element",
+    "selectedMany": "Valgte elementer",
+    "noSelection": "Ingen markering",
+    "resolveIds": "Slå id'er op",
+    "moreResults": "Flere resultater",
+    "retry": "Prøv igen",
+    "namedOptions": "{name}: Valgmuligheder",
+    "namedSearch": "{name}: Søg",
+    "selectedCount": {
+      "one": "{count} element valgt",
+      "other": "{count} elementer valgt"
+    },
+    "minimumSearchLength": {
+      "one": "Skriv mindst {count} tegn for at søge",
+      "other": "Skriv mindst {count} tegn for at søge"
+    }
+  },
+  "status": {
+    "searching": "Søger…",
+    "loading": "Indlæser…",
+    "partialSearch": "Delvis søgning: præciser din søgning.",
+    "noOtherResults": "Ingen andre resultater for denne søgning",
+    "noResults": "Ingen resultater for denne søgning",
+    "noOptions": "Ingen tilgængelige valgmuligheder.",
+    "moreItemsAvailable": "Der er flere tilgængelige elementer.",
+    "partialSuggestions": "Delvise forslag: nogle kilder er utilgængelige.",
+    "unresolvedValue": "Værdi kunne ikke slås op",
+    "partialHubs": "Delvis liste over hubwebsteder: indsnævr omfanget, eller brug webstedstilstand.",
+    "partialSiteCollections": "Delvis søgning i grupper af websteder (højst 1000 resultater): indsnævr kriterierne."
+  },
+  "sections": {
+    "consumer": "Angivne valgmuligheder",
+    "currentSite": "Aktuelt websted",
+    "hubSite": "Tilknyttet hub",
+    "catalog": "Tilgængelige valgmuligheder",
+    "currentUser": "Dig",
+    "people": "Foreslåede personer",
+    "memberOf": "Dine grupper"
+  },
+  "metadata": {
+    "documentLibrary": "Dokumentbibliotek",
+    "sharePointList": "SharePoint-liste",
+    "personalView": "Personlig visning",
+    "publicView": "Offentlig visning",
+    "field": "Felt",
+    "itemDescription": "Element · ID {id}",
+    "file": "Fil",
+    "fileWithExtension": "{extension}-fil",
+    "folder": "Mappe",
+    "sharePointGroup": "SharePoint-gruppe · SharePoint",
+    "securityGroup": "Sikkerhedsgruppe · Entra",
+    "distributionList": "Distributionsliste · Entra",
+    "unvalidatedEmail": "Ubekræftet mail",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Grænsen for valg er nået.",
+    "selectionLimitExceeded": "Valget overskrider den konfigurerede grænse.",
+    "unresolvedValues": "Nogle valgte værdier kunne ikke slås op.",
+    "outOfScopeValues": "Valget indeholder værdier uden for det konfigurerede omfang.",
+    "resolveRequiredUserIds": "Slå de nødvendige id'er op for de valgte brugere."
+  },
+  "errors": {
+    "candidateOutOfScope": "Kandidaten er uden for det konfigurerede omfang.",
+    "incompleteCandidateResolution": "Kandidaten kunne ikke slås fuldstændigt op.",
+    "resolutionFailed": "Opslaget mislykkedes.",
+    "graphUnavailable": "Microsoft Graph-klienten er utilgængelig."
+  }
+}

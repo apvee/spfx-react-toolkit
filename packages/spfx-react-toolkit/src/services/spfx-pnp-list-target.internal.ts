@@ -1,3 +1,4 @@
+import { normalizeListId, validateListRoot, webRelativeListRoot } from '../helpers/spfx-list-target.helpers.internal';
 import { extractWebUrl } from '@pnp/sp';
 import type { SPFI } from '@pnp/sp';
 import type { IList } from '@pnp/sp/lists';
@@ -33,21 +34,6 @@ export function snapshotListTarget(target: unknown): ListTargetSnapshot {
   return { kind, value: typeof value === 'string' ? value : undefined };
 }
 
-function validateRoot(value: string, kind: 'url' | 'path'): void {
-  const hasLeadingSlash = value.startsWith('/');
-  const wrongBoundary = kind === 'url'
-    ? !hasLeadingSlash || value.startsWith('//')
-    : hasLeadingSlash;
-
-  if (value.trim().length === 0 || wrongBoundary ||
-      /^[a-z][a-z\d+.-]*:/i.test(value.trimStart()) ||
-      value.includes('\\') || value.includes('?') ||
-      value.split('/').some(segment => segment === '.' || segment === '..')) {
-    throw new Error(`${errorPrefix} Invalid ${kind === 'url' ? 'serverRelativeUrl' : 'webRelativePath'}: ` +
-      'provide a decoded list root with the correct leading slash, without a URL scheme, query, backslash or dot segments.');
-  }
-}
-
 function getWebRelativeRoot(sp: SPFI, path: string): string {
   const configuredWebUrl = sp.web.toUrl();
   const endpoint = /\/_api\/web\/?$/i.exec(configuredWebUrl);
@@ -65,8 +51,7 @@ function getWebRelativeRoot(sp: SPFI, path: string): string {
     if ((webUrl.protocol !== 'https:' && webUrl.protocol !== 'http:') || webUrl.search || webUrl.hash) {
       throw baseError();
     }
-    const webPath = decodeURIComponent(webUrl.pathname).replace(/\/+$/, '');
-    return `${webPath}/${path}`;
+    return webRelativeListRoot(webUrl, path);
   } catch {
     throw baseError();
   }
@@ -83,18 +68,13 @@ export function resolveListTarget(sp: SPFI, target: ListTargetSnapshot): IList {
     case 'title':
       return sp.web.lists.getByTitle(value);
     case 'id': {
-      const trimmed = value.trim();
-      const id = trimmed.startsWith('{') && trimmed.endsWith('}') ? trimmed.slice(1, -1) : trimmed;
-      if (!/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(id)) {
-        throw new Error(`${errorPrefix} Invalid list ID: provide a hyphenated GUID, optionally enclosed in paired braces.`);
-      }
-      return sp.web.lists.getById(id.toLowerCase());
+      return sp.web.lists.getById(normalizeListId(value, errorPrefix));
     }
     case 'url':
-      validateRoot(value, kind);
+      validateListRoot(value, kind, errorPrefix);
       return sp.web.getList(value);
     case 'path':
-      validateRoot(value, kind);
+      validateListRoot(value, kind, errorPrefix);
       return sp.web.getList(getWebRelativeRoot(sp, value));
     default:
       throw new Error(`${errorPrefix} Invalid list selector kind: use title, id, url or path.`);

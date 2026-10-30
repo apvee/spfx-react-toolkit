@@ -6,20 +6,15 @@ import { getSPFxContainerSize } from '../helpers/spfx-container.helpers';
 import { useSPFxContainerInfo } from './useSPFxContainerInfo';
 
 /**
- * Container size categories (Fluent UI 9 aligned)
- * 
- * Based on official Fluent UI 9 responsive breakpoints:
- * @see https://developer.microsoft.com/en-us/fluentui#/styles/web/responsive
- * 
- * - small:    320-479px   (Mobile portrait)
- * - medium:   480-639px   (Mobile landscape, small tablets)
- * - large:    640-1023px  (Tablets, single column)
- * - xLarge:   1024-1365px (Laptop, desktop standard)
- * - xxLarge:  1366-1919px (Large desktop, wide screen)
- * - xxxLarge: >= 1920px   (4K, ultra-wide, multi-column)
+ * Toolkit width categories using exclusive upper boundaries: small <480, medium <640, large <1024, xLarge <1366, xxLarge <1920, otherwise xxxLarge. This is a container measurement; before observation zero width is small.
+ *
+ * @example
+ * ```ts
+ * const category: SPFxContainerSize = 'small';
+ * ```
  */
 export type SPFxContainerSize = 
-  | 'small'     // 320-479px
+  | 'small'     // <480px
   | 'medium'    // 480-639px
   | 'large'     // 640-1023px
   | 'xLarge'    // 1024-1365px
@@ -28,12 +23,21 @@ export type SPFxContainerSize =
 
 /**
  * Return type for useSPFxContainerSize hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const container: SPFxContainerSizeInfo = useSPFxContainerSize();
+ * console.log(container.isSmall, container.width);
+ * ```
  */
 export interface SPFxContainerSizeInfo {
   /** Container size category (Fluent UI 9 aligned) */
   readonly size: SPFxContainerSize;
   
-  /** Is small container (320-479px) - mobile portrait */
+  /**
+   * True for the small category (width <480px), including the zero-width unmeasured fallback.
+   */
   readonly isSmall: boolean;
   
   /** Is medium container (480-639px) - mobile landscape, small tablets */
@@ -51,90 +55,28 @@ export interface SPFxContainerSizeInfo {
   /** Is extra extra extra large container (>= 1920px) - 4K, ultra-wide, multi-column */
   readonly isXXXLarge: boolean;
   
-  /** Actual container width in pixels */
+  /**
+   * Observed container width in CSS pixels, or zero before/without a supported measurement.
+   */
   readonly width: number;
   
-  /** Actual container height in pixels */
+  /**
+   * Observed container height in CSS pixels, or zero before/without a supported measurement.
+   */
   readonly height: number;
 }
 
 /**
- * Hook to get container size with Fluent UI 9 aligned breakpoints
- * 
- * Automatically tracks container size changes and categorizes into
- * Fluent UI 9 compatible size categories.
- * 
- * Breakpoints (aligned with Fluent UI 9):
- * - small:    320-479px   (mobile portrait)
- * - medium:   480-639px   (mobile landscape, small tablets)
- * - large:    640-1023px  (tablets, single column)
- * - xLarge:   1024-1365px (laptop, desktop standard)
- * - xxLarge:  1366-1919px (large desktop, wide screen)
- * - xxxLarge: >= 1920px   (4K, ultra-wide, multi-column)
- * 
- * Useful for:
- * - Responsive layouts based on actual container space
- * - Adaptive UI that works in sidebars, columns, or full width
- * - Fluent UI 9 compatible responsive design
- * - Making layout decisions based on available space
- * 
- * @returns Container size information and helpers
- * 
+ * Classifies the observed container width using toolkit thresholds: small <480, medium <640, large <1024, xLarge <1366, xxLarge <1920, otherwise xxxLarge. These measure container width, not viewport width. Before a supported measurement, width and height default to zero and the category is small. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns Category, exact-category boolean flags and dimensions in CSS pixels.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyWebPart() {
- *   const { size, isSmall, isXXXLarge, width } = useSPFxContainerSize();
- *   
- *   // Decision based on size
- *   if (size === 'small') {
- *     return <CompactMobileView />;
- *   }
- *   
- *   if (size === 'medium' || size === 'large') {
- *     return <TabletView />;
- *   }
- *   
- *   if (size === 'xxxLarge') {
- *     return <UltraWideView columns={6} />;  // 4K/ultra-wide
- *   }
- *   
- *   return <DesktopView columns={size === 'xxLarge' ? 4 : 3} />;
- * }
- * ```
- * 
- * @example
- * ```tsx
- * function ResponsiveComponent() {
- *   const { isSmall, isMedium, isLarge, isXLarge, isXXLarge, isXXXLarge } = useSPFxContainerSize();
- *   
- *   return (
- *     <div>
- *       {isSmall && <MobileLayout />}
- *       {(isMedium || isLarge) && <TabletLayout />}
- *       {isXLarge && <DesktopLayout columns={3} />}
- *       {isXXLarge && <DesktopLayout columns={4} />}
- *       {isXXXLarge && <UltraWideLayout columns={6} />}
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example
- * ```tsx
- * function AdaptiveCard() {
- *   const { size, width, height } = useSPFxContainerSize();
- *   
- *   return (
- *     <div>
- *       <p>Container: {width}px × {height}px</p>
- *       <p>Size category: {size}</p>
- *       {size === 'small' && <StackedLayout />}
- *       {size === 'medium' && <TwoColumnLayout />}
- *       {size === 'large' && <ThreeColumnLayout />}
- *       {(size === 'xLarge' || size === 'xxLarge') && <MultiColumnLayout />}
- *       {size === 'xxxLarge' && <UltraWideLayout columns={6} />}
- *     </div>
- *   );
+ * function ContainerLabel() {
+ *   const { size, width } = useSPFxContainerSize();
+ *   return <span>{size}: {width}px</span>;
  * }
  * ```
  */

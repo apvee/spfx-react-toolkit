@@ -1,5 +1,7 @@
 # PnPjs Hooks
 
+[React and SPFx hooks](../INDEX.md#react-and-spfx-hooks)
+
 Public hook signatures and result shapes match the library source. External types (React, SPFx and PnPjs) come from their respective packages. All hooks require a matching SPFx provider.
 
 Install compatible @pnp/core, @pnp/queryable and @pnp/sp v4 peers in your host.
@@ -30,7 +32,7 @@ export interface SPFxPnPInfo {
 }
 ```
 
-Uses the supplied PnP context or a default one. invoke and batch return caller promises. isLoading remains true while any current-client operation is pending; only the latest-started operation publishes an error. Client replacement and unmount ignore obsolete state updates. clearError clears display state without cancelling work. Import required PnPjs modules for the operations you call.
+Uses the supplied PnP context or a default one. `invoke` and `batch` return caller promises. Loading uses a single boolean: each operation sets it to true on start and false on settlement, so overlapping work can show false while another operation is still pending. Errors follow settlement order; this hook does not suppress completions after client replacement or unmount. `clearError` clears display state without cancelling work. Import required PnPjs modules for the operations you call.
 
 [View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnP.ts)
 
@@ -59,7 +61,7 @@ export interface PnPContextInfo {
 }
 ```
 
-The first argument is an optional site URL; the second is configuration. Undefined uses the current web; server-relative paths resolve from the current origin. Caching is optional and defaults to session storage when enabled. cache.timeout is applied through PnPjs expireFunc in milliseconds: absent timeout and 0 retain the legacy 300000ms fallback. Changing cache.keyFactory function identity rebuilds SPFI even if JSON configuration is unchanged; memoize custom factories for stability. batch configuration is reserved metadata, not an automatic request limit.
+The first argument is an optional site URL; the second is configuration. Omitted or empty URL uses the current web unchanged; supplied server-relative paths resolve from the current origin and supplied URLs lose one trailing slash. Caching is optional and defaults to session storage when enabled. cache.timeout is applied through PnPjs expireFunc in milliseconds: absent timeout and 0 retain the legacy 300000ms fallback. Changing cache.keyFactory function identity rebuilds SPFI even if JSON configuration is unchanged; memoize custom factories for stability. batch configuration is reserved metadata, not an automatic request limit.
 
 ```tsx
 import * as React from 'react';
@@ -107,7 +109,7 @@ export interface SPFxPnPListInfo<T = unknown> {
 }
 ```
 
-Creates list CRUD and query operations for the exact `listTitle`. Strings remain titles, even when they resemble a GUID or URL; they are not trimmed or auto-detected. It does not auto-query on mount: call query(). A new query or list/service identity supersedes prior data, errors, pages and pending CRUD/debounce refresh effects. loadMore is bound to the active query; duplicate simultaneous calls return an empty page without a second dispatch. Failed pages release the lock and retain the offset for retry. Caller promises retain their existing failure channels, detailed below. Remote CRUD operations are not undone when a completion becomes stale. Successful batch writes are not rolled back; inspect hook `error` and server data before retrying a partial batch.
+Creates list CRUD and query operations for the exact `listTitle`. Strings remain titles, even when they resemble a GUID or URL; they are not trimmed or auto-detected. It does not auto-query on mount: call query(). An explicit `.top()` in the query builder takes precedence over per-query `pageSize`, then the hook’s `pageSize`; without any limit SharePoint chooses the result size. `hasMore` is a count-equals-page-size heuristic, so a final empty request can be necessary. A new query or list/service identity supersedes prior data, errors, pages and pending CRUD/debounce refresh effects. loadMore is bound to the active query; duplicate simultaneous calls return an empty page without a second dispatch. Failed pages release the lock and retain the offset for retry. Caller promises retain their existing failure channels, detailed below. Remote CRUD operations are not undone when a completion becomes stale. Successful batch writes are not rolled back; inspect hook `error` and server data before retrying a partial batch.
 
 ```tsx
 import * as React from 'react';
@@ -206,6 +208,7 @@ export interface UseSPFxPnPSearchOptions {
     pageSize?: number;
     selectProperties?: string[];
     refiners?: string;
+    refinerOperator?: 'and' | 'or';
 }
 export interface SearchResult<T = Record<string, string>> {
     id: string;
@@ -242,6 +245,28 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
 
 search() starts a new query and clears prior refiners. refetch() and loadMore() retain current refinement filters; applyRefiner toggles the supplied refiner token. Latest query ownership prevents obsolete data, errors or pages from replacing current results. Duplicate simultaneous loadMore calls return an empty page without a second dispatch; failed pages preserve offset for retry. totalResults is the service total, while results contains loaded rows. suggest returns its promise to the caller, which must order its own suggestion UI updates; obsolete suggestion failures cannot replace a newer search error. Requests are not cancelled by these guards.
 
+### Refinement tokens and operators
+
+For faceted search, request the managed properties in `refiners`, render each entry's `value` and `count`, and pass its **`token` unchanged** to `applyRefiner(refiner.name, entry.token)`. Quoted string tokens, numeric/date scalars and native FQL expressions such as `range(...)` are preserved as operands; unquoted hex tokens receive one pair of quotes. Legacy unquoted text values still use escaped string equality. The hook does not decode tokens into display labels or rewrite managed-property names. Selecting the same token again removes it. Search permissions, managed-property refinement configuration and indexing still apply.
+
+`refinerOperator` explicitly selects how multiple values in the **same** facet combine. It defaults to `'and'`, preserving the historical behavior; `'or'` includes any selected value. Different facets always combine with AND. For example, PDF and DOCX with OR produce `FileType:or("tokenPDF","tokenDOCX")`; a Size interval is a separate restriction that still applies to both types. With AND, mutually exclusive file types legitimately return zero results. Changing the hook option resets the current query and selected filters; run `search()` again. Refetch and pagination retain selections and the configured operator.
+
+Use `DisplayAuthor` for the sample's person facets, while `Author` may still be selected to display result metadata. The authenticated sample investigation found normalized `Author` tokens that did not round-trip for PDF documents; `DisplayAuthor` returned matching display-name tokens. Other managed properties depend on their search-schema mappings. The service does not silently replace `Author`. Counts may include duplicates while `totalResults` reflects trimmed results. See [Microsoft's refinement token contract](https://learn.microsoft.com/en-us/sharepoint/dev/general-development/query-refinement-in-sharepoint#understanding-the-refinement-data-in-the-search-result).
+
+```tsx
+const { search, refiners, applyRefiner, loading } = useSPFxPnPSearch({
+  refiners: 'FileType,DisplayAuthor,Size,Write',
+  refinerOperator: 'or'
+});
+// Run search('*') first, then render the refiners from its response.
+refiners.map(refiner => refiner.entries.map(entry => (
+  <button key={`${refiner.name}:${entry.token}`} disabled={loading || !entry.token}
+    onClick={() => applyRefiner(refiner.name, entry.token).catch(console.error)}>
+    {entry.value} ({entry.count})
+  </button>
+)));
+```
+
 ```tsx
 import * as React from 'react';
 import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
@@ -262,8 +287,93 @@ function SearchResults() {
 
 `SearchVerticals` is an exported preset object defined in the [search hook source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts). A query-builder callback receives PnPjs `ISearchBuilder`; `SearchQueryBuilderFn` in the signature names that internal callback alias, rather than a separate public export. Query construction does not bypass search permissions or indexing delays.
 
+## PnP context and operation members
+
+`PnPContextConfig.cache.enabled` must be supplied when `cache` exists; omission/false disables caching. `cache.storage` defaults to session and `cache.keyFactory(url)` returns the cache key (a hashed URL key is the default). `cache.timeout` uses milliseconds as described above. `PnPContextConfig.headers` injects the supplied headers; omitted headers add no behavior. `PnPContextConfig.batch.enabled` and `batch.maxRequests` are reserved metadata and enforce no request behavior. These rules also apply to the service config. JSON-incompatible configuration can throw while deriving the memoization key during render; URL resolution can also throw before SPFI error capture. Keep configuration immutable.
+
+`PnPContextInfo.sp` is the configured client or undefined; `PnPContextInfo.isInitialized` is exactly client presence, `PnPContextInfo.error` captures SPFI creation failure, and `PnPContextInfo.siteUrl` is the resolved web target. No network request, access check or schema check establishes readiness. Supplying a context to another PnP hook does not remove the matching provider requirement: those hooks also invoke their default context hook unconditionally.
+
+`SPFxPnPInfo.sp`, `SPFxPnPInfo.siteUrl` and `SPFxPnPInfo.isInitialized` mirror the selected context. `SPFxPnPInfo.invoke(fn)` returns callback results; `SPFxPnPInfo.batch(fn)` invokes the callback to queue work, executes the batch, then awaits its result. Queue calls before awaiting their results inside a batch callback. `SPFxPnPInfo.error` prefers the current invocation error over context error; `SPFxPnPInfo.clearError()` clears only the invocation error, so a context error can remain. These operations normalize thrown values to Error. Native batches are not transactions.
+
+```tsx
+import '@pnp/sp/webs';
+import { useSPFxPnP } from '@apvee/spfx-react-toolkit/hooks';
+
+function WebTitleButton() {
+  const pnp = useSPFxPnP();
+  return <button disabled={!pnp.isInitialized} onClick={() => {
+    void pnp.invoke(sp => sp.web.select('Title')()).then(console.log).catch(console.error);
+  }}>Read web title</button>;
+}
+```
+
+## List result members and mutation refresh
+
+| Member | Observable contract |
+| --- | --- |
+| `ListFilterFunction<T>` | Type for a PnP fluent predicate: accepts `InitialFieldQuery<T>`, returns `ComparisonResult<T>`; the toolkit does not evaluate it locally |
+| `UseSPFxPnPListOptions.pageSize` | Optional default limit, absent by default; explicit builder `.top()` and per-query limit take precedence |
+| `SPFxPnPListInfo.query(builder?, options?)` | Executes the supplied `IItems` transform (identity when omitted), returns a page and replaces items on success |
+| `SPFxPnPListInfo.items` | Loaded rows; initially `[]`; `T` does not validate server data |
+| `SPFxPnPListInfo.loading`, `SPFxPnPListInfo.loadingMore` | Current replacement/page request flags; they do not track CRUD/getById calls |
+| `SPFxPnPListInfo.error`, `SPFxPnPListInfo.clearError()` | Shared current-operation error and explicit clear; clearing does not cancel requests |
+| `SPFxPnPListInfo.isEmpty` | `items.length === 0 && !loading && !error`; can be true before any query |
+| `SPFxPnPListInfo.hasMore` | Count/page-size heuristic, initially false |
+| `SPFxPnPListInfo.refetch()` | Repeats the last successful query from page one; rejects before a successful query exists |
+| `SPFxPnPListInfo.loadMore()` | Requests/appends another page using the cumulative-count paging heuristic below; requires a successful prior query with a page size and does not automatically stop when `hasMore` is false |
+| `SPFxPnPListInfo.getById(id)` | Reads a numeric item ID; does not populate `items` or change query loading state |
+| `SPFxPnPListInfo.create(item)` | Creates a partial item and returns the new numeric ID |
+| `SPFxPnPListInfo.update(id, item)`, `SPFxPnPListInfo.remove(id)` | Updates/deletes one numeric item ID; resolve without a value |
+| `SPFxPnPListInfo.createBatch(items)` | Creates partial items and resolves successful numeric IDs, with per-item failures published as described above |
+| `SPFxPnPListInfo.updateBatch(updates)` | Each entry has numeric `id` and partial `item`; resolves without a value |
+| `SPFxPnPListInfo.removeBatch(ids)` | Deletes numeric IDs; resolves without a value |
+
+All four list hooks inherit the service's paging limitation: `query` initializes the next skip to the returned item count, and successful `loadMore` adds that page's count. The service applies `.skip(skip).top(pageSize)` after the builder. The installed PnP implementation serializes `.skip(skip)` as `$skiptoken=Paged=TRUE&p_ID=<skip>`, rather than OData `$skip`. This cumulative-count value is a historical heuristic, not a server-returned continuation token; it does not provide a validated cursor for arbitrary filters/order or noncontiguous item IDs. Reuse the original filter and deterministic order, and verify that this policy fits the queried list before relying on loaded rows as complete. Concurrent server changes can also move items between requests. See the [shared list service paging contract](../services/pnp-list.md#paging-and-public-type-contracts).
+
+Successful CRUD/batch settlement schedules a 100ms debounced refresh only when a query has been started for that active identity. The refresh uses the active query at dispatch and is invalidated by another query, target/service replacement or unmount. A mutation promise can resolve before this separate refresh runs; a refresh failure does not roll back the write. Failed refetch retains previously successful rows and paging offset. Display the current error alongside retained rows rather than treating old rows as a successful replacement query.
+
+## Search options and result members
+
+| Member | Observable contract |
+| --- | --- |
+| `UseSPFxPnPSearchOptions.pageSize` | Defaults to 50; per-search pageSize wins and is applied after builder `rowLimit` |
+| `UseSPFxPnPSearchOptions.selectProperties` | Optional managed-property defaults; omitted/empty keeps PnP/SharePoint defaults; builder can override |
+| `UseSPFxPnPSearchOptions.refiners` | Optional managed-property refiner specification; omitted requests no additional facets |
+| `UseSPFxPnPSearchOptions.refinerOperator` | `'and'` by default, or `'or'`, within one facet |
+| `SPFxPnPSearchInfo.search(query, options?)` | Text or builder transform; returns the first page and starts a new unrefined query |
+| `SPFxPnPSearchInfo.suggest(queryText)` | Returns suggestion strings; no suggestion state/loading flag is exposed |
+| `SPFxPnPSearchInfo.results`, `SPFxPnPSearchInfo.totalResults`, `SPFxPnPSearchInfo.refiners` | Loaded rows, full server count (zero if absent), facets (empty if absent); initially empty/zero |
+| `SPFxPnPSearchInfo.loading`, `SPFxPnPSearchInfo.loadingMore` | Latest active replacement/page request flags |
+| `SPFxPnPSearchInfo.hasMore` | Accumulated loaded row count is below server total; the method itself does not stop dispatch when false |
+| `SPFxPnPSearchInfo.error`, `SPFxPnPSearchInfo.clearError()` | Shared error and explicit clear, without cancellation |
+| `SPFxPnPSearchInfo.loadMore()` | Returns/appends a next page; rejects before a search or without a truthy page size |
+| `SPFxPnPSearchInfo.refetch()` | Repeats the remembered query from offset zero with selected refiners; rejects before a search |
+| `SPFxPnPSearchInfo.applyRefiner(name, token)` | Toggles an unchanged server token and reexecutes from offset zero; rejects before a search |
+
+No search runs on mount. Search/page/refetch/refiner/suggestion failures reject their promises and publish errors subject to current ownership. Search option/service identity changes reset query/filter/results state; older calls can still settle their own promises. Existing rows can remain while a new search is loading or fails, so render loading/error with them. `SearchResult.id` is `String(DocId ?? Path ?? Math.random())` and is not stable when both identifiers are absent; `SearchResult.data` and `SearchResult.raw` reference the same unvalidated PnP row. `SearchResult.rank` parses a truthy Rank as an integer and is undefined for a missing/zero Rank. `SearchRefiner.name` defaults to `''`; each `SearchRefiner.entries` entry exposes display `value` (default `''`), parsed `count` (default 0) and opaque `token` (default `''`).
+
+## SearchVerticals values
+
+`SearchVerticals` provides PnP search result-source presets; select a preset with a search builder's `sourceId` method. The preset does not filter local data or grant access.
+
+| Member | Value |
+| --- | --- |
+| `SearchVerticals.All` | `undefined` (no explicit source) |
+| `SearchVerticals.People` | `b09a7990-05ea-4af9-81ef-edfab16c4e31` |
+| `SearchVerticals.Videos` | `38403c8c-3975-41a8-826e-717f2d41568a` |
+| `SearchVerticals.Sites` | `e1327b9c-2b8c-4b23-99c9-3730cb29c3f7` |
+| `SearchVerticals.Documents` | `8413cd39-2156-4e00-b54d-11efd9abdb89` |
+| `SearchVerticals.Conversations` | `6e71030e-5e16-4406-9bff-9c1829843083` |
+| `SearchVerticals.Pages` | `5e34578e-4d68-4783-8c79-1f07d10bed4f` |
+
+```tsx
+const search = useSPFxPnPSearch<{ Title: string }>();
+const run = () => search.search(builder => builder.text('training').sourceId(SearchVerticals.Documents));
+// Invoke run from an event/effect and handle its rejection.
+```
+
 ## See Also
 
-- [API index](../../INDEX.md)
+- [API index](../INDEX.md)
 - [Services](../INDEX.md#non-react-services)
 - [SharePoint validation](../../development/sharepoint-validation/INDEX.md)

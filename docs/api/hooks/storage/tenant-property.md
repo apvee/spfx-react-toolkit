@@ -8,10 +8,9 @@ import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit/hooks';
 
 Requires the matching SPFx host provider. See [provider selection](../../../getting-started/choosing-a-provider.md).
 
-
 Access tenant-wide custom properties (read-only).
 
-> **Note:** Write and remove operations have been removed in v2.0.0. Microsoft has blocked the SetStorageEntity and RemoveStorageEntity REST API endpoints. Tenant properties can only be managed via PowerShell (`Set-PnPStorageEntity`, `Remove-PnPStorageEntity`). For a read/write key-value store at tenant level, use [`useSPFxTenantKeyValueStore`](tenant-key-value-store.md#usespfxtenantkeyvaluestore).
+This hook and `createSPFxTenantPropertyService` expose reads only; neither exports write/remove operations. Manage StorageEntity provisioning through your administrator’s supported tooling. For toolkit-managed read/write tenant configuration, use [`useSPFxTenantKeyValueStore`](tenant-key-value-store.md).
 
 ## Signature
 
@@ -33,7 +32,7 @@ function useSPFxTenantProperty<T = unknown>(
 
 ```typescript
 interface SPFxTenantPropertyResult<T> {
-  /** Property value (undefined while loading or if not found) */
+  /** Current value; undefined initially, after identity reset or for an absent value */
   readonly data: T | undefined;
 
   /** Property description metadata */
@@ -48,14 +47,14 @@ interface SPFxTenantPropertyResult<T> {
   /** Manually load/reload the property */
   readonly load: () => Promise<void>;
 
-  /** True if data is loaded successfully */
+  /** True when data is defined, with no pending load or current read error */
   readonly isReady: boolean;
 }
 ```
 
 ## Request behavior
 
-Changing key, service/catalog identity or fetch mode invalidates previous request ownership and clears old data. Only the latest load can publish data, error and loading state. `load()` records read failures in `error`; it resolves rather than rethrowing them. `isReady` indicates a successfully loaded current value. Requests are not cancelled on identity change or unmount.
+Changing key, service or catalog-discovery identity invalidates previous request ownership and clears old data/description/error. `autoFetch` defaults to true: enabling it starts a load when prerequisites exist; disabling it alone retains current state and does not cancel an already dispatched load. Only the latest load for the active identity can publish data, description, error and loading state. The previous value/description remain during a same-identity reload, and can remain after a failed reload; render `error` before treating retained data as current. `load()` records read failures in `error` and resolves rather than rethrowing them. If no client or key is available it logs and resolves without dispatch. `isReady` is exactly `!isLoading && !error && data !== undefined`, so an absent value is not ready. Requests are not cancelled on identity change or unmount. The read uses the StorageEntity JSON-first decoder; `T` does not validate its shape. There is no write or remove operation.
 
 ## Example: Feature Flags
 
@@ -130,5 +129,3 @@ function ConfiguredWidget() {
 ## Source
 
 [View source](../../../../packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts)
-
----

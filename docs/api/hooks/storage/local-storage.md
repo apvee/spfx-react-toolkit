@@ -8,7 +8,6 @@ import { useSPFxLocalStorage } from '@apvee/spfx-react-toolkit/hooks';
 
 Requires the matching SPFx host provider. See [provider selection](../../../getting-started/choosing-a-provider.md).
 
-
 Persistent storage that survives browser restarts. Data is namespaced per web part instance.
 
 ## Signature
@@ -37,7 +36,7 @@ An object containing:
 
 ## Default and persistence behavior
 
-The default seeds the current key when no readable JSON exists. Changing only `defaultValue` preserves the current value, including when the default is an inline object. `remove()` and a matching browser storage deletion event reset to the latest default. Changing key or instance ID reloads that scoped key, using the current default if needed. Persistence is best effort: blocked storage, invalid JSON and quota failures do not throw from this hook. Browser storage event rules apply; this is not a same-document synchronization bus.
+The default seeds local React state when the key has no readable JSON; it is not persisted until `setValue` writes. Changing only `defaultValue` preserves the current value, including when the default is an inline object. `remove()` and a matching browser storage deletion event reset to the latest default. Changing key or instance ID reloads that scoped key, using the current default if needed. Persistence is best effort: blocked storage, invalid JSON and quota failures do not throw from this hook. Browser storage event rules apply; this is not a same-document synchronization bus.
 
 ## Namespacing
 
@@ -138,4 +137,16 @@ function SearchWithHistory() {
 
 [View source](../../../../packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts)
 
----
+## SPFxStorageHook
+
+Both browser storage hooks return `SPFxStorageHook<T>`. `value` is the current JSON-decoded value or current fallback; `setValue(valueOrUpdater)` updates local state and attempts JSON persistence; `remove()` removes the scoped key and resets state to the latest default. Omitted `key` or default is not supported by the signature. `T` supplies no runtime data validation, and only JSON-compatible values reliably round-trip.
+
+```ts
+interface SPFxStorageHook<T> {
+  readonly value: T;
+  readonly setValue: (value: T | ((previous: T) => T)) => void;
+  readonly remove: () => void;
+}
+```
+
+Keys use the existing `spfx:<instanceId>:<key>` scope, not a user/session authorization boundary. The hook does not encrypt data or subscribe to same-document setter calls from another hook instance. Serialization/storage failures are best effort; the local value may update even when persistence fails. `localStorage.clear()` events have no matching key and are ignored by this implementation; a deletion event for the exact key resets it to the latest fallback.

@@ -99,7 +99,7 @@ for (const method of ['get', 'list']) {
   });
 }
 for (const method of ['save', 'remove']) {
-  test(`${method} publishes write failures, rejects, and does not refresh permission`, async () => {
+  test(`${method} publishes write failures, rejects, and refreshes permission`, async () => {
     const failure = new Error('write denied');
     const f = fixture({ [method]: async () => { throw failure; } });
     try {
@@ -108,7 +108,7 @@ for (const method of ['save', 'remove']) {
       assert.equal(f.view.current.writeError, failure);
       assert.equal(f.view.current.error, undefined);
       assert.equal(f.view.current.isWriting, false);
-      assert.equal(methodCalls(f, 'canCurrentUserWrite').length, 1);
+      assert.equal(methodCalls(f, 'canCurrentUserWrite').length, 2);
     } finally { f.view.unmount(); }
   });
 }
@@ -357,3 +357,21 @@ test('child layout effects can start parent-provided operations before the paren
     assert.equal(f.view.current.isWriting, false);
   } finally { f.view.unmount(); }
 });
+
+for (const method of ['get', 'list']) for (const fails of [false, true]) {
+  test(`${method} refreshes permissions after ${fails ? 'failure' : 'success'} without changing the read error channel`, async () => {
+    let allowed = false;
+    const f = fixture({ canCurrentUserWrite: async () => allowed,
+      [method]: async () => { if (fails) throw new Error('read denied'); return method === 'get' ? { key: 'a', value: 1 } : []; } });
+    try {
+      await flush(); assert.equal(f.view.current.canWrite, false);
+      allowed = true;
+      await settle(() => f.view.current[method]('a')); await flush();
+      assert.equal(f.view.current.canWrite, true);
+      assert.equal(methodCalls(f, 'canCurrentUserWrite').length, 2);
+      assert.equal(f.view.current.error?.message, fails ? 'read denied' : undefined);
+      assert.equal(f.view.current.writeError, undefined);
+      assert.equal(methodCalls(f, 'ensureListReady').length, 0);
+    } finally { f.view.unmount(); }
+  });
+}

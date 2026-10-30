@@ -10,8 +10,30 @@ const aliases = {
   './helpers': 'lib/helpers/index', './services': 'lib/services/index',
   './styles': 'lib/styles/index', './styles/useSx': 'lib/hooks/useSx',
   './hooks/useStableCallback': 'lib/hooks/useStableCallback',
+  './controls/file-folder-picker': 'lib/controls/file-folder-picker/index',
+  './property-pane/file-folder-picker': 'lib/property-pane/file-folder-picker/index',
+  './controls/pickers': 'lib/controls/pickers/index',
+  './property-pane/pickers': 'lib/property-pane/pickers/index',
+  './controls': 'lib/controls/index', './controls/formatted-text': 'lib/controls/formatted-text/index',
+  './controls/relative-time': 'lib/controls/relative-time/index',
+  './controls/auto-skeleton': 'lib/controls/auto-skeleton/index',
+  './controls/state-message': 'lib/controls/state-message/index',
+  './controls/settings-group': 'lib/controls/settings-group/index',
+  './controls/accordion-group': 'lib/controls/accordion-group/index',
+  './controls/form': 'lib/controls/form/index',
+  './controls/data-grid': 'lib/controls/data-grid/index',
+  './controls/editable-text': 'lib/controls/editable-text/index',
+  './controls/web-part-shell': 'lib/controls/web-part-shell/index',
+  './controls/stage': 'lib/controls/stage/index',
+  './controls/pagination': 'lib/controls/pagination/index',
+  './controls/description-list': 'lib/controls/description-list/index',
+  './controls/content-card': 'lib/controls/content-card/index',
+  './controls/preview-card': 'lib/controls/preview-card/index',
+  './controls/sharepoint-permission-trim': 'lib/controls/sharepoint-permission-trim/index',
+  './controls/sharepoint-group-trim': 'lib/controls/sharepoint-group-trim/index',
+  './controls/entra-group-trim': 'lib/controls/entra-group-trim/index',
 };
-const files = [...inventory.files, ...['.js', '.d.ts', '.js.map', '.d.ts.map'].map(ext => 'lib/styles/index' + ext)];
+const files = [...inventory.files, ...['lib/controls/file-folder-picker/index', 'lib/property-pane/file-folder-picker/index', 'lib/controls/pickers/index', 'lib/property-pane/pickers/index', 'lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index', 'lib/controls/form/index', 'lib/controls/data-grid/index', 'lib/controls/editable-text/index', 'lib/controls/web-part-shell/index', 'lib/controls/stage/index', 'lib/controls/pagination/index', 'lib/controls/description-list/index', 'lib/controls/content-card/index', 'lib/controls/preview-card/index', 'lib/controls/sharepoint-permission-trim/index', 'lib/controls/sharepoint-group-trim/index', 'lib/controls/entra-group-trim/index'].flatMap(base => ['.js', '.d.ts', '.js.map', '.d.ts.map'].map(ext => base + ext))];
 test('clean entrypoints select their canonical declarations before runtime', () => {
   for (const [alias, target] of Object.entries(aliases)) {
     assert.deepEqual(manifest.exports?.[alias], { types: './' + target + '.d.ts', default: './' + target + '.js' });
@@ -20,6 +42,26 @@ test('clean entrypoints select their canonical declarations before runtime', () 
   assert.deepEqual(manifest.typesVersions, { '*': {
     core: ['lib/core/index.d.ts'], hooks: ['lib/hooks/index.d.ts'], helpers: ['lib/helpers/index.d.ts'],
     services: ['lib/services/index.d.ts'], styles: ['lib/styles/index.d.ts'],
+    'controls/file-folder-picker': ['lib/controls/file-folder-picker/index.d.ts'], 'property-pane/file-folder-picker': ['lib/property-pane/file-folder-picker/index.d.ts'],
+    'controls/pickers': ['lib/controls/pickers/index.d.ts'], 'property-pane/pickers': ['lib/property-pane/pickers/index.d.ts'],
+    controls: ['lib/controls/index.d.ts'], 'controls/formatted-text': ['lib/controls/formatted-text/index.d.ts'],
+    'controls/relative-time': ['lib/controls/relative-time/index.d.ts'],
+    'controls/auto-skeleton': ['lib/controls/auto-skeleton/index.d.ts'],
+    'controls/state-message': ['lib/controls/state-message/index.d.ts'],
+    'controls/settings-group': ['lib/controls/settings-group/index.d.ts'],
+    'controls/accordion-group': ['lib/controls/accordion-group/index.d.ts'],
+    'controls/form': ['lib/controls/form/index.d.ts'],
+    'controls/data-grid': ['lib/controls/data-grid/index.d.ts'],
+    'controls/editable-text': ['lib/controls/editable-text/index.d.ts'],
+    'controls/web-part-shell': ['lib/controls/web-part-shell/index.d.ts'],
+    'controls/stage': ['lib/controls/stage/index.d.ts'],
+    'controls/pagination': ['lib/controls/pagination/index.d.ts'],
+    'controls/description-list': ['lib/controls/description-list/index.d.ts'],
+    'controls/content-card': ['lib/controls/content-card/index.d.ts'],
+    'controls/preview-card': ['lib/controls/preview-card/index.d.ts'],
+    'controls/sharepoint-permission-trim': ['lib/controls/sharepoint-permission-trim/index.d.ts'],
+    'controls/sharepoint-group-trim': ['lib/controls/sharepoint-group-trim/index.d.ts'],
+    'controls/entra-group-trim': ['lib/controls/entra-group-trim/index.d.ts'],
     'styles/useSx': ['lib/hooks/useSx.d.ts'], 'hooks/useStableCallback': ['lib/hooks/useStableCallback.d.ts'],
   } });
   assert.equal(manifest.main, 'lib/index.js');
@@ -39,7 +81,7 @@ test('every frozen packed path remains accessible in its original form', () => {
 });
 test('new clean private and wildcard paths are absent', () => {
   assert.ok(manifest.exports);
-  for (const alias of ['./hooks/useAsyncInvoke.internal', './styles/descriptor.internal', './styles/types', './styles/*', './lib/*']) {
+  for (const alias of ['./hooks/useAsyncInvoke.internal', './styles/descriptor.internal', './styles/types', './styles/*', './lib/*', './controls/formatted-text/formatted-text-content.internal', './controls/*', './controls/relative-time/relative-time.internal', './helpers/spfx-time-zone.internal', './controls/form/form', './controls/form/create-form', './controls/form/controls/form-input', './controls/form/plugins', './controls/form/advanced', './lib/controls/form', './lib/controls/form/index', './controls/data-grid/data-grid', './controls/data-grid/create-data-grid', './controls/data-grid/column-family.internal', './lib/controls/data-grid/index', './lib/controls/data-grid/data-grid.js', './controls/editable-text/editable-text', './controls/editable-text/editable-text-editor.internal', './controls/editable-text/editable-text-codec.internal', './controls/editable-text/editable-text-document.types.internal', './lib/controls/editable-text', './lib/controls/editable-text/index', './controls/web-part-shell/title/web-part-title-color-picker.internal', './controls/web-part-shell/title/web-part-title-toolbar.internal', './controls/stage/stage', './controls/stage/stage-context.internal', './lib/controls/stage', './controls/content-slot.internal', './controls/content-slot.types.internal', './controls/cards/card-frame.internal', './controls/content-card/content-card', './controls/preview-card/preview-card', './lib/controls/cards', './lib/controls/content-card', './lib/controls/preview-card', './hooks/useAccessRequest.internal', './services/spfx-scoped-permissions.internal', './services/spfx-sharepoint-groups.internal', './services/spfx-entra-groups.internal', './controls/access-trim-children.internal', './controls/sharepoint-permission-trim/sharepoint-permission-trim', './controls/sharepoint-group-trim/sharepoint-group-trim', './controls/entra-group-trim/entra-group-trim', './lib/controls/sharepoint-permission-trim', './lib/controls/sharepoint-group-trim', './lib/controls/entra-group-trim', './lib/services/spfx-permission-target.types']) {
     assert.equal(manifest.exports[alias], undefined);
   }
 });

@@ -1,0 +1,27 @@
+{
+  "empty": "אין נתונים זמינים",
+  "noResults": "לא נמצאו תוצאות",
+  "noVisibleColumns": "אין עמודות גלויות",
+  "loading": "בטעינה",
+  "actions": "פעולות",
+  "moreActions": "פעולות נוספות",
+  "yes": "כן",
+  "no": "לא",
+  "noTags": "אין תגיות",
+  "noObservations": "אין תצפיות",
+  "invalidValue": "ערך לא תקין",
+  "selectAllRows": "בחירת כל השורות",
+  "retry": "ניסיון חוזר",
+  "selectRowTemplate": "בחירת שורה {rowId}",
+  "sparklineSummaryTemplate": "ראשון {first}; אחרון {last}; מינימום {minimum}; מקסימום {maximum}; ממוצע {average}; שינוי {change}; אחוז שינוי {changePercent}",
+  "tagOverflow": {
+    "one": "הצגת {count} תגית נוספת",
+    "two": "הצגת {count} תגיות נוספות",
+    "other": "הצגת {count} תגיות נוספות"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} הצבעה",
+    "two": "{formattedCount} הצבעות",
+    "other": "{formattedCount} הצבעות"
+  }
+}

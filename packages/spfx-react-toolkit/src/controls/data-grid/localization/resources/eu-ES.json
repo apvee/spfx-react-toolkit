@@ -1,0 +1,25 @@
+{
+  "empty": "Ez dago daturik erabilgarri",
+  "noResults": "Ez da emaitzarik aurkitu",
+  "noVisibleColumns": "Ez dago zutabe ikusgairik",
+  "loading": "Kargatzen",
+  "actions": "Ekintzak",
+  "moreActions": "Ekintza gehiago",
+  "yes": "Bai",
+  "no": "Ez",
+  "noTags": "Ez dago etiketarik",
+  "noObservations": "Ez dago behaketarik",
+  "invalidValue": "Balio baliogabea",
+  "selectAllRows": "Hautatu errenkada guztiak",
+  "retry": "Saiatu berriro",
+  "selectRowTemplate": "Hautatu {rowId} errenkada",
+  "sparklineSummaryTemplate": "Lehena {first}; Azkena {last}; Gutxienekoa {minimum}; Gehienekoa {maximum}; Batezbestekoa {average}; Aldaketa {change}; Aldaketaren ehunekoa {changePercent}",
+  "tagOverflow": {
+    "one": "Erakutsi beste {count} etiketa",
+    "other": "Erakutsi beste {count} etiketa"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} boto",
+    "other": "{formattedCount} boto"
+  }
+}

@@ -158,7 +158,7 @@ function validateContract(contract) {
   for (const fixture of contract.fixtures) {
     if (!/^[a-z0-9-]+$/.test(fixture.id) || ids.has(fixture.id) || !fixture.template || !fixture.variants) throw new Error('Invalid/duplicate fixture');
     ids.add(fixture.id);
-    for (const group of [...fixture.forbiddenModuleGroups, ...fixture.requiredModuleGroups]) if (!contract.moduleGroups[group]) throw new Error(`Unknown module group ${group}`);
+    for (const group of [...fixture.forbiddenModuleGroups, ...fixture.requiredModuleGroups, ...(fixture.forbiddenInitialModuleGroups ?? [])]) if (!contract.moduleGroups[group]) throw new Error(`Unknown module group ${group}`);
     for (const variant of Object.keys(fixture.variants)) if (!/^[a-z0-9-]+$/.test(variant)) throw new Error('Invalid variant name');
   }
   for (const patterns of Object.values(contract.moduleGroups)) for (const pattern of patterns) new RegExp(pattern);
@@ -203,6 +203,10 @@ function checkFixture(item, fixture, contract) {
   const matches = group => item.emittedModules.filter(module => contract.moduleGroups[group].some(pattern => new RegExp(pattern).test(module.resource)));
   for (const group of fixture.forbiddenModuleGroups) if (matches(group).length) failures.push(`${item.id}: forbidden module group ${group}`);
   for (const group of fixture.requiredModuleGroups) if (!matches(group).length) failures.push(`${item.id}: missing required module group ${group}`);
+  for (const group of fixture.forbiddenInitialModuleGroups ?? []) {
+    if (!Array.isArray(item.initialChunkIds) || !item.initialChunkIds.length) throw new Error('Missing initial chunk provenance');
+    if (matches(group).some(module => module.chunks.some(id => item.initialChunkIds.includes(id)))) failures.push(`${item.id}: forbidden initial module group ${group}`);
+  }
   const expected = fixture.retainedDescriptors;
   if (expected) {
     for (const call of item.retentionObservations) {
@@ -214,9 +218,15 @@ function checkFixture(item, fixture, contract) {
   return failures;
 }
 function buildConfig(consumerRoot, entry, directory, attribution) {
+  const nativePackageRoot = path.join(consumerRoot, 'node_modules', toolkit);
+  const nativeAliases = fs.existsSync(path.join(nativePackageRoot, 'localization/resources.json'))
+    ? require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: nativePackageRoot }) : {};
   return { context: consumerRoot, mode: 'production', devtool: false, cache: false, entry: { main: entry },
     output: { path: directory, filename: 'entry.js', chunkFilename: '[id].[contenthash].js', library: { type: 'commonjs2' }, clean: true },
-    resolve: { extensions: ['.tsx', '.ts', '.js'], modules: [path.join(consumerRoot, 'node_modules')] },
+    // Native Fluent packages may legitimately nest dependencies with different
+    // minimum versions. Standard Node hierarchy resolves those owning packages;
+    // installed-origin checks below still reject workspace toolkit resolution.
+    resolve: { extensions: ['.tsx', '.ts', '.js'], modules: ['node_modules'], alias: nativeAliases },
     externals: [({ request }, done) => /^(react|react-dom)(\/|$)/.test(request || '') || /^@microsoft\/sp-/.test(request || '') ? done(null, `commonjs ${request}`) : done()],
     module: { rules: [{ test: /\.tsx?$/, use: path.join(root, 'scripts/sx-browser-typescript-loader.cjs') }] },
     optimization: { usedExports: true, minimize: true, concatenateModules: !attribution, moduleIds: 'deterministic', chunkIds: 'deterministic' } };
@@ -246,10 +256,17 @@ function consumerProvenance(consumerRoot) {
   if (!tarball.endsWith('.tgz') || !fs.existsSync(tarball)) throw new Error('Missing consumer tarball provenance');
   const lock = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json')));
   const versions = {};
-  for (const name of ['typescript', 'webpack', 'react', 'react-dom', '@pnp/sp', '@pnp/core', '@pnp/queryable', '@griffel/core', '@griffel/react', '@fluentui/react-theme', '@fluentui/react-utilities', '@fluentui/react-shared-contexts', '@microsoft/sp-core-library']) {
+  for (const name of ['typescript', 'webpack', 'react', 'react-dom', '@pnp/sp', '@pnp/core', '@pnp/queryable', '@griffel/core', '@griffel/react', '@fluentui/react-theme', '@fluentui/react-utilities', '@fluentui/react-shared-contexts', '@microsoft/sp-core-library', '@fluentui/react-components', 'react-hook-form', '@hookform/resolvers', '@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-calendar-compat']) {
     const installed = consumerRequire(name + '/package.json').version;
     if (installed !== lock.packages['node_modules/' + name].version) throw new Error(`Consumer ${name} differs from locked toolchain`);
     versions[name] = installed;
+  }
+  // These packages keep package.json private behind their exports map. The
+  // isolated gate separately verifies their real runtime origins and identity.
+  for (const name of ['@fluentui/react-icons', '@standard-schema/spec', '@standard-schema/utils', '@tiptap/core', '@tiptap/pm', '@tiptap/react', '@tiptap/extensions', '@tiptap/extension-document', '@tiptap/extension-text', '@tiptap/extension-paragraph', '@tiptap/extension-heading', '@tiptap/extension-hard-break', '@tiptap/extension-bold', '@tiptap/extension-italic', '@tiptap/extension-underline', '@tiptap/extension-bubble-menu', '@tiptap/extension-floating-menu']) {
+    const manifest = JSON.parse(fs.readFileSync(path.join(consumerRoot, 'node_modules', name, 'package.json'), 'utf8'));
+    if (manifest.name !== name || manifest.version !== lock.packages['node_modules/' + name].version) throw new Error(`Consumer ${name} differs from locked toolchain`);
+    versions[name] = manifest.version;
   }
   if (ts.version !== versions.typescript || require('webpack/package.json').version !== versions.webpack) throw new Error('Measurement tooling differs from locked consumer toolchain');
   if (!/^v22\./.test(process.version) || Number(process.versions.node.split('.')[1]) < 14) throw new Error('Unsupported Node version');
@@ -294,7 +311,7 @@ async function measureTreeShaking({ consumerRoot, outputDir, contract, mode, att
       }
       const directory = path.join(outputDir, 'assets', fixture.id, variantId);
       const config = buildConfig(consumerRoot, entry, directory, attribution);
-      const normalizedConfig = { ...config, context: '<consumer>', entry: { main: slash(path.relative(consumerRoot, entry)) }, output: { ...config.output, path: '<output>' }, resolve: { ...config.resolve, modules: ['<consumer>/node_modules'] }, module: { rules: [{ test: '\\.tsx?$', use: 'scripts/sx-browser-typescript-loader.cjs' }] }, externals: ['react/react-dom and @microsoft/sp-* host externals'] };
+      const normalizedConfig = { ...config, context: '<consumer>', entry: { main: slash(path.relative(consumerRoot, entry)) }, output: { ...config.output, path: '<output>' }, resolve: { ...config.resolve, alias: Object.fromEntries(Object.entries(config.resolve.alias).map(([id, target]) => [id, slash(path.relative(consumerRoot, target))])) }, module: { rules: [{ test: '\\.tsx?$', use: 'scripts/sx-browser-typescript-loader.cjs' }] }, externals: ['react/react-dom and @microsoft/sp-* host externals'] };
       const stats = await compile(config);
       const detail = stats.toJson(statsOptions());
       const statsFile = `${fixture.id}-${variantId}-stats.json.gz`;
@@ -312,7 +329,7 @@ async function measureTreeShaking({ consumerRoot, outputDir, contract, mode, att
         return { name, ...sizes(fs.readFileSync(file)), initial: reachable.initial.includes(name) };
       });
       const totals = names => assets.filter(a => names.includes(a.name)).reduce((sum, asset) => ({ raw: sum.raw + asset.raw, gzip: sum.gzip + asset.gzip, brotli: sum.brotli + asset.brotli }), { raw: 0, gzip: 0, brotli: 0 });
-      const item = { id, status: 'measured', statsFile, templateSha256: hash(template), fixtureSha256: hash(rendered), configSha256: hash(JSON.stringify(normalizedConfig)), assets, totals: { initial: totals(reachable.initial), async: totals(reachable.async), union: totals(reachable.union) }, emittedModules,
+      const item = { id, status: 'measured', statsFile, templateSha256: hash(template), fixtureSha256: hash(rendered), configSha256: hash(JSON.stringify(normalizedConfig)), assets, initialChunkIds: [...new Set(Object.values(detail.entrypoints ?? {}).flatMap(entry => entry.chunks ?? []))], reachableChunkIds: detail.chunks.filter(chunk => chunk.files.some(name => reachable.union.includes(name))).map(chunk => chunk.id), totals: { initial: totals(reachable.initial), async: totals(reachable.async), union: totals(reachable.union) }, emittedModules,
         retentionObservations: retentionObservations(reachable.union.map(name => fs.readFileSync(path.join(directory, name), 'utf8')).join('\n')), warnings: detail.warnings.map(w => w.message), errors: [] };
       item.failures = checkFixture(item, fixture, contract);
       report.fixtures.push(item); report.failures.push(...item.failures); save();
@@ -359,8 +376,10 @@ async function verifyContractMutations({consumerRoot,outputDir}) {
   const save=()=>fs.writeFileSync(path.join(outputDir,'mutation-report.json'),JSON.stringify(report,null,2)+'\n');save();
   const definitions=[
     {id:'unwanted-pnp',family:'helper',expected:/helper\/.*forbidden module group pnp/,change(packageDir){fs.appendFileSync(path.join(packageDir,'lib/helpers/spfx-graph-path.helpers.js'),"\nimport '@pnp/sp/webs';\n");}},
+    {id:'unwanted-grid-charts',family:'helper',expected:/forbidden module group data-grid[\s\S]*forbidden module group charts[\s\S]*forbidden module group d3/,change(packageDir){fs.appendFileSync(path.join(packageDir,'lib/helpers/spfx-graph-path.helpers.js'),"\nimport { DataGrid } from '../controls/data-grid/index.js';\nglobalThis.__contractMutationGrid = DataGrid;\n");}},
     {id:'unwanted-descriptor',family:'sx-width-only',expected:/unexpected declaration width=auto|descriptor calls exceeds/,change(packageDir){fs.appendFileSync(path.join(packageDir,'lib/helpers/styles/width.js'),'\nglobalThis.__contractMutation = auto;\n');}},
     {id:'missing-new-export',expected:/exports|entrypoint|contract/i,change(packageDir){const file=path.join(packageDir,'package.json'),manifest=JSON.parse(fs.readFileSync(file));delete manifest.exports['./styles/useSx'];fs.writeFileSync(file,JSON.stringify(manifest));}},
+    {id:'missing-grid-export',expected:/exports|entrypoint|contract/i,change(packageDir){const file=path.join(packageDir,'package.json'),manifest=JSON.parse(fs.readFileSync(file));delete manifest.exports['./controls/data-grid'];fs.writeFileSync(file,JSON.stringify(manifest));}},
     {id:'missing-legacy-export',expected:/exports|entrypoint|contract/i,change(packageDir){const file=path.join(packageDir,'package.json'),manifest=JSON.parse(fs.readFileSync(file));delete manifest.exports['./lib/hooks/useSx'];fs.writeFileSync(file,JSON.stringify(manifest));}},
     {id:'workspace-origin',family:'helper',expected:/Toolkit origin escaped consumer/,change(packageDir){const file=path.join(packageDir,'lib/helpers/spfx-graph-path.helpers.js');fs.rmSync(file);fs.symlinkSync(path.join(root,'packages/spfx-react-toolkit/lib/helpers/spfx-graph-path.helpers.js'),file);}},
     {id:'byte-inflation',family:'helper',expected:/Gzip comparison helper\/root increased/,change(packageDir){const noise=crypto.randomBytes(16000).toString('hex');fs.appendFileSync(path.join(packageDir,'lib/index.js'),`\nimport { buildOneDriveAppDataPath as originalPath } from './helpers/spfx-graph-path.helpers';\nexport function buildOneDriveAppDataPath(name) { globalThis.__contractInflation = '${noise}'; return originalPath(name); }\n`);}},

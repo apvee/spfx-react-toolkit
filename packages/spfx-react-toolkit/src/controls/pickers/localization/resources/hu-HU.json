@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Elem kiválasztása",
+    "selectMany": "Elemek kiválasztása",
+    "search": "Keresés…",
+    "clearSelection": "Kijelölés törlése",
+    "clearSearch": "Keresés törlése",
+    "options": "Lehetőségek",
+    "searchOptions": "Lehetőségek keresése",
+    "selectedOne": "Kijelölt elem",
+    "selectedMany": "Kijelölt elemek",
+    "noSelection": "Nincs kijelölés",
+    "resolveIds": "Azonosítók feloldása",
+    "moreResults": "További találatok",
+    "retry": "Újrapróbálkozás",
+    "namedOptions": "{name}: Lehetőségek",
+    "namedSearch": "{name}: Keresés",
+    "selectedCount": {
+      "one": "{count} elem kijelölve",
+      "other": "{count} elem kijelölve"
+    },
+    "minimumSearchLength": {
+      "one": "A kereséshez írjon be legalább {count} karaktert",
+      "other": "A kereséshez írjon be legalább {count} karaktert"
+    }
+  },
+  "status": {
+    "searching": "Keresés…",
+    "loading": "Betöltés…",
+    "partialSearch": "Részleges keresés: szűkítse a keresést.",
+    "noOtherResults": "Nincs további találat ehhez a kereséshez",
+    "noResults": "Nincs találat ehhez a kereséshez",
+    "noOptions": "Nincsenek elérhető lehetőségek.",
+    "moreItemsAvailable": "További elemek érhetők el.",
+    "partialSuggestions": "Részleges javaslatok: néhány forrás nem érhető el.",
+    "unresolvedValue": "Feloldatlan érték",
+    "partialHubs": "Részleges központlista: szűkítse a hatókört, vagy használja a webhelymódot.",
+    "partialSiteCollections": "Részleges webhelycsoport-keresés (legfeljebb 1000 találat): szűkítse a feltételeket."
+  },
+  "sections": {
+    "consumer": "Megadott lehetőségek",
+    "currentSite": "Jelenlegi webhely",
+    "hubSite": "Társított központ",
+    "catalog": "Elérhető lehetőségek",
+    "currentUser": "Ön",
+    "people": "Javasolt személyek",
+    "memberOf": "Saját csoportok"
+  },
+  "metadata": {
+    "documentLibrary": "Dokumentumtár",
+    "sharePointList": "SharePoint-lista",
+    "personalView": "Személyes nézet",
+    "publicView": "Nyilvános nézet",
+    "field": "Mező",
+    "itemDescription": "Elem · azonosító {id}",
+    "file": "Fájl",
+    "fileWithExtension": "{extension}-fájl",
+    "folder": "Mappa",
+    "sharePointGroup": "SharePoint-csoport · SharePoint",
+    "securityGroup": "Biztonsági csoport · Entra",
+    "distributionList": "Terjesztési lista · Entra",
+    "unvalidatedEmail": "Nem ellenőrzött e-mail-cím",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Elérte a kijelölési korlátot.",
+    "selectionLimitExceeded": "A kijelölés meghaladja a beállított korlátot.",
+    "unresolvedValues": "Egyes kijelölt értékek nincsenek feloldva.",
+    "outOfScopeValues": "A kijelölés a beállított hatókörön kívüli értékeket tartalmaz.",
+    "resolveRequiredUserIds": "Oldja fel a kijelölt felhasználók szükséges azonosítóit."
+  },
+  "errors": {
+    "candidateOutOfScope": "A jelölt a beállított hatókörön kívül van.",
+    "incompleteCandidateResolution": "A jelöltet nem sikerült teljesen feloldani.",
+    "resolutionFailed": "A feloldás nem sikerült.",
+    "graphUnavailable": "A Microsoft Graph-ügyfél nem érhető el."
+  }
+}

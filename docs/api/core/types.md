@@ -1,5 +1,7 @@
 # Core Types
 
+[Providers and core types](../INDEX.md#providers-and-core-types)
+
 > TypeScript type definitions for SPFx React Toolkit
 
 ## Overview
@@ -15,11 +17,11 @@ Type of SPFx host component.
 ### Definition
 
 ```typescript
-type HostKind = 
-  | 'WebPart' 
-  | 'AppCustomizer' 
-  | 'FieldCustomizer' 
-  | 'CommandSet' 
+type HostKind =
+  | 'WebPart'
+  | 'AppCustomizer'
+  | 'FieldCustomizer'
+  | 'CommandSet'
   | 'ACE';
 ```
 
@@ -40,7 +42,7 @@ import { useSPFxContext } from '@apvee/spfx-react-toolkit';
 
 function MyComponent() {
   const { kind } = useSPFxContext();
-  
+
   switch (kind) {
     case 'WebPart':
       return <WebPartUI />;
@@ -65,7 +67,7 @@ Union type for all SPFx component instances.
 ### Definition
 
 ```typescript
-type SPFxComponent<TProps extends {} = {}> = 
+type SPFxComponent<TProps extends {} = {}> =
   | BaseClientSideWebPart<TProps>
   | BaseApplicationCustomizer<TProps>
   | BaseListViewCommandSet<TProps>
@@ -81,9 +83,8 @@ This type represents any SPFx component instance that can be passed to a provide
 ```typescript
 import type { SPFxComponent } from '@apvee/spfx-react-toolkit';
 
-function getInstanceId<T extends {}>(component: SPFxComponent<T>): string {
-  return component.context.instanceId;
-}
+// The union describes provider inputs; read metadata through public hooks.
+type TitledHost = SPFxComponent<{ title: string }>;
 ```
 
 ### Source
@@ -99,7 +100,7 @@ Union type for all SPFx context types.
 ### Definition
 
 ```typescript
-type SPFxContextType = 
+type SPFxContextType =
   | BaseClientSideWebPart<any>['context']
   | BaseApplicationCustomizer<any>['context']
   | BaseListViewCommandSet<any>['context']
@@ -122,13 +123,13 @@ import type { WebPartContext } from '@microsoft/sp-webpart-base';
 
 function MyComponent() {
   const { spfxContext, kind } = useSPFxContext();
-  
-  // Type narrowing for WebPart-specific properties
+
+  // The matching WebPart provider establishes this explicit assertion.
   if (kind === 'WebPart') {
     const wpContext = spfxContext as WebPartContext;
     console.log(wpContext.domElement); // WebPart-specific
   }
-  
+
   // Common properties available on all contexts
   console.log(spfxContext.pageContext.web.title);
 }
@@ -166,11 +167,11 @@ interface ContainerSize {
 import { useSPFxContainerInfo } from '@apvee/spfx-react-toolkit';
 
 function MyComponent() {
-  const { width, height } = useSPFxContainerInfo();
-  
+  const { size } = useSPFxContainerInfo();
+
   return (
     <div>
-      <p>Container: {width}x{height}px</p>
+      <p>{size ? `Container: ${size.width}x${size.height}px` : 'No container'}</p>
     </div>
   );
 }
@@ -192,7 +193,7 @@ Props accepted by SPFx providers.
 interface SPFxProviderProps<TProps extends {} = {}> {
   /** SPFx component instance (WebPart, ApplicationCustomizer, etc.) */
   readonly instance: SPFxComponent<TProps>;
-  
+
   /** Children to render */
   readonly children?: React.ReactNode;
 }
@@ -208,8 +209,8 @@ interface SPFxProviderProps<TProps extends {} = {}> {
 
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
-| `instance` | `SPFxComponent<TProps>` | Yes | The SPFx component instance |
-| `children` | `React.ReactNode` | No | Children to render |
+| `instance` | `SPFxComponent<TProps>` | Yes | Required initialized native instance; use its matching host-specific provider, whose children wait for service-scope readiness |
+| `children` | `React.ReactNode` | No | Descendant application content; omission renders no application content |
 
 ### Example
 
@@ -245,10 +246,10 @@ Context value provided by SPFx providers.
 interface SPFxContextValue {
   /** Unique identifier for this SPFx instance */
   readonly instanceId: string;
-  
+
   /** SPFx context object with full type safety */
   readonly spfxContext: SPFxContextType;
-  
+
   /** Type of host component */
   readonly kind: HostKind;
 }
@@ -266,7 +267,7 @@ interface SPFxContextValue {
 
 Contains only static metadata, no reactive state. The `spfxContext` property provides type-safe access to common SPFx context properties like `pageContext`, `serviceScope`, and `instanceId`.
 
-For component-specific properties, use type narrowing with the `kind` property.
+`kind` and `spfxContext` are separate fields, not a discriminated union: checking `kind` does not narrow the context type in TypeScript. Where the matching provider is known, explicitly assert its native SPFx context type, as in the `SPFxContextType` example above. No host-specific context hooks are exported.
 
 ### Example
 
@@ -275,7 +276,7 @@ import { useSPFxContext } from '@apvee/spfx-react-toolkit';
 
 function MyComponent() {
   const { instanceId, spfxContext, kind } = useSPFxContext();
-  
+
   return (
     <div>
       <p>Instance: {instanceId}</p>
@@ -297,7 +298,7 @@ function MyComponent() {
 Import types from the main package:
 
 ```typescript
-import type { 
+import type {
   HostKind,
   SPFxComponent,
   SPFxContextType,
@@ -313,7 +314,3 @@ import type {
 
 - [Providers](providers.md) - Provider components
 - [Context Hooks](../hooks/context.md) - Hooks using these types
-
----
-
-*Generated from JSDoc comments. Last updated: January 31, 2026*

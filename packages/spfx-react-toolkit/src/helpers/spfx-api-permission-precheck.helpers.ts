@@ -1,5 +1,21 @@
+/**
+ * Token acquisition policy used by the precheck service. `passive` disables provider interaction; `interactiveAllowed` permits it. Neither mode grants permissions or bypasses consent.
+ *
+ * @example
+ * ```ts
+ * const mode: SPFxApiPermissionPrecheckMode = 'passive';
+ * ```
+ */
 export type SPFxApiPermissionPrecheckMode = 'passive' | 'interactiveAllowed';
 
+/**
+ * Aggregate UI state: `idle` has no results, `checking` has pending work, `ready` has every required scope, `actionRequired` has remediable required failures, and `cannotDetermine` has unresolved required results.
+ *
+ * @example
+ * ```ts
+ * const state = summarizeSPFxApiPermissionResults([]).configurationState;
+ * ```
+ */
 export type SPFxApiPermissionConfigurationState =
   | 'idle'
   | 'checking'
@@ -7,6 +23,14 @@ export type SPFxApiPermissionConfigurationState =
   | 'actionRequired'
   | 'cannotDetermine';
 
+/**
+ * Outcome of one delegated-scope precheck. `available` means the decoded token contains an accepted scope; other values describe configuration, token or acquisition failures. This is diagnostic evidence, not proof that an API operation will succeed.
+ *
+ * @example
+ * ```ts
+ * const status: SPFxApiPermissionCheckStatus = 'missingScope';
+ * ```
+ */
 export type SPFxApiPermissionCheckStatus =
   | 'available'
   | 'missingScope'
@@ -26,85 +50,336 @@ export type SPFxApiPermissionCheckStatus =
   | 'invalidRequirement'
   | 'unknown';
 
+/**
+ * Presentation severity: available is ok; unknown, transientFailure and timeout are unknown regardless of requiredness; all other unavailable statuses are error for required requirements and warning for optional ones. This differs from aggregate readiness buckets.
+ *
+ * @example
+ * ```ts
+ * const severity: SPFxApiPermissionSeverity = 'warning';
+ * ```
+ */
 export type SPFxApiPermissionSeverity = 'ok' | 'warning' | 'error' | 'unknown';
 
+/**
+ * One delegated scope with optional alternatives and UI metadata. Scope names are case-sensitive; normalization trims whitespace and defaults `required` to true.
+ *
+ * @example
+ * ```ts
+ * const scope: SPFxPermissionScopeOptions = { scope: 'User.Read', required: false };
+ * ```
+ */
 export interface SPFxPermissionScopeOptions {
+  /**
+   * Case-sensitive delegated scope name; normalization trims surrounding whitespace.
+   */
   readonly scope: string;
+  /**
+   * Whether this scope blocks configuration readiness. Defaults to true when omitted.
+   */
   readonly required?: boolean;
+  /**
+   * Explicit alternative scope names accepted as equivalent; no hierarchy is inferred. Omitted means no alternatives.
+   */
   readonly satisfies?: readonly string[];
+  /**
+   * Optional display label preserved on the normalized requirement.
+   */
   readonly label?: string;
 }
 
+/**
+ * Convenient scope input: a string is a required scope; an options object specifies optionality, acceptable alternative scopes and a display label.
+ *
+ * @example
+ * ```ts
+ * const scopes: SPFxPermissionScopeInput[] = ['User.Read', { scope: 'Mail.Read', required: false }];
+ * ```
+ */
 export type SPFxPermissionScopeInput = string | SPFxPermissionScopeOptions;
 
+/**
+ * Custom API resource and its delegated scopes. `resource` is the token request resource; `packageResource` is the SharePoint API-access resource name. Audience checks are skipped unless expected audiences are supplied.
+ *
+ * @example
+ * ```ts
+ * const api: SPFxCustomApiPermissionInput = { name: 'Contoso API', resource: 'api://contoso', scopes: ['access_as_user'] };
+ * ```
+ */
 export interface SPFxCustomApiPermissionInput {
+  /**
+   * Optional identity prefix. Defaults to the resource endpoint when omitted or empty.
+   */
   readonly id?: string;
+  /**
+   * Human-readable resource name; also the default package resource label.
+   */
   readonly name: string;
+  /**
+   * Resource URI passed to the SPFx token provider.
+   */
   readonly resource: string;
+  /**
+   * Resource label for SharePoint permission requests; defaults to name when omitted or empty.
+   */
   readonly packageResource?: string;
+  /**
+   * Delegated scope inputs to normalize; each produces one requirement.
+   */
   readonly scopes: readonly SPFxPermissionScopeInput[];
+  /**
+   * Exact accepted token audience strings. Omission disables audience comparison for this API.
+   */
   readonly expectedAudiences?: readonly string[];
 }
 
+/**
+ * Inputs normalized into delegated-scope requirements, in Graph, custom API, then explicit-requirement order. Duplicate endpoint/scope pairs keep the first entry. Omitted arrays contribute no requirements; normalization performs no token request.
+ *
+ * @example
+ * ```ts
+ * const config: SPFxApiPermissionPrecheckConfig = { graph: ['User.Read'] };
+ * ```
+ */
 export interface SPFxApiPermissionPrecheckConfig {
+  /**
+   * Graph delegated scopes; omitted means no Graph requirements.
+   */
   readonly graph?: readonly SPFxPermissionScopeInput[];
+  /**
+   * Custom resource configurations; omitted means no custom API requirements.
+   */
   readonly customApis?: readonly SPFxCustomApiPermissionInput[];
+  /**
+   * Explicit normalized requirements appended after configured resources. Duplicate endpoint/scope pairs keep the earlier requirement.
+   */
   readonly requirements?: readonly SPFxApiPermissionRequirement[];
 }
 
+/**
+ * Normalized, required metadata for one delegated-scope check. Prefer `normalizeSPFxApiPermissionRequirements` to construct Graph/custom API entries consistently. Validation checks completeness, not endpoint reachability or consent.
+ *
+ * @example
+ * ```ts
+ * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
+ * ```
+ */
 export interface SPFxApiPermissionRequirement {
+  /**
+   * Stable identity used to associate a result with its requirement; must be nonblank.
+   */
   readonly id: string;
+  /**
+   * Resource display name; must be nonblank.
+   */
   readonly resourceName: string;
+  /**
+   * Token request resource URI; must be nonblank.
+   */
   readonly resourceEndpoint: string;
+  /**
+   * Resource label in package-solution API permission requests; must be nonblank.
+   */
   readonly packageResource: string;
+  /**
+   * Case-sensitive delegated scope name; must be nonblank.
+   */
   readonly scope: string;
+  /**
+   * Supported permission kind. Only delegated scopes are evaluated, not application roles.
+   */
   readonly kind: 'delegatedScope';
+  /**
+   * Whether an unavailable result blocks aggregate readiness.
+   */
   readonly required: boolean;
+  /**
+   * Explicit alternative accepted scope names; omitted means only scope is accepted.
+   */
   readonly satisfies?: readonly string[];
+  /**
+   * Exact accepted audience strings; omitted or empty disables audience comparison.
+   */
   readonly expectedAudiences?: readonly string[];
+  /**
+   * Administrator remediation text displayed on actionable failures.
+   */
   readonly adminMessage: string;
+  /**
+   * Optional application-defined display label.
+   */
   readonly label?: string;
 }
 
+/**
+ * Resource/scope pair suitable for `webApiPermissionRequests` in package-solution.json. Listing a request does not approve it; an administrator must approve API access.
+ *
+ * @example
+ * ```ts
+ * const request: SPFxApiPermissionPackageSolutionEntry = { resource: 'Microsoft Graph', scope: 'User.Read' };
+ * ```
+ */
 export interface SPFxApiPermissionPackageSolutionEntry {
+  /**
+   * Resource label for a package-solution.json API access request.
+   */
   readonly resource: string;
+  /**
+   * Delegated permission scope requested from that resource.
+   */
   readonly scope: string;
 }
 
+/**
+ * Token-free display metadata for a checked requirement, including diagnostic status and administrator remediation. Consumers should branch on `status`, rather than infer success from a message or severity.
+ *
+ * @example
+ * ```ts
+ * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
+ * const summary: SPFxApiPermissionSummary = evaluateSPFxApiPermissionRequirement(requirement, { scp: 'User.Read' });
+ * ```
+ */
 export interface SPFxApiPermissionSummary {
+  /**
+   * Identity copied from the checked requirement.
+   */
   readonly id: string;
+  /**
+   * Resource display name copied from the requirement.
+   */
   readonly resourceName: string;
+  /**
+   * Token request resource URI copied from the requirement.
+   */
   readonly resourceEndpoint: string;
+  /**
+   * Requested delegated scope, in its original case.
+   */
   readonly scope: string;
+  /**
+   * Whether this requirement blocks readiness when unavailable.
+   */
   readonly required: boolean;
+  /**
+   * Diagnostic outcome for this requirement; inspect available for scope success.
+   */
   readonly status: SPFxApiPermissionCheckStatus;
+  /**
+   * UI severity derived from status and whether the requirement is required.
+   */
   readonly severity: SPFxApiPermissionSeverity;
+  /**
+   * Human-readable diagnostic text, without the access token.
+   */
   readonly message: string;
+  /**
+   * Administrator remediation instruction from the requirement.
+   */
   readonly adminMessage: string;
+  /**
+   * Resource/scope pair to include in package-solution.json; approval remains separate.
+   */
   readonly packageSolutionEntry: SPFxApiPermissionPackageSolutionEntry;
+  /**
+   * Requested or alternative scope found exactly in the token; undefined when none matches.
+   */
   readonly matchedScope?: string;
+  /**
+   * Extracted acquisition error code when available; undefined otherwise.
+   */
   readonly errorCode?: string;
 }
 
+/**
+ * Detailed precheck outcome extending `SPFxApiPermissionSummary` with observed delegated scopes, audience and tenant metadata. Raw access tokens are never included; these claims are diagnostic and unverified.
+ *
+ * @example
+ * ```ts
+ * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
+ * const result: SPFxApiPermissionCheckResult = evaluateSPFxApiPermissionRequirement(requirement, { scp: 'User.Read' });
+ * ```
+ */
 export interface SPFxApiPermissionCheckResult extends SPFxApiPermissionSummary {
+  /**
+   * Delegated scp claim values observed in the token; empty when no scopes were decoded.
+   */
   readonly detectedScopes: readonly string[];
+  /**
+   * First string audience observed when available; undefined for absent/unusable audiences.
+   */
   readonly audience?: string;
+  /**
+   * Tenant ID claim when available; not independently verified.
+   */
   readonly tenantId?: string;
+  /**
+   * Observed scope differing only by case from an acceptable scope; diagnostic only, not accepted.
+   */
   readonly caseMismatchScope?: string;
 }
 
+/**
+ * Decoded JWT claims used for diagnostics. All known claims are optional and extra claims are retained as unknown values. Decoding does not validate signatures or claim types; never use this object as authorization evidence.
+ *
+ * @example
+ * ```ts
+ * const payload: SPFxJwtPayload = { scp: 'User.Read Mail.Read', aud: SPFX_GRAPH_APP_ID };
+ * ```
+ */
 export interface SPFxJwtPayload {
+  /**
+   * Optional resource audience string or list; decoded without signature verification.
+   */
   readonly aud?: string | readonly string[];
+  /**
+   * Optional space-separated delegated scope claim.
+   */
   readonly scp?: string;
+  /**
+   * Optional application role claims; delegated-scope prechecks do not accept these as scopes.
+   */
   readonly roles?: readonly string[] | string;
+  /**
+   * Optional tenant identifier claim; unverified.
+   */
   readonly tid?: string;
+  /**
+   * Optional expiration time in Unix seconds; numeric values are checked by evaluation.
+   */
   readonly exp?: number;
+  /**
+   * Optional earliest valid time in Unix seconds; numeric values are checked by evaluation.
+   */
   readonly nbf?: number;
+  /** Additional decoded claims; callers must validate their types before use. */
   readonly [key: string]: unknown;
 }
 
+/**
+ * Microsoft Graph resource label used in SharePoint package-solution permission requests.
+ *
+ * @example
+ * ```ts
+ * const request = { resource: SPFX_GRAPH_RESOURCE_NAME, scope: 'User.Read' };
+ * ```
+ */
 export const SPFX_GRAPH_RESOURCE_NAME = 'Microsoft Graph';
+/**
+ * Microsoft Graph resource endpoint used to acquire tokens and construct normalized Graph requirement IDs.
+ *
+ * @example
+ * ```ts
+ * const id = createSPFxApiPermissionRequirementId(SPFX_GRAPH_RESOURCE_ENDPOINT, 'User.Read');
+ * ```
+ */
 export const SPFX_GRAPH_RESOURCE_ENDPOINT = 'https://graph.microsoft.com';
+/**
+ * Microsoft Graph application audience accepted alongside its resource endpoint by normalized Graph requirements.
+ *
+ * @example
+ * ```ts
+ * const payload: SPFxJwtPayload = { aud: SPFX_GRAPH_APP_ID, scp: 'User.Read' };
+ * ```
+ */
 export const SPFX_GRAPH_APP_ID = '00000003-0000-0000-c000-000000000000';
 
 const graphExpectedAudiences: readonly string[] = [
@@ -165,6 +440,17 @@ function addRequirement(
   requirements.push(requirement);
 }
 
+/**
+ * Normalizes configured Graph, custom API and explicit requirements without I/O. Trims configured scope names; Graph and custom scopes default to required. Deduplicates exact endpoint/scope pairs, keeping the first entry; explicit requirements are otherwise preserved.
+ *
+ * @param config - Configuration; omitted arrays contribute no requirements.
+ * @returns Ordered, deduplicated requirements; an empty configuration returns an empty array.
+ *
+ * @example
+ * ```ts
+ * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
+ * ```
+ */
 export function normalizeSPFxApiPermissionRequirements(
   config: SPFxApiPermissionPrecheckConfig
 ): readonly SPFxApiPermissionRequirement[] {
@@ -221,6 +507,18 @@ export function normalizeSPFxApiPermissionRequirements(
   return requirements;
 }
 
+/**
+ * Builds a display-only administrator instruction for one resource/scope pair. It does not change package configuration or grant API permissions.
+ *
+ * @param packageResource - Resource label used in package-solution.json.
+ * @param scope - Delegated scope to approve.
+ * @returns Plain-text instruction for SharePoint Admin Center API access.
+ *
+ * @example
+ * ```ts
+ * const message = buildSPFxApiPermissionAdminMessage('Microsoft Graph', 'User.Read');
+ * ```
+ */
 export function buildSPFxApiPermissionAdminMessage(
   packageResource: string,
   scope: string
@@ -228,6 +526,19 @@ export function buildSPFxApiPermissionAdminMessage(
   return `Approve ${packageResource} / ${scope} in SharePoint Admin Center API access.`;
 }
 
+/**
+ * Builds a deterministic display identity. Graph uses `graph:<trimmed scope>`; other resources use `api:<trimmed prefix or endpoint>:<trimmed scope>`. Values are not URL-encoded.
+ *
+ * @param resourceEndpoint - Token resource endpoint.
+ * @param scope - Delegated scope; surrounding whitespace is removed.
+ * @param prefix - Optional custom namespace; `graph` selects the Graph identity format.
+ * @returns Requirement identity string.
+ *
+ * @example
+ * ```ts
+ * const id = createSPFxApiPermissionRequirementId(SPFX_GRAPH_RESOURCE_ENDPOINT, 'User.Read');
+ * ```
+ */
 export function createSPFxApiPermissionRequirementId(
   resourceEndpoint: string,
   scope: string,
@@ -242,6 +553,18 @@ export function createSPFxApiPermissionRequirementId(
   return `api:${(prefix || resourceEndpoint).trim()}:${trimmedScope}`;
 }
 
+/**
+ * Checks required metadata for a delegated-scope requirement without acquiring a token. Unsupported kinds return `unsupportedPermissionKind`; missing or blank required fields return `invalidRequirement`.
+ *
+ * @param requirement - Requirement to inspect, including metadata and permission kind.
+ * @returns A diagnostic failure result, or undefined when metadata is complete.
+ *
+ * @example
+ * ```ts
+ * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
+ * const issue = validateSPFxApiPermissionRequirement(requirement);
+ * ```
+ */
 export function validateSPFxApiPermissionRequirement(
   requirement: SPFxApiPermissionRequirement
 ): SPFxApiPermissionCheckResult | undefined {
@@ -273,6 +596,17 @@ export function validateSPFxApiPermissionRequirement(
   return undefined;
 }
 
+/**
+ * Decodes only the JSON payload of a JWT-shaped string. Malformed/nonobject payloads return undefined; signature, issuer and claim types are not validated. Do not log raw tokens or treat decoded claims as verified identity.
+ *
+ * @param token - Token text to decode locally; no network request is made.
+ * @returns Decoded object claims, or undefined when decoding fails.
+ *
+ * @example
+ * ```ts
+ * const payload = decodeSPFxJwtPayload('header.eyJzY3AiOiJVc2VyLlJlYWQifQ.signature');
+ * ```
+ */
 export function decodeSPFxJwtPayload(token: string): SPFxJwtPayload | undefined {
   try {
     const parts = token.split('.');
@@ -294,6 +628,17 @@ export function decodeSPFxJwtPayload(token: string): SPFxJwtPayload | undefined 
   }
 }
 
+/**
+ * Extracts whitespace-trimmed scopes from a string `scp` claim. Ignores app roles and returns an empty array for absent/nonstring claims; duplicate scopes are retained.
+ *
+ * @param payload - Decoded, unverified JWT claims.
+ * @returns Delegated scope names in their original case and order.
+ *
+ * @example
+ * ```ts
+ * const scopes = extractSPFxDelegatedScopes({ scp: 'User.Read Mail.Read' });
+ * ```
+ */
 export function extractSPFxDelegatedScopes(payload: SPFxJwtPayload): readonly string[] {
   if (typeof payload.scp !== 'string') {
     return [];
@@ -305,10 +650,27 @@ export function extractSPFxDelegatedScopes(payload: SPFxJwtPayload): readonly st
     .filter(scope => scope.length > 0);
 }
 
+/**
+ * Evaluates a requirement against decoded claims without I/O or signature verification. Checks metadata, token dates, optional audience policy and exact case-sensitive delegated scopes (including explicitly accepted alternatives). App-only roles are unsupported. An available result does not prove an API request will succeed.
+ *
+ * @param requirement - Normalized delegated-scope requirement.
+ * @param payload - Decoded claims; undefined produces `unsupportedToken`.
+ * @param options - Audience validation is enabled unless `validateAudience` is false; absent expected audiences skip the comparison.
+ * @returns Detailed diagnostic result without a raw token.
+ *
+ * @example
+ * ```ts
+ * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
+ * const result = evaluateSPFxApiPermissionRequirement(requirement, { aud: SPFX_GRAPH_APP_ID, scp: 'User.Read' });
+ * ```
+ */
 export function evaluateSPFxApiPermissionRequirement(
   requirement: SPFxApiPermissionRequirement,
   payload: SPFxJwtPayload | undefined,
-  options?: { readonly validateAudience?: boolean }
+  options?: { /**
+   * Checks configured expected audiences unless false. Omitted defaults to enabled.
+   */
+  readonly validateAudience?: boolean }
 ): SPFxApiPermissionCheckResult {
   const invalidResult = validateSPFxApiPermissionRequirement(requirement);
 
@@ -393,6 +755,19 @@ export function evaluateSPFxApiPermissionRequirement(
   );
 }
 
+/**
+ * Classifies a token-acquisition error using message/code heuristics into consent, claims, Conditional Access, interaction, assignment, resource, timeout, transient or unknown outcomes. Classification is diagnostic and does not retry or grant access.
+ *
+ * @param requirement - Requirement whose display/remediation metadata accompanies the failure.
+ * @param error - Arbitrary thrown value from token acquisition.
+ * @returns Diagnostic result with an extracted error code when available.
+ *
+ * @example
+ * ```ts
+ * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
+ * const result = classifySPFxApiPermissionError(requirement, new Error('AADSTS65001: consent required'));
+ * ```
+ */
 export function classifySPFxApiPermissionError(
   requirement: SPFxApiPermissionRequirement,
   error: unknown
@@ -493,15 +868,46 @@ export function classifySPFxApiPermissionError(
   );
 }
 
+/**
+ * Groups available results, required actionable failures, optional failures and unresolved required outcomes. `isConfigured` checks only required results, so an empty set returns true even though its configuration state is `idle`. A checking flag overrides the aggregate state.
+ *
+ * @param results - Completed requirement results.
+ * @param isChecking - Whether work is still pending; omitted means false.
+ * @returns Aggregate state and token-free UI buckets.
+ *
+ * @example
+ * ```ts
+ * const summary = summarizeSPFxApiPermissionResults([]);
+ * // summary.configurationState === 'idle'; summary.isConfigured === true
+ * ```
+ */
 export function summarizeSPFxApiPermissionResults(
   results: readonly SPFxApiPermissionCheckResult[],
   isChecking?: boolean
 ): {
+  /**
+   * Aggregate readiness state; checking takes priority, while no results produces idle.
+   */
   readonly configurationState: SPFxApiPermissionConfigurationState;
+  /**
+   * True when every required result is available. Empty/no-required results also yield true.
+   */
   readonly isConfigured: boolean;
+  /**
+   * All results with available status, whether required or optional.
+   */
   readonly available: readonly SPFxApiPermissionSummary[];
+  /**
+   * Required failures whose status indicates an actionable permission/access issue.
+   */
   readonly missing: readonly SPFxApiPermissionSummary[];
+  /**
+   * All unavailable optional requirements; they do not block isConfigured.
+   */
   readonly warnings: readonly SPFxApiPermissionSummary[];
+  /**
+   * Required failures whose status does not determine an actionable missing permission.
+   */
   readonly unknown: readonly SPFxApiPermissionSummary[];
 } {
   const available: SPFxApiPermissionSummary[] = [];

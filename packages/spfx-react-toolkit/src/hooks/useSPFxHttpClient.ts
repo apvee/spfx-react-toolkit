@@ -8,249 +8,95 @@ import { useAsyncInvoke } from './useAsyncInvoke.internal';
 
 /**
  * Return type for useSPFxHttpClient hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const http: SPFxHttpClientInfo = useSPFxHttpClient();
+ * console.log(http.isReady, http.error);
+ * ```
  */
 export interface SPFxHttpClientInfo {
-  /** 
-   * Native HttpClient from SPFx.
-   * Provides access to generic HTTP endpoints (non-SharePoint).
-   * Will be undefined if ServiceScope is not available.
+  /**
+   * Native SPFx client, undefined until available or when service consumption/initialization fails. Direct client requests do not update hook loading/error state.
    */
   readonly client: HttpClient | undefined;
   
-  /** 
+  /**
    * Invoke HTTP API call with automatic state management.
    * Tracks loading state and captures errors automatically.
-   * 
+   *
    * @param fn - Function that receives HttpClient and returns a promise
    * @returns Promise with the result
    * @throws Error if client is not available
-   * 
+   *
    * @example
    * ```tsx
+   * // Inside a React component beneath a matching host-specific SPFx provider:
    * const { invoke } = useSPFxHttpClient();
-   * 
-   * const data = await invoke(client => 
-   *   client.get('https://api.example.com/data', HttpClient.configurations.v1)
-   *     .then(res => res.json())
-   * );
+   *
+   * // Call this handler from an event or an effect; do not request during render.
+   * const run = async () => {
+   *   const data = await invoke(client =>
+   *     client.get('https://api.example.com/data', HttpClient.configurations.v1)
+   *       .then(res => res.json())
+   *   );
+   * };
    * ```
+   * @throws Callback/request failures are normalized to Error, published when current, and rethrown. HTTP response.ok is not checked automatically.
    */
   readonly invoke: <T>(fn: (client: HttpClient) => Promise<T>) => Promise<T>;
   
-  /** 
-   * Loading state - true during invoke() calls.
-   * Does not track direct client usage.
+  /**
+   * True while any invoke call for the current client remains pending; direct client usage is not tracked.
    */
   readonly isLoading: boolean;
   
-  /** 
-   * Last error from invoke() calls.
-   * Does not capture errors from direct client usage.
+  /**
+   * Error from the latest-started invoke call; each new call clears it. Older/client-obsolete completions cannot replace it. Direct client usage is not tracked.
    */
   readonly error: Error | undefined;
   
-  /** Clear the current error */
+  /**
+   * Clear the current error
+   * @returns No value; initialization/context errors remain separate.
+   */
   readonly clearError: () => void;
 
   /**
-   * Computed state: true when client is ready for use.
-   * Equivalent to: client !== undefined
-   * 
+   * True when the native client exists. Check readiness before invoking a request.
+   *
    * @example
    * ```tsx
-   * const { isReady, invoke } = useSPFxHttpClient();
-   * 
-   * if (!isReady) return <Spinner label="Waiting for HttpClient..." />;
-   * 
-   * // Safe to use invoke
-   * const data = await invoke(c => c.get(...).then(r => r.json()));
+   * import { HttpClient } from '@microsoft/sp-http';
+   *
+   * function LoadButton() {
+   *   const { isReady, invoke } = useSPFxHttpClient();
+   *   const load = async () => {
+   *     try {
+   *       const data = await invoke(client => client.get('https://api.example.com/data', HttpClient.configurations.v1).then(response => response.json()));
+   *       console.log(data);
+   *     } catch (error) {
+   *       console.error(error);
+   *     }
+   *   };
+   *   return <button disabled={!isReady} onClick={() => void load()}>Load</button>;
+   * }
    * ```
    */
   readonly isReady: boolean;
 }
 
 /**
- * Hook to access generic HTTP client with built-in state management
- * 
- * Provides native HttpClient for generic HTTP requests to external APIs,
- * webhooks, or any non-SharePoint endpoints. For SharePoint REST API calls,
- * use useSPFxSPHttpClient instead.
- * 
- * Offers two usage patterns:
- * 
- * 1. **invoke()** - Automatic state management (loading + error tracking)
- * 2. **client** - Direct access for full control
- * 
- * For type safety, import SPFx types:
- * ```typescript
- * import { HttpClient } from '@microsoft/sp-http';
- * ```
- * 
- * Requirements:
- * - SPFx ServiceScope with HttpClient service
- * - Network access to target endpoints
- * - CORS configured on external APIs (if applicable)
- * 
- * @remarks
- * This hook consumes HttpClient from SPFx ServiceScope using dependency injection.
- * The service is consumed lazily (only when this hook is used) and cached for optimal
- * performance. The client is always available (non-undefined) after Provider initialization.
- * 
- * **Key Differences from SPHttpClient:**
- * - HttpClient: Generic HTTP calls to any URL (public APIs, webhooks)
- * - SPHttpClient: SharePoint-specific REST API calls with integrated authentication
- * 
- * Use HttpClient for external APIs, SPHttpClient for SharePoint `/_api/` endpoints.
- * 
- * @see {@link useSPFxSPHttpClient} for SharePoint REST API calls
- * @see {@link useSPFxAadHttpClient} for Azure AD secured API calls
- * @see {@link useSPFxMSGraphClient} for Microsoft Graph API calls
- * 
- * @example Using invoke with public API
+ * Accesses the SPFx HttpClient from ServiceScope. Direct client calls do not update hook state. invoke tracks all pending calls for its current client and publishes errors only from the latest-started call; obsolete completions still settle their promises. HTTP non-success responses must be checked by the callback; the hook does not inspect response.ok.
+ * @returns Native client, invocation state and readiness helpers.
+ * @throws Missing SPFx provider.
+ *
+ * @example
  * ```tsx
- * function WeatherWidget() {
- *   const { invoke, isLoading, error, clearError } = useSPFxHttpClient();
- *   const [weather, setWeather] = useState<any>(null);
- *   
- *   const loadWeather = () => {
- *     invoke(client =>
- *       client.get(
- *         'https://api.openweathermap.org/data/2.5/weather?q=London&appid=YOUR_KEY',
- *         HttpClient.configurations.v1
- *       ).then(res => res.json())
- *     ).then(data => setWeather(data));
- *   };
- *   
- *   useEffect(() => { loadWeather(); }, []);
- *   
- *   if (isLoading) return <Spinner />;
- *   if (error) return (
- *     <MessageBar messageBarType={MessageBarType.error}>
- *       {error.message}
- *       <Link onClick={() => { clearError(); loadWeather(); }}>Retry</Link>
- *     </MessageBar>
- *   );
- *   
- *   return <div>Temperature: {weather?.main?.temp}</div>;
- * }
- * ```
- * 
- * @example Using client directly for advanced control
- * ```tsx
- * import { HttpClient } from '@microsoft/sp-http';
- * 
- * function NewsReader() {
- *   const { client } = useSPFxHttpClient();
- *   const [articles, setArticles] = useState([]);
- *   const [loading, setLoading] = useState(false);
- *   
- *   // client is always available after Provider initialization
- *   
- *   const loadNews = async () => {
- *     setLoading(true);
- *     try {
- *       const response = await client.get(
- *         'https://newsapi.org/v2/top-headlines?country=us&apiKey=YOUR_KEY',
- *         HttpClient.configurations.v1
- *       );
- *       const data = await response.json();
- *       setArticles(data.articles);
- *     } catch (err) {
- *       console.error(err);
- *     } finally {
- *       setLoading(false);
- *     }
- *   };
- *   
- *   return (
- *     <>
- *       <button onClick={loadNews} disabled={loading}>Load News</button>
- *       {loading && <Spinner />}
- *       <ul>{articles.map(a => <li key={a.url}>{a.title}</li>)}</ul>
- *     </>
- *   );
- * }
- * ```
- * 
- * @example POST to external webhook
- * ```tsx
- * function NotificationSender() {
- *   const { invoke, isLoading } = useSPFxHttpClient();
- *   
- *   const sendNotification = (message: string) => {
- *     invoke(client =>
- *       client.post(
- *         'https://hooks.slack.com/services/YOUR/WEBHOOK/URL',
- *         HttpClient.configurations.v1,
- *         {
- *           headers: { 'Content-Type': 'application/json' },
- *           body: JSON.stringify({ text: message })
- *         }
- *       )
- *     ).then(() => console.log('Notification sent'));
- *   };
- *   
- *   return (
- *     <button onClick={() => sendNotification('Hello from SPFx!')} disabled={isLoading}>
- *       Send to Slack
- *     </button>
- *   );
- * }
- * ```
- * 
- * @example Polling external API
- * ```tsx
- * function StatusMonitor() {
- *   const { invoke } = useSPFxHttpClient();
- *   const [status, setStatus] = useState<string>('unknown');
- *   
- *   useEffect(() => {
- *     const interval = setInterval(() => {
- *       invoke(client =>
- *         client.get(
- *           'https://status.example.com/api/health',
- *           HttpClient.configurations.v1
- *         ).then(res => res.json())
- *       ).then(data => setStatus(data.status));
- *     }, 30000); // Poll every 30 seconds
- *     
- *     return () => clearInterval(interval);
- *   }, [invoke]);
- *   
- *   return <div>Service Status: {status}</div>;
- * }
- * ```
- * 
- * @example CORS-enabled REST API
- * ```tsx
- * function ExternalDataGrid() {
- *   const { invoke, isLoading, error } = useSPFxHttpClient();
- *   const [data, setData] = useState([]);
- *   
- *   const fetchData = () => {
- *     invoke(client =>
- *       client.get(
- *         'https://api.contoso.com/v1/records',
- *         HttpClient.configurations.v1,
- *         {
- *           headers: {
- *             'Accept': 'application/json',
- *             'X-API-Key': 'your-api-key'
- *           }
- *         }
- *       ).then(res => res.json())
- *     ).then(records => setData(records));
- *   };
- *   
- *   useEffect(() => { fetchData(); }, []);
- *   
- *   return (
- *     <DetailsList 
- *       items={data}
- *       isLoading={isLoading}
- *       error={error}
- *     />
- *   );
+ * function ClientStatus() {
+ *   const info = useSPFxHttpClient();
+ *   return <span>{info.isReady ? 'Ready' : 'Unavailable'}</span>;
  * }
  * ```
  */

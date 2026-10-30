@@ -1,0 +1,29 @@
+{
+  "empty": "Нет доступных данных",
+  "noResults": "Результаты не найдены",
+  "noVisibleColumns": "Нет видимых столбцов",
+  "loading": "Загрузка",
+  "actions": "Действия",
+  "moreActions": "Другие действия",
+  "yes": "Да",
+  "no": "Нет",
+  "noTags": "Нет тегов",
+  "noObservations": "Нет наблюдений",
+  "invalidValue": "Недопустимое значение",
+  "selectAllRows": "Выбрать все строки",
+  "retry": "Повторить",
+  "selectRowTemplate": "Выбрать строку {rowId}",
+  "sparklineSummaryTemplate": "Первое значение {first}; Последнее значение {last}; Минимум {minimum}; Максимум {maximum}; Среднее {average}; Изменение {change}; Изменение в процентах {changePercent}",
+  "tagOverflow": {
+    "one": "Показать ещё {count} тег",
+    "few": "Показать ещё {count} тега",
+    "many": "Показать ещё {count} тегов",
+    "other": "Показать ещё {count} тега"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} голос",
+    "few": "{formattedCount} голоса",
+    "many": "{formattedCount} голосов",
+    "other": "{formattedCount} голоса"
+  }
+}

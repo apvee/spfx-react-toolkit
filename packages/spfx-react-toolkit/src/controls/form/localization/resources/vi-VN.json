@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Không thể gửi biểu mẫu. Vui lòng thử lại.",
+  "dateInputValidationMessage": "Hoàn tất hoặc sửa ngày trước khi gửi.",
+  "timeInputValidationMessage": "Hoàn tất hoặc sửa giờ trước khi gửi.",
+  "tagPicker": {
+    "noOptions": "Không có tùy chọn nào khớp với truy vấn hiện tại."
+  },
+  "fileInput": {
+    "browseLabel": "Duyệt",
+    "clearLabel": "Xóa"
+  },
+  "arraySection": {
+    "add": "Thêm mục",
+    "empty": "Không có mục",
+    "itemLabelTemplate": "Mục {position}",
+    "removeTemplate": "Xóa {label}",
+    "moveUpTemplate": "Di chuyển {label} lên",
+    "moveDownTemplate": "Di chuyển {label} xuống",
+    "addedTemplate": "Đã thêm {label}",
+    "removedTemplate": "Đã xóa {label}",
+    "movedTemplate": "Đã chuyển {label} đến vị trí {position} trong tổng số {total}"
+  },
+  "datePicker": {
+    "months": [
+      "Tháng 1",
+      "Tháng 2",
+      "Tháng 3",
+      "Tháng 4",
+      "Tháng 5",
+      "Tháng 6",
+      "Tháng 7",
+      "Tháng 8",
+      "Tháng 9",
+      "Tháng 10",
+      "Tháng 11",
+      "Tháng 12"
+    ],
+    "shortMonths": [
+      "Tháng 1",
+      "Tháng 2",
+      "Tháng 3",
+      "Tháng 4",
+      "Tháng 5",
+      "Tháng 6",
+      "Tháng 7",
+      "Tháng 8",
+      "Tháng 9",
+      "Tháng 10",
+      "Tháng 11",
+      "Tháng 12"
+    ],
+    "days": [
+      "Chủ Nhật",
+      "Thứ Hai",
+      "Thứ Ba",
+      "Thứ Tư",
+      "Thứ Năm",
+      "Thứ Sáu",
+      "Thứ Bảy"
+    ],
+    "shortDays": [
+      "CN",
+      "Th 2",
+      "Th 3",
+      "Th 4",
+      "Th 5",
+      "Th 6",
+      "Th 7"
+    ],
+    "goToToday": "Đến hôm nay",
+    "prevMonthAriaLabel": "Tháng trước",
+    "nextMonthAriaLabel": "Tháng sau",
+    "prevYearAriaLabel": "Năm trước",
+    "nextYearAriaLabel": "Năm sau",
+    "prevYearRangeAriaLabel": "Khoảng năm trước",
+    "nextYearRangeAriaLabel": "Khoảng năm sau",
+    "monthPickerHeaderAriaLabel": "{0}, đổi năm",
+    "yearPickerHeaderAriaLabel": "{0}, đổi tháng",
+    "closeButtonAriaLabel": "Đóng",
+    "weekNumberFormatString": "Số tuần {0}",
+    "selectedDateFormatString": "Ngày đã chọn {0}",
+    "todayDateFormatString": "Ngày hôm nay {0}",
+    "dayMarkedAriaLabel": "đã đánh dấu"
+  }
+}

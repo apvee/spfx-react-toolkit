@@ -9,53 +9,211 @@ import '@pnp/sp/batching';
 import { resolveListTarget, snapshotListTarget } from './spfx-pnp-list-target.internal';
 
 /**
- * Select a SharePoint list by exact title, GUID, decoded server-relative root URL
- * or decoded root path relative to the supplied client's explicit web.
- * String targets always remain titles; URL/path request escaping is owned by PnPjs.
+ * Selects by exact title, GUID, decoded server-relative root URL or decoded web-relative root path. String targets remain exact titles. URL roots start with exactly one slash; paths have no leading slash and require an explicit HTTP(S) client web base ending in /_api/web. Validation is lazy per operation.
+ *
+ * @example
+ * ```ts
+ * const target: SPFxPnPListSelector = { kind: 'path', webRelativePath: 'Lists/Tasks' };
+ * ```
  */
 export type SPFxPnPListSelector =
-  | { readonly kind: 'title'; readonly title: string }
-  | { readonly kind: 'id'; readonly id: string }
-  | { readonly kind: 'url'; readonly serverRelativeUrl: string }
-  | { readonly kind: 'path'; readonly webRelativePath: string };
+  | {
+      /** Explicit title selection; strings are never auto-detected as other modes. */
+      readonly kind: 'title';
+      /** Exact list title; whitespace is preserved. */
+      readonly title: string
+    }
+  | {
+      /** Explicit list GUID selection. */
+      readonly kind: 'id';
+      /** List GUID, not an item ID; paired braces and surrounding whitespace are accepted. */
+      readonly id: string
+    }
+  | {
+      /** Explicit decoded server-relative root selection. */
+      readonly kind: 'url';
+      /** Decoded list root starting with exactly one slash; does not switch the client web. */
+      readonly serverRelativeUrl: string
+    }
+  | {
+      /** Explicit decoded web-relative root selection. */
+      readonly kind: 'path';
+      /** Decoded list root relative to the operation client web, without a leading slash. */
+      readonly webRelativePath: string
+    };
 
+/**
+ * Transforms a PnP items query without executing it. Return the fluent query to run; T data is not validated at runtime.
+ * @param items - Query for the selected list.
+ * @returns Configured PnP items query.
+ *
+ * @example
+ * ```ts
+ * const build: SPFxPnPListQueryBuilder = items => items.select('Id', 'Title').orderBy('Id');
+ * ```
+ */
 export type SPFxPnPListQueryBuilder = (items: IItems) => IItems;
 
+/**
+ * Per-query paging overrides. Explicit .top() in the builder takes precedence.
+ *
+ * @example
+ * ```ts
+ * const options: SPFxPnPListQueryOptions = { pageSize: 25 };
+ * ```
+ */
 export interface SPFxPnPListQueryOptions {
+  /**
+   * Overrides the factory default when supplied; omitted uses that default. With neither a default nor .top(), SharePoint chooses the result limit.
+   */
   pageSize?: number;
 }
 
+/**
+ * One page of typed item data and inferred pagination metadata. T is a compile-time expectation without runtime validation.
+ *
+ * @example
+ * ```ts
+ * const page: SPFxPnPListQueryResult<{ Id: number }> = await tasks.query();
+ * if (page.hasMore) console.log(page.nextSkip);
+ * ```
+ * @template T - Expected application data shape; no runtime validation is performed.
+ */
 export interface SPFxPnPListQueryResult<T> {
+  /**
+   * Items returned for this page.
+   */
   readonly items: T[];
+  /**
+   * Explicit .top(), requested size, or undefined when no limit was specified.
+   */
   readonly effectivePageSize: number | undefined;
+  /**
+   * True when a defined effective size equals the returned count; this is a heuristic, not proof of another page.
+   */
   readonly hasMore: boolean;
+  /**
+   * Offset for a follow-up loadMore: page count for query, prior skip plus page count for loadMore.
+   */
   readonly nextSkip: number;
 }
 
+/**
+ * Settled batch outcome. Successful writes are not rolled back; selector and batch-execution failures reject instead of returning this envelope.
+ *
+ * @example
+ * ```ts
+ * const result: SPFxPnPListBatchResult<number[]> = await tasks.createBatch([{ Title: 'New' }]);
+ * if (result.summaryError) console.error(result.errors);
+ * ```
+ * @template TValue - Batch result value shape.
+ */
 export interface SPFxPnPListBatchResult<TValue> {
+  /**
+   * Successful created IDs for createBatch; undefined for update/delete batches.
+   */
   readonly value: TValue;
+  /**
+   * Individual operation rejection reasons, including missing IDs in successful add responses.
+   */
   readonly errors: unknown[];
+  /**
+   * Summary Error when any item failed; undefined when all operations succeeded.
+   */
   readonly summaryError: Error | undefined;
 }
 
+/**
+ * Explicit list operations on a caller-owned client. The target is captured at construction and validated on each operation; T does not validate SharePoint item data. Methods reject selector/request failures, while settled item batch failures are returned in the batch envelope.
+ *
+ * @example
+ * ```ts
+ * const tasks: SPFxPnPListService<{ Id: number; Title: string }> = createSPFxPnPListService(sp, 'Tasks', 25);
+ * const page = await tasks.query(items => items.select('Id', 'Title'));
+ * ```
+ * @template T - Expected application data shape; no runtime validation is performed.
+ */
 export interface SPFxPnPListService<T = unknown> {
+  /**
+   * Queries items with explicit .top() taking precedence over per-call/factory page size.
+   * @param queryBuilder - Optional query transform; omitted queries the list items directly.
+   * @param options - Optional page-size override.
+   * @returns One page with pagination metadata.
+   * @throws Selector, builder or request failures.
+   */
   query: (
     queryBuilder?: SPFxPnPListQueryBuilder,
     options?: SPFxPnPListQueryOptions
   ) => Promise<SPFxPnPListQueryResult<T>>;
+  /**
+   * Queries a later page; applies skip and top after the builder.
+   * @param queryBuilder - Query transform for the original filter/order.
+   * @param pageSize - Requested page count.
+   * @param skip - Offset to request.
+   * @returns Page and next offset.
+   * @throws Selector, builder or request failures.
+   */
   loadMore: (
     queryBuilder: SPFxPnPListQueryBuilder,
     pageSize: number,
     skip: number
   ) => Promise<SPFxPnPListQueryResult<T>>;
+  /**
+   * Reads an item.
+   * @param id - Numeric item ID within the selected list.
+   * @returns Item data typed as T.
+   * @throws Selector or request failures, including missing items.
+   */
   getById: (id: number) => Promise<T>;
+  /**
+   * Creates an item.
+   * @param item - SharePoint field values to write.
+   * @returns Created numeric item ID.
+   * @throws Selector/request failures or an add response without an ID.
+   */
   create: (item: Partial<T>) => Promise<number>;
+  /**
+   * Updates an item.
+   * @param id - Numeric item ID.
+   * @param item - Field values to update.
+   * @returns Resolves after the update succeeds.
+   * @throws Selector or request failures.
+   */
   update: (id: number, item: Partial<T>) => Promise<void>;
+  /**
+   * Deletes an item.
+   * @param id - Numeric item ID.
+   * @returns Resolves after deletion succeeds.
+   * @throws Selector or request failures.
+   */
   remove: (id: number) => Promise<void>;
+  /**
+   * Queues and executes item operations in one PnP batch; successful writes are not rolled back.
+   * @param items - Field values for items to create.
+   * @returns Successful numeric IDs plus settled errors.
+   * @throws Selector or batch-execution failures, including invalid selectors for empty batches.
+   */
   createBatch: (items: Partial<T>[]) => Promise<SPFxPnPListBatchResult<number[]>>;
+  /**
+   * Queues and executes item operations in one PnP batch; successful writes are not rolled back.
+   * @param updates - Numeric item IDs and partial field updates.
+   * @returns Settled errors with an undefined value.
+   * @throws Selector or batch-execution failures, including invalid selectors for empty batches.
+   */
   updateBatch: (
-    updates: Array<{ id: number; item: Partial<T> }>
+    updates: Array<{
+      /** Numeric item ID within the selected list. */
+      id: number;
+      /** SharePoint field values to update. */
+      item: Partial<T>
+    }>
   ) => Promise<SPFxPnPListBatchResult<void>>;
+  /**
+   * Queues and executes item operations in one PnP batch; successful writes are not rolled back.
+   * @param ids - Numeric item IDs to delete.
+   * @returns Settled errors with an undefined value.
+   * @throws Selector or batch-execution failures, including invalid selectors for empty batches.
+   */
   removeBatch: (ids: number[]) => Promise<SPFxPnPListBatchResult<void>>;
 }
 
@@ -167,18 +325,18 @@ function collectCreatedIds(settled: PromiseSettledResult<unknown>[]): { ids: num
 }
 
 /**
- * Create list operations using the supplied PnP client and a captured list target.
- * This module registers PnP webs, lists, items and batching; it does not require
- * the toolkit context factory. The client still needs authentication and request
- * behaviors. Import other PnP features explicitly for direct client operations.
+ * Creates a non-React list service without requesting or validating the list. Owns list/items/batching registrations; the supplied client owns authentication and web selection.
+ * @typeParam T - Expected item shape; no runtime validation occurs.
+ * @param sp - Initialized PnP client for the intended web.
+ * @param listTarget - Exact title or explicit selector, captured at construction.
+ * @param defaultPageSize - Optional limit for query; omitted leaves the server limit unless the builder uses .top().
+ * @returns Explicit list reads, writes and batch operations.
  *
- * @param sp - Configured client; batch operations use its own batched client.
- * @param listTarget - Exact title string or explicit list selector. GUIDs accept paired
- * braces and surrounding whitespace. URL/path roots are decoded values; path selectors
- * require an explicit HTTP(S) web base on the operation's client.
- * @param defaultPageSize - Default query size when neither options nor `.top()` override it.
- * @returns List query, item CRUD and batch operations. Selector validation rejects lazily
- * from operations, including empty batches; constructing the service does not validate.
+ * @example
+ * ```ts
+ * const tasks = createSPFxPnPListService<{ Id: number; Title: string }>(sp, 'Tasks', 25);
+ * const page = await tasks.query(items => items.select('Id', 'Title'));
+ * ```
  */
 export function createSPFxPnPListService<T = unknown>(
   sp: SPFI,
@@ -293,7 +451,12 @@ export function createSPFxPnPListService<T = unknown>(
   };
 
   const updateBatch = async (
-    updates: Array<{ id: number; item: Partial<T> }>
+    updates: Array<{
+      /** Numeric item ID within the selected list. */
+      id: number;
+      /** SharePoint field values to update. */
+      item: Partial<T>
+    }>
   ): Promise<SPFxPnPListBatchResult<void>> => {
     const [batchedSP, execute] = sp.batched();
     const list = resolveListTarget(batchedSP, target);

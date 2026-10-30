@@ -1,0 +1,23 @@
+{
+  "empty": "利用できるデータがありません",
+  "noResults": "結果が見つかりません",
+  "noVisibleColumns": "表示されている列がありません",
+  "loading": "読み込み中",
+  "actions": "操作",
+  "moreActions": "その他の操作",
+  "yes": "はい",
+  "no": "いいえ",
+  "noTags": "タグがありません",
+  "noObservations": "観測データがありません",
+  "invalidValue": "無効な値",
+  "selectAllRows": "すべての行を選択",
+  "retry": "再試行",
+  "selectRowTemplate": "行 {rowId} を選択",
+  "sparklineSummaryTemplate": "最初 {first}; 最後 {last}; 最小 {minimum}; 最大 {maximum}; 平均 {average}; 変化 {change}; 変化率 {changePercent}",
+  "tagOverflow": {
+    "other": "さらに {count} 個のタグを表示"
+  },
+  "ratingCount": {
+    "other": "{formattedCount} 票"
+  }
+}

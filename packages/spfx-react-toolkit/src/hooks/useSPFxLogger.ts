@@ -11,11 +11,23 @@ import type { WebPartContext } from '@microsoft/sp-webpart-base';
 
 /**
  * Log levels
+ *
+ * @example
+ * ```tsx
+ * const level: LogLevel = 'warn';
+ * ```
  */
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 /**
  * Structured log entry
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const handleLog = (entry: LogEntry) => console.info(entry.message, entry.instanceId);
+ * const logger = useSPFxLogger(handleLog);
+ * ```
  */
 export interface LogEntry {
   /** Log level */
@@ -54,24 +66,51 @@ export interface LogEntry {
 
 /**
  * Return type for useSPFxLogger hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const logger: SPFxLoggerInfo = useSPFxLogger();
+ * const onSave = () => logger.info('Saved', { itemId: 12 });
+ * ```
  */
 export interface SPFxLoggerInfo {
-  /** Log debug message */
+  /**
+   * Emits a debug message to the custom handler, or the corresponding console output (debug uses console.log). Handler failures propagate.
+   * @param message - Log message.
+   * @param extra - Optional metadata included in the entry.
+   * @returns No value.
+   */
   readonly debug: (message: string, extra?: Record<string, unknown>) => void;
   
-  /** Log info message */
+  /**
+   * Emits a info message to the custom handler, or the corresponding console output (debug uses console.log). Handler failures propagate.
+   * @param message - Log message.
+   * @param extra - Optional metadata included in the entry.
+   * @returns No value.
+   */
   readonly info: (message: string, extra?: Record<string, unknown>) => void;
   
-  /** Log warning message */
+  /**
+   * Emits a warn message to the custom handler, or the corresponding console output (debug uses console.log). Handler failures propagate.
+   * @param message - Log message.
+   * @param extra - Optional metadata included in the entry.
+   * @returns No value.
+   */
   readonly warn: (message: string, extra?: Record<string, unknown>) => void;
   
-  /** Log error message */
+  /**
+   * Emits a error message to the custom handler, or the corresponding console output (debug uses console.log). Handler failures propagate.
+   * @param message - Log message.
+   * @param extra - Optional metadata included in the entry.
+   * @returns No value.
+   */
   readonly error: (message: string, extra?: Record<string, unknown>) => void;
 }
 
 /**
  * Hook for structured logging with SPFx context
- * 
+ *
  * Provides structured logging methods that automatically include:
  * - SPFx instance ID
  * - Host kind (WebPart, Extension, etc.)
@@ -79,21 +118,21 @@ export interface SPFxLoggerInfo {
  * - Site/web URLs
  * - Correlation ID
  * - Timestamp
- * 
+ *
  * By default logs to console, but can be configured with custom handler
  * for integration with Application Insights, Log Analytics, or other
  * logging services.
- * 
+ *
  * Useful for:
  * - Diagnostic logging
  * - Error tracking
  * - Performance monitoring
  * - User activity tracking
  * - Support troubleshooting
- * 
+ *
  * @param handler - Optional custom log handler
  * @returns Logger methods
- * 
+ *
  * @example
  * ```tsx
  * function MyComponent() {
@@ -113,9 +152,10 @@ export interface SPFxLoggerInfo {
  *   return <button onClick={handleClick}>Click Me</button>;
  * }
  * ```
- * 
+ *
  * @example Custom handler for Application Insights
  * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
  * const customHandler = (entry: LogEntry) => {
  *   appInsights.trackTrace({
  *     message: entry.message,
@@ -127,9 +167,10 @@ export interface SPFxLoggerInfo {
  *     }
  *   });
  * };
- * 
+ *
  * const logger = useSPFxLogger(customHandler);
  * ```
+ * @throws When called outside an SPFx provider.
  */
 export function useSPFxLogger(
   handler?: (entry: LogEntry) => void

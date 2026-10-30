@@ -1,7 +1,4 @@
-# Prerequisites and debug setup
-
-[Validation index](INDEX.md). These procedures require an authenticated host; their presence is not an executed result.
-
+# Prepare authenticated SharePoint validation
 
 Use a test tenant/site you can edit, an authenticated account and a modern page with a Top placeholder. Record tenant/site URLs, account role, Node version, library package version and SPFx 1.21.1. Prepare a disposable `Tasks` list with a Title column and at least two pages of items. Use separate test keys/files; list writes, OneDrive writes, site collection writes and tenant key-value writes change live test data.
 

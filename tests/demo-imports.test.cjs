@@ -4,10 +4,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { createHarness } = require('./services-test-harness.cjs');
 const { Simulate } = require('react-dom/test-utils');
+const { FluentProvider, webLightTheme } = require('@fluentui/react-components');
 const { createDOMRenderer } = require('@griffel/core');
 const { RendererProvider } = require('@griffel/react');
-const panelPath = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/ImportsPanel.tsx');
-require('@fluentui/react').registerIcons({ icons: { Code: 'code' } });
+const panelPath = path.resolve(__dirname, 'fixtures/foundation-legacy/ImportsPanel.tsx');
 function fixture(t) {
   assert.ok(fs.existsSync(panelPath), 'The observable Imports panel is missing');
   const root = {}, hooks = {}, styles = {}, callback = {}, sx = {}, dimensions = {}, typography = {}, spacing = {};
@@ -31,7 +31,7 @@ function fixture(t) {
   Object.assign(root, hooks, styles);
   const renderer = createDOMRenderer(null);
   const Panel = h.load(panelPath).default;
-  const view = h.mountComponent(() => h.React.createElement(RendererProvider, { renderer }, h.React.createElement(Panel)));
+  const view = h.mountComponent(() => h.React.createElement(RendererProvider, { renderer }, h.React.createElement(FluentProvider, { theme: webLightTheme }, h.React.createElement(Panel))));
   t.after(h.close);
   const node = id => { const e = view.container.querySelector(`[data-imports-demo="${id}"]`); assert.ok(e, id); return e; };
   const click = (scope, label) => {
@@ -52,6 +52,8 @@ test('root, domain and legacy Imports callbacks retain identity and read the lat
     f.click(scope, 'Invoke original callback');
     assert.match(f.node(scope).textContent, /Observed counter: 2/);
     assert.match(f.node(scope).textContent, /Same callback identity: yes/);
+    assert.equal(f.node(scope).querySelector('[data-demo-section] > [aria-label$=" preview"]'), null, 'import hook has no separate subject region');
+    assert.ok(f.node(`${scope}-preview`).closest('[data-demo-configuration]'), 'style result is retained beside its commands');
   }
 });
 test('mixed Imports descriptors compose equivalently, remove overrides and change provider direction', t => {

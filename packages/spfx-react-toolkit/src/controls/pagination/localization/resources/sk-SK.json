@@ -1,0 +1,9 @@
+{
+  "pagination": "Stránkovanie",
+  "firstPage": "Prvá stránka",
+  "previousPage": "Predchádzajúca stránka",
+  "nextPage": "Ďalšia stránka",
+  "lastPage": "Posledná stránka",
+  "loadMore": "Načítať ďalšie",
+  "loading": "Načítava sa"
+}

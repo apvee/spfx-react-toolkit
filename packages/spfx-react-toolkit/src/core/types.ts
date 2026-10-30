@@ -6,7 +6,12 @@ import type { BaseApplicationCustomizer } from '@microsoft/sp-application-base';
 import type { BaseListViewCommandSet, BaseFieldCustomizer } from '@microsoft/sp-listview-extensibility';
 
 /**
- * Type of SPFx host component
+ * Host discriminator returned by provider metadata. Current exported providers cover WebPart, AppCustomizer, FieldCustomizer and CommandSet; ACE is a reserved type member without an exported ACE provider.
+ *
+ * @example
+ * ```ts
+ * const kind: HostKind = 'WebPart';
+ * ```
  */
 export type HostKind = 
   | 'WebPart' 
@@ -16,8 +21,14 @@ export type HostKind =
   | 'ACE';
 
 /**
- * Union type for all SPFx component instances
- * Uses actual SPFx base classes for full type safety and API access
+ * Union of the four supported SPFx component instances. TProps is the host properties type. Pass an initialized instance to its matching host-specific provider; access context and properties through the public React hooks rather than assuming shared public members on this union.
+ *
+ * @typeParam TProps - Properties type of the supplied host instance.
+ *
+ * @example
+ * ```tsx
+ * type ComponentWithTitle = SPFxComponent<{ title: string }>;
+ * ```
  */
 export type SPFxComponent<TProps extends {} = {}> = 
   | BaseClientSideWebPart<TProps>
@@ -26,21 +37,12 @@ export type SPFxComponent<TProps extends {} = {}> =
   | BaseFieldCustomizer<TProps>;
 
 /**
- * Union type for all SPFx context types
- * Provides type-safe access to common context properties across all SPFx components
- * 
- * @remarks
- * All SPFx contexts include these common properties:
- * - `pageContext` - SharePoint page context
- * - `serviceScope` - Service locator for SPFx services
- * - `instanceId` - Unique identifier for the component instance
- * 
- * For component-specific properties, use type narrowing or casting:
- * ```typescript
- * const ctx = useSPFxContext();
- * if (ctx.kind === 'WebPart') {
- *   const wpContext = ctx.spfxContext as WebPartContext;
- *   // Access WebPart-specific properties
+ * Union of the four supported SPFx host context types. Common context fields are available directly; kind is a separate metadata value and does not automatically narrow this union. When the matching provider is known, explicitly assert its native SPFx context type to access host-only APIs.
+ *
+ * @example
+ * ```ts
+ * function webUrl(context: SPFxContextType): string {
+ *   return context.pageContext.web.absoluteUrl;
  * }
  * ```
  */
@@ -56,10 +58,21 @@ export type SPFxContextType =
   | BaseFieldCustomizer<any>['context'];
 
 /**
- * Container size information
+ * Width and height measurement in CSS pixels. This shape does not perform measurement; consumers obtain host measurements from useSPFxContainerSize.
+ *
+ * @example
+ * ```ts
+ * const size: ContainerSize = { width: 720, height: 300 };
+ * ```
  */
 export interface ContainerSize {
+  /**
+   * Measured container width in CSS pixels.
+   */
   readonly width: number;
+  /**
+   * Measured container height in CSS pixels.
+   */
   readonly height: number;
 }
 
@@ -82,30 +95,34 @@ export interface ContainerSize {
  * ```
  */
 export interface SPFxProviderProps<TProps extends {} = {}> {
-  /** SPFx component instance (WebPart, ApplicationCustomizer, etc.) */
+  /**
+   * Required, initialized SPFx component instance. Use the provider matching its host type; provider descendants render after its service scope is ready.
+   */
   readonly instance: SPFxComponent<TProps>;
   
-  /** Children to render */
+  /**
+   * Optional React subtree receiving instance metadata, runtime state and host theme. Omission renders no application content.
+   */
   readonly children?: React.ReactNode;
 }
 
 /**
- * Context value provided by SPFx providers
- * Contains only static metadata, no reactive state
- * 
- * @remarks
- * The `spfxContext` property provides type-safe access to common SPFx context properties
- * like `pageContext`, `serviceScope`, and `instanceId`. For component-specific properties,
- * use type narrowing with the `kind` property.
+ * Static host metadata returned by useSPFxContext beneath a host-specific provider. Property and theme updates are exposed through dedicated runtime hooks. kind does not form a discriminated union with spfxContext; explicitly assert a known host context type for host-only fields.
+ *
+ * @example
+ * ```tsx
+ * function HostLabel() {
+ *   const metadata = useSPFxContext();
+ *   return <span>{metadata.kind}: {metadata.instanceId}</span>;
+ * }
+ * ```
  */
 export interface SPFxContextValue {
   /** Unique identifier for this SPFx instance */
   readonly instanceId: string;
   
-  /** 
-   * SPFx context object with full type safety
-   * Provides access to common properties: pageContext, serviceScope, instanceId
-   * For component-specific properties, use type narrowing based on `kind`
+  /**
+   * Context reference of the supplied SPFx instance. Common fields are directly accessible; explicitly assert the known native host context type for host-only fields.
    */
   readonly spfxContext: SPFxContextType;
   

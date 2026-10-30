@@ -5,28 +5,16 @@ import type { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { useSPFxRuntimeSelector } from '../core/state.internal';
 
 /**
- * Hook to access the current SPFx theme
- * 
- * Theme subscription is managed automatically by SPFx providers.
- * Updates when user switches between light/dark theme or theme settings change.
- * 
- * @returns Current theme object or undefined if not yet loaded
- * 
- * @see {@link useSPFxFluent9ThemeInfo} for Fluent UI 9 theme conversion
- * 
+ * Reads the nearest provider's host SPFx theme reference. Provider subscriptions publish changes; absence remains undefined, without a local theme fallback. Use useSPFxFluent9ThemeInfo to obtain Fluent UI 9 theme tokens. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns Host readonly theme, or undefined when unavailable.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
+ * function ThemeLabel() {
  *   const theme = useSPFxThemeInfo();
- *   
- *   return (
- *     <div style={{ 
- *       backgroundColor: theme?.semanticColors.bodyBackground,
- *       color: theme?.semanticColors.bodyText 
- *     }}>
- *       Themed content
- *     </div>
- *   );
+ *   return <span>{theme ? 'Host theme available' : 'Host theme unavailable'}</span>;
  * }
  * ```
  */

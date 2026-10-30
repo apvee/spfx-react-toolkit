@@ -8,7 +8,6 @@ import { useSPFxMSGraphClient } from '@apvee/spfx-react-toolkit/hooks';
 
 Requires the matching SPFx host provider. See [provider selection](../../../getting-started/choosing-a-provider.md).
 
-
 Access Microsoft Graph API client.
 
 ## Signature
@@ -51,7 +50,7 @@ interface SPFxMSGraphClientInfo {
 
 Provides `MSGraphClientV3` for authenticated Microsoft Graph API access. Requires appropriate Graph permissions granted by admin.
 
-**Async Initialization**: The Graph client requires async initialization via `factory.getClient('3')`. Use `isInitializing`, `initError`, and `isReady` to track initialization state.
+**Async Initialization**: The Graph client requires async initialization via `factory.getClient('3')`. Use `isInitializing`, `initError`, and `isReady` to track initialization state. When the provider's consumed factory changes, the previous client and its invocation loading/error state are hidden during render. The hook initializes the replacement factory, publishes only its current result and ignores obsolete or unmounted initialization completions. Initialization failure appears through `initError`; invocation failures remain separate in `error`. A newly mounted hook initializes again; it does not persist clients or grants across mounts.
 
 ## Prerequisites
 
@@ -70,6 +69,7 @@ Provides `MSGraphClientV3` for authenticated Microsoft Graph API access. Require
   ]
 }
 ```
+
 2. Approve permissions in SharePoint admin center
 
 ## Type Safety
@@ -103,7 +103,7 @@ function UserProfile() {
       client.api('/me')
         .select('displayName,mail,jobTitle,department')
         .get()
-    ).then(setUser);
+    ).then(setUser).catch(() => undefined);
   };
 
   React.useEffect(() => {
@@ -156,7 +156,7 @@ function RecentMail() {
         .orderBy('receivedDateTime DESC')
         .top(10)
         .get()
-    ).then(result => setMessages(result.value));
+    ).then(result => setMessages(result.value)).catch(() => undefined);
   };
 
   React.useEffect(() => {
@@ -202,7 +202,7 @@ function UpcomingEvents() {
         .orderBy('start/dateTime')
         .top(5)
         .get()
-    ).then(result => setEvents(result.value));
+    ).then(result => setEvents(result.value)).catch(() => undefined);
   };
 
   React.useEffect(() => {
@@ -223,8 +223,14 @@ function UpcomingEvents() {
 }
 ```
 
+## Invocation state and failures
+
+`invoke(fn)` requires a ready client and returns the callback result. While any invocation on the current client is pending, `isLoading` remains true. Starting another invocation clears `error`; only the latest-started invocation may publish a failure. Client replacement and unmount suppress obsolete UI updates while caller promises still settle. Callback/request rejections are normalized to `Error` and rethrown; catch returned promises. An unavailable client rejects before invocation tracking starts.
+
+`clearError()` clears the invocation error without cancelling work or clearing initialization errors. Direct `client` calls bypass invocation tracking. The hook does not inspect `response.ok`; check unsuccessful HTTP responses and reject them inside the callback. A resolved HTTP error response can otherwise look successful to the hook.
+
+The hook requests Graph client version `'3'` from the current native factory. `client` is undefined during acquisition; `isInitializing` is true until acquisition succeeds or fails, and `initError` holds that acquisition failure. Factory replacement hides the previous client and its invocation state immediately. Unmounted or superseded acquisitions cannot publish. Native factory consumption may throw during render; `isReady` indicates client availability, not approval of any Graph permission.
+
 ## Source
 
 [View source](../../../../packages/spfx-react-toolkit/src/hooks/useSPFxMSGraphClient.ts)
-
----

@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "No s'ha pogut enviar el formulari. Torneu-ho a provar.",
+  "dateInputValidationMessage": "Completeu o corregiu la data abans d'enviar-lo.",
+  "timeInputValidationMessage": "Completeu o corregiu l'hora abans d'enviar-lo.",
+  "tagPicker": {
+    "noOptions": "Cap opció no coincideix amb la consulta actual."
+  },
+  "fileInput": {
+    "browseLabel": "Navega",
+    "clearLabel": "Esborra"
+  },
+  "arraySection": {
+    "add": "Afegeix un element",
+    "empty": "No hi ha elements",
+    "itemLabelTemplate": "Element {position}",
+    "removeTemplate": "Suprimeix {label}",
+    "moveUpTemplate": "Mou {label} amunt",
+    "moveDownTemplate": "Mou {label} avall",
+    "addedTemplate": "S'ha afegit: {label}",
+    "removedTemplate": "S'ha suprimit: {label}",
+    "movedTemplate": "S'ha mogut {label} a la posició {position} de {total}"
+  },
+  "datePicker": {
+    "months": [
+      "gener",
+      "febrer",
+      "març",
+      "abril",
+      "maig",
+      "juny",
+      "juliol",
+      "agost",
+      "setembre",
+      "octubre",
+      "novembre",
+      "desembre"
+    ],
+    "shortMonths": [
+      "gen.",
+      "febr.",
+      "març",
+      "abr.",
+      "maig",
+      "juny",
+      "jul.",
+      "ag.",
+      "set.",
+      "oct.",
+      "nov.",
+      "des."
+    ],
+    "days": [
+      "diumenge",
+      "dilluns",
+      "dimarts",
+      "dimecres",
+      "dijous",
+      "divendres",
+      "dissabte"
+    ],
+    "shortDays": [
+      "dg.",
+      "dl.",
+      "dt.",
+      "dc.",
+      "dj.",
+      "dv.",
+      "ds."
+    ],
+    "goToToday": "Ves a avui",
+    "prevMonthAriaLabel": "Mes anterior",
+    "nextMonthAriaLabel": "Mes següent",
+    "prevYearAriaLabel": "Any anterior",
+    "nextYearAriaLabel": "Any següent",
+    "prevYearRangeAriaLabel": "Interval d'anys anterior",
+    "nextYearRangeAriaLabel": "Interval d'anys següent",
+    "monthPickerHeaderAriaLabel": "{0}, canvia l'any",
+    "yearPickerHeaderAriaLabel": "{0}, canvia el mes",
+    "closeButtonAriaLabel": "Tanca",
+    "weekNumberFormatString": "Setmana número {0}",
+    "selectedDateFormatString": "Data seleccionada {0}",
+    "todayDateFormatString": "Data d'avui {0}",
+    "dayMarkedAriaLabel": "marcat"
+  }
+}

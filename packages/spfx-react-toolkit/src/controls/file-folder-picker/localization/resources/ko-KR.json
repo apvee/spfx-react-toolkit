@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "파일 찾아보기…",
+    "folders": "폴더 찾아보기…",
+    "all": "파일 및 폴더 찾아보기…"
+  },
+  "placeholders": {
+    "files": "파일 선택…",
+    "folders": "폴더 선택…",
+    "all": "파일 또는 폴더 선택…"
+  },
+  "labels": {
+    "selection": "파일 및 폴더 선택",
+    "file": "파일",
+    "folder": "폴더",
+    "unresolvedItem": "확인되지 않은 항목",
+    "removeItem": "{name} 제거"
+  },
+  "validation": {
+    "invalidReferences": "파일 또는 폴더 참조가 잘못되었습니다.",
+    "controlledModeChanged": "컨트롤이 마운트된 동안에는 제어 모드를 변경할 수 없습니다.",
+    "incompatibleItems": "선택 항목에 구성된 유형, 범주 또는 확장명과 호환되지 않는 항목이 포함되어 있습니다. 해당 항목을 제거하거나 바꾸세요.",
+    "invalidPolicy": "선택 유형, 범주, 확장명 또는 제한 구성이 잘못되었습니다.",
+    "selectionLimitExceeded": "선택 항목이 구성된 제한을 초과합니다. 초과 항목을 제거하세요."
+  },
+  "errors": {
+    "configuration": "선택기 구성이 잘못되었습니다. 원본, 유형, 범주 및 제한을 확인하고, 레거시 옵션 없이 사전 설정을 사용하세요.",
+    "auth-resource": "선택기가 구성에서 허용하지 않는 인증 리소스를 요청했습니다.",
+    "auth-type": "선택기가 구성에서 지원하지 않는 인증 유형을 요청했습니다.",
+    "auth-challenge": "선택기에 지원되지 않는 추가 인증 검사가 필요합니다.",
+    "auth-provider": "SharePoint 토큰을 가져올 수 없습니다. 다시 시도하세요. 문제가 계속되면 액세스 및 기존 권한을 확인하세요.",
+    "selection-identity": "선택한 항목의 ID를 확인할 수 없습니다. 선택기를 다시 열고 다시 시도하세요.",
+    "selection-scope": "선택한 항목이 허용된 사이트, 라이브러리 또는 폴더 외부에 있습니다.",
+    "selection-policy": "선택 항목이 허용된 유형, 범주, 확장명 또는 항목 수 요구 사항을 충족하지 않습니다.",
+    "selection-unavailable": "선택한 항목을 사용할 수 없거나 액세스할 수 없습니다.",
+    "selection-invalid": "선택 항목을 확인할 수 없습니다. 새 항목이 추가되지 않았습니다.",
+    "onedrive-unavailable": "현재 사용자의 OneDrive를 사용할 수 없거나 액세스할 수 없습니다. 드라이브가 있는지 확인하고 다시 시도하세요.",
+    "opening": "선택기를 열 수 없습니다. 구성과 원본에 대한 액세스를 확인한 후 다시 시도하세요.",
+    "timeout": "선택기가 시간 내에 응답하지 않았습니다. 닫은 후 다시 시도하세요.",
+    "communication": "선택기와의 통신이 중단되었습니다. 다시 열고 다시 시도하세요."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "선택적 인증 기능이 시간 내에 응답하지 않았습니다. 다시 시도하세요.",
+    "unsupportedCommand": "이 통합에서는 해당 명령을 지원하지 않습니다.",
+    "optionalGraphAuthenticationFailed": "선택적 Microsoft Graph 기능을 인증할 수 없습니다.",
+    "optionalPersonalAuthenticationFailed": "선택적 개인 대상 위치를 인증할 수 없습니다."
+  }
+}

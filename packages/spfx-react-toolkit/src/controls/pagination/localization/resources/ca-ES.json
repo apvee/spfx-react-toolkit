@@ -1,0 +1,9 @@
+{
+  "pagination": "Paginació",
+  "firstPage": "Primera pàgina",
+  "previousPage": "Pàgina anterior",
+  "nextPage": "Pàgina següent",
+  "lastPage": "Última pàgina",
+  "loadMore": "Carrega'n més",
+  "loading": "S'està carregant"
+}

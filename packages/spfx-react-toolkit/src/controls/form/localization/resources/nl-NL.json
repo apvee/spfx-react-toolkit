@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Het formulier kan niet worden verzonden. Probeer het opnieuw.",
+  "dateInputValidationMessage": "Vul de datum aan of corrigeer deze voordat u het formulier verzendt.",
+  "timeInputValidationMessage": "Vul de tijd aan of corrigeer deze voordat u het formulier verzendt.",
+  "tagPicker": {
+    "noOptions": "Geen opties komen overeen met de huidige zoekopdracht."
+  },
+  "fileInput": {
+    "browseLabel": "Bladeren",
+    "clearLabel": "Wissen"
+  },
+  "arraySection": {
+    "add": "Item toevoegen",
+    "empty": "Geen items",
+    "itemLabelTemplate": "Item {position}",
+    "removeTemplate": "{label} verwijderen",
+    "moveUpTemplate": "{label} omhoog verplaatsen",
+    "moveDownTemplate": "{label} omlaag verplaatsen",
+    "addedTemplate": "{label} toegevoegd",
+    "removedTemplate": "{label} verwijderd",
+    "movedTemplate": "{label} verplaatst naar positie {position} van {total}"
+  },
+  "datePicker": {
+    "months": [
+      "januari",
+      "februari",
+      "maart",
+      "april",
+      "mei",
+      "juni",
+      "juli",
+      "augustus",
+      "september",
+      "oktober",
+      "november",
+      "december"
+    ],
+    "shortMonths": [
+      "jan",
+      "feb",
+      "mrt",
+      "apr",
+      "mei",
+      "jun",
+      "jul",
+      "aug",
+      "sep",
+      "okt",
+      "nov",
+      "dec"
+    ],
+    "days": [
+      "zondag",
+      "maandag",
+      "dinsdag",
+      "woensdag",
+      "donderdag",
+      "vrijdag",
+      "zaterdag"
+    ],
+    "shortDays": [
+      "zo",
+      "ma",
+      "di",
+      "wo",
+      "do",
+      "vr",
+      "za"
+    ],
+    "goToToday": "Naar vandaag",
+    "prevMonthAriaLabel": "Vorige maand",
+    "nextMonthAriaLabel": "Volgende maand",
+    "prevYearAriaLabel": "Vorig jaar",
+    "nextYearAriaLabel": "Volgend jaar",
+    "prevYearRangeAriaLabel": "Vorige reeks jaren",
+    "nextYearRangeAriaLabel": "Volgende reeks jaren",
+    "monthPickerHeaderAriaLabel": "{0}, jaar wijzigen",
+    "yearPickerHeaderAriaLabel": "{0}, maand wijzigen",
+    "closeButtonAriaLabel": "Sluiten",
+    "weekNumberFormatString": "Weeknummer {0}",
+    "selectedDateFormatString": "Geselecteerde datum {0}",
+    "todayDateFormatString": "Datum van vandaag {0}",
+    "dayMarkedAriaLabel": "gemarkeerd"
+  }
+}

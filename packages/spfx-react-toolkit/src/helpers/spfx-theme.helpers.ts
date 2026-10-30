@@ -43,10 +43,15 @@ export function createFluent9ThemeFromSPFxTheme(
 }
 
 /**
- * Maps a Teams theme name to the matching Fluent UI 9 Teams theme.
+ * Returns a shared Fluent Teams theme after case-insensitive matching. Dark selects teamsDarkTheme; contrast/highcontrast selects teamsHighContrastTheme; default, unknown and undefined select teamsLightTheme. Treat the returned shared theme as immutable.
  *
- * @param teamsThemeName - Teams theme name
- * @returns Fluent UI 9 Teams theme
+ * @param teamsThemeName - Host theme name; surrounding whitespace is not trimmed.
+ * @returns Shared Fluent UI 9 Teams theme.
+ *
+ * @example
+ * ```ts
+ * const theme = getTeamsFluentTheme('dark');
+ * ```
  */
 export function getTeamsFluentTheme(teamsThemeName: string | undefined): Theme {
   const normalizedThemeName = teamsThemeName?.toLowerCase();

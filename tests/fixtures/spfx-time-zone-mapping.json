@@ -1,0 +1,1631 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-10-08",
+  "scope": "All111 numeric candidates from the pinned PnP resolver; not a complete current SharePoint Online inventory. Standard representative groups only; customized TIMEZONE.XML rules are not verified. No inference from locale, description or UTC offset at runtime.",
+  "candidateCount": 111,
+  "verifiedCount": 104,
+  "excludedCount": 7,
+  "territory": "001",
+  "sources": [
+    {
+      "id": "pnp",
+      "url": "https://raw.githubusercontent.com/pnp/pnpcore/b6ff7b30dc8a1dfa8202bca50b75a08e3d3d6c43/src/sdk/PnP.Core/Model/SharePoint/Core/Internal/TimeZone.cs",
+      "revision": "b6ff7b30dc8a1dfa8202bca50b75a08e3d3d6c43",
+      "snapshotSha256": "96c350fddce017973c71574c04477219cc66cc4e03af4d103be9e1f48642cc7a",
+      "license": "MIT",
+      "notice": "MIT License\n\nCopyright (c) 2020 PnP\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n"
+    },
+    {
+      "id": "cldr",
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr/acd6d88ae493633240e19a87a721076a8a75c310/common/supplemental/windowsZones.xml",
+      "revision": "release-48 / acd6d88ae493633240e19a87a721076a8a75c310",
+      "snapshotSha256": "9cf3db6a31fb382fee21b70be6feba1e82766b0fcd06e6261fb7936a73e537ff",
+      "license": "Unicode-3.0",
+      "notice": "UNICODE LICENSE V3\n\nCOPYRIGHT AND PERMISSION NOTICE\n\nCopyright © 2004-2025 Unicode, Inc.\n\nNOTICE TO USER: Carefully read the following legal agreement. BY\nDOWNLOADING, INSTALLING, COPYING OR OTHERWISE USING DATA FILES, AND/OR\nSOFTWARE, YOU UNEQUIVOCALLY ACCEPT, AND AGREE TO BE BOUND BY, ALL OF THE\nTERMS AND CONDITIONS OF THIS AGREEMENT. IF YOU DO NOT AGREE, DO NOT\nDOWNLOAD, INSTALL, COPY, DISTRIBUTE OR USE THE DATA FILES OR SOFTWARE.\n\nPermission is hereby granted, free of charge, to any person obtaining a\ncopy of data files and any associated documentation (the \"Data Files\") or\nsoftware and any associated documentation (the \"Software\") to deal in the\nData Files or Software without restriction, including without limitation\nthe rights to use, copy, modify, merge, publish, distribute, and/or sell\ncopies of the Data Files or Software, and to permit persons to whom the\nData Files or Software are furnished to do so, provided that either (a)\nthis copyright and permission notice appear with all copies of the Data\nFiles or Software, or (b) this copyright and permission notice appear in\nassociated Documentation.\n\nTHE DATA FILES AND SOFTWARE ARE PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY\nKIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF\nTHIRD PARTY RIGHTS.\n\nIN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE\nBE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES,\nOR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,\nWHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,\nARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE DATA\nFILES OR SOFTWARE.\n\nExcept as contained in this notice, the name of a copyright holder shall\nnot be used in advertising or otherwise to promote the sale, use or other\ndealings in these Data Files or Software without prior written\nauthorization of the copyright holder.\n\nSPDX-License-Identifier: Unicode-3.0\n"
+    },
+    {
+      "id": "microsoft-groups",
+      "url": "https://learn.microsoft.com/en-us/openspecs/sharepoint_protocols/ms-wssfo2/4b41f00e-6782-40f0-9db2-172502446d4c",
+      "revision": "published 2024-01-17; retrieved 2026-10-08",
+      "snapshotSha256": "bc93c7333231b2c8681c1ff49185f7809c20d49746100f6fb38ca0b43f517562",
+      "publishedAt": "2024-01-17",
+      "retrievedAt": "2026-10-08",
+      "snapshotFormat": "UTF-8 HTML; relevant numeric-group snapshot is preserved per row in microsoftGroup"
+    }
+  ],
+  "rows": [
+    {
+      "sharePointId": 2,
+      "candidateWindowsId": "GMT Standard Time",
+      "candidateDescription": "(UTC) Dublin, Edinburgh, Lisbon, London",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London",
+      "windowsId": "GMT Standard Time",
+      "iana": "Europe/London",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 3,
+      "candidateWindowsId": "Romance Standard Time",
+      "candidateDescription": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+01:00) Brussels, Copenhagen, Madrid, Paris",
+      "windowsId": "Romance Standard Time",
+      "iana": "Europe/Paris",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 4,
+      "candidateWindowsId": "W. Europe Standard Time",
+      "candidateDescription": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna",
+      "windowsId": "W. Europe Standard Time",
+      "iana": "Europe/Berlin",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 5,
+      "candidateWindowsId": "GTB Standard Time",
+      "candidateDescription": "(UTC+02:00) Athens, Bucharest",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+02:00) Athens, Bucharest, Istanbul",
+      "windowsId": "GTB Standard Time",
+      "iana": "Europe/Bucharest",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 6,
+      "candidateWindowsId": "Central Europe Standard Time",
+      "candidateDescription": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague",
+      "windowsId": "Central Europe Standard Time",
+      "iana": "Europe/Budapest",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 7,
+      "candidateWindowsId": "Belarus Standard Time",
+      "candidateDescription": "(UTC+02:00) Minsk (old)",
+      "status": "excluded",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+02:00) Minsk",
+      "reason": "Microsoft names the old Minsk group; PnP assigns the same Belarus key as newer ID109. Historical group identity is unresolved."
+    },
+    {
+      "sharePointId": 8,
+      "candidateWindowsId": "E. South America Standard Time",
+      "candidateDescription": "(UTC-03:00) Brasilia",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-03:00) Brasilia",
+      "windowsId": "E. South America Standard Time",
+      "iana": "America/Sao_Paulo",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 9,
+      "candidateWindowsId": "Atlantic Standard Time",
+      "candidateDescription": "(UTC-04:00) Atlantic Time (Canada)",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-04:00) Atlantic Time (Canada)",
+      "windowsId": "Atlantic Standard Time",
+      "iana": "America/Halifax",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 10,
+      "candidateWindowsId": "US Eastern Standard Time",
+      "candidateDescription": "(UTC-05:00) Eastern Time (US and Canada)",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-05:00) Eastern Time (U.S. and Canada)",
+      "windowsId": "Eastern Standard Time",
+      "iana": "America/New_York",
+      "reason": "Microsoft numeric group corrects PnP Eastern/Indiana or Mountain/Arizona key conflict; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 11,
+      "candidateWindowsId": "Central Standard Time",
+      "candidateDescription": "(UTC-06:00) Central Time (US and Canada)",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-06:00) Central Time (U.S. and Canada)",
+      "windowsId": "Central Standard Time",
+      "iana": "America/Chicago",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 12,
+      "candidateWindowsId": "US Mountain Standard Time",
+      "candidateDescription": "(UTC-07:00) Mountain Time (US and Canada)",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-07:00) Mountain Time (U.S. and Canada)",
+      "windowsId": "Mountain Standard Time",
+      "iana": "America/Denver",
+      "reason": "Microsoft numeric group corrects PnP Eastern/Indiana or Mountain/Arizona key conflict; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 13,
+      "candidateWindowsId": "Pacific Standard Time",
+      "candidateDescription": "(UTC-08:00) Pacific Time (US and Canada)",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-08:00) Pacific Time (U.S. and Canada)",
+      "windowsId": "Pacific Standard Time",
+      "iana": "America/Los_Angeles",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 14,
+      "candidateWindowsId": "Alaskan Standard Time",
+      "candidateDescription": "(UTC-09:00) Alaska",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-09:00) Alaska",
+      "windowsId": "Alaskan Standard Time",
+      "iana": "America/Anchorage",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 15,
+      "candidateWindowsId": "Hawaiian Standard Time",
+      "candidateDescription": "(UTC-10:00) Hawaii",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-10:00) Hawaii",
+      "windowsId": "Hawaiian Standard Time",
+      "iana": "Pacific/Honolulu",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 16,
+      "candidateWindowsId": "Samoa Standard Time",
+      "candidateDescription": "(UTC+13:00) Samoa",
+      "status": "excluded",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-11:00) Midway Island, Samoa",
+      "reason": "Microsoft documents UTC-11 Samoa while PnP identifies UTC+13 Samoa. The old group cannot be confirmed as modern Apia rather than the UTC-11 group."
+    },
+    {
+      "sharePointId": 17,
+      "candidateWindowsId": "New Zealand Standard Time",
+      "candidateDescription": "(UTC+12:00) Auckland, Wellington",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+12:00) Auckland, Wellington",
+      "windowsId": "New Zealand Standard Time",
+      "iana": "Pacific/Auckland",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 18,
+      "candidateWindowsId": "E. Australia Standard Time",
+      "candidateDescription": "(UTC+10:00) Brisbane",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+10:00) Brisbane",
+      "windowsId": "E. Australia Standard Time",
+      "iana": "Australia/Brisbane",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 19,
+      "candidateWindowsId": "Cen. Australia Standard Time",
+      "candidateDescription": "(UTC+09:30) Adelaide",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+09:30) Adelaide",
+      "windowsId": "Cen. Australia Standard Time",
+      "iana": "Australia/Adelaide",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 20,
+      "candidateWindowsId": "Tokyo Standard Time",
+      "candidateDescription": "(UTC+09:00) Osaka, Sapporo, Tokyo",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+09:00) Osaka, Sapporo, Tokyo",
+      "windowsId": "Tokyo Standard Time",
+      "iana": "Asia/Tokyo",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 21,
+      "candidateWindowsId": "Singapore Standard Time",
+      "candidateDescription": "(UTC+08:00) Kuala Lumpur, Singapore",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+08:00) Kuala Lumpur, Singapore",
+      "windowsId": "Singapore Standard Time",
+      "iana": "Asia/Singapore",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 22,
+      "candidateWindowsId": "SE Asia Standard Time",
+      "candidateDescription": "(UTC+07:00) Bangkok, Hanoi, Jakarta",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+07:00) Bangkok, Hanoi, Jakarta",
+      "windowsId": "SE Asia Standard Time",
+      "iana": "Asia/Bangkok",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 23,
+      "candidateWindowsId": "India Standard Time",
+      "candidateDescription": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi",
+      "windowsId": "India Standard Time",
+      "iana": "Asia/Calcutta",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 24,
+      "candidateWindowsId": "Arabian Standard Time",
+      "candidateDescription": "(UTC+04:00) Abu Dhabi, Muscat",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+04:00) Abu Dhabi, Muscat",
+      "windowsId": "Arabian Standard Time",
+      "iana": "Asia/Dubai",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 25,
+      "candidateWindowsId": "Iran Standard Time",
+      "candidateDescription": "(UTC+03:30) Tehran",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+03:30) Tehran",
+      "windowsId": "Iran Standard Time",
+      "iana": "Asia/Tehran",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 26,
+      "candidateWindowsId": "Arabic Standard Time",
+      "candidateDescription": "(UTC+03:00) Baghdad",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+03:00) Baghdad",
+      "windowsId": "Arabic Standard Time",
+      "iana": "Asia/Baghdad",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 27,
+      "candidateWindowsId": "Israel Standard Time",
+      "candidateDescription": "(UTC+02:00) Jerusalem",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+02:00) Jerusalem",
+      "windowsId": "Israel Standard Time",
+      "iana": "Asia/Jerusalem",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 28,
+      "candidateWindowsId": "Newfoundland Standard Time",
+      "candidateDescription": "(UTC-03:30) Newfoundland",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-03:30) Newfoundland",
+      "windowsId": "Newfoundland Standard Time",
+      "iana": "America/St_Johns",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 29,
+      "candidateWindowsId": "Azores Standard Time",
+      "candidateDescription": "(UTC-01:00) Azores",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-01:00) Azores",
+      "windowsId": "Azores Standard Time",
+      "iana": "Atlantic/Azores",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 30,
+      "candidateWindowsId": "Mid-Atlantic Standard Time",
+      "candidateDescription": "(UTC-02:00) Mid-Atlantic",
+      "status": "excluded",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-02:00) Mid-Atlantic",
+      "reason": "The obsolete Mid-Atlantic Windows key has no territory001 representative in the pinned CLDR release."
+    },
+    {
+      "sharePointId": 31,
+      "candidateWindowsId": "Greenwich Standard Time",
+      "candidateDescription": "(UTC) Monrovia, Reykjavik",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT) Casablanca, Monrovia, Reykjavik",
+      "windowsId": "Greenwich Standard Time",
+      "iana": "Atlantic/Reykjavik",
+      "reason": "Monrovia/Reykjavik identify the retained Greenwich group; Casablanca now has a separate candidate86. The representative is Reykjavik, not every historical city in the old group."
+    },
+    {
+      "sharePointId": 32,
+      "candidateWindowsId": "SA Eastern Standard Time",
+      "candidateDescription": "(UTC-03:00) Cayenne, Fortaleza",
+      "status": "excluded",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-03:00) Buenos Aires, Georgetown",
+      "reason": "Microsoft groups Buenos Aires and Georgetown; PnP instead assigns Cayenne/Fortaleza. Current stock numeric group identity is unresolved."
+    },
+    {
+      "sharePointId": 33,
+      "candidateWindowsId": "SA Western Standard Time",
+      "candidateDescription": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-04:00) Caracas, La Paz",
+      "windowsId": "SA Western Standard Time",
+      "iana": "America/La_Paz",
+      "reason": "La Paz identifies the retained SA Western group; Caracas now has a separate candidate88. The representative is La Paz, not every historical city in the old group."
+    },
+    {
+      "sharePointId": 34,
+      "candidateWindowsId": "US Eastern Standard Time",
+      "candidateDescription": "(UTC-05:00) Indiana (East)",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-05:00) Indiana (East)",
+      "windowsId": "US Eastern Standard Time",
+      "iana": "America/Indianapolis",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 35,
+      "candidateWindowsId": "SA Pacific Standard Time",
+      "candidateDescription": "(UTC-05:00) Bogota, Lima, Quito",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-05:00) Bogota, Lima, Quito, Rio Branco",
+      "windowsId": "SA Pacific Standard Time",
+      "iana": "America/Bogota",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 36,
+      "candidateWindowsId": "Canada Central Standard Time",
+      "candidateDescription": "(UTC-06:00) Saskatchewan",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-06:00) Saskatchewan",
+      "windowsId": "Canada Central Standard Time",
+      "iana": "America/Regina",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 37,
+      "candidateWindowsId": "Central Standard Time (Mexico)",
+      "candidateDescription": "(UTC-06:00) Guadalajara, Mexico City, Monterrey",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-06:00) Guadalajara, Mexico City, Monterrey",
+      "windowsId": "Central Standard Time (Mexico)",
+      "iana": "America/Mexico_City",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 38,
+      "candidateWindowsId": "US Mountain Standard Time",
+      "candidateDescription": "(UTC-07:00) Arizona",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-07:00) Arizona",
+      "windowsId": "US Mountain Standard Time",
+      "iana": "America/Phoenix",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 39,
+      "candidateWindowsId": "Dateline Standard Time",
+      "candidateDescription": "(UTC-12:00) International Date Line West",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-12:00) International Date Line West",
+      "windowsId": "Dateline Standard Time",
+      "iana": "Etc/GMT+12",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 40,
+      "candidateWindowsId": "Fiji Standard Time",
+      "candidateDescription": "(UTC+12:00) Fiji",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+12:00) Fiji Is., Kamchatka, Marshall Is.",
+      "windowsId": "Fiji Standard Time",
+      "iana": "Pacific/Fiji",
+      "reason": "Fiji identifies the retained Fiji group; Kamchatka has separate historical/new candidates92/108. The representative is Fiji, not every historical city in the old group."
+    },
+    {
+      "sharePointId": 41,
+      "candidateWindowsId": "Central Pacific Standard Time",
+      "candidateDescription": "(UTC+11:00) Solomon Is., New Caledonia",
+      "status": "excluded",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+11:00) Magadan, Solomon Is., New Caledonia",
+      "reason": "Microsoft includes Magadan; PnP assigns the Solomon Islands/New Caledonia group while newer ID99 names Magadan. Current stock numeric group identity is unresolved."
+    },
+    {
+      "sharePointId": 42,
+      "candidateWindowsId": "Tasmania Standard Time",
+      "candidateDescription": "(UTC+10:00) Hobart",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+10:00) Hobart",
+      "windowsId": "Tasmania Standard Time",
+      "iana": "Australia/Hobart",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 43,
+      "candidateWindowsId": "West Pacific Standard Time",
+      "candidateDescription": "(UTC+10:00) Guam, Port Moresby",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+10:00) Guam, Port Moresby",
+      "windowsId": "West Pacific Standard Time",
+      "iana": "Pacific/Port_Moresby",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 44,
+      "candidateWindowsId": "AUS Central Standard Time",
+      "candidateDescription": "(UTC+09:30) Darwin",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+09:30) Darwin",
+      "windowsId": "AUS Central Standard Time",
+      "iana": "Australia/Darwin",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 45,
+      "candidateWindowsId": "China Standard Time",
+      "candidateDescription": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+08:00) Beijing, Chongqing, Hong Kong S.A.R., Urumqi",
+      "windowsId": "China Standard Time",
+      "iana": "Asia/Shanghai",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 46,
+      "candidateWindowsId": "N. Central Asia Standard Time",
+      "candidateDescription": "(UTC+07:00) Novosibirsk",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+06:00) Almaty, Novosibirsk",
+      "windowsId": "N. Central Asia Standard Time",
+      "iana": "Asia/Novosibirsk",
+      "reason": "Novosibirsk identifies the retained N. Central Asia group despite changed offsets and split Almaty membership. CLDR001 selects Novosibirsk."
+    },
+    {
+      "sharePointId": 47,
+      "candidateWindowsId": "West Asia Standard Time",
+      "candidateDescription": "(UTC+05:00) Tashkent",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+05:00) Islamabad, Karachi, Toshkent",
+      "windowsId": "West Asia Standard Time",
+      "iana": "Asia/Tashkent",
+      "reason": "Toshkent/Tashkent identifies the retained West Asia group; Islamabad/Karachi now have separate candidate87. CLDR001 selects Tashkent."
+    },
+    {
+      "sharePointId": 48,
+      "candidateWindowsId": "Afghanistan Standard Time",
+      "candidateDescription": "(UTC+04:30) Kabul",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+04:30) Kabul",
+      "windowsId": "Afghanistan Standard Time",
+      "iana": "Asia/Kabul",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 49,
+      "candidateWindowsId": "Egypt Standard Time",
+      "candidateDescription": "(UTC+02:00) Cairo",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+02:00) Cairo",
+      "windowsId": "Egypt Standard Time",
+      "iana": "Africa/Cairo",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 50,
+      "candidateWindowsId": "South Africa Standard Time",
+      "candidateDescription": "(UTC+02:00) Harare, Pretoria",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+02:00) Harare, Pretoria",
+      "windowsId": "South Africa Standard Time",
+      "iana": "Africa/Johannesburg",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 51,
+      "candidateWindowsId": "Russian Standard Time",
+      "candidateDescription": "(UTC+03:00) Moscow, St. Petersburg, Volgograd",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+03:00) Moscow, St. Petersburg, Volgograd",
+      "windowsId": "Russian Standard Time",
+      "iana": "Europe/Moscow",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 53,
+      "candidateWindowsId": "Cape Verde Standard Time",
+      "candidateDescription": "(UTC-01:00) Cabo Verde",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-01:00) Cabo Verde Is.",
+      "windowsId": "Cape Verde Standard Time",
+      "iana": "Atlantic/Cape_Verde",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 54,
+      "candidateWindowsId": "Azerbaijan Standard Time",
+      "candidateDescription": "(UTC+04:00) Baku",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+04:00) Baku",
+      "windowsId": "Azerbaijan Standard Time",
+      "iana": "Asia/Baku",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 55,
+      "candidateWindowsId": "Central America Standard Time",
+      "candidateDescription": "(UTC-06:00) Central America",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-06:00) Central America",
+      "windowsId": "Central America Standard Time",
+      "iana": "America/Guatemala",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 56,
+      "candidateWindowsId": "E. Africa Standard Time",
+      "candidateDescription": "(UTC+03:00) Nairobi",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+03:00) Nairobi",
+      "windowsId": "E. Africa Standard Time",
+      "iana": "Africa/Nairobi",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 57,
+      "candidateWindowsId": "Central European Standard Time",
+      "candidateDescription": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+01:00) Sarajevo, Skopje, Warsaw, Zagreb",
+      "windowsId": "Central European Standard Time",
+      "iana": "Europe/Warsaw",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 58,
+      "candidateWindowsId": "Ekaterinburg Standard Time",
+      "candidateDescription": "(UTC+05:00) Ekaterinburg",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+05:00) Ekaterinburg",
+      "windowsId": "Ekaterinburg Standard Time",
+      "iana": "Asia/Yekaterinburg",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 59,
+      "candidateWindowsId": "FLE Standard Time",
+      "candidateDescription": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius",
+      "windowsId": "FLE Standard Time",
+      "iana": "Europe/Kiev",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 60,
+      "candidateWindowsId": "Greenland Standard Time",
+      "candidateDescription": "(UTC-03:00) Greenland",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-03:00) Greenland",
+      "windowsId": "Greenland Standard Time",
+      "iana": "America/Godthab",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 61,
+      "candidateWindowsId": "Myanmar Standard Time",
+      "candidateDescription": "(UTC+06:30) Yangon (Rangoon)",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+06:30) Yangon (Rangoon)",
+      "windowsId": "Myanmar Standard Time",
+      "iana": "Asia/Rangoon",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 62,
+      "candidateWindowsId": "Nepal Standard Time",
+      "candidateDescription": "(UTC+05:45) Kathmandu",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+05:45) Kathmandu",
+      "windowsId": "Nepal Standard Time",
+      "iana": "Asia/Katmandu",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 63,
+      "candidateWindowsId": "North Asia East Standard Time",
+      "candidateDescription": "(UTC+08:00) Irkutsk",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+08:00) Irkutsk, Ulaan Bataar",
+      "windowsId": "North Asia East Standard Time",
+      "iana": "Asia/Irkutsk",
+      "reason": "Irkutsk identifies the retained North Asia East group; Ulaanbaatar now has separate candidate94. CLDR001 selects Irkutsk."
+    },
+    {
+      "sharePointId": 64,
+      "candidateWindowsId": "North Asia Standard Time",
+      "candidateDescription": "(UTC+07:00) Krasnoyarsk",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+07:00) Krasnoyarsk",
+      "windowsId": "North Asia Standard Time",
+      "iana": "Asia/Krasnoyarsk",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 65,
+      "candidateWindowsId": "Pacific SA Standard Time",
+      "candidateDescription": "(UTC-04:00) Santiago",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-04:00) Santiago",
+      "windowsId": "Pacific SA Standard Time",
+      "iana": "America/Santiago",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 66,
+      "candidateWindowsId": "Sri Lanka Standard Time",
+      "candidateDescription": "(UTC+05:30) Sri Jayawardenepura",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+05:30) Sri Jayawardenepura",
+      "windowsId": "Sri Lanka Standard Time",
+      "iana": "Asia/Colombo",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 67,
+      "candidateWindowsId": "Tonga Standard Time",
+      "candidateDescription": "(UTC+13:00) Nuku'alofa",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+13:00) Nuku'alofa",
+      "windowsId": "Tonga Standard Time",
+      "iana": "Pacific/Tongatapu",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 68,
+      "candidateWindowsId": "Vladivostok Standard Time",
+      "candidateDescription": "(UTC+10:00) Vladivostok",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+10:00) Vladivostok",
+      "windowsId": "Vladivostok Standard Time",
+      "iana": "Asia/Vladivostok",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 69,
+      "candidateWindowsId": "W. Central Africa Standard Time",
+      "candidateDescription": "(UTC+01:00) West Central Africa",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+01:00) West Central Africa",
+      "windowsId": "W. Central Africa Standard Time",
+      "iana": "Africa/Lagos",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 70,
+      "candidateWindowsId": "Yakutsk Standard Time",
+      "candidateDescription": "(UTC+09:00) Yakutsk",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+09:00) Yakutsk",
+      "windowsId": "Yakutsk Standard Time",
+      "iana": "Asia/Yakutsk",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 71,
+      "candidateWindowsId": "Central Asia Standard Time",
+      "candidateDescription": "(UTC+06:00) Astana",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+06:00) Astana, Dhaka",
+      "windowsId": "Central Asia Standard Time",
+      "iana": "Asia/Bishkek",
+      "reason": "PnP and Microsoft identify the Central Asia/Astana group; Dhaka now has separate candidate102. CLDR001 selects Bishkek as the standard-group representative, not Astana physical-city equivalence."
+    },
+    {
+      "sharePointId": 72,
+      "candidateWindowsId": "Korea Standard Time",
+      "candidateDescription": "(UTC+09:00) Seoul",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+09:00) Seoul",
+      "windowsId": "Korea Standard Time",
+      "iana": "Asia/Seoul",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 73,
+      "candidateWindowsId": "W. Australia Standard Time",
+      "candidateDescription": "(UTC+08:00) Perth",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+08:00) Perth",
+      "windowsId": "W. Australia Standard Time",
+      "iana": "Australia/Perth",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 74,
+      "candidateWindowsId": "Arab Standard Time",
+      "candidateDescription": "(UTC+03:00) Kuwait, Riyadh",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+03:00) Kuwait, Riyadh",
+      "windowsId": "Arab Standard Time",
+      "iana": "Asia/Riyadh",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 75,
+      "candidateWindowsId": "Taipei Standard Time",
+      "candidateDescription": "(UTC+08:00) Taipei",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+08:00) Taipei",
+      "windowsId": "Taipei Standard Time",
+      "iana": "Asia/Taipei",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 76,
+      "candidateWindowsId": "AUS Eastern Standard Time",
+      "candidateDescription": "(UTC+10:00) Canberra, Melbourne, Sydney",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+10:00) Canberra, Melbourne, Sydney",
+      "windowsId": "AUS Eastern Standard Time",
+      "iana": "Australia/Sydney",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 77,
+      "candidateWindowsId": "Mountain Standard Time (Mexico)",
+      "candidateDescription": "(UTC-07:00) Chihuahua, La Paz, Mazatlan",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-07:00) Chihuahua, La Paz, Mazatlan",
+      "windowsId": "Mountain Standard Time (Mexico)",
+      "iana": "America/Mazatlan",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 78,
+      "candidateWindowsId": "Pacific Standard Time (Mexico)",
+      "candidateDescription": "(UTC-08:00) Baja California",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-08:00) Tijuana, Baja California",
+      "windowsId": "Pacific Standard Time (Mexico)",
+      "iana": "America/Tijuana",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 79,
+      "candidateWindowsId": "Jordan Standard Time",
+      "candidateDescription": "(UTC+02:00) Amman",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+02:00) Amman",
+      "windowsId": "Jordan Standard Time",
+      "iana": "Asia/Amman",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 80,
+      "candidateWindowsId": "Middle East Standard Time",
+      "candidateDescription": "(UTC+02:00) Beirut",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+02:00) Beirut",
+      "windowsId": "Middle East Standard Time",
+      "iana": "Asia/Beirut",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 81,
+      "candidateWindowsId": "Central Brazilian Standard Time",
+      "candidateDescription": "(UTC-04:00) Cuiaba",
+      "status": "excluded",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT-04:00) Manaus",
+      "reason": "Microsoft identifies Manaus; PnP assigns the Cuiaba Windows group. These regions have distinct historical daylight rules; equal offsets are insufficient."
+    },
+    {
+      "sharePointId": 82,
+      "candidateWindowsId": "Georgian Standard Time",
+      "candidateDescription": "(UTC+04:00) Tbilisi",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+03:00) Tbilisi",
+      "windowsId": "Georgian Standard Time",
+      "iana": "Asia/Tbilisi",
+      "reason": "Both sources retain Tbilisi as the Georgian identity despite historical offset changes. CLDR001 selects Tbilisi."
+    },
+    {
+      "sharePointId": 83,
+      "candidateWindowsId": "Namibia Standard Time",
+      "candidateDescription": "(UTC+01:00) Windhoek",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+02:00) Windhoek",
+      "windowsId": "Namibia Standard Time",
+      "iana": "Africa/Windhoek",
+      "reason": "Both sources retain Windhoek as the Namibia identity despite historical offset/daylight changes. CLDR001 selects Windhoek."
+    },
+    {
+      "sharePointId": 84,
+      "candidateWindowsId": "Caucasus Standard Time",
+      "candidateDescription": "(UTC+04:00) Yerevan",
+      "status": "verified",
+      "evidence": [
+        "microsoft-groups",
+        "pnp",
+        "cldr"
+      ],
+      "microsoftGroup": "(GMT+04:00) Yerevan",
+      "windowsId": "Caucasus Standard Time",
+      "iana": "Asia/Yerevan",
+      "reason": "PnP supplies the stock numeric Windows identity; Microsoft group corroborates the regional identity; CLDR territory001 supplies the representative."
+    },
+    {
+      "sharePointId": 85,
+      "candidateWindowsId": "Argentina Standard Time",
+      "candidateDescription": "(UTC-03:00) Buenos Aires",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Argentina Standard Time",
+      "iana": "America/Buenos_Aires",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 86,
+      "candidateWindowsId": "Morocco Standard Time",
+      "candidateDescription": "(UTC) Casablanca",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Morocco Standard Time",
+      "iana": "Africa/Casablanca",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 87,
+      "candidateWindowsId": "Pakistan Standard Time",
+      "candidateDescription": "(UTC+05:00) Islamabad, Karachi",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Pakistan Standard Time",
+      "iana": "Asia/Karachi",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 88,
+      "candidateWindowsId": "Venezuela Standard Time",
+      "candidateDescription": "(UTC-04:30) Caracas",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Venezuela Standard Time",
+      "iana": "America/Caracas",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 89,
+      "candidateWindowsId": "Mauritius Standard Time",
+      "candidateDescription": "(UTC+04:00) Port Louis",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Mauritius Standard Time",
+      "iana": "Indian/Mauritius",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 90,
+      "candidateWindowsId": "Montevideo Standard Time",
+      "candidateDescription": "(UTC-03:00) Montevideo",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Montevideo Standard Time",
+      "iana": "America/Montevideo",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 91,
+      "candidateWindowsId": "Paraguay Standard Time",
+      "candidateDescription": "(UTC-04:00) Asuncion",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Paraguay Standard Time",
+      "iana": "America/Asuncion",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 92,
+      "candidateWindowsId": "Kamchatka Standard Time",
+      "candidateDescription": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old",
+      "status": "excluded",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "reason": "The obsolete Kamchatka Windows key has no territory001 representative in the pinned CLDR release."
+    },
+    {
+      "sharePointId": 93,
+      "candidateWindowsId": "UTC",
+      "candidateDescription": "(UTC) Coordinated Universal Time",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "UTC",
+      "iana": "Etc/UTC",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 94,
+      "candidateWindowsId": "Ulaanbaatar Standard Time",
+      "candidateDescription": "(UTC+08:00) Ulaanbaatar",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Ulaanbaatar Standard Time",
+      "iana": "Asia/Ulaanbaatar",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 95,
+      "candidateWindowsId": "UTC-11",
+      "candidateDescription": "(UTC-11:00) Coordinated Universal Time-11",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "UTC-11",
+      "iana": "Etc/GMT+11",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 96,
+      "candidateWindowsId": "UTC-02",
+      "candidateDescription": "(UTC-02:00) Coordinated Universal Time-02",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "UTC-02",
+      "iana": "Etc/GMT+2",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 97,
+      "candidateWindowsId": "UTC+12",
+      "candidateDescription": "(UTC+12:00) Coordinated Universal Time+12",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "UTC+12",
+      "iana": "Etc/GMT-12",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 98,
+      "candidateWindowsId": "Syria Standard Time",
+      "candidateDescription": "(UTC+02:00) Damascus",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Syria Standard Time",
+      "iana": "Asia/Damascus",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 99,
+      "candidateWindowsId": "Magadan Standard Time",
+      "candidateDescription": "(UTC+10:00) Magadan",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Magadan Standard Time",
+      "iana": "Asia/Magadan",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 100,
+      "candidateWindowsId": "Kaliningrad Standard Time",
+      "candidateDescription": "(UTC+02:00) Kaliningrad",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Kaliningrad Standard Time",
+      "iana": "Europe/Kaliningrad",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 101,
+      "candidateWindowsId": "Turkey Standard Time",
+      "candidateDescription": "(UTC+03:00) Istanbul",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Turkey Standard Time",
+      "iana": "Europe/Istanbul",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 102,
+      "candidateWindowsId": "Bangladesh Standard Time",
+      "candidateDescription": "(UTC+06:00) Dhaka",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Bangladesh Standard Time",
+      "iana": "Asia/Dhaka",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 103,
+      "candidateWindowsId": "Bahia Standard Time",
+      "candidateDescription": "(UTC-03:00) Salvador",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Bahia Standard Time",
+      "iana": "America/Bahia",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 104,
+      "candidateWindowsId": "E. Europe Standard Time",
+      "candidateDescription": "(UTC+02:00) E. Europe",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "E. Europe Standard Time",
+      "iana": "Europe/Chisinau",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 106,
+      "candidateWindowsId": "Russia Time Zone 3",
+      "candidateDescription": "(UTC+04:00) Izhevsk, Samara",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Russia Time Zone 3",
+      "iana": "Europe/Samara",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 107,
+      "candidateWindowsId": "Russia Time Zone 10",
+      "candidateDescription": "(UTC+11:00) Chokurdakh",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Russia Time Zone 10",
+      "iana": "Asia/Srednekolymsk",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 108,
+      "candidateWindowsId": "Russia Time Zone 11",
+      "candidateDescription": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Russia Time Zone 11",
+      "iana": "Asia/Kamchatka",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 109,
+      "candidateWindowsId": "Belarus Standard Time",
+      "candidateDescription": "(UTC+03:00) Minsk",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Belarus Standard Time",
+      "iana": "Europe/Minsk",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 110,
+      "candidateWindowsId": "Astrakhan Standard Time",
+      "candidateDescription": "(UTC+04:00) Astrakhan, Ulyanovsk",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Astrakhan Standard Time",
+      "iana": "Europe/Astrakhan",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 111,
+      "candidateWindowsId": "Altai Standard Time",
+      "candidateDescription": "(UTC+07:00) Barnaul, Gorno-Altaysk",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Altai Standard Time",
+      "iana": "Asia/Barnaul",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 112,
+      "candidateWindowsId": "Tomsk Standard Time",
+      "candidateDescription": "(UTC+07:00) Tomsk",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Tomsk Standard Time",
+      "iana": "Asia/Tomsk",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 114,
+      "candidateWindowsId": "Sakhalin Standard Time",
+      "candidateDescription": "(UTC+11:00) Sakhalin",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Sakhalin Standard Time",
+      "iana": "Asia/Sakhalin",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    },
+    {
+      "sharePointId": 115,
+      "candidateWindowsId": "Omsk Standard Time",
+      "candidateDescription": "(UTC+06:00) Omsk",
+      "status": "verified",
+      "evidence": [
+        "pnp",
+        "cldr"
+      ],
+      "windowsId": "Omsk Standard Time",
+      "iana": "Asia/Omsk",
+      "reason": "PnP supplies the additional stock numeric Windows identity and named region; the pinned CLDR Windows key and territory001 representative corroborate that identity."
+    }
+  ]
+}

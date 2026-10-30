@@ -1,7 +1,6 @@
 # Graph and storage permissions
 
-[Validation index](../INDEX.md). These procedures require an authenticated host; their presence is not an executed result.
-
+[Validation index](../INDEX.md) · [Setup](../setup.md)
 
 The checked-in [package solution config](../../../../apps/spfx-react-toolkit-test/config/package-solution.json) does not declare `webApiPermissionRequests`. A served sample does not grant Graph/custom API permissions. Before positive Graph tests, have the tenant administrator arrange the required delegated permissions through the established SPFx approval workflow for an authorized test solution. Permission/precheck output is evidence of token acquisition for the current runtime, not a tenant grants inventory or server authorization guarantee.
 
@@ -15,6 +14,6 @@ For OneDrive app-root reads/writes, use the applicable delegated `Files.ReadWrit
 | OneDrive missing/current identity | Read a missing disposable JSON file with createIfMissing, confirm only the current missing file is created. Change file during an old read; old 404 must not create the current file or overwrite newer local data. |
 | OneDrive failure | Denied Graph scope, missing drive, invalid JSON and network failure expose the relevant read/write error. Write promises reject; read failures are captured in state. |
 | Tenant properties | Provision `spfx-toolkit-test-version` and `spfx-toolkit-test-counter` via the tenant's established admin tooling, then load in Tenant panel. Also test a missing key and inaccessible catalog. Properties are read-only through this API. |
-| Tenant key-value CRUD | As an authorized catalog Site Collection Admin, save a disposable key, get/list it, update and remove it. First write may provision hidden TenantKeyValueStore. Repeat with a regular user: canWrite is false and unauthorized writes fail. Reads depend on actual catalog/list access. |
+| Tenant key-value CRUD | In Tenant → Tenant storage, confirm mount/read/remove never create or repair TenantKeyValueStore. Save a disposable key with sufficient catalog/list grants; first save may provision and requires unique indexed Title. Read/update/remove it, clear description explicitly, and exercise Text `123`, JSON, Big integer `9007199254740993` and Date formats; inspect readback types. Verify canWrite against effective Add/Edit/Delete Items grants (plus catalog Manage Lists if absent), not role alone. Test denied reads as errors, multi-page lists, schema/uniqueness failures and concurrent HTTP 412 conflicts. Reads depend on actual catalog/list access. |
 | Tenant read failure | Inaccessible/unprovisioned catalog and denied list requests produce errors. `get`/`list` may return undefined/empty fallback; inspect error before calling that an absent record. Loading tracks pending read/write channels separately. |
 | Legacy serialization | Read numeric/boolean/null-like strings, objects, dates and large bigint inputs. Document observed coercion/loss; there is no complete type round-trip guarantee and generic types do not validate stored data. |

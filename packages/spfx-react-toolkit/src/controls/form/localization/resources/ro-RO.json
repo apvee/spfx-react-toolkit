@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Formularul nu a putut fi trimis. Încercați din nou.",
+  "dateInputValidationMessage": "Completați sau corectați data înainte de trimitere.",
+  "timeInputValidationMessage": "Completați sau corectați ora înainte de trimitere.",
+  "tagPicker": {
+    "noOptions": "Nicio opțiune nu corespunde căutării curente."
+  },
+  "fileInput": {
+    "browseLabel": "Răsfoire",
+    "clearLabel": "Golire"
+  },
+  "arraySection": {
+    "add": "Adaugă un element",
+    "empty": "Nu există elemente",
+    "itemLabelTemplate": "Elementul {position}",
+    "removeTemplate": "Elimină {label}",
+    "moveUpTemplate": "Mută {label} în sus",
+    "moveDownTemplate": "Mută {label} în jos",
+    "addedTemplate": "S-a adăugat: {label}",
+    "removedTemplate": "S-a eliminat: {label}",
+    "movedTemplate": "Elementul {label} a fost mutat pe poziția {position} din {total}"
+  },
+  "datePicker": {
+    "months": [
+      "ianuarie",
+      "februarie",
+      "martie",
+      "aprilie",
+      "mai",
+      "iunie",
+      "iulie",
+      "august",
+      "septembrie",
+      "octombrie",
+      "noiembrie",
+      "decembrie"
+    ],
+    "shortMonths": [
+      "ian.",
+      "feb.",
+      "mar.",
+      "apr.",
+      "mai",
+      "iun.",
+      "iul.",
+      "aug.",
+      "sept.",
+      "oct.",
+      "nov.",
+      "dec."
+    ],
+    "days": [
+      "duminică",
+      "luni",
+      "marți",
+      "miercuri",
+      "joi",
+      "vineri",
+      "sâmbătă"
+    ],
+    "shortDays": [
+      "dum.",
+      "lun.",
+      "mar.",
+      "mie.",
+      "joi",
+      "vin.",
+      "sâm."
+    ],
+    "goToToday": "Mergi la ziua de azi",
+    "prevMonthAriaLabel": "Luna anterioară",
+    "nextMonthAriaLabel": "Luna următoare",
+    "prevYearAriaLabel": "Anul anterior",
+    "nextYearAriaLabel": "Anul următor",
+    "prevYearRangeAriaLabel": "Intervalul de ani anterior",
+    "nextYearRangeAriaLabel": "Intervalul de ani următor",
+    "monthPickerHeaderAriaLabel": "{0}, schimbă anul",
+    "yearPickerHeaderAriaLabel": "{0}, schimbă luna",
+    "closeButtonAriaLabel": "Închide",
+    "weekNumberFormatString": "Numărul săptămânii {0}",
+    "selectedDateFormatString": "Data selectată {0}",
+    "todayDateFormatString": "Data de azi {0}",
+    "dayMarkedAriaLabel": "marcat"
+  }
+}

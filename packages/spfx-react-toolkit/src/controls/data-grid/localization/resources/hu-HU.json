@@ -1,0 +1,25 @@
+{
+  "empty": "Nincs elérhető adat",
+  "noResults": "Nincs találat",
+  "noVisibleColumns": "Nincsenek látható oszlopok",
+  "loading": "Betöltés",
+  "actions": "Műveletek",
+  "moreActions": "További műveletek",
+  "yes": "Igen",
+  "no": "Nem",
+  "noTags": "Nincsenek címkék",
+  "noObservations": "Nincsenek megfigyelések",
+  "invalidValue": "Érvénytelen érték",
+  "selectAllRows": "Összes sor kijelölése",
+  "retry": "Újrapróbálkozás",
+  "selectRowTemplate": "{rowId}. sor kijelölése",
+  "sparklineSummaryTemplate": "Első {first}; Utolsó {last}; Minimum {minimum}; Maximum {maximum}; Átlag {average}; Változás {change}; Százalékos változás {changePercent}",
+  "tagOverflow": {
+    "one": "További {count} címke megjelenítése",
+    "other": "További {count} címke megjelenítése"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} szavazat",
+    "other": "{formattedCount} szavazat"
+  }
+}

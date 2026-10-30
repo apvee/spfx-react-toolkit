@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Răsfoiți fișiere…",
+    "folders": "Răsfoiți foldere…",
+    "all": "Răsfoiți fișiere și foldere…"
+  },
+  "placeholders": {
+    "files": "Selectați fișiere…",
+    "folders": "Selectați foldere…",
+    "all": "Selectați fișiere sau foldere…"
+  },
+  "labels": {
+    "selection": "Selectare de fișiere și foldere",
+    "file": "Fișier",
+    "folder": "Folder",
+    "unresolvedItem": "Element nerezolvat",
+    "removeItem": "Eliminați {name}"
+  },
+  "validation": {
+    "invalidReferences": "Referințe nevalide la fișiere sau foldere.",
+    "controlledModeChanged": "Modul controlat nu poate fi schimbat cât timp controlul este montat.",
+    "incompatibleItems": "Selecția conține elemente incompatibile cu tipul, categoria sau extensiile configurate. Eliminați-le sau înlocuiți-le.",
+    "invalidPolicy": "Configurație nevalidă pentru tipul, categoria, extensiile sau limita selecției.",
+    "selectionLimitExceeded": "Selecția depășește limita configurată. Eliminați elementele în plus."
+  },
+  "errors": {
+    "configuration": "Configurație nevalidă a selectorului. Verificați sursa, tipurile, categoria și limitele; utilizați presetarea fără opțiuni vechi.",
+    "auth-resource": "Selectorul a solicitat o resursă de autentificare nepermisă de configurație.",
+    "auth-type": "Selectorul a solicitat un tip de autentificare neacceptat de configurație.",
+    "auth-challenge": "Selectorul necesită o verificare suplimentară a autentificării care nu este acceptată.",
+    "auth-provider": "Nu s-a putut obține tokenul SharePoint. Încercați din nou; dacă problema persistă, verificați accesul și permisiunile existente.",
+    "selection-identity": "Nu s-a putut verifica identitatea elementului selectat. Redeschideți selectorul și încercați din nou.",
+    "selection-scope": "Elementul selectat se află în afara site-ului, bibliotecii sau folderului permis.",
+    "selection-policy": "Selecția nu respectă cerințele privind tipul, categoria, extensiile sau numărul de elemente permise.",
+    "selection-unavailable": "Elementul selectat nu este disponibil sau nu poate fi accesat.",
+    "selection-invalid": "Nu s-a putut verifica selecția. Nu au fost adăugate elemente noi.",
+    "onedrive-unavailable": "OneDrive al utilizatorului curent nu este disponibil sau nu poate fi accesat. Verificați dacă unitatea există și încercați din nou.",
+    "opening": "Nu s-a putut deschide selectorul. Verificați configurația și accesul la sursă, apoi încercați din nou.",
+    "timeout": "Selectorul nu a răspuns la timp. Închideți-l și încercați din nou.",
+    "communication": "Comunicarea cu selectorul a fost întreruptă. Redeschideți-l și încercați din nou."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Caracteristica opțională de autentificare nu a răspuns la timp. Încercați din nou.",
+    "unsupportedCommand": "Această integrare nu acceptă această comandă.",
+    "optionalGraphAuthenticationFailed": "Nu s-a putut autentifica caracteristica opțională Microsoft Graph.",
+    "optionalPersonalAuthenticationFailed": "Nu s-a putut autentifica destinația personală opțională."
+  }
+}

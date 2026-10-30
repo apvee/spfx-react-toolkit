@@ -25,3 +25,5 @@ The sample consumes the compiled library. Build the library before the app; afte
 Use the verification guide to select checks for the changed behavior and its affected consumers. It distinguishes focused checks from full repository and package gates. Browser fixtures establish local rendering/interaction behavior; the SharePoint checklists cover actual host lifecycle, authentication and grants. Record those outcomes separately.
 
 When adding or changing a public capability, keep source JSDoc, the Markdown reference and an observable sample scenario aligned. Repository instructions in [AGENTS.md](../../AGENTS.md) govern branch selection, scope, documentation/sample requirements and completion evidence.
+
+Use [component and sample checks](component-checks.md) for control-family tests and observable scenarios; [localization](../guides/localization.md) and [control slots](../guides/control-slots.md) are shared authoring contracts.

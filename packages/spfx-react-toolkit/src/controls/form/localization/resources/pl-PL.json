@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Nie można przesłać formularza. Spróbuj ponownie.",
+  "dateInputValidationMessage": "Przed przesłaniem uzupełnij lub popraw datę.",
+  "timeInputValidationMessage": "Przed przesłaniem uzupełnij lub popraw godzinę.",
+  "tagPicker": {
+    "noOptions": "Żadna opcja nie pasuje do bieżącego zapytania."
+  },
+  "fileInput": {
+    "browseLabel": "Przeglądaj",
+    "clearLabel": "Wyczyść"
+  },
+  "arraySection": {
+    "add": "Dodaj element",
+    "empty": "Brak elementów",
+    "itemLabelTemplate": "Element {position}",
+    "removeTemplate": "Usuń {label}",
+    "moveUpTemplate": "Przenieś {label} w górę",
+    "moveDownTemplate": "Przenieś {label} w dół",
+    "addedTemplate": "Dodano: {label}",
+    "removedTemplate": "Usunięto: {label}",
+    "movedTemplate": "Element {label} przeniesiono na pozycję {position} z {total}"
+  },
+  "datePicker": {
+    "months": [
+      "styczeń",
+      "luty",
+      "marzec",
+      "kwiecień",
+      "maj",
+      "czerwiec",
+      "lipiec",
+      "sierpień",
+      "wrzesień",
+      "październik",
+      "listopad",
+      "grudzień"
+    ],
+    "shortMonths": [
+      "sty",
+      "lut",
+      "mar",
+      "kwi",
+      "maj",
+      "cze",
+      "lip",
+      "sie",
+      "wrz",
+      "paź",
+      "lis",
+      "gru"
+    ],
+    "days": [
+      "niedziela",
+      "poniedziałek",
+      "wtorek",
+      "środa",
+      "czwartek",
+      "piątek",
+      "sobota"
+    ],
+    "shortDays": [
+      "niedz.",
+      "pon.",
+      "wt.",
+      "śr.",
+      "czw.",
+      "pt.",
+      "sob."
+    ],
+    "goToToday": "Przejdź do dzisiaj",
+    "prevMonthAriaLabel": "Poprzedni miesiąc",
+    "nextMonthAriaLabel": "Następny miesiąc",
+    "prevYearAriaLabel": "Poprzedni rok",
+    "nextYearAriaLabel": "Następny rok",
+    "prevYearRangeAriaLabel": "Poprzedni zakres lat",
+    "nextYearRangeAriaLabel": "Następny zakres lat",
+    "monthPickerHeaderAriaLabel": "{0}, zmień rok",
+    "yearPickerHeaderAriaLabel": "{0}, zmień miesiąc",
+    "closeButtonAriaLabel": "Zamknij",
+    "weekNumberFormatString": "Numer tygodnia {0}",
+    "selectedDateFormatString": "Wybrana data {0}",
+    "todayDateFormatString": "Dzisiejsza data {0}",
+    "dayMarkedAriaLabel": "oznaczono"
+  }
+}

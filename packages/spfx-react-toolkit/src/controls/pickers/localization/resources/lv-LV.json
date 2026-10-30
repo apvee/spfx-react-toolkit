@@ -1,0 +1,81 @@
+{
+  "labels": {
+    "selectOne": "Atlasīt vienumu",
+    "selectMany": "Atlasīt vienumus",
+    "search": "Meklēt…",
+    "clearSelection": "Notīrīt atlasi",
+    "clearSearch": "Notīrīt meklēšanu",
+    "options": "Opcijas",
+    "searchOptions": "Meklēt opcijas",
+    "selectedOne": "Atlasītais vienums",
+    "selectedMany": "Atlasītie vienumi",
+    "noSelection": "Nav atlases",
+    "resolveIds": "Noteikt ID",
+    "moreResults": "Vairāk rezultātu",
+    "retry": "Mēģināt vēlreiz",
+    "namedOptions": "{name}: Opcijas",
+    "namedSearch": "{name}: Meklēt",
+    "selectedCount": {
+      "zero": "Atlasīti {count} vienumu",
+      "one": "Atlasīts {count} vienums",
+      "other": "Atlasīti {count} vienumi"
+    },
+    "minimumSearchLength": {
+      "zero": "Lai meklētu, ierakstiet vismaz {count} rakstzīmju",
+      "one": "Lai meklētu, ierakstiet vismaz {count} rakstzīmi",
+      "other": "Lai meklētu, ierakstiet vismaz {count} rakstzīmes"
+    }
+  },
+  "status": {
+    "searching": "Notiek meklēšana…",
+    "loading": "Notiek ielāde…",
+    "partialSearch": "Daļēja meklēšana: precizējiet meklēšanu.",
+    "noOtherResults": "Šai meklēšanai nav citu rezultātu",
+    "noResults": "Šai meklēšanai nav rezultātu",
+    "noOptions": "Nav pieejamu opciju.",
+    "moreItemsAvailable": "Ir pieejami citi vienumi.",
+    "partialSuggestions": "Daļēji ieteikumi: daži avoti nav pieejami.",
+    "unresolvedValue": "Neatrisināta vērtība",
+    "partialHubs": "Daļējs centrmezglu saraksts: sašauriniet tvērumu vai izmantojiet vietnes režīmu.",
+    "partialSiteCollections": "Daļēja vietņu kolekciju meklēšana (ne vairāk kā 1000 rezultātu): sašauriniet kritērijus."
+  },
+  "sections": {
+    "consumer": "Nodrošinātās opcijas",
+    "currentSite": "Pašreizējā vietne",
+    "hubSite": "Saistītais centrmezgls",
+    "catalog": "Pieejamās opcijas",
+    "currentUser": "Jūs",
+    "people": "Ieteiktās personas",
+    "memberOf": "Jūsu grupas"
+  },
+  "metadata": {
+    "documentLibrary": "Dokumentu bibliotēka",
+    "sharePointList": "SharePoint saraksts",
+    "personalView": "Personiskais skats",
+    "publicView": "Publiskais skats",
+    "field": "Lauks",
+    "itemDescription": "Vienums · ID {id}",
+    "file": "Fails",
+    "fileWithExtension": "{extension} fails",
+    "folder": "Mape",
+    "sharePointGroup": "SharePoint grupa · SharePoint",
+    "securityGroup": "Drošības grupa · Entra",
+    "distributionList": "Adresātu saraksts · Entra",
+    "unvalidatedEmail": "Nepārbaudīta e-pasta adrese",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Sasniegts atlases ierobežojums.",
+    "selectionLimitExceeded": "Atlase pārsniedz konfigurēto ierobežojumu.",
+    "unresolvedValues": "Dažas atlasītās vērtības nav noteiktas.",
+    "outOfScopeValues": "Atlase satur vērtības ārpus konfigurētā tvēruma.",
+    "resolveRequiredUserIds": "Nosakiet atlasītajiem lietotājiem nepieciešamos ID."
+  },
+  "errors": {
+    "candidateOutOfScope": "Kandidāts ir ārpus konfigurētā tvēruma.",
+    "incompleteCandidateResolution": "Kandidātu neizdevās pilnībā noteikt.",
+    "resolutionFailed": "Noteikšana neizdevās.",
+    "graphUnavailable": "Microsoft Graph klients nav pieejams."
+  }
+}

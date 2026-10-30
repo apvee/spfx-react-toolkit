@@ -38,6 +38,47 @@ test('mixed runtime and erased reexports sharing a specifier retain separate edg
 test('unresolved external packages are reported', () => {
   assert.ok(audit().issues.some(i=>i.kind==='unresolved-module' && i.specifier==='missing-external-registration'));
 });
+test('exact native resource inventory IDs resolve externally without package metadata in the audited source root', () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const inventory = require('../packages/spfx-react-toolkit/localization/resources.json');
+  const ids = inventory.resources.map(resource => resource.id);
+  assert.equal(ids.length, 8);
+  const unknown = 'ApveeSpfxReactToolkitUnreviewedStrings';
+  const directory = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'graph-native-resources-')));
+  try {
+    fs.writeFileSync(path.join(directory, 'index.ts'), [...ids, unknown].map((id, index) =>
+      `import * as resource${index} from '${id}';\nexport const value${index} = resource${index};`).join('\n'));
+    const report = auditImportGraph({ sourceRoot: directory, entrypoints: ['index.ts'] });
+    for (const id of ids) {
+      const edge = report.edges.find(item => item.specifier === id);
+      assert.equal(edge.resolvedTarget, id, id);
+      assert.equal(edge.kind, 'import', id);
+      assert.ok(!report.issues.some(issue => issue.kind === 'unresolved-module' && issue.specifier === id), id);
+    }
+    assert.deepEqual(report.issues.filter(issue => issue.kind === 'unresolved-module').map(issue => issue.specifier), [unknown]);
+    assert.equal(report.edges.find(item => item.specifier === unknown).resolvedTarget, null);
+    assert.deepEqual(report.publicExports.find(item => item.name === 'value0').dependencies, ids.slice().sort());
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});
+
+test('only the five reviewed native string adapters receive manual resource classification', () => {
+  const { reviewModuleEffects } = require('../scripts/audit-import-graph.cjs');
+  const module = path => ({ path, externalImports: [], topLevelInitializations: [{ expression: '{}' }], effects: { classification: 'review-required' } });
+  for (const file of [
+    'controls/editable-text/localization/editable-text-strings.internal.ts',
+    'controls/web-part-shell/localization/web-part-shell-strings.internal.ts',
+    'controls/pickers/pickers-strings.internal.ts',
+    'controls/file-folder-picker/file-folder-picker-strings.internal.ts',
+    'controls/form/form-strings.internal.ts',
+  ]) assert.equal(reviewModuleEffects(module(file)).classification, 'local-resource-allocation', file);
+  for (const file of [
+    'controls/form/unreviewed-strings.internal.ts',
+    'controls/form/localization/form-strings.internal.ts',
+    'controls/stage/stage-strings.internal.ts',
+    'controls/unreviewed/unreviewed-strings.internal.ts',
+  ]) assert.equal(reviewModuleEffects(module(file)).classification, 'review-required', file);
+});
 test('renamed imported namespaces retain runtime leaves and dependencies', () => {
   const report = auditImportGraph({sourceRoot,entrypoints:['namespace-alias.ts']});
   const value = report.publicExports.find(e=>e.name==='renamed.value');
@@ -68,9 +109,22 @@ test('source rules reject internal barrel imports, global renderers and unclassi
 test('repository source effects match the manifest and internal imports use direct modules', () => {
   const fs = require('node:fs');
   const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
-  const report = auditImportGraph({ sourceRoot: path.resolve(__dirname, '../packages/spfx-react-toolkit/src'), entrypoints: ['index.ts'] });
+  const report = auditImportGraph({ sourceRoot: path.resolve(__dirname, '../packages/spfx-react-toolkit/src'), entrypoints: ['index.ts', 'controls/index.ts', 'controls/form/index.ts'] });
   const manifest = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../packages/spfx-react-toolkit/package.json')));
   assert.deepEqual(checkSourceRules(report, manifest.sideEffects), []);
+  const family = report.publicExports.filter(item => item.entrypoint === 'controls/form/index.ts' && item.kind === 'runtime');
+  assert.deepEqual(family.map(item => item.name).sort(), ['Form', 'createForm']);
+  for (const entrypoint of ['index.ts', 'controls/index.ts']) {
+    for (const exported of family) {
+      const alias = report.publicExports.find(item => item.entrypoint === entrypoint && item.name === exported.name);
+      assert.ok(alias, `${entrypoint}: ${exported.name}`);
+      assert.equal(alias.canonicalSource, exported.canonicalSource);
+      assert.equal(alias.kind, 'runtime');
+    }
+  }
+  for (const module of report.modules.filter(item => item.path.startsWith('controls/form/'))) {
+    assert.ok(module.externalImports.every(edge => edge.kind !== 'bare-import'), `${module.path}: no external registration`);
+  }
 });
 
 test('source rules preserve type-only reexports at public barrel boundaries', () => {
@@ -139,4 +193,35 @@ test('returned conditional factories remain deferred until the returned function
     '(function () { return condition ? () => createDOMRenderer() : () => createRegistry(); })()()'
   ]) assert.equal(checkSourceRules(report(expression),[])[0]?.kind,'package-global-renderer',expression);
   assert.deepEqual(checkSourceRules(report('(() => true ? () => createDOMRenderer() : () => createRegistry())()'),[]),[]);
+});
+
+test('reviewed control style definitions are local but actual renderer allocation stays forbidden', () => {
+  const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
+  for (const path of ['controls/file-folder-picker/file-folder-picker.styles.internal.ts', 'controls/formatted-text/formatted-text.styles.internal.ts', 'controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts', 'controls/cards/card.styles.internal.ts', 'controls/editable-text/editable-text-color-picker.internal.tsx', 'controls/editable-text/editable-text-editor.internal.tsx', 'controls/editable-text/editable-text-styles.internal.ts', 'controls/editable-text/editable-text-toolbar.internal.tsx']) {
+    const module = expression => ({ path, externalImports: [], topLevelInitializations: [{ expression }] });
+    assert.deepEqual(checkSourceRules({ edges: [], modules: [module('makeStyles({ root: {} })')] }, []), []);
+    assert.equal(checkSourceRules({ edges: [], modules: [module('createDOMRenderer()')] }, [])[0].kind, 'package-global-renderer');
+    assert.equal(checkSourceRules({ edges: [], modules: [module('makeStyles({ root: createDOMRenderer() })')] }, [])[0].kind, 'package-global-renderer');
+  }
+});
+
+test('trim root/domain/control exports share canonical leaves without registrations or barrel imports', () => {
+  const families = [['sharepoint-permission-trim', 'SharePointPermissionTrim'], ['sharepoint-group-trim', 'SharePointGroupTrim'], ['entra-group-trim', 'EntraGroupTrim']];
+  const report = auditImportGraph({ sourceRoot: path.resolve(__dirname, '../packages/spfx-react-toolkit/src'), entrypoints: ['index.ts', 'controls/index.ts', ...families.map(([folder]) => `controls/${folder}/index.ts`)] });
+  for (const [folder, symbol] of families) {
+    const leaf = report.publicExports.find(item => item.entrypoint === `controls/${folder}/index.ts` && item.name === symbol);
+    assert.ok(leaf); assert.equal(leaf.kind, 'runtime');
+    for (const entrypoint of ['index.ts', 'controls/index.ts']) {
+      const alias = report.publicExports.find(item => item.entrypoint === entrypoint && item.name === symbol);
+      assert.ok(alias); assert.equal(alias.canonicalSource, leaf.canonicalSource);
+    }
+    assert.ok(leaf.dependencies.every(dependency => !dependency.startsWith('@pnp/')));
+    for (const module of report.modules.filter(item => item.path.startsWith(`controls/${folder}/`))) {
+      assert.ok(module.externalImports.every(edge => edge.kind !== 'bare-import'));
+    }
+  }
+  const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
+  const manifest = require('../packages/spfx-react-toolkit/package.json');
+  const issues = checkSourceRules(report, manifest.sideEffects);
+  assert.ok(issues.every(issue => !families.some(([folder]) => issue.from?.startsWith(`controls/${folder}/`))), JSON.stringify(issues));
 });

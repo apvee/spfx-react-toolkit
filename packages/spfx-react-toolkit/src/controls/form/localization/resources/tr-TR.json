@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Form gönderilemedi. Lütfen yeniden deneyin.",
+  "dateInputValidationMessage": "Göndermeden önce tarihi tamamlayın veya düzeltin.",
+  "timeInputValidationMessage": "Göndermeden önce saati tamamlayın veya düzeltin.",
+  "tagPicker": {
+    "noOptions": "Geçerli sorguyla eşleşen seçenek yok."
+  },
+  "fileInput": {
+    "browseLabel": "Gözat",
+    "clearLabel": "Temizle"
+  },
+  "arraySection": {
+    "add": "Öğe ekle",
+    "empty": "Öğe yok",
+    "itemLabelTemplate": "Öğe {position}",
+    "removeTemplate": "{label} öğesini kaldır",
+    "moveUpTemplate": "{label} öğesini yukarı taşı",
+    "moveDownTemplate": "{label} öğesini aşağı taşı",
+    "addedTemplate": "Eklendi: {label}",
+    "removedTemplate": "Kaldırıldı: {label}",
+    "movedTemplate": "{label} öğesi {total} konumdan {position}. konuma taşındı"
+  },
+  "datePicker": {
+    "months": [
+      "Ocak",
+      "Şubat",
+      "Mart",
+      "Nisan",
+      "Mayıs",
+      "Haziran",
+      "Temmuz",
+      "Ağustos",
+      "Eylül",
+      "Ekim",
+      "Kasım",
+      "Aralık"
+    ],
+    "shortMonths": [
+      "Oca",
+      "Şub",
+      "Mar",
+      "Nis",
+      "May",
+      "Haz",
+      "Tem",
+      "Ağu",
+      "Eyl",
+      "Eki",
+      "Kas",
+      "Ara"
+    ],
+    "days": [
+      "Pazar",
+      "Pazartesi",
+      "Salı",
+      "Çarşamba",
+      "Perşembe",
+      "Cuma",
+      "Cumartesi"
+    ],
+    "shortDays": [
+      "Paz",
+      "Pzt",
+      "Sal",
+      "Çar",
+      "Per",
+      "Cum",
+      "Cmt"
+    ],
+    "goToToday": "Bugüne git",
+    "prevMonthAriaLabel": "Önceki ay",
+    "nextMonthAriaLabel": "Sonraki ay",
+    "prevYearAriaLabel": "Önceki yıl",
+    "nextYearAriaLabel": "Sonraki yıl",
+    "prevYearRangeAriaLabel": "Önceki yıl aralığı",
+    "nextYearRangeAriaLabel": "Sonraki yıl aralığı",
+    "monthPickerHeaderAriaLabel": "{0}, yılı değiştir",
+    "yearPickerHeaderAriaLabel": "{0}, ayı değiştir",
+    "closeButtonAriaLabel": "Kapat",
+    "weekNumberFormatString": "Hafta numarası {0}",
+    "selectedDateFormatString": "Seçilen tarih {0}",
+    "todayDateFormatString": "Bugünün tarihi {0}",
+    "dayMarkedAriaLabel": "işaretli"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Избери ставка",
+    "selectMany": "Избери ставки",
+    "search": "Пребарај…",
+    "clearSelection": "Исчисти го изборот",
+    "clearSearch": "Исчисти го пребарувањето",
+    "options": "Опции",
+    "searchOptions": "Пребарај опции",
+    "selectedOne": "Избрана ставка",
+    "selectedMany": "Избрани ставки",
+    "noSelection": "Нема избор",
+    "resolveIds": "Разреши идентификатори",
+    "moreResults": "Повеќе резултати",
+    "retry": "Обиди се повторно",
+    "namedOptions": "{name}: Опции",
+    "namedSearch": "{name}: Пребарај",
+    "selectedCount": {
+      "one": "Избрана е {count} ставка",
+      "other": "Избрани се {count} ставки"
+    },
+    "minimumSearchLength": {
+      "one": "Внесете најмалку {count} знак за пребарување",
+      "other": "Внесете најмалку {count} знаци за пребарување"
+    }
+  },
+  "status": {
+    "searching": "Се пребарува…",
+    "loading": "Се вчитува…",
+    "partialSearch": "Делумно пребарување: прецизирајте го пребарувањето.",
+    "noOtherResults": "Нема други резултати за ова пребарување",
+    "noResults": "Нема резултати за ова пребарување",
+    "noOptions": "Нема достапни опции.",
+    "moreItemsAvailable": "Достапни се повеќе ставки.",
+    "partialSuggestions": "Делумни предлози: некои извори не се достапни.",
+    "unresolvedValue": "Неразрешена вредност",
+    "partialHubs": "Делумен список на центри: стеснете го опсегот или користете го режимот за локации.",
+    "partialSiteCollections": "Делумно пребарување на збирки локации (најмногу 1000 резултати): стеснете ги критериумите."
+  },
+  "sections": {
+    "consumer": "Дадени опции",
+    "currentSite": "Тековна локација",
+    "hubSite": "Поврзан центар",
+    "catalog": "Достапни опции",
+    "currentUser": "Вие",
+    "people": "Предложени лица",
+    "memberOf": "Вашите групи"
+  },
+  "metadata": {
+    "documentLibrary": "Библиотека со документи",
+    "sharePointList": "Список на SharePoint",
+    "personalView": "Личен приказ",
+    "publicView": "Јавен приказ",
+    "field": "Поле",
+    "itemDescription": "Ставка · ID {id}",
+    "file": "Датотека",
+    "fileWithExtension": "Датотека {extension}",
+    "folder": "Папка",
+    "sharePointGroup": "Група на SharePoint · SharePoint",
+    "securityGroup": "Безбедносна група · Entra",
+    "distributionList": "Список за дистрибуција · Entra",
+    "unvalidatedEmail": "Непотврдена е-пошта",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Достигнато е ограничувањето за избор.",
+    "selectionLimitExceeded": "Изборот го надминува поставеното ограничување.",
+    "unresolvedValues": "Некои избрани вредности не се разрешени.",
+    "outOfScopeValues": "Изборот содржи вредности надвор од поставениот опсег.",
+    "resolveRequiredUserIds": "Разрешете ги потребните идентификатори за избраните корисници."
+  },
+  "errors": {
+    "candidateOutOfScope": "Кандидатот е надвор од поставениот опсег.",
+    "incompleteCandidateResolution": "Кандидатот не можеше целосно да се разреши.",
+    "resolutionFailed": "Разрешувањето не успеа.",
+    "graphUnavailable": "Клиентот на Microsoft Graph не е достапен."
+  }
+}

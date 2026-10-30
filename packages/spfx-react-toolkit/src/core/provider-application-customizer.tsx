@@ -7,19 +7,24 @@ import { SPFxProviderBase } from './provider-base.internal';
 import type { SPFxComponent } from './types';
 
 /**
- * Props for the SPFx Application Customizer-specific provider component.
+ * Inputs for SPFxApplicationCustomizerProvider. Pass the initialized Application Customizer instance and a subtree using toolkit hooks. The provider waits for ServiceScope readiness and owns an isolated runtime store; omitted children render no application content.
  *
- * @template TProps - The properties type for the Application Customizer.
- * @public
+ * @typeParam TProps - Properties type of the supplied SPFx host instance.
+ *
+ * @example
+ * ```tsx
+ * // In the Application Customizer instance's render or mounting method:
+ * const element = <SPFxApplicationCustomizerProvider instance={this}><MyComponent /></SPFxApplicationCustomizerProvider>;
+ * ```
  */
 export interface SPFxApplicationCustomizerProviderProps<TProps extends {} = {}> {
   /**
-   * The SPFx Application Customizer instance.
+   * Required, initialized Application Customizer instance supplying context, properties and lifecycle integration.
    */
   instance: BaseApplicationCustomizer<TProps>;
 
   /**
-   * The children to render within the provider.
+   * Optional React subtree receiving host context, theme and isolated runtime state. Descendants mount after service-scope readiness; omission renders no application content.
    */
   children?: React.ReactNode;
 }
@@ -36,7 +41,7 @@ export interface SPFxApplicationCustomizerProviderProps<TProps extends {} = {}> 
  *
  * @example
  * ```tsx
- * import { SPFxApplicationCustomizerProvider } from 'spfx-react-toolkit';
+ * import { SPFxApplicationCustomizerProvider } from '@apvee/spfx-react-toolkit';
  *
  * export default class MyApplicationCustomizer extends BaseApplicationCustomizer<IMyProps> {
  *   public onInit(): Promise<void> {

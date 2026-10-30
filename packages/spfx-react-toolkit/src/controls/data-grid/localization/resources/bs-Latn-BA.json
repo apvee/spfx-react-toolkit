@@ -1,0 +1,27 @@
+{
+  "empty": "Nema dostupnih podataka",
+  "noResults": "Nema pronađenih rezultata",
+  "noVisibleColumns": "Nema vidljivih kolona",
+  "loading": "Učitavanje",
+  "actions": "Radnje",
+  "moreActions": "Više radnji",
+  "yes": "Da",
+  "no": "Ne",
+  "noTags": "Nema oznaka",
+  "noObservations": "Nema opažanja",
+  "invalidValue": "Nevažeća vrijednost",
+  "selectAllRows": "Odaberi sve redove",
+  "retry": "Pokušaj ponovo",
+  "selectRowTemplate": "Odaberi red {rowId}",
+  "sparklineSummaryTemplate": "Prvo {first}; Posljednje {last}; Minimum {minimum}; Maksimum {maximum}; Prosjek {average}; Promjena {change}; Postotak promjene {changePercent}",
+  "tagOverflow": {
+    "one": "Prikaži još {count} oznaku",
+    "few": "Prikaži još {count} oznake",
+    "other": "Prikaži još {count} oznaka"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} glas",
+    "few": "{formattedCount} glasa",
+    "other": "{formattedCount} glasova"
+  }
+}

@@ -1,7 +1,6 @@
 # Host and lifecycle checks
 
-[Validation index](../INDEX.md). These procedures require an authenticated host; their presence is not an executed result.
-
+[Validation index](../INDEX.md) · [Setup](../setup.md)
 
 The [WebPart entry point](../../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/SpFxReactToolkitTestWebPart.ts) mounts `SPFxWebPartProvider`. The [Application Customizer entry point](../../../../apps/spfx-react-toolkit-test/src/extensions/spFxReactToolkitTest/SpFxReactToolkitTestApplicationCustomizer.ts) mounts its matching provider into the Top placeholder and disposes React with the placeholder. The Providers panel checks all four exports, but Field Customizer and ListView Command Set are not mounted by this sample. Record those two as **not executed** until dedicated real-host samples are used; an export check is insufficient.
 

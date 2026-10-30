@@ -1,7 +1,6 @@
 # Async, list and search checks
 
-[Validation index](../INDEX.md). These procedures require an authenticated host; their presence is not an executed result.
-
+[Validation index](../INDEX.md) · [Setup](../setup.md)
 
 Use browser Network throttling and log start/finish times to exercise overlapping requests. When deterministic reversal cannot be achieved against the real service, record the case as **not executed**; local controlled-promise tests provide separate evidence.
 
@@ -14,5 +13,5 @@ Use browser Network throttling and log start/finish times to exercise overlappin
 | List paging | Load two pages, click loadMore twice promptly, and start a new query during a page request. No duplicate dispatch/obsolete page append. Failed pages can retry the same offset. |
 | Search refiners | Search, select refiners, refetch and load more; current filters persist. Start a new search; prior refiners clear. Results and hasMore reflect accumulated results. |
 | Latest request | Change list/key/file/query while a previous read is pending. Current identity's data/errors remain authoritative when an old response arrives. Remote writes may still complete; local guards do not cancel them. |
-| Suggestions | Type rapidly, change text during debounce, and clear while a request is pending. Suggestions reflect the current input. Trigger a failed suggestion and a newer successful search; obsolete failure must not replace the newer search error state. |
+| Suggestions | Type rapidly, change text during debounce, and clear while a request is pending. The autocomplete example shows loading throughout debounce and the request; suggestions reflect the current input. A successful empty response explains dependence on search history and tenant configuration, while a failed request shows a separate error with retry guidance. Editing retries and clears previous feedback; short input and selecting a suggestion return to idle. Obsolete responses/errors cannot replace current feedback. Trigger a failed suggestion and a newer successful search; obsolete failure must not replace the newer search error state. Indexed documents alone do not guarantee query suggestions. |
 | Error recovery | Exercise a missing list/file/property, inaccessible target and network failure; record loading completion, error presentation and successful retry after restoring access. |

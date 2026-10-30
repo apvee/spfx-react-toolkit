@@ -1,0 +1,9 @@
+{
+  "pagination": "ページ区切り",
+  "firstPage": "最初のページ",
+  "previousPage": "前のページ",
+  "nextPage": "次のページ",
+  "lastPage": "最後のページ",
+  "loadMore": "さらに読み込む",
+  "loading": "読み込み中"
+}

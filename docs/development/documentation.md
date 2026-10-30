@@ -41,7 +41,7 @@ Source JSDoc and the Markdown reference describe the same public behavior. JSDoc
 
 The root README is the editorial source for the npm README. The generator changes repository-relative documentation links to absolute GitHub links, preserves literal fenced examples and keeps the packaged LICENSE link local.
 
-The alphabetical [API catalog](../api/INDEX.md) is generated from actual root TypeScript exports, including imported re-exports, aliases and public types. Its descriptive sections also provide navigation by API area; individual reference folders link back to those sections instead of maintaining separate indexes. Keep the documentation home, API reference, development guide and SharePoint validation guide as the four entry points with distinct purposes. The [route map](../../scripts/documentation-routes.json) maps source modules to their reference page and optionally overrides an individual symbol. Keep the entry's import contract and reference accurate when changing that map. Unknown public source modules fail generation rather than disappearing from the catalog. Style namespaces link to the dedicated qualified style-member catalog.
+The alphabetical [API catalog](../api/INDEX.md) is generated from all clean package entry points, including root/domain exports, imported re-exports, aliases, public types and dedicated native Property Pane factories. Its descriptive sections also provide navigation by API area; individual reference folders link back to those sections instead of maintaining separate indexes. Keep the documentation home, API reference, development guide and SharePoint validation guide as the four entry points with distinct purposes. The [route map](../../scripts/documentation-routes.json) maps source modules to their reference page and optionally overrides an individual symbol. Keep the entry's import contract and reference accurate when changing that map. Unknown public source modules fail generation rather than disappearing from the catalog. Style namespaces link to the dedicated qualified style-member catalog.
 
 After editing the root README, public exports or routes, run from the root:
 
@@ -51,7 +51,7 @@ node scripts/documentation.cjs --check
 npm run verify:public-docs
 ```
 
-Commit both generated artifacts with their source changes. `--check` reports stale artifacts without writing them. The documentation verifier checks generation, public helper/service inventories, qualified styles/JSDoc, local paths and Markdown fragments. Generated descriptions summarize source JSDoc; they are not independent proof of behavior or example correctness.
+Commit both generated artifacts with their source changes. `--check` reports stale artifacts without writing them. The documentation verifier checks generation, every clean-entry export route, all React family members/JSDoc, native factories, helper/service inventories, qualified styles/JSDoc, local paths, Markdown fragments and supported imports in TypeScript/JavaScript fenced examples. Generated descriptions summarize source JSDoc; they are not independent proof of behavior or example correctness.
 
 ## Moves and current links
 

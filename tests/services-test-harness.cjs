@@ -3,6 +3,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const ts = require('typescript');
 const { JSDOM } = require('jsdom');
+const { createNativeResources } = require('./fixtures/localization/native-resources.cjs');
 const dom = new JSDOM('<!doctype html><body></body>', { url: 'https://tenant.test', pretendToBeVisual: true });
 const globals = ['window', 'document', 'navigator', 'localStorage', 'sessionStorage', 'requestAnimationFrame', 'cancelAnimationFrame', 'MessageChannel'];
 const previous = globals.map(name => Object.getOwnPropertyDescriptor(global, name));
@@ -17,7 +18,8 @@ require('node:test').after(() => {
     else delete global[name];
   });
 });
-function createHarness(boundaries = {}) {
+function createHarness(boundaries = {}, options = {}) {
+  const nativeResources = createNativeResources({ culture: options.nativeCulture ?? 'en-US' });
   const cache = new Map();
   const root = path.resolve(__dirname, '../packages/spfx-react-toolkit/src');
   function load(file) {
@@ -27,6 +29,7 @@ function createHarness(boundaries = {}) {
     cache.set(file, module);
     const output = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { allowJs: true, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.React }}).outputText;
     function sourceRequire(specifier) {
+      if (specifier.startsWith('ApveeSpfxReactToolkit')) return nativeResources.require(specifier);
       if (Object.hasOwn(boundaries, specifier)) return boundaries[specifier];
       if (specifier.startsWith('@pnp/')) return load(require.resolve(specifier));
       if (!specifier.startsWith('.')) return require(specifier);
@@ -77,6 +80,6 @@ function createHarness(boundaries = {}) {
     localStorage.clear();
     sessionStorage.clear();
   }
-  return { load, mount, close, withTransport, context, pageContext, React, act, mountComponent };
+  return { load, mount, close, withTransport, context, pageContext, React, act, mountComponent, nativeResources };
 }
 module.exports = { createHarness };

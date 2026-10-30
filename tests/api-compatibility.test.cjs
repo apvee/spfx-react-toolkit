@@ -33,6 +33,20 @@ const allowedBarrels = [
   ['hooks/index.d.ts', './useSPFxSiteKeyValueStore', './useSPFxTenantKeyValueStore'],
   ['services/index.d.ts', './spfx-site-key-value-store.service', './spfx-tenant-key-value-store.service'],
 ];
+for (const [name, addition] of [
+  ['hooks/index.d.ts', './useSPFxConfigurationStore'],
+  ['services/index.d.ts', './spfx-configuration-store.service'],
+]) {
+  test(`configuration export is narrowly additive in ${name}`, () => {
+    const original=baseline[name].declaration, line=`export * from '${addition}';`;
+    assert.doesNotThrow(()=>assertCompatibleDeclaration(name,original+'\n'+line,original,{requireConfigurationStoreAdditions:true}));
+    for(const changed of [original,original+'\n'+line+'\n'+line,original+`\nexport * from '${addition}.js';`,original+`\nexport { Unexpected } from '${addition}';`]) {
+      assert.throws(()=>assertCompatibleDeclaration(name,changed,original,{requireConfigurationStoreAdditions:true}));
+    }
+    const other='helpers/index.d.ts';
+    assert.throws(()=>assertCompatibleDeclaration(other,baseline[other].declaration+'\n'+line,baseline[other].declaration));
+  });
+}
 for (const [name, addition, historical] of allowedBarrels) {
   const original = baseline[name].declaration;
   const exportAll = `export * from '${addition}';`;
@@ -82,6 +96,7 @@ for (const [missingName] of allowedBarrels) {
     const fileBoundary = {
       ...fs,
       existsSync(file) {
+        if (file.endsWith('/src/hooks/useSPFxConfigurationStore.ts')) return false;
         if (file.endsWith('/src/hooks/useSx.ts')) return false;
         if (file.endsWith('/src/hooks/useSPFxPnPListById.ts')) return false;
         return file.endsWith('/src/hooks/useSPFxSiteKeyValueStore.ts') || fs.existsSync(file);
@@ -186,6 +201,7 @@ test('integrated verify-api requires webs registration even without other comple
   const fileBoundary = {
     ...fs,
     existsSync(file) {
+        if (file.endsWith('/src/hooks/useSPFxConfigurationStore.ts')) return false;
       if (file.includes('/src/hooks/')) return false;
       return fs.existsSync(file);
     },
@@ -299,6 +315,7 @@ for (const missing of [...pnpHookPaths, 'selector', 'factory']) {
     const fileBoundary = {
       ...fs,
       existsSync(file) {
+        if (file.endsWith('/src/hooks/useSPFxConfigurationStore.ts')) return false;
         if (file.endsWith('/src/hooks/useSx.ts')) return false;
         if (file.endsWith('/src/hooks/useSPFxSiteKeyValueStore.ts')) return false;
         if (file.endsWith('/src/hooks/useSPFxPnPListById.ts')) return true;
@@ -376,6 +393,7 @@ test('permits only approved peer changes, exact additive entrypoints and styles 
   assert.doesNotThrow(() => assertCompatiblePackageContract(currentPackage, originalPackage));
 });
 for (const [label, mutate] of [
+  ['release version', manifest => { manifest.version = '2.1.0'; }],
   ['historical peer range', manifest => { manifest.peerDependencies.react = '^18.0.0'; }],
   ['new Griffel core peer range', manifest => { manifest.peerDependencies['@griffel/core'] = '^2.0.0'; }],
   ['new Griffel React peer removal', manifest => { delete manifest.peerDependencies['@griffel/react']; }],
@@ -394,6 +412,53 @@ for (const [label, mutate] of [
   });
 }
 
+for (const name of [
+  'react-hook-form', '@fluentui/react-datepicker-compat',
+  '@fluentui/react-timepicker-compat', '@fluentui/react-icons',
+]) {
+  for (const [label, mutate] of [
+    ['removal', manifest => { delete manifest.peerDependencies[name]; }],
+    ['widening', manifest => { manifest.peerDependencies[name] = '*'; }],
+    ['private runtime ownership', manifest => {
+      delete manifest.peerDependencies[name];
+      manifest.dependencies[name] = manifest.devDependencies[name];
+    }],
+    ['duplicate private runtime ownership', manifest => {
+      manifest.dependencies[name] = manifest.devDependencies[name];
+    }],
+  ]) {
+    test(`rejects Form peer ${name} ${label}`, () => {
+      assert.doesNotThrow(() => assertCompatiblePackageContract(currentPackage, originalPackage));
+      const candidate = JSON.parse(JSON.stringify(currentPackage));
+      mutate(candidate);
+      assert.throws(() => assertCompatiblePackageContract(candidate, originalPackage),
+        /Runtime (?:peer contracts|dependencies) changed/);
+    });
+  }
+}
+for (const name of ['@hookform/resolvers', '@standard-schema/spec']) {
+  for (const [label, mutate] of [
+    ['removal', manifest => { delete manifest.dependencies[name]; }],
+    ['widening', manifest => { manifest.dependencies[name] = `^${manifest.dependencies[name]}`; }],
+    ['development-only classification', manifest => {
+      manifest.devDependencies[name] = manifest.dependencies[name];
+      delete manifest.dependencies[name];
+    }],
+    ['peer-only classification', manifest => {
+      manifest.peerDependencies[name] = manifest.dependencies[name];
+      delete manifest.dependencies[name];
+    }],
+  ]) {
+    test(`rejects Form direct dependency ${name} ${label}`, () => {
+      assert.doesNotThrow(() => assertCompatiblePackageContract(currentPackage, originalPackage));
+      const candidate = JSON.parse(JSON.stringify(currentPackage));
+      mutate(candidate);
+      assert.throws(() => assertCompatiblePackageContract(candidate, originalPackage),
+        /Runtime (?:peer contracts|dependencies) changed/);
+    });
+  }
+}
+
 for (const [missingName] of styleBarrels) {
   test(`integrated verify-api requires finished style ${missingName}`, () => {
     const fs = require('node:fs');
@@ -404,6 +469,7 @@ for (const [missingName] of styleBarrels) {
     const fileBoundary = {
       ...fs,
       existsSync(file) {
+        if (file.endsWith('/src/hooks/useSPFxConfigurationStore.ts')) return false;
         if (file.endsWith('/src/hooks/useSPFxSiteKeyValueStore.ts') || file.endsWith('/src/hooks/useSPFxPnPListById.ts')) return false;
         if (file.endsWith('/src/hooks/useSx.ts')) return true;
         return fs.existsSync(file);
@@ -625,4 +691,87 @@ test('real metadata module evaluation errors remain fatal', () => {
 test('real installed metadata package without a default entry remains fatal', () => {
   withMetadataPackageFixture(JSON.stringify({ name: 'baseline-browser-mapping' }), undefined,
     prepare => assert.throws(prepare, error => error.code === 'MODULE_NOT_FOUND' && error.message.startsWith("Cannot find module 'baseline-browser-mapping'\n")));
+});
+
+// Approved controls are additive; existing declarations and dependency contracts remain exact.
+test('permits only the approved controls root export once', () => {
+  const original = baseline['index.d.ts'].declaration;
+  const addition = "\nexport * from './controls';";
+  assert.doesNotThrow(() => assertCompatibleDeclaration('index.d.ts', original + addition, original));
+  assert.throws(() => assertCompatibleDeclaration('index.d.ts', original + addition + addition, original));
+  assert.throws(() => assertCompatibleDeclaration('index.d.ts', original + "\nexport * from './other-controls';", original));
+});
+test('control dependencies are exact additions rather than unrestricted peer/runtime changes', () => {
+  const { assertCompatiblePackageContract } = require('../scripts/api-compatibility.helpers.cjs');
+  const manifest = require('../packages/spfx-react-toolkit/package.json');
+  const original = require('./fixtures/package-baseline.json');
+  for (const mutate of [
+    p => { p.dependencies.unified = '10.0.0'; },
+    p => { p.dependencies.extra = '1.0.0'; },
+    p => { p.peerDependencies['@fluentui/react-components'] = '*'; },
+    p => { delete p.peerDependencies.react; },
+  ]) {
+    const changed = structuredClone(manifest); mutate(changed);
+    assert.throws(() => assertCompatiblePackageContract(changed, original));
+  }
+});
+
+for (const name of ['hooks/useSPFxLocaleInfo.d.ts', 'helpers/spfx-page-context.helpers.d.ts']) {
+  test(`permits only the exact optional readonly IANA field in ${name}`, () => {
+    const original = baseline[name].declaration;
+    const anchor = name.startsWith('hooks') ? 'export interface SPFxLocaleInfo {' : 'export declare function getSPFxLocaleInfo(pageContext: PageContext): {';
+    assert.ok(original.includes(anchor));
+    const current = original.replace(anchor, anchor + '\n readonly ianaTimeZone?: string;');
+    assert.doesNotThrow(() => assertCompatibleDeclaration(name, current, original));
+    for (const field of ['ianaTimeZone?: string;', 'readonly ianaTimeZone: string;', 'readonly ianaTimeZone?: any;', 'readonly ianaTimeZone?: number;']) {
+      assert.throws(() => assertCompatibleDeclaration(name, original.replace(anchor, anchor + '\n ' + field), original));
+    }
+    assert.throws(() => assertCompatibleDeclaration(name, current.replace('ianaTimeZone?: string;', 'ianaTimeZone?: string;\n readonly ianaTimeZone?: string;'), original));
+    assert.throws(() => assertCompatibleDeclaration(name, original, original, { requireIanaAdditions: true }), /Missing approved IANA/);
+  });
+}
+
+const scopedPermissionName = 'hooks/useSPFxCrossSitePermissions.d.ts';
+const scopedPermissionAdditions = `
+import type { SPFxScopedPermissionsOptions } from '../services/spfx-permission-target.types';
+export type { SPFxScopedPermissionsOptions } from '../services/spfx-permission-target.types';
+export interface SPFxScopedPermissionsInfo {
+  readonly permissions: SPPermission | undefined;
+  readonly hasPermission: (permission: SPPermission) => boolean;
+  readonly isLoading: boolean;
+  readonly error: Error | undefined;
+}
+export declare function useSPFxCrossSitePermissions(options: SPFxScopedPermissionsOptions): SPFxScopedPermissionsInfo;
+`;
+const scopedRequired = { requireScopedPermissionsAdditions: true };
+test('scoped permissions approval preserves the historical hook signature and interfaces', () => {
+  const original = baseline[scopedPermissionName].declaration;
+  assert.doesNotThrow(() => assertCompatibleDeclaration(scopedPermissionName, original + scopedPermissionAdditions, original, scopedRequired));
+  assert.throws(() => assertCompatibleDeclaration(scopedPermissionName, original, original, scopedRequired), /Missing approved scoped/);
+  for (const [before, after] of [
+    ['siteUrl?: string', 'siteUrl: string'],
+    ['options?: SPFxCrossSitePermissionsOptions', 'options?: SPFxCrossSitePermissionsOptions | string'],
+    ['listId?: string', 'listId?: string | number'],
+    ['isLoading: boolean', 'isLoading: boolean | undefined'],
+    ['sitePermissions?: SPPermission', 'sitePermissions?: SPPermission | string'],
+  ]) {
+    assert.ok(original.includes(before));
+    assert.throws(() => assertCompatibleDeclaration(scopedPermissionName, original.replace(before, after) + scopedPermissionAdditions, original, scopedRequired), /Declaration contract changed/);
+  }
+});
+test('scoped permissions rejects missing or duplicate overloads and unrelated widening', () => {
+  const original = baseline[scopedPermissionName].declaration;
+  const overload = 'export declare function useSPFxCrossSitePermissions(options: SPFxScopedPermissionsOptions): SPFxScopedPermissionsInfo;';
+  for (const addition of [scopedPermissionAdditions.replace(overload, ''), scopedPermissionAdditions + overload]) {
+    assert.throws(() => assertCompatibleDeclaration(scopedPermissionName, original + addition, original, scopedRequired), /Missing approved scoped|Duplicate approved scoped/);
+  }
+  for (const addition of [
+    scopedPermissionAdditions.replace('readonly permissions:', 'permissions:'),
+    scopedPermissionAdditions.replace('readonly error: Error | undefined', 'readonly error: Error | string | undefined'),
+    scopedPermissionAdditions.replace('options: SPFxScopedPermissionsOptions', 'options: SPFxScopedPermissionsOptions | string'),
+    scopedPermissionAdditions + 'export interface Unexpected { enabled: boolean; }',
+  ]) assert.throws(() => assertCompatibleDeclaration(scopedPermissionName, original + addition, original, scopedRequired));
+  for (const [name, snapshot] of Object.entries(baseline)) {
+    if (name !== scopedPermissionName) assert.throws(() => assertCompatibleDeclaration(name, snapshot.declaration + scopedPermissionAdditions, snapshot.declaration));
+  }
 });

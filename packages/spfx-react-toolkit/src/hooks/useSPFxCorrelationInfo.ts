@@ -7,6 +7,13 @@ import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
  * Return type for useSPFxCorrelationInfo hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const info: SPFxCorrelationInfo = useSPFxCorrelationInfo();
+ * console.log(info.correlationId);
+ * ```
  */
 export interface SPFxCorrelationInfo {
   /** Correlation ID for tracking requests across services */
@@ -17,42 +24,16 @@ export interface SPFxCorrelationInfo {
 }
 
 /**
- * Hook for correlation and tenant ID extraction
- * 
- * Provides diagnostic IDs for tracking and monitoring:
- * - Correlation ID: Tracks requests across SPFx → SharePoint → Microsoft Graph
- * - Tenant ID: Azure AD tenant identifier
- * 
- * These IDs are essential for:
- * - Distributed tracing
- * - Log correlation
- * - Support tickets
- * - Diagnostic troubleshooting
- * - Security auditing
- * 
- * Useful for:
- * - Structured logging
- * - Error tracking (Application Insights, etc.)
- * - Support requests
- * - Performance monitoring
- * 
- * @returns Correlation and tenant identifiers
- * 
+ * Reads optional correlation and tenant IDs from the supplied PageContext. IDs are diagnostic metadata; the hook does not inject headers, generate request IDs or propagate tracing across services. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns Correlation and tenant identifier strings, each undefined when unavailable.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
- *   const { correlationId, tenantId } = useSPFxCorrelationInfo();
- *   
- *   const logError = (error: Error) => {
- *     console.error('Error occurred', {
- *       message: error.message,
- *       correlationId,
- *       tenantId,
- *       timestamp: new Date().toISOString()
- *     });
- *   };
- *   
- *   return <div>Tenant: {tenantId}</div>;
+ * function TenantLabel() {
+ *   const { tenantId } = useSPFxCorrelationInfo();
+ *   return <span>{tenantId ?? 'Tenant unavailable'}</span>;
  * }
  * ```
  */

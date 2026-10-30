@@ -1,0 +1,23 @@
+{
+  "empty": "ไม่มีข้อมูลที่พร้อมใช้งาน",
+  "noResults": "ไม่พบผลลัพธ์",
+  "noVisibleColumns": "ไม่มีคอลัมน์ที่มองเห็นได้",
+  "loading": "กำลังโหลด",
+  "actions": "การดำเนินการ",
+  "moreActions": "การดำเนินการเพิ่มเติม",
+  "yes": "ใช่",
+  "no": "ไม่ใช่",
+  "noTags": "ไม่มีแท็ก",
+  "noObservations": "ไม่มีข้อมูลการสังเกต",
+  "invalidValue": "ค่าไม่ถูกต้อง",
+  "selectAllRows": "เลือกทุกแถว",
+  "retry": "ลองอีกครั้ง",
+  "selectRowTemplate": "เลือกแถว {rowId}",
+  "sparklineSummaryTemplate": "ค่าแรก {first}; ค่าสุดท้าย {last}; ค่าต่ำสุด {minimum}; ค่าสูงสุด {maximum}; ค่าเฉลี่ย {average}; การเปลี่ยนแปลง {change}; เปอร์เซ็นต์การเปลี่ยนแปลง {changePercent}",
+  "tagOverflow": {
+    "other": "แสดงแท็กอีก {count} รายการ"
+  },
+  "ratingCount": {
+    "other": "{formattedCount} คะแนนโหวต"
+  }
+}

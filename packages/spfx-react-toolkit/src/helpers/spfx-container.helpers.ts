@@ -8,10 +8,15 @@ const CONTAINER_SIZE_BREAKPOINTS = {
 } as const;
 
 /**
- * Gets the Fluent UI 9 aligned SPFx container size category from width.
+ * Classifies container width with exclusive upper boundaries: small <480, medium <640, large <1024, xLarge <1366, xxLarge <1920, otherwise xxxLarge. No DOM measurement or input validation is performed.
  *
- * @param width - Container width in pixels
- * @returns Container size category
+ * @param width - Container width in CSS pixels; use a finite, nonnegative measurement.
+ * @returns Width category for the supplied value.
+ *
+ * @example
+ * ```ts
+ * const category = getSPFxContainerSize(720); // 'large'
+ * ```
  */
 export function getSPFxContainerSize(
   width: number

@@ -27,16 +27,21 @@ export type ListFilterFunction<T> = (f: InitialFieldQuery<T>) => ComparisonResul
 
 /**
  * Options for configuring the useSPFxPnPList hook.
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const options: UseSPFxPnPListOptions = { pageSize: 25 };
+ * const tasks = useSPFxPnPList('Tasks', options);
+ * ```
  */
 export interface UseSPFxPnPListOptions {
   /**
-   * Page size for pagination (number of items per page).
-   * Used by `loadMore()` for automatic pagination.
-   * 
-   * @default 100
+   * Default query page size used for subsequent loadMore calls. Omitted supplies no explicit limit; .top() in a builder overrides this, and a per-query pageSize overrides this default.
    * @example
    * ```tsx
-   * const { query, loadMore } = useSPFxPnPList('Tasks', { pageSize: 50 });
+   * // Inside a React component beneath a matching host-specific SPFx provider:
+   * const tasks = useSPFxPnPList('Tasks', { pageSize: 25 });
    * ```
    */
   pageSize?: number;
@@ -44,54 +49,36 @@ export interface UseSPFxPnPListOptions {
 
 /**
  * Return type for the useSPFxPnPList hook.
- * 
+ *
  * @template T - The type of the list item
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const tasks: SPFxPnPListInfo<{ Id: number; Title: string }> = useSPFxPnPList('Tasks', { pageSize: 25 });
+ * console.log(tasks.items, tasks.hasMore);
+ * ```
  */
 export interface SPFxPnPListInfo<T = unknown> {
   /**
-   * Executes a query against the SharePoint list using PnPjs fluent API.
-   * 
-   * The hook automatically detects if `.top()` is called in the queryBuilder:
-   * - If `.top()` is specified → uses that value
-   * - If no `.top()` → uses `pageSize` option (if provided)
-   * - If neither → no limit (SharePoint default ~100-5000)
-   * 
-   * **Note**: If both `.top()` and `pageSize` are specified, `.top()` takes precedence
-   * and a warning is logged to the console.
-   * 
-   * @param queryBuilder - Function to build the query using PnPjs fluent API
-   * @param options - Query options (pageSize for pagination)
-   * @returns Promise resolving to the array of items
-   * 
-   * @example Basic query with pageSize
+   * Executes a query, replacing items/paging state only after a successful current response. Builder .top() overrides per-call/hook pageSize; without either, SharePoint chooses the limit and hasMore is false.
+   * @param queryBuilder - Optional fluent transform; return its IItems query without executing it.
+   * @param options - Optional per-call page-size override.
+   * @returns Returned items even when completion is obsolete.
+   * @throws Uninitialized context, builder or request failures; current failures publish error.
+   * @example
    * ```tsx
-   * const { query, items } = useSPFxPnPList('Tasks', { pageSize: 50 });
-   * 
-   * await query(q => 
-   *   q.select('Id', 'Title', 'Status')
-   *    .filter("Status eq 'Active'")
-   *    .orderBy('Created', false)
-   * );
-   * ```
-   * 
-   * @example Query with explicit .top()
-   * ```tsx
-   * await query(q => 
-   *   q.select('Id', 'Title')
-   *    .top(100)  // Explicit top takes precedence
-   *    .orderBy('Priority', false)
-   * );
-   * ```
-   * 
-   * @example Query without pagination
-   * ```tsx
-   * await query(q => q.select('Id', 'Title'));
-   * // Uses SharePoint default limit
+   * // Inside a React component beneath a matching host-specific SPFx provider:
+   * const tasks = useSPFxPnPList('Tasks', { pageSize: 25 });
+   * const load = () => tasks.query(items => items.select('Id', 'Title'));
    * ```
    */
   query: (
     queryBuilder?: (items: IItems) => IItems,
-    options?: { pageSize?: number }
+    options?: {
+      /** Overrides the hook page size; explicit builder .top() takes precedence. */
+      pageSize?: number
+    }
   ) => Promise<T[]>;
 
   /**
@@ -120,448 +107,110 @@ export interface SPFxPnPListInfo<T = unknown> {
   isEmpty: boolean;
 
   /**
-   * Indicates if there are more items available to load.
-   * Only meaningful when using pagination (pageSize or .top()).
+   * True when the last returned page count equals its explicit effective page size. This is a heuristic; a following page may be empty. Without an explicit size this is false.
    */
   hasMore: boolean;
 
   /**
-   * Re-executes the last query with the same parameters.
-   * Resets pagination state.
-   * 
-   * @returns Promise resolving when refetch is complete
-   * @throws Error if no previous query was executed
+   * Repeats the last successful query from the first page; replaces items/paging only after success.
+   * @returns Resolves after the query succeeds.
+   * @throws No successful previous query, uninitialized context or request failures.
    */
   refetch: () => Promise<void>;
 
   /**
-   * Loads the next page of items using the last query.
-   * Automatically appends new items to the existing items array.
-   * 
-   * @returns Promise resolving to the newly loaded items
-   * @throws Error if no previous query was executed
-   * @throws Error if no pageSize was specified in the previous query
+   * Appends the next page using the last successful builder and effective size. Returns [] while a query/page load is pending.
+   * @returns New page items, including when a completion is obsolete.
+   * @throws No previous successful query, no explicit effective size, uninitialized context or request failures.
    */
   loadMore: () => Promise<T[]>;
 
   /**
    * Clears the current error state.
+   * @returns No value; initialization/context errors remain separate.
    */
   clearError: () => void;
 
   /**
-   * Retrieves a single list item by ID.
-   * 
-   * @param id - The ID of the list item to retrieve
-   * @returns Promise resolving to the item or undefined if not found
+   * Reads an item without changing the items array. Service failures publish error and resolve undefined.
+   * @param id - Numeric item ID within this list.
+   * @returns Typed item or undefined on service failure.
+   * @throws Uninitialized context before execution.
    */
   getById: (id: number) => Promise<T | undefined>;
 
   /**
-   * Creates a new list item.
-   * Automatically triggers a refetch after successful creation.
-   * 
-   * @param item - Partial object containing the fields to set
-   * @returns Promise resolving to the ID of the created item
+   * Writes to the selected list and schedules a 100 ms debounced refresh of the active query if this service is still current.
+   * @param item - SharePoint field values.
+   * @returns Created numeric item ID.
+   * @throws Uninitialized context or request failures; request failures also publish error.
    */
   create: (item: Partial<T>) => Promise<number>;
 
   /**
-   * Updates an existing list item by ID.
-   * Automatically triggers a refetch after successful update.
-   * 
-   * @param id - The ID of the list item to update
-   * @param item - Partial object containing the fields to update
+   * Writes to the selected list and schedules a 100 ms debounced refresh of the active query if this service is still current.
+   * @param id - Numeric item ID.
+   * @param item - Partial field values.
+   * @returns Resolves after the update.
+   * @throws Uninitialized context or request failures; request failures also publish error.
    */
   update: (id: number, item: Partial<T>) => Promise<void>;
 
   /**
-   * Deletes a list item by ID.
-   * Automatically triggers a refetch after successful deletion.
-   * 
-   * @param id - The ID of the list item to delete
+   * Writes to the selected list and schedules a 100 ms debounced refresh of the active query if this service is still current.
+   * @param id - Numeric item ID.
+   * @returns Resolves after deletion.
+   * @throws Uninitialized context or request failures; request failures also publish error.
    */
   remove: (id: number) => Promise<void>;
 
   /**
-   * Creates multiple list items in a single batched request.
-   * Automatically triggers a refetch after successful batch creation.
-   * 
-   * @param items - Array of partial objects to create
-   * @returns Promise resolving to an array of created item IDs
+   * Executes a PnP batch; settled item failures publish a summary error and are logged, but do not reject. Successful writes are not rolled back. Schedules a debounced query refresh.
+   * @param items - Field values to create.
+   * @returns Successful numeric IDs, including partial success.
+   * @throws Uninitialized context, selector or batch-execution failures.
    */
   createBatch: (items: Partial<T>[]) => Promise<number[]>;
 
   /**
-   * Updates multiple list items in a single batched request.
-   * Automatically triggers a refetch after successful batch update.
-   * 
-   * @param updates - Array of objects containing id and item fields to update
+   * Executes a PnP batch; settled item failures publish a summary error and are logged, but do not reject. Successful writes are not rolled back. Schedules a debounced query refresh.
+   * @param updates - Item IDs and partial field values.
+   * @returns Resolves after the batch, including partial item failure.
+   * @throws Uninitialized context, selector or batch-execution failures.
    */
-  updateBatch: (updates: Array<{ id: number; item: Partial<T> }>) => Promise<void>;
+  updateBatch: (updates: Array<{
+      /** Numeric item ID within the selected list. */
+      id: number;
+      /** SharePoint field values to update. */
+      item: Partial<T>
+    }>) => Promise<void>;
 
   /**
-   * Deletes multiple list items in a single batched request.
-   * Automatically triggers a refetch after successful batch deletion.
-   * 
-   * @param ids - Array of item IDs to delete
+   * Executes a PnP batch; settled item failures publish a summary error and are logged, but do not reject. Successful writes are not rolled back. Schedules a debounced query refresh.
+   * @param ids - Numeric item IDs to delete.
+   * @returns Resolves after the batch, including partial item failure.
+   * @throws Uninitialized context, selector or batch-execution failures.
    */
   removeBatch: (ids: number[]) => Promise<void>;
 }
 
 /**
- * Hook for working with SharePoint lists using PnPjs fluent API.
- * Provides query execution with automatic .top() detection, CRUD operations, pagination, and state management.
- * 
- * **Key Features**:
- * - ✅ Native PnPjs fluent API - full type-safe query building
- * - ✅ Smart .top() detection - no conflicts between user .top() and pageSize
- * - ✅ CRUD operations (create, read, update, delete)
- * - ✅ Batch operations for bulk updates
- * - ✅ Pagination with `loadMore()` and `hasMore`
- * - ✅ Automatic refetch after CRUD operations
- * - ✅ Local state management per component instance
- * - ✅ Cross-site support via PnPContextInfo
- * - ✅ ES5 compatibility (IE11 support)
- * 
- * **How .top() Detection Works**:
- * The hook uses a recursive Proxy to detect if `.top()` is called in your queryBuilder:
- * - If `.top()` is specified → uses that value
- * - If no `.top()` but `pageSize` option → adds `.top(pageSize)` automatically
- * - If neither → no limit (SharePoint default ~100-5000)
- * - If both → `.top()` wins, warning logged
- * 
- * @template T - The type of the list item (default: unknown)
- * @param listTitle - The title of the SharePoint list
- * @param options - Optional configuration (pageSize for pagination)
- * @param pnpContext - Optional PnP context for cross-site scenarios
- * @returns Object containing query method, items, loading states, error, and CRUD operations
- * 
- * @example Basic usage with pageSize
+ * Accesses a list by its exact title without an automatic query. State is local to this hook; changing title, client or page-size resets query/paging state. Latest queries publish state, while obsolete completions still settle their promises. Single writes schedule a 100 ms debounced refresh of the active query. Settled batch item failures publish error without rejecting; successful writes are not rolled back. T does not validate server data.
+ * @typeParam T - Expected list item fields.
+ * @param listTitle - Exact list title; GUID/path-shaped strings remain titles.
+ * @param options - Optional default page size; omitted leaves the SharePoint limit unless .top() is supplied.
+ * @param pnpContext - Optional selected-web context; the default context hook still runs.
+ * @returns List items, query/paging state and CRUD/batch methods.
+ * @throws Missing SPFx provider or default-context resolution failures. Request rejection channels are documented on each method.
+ *
+ * @example
  * ```tsx
- * import { useSPFxPnPList } from '@apvee/spfx-react-toolkit';
- * 
- * function TaskList() {
- *   const { query, items, loading, error } = useSPFxPnPList('Tasks', { pageSize: 50 });
- * 
- *   useEffect(() => {
- *     query(q => 
- *       q.select('Id', 'Title', 'Status', 'Priority')
- *        .filter("Status eq 'Active'")
- *        .orderBy('Priority', false)
- *     );
- *   }, [query]);
- * 
- *   if (loading) return <Spinner />;
- *   if (error) return <MessageBar>Error: {error.message}</MessageBar>;
- * 
- *   return (
- *     <ul>
- *       {items.map(task => (
- *         <li key={task.Id}>{task.Title} - {task.Status}</li>
- *       ))}
- *     </ul>
- *   );
+ * function Tasks() {
+ *   const tasks = useSPFxPnPList<{ Id: number; Title: string }>('Tasks', { pageSize: 25 });
+ *   const load = () => tasks.query(items => items.select('Id', 'Title'));
+ *   return <button onClick={load} disabled={tasks.loading}>Load tasks</button>;
  * }
  * ```
- * 
- * @example Type-safe fluent filter
- * ```tsx
- * interface Task {
- *   Id: number;
- *   Title: string;
- *   Status: string;
- *   Priority: number;
- *   DueDate: string;
- * }
- * 
- * function ActiveHighPriorityTasks() {
- *   const { query, items, loading } = useSPFxPnPList<Task>('Tasks', { pageSize: 50 });
- * 
- *   useEffect(() => {
- *     query(q => 
- *       q.select('Id', 'Title', 'Priority', 'DueDate')
- *        .filter(f => f.text("Status").equals("Active")
- *                      .and()
- *                      .number("Priority").greaterThan(3))
- *        .orderBy('DueDate', true)
- *     );
- *   }, [query]);
- * 
- *   return (
- *     <div>
- *       {items.map(task => (
- *         <TaskCard key={task.Id} task={task} />
- *       ))}
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Query with explicit .top()
- * ```tsx
- * const { query, items } = useSPFxPnPList<Task>('Tasks');
- * 
- * useEffect(() => {
- *   // User specifies .top() explicitly - takes precedence
- *   query(q => 
- *     q.select('Id', 'Title')
- *      .top(100)  // Hook detects this and uses it
- *      .orderBy('Created', false)
- *   );
- * }, [query]);
- * ```
- * 
- * @example CRUD operations
- * ```tsx
- * function TaskManager() {
- *   const { items, create, update, remove, loading } = useSPFxPnPList<Task>('Tasks');
- * 
- *   const handleCreate = async () => {
- *     try {
- *       const newId = await create({
- *         Title: 'New Task',
- *         Status: 'Active',
- *         Priority: 3
- *       });
- *       console.log('Created task with ID:', newId);
- *       // List automatically refetches
- *     } catch (error) {
- *       console.error('Create failed:', error);
- *     }
- *   };
- * 
- *   const handleUpdate = async (id: number) => {
- *     await update(id, { Status: 'Completed' });
- *     // List automatically refetches
- *   };
- * 
- *   const handleDelete = async (id: number) => {
- *     await remove(id);
- *     // List automatically refetches
- *   };
- * 
- *   return (
- *     <div>
- *       <button onClick={handleCreate}>Create Task</button>
- *       {items.map(task => (
- *         <div key={task.Id}>
- *           <span>{task.Title}</span>
- *           <button onClick={() => handleUpdate(task.Id)}>Complete</button>
- *           <button onClick={() => handleDelete(task.Id)}>Delete</button>
- *         </div>
- *       ))}
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Batch operations for bulk updates
- * ```tsx
- * function BulkTaskManager() {
- *   const { createBatch, updateBatch, removeBatch } = useSPFxPnPList<Task>('Tasks');
- * 
- *   const handleBulkCreate = async () => {
- *     const ids = await createBatch([
- *       { Title: 'Task 1', Status: 'Active', Priority: 1 },
- *       { Title: 'Task 2', Status: 'Active', Priority: 2 },
- *       { Title: 'Task 3', Status: 'Active', Priority: 3 }
- *     ]);
- *     console.log('Created task IDs:', ids);
- *   };
- * 
- *   const handleBulkUpdate = async (taskIds: number[]) => {
- *     await updateBatch([
- *       { id: taskIds[0], item: { Status: 'Completed' } },
- *       { id: taskIds[1], item: { Priority: 5 } },
- *       { id: taskIds[2], item: { Status: 'In Progress', Priority: 4 } }
- *     ]);
- *   };
- * 
- *   const handleBulkDelete = async (taskIds: number[]) => {
- *     await removeBatch(taskIds);
- *   };
- * 
- *   return (
- *     <div>
- *       <button onClick={handleBulkCreate}>Create 3 Tasks</button>
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Pagination with loadMore
- * ```tsx
- * function InfiniteTaskList() {
- *   const {
- *     query,
- *     items,
- *     loading,
- *     loadingMore,
- *     hasMore,
- *     loadMore,
- *     isEmpty
- *   } = useSPFxPnPList<Task>('Tasks', { pageSize: 50 });
- * 
- *   useEffect(() => {
- *     query(q => 
- *       q.select('Id', 'Title', 'Status')
- *        .orderBy('Created', false)
- *     );
- *   }, [query]);
- * 
- *   if (loading) return <Spinner label="Loading tasks..." />;
- *   if (isEmpty) return <MessageBar>No tasks found</MessageBar>;
- * 
- *   return (
- *     <div>
- *       {items.map(task => (
- *         <TaskCard key={task.Id} task={task} />
- *       ))}
- *       
- *       {hasMore && (
- *         <PrimaryButton
- *           text={loadingMore ? 'Loading...' : 'Load More'}
- *           onClick={loadMore}
- *           disabled={loadingMore}
- *         />
- *       )}
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Cross-site usage
- * ```tsx
- * function EmployeeList() {
- *   // Create context for HR site
- *   const hrContext = useSPFxPnPContext({
- *     siteUrl: '/sites/hr'
- *   });
- * 
- *   // Query Employees list from HR site
- *   const { query, items, loading } = useSPFxPnPList<Employee>(
- *     'Employees',
- *     { pageSize: 100 },
- *     hrContext  // Pass context for cross-site query
- *   );
- * 
- *   useEffect(() => {
- *     query(q => 
- *       q.select('Id', 'Name', 'Department', 'Email')
- *        .filter("Department eq 'Engineering'")
- *        .orderBy('Name', true)
- *     );
- *   }, [query]);
- * 
- *   return (
- *     <div>
- *       {items.map(emp => (
- *         <PersonaCard key={emp.Id} employee={emp} />
- *       ))}
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Manual refetch with error handling
- * ```tsx
- * function TaskListWithRefresh() {
- *   const { query, items, loading, error, refetch, clearError } = useSPFxPnPList<Task>('Tasks', { pageSize: 50 });
- * 
- *   useEffect(() => {
- *     query(q => q.select('Id', 'Title', 'Status').orderBy('Created', false));
- *   }, [query]);
- * 
- *   return (
- *     <div>
- *       <CommandBar
- *         items={[
- *           {
- *             key: 'refresh',
- *             text: 'Refresh',
- *             iconProps: { iconName: 'Refresh' },
- *             onClick: () => refetch()
- *           }
- *         ]}
- *       />
- * 
- *       {error && (
- *         <MessageBar
- *           messageBarType={MessageBarType.error}
- *           onDismiss={clearError}
- *         >
- *           Error loading tasks: {error.message}
- *         </MessageBar>
- *       )}
- * 
- *       {loading ? (
- *         <Spinner />
- *       ) : (
- *         <DetailsList items={items} />
- *       )}
- *     </div>
- *   );
- * }
- * ```
- * 
- * @example Conditional loading (autoLoad: false)
- * ```tsx
- * function ConditionalTaskList() {
- *   const [showCompleted, setShowCompleted] = useState(false);
- *   const { items, loading, refetch } = useSPFxPnPList<Task>(
- *     'Tasks',
- *     {
- *       filter: showCompleted ? "Status eq 'Completed'" : "Status eq 'Active'",
- *       autoLoad: false  // Don't load on mount
- *     }
- *   );
- * 
- *   useEffect(() => {
- *     if (showCompleted) {
- *       refetch();  // Manually trigger load
- *     }
- *   }, [showCompleted, refetch]);
- * 
- *   return (
- *     <div>
- *       <Toggle
- *         label="Show Completed"
- *         checked={showCompleted}
- *         onChange={(_, checked) => setShowCompleted(checked || false)}
- *       />
- *       {items.map(task => <TaskCard key={task.Id} task={task} />)}
- *     </div>
- *   );
- * }
- * ```
- * 
- * @remarks
- * **PnPjs Installation**: This hook requires `@pnp/sp` to be installed:
- * ```bash
- * npm install @pnp/sp @pnp/core @pnp/queryable
- * ```
- * 
- * **SharePoint List View Threshold**: Be aware that querying lists with more than 5000 items
- * may cause throttling unless:
- * - Filters use indexed columns
- * - Query results are under 5000 items
- * - Proper pagination is used (top + skip)
- * 
- * **Fluent Filter Requirements**: To use type-safe fluent filters, import types:
- * ```typescript
- * import '@pnp/sp/items';  // Enables fluent filter on items
- * ```
- * 
- * **State Management**: Each hook instance maintains its own local state (items, loading, error).
- * State is not shared between components - this follows the standard React hooks pattern.
- * 
- * **Debounced Refetch**: CRUD operations trigger a debounced refetch (100ms delay) of the
- * current query. A mutation begun under an older query refreshes the current one;
- * replacing the query again before dispatch cancels the scheduled refresh.
- * 
- * @see {@link useSPFxPnPContext} for creating PnP contexts
- * @see {@link PNPContextInfo} for context information
  */
 export function useSPFxPnPList<T = unknown>(
   listTitle: string,

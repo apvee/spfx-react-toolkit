@@ -1,0 +1,83 @@
+{
+  "labels": {
+    "selectOne": "Vybrať položku",
+    "selectMany": "Vybrať položky",
+    "search": "Hľadať…",
+    "clearSelection": "Vymazať výber",
+    "clearSearch": "Vymazať hľadanie",
+    "options": "Možnosti",
+    "searchOptions": "Hľadať možnosti",
+    "selectedOne": "Vybraná položka",
+    "selectedMany": "Vybrané položky",
+    "noSelection": "Žiadny výber",
+    "resolveIds": "Rozpoznať identifikátory",
+    "moreResults": "Ďalšie výsledky",
+    "retry": "Skúsiť znova",
+    "namedOptions": "{name}: Možnosti",
+    "namedSearch": "{name}: Hľadať",
+    "selectedCount": {
+      "one": "Vybraná {count} položka",
+      "few": "Vybrané {count} položky",
+      "many": "Vybrané {count} položky",
+      "other": "Vybraných {count} položiek"
+    },
+    "minimumSearchLength": {
+      "one": "Ak chcete hľadať, zadajte aspoň {count} znak",
+      "few": "Ak chcete hľadať, zadajte aspoň {count} znaky",
+      "many": "Ak chcete hľadať, zadajte aspoň {count} znaku",
+      "other": "Ak chcete hľadať, zadajte aspoň {count} znakov"
+    }
+  },
+  "status": {
+    "searching": "Vyhľadávanie…",
+    "loading": "Načítava sa…",
+    "partialSearch": "Čiastočné vyhľadávanie: spresnite vyhľadávanie.",
+    "noOtherResults": "Žiadne ďalšie výsledky pre toto vyhľadávanie",
+    "noResults": "Žiadne výsledky pre toto vyhľadávanie",
+    "noOptions": "Nie sú k dispozícii žiadne možnosti.",
+    "moreItemsAvailable": "K dispozícii sú ďalšie položky.",
+    "partialSuggestions": "Čiastočné návrhy: niektoré zdroje nie sú dostupné.",
+    "unresolvedValue": "Nerozpoznaná hodnota",
+    "partialHubs": "Čiastočný zoznam centier: zúžte rozsah alebo použite režim lokality.",
+    "partialSiteCollections": "Čiastočné vyhľadávanie kolekcií lokalít (najviac 1000 výsledkov): zúžte kritériá."
+  },
+  "sections": {
+    "consumer": "Poskytnuté možnosti",
+    "currentSite": "Aktuálna lokalita",
+    "hubSite": "Priradené centrum",
+    "catalog": "Dostupné možnosti",
+    "currentUser": "Vy",
+    "people": "Navrhovaní ľudia",
+    "memberOf": "Vaše skupiny"
+  },
+  "metadata": {
+    "documentLibrary": "Knižnica dokumentov",
+    "sharePointList": "Zoznam SharePointu",
+    "personalView": "Osobné zobrazenie",
+    "publicView": "Verejné zobrazenie",
+    "field": "Pole",
+    "itemDescription": "Položka · ID {id}",
+    "file": "Súbor",
+    "fileWithExtension": "Súbor {extension}",
+    "folder": "Priečinok",
+    "sharePointGroup": "Skupina SharePointu · SharePoint",
+    "securityGroup": "Skupina zabezpečenia · Entra",
+    "distributionList": "Distribučný zoznam · Entra",
+    "unvalidatedEmail": "Neoverený e-mail",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Bol dosiahnutý limit výberu.",
+    "selectionLimitExceeded": "Výber prekračuje nastavený limit.",
+    "unresolvedValues": "Niektoré vybrané hodnoty neboli rozpoznané.",
+    "outOfScopeValues": "Výber obsahuje hodnoty mimo nastaveného rozsahu.",
+    "resolveRequiredUserIds": "Rozpoznajte požadované identifikátory vybraných používateľov."
+  },
+  "errors": {
+    "candidateOutOfScope": "Kandidát je mimo nastaveného rozsahu.",
+    "incompleteCandidateResolution": "Kandidáta sa nepodarilo úplne rozpoznať.",
+    "resolutionFailed": "Rozpoznanie zlyhalo.",
+    "graphUnavailable": "Klient Microsoft Graph nie je dostupný."
+  }
+}

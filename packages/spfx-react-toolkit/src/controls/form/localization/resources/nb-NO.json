@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Skjemaet kunne ikke sendes. Prøv igjen.",
+  "dateInputValidationMessage": "Fyll ut eller rett datoen før du sender.",
+  "timeInputValidationMessage": "Fyll ut eller rett klokkeslettet før du sender.",
+  "tagPicker": {
+    "noOptions": "Ingen alternativer samsvarer med gjeldende søk."
+  },
+  "fileInput": {
+    "browseLabel": "Bla gjennom",
+    "clearLabel": "Tøm"
+  },
+  "arraySection": {
+    "add": "Legg til element",
+    "empty": "Ingen elementer",
+    "itemLabelTemplate": "Element {position}",
+    "removeTemplate": "Fjern {label}",
+    "moveUpTemplate": "Flytt {label} opp",
+    "moveDownTemplate": "Flytt {label} ned",
+    "addedTemplate": "Lagt til: {label}",
+    "removedTemplate": "Fjernet: {label}",
+    "movedTemplate": "{label} ble flyttet til posisjon {position} av {total}"
+  },
+  "datePicker": {
+    "months": [
+      "januar",
+      "februar",
+      "mars",
+      "april",
+      "mai",
+      "juni",
+      "juli",
+      "august",
+      "september",
+      "oktober",
+      "november",
+      "desember"
+    ],
+    "shortMonths": [
+      "jan",
+      "feb",
+      "mar",
+      "apr",
+      "mai",
+      "jun",
+      "jul",
+      "aug",
+      "sep",
+      "okt",
+      "nov",
+      "des"
+    ],
+    "days": [
+      "søndag",
+      "mandag",
+      "tirsdag",
+      "onsdag",
+      "torsdag",
+      "fredag",
+      "lørdag"
+    ],
+    "shortDays": [
+      "søn.",
+      "man.",
+      "tir.",
+      "ons.",
+      "tor.",
+      "fre.",
+      "lør."
+    ],
+    "goToToday": "Gå til i dag",
+    "prevMonthAriaLabel": "Forrige måned",
+    "nextMonthAriaLabel": "Neste måned",
+    "prevYearAriaLabel": "Forrige år",
+    "nextYearAriaLabel": "Neste år",
+    "prevYearRangeAriaLabel": "Forrige årsspenn",
+    "nextYearRangeAriaLabel": "Neste årsspenn",
+    "monthPickerHeaderAriaLabel": "{0}, endre år",
+    "yearPickerHeaderAriaLabel": "{0}, endre måned",
+    "closeButtonAriaLabel": "Lukk",
+    "weekNumberFormatString": "Ukenummer {0}",
+    "selectedDateFormatString": "Valgt dato {0}",
+    "todayDateFormatString": "Dagens dato {0}",
+    "dayMarkedAriaLabel": "merket"
+  }
+}

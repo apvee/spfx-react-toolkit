@@ -8,7 +8,6 @@ import { useSPFxAadHttpClient } from '@apvee/spfx-react-toolkit/hooks';
 
 Requires the matching SPFx host provider. See [provider selection](../../../getting-started/choosing-a-provider.md).
 
-
 Access Azure AD secured API client.
 
 ## Signature
@@ -21,7 +20,7 @@ function useSPFxAadHttpClient(initialResourceUrl?: string): SPFxAadHttpClientInf
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `initialResourceUrl` | `string` | No | Resource URI for the Azure AD app |
+| `initialResourceUrl` | `string` | No | Initial resource URI or application ID; omitted/empty leaves the client unavailable |
 
 ## Returns
 
@@ -63,6 +62,8 @@ interface SPFxAadHttpClientInfo {
 
 Provides `AadHttpClient` for calling custom Azure AD secured APIs. Requires API permissions to be configured in SharePoint admin center.
 
+`initialResourceUrl` is captured once; use `setResourceUrl` for later changes. The resource selects token acquisition; callers still construct the API request URL.
+
 **Async Initialization**: Unlike sync hooks, the AAD client requires async initialization via `factory.getClient()`. Use `isInitializing`, `initError`, and `isReady` to track initialization state.
 
 ## Prerequisites
@@ -79,6 +80,7 @@ Provides `AadHttpClient` for calling custom Azure AD secured APIs. Requires API 
   ]
 }
 ```
+
 3. Approve permissions in SharePoint admin center
 
 ## Example: Custom API with State Handling
@@ -98,15 +100,18 @@ function CustomApiWidget() {
     isReady
   } = useSPFxAadHttpClient('https://contoso-api.azurewebsites.net');
 
-  const [data, setData] = React.useState(null);
+  const [data, setData] = React.useState<unknown>(undefined);
 
   const loadData = () => {
     invoke(client =>
       client.get(
         `${resourceUrl}/api/data`,
         AadHttpClient.configurations.v1
-      ).then(res => res.json())
-    ).then(setData);
+      ).then(res => {
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        return res.json();
+      })
+    ).then(setData).catch(() => undefined);
   };
 
   React.useEffect(() => {
@@ -126,6 +131,8 @@ function CustomApiWidget() {
 }
 ```
 
+`initialResourceUrl` seeds local resource state only on mount; later argument changes do not select another resource. Use `setResourceUrl(url)` and wait for initialization. With no initial resource, the hook starts without a client and `isInitializing` is false. Resource or factory changes trigger replacement initialization; `initError` describes that acquisition separately from invocation `error`. Native factory consumption can throw during render.
+
 ## Example: Dynamic Resource URL
 
 ```tsx
@@ -142,7 +149,7 @@ function DynamicApiSelector() {
     clearError
   } = useSPFxAadHttpClient();
 
-  const [data, setData] = React.useState(null);
+  const [data, setData] = React.useState<unknown>(undefined);
 
   const loadFromApi = (apiUrl: string) => {
     clearError();
@@ -156,8 +163,11 @@ function DynamicApiSelector() {
         client.get(
           `${resourceUrl}/api/data`,
           AadHttpClient.configurations.v1
-        ).then(res => res.json())
-      ).then(setData);
+        ).then(res => {
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        return res.json();
+      })
+      ).then(setData).catch(() => undefined);
     }
   }, [isReady, resourceUrl]);
 
@@ -176,8 +186,12 @@ function DynamicApiSelector() {
 }
 ```
 
+## Invocation state and failures
+
+`invoke(fn)` requires a ready client and returns the callback result. While any invocation on the current client is pending, `isLoading` remains true. Starting another invocation clears `error`; only the latest-started invocation may publish a failure. Client replacement and unmount suppress obsolete UI updates while caller promises still settle. Callback/request rejections are normalized to `Error` and rethrown; catch returned promises. An unavailable client rejects before invocation tracking starts.
+
+`clearError()` clears the invocation error without cancelling work or clearing initialization errors. Direct `client` calls bypass invocation tracking. The hook does not inspect `response.ok`; check unsuccessful HTTP responses and reject them inside the callback. A resolved HTTP error response can otherwise look successful to the hook.
+
 ## Source
 
 [View source](../../../../packages/spfx-react-toolkit/src/hooks/useSPFxAadHttpClient.ts)
-
----

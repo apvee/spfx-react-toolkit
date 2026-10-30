@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Label, Icon } from '@fluentui/react';
-import styles from '../SpFxReactToolkitTest.module.scss';
+import { Text } from '@fluentui/react-components';
+import { DemoIcon } from './DemoIcon';
+import { useDemoStyles } from './demoStyles';
 
 /**
  * Props for the InfoRow component
@@ -18,10 +19,13 @@ export interface IInfoRowProps {
  * Helper component for displaying labeled information rows
  * with optional icon prefix
  */
-export const InfoRow: React.FC<IInfoRowProps> = ({ label, value, icon }) => (
-  <div className={styles.infoRow}>
-    {icon && <Icon iconName={icon} />}
-    <Label>{label}:</Label>
-    <span>{value || 'N/A'}</span>
-  </div>
-);
+export const InfoRow: React.FC<IInfoRowProps> = ({ label, value, icon }) => {
+  const styles = useDemoStyles();
+  return <div className={styles.infoRow}>
+    <span className={styles.infoLabel}>
+      {icon && <DemoIcon name={icon} />}
+      <Text weight="semibold">{label}:</Text>
+    </span>
+    <Text>{value || 'N/A'}</Text>
+  </div>;
+};

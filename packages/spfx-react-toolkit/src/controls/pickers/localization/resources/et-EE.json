@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Vali üksus",
+    "selectMany": "Vali üksused",
+    "search": "Otsi…",
+    "clearSelection": "Tühjenda valik",
+    "clearSearch": "Tühjenda otsing",
+    "options": "Valikud",
+    "searchOptions": "Otsi valikuid",
+    "selectedOne": "Valitud üksus",
+    "selectedMany": "Valitud üksused",
+    "noSelection": "Valik puudub",
+    "resolveIds": "Lahenda ID-d",
+    "moreResults": "Veel tulemusi",
+    "retry": "Proovi uuesti",
+    "namedOptions": "{name}: Valikud",
+    "namedSearch": "{name}: Otsi",
+    "selectedCount": {
+      "one": "Valitud on {count} üksus",
+      "other": "Valitud on {count} üksust"
+    },
+    "minimumSearchLength": {
+      "one": "Otsimiseks sisestage vähemalt {count} märk",
+      "other": "Otsimiseks sisestage vähemalt {count} märki"
+    }
+  },
+  "status": {
+    "searching": "Otsimine…",
+    "loading": "Laadimine…",
+    "partialSearch": "Osaline otsing: täpsustage otsingut.",
+    "noOtherResults": "Selle otsingu jaoks pole muid tulemusi",
+    "noResults": "Selle otsingu jaoks pole tulemusi",
+    "noOptions": "Valikuid pole saadaval.",
+    "moreItemsAvailable": "Saadaval on veel üksusi.",
+    "partialSuggestions": "Osalised soovitused: mõned allikad pole saadaval.",
+    "unresolvedValue": "Lahendamata väärtus",
+    "partialHubs": "Osaline keskuste loend: kitsendage ulatust või kasutage saidirežiimi.",
+    "partialSiteCollections": "Osaline saidikogumite otsing (kuni 1000 tulemust): kitsendage kriteeriume."
+  },
+  "sections": {
+    "consumer": "Pakutud valikud",
+    "currentSite": "Praegune sait",
+    "hubSite": "Seotud keskussait",
+    "catalog": "Saadaolevad valikud",
+    "currentUser": "Teie",
+    "people": "Soovitatud inimesed",
+    "memberOf": "Teie rühmad"
+  },
+  "metadata": {
+    "documentLibrary": "Dokumenditeek",
+    "sharePointList": "SharePointi loend",
+    "personalView": "Isiklik vaade",
+    "publicView": "Avalik vaade",
+    "field": "Väli",
+    "itemDescription": "Üksus · ID {id}",
+    "file": "Fail",
+    "fileWithExtension": "{extension}-fail",
+    "folder": "Kaust",
+    "sharePointGroup": "SharePointi rühm · SharePoint",
+    "securityGroup": "Turberühm · Entra",
+    "distributionList": "Levirühm · Entra",
+    "unvalidatedEmail": "Kinnitamata meiliaadress",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Valikupiirang on saavutatud.",
+    "selectionLimitExceeded": "Valik ületab määratud piirangu.",
+    "unresolvedValues": "Mõned valitud väärtused on lahendamata.",
+    "outOfScopeValues": "Valik sisaldab määratud ulatusest väljapoole jäävaid väärtusi.",
+    "resolveRequiredUserIds": "Lahendage valitud kasutajate nõutavad ID-d."
+  },
+  "errors": {
+    "candidateOutOfScope": "Kandidaat jääb määratud ulatusest välja.",
+    "incompleteCandidateResolution": "Kandidaati ei saanud täielikult lahendada.",
+    "resolutionFailed": "Lahendamine nurjus.",
+    "graphUnavailable": "Microsoft Graphi klient pole saadaval."
+  }
+}

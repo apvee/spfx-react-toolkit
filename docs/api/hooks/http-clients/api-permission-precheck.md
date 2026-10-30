@@ -8,7 +8,6 @@ import { useSPFxApiPermissionPrecheck } from '@apvee/spfx-react-toolkit/hooks';
 
 Requires the matching SPFx host provider. See [provider selection](../../../getting-started/choosing-a-provider.md).
 
-
 Check whether the current SPFx runtime can obtain delegated tokens for Microsoft Graph and custom API scopes.
 
 ## Signature
@@ -28,6 +27,8 @@ function useSPFxApiPermissionPrecheck(
 | `options` | `SPFxApiPermissionPrecheckOptions` | No | Check behavior such as passive mode, cache usage, audience validation, and timeout |
 
 ## Options
+
+Configuration and result member types are documented in the [precheck helper reference](../../helpers/api-permission-precheck.md). Scope matching is case-sensitive, and optional failures do not block readiness.
 
 | Option | Default | Description |
 |--------|---------|-------------|
@@ -61,6 +62,27 @@ interface SPFxApiPermissionPrecheckResult {
 The hook normalizes Graph and custom API requirements, uses the SPFx `AadTokenProvider` to acquire one token per resource, and evaluates delegated `scp` scopes in the token payload. Remediation entries include the `resource` and `scope` values that map back to `webApiPermissionRequests`.
 
 `available` means the current SPFx runtime obtained a token with the delegated scope. It does not read tenant grants and does not replace server-side authorization. Requirements or token-provider replacement clear prior check results and invalidate older requests. With `autoCheck` enabled, the current provider is checked again when ready; manual mode waits for `check()`/`retry()`.
+
+## Result semantics and limitations
+
+`SPFxApiPermissionPrecheckOptions.autoCheck` defaults to true; keep requirements immutable when changing them. Equivalent requirement values do not repeat an automatic check. `mode` defaults to passive and acquires resources sequentially while cancelling popup/redirect events only where the provider exposes supported registration APIs; it is not a universal guarantee that no interaction can occur. `interactiveAllowed` does not install that guard. `useCachedToken` and `validateAudience` default to true. `timeoutMs` defaults to 15000 **per resource** and does not cancel the underlying token request.
+
+| Result member | Observable meaning |
+| --- | --- |
+| `SPFxApiPermissionPrecheckResult.isChecking` | The latest-started check is pending |
+| `SPFxApiPermissionPrecheckResult.isConfigured` | Every required evaluated result is available; empty/no-required results also yield true, including while idle/checking |
+| `SPFxApiPermissionPrecheckResult.configurationState` | `idle`, `checking`, `ready`, `actionRequired` or `cannotDetermine`; use this state when choosing a diagnostic view |
+| `SPFxApiPermissionPrecheckResult.available` | Requirements whose delegated scope was obtained |
+| `SPFxApiPermissionPrecheckResult.missing` | Required unavailable requirements with actionable missing/blocked diagnostics |
+| `SPFxApiPermissionPrecheckResult.warnings` | Unavailable optional requirements, which do not block `isConfigured` |
+| `SPFxApiPermissionPrecheckResult.unknown` | Required unavailable requirements without an actionable missing-permission diagnosis |
+| `SPFxApiPermissionPrecheckResult.results` | Per-scope diagnostic records; raw tokens are omitted |
+| `SPFxApiPermissionPrecheckResult.tokenProviderError` | Native provider initialization failure, separate from per-scope diagnostics |
+| `SPFxApiPermissionPrecheckResult.check()` | Checks with the configured cache preference |
+| `SPFxApiPermissionPrecheckResult.retry()` | Repeats `check()` |
+| `SPFxApiPermissionPrecheckResult.retryWithoutCache()` | Requests uncached tokens, retaining the configured interaction mode |
+
+Token failures normally become diagnostic results. Unexpected normalization or authentication-event registration failures can reject check/retry promises; catch them. The latest-started check owns UI publication; obsolete or unmounted checks still settle their returned promises. Clearing/replacing requirements or provider invalidates prior results. Diagnostic availability does not read tenant grants, support app-only permissions, cryptographically validate a token or authorize a server operation. See the [shared configuration and diagnostic types](../../helpers/api-permission-precheck.md) for Graph/custom-API requirements, statuses, severity, remediation and audience rules.
 
 ## Example: Simple Precheck
 
@@ -123,5 +145,3 @@ Use `retryWithoutCache()` after SharePoint admin center API access changes or wh
 ## Source
 
 [View source](../../../../packages/spfx-react-toolkit/src/hooks/useSPFxApiPermissionPrecheck.ts)
-
----

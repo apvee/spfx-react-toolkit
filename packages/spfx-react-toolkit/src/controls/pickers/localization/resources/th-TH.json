@@ -1,0 +1,77 @@
+{
+  "labels": {
+    "selectOne": "เลือกหนึ่งรายการ",
+    "selectMany": "เลือกรายการ",
+    "search": "ค้นหา…",
+    "clearSelection": "ล้างการเลือก",
+    "clearSearch": "ล้างการค้นหา",
+    "options": "ตัวเลือก",
+    "searchOptions": "ค้นหาตัวเลือก",
+    "selectedOne": "รายการที่เลือก",
+    "selectedMany": "รายการที่เลือก",
+    "noSelection": "ไม่มีการเลือก",
+    "resolveIds": "ตรวจสอบ ID",
+    "moreResults": "ผลลัพธ์เพิ่มเติม",
+    "retry": "ลองอีกครั้ง",
+    "namedOptions": "{name}: ตัวเลือก",
+    "namedSearch": "{name}: ค้นหา",
+    "selectedCount": {
+      "other": "เลือกแล้ว {count} รายการ"
+    },
+    "minimumSearchLength": {
+      "other": "พิมพ์อย่างน้อย {count} อักขระเพื่อค้นหา"
+    }
+  },
+  "status": {
+    "searching": "กำลังค้นหา…",
+    "loading": "กำลังโหลด…",
+    "partialSearch": "การค้นหาไม่ครบถ้วน: โปรดจำกัดการค้นหาให้แคบลง",
+    "noOtherResults": "ไม่มีผลลัพธ์อื่นสำหรับการค้นหานี้",
+    "noResults": "ไม่พบผลลัพธ์สำหรับการค้นหานี้",
+    "noOptions": "ไม่มีตัวเลือกที่พร้อมใช้งาน",
+    "moreItemsAvailable": "มีรายการเพิ่มเติมที่พร้อมใช้งาน",
+    "partialSuggestions": "คำแนะนำไม่ครบถ้วน: บางแหล่งข้อมูลไม่พร้อมใช้งาน",
+    "unresolvedValue": "ค่าที่ยังตรวจสอบไม่ได้",
+    "partialHubs": "รายการฮับไม่ครบถ้วน: จำกัดขอบเขตให้แคบลงหรือใช้โหมดไซต์",
+    "partialSiteCollections": "การค้นหาไซต์คอลเลกชันไม่ครบถ้วน (สูงสุด 1000 ผลลัพธ์): จำกัดเงื่อนไขให้แคบลง"
+  },
+  "sections": {
+    "consumer": "ตัวเลือกที่ให้มา",
+    "currentSite": "ไซต์ปัจจุบัน",
+    "hubSite": "ฮับที่เชื่อมโยง",
+    "catalog": "ตัวเลือกที่พร้อมใช้งาน",
+    "currentUser": "คุณ",
+    "people": "บุคคลที่แนะนำ",
+    "memberOf": "กลุ่มของคุณ"
+  },
+  "metadata": {
+    "documentLibrary": "ไลบรารีเอกสาร",
+    "sharePointList": "รายการ SharePoint",
+    "personalView": "มุมมองส่วนบุคคล",
+    "publicView": "มุมมองสาธารณะ",
+    "field": "เขตข้อมูล",
+    "itemDescription": "รายการ · ID {id}",
+    "file": "ไฟล์",
+    "fileWithExtension": "ไฟล์ {extension}",
+    "folder": "โฟลเดอร์",
+    "sharePointGroup": "กลุ่ม SharePoint · SharePoint",
+    "securityGroup": "กลุ่มความปลอดภัย · Entra",
+    "distributionList": "รายชื่อการแจกจ่าย · Entra",
+    "unvalidatedEmail": "อีเมลที่ยังไม่ได้ยืนยัน",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "ถึงขีดจำกัดการเลือกแล้ว",
+    "selectionLimitExceeded": "การเลือกเกินขีดจำกัดที่กำหนดไว้",
+    "unresolvedValues": "ค่าที่เลือกบางค่ายังตรวจสอบไม่ได้",
+    "outOfScopeValues": "การเลือกมีค่าที่อยู่นอกขอบเขตที่กำหนดไว้",
+    "resolveRequiredUserIds": "ตรวจสอบ ID ที่จำเป็นสำหรับผู้ใช้ที่เลือก"
+  },
+  "errors": {
+    "candidateOutOfScope": "รายการที่เสนออยู่นอกขอบเขตที่กำหนดไว้",
+    "incompleteCandidateResolution": "ไม่สามารถตรวจสอบรายการที่เสนอได้อย่างครบถ้วน",
+    "resolutionFailed": "การตรวจสอบไม่สำเร็จ",
+    "graphUnavailable": "ไคลเอ็นต์ Microsoft Graph ไม่พร้อมใช้งาน"
+  }
+}

@@ -7,6 +7,13 @@ import { useSPFxRuntimeSelector } from './../core/state.internal';
 
 /**
  * Return type for useSPFxDisplayMode hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const mode: SPFxDisplayModeInfo = useSPFxDisplayMode();
+ * console.log(mode.isEdit);
+ * ```
  */
 export interface SPFxDisplayModeInfo {
   /** Current display mode (Read/Edit) */
@@ -20,35 +27,16 @@ export interface SPFxDisplayModeInfo {
 }
 
 /**
- * Hook to access SPFx display mode (readonly)
- * 
- * Display mode controls whether the WebPart/Extension is in:
- * - Read mode (DisplayMode.Read): Normal viewing mode
- * - Edit mode (DisplayMode.Edit): Editing/configuration mode
- * 
- * Note: displayMode is readonly in SPFx and controlled by SharePoint.
- * It changes when the user clicks the Edit button in the page.
- * 
- * Useful for:
- * - Showing/hiding edit controls
- * - Conditional rendering based on mode
- * - Different layouts for read vs edit
- * 
- * @returns Display mode information
- * 
- * @see {@link useSPFxIsEdit} for a simple boolean shortcut
- * 
+ * Reads the provider runtime display mode and derives exact Read/Edit flags. An absent mode defaults to DisplayMode.Read. The host controls this value; this hook does not switch the page into edit mode. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns Current host mode and Read/Edit boolean flags.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
- *   const { mode, isEdit } = useSPFxDisplayMode();
- *   
- *   return (
- *     <div>
- *       <p>Mode: {isEdit ? 'Editing' : 'Reading'}</p>
- *       {isEdit && <EditControls />}
- *     </div>
- *   );
+ * function ModeLabel() {
+ *   const { isEdit } = useSPFxDisplayMode();
+ *   return <span>{isEdit ? 'Editing' : 'Reading'}</span>;
  * }
  * ```
  */
@@ -69,19 +57,16 @@ export function useSPFxDisplayMode(): SPFxDisplayModeInfo {
 }
 
 /**
- * Hook to check if currently in Edit mode
- * Shortcut for useSPFxDisplayMode().isEdit
- * 
- * @returns true if in Edit mode, false otherwise
- * 
- * @see {@link useSPFxDisplayMode} for full display mode information
- * 
+ * Returns useSPFxDisplayMode().isEdit. Missing runtime mode defaults to Read and therefore returns false. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns True only when the provider mode is DisplayMode.Edit.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
- *   const isEdit = useSPFxIsEdit();
- *   
- *   return isEdit ? <EditView /> : <ReadView />;
+ * function EditLabel() {
+ *   const editing = useSPFxIsEdit();
+ *   return <span>{editing ? 'Editing' : 'Reading'}</span>;
  * }
  * ```
  */

@@ -1,0 +1,83 @@
+{
+  "labels": {
+    "selectOne": "Pasirinkti elementą",
+    "selectMany": "Pasirinkti elementus",
+    "search": "Ieškoti…",
+    "clearSelection": "Išvalyti pasirinkimą",
+    "clearSearch": "Išvalyti paiešką",
+    "options": "Parinktys",
+    "searchOptions": "Ieškoti parinkčių",
+    "selectedOne": "Pasirinktas elementas",
+    "selectedMany": "Pasirinkti elementai",
+    "noSelection": "Nieko nepasirinkta",
+    "resolveIds": "Atpažinti ID",
+    "moreResults": "Daugiau rezultatų",
+    "retry": "Bandyti dar kartą",
+    "namedOptions": "{name}: Parinktys",
+    "namedSearch": "{name}: Ieškoti",
+    "selectedCount": {
+      "one": "Pasirinktas {count} elementas",
+      "few": "Pasirinkti {count} elementai",
+      "many": "Pasirinkta {count} elemento",
+      "other": "Pasirinkta {count} elementų"
+    },
+    "minimumSearchLength": {
+      "one": "Norėdami ieškoti įveskite bent {count} simbolį",
+      "few": "Norėdami ieškoti įveskite bent {count} simbolius",
+      "many": "Norėdami ieškoti įveskite bent {count} simbolio",
+      "other": "Norėdami ieškoti įveskite bent {count} simbolių"
+    }
+  },
+  "status": {
+    "searching": "Ieškoma…",
+    "loading": "Įkeliama…",
+    "partialSearch": "Dalinė paieška: patikslinkite paiešką.",
+    "noOtherResults": "Šiai paieškai nėra kitų rezultatų",
+    "noResults": "Šiai paieškai nėra rezultatų",
+    "noOptions": "Nėra galimų parinkčių.",
+    "moreItemsAvailable": "Yra daugiau elementų.",
+    "partialSuggestions": "Daliniai pasiūlymai: kai kurie šaltiniai nepasiekiami.",
+    "unresolvedValue": "Neatpažinta reikšmė",
+    "partialHubs": "Dalinis telkinių sąrašas: susiaurinkite aprėptį arba naudokite svetainės režimą.",
+    "partialSiteCollections": "Dalinė svetainių rinkinių paieška (daugiausia 1000 rezultatų): susiaurinkite kriterijus."
+  },
+  "sections": {
+    "consumer": "Pateiktos parinktys",
+    "currentSite": "Dabartinė svetainė",
+    "hubSite": "Susietas telkinys",
+    "catalog": "Galimos parinktys",
+    "currentUser": "Jūs",
+    "people": "Siūlomi žmonės",
+    "memberOf": "Jūsų grupės"
+  },
+  "metadata": {
+    "documentLibrary": "Dokumentų biblioteka",
+    "sharePointList": "SharePoint sąrašas",
+    "personalView": "Asmeninis rodinys",
+    "publicView": "Viešasis rodinys",
+    "field": "Laukas",
+    "itemDescription": "Elementas · ID {id}",
+    "file": "Failas",
+    "fileWithExtension": "{extension} failas",
+    "folder": "Aplankas",
+    "sharePointGroup": "SharePoint grupė · SharePoint",
+    "securityGroup": "Saugos grupė · Entra",
+    "distributionList": "Platinimo sąrašas · Entra",
+    "unvalidatedEmail": "Nepatvirtintas el. paštas",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Pasiektas pasirinkimo limitas.",
+    "selectionLimitExceeded": "Pasirinkimas viršija nustatytą limitą.",
+    "unresolvedValues": "Kai kurios pasirinktos reikšmės neatpažintos.",
+    "outOfScopeValues": "Pasirinkime yra reikšmių už nustatytos aprėpties ribų.",
+    "resolveRequiredUserIds": "Atpažinkite pasirinktų vartotojų reikiamus ID."
+  },
+  "errors": {
+    "candidateOutOfScope": "Kandidatas yra už nustatytos aprėpties ribų.",
+    "incompleteCandidateResolution": "Nepavyko visiškai atpažinti kandidato.",
+    "resolutionFailed": "Atpažinti nepavyko.",
+    "graphUnavailable": "Microsoft Graph klientas nepasiekiamas."
+  }
+}

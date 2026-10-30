@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Lomakkeen lähettäminen epäonnistui. Yritä uudelleen.",
+  "dateInputValidationMessage": "Täydennä tai korjaa päivämäärä ennen lähettämistä.",
+  "timeInputValidationMessage": "Täydennä tai korjaa kellonaika ennen lähettämistä.",
+  "tagPicker": {
+    "noOptions": "Yksikään vaihtoehto ei vastaa nykyistä hakua."
+  },
+  "fileInput": {
+    "browseLabel": "Selaa",
+    "clearLabel": "Tyhjennä"
+  },
+  "arraySection": {
+    "add": "Lisää kohde",
+    "empty": "Ei kohteita",
+    "itemLabelTemplate": "Kohde {position}",
+    "removeTemplate": "Poista {label}",
+    "moveUpTemplate": "Siirrä {label} ylös",
+    "moveDownTemplate": "Siirrä {label} alas",
+    "addedTemplate": "Lisätty: {label}",
+    "removedTemplate": "Poistettu: {label}",
+    "movedTemplate": "{label} siirrettiin sijaintiin {position}/{total}"
+  },
+  "datePicker": {
+    "months": [
+      "tammikuu",
+      "helmikuu",
+      "maaliskuu",
+      "huhtikuu",
+      "toukokuu",
+      "kesäkuu",
+      "heinäkuu",
+      "elokuu",
+      "syyskuu",
+      "lokakuu",
+      "marraskuu",
+      "joulukuu"
+    ],
+    "shortMonths": [
+      "tammi",
+      "helmi",
+      "maalis",
+      "huhti",
+      "touko",
+      "kesä",
+      "heinä",
+      "elo",
+      "syys",
+      "loka",
+      "marras",
+      "joulu"
+    ],
+    "days": [
+      "sunnuntai",
+      "maanantai",
+      "tiistai",
+      "keskiviikko",
+      "torstai",
+      "perjantai",
+      "lauantai"
+    ],
+    "shortDays": [
+      "su",
+      "ma",
+      "ti",
+      "ke",
+      "to",
+      "pe",
+      "la"
+    ],
+    "goToToday": "Siirry tähän päivään",
+    "prevMonthAriaLabel": "Edellinen kuukausi",
+    "nextMonthAriaLabel": "Seuraava kuukausi",
+    "prevYearAriaLabel": "Edellinen vuosi",
+    "nextYearAriaLabel": "Seuraava vuosi",
+    "prevYearRangeAriaLabel": "Edellinen vuosijakso",
+    "nextYearRangeAriaLabel": "Seuraava vuosijakso",
+    "monthPickerHeaderAriaLabel": "{0}, vaihda vuosi",
+    "yearPickerHeaderAriaLabel": "{0}, vaihda kuukausi",
+    "closeButtonAriaLabel": "Sulje",
+    "weekNumberFormatString": "Viikon numero {0}",
+    "selectedDateFormatString": "Valittu päivämäärä {0}",
+    "todayDateFormatString": "Tämän päivän päivämäärä {0}",
+    "dayMarkedAriaLabel": "merkitty"
+  }
+}

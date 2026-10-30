@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Не вдалося надіслати форму. Спробуйте ще раз.",
+  "dateInputValidationMessage": "Заповніть або виправте дату перед надсиланням.",
+  "timeInputValidationMessage": "Заповніть або виправте час перед надсиланням.",
+  "tagPicker": {
+    "noOptions": "Немає варіантів, що відповідають поточному запиту."
+  },
+  "fileInput": {
+    "browseLabel": "Огляд",
+    "clearLabel": "Очистити"
+  },
+  "arraySection": {
+    "add": "Додати елемент",
+    "empty": "Немає елементів",
+    "itemLabelTemplate": "Елемент {position}",
+    "removeTemplate": "Видалити {label}",
+    "moveUpTemplate": "Перемістити {label} вгору",
+    "moveDownTemplate": "Перемістити {label} вниз",
+    "addedTemplate": "Додано: {label}",
+    "removedTemplate": "Видалено: {label}",
+    "movedTemplate": "Елемент {label} переміщено на позицію {position} із {total}"
+  },
+  "datePicker": {
+    "months": [
+      "січень",
+      "лютий",
+      "березень",
+      "квітень",
+      "травень",
+      "червень",
+      "липень",
+      "серпень",
+      "вересень",
+      "жовтень",
+      "листопад",
+      "грудень"
+    ],
+    "shortMonths": [
+      "січ.",
+      "лют.",
+      "бер.",
+      "квіт.",
+      "трав.",
+      "черв.",
+      "лип.",
+      "серп.",
+      "вер.",
+      "жовт.",
+      "лист.",
+      "груд."
+    ],
+    "days": [
+      "неділя",
+      "понеділок",
+      "вівторок",
+      "середа",
+      "четвер",
+      "пʼятниця",
+      "субота"
+    ],
+    "shortDays": [
+      "нд",
+      "пн",
+      "вт",
+      "ср",
+      "чт",
+      "пт",
+      "сб"
+    ],
+    "goToToday": "Перейти до сьогоднішнього дня",
+    "prevMonthAriaLabel": "Попередній місяць",
+    "nextMonthAriaLabel": "Наступний місяць",
+    "prevYearAriaLabel": "Попередній рік",
+    "nextYearAriaLabel": "Наступний рік",
+    "prevYearRangeAriaLabel": "Попередній діапазон років",
+    "nextYearRangeAriaLabel": "Наступний діапазон років",
+    "monthPickerHeaderAriaLabel": "{0}, змінити рік",
+    "yearPickerHeaderAriaLabel": "{0}, змінити місяць",
+    "closeButtonAriaLabel": "Закрити",
+    "weekNumberFormatString": "Номер тижня {0}",
+    "selectedDateFormatString": "Вибрана дата {0}",
+    "todayDateFormatString": "Сьогоднішня дата {0}",
+    "dayMarkedAriaLabel": "позначено"
+  }
+}

@@ -1,11 +1,16 @@
 import type { SPPermission } from '@microsoft/sp-page-context';
 
 /**
- * Checks whether an SPFx permission set contains a specific permission.
+ * Tests a SharePoint permission set using its hasPermission method. Undefined sets return false. This is a local capability check; it does not authorize a server operation or acquire Graph scopes.
  *
- * @param permissionSet - Permission set to check
- * @param permission - Required permission
- * @returns True when the permission is present
+ * @param permissionSet - Host permission set, or undefined when unavailable.
+ * @param permission - SharePoint permission bit to inspect.
+ * @returns True when the supplied set contains the requested permission.
+ *
+ * @example
+ * ```ts
+ * const canEdit = hasSPFxPermission(pageContext.web.permissions, SPPermission.editListItems);
+ * ```
  */
 export function hasSPFxPermission(
   permissionSet: SPPermission | undefined,

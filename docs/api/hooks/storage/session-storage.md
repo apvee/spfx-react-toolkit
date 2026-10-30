@@ -8,7 +8,6 @@ import { useSPFxSessionStorage } from '@apvee/spfx-react-toolkit/hooks';
 
 Requires the matching SPFx host provider. See [provider selection](../../../getting-started/choosing-a-provider.md).
 
-
 Temporary storage that persists only for the current browser session/tab. It has the same default, removal and best-effort behavior as [local storage](local-storage.md#default-and-persistence-behavior).
 
 ## Signature
@@ -137,4 +136,6 @@ function MultiStepWizard() {
 
 [View source](../../../../packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts)
 
----
+## Result type and scope
+
+The returned [`SPFxStorageHook<T>`](local-storage.md#spfxstoragehook) has `value`, `setValue(valueOrUpdater)` and `remove()`. Both required arguments and all default/reset/JSON failure behavior match local storage. Session storage follows the browser's per-origin, per-tab session rules; identical provider keys in another tab are not a cross-tab shared persistence channel.

@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Prehľadávať súbory…",
+    "folders": "Prehľadávať priečinky…",
+    "all": "Prehľadávať súbory a priečinky…"
+  },
+  "placeholders": {
+    "files": "Vybrať súbory…",
+    "folders": "Vybrať priečinky…",
+    "all": "Vybrať súbory alebo priečinky…"
+  },
+  "labels": {
+    "selection": "Výber súborov a priečinkov",
+    "file": "Súbor",
+    "folder": "Priečinok",
+    "unresolvedItem": "Nevyriešená položka",
+    "removeItem": "Odstrániť {name}"
+  },
+  "validation": {
+    "invalidReferences": "Neplatné odkazy na súbory alebo priečinky.",
+    "controlledModeChanged": "Riadený režim nemožno zmeniť, kým je ovládací prvok pripojený.",
+    "incompatibleItems": "Výber obsahuje položky nekompatibilné s nakonfigurovaným typom, kategóriou alebo príponami. Odstráňte ich alebo nahraďte.",
+    "invalidPolicy": "Neplatná konfigurácia typu, kategórie, prípon alebo limitu výberu.",
+    "selectionLimitExceeded": "Výber prekračuje nakonfigurovaný limit. Odstráňte nadbytočné položky."
+  },
+  "errors": {
+    "configuration": "Neplatná konfigurácia výberu. Skontrolujte zdroj, typy, kategóriu a limity; použite predvoľbu bez starších možností.",
+    "auth-resource": "Výber požiadal o prostriedok overovania, ktorý konfigurácia nepovoľuje.",
+    "auth-type": "Výber požiadal o typ overovania, ktorý konfigurácia nepodporuje.",
+    "auth-challenge": "Výber vyžaduje dodatočnú kontrolu overovania, ktorá nie je podporovaná.",
+    "auth-provider": "Nepodarilo sa získať token SharePointu. Skúste to znova; ak problém pretrváva, skontrolujte prístup a existujúce povolenia.",
+    "selection-identity": "Nepodarilo sa overiť identitu vybratej položky. Znova otvorte výber a skúste to znova.",
+    "selection-scope": "Vybratá položka je mimo povolenej lokality, knižnice alebo priečinka.",
+    "selection-policy": "Výber nezodpovedá povolenému typu, kategórii, príponám alebo počtu položiek.",
+    "selection-unavailable": "Vybratá položka nie je dostupná alebo k nej nemožno získať prístup.",
+    "selection-invalid": "Nepodarilo sa overiť výber. Neboli pridané žiadne nové položky.",
+    "onedrive-unavailable": "OneDrive aktuálneho používateľa nie je dostupný alebo k nemu nemožno získať prístup. Skontrolujte, či jednotka existuje, a skúste to znova.",
+    "opening": "Výber sa nepodarilo otvoriť. Skontrolujte konfiguráciu a prístup k zdroju a skúste to znova.",
+    "timeout": "Výber neodpovedal včas. Zavrite ho a skúste to znova.",
+    "communication": "Komunikácia s výberom bola prerušená. Znova ho otvorte a skúste to znova."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Voliteľná funkcia overovania neodpovedala včas. Skúste to znova.",
+    "unsupportedCommand": "Táto integrácia nepodporuje tento príkaz.",
+    "optionalGraphAuthenticationFailed": "Nepodarilo sa overiť voliteľnú funkciu Microsoft Graph.",
+    "optionalPersonalAuthenticationFailed": "Nepodarilo sa overiť voliteľné osobné umiestnenie."
+  }
+}

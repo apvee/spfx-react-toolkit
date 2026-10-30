@@ -7,6 +7,13 @@ import type { HostKind } from '../core/types';
 
 /**
  * Return type for useSPFxInstanceInfo hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const instance: SPFxInstanceInfo = useSPFxInstanceInfo();
+ * console.log(instance.id, instance.kind);
+ * ```
  */
 export interface SPFxInstanceInfo {
   /** Unique identifier for this SPFx instance */
@@ -17,31 +24,16 @@ export interface SPFxInstanceInfo {
 }
 
 /**
- * Hook to access SPFx instance metadata
- * 
- * Provides:
- * - id: Unique identifier for this SPFx instance
- * - kind: Type of component ('WebPart', 'AppCustomizer', etc.)
- * 
- * Useful for:
- * - Logging and telemetry
- * - Conditional logic based on host type
- * - Scoped storage keys
- * - Debug information
- * 
- * @returns Instance metadata
- * 
+ * Returns static identity and host kind from the nearest provider. Use the identity to scope application storage or diagnostics; theme and property changes are exposed through their dedicated hooks. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ *
+ * @returns Instance identifier and host discriminator.
+ * @throws Error when no host-specific SPFx provider is present.
+ *
  * @example
  * ```tsx
- * function MyComponent() {
+ * function InstanceLabel() {
  *   const { id, kind } = useSPFxInstanceInfo();
- *   
- *   return (
- *     <div>
- *       <p>Instance: {id}</p>
- *       <p>Type: {kind}</p>
- *     </div>
- *   );
+ *   return <span>{kind}: {id}</span>;
  * }
  * ```
  */

@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Veidlapu neizdevās iesniegt. Lūdzu, mēģiniet vēlreiz.",
+  "dateInputValidationMessage": "Pirms iesniegšanas papildiniet vai izlabojiet datumu.",
+  "timeInputValidationMessage": "Pirms iesniegšanas papildiniet vai izlabojiet laiku.",
+  "tagPicker": {
+    "noOptions": "Neviena opcija neatbilst pašreizējam vaicājumam."
+  },
+  "fileInput": {
+    "browseLabel": "Pārlūkot",
+    "clearLabel": "Notīrīt"
+  },
+  "arraySection": {
+    "add": "Pievienot vienumu",
+    "empty": "Nav vienumu",
+    "itemLabelTemplate": "Vienums {position}",
+    "removeTemplate": "Noņemt {label}",
+    "moveUpTemplate": "Pārvietot {label} augšup",
+    "moveDownTemplate": "Pārvietot {label} lejup",
+    "addedTemplate": "Pievienots: {label}",
+    "removedTemplate": "Noņemts: {label}",
+    "movedTemplate": "Vienums {label} pārvietots uz pozīciju {position} no {total}"
+  },
+  "datePicker": {
+    "months": [
+      "janvāris",
+      "februāris",
+      "marts",
+      "aprīlis",
+      "maijs",
+      "jūnijs",
+      "jūlijs",
+      "augusts",
+      "septembris",
+      "oktobris",
+      "novembris",
+      "decembris"
+    ],
+    "shortMonths": [
+      "janv.",
+      "febr.",
+      "marts",
+      "apr.",
+      "maijs",
+      "jūn.",
+      "jūl.",
+      "aug.",
+      "sept.",
+      "okt.",
+      "nov.",
+      "dec."
+    ],
+    "days": [
+      "Svētdiena",
+      "Pirmdiena",
+      "Otrdiena",
+      "Trešdiena",
+      "Ceturtdiena",
+      "Piektdiena",
+      "Sestdiena"
+    ],
+    "shortDays": [
+      "Svētd.",
+      "Pirmd.",
+      "Otrd.",
+      "Trešd.",
+      "Ceturtd.",
+      "Piektd.",
+      "Sestd."
+    ],
+    "goToToday": "Pāriet uz šodienu",
+    "prevMonthAriaLabel": "Iepriekšējais mēnesis",
+    "nextMonthAriaLabel": "Nākamais mēnesis",
+    "prevYearAriaLabel": "Iepriekšējais gads",
+    "nextYearAriaLabel": "Nākamais gads",
+    "prevYearRangeAriaLabel": "Iepriekšējais gadu diapazons",
+    "nextYearRangeAriaLabel": "Nākamais gadu diapazons",
+    "monthPickerHeaderAriaLabel": "{0}, mainīt gadu",
+    "yearPickerHeaderAriaLabel": "{0}, mainīt mēnesi",
+    "closeButtonAriaLabel": "Aizvērt",
+    "weekNumberFormatString": "Nedēļas numurs {0}",
+    "selectedDateFormatString": "Atlasītais datums {0}",
+    "todayDateFormatString": "Šodienas datums {0}",
+    "dayMarkedAriaLabel": "atzīmēts"
+  }
+}

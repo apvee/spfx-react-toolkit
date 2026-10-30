@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "फ़ॉर्म सबमिट नहीं किया जा सका। कृपया फिर से प्रयास करें।",
+  "dateInputValidationMessage": "सबमिट करने से पहले दिनांक पूरी करें या सही करें।",
+  "timeInputValidationMessage": "सबमिट करने से पहले समय पूरा करें या सही करें।",
+  "tagPicker": {
+    "noOptions": "कोई भी विकल्प वर्तमान खोज से मेल नहीं खाता।"
+  },
+  "fileInput": {
+    "browseLabel": "ब्राउज़ करें",
+    "clearLabel": "साफ़ करें"
+  },
+  "arraySection": {
+    "add": "आइटम जोड़ें",
+    "empty": "कोई आइटम नहीं है",
+    "itemLabelTemplate": "आइटम {position}",
+    "removeTemplate": "{label} हटाएँ",
+    "moveUpTemplate": "{label} को ऊपर ले जाएँ",
+    "moveDownTemplate": "{label} को नीचे ले जाएँ",
+    "addedTemplate": "{label} जोड़ा गया",
+    "removedTemplate": "{label} हटाया गया",
+    "movedTemplate": "{label} को कुल {total} में से स्थान {position} पर ले जाया गया"
+  },
+  "datePicker": {
+    "months": [
+      "जनवरी",
+      "फ़रवरी",
+      "मार्च",
+      "अप्रैल",
+      "मई",
+      "जून",
+      "जुलाई",
+      "अगस्त",
+      "सितंबर",
+      "अक्टूबर",
+      "नवंबर",
+      "दिसंबर"
+    ],
+    "shortMonths": [
+      "जन॰",
+      "फ़र॰",
+      "मार्च",
+      "अप्रैल",
+      "मई",
+      "जून",
+      "जुल॰",
+      "अग॰",
+      "सित॰",
+      "अक्टू॰",
+      "नव॰",
+      "दिस॰"
+    ],
+    "days": [
+      "रविवार",
+      "सोमवार",
+      "मंगलवार",
+      "बुधवार",
+      "गुरुवार",
+      "शुक्रवार",
+      "शनिवार"
+    ],
+    "shortDays": [
+      "रवि",
+      "सोम",
+      "मंगल",
+      "बुध",
+      "गुरु",
+      "शुक्र",
+      "शनि"
+    ],
+    "goToToday": "आज पर जाएँ",
+    "prevMonthAriaLabel": "पिछला महीना",
+    "nextMonthAriaLabel": "अगला महीना",
+    "prevYearAriaLabel": "पिछला वर्ष",
+    "nextYearAriaLabel": "अगला वर्ष",
+    "prevYearRangeAriaLabel": "पिछली वर्ष सीमा",
+    "nextYearRangeAriaLabel": "अगली वर्ष सीमा",
+    "monthPickerHeaderAriaLabel": "{0}, वर्ष बदलें",
+    "yearPickerHeaderAriaLabel": "{0}, महीना बदलें",
+    "closeButtonAriaLabel": "बंद करें",
+    "weekNumberFormatString": "सप्ताह संख्या {0}",
+    "selectedDateFormatString": "चुनी गई दिनांक {0}",
+    "todayDateFormatString": "आज की दिनांक {0}",
+    "dayMarkedAriaLabel": "चिह्नित"
+  }
+}

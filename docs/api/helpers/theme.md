@@ -2,7 +2,6 @@
 
 [Helpers overview](../INDEX.md#helpers-and-styles) · [Non-React composition](../../guides/helpers-and-services.md)
 
-
 Import:
 
 ```ts
@@ -48,3 +47,13 @@ function getTeamsFluentTheme(teamsThemeName: string | undefined): Theme;
 | `dark` | `teamsDarkTheme` |
 | `contrast`, `highcontrast` | `teamsHighContrastTheme` |
 | `default`, undefined, other values | `teamsLightTheme` |
+
+`getTeamsFluentTheme` lowercases the supplied name before matching, so `DARK` and `HighContrast` select their respective shared themes. It does not trim surrounding whitespace: ` dark ` falls back to Teams light. The helper returns the original shared Fluent theme objects; treat them and the undefined-SPFx-theme light fallback as immutable. Neither function mounts a provider, inserts theme variables or loads host context.
+
+```ts
+const light = createFluent9ThemeFromSPFxTheme(undefined);
+const teamsDark = getTeamsFluentTheme('DARK');
+const fallback = getTeamsFluentTheme(undefined);
+```
+
+Supply the returned `Theme` to a Fluent provider to establish variables. The [theming hooks](../hooks/theming.md) additionally obtain host data and subscribe to changes; these functions only convert supplied values.

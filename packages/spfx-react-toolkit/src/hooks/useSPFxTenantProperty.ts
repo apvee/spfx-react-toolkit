@@ -7,11 +7,18 @@ import { createSPFxTenantPropertyService } from '../services/spfx-tenant-propert
 
 /**
  * Return type for useSPFxTenantProperty hook
+ *
+ * @example
+ * ```tsx
+ * // Inside a React component beneath a matching host-specific SPFx provider:
+ * const property: SPFxTenantPropertyResult<string> = useSPFxTenantProperty('appVersion');
+ * console.log(property.data, property.error);
+ * ```
+ * @template T - Expected application data shape; no runtime validation is performed.
  */
 export interface SPFxTenantPropertyResult<T> {
-  /** 
-   * The loaded property value from tenant app catalog.
-   * Undefined if not loaded yet or on error.
+  /**
+   * Current property value, initially undefined. A failed reload preserves previously loaded data; inspect error/isReady before using it.
    */
   readonly data: T | undefined;
 
@@ -27,9 +34,8 @@ export interface SPFxTenantPropertyResult<T> {
    */
   readonly isLoading: boolean;
 
-  /** 
-   * Last error from read operations.
-   * Cleared on successful load.
+  /**
+   * Error from the latest-started load; cleared when a new load starts.
    */
   readonly error: Error | undefined;
 
@@ -41,8 +47,9 @@ export interface SPFxTenantPropertyResult<T> {
    * 
    * @example
    * ```tsx
+   * // Inside a React component using the host Fluent renderer:
    * const { data, load } = useSPFxTenantProperty<string>('appVersion', false);
-   * 
+   *
    * // Load on button click
    * <button onClick={load}>Refresh</button>
    * ```
@@ -64,16 +71,16 @@ export interface SPFxTenantPropertyResult<T> {
 
 /**
  * Hook to read tenant-wide properties using SharePoint StorageEntity API (read-only)
- * 
+ *
  * Provides read access to tenant-scoped properties stored in the SharePoint tenant
  * app catalog. Properties are accessible across all sites in the tenant.
- * 
+ *
  * **Note:** Write and remove operations have been removed because Microsoft has
  * blocked the SetStorageEntity and RemoveStorageEntity REST API endpoints.
  * Tenant properties can only be managed via PowerShell (Set-PnPStorageEntity,
  * Remove-PnPStorageEntity) or the SharePoint Management Shell.
  * For a read/write key-value store at tenant level, use `useSPFxTenantKeyValueStore`.
- * 
+ *
  * Features:
  * - Tenant-wide centralized storage (not site-specific)
  * - Smart deserialization for primitives and complex objects
@@ -81,16 +88,16 @@ export interface SPFxTenantPropertyResult<T> {
  * - Type-safe with TypeScript generics
  * - Memory leak safe with mounted state tracking
  * - Automatic app catalog URL discovery
- * 
+ *
  * Requirements:
  * - Tenant app catalog must be provisioned
  * - Any authenticated user can read tenant properties
- * 
+ *
  * @param key - Unique property key (e.g., 'appVersion', 'apiEndpoint', 'featureFlags')
  * @param autoFetch - Whether to automatically load property on mount. Default: true
- * 
+ *
  * @returns Object with data, metadata, loading state, error state, and load function
- * 
+ *
  * @example Basic usage - string property
  * ```tsx
  * function VersionDisplay() {
@@ -104,23 +111,24 @@ export interface SPFxTenantPropertyResult<T> {
  *   return <Text>Current Version: {data ?? 'Not Set'}</Text>;
  * }
  * ```
- * 
+ *
  * @example Complex object with JSON
  * ```tsx
+ * // Inside a React component using the host Fluent renderer:
  * interface FeatureFlags {
  *   enableChat: boolean;
  *   enableAnalytics: boolean;
  *   maxUsers: number;
  * }
- * 
+ *
  * const { data, isLoading } = useSPFxTenantProperty<FeatureFlags>('featureFlags');
- * 
+ *
  * // Returns parsed object (stored as JSON string via PowerShell)
  * if (data?.enableChat) {
  *   return <ChatPanel />;
  * }
  * ```
- * 
+ *
  * @example With metadata viewing
  * ```tsx
  * function PropertyViewer() {
@@ -137,14 +145,15 @@ export interface SPFxTenantPropertyResult<T> {
  *   );
  * }
  * ```
- * 
+ *
  * @example Lazy loading with manual trigger
  * ```tsx
+ * // Inside a React component using the host Fluent renderer:
  * const { data, load, isLoading } = useSPFxTenantProperty<Config>(
  *   'appConfig',
  *   false  // Don't auto-fetch
  * );
- * 
+ *
  * return (
  *   <div>
  *     <button onClick={load} disabled={isLoading}>
@@ -154,7 +163,7 @@ export interface SPFxTenantPropertyResult<T> {
  *   </div>
  * );
  * ```
- * 
+ *
  * @example Multi-property dashboard
  * ```tsx
  * function TenantDashboard() {
@@ -176,6 +185,8 @@ export interface SPFxTenantPropertyResult<T> {
  *   );
  * }
  * ```
+ * @throws When called outside an SPFx provider.
+ * @template T - Expected application data shape; no runtime validation is performed.
  */
 export function useSPFxTenantProperty<T = unknown>(
   key: string,

@@ -1,0 +1,27 @@
+{
+  "empty": "Nav pieejamu datu",
+  "noResults": "Nav atrasts neviens rezultāts",
+  "noVisibleColumns": "Nav redzamu kolonnu",
+  "loading": "Notiek ielāde",
+  "actions": "Darbības",
+  "moreActions": "Citas darbības",
+  "yes": "Jā",
+  "no": "Nē",
+  "noTags": "Nav atzīmju",
+  "noObservations": "Nav novērojumu",
+  "invalidValue": "Nederīga vērtība",
+  "selectAllRows": "Atlasīt visas rindas",
+  "retry": "Mēģināt vēlreiz",
+  "selectRowTemplate": "Atlasīt rindu {rowId}",
+  "sparklineSummaryTemplate": "Pirmā vērtība {first}; Pēdējā vērtība {last}; Minimums {minimum}; Maksimums {maximum}; Vidējais {average}; Izmaiņa {change}; Izmaiņa procentos {changePercent}",
+  "tagOverflow": {
+    "zero": "Rādīt vēl {count} atzīmju",
+    "one": "Rādīt vēl {count} atzīmi",
+    "other": "Rādīt vēl {count} atzīmes"
+  },
+  "ratingCount": {
+    "zero": "{formattedCount} balsu",
+    "one": "{formattedCount} balss",
+    "other": "{formattedCount} balsis"
+  }
+}

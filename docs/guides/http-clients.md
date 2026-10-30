@@ -4,7 +4,7 @@
 
 ## Overview
 
-These hooks provide access to SPFx HTTP clients for making API calls with automatic loading and error state management.
+The four request-client hooks provide SPFx HTTP clients with invocation loading/error tracking. The token-provider hook exposes provider initialization state, and the permission-precheck hook exposes diagnostic state; their contracts are described separately below.
 
 | Hook | Returns | Init Type | Description |
 |------|---------|-----------|-------------|
@@ -28,7 +28,7 @@ These hooks provide access to SPFx HTTP clients for making API calls with automa
 
 ### State Management Pattern
 
-All hooks follow a consistent pattern:
+`useSPFxHttpClient`, `useSPFxSPHttpClient`, `useSPFxAadHttpClient` and `useSPFxMSGraphClient` follow this request-client pattern:
 
 | Property | Sync Hooks | Async Hooks | Description |
 |----------|------------|-------------|-------------|
@@ -40,6 +40,8 @@ All hooks follow a consistent pattern:
 | `isReady` | ✅ | ✅ | Client ready for use |
 | `isInitializing` | ❌ | ✅ | Client being initialized |
 | `initError` | ❌ | ✅ | Initialization error |
+
+`useSPFxAadTokenProvider` exposes only `tokenProvider`, `isInitializing`, `initError` and `isReady`. It does not acquire a token itself or provide `client`, `invoke`, `isLoading`, `error` or `clearError`; callers own loading and failure handling for requests made through the returned provider.
 
 `useSPFxApiPermissionPrecheck` returns permission-specific state instead of a client. Its result includes `configurationState`, `available`, `missing`, `warnings`, `unknown`, `check()`, `retry()`, and `retryWithoutCache()`.
 
@@ -61,3 +63,7 @@ For JSON file persistence through Graph, see the [OneDrive app-data hook](../api
 - [useSPFxAadTokenProvider](../api/hooks/http-clients/aad-token-provider.md).
 - [useSPFxApiPermissionPrecheck](../api/hooks/http-clients/api-permission-precheck.md).
 - [useSPFxMSGraphClient](../api/hooks/http-clients/graph-client.md).
+
+## Access trim consumers
+
+[SharePointPermissionTrim](../api/controls/sharepoint-permission-trim.md) and [SharePointGroupTrim](../api/controls/sharepoint-group-trim.md) reuse the provider's native SPHttpClient. [EntraGroupTrim](../api/controls/entra-group-trim.md) reuses MSGraphClientV3. Their samples invoke actual native reads; configured User.Read and GroupMember.Read.All requests need separate tenant approval and do not prove hidden membership completeness. Client/provider identity changes invalidate prior asynchronous decisions. See the [host checklist](../development/sharepoint-validation/INDEX.md).

@@ -1,6 +1,6 @@
 # SPFx React Toolkit documentation
 
-SPFx React Toolkit provides React providers, hooks, typed styles, helpers and services for SharePoint Framework applications. It brings together access to SPFx context, component properties, HTTP clients, PnPjs, themes, permissions and storage. Host-specific providers keep runtime state scoped to each SPFx instance.
+SPFx React Toolkit provides React controls, providers, hooks, typed styles, helpers and services for SharePoint Framework applications. It brings together access to SPFx context, component properties, HTTP clients, PnPjs, themes, permissions and storage. Host-specific providers keep runtime state scoped to each SPFx instance.
 
 Use this documentation to integrate the toolkit into an application, choose APIs for a feature, or contribute to the library. If you already know a symbol's name, go directly to the [alphabetical API catalog](api/INDEX.md).
 
@@ -18,6 +18,8 @@ The public API is organized by the responsibility of each part:
 
 | Family | What it provides | When to use it |
 | --- | --- | --- |
+| [React controls](api/INDEX.md#react-controls) | Shell, rich/plain text, forms, grids, cards, loading/feedback, surfaces, access trims and SharePoint pickers | Compose actual user interactions; each reference states provider, shared-runtime, localization and permission requirements. |
+| [Property Pane](api/INDEX.md#property-pane) | Native SPFx picker factories, saved references and field lifecycle | Configure a web part through dedicated Property Pane imports. |
 | [Providers and core types](api/INDEX.md#providers-and-core-types) | Host integration, instance context and shared TypeScript contracts | Connect a React tree to its actual SPFx component instance. |
 | [Hooks](api/INDEX.md#react-and-spfx-hooks) | React access to context, properties, clients, themes, storage and diagnostics | Read toolkit state or invoke operations from a React component. SPFx hooks require a matching provider; generic React utilities document their own dependencies. |
 | [Helpers and styles](api/INDEX.md#helpers-and-styles) | Input-based transformations, permission utilities, path builders, serialization and typed style descriptors | Reuse a focused transformation or compose styles. The `useSx` hook uses the host renderer and documented theme requirements. |
@@ -31,6 +33,9 @@ These guides explain how to select and combine APIs for a concrete task. Detaile
 
 | Task | Guide and coverage |
 | --- | --- |
+| Compose controls and own their state | [React controls](guides/react-controls.md): selecting families, providers, compound APIs and lifecycle. |
+| Customize named presentation regions | [Control slots](guides/control-slots.md): shorthand content, ref/event forwarding, semantics and absence policies. |
+| Localize toolkit UI in an SPFx consumer | [Localization](guides/localization.md): native resource registration, per-instance dictionaries and formatting cultures. |
 | Call an external API, SharePoint REST or Microsoft Graph | [HTTP clients](guides/http-clients.md): client selection, request state, readiness and overlapping invocations. |
 | Persist data with the appropriate lifetime and sharing scope | [Storage](guides/storage.md): browser, OneDrive, tenant and site collection options, permissions and failure handling. |
 | Check SharePoint permissions or delegated API scopes | [Permissions](guides/permissions.md): choosing a check, interpreting precheck results and handling actual request authorization. |

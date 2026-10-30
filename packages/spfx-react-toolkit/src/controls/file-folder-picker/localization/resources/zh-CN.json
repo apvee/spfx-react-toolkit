@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "浏览文件…",
+    "folders": "浏览文件夹…",
+    "all": "浏览文件和文件夹…"
+  },
+  "placeholders": {
+    "files": "选择文件…",
+    "folders": "选择文件夹…",
+    "all": "选择文件或文件夹…"
+  },
+  "labels": {
+    "selection": "文件和文件夹选择",
+    "file": "文件",
+    "folder": "文件夹",
+    "unresolvedItem": "未解析的项目",
+    "removeItem": "移除 {name}"
+  },
+  "validation": {
+    "invalidReferences": "文件或文件夹引用无效。",
+    "controlledModeChanged": "控件挂载期间无法更改受控模式。",
+    "incompatibleItems": "所选内容包含与配置的类型、类别或扩展名不兼容的项目。请移除或替换这些项目。",
+    "invalidPolicy": "选择类型、类别、扩展名或数量限制的配置无效。",
+    "selectionLimitExceeded": "所选内容超出了配置的数量限制。请移除多余的项目。"
+  },
+  "errors": {
+    "configuration": "选取器配置无效。请检查来源、类型、类别和数量限制；使用预设时请勿搭配旧版选项。",
+    "auth-resource": "选取器请求了配置不允许的身份验证资源。",
+    "auth-type": "选取器请求了配置不支持的身份验证类型。",
+    "auth-challenge": "选取器需要额外的身份验证检查，但不支持此检查。",
+    "auth-provider": "无法获取 SharePoint 令牌。请重试；如果问题仍然存在，请检查你的访问权限和现有授权。",
+    "selection-identity": "无法验证所选项目的身份。请重新打开选取器并重试。",
+    "selection-scope": "所选项目不属于允许的站点、库或文件夹。",
+    "selection-policy": "所选内容不符合允许的类型、类别、扩展名或项目数量要求。",
+    "selection-unavailable": "所选项目不可用或无法访问。",
+    "selection-invalid": "无法验证所选内容。未添加任何新项目。",
+    "onedrive-unavailable": "当前用户的 OneDrive 不可用或无法访问。请检查驱动器是否存在，然后重试。",
+    "opening": "无法打开选取器。请检查配置以及对来源的访问权限，然后重试。",
+    "timeout": "选取器未及时响应。请关闭它并重试。",
+    "communication": "与选取器的通信已中断。请重新打开它并重试。"
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "可选身份验证功能未及时响应。请重试。",
+    "unsupportedCommand": "此集成不支持该命令。",
+    "optionalGraphAuthenticationFailed": "无法对可选的 Microsoft Graph 功能进行身份验证。",
+    "optionalPersonalAuthenticationFailed": "无法对可选的个人目标位置进行身份验证。"
+  }
+}

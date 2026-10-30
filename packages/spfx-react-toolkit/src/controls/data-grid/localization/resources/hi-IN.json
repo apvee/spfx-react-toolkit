@@ -1,0 +1,25 @@
+{
+  "empty": "कोई डेटा उपलब्ध नहीं है",
+  "noResults": "कोई परिणाम नहीं मिला",
+  "noVisibleColumns": "कोई दृश्यमान स्तंभ नहीं है",
+  "loading": "लोड हो रहा है",
+  "actions": "कार्रवाइयाँ",
+  "moreActions": "और कार्रवाइयाँ",
+  "yes": "हाँ",
+  "no": "नहीं",
+  "noTags": "कोई टैग नहीं है",
+  "noObservations": "कोई अवलोकन नहीं है",
+  "invalidValue": "अमान्य मान",
+  "selectAllRows": "सभी पंक्तियाँ चुनें",
+  "retry": "पुनः प्रयास करें",
+  "selectRowTemplate": "पंक्ति {rowId} चुनें",
+  "sparklineSummaryTemplate": "पहला {first}; अंतिम {last}; न्यूनतम {minimum}; अधिकतम {maximum}; औसत {average}; परिवर्तन {change}; परिवर्तन प्रतिशत {changePercent}",
+  "tagOverflow": {
+    "one": "{count} और टैग दिखाएँ",
+    "other": "{count} और टैग दिखाएँ"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} मत",
+    "other": "{formattedCount} मत"
+  }
+}

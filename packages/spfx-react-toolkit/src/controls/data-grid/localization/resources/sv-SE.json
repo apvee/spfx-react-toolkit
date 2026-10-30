@@ -1,0 +1,25 @@
+{
+  "empty": "Inga tillgängliga data",
+  "noResults": "Inga resultat hittades",
+  "noVisibleColumns": "Inga synliga kolumner",
+  "loading": "Läser in",
+  "actions": "Åtgärder",
+  "moreActions": "Fler åtgärder",
+  "yes": "Ja",
+  "no": "Nej",
+  "noTags": "Inga etiketter",
+  "noObservations": "Inga observationer",
+  "invalidValue": "Ogiltigt värde",
+  "selectAllRows": "Markera alla rader",
+  "retry": "Försök igen",
+  "selectRowTemplate": "Markera rad {rowId}",
+  "sparklineSummaryTemplate": "Första {first}; Sista {last}; Minimum {minimum}; Maximum {maximum}; Medelvärde {average}; Förändring {change}; Procentuell förändring {changePercent}",
+  "tagOverflow": {
+    "one": "Visa {count} etikett till",
+    "other": "Visa {count} etiketter till"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} röst",
+    "other": "{formattedCount} röster"
+  }
+}

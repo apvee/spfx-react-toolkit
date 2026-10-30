@@ -1,5 +1,7 @@
 # Context Hooks
 
+[React and SPFx hooks](../INDEX.md#react-and-spfx-hooks)
+
 > Hooks for accessing SPFx context and instance metadata
 
 ## Overview
@@ -31,10 +33,10 @@ function useSPFxContext(): SPFxContextValue
 interface SPFxContextValue {
   /** Unique identifier for this SPFx instance */
   readonly instanceId: string;
-  
+
   /** SPFx context object (WebPartContext, etc.) */
   readonly spfxContext: SPFxContextType;
-  
+
   /** Type of host component */
   readonly kind: HostKind;
 }
@@ -43,6 +45,7 @@ interface SPFxContextValue {
 ### Description
 
 Returns core SPFx context metadata:
+
 - `instanceId` - Unique identifier for this SPFx instance
 - `spfxContext` - The native SPFx context object
 - `kind` - Type of host component ('WebPart', 'AppCustomizer', etc.)
@@ -55,13 +58,13 @@ import type { WebPartContext } from '@microsoft/sp-webpart-base';
 
 function MyComponent() {
   const { instanceId, spfxContext, kind } = useSPFxContext();
-  
-  // Type narrowing for component-specific properties
+
+  // This assertion is valid when mounted under SPFxWebPartProvider.
   if (kind === 'WebPart') {
     const wpContext = spfxContext as WebPartContext;
     console.log(wpContext.domElement); // WebPart-specific
   }
-  
+
   return (
     <div>
       <p>Instance: {instanceId}</p>
@@ -99,14 +102,14 @@ function useSPFxPageContext(): PageContext
 ### Description
 
 Provides access to SharePoint page context containing information about:
+
 - Site collection and web
 - Current user
 - Current list and list item (if applicable)
-- Teams context (if running in Teams)
 - Culture and locale settings
 - Permissions and capabilities
 
-This hook consumes `PageContext` from SPFx ServiceScope using dependency injection. The service is consumed lazily and cached for performance.
+This hook consumes `PageContext` from the provider’s ready SPFx ServiceScope and memoizes the native reference for that scope. It does not clone context, fetch data or independently observe every field mutation. Application SDK context is available through [`useSPFxTeams`](environment.md#usespfxteams).
 
 ### Example
 
@@ -115,17 +118,17 @@ import { useSPFxPageContext } from '@apvee/spfx-react-toolkit';
 
 function MyComponent() {
   const pageContext = useSPFxPageContext();
-  
+
   return (
     <div>
       <h2>Site Information</h2>
       <p>Site: {pageContext.web.title}</p>
       <p>URL: {pageContext.web.absoluteUrl}</p>
-      
+
       <h2>User Information</h2>
       <p>User: {pageContext.user.displayName}</p>
       <p>Email: {pageContext.user.email}</p>
-      
+
       <h2>Locale</h2>
       <p>Language: {pageContext.cultureInfo.currentUICultureName}</p>
     </div>
@@ -155,7 +158,7 @@ function useSPFxServiceScope(): SPFxServiceScopeInfo
 interface SPFxServiceScopeInfo {
   /** Native ServiceScope instance from SPFx */
   readonly serviceScope: ServiceScope | undefined;
-  
+
   /** Consume a service from the ServiceScope */
   readonly consume: <T>(serviceKey: ServiceKey<T>) => T;
 }
@@ -164,12 +167,14 @@ interface SPFxServiceScopeInfo {
 ### Description
 
 ServiceScope is SPFx's dependency injection container that provides:
+
 - Access to built-in SPFx services
 - Access to custom registered services
 - Service lifecycle management
 - Service isolation per scope
 
 **Common built-in services:**
+
 - `PageContext` (via @microsoft/sp-page-context)
 - `HttpClient` (via @microsoft/sp-http)
 - `MSGraphClientFactory` (via @microsoft/sp-http)
@@ -250,7 +255,7 @@ function useSPFxInstanceInfo(): SPFxInstanceInfo
 interface SPFxInstanceInfo {
   /** Unique identifier for this SPFx instance */
   readonly id: string;
-  
+
   /** Type of SPFx component (WebPart, AppCustomizer, etc.) */
   readonly kind: HostKind;
 }
@@ -259,10 +264,12 @@ interface SPFxInstanceInfo {
 ### Description
 
 Provides simplified access to instance metadata:
+
 - `id` - Unique identifier for this SPFx instance
 - `kind` - Type of component ('WebPart', 'AppCustomizer', etc.)
 
 **Use cases:**
+
 - Logging and telemetry
 - Conditional logic based on host type
 - Scoped storage keys
@@ -275,12 +282,12 @@ import { useSPFxInstanceInfo } from '@apvee/spfx-react-toolkit';
 
 function MyComponent() {
   const { id, kind } = useSPFxInstanceInfo();
-  
+
   // Use instance ID for scoped logging
   const log = (message: string) => {
     console.log(`[${kind}:${id}] ${message}`);
   };
-  
+
   return (
     <div>
       <p>Instance ID: {id}</p>
@@ -300,16 +307,16 @@ import { useSPFxInstanceInfo } from '@apvee/spfx-react-toolkit';
 
 function MyComponent() {
   const { kind } = useSPFxInstanceInfo();
-  
+
   // Different UI based on host type
   if (kind === 'WebPart') {
     return <FullWebPartUI />;
   }
-  
+
   if (kind === 'AppCustomizer') {
     return <CompactHeaderUI />;
   }
-  
+
   return <DefaultUI />;
 }
 ```
@@ -325,7 +332,3 @@ function MyComponent() {
 - [Providers](../core/providers.md) - Provider components
 - [Types](../core/types.md) - Type definitions
 - [Properties Hooks](properties.md) - Property management
-
----
-
-*Generated from JSDoc comments. Last updated: January 31, 2026*

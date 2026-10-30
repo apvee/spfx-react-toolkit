@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "locales": [
+    "ar-SA",
+    "az-Latn-AZ",
+    "eu-ES",
+    "bs-Latn-BA",
+    "bg-BG",
+    "ca-ES",
+    "zh-CN",
+    "zh-TW",
+    "hr-HR",
+    "cs-CZ",
+    "da-DK",
+    "prs-AF",
+    "nl-NL",
+    "en-US",
+    "et-EE",
+    "fi-FI",
+    "fr-FR",
+    "gl-ES",
+    "de-DE",
+    "el-GR",
+    "he-IL",
+    "hi-IN",
+    "hu-HU",
+    "id-ID",
+    "ga-IE",
+    "it-IT",
+    "ja-JP",
+    "kk-KZ",
+    "ko-KR",
+    "lv-LV",
+    "lt-LT",
+    "mk-MK",
+    "ms-MY",
+    "nb-NO",
+    "pl-PL",
+    "pt-BR",
+    "pt-PT",
+    "ro-RO",
+    "ru-RU",
+    "sr-Cyrl-RS",
+    "sr-Latn-RS",
+    "sk-SK",
+    "sl-SI",
+    "es-ES",
+    "sv-SE",
+    "th-TH",
+    "tr-TR",
+    "uk-UA",
+    "vi-VN",
+    "cy-GB"
+  ],
+  "families": [
+    {
+      "family": "pagination",
+      "id": "ApveeSpfxReactToolkitPaginationStrings",
+      "sourceDirectory": "src/controls/pagination/localization/resources",
+      "resourceType": {
+        "path": "src/controls/pagination/localization/pagination-resource.types.internal.ts",
+        "export": "PaginationResource"
+      },
+      "outputPattern": "lib/controls/pagination/loc/{locale}.js"
+    },
+    {
+      "family": "data-grid",
+      "id": "ApveeSpfxReactToolkitDataGridStrings",
+      "sourceDirectory": "src/controls/data-grid/localization/resources",
+      "resourceType": {
+        "path": "src/controls/data-grid/localization/data-grid-resource.types.internal.ts",
+        "export": "DataGridResource"
+      },
+      "outputPattern": "lib/controls/data-grid/loc/{locale}.js",
+      "templates": {
+        "selectRowTemplate": [
+          "rowId"
+        ],
+        "sparklineSummaryTemplate": [
+          "first",
+          "last",
+          "minimum",
+          "maximum",
+          "average",
+          "change",
+          "changePercent"
+        ]
+      },
+      "plurals": {
+        "tagOverflow": {
+          "tokens": [
+            "count"
+          ]
+        },
+        "ratingCount": {
+          "tokens": [
+            "formattedCount"
+          ]
+        }
+      }
+    },
+    {
+      "family": "editable-text",
+      "id": "ApveeSpfxReactToolkitEditableTextStrings",
+      "sourceDirectory": "src/controls/editable-text/localization/resources",
+      "resourceType": {
+        "path": "src/controls/editable-text/localization/editable-text-resource.types.internal.ts",
+        "export": "EditableTextResource"
+      },
+      "outputPattern": "lib/controls/editable-text/loc/{locale}.js",
+      "templates": {
+        "headingLevelTemplate": [
+          "level"
+        ],
+        "lineSpacingValueTemplate": [
+          "value"
+        ],
+        "formattingShortcutTemplate": [
+          "label",
+          "shortcut"
+        ],
+        "mixedFormattingTemplate": [
+          "label"
+        ]
+      }
+    },
+    {
+      "family": "web-part-shell",
+      "id": "ApveeSpfxReactToolkitWebPartShellStrings",
+      "sourceDirectory": "src/controls/web-part-shell/localization/resources",
+      "resourceType": {
+        "path": "src/controls/web-part-shell/localization/web-part-shell-resource.types.internal.ts",
+        "export": "WebPartShellResource"
+      },
+      "outputPattern": "lib/controls/web-part-shell/loc/{locale}.js"
+    },
+    {
+      "family": "pickers",
+      "id": "ApveeSpfxReactToolkitPickersStrings",
+      "sourceDirectory": "src/controls/pickers/localization/resources",
+      "resourceType": {
+        "path": "src/controls/pickers/localization/pickers-resource.types.internal.ts",
+        "export": "PickersResource"
+      },
+      "outputPattern": "lib/controls/pickers/loc/{locale}.js",
+      "templates": {
+        "labels.namedOptions": [
+          "name"
+        ],
+        "labels.namedSearch": [
+          "name"
+        ],
+        "metadata.fieldDescription": [
+          "internalName",
+          "type"
+        ],
+        "metadata.itemDescription": [
+          "id"
+        ],
+        "metadata.fileWithExtension": [
+          "extension"
+        ]
+      },
+      "plurals": {
+        "labels.selectedCount": {
+          "tokens": [
+            "count"
+          ]
+        },
+        "labels.minimumSearchLength": {
+          "tokens": [
+            "count"
+          ]
+        }
+      }
+    },
+    {
+      "family": "file-folder-picker",
+      "id": "ApveeSpfxReactToolkitFileFolderPickerStrings",
+      "sourceDirectory": "src/controls/file-folder-picker/localization/resources",
+      "resourceType": {
+        "path": "src/controls/file-folder-picker/localization/file-folder-picker-resource.types.internal.ts",
+        "export": "FileFolderPickerResource"
+      },
+      "outputPattern": "lib/controls/file-folder-picker/loc/{locale}.js",
+      "templates": {
+        "labels.removeItem": [
+          "name"
+        ]
+      }
+    },
+    {
+      "family": "form",
+      "id": "ApveeSpfxReactToolkitFormStrings",
+      "sourceDirectory": "src/controls/form/localization/resources",
+      "resourceType": {
+        "path": "src/controls/form/localization/form-resource.types.internal.ts",
+        "export": "FormResource"
+      },
+      "outputPattern": "lib/controls/form/loc/{locale}.js",
+      "arrays": {
+        "datePicker.months": 12,
+        "datePicker.shortMonths": 12,
+        "datePicker.days": 7,
+        "datePicker.shortDays": 7
+      },
+      "templates": {
+        "arraySection.itemLabelTemplate": [
+          "position"
+        ],
+        "arraySection.removeTemplate": [
+          "label"
+        ],
+        "arraySection.moveUpTemplate": [
+          "label"
+        ],
+        "arraySection.moveDownTemplate": [
+          "label"
+        ],
+        "arraySection.addedTemplate": [
+          "label"
+        ],
+        "arraySection.removedTemplate": [
+          "label"
+        ],
+        "arraySection.movedTemplate": [
+          "label",
+          "position",
+          "total"
+        ],
+        "datePicker.monthPickerHeaderAriaLabel": [
+          "0"
+        ],
+        "datePicker.yearPickerHeaderAriaLabel": [
+          "0"
+        ],
+        "datePicker.weekNumberFormatString": [
+          "0"
+        ],
+        "datePicker.selectedDateFormatString": [
+          "0"
+        ],
+        "datePicker.todayDateFormatString": [
+          "0"
+        ]
+      }
+    },
+    {
+      "family": "stage",
+      "id": "ApveeSpfxReactToolkitStageStrings",
+      "sourceDirectory": "src/controls/stage/localization/resources",
+      "resourceType": {
+        "path": "src/controls/stage/localization/stage-resource.types.internal.ts",
+        "export": "StageResource"
+      },
+      "outputPattern": "lib/controls/stage/loc/{locale}.js"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Välj ett objekt",
+    "selectMany": "Välj objekt",
+    "search": "Sök…",
+    "clearSelection": "Rensa markering",
+    "clearSearch": "Rensa sökning",
+    "options": "Alternativ",
+    "searchOptions": "Sök alternativ",
+    "selectedOne": "Markerat objekt",
+    "selectedMany": "Markerade objekt",
+    "noSelection": "Inget markerat",
+    "resolveIds": "Slå upp ID:n",
+    "moreResults": "Fler resultat",
+    "retry": "Försök igen",
+    "namedOptions": "{name}: Alternativ",
+    "namedSearch": "{name}: Sök",
+    "selectedCount": {
+      "one": "{count} objekt markerat",
+      "other": "{count} objekt markerade"
+    },
+    "minimumSearchLength": {
+      "one": "Skriv minst {count} tecken för att söka",
+      "other": "Skriv minst {count} tecken för att söka"
+    }
+  },
+  "status": {
+    "searching": "Söker…",
+    "loading": "Läser in…",
+    "partialSearch": "Ofullständig sökning: precisera sökningen.",
+    "noOtherResults": "Inga andra resultat för denna sökning",
+    "noResults": "Inga resultat för denna sökning",
+    "noOptions": "Inga tillgängliga alternativ.",
+    "moreItemsAvailable": "Fler objekt är tillgängliga.",
+    "partialSuggestions": "Ofullständiga förslag: vissa källor är otillgängliga.",
+    "unresolvedValue": "Värde som inte har slagits upp",
+    "partialHubs": "Ofullständig lista över nav: begränsa omfånget eller använd webbplatsläge.",
+    "partialSiteCollections": "Ofullständig sökning efter webbplatssamlingar (högst 1000 resultat): begränsa kriterierna."
+  },
+  "sections": {
+    "consumer": "Tillhandahållna alternativ",
+    "currentSite": "Aktuell webbplats",
+    "hubSite": "Associerat nav",
+    "catalog": "Tillgängliga alternativ",
+    "currentUser": "Du",
+    "people": "Föreslagna personer",
+    "memberOf": "Dina grupper"
+  },
+  "metadata": {
+    "documentLibrary": "Dokumentbibliotek",
+    "sharePointList": "SharePoint-lista",
+    "personalView": "Personlig vy",
+    "publicView": "Offentlig vy",
+    "field": "Fält",
+    "itemDescription": "Objekt · ID {id}",
+    "file": "Fil",
+    "fileWithExtension": "{extension}-fil",
+    "folder": "Mapp",
+    "sharePointGroup": "SharePoint-grupp · SharePoint",
+    "securityGroup": "Säkerhetsgrupp · Entra",
+    "distributionList": "Distributionslista · Entra",
+    "unvalidatedEmail": "Obekräftad e-post",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Gränsen för val har nåtts.",
+    "selectionLimitExceeded": "Valet överskrider den konfigurerade gränsen.",
+    "unresolvedValues": "Vissa valda värden har inte slagits upp.",
+    "outOfScopeValues": "Valet innehåller värden utanför det konfigurerade omfånget.",
+    "resolveRequiredUserIds": "Slå upp de ID:n som krävs för de valda användarna."
+  },
+  "errors": {
+    "candidateOutOfScope": "Kandidaten ligger utanför det konfigurerade omfånget.",
+    "incompleteCandidateResolution": "Kandidaten kunde inte slås upp fullständigt.",
+    "resolutionFailed": "Uppslagningen misslyckades.",
+    "graphUnavailable": "Microsoft Graph-klienten är otillgänglig."
+  }
+}

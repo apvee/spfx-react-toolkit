@@ -1,0 +1,79 @@
+{
+  "labels": {
+    "selectOne": "Элемент таңдаңыз",
+    "selectMany": "Элементтер таңдаңыз",
+    "search": "Іздеу…",
+    "clearSelection": "Таңдауды тазалау",
+    "clearSearch": "Іздеуді тазалау",
+    "options": "Параметрлер",
+    "searchOptions": "Параметрлерді іздеу",
+    "selectedOne": "Таңдалған элемент",
+    "selectedMany": "Таңдалған элементтер",
+    "noSelection": "Ештеңе таңдалмаған",
+    "resolveIds": "Идентификаторларды анықтау",
+    "moreResults": "Қосымша нәтижелер",
+    "retry": "Қайталап көру",
+    "namedOptions": "{name}: Параметрлер",
+    "namedSearch": "{name}: Іздеу",
+    "selectedCount": {
+      "one": "{count} элемент таңдалды",
+      "other": "{count} элемент таңдалды"
+    },
+    "minimumSearchLength": {
+      "one": "Іздеу үшін кемінде {count} таңба теріңіз",
+      "other": "Іздеу үшін кемінде {count} таңба теріңіз"
+    }
+  },
+  "status": {
+    "searching": "Ізделуде…",
+    "loading": "Жүктелуде…",
+    "partialSearch": "Іздеу толық емес: іздеу шарттарын нақтылаңыз.",
+    "noOtherResults": "Бұл іздеу үшін басқа нәтижелер жоқ",
+    "noResults": "Бұл іздеу үшін нәтижелер жоқ",
+    "noOptions": "Қолжетімді параметрлер жоқ.",
+    "moreItemsAvailable": "Қосымша элементтер қолжетімді.",
+    "partialSuggestions": "Ұсыныстар толық емес: кейбір дереккөздер қолжетімсіз.",
+    "unresolvedValue": "Анықталмаған мән",
+    "partialHubs": "Хабтар тізімі толық емес: ауқымды тарылтыңыз немесе сайт режимін пайдаланыңыз.",
+    "partialSiteCollections": "Сайттар жиынын іздеу толық емес (ең көбі 1000 нәтиже): шарттарды тарылтыңыз."
+  },
+  "sections": {
+    "consumer": "Берілген параметрлер",
+    "currentSite": "Ағымдағы сайт",
+    "hubSite": "Байланыстырылған хаб",
+    "catalog": "Қолжетімді параметрлер",
+    "currentUser": "Сіз",
+    "people": "Ұсынылған адамдар",
+    "memberOf": "Топтарыңыз"
+  },
+  "metadata": {
+    "documentLibrary": "Құжаттар кітапханасы",
+    "sharePointList": "SharePoint тізімі",
+    "personalView": "Жеке көрініс",
+    "publicView": "Жалпыға ортақ көрініс",
+    "field": "Өріс",
+    "itemDescription": "Элемент · ID {id}",
+    "file": "Файл",
+    "fileWithExtension": "{extension} файлы",
+    "folder": "Қалта",
+    "sharePointGroup": "SharePoint тобы · SharePoint",
+    "securityGroup": "Қауіпсіздік тобы · Entra",
+    "distributionList": "Тарату тізімі · Entra",
+    "unvalidatedEmail": "Расталмаған электрондық пошта",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "Таңдау шегіне жетті.",
+    "selectionLimitExceeded": "Таңдау белгіленген шектен асады.",
+    "unresolvedValues": "Кейбір таңдалған мәндер анықталмаған.",
+    "outOfScopeValues": "Таңдауда белгіленген ауқымнан тыс мәндер бар.",
+    "resolveRequiredUserIds": "Таңдалған пайдаланушылардың қажетті идентификаторларын анықтаңыз."
+  },
+  "errors": {
+    "candidateOutOfScope": "Үміткер белгіленген ауқымнан тыс.",
+    "incompleteCandidateResolution": "Үміткерді толық анықтау мүмкін болмады.",
+    "resolutionFailed": "Анықтау сәтсіз аяқталды.",
+    "graphUnavailable": "Microsoft Graph клиенті қолжетімсіз."
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Procurar ficheiros…",
+    "folders": "Procurar pastas…",
+    "all": "Procurar ficheiros e pastas…"
+  },
+  "placeholders": {
+    "files": "Selecionar ficheiros…",
+    "folders": "Selecionar pastas…",
+    "all": "Selecionar ficheiros ou pastas…"
+  },
+  "labels": {
+    "selection": "Seleção de ficheiros e pastas",
+    "file": "Ficheiro",
+    "folder": "Pasta",
+    "unresolvedItem": "Item não resolvido",
+    "removeItem": "Remover {name}"
+  },
+  "validation": {
+    "invalidReferences": "Referências de ficheiros ou pastas inválidas.",
+    "controlledModeChanged": "O modo controlado não pode mudar enquanto o controlo estiver montado.",
+    "incompatibleItems": "A seleção contém itens incompatíveis com o tipo, a categoria ou as extensões configurados. Remova-os ou substitua-os.",
+    "invalidPolicy": "Configuração inválida do tipo, categoria, extensões ou limite de seleção.",
+    "selectionLimitExceeded": "A seleção excede o limite configurado. Remova os itens em excesso."
+  },
+  "errors": {
+    "configuration": "Configuração do seletor inválida. Verifique a origem, os tipos, a categoria e os limites; utilize a predefinição sem opções legadas.",
+    "auth-resource": "O seletor pediu um recurso de autenticação não permitido pela configuração.",
+    "auth-type": "O seletor pediu um tipo de autenticação não suportado pela configuração.",
+    "auth-challenge": "O seletor requer uma verificação de autenticação adicional que não é suportada.",
+    "auth-provider": "Não foi possível obter o token do SharePoint. Tente novamente; se o problema persistir, verifique o seu acesso e as permissões existentes.",
+    "selection-identity": "Não foi possível verificar a identidade do item selecionado. Volte a abrir o seletor e tente novamente.",
+    "selection-scope": "O item selecionado está fora do site, da biblioteca ou da pasta permitidos.",
+    "selection-policy": "A seleção não cumpre os requisitos de tipo, categoria, extensões ou número de itens permitidos.",
+    "selection-unavailable": "O item selecionado está indisponível ou inacessível.",
+    "selection-invalid": "Não foi possível verificar a seleção. Não foram adicionados novos itens.",
+    "onedrive-unavailable": "O OneDrive do utilizador atual está indisponível ou inacessível. Verifique se a unidade existe e tente novamente.",
+    "opening": "Não foi possível abrir o seletor. Verifique a configuração e o acesso à origem e tente novamente.",
+    "timeout": "O seletor não respondeu a tempo. Feche-o e tente novamente.",
+    "communication": "A comunicação com o seletor foi interrompida. Volte a abri-lo e tente novamente."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "A funcionalidade de autenticação opcional não respondeu a tempo. Tente novamente.",
+    "unsupportedCommand": "Esta integração não suporta esse comando.",
+    "optionalGraphAuthenticationFailed": "Não foi possível autenticar a funcionalidade opcional do Microsoft Graph.",
+    "optionalPersonalAuthenticationFailed": "Não foi possível autenticar o destino pessoal opcional."
+  }
+}

@@ -8,7 +8,7 @@ Services are non-React factories. Callers provide initialized dependencies such 
 
 | API type | Use when | Dependency |
 |----------|----------|------------|
-| Hooks | A React component is wrapped by an SPFx provider | React provider context |
+| SPFx hooks | A React component is wrapped by the matching SPFx provider | React provider context; generic React utilities document separate requirements |
 | Helpers | You need pure mapping, formatting, or conversion logic | Direct input values |
 | Services | You need reusable non-React I/O operations | SPFx clients, PnPjs, or Graph clients |
 
@@ -50,6 +50,7 @@ const photoPath = buildUserPhotoEndpoint({ email: 'user@contoso.com', size: '240
 | `createSPFxTenantPropertyService` | `SPHttpClient` |
 | `createSPFxTenantKeyValueStoreService` | `SPHttpClient` |
 | `createSPFxSiteKeyValueStoreService` | `SPHttpClient` |
+| `createSPFxConfigurationStoreService` | `SPHttpClient`, required mode, discovery/collection URLs and caller-selected mutation scope |
 | `createSPFxOneDriveAppDataService` | `MSGraphClientV3` |
 | `createSPFxUserPhotoService` | `MSGraphClientV3` |
 | `createSPFxApiPermissionPrecheckService` | `SPFxAadTokenProviderLike` |
@@ -131,3 +132,5 @@ These factories retain their existing selector, query, cache, error and batch co
 - Services do not replace providers; callers obtain the necessary SPFx dependencies.
 
 Style descriptors are immutable data, while `useSx` composes them using the existing host Griffel renderer. See the [style reference](../api/helpers/styles.md) for its separate cache and runtime contract.
+
+For tenant defaults and site overrides, use the [configuration service](../api/services/configuration-store.md) with explicit mutation scope; ordinary tenant/site factories retain their single-scope contracts. The [storage guide](storage.md) compares read/discovery, serialization and conflict behavior.

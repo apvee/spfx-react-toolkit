@@ -1,0 +1,25 @@
+{
+  "empty": "Tietoja ei ole saatavilla",
+  "noResults": "Tuloksia ei löytynyt",
+  "noVisibleColumns": "Ei näkyviä sarakkeita",
+  "loading": "Ladataan",
+  "actions": "Toiminnot",
+  "moreActions": "Lisää toimintoja",
+  "yes": "Kyllä",
+  "no": "Ei",
+  "noTags": "Ei tunnisteita",
+  "noObservations": "Ei havaintoja",
+  "invalidValue": "Virheellinen arvo",
+  "selectAllRows": "Valitse kaikki rivit",
+  "retry": "Yritä uudelleen",
+  "selectRowTemplate": "Valitse rivi {rowId}",
+  "sparklineSummaryTemplate": "Ensimmäinen {first}; Viimeinen {last}; Pienin {minimum}; Suurin {maximum}; Keskiarvo {average}; Muutos {change}; Muutosprosentti {changePercent}",
+  "tagOverflow": {
+    "one": "Näytä vielä {count} tunniste",
+    "other": "Näytä vielä {count} tunnistetta"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} ääni",
+    "other": "{formattedCount} ääntä"
+  }
+}

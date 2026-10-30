@@ -1,5 +1,7 @@
 # Core Providers
 
+[Providers and core types](../INDEX.md#providers-and-core-types)
+
 > React context providers for SPFx components
 
 ## Overview
@@ -35,7 +37,7 @@ function SPFxWebPartProvider<TProps extends {} = {}>(
 interface SPFxWebPartProviderProps<TProps extends {} = {}> {
   /** The SPFx WebPart instance */
   instance: BaseClientSideWebPart<TProps>;
-  
+
   /** Children to render within the provider */
   children?: React.ReactNode;
 }
@@ -94,7 +96,7 @@ function SPFxApplicationCustomizerProvider<TProps extends {} = {}>(
 interface SPFxApplicationCustomizerProviderProps<TProps extends {} = {}> {
   /** The SPFx Application Customizer instance */
   instance: BaseApplicationCustomizer<TProps>;
-  
+
   /** Children to render within the provider */
   children?: React.ReactNode;
 }
@@ -191,7 +193,7 @@ function SPFxFieldCustomizerProvider<TProps extends {} = {}>(
 interface SPFxFieldCustomizerProviderProps<TProps extends {} = {}> {
   /** The SPFx Field Customizer instance */
   instance: BaseFieldCustomizer<TProps>;
-  
+
   /** Children to render within the provider */
   children?: React.ReactNode;
 }
@@ -202,9 +204,9 @@ interface SPFxFieldCustomizerProviderProps<TProps extends {} = {}> {
 ```tsx
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { 
-  BaseFieldCustomizer, 
-  IFieldCustomizerCellEventParameters 
+import {
+  BaseFieldCustomizer,
+  IFieldCustomizerCellEventParameters
 } from '@microsoft/sp-listview-extensibility';
 import { SPFxFieldCustomizerProvider } from '@apvee/spfx-react-toolkit';
 
@@ -256,7 +258,7 @@ function SPFxListViewCommandSetProvider<TProps extends {} = {}>(
 interface SPFxListViewCommandSetProviderProps<TProps extends {} = {}> {
   /** The SPFx ListView Command Set instance */
   instance: BaseListViewCommandSet<TProps>;
-  
+
   /** Children to render within the provider */
   children?: React.ReactNode;
 }
@@ -267,9 +269,9 @@ interface SPFxListViewCommandSetProviderProps<TProps extends {} = {}> {
 ```tsx
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { 
-  BaseListViewCommandSet, 
-  IListViewCommandSetExecuteEventParameters 
+import {
+  BaseListViewCommandSet,
+  IListViewCommandSetExecuteEventParameters
 } from '@microsoft/sp-listview-extensibility';
 import { SPFxListViewCommandSetProvider } from '@apvee/spfx-react-toolkit';
 
@@ -284,7 +286,7 @@ export default class MyCommandSet extends BaseListViewCommandSet<IMyCommandSetPr
         // Render dialog with provider
         const dialogContainer = document.createElement('div');
         document.body.appendChild(dialogContainer);
-        
+
         const element = React.createElement(
           SPFxListViewCommandSetProvider,
           { instance: this },
@@ -308,6 +310,12 @@ export default class MyCommandSet extends BaseListViewCommandSet<IMyCommandSetPr
 [View source](../../../packages/spfx-react-toolkit/src/core/provider-listview-commandset.tsx)
 
 ---
+
+## Shared provider contract
+
+`SPFxWebPartProviderProps`, `SPFxApplicationCustomizerProviderProps`, `SPFxFieldCustomizerProviderProps` and `SPFxListViewCommandSetProviderProps` each require the initialized native host `instance` shown above and accept optional React `children`. The `TProps extends {}` generic defaults to `{}` and describes the host property bag. Omitted children render no application content. Each provider returns a JSX element and waits for its active native ServiceScope to finish before mounting descendants; it does not register, finish or authorize services itself. The internal fallback proceeds if a scope is missing, but hooks requiring native services may then fail.
+
+The exported providers are typed wrappers over the shared runtime; `SPFxProviderBase`, runtime stores and React context objects remain private. Hooks consuming SPFx context/runtime state throw outside the matching provider. The generic React hooks `useStableCallback` and `useSx` do not require an SPFx provider.
 
 ## Provider Features
 
@@ -336,7 +344,7 @@ The host must unmount React when it disposes its rendered surface. The provider 
 
 ### Container Observation
 
-Container size changes are observed and available via `useSPFxContainerSize`.
+WebPart providers expose the native `domElement`; other current host kinds expose no container element. `useSPFxContainerInfo` subscribes to the available element with ResizeObserver (or the existing browser fallback) and `useSPFxContainerSize` derives breakpoints. Mount the container hook when measurements are needed; the provider itself does not observe an element.
 
 ---
 
@@ -345,7 +353,3 @@ Container size changes are observed and available via `useSPFxContainerSize`.
 - [Types](types.md) - Core type definitions
 - [Context Hooks](../hooks/context.md) - Hooks for accessing context
 - [Properties Hooks](../hooks/properties.md) - Property management hooks
-
----
-
-*Generated from JSDoc comments. Last updated: January 31, 2026*

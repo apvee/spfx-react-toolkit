@@ -1,0 +1,23 @@
+{
+  "empty": "Không có dữ liệu",
+  "noResults": "Không tìm thấy kết quả",
+  "noVisibleColumns": "Không có cột hiển thị",
+  "loading": "Đang tải",
+  "actions": "Thao tác",
+  "moreActions": "Thao tác khác",
+  "yes": "Có",
+  "no": "Không",
+  "noTags": "Không có thẻ",
+  "noObservations": "Không có quan sát",
+  "invalidValue": "Giá trị không hợp lệ",
+  "selectAllRows": "Chọn tất cả hàng",
+  "retry": "Thử lại",
+  "selectRowTemplate": "Chọn hàng {rowId}",
+  "sparklineSummaryTemplate": "Đầu tiên {first}; Cuối cùng {last}; Nhỏ nhất {minimum}; Lớn nhất {maximum}; Trung bình {average}; Thay đổi {change}; Phần trăm thay đổi {changePercent}",
+  "tagOverflow": {
+    "other": "Hiển thị thêm {count} thẻ"
+  },
+  "ratingCount": {
+    "other": "{formattedCount} phiếu"
+  }
+}

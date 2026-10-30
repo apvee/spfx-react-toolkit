@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "Níorbh fhéidir an fhoirm a sheoladh. Bain triail eile as.",
+  "dateInputValidationMessage": "Comhlánaigh nó ceartaigh an dáta sula seolann tú an fhoirm.",
+  "timeInputValidationMessage": "Comhlánaigh nó ceartaigh an t-am sula seolann tú an fhoirm.",
+  "tagPicker": {
+    "noOptions": "Níl aon rogha ann a oireann don chuardach reatha."
+  },
+  "fileInput": {
+    "browseLabel": "Brabhsáil",
+    "clearLabel": "Glan"
+  },
+  "arraySection": {
+    "add": "Cuir mír leis",
+    "empty": "Níl aon mhír ann",
+    "itemLabelTemplate": "Mír {position}",
+    "removeTemplate": "Bain {label}",
+    "moveUpTemplate": "Bog {label} suas",
+    "moveDownTemplate": "Bog {label} síos",
+    "addedTemplate": "Cuireadh leis: {label}",
+    "removedTemplate": "Baineadh: {label}",
+    "movedTemplate": "Bogadh {label} go suíomh {position} as {total}"
+  },
+  "datePicker": {
+    "months": [
+      "Eanáir",
+      "Feabhra",
+      "Márta",
+      "Aibreán",
+      "Bealtaine",
+      "Meitheamh",
+      "Iúil",
+      "Lúnasa",
+      "Meán Fómhair",
+      "Deireadh Fómhair",
+      "Samhain",
+      "Nollaig"
+    ],
+    "shortMonths": [
+      "Ean",
+      "Feabh",
+      "Márta",
+      "Aib",
+      "Beal",
+      "Meith",
+      "Iúil",
+      "Lún",
+      "MFómh",
+      "DFómh",
+      "Samh",
+      "Noll"
+    ],
+    "days": [
+      "Dé Domhnaigh",
+      "Dé Luain",
+      "Dé Máirt",
+      "Dé Céadaoin",
+      "Déardaoin",
+      "Dé hAoine",
+      "Dé Sathairn"
+    ],
+    "shortDays": [
+      "Domh",
+      "Luan",
+      "Máirt",
+      "Céad",
+      "Déar",
+      "Aoine",
+      "Sath"
+    ],
+    "goToToday": "Téigh go dtí an lá inniu",
+    "prevMonthAriaLabel": "An mhí roimhe",
+    "nextMonthAriaLabel": "An chéad mhí eile",
+    "prevYearAriaLabel": "An bhliain roimhe",
+    "nextYearAriaLabel": "An bhliain seo chugainn",
+    "prevYearRangeAriaLabel": "An raon blianta roimhe",
+    "nextYearRangeAriaLabel": "An chéad raon blianta eile",
+    "monthPickerHeaderAriaLabel": "{0}, athraigh an bhliain",
+    "yearPickerHeaderAriaLabel": "{0}, athraigh an mhí",
+    "closeButtonAriaLabel": "Dún",
+    "weekNumberFormatString": "Uimhir na seachtaine {0}",
+    "selectedDateFormatString": "An dáta roghnaithe {0}",
+    "todayDateFormatString": "Dáta an lae inniu {0}",
+    "dayMarkedAriaLabel": "marcáilte"
+  }
+}

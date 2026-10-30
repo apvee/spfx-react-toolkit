@@ -1,5 +1,6 @@
 import type { IRefiner, ISearchResult } from '@pnp/sp/search';
 import type { SearchRefiner, SearchResult } from './useSPFxPnPSearch';
+import { buildRefinementFilters as buildSearchRefinementFilters } from '../services/spfx-pnp-search-refiners.internal';
 
 export function parseSearchResults<T>(rawResults: ISearchResult[]): SearchResult<T>[] {
   return rawResults.map(function(result: ISearchResult) {
@@ -31,13 +32,5 @@ export function parseSearchRefiners(refinerResults: IRefiner[]): SearchRefiner[]
 }
 
 export function buildRefinementFilters(refinersToApply: Map<string, string[]>): string[] {
-  const refinementFilters: string[] = [];
-
-  refinersToApply.forEach(function(values, key) {
-    values.forEach(function(value) {
-      refinementFilters.push(key + ":equals('" + value + "')");
-    });
-  });
-
-  return refinementFilters;
+  return buildSearchRefinementFilters(refinersToApply);
 }

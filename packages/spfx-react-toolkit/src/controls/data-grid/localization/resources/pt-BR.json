@@ -1,0 +1,27 @@
+{
+  "empty": "Nenhum dado disponível",
+  "noResults": "Nenhum resultado encontrado",
+  "noVisibleColumns": "Nenhuma coluna visível",
+  "loading": "Carregando",
+  "actions": "Ações",
+  "moreActions": "Mais ações",
+  "yes": "Sim",
+  "no": "Não",
+  "noTags": "Nenhuma marca",
+  "noObservations": "Nenhuma observação",
+  "invalidValue": "Valor inválido",
+  "selectAllRows": "Selecionar todas as linhas",
+  "retry": "Tentar novamente",
+  "selectRowTemplate": "Selecionar linha {rowId}",
+  "sparklineSummaryTemplate": "Primeiro {first}; Último {last}; Mínimo {minimum}; Máximo {maximum}; Média {average}; Alteração {change}; Alteração percentual {changePercent}",
+  "tagOverflow": {
+    "one": "Mostrar mais {count} marca",
+    "many": "Mostrar mais {count} marcas",
+    "other": "Mostrar mais {count} marcas"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} voto",
+    "many": "{formattedCount} votos",
+    "other": "{formattedCount} votos"
+  }
+}

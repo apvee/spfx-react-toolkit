@@ -3,6 +3,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const ts = require('typescript');
 const { JSDOM } = require('jsdom');
+const { createNativeResources } = require('./fixtures/localization/native-resources.cjs');
 
 // Keep one DOM for ReactDOM's captured development event target; reset contents per test.
 const dom = new JSDOM('<!doctype html><body></body>', { url: 'https://example.test', pretendToBeVisual: true });
@@ -24,7 +25,8 @@ require('node:test').after(() => {
     else delete global[name];
   });
 });
-function createHarness() {
+function createHarness(options = {}) {
+  const nativeResources = createNativeResources({ culture: options.nativeCulture ?? 'en-US' });
   const originalAddEventListener = dom.window.addEventListener;
   const originalRemoveEventListener = dom.window.removeEventListener;
   const cache = new Map();
@@ -39,6 +41,7 @@ function createHarness() {
       module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.React,
     }}).outputText;
     function sourceRequire(specifier) {
+      if (specifier.startsWith('ApveeSpfxReactToolkit')) return nativeResources.require(specifier);
       if (specifier === '@microsoft/sp-component-base') return { ThemeProvider: { serviceKey: themeKey } };
       if (specifier === '@microsoft/sp-core-library') return { DisplayMode: { Read: 1, Edit: 2 } };
       if (!specifier.startsWith('.')) return require(specifier);
@@ -98,6 +101,6 @@ function createHarness() {
     localStorage.clear();
     sessionStorage.clear();
   }
-  return { React, act, load, scope, instance, mount, close, window: dom.window };
+  return { React, act, load, scope, instance, mount, close, window: dom.window, nativeResources };
 }
 module.exports = { createHarness };

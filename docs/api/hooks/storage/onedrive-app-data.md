@@ -8,12 +8,12 @@ import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit/hooks';
 
 Requires the matching SPFx host provider. See [provider selection](../../../getting-started/choosing-a-provider.md).
 
-
 Cloud-synced JSON storage using OneDrive app-specific data folder.
 
 ## Prerequisites
 
 Requires Microsoft Graph permissions:
+
 - `Files.ReadWrite` or `Files.ReadWrite.AppFolder`
 
 ## Signature
@@ -78,14 +78,22 @@ interface SPFxOneDriveAppDataResult<T> {
   /** Write data to OneDrive (upsert) */
   readonly write: (content: T) => Promise<void>;
 
-  /** True when data is loaded and ready */
+  /** True when data is defined, no read is pending and no read error exists */
   readonly isReady: boolean;
 }
 ```
 
+`autoFetch` defaults to true and `createIfMissing` to false; `folder` is an optional namespace and `defaultValue` is an optional seed/missing-file fallback. There is no remove operation. `load()` logs and resolves without dispatch when client initialization is pending/failed, the client is absent or `fileName` is empty. `write()` rejects those preconditions before write-state tracking starts; dispatched write failures populate `writeError` and reject. A missing file without a default leaves `data` undefined.
+
+## Browser downloads
+
+Reads request the file's complete Graph metadata and immediately download its JSON from `@microsoft.graph.downloadUrl` using native `fetch` with `credentials: 'omit'`. The path lookup uses no `$select` projection, which can omit the download annotation. Graph authorization headers are not forwarded to the download host. This avoids the authenticated `/content` redirect that fails browser CORS preflight, as described in [Microsoft's download guidance](https://learn.microsoft.com/en-us/graph/api/driveitem-get-content?view=graph-rest-1.0#downloading-files-in-javascript-apps).
+
+Download URLs must be absolute HTTPS URLs and are used immediately rather than cached or logged. Only a missing-file response from Graph metadata sets `isNotFound`. Denied Graph requests, failed downloads (including download URL 404s) and invalid JSON remain errors, preventing `createIfMissing` from acting on an unavailable download URL. Writes continue to use the Graph `/content` endpoint. The consumer runtime must provide native `fetch`.
+
 ## Request ownership and lazy defaults
 
-`defaultValue` seeds `data` even with `autoFetch: false`; changing file, folder or Graph client seeds the new identity from the current default without forcing a lazy fetch. Changing an inline default alone does not reload. A current missing-file response is required before `createIfMissing` writes a default.
+`isReady` is exactly `!isLoading && !error && data !== undefined`; a seeded default can be ready before any read, and a pending write or write error does not itself make it false. `defaultValue` seeds `data` even with `autoFetch: false`; changing file, folder or Graph client seeds the new identity from the current default without forcing a lazy fetch. Changing an inline default alone does not reload. A current missing-file response is required before `createIfMissing` writes a default.
 
 Latest-started reads and writes own the local data/error state together. An older read, 404 or write completion cannot replace a newer write's local data. `isLoading` and `isWriting` track pending reads and writes separately for the current identity. Identity changes and unmount ignore obsolete completions. Requests still settle for their callers; remote writes are not cancelled or serialized. `load()` records read errors in `error`; `write()` records `writeError` and rejects on failure. These guards do not provide remote transaction ordering.
 
@@ -275,5 +283,3 @@ function TodoApp() {
 ## Source
 
 [View source](../../../../packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData.ts)
-
----

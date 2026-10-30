@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Dateien durchsuchen…",
+    "folders": "Ordner durchsuchen…",
+    "all": "Dateien und Ordner durchsuchen…"
+  },
+  "placeholders": {
+    "files": "Dateien auswählen…",
+    "folders": "Ordner auswählen…",
+    "all": "Dateien oder Ordner auswählen…"
+  },
+  "labels": {
+    "selection": "Datei- und Ordnerauswahl",
+    "file": "Datei",
+    "folder": "Ordner",
+    "unresolvedItem": "Nicht aufgelöstes Element",
+    "removeItem": "{name} entfernen"
+  },
+  "validation": {
+    "invalidReferences": "Ungültige Datei-/Ordnerverweise.",
+    "controlledModeChanged": "Der gesteuerte Modus kann nicht geändert werden, solange das Steuerelement eingebunden ist.",
+    "incompatibleItems": "Die Auswahl enthält Elemente, die mit dem konfigurierten Typ, der Kategorie oder den Erweiterungen nicht kompatibel sind. Entfernen oder ersetzen Sie diese.",
+    "invalidPolicy": "Ungültige Konfiguration für Auswahltyp, Kategorie, Erweiterungen oder Begrenzung.",
+    "selectionLimitExceeded": "Die Auswahl überschreitet die konfigurierte Begrenzung. Entfernen Sie die überzähligen Elemente."
+  },
+  "errors": {
+    "configuration": "Ungültige Auswahlkonfiguration. Prüfen Sie Quelle, Typen, Kategorie und Begrenzungen; verwenden Sie die Voreinstellung ohne veraltete Optionen.",
+    "auth-resource": "Die Auswahl hat eine Authentifizierungsressource angefordert, die laut Konfiguration nicht zulässig ist.",
+    "auth-type": "Die Auswahl hat einen Authentifizierungstyp angefordert, der von der Konfiguration nicht unterstützt wird.",
+    "auth-challenge": "Die Auswahl erfordert eine zusätzliche Authentifizierungsprüfung, die nicht unterstützt wird.",
+    "auth-provider": "Das SharePoint-Token konnte nicht abgerufen werden. Versuchen Sie es erneut; prüfen Sie bei anhaltenden Problemen Ihren Zugriff und die bestehenden Berechtigungen.",
+    "selection-identity": "Die Identität des ausgewählten Elements konnte nicht überprüft werden. Öffnen Sie die Auswahl erneut und versuchen Sie es noch einmal.",
+    "selection-scope": "Das ausgewählte Element liegt außerhalb der zulässigen Website, Bibliothek oder des zulässigen Ordners.",
+    "selection-policy": "Die Auswahl entspricht nicht dem zulässigen Typ, der Kategorie, den Erweiterungen oder der Elementanzahl.",
+    "selection-unavailable": "Das ausgewählte Element ist nicht verfügbar oder nicht zugänglich.",
+    "selection-invalid": "Die Auswahl konnte nicht überprüft werden. Es wurden keine neuen Elemente hinzugefügt.",
+    "onedrive-unavailable": "OneDrive des aktuellen Benutzers ist nicht verfügbar oder nicht zugänglich. Prüfen Sie, ob das Laufwerk vorhanden ist, und versuchen Sie es erneut.",
+    "opening": "Die Auswahl konnte nicht geöffnet werden. Prüfen Sie die Konfiguration und den Zugriff auf die Quelle und versuchen Sie es erneut.",
+    "timeout": "Die Auswahl hat nicht rechtzeitig geantwortet. Schließen Sie sie und versuchen Sie es erneut.",
+    "communication": "Die Kommunikation mit der Auswahl wurde unterbrochen. Öffnen Sie sie erneut und versuchen Sie es noch einmal."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "Die optionale Authentifizierungsfunktion hat nicht rechtzeitig geantwortet. Versuchen Sie es erneut.",
+    "unsupportedCommand": "Diese Integration unterstützt diesen Befehl nicht.",
+    "optionalGraphAuthenticationFailed": "Die optionale Microsoft Graph-Funktion konnte nicht authentifiziert werden.",
+    "optionalPersonalAuthenticationFailed": "Das optionale persönliche Ziel konnte nicht authentifiziert werden."
+  }
+}

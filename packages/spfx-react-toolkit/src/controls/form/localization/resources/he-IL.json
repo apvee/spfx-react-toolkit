@@ -1,0 +1,85 @@
+{
+  "unexpectedFailure": "לא ניתן לשלוח את הטופס. נא לנסות שוב.",
+  "dateInputValidationMessage": "יש להשלים או לתקן את התאריך לפני השליחה.",
+  "timeInputValidationMessage": "יש להשלים או לתקן את השעה לפני השליחה.",
+  "tagPicker": {
+    "noOptions": "אין אפשרויות התואמות לשאילתה הנוכחית."
+  },
+  "fileInput": {
+    "browseLabel": "עיון",
+    "clearLabel": "ניקוי"
+  },
+  "arraySection": {
+    "add": "הוספת פריט",
+    "empty": "אין פריטים",
+    "itemLabelTemplate": "פריט {position}",
+    "removeTemplate": "הסרת {label}",
+    "moveUpTemplate": "הזזת {label} למעלה",
+    "moveDownTemplate": "הזזת {label} למטה",
+    "addedTemplate": "נוסף: {label}",
+    "removedTemplate": "הוסר: {label}",
+    "movedTemplate": "הפריט {label} הועבר למיקום {position} מתוך {total}"
+  },
+  "datePicker": {
+    "months": [
+      "ינואר",
+      "פברואר",
+      "מרץ",
+      "אפריל",
+      "מאי",
+      "יוני",
+      "יולי",
+      "אוגוסט",
+      "ספטמבר",
+      "אוקטובר",
+      "נובמבר",
+      "דצמבר"
+    ],
+    "shortMonths": [
+      "ינו׳",
+      "פבר׳",
+      "מרץ",
+      "אפר׳",
+      "מאי",
+      "יוני",
+      "יולי",
+      "אוג׳",
+      "ספט׳",
+      "אוק׳",
+      "נוב׳",
+      "דצמ׳"
+    ],
+    "days": [
+      "יום ראשון",
+      "יום שני",
+      "יום שלישי",
+      "יום רביעי",
+      "יום חמישי",
+      "יום שישי",
+      "יום שבת"
+    ],
+    "shortDays": [
+      "יום א׳",
+      "יום ב׳",
+      "יום ג׳",
+      "יום ד׳",
+      "יום ה׳",
+      "יום ו׳",
+      "שבת"
+    ],
+    "goToToday": "מעבר להיום",
+    "prevMonthAriaLabel": "החודש הקודם",
+    "nextMonthAriaLabel": "החודש הבא",
+    "prevYearAriaLabel": "השנה הקודמת",
+    "nextYearAriaLabel": "השנה הבאה",
+    "prevYearRangeAriaLabel": "טווח השנים הקודם",
+    "nextYearRangeAriaLabel": "טווח השנים הבא",
+    "monthPickerHeaderAriaLabel": "{0}, שינוי שנה",
+    "yearPickerHeaderAriaLabel": "{0}, שינוי חודש",
+    "closeButtonAriaLabel": "סגירה",
+    "weekNumberFormatString": "מספר שבוע {0}",
+    "selectedDateFormatString": "התאריך שנבחר {0}",
+    "todayDateFormatString": "התאריך של היום {0}",
+    "dayMarkedAriaLabel": "מסומן"
+  }
+}

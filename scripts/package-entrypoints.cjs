@@ -13,7 +13,55 @@ const cleanAliases = Object.freeze({
   './helpers': 'lib/helpers/index', './services': 'lib/services/index',
   './styles': 'lib/styles/index', './styles/useSx': 'lib/hooks/useSx',
   './hooks/useStableCallback': 'lib/hooks/useStableCallback',
+  './controls/file-folder-picker': 'lib/controls/file-folder-picker/index',
+  './property-pane/file-folder-picker': 'lib/property-pane/file-folder-picker/index',
+  './controls/pickers': 'lib/controls/pickers/index',
+  './property-pane/pickers': 'lib/property-pane/pickers/index',
+  './controls': 'lib/controls/index', './controls/formatted-text': 'lib/controls/formatted-text/index',
+  './controls/relative-time': 'lib/controls/relative-time/index',
+  './controls/auto-skeleton': 'lib/controls/auto-skeleton/index',
+  './controls/state-message': 'lib/controls/state-message/index',
+  './controls/settings-group': 'lib/controls/settings-group/index',
+  './controls/accordion-group': 'lib/controls/accordion-group/index',
+  './controls/form': 'lib/controls/form/index',
+  './controls/data-grid': 'lib/controls/data-grid/index',
+  './controls/editable-text': 'lib/controls/editable-text/index',
+  './controls/web-part-shell': 'lib/controls/web-part-shell/index',
+  './controls/stage': 'lib/controls/stage/index',
+  './controls/pagination': 'lib/controls/pagination/index',
+  './controls/description-list': 'lib/controls/description-list/index',
+  './controls/content-card': 'lib/controls/content-card/index',
+  './controls/preview-card': 'lib/controls/preview-card/index',
+  './controls/sharepoint-permission-trim': 'lib/controls/sharepoint-permission-trim/index',
+  './controls/sharepoint-group-trim': 'lib/controls/sharepoint-group-trim/index',
+  './controls/entra-group-trim': 'lib/controls/entra-group-trim/index',
 });
+
+/** Exact build-only contract for native resource assets and the installed setup CLI. */
+function getLocalizationPackageContract(directory = library) {
+  const file = path.join(directory, 'localization/resources.json');
+  if (!fs.existsSync(file)) return { extraFiles: [], nativeIds: new Set(), assetSources: new Map() };
+  const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.equal(data.schemaVersion, 1, 'Unsupported localization inventory');
+  assert.ok(Array.isArray(data.resources), 'Localization resources must be an array');
+  const nativeIds = new Set();
+  const assetSources = new Map();
+  for (const resource of data.resources) {
+    assert.match(resource.id, /^ApveeSpfxReactToolkit[A-Za-z0-9]+Strings$/);
+    assert.ok(!nativeIds.has(resource.id), `Duplicate native resource ID: ${resource.id}`);
+    nativeIds.add(resource.id);
+    const match = /^lib\/controls\/([a-z]+(?:-[a-z]+)*)\/loc\/\{locale\}\.js$/.exec(resource.path);
+    assert.ok(match, `Invalid native resource path: ${resource.path}`);
+    assert.ok(Array.isArray(resource.locales) && resource.locales.includes('en-US'), 'Native resources need en-US');
+    for (const culture of resource.locales) {
+      assert.match(culture, /^[a-z]{2,3}(?:-[A-Z][a-z]{3})?-[A-Z]{2}$/);
+      const asset = resource.path.replace('{locale}', culture.toLowerCase());
+      assert.ok(!assetSources.has(asset), `Duplicate native resource asset: ${asset}`);
+      assetSources.set(asset, `src/controls/${match[1]}/localization/resources/${culture}.json`);
+    }
+  }
+  return { extraFiles: ['cli/spfx-react-toolkit.cjs', 'localization/resources.json'], nativeIds, assetSources };
+}
 
 /** Derive explicit exports without changing the frozen historical inventory. */
 function createEntrypointContract({ publishedFiles, cleanAliases: aliases = cleanAliases }) {
@@ -51,7 +99,8 @@ function createEntrypointContract({ publishedFiles, cleanAliases: aliases = clea
 }
 
 function collectPublishedFiles(directory = library) {
-  const files = ['LICENSE', 'README.md', 'package.json'];
+  const localization = getLocalizationPackageContract(directory);
+  const files = ['LICENSE', 'README.md', 'THIRD-PARTY-NOTICES.md', 'package.json', ...localization.extraFiles];
   function visit(folder) {
     for (const entry of fs.readdirSync(folder, { withFileTypes: true })) {
       const file = path.join(folder, entry.name);
@@ -62,15 +111,19 @@ function collectPublishedFiles(directory = library) {
   visit(path.join(directory, 'lib'));
   for (const file of files) {
     assert.ok(fs.existsSync(path.join(directory, file)), `Missing published file: ${file}`);
-    assert.ok(/^(package\.json|README\.md|LICENSE|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles)\/.+))$/.test(file), `Unexpected published file: ${file}`);
+    assert.ok(localization.extraFiles.includes(file) || /^(package\.json|README\.md|LICENSE|THIRD-PARTY-NOTICES\.md|lib\/(index\.[^/]+|(core|hooks|services|helpers|utils|styles|controls|property-pane|localization)\/.+))$/.test(file), `Unexpected published file: ${file}`);
     if (!file.startsWith('lib/')) continue;
+    if (localization.assetSources.has(file)) {
+      assert.ok(fs.existsSync(path.join(directory, localization.assetSources.get(file))), `Native resource lacks canonical translator source: ${file}`);
+      continue;
+    }
     const source = file.replace(/^lib\//, 'src/').replace(/\.(d\.ts|js)(\.map)?$/, '');
     assert.ok(fs.existsSync(path.join(directory, source + '.ts')) || fs.existsSync(path.join(directory, source + '.tsx')), `Published file lacks canonical source: ${file}`);
   }
   return files.sort();
 }
 
-function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, 'lib/styles/index.js', 'lib/styles/index.d.ts']) {
+function assertEntrypointContract(manifest, publishedFiles = [...inventory.files, ...['lib/controls/file-folder-picker/index', 'lib/property-pane/file-folder-picker/index', 'lib/controls/pickers/index', 'lib/property-pane/pickers/index', 'lib/styles/index', 'lib/controls/index', 'lib/controls/formatted-text/index', 'lib/controls/relative-time/index', 'lib/controls/auto-skeleton/index', 'lib/controls/state-message/index', 'lib/controls/settings-group/index', 'lib/controls/accordion-group/index', 'lib/controls/form/index', 'lib/controls/data-grid/index', 'lib/controls/editable-text/index', 'lib/controls/web-part-shell/index', 'lib/controls/stage/index', 'lib/controls/pagination/index', 'lib/controls/description-list/index', 'lib/controls/content-card/index', 'lib/controls/preview-card/index', 'lib/controls/sharepoint-permission-trim/index', 'lib/controls/sharepoint-group-trim/index', 'lib/controls/entra-group-trim/index'].flatMap(base => ['.js', '.d.ts'].map(ext => base + ext))]) {
   const contract = createEntrypointContract({ publishedFiles, cleanAliases });
   assert.deepEqual(manifest.exports, contract.exports, 'Package exports differ from the exact additive contract');
   // Object equality alone does not check condition priority.
@@ -112,7 +165,7 @@ function verifyConsumerResolution(consumer, evidenceDirectory) {
     assert.equal(fs.realpathSync(resolved), fs.realpathSync(path.join(packageDirectory, expected)), `Runtime resolution changed: ${request}`);
     runtime.push({ request, file: resolved });
   }
-  for (const suffix of ['/hooks/useAsyncInvoke.internal', '/styles/descriptor.internal', '/styles/types']) {
+  for (const suffix of ['/hooks/useAsyncInvoke.internal', '/styles/descriptor.internal', '/styles/types', '/controls/form/form', '/controls/form/create-form', '/controls/form/controls/form-input', '/controls/form/plugins', '/controls/form/advanced', '/lib/controls/form', '/lib/controls/form/index', '/controls/data-grid/data-grid', '/controls/data-grid/create-data-grid', '/controls/data-grid/column-family.internal', '/controls/data-grid/cells/data-grid-cells.internal', '/controls/data-grid/view', '/lib/controls/data-grid', '/lib/controls/data-grid/index', '/controls/editable-text/editable-text', '/controls/editable-text/editable-text-editor.internal', '/controls/editable-text/editable-text-codec.internal', '/controls/editable-text/editable-text-document.types.internal', '/lib/controls/editable-text', '/lib/controls/editable-text/index', '/controls/web-part-shell/web-part-shell', '/controls/web-part-shell/title/web-part-title-editor.internal', '/controls/web-part-shell/title/web-part-title-color-picker.internal', '/controls/web-part-shell/title/web-part-title-toolbar.internal', '/lib/controls/web-part-shell/index', '/controls/stage/stage', '/controls/stage/stage-context.internal', '/lib/controls/stage', '/controls/content-slot.internal', '/controls/content-slot.types.internal', '/controls/cards/card-frame.internal', '/controls/content-card/content-card', '/controls/preview-card/preview-card', '/lib/controls/cards', '/lib/controls/content-card', '/lib/controls/preview-card', '/hooks/useAccessRequest.internal', '/services/spfx-scoped-permissions.internal', '/services/spfx-sharepoint-groups.internal', '/services/spfx-entra-groups.internal', '/controls/access-trim-children.internal', '/controls/sharepoint-permission-trim/sharepoint-permission-trim', '/controls/sharepoint-group-trim/sharepoint-group-trim', '/controls/entra-group-trim/entra-group-trim', '/lib/controls/sharepoint-permission-trim', '/lib/controls/sharepoint-group-trim', '/lib/controls/entra-group-trim', '/lib/services/spfx-permission-target.types']) {
     assert.throws(() => resolver.resolveSync({}, consumer, '@apvee/spfx-react-toolkit' + suffix), /not exported/);
   }
   const fixture = path.join(consumer, 'compatibility/entrypoint-resolution.ts');
@@ -120,7 +173,7 @@ function verifyConsumerResolution(consumer, evidenceDirectory) {
   fs.copyFileSync(path.join(root, 'tests/fixtures/tree-shaking/resolution/consumer.ts'), fixture);
   const modes = [];
   const declarations = {};
-  const importedNames = ['rootWidth', 'helperWidth', 'width', 'directoryWidth', 'rootSx', 'useSx', 'leafSx', 'legacySx', 'rootCallback', 'useStableCallback', 'legacyCallback'];
+  const importedNames = ['rootEditable','domainEditable','controlEditable','RootEditableProps','DomainEditableProps','ControlEditableProps','RootEditableBlock','DomainEditableBlock','ControlEditableBlock','RootEditableChange','DomainEditableChange','ControlEditableChange','rootSitePicker','controlSitePicker','domainSitePicker','rootListPicker','controlListPicker','domainListPicker','rootFieldPicker','controlFieldPicker','domainFieldPicker','rootViewPicker','controlViewPicker','domainViewPicker','rootItemPicker','controlItemPicker','domainItemPicker','rootPrincipalPicker','controlPrincipalPicker','domainPrincipalPicker','RootPrincipalValue','ControlPrincipalValue','DomainPrincipalValue','NativePrincipalValue','rootWidth', 'helperWidth', 'width', 'directoryWidth', 'rootSx', 'useSx', 'leafSx', 'legacySx', 'rootCallback', 'useStableCallback', 'legacyCallback', 'rootText', 'domainText', 'controlText', 'rootRelative', 'domainRelative', 'controlRelative', 'rootSkeleton', 'domainSkeleton', 'controlSkeleton', 'rootState', 'domainState', 'controlState', 'rootForm', 'domainForm', 'controlForm', 'rootFactory', 'domainFactory', 'controlFactory', 'RootMethods', 'DomainMethods', 'ControlMethods', 'rootGrid', 'domainGrid', 'controlGrid', 'rootGridFactory', 'domainGridFactory', 'controlGridFactory', 'RootGridProps', 'DomainGridProps', 'ControlGridProps', 'rootShell', 'domainShell', 'controlShell', 'rootMetadata', 'domainMetadata', 'controlMetadata', 'RootShellProps', 'DomainShellProps', 'ControlShellProps', 'rootStage', 'domainStage', 'controlStage', 'RootStageProps', 'DomainStageProps', 'ControlStageProps', 'rootContentCard', 'domainContentCard', 'controlContentCard', 'RootCardProps', 'DomainCardProps', 'ControlCardProps', 'rootPreviewCard', 'domainPreviewCard', 'controlPreviewCard', 'RootPreviewProps', 'DomainPreviewProps', 'ControlPreviewProps', 'rootPermissionTrim', 'domainPermissionTrim', 'controlPermissionTrim', 'RootPermissionTrimProps', 'DomainPermissionTrimProps', 'ControlPermissionTrimProps', 'rootSPGroupTrim', 'domainSPGroupTrim', 'controlSPGroupTrim', 'RootSPGroupTrimProps', 'DomainSPGroupTrimProps', 'ControlSPGroupTrimProps', 'rootEntraTrim', 'domainEntraTrim', 'controlEntraTrim', 'RootEntraTrimProps', 'DomainEntraTrimProps', 'ControlEntraTrimProps', 'rootScopedHook', 'hooksScopedHook', 'legacyScopedHook', 'rootScopedInfo', 'hooksScopedInfo', 'legacyScopedInfo', 'rootScopedOptions', 'hooksScopedOptions', 'legacyScopedOptions', 'RootSharePointPermissionTrimBranchProps', 'DomainSharePointPermissionTrimBranchProps', 'ControlSharePointPermissionTrimBranchProps', 'RootSharePointGroupSelector', 'DomainSharePointGroupSelector', 'ControlSharePointGroupSelector', 'RootSharePointGroupTrimBranchProps', 'DomainSharePointGroupTrimBranchProps', 'ControlSharePointGroupTrimBranchProps', 'RootEntraGroupSelector', 'DomainEntraGroupSelector', 'ControlEntraGroupSelector', 'RootEntraGroupType', 'DomainEntraGroupType', 'ControlEntraGroupType', 'RootEntraGroupRelationship', 'DomainEntraGroupRelationship', 'ControlEntraGroupRelationship', 'RootEntraGroupTrimBranchProps', 'DomainEntraGroupTrimBranchProps', 'ControlEntraGroupTrimBranchProps'];
   for (const [mode, moduleResolution, module] of [
     ['node', ts.ModuleResolutionKind.Node10, ts.ModuleKind.ESNext],
     ['bundler', ts.ModuleResolutionKind.Bundler, ts.ModuleKind.ESNext],
@@ -130,6 +183,11 @@ function verifyConsumerResolution(consumer, evidenceDirectory) {
     const program = ts.createProgram([fixture], options);
     const diagnostics = ts.getPreEmitDiagnostics(program);
     assert.equal(diagnostics.length, 0, `${mode} resolution failed:\n${ts.formatDiagnosticsWithColorAndContext(diagnostics, { getCanonicalFileName: file => file, getCurrentDirectory: () => consumer, getNewLine: () => '\n' })}`);
+    if (mode !== 'node') {
+      // Node10 intentionally ignores exports maps and can discover packed
+      // physical modules. Only modern resolution enforces this boundary.
+      for (const suffix of ['/lib/controls/form', '/lib/controls/form/index', '/lib/controls/data-grid', '/lib/controls/data-grid/index', '/controls/editable-text/editable-text', '/controls/editable-text/editable-text-editor.internal', '/controls/editable-text/editable-text-codec.internal', '/controls/editable-text/editable-text-document.types.internal', '/lib/controls/editable-text', '/lib/controls/editable-text/index', '/controls/web-part-shell/web-part-shell', '/controls/web-part-shell/title/web-part-title-editor.internal', '/controls/web-part-shell/title/web-part-title-color-picker.internal', '/controls/web-part-shell/title/web-part-title-toolbar.internal', '/lib/controls/web-part-shell/index', '/controls/stage/stage', '/controls/stage/stage-context.internal', '/lib/controls/stage', '/controls/content-slot.internal', '/controls/content-slot.types.internal', '/controls/cards/card-frame.internal', '/controls/content-card/content-card', '/controls/preview-card/preview-card', '/lib/controls/cards', '/lib/controls/content-card', '/lib/controls/preview-card', '/hooks/useAccessRequest.internal', '/services/spfx-scoped-permissions.internal', '/services/spfx-sharepoint-groups.internal', '/services/spfx-entra-groups.internal', '/controls/access-trim-children.internal', '/controls/sharepoint-permission-trim/sharepoint-permission-trim', '/controls/sharepoint-group-trim/sharepoint-group-trim', '/controls/entra-group-trim/entra-group-trim', '/lib/controls/sharepoint-permission-trim', '/lib/controls/sharepoint-group-trim', '/lib/controls/entra-group-trim', '/lib/services/spfx-permission-target.types']) assert.equal(ts.resolveModuleName('@apvee/spfx-react-toolkit' + suffix, fixture, options, ts.sys).resolvedModule, undefined, `${mode} must reject unexported control physical paths`);
+    }
     const resolvedRoot = ts.resolveModuleName('@apvee/spfx-react-toolkit', fixture, options, ts.sys).resolvedModule;
     assert.equal(fs.realpathSync(resolvedRoot.resolvedFileName), fs.realpathSync(path.join(packageDirectory, 'lib/index.d.ts')), 'Root must not be rewritten to lib/lib');
     const symbols = new Map();
@@ -140,8 +198,11 @@ function verifyConsumerResolution(consumer, evidenceDirectory) {
         if (importedNames.includes(element.name.text)) symbols.set(element.name.text, checker.getAliasedSymbol(checker.getSymbolAtLocation(element.name)));
       }
     }
-    for (const group of [['rootWidth', 'helperWidth', 'width', 'directoryWidth'], ['rootSx', 'useSx', 'leafSx', 'legacySx'], ['rootCallback', 'useStableCallback', 'legacyCallback']]) {
-      for (const name of group) assert.equal(symbols.get(name), symbols.get(group[0]), `Canonical symbol identity changed: ${name}`);
+    for (const group of [['rootEditable', 'domainEditable', 'controlEditable'],['RootEditableProps', 'DomainEditableProps', 'ControlEditableProps'],['RootEditableBlock', 'DomainEditableBlock', 'ControlEditableBlock'],['RootEditableChange', 'DomainEditableChange', 'ControlEditableChange'], ['rootSitePicker', 'controlSitePicker', 'domainSitePicker'],['rootListPicker', 'controlListPicker', 'domainListPicker'],['rootFieldPicker', 'controlFieldPicker', 'domainFieldPicker'],['rootViewPicker', 'controlViewPicker', 'domainViewPicker'],['rootItemPicker', 'controlItemPicker', 'domainItemPicker'],['rootPrincipalPicker', 'controlPrincipalPicker', 'domainPrincipalPicker'],['RootPrincipalValue', 'ControlPrincipalValue', 'DomainPrincipalValue', 'NativePrincipalValue'], ['rootWidth', 'helperWidth', 'width', 'directoryWidth'], ['rootSx', 'useSx', 'leafSx', 'legacySx'], ['rootCallback', 'useStableCallback', 'legacyCallback'], ['rootText', 'domainText', 'controlText'], ['rootRelative', 'domainRelative', 'controlRelative'], ['rootSkeleton', 'domainSkeleton', 'controlSkeleton'], ['rootState', 'domainState', 'controlState'], ['rootForm', 'domainForm', 'controlForm'], ['rootFactory', 'domainFactory', 'controlFactory'], ['RootMethods', 'DomainMethods', 'ControlMethods'], ['rootGrid', 'domainGrid', 'controlGrid'], ['rootGridFactory', 'domainGridFactory', 'controlGridFactory'], ['RootGridProps', 'DomainGridProps', 'ControlGridProps'], ['rootShell', 'domainShell', 'controlShell'], ['rootMetadata', 'domainMetadata', 'controlMetadata'], ['RootShellProps', 'DomainShellProps', 'ControlShellProps'], ['rootStage', 'domainStage', 'controlStage'], ['RootStageProps', 'DomainStageProps', 'ControlStageProps'], ['rootContentCard', 'domainContentCard', 'controlContentCard'], ['RootCardProps', 'DomainCardProps', 'ControlCardProps'], ['rootPreviewCard', 'domainPreviewCard', 'controlPreviewCard'], ['RootPreviewProps', 'DomainPreviewProps', 'ControlPreviewProps'], ['rootPermissionTrim', 'domainPermissionTrim', 'controlPermissionTrim'], ['RootPermissionTrimProps', 'DomainPermissionTrimProps', 'ControlPermissionTrimProps'], ['rootSPGroupTrim', 'domainSPGroupTrim', 'controlSPGroupTrim'], ['RootSPGroupTrimProps', 'DomainSPGroupTrimProps', 'ControlSPGroupTrimProps'], ['rootEntraTrim', 'domainEntraTrim', 'controlEntraTrim'], ['RootEntraTrimProps', 'DomainEntraTrimProps', 'ControlEntraTrimProps'], ['rootScopedHook', 'hooksScopedHook', 'legacyScopedHook'], ['rootScopedInfo', 'hooksScopedInfo', 'legacyScopedInfo'], ['rootScopedOptions', 'hooksScopedOptions', 'legacyScopedOptions'], ['RootSharePointPermissionTrimBranchProps', 'DomainSharePointPermissionTrimBranchProps', 'ControlSharePointPermissionTrimBranchProps'], ['RootSharePointGroupSelector', 'DomainSharePointGroupSelector', 'ControlSharePointGroupSelector'], ['RootSharePointGroupTrimBranchProps', 'DomainSharePointGroupTrimBranchProps', 'ControlSharePointGroupTrimBranchProps'], ['RootEntraGroupSelector', 'DomainEntraGroupSelector', 'ControlEntraGroupSelector'], ['RootEntraGroupType', 'DomainEntraGroupType', 'ControlEntraGroupType'], ['RootEntraGroupRelationship', 'DomainEntraGroupRelationship', 'ControlEntraGroupRelationship'], ['RootEntraGroupTrimBranchProps', 'DomainEntraGroupTrimBranchProps', 'ControlEntraGroupTrimBranchProps']]) {
+      for (const name of group) {
+        assert.ok(symbols.get(name), `Missing canonical imported symbol: ${name}`);
+        assert.equal(symbols.get(name), symbols.get(group[0]), `Canonical symbol identity changed: ${name}`);
+      }
     }
     declarations[mode] = resolvedRoot.resolvedFileName;
     modes.push(mode);
@@ -158,11 +219,11 @@ function main(args = process.argv.slice(2)) {
   const publishedFiles = collectPublishedFiles();
   if (args[0] === '--write') {
     Object.assign(manifest, createEntrypointContract({ publishedFiles, cleanAliases }));
-    if (!manifest.files.includes('lib/styles/**/*')) manifest.files.push('lib/styles/**/*');
+    for (const glob of ['lib/styles/**/*', 'lib/controls/**/*']) if (!manifest.files.includes(glob)) manifest.files.push(glob);
     fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n');
   }
   assertEntrypointContract(manifest, publishedFiles);
   console.log(`Package entrypoints passed: ${Object.keys(manifest.exports).length} exact exports, ${inventory.files.length} historical packed files.`);
 }
 if (require.main === module) main();
-module.exports = { createEntrypointContract, assertEntrypointContract, collectPublishedFiles, verifyConsumerResolution, cleanAliases, main };
+module.exports = { createEntrypointContract, assertEntrypointContract, collectPublishedFiles, verifyConsumerResolution, getLocalizationPackageContract, cleanAliases, main };

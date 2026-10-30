@@ -1,0 +1,25 @@
+{
+  "empty": "Məlumat yoxdur",
+  "noResults": "Nəticə tapılmadı",
+  "noVisibleColumns": "Görünən sütun yoxdur",
+  "loading": "Yüklənir",
+  "actions": "Əməliyyatlar",
+  "moreActions": "Digər əməliyyatlar",
+  "yes": "Bəli",
+  "no": "Xeyr",
+  "noTags": "Teq yoxdur",
+  "noObservations": "Müşahidə yoxdur",
+  "invalidValue": "Yanlış dəyər",
+  "selectAllRows": "Bütün sətirləri seç",
+  "retry": "Yenidən cəhd et",
+  "selectRowTemplate": "{rowId} sətrini seç",
+  "sparklineSummaryTemplate": "İlk {first}; Son {last}; Minimum {minimum}; Maksimum {maximum}; Orta {average}; Dəyişiklik {change}; Dəyişiklik faizi {changePercent}",
+  "tagOverflow": {
+    "one": "Daha {count} teq göstər",
+    "other": "Daha {count} teq göstər"
+  },
+  "ratingCount": {
+    "one": "{formattedCount} səs",
+    "other": "{formattedCount} səs"
+  }
+}

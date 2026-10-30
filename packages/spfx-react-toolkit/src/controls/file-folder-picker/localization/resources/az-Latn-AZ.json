@@ -1,0 +1,48 @@
+{
+  "browse": {
+    "files": "Fayllara baxın…",
+    "folders": "Qovluqlara baxın…",
+    "all": "Fayl və qovluqlara baxın…"
+  },
+  "placeholders": {
+    "files": "Faylları seçin…",
+    "folders": "Qovluqları seçin…",
+    "all": "Fayl və ya qovluqları seçin…"
+  },
+  "labels": {
+    "selection": "Fayl və qovluq seçimi",
+    "file": "Fayl",
+    "folder": "Qovluq",
+    "unresolvedItem": "Müəyyənləşdirilməmiş element",
+    "removeItem": "{name} elementini silin"
+  },
+  "validation": {
+    "invalidReferences": "Yanlış fayl və ya qovluq istinadları.",
+    "controlledModeChanged": "İdarəetmə elementi qoşulu olduğu müddətdə idarə olunan rejim dəyişdirilə bilməz.",
+    "incompatibleItems": "Seçimdə konfiqurasiya edilmiş növ, kateqoriya və ya uzantılarla uyğun olmayan elementlər var. Onları silin və ya əvəz edin.",
+    "invalidPolicy": "Seçim növü, kateqoriyası, uzantıları və ya limitinin konfiqurasiyası yanlışdır.",
+    "selectionLimitExceeded": "Seçim konfiqurasiya edilmiş limiti aşır. Artıq elementləri silin."
+  },
+  "errors": {
+    "configuration": "Seçicinin konfiqurasiyası yanlışdır. Mənbəni, növləri, kateqoriyanı və limitləri yoxlayın; əvvəlcədən təyin edilmiş ayarı köhnə seçimlər olmadan istifadə edin.",
+    "auth-resource": "Seçici konfiqurasiyanın icazə vermədiyi autentifikasiya resursunu tələb etdi.",
+    "auth-type": "Seçici konfiqurasiyanın dəstəkləmədiyi autentifikasiya növünü tələb etdi.",
+    "auth-challenge": "Seçici dəstəklənməyən əlavə autentifikasiya yoxlaması tələb edir.",
+    "auth-provider": "SharePoint nişanını əldə etmək mümkün olmadı. Yenidən cəhd edin; problem davam edərsə, girişinizi və mövcud icazələri yoxlayın.",
+    "selection-identity": "Seçilmiş elementin kimliyini yoxlamaq mümkün olmadı. Seçicini yenidən açın və təkrar cəhd edin.",
+    "selection-scope": "Seçilmiş element icazə verilən sayt, kitabxana və ya qovluqdan kənardadır.",
+    "selection-policy": "Seçim icazə verilən növ, kateqoriya, uzantılar və ya element sayı tələblərinə uyğun deyil.",
+    "selection-unavailable": "Seçilmiş element əlçatan deyil və ya ona giriş mümkün deyil.",
+    "selection-invalid": "Seçimi yoxlamaq mümkün olmadı. Yeni element əlavə edilmədi.",
+    "onedrive-unavailable": "Cari istifadəçinin OneDrive-ı əlçatan deyil və ya ona giriş mümkün deyil. Diskin mövcud olduğunu yoxlayın və yenidən cəhd edin.",
+    "opening": "Seçicini açmaq mümkün olmadı. Konfiqurasiyanı və mənbəyə girişi yoxlayın, sonra yenidən cəhd edin.",
+    "timeout": "Seçici vaxtında cavab vermədi. Onu bağlayın və yenidən cəhd edin.",
+    "communication": "Seçici ilə əlaqə kəsildi. Onu yenidən açın və təkrar cəhd edin."
+  },
+  "protocol": {
+    "optionalAuthenticationTimeout": "İstəyə bağlı autentifikasiya funksiyası vaxtında cavab vermədi. Yenidən cəhd edin.",
+    "unsupportedCommand": "Bu inteqrasiya həmin əmri dəstəkləmir.",
+    "optionalGraphAuthenticationFailed": "İstəyə bağlı Microsoft Graph funksiyasının autentifikasiyası mümkün olmadı.",
+    "optionalPersonalAuthenticationFailed": "İstəyə bağlı şəxsi təyinatın autentifikasiyası mümkün olmadı."
+  }
+}

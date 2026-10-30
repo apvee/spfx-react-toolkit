@@ -1,5 +1,7 @@
 # Styles and useSx
 
+[Helpers overview](../INDEX.md#helpers-and-styles) · [Styling guide](../../guides/styling.md)
+
 Style descriptors are immutable, typed data used to describe dimensions, Fluent theme references, typography, and CSS scopes. They are independent of SPFx context. Creating or importing a descriptor does not access the DOM or insert CSS.
 
 The complete style catalog is available from the package root, the clean `@apvee/spfx-react-toolkit/styles` facade and the historical `@apvee/spfx-react-toolkit/lib/helpers/styles` deep entry point. The facade also re-exports canonical `useSx` and all public descriptor types; the narrow `/styles/useSx` entry exposes only that hook. Root, facade and historical leaves compose with the same active renderer/direction context. See [package imports](../../guides/package-imports.md) for resolver/peer contracts and bundle interpretation.
@@ -86,7 +88,6 @@ Container queries target the nearest ancestor named `apvee-sx`; their thresholds
 
 `SxOptions.dir` overrides the effective `ltr` or `rtl` direction. When omitted, `useSx` uses Fluent direction context, with LTR as the context-free default. Keep it consistent with the host's direction and any external Griffel classes when using a standalone Griffel context.
 
-
 ## Composition and precedence
 
 Call `useSx` once at the top level of a React component; its returned `sx` is an ordinary function and can be called repeatedly while rendering. It returns a `className` string and never requires an inline `style` attribute. Its identity is stable while the Griffel renderer and effective direction stay unchanged. `sx()` and inputs consisting only of `false`, `null`, `undefined`, or empty strings produce `''`.
@@ -135,17 +136,17 @@ The hook reads the existing Griffel renderer and Fluent direction context. `SxOp
 
 ## Dependencies and cache lifetime
 
-The package's mandatory shared style peers are `@griffel/core@^1.19.2`, `@griffel/react@^1.5.30` and `@fluentui/react-shared-contexts@^9.25.2`. Existing Fluent peers remain `@fluentui/react-migration-v8-v9@^9.9.12`, `@fluentui/react-theme@^9.2.0` and `@fluentui/react-utilities@^9.25.1`. The consuming host supplies compatible shared installations; the hook needs no SPFx provider and creates no renderer.
+The package's mandatory shared style peers are `@griffel/core@^1.21.4`, `@griffel/react@^1.7.8` and `@fluentui/react-shared-contexts@^9.26.4`. Existing Fluent peers remain `@fluentui/react-migration-v8-v9@^9.10.20`, `@fluentui/react-theme@^9.2.2` and `@fluentui/react-utilities@^9.26.7`. The consuming host supplies compatible shared installations; the hook needs no SPFx provider and creates no renderer.
 
 Token styles need Fluent theme CSS variables in the element's scope. A host can supply them through its existing FluentProvider. The sample uses `@fluentui/react-provider@9.22.8`; that provider package is optional for consumers and is not an additional toolkit peer. Switching scoped theme variables updates computed colors and sizes without RGB-dependent classes.
 
 Factories and generated assignments are cached by renderer and canonical property/scope/value. Repeated values reuse classes and rules. A finite repeated set of values avoids continued growth from those values; continuously distinct pixel values still grow the assignment maps and Griffel CSS caches for the renderer's lifetime. There is no hard cache limit or CSS removal guarantee on component unmount. The renderer WeakMap does not bound memory while a renderer remains live. Prefer a finite design scale for frequently changing dimensions; do not generate a new arbitrary value every frame.
 
-Factories are isolated per renderer to avoid capturing another renderer's `classNameHashSalt`. The installed Griffel core 1.19.2 emits its upstream development console diagnostic for a nonempty salt during the first factory computation, including an isolated factory. The toolkit preserves that diagnostic. Reuse the host renderer/salt configuration and investigate console output; this behavior is not suppressed or presented as a warning-free custom-salt path.
+Factories are isolated per renderer to avoid capturing another renderer's `classNameHashSalt`. The installed Griffel core 1.21.4 emits its upstream development console diagnostic for a nonempty salt during the first factory computation, including an isolated factory. The toolkit preserves that diagnostic. Reuse the host renderer/salt configuration and investigate console output; this behavior is not suppressed or presented as a warning-free custom-salt path.
 
 ## Complete v1 catalog mappings
 
-Each namespace consists of individual ESM exports returning opaque base descriptors, except the numeric factories and scope functions. The catalog references `@fluentui/react-theme` 9.2.0 and its actual `@fluentui/tokens` 1.0.0-alpha.22 floor. Token selections retain `var(--tokenName)` references, so changing a scoped Fluent theme updates computed styles without generating RGB-dependent classes. A scoped Fluent theme, normally from `FluentProvider`, is required for token-based values; the generic hook requires no SPFx context.
+Each namespace consists of individual ESM exports returning opaque base descriptors, except the numeric factories and scope functions. The catalog references `@fluentui/react-theme` 9.2.2 and its actual `@fluentui/tokens` 1.0.0-alpha.24 floor. Token selections retain `var(--tokenName)` references, so changing a scoped Fluent theme updates computed styles without generating RGB-dependent classes. A scoped Fluent theme, normally from `FluentProvider`, is required for token-based values; the generic hook requires no SPFx context.
 
 ### Layout and dimensions
 
@@ -286,7 +287,6 @@ return <div className={sx(width.px(320), height.px(160), overflow.auto, scrollba
 Use the existing shared Griffel/Fluent peers and scoped theme variables described above; no extra dependency is required. Browsers without vendor pseudo-element support need standard `scrollbar-width` and `scrollbar-color` for the thin fallback; otherwise native appearance remains. Platform overlay scrollbars may appear only during scrolling. `hover`, `active`, `focusVisible`, `responsive` and `viewport` scopes apply the vendor rules only while their scopes are active; removing the descriptor restores native appearance. The transparent track reveals the actual underlying surface, so thumb contrast must be checked there.
 
 Foreign Griffel declarations retain the usual argument/merge order: a later native `scrollbarWidth: none` hides the scrollbar, and a later `scrollbarColor` overrides its colors. In modern Chromium, non-`auto` standard scrollbar values select native rendering and can bypass the recipe's vendor 6px sizing. Putting `scrollbar.fluent` last restores the recipe in the same scope.
-
 
 The same local Chrome checkpoint measured the accessible neutral scrollbar thumb against the tested underlying surfaces:
 

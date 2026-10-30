@@ -1,0 +1,77 @@
+{
+  "labels": {
+    "selectOne": "选择一个项目",
+    "selectMany": "选择项目",
+    "search": "搜索…",
+    "clearSelection": "清除选择",
+    "clearSearch": "清除搜索",
+    "options": "选项",
+    "searchOptions": "搜索选项",
+    "selectedOne": "所选项目",
+    "selectedMany": "所选项目",
+    "noSelection": "未选择",
+    "resolveIds": "解析 ID",
+    "moreResults": "更多结果",
+    "retry": "重试",
+    "namedOptions": "{name}: 选项",
+    "namedSearch": "{name}: 搜索",
+    "selectedCount": {
+      "other": "已选择 {count} 个项目"
+    },
+    "minimumSearchLength": {
+      "other": "输入至少 {count} 个字符以搜索"
+    }
+  },
+  "status": {
+    "searching": "正在搜索…",
+    "loading": "正在加载…",
+    "partialSearch": "搜索不完整：请缩小搜索范围。",
+    "noOtherResults": "此搜索没有其他结果",
+    "noResults": "此搜索没有结果",
+    "noOptions": "没有可用选项。",
+    "moreItemsAvailable": "还有更多可用项目。",
+    "partialSuggestions": "建议不完整：某些来源不可用。",
+    "unresolvedValue": "未解析的值",
+    "partialHubs": "中心列表不完整：请缩小范围或使用站点模式。",
+    "partialSiteCollections": "网站集搜索不完整（最多 1000 条结果）：请缩小条件范围。"
+  },
+  "sections": {
+    "consumer": "提供的选项",
+    "currentSite": "当前站点",
+    "hubSite": "关联的中心",
+    "catalog": "可用选项",
+    "currentUser": "你",
+    "people": "建议的人员",
+    "memberOf": "你的组"
+  },
+  "metadata": {
+    "documentLibrary": "文档库",
+    "sharePointList": "SharePoint 列表",
+    "personalView": "个人视图",
+    "publicView": "公共视图",
+    "field": "字段",
+    "itemDescription": "项目 · ID {id}",
+    "file": "文件",
+    "fileWithExtension": "{extension} 文件",
+    "folder": "文件夹",
+    "sharePointGroup": "SharePoint 组 · SharePoint",
+    "securityGroup": "安全组 · Entra",
+    "distributionList": "通讯组列表 · Entra",
+    "unvalidatedEmail": "未经验证的电子邮件",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "已达到选择数量限制。",
+    "selectionLimitExceeded": "所选数量超过配置的限制。",
+    "unresolvedValues": "某些所选值尚未解析。",
+    "outOfScopeValues": "选择中包含超出配置范围的值。",
+    "resolveRequiredUserIds": "请解析所选用户所需的 ID。"
+  },
+  "errors": {
+    "candidateOutOfScope": "候选项超出配置的范围。",
+    "incompleteCandidateResolution": "无法完全解析候选项。",
+    "resolutionFailed": "解析失败。",
+    "graphUnavailable": "Microsoft Graph 客户端不可用。"
+  }
+}

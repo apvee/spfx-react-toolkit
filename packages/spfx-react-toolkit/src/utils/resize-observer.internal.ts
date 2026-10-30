@@ -17,7 +17,7 @@ import type { ContainerSize } from '../core/types';
  * @remarks
  * - Cleanup is handled automatically on unmount or when element changes
  * - ResizeObserver polyfill is NOT included - requires browser support
- * - Initial size is reported immediately after observation starts
+ * - Size is reported when the browser delivers an observation, not synchronously
  *
  * @internal
  */
@@ -26,14 +26,15 @@ export function useResizeObserver(
   onResize: (size: ContainerSize | undefined) => void
 ): void {
   useEffect(() => {
-    // If no element or ResizeObserver not supported, clear size
-    if (!element || typeof ResizeObserver === 'undefined') {
+    const Observer = element?.ownerDocument.defaultView?.ResizeObserver;
+    // Use the element's document, including when it belongs to an iframe.
+    if (!element || !Observer) {
       onResize(undefined);
       return;
     }
     
     // Create ResizeObserver
-    const observer = new ResizeObserver((entries) => {
+    const observer = new Observer((entries) => {
       for (const entry of entries) {
         const { width, height } = entry.contentRect;
         onResize({ width, height });

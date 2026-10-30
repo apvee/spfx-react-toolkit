@@ -1,0 +1,81 @@
+{
+  "labels": {
+    "selectOne": "Selectează un element",
+    "selectMany": "Selectează elemente",
+    "search": "Caută…",
+    "clearSelection": "Golește selecția",
+    "clearSearch": "Golește căutarea",
+    "options": "Opțiuni",
+    "searchOptions": "Caută opțiuni",
+    "selectedOne": "Element selectat",
+    "selectedMany": "Elemente selectate",
+    "noSelection": "Nicio selecție",
+    "resolveIds": "Identifică ID-urile",
+    "moreResults": "Mai multe rezultate",
+    "retry": "Reîncearcă",
+    "namedOptions": "{name}: Opțiuni",
+    "namedSearch": "{name}: Caută",
+    "selectedCount": {
+      "one": "{count} element selectat",
+      "few": "{count} elemente selectate",
+      "other": "{count} de elemente selectate"
+    },
+    "minimumSearchLength": {
+      "one": "Tastați cel puțin {count} caracter pentru a căuta",
+      "few": "Tastați cel puțin {count} caractere pentru a căuta",
+      "other": "Tastați cel puțin {count} de caractere pentru a căuta"
+    }
+  },
+  "status": {
+    "searching": "Se caută…",
+    "loading": "Se încarcă…",
+    "partialSearch": "Căutare parțială: restrângeți căutarea.",
+    "noOtherResults": "Nu există alte rezultate pentru această căutare",
+    "noResults": "Nu există rezultate pentru această căutare",
+    "noOptions": "Nu există opțiuni disponibile.",
+    "moreItemsAvailable": "Sunt disponibile mai multe elemente.",
+    "partialSuggestions": "Sugestii parțiale: unele surse nu sunt disponibile.",
+    "unresolvedValue": "Valoare neidentificată",
+    "partialHubs": "Listă parțială de huburi: restrângeți domeniul sau folosiți modul site.",
+    "partialSiteCollections": "Căutare parțială în colecțiile de site-uri (maximum 1000 de rezultate): restrângeți criteriile."
+  },
+  "sections": {
+    "consumer": "Opțiuni furnizate",
+    "currentSite": "Site-ul curent",
+    "hubSite": "Hub asociat",
+    "catalog": "Opțiuni disponibile",
+    "currentUser": "Dumneavoastră",
+    "people": "Persoane sugerate",
+    "memberOf": "Grupurile dumneavoastră"
+  },
+  "metadata": {
+    "documentLibrary": "Bibliotecă de documente",
+    "sharePointList": "Listă SharePoint",
+    "personalView": "Vizualizare personală",
+    "publicView": "Vizualizare publică",
+    "field": "Câmp",
+    "itemDescription": "Element · ID {id}",
+    "file": "Fișier",
+    "fileWithExtension": "Fișier {extension}",
+    "folder": "Folder",
+    "sharePointGroup": "Grup SharePoint · SharePoint",
+    "securityGroup": "Grup de securitate · Entra",
+    "distributionList": "Listă de distribuire · Entra",
+    "unvalidatedEmail": "E-mail neverificat",
+    "microsoft365Group": "Microsoft 365 · Entra",
+    "fieldDescription": "{internalName} · {type}"
+  },
+  "validation": {
+    "selectionLimitReached": "S-a atins limita de selecție.",
+    "selectionLimitExceeded": "Selecția depășește limita configurată.",
+    "unresolvedValues": "Unele valori selectate nu au fost identificate.",
+    "outOfScopeValues": "Selecția conține valori în afara domeniului configurat.",
+    "resolveRequiredUserIds": "Identificați ID-urile necesare pentru utilizatorii selectați."
+  },
+  "errors": {
+    "candidateOutOfScope": "Candidatul se află în afara domeniului configurat.",
+    "incompleteCandidateResolution": "Candidatul nu a putut fi identificat complet.",
+    "resolutionFailed": "Identificarea a eșuat.",
+    "graphUnavailable": "Clientul Microsoft Graph nu este disponibil."
+  }
+}

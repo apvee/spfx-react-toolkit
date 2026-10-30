@@ -1,0 +1,33 @@
+{
+  "empty": "لا توجد بيانات متاحة",
+  "noResults": "لم يتم العثور على نتائج",
+  "noVisibleColumns": "لا توجد أعمدة مرئية",
+  "loading": "جارٍ التحميل",
+  "actions": "الإجراءات",
+  "moreActions": "المزيد من الإجراءات",
+  "yes": "نعم",
+  "no": "لا",
+  "noTags": "لا توجد علامات",
+  "noObservations": "لا توجد ملاحظات",
+  "invalidValue": "قيمة غير صالحة",
+  "selectAllRows": "تحديد كل الصفوف",
+  "retry": "إعادة المحاولة",
+  "selectRowTemplate": "تحديد الصف {rowId}",
+  "sparklineSummaryTemplate": "الأول {first}; الأخير {last}; الحد الأدنى {minimum}; الحد الأقصى {maximum}; المتوسط {average}; التغير {change}; نسبة التغير {changePercent}",
+  "tagOverflow": {
+    "zero": "إظهار {count} علامة إضافية",
+    "one": "إظهار {count} علامة إضافية",
+    "two": "إظهار {count} من العلامات الإضافية",
+    "few": "إظهار {count} علامات إضافية",
+    "many": "إظهار {count} علامة إضافية",
+    "other": "إظهار {count} علامة إضافية"
+  },
+  "ratingCount": {
+    "zero": "{formattedCount} صوت",
+    "one": "{formattedCount} صوت",
+    "two": "{formattedCount} من الأصوات",
+    "few": "{formattedCount} أصوات",
+    "many": "{formattedCount} صوتًا",
+    "other": "{formattedCount} صوت"
+  }
+}

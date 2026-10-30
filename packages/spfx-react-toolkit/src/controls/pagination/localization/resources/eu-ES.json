@@ -1,0 +1,9 @@
+{
+  "pagination": "Orrikatzea",
+  "firstPage": "Lehen orria",
+  "previousPage": "Aurreko orria",
+  "nextPage": "Hurrengo orria",
+  "lastPage": "Azken orria",
+  "loadMore": "Kargatu gehiago",
+  "loading": "Kargatzen"
+}

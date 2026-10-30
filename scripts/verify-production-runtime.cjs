@@ -10,17 +10,29 @@ const { buildConfig, statsOptions, collectEmittedModules, renderConsumer, readRu
 const root = path.resolve(__dirname, '..');
 const base = 'https://tenant.test/sites/standalone';
 const toolkit = '@apvee/spfx-react-toolkit';
-const scenarios = ['context', 'list', 'search', 'batch', 'providers', 'styles'];
+const scenarios = ['context', 'list', 'search', 'batch', 'providers', 'styles', 'form', 'data-grid', 'editable-text', 'web-part-shell', 'stage', 'pagination', 'description-list', 'content-card', 'preview-card', 'sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'];
+const accessTrimScenarios = ['sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'];
 const variants = ['root', 'domain', 'leaf'];
 const leaf = { context: 'spfx-pnp-context.service', list: 'spfx-pnp-list.service', search: 'spfx-pnp-search.service', batch: 'spfx-pnp.service' };
 const hash = data => crypto.createHash('sha256').update(data).digest('hex');
 
+function buildRuntimeConfig(consumerRoot, entry, outputDir, browserUi) {
+  const config = buildConfig(consumerRoot, entry, path.resolve(outputDir), false);
+  // Execute the browser production graph in Node's JSDOM host. Older
+  // Fluent peers put exports.node ahead of exports.import; using Node's
+  // conditions would mix their CJS contexts with modern peers' ESM contexts.
+  // CommonJS output and React externals already allow Node execution.
+  // Service probes retain native Node chunk loading for PnP's lazy imports.
+  config.target = browserUi ? 'web' : 'node';
+  return config;
+}
+
 async function compileProbe({ consumerRoot, outputDir, scenario, variant }) {
-  if (!scenarios.includes(scenario) || !['root', 'domain', 'leaf'].includes(variant)) throw new Error('Unknown production runtime probe');
-  const ui = scenario === 'providers' || scenario === 'styles';
+  if (!scenarios.includes(scenario) || !(['form', 'data-grid', 'editable-text', 'web-part-shell', 'stage', 'pagination', 'description-list', 'content-card', 'preview-card', 'sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'].includes(scenario) ? ['root', 'domain', 'control'] : variants).includes(variant)) throw new Error('Unknown production runtime probe');
+  const ui = scenario === 'providers' || scenario === 'styles' || scenario === 'form' || scenario === 'data-grid' || (scenario === 'web-part-shell' || scenario === 'editable-text') || scenario === 'stage' || scenario === 'pagination' || scenario === 'description-list' || scenario === 'content-card' || scenario === 'preview-card' || accessTrimScenarios.includes(scenario);
   const fixture = ui ? `${scenario}.tsx` : `pnp-${scenario}.ts`;
   const specifier = toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/services' : '/lib/services/' + leaf[scenario]);
-  const imports = ui ? scenario === 'providers' ? {
+  const imports = ['form', 'data-grid', 'editable-text', 'web-part-shell', 'stage', 'pagination', 'description-list', 'content-card', 'preview-card', 'sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'].includes(scenario) ? { TOOLKIT: toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/controls' : '/controls/' + scenario) } : ui ? scenario === 'providers' ? {
     PROVIDER: toolkit + (variant === 'root' ? '' : variant === 'domain' ? '/core' : '/lib/core/provider-webpart'),
     CONTEXT: toolkit + (variant === 'root' ? '/hooks' : ''),
     PROPERTIES: toolkit + (variant === 'root' ? '/lib/hooks/useSPFxProperties' : '/hooks'),
@@ -29,12 +41,15 @@ async function compileProbe({ consumerRoot, outputDir, scenario, variant }) {
     OTHER_HOOK: toolkit + (variant === 'root' ? '/styles/useSx' : ''),
     DESCRIPTORS: toolkit + (variant === 'root' ? '/styles' : '/lib/helpers/styles'),
   } : {TOOLKIT:specifier};
+  if (accessTrimScenarios.includes(scenario)) imports.PROVIDER = toolkit + '/core';
   const source = renderConsumer(fs.readFileSync(path.join(root, 'tests/fixtures/tree-shaking/runtime', fixture), 'utf8'), { imports });
   const entry = path.join(consumerRoot, '.production-runtime', `${scenario}-${variant}${ui ? '.tsx' : '.ts'}`);
   fs.mkdirSync(path.dirname(entry), { recursive: true });
   fs.writeFileSync(entry, source);
-  const config = buildConfig(consumerRoot, entry, path.resolve(outputDir), false);
-  config.target = 'node';
+  const supportFixture = accessTrimScenarios.includes(scenario) ? fs.readFileSync(path.join(root, 'tests/fixtures/tree-shaking/runtime/access-trim-probe.tsx'), 'utf8') : undefined;
+  if (supportFixture !== undefined) fs.writeFileSync(path.join(path.dirname(entry), 'access-trim-probe.tsx'), supportFixture);
+  const config = buildRuntimeConfig(consumerRoot, entry, outputDir, ui);
+  if (scenario === 'web-part-shell' || scenario === 'editable-text') config.output.publicPath = '/production-assets/';
   const stats = await new Promise((resolve, reject) => {
     const compiler = webpack(config);
     compiler.run((error, result) => compiler.close(closeError => error || closeError ? reject(error || closeError) : resolve(result)));
@@ -45,7 +60,7 @@ async function compileProbe({ consumerRoot, outputDir, scenario, variant }) {
   if (stats.hasErrors() || detail.warnings.some(w => /export .*was not found|Module not found/.test(w.message))) throw new Error(`Production runtime bundle ${scenario}/${variant}: ${[...detail.errors, ...detail.warnings].map(w => w.message).join('\n')}`);
   assertToolkitOrigin(detail, consumerRoot);
   const bundlePath = path.join(outputDir, 'entry.js');
-  return { scenario, variant, bundlePath, fixtureSha256: hash(source), bundleSha256: hash(fs.readFileSync(bundlePath)), emittedModules: collectEmittedModules(detail, consumerRoot), warnings: detail.warnings.map(w => w.message) };
+  return { scenario, variant, bundlePath, fixtureSha256: hash(source), ...(supportFixture !== undefined ? { supportFixtureSha256: hash(supportFixture) } : {}), bundleSha256: hash(fs.readFileSync(bundlePath)), emittedModules: collectEmittedModules(detail, consumerRoot), warnings: detail.warnings.map(w => w.message) };
 }
 
 function assertToolkitOrigin(detail, consumerRoot) {
@@ -59,20 +74,31 @@ function executeProbe(bundlePath, scenario, consumerRoot) {
   if(result.error || result.status !== 0 || metadata.failureMarkers.length) throw Object.assign(new Error(`Production probe ${scenario}: ${result.error?.message || metadata.stderr}`),metadata);
   return {...JSON.parse(result.stdout),...metadata};
 }
-function installHostAdapter(consumerRoot) {
+function installHostAdapter(consumerRoot, scenario) {
   const consumerRequire=createRequire(path.join(consumerRoot,'package.json'));
   const original=Module._load;
   global.MessageChannel=window.MessageChannel;
   // Resolve first to avoid recursion in the external adapter.
   const host={};
   for(const name of ['react','react-dom','react-dom/test-utils']) host[name]=original.call(Module,consumerRequire.resolve(name),module,false);
+  const trimHost = accessTrimScenarios.includes(scenario) ? { page: {}, sp: {}, graph: {}, v1: {} } : undefined;
+  const permissionPath = trimHost ? path.join(path.dirname(consumerRequire.resolve('@microsoft/sp-page-context')), 'SPPermission.js') : undefined;
+  // SPFx's full native entries require its unavailable browser shell (resx and
+  // @msinternal/ecs-flight). Use opaque host service keys and the installed
+  // native SPPermission leaf. Its flight lookup is a host boundary fixed false;
+  // native host initialization and flight configuration are not validated here.
   Module._load=function(request,parent,isMain) {
+    if (trimHost && request === '@microsoft/sp-core-library') return { DisplayMode: { Read: 1, Edit: 2 }, _SPKillSwitch: { isActivated: () => false } };
+    if (trimHost && request === '@microsoft/sp-page-context') return { PageContext: { serviceKey: trimHost.page }, SPPermission: original.call(this, permissionPath, parent, false).default };
+    if (trimHost && request === '@microsoft/sp-http') return { SPHttpClient: { serviceKey: trimHost.sp, configurations: { v1: trimHost.v1 } }, MSGraphClientFactory: { serviceKey: trimHost.graph } };
+    if (scenario === 'editable-text' && request.startsWith('@microsoft/sp-')) throw new Error('Standalone EditableText requested SPFx: ' + request);
     if(host[request]) return host[request];
     if (/^(react|react-dom)(\/|$)/.test(request)) return original.call(this,consumerRequire.resolve(request),parent,isMain);
+    if(scenario === 'web-part-shell' && request === '@microsoft/sp-core-library') return {DisplayMode:{Read:1,Edit:2}};
     if(request === '@microsoft/sp-component-base') return {ThemeProvider:{serviceKey:'production-theme'}};
     return original.call(this,request,parent,isMain);
   };
-  return {React:host.react,ReactDOM:host['react-dom'],act:callback=>host['react-dom/test-utils'].act(()=>{callback();})};
+  return {React:host.react,ReactDOM:host['react-dom'],act:callback=>host['react-dom/test-utils'].act(()=>{callback();}), ...(permissionPath ? { nativePermission: { file: permissionPath, sha256: hash(fs.readFileSync(permissionPath)), hostFlight: 'fixed false; host initialization not validated' } } : {})};
 }
 function jsonResponse(value) { return new Response(JSON.stringify(value), { headers: { 'Content-Type': 'application/json' } }); }
 function batchResponse(scenario, partial = false) {
@@ -88,9 +114,49 @@ async function runProbe(scenario, bundlePath, consumerRoot) {
   Object.defineProperty(global,'navigator',{value:dom.window.navigator,configurable:true});
   global.HTMLElement=dom.window.HTMLElement;global.localStorage=dom.window.localStorage;global.sessionStorage=dom.window.sessionStorage;
   window.requestAnimationFrame=callback=>setTimeout(callback,0);window.cancelAnimationFrame=clearTimeout;
-  if(scenario==='providers'||scenario==='styles') {
-    const host=installHostAdapter(consumerRoot);
-    const observation=await require(bundlePath).run({...host,assert});
+  if(scenario==='providers'||scenario==='styles'||scenario==='form'||scenario==='data-grid'||(scenario==='web-part-shell'||scenario==='editable-text')||scenario==='stage'||scenario==='pagination'||scenario==='description-list'||scenario==='content-card'||scenario==='preview-card'||accessTrimScenarios.includes(scenario)) {
+    if (scenario === 'form' || scenario === 'data-grid' || (scenario === 'web-part-shell' || scenario === 'editable-text') || scenario === 'stage' || scenario === 'pagination' || scenario === 'description-list' || scenario === 'content-card' || scenario === 'preview-card') {
+      for (const name of ['Node', 'NodeFilter', 'Element', 'Event', 'CustomEvent', 'File', 'FileList', 'MutationObserver']) global[name] = dom.window[name];
+      window.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
+      // JSDOM 15 predates the browser WebCrypto API used by native Tabster.
+      // Supply the actual host implementation rather than a random-ID stub.
+      Object.defineProperty(window, 'crypto', { value: crypto.webcrypto });
+      if (scenario === 'data-grid' || (scenario === 'web-part-shell' || scenario === 'editable-text') || scenario === 'stage' || scenario === 'pagination' || scenario === 'description-list' || scenario === 'content-card' || scenario === 'preview-card') {
+        // JSDOM 15 lacks Range geometry, as in the existing AutoSkeleton Node
+        // harness. Real overlay rectangles/inert behavior are browser gates.
+        document.createRange = () => ({ selectNodeContents() {}, getClientRects() { return []; } });
+      }
+    }
+    const assetRequests = [];
+    if (scenario === 'web-part-shell' || scenario === 'editable-text') {
+      // JSDOM15 has no Selection implementation. The legacy null sentinel means
+      // no selection, as in the dependency lifecycle probe; native focus is Task9.
+      document.getSelection = () => null;
+      global.getComputedStyle = window.getComputedStyle.bind(window);
+      global.innerHeight = window.innerHeight;
+      global.requestAnimationFrame = window.requestAnimationFrame;
+      global.cancelAnimationFrame = window.cancelAnimationFrame;
+      global.self = window;
+      const append = document.head.appendChild.bind(document.head);
+      document.head.appendChild = element => {
+        if (element.tagName === 'SCRIPT' && element.src) {
+          const asset = path.basename(new URL(element.src).pathname);
+          assert.ok(/^[a-zA-Z0-9_.-]+\.js$/.test(asset), 'Unexpected runtime asset path');
+          const file = path.join(path.dirname(bundlePath), asset);
+          assert.ok(fs.existsSync(file), `Missing requested emitted asset: ${asset}`);
+          assetRequests.push(asset);
+          // Execute actual emitted chunk bytes through Webpack's real web loader.
+          // This observes requested script assets; it is not a native HTTP test.
+          setTimeout(() => {
+            try { require('node:vm').runInThisContext(fs.readFileSync(file, 'utf8'), { filename: file }); element.onload?.({ type: 'load', target: element }); }
+            catch (error) { element.onerror?.({ type: 'error', target: element }); throw error; }
+          }, 0);
+        }
+        return append(element);
+      };
+    }
+    const host=installHostAdapter(consumerRoot, scenario);
+    const observation=await require(bundlePath).run({...host,assert,assetRequests});
     dom.window.close();
     return {scenario,pid:process.pid,assertions:observation.assertions,observation};
   }
@@ -148,6 +214,9 @@ async function runProbe(scenario, bundlePath, consumerRoot) {
   return { scenario, calls, result, pid:process.pid, assertions:[`${scenario}: real bundled HTTP operations and parsed results`] };
 }
 
+function productionRuntimeCases() {
+  return scenarios.flatMap(scenario => (['form', 'data-grid', 'editable-text', 'web-part-shell', 'stage', 'pagination', 'description-list', 'content-card', 'preview-card', 'sharepoint-permission-trim', 'sharepoint-group-trim', 'entra-group-trim'].includes(scenario) ? ['root', 'domain', 'control'] : variants).map(variant => ({ scenario, variant })));
+}
 async function verifyProductionRuntime({ consumerRoot, outputDir }) {
   consumerRoot = fs.realpathSync(consumerRoot); outputDir = path.resolve(outputDir);
   const toolkitDir = path.join(consumerRoot, 'node_modules', toolkit);
@@ -161,7 +230,7 @@ async function verifyProductionRuntime({ consumerRoot, outputDir }) {
   const save = () => fs.writeFileSync(path.join(outputDir, 'runtime-report.json'), JSON.stringify(report, null, 2) + '\n');
   save();
   const start=Date.now();
-  await runRuntimeMatrix({report,cases:scenarios.flatMap(scenario=>variants.map(variant=>({scenario,variant}))),
+  await runRuntimeMatrix({report,cases:productionRuntimeCases(),
     compile:probe=>compileProbe({consumerRoot,outputDir:path.join(outputDir,probe.scenario,probe.variant),...probe}),
     execute:(bundlePath,scenario)=>executeProbe(bundlePath,scenario,consumerRoot),save});
   report.durationMs=Date.now()-start;save();
@@ -195,4 +264,4 @@ if (require.main === module) {
     verifyProductionRuntime({ consumerRoot: options['--consumer-root'], outputDir: options['--output'] }).then(report => { console.log(`production runtime: ${report.probes.length} probes; passed=${report.passed}; warnings=${report.warnings.length}`); if (!report.passed) process.exitCode = 1; }).catch(error => { console.error(error); process.exitCode = 1; });
   }
 }
-module.exports = { verifyProductionRuntime, compileProbe, executeProbe, runRuntimeMatrix, assertToolkitOrigin };
+module.exports = { productionRuntimeCases, verifyProductionRuntime, compileProbe, executeProbe, runRuntimeMatrix, assertToolkitOrigin, buildRuntimeConfig };

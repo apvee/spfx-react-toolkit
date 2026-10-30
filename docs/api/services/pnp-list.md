@@ -2,10 +2,7 @@
 
 [Services overview](../INDEX.md#non-react-services) · [Non-React composition](../../guides/helpers-and-services.md)
 
-```ts
-import { createSPFxPnPListService } from '@apvee/spfx-react-toolkit/services';
-```
-
+Import this factory and its public types from `@apvee/spfx-react-toolkit/services` or the package root. Callers supply the initialized client/context; these services require no React provider.
 
 ## `createSPFxPnPListService`
 
@@ -87,3 +84,24 @@ Returned `SPFxPnPListService` methods:
 `SPFxPnPListBatchResult<TValue>` contains `value`, `errors`, and `summaryError`. Batch methods retain their existing result envelope: settled item failures populate `errors` and `summaryError`, and successful create IDs remain in `value`. Selector-validation and batch-execution failures reject the caller promise. Successful writes are not rolled back; inspect server state before retrying a partial batch. The React hooks publish `summaryError` through hook `error` and log settled item failures rather than returning this envelope: `createBatch` resolves successful create IDs, while `updateBatch` and `removeBatch` resolve `undefined`. Underlying service rejection still rejects hook batch promises. Inspect hook `error` and server state before retrying. Hook `getById` catches service failures, publishes `error` and resolves `undefined`; missing or uninitialized context still rejects before service execution. Other hook methods retain their existing rejection channels.
 
 [View source](../../../packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts)
+
+## Paging and public type contracts
+
+`SPFxPnPListQueryBuilder` is `(items: IItems) => IItems`; return the fluent query without executing it. `SPFxPnPListQueryOptions` has only optional `pageSize: number`, overriding the factory default. In `query`, an explicit builder `.top(n)` takes precedence over both page-size settings and emits a warning when combined with one. With no `.top()` and no page-size setting, `effectivePageSize` is undefined and SharePoint chooses the limit; `hasMore` is then false. A full page sets `hasMore: true` only as a heuristic, not proof of another page.
+
+`nextSkip` is the returned item count for `query`, and the prior skip plus that count for `loadMore`. `loadMore(builder, pageSize, skip)` applies its `.skip()` and `.top()` after the builder, overriding those builder settings. Reuse the original filter and deterministic order. The installed PnP implementation serializes `.skip(skip)` as `$skiptoken=Paged=TRUE&p_ID=<skip>`, rather than OData `$skip`. The service's count-based `nextSkip` is a historical paging heuristic, not a server-returned continuation token; it does not provide a validated cursor for arbitrary filters/order or noncontiguous item IDs. Verify that this policy fits the queried list. Concurrent server changes can also move items between requests.
+
+`SPFxPnPListService<T>` exposes the methods above. `create(item: Partial<T>)` returns `Promise<number>`; update/remove resolve `Promise<void>`. `createBatch(items: Partial<T>[])` resolves `SPFxPnPListBatchResult<number[]>`; update accepts `{ id: number; item: Partial<T> }[]` and remove accepts `number[]`, both returning `SPFxPnPListBatchResult<void>`. The result's `errors: unknown[]` contains settled rejection reasons (including missing create-response IDs), and `summaryError: Error | undefined` indicates whether any item failed. `value` holds successful IDs for create and undefined for update/remove. Generic type arguments are compile-time expectations only; server fields, permissions and validation still apply.
+
+```ts
+const builder = (items: import('@pnp/sp/items').IItems) => items.select('Id', 'Title').orderBy('Id');
+const first = await byTitle.query(builder, { pageSize: 25 });
+if (first.hasMore) {
+  const next = await byTitle.loadMore(builder, 25, first.nextSkip);
+  console.log(next.items);
+}
+const outcome = await byTitle.createBatch([{ Title: 'Review report' }]);
+if (outcome.summaryError) console.error(outcome.errors);
+```
+
+This module registers PnP webs/lists/items/batching itself; the supplied client still needs authentication/request behaviors. Standalone list operations do not require the context-service factory or a React provider.
