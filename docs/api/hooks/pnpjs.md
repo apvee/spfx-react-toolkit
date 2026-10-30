@@ -6,24 +6,13 @@ Install compatible @pnp/core, @pnp/queryable and @pnp/sp v4 peers in your host.
 
 ## Package import migration
 
-Root and clean domain imports use the canonical implementations; historical `/lib/...` imports remain supported. Unrelated root imports no longer install incidental PnP features. Direct consumers must import every feature used by their operations, including callbacks passed to `invoke`/`batch`; toolkit-owned registrations do not cover arbitrary caller features. See [package imports](../../PACKAGE-IMPORTS.md) for aliases, resolver and peer requirements, and the local-versus-tenant verification boundary.
+Root and clean domain imports use the canonical implementations; historical `/lib/...` imports remain supported. Unrelated root imports no longer install incidental PnP features. Direct consumers must import every feature used by their operations, including callbacks passed to `invoke`/`batch`; toolkit-owned registrations do not cover arbitrary caller features. See [package imports](../../guides/package-imports.md) for aliases, resolver and peer requirements, and the local-versus-tenant verification boundary.
 
 ## PnP feature registrations
 
-Hooks use service modules that install their own required PnP registrations:
-context installs webs and batching, list installs webs/lists/items/batching,
-search installs search and suggestions, and the generic service installs batching.
-Standalone list and search factories also work with a supplied configured `SPFI`
-without loading the toolkit context factory. The client still requires request
-behaviors and authentication; registration does not grant SharePoint permissions.
+Hooks use service modules that install their own required PnP registrations: context installs webs and batching, list installs webs/lists/items/batching, search installs search and suggestions, and the generic service installs batching. Standalone list and search factories also work with a supplied configured `SPFI` without loading the toolkit context factory. The client still requires request behaviors and authentication; registration does not grant SharePoint permissions.
 
-Import features used in direct PnP operations explicitly, including callbacks
-passed to `useSPFxPnP().invoke` or `.batch`. For example, a callback reading
-`sp.web()` needs `import '@pnp/sp/webs';`; one reading list items also needs
-`import '@pnp/sp/lists';` and `import '@pnp/sp/items';`. Additional features such
-as files require their corresponding PnP imports. Do not rely on unrelated toolkit
-imports to install these features. See the [service registration table and
-example](../services/INDEX.md#pnp-feature-registrations).
+Import features used in direct PnP operations explicitly, including callbacks passed to `useSPFxPnP().invoke` or `.batch`. For example, a callback reading `sp.web()` needs `import '@pnp/sp/webs';`; one reading list items also needs `import '@pnp/sp/lists';` and `import '@pnp/sp/items';`. Additional features such as files require their corresponding PnP imports. Do not rely on unrelated toolkit imports to install these features. See the [service registration table and example](../../guides/helpers-and-services.md).
 
 ## useSPFxPnP
 
@@ -207,7 +196,7 @@ function SelectedLists() {
 }
 ```
 
-Use the actual GUID and root of your list in place of these illustrative values. Each hook has independent local state. Settled per-item batch failures publish hook `error` while batch promises resolve successful create IDs or `undefined` for update/remove; underlying service rejection still rejects those promises. Successful server writes are not rolled back. The standalone [list service](../services/INDEX.md#createspfxpnplistservice) returns its existing `value`/`errors`/`summaryError` batch envelope instead. Inspect hook `error` and server state before retrying a partial batch.
+Use the actual GUID and root of your list in place of these illustrative values. Each hook has independent local state. Settled per-item batch failures publish hook `error` while batch promises resolve successful create IDs or `undefined` for update/remove; underlying service rejection still rejects those promises. Successful server writes are not rolled back. The standalone [list service](../services/pnp-list.md#createspfxpnplistservice) returns its existing `value`/`errors`/`summaryError` batch envelope instead. Inspect hook `error` and server state before retrying a partial batch.
 
 ## useSPFxPnPSearch
 
@@ -276,5 +265,5 @@ function SearchResults() {
 ## See Also
 
 - [API index](../../INDEX.md)
-- [Services](../services/INDEX.md)
-- [SharePoint validation](../../SHAREPOINT-VALIDATION.md)
+- [Services](../INDEX.md#non-react-services)
+- [SharePoint validation](../../development/sharepoint-validation/INDEX.md)

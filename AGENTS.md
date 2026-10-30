@@ -45,7 +45,7 @@ These instructions apply to the entire repository, including `packages/`, `apps/
 ## Repository architecture and compatibility
 
 - `packages/spfx-react-toolkit/src/` owns the public library; `apps/spfx-react-toolkit-test/` owns the private SPFx sample and host configuration. Root `tests/` and `scripts/` own behavioral tests and verification tooling.
-- Consult `README.md` and `docs/DEVELOPMENT.md` for workspace boundaries, supported tooling, and commands. Consult `docs/SHAREPOINT-VALIDATION.md` when real-host validation is relevant. Read affected API documentation in `docs/` when changing public behavior.
+- Consult `README.md` and `docs/development/INDEX.md` for workspace boundaries, supported tooling, and commands. Consult `docs/development/sharepoint-validation/INDEX.md` when real-host validation is relevant. Read affected API documentation in `docs/` when changing public behavior.
 - The sample consumes the library's compiled `lib` entry point. Build the library before the app; after library source changes, rebuild it and restart a running app serve process before evaluating the new behavior.
 - Preserve public imports, exports, declaration contracts, package contents, peer dependency contracts, and provider instance isolation unless the user authorizes the relevant change.
 - Follow repository React, TypeScript, Node, and SPFx compatibility constraints. Do not upgrade the toolchain or dependencies merely to simplify an implementation.
@@ -130,7 +130,7 @@ These are preferences for controls actually exposed by the runtime, not a claim 
 - Before claiming completion, a fix, passing checks, or readiness, identify the command/observation supporting that specific claim, run it fresh, inspect output and exit status, and confirm that it proves the claim.
 - Use the smallest sufficient verification during iteration; this does not waive documented project gates. Do not rely solely on confidence, old results, code inspection, partial checks, or a subagent's success report.
 - Root `npm test` runs Node behavioral tests. `npm run typecheck` and `npm run lint` cover the workspaces; `npm run build:library` precedes `npm run build:app`.
-- Run `npm run verify` and `npm run verify:package` before requesting development review, as required by `docs/DEVELOPMENT.md`. These commands do not authorize publication or deployment.
+- Run `npm run verify` and `npm run verify:package` before requesting development review, as required by `docs/development/verification.md`. These commands do not authorize publication or deployment.
 - For instruction/documentation-only edits, inspect the diff, check whitespace and referenced paths/commands, and assess internal consistency. Run additional documentation checks if the affected content requires them; full application builds are not needed solely for an `AGENTS.md` edit.
 - Build, local tests, and package verification do not establish authenticated SharePoint-host behavior or tenant permissions. Keep real-host results separate and label unavailable checks as not executed or blocked; do not present simulations as tenant passes.
 - Confirm requested behavior, scope, likely regressions, justified complexity, and material limitations before completion. If a required check cannot run, report what was verified and what remains unverified.

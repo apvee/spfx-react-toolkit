@@ -2,7 +2,7 @@
 
 Style descriptors are immutable, typed data used to describe dimensions, Fluent theme references, typography, and CSS scopes. They are independent of SPFx context. Creating or importing a descriptor does not access the DOM or insert CSS.
 
-The complete style catalog is available from the package root, the clean `@apvee/spfx-react-toolkit/styles` facade and the historical `@apvee/spfx-react-toolkit/lib/helpers/styles` deep entry point. The facade also re-exports canonical `useSx` and all public descriptor types; the narrow `/styles/useSx` entry exposes only that hook. Root, facade and historical leaves compose with the same active renderer/direction context. See [package imports](../../PACKAGE-IMPORTS.md) for resolver/peer contracts and bundle interpretation.
+The complete style catalog is available from the package root, the clean `@apvee/spfx-react-toolkit/styles` facade and the historical `@apvee/spfx-react-toolkit/lib/helpers/styles` deep entry point. The facade also re-exports canonical `useSx` and all public descriptor types; the narrow `/styles/useSx` entry exposes only that hook. Root, facade and historical leaves compose with the same active renderer/direction context. See [package imports](../../guides/package-imports.md) for resolver/peer contracts and bundle interpretation.
 
 ```tsx
 import { useSx, width, typography, SxInput } from '@apvee/spfx-react-toolkit/styles';
@@ -274,7 +274,7 @@ Border geometry remains explicit: compose `borderWidth.thin`, `borderStyle.solid
 
 The vendor thumb retains **3px rounded corners** on both axes. Its base color is `colorNeutralStrokeAccessible`; moving the pointer over the thumb itself uses `colorNeutralStrokeAccessibleHover`, and pressing or dragging it uses `colorNeutralStrokeAccessiblePressed`. Pressed feedback wins while the thumb is also hovered; release restores hover feedback and leaving restores the base color. These tokens follow the existing Fluent theme variables in scope. Hovering the content or track does not activate thumb feedback. Forced colors and browsers using the standard fallback retain native interactions.
 
-In SharePoint host mode, [`createFluent9ThemeFromSPFxTheme`](./INDEX.md#createfluent9themefromspfxtheme) keeps the converted base token and maps hover/pressed to the host palette's `neutralPrimary`/`neutralDark`. This avoids the migration shim mapping all three to `neutralSecondary`. Missing state colors use the converted fallback; custom palettes with equal colors can still produce equal feedback colors. Teams themes and the undefined-theme web light fallback retain their existing tokens.
+In SharePoint host mode, [`createFluent9ThemeFromSPFxTheme`](theme.md#createfluent9themefromspfxtheme) keeps the converted base token and maps hover/pressed to the host palette's `neutralPrimary`/`neutralDark`. This avoids the migration shim mapping all three to `neutralSecondary`. Missing state colors use the converted fallback; custom palettes with equal colors can still produce equal feedback colors. Teams themes and the undefined-theme web light fallback retain their existing tokens.
 
 ```tsx
 const sx = useSx();

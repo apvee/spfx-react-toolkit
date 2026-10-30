@@ -46,7 +46,7 @@ The panel makes runtime compatibility observable. The separate installed-package
 
 ## Styles facade and generic callbacks
 
-`/styles` re-exports `SxBaseDescriptor`, `SxStateDescriptor`, `SxResponsiveDescriptor`, `SxDescriptor`, `SxInput`, `SxFunction`, `SxOptions`, every public style namespace/scope, and `useSx`. It adds no descriptor implementation or registration. See the complete [style API](./api/helpers/styles.md) and [hook signatures](./api/hooks/react.md).
+`/styles` re-exports `SxBaseDescriptor`, `SxStateDescriptor`, `SxResponsiveDescriptor`, `SxDescriptor`, `SxInput`, `SxFunction`, `SxOptions`, every public style namespace/scope, and `useSx`. It adds no descriptor implementation or registration. See the complete [style API](../api/helpers/styles.md) and [hook signatures](../api/hooks/react.md).
 
 ```tsx
 import * as React from 'react';
@@ -93,7 +93,7 @@ export async function readTitles(sp: SPFI): Promise<unknown> {
 }
 ```
 
-Files, folders and other features need their corresponding explicit PnP imports too. Registration does not configure authentication or grant permissions. See [PnP hooks](./api/hooks/pnpjs.md#pnp-feature-registrations) and the [service registration table](./api/services/INDEX.md#pnp-feature-registrations). Real SDK registrations are exercised locally with controlled transport; authenticated server permissions and caller-specific feature combinations require their own validation.
+Files, folders and other features need their corresponding explicit PnP imports too. Registration does not configure authentication or grant permissions. See [PnP hooks](../api/hooks/pnpjs.md#pnp-feature-registrations) and the [service registration table](helpers-and-services.md). Real SDK registrations are exercised locally with controlled transport; authenticated server permissions and caller-specific feature combinations require their own validation.
 
 ## What the bundle gate measures
 
@@ -103,4 +103,4 @@ Style API reachability gaps and engine overhead answer different questions. The 
 
 `npm run verify:package` installs the fresh tarball into an isolated real SPFx consumer, validates resolution, executes the canonical 36 bundle/18 runtime/9 mutation gates and builds the ship sample/solution. Transport-controlled runtime probes establish local registration, provider and renderer identity; they do not establish tenant authentication. Existing npm transitive deprecation/lifecycle warnings and SPFx metadata-age advisories remain visible. Check actual warning and failure output, including subprocess markers, instead of relying only on an outer success status.
 
-See [development commands and baseline review](./DEVELOPMENT.md#production-import-gates-and-baseline-review) and the authenticated [Imports checklist](./SHAREPOINT-VALIDATION.md#imports).
+See [development commands and baseline review](../development/verification.md#production-import-gates-and-baseline-review) and the authenticated [Imports checklist](../development/sharepoint-validation/checklists/imports.md#imports).

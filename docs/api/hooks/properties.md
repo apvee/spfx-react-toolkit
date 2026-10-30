@@ -311,8 +311,8 @@ function MyComponent() {
 
 ## See Also
 
-- [Context Hooks](./context.md) - Context access
-- [Storage Hooks](./storage.md) - Persistent storage
+- [Context Hooks](context.md) - Context access
+- [Storage Hooks](../INDEX.md#storage-hooks) - Persistent storage
 - [Providers](../core/providers.md) - Provider components
 
 ---

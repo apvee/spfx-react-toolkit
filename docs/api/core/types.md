@@ -311,7 +311,7 @@ import type {
 
 ## See Also
 
-- [Providers](./providers.md) - Provider components
+- [Providers](providers.md) - Provider components
 - [Context Hooks](../hooks/context.md) - Hooks using these types
 
 ---

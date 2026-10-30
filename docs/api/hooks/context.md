@@ -324,7 +324,7 @@ function MyComponent() {
 
 - [Providers](../core/providers.md) - Provider components
 - [Types](../core/types.md) - Type definitions
-- [Properties Hooks](./properties.md) - Property management
+- [Properties Hooks](properties.md) - Property management
 
 ---
 

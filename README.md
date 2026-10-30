@@ -1,118 +1,58 @@
 # SPFx React Toolkit
 
-React providers, 46 hooks, public helpers and services for SharePoint Framework. Each provider maintains runtime state for its SPFx instance. Hooks cover reusable React callbacks, typed class composition with useSx, context, properties, clients, PnPjs, themes, permissions, storage and diagnostics; helpers and services support composition outside React.
+React providers, hooks, typed styles, helpers and services for SharePoint Framework. Access context, properties, clients, PnPjs, themes, permissions and storage with runtime state isolated per SPFx instance.
 
 ![SPFx React Toolkit](https://raw.githubusercontent.com/apvee/spfx-react-toolkit/main/assets/banner.png)
 
-Install in an SPFx host project:
+[Documentation](docs/INDEX.md) · [Quick start](docs/getting-started/quick-start.md) · [API catalog](docs/api/INDEX.md) · [npm](https://www.npmjs.com/package/@apvee/spfx-react-toolkit)
+
+## Installation
+
+Install in the consuming SPFx application:
 
 ```bash
-npm install @apvee/spfx-react-toolkit "@fluentui/react-migration-v8-v9@^9.9.12" "@fluentui/react-theme@^9.2.0" "@fluentui/react-utilities@^9.25.1" "@griffel/core@^1.19.2" "@griffel/react@^1.5.30" "@fluentui/react-shared-contexts@^9.25.2"
+npm install @apvee/spfx-react-toolkit
 ```
 
-The host supplies the React and SPFx runtimes. PnPjs APIs require the compatible `@pnp/core`, `@pnp/queryable` and `@pnp/sp` peers. Preserve versions compatible with your host; do not upgrade an existing SPFx toolchain just to install the toolkit.
+The host supplies compatible React, SPFx, PnPjs and shared Fluent/Griffel peers. Follow [installation and compatibility](docs/getting-started/installation.md) for the complete peer setup and verified baseline before building.
+
+## Example
 
 ```tsx
 import * as React from 'react';
-import * as ReactDom from 'react-dom';
-import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-import { SPFxWebPartProvider, useSPFxUserInfo } from '@apvee/spfx-react-toolkit';
+import { useSPFxUserInfo } from '@apvee/spfx-react-toolkit';
 
-const Greeting: React.FC = () => {
+export function Greeting(): React.ReactElement {
   const { displayName } = useSPFxUserInfo();
   return <div>Hello {displayName}!</div>;
-};
-
-export default class GreetingWebPart extends BaseClientSideWebPart<{}> {
-  public render(): void {
-    ReactDom.render(
-      React.createElement(SPFxWebPartProvider, { instance: this }, React.createElement(Greeting)),
-      this.domElement
-    );
-  }
-
-  protected onDispose(): void {
-    ReactDom.unmountComponentAtNode(this.domElement);
-  }
 }
 ```
 
-Choose `SPFxWebPartProvider`, `SPFxApplicationCustomizerProvider`, `SPFxFieldCustomizerProvider` or `SPFxListViewCommandSetProvider` to match the actual SPFx host. The sample includes real WebPart and Application Customizer entry points. Field Customizer and Command Set provider coverage currently checks exports; mounting those providers needs their corresponding hosts.
-
-## Package imports
-
-Root imports remain supported. Clean `/core`, `/hooks`, `/helpers`, `/services`, `/styles`, `/styles/useSx` and `/hooks/useStableCallback` aliases resolve to canonical implementations; historical `/lib/...` imports remain available. The `/styles` facade exports descriptors, their public types and `useSx`. For example:
-
-```tsx
-import { useStableCallback } from '@apvee/spfx-react-toolkit/hooks/useStableCallback';
-import { useSx, width, typography } from '@apvee/spfx-react-toolkit/styles';
-```
-
-Use an ESM-aware bundler with package exports and sideEffects support. Shared React/Griffel/Fluent peers, theme variables and existing lifecycle limits still apply; native Node/CJS execution and all peer versions are not verified. Unrelated root imports no longer install incidental PnP registrations: direct callers must import their own PnP features, including inside invoke/batch callbacks. See [package imports and the measured production contract](./docs/PACKAGE-IMPORTS.md) for resolver requirements, legacy leaves, generic examples, budgets and limitations. The lazy Imports sample exercises updated captured callbacks, mixed descriptors and shared provider direction; authenticated host checks remain separate.
-
-## List selection
-
-[`useSPFxPnPList`](./docs/api/hooks/pnpjs.md#usespfxpnplist) keeps its exact-title API. [`useSPFxPnPListById`](./docs/api/hooks/pnpjs.md#usespfxpnplistbyid), [`useSPFxPnPListByUrl`](./docs/api/hooks/pnpjs.md#usespfxpnplistbyurl) and [`useSPFxPnPListByPath`](./docs/api/hooks/pnpjs.md#usespfxpnplistbypath) select by list GUID, decoded server-relative root URL or decoded web-relative root path. All share the existing generic item type, options, optional PnP context and CRUD/query results. They do not query on mount; invalid selectors fail lazily through existing operation failure channels (`getById` resolves `undefined` and publishes `error` for service failures; query/write actions reject). Supply the intended web's context for cross-site access; paths require an explicit client web base. The standalone [`createSPFxPnPListService`](./docs/api/services/INDEX.md#createspfxpnplistservice) accepts a title string or `SPFxPnPListSelector`. Numeric item IDs remain distinct from list GUIDs.
-
-## Site collection storage
-
-[`useSPFxSiteKeyValueStore`](./docs/api/hooks/storage.md#usespfxsitekeyvaluestore) shares one hidden `SiteKeyValueStore` in the collection root web across all subsites. The standalone [`createSPFxSiteKeyValueStoreService`](./docs/api/services/INDEX.md#createspfxsitekeyvaluestoreservice) accepts `pageContext.site.absoluteUrl` explicitly. Mount, reads and removal do not provision; `save` or explicit service `ensureListReady` can provision. Effective root-web/list grants apply, and `canWrite` is advisory. Hook read failures return fallbacks with `error`; writes reject and must be caught. Existing tenant storage remains in the tenant app catalog.
-
-## Repository development
-
-This repository uses npm workspaces:
-
-- `packages/spfx-react-toolkit`: publishable library; `tsc` emits ESNext modules, declarations and maps to `lib`.
-- `apps/spfx-react-toolkit-test`: private SPFx sample; SPFx 1.21.1 Gulp build performs Sass, lint and webpack bundling against the library package.
-- `docs`, `scripts`, `tests`: public documentation, verification and regression tests.
-- `.docs`: internal maintenance records and local agent planning material.
-
-Run from the cloned repository root:
-
-```bash
-npm ci
-npm run build:library
-npm run build:app
-npm run verify
-npm run verify:package
-```
-
-`npm test` runs the Node behavioral suite; it is not a Gulp test task. `npm run build` builds library then app. To debug locally:
-
-```bash
-npm run trust-dev-cert --workspace @apvee/spfx-react-toolkit-test
-npm run serve
-```
-
-After library source changes, rebuild with `npm run build:library` and restart the app's serve process. The app consumes the package's compiled `lib` entry point. See [Development](./docs/DEVELOPMENT.md) for the full command map and [SharePoint validation](./docs/SHAREPOINT-VALIDATION.md) for real-host checks and prerequisites.
-
-The layout migration preserves the package import name and public API. Source moved from root `src` to the library workspace; SPFx sample source/config moved to the app workspace. Root build output is replaced by workspace output. Consumers continue to import `@apvee/spfx-react-toolkit`.
-
-## Typed styles
-
-`useSx()` composes direct descriptors such as `width.full`, `padding.medium` and `presets.canvas` into className strings. See the [full styles reference](./docs/api/helpers/styles.md) for namespaces, states, container/viewport queries, theme requirements and limitations. The sample’s lazy **Styles** panel exercises the complete catalog. Authenticated SharePoint-host checks remain separate.
-
-## Requirements
-
-| Requirement | Repository verification baseline |
-|-------------|----------------------------------|
-| Node.js | `>=22.14.0 <23.0.0` |
-| SPFx build/runtime packages | `1.21.1` |
-| React / ReactDOM | `17.0.1` (package peers: `17.x`) |
-| TypeScript | `5.3.3` |
-| PnPjs | `4.17.0` (package peers: `^4.0.0`) |
-
-The package declares SPFx peers `>=1.18.0 <2.0.0`; that range is a compatibility declaration, not evidence of testing every version. Repository checks use SPFx 1.21.1. Authenticated tenant validation is a separate step.
+Mount this component below the provider matching your actual SPFx host. The [complete quick start](docs/getting-started/quick-start.md) includes a web part, provider mounting and disposal. Generic React utilities describe their individual requirements in the [API reference](docs/api/INDEX.md).
 
 ## Documentation
 
-- [Introduction and quick start](./docs/INTRODUCTION.md)
-- [API reference: 4 providers, 46 hooks, helpers and services](./docs/INDEX.md)
-- [Helpers API](./docs/api/helpers/INDEX.md)
-- [Services API](./docs/api/services/INDEX.md)
-- [NPM package](https://www.npmjs.com/package/@apvee/spfx-react-toolkit)
-- [Issues](https://github.com/apvee/spfx-react-toolkit/issues)
+| Task | Guide |
+| --- | --- |
+| Find a function, hook, provider or type | [API catalog](docs/api/INDEX.md) |
+| Make HTTP, SharePoint REST or Graph calls | [HTTP clients](docs/guides/http-clients.md) |
+| Select storage by lifetime and sharing | [Storage guide](docs/guides/storage.md) |
+| Check SharePoint permissions or delegated scopes | [Permissions guide](docs/guides/permissions.md) |
+| Compose typed CSS classes | [Styling guide](docs/guides/styling.md) |
+| Work outside React | [Helpers and services](docs/guides/helpers-and-services.md) |
+| Choose imports and understand bundling | [Package imports](docs/guides/package-imports.md) |
 
-MIT — see [LICENSE](./LICENSE).
+## Development
 
-Fluent and Griffel integration uses mandatory shared peer dependencies `@griffel/core` (`^1.19.2`), `@griffel/react` (`^1.5.30`), `@fluentui/react-shared-contexts` (`^9.25.2`), `@fluentui/react-migration-v8-v9` (`^9.9.12`), `@fluentui/react-theme` (`^9.2.0`) and `@fluentui/react-utilities` (`^9.25.1`). The consuming project provides compatible shared packages; modern npm can install missing peers automatically. Existing compatible installations are reused. The SPFx test app declares these explicitly. Token-based styles need theme variables in scope; useSx needs no SPFx provider or new renderer. The sample uses optional `@fluentui/react-provider@9.22.8` for its theme controls. `tslib` is required by the SPFx packages that use it; this library’s ES2020 output does not import it.
+From a cloned repository's root:
+
+```bash
+npm ci
+npm run build
+```
+
+The library lives in `packages/spfx-react-toolkit`; the private SPFx sample lives in `apps/spfx-react-toolkit-test` and consumes the compiled library. Rebuild the library and restart serve after library source changes. See [development setup](docs/development/setup.md) and [scoped verification commands](docs/development/verification.md).
+
+Authenticated SharePoint behavior is verified separately using the [host checklists](docs/development/sharepoint-validation/INDEX.md). Local builds and tests do not establish tenant permissions or consent.
+
+MIT — see [LICENSE](LICENSE). [Report an issue](https://github.com/apvee/spfx-react-toolkit/issues).

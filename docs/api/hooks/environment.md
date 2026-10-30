@@ -125,6 +125,6 @@ function PageStatus() {
 
 ## See Also
 
-- [Context Hooks](./context.md)
-- [Theming Hooks](./theming.md)
-- [Page Context Helpers](../helpers/INDEX.md#page-context-helpers)
+- [Context Hooks](context.md)
+- [Theming Hooks](theming.md)
+- [Page Context Helpers](../helpers/page-context.md#page-context-helpers)

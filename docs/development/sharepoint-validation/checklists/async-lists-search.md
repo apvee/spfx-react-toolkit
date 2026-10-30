@@ -1,0 +1,18 @@
+# Async, list and search checks
+
+[Validation index](../INDEX.md). These procedures require an authenticated host; their presence is not an executed result.
+
+
+Use browser Network throttling and log start/finish times to exercise overlapping requests. When deterministic reversal cannot be achieved against the real service, record the case as **not executed**; local controlled-promise tests provide separate evidence.
+
+| Check | Expected observation |
+|-------|----------------------|
+| Client overlapping invoke | Start two client/PnP operations. Loading remains active while any current-client invocation is pending; older failures do not replace the newest operation's displayed error. |
+| List CRUD | Query Tasks, create/update/delete a disposable item and confirm server data. Force a denied write or invalid list and inspect the error; handle rejected caller promises. |
+| Batch multipart (instrumented host) | The current demo exposes single-item CRUD. In a temporary provider-wrapped test component use `useSPFxPnPList<{ Id: number; Title: string }>('Tasks')`. Call `createBatch([{ Title: 'toolkit-run-A' }, { Title: 'toolkit-run-B' }])` with a unique run marker and retain returned IDs. Call `updateBatch(ids.map(id => ({ id, item: { Title: 'toolkit-run-updated' } })))`, query those IDs to confirm server values, then `removeBatch(ids)` and confirm removal. Inspect the SharePoint `$batch` multipart response and individual statuses. Repeat a denied or deliberately invalid operation only on disposable records; settled per-item failures publish hook `error` while `createBatch` resolves successful IDs and update/remove batches resolve `undefined`. Service rejection (including selector-validation or batch-execution failure) still rejects hook batch promises. Successful writes remain, so inspect hook `error` and server state before retry/cleanup. Record this separately from demo UI and controlled-boundary tests. |
+| Cache expiry (instrumented host) | Use `useSPFxPnPContext(undefined, { cache: { enabled: true, storage: 'session', timeout: 1250 } })` under a provider. Start with a fresh test cache entry and call `sp.web.select('Title')()` twice, filtering Network by that exact resource URL. The second call should use cache; wait at least 1300 ms after the first response and call again: a new request should appear. With a custom keyFactory, keep its reference stable using useCallback/useMemo; changing its reference rebuilds SPFI. A different cache key requires the factory to return a different key for that URL. Do not clear unrelated browser data. |
+| List paging | Load two pages, click loadMore twice promptly, and start a new query during a page request. No duplicate dispatch/obsolete page append. Failed pages can retry the same offset. |
+| Search refiners | Search, select refiners, refetch and load more; current filters persist. Start a new search; prior refiners clear. Results and hasMore reflect accumulated results. |
+| Latest request | Change list/key/file/query while a previous read is pending. Current identity's data/errors remain authoritative when an old response arrives. Remote writes may still complete; local guards do not cancel them. |
+| Suggestions | Type rapidly, change text during debounce, and clear while a request is pending. Suggestions reflect the current input. Trigger a failed suggestion and a newer successful search; obsolete failure must not replace the newer search error state. |
+| Error recovery | Exercise a missing list/file/property, inaccessible target and network failure; record loading completion, error presentation and successful retry after restoring access. |

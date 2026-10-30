@@ -77,5 +77,5 @@ function Dimensions() {
 ## See Also
 
 - [API index](../../INDEX.md)
-- [Services](../services/INDEX.md)
-- [SharePoint validation](../../SHAREPOINT-VALIDATION.md)
+- [Services](../INDEX.md#non-react-services)
+- [SharePoint validation](../../development/sharepoint-validation/INDEX.md)

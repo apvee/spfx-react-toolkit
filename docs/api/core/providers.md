@@ -311,7 +311,7 @@ export default class MyCommandSet extends BaseListViewCommandSet<IMyCommandSetPr
 
 ## Provider Features
 
-All providers use the common runtime. The sample mounts WebPart and Application Customizer providers in their real host entry points; Field Customizer and ListView Command Set exports are checked but require separate real-host validation. See [SharePoint validation](../../SHAREPOINT-VALIDATION.md).
+All providers use the common runtime. The sample mounts WebPart and Application Customizer providers in their real host entry points; Field Customizer and ListView Command Set exports are checked but require separate real-host validation. See [SharePoint validation](../../development/sharepoint-validation/INDEX.md).
 
 ### Instance Isolation
 
@@ -342,7 +342,7 @@ Container size changes are observed and available via `useSPFxContainerSize`.
 
 ## See Also
 
-- [Types](./types.md) - Core type definitions
+- [Types](types.md) - Core type definitions
 - [Context Hooks](../hooks/context.md) - Hooks for accessing context
 - [Properties Hooks](../hooks/properties.md) - Property management hooks
 

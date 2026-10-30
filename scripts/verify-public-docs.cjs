@@ -2,6 +2,7 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const { resolveModule, collectPublicSurface, assertDocumentedSurface } = require('./public-surface.helpers.cjs');
+const { generatedArtifacts, checkArtifacts, findBrokenLinks } = require('./documentation.cjs');
 
 const root = path.resolve(__dirname, '..');
 
@@ -56,7 +57,7 @@ function collectPublicDocs() {
 }
 
 function assertContainsAll(documentPath, names, label) {
-  const document = read(documentPath);
+  const document = Array.isArray(documentPath) ? documentPath.map(read).join('\n') : read(documentPath);
   const missing = names.filter(name => !document.includes(name));
   assert.deepStrictEqual(missing, [], `${documentPath} missing ${label}: ${missing.join(', ')}`);
 }
@@ -74,9 +75,13 @@ const serviceInterfaces = serviceModules.flatMap(modulePath => (
   collectExportedNames(modulePath, /export\s+interface\s+([A-Za-z0-9_]+)/g)
 ));
 
-assertContainsAll('docs/api/helpers/INDEX.md', helperFunctions, 'helper functions');
-assertContainsAll('docs/api/services/INDEX.md', serviceFactories, 'service factories');
-assertContainsAll('docs/api/services/INDEX.md', serviceInterfaces, 'service interfaces');
+const helperDocs = collectPublicDocs().filter(file => file.startsWith('docs/api/helpers/'));
+const serviceDocs = collectPublicDocs().filter(file => file.startsWith('docs/api/services/'));
+assertContainsAll(helperDocs, helperFunctions, 'helper functions');
+assertContainsAll(serviceDocs, serviceFactories, 'service factories');
+assertContainsAll(serviceDocs, serviceInterfaces, 'service interfaces');
+const precheckHelperSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/helpers/spfx-api-permission-precheck.helpers.ts'));
+assertContainsAll('docs/api/helpers/api-permission-precheck.md', precheckHelperSurface.map(item => item.name), 'precheck helper functions, types and constants');
 
 const styleEntry = path.join(root, 'packages/spfx-react-toolkit/src/helpers/styles/index.ts');
 const styleSurface = collectPublicSurface(styleEntry);
@@ -89,16 +94,21 @@ assert.deepStrictEqual(
 assertDocumentedSurface(read('docs/api/helpers/styles.md'), styleSurface);
 const sxHook = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSx.ts'));
 assertDocumentedSurface(read('docs/api/hooks/react.md'), sxHook);
-assertContainsAll('docs/api/hooks/INDEX.md', ['useSx', 'useStableCallback'], 'React utility hooks');
+assertContainsAll('docs/api/INDEX.md', ['useSx', 'useStableCallback'], 'React utility hooks');
 
-const hooksIndex = read('docs/api/hooks/INDEX.md');
+const apiIndex = read('docs/api/INDEX.md');
 for (const staleHook of ['useSPFxPropertyPane', 'useSPFxPnPSP', 'useSPFxPnPGraph']) {
-  assert.ok(!hooksIndex.includes(staleHook), `docs/api/hooks/INDEX.md contains stale hook ${staleHook}`);
+  assert.ok(!apiIndex.includes(staleHook), `docs/api/INDEX.md contains stale hook ${staleHook}`);
 }
 
 const publicDocLinks = [
-  './api/helpers/INDEX.md',
-  './api/services/INDEX.md',
+  'api/INDEX.md#helpers-and-styles',
+  'api/INDEX.md#non-react-services',
+  'api/INDEX.md',
+  'getting-started/installation.md',
+  'getting-started/quick-start.md',
+  'development/INDEX.md',
+  'development/sharepoint-validation/INDEX.md',
 ];
 
 for (const link of publicDocLinks) {
@@ -125,29 +135,20 @@ assert.deepStrictEqual(offenders, []);
 
 
 
-// Validate repository-relative links in public docs as well as the export inventory.
-const brokenLinks = [];
-for (const documentPath of ['README.md', 'packages/spfx-react-toolkit/README.md', ...collectPublicDocs()]) {
-  const source = read(documentPath);
-  for (const match of source.matchAll(/\]\(([^)]+)\)/g)) {
-    const target = match[1].split(/\s+["']/)[0];
-    if (/^(?:[a-z][a-z0-9+.-]*:|#|\/)/i.test(target)) continue;
-    const relative = decodeURIComponent(target.split('#')[0]);
-    if (relative && !fs.existsSync(path.resolve(root, path.dirname(documentPath), relative))) {
-      brokenLinks.push(`${documentPath}: ${target}`);
-    }
-  }
-}
+// Validate current local paths and Markdown fragments, including agent guidance.
+const brokenLinks = findBrokenLinks(root, ['AGENTS.md', 'README.md', 'packages/spfx-react-toolkit/README.md', ...collectPublicDocs()]);
 assert.deepStrictEqual(brokenLinks, [], `Broken public documentation links:\n${brokenLinks.join('\n')}`);
-console.log(`public docs verification passed (${styleSurface.length} qualified style exports with source JSDoc, historical helper/service inventory and relative links)`);
+assert.deepStrictEqual(checkArtifacts(root, generatedArtifacts(root)), [], 'Regenerate the API catalog and npm README with node scripts/documentation.cjs');
 
 const facadeSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/styles/index.ts'));
 assert.deepStrictEqual(facadeSurface.map(item => item.name).sort(),
   [...styleSurface, ...sxHook].map(item => item.name).sort(),
   'Clean styles facade must expose the canonical descriptor surface and useSx');
-assertContainsAll('docs/PACKAGE-IMPORTS.md', [
+assertContainsAll('docs/guides/package-imports.md', [
   '/core', '/hooks', '/helpers', '/services', '/styles', '/styles/useSx', '/hooks/useStableCallback',
   '/lib/', 'typesVersions', 'moduleResolution', 'SxFunction', 'SxOptions', 'SxInput',
   'CommonJS', 'sideEffects', '1,023', '512', 'PnP',
 ], 'facade imports and compatibility constraints');
-assert.ok(read('docs/INDEX.md').includes('./PACKAGE-IMPORTS.md'), 'Package import guide must be indexed');
+assert.ok(read('docs/INDEX.md').includes('guides/package-imports.md'), 'Package import guide must be indexed');
+
+console.log(`public docs verification passed (${styleSurface.length} qualified style exports/JSDoc, helper/service coverage, generated catalog/README and current local links/fragments)`);
