@@ -186,7 +186,7 @@ Canonical HTML uses `p`, `h1`–`h4`, `strong`, `em`, `u`, `span` and `br`, esca
 | --- | --- |
 | Font size | Integer 8–96px; `wps-size-N`. Suggestions: 8/10/12/14/16/18/20/24/28/32/36/48/60/72/96. |
 | Block defaults | H1 → `title1` (32/40px), H2 → `title2` (28/36px), H3 → `title3` (24/32px), H4 → `subtitle1` (20/28px), Normal → `body1` (14/20px), without explicit overrides. Values shown are font size/line-height in the standard web theme; active theme tokens determine actual values. |
-| Theme foreground | Stable `wps-color-<id>` markers from the closed foreground registry below. Automatic has no color mark. |
+| Theme foreground | Stable `wps-color-<id>` markers from the [EditableText foreground registry](editable-text.md#color-picker-and-theme-colors). Automatic has no color mark. |
 | Line spacing | Default uses the block's Fluent line-height token. Explicit 1/1.2/1.4/1.6/2/2.4 overrides use `wps-line-10/12/14/16/20/24`. “Default line spacing” removes only that override. |
 | Space before/after | `wps-space-before` and `wps-space-after` toggles; active space uses `spacingVerticalS`. |
 | Emphasis | Bold, italic and underline marks; no links, lists, images or arbitrary color/style configuration. |
@@ -197,53 +197,9 @@ Read and Edit share the official Fluent typography recipes, including font famil
 
 Input and canonical output are limited to 65,536 UTF-8 bytes; parser nesting is limited to depth 32. Input that exceeds a limit or would exceed the canonical byte limit uses the safe fallback. An oversized editor draft stays visible with a recoverable size error; neither title property is patched until the draft fits. There is no implicit truncation. Leaving Edit discards an unsaved oversized draft when the editor is destroyed; previously saved properties remain authoritative.
 
-## Theme colors and localized UI
+## Title editor localization
 
-The circular Fluent SwatchPicker contains vertically stacked Automatic, Theme colors and Standard colors sections, each with a horizontal wrapping row of swatches. Every swatch has a localized name and Tooltip available on pointer hover and keyboard focus; the accessible name matches that name. Theme colors describe roles rather than promising a fixed black/blue value. The same picker and names are available in the toolbar overflow.
-
-The default light-theme palette follows the reference order: 12 Theme colors and 10 Standard colors. The values come exclusively from foreground tokens; fixed `color-mix(in srgb, …)` recipes provide intermediate tones. Their appearance follows the current Fluent theme and may differ from the older Office reference palette, particularly its cyan, blue and purple.
-
-| Offered Theme ID | Foreground source |
-| --- | --- |
-| `primary` | `colorNeutralForeground1` |
-| `neutralDark` | 50% neutral foreground 1 + 50% neutral foreground 2 |
-| `subtle` | `colorNeutralForeground2` |
-| `neutralMuted` | `colorNeutralForeground3` |
-| `neutralLight` | 75% neutral foreground 3 + 25% neutral foreground inverted |
-| `neutralLighter` | 60% neutral foreground 3 + 40% neutral foreground inverted |
-| `brandDarkest` | 25% brand foreground 1 + 75% neutral foreground 1 |
-| `brandDarker` | 40% brand foreground 1 + 60% neutral foreground 1 |
-| `brandDark` | 55% brand foreground 1 + 45% neutral foreground 1 |
-| `brandAlt` | `colorBrandForeground2` |
-| `brand` | `colorBrandForeground1` |
-| `brandLight` | 75% brand foreground 1 + 25% neutral foreground inverted |
-
-| Offered Standard ID | Foreground source |
-| --- | --- |
-| `darkRed` | `colorPaletteRedForeground1` |
-| `red` | `colorPaletteRedForeground3` |
-| `amber` | `colorPaletteMarigoldForeground3` |
-| `yellow` | `colorPaletteYellowForeground3` |
-| `yellowGreen` | 73% yellow foreground 3 + 27% green foreground 3 |
-| `green` | `colorPaletteGreenForeground3` |
-| `cyan` | `colorPaletteLightTealForeground2` |
-| `blue` | `colorPaletteBlueForeground2` |
-| `navy` | `colorPaletteNavyForeground2` |
-| `purple` | `colorPalettePurpleForeground2` |
-
-The accepted protocol retains four earlier colors: `orange` (dark-orange foreground 3), `teal`, `pink` and `brown` (their palette foreground 2). These remain valid in saved titles and appear in the picker while selected, without expanding the default palette. All 26 IDs use stable `wps-color-<id>` markers; derived tones never save CSS expressions or resolved colors in the document.
-
-Colors resolve from the shell's effective Fluent theme, including host/ancestor/explicit overrides. Duplicate resolved colors are collapsed while preserving the currently selected identity and Automatic. For example, default dark-theme red and dark red coincide, so only one is offered at a time; both protocol IDs remain valid. Automatic removes only the color override, preserving emphasis, size and block formatting. Existing primary/subtle/brand titles remain valid. No custom HEX/RGB color picker is provided.
-
-```tsx
-// The saved semantic green follows the active theme; its UI name is translated.
-// The properties object belongs to the SPFx web part instance passed to WebPartShell.
-const properties: IWebPartShellProperties = {
-  title: 'Project documents',
-  titleHTML: '<h2><span class="wps-color-green">Project documents</span></h2>',
-  showTitle: true,
-};
-```
+The title delegates its color picker to `EditableText`. See [Color picker and theme colors](editable-text.md#color-picker-and-theme-colors) for palette IDs, theme resolution, accessible swatch names and Automatic behavior. The picker uses the shell's effective Fluent theme, including host, ancestor and explicit overrides.
 
 Native SPFx AMD modules supply the Shell naming and common editor labels from the 50 canonical SharePoint UI-culture catalogs. Configure the package localized resources in the consuming solution; SPFx selects the modules when loading the page. Changing the instance pageContext or regional culture at runtime does not replace an already loaded native module. Hosts outside the SPFx loader need an explicit module adapter.
 

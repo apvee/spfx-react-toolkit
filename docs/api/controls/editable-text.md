@@ -139,6 +139,56 @@ Formatter callbacks receive heading levels 1–4, numeric line spacing, a transl
 | `EditableTextColorNames.pink` | Pink semantic color tooltip and accessible swatch name. |
 | `EditableTextColorNames.brown` | Brown semantic color tooltip and accessible swatch name. |
 
+## Color picker and theme colors
+
+The circular Fluent SwatchPicker contains vertically stacked Automatic, Theme colors and Standard colors sections, each with a horizontal wrapping row of swatches. Every swatch has a localized name and Tooltip available on pointer hover and keyboard focus; the accessible name matches that name. Theme colors describe roles rather than promising a fixed black/blue value. The same picker and names are available in the toolbar overflow.
+
+The default light-theme palette follows the reference order: 12 Theme colors and 10 Standard colors. The values come exclusively from foreground tokens; fixed `color-mix(in srgb, …)` recipes provide intermediate tones. Their appearance follows the current Fluent theme and may differ from the older Office reference palette, particularly its cyan, blue and purple.
+
+| Offered Theme ID | Foreground source |
+| --- | --- |
+| `primary` | `colorNeutralForeground1` |
+| `neutralDark` | 50% neutral foreground 1 + 50% neutral foreground 2 |
+| `subtle` | `colorNeutralForeground2` |
+| `neutralMuted` | `colorNeutralForeground3` |
+| `neutralLight` | 75% neutral foreground 3 + 25% neutral foreground inverted |
+| `neutralLighter` | 60% neutral foreground 3 + 40% neutral foreground inverted |
+| `brandDarkest` | 25% brand foreground 1 + 75% neutral foreground 1 |
+| `brandDarker` | 40% brand foreground 1 + 60% neutral foreground 1 |
+| `brandDark` | 55% brand foreground 1 + 45% neutral foreground 1 |
+| `brandAlt` | `colorBrandForeground2` |
+| `brand` | `colorBrandForeground1` |
+| `brandLight` | 75% brand foreground 1 + 25% neutral foreground inverted |
+
+| Offered Standard ID | Foreground source |
+| --- | --- |
+| `darkRed` | `colorPaletteRedForeground1` |
+| `red` | `colorPaletteRedForeground3` |
+| `amber` | `colorPaletteMarigoldForeground3` |
+| `yellow` | `colorPaletteYellowForeground3` |
+| `yellowGreen` | 73% yellow foreground 3 + 27% green foreground 3 |
+| `green` | `colorPaletteGreenForeground3` |
+| `cyan` | `colorPaletteLightTealForeground2` |
+| `blue` | `colorPaletteBlueForeground2` |
+| `navy` | `colorPaletteNavyForeground2` |
+| `purple` | `colorPalettePurpleForeground2` |
+
+The accepted protocol retains four earlier colors: `orange` (dark-orange foreground 3), `teal`, `pink` and `brown` (their palette foreground 2). These remain valid in saved content and appear in the picker while selected, without expanding the default palette. All 26 IDs use stable `wps-color-<id>` markers; derived tones never save CSS expressions or resolved colors in the document.
+
+Colors resolve from the active FluentProvider theme supplied by the host. Duplicate resolved colors are collapsed while preserving the currently selected identity and Automatic. For example, default dark-theme red and dark red coincide, so only one is offered at a time; both protocol IDs remain valid. Automatic removes only the color override, preserving emphasis, size and block formatting. Existing primary/subtle/brand content remains valid. No custom HEX/RGB color picker is provided.
+
+```tsx
+import * as React from 'react';
+import { EditableText } from '@apvee/spfx-react-toolkit/controls/editable-text';
+
+// The saved semantic green follows the active theme; its UI name is translated.
+const savedHTML = '<h2><span class="wps-color-green">Project documents</span></h2>';
+
+export function ProjectHeading(): React.ReactElement {
+  return <EditableText value={savedHTML} />;
+}
+```
+
 ## Controlled updates, history and composition
 
 Canonical echoes preserve the current selection and history. Actual external source replacement (`value`/`fallbackText`) establishes a new undo baseline. A membership change reconciles the live draft, retaining the editor, text, marks and valid selection while resetting undo, even if the current block is still admitted. Reordering/duplicates do not reset it. Changing only `defaultBlock` preserves history and a nonempty admitted block. Placeholder and dictionary updates preserve the draft, selection and history. None of these configuration operations emits a callback.
