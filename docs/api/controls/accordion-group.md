@@ -1,6 +1,8 @@
 # AccordionGroup
 
-`AccordionGroup` groups optional details inside a Fluent Card. Fluent Accordion owns expansion and native trigger behavior; native semantic wrappers and `useSx` provide toolkit typography/layout. Use [SettingsGroup](./settings-group.md) for preferences that should remain visible. No SPFx provider is required.
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > AccordionGroup
+
+`AccordionGroup` groups optional details inside a Fluent Card. Fluent Accordion owns expansion and native trigger behavior; native semantic wrappers and `useSx` provide toolkit typography/layout. Use [SettingsGroup](settings-group.md) for preferences that should remain visible. No SPFx provider is required.
 
 ```tsx
 import { AccordionGroup } from '@apvee/spfx-react-toolkit';
@@ -88,7 +90,7 @@ By default closed panel children remain mounted, preserving uncontrolled inputs 
 
 The optional header sits 12px from the Card (Fluent medium spacing). Header icons have fixed 24px boxes and Item icons fixed 20px boxes; direct font icons inherit slot font size and SVG icons fill the slot without cloned child props. Complex custom icon content retains its own structure. Fluent Card medium provides the single 12px lateral inset, border and radius. The trigger has zero extra horizontal padding and the panel zero horizontal margin, so panel content and trigger text share the Card inset when no leading icon is present. Native trigger minimum height remains 44px; adjacent Items receive a thin separator with additional spacing equal to one Card-padding interval, split equally before and after it (6px + 6px at medium). Both halves derive from Fluent’s public `cardCSSVars.cardSizeVar` (`--fui-Card--size`), matching native Card padding; body gap stays zero. Divider spacing is measured between the native trigger/content row boxes; the 44px trigger minimum remains independent of the outer separator padding, so short and multiline titles retain native vertical centering. Fluent owns interaction and motion; the wrapper adds no animation timers or custom expansion state. Theme and direction use existing toolkit/Fluent/Griffel primitives and shared peer contracts; no Markdown parser or new dependency is required.
 
-The lazy **SettingsGroup and AccordionGroup** sample selects one active group. Its AccordionGroup contains Profile details with a retained note and Advanced preferences with a notification switch; both triggers have Fluent icons. The sample and public control default to `filled`; `alternate` and `outline` remain selectable. Controlled expansion, multiple mode, disabled triggers, retained note state and unmount reset, inherited host theme/direction, width and root refs remain observable. Verify actual Tab behavior and state in a browser. Local and authenticated SharePoint results are distinct; see the [host checklist](../../SHAREPOINT-VALIDATION.md#settingsgroup-and-accordiongroup).
+The lazy **SettingsGroup and AccordionGroup** sample selects one active group. Its AccordionGroup contains Profile details with a retained note and Advanced preferences with a notification switch; both triggers have Fluent icons. The sample and public control default to `filled`; `alternate` and `outline` remain selectable. Controlled expansion, multiple mode, disabled triggers, retained note state and unmount reset, inherited host theme/direction, width and root refs remain observable. Verify actual Tab behavior and state in a browser. Local and authenticated SharePoint results are distinct; see the [host checklist](../../development/sharepoint-validation/checklists/groups.md#settingsgroup-and-accordiongroup).
 
 ## Named content slots
 

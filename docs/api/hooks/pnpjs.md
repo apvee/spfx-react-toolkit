@@ -1,29 +1,20 @@
 # PnPjs Hooks
 
+[React and SPFx hooks](../INDEX.md#react-and-spfx-hooks)
+
 Public hook signatures and result shapes match the library source. External types (React, SPFx and PnPjs) come from their respective packages. All hooks require a matching SPFx provider.
 
 Install compatible @pnp/core, @pnp/queryable and @pnp/sp v4 peers in your host.
 
 ## Package import migration
 
-Root and clean domain imports use the canonical implementations; historical `/lib/...` imports remain supported. Unrelated root imports no longer install incidental PnP features. Direct consumers must import every feature used by their operations, including callbacks passed to `invoke`/`batch`; toolkit-owned registrations do not cover arbitrary caller features. See [package imports](../../PACKAGE-IMPORTS.md) for aliases, resolver and peer requirements, and the local-versus-tenant verification boundary.
+Root and clean domain imports use the canonical implementations; historical `/lib/...` imports remain supported. Unrelated root imports no longer install incidental PnP features. Direct consumers must import every feature used by their operations, including callbacks passed to `invoke`/`batch`; toolkit-owned registrations do not cover arbitrary caller features. See [package imports](../../guides/package-imports.md) for aliases, resolver and peer requirements, and the local-versus-tenant verification boundary.
 
 ## PnP feature registrations
 
-Hooks use service modules that install their own required PnP registrations:
-context installs webs and batching, list installs webs/lists/items/batching,
-search installs search and suggestions, and the generic service installs batching.
-Standalone list and search factories also work with a supplied configured `SPFI`
-without loading the toolkit context factory. The client still requires request
-behaviors and authentication; registration does not grant SharePoint permissions.
+Hooks use service modules that install their own required PnP registrations: context installs webs and batching, list installs webs/lists/items/batching, search installs search and suggestions, and the generic service installs batching. Standalone list and search factories also work with a supplied configured `SPFI` without loading the toolkit context factory. The client still requires request behaviors and authentication; registration does not grant SharePoint permissions.
 
-Import features used in direct PnP operations explicitly, including callbacks
-passed to `useSPFxPnP().invoke` or `.batch`. For example, a callback reading
-`sp.web()` needs `import '@pnp/sp/webs';`; one reading list items also needs
-`import '@pnp/sp/lists';` and `import '@pnp/sp/items';`. Additional features such
-as files require their corresponding PnP imports. Do not rely on unrelated toolkit
-imports to install these features. See the [service registration table and
-example](../services/INDEX.md#pnp-feature-registrations).
+Import features used in direct PnP operations explicitly, including callbacks passed to `useSPFxPnP().invoke` or `.batch`. For example, a callback reading `sp.web()` needs `import '@pnp/sp/webs';`; one reading list items also needs `import '@pnp/sp/lists';` and `import '@pnp/sp/items';`. Additional features such as files require their corresponding PnP imports. Do not rely on unrelated toolkit imports to install these features. See the [service registration table and example](../../guides/helpers-and-services.md).
 
 ## useSPFxPnP
 
@@ -207,7 +198,7 @@ function SelectedLists() {
 }
 ```
 
-Use the actual GUID and root of your list in place of these illustrative values. Each hook has independent local state. Settled per-item batch failures publish hook `error` while batch promises resolve successful create IDs or `undefined` for update/remove; underlying service rejection still rejects those promises. Successful server writes are not rolled back. The standalone [list service](../services/INDEX.md#createspfxpnplistservice) returns its existing `value`/`errors`/`summaryError` batch envelope instead. Inspect hook `error` and server state before retrying a partial batch.
+Use the actual GUID and root of your list in place of these illustrative values. Each hook has independent local state. Settled per-item batch failures publish hook `error` while batch promises resolve successful create IDs or `undefined` for update/remove; underlying service rejection still rejects those promises. Successful server writes are not rolled back. The standalone [list service](../services/pnp-list.md#createspfxpnplistservice) returns its existing `value`/`errors`/`summaryError` batch envelope instead. Inspect hook `error` and server state before retrying a partial batch.
 
 ## useSPFxPnPSearch
 
@@ -296,8 +287,93 @@ function SearchResults() {
 
 `SearchVerticals` is an exported preset object defined in the [search hook source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts). A query-builder callback receives PnPjs `ISearchBuilder`; `SearchQueryBuilderFn` in the signature names that internal callback alias, rather than a separate public export. Query construction does not bypass search permissions or indexing delays.
 
+## PnP context and operation members
+
+`PnPContextConfig.cache.enabled` must be supplied when `cache` exists; omission/false disables caching. `cache.storage` defaults to session and `cache.keyFactory(url)` returns the cache key (a hashed URL key is the default). `cache.timeout` uses milliseconds as described above. `PnPContextConfig.headers` injects the supplied headers; omitted headers add no behavior. `PnPContextConfig.batch.enabled` and `batch.maxRequests` are reserved metadata and enforce no request behavior. These rules also apply to the service config. JSON-incompatible configuration can throw while deriving the memoization key during render; URL resolution can also throw before SPFI error capture. Keep configuration immutable.
+
+`PnPContextInfo.sp` is the configured client or undefined; `PnPContextInfo.isInitialized` is exactly client presence, `PnPContextInfo.error` captures SPFI creation failure, and `PnPContextInfo.siteUrl` is the resolved web target. No network request, access check or schema check establishes readiness. Supplying a context to another PnP hook does not remove the matching provider requirement: those hooks also invoke their default context hook unconditionally.
+
+`SPFxPnPInfo.sp`, `SPFxPnPInfo.siteUrl` and `SPFxPnPInfo.isInitialized` mirror the selected context. `SPFxPnPInfo.invoke(fn)` returns callback results; `SPFxPnPInfo.batch(fn)` invokes the callback to queue work, executes the batch, then awaits its result. Queue calls before awaiting their results inside a batch callback. `SPFxPnPInfo.error` prefers the current invocation error over context error; `SPFxPnPInfo.clearError()` clears only the invocation error, so a context error can remain. These operations normalize thrown values to Error. Native batches are not transactions.
+
+```tsx
+import '@pnp/sp/webs';
+import { useSPFxPnP } from '@apvee/spfx-react-toolkit/hooks';
+
+function WebTitleButton() {
+  const pnp = useSPFxPnP();
+  return <button disabled={!pnp.isInitialized} onClick={() => {
+    void pnp.invoke(sp => sp.web.select('Title')()).then(console.log).catch(console.error);
+  }}>Read web title</button>;
+}
+```
+
+## List result members and mutation refresh
+
+| Member | Observable contract |
+| --- | --- |
+| `ListFilterFunction<T>` | Type for a PnP fluent predicate: accepts `InitialFieldQuery<T>`, returns `ComparisonResult<T>`; the toolkit does not evaluate it locally |
+| `UseSPFxPnPListOptions.pageSize` | Optional default limit, absent by default; explicit builder `.top()` and per-query limit take precedence |
+| `SPFxPnPListInfo.query(builder?, options?)` | Executes the supplied `IItems` transform (identity when omitted), returns a page and replaces items on success |
+| `SPFxPnPListInfo.items` | Loaded rows; initially `[]`; `T` does not validate server data |
+| `SPFxPnPListInfo.loading`, `SPFxPnPListInfo.loadingMore` | Current replacement/page request flags; they do not track CRUD/getById calls |
+| `SPFxPnPListInfo.error`, `SPFxPnPListInfo.clearError()` | Shared current-operation error and explicit clear; clearing does not cancel requests |
+| `SPFxPnPListInfo.isEmpty` | `items.length === 0 && !loading && !error`; can be true before any query |
+| `SPFxPnPListInfo.hasMore` | Count/page-size heuristic, initially false |
+| `SPFxPnPListInfo.refetch()` | Repeats the last successful query from page one; rejects before a successful query exists |
+| `SPFxPnPListInfo.loadMore()` | Requests/appends another page using the cumulative-count paging heuristic below; requires a successful prior query with a page size and does not automatically stop when `hasMore` is false |
+| `SPFxPnPListInfo.getById(id)` | Reads a numeric item ID; does not populate `items` or change query loading state |
+| `SPFxPnPListInfo.create(item)` | Creates a partial item and returns the new numeric ID |
+| `SPFxPnPListInfo.update(id, item)`, `SPFxPnPListInfo.remove(id)` | Updates/deletes one numeric item ID; resolve without a value |
+| `SPFxPnPListInfo.createBatch(items)` | Creates partial items and resolves successful numeric IDs, with per-item failures published as described above |
+| `SPFxPnPListInfo.updateBatch(updates)` | Each entry has numeric `id` and partial `item`; resolves without a value |
+| `SPFxPnPListInfo.removeBatch(ids)` | Deletes numeric IDs; resolves without a value |
+
+All four list hooks inherit the service's paging limitation: `query` initializes the next skip to the returned item count, and successful `loadMore` adds that page's count. The service applies `.skip(skip).top(pageSize)` after the builder. The installed PnP implementation serializes `.skip(skip)` as `$skiptoken=Paged=TRUE&p_ID=<skip>`, rather than OData `$skip`. This cumulative-count value is a historical heuristic, not a server-returned continuation token; it does not provide a validated cursor for arbitrary filters/order or noncontiguous item IDs. Reuse the original filter and deterministic order, and verify that this policy fits the queried list before relying on loaded rows as complete. Concurrent server changes can also move items between requests. See the [shared list service paging contract](../services/pnp-list.md#paging-and-public-type-contracts).
+
+Successful CRUD/batch settlement schedules a 100ms debounced refresh only when a query has been started for that active identity. The refresh uses the active query at dispatch and is invalidated by another query, target/service replacement or unmount. A mutation promise can resolve before this separate refresh runs; a refresh failure does not roll back the write. Failed refetch retains previously successful rows and paging offset. Display the current error alongside retained rows rather than treating old rows as a successful replacement query.
+
+## Search options and result members
+
+| Member | Observable contract |
+| --- | --- |
+| `UseSPFxPnPSearchOptions.pageSize` | Defaults to 50; per-search pageSize wins and is applied after builder `rowLimit` |
+| `UseSPFxPnPSearchOptions.selectProperties` | Optional managed-property defaults; omitted/empty keeps PnP/SharePoint defaults; builder can override |
+| `UseSPFxPnPSearchOptions.refiners` | Optional managed-property refiner specification; omitted requests no additional facets |
+| `UseSPFxPnPSearchOptions.refinerOperator` | `'and'` by default, or `'or'`, within one facet |
+| `SPFxPnPSearchInfo.search(query, options?)` | Text or builder transform; returns the first page and starts a new unrefined query |
+| `SPFxPnPSearchInfo.suggest(queryText)` | Returns suggestion strings; no suggestion state/loading flag is exposed |
+| `SPFxPnPSearchInfo.results`, `SPFxPnPSearchInfo.totalResults`, `SPFxPnPSearchInfo.refiners` | Loaded rows, full server count (zero if absent), facets (empty if absent); initially empty/zero |
+| `SPFxPnPSearchInfo.loading`, `SPFxPnPSearchInfo.loadingMore` | Latest active replacement/page request flags |
+| `SPFxPnPSearchInfo.hasMore` | Accumulated loaded row count is below server total; the method itself does not stop dispatch when false |
+| `SPFxPnPSearchInfo.error`, `SPFxPnPSearchInfo.clearError()` | Shared error and explicit clear, without cancellation |
+| `SPFxPnPSearchInfo.loadMore()` | Returns/appends a next page; rejects before a search or without a truthy page size |
+| `SPFxPnPSearchInfo.refetch()` | Repeats the remembered query from offset zero with selected refiners; rejects before a search |
+| `SPFxPnPSearchInfo.applyRefiner(name, token)` | Toggles an unchanged server token and reexecutes from offset zero; rejects before a search |
+
+No search runs on mount. Search/page/refetch/refiner/suggestion failures reject their promises and publish errors subject to current ownership. Search option/service identity changes reset query/filter/results state; older calls can still settle their own promises. Existing rows can remain while a new search is loading or fails, so render loading/error with them. `SearchResult.id` is `String(DocId ?? Path ?? Math.random())` and is not stable when both identifiers are absent; `SearchResult.data` and `SearchResult.raw` reference the same unvalidated PnP row. `SearchResult.rank` parses a truthy Rank as an integer and is undefined for a missing/zero Rank. `SearchRefiner.name` defaults to `''`; each `SearchRefiner.entries` entry exposes display `value` (default `''`), parsed `count` (default 0) and opaque `token` (default `''`).
+
+## SearchVerticals values
+
+`SearchVerticals` provides PnP search result-source presets; select a preset with a search builder's `sourceId` method. The preset does not filter local data or grant access.
+
+| Member | Value |
+| --- | --- |
+| `SearchVerticals.All` | `undefined` (no explicit source) |
+| `SearchVerticals.People` | `b09a7990-05ea-4af9-81ef-edfab16c4e31` |
+| `SearchVerticals.Videos` | `38403c8c-3975-41a8-826e-717f2d41568a` |
+| `SearchVerticals.Sites` | `e1327b9c-2b8c-4b23-99c9-3730cb29c3f7` |
+| `SearchVerticals.Documents` | `8413cd39-2156-4e00-b54d-11efd9abdb89` |
+| `SearchVerticals.Conversations` | `6e71030e-5e16-4406-9bff-9c1829843083` |
+| `SearchVerticals.Pages` | `5e34578e-4d68-4783-8c79-1f07d10bed4f` |
+
+```tsx
+const search = useSPFxPnPSearch<{ Title: string }>();
+const run = () => search.search(builder => builder.text('training').sourceId(SearchVerticals.Documents));
+// Invoke run from an event/effect and handle its rejection.
+```
+
 ## See Also
 
-- [API index](../../INDEX.md)
-- [Services](../services/INDEX.md)
-- [SharePoint validation](../../SHAREPOINT-VALIDATION.md)
+- [API index](../INDEX.md)
+- [Services](../INDEX.md#non-react-services)
+- [SharePoint validation](../../development/sharepoint-validation/INDEX.md)

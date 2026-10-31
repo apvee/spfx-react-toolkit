@@ -1,267 +1,52 @@
-# API Reference
+# SPFx React Toolkit documentation
 
-> Complete API documentation for @apvee/spfx-react-toolkit
+SPFx React Toolkit provides React controls, providers, hooks, typed styles, helpers and services for SharePoint Framework applications. It brings together access to SPFx context, component properties, HTTP clients, PnPjs, themes, permissions and storage. Host-specific providers keep runtime state scoped to each SPFx instance.
 
-[Package imports, resolver requirements and tree shaking](./PACKAGE-IMPORTS.md)
+Use this documentation to integrate the toolkit into an application, choose APIs for a feature, or contribute to the library. If you already know a symbol's name, go directly to the [alphabetical API catalog](api/INDEX.md).
 
-## Table of Contents
+## Start with your first integration
 
-- [Controls](#controls)
-- [Core](#core)
-  - [Providers](#providers)
-  - [Types](#types)
-- [Hooks](#hooks)
-  - [React Utilities](#react-utilities)
-  - [Context & Metadata](#context--metadata)
-  - [Properties & Display](#properties--display)
-  - [HTTP Clients](#http-clients)
-  - [PnPjs Integration](#pnpjs-integration)
-  - [UI & Theming](#ui--theming)
-  - [User & Site Information](#user--site-information)
-  - [Environment & Platform](#environment--platform)
-  - [Storage](#storage)
-  - [Permissions](#permissions)
-  - [Performance & Diagnostics](#performance--diagnostics)
-- [Services](#services)
-- [Helpers](#helpers)
-- [Access trims](#access-trims)
-- [SharePoint pickers](#sharepoint-pickers)
-- [Localization](./LOCALIZATION.md)
+Follow these guides when adding the toolkit to an existing SPFx project:
 
----
+1. [Install the package and compatible peers](getting-started/installation.md). Check the host's dependencies, shared React/Fluent/Griffel runtimes and the distinction between declared compatibility and the verified toolchain baseline.
+2. [Build a first web part](getting-started/quick-start.md). Follow a complete example that mounts a provider, reads user information through a hook and unmounts the React tree when the web part is disposed.
+3. [Choose the provider for your host](getting-started/choosing-a-provider.md). Understand the integration points for web parts, Application Customizers, Field Customizers and ListView Command Sets, including their validation limits.
 
-## Controls
+## Browse API families
 
-- [Stage](./api/controls/stage.md) — explicit Dialog/Drawer/Popover with compound Header, Body and Footer, controlled requests and form composition.
+The public API is organized by the responsibility of each part:
 
-- [WebPartShell](./api/controls/web-part-shell.md) — actual web part provider composition, adaptive surface and inline rich title with searchable plain metadata.
-
-- [Form and createForm](./api/controls/form.md) — typed React Hook Form binding, validation, reset, settings field composition and structured sections.
-
-- [SettingsGroup](./api/controls/settings-group.md) — caller-owned preferences and automatic Form field names/hints in a Fluent Card.
-- [AccordionGroup](./api/controls/accordion-group.md) — optional details with controlled/uncontrolled disclosure and retained state.
-
-- [StateMessage](./api/controls/state-message.md) — section states, artwork and actions.
-
-| Component / types | Description | Documentation |
+| Family | What it provides | When to use it |
 | --- | --- | --- |
-| `AutoSkeleton`, `AutoSkeletonProps` | Mounted HTML geometry, loading overlays and persistent child state | [AutoSkeleton](./api/controls/auto-skeleton.md) |
-| `RelativeTime`, `RelativeTimeProps` | Localized relative instants, full-date descriptions and clock modes | [RelativeTime](./api/controls/relative-time.md) |
-| `FormattedText`, `FormattedTextProps`, `FormattedTextVariant`, `FormattedTextSemanticElement` | Native text elements, typography, inline Markdown and overflow | [Controls](./api/controls/INDEX.md), [FormattedText](./api/controls/formatted-text.md) |
-| `EditableText` | Safe HTML read rendering and lazy, policy-bounded editing | [EditableText](./api/controls/editable-text.md) |
-| `DataGrid`, `createDataGrid` | Typed columns, controlled selection/sort intent and native cells | [DataGrid](./api/controls/data-grid.md) |
-| `Pagination` | Controlled pages, cursors and load-more requests | [Pagination](./api/controls/pagination.md) |
-| `DescriptionList` | Data or compound term/definition composition | [DescriptionList](./api/controls/description-list.md) |
-| `ContentCard`, `PreviewCard` | Native Fluent cards with content slots and optional preview media | [ContentCard](./api/controls/content-card.md), [PreviewCard](./api/controls/preview-card.md) |
+| [React controls](api/INDEX.md#react-controls) | Shell, rich/plain text, forms, grids, cards, loading/feedback, surfaces, access trims and SharePoint pickers | Compose actual user interactions; each reference states provider, shared-runtime, localization and permission requirements. |
+| [Property Pane](api/INDEX.md#property-pane) | Native SPFx picker factories, saved references and field lifecycle | Configure a web part through dedicated Property Pane imports. |
+| [Providers and core types](api/INDEX.md#providers-and-core-types) | Host integration, instance context and shared TypeScript contracts | Connect a React tree to its actual SPFx component instance. |
+| [Hooks](api/INDEX.md#react-and-spfx-hooks) | React access to context, properties, clients, themes, storage and diagnostics | Read toolkit state or invoke operations from a React component. SPFx hooks require a matching provider; generic React utilities document their own dependencies. |
+| [Helpers and styles](api/INDEX.md#helpers-and-styles) | Input-based transformations, permission utilities, path builders, serialization and typed style descriptors | Reuse a focused transformation or compose styles. The `useSx` hook uses the host renderer and documented theme requirements. |
+| [Services](api/INDEX.md#non-react-services) | SharePoint, PnPjs and Graph operations using caller-supplied clients | Perform reusable I/O in command handlers or other code outside React. |
 
-The [controls index](./api/controls/INDEX.md) lists the complete public control and type surface. Native Property Pane factories have [dedicated imports and guides](#sharepoint-pickers).
+The [API catalog](api/INDEX.md) lists exported symbols and their import paths, including associated public types. Follow a symbol to its reference for signatures, parameters, defaults, results, error behavior and limitations. Related types stay with their capability; shared core types have a [dedicated reference](api/core/types.md).
 
-## Core
+## Task guides
 
-### Providers
+These guides explain how to select and combine APIs for a concrete task. Detailed contracts and complete option definitions remain in the linked API references.
 
-React context providers that wrap your SPFx components and enable hook usage.
+| Task | Guide and coverage |
+| --- | --- |
+| Compose controls and own their state | [React controls](guides/react-controls.md): selecting families, providers, compound APIs and lifecycle. |
+| Customize named presentation regions | [Control slots](guides/control-slots.md): shorthand content, ref/event forwarding, semantics and absence policies. |
+| Localize toolkit UI in an SPFx consumer | [Localization](guides/localization.md): native resource registration, per-instance dictionaries and formatting cultures. |
+| Call an external API, SharePoint REST or Microsoft Graph | [HTTP clients](guides/http-clients.md): client selection, request state, readiness and overlapping invocations. |
+| Persist data with the appropriate lifetime and sharing scope | [Storage](guides/storage.md): browser, OneDrive, tenant and site collection options, permissions and failure handling. |
+| Check SharePoint permissions or delegated API scopes | [Permissions](guides/permissions.md): choosing a check, interpreting precheck results and handling actual request authorization. |
+| Apply typed layout, spacing and theme styles | [Styling](guides/styling.md): composing descriptors with `useSx` and using the shared host runtime. |
+| Reuse toolkit operations outside a React component | [Helpers and services](guides/helpers-and-services.md): dependency ownership, examples and explicit PnP feature registrations. |
+| Select package entry points and understand bundling | [Package imports](guides/package-imports.md): supported aliases, resolver requirements, tree shaking and compatibility boundaries. |
 
-| Provider | Component Type | Documentation |
-|----------|----------------|---------------|
-| `SPFxWebPartProvider` | WebParts | [providers.md](./api/core/providers.md#spfxwebpartprovider) |
-| `SPFxApplicationCustomizerProvider` | Application Customizers | [providers.md](./api/core/providers.md#spfxapplicationcustomizerprovider) |
-| `SPFxFieldCustomizerProvider` | Field Customizers | [providers.md](./api/core/providers.md#spfxfieldcustomizerprovider) |
-| `SPFxListViewCommandSetProvider` | ListView Command Sets | [providers.md](./api/core/providers.md#spfxlistviewcommandsetprovider) |
+## Develop and verify the toolkit
 
-### Types
+The [development documentation](development/INDEX.md) covers the npm workspaces, local setup, build/debug workflow, browser fixtures and verification commands. The private SPFx sample consumes the compiled library, so library source changes require a library rebuild and a restart of the app's serve process.
 
-Core TypeScript type definitions.
+Use the [SharePoint validation procedures](development/sharepoint-validation/INDEX.md) when checking behavior in an authenticated host. They describe setup, scenario checklists and how to record results. Local tests and builds do not establish tenant permissions, Graph consent or actual SharePoint-host behavior.
 
-| Type | Description | Documentation |
-|------|-------------|---------------|
-| `HostKind` | SPFx component type discriminator | [types.md](./api/core/types.md#hostkind) |
-| `SPFxComponent` | Union of all SPFx component types | [types.md](./api/core/types.md#spfxcomponent) |
-| `SPFxContextType` | Union of all SPFx context types | [types.md](./api/core/types.md#spfxcontexttype) |
-| `ContainerSize` | Container dimensions interface | [types.md](./api/core/types.md#containersize) |
-| `SPFxProviderProps` | Provider component props | [types.md](./api/core/types.md#spfxproviderprops) |
-| `SPFxContextValue` | Context value interface | [types.md](./api/core/types.md#spfxcontextvalue) |
-
----
-
-## Hooks
-
-### React Utilities
-
-| Hook | Returns | Documentation |
-| --- | --- | --- |
-| `useStableCallback` | Stable callback | [React utility hooks](./api/hooks/react.md#usestablecallback) |
-| `useSx` | `SxFunction` class composer | [Styles and useSx](./api/helpers/styles.md) |
-
-### Context & Metadata
-
-Access SPFx context and instance metadata.
-
-| Hook | Returns | Description |
-|------|---------|-------------|
-| [`useSPFxContext`](./api/hooks/context.md#usespfxcontext) | `SPFxContextValue` | Core SPFx context (instanceId, spfxContext, kind) |
-| [`useSPFxPageContext`](./api/hooks/context.md#usespfxpagecontext) | `PageContext` | SharePoint page context |
-| [`useSPFxServiceScope`](./api/hooks/context.md#usespfxservicescope) | `SPFxServiceScopeInfo` | Service scope for dependency injection |
-| [`useSPFxInstanceInfo`](./api/hooks/context.md#usespfxinstanceinfo) | `SPFxInstanceInfo` | Component instance metadata |
-
-### Properties & Display
-
-Manage component properties and display state.
-
-| Hook | Returns | Description |
-|------|---------|-------------|
-| [`useSPFxProperties`](./api/hooks/properties.md#usespfxproperties) | `SPFxPropertiesInfo<T>` | Bidirectional property management |
-| [`useSPFxDisplayMode`](./api/hooks/properties.md#usespfxdisplaymode) | `SPFxDisplayModeInfo` | Read/Edit mode detection |
-| [`useSPFxIsEdit`](./api/hooks/properties.md#usespfxisedit) | `boolean` | Shortcut for edit mode check |
-
-### HTTP Clients
-
-Access SPFx HTTP clients for API calls.
-
-| Hook | Returns | Description |
-|------|---------|-------------|
-| [`useSPFxHttpClient`](./api/hooks/http-clients.md#usespfxhttpclient) | `SPFxHttpClientInfo` | Generic HTTP client |
-| [`useSPFxSPHttpClient`](./api/hooks/http-clients.md#usespfxsphttpclient) | `SPFxSPHttpClientInfo` | SharePoint REST API client |
-| [`useSPFxAadHttpClient`](./api/hooks/http-clients.md#usespfxaadhttpclient) | `SPFxAadHttpClientInfo` | Azure AD secured API client |
-| [`useSPFxAadTokenProvider`](./api/hooks/http-clients.md#usespfxaadtokenprovider) | `SPFxAadTokenProviderInfo` | SPFx AAD token provider access |
-| [`useSPFxApiPermissionPrecheck`](./api/hooks/http-clients.md#usespfxapipermissionprecheck) | `SPFxApiPermissionPrecheckResult` | Delegated Graph and custom API permission precheck |
-| [`useSPFxMSGraphClient`](./api/hooks/http-clients.md#usespfxmsgraphclient) | `SPFxMSGraphClientInfo` | Microsoft Graph client |
-
-### PnPjs Integration
-
-PnPjs v4 integration with state management.
-
-| Hook | Returns | Description |
-|------|---------|-------------|
-| [`useSPFxPnP`](./api/hooks/pnpjs.md#usespfxpnp) | `SPFxPnPInfo` | PnPjs with invoke/batch helpers |
-| [`useSPFxPnPContext`](./api/hooks/pnpjs.md#usespfxpnpcontext) | `PnPContextInfo` | PnPjs SPFI factory |
-| [`useSPFxPnPList`](./api/hooks/pnpjs.md#usespfxpnplist) | `SPFxPnPListInfo<T>` | List CRUD operations |
-| [`useSPFxPnPListById`](./api/hooks/pnpjs.md#usespfxpnplistbyid) | `SPFxPnPListInfo<T>` | List access by GUID |
-| [`useSPFxPnPListByUrl`](./api/hooks/pnpjs.md#usespfxpnplistbyurl) | `SPFxPnPListInfo<T>` | List access by decoded server-relative root URL |
-| [`useSPFxPnPListByPath`](./api/hooks/pnpjs.md#usespfxpnplistbypath) | `SPFxPnPListInfo<T>` | List access by decoded web-relative root path |
-| [`useSPFxPnPSearch`](./api/hooks/pnpjs.md#usespfxpnpsearch) | `SPFxPnPSearchInfo<T>` | SharePoint Search with pagination |
-
-### UI & Theming
-
-Access theme and layout information.
-
-| Hook | Returns | Description |
-|------|---------|-------------|
-| [`useSPFxThemeInfo`](./api/hooks/theming.md#usespfxthemeinfo) | `IReadonlyTheme \| undefined` | SPFx theme (Fluent UI 8) |
-| [`useSPFxFluent9ThemeInfo`](./api/hooks/theming.md#usespfxfluent9themeinfo) | `SPFxFluent9ThemeInfo` | Fluent UI 9 theme conversion |
-| [`useSPFxContainerSize`](./api/hooks/theming.md#usespfxcontainersize) | `SPFxContainerSizeInfo` | Responsive breakpoints |
-| [`useSPFxContainerInfo`](./api/hooks/theming.md#usespfxcontainerinfo) | `SPFxContainerInfo` | Container dimensions |
-
-### User & Site Information
-
-Access user and site metadata.
-
-| Hook | Returns | Description |
-|------|---------|-------------|
-| [`useSPFxUserInfo`](./api/hooks/user-site.md#usespfxuserinfo) | `SPFxUserInfo` | Current user information |
-| [`useSPFxUserPhoto`](./api/hooks/user-site.md#usespfxuserphoto) | `SPFxUserPhotoResult` | User profile photo URL |
-| [`useSPFxSiteInfo`](./api/hooks/user-site.md#usespfxsiteinfo) | `SPFxSiteInfo` | Site and web information |
-| [`useSPFxHubSiteInfo`](./api/hooks/user-site.md#usespfxhubsiteinfo) | `SPFxHubSiteInfo` | Hub site information |
-| [`useSPFxListInfo`](./api/hooks/user-site.md#usespfxlistinfo) | `SPFxListInfo \| undefined` | Current list context |
-
-### Environment & Platform
-
-Detect environment and platform capabilities.
-
-| Hook | Returns | Description |
-|------|---------|-------------|
-| [`useSPFxEnvironmentInfo`](./api/hooks/environment.md#usespfxenvironmentinfo) | `SPFxEnvironmentInfo` | Environment type detection |
-| [`useSPFxTeams`](./api/hooks/environment.md#usespfxteams) | `SPFxTeamsInfo` | Microsoft Teams context |
-| [`useSPFxLocaleInfo`](./api/hooks/environment.md#usespfxlocaleinfo) | `SPFxLocaleInfo` | Locale, raw timezone and optional representative IANA zone |
-| [`useSPFxPageType`](./api/hooks/environment.md#usespfxpagetype) | `SPFxPageTypeInfo` | Page type detection |
-
-### Storage
-
-Browser storage is instance-scoped; cloud stores use their documented user, collection or tenant scope.
-
-| Hook | Returns | Description |
-|------|---------|-------------|
-| [`useSPFxLocalStorage`](./api/hooks/storage.md#usespfxlocalstorage) | `SPFxStorageHook<T>` | Instance-scoped localStorage |
-| [`useSPFxSessionStorage`](./api/hooks/storage.md#usespfxsessionstorage) | `SPFxStorageHook<T>` | Instance-scoped sessionStorage |
-| [`useSPFxOneDriveAppData`](./api/hooks/storage.md#usespfxonedriveappdata) | `SPFxOneDriveAppDataResult<T>` | OneDrive app folder storage |
-| [`useSPFxTenantProperty`](./api/hooks/storage.md#usespfxtenantproperty) | `SPFxTenantPropertyResult<T>` | Tenant properties (read-only) |
-| [`useSPFxTenantKeyValueStore`](./api/hooks/storage.md#usespfxtenantkeyvaluestore) | `SPFxTenantKeyValueStoreResult` | Tenant-level key-value store |
-| [`useSPFxSiteKeyValueStore`](./api/hooks/storage.md#usespfxsitekeyvaluestore) | `SPFxSiteKeyValueStoreResult` | Collection root-web key-value store shared by subsites |
-| [`useSPFxConfigurationStore`](./api/hooks/storage.md#usespfxconfigurationstore) | `SPFxConfigurationStoreResult` | Tenant defaults, site overrides and explicitly scoped mutations |
-
-### Permissions
-
-SharePoint permissions checking.
-
-| Hook | Returns | Description |
-|------|---------|-------------|
-| [`useSPFxPermissions`](./api/hooks/permissions.md#usespfxpermissions) | `SPFxPermissionsInfo` | Site/web/list permissions |
-| [`useSPFxCrossSitePermissions`](./api/hooks/permissions.md#usespfxcrosssitepermissions) | `SPFxCrossSitePermissionsInfo` | Cross-site permissions |
-
-### Performance & Diagnostics
-
-Performance measurement and logging.
-
-| Hook | Returns | Description |
-|------|---------|-------------|
-| [`useSPFxPerformance`](./api/hooks/performance.md#usespfxperformance) | `SPFxPerformanceInfo` | Performance measurement |
-| [`useSPFxLogger`](./api/hooks/performance.md#usespfxlogger) | `SPFxLoggerInfo` | Structured logging |
-| [`useSPFxCorrelationInfo`](./api/hooks/performance.md#usespfxcorrelationinfo) | `SPFxCorrelationInfo` | Request correlation IDs |
-
----
-
-## Services
-
-Public non-React service factories for composing SPFx, PnPjs, SharePoint REST, and Microsoft Graph operations outside hooks.
-
-| Module | Description | Documentation |
-|--------|-------------|---------------|
-| PnPjs services | Context, invoke/batch, list CRUD, and search | [services/INDEX.md](./api/services/INDEX.md) |
-| Tenant services | App catalog discovery, tenant properties, tenant key-value store | [services/INDEX.md](./api/services/INDEX.md) |
-| Site collection service | `createSPFxSiteKeyValueStoreService`: root-web storage shared by subsites | [services/INDEX.md](./api/services/INDEX.md#createspfxsitekeyvaluestoreservice) |
-| Configuration service | `createSPFxConfigurationStoreService`: tenant defaults, site overrides and scoped mutations | [services/INDEX.md](./api/services/INDEX.md#configuration-store-service) |
-| Graph services | OneDrive app data and user photos | [services/INDEX.md](./api/services/INDEX.md) |
-| API permission precheck service | Token-provider-based delegated scope checks with remediation entries for `webApiPermissionRequests` | [services/INDEX.md](./api/services/INDEX.md) |
-
----
-
-## Helpers
-
-Public non-React helper functions for SPFx context mapping, permission checks, API permission precheck normalization and summarization, storage keys, tenant value serialization, Graph paths, and theme conversion.
-
-| Module | Description | Documentation |
-|--------|-------------|---------------|
-| Style descriptors | Complete typed catalog, theme mappings, state and responsive scopes | [styles.md](./api/helpers/styles.md) |
-| Page context helpers | User, site, list, locale, environment, page type, and correlation mapping | [helpers/INDEX.md](./api/helpers/INDEX.md) |
-| Utility helpers | Permissions, container size, storage keys, tenant values, Graph paths, theme conversion | [helpers/INDEX.md](./api/helpers/INDEX.md) |
-| API permission precheck helpers | Requirement normalization, JWT scope evaluation, error classification, and summaries that map remediation to `webApiPermissionRequests` | [helpers/INDEX.md](./api/helpers/INDEX.md) |
-
----
-
-## Quick Links
-
-- [Introduction & Quick Start](./INTRODUCTION.md)
-- [Workspace Development](./DEVELOPMENT.md)
-- [SharePoint Validation](./SHAREPOINT-VALIDATION.md)
-- [Controls Module](./api/controls/INDEX.md)
-- [Core Module](./api/core/INDEX.md)
-- [Hooks Module](./api/hooks/INDEX.md)
-- [Services Module](./api/services/INDEX.md)
-- [Helpers Module](./api/helpers/INDEX.md)
-
----
-
-This reference is maintained alongside the source; `npm run verify:public-docs` checks export coverage, selected JSDoc contracts and local links. Behavior and example correctness also require comparison with the implementation.
-
-## Access trims
-
-[SharePointPermissionTrim](./api/controls/sharepoint-permission-trim.md), [SharePointGroupTrim](./api/controls/sharepoint-group-trim.md) and [EntraGroupTrim](./api/controls/entra-group-trim.md) mount caller content only for a current positive permission/membership decision. Direct Loading/Fallback/ErrorFallback branches distinguish pending, denied and failed checks. The matching SPFx provider supplies native clients. The lazy sample exposes editable targets, repeat checks and protected mount counters; the Context panel also demonstrates scoped permissions. Server authorization remains required.
-
-## SharePoint pickers
-
-[React pickers](api/controls/pickers.md) and [native Property Pane pickers](api/property-pane/pickers.md) cover SitePicker, ListPicker, FieldPicker, ViewPicker, ContentTypePicker, ListItemPicker and PrincipalPicker, with JSON references, consumer options and remote discovery.
-
-- [Hosted FileFolderPicker](api/controls/file-folder-picker.md): React source restrictions, metadata references, authentication and lifecycle.
-- [PropertyPaneFileFolderPicker](api/property-pane/file-folder-picker.md): native JSON arrays and retained drafts.
-
-See [native SPFx localization and consumer setup](./LOCALIZATION.md) for per-family resources, postinstall registration, typed overrides and the EditableText locale migration.
+For documentation changes, follow the [authoring and maintenance guide](development/documentation.md). It explains content ownership, API page structure, generated catalog/README updates and link verification. Source JSDoc supports IntelliSense, while the sample provides observable usage scenarios alongside the written references.

@@ -1,10 +1,12 @@
 # React Utility Hooks
 
+[React and SPFx hooks](../INDEX.md#react-and-spfx-hooks)
+
 These hooks can be used in React components without an SPFx provider. `useStableCallback` needs no FluentProvider; token-based `useSx` selections need theme CSS variables in scope.
 
 ## Import choices
 
-Root imports, `/hooks` and historical hook leaves remain supported. The narrow clean `/hooks/useStableCallback` and `/styles/useSx` aliases point to the same canonical hooks. `/styles` exposes `useSx` alongside descriptors and types. Mixed aliases share context and renderer identity rather than adding instances. See [package imports](../../PACKAGE-IMPORTS.md) for complete examples, resolver/peer requirements and measured budgets. The Imports web part complements the existing React Hooks and Styles scenarios.
+Root imports, `/hooks` and historical hook leaves remain supported. The narrow clean `/hooks/useStableCallback` and `/styles/useSx` aliases point to the same canonical hooks. `/styles` exposes `useSx` alongside descriptors and types. Mixed aliases share context and renderer identity rather than adding instances. See [package imports](../../guides/package-imports.md) for complete examples, resolver/peer requirements and measured budgets. The Imports web part complements the existing React Hooks and Styles scenarios.
 
 ## useStableCallback
 
@@ -91,4 +93,4 @@ Use it at the top level of a component. The returned composer is an ordinary fun
 
 See the [complete styles reference](../helpers/styles.md) for all qualified exports, mapping, numeric domains, state/query priority, external-class behavior, direction, container ancestor requirements, theme restrictions and cache growth. Shared peers are `@griffel/core@^1.21.4`, `@griffel/react@^1.7.8`, `@fluentui/react-shared-contexts@^9.26.4`, alongside the existing Fluent peers.
 
-The lazy **Styles** web part panel selects one active recipe for catalog, query, interaction or scrolling behavior under the host theme. The two independent query regions and simultaneous engine comparisons remain in the versioned conformance fixtures. Local React/Griffel tests and browser observations are separate from authenticated SharePoint-host execution, which is **NOT EXECUTED** until recorded in the [host checklist](../../SHAREPOINT-VALIDATION.md#styles-and-usesx).
+The lazy **Styles** web part panel selects one active recipe for catalog, query, interaction or scrolling behavior under the host theme. The two independent query regions and simultaneous engine comparisons remain in the versioned conformance fixtures. Local React/Griffel tests and browser observations are separate from authenticated SharePoint-host execution, which is **NOT EXECUTED** until recorded in the [host checklist](../../development/sharepoint-validation/checklists/styling.md#styles-and-usesx).

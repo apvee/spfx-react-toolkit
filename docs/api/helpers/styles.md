@@ -1,8 +1,10 @@
 # Styles and useSx
 
+[Helpers overview](../INDEX.md#helpers-and-styles) · [Styling guide](../../guides/styling.md)
+
 Style descriptors are immutable, typed data used to describe dimensions, Fluent theme references, typography, and CSS scopes. They are independent of SPFx context. Creating or importing a descriptor does not access the DOM or insert CSS.
 
-The complete style catalog is available from the package root, the clean `@apvee/spfx-react-toolkit/styles` facade and the historical `@apvee/spfx-react-toolkit/lib/helpers/styles` deep entry point. The facade also re-exports canonical `useSx` and all public descriptor types; the narrow `/styles/useSx` entry exposes only that hook. Root, facade and historical leaves compose with the same active renderer/direction context. See [package imports](../../PACKAGE-IMPORTS.md) for resolver/peer contracts and bundle interpretation.
+The complete style catalog is available from the package root, the clean `@apvee/spfx-react-toolkit/styles` facade and the historical `@apvee/spfx-react-toolkit/lib/helpers/styles` deep entry point. The facade also re-exports canonical `useSx` and all public descriptor types; the narrow `/styles/useSx` entry exposes only that hook. Root, facade and historical leaves compose with the same active renderer/direction context. See [package imports](../../guides/package-imports.md) for resolver/peer contracts and bundle interpretation.
 
 ```tsx
 import { useSx, width, typography, SxInput } from '@apvee/spfx-react-toolkit/styles';
@@ -85,7 +87,6 @@ All three descriptor types are readonly and opaque. Raw CSS objects do not satis
 Container queries target the nearest ancestor named `apvee-sx`; their thresholds are inclusive. The element cannot query its own inline-size. Viewport queries use the window width. Scope constructors preserve data only; the browser evaluates the CSS materialized by `sx`.
 
 `SxOptions.dir` overrides the effective `ltr` or `rtl` direction. When omitted, `useSx` uses Fluent direction context, with LTR as the context-free default. Keep it consistent with the host's direction and any external Griffel classes when using a standalone Griffel context.
-
 
 ## Composition and precedence
 
@@ -274,7 +275,7 @@ Border geometry remains explicit: compose `borderWidth.thin`, `borderStyle.solid
 
 The vendor thumb retains **3px rounded corners** on both axes. Its base color is `colorNeutralStrokeAccessible`; moving the pointer over the thumb itself uses `colorNeutralStrokeAccessibleHover`, and pressing or dragging it uses `colorNeutralStrokeAccessiblePressed`. Pressed feedback wins while the thumb is also hovered; release restores hover feedback and leaving restores the base color. These tokens follow the existing Fluent theme variables in scope. Hovering the content or track does not activate thumb feedback. Forced colors and browsers using the standard fallback retain native interactions.
 
-In SharePoint host mode, [`createFluent9ThemeFromSPFxTheme`](./INDEX.md#createfluent9themefromspfxtheme) keeps the converted base token and maps hover/pressed to the host palette's `neutralPrimary`/`neutralDark`. This avoids the migration shim mapping all three to `neutralSecondary`. Missing state colors use the converted fallback; custom palettes with equal colors can still produce equal feedback colors. Teams themes and the undefined-theme web light fallback retain their existing tokens.
+In SharePoint host mode, [`createFluent9ThemeFromSPFxTheme`](theme.md#createfluent9themefromspfxtheme) keeps the converted base token and maps hover/pressed to the host palette's `neutralPrimary`/`neutralDark`. This avoids the migration shim mapping all three to `neutralSecondary`. Missing state colors use the converted fallback; custom palettes with equal colors can still produce equal feedback colors. Teams themes and the undefined-theme web light fallback retain their existing tokens.
 
 ```tsx
 const sx = useSx();
@@ -286,7 +287,6 @@ return <div className={sx(width.px(320), height.px(160), overflow.auto, scrollba
 Use the existing shared Griffel/Fluent peers and scoped theme variables described above; no extra dependency is required. Browsers without vendor pseudo-element support need standard `scrollbar-width` and `scrollbar-color` for the thin fallback; otherwise native appearance remains. Platform overlay scrollbars may appear only during scrolling. `hover`, `active`, `focusVisible`, `responsive` and `viewport` scopes apply the vendor rules only while their scopes are active; removing the descriptor restores native appearance. The transparent track reveals the actual underlying surface, so thumb contrast must be checked there.
 
 Foreign Griffel declarations retain the usual argument/merge order: a later native `scrollbarWidth: none` hides the scrollbar, and a later `scrollbarColor` overrides its colors. In modern Chromium, non-`auto` standard scrollbar values select native rendering and can bypass the recipe's vendor 6px sizing. Putting `scrollbar.fluent` last restores the recipe in the same scope.
-
 
 The same local Chrome checkpoint measured the accessible neutral scrollbar thumb against the tested underlying surfaces:
 

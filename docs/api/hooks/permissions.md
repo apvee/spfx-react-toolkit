@@ -1,5 +1,7 @@
 # Permission Hooks
 
+[React and SPFx hooks](../INDEX.md#react-and-spfx-hooks)
+
 Public hook signatures and result shapes match the library source. External types (React, SPFx and PnPjs) come from their respective packages. All hooks require a matching SPFx provider.
 
 ## useSPFxPermissions
@@ -127,13 +129,17 @@ For current-web scope, an available mask is read through `useSPFxPermissions` wi
 
 `permissions` is undefined during loading, validation/HTTP/payload errors and target replacement. `hasPermission` returns false when the mask is unavailable and otherwise requires every bit in the supplied native `SPPermission`. `isLoading` is false for native-mask success and validation errors. `error` holds only the current failure. A newly allocated object with equivalent scalar values does not repeat requests. Concurrent identical requests may share an inflight promise **only within one provider and matching client/user identity**; completed decisions are not cached and there is no polling or refresh timer. Changing provider, client, user or target immediately discards old asynchronous decisions. In-place host changes still require a React render; the hook does not subscribe independently to every PageContext field.
 
-Requires a matching SPFx provider and its native PageContext/SPHttpClient; it imports no PnP feature registrations. Local behavior/type tests use native boundary doubles and do not establish authenticated SharePoint results. The Context demo includes a staged scoped target and explicit Run/repeat, alongside the unchanged legacy staged URL view. The [SharePointPermissionTrim](../controls/sharepoint-permission-trim.md) sample composes this same hook; [authenticated scoped checks](../../SHAREPOINT-VALIDATION.md) remain separate. A permission check is a UI decision; SharePoint remains responsible for authorization.
+Requires a matching SPFx provider and its native PageContext/SPHttpClient; it imports no PnP feature registrations. Local behavior/type tests use native boundary doubles and do not establish authenticated SharePoint results. The Context demo includes a staged scoped target and explicit Run/repeat, alongside the unchanged legacy staged URL view. The [SharePointPermissionTrim](../controls/sharepoint-permission-trim.md) sample composes this same hook; [authenticated scoped checks](../../development/sharepoint-validation/INDEX.md) remain separate. A permission check is a UI decision; SharePoint remains responsible for authorization.
+
+## Current permission members
+
+`SPFxPermissionsInfo.sitePermissions`, `webPermissions` and `listPermissions` are the native optional PageContext masks. `SPFxPermissionsInfo.hasSitePermission`, `hasWebPermission` and `hasListPermission` each accept a required native `SPPermission`, require every requested bit, and return false when that mask is absent. No REST request or role-name inference is made by the current-context hook. Changes become visible through a React render with the corresponding native mask references; there is no independent permission polling.
 
 ## See Also
 
-- [API index](../../INDEX.md)
-- [Services](../services/INDEX.md)
-- [SharePoint validation](../../SHAREPOINT-VALIDATION.md)
+- [API index](../INDEX.md)
+- [Services](../INDEX.md#non-react-services)
+- [SharePoint validation](../../development/sharepoint-validation/INDEX.md)
 
 Qualified overload result members: `SPFxCrossSitePermissionsOptions.webUrl`, `SPFxCrossSitePermissionsOptions.listId` select the optional legacy web/list. `SPFxCrossSitePermissionsInfo.sitePermissions`, `SPFxCrossSitePermissionsInfo.webPermissions`, `SPFxCrossSitePermissionsInfo.listPermissions` are absent while unavailable; `SPFxCrossSitePermissionsInfo.hasSitePermission`, `SPFxCrossSitePermissionsInfo.hasWebPermission`, `SPFxCrossSitePermissionsInfo.hasListPermission` check those masks and return false when absent. `SPFxCrossSitePermissionsInfo.isLoading` reports pending reads and `SPFxCrossSitePermissionsInfo.error` reports the current failure.
 

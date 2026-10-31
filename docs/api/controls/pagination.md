@@ -1,5 +1,7 @@
 # Pagination
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > Pagination
+
 `Pagination` renders accessible controlled result navigation. The application owns the supplied rows, page/cursor availability, requests and loading state. It does not fetch, slice results or retain pagination state. Import the same implementation from the package root, `/controls`, or `/controls/pagination`.
 
 ```tsx
@@ -98,10 +100,10 @@ Append results in the application. At rest, the button shows text only. During l
 
 | Member | Type | Behavior |
 | --- | --- | --- |
-| `PaginationChangeData.type` | `'pages' | 'cursor' | 'loadMore'` | Discriminates the semantic request. |
+| `PaginationChangeData.type` | `'pages' \| 'cursor' \| 'loadMore'` | Discriminates the semantic request. |
 | `PaginationChangeData.pageIndex` | `number` | Present for pages: requested zero-based index. |
 | `PaginationChangeData.pageSize` | `number` | Present for pages: received page size. |
-| `PaginationChangeData.direction` | `'previous' | 'next'` | Present for cursor: requested direction. |
+| `PaginationChangeData.direction` | `'previous' \| 'next'` | Present for cursor: requested direction. |
 
 Load-more data contains only `{ type: 'loadMore' }`. Each available click emits one request. Navigation controls have `type="button"`, so an enclosing form is not submitted.
 
@@ -133,7 +135,7 @@ Authenticated SharePoint, Teams/iframe and screen-reader validation is **NOT EXE
 
 ## Native UI localization
 
-Pagination requires the host to register its toolkit resource ID through the [localization configuration CLI](../../LOCALIZATION.md). SPFx selects the UI resource; no toolkit provider is required. Outside the SPFx loader, supply an explicit resource-module adapter: the native resource is a static dependency even when passing a complete dictionary.
+Pagination requires the host to register its toolkit resource ID through the [localization configuration CLI](../../guides/localization.md). SPFx selects the UI resource; no toolkit provider is required. Outside the SPFx loader, supply an explicit resource-module adapter: the native resource is a static dependency even when passing a complete dictionary.
 
 `strings?: Partial<PaginationStrings>` overrides labels per instance. Overrides are trimmed, and omitted, undefined or blank labels use the selected resource. A complete nonblank `PaginationStrings` dictionary replaces every owned label. This does not translate result summaries or change controlled navigation callbacks.
 

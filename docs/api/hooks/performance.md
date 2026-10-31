@@ -1,5 +1,7 @@
 # Performance & Diagnostics Hooks
 
+[React and SPFx hooks](../INDEX.md#react-and-spfx-hooks)
+
 ## useSPFxPerformance
 
 ```typescript
@@ -101,7 +103,17 @@ function CorrelationStatus() {
 
 [View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts)
 
+## Diagnostic member contracts
+
+`SPFxPerformanceInfo.mark(name)` attempts a native browser mark and ignores unsupported/failed marks. `SPFxPerformanceInfo.measure(name, startMark, endMark?)` creates the supplied end mark at the time of the call, then reads the latest named measurement; omitted end mark measures to the current time. Unsupported/failed measurements return duration 0. `SPFxPerformanceInfo.time(name, fn)` calls sync/async work and resolves its measured result; failures reject with the original callback failure.
+
+`SPFxPerfResult.name` is the caller's measurement name, `SPFxPerfResult.durationMs` is elapsed milliseconds, and `SPFxPerfResult.result` is populated only by successful `time` (possibly undefined if the callback returns it). `SPFxPerfResult.instanceId`, `SPFxPerfResult.host` and `SPFxPerfResult.correlationId` are the current provider metadata and optional host correlation ID. `host` is the SPFx component kind, not Teams/Office classification.
+
+`SPFxLoggerInfo.debug`, `info`, `warn` and `error` accept a required message and optional `Record<string, unknown>` extra metadata, return no value, and call the supplied handler synchronously without swallowing its failures. Omitted handler uses console (debug uses console.log). `LogEntry.level` is `LogLevel`, `LogEntry.message` the input, `LogEntry.ts` an ISO timestamp, `LogEntry.instanceId`/`LogEntry.host` the provider identity/kind, and `LogEntry.user` formats display name plus login. `LogEntry.siteUrl`, `webUrl` and `correlationId` carry available host metadata; `LogEntry.webPartTag` is native WebPart-only metadata and `LogEntry.extra` is the optional original record. No buffering, redaction or persistence is added.
+
+`SPFxCorrelationInfo.correlationId` and `SPFxCorrelationInfo.tenantId` map available native IDs to strings or undefined. Both performance/logger hooks require a matching provider; they do not initialize telemetry sessions or publish data externally.
+
 ## See Also
 
-- [Context Hooks](./context.md)
-- [Page Context Helpers](../helpers/INDEX.md#page-context-helpers)
+- [Context Hooks](context.md)
+- [Page Context Helpers](../helpers/page-context.md#page-context-helpers)

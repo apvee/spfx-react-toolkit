@@ -1,5 +1,7 @@
 # Form
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > Form
+
 `Form` and `createForm` compose React Hook Form (RHF) with Fluent UI 9 controls. RHF owns values, validation, dirty/touched state, subscriptions and submission bookkeeping. No SPFx provider is required. Use a shared FluentProvider and the toolkit's `useSx` descriptors for layout.
 
 Import the compound family and its public types from the package root, `/controls` or `/controls/form`. Adapter implementations are private; there are no flat `FormInput` exports or adapter plugins. Create typed suites outside component rendering.
@@ -40,7 +42,7 @@ export function ProfileEditor(): React.ReactElement {
 
 ## Settings rows as Form fields
 
-[SettingsGroup](./settings-group.md#automatic-form-field-rows) can own the visible name and hint of one built-in Form logical control. Use `SettingsGroup.Item field title="..." description="..."` and omit the control's `label` and `hint`. The same integration applies to typed, dynamic and scoped `Fields` adapters, with no manual ARIA naming links or repeated visible text.
+[SettingsGroup](settings-group.md#automatic-form-field-rows) can own the visible name and hint of one built-in Form logical control. Use `SettingsGroup.Item field title="..." description="..."` and omit the control's `label` and `hint`. The same integration applies to typed, dynamic and scoped `Fields` adapters, with no manual ARIA naming links or repeated visible text.
 
 ```tsx
 import { createForm, SettingsGroup } from '@apvee/spfx-react-toolkit';
@@ -70,11 +72,11 @@ The row description is merged with caller `aria-describedby` IDs and Field error
 
 Exactly one built-in adapter may own a field row. Repeated adapter `label`/`hint` and multiple owners produce diagnostics. Split multiple controls across field rows, or use an ordinary `SettingsGroup.Item` and name each control explicitly. Secondary actions, nested settings rows and DateTime parts do not inherit the parent row's naming. Custom `useField` bindings and standalone Fluent controls need their own labels/hints and should use ordinary rows. This composition uses the [existing dependencies](#dependencies), Fluent theme and renderer, with no new provider or peer.
 
-The **Form** test web part shows one selected form model and, in the variable-field model, one selected adapter at a time. Change the field, edit its value, and use save/reset and the validation controls to inspect the current model's behavior. The versioned [Form regression fixture](../../../tests/fixtures/demo-control-isolation/form-regressions.tsx) retains broader adapter, native-form and isolation scenarios. These local interactions do not establish authenticated SharePoint or screen-reader behavior; see the [host checklist](../../SHAREPOINT-VALIDATION.md#form).
+The **Form** test web part shows one selected form model and, in the variable-field model, one selected adapter at a time. Change the field, edit its value, and use save/reset and the validation controls to inspect the current model's behavior. The versioned [Form regression fixture](../../../tests/fixtures/demo-control-isolation/form-regressions.tsx) retains broader adapter, native-form and isolation scenarios. These local interactions do not establish authenticated SharePoint or screen-reader behavior; see the [host checklist](../../development/sharepoint-validation/checklists/form.md#form).
 
 ## Presentation slots
 
-Named presentation props follow the [shared content-slot convention](../../CONTROL-SLOTS.md):
+Named presentation props follow the [shared content-slot convention](../../guides/control-slots.md):
 
 | Props | Fixed inner tag | Owned outer region |
 | --- | --- | --- |
@@ -213,9 +215,130 @@ Sections inherit disabled state and RHF omission. Titles/descriptions accept the
 
 `Form.useField` supplies the live value, onChange/onBlur/ref, errors, dirty/touched/invalid/disabled and resetVersion for a custom control. Use truthful native/RHF refs; do not fabricate DOM nodes. `Form.useForm` supplies enhanced same-suite RHF methods and reset coordination. These suite hooks are not new package-level hook exports.
 
-The lazy Form sample selects one model at a time; its variable-field model selects one of the 22 adapters at a time. Save/reset, validation, draft and pending-save controls operate on that active form. Broader adapter/composition and native/isolation regressions remain in the versioned [Form fixture](../../../tests/fixtures/demo-control-isolation/form-regressions.tsx). Source browser and compiled sample checks are separate from the authenticated [SharePoint checklist](../../SHAREPOINT-VALIDATION.md#form).
+```tsx
+import * as React from 'react';
+import { createForm } from '@apvee/spfx-react-toolkit/controls/form';
 
-See [Development](../../DEVELOPMENT.md) for fresh verification commands and [package imports](../../PACKAGE-IMPORTS.md) for peer resolution and bundle limits. Importing a member of the compound family may retain the complete family; per-slot tree shaking is not promised. Unrelated imports must not retain Form/RHF/schema/date/time dependencies. Build library before the SPFx app and restart a running serve after source changes. Local tests/builds do not establish tenant permissions or screen-reader behavior.
+const Notes = createForm<{ note: string }>();
+
+function CustomNote(): React.ReactElement {
+  const field = Notes.useField<string>({ name: 'note', rules: { required: 'Enter a note.' } });
+  return <label>
+    Note
+    <input ref={field.ref} value={field.value} disabled={field.disabled}
+      aria-invalid={field.invalid}
+      onChange={event => field.onChange(event.currentTarget.value)}
+      onBlur={field.onBlur} />
+  </label>;
+}
+
+export function NotesEditor(): React.ReactElement {
+  return <Notes.Root defaultValues={{ note: '' }} onSubmit={values => { console.log(values.note); }}>
+    <CustomNote />
+    <Notes.Error name="note" />
+    <Notes.Submit>Save</Notes.Submit>
+  </Notes.Root>;
+}
+```
+
+`FormUseFieldProps.name` is required and checked against the complete read/write domain; `rules` and `disabled` are optional. Invoke the hook inside its owning Root or scope, following React hook rules. A custom binding supplies its own accessible name, hint/error associations and native focus target; it does not consume the SettingsGroup field-row integration.
+
+| `FormFieldResult` member | Meaning for a custom control |
+| --- | --- |
+| `value` | Current live RHF value, without schema-output conversion. Initialize the field appropriately. |
+| `onChange(value)` | Synchronous complete-value write; validation follows RHF's configured lifecycle. Its return value is ignored. |
+| `onBlur()` | Marks the field touched; call when the logical control loses focus. |
+| `ref` | Callback ref for the real focusable HTML element used by RHF error focus. |
+| `error`, `errors`, `invalid` | First optional message, all deterministic deduplicated messages, and active failure state. |
+| `disabled` | Effective additive Root/scope/field restriction; custom controls must honor it. |
+| `isDirty`, `isTouched` | RHF comparison against the baseline and blur history. |
+| `resetVersion` | Field-local reset generation for clearing consumer-owned transient drafts; semantic values remain in RHF. |
+
+The public `FormFieldPresentationProps` shared by built-in adapters supplies optional `label`, `hint`, `required`, `orientation`, `disabled`, `className` and `fieldProps`. Orientation defaults to Fluent Field's vertical layout; `className` styles the outer Field, while applicable control/native classes use their documented slots. Active RHF errors take precedence over `fieldProps` validation presentation. `FormControlProps` adds the required relative `name` and optional domain `rules`. `FormInputType` permits only `text`, `email`, `password`, `search`, `tel` and `url`; Input defaults to native text. Use the dedicated numeric, date/time and file adapters for those domains.
+
+## Date and time configuration
+
+`FormDatePickerControlProps` and `FormTimePickerControlProps` describe the package-owned configuration without a form binding. They are also the types of DateTime's `datePickerProps` and `timePickerProps`. Native input attributes retained by these types follow the actual native input; RHF still owns `name`, selected value and initialization. No parser, formatter or notification callback is asynchronous.
+
+| DatePicker option | Contract |
+| --- | --- |
+| `allowTextInput` | Default false. When enabled, Enter/blur commits accepted text; invalid text stays visible and blocks stale-value submission. |
+| `formatDate`, `parseDateFromString` | Format `Date \| undefined` to text; parse text to a local Date or the compat-required null for rejection. Omission uses strict local `YYYY-MM-DD`. Pair custom display and parsing formats explicitly. |
+| `minDate`, `maxDate` | Optional inclusive local calendar bounds for selection and manual commits. Validate domain constraints through rules/schema/resolver as well. |
+| `inputValidationMessage` | Direct incomplete/rejected draft message, overriding the per-form dictionary. |
+| `onSelectDate` | Notification with `Date \| null` after an accepted RHF write, including clear. Return value is ignored. |
+| `onValidationResult` | Notification with `FormDatePickerValidationResult.error`: `invalid-input`, `out-of-bounds`, `required-input`, or undefined for success. A rejected draft retains its committed value. |
+| `open`, `defaultOpen`, `onOpenChange` | Controlled popup state, initial uncontrolled state and proposed boolean-state notification. A controlled owner must update `open`. |
+| `firstDayOfWeek`, `firstWeekOfYear` | Numeric calendar policies: Sunday–Saturday are 0–6; first-day/full-week/four-day-week rules are 0/1/2. |
+| `strings`, `dateTimeFormatter` | Calendar labels and pure formatting functions; these do not change the manual input parser. |
+| `today`, `initialPickerDate` | Current-day marker (client date when omitted) and initially highlighted calendar date. |
+| `allFocusable`, `borderless`, `openOnClick` | Compat presentation/interaction flags; defaults false, false and true respectively. |
+| `appearance`, `className`, `placeholder`, `disabled`, `required` | Input presentation, root class, empty prompt and existing field restrictions/metadata. |
+| `disableAutoFocus`, `inlinePopup`, `isMonthPickerVisible`, `highlightCurrentMonth`, `highlightSelectedMonth`, `showCloseButton`, `showGoToToday`, `showMonthPickerAsOverlay`, `showWeekNumbers`, `underlined` | Forwarded compat calendar/focus/layout configuration. Omission retains the installed compat primitive's defaults; the adapter adds no separate policy. |
+
+`FormDatePickerStrings` requires full/abbreviated month and weekday arrays and `goToToday`; arrays begin with January and Sunday. Optional navigation, header, close, week-number, selected/today and marked-day labels name the corresponding calendar operations. `FormDatePickerFormatting` supplies `formatDay(date)`, `formatYear(date)`, and `formatMonth`, `formatMonthDayYear`, `formatMonthYear` with `(date, strings)`; all return strings. Calendar arrays are copied before passing to compat, so readonly consumer dictionaries are supported.
+
+| TimePicker option | Contract |
+| --- | --- |
+| `dateAnchor` | Explicit local date for generated/parsed times. Omission retains the selected field date, or local 1970-01-01 while empty. |
+| `startHour`, `endHour`, `increment` | Inclusive start, exclusive end and minute spacing of generated choices; `FormTimePickerHour` permits 0–24. Omission follows compat option generation. |
+| `freeform`, `clearable` | Native compat text-entry and clear affordances; accepted clear writes null. |
+| `hourCycle`, `showSeconds`, `formatDateToTimeString` | `h11`/`h12`/`h23`/`h24`, seconds display and optional `(date: Date) => string` formatting. Omission uses compat formatting. |
+| `parseTimeStringToDate` | Synchronous `(text: string \| undefined) => FormTimePickerParseResult`; return `{ date: Date \| null, error? }`. |
+| `onTimeChange` | Receives the native synthetic event and `{ selectedTime, selectedTimeText, error? }` after any accepted RHF write. Invalid draft notifications leave the previous committed value intact. |
+| `inputValidationMessage` | Direct incomplete/rejected draft message, overriding the per-form dictionary. |
+| `open`, `defaultOpen`, `onOpenChange` | Controlled popup state, uncontrolled initial state and proposed boolean-state notification. |
+| `appearance`, `className`, `disabled`, `inlinePopup`, `placeholder`, `size` | Forwarded native compat presentation/input options, with existing additive disabled ownership. |
+
+`FormTimePickerError` has the same three identifiers as `FormDatePickerError`; the public payload calls the member `error`, rather than compat's `errorType`. `selectedTimeText` may be undefined. DateTime's `dateLabel`/`timeLabel` name the individual parts; its `id`/`aria-describedby` identify and describe the outer semantic group. Neither date/time part determines a time zone or merges itself into the other's Date.
+
+```tsx
+const Appointment = createForm<{ when: { date: Date | null; time: Date | null } }>();
+<Appointment.Root defaultValues={{ when: { date: null, time: null } }} onSubmit={values => { console.log(values.when); }}>
+  <Appointment.DateTime name="when" label="Appointment" dateLabel="Date" timeLabel="Time"
+    datePickerProps={{ allowTextInput: true, firstDayOfWeek: 1 }}
+    timePickerProps={{ freeform: true, hourCycle: 'h23', increment: 15 }} />
+  <Appointment.Error name="when" />
+  <Appointment.Submit>Save</Appointment.Submit>
+</Appointment.Root>;
+```
+
+These examples use null only for the required Fluent compat DatePicker/TimePicker empty-value contract. Application optional configuration uses undefined.
+
+## Scope and array member contracts
+
+`FormObjectPath` selects nested record paths while excluding arrays, Dates, files/blobs and HSV colors; `FormObjectPathValue` derives the selected model. `FormArrayPath` selects arrays of records, with `FormArrayItemValue` deriving the complete item model. `FormObjectComponent`, `FormArrayComponent` and their Section variants preserve path-specific inference when a compound member is assigned to another variable. `ScopedFormSuite` retains fields, nested scopes, errors and useField with relative names; Root, Submit, Reset and useForm remain members of the complete `FormSuite`. `UntypedFormSuite` uses RHF FieldValues for genuinely dynamic names.
+
+Object `children` receives `FormObjectContext` with relative `Fields`, optional first `error` and all direct `errors`. Array `children` receives `FormArrayContext`: its `items` entries expose RHF `key`, current zero-based `index`, `total`, `isFirst`, `isLast` and stable relative `Fields`. The key is a React identity, separate from a domain id and the changing index.
+
+| `FormArrayContext` operation | Contract |
+| --- | --- |
+| `append(value)`, `prepend(value)` | Add one complete record at the end/start without moving native focus. |
+| `insert(index, value)` | Add at an integer from zero through current length. |
+| `remove(index?)` | Remove one valid index or a valid distinct index list; omission/undefined removes all. Invalid/duplicate/empty lists are no-ops. |
+| `update(index, value)` | Replace one complete record using RHF's remount/new-item semantics. |
+| `replace(values)` | Replace all records and their generated RHF identities. |
+| `move(from, to)`, `swap(first, second)` | Reorder valid integer positions while preserving item identities. |
+| `error`, `errors` | Optional first and deterministic deduplicated direct array/root validation messages. |
+
+Every headless operation is suppressed by effective disabled state. `FormArrayRules` uses RHF whole-array rules and is available only when neither schema nor resolver owns validation. Every operation returns void.
+
+`FormSectionProps.appearance` accepts `filled` (default), `filled-alternative`, `outline` and `subtle`; these are native Card values, unlike SettingsGroup's `alternate` alias. A Section requires `FormSectionName`: `title`, `aria-label` or `aria-labelledby`. Native fieldset attributes and caller classes are forwarded, while naming, content and disabled ownership stay with the Section.
+
+| `FormArraySectionProps` option | Behavior/default |
+| --- | --- |
+| `name`, `createItem`, `renderItem` | Required record-array path, synchronous complete-record factory for an allowed Add, and item-render callback receiving current metadata/relative Fields. |
+| `minItems` | Nonnegative integer, default 0; limits UI removal and never creates missing records. |
+| `maxItems` | Integer at least minItems; omission is unbounded. Limits UI Add. |
+| `removable`, `reorderable` | Default true and false; show removal and reordering controls. Boundary move controls disable. |
+| `itemLabel(item)` | Accessible item/action/announcement name. Omission uses the owning form dictionary's one-based item formatter. |
+| `strings` | Optional `FormArraySectionStrings` partial labels over the owning form dictionary. |
+
+Bounds constrain the Section's actions; they do not validate submitted arrays or constrain external resets/method writes. Use array rules or the validation owner for those requirements. `add`/`empty` strings supply visible labels; `remove`, `moveUp`, `moveDown`, `added` and `removed` receive the current label; `moved(label, position, total)` additionally receives a one-based position and total. Action text, tooltips and polite announcements use those results. The native resource supplies defaults and the Localization section describes overrides.
+
+The lazy Form sample selects one model at a time; its variable-field model selects one of the 22 adapters at a time. Save/reset, validation, draft and pending-save controls operate on that active form. Broader adapter/composition and native/isolation regressions remain in the versioned [Form fixture](../../../tests/fixtures/demo-control-isolation/form-regressions.tsx). Source browser and compiled sample checks are separate from the authenticated [SharePoint checklist](../../development/sharepoint-validation/checklists/form.md#form).
+
+See [Development](../../development/INDEX.md) for fresh verification commands and [package imports](../../guides/package-imports.md) for peer resolution and bundle limits. Importing a member of the compound family may retain the complete family; per-slot tree shaking is not promised. Unrelated imports must not retain Form/RHF/schema/date/time dependencies. Build library before the SPFx app and restart a running serve after source changes. Local tests/builds do not establish tenant permissions or screen-reader behavior.
 
 ## Public type reference
 

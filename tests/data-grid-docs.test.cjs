@@ -13,6 +13,6 @@ test('DataGrid source JSDoc and public guide cover all exposed members and row/s
     assert.throws(() => assertDocumentedSurface(missing, surface), new RegExp(name.replaceAll('.', '\\.')));
   }
   for (const contract of ['off-page', 'consumer-supplied order', 'missing', 'invalid', 'NaN', '0000', '9.3.27', 'showValue={false}', 'Number.MAX_VALUE', 'HTMLDivElement', 'ReadonlyMap', 'no-visible-columns']) assert.ok(document.toLowerCase().includes(contract.toLowerCase()), contract);
-  assert.match(fs.readFileSync('docs/api/controls/INDEX.md', 'utf8'), /\.\/data-grid\.md/);
-  assert.match(fs.readFileSync('docs/SHAREPOINT-VALIDATION.md', 'utf8'), /## DataGrid/);
+  assert.match(fs.readFileSync('docs/api/INDEX.md', 'utf8'), /\.\/controls\/data-grid\.md/);
+  assert.match(fs.readFileSync('docs/development/sharepoint-validation/checklists/data-grid.md', 'utf8'), /^# DataGrid/m);
 });

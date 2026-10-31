@@ -1,12 +1,14 @@
 # DataGrid
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > DataGrid
+
 `DataGrid` and `createDataGrid<TItem>()` compose a table with native Fluent UI 9 navigation, focus, selection cells and column resizing. The consumer owns the items, their order and controlled state. No SPFx provider is required.
 
 Import from the package root, `/controls` or `/controls/data-grid`. Create typed suites outside rendering. The implementation modules and column markers are private to each suite; columns are used through the suite rather than flat exports.
 
 ## Dependencies
 
-The verified baseline uses React/ReactDOM 17.0.1, TypeScript 5.3.3 and SPFx 1.21.1, with components 9.74.9, Charts 9.3.27, shared contexts 9.26.4, utilities 9.26.7, theme 9.2.2, Griffel React 1.7.8/core 1.21.4 and migration 9.10.20. The shared packages, including `@fluentui/react-charts`, are mandatory host peers. A shared FluentProvider and renderer supply theme, direction and classes. See [installation](../../../README.md) and [development](../../DEVELOPMENT.md) for the full peer contract and compatible lockfile.
+The verified baseline uses React/ReactDOM 17.0.1, TypeScript 5.3.3 and SPFx 1.21.1, with components 9.74.9, Charts 9.3.27, shared contexts 9.26.4, utilities 9.26.7, theme 9.2.2, Griffel React 1.7.8/core 1.21.4 and migration 9.10.20. The shared packages, including `@fluentui/react-charts`, are mandatory host peers. A shared FluentProvider and renderer supply theme, direction and classes. See [installation](../../../README.md) and [development](../../development/INDEX.md) for the full peer contract and compatible lockfile.
 
 The complete grid family includes its cell renderers, reused AutoSkeleton and Charts/D3 even when a particular declaration uses only text. Root, domain and control aliases share the same implementation. There is no promise of per-column tree shaking; unrelated imports are verified to exclude the grid and charts. The optimized complete-family reference consumer measured 572,545 raw / 164,102 gzip / 128,306 Brotli bytes; these are fixture measurements with React/ReactDOM supplied by the host, rather than a size promise for every application. Root/domain/control aliases had zero size difference in that comparison.
 
@@ -55,11 +57,7 @@ Supply exactly one declared collection: JSX `children` or `columns`. Omitting bo
 
 ## Named presentation slots
 
-`error`, `emptyContent`, `noResultsContent`, column `header`, `placeholder` and
-`invalidPlaceholder` accept literal text, numbers, JSX, boolean conditions or a
-Fluent-style props object. Objects support native attributes, `className`, consumer
-`style`, events, `ref` and `children: (Component, nativeProps) => JSX`. This uses the
-existing Fluent/Griffel peers; no additional dependency is required.
+`error`, `emptyContent`, `noResultsContent`, column `header`, `placeholder` and `invalidPlaceholder` accept literal text, numbers, JSX, boolean conditions or a Fluent-style props object. Objects support native attributes, `className`, consumer `style`, events, `ref` and `children: (Component, nativeProps) => JSX`. This uses the existing Fluent/Griffel peers; no additional dependency is required.
 
 ```tsx
 const headerRef = React.createRef<HTMLSpanElement>();
@@ -78,29 +76,11 @@ const presented = <Orders items={[]} getRowId={item => item.id}
   noResultsContent={false} />;
 ```
 
-Error and status object slots create an inner **div**. Header and placeholder object
-slots create an inner **span**: supply phrasing content, with noninteractive header
-content. `as` may only repeat that fixed tag. Refs and events belong to the inner
-container; the native MessageBarBody, status region, header/sort button and existing
-placeholder span remain owned by the grid. `headerAriaLabel` and `headerTooltip`
-continue to name and describe the native header. A callback runs during ordinary
-rendering, never to classify content or decide whether a region exists.
+Error and status object slots create an inner **div**. Header and placeholder object slots create an inner **span**: supply phrasing content, with noninteractive header content. `as` may only repeat that fixed tag. Refs and events belong to the inner container; the native MessageBarBody, status region, header/sort button and existing placeholder span remain owned by the grid. `headerAriaLabel` and `headerTooltip` continue to name and describe the native header. A callback runs during ordinary rendering, never to classify content or decide whether a region exists.
 
-Shorthand keeps its existing wrappers and JSX identity; strings remain literal.
-Nullish status/placeholders use their existing localized defaults (or the em dash).
-Boolean and empty content suppress default text while retaining the owned wrapper;
-an empty object requests an explicit inner container. Actions headers default only
-when undefined. Error is omitted for undefined, legacy null and false; **true**,
-empty strings, empty fragments and zero still request the error bar. No visible
-columns retains precedence over loading/empty status, and errors can coexist with
-rows and loading. Retry, sorting, sizing, selection and row activation are unchanged.
+Shorthand keeps its existing wrappers and JSX identity; strings remain literal. Nullish status/placeholders use their existing localized defaults (or the em dash). Boolean and empty content suppress default text while retaining the owned wrapper; an empty object requests an explicit inner container. Actions headers default only when undefined. Error is omitted for undefined, legacy null and false; **true**, empty strings, empty fragments and zero still request the error bar. No visible columns retains precedence over loading/empty status, and errors can coexist with rows and loading. Retry, sorting, sizing, selection and row activation are unchanged.
 
-Raw HTML and unsupported object props are rejected/filtered; React 17's erased
-`ReactNode` can defeat static object restrictions. Arbitrary JSX/callback subtrees
-remain the consumer's responsibility. Domain labels/icons/actions, value readers and
-`renderCell` callbacks retain their existing contracts and rendering paths.
-The lazy sample exposes inner refs, header callback clicks, object error/status and
-missing/invalid slots, and conditional suppression controls.
+Raw HTML and unsupported object props are rejected/filtered; React 17's erased `ReactNode` can defeat static object restrictions. Arbitrary JSX/callback subtrees remain the consumer's responsibility. Domain labels/icons/actions, value readers and `renderCell` callbacks retain their existing contracts and rendering paths. The lazy sample exposes inner refs, header callback clicks, object error/status and missing/invalid slots, and conditional suppression controls.
 
 ## Column inventory
 
@@ -119,7 +99,7 @@ missing/invalid slots, and conditional suppression controls.
 | `TagsColumn` / `tags` | Immutable scalar/object tags, configured and responsive recoverable overflow |
 | `ProgressColumn` / `progress` | Finite value in the configured positive maximum; native ProgressBar |
 | `RatingColumn` / `rating` | Read-only native RatingDisplay with configured maximum and optional count |
-| `SparklineColumn` / `sparkline` | Immutable number series or `{ x: number | Date, y: number }` points; official Charts Sparkline |
+| `SparklineColumn` / `sparkline` | Immutable number series or `{ x: number \| Date, y: number }` points; official Charts Sparkline |
 | `ActionsColumn` / `actions` | Source-free inline/menu actions with labels, row IDs and disabled/busy states |
 | `Column` / `custom` | Caller JSX with typed item, value and row ID; content identity is preserved |
 
@@ -193,7 +173,7 @@ Default empty/no-results text is horizontally centered with Fluent medium vertic
 
 There is no View, toolbar, search, filter, pagination, fetching or virtualization API. Supply data and orchestrate those behaviors in the consumer.
 
-The lazy DataGrid test-web-part scenario shows one compact grid with selectable typed, descriptor or dynamic APIs and column presets. Its controls update the active grid's rows, sizing, selection and status. Broader column, chart and native-behavior regression cases remain in the versioned [DataGrid fixture](../../../tests/fixtures/demo-control-isolation/data-grid-regressions.tsx). Automated source/compiled browser runs and standalone tarball checks are local evidence. Authenticated SharePoint and screen-reader validation remain separate; see the [host checklist](../../SHAREPOINT-VALIDATION.md).
+The lazy DataGrid test-web-part scenario shows one compact grid with selectable typed, descriptor or dynamic APIs and column presets. Its controls update the active grid's rows, sizing, selection and status. Broader column, chart and native-behavior regression cases remain in the versioned [DataGrid fixture](../../../tests/fixtures/demo-control-isolation/data-grid-regressions.tsx). Automated source/compiled browser runs and standalone tarball checks are local evidence. Authenticated SharePoint and screen-reader validation remain separate; see the [host checklist](../../development/sharepoint-validation/INDEX.md).
 
 ## Public API catalog
 
@@ -387,8 +367,8 @@ Shared column configuration. Sources and callbacks must be pure.
 | `DataGridColumnCommonProps.placeholder` | Missing source presentation; defaults to an em dash. |
 | `DataGridColumnCommonProps.invalidPlaceholder` | Present but invalid source presentation. |
 | `DataGridColumnCommonProps.sortable` | Enables controlled sorting intent, without changing item order. |
-| `DataGridColumnCommonProps.width` | Preferred width in pixels. |
-| `DataGridColumnCommonProps.minWidth` | Minimum width in pixels. |
+| `DataGridColumnCommonProps.width` | Optional finite nonnegative preferred width in pixels, at least minWidth; used by native resizing when enabled. Omission retains native sizing. |
+| `DataGridColumnCommonProps.minWidth` | Optional finite nonnegative minimum width in pixels; omission retains native sizing. |
 | `DataGridColumnCommonProps.locale` | Overrides the root locale. |
 
 ### `DataGridColumnDefinition`
@@ -569,11 +549,11 @@ One synchronous row action.
 | `DataGridAction.id` | Non-empty unique action ID. |
 | `DataGridAction.label` | Visible and accessible label. |
 | `DataGridAction.icon` | Optional icon. |
-| `DataGridAction.placement` | Placement in the row. |
-| `DataGridAction.visible` | Static or row-dependent visibility. |
-| `DataGridAction.disabled` | Static or row-dependent disabled state. |
-| `DataGridAction.loading` | Static or row-dependent busy state. |
-| `DataGridAction.onClick` | Receives the original item and IDs. |
+| `DataGridAction.placement` | Required `inline` button or `menu` overflow item. |
+| `DataGridAction.visible` | Optional boolean or synchronous `(item) => boolean`; omission shows the action, false omits it. |
+| `DataGridAction.disabled` | Optional boolean or synchronous `(item) => boolean`; omission enables an idle action. |
+| `DataGridAction.loading` | Optional boolean or synchronous `(item) => boolean`; true shows a spinner and prevents activation, omission is idle. |
+| `DataGridAction.onClick` | Required `(event, data) => void` for an enabled idle action; data contains original item, rowId and actionId. Row propagation is stopped first. Returned promises are not observed; manage async loading/errors externally. |
 
 ### `DataGridNumberOptions`
 
@@ -590,8 +570,8 @@ Readonly boolean presentation.
 | Member | Contract |
 | --- | --- |
 | `DataGridBooleanOptions.display` | Text or a vertically centered native 20px informative icon; defaults to text. |
-| `DataGridBooleanOptions.trueLabel` | Visible and accessible true label. |
-| `DataGridBooleanOptions.falseLabel` | Visible and accessible false label. |
+| `DataGridBooleanOptions.trueLabel` | Visible and accessible true label; omission uses grid strings.yes. |
+| `DataGridBooleanOptions.falseLabel` | Visible and accessible false label; omission uses grid strings.no. |
 
 ### `DataGridDateOptions`
 
@@ -600,7 +580,7 @@ Absolute calendar or instant presentation.
 | Member | Contract |
 | --- | --- |
 | `DataGridDateOptions.timeZone` | Explicit IANA zone for Date objects and dateTime instants; defaults to UTC. Calendar-only YYYY-MM-DD strings always display their UTC calendar day. |
-| `DataGridDateOptions.format` | Date formatting; configure the zone with timeZone. |
+| `DataGridDateOptions.format` | Intl date formatting; default medium date plus short time for dateTime. Configure the zone separately with timeZone. |
 
 ### `DataGridBadgeOptions`
 
@@ -624,9 +604,9 @@ Link destination and navigation intent.
 
 | Member | Contract |
 | --- | --- |
-| `DataGridLinkOptions.href` | Static or row-aware destination for valid text. |
+| `DataGridLinkOptions.href` | Required string or synchronous `(item, value) => string \| undefined`; undefined renders plain text. The consumer owns destination safety. |
 | `DataGridLinkOptions.linkProps` | Native anchor presentation; the grid owns its element, content and navigation. |
-| `DataGridLinkOptions.onNavigate` | Receives original item, row ID, value and destination. |
+| `DataGridLinkOptions.onNavigate` | Optional `(event, data) => void` with original item, rowId, value and href. Row propagation is stopped; preventDefault replaces native navigation. Returned promises are not observed. |
 
 ### `DataGridPersonOptions`
 
@@ -647,7 +627,7 @@ Multiple-person identity and overflow options.
 | Member | Contract |
 | --- | --- |
 | `DataGridPeopleOptions.getPersonId` | Returns a stable ID unique within this cell. |
-| `DataGridPeopleOptions.maxVisible` | Maximum visible avatars before the recoverable overflow affordance. |
+| `DataGridPeopleOptions.maxVisible` | Positive whole-number maximum, default 3; remaining people stay available in the native overflow popover. |
 
 ### `DataGridTagsOptions`
 
@@ -655,7 +635,7 @@ Exact tag mappings or paired scalar/object tag callbacks. Missing configuration 
 
 | Member | Contract |
 | --- | --- |
-| `DataGridTagsOptions.maxVisible` | Maximum visible tags before recoverable overflow. |
+| `DataGridTagsOptions.maxVisible` | Optional positive whole-number maximum; omission shows all tags, still subject to responsive native overflow. |
 | `DataGridTagsOptions.values` | Optional mapped presentation for IDs returned by getTagId. |
 | `DataGridTagsOptions.getTagId` | Stable scalar ID for each tag. Supply together with getLabel. |
 | `DataGridTagsOptions.getLabel` | Explicit display label for each tag. Supply together with getTagId. |
@@ -667,7 +647,7 @@ Determinate readonly progress presentation.
 | Member | Contract |
 | --- | --- |
 | `DataGridProgressOptions.max` | Positive finite upper bound; defaults to one. |
-| `DataGridProgressOptions.showValue` | Display the localized value next to the indicator. |
+| `DataGridProgressOptions.showValue` | Default false; true displays the localized value beside the indicator. The accessible value remains available when hidden. |
 | `DataGridProgressOptions.progressBarProps` | Native visual options, excluding owned value and accessibility. |
 
 ### `DataGridRatingOptions`
@@ -677,7 +657,7 @@ Readonly rating presentation.
 | Member | Contract |
 | --- | --- |
 | `DataGridRatingOptions.max` | Whole number greater than one; defaults to five. |
-| `DataGridRatingOptions.count` | Optional non-negative whole number of votes for the accessible description only. Zero is included; undefined omits it. Localize with strings.ratingCount. |
+| `DataGridRatingOptions.count` | Optional nonnegative whole-number vote count, or synchronous `({ item, value }) => number \| undefined`, for the accessible description only. Zero is included; undefined omits it. Localize with strings.ratingCount. |
 | `DataGridRatingOptions.ratingDisplayProps` | Native visual options, excluding owned value and range. Defaults to marigold, Star20Filled and native large (20px); explicit consumer overrides remain supported. Numeric slots are hidden. |
 
 ### `DataGridSparklineOptions`
@@ -686,7 +666,7 @@ Official Charts Sparkline presentation.
 
 | Member | Contract |
 | --- | --- |
-| `DataGridSparklineOptions.showValue` | Show the latest observation; accessible summary remains when false. |
+| `DataGridSparklineOptions.showValue` | Default true; false hides visible latest-value text while retaining the accessible summary. |
 | `DataGridSparklineOptions.color` | Static or summary-aware Fluent color string. |
 
 ### `DataGridCustomOptions`

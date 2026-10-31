@@ -1,6 +1,8 @@
 # PreviewCard
 
-`PreviewCard` adds a generated image or custom preview to [ContentCard](./content-card.md), using native Fluent `CardPreview`. Import from the package root, `/controls` or `/controls/preview-card`.
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > PreviewCard
+
+`PreviewCard` adds a generated image or custom preview to [ContentCard](content-card.md), using native Fluent `CardPreview`. Import from the package root, `/controls` or `/controls/preview-card`.
 
 ```tsx
 import { Button } from '@fluentui/react-components';
@@ -43,6 +45,6 @@ Generated images crop with cover fit. After failure, the default and custom fall
 
 Media keeps native Card padding and border-radius variables. Vertical and wrapped previews use 16:9 geometry. Horizontal media prefers an 8rem column stretched to details, with a preferred 12rem details minimum; flex wrapping moves the preview above details when the container narrows. This depends on container width, without viewport breakpoints or measured layout state. The same detail wrapper preserves input/control identity across orientation changes. Custom previews stretch into the region and own their internal presentation.
 
-Dependencies, fixed-tag objects/callbacks, refs, raw-HTML guards and native Card interaction limits match [ContentCard](./content-card.md) and the [slot convention](../../CONTROL-SLOTS.md). No new peers, provider, renderer, implicit loading, route, playback or recovery workflow is introduced.
+Dependencies, fixed-tag objects/callbacks, refs, raw-HTML guards and native Card interaction limits match [ContentCard](content-card.md) and the [slot convention](../../guides/control-slots.md). No new peers, provider, renderer, implicit loading, route, playback or recovery workflow is introduced.
 
 The lazy CardsPanel follows the realistic report mockup: one PreviewCard by default, with selectable ContentCard, title/description, orientation and standard/compact widths, loading/disabled and explicit image failure/recovery commands. Shared notes survive ordinary properties and type changes. Its outline configuration holds compact status and collapsed diagnostics; those options affect the same card and never introduce native comparisons. The live card renders directly afterward without a padded demo surface. Full slot/empty-media/native/isolation regressions remain in [versioned conformance fixtures](../../../tests/fixtures/demo-control-isolation/cards-regressions.tsx). Browser and authenticated host execution must be reported separately.

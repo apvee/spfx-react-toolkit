@@ -35,7 +35,7 @@ test('group guides explain labels, trigger restrictions and separate host execut
   assert.match(accordion, /unmountOnClose/);
   assert.match(accordion, /remain mounted/);
   assert.match(accordion, /native inert/);
-  assert.match(read('docs/SHAREPOINT-VALIDATION.md'), /## SettingsGroup and AccordionGroup/);
+  assert.match(read('docs/development/sharepoint-validation/checklists/groups.md'), /^# SettingsGroup and AccordionGroup/m);
 });
 
 test('group slot demo exposes inner refs and callback actions', () => {

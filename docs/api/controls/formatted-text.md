@@ -1,5 +1,7 @@
 # FormattedText
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > FormattedText
+
 ## FormattedText
 
 `FormattedText` renders a native HTML text element with the toolkit's typography and style helpers. It interprets a restricted inline Markdown subset and accepts mixed React content. It needs no SPFx provider and embeds no theme provider.
@@ -100,4 +102,4 @@ Strings above 64 KiB of UTF-8 bytes fall back before parsing. More than 2,000 or
 
 The host supplies compatible shared React 17, Griffel and Fluent packages, including the mandatory `@fluentui/react-components` peer `^9.74.9`. Fluent theme variables must be in CSS scope; `useSx` uses the existing renderer and direction. The library supplies runtime dependencies `unified@11.0.5`, `remark-parse@11.0.0` and `remark-gfm@4.0.1`. Use an ESM-aware bundler. `markdown={false}` skips parsing at runtime but does not promise to remove the static parser dependency from a bundle that imports the control.
 
-The lazy **FormattedText** sample includes editable text, all presentation props, width and RTL controls, inherited host theme, mixed JSX, a ref inspection button and click count. Build the library before the app and restart serve after library edits. The marker test checks sample coverage; it does not execute browser layout. Local DOM/browser/package checks and authenticated SharePoint results are separate. The [authenticated checklist](../../SHAREPOINT-VALIDATION.md#formattedtext) is **NOT EXECUTED** until a tenant run records evidence.
+The lazy **FormattedText** sample includes editable text, all presentation props, width and RTL controls, inherited host theme, mixed JSX, a ref inspection button and click count. Build the library before the app and restart serve after library edits. The marker test checks sample coverage; it does not execute browser layout. Local DOM/browser/package checks and authenticated SharePoint results are separate. The [authenticated checklist](../../development/sharepoint-validation/checklists/formatted-text.md#formattedtext) is **NOT EXECUTED** until a tenant run records evidence.

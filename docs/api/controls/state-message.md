@@ -1,5 +1,7 @@
 # StateMessage
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > StateMessage
+
 `StateMessage` replaces the main content of a bounded section with a localized explanation, optional decorative artwork and actions. Use Fluent `MessageBar` for compact feedback beside ordinary content. It composes the toolkit's `FormattedText` and `useSx` with Fluent Button; no SPFx provider or additional dependency is required.
 
 ```tsx
@@ -52,6 +54,15 @@ Omitting the preset renders no automatic artwork or role. `role={undefined}` kee
 
 `StateMessageClickAction` requires `onClick: React.MouseEventHandler<HTMLButtonElement>` and forbids href. Its native button has type=button, so it does not submit a containing form. `StateMessageLinkAction` requires `href: string` and accepts optional target, rel and `onClick: React.MouseEventHandler<HTMLAnchorElement>`; it uses Fluent Button as an anchor. Destinations are assigned as supplied by the application.
 
+| Action member | Contract |
+| --- | --- |
+| `StateMessageClickAction.onClick` | Required button callback; asynchronous operations and their pending/error state belong to the application. |
+| `StateMessageClickAction.href` | `never`; navigation belongs to the link branch. |
+| `StateMessageLinkAction.href` | Required consumer-owned destination string; the action does not apply FormattedText's Markdown URL policy. |
+| `StateMessageLinkAction.target` | Optional native anchor target. |
+| `StateMessageLinkAction.rel` | Optional native anchor relationship; choose the relationship required by the destination/target. |
+| `StateMessageLinkAction.onClick` | Optional native anchor callback; normal browser cancellation applies. |
+
 ```tsx
 <StateMessage preset="error" title="Could not save" role="alert" headingLevel={2}
   primaryAction={{ label: 'Retry', onClick: retry }}
@@ -86,7 +97,7 @@ The root establishes the toolkit's named inline-size container. All authored lay
 
 Medium means **640px of root content width**, excluding padding and border. It follows the toolkit's 480/640/1024px breakpoint vocabulary, rather than the source repository's names. The viewport does not decide presentation. A host with outer width 664px and default 12px padding per side has 640px available. Below the threshold, or without container-query support, base sizes remain active. The visual follows the BigMessage sizing approach: width fills the available space up to 280px, and SVG height follows its viewBox ratio. There is no square box or equal-area normalization. Wide subjects are naturally shorter; tall subjects take more vertical space, and the text/actions follow them without a reserved empty square. Custom SVGs should provide an intrinsic aspect ratio, usually through viewBox. Widths can shrink inside a narrow host; content has no fixed height. Custom CSS may change containment and sizing.
 
-The root uses min-height semantics; vertical centering needs an available containing height. Long content can grow naturally. Responsive changes keep the same text/action DOM elements. See [styles and useSx](../helpers/styles.md) for container semantics and [SharePoint validation](../../SHAREPOINT-VALIDATION.md#statemessage) for authenticated checks.
+The root uses min-height semantics; vertical centering needs an available containing height. Long content can grow naturally. Responsive changes keep the same text/action DOM elements. See [styles and useSx](../helpers/styles.md) for container semantics and [SharePoint validation](../../development/sharepoint-validation/checklists/state-message.md#statemessage) for authenticated checks.
 
 ## Content slots
 

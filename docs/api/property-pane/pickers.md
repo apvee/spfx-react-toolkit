@@ -1,5 +1,7 @@
 # Native Property Pane pickers
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#property-pane) > Native Property Pane pickers
+
 Import the factories only from `@apvee/spfx-react-toolkit/property-pane/pickers`. React controls and JSON types remain available from `/controls/pickers`, `/controls` and the root; the root does not load native Property Pane factory runtime. The peer `@microsoft/sp-property-pane` supports SPFx >=1.18 <2, using the host's installed version. React 17 render/unmount is used, with the toolkit provider and scoped Fluent renderer/theme; no React 18 createRoot is required.
 
 ## Native pane theme
@@ -52,6 +54,8 @@ The historical `presentation: 'combobox'` value now renders Fluent Dropdown with
 
 ## Seven fields
 
+Every factory is called as `Factory<TProperties>(targetProperty, props)` and returns the native `IPropertyPaneField<IPropertyPaneCustomFieldProps>` from `@microsoft/sp-property-pane`. The type parameter is the owning web part's property bag; ordinary calls infer it from `instance`. `targetProperty` must pass the matching `PickerPropertyKey<TProperties, TValue>` contract. The returned field belongs in a native `groupFields` array; rendering a factory as JSX is unsupported.
+
 | Factory | JSON domain | Default presentation / selection |
 | --- | --- | --- |
 | PropertyPaneSitePicker | SitePickerValue | Dropdown / single |
@@ -63,6 +67,15 @@ The historical `presentation: 'combobox'` value now renders Fluent Dropdown with
 | PropertyPanePrincipalPicker | PrincipalPickerValue | TagPicker / multiple |
 
 Each factory requires the initialized web-part `instance`, a stable field `key`, and `value`. Fields/View/Item source selectors and Principal scope/identity configuration have exactly the [React contracts](../controls/pickers.md). Single/multiple and Dropdown/TagPicker remain configurable for every field. Persona rows/icons, consumer/personal ordering, five ordinary initial suggestions for Site/Item/Principal (Site contextual choices are separate), up to 30 initial scoped options for List (`initialCatalogLimit`, integer 1–200), complete catalogs with local case-insensitive search for Field/View/ContentType, read-only preflight and typed discovery are shared with React. Field/View/ContentType match locally over their complete remotely loaded catalogs; ListItemPicker retrieves remote candidates and matches locally within each bounded scan. User identity modes and explicit ensureUser remain independent of presentation and apply only to users.
+
+| `PropertyPanePickerProps` native member | Contract |
+| --- | --- |
+| `PropertyPanePickerProps.instance` | Required matching initialized `BaseClientSideWebPart<TProperties>`; supplies context, clients and lifecycle ownership, never JSON data. |
+| `PropertyPanePickerProps.key` | Required stable nonempty field key within that web part; selection/query changes must retain it. |
+| `PropertyPanePickerProps.value` | Required complete ordered `readonly TValue[]`, including in single mode. Pass `[]` for an absent optional property. |
+| `PropertyPanePickerProps.valueRevision` | Optional string/number authoritative reset token; a changed token adopts value even when it equals an old host bag. Omission/equivalence retains a pending nonreactive draft. |
+
+`PropertyPanePickerProps<TProperties, TControlProps, TValue>` preserves discriminated React source branches, including ContentTypePicker's scope/list requirement. It removes `selectedOptions`, `defaultSelectedOptions`, `defaultPrincipals` and `onOptionSelect`; consumers configure saved references through `value`, while SPFx supplies the persistence notification. Other inherited props remain the matching React family's contract, including label/ARIA naming, validation, source restrictions, strings, error callbacks, consumer options and display seeds. The factory never serializes client instances, options or callbacks into the property value.
 
 ## Search feedback
 
@@ -124,7 +137,7 @@ PropertyPaneSitePicker('sites', {
 
 ## Observable validation
 
-The sample web part's “Picker references (JSON)” group cascades Sites → Lists → Fields/Views/Items. ContentTypePicker depends on the selected site and, only in list scope, the selected list. Global picker modes configure presentation and single/multiple selection. Cascading sources require exactly one parent reference: the selected collection URL targets Lists, and the selected list GUID plus web URL target list-dependent fields. Lists is disabled without a selected collection; list-dependent fields appear only with a matching list reference. No manual list-title field or fabricated fallback list is used. Changing a parent identity clears dependent references, increments valueRevision and refreshes the consumer-owned pane configuration with stable field keys. Site changes clear content types in both scopes; list changes clear them only in list scope. Display-only changes preserve values. PrincipalPicker remains independent. The React “SharePoint pickers” panel exposes live source settings and diagnostic JSON. Automated native tests use actual provider/hooks/Fluent with mocked network boundaries to observe root/input preservation, callback replacement, reset cancellation, unresolved ordering, malformed data rejection, identity conflicts and final dispose cleanup. These local results do not establish authenticated Apply behavior or tenant permissions; follow [SharePoint validation](../../SHAREPOINT-VALIDATION.md).
+The sample web part's “Picker references (JSON)” group cascades Sites → Lists → Fields/Views/Items. ContentTypePicker depends on the selected site and, only in list scope, the selected list. Global picker modes configure presentation and single/multiple selection. Cascading sources require exactly one parent reference: the selected collection URL targets Lists, and the selected list GUID plus web URL target list-dependent fields. Lists is disabled without a selected collection; list-dependent fields appear only with a matching list reference. No manual list-title field or fabricated fallback list is used. Changing a parent identity clears dependent references, increments valueRevision and refreshes the consumer-owned pane configuration with stable field keys. Site changes clear content types in both scopes; list changes clear them only in list scope. Display-only changes preserve values. PrincipalPicker remains independent. The React “SharePoint pickers” panel exposes live source settings and diagnostic JSON. Automated native tests use actual provider/hooks/Fluent with mocked network boundaries to observe root/input preservation, callback replacement, reset cancellation, unresolved ordering, malformed data rejection, identity conflicts and final dispose cleanup. These local results do not establish authenticated Apply behavior or tenant permissions; follow [SharePoint validation](../../development/sharepoint-validation/INDEX.md).
 
 The four catalog fields share React lazy loading, consumer precedence and selected-exclusion rules. Only List uses the configurable limit/lookahead hint. Field/View/ContentType follow every REST page, show all matching options and filter their cached catalog locally without typed REST requests; none of these three accepts initialCatalogLimit. Single Dropdown fields expose the localized selected-item group first, with a checked current value even during search; clicking it preserves selection, selecting another replaces it, and clearable clears it. No duplicate of the selected identity appears among candidates. Multiple Dropdown fields expose a separate localized selected-items group, including unresolved references, for deselection without a query. Pending hydration/preflight displays loading; definitive unresolved references stay diagnosed and preserved. Site/List/Field/View/ContentType/Item searches are case insensitive, including equivalent-query cache/cursor reuse; raw filters and saved identities remain unchanged. Updating the List catalog limit, available models or cosmetic props retains the mounted field and selections, reusing equivalent memory-cached source pages.
 

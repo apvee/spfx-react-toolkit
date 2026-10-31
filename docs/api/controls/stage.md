@@ -1,5 +1,7 @@
 # Stage
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > Stage
+
 `Stage` presents one content structure as a modal Dialog, modal Drawer or anchored nonmodal Popover. Choose `presentation` explicitly; viewport changes never switch it. Compose `Stage.Header`, `Stage.Body` and optional `Stage.Footer` in declaration order. Stage needs the shared Fluent theme/Griffel renderer, but no SPFx provider or new dependency.
 
 ```tsx
@@ -98,8 +100,8 @@ Use `withArrow` with Popover to show Fluent's native arrow. Toggle the boolean w
 
 | Member | Type | Behavior/default |
 | --- | --- | --- |
-| `StagePopoverPositioning.position` | `'above' | 'below' | 'before' | 'after'` | below; preferred logical side. |
-| `StagePopoverPositioning.align` | `'start' | 'center' | 'end'` | start; preferred alignment. |
+| `StagePopoverPositioning.position` | `'above' \| 'below' \| 'before' \| 'after'` | below; preferred logical side. |
+| `StagePopoverPositioning.align` | `'start' \| 'center' \| 'end'` | start; preferred alignment. |
 
 Dialog/Drawer use native modal dialog semantics and focus management. Popover uses the native nonmodal group surface without a focus trap. Supply a named native `<button>` or Fluent `Button` trigger; arbitrary elements/custom wrappers are unsupported. Stage preserves trigger ref, disabled state, name and event handlers. It owns `aria-expanded` and `aria-controls`; Popover omits `aria-haspopup` because its surface is a group. Consumer activation cancellation prevents opening. Native focus initial placement/restoration is Fluent-owned; removed triggers are not a usable restore destination.
 
@@ -170,7 +172,7 @@ export function ProfileEditor(): React.ReactElement {
 }
 ```
 
-For persistence, await the application save in Root's onSubmit before reset/close. Keep pending requests controlled and use an inline discard confirmation rather than nesting a modal. See [Form](./form.md) for validation, async submission and reset semantics. Stage has no RHF dependency of its own.
+For persistence, await the application save in Root's onSubmit before reset/close. Keep pending requests controlled and use an inline discard confirmation rather than nesting a modal. See [Form](form.md) for validation, async submission and reset semantics. Stage has no RHF dependency of its own.
 
 ## Dependencies, portals and validation
 
@@ -198,7 +200,7 @@ A description props object with empty or whitespace-only static children adds no
 
 ## Native UI localization
 
-SPFx selects the Stage native resource from the host UI culture after the host registers its toolkit resource ID through the [localization configuration CLI](../../LOCALIZATION.md). The native resource is a static module dependency: outside the SPFx loader, supply an explicit resource-module adapter even when passing `strings` or `closeLabel`. No toolkit provider is required, but overrides do not remove that module dependency.
+SPFx selects the Stage native resource from the host UI culture after the host registers its toolkit resource ID through the [localization configuration CLI](../../guides/localization.md). The native resource is a static module dependency: outside the SPFx loader, supply an explicit resource-module adapter even when passing `strings` or `closeLabel`. No toolkit provider is required, but overrides do not remove that module dependency.
 
 `Stage.Header` accepts `strings?: Partial<StageStrings>`; the only owned label is `StageStrings.closeLabel`, the close button accessible name. Omitted/undefined dictionary values use that native label. An explicit direct `closeLabel` prop takes precedence over the dictionary, including empty or whitespace values. Dictionary strings also preserve explicit empty/whitespace values. These overrides are independent per Header.
 

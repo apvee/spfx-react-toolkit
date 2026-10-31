@@ -1,5 +1,7 @@
 # Environment Hooks
 
+[React and SPFx hooks](../INDEX.md#react-and-spfx-hooks)
+
 Hooks for host environment, Teams context, locale and page type. These hooks must run under the matching SPFx provider.
 
 ## useSPFxEnvironmentInfo
@@ -100,7 +102,7 @@ interface SPFxLocaleInfo {
 
 Maps SPFx culture information and optional `web.timeZoneInfo` preview metadata. `SPFxLocaleInfo.ianaTimeZone` is an optional representative IANA identifier derived only from `timeZone.id`. The original `timeZone` object is preserved by reference, without cloning or mutation. A changed ID on the same metadata object is observed on the next render.
 
-The static mapping uses verified SharePoint standard groups and CLDR territory `001`, with no network requests, locale/offset/description inference or runtime Windows conversion. Unknown, absent, invalid or excluded IDs return undefined. It does not locate a user's city or guarantee all historical/custom rules. SharePoint Server `TIMEZONE.XML` can be customized; this standard mapping cannot verify those installations. Coverage and immutable provenance are documented in the [helper guide](../helpers/INDEX.md#getspfxlocaleinfo).
+The static mapping uses verified SharePoint standard groups and CLDR territory `001`, with no network requests, locale/offset/description inference or runtime Windows conversion. Unknown, absent, invalid or excluded IDs return undefined. It does not locate a user's city or guarantee all historical/custom rules. SharePoint Server `TIMEZONE.XML` can be customized; this standard mapping cannot verify those installations. Coverage and immutable provenance are documented in the [helper guide](../helpers/page-context.md#getspfxlocaleinfo).
 
 Passing undefined as Intl/RelativeTime timeZone uses the runtime zone, not a resolved site zone. Locale `it-IT` does not imply Rome; group 4 maps to `Europe/Berlin`.
 
@@ -156,8 +158,14 @@ function PageStatus() {
 
 [View source](../../../packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts)
 
+## Metadata and update boundaries
+
+`SPFxEnvironmentInfo.type` is the selected host classification; the `isLocal`, `isWorkbench`, `isSharePoint`, `isSharePointOnPrem`, `isTeams`, `isOffice` and `isOutlook` members expose the corresponding local/workbench checks or host indicators. Local type takes precedence while individual SDK host indicators can still reflect a known host; do not assume every flag is mutually exclusive. `SPFxTeamsInfo.supported` starts false, `context` and `theme` start undefined, and context acquisition or live events update them. Unknown theme strings normalize to default; absent SDK stays unsupported.
+
+`SPFxPageTypeInfo.pageType` is the mapped `SPFxPageType` value; `isModernPage`, `isSitePage`, `isListPage`, `isListFormPage` and `isWebPartPage` are derived from available modern/legacy page metadata. The mapper can return profile/search types without a dedicated boolean for them. It does not fetch page/list content. These metadata hooks observe their documented scalar/reference dependencies on a React render; there is no independent subscription to every mutable PageContext field.
+
 ## See Also
 
-- [Context Hooks](./context.md)
-- [Theming Hooks](./theming.md)
-- [Page Context Helpers](../helpers/INDEX.md#page-context-helpers)
+- [Context Hooks](context.md)
+- [Theming Hooks](theming.md)
+- [Page Context Helpers](../helpers/page-context.md#page-context-helpers)

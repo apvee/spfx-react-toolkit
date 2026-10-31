@@ -1,5 +1,7 @@
 # EntraGroupTrim
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > EntraGroupTrim
+
 `EntraGroupTrim` is a headless current-user access trim. Import the compound value and its types from the package root or controls barrel. It requires a matching SPFx provider; place it within the provider appropriate for your actual host.
 
 ```tsx
@@ -34,7 +36,7 @@ Requires a matching SPFx provider with its native MSGraphClientV3 factory. All-I
 
 Owners read `/me` and every direct owners page; ID-only limited-information objects suffice. Metadata-confirmed synchronized groups, distribution groups and non-Unified mail-enabled groups have unsupported ownership and select ErrorFallback before member/owner reads, including memberOrOwner. Every requested read must succeed; `any` or a positive member result cannot hide another read failure. HTTP/Graph/payload errors never become partial grants. Hidden membership may be omitted by Graph: absence in a response is not proof of real-world absence.
 
-The sample solution config requests Microsoft Graph `User.Read` and `GroupMember.Read.All`; deployment and tenant approval are separate and have not been performed. Graph consent/access and additional permissions required for hidden membership or constrained groups must be checked in the actual tenant. A configured permission request is not proof of an approved grant. See the [HTTP client guide](../hooks/http-clients.md) and [host checklist](../../SHAREPOINT-VALIDATION.md).
+The sample solution config requests Microsoft Graph `User.Read` and `GroupMember.Read.All`; deployment and tenant approval are separate and have not been performed. Graph consent/access and additional permissions required for hidden membership or constrained groups must be checked in the actual tenant. A configured permission request is not proof of an approved grant. See the [HTTP client guide](../../guides/http-clients.md) and [host checklist](../../development/sharepoint-validation/INDEX.md).
 
 ## Structural branches and lifetime
 
@@ -46,7 +48,7 @@ Duplicate, wrong-family and detectable fragment-wrapped markers fail closed. Kee
 
 Provider, native client, PageContext/current-user identity and target changes hide previous asynchronous grants during render. Obsolete/unmounted requests cannot restore them. Identical inflight reads may be shared within the matching provider only; settled grants are not cached and there is no polling. Host changes still require a React render. Run/repeat in the sample deliberately changes the trim key to perform a fresh check. UI trimming is advisory; each server operation still needs authorization.
 
-The lazy **Entra Group Trim** sample uses this actual control and native APIs, editable selectors, enum fields, all three branches, a protected counter and effect mount gauge. Local fixtures replace only unavailable transports and do not establish authenticated tenant behavior. See [development verification](../../DEVELOPMENT.md) and the [controls index](./INDEX.md).
+The lazy **Entra Group Trim** sample uses this actual control and native APIs, editable selectors, enum fields, all three branches, a protected counter and effect mount gauge. Local fixtures replace only unavailable transports and do not establish authenticated tenant behavior. See [development verification](../../development/INDEX.md) and the [controls index](../INDEX.md#react-controls).
 
 `EntraGroupTrimBranchProps` describes each structural marker. `EntraGroupTrimProps` describes the control.
 

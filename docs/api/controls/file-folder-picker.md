@@ -1,5 +1,7 @@
 # FileFolderPicker
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > FileFolderPicker
+
 `FileFolderPicker` selects existing SharePoint or OneDrive for Business files and folders through Microsoft's hosted File Picker v8. It requires a matching SPFx provider and the existing SPFx AAD token provider. The toolkit does not install the sample-local `@pnp/picker-api` package or another MSAL client.
 
 ```tsx
@@ -148,7 +150,7 @@ The border uses the installed Fluent Input style hook directly, including its 1p
 
 Uploads, folder creation and local-device upload are disabled until the corresponding explicit write intent is enabled. Link entry is disabled in focused and legacy defaults, and enabled as a native pivot in extended. Local-device pick, account switching and share/move/download actions remain gated. Confirming selection reads metadata and does not itself perform those operations. Restrictions are checked again when confirming results.
 
-The private sample exposes source, start location, file/folder mode, suffixes, single/multiple selection and the single hosted dialog. Automated protocol/scope tests and simulated browser fixtures are separate from authenticated tenant validation. See [SharePoint validation](../../SHAREPOINT-VALIDATION.md) for the host checklist and execution limitations.
+The private sample exposes source, start location, file/folder mode, suffixes, single/multiple selection and the single hosted dialog. Automated protocol/scope tests and simulated browser fixtures are separate from authenticated tenant validation. See [SharePoint validation](../../development/sharepoint-validation/INDEX.md) for the host checklist and execution limitations.
 
 Primary references: [Microsoft File Picker v8](https://learn.microsoft.com/en-us/onedrive/developer/controls/file-pickers/), [current schema](https://learn.microsoft.com/en-us/onedrive/developer/controls/file-pickers/v8-schema), [React sample](https://github.com/OneDrive/samples/tree/master/samples/file-picking/typescript-react).
 
@@ -266,7 +268,7 @@ For a consumer choosing an all-sites read grant use AllSites.Read instead; add w
 
 The [current v8 schema](https://learn.microsoft.com/en-us/onedrive/developer/controls/file-pickers/v8-schema?view=odsp-graph-online) contains additional options whose presence does not establish their complete message/result contracts. Local-file pick, draft-selection payloads, custom/formatter commands, host-rendered tray/navigation, account switching and download/share/move/save results are not exposed as supported toolkit actions. No guessed callbacks or inert configuration flags are forwarded. Copy has a schema block without a copy action enum. Substrate, parent/configure protocol and SDK timeout overrides remain internal research gates. Consumer-only photos are outside SPFx Business support; site/list/listItem/Syntex domains require different result models and cannot be coerced into file/folder references. Only one file category is supported at a time; arbitrary category combinations are not exposed. Use extension filters for an explicit suffix allowlist.
 
-Automated config/auth/lifecycle tests and browser/tenant acceptance are separate evidence. Enabling a capability does not prove service availability, tenant grants or actual internal API behavior; see the [validation guide](../../SHAREPOINT-VALIDATION.md).
+Automated config/auth/lifecycle tests and browser/tenant acceptance are separate evidence. Enabling a capability does not prove service availability, tenant grants or actual internal API behavior; see the [validation guide](../../development/sharepoint-validation/INDEX.md).
 
 
 ### Trying presets in the sample

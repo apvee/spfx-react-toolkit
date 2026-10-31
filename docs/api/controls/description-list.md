@@ -1,5 +1,7 @@
 # DescriptionList
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > DescriptionList
+
 `DescriptionList` presents read-only labeled details of one record using native `dl`, `dt` and `dd` elements. Import the single compound value from the package root, `/controls` or `/controls/description-list`. Its only part is `DescriptionList.Item`; there is no flat Item runtime export.
 
 ```tsx
@@ -92,4 +94,4 @@ No SPFx provider or new dependency is required. The control uses the existing sh
 
 The lazy Description List tab shows one document detail with five entries. Layout, width, data/compound API, order and content variations modify that same list; diagnostics inspect its refs and callbacks without adding a nested list. The heading and one outline configuration precede the undecorated subject. Nested container, pathological values and independent/RTL comparisons remain in the [versioned regression fixture](../../../tests/fixtures/demo-control-isolation/description-list-regressions.tsx). Browser runners exercise the product route and then all preserved conformance assertions.
 
-See [development checks](../../DEVELOPMENT.md#description-list-checks) and [authenticated acceptance](../../SHAREPOINT-VALIDATION.md#description-list). Authenticated SharePoint, Teams/iframe and screen-reader checks remain **NOT EXECUTED** until separately recorded. Static demo checks do not execute the rendered scenario or establish tenant behavior.
+See [development checks](../../development/component-checks.md#description-list-checks) and [authenticated acceptance](../../development/sharepoint-validation/checklists/description-list.md#description-list). Authenticated SharePoint, Teams/iframe and screen-reader checks remain **NOT EXECUTED** until separately recorded. Static demo checks do not execute the rendered scenario or establish tenant behavior.

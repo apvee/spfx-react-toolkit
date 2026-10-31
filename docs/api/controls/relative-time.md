@@ -1,5 +1,7 @@
 # RelativeTime
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > RelativeTime
+
 `RelativeTime` formats an explicit instant as localized elapsed time and exposes its full date through an accessible description. It renders a native `time` element and requires no SPFx provider. Its typography, color and direction inherit from the surrounding UI. Tooltip uses the existing Fluent UI 9 peer dependency and shared Fluent/Griffel host runtime; no extra date library is required.
 
 ```tsx
@@ -67,7 +69,7 @@ const { uiLocale, ianaTimeZone } = useSPFxLocaleInfo();
 
 The [locale hook](../hooks/environment.md#usespfxlocaleinfo) requires an SPFx provider; RelativeTime itself does not. `ianaTimeZone` identifies a representative standard SharePoint numeric zone group. When undefined, this example uses the runtime zone: it does not establish the site's zone. A locale such as `it-IT` does not imply `Europe/Rome`; verified group 4 maps to `Europe/Berlin`. Consumers should choose their unavailable-mapping UI or runtime fallback explicitly.
 
-The sample's lazy RelativeTime panel exercises all props, three clock modes, invalid input, composition and native ref/events. ContextPanel separately compares fixed winter/summer instants only for a mapped site zone. Local tests and browser checks do not establish authenticated SharePoint-host behavior; see [SharePoint validation](../../SHAREPOINT-VALIDATION.md#relativetime-and-site-time-zone).
+The sample's lazy RelativeTime panel exercises all props, three clock modes, invalid input, composition and native ref/events. ContextPanel separately compares fixed winter/summer instants only for a mapped site zone. Local tests and browser checks do not establish authenticated SharePoint-host behavior; see [SharePoint validation](../../development/sharepoint-validation/checklists/relative-time.md#relativetime-and-site-time-zone).
 
 ## Invalid-input fallback slot
 

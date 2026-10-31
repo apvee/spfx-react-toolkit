@@ -1,5 +1,7 @@
 # EditableText
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#react-controls) > EditableText
+
 `EditableText` owns one formatted block with hard breaks. It is controlled React UI with no SPFx provider requirement. Native SPFx AMD resources supply its UI labels. Read mode renders safe content; Edit loads the private editor on demand. The caller owns the saved HTML and reflects user changes into `value`. Mounting, loading external content and changing configuration never save normalized HTML automatically.
 
 Import `EditableText`, `EditableTextProps`, `EditableTextBlock`, `EditableTextChangeData`, `EditableTextStrings`, `EditableTextColorNames` and `EditableTextStringsOverride` from `@apvee/spfx-react-toolkit`, `/controls` or `/controls/editable-text`. These resolve to the same public implementation and types. There are no public engine, AST, codec, toolbar slot or plugin exports.
@@ -43,7 +45,7 @@ export function ProjectSummary(): React.ReactElement {
 
 React 17's `useRef<HTMLDivElement>(null)` interoperates with the legacy React ref API; application absence values use `undefined`. No SPFx hook/provider is required. Share the host's existing Fluent/Griffel peers; the control creates no provider or renderer. The host sets theme, direction, popup target document and renderer target document, including iframe/secondary-document scenarios.
 
-The stable native `div` owns a `p` or H1–H4 region. Place it in a block-capable container, outside labels, buttons, triggers and other inline-only slots. It is not a general replacement for arbitrary inline slot content. Use [FormattedText](./formatted-text.md) for read-only Markdown/JSX rendering.
+The stable native `div` owns a `p` or H1–H4 region. Place it in a block-capable container, outside labels, buttons, triggers and other inline-only slots. It is not a general replacement for arbitrary inline slot content. Use [FormattedText](formatted-text.md) for read-only Markdown/JSX rendering.
 
 ## Public contract
 
@@ -137,6 +139,56 @@ Formatter callbacks receive heading levels 1–4, numeric line spacing, a transl
 | `EditableTextColorNames.pink` | Pink semantic color tooltip and accessible swatch name. |
 | `EditableTextColorNames.brown` | Brown semantic color tooltip and accessible swatch name. |
 
+## Color picker and theme colors
+
+The circular Fluent SwatchPicker contains vertically stacked Automatic, Theme colors and Standard colors sections, each with a horizontal wrapping row of swatches. Every swatch has a localized name and Tooltip available on pointer hover and keyboard focus; the accessible name matches that name. Theme colors describe roles rather than promising a fixed black/blue value. The same picker and names are available in the toolbar overflow.
+
+The default light-theme palette follows the reference order: 12 Theme colors and 10 Standard colors. The values come exclusively from foreground tokens; fixed `color-mix(in srgb, …)` recipes provide intermediate tones. Their appearance follows the current Fluent theme and may differ from the older Office reference palette, particularly its cyan, blue and purple.
+
+| Offered Theme ID | Foreground source |
+| --- | --- |
+| `primary` | `colorNeutralForeground1` |
+| `neutralDark` | 50% neutral foreground 1 + 50% neutral foreground 2 |
+| `subtle` | `colorNeutralForeground2` |
+| `neutralMuted` | `colorNeutralForeground3` |
+| `neutralLight` | 75% neutral foreground 3 + 25% neutral foreground inverted |
+| `neutralLighter` | 60% neutral foreground 3 + 40% neutral foreground inverted |
+| `brandDarkest` | 25% brand foreground 1 + 75% neutral foreground 1 |
+| `brandDarker` | 40% brand foreground 1 + 60% neutral foreground 1 |
+| `brandDark` | 55% brand foreground 1 + 45% neutral foreground 1 |
+| `brandAlt` | `colorBrandForeground2` |
+| `brand` | `colorBrandForeground1` |
+| `brandLight` | 75% brand foreground 1 + 25% neutral foreground inverted |
+
+| Offered Standard ID | Foreground source |
+| --- | --- |
+| `darkRed` | `colorPaletteRedForeground1` |
+| `red` | `colorPaletteRedForeground3` |
+| `amber` | `colorPaletteMarigoldForeground3` |
+| `yellow` | `colorPaletteYellowForeground3` |
+| `yellowGreen` | 73% yellow foreground 3 + 27% green foreground 3 |
+| `green` | `colorPaletteGreenForeground3` |
+| `cyan` | `colorPaletteLightTealForeground2` |
+| `blue` | `colorPaletteBlueForeground2` |
+| `navy` | `colorPaletteNavyForeground2` |
+| `purple` | `colorPalettePurpleForeground2` |
+
+The accepted protocol retains four earlier colors: `orange` (dark-orange foreground 3), `teal`, `pink` and `brown` (their palette foreground 2). These remain valid in saved content and appear in the picker while selected, without expanding the default palette. All 26 IDs use stable `wps-color-<id>` markers; derived tones never save CSS expressions or resolved colors in the document.
+
+Colors resolve from the active FluentProvider theme supplied by the host. Duplicate resolved colors are collapsed while preserving the currently selected identity and Automatic. For example, default dark-theme red and dark red coincide, so only one is offered at a time; both protocol IDs remain valid. Automatic removes only the color override, preserving emphasis, size and block formatting. Existing primary/subtle/brand content remains valid. No custom HEX/RGB color picker is provided.
+
+```tsx
+import * as React from 'react';
+import { EditableText } from '@apvee/spfx-react-toolkit/controls/editable-text';
+
+// The saved semantic green follows the active theme; its UI name is translated.
+const savedHTML = '<h2><span class="wps-color-green">Project documents</span></h2>';
+
+export function ProjectHeading(): React.ReactElement {
+  return <EditableText value={savedHTML} />;
+}
+```
+
 ## Controlled updates, history and composition
 
 Canonical echoes preserve the current selection and history. Actual external source replacement (`value`/`fallbackText`) establishes a new undo baseline. A membership change reconciles the live draft, retaining the editor, text, marks and valid selection while resetting undo, even if the current block is still admitted. Reordering/duplicates do not reset it. Changing only `defaultBlock` preserves history and a nonempty admitted block. Placeholder and dictionary updates preserve the draft, selection and history. None of these configuration operations emits a callback.
@@ -147,11 +199,11 @@ During IME composition the latest committed policy applies after composition. An
 
 Canonical content consists of one p/H1–H4 block, text, `br`, strong/emphasis/underline and the supported semantic formatting markers. Enter and Shift+Enter insert hard breaks; multiple incoming blocks normalize into the one region. Bold/italic/underline commands and Ctrl/Cmd+B/I/U retain selection and provide undo boundaries. A caret-only inline formatting command affects the whole nonempty region. Clear formatting retains the block type. The editor supports size 8–96 px, finite line spacing and theme-derived color choices; H5/H6, lists, links, images, Markdown conversion and multi-paragraph documents are outside the public editing model. Unsupported wrappers may contribute safe text; unsafe embedded/executable subtrees are discarded. Unsupported markup is never injected as raw HTML.
 
-The persisted protocol is shared with [WebPartShell titles](./web-part-shell.md#title-authority-and-html-protocol): existing `wps-*` semantic classes, escaped content, mark order and accepted legacy size/color imports are retained. Color IDs resolve against the current Fluent theme rather than storing arbitrary HEX colors. HTML input and output are limited to 65,536 UTF-8 bytes with parsing depth 32. Unrecoverable imports use literal fallback. An oversized live draft stays visible with an error and suppresses publication, without partial/truncated callbacks. Resolve the draft or replace its source before persisting it.
+The persisted protocol is shared with [WebPartShell titles](web-part-shell.md#title-authority-and-html-protocol): existing `wps-*` semantic classes, escaped content, mark order and accepted legacy size/color imports are retained. Color IDs resolve against the current Fluent theme rather than storing arbitrary HEX colors. HTML input and output are limited to 65,536 UTF-8 bytes with parsing depth 32. Unrecoverable imports use literal fallback. An oversized live draft stays visible with an error and suppresses publication, without partial/truncated callbacks. Resolve the draft or replace its source before persisting it.
 
 ## Caller-owned SPFx persistence
 
-Render this content under an initialized matching SPFx provider, for example [WebPartShell](./web-part-shell.md). The existing hooks remain in the caller. They are not dependencies of EditableText itself.
+Render this content under an initialized matching SPFx provider, for example [WebPartShell](web-part-shell.md). The existing hooks remain in the caller. They are not dependencies of EditableText itself.
 
 ```tsx
 import * as React from 'react';
@@ -181,4 +233,4 @@ export function SummaryContent(): React.ReactElement {
 
 The lazy `editable-text` tab (`spfx-demo-editable-text`) consumes compiled library exports. It mounts one controlled subject under DemoCard, with all/paragraph/headings/H2–H4 presets, Read/Edit, H2/fallback/empty commands and separate raw stored input versus actual visible policy projection. The editor dictionary selector and last callback are in initially collapsed diagnostics; the selector changes per-instance labels rather than the native SPFx culture. Presets preserve the root; a Read transition ends only that editor session. The separate `tests/fixtures/demo-control-isolation/editable-text-regressions.tsx` accepts a real SPFx web part instance and places two independently controlled policies beside the Shell-owned title.
 
-Automated DOM tests exercise the pure React panel and real control; compilation and local tests do not establish authenticated SharePoint behavior. See [SharePoint validation](../../SHAREPOINT-VALIDATION.md) for pending host, keyboard, IME and document-boundary checks.
+Automated DOM tests exercise the pure React panel and real control; compilation and local tests do not establish authenticated SharePoint behavior. See [SharePoint validation](../../development/sharepoint-validation/INDEX.md) for pending host, keyboard, IME and document-boundary checks.

@@ -1,5 +1,7 @@
 # PropertyPaneFileFolderPicker
 
+[Documentation](../../INDEX.md) > [API reference](../INDEX.md#property-pane) > PropertyPaneFileFolderPicker
+
 The native field follows the [Property Pane token bridge](pickers.md#native-pane-theme), independently of the web-part section theme. Its body-mounted Stage dialog uses the same native tokens. The existing File Picker SDK receives `default` or `dark` from that theme on each opening; an already-open Microsoft iframe is not reskinned live. Renderer, direction, focus, selections and SDK ownership remain unchanged.
 
 The native field renders the same outlined tag surface as the React control: individually removable tags, an empty selection action and a mode-specific icon (Attach, FolderOpen or FolderDocument). It has no separate Browse/clear-all buttons. Medium/Large use the native Fluent Input border and 32px/40px minimum height; tags can wrap in a narrow pane. The focus underline remains active while the hosted picker is open. Labels, hint/error associations, disabled/error styling, host theme and reduced motion follow the shared control. This presentation does not change JSON ownership, metadata leases or hydration behavior.
@@ -9,26 +11,33 @@ Import the native factory separately from the React control:
 ```ts
 import { PropertyPaneFileFolderPicker } from '@apvee/spfx-react-toolkit/property-pane/file-folder-picker';
 import type { FileFolderPickerValue } from '@apvee/spfx-react-toolkit/controls/file-folder-picker';
+import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
 
 interface DocumentProperties {
   documents: FileFolderPickerValue[];
 }
 
-// Inside an SPFx WebPart whose properties use DocumentProperties:
-// PropertyPaneFileFolderPicker<DocumentProperties>('documents', {
-//   instance: this,
-//   key: 'documents-picker',
-//   label: 'Documents',
-//   preset: 'focused',
-//   value: this.properties.documents ?? [],
-//   scope: { kind: 'siteCollection' },
-//   multiselect: true,
-//   itemTypes: 'files',
-//   extensions: ['.pdf'],
-// });
+export default class DocumentsWebPart extends BaseClientSideWebPart<DocumentProperties> {
+  public render(): void {
+    this.domElement.textContent = `${this.properties.documents?.length ?? 0} references`;
+  }
+
+  protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
+    return { pages: [{ groups: [{ groupName: 'Documents', groupFields: [
+      PropertyPaneFileFolderPicker<DocumentProperties>('documents', {
+        instance: this, key: 'documents-picker', label: 'Documents', preset: 'focused',
+        value: this.properties.documents ?? [], scope: { kind: 'siteCollection' },
+        multiselect: true, itemTypes: 'files', extensions: ['.pdf'],
+      }),
+    ] }] }] };
+  }
+}
 ```
 
-The returned value is always a JSON array of `FileFolderPickerValue`, including in single mode. `FileFolderPickerPropertyKey<P>` accepts only safe direct properties whose non-undefined type is exactly that array domain; scalar, nested, untyped and mixed-domain properties are rejected. Drive-item references are separate from the existing SharePoint list-item picker values.
+The persisted value is always a JSON array of `FileFolderPickerValue`, including in single mode. `FileFolderPickerPropertyKey<P>` accepts only safe direct properties whose non-undefined type is exactly that array domain; scalar, nested, untyped and mixed-domain properties are rejected. Drive-item references are separate from the existing SharePoint list-item picker values.
+
+The factory call returns `IPropertyPaneField<IPropertyPaneCustomFieldProps>` for a native `groupFields` array. The array described above is the persisted property value supplied through its native change callback, rather than the factory's return type. Optional and readonly reference-array properties are supported; prototype-related target names are forbidden by types and runtime.
 
 The factory requires `instance`, a stable `key` and the current `value`. Optional `valueRevision` marks an authoritative external reset, including resets to an array equivalent to a previous host value. Remaining options follow [FileFolderPicker](../controls/file-folder-picker.md), excluding `value`, `defaultValue` and `onChange` from the React contract. SPFx supplies the native change callback; absent callbacks disable mutations with a diagnostic.
 
@@ -40,7 +49,7 @@ Closing the last native field releases its in-memory metadata cache and cancels 
 
 The new factory uses a small direct-array value bridge because the older bridge requires `PickerValue` renderer aliases and Combobox selection events. Authentication, metadata clients, scope resolution and native hosting remain shared toolkit capabilities. Source, kind, category, extension, cardinality and returned-item restrictions are identical between React and Property Pane.
 
-See [SharePoint validation](../../SHAREPOINT-VALIDATION.md) for required real-host dialog, scope, authentication and reopen checks. Local simulations do not establish tenant permissions or Microsoft's internal API traffic.
+See [SharePoint validation](../../development/sharepoint-validation/INDEX.md) for required real-host dialog, scope, authentication and reopen checks. Local simulations do not establish tenant permissions or Microsoft's internal API traffic.
 
 ## Native member reference
 
@@ -60,8 +69,7 @@ The native field always opens the same responsive 1080 × 720 dialog without an 
 
 The native factory accepts the same explicit `preset: 'focused' | 'extended'` and functional props as [React](../controls/file-folder-picker.md#presets-the-simple-configuration), with the same resolver, defaults and validation. Graph/claims handling is internal to the preset and uses existing provider/grants only. Upload and create-folder remain explicit false-by-default intents. A preset does not change accepted source or saved JSON values.
 
-Omitting preset preserves the deprecated legacy SDK configuration. Defined legacy SDK flags cannot be mixed with a preset; choose migration explicitly. Existing web-part preferences are not silently reinterpreted, and draft/confirmed references survive presentation/preset updates.
-Use `hint` for the description: omission renders none; opening never adds automatic status text or replaces the browse icon with a spinner. The animated lower border and internal busy state remain. Opening-only changes apply on the next Browse without replacing the mounted root, losing the native draft or repeating hydration. Source/policy or authoritative revision changes still cancel stale work. The final native lease disposal clears mounted metadata cache; a later pane opening hydrates with a fresh cache and preserves saved JSON references/available labels.
+Omitting preset preserves the deprecated legacy SDK configuration. Defined legacy SDK flags cannot be mixed with a preset; choose migration explicitly. Existing web-part preferences are not silently reinterpreted, and draft/confirmed references survive presentation/preset updates. Use `hint` for the description: omission renders none; opening never adds automatic status text or replaces the browse icon with a spinner. The animated lower border and internal busy state remain. Opening-only changes apply on the next Browse without replacing the mounted root, losing the native draft or repeating hydration. Source/policy or authoritative revision changes still cancel stale work. The final native lease disposal clears mounted metadata cache; a later pane opening hydrates with a fresh cache and preserves saved JSON references/available labels.
 
 ```tsx
 PropertyPaneFileFolderPicker('documents', {
