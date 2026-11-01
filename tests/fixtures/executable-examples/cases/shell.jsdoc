@@ -1,0 +1,16 @@
+/**
+ * Configure the existing shell.
+ * @example Shell presentation
+ * ```tsx
+ * import * as React from 'react';
+ * import type { WebPartShellProps, IWebPartShellProperties } from '@apvee/spfx-react-toolkit/controls/web-part-shell';
+ * type DemoShellPort = {
+ *   presentation: Required<Pick<WebPartShellProps<IWebPartShellProperties>, 'appearance' | 'size' | 'titlePosition' | 'padding'>>;
+ *   updatePresentation(patch: Partial<DemoShellPort['presentation']>): void;
+ * };
+ * export function Demo({ shell }: { shell?: DemoShellPort }): React.ReactElement {
+ *   return <div>{shell ? shell.presentation.appearance : 'A web part host is required.'}</div>;
+ * }
+ * export const demo = { host: 'webPart', hostAdapter: 'webPartShell', kind: 'snapshot', contentPlacement: 'configuration', observe: 'The outer shell uses the chosen presentation.' };
+ * ```
+ */

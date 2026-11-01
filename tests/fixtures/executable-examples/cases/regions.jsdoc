@@ -1,0 +1,22 @@
+/**
+ * A scenario with host regions.
+ * @example Regions and reset
+ * ```tsx
+ * import * as React from 'react';
+ * type DemoRegions = {
+ *   controls?: React.ReactNode;
+ *   commands?: React.ReactNode;
+ *   status?: React.ReactNode;
+ *   diagnostics?: React.ReactNode;
+ *   children?: React.ReactNode;
+ * };
+ * export function Demo({ render, resetRevision = 0 }: {
+ *   render?: (regions: DemoRegions) => React.ReactElement;
+ *   resetRevision?: number;
+ * }): React.ReactElement {
+ *   const regions: DemoRegions = { children: <div>{resetRevision}</div> };
+ *   return render ? render(regions) : <>{regions.children}</>;
+ * }
+ * export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'The revision is visible.' };
+ * ```
+ */

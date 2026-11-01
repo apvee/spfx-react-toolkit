@@ -1,0 +1,7 @@
+{
+  "name": "@apvee/spfx-react-toolkit",
+  "exports": {
+    ".": { "types": "./lib/index.d.ts" },
+    "./controls/web-part-shell": { "types": "./lib/shell.d.ts" }
+  }
+}
