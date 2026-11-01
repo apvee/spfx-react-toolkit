@@ -6,7 +6,7 @@ const ts = require('typescript');
 const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
 const readPanel = () => fs.readFileSync(path.resolve(__dirname, 'fixtures/demo-control-isolation/pagination-regressions.tsx'), 'utf8');
 
-test('Pagination registry owns one lazy executable scenario', () => {
+test('Pagination residual registry keeps its rich lazy panel beside generated pilots', () => {
   const registry = fs.readFileSync(path.join(base, 'demoRegistry.ts'), 'utf8');
   for (const token of ["key: 'pagination'", "symbol: 'Pagination'", "webpackChunkName: 'spfx-demo-pagination'"]) {
     assert.equal(registry.split(token).length - 1, 1, token);
@@ -73,4 +73,15 @@ test('Product scenario owns one configuration and selectable variants without co
   assert.doesNotMatch(product, /Independent |comparison|hidden=\{(?:mode|family) !==/);
   const browserChecks = fs.readFileSync(path.resolve(__dirname, 'fixtures/demo-control-isolation/task3-product.browser.cjs'), 'utf8');
   assert.match(browserChecks, /paginationProduct/);
+});
+
+
+test('source-owned Pagination pilots coexist with rich cursor/load-more residual coverage', () => {
+  const source = fs.readFileSync(path.resolve(__dirname, '../packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx'), 'utf8');
+  const catalogue = fs.readFileSync(path.join(base, 'generated/jsdoc-examples/catalogue.ts'), 'utf8');
+  for (const title of ['Browse controlled rows', 'Browse controlled rows with pending completion', 'Show an empty controlled result']) {
+    assert.ok(source.includes(`@example ${title}\n`));
+    assert.ok(catalogue.includes(`"title": "${title}"`));
+  }
+  for (const mode of ['unknown', 'cursor', 'loadMore']) assert.ok(readPanel().includes(`value="${mode}"`), `${mode} residual remains active`);
 });

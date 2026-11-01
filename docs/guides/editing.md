@@ -256,3 +256,333 @@ export function SummaryContent(): React.ReactElement {
     onChange={data => setProperties({ summaryHTML: data.html, summary: data.text })} />;
 }
 ```
+
+## Observe the actual Shell presentation lifecycle
+
+The test web part exposes three source-owned **WebPartShell** scenarios under **Controlli**. They receive a presentation port for the existing outer Shell and use its initialized provider; copying them into another host requires the same port shape. They never render a second Shell. Choose **Use Card baseline** explicitly before testing Card retention. Title position, visibility, Card size and changes between non-subtle Card appearances retain the note and counter. Switching between subtle and Card can remount that content; the explorer keeps its group, feature and scenario selection above the Shell.
+
+Presentation presets are explicit commands, so selecting a scenario preserves the current outer presentation. **Ripristina scenario** applies the selected source baseline, resets local values and, only in actual native Edit mode, restores the persisted title to `SPFx React Toolkit`. Mount, selection and native Read mode never reset the title. The host header action hides the title; the scenario provides an always-reachable **Show title** command and moves focus there when the header disappears.
+
+#### Configure the actual web part Shell
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Select } from '@fluentui/react-components';
+import { useSPFxProperties, useSPFxDisplayMode, type IWebPartShellProperties, type WebPartShellProps } from '@apvee/spfx-react-toolkit';
+
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+  children?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+interface DemoShellPort {
+  presentation: Required<Pick<WebPartShellProps<IWebPartShellProperties>, 'appearance' | 'size' | 'titlePosition' | 'padding'>>;
+  updatePresentation(patch: Partial<DemoShellPort['presentation']>): void;
+}
+interface DemoProps {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+  shell?: DemoShellPort;
+}
+
+// The host supplies its existing Shell and initialized SPFx provider, never a nested Shell.
+export function Demo({ render = standalone, resetRevision = 0, shell }: DemoProps = {}): React.ReactElement {
+  return shell === undefined
+    ? <p>This scenario requires the actual WebPartShell host, its presentation port and initialized SPFx provider.</p>
+    : <ShellContent render={render} resetRevision={resetRevision} shell={shell} />;
+}
+function ShellContent({ render, resetRevision, shell }: {
+  render: (regions: DemoRegions) => React.ReactElement;
+  resetRevision: number;
+  shell: DemoShellPort;
+}): React.ReactElement {
+  const { properties, setProperties } = useSPFxProperties<IWebPartShellProperties>();
+  const { isEdit } = useSPFxDisplayMode();
+  const [note, setNote] = React.useState('Intranet project review');
+  const [count, setCount] = React.useState(0);
+  const showButton = React.useRef<HTMLButtonElement>(null); // React 17 ref interoperability requires null.
+  const revision = React.useRef(resetRevision);
+  const updateBaseline = React.useCallback((): void => {
+    const baseline: DemoShellPort['presentation'] = { appearance: 'subtle', size: 'medium', titlePosition: 'outside', padding: 'auto' };
+    const current = shell.presentation;
+    if (current.appearance !== baseline.appearance || current.size !== baseline.size ||
+        current.titlePosition !== baseline.titlePosition || current.padding !== baseline.padding) {
+      shell.updatePresentation(baseline);
+    }
+  }, [shell]);
+  React.useEffect(() => {
+    // Mount and native Read/Edit updates only observe the revision. A later
+    // revision is an explicit reset; no persisted properties are written on mount.
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setNote('Intranet project review');
+    setCount(0);
+    updateBaseline();
+    if (isEdit) setProperties({ title: 'SPFx React Toolkit', titleHTML: undefined, showTitle: true });
+  }, [resetRevision, updateBaseline, isEdit, setProperties]);
+  React.useEffect(() => {
+    if (properties?.showTitle === false) showButton.current?.focus();
+  }, [properties?.showTitle]);
+  return render({
+    controls: <>
+      <Field label="Appearance"><Select aria-label="Appearance" value={shell.presentation.appearance}
+        onChange={event => shell.updatePresentation({ appearance: event.target.value === 'filled' ? 'filled' : event.target.value === 'filled-alternative' ? 'filled-alternative' : event.target.value === 'outline' ? 'outline' : 'subtle' })}>
+        <option value="subtle">Subtle</option><option value="filled">Filled</option><option value="filled-alternative">Filled alternative</option><option value="outline">Outline</option>
+      </Select></Field>
+      <Field label="Card size"><Select aria-label="Card size" value={shell.presentation.size}
+        onChange={event => shell.updatePresentation({ size: event.target.value === 'small' ? 'small' : event.target.value === 'large' ? 'large' : 'medium' })}>
+        <option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option>
+      </Select></Field>
+      <Field label="Title position"><Select aria-label="Title position" value={shell.presentation.titlePosition}
+        onChange={event => shell.updatePresentation({ titlePosition: event.target.value === 'inside' ? 'inside' : 'outside' })}>
+        <option value="outside">Outside</option><option value="inside">Inside</option>
+      </Select></Field>
+      <Field label="Spacing"><Select aria-label="Spacing" value={shell.presentation.padding}
+        onChange={event => shell.updatePresentation({ padding: event.target.value === 'none' ? 'none' : event.target.value === 'small' ? 'small' : event.target.value === 'medium' ? 'medium' : event.target.value === 'large' ? 'large' : 'auto' })}>
+        <option value="auto">Auto</option><option value="none">None</option><option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option>
+      </Select></Field>
+    </>,
+    commands: <>
+      <Button onClick={() => shell.updatePresentation({ appearance: 'outline' })}>Use Card baseline</Button>
+      <Button onClick={() => shell.updatePresentation({ appearance: 'subtle' })}>Use subtle baseline</Button>
+      <Button onClick={() => setProperties({ showTitle: false })}>Hide title</Button>
+      <Button ref={showButton} onClick={() => setProperties({ showTitle: true })}>Show title</Button>
+      <Button disabled={!isEdit} onClick={() => { if (isEdit) setProperties({ title: 'Project documents', titleHTML: undefined }); }}>Plain title</Button>
+      <Button disabled={!isEdit} onClick={() => { if (isEdit) setProperties({ title: 'Project documents', titleHTML: '<h2><strong>Project</strong> documents</h2>' }); }}>Formatted title</Button>
+      <Button disabled={!isEdit} onClick={() => { if (isEdit) setProperties({ title: '', titleHTML: '' }); }}>Empty title</Button>
+    </>,
+    status: <div role="status" aria-live="polite"><p>Mode: {isEdit ? 'Edit' : 'Read'} · Child counter: {count}</p>
+      <p>Use the actual host title and header action. Presentation presets are explicit; Reset restores this source baseline and restores the title only in Edit.</p></div>,
+    children: <>
+      <Input aria-label="Project note" value={note} onChange={(_event, data) => setNote(data.value)} />
+      <Button onClick={() => setCount(current => current + 1)}>Increment counter</Button>
+    </>,
+    diagnostics: <output>{JSON.stringify({ title: properties?.title, titleHTML: properties?.titleHTML, showTitle: properties?.showTitle, ...shell.presentation })}</output>,
+  });
+}
+export const demo = {
+  host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', hostAdapter: 'webPartShell',
+  observe: 'Configure the actual outer Shell. Its title and action are outside this scenario; native Read/Edit comes from SharePoint. Reset writes the source title only in Edit.',
+};
+```
+
+#### Retain content through Shell presentation changes
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Select } from '@fluentui/react-components';
+import { useSPFxProperties, useSPFxDisplayMode, type IWebPartShellProperties, type WebPartShellProps } from '@apvee/spfx-react-toolkit';
+
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+  children?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+interface DemoShellPort {
+  presentation: Required<Pick<WebPartShellProps<IWebPartShellProperties>, 'appearance' | 'size' | 'titlePosition' | 'padding'>>;
+  updatePresentation(patch: Partial<DemoShellPort['presentation']>): void;
+}
+interface DemoProps {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+  shell?: DemoShellPort;
+}
+
+// The host supplies its existing Shell and initialized SPFx provider, never a nested Shell.
+export function Demo({ render = standalone, resetRevision = 0, shell }: DemoProps = {}): React.ReactElement {
+  return shell === undefined
+    ? <p>This scenario requires the actual WebPartShell host, its presentation port and initialized SPFx provider.</p>
+    : <ShellContent render={render} resetRevision={resetRevision} shell={shell} />;
+}
+function ShellContent({ render, resetRevision, shell }: {
+  render: (regions: DemoRegions) => React.ReactElement;
+  resetRevision: number;
+  shell: DemoShellPort;
+}): React.ReactElement {
+  const { properties, setProperties } = useSPFxProperties<IWebPartShellProperties>();
+  const { isEdit } = useSPFxDisplayMode();
+  const [note, setNote] = React.useState('Intranet project review');
+  const [count, setCount] = React.useState(0);
+  const showButton = React.useRef<HTMLButtonElement>(null); // React 17 ref interoperability requires null.
+  const revision = React.useRef(resetRevision);
+  const updateBaseline = React.useCallback((): void => {
+    const baseline: DemoShellPort['presentation'] = { appearance: 'outline', size: 'medium', titlePosition: 'outside', padding: 'auto' };
+    const current = shell.presentation;
+    if (current.appearance !== baseline.appearance || current.size !== baseline.size ||
+        current.titlePosition !== baseline.titlePosition || current.padding !== baseline.padding) {
+      shell.updatePresentation(baseline);
+    }
+  }, [shell]);
+  React.useEffect(() => {
+    // Mount and native Read/Edit updates only observe the revision. A later
+    // revision is an explicit reset; no persisted properties are written on mount.
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setNote('Intranet project review');
+    setCount(0);
+    updateBaseline();
+    if (isEdit) setProperties({ title: 'SPFx React Toolkit', titleHTML: undefined, showTitle: true });
+  }, [resetRevision, updateBaseline, isEdit, setProperties]);
+  React.useEffect(() => {
+    if (properties?.showTitle === false) showButton.current?.focus();
+  }, [properties?.showTitle]);
+  return render({
+    controls: <>
+      <Field label="Appearance"><Select aria-label="Appearance" value={shell.presentation.appearance}
+        onChange={event => shell.updatePresentation({ appearance: event.target.value === 'filled' ? 'filled' : event.target.value === 'filled-alternative' ? 'filled-alternative' : event.target.value === 'outline' ? 'outline' : 'subtle' })}>
+        <option value="subtle">Subtle</option><option value="filled">Filled</option><option value="filled-alternative">Filled alternative</option><option value="outline">Outline</option>
+      </Select></Field>
+      <Field label="Card size"><Select aria-label="Card size" value={shell.presentation.size}
+        onChange={event => shell.updatePresentation({ size: event.target.value === 'small' ? 'small' : event.target.value === 'large' ? 'large' : 'medium' })}>
+        <option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option>
+      </Select></Field>
+      <Field label="Title position"><Select aria-label="Title position" value={shell.presentation.titlePosition}
+        onChange={event => shell.updatePresentation({ titlePosition: event.target.value === 'inside' ? 'inside' : 'outside' })}>
+        <option value="outside">Outside</option><option value="inside">Inside</option>
+      </Select></Field>
+      <Field label="Spacing"><Select aria-label="Spacing" value={shell.presentation.padding}
+        onChange={event => shell.updatePresentation({ padding: event.target.value === 'none' ? 'none' : event.target.value === 'small' ? 'small' : event.target.value === 'medium' ? 'medium' : event.target.value === 'large' ? 'large' : 'auto' })}>
+        <option value="auto">Auto</option><option value="none">None</option><option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option>
+      </Select></Field>
+    </>,
+    commands: <>
+      <Button onClick={() => shell.updatePresentation({ appearance: 'outline' })}>Use Card baseline</Button>
+      <Button onClick={() => shell.updatePresentation({ appearance: 'subtle' })}>Use subtle baseline</Button>
+      <Button onClick={() => setProperties({ showTitle: false })}>Hide title</Button>
+      <Button ref={showButton} onClick={() => setProperties({ showTitle: true })}>Show title</Button>
+      <Button disabled={!isEdit} onClick={() => { if (isEdit) setProperties({ title: 'Project documents', titleHTML: undefined }); }}>Plain title</Button>
+      <Button disabled={!isEdit} onClick={() => { if (isEdit) setProperties({ title: 'Project documents', titleHTML: '<h2><strong>Project</strong> documents</h2>' }); }}>Formatted title</Button>
+      <Button disabled={!isEdit} onClick={() => { if (isEdit) setProperties({ title: '', titleHTML: '' }); }}>Empty title</Button>
+    </>,
+    status: <div role="status" aria-live="polite"><p>Mode: {isEdit ? 'Edit' : 'Read'} · Child counter: {count}</p>
+      <p>Choose Use Card baseline first, then edit the note and counter. Card appearance, size, title position and visibility preserve content.</p></div>,
+    children: <>
+      <Input aria-label="Project note" value={note} onChange={(_event, data) => setNote(data.value)} />
+      <Button onClick={() => setCount(current => current + 1)}>Increment counter</Button>
+    </>,
+    diagnostics: <output>{JSON.stringify({ title: properties?.title, titleHTML: properties?.titleHTML, showTitle: properties?.showTitle, ...shell.presentation })}</output>,
+  });
+}
+export const demo = {
+  host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', hostAdapter: 'webPartShell',
+  observe: 'Choose Use Card baseline, edit the note and increment. Change between Card variants, size, title position and visibility: the same content remains mounted.',
+};
+```
+
+#### Observe content remount between subtle and Card
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Select } from '@fluentui/react-components';
+import { useSPFxProperties, useSPFxDisplayMode, type IWebPartShellProperties, type WebPartShellProps } from '@apvee/spfx-react-toolkit';
+
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+  children?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+interface DemoShellPort {
+  presentation: Required<Pick<WebPartShellProps<IWebPartShellProperties>, 'appearance' | 'size' | 'titlePosition' | 'padding'>>;
+  updatePresentation(patch: Partial<DemoShellPort['presentation']>): void;
+}
+interface DemoProps {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+  shell?: DemoShellPort;
+}
+
+// The host supplies its existing Shell and initialized SPFx provider, never a nested Shell.
+export function Demo({ render = standalone, resetRevision = 0, shell }: DemoProps = {}): React.ReactElement {
+  return shell === undefined
+    ? <p>This scenario requires the actual WebPartShell host, its presentation port and initialized SPFx provider.</p>
+    : <ShellContent render={render} resetRevision={resetRevision} shell={shell} />;
+}
+function ShellContent({ render, resetRevision, shell }: {
+  render: (regions: DemoRegions) => React.ReactElement;
+  resetRevision: number;
+  shell: DemoShellPort;
+}): React.ReactElement {
+  const { properties, setProperties } = useSPFxProperties<IWebPartShellProperties>();
+  const { isEdit } = useSPFxDisplayMode();
+  const [note, setNote] = React.useState('Intranet project review');
+  const [count, setCount] = React.useState(0);
+  const showButton = React.useRef<HTMLButtonElement>(null); // React 17 ref interoperability requires null.
+  const revision = React.useRef(resetRevision);
+  const updateBaseline = React.useCallback((): void => {
+    const baseline: DemoShellPort['presentation'] = { appearance: 'subtle', size: 'medium', titlePosition: 'outside', padding: 'auto' };
+    const current = shell.presentation;
+    if (current.appearance !== baseline.appearance || current.size !== baseline.size ||
+        current.titlePosition !== baseline.titlePosition || current.padding !== baseline.padding) {
+      shell.updatePresentation(baseline);
+    }
+  }, [shell]);
+  React.useEffect(() => {
+    // Mount and native Read/Edit updates only observe the revision. A later
+    // revision is an explicit reset; no persisted properties are written on mount.
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setNote('Intranet project review');
+    setCount(0);
+    updateBaseline();
+    if (isEdit) setProperties({ title: 'SPFx React Toolkit', titleHTML: undefined, showTitle: true });
+  }, [resetRevision, updateBaseline, isEdit, setProperties]);
+  React.useEffect(() => {
+    if (properties?.showTitle === false) showButton.current?.focus();
+  }, [properties?.showTitle]);
+  return render({
+    controls: <>
+      <Field label="Appearance"><Select aria-label="Appearance" value={shell.presentation.appearance}
+        onChange={event => shell.updatePresentation({ appearance: event.target.value === 'filled' ? 'filled' : event.target.value === 'filled-alternative' ? 'filled-alternative' : event.target.value === 'outline' ? 'outline' : 'subtle' })}>
+        <option value="subtle">Subtle</option><option value="filled">Filled</option><option value="filled-alternative">Filled alternative</option><option value="outline">Outline</option>
+      </Select></Field>
+      <Field label="Card size"><Select aria-label="Card size" value={shell.presentation.size}
+        onChange={event => shell.updatePresentation({ size: event.target.value === 'small' ? 'small' : event.target.value === 'large' ? 'large' : 'medium' })}>
+        <option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option>
+      </Select></Field>
+      <Field label="Title position"><Select aria-label="Title position" value={shell.presentation.titlePosition}
+        onChange={event => shell.updatePresentation({ titlePosition: event.target.value === 'inside' ? 'inside' : 'outside' })}>
+        <option value="outside">Outside</option><option value="inside">Inside</option>
+      </Select></Field>
+      <Field label="Spacing"><Select aria-label="Spacing" value={shell.presentation.padding}
+        onChange={event => shell.updatePresentation({ padding: event.target.value === 'none' ? 'none' : event.target.value === 'small' ? 'small' : event.target.value === 'medium' ? 'medium' : event.target.value === 'large' ? 'large' : 'auto' })}>
+        <option value="auto">Auto</option><option value="none">None</option><option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option>
+      </Select></Field>
+    </>,
+    commands: <>
+      <Button onClick={() => shell.updatePresentation({ appearance: 'outline' })}>Use Card baseline</Button>
+      <Button onClick={() => shell.updatePresentation({ appearance: 'subtle' })}>Use subtle baseline</Button>
+      <Button onClick={() => setProperties({ showTitle: false })}>Hide title</Button>
+      <Button ref={showButton} onClick={() => setProperties({ showTitle: true })}>Show title</Button>
+      <Button disabled={!isEdit} onClick={() => { if (isEdit) setProperties({ title: 'Project documents', titleHTML: undefined }); }}>Plain title</Button>
+      <Button disabled={!isEdit} onClick={() => { if (isEdit) setProperties({ title: 'Project documents', titleHTML: '<h2><strong>Project</strong> documents</h2>' }); }}>Formatted title</Button>
+      <Button disabled={!isEdit} onClick={() => { if (isEdit) setProperties({ title: '', titleHTML: '' }); }}>Empty title</Button>
+    </>,
+    status: <div role="status" aria-live="polite"><p>Mode: {isEdit ? 'Edit' : 'Read'} · Child counter: {count}</p>
+      <p>Edit the note and increment, then switch subtle and Card. The real Shell may remount its content; upper explorer selection survives.</p></div>,
+    children: <>
+      <Input aria-label="Project note" value={note} onChange={(_event, data) => setNote(data.value)} />
+      <Button onClick={() => setCount(current => current + 1)}>Increment counter</Button>
+    </>,
+    diagnostics: <output>{JSON.stringify({ title: properties?.title, titleHTML: properties?.titleHTML, showTitle: properties?.showTitle, ...shell.presentation })}</output>,
+  });
+}
+export const demo = {
+  host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', hostAdapter: 'webPartShell',
+  observe: 'Edit the note and counter, then switch subtle and Card with the explicit commands. Child state resets at the real body boundary; group, feature and scenario selection survive.',
+};
+```

@@ -626,6 +626,8 @@ import { FormattedText, RelativeTime } from '@apvee/spfx-react-toolkit';
 </FormattedText>
 ```
 
+#### Request the next load-more batch
+
 ```tsx
 import * as React from 'react';
 import { Pagination } from '@apvee/spfx-react-toolkit';
@@ -635,6 +637,240 @@ async function loadMore(): Promise<void> { console.log('Next batch requested'); 
 function reportError(error: unknown): void { console.error(error); }
 <Pagination pagination={{ type: 'loadMore', hasNextPage: hasMore }} loading={loadingMore}
   onPaginationChange={() => { void loadMore().catch(reportError); }} />
+```
+
+#### Browse controlled rows
+
+```tsx
+import * as React from 'react';
+import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from '@fluentui/react-components';
+import { Pagination } from '@apvee/spfx-react-toolkit/controls/pagination';
+
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+  children?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+interface Order { id: number; title: string; category: 'Hardware' | 'Software'; }
+const orders: readonly Order[] = Array.from({ length: 23 }, (_, index) => ({
+  id: index + 1, title: `Order ${index + 1}`, category: index % 2 === 0 ? 'Hardware' : 'Software',
+}));
+const available: readonly Order[] = orders;
+const pageSize = 5;
+
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const [pageIndex, setPageIndex] = React.useState(0);
+  const [requests, setRequests] = React.useState(0);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setPageIndex(0);
+    setRequests(0);
+  }, [resetRevision]);
+  const requestPage = (nextPage: number): void => {
+    setRequests(current => current + 1);
+    setPageIndex(nextPage);
+  };
+  const start = pageIndex * pageSize;
+  const rows = available.slice(start, start + pageSize);
+  return render({
+    status: <div role="status" aria-live="polite" aria-atomic="true">
+      <p>{available.length === 0 ? 0 : start + 1}–{Math.min(start + pageSize, available.length)} of {available.length}</p>
+      <p>Requests: {requests}</p>
+    </div>,
+    children: <>
+      <Table aria-label="Orders">
+        <TableHeader><TableRow><TableHeaderCell>ID</TableHeaderCell><TableHeaderCell>Order</TableHeaderCell><TableHeaderCell>Category</TableHeaderCell></TableRow></TableHeader>
+        <TableBody>{rows.map(order => <TableRow key={order.id} data-order-id={order.id}>
+          <TableCell>{order.id}</TableCell><TableCell>{order.title}</TableCell><TableCell>{order.category}</TableCell>
+        </TableRow>)}</TableBody>
+      </Table>
+      {rows.length === 0 ? <p>No orders found.</p> : undefined}
+      <Pagination pagination={{ type: 'pages', pageIndex, pageSize, totalItems: available.length }}
+        onPaginationChange={(_event, data) => { if (data.type === 'pages') requestPage(data.pageIndex); }} />
+    </>,
+    diagnostics: <p>The consumer owns slicing and controlled page state. Reset restores this example’s first page and result baseline.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'subject',
+  observe: 'Browse 23 deterministic orders, five per page. Next changes rows 1–5 to 6–10; Reset returns to the first page.',
+};
+```
+
+#### Browse controlled rows with pending completion
+
+```tsx
+import * as React from 'react';
+import { Button, Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from '@fluentui/react-components';
+import { Pagination } from '@apvee/spfx-react-toolkit/controls/pagination';
+
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+  children?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+interface Order { id: number; title: string; category: 'Hardware' | 'Software'; }
+const orders: readonly Order[] = Array.from({ length: 23 }, (_, index) => ({
+  id: index + 1, title: `Order ${index + 1}`, category: index % 2 === 0 ? 'Hardware' : 'Software',
+}));
+const available: readonly Order[] = orders;
+const pageSize = 5;
+
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const [pageIndex, setPageIndex] = React.useState(0);
+  const [loading, setLoading] = React.useState(false);
+  const [requests, setRequests] = React.useState(0);
+  const [error, setError] = React.useState<string>();
+  const generation = React.useRef(0);
+  const revision = React.useRef(resetRevision);
+  const pending = React.useRef<{ complete: () => void }>();
+  const invalidate = React.useCallback((): void => {
+    generation.current++;
+    pending.current?.complete();
+    pending.current = undefined;
+  }, []);
+  React.useLayoutEffect(() => () => invalidate(), [invalidate]);
+  React.useLayoutEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    invalidate();
+    setPageIndex(0);
+    setLoading(false);
+    setRequests(0);
+    setError(undefined);
+  }, [resetRevision, invalidate]);
+  const requestPage = (nextPage: number): void => {
+    if (pending.current !== undefined) return;
+    setRequests(current => current + 1);
+    setError(undefined);
+    const token = generation.current;
+    setLoading(true);
+    const completion = new Promise<void>(resolve => { pending.current = { complete: resolve }; });
+    completion.then(() => {
+      if (generation.current !== token) return;
+      pending.current = undefined;
+      setPageIndex(nextPage);
+      setLoading(false);
+    }).catch((reason: unknown) => {
+      if (generation.current !== token) return;
+      pending.current = undefined;
+      setLoading(false);
+      setError(reason instanceof Error ? reason.message : String(reason));
+    });
+  };
+  const start = pageIndex * pageSize;
+  const rows = available.slice(start, start + pageSize);
+  return render({
+    commands: <Button disabled={!loading} onClick={() => pending.current?.complete()}>Complete pending request</Button>,
+    status: <div role="status" aria-live="polite" aria-atomic="true">
+      <p>{available.length === 0 ? 0 : start + 1}–{Math.min(start + pageSize, available.length)} of {available.length}</p>
+      <p>Requests: {requests}{loading ? ' · Pending completion' : ''}</p>
+      {error === undefined ? undefined : <p role="alert">{error}</p>}
+    </div>,
+    children: <>
+      <Table aria-label="Orders">
+        <TableHeader><TableRow><TableHeaderCell>ID</TableHeaderCell><TableHeaderCell>Order</TableHeaderCell><TableHeaderCell>Category</TableHeaderCell></TableRow></TableHeader>
+        <TableBody>{rows.map(order => <TableRow key={order.id} data-order-id={order.id}>
+          <TableCell>{order.id}</TableCell><TableCell>{order.title}</TableCell><TableCell>{order.category}</TableCell>
+        </TableRow>)}</TableBody>
+      </Table>
+      {rows.length === 0 ? <p>No orders found.</p> : undefined}
+      <Pagination pagination={{ type: 'pages', pageIndex, pageSize, totalItems: available.length }} loading={loading}
+        onPaginationChange={(_event, data) => { if (data.type === 'pages') requestPage(data.pageIndex); }} />
+    </>,
+    diagnostics: <p>The consumer owns slicing, request locks and cancellation. Reset and unmount invalidate pending completion.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'subject',
+  observe: 'Next retains rows 1–5 and locks navigation until Complete pending request applies rows 6–10 once. Reset cancels pending work and keeps manual completion.',
+};
+```
+
+#### Show an empty controlled result
+
+```tsx
+import * as React from 'react';
+import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from '@fluentui/react-components';
+import { Pagination } from '@apvee/spfx-react-toolkit/controls/pagination';
+
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+  children?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+interface Order { id: number; title: string; category: 'Hardware' | 'Software'; }
+const orders: readonly Order[] = Array.from({ length: 23 }, (_, index) => ({
+  id: index + 1, title: `Order ${index + 1}`, category: index % 2 === 0 ? 'Hardware' : 'Software',
+}));
+const available: readonly Order[] = orders.filter(() => false);
+const pageSize = 5;
+
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const [pageIndex, setPageIndex] = React.useState(0);
+  const [requests, setRequests] = React.useState(0);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setPageIndex(0);
+    setRequests(0);
+  }, [resetRevision]);
+  const requestPage = (nextPage: number): void => {
+    setRequests(current => current + 1);
+    setPageIndex(nextPage);
+  };
+  const start = pageIndex * pageSize;
+  const rows = available.slice(start, start + pageSize);
+  return render({
+    status: <div role="status" aria-live="polite" aria-atomic="true">
+      <p>{available.length === 0 ? 0 : start + 1}–{Math.min(start + pageSize, available.length)} of {available.length}</p>
+      <p>Requests: {requests}</p>
+    </div>,
+    children: <>
+      <Table aria-label="Orders">
+        <TableHeader><TableRow><TableHeaderCell>ID</TableHeaderCell><TableHeaderCell>Order</TableHeaderCell><TableHeaderCell>Category</TableHeaderCell></TableRow></TableHeader>
+        <TableBody>{rows.map(order => <TableRow key={order.id} data-order-id={order.id}>
+          <TableCell>{order.id}</TableCell><TableCell>{order.title}</TableCell><TableCell>{order.category}</TableCell>
+        </TableRow>)}</TableBody>
+      </Table>
+      {rows.length === 0 ? <p>No orders found.</p> : undefined}
+      <Pagination pagination={{ type: 'pages', pageIndex, pageSize, totalItems: available.length }}
+        onPaginationChange={(_event, data) => { if (data.type === 'pages') requestPage(data.pageIndex); }} />
+    </>,
+    diagnostics: <p>The consumer owns slicing and controlled page state. Reset restores this example’s first page and result baseline.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'subject',
+  observe: 'No rows, a zero result summary and disabled navigation remain empty after Reset.',
+};
 ```
 
 ### Choose the site-zone fallback

@@ -143,7 +143,7 @@ test('numeric drafts allow clearing and sequential replacement while retaining v
 
 test('hook, provider, style and service panels use Fluent configuration and shared demo regions', () => {
   const componentRoot = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
-  const panels = ['Styles', 'Imports', 'ReactHooks', 'Providers', 'Context', 'Runtime', 'Clients', 'GraphData', 'Site', 'Tenant', 'PnP', 'Search'];
+  const panels = ['Styles', 'Imports', 'Providers', 'Context', 'Runtime', 'Clients', 'GraphData', 'Site', 'Tenant', 'PnP', 'Search'];
   const files = panels.map(name => path.join(componentRoot, 'panels', name + 'Panel.tsx'))
     .concat(fs.readdirSync(path.join(componentRoot, 'demos')).filter(name => /^PnP.*\.tsx$/.test(name)).map(name => path.join(componentRoot, 'demos', name)));
   for (const file of files) {
@@ -154,6 +154,17 @@ test('hook, provider, style and service panels use Fluent configuration and shar
     const delegated = /from ['"]\.\.\/demos['"]/.test(source) && /<PnP[A-Za-z]+Demo/.test(source);
     assert.ok(/DemoCard|useDemoStyles/.test(source) || delegated, `${path.basename(file)} must own shared regions or delegate an actual demo component`);
   }
+  const generatedRoot = path.join(componentRoot, 'generated/jsdoc-examples');
+  const hooks = fs.readdirSync(generatedRoot).filter(name => name.endsWith('.tsx'))
+    .map(name => fs.readFileSync(path.join(generatedRoot, name), 'utf8'))
+    .filter(source => source.includes('useStableCallback'));
+  assert.equal(hooks.length, 2, 'callback scenarios moved into their owning source examples');
+  for (const source of hooks) {
+    assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|a)\b|\bstyles?\s*=/);
+    assert.match(source, /return render\(\{/);
+    assert.match(source, /contentPlacement: 'configuration'/);
+  }
+  assert.match(fs.readFileSync(path.join(componentRoot, 'shared/ExecutableExampleHost.tsx'), 'utf8'), /<DemoCard/, 'host owns the shared presentation for source examples');
 });
 
 test('Styles native slots keep their Fluent label associations', t => {

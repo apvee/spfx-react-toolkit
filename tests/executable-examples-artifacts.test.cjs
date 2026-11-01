@@ -72,7 +72,7 @@ test('emits exact source bytes, literal lazy imports and one feature with source
   for (const entry of cat.executableExamples) {
     const example = context.model.examples.find(item => item.ownerKey === entry.ownerKey && item.title === entry.title);
     assert.equal(artifacts[outputRoot + '/' + entry.id + '.tsx'], marker + '\n' + example.code);
-    assert.match(cat.source, new RegExp('import\\("\\./' + entry.id + '"\\)'));
+    assert.ok(cat.source.includes(`import(/* webpackChunkName: 'spfx-jsdoc-${entry.id}' */ "./${entry.id}")`));
     assert.equal(typeof entry.load, 'function');
     assert.equal(entry.metadata.host, 'none');
   }
@@ -277,4 +277,34 @@ test('both compiler consumers reject generated executable source/config inputs i
     }
     assert.deepEqual(snapshot(root), before);
   }
+});
+
+test('SPFx lazy chunks have deterministic names derived only from scenario identity', () => {
+  const { renderExecutableExamples } = require('../scripts/executable-examples-render.cjs');
+  const examples = ['a', 'b'].map((character, index) => ({
+    id: character.repeat(64), ownerKey: 'src/widget.tsx#Widget', title: `Scenario ${index}`,
+    groupKey: 'controls', groupRoute: 'docs/api/controls/widget.md', featureKey: 'src/widget.tsx#Widget', featureTitle: 'Widget',
+    publicNames: ['Widget'], source: { file: 'src/widget.tsx', line: index + 1 },
+    metadata: { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Observe the widget.' },
+    code: 'export function Demo() { throw new Error("Never execute during generation"); }\n',
+  }));
+  const artifacts = renderExecutableExamples(examples);
+  const source = ts.createSourceFile('catalogue.ts', artifacts[outputRoot + '/catalogue.ts'], ts.ScriptTarget.Latest, true);
+  const imports = [];
+  function visit(node) {
+    if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) imports.push(node);
+    ts.forEachChild(node, visit);
+  }
+  visit(source);
+  assert.equal(imports.length, 2);
+  for (const [index, node] of imports.entries()) {
+    assert.equal(node.arguments.length, 1);
+    assert.ok(ts.isStringLiteral(node.arguments[0]), 'webpack needs a literal module specifier');
+    const id = examples[index].id;
+    assert.equal(node.arguments[0].text, './' + id);
+    assert.ok(node.getText(source).includes(`/* webpackChunkName: 'spfx-jsdoc-${id}' */`), 'SPFx-required magic comment');
+  }
+  const moved = examples.map(entry => ({ ...entry, source: { ...entry.source, line: entry.source.line + 100 } }));
+  const movedText = renderExecutableExamples(moved)[outputRoot + '/catalogue.ts'];
+  for (const { id } of examples) assert.ok(movedText.includes(`webpackChunkName: 'spfx-jsdoc-${id}'`), 'source movement does not rename chunks');
 });

@@ -55,6 +55,202 @@ export interface ExecutableGroup {
   features: readonly ExecutableFeature[];
 }
 
-export const executableExamples: readonly ExecutableExampleEntry[] = [];
+export const executableExamples: readonly ExecutableExampleEntry[] = [
+{
+  "id": "9683f13667de14283119638684b1fbc134bf95fe6d1d842aafafff359750b401",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination",
+  "title": "Browse controlled rows",
+  "groupRoute": "docs/api/controls/pagination.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination",
+  "featureTitle": "Pagination",
+  "publicNames": [
+    "Pagination"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx",
+    "line": 48
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Browse 23 deterministic orders, five per page. Next changes rows 1–5 to 6–10; Reset returns to the first page."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-9683f13667de14283119638684b1fbc134bf95fe6d1d842aafafff359750b401' */ "./9683f13667de14283119638684b1fbc134bf95fe6d1d842aafafff359750b401")
+},
+{
+  "id": "6c9bf1684b6b9e8ea749d23a3e3e1d5cab4d64ae8022a308363bd1a392965a40",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination",
+  "title": "Browse controlled rows with pending completion",
+  "groupRoute": "docs/api/controls/pagination.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination",
+  "featureTitle": "Pagination",
+  "publicNames": [
+    "Pagination"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx",
+    "line": 115
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Next retains rows 1–5 and locks navigation until Complete pending request applies rows 6–10 once. Reset cancels pending work and keeps manual completion."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-6c9bf1684b6b9e8ea749d23a3e3e1d5cab4d64ae8022a308363bd1a392965a40' */ "./6c9bf1684b6b9e8ea749d23a3e3e1d5cab4d64ae8022a308363bd1a392965a40")
+},
+{
+  "id": "2d308f4ed4728174423af4867bfda6b265243ed459b7111d1db58e5e5075531a",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination",
+  "title": "Show an empty controlled result",
+  "groupRoute": "docs/api/controls/pagination.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination",
+  "featureTitle": "Pagination",
+  "publicNames": [
+    "Pagination"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx",
+    "line": 212
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "No rows, a zero result summary and disabled navigation remain empty after Reset."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-2d308f4ed4728174423af4867bfda6b265243ed459b7111d1db58e5e5075531a' */ "./2d308f4ed4728174423af4867bfda6b265243ed459b7111d1db58e5e5075531a")
+},
+{
+  "id": "524ada20fca467ad721252dc50e1ffa9546c8e06f490d7728060dd959a62a61f",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell",
+  "title": "Configure the actual web part Shell",
+  "groupRoute": "docs/api/controls/web-part-shell.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell",
+  "featureTitle": "WebPartShell",
+  "publicNames": [
+    "WebPartShell"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx",
+    "line": 148
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "hostAdapter": "webPartShell",
+    "observe": "Configure the actual outer Shell. Its title and action are outside this scenario; native Read/Edit comes from SharePoint. Reset writes the source title only in Edit."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-524ada20fca467ad721252dc50e1ffa9546c8e06f490d7728060dd959a62a61f' */ "./524ada20fca467ad721252dc50e1ffa9546c8e06f490d7728060dd959a62a61f")
+},
+{
+  "id": "0b61abedb42418bdfcdd31cfacdb1b844dbd065bc55f57c82ae7154c09ead21f",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell",
+  "title": "Retain content through Shell presentation changes",
+  "groupRoute": "docs/api/controls/web-part-shell.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell",
+  "featureTitle": "WebPartShell",
+  "publicNames": [
+    "WebPartShell"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx",
+    "line": 255
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "hostAdapter": "webPartShell",
+    "observe": "Choose Use Card baseline, edit the note and increment. Change between Card variants, size, title position and visibility: the same content remains mounted."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-0b61abedb42418bdfcdd31cfacdb1b844dbd065bc55f57c82ae7154c09ead21f' */ "./0b61abedb42418bdfcdd31cfacdb1b844dbd065bc55f57c82ae7154c09ead21f")
+},
+{
+  "id": "7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell",
+  "title": "Observe content remount between subtle and Card",
+  "groupRoute": "docs/api/controls/web-part-shell.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell",
+  "featureTitle": "WebPartShell",
+  "publicNames": [
+    "WebPartShell"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx",
+    "line": 362
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "hostAdapter": "webPartShell",
+    "observe": "Edit the note and counter, then switch subtle and Card with the explicit commands. Child state resets at the real body boundary; group, feature and scenario selection survive."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717' */ "./7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717")
+},
+{
+  "id": "d41ff401e795fa9c1800585f3d2bdf498395dbac07dce27da9c8d3a2aa023376",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback",
+  "title": "Report current count through a retained callback",
+  "groupRoute": "docs/api/hooks/react.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback",
+  "featureTitle": "useStableCallback",
+  "publicNames": [
+    "useStableCallback"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts",
+    "line": 43
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Increment twice, then invoke the original callback: it reports 2. Increment again; the observed value changes only when invoked."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-d41ff401e795fa9c1800585f3d2bdf498395dbac07dce27da9c8d3a2aa023376' */ "./d41ff401e795fa9c1800585f3d2bdf498395dbac07dce27da9c8d3a2aa023376")
+},
+{
+  "id": "3d1b9688a4a92bbeb2147405d82aed353d95d1521353a65cac6d0ee9591a8427",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback",
+  "title": "Retain callback identity through rerenders",
+  "groupRoute": "docs/api/hooks/react.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback",
+  "featureTitle": "useStableCallback",
+  "publicNames": [
+    "useStableCallback"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts",
+    "line": 111
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Increment and invoke the original callback after rerenders. Identity stays yes, including after Reset clears the values without remounting."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-3d1b9688a4a92bbeb2147405d82aed353d95d1521353a65cac6d0ee9591a8427' */ "./3d1b9688a4a92bbeb2147405d82aed353d95d1521353a65cac6d0ee9591a8427")
+}
+];
 
-export const executableGroups: readonly ExecutableGroup[] = [];
+export const executableGroups: readonly ExecutableGroup[] = [
+  { key: "controls", title: "Controlli", features: [
+    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[0], executableExamples[1], executableExamples[2]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[3], executableExamples[4], executableExamples[5]] }
+  ] },
+  { key: "hooks", title: "Hook", features: [
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[6], executableExamples[7]] }
+  ] }
+];

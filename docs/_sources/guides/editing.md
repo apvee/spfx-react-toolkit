@@ -163,3 +163,15 @@ The Shell-owned title delegates to [EditableText](../../api/controls/editable-te
 <!-- toolkit:include symbol="EditableText" section="example" title="Render saved semantic theme color" -->
 
 <!-- toolkit:include symbol="EditableText" section="example" title="Persist HTML and searchable text through SPFx properties" -->
+
+## Observe the actual Shell presentation lifecycle
+
+The test web part exposes three source-owned **WebPartShell** scenarios under **Controlli**. They receive a presentation port for the existing outer Shell and use its initialized provider; copying them into another host requires the same port shape. They never render a second Shell. Choose **Use Card baseline** explicitly before testing Card retention. Title position, visibility, Card size and changes between non-subtle Card appearances retain the note and counter. Switching between subtle and Card can remount that content; the explorer keeps its group, feature and scenario selection above the Shell.
+
+Presentation presets are explicit commands, so selecting a scenario preserves the current outer presentation. **Ripristina scenario** applies the selected source baseline, resets local values and, only in actual native Edit mode, restores the persisted title to `SPFx React Toolkit`. Mount, selection and native Read mode never reset the title. The host header action hides the title; the scenario provides an always-reachable **Show title** command and moves focus there when the header disappears.
+
+<!-- toolkit:include symbol="WebPartShell" section="example" title="Configure the actual web part Shell" -->
+
+<!-- toolkit:include symbol="WebPartShell" section="example" title="Retain content through Shell presentation changes" -->
+
+<!-- toolkit:include symbol="WebPartShell" section="example" title="Observe content remount between subtle and Card" -->

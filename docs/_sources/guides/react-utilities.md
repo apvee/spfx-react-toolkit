@@ -8,7 +8,7 @@ Keep callback identity stable after commit while reading current state, and dist
 
 ### Import choices
 
-Root imports, `/hooks` and historical hook leaves remain supported. The narrow clean `/hooks/useStableCallback` and `/styles/useSx` aliases point to the same canonical hooks. `/styles` exposes `useSx` alongside descriptors and types. Mixed aliases share context and renderer identity rather than adding instances. See [package imports](package-imports.md) for complete examples, resolver/peer requirements and measured budgets. The Imports web part complements the existing React Hooks and Styles scenarios.
+Root imports, `/hooks` and historical hook leaves remain supported. The narrow clean `/hooks/useStableCallback` and `/styles/useSx` aliases point to the same canonical hooks. `/styles` exposes `useSx` alongside descriptors and types. Mixed aliases share context and renderer identity rather than adding instances. See [package imports](package-imports.md) for complete examples, resolver/peer requirements and measured budgets. The Imports web part complements the generated useStableCallback scenarios and the existing Styles scenarios.
 
 ### useStableCallback
 
@@ -32,7 +32,7 @@ The underlying hook is exported and typed by Fluent UI 9, but its upstream sourc
 
 ### Web part scenario
 
-Open **React Hooks** in the test web part. Increment the counter, then select **Invoke original callback**. The observed counter should match the current counter and **Same callback identity** should read **yes**. The scenario retains the callback captured at mount rather than replacing it on each render.
+Open **Hook → useStableCallback** in the test web part and select either source-owned scenario. Increment the counter, then select **Invoke original callback**. The observed counter should match the current counter and **Same callback identity** should read **yes**. The scenario retains the callback captured at mount rather than replacing it on each render.
 
 Local tests exercise that component in a DOM harness with the actual hook. Authenticated SharePoint-host execution must be recorded separately.
 
@@ -40,3 +40,5 @@ Local tests exercise that component in a DOM harness with the actual hook. Authe
 - [Fluent implementation](https://github.com/microsoft/fluentui/blob/master/packages/react-components/react-utilities/src/hooks/useEventCallback.ts)
 
 <!-- toolkit:include symbol="useStableCallback" section="example" title="Report current count through a retained callback" -->
+
+<!-- toolkit:include symbol="useStableCallback" section="example" title="Retain callback identity through rerenders" -->

@@ -277,7 +277,7 @@ console.log('Verified selectable single Cards, image lifecycle and versioned nat
 for (const name of ['Cards', 'Stage', 'Form', 'DataGrid', 'Groups', 'Pagination', 'DescriptionList', 'Styles', 'Imports', 'RelativeTime', 'FormattedText', 'EditableText', 'AutoSkeleton', 'StateMessage', 'WebPartShell', 'Providers', 'Context']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
-  if (!product.includes('data-demo-variant') && !['ReactHooks'].includes(name)) throw new Error(`${name} selectable product variant missing`);
+  if (!product.includes('data-demo-variant')) throw new Error(`${name} selectable product variant missing`);
 }
 console.log('Verified live single-example variant declarations; execution/cardinality are browser checks.');
 // Guard the authored webpart tree, never native DOM emitted by Fluent/toolkit controls.

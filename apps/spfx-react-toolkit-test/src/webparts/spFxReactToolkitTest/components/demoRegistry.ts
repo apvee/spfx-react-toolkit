@@ -186,17 +186,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     iconName: 'Code',
     description: 'Select one root, domain or legacy adapter and inspect its captured callback and composed styles.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-imports' */ './panels/ImportsPanel')),
-    coverage: [], // Existing React Hooks and Styles entries own the exported symbols.
-  },
-  {
-    key: 'react-hooks',
-    title: 'React Hooks',
-    iconName: 'Code',
-    description: 'Reusable React hooks that do not require an SPFx provider.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-react-hooks' */ './panels/ReactHooksPanel')),
-    coverage: [
-      { symbol: 'useStableCallback', kind: 'snapshot', notes: 'Retained callback identity and updated counter after re-render.' },
-    ],
+    coverage: [], // Generated hook scenarios and the existing Styles entry own the exported symbols.
   },
   {
     key: 'styles',

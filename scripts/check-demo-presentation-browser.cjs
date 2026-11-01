@@ -148,7 +148,6 @@ async function interact(page, key) {
       const diagnostics = panel.getByRole('button', { name: 'Advanced diagnostics', exact: true });
       await diagnostics.click(); check('Imports original callback observes latest state', (await panel.textContent()).includes('Observed counter: 1'), true); await diagnostics.click(); break;
     }
-    case 'react-hooks': await panel.getByRole('button', { name: 'Increment counter', exact: true }).click(); await panel.getByRole('button', { name: 'Invoke captured callback', exact: true }).click(); check('Stable callback identity', (await panel.textContent()).includes('Same callback identity: yes'), true); break;
     case 'styles': {
       const scenario = panel.locator('select[data-demo-variant=styles]');
       await scenario.selectOption('preset');

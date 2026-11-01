@@ -96,7 +96,7 @@ function renderExecutableExamples(examples) {
     artifacts[`${executableRoot}/${id}.tsx`] = ownership + '\n' + example.code;
     indices.set(id, index);
     const data = JSON.stringify({ id, ownerKey, title, groupRoute, groupKey, featureKey, featureTitle, publicNames, source, metadata }, undefined, 2);
-    entries.push(data.slice(0, -2) + `,\n  load: () => import("./${id}")\n}`);
+    entries.push(data.slice(0, -2) + `,\n  load: () => import(/* webpackChunkName: 'spfx-jsdoc-${id}' */ "./${id}")\n}`);
   }
   const hierarchy = orderedGroups.map(group => {
     const features = group.features.map(feature => `    { key: ${JSON.stringify(feature.key)}, title: ${JSON.stringify(feature.title)}, scenarios: [${feature.examples.map(example => `executableExamples[${indices.get(example.id)}]`).join(', ')}] }`);

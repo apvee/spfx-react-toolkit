@@ -10,7 +10,7 @@ Keep callback identity stable after commit while reading current state, and dist
 
 ### Import choices
 
-Root imports, `/hooks` and historical hook leaves remain supported. The narrow clean `/hooks/useStableCallback` and `/styles/useSx` aliases point to the same canonical hooks. `/styles` exposes `useSx` alongside descriptors and types. Mixed aliases share context and renderer identity rather than adding instances. See [package imports](package-imports.md) for complete examples, resolver/peer requirements and measured budgets. The Imports web part complements the existing React Hooks and Styles scenarios.
+Root imports, `/hooks` and historical hook leaves remain supported. The narrow clean `/hooks/useStableCallback` and `/styles/useSx` aliases point to the same canonical hooks. `/styles` exposes `useSx` alongside descriptors and types. Mixed aliases share context and renderer identity rather than adding instances. See [package imports](package-imports.md) for complete examples, resolver/peer requirements and measured budgets. The Imports web part complements the generated useStableCallback scenarios and the existing Styles scenarios.
 
 ### useStableCallback
 
@@ -34,7 +34,7 @@ The underlying hook is exported and typed by Fluent UI 9, but its upstream sourc
 
 ### Web part scenario
 
-Open **React Hooks** in the test web part. Increment the counter, then select **Invoke original callback**. The observed counter should match the current counter and **Same callback identity** should read **yes**. The scenario retains the callback captured at mount rather than replacing it on each render.
+Open **Hook → useStableCallback** in the test web part and select either source-owned scenario. Increment the counter, then select **Invoke original callback**. The observed counter should match the current counter and **Same callback identity** should read **yes**. The scenario retains the callback captured at mount rather than replacing it on each render.
 
 Local tests exercise that component in a DOM harness with the actual hook. Authenticated SharePoint-host execution must be recorded separately.
 
@@ -45,20 +45,138 @@ Local tests exercise that component in a DOM harness with the actual hook. Authe
 
 ```tsx
 import * as React from 'react';
+import { Button } from '@fluentui/react-components';
 import { useStableCallback } from '@apvee/spfx-react-toolkit/hooks/useStableCallback';
 
-export function Counter(): React.ReactElement {
-  const [count, setCount] = React.useState(0);
-  const [message, setMessage] = React.useState('');
-  const report = useStableCallback((label: string) => `${label}: ${count}`);
-  const originalReport = React.useRef(report);
-  return <div>
-    <button onClick={() => setCount(current => current + 1)}>Increment</button>
-    <button onClick={() => setMessage(report('Current count'))}>Report</button>
-    <button onClick={() => setMessage(originalReport.current('Current count'))}>Invoke original callback</button>
-    <p>Count: {count}</p>
-    <p>{message}</p>
-    <p>Same callback identity: {originalReport.current === report ? 'yes' : 'no'}</p>
-  </div>;
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+  children?: React.ReactNode;
 }
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const [count, setCount] = React.useState(0);
+  const [observed, setObserved] = React.useState<number>();
+  const [message, setMessage] = React.useState('');
+  const [sameIdentity, setSameIdentity] = React.useState<boolean>();
+  const report = useStableCallback((label: string) => {
+    setObserved(count);
+    return `${label}: ${count}`;
+  });
+  const originalReport = React.useRef<typeof report>();
+  React.useEffect(() => {
+    if (originalReport.current === undefined) originalReport.current = report;
+  }, [report]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setCount(0);
+    setObserved(undefined);
+    setMessage('');
+    setSameIdentity(undefined);
+  }, [resetRevision]);
+  const invokeOriginal = (): void => {
+    const original = originalReport.current;
+    if (original === undefined) return;
+    setSameIdentity(original === report);
+    setMessage(original('Current count'));
+  };
+  return render({
+    commands: <>
+      <Button onClick={() => setCount(current => current + 1)}>Increment counter</Button>
+      <Button onClick={() => setMessage(report('Current count'))}>Report</Button>
+      <Button onClick={invokeOriginal}>Invoke original callback</Button>
+    </>,
+    status: <div role="status" aria-live="polite">
+      <p>Current count: {count}</p>
+      <p>Observed counter: {observed === undefined ? 'not invoked' : observed}</p>
+      <p>{message}</p>
+      <p>Same callback identity: {sameIdentity === undefined ? 'not checked' : sameIdentity ? 'yes' : 'no'}</p>
+    </div>,
+    diagnostics: <p>Invoke after commit. Reset keeps this mounted component and its original callback reference.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Increment twice, then invoke the original callback: it reports 2. Increment again; the observed value changes only when invoked.',
+};
+```
+
+#### Retain callback identity through rerenders
+
+```tsx
+import * as React from 'react';
+import { Button } from '@fluentui/react-components';
+import { useStableCallback } from '@apvee/spfx-react-toolkit/hooks/useStableCallback';
+
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+  children?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const [count, setCount] = React.useState(0);
+  const [observed, setObserved] = React.useState<number>();
+  const [message, setMessage] = React.useState('');
+  const [sameIdentity, setSameIdentity] = React.useState<boolean>();
+  const report = useStableCallback((label: string) => {
+    setObserved(count);
+    return `${label}: ${count}`;
+  });
+  const originalReport = React.useRef<typeof report>();
+  React.useEffect(() => {
+    if (originalReport.current === undefined) originalReport.current = report;
+  }, [report]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setCount(0);
+    setObserved(undefined);
+    setMessage('');
+    setSameIdentity(undefined);
+  }, [resetRevision]);
+  const invokeOriginal = (): void => {
+    const original = originalReport.current;
+    if (original === undefined) return;
+    setSameIdentity(original === report);
+    setMessage(original('Current count'));
+  };
+  return render({
+    commands: <>
+      <Button onClick={() => setCount(current => current + 1)}>Increment counter</Button>
+      <Button onClick={() => setMessage(report('Current count'))}>Report</Button>
+      <Button onClick={invokeOriginal}>Invoke original callback</Button>
+    </>,
+    status: <div role="status" aria-live="polite">
+      <p>Current count: {count}</p>
+      <p>Observed counter: {observed === undefined ? 'not invoked' : observed}</p>
+      <p>{message}</p>
+      <p>Same callback identity: {sameIdentity === undefined ? 'not checked' : sameIdentity ? 'yes' : 'no'}</p>
+    </div>,
+    diagnostics: <p>Invoke after commit. Reset keeps this mounted component and its original callback reference.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Increment and invoke the original callback after rerenders. Identity stays yes, including after Reset clears the values without remounting.',
+};
 ```

@@ -29,7 +29,10 @@ function ShellDemoAction(): JSX.Element {
 /** Private sample host: one Shell for the web part, with observable presentation overrides. */
 export function WebPartShellDemoHost(props: WebPartShellProps<IWebPartShellProperties>): JSX.Element {
   const [options, setOptions] = React.useState(defaults);
-  const update = React.useCallback((patch: Partial<ShellDemoOptions>): void => setOptions(previous => ({ ...previous, ...patch })), []);
+  const update = React.useCallback((patch: Partial<ShellDemoOptions>): void => setOptions(previous => {
+    const next = { ...previous, ...patch };
+    return (Object.keys(next) as (keyof ShellDemoOptions)[]).every(key => next[key] === previous[key]) ? previous : next;
+  }), []);
   return <ExampleExplorerStateProvider key={props.instance.instanceId} initialGroups={executableGroups}>
     <ShellDemoContext.Provider value={{ options, update }}>
       <WebPartShell {...props} surface={props.surface ?? options.surface} padding={props.padding ?? options.padding}

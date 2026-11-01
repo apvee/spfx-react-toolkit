@@ -42,6 +42,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
   const cache = new Map();
   function load(file) {
     file = path.resolve(file);
+    if (file.endsWith('/generated/jsdoc-examples/catalogue.ts')) return { executableExamples: [], executableGroups: [] };
     if (cache.has(file)) return cache.get(file).exports;
     const module = { exports: {} }; cache.set(file, module);
     const compiled = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.React } });
@@ -147,7 +148,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     assert.equal(retainedNote.closest('.fui-AccordionPanel').hasAttribute('inert'), false);
     const rootModule = load(path.join(base, 'demoRegistry.ts'));
     registry = rootModule.demoRegistry;
-    assert.equal(registry.length, 31, 'all registered tabs participate in lazy navigation');
+    assert.equal(registry.length, 30, 'all residual panels participate in lazy navigation');
     const paths = [...read('demoRegistry.ts').matchAll(/component: lazyPanel\(\(\) => import\(\/\*[^*]+\*\/ '([^']+)'\)\)/g)].map(match => match[1]);
     assert.equal(paths.length, registry.length);
     registry.forEach((entry, i) => { entry.componentPath = paths[i]; });
