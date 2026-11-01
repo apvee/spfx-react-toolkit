@@ -59,7 +59,27 @@ function harness() {
     act(() => { ReactDOM.render(React.createElement(fluent.FluentProvider, { theme },
       React.createElement(state.ExampleExplorerStateProvider, { initialGroups: groups }, React.createElement(Probe), React.createElement(ExampleExplorer, { groups, legacyEntries }))), host); });
   }
-  const flush = async () => { await act(async () => { await Promise.resolve(); }); };
+  const flush = async selector => {
+    await act(async () => {
+      if (!selector) { await Promise.resolve(); return; }
+      // React 17 schedules a Suspense retry after the loader promise resolves.
+      // Observe its actual DOM commit, rather than guessing how many microtasks
+      // or scheduler turns that needs. The timer is only a failure deadline.
+      await new Promise((resolve, reject) => {
+        const observer = new MutationObserver(check);
+        const deadline = setTimeout(() => {
+          observer.disconnect();
+          reject(new Error(`No committed example matching ${selector}: ${host.textContent}`));
+        }, 5000);
+        function check() {
+          if (!host.querySelector(selector)) return;
+          observer.disconnect(); clearTimeout(deadline); resolve();
+        }
+        observer.observe(host, { childList: true, subtree: true });
+        check();
+      });
+    });
+  };
   const click = node => { assert.ok(node, 'control exists'); act(() => node.click()); };
   const change = (node, value) => { act(() => { node.value = value; Simulate.change(node, { target: { value } }); }); };
   const button = text => Array.from(host.querySelectorAll('button')).find(node => node.textContent.includes(text));
@@ -223,12 +243,36 @@ test('Shell port projects only presentation defaults and delegates patches; inst
     hostModule.useShellDemoOptions = () => { ordinaryHookCalls++; return originalOptionsHook(); };
     const { ExecutableExampleHost } = h.load('shared/ExecutableExampleHost.tsx');
     h.act(() => { h.ReactDOM.render(h.React.createElement(h.fluent.FluentProvider, { theme: h.fluent.webLightTheme }, h.React.createElement(ExecutableExampleHost, { entry: s.groups[0].features[0].scenarios[0], resetRevision: 0 })), h.host); });
-    await h.flush(); assert.equal(h.host.querySelector('[data-example]').textContent, 'Ordinary example');
+    await h.flush('[data-example="a"]'); assert.equal(h.host.querySelector('[data-example]').textContent, 'Ordinary example');
     assert.equal(ordinaryHookCalls, 0, 'ordinary examples do not read the private Shell context');
     hostModule.useShellDemoOptions = originalOptionsHook;
     const shellEntry = s.entry('shell', 'shell', 'controls', 'webPartShell');
     h.act(() => { h.ReactDOM.render(h.React.createElement(h.fluent.FluentProvider, { theme: h.fluent.webLightTheme }, h.React.createElement(ExecutableExampleHost, { entry: shellEntry, resetRevision: 0 })), h.host); });
-    await h.flush(); assert.equal(h.host.querySelector('[data-example]').textContent, 'subtle');
+    await h.flush('[data-example="shell"]');
+    assert.equal(h.host.querySelector('[data-example]').textContent, 'subtle');
+  } finally { h.close(); }
+});
+
+test('selected Shell commit wait includes a deferred module and the React Suspense retry', async () => {
+  const h = harness();
+  try {
+    const s = scenarios(h);
+    const shellEntry = s.entry('deferred-shell', 'shell', 'controls', 'webPartShell');
+    const load = shellEntry.load;
+    // Model a real chunk completing on a later event-loop task, after the old
+    // unrelated microtask/act flush has finished. No wall-clock delay is involved.
+    shellEntry.load = () => new Promise(resolve => setImmediate(() => setImmediate(() => resolve(load()))));
+    const { ExecutableExampleHost } = h.load('shared/ExecutableExampleHost.tsx');
+    h.act(() => { h.ReactDOM.render(h.React.createElement(h.fluent.FluentProvider, { theme: h.fluent.webLightTheme },
+      h.React.createElement(ExecutableExampleHost, { entry: shellEntry, resetRevision: 0 })), h.host); });
+    assert.equal(h.host.querySelector('[data-example="deferred-shell"]'), null, 'loading starts without a hidden mounted example');
+    await h.flush('[data-example="deferred-shell"]');
+    const example = h.host.querySelector('[data-example="deferred-shell"]');
+    assert.ok(example, 'the selected Shell example must commit before the wait finishes');
+    assert.equal(example.textContent, 'subtle');
+    assert.deepEqual(s.loads, ['deferred-shell']);
+    assert.deepEqual(s.mounts, ['deferred-shell']);
+    assert.equal(h.host.querySelectorAll('[data-example]').length, 1);
   } finally { h.close(); }
 });
 
