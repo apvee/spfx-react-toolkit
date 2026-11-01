@@ -73,11 +73,13 @@ test('actual Shell panel inherits custom host tokens and retains inputs/counters
   let update;
   const custom = { ...fluent.webLightTheme, colorBrandBackground: '#ab1234' };
   const other = { ...fluent.webDarkTheme, colorBrandBackground: '#12abcd' };
+  // The real demo host owns navigation by native identity; SDK plumbing is doubled here.
+  const hostInstances = [{ instanceId: 'theme-host-first' }, { instanceId: 'theme-host-second' }];
   function Fixture() {
     const [theme, setTheme] = React.useState(custom); update = setTheme;
     return React.createElement(React.Fragment, {}, ...[theme, other].map((value, i) => React.createElement('section', { key: i, 'data-instance': i },
       React.createElement(fluent.FluentProvider, { theme: value, dir: i ? 'ltr' : 'rtl' },
-        React.createElement(Host, {}, React.createElement(Panel), React.createElement(Preview))))));
+        React.createElement(Host, { instance: hostInstances[i] }, React.createElement(Panel), React.createElement(Preview))))));
   }
   const view = h.mountComponent(Fixture);
   try {

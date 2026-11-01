@@ -132,7 +132,7 @@ test('webpack engine bundle mounts React17 EditorContent, round-trips HTML and d
   const globalNames = ['window', 'document', 'navigator', 'requestAnimationFrame', 'cancelAnimationFrame',
     'MessageChannel', 'Node', 'HTMLElement', 'Element', 'MutationObserver', 'getComputedStyle', 'innerHeight'];
   const previous = new Map(globalNames.map(name => [name, Object.getOwnPropertyDescriptor(global, name)]));
-  let dom, container, ReactDOM, act, editor;
+  let dom, container, ReactDOM, act, editor, lifecycleDeadline;
   let destroyCount = 0;
   try {
     dom = createSxDom();
@@ -152,13 +152,23 @@ test('webpack engine bundle mounts React17 EditorContent, round-trips HTML and d
     assert.equal(loaded.dependencyIdentity.Placeholder.name, 'placeholder');
     container = document.createElement('div');
     document.body.appendChild(container);
-    await act(async () => {
+    let created, destroyed;
+    const creation = new Promise(resolve => { created = resolve; });
+    const destruction = new Promise(resolve => { destroyed = resolve; });
+    let awaitingLifecycle = 'create';
+    // A missing event rejects and enters resource cleanup. Elapsed time can
+    // never satisfy readiness: only the real engine callbacks resolve it.
+    const missingEvent = new Promise((_resolve, reject) => {
+      lifecycleDeadline = setTimeout(() => reject(new Error(`Engine did not emit ${awaitingLifecycle}`)), 30_000);
+    });
+    act(() => {
       ReactDOM.render(React.createElement(FluentProvider, { theme: webLightTheme },
         React.createElement(loaded.DependencyProbe, {
-          onEditor: value => { editor = value; }, onDestroy: () => { destroyCount += 1; },
+          onEditor: value => { editor = value; created(); },
+          onDestroy: () => { destroyCount += 1; destroyed(); },
         })), container);
-      await new Promise(resolve => setTimeout(resolve, 20));
     });
+    await act(async () => { await Promise.race([creation, missingEvent]); });
     assert.ok(editor, 'onCreate receives the actual mounted engine');
     assert.equal(editor.getHTML(), '<h2>Title</h2>');
     assert.equal(container.querySelector('[contenteditable="true"] h2').textContent, 'Title');
@@ -168,15 +178,16 @@ test('webpack engine bundle mounts React17 EditorContent, round-trips HTML and d
     assert.equal(editor.getHTML(), '<h2><strong>Changed</strong><br>Title</h2>');
     await act(async () => { editor.commands.undo(); });
     assert.equal(editor.getHTML(), '<h2>Title</h2>');
-    await act(async () => {
-      ReactDOM.unmountComponentAtNode(container);
-      // useEditor's delayed destruction supports StrictMode remount; wait for cleanup.
-      await new Promise(resolve => setTimeout(resolve, 20));
-    });
+    awaitingLifecycle = 'destroy';
+    act(() => { ReactDOM.unmountComponentAtNode(container); });
+    // useEditor defers destruction for StrictMode remount. Observe the actual
+    // destroy callback rather than guessing when its task will run under load.
+    await act(async () => { await Promise.race([destruction, missingEvent]); });
     assert.equal(editor.isDestroyed, true);
     assert.equal(destroyCount, 1);
     assert.equal(container.childElementCount, 0);
   } finally {
+    clearTimeout(lifecycleDeadline);
     if (container && ReactDOM && act) await act(async () => { ReactDOM.unmountComponentAtNode(container); });
     if (editor && !editor.isDestroyed) editor.destroy();
     if (dom) {
