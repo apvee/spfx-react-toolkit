@@ -54,6 +54,13 @@ test('copied tiny engine reconstructs development only from sources and restores
   fs.mkdirSync(path.join(fixture, 'docs/development'), { recursive: true });
   fs.writeFileSync(path.join(fixture, 'docs/development/stale.md'), '# Poisoned old output\n\nNever copy this file.\n');
   fs.writeFileSync(path.join(fixture, 'docs/development/INDEX.md'), '# Poisoned old index\n\nNever copy this target through link closure.\n');
+  // Real API owners may have an untitled non-executable example. Promotion
+  // inside the cold mirror must supply the required executable title.
+  const apiSource = path.join(fixture, 'packages/spfx-react-toolkit/src/index.ts');
+  fs.writeFileSync(apiSource, fs.readFileSync(apiSource, 'utf8').replace('@example Count', '@example'));
+  const generated = require('../scripts/executable-examples-render.cjs').executableRoot;
+  fs.mkdirSync(path.join(fixture, generated), { recursive: true });
+  fs.writeFileSync(path.join(fixture, generated, 'poisoned.ts'), 'throw new Error(\"old executable output\");\n');
   // Exercise target-closure traversal as well as the initial docs-tree copy.
   fs.appendFileSync(path.join(fixture, 'docs/_sources/development/INDEX.md'), '\n[Old output](../../development/INDEX.md). [Contributor input](../../../contributor.md).\n');
   fs.writeFileSync(path.join(fixture, 'contributor.md'), '# Contributor input\n\nA source-owned target outside the standard copied roots.\n');
@@ -67,7 +74,14 @@ test('copied tiny engine reconstructs development only from sources and restores
   assert.equal(result.developmentSourceMutationChanged, true);
   assert.equal(result.developmentRebuild.directoryAbsentBefore, true);
   assert.equal(result.developmentRebuild.sourcesRetained, true);
-  assert.ok(result.copiedInputs.includes('scripts/generated-artifacts.cjs'));
+  for (const route of ['scripts/generated.cjs', 'scripts/generated-artifacts.cjs', 'scripts/documentation-context.cjs', 'scripts/executable-examples.cjs', 'scripts/executable-examples-model.cjs', 'scripts/executable-examples-render.cjs']) assert.ok(result.copiedInputs.includes(route), route);
+  const { executableRoot } = require('../scripts/executable-examples-render.cjs');
+  assert.ok(!result.copiedInputs.some(route => route.startsWith(executableRoot + '/')));
+  assert.ok(result.families.examples.paths.includes(executableRoot + '/catalogue.ts'));
+  assert.deepEqual([...result.families.documentation.paths, ...result.families.examples.paths].sort(), result.hashes.paths);
+  assert.equal(result.executableSourceMutationChanged, true);
+  assert.equal(result.executableManualPreserved, true);
+  assert.equal(result.executableOrphanRemoved, true);
   assert.ok(result.copiedInputs.includes('scripts/documentation-context.cjs'));
   assert.ok(result.copiedInputs.includes('docs/_sources/development/INDEX.md'));
   assert.ok(result.copiedInputs.includes('docs/_sources/development/sharepoint-validation/INDEX.md'));

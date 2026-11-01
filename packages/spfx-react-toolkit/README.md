@@ -89,7 +89,7 @@ npm ci
 npm run build
 ```
 
-The library lives in `packages/spfx-react-toolkit`; the private SPFx sample lives in `apps/spfx-react-toolkit-test` and consumes the compiled library. Rebuild the library and restart serve after library source changes. See [development setup](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/development/setup.md) and [scoped verification commands](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/development/verification.md).
+The library lives in `packages/spfx-react-toolkit`; the private SPFx sample lives in `apps/spfx-react-toolkit-test` and consumes the compiled library. A complete checkout builds with versioned documentation and executable examples. After editing JSDoc, API or editorial sources, run `npm run generated:sync`, review and version the source/output diff together, then run `npm run generated:check` and relevant build/tests. Build, serve, bundle and packaging do not generate or check freshness. After library source changes, sync, rebuild the library and restart serve; no JSDoc watcher is installed. See [development setup](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/development/setup.md) and [scoped verification commands](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/development/verification.md).
 
 Authenticated SharePoint behavior is verified separately using the [essential host checklist](https://github.com/apvee/spfx-react-toolkit/blob/main/docs/development/sharepoint-validation/INDEX.md). Local builds and tests do not establish tenant permissions or consent.
 

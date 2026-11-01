@@ -33,7 +33,11 @@
     "verify:localization": "node scripts/localization-resources.cjs --check-inventory && node --test tests/localization-resources.test.cjs tests/localization-inventory.test.cjs tests/configure-localization.test.cjs tests/localization-lifecycle.test.cjs tests/localization-native-boundaries.test.cjs",
     "docs:generate": "node scripts/documentation.cjs",
     "docs:check": "node scripts/documentation.cjs --check",
-    "verify:docs-reproducibility": "node scripts/verify-documentation-reproducibility.cjs"
+    "verify:docs-reproducibility": "node scripts/verify-documentation-reproducibility.cjs",
+    "generated:sync": "node scripts/generated.cjs",
+    "generated:check": "node scripts/generated.cjs --check",
+    "examples:generate": "node scripts/executable-examples.cjs",
+    "examples:check": "node scripts/executable-examples.cjs --check"
   },
   "devDependencies": {
     "typescript": "5.3.3",

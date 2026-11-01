@@ -29,7 +29,7 @@
     "lib/localization/**/*"
   ],
   "scripts": {
-    "build": "node ../../scripts/localization-resources.cjs --check-inventory && tsc -p tsconfig.json && node ../../scripts/localization-resources.cjs --emit && node ../../scripts/documentation.cjs",
+    "build": "node ../../scripts/localization-resources.cjs --check-inventory && tsc -p tsconfig.json && node ../../scripts/localization-resources.cjs --emit",
     "clean": "node -e \"require('fs').rmSync('lib', {recursive:true,force:true})\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --ext .ts,.tsx",

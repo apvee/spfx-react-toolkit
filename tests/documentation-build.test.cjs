@@ -71,18 +71,21 @@ test('CLI --check overrides write, rejects unknown env and arguments, and valida
   assert.match(invalid.stderr, /TS1109/);
   assert.deepEqual(snapshot(root), initial);
 });
-test('library build and CI use one canonical CLI with job-wide check mode', () => {
+test('library build keeps compilation/localization and CI checks explicit generated artifacts before build', () => {
   const metadata = require('../packages/spfx-react-toolkit/package.json');
-  assert.equal(metadata.scripts.build.split('node ../../scripts/documentation.cjs').length - 1, 1);
-  assert.match(metadata.scripts.build, /tsc.*localization-resources.cjs --emit && node ..\/..\/scripts\/documentation.cjs$/);
+  assert.equal(metadata.scripts.build, 'node ../../scripts/localization-resources.cjs --check-inventory && tsc -p tsconfig.json && node ../../scripts/localization-resources.cjs --emit');
   const root = require('../package.json');
   assert.equal(root.scripts['docs:generate'], 'node scripts/documentation.cjs');
   assert.equal(root.scripts['docs:check'], 'node scripts/documentation.cjs --check');
+  assert.equal(root.scripts['generated:sync'], 'node scripts/generated.cjs');
+  assert.equal(root.scripts['generated:check'], 'node scripts/generated.cjs --check');
   const workflow = fs.readFileSync(path.join(repository, '.github/workflows/verify.yml'), 'utf8');
-  assert.match(workflow, /    env:\n      TOOLKIT_DOCS_MODE: check\n    steps:/);
+  assert.ok(!workflow.includes('TOOLKIT_DOCS_MODE'));
+  assert.ok(workflow.indexOf('scripts/generated.cjs --check') < workflow.indexOf('- run: npm run build'));
+  assert.match(workflow, /network-namespace-probe.cjs/);
   for (const command of ['build', 'package:solution', 'verify:package']) assert.ok(workflow.includes('- run: npm run ' + command));
 });
-test('real copied library build refuses stale sources and missing development/llms without changing document bytes or mtimes', { timeout: 240000 }, t => {
+test('real copied library build compiles/localizes stale or missing documents; separate generated check refuses without writes', { timeout: 240000 }, t => {
   const root = mirror(t, true);
   const baseline = run(root);
   assert.equal(baseline.status, 0, baseline.stderr);
@@ -97,9 +100,11 @@ test('real copied library build refuses stale sources and missing development/ll
   function build(label, expectedRoutes) {
     const before = snapshot(root);
     const result = spawnSync('npm', ['run', 'build:library'], { cwd: root, env: { ...process.env, TOOLKIT_DOCS_MODE: 'check' }, encoding: 'utf8', timeout: 110000 });
-    assert.notEqual(result.status, 0, label);
-    assert.match(result.stderr, /stale generated documentation/i, result.stdout + result.stderr);
-    for (const route of expectedRoutes) assert.ok(result.stderr.includes(route), label + ': missing stale route ' + route);
+    assert.equal(result.status, 0, result.stdout + result.stderr);
+    const checked = spawnSync(process.execPath, [path.join(root, 'scripts/generated.cjs'), '--check'], { cwd: root, encoding: 'utf8', timeout: 120000 });
+    assert.notEqual(checked.status, 0, label);
+    assert.match(checked.stderr, /stale generated/i, checked.stderr);
+    for (const route of expectedRoutes) assert.ok(checked.stderr.includes(route), label + ': missing stale route ' + route);
     assert.match(result.stdout, /Emitted|localization|resources/i);
     assert.ok(fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/lib/index.js')), 'real tsc must run');
     const inventory = JSON.parse(fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/localization/resources.json'), 'utf8'));
@@ -116,5 +121,5 @@ test('real copied library build refuses stale sources and missing development/ll
   fs.unlinkSync(path.join(root, 'llms.txt'));
   fs.rmSync(path.join(root, 'docs/development'), { recursive: true });
   build('missing development directory and llms.txt', [...developmentRoutes, 'llms.txt']);
-  assert.equal(fs.existsSync(path.join(root, 'docs/development')), false, 'check-mode build must not recreate the missing directory');
+  assert.equal(fs.existsSync(path.join(root, 'docs/development')), false, 'build must not recreate the missing directory');
 });

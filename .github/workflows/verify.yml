@@ -4,8 +4,6 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    env:
-      TOOLKIT_DOCS_MODE: check
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,7 +14,7 @@ jobs:
       - name: Capture exact setup-node binary
         run: echo "DOCS_NODE_BIN=$(node -p 'process.execPath')" >> "$GITHUB_ENV"
       - run: npm run verify:docs-reproducibility
-      - name: Require isolated-network documentation check
+      - name: Require isolated-network generated artifacts check
         shell: bash
         run: |
           command -v unshare
@@ -24,7 +22,7 @@ jobs:
           test -x "$DOCS_NODE_BIN"
           sudo -n unshare --net -- sh -eu -c '
             "$1" tests/fixtures/documentation/reproducibility/network-namespace-probe.cjs
-            exec "$1" scripts/documentation.cjs --check
+            exec "$1" scripts/generated.cjs --check
           ' docs-offline "$DOCS_NODE_BIN"
       - run: npm run build
       - run: npm run verify
