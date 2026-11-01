@@ -1,0 +1,21 @@
+/**
+ * Returns the supplied count; see {@link count}.
+ * @docPage helpers/count
+ * @useWhen You already own the count.
+ * @param value - The count to return.
+ * @returns The supplied count.
+ * @example Z first scenario
+ * ```tsx
+ * import * as React from 'react';
+ * import { count } from '@fixture/artifacts';
+ * throw new Error('must not execute during generation');
+ * export function Demo(): React.ReactElement { return <div>{count(3)}</div>; }
+ * export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Three is visible.' };
+ * ```
+ * @example A second scenario
+ * ```tsx
+ * import * as React from 'react';
+ * export function Demo(): React.ReactElement { return <div>Second</div>; }
+ * export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Second is visible.' };
+ * ```
+ */

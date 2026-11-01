@@ -67,6 +67,8 @@ test('copied tiny engine reconstructs development only from sources and restores
   assert.equal(result.developmentSourceMutationChanged, true);
   assert.equal(result.developmentRebuild.directoryAbsentBefore, true);
   assert.equal(result.developmentRebuild.sourcesRetained, true);
+  assert.ok(result.copiedInputs.includes('scripts/generated-artifacts.cjs'));
+  assert.ok(result.copiedInputs.includes('scripts/documentation-context.cjs'));
   assert.ok(result.copiedInputs.includes('docs/_sources/development/INDEX.md'));
   assert.ok(result.copiedInputs.includes('docs/_sources/development/sharepoint-validation/INDEX.md'));
   assert.ok(result.copiedInputs.includes('contributor.md'));

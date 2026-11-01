@@ -62,7 +62,7 @@ function copyInputs(root, source, mirror, config, reverse) {
   for (const route of ['README.md', 'AGENTS.md', 'LICENSE', 'package.json', 'package-lock.json']) add(source, route);
   // Fixture inputs intentionally have no workspace lock or executable engine.
   for (const route of ['package.json', 'package-lock.json']) if (!inputs.has(route)) add(root, route);
-  for (const entry of fs.readdirSync(path.join(root, 'scripts'))) if (/^documentation(?:[.-].*)?\.cjs$/.test(entry) || entry === 'public-surface.helpers.cjs' || entry === 'verify-documentation-reproducibility.cjs') add(root, 'scripts/' + entry);
+  for (const entry of fs.readdirSync(path.join(root, 'scripts'))) if (/^documentation(?:[.-].*)?\.cjs$/.test(entry) || entry === 'generated-artifacts.cjs' || entry === 'public-surface.helpers.cjs' || entry === 'verify-documentation-reproducibility.cjs') add(root, 'scripts/' + entry);
   add(root, probes);
   add(source, config.sourceRoot);
   for (const name of ['package.json', 'tsconfig.json', 'tsdoc.json', 'THIRD-PARTY-NOTICES.md', 'localization/resources.json']) add(source, path.posix.join(config.packageRoot, name));

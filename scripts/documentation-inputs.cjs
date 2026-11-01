@@ -82,6 +82,9 @@ function createDocumentationInputs(root, config) {
   const dependencies = { admitted: file => admissions.some(admission => admission.admitted(file)), directory: file => admissions.some(admission => admission.directory(file)) };
   if (!dependencies.admitted(path.join(compiler, 'package.json')) || JSON.parse(fs.readFileSync(path.join(compiler, 'package.json'), 'utf8')).version !== '5.3.3') throw new Error('Documentation requires locked TypeScript 5.3.3.');
   const outputs = [path.join(packageRoot, 'lib'), path.join(root, 'docs/api'), path.join(root, 'docs/guides'), path.join(root, 'docs/getting-started'), path.join(root, 'docs/development')];
+  // The private app's executable copies are outputs too, including config or
+  // source imports that reach them through a different symlink spelling.
+  outputs.push(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/generated/jsdoc-examples'));
   outputs.push(...outputs.map(canonical));
   const outputFiles = [path.join(root, 'docs/INDEX.md'), path.join(root, 'llms.txt'), path.join(packageRoot, 'README.md')];
   outputFiles.push(...outputFiles.map(canonical));
