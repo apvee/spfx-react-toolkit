@@ -16,7 +16,7 @@ webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 
     ...Object.fromEntries(['sp-core-library', 'sp-component-base', 'sp-page-context', 'sp-http'].map(name => [`@microsoft/${name}$`, path.join(fixture, 'spfx-services.ts')])),
     'react/jsx-runtime$': require.resolve('react/jsx-runtime.js'),
   } },
-  plugins: [new webpack.NormalModuleReplacementPlugin(/^\.\.\/services\/spfx-pnp-context\.service$/, resource => {
+  plugins: [new webpack.DefinePlugin({ 'process.env.DEMO_PRESENTATION_JSDOC_ONLY': JSON.stringify(process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? '1' : '0') }), new webpack.NormalModuleReplacementPlugin(/^\.\.\/services\/spfx-pnp-context\.service$/, resource => {
     if ([path.join(root, 'packages/spfx-react-toolkit/lib/hooks'), path.join(root, 'packages/spfx-react-toolkit/src/hooks')].includes(resource.context)) resource.request = path.join(fixture, 'pnp-read-transport.ts');
   }), new webpack.NormalModuleReplacementPlugin(/^\.\/useSPFx(Teams|ThemeInfo)$/, resource => {
     if ([path.join(root, 'packages/spfx-react-toolkit/lib/hooks'), path.join(root, 'packages/spfx-react-toolkit/src/hooks')].includes(resource.context)) resource.request = path.join(fixture, 'host-boundaries.ts');
@@ -26,5 +26,6 @@ webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 
   if (error || stats.hasErrors()) { console.error(error || stats.toString({ all: false, errors: true })); process.exitCode = 1; return; }
   fs.writeFileSync(path.join(output, 'index.html'), fs.readFileSync(path.join(fixture, 'index.html'), 'utf8').replace('compiled controls and host styles', `${source ? 'source' : 'compiled'} controls, hooks, real provider and host styles`).replace('SPFx services/network snapshots are simulated', 'Unavailable native SPFx services/transports are simulated'));
   console.log(stats.toString({ all: false, timings: true, assets: true, warnings: true }));
+  console.log(`JSDoc-only filter: ${process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1'} (checker can also select it through the fixture query).`);
   console.log(`Actual app/registry + ${source ? 'source' : 'compiled'} feature controls; native transport doubles: ${output}`);
 });

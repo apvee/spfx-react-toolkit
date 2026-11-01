@@ -10,6 +10,7 @@ Use these procedures to work on the public library, its private SPFx sample, ver
 | --- | --- |
 | Install, build and debug the checkout | [Repository setup](setup.md) |
 | Select checks and inspect rendered behavior | [Verification](verification.md) |
+| Author source-owned runnable examples and explore scenarios | [Executable authoring](documentation.md#executable-example-authoring) · [Explorer](setup.md#explore-source-owned-scenarios) |
 | Change documentation and reconstruct public outputs | [Documentation maintenance](documentation.md) |
 | Validate actual host, permissions and persistence | [Essential SharePoint checklist](sharepoint-validation/INDEX.md) |
 

@@ -135,6 +135,14 @@ test('explorer groups, central scenarios, focus and reset preserve one real exam
     assert.equal(s.cleanups.length, 0, 'collapse does not reset content');
     const mobile = h.host.querySelector('select[aria-label="Funzionalità"]');
     assert.equal(mobile.querySelectorAll('optgroup').length, 2);
+    for (const select of [mobile, h.host.querySelector('select[aria-label="Scenario"]')]) {
+      for (const element of [select, select.parentElement]) {
+        const classes = Array.from(element.classList);
+        assert.ok(rules.some(rule => classes.some(name => rule.includes(`.${name}{`)) && /[;{]width:100%[;}]/.test(rule)), 'both Select root and native slot constrain intrinsic option width');
+        assert.ok(rules.some(rule => classes.some(name => rule.includes(`.${name}{`)) && rule.includes('max-width:100%')), 'both Select root and native slot stay within the container');
+        assert.ok(rules.some(rule => classes.some(name => rule.includes(`.${name}{`)) && rule.includes('min-width:0')), 'both Select root and native slot may shrink below intrinsic option width');
+      }
+    }
     h.change(mobile, 'beta'); await h.flush();
     assert.equal(h.host.querySelector('select[aria-label="Scenario"]'), null, 'one scenario needs no select');
     h.change(mobile, 'alpha'); await h.flush();

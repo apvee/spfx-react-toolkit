@@ -6,6 +6,9 @@ import { mountDemoFixture } from '../demo-fixture-host';
 import { WebPartShellDemoHost } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/WebPartShellDemoHost';
 import { fixturePage, nativeFixtureService } from './trim-transports';
 import App from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/SpFxReactToolkitTest';
+import { ExampleExplorer } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/ExampleExplorer';
+import { executableGroups } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/generated/jsdoc-examples/catalogue';
+const { filterPilotGroups } = require('./jsdoc-pilots.cjs');
 const element = document.getElementById('root');
 if (!element) throw new Error('Fixture root missing');
 // Structural host double supplies only the fields consumed by the real Shell/provider.
@@ -17,4 +20,4 @@ const instance = {
     pageContext: fixturePage, sdks: {},
     serviceScope: { whenFinished: (callback: () => void) => callback(), consume: (key: unknown) => nativeFixtureService(key, service) }, propertyPane: { refresh: () => {} } },
 } as unknown as BaseClientSideWebPart<IWebPartShellProperties>;
-mountDemoFixture(<WebPartShellDemoHost instance={instance}><App /></WebPartShellDemoHost>);
+mountDemoFixture(<WebPartShellDemoHost instance={instance}>{(process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' || new URLSearchParams(window.location.search).get('jsdocOnly') === '1') ? <ExampleExplorer groups={filterPilotGroups(executableGroups)} legacyEntries={[]} /> : <App />}</WebPartShellDemoHost>);

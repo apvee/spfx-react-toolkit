@@ -1,0 +1,152 @@
+const { pilotTitles } = require('../tests/fixtures/demo-presentation/jsdoc-pilots.cjs');
+
+// Local browser acceptance uses real generated modules/controls/Shell. Only SPFx
+// native services and HTTP transport are doubled by the integrated fixture.
+async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
+  const navigation = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
+  const group = name => navigation.getByRole('button', { name: new RegExp(`^${name}`) }).first();
+  const selectedPanel = title => page.getByRole('region', { name: title, exact: true });
+  const reset = () => page.getByRole('button', { name: 'Ripristina scenario', exact: true });
+  async function feature(title) {
+    const family = ['WebPartShell', 'Pagination'].includes(title) ? 'Controlli' : 'Hook';
+    if (await group(family).getAttribute('aria-expanded') !== 'true') await group(family).click();
+    await navigation.getByRole('button', { name: title, exact: true }).click();
+    await selectedPanel(title).locator('[data-demo-section]').waitFor();
+    await settle(page);
+    return selectedPanel(title);
+  }
+  async function scenario(title, name) {
+    const panel = await feature(title);
+    const selector = panel.getByRole('combobox', { name: 'Scenario', exact: true });
+    if (pilotTitles[title].length > 1) {
+      await selector.focus();
+      await selector.selectOption({ label: name });
+      await panel.getByRole('heading', { name, exact: true }).waitFor();
+      check(`${name}: scenario selector keeps focus`, await selector.evaluate(element => element === document.activeElement), true);
+    }
+    await panel.locator('[data-demo-section]').waitFor(); await settle(page);
+    check(`${name}: one mounted scenario`, await page.locator('[data-demo-section]').count(), 1);
+    check(`${name}: observation available`, (await panel.textContent()).includes('Cosa osservare:'), true);
+    check(`${name}: diagnostics initially closed`, await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).getAttribute('aria-expanded'), 'false');
+    return panel;
+  }
+  async function restore(panel, name) {
+    await reset().click(); await settle(page);
+    check(`${name}: reset focus`, await reset().evaluate(element => element === document.activeElement), true);
+    check(`${name}: reset keeps one scenario`, await panel.locator('[data-demo-section]').count(), 1);
+  }
+  const text = async (panel, fragment) => check(fragment, (await panel.textContent()).includes(fragment), true);
+  const rows = panel => panel.locator('tbody tr').evaluateAll(nodes => nodes.map(node => Number(node.getAttribute('data-order-id'))));
+  const calls = () => page.evaluate(() => window.pnpReadFixture.calls.length);
+  check('Initial fixture mount issues no business requests', await calls(), 0);
+  check('JSDoc filter: exactly four features', await navigation.locator('[data-example-feature]').count(), 4);
+  check('JSDoc filter: exactly two generated groups', await navigation.locator('button[aria-expanded]').count(), 2);
+  let panel = await feature('WebPartShell');
+  await group('Hook').click();
+  check('Opening hooks leaves controls open', await group('Controlli').getAttribute('aria-expanded'), 'true');
+  const heading = await panel.getByRole('heading', { level: 2 }).elementHandle();
+  await group('Controlli').click();
+  check('Closed group identifies active selection', (await group('Controlli').textContent()).includes('WebPartShell'), true);
+  check('Closing group preserves scenario DOM', await heading.evaluate(element => element.isConnected), true); await heading.dispose();
+  check('Independent hooks remain open', await group('Hook').getAttribute('aria-expanded'), 'true');
+  check('Group expansion and collapse issue no business requests', await calls(), 0);
+
+  panel = await scenario('WebPartShell', pilotTitles.WebPartShell[0]);
+  await panel.getByRole('combobox', { name: 'Appearance', exact: true }).selectOption('filled');
+  await panel.getByRole('combobox', { name: 'Card size', exact: true }).selectOption('small');
+  await panel.getByRole('combobox', { name: 'Title position', exact: true }).selectOption('inside');
+  await panel.getByRole('combobox', { name: 'Spacing', exact: true }).selectOption('large');
+  await panel.getByRole('button', { name: 'Show title', exact: true }).click();
+  await panel.getByRole('button', { name: 'Hide title', exact: true }).click();
+  check('Hiding title focuses show command', await panel.getByRole('button', { name: 'Show title', exact: true }).evaluate(element => element === document.activeElement), true);
+  await text(panel, 'Mode: Read');
+  for (const name of ['Plain title', 'Formatted title', 'Empty title']) check(`Read mode disables ${name}`, await panel.getByRole('button', { name, exact: true }).isDisabled(), true);
+  await restore(panel, 'Shell configuration'); await capture(page, 'jsdoc-shell-configuration');
+
+  panel = await scenario('WebPartShell', pilotTitles.WebPartShell[1]);
+  await panel.getByRole('button', { name: 'Use Card baseline', exact: true }).click(); await settle(page);
+  const note = panel.getByRole('textbox', { name: 'Project note', exact: true });
+  await note.fill('Retained content'); await panel.getByRole('button', { name: 'Increment counter', exact: true }).click();
+  const retained = await note.elementHandle();
+  for (const [name, value] of [['Card appearance', 'filled'], ['Card appearance', 'filled-alternative'], ['Card size', 'large'], ['Title position', 'inside']]) {
+    await panel.getByRole('combobox', { name, exact: true }).selectOption(value); await settle(page);
+    check(`Shell ${name}/${value} retains note DOM`, await retained.evaluate(element => element.isConnected && element.value === 'Retained content'), true);
+    await text(panel, 'Child counter: 1');
+  }
+  await page.locator('[data-shell-demo=action]').click(); await settle(page);
+  check('Host title toggle retains note DOM', await retained.evaluate(element => element.isConnected), true);
+  await retained.dispose(); await restore(panel, 'Shell retained content'); await capture(page, 'jsdoc-shell-retention');
+
+  panel = await scenario('WebPartShell', pilotTitles.WebPartShell[2]);
+  await panel.getByRole('textbox', { name: 'Project note', exact: true }).fill('Must remount');
+  await panel.getByRole('button', { name: 'Increment counter', exact: true }).click();
+  const previous = await panel.getByRole('textbox', { name: 'Project note', exact: true }).elementHandle();
+  await panel.getByRole('button', { name: 'Use subtle baseline', exact: true }).click(); await settle(page);
+  // Ensure a known subtle starting point before observing the real Card transition.
+  await panel.getByRole('textbox', { name: 'Project note', exact: true }).fill('Actual subtle note');
+  const subtleNote = await panel.getByRole('textbox', { name: 'Project note', exact: true }).elementHandle();
+  await panel.getByRole('button', { name: 'Use Card baseline', exact: true }).click(); await settle(page);
+  check('Actual Shell remount detaches former child', await subtleNote.evaluate(element => element.isConnected), false);
+  check('Shell remount preserves explorer scenario', await panel.getByRole('combobox', { name: 'Scenario', exact: true }).locator('option:checked').textContent(), pilotTitles.WebPartShell[2]);
+  check('Shell remount resets child note', await panel.getByRole('textbox', { name: 'Project note', exact: true }).inputValue(), 'Intranet project review');
+  await text(panel, 'Child counter: 0'); await previous.dispose(); await subtleNote.dispose(); await capture(page, 'jsdoc-shell-remount');
+
+  panel = await scenario('Pagination', pilotTitles.Pagination[0]);
+  check('Known rows baseline', await rows(panel), [1, 2, 3, 4, 5]);
+  await panel.getByRole('button', { name: 'Next page', exact: true }).click();
+  check('Known rows next page', await rows(panel), [6, 7, 8, 9, 10]);
+  await restore(panel, 'Known rows'); check('Known rows reset', await rows(panel), [1, 2, 3, 4, 5]); await capture(page, 'jsdoc-pagination-known');
+  panel = await scenario('Pagination', pilotTitles.Pagination[1]);
+  await panel.getByRole('button', { name: 'Next page', exact: true }).click();
+  check('Pending retains actual rows', await rows(panel), [1, 2, 3, 4, 5]);
+  check('Pending blocks duplicates', await panel.getByRole('button', { name: 'Next page', exact: true }).isDisabled(), true);
+  await panel.getByRole('button', { name: 'Complete pending request', exact: true }).click();
+  check('Completion applies actual rows', await rows(panel), [6, 7, 8, 9, 10]);
+  await panel.getByRole('button', { name: 'Next page', exact: true }).click(); await restore(panel, 'Pending rows');
+  check('Reset invalidates pending completion', await panel.getByRole('button', { name: 'Complete pending request', exact: true }).isDisabled(), true);
+  check('Pending reset rows', await rows(panel), [1, 2, 3, 4, 5]); await capture(page, 'jsdoc-pagination-pending');
+  panel = await scenario('Pagination', pilotTitles.Pagination[2]);
+  check('Empty rows', await rows(panel), []);
+  check('Empty next disabled', await panel.getByRole('button', { name: 'Next page', exact: true }).isDisabled(), true);
+  await restore(panel, 'Empty rows'); check('Empty stays empty', await rows(panel), []); await capture(page, 'jsdoc-pagination-empty');
+
+  panel = await scenario('useStableCallback', pilotTitles.useStableCallback[0]);
+  await panel.getByRole('button', { name: 'Increment counter', exact: true }).click(); await panel.getByRole('button', { name: 'Increment counter', exact: true }).click();
+  await panel.getByRole('button', { name: 'Invoke original callback', exact: true }).click();
+  await text(panel, 'Observed counter: 2'); await text(panel, 'Same callback identity: yes');
+  await restore(panel, 'Current callback'); await panel.getByRole('button', { name: 'Invoke original callback', exact: true }).click();
+  await text(panel, 'Observed counter: 0'); await text(panel, 'Same callback identity: yes'); await capture(page, 'jsdoc-callback-current');
+  panel = await scenario('useStableCallback', pilotTitles.useStableCallback[1]);
+  await panel.getByRole('button', { name: 'Rerender component', exact: true }).click(); await panel.getByRole('button', { name: 'Rerender component', exact: true }).click();
+  await panel.getByRole('button', { name: 'Invoke original callback', exact: true }).click(); await text(panel, 'Rerender revision: 2'); await text(panel, 'Same callback identity: yes');
+  await restore(panel, 'Callback identity'); await panel.getByRole('button', { name: 'Invoke original callback', exact: true }).click(); await text(panel, 'Same callback identity: yes'); await capture(page, 'jsdoc-callback-identity');
+
+  const before = await calls(); panel = await scenario('useSPFxPnPList', pilotTitles.useSPFxPnPList[0]);
+  check('Read: selecting feature issues zero requests', await calls(), before);
+  const listTitle = panel.getByRole('textbox', { name: 'List title', exact: true });
+  await listTitle.fill('Documents'); check('Read: resource editing issues zero requests', await calls(), before);
+  await panel.getByRole('button', { name: 'Read selected list', exact: true }).click();
+  await panel.getByText('Results for Documents: 1', { exact: true }).waitFor();
+  check('Explicit read performs one request', await calls(), before + 1);
+  await page.evaluate(() => window.pnpReadFixture.configure({ failure: 'unavailable', hold: false }));
+  await panel.getByRole('button', { name: 'Read selected list', exact: true }).click(); await panel.getByRole('alert').filter({ hasText: 'Request error for Documents' }).waitFor();
+  await page.evaluate(() => window.pnpReadFixture.configure({ failure: undefined, hold: true }));
+  await panel.getByRole('button', { name: 'Read selected list', exact: true }).click();
+  await panel.getByText('Loading Documents…', { exact: true }).waitFor(); await restore(panel, 'Read request');
+  await page.evaluate(() => window.pnpReadFixture.release()); await settle(page);
+  check('Reset clears selected list', await listTitle.inputValue(), '');
+  check('Late read cannot republish result', await panel.getByRole('list').count(), 0);
+  check('Fixture forbids every write', await page.evaluate(() => window.pnpReadFixture.calls.every(call => call.method === 'GET')), true);
+  await capture(page, 'jsdoc-list-read');
+
+  await page.setViewportSize({ width: 320, height: 900 }); await settle(page);
+  const mobile = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
+  check('320px mobile feature selector visible', await mobile.isVisible(), true);
+  check('320px desktop navigation hidden', await navigation.isVisible(), false);
+  check('Mobile optgroups', await mobile.locator('optgroup').evaluateAll(nodes => nodes.map(node => node.label)), ['Controlli', 'Hook']);
+  const pagination = await mobile.locator('option').filter({ hasText: /^Pagination$/ }).getAttribute('value');
+  await mobile.selectOption(pagination); await mobile.focus(); await page.keyboard.press('Tab');
+  check('Keyboard reaches central scenario selector', await page.getByRole('combobox', { name: 'Scenario', exact: true }).evaluate(element => element === document.activeElement), true);
+  await overflow(page, 'JSDoc 320px'); await capture(page, 'jsdoc-mobile-320');
+}
+module.exports = { jsdocPilotsBrowser };

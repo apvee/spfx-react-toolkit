@@ -1,4 +1,4 @@
-// Browser plugin unavailable: existing Playwright + installed Chrome. Actual app/lazy registry.
+// Optional local Playwright fixture runner; authenticated host evidence is separate.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const http = require('node:http');
@@ -239,9 +239,15 @@ async function liveTheme(page) {
     browser = await chromium.launch({ headless: true, executablePath });
     const page = await browser.newPage({ viewport: { width: 1280, height: 1000 } }); observe(page); page.setDefaultTimeout(10000);
     await guardNetwork(page, url);
-    await page.goto(url); check('Page identity', await page.title(), 'Integrated demo presentation checkpoint');
+    await page.goto(process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `${url}/?jsdocOnly=1` : url); check('Page identity', await page.title(), 'Integrated demo presentation checkpoint');
     check('Local origin', new URL(page.url()).origin, url);
     check('Framework overlays absent', await page.locator('webpack-dev-server-client-overlay,#webpack-dev-server-client-overlay,nextjs-portal').count(), 0);
+    if (process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1') {
+      await require('./jsdoc-pilots-browser.helpers.cjs').jsdocPilotsBrowser({ page, check, settle, overflow, capture });
+      check('Unexpected JSDoc pilot diagnostics', diagnostics, []);
+      console.log(`Nine source-owned JSDoc scenarios: ${checks.length} checks PASS (simulated native transport).`);
+      return;
+    }
     check('Actual registered tab count', await page.getByRole('tab').count(), entries.length);
     check('Coverage detailed default collapsed', await page.getByRole('button', { name: 'Detailed package coverage', exact: true }).getAttribute('aria-expanded'), 'false');
     await page.screenshot({ path: path.join(output, 'initial-viewport.png') });

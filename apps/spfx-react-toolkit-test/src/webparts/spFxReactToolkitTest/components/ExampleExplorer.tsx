@@ -31,11 +31,11 @@ export function ExampleExplorer({ groups, legacyEntries }: {
           {entry && <>
             <div className={styles.toolbar}>
               {feature && feature.scenarios.length > 1 && <Field label="Scenario">
-                <Select aria-label="Scenario" value={entry.id} onChange={(_event, data) => state.selectScenario(feature.key, data.value)}>
+                <Select className={styles.selectRoot} select={{ className: styles.selectInput }} aria-label="Scenario" value={entry.id} onChange={(_event, data) => state.selectScenario(feature.key, data.value)}>
                   {feature.scenarios.map(scenario => <option key={scenario.id} value={scenario.id}>{scenario.title}</option>)}
                 </Select>
               </Field>}
-              <Button onClick={state.resetScenario}>Ripristina scenario</Button>
+              <Button ref={state.resetButtonRef} onClick={event => state.resetScenario(event.currentTarget)}>Ripristina scenario</Button>
             </div>
             <Text><strong>Cosa osservare: </strong>{entry.metadata.observe}</Text>
             <ExecutableExampleHost entry={entry} resetRevision={state.resetRevision} />

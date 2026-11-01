@@ -10,6 +10,8 @@ export const useExampleExplorerStyles = makeStyles({
   sidebar: { display: 'flex', flexDirection: 'column', gap: tokens.spacingVerticalS, minWidth: 0,
     '@container (max-width: 600px)': { display: 'none' } },
   mobile: { display: 'none', minWidth: 0, '@container (max-width: 600px)': { display: 'flex' } },
+  selectRoot: { minWidth: 0, maxWidth: '100%', width: '100%' },
+  selectInput: { minWidth: 0, maxWidth: '100%', width: '100%' },
   group: { display: 'flex', flexDirection: 'column', gap: tokens.spacingVerticalXS, minWidth: 0 },
   groupHeader: { justifyContent: 'flex-start', textAlign: 'start', minWidth: 0, maxWidth: '100%' },
   groupLabel: { display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden' },

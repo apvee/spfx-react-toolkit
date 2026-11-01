@@ -16,7 +16,7 @@ Lifecycle `prepublishOnly` guards are checks, not publishing instructions. Local
 
 ## Sample and component checks
 
-Use the [demo registry](../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts) and affected `tests/demo-*.test.cjs` plus feature tests to identify live selectable scenarios and versioned conformance coverage. `npm run verify:examples` checks coverage; markers and export lists do not execute UI. Public contracts and recipes belong in [API documentation](../api/INDEX.md) and task guides, not another per-control development inventory.
+Use the generated source-owned catalogue together with the transitional [demo registry](../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts) and affected `tests/demo-*.test.cjs` plus feature tests to identify live selectable scenarios and versioned conformance coverage. `npm run verify:examples` checks coverage; markers and export lists do not execute UI. Public contracts and recipes belong in [API documentation](../api/INDEX.md) and task guides, not another per-control development inventory.
 
 The sample shows one active example, configuration/commands/status and collapsed diagnostics. Changing a service selection must not dispatch I/O; execute explicit actions and attribute results to their actual parameters/identity. Keep pending-write targets stable. Visual subjects render separately from configuration, while hook/service results stay within it. Broader simultaneous comparisons live in [control isolation fixtures](../../tests/fixtures/demo-control-isolation) and [legacy foundation fixtures](../../tests/fixtures/foundation-legacy). The sample consumes compiled library output: [rebuild library before app and restart serve](setup.md#layout-and-build-boundary) after library edits.
 
@@ -56,7 +56,18 @@ The optional Grid failure probe requires `DATA_GRID_CHART_PROBE=1` on both the G
 
 ### Integrated demo presentation checks
 
-The integrated fixture mounts the actual app, registry and lazy panels with compiled controls by default. Build with `node scripts/build-demo-presentation-browser.cjs`, then run `node scripts/check-demo-presentation-browser.cjs`. Set `DEMO_PRESENTATION_MODE=source` for both commands to test source controls; focused options such as `DEMO_PRESENTATION_TRIMS_ONLY=1` are owned by [the checker](../../scripts/check-demo-presentation-browser.cjs). It accepts `PLAYWRIGHT_MODULE_PATH`, `CHROME_EXECUTABLE_PATH` and `DEMO_PRESENTATION_EVIDENCE`.
+The integrated fixture mounts the actual explorer and lazy scenarios/panels with compiled controls by default. Build with `node scripts/build-demo-presentation-browser.cjs`, then run `node scripts/check-demo-presentation-browser.cjs`. Set `DEMO_PRESENTATION_MODE=source` for both commands to test source controls; focused options such as `DEMO_PRESENTATION_TRIMS_ONLY=1` are owned by [the checker](../../scripts/check-demo-presentation-browser.cjs). It accepts `PLAYWRIGHT_MODULE_PATH`, `CHROME_EXECUTABLE_PATH` and `DEMO_PRESENTATION_EVIDENCE`.
+
+For the exact four-feature/nine-scenario pilot, build the fixture, then select the focused checker:
+
+```bash
+node scripts/build-demo-presentation-browser.cjs
+DEMO_PRESENTATION_JSDOC_ONLY=1 node scripts/check-demo-presentation-browser.cjs
+```
+
+The filter's independent versioned expectations live in the browser fixture, never in the generator or application navigator. Missing/duplicate expected titles fail rather than silently reducing coverage. The focused runner checks independent groups, collapsed selection/content, central switch/reset, one mounted scenario, keyboard focus, mobile optgroups at 320 px, callback freshness/identity, actual controlled rows/pending completion/reset, real Shell retention/remount with preserved navigation, and explicit simulated list reads/errors/stale-completion suppression. Capture screenshots and inspect JSON and process exit; adding assertions or compiling the fixture does not establish that the browser checks ran. Ordinary runner modes retain their existing paths. Record actual mode/flags and do not infer a full-suite result from this focused run.
+
+The fixture supplies real generated modules, React, Fluent controls, provider and outer Shell; unavailable native SPFx services and HTTP send are doubled, and CRUD is forbidden. Its Read-mode Shell checks cannot establish authenticated Edit title persistence. For authenticated validation use the explicitly requested browser and target workbench; a local Playwright run cannot substitute for that host. Record viewport, actual WebPart/container width, selector bounds and document scroll separately: workbench chrome can shrink a 320 px viewport much further. A passing 320 px local fixture does not establish a 320 px tenant workbench result.
 
 SPFx services/native transports are doubled and CRUD is forbidden. Exact unavailable legacy Segoe CDN text fonts are fulfilled from installed Arial, with requested assets recorded; icon fonts are not substituted and no fonts are downloaded. Disposable Chrome profiles leave the user profile untouched; native-zoom screenshots use CDP physical viewport capture. Inspect JSON/DOM/screenshots, computed styles, real keyboard/pointer focus, narrow/RTL geometry, retained/inert content, nested popups, request counts and independent instances. CSSOM/JSDOM and static coverage alone do not establish these observations. Local fixture evidence does not establish device IME, touch, screen-reader, Teams/iframe or authenticated SharePoint behavior. Record [host acceptance](sharepoint-validation/INDEX.md) separately. Restricted environments may require approval for loopback listening/browser launch; record actual outcomes.
 

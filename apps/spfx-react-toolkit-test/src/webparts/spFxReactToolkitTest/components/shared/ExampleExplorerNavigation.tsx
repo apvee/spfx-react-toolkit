@@ -30,7 +30,7 @@ export function ExampleExplorerNavigation({ groups, legacyEntries }: {
   const selectedKey = navigationGroups.flatMap(group => group.features).find(feature => feature.key === state.selectedFeatureKey)?.key ?? navigationGroups[0]?.features[0]?.key;
   return <>
     <Field label="Funzionalità" className={styles.mobile}>
-      <Select aria-label="Funzionalità" value={selectedKey ?? ''} disabled={!selectedKey} onChange={(_event, data) => state.selectFeature(data.value)}>
+      <Select className={styles.selectRoot} select={{ className: styles.selectInput }} aria-label="Funzionalità" value={selectedKey ?? ''} disabled={!selectedKey} onChange={(_event, data) => state.selectFeature(data.value)}>
         {navigationGroups.map(group => <optgroup key={group.key} label={group.title}>
           {group.features.map(feature => <option key={feature.key} value={feature.key}>{feature.title}</option>)}
         </optgroup>)}
