@@ -28,7 +28,7 @@ test('real catalog derives three features and eight source-owned scenarios', t =
   assert.equal(h.modules.catalogue.executableGroups.flatMap(group => group.features).length, 3);
   assert.deepEqual(h.modules.catalogue.executableGroups.map(group => group.key), ['controls', 'hooks']);
 });
-for (const title of ['Report current count through a retained callback', 'Retain callback identity through rerenders']) {
+for (const title of ['Report current count through a retained callback']) {
   test(`${title}: original committed callback observes state; reset retains its identity`, t => {
     const h = fixture(t, title);
     assert.equal(h.entry.metadata.contentPlacement, 'configuration');
@@ -49,6 +49,25 @@ for (const title of ['Report current count through a retained callback', 'Retain
     assert.equal(h.container.querySelector('[data-demo-subject]'), null);
   });
 }
+test('identity pilot owns real rerenders, original-reference invocation and reset without report state', t => {
+  const h = fixture(t, 'Retain callback identity through rerenders');
+  assert.equal(h.entry.metadata.contentPlacement, 'configuration');
+  h.click('Rerender component'); h.click('Rerender component');
+  assert.match(h.container.textContent, /Rerender revision: 2/);
+  h.click('Invoke original callback');
+  assert.match(h.container.textContent, /Original invocations: 1/);
+  assert.match(h.container.textContent, /Same callback identity: yes/);
+  const originalButton = button(h.container, 'Invoke original callback');
+  h.reset();
+  assert.equal(button(h.container, 'Invoke original callback'), originalButton);
+  assert.match(h.container.textContent, /Rerender revision: 0/);
+  assert.match(h.container.textContent, /Original invocations: 0/);
+  h.click('Invoke original callback');
+  assert.match(h.container.textContent, /Original invocations: 1/);
+  assert.match(h.container.textContent, /Same callback identity: yes/);
+  assert.equal([...h.container.querySelectorAll('button')].some(node => node.textContent === 'Report'), false);
+  assert.doesNotMatch(h.container.textContent, /Observed counter:|Current count:/);
+});
 test('controlled known-total pilot slices exact deterministic orders and resets to five', t => {
   const h = fixture(t, 'Browse controlled rows');
   assert.deepEqual(ids(h), [1, 2, 3, 4, 5]);

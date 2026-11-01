@@ -32,7 +32,7 @@ The underlying hook is exported and typed by Fluent UI 9, but its upstream sourc
 
 ### Web part scenario
 
-Open **Hook → useStableCallback** in the test web part and select either source-owned scenario. Increment the counter, then select **Invoke original callback**. The observed counter should match the current counter and **Same callback identity** should read **yes**. The scenario retains the callback captured at mount rather than replacing it on each render.
+Open **Hook → useStableCallback** in the test web part and select **Report current count through a retained callback**. Increment the counter, then select **Invoke original callback**. The observed counter should match the current counter and **Same callback identity** should read **yes**. The scenario retains the callback captured at mount rather than replacing it on each render. **Retain callback identity through rerenders** instead provides a dedicated **Rerender component** command and counts invocations of its original callback; its reset clears those observations while preserving the original reference.
 
 Local tests exercise that component in a DOM harness with the actual hook. Authenticated SharePoint-host execution must be recorded separately.
 

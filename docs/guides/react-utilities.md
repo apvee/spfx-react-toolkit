@@ -34,7 +34,7 @@ The underlying hook is exported and typed by Fluent UI 9, but its upstream sourc
 
 ### Web part scenario
 
-Open **Hook → useStableCallback** in the test web part and select either source-owned scenario. Increment the counter, then select **Invoke original callback**. The observed counter should match the current counter and **Same callback identity** should read **yes**. The scenario retains the callback captured at mount rather than replacing it on each render.
+Open **Hook → useStableCallback** in the test web part and select **Report current count through a retained callback**. Increment the counter, then select **Invoke original callback**. The observed counter should match the current counter and **Same callback identity** should read **yes**. The scenario retains the callback captured at mount rather than replacing it on each render. **Retain callback identity through rerenders** instead provides a dedicated **Rerender component** command and counts invocations of its original callback; its reset clears those observations while preserving the original reference.
 
 Local tests exercise that component in a DOM harness with the actual hook. Authenticated SharePoint-host execution must be recorded separately.
 
@@ -133,50 +133,43 @@ export function Demo({ render = standalone, resetRevision = 0 }: {
   render?: (regions: DemoRegions) => React.ReactElement;
   resetRevision?: number;
 } = {}): React.ReactElement {
-  const [count, setCount] = React.useState(0);
-  const [observed, setObserved] = React.useState<number>();
-  const [message, setMessage] = React.useState('');
+  const [rerenderRevision, setRerenderRevision] = React.useState(0);
+  const [invocations, setInvocations] = React.useState(0);
   const [sameIdentity, setSameIdentity] = React.useState<boolean>();
-  const report = useStableCallback((label: string) => {
-    setObserved(count);
-    return `${label}: ${count}`;
-  });
-  const originalReport = React.useRef<typeof report>();
+  const callback = useStableCallback(() => setInvocations(current => current + 1));
+  const originalCallback = React.useRef<typeof callback>();
   React.useEffect(() => {
-    if (originalReport.current === undefined) originalReport.current = report;
-  }, [report]);
+    if (originalCallback.current === undefined) originalCallback.current = callback;
+  }, [callback]);
   const revision = React.useRef(resetRevision);
   React.useEffect(() => {
     if (revision.current === resetRevision) return;
     revision.current = resetRevision;
-    setCount(0);
-    setObserved(undefined);
-    setMessage('');
+    setRerenderRevision(0);
+    setInvocations(0);
     setSameIdentity(undefined);
   }, [resetRevision]);
   const invokeOriginal = (): void => {
-    const original = originalReport.current;
+    const original = originalCallback.current;
     if (original === undefined) return;
-    setSameIdentity(original === report);
-    setMessage(original('Current count'));
+    setSameIdentity(original === callback);
+    original();
   };
   return render({
     commands: <>
-      <Button onClick={() => setCount(current => current + 1)}>Increment counter</Button>
-      <Button onClick={() => setMessage(report('Current count'))}>Report</Button>
+      <Button onClick={() => setRerenderRevision(current => current + 1)}>Rerender component</Button>
       <Button onClick={invokeOriginal}>Invoke original callback</Button>
     </>,
     status: <div role="status" aria-live="polite">
-      <p>Current count: {count}</p>
-      <p>Observed counter: {observed === undefined ? 'not invoked' : observed}</p>
-      <p>{message}</p>
+      <p>Rerender revision: {rerenderRevision}</p>
+      <p>Original invocations: {invocations}</p>
       <p>Same callback identity: {sameIdentity === undefined ? 'not checked' : sameIdentity ? 'yes' : 'no'}</p>
     </div>,
-    diagnostics: <p>Invoke after commit. Reset keeps this mounted component and its original callback reference.</p>,
+    diagnostics: <p>Rerender uses React state. Reset clears the observations without replacing the original callback reference.</p>,
   });
 }
 export const demo = {
   host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
-  observe: 'Increment and invoke the original callback after rerenders. Identity stays yes, including after Reset clears the values without remounting.',
+  observe: 'Rerender the mounted component, then invoke its original callback. Identity stays yes, including after Reset clears the rerender and invocation counts.',
 };
 ```

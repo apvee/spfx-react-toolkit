@@ -162,14 +162,14 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   ],
   "source": {
     "file": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx",
-    "line": 255
+    "line": 241
   },
   "metadata": {
     "host": "webPart",
     "kind": "snapshot",
     "contentPlacement": "configuration",
     "hostAdapter": "webPartShell",
-    "observe": "Choose Use Card baseline, edit the note and increment. Change between Card variants, size, title position and visibility: the same content remains mounted."
+    "observe": "Choose Use Card baseline, edit the note and increment. Card variants, size, title position and host-owned title visibility retain content. Reset preserves all persisted title properties in Read and Edit."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-0b61abedb42418bdfcdd31cfacdb1b844dbd065bc55f57c82ae7154c09ead21f' */ "./0b61abedb42418bdfcdd31cfacdb1b844dbd065bc55f57c82ae7154c09ead21f")
 },
@@ -186,14 +186,14 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   ],
   "source": {
     "file": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx",
-    "line": 362
+    "line": 322
   },
   "metadata": {
     "host": "webPart",
     "kind": "snapshot",
     "contentPlacement": "configuration",
     "hostAdapter": "webPartShell",
-    "observe": "Edit the note and counter, then switch subtle and Card with the explicit commands. Child state resets at the real body boundary; group, feature and scenario selection survive."
+    "observe": "Edit the note and counter, then switch subtle and Card explicitly. Child state resets at the actual body boundary while explorer selection survives. Reset preserves all persisted title properties in Read and Edit."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717' */ "./7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717")
 },
@@ -239,7 +239,7 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "host": "none",
     "kind": "snapshot",
     "contentPlacement": "configuration",
-    "observe": "Increment and invoke the original callback after rerenders. Identity stays yes, including after Reset clears the values without remounting."
+    "observe": "Rerender the mounted component, then invoke its original callback. Identity stays yes, including after Reset clears the rerender and invocation counts."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-3d1b9688a4a92bbeb2147405d82aed353d95d1521353a65cac6d0ee9591a8427' */ "./3d1b9688a4a92bbeb2147405d82aed353d95d1521353a65cac6d0ee9591a8427")
 }
