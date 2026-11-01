@@ -16,6 +16,8 @@ const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
 const exported = node => ts.getModifiers(node)?.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword) &&
   !ts.getModifiers(node)?.some(modifier => modifier.kind === ts.SyntaxKind.DefaultKeyword);
 function namedExports(source) {
+  // Erased names still opt into the convention so they receive an error
+  // instead of silently becoming ordinary documentation examples.
   const names = new Set();
   for (const statement of source.statements) {
     if (ts.isExportDeclaration(statement) && statement.exportClause && ts.isNamedExports(statement.exportClause)) {
@@ -148,6 +150,23 @@ export type Component = (props: Props) => React.ReactElement;
   const program = ts.createProgram([...parsed.fileNames, ...virtual.keys()], options, host);
   const checker = program.getTypeChecker();
   const actualSymbol = symbol => symbol && (symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol);
+  const runtimeDeclaration = declaration => {
+    if (declaration.getSourceFile().isDeclarationFile) return false;
+    for (let node = declaration; node; node = node.parent) {
+      if (ts.canHaveModifiers(node) && ts.getModifiers(node)?.some(modifier => modifier.kind === ts.SyntaxKind.DeclareKeyword)) return false;
+    }
+    return ts.isFunctionDeclaration(declaration) ? Boolean(declaration.body)
+      : ts.isVariableDeclaration(declaration) && Boolean(declaration.initializer);
+  };
+  const runtimeExport = (symbol, visiting = new Set()) => {
+    if (!symbol || visiting.has(symbol)) return false;
+    visiting.add(symbol);
+    if (symbol.declarations?.some(declaration => ts.isTypeOnlyExportDeclaration(declaration) || ts.isTypeOnlyImportDeclaration(declaration))) return false;
+    // Preserve each alias edge: jumping straight to getAliasedSymbol would
+    // discard a type-only import/export on the route to a real value symbol.
+    if (symbol.flags & ts.SymbolFlags.Alias) return runtimeExport(checker.getImmediateAliasedSymbol(symbol), visiting);
+    return Boolean(symbol.flags & ts.SymbolFlags.Value) && Boolean(symbol.declarations?.some(runtimeDeclaration));
+  };
   const exportsOf = source => checker.getExportsOfModule(checker.getSymbolAtLocation(source));
   const contractSource = program.getSourceFile(contractFile);
   const contracts = new Map(exportsOf(contractSource).map(symbol => [symbol.name, checker.getDeclaredTypeOfSymbol(symbol)]));
@@ -195,7 +214,12 @@ export type Component = (props: Props) => React.ReactElement;
     if (!candidate.example) continue;
     const { example } = candidate;
     const source = program.getSourceFile(filename);
-    const exports = new Map(exportsOf(source).map(symbol => [symbol.name, actualSymbol(symbol)]));
+    const sourceExports = exportsOf(source);
+    for (const symbol of sourceExports) {
+      if (['Demo', 'demo'].includes(symbol.name) && !runtimeExport(symbol)) report(example, 'EXECUTABLE_RUNTIME_EXPORT',
+        `${symbol.name} requires a value export with a runtime implementation; type-only exports and ambient declarations are erased.`, symbol.declarations?.[0]);
+    }
+    const exports = new Map(sourceExports.map(symbol => [symbol.name, actualSymbol(symbol)]));
     const demoSymbol = exports.get('demo');
     const metadataDeclaration = demoSymbol?.valueDeclaration;
     candidate.metadata = metadataDeclaration?.getSourceFile() === source ? readMetadata(metadataDeclaration) : undefined;

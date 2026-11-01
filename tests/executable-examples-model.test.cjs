@@ -136,6 +136,43 @@ test('rejects incomplete named contracts while ignoring names inside nested scop
   assert.deepEqual(collect(replaceDoc(snippet(nested))), { examples: [], diagnostics: [] });
 });
 
+for (const declaration of ['export type { Actual as Demo };', 'export { type Actual as Demo };']) {
+  test(`rejects erased component export: ${declaration}`, () => {
+    const code = `${component.replace('export function Demo', 'function Actual')}\n${declaration}\n${metadata}`;
+    const result = invalid(code, 'EXECUTABLE_RUNTIME_EXPORT');
+    assert.ok(result.diagnostics.some(item => item.code === 'EXECUTABLE_RUNTIME_EXPORT' && item.line === 6));
+  });
+}
+
+for (const declaration of ['export type { data as demo };', 'export { type data as demo };']) {
+  test(`rejects erased metadata export: ${declaration}`, () => {
+    const code = `${component}\n${metadata.replace('export const demo', 'const data')}\n${declaration}`;
+    const result = invalid(code, 'EXECUTABLE_RUNTIME_EXPORT');
+    assert.ok(result.diagnostics.some(item => item.code === 'EXECUTABLE_RUNTIME_EXPORT' && item.line === 7));
+  });
+}
+
+for (const declaration of [
+  'export declare function Demo(): React.ReactElement;',
+  'export declare const Demo: () => React.ReactElement;',
+  'declare function Actual(): React.ReactElement;\nexport { Actual as Demo };',
+]) {
+  test(`rejects ambient component without a runtime implementation: ${declaration}`, () => {
+    invalid(`import * as React from 'react';\n${declaration}\n${metadata}`, 'EXECUTABLE_RUNTIME_EXPORT');
+  });
+}
+
+test('retains real runtime aliases for both contract exports and implemented overloads', () => {
+  const code = `import * as React from 'react';
+function Actual(): React.ReactElement;
+function Actual(): React.ReactElement { return <div />; }
+${metadata.replace('export const demo', 'const data')}
+export { Actual as Demo, data as demo };`;
+  const result = collect(replaceDoc(snippet(code)));
+  assert.deepEqual(result.diagnostics, []);
+  assert.equal(result.examples.length, 1);
+});
+
 test('requires TSX for executable components', () => {
   invalid(component.replace('return <div />', 'return React.createElement("div")') + '\n' + metadata, 'EXECUTABLE_LANGUAGE', 'ts');
 });
