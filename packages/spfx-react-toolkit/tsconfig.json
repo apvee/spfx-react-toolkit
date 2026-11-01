@@ -3,7 +3,7 @@
     "target": "es2020",
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "jsx": "react",
     "declaration": true,
     "declarationMap": true,
