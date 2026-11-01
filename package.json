@@ -30,7 +30,10 @@
     "prepublishOnly": "npm run clean && npm run build && npm run verify",
     "verify:import-graph": "node scripts/audit-import-graph.cjs .docs/maintenance/evidence/tree-shaking/import-graph.json",
     "verify:bundle-contract": "node scripts/verify-bundle-contract.cjs",
-    "verify:localization": "node scripts/localization-resources.cjs --check-inventory && node --test tests/localization-resources.test.cjs tests/localization-inventory.test.cjs tests/configure-localization.test.cjs tests/localization-lifecycle.test.cjs tests/localization-native-boundaries.test.cjs"
+    "verify:localization": "node scripts/localization-resources.cjs --check-inventory && node --test tests/localization-resources.test.cjs tests/localization-inventory.test.cjs tests/configure-localization.test.cjs tests/localization-lifecycle.test.cjs tests/localization-native-boundaries.test.cjs",
+    "docs:generate": "node scripts/documentation.cjs",
+    "docs:check": "node scripts/documentation.cjs --check",
+    "verify:docs-reproducibility": "node scripts/verify-documentation-reproducibility.cjs"
   },
   "devDependencies": {
     "typescript": "5.3.3",
@@ -44,6 +47,8 @@
     "@types/webpack-env": "1.15.3",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "jsdom": "15.2.1"
+    "jsdom": "15.2.1",
+    "@microsoft/tsdoc": "0.13.2",
+    "markdown-it": "14.1.0"
   }
 }

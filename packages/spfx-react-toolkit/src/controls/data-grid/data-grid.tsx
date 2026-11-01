@@ -1,3 +1,9 @@
+/**
+ * Controlled row presentation with suite-owned typed columns and native Fluent grid interactions.
+ *
+ * @packageDocumentation
+ * @docPage controls/data-grid
+ */
 import * as React from 'react';
 import { renderContentSlot } from '../content-slot.internal';
 import {
@@ -99,7 +105,9 @@ const ownedRootPropNames = [
   'resizableColumnsOptions', 'size', 'dangerouslySetInnerHTML', 'defaultSortState',
   'defaultSelectedItems', 'as', 'noNativeElements', 'sortable', 'columnSizingOptions',
 ] as const;
-/** Strip owned runtime paths from untyped callers before forwarding native attributes. */
+/**
+ * Strip owned runtime paths from untyped callers before forwarding native attributes.
+ */
 function nativeRootProps<T extends object>(props: DataGridProps<T>): Omit<
   DataGridProps<T>, (typeof ownedRootPropNames)[number]
 > {
@@ -245,17 +253,31 @@ function DataGridRuntime<T extends object>({ family, props, rootRef }: {
     </>}
   </div>;
 }
-/** Create the native root around a feature-local owning family. */
+/**
+ * Create the native root around a feature-local owning family.
+ */
 export function createDataGridRuntimeComponent<T extends object>(family: FamilyResolution<T>): React.ForwardRefExoticComponent<DataGridProps<T> & React.RefAttributes<HTMLDivElement>> {
   const Root = React.forwardRef<HTMLDivElement, DataGridProps<T>>((props, ref) => <DataGridRuntime<T> family={family} props={props} rootRef={ref} />);
   Root.displayName = 'DataGrid';
   return Root;
 }
 const dynamicFamily = createDynamicColumnFamily();
-/** Native controlled grid for dictionary rows. Values remain unknown until classified.
+/**
+ * Native controlled grid for dictionary rows. Values remain unknown until classified.
  * Requires immutable items, stable getRowId and one same-suite column collection.
  * Native div ref is unavailable while a status replaces the grid. Fluent supplies
  * navigation, resize, selection and cell widgets; no SPFx provider is required.
- * @example <DataGrid items={rows} getRowId={row => String(row.id)}><DataGrid.TextColumn id="title" header="Title" field="title" /></DataGrid>
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { DataGrid } from '@apvee/spfx-react-toolkit';
+ * const rows = [{ id: 1, title: 'Plan' }];
+ * <DataGrid items={rows} getRowId={row => String(row.id)}><DataGrid.TextColumn id="title" header="Title" field="title" /></DataGrid>
+ * ```
+ *
+ * @useWhen Rows are dynamic records and column callbacks can explicitly handle unknown values.
+ * @avoidWhen Use createDataGrid for a known row model to preserve inferred source domains.
+ * @param props - Controlled row data, same-suite columns and native grid presentation props.
+ * @returns Native Fluent grid output, or the configured empty/no-visible-column status instead of the grid root.
  */
 export const DataGrid: DynamicDataGridSuite = Object.assign(createDataGridRuntimeComponent(dynamicFamily), getPublicDataGridColumnFamily(dynamicFamily));

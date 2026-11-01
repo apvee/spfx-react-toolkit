@@ -1,3 +1,9 @@
+/**
+ * Delegated-scope diagnostics do not grant access or replace server authorization.
+ *
+ * @packageDocumentation
+ * @docPage hooks/http-clients/api-permission-precheck
+ */
 // useSPFxApiPermissionPrecheck.ts
 // React facade for SPFx API permission diagnostics
 
@@ -25,30 +31,40 @@ import { useSPFxInstanceInfo } from './useSPFxInstanceInfo';
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const options: SPFxApiPermissionPrecheckOptions = { autoCheck: false, mode: 'passive', timeoutMs: 10000 };
- * const permissions = useSPFxApiPermissionPrecheck({ graph: ['User.Read'] }, options);
+ * import * as React from 'react';
+ * import { SPFxApiPermissionPrecheckOptions, useSPFxApiPermissionPrecheck } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const options: SPFxApiPermissionPrecheckOptions = { autoCheck: false, mode: 'passive', timeoutMs: 10000 };
+ *   const permissions = useSPFxApiPermissionPrecheck({ graph: ['User.Read'] }, options);
+ *   return <span>{permissions.configurationState}</span>;
+ * }
  * ```
  */
 export interface SPFxApiPermissionPrecheckOptions {
   /**
-   * Automatically checks when the token provider is ready and requirements/options change; defaults to true.
+   * Automatically checks when the token provider is ready and requirements/options change; omitted or undefined uses true.
+   * @defaultValue true
    */
   readonly autoCheck?: boolean;
   /**
-   * Defaults to passive: resource acquisition is sequential and available popup/redirect events are cancelled for the check. interactiveAllowed does not install that guard; the provider controls actual interaction.
+   * Omitted or undefined uses passive: resource acquisition is sequential and available popup/redirect events are cancelled for the check. interactiveAllowed does not install that guard; the provider controls actual interaction.
+   * @defaultValue 'passive'
    */
   readonly mode?: SPFxApiPermissionPrecheckMode;
   /**
-   * Allows cached tokens unless false; defaults to true.
+   * Allows cached tokens unless false; omitted or undefined uses true.
+   * @defaultValue true
    */
   readonly useCachedToken?: boolean;
   /**
-   * Checks expected audiences unless false; defaults to true.
+   * Checks expected audiences unless false; omitted or undefined uses true.
+   * @defaultValue true
    */
   readonly validateAudience?: boolean;
   /**
-   * Per-resource token acquisition timeout in milliseconds; defaults to 15000. Does not cancel the underlying provider request.
+   * Per-resource token acquisition timeout in milliseconds; omitted or undefined uses 15000. Does not cancel the underlying provider request.
+   * @defaultValue 15000
    */
   readonly timeoutMs?: number;
 }
@@ -58,9 +74,14 @@ export interface SPFxApiPermissionPrecheckOptions {
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const permissions: SPFxApiPermissionPrecheckResult = useSPFxApiPermissionPrecheck({ graph: ['User.Read'] });
- * console.log(permissions.configurationState, permissions.missing);
+ * import * as React from 'react';
+ * import { SPFxApiPermissionPrecheckResult, useSPFxApiPermissionPrecheck } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const permissions: SPFxApiPermissionPrecheckResult = useSPFxApiPermissionPrecheck({ graph: ['User.Read'] });
+ *   console.log(permissions.configurationState, permissions.missing);
+ *   return <span>{permissions.configurationState}</span>;
+ * }
  * ```
  */
 export interface SPFxApiPermissionPrecheckResult {
@@ -138,15 +159,45 @@ interface PassiveAuthEventObserverInfo {
 /**
  * Checks delegated scopes using the provider's AadTokenProvider. Auto-check defaults to true and mode to passive. Requirement/provider changes reset results; latest checks publish state, without cancelling underlying requests. Token failures become diagnostics.
  * @param config - Graph/custom API requirements; keep data immutable when changing requirements.
- * @param options - Optional automation, interaction, cache, audience and timeout settings.
+ * @param options - Automation/auth settings; omitted or undefined uses auto-check, passive mode, cached tokens, audience validation and 15000 ms timeout.
  * @returns Aggregate state, detailed diagnostics and explicit retry methods.
  * @throws When called outside an SPFx provider.
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxApiPermissionPrecheck } from '@apvee/spfx-react-toolkit';
+ *
  * function PermissionStatus() {
  *   const permissions = useSPFxApiPermissionPrecheck({ graph: ['User.Read'] });
  *   return <span>{permissions.configurationState}</span>;
+ * }
+ * ```
+ *
+ * @useWhen setup UI needs delegated-scope diagnostics and actionable retry results.
+ *
+ * @avoidWhen the application needs proof that a server request will succeed; token diagnostics do not grant access.
+ *
+ *
+ * @example Compare a gate and manual passive recheck
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxApiPermissionPrecheck } from '@apvee/spfx-react-toolkit';
+ * function OrdersPermissionGate({ children }: { children: React.ReactNode }) {
+ *   const precheck = useSPFxApiPermissionPrecheck({ graph: ['Sites.Read.All'], customApis: [{
+ *     name: 'Orders API', resource: 'api://contoso-orders-api', packageResource: 'Orders API', scopes: ['Orders.Read'],
+ *   }] });
+ *   return precheck.configurationState === 'ready' ? <>{children}</> : <section>
+ *     <p>{precheck.isChecking ? 'Checking API access' : precheck.configurationState}</p>
+ *     {precheck.missing.map(item => <p key={item.id}>{item.adminMessage}</p>)}
+ *   </section>;
+ * }
+ * function ManualPermissionCheck() {
+ *   const precheck = useSPFxApiPermissionPrecheck({ graph: ['Sites.Read.All'] }, { autoCheck: false, mode: 'passive' });
+ *   return <div><button disabled={precheck.isChecking} onClick={() => void precheck.check().catch(console.error)}>Check now</button>
+ *     <button disabled={precheck.isChecking} onClick={() => void precheck.retryWithoutCache().catch(console.error)}>Recheck without cache</button>
+ *     <pre>{precheck.configurationState}</pre>
+ *   </div>;
  * }
  * ```
  */

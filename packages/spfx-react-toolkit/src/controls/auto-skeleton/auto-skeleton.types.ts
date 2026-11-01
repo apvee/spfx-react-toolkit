@@ -1,34 +1,56 @@
+/**
+ * @packageDocumentation
+ * @docPage controls/auto-skeleton
+ */
 import type * as React from 'react';
 
-/** Props for skeleton geometry derived from mounted, bounded HTML content.
+/**
+ * Props for skeleton geometry derived from mounted, bounded HTML content.
  * Native div attributes and ref are forwarded to the root. Uses the host Fluent theme
  * and Griffel renderer; no SPFx provider is required. Native inert and bounded browser DOM
  * geometry are required for the overlay; server rendering keeps only the content. Apply the content's
  * flex/grid layout inside children: an owned block wrapper is always present.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { AutoSkeleton } from '@apvee/spfx-react-toolkit';
+ * const isLoading = true;
+ * function ProfileCard(): React.ReactElement { return <article>Ada — project owner</article>; }
  * <AutoSkeleton loading={isLoading}><ProfileCard /></AutoSkeleton>
  * ```
  */
 export type AutoSkeletonProps = Omit<React.ComponentPropsWithoutRef<'div'>,
   'children' | 'dangerouslySetInnerHTML'> & {
-  /** Mounted content to measure. Absent/unmeasurable content has no inferred placeholder. */
+  /**
+   * Mounted content to measure. Absent/unmeasurable content has no inferred placeholder.
+   */
   children: React.ReactNode;
-  /** Sets root `aria-busy`. When geometry and native `inert` exist, hides measured content
-   * beneath a decorative overlay and releases focus inside it. Otherwise content stays available. */
+  /**
+   * Sets root `aria-busy`. When geometry and native `inert` exist, hides measured content
+   * beneath a decorative overlay and releases focus inside it. Otherwise content stays available.
+   */
   loading: boolean;
-  /** Visual treatment; defaults to `wave`. Fluent `wave` and `pulse` respect reduced motion.
+  /**
+   * Visual treatment; when omitted, defaults to `wave`. Fluent `wave` and `pulse` respect reduced motion.
    * `none` keeps Fluent items with a uniform themed fill and no animation or shimmer.
    * This affects presentation only: `loading` still controls visibility, inert content and `aria-busy`.
+   * @defaultValue 'wave'
    */
   animation?: 'wave' | 'pulse' | 'none';
-  /** Minimum normalized width and height in pixels. Defaults to `8`; nonfinite or nonpositive values throw `RangeError` after mount. */
+  /**
+   * Minimum normalized width and height in pixels. when omitted, defaults to `8`; nonfinite or nonpositive values throw `RangeError` after mount.
+   * @defaultValue 8
+   */
   minSize?: number;
-  /** CSS selectors excluding matching descendants and their entire subtrees.
+  /**
+   * CSS selectors excluding matching descendants and their entire subtrees.
    * Malformed selectors throw `SyntaxError` after mount, even when loading is false.
-   * The `data-skeleton-ignore` presence marker also excludes a subtree; omission uses no extra selectors.
+   * The `data-skeleton-ignore` presence marker also excludes a subtree; when omitted, uses no extra selectors.
    */
   ignoreSelectors?: readonly string[];
-  /** Direct HTML injection is unsupported; provide rendered children instead. */
+  /**
+   * Direct HTML injection is unsupported; provide rendered children instead.
+   * Must be omitted or undefined in this branch.
+   */
   dangerouslySetInnerHTML?: never;
 };

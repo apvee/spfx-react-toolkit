@@ -1,3 +1,9 @@
+/**
+ * Read-only term/value metadata with native description-list semantics.
+ *
+ * @packageDocumentation
+ * @docPage controls/description-list
+ */
 import * as React from 'react';
 import { renderContentSlot } from '../content-slot.internal';
 import { useSx } from '../../hooks/useSx';
@@ -11,11 +17,14 @@ import type { DescriptionListLayout, DescriptionListProps, DescriptionListItemPr
 
 const DescriptionListContext = React.createContext<DescriptionListLayout | undefined>(undefined);
 
-/** One pair with preserved native semantic cells and caller-owned content/state.
- * @param props Native grouping attributes and Fluent content slots.
+/**
+ * One pair with preserved native semantic cells and caller-owned content/state.
+ * @param props - Native grouping attributes and Fluent content slots.
  * @returns A grouping div containing one dt and one dd.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { DescriptionList } from '@apvee/spfx-react-toolkit';
  * <DescriptionList><DescriptionList.Item label="Owner">Ada</DescriptionList.Item></DescriptionList>
  * ```
  */
@@ -54,7 +63,8 @@ const DescriptionListRoot = React.forwardRef<HTMLDListElement, DescriptionListPr
 });
 DescriptionListRoot.displayName = 'DescriptionList';
 
-/** Display read-only metadata for one record as a native description list.
+/**
+ * Display read-only metadata for one record as a native description list.
  * Supply immutable items with stable IDs or compound Item children. Strings remain literal;
  * formatting, missing-value labels, loading and empty states belong to the consumer.
  * Auto layout stacks without a named container and shares two columns from 480px of the
@@ -62,20 +72,58 @@ DescriptionListRoot.displayName = 'DescriptionList';
  * Uses Fluent theme variables and the host Griffel renderer, with no SPFx provider requirement.
  * No generated inline styles, keyboard behavior, cloning or application state.
  * Empty data/absent children render nothing; empty fragments can leave an empty dl.
- * @param props Native dl attributes, layout and one content pathway.
+ * @param props - Native dl attributes, layout and one content pathway.
  * @returns A native dl of term/definition pairs, or an empty fragment.
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { DescriptionList } from '@apvee/spfx-react-toolkit';
  * <DescriptionList items={[{ id: 'owner', label: 'Owner', value: 'Ada Lovelace' }]} />
+ * ```
+ *
+ * @useWhen One record has read-only named values requiring native term/definition semantics.
+ * @avoidWhen Use DataGrid for tabular collections of records.
+ *
+ *
+ * @example Use the nearest named size container
+ * ```tsx
+ * import * as React from 'react';
+ * import { DescriptionList, container, useSx, width } from '@apvee/spfx-react-toolkit';
+ * function RecordDetails() {
+ *   const sx = useSx();
+ *   return <section className={sx(container.inlineSize, width.full)}>
+ *     <DescriptionList items={[{ id: 'owner', label: 'Owner', value: 'Ada' }]} />
+ *   </section>;
+ * }
+ * ```
+ *
+ *
+ * @example Compose conditional metadata pairs with inner slot refs
+ * ```tsx
+ * import * as React from 'react';
+ * import { Badge } from '@fluentui/react-components';
+ * import { DescriptionList } from '@apvee/spfx-react-toolkit';
+ * function ConditionalDetails({ showStatus }: { showStatus: boolean }) {
+ *   const valueRef = React.useRef<HTMLDivElement>(null); // React 17's legacy ref initializer.
+ *   return <DescriptionList aria-label="Record details" layout="horizontal">
+ *     <DescriptionList.Item label={{ title: 'Account owner', children: 'Owner' }}>
+ *       {{ ref: valueRef, children: (Component, props) => <Component {...props}><p>Ada Lovelace</p></Component> }}
+ *     </DescriptionList.Item>
+ *     {showStatus && <DescriptionList.Item label="Status"><Badge appearance="filled">Active</Badge></DescriptionList.Item>}
+ *   </DescriptionList>;
+ * }
  * ```
  */
 export const DescriptionList = Object.assign(DescriptionListRoot, {
-  /** Render one term/value pair inside DescriptionList, preserving native dt/dd cells.
+  /**
+   * Render one term/value pair inside DescriptionList, preserving native dt/dd cells.
    * Native attributes and ref target the grouping div; Fluent slots customize cell content.
-   * @param props Native grouping attributes, required label and associated value slot.
+   * @param props - Native grouping attributes, required label and associated value slot.
    * @returns A grouping div containing one dt and one dd; requires a DescriptionList parent.
    * @example
    * ```tsx
+   * import * as React from 'react';
+   * import { DescriptionList } from '@apvee/spfx-react-toolkit';
    * <DescriptionList><DescriptionList.Item label="Owner">Ada</DescriptionList.Item></DescriptionList>
    * ```
    */

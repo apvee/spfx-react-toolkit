@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/tsdoc/v0/tsdoc.schema.json",
+  "tagDefinitions": [
+    { "tagName": "@useWhen", "syntaxKind": "block", "allowMultiple": true },
+    { "tagName": "@avoidWhen", "syntaxKind": "block", "allowMultiple": true },
+    { "tagName": "@docPage", "syntaxKind": "block" },
+    { "tagName": "@default", "syntaxKind": "block" },
+    { "tagName": "@template", "syntaxKind": "block", "allowMultiple": true },
+    { "tagName": "@module", "syntaxKind": "block" }
+  ]
+}

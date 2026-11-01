@@ -1,3 +1,9 @@
+/**
+ * Current-page permission checks reuse native masks and make no REST requests.
+ *
+ * @packageDocumentation
+ * @docPage hooks/permissions
+ */
 // useSPFxPermissions.ts
 // Hook for SharePoint permissions checking
 
@@ -7,23 +13,29 @@ import { hasSPFxPermission } from '../helpers/spfx-permissions.helpers';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
- * Return type for useSPFxPermissions hook
+ * Native current-context site/web/list masks and UI-only checks; unavailable masks deny the check.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const permissions: SPFxPermissionsInfo = useSPFxPermissions();
- * console.log(permissions.hasWebPermission(SPPermission.addListItems));
+ * import * as React from 'react';
+ * import { SPFxPermissionsInfo, useSPFxPermissions } from '@apvee/spfx-react-toolkit';
+ * import { SPPermission } from '@microsoft/sp-page-context';
+ *
+ * function Example() {
+ *   const permissions: SPFxPermissionsInfo = useSPFxPermissions();
+ *   console.log(permissions.hasWebPermission(SPPermission.addListItems));
+ *   return <span>{permissions.hasWebPermission(SPPermission.addListItems) ? 'Can add' : 'Unavailable'}</span>;
+ * }
  * ```
  */
 export interface SPFxPermissionsInfo {
-  /** Site collection permissions */
+  /** Host site collection permission mask; undefined when unavailable. */
   readonly sitePermissions: SPPermission | undefined;
 
-  /** Web permissions */
+  /** Host web permission mask; undefined when unavailable. */
   readonly webPermissions: SPPermission | undefined;
 
-  /** List permissions (if in list context) */
+  /** Host list permission mask; undefined outside list context or when unavailable. */
   readonly listPermissions: SPPermission | undefined;
 
   /**
@@ -55,6 +67,9 @@ export interface SPFxPermissionsInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxPermissions } from '@apvee/spfx-react-toolkit';
+ *
  * import { SPPermission } from '@microsoft/sp-page-context';
  *
  * function PermissionStatus() {
@@ -62,6 +77,10 @@ export interface SPFxPermissionsInfo {
  *   return <span>{hasWebPermission(SPPermission.addListItems) ? 'Can add' : 'Read only'}</span>;
  * }
  * ```
+ *
+ * @useWhen current-page UI needs native site/web/list permission indicators without an extra REST lookup.
+ *
+ * @avoidWhen a server operation needs authorization; enforce access on the server rather than trusting a UI check.
  */
 export function useSPFxPermissions(): SPFxPermissionsInfo {
   const pageContext = useSPFxPageContext();

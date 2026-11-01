@@ -1,3 +1,9 @@
+/**
+ * User/application JSON files have separate read/write state and explicit creation policy.
+ *
+ * @packageDocumentation
+ * @docPage hooks/storage/onedrive-app-data
+ */
 // useSPFxOneDriveAppData.ts
 // Hook to manage JSON files in OneDrive approot folder with state management
 
@@ -6,13 +12,18 @@ import { useSPFxMSGraphClient } from './useSPFxMSGraphClient';
 import { createSPFxOneDriveAppDataService } from '../services/spfx-onedrive-app-data.service';
 
 /**
- * Return type for useSPFxOneDriveAppData hook
+ * User/application-scoped OneDrive JSON data, separate read/write state and explicit operations.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const file: SPFxOneDriveAppDataResult<{ theme: string }> = useSPFxOneDriveAppData('settings.json');
- * console.log(file.data?.theme, file.isNotFound);
+ * import * as React from 'react';
+ * import { SPFxOneDriveAppDataResult, useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const file: SPFxOneDriveAppDataResult<{ theme: string }> = useSPFxOneDriveAppData('settings.json');
+ *   console.log(file.data?.theme, file.isNotFound);
+ *   return <span>{file.data?.theme ?? 'Unavailable'}</span>;
+ * }
  * ```
  * @template T - Expected application data shape; no runtime validation is performed.
  */
@@ -24,7 +35,7 @@ export interface SPFxOneDriveAppDataResult<T> {
 
   /** 
    * Loading state for read operations.
-   * True during initial load or manual load() calls.
+   * True while any current-target load remains pending.
    */
   readonly isLoading: boolean;
 
@@ -41,7 +52,7 @@ export interface SPFxOneDriveAppDataResult<T> {
 
   /** 
    * Loading state for write operations.
-   * True during write() calls.
+   * True while any current-target write remains pending.
    */
   readonly isWriting: boolean;
 
@@ -55,9 +66,13 @@ export interface SPFxOneDriveAppDataResult<T> {
    * @returns Resolves after the read attempt; inspect error and isNotFound.
    * @example
    * ```tsx
-   * // Inside a React component using the host Fluent renderer:
-   * const file = useSPFxOneDriveAppData<{ theme: string }>('settings.json', { autoFetch: false });
-   * return <button onClick={file.load}>Refresh</button>;
+   * import * as React from 'react';
+   * import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
+   *
+   * function Example() {
+   *   const file = useSPFxOneDriveAppData<{ theme: string }>('settings.json', { autoFetch: false });
+   *   return <button onClick={file.load}>Refresh</button>;
+   * }
    * ```
    */
   readonly load: () => Promise<void>;
@@ -81,47 +96,134 @@ export interface SPFxOneDriveAppDataResult<T> {
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const options: SPFxOneDriveAppDataOptions<{ theme: string }> = { folder: 'dashboard', defaultValue: { theme: 'dark' }, createIfMissing: true };
- * const file = useSPFxOneDriveAppData('settings.json', options);
+ * import * as React from 'react';
+ * import { SPFxOneDriveAppDataOptions, useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const options: SPFxOneDriveAppDataOptions<{ theme: string }> = { folder: 'dashboard', defaultValue: { theme: 'dark' }, createIfMissing: true };
+ *   const file = useSPFxOneDriveAppData('settings.json', options);
+ *   return <span>{file.data?.theme ?? 'Unavailable'}</span>;
+ * }
  * ```
  * @template T - Expected application data shape; no runtime validation is performed.
  */
 export interface SPFxOneDriveAppDataOptions<T> {
   /**
-   * Optional folder namespace; characters other than letters, digits, hyphens and underscores become hyphens. fileName is not sanitized.
+   * Folder namespace; omitted, undefined or empty uses the app root. Characters other than letters, digits, hyphens and underscores become hyphens. fileName is not sanitized.
    */
   folder?: string;
 
-  /** Whether to automatically load file on mount. Default: true */
+  /** Whether to load on mount; omitted or undefined uses true.
+   * @defaultValue true
+   */
   autoFetch?: boolean;
 
   /**
-   * Initial/fallback data when a file is confirmed missing. Changing it alone does not reset current data; future missing reads use the latest value.
+   * Initial/fallback data when a file is confirmed missing; omitted or undefined leaves data undefined. Changing it alone does not reset current data; future missing reads use the latest value.
    */
   defaultValue?: T;
 
   /**
-   * Defaults to false. After a current confirmed missing read, writes a defined defaultValue once per load attempt; failed downloads do not trigger creation.
+   * Omitted or undefined uses false. After a current confirmed missing read, writes a defined defaultValue once per load attempt; failed downloads do not trigger creation.
+   * @defaultValue false
    */
   createIfMissing?: boolean;
 }
 
 /**
- * Manages JSON content in the authenticated user's OneDrive app root. Requires Graph permissions for the requested read/write operations and native fetch for preauthenticated downloads. T is an expected shape without runtime validation. Auto-load defaults to true; target changes reset state and obsolete completions cannot publish it. Read failures publish error and resolve; writes reject and publish writeError. Recognized missing metadata returns fallback data without an error.
+ * Manages JSON content in the authenticated user's OneDrive app root. Requires Graph permissions for the requested read/write operations and native fetch for preauthenticated downloads. T is an expected shape without runtime validation. Auto-load defaults to true; target changes reset state and obsolete completions cannot publish it. Reads and writes have separate pending counters but share latest-started result ownership, so a later write prevents an earlier read from publishing stale data. Retained callbacks keep their original remote target; dispatched requests are not cancelled. Read failures publish error and resolve; writes reject and publish writeError. Recognized missing metadata returns fallback data without an error.
  * @typeParam T - Expected JSON data shape.
  * @param fileName - File name, passed into the Graph path without sanitization.
- * @param options - Folder, auto-load, fallback and missing-file creation settings.
+ * @param options - Folder, auto-load, fallback and creation settings; omitted or undefined uses app root, auto-load true, undefined fallback and creation false.
  * @returns Read/write state and explicit load/write methods.
  * @throws When called outside an SPFx provider.
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
+ *
  * function Settings() {
  *   const file = useSPFxOneDriveAppData<{ theme: string }>('settings.json', {
  *     folder: 'dashboard', autoFetch: false, defaultValue: { theme: 'dark' }
  *   });
  *   return <button onClick={file.load} disabled={file.isLoading}>Load settings</button>;
+ * }
+ * ```
+ *
+ * @useWhen JSON settings belong to the authenticated user and application in OneDrive.
+ *
+ *
+ * @example Create preferences only for a missing app file
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
+ * interface UserPrefs { favorites: string[]; notifications: boolean }
+ * function UserPreferences() {
+ *   const prefs = useSPFxOneDriveAppData<UserPrefs>('prefs.json', {
+ *     folder: 'user-settings', defaultValue: { favorites: [], notifications: true }, createIfMissing: true,
+ *   });
+ *   const add = async () => {
+ *     if (prefs.data) await prefs.write({ ...prefs.data, favorites: [...prefs.data.favorites, 'report'] });
+ *   };
+ *   return <div><p>Favorites: {prefs.data?.favorites.length ?? 0}</p>
+ *     <button disabled={!prefs.isReady || prefs.isWriting} onClick={() => void add().catch(console.error)}>Add favorite</button>
+ *     {(prefs.error ?? prefs.writeError) && <p role="alert">{(prefs.error ?? prefs.writeError)?.message}</p>}
+ *   </div>;
+ * }
+ * ```
+ *
+ *
+ * @example Load an app-folder cache on demand
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
+ * function LazyCache() {
+ *   const cache = useSPFxOneDriveAppData<unknown>('cache.json', { folder: 'my-app-v2', autoFetch: false });
+ *   return <div><button disabled={cache.isLoading} onClick={() => void cache.load().catch(console.error)}>Load cache</button>
+ *     {cache.error && <p role="alert">{cache.error.message}</p>}
+ *     {cache.isReady && <pre>{JSON.stringify(cache.data, undefined, 2)}</pre>}
+ *   </div>;
+ * }
+ * ```
+ *
+ *
+ * @example Add toggle and remove persisted todos
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
+ * interface TodoData { items: { id: string; text: string; done: boolean }[] }
+ * function TodoApp() {
+ *   const store = useSPFxOneDriveAppData<TodoData>('todos.json', {
+ *     folder: 'todo-app', defaultValue: { items: [] }, createIfMissing: true,
+ *   });
+ *   const [text, setText] = React.useState('');
+ *   const add = async () => { await store.write({ items: [...(store.data?.items ?? []), { id: crypto.randomUUID(), text, done: false }] }); };
+ *   const toggle = async (id: string) => { await store.write({ items: (store.data?.items ?? []).map(item => item.id === id ? { ...item, done: !item.done } : item) }); };
+ *   const remove = async (id: string) => { await store.write({ items: (store.data?.items ?? []).filter(item => item.id !== id) }); };
+ *   return <div><input aria-label="New todo" value={text} onChange={event => setText(event.target.value)} />
+ *     <button disabled={!store.isReady || store.isWriting} onClick={() => void add().catch(console.error)}>Add</button>
+ *     <ul>{store.data?.items.map(item => <li key={item.id}>{item.text}
+ *       <button disabled={store.isWriting} onClick={() => void toggle(item.id).catch(console.error)}>{item.done ? 'Reopen' : 'Complete'}</button>
+ *       <button disabled={store.isWriting} onClick={() => void remove(item.id).catch(console.error)}>Delete</button>
+ *     </li>)}</ul>
+ *     {(store.error ?? store.writeError) && <p role="alert">{(store.error ?? store.writeError)?.message}</p>}
+ *   </div>;
+ * }
+ * ```
+ *
+ *
+ * @example Edit app-folder configuration
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
+ * function ConfigPanel() {
+ *   const config = useSPFxOneDriveAppData<{ theme: 'light' | 'dark'; language: string }>('config.json');
+ *   const change = async (dark: boolean) => { if (config.data) await config.write({ ...config.data, theme: dark ? 'dark' : 'light' }); };
+ *   return <div><label>Dark mode<input type="checkbox" checked={config.data?.theme === 'dark'} disabled={!config.isReady || config.isWriting}
+ *     onChange={event => void change(event.target.checked).catch(console.error)} /></label>
+ *     {(config.error ?? config.writeError) && <p role="alert">{(config.error ?? config.writeError)?.message}</p>}
+ *   </div>;
  * }
  * ```
  */

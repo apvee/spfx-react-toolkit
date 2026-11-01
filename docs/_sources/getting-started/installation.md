@@ -1,0 +1,86 @@
+# Install the toolkit and shared peers
+
+Install the toolkit in the consuming SPFx application and align its shared runtimes with the host. Declared peer ranges and the repository verification baseline are different compatibility claims.
+
+[Documentation home](../INDEX.md) · [Quick start](quick-start.md) · [Localization](../guides/localization.md)
+
+Install in the **consuming SPFx application**:
+
+```bash
+npm install @apvee/spfx-react-toolkit
+```
+
+The host supplies compatible React, ReactDOM and SPFx runtimes. Keep those versions aligned with the host rather than upgrading its toolchain just to install the toolkit. The package also declares `@pnp/core`, `@pnp/queryable` and `@pnp/sp` v4 peers for its PnPjs APIs.
+
+Add missing shared UI peers using compatible versions. All packages below are mandatory package peers, including Charts and the Form adapters; reuse compatible installations already present in the application:
+
+```bash
+npm install \
+  "@fluentui/react-components@^9.74.9" \
+  "@fluentui/react-charts@^9.3.27" \
+  "@fluentui/react-migration-v8-v9@^9.10.20" \
+  "@fluentui/react-theme@^9.2.2" \
+  "@fluentui/react-utilities@^9.26.7" \
+  "@fluentui/react-shared-contexts@^9.26.4" \
+  "@griffel/core@^1.21.4" \
+  "@griffel/react@^1.7.8" \
+  react-hook-form@7.87.0 \
+  @fluentui/react-datepicker-compat@0.6.16 \
+  @fluentui/react-timepicker-compat@0.4.21 \
+  @fluentui/react-icons@2.0.312
+```
+
+Modern npm can install missing peers automatically. Review the resolved versions and preserve shared React/Fluent/Griffel identities; see [Form dependencies](#form-adapter-baseline) for the tested adapter baseline.
+
+### Compatibility
+
+| Dependency | Declared contract | Repository verification baseline |
+| --- | --- | --- |
+| SPFx runtime peers, including Property Pane | `>=1.18.0 <2.0.0` | `1.21.1` |
+| React / ReactDOM | `17.x` | `17.0.1` |
+| PnPjs | `^4.0.0` | `4.17.0` |
+| Node.js | `>=22.14.0 <23.0.0` | `22.20.0` |
+| TypeScript | Host toolchain | `5.3.3` |
+
+The declared SPFx range is broader than the verified baseline; it does not imply testing every SPFx release. Theme-based controls and styles need Fluent theme variables and the shared host renderer.
+
+## Register localized resources
+
+Before using localized controls, configure the consumer postinstall and run the setup CLI once. Follow the [localization guide](../guides/localization.md) for resource mappings, dictionary overrides, monorepo --project setup and the read-only --check command. Complete overrides do not remove the native resource requirement.
+
+
+## Declared peer contract
+
+The [package manifest](../../../packages/spfx-react-toolkit/package.json) is the complete authoritative peer contract. The installation commands and baseline above are curated integration guidance; a declared range is not a tested matrix.
+
+## Shared runtimes
+
+React, Fluent and Griffel instances must be shared with the host. Token-based `useSx` descriptors need theme variables in scope, normally from the host's existing FluentProvider. The hook does not create a renderer or require an SPFx provider. The sample's `@fluentui/react-provider@9.22.8` is optional for consumers. `tslib` is supplied by the SPFx packages that depend on it; the library's ES2020 output does not import it.
+
+See [package imports](../guides/package-imports.md) for bundler/resolver support, legacy imports, PnP registrations and verified bundle boundaries. For a source checkout, use [repository setup](../../development/setup.md) instead of treating development scripts as commands available in an installed npm package.
+
+## Form adapter baseline
+
+The tested baseline is React/ReactDOM 17.0.1, TypeScript 5.3.3 and Fluent react-components 9.74.9, with RHF 7.87.0, datepicker-compat 0.6.16, timepicker-compat 0.4.21 and react-icons 2.0.312. RHF, compat controls and icons are explicit host peers. The package supplies `@hookform/resolvers` 5.9.1 and `@standard-schema/spec` 1.1.0 as direct dependencies.
+
+The compat subtree is locked with calendar-compat 0.3.11 and the existing shared contexts/utilities/Griffel versions. Preserve a compatible host lockfile and check runtime identity: newer compat candidates require newer shared packages and can otherwise introduce duplicate providers/renderers. The tested baseline preserves context 9.26.4, utilities 9.26.7 and Griffel React 1.7.8; peer ranges are not a tested version matrix. Package-root declaration resolution requires these peers even when another named export is used. Do not upgrade the host toolchain solely to install Form.
+
+## Navigation dependency baseline
+
+The coordinated Fluent/Charts baseline uses Charts 9.3.27 and locks Tabster 8.8.0 with shared Keyborg 2.14.1. Preserve this compatible navigation subtree: Tabster 8.8.1 resolves Keyborg 3 alongside Fluent’s Keyborg 2 and the actual React 17 cleanup probe detects a registry collision. This lock selection satisfies Fluent’s published range; no overrides are used. Native providers may have distinct package versions, but must resolve the same shared contexts, theme and Griffel renderer.
+
+## Style runtime floor
+
+### Dependencies and cache lifetime
+
+The package's mandatory shared style peers are `@griffel/core@^1.21.4`, `@griffel/react@^1.7.8` and `@fluentui/react-shared-contexts@^9.26.4`. Existing Fluent peers remain `@fluentui/react-migration-v8-v9@^9.10.20`, `@fluentui/react-theme@^9.2.2` and `@fluentui/react-utilities@^9.26.7`. The consuming host supplies compatible shared installations; the hook needs no SPFx provider and creates no renderer.
+
+Token styles need Fluent theme CSS variables in the element's scope. A host can supply them through its existing FluentProvider. The sample uses `@fluentui/react-provider@9.22.8`; that provider package is optional for consumers and is not an additional toolkit peer. Switching scoped theme variables updates computed colors and sizes without RGB-dependent classes.
+
+Factories and generated assignments are cached by renderer and canonical property/scope/value. Repeated values reuse classes and rules. A finite repeated set of values avoids continued growth from those values; continuously distinct pixel values still grow the assignment maps and Griffel CSS caches for the renderer's lifetime. There is no hard cache limit or CSS removal guarantee on component unmount. The renderer WeakMap does not bound memory while a renderer remains live. Prefer a finite design scale for frequently changing dimensions; do not generate a new arbitrary value every frame.
+
+Factories are isolated per renderer to avoid capturing another renderer's `classNameHashSalt`. The installed Griffel core 1.21.4 emits its upstream development console diagnostic for a nonempty salt during the first factory computation, including an isolated factory. The toolkit preserves that diagnostic. Reuse the host renderer/salt configuration and investigate console output; this behavior is not suppressed or presented as a warning-free custom-salt path.
+
+### Verified theme token floor
+
+Each namespace consists of individual ESM exports returning opaque base descriptors, except the numeric factories and scope functions. The catalog references `@fluentui/react-theme` 9.2.2 and its actual `@fluentui/tokens` 1.0.0-alpha.24 floor. Token selections retain `var(--tokenName)` references, so changing a scoped Fluent theme updates computed styles without generating RGB-dependent classes. A scoped Fluent theme, normally from `FluentProvider`, is required for token-based values; the generic hook requires no SPFx context.

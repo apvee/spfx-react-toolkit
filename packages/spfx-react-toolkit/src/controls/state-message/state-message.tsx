@@ -1,3 +1,9 @@
+/**
+ * Section states with caller copy, optional artwork and explicit actions.
+ *
+ * @packageDocumentation
+ * @docPage controls/state-message
+ */
 import * as React from 'react';
 import { Button } from '@fluentui/react-components';
 import { hasContentSlot, inspectContentSlot, renderContentSlot } from '../content-slot.internal';
@@ -43,20 +49,27 @@ function Action({ action, appearance, className }: {
     className={sx(className, consumerClass)}>{labelContent}</Button>;
 }
 
-/** Replace a bounded section with a state explanation, decorative artwork and optional actions.
+/**
+ * Replace a bounded section with a state explanation, decorative artwork and optional actions.
  * Reuses FormattedText, Fluent buttons and useSx container layout; requires no SPFx provider.
  * The nearest Fluent theme selects light/dark artwork by foreground/background luminance,
  * with a light fallback for absent or uninterpretable tokens. Custom visual overrides it.
  * Text/action widths follow the toolkit medium (640px) container breakpoint.
  * Artwork has fluid width up to 280px and natural height from its SVG aspect ratio.
  * Children of the text region must be semantically valid phrasing content. No autofocus.
- * @param props Native div attributes, localized content, preset and button/link intentions.
+ * @param props - Native div attributes, localized content, preset and button/link intentions.
  * @returns The div root containing text, optional artwork and actions outside the live region.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { StateMessage } from '@apvee/spfx-react-toolkit';
+ * const clearFilters = (): void => { console.log('Clear filters requested'); };
  * <StateMessage preset="empty" title="No results" description="Try **other filters**."
  *   primaryAction={{ label: 'Clear filters', onClick: clearFilters }} />
  * ```
+ *
+ * @useWhen A section needs an empty, error or completion state with optional artwork and explicit actions.
+ * @avoidWhen Use FormattedText for ordinary text without state semantics or illustration/actions.
  */
 export const StateMessage = React.forwardRef<HTMLDivElement, StateMessageProps>(({
   preset, title, description, headingLevel = 3, visual, primaryAction, secondaryAction,

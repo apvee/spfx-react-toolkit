@@ -1,3 +1,9 @@
+/**
+ * The legacy collection-root list store is shared by all subsites.
+ *
+ * @packageDocumentation
+ * @docPage hooks/storage/site-key-value-store
+ */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useSPFxSPHttpClient } from './useSPFxSPHttpClient';
 import { useSPFxPageContext } from './useSPFxPageContext';
@@ -8,12 +14,28 @@ import { createSPFxSiteKeyValueStoreService } from '../services/spfx-site-key-va
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const store = useSPFxSiteKeyValueStore();
- * const onLoad = async () => {
- *   const item: SPFxSiteKeyValueStoreItem<boolean> | undefined = await store.get('featureEnabled');
- *   console.log(item?.value);
- * };
+ * import * as React from 'react';
+ * import { SPFxSiteKeyValueStoreItem, useSPFxSiteKeyValueStore } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const store = useSPFxSiteKeyValueStore();
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const run = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       const item: SPFxSiteKeyValueStoreItem<boolean> | undefined = await store.get('featureEnabled');
+ *       setResult(item?.value);
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={!store.isReady || store.isLoading} onClick={() => void run()}>Load setting</button>
+ *     {(failure ?? store.error?.message) && <span role="alert">{failure ?? store.error?.message}</span>}
+ *     <pre>{JSON.stringify(result)}</pre>
+ *   </>;
+ * }
  * ```
  * @template T - Expected application data shape; no runtime validation is performed.
  */
@@ -33,9 +55,28 @@ export interface SPFxSiteKeyValueStoreItem<T = unknown> {
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const store: SPFxSiteKeyValueStoreResult = useSPFxSiteKeyValueStore();
- * const onLoad = async () => console.log(await store.get<boolean>('featureEnabled'));
+ * import * as React from 'react';
+ * import { SPFxSiteKeyValueStoreResult, useSPFxSiteKeyValueStore } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const store: SPFxSiteKeyValueStoreResult = useSPFxSiteKeyValueStore();
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const run = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       const item = await store.get<boolean>('featureEnabled');
+ *       setResult(item?.value);
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={!store.isReady || store.isLoading} onClick={() => void run()}>Load setting</button>
+ *     {(failure ?? store.error?.message) && <span role="alert">{failure ?? store.error?.message}</span>}
+ *     <pre>{JSON.stringify(result)}</pre>
+ *   </>;
+ * }
  * ```
  */
 export interface SPFxSiteKeyValueStoreResult {
@@ -53,6 +94,7 @@ export interface SPFxSiteKeyValueStoreResult {
   readonly isReady: boolean;
   /**
    * Reads without provisioning; failed requests publish error and return undefined.
+   * @typeParam T - Expected deserialized value shape; no runtime validation.
    * @param key - Key to read.
    * @returns An item, or undefined for absent keys/lists or caught read failures.
    * @throws Not-ready operations reject; writes also reject request/setup failures.
@@ -67,6 +109,7 @@ export interface SPFxSiteKeyValueStoreResult {
   /**
    * Ensures setup, then writes with an observed item ETag; missing ETags and HTTP 412 conflicts publish writeError and reject without a blind overwrite. This is not compare-and-swap against a previous get().
    * @param key - Key to create/update.
+   * @typeParam T - Supplied value type; serialization may change its read-back representation.
    * @param value - Value to encode. Empty/JSON-like strings preserve their text, bigint reads as exact decimal string and Date as ISO string; T does not validate runtime content. Historical values keep their previous interpretation.
    * @param description - Omitted preserves existing description; empty string clears it.
    * @returns Resolves after successful write.
@@ -87,12 +130,79 @@ export interface SPFxSiteKeyValueStoreResult {
  * @returns Store readiness, read/write state and explicit operations.
  * @throws When called outside an SPFx provider.
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxSiteKeyValueStore } from '@apvee/spfx-react-toolkit';
+ *
  * function SiteSetting() {
  *   const store = useSPFxSiteKeyValueStore();
- *   const load = async () => console.log(await store.get<boolean>('featureEnabled'));
- *   return <button onClick={load} disabled={!store.isReady}>Load setting</button>;
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const run = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       const item = await store.get<boolean>('featureEnabled');
+ *       setResult(item?.value);
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={!store.isReady || store.isLoading} onClick={() => void run()}>Load setting</button>
+ *     {(failure ?? store.error?.message) && <span role="alert">{failure ?? store.error?.message}</span>}
+ *     <pre>{JSON.stringify(result)}</pre>
+ *   </>;
+ * }
+ * ```
+ *
+ * @useWhen legacy shared configuration belongs to the current site collection.
+ *
+ * @avoidWhen new configuration needs layered tenant defaults or explicit mutation scopes; use useSPFxConfigurationStore.
+ *
+ *
+ * @example Read and save with separate hook errors
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxSiteKeyValueStore, SPFxSiteKeyValueStoreItem } from '@apvee/spfx-react-toolkit';
+ *
+ * function SiteSettings() {
+ *   const store = useSPFxSiteKeyValueStore();
+ *   const [item, setItem] = React.useState<SPFxSiteKeyValueStoreItem<unknown>>();
+ *   const [hasRead, setHasRead] = React.useState(false);
+ *   const [message, setMessage] = React.useState('');
+ *
+ *   const load = async () => {
+ *     setHasRead(false);
+ *     setMessage('');
+ *     try {
+ *       setItem(await store.get('toolkit-site-demo-setting'));
+ *       setHasRead(true);
+ *     } catch (failure) {
+ *       setMessage(String(failure)); // For example, an operation before readiness.
+ *     }
+ *   };
+ *
+ *   const save = async () => {
+ *     setMessage('');
+ *     try {
+ *       await store.save('toolkit-site-demo-setting', { enabled: true }, 'Collection setting');
+ *       setMessage('Saved');
+ *     } catch (failure) {
+ *       setMessage(String(failure));
+ *     }
+ *   };
+ *
+ *   return (
+ *     <div>
+ *       <button onClick={load} disabled={!store.isReady || store.isLoading}>Read</button>
+ *       <button onClick={save} disabled={!store.isReady || !store.canWrite || store.isWriting}>Save</button>
+ *       {store.error ? <p role="alert">{store.error.message}</p> :
+ *         hasRead && !store.isLoading && <p>{item ? JSON.stringify(item.value) : 'Key not found'}</p>}
+ *       {store.writeError && <p role="alert">{store.writeError.message}</p>}
+ *       {message && <p>{message}</p>}
+ *     </div>
+ *   );
  * }
  * ```
  */

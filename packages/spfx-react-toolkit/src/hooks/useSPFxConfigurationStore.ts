@@ -1,3 +1,9 @@
+/**
+ * Explicit configuration scopes support site overrides over tenant defaults.
+ *
+ * @packageDocumentation
+ * @docPage hooks/storage/configuration-store
+ */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useSPFxSPHttpClient } from './useSPFxSPHttpClient';
 import { useSPFxPageContext } from './useSPFxPageContext';
@@ -15,8 +21,16 @@ export type {
 /**
  * Configuration operations plus independent read/write state. Inherits all methods from SPFxConfigurationStoreService; unlike the historical storage hooks, failed reads reject as well as publishing error. No data or permission indicator is cached.
  * @example
- * const store: SPFxConfigurationStoreResult = useSPFxConfigurationStore({ mode: 'layered' });
- * try { await store.get('my-app:pageSize'); } catch { console.error(store.error); }
+ * ```tsx
+ * import * as React from 'react';
+ * import { SPFxConfigurationStoreResult, useSPFxConfigurationStore } from '@apvee/spfx-react-toolkit';
+ *
+ * function LoadSetting() {
+ *   const store: SPFxConfigurationStoreResult = useSPFxConfigurationStore({ mode: 'layered' });
+ *   const load = async () => { try { console.log(await store.get('my-app:pageSize')); } catch (error) { console.error(error); } };
+ *   return <button disabled={!store.isReady} onClick={load}>Load</button>;
+ * }
+ * ```
  */
 export interface SPFxConfigurationStoreResult extends SPFxConfigurationStoreService {
   /** True when client and required local URLs are available; does not establish discovery, list existence or access. */
@@ -37,15 +51,51 @@ export interface SPFxConfigurationStoreResult extends SPFxConfigurationStoreServ
  * @param options - Required tenant/site/layered mode; equivalent inline objects preserve callbacks. Site uses pageContext.site.absoluteUrl; tenant discovery uses a snapshot of pageContext.web.absoluteUrl.
  * @returns Explicit service operations and local readiness/loading/errors. Method parameters and return values inherit SPFxConfigurationStoreService.
  * @throws Outside a matching host-specific SPFx provider, or for an invalid mode during rendering. Not-ready operations and service failures reject their Promises.
- * @example
+ * @example Basic usage
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxConfigurationStore } from '@apvee/spfx-react-toolkit';
+ *
  * function PageSize() {
  *   const store = useSPFxConfigurationStore({ mode: 'layered' });
  *   const save = async () => {
  *     try { await store.save('my-app:pageSize', 50, { scope: 'site' }); }
- *     catch { console.error(store.writeError); }
+ *     catch (error) { console.error(error); }
  *   };
  *   return <button disabled={!store.isReady || store.isWriting} onClick={save}>Save site override</button>;
  * }
+ * ```
+ *
+ * @useWhen configuration needs explicit tenant/site scopes or site overrides over tenant defaults.
+ *
+ *
+ * @example Read a site override then reveal its tenant default
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxConfigurationStore } from '@apvee/spfx-react-toolkit/hooks';
+ * import type { SPFxConfigurationStoreItem } from '@apvee/spfx-react-toolkit/hooks';
+ *
+ * function ConfigurationExample() {
+ *   const store = useSPFxConfigurationStore({ mode: 'layered' });
+ *   const [item, setItem] = React.useState<SPFxConfigurationStoreItem<number>>();
+ *   const run = async (): Promise<void> => {
+ *     try {
+ *       await store.save('my-app:pageSize', 20, { scope: 'tenant' });
+ *       await store.save('my-app:pageSize', 50, { scope: 'site' });
+ *       setItem(await store.get<number>('my-app:pageSize')); // 50, source site
+ *       await store.remove('my-app:pageSize', { scope: 'site' });
+ *       setItem(await store.get<number>('my-app:pageSize')); // 20, source tenant
+ *     } catch {
+ *       setItem(undefined); // Render the current hook error below.
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={!store.isReady || store.isLoading || store.isWriting} onClick={run}>Run configuration example</button>
+ *     <p>{item ? `${item.source}: ${item.value}` : 'No result'}</p>
+ *     {(store.error ?? store.writeError) && <p role="alert">{(store.error ?? store.writeError)?.message}</p>}
+ *   </>;
+ * }
+ * ```
  */
 export function useSPFxConfigurationStore(options: SPFxConfigurationStoreOptions): SPFxConfigurationStoreResult {
   const { client } = useSPFxSPHttpClient();

@@ -1,10 +1,13 @@
 const fs = require('fs');
 const path = require('path');
-const { collectPublicSurface } = require('./public-surface.helpers.cjs');
+const { collectPublicSurfaces } = require('./public-surface.helpers.cjs');
 const { assertStyleExampleCoverage } = require('./style-example.helpers.cjs');
 const { assertFormExampleCoverage } = require('./form-example.helpers.cjs');
 
 const root = path.resolve(__dirname, '..');
+const [styleSurface, controlSurface, formSurface] = collectPublicSurfaces([
+  'helpers/styles/index.ts', 'controls/index.ts', 'controls/form/index.ts',
+].map(entry => path.join(root, 'packages/spfx-react-toolkit/src', entry)));
 const hooksIndexPath = path.join(root, 'packages', 'spfx-react-toolkit', 'src', 'hooks', 'index.ts');
 const coreIndexPath = path.join(root, 'packages', 'spfx-react-toolkit', 'src', 'core', 'index.ts');
 const registryPath = path.join(
@@ -124,7 +127,6 @@ const registrySymbols = getRegistrySymbols();
 assertCovered('Hooks', hookSymbols, registrySymbols);
 assertCovered('Providers', providerSymbols, registrySymbols);
 
-const styleSurface = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/helpers/styles/index.ts'));
 const panelsPath = path.join(path.dirname(registryPath), 'panels');
 // Product variants and versioned conformance fixtures are distinct coverage surfaces.
 // Static markers prove neither browser execution nor simultaneous visible examples.
@@ -166,7 +168,7 @@ for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invok
 }
 console.log('Verified selectable root/domain/legacy Imports and dedicated equivalence fixture.');
 
-const controlSymbols = collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/index.ts')).filter(item => ['EditableText', 'FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination', 'DescriptionList', 'ContentCard', 'PreviewCard', 'SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGroupTrim'].includes(item.name)).map(item => item.name);
+const controlSymbols = controlSurface.filter(item => ['EditableText', 'FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination', 'DescriptionList', 'ContentCard', 'PreviewCard', 'SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGroupTrim'].includes(item.name)).map(item => item.name);
 assertCovered('Controls', controlSymbols, registrySymbols);
 const descriptionListPanel = scenarioSource('DescriptionList');
 for (const marker of ['DescriptionList.Item', 'items=', 'layout=', 'key={entry.id}',
@@ -212,7 +214,7 @@ for (const marker of ['SettingsGroup.Item', 'AccordionGroup.Item', 'Input aria-l
 }
 
 assertFormExampleCoverage(
-  collectPublicSurface(path.join(root, 'packages/spfx-react-toolkit/src/controls/form/index.ts')),
+  formSurface,
   read(registryPath), scenarioSource('Form')
 );
 console.log('Verified selectable Form adapters plus versioned scope/hook conformance coverage.');

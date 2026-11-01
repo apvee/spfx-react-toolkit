@@ -1,3 +1,9 @@
+/**
+ * Fluent 9 themes prioritize acquired application themes, then native SPFx colors.
+ *
+ * @packageDocumentation
+ * @docPage hooks/theming
+ */
 // useSPFxFluent9ThemeInfo.ts
 // Hook for accessing Fluent UI 9 theme based on SPFx context
 
@@ -8,13 +14,18 @@ import { useSPFxThemeInfo } from './useSPFxThemeInfo';
 import { useSPFxTeams } from './useSPFxTeams';
 
 /**
- * Return type for useSPFxFluent9ThemeInfo hook
+ * Fluent 9 tokens derived from the acquired SDK theme or SPFx theme, with webLightTheme fallback.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const info: SPFxFluent9ThemeInfo = useSPFxFluent9ThemeInfo();
- * return <FluentProvider theme={info.theme}>Content</FluentProvider>;
+ * import * as React from 'react';
+ * import { FluentProvider } from '@fluentui/react-components';
+ * import { SPFxFluent9ThemeInfo, useSPFxFluent9ThemeInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const info: SPFxFluent9ThemeInfo = useSPFxFluent9ThemeInfo();
+ *   return <FluentProvider theme={info.theme}>Content</FluentProvider>;
+ * }
  * ```
  */
 export interface SPFxFluent9ThemeInfo {
@@ -26,7 +37,7 @@ export interface SPFxFluent9ThemeInfo {
    */
   readonly isTeams: boolean;
   
-  /** Normalized application theme name ('default', 'dark', 'highContrast'). */
+  /** Normalized application theme name ('default', 'dark', 'highContrast'); undefined until an SDK theme is available. */
   readonly teamsTheme?: string;
 }
 
@@ -38,11 +49,17 @@ export interface SPFxFluent9ThemeInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { FluentProvider } from '@fluentui/react-components';
+ * import { useSPFxFluent9ThemeInfo } from '@apvee/spfx-react-toolkit';
+ *
  * function ThemedContent() {
  *   const { theme } = useSPFxFluent9ThemeInfo();
  *   return <FluentProvider theme={theme}><span>Themed content</span></FluentProvider>;
  * }
  * ```
+ *
+ * @useWhen custom Fluent 9 UI must use the theme derived from this provider host.
  */
 export function useSPFxFluent9ThemeInfo(): SPFxFluent9ThemeInfo {
   const teamsInfo = useSPFxTeams();

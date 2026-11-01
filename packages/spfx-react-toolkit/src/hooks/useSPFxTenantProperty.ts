@@ -1,3 +1,9 @@
+/**
+ * Tenant storage-entity reads retain data on same-identity reload failure.
+ *
+ * @packageDocumentation
+ * @docPage hooks/storage/tenant-property
+ */
 // useSPFxTenantProperty.ts
 // Hook to read tenant-wide properties using SharePoint StorageEntity API (read-only)
 
@@ -6,13 +12,18 @@ import { useAppCatalogUrl } from './useAppCatalogUrl.internal';
 import { createSPFxTenantPropertyService } from '../services/spfx-tenant-property.service';
 
 /**
- * Return type for useSPFxTenantProperty hook
+ * Read-only tenant storage-entity value/description and reload state; failures preserve earlier data.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const property: SPFxTenantPropertyResult<string> = useSPFxTenantProperty('appVersion');
- * console.log(property.data, property.error);
+ * import * as React from 'react';
+ * import { SPFxTenantPropertyResult, useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const property: SPFxTenantPropertyResult<string> = useSPFxTenantProperty('appVersion');
+ *   console.log(property.data, property.error);
+ *   return <span>{property.data ?? 'Unavailable'}</span>;
+ * }
  * ```
  * @template T - Expected application data shape; no runtime validation is performed.
  */
@@ -40,18 +51,26 @@ export interface SPFxTenantPropertyResult<T> {
   readonly error: Error | undefined;
 
   /** 
-   * Manually load/reload the property from tenant app catalog.
+   * Loads the property from the tenant app catalog. Missing client/key logs and resolves without dispatch. Read failures publish error and resolve rather than rejecting.
    * Updates data, description, isLoading, and error states.
    * 
-   * @returns Promise that resolves when load completes
+   * @returns Resolves after the attempt; inspect the current render error and data.
    * 
    * @example
    * ```tsx
-   * // Inside a React component using the host Fluent renderer:
-   * const { data, load } = useSPFxTenantProperty<string>('appVersion', false);
+   * import * as React from 'react';
+   * import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
    *
-   * // Load on button click
-   * <button onClick={load}>Refresh</button>
+   * // Render beneath the initialized host's matching SPFx provider.
+   * function TenantVersion() {
+   *   const { data, load, isLoading, error } = useSPFxTenantProperty<string>('appVersion', false);
+   *   return (
+   *     <div>
+   *       <button onClick={load} disabled={isLoading}>Refresh</button>
+   *       <span>{error?.message ?? data ?? 'Unavailable'}</span>
+   *     </div>
+   *   );
+   * }
    * ```
    */
   readonly load: () => Promise<void>;
@@ -62,7 +81,9 @@ export interface SPFxTenantPropertyResult<T> {
    * 
    * Useful for conditional rendering:
    * ```tsx
-   * if (!isReady) return <Spinner />;
+   * import * as React from 'react';
+   *
+   * if (!isReady) return <span>Loading</span>;
    * return <div>{data}</div>;
    * ```
    */
@@ -75,10 +96,7 @@ export interface SPFxTenantPropertyResult<T> {
  * Provides read access to tenant-scoped properties stored in the SharePoint tenant
  * app catalog. Properties are accessible across all sites in the tenant.
  *
- * **Note:** Write and remove operations have been removed because Microsoft has
- * blocked the SetStorageEntity and RemoveStorageEntity REST API endpoints.
- * Tenant properties can only be managed via PowerShell (Set-PnPStorageEntity,
- * Remove-PnPStorageEntity) or the SharePoint Management Shell.
+ * This hook exposes reads only; it has no write/remove operations. Manage tenant storage entities through your administrator's supported tooling.
  * For a read/write key-value store at tenant level, use `useSPFxTenantKeyValueStore`.
  *
  * Features:
@@ -86,107 +104,160 @@ export interface SPFxTenantPropertyResult<T> {
  * - Smart deserialization for primitives and complex objects
  * - Optional metadata (description only - SharePoint limitation)
  * - Type-safe with TypeScript generics
- * - Memory leak safe with mounted state tracking
+ * - Obsolete/unmounted completions cannot publish state
  * - Automatic app catalog URL discovery
  *
  * Requirements:
  * - Tenant app catalog must be provisioned
- * - Any authenticated user can read tenant properties
+ * - SharePoint must allow the current user to read the selected storage entity
+ *
+ * Key, service or catalog-discovery changes clear prior data/description/error and invalidate old request ownership. Only the latest active-identity load publishes state; dispatched requests are not cancelled. Same-identity reloads preserve previous data/description, including after a failed load, so render error before treating retained data as current. Disabling autoFetch alone retains state and does not cancel pending work. T is a cast of JSON-first decoded storage data without validation.
  *
  * @param key - Unique property key (e.g., 'appVersion', 'apiEndpoint', 'featureFlags')
- * @param autoFetch - Whether to automatically load property on mount. Default: true
+ * @param autoFetch - Whether to load on mount; omitted or undefined uses true.
  *
  * @returns Object with data, metadata, loading state, error state, and load function
  *
  * @example Basic usage - string property
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
+ *
  * function VersionDisplay() {
  *   const { data, isLoading, error } = useSPFxTenantProperty<string>('appVersion');
- *   
- *   if (isLoading) return <Spinner label="Loading version..." />;
- *   if (error) return <MessageBar messageBarType={MessageBarType.error}>
+ *
+ *   if (isLoading) return <span>Loading version...</span>;
+ *   if (error) return <div role="alert">
  *     Failed to load: {error.message}
- *   </MessageBar>;
- *   
- *   return <Text>Current Version: {data ?? 'Not Set'}</Text>;
+ *   </div>;
+ *
+ *   return <span>Current Version: {data ?? 'Not Set'}</span>;
  * }
  * ```
  *
  * @example Complex object with JSON
  * ```tsx
- * // Inside a React component using the host Fluent renderer:
- * interface FeatureFlags {
- *   enableChat: boolean;
- *   enableAnalytics: boolean;
- *   maxUsers: number;
- * }
+ * import * as React from 'react';
+ * import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
  *
- * const { data, isLoading } = useSPFxTenantProperty<FeatureFlags>('featureFlags');
+ * function Example() {
+ *   interface FeatureFlags {
+ *     enableChat: boolean;
+ *     enableAnalytics: boolean;
+ *     maxUsers: number;
+ *   }
  *
- * // Returns parsed object (stored as JSON string via PowerShell)
- * if (data?.enableChat) {
- *   return <ChatPanel />;
+ *   const { data, isLoading } = useSPFxTenantProperty<FeatureFlags>('featureFlags');
+ *
+ *   // Returns parsed object (stored as JSON string via PowerShell)
+ *   if (data?.enableChat) {
+ *     return <section>Chat enabled</section>;
+ *   }
+ *   return <span>{data?.enableChat ? 'Chat enabled' : 'Chat disabled'}</span>;
  * }
  * ```
  *
  * @example With metadata viewing
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
+ *
  * function PropertyViewer() {
- *   const { data, description, isLoading } = 
+ *   const { data, description, isLoading } =
  *     useSPFxTenantProperty<string>('appConfig');
- *   
- *   if (isLoading) return <Spinner />;
- *   
+ *
+ *   if (isLoading) return <span>Loading</span>;
+ *
  *   return (
- *     <Stack tokens={{ childrenGap: 5 }}>
- *       <Text variant="large">Value: {data}</Text>
- *       {description && <Text variant="small">Description: {description}</Text>}
- *     </Stack>
+ *     <section>
+ *       <p>Value: {data}</p>
+ *       {description && <p>Description: {description}</p>}
+ *     </section>
  *   );
  * }
  * ```
  *
  * @example Lazy loading with manual trigger
  * ```tsx
- * // Inside a React component using the host Fluent renderer:
- * const { data, load, isLoading } = useSPFxTenantProperty<Config>(
- *   'appConfig',
- *   false  // Don't auto-fetch
- * );
+ * import * as React from 'react';
+ * import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
  *
- * return (
- *   <div>
- *     <button onClick={load} disabled={isLoading}>
- *       {isLoading ? 'Loading...' : 'Load Config'}
- *     </button>
- *     {data && <ConfigDisplay config={data} />}
- *   </div>
- * );
+ * function Example() {
+ *   const { data, load, isLoading } = useSPFxTenantProperty<{ title: string }> (
+ *     'appConfig',
+ *     false  // Don't auto-fetch
+ *   );
+ *
+ *   return (
+ *     <div>
+ *       <button onClick={load} disabled={isLoading}>
+ *         {isLoading ? 'Loading...' : 'Load Config'}
+ *       </button>
+ *       {data && <pre>{JSON.stringify(data)}</pre>}
+ *     </div>
+ *   );
+ * }
  * ```
  *
  * @example Multi-property dashboard
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
+ *
  * function TenantDashboard() {
  *   const version = useSPFxTenantProperty<string>('appVersion');
  *   const maintenance = useSPFxTenantProperty<boolean>('maintenanceMode');
- *   const config = useSPFxTenantProperty<AppConfig>('appConfig');
- *   
+ *   const config = useSPFxTenantProperty<{ title: string }> ('appConfig');
+ *
  *   const isLoading = version.isLoading || maintenance.isLoading || config.isLoading;
- *   
- *   if (isLoading) return <Spinner label="Loading dashboard..." />;
- *   
+ *
+ *   if (isLoading) return <span>Loading dashboard...</span>;
+ *
  *   return (
- *     <Stack tokens={{ childrenGap: 20 }}>
- *       <Text variant="xxLarge">Tenant Configuration</Text>
- *       <Label>App Version: {version.data ?? 'Not Set'}</Label>
- *       <Label>Maintenance Mode: {maintenance.data ? 'ON' : 'OFF'}</Label>
- *       {config.data && <pre>{JSON.stringify(config.data, null, 2)}</pre>}
- *     </Stack>
+ *     <section>
+ *       <p>Tenant Configuration</p>
+ *       <p>App Version: {version.data ?? 'Not Set'}</p>
+ *       <p>Maintenance Mode: {maintenance.data ? 'ON' : 'OFF'}</p>
+ *       {config.data && <pre>{JSON.stringify(config.data, undefined, 2)}</pre>}
+ *     </section>
  *   );
  * }
  * ```
  * @throws When called outside an SPFx provider.
  * @template T - Expected application data shape; no runtime validation is performed.
+ *
+ * @useWhen read-only configuration is stored as a tenant app-catalog storage entity.
+ *
+ *
+ * @example Compose feature flags endpoint configuration and branding
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
+ * function TenantConfiguredWidget({ request }: { request: (endpoint: string, apiKey: string) => Promise<unknown> }) {
+ *   const flags = useSPFxTenantProperty<{ enableNewUI?: boolean; enableBetaFeatures?: boolean }>('FeatureFlags');
+ *   const endpoint = useSPFxTenantProperty<string>('CustomApiEndpoint');
+ *   const apiKey = useSPFxTenantProperty<string>('CustomApiKey');
+ *   const logo = useSPFxTenantProperty<string>('CompanyLogo');
+ *   const theme = useSPFxTenantProperty<{ primary: string }>('CompanyTheme');
+ *   const help = useSPFxTenantProperty<string>('HelpDeskUrl');
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState('');
+ *   const load = async () => {
+ *     if (!endpoint.data || !apiKey.data) return;
+ *     try { setFailure(''); setResult(await request(endpoint.data, apiKey.data)); }
+ *     catch (error) { setFailure(String(error)); }
+ *   };
+ *   const error = flags.error ?? endpoint.error ?? apiKey.error ?? logo.error ?? theme.error ?? help.error;
+ *   return <div>{error && <p role="alert">{error.message}</p>}
+ *     {logo.data && <img src={logo.data} alt="Company logo" />}{help.data && <a href={help.data}>Help</a>}
+ *     <p>Configured primary color: {theme.data?.primary ?? '#0078d4'}</p>
+ *     {flags.data?.enableNewUI && <p>New UI enabled</p>}{flags.data?.enableBetaFeatures && <p>Beta features enabled</p>}
+ *     {(!endpoint.data || !apiKey.data) && <p>Tenant properties not configured. Contact your administrator.</p>}
+ *     <button disabled={endpoint.isLoading || apiKey.isLoading || !endpoint.data || !apiKey.data} onClick={() => void load()}>Call configured API</button>
+ *     {failure && <p role="alert">{failure}</p>}<pre>{JSON.stringify(result, undefined, 2)}</pre>
+ *   </div>;
+ * }
+ * ```
  */
 export function useSPFxTenantProperty<T = unknown>(
   key: string,

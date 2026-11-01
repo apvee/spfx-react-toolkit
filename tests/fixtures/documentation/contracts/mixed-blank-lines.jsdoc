@@ -1,0 +1,17 @@
+/**
+ * Retains original example whitespace.
+ * @useWhen You need a whitespace preservation example.
+ * @example Mixed blank lines
+ * ```ts
+ * const a = 1;
+
+ * const b = 2;
+ *
+ * const text = `
+ * alpha
+
+ *
+ * omega
+ * `;
+ * ```
+ */

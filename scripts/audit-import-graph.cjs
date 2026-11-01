@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
-const { collectPublicSurface } = require('./public-surface.helpers.cjs');
+const { collectPublicSurfaces } = require('./public-surface.helpers.cjs');
 const { getLocalizationPackageContract } = require('./package-entrypoints.cjs');
 const slash = value => value.split(path.sep).join('/');
 function sourceFiles(directory) {
@@ -139,9 +139,14 @@ function auditImportGraph({ sourceRoot, entrypoints }) {
     }
     for (const edge of runtimeEdges.filter(e => e.from === current && e.specifier.startsWith('.') && e.resolvedTarget)) cycleVisit(edge.resolvedTarget, [...stack, current]);
   }
-  // Resolve aliases through TypeScript, retaining namespace qualification. The
-  // existing surface collector is reused as a cross-check where its syntax
-  // supports the entry (it does not handle exported imported bindings).
+  // Cross-check compiler inventories against the documentation graph's exact
+  // namespace leaves, querying the requested source entries in one invocation.
+  // Invalid standalone audit fixtures retain a visible collector diagnostic.
+  let surfaces, surfaceError;
+  const queryEntries = entrypoints.filter(entry => program.getSourceFile(path.resolve(sourceRoot, entry)));
+  try {
+    surfaces = new Map(collectPublicSurfaces(queryEntries.map(entry => path.resolve(sourceRoot, entry))).map((surface, index) => [queryEntries[index], surface]));
+  } catch (error) { surfaceError = error; }
   for (const entrypoint of entrypoints) {
     const file = path.resolve(sourceRoot, entrypoint);
     const source = program.getSourceFile(file);
@@ -169,7 +174,8 @@ function auditImportGraph({ sourceRoot, entrypoints }) {
     }
     if (entrySymbol) visit(entrySymbol, '');
     try {
-      const collected = collectPublicSurface(file);
+      if (surfaceError) throw surfaceError;
+      const collected = surfaces.get(entrypoint);
       for (const declaration of collected) if (!publicExports.some(e => e.entrypoint === entrypoint && e.name === declaration.name)) issues.push({ kind: 'surface-discrepancy', entrypoint, name: declaration.name });
     } catch (error) { issues.push({ kind: 'surface-collector-fallback', entrypoint, reason: error.message }); }
   }

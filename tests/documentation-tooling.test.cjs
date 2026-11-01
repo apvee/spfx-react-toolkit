@@ -4,6 +4,15 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
+function writeConfig(root) {
+  fs.writeFileSync(path.join(root, 'tsconfig.json'), JSON.stringify({ compilerOptions: { target: 'es2020', module: 'commonjs', strict: true, types: [], skipLibCheck: true }, include: ['src/**/*.ts'] }));
+}
+function fixturePackage(root) {
+  fs.mkdirSync(path.join(root, 'src'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ name: '@apvee/spfx-react-toolkit', exports: { '.': { types: './lib/index.d.ts' } } }));
+  writeConfig(root);
+}
+
 const script = path.resolve(__dirname, '../scripts/documentation.cjs');
 const documentation = fs.existsSync(script) ? require(script) : {};
 
@@ -23,24 +32,32 @@ test('catalog discovers aliases, imported re-exports and types from real TypeScr
   assert.equal(typeof documentation.collectExports, 'function');
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'toolkit-docs-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  fs.writeFileSync(path.join(root, 'value.ts'), '/** A public action. */\nexport function original(): void {}\nexport interface Options { enabled: boolean }\nexport const hidden = 1;\n');
-  fs.writeFileSync(path.join(root, 'index.ts'), "import { original } from './value';\nexport { original as action };\nexport type { Options } from './value';\n");
-  const exports = documentation.collectExports(path.join(root, 'index.ts'));
+  fixturePackage(root);
+  fs.writeFileSync(path.join(root, 'src/value.ts'), '/** A public action. */\nexport function original(): void {}\nexport interface Options { enabled: boolean }\nexport const hidden = 1;\n');
+  fs.writeFileSync(path.join(root, 'src/index.ts'), "import { original } from './value';\nexport { original as action };\nexport type { Options } from './value';\n");
+  const exports = documentation.collectExports(path.join(root, 'src/index.ts'));
   assert.deepEqual(exports.map(item => item.name).sort(), ['Options', 'action']);
   assert.equal(exports.find(item => item.name === 'action').source, 'value.ts');
   assert.equal(exports.find(item => item.name === 'Options').kind, 'Type');
 });
 
-test('catalog refuses to silently omit a new export without a documentation route', () => {
-  assert.equal(typeof documentation.renderCatalog, 'function');
-  assert.throws(() => documentation.renderCatalog([
-    { name: 'newApi', source: 'hooks/newApi.ts', kind: 'Function', description: 'New capability.' },
-  ], {}), /newApi.*route/i);
-  const text = documentation.renderCatalog([
-    { name: 'action', source: 'hooks/action.ts', kind: 'Function', description: 'Runs an action.' },
-  ], { action: 'hooks/action.md#action' });
-  assert.ok(text.includes('[`action`](./hooks/action.md#action)'));
-  assert.ok(text.includes('@apvee/spfx-react-toolkit/hooks'));
+test('new documented exports obtain canonical routes without a manual inventory', t => {
+  const { buildApiGraph } = require('../scripts/documentation-model.cjs');
+  const { buildDocumentationModel } = require('../scripts/documentation-contract.cjs');
+  const { renderCatalog } = require('../scripts/documentation-render.cjs');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'toolkit-doc-discovery-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fixturePackage(root);
+  const file = path.join(root, 'src/index.ts');
+  fs.writeFileSync(file, '/** Runs an action.\n * @useWhen An action is needed.\n * @example\n * ```ts\n * import { newApi } from "@apvee/spfx-react-toolkit";\n * newApi();\n * ```\n */ export function newApi(): void {}\n');
+  const config = { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json' };
+  const model = buildDocumentationModel(buildApiGraph(root, config), config);
+  assert.equal(model.pages.length, 1);
+  assert.ok(renderCatalog(model, config).includes('[`newApi`](index.md#newapi)'));
+  assert.deepEqual(model.diagnostics, []);
+  fs.writeFileSync(file, '/** Runs an action.\n * @docPage ../escape\n */ export function newApi(): void {}\n');
+  const invalid = buildDocumentationModel(buildApiGraph(root, config), config);
+  assert.ok(invalid.diagnostics.some(item => /page|route/i.test(item.code)));
 });
 
 test('catalog covers dedicated native entries without advertising them as root exports', t => {
@@ -50,6 +67,7 @@ test('catalog covers dedicated native entries without advertising them as root e
   fs.mkdirSync(path.join(packageRoot, 'src/controls'), { recursive: true });
   fs.mkdirSync(path.join(packageRoot, 'src/property-pane/pickers'), { recursive: true });
   fs.writeFileSync(path.join(packageRoot, 'package.json'), JSON.stringify({
+    name: '@apvee/spfx-react-toolkit',
     exports: {
       '.': { types: './lib/index.d.ts', default: './lib/index.js' },
       './controls': { types: './lib/controls/index.d.ts', default: './lib/controls/index.js' },
@@ -57,6 +75,7 @@ test('catalog covers dedicated native entries without advertising them as root e
       './lib/index': { types: './lib/index.d.ts', default: './lib/index.js' },
     },
   }));
+  writeConfig(packageRoot);
   fs.writeFileSync(path.join(packageRoot, 'src/index.ts'), "export { Card } from './controls';\n");
   fs.writeFileSync(path.join(packageRoot, 'src/controls/index.ts'), '/** Renders a card. */\nexport function Card(): void {}\n');
   fs.writeFileSync(path.join(packageRoot, 'src/property-pane/pickers/index.ts'), '/** Creates a native field. */\nexport function PropertyPanePicker(): void {}\n');
@@ -66,25 +85,29 @@ test('catalog covers dedicated native entries without advertising them as root e
   assert.deepEqual(surface[0].imports, ['@apvee/spfx-react-toolkit', '@apvee/spfx-react-toolkit/controls']);
   assert.deepEqual(surface[1].imports, ['@apvee/spfx-react-toolkit/property-pane/pickers']);
   assert.equal(surface[1].source, 'property-pane/pickers/index.ts');
-  const catalog = documentation.renderCatalog(surface, {
-    'controls/index.ts': 'controls/card.md',
-    'property-pane/pickers/index.ts': 'property-pane/pickers.md',
-  });
-  const nativeRow = catalog.split('\n').find(line => line.startsWith('| [`PropertyPanePicker`]'));
-  assert.ok(nativeRow.includes('`@apvee/spfx-react-toolkit/property-pane/pickers`'));
-  assert.ok(!nativeRow.includes('`@apvee/spfx-react-toolkit`'));
-  const cardRow = catalog.split('\n').find(line => line.startsWith('| [`Card`]'));
-  assert.ok(cardRow.includes('`@apvee/spfx-react-toolkit/controls`'));
+  fs.writeFileSync(path.join(root, 'guide.md'), [
+    '```ts',
+    "import { Card } from '@apvee/spfx-react-toolkit/lib/index';",
+    "import { Missing } from '@apvee/spfx-react-toolkit';",
+    "import { PropertyPanePicker } from '@apvee/spfx-react-toolkit';",
+    "import { Card } from '@apvee/spfx-react-toolkit/controls/private';",
+    '```',
+  ].join('\n'));
+  const invalidImports = documentation.findInvalidExampleImports(root, ['guide.md'], surface);
+  assert.equal(invalidImports.length, 3);
+  for (const invalid of ['Missing', 'PropertyPanePicker', 'controls/private']) assert.ok(invalidImports.some(message => message.includes(invalid)));
+
+
 });
 
 test('check mode reports stale generated artifacts without rewriting them', t => {
   assert.equal(typeof documentation.checkArtifacts, 'function');
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'toolkit-docs-check-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  fs.writeFileSync(path.join(root, 'generated.md'), 'old content\n');
-  assert.deepEqual(documentation.checkArtifacts(root, { 'generated.md': 'new content\n' }), ['generated.md']);
-  assert.equal(fs.readFileSync(path.join(root, 'generated.md'), 'utf8'), 'old content\n');
-  assert.deepEqual(documentation.checkArtifacts(root, { 'generated.md': 'old content\n' }), []);
+  fs.writeFileSync(path.join(root, 'llms.txt'), 'old content\n');
+  assert.deepEqual(documentation.checkArtifacts(root, { 'llms.txt': 'new content\n' }), ['llms.txt']);
+  assert.equal(fs.readFileSync(path.join(root, 'llms.txt'), 'utf8'), 'old content\n');
+  assert.deepEqual(documentation.checkArtifacts(root, { 'llms.txt': 'old content\n' }), []);
 });
 
 test('Markdown examples reject unavailable public imports while leaving literal non-code text alone', t => {
@@ -125,5 +148,18 @@ test('local link verification checks fragments, duplicate headings and explicit 
   assert.deepEqual(documentation.findBrokenLinks(root, ['index.md']), [
     'index.md: target.md#not-a-heading',
     'index.md: absent.md',
+  ]);
+});
+
+test('natural heading anchors preserve existing case, punctuation, Unicode and duplicate behavior', () => {
+  const headings = [
+    '# Reference', '## StageProps', '## width.px', '## `PagingOptions`',
+    '## [StageProps](#reference)', '## <code>width.px</code>', '## Foo-Bar',
+    '## foo.bar', '## FOOBAR', '## Über Déjà', '## _API Value_',
+    '```md', '## Ignored.Heading', '```',
+  ].join('\n');
+  assert.deepEqual([...documentation.markdownAnchors(headings)], [
+    'reference', 'stageprops', 'widthpx', 'pagingoptions', 'stageprops-1',
+    'widthpx-1', 'foo-bar', 'foobar', 'foobar-1', 'über-déjà', 'api-value',
   ]);
 });

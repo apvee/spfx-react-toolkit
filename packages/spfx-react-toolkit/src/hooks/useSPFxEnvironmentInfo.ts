@@ -1,3 +1,9 @@
+/**
+ * Application SDK host acquisition complements URL and legacy environment metadata.
+ *
+ * @packageDocumentation
+ * @docPage hooks/environment
+ */
 // useSPFxEnvironmentInfo.ts
 // Hook to access environment type information
 
@@ -12,6 +18,9 @@ import { resolveSPFxRuntimeHost } from '../helpers/spfx-host-context.internal';
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { SPFxEnvironmentType } from '@apvee/spfx-react-toolkit';
+ *
  * const host: SPFxEnvironmentType = 'SharePoint';
  * ```
  */
@@ -24,13 +33,18 @@ export type SPFxEnvironmentType =
   | 'Outlook';        // Outlook
 
 /**
- * Return type for useSPFxEnvironmentInfo hook
+ * Primary host category plus workbench and asynchronously resolved Teams/Office/Outlook host flags.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const host: SPFxEnvironmentInfo = useSPFxEnvironmentInfo();
- * console.log(host.type, host.isTeams);
+ * import * as React from 'react';
+ * import { SPFxEnvironmentInfo, useSPFxEnvironmentInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const host: SPFxEnvironmentInfo = useSPFxEnvironmentInfo();
+ *   console.log(host.type, host.isTeams);
+ *   return <span>{host.type}</span>;
+ * }
  * ```
  */
 export interface SPFxEnvironmentInfo {
@@ -67,11 +81,16 @@ export interface SPFxEnvironmentInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxEnvironmentInfo } from '@apvee/spfx-react-toolkit';
+ *
  * function HostLabel() {
  *   const { type } = useSPFxEnvironmentInfo();
  *   return <span>{type}</span>;
  * }
  * ```
+ *
+ * @useWhen UI must adapt to the detected SharePoint, Teams or Office host.
  */
 export function useSPFxEnvironmentInfo(): SPFxEnvironmentInfo {
   const pageContext = useSPFxPageContext();

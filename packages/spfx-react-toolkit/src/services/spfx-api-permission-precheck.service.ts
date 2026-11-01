@@ -1,3 +1,9 @@
+/**
+ * Acquire one token per resource and return ordered delegated-scope diagnostics without React.
+ *
+ * @packageDocumentation
+ * @docPage services/api-permission-precheck
+ */
 import {
   classifySPFxApiPermissionError,
   decodeSPFxJwtPayload,
@@ -14,14 +20,18 @@ import {
  *
  * @example
  * ```ts
- * const provider: SPFxAadTokenProviderLike = spfxTokenProvider;
+ * import { SPFxAadTokenProviderLike } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(spfxTokenProvider: SPFxAadTokenProviderLike) {
+ *   const provider: SPFxAadTokenProviderLike = spfxTokenProvider;
+ * }
  * ```
  */
 export interface SPFxAadTokenProviderLike {
   /**
    * Acquires an access token; acquisition failures reject.
    * @param resourceEndpoint - Resource URL or application identifier.
-   * @param options - Cache preference and optional claims passed to the provider.
+   * @param options - Omitted follows the provider's native defaults; supplied cache preference and claims are forwarded.
    * @returns The access token.
    */
   getToken(
@@ -29,7 +39,7 @@ export interface SPFxAadTokenProviderLike {
     options?: {
       /** Whether the provider may reuse a cached token; omitted follows its native default. */
       readonly useCachedToken?: boolean;
-      /** Optional claims challenge passed to the native provider. */
+      /** Claims challenge passed to the native provider; omitted requests no explicit claims. */
       readonly claims?: string
     }
   ): Promise<string>;
@@ -40,43 +50,53 @@ export interface SPFxAadTokenProviderLike {
  *
  * @example
  * ```ts
+ * import { SPFxApiPermissionPrecheckServiceOptions } from '@apvee/spfx-react-toolkit';
+ *
  * const options: SPFxApiPermissionPrecheckServiceOptions = { useCachedToken: false, timeoutMs: 10000 };
  * ```
  */
 export interface SPFxApiPermissionPrecheckServiceOptions {
   /**
-   * Allows cached tokens unless false; defaults to true.
+   * Allows cached tokens unless false; omitted or undefined uses true.
+   * @defaultValue true
    */
   readonly useCachedToken?: boolean;
   /**
-   * Checks expected audiences unless false; defaults to true.
+   * Checks expected audiences unless false; omitted or undefined uses true.
+   * @defaultValue true
    */
   readonly validateAudience?: boolean;
   /**
-   * Acquisition timeout in milliseconds; defaults to 15000. Timing out does not cancel the provider request.
+   * Acquisition timeout in milliseconds; omitted or undefined uses 15000. Timing out does not cancel the provider request.
+   * @defaultValue 15000
    */
   readonly timeoutMs?: number;
   /**
-   * Acquires each resource group in sequence when true; otherwise acquires groups concurrently.
+   * Acquires each resource group in sequence when true; omitted/false acquires groups concurrently.
+   * @defaultValue false
    */
   readonly sequentialResourceAcquisition?: boolean;
 }
 
 /**
- * Non-React delegated-scope diagnostics using one token acquisition per resource endpoint. Invalid requirements and acquisition failures become diagnostic results; this does not grant permissions.
+ * Non-React delegated-scope diagnostics using one token acquisition per exact resource endpoint. Invalid requirements and group acquisition/evaluation failures become diagnostic results; malformed untyped configuration can still reject normalization. Empty config returns an empty result without acquisition. No React provider or lifecycle cleanup is required.
  *
  * @example
  * ```ts
- * const service: SPFxApiPermissionPrecheckService = createSPFxApiPermissionPrecheckService(provider);
- * const results = await service.check({ graph: ['User.Read'] });
+ * import { SPFxAadTokenProviderLike, SPFxApiPermissionPrecheckService, createSPFxApiPermissionPrecheckService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(provider: SPFxAadTokenProviderLike) {
+ *   const service: SPFxApiPermissionPrecheckService = createSPFxApiPermissionPrecheckService(provider);
+ *   const results = await service.check({ graph: ['User.Read'] });
+ * }
  * ```
  */
 export interface SPFxApiPermissionPrecheckService {
   /**
    * Checks configured scopes without returning raw tokens.
    * @param config - Graph and custom API requirements.
-   * @param options - Optional acquisition and audience checks.
-   * @returns Per-scope diagnostics, including invalid requirements and token failures.
+   * @param options - Omitted enables cached tokens and audience checks, a 15000 ms timeout and concurrent resource groups.
+   * @returns Invalid results first, then resource groups in first-seen order and scopes in group order; concurrent completion does not reorder them. Results contain no raw token and expose packageSolutionEntry for remediation.
    */
   check(
     config: SPFxApiPermissionPrecheckConfig,
@@ -85,14 +105,34 @@ export interface SPFxApiPermissionPrecheckService {
 }
 
 /**
- * Creates permission diagnostics without React state or provider context.
+ * Creates permission diagnostics without React state or provider context. The caller's token provider controls interaction: this service installs no passive popup/redirect handlers, requests no claims challenge and adds no retry. Timeout clears its timer but does not cancel token acquisition. Available is diagnostic; the target API still authorizes requests.
  * @param tokenProvider - Initialized token provider owned by the caller.
  * @returns A service that evaluates delegated scopes from token payloads.
  *
- * @example
+ * @example Basic usage
  * ```ts
- * const service = createSPFxApiPermissionPrecheckService(provider);
- * const results = await service.check({ graph: ['User.Read'] });
+ * import { SPFxAadTokenProviderLike, createSPFxApiPermissionPrecheckService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(provider: SPFxAadTokenProviderLike) {
+ *   const service = createSPFxApiPermissionPrecheckService(provider);
+ *   const results = await service.check({ graph: ['User.Read'] });
+ * }
+ * ```
+ * @useWhen You need delegated-scope diagnostics outside React using a caller-supplied token provider.
+ *
+ *
+ * @example Check real delegated token diagnostics
+ * ```ts
+ * import type { SPFxAadTokenProviderLike } from '@apvee/spfx-react-toolkit';
+ *
+ * import { createSPFxApiPermissionPrecheckService } from '@apvee/spfx-react-toolkit';
+ * async function demonstrate(tokenProvider: SPFxAadTokenProviderLike) {
+ *   const diagnostics = createSPFxApiPermissionPrecheckService(tokenProvider);
+ *   const results = await diagnostics.check({
+ *     graph: ['User.Read', { scope: 'Mail.Read', required: false }],
+ *   }, { useCachedToken: false, timeoutMs: 10000 });
+ *   for (const result of results) console.log(result.scope, result.status, result.packageSolutionEntry);
+ * }
  * ```
  */
 export function createSPFxApiPermissionPrecheckService(

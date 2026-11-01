@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "strict": true,
+    "types": [],
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": { "@fixture/peer": ["peer/index.d.ts"] }
+  },
+  "include": ["src/**/*.ts"]
+}

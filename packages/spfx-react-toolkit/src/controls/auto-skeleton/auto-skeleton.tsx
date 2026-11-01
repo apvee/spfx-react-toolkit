@@ -1,3 +1,9 @@
+/**
+ * Geometry-derived loading placeholders over mounted, bounded HTML content.
+ *
+ * @packageDocumentation
+ * @docPage controls/auto-skeleton
+ */
 import * as React from 'react';
 import { mergeClasses, Skeleton, SkeletonItem } from '@fluentui/react-components';
 import { useIsomorphicLayoutEffect, useMergedRefs } from '@fluentui/react-utilities';
@@ -8,7 +14,8 @@ import type { AutoSkeletonBone } from './auto-skeleton-geometry.internal';
 
 const emptySelectors: readonly string[] = [];
 const emptyGeometry: readonly AutoSkeletonBone[] = [];
-/** Derive Fluent skeleton items from the live geometry of mounted HTML content.
+/**
+ * Derive Fluent skeleton items from the live geometry of mounted HTML content.
  * Children stay mounted in a block wrapper. Real text rectangles and visual leaves
  * produce only circle/rectangle items; text is inset by up to 2px per side for spacing.
  * Rectangles retain Fluent's rounded corners when content has no measured radius;
@@ -20,17 +27,52 @@ const emptyGeometry: readonly AutoSkeletonBone[] = [];
  * Otherwise content remains available with aria-busy. Native inert and DOM geometry
  * are browser requirements; server imports are safe but server rendering has no overlay.
  * Bounded HTML only: portals, shadow DOM, transforms and nested clipping are unsupported.
- * @param props Loading state, scan configuration and native div attributes.
+ * @param props - Loading state, scan configuration and native div attributes.
  * @returns A div root containing mounted content and an optional decorative skeleton.
- * @example
+ * @example Loading a mounted profile
  * ```tsx
+ * import * as React from 'react';
+ * import { AutoSkeleton } from '@apvee/spfx-react-toolkit';
+ * const isLoading = true;
+ * const photoUrl = '/images/profile.png';
+ * const name = 'Ada';
  * <AutoSkeleton loading={isLoading} animation="pulse">
  *   <section><img data-skeleton-shape="circle" src={photoUrl} alt="" /><p>{name}</p></section>
  * </AutoSkeleton>
  * ```
- * @example
+ *
+ * @example Static placeholders
  * ```tsx
+ * import * as React from 'react';
+ * import { AutoSkeleton } from '@apvee/spfx-react-toolkit';
+ * const showPlaceholder = true;
+ * function ProfileCard(): React.ReactElement { return <article>Ada — project owner</article>; }
  * <AutoSkeleton loading={showPlaceholder} animation="none"><ProfileCard /></AutoSkeleton>
+ * ```
+ *
+ * @useWhen Representative mounted HTML exists and a loading overlay should follow its measured geometry.
+ * @avoidWhen Use explicit skeleton placeholders for cold empty data, virtualized content or unsupported transformed geometry.
+ *
+ *
+ * @example Compose shape container and conditional ignore markers
+ * ```tsx
+ * import * as React from 'react';
+ * import { Card, CardHeader, Text } from '@fluentui/react-components';
+ * import { AutoSkeleton, useSx, flex, gap } from '@apvee/spfx-react-toolkit';
+ * function ProfileLoading({ loading, showSummary, ignoreNotes }: { loading: boolean; showSummary: boolean; ignoreNotes: boolean }) {
+ *   const sx = useSx();
+ *   return <div>
+ *     <AutoSkeleton loading={loading}>
+ *       <Card data-skeleton-shape="rectangle"><CardHeader header={<Text>Profile</Text>} /><Text>Profile details</Text></Card>
+ *     </AutoSkeleton>
+ *     <AutoSkeleton loading={loading}>
+ *       <div data-skeleton-container="" className={sx(flex.column, gap.medium)}>
+ *         {showSummary && <p>Profile summary</p>}
+ *         <p data-skeleton-ignore={ignoreNotes ? '' : undefined}>Notes excluded when requested</p>
+ *       </div>
+ *     </AutoSkeleton>
+ *   </div>;
+ * }
  * ```
  */
 export const AutoSkeleton = React.forwardRef<HTMLDivElement, AutoSkeletonProps>((props, forwardedRef) => {

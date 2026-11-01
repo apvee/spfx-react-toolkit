@@ -1,3 +1,9 @@
+/**
+ * Graph profile photos use managed Blob URLs with explicit cleanup.
+ *
+ * @packageDocumentation
+ * @docPage hooks/user-site
+ */
 // useSPFxUserPhoto.ts
 // Hook to load user photos from Microsoft Graph API
 
@@ -10,18 +16,21 @@ import { createSPFxUserPhotoService } from '../services/spfx-user-photo.service'
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { SPFxUserPhotoSize } from '@apvee/spfx-react-toolkit';
+ *
  * const size: SPFxUserPhotoSize = '96x96';
  * ```
  */
-export type SPFxUserPhotoSize = 
-  | '48x48' 
-  | '64x64' 
-  | '96x96' 
-  | '120x120' 
-  | '240x240' 
-  | '360x360' 
-  | '432x432' 
-  | '504x504' 
+export type SPFxUserPhotoSize =
+  | '48x48'
+  | '64x64'
+  | '96x96'
+  | '120x120'
+  | '240x240'
+  | '360x360'
+  | '432x432'
+  | '504x504'
   | '648x648';
 
 /**
@@ -29,25 +38,31 @@ export type SPFxUserPhotoSize =
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const options: SPFxUserPhotoOptions = { email: 'user@contoso.com', size: '96x96', autoFetch: false };
- * const photo = useSPFxUserPhoto(options);
+ * import * as React from 'react';
+ * import { SPFxUserPhotoOptions, useSPFxUserPhoto } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const options: SPFxUserPhotoOptions = { email: 'user@contoso.com', size: '96x96', autoFetch: false };
+ *   const photo = useSPFxUserPhoto(options);
+ *   return photo.photoUrl ? <img src={photo.photoUrl} alt="Profile" /> : <span>Photo unavailable</span>;
+ * }
  * ```
  */
 export interface SPFxUserPhotoOptions {
   /**
-   * Graph user/object ID; takes precedence over email when nonempty.
+   * Graph user/object ID; omitted, undefined or empty falls back to email, then /me. Nonempty values take precedence over email.
    */
   userId?: string;
   
   /**
-   * User email/UPN; used when userId is absent/empty, otherwise ignored. Without either identifier, targets /me.
+   * User email/UPN; used when userId is absent/empty, otherwise ignored. Omitted, undefined or empty targets /me when no ID is provided.
    */
   email?: string;
   
   /**
    * Photo size to retrieve.
-   * Default: '240x240'
+   * Omitted or undefined uses '240x240'.
+   * @defaultValue '240x240'
    * 
    * Available sizes:
    * - 48x48: Tiny avatar
@@ -61,19 +76,24 @@ export interface SPFxUserPhotoOptions {
   
   /**
    * Whether to automatically fetch photo on mount.
-   * Default: true
+   * Omitted or undefined uses true.
+   * @defaultValue true
    */
   autoFetch?: boolean;
 }
 
 /**
- * Return type for useSPFxUserPhoto hook
+ * Graph photo Blob/object URL with owned cleanup, reload control and current-request state.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const photo: SPFxUserPhotoResult = useSPFxUserPhoto();
- * return photo.photoUrl ? <img src={photo.photoUrl} alt="Profile" /> : <span>No photo</span>;
+ * import * as React from 'react';
+ * import { SPFxUserPhotoResult, useSPFxUserPhoto } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const photo: SPFxUserPhotoResult = useSPFxUserPhoto();
+ *   return photo.photoUrl ? <img src={photo.photoUrl} alt="Profile" /> : <span>No photo</span>;
+ * }
  * ```
  */
 export interface SPFxUserPhotoResult {
@@ -116,6 +136,8 @@ export interface SPFxUserPhotoResult {
    * 
    * Useful for conditional rendering:
    * ```tsx
+   * import * as React from 'react';
+   *
    * if (!isReady) return <Spinner />;
    * return <img src={photoUrl} />;
    * ```
@@ -168,17 +190,22 @@ function createEnhancedPhotoError(err: unknown): Error {
 
 /**
  * Loads a Graph profile photo and manages its Blob/object URL lifecycle. Defaults to /me, 240x240 and automatic fetching. Identifier/size changes clear prior state; latest requests publish results, and obsolete/unmounted completions cannot publish them. URLs are revoked on replacement, target change, failure and unmount. Failures are captured in error and reload resolves; Graph permissions are enforced by the server.
- * @param options - User ID (preferred over email), email/UPN, size and auto-fetch settings.
+ * @param options - User ID, email/UPN, size and auto-fetch settings; omitted or undefined uses /me, 240x240 and auto-fetch true.
  * @returns Photo data, loading/error/readiness state and a reload method.
  * @throws Missing SPFx provider or synchronous Graph factory-consumption failures.
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxUserPhoto } from '@apvee/spfx-react-toolkit';
+ *
  * function ProfilePhoto() {
  *   const photo = useSPFxUserPhoto({ email: 'user@contoso.com', size: '96x96' });
  *   return photo.photoUrl ? <img src={photo.photoUrl} alt="Profile" /> : <span>{photo.error?.message}</span>;
  * }
  * ```
+ *
+ * @useWhen an avatar must load a Graph photo with hook-owned object URL cleanup.
  */
 export function useSPFxUserPhoto(
   options?: SPFxUserPhotoOptions

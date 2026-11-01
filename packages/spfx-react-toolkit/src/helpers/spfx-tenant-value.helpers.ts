@@ -1,4 +1,10 @@
 /**
+ * Historical tenant-value serialization and OData string-literal escaping.
+ *
+ * @packageDocumentation
+ * @docPage helpers/tenant-value
+ */
+/**
  * Doubles single quotes for the content of an OData string literal. This does not add surrounding quotes, escape a full query or encode a URL.
  *
  * @param value - Raw string-literal content.
@@ -6,8 +12,11 @@
  *
  * @example
  * ```ts
+ * import { escapeODataValue } from '@apvee/spfx-react-toolkit';
+ *
  * const filter = `key eq '${escapeODataValue("owner's-settings")}'`;
  * ```
+ * @useWhen You embed user text inside an OData single-quoted string literal.
  */
 export function escapeODataValue(value: string): string {
   return value.replace(/'/g, "''");
@@ -20,9 +29,25 @@ export function escapeODataValue(value: string): string {
  * @returns Stored text; serialization is not lossless for every input type.
  * @throws Native serialization errors for unsupported JSON values or invalid Dates.
  *
- * @example
+ * @example Basic usage
  * ```ts
+ * import { serializeTenantValue } from '@apvee/spfx-react-toolkit';
+ *
  * const stored = serializeTenantValue({ enabled: true });
+ * ```
+ * @useWhen You must preserve the historical standalone tenant-value string format.
+ * @avoidWhen You write new list-store values and need exact empty/JSON-like strings or bigint text; use the tenant/site store service encoding instead.
+ *
+ *
+ * @example Compare legacy serialization with validated unknown data
+ * ```ts
+ * import { serializeTenantValue, deserializeTenantValue, escapeODataValue } from '@apvee/spfx-react-toolkit';
+ * const filter = `Title eq '${escapeODataValue("owner's-settings")}'`;
+ * // Title eq 'owner''s-settings'
+ * const raw = serializeTenantValue({ enabled: true });
+ * const value = deserializeTenantValue<unknown>(raw);
+ * if (typeof value === 'object' && value !== undefined && value !== null) console.log(value);
+ * const legacy = deserializeTenantValue<unknown>('false'); // boolean false
  * ```
  */
 export function serializeTenantValue(value: unknown): string {
@@ -45,7 +70,7 @@ export function serializeTenantValue(value: unknown): string {
 }
 
 /**
- * Parses stored text as JSON, falling back to the unchanged string when parsing fails. T is only a compile-time assertion: no schema validation, Date reconstruction or runtime type checking occurs.
+ * Parses stored text as JSON, falling back to the unchanged string when parsing fails. JSON-like strings become primitives, bigint decimal strings can lose precision as numbers, and Dates remain text. T is only a compile-time assertion: no schema validation, Date reconstruction or runtime type checking occurs.
  *
  * @typeParam T - Expected result type; callers must validate untrusted data.
  * @param rawValue - Stored string to parse.
@@ -53,8 +78,12 @@ export function serializeTenantValue(value: unknown): string {
  *
  * @example
  * ```tsx
+ * import { deserializeTenantValue } from '@apvee/spfx-react-toolkit';
+ *
  * const value = deserializeTenantValue<unknown>('false'); // boolean false
  * ```
+ * @useWhen You read historical tenant text and can validate its JSON-first interpretation in the caller.
+ * @avoidWhen You need a schema-validated or lossless type round trip; validate the unknown result in the caller.
  */
 export function deserializeTenantValue<T>(rawValue: string): T {
   try {

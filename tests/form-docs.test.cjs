@@ -16,14 +16,17 @@ test('Form docs cover compound members and Form-owned alias props, including nes
 });
 
 test('opt-in alias coverage requires own nested member JSDoc and does not invent inherited upstream props', () => {
-  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'form-docs-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'form-docs-'));
+  fs.cpSync(path.join(__dirname, 'fixtures/documentation/surface'), root, { recursive: true });
+  const directory = path.join(root, 'src');
+  fs.mkdirSync(directory);
   const file = path.join(directory, 'index.ts');
   try {
-    fs.writeFileSync(file, '/** Options. */ export type Options = External<{ as?: "button" }> & {\n/** State. */\nstate: { value: string } };');
+    fs.writeFileSync(file, 'import type { External } from "@fixture/peer";\n/** Options. */ export type Options = External<{ as?: "button" }> & {\n/** State. */\nstate: { value: string } };');
     const surface = collectPublicSurface(file, { includeTypeMembers: true });
     assert.deepEqual(surface[0].members.map(member => member.name), ['Options.state', 'Options.state.value']);
     assert.throws(() => assertDocumentedSurface('Options Options.state Options.state.value', surface), /JSDoc.*Options.state.value/);
-    fs.writeFileSync(file, '/** Options. */ export type Options = External<{ as?: "button" }> & {\n/** State. */\nstate: {\n/** Value. */\nvalue: string } };');
+    fs.writeFileSync(file, 'import type { External } from "@fixture/peer";\n/** Options. */ export type Options = External<{ as?: "button" }> & {\n/** State. */\nstate: {\n/** Value. */\nvalue: string } };');
     assertDocumentedSurface('Options Options.state Options.state.value', collectPublicSurface(file, { includeTypeMembers: true }));
-  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
 });

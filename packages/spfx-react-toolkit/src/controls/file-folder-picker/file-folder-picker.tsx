@@ -1,3 +1,9 @@
+/**
+ * Hosted SharePoint and OneDrive file/folder selection with serializable metadata references.
+ *
+ * @packageDocumentation
+ * @docPage controls/file-folder-picker
+ */
 import { resolveFileFolderPickerStrings } from './file-folder-picker-strings.internal';
 import * as React from 'react';
 import { Avatar, Button, Field, Tag, TagGroup, Tooltip, mergeClasses, useInputStyles_unstable } from '@fluentui/react-components';
@@ -11,16 +17,90 @@ import { useFileFolderPicker } from './useFileFolderPicker.internal';
 import { useFileFolderPickerStyles } from './file-folder-picker.styles.internal';
 import type { FileFolderPickerProps } from './file-folder-picker.types';
 
-/** Select existing SharePoint/OneDrive Business files or folders through Microsoft's hosted v8 UI.
+/**
+ * Select existing SharePoint/OneDrive Business files or folders through Microsoft's hosted v8 UI.
  * Requires a matching SPFx provider and existing delegated permissions. Only explicit accepted actions emit onChange.
  * Uses native Fluent Field slots; the remote Microsoft surface does not inherit arbitrary host CSS.
  * No persistence or host-side file-byte download is performed. Native upload/create are explicit opt-ins with immediate effects.
  * @param props - Source restrictions, JSON selection ownership and native Field contracts. Uses a single responsive 1080×720 hosted dialog.
  * @returns Owned Field with one Fluent Input-styled tag surface, mode-specific opening action and optional Stage-hosted iframe.
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { FileFolderPicker } from '@apvee/spfx-react-toolkit';
  * <FileFolderPicker label="Documents" defaultValue={[]} multiselect extensions={['.pdf']}
  *   scope={{ kind: 'siteCollection' }} onChange={data => console.log(data.values)} />
+ * ```
+ *
+ * @useWhen Existing SharePoint or OneDrive files/folders should be selected through Microsoft’s hosted picker as serializable metadata references.
+ * @avoidWhen Use a dedicated upload workflow when the application needs upload rollback or raw local-file payloads.
+ *
+ *
+ * @example Choose current-user OneDrive root or Projects folder
+ * ```tsx
+ * import * as React from 'react';
+ * import { FileFolderPicker, type FileFolderPickerValue } from '@apvee/spfx-react-toolkit';
+ * // Mount beneath the initialized matching SPFx provider with existing SharePoint grants.
+ * function OneDriveChoices() {
+ *   const [rootValues, setRootValues] = React.useState<readonly FileFolderPickerValue[]>([]);
+ *   const [projectValues, setProjectValues] = React.useState<readonly FileFolderPickerValue[]>([]);
+ *   return <section>
+ *     <FileFolderPicker label="Current user's OneDrive root" preset="focused"
+ *       scope={{ kind: 'oneDrive' }} itemTypes="all" multiselect
+ *       value={rootValues} onChange={data => setRootValues(data.values)} />
+ *     <output>{JSON.stringify(rootValues)}</output>
+ *     <FileFolderPicker label="Files in Projects" preset="focused"
+ *       scope={{ kind: 'oneDrive', folder: 'Projects' }} itemTypes="files"
+ *       value={projectValues} onChange={data => setProjectValues(data.values)} />
+ *     <output>{JSON.stringify(projectValues)}</output>
+ *   </section>;
+ * }
+ * ```
+ *
+ *
+ * @example Configure a legacy library opening without a preset
+ * ```tsx
+ * import * as React from 'react';
+ * import { FileFolderPicker, type FileFolderPickerValue } from '@apvee/spfx-react-toolkit';
+ * // Mount beneath the initialized matching SPFx provider; supply the actual owning web URL.
+ * function LegacyLibraryPicker({ webUrl }: { webUrl: string }) {
+ *   const [values, setValues] = React.useState<readonly FileFolderPickerValue[]>([]);
+ *   const [readyOpenings, setReadyOpenings] = React.useState(0);
+ *   // Deliberately omit preset: these legacy SDK-facing options cannot accompany focused/extended.
+ *   return <section>
+ *     <FileFolderPicker label="Documents" hint="Select a project document"
+ *       scope={{ kind: 'library', webUrl, list: 'Documents' }}
+ *       value={values} onChange={data => setValues(data.values)}
+ *       title="Project documents" layout="details" stickyHeaders
+ *       selectLabel="Use document" cancelLabel="Cancel"
+ *       initialSort={{ fieldName: 'FileLeafRef', ascending: true }} navigationVisible
+ *       graphEnabled={false} uploadEnabled={false} createFolderEnabled={false}
+ *       onReady={() => setReadyOpenings(count => count + 1)} />
+ *     <p>Hosted page ready: {readyOpenings} openings</p>
+ *     <output>{JSON.stringify(values)}</output>
+ *   </section>;
+ * }
+ * ```
+ *
+ *
+ * @example Seed file labels and show colorful selected avatars
+ * ```tsx
+ * import * as React from 'react';
+ * import { FileFolderPicker, type FileFolderPickerValue } from '@apvee/spfx-react-toolkit';
+ * // Supply real saved references and a pure caller-owned label function beneath the matching provider.
+ * function LabeledFilePicker({ initialValues, labelFor }: {
+ *   initialValues: readonly FileFolderPickerValue[]; labelFor: (value: FileFolderPickerValue) => string;
+ * }) {
+ *   const [values, setValues] = React.useState<readonly FileFolderPickerValue[]>(
+ *     // File references use name snapshots; text belongs to FileFolderPickerOption display models.
+ *     () => initialValues.map((value): FileFolderPickerValue => ({ ...value, name: labelFor(value) }))
+ *   );
+ *   return <section>
+ *     <FileFolderPicker label="Documents" preset="focused" scope={{ kind: 'siteCollection' }}
+ *       colorfulTagAvatars multiselect value={values} onChange={data => setValues(data.values)} />
+ *     <output>{JSON.stringify(values)}</output>
+ *   </section>;
+ * }
  * ```
  */
 export function FileFolderPicker(props: FileFolderPickerProps): React.ReactElement {

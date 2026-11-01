@@ -1,0 +1,10 @@
+/**
+ * @example
+ * ```ts
+ * import { PropertyPaneListPicker } from '@apvee/spfx-react-toolkit';
+ * import { absent } from '@apvee/spfx-react-toolkit/absent';
+ * import { Pagination } from '@apvee/spfx-react-toolkit/lib/pagination';
+ * import { hidden } from '@apvee/spfx-react-toolkit/src/private';
+ * import { unknown } from 'nonexistent-documentation-peer';
+ * ```
+ */

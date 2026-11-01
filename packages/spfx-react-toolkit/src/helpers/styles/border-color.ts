@@ -1,10 +1,31 @@
+/**
+ * Four-side Fluent border colors; these do not create a visible border without style/width.
+ *
+ * @packageDocumentation
+ * @docPage helpers/styles
+ * @useWhen An existing visible border needs a Fluent color role without changing its thickness or style.
+ * @example
+ * ```ts
+ * import { borderColor } from '@apvee/spfx-react-toolkit/styles';
+ * const descriptor = borderColor.primary;
+ * ```
+ */
 import { tokens } from '@fluentui/react-theme';
 import { SxBaseDescriptor } from './types';
 import { createDeclaration, createRecipe } from './descriptor.internal';
 
 /** Applies var(--colorNeutralStroke1) to all four border sides. It does not add border width or style.
  * Token values require scoped Fluent theme variables.
- * @example sx(borderColor.primary)
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSx, borderColor } from '@apvee/spfx-react-toolkit/styles';
+ *
+ * export function StyledSurface(): React.ReactElement {
+ *   const sx = useSx();
+ *   return <div className={sx(borderColor.primary)}>Content</div>;
+ * }
+ * ```
  */
 export const primary: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderColor.primary', [
   /*#__PURE__*/ createDeclaration('borderTopColor', tokens.colorNeutralStroke1, { property: 'borderTopColor', fallback: 'currentColor' }),
@@ -15,7 +36,16 @@ export const primary: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderColor
 
 /** Applies var(--colorNeutralStroke2) to all four border sides. It does not add border width or style.
  * Token values require scoped Fluent theme variables.
- * @example sx(borderColor.subtle)
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSx, borderColor } from '@apvee/spfx-react-toolkit/styles';
+ *
+ * export function StyledSurface(): React.ReactElement {
+ *   const sx = useSx();
+ *   return <div className={sx(borderColor.subtle)}>Content</div>;
+ * }
+ * ```
  */
 export const subtle: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderColor.subtle', [
   /*#__PURE__*/ createDeclaration('borderTopColor', tokens.colorNeutralStroke2, { property: 'borderTopColor', fallback: 'currentColor' }),
@@ -26,7 +56,16 @@ export const subtle: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderColor.
 
 /** Applies var(--colorBrandStroke1) to all four border sides. It does not add border width or style.
  * Token values require scoped Fluent theme variables.
- * @example sx(borderColor.brand)
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSx, borderColor } from '@apvee/spfx-react-toolkit/styles';
+ *
+ * export function StyledSurface(): React.ReactElement {
+ *   const sx = useSx();
+ *   return <div className={sx(borderColor.brand)}>Content</div>;
+ * }
+ * ```
  */
 export const brand: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderColor.brand', [
   /*#__PURE__*/ createDeclaration('borderTopColor', tokens.colorBrandStroke1, { property: 'borderTopColor', fallback: 'currentColor' }),
@@ -37,7 +76,16 @@ export const brand: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderColor.b
 
 /** Applies var(--colorNeutralStrokeDisabled) to all four border sides. It does not add border width or style.
  * Token values require scoped Fluent theme variables.
- * @example sx(borderColor.disabled)
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSx, borderColor } from '@apvee/spfx-react-toolkit/styles';
+ *
+ * export function StyledSurface(): React.ReactElement {
+ *   const sx = useSx();
+ *   return <div className={sx(borderColor.disabled)}>Content</div>;
+ * }
+ * ```
  */
 export const disabled: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderColor.disabled', [
   /*#__PURE__*/ createDeclaration('borderTopColor', tokens.colorNeutralStrokeDisabled, { property: 'borderTopColor', fallback: 'currentColor' }),

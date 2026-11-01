@@ -1,3 +1,15 @@
+/**
+ * Snapshot mappings for supplied SPFx user, site, list, regional and environment metadata.
+ *
+ * Each helper requires a real PageContext and returns a fresh, unfrozen object.
+ * Readonly is a TypeScript constraint; locale timeZone deliberately retains the
+ * host reference. No React provider, asynchronous host detection or input
+ * validation is added. Errors from malformed required fields/GUID conversion
+ * propagate. Optional output properties may be present with undefined values.
+ *
+ * @packageDocumentation
+ * @docPage helpers/page-context
+ */
 import type { PageContext } from '@microsoft/sp-page-context';
 import { resolveSPFxIanaTimeZone } from './spfx-time-zone.internal';
 
@@ -6,8 +18,13 @@ import { resolveSPFxIanaTimeZone } from './spfx-time-zone.internal';
  *
  * @example
  * ```ts
- * const group = getSPFxSiteInfo(pageContext).siteGroup;
- * if (group) console.log(group.id, group.isPublic);
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * import { getSPFxSiteInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(pageContext: PageContext) {
+ *   const group = getSPFxSiteInfo(pageContext).siteGroup;
+ *   if (group) console.log(group.id, group.isPublic);
+ * }
  * ```
  */
 type SPFxGroupInfoResult = {
@@ -26,8 +43,13 @@ type SPFxGroupInfoResult = {
  *
  * @example
  * ```ts
- * const zone = getSPFxLocaleInfo(pageContext).timeZone;
- * if (zone) console.log(zone.id, zone.description);
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * import { getSPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(pageContext: PageContext) {
+ *   const zone = getSPFxLocaleInfo(pageContext).timeZone;
+ *   if (zone) console.log(zone.id, zone.description);
+ * }
  * ```
  */
 type SPFxTimeZoneResult = {
@@ -54,11 +76,16 @@ type SPFxTimeZoneResult = {
 };
 
 /**
- * Best-effort host category derived by `getSPFxEnvironmentInfo` from supplied PageContext URLs, legacy flags and SDK-shaped fields. It is not asynchronous Teams host detection.
+ * Best-effort host category derived by `getSPFxEnvironmentInfo` from supplied PageContext URLs, legacy flags and SDK-shaped fields. It is not asynchronous Teams host detection. Use actual host SDK initialization for authoritative host detection.
  *
  * @example
  * ```ts
- * const host = getSPFxEnvironmentInfo(pageContext).type;
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * import { getSPFxEnvironmentInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(pageContext: PageContext) {
+ *   const host = getSPFxEnvironmentInfo(pageContext).type;
+ * }
  * ```
  */
 type SPFxEnvironmentTypeResult =
@@ -74,7 +101,12 @@ type SPFxEnvironmentTypeResult =
  *
  * @example
  * ```ts
- * const type = getSPFxPageTypeInfo(pageContext).pageType;
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * import { getSPFxPageTypeInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(pageContext: PageContext) {
+ *   const type = getSPFxPageTypeInfo(pageContext).pageType;
+ * }
  * ```
  */
 type SPFxPageTypeResult =
@@ -94,8 +126,14 @@ type SPFxPageTypeResult =
  *
  * @example
  * ```ts
- * const info = getSPFxUserInfo(pageContext);
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * import { getSPFxUserInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(pageContext: PageContext) {
+ *   const info = getSPFxUserInfo(pageContext);
+ * }
  * ```
+ * @useWhen You map a supplied PageContext to login, display-name and guest metadata outside React.
  */
 export function getSPFxUserInfo(pageContext: PageContext): {
   /**
@@ -131,9 +169,33 @@ export function getSPFxUserInfo(pageContext: PageContext): {
  * @param pageContext - SPFx page context
  * @returns Site collection and web information
  *
- * @example
+ * @example Basic usage
  * ```ts
- * const info = getSPFxSiteInfo(pageContext);
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * import { getSPFxSiteInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(pageContext: PageContext) {
+ *   const info = getSPFxSiteInfo(pageContext);
+ * }
+ * ```
+ * @useWhen You need both current-web and collection-root metadata from a supplied PageContext.
+ *
+ *
+ * @example Read combined host metadata
+ * ```ts
+ * import { getSPFxUserInfo, getSPFxSiteInfo, getSPFxListInfo, getSPFxLocaleInfo, getSPFxEnvironmentInfo, getSPFxPageTypeInfo, getSPFxCorrelationInfo } from '@apvee/spfx-react-toolkit';
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * function inspectHost(pageContext: PageContext) {
+ * const user = getSPFxUserInfo(pageContext);
+ * const site = getSPFxSiteInfo(pageContext);
+ * const list = getSPFxListInfo(pageContext);
+ * const locale = getSPFxLocaleInfo(pageContext);
+ * const environment = getSPFxEnvironmentInfo(pageContext);
+ * const page = getSPFxPageTypeInfo(pageContext);
+ * const correlation = getSPFxCorrelationInfo(pageContext);
+ * console.log(user.displayName, site.siteUrl, list?.title, locale.uiLocale);
+ * console.log(environment.type, page.pageType, correlation.correlationId);
+ * }
  * ```
  */
 export function getSPFxSiteInfo(pageContext: PageContext): {
@@ -222,8 +284,14 @@ export function getSPFxSiteInfo(pageContext: PageContext): {
  *
  * @example
  * ```ts
- * const info = getSPFxListInfo(pageContext);
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * import { getSPFxListInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(pageContext: PageContext) {
+ *   const info = getSPFxListInfo(pageContext);
+ * }
  * ```
+ * @useWhen You inspect optional list context and can handle pages that do not expose a list ID.
  */
 export function getSPFxListInfo(pageContext: PageContext): {
   /**
@@ -243,7 +311,7 @@ export function getSPFxListInfo(pageContext: PageContext): {
    */
   readonly baseTemplate?: number;
   /**
-   * True only when baseTemplate equals 101; false for other or missing templates.
+   * Always returned when list context exists despite the optional declaration: true only when baseTemplate equals 101; false for other or missing templates. No undefined flag is produced by this mapper.
    */
   readonly isDocumentLibrary?: boolean;
 } | undefined {
@@ -290,15 +358,39 @@ export function getSPFxListInfo(pageContext: PageContext): {
  * audited CLDR territory001 representative for timeZone.id, not a physical city,
  * user profile zone or guarantee of customized SharePoint Server rules.
  * Unknown or unverified IDs return undefined without a browser/offset fallback.
+ * Missing, noninteger and nonfinite IDs are unresolved, not UTC. Mapping uses
+ * only the numeric ID, never culture, description or offset. Consumers need
+ * suitable Intl zone data; pinned CLDR aliases are retained.
  *
  * @param pageContext - SPFx page context
  * @returns Locale, regional metadata and an optional representative IANA time zone
- * @example
+ * @example Basic usage
  * ```ts
- * const { uiLocale, ianaTimeZone } = getSPFxLocaleInfo(pageContext);
- * if (ianaTimeZone !== undefined) {
- *   const formatter = new Intl.DateTimeFormat(uiLocale, { timeZone: ianaTimeZone });
- *   const siteDate = formatter.format(new Date());
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * import { getSPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(pageContext: PageContext) {
+ *   const { uiLocale, ianaTimeZone } = getSPFxLocaleInfo(pageContext);
+ *   if (ianaTimeZone !== undefined) {
+ *     const formatter = new Intl.DateTimeFormat(uiLocale, { timeZone: ianaTimeZone });
+ *     const siteDate = formatter.format(new Date());
+ *   }
+ * }
+ * ```
+ * @useWhen You format site-local dates using the supplied host culture and an audited regional-zone representative.
+ *
+ *
+ * @example Choose an explicit missing site-zone policy
+ * ```ts
+ * import { getSPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * function formatModified(pageContext: PageContext, modified: Date) {
+ * const info = getSPFxLocaleInfo(pageContext);
+ * // Explicit policy: no site-zone date when the standard mapping is unavailable.
+ * const fullDate = info.ianaTimeZone
+ *   ? new Intl.DateTimeFormat(info.uiLocale, { timeZone: info.ianaTimeZone, dateStyle: 'full' }).format(modified)
+ *   : 'Site time zone unavailable';
+ * return fullDate;
  * }
  * ```
  */
@@ -335,15 +427,21 @@ export function getSPFxLocaleInfo(pageContext: PageContext): {
 }
 
 /**
- * Maps SPFx PageContext host data to the toolkit environment info shape.
+ * Maps supplied PageContext URL substrings, legacy isOnPremises and SDK-shaped fields to a best-effort host category. Precedence is Local, Teams, Outlook, Office, SharePointOnPrem, SharePoint; individual flags can overlap. Does not initialize SDK context or inspect a provider's native host.
  *
  * @param pageContext - SPFx page context
  * @returns Environment information
  *
  * @example
  * ```ts
- * const info = getSPFxEnvironmentInfo(pageContext);
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * import { getSPFxEnvironmentInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(pageContext: PageContext) {
+ *   const info = getSPFxEnvironmentInfo(pageContext);
+ * }
  * ```
+ * @useWhen You need a synchronous best-effort host category from supplied PageContext metadata.
  */
 export function getSPFxEnvironmentInfo(pageContext: PageContext): {
   /**
@@ -367,7 +465,7 @@ export function getSPFxEnvironmentInfo(pageContext: PageContext): {
    */
   readonly isSharePointOnPrem: boolean;
   /**
-   * Whether the supplied PageContext exposes a microsoftTeams SDK-shaped field.
+   * True when the supplied PageContext sdks.microsoftTeams field is not undefined; no SDK shape validation or acquisition occurs.
    */
   readonly isTeams: boolean;
   /**
@@ -434,15 +532,21 @@ export function getSPFxEnvironmentInfo(pageContext: PageContext): {
 }
 
 /**
- * Detects the current SharePoint page type from modern and legacy page context data.
+ * Checks modern page.type for site/web-part pages, then legacy pageType for site/web-part/list/profile/search categories, then legacy listId. A non-null, non-undefined legacy formType, including zero, selects a list form. Unknown metadata returns unknown with false category flags.
  *
  * @param pageContext - SPFx page context
  * @returns Page type information
  *
  * @example
  * ```ts
- * const info = getSPFxPageTypeInfo(pageContext);
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * import { getSPFxPageTypeInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(pageContext: PageContext) {
+ *   const info = getSPFxPageTypeInfo(pageContext);
+ * }
  * ```
+ * @useWhen You choose page-specific presentation from modern or legacy page metadata.
  */
 export function getSPFxPageTypeInfo(pageContext: PageContext): {
   /**
@@ -553,8 +657,14 @@ export function getSPFxPageTypeInfo(pageContext: PageContext): {
  *
  * @example
  * ```ts
- * const info = getSPFxCorrelationInfo(pageContext);
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * import { getSPFxCorrelationInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(pageContext: PageContext) {
+ *   const info = getSPFxCorrelationInfo(pageContext);
+ * }
  * ```
+ * @useWhen You attach host correlation and tenant identifiers to diagnostics when available.
  */
 export function getSPFxCorrelationInfo(pageContext: PageContext): {
   /**

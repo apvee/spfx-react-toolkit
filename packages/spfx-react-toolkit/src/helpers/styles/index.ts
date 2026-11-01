@@ -1,4 +1,9 @@
-/** Typed, immutable style descriptors. Importing this module does not insert CSS. */
+/**
+ * Typed, immutable style descriptors. Importing this module does not insert CSS.
+ *
+ * @packageDocumentation
+ * @docPage helpers/styles
+ */
 export type { SxBaseDescriptor, SxStateDescriptor, SxResponsiveDescriptor, SxDescriptor, SxInput, SxFunction, SxOptions } from './types';
 export * as width from './width';
 export * as minWidth from './min-width';

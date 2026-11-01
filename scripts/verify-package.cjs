@@ -5,7 +5,7 @@ const os = require('node:os');
 const path = require('node:path');
 const {execFileSync, spawnSync} = require('node:child_process');
 const ts = require('typescript');
-const { collectPublicSurface } = require('./public-surface.helpers.cjs');
+const { collectPublicSurfaces } = require('./public-surface.helpers.cjs');
 const { assertEntrypointContract, verifyConsumerResolution, getLocalizationPackageContract } = require('./package-entrypoints.cjs');
 const {createRequire} = require('node:module');
 const {measureTreeShaking, runInstalledGates, verifyContractMutations} = require('./bundle-contract.internal.cjs');
@@ -99,7 +99,7 @@ function assertPackedImports(packedPaths) {
 
 function assertEmittedStyleJSDoc(packedPaths) {
   const styleEntry = path.join(library, 'src/helpers/styles/index.ts');
-  const surface = [...collectPublicSurface(path.join(library, 'src/controls/index.ts')), ...collectPublicSurface(styleEntry), ...collectPublicSurface(path.join(library, 'src/hooks/useSx.ts'))];
+  const surface = collectPublicSurfaces([path.join(library, 'src/controls/index.ts'), styleEntry, path.join(library, 'src/hooks/useSx.ts')]).flat();
   function findDeclaration(source, name) {
     return source.statements.find(node => node.name?.text === name ||
       (ts.isVariableStatement(node) && node.declarationList.declarations.some(declaration => declaration.name.text === name)));
@@ -119,8 +119,8 @@ function assertEmittedStyleJSDoc(packedPaths) {
     assert.equal(normalizeDocs(emitted, emittedSource), normalizeDocs(original, originalSource), `JSDoc changed during emission: ${declaration.name}`);
     for (const member of declaration.members) {
       const memberName = member.name.split('.').pop();
-      const originalMember = original.members.find(node => node.name?.getText(originalSource) === memberName);
-      const emittedMember = emitted.members.find(node => node.name?.getText(emittedSource) === memberName);
+      const originalMember = original.members.find(node => node.name?.text === memberName);
+      const emittedMember = emitted.members.find(node => node.name?.text === memberName);
       assert.ok(emittedMember && normalizeDocs(emittedMember, emittedSource), `Missing emitted member JSDoc: ${member.name}`);
       assert.equal(normalizeDocs(emittedMember, emittedSource), normalizeDocs(originalMember, originalSource), `Member JSDoc changed during emission: ${member.name}`);
     }

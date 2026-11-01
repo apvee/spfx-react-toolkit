@@ -1,3 +1,9 @@
+/**
+ * Instance identity is suitable for namespacing local state and diagnostics.
+ *
+ * @packageDocumentation
+ * @docPage hooks/context
+ */
 // useSPFxInstanceInfo.ts
 // Hook to access SPFx instance metadata
 
@@ -6,13 +12,18 @@ import { useSPFxContext } from './useSPFxContext';
 import type { HostKind } from '../core/types';
 
 /**
- * Return type for useSPFxInstanceInfo hook
+ * Static identity and host discriminator from the nearest host-specific provider.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const instance: SPFxInstanceInfo = useSPFxInstanceInfo();
- * console.log(instance.id, instance.kind);
+ * import * as React from 'react';
+ * import { SPFxInstanceInfo, useSPFxInstanceInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const instance: SPFxInstanceInfo = useSPFxInstanceInfo();
+ *   console.log(instance.id, instance.kind);
+ *   return <span>{instance.id}</span>;
+ * }
  * ```
  */
 export interface SPFxInstanceInfo {
@@ -31,11 +42,16 @@ export interface SPFxInstanceInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxInstanceInfo } from '@apvee/spfx-react-toolkit';
+ *
  * function InstanceLabel() {
  *   const { id, kind } = useSPFxInstanceInfo();
  *   return <span>{kind}: {id}</span>;
  * }
  * ```
+ *
+ * @useWhen an instance-scoped key or diagnostic entry needs the current provider identity.
  */
 export function useSPFxInstanceInfo(): SPFxInstanceInfo {
   const { instanceId, kind } = useSPFxContext();

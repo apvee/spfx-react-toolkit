@@ -1,0 +1,1 @@
+{ "name": "@fixture/pilot", "exports": { ".": { "types": "./lib/index.d.ts" } } }

@@ -1,3 +1,9 @@
+/**
+ * Current web and collection metadata include optional group and legacy fields.
+ *
+ * @packageDocumentation
+ * @docPage hooks/user-site
+ */
 // useSPFxSiteInfo.ts
 // Hook to access site collection and web information
 
@@ -10,9 +16,14 @@ import { useSPFxPageContext } from './useSPFxPageContext';
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const group: SPFxGroupInfo | undefined = useSPFxSiteInfo().siteGroup;
- * console.log(group?.id, group?.isPublic);
+ * import * as React from 'react';
+ * import { SPFxGroupInfo, useSPFxSiteInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const group: SPFxGroupInfo | undefined = useSPFxSiteInfo().siteGroup;
+ *   console.log(group?.id, group?.isPublic);
+ *   return <span>{group?.id ?? 'No group'}</span>;
+ * }
  * ```
  */
 export interface SPFxGroupInfo {
@@ -26,13 +37,18 @@ export interface SPFxGroupInfo {
 }
 
 /**
- * Return type for useSPFxSiteInfo hook
+ * Current web/site-collection identity and metadata, including optional legacy classification and associated group.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const site: SPFxSiteInfo = useSPFxSiteInfo();
- * console.log(site.webUrl, site.siteUrl);
+ * import * as React from 'react';
+ * import { SPFxSiteInfo, useSPFxSiteInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const site: SPFxSiteInfo = useSPFxSiteInfo();
+ *   console.log(site.webUrl, site.siteUrl);
+ *   return <span>{site.webUrl}</span>;
+ * }
  * ```
  */
 export interface SPFxSiteInfo {
@@ -55,7 +71,7 @@ export interface SPFxSiteInfo {
    */
   readonly languageId: number;
   
-  /** Site logo URL (if configured) */
+  /** Site logo URL; undefined when not supplied by the host */
   readonly logoUrl?: string;
   
   // Site collection properties (all prefixed)
@@ -68,10 +84,10 @@ export interface SPFxSiteInfo {
   /** Site collection server relative URL */
   readonly siteServerRelativeUrl: string;
   
-  /** Site classification (e.g., "Confidential", "Public") */
+  /** Legacy site classification; undefined when host metadata omits it */
   readonly siteClassification?: string;
   
-  /** Microsoft 365 Group information (if group-connected) */
+  /** Microsoft 365 Group information; undefined when no associated group is supplied */
   readonly siteGroup?: SPFxGroupInfo;
 }
 
@@ -83,11 +99,16 @@ export interface SPFxSiteInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxSiteInfo } from '@apvee/spfx-react-toolkit';
+ *
  * function SiteLabel() {
  *   const { title, webUrl } = useSPFxSiteInfo();
  *   return <a href={webUrl}>{title}</a>;
  * }
  * ```
+ *
+ * @useWhen UI needs current web/site identifiers and optional group metadata without I/O.
  */
 export function useSPFxSiteInfo(): SPFxSiteInfo {
   const pageContext = useSPFxPageContext();

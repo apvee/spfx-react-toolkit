@@ -1,3 +1,9 @@
+/**
+ * Related optional details composed as Fluent disclosures inside a native Card.
+ *
+ * @packageDocumentation
+ * @docPage controls/accordion-group
+ */
 import * as React from 'react';
 import { renderContentSlot } from '../content-slot.internal';
 import { Accordion, AccordionItem, AccordionHeader, AccordionPanel, Card, useId } from '@fluentui/react-components';
@@ -13,14 +19,17 @@ import { useAccordionGroupStyles } from './accordion-group.styles.internal';
 import type { AccordionGroupProps, AccordionGroupItemProps, AccordionGroupValue } from './accordion-group.types';
 
 const headings = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
-// React 17's HTML types omit native inert. An empty attribute enables inert; omission removes it.
+// React 17's HTML types omit native inert. An empty attribute enables inert; when omitted, removes it.
 type InertPanelProps = React.HTMLAttributes<HTMLDivElement> & { inert?: '' };
 
-/** Render a Fluent disclosure, retaining inert descendants unless reset is requested.
- * @param props Native item attributes, value, trigger content and caller-owned panel children.
+/**
+ * Render a Fluent disclosure, retaining inert descendants unless reset is requested.
+ * @param props - Native item attributes, value, trigger content and caller-owned panel children.
  * @returns A native Fluent AccordionItem with semantic heading, button and linked panel.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { AccordionGroup } from '@apvee/spfx-react-toolkit';
  * <AccordionGroup><AccordionGroup.Item value="profile" title="Profile">Details</AccordionGroup.Item></AccordionGroup>
  * ```
  */
@@ -74,7 +83,8 @@ const AccordionGroupRoot = React.forwardRef<HTMLDivElement, AccordionGroupProps>
 });
 AccordionGroupRoot.displayName = 'AccordionGroup';
 
-/** Group native disclosures in a medium Fluent Card with an optional outside header.
+/**
+ * Group native disclosures in a medium Fluent Card with an optional outside header.
  * Fluent owns expansion, disabled behavior and motion; no SPFx provider is required.
  * Closed descendants remain mounted and inert by default; unmountOnClose resets them after exit.
  * Strings remain literal. All text slots inherit toolkit presets; JSX phrasing children
@@ -83,20 +93,28 @@ AccordionGroupRoot.displayName = 'AccordionGroup';
  * labels the item div and does not name its button. Before programmatic closure,
  * consumers move focus from panel content when necessary. Root titles use the headingLevel wrapper,
  * including JSX; avoid nested headings. Native Card padding is the single lateral inset.
- * @param props Native div attributes, header and native Fluent expansion options.
+ * @param props - Native div attributes, header and native Fluent expansion options.
  * @returns A div containing the optional header and composed Accordion inside a Card.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { AccordionGroup } from '@apvee/spfx-react-toolkit';
  * <AccordionGroup title="Preferences" defaultOpenItems={['profile']}><AccordionGroup.Item value="profile" title="Profile">Details</AccordionGroup.Item></AccordionGroup>
  * ```
+ *
+ * @useWhen Several related disclosure panels need Fluent expansion with retained child state.
+ * @avoidWhen Use SettingsGroup when fields should remain continuously visible.
  */
 export const AccordionGroup = Object.assign(AccordionGroupRoot, {
-  /** Render one uniquely identified disclosure inside AccordionGroup. Closed content
+  /**
+   * Render one uniquely identified disclosure inside AccordionGroup. Closed content
    * stays mounted/inert unless `unmountOnClose` requests a reset after closing motion.
-   * @param props Native item attributes, value, noninteractive trigger content and panel children.
+   * @param props - Native item attributes, value, noninteractive trigger content and panel children.
    * @returns An item div with semantic heading, trigger and associated panel.
    * @example
    * ```tsx
+   * import * as React from 'react';
+   * import { AccordionGroup } from '@apvee/spfx-react-toolkit';
    * <AccordionGroup><AccordionGroup.Item value="profile" title="Profile">Details</AccordionGroup.Item></AccordionGroup>
    * ```
    */

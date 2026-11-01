@@ -1,3 +1,9 @@
+/**
+ * Advisory content branches selected by effective SharePoint resource permissions.
+ *
+ * @packageDocumentation
+ * @docPage controls/sharepoint-permission-trim
+ */
 import * as React from 'react';
 import type { SPPermission } from '@microsoft/sp-page-context';
 import { useSPFxCrossSitePermissions } from '../../hooks/useSPFxCrossSitePermissions';
@@ -22,9 +28,11 @@ function isRequestedPermission(permission: unknown): permission is SPPermission 
  * @param props - Scoped target, nonempty permissions, match and structural children.
  * @returns Active content in a React fragment, without a DOM wrapper.
  * @throws Missing matching SPFx provider.
- *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { SharePointPermissionTrim } from '@apvee/spfx-react-toolkit';
+ * import { SPPermission } from '@microsoft/sp-page-context';
  * <SharePointPermissionTrim permissions={[SPPermission.addListItems]} scope="list" listTitle="Tasks">
  *   <button>Create task</button>
  *   <SharePointPermissionTrim.Loading>Checking</SharePointPermissionTrim.Loading>
@@ -58,21 +66,45 @@ function PermissionTrim(props: SharePointPermissionTrimProps): React.ReactElemen
  * Structural loading branch, shown while the selected permission check is pending.
  * @param props - Optional children only; must be a unique direct child of SharePointPermissionTrim.
  * @returns Its active children without a DOM wrapper; omitted children render empty.
- * @example <SharePointPermissionTrim.Loading>Checking</SharePointPermissionTrim.Loading>
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { SharePointPermissionTrim } from '@apvee/spfx-react-toolkit';
+ * import { SPPermission } from '@microsoft/sp-page-context';
+ * <SharePointPermissionTrim permissions={[SPPermission.addListItems]}>
+ *   <SharePointPermissionTrim.Loading>Checking</SharePointPermissionTrim.Loading>
+ * </SharePointPermissionTrim>
+ * ```
  */
 const Loading: React.ComponentType<SharePointPermissionTrimBranchProps> = createAccessTrimBranch(family, 'loading');
 /**
  * Structural denial branch, shown after a successful check without a matching grant.
  * @param props - Optional children only; must be a unique direct child of SharePointPermissionTrim.
  * @returns Its active children without a DOM wrapper; omitted children render empty.
- * @example <SharePointPermissionTrim.Fallback>Read only</SharePointPermissionTrim.Fallback>
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { SharePointPermissionTrim } from '@apvee/spfx-react-toolkit';
+ * import { SPPermission } from '@microsoft/sp-page-context';
+ * <SharePointPermissionTrim permissions={[SPPermission.addListItems]}>
+ *   <SharePointPermissionTrim.Fallback>Read only</SharePointPermissionTrim.Fallback>
+ * </SharePointPermissionTrim>
+ * ```
  */
 const Fallback: React.ComponentType<SharePointPermissionTrimBranchProps> = createAccessTrimBranch(family, 'fallback');
 /**
  * Structural error branch for malformed input/composition and failed permission reads.
  * @param props - Optional children only; must be a unique direct child of SharePointPermissionTrim.
  * @returns Its active children without a DOM wrapper; omitted children render empty.
- * @example <SharePointPermissionTrim.ErrorFallback>Unavailable</SharePointPermissionTrim.ErrorFallback>
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { SharePointPermissionTrim } from '@apvee/spfx-react-toolkit';
+ * import { SPPermission } from '@microsoft/sp-page-context';
+ * <SharePointPermissionTrim permissions={[SPPermission.addListItems]}>
+ *   <SharePointPermissionTrim.ErrorFallback>Unavailable</SharePointPermissionTrim.ErrorFallback>
+ * </SharePointPermissionTrim>
+ * ```
  */
 const ErrorFallback: React.ComponentType<SharePointPermissionTrimBranchProps> = createAccessTrimBranch(family, 'error');
 /**
@@ -87,29 +119,62 @@ const ErrorFallback: React.ComponentType<SharePointPermissionTrimBranchProps> = 
  * @throws Missing matching SPFx provider.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { SharePointPermissionTrim } from '@apvee/spfx-react-toolkit';
+ * import { SPPermission } from '@microsoft/sp-page-context';
  * <SharePointPermissionTrim permissions={[SPPermission.addListItems]}>
  *   <button>Create</button>
  *   <SharePointPermissionTrim.Fallback>Read only</SharePointPermissionTrim.Fallback>
  * </SharePointPermissionTrim>
  * ```
+ *
+ * @useWhen Effective current-user SharePoint permission masks should select resource-specific content branches.
+ * @avoidWhen Keep server authorization on every protected operation; the trim only controls rendering.
  */
 export const SharePointPermissionTrim = Object.assign(PermissionTrim, {
-  /** Pending permission branch, unique and direct beneath SharePointPermissionTrim.
-   * @param props - Optional children only; omission is empty.
+  /**
+   * Pending permission branch, unique and direct beneath SharePointPermissionTrim.
+   * Accepts Optional children only; when omitted, is empty.
    * @returns Active children without a wrapper.
-   * @example <SharePointPermissionTrim.Loading>Checking</SharePointPermissionTrim.Loading>
+   * @example
+   * ```tsx
+   * import * as React from 'react';
+   * import { SharePointPermissionTrim } from '@apvee/spfx-react-toolkit';
+   * import { SPPermission } from '@microsoft/sp-page-context';
+   * <SharePointPermissionTrim permissions={[SPPermission.addListItems]}>
+   *   <SharePointPermissionTrim.Loading>Checking</SharePointPermissionTrim.Loading>
+   * </SharePointPermissionTrim>
+   * ```
    */
   Loading,
-  /** Successful denial branch, unique and direct beneath SharePointPermissionTrim.
-   * @param props - Optional children only; omission is empty.
+  /**
+   * Successful denial branch, unique and direct beneath SharePointPermissionTrim.
+   * Accepts Optional children only; when omitted, is empty.
    * @returns Active children without a wrapper.
-   * @example <SharePointPermissionTrim.Fallback>Read only</SharePointPermissionTrim.Fallback>
+   * @example
+   * ```tsx
+   * import * as React from 'react';
+   * import { SharePointPermissionTrim } from '@apvee/spfx-react-toolkit';
+   * import { SPPermission } from '@microsoft/sp-page-context';
+   * <SharePointPermissionTrim permissions={[SPPermission.addListItems]}>
+   *   <SharePointPermissionTrim.Fallback>Read only</SharePointPermissionTrim.Fallback>
+   * </SharePointPermissionTrim>
+   * ```
    */
   Fallback,
-  /** Invalid input/composition or failed-read branch; unique direct child of this family.
-   * @param props - Optional children only; omission is empty.
+  /**
+   * Invalid input/composition or failed-read branch; unique direct child of this family.
+   * Accepts Optional children only; when omitted, is empty.
    * @returns Active children without a wrapper.
-   * @example <SharePointPermissionTrim.ErrorFallback>Unavailable</SharePointPermissionTrim.ErrorFallback>
+   * @example
+   * ```tsx
+   * import * as React from 'react';
+   * import { SharePointPermissionTrim } from '@apvee/spfx-react-toolkit';
+   * import { SPPermission } from '@microsoft/sp-page-context';
+   * <SharePointPermissionTrim permissions={[SPPermission.addListItems]}>
+   *   <SharePointPermissionTrim.ErrorFallback>Unavailable</SharePointPermissionTrim.ErrorFallback>
+   * </SharePointPermissionTrim>
+   * ```
    */
   ErrorFallback,
 });

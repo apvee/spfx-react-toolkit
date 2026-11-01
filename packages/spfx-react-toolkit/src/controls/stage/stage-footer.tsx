@@ -1,15 +1,25 @@
+/**
+ * Explicit Dialog, Drawer and Popover surfaces sharing one caller-owned content structure.
+ *
+ * @packageDocumentation
+ * @docPage controls/stage
+ */
 import * as React from 'react';
 import { useSx } from '../../hooks/useSx';
 import { useStageContext } from './stage-context.internal';
 import { useStageStyles } from './stage.styles.internal';
 import type { StageFooterProps } from './stage.types';
 
-/** Render free caller-owned footer content without imposing actions or automatic dismissal.
+/**
+ * Render free caller-owned footer content without imposing actions or automatic dismissal.
  * Requires an owning Stage. Omit Footer entirely when no footer is wanted, leaving no gap.
- * @param props Native div attributes, forwarded ref and optional content.
+ * @param props - Native div attributes, forwarded ref and optional content.
  * @returns A nonshrinking zero-padding div preserving caller JSX and events.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { Stage } from '@apvee/spfx-react-toolkit/controls/stage';
+ *
  * <Stage presentation="dialog"><Stage.Footer><button type="submit">Save</button></Stage.Footer></Stage>
  * ```
  */

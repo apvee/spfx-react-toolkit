@@ -1,3 +1,9 @@
+/**
+ * Controlled single-block rich text with safe read rendering and lazy explicit editing.
+ *
+ * @packageDocumentation
+ * @docPage controls/editable-text
+ */
 import * as React from 'react';
 import { Button, MessageBar, MessageBarBody, Spinner } from '@fluentui/react-components';
 import { useFluent_unstable } from '@fluentui/react-shared-contexts';
@@ -62,7 +68,7 @@ function validateProps(props: EditableTextProps): void {
  * @returns The stable div root in Read, loading, error and Edit states. A forwarded
  * HTMLDivElement ref targets this root; name/description ARIA targets the actual
  * textbox in Edit and the root in Read. Consumer style/events stay on the root.
- * @example
+ * @example Basic usage
  * ```tsx
  * import * as React from 'react';
  * import { EditableText } from '@apvee/spfx-react-toolkit';
@@ -71,6 +77,82 @@ function validateProps(props: EditableTextProps): void {
  *   return <EditableText mode="edit" value={html} fallbackText="Summary"
  *     allowedBlocks={['p', 'h2']} aria-label="Summary"
  *     onChange={data => setHtml(data.html)} />;
+ * }
+ * ```
+ *
+ * @useWhen Bounded text needs safe read rendering with optional explicit rich-text editing.
+ * @avoidWhen Use FormattedText for display-only inline Markdown without an editor lifecycle.
+ *
+ *
+ * @example Control a project summary and preserve plain text
+ * ```tsx
+ * import * as React from 'react';
+ * import {
+ *   EditableText, type EditableTextProps,
+ *   type EditableTextBlock, type EditableTextChangeData,
+ * } from '@apvee/spfx-react-toolkit/controls/editable-text';
+ *
+ * const headings: readonly EditableTextBlock[] = ['h2', 'h3', 'h4'];
+ *
+ * export function ProjectSummary(): React.ReactElement {
+ *   const [html, setHTML] = React.useState<string>();
+ *   const [text, setText] = React.useState('Project summary');
+ *   const [editing, setEditing] = React.useState(false);
+ *   const root = React.useRef<HTMLDivElement>(null); // React 17 ref initializer
+ *   const change = (data: EditableTextChangeData): void => {
+ *     setHTML(data.html);
+ *     setText(data.text);
+ *   };
+ *   const props: EditableTextProps = {
+ *     mode: editing ? 'edit' : 'read', value: html,
+ *     fallbackText: 'Project summary', allowedBlocks: headings,
+ *     'aria-label': 'Project summary', 'aria-describedby': 'summary-help',
+ *     onChange: change, strings: { bold: 'Strong', colorNames: { red: 'Danger' } },
+ *   };
+ *   return <section>
+ *     <button type="button" onClick={() => setEditing(value => !value)}>Toggle editing</button>
+ *     <p id="summary-help">One heading; Enter inserts a hard break.</p>
+ *     <EditableText {...props} ref={root} data-project-summary="" />
+ *     <output>{text}</output>
+ *   </section>;
+ * }
+ * ```
+ *
+ *
+ * @example Render saved semantic theme color
+ * ```tsx
+ * import * as React from 'react';
+ * import { EditableText } from '@apvee/spfx-react-toolkit/controls/editable-text';
+ *
+ * // The saved semantic green follows the active theme; its UI name is translated.
+ * const savedHTML = '<h2><span class="wps-color-green">Project documents</span></h2>';
+ *
+ * export function ProjectHeading(): React.ReactElement {
+ *   return <EditableText value={savedHTML} />;
+ * }
+ * ```
+ *
+ *
+ * @example Persist HTML and searchable text through SPFx properties
+ * ```tsx
+ * import * as React from 'react';
+ * import {
+ *   EditableText, useSPFxProperties, useSPFxDisplayMode,
+ *   type IWebPartShellProperties,
+ * } from '@apvee/spfx-react-toolkit';
+ *
+ * interface Properties extends IWebPartShellProperties {
+ *   summary: string;
+ *   summaryHTML?: string;
+ * }
+ *
+ * export function SummaryContent(): React.ReactElement {
+ *   const { properties, setProperties } = useSPFxProperties<Properties>();
+ *   const { isEdit } = useSPFxDisplayMode();
+ *   return <EditableText mode={isEdit ? 'edit' : 'read'}
+ *     value={properties?.summaryHTML} fallbackText={properties?.summary ?? ''}
+ *     allowedBlocks={['p']} aria-label="Project summary"
+ *     onChange={data => setProperties({ summaryHTML: data.html, summary: data.text })} />;
  * }
  * ```
  */

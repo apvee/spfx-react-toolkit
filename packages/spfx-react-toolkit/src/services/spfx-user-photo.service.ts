@@ -1,3 +1,9 @@
+/**
+ * Retrieve selected Microsoft Graph profile-photo bytes through a caller-owned client.
+ *
+ * @packageDocumentation
+ * @docPage services/user-photo
+ */
 import type { MSGraphClientV3 } from '@microsoft/sp-http';
 
 import { buildUserPhotoEndpoint } from '../helpers/spfx-graph-path.helpers';
@@ -7,6 +13,8 @@ import { buildUserPhotoEndpoint } from '../helpers/spfx-graph-path.helpers';
  *
  * @example
  * ```ts
+ * import { SPFxUserPhotoServiceSize } from '@apvee/spfx-react-toolkit';
+ *
  * const size: SPFxUserPhotoServiceSize = '240x240';
  * ```
  */
@@ -26,20 +34,23 @@ export type SPFxUserPhotoServiceSize =
  *
  * @example
  * ```ts
+ * import { SPFxUserPhotoServiceOptions } from '@apvee/spfx-react-toolkit';
+ *
  * const options: SPFxUserPhotoServiceOptions = { email: 'user@contoso.com', size: '96x96' };
  * ```
  */
 export interface SPFxUserPhotoServiceOptions {
   /**
-   * Graph user/object ID; takes precedence over email when nonempty.
+   * Graph user/object ID; takes precedence over email when nonempty. Omitted/empty uses email, then /me.
    */
   readonly userId?: string;
   /**
-   * User email or UPN, used when userId is absent/empty.
+   * User email or UPN, used when userId is absent/empty. Omitted/empty targets /me when there is no userId.
    */
   readonly email?: string;
   /**
-   * Requested photo dimensions; defaults to 240x240.
+   * Requested photo dimensions; omitted or undefined uses 240x240.
+   * @defaultValue '240x240'
    */
   readonly size?: SPFxUserPhotoServiceSize;
 }
@@ -49,14 +60,19 @@ export interface SPFxUserPhotoServiceOptions {
  *
  * @example
  * ```ts
- * const photos: SPFxUserPhotoService = createSPFxUserPhotoService(graphClient);
- * const blob = await photos.getPhotoBlob();
+ * import type { MSGraphClientV3 } from '@microsoft/sp-http';
+ * import { SPFxUserPhotoService, createSPFxUserPhotoService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(graphClient: MSGraphClientV3) {
+ *   const photos: SPFxUserPhotoService = createSPFxUserPhotoService(graphClient);
+ *   const blob = await photos.getPhotoBlob();
+ * }
  * ```
  */
 export interface SPFxUserPhotoService {
   /**
    * Fetches a profile photo.
-   * @param options - Optional user identifier and photo dimensions.
+   * @param options - Omitted targets /me at 240x240; userId takes precedence over email. Identifiers are interpolated without encoding.
    * @returns Graph response as a Blob.
    * @throws Graph failures, including missing photos and insufficient permissions.
    */
@@ -68,10 +84,29 @@ export interface SPFxUserPhotoService {
  * @param graphClient - Initialized Graph client with the required permissions.
  * @returns Photo retrieval methods; construction performs no request.
  *
- * @example
+ * @example Basic usage
  * ```ts
- * const photos = createSPFxUserPhotoService(graphClient);
- * const blob = await photos.getPhotoBlob({ email: 'user@contoso.com' });
+ * import type { MSGraphClientV3 } from '@microsoft/sp-http';
+ * import { createSPFxUserPhotoService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(graphClient: MSGraphClientV3) {
+ *   const photos = createSPFxUserPhotoService(graphClient);
+ *   const blob = await photos.getPhotoBlob({ email: 'user@contoso.com' });
+ * }
+ * ```
+ * @useWhen You need profile-photo bytes through a caller-owned Graph client without React or object-URL lifetime management.
+ *
+ *
+ * @example Read own and selected-user photo blobs
+ * ```ts
+ * import type { MSGraphClientV3 } from '@microsoft/sp-http';
+ *
+ * import { createSPFxUserPhotoService } from '@apvee/spfx-react-toolkit';
+ * async function demonstrate(graphClient: MSGraphClientV3) {
+ *   const photos = createSPFxUserPhotoService(graphClient);
+ *   const ownPhoto = await photos.getPhotoBlob();
+ *   const selected = await photos.getPhotoBlob({ email: 'user@contoso.com', size: '96x96' });
+ * }
  * ```
  */
 export function createSPFxUserPhotoService(

@@ -1,3 +1,9 @@
+/**
+ * SharePoint REST calls use the host client; base URL state is caller-owned.
+ *
+ * @packageDocumentation
+ * @docPage hooks/http-clients/sharepoint-http-client
+ */
 // useSPFxSPHttpClient.ts
 // Hook to access SharePoint REST APIs with state management
 
@@ -8,13 +14,18 @@ import { SPHttpClient } from '@microsoft/sp-http';
 import { useAsyncInvoke } from './useAsyncInvoke.internal';
 
 /**
- * Return type for useSPFxSPHttpClient hook
+ * Native SharePoint REST client, caller-managed base URL and counted invocation state local to this hook.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const http: SPFxSPHttpClientInfo = useSPFxSPHttpClient();
- * console.log(http.baseUrl, http.isReady);
+ * import * as React from 'react';
+ * import { SPFxSPHttpClientInfo, useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const http: SPFxSPHttpClientInfo = useSPFxSPHttpClient();
+ *   console.log(http.baseUrl, http.isReady);
+ *   return <span>{http.isReady ? 'Ready' : 'Unavailable'}</span>;
+ * }
  * ```
  */
 export interface SPFxSPHttpClientInfo {
@@ -27,26 +38,47 @@ export interface SPFxSPHttpClientInfo {
    * Invoke SharePoint REST API call with automatic state management.
    * Tracks loading state and captures errors automatically.
    *
+   * @typeParam T - Result produced by the supplied operation.
    * @param fn - Function that receives SPHttpClient and returns a promise
    * @returns Promise with the result
    * @throws Error if client is not available
    *
    * @example
    * ```tsx
-   * // Inside a React component beneath a matching host-specific SPFx provider:
-   * const { invoke, baseUrl } = useSPFxSPHttpClient();
+   * import * as React from 'react';
+   * import { useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
+   * import { SPHttpClient } from '@microsoft/sp-http';
    *
-   * // Call this handler from an event or an effect; do not request during render.
-   * const run = async () => {
-   *   const web = await invoke(client =>
-   *     client.get(`${baseUrl}/_api/web`, SPHttpClient.configurations.v1)
-   *       .then(res => res.json())
-   *   );
-   * };
+   * function Example() {
+   *   const { invoke, baseUrl, isReady, isLoading } = useSPFxSPHttpClient();
+   *   const [result, setResult] = React.useState<unknown>();
+   *   const [failure, setFailure] = React.useState<string>();
+   *   const run = async () => {
+   *     setFailure(undefined);
+   *     try {
+   *       const web = await invoke(client =>
+   *         client.get(`${baseUrl}/_api/web`, SPHttpClient.configurations.v1)
+   *           .then(res => res.json())
+   *       );
+   *       setResult(web);
+   *     } catch (failure) {
+   *       setFailure(failure instanceof Error ? failure.message : String(failure));
+   *     }
+   *   };
+   *   return <>
+   *     <button disabled={!isReady || isLoading} onClick={() => void run()}>Load</button>
+   *     {failure && <span role="alert">{failure}</span>}
+   *     <pre>{JSON.stringify(result)}</pre>
+   *   </>;
+   * }
    * ```
    * @throws Callback/request failures are normalized to Error, published when current, and rethrown. HTTP response.ok is not checked automatically.
    */
-  readonly invoke: <T>(fn: (client: SPHttpClient) => Promise<T>) => Promise<T>;
+  readonly invoke: <T>(fn: /**
+   * Operation receiving the initialized native client. Non-success HTTP responses require explicit checking.
+   * @param client - Initialized client for this invocation.
+   * @returns Promise for the operation result; rejection flows through invoke.
+   */ (client: SPHttpClient) => Promise<T>) => Promise<T>;
   
   /**
    * True while any invoke call for the current client remains pending; direct client usage is not tracked.
@@ -79,6 +111,9 @@ export interface SPFxSPHttpClientInfo {
    *
    * @example
    * ```tsx
+   * import * as React from 'react';
+   * import { useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
+   *
    * import { SPHttpClient } from '@microsoft/sp-http';
    *
    * function LoadButton() {
@@ -104,11 +139,158 @@ export interface SPFxSPHttpClientInfo {
  * @returns Native client, invocation state and readiness helpers.
  * @throws Missing SPFx provider.
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
+ *
  * function ClientStatus() {
  *   const info = useSPFxSPHttpClient();
  *   return <span>{info.isReady ? 'Ready' : 'Unavailable'}</span>;
+ * }
+ * ```
+ *
+ * @useWhen an event or effect must call SharePoint REST using the host-authenticated client.
+ *
+ *
+ * @example List items CRUD with visible actions
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
+ * import { SPHttpClient } from '@microsoft/sp-http';
+ *
+ * interface ITask {
+ *   Id: number;
+ *   Title: string;
+ *   Status: string;
+ * }
+ *
+ * function TaskList() {
+ *   const { invoke, isLoading, error, baseUrl, isReady } = useSPFxSPHttpClient();
+ *   const [tasks, setTasks] = React.useState<ITask[]>([]);
+ *
+ *   // Load tasks
+ *   const loadTasks = () => {
+ *     invoke(client =>
+ *       client.get(
+ *         `${baseUrl}/_api/web/lists/getbytitle('Tasks')/items`,
+ *         SPHttpClient.configurations.v1
+ *       ).then(res => {
+ *         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+ *         return res.json();
+ *       })
+ *     ).then(result => setTasks(result.value)).catch(() => undefined);
+ *   };
+ *
+ *   // Create task
+ *   const createTask = (title: string) => {
+ *     invoke(client =>
+ *       client.post(
+ *         `${baseUrl}/_api/web/lists/getbytitle('Tasks')/items`,
+ *         SPHttpClient.configurations.v1,
+ *         { body: JSON.stringify({ Title: title, Status: 'New' }) }
+ *       ).then(res => {
+ *         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+ *         return res.json();
+ *       })
+ *     ).then(loadTasks).catch(() => undefined);
+ *   };
+ *
+ *   // Update task
+ *   const updateTask = (id: number, status: string) => {
+ *     invoke(client =>
+ *       client.post(
+ *         `${baseUrl}/_api/web/lists/getbytitle('Tasks')/items(${id})`,
+ *         SPHttpClient.configurations.v1,
+ *         {
+ *           headers: { 'IF-MATCH': '*', 'X-HTTP-Method': 'MERGE' },
+ *           body: JSON.stringify({ Status: status })
+ *         }
+ *       ).then(response => {
+ *         if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+ *         return response;
+ *       })
+ *     ).then(loadTasks).catch(() => undefined);
+ *   };
+ *
+ *   // Delete task
+ *   const deleteTask = (id: number) => {
+ *     invoke(client =>
+ *       client.post(
+ *         `${baseUrl}/_api/web/lists/getbytitle('Tasks')/items(${id})`,
+ *         SPHttpClient.configurations.v1,
+ *         { headers: { 'IF-MATCH': '*', 'X-HTTP-Method': 'DELETE' } }
+ *       ).then(response => {
+ *         if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+ *         return response;
+ *       })
+ *     ).then(loadTasks).catch(() => undefined);
+ *   };
+ *
+ *   React.useEffect(() => {
+ *     if (isReady) loadTasks();
+ *   }, [isReady]);
+ *
+ *   if (!isReady) return <p role="status">Initializing...</p>;
+ *   if (isLoading) return <p role="status">Loading tasks...</p>;
+ *   if (error) return <p role="alert">{error.message}</p>;
+ *
+ *   return (
+ *     <div><button disabled={isLoading} onClick={() => createTask('New task')}>Create task</button><ul>
+ *       {tasks.map(task => (
+ *         <li key={task.Id}>
+ *           {task.Title} - {task.Status}
+ *           <button onClick={() => updateTask(task.Id, 'Done')}>Complete</button>
+ *           <button onClick={() => deleteTask(task.Id)}>Delete</button>
+ *         </li>
+ *       ))}
+ *     </ul></div>
+ *   );
+ * }
+ * ```
+ *
+ *
+ * @example Cross-site request without stale base state
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
+ * import { SPHttpClient } from '@microsoft/sp-http';
+ *
+ * interface DocumentItem {
+ *   Id: number;
+ *   Title: string;
+ * }
+ *
+ * function CrossSiteData() {
+ *   const { invoke, setBaseUrl, isLoading, isReady, error } = useSPFxSPHttpClient();
+ *   const [otherSiteData, setOtherSiteData] = React.useState<DocumentItem[]>([]);
+ *
+ *   const loadFromOtherSite = async () => {
+ *     const targetUrl = 'https://tenant.sharepoint.com/sites/OtherSite';
+ *     setBaseUrl(targetUrl);
+ *     try {
+ *       const result = await invoke(client =>
+ *         client.get(
+ *           `${targetUrl}/_api/web/lists/getbytitle('Documents')/items`,
+ *           SPHttpClient.configurations.v1
+ *         ).then(res => {
+ *         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+ *         return res.json();
+ *       })
+ *       );
+ *       setOtherSiteData(result.value);
+ *     } catch {
+ *       // The hook exposes the invocation error for the UI below.
+ *     }
+ *   };
+ *
+ *   return <div>
+ *     <button onClick={loadFromOtherSite} disabled={!isReady || isLoading}>
+ *       Load from Other Site
+ *     </button>
+ *     {error && <p>{error.message}</p>}
+ *     {otherSiteData.map(item => <p key={item.Id}>{item.Title}</p>)}
+ *   </div>;
  * }
  * ```
  */

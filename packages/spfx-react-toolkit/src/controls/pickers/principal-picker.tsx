@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @docPage controls/pickers
+ */
 import { PickerMessageError } from './picker-message.internal';
 import * as React from 'react';
 import type { MSGraphClientV3 } from '@microsoft/sp-http';
@@ -16,7 +20,9 @@ interface PrincipalGraphAccess {
   dispose(): void;
 }
 
-/** Per-provider pending dependency; SharePoint-only operations never wait for Graph. */
+/**
+ * Per-provider pending dependency; SharePoint-only operations never wait for Graph.
+ */
 function createPrincipalGraphAccess(): PrincipalGraphAccess {
   let current: { readonly client: MSGraphClientV3 } | { readonly error: Error } | undefined;
   const waiters = new Set<{ readonly resolve: (client: MSGraphClientV3) => void; readonly reject: (error: Error) => void }>();
@@ -41,12 +47,21 @@ function createPrincipalGraphAccess(): PrincipalGraphAccess {
   };
 }
 
-/** Unified user/SharePoint/Entra group picker beneath an SPFx provider.
+/**
+ * Unified user/SharePoint/Entra group picker beneath an SPFx provider.
  * Defaults: TagPicker, multiple users, available IDs, no personal/current suggestions and no provisioning.
  * Delegated People.Read/User.Read and directory/membership permissions depend on enabled sources. Graph-dependent operations wait for native client initialization; terminal initialization errors are reported without blocking SharePoint-only operations.
- * @param props Principal categories/scopes, independent consumer/seed models and explicit ID resolution policy.
+ * @param props - Principal categories/scopes, independent consumer/seed models and explicit ID resolution policy.
  * @returns A native Fluent picker. ensureUser only runs on accepted user actions or explicit ID resolution.
- * @example <PrincipalPicker label="Destinatari" principalTypes={['user','microsoft365Group']} userIdentity={{mode:'both',ensureUser:false}} />
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { PrincipalPicker } from '@apvee/spfx-react-toolkit';
+ * <PrincipalPicker label="Destinatari" principalTypes={['user','microsoft365Group']} userIdentity={{mode:'both',ensureUser:false}} />
+ * ```
+ *
+ * @useWhen A user must select people or configured SharePoint/Entra group categories with verified scoped identities.
+ * @avoidWhen Use advisory access trims for membership decisions; a picker selection is not an authorization check.
  */
 export function PrincipalPicker(props: PrincipalPickerProps): React.ReactElement {
   const base = usePickerSourceContext(), graph = useSPFxMSGraphClient(), { serviceScope } = useSPFxServiceScope();

@@ -34,9 +34,9 @@ Mount this component below `WebPartShell` in a web part, or the provider matchin
 
 | Area | Capabilities and references |
 | --- | --- |
-| React controls | [WebPartShell](docs/api/controls/web-part-shell.md), [text and metadata](docs/api/INDEX.md#react-controls), [forms](docs/api/controls/form.md), [DataGrid](docs/api/controls/data-grid.md), cards, feedback and Stage |
-| SharePoint selections | [React pickers](docs/api/controls/pickers.md), [FileFolderPicker](docs/api/controls/file-folder-picker.md) and [native Property Pane factories](docs/api/INDEX.md#property-pane) |
-| Access and host runtime | [Access trims](docs/guides/react-controls.md), [four SPFx providers](docs/api/core/providers.md), [hooks](docs/api/INDEX.md#react-and-spfx-hooks), scoped permissions and clients |
+| React controls | [WebPartShell](docs/api/controls/web-part-shell.md), [text and metadata](docs/api/INDEX.md#references), [forms](docs/api/controls/form.md), [DataGrid](docs/api/controls/data-grid.md), cards, feedback and Stage |
+| SharePoint selections | [React pickers](docs/api/controls/pickers.md), [FileFolderPicker](docs/api/controls/file-folder-picker.md) and [native Property Pane factories](docs/api/INDEX.md#references) |
+| Access and host runtime | [Access trims](docs/guides/react-controls.md), [four SPFx providers](docs/api/core/providers.md), [hooks](docs/api/INDEX.md#references), scoped permissions and clients |
 | Storage and non-React composition | [Browser/Graph/tenant/site/layered configuration](docs/guides/storage.md), [helpers and services](docs/guides/helpers-and-services.md) |
 | Styling and localization | [Typed styles and useSx](docs/guides/styling.md), [native resources and strings overrides](docs/guides/localization.md) |
 
@@ -87,6 +87,6 @@ npm run build
 
 The library lives in `packages/spfx-react-toolkit`; the private SPFx sample lives in `apps/spfx-react-toolkit-test` and consumes the compiled library. Rebuild the library and restart serve after library source changes. See [development setup](docs/development/setup.md) and [scoped verification commands](docs/development/verification.md).
 
-Authenticated SharePoint behavior is verified separately using the [host checklists](docs/development/sharepoint-validation/INDEX.md). Local builds and tests do not establish tenant permissions or consent.
+Authenticated SharePoint behavior is verified separately using the [essential host checklist](docs/development/sharepoint-validation/INDEX.md). Local builds and tests do not establish tenant permissions or consent.
 
 MIT — see [LICENSE](LICENSE) and [third-party notices](packages/spfx-react-toolkit/THIRD-PARTY-NOTICES.md). [Report an issue](https://github.com/apvee/spfx-react-toolkit/issues).

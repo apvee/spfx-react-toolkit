@@ -1,0 +1,7 @@
+{
+  "name": "@fixture/contracts",
+  "exports": {
+    ".": { "types": "./lib/index.d.ts" },
+    "./other": { "types": "./lib/other.d.ts" }
+  }
+}

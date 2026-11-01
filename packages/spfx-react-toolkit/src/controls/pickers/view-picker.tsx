@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @docPage controls/pickers
+ */
 import * as React from 'react';
 import type { ViewPickerProps, ViewPickerOption } from './picker.types';
 import { createViewPickerSource } from './view-picker.source.internal';
@@ -6,12 +10,21 @@ import type { ViewPickerValue } from './picker-values.types';
 import { usePickerRuntime } from './usePickerRuntime.internal';
 import { PickerRenderer } from './picker-renderer.internal';
 
-/** Search public/personal SharePoint list views through an SPFx provider.
+/**
+ * Search public/personal SharePoint list views through an SPFx provider.
  * Defaults: Dropdown (historical combobox presentation), single selection, Title ascending; a list is required.
  * Opening the menu loads all matching views, following native paging. Typed search filters the complete memory-cached catalog locally, case-insensitively; no initial display limit.
- * @param props Exact toolkit list selector, filters, reference models and presentation.
+ * @param props - Exact toolkit list selector, filters, reference models and presentation.
  * @returns A native Fluent Field and view picker; selection values always remain scoped arrays.
- * @example <ViewPicker label="Vista" list={{kind:'id',id:'11111111-1111-4111-8111-111111111111'}} />
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { ViewPicker } from '@apvee/spfx-react-toolkit';
+ * <ViewPicker label="Vista" list={{kind:'id',id:'11111111-1111-4111-8111-111111111111'}} />
+ * ```
+ *
+ * @useWhen A user must select saved views of a specified SharePoint list.
+ * @avoidWhen Use ListItemPicker for actual item selection rather than view definitions.
  */
 export function ViewPicker(props: ViewPickerProps): React.ReactElement {
   const context = usePickerSourceContext(), source = createViewPickerSource(props, context);

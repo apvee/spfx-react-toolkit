@@ -1,3 +1,15 @@
+/**
+ * Fluent scrollbar treatment with native/forced-color fallbacks. Adds no overflow or dimensions; verify thumb contrast against the actual underlying surface.
+ *
+ * @packageDocumentation
+ * @docPage helpers/styles
+ * @useWhen An already-scrollable region needs compact theme-aware scrollbar styling with native forced-color fallback.
+ * @example
+ * ```ts
+ * import { scrollbar } from '@apvee/spfx-react-toolkit/styles';
+ * const descriptor = scrollbar.fluent;
+ * ```
+ */
 import { tokens } from '@fluentui/react-theme';
 import { SxBaseDescriptor } from './types';
 import { createDeclaration, createRecipe } from './descriptor.internal';
@@ -14,7 +26,16 @@ const thumbColor = tokens.colorNeutralStrokeAccessible;
  * colors; standard scrollbar-width/color support supplies the native fallback.
  * Adds no overflow, container dimensions, gutter, overscroll, or smooth behavior.
  * Verify thumb contrast against the actual underlying surface.
- * @example sx(overflow.auto, scrollbar.fluent)
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSx, scrollbar, overflow } from '@apvee/spfx-react-toolkit/styles';
+ *
+ * export function StyledSurface(): React.ReactElement {
+ *   const sx = useSx();
+ *   return <div className={sx(overflow.auto, scrollbar.fluent)}>Content</div>;
+ * }
+ * ```
  */
 export const fluent: SxBaseDescriptor = /*#__PURE__*/ createRecipe('scrollbar.fluent', [
   /*#__PURE__*/ createDeclaration('scrollbarWidth', 'thin', {

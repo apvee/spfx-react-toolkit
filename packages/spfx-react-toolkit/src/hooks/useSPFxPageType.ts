@@ -1,3 +1,9 @@
+/**
+ * Page categories are best-effort interpretations of host metadata.
+ *
+ * @packageDocumentation
+ * @docPage hooks/environment
+ */
 // useSPFxPageType.ts
 // Hook for SharePoint page type detection
 
@@ -10,6 +16,9 @@ import { useSPFxPageContext } from './useSPFxPageContext';
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { SPFxPageType } from '@apvee/spfx-react-toolkit';
+ *
  * const type: SPFxPageType = 'sitePage';
  * ```
  */
@@ -23,13 +32,18 @@ export type SPFxPageType =
   | 'unknown';          // Unknown page type
 
 /**
- * Return type for useSPFxPageType hook
+ * Best-effort category and derived flags from modern or legacy host page metadata.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const page: SPFxPageTypeInfo = useSPFxPageType();
- * console.log(page.pageType, page.isModernPage);
+ * import * as React from 'react';
+ * import { SPFxPageTypeInfo, useSPFxPageType } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const page: SPFxPageTypeInfo = useSPFxPageType();
+ *   console.log(page.pageType, page.isModernPage);
+ *   return <span>{page.pageType}</span>;
+ * }
  * ```
  */
 export interface SPFxPageTypeInfo {
@@ -60,11 +74,16 @@ export interface SPFxPageTypeInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxPageType } from '@apvee/spfx-react-toolkit';
+ *
  * function PageLabel() {
  *   const { pageType } = useSPFxPageType();
  *   return <span>{pageType}</span>;
  * }
  * ```
+ *
+ * @useWhen UI needs the page-layout classification available in legacy page metadata.
  */
 export function useSPFxPageType(): SPFxPageTypeInfo {
   const pageContext = useSPFxPageContext();

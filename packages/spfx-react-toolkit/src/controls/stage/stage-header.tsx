@@ -1,3 +1,9 @@
+/**
+ * Explicit Dialog, Drawer and Popover surfaces sharing one caller-owned content structure.
+ *
+ * @packageDocumentation
+ * @docPage controls/stage
+ */
 import * as React from 'react';
 import { inspectContentSlot, renderContentSlot } from '../content-slot.internal';
 import { Button, Card, CardHeader } from '@fluentui/react-components';
@@ -10,7 +16,8 @@ import { useStageStyles } from './stage.styles.internal';
 import type { StageHeaderProps } from './stage.types';
 import { nativeStageResource } from './localization/stage-native.internal';
 
-/** Render Stage's semantic heading, supporting text, decorative icon and caller action.
+/**
+ * Render Stage's semantic heading, supporting text, decorative icon and caller action.
  * Strings remain literal; caller JSX, refs and handlers are preserved. Requires an owning
  * Stage and Fluent theme/renderer. A single nonempty phrasing title is required.
  * Direct strings and props-object string children use one title line and two description
@@ -18,10 +25,13 @@ import { nativeStageResource } from './localization/stage-native.internal';
  * JSX and render callbacks own their presentation. Close remains separate from action.
  * Action and Close share one row and are vertically centered with the text block,
  * including narrow Dialog, Drawer and Popover headers.
- * @param props Native div attributes and named Header slots; Close defaults to visible.
+ * @param props - Native div attributes and named Header slots; Close defaults to visible.
  * @returns A native div wrapping a neutral Card and CardHeader, isolated from ancestor Cards.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { Stage } from '@apvee/spfx-react-toolkit/controls/stage';
+ *
  * <Stage presentation="dialog"><Stage.Header title="Profile" description="Edit details" closeLabel="Chiudi" /></Stage>
  * ```
  */

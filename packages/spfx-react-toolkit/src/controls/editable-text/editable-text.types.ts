@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @docPage controls/editable-text
+ */
 import type * as React from 'react';
 
 /**
@@ -5,10 +9,11 @@ import type * as React from 'react';
  * Use these values in `allowedBlocks` and `defaultBlock`; H5/H6 are unsupported.
  * Omitted `allowedBlocks` admits every value. Omitted `defaultBlock` selects `p`
  * when allowed, otherwise the lowest allowed heading level.
- *
  * @example
+ * ```ts
  * import type { EditableTextBlock } from '@apvee/spfx-react-toolkit';
  * const headings: readonly EditableTextBlock[] = ['h2', 'h3'];
+ * ```
  */
 export type EditableTextBlock = 'p' | 'h1' | 'h2' | 'h3' | 'h4';
 
@@ -16,15 +21,21 @@ export type EditableTextBlock = 'p' | 'h1' | 'h2' | 'h3' | 'h4';
  * Controlled value emitted after an effective EditableText user change.
  * The caller reflects `html` into the controlled value and owns persistence.
  * Configuration normalization does not emit a change. Deletion emits two empty strings.
- *
  * @example
+ * ```tsx
+ * import * as React from 'react';
  * import type { EditableTextChangeData } from '@apvee/spfx-react-toolkit';
  * const change: EditableTextChangeData = { html: '<p>News<br>Today</p>', text: 'News Today' };
+ * ```
  */
 export interface EditableTextChangeData {
-  /** Canonical escaped toolkit HTML, or `''` for an empty region; hard breaks use `br`. */
+  /**
+   * Canonical escaped toolkit HTML, or `''` for an empty region; hard breaks use `br`.
+   */
   readonly html: string;
-  /** Searchable plain text with whitespace and hard breaks collapsed to spaces and trimmed. */
+  /**
+   * Searchable plain text with whitespace and hard breaks collapsed to spaces and trimmed.
+   */
   readonly text: string;
 }
 
@@ -33,61 +44,116 @@ export interface EditableTextChangeData {
  * labels never change persisted color identifiers or theme-derived values.
  * Every member is required in a complete dictionary; use Partial for overrides.
  * @example
+ * ```ts
+ * import { EditableTextColorNames } from '@apvee/spfx-react-toolkit';
  * const customizeColors = (names: EditableTextColorNames): EditableTextColorNames =>
  *   ({ ...names, red: 'Danger', brand: 'Accent' });
+ * ```
  */
 export interface EditableTextColorNames {
-  /** Neutral tone 2 semantic color tooltip and accessible swatch name. */
+  /**
+   * Neutral tone 2 semantic color tooltip and accessible swatch name.
+   */
   readonly neutralDark: string;
-  /** Neutral tone 5 semantic color tooltip and accessible swatch name. */
+  /**
+   * Neutral tone 5 semantic color tooltip and accessible swatch name.
+   */
   readonly neutralLight: string;
-  /** Neutral tone 6 semantic color tooltip and accessible swatch name. */
+  /**
+   * Neutral tone 6 semantic color tooltip and accessible swatch name.
+   */
   readonly neutralLighter: string;
-  /** Brand tone 1 semantic color tooltip and accessible swatch name. */
+  /**
+   * Brand tone 1 semantic color tooltip and accessible swatch name.
+   */
   readonly brandDarkest: string;
-  /** Brand tone 2 semantic color tooltip and accessible swatch name. */
+  /**
+   * Brand tone 2 semantic color tooltip and accessible swatch name.
+   */
   readonly brandDarker: string;
-  /** Brand tone 3 semantic color tooltip and accessible swatch name. */
+  /**
+   * Brand tone 3 semantic color tooltip and accessible swatch name.
+   */
   readonly brandDark: string;
-  /** Brand tone 6 semantic color tooltip and accessible swatch name. */
+  /**
+   * Brand tone 6 semantic color tooltip and accessible swatch name.
+   */
   readonly brandLight: string;
-  /** Dark red semantic color tooltip and accessible swatch name. */
+  /**
+   * Dark red semantic color tooltip and accessible swatch name.
+   */
   readonly darkRed: string;
-  /** Amber semantic color tooltip and accessible swatch name. */
+  /**
+   * Amber semantic color tooltip and accessible swatch name.
+   */
   readonly amber: string;
-  /** Yellow green semantic color tooltip and accessible swatch name. */
+  /**
+   * Yellow green semantic color tooltip and accessible swatch name.
+   */
   readonly yellowGreen: string;
-  /** Cyan semantic color tooltip and accessible swatch name. */
+  /**
+   * Cyan semantic color tooltip and accessible swatch name.
+   */
   readonly cyan: string;
-  /** Navy blue semantic color tooltip and accessible swatch name. */
+  /**
+   * Navy blue semantic color tooltip and accessible swatch name.
+   */
   readonly navy: string;
-  /** Primary text color semantic color tooltip and accessible swatch name. */
+  /**
+   * Primary text color semantic color tooltip and accessible swatch name.
+   */
   readonly primary: string;
-  /** Secondary text color semantic color tooltip and accessible swatch name. */
+  /**
+   * Secondary text color semantic color tooltip and accessible swatch name.
+   */
   readonly subtle: string;
-  /** Brand color semantic color tooltip and accessible swatch name. */
+  /**
+   * Brand color semantic color tooltip and accessible swatch name.
+   */
   readonly brand: string;
-  /** Muted text color semantic color tooltip and accessible swatch name. */
+  /**
+   * Muted text color semantic color tooltip and accessible swatch name.
+   */
   readonly neutralMuted: string;
-  /** Alternate brand color semantic color tooltip and accessible swatch name. */
+  /**
+   * Alternate brand color semantic color tooltip and accessible swatch name.
+   */
   readonly brandAlt: string;
-  /** Red semantic color tooltip and accessible swatch name. */
+  /**
+   * Red semantic color tooltip and accessible swatch name.
+   */
   readonly red: string;
-  /** Orange semantic color tooltip and accessible swatch name. */
+  /**
+   * Orange semantic color tooltip and accessible swatch name.
+   */
   readonly orange: string;
-  /** Yellow semantic color tooltip and accessible swatch name. */
+  /**
+   * Yellow semantic color tooltip and accessible swatch name.
+   */
   readonly yellow: string;
-  /** Green semantic color tooltip and accessible swatch name. */
+  /**
+   * Green semantic color tooltip and accessible swatch name.
+   */
   readonly green: string;
-  /** Teal semantic color tooltip and accessible swatch name. */
+  /**
+   * Teal semantic color tooltip and accessible swatch name.
+   */
   readonly teal: string;
-  /** Blue semantic color tooltip and accessible swatch name. */
+  /**
+   * Blue semantic color tooltip and accessible swatch name.
+   */
   readonly blue: string;
-  /** Purple semantic color tooltip and accessible swatch name. */
+  /**
+   * Purple semantic color tooltip and accessible swatch name.
+   */
   readonly purple: string;
-  /** Pink semantic color tooltip and accessible swatch name. */
+  /**
+   * Pink semantic color tooltip and accessible swatch name.
+   */
   readonly pink: string;
-  /** Brown semantic color tooltip and accessible swatch name. */
+  /**
+   * Brown semantic color tooltip and accessible swatch name.
+   */
   readonly brown: string;
 }
 
@@ -97,73 +163,176 @@ export interface EditableTextColorNames {
  * configure direction or replace the caller's required textbox name. Formatter
  * callbacks run during rendering and must return strings without side effects.
  * @example
+ * ```ts
+ * import { EditableTextStrings } from '@apvee/spfx-react-toolkit';
  * const customize = (labels: EditableTextStrings): EditableTextStrings => ({
  *   ...labels, bold: 'Strong', headingLevel: level => `Heading ${level}`,
  *   colorNames: { ...labels.colorNames, red: 'Danger' },
  * });
+ * ```
  */
 export interface EditableTextStrings {
-  /** Error shown when the lazy editor chunk fails to load. */
+  /**
+   * Error shown when the lazy editor chunk fails to load.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly editorLoadError: string;
-  /** Button label that retries the failed editor chunk. */
+  /**
+   * Button label that retries the failed editor chunk.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly retry: string;
-  /** Warning shown when saved markup falls back to literal text. */
+  /**
+   * Warning shown when saved markup falls back to literal text.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly savedFormattingWarning: string;
-  /** Spinner label while the editor chunk loads. */
+  /**
+   * Spinner label while the editor chunk loads.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly loadingEditor: string;
-  /** Empty editor hint when the direct placeholder prop is omitted; never an accessible name. */
+  /**
+   * Empty editor hint when the direct placeholder prop is omitted; never an accessible name.
+   */
   readonly placeholder: string;
-  /** Error shown when the live draft exceeds the serialized size limit. */
+  /**
+   * Error shown when the live draft exceeds the serialized size limit.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly tooLargeError: string;
-  /** Accessible name and tooltip for overflow formatting commands. */
+  /**
+   * Accessible name and tooltip for overflow formatting commands.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly moreFormatting: string;
-  /** Heading selector and overflow submenu label. */
+  /**
+   * Heading selector and overflow submenu label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly heading: string;
-  /** Paragraph option label. */
+  /**
+   * Paragraph option label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly normal: string;
-  /** Bold command label and accessible name. */
+  /**
+   * Bold command label and accessible name.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly bold: string;
-  /** Italic command label and accessible name. */
+  /**
+   * Italic command label and accessible name.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly italic: string;
-  /** Underline command label and accessible name. */
+  /**
+   * Underline command label and accessible name.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly underline: string;
-  /** Color command label and accessible name. */
+  /**
+   * Color command label and accessible name.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly themeColor: string;
-  /** Clear-formatting command label. */
+  /**
+   * Clear-formatting command label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly clearFormatting: string;
-  /** Spacing command label. */
+  /**
+   * Spacing command label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly spacing: string;
-  /** Default line spacing option label. */
+  /**
+   * Default line spacing option label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly defaultLineSpacing: string;
-  /** Space-before toggle label. */
+  /**
+   * Space-before toggle label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly spaceBefore: string;
-  /** Space-after toggle label. */
+  /**
+   * Space-after toggle label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly spaceAfter: string;
-  /** Accessible name of the formatting popup. */
+  /**
+   * Accessible name of the formatting popup.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly formattingControls: string;
-  /** Accessible name of its toolbar. */
+  /**
+   * Accessible name of its toolbar.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly formatting: string;
-  /** Font size combobox and expand-button accessible name. */
+  /**
+   * Font size combobox and expand-button accessible name.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly fontSize: string;
-  /** Mixed font-size placeholder. */
+  /**
+   * Mixed font-size placeholder.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly mixed: string;
-  /** Accessible name of the color picker. */
+  /**
+   * Accessible name of the color picker.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly themeColorGroup: string;
-  /** Automatic color option and section label. */
+  /**
+   * Automatic color option and section label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly automatic: string;
-  /** Theme swatch section label. */
+  /**
+   * Theme swatch section label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly themeColors: string;
-  /** Standard swatch section label. */
+  /**
+   * Standard swatch section label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   */
   readonly paletteColors: string;
-  /** Accessible swatch labels; complete dictionaries require every semantic color. */
+  /**
+   * Accessible swatch labels; complete dictionaries require every semantic color.
+   */
   readonly colorNames: EditableTextColorNames;
-  /** Formats an offered heading level (1–4) into its selector label. */
+  /**
+   * Formats an offered heading level (1–4) into its selector label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   * @param level - Offered heading level from 1 through 4.
+   * @returns Localized plain text for this editor command, value or keyboard hint.
+   */
   readonly headingLevel: (level: number) => string;
-  /** Formats an offered numeric line-spacing multiplier into its menu label. */
+  /**
+   * Formats an offered numeric line-spacing multiplier into its menu label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   * @param value - Offered numeric line-spacing multiplier.
+   * @returns Localized plain text for this editor command, value or keyboard hint.
+   */
   readonly lineSpacingValue: (value: number) => string;
-  /** Combines a translated command label and literal keyboard shortcut for a tooltip. */
+  /**
+   * Combines a translated command label and literal keyboard shortcut for a tooltip.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   * @param label - Translated formatting command or group label.
+   * @param shortcut - Literal platform keyboard-shortcut text.
+   * @returns Localized plain text for this editor command, value or keyboard hint.
+   */
   readonly formattingShortcut: (label: string, shortcut: string) => string;
-  /** Describes a command or group with mixed selection formatting using its label. */
+  /**
+   * Describes a command or group with mixed selection formatting using its label.
+   * When omitted from a partial strings override, the host-selected native resource supplies this label or formatter.
+   * @param label - Translated formatting command or group label.
+   * @returns Localized plain text for this editor command, value or keyboard hint.
+   */
   readonly mixedFormatting: (label: string) => string;
 }
 
@@ -174,16 +343,31 @@ export interface EditableTextStrings {
  * Replacing this dictionary preserves the editor, draft, selection and undo
  * history and never invokes onChange. No provider or translation service is needed.
  * @example
+ * ```ts
+ * import { EditableTextStringsOverride } from '@apvee/spfx-react-toolkit';
  * const labels: EditableTextStringsOverride = {
  *   placeholder: 'Write a summary', colorNames: { brand: 'Accent' },
  *   formattingShortcut: (label, shortcut) => `${label}: ${shortcut}`,
  * };
+ * ```
  */
 export type EditableTextStringsOverride = Partial<Omit<EditableTextStrings, 'colorNames'>> & {
-  /** Overrides individual semantic swatch names; omitted colors retain native labels. */
+  /**
+   * Overrides individual semantic swatch names; omitted colors retain native labels.
+   */
   readonly colorNames?: Partial<EditableTextColorNames>;
 };
 
+/**
+ * Native div attributes forwarded by EditableText, excluding control-owned content,
+ * editable state, direction and accessible naming. Consumers configure owned options through
+ * EditableTextProps; the root ref and ordinary div events retain native React semantics.
+ * @example
+ * ```ts
+ * import { EditableTextProps } from '@apvee/spfx-react-toolkit';
+ * const text: EditableTextProps = { value: '<p>Summary</p>', className: 'summary' };
+ * ```
+ */
 type EditableTextNativeProps = Omit<React.HTMLAttributes<HTMLDivElement>,
   'children' | 'dangerouslySetInnerHTML' | 'contentEditable' | 'suppressContentEditableWarning' |
   'defaultValue' | 'role' | 'dir' | 'onChange' | 'placeholder' | 'aria-label' | 'aria-labelledby' | 'aria-describedby'>;
@@ -203,11 +387,10 @@ type EditableTextNativeProps = Omit<React.HTMLAttributes<HTMLDivElement>,
  * TypeError in either mode. This browser control owns p/h1–h4 nodes and must be
  * placed in a container that permits block elements, outside labels or triggers.
  * No editor/AST types, toolbar slots or persistence integration are exposed.
- *
  * @example
  * ```tsx
  * import * as React from 'react';
- * import { EditableText, type EditableTextProps } from '@apvee/spfx-react-toolkit';
+ * import { EditableText, EditableTextProps } from '@apvee/spfx-react-toolkit';
  * function Summary(): React.ReactElement {
  *   const [html, setHtml] = React.useState<string>();
  *   const props: EditableTextProps = {
@@ -221,7 +404,7 @@ type EditableTextNativeProps = Omit<React.HTMLAttributes<HTMLDivElement>,
  */
 export type EditableTextProps = EditableTextNativeProps & {
   /**
-   * Controlled toolkit HTML. Omission uses literal fallbackText; `''` is an
+   * Controlled toolkit HTML. When omitted, uses literal fallbackText; `''` is an
    * authoritative empty value. Unrecoverable HTML uses fallbackText and shows an
    * Edit warning. Safe imports and block conversion normalize only in memory,
    * without onChange. The caller must reflect user changes here and owns saving.
@@ -237,7 +420,7 @@ export type EditableTextProps = EditableTextNativeProps & {
    */
   fallbackText?: string;
   /**
-   * Semantic block membership in Read and every Edit input path. Omission admits
+   * Semantic block membership in Read and every Edit input path. When omitted, admits
    * h1/h2/h3/h4/p. Order and duplicates are ignored; an empty array or unsupported
    * runtime member throws TypeError. A membership change reconciles the live
    * draft and resets undo while retaining the editor, text, marks and valid
@@ -247,7 +430,7 @@ export type EditableTextProps = EditableTextNativeProps & {
   allowedBlocks?: readonly EditableTextBlock[];
   /**
    * Initial/fallback/empty block and conversion target for excluded blocks.
-   * Defaults to p if allowed, otherwise the lowest allowed heading. An explicit
+   * when omitted, defaults to p if allowed, otherwise the lowest allowed heading. An explicit
    * excluded value throws TypeError. Changing only this default preserves undo
    * and any nonempty permitted block, without publishing. During IME the latest
    * policy applies after composition; configuration alone never produces changes.
@@ -255,7 +438,7 @@ export type EditableTextProps = EditableTextNativeProps & {
   defaultBlock?: EditableTextBlock;
   /**
    * Literal empty-editor hint, never serialized or used as its accessible name.
-   * Omission uses the generic localized hint; `''` suppresses the hint. Has no
+   * When omitted, uses the generic localized hint; `''` suppresses the hint. Has no
    * effect in Read. Changes preserve draft, selection and history.
    */
   placeholder?: string;
@@ -269,24 +452,28 @@ export type EditableTextProps = EditableTextNativeProps & {
   strings?: EditableTextStringsOverride;
   /**
    * Accessible name on the actual Edit textbox, or on the Read root. Edit
-   * requires this or aria-labelledby to contain non-whitespace text. Omission
+   * requires this or aria-labelledby to contain non-whitespace text. When omitted,
    * supplies no implicit name; placeholder and dictionaries do not replace it.
    */
   'aria-label'?: string;
   /**
    * Space-separated IDs naming the Edit textbox, or the Read root. At least
    * this or aria-label must be nonempty in Edit. The caller owns the referenced
-   * labeling elements; omission creates no association.
+   * labeling elements; when omitted, creates no association.
    */
   'aria-labelledby'?: string;
   /**
    * Optional space-separated description IDs for the actual Edit textbox or
-   * Read root; the caller owns these elements. Omission creates no association.
+   * Read root; the caller owns these elements. When omitted, creates no association.
    */
   'aria-describedby'?: string;
 } & (
   {
-    /** Rendering mode, default read. Only edit loads the private editor engine. */
+    /**
+     * Rendering mode, default read. Only edit loads the private editor engine.
+     * When omitted, defaults to read.
+     * @defaultValue 'read'
+     */
     mode?: 'read';
     /**
      * Optional domain callback in Read; Read originates no changes. An Edit→Read
@@ -299,10 +486,13 @@ export type EditableTextProps = EditableTextNativeProps & {
      * document prepares typing without emitting. Mount, external value and
      * policy normalization never emit. Oversized live drafts remain visible
      * with an error and suppress publication instead of emitting partial data.
+     * @param data - Committed plain text and serialized safe HTML for the edited single block.
      */
     onChange?: (data: EditableTextChangeData) => void;
   } | ({
-    /** Explicit edit, or a dynamic read/edit mode with callback and name supplied. */
+    /**
+     * Explicit edit, or a dynamic read/edit mode with callback and name supplied.
+     */
     mode: 'read' | 'edit';
     /**
      * Required controlled domain callback in Edit. Reflect data.html into value;
@@ -311,10 +501,14 @@ export type EditableTextProps = EditableTextNativeProps & {
      */
     onChange: (data: EditableTextChangeData) => void;
   } & ({
-    /** Required nonempty Edit textbox name when aria-labelledby is omitted; see the common name contract. */
+    /**
+     * Required nonempty Edit textbox name when aria-labelledby is omitted; see the common name contract.
+     */
     'aria-label': string;
   } | {
-    /** Required nonempty Edit textbox label IDs when aria-label is omitted; see the common labeling contract. */
+    /**
+     * Required nonempty Edit textbox label IDs when aria-label is omitted; see the common labeling contract.
+     */
     'aria-labelledby': string;
   }))
 );

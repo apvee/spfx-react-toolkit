@@ -1,0 +1,6 @@
+{
+  "name": "@fixture/artifacts",
+  "description": "Source-owned fixture documentation.",
+  "version": "1.0.0",
+  "exports": { ".": { "types": "./lib/index.d.ts" } }
+}

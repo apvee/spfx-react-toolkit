@@ -1,3 +1,9 @@
+/**
+ * Advisory content branches selected by direct SharePoint site-group membership.
+ *
+ * @packageDocumentation
+ * @docPage controls/sharepoint-group-trim
+ */
 import * as React from 'react';
 import { useSPFxContext } from '../../hooks/useSPFxContext';
 import { useSPFxPageContext } from '../../hooks/useSPFxPageContext';
@@ -21,6 +27,8 @@ const family = {};
  * @throws Missing matching SPFx provider.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { SharePointGroupTrim } from '@apvee/spfx-react-toolkit';
  * <SharePointGroupTrim groups={[{ name: 'Project Readers' }]}>
  *   <section>Project</section>
  *   <SharePointGroupTrim.Loading>Checking</SharePointGroupTrim.Loading>
@@ -56,23 +64,44 @@ function GroupTrim(props: SharePointGroupTrimProps): React.ReactElement {
 }
 /**
  * Structural pending-membership branch, unique and direct beneath SharePointGroupTrim.
- * @param props - Optional children only; omission renders empty.
+ * @param props - Optional children only; when omitted, renders empty.
  * @returns Active children without a wrapper.
- * @example <SharePointGroupTrim.Loading>Checking</SharePointGroupTrim.Loading>
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { SharePointGroupTrim } from '@apvee/spfx-react-toolkit';
+ * <SharePointGroupTrim groups={[{ name: 'Project Readers' }]}>
+ *   <SharePointGroupTrim.Loading>Checking</SharePointGroupTrim.Loading>
+ * </SharePointGroupTrim>
+ * ```
  */
 const Loading: React.ComponentType<SharePointGroupTrimBranchProps> = createAccessTrimBranch(family, 'loading');
 /**
  * Structural denial branch after all selected references/reads succeed.
  * @param props - Optional children only; unique and direct beneath SharePointGroupTrim.
- * @returns Active children without a wrapper; omission renders empty.
- * @example <SharePointGroupTrim.Fallback>No membership</SharePointGroupTrim.Fallback>
+ * @returns Active children without a wrapper; when omitted, renders empty.
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { SharePointGroupTrim } from '@apvee/spfx-react-toolkit';
+ * <SharePointGroupTrim groups={[{ name: 'Project Readers' }]}>
+ *   <SharePointGroupTrim.Fallback>No membership</SharePointGroupTrim.Fallback>
+ * </SharePointGroupTrim>
+ * ```
  */
 const Fallback: React.ComponentType<SharePointGroupTrimBranchProps> = createAccessTrimBranch(family, 'fallback');
 /**
  * Structural malformed-input/composition or failed-read branch.
  * @param props - Optional children only; unique and direct beneath SharePointGroupTrim.
- * @returns Active children without a wrapper; omission renders empty.
- * @example <SharePointGroupTrim.ErrorFallback>Unavailable</SharePointGroupTrim.ErrorFallback>
+ * @returns Active children without a wrapper; when omitted, renders empty.
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { SharePointGroupTrim } from '@apvee/spfx-react-toolkit';
+ * <SharePointGroupTrim groups={[{ name: 'Project Readers' }]}>
+ *   <SharePointGroupTrim.ErrorFallback>Unavailable</SharePointGroupTrim.ErrorFallback>
+ * </SharePointGroupTrim>
+ * ```
  */
 const ErrorFallback: React.ComponentType<SharePointGroupTrimBranchProps> = createAccessTrimBranch(family, 'error');
 /**
@@ -88,29 +117,58 @@ const ErrorFallback: React.ComponentType<SharePointGroupTrimBranchProps> = creat
  * @throws Missing matching SPFx provider.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { SharePointGroupTrim } from '@apvee/spfx-react-toolkit';
  * <SharePointGroupTrim groups={[{ name: 'Readers' }]}>
  *   Team content
  *   <SharePointGroupTrim.Fallback>No membership</SharePointGroupTrim.Fallback>
  * </SharePointGroupTrim>
  * ```
+ *
+ * @useWhen Direct membership in specific SharePoint site groups should select advisory content branches.
+ * @avoidWhen Use EntraGroupTrim for directory groups; SharePoint groups do not expand contained Entra principals.
  */
 export const SharePointGroupTrim = Object.assign(GroupTrim, {
-  /** Pending membership branch, unique and direct beneath SharePointGroupTrim.
-   * @param props - Optional children only; omission is empty.
+  /**
+   * Pending membership branch, unique and direct beneath SharePointGroupTrim.
+   * Accepts Optional children only; when omitted, is empty.
    * @returns Active children without a wrapper.
-   * @example <SharePointGroupTrim.Loading>Checking</SharePointGroupTrim.Loading>
+   * @example
+   * ```tsx
+   * import * as React from 'react';
+   * import { SharePointGroupTrim } from '@apvee/spfx-react-toolkit';
+   * <SharePointGroupTrim groups={[{ name: 'Project Readers' }]}>
+   *   <SharePointGroupTrim.Loading>Checking</SharePointGroupTrim.Loading>
+   * </SharePointGroupTrim>
+   * ```
    */
   Loading,
-  /** Successful direct-membership denial branch; unique direct child of this family.
-   * @param props - Optional children only; omission is empty.
+  /**
+   * Successful direct-membership denial branch; unique direct child of this family.
+   * Accepts Optional children only; when omitted, is empty.
    * @returns Active children without a wrapper.
-   * @example <SharePointGroupTrim.Fallback>No membership</SharePointGroupTrim.Fallback>
+   * @example
+   * ```tsx
+   * import * as React from 'react';
+   * import { SharePointGroupTrim } from '@apvee/spfx-react-toolkit';
+   * <SharePointGroupTrim groups={[{ name: 'Project Readers' }]}>
+   *   <SharePointGroupTrim.Fallback>No membership</SharePointGroupTrim.Fallback>
+   * </SharePointGroupTrim>
+   * ```
    */
   Fallback,
-  /** Invalid input/composition or failed-read branch; unique direct child of this family.
-   * @param props - Optional children only; omission is empty.
+  /**
+   * Invalid input/composition or failed-read branch; unique direct child of this family.
+   * Accepts Optional children only; when omitted, is empty.
    * @returns Active children without a wrapper.
-   * @example <SharePointGroupTrim.ErrorFallback>Unavailable</SharePointGroupTrim.ErrorFallback>
+   * @example
+   * ```tsx
+   * import * as React from 'react';
+   * import { SharePointGroupTrim } from '@apvee/spfx-react-toolkit';
+   * <SharePointGroupTrim groups={[{ name: 'Project Readers' }]}>
+   *   <SharePointGroupTrim.ErrorFallback>Unavailable</SharePointGroupTrim.ErrorFallback>
+   * </SharePointGroupTrim>
+   * ```
    */
   ErrorFallback,
 });

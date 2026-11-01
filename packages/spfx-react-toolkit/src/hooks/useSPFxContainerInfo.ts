@@ -1,3 +1,9 @@
+/**
+ * Container observation requires a WebPart host element and document ResizeObserver.
+ *
+ * @packageDocumentation
+ * @docPage hooks/theming
+ */
 // useSPFxContainerInfo.ts
 // Hook to access container element and size
 
@@ -7,13 +13,18 @@ import { useResizeObserver } from '../utils/resize-observer.internal';
 import type { ContainerSize } from '../core/types';
 
 /**
- * Return type for useSPFxContainerInfo hook
+ * Nearest provider container element and asynchronously observed content-box dimensions.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const container: SPFxContainerInfo = useSPFxContainerInfo();
- * console.log(container.size?.width);
+ * import * as React from 'react';
+ * import { SPFxContainerInfo, useSPFxContainerInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const container: SPFxContainerInfo = useSPFxContainerInfo();
+ *   console.log(container.size?.width);
+ *   return <span>{container.size?.width ?? 'Unmeasured'}</span>;
+ * }
  * ```
  */
 export interface SPFxContainerInfo {
@@ -36,11 +47,16 @@ export interface SPFxContainerInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxContainerInfo } from '@apvee/spfx-react-toolkit';
+ *
  * function ContainerLabel() {
  *   const { size } = useSPFxContainerInfo();
  *   return <span>{size ? `${size.width} × ${size.height}` : 'Size unavailable'}</span>;
  * }
  * ```
+ *
+ * @useWhen a WebPart needs its host element and observed CSS-pixel dimensions.
  */
 export function useSPFxContainerInfo(): SPFxContainerInfo {
   const element = useSPFxRuntimeSelector(state => state.containerEl);

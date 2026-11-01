@@ -1,3 +1,9 @@
+/**
+ * Resolve current/target web URLs and create SPFx-authenticated PnP clients with opt-in cache and headers.
+ *
+ * @packageDocumentation
+ * @docPage services/pnp-context
+ */
 import { spfi, SPFx } from '@pnp/sp';
 import type { ISPFXContext, SPFI } from '@pnp/sp';
 import { Caching, InjectHeaders } from '@pnp/queryable';
@@ -11,6 +17,8 @@ import '@pnp/sp/batching';
  *
  * @example
  * ```ts
+ * import { SPFxPnPContextServiceConfig } from '@apvee/spfx-react-toolkit';
+ *
  * const config: SPFxPnPContextServiceConfig = { cache: { enabled: true, storage: 'session', timeout: 60000 } };
  * ```
  */
@@ -24,22 +32,24 @@ export interface SPFxPnPContextServiceConfig {
      */
     enabled: boolean;
     /**
-     * Cache store; defaults to session.
+     * Cache store; omitted or undefined uses session.
+     * @defaultValue 'session'
      */
     storage?: 'session' | 'local';
     /**
      * Expiry duration in milliseconds; omitted or zero uses the legacy 300000 fallback.
+     * @defaultValue 300000
      */
     timeout?: number;
     /**
-     * Builds a cache key from a request URL; defaults to a hashed URL key.
+     * Builds a cache key from a request URL; omitted or undefined uses a hashed URL key, which can collide. The returned string goes to PnP unchanged and function identity is not represented in getConfigKey.
      * @param url - Request URL.
      * @returns Cache key.
      */
     keyFactory?: (url: string) => string;
   };
   /**
-   * Reserved caller metadata; the factory does not apply these settings.
+   * Reserved caller metadata; omitted or supplied has no batching effect. The factory does not apply these settings.
    */
   batch?: {
     /**
@@ -47,7 +57,7 @@ export interface SPFxPnPContextServiceConfig {
      */
     enabled: boolean;
     /**
-     * Reserved request-count marker; no limit is enforced.
+     * Reserved request-count marker; omitted means no marker. No limit is enforced even when supplied.
      */
     maxRequests?: number;
   };
@@ -62,6 +72,8 @@ export interface SPFxPnPContextServiceConfig {
  *
  * @example
  * ```ts
+ * import { SPFxPnPPageContextLike } from '@apvee/spfx-react-toolkit';
+ *
  * const page: SPFxPnPPageContextLike = { web: { absoluteUrl: 'https://contoso.sharepoint.com/sites/team' } };
  * ```
  */
@@ -82,22 +94,27 @@ export interface SPFxPnPPageContextLike {
  *
  * @example
  * ```ts
- * const service: SPFxPnPContextService = createSPFxPnPContextService(context, context.pageContext);
- * const sp = service.createSPFI('/sites/projects');
+ * import type { WebPartContext } from '@microsoft/sp-webpart-base';
+ * import { SPFxPnPContextService, createSPFxPnPContextService } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(context: WebPartContext) {
+ *   const service: SPFxPnPContextService = createSPFxPnPContextService(context, context.pageContext);
+ *   const sp = service.createSPFI('/sites/projects');
+ * }
  * ```
  */
 export interface SPFxPnPContextService {
   /**
-   * Resolves an omitted/empty URL to the current web unchanged. Supplied URLs lose one trailing slash; server-relative URLs use the current origin.
-   * @param siteUrl - Optional absolute or server-relative URL.
+   * Resolves an omitted/empty URL to the current web unchanged. Supplied URLs lose one trailing slash; server-relative URLs use the current origin. No whitespace trimming, HTTP validation or site discovery occurs.
+   * @param siteUrl - Omitted or empty uses the current web; otherwise an absolute or server-relative URL.
    * @returns Resolved URL.
    * @throws Invalid current URL when resolving a server-relative target.
    */
   resolveSiteUrl: (siteUrl?: string) => string;
   /**
    * Creates a client with SPFx request behaviors and optional caching/headers.
-   * @param siteUrl - Optional web URL; defaults to the current web.
-   * @param config - Optional client behaviors.
+   * @param siteUrl - Omitted or empty uses the current web unchanged; otherwise the target web URL.
+   * @param config - Omitted adds no cache/header behaviors; batching markers are ignored.
    * @returns A new configured SPFI.
    * @throws When SPFx context is unavailable or URL resolution fails.
    */
@@ -124,15 +141,38 @@ function createDefaultCacheKey(url: string): string {
 }
 
 /**
- * Creates a non-React PnP client factory; construction performs no request.
+ * Creates a non-React PnP client factory; construction performs no request. The caller supplies authentication and owns returned clients; no React provider is required, even though the missing-context error mentions one for hook callers. Registers only webs/batching; import features used by caller operations explicitly.
  * @param spfxContext - SPFx authentication context; createSPFI throws if unavailable.
  * @param pageContext - Current web URL for resolution.
  * @returns URL resolution and client creation methods.
  *
- * @example
+ * @example Basic usage
  * ```ts
- * const service = createSPFxPnPContextService(context, context.pageContext);
- * const sp = service.createSPFI();
+ * import type { WebPartContext } from '@microsoft/sp-webpart-base';
+ * import { createSPFxPnPContextService } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(context: WebPartContext) {
+ *   const service = createSPFxPnPContextService(context, context.pageContext);
+ *   const sp = service.createSPFI();
+ * }
+ * ```
+ * @useWhen You need configured PnP clients outside React using an explicit SPFx context and current-web URL.
+ *
+ *
+ * @example Cross-site cache and header configuration
+ * ```ts
+ * import { type ISPFXContext } from '@pnp/sp';
+ * import { type PageContext } from '@microsoft/sp-page-context';
+ *
+ * import { createSPFxPnPContextService } from '@apvee/spfx-react-toolkit';
+ * async function demonstrate(context: ISPFXContext & { pageContext: PageContext }) {
+ *   const factory = createSPFxPnPContextService(context, context.pageContext);
+ *   const sp = factory.createSPFI('/sites/projects', {
+ *     cache: { enabled: true, storage: 'session', timeout: 60000 },
+ *     headers: { 'X-Application': 'reports' },
+ *   });
+ *   const identity = factory.getConfigKey({ cache: { enabled: false } });
+ * }
  * ```
  */
 export function createSPFxPnPContextService(

@@ -1,3 +1,9 @@
+/**
+ * Native SPFx file/folder fields with hosted selection and caller-owned JSON persistence.
+ *
+ * @packageDocumentation
+ * @docPage property-pane/file-folder-picker
+ */
 import * as React from 'react';
 import { PropertyPaneFieldType } from '@microsoft/sp-property-pane';
 import type { IPropertyPaneCustomFieldProps, IPropertyPaneField } from '@microsoft/sp-property-pane';
@@ -15,16 +21,35 @@ import type { FileFolderPickerPropertyKey, PropertyPaneFileFolderPickerProps } f
  * pending confirmation. Without a native change callback the field displays saved values with mutation disabled.
  * Initial unlabeled selections use the existing input-only AutoSkeleton boundary; known labels remain visible.
  * Latest-factory disposal closes owned picker resources and releases its metadata lease; stale disposal is ignored.
- * @typeParam TProperties Web-part property bag containing an exact file/folder reference array.
- * @param targetProperty Safe direct array property key; nested paths and prototype names are rejected at runtime too.
- * @param props Initialized instance, stable field key, required JSON array, optional revision and React control options.
+ * @typeParam TProperties - Web-part property bag containing an exact file/folder reference array.
+ * @param targetProperty - Required safe direct array property key; nested paths and prototype names are rejected at runtime too.
+ * @param props - Required initialized instance, stable field key, required JSON array, optional revision and React control options.
  * @returns Native custom field using the owning document's renderer, native pane token theme and SPFxWebPartProvider.
  * @throws Invalid targetProperty or blank field key.
- * @example
- * PropertyPaneFileFolderPicker('documents', {
- *   instance: this, key: 'documents-picker', value: this.properties.documents ?? [],
- *   label: 'Documents', multiselect: true, scope: { kind: 'siteCollection' },
- * });
+ * @useWhen A native SPFx pane must persist existing drive-item references through the hosted file/folder picker while preserving native Apply ownership.
+ * @avoidWhen Rendering ordinary React content; use FileFolderPicker and its onChange contract instead.
+ * @example Native file and folder configuration
+ * ```ts
+ * import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+ * import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
+ * import { PropertyPaneFileFolderPicker } from '@apvee/spfx-react-toolkit/property-pane/file-folder-picker';
+ * import type { FileFolderPickerValue } from '@apvee/spfx-react-toolkit/controls/file-folder-picker';
+ * interface Properties { documents?: FileFolderPickerValue[]; }
+ * export default class DocumentsWebPart extends BaseClientSideWebPart<Properties> {
+ *   public render(): void {
+ *     this.domElement.textContent = `${this.properties.documents?.length ?? 0} references`;
+ *   }
+ *   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
+ *     return { pages: [{ groups: [{ groupName: 'Documents', groupFields: [
+ *       PropertyPaneFileFolderPicker('documents', {
+ *         instance: this, key: 'documents-picker', value: this.properties.documents ?? [],
+ *         label: 'Documents', preset: 'focused', multiselect: true,
+ *         scope: { kind: 'siteCollection' }, itemTypes: 'files', extensions: ['.pdf'],
+ *       }),
+ *     ] }] }] };
+ *   }
+ * }
+ * ```
  */
 export function PropertyPaneFileFolderPicker<TProperties extends object>(
   targetProperty: FileFolderPickerPropertyKey<TProperties>, props: PropertyPaneFileFolderPickerProps<TProperties>,

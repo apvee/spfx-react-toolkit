@@ -1,3 +1,9 @@
+/**
+ * Native token-provider acquisition does not request tokens automatically.
+ *
+ * @packageDocumentation
+ * @docPage hooks/http-clients/aad-token-provider
+ */
 // useSPFxAadTokenProvider.ts
 // Hook to access the SPFx Azure AD token provider with state management
 
@@ -7,13 +13,18 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSPFxServiceScope } from './useSPFxServiceScope';
 
 /**
- * Return type for useSPFxAadTokenProvider hook
+ * Native SPFx token provider with asynchronous initialization state; acquisition failures remain distinct from token-request failures.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const info: SPFxAadTokenProviderInfo = useSPFxAadTokenProvider();
- * console.log(info.isReady, info.initError);
+ * import * as React from 'react';
+ * import { SPFxAadTokenProviderInfo, useSPFxAadTokenProvider } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const info: SPFxAadTokenProviderInfo = useSPFxAadTokenProvider();
+ *   console.log(info.isReady, info.initError);
+ *   return <span>{info.isReady ? 'Ready' : 'Unavailable'}</span>;
+ * }
  * ```
  */
 export interface SPFxAadTokenProviderInfo {
@@ -48,11 +59,60 @@ export interface SPFxAadTokenProviderInfo {
  * @returns Provider, initialization state and readiness.
  * @throws When called outside an SPFx provider.
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxAadTokenProvider } from '@apvee/spfx-react-toolkit';
+ *
  * function TokenStatus() {
  *   const { isReady, initError } = useSPFxAadTokenProvider();
  *   return <span>{initError?.message ?? (isReady ? 'Ready' : 'Initializing')}</span>;
+ * }
+ * ```
+ *
+ * @useWhen an integration needs the native token provider rather than an HTTP wrapper.
+ *
+ *
+ * @example Inspect delegated scopes from a manual token
+ * ```tsx
+ * import * as React from 'react';
+ * import {
+ *   decodeSPFxJwtPayload,
+ *   useSPFxAadTokenProvider,
+ * } from '@apvee/spfx-react-toolkit';
+ *
+ * function TokenProbe() {
+ *   const { tokenProvider, isReady, isInitializing, initError } = useSPFxAadTokenProvider();
+ *   const [scopeText, setScopeText] = React.useState<string>('');
+ *   const [failure, setFailure] = React.useState<string>();
+ *
+ *   const inspectGraphToken = async () => {
+ *     if (!tokenProvider) {
+ *       return;
+ *     }
+ *
+ *     setFailure(undefined);
+ *     try {
+ *       const token = await tokenProvider.getToken('https://graph.microsoft.com');
+ *       const payload = decodeSPFxJwtPayload(token);
+ *       setScopeText(payload?.scp || '');
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     }
+ *   };
+ *
+ *   if (isInitializing) return <p role="status">Preparing token provider...</p>;
+ *   if (initError) return <p role="alert">{initError.message}</p>;
+ *
+ *   return (
+ *     <>
+ *       <button onClick={inspectGraphToken} disabled={!isReady}>
+ *         Inspect Graph scopes
+ *       </button>
+ *       {failure && <p role="alert">{failure}</p>}
+ *       <pre>{scopeText}</pre>
+ *     </>
+ *   );
  * }
  * ```
  */

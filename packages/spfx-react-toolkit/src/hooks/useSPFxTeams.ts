@@ -1,3 +1,9 @@
+/**
+ * Application SDK context and theme subscriptions belong to the provider runtime.
+ *
+ * @packageDocumentation
+ * @docPage hooks/environment
+ */
 // useSPFxTeams.ts
 // Hook for Microsoft Teams context integration
 
@@ -12,19 +18,27 @@ import { subscribeSPFxTeamsRuntime } from '../core/teams-runtime.internal';
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { TeamsTheme } from '@apvee/spfx-react-toolkit';
+ *
  * const theme: TeamsTheme = 'highContrast';
  * ```
  */
 export type TeamsTheme = 'default' | 'dark' | 'highContrast';
 
 /**
- * Return type for useSPFxTeams hook
+ * Asynchronously acquired application SDK context and normalized theme; supported is not a Teams-host discriminator.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const host: SPFxTeamsInfo = useSPFxTeams();
- * console.log(host.supported, host.theme);
+ * import * as React from 'react';
+ * import { SPFxTeamsInfo, useSPFxTeams } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const host: SPFxTeamsInfo = useSPFxTeams();
+ *   console.log(host.supported, host.theme);
+ *   return <span>{host.theme ?? 'Unavailable'}</span>;
+ * }
  * ```
  */
 export interface SPFxTeamsInfo {
@@ -50,11 +64,16 @@ export interface SPFxTeamsInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxTeams } from '@apvee/spfx-react-toolkit';
+ *
  * function ApplicationTheme() {
  *   const { supported, theme } = useSPFxTeams();
  *   return <span>{supported ? theme ?? 'Theme unavailable' : 'SDK context unavailable'}</span>;
  * }
  * ```
+ *
+ * @useWhen a component needs the acquired application SDK context and its published runtime theme.
  */
 export function useSPFxTeams(): SPFxTeamsInfo {
   const { spfxContext } = useSPFxContext();

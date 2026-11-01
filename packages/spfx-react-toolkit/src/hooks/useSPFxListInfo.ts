@@ -1,3 +1,9 @@
+/**
+ * Current-list metadata exists only when PageContext includes an identified list.
+ *
+ * @packageDocumentation
+ * @docPage hooks/user-site
+ */
 // useSPFxListInfo.ts
 // Hook to access list information (when in list context)
 
@@ -6,13 +12,18 @@ import { getSPFxListInfo } from '../helpers/spfx-page-context.helpers';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
- * Return type for useSPFxListInfo hook
+ * Current PageContext list identity and best-effort template metadata; no list query is issued.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const list: SPFxListInfo | undefined = useSPFxListInfo();
- * console.log(list?.title);
+ * import * as React from 'react';
+ * import { SPFxListInfo, useSPFxListInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const list: SPFxListInfo | undefined = useSPFxListInfo();
+ *   console.log(list?.title);
+ *   return <span>{list?.title ?? 'No list'}</span>;
+ * }
  * ```
  */
 export interface SPFxListInfo {
@@ -29,11 +40,11 @@ export interface SPFxListInfo {
    */
   readonly serverRelativeUrl: string;
   
-  /** List template type (e.g., 100 for Generic List, 101 for Document Library) */
+  /** List template type (100 for Generic List, 101 for Document Library); undefined when host metadata omits it. */
   readonly baseTemplate?: number;
   
   /**
-   * True only when baseTemplate is 101; missing or different templates produce false.
+   * Always supplied by the hook: true only when baseTemplate is 101; undefined is permitted by the public shape but the hook returns false for missing/different templates.
    */
   readonly isDocumentLibrary?: boolean;
 }
@@ -46,11 +57,16 @@ export interface SPFxListInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxListInfo } from '@apvee/spfx-react-toolkit';
+ *
  * function ListLabel() {
  *   const list = useSPFxListInfo();
  *   return <span>{list?.title ?? 'No list context'}</span>;
  * }
  * ```
+ *
+ * @useWhen a list-hosted view needs the current list identity and template metadata.
  */
 export function useSPFxListInfo(): SPFxListInfo | undefined {
   const pageContext = useSPFxPageContext();
