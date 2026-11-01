@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { MessageBar, MessageBarBody, Spinner, Tab, TabList, useId } from '@fluentui/react-components';
+import { Text } from '@fluentui/react-components';
 import styles from './SpFxReactToolkitTest.module.scss';
+import { ExampleExplorer } from './ExampleExplorer';
+import { executableExamples, executableGroups } from './generated/jsdoc-examples/catalogue';
 import { useSPFxTeams } from '@apvee/spfx-react-toolkit';
 import {
   demoCoverage,
   demoRegistry,
   type DemoCoverageKind,
-  type DemoRegistryEntry,
 } from './demoRegistry';
-import { DemoCard, DemoIcon, InfoGrid, StatusBadge, useDemoStyles } from './shared';
+import { DemoCard, InfoGrid, StatusBadge, useDemoStyles } from './shared';
 
 const coverageKindLabels: Record<DemoCoverageKind, string> = {
   host: 'Host',
@@ -27,12 +28,13 @@ const CoverageOverview: React.FC = () => {
 
   return (
     <DemoCard
-      title="Package Coverage"
+      title="Disponibilità degli esempi"
       iconName="CompletedSolid"
-      description="Every public provider and hook covered by the package sample surface is tracked here and verified by scripts/verify-example-coverage.cjs."
+      description="Gli scenari generati e i pannelli transitori sono conteggi distinti; la disponibilità non attesta l’esecuzione o il superamento di prove."
       contentPlacement="configuration"
       status={<div className={demoStyles.actions}>
-        <StatusBadge label={`${symbols.size} symbols covered`} available={true} />
+        <Text>{executableGroups.reduce((count, group) => count + group.features.length, 0)} funzionalità generate · {executableExamples.length} scenari generati · {demoRegistry.length} pannelli transitori</Text>
+        <StatusBadge label={`${symbols.size} simboli nel registro transitorio`} available={true} />
         <StatusBadge label={`${countByKind('host')} host providers`} available={true} />
         <StatusBadge label={`${countByKind('snapshot')} snapshots`} available={true} />
         <StatusBadge label={`${countByKind('read')} read demos`} available={true} />
@@ -50,52 +52,13 @@ const CoverageOverview: React.FC = () => {
   );
 };
 
-const DynamicDemoPanel: React.FC<{ entry: DemoRegistryEntry }> = ({ entry }) => {
-  const demoStyles = useDemoStyles();
-  const Component = entry.component;
-
-  return (
-    <div className={demoStyles.panel}>
-      <MessageBar intent="info"><MessageBarBody>{entry.description}</MessageBarBody></MessageBar>
-      <React.Suspense
-        fallback={(
-          <Spinner
-            size="medium"
-            label={`Loading ${entry.title} demos...`}
-          />
-        )}
-      >
-        <Component />
-      </React.Suspense>
-    </div>
-  );
-};
-
 const SpFxReactToolkitTest: React.FC = () => {
   const { supported: hasTeamsContext } = useSPFxTeams();
   const demoStyles = useDemoStyles();
-  const navigationId = useId('demo-navigation');
-  const [selectedKey, setSelectedKey] = React.useState(demoRegistry[0].key);
-  const activeEntry = demoRegistry.find(entry => entry.key === selectedKey) ?? demoRegistry[0];
-
   return (
     <section className={`${styles.spFxReactToolkitTest} ${demoStyles.root} ${hasTeamsContext ? styles.teams : ''}`}>
+      <ExampleExplorer groups={executableGroups} legacyEntries={demoRegistry} />
       <CoverageOverview />
-      <TabList aria-label="SPFx React Toolkit Demo Tabs" className={demoStyles.tabList}
-        selectTabOnFocus selectedValue={selectedKey} onTabSelect={(_event, data) => {
-          if (typeof data.value === 'string' && demoRegistry.some(entry => entry.key === data.value)) setSelectedKey(data.value);
-        }}>
-        {demoRegistry.map(entry => (
-          <Tab key={entry.key} value={entry.key} id={`${navigationId}-tab-${entry.key}`}
-            aria-controls={`${navigationId}-panel-${entry.key}`} icon={<DemoIcon name={entry.iconName} />}>
-            {entry.title}
-          </Tab>
-        ))}
-      </TabList>
-      <div role="tabpanel" id={`${navigationId}-panel-${activeEntry.key}`} aria-labelledby={`${navigationId}-tab-${activeEntry.key}`} tabIndex={0}>
-        {/* Preserve Pivot's active-only mount cycle; host updates retain the selected component. */}
-        <DynamicDemoPanel key={activeEntry.key} entry={activeEntry} />
-      </div>
     </section>
   );
 };

@@ -21,6 +21,7 @@ const lazyPanel = (
   loader: () => Promise<{ default: React.ComponentType }>
 ): React.LazyExoticComponent<React.ComponentType> => React.lazy(loader);
 
+/** Temporary panels only: these entries are not generated features or executed test results. */
 export const demoRegistry: readonly DemoRegistryEntry[] = [
   {
     key: 'file-folder-picker', title: 'File and folder picker', iconName: 'Folder',

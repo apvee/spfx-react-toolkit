@@ -3,6 +3,7 @@ const path = require('path');
 const { collectPublicSurfaces } = require('./public-surface.helpers.cjs');
 const { assertStyleExampleCoverage } = require('./style-example.helpers.cjs');
 const { assertFormExampleCoverage } = require('./form-example.helpers.cjs');
+const { collectExecutableCoverage } = require('./executable-example-coverage.helpers.cjs');
 
 const root = path.resolve(__dirname, '..');
 const [styleSurface, controlSurface, formSurface] = collectPublicSurfaces([
@@ -122,7 +123,11 @@ const providerSymbols = getExportedSymbols(
   /export\s+function\s+(SPFx[A-Za-z0-9]+Provider)/g,
   'SPFx'
 );
-const registrySymbols = getRegistrySymbols();
+const legacySymbols = getRegistrySymbols();
+const generated = collectExecutableCoverage(read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')));
+const registrySymbols = new Set([...legacySymbols, ...generated.symbols]);
+console.log(`Generated scenario availability: ${generated.featureCount} features, ${generated.scenarioCount} scenarios, ${generated.symbols.size} unique symbols/aliases, ${generated.associationCount} scenario/API associations (not execution results).`);
+console.log(`Temporary legacy coverage: ${legacySymbols.size} unique symbols; existing panels remain separate from generated counts.`);
 
 assertCovered('Hooks', hookSymbols, registrySymbols);
 assertCovered('Providers', providerSymbols, registrySymbols);

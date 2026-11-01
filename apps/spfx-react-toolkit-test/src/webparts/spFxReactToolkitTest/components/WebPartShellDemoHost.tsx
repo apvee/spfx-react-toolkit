@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Button } from '@fluentui/react-components';
+import { executableGroups } from './generated/jsdoc-examples/catalogue';
+import { ExampleExplorerStateProvider } from './shared/ExampleExplorerState';
 import { WebPartShell, useSPFxProperties, type IWebPartShellProperties, type WebPartShellProps } from '@apvee/spfx-react-toolkit';
 
 export interface ShellDemoOptions {
@@ -28,12 +30,14 @@ function ShellDemoAction(): JSX.Element {
 export function WebPartShellDemoHost(props: WebPartShellProps<IWebPartShellProperties>): JSX.Element {
   const [options, setOptions] = React.useState(defaults);
   const update = React.useCallback((patch: Partial<ShellDemoOptions>): void => setOptions(previous => ({ ...previous, ...patch })), []);
-  return <ShellDemoContext.Provider value={{ options, update }}>
-    <WebPartShell {...props} surface={props.surface ?? options.surface} padding={props.padding ?? options.padding}
-      appearance={props.appearance ?? options.appearance} size={props.size ?? options.size} titlePosition={props.titlePosition ?? options.titlePosition}
-      strings={props.strings ?? (options.customNaming ? { titleEditorLabel: 'Project section heading', titlePlaceholder: 'Add a project heading' } : undefined)}
-      titleEditorStrings={props.titleEditorStrings ?? (options.customEditor ? { bold: 'Strong', formattingControls: 'Project heading controls', colorNames: { red: 'Alert red' } } : undefined)}
-      dir={props.dir ?? (options.dir === 'host' ? undefined : options.dir)} action={options.actionSlot ? { 'data-shell-demo': 'action-slot',
-        children: (Component, slotProps) => <Component {...slotProps}><ShellDemoAction /></Component> } : <ShellDemoAction />} />
-  </ShellDemoContext.Provider>;
+  return <ExampleExplorerStateProvider key={props.instance.instanceId} initialGroups={executableGroups}>
+    <ShellDemoContext.Provider value={{ options, update }}>
+      <WebPartShell {...props} surface={props.surface ?? options.surface} padding={props.padding ?? options.padding}
+        appearance={props.appearance ?? options.appearance} size={props.size ?? options.size} titlePosition={props.titlePosition ?? options.titlePosition}
+        strings={props.strings ?? (options.customNaming ? { titleEditorLabel: 'Project section heading', titlePlaceholder: 'Add a project heading' } : undefined)}
+        titleEditorStrings={props.titleEditorStrings ?? (options.customEditor ? { bold: 'Strong', formattingControls: 'Project heading controls', colorNames: { red: 'Alert red' } } : undefined)}
+        dir={props.dir ?? (options.dir === 'host' ? undefined : options.dir)} action={options.actionSlot ? { 'data-shell-demo': 'action-slot',
+          children: (Component, slotProps) => <Component {...slotProps}><ShellDemoAction /></Component> } : <ShellDemoAction />} />
+    </ShellDemoContext.Provider>
+  </ExampleExplorerStateProvider>;
 }

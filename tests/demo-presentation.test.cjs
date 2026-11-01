@@ -33,6 +33,9 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
   const React = require('react'), ReactDOM = require('react-dom');
   const { act, Simulate } = require('react-dom/test-utils');
   const fluent = require('@fluentui/react-components');
+  const { RendererProvider } = require('@griffel/react');
+  // JSDOM 15 has no container-query layout; rules remain inspectable in memory.
+  const renderer = require('@griffel/core').createDOMRenderer(null);
   const host = document.createElement('div'); document.body.appendChild(host);
   const mounts = new Map(), unmounts = new Map(), loads = new Map();
   let registry;
@@ -66,7 +69,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     return module.exports;
   }
   function render(children, theme = fluent.webLightTheme) {
-    act(() => { ReactDOM.render(React.createElement(fluent.FluentProvider, { theme }, children), host); });
+    act(() => { ReactDOM.render(React.createElement(RendererProvider, { renderer }, React.createElement(fluent.FluentProvider, { theme }, children)), host); });
   }
   try {
     const shared = load(path.join(base, 'shared/index.ts'));
@@ -149,7 +152,9 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     assert.equal(paths.length, registry.length);
     registry.forEach((entry, i) => { entry.componentPath = paths[i]; });
     const Demo = load(path.join(base, 'SpFxReactToolkitTest.tsx')).default;
-    render(React.createElement(Demo));
+    const { ExampleExplorerStateProvider } = load(path.join(base, 'shared/ExampleExplorerState.tsx'));
+    const root = () => React.createElement(ExampleExplorerStateProvider, { initialGroups: [] }, React.createElement(Demo));
+    render(root());
     await act(async () => { await Promise.resolve(); });
     const coverageToggle = Array.from(host.querySelectorAll('button')).find(node => node.textContent === 'Detailed package coverage');
     assert.ok(coverageToggle, 'verbose coverage has a disclosure');
@@ -157,26 +162,23 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     act(() => coverageToggle.click());
     assert.match(host.textContent, /ContentCard/);
     act(() => coverageToggle.click());
-    const tabs = Array.from(host.querySelectorAll('[role="tab"]'));
-    assert.equal(tabs.length, registry.length);
+    const features = Array.from(host.querySelectorAll('[data-example-feature]'));
+    assert.equal(features.length, registry.length, 'one legacy feature entry per panel, not per covered symbol');
+    assert.equal(host.querySelectorAll('optgroup').length, 1, 'only the temporary group is present while catalogue is empty');
     assert.equal(loads.size, 1, 'inactive lazy factories do not load');
     for (let i = 0; i < registry.length; i++) {
-      act(() => tabs[i].click()); await act(async () => { await Promise.resolve(); });
-      const panels = host.querySelectorAll('[role="tabpanel"]'); assert.equal(panels.length, 1);
-      assert.equal(panels[0].getAttribute('aria-labelledby'), tabs[i].id);
-      assert.equal(tabs[i].getAttribute('aria-controls'), panels[0].id);
+      act(() => features[i].click()); await act(async () => { await Promise.resolve(); });
+      const panels = host.querySelectorAll('[role="region"]'); assert.equal(panels.length, 1);
+      assert.equal(features[i].getAttribute('aria-current'), 'true');
       assert.equal(panels[0].querySelector('input').getAttribute('data-test-panel'), registry[i].key);
     }
-    const input = host.querySelector('[role="tabpanel"] input'); input.value = 'Retained';
-    render(React.createElement(Demo), fluent.webDarkTheme);
-    assert.equal(host.querySelector('[role="tabpanel"] input'), input); assert.equal(input.value, 'Retained');
+    const input = host.querySelector('[role="region"] input'); input.value = 'Retained';
+    render(root(), fluent.webDarkTheme);
+    assert.equal(host.querySelector('[role="region"] input'), input); assert.equal(input.value, 'Retained');
     assert.equal(mounts.get(registry[0].key), 1); assert.equal(unmounts.get(registry[0].key), 1);
-    act(() => tabs[0].click()); await act(async () => { await Promise.resolve(); });
-    assert.equal(mounts.get(registry[0].key), 2, 'revisiting remounts as the original Pivot did');
-    // Fluent automatic activation selects a focused tab, including keyboard focus.
-    act(() => { Simulate.focus(host.querySelectorAll('[role=tab]')[1]); });
-    await act(async () => { await Promise.resolve(); });
-    assert.equal(host.querySelectorAll('[role=tab]')[1].getAttribute('aria-selected'), 'true');
+    act(() => features[0].click()); await act(async () => { await Promise.resolve(); });
+    assert.equal(mounts.get(registry[0].key), 2, 'revisiting remounts the real panel');
+    assert.equal(host.querySelectorAll('[data-test-panel]').length, 1, 'inactive panels are not mounted');
   } finally {
     act(() => { ReactDOM.unmountComponentAtNode(host); }); host.remove(); dom.window.close();
     for (const [name, descriptor] of previousGlobals) {
