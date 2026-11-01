@@ -29,13 +29,17 @@ test('groups have lazy interactive coverage without duplicate hook/provider inve
 test('group guides explain labels, trigger restrictions and separate host execution', () => {
   const settings = read('docs/api/controls/settings-group.md');
   const accordion = read('docs/api/controls/accordion-group.md');
-  assert.match(settings, /not implicit labels/);
+  const guide = read('docs/guides/react-controls.md');
+  assert.match(guide, /not implicit labels/);
   assert.match(settings, /wrap/);
-  assert.match(accordion, /Never place interactive JSX/);
+  assert.match(guide, /Never place interactive JSX/);
   assert.match(accordion, /unmountOnClose/);
-  assert.match(accordion, /remain mounted/);
-  assert.match(accordion, /native inert/);
-  assert.match(read('docs/development/sharepoint-validation/checklists/groups.md'), /^# SettingsGroup and AccordionGroup/m);
+  assert.match(guide, /remain mounted/);
+  assert.match(guide, /native inert/);
+  const hostChecklist = read('docs/development/sharepoint-validation/INDEX.md');
+  assert.match(hostChecklist, /SettingsGroup.*AccordionGroup/);
+  assert.match(hostChecklist, /closed retained panels leave the Tab order/);
+  assert.match(hostChecklist, /NOT EXECUTED/);
 });
 
 test('group slot demo exposes inner refs and callback actions', () => {

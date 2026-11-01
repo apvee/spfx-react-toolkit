@@ -4,6 +4,8 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      TOOLKIT_DOCS_MODE: check
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -11,6 +13,19 @@ jobs:
           node-version: '22.20.0'
           cache: npm
       - run: npm ci --no-audit --no-fund
+      - name: Capture exact setup-node binary
+        run: echo "DOCS_NODE_BIN=$(node -p 'process.execPath')" >> "$GITHUB_ENV"
+      - run: npm run verify:docs-reproducibility
+      - name: Require isolated-network documentation check
+        shell: bash
+        run: |
+          command -v unshare
+          command -v sudo
+          test -x "$DOCS_NODE_BIN"
+          sudo -n unshare --net -- sh -eu -c '
+            "$1" tests/fixtures/documentation/reproducibility/network-namespace-probe.cjs
+            exec "$1" scripts/documentation.cjs --check
+          ' docs-offline "$DOCS_NODE_BIN"
       - run: npm run build
       - run: npm run verify
       - run: npm run package:solution

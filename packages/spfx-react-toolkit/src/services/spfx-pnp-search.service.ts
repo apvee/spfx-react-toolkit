@@ -1,3 +1,9 @@
+/**
+ * Run explicit SharePoint searches and suggestions with native server refinement tokens.
+ *
+ * @packageDocumentation
+ * @docPage services/pnp-search
+ */
 import type { SPFI } from '@pnp/sp';
 import { buildRefinementFilters } from './spfx-pnp-search-refiners.internal';
 
@@ -18,6 +24,8 @@ import type {
  *
  * @example
  * ```ts
+ * import { SPFxPnPSearchQueryBuilder } from '@apvee/spfx-react-toolkit';
+ *
  * const build: SPFxPnPSearchQueryBuilder = builder => builder.text('training').selectProperties('Title', 'Path');
  * ```
  */
@@ -28,12 +36,15 @@ export type SPFxPnPSearchQueryBuilder = (builder: ISearchBuilder) => ISearchBuil
  *
  * @example
  * ```ts
+ * import { SPFxPnPSearchOptions } from '@apvee/spfx-react-toolkit';
+ *
  * const options: SPFxPnPSearchOptions = { pageSize: 25, selectProperties: ['Title', 'Path'], refiners: 'FileType' };
  * ```
  */
 export interface SPFxPnPSearchOptions {
   /**
    * Default row limit; omitted uses 50. Request pageSize takes precedence.
+   * @defaultValue 50
    */
   pageSize?: number;
   /**
@@ -47,8 +58,9 @@ export interface SPFxPnPSearchOptions {
   /**
    * How multiple selected values within each managed property are combined.
    * `and` requires every selected value; `or` accepts any selected value.
-   * Different managed properties always combine with AND.
-   * @default 'and'
+   * Different managed properties always combine with AND; empty value arrays add no restriction and property names are never remapped.
+   * Omitted or undefined uses and.
+   * @defaultValue 'and'
    */
   refinerOperator?: 'and' | 'or';
 }
@@ -58,12 +70,14 @@ export interface SPFxPnPSearchOptions {
  *
  * @example
  * ```ts
+ * import { SPFxPnPSearchRequestOptions } from '@apvee/spfx-react-toolkit';
+ *
  * const options: SPFxPnPSearchRequestOptions = { pageSize: 25, startRow: 25 };
  * ```
  */
 export interface SPFxPnPSearchRequestOptions {
   /**
-   * Overrides the service row limit, including any builder rowLimit; defaults to service pageSize or 50.
+   * Overrides the service row limit, including any builder rowLimit; omitted or undefined uses service pageSize or 50.
    */
   pageSize?: number;
   /**
@@ -72,16 +86,17 @@ export interface SPFxPnPSearchRequestOptions {
   startRow?: number;
   /**
    * Managed property names mapped to refinement tokens from response entries.
-   * Use each entry's `token`, not its display `value`. Tokens already enclosed
+   * Omitted or empty adds no request filters. Use each entry's `token`, not its display `value`. Tokens already enclosed
    * in FQL double quotes, native scalars and FQL expressions such as `range(...)`
-   * are preserved. Unquoted hex tokens are quoted once. Legacy unquoted text
+   * are preserved without equals wrapping. Unquoted hex tokens are quoted once. Numeric/date scalars remain unchanged, and SharePoint validates native FQL expressions. Legacy unquoted text
    * values retain escaped string-equality filtering.
    */
   refinementFilters?: Map<string, string[]>;
   /**
    * Overrides the service's within-property selection operator for this request.
-   * Different managed properties always combine with AND.
-   * @default The service default, or 'and' when unspecified
+   * Different managed properties always combine with AND; empty value arrays add no restriction and property names are never remapped.
+   * Omitted or undefined uses the service default, or and.
+   * @defaultValue The service default, or 'and' when unspecified
    */
   refinerOperator?: 'and' | 'or';
 }
@@ -91,10 +106,14 @@ export interface SPFxPnPSearchRequestOptions {
  *
  * @example
  * ```ts
- * const result: SPFxPnPSearchResult<{ Title: string }> = response.results[0];
- * console.log(result.data.Title);
+ * import { SPFxPnPSearchResponse, SPFxPnPSearchResult } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(response: SPFxPnPSearchResponse<{ Title: string }>) {
+ *   const result: SPFxPnPSearchResult<{ Title: string }> | undefined = response.results[0];
+ *   console.log(result?.data.Title);
+ * }
  * ```
- * @template T - Expected application data shape; no runtime validation is performed.
+ * @template T - Expected application data shape; defaults to `Record<string, string>` and performs no runtime validation.
  */
 export interface SPFxPnPSearchResult<T = Record<string, string>> {
   /**
@@ -110,7 +129,7 @@ export interface SPFxPnPSearchResult<T = Record<string, string>> {
    */
   raw: unknown;
   /**
-   * Integer parsed from a truthy Rank value; undefined for missing/zero rank.
+   * parseInt result from a truthy Rank value; undefined for missing, numeric zero or other falsy ranks. Unvalidated malformed values can produce NaN; string zero remains parseable.
    */
   rank?: number;
 }
@@ -120,8 +139,12 @@ export interface SPFxPnPSearchResult<T = Record<string, string>> {
  *
  * @example
  * ```ts
- * const facet: SPFxPnPSearchRefiner | undefined = response.refiners.find(item => item.name === 'FileType');
- * console.log(facet?.entries[0]?.token);
+ * import { SPFxPnPSearchRefiner, SPFxPnPSearchResponse } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(response: SPFxPnPSearchResponse<{ Title: string }>) {
+ *   const facet: SPFxPnPSearchRefiner | undefined = response.refiners.find(item => item.name === 'FileType');
+ *   console.log(facet?.entries[0]?.token);
+ * }
  * ```
  */
 export interface SPFxPnPSearchRefiner {
@@ -132,7 +155,9 @@ export interface SPFxPnPSearchRefiner {
   /**
    * Facet entries; use value for display and token unchanged for filtering.
    */
-  entries: Array<{
+  entries: Array<
+    /** One server facet entry: display label, parsed count and unchanged filter token. */
+    {
     /**
      * Display label; defaults to an empty string when absent.
      */
@@ -151,10 +176,14 @@ export interface SPFxPnPSearchRefiner {
  *
  * @example
  * ```ts
- * const response: SPFxPnPSearchResponse<{ Title: string }> = await service.search('training');
- * console.log(response.totalResults, response.results.length);
+ * import { SPFxPnPSearchResponse, SPFxPnPSearchService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(service: SPFxPnPSearchService<{ Title: string }>) {
+ *   const response: SPFxPnPSearchResponse<{ Title: string }> = await service.search('training');
+ *   console.log(response.totalResults, response.results.length);
+ * }
  * ```
- * @template T - Expected application data shape; no runtime validation is performed.
+ * @template T - Expected application data shape; defaults to `Record<string, string>` and performs no runtime validation.
  */
 export interface SPFxPnPSearchResponse<T = Record<string, string>> {
   /**
@@ -176,16 +205,21 @@ export interface SPFxPnPSearchResponse<T = Record<string, string>> {
  *
  * @example
  * ```ts
- * const service: SPFxPnPSearchService = createSPFxPnPSearchService(sp);
- * const response = await service.search('training');
+ * import type { SPFI } from '@pnp/sp';
+ * import { SPFxPnPSearchService, createSPFxPnPSearchService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(sp: SPFI) {
+ *   const service: SPFxPnPSearchService = createSPFxPnPSearchService(sp);
+ *   const response = await service.search('training');
+ * }
  * ```
- * @template T - Expected application data shape; no runtime validation is performed.
+ * @template T - Expected application data shape; defaults to `Record<string, string>` and performs no runtime validation.
  */
 export interface SPFxPnPSearchService<T = Record<string, string>> {
   /**
    * Runs SharePoint Search with service defaults and per-request paging/refinements.
    * @param query - Text query or builder transform.
-   * @param options - Optional paging and token selections.
+   * @param options - Omitted uses service paging defaults and adds no request refinement filters.
    * @returns Search page, total count and facets.
    * @throws Builder or PnP request failures.
    */
@@ -269,25 +303,68 @@ function parseRefiners(refinerResults: IRefiner[]): SPFxPnPSearchRefiner[] {
 }
 
 /**
- * Creates a SharePoint search service with native refiner token support.
+ * Creates a SharePoint search service with native refiner token support. Construction makes no request; caller owns authentication. Registers search/suggestion only, with no cache, automatic retry or React state.
  *
  * @param sp - Initialized PnP client; this module owns search registration.
- * @param defaultOptions - Search defaults, including the within-facet AND/OR operator.
+ * @param defaultOptions - Omitted uses 50 rows, no extra selected properties/refiners and within-facet AND selection.
  * @returns Search and suggestion methods. Requests may override the default operator.
- * @example
+ * @example Basic usage
  * ```ts
- * const service = createSPFxPnPSearchService(sp, {
- *   refiners: 'FileType,Size', refinerOperator: 'or'
- * });
- * const response = await service.search('*');
- * const type = response.refiners.find(refiner => refiner.name === 'FileType');
- * if (type?.entries.length) {
- *   await service.search('*', {
- *     refinementFilters: new Map([['FileType', type.entries.map(entry => entry.token)]])
+ * import type { SPFI } from '@pnp/sp';
+ * import { createSPFxPnPSearchService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(sp: SPFI) {
+ *   const service = createSPFxPnPSearchService(sp, {
+ *     refiners: 'FileType,Size', refinerOperator: 'or'
  *   });
+ *   const response = await service.search('*');
+ *   const type = response.refiners.find(refiner => refiner.name === 'FileType');
+ *   if (type?.entries.length) {
+ *     await service.search('*', {
+ *       refinementFilters: new Map([['FileType', type.entries.map(entry => entry.token)]])
+ *     });
+ *   }
  * }
  * ```
- * @template T - Expected application data shape; no runtime validation is performed.
+ * @template T - Expected application data shape; defaults to `Record<string, string>` and performs no runtime validation.
+ * @useWhen You need explicit SharePoint search, suggestions or server refinement tokens outside React.
+ *
+ *
+ * @example Apply a returned PDF refiner token
+ * ```ts
+ * import type { SPFI } from '@pnp/sp';
+ *
+ * import { createSPFxPnPSearchService } from '@apvee/spfx-react-toolkit';
+ * async function demonstrate(sp: SPFI) {
+ *   const service = createSPFxPnPSearchService(sp, {
+ *     refiners: 'FileType,DisplayAuthor,Size,Write', refinerOperator: 'or'
+ *   });
+ *   const response = await service.search('*');
+ *   const fileType = response.refiners.find(refiner => refiner.name === 'FileType');
+ *   const pdf = fileType?.entries.find(entry => entry.value === 'pdf');
+ *   if (pdf?.token) {
+ *     await service.search('*', {
+ *       refinementFilters: new Map([['FileType', [pdf.token]]])
+ *     });
+ *   }
+ * }
+ * ```
+ *
+ *
+ * @example Search a typed page and request suggestions
+ * ```ts
+ * import type { SPFI } from '@pnp/sp';
+ *
+ * import { createSPFxPnPSearchService } from '@apvee/spfx-react-toolkit';
+ * async function demonstrate(sp: SPFI) {
+ *   const search = createSPFxPnPSearchService<{ Title: string; Path: string }>(sp, {
+ *     pageSize: 25, selectProperties: ['Title', 'Path'],
+ *   });
+ *   const page = await search.search(builder => builder.text('training'), { startRow: 25 });
+ *   const suggestions = await search.suggest('train');
+ *   console.log(page.results[0]?.data.Title, suggestions);
+ * }
+ * ```
  */
 export function createSPFxPnPSearchService<T = Record<string, string>>(
   sp: SPFI,

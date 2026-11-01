@@ -1,3 +1,9 @@
+/**
+ * Convert supplied host themes and choose shared Fluent Teams themes.
+ *
+ * @packageDocumentation
+ * @docPage helpers/theme
+ */
 import type { IReadonlyTheme } from '@microsoft/sp-component-base';
 import type { Theme } from '@fluentui/react-theme';
 import {
@@ -15,13 +21,37 @@ import { createV9Theme } from '@fluentui/react-migration-v8-v9';
  * and neutralDark. Missing/empty state colors retain the shim's fallback.
  * Does not mutate the SPFx theme. Undefined retains the shared webLightTheme;
  * custom palettes remain responsible for usable color/contrast differences.
+ * Requires the installed Fluent theme/migration peers. Supply the result to a
+ * FluentProvider to establish CSS variables; this function mounts no provider.
  *
  * @param spfxTheme - SPFx theme, or undefined for the default web light theme
  * @returns Fluent UI 9 theme
- * @example
- * const theme = createFluent9ThemeFromSPFxTheme(spfxTheme);
- * // Pass theme to FluentProvider; host scrollbar thumb hover/pressed feedback
- * // follows neutralPrimary/neutralDark without replacing other host tokens.
+ * @example Basic usage
+ * ```ts
+ * import type { IReadonlyTheme } from '@microsoft/sp-component-base';
+ * import { createFluent9ThemeFromSPFxTheme } from '@apvee/spfx-react-toolkit';
+ * function convertTheme(spfxTheme: IReadonlyTheme | undefined) {
+ *   return createFluent9ThemeFromSPFxTheme(spfxTheme);
+ * }
+ * ```
+ * @useWhen You have a host theme outside the toolkit hooks and need Fluent UI 9 tokens for a FluentProvider.
+ *
+ *
+ * @example Compose a host theme without mutating shared themes
+ * ```tsx
+ * import * as React from 'react';
+ * import type { IReadonlyTheme } from '@microsoft/sp-component-base';
+ * import { FluentProvider } from '@fluentui/react-components';
+ * import { createFluent9ThemeFromSPFxTheme, getTeamsFluentTheme } from '@apvee/spfx-react-toolkit';
+ * function HostTheme({ spfxTheme, children }: { spfxTheme: IReadonlyTheme | undefined; children: React.ReactNode }) {
+ *   const theme = createFluent9ThemeFromSPFxTheme(spfxTheme);
+ *   return <FluentProvider theme={theme}>{children}</FluentProvider>;
+ * }
+ * const light = createFluent9ThemeFromSPFxTheme(undefined);
+ * const teamsDark = getTeamsFluentTheme('DARK');
+ * const fallback = getTeamsFluentTheme(undefined);
+ * // Treat these shared returned objects as immutable. Theme hooks own live host subscriptions.
+ * ```
  */
 export function createFluent9ThemeFromSPFxTheme(
   spfxTheme: IReadonlyTheme | undefined
@@ -50,8 +80,11 @@ export function createFluent9ThemeFromSPFxTheme(
  *
  * @example
  * ```ts
+ * import { getTeamsFluentTheme } from '@apvee/spfx-react-toolkit';
+ *
  * const theme = getTeamsFluentTheme('dark');
  * ```
+ * @useWhen You already have the Teams theme name and need the corresponding shared Fluent theme.
  */
 export function getTeamsFluentTheme(teamsThemeName: string | undefined): Theme {
   const normalizedThemeName = teamsThemeName?.toLowerCase();

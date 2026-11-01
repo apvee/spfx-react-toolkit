@@ -1,0 +1,125 @@
+# Compose typed styles
+
+Compose typed descriptors inside React through the host renderer and theme, with deliberate precedence and browser verification.
+
+[Documentation home](../INDEX.md) · [Complete style API](../../api/helpers/styles.md)
+
+Use `useSx` inside a React component to compose descriptors into a CSS class:
+
+<!-- toolkit:include symbol="useSx" section="example" title="Basic usage" -->
+
+Use the host's shared React/Griffel runtime and renderer. Token-based selections need theme variables in scope, normally through the existing FluentProvider; the hook needs no SPFx provider and does not create a new renderer. See [installation](../getting-started/installation.md#shared-runtimes).
+
+The [reference](../../api/helpers/styles.md) owns the qualified descriptor catalog, composition order, state/query precedence, theme limitations and cache lifetime. The [generic hook reference](../../api/hooks/react.md#usesx) documents hook options. Use those contracts for responsive, state and scrollbar recipes instead of copying mappings into this guide.
+
+The lazy Styles sample provides an interactive catalog; [local browser checks](../development/verification.md#local-browser-checks) and [authenticated host checks](../development/sharepoint-validation/INDEX.md#focus-input-and-accessibility) establish different verification boundaries.
+
+## Host theme stroke mapping
+
+The existing Fluent migration shim supplies the conversion. Two accessible neutral stroke state tokens use the host palette so interactions remain observable; their exact mapping belongs to the helper contract.
+
+Every other converted token keeps the shim's mapping. Missing, empty or whitespace-only hover/pressed palette values retain the corresponding converted fallback. The helper does not mutate the input theme. Custom/inverted palettes use their supplied colors; palettes with equal colors can still have equal state tokens and require their own contrast/feedback checks. Teams themes returned by `getTeamsFluentTheme` remain the original shared theme objects. The existing Fluent theme/migration peers supply the conversion; no extra dependency is required.
+
+For example, the default Fluent UI 8 host palette provides `#605e5c` for the base accessible stroke, `#323130` for hover and `#201f1e` for pressed. [`scrollbar.fluent`](#scrollbar-presentation) consumes these scoped tokens for its thumb feedback. `useSPFxFluent9ThemeInfo` uses this conversion in SharePoint and keeps its existing Teams/fallback selection order.
+
+## Shared theme objects and subscriptions
+
+`getTeamsFluentTheme` lowercases the supplied name before matching, so `DARK` and `HighContrast` select their respective shared themes. It does not trim surrounding whitespace: ` dark ` falls back to Teams light. The helper returns the original shared Fluent theme objects; treat them and the undefined-SPFx-theme light fallback as immutable. Neither function mounts a provider, inserts theme variables or loads host context.
+
+Supply the returned `Theme` to a Fluent provider to establish variables. The [theming hooks](../../api/hooks/theming.md) additionally obtain host data and subscribe to changes; these functions only convert supplied values.
+
+## Composition scopes and precedence
+
+### Basic API examples
+
+All catalog pixel factories accept finite nonnegative numbers, including zero, and preserve explicit `px` units. Negative values, `NaN`, and infinity throw `RangeError`; values are never silently clamped.
+
+### Fluent token references
+
+The library source uses `tokens` from `@fluentui/react-theme` for token-backed declarations. These references contain CSS variable expressions, not resolved theme colors.
+
+Consumers continue to use `sx(foreground.subtle)`. The browser resolves the emitted CSS variable against the element's scoped Fluent theme, so theme changes preserve the same descriptor API and theme scoping. The canonical source reference owns the exact emitted token mappings.
+
+`body1` uses the installed `@fluentui/react-theme` recipe. Its values remain CSS variable references: `fontFamilyBase`, `fontSizeBase300`, `fontWeightRegular`, and `lineHeightBase300`. It does not set color. Theme variables must be supplied in the element's scope, usually by a Fluent provider; descriptor construction itself requires no provider.
+
+### Types and scopes
+
+All three descriptor types are readonly and opaque. Raw CSS objects do not satisfy them. States accept only base descriptors; responsive and viewport functions accept base or state descriptors. The canonical combined form is `responsive.medium(hover(foreground.subtle))`. Nested states, nested queries, and class strings inside scopes are rejected by TypeScript. Existing class strings and conditional falsy values belong at the composer level.
+
+Container queries target the nearest ancestor named `apvee-sx`; their thresholds are inclusive. The element cannot query its own inline-size. Viewport queries use the window width. Scope constructors preserve data only; the browser evaluates the CSS materialized by `sx`.
+
+`SxOptions.dir` overrides the effective `ltr` or `rtl` direction. When omitted, `useSx` uses Fluent direction context, with LTR as the context-free default. Keep it consistent with the host's direction and any external Griffel classes when using a standalone Griffel context.
+
+### Composition and precedence
+
+Call `useSx` once at the top level of a React component; its returned `sx` is an ordinary function and can be called repeatedly while rendering. It returns a `className` string and never requires an inline `style` attribute. Its identity is stable while the Griffel renderer and effective direction stay unchanged. `sx()` and inputs consisting only of `false`, `null`, `undefined`, or empty strings produce `''`.
+
+Within one normalized property and the same scope, the last declaration wins. Recipes expand before resolving overrides, so `sx(padding.medium, paddingInlineStart.small)` replaces only inline-start. Different scopes have explicit priority independent of descriptor order or mount order:
+
+1. `focusVisible` overrides `active`, which overrides `hover`, which overrides the base state for overlapping properties.
+2. Within each state, matching `large` overrides `medium`, then `small`, then the base declaration.
+3. At the same breakpoint within the same state, a matching container query overrides a matching viewport query.
+
+State priority applies before breakpoint priority: an applicable hover base declaration wins over a non-state large query. Independent properties remain independent; omitting color allows ordinary CSS inheritance. Focus-visible styling does not itself create an outline or accessible focus indicator; retain a native outline or supply an appropriate control treatment.
+
+Class strings keep their original position between contiguous descriptor segments. External Griffel atomic classes participate in `mergeClasses`: `sx(width.px(240), externalWidth400, gap.small)` retains the external 400px width; adding `width.px(360)` last changes width to 360px. Existing `sx` results can also be composed as class strings, preserving independent scopes. Keep one shared Griffel installation in the host. Ordinary CSS class strings are preserved and follow native specificity, stylesheet order and importance; argument order does not guarantee their property precedence.
+
+Application states use normal conditions, rather than new CSS scopes. Remove enabled recipes when disabled; a disabled base preset cannot cancel a more specific enabled hover recipe:
+
+<!-- toolkit:include symbol="useSx" section="example" title="Combine application state with CSS interaction scopes" -->
+
+### Container, viewport and direction
+
+`container.inlineSize` sets exactly `containerType: inline-size` and `containerName: apvee-sx`. Apply it to an ancestor of the queried element. It adds no width, height or display; inline-size containment can affect intrinsic sizing, so provide suitable host geometry. The nearest named ancestor supplies the query size. Inline-size follows writing mode: horizontal writing measures width, vertical writing measures height. An element never queries itself; without a matching ancestor the base styles still apply.
+
+<!-- toolkit:include symbol="useSx" section="example" title="Separate ancestor container queries from viewport queries" -->
+
+`responsive.small`, `responsive.medium` and `responsive.large` query inclusive ancestor inline-size thresholds of 480px, 640px and 1024px. `viewport.small`, `viewport.medium` and `viewport.large` use those inclusive window-width thresholds independently. Changing a container does not change the viewport query.
+
+The hook reads the existing Griffel renderer and Fluent direction context. `SxOptions.dir` explicitly overrides that direction; without an override or different context, the default is LTR. In a standalone Griffel environment, keep `useSx({ dir: 'rtl' })`, the host's DOM/CSS direction, Fluent direction context and external Griffel classes coherent. The option does not set the DOM `dir` attribute. Logical spacing/alignment follows CSS direction and writing mode; do not assume physical left/right mappings in vertical layouts.
+
+## Contrast and browser evidence
+
+The installed `teamsHighContrastTheme` maps both inverted tokens to black (1:1 contrast). **`presets.inverted` is supported for the verified light/dark themes; use `canvas` or `alternative` for content in that floor high contrast theme.** `presets.disabled` is restricted to actual disabled presentation; it does not set the native disabled attribute or `aria-disabled`. Its light/dark foreground pairs have low contrast. Transparent/subtle presets and scrollbar tracks depend on the underlying surface. Custom themes and backgrounds require their own contrast evaluation; the token names do not guarantee universal contrast.
+
+The local Chrome 152 checkpoint measured all 11 presets on canvas and alternative surfaces in the three floor themes. Supported active-content pairs ranged from 4.85:1 to 21:1. Disabled pairs measured 1.65:1 in light and 2.76:1 in dark; inverted measured 1:1 in the Fluent high contrast theme. These measurements cover those exact palettes and surfaces, including the actual underlying color for transparent backgrounds.
+
+## Scrollbar presentation
+
+### Overflow and the single scrollbar recipe
+
+`overflow.visible/hidden/auto` expand to both `overflowX` and `overflowY`. `overflow.horizontal.visible/hidden/auto` set only `overflowX`; `overflow.vertical.visible/hidden/auto` set only `overflowY`. The browser retains native axis coupling: a visible axis can compute to auto when the other axis is hidden or auto.
+
+`scrollbar.fluent` is the only scrollbar selection (`SxBaseDescriptor`). In Edge/Chrome and other browsers supporting `@supports selector(::-webkit-scrollbar)`, both axes use **6px** scrollbars with a `colorNeutralStrokeAccessible` thumb and transparent track/corner. These pseudo-element rules apply only under `(forced-colors: none)`; standard `scrollbarWidth` and `scrollbarColor` become `auto` in that branch so they do not suppress vendor styling. Other browsers retain standard `scrollbarWidth: thin` and `scrollbarColor: var(--colorNeutralStrokeAccessible) transparent`. An actual `(forced-colors: active)` media rule sets `scrollbarColor: auto`, preserving native thin sizing and browser system colors. The recipe adds no overflow, container dimensions, gutter, overscroll, smooth scrolling, or `forced-color-adjust: none`.
+
+The vendor thumb retains **3px rounded corners** on both axes. Its base color is `colorNeutralStrokeAccessible`; moving the pointer over the thumb itself uses `colorNeutralStrokeAccessibleHover`, and pressing or dragging it uses `colorNeutralStrokeAccessiblePressed`. Pressed feedback wins while the thumb is also hovered; release restores hover feedback and leaving restores the base color. These tokens follow the existing Fluent theme variables in scope. Hovering the content or track does not activate thumb feedback. Forced colors and browsers using the standard fallback retain native interactions.
+
+In SharePoint host mode, [`createFluent9ThemeFromSPFxTheme`](../../api/helpers/theme.md#createfluent9themefromspfxtheme) keeps the converted base token and maps hover/pressed to the host palette's `neutralPrimary`/`neutralDark`. This avoids the migration shim mapping all three to `neutralSecondary`. Missing state colors use the converted fallback; custom palettes with equal colors can still produce equal feedback colors. Teams themes and the undefined-theme web light fallback retain their existing tokens.
+
+Use the existing shared Griffel/Fluent peers and scoped theme variables described above; no extra dependency is required. Browsers without vendor pseudo-element support need standard `scrollbar-width` and `scrollbar-color` for the thin fallback; otherwise native appearance remains. Platform overlay scrollbars may appear only during scrolling. `hover`, `active`, `focusVisible`, `responsive` and `viewport` scopes apply the vendor rules only while their scopes are active; removing the descriptor restores native appearance. The transparent track reveals the actual underlying surface, so thumb contrast must be checked there.
+
+Foreign Griffel declarations retain the usual argument/merge order: a later native `scrollbarWidth: none` hides the scrollbar, and a later `scrollbarColor` overrides its colors. In modern Chromium, non-`auto` standard scrollbar values select native rendering and can bypass the recipe's vendor 6px sizing. Putting `scrollbar.fluent` last restores the recipe in the same scope.
+
+The same local Chrome checkpoint measured the accessible neutral scrollbar thumb against the tested underlying surfaces:
+
+| Floor theme | Canvas | Alternative |
+| --- | --- | --- |
+| `webLightTheme` | 6.19:1 | 5.93:1 |
+| `webDarkTheme` | 6.48:1 | 7.34:1 |
+| `teamsHighContrastTheme` | 21:1 | 21:1 |
+
+Browser forced colors were emulated separately from the Fluent high contrast palette and computed `scrollbarColor: auto` in each theme. Local browser measurements do not establish authenticated SharePoint-host behavior.
+
+## Styles sample and host boundary
+
+### useSx
+
+`options` optionally declares the effective `dir: 'ltr' | 'rtl'`. Otherwise the hook uses Fluent direction context, with LTR as the context-free default. The returned `SxFunction` composes immutable descriptors, existing class strings and conditional falsy inputs into a className string. It is stable while renderer and effective direction stay unchanged. Empty composition returns `''`.
+
+Use it at the top level of a component. The returned composer is an ordinary function usable multiple times during rendering. No SPFx provider or additional renderer is created. Theme-based selections need existing Fluent CSS variables, usually from the host's FluentProvider.
+
+See the [complete styles reference](../../api/helpers/styles.md) for all qualified exports, mapping, numeric domains, state/query priority, external-class behavior, direction, container ancestor requirements, theme restrictions and cache growth. Shared peers are `@griffel/core@^1.21.4`, `@griffel/react@^1.7.8`, `@fluentui/react-shared-contexts@^9.26.4`, alongside the existing Fluent peers.
+
+The lazy **Styles** web part panel selects one active recipe for catalog, query, interaction or scrolling behavior under the host theme. The two independent query regions and simultaneous engine comparisons remain in the versioned conformance fixtures. Local React/Griffel tests and browser observations are separate from authenticated SharePoint-host execution, which is **NOT EXECUTED** until recorded in the [host checklist](../development/sharepoint-validation/INDEX.md#focus-input-and-accessibility).
+
+<!-- toolkit:include symbol="createFluent9ThemeFromSPFxTheme" section="example" title="Compose a host theme without mutating shared themes" -->

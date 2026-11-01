@@ -1,0 +1,8 @@
+{
+  "name": "@fixture/semantic",
+  "exports": {
+    ".": { "types": "./lib/index.d.ts" },
+    "./pane": { "types": "./lib/pane.d.ts" },
+    "./lib/index": { "types": "./lib/index.d.ts" }
+  }
+}

@@ -1,3 +1,9 @@
+/**
+ * SPFx metadata access.
+ *
+ * @packageDocumentation
+ * @docPage hooks/context
+ */
 // context.tsx
 // React Context for SPFx metadata (static, non-reactive)
 
@@ -30,11 +36,16 @@ if (process.env.NODE_ENV !== 'production') {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxContext } from '@apvee/spfx-react-toolkit';
+ *
  * function HostLabel() {
  *   const { kind, instanceId } = useSPFxContext();
  *   return <span>{kind}: {instanceId}</span>;
  * }
  * ```
+ *
+ * @useWhen a descendant needs the native host context or instance identity without subscribing to runtime state.
  */
 export function useSPFxContext(): SPFxContextValue {
   const context = React.useContext(SPFxContext);

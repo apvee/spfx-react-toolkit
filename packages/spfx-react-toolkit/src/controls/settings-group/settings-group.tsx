@@ -1,3 +1,9 @@
+/**
+ * Visible settings rows with caller-owned controls and optional built-in Form naming.
+ *
+ * @packageDocumentation
+ * @docPage controls/settings-group
+ */
 import * as React from 'react';
 import { inspectContentSlot, renderContentSlot } from '../content-slot.internal';
 import { useId } from '@fluentui/react-utilities';
@@ -18,7 +24,9 @@ import * as container from '../../helpers/styles/container';
 import { useSettingsGroupStyles } from './settings-group.styles.internal';
 import type { SettingsGroupProps, SettingsGroupItemProps } from './settings-group.types';
 
-/** Inspect only static phrasing children; custom components own their rendered title. */
+/**
+ * Inspect only static phrasing children; custom components own their rendered title.
+ */
 function hasSettingsFieldTitle(value: unknown): boolean {
   const inspected = inspectContentSlot(value);
   if (inspected.kind === 'render') return true;
@@ -39,11 +47,15 @@ function hasStaticSettingsFieldTitle(content: React.ReactNode): boolean {
   });
 }
 
-/** Render one settings row; field mode labels one built-in Form logical control.
- * @param props Native row attributes, optional text/icon/action and caller-owned controls.
+/**
+ * Render one settings row; field mode labels one built-in Form logical control.
+ * @param props - Native row attributes, optional text/icon/action and caller-owned controls.
  * @returns A flex row whose controls wrap only when the available width requires it.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { SettingsGroup } from '@apvee/spfx-react-toolkit';
+ * import { Switch } from '@fluentui/react-components';
  * <SettingsGroup><SettingsGroup.Item title="Email"><Switch aria-label="Email alerts" /></SettingsGroup.Item></SettingsGroup>
  * ```
  */
@@ -111,26 +123,36 @@ const SettingsGroupRoot = React.forwardRef<HTMLDivElement, SettingsGroupProps>((
 });
 SettingsGroupRoot.displayName = 'SettingsGroup';
 
-/** Group visible settings in a native medium Fluent Card. The optional header sits outside it.
+/**
+ * Group visible settings in a native medium Fluent Card. The optional header sits outside it.
  * Text and controls share a fluid wrapping row: compact controls remain beside text
  * while larger controls move below when they do not fit. Leading text grows from a 160px preferred basis, bounded by the available width.
  * Requires Fluent theme variables; no SPFx provider, cloned controls or form state.
  * Text uses semantic wrappers and toolkit typography; strings remain literal.
  * JSX phrasing children inherit presets without cloning and may supply explicit styling.
- * @param props Native div attributes, optional header and caller-owned settings rows.
+ * @param props - Native div attributes, optional header and caller-owned settings rows.
  * @returns A div containing the optional header and Card.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { SettingsGroup } from '@apvee/spfx-react-toolkit';
+ * import { Switch } from '@fluentui/react-components';
  * <SettingsGroup title="Notifications"><SettingsGroup.Item title="Email"><Switch aria-label="Email alerts" /></SettingsGroup.Item></SettingsGroup>
  * ```
+ *
+ * @useWhen Related settings should stay visible in a Card with shared row labels and optional Form adapters.
+ * @avoidWhen Use AccordionGroup when consumers should disclose and collapse sections.
  */
 export const SettingsGroup = Object.assign(SettingsGroupRoot, {
-  /** Render one settings row; ordinary rows retain caller-owned labels. `field` integrates
+  /**
+   * Render one settings row; ordinary rows retain caller-owned labels. `field` integrates
    * one built-in Form control with the row title/hint inside its Form root.
-   * @param props Native row attributes, optional text/icon/action and primary controls.
+   * @param props - Native row attributes, optional text/icon/action and primary controls.
    * @returns A native div row preserving caller controls and their state.
    * @example
    * ```tsx
+   * import * as React from 'react';
+   * import { SettingsGroup } from '@apvee/spfx-react-toolkit';
    * <SettingsGroup><SettingsGroup.Item title="Email"><input aria-label="Email" /></SettingsGroup.Item></SettingsGroup>
    * ```
    */

@@ -1,3 +1,9 @@
+/**
+ * Explicit Dialog, Drawer and Popover surfaces sharing one caller-owned content structure.
+ *
+ * @packageDocumentation
+ * @docPage controls/stage
+ */
 import * as React from 'react';
 import { StageHeader } from './stage-header';
 import { StageBody } from './stage-body';
@@ -10,7 +16,8 @@ import { StageContext, useStageContextValue } from './stage-context.internal';
 import type { StageController } from './stage-controller.internal';
 import type { StageProps, StageSurfaceAttributes } from './stage.types';
 
-/** Keep the active anchor/placement when a different presentation is pending.
+/**
+ * Keep the active anchor/placement when a different presentation is pending.
  * Common behavior remains live; the controller already owns state and compatible size.
  */
 function useAdapterOptions(props: StageProps, controller: StageController): StageProps {
@@ -68,47 +75,116 @@ const StageRoot = React.forwardRef<HTMLDivElement, StageProps>(function StageRoo
 });
 StageRoot.displayName = 'Stage';
 
-/** Present one composed content structure in a Dialog, Drawer or anchored Popover.
+/**
+ * Present one composed content structure in a Dialog, Drawer or anchored Popover.
  * Use Header, Body and optional Footer in declared order; a caller-owned form wrapper
  * may contain all three. Presentation is explicit and latched for each open session.
  * Strings in Header stay literal with toolkit presets; caller JSX remains unchanged.
  * Requires shared Fluent theme/renderer, but no SPFx provider. Controlled consumers
  * accept or refuse requests by updating open; native event prevention is not a callback veto.
- * @param props Surface attributes, presentation-specific options and open-state ownership.
+ * @param props - Surface attributes, presentation-specific options and open-state ownership.
  * @returns The integrated trigger, when supplied, and the Fluent-owned surface/portal.
- * @example
+ * @example Basic Stage composition
  * ```tsx
+ * import * as React from 'react';
+ * import { Stage } from '@apvee/spfx-react-toolkit/controls/stage';
+ *
  * <Stage presentation="dialog" trigger={<button type="button">Edit</button>}>
  *   <Stage.Header title="Profile" closeLabel="Close" />
  *   <Stage.Body><input aria-label="Name" /></Stage.Body>
  *   <Stage.Footer><button type="button">Save</button></Stage.Footer>
  * </Stage>
  * ```
+ * @useWhen One explicit modal or anchored presentation must host the same structured content.
+ * @avoidWhen An open surface must switch immediately between presentation modes as the viewport changes; Stage latches presentation until the next session.
+ * @throws Error - Presentation/size is invalid, full Popover is requested, or state ownership changes during a mount.
+ * @example Profile editor with native Form ownership
+ * ```tsx
+ * import * as React from 'react';
+ * import { createForm, Stage, useSx, alignItems, flex, flexItem, justifyContent, minHeight, width, gap } from '@apvee/spfx-react-toolkit';
+ *
+ * const Editor = createForm<{ name: string }>();
+ *
+ * export function ProfileEditor({ saveProfile }: { saveProfile: (values: { name: string }) => Promise<void> }): React.ReactElement {
+ *   const [open, setOpen] = React.useState(false);
+ *   const [discardRequested, setDiscardRequested] = React.useState(false);
+ *   const methods = Editor.useForm({ defaultValues: { name: '' } });
+ *   // Read during render to subscribe to RHF's proxied formState before callbacks use it.
+ *   const { isDirty, isSubmitting } = methods.formState;
+ *   const sx = useSx();
+ *   return <Stage presentation="dialog" open={open}
+ *     trigger={<button type="button">Edit profile</button>}
+ *     onOpenChange={(_, data) => {
+ *       if (!data.open && isSubmitting) return;
+ *       if (!data.open && isDirty) { setDiscardRequested(true); return; }
+ *       setOpen(data.open);
+ *     }}>
+ *     <Editor.Root methods={methods}
+ *       className={sx(flex.column, flexItem.grow, minHeight.zero, width.full, gap.medium)}
+ *       onSubmit={async values => {
+ *         await saveProfile(values);
+ *         methods.reset(values);
+ *         setDiscardRequested(false);
+ *         setOpen(false);
+ *       }}>
+ *       <Stage.Header title="Profile" closeLabel="Close" />
+ *       <Stage.Body>
+ *         <Editor.Input name="name" label="Display name" />
+ *         {discardRequested && <div role="status">
+ *           Discard changes?
+ *           <button type="button" disabled={isSubmitting} onClick={() => {
+ *             methods.reset(); setDiscardRequested(false); setOpen(false);
+ *           }}>Discard</button>
+ *           <button type="button" disabled={isSubmitting} onClick={() => setDiscardRequested(false)}>Keep editing</button>
+ *         </div>}
+ *       </Stage.Body>
+ *       <Stage.Footer className={sx(flex.row, flex.wrap, alignItems.center, justifyContent.end, gap.small)}>
+ *         <Editor.Submit appearance="primary">Save</Editor.Submit>
+ *       </Stage.Footer>
+ *     </Editor.Root>
+ *   </Stage>;
+ * }
+ * ```
+ * @remarks
+ * ### Form ownership and pending work
+ * Put the same-suite Form.Root inside the portaled surface so Body fields and Footer Submit share one native DOM form. React context from an outer Root alone cannot establish DOM form ownership. Submit through the suite's Root/Submit gate; direct methods.handleSubmit bypasses that gate. Read proxied isDirty/isSubmitting during rendering before callbacks use them. Await application persistence before resetting the baseline and closing. Keep close requests controlled while pending, and show inline discard confirmation rather than nesting a modal. Stage itself has no RHF dependency.
  */
 export const Stage = Object.assign(StageRoot, {
-  /** Semantic heading, decorative icon, supporting text and caller-owned action. Requires the owning Stage.
-   * @param props Native div attributes and header content.
+  /**
+   * Semantic heading, decorative icon, supporting text and caller-owned action. Requires the owning Stage.
+   * @param props - Native div attributes and header content.
    * @returns The header div within the active surface; its ref targets that div.
    * @example
    * ```tsx
+   * import * as React from 'react';
+   * import { Stage } from '@apvee/spfx-react-toolkit/controls/stage';
+   *
    * <Stage presentation="dialog"><Stage.Header title="Profile" /></Stage>
    * ```
    */
   Header: StageHeader,
-  /** Growing scroll region, preserving the consumer's content. Requires the owning Stage.
-   * @param props Native div attributes and body content.
+  /**
+   * Growing scroll region, preserving the consumer's content. Requires the owning Stage.
+   * @param props - Native div attributes and body content.
    * @returns The body div within the active surface; its ref targets that div.
    * @example
    * ```tsx
+   * import * as React from 'react';
+   * import { Stage } from '@apvee/spfx-react-toolkit/controls/stage';
+   *
    * <Stage presentation="dialog"><Stage.Body>Content</Stage.Body></Stage>
    * ```
    */
   Body: StageBody,
-  /** Optional free-content footer; actions do not dismiss automatically. Requires the owning Stage.
-   * @param props Native div attributes and footer content.
+  /**
+   * Optional free-content footer; actions do not dismiss automatically. Requires the owning Stage.
+   * @param props - Native div attributes and footer content.
    * @returns The footer div within the active surface; its ref targets that div.
    * @example
    * ```tsx
+   * import * as React from 'react';
+   * import { Stage } from '@apvee/spfx-react-toolkit/controls/stage';
+   *
    * <Stage presentation="dialog"><Stage.Footer><button type="button">Save</button></Stage.Footer></Stage>
    * ```
    */

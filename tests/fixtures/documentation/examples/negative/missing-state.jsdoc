@@ -1,0 +1,8 @@
+/**
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { Pagination } from '@apvee/spfx-react-toolkit';
+ * const example = <Pagination pageIndex={pageIndex} onPageChange={next => next.toFixed()} />;
+ * ```
+ */

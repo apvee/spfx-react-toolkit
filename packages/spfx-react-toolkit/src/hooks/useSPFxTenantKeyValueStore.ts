@@ -1,3 +1,9 @@
+/**
+ * The legacy tenant list store exposes fallback reads and rejecting mutations.
+ *
+ * @packageDocumentation
+ * @docPage hooks/storage/tenant-key-value-store
+ */
 // useSPFxTenantKeyValueStore.ts
 // Hook to manage tenant-wide key-value pairs using a hidden SharePoint list in the tenant app catalog
 
@@ -14,12 +20,28 @@ import { createSPFxTenantKeyValueStoreService } from '../services/spfx-tenant-ke
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const store = useSPFxTenantKeyValueStore();
- * const onLoad = async () => {
- *   const item: SPFxTenantKeyValueStoreItem<boolean> | undefined = await store.get('featureEnabled');
- *   console.log(item?.value);
- * };
+ * import * as React from 'react';
+ * import { SPFxTenantKeyValueStoreItem, useSPFxTenantKeyValueStore } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const store = useSPFxTenantKeyValueStore();
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const run = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       const item: SPFxTenantKeyValueStoreItem<boolean> | undefined = await store.get('featureEnabled');
+ *       setResult(item?.value);
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={!store.isReady || store.isLoading} onClick={() => void run()}>Load setting</button>
+ *     {(failure ?? store.error?.message) && <span role="alert">{failure ?? store.error?.message}</span>}
+ *     <pre>{JSON.stringify(result)}</pre>
+ *   </>;
+ * }
  * ```
  * @template T - Expected application data shape; no runtime validation is performed.
  */
@@ -35,13 +57,32 @@ export interface SPFxTenantKeyValueStoreItem<T = unknown> {
 }
 
 /**
- * Return type for useSPFxTenantKeyValueStore hook
+ * Legacy tenant app-catalog store state and explicit operations with fallback reads and rejecting writes.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const store: SPFxTenantKeyValueStoreResult = useSPFxTenantKeyValueStore();
- * const onLoad = async () => console.log(await store.get<boolean>('featureEnabled'));
+ * import * as React from 'react';
+ * import { SPFxTenantKeyValueStoreResult, useSPFxTenantKeyValueStore } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const store: SPFxTenantKeyValueStoreResult = useSPFxTenantKeyValueStore();
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const run = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       const item = await store.get<boolean>('featureEnabled');
+ *       setResult(item?.value);
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={!store.isReady || store.isLoading} onClick={() => void run()}>Load setting</button>
+ *     {(failure ?? store.error?.message) && <span role="alert">{failure ?? store.error?.message}</span>}
+ *     <pre>{JSON.stringify(result)}</pre>
+ *   </>;
+ * }
  * ```
  */
 export interface SPFxTenantKeyValueStoreResult {
@@ -80,6 +121,7 @@ export interface SPFxTenantKeyValueStoreResult {
 
     /**
      * Reads without provisioning or repairing the list. Only a confirmed absent list/key is empty; discovery/access/schema/read failures publish error and return undefined.
+     * @typeParam T - Expected deserialized value shape; no runtime validation.
      * @param key - Stored property key.
      * @returns Item or undefined for an absent list/key or failed read; inspect error to distinguish failures.
      * @throws When the SharePoint client is unavailable.
@@ -105,22 +147,36 @@ export interface SPFxTenantKeyValueStoreResult {
      * - Objects/arrays → JSON.stringify(value)
      *
      * @param key - Property key
+     * @typeParam T - Supplied value type; serialization may change its read-back representation.
      * @param value - Value to store
-     * @param description - Optional description metadata
+     * @param description - Omitted or undefined preserves an existing description; empty string clears it.
      *
      * @example
      * ```tsx
-     * // Inside a React component beneath a matching host-specific SPFx provider:
-     * const store = useSPFxTenantKeyValueStore();
+     * import * as React from 'react';
+     * import { useSPFxTenantKeyValueStore } from '@apvee/spfx-react-toolkit';
      *
-     * // String value
-     * // Call this handler from an event or an effect; do not request during render.
-     * const run = async () => {
-     *   await store.save<string>('apiEndpoint', 'https://api.example.com', 'Production API');
-     *
-     *   // Complex object
-     *   await store.save('featureFlags', { enableChat: true, maxUsers: 1000 });
-     * };
+     * function Example() {
+     *   const store = useSPFxTenantKeyValueStore();
+     *   const [result, setResult] = React.useState<unknown>();
+     *   const [failure, setFailure] = React.useState<string>();
+     *   const run = async () => {
+     *     setFailure(undefined);
+     *     try {
+     *       await store.save<string>('apiEndpoint', 'https://api.example.com', 'Production API');
+     *       // Save the complex value only after the first write succeeds.
+     *       await store.save('featureFlags', { enableChat: true, maxUsers: 1000 });
+     *       setResult('Saved settings');
+     *     } catch (failure) {
+     *       setFailure(failure instanceof Error ? failure.message : String(failure));
+     *     }
+     *   };
+     *   return <>
+     *     <button disabled={!store.isReady || store.isWriting} onClick={() => void run()}>Save settings</button>
+     *     {(failure ?? store.writeError?.message) && <span role="alert">{failure ?? store.writeError?.message}</span>}
+     *     <pre>{JSON.stringify(result)}</pre>
+     *   </>;
+     * }
      * ```
      * @returns Resolves after a successful write; updates preserve an omitted description and empty string clears it.
      * @throws Client, catalog discovery, schema, serialization, missing ETag or write/conflict failures; operation failures also publish writeError. No wildcard overwrite is performed.
@@ -153,12 +209,59 @@ export interface SPFxTenantKeyValueStoreResult {
  * @returns Client readiness, read/write state, permission indicator and CRUD methods.
  * @throws When called outside an SPFx provider.
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxTenantKeyValueStore } from '@apvee/spfx-react-toolkit';
+ *
  * function TenantSetting() {
  *   const store = useSPFxTenantKeyValueStore();
- *   const load = async () => console.log(await store.get<boolean>('featureEnabled'));
- *   return <button onClick={load} disabled={!store.isReady}>Load setting</button>;
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const run = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       const item = await store.get<boolean>('featureEnabled');
+ *       setResult(item?.value);
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={!store.isReady || store.isLoading} onClick={() => void run()}>Load setting</button>
+ *     {(failure ?? store.error?.message) && <span role="alert">{failure ?? store.error?.message}</span>}
+ *     <pre>{JSON.stringify(result)}</pre>
+ *   </>;
+ * }
+ * ```
+ *
+ * @useWhen legacy tenant-wide key/value configuration needs tracked list CRUD and permission indicators.
+ *
+ * @avoidWhen new configuration needs rejecting reads and explicit mutation scopes; use useSPFxConfigurationStore.
+ *
+ *
+ * @example Save and read numeric-looking text
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxTenantKeyValueStore } from '@apvee/spfx-react-toolkit';
+ *
+ * function TenantConfigEditor() {
+ *   const { save, get, isReady, isWriting, error, writeError } = useSPFxTenantKeyValueStore();
+ *   const [text, setText] = React.useState<string>('');
+ *   const run = async (): Promise<void> => {
+ *     try {
+ *       await save('my-app:version', '123', 'Application version');
+ *       const item = await get<unknown>('my-app:version');
+ *       if (typeof item?.value === 'string') setText(item.value);
+ *     } catch {
+ *       // Write failures are rendered through writeError; reads use error + fallback.
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={!isReady || isWriting} onClick={run}>Save and read</button>
+ *     <p>{text}</p>
+ *     {(error ?? writeError) && <p role="alert">{(error ?? writeError)?.message}</p>}
+ *   </>;
  * }
  * ```
  */

@@ -1,3 +1,9 @@
+/**
+ * Mount a native Field Customizer React surface with an isolated toolkit runtime.
+ *
+ * @packageDocumentation
+ * @docPage core/providers
+ */
 // provider-field-customizer.tsx
 // Type-safe provider for Field Customizers
 
@@ -7,14 +13,19 @@ import { SPFxProviderBase } from './provider-base.internal';
 import type { SPFxComponent } from './types';
 
 /**
- * Inputs for SPFxFieldCustomizerProvider. Pass the initialized Field Customizer instance and a subtree using toolkit hooks. The provider waits for ServiceScope readiness and owns an isolated runtime store; omitted children render no application content.
+ * Initialized native host instance and optional subtree for SPFxFieldCustomizerProvider. Each mounted provider owns a separate runtime store. Children mount after the active ServiceScope finishes; missing-scope fallback does not make native services available.
  *
- * @typeParam TProps - Properties type of the supplied SPFx host instance.
- *
- * @example
+ * @typeParam TProps - Host property bag, constrained to an object and defaulting to the empty object type.
+ * @example Typed native host input
  * ```tsx
- * // In the Field Customizer instance's render or mounting method:
- * const element = <SPFxFieldCustomizerProvider instance={this}><MyComponent /></SPFxFieldCustomizerProvider>;
+ * import * as React from 'react';
+ * import { BaseFieldCustomizer } from '@microsoft/sp-listview-extensibility';
+ * import { SPFxFieldCustomizerProvider, SPFxFieldCustomizerProviderProps } from '@apvee/spfx-react-toolkit';
+ *
+ * function hostTree(instance: BaseFieldCustomizer<{ title: string }>): React.ReactElement {
+ *   const props: SPFxFieldCustomizerProviderProps<{ title: string }> = { instance, children: <span>Host content</span> };
+ *   return <SPFxFieldCustomizerProvider {...props} />;
+ * }
  * ```
  */
 export interface SPFxFieldCustomizerProviderProps<TProps extends {} = {}> {
@@ -24,37 +35,61 @@ export interface SPFxFieldCustomizerProviderProps<TProps extends {} = {}> {
   instance: BaseFieldCustomizer<TProps>;
 
   /**
-   * Optional React subtree receiving host context, theme and isolated runtime state. Descendants mount after service-scope readiness; omission renders no application content.
+   * Optional React subtree receiving host context, theme and isolated runtime state. Descendants mount after service-scope readiness; omitted or undefined children render no application content.
    */
   children?: React.ReactNode;
 }
 
 /**
- * SPFx context provider specifically for Field Customizers.
+ * Establishes SPFx context and isolated runtime state for a Field Customizer React surface. Pass its initialized native instance. Descendants mount after the active ServiceScope finishes; the provider never registers, finishes or authorizes services. The missing-scope fallback allows rendering but service-consuming hooks can fail.
  *
- * This is a type-safe wrapper around the base provider that accepts a Field Customizer instance
- * directly without requiring type casting. Use this provider in Field Customizers instead of the
- * other host-specific providers.
+ * Host renders reconcile shallow property snapshots, including removals and reference changes; nested in-place changes are not deep-observed. Hook property updates synchronize back to the native instance. Theme subscriptions and runtime listeners are cleaned up on unmount; obsolete scope-readiness callbacks are ignored. Keep a mounted provider associated with its owning host surface and unmount React when that surface is disposed.
  *
- * @param props - The component props.
- * @returns The provider component.
- *
- * @example
+ * @typeParam TProps - Host property bag, constrained to an object and defaulting to the empty object type.
+ * @param props - Required initialized BaseFieldCustomizer instance and optional children; omitted or undefined children render no application content.
+ * @returns Provider element establishing context after ServiceScope readiness.
+ * @useWhen toolkit hooks render inside a native FieldCustomizer surface owned by this host instance.
+ * @avoidWhen the host is another SPFx component kind; use its matching typed provider.
+ * @example Mount an initialized native host
  * ```tsx
- * import { SPFxFieldCustomizerProvider } from '@apvee/spfx-react-toolkit';
- * import * as ReactDom from 'react-dom';
+ * import * as React from 'react';
+ * import { BaseFieldCustomizer } from '@microsoft/sp-listview-extensibility';
+ * import { SPFxFieldCustomizerProvider, SPFxFieldCustomizerProviderProps } from '@apvee/spfx-react-toolkit';
  *
- * export default class MyFieldCustomizer extends BaseFieldCustomizer<IMyProps> {
+ * function hostTree(instance: BaseFieldCustomizer<{ title: string }>): React.ReactElement {
+ *   const props: SPFxFieldCustomizerProviderProps<{ title: string }> = { instance, children: <span>Host content</span> };
+ *   return <SPFxFieldCustomizerProvider {...props} />;
+ * }
+ * ```
+ * @public
+ * @docPage core/providers
+ *
+ *
+ * @example Render and dispose each field cell
+ * ```tsx
+ * import * as React from 'react';
+ * import * as ReactDom from 'react-dom';
+ * import {
+ *   BaseFieldCustomizer,
+ *   IFieldCustomizerCellEventParameters
+ * } from '@microsoft/sp-listview-extensibility';
+ * import { SPFxFieldCustomizerProvider } from '@apvee/spfx-react-toolkit';
+ *
+ * function FieldRenderer({ value }: { value: unknown }) { return <span>{String(value ?? '')}</span>; }
+ *
+ * interface IMyFieldProps {
+ *   colorMapping: Record<string, string>;
+ * }
+ *
+ * export default class MyFieldCustomizer extends BaseFieldCustomizer<IMyFieldProps> {
  *   public onRenderCell(event: IFieldCustomizerCellEventParameters): void {
  *     const element = React.createElement(
  *       SPFxFieldCustomizerProvider,
  *       { instance: this },
- *       React.createElement(MyFieldRenderer, {
- *         value: event.fieldValue,
- *         listItem: event.listItem
+ *       React.createElement(FieldRenderer, {
+ *         value: event.fieldValue
  *       })
  *     );
- *
  *     ReactDom.render(element, event.domElement);
  *   }
  *
@@ -64,8 +99,6 @@ export interface SPFxFieldCustomizerProviderProps<TProps extends {} = {}> {
  *   }
  * }
  * ```
- *
- * @public
  */
 export function SPFxFieldCustomizerProvider<TProps extends {} = {}>(
   props: SPFxFieldCustomizerProviderProps<TProps>

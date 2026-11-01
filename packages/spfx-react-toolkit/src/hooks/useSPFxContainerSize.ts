@@ -1,3 +1,9 @@
+/**
+ * Width categories derive from the measured container, with zero as the unmeasured fallback.
+ *
+ * @packageDocumentation
+ * @docPage hooks/theming
+ */
 // useSPFxContainerSize.ts
 // Hook for container size detection with SharePoint-aligned breakpoints
 
@@ -6,10 +12,12 @@ import { getSPFxContainerSize } from '../helpers/spfx-container.helpers';
 import { useSPFxContainerInfo } from './useSPFxContainerInfo';
 
 /**
- * Toolkit width categories using exclusive upper boundaries: small <480, medium <640, large <1024, xLarge <1366, xxLarge <1920, otherwise xxxLarge. This is a container measurement; before observation zero width is small.
+ * Toolkit width categories using exclusive upper boundaries: small `less than 480`, medium `less than 640`, large `less than 1024`, xLarge `less than 1366`, xxLarge `less than 1920`, otherwise xxxLarge. This is a container measurement; before observation zero width is small.
  *
  * @example
  * ```ts
+ * import { SPFxContainerSize } from '@apvee/spfx-react-toolkit';
+ *
  * const category: SPFxContainerSize = 'small';
  * ```
  */
@@ -22,13 +30,18 @@ export type SPFxContainerSize =
   | 'xxxLarge'; // >= 1920px
 
 /**
- * Return type for useSPFxContainerSize hook
+ * Exact toolkit container-width category, category flags and observed CSS-pixel dimensions.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const container: SPFxContainerSizeInfo = useSPFxContainerSize();
- * console.log(container.isSmall, container.width);
+ * import * as React from 'react';
+ * import { SPFxContainerSizeInfo, useSPFxContainerSize } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const container: SPFxContainerSizeInfo = useSPFxContainerSize();
+ *   console.log(container.isSmall, container.width);
+ *   return <span>{container.width}</span>;
+ * }
  * ```
  */
 export interface SPFxContainerSizeInfo {
@@ -36,7 +49,7 @@ export interface SPFxContainerSizeInfo {
   readonly size: SPFxContainerSize;
   
   /**
-   * True for the small category (width <480px), including the zero-width unmeasured fallback.
+   * True for the small category (width below 480px), including the zero-width unmeasured fallback.
    */
   readonly isSmall: boolean;
   
@@ -52,7 +65,7 @@ export interface SPFxContainerSizeInfo {
   /** Is extra extra large container (1366-1919px) - large desktop, wide screen */
   readonly isXXLarge: boolean;
   
-  /** Is extra extra extra large container (>= 1920px) - 4K, ultra-wide, multi-column */
+  /** Is extra extra extra large container (1920px or wider) - 4K, ultra-wide, multi-column */
   readonly isXXXLarge: boolean;
   
   /**
@@ -67,18 +80,23 @@ export interface SPFxContainerSizeInfo {
 }
 
 /**
- * Classifies the observed container width using toolkit thresholds: small <480, medium <640, large <1024, xLarge <1366, xxLarge <1920, otherwise xxxLarge. These measure container width, not viewport width. Before a supported measurement, width and height default to zero and the category is small. Call in a React component or hook beneath the matching host-specific SPFx provider.
+ * Classifies the observed container width using toolkit thresholds: small `less than 480`, medium `less than 640`, large `less than 1024`, xLarge `less than 1366`, xxLarge `less than 1920`, otherwise xxxLarge. These measure container width, not viewport width. Before a supported measurement, width and height default to zero and the category is small. Call in a React component or hook beneath the matching host-specific SPFx provider.
  *
  * @returns Category, exact-category boolean flags and dimensions in CSS pixels.
  * @throws Error when no host-specific SPFx provider is present.
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxContainerSize } from '@apvee/spfx-react-toolkit';
+ *
  * function ContainerLabel() {
  *   const { size, width } = useSPFxContainerSize();
  *   return <span>{size}: {width}px</span>;
  * }
  * ```
+ *
+ * @useWhen a WebPart layout must switch on measured container width categories.
  */
 export function useSPFxContainerSize(): SPFxContainerSizeInfo {
   const { size: containerSize } = useSPFxContainerInfo();

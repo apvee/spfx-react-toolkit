@@ -1,0 +1,9 @@
+{
+  "name": "@apvee/spfx-react-toolkit",
+  "exports": {
+    ".": { "types": "./lib/index.d.ts" },
+    "./controls/pagination": { "types": "./lib/pagination.d.ts" },
+    "./property-pane/pickers": { "types": "./lib/pane.d.ts" },
+    "./lib/*": { "types": "./lib/*.d.ts" }
+  }
+}

@@ -1,8 +1,20 @@
 /**
- * Token acquisition policy used by the precheck service. `passive` disables provider interaction; `interactiveAllowed` permits it. Neither mode grants permissions or bypasses consent.
+ * Token-free delegated-scope diagnostics and configuration normalization.
+ *
+ * These helpers read supplied values without React context or token acquisition.
+ * Decoded claims and available scopes are diagnostic evidence; the target API
+ * still enforces authorization. No signature or issuer verification is performed.
+ *
+ * @packageDocumentation
+ * @docPage helpers/api-permission-precheck
+ */
+/**
+ * Token acquisition policy used by the React precheck hook. `passive` cancels supported popup/redirect events; `interactiveAllowed` permits interaction. The standalone service does not apply this policy. Neither mode grants permissions or bypasses consent.
  *
  * @example
  * ```ts
+ * import { SPFxApiPermissionPrecheckMode } from '@apvee/spfx-react-toolkit';
+ *
  * const mode: SPFxApiPermissionPrecheckMode = 'passive';
  * ```
  */
@@ -13,6 +25,8 @@ export type SPFxApiPermissionPrecheckMode = 'passive' | 'interactiveAllowed';
  *
  * @example
  * ```ts
+ * import { summarizeSPFxApiPermissionResults } from '@apvee/spfx-react-toolkit';
+ *
  * const state = summarizeSPFxApiPermissionResults([]).configurationState;
  * ```
  */
@@ -26,8 +40,25 @@ export type SPFxApiPermissionConfigurationState =
 /**
  * Outcome of one delegated-scope precheck. `available` means the decoded token contains an accepted scope; other values describe configuration, token or acquisition failures. This is diagnostic evidence, not proof that an API operation will succeed.
  *
+ * @remarks
+ * `missingScope` has no exact acceptable delegated scope. Acquisition may report
+ * `consentRequired`, `interactionRequired`, `claimsChallenge`,
+ * `conditionalAccessBlocked`, `accessRestricted` (assignment restriction), or
+ * `resourceMisconfigured` (unresolved resource). These are heuristic diagnoses.
+ * `tokenProviderUnavailable` is the hook's inability to obtain its provider.
+ *
+ * `audienceMismatch` has no accepted token audience; `unsupportedToken` has no
+ * decodable object payload. `unsupportedPermissionKind` means an unsupported
+ * requirement kind or app roles without delegated scopes. `tokenExpired` also
+ * covers not-yet-valid numeric nbf claims. `invalidRequirement` has incomplete
+ * identity/resource/scope/kind metadata. `transientFailure` covers network,
+ * throttling or temporary acquisition failure; `timeout` reports acquisition
+ * timeout and `unknown` means no more specific diagnostic was determined.
+ *
  * @example
  * ```ts
+ * import { SPFxApiPermissionCheckStatus } from '@apvee/spfx-react-toolkit';
+ *
  * const status: SPFxApiPermissionCheckStatus = 'missingScope';
  * ```
  */
@@ -55,6 +86,8 @@ export type SPFxApiPermissionCheckStatus =
  *
  * @example
  * ```ts
+ * import { SPFxApiPermissionSeverity } from '@apvee/spfx-react-toolkit';
+ *
  * const severity: SPFxApiPermissionSeverity = 'warning';
  * ```
  */
@@ -65,6 +98,8 @@ export type SPFxApiPermissionSeverity = 'ok' | 'warning' | 'error' | 'unknown';
  *
  * @example
  * ```ts
+ * import { SPFxPermissionScopeOptions } from '@apvee/spfx-react-toolkit';
+ *
  * const scope: SPFxPermissionScopeOptions = { scope: 'User.Read', required: false };
  * ```
  */
@@ -74,7 +109,8 @@ export interface SPFxPermissionScopeOptions {
    */
   readonly scope: string;
   /**
-   * Whether this scope blocks configuration readiness. Defaults to true when omitted.
+   * Whether this scope blocks configuration readiness. Omitted or undefined means true.
+   * @defaultValue true
    */
   readonly required?: boolean;
   /**
@@ -82,7 +118,7 @@ export interface SPFxPermissionScopeOptions {
    */
   readonly satisfies?: readonly string[];
   /**
-   * Optional display label preserved on the normalized requirement.
+   * Display label preserved on normalization; omitted remains undefined.
    */
   readonly label?: string;
 }
@@ -92,6 +128,8 @@ export interface SPFxPermissionScopeOptions {
  *
  * @example
  * ```ts
+ * import { SPFxPermissionScopeInput } from '@apvee/spfx-react-toolkit';
+ *
  * const scopes: SPFxPermissionScopeInput[] = ['User.Read', { scope: 'Mail.Read', required: false }];
  * ```
  */
@@ -102,6 +140,8 @@ export type SPFxPermissionScopeInput = string | SPFxPermissionScopeOptions;
  *
  * @example
  * ```ts
+ * import { SPFxCustomApiPermissionInput } from '@apvee/spfx-react-toolkit';
+ *
  * const api: SPFxCustomApiPermissionInput = { name: 'Contoso API', resource: 'api://contoso', scopes: ['access_as_user'] };
  * ```
  */
@@ -127,7 +167,7 @@ export interface SPFxCustomApiPermissionInput {
    */
   readonly scopes: readonly SPFxPermissionScopeInput[];
   /**
-   * Exact accepted token audience strings. Omission disables audience comparison for this API.
+   * Exact accepted token audience strings. Omitted or empty disables audience comparison for this API.
    */
   readonly expectedAudiences?: readonly string[];
 }
@@ -137,6 +177,8 @@ export interface SPFxCustomApiPermissionInput {
  *
  * @example
  * ```ts
+ * import { SPFxApiPermissionPrecheckConfig } from '@apvee/spfx-react-toolkit';
+ *
  * const config: SPFxApiPermissionPrecheckConfig = { graph: ['User.Read'] };
  * ```
  */
@@ -150,7 +192,7 @@ export interface SPFxApiPermissionPrecheckConfig {
    */
   readonly customApis?: readonly SPFxCustomApiPermissionInput[];
   /**
-   * Explicit normalized requirements appended after configured resources. Duplicate endpoint/scope pairs keep the earlier requirement.
+   * Explicit normalized requirements appended after configured resources. Omitted contributes none; duplicate endpoint/scope pairs keep the earlier requirement.
    */
   readonly requirements?: readonly SPFxApiPermissionRequirement[];
 }
@@ -160,6 +202,8 @@ export interface SPFxApiPermissionPrecheckConfig {
  *
  * @example
  * ```ts
+ * import { normalizeSPFxApiPermissionRequirements } from '@apvee/spfx-react-toolkit';
+ *
  * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
  * ```
  */
@@ -205,7 +249,7 @@ export interface SPFxApiPermissionRequirement {
    */
   readonly adminMessage: string;
   /**
-   * Optional application-defined display label.
+   * Application-defined display label; omitted remains undefined and is not copied into result summaries.
    */
   readonly label?: string;
 }
@@ -215,6 +259,8 @@ export interface SPFxApiPermissionRequirement {
  *
  * @example
  * ```ts
+ * import { SPFxApiPermissionPackageSolutionEntry } from '@apvee/spfx-react-toolkit';
+ *
  * const request: SPFxApiPermissionPackageSolutionEntry = { resource: 'Microsoft Graph', scope: 'User.Read' };
  * ```
  */
@@ -234,6 +280,8 @@ export interface SPFxApiPermissionPackageSolutionEntry {
  *
  * @example
  * ```ts
+ * import { SPFxApiPermissionSummary, evaluateSPFxApiPermissionRequirement, normalizeSPFxApiPermissionRequirements } from '@apvee/spfx-react-toolkit';
+ *
  * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
  * const summary: SPFxApiPermissionSummary = evaluateSPFxApiPermissionRequirement(requirement, { scp: 'User.Read' });
  * ```
@@ -294,6 +342,8 @@ export interface SPFxApiPermissionSummary {
  *
  * @example
  * ```ts
+ * import { SPFxApiPermissionCheckResult, evaluateSPFxApiPermissionRequirement, normalizeSPFxApiPermissionRequirements } from '@apvee/spfx-react-toolkit';
+ *
  * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
  * const result: SPFxApiPermissionCheckResult = evaluateSPFxApiPermissionRequirement(requirement, { scp: 'User.Read' });
  * ```
@@ -304,15 +354,15 @@ export interface SPFxApiPermissionCheckResult extends SPFxApiPermissionSummary {
    */
   readonly detectedScopes: readonly string[];
   /**
-   * First string audience observed when available; undefined for absent/unusable audiences.
+   * First string audience observed when available; undefined for absent/unusable first entries. Evaluation compares every string entry in an audience array, even though this display field shows only its first entry.
    */
   readonly audience?: string;
   /**
-   * Tenant ID claim when available; not independently verified.
+   * Tenant ID claim when available; undefined when unavailable and not independently verified.
    */
   readonly tenantId?: string;
   /**
-   * Observed scope differing only by case from an acceptable scope; diagnostic only, not accepted.
+   * Observed scope differing only by case from an acceptable scope; undefined when none matches. Diagnostic only, not accepted.
    */
   readonly caseMismatchScope?: string;
 }
@@ -322,32 +372,34 @@ export interface SPFxApiPermissionCheckResult extends SPFxApiPermissionSummary {
  *
  * @example
  * ```ts
+ * import { SPFX_GRAPH_APP_ID, SPFxJwtPayload } from '@apvee/spfx-react-toolkit';
+ *
  * const payload: SPFxJwtPayload = { scp: 'User.Read Mail.Read', aud: SPFX_GRAPH_APP_ID };
  * ```
  */
 export interface SPFxJwtPayload {
   /**
-   * Optional resource audience string or list; decoded without signature verification.
+   * Resource audience string or list; omitted means no audience evidence. Decoded without signature verification.
    */
   readonly aud?: string | readonly string[];
   /**
-   * Optional space-separated delegated scope claim.
+   * Space-separated delegated scope claim; omitted yields no detected delegated scopes.
    */
   readonly scp?: string;
   /**
-   * Optional application role claims; delegated-scope prechecks do not accept these as scopes.
+   * Application role claims; omitted means no role evidence. Delegated-scope prechecks do not accept these as scopes.
    */
   readonly roles?: readonly string[] | string;
   /**
-   * Optional tenant identifier claim; unverified.
+   * Tenant identifier claim; omitted provides no tenant metadata. Unverified.
    */
   readonly tid?: string;
   /**
-   * Optional expiration time in Unix seconds; numeric values are checked by evaluation.
+   * Expiration time in Unix seconds; omitted skips the expiry check. Numeric values are checked by evaluation.
    */
   readonly exp?: number;
   /**
-   * Optional earliest valid time in Unix seconds; numeric values are checked by evaluation.
+   * Earliest valid time in Unix seconds; omitted skips the not-yet-valid check. Numeric values are checked by evaluation.
    */
   readonly nbf?: number;
   /** Additional decoded claims; callers must validate their types before use. */
@@ -359,8 +411,11 @@ export interface SPFxJwtPayload {
  *
  * @example
  * ```ts
+ * import { SPFX_GRAPH_RESOURCE_NAME } from '@apvee/spfx-react-toolkit';
+ *
  * const request = { resource: SPFX_GRAPH_RESOURCE_NAME, scope: 'User.Read' };
  * ```
+ * @useWhen You construct a SharePoint package-solution API permission request for Microsoft Graph.
  */
 export const SPFX_GRAPH_RESOURCE_NAME = 'Microsoft Graph';
 /**
@@ -368,8 +423,11 @@ export const SPFX_GRAPH_RESOURCE_NAME = 'Microsoft Graph';
  *
  * @example
  * ```ts
+ * import { SPFX_GRAPH_RESOURCE_ENDPOINT, createSPFxApiPermissionRequirementId } from '@apvee/spfx-react-toolkit';
+ *
  * const id = createSPFxApiPermissionRequirementId(SPFX_GRAPH_RESOURCE_ENDPOINT, 'User.Read');
  * ```
+ * @useWhen You acquire a Graph token or build a normalized Graph requirement identity.
  */
 export const SPFX_GRAPH_RESOURCE_ENDPOINT = 'https://graph.microsoft.com';
 /**
@@ -377,8 +435,11 @@ export const SPFX_GRAPH_RESOURCE_ENDPOINT = 'https://graph.microsoft.com';
  *
  * @example
  * ```ts
+ * import { SPFX_GRAPH_APP_ID, SPFxJwtPayload } from '@apvee/spfx-react-toolkit';
+ *
  * const payload: SPFxJwtPayload = { aud: SPFX_GRAPH_APP_ID, scp: 'User.Read' };
  * ```
+ * @useWhen You compare a decoded Graph token audience with its well-known application identifier.
  */
 export const SPFX_GRAPH_APP_ID = '00000003-0000-0000-c000-000000000000';
 
@@ -446,9 +507,55 @@ function addRequirement(
  * @param config - Configuration; omitted arrays contribute no requirements.
  * @returns Ordered, deduplicated requirements; an empty configuration returns an empty array.
  *
- * @example
+ * @example Basic usage
  * ```ts
+ * import { normalizeSPFxApiPermissionRequirements } from '@apvee/spfx-react-toolkit';
+ *
  * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
+ * ```
+ * @useWhen You combine Graph and custom API scope configuration into ordered, deduplicated diagnostic requirements.
+ *
+ *
+ * @example Compare illustrative Graph and Orders API requirements
+ * ```ts
+ * import {
+ *   evaluateSPFxApiPermissionRequirement,
+ *   normalizeSPFxApiPermissionRequirements,
+ *   summarizeSPFxApiPermissionResults,
+ *   SPFX_GRAPH_APP_ID,
+ *   type SPFxApiPermissionPrecheckConfig,
+ *   type SPFxJwtPayload,
+ * } from '@apvee/spfx-react-toolkit';
+ *
+ * const config: SPFxApiPermissionPrecheckConfig = {
+ *   graph: [
+ *     'Sites.Read.All',
+ *     { scope: 'User.Read', required: false, label: 'Profile access' },
+ *   ],
+ *   customApis: [{
+ *     id: 'orders',
+ *     name: 'Orders API',
+ *     resource: 'api://11111111-1111-1111-1111-111111111111',
+ *     packageResource: 'Orders API',
+ *     scopes: [{ scope: 'Orders.Read', satisfies: ['Orders.ReadWrite'] }],
+ *     expectedAudiences: ['11111111-1111-1111-1111-111111111111'],
+ *   }],
+ * };
+ *
+ * const requirements = normalizeSPFxApiPermissionRequirements(config);
+ * // Illustrative decoded claims only; use the hook/service for real tokens.
+ * const graphPayload: SPFxJwtPayload = {
+ *   aud: SPFX_GRAPH_APP_ID,
+ *   scp: 'Sites.Read.All User.Read',
+ * };
+ * const graphResults = requirements
+ *   .filter(requirement => requirement.id.startsWith('graph:'))
+ *   .map(requirement =>
+ *     evaluateSPFxApiPermissionRequirement(requirement, graphPayload)
+ *   );
+ * const graphSummary = summarizeSPFxApiPermissionResults(graphResults);
+ * // Both Graph requirements are available: configurationState === 'ready'.
+ * // Custom API requirements need their own resource token and are not checked here.
  * ```
  */
 export function normalizeSPFxApiPermissionRequirements(
@@ -516,8 +623,11 @@ export function normalizeSPFxApiPermissionRequirements(
  *
  * @example
  * ```ts
+ * import { buildSPFxApiPermissionAdminMessage } from '@apvee/spfx-react-toolkit';
+ *
  * const message = buildSPFxApiPermissionAdminMessage('Microsoft Graph', 'User.Read');
  * ```
+ * @useWhen You present an administrator with the resource and scope that need API-access approval.
  */
 export function buildSPFxApiPermissionAdminMessage(
   packageResource: string,
@@ -531,13 +641,16 @@ export function buildSPFxApiPermissionAdminMessage(
  *
  * @param resourceEndpoint - Token resource endpoint.
  * @param scope - Delegated scope; surrounding whitespace is removed.
- * @param prefix - Optional custom namespace; `graph` selects the Graph identity format.
+ * @param prefix - Omitted/empty uses graph identity for the exact Graph endpoint, otherwise the trimmed endpoint; `graph` explicitly selects Graph format.
  * @returns Requirement identity string.
  *
  * @example
  * ```ts
+ * import { SPFX_GRAPH_RESOURCE_ENDPOINT, createSPFxApiPermissionRequirementId } from '@apvee/spfx-react-toolkit';
+ *
  * const id = createSPFxApiPermissionRequirementId(SPFX_GRAPH_RESOURCE_ENDPOINT, 'User.Read');
  * ```
+ * @useWhen You correlate configured scopes with diagnostic results using the normalization identity format.
  */
 export function createSPFxApiPermissionRequirementId(
   resourceEndpoint: string,
@@ -561,9 +674,12 @@ export function createSPFxApiPermissionRequirementId(
  *
  * @example
  * ```ts
+ * import { normalizeSPFxApiPermissionRequirements, validateSPFxApiPermissionRequirement } from '@apvee/spfx-react-toolkit';
+ *
  * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
  * const issue = validateSPFxApiPermissionRequirement(requirement);
  * ```
+ * @useWhen You reject incomplete delegated-scope metadata before requesting a token.
  */
 export function validateSPFxApiPermissionRequirement(
   requirement: SPFxApiPermissionRequirement
@@ -597,15 +713,19 @@ export function validateSPFxApiPermissionRequirement(
 }
 
 /**
- * Decodes only the JSON payload of a JWT-shaped string. Malformed/nonobject payloads return undefined; signature, issuer and claim types are not validated. Do not log raw tokens or treat decoded claims as verified identity.
+ * Decodes only the JSON payload of a JWT-shaped string. Malformed/nonobject payloads return undefined; signature, issuer and claim types are not validated. Requires globalThis.atob for payload decoding; unavailable decoding support also returns undefined. Do not log raw tokens or treat decoded claims as verified identity.
  *
  * @param token - Token text to decode locally; no network request is made.
  * @returns Decoded object claims, or undefined when decoding fails.
  *
  * @example
  * ```ts
+ * import { decodeSPFxJwtPayload } from '@apvee/spfx-react-toolkit';
+ *
  * const payload = decodeSPFxJwtPayload('header.eyJzY3AiOiJVc2VyLlJlYWQifQ.signature');
  * ```
+ * @useWhen You inspect token claims locally for diagnostics without exposing the raw token in results.
+ * @avoidWhen You need authenticated identity or authorization: payload decoding does not verify the signature, issuer or claim types.
  */
 export function decodeSPFxJwtPayload(token: string): SPFxJwtPayload | undefined {
   try {
@@ -631,13 +751,16 @@ export function decodeSPFxJwtPayload(token: string): SPFxJwtPayload | undefined 
 /**
  * Extracts whitespace-trimmed scopes from a string `scp` claim. Ignores app roles and returns an empty array for absent/nonstring claims; duplicate scopes are retained.
  *
- * @param payload - Decoded, unverified JWT claims.
+ * @param payload - Decoded, unverified JWT claims. Scopes split on literal spaces; tabs are trimmed only at each resulting entry boundary.
  * @returns Delegated scope names in their original case and order.
  *
  * @example
  * ```ts
+ * import { extractSPFxDelegatedScopes } from '@apvee/spfx-react-toolkit';
+ *
  * const scopes = extractSPFxDelegatedScopes({ scp: 'User.Read Mail.Read' });
  * ```
+ * @useWhen You need delegated scp entries from an already decoded payload for diagnostic comparison.
  */
 export function extractSPFxDelegatedScopes(payload: SPFxJwtPayload): readonly string[] {
   if (typeof payload.scp !== 'string') {
@@ -655,22 +778,26 @@ export function extractSPFxDelegatedScopes(payload: SPFxJwtPayload): readonly st
  *
  * @param requirement - Normalized delegated-scope requirement.
  * @param payload - Decoded claims; undefined produces `unsupportedToken`.
- * @param options - Audience validation is enabled unless `validateAudience` is false; absent expected audiences skip the comparison.
+ * @param options - Omitted enables audience validation; validateAudience false skips it. Missing/empty expected audiences skip comparison in either case.
  * @returns Detailed diagnostic result without a raw token.
  *
  * @example
  * ```ts
+ * import { SPFX_GRAPH_APP_ID, evaluateSPFxApiPermissionRequirement, normalizeSPFxApiPermissionRequirements } from '@apvee/spfx-react-toolkit';
+ *
  * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
  * const result = evaluateSPFxApiPermissionRequirement(requirement, { aud: SPFX_GRAPH_APP_ID, scp: 'User.Read' });
  * ```
+ * @useWhen You already have decoded claims and need a case-sensitive delegated-scope diagnostic.
+ * @avoidWhen You need server authorization or app-role permission checks; this evaluates delegated scope evidence only.
  */
 export function evaluateSPFxApiPermissionRequirement(
   requirement: SPFxApiPermissionRequirement,
   payload: SPFxJwtPayload | undefined,
-  options?: { /**
-   * Checks configured expected audiences unless false. Omitted defaults to enabled.
-   */
-  readonly validateAudience?: boolean }
+  options?: {
+    /** Checks configured expected audiences unless false; omitted or undefined enables validation. */
+    readonly validateAudience?: boolean
+  }
 ): SPFxApiPermissionCheckResult {
   const invalidResult = validateSPFxApiPermissionRequirement(requirement);
 
@@ -764,9 +891,12 @@ export function evaluateSPFxApiPermissionRequirement(
  *
  * @example
  * ```ts
+ * import { classifySPFxApiPermissionError, normalizeSPFxApiPermissionRequirements } from '@apvee/spfx-react-toolkit';
+ *
  * const [requirement] = normalizeSPFxApiPermissionRequirements({ graph: ['User.Read'] });
  * const result = classifySPFxApiPermissionError(requirement, new Error('AADSTS65001: consent required'));
  * ```
+ * @useWhen You translate an acquisition failure into token-free remediation/status metadata.
  */
 export function classifySPFxApiPermissionError(
   requirement: SPFxApiPermissionRequirement,
@@ -871,15 +1001,24 @@ export function classifySPFxApiPermissionError(
 /**
  * Groups available results, required actionable failures, optional failures and unresolved required outcomes. `isConfigured` checks only required results, so an empty set returns true even though its configuration state is `idle`. A checking flag overrides the aggregate state.
  *
+ * Required missingScope, consentRequired, interactionRequired, claimsChallenge,
+ * conditionalAccessBlocked and accessRestricted results enter missing. Other
+ * unavailable required results enter unknown; unavailable optional results enter
+ * warnings regardless of severity. State precedence is checking, empty idle,
+ * actionable missing, all-required available, then cannotDetermine.
+ *
  * @param results - Completed requirement results.
  * @param isChecking - Whether work is still pending; omitted means false.
  * @returns Aggregate state and token-free UI buckets.
  *
  * @example
  * ```ts
+ * import { summarizeSPFxApiPermissionResults } from '@apvee/spfx-react-toolkit';
+ *
  * const summary = summarizeSPFxApiPermissionResults([]);
  * // summary.configurationState === 'idle'; summary.isConfigured === true
  * ```
+ * @useWhen You render readiness and actionable/optional/unknown buckets from completed prechecks.
  */
 export function summarizeSPFxApiPermissionResults(
   results: readonly SPFxApiPermissionCheckResult[],

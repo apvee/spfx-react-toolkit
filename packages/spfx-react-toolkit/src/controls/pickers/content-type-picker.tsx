@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @docPage controls/pickers
+ */
 import * as React from 'react';
 import type { ContentTypePickerProps, ContentTypePickerOption } from './picker.types';
 import type { ContentTypePickerValue } from './picker-values.types';
@@ -6,7 +10,8 @@ import { usePickerSourceContext } from './usePickerSourceContext.internal';
 import { usePickerRuntime } from './usePickerRuntime.internal';
 import { PickerRenderer } from './picker-renderer.internal';
 
-/** Select read-only SharePoint content type references from a collection root or one list.
+/**
+ * Select read-only SharePoint content type references from a collection root or one list.
  * Requires an SPFx toolkit provider with SPHttpClient. Site scope (default) resolves the owning
  * collection root even for a subweb URL; list scope preserves the owning web and exact list copy ID.
  * Defaults to Dropdown (historical combobox presentation), single selection and includeHidden=true. Opening retrieves every REST
@@ -15,10 +20,24 @@ import { PickerRenderer } from './picker-renderer.internal';
  * Inherits PickerProps model seeds, reactive availableOptions, array selection events, errors,
  * accessibility and fixed presentation slots. ReadOnly/Sealed do not remove choices. Invalid
  * IDs/configuration throw synchronously; request failures use the inherited onError contract.
- * @param props Catalog scope/list selector, optional group/ID/hidden filters, selection models and native presentation.
+ * @param props - Catalog scope/list selector, optional group/ID/hidden filters, selection models and native presentation.
  * @returns A Fluent Field with Dropdown or TagPicker. Single and multiple selections both use scoped reference arrays.
- * @example <ContentTypePicker label="Site content type" webUrl="https://tenant.sharepoint.com/sites/hr/sub" />
- * @example <ContentTypePicker label="List content type" scope="list" list="Documents" contentTypeId="0x0101" includeDescendants multiselect />
+ * @example Current collection catalog
+ * ```tsx
+ * import * as React from 'react';
+ * import { ContentTypePicker } from '@apvee/spfx-react-toolkit';
+ * <ContentTypePicker label="Site content type" webUrl="https://tenant.sharepoint.com/sites/hr/sub" />
+ * ```
+ *
+ * @example List catalog
+ * ```tsx
+ * import * as React from 'react';
+ * import { ContentTypePicker } from '@apvee/spfx-react-toolkit';
+ * <ContentTypePicker label="List content type" scope="list" list="Documents" contentTypeId="0x0101" includeDescendants multiselect />
+ * ```
+ *
+ * @useWhen A user must select content types from a site collection, web or list catalog.
+ * @avoidWhen Use FieldPicker for column definitions within a list.
  */
 export function ContentTypePicker(props: ContentTypePickerProps): React.ReactElement {
   const context = usePickerSourceContext();

@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @docPage controls/pickers
+ */
 import * as React from 'react';
 import type { FieldPickerProps, FieldPickerOption } from './picker.types';
 import { createFieldPickerSource } from './field-picker.source.internal';
@@ -6,12 +10,21 @@ import type { FieldPickerValue } from './picker-values.types';
 import { usePickerRuntime } from './usePickerRuntime.internal';
 import { PickerRenderer } from './picker-renderer.internal';
 
-/** Search list fields or site columns beneath an SPFx provider, with icons based on verified field types.
+/**
+ * Search list fields or site columns beneath an SPFx provider, with icons based on verified field types.
  * Defaults: Dropdown (historical combobox presentation), multiple selection, hidden/read-only included, Title ascending.
  * Opening the menu loads all matching fields, following native paging. Typed search filters the complete memory-cached catalog locally, case-insensitively; no initial display limit.
- * @param props List selector (omitted for site columns), references and Fluent options.
+ * @param props - List selector (omitted for site columns), references and Fluent options.
  * @returns A native Fluent Field and picker; blank clearing emits an empty array.
- * @example <FieldPicker label="Campi" list="Projects" includeReadOnly={false} />
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { FieldPicker } from '@apvee/spfx-react-toolkit';
+ * <FieldPicker label="Campi" list="Projects" includeReadOnly={false} />
+ * ```
+ *
+ * @useWhen A user must select fields from a specified SharePoint list.
+ * @avoidWhen Use ContentTypePicker when the configuration requires content-type identities.
  */
 export function FieldPicker(props: FieldPickerProps): React.ReactElement {
   const context = usePickerSourceContext(), source = createFieldPickerSource(props, context);

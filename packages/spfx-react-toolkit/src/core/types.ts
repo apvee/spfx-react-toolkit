@@ -1,3 +1,9 @@
+/**
+ * Host and provider metadata contracts.
+ *
+ * @packageDocumentation
+ * @docPage core/types
+ */
 // types.ts
 // Core type definitions for SPFx React Toolkit
 
@@ -10,23 +16,28 @@ import type { BaseListViewCommandSet, BaseFieldCustomizer } from '@microsoft/sp-
  *
  * @example
  * ```ts
+ * import { HostKind } from '@apvee/spfx-react-toolkit';
+ *
  * const kind: HostKind = 'WebPart';
  * ```
  */
-export type HostKind = 
-  | 'WebPart' 
-  | 'AppCustomizer' 
-  | 'FieldCustomizer' 
-  | 'CommandSet' 
+export type HostKind =
+  | 'WebPart'
+  | 'AppCustomizer'
+  | 'FieldCustomizer'
+  | 'CommandSet'
   | 'ACE';
 
 /**
  * Union of the four supported SPFx component instances. TProps is the host properties type. Pass an initialized instance to its matching host-specific provider; access context and properties through the public React hooks rather than assuming shared public members on this union.
  *
- * @typeParam TProps - Properties type of the supplied host instance.
+ * @typeParam TProps - Object properties type of the supplied host instance; defaults to the empty object type.
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { SPFxComponent } from '@apvee/spfx-react-toolkit';
+ *
  * type ComponentWithTitle = SPFxComponent<{ title: string }>;
  * ```
  */
@@ -41,6 +52,8 @@ export type SPFxComponent<TProps extends {} = {}> =
  *
  * @example
  * ```ts
+ * import { SPFxContextType } from '@apvee/spfx-react-toolkit';
+ *
  * function webUrl(context: SPFxContextType): string {
  *   return context.pageContext.web.absoluteUrl;
  * }
@@ -62,6 +75,8 @@ export type SPFxContextType =
  *
  * @example
  * ```ts
+ * import { ContainerSize } from '@apvee/spfx-react-toolkit';
+ *
  * const size: ContainerSize = { width: 720, height: 300 };
  * ```
  */
@@ -77,20 +92,16 @@ export interface ContainerSize {
 }
 
 /**
- * Props accepted by SPFx providers (instance-based API)
- * 
- * @template TProps - The properties type for the SPFx component (WebPart props, Extension props, etc.)
- * 
- * @example
+ * Shared initialized-host input contract used by the provider runtime. Prefer the host-specific provider props so TypeScript enforces the native host kind. Each mount owns an isolated runtime store and waits for ServiceScope readiness before mounting children.
+ *
+ * @typeParam TProps - Object property bag of the supplied native host, defaulting to the empty object type.
+ * @example Shared props with a real host input
  * ```tsx
- * // In your WebPart render():
- * public render(): void {
- *   const element = React.createElement(
- *     SPFxWebPartProvider,
- *     { instance: this },
- *     React.createElement(MyComponent)
- *   );
- *   ReactDom.render(element, this.domElement);
+ * import * as React from 'react';
+ * import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+ * import { SPFxProviderProps } from '@apvee/spfx-react-toolkit';
+ * function sharedProps(instance: BaseClientSideWebPart<{ title: string }>): SPFxProviderProps<{ title: string }> {
+ *   return { instance, children: <span>Host content</span> };
  * }
  * ```
  */
@@ -101,7 +112,7 @@ export interface SPFxProviderProps<TProps extends {} = {}> {
   readonly instance: SPFxComponent<TProps>;
   
   /**
-   * Optional React subtree receiving instance metadata, runtime state and host theme. Omission renders no application content.
+   * Optional React subtree receiving instance metadata, runtime state and host theme. Omitted or undefined children render no application content.
    */
   readonly children?: React.ReactNode;
 }
@@ -111,6 +122,9 @@ export interface SPFxProviderProps<TProps extends {} = {}> {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxContext } from '@apvee/spfx-react-toolkit';
+ *
  * function HostLabel() {
  *   const metadata = useSPFxContext();
  *   return <span>{metadata.kind}: {metadata.instanceId}</span>;

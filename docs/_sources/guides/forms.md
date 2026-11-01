@@ -1,0 +1,153 @@
+# Build forms with explicit ownership
+
+Choose one form suite and validation owner, compose fields inside a native form, then await persistence before reset or dismissal. Records, drafts and date/time domains require deliberate application policies.
+
+[Documentation home](../INDEX.md)
+
+## Rules-only forms
+
+`required` supplies visible and accessible metadata. It does **not** create a validation rule. Requirements belong in `rules`, a schema or a resolver. Returned service errors should normally be localized by the consumer with `methods.setError('root.serverError', { message: 'Please try again.' })`.
+
+<!-- toolkit:include symbol="createForm" section="example" title="Rules-only profile editor" -->
+
+## Settings rows as Form fields
+
+[SettingsGroup](react-controls.md#automatic-form-field-rows) can own the visible name and hint of one built-in Form logical control. Use `SettingsGroup.Item field title="..." description="..."` and omit the control's `label` and `hint`. The same integration applies to typed, dynamic and scoped `Fields` adapters, with no manual ARIA naming links or repeated visible text.
+
+The title must supply a meaningful name and may contain noninteractive phrasing JSX. Arbitrary custom components used in the title must themselves render meaningful accessible content; the toolkit does not inspect their rendered DOM. Native labelable controls receive a real label targeting their actual ID; clicking a row title focuses the input or activates the boolean control. Composite controls receive the row's name at their semantic target rather than assigning the same name to every internal control. DateTime is one logical field and still uses `dateLabel`/`timeLabel` for its two parts. TagPicker inherits the row name for its input and tag group; its ordinary standalone naming requirement remains in force.
+
+The row description is merged with caller `aria-describedby` IDs and Field error IDs. TagPicker accepts `id` for its native query input and `aria-describedby` for additional input descriptions. DateTime accepts `id` and `aria-describedby` for its semantic date/time group; its parts retain their own identities and descriptions. Validation stays with the control, and the row label reflects `required` and effective disabled state. `required` does not create validation: choose field rules, a schema or a resolver as usual. Edits update RHF normally; persistence happens through your existing submit handler, with no automatic save.
+
+Exactly one built-in adapter may own a field row. Repeated adapter `label`/`hint` and multiple owners produce diagnostics. Split multiple controls across field rows, or use an ordinary `SettingsGroup.Item` and name each control explicitly. Secondary actions, nested settings rows and DateTime parts do not inherit the parent row's naming. Custom `useField` bindings and standalone Fluent controls need their own labels/hints and should use ordinary rows. This composition uses the [existing dependencies](../getting-started/installation.md#form-adapter-baseline), Fluent theme and renderer, with no new provider or peer.
+
+The **Form** test web part shows one selected form model and, in the variable-field model, one selected adapter at a time. Change the field, edit its value, and use save/reset and the validation controls to inspect the current model's behavior. The versioned [Form regression fixture](../../../tests/fixtures/demo-control-isolation/form-regressions.tsx) retains broader adapter, native-form and isolation scenarios. These local interactions do not establish authenticated SharePoint or screen-reader behavior; see the [host checklist](../development/sharepoint-validation/INDEX.md#focus-input-and-accessibility).
+
+<!-- toolkit:include symbol="createForm" section="example" title="Settings rows as Form fields" -->
+
+## Input and validation ownership
+
+### Input, output and validation ownership
+
+`createForm<TInput>()` retains the input model at submission. `createForm(schema)` infers distinct input/output models from a Standard Schema. `createForm<TInput, TOutput, TContext>({ schema })` and the equivalent `{ resolver }` bind that owner permanently. Standard Schema is an interface; no Zod or Yup dependency is required.
+
+For example, a schema can accept `{ quantity: string }` and produce `{ quantity: number }`: the Input receives and writes a string, `getValues()`/`watch()` still expose strings, and successful `onSubmit` receives numbers. Validation does not rewrite the live model. Direct Input cannot write a narrower literal type; use a string input domain and transform its output, or a custom `useField` binding.
+
+Choose one validation owner: schema, resolver or field/array rules. Supplying domain rules with a resolver is rejected rather than silently ignored. Internal date/time draft checks compose with the chosen owner so an incomplete draft cannot submit an older committed value.
+
+Root may initialize its own form or receive `methods` from the **same suite's** `useForm`. Supplied methods and initialization options are mutually exclusive; raw RHF methods and methods from another factory are not accepted. The validation owner of a bound suite cannot be replaced. The native HTMLFormElement ref and applicable native attributes/events are forwarded; owned content cannot use `dangerouslySetInnerHTML`. Root defaults to `noValidate`.
+
+## Errors and pending saves
+
+### Errors, pending and retry
+
+Unexpected resolver failures use the reserved non-root error `__formValidation`. RHF deletes `errors.root` before deciding whether submission is valid; a root-only resolver failure would therefore be unsafe. The reserved field and its paths cannot appear in the input model or control names. `FormErrors` and `methods.formState.errors` expose this blocker truthfully.
+
+Unexpected custom-validator failures become validation errors at the rule boundary. Unexpected save failures are caught inside RHF's valid callback and become `root.submit` before RHF calculates submission success, including promises rejected with `undefined` or other falsy reasons. The original exception is retained in development diagnostics. An invalid notification failure is contained as well. No private RHF state mutation or recovery reset is used; pending clears and later attempts can succeed.
+
+`Error` renders a native alert. Without a name it aggregates the root's own messages, immediate global children such as `root.submit`/`root.serverError`, and `__formValidation`, with deterministic deduplication. Address a field or array root for its local messages. Arbitrary refs and nested object graphs are not recursively interpreted as messages.
+
+Root gates repeated native submissions and `requestSubmit()` through both validation and save. Submit and Reset are disabled while pending; ordinary fields remain editable. Save receives a validated snapshot, so edits after save starts do not mutate it. This does not promise to freeze fields at the initial click. Direct `methods.handleSubmit` preserves RHF behavior and bypasses Root's DOM gate.
+
+Disabled fields follow RHF's omission contract. A disabled Root or section cannot be re-enabled by nested props. `readOnly` retains submitted data where the underlying native control supports it; selection and boolean controls do not acquire a fabricated readOnly implementation. Control change/blur updates RHF before invoking the corresponding consumer callback. Ordinary label, hint and validation relationships belong to Fluent Field. Opt-in settings rows compose row naming and hints with those validation relationships.
+
+Semantic adapter callbacks run after the RHF update, followed by supported native-slot notifications. SpinButton's native input change is an editing draft; its top-level change is the numeric commit. CheckboxGroup owns its documented direct Checkbox child callbacks. ColorPicker and SwatchPicker own their adapter callbacks; arbitrary ColorSlider/ImageSwatch children retain Fluent callback order. Native color interaction can normalize absent alpha to `1`; the initial read preserves an absent alpha. RadioGroup owns its group callback, while raw Radio children retain Fluent's native-slot/child/bubbling order; use the group callback when reading the committed form selection.
+
+## Reset, records and drafts
+
+`defaultValues` initializes the baseline. Load another record with `methods.reset(newRecord)`; this updates the baseline and clears presentation drafts. Refresh the same record with explicit `keepDirtyValues` when preservation is desired. Object identity and domain IDs do not trigger inferred record changes or smart merges.
+
+`resetField(name)` targets that field. Same-value resets still clear combobox/date/time drafts. The private per-form coordinator tracks field owners across scoped arrays; moving an item preserves its identity and draft, removing it cleans up its owners, and unrelated forms remain isolated. Reactive `values` and async defaults follow RHF reset semantics with explicit resetOptions from the last committed render. Options from a suspended render do not change the active reset policy. Explicit reset-call options take precedence. A private, reset-scoped handoff preserves only opted-in dirty presentation text across actual RHF array-key replacement under `keepDirtyValues`; it is consumed once and cleared on targeted reset, removal or the next reset. RHF remains the only owner of semantic values and state.
+
+SpinButton also clears uncommitted text on a real targeted reset. Fluent 9.74.9 prioritizes its internal editing text over the controlled display prop and exposes no draft-clear API, so a reset that does not preserve this field replaces only the SpinButton primitive. Its native input identity changes, its forwarded ref updates, and existing input focus is restored. The Field, RHF controller, array item and form retain identity; a preserved dirty owner keeps its native input and draft. This presentation reset adds no numeric validation registry.
+
+TimePicker likewise replaces only its compat primitive on a targeted reset that does not preserve the field, because compat remembers previously submitted text. The forwarded native input ref changes and existing input focus is restored; preserved dirty presentation keeps the primitive. Freeform times commit on blur or selection using the tested compat popup behavior.
+
+Ordinary Reset invokes the consumer click handler first and respects `preventDefault()`. Native form reset cancellation is honored. Reset does not restore browser file selections or infer focus changes for a new record.
+
+DatePicker represents local calendar dates; TimePicker represents local times. DateTime stores `{ date: Date | null, time: Date | null }` separately and merges edits against the current scoped parent. Invalid drafts remain visible and block Root **and direct handleSubmit**, even if the old committed date is valid. UTC, time zones and DST conversion belong to the consumer/schema.
+
+DatePicker's default display and manual parser use strict local `YYYY-MM-DD`, with four-digit years `0000`–`9999`. The parser constructs and checks local calendar parts, including leap days; invalid dates, rollover, locale/timestamp/offset strings remain visible invalid drafts. Other locale formats or timestamp conversion require explicit consumer parser/formatter functions. There is no UTC parsing fallback. TimePicker retains the current field's local anchor or an explicit anchor; an empty field uses local `1970-01-01`. Its time part is meaningful independently of that anchor.
+
+FileInput owns local browser selection only. Clear/reset synchronizes its native input, display and submitted data. External/default/reset FileList values cannot reconstruct a native selection: keep existing attachments in a separate consumer model. Explicit keepDirtyValues can preserve a still-current dirty native selection. If an array reset actually remounts the native input, its selection cannot survive, including under `keepDirtyValues`: the owned model and display clear truthfully. Custom unowned FileList fields are not normalized by a package FileInput owner.
+
+## Objects and arrays
+
+### Objects, arrays and visual sections
+
+`Form.Object` scopes relative field names without adding layout. `Form.Array` manages structured records with RHF useFieldArray. Its RHF stable key is separate from domain ID/index; render with that key so moving/swapping records preserves mounted identity. Scopes compose for Object-in-Array and Array-in-Object. Captured field components follow the item after reordering.
+
+Array supports append, prepend, insert, remove, update, replace, move and swap. Disabled/invalid operations are no-ops; duplicate removal indices are handled safely; `remove(undefined)` removes every item. Domain array rules conflict with a resolver rather than being ignored. Headless operations do not move focus. Primitive arrays should use an appropriate multi-selection binding or a consumer model of records.
+
+`Form.ObjectSection` adds a named semantic group/fieldset and Fluent surface using `name`, `title`, `description`, `disabled`, `appearance`, children/render content and class/native group attributes. Supply a visible name or aria-label/aria-labelledby.
+
+`Form.ArraySection` adds an ordered editable list with `name`, `createItem`, `renderItem`, `minItems`, `maxItems`, `removable`, `reorderable`, `itemLabel`, localized `strings` and `disabled`. Add focuses the first available item control; Remove chooses the next/previous item or Add fallback; Move keeps the item's action focused. Hidden, inert, disabled, aria-disabled and focus-rejecting targets are skipped. Announcements support repeated identical actions. Record reset does not force a focus change.
+
+Sections inherit disabled state and RHF omission. Titles/descriptions accept the presentation slots above, including literal strings and JSX, with no implicit Markdown. Caller content and `useSx` own custom layout. Source slots/contentLayout/itemLayout configuration is intentionally replaced with these ordinary content/action props and class overrides.
+
+## Custom bindings
+
+### Custom binding and compatibility evidence
+
+`Form.useField` supplies the live value, onChange/onBlur/ref, errors, dirty/touched/invalid/disabled and resetVersion for a custom control. Use truthful native/RHF refs; do not fabricate DOM nodes. `Form.useForm` supplies enhanced same-suite RHF methods and reset coordination. These suite hooks are not new package-level hook exports.
+
+`FormUseFieldProps.name` is required and checked against the complete read/write domain; `rules` and `disabled` are optional. Invoke the hook inside its owning Root or scope, following React hook rules. A custom binding supplies its own accessible name, hint/error associations and native focus target; it does not consume the SettingsGroup field-row integration.
+
+<!-- toolkit:include symbol="createForm" section="example" title="Custom native input binding" -->
+
+## Date and time configuration
+
+`FormDatePickerControlProps` and `FormTimePickerControlProps` describe the package-owned configuration without a form binding. They are also the types of DateTime's `datePickerProps` and `timePickerProps`. Native input attributes retained by these types follow the actual native input; RHF still owns `name`, selected value and initialization. No parser, formatter or notification callback is asynchronous.
+
+`FormDatePickerStrings` requires full/abbreviated month and weekday arrays and `goToToday`; arrays begin with January and Sunday. Optional navigation, header, close, week-number, selected/today and marked-day labels name the corresponding calendar operations. `FormDatePickerFormatting` supplies `formatDay(date)`, `formatYear(date)`, and `formatMonth`, `formatMonthDayYear`, `formatMonthYear` with `(date, strings)`; all return strings. Calendar arrays are copied before passing to compat, so readonly consumer dictionaries are supported.
+
+`FormTimePickerError` has the same three identifiers as `FormDatePickerError`; the public payload calls the member `error`, rather than compat's `errorType`. `selectedTimeText` may be undefined. DateTime's `dateLabel`/`timeLabel` name the individual parts; its `id`/`aria-describedby` identify and describe the outer semantic group. Neither date/time part determines a time zone or merges itself into the other's Date.
+
+These examples use null only for the required Fluent compat DatePicker/TimePicker empty-value contract. Application optional configuration uses undefined.
+
+## Scope and array validation
+
+`FormObjectPath` selects nested record paths while excluding arrays, Dates, files/blobs and HSV colors; `FormObjectPathValue` derives the selected model. `FormArrayPath` selects arrays of records, with `FormArrayItemValue` deriving the complete item model. `FormObjectComponent`, `FormArrayComponent` and their Section variants preserve path-specific inference when a compound member is assigned to another variable. `ScopedFormSuite` retains fields, nested scopes, errors and useField with relative names; Root, Submit, Reset and useForm remain members of the complete `FormSuite`. `UntypedFormSuite` uses RHF FieldValues for genuinely dynamic names.
+
+Object `children` receives `FormObjectContext` with relative `Fields`, optional first `error` and all direct `errors`. Array `children` receives `FormArrayContext`: its `items` entries expose RHF `key`, current zero-based `index`, `total`, `isFirst`, `isLast` and stable relative `Fields`. The key is a React identity, separate from a domain id and the changing index.
+
+Every headless operation is suppressed by effective disabled state. `FormArrayRules` uses RHF whole-array rules and is available only when neither schema nor resolver owns validation. Every operation returns void.
+
+`FormSectionProps.appearance` accepts `filled` (default), `filled-alternative`, `outline` and `subtle`; these are native Card values, unlike SettingsGroup's `alternate` alias. A Section requires `FormSectionName`: `title`, `aria-label` or `aria-labelledby`. Native fieldset attributes and caller classes are forwarded, while naming, content and disabled ownership stay with the Section.
+
+Bounds constrain the Section's actions; they do not validate submitted arrays or constrain external resets/method writes. Use array rules or the validation owner for those requirements. `add`/`empty` strings supply visible labels; `remove`, `moveUp`, `moveDown`, `added` and `removed` receive the current label; `moved(label, position, total)` additionally receives a one-based position and total. Action text, tooltips and polite announcements use those results. The native resource supplies defaults and the Localization section describes overrides.
+
+The lazy Form sample selects one model at a time; its variable-field model selects one of the 22 adapters at a time. Save/reset, validation, draft and pending-save controls operate on that active form. Broader adapter/composition and native/isolation regressions remain in the versioned [Form fixture](../../../tests/fixtures/demo-control-isolation/form-regressions.tsx). Source browser and compiled sample checks are separate from the authenticated [SharePoint checklist](../development/sharepoint-validation/INDEX.md#focus-input-and-accessibility).
+
+See [Development](../development/INDEX.md) for fresh verification commands and [package imports](package-imports.md) for peer resolution and bundle limits. Importing a member of the compound family may retain the complete family; per-slot tree shaking is not promised. Unrelated imports must not retain Form/RHF/schema/date/time dependencies. Build library before the SPFx app and restart a running serve after source changes. Local tests/builds do not establish tenant permissions or screen-reader behavior.
+
+## Layout and colorful avatars
+
+ComboboxMulti displays selected labels inside the input at rest. Focus switches to the search query; blur clears that transient query and restores selected labels without changing the stored selections. No selected-value caption is rendered beneath the field. ColorPicker defaults to a responsive square color area capped at 300px, with sliders fitting the same available width. ArraySection uses compact arrow/delete actions with localized accessible labels and tooltips, plus an Add icon alongside its action text.
+
+ObjectSection content and ArraySection item content stack direct fields with `gap.medium` (12px). Their description/error output uses `gap.small` (8px) from the content. Custom layout inside a caller-supplied wrapper remains caller-owned.
+
+The coordinated Fluent/Charts baseline uses Charts 9.3.27 and locks Tabster 8.8.0 with shared Keyborg 2.14.1. Preserve this compatible navigation subtree: Tabster 8.8.1 resolves Keyborg 3 alongside Fluent’s Keyborg 2 and the actual React 17 cleanup probe detects a registry collision. This lock selection satisfies Fluent’s published range; no overrides are used. Native providers may have distinct package versions, but must resolve the same shared contexts, theme and Griffel renderer.
+
+### Colorful TagPicker avatars
+
+`FormTagPickerProps.colorfulTagAvatars?: boolean` is an optional presentation flag, default false. Omission/false retains today's text-only selected tags. True adds a Fluent colorful avatar to each selected tag, using its string option identity as `idForColor` and its plain display text for initials. Missing/plain-text-free labels use Fluent's fallback icon; rich consumer labels are preserved alongside the avatar. Labels can change without changing the identity's color; the finite palette can repeat colors.
+
+This uses the existing Form/Fluent providers and theme. It preserves the current input, typed query, RHF values, codec and selection events. The option does not recolor suggestions or the tag container. The sample's **Form → Variable field → TagPicker** exposes **Colorful tag avatars**, initially off, for direct comparison.
+
+## Form composition
+
+Put Form.Root **inside** the portaled surface so the inputs and footer Submit belong to one DOM form. React context alone from an outer Form.Root does not establish DOM form ownership. Submit through the suite's Submit/Root gate rather than calling methods.handleSubmit in the Footer.
+
+For persistence, await the application save in Root's onSubmit before reset/close. Keep pending requests controlled and use an inline discard confirmation rather than nesting a modal. See [Form](../../api/controls/form.md) for validation, async submission and reset semantics. Stage has no RHF dependency of its own.
+
+### Dependencies, portals and validation
+
+Stage uses the existing shared Fluent components/icons and Griffel peers. The repository baseline is React/ReactDOM 17.0.1, TypeScript 5.3.3, Fluent 9.74.9 and SPFx 1.21.1, with Node `>=22.14.0 <23.0.0`; it introduces no dependency or peer upgrade. Inherit theme, direction, targetDocument and renderer from the enclosing Fluent provider, including an iframe's owner document. Stage creates no global renderer/provider and adds no arbitrary z-index.
+
+Omitting mountNode retains Fluent's themed portal/virtual-parent behavior. An explicit mountNode is a caller-owned escape hatch: use the correct owner document and verify theme variables, direction, renderer styles, focus and nested portal relationships at that destination. Do not automatically move content to document.body.
+
+The lazy Stage tab shows one configurable two-field editor in Dialog, Drawer or Popover. Presentation, size, title and description drive the same active surface; header action and Close stay aligned, while save/dismiss/retention guards remain observable. Configuration, open trigger, compact status and advanced diagnostics share one outline card. Modal-only manual completion remains inside the surface to preserve focus ownership. Nested popup, long-content and independent/RTL/native-ancestor regressions remain in the [versioned Stage fixture](../../../tests/fixtures/demo-control-isolation/stage-regressions.tsx). The product and conformance browser results, including any console gate failure, must be reported separately from authenticated host observations.
+
+<!-- toolkit:include symbol="Stage" section="example" title="Profile editor with native Form ownership" -->
+
+<!-- toolkit:include symbol="createForm" section="example" title="Configure local appointment date and wall-clock time" -->

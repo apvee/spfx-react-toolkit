@@ -1,3 +1,9 @@
+/**
+ * Entra resource clients initialize asynchronously and expose separate initialization errors.
+ *
+ * @packageDocumentation
+ * @docPage hooks/http-clients/aad-http-client
+ */
 // useSPFxAadHttpClient.ts
 // Hook to access Azure AD-secured APIs with state management
 
@@ -7,13 +13,18 @@ import { AadHttpClient, AadHttpClientFactory } from '@microsoft/sp-http';
 import { useAsyncInvoke } from './useAsyncInvoke.internal';
 
 /**
- * Return type for useSPFxAadHttpClient hook
+ * Resource-selected native Entra HTTP client, invocation state and asynchronous initialization controls.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const info: SPFxAadHttpClientInfo = useSPFxAadHttpClient('https://api.contoso.com');
- * console.log(info.isReady, info.resourceUrl);
+ * import * as React from 'react';
+ * import { SPFxAadHttpClientInfo, useSPFxAadHttpClient } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const info: SPFxAadHttpClientInfo = useSPFxAadHttpClient('https://api.contoso.com');
+ *   console.log(info.isReady, info.resourceUrl);
+ *   return <span>{info.isReady ? 'Ready' : 'Unavailable'}</span>;
+ * }
  * ```
  */
 export interface SPFxAadHttpClientInfo {
@@ -26,26 +37,47 @@ export interface SPFxAadHttpClientInfo {
    * Invoke Azure AD API call with automatic state management.
    * Tracks loading state and captures errors automatically.
    *
+   * @typeParam T - Result produced by the supplied operation.
    * @param fn - Function that receives AadHttpClient and returns a promise
    * @returns Promise with the result
    * @throws Error if client is not initialized yet
    *
    * @example
    * ```tsx
-   * // Inside a React component beneath a matching host-specific SPFx provider:
-   * const { invoke, resourceUrl } = useSPFxAadHttpClient('https://api.contoso.com');
+   * import * as React from 'react';
+   * import { useSPFxAadHttpClient } from '@apvee/spfx-react-toolkit';
+   * import { AadHttpClient } from '@microsoft/sp-http';
    *
-   * // Call this handler from an event or an effect; do not request during render.
-   * const run = async () => {
-   *   const data = await invoke(client =>
-   *     client.get(`${resourceUrl}/api/orders`, AadHttpClient.configurations.v1)
-   *       .then(res => res.json())
-   *   );
-   * };
+   * function Example() {
+   *   const { invoke, resourceUrl, isReady, isLoading, initError } = useSPFxAadHttpClient('https://api.contoso.com');
+   *   const [result, setResult] = React.useState<unknown>();
+   *   const [failure, setFailure] = React.useState<string>();
+   *   const run = async () => {
+   *     setFailure(undefined);
+   *     try {
+   *       const data = await invoke(client =>
+   *         client.get(`${resourceUrl}/api/orders`, AadHttpClient.configurations.v1)
+   *           .then(res => res.json())
+   *       );
+   *       setResult(data);
+   *     } catch (failure) {
+   *       setFailure(failure instanceof Error ? failure.message : String(failure));
+   *     }
+   *   };
+   *   return <>
+   *     <button disabled={!isReady || isLoading} onClick={() => void run()}>Load</button>
+   *     {(failure ?? initError?.message) && <span role="alert">{failure ?? initError?.message}</span>}
+   *     <pre>{JSON.stringify(result)}</pre>
+   *   </>;
+   * }
    * ```
    * @throws Callback/request failures are normalized to Error, published when current, and rethrown. HTTP response.ok is not checked automatically.
    */
-  readonly invoke: <T>(fn: (client: AadHttpClient) => Promise<T>) => Promise<T>;
+  readonly invoke: <T>(fn: /**
+   * Operation receiving the initialized native client. Non-success HTTP responses require explicit checking.
+   * @param client - Initialized client for this invocation.
+   * @returns Promise for the operation result; rejection flows through invoke.
+   */ (client: AadHttpClient) => Promise<T>) => Promise<T>;
   
   /**
    * True while any invoke call for the current client remains pending; direct client usage is not tracked.
@@ -78,10 +110,15 @@ export interface SPFxAadHttpClientInfo {
    *
    * @example
    * ```tsx
-   * // Inside a React component beneath a matching host-specific SPFx provider:
-   * const { isInitializing, isReady } = useSPFxAadHttpClient('https://api.contoso.com');
-   * if (isInitializing) return <span>Initializing client</span>;
-   * if (!isReady) return <span>Client unavailable</span>;
+   * import * as React from 'react';
+   * import { useSPFxAadHttpClient } from '@apvee/spfx-react-toolkit';
+   *
+   * function Example() {
+   *   const { isInitializing, isReady } = useSPFxAadHttpClient('https://api.contoso.com');
+   *   if (isInitializing) return <span>Initializing client</span>;
+   *   if (!isReady) return <span>Client unavailable</span>;
+   *   return <span>Ready</span>;
+   * }
    * ```
    */
   readonly isInitializing: boolean;
@@ -91,9 +128,14 @@ export interface SPFxAadHttpClientInfo {
    *
    * @example
    * ```tsx
-   * // Inside a React component beneath a matching host-specific SPFx provider:
-   * const { initError } = useSPFxAadHttpClient('https://api.contoso.com');
-   * if (initError) return <span>{initError.message}</span>;
+   * import * as React from 'react';
+   * import { useSPFxAadHttpClient } from '@apvee/spfx-react-toolkit';
+   *
+   * function Example() {
+   *   const { initError } = useSPFxAadHttpClient('https://api.contoso.com');
+   *   if (initError) return <span>{initError.message}</span>;
+   *   return <span>No initialization error</span>;
+   * }
    * ```
    */
   readonly initError: Error | undefined;
@@ -103,6 +145,9 @@ export interface SPFxAadHttpClientInfo {
    *
    * @example
    * ```tsx
+   * import * as React from 'react';
+   * import { useSPFxAadHttpClient } from '@apvee/spfx-react-toolkit';
+   *
    * import { AadHttpClient } from '@microsoft/sp-http';
    *
    * function LoadButton() {
@@ -128,11 +173,119 @@ export interface SPFxAadHttpClientInfo {
  * @returns Native client, invocation state and initialization/readiness state.
  * @throws Missing SPFx provider or synchronous native factory-consumption failures.
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxAadHttpClient } from '@apvee/spfx-react-toolkit';
+ *
  * function ClientStatus() {
  *   const info = useSPFxAadHttpClient('https://api.contoso.com');
  *   return <span>{info.isReady ? 'Ready' : 'Unavailable'}</span>;
+ * }
+ * ```
+ *
+ * @useWhen an approved Entra-protected resource needs a resource-specific client and tracked calls.
+ *
+ *
+ * @example Custom API with initialization and request states
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxAadHttpClient } from '@apvee/spfx-react-toolkit';
+ * import { AadHttpClient } from '@microsoft/sp-http';
+ *
+ * function CustomApiWidget() {
+ *   const {
+ *     invoke,
+ *     isLoading,
+ *     error,
+ *     resourceUrl,
+ *     isInitializing,
+ *     initError,
+ *     isReady
+ *   } = useSPFxAadHttpClient('https://contoso-api.azurewebsites.net');
+ *
+ *   const [data, setData] = React.useState<unknown>(undefined);
+ *
+ *   const loadData = () => {
+ *     invoke(client =>
+ *       client.get(
+ *         `${resourceUrl}/api/data`,
+ *         AadHttpClient.configurations.v1
+ *       ).then(res => {
+ *         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+ *         return res.json();
+ *       })
+ *     ).then(setData).catch(() => undefined);
+ *   };
+ *
+ *   React.useEffect(() => {
+ *     if (isReady) loadData();
+ *   }, [isReady]);
+ *
+ *   // Handle initialization states
+ *   if (isInitializing) return <p role="status">Initializing AAD client...</p>;
+ *   if (initError) return <p role="alert">Init failed: {initError.message}</p>;
+ *   if (!isReady) return <p role="status">Waiting for client...</p>;
+ *
+ *   // Handle operation states
+ *   if (isLoading) return <p role="status">Loading data...</p>;
+ *   if (error) return <p role="alert">{error.message}</p>;
+ *
+ *   return <div>{JSON.stringify(data)}</div>;
+ * }
+ * ```
+ *
+ *
+ * @example Switch resource before acquiring another API client
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxAadHttpClient } from '@apvee/spfx-react-toolkit';
+ * import { AadHttpClient } from '@microsoft/sp-http';
+ *
+ * function DynamicApiSelector() {
+ *   const {
+ *     invoke,
+ *     setResourceUrl,
+ *     resourceUrl,
+ *     isInitializing,
+ *     isReady,
+ *     clearError
+ *   } = useSPFxAadHttpClient();
+ *
+ *   const [data, setData] = React.useState<unknown>(undefined);
+ *
+ *   const loadFromApi = (apiUrl: string) => {
+ *     clearError();
+ *     setResourceUrl(apiUrl);
+ *   };
+ *
+ *   // Load data when client becomes ready
+ *   React.useEffect(() => {
+ *     if (isReady && resourceUrl) {
+ *       invoke(client =>
+ *         client.get(
+ *           `${resourceUrl}/api/data`,
+ *           AadHttpClient.configurations.v1
+ *         ).then(res => {
+ *         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+ *         return res.json();
+ *       })
+ *       ).then(setData).catch(() => undefined);
+ *     }
+ *   }, [isReady, resourceUrl]);
+ *
+ *   return (
+ *     <>
+ *       <button onClick={() => loadFromApi('https://api1.contoso.com')} disabled={isInitializing}>
+ *         API 1
+ *       </button>
+ *       <button onClick={() => loadFromApi('https://api2.contoso.com')} disabled={isInitializing}>
+ *         API 2
+ *       </button>
+ *       {isInitializing && <p role="status">Switching API...</p>}
+ *       {data && <pre>{JSON.stringify(data, undefined, 2)}</pre>}
+ *     </>
+ *   );
  * }
  * ```
  */

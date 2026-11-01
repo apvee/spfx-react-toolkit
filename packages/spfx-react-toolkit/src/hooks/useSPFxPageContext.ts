@@ -1,3 +1,9 @@
+/**
+ * PageContext exposes metadata already supplied by the active SPFx host.
+ *
+ * @packageDocumentation
+ * @docPage hooks/context
+ */
 // useSPFxPageContext.ts
 // Hook to access SharePoint page context
 
@@ -13,11 +19,16 @@ import { useSPFxServiceScope } from './useSPFxServiceScope';
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxPageContext } from '@apvee/spfx-react-toolkit';
+ *
  * function SiteLabel() {
  *   const context = useSPFxPageContext();
  *   return <span>{context.web.title}</span>;
  * }
  * ```
+ *
+ * @useWhen a descendant needs the native PageContext metadata instead of issuing a network request.
  */
 export function useSPFxPageContext(): PageContext {
   const { consume } = useSPFxServiceScope();

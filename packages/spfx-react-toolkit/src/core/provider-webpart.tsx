@@ -1,3 +1,9 @@
+/**
+ * Mount a native WebPart React surface with an isolated toolkit runtime.
+ *
+ * @packageDocumentation
+ * @docPage core/providers
+ */
 // provider-webpart.tsx
 // Type-safe provider for WebParts
 
@@ -7,14 +13,19 @@ import { SPFxProviderBase } from './provider-base.internal';
 import type { SPFxComponent } from './types';
 
 /**
- * Inputs for SPFxWebPartProvider. Pass the initialized WebPart instance and a subtree using toolkit hooks. The provider waits for ServiceScope readiness and owns an isolated runtime store; omitted children render no application content.
+ * Initialized native host instance and optional subtree for SPFxWebPartProvider. Each mounted provider owns a separate runtime store. Children mount after the active ServiceScope finishes; missing-scope fallback does not make native services available.
  *
- * @typeParam TProps - Properties type of the supplied SPFx host instance.
- *
- * @example
+ * @typeParam TProps - Host property bag, constrained to an object and defaulting to the empty object type.
+ * @example Typed native host input
  * ```tsx
- * // In the WebPart instance's render or mounting method:
- * const element = <SPFxWebPartProvider instance={this}><MyComponent /></SPFxWebPartProvider>;
+ * import * as React from 'react';
+ * import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+ * import { SPFxWebPartProvider, SPFxWebPartProviderProps } from '@apvee/spfx-react-toolkit';
+ *
+ * function hostTree(instance: BaseClientSideWebPart<{ title: string }>): React.ReactElement {
+ *   const props: SPFxWebPartProviderProps<{ title: string }> = { instance, children: <span>Host content</span> };
+ *   return <SPFxWebPartProvider {...props} />;
+ * }
  * ```
  */
 export interface SPFxWebPartProviderProps<TProps extends {} = {}> {
@@ -24,24 +35,71 @@ export interface SPFxWebPartProviderProps<TProps extends {} = {}> {
   instance: BaseClientSideWebPart<TProps>;
 
   /**
-   * Optional React subtree receiving host context, theme and isolated runtime state. Descendants mount after service-scope readiness; omission renders no application content.
+   * Optional React subtree receiving host context, theme and isolated runtime state. Descendants mount after service-scope readiness; omitted or undefined children render no application content.
    */
   children?: React.ReactNode;
 }
 
 /**
- * SPFx context provider specifically for WebParts.
+ * Establishes SPFx context and isolated runtime state for a WebPart React surface. Pass its initialized native instance. Descendants mount after the active ServiceScope finishes; the provider never registers, finishes or authorizes services. The missing-scope fallback allows rendering but service-consuming hooks can fail.
  *
- * This is a type-safe wrapper around the base provider that accepts a WebPart instance
- * directly without requiring type casting. Use this provider in WebParts instead of the
- * other host-specific providers.
+ * Host renders reconcile shallow property snapshots, including removals and reference changes; nested in-place changes are not deep-observed. Hook property updates synchronize back to the native instance. Theme subscriptions and runtime listeners are cleaned up on unmount; obsolete scope-readiness callbacks are ignored. Keep a mounted provider associated with its owning host surface and unmount React when that surface is disposed.
  *
- * @param props - The component props.
- * @returns The provider component.
- *
- * @example
+ * @typeParam TProps - Host property bag, constrained to an object and defaulting to the empty object type.
+ * @param props - Required initialized BaseClientSideWebPart instance and optional children; omitted or undefined children render no application content.
+ * @returns Provider element establishing context after ServiceScope readiness.
+ * @useWhen toolkit hooks render inside a native WebPart surface owned by this host instance.
+ * @avoidWhen the host is another SPFx component kind; use its matching typed provider.
+ * @example Mount an initialized native host
  * ```tsx
+ * import * as React from 'react';
+ * import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+ * import { SPFxWebPartProvider, SPFxWebPartProviderProps } from '@apvee/spfx-react-toolkit';
+ *
+ * function hostTree(instance: BaseClientSideWebPart<{ title: string }>): React.ReactElement {
+ *   const props: SPFxWebPartProviderProps<{ title: string }> = { instance, children: <span>Host content</span> };
+ *   return <SPFxWebPartProvider {...props} />;
+ * }
+ * ```
+ * @public
+ * @docPage core/providers
+ *
+ * @remarks
+ * WebPart providers expose the native domElement and current display mode. Container hooks perform observation when mounted; the provider itself does not observe the element. Other current providers publish no container element or display mode. Provider isolation covers local runtime state, while explicitly shared clients, tenant data and caller objects retain their own sharing contracts.
+ *
+ * @example WebPart render and disposal
+ * ```tsx
+ * import * as React from 'react';
+ * import * as ReactDom from 'react-dom';
+ * import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+ * import { SPFxWebPartProvider, useSPFxProperties } from '@apvee/spfx-react-toolkit';
+ * interface Properties { title: string; }
+ * function Title() {
+ *   const { properties } = useSPFxProperties<Properties>();
+ *   return <h2>{properties?.title ?? 'Loading'}</h2>;
+ * }
+ * export default class TitleWebPart extends BaseClientSideWebPart<Properties> {
+ *   public render(): void {
+ *     ReactDom.render(<SPFxWebPartProvider instance={this}><Title /></SPFxWebPartProvider>, this.domElement);
+ *   }
+ *   protected onDispose(): void { ReactDom.unmountComponentAtNode(this.domElement); }
+ * }
+ * ```
+ *
+ *
+ * @example Mount and dispose a web part
+ * ```tsx
+ * import * as React from 'react';
+ * import * as ReactDom from 'react-dom';
+ * import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
  * import { SPFxWebPartProvider } from '@apvee/spfx-react-toolkit';
+ *
+ * function MyComponent() { return <p>Web part content</p>; }
+ *
+ * interface IMyWebPartProps {
+ *   title: string;
+ *   description: string;
+ * }
  *
  * export default class MyWebPart extends BaseClientSideWebPart<IMyWebPartProps> {
  *   public render(): void {
@@ -52,10 +110,12 @@ export interface SPFxWebPartProviderProps<TProps extends {} = {}> {
  *     );
  *     ReactDom.render(element, this.domElement);
  *   }
+ *
+ *   protected onDispose(): void {
+ *     ReactDom.unmountComponentAtNode(this.domElement);
+ *   }
  * }
  * ```
- *
- * @public
  */
 export function SPFxWebPartProvider<TProps extends {} = {}>(
   props: SPFxWebPartProviderProps<TProps>

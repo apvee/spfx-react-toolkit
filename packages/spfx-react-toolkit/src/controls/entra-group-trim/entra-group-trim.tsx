@@ -1,3 +1,9 @@
+/**
+ * Advisory content branches selected by current-user Entra membership or ownership.
+ *
+ * @packageDocumentation
+ * @docPage controls/entra-group-trim
+ */
 import * as React from 'react';
 import { useSPFxContext } from '../../hooks/useSPFxContext';
 import { useSPFxPageContext } from '../../hooks/useSPFxPageContext';
@@ -19,10 +25,12 @@ const family = {};
  * absence. Server authorization remains required. Requests share inflight only
  * per provider; identity changes hide former grants during render.
  * @param props - Selectors, control-level type/relationship/match and structural children.
- * @returns Active content in a fragment with no DOM wrapper; omission is empty.
+ * @returns Active content in a fragment with no DOM wrapper; when omitted, is empty.
  * @throws Missing matching SPFx provider.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { EntraGroupTrim } from '@apvee/spfx-react-toolkit';
  * <EntraGroupTrim groups={[{ name: 'Engineering' }]} groupType="M365" relationship="memberOrOwner">
  *   <section>Team</section>
  *   <EntraGroupTrim.Loading>Checking</EntraGroupTrim.Loading>
@@ -62,22 +70,43 @@ function GroupTrim(props: EntraGroupTrimProps): React.ReactElement {
 /**
  * Structural branch during Graph initialization or a pending relationship check.
  * @param props - Optional children only; unique and direct beneath EntraGroupTrim.
- * @returns Active children without a wrapper; omission renders empty.
- * @example <EntraGroupTrim.Loading>Checking</EntraGroupTrim.Loading>
+ * @returns Active children without a wrapper; when omitted, renders empty.
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { EntraGroupTrim } from '@apvee/spfx-react-toolkit';
+ * <EntraGroupTrim groups={[{ name: 'Engineering' }]}>
+ *   <EntraGroupTrim.Loading>Checking</EntraGroupTrim.Loading>
+ * </EntraGroupTrim>
+ * ```
  */
 const Loading: React.ComponentType<EntraGroupTrimBranchProps> = createAccessTrimBranch(family, 'loading');
 /**
  * Structural denial branch after every requested reference/read succeeds.
  * @param props - Optional children only; unique and direct beneath EntraGroupTrim.
- * @returns Active children without a wrapper; omission renders empty.
- * @example <EntraGroupTrim.Fallback>No relationship</EntraGroupTrim.Fallback>
+ * @returns Active children without a wrapper; when omitted, renders empty.
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { EntraGroupTrim } from '@apvee/spfx-react-toolkit';
+ * <EntraGroupTrim groups={[{ name: 'Engineering' }]}>
+ *   <EntraGroupTrim.Fallback>No relationship</EntraGroupTrim.Fallback>
+ * </EntraGroupTrim>
+ * ```
  */
 const Fallback: React.ComponentType<EntraGroupTrimBranchProps> = createAccessTrimBranch(family, 'fallback');
 /**
  * Structural malformed-input/composition, initialization or failed-read branch.
  * @param props - Optional children only; unique and direct beneath EntraGroupTrim.
- * @returns Active children without a wrapper; omission renders empty.
- * @example <EntraGroupTrim.ErrorFallback>Unavailable</EntraGroupTrim.ErrorFallback>
+ * @returns Active children without a wrapper; when omitted, renders empty.
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { EntraGroupTrim } from '@apvee/spfx-react-toolkit';
+ * <EntraGroupTrim groups={[{ name: 'Engineering' }]}>
+ *   <EntraGroupTrim.ErrorFallback>Unavailable</EntraGroupTrim.ErrorFallback>
+ * </EntraGroupTrim>
+ * ```
  */
 const ErrorFallback: React.ComponentType<EntraGroupTrimBranchProps> = createAccessTrimBranch(family, 'error');
 /**
@@ -95,29 +124,58 @@ const ErrorFallback: React.ComponentType<EntraGroupTrimBranchProps> = createAcce
  * @throws Missing matching SPFx provider.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { EntraGroupTrim } from '@apvee/spfx-react-toolkit';
  * <EntraGroupTrim groups={[{ name: 'Engineering' }]} groupType="M365">
  *   Team content
  *   <EntraGroupTrim.Fallback>No membership</EntraGroupTrim.Fallback>
  * </EntraGroupTrim>
  * ```
+ *
+ * @useWhen Current-user Entra membership or ownership should select advisory content branches beneath an SPFx provider.
+ * @avoidWhen Do not use a rendering decision as authorization for server operations.
  */
 export const EntraGroupTrim = Object.assign(GroupTrim, {
-  /** Graph initialization or pending-check branch; unique direct child of EntraGroupTrim.
-   * @param props - Optional children only; omission is empty.
+  /**
+   * Graph initialization or pending-check branch; unique direct child of EntraGroupTrim.
+   * Accepts Optional children only; when omitted, is empty.
    * @returns Active children without a wrapper.
-   * @example <EntraGroupTrim.Loading>Checking</EntraGroupTrim.Loading>
+   * @example
+   * ```tsx
+   * import * as React from 'react';
+   * import { EntraGroupTrim } from '@apvee/spfx-react-toolkit';
+   * <EntraGroupTrim groups={[{ name: 'Engineering' }]}>
+   *   <EntraGroupTrim.Loading>Checking</EntraGroupTrim.Loading>
+   * </EntraGroupTrim>
+   * ```
    */
   Loading,
-  /** Successful relationship-denial branch; unique direct child of this family.
-   * @param props - Optional children only; omission is empty.
+  /**
+   * Successful relationship-denial branch; unique direct child of this family.
+   * Accepts Optional children only; when omitted, is empty.
    * @returns Active children without a wrapper.
-   * @example <EntraGroupTrim.Fallback>No relationship</EntraGroupTrim.Fallback>
+   * @example
+   * ```tsx
+   * import * as React from 'react';
+   * import { EntraGroupTrim } from '@apvee/spfx-react-toolkit';
+   * <EntraGroupTrim groups={[{ name: 'Engineering' }]}>
+   *   <EntraGroupTrim.Fallback>No relationship</EntraGroupTrim.Fallback>
+   * </EntraGroupTrim>
+   * ```
    */
   Fallback,
-  /** Invalid input/composition, initialization or failed-read branch; unique direct child.
-   * @param props - Optional children only; omission is empty.
+  /**
+   * Invalid input/composition, initialization or failed-read branch; unique direct child.
+   * Accepts Optional children only; when omitted, is empty.
    * @returns Active children without a wrapper.
-   * @example <EntraGroupTrim.ErrorFallback>Unavailable</EntraGroupTrim.ErrorFallback>
+   * @example
+   * ```tsx
+   * import * as React from 'react';
+   * import { EntraGroupTrim } from '@apvee/spfx-react-toolkit';
+   * <EntraGroupTrim groups={[{ name: 'Engineering' }]}>
+   *   <EntraGroupTrim.ErrorFallback>Unavailable</EntraGroupTrim.ErrorFallback>
+   * </EntraGroupTrim>
+   * ```
    */
   ErrorFallback,
 });

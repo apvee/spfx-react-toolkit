@@ -1,3 +1,9 @@
+/**
+ * Explicit search operations support paging, suggestions and native refinement tokens.
+ *
+ * @packageDocumentation
+ * @docPage hooks/pnpjs
+ */
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useSPFxPnPContext } from './useSPFxPnPContext';
 import type { PnPContextInfo } from './useSPFxPnPContext';
@@ -13,10 +19,29 @@ import type { ISearchBuilder } from '@pnp/sp/search';
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const build: SearchQueryBuilderFn = builder => builder.text('training');
- * const search = useSPFxPnPSearch();
- * const onSearch = () => search.search(build);
+ * import * as React from 'react';
+ * import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+ * import { ISearchBuilder } from '@pnp/sp/search';
+ *
+ * function Example() {
+ *   const build: (builder: ISearchBuilder) => ISearchBuilder = builder => builder.text('training');
+ *   const search = useSPFxPnPSearch();
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const run = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       setResult(await search.search(build));
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={search.loading} onClick={() => void run()}>Load</button>
+ *     {(failure ?? search.error?.message) && <span role="alert">{failure ?? search.error?.message}</span>}
+ *     <pre>{JSON.stringify(result)}</pre>
+ *   </>;
+ * }
  * ```
  */
 type SearchQueryBuilderFn = (builder: ISearchBuilder) => ISearchBuilder;
@@ -24,16 +49,35 @@ type SearchQueryBuilderFn = (builder: ISearchBuilder) => ISearchBuilder;
 /**
  * Standard SharePoint Search Verticals (Result Sources).
  * Use these SourceIds to filter search results by content type.
- * 
+ *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+ *
  * import { SearchVerticals } from '@apvee/spfx-react-toolkit';
- * 
- * // Search only people
- * search(builder => 
- *   builder.text("john").sourceId(SearchVerticals.People)
- * );
+ *
+ * function PeopleSearch() {
+ *   const { search, loading, error } = useSPFxPnPSearch();
+ *   const [people, setPeople] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const findPeople = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       setPeople(await search(builder => builder.text('john').sourceId(SearchVerticals.People)));
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={loading} onClick={() => void findPeople()}>Find people</button>
+ *     {(failure ?? error?.message) && <span role="alert">{failure ?? error?.message}</span>}
+ *     <pre>{JSON.stringify(people)}</pre>
+ *   </>;
+ * }
  * ```
+ *
+ * @useWhen a builder needs one of the listed SharePoint result-source identifiers.
  */
 export const SearchVerticals = {
   /**
@@ -77,62 +121,101 @@ export const SearchVerticals = {
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const options: UseSPFxPnPSearchOptions = { refiners: 'FileType', pageSize: 25 };
- * const search = useSPFxPnPSearch(options);
+ * import * as React from 'react';
+ * import { UseSPFxPnPSearchOptions, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const options: UseSPFxPnPSearchOptions = { refiners: 'FileType', pageSize: 25 };
+ *   const search = useSPFxPnPSearch(options);
+ *   return <span>{search.results.length}</span>;
+ * }
  * ```
  */
 export interface UseSPFxPnPSearchOptions {
   /**
-   * Number of results per page (default: 50).
+   * Number of results per page; omitted or undefined uses 50.
    * Used for automatic pagination with loadMore().
    * 
-   * @default 50
+   * @defaultValue 50
    * @example
    * ```tsx
-   * // Inside a React component beneath a matching host-specific SPFx provider:
-   * const { search } = useSPFxPnPSearch({ pageSize: 100 });
+   * import * as React from 'react';
+   * import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+   *
+   * function Example() {
+   *   const search = useSPFxPnPSearch({ pageSize: 100 });
+   *   const [result, setResult] = React.useState<unknown>();
+   *   const [failure, setFailure] = React.useState<string>();
+   *   const run = async () => {
+   *     setFailure(undefined);
+   *     try {
+   *       setResult(await search.search('training'));
+   *     } catch (failure) {
+   *       setFailure(failure instanceof Error ? failure.message : String(failure));
+   *     }
+   *   };
+   *   return <>
+   *     <button disabled={search.loading} onClick={() => void run()}>Load</button>
+   *     {(failure ?? search.error?.message) && <span role="alert">{failure ?? search.error?.message}</span>}
+   *     <pre>{JSON.stringify(result)}</pre>
+   *   </>;
+   * }
    * ```
    */
   pageSize?: number;
   
   /**
-   * Default properties to select in search results.
+   * Default properties to select in search results; omitted, undefined or empty adds no explicit select-properties clause.
    * Can be overridden in individual search() calls via builder.
    * 
    * @example
    * ```tsx
-   * // Inside a React component beneath a matching host-specific SPFx provider:
-   * useSPFxPnPSearch({
-   *   selectProperties: ['Title', 'Path', 'Author', 'FileType']
-   * });
+   * import * as React from 'react';
+   * import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+   *
+   * function Example() {
+   *   const search = useSPFxPnPSearch({
+   *     selectProperties: ['Title', 'Path', 'Author', 'FileType']
+   *   });
+   *   return <span>{search.results.length}</span>;
+   * }
    * ```
    */
   selectProperties?: string[];
   
   /**
-   * Refiners (facets) to request from SharePoint.
+   * Refiners (facets) to request from SharePoint; omitted or undefined requests no additional refiners.
    * Comma-separated string of managed property names.
    * 
    * @example
    * ```tsx
-   * // Inside a React component beneath a matching host-specific SPFx provider:
-   * useSPFxPnPSearch({
-   *   refiners: 'FileType,DisplayAuthor,ModifiedBy'
-   * });
+   * import * as React from 'react';
+   * import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+   *
+   * function Example() {
+   *   const search = useSPFxPnPSearch({
+   *     refiners: 'FileType,DisplayAuthor,ModifiedBy'
+   *   });
+   *   return <span>{search.results.length}</span>;
+   * }
    * ```
    */
   refiners?: string;
   /**
-   * Combines multiple selected values in the same facet with AND or OR.
+   * Combines multiple selected values in the same facet with AND or OR; omitted or undefined uses and.
    * Different facets always combine with AND. Changing this option resets the
    * current search and selected filters; run `search()` again afterward.
-   * @default 'and'
+   * @defaultValue 'and'
    * @example
    * ```tsx
-   * // Inside a React component beneath a matching host-specific SPFx provider:
-   * useSPFxPnPSearch({ refiners: 'FileType,Size', refinerOperator: 'or' });
-   * // Selecting PDF and DOCX includes either type; a Size filter still applies.
+   * import * as React from 'react';
+   * import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+   *
+   * function Example() {
+   *   const search = useSPFxPnPSearch({ refiners: 'FileType,Size', refinerOperator: 'or' });
+   *   // Selecting PDF and DOCX includes either type; a Size filter still applies.
+   *   return <span>{search.results.length}</span>;
+   * }
    * ```
    */
   refinerOperator?: 'and' | 'or';
@@ -141,14 +224,19 @@ export interface UseSPFxPnPSearchOptions {
 /**
  * Represents a single search result with parsed data and raw cells.
  *
- * @template T - The type of the parsed result data (default: Record<string, string>)
+ * @template T - The type of the parsed result data (defaults to `Record<string, string>`)
  *
  * @example
  * ```tsx
- * // Inside a React component using the host Fluent renderer:
- * const search = useSPFxPnPSearch<{ Title: string }>();
- * const result: SearchResult<{ Title: string }> | undefined = search.results[0];
- * console.log(result?.data.Title);
+ * import * as React from 'react';
+ * import { SearchResult, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const search = useSPFxPnPSearch<{ Title: string }>();
+ *   const result: SearchResult<{ Title: string }> | undefined = search.results[0];
+ *   console.log(result?.data.Title);
+ *   return <span>{search.results.length}</span>;
+ * }
  * ```
  */
 export interface SearchResult<T = Record<string, string>> {
@@ -179,10 +267,31 @@ export interface SearchResult<T = Record<string, string>> {
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const search = useSPFxPnPSearch({ refiners: 'FileType' });
- * const facet: SearchRefiner | undefined = search.refiners.find(item => item.name === 'FileType');
- * const onFilter = () => facet?.entries[0] && search.applyRefiner(facet.name, facet.entries[0].token);
+ * import * as React from 'react';
+ * import { SearchRefiner, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const search = useSPFxPnPSearch({ refiners: 'FileType' });
+ *   const facet: SearchRefiner | undefined = search.refiners.find(item => item.name === 'FileType');
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const run = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       const entry = facet?.entries[0];
+ *       if (!entry || !facet) return;
+ *       await search.applyRefiner(facet.name, entry.token);
+ *       setResult("Filter applied");
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={search.loading || !facet?.entries.length} onClick={() => void run()}>Load</button>
+ *     {(failure ?? search.error?.message) && <span role="alert">{failure ?? search.error?.message}</span>}
+ *     <pre>{JSON.stringify(result)}</pre>
+ *   </>;
+ * }
  * ```
  */
 export interface SearchRefiner {
@@ -194,7 +303,7 @@ export interface SearchRefiner {
   /**
    * Refiner entries with values and counts.
    */
-  entries: Array<{
+  entries: Array</** Display entries and native filter tokens returned for this facet. */ {
     /**
      * Display value of the refiner entry.
      */
@@ -215,29 +324,34 @@ export interface SearchRefiner {
 }
 
 /**
- * Return type for the useSPFxPnPSearch hook.
+ * Explicit search results, pagination/refiner state and operations; mounting does not issue a search.
  *
  * @template T - The type of the search result data
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const search: SPFxPnPSearchInfo<{ Title: string }> = useSPFxPnPSearch({ pageSize: 25 });
- * console.log(search.results, search.totalResults);
+ * import * as React from 'react';
+ * import { SPFxPnPSearchInfo, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const search: SPFxPnPSearchInfo<{ Title: string }> = useSPFxPnPSearch({ pageSize: 25 });
+ *   console.log(search.results, search.totalResults);
+ *   return <span>{search.results.length}</span>;
+ * }
  * ```
  */
 export interface SPFxPnPSearchInfo<T = Record<string, string>> {
   /**
    * Starts a replacement search, clearing selected filters and resetting the offset. Builder selectProperties/refiners can override defaults; row limit is applied afterward.
    * @param query - Text or fluent builder transform.
-   * @param options - Optional page-size override.
+   * @param options - Page-size override; omitted or undefined uses the hook row limit.
    * @returns New result page even for obsolete completions.
    * @throws Uninitialized context, builder or request failures; current failures publish error.
    */
   search: (
     query: string | SearchQueryBuilderFn,
     options?: {
-      /** Row limit for this search; overrides the hook default and builder rowLimit. */
+      /** Row limit for this search; omitted or undefined uses the hook setting. Supplied values override builder rowLimit. */
       pageSize?: number
     }
   ) => Promise<SearchResult<T>[]>;
@@ -251,14 +365,32 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
    * 
    * @example
    * ```tsx
-   * // Inside a React component beneath a matching host-specific SPFx provider:
-   * const { suggest } = useSPFxPnPSearch();
+   * import * as React from 'react';
+   * import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
    *
-   * // Call this handler from an event or an effect; do not request during render.
-   * const run = async () => {
-   *   const suggestions = await suggest("my qu");
-   *   // → ["my query", "my question", "my quick start"]
-   * };
+   * function Example() {
+   *   const { suggest } = useSPFxPnPSearch();
+   *   const [pending, setPending] = React.useState(false);
+   *   const [result, setResult] = React.useState<unknown>();
+   *   const [failure, setFailure] = React.useState<string>();
+   *   const run = async () => {
+   *     setFailure(undefined);
+   *     try {
+   *       setPending(true);
+   *       const suggestions = await suggest("my qu");
+   *       setResult(suggestions);
+   *     } catch (failure) {
+   *       setFailure(failure instanceof Error ? failure.message : String(failure));
+   *     } finally {
+   *       setPending(false);
+   *     }
+   *   };
+   *   return <>
+   *     <button disabled={pending} onClick={() => void run()}>Suggest</button>
+   *     {failure && <span role="alert">{failure}</span>}
+   *     <pre>{JSON.stringify(result)}</pre>
+   *   </>;
+   * }
    * ```
    */
   suggest: (queryText: string) => Promise<string[]>;
@@ -269,13 +401,12 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
   results: SearchResult<T>[];
   
   /**
-   * Total number of results available (may be > results.length if paginated).
+   * Total number of results available (may exceed results.length if paginated).
    */
   totalResults: number;
   
   /**
-   * Available refiners (facets) from the last search.
-   * Only populated if refiners were requested in options.
+   * Facets returned by the server for the last search. Request them through hook options or a search builder; availability and entries depend on the server response.
    */
   refiners: SearchRefiner[];
   
@@ -329,22 +460,39 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
    * 
    * @example
    * ```tsx
-   * // Inside a React component beneath a matching host-specific SPFx provider:
-   * const { refiners, applyRefiner } = useSPFxPnPSearch({
-   *   refiners: 'FileType,DisplayAuthor'
-   * });
+   * import * as React from 'react';
+   * import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
    *
-   * // After initial search, show refiners
-   * {refiners.map(refiner => (
-   *   <div key={refiner.name}>
-   *     <h3>{refiner.name}</h3>
-   *     {refiner.entries.map(entry => (
-   *       <button onClick={() => applyRefiner(refiner.name, entry.token)}>
-   *         {entry.value} ({entry.count})
-   *       </button>
-   *     ))}
-   *   </div>
-   * ))}
+   * // Render beneath the initialized host's matching SPFx provider.
+   * function SearchWithFacets() {
+   *   const { search, refiners, applyRefiner, loading, error } = useSPFxPnPSearch({
+   *     refiners: 'FileType,DisplayAuthor'
+   *   });
+   *   const startSearch = async () => {
+   *     try { await search('ContentType:Document'); }
+   *     catch (failure) { console.error(failure); }
+   *   };
+   *   const refine = async (name: string, token: string) => {
+   *     try { await applyRefiner(name, token); }
+   *     catch (failure) { console.error(failure); }
+   *   };
+   *   return (
+   *     <div>
+   *       <button disabled={loading} onClick={startSearch}>Search documents</button>
+   *       {error && <span role="alert">{error.message}</span>}
+   *       {refiners.map(refiner => (
+   *         <section key={refiner.name}>
+   *           <h3>{refiner.name}</h3>
+   *           {refiner.entries.map(entry => (
+   *             <button key={entry.token} disabled={loading} onClick={() => void refine(refiner.name, entry.token)}>
+   *               {entry.value} ({entry.count})
+   *             </button>
+   *           ))}
+   *         </section>
+   *       ))}
+   *     </div>
+   *   );
+   * }
    * ```
    */
   applyRefiner: (refinerName: string, refinerValue: string) => Promise<void>;
@@ -361,16 +509,52 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
 /**
  * Runs explicit SharePoint searches with paging, suggestions and refinement tokens; no search runs on mount. Options/client changes reset results and filters. Latest replacement queries publish state; obsolete/unmounted completions still settle their promises. T is a cast of PnP result data without conversion or runtime validation. Server permissions and search configuration control available results/facets.
  * @typeParam T - Expected result data fields.
- * @param options - Default row limit (50), selected properties, refiners and within-facet operator (and).
- * @param pnpContext - Optional selected-web context; the default context hook still runs.
+ * @param options - Row limit, selected properties, refiners and operator; omitted or undefined uses 50 rows, no explicit properties/refiners and and.
+ * @param pnpContext - Selected-web context; omitted or undefined uses the current-web default. The default context hook still runs.
  * @returns Search results, totals/facets, state and explicit operations.
  * @throws Missing SPFx provider or default-context resolution failures. Methods reject failed requests.
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+ *
  * function SearchDocuments() {
  *   const search = useSPFxPnPSearch<{ Title: string }>({ pageSize: 25, refiners: 'FileType' });
- *   return <button onClick={() => search.search('ContentType:Document')} disabled={search.loading}>Search</button>;
+ *   const [documents, setDocuments] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const findDocuments = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       setDocuments(await search.search('ContentType:Document'));
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={search.loading} onClick={() => void findDocuments()}>Search</button>
+ *     {(failure ?? search.error?.message) && <span role="alert">{failure ?? search.error?.message}</span>}
+ *     <pre>{JSON.stringify(documents)}</pre>
+ *   </>;
+ * }
+ * ```
+ *
+ * @useWhen an interactive search UI needs explicit searches, pagination and native refinement tokens.
+ *
+ *
+ * @example Choose native refiner tokens and a document vertical
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxPnPSearch, SearchVerticals } from '@apvee/spfx-react-toolkit';
+ * function DocumentSearch() {
+ *   const state = useSPFxPnPSearch<{ Title: string }>({ refiners: 'FileType,DisplayAuthor,Size,Write', refinerOperator: 'or' });
+ *   return <div><button disabled={state.loading} onClick={() => void state.search(builder => builder.text('training').sourceId(SearchVerticals.Documents)).catch(console.error)}>Search documents</button>
+ *     {state.refiners.map(refiner => <section key={refiner.name}><h3>{refiner.name}</h3>{refiner.entries.map(entry =>
+ *       <button key={entry.token} disabled={state.loading || !entry.token} onClick={() => void state.applyRefiner(refiner.name, entry.token).catch(console.error)}>{entry.value} ({entry.count})</button>
+ *     )}</section>)}
+ *     {state.error && <p role="alert">{state.error.message}</p>}
+ *     <ul>{state.results.map(result => <li key={result.id}>{result.data.Title}</li>)}</ul>
+ *   </div>;
  * }
  * ```
  */

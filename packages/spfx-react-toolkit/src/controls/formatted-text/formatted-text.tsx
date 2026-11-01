@@ -1,3 +1,9 @@
+/**
+ * Semantic text, toolkit typography and bounded inline Markdown.
+ *
+ * @packageDocumentation
+ * @docPage controls/formatted-text
+ */
 import * as React from 'react';
 import { useSx } from '../../hooks/useSx';
 import * as typography from '../../helpers/styles/typography';
@@ -12,7 +18,8 @@ import { useFormattedTextStyles, useLineClampClass } from './formatted-text.styl
 import { renderFormattedTextChildren } from './formatted-text-content.internal';
 import type { FormattedTextProps } from './formatted-text.types';
 
-/** Render toolkit typography with bounded inline Markdown or caller-owned JSX.
+/**
+ * Render toolkit typography with bounded inline Markdown or caller-owned JSX.
  * `as` defaults to span independently of variant. Native attributes/events and ref reach that root.
  * Uses the host's Fluent theme and Griffel renderer; no SPFx provider is required.
  * Valid maxLines applies block clamp layout without changing the tag and wins over truncate/wrap.
@@ -23,16 +30,21 @@ import type { FormattedTextProps } from './formatted-text.types';
  * Each owned string above 64 KiB UTF-8 falls back literally before parsing. More than 2,000
  * original AST nodes or depth above 32 (root depth 1) also returns the complete string literally.
  * Node/depth checks run after parsing and do not bound parser work; see the FormattedText guide.
- * @param props Native text attributes, presentation options and owned content.
+ * @param props - Native text attributes, presentation options and owned content.
  * @returns A semantic text root, including when children render nothing.
- * @example
+ * @example Inline Markdown heading
  * ```tsx
+ * import * as React from 'react';
+ * import { FormattedText } from '@apvee/spfx-react-toolkit';
  * <FormattedText as="h2" variant="title2" maxLines={2}>
  *   Read the **updates** in [documentation](./docs).
  * </FormattedText>
  * ```
- * @example
+ *
+ * @example Mixed content in a fragment
  * ```tsx
+ * import * as React from 'react';
+ * import { FormattedText } from '@apvee/spfx-react-toolkit';
  * <FormattedText>
  *   <React.Fragment>
  *     {'**Project update** '}
@@ -41,6 +53,9 @@ import type { FormattedTextProps } from './formatted-text.types';
  *   </React.Fragment>
  * </FormattedText>
  * ```
+ *
+ * @useWhen Semantic text needs toolkit typography, bounded inline Markdown or overflow presentation.
+ * @avoidWhen Use EditableText when the user must edit and serialize rich text.
  */
 export const FormattedText = React.forwardRef<HTMLElement, FormattedTextProps>((props, ref) => {
   const {

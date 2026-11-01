@@ -1,0 +1,9 @@
+/**
+ * @example
+ * ```ts
+ * // @ts-expect-error unused suppression must also remain a compiler error
+ * const valid: number = 1;
+ * // @ts-ignore cannot make an example valid
+ * missingInput;
+ * ```
+ */

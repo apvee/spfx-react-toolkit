@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2020", "module": "esnext", "moduleResolution": "node",
+    "jsx": "react", "strict": true, "types": [], "skipLibCheck": true,
+    "rootDir": "src", "outDir": "lib", "declaration": true,
+    "baseUrl": ".",
+    "paths": {
+      "@example-private": ["src/private.ts"],
+      "@example-stale": ["lib/private.d.ts"]
+    },
+    "noUnusedLocals": true, "noUnusedParameters": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

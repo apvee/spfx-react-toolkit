@@ -1,3 +1,9 @@
+/**
+ * Read and replace user/application JSON files through Graph metadata and app-root content endpoints.
+ *
+ * @packageDocumentation
+ * @docPage services/onedrive-app-data
+ */
 import type { MSGraphClientV3 } from '@microsoft/sp-http';
 
 import { buildOneDriveAppDataPath } from '../helpers/spfx-graph-path.helpers';
@@ -7,10 +13,14 @@ import { buildOneDriveAppDataPath } from '../helpers/spfx-graph-path.helpers';
  *
  * @example
  * ```ts
- * const result: SPFxOneDriveAppDataReadResult<{ theme: string }> = await appData.read('settings.json');
- * if (!result.isNotFound) console.log(result.data?.theme);
+ * import { SPFxOneDriveAppDataReadResult, SPFxOneDriveAppDataService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(appData: SPFxOneDriveAppDataService) {
+ *   const result: SPFxOneDriveAppDataReadResult<{ theme: string }> = await appData.read('settings.json');
+ *   if (!result.isNotFound) console.log(result.data?.theme);
+ * }
  * ```
- * @template T - Expected application data shape; no runtime validation is performed.
+ * @template T - Expected application data shape; defaults to unknown and performs no runtime validation.
  */
 export interface SPFxOneDriveAppDataReadResult<T = unknown> {
   /**
@@ -24,12 +34,17 @@ export interface SPFxOneDriveAppDataReadResult<T = unknown> {
 }
 
 /**
- * JSON reads and writes in the authenticated user's OneDrive app root. Requires a caller-owned Graph client with appropriate permissions and native fetch for reads.
+ * JSON reads and writes in the authenticated user's OneDrive app root. Requires a caller-owned Graph client with app-folder read/write grants and native fetch for reads. No cache, retry or folder creation is added. Dates, undefined and other non-JSON values do not round-trip losslessly.
  *
  * @example
  * ```ts
- * const appData: SPFxOneDriveAppDataService = createSPFxOneDriveAppDataService(graphClient);
- * await appData.write('settings.json', { theme: 'dark' }, 'dashboard');
+ * import type { MSGraphClientV3 } from '@microsoft/sp-http';
+ * import { SPFxOneDriveAppDataService, createSPFxOneDriveAppDataService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(graphClient: MSGraphClientV3) {
+ *   const appData: SPFxOneDriveAppDataService = createSPFxOneDriveAppDataService(graphClient);
+ *   await appData.write('settings.json', { theme: 'dark' }, 'dashboard');
+ * }
  * ```
  */
 export interface SPFxOneDriveAppDataService {
@@ -38,13 +53,18 @@ export interface SPFxOneDriveAppDataService {
    * HTTPS URL using native fetch without authorization headers or cookies.
    * This avoids Graph's browser-incompatible authenticated /content redirect.
    *
+   * @typeParam T - Expected deserialized value; defaults to unknown and performs no runtime validation.
    * @param fileName - File name, passed into the Graph path without sanitization.
-   * @param folder - Optional namespace; characters other than letters, digits, hyphen and underscore become hyphens.
+   * @param folder - Omitted or empty selects app root; other values replace characters outside letters, digits, hyphen and underscore with hyphens. Distinct inputs can collide after sanitization.
    * @returns Parsed data, or isNotFound with undefined data for a missing file.
    * @throws Graph, download, invalid metadata or JSON parsing errors.
    * @example
    * ```ts
-   * const result = await appData.read<Settings>('settings.json', 'my-app');
+   * import { SPFxOneDriveAppDataService } from '@apvee/spfx-react-toolkit';
+   *
+   * async function exampleUsage(appData: SPFxOneDriveAppDataService) {
+   *   const result = await appData.read<{ theme: string }>('settings.json', 'my-app');
+   * }
    * ```
    */
   read: <T = unknown>(
@@ -53,9 +73,10 @@ export interface SPFxOneDriveAppDataService {
   ) => Promise<SPFxOneDriveAppDataReadResult<T>>;
   /**
    * Writes JSON through Graph; existing content is replaced.
+   * @typeParam T - Input value shape; defaults to unknown and does not guarantee serializability.
    * @param fileName - File name; passed into the Graph path without sanitization.
    * @param content - JSON-serializable value; generic types do not validate serialization.
-   * @param folder - Optional namespace; non-alphanumeric characters except hyphen/underscore become hyphens.
+   * @param folder - Omitted or empty selects app root; non-alphanumeric characters except hyphen/underscore become hyphens. No folder creation is performed.
    * @returns Resolves after Graph accepts the write.
    * @throws Serialization and Graph failures.
    */
@@ -140,10 +161,30 @@ function getDownloadUrl(driveItem: unknown): string {
  * @param graphClient - Initialized, caller-owned Microsoft Graph client.
  * @returns JSON read and write methods; construction performs no request.
  *
- * @example
+ * @example Basic usage
  * ```ts
- * const appData = createSPFxOneDriveAppDataService(graphClient);
- * const settings = await appData.read<{ theme: string }>('settings.json');
+ * import type { MSGraphClientV3 } from '@microsoft/sp-http';
+ * import { createSPFxOneDriveAppDataService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(graphClient: MSGraphClientV3) {
+ *   const appData = createSPFxOneDriveAppDataService(graphClient);
+ *   const settings = await appData.read<{ theme: string }>('settings.json');
+ * }
+ * ```
+ * @useWhen You store JSON files private to the signed-in user and this Graph application in OneDrive app root.
+ *
+ *
+ * @example Read and replace app-folder JSON
+ * ```ts
+ * import type { MSGraphClientV3 } from '@microsoft/sp-http';
+ *
+ * import { createSPFxOneDriveAppDataService } from '@apvee/spfx-react-toolkit';
+ * async function demonstrate(graphClient: MSGraphClientV3) {
+ *   const data = createSPFxOneDriveAppDataService(graphClient);
+ *   const result = await data.read<unknown>('settings.json', 'dashboard');
+ *   if (!result.isNotFound) console.log(result.data);
+ *   await data.write('settings.json', { theme: 'dark' }, 'dashboard');
+ * }
  * ```
  */
 export function createSPFxOneDriveAppDataService(

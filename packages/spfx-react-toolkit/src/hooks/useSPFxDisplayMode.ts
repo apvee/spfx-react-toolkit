@@ -1,3 +1,9 @@
+/**
+ * WebPart read/edit flags follow the provider display mode.
+ *
+ * @packageDocumentation
+ * @docPage hooks/properties
+ */
 // useSPFxDisplayMode.ts
 // Hook to access display mode (Read/Edit)
 
@@ -6,13 +12,18 @@ import { DisplayMode } from '@microsoft/sp-core-library';
 import { useSPFxRuntimeSelector } from './../core/state.internal';
 
 /**
- * Return type for useSPFxDisplayMode hook
+ * Provider display mode and exact Read/Edit flags; missing runtime mode is read-only.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const mode: SPFxDisplayModeInfo = useSPFxDisplayMode();
- * console.log(mode.isEdit);
+ * import * as React from 'react';
+ * import { SPFxDisplayModeInfo, useSPFxDisplayMode } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const mode: SPFxDisplayModeInfo = useSPFxDisplayMode();
+ *   console.log(mode.isEdit);
+ *   return <span>{mode.isEdit ? 'Edit' : 'Read'}</span>;
+ * }
  * ```
  */
 export interface SPFxDisplayModeInfo {
@@ -34,11 +45,16 @@ export interface SPFxDisplayModeInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxDisplayMode } from '@apvee/spfx-react-toolkit';
+ *
  * function ModeLabel() {
  *   const { isEdit } = useSPFxDisplayMode();
  *   return <span>{isEdit ? 'Editing' : 'Reading'}</span>;
  * }
  * ```
+ *
+ * @useWhen WebPart UI must distinguish the current edit and read modes.
  */
 export function useSPFxDisplayMode(): SPFxDisplayModeInfo {
   const modeValue = useSPFxRuntimeSelector(state => state.displayMode);
@@ -64,11 +80,16 @@ export function useSPFxDisplayMode(): SPFxDisplayModeInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxIsEdit } from '@apvee/spfx-react-toolkit';
+ *
  * function EditLabel() {
  *   const editing = useSPFxIsEdit();
  *   return <span>{editing ? 'Editing' : 'Reading'}</span>;
  * }
  * ```
+ *
+ * @useWhen a WebPart only needs an edit-mode boolean for conditional UI.
  */
 export function useSPFxIsEdit(): boolean {
   const { isEdit } = useSPFxDisplayMode();

@@ -1,0 +1,9 @@
+{
+  "name": "@fixture/render",
+  "description": "Source-owned rendering fixture.",
+  "exports": {
+    ".": { "types": "./lib/index.d.ts" },
+    "./controls": { "types": "./lib/controls.d.ts" },
+    "./property-pane": { "types": "./lib/pane.d.ts" }
+  }
+}

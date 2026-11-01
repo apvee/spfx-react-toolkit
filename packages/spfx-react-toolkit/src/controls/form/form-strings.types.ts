@@ -1,10 +1,18 @@
+/**
+ * Typed Form families, RHF value ownership and native Fluent bindings.
+ *
+ * @packageDocumentation
+ * @docPage controls/form
+ */
 import type { FormDatePickerStrings, FormTagPickerStrings } from './form-control.types';
 import type { FormArraySectionStrings } from './form-composition.types';
 
-/** Complete Form UI dictionary. Native SPFx resources supply omitted overrides.
+/**
+ * Complete Form UI dictionary. Native SPFx resources supply omitted overrides.
  * Caller validation messages, field labels and values remain caller-owned.
  * @example
  * ```ts
+ * import { FormStrings } from '@apvee/spfx-react-toolkit/controls/form';
  * function customize(strings: FormStrings): FormStrings {
  *   return { ...strings, unexpectedFailure: 'Please retry.' };
  * }
@@ -38,12 +46,14 @@ export interface FormStrings {
     };
 }
 
-/** Known optional Form dictionary fields, merged per group with native resources.
+/**
+ * Known optional Form dictionary fields, merged per group with native resources.
  * Explicit empty strings are retained; calendar arrays replace complete arrays.
  * Supply to useForm or an initializing Root. A Root with methods inherits that
  * hook's dictionary. Dictionary changes do not reset or revalidate the form.
  * @example
  * ```ts
+ * import { FormStringsOverride } from '@apvee/spfx-react-toolkit/controls/form';
  * const strings: FormStringsOverride = {
  *   unexpectedFailure: 'Please retry.',
  *   fileInput: { browseLabel: 'Choose files' },
@@ -52,18 +62,39 @@ export interface FormStrings {
  * ```
  */
 export interface FormStringsOverride {
-    /** Optional unexpected exception fallback; omission uses the native resource. */
+    /**
+     * Optional unexpected exception fallback; omission uses the native resource.
+     * When omitted, native resources supply the unexpected-failure message.
+     */
     unexpectedFailure?: FormStrings['unexpectedFailure'];
-    /** Optional calendar fields; omission retains native names and accessibility text. */
+    /**
+     * Optional calendar fields; omission retains native names and accessibility text.
+     * When omitted, native calendar names and accessible labels remain.
+     */
     datePicker?: Partial<FormStrings['datePicker']>;
-    /** Optional incomplete date draft message; direct control message wins. */
+    /**
+     * Optional incomplete date draft message; direct control message wins.
+     * When omitted, native resources supply the incomplete-date message; direct control messages win.
+     */
     dateInputValidationMessage?: string;
-    /** Optional incomplete time draft message; direct control message wins. */
+    /**
+     * Optional incomplete time draft message; direct control message wins.
+     * When omitted, native resources supply the incomplete-time message; direct control messages win.
+     */
     timeInputValidationMessage?: string;
-    /** Optional tag content using the unchanged FormTagPickerStrings slot contract. */
+    /**
+     * Optional tag content using the unchanged FormTagPickerStrings slot contract.
+     * When omitted, native TagPicker empty-result content remains.
+     */
     tagPicker?: Partial<FormStrings['tagPicker']>;
-    /** Optional file action labels; direct control labels win. */
+    /**
+     * Optional file action labels; direct control labels win.
+     * When omitted, native file action labels remain.
+     */
     fileInput?: Partial<FormStrings['fileInput']>;
-    /** Optional array callbacks/text/item naming; leaf action strings and itemLabel win. */
+    /**
+     * Optional array callbacks/text/item naming; leaf action strings and itemLabel win.
+     * When omitted, native array action labels, item naming and announcements remain.
+     */
     arraySection?: Partial<FormStrings['arraySection']>;
 }

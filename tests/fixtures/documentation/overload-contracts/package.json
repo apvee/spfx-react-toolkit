@@ -1,0 +1,4 @@
+{
+  "name": "@fixture/overload-contracts",
+  "exports": { ".": { "types": "./lib/index.d.ts" } }
+}

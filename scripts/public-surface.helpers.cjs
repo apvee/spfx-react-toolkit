@@ -1,82 +1,77 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const ts = require('typescript');
 
-function resolveModule(from, specifier) {
-  const base = path.resolve(path.dirname(from), specifier);
-  const resolved = [base + '.ts', base + '.tsx', path.join(base, 'index.ts'), path.join(base, 'index.tsx')]
-    .find(candidate => fs.existsSync(candidate));
-  assert.ok(resolved, `Cannot resolve public export ${specifier} from ${from}`);
-  return resolved;
+/** Locate explicit package/config context without creating fixture metadata. */
+function sourceContext(entryPath) {
+  const repository = path.resolve(__dirname, '..');
+  const config = require('./documentation.config.cjs');
+  const relative = path.relative(path.join(repository, config.sourceRoot), entryPath);
+  if (!relative.startsWith('..') && !path.isAbsolute(relative)) return { root: repository, config };
+  for (let directory = path.dirname(path.resolve(entryPath));;) {
+    if (fs.existsSync(path.join(directory, 'package.json')) && fs.existsSync(path.join(directory, 'tsconfig.json'))) {
+      return { root: directory, config: { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json' } };
+    }
+    const parent = path.dirname(directory);
+    assert.notEqual(parent, directory, `Missing explicit package.json/tsconfig.json context for ${entryPath}`);
+    directory = parent;
+  }
 }
-
-/** Collect leaf declarations reached by public exports, retaining qualified namespace names. */
-function collectPublicSurface(entryPath, { includeTypeMembers = false } = {}) {
-  function ownTypeMembers(type, prefix) {
-    if (ts.isTypeLiteralNode(type)) return type.members.flatMap(member => {
-      if (!member.name || ts.isComputedPropertyName(member.name)) return [];
-      const name = prefix + '.' + member.name.getText();
-      return [{ name, jsdoc: member.jsDoc?.some(doc => !!doc.comment || !!doc.tags?.length) ?? false },
-        ...(member.type ? ownTypeMembers(member.type, name) : [])];
-    });
-    if (ts.isIntersectionTypeNode(type) || ts.isUnionTypeNode(type)) return type.types.flatMap(child => ownTypeMembers(child, prefix));
-    if (ts.isParenthesizedTypeNode(type)) return ownTypeMembers(type.type, prefix);
-    if (ts.isConditionalTypeNode(type)) return [...ownTypeMembers(type.trueType, prefix), ...ownTypeMembers(type.falseType, prefix)];
-    return [];
+function checkedGraph(root, config, query) {
+  const graph = require('./documentation-model.cjs').buildApiGraph(root, config, query);
+  assert.deepEqual(graph.diagnostics, [], 'Invalid documentation source: ' + graph.diagnostics.map(item => `${item.file}:${item.line} ${item.code}: ${item.message}`).join('\n'));
+  return graph;
+}
+/** Project the canonical graph; default members retain physical declaration ownership. */
+function projectPublicSurface(graph, bindings, root, { includeTypeMembers = false } = {}) {
+  const entities = new Map(graph.entities.map(entity => [entity.key, entity]));
+  function namespaceLeaf(binding) {
+    if (entities.get(binding.entityKey).kind === 'namespace') return false;
+    for (let index = 0; index < binding.memberPath.length; index++) {
+      const parent = bindings.find(item => item.exportedName === binding.exportedName && item.memberPath.join('.') === binding.memberPath.slice(0, index).join('.'));
+      if (!parent || entities.get(parent.entityKey).kind !== 'namespace') return false;
+    }
+    return true;
   }
-  function visit(filePath, prefix, stack) {
-    assert.ok(!stack.includes(filePath), `Cyclic public barrel: ${filePath}`);
-    const source = ts.createSourceFile(filePath, fs.readFileSync(filePath, 'utf8'), ts.ScriptTarget.Latest, true);
-    const nextStack = [...stack, filePath];
-    const declarations = new Map();
-    const exports = [];
-    const hasExport = node => node.modifiers?.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword);
-    const describe = (name, node) => ({
-      name: prefix + name,
-      filePath,
-      jsdoc: node.jsDoc?.some(doc => !!doc.comment || !!doc.tags?.length) ?? false,
-      signature: node.getText(source),
-      members: ts.isInterfaceDeclaration(node) ? node.members
-        .filter(member => member.name && !ts.isComputedPropertyName(member.name))
-        .map(member => ({ name: prefix + name + '.' + member.name.getText(source), jsdoc: member.jsDoc?.some(doc => !!doc.comment || !!doc.tags?.length) ?? false })) : includeTypeMembers && ts.isTypeAliasDeclaration(node) ? ownTypeMembers(node.type, prefix + name) : [],
-    });
-    for (const node of source.statements) {
-      if (ts.isVariableStatement(node)) {
-        for (const declaration of node.declarationList.declarations) {
-          if (ts.isIdentifier(declaration.name)) declarations.set(declaration.name.text, describe(declaration.name.text, node));
-        }
-      } else if (node.name && ts.isIdentifier(node.name)) {
-        declarations.set(node.name.text, describe(node.name.text, node));
+  function expanded(entity, prefix, stack = new Set()) {
+    if (stack.has(entity.key)) return [];
+    stack = new Set([...stack, entity.key]);
+    const result = [];
+    for (const member of [...entity.members, ...entity.variants.flatMap(variant => variant.members)]) {
+      if (member.name.startsWith('[')) continue;
+      result.push({ name: prefix + '.' + member.name, jsdoc: Boolean(member.rawDoc), ownerKey: member.ownerKey });
+      const owner = entities.get(member.ownerKey);
+      for (const reference of member.type.references) {
+        const child = entities.get(reference);
+        if (member.ownerKey === entity.key && child && owner && child.source.file === owner.source.file && child.qualifiedName === owner.qualifiedName + '.' + member.name) result.push(...expanded(child, prefix + '.' + member.name, stack));
       }
     }
-    for (const node of source.statements) {
-      if (ts.isExportDeclaration(node)) {
-        const target = node.moduleSpecifier && resolveModule(filePath, node.moduleSpecifier.text);
-        if (!node.exportClause) {
-          assert.ok(target, 'Star export requires a module');
-          exports.push(...visit(target, prefix, nextStack));
-        } else if (ts.isNamespaceExport(node.exportClause)) {
-          exports.push(...visit(target, prefix + node.exportClause.name.text + '.', nextStack));
-        } else {
-          const targetSurface = target && visit(target, '', nextStack);
-          for (const element of node.exportClause.elements) {
-            const localName = (element.propertyName ?? element.name).text;
-            const declaration = target ? targetSurface.find(item => item.name === localName) : declarations.get(localName);
-            assert.ok(declaration, `Cannot resolve exported member ${localName} in ${filePath}`);
-            const qualifiedName = prefix + element.name.text;
-            exports.push({ ...declaration, name: qualifiedName, members: declaration.members.map(member => ({ ...member, name: qualifiedName + member.name.slice(declaration.name.length) })) });
-          }
-        }
-      } else if (hasExport(node)) {
-        if (ts.isVariableStatement(node)) {
-          for (const declaration of node.declarationList.declarations) exports.push(declarations.get(declaration.name.text));
-        } else if (node.name) exports.push(declarations.get(node.name.text));
-      }
-    }
-    return exports;
+    return [...new Map(result.map(item => [item.name + ':' + item.ownerKey, item])).values()];
   }
-  return visit(path.resolve(entryPath), '', []);
+  return bindings.filter(namespaceLeaf).map(binding => {
+    const entity = entities.get(binding.entityKey);
+    const name = [binding.exportedName, ...binding.memberPath].join('.');
+    const members = includeTypeMembers && ['interface', 'type'].includes(entity.kind) ? expanded(entity, name)
+      : entity.kind === 'interface' ? entity.members.filter(member => member.ownerKey === entity.key && !member.name.startsWith('['))
+        .map(member => ({ name: name + '.' + member.name, jsdoc: Boolean(member.rawDoc) })) : [];
+    return { name, filePath: path.resolve(root, entity.source.file), jsdoc: Boolean(entity.rawDoc), members };
+  });
+}
+/** Batch one invocation's entry queries; rebuild on every call to observe mutations. */
+function collectPublicSurfaces(entryPaths, options = {}) {
+  if (!entryPaths.length) return [];
+  const { root, config } = sourceContext(path.resolve(entryPaths[0]));
+  const entries = entryPaths.map(entryPath => {
+    const context = sourceContext(path.resolve(entryPath));
+    assert.deepEqual(context, { root, config }, 'A surface query batch must use one package/config context.');
+    return path.relative(root, path.resolve(entryPath)).split(path.sep).join('/');
+  });
+  const graph = checkedGraph(root, config, { requestedSourceEntries: entries });
+  return entries.map(entry => projectPublicSurface(graph, graph.entryQueries[entry], root, options));
+}
+/** Collect a caller-selected source entry using the same checker as package docs. */
+function collectPublicSurface(entryPath, options = {}) {
+  return collectPublicSurfaces([entryPath], options)[0];
 }
 
 function assertDocumentedSurface(document, surface) {
@@ -91,4 +86,4 @@ function assertDocumentedSurface(document, surface) {
   }
 }
 
-module.exports = { resolveModule, collectPublicSurface, assertDocumentedSurface };
+module.exports = { collectPublicSurface, collectPublicSurfaces, assertDocumentedSurface, projectPublicSurface, sourceContext, checkedGraph };

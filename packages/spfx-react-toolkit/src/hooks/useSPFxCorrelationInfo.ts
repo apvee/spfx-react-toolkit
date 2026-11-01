@@ -1,3 +1,9 @@
+/**
+ * Correlation and tenant identifiers are diagnostic metadata, not generated request headers.
+ *
+ * @packageDocumentation
+ * @docPage hooks/performance
+ */
 // useSPFxCorrelationInfo.ts
 // Hook for correlation and tenant ID extraction
 
@@ -6,13 +12,18 @@ import { getSPFxCorrelationInfo } from '../helpers/spfx-page-context.helpers';
 import { useSPFxPageContext } from './useSPFxPageContext';
 
 /**
- * Return type for useSPFxCorrelationInfo hook
+ * Optional diagnostic correlation and tenant identifiers from the current PageContext; no tracing headers are generated.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const info: SPFxCorrelationInfo = useSPFxCorrelationInfo();
- * console.log(info.correlationId);
+ * import * as React from 'react';
+ * import { SPFxCorrelationInfo, useSPFxCorrelationInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const info: SPFxCorrelationInfo = useSPFxCorrelationInfo();
+ *   console.log(info.correlationId);
+ *   return <span>{info.correlationId ?? 'Unavailable'}</span>;
+ * }
  * ```
  */
 export interface SPFxCorrelationInfo {
@@ -31,11 +42,16 @@ export interface SPFxCorrelationInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxCorrelationInfo } from '@apvee/spfx-react-toolkit';
+ *
  * function TenantLabel() {
  *   const { tenantId } = useSPFxCorrelationInfo();
  *   return <span>{tenantId ?? 'Tenant unavailable'}</span>;
  * }
  * ```
+ *
+ * @useWhen a support or telemetry record needs the request correlation identifier exposed by the host.
  */
 export function useSPFxCorrelationInfo(): SPFxCorrelationInfo {
   const pageContext = useSPFxPageContext();

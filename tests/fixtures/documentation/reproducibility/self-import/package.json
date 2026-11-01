@@ -1,0 +1,8 @@
+{
+  "name": "@fixture/cold",
+  "version": "1.0.0",
+  "exports": {
+    ".": { "types": "./lib/index.d.ts" },
+    "./native": { "types": "./lib/native.d.ts" }
+  }
+}

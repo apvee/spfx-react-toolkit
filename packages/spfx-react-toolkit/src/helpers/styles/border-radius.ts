@@ -1,10 +1,31 @@
+/**
+ * Four-corner Fluent radius declarations without borders or clipping.
+ *
+ * @packageDocumentation
+ * @docPage helpers/styles
+ * @useWhen A box needs Fluent corner rounding without adding a border or clipping its children.
+ * @example
+ * ```ts
+ * import { borderRadius } from '@apvee/spfx-react-toolkit/styles';
+ * const descriptor = borderRadius.none;
+ * ```
+ */
 import { tokens } from '@fluentui/react-theme';
 import { SxBaseDescriptor } from './types';
 import { createDeclaration, createRecipe } from './descriptor.internal';
 
 /** Applies var(--borderRadiusNone) to all four border corners. It does not change dimensions.
  * Token values require scoped Fluent theme variables.
- * @example sx(borderRadius.none)
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSx, borderRadius } from '@apvee/spfx-react-toolkit/styles';
+ *
+ * export function StyledSurface(): React.ReactElement {
+ *   const sx = useSx();
+ *   return <div className={sx(borderRadius.none)}>Content</div>;
+ * }
+ * ```
  */
 export const none: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderRadius.none', [
   /*#__PURE__*/ createDeclaration('borderTopLeftRadius', tokens.borderRadiusNone, { property: 'borderTopLeftRadius', fallback: '0px' }),
@@ -15,7 +36,16 @@ export const none: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderRadius.n
 
 /** Applies var(--borderRadiusSmall) to all four border corners. It does not change dimensions.
  * Token values require scoped Fluent theme variables.
- * @example sx(borderRadius.small)
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSx, borderRadius } from '@apvee/spfx-react-toolkit/styles';
+ *
+ * export function StyledSurface(): React.ReactElement {
+ *   const sx = useSx();
+ *   return <div className={sx(borderRadius.small)}>Content</div>;
+ * }
+ * ```
  */
 export const small: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderRadius.small', [
   /*#__PURE__*/ createDeclaration('borderTopLeftRadius', tokens.borderRadiusSmall, { property: 'borderTopLeftRadius', fallback: '0px' }),
@@ -26,7 +56,16 @@ export const small: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderRadius.
 
 /** Applies var(--borderRadiusMedium) to all four border corners. It does not change dimensions.
  * Token values require scoped Fluent theme variables.
- * @example sx(borderRadius.medium)
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSx, borderRadius } from '@apvee/spfx-react-toolkit/styles';
+ *
+ * export function StyledSurface(): React.ReactElement {
+ *   const sx = useSx();
+ *   return <div className={sx(borderRadius.medium)}>Content</div>;
+ * }
+ * ```
  */
 export const medium: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderRadius.medium', [
   /*#__PURE__*/ createDeclaration('borderTopLeftRadius', tokens.borderRadiusMedium, { property: 'borderTopLeftRadius', fallback: '0px' }),
@@ -37,7 +76,16 @@ export const medium: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderRadius
 
 /** Applies var(--borderRadiusLarge) to all four border corners. It does not change dimensions.
  * Token values require scoped Fluent theme variables.
- * @example sx(borderRadius.large)
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSx, borderRadius } from '@apvee/spfx-react-toolkit/styles';
+ *
+ * export function StyledSurface(): React.ReactElement {
+ *   const sx = useSx();
+ *   return <div className={sx(borderRadius.large)}>Content</div>;
+ * }
+ * ```
  */
 export const large: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderRadius.large', [
   /*#__PURE__*/ createDeclaration('borderTopLeftRadius', tokens.borderRadiusLarge, { property: 'borderTopLeftRadius', fallback: '0px' }),
@@ -48,7 +96,16 @@ export const large: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderRadius.
 
 /** Applies var(--borderRadiusXLarge) to all four border corners. It does not change dimensions.
  * Token values require scoped Fluent theme variables.
- * @example sx(borderRadius.extraLarge)
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSx, borderRadius } from '@apvee/spfx-react-toolkit/styles';
+ *
+ * export function StyledSurface(): React.ReactElement {
+ *   const sx = useSx();
+ *   return <div className={sx(borderRadius.extraLarge)}>Content</div>;
+ * }
+ * ```
  */
 export const extraLarge: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderRadius.extraLarge', [
   /*#__PURE__*/ createDeclaration('borderTopLeftRadius', tokens.borderRadiusXLarge, { property: 'borderTopLeftRadius', fallback: '0px' }),
@@ -59,7 +116,16 @@ export const extraLarge: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderRa
 
 /** Applies var(--borderRadiusCircular) to all four border corners. It does not change dimensions.
  * Token values require scoped Fluent theme variables.
- * @example sx(borderRadius.circular)
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSx, borderRadius } from '@apvee/spfx-react-toolkit/styles';
+ *
+ * export function StyledSurface(): React.ReactElement {
+ *   const sx = useSx();
+ *   return <div className={sx(borderRadius.circular)}>Content</div>;
+ * }
+ * ```
  */
 export const circular: SxBaseDescriptor = /*#__PURE__*/ createRecipe('borderRadius.circular', [
   /*#__PURE__*/ createDeclaration('borderTopLeftRadius', tokens.borderRadiusCircular, { property: 'borderTopLeftRadius', fallback: '0px' }),

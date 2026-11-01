@@ -1,3 +1,9 @@
+/**
+ * Legacy hub association can trigger a request to resolve the hub URL.
+ *
+ * @packageDocumentation
+ * @docPage hooks/user-site
+ */
 // useSPFxHubSiteInfo.ts
 // Hook for Hub Site information
 
@@ -7,13 +13,18 @@ import { useSPFxPageContext } from './useSPFxPageContext';
 import { useSPFxSPHttpClient } from './useSPFxSPHttpClient';
 
 /**
- * Return type for useSPFxHubSiteInfo hook
+ * Legacy hub association plus the asynchronously resolved hub URL and request state.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const hub: SPFxHubSiteInfo = useSPFxHubSiteInfo();
- * console.log(hub.hubSiteUrl, hub.isLoading);
+ * import * as React from 'react';
+ * import { SPFxHubSiteInfo, useSPFxHubSiteInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const hub: SPFxHubSiteInfo = useSPFxHubSiteInfo();
+ *   console.log(hub.hubSiteUrl, hub.isLoading);
+ *   return <span>{hub.hubSiteUrl ?? 'Unavailable'}</span>;
+ * }
  * ```
  */
 export interface SPFxHubSiteInfo {
@@ -49,6 +60,9 @@ export interface SPFxHubSiteInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxHubSiteInfo } from '@apvee/spfx-react-toolkit';
+ *
  * function HubLink() {
  *   const hub = useSPFxHubSiteInfo();
  *   if (hub.error) return <span>{hub.error.message}</span>;
@@ -57,6 +71,8 @@ export interface SPFxHubSiteInfo {
  *   return <a href={hub.hubSiteUrl}>Visit hub</a>;
  * }
  * ```
+ *
+ * @useWhen navigation needs the current hub association and its resolved hub URL.
  */
 export function useSPFxHubSiteInfo(): SPFxHubSiteInfo {
   const pageContext = useSPFxPageContext();

@@ -1,3 +1,9 @@
+/**
+ * Compose whole-record site overrides over tenant defaults with explicit physical mutation targets.
+ *
+ * @packageDocumentation
+ * @docPage services/configuration-store
+ */
 import type { SPHttpClient } from '@microsoft/sp-http';
 import { createSPFxAppCatalogService } from './spfx-app-catalog.service';
 import { createSPFxSiteKeyValueStoreService } from './spfx-site-key-value-store.service';
@@ -6,24 +12,39 @@ import { createSPFxTenantKeyValueStoreService } from './spfx-tenant-key-value-st
 /**
  * Physical configuration destination. Site means the collection root, shared by its subsites.
  * @example
+ * ```ts
+ * import { SPFxConfigurationStoreScope } from '@apvee/spfx-react-toolkit';
+ *
  * const scope: SPFxConfigurationStoreScope = 'site';
+ * ```
  */
 export type SPFxConfigurationStoreScope = 'tenant' | 'site';
 
 /**
  * Allowed physical stores and effective-read policy. Layered reads site first, then tenant on confirmed absence.
  * @example
+ * ```ts
+ * import { SPFxConfigurationStoreMode } from '@apvee/spfx-react-toolkit';
+ *
  * const mode: SPFxConfigurationStoreMode = 'layered';
+ * ```
  */
 export type SPFxConfigurationStoreMode = SPFxConfigurationStoreScope | 'layered';
 
 /**
- * Required mode and its addressable dependencies; no defaults. URLs are snapshotted and normalized at construction.
+ * Required mode and its addressable dependencies; no defaults. URLs are snapshotted and normalized at construction. Validation checks nonempty strings, not HTTP URL validity or whether a supplied site URL is a collection root.
  * @example
- * const options: SPFxConfigurationStoreServiceOptions = {
- *   mode: 'layered', discoveryWebUrl: context.pageContext.web.absoluteUrl,
- *   siteCollectionUrl: context.pageContext.site.absoluteUrl,
- * };
+ * ```ts
+ * import type { WebPartContext } from '@microsoft/sp-webpart-base';
+ * import { SPFxConfigurationStoreServiceOptions } from '@apvee/spfx-react-toolkit';
+ *
+ * function exampleUsage(context: WebPartContext) {
+ *   const options: SPFxConfigurationStoreServiceOptions = {
+ *     mode: 'layered', discoveryWebUrl: context.pageContext.web.absoluteUrl,
+ *     siteCollectionUrl: context.pageContext.site.absoluteUrl,
+ *   };
+ * }
+ * ```
  */
 export type SPFxConfigurationStoreServiceOptions =
   | {
@@ -31,7 +52,7 @@ export type SPFxConfigurationStoreServiceOptions =
     readonly mode: 'tenant';
     /** Current web URL used for lazy tenant catalog discovery; not the catalog URL. */
     readonly discoveryWebUrl: string;
-    /** Unused in tenant mode. */
+    /** Omit in tenant mode; an explicitly undefined value is also ignored at runtime. */
     readonly siteCollectionUrl?: never;
   }
   | {
@@ -39,7 +60,7 @@ export type SPFxConfigurationStoreServiceOptions =
     readonly mode: 'site';
     /** Absolute collection-root URL, never a subsite URL. */
     readonly siteCollectionUrl: string;
-    /** Unused in site mode. */
+    /** Omit in site mode; an explicitly undefined value is also ignored at runtime. */
     readonly discoveryWebUrl?: never;
   }
   | {
@@ -54,7 +75,11 @@ export type SPFxConfigurationStoreServiceOptions =
 /**
  * Hook configuration. The matching SPFx provider supplies the client and mode-specific URLs.
  * @example
+ * ```ts
+ * import { SPFxConfigurationStoreOptions } from '@apvee/spfx-react-toolkit';
+ *
  * const options: SPFxConfigurationStoreOptions = { mode: 'site' };
+ * ```
  */
 export interface SPFxConfigurationStoreOptions {
   /** Required read policy and allowed physical scopes; no default. */
@@ -64,7 +89,11 @@ export interface SPFxConfigurationStoreOptions {
 /**
  * Explicit mutation destination, independent of a previously read value's source.
  * @example
+ * ```ts
+ * import { SPFxConfigurationStoreTarget } from '@apvee/spfx-react-toolkit';
+ *
  * const target: SPFxConfigurationStoreTarget = { scope: 'site' };
+ * ```
  */
 export interface SPFxConfigurationStoreTarget {
   /** Required physical scope; must be enabled by the configured mode. */
@@ -74,7 +103,11 @@ export interface SPFxConfigurationStoreTarget {
 /**
  * Save destination and destination-local metadata.
  * @example
+ * ```ts
+ * import { SPFxConfigurationStoreSaveOptions } from '@apvee/spfx-react-toolkit';
+ *
  * const options: SPFxConfigurationStoreSaveOptions = { scope: 'site', description: '' };
+ * ```
  */
 export interface SPFxConfigurationStoreSaveOptions extends SPFxConfigurationStoreTarget {
   /** Omitted preserves existing destination metadata; empty string clears it. Never inherits metadata from another scope. */
@@ -83,9 +116,16 @@ export interface SPFxConfigurationStoreSaveOptions extends SPFxConfigurationStor
 
 /**
  * One physical record and its provenance. T describes expected data; it does not validate stored content.
+ * @typeParam T - Expected deserialized value; defaults to unknown, without runtime validation.
  * @example
- * const item: SPFxConfigurationStoreItem<number> | undefined = await store.get<number>('my-app:pageSize');
- * console.log(item?.value, item?.source);
+ * ```ts
+ * import { SPFxConfigurationStoreItem, SPFxConfigurationStoreService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(store: SPFxConfigurationStoreService) {
+ *   const item: SPFxConfigurationStoreItem<number> | undefined = await store.get<number>('my-app:pageSize');
+ *   console.log(item?.value, item?.source);
+ * }
+ * ```
  */
 export interface SPFxConfigurationStoreItem<T = unknown> {
   /** Stored key with server-provided casing, without normalization. */
@@ -101,15 +141,22 @@ export interface SPFxConfigurationStoreItem<T = unknown> {
 }
 
 /**
- * Configuration operations without React. All failed operations reject; only confirmed absence is empty.
+ * Configuration operations without React. All failed operations reject; only confirmed absence is empty. False, zero, empty text and legacy null-valued records remain present site overrides. Keys are forwarded without trimming or namespacing; SharePoint determines equality.
  * @example
- * await store.save('my-app:pageSize', 50, { scope: 'site' });
- * const item = await store.get<number>('my-app:pageSize');
- * await store.remove('my-app:pageSize', { scope: 'site' });
+ * ```ts
+ * import { SPFxConfigurationStoreService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(store: SPFxConfigurationStoreService) {
+ *   await store.save('my-app:pageSize', 50, { scope: 'site' });
+ *   const item = await store.get<number>('my-app:pageSize');
+ *   await store.remove('my-app:pageSize', { scope: 'site' });
+ * }
+ * ```
  */
 export interface SPFxConfigurationStoreService {
   /**
    * Reads the mode's effective record without provisioning. Layered reads site first and consults tenant only after confirmed site absence.
+   * @typeParam T - Expected deserialized value; defaults to unknown and performs no runtime validation.
    * @param key - String key forwarded unchanged; equality is delegated to SharePoint.
    * @returns Whole winning record with source, or undefined for confirmed absence in all required scopes.
    * @throws Discovery, access, schema or lookup failures; a failed site read never enables tenant fallback.
@@ -124,6 +171,7 @@ export interface SPFxConfigurationStoreService {
   listScope: (scope: SPFxConfigurationStoreScope) => Promise<SPFxConfigurationStoreItem<unknown>[]>;
   /**
    * Replaces the complete value only at the explicit destination, provisioning that store if necessary. No JSON-property merge or automatic read follows.
+   * @typeParam T - Input value shape; defaults to unknown and does not guarantee serializability.
    * @param key - String key forwarded unchanged.
    * @param value - Existing store encoding applies: new text is preserved, bigint reads as decimal string and Date as ISO text. T is not validation.
    * @param options - Required enabled scope and optional destination description.
@@ -144,18 +192,47 @@ export interface SPFxConfigurationStoreService {
 /**
  * Creates an isolated facade over existing list stores. Construction performs no requests. Tenant discovery is lazy and shared while pending within this instance; successful URLs use the existing catalog cache. Site-only operations never need catalog access.
  * Existing APIs/data, nullable-Note legacy differences, serialization and ETag preconditions remain unchanged. No cross-store transaction, value cache or permission indicator is provided.
+ * @useWhen You need whole-record site overrides over tenant defaults with an explicit destination for every mutation.
  * @param client - Caller-owned authenticated SharePoint client.
  * @param options - Required mode and relevant URLs; copied at construction, never read again from the caller's object.
  * @returns Effective reads, physical inventories and explicitly scoped mutations.
  * @throws Invalid mode or missing/empty required URLs synchronously. Operation failures reject their Promises. Tenant serialization failures can follow discovery, but never setup/item writes.
- * @example
- * const store = createSPFxConfigurationStoreService(context.spHttpClient, {
- *   mode: 'layered', discoveryWebUrl: context.pageContext.web.absoluteUrl,
- *   siteCollectionUrl: context.pageContext.site.absoluteUrl,
- * });
- * await store.save('my-app:pageSize', 20, { scope: 'tenant' });
- * await store.save('my-app:pageSize', 50, { scope: 'site' });
- * console.log((await store.get<number>('my-app:pageSize'))?.source); // site
+ * @example Basic usage
+ * ```ts
+ * import type { WebPartContext } from '@microsoft/sp-webpart-base';
+ * import { createSPFxConfigurationStoreService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(context: WebPartContext) {
+ *   const store = createSPFxConfigurationStoreService(context.spHttpClient, {
+ *     mode: 'layered', discoveryWebUrl: context.pageContext.web.absoluteUrl,
+ *     siteCollectionUrl: context.pageContext.site.absoluteUrl,
+ *   });
+ *   await store.save('my-app:pageSize', 20, { scope: 'tenant' });
+ *   await store.save('my-app:pageSize', 50, { scope: 'site' });
+ *   console.log((await store.get<number>('my-app:pageSize'))?.source); // site
+ * }
+ * ```
+ *
+ *
+ * @example Tenant default site override inventory and removal
+ * ```ts
+ * import type { SPHttpClient } from '@microsoft/sp-http';
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ *
+ * import { createSPFxConfigurationStoreService } from '@apvee/spfx-react-toolkit';
+ * async function demonstrate(context: { spHttpClient: SPHttpClient; pageContext: PageContext }) {
+ *   const store = createSPFxConfigurationStoreService(context.spHttpClient, {
+ *     mode: 'layered',
+ *     discoveryWebUrl: context.pageContext.web.absoluteUrl,
+ *     siteCollectionUrl: context.pageContext.site.absoluteUrl,
+ *   });
+ *   await store.save('my-app:pageSize', 20, { scope: 'tenant' });
+ *   await store.save('my-app:pageSize', 50, { scope: 'site', description: 'Local override' });
+ *   const item = await store.get<number>('my-app:pageSize'); // value 50, source site
+ *   const siteRows = await store.listScope('site'); // physical inventory, not effective merge
+ *   await store.remove('my-app:pageSize', { scope: 'site' });
+ * }
+ * ```
  */
 export function createSPFxConfigurationStoreService(
   client: SPHttpClient,

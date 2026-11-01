@@ -2,259 +2,46 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
+const { markdownAnchors: collectMarkdownAnchors } = require('./documentation-markdown.cjs');
+const { renderPackageReadme } = require('./documentation-render.cjs');
 
-const repositoryUrl = 'https://github.com/apvee/spfx-react-toolkit/blob/main/';
+const defaultConfig = require('./documentation.config.cjs');
+const { generateArtifacts, compareArtifacts, applyArtifacts } = require('./documentation-artifacts.cjs');
+const { buildDocumentationModel } = require('./documentation-contract.cjs');
+const { sourceContext, checkedGraph } = require('./public-surface.helpers.cjs');
 
-function renderPackageReadme(source) {
-  let fence;
-  const body = source.split('\n').map(line => {
-    const marker = line.match(/^\s*(`{3,}|~{3,})/);
-    if (marker) {
-      if (!fence) fence = marker[1];
-      else if (marker[1][0] === fence[0] && marker[1].length >= fence.length) fence = undefined;
-      return line;
-    }
-    if (fence) return line;
-    return line.replace(/\]\(([^\s)]+)\)/g, (match, target) => {
-      if (/^(?:[a-z][a-z0-9+.-]*:|#|\/)/i.test(target) || target === './LICENSE' || target === 'LICENSE') return match;
-      return '](' + repositoryUrl + target.replace(/^\.\//, '') + ')';
-    });
-  }).join('\n');
-  return '<!-- Generated from the root README.md by scripts/documentation.cjs. -->\n\n' + body;
+function topLevelExports(graph, bindings, root, sourceRoot, config) {
+  const entities = new Map(graph.entities.map(entity => [entity.key, entity]));
+  const model = buildDocumentationModel(graph, config);
+  return bindings.filter(binding => !binding.memberPath.length).map(binding => {
+    const entity = entities.get(binding.entityKey);
+    return { name: binding.exportedName, source: path.relative(sourceRoot, path.resolve(root, entity.source.file)).split(path.sep).join('/'),
+      kind: ['interface', 'type'].includes(entity.kind) ? 'Type' : entity.kind === 'function' ? 'Function' : 'Value',
+      description: model.contracts[entity.key]?.summary.split('\n')[0] || '', specifier: binding.specifier };
+  }).sort((a, b) => a.name.localeCompare(b.name, 'en'));
 }
-
-function exportProgram(entries) {
-  return ts.createProgram(entries, {
-    target: ts.ScriptTarget.ES2020,
-    module: ts.ModuleKind.ESNext,
-    moduleResolution: ts.ModuleResolutionKind.NodeJs,
-    jsx: ts.JsxEmit.React,
-    skipLibCheck: true,
-  });
-}
-
-function moduleExports(program, entry, sourceRoot) {
-  const checker = program.getTypeChecker();
-  const source = program.getSourceFile(entry);
-  assert.ok(source, `Missing TypeScript entry: ${entry}`);
-  const module = checker.getSymbolAtLocation(source);
-  assert.ok(module, `Missing TypeScript module: ${entry}`);
-  return checker.getExportsOfModule(module).map(exported => {
-    const symbol = exported.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(exported) : exported;
-    const declaration = symbol.declarations?.[0];
-    assert.ok(declaration, `Cannot resolve public export ${exported.name}`);
-    return {
-      name: exported.name,
-      source: path.relative(sourceRoot, declaration.getSourceFile().fileName).split(path.sep).join('/'),
-      kind: symbol.flags & (ts.SymbolFlags.Interface | ts.SymbolFlags.TypeAlias) ? 'Type'
-        : symbol.flags & ts.SymbolFlags.Function ? 'Function' : 'Value',
-      description: ts.displayPartsToString(symbol.getDocumentationComment(checker)).split('\n')[0],
-    };
-  }).sort((left, right) => left.name.localeCompare(right.name, 'en'));
-}
-
 function collectExports(entry) {
-  return moduleExports(exportProgram([entry]), entry, path.dirname(entry));
+  const { root, config } = sourceContext(path.resolve(entry));
+  const route = path.relative(root, path.resolve(entry)).split(path.sep).join('/');
+  const graph = checkedGraph(root, config, { requestedSourceEntries: [route] });
+  return topLevelExports(graph, graph.entryQueries[route], root, path.dirname(entry), config).map(({ specifier, ...item }) => item);
 }
-
-function collectPackageExports(root) {
-  const packageRoot = path.join(root, 'packages/spfx-react-toolkit');
-  const sourceRoot = path.join(packageRoot, 'src');
-  const metadata = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json'), 'utf8'));
-  const entries = Object.entries(metadata.exports).filter(([key, value]) =>
-    key !== './lib' && !key.startsWith('./lib/') && typeof value === 'object' && value.types
-  ).map(([key, value]) => {
-    const relative = value.types.replace(/^\.\/lib\//, '').replace(/\.d\.ts$/, '');
-    const entry = ['.ts', '.tsx'].map(extension => path.join(sourceRoot, relative + extension)).find(file => fs.existsSync(file));
-    assert.ok(entry, `Missing source for public entry ${key}: ${value.types}`);
-    return { entry, importPath: '@apvee/spfx-react-toolkit' + (key === '.' ? '' : key.slice(1)) };
-  });
-  const program = exportProgram(entries.map(item => item.entry));
+function collectPackageExports(root, config = defaultConfig) {
+  return projectPackageExports(checkedGraph(root, config), root, config);
+}
+function projectPackageExports(graph, root, config = defaultConfig) {
   const exports = new Map();
-  for (const { entry, importPath } of entries) {
-    for (const item of moduleExports(program, entry, sourceRoot)) {
-      const previous = exports.get(item.name);
-      assert.ok(!previous || previous.source === item.source, `Ambiguous public export ${item.name}`);
-      if (!previous) exports.set(item.name, { ...item, imports: [] });
-      exports.get(item.name).imports.push(importPath);
-    }
+  for (const { specifier, ...item } of topLevelExports(graph, graph.bindings, root, path.resolve(root, config.sourceRoot), config)) {
+    const previous = exports.get(item.name);
+    assert.ok(!previous || previous.source === item.source, `Ambiguous public export ${item.name}`);
+    if (!previous) exports.set(item.name, { ...item, imports: [] });
+    exports.get(item.name).imports.push(specifier);
   }
-  return [...exports.values()].sort((left, right) => left.name.localeCompare(right.name, 'en'));
+  return [...exports.values()].sort((a, b) => a.name.localeCompare(b.name, 'en'));
 }
-
-function renderCatalog(exports, routes) {
-  const escape = value => value.replace(/\|/g, '\\|').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const rows = exports.map(item => {
-    const route = routes[item.name] ?? routes[item.source];
-    assert.ok(route, `${item.name} has no documentation route (${item.source})`);
-    const family = item.name.startsWith('use') ? 'hooks' : item.source.split('/')[0];
-    assert.ok(['hooks', 'core', 'services', 'helpers', 'controls', 'property-pane'].includes(family), `Unknown public family: ${family}`);
-    const domainImport = '@apvee/spfx-react-toolkit/' + family;
-    const importPath = item.imports ? (item.imports.includes(domainImport) ? domainImport : item.imports.find(value => value !== '@apvee/spfx-react-toolkit') ?? item.imports[0]) : domainImport;
-    return `| [\`${item.name}\`](./${route}) | ${item.kind} | \`${importPath}\` | ${escape(item.description || 'See the linked reference.')} |`;
-  });
-  return `# API catalog
-
-<!-- Generated by scripts/documentation.cjs from public TypeScript exports. -->
-
-[Documentation home](../INDEX.md) · [Controls](#react-controls) · [Property Pane](#property-pane) · [Providers](#providers-and-core-types) · [Hooks](#react-and-spfx-hooks) · [Helpers](#helpers-and-styles) · [Services](#non-react-services) · [All symbols](#alphabetical-symbol-catalog)
-
-Use this reference to choose an API area or find an exported symbol by its exact name. The sections below explain the responsibility of each area and link directly to its reference pages. The [alphabetical catalog](#alphabetical-symbol-catalog) includes functions, values and associated public types with their import paths.
-
-Reference pages own signatures, inputs, defaults, return values, error behavior, examples and limitations. For a step-by-step integration, start with the [quick start](../getting-started/quick-start.md); for choosing and combining APIs, follow the [task guides](../INDEX.md#task-guides).
-
-## React controls
-
-Choose a control by the interaction or content you need. The [React controls guide](../guides/react-controls.md) explains composition, provider ownership and shared runtimes. Individual references describe all public props, associated types, compound members, events, defaults and limitations; generic React controls do not all require an SPFx provider.
-
-| Reference | What it provides |
-| --- | --- |
-| [WebPartShell](./controls/web-part-shell.md) | Actual web part provider composition, native host spacing, editable title and persisted title metadata. |
-| [FormattedText](./controls/formatted-text.md) | Semantic text, typography, bounded inline Markdown and overflow. |
-| [EditableText](./controls/editable-text.md) | Safe read rendering and lazy policy-bounded rich text editing. |
-| [RelativeTime](./controls/relative-time.md) | Localized relative instants, full-date descriptions and clock modes. |
-| [DescriptionList](./controls/description-list.md) | Responsive term/value content using data or compound items. |
-| [AutoSkeleton](./controls/auto-skeleton.md) | Loading geometry over mounted children while retaining their state. |
-| [StateMessage](./controls/state-message.md) | Empty, error and other section states, illustrations and actions. |
-| [Form and createForm](./controls/form.md) | Typed React Hook Form binding, 22 adapters, validation, reset and compound composition. |
-| [SettingsGroup](./controls/settings-group.md) | Caller-owned settings and automatic Form field names and hints. |
-| [AccordionGroup](./controls/accordion-group.md) | Controlled or uncontrolled disclosure with retained child state. |
-| [DataGrid and createDataGrid](./controls/data-grid.md) | Typed column families, native cells and controlled selection/sort intent. |
-| [Pagination](./controls/pagination.md) | Controlled known/unknown totals, cursors and load-more requests. |
-| [ContentCard](./controls/content-card.md) | Native Fluent Card with caller-owned content slots and actions. |
-| [PreviewCard](./controls/preview-card.md) | Card content with preview media, orientation and explicit precedence. |
-| [Stage](./controls/stage.md) | Dialog, Drawer or Popover with compound Header, Body and Footer. |
-| [SharePointPermissionTrim](./controls/sharepoint-permission-trim.md) | Current-context or scoped SharePoint permission decisions and branch content. |
-| [SharePointGroupTrim](./controls/sharepoint-group-trim.md) | SharePoint group membership decisions and repeat checks. |
-| [EntraGroupTrim](./controls/entra-group-trim.md) | Entra group membership checks using the supplied host's Graph client. |
-| [SharePoint pickers](./controls/pickers.md) | Site, list, field, view, content type, item and principal discovery and references. |
-| [FileFolderPicker](./controls/file-folder-picker.md) | Hosted picker for existing file/folder metadata, source restrictions and explicit selection. |
-
-Read [localization setup](../guides/localization.md) before using native resource consumers, including controls with complete strings overrides. The [slot guide](../guides/control-slots.md) explains presentation shorthand, callback/ref boundaries and control-owned semantics. Access trims control rendering; server authorization remains required.
-
-## Property Pane
-
-Native SPFx fields have dedicated entry points and host lifecycles. They are not root value exports or React controls to render directly; use the factory and JSON-value contract documented for the field.
-
-| Reference | Supported import and behavior |
-| --- | --- |
-| [Native picker fields](./property-pane/pickers.md) | \`@apvee/spfx-react-toolkit/property-pane/pickers\`: seven factories for dependent SharePoint selections, native field lifecycle and saved references. |
-| [Native file/folder field](./property-pane/file-folder-picker.md) | \`@apvee/spfx-react-toolkit/property-pane/file-folder-picker\`: hosted selection, JSON arrays, retained drafts and cleanup. |
-
-## Providers and core types
-
-Providers connect a React tree to its actual SPFx host instance and maintain that instance's runtime context. Choose the matching provider for a web part, Application Customizer, Field Customizer or ListView Command Set.
-
-| Reference | What you will find |
-| --- | --- |
-| [Host providers](./core/providers.md) | Provider props, mounting patterns, host lifecycle synchronization and cleanup. |
-| [Core types](./core/types.md) | Host discriminators, component/context unions, provider contracts and container metadata. |
-
-The [provider selection guide](../getting-started/choosing-a-provider.md) explains host requirements and validation limits before you wire the integration.
-
-## React and SPFx hooks
-
-SPFx hooks read the matching provider context and expose state or operations to React components. Generic \`useStableCallback\` and \`useSx\` do not require an SPFx provider; their references explain shared-runtime and theme requirements.
-
-| Category | What it covers |
-| --- | --- |
-| [React utilities](./hooks/react.md) | Stable callbacks and typed class composition with useSx. |
-| [Context and instance metadata](./hooks/context.md) | SPFx context, page context, service scope and instance identity. |
-| [Properties and display mode](./hooks/properties.md) | Component property updates and read/edit state. |
-| [Environment and locale](./hooks/environment.md) | Host environment, Teams, locale and page information. |
-| [User and site information](./hooks/user-site.md) | User profile/photo, site, hub and list metadata. |
-| [Themes and container dimensions](./hooks/theming.md) | SPFx/Fluent themes, measured dimensions and responsive metadata. |
-| [Permissions](./hooks/permissions.md) | Current-context and cross-site SharePoint permission checks. |
-| [Performance and diagnostics](./hooks/performance.md) | Measurements, structured logging and correlation information. |
-| [PnPjs](./hooks/pnpjs.md) | Context setup, invoke/batch, list selection/CRUD and search. |
-| [HTTP client hooks](#http-client-hooks) | Native clients, token-provider access and delegated-scope diagnostics. |
-| [Storage hooks](#storage-hooks) | Browser, OneDrive, tenant and site collection persistence. |
-
-Readiness, pending state, request ownership and failure behavior belong to each hook's contract. Follow the selected reference when composing asynchronous work.
-
-### HTTP client hooks
-
-Choose the API for your destination and the authentication it requires. The [HTTP guide](../guides/http-clients.md) explains client choice, state management and overlapping invocations; the references below describe each API's contract.
-
-| Reference | Use for |
-| --- | --- |
-| [useSPFxHttpClient](./hooks/http-clients/http-client.md) | Generic HTTP requests and external APIs. |
-| [useSPFxSPHttpClient](./hooks/http-clients/sharepoint-http-client.md) | SharePoint REST requests. |
-| [useSPFxAadHttpClient](./hooks/http-clients/aad-http-client.md) | Requests to an Entra-protected custom API. |
-| [useSPFxAadTokenProvider](./hooks/http-clients/aad-token-provider.md) | Direct access to the SPFx token provider. |
-| [useSPFxApiPermissionPrecheck](./hooks/http-clients/api-permission-precheck.md) | Delegated Graph/custom API scope diagnostics and remediation metadata. |
-| [useSPFxMSGraphClient](./hooks/http-clients/graph-client.md) | Microsoft Graph requests. |
-
-### Storage hooks
-
-Choose storage by lifetime, sharing scope and required permissions. The [storage guide](../guides/storage.md) compares these options and their failure boundaries. Each reference documents its own defaults, serialization and lifecycle.
-
-| Reference | Storage scope |
-| --- | --- |
-| [useSPFxLocalStorage](./hooks/storage/local-storage.md) | Persistent browser data namespaced to the SPFx instance. |
-| [useSPFxSessionStorage](./hooks/storage/session-storage.md) | Browser-session data namespaced to the SPFx instance. |
-| [useSPFxOneDriveAppData](./hooks/storage/onedrive-app-data.md) | JSON files in the user's OneDrive app root. |
-| [useSPFxTenantProperty](./hooks/storage/tenant-property.md) | Read-only tenant storage entities. |
-| [useSPFxTenantKeyValueStore](./hooks/storage/tenant-key-value-store.md) | Read/write values in the tenant app catalog. |
-| [useSPFxSiteKeyValueStore](./hooks/storage/site-key-value-store.md) | Read/write values shared within one site collection. |
-| [useSPFxConfigurationStore](./hooks/storage/configuration-store.md) | Tenant defaults, optional site overrides, lazy discovery and explicitly scoped mutations. |
-
-## Helpers and styles
-
-Helpers receive explicit inputs for reusable transformations and calculations. The styles facade also exposes the React \`useSx\` hook, which composes descriptors through the existing host renderer. Consult each reference for dependencies and constraints instead of assuming every helper has the same runtime behavior.
-
-| Reference | What it covers |
-| --- | --- |
-| [Page context helpers](./helpers/page-context.md) | Mapping user, site, list, locale, environment, page type and correlation metadata. |
-| [Permission helper](./helpers/permission.md) | Checking a supplied SharePoint permission mask. |
-| [API permission precheck helpers](./helpers/api-permission-precheck.md) | Requirement normalization, decoded-token diagnostics, result summaries and public configuration types. |
-| [Container helper](./helpers/container.md) | Deriving container metadata from supplied dimensions. |
-| [Storage key helper](./helpers/storage.md) | Building keys scoped to an SPFx instance. |
-| [Tenant value helpers](./helpers/tenant-value.md) | Serialization, deserialization and stored-value compatibility. |
-| [Graph path helpers](./helpers/graph-path.md) | OneDrive app-data paths and user-photo endpoints. |
-| [Theme helpers](./helpers/theme.md) | SPFx-to-Fluent theme conversion and Teams theme selection. |
-| [Typed styles and useSx](./helpers/styles.md) | Descriptor namespaces, composition, state/query precedence, themes and cache lifetime. |
-
-Style namespaces such as \`width\` and \`responsive\` have a [qualified member catalog](./helpers/styles.md#qualified-api-reference). The [styling guide](../guides/styling.md) demonstrates their composition in React.
-
-## Non-React services
-
-Services perform reusable SPFx, SharePoint, PnPjs and Graph operations outside React. Callers supply initialized clients and the destination/context required by each factory. Services do not obtain dependencies from a React provider.
-
-| Reference | What it provides |
-| --- | --- |
-| [createSPFxPnPContextService](./services/pnp-context.md) | Configured PnPjs client creation from SPFx context. |
-| [createSPFxPnPService](./services/pnp.md) | Generic PnPjs invoke and batch operations. |
-| [createSPFxPnPListService](./services/pnp-list.md) | List selection, queries, item CRUD and batching. |
-| [createSPFxPnPSearchService](./services/pnp-search.md) | SharePoint search queries, results and refiners. |
-| [createSPFxAppCatalogService](./services/app-catalog.md) | Tenant app-catalog discovery and write-capability checks. |
-| [createSPFxTenantPropertyService](./services/tenant-property.md) | Reading tenant storage entities. |
-| [createSPFxTenantKeyValueStoreService](./services/tenant-key-value-store.md) | Key-value operations in the tenant app catalog. |
-| [createSPFxSiteKeyValueStoreService](./services/site-key-value-store.md) | Key-value operations in the site collection root. |
-| [createSPFxConfigurationStoreService](./services/configuration-store.md) | Tenant defaults and site overrides with explicit scoped save/remove operations. |
-| [createSPFxOneDriveAppDataService](./services/onedrive-app-data.md) | Reading and writing JSON app-data files through Graph. |
-| [createSPFxUserPhotoService](./services/user-photo.md) | Retrieving user-photo blobs through Graph. |
-| [createSPFxApiPermissionPrecheckService](./services/api-permission-precheck.md) | Delegated-scope checks using a caller-supplied token provider. |
-
-See [helpers and services outside React](../guides/helpers-and-services.md) for dependency ownership, examples and explicit PnP feature registrations. Each service reference describes setup behavior, returned values and failure handling.
-
-## Alphabetical symbol catalog
-
-Use your browser or editor's Find command to locate an exact symbol. Each row shows a supported import and links to the owning reference. Controls, providers, hooks, helpers and services are available from the package root and their documented aliases. Native Property Pane factories require the dedicated imports shown in their rows; [package imports](../guides/package-imports.md) documents resolver requirements and historical import paths.
-
-${exports.length} distinct public symbols across clean package entry points. This page and the npm README are generated; [documentation maintenance](../development/documentation.md) explains how to update their sources and run the read-only freshness check.
-
-| Symbol | Kind | Import | Description |
-| --- | --- | --- | --- |
-${rows.join('\n')}
-`;
-}
-
 function checkArtifacts(root, artifacts) {
-  return Object.entries(artifacts).filter(([file, expected]) => {
-    const target = path.join(root, file);
-    return !fs.existsSync(target) || fs.readFileSync(target, 'utf8') !== expected;
-  }).map(([file]) => file);
+  const diff = compareArtifacts(root, artifacts);
+  return [...diff.missing, ...diff.changed, ...diff.orphan].sort();
 }
 
 function withoutFencedCode(source) {
@@ -271,17 +58,7 @@ function withoutFencedCode(source) {
 }
 
 function markdownAnchors(source) {
-  const text = withoutFencedCode(source);
-  const anchors = new Set([...text.matchAll(/<a\s+id=["']([^"']+)["']/g)].map(match => match[1]));
-  const counts = new Map();
-  for (const match of text.matchAll(/^#{1,6}\s+(.+?)\s*#*$/gm)) {
-    const slug = match[1].replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/<[^>]*>/g, '').toLowerCase()
-      .replace(/[^\p{L}\p{N}_ -]/gu, '').replace(/ /g, '-');
-    const count = counts.get(slug) ?? 0;
-    anchors.add(slug + (count ? '-' + count : ''));
-    counts.set(slug, count + 1);
-  }
-  return anchors;
+  return new Set(collectMarkdownAnchors(source));
 }
 
 function findBrokenLinks(root, files) {
@@ -316,20 +93,7 @@ function findInvalidExampleImports(root, files, exports) {
   const packageRoot = path.join(root, 'packages/spfx-react-toolkit');
   const metadataPath = path.join(packageRoot, 'package.json');
   const metadata = fs.existsSync(metadataPath) ? JSON.parse(fs.readFileSync(metadataPath, 'utf8')) : undefined;
-  function namesFor(importPath) {
-    if (available.has(importPath)) return available.get(importPath);
-    const key = '.' + importPath.slice('@apvee/spfx-react-toolkit'.length);
-    const legacy = key === './lib' || key.startsWith('./lib/');
-    const contract = legacy && metadata?.exports[key];
-    const target = typeof contract === 'string' ? contract : contract?.types;
-    if (!target) return undefined;
-    const relative = target.replace(/^\.\/lib\//, '').replace(/\.(?:d\.ts|js)$/, '');
-    const entry = ['.ts', '.tsx'].map(extension => path.join(packageRoot, 'src', relative + extension)).find(file => fs.existsSync(file));
-    if (!entry) return undefined;
-    const names = new Set(collectExports(entry).map(item => item.name));
-    available.set(importPath, names);
-    return names;
-  }
+  const requests = [];
   const invalid = [];
   for (const file of files) {
     let fence;
@@ -348,16 +112,11 @@ function findInvalidExampleImports(root, files, exports) {
             if (!ts.isImportDeclaration(statement) || !ts.isStringLiteral(statement.moduleSpecifier)) continue;
             const importPath = statement.moduleSpecifier.text;
             if (importPath !== '@apvee/spfx-react-toolkit' && !importPath.startsWith('@apvee/spfx-react-toolkit/')) continue;
-            const names = namesFor(importPath);
             const location = `${file}:${firstLine + source.getLineAndCharacterOfPosition(statement.getStart(source)).line}`;
-            if (!names) {
-              invalid.push(`${location}: unsupported public import ${importPath}`);
-              continue;
-            }
             const clause = statement.importClause;
             const requested = clause?.name ? ['default'] : [];
             if (clause?.namedBindings && ts.isNamedImports(clause.namedBindings)) requested.push(...clause.namedBindings.elements.map(item => (item.propertyName ?? item.name).text));
-            for (const name of requested) if (!names.has(name)) invalid.push(`${location}: ${importPath} does not export ${name}`);
+            requests.push({ importPath, requested, location });
           }
         }
         fence = undefined;
@@ -366,36 +125,49 @@ function findInvalidExampleImports(root, files, exports) {
       }
     }
   }
+  // Resolve only metadata-declared historical imports, once per invocation,
+  // through the canonical requested-source query. No query adds public imports.
+  const legacyEntries = new Map();
+  for (const { importPath } of requests) {
+    if (available.has(importPath) || legacyEntries.has(importPath)) continue;
+    const key = '.' + importPath.slice('@apvee/spfx-react-toolkit'.length);
+    if (key !== './lib' && !key.startsWith('./lib/')) continue;
+    const contract = metadata?.exports[key];
+    const target = typeof contract === 'string' ? contract : contract?.types;
+    if (typeof target !== 'string' || !/^\.\/lib\/(?:[^./\\][^/\\]*\/)*[^./\\][^/\\]*\.(?:d\.ts|js)$/.test(target)) continue;
+    const stem = target.slice('./lib/'.length).replace(/\.(?:d\.ts|js)$/, '');
+    const entry = ['.ts', '.tsx'].map(extension => path.join(packageRoot, 'src', stem + extension)).find(file => fs.existsSync(file));
+    if (entry) legacyEntries.set(importPath, path.relative(root, entry).split(path.sep).join('/'));
+  }
+  if (legacyEntries.size) {
+    const graph = checkedGraph(root, defaultConfig, { requestedSourceEntries: [...legacyEntries.values()] });
+    for (const [importPath, entry] of legacyEntries) available.set(importPath, new Set(graph.entryQueries[entry].filter(binding => !binding.memberPath.length).map(binding => binding.exportedName)));
+  }
+  for (const { importPath, requested, location } of requests) {
+    const names = available.get(importPath);
+    if (!names) invalid.push(`${location}: unsupported public import ${importPath}`);
+    else for (const name of requested) if (!names.has(name)) invalid.push(`${location}: ${importPath} does not export ${name}`);
+  }
   return invalid;
 }
 
-function generatedArtifacts(root) {
-  const routes = JSON.parse(fs.readFileSync(path.join(root, 'scripts/documentation-routes.json'), 'utf8'));
-  const exports = collectPackageExports(root);
-  for (const item of exports) {
-    const route = routes[item.name] ?? routes[item.source];
-    assert.ok(route, `${item.name} has no documentation route (${item.source})`);
-    assert.ok(fs.existsSync(path.join(root, 'docs/api', route.split('#')[0])), `Missing reference for ${item.name}: ${route}`);
-  }
-  return {
-    'packages/spfx-react-toolkit/README.md': renderPackageReadme(fs.readFileSync(path.join(root, 'README.md'), 'utf8')),
-    'docs/api/INDEX.md': renderCatalog(exports, routes),
-  };
-}
+const generatedArtifacts = generateArtifacts;
 
-if (require.main === module) {
-  const args = process.argv.slice(2);
+function runCli(args = process.argv.slice(2), env = process.env) {
   assert.ok(args.length === 0 || (args.length === 1 && args[0] === '--check'), 'Usage: node scripts/documentation.cjs [--check]');
+  const configured = env.TOOLKIT_DOCS_MODE === undefined ? 'write' : env.TOOLKIT_DOCS_MODE;
+  assert.ok(configured === 'write' || configured === 'check', `Unknown documentation mode TOOLKIT_DOCS_MODE=${configured}; expected write or check.`);
+  const mode = args.includes('--check') ? 'check' : configured;
   const root = path.resolve(__dirname, '..');
-  const artifacts = generatedArtifacts(root);
-  const stale = checkArtifacts(root, artifacts);
-  if (args.includes('--check')) {
-    assert.deepEqual(stale, [], `Stale generated documentation: ${stale.join(', ')}. Run node scripts/documentation.cjs.`);
-    console.log('Generated API catalog and npm README are current.');
-  } else {
-    for (const file of stale) fs.writeFileSync(path.join(root, file), artifacts[file]);
-    console.log(`Updated ${stale.length} documentation artifact(s).`);
-  }
+  const artifacts = generateArtifacts(root);
+  const result = applyArtifacts(root, artifacts, mode);
+  const stale = [...result.diff.missing, ...result.diff.changed, ...result.diff.orphan];
+  if (!result.ok) throw new Error(`Stale generated documentation: ${stale.join(', ')}. Run npm run docs:generate.`);
+  console.log(mode === 'check' ? `Generated documentation is current (${Object.keys(artifacts).length} artifacts).` : `Updated ${stale.length} documentation artifact(s).`);
+  return result;
 }
-
-module.exports = { renderPackageReadme, collectExports, collectPackageExports, renderCatalog, checkArtifacts, generatedArtifacts, markdownAnchors, findBrokenLinks, findInvalidExampleImports };
+if (require.main === module) {
+  try { runCli(); }
+  catch (error) { console.error(error.message); process.exitCode = 1; }
+}
+module.exports = { renderPackageReadme, collectExports, collectPackageExports, projectPackageExports, checkArtifacts, generatedArtifacts, markdownAnchors, findBrokenLinks, findInvalidExampleImports, runCli };

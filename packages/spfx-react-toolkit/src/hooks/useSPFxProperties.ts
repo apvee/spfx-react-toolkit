@@ -1,3 +1,9 @@
+/**
+ * Host property edits synchronize through the nearest provider runtime.
+ *
+ * @packageDocumentation
+ * @docPage hooks/properties
+ */
 // useSPFxProperties.ts
 // Hook to access and manage SPFx properties
 
@@ -5,13 +11,18 @@ import { useCallback, useMemo } from 'react';
 import { useSPFxRuntimeActions, useSPFxRuntimeSelector } from './../core/state.internal';
 
 /**
- * Return type for useSPFxProperties hook
+ * Nearest provider property bag and shallow-merge/complete-replacement update operations.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const props: SPFxPropertiesInfo<{ title: string }> = useSPFxProperties();
- * const onRename = () => props.setProperties({ title: 'Projects' });
+ * import * as React from 'react';
+ * import { SPFxPropertiesInfo, useSPFxProperties } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const props: SPFxPropertiesInfo<{ title: string }> = useSPFxProperties();
+ *   const onRename = () => props.setProperties({ title: 'Projects' });
+ *   return <button onClick={()=>void onRename()}>Run operation</button>;
+ * }
  * ```
  * @template TProps - Application properties shape; no runtime validation is performed.
  */
@@ -32,7 +43,11 @@ export interface SPFxPropertiesInfo<TProps = unknown> {
    * @returns No value.
    * @throws Updater errors propagate.
    */
-  readonly updateProperties: (updater: (current: TProps | undefined) => TProps) => void;
+  readonly updateProperties: (updater: /**
+   * Derives the complete next host property bag.
+   * @param current - Current properties, or undefined before provider initialization.
+   * @returns Complete next property bag; it replaces the previous object.
+   */ (current: TProps | undefined) => TProps) => void;
 }
 
 /**
@@ -42,8 +57,11 @@ export interface SPFxPropertiesInfo<TProps = unknown> {
  * @returns Current optional properties and partial-merge/complete-replacement setters.
  * @throws Error when no host-specific SPFx provider is present.
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxProperties } from '@apvee/spfx-react-toolkit';
+ *
  * interface MyProperties { title: string; description: string; }
  *
  * function RenameButton() {
@@ -53,6 +71,114 @@ export interface SPFxPropertiesInfo<TProps = unknown> {
  *     title: `${previous?.title ?? ''} Updated`,
  *     description: previous?.description ?? ''
  *   }))}>{properties?.title ?? 'Rename'}</button>;
+ * }
+ * ```
+ *
+ * @useWhen React controls must edit the host property bag and reflect host render updates.
+ *
+ *
+ * @example Update selected properties
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxProperties } from '@apvee/spfx-react-toolkit';
+ *
+ * interface IMyWebPartProps {
+ *   title: string;
+ *   description: string;
+ *   showHeader: boolean;
+ * }
+ *
+ * function MyComponent() {
+ *   const { properties, setProperties } = useSPFxProperties<IMyWebPartProps>();
+ *
+ *   return (
+ *     <div>
+ *       <h1>{properties?.title ?? 'Default Title'}</h1>
+ *       <p>{properties?.description}</p>
+ *
+ *       <button onClick={() => setProperties({ title: 'New Title' })}>
+ *         Update Title
+ *       </button>
+ *     </div>
+ *   );
+ * }
+ * ```
+ *
+ *
+ * @example Update properties from the previous snapshot
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxProperties } from '@apvee/spfx-react-toolkit';
+ *
+ * interface ICounterProps {
+ *   count: number;
+ *   lastUpdated: string;
+ * }
+ *
+ * function CounterComponent() {
+ *   const { properties, updateProperties } = useSPFxProperties<ICounterProps>();
+ *
+ *   const increment = () => {
+ *     updateProperties(prev => ({
+ *       count: (prev?.count ?? 0) + 1,
+ *       lastUpdated: new Date().toISOString()
+ *     }));
+ *   };
+ *
+ *   return (
+ *     <div>
+ *       <p>Count: {properties?.count ?? 0}</p>
+ *       <p>Last Updated: {properties?.lastUpdated ?? 'Never'}</p>
+ *       <button onClick={increment}>Increment</button>
+ *     </div>
+ *   );
+ * }
+ * ```
+ *
+ *
+ * @example Edit configuration in native edit mode
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxProperties, useSPFxDisplayMode } from '@apvee/spfx-react-toolkit';
+ *
+ * interface IFormProps {
+ *   formTitle: string;
+ *   submitUrl: string;
+ *   showLabels: boolean;
+ * }
+ *
+ * function ConfigurableForm() {
+ *   const { properties, setProperties } = useSPFxProperties<IFormProps>();
+ *   const { isEdit } = useSPFxDisplayMode();
+ *
+ *   if (isEdit) {
+ *     return (
+ *       <div className="config-panel">
+ *         <label>
+ *           Form Title:
+ *           <input
+ *             value={properties?.formTitle ?? ''}
+ *             onChange={(e) => setProperties({ formTitle: e.target.value })}
+ *           />
+ *         </label>
+ *         <label>
+ *           <input
+ *             type="checkbox"
+ *             checked={properties?.showLabels ?? true}
+ *             onChange={(e) => setProperties({ showLabels: e.target.checked })}
+ *           />
+ *           Show Labels
+ *         </label>
+ *       </div>
+ *     );
+ *   }
+ *
+ *   return (
+ *     <form>
+ *       <h2>{properties?.formTitle}</h2>
+ *
+ *     </form>
+ *   );
  * }
  * ```
  */
@@ -69,7 +195,11 @@ export function useSPFxProperties<TProps = unknown>(): SPFxPropertiesInfo<TProps
   }, [setRuntimeProperties]);
   
   // Updater function pattern (like React setState)
-  const updateProperties = useCallback((updater: (current: TProps | undefined) => TProps): void => {
+  const updateProperties = useCallback((updater: /**
+   * Derives the complete next host property bag.
+   * @param current - Current properties, or undefined before provider initialization.
+   * @returns Complete next property bag; it replaces the previous object.
+   */ (current: TProps | undefined) => TProps): void => {
     setRuntimeProperties((prev: unknown) => updater(prev as TProps | undefined));
   }, [setRuntimeProperties]);
   

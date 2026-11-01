@@ -1,3 +1,9 @@
+/**
+ * Browser measurements carry provider identity and optional correlation metadata.
+ *
+ * @packageDocumentation
+ * @docPage hooks/performance
+ */
 // useSPFxPerformance.ts
 // Hook for performance measurement and monitoring
 
@@ -9,18 +15,38 @@ import { useSPFxCorrelationInfo } from './useSPFxCorrelationInfo';
 let timedOperationSequence = 0;
 
 /**
- * Performance result type
+ * Named browser measurement with duration/context and an optional timed callback result.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const perf = useSPFxPerformance();
- * const onLoad = async () => {
- *   const result: SPFxPerfResult<Response> = await perf.time('load', () => fetch('/api/data'));
- *   console.log(result.durationMs, result.result?.status);
- * };
+ * import * as React from 'react';
+ * import { SPFxPerfResult, useSPFxPerformance } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const perf = useSPFxPerformance();
+ *   const [pending, setPending] = React.useState(false);
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const run = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       setPending(true);
+ *       const timed: SPFxPerfResult<Response> = await perf.time('load', () => fetch('/api/data'));
+ *       setResult({ durationMs: timed.durationMs, status: timed.result?.status });
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     } finally {
+ *       setPending(false);
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={pending} onClick={() => void run()}>Load data</button>
+ *     {failure && <span role="alert">{failure}</span>}
+ *     <pre>{JSON.stringify(result)}</pre>
+ *   </>;
+ * }
  * ```
- * @template T - Expected application data shape; no runtime validation is performed.
+ * @typeParam T - Actual value returned by the timed callback, defaulting to unknown.
  */
 export interface SPFxPerfResult<T = unknown> {
   /** Measurement name */
@@ -29,7 +55,7 @@ export interface SPFxPerfResult<T = unknown> {
   /** Duration in milliseconds */
   readonly durationMs: number;
   
-  /** Optional result from timed operation */
+  /** Callback result from time; omitted from plain measure results, and may itself be undefined. */
   readonly result?: T;
   
   /** SPFx instance ID */
@@ -43,13 +69,36 @@ export interface SPFxPerfResult<T = unknown> {
 }
 
 /**
- * Return type for useSPFxPerformance hook
+ * Browser measurement methods enriched with instance, host and optional correlation metadata.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const perf: SPFxPerformanceInfo = useSPFxPerformance();
- * const onLoad = async () => console.log(await perf.time('load', () => fetch('/api/data')));
+ * import * as React from 'react';
+ * import { SPFxPerformanceInfo, useSPFxPerformance } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const perf: SPFxPerformanceInfo = useSPFxPerformance();
+ *   const [pending, setPending] = React.useState(false);
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const run = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       setPending(true);
+ *       const timed = await perf.time('load', () => fetch('/api/data'));
+ *       setResult({ durationMs: timed.durationMs, status: timed.result?.status });
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     } finally {
+ *       setPending(false);
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={pending} onClick={() => void run()}>Load data</button>
+ *     {failure && <span role="alert">{failure}</span>}
+ *     <pre>{JSON.stringify(result)}</pre>
+ *   </>;
+ * }
  * ```
  */
 export interface SPFxPerformanceInfo {
@@ -64,7 +113,7 @@ export interface SPFxPerformanceInfo {
    * Measures from startMark to a newly created endMark, or now when omitted. Does not clear explicit marks or measurement entries.
    * @param name - Measurement name.
    * @param startMark - Existing start mark.
-   * @param endMark - Optional name for a new end mark created at measurement time.
+   * @param endMark - Name for a new end mark created at measurement time; omitted or undefined measures to the current time.
    * @returns Context-enriched measurement; durationMs is zero if unsupported or measurement fails.
    */
   readonly measure: (name: string, startMark: string, endMark?: string) => SPFxPerfResult;
@@ -72,11 +121,15 @@ export interface SPFxPerformanceInfo {
   /**
    * Times a synchronous or asynchronous callback and clears its unique start mark after settlement. Measurement entries remain in the browser timeline.
    * @param name - Measurement name.
+   * @typeParam T - Callback result type.
    * @param fn - Operation invoked asynchronously; errors reject the returned promise.
    * @returns Duration, context and callback result.
    * @throws Callback errors.
    */
-  readonly time: <T>(name: string, fn: () => Promise<T> | T) => Promise<SPFxPerfResult<T>>;
+  readonly time: <T>(name: string, fn: /**
+   * Timed work, invoked in a promise continuation.
+   * @returns Synchronous value or promise for the timed result.
+   */ () => Promise<T> | T) => Promise<SPFxPerfResult<T>>;
 }
 
 /**
@@ -103,24 +156,39 @@ export interface SPFxPerformanceInfo {
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxPerformance } from '@apvee/spfx-react-toolkit';
+ *
  * function MyComponent() {
- *   const { mark, measure, time } = useSPFxPerformance();
- *   const [data, setData] = useState<unknown>(undefined);
- *   
- *   const fetchData = async () => {
- *     const result = await time('fetch-data', async () => {
- *       const response = await fetch('/api/data');
- *       return response.json();
- *     });
- *     
- *     console.log(`Fetch took ${result.durationMs}ms`);
- *     setData(result.result);
+ *   const { time } = useSPFxPerformance();
+ *   const [pending, setPending] = React.useState(false);
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const run = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       setPending(true);
+ *       const timed = await time('fetch-data', async () => {
+ *         const response = await fetch('/api/data');
+ *         return response.json();
+ *       });
+ *       setResult({ durationMs: timed.durationMs, data: timed.result });
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     } finally {
+ *       setPending(false);
+ *     }
  *   };
- *   
- *   return <button onClick={fetchData}>Load Data</button>;
+ *   return <>
+ *     <button disabled={pending} onClick={() => void run()}>Load data</button>
+ *     {failure && <span role="alert">{failure}</span>}
+ *     <pre>{JSON.stringify(result)}</pre>
+ *   </>;
  * }
  * ```
  * @throws When called outside an SPFx provider.
+ *
+ * @useWhen diagnostics need timed operations enriched with host and correlation metadata.
  */
 export function useSPFxPerformance(): SPFxPerformanceInfo {
   const { id: instanceId, kind: host } = useSPFxInstanceInfo();
@@ -180,7 +248,10 @@ export function useSPFxPerformance(): SPFxPerformanceInfo {
   
   // Time an async operation
   const time = useCallback(
-    async <T,>(name: string, fn: () => Promise<T> | T): Promise<SPFxPerfResult<T>> => {
+    async <T,>(name: string, fn: /**
+   * Timed work, invoked in a promise continuation.
+   * @returns Synchronous value or promise for the timed result.
+   */ () => Promise<T> | T): Promise<SPFxPerfResult<T>> => {
       const startMark = name + '-start-' + (++timedOperationSequence);
       mark(startMark);
       

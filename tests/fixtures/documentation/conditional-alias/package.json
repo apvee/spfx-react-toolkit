@@ -1,0 +1,1 @@
+{ "name": "@fixture/conditional-alias", "exports": { ".": { "types": "./lib/index.d.ts" } } }

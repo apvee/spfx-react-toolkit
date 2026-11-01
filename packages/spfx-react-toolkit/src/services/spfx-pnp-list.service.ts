@@ -1,3 +1,9 @@
+/**
+ * Query and mutate explicitly selected SharePoint lists, preserving settled partial-batch outcomes.
+ *
+ * @packageDocumentation
+ * @docPage services/pnp-list
+ */
 import type { SPFI } from '@pnp/sp';
 import type { IItems } from '@pnp/sp/items';
 
@@ -9,10 +15,12 @@ import '@pnp/sp/batching';
 import { resolveListTarget, snapshotListTarget } from './spfx-pnp-list-target.internal';
 
 /**
- * Selects by exact title, GUID, decoded server-relative root URL or decoded web-relative root path. String targets remain exact titles. URL roots start with exactly one slash; paths have no leading slash and require an explicit HTTP(S) client web base ending in /_api/web. Validation is lazy per operation.
+ * Selects by exact title, GUID, decoded server-relative root URL or decoded web-relative root path. String targets remain exact titles. URL roots start with exactly one slash; paths have no leading slash and require an explicit HTTP(S) client web base ending in /_api/web (optional trailing slash). Unbased/indirect rootWeb clients cannot resolve paths. Validation is lazy per operation; the client web is never switched or discovered.
  *
  * @example
  * ```ts
+ * import { SPFxPnPListSelector } from '@apvee/spfx-react-toolkit';
+ *
  * const target: SPFxPnPListSelector = { kind: 'path', webRelativePath: 'Lists/Tasks' };
  * ```
  */
@@ -32,23 +40,25 @@ export type SPFxPnPListSelector =
   | {
       /** Explicit decoded server-relative root selection. */
       readonly kind: 'url';
-      /** Decoded list root starting with exactly one slash; does not switch the client web. */
+      /** Decoded list root starting with exactly one slash; no scheme, query, backslash or dot segments. Does not switch the client web. */
       readonly serverRelativeUrl: string
     }
   | {
       /** Explicit decoded web-relative root selection. */
       readonly kind: 'path';
-      /** Decoded list root relative to the operation client web, without a leading slash. */
+      /** Decoded list root relative to the operation client web, without a leading slash, scheme, query, backslash or dot segments. The client base pathname is decoded once; this input remains unchanged. */
       readonly webRelativePath: string
     };
 
 /**
- * Transforms a PnP items query without executing it. Return the fluent query to run; T data is not validated at runtime.
+ * Transforms a PnP items query without executing it. Return the fluent query to run; this transform does not validate result item data.
  * @param items - Query for the selected list.
  * @returns Configured PnP items query.
  *
  * @example
  * ```ts
+ * import { SPFxPnPListQueryBuilder } from '@apvee/spfx-react-toolkit';
+ *
  * const build: SPFxPnPListQueryBuilder = items => items.select('Id', 'Title').orderBy('Id');
  * ```
  */
@@ -59,6 +69,8 @@ export type SPFxPnPListQueryBuilder = (items: IItems) => IItems;
  *
  * @example
  * ```ts
+ * import { SPFxPnPListQueryOptions } from '@apvee/spfx-react-toolkit';
+ *
  * const options: SPFxPnPListQueryOptions = { pageSize: 25 };
  * ```
  */
@@ -74,8 +86,12 @@ export interface SPFxPnPListQueryOptions {
  *
  * @example
  * ```ts
- * const page: SPFxPnPListQueryResult<{ Id: number }> = await tasks.query();
- * if (page.hasMore) console.log(page.nextSkip);
+ * import { SPFxPnPListQueryResult, SPFxPnPListService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(tasks: SPFxPnPListService<{ Id: number; Title: string }>) {
+ *   const page: SPFxPnPListQueryResult<{ Id: number }> = await tasks.query();
+ *   if (page.hasMore) console.log(page.nextSkip);
+ * }
  * ```
  * @template T - Expected application data shape; no runtime validation is performed.
  */
@@ -93,7 +109,7 @@ export interface SPFxPnPListQueryResult<T> {
    */
   readonly hasMore: boolean;
   /**
-   * Offset for a follow-up loadMore: page count for query, prior skip plus page count for loadMore.
+   * Offset for a follow-up loadMore: page count for query, prior skip plus page count for loadMore. This historical count heuristic is not a validated server continuation cursor for arbitrary ordering or noncontiguous IDs.
    */
   readonly nextSkip: number;
 }
@@ -103,8 +119,12 @@ export interface SPFxPnPListQueryResult<T> {
  *
  * @example
  * ```ts
- * const result: SPFxPnPListBatchResult<number[]> = await tasks.createBatch([{ Title: 'New' }]);
- * if (result.summaryError) console.error(result.errors);
+ * import { SPFxPnPListBatchResult, SPFxPnPListService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(tasks: SPFxPnPListService<{ Id: number; Title: string }>) {
+ *   const result: SPFxPnPListBatchResult<number[]> = await tasks.createBatch([{ Title: 'New' }]);
+ *   if (result.summaryError) console.error(result.errors);
+ * }
  * ```
  * @template TValue - Batch result value shape.
  */
@@ -128,16 +148,21 @@ export interface SPFxPnPListBatchResult<TValue> {
  *
  * @example
  * ```ts
- * const tasks: SPFxPnPListService<{ Id: number; Title: string }> = createSPFxPnPListService(sp, 'Tasks', 25);
- * const page = await tasks.query(items => items.select('Id', 'Title'));
+ * import type { SPFI } from '@pnp/sp';
+ * import { SPFxPnPListService, createSPFxPnPListService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(sp: SPFI) {
+ *   const tasks: SPFxPnPListService<{ Id: number; Title: string }> = createSPFxPnPListService(sp, 'Tasks', 25);
+ *   const page = await tasks.query(items => items.select('Id', 'Title'));
+ * }
  * ```
- * @template T - Expected application data shape; no runtime validation is performed.
+ * @template T - Expected application data shape; defaults to unknown and performs no runtime validation.
  */
 export interface SPFxPnPListService<T = unknown> {
   /**
    * Queries items with explicit .top() taking precedence over per-call/factory page size.
    * @param queryBuilder - Optional query transform; omitted queries the list items directly.
-   * @param options - Optional page-size override.
+   * @param options - Omitted uses the factory page size; with no factory size or builder top, SharePoint chooses the limit.
    * @returns One page with pagination metadata.
    * @throws Selector, builder or request failures.
    */
@@ -146,7 +171,7 @@ export interface SPFxPnPListService<T = unknown> {
     options?: SPFxPnPListQueryOptions
   ) => Promise<SPFxPnPListQueryResult<T>>;
   /**
-   * Queries a later page; applies skip and top after the builder.
+   * Queries a later page; applies skip and top after the builder, overriding builder settings. Reuse the original filter and deterministic order; concurrent edits can move items. The installed PnP skip serializes as a Paged/p_ID skiptoken, so a count offset may not fit noncontiguous item IDs or arbitrary filters/order.
    * @param queryBuilder - Query transform for the original filter/order.
    * @param pageSize - Requested page count.
    * @param skip - Offset to request.
@@ -190,7 +215,7 @@ export interface SPFxPnPListService<T = unknown> {
   /**
    * Queues and executes item operations in one PnP batch; successful writes are not rolled back.
    * @param items - Field values for items to create.
-   * @returns Successful numeric IDs plus settled errors.
+   * @returns Successful numeric IDs plus settled errors. Inspect server state before retrying a partial batch.
    * @throws Selector or batch-execution failures, including invalid selectors for empty batches.
    */
   createBatch: (items: Partial<T>[]) => Promise<SPFxPnPListBatchResult<number[]>>;
@@ -201,7 +226,9 @@ export interface SPFxPnPListService<T = unknown> {
    * @throws Selector or batch-execution failures, including invalid selectors for empty batches.
    */
   updateBatch: (
-    updates: Array<{
+    updates: Array<
+      /** One required item ID and its partial SharePoint field update, queued in caller order. */
+      {
       /** Numeric item ID within the selected list. */
       id: number;
       /** SharePoint field values to update. */
@@ -332,10 +359,48 @@ function collectCreatedIds(settled: PromiseSettledResult<unknown>[]): { ids: num
  * @param defaultPageSize - Optional limit for query; omitted leaves the server limit unless the builder uses .top().
  * @returns Explicit list reads, writes and batch operations.
  *
- * @example
+ * @example Basic usage
  * ```ts
- * const tasks = createSPFxPnPListService<{ Id: number; Title: string }>(sp, 'Tasks', 25);
- * const page = await tasks.query(items => items.select('Id', 'Title'));
+ * import type { SPFI } from '@pnp/sp';
+ * import { createSPFxPnPListService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(sp: SPFI) {
+ *   const tasks = createSPFxPnPListService<{ Id: number; Title: string }>(sp, 'Tasks', 25);
+ *   const page = await tasks.query(items => items.select('Id', 'Title'));
+ * }
+ * ```
+ * @useWhen You need explicit list queries, CRUD or batches on a caller-configured web without React state.
+ *
+ *
+ * @example Select four list modes and page a batch
+ * ```ts
+ * import type { SPFI } from '@pnp/sp';
+ *
+ * import { createSPFxPnPListService } from '@apvee/spfx-react-toolkit';
+ * async function demonstrate(sp: SPFI) {
+ *   // sp must already be configured for /sites/projects/team.
+ *   type Task = { Id: number; Title: string };
+ *   const byTitle = createSPFxPnPListService<Task>(sp, 'Tasks', 25);
+ *   const byId = createSPFxPnPListService<Task>(sp, {
+ *     kind: 'id', id: '11111111-2222-3333-4444-555555555555',
+ *   }, 25);
+ *   const byUrl = createSPFxPnPListService<Task>(sp, {
+ *     kind: 'url', serverRelativeUrl: '/sites/projects/team/Lists/Tasks',
+ *   }, 25);
+ *   const byPath = createSPFxPnPListService<Task>(sp, {
+ *     kind: 'path', webRelativePath: 'Lists/Tasks',
+ *   }, 25);
+ *   const page = await byPath.query(items => items.select('Id', 'Title'));
+ *   const item = await byId.getById(12); // Item ID, not list GUID.
+ *   const builder = (items: import('@pnp/sp/items').IItems) => items.select('Id', 'Title').orderBy('Id');
+ *   const first = await byTitle.query(builder, { pageSize: 25 });
+ *   if (first.hasMore) {
+ *     const next = await byTitle.loadMore(builder, 25, first.nextSkip);
+ *     console.log(next.items);
+ *   }
+ *   const outcome = await byTitle.createBatch([{ Title: 'Review report' }]);
+ *   if (outcome.summaryError) console.error(outcome.errors);
+ * }
  * ```
  */
 export function createSPFxPnPListService<T = unknown>(
@@ -451,7 +516,9 @@ export function createSPFxPnPListService<T = unknown>(
   };
 
   const updateBatch = async (
-    updates: Array<{
+    updates: Array<
+      /** One required item ID and its partial SharePoint field update, queued in caller order. */
+      {
       /** Numeric item ID within the selected list. */
       id: number;
       /** SharePoint field values to update. */

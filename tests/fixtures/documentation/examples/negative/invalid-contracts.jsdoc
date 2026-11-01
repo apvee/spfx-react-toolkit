@@ -1,0 +1,11 @@
+/**
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { Pagination, transform } from '@apvee/spfx-react-toolkit';
+ * import type { PaginationProps } from '@apvee/spfx-react-toolkit';
+ * const example = <Pagination pageIndex="zero" onPageChange={next => next.toUpperCase()} />;
+ * const result = transform<number, string>('four', value => value.toFixed());
+ * const props = PaginationProps;
+ * ```
+ */

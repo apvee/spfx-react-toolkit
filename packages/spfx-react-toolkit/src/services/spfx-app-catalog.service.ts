@@ -1,3 +1,9 @@
+/**
+ * Discover a tenant app catalog lazily and inspect its current-user site-administrator flag.
+ *
+ * @packageDocumentation
+ * @docPage services/app-catalog
+ */
 import { SPHttpClient } from '@microsoft/sp-http';
 import type { SPHttpClientResponse } from '@microsoft/sp-http';
 
@@ -6,6 +12,8 @@ import type { SPHttpClientResponse } from '@microsoft/sp-http';
  *
  * @example
  * ```ts
+ * import { SPFxAppCatalogPageContextLike } from '@apvee/spfx-react-toolkit';
+ *
  * const page: SPFxAppCatalogPageContextLike = { web: { absoluteUrl: 'https://contoso.sharepoint.com/sites/team' } };
  * ```
  */
@@ -22,12 +30,18 @@ export interface SPFxAppCatalogPageContextLike {
 }
 
 /**
- * Tenant app catalog discovery and site-administrator indicator. Discovery caches a successful URL within this service instance.
+ * Tenant app catalog discovery and site-administrator indicator. Discovery caches a successful URL within this service instance. Concurrent first discovery calls are not deduplicated; failures are not cached. No catalog is provisioned and tenant settings are never mutated.
  *
  * @example
  * ```ts
- * const catalog: SPFxAppCatalogService = createSPFxAppCatalogService(client, pageContext);
- * const url = await catalog.discoverUrl();
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ * import type { SPHttpClient } from '@microsoft/sp-http';
+ * import { SPFxAppCatalogService, createSPFxAppCatalogService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(pageContext: PageContext, client: SPHttpClient) {
+ *   const catalog: SPFxAppCatalogService = createSPFxAppCatalogService(client, pageContext);
+ *   const url = await catalog.discoverUrl();
+ * }
  * ```
  */
 export interface SPFxAppCatalogService {
@@ -55,10 +69,30 @@ interface TenantAppCatalogResponse {
  * @param pageContext - Current web metadata, possibly unavailable.
  * @returns Explicit discovery and administrator-check operations.
  *
- * @example
+ * @example Basic usage
  * ```ts
- * const catalog = createSPFxAppCatalogService(context.spHttpClient, context.pageContext);
- * const url = await catalog.discoverUrl();
+ * import type { WebPartContext } from '@microsoft/sp-webpart-base';
+ * import { createSPFxAppCatalogService } from '@apvee/spfx-react-toolkit';
+ *
+ * async function exampleUsage(context: WebPartContext) {
+ *   const catalog = createSPFxAppCatalogService(context.spHttpClient, context.pageContext);
+ *   const url = await catalog.discoverUrl();
+ * }
+ * ```
+ * @useWhen You need lazy tenant app-catalog discovery or its site-administrator indicator outside React.
+ *
+ *
+ * @example Discover the catalog and compare its admin indicator
+ * ```ts
+ * import type { SPHttpClient } from '@microsoft/sp-http';
+ * import type { PageContext } from '@microsoft/sp-page-context';
+ *
+ * import { createSPFxAppCatalogService } from '@apvee/spfx-react-toolkit';
+ * async function demonstrate(context: { spHttpClient: SPHttpClient; pageContext: PageContext }) {
+ *   const catalog = createSPFxAppCatalogService(context.spHttpClient, context.pageContext);
+ *   const url = await catalog.discoverUrl();
+ *   const isCatalogAdmin = await catalog.canCurrentUserWrite(url);
+ * }
  * ```
  */
 export function createSPFxAppCatalogService(

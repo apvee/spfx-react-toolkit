@@ -1,3 +1,9 @@
+/**
+ * Typed Form families, RHF value ownership and native Fluent bindings.
+ *
+ * @packageDocumentation
+ * @docPage controls/form
+ */
 import * as React from 'react';
 import { resolveFormStrings } from './form-strings.internal';
 import { FormProvider, useForm as useReactHookForm } from 'react-hook-form';
@@ -47,7 +53,9 @@ type FrameProps<TInput extends FieldValues, TContext, TOutput> = Omit<React.Form
     onInvalid?: RuntimeRootProps<TInput, TContext, TOutput>['onInvalid'];
 };
 type RuntimeRootProps<TInput extends FieldValues, TContext, TOutput> = FormRootProps<TInput, TContext, TOutput, boolean>;
-/** Constructs only the real implemented family; integrations extend assembly with real members. */
+/**
+ * Constructs only the real implemented family; integrations extend assembly with real members.
+ */
 export function createFormSuiteRuntime<TInput extends FieldValues, TContext, TOutput, TBound extends boolean>(boundResolver?: Resolver<TInput, TContext, TOutput>): FormSuite<TInput, TContext, TOutput, TBound> {
     const suiteIdentity = Symbol('FormSuite');
     function useSuiteForm(props?: FormUseFormProps<TInput, TContext, TOutput, TBound>): FormMethods<TInput, TContext, TOutput> {
@@ -236,8 +244,9 @@ export function createFormSuiteRuntime<TInput extends FieldValues, TContext, TOu
         const methods = useSuiteForm(options as FormUseFormProps<TInput, TContext, TOutput, TBound>);
         return <Frame {...native as RuntimeRootProps<TInput, TContext, TOutput>} methods={methods} ref={ref}/>;
     });
-    /** Native Root owns RHF initialization or receives same-suite methods.
-     * @example `<Order.Root defaultValues={{reference:''}} onSubmit={save}>...</Order.Root>`
+    /**
+     * Native Root owns RHF initialization or receives same-suite methods.
+     * Example: `<Order.Root defaultValues={{reference:''}} onSubmit={save}>...</Order.Root>`
      */
     const Root = React.forwardRef<HTMLFormElement, RuntimeRootProps<TInput, TContext, TOutput>>((props, ref) => {
         if ('dangerouslySetInnerHTML' in props)
@@ -254,10 +263,23 @@ export function createFormSuiteRuntime<TInput extends FieldValues, TContext, TOu
     Root.displayName = 'Form.Root';
     return { ...fields, Root, Submit: bindMember(FormSubmit), Reset: bindMember(FormReset), useForm: useSuiteForm } as unknown as FormSuite<TInput, TContext, TOutput, TBound>;
 }
-/** Dynamic-name Form family; use createForm for input/output-aware paths.
+/**
+ * Dynamic-name Form family; use createForm for input/output-aware paths.
  * React Hook Form owns values and validation. Render bindings inside this family's Root;
  * Fluent UI and date/time compat peers are required, with a shared FluentProvider.
  * No SPFx provider is required.
- * @example `<Form.Root defaultValues={{title:''}} onSubmit={save}><Form.Input name="title" /></Form.Root>`
+ * Example: `<Form.Root defaultValues={{title:''}} onSubmit={save}><Form.Input name="title" /></Form.Root>`
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { Form } from '@apvee/spfx-react-toolkit/controls/form';
+ * export function Editor(): React.ReactElement {
+ *   return <Form.Root defaultValues={{ reference: '' }} onSubmit={values => { console.log(values.reference); }}>
+ *     <Form.Input name="reference" /><Form.Submit>Save</Form.Submit>
+ *   </Form.Root>;
+ * }
+ * ```
+ * @useWhen Runtime field names prevent a statically typed createForm family.
+ * @avoidWhen A known model can use createForm for checked live paths and output types.
  */
 export const Form: UntypedFormSuite = createFormSuiteRuntime<FieldValues, unknown, FieldValues, false>();

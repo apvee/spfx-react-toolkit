@@ -1,3 +1,9 @@
+/**
+ * Host cultures and audited regional identifiers guide formatting and direction.
+ *
+ * @packageDocumentation
+ * @docPage hooks/environment
+ */
 // useSPFxLocaleInfo.ts
 // Hook for locale and regional settings
 
@@ -13,36 +19,46 @@ import { useSPFxPageContext } from './useSPFxPageContext';
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const zone: SPFxTimeZone | undefined = useSPFxLocaleInfo().timeZone;
- * console.log(zone?.id, zone?.description);
+ * import * as React from 'react';
+ * import { SPFxTimeZone, useSPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const zone: SPFxTimeZone | undefined = useSPFxLocaleInfo().timeZone;
+ *   console.log(zone?.id, zone?.description);
+ *   return <span>{zone?.description ?? 'Unavailable'}</span>;
+ * }
  * ```
  */
 export interface SPFxTimeZone {
   /** Time zone ID (numeric identifier) */
   readonly id: number;
   
-  /** Offset in minutes from UTC */
+  /** Raw host regional offset in minutes, preserved without normalization. */
   readonly offset: number;
   
   /** Time zone description (e.g., "Pacific Standard Time") */
   readonly description: string;
   
-  /** Daylight savings time offset in minutes from UTC */
+  /** Raw host daylight offset in minutes, preserved without normalization. */
   readonly daylightOffset: number;
   
-  /** Standard time offset in minutes from UTC */
+  /** Raw host standard offset in minutes, preserved without normalization. */
   readonly standardOffset: number;
 }
 
 /**
- * Return type for useSPFxLocaleInfo hook
+ * Host content/UI cultures, preserved regional time-zone metadata and an optional audited IANA representative.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const locale: SPFxLocaleInfo = useSPFxLocaleInfo();
- * console.log(locale.locale, locale.ianaTimeZone);
+ * import * as React from 'react';
+ * import { SPFxLocaleInfo, useSPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const locale: SPFxLocaleInfo = useSPFxLocaleInfo();
+ *   console.log(locale.locale, locale.ianaTimeZone);
+ *   return <span>{locale.locale}</span>;
+ * }
  * ```
  */
 export interface SPFxLocaleInfo {
@@ -52,7 +68,7 @@ export interface SPFxLocaleInfo {
   /** Current UI locale (may differ from content locale) */
   readonly uiLocale: string;
   
-  /** Time zone information from SPWeb (preview API) */
+  /** Original optional web.timeZoneInfo host metadata; undefined when unavailable. */
   readonly timeZone: SPFxTimeZone | undefined;
 
   /**
@@ -103,16 +119,19 @@ export interface SPFxLocaleInfo {
  * 
  * @example Basic locale usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
+ *
  * function MyComponent() {
  *   const { locale, isRtl } = useSPFxLocaleInfo();
- *   
+ *
  *   const formatDate = (date: Date) => {
  *     return new Intl.DateTimeFormat(locale, {
  *       dateStyle: 'full',
  *       timeStyle: 'long'
  *     }).format(date);
  *   };
- *   
+ *
  *   return (
  *     <div dir={isRtl ? 'rtl' : 'ltr'}>
  *       <p>{formatDate(new Date())}</p>
@@ -123,11 +142,14 @@ export interface SPFxLocaleInfo {
  * 
  * @example Time zone aware formatting
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
+ *
  * function Calendar() {
  *   const { locale, timeZone, ianaTimeZone } = useSPFxLocaleInfo();
- *   
+ *
  *   if (!timeZone || ianaTimeZone === undefined) return <div>Site time zone unavailable</div>;
- *   
+ *
  *   const formatWithTimeZone = (date: Date) => {
  *     return new Intl.DateTimeFormat(locale, {
  *       timeZone: ianaTimeZone,
@@ -135,7 +157,7 @@ export interface SPFxLocaleInfo {
  *       timeStyle: 'short'
  *     }).format(date);
  *   };
- *   
+ *
  *   return (
  *     <div>
  *       <h3>Time Zone: {timeZone.description}</h3>
@@ -148,17 +170,22 @@ export interface SPFxLocaleInfo {
  * 
  * @example Multi-locale support
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
+ *
  * function PriceDisplay({ amount }: { amount: number }) {
  *   const { locale } = useSPFxLocaleInfo();
- *   
+ *
  *   const price = new Intl.NumberFormat(locale, {
  *     style: 'currency',
  *     currency: 'USD'
  *   }).format(amount);
- *   
+ *
  *   return <p>Price: {price}</p>;
  * }
  * ```
+ *
+ * @useWhen formatting or layout must follow the host content/UI culture and audited regional metadata.
  */
 export function useSPFxLocaleInfo(): SPFxLocaleInfo {
   const pageContext = useSPFxPageContext();

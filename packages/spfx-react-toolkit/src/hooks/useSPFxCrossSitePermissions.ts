@@ -1,3 +1,9 @@
+/**
+ * Scoped effective permissions use native current-web masks or selected-resource REST calls.
+ *
+ * @packageDocumentation
+ * @docPage hooks/permissions
+ */
 import { useCallback, useMemo } from 'react';
 import { SPPermission } from '@microsoft/sp-page-context';
 import { useSPFxSPHttpClient } from './useSPFxSPHttpClient';
@@ -15,19 +21,24 @@ export type { SPFxScopedPermissionsOptions } from '../services/spfx-permission-t
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const options: SPFxCrossSitePermissionsOptions = { webUrl: 'https://contoso.sharepoint.com/sites/team/subweb' };
- * const permissions = useSPFxCrossSitePermissions('https://contoso.sharepoint.com/sites/team', options);
+ * import * as React from 'react';
+ * import { SPFxCrossSitePermissionsOptions, useSPFxCrossSitePermissions } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const options: SPFxCrossSitePermissionsOptions = { webUrl: 'https://contoso.sharepoint.com/sites/team/subweb' };
+ *   const permissions = useSPFxCrossSitePermissions('https://contoso.sharepoint.com/sites/team', options);
+ *   return <span>{permissions.isLoading ? 'Loading' : 'Idle'}</span>;
+ * }
  * ```
  */
 export interface SPFxCrossSitePermissionsOptions {
   /**
-   * Absolute web URL to request (e.g., 'https://contoso.sharepoint.com/sites/mysite/subweb'); defaults to siteUrl.
+   * Absolute web URL to request; omitted, undefined or empty uses the legacy siteUrl.
    */
   webUrl?: string;
 
   /**
-   * Optional list ID to retrieve list-level permissions
+   * List GUID to retrieve list permissions; omitted, undefined or empty skips list retrieval.
    */
   listId?: string;
 }
@@ -37,9 +48,14 @@ export interface SPFxCrossSitePermissionsOptions {
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const permissions: SPFxCrossSitePermissionsInfo = useSPFxCrossSitePermissions('https://contoso.sharepoint.com/sites/team');
- * console.log(permissions.isLoading, permissions.error);
+ * import * as React from 'react';
+ * import { SPFxCrossSitePermissionsInfo, useSPFxCrossSitePermissions } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const permissions: SPFxCrossSitePermissionsInfo = useSPFxCrossSitePermissions('https://contoso.sharepoint.com/sites/team');
+ *   console.log(permissions.isLoading, permissions.error);
+ *   return <span>{permissions.isLoading ? 'Loading' : 'Idle'}</span>;
+ * }
  * ```
  */
 export interface SPFxCrossSitePermissionsInfo {
@@ -49,12 +65,12 @@ export interface SPFxCrossSitePermissionsInfo {
   sitePermissions?: SPPermission;
 
   /**
-   * Web-level permissions
+   * Web-level permissions; undefined before success, while idle/loading or on failure.
    */
   webPermissions?: SPPermission;
 
   /**
-   * List-level permissions (if listId provided)
+   * List-level permissions; undefined without a list ID, before success or on failure.
    */
   listPermissions?: SPPermission;
 
@@ -85,7 +101,7 @@ export interface SPFxCrossSitePermissionsInfo {
   isLoading: boolean;
 
   /**
-   * Error state
+   * Current error; undefined while idle/loading or after success.
    */
   error?: Error;
 }
@@ -95,6 +111,9 @@ export interface SPFxCrossSitePermissionsInfo {
  * results make hasPermission false; server authorization still applies.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { SPFxScopedPermissionsInfo, useSPFxCrossSitePermissions } from '@apvee/spfx-react-toolkit';
+ *
  * function ListPermissionStatus() {
  *   const info: SPFxScopedPermissionsInfo = useSPFxCrossSitePermissions({ scope: 'list', listTitle: 'Tasks' });
  *   return <span>{info.error?.message ?? (info.isLoading ? 'Loading' : 'Ready')}</span>;
@@ -110,8 +129,16 @@ export interface SPFxScopedPermissionsInfo {
    * @returns True only when the current resource contains every required bit.
    * @example
    * ```tsx
-   * const info = useSPFxCrossSitePermissions({});
-   * const allowed = info.hasPermission(SPPermission.addListItems);
+   * import * as React from 'react';
+   * import { useSPFxCrossSitePermissions } from '@apvee/spfx-react-toolkit';
+   * import { SPPermission } from '@microsoft/sp-page-context';
+   *
+   * // Render beneath the initialized host's matching SPFx provider.
+   * function AddItemDecision() {
+   *   const info = useSPFxCrossSitePermissions({});
+   *   const allowed = info.hasPermission(SPPermission.addListItems);
+   *   return <span>{info.error?.message ?? (info.isLoading ? 'Checking permissions' : allowed ? 'Can add items' : 'Add unavailable')}</span>;
+   * }
    * ```
    */
   readonly hasPermission: (permission: SPPermission) => boolean;
@@ -128,11 +155,16 @@ export interface SPFxScopedPermissionsInfo {
  * Scalar-equivalent options do not refetch. Provider/client/user/target changes
  * hide former decisions during render; obsolete/unmounted results are ignored.
  * HTTP failure, invalid mask or folder/list mismatch produces error and no grant.
- * @param options - Scope defaults to web and URL to current web; nonweb selectors are exclusive.
+ * @param options - Required scoped options. Scope defaults to web and URL to current web; nonweb selectors are exclusive.
+ * @useWhen UI needs effective permissions for one selected resource.
  * @returns Selected mask, hasPermission helper and loading/error state.
  * @throws When called outside an SPFx provider.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxCrossSitePermissions } from '@apvee/spfx-react-toolkit';
+ * import { SPPermission } from '@microsoft/sp-page-context';
+ *
  * function ItemPermissionStatus() {
  *   const info = useSPFxCrossSitePermissions({ scope: 'item', listTitle: 'Tasks', itemId: 42 });
  *   return <span>{info.error?.message ?? (info.isLoading ? 'Loading' : String(info.hasPermission(SPPermission.editListItems)))}</span>;
@@ -146,11 +178,15 @@ export function useSPFxCrossSitePermissions(options: SPFxScopedPermissionsOption
  * to siteUrl. Current identity changes hide previous sets before effects run.
  * Requires an SPFx provider. HTTP failures and invalid payloads expose error.
  * @param siteUrl - Absolute HTTP(S) site URL; omitted/blank performs no request.
- * @param options - Optional absolute web URL and list GUID.
+ * @param options - Absolute web URL and list GUID; omitted or undefined uses siteUrl and skips the list mask.
  * @returns Compatible site/web/list sets, checks and loading/error state.
  * @throws When called outside an SPFx provider.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxCrossSitePermissions } from '@apvee/spfx-react-toolkit';
+ * import { SPPermission } from '@microsoft/sp-page-context';
+ *
  * function LegacyPermissionStatus() {
  *   const info = useSPFxCrossSitePermissions('https://contoso.sharepoint.com/sites/team', { listId: '11111111-2222-3333-4444-555555555555' });
  *   return <span>{String(info.hasListPermission(SPPermission.viewListItems))}</span>;
@@ -167,13 +203,22 @@ export function useSPFxCrossSitePermissions(siteUrl?: string, options?: SPFxCros
  * @throws When called outside a matching SPFx provider.
  * @example
  * ```tsx
- * // Inside a React component beneath a matching SPFx provider:
- * function PermissionChecks() {
- *   const selected = useSPFxCrossSitePermissions({ scope: 'list', listTitle: 'Tasks' });
- *   const legacy = useSPFxCrossSitePermissions('https://contoso.sharepoint.com/sites/team');
- *   return <span>{String(selected.isLoading || legacy.isLoading)}</span>;
+ * import * as React from 'react';
+ * import { useSPFxCrossSitePermissions } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   function PermissionChecks() {
+ *     const selected = useSPFxCrossSitePermissions({ scope: 'list', listTitle: 'Tasks' });
+ *     const legacy = useSPFxCrossSitePermissions('https://contoso.sharepoint.com/sites/team');
+ *     return <span>{String(selected.isLoading || legacy.isLoading)}</span>;
+ *   }
+ *   return <PermissionChecks />;
  * }
  * ```
+ *
+ * @useWhen UI needs current-user permissions for an explicitly selected web, list, item or folder.
+ *
+ * @avoidWhen server access must be enforced; these masks are UI indicators and requests still require server authorization.
  */
 export function useSPFxCrossSitePermissions(
   targetOrUrl?: string | SPFxScopedPermissionsOptions,

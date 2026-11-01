@@ -1,3 +1,9 @@
+/**
+ * Browser storage uses an instance namespace and best-effort JSON persistence.
+ *
+ * @packageDocumentation
+ * @docPage hooks/storage/local-storage
+ */
 // useSPFxStorage.ts
 // Hooks for persisted storage scoped to SPFx instance
 
@@ -6,15 +12,22 @@ import { createScopedSPFxStorageKey } from '../helpers/spfx-storage.helpers';
 import { useSPFxInstanceInfo } from './useSPFxInstanceInfo';
 
 /**
- * Return type for storage hooks
+ * Instance-scoped browser JSON state and best-effort persistence operations.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const storage: SPFxStorageHook<number> = useSPFxLocalStorage('pageSize', 25);
- * const onIncrease = () => storage.setValue(value => value + 5);
+ * import * as React from 'react';
+ * import { SPFxStorageHook, useSPFxLocalStorage } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const storage: SPFxStorageHook<number> = useSPFxLocalStorage('pageSize', 25);
+ *   const onIncrease = () => storage.setValue(value => value + 5);
+ *   return <button onClick={()=>void onIncrease()}>Run operation</button>;
+ * }
  * ```
  * @template T - Expected application data shape; no runtime validation is performed.
+ *
+ * @docPage hooks/storage/local-storage
  */
 export interface SPFxStorageHook<T> {
   /** Current value */
@@ -195,15 +208,20 @@ function useSPFxBrowserStorage<T>(
  * - Long-lived cache
  * - Settings
  *
+ * The key is `spfx:<instanceId>:<key>`, an instance namespace rather than an authorization boundary. The default seeds React state but is not written until setValue. Key/instance changes reload that key; changing only the default preserves current state. remove and exact-key browser deletion events use the latest default. Storage/JSON failures are ignored; local state can change even when persistence fails. T supplies no runtime validation, and only JSON-compatible values reliably round-trip. Same-document hook instances do not synchronize via storage events; clear events with no matching key are ignored.
+ *
  * @param key - Storage key (will be prefixed with instance ID)
  * @param defaultValue - Fallback when initializing a key or removing its value. Changing it alone preserves the current value; remove uses the latest fallback.
  * @returns Storage hook with value, setValue, and remove
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxLocalStorage } from '@apvee/spfx-react-toolkit';
+ *
  * function MyComponent() {
  *   const { value, setValue } = useSPFxLocalStorage('view-mode', 'grid');
- *   
+ *
  *   return (
  *     <div>
  *       <p>View: {value}</p>
@@ -215,6 +233,105 @@ function useSPFxBrowserStorage<T>(
  * ```
  * @throws When called outside an SPFx provider.
  * @template T - Expected application data shape; no runtime validation is performed.
+ *
+ * @docPage hooks/storage/local-storage
+ *
+ * @useWhen JSON preferences should persist in this browser across sessions for this SPFx instance.
+ *
+ * @avoidWhen data must be shared across browsers or validated on the server; use a server-backed store.
+ *
+ *
+ * @example Edit local preferences
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxLocalStorage } from '@apvee/spfx-react-toolkit';
+ *
+ * interface UserPreferences {
+ *   theme: 'light' | 'dark';
+ *   itemsPerPage: number;
+ *   showSidebar: boolean;
+ * }
+ *
+ * function SettingsPanel() {
+ *   const { value: preferences, setValue: setPreferences } = useSPFxLocalStorage<UserPreferences>(
+ *     'userPrefs',
+ *     { theme: 'light', itemsPerPage: 10, showSidebar: true }
+ *   );
+ *
+ *   const updateTheme = (theme: 'light' | 'dark') => {
+ *     setPreferences(prev => ({ ...prev, theme }));
+ *   };
+ *
+ *   const updateItemsPerPage = (itemsPerPage: number) => {
+ *     setPreferences(prev => ({ ...prev, itemsPerPage }));
+ *   };
+ *
+ *   return (
+ *     <div className="settings">
+ *       <label>
+ *         Theme:
+ *         <select
+ *           value={preferences.theme}
+ *           onChange={e => updateTheme(e.target.value === 'dark' ? 'dark' : 'light')}
+ *         >
+ *           <option value="light">Light</option>
+ *           <option value="dark">Dark</option>
+ *         </select>
+ *       </label>
+ *
+ *       <label>
+ *         Items per page:
+ *         <input
+ *           type="number"
+ *           value={preferences.itemsPerPage}
+ *           onChange={e => updateItemsPerPage(Number(e.target.value))}
+ *           min={5}
+ *           max={50}
+ *         />
+ *       </label>
+ *     </div>
+ *   );
+ * }
+ * ```
+ *
+ *
+ * @example Keep and clear the last ten searches
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxLocalStorage } from '@apvee/spfx-react-toolkit';
+ *
+ * function SearchWithHistory() {
+ *   const { value: history, setValue: setHistory } = useSPFxLocalStorage<string[]>('searchHistory', []);
+ *   const [query, setQuery] = React.useState('');
+ *
+ *   const handleSearch = () => {
+ *     if (query && !history.includes(query)) {
+ *       setHistory(prev => [query, ...prev.slice(0, 9)]); // Keep last 10
+ *     }
+ *     // Perform search...
+ *   };
+ *
+ *   const clearHistory = () => setHistory([]);
+ *
+ *   return (
+ *     <div>
+ *       <input
+ *         value={query}
+ *         onChange={e => setQuery(e.target.value)}
+ *         placeholder="Search..."
+ *         list="search-history"
+ *       />
+ *       <datalist id="search-history">
+ *         {history.map(term => (
+ *           <option key={term} value={term} />
+ *         ))}
+ *       </datalist>
+ *       <button onClick={handleSearch}>Search</button>
+ *       <button onClick={clearHistory}>Clear History</button>
+ *     </div>
+ *   );
+ * }
+ * ```
  */
 export function useSPFxLocalStorage<T>(
   key: string,
@@ -237,15 +354,20 @@ export function useSPFxLocalStorage<T>(
  * - Tab-specific settings
  * - Wizard state
  *
+ * Shares local storage's JSON/default/reset and best-effort failure rules. The key uses the same instance namespace; browser per-origin/per-tab session rules determine sharing. Same-document hook instances do not synchronize automatically, and an identical key in another tab is not a shared persistence channel.
+ *
  * @param key - Storage key (will be prefixed with instance ID)
  * @param defaultValue - Fallback when initializing a key or removing its value. Changing it alone preserves the current value; remove uses the latest fallback.
  * @returns Storage hook with value, setValue, and remove
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxSessionStorage } from '@apvee/spfx-react-toolkit';
+ *
  * function WizardComponent() {
  *   const { value: step, setValue: setStep } = useSPFxSessionStorage('wizard-step', 1);
- *   
+ *
  *   return (
  *     <div>
  *       <p>Step: {step}</p>
@@ -256,6 +378,113 @@ export function useSPFxLocalStorage<T>(
  * ```
  * @throws When called outside an SPFx provider.
  * @template T - Expected application data shape; no runtime validation is performed.
+ *
+ * @docPage hooks/storage/session-storage
+ *
+ * @useWhen JSON workflow state should last only within this browser tab/session for this instance.
+ *
+ * @avoidWhen data must survive the tab/session or be shared with another browser; choose persistent or server storage.
+ *
+ *
+ * @example Save a session draft before clearing it
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxSessionStorage } from '@apvee/spfx-react-toolkit';
+ *
+ * interface FormData {
+ *   title: string;
+ *   description: string;
+ *   category: string;
+ * }
+ *
+ * function FormWithDraft({ save }: { save: (draft: FormData) => Promise<void> }) {
+ *   const { value: draft, setValue: setDraft } = useSPFxSessionStorage<FormData>('formDraft', {
+ *     title: '',
+ *     description: '',
+ *     category: ''
+ *   });
+ *
+ *   const handleChange = (field: keyof FormData, value: string) => {
+ *     setDraft(prev => ({ ...prev, [field]: value }));
+ *   };
+ *
+ *   const handleSubmit = async () => {
+ *     await save(draft);
+ *     setDraft({ title: '', description: '', category: '' }); // Clear draft
+ *   };
+ *
+ *   return (
+ *     <form onSubmit={e => { e.preventDefault(); void handleSubmit().catch(console.error); }}>
+ *       <input
+ *         value={draft.title}
+ *         onChange={e => handleChange('title', e.target.value)}
+ *         placeholder="Title"
+ *       />
+ *       <textarea
+ *         value={draft.description}
+ *         onChange={e => handleChange('description', e.target.value)}
+ *         placeholder="Description"
+ *       />
+ *       <button type="submit">Submit</button>
+ *       <p className="hint">Draft auto-saved for this session</p>
+ *     </form>
+ *   );
+ * }
+ * ```
+ *
+ *
+ * @example Resume and complete a session wizard
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxSessionStorage } from '@apvee/spfx-react-toolkit';
+ *
+ * interface WizardState {
+ *   currentStep: number;
+ *   completedSteps: number[];
+ *   data: Record<string, unknown>;
+ * }
+ *
+ * function MultiStepWizard() {
+ *   const { value: wizard, setValue: setWizard } = useSPFxSessionStorage<WizardState>('wizard', {
+ *     currentStep: 0,
+ *     completedSteps: [],
+ *     data: {}
+ *   });
+ *
+ *   const goToStep = (step: number) => {
+ *     setWizard(prev => ({ ...prev, currentStep: step }));
+ *   };
+ *
+ *   const completeStep = (stepData: Record<string, unknown>) => {
+ *     setWizard(prev => ({
+ *       currentStep: prev.currentStep + 1,
+ *       completedSteps: [...prev.completedSteps, prev.currentStep],
+ *       data: { ...prev.data, ...stepData }
+ *     }));
+ *   };
+ *
+ *   return (
+ *     <div className="wizard">
+ *       <nav>
+ *         {[0, 1, 2, 3].map(step => (
+ *           <button
+ *             key={step}
+ *             onClick={() => goToStep(step)}
+ *             disabled={!wizard.completedSteps.includes(step - 1) && step !== 0}
+ *             className={wizard.currentStep === step ? 'active' : ''}
+ *           >
+ *             Step {step + 1}
+ *           </button>
+ *         ))}
+ *       </nav>
+ *       <main>
+ *         <p>Current step: {wizard.currentStep + 1}</p>
+ *         <button onClick={() => completeStep({ confirmed: true })}>Complete step</button>
+ *       </main>
+ *     </div>
+ *   );
+ * }
+ * ```
  */
 export function useSPFxSessionStorage<T>(
   key: string,

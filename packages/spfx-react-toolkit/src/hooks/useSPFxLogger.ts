@@ -1,3 +1,9 @@
+/**
+ * Synchronous log sinks receive structured host and user diagnostics.
+ *
+ * @packageDocumentation
+ * @docPage hooks/performance
+ */
 // useSPFxLogger.ts
 // Hook for structured logging with SPFx context
 
@@ -14,19 +20,27 @@ import type { WebPartContext } from '@microsoft/sp-webpart-base';
  *
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { LogLevel } from '@apvee/spfx-react-toolkit';
+ *
  * const level: LogLevel = 'warn';
  * ```
  */
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 /**
- * Structured log entry
+ * Timestamped message and host/user/site/correlation metadata emitted synchronously to a custom logger sink.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const handleLog = (entry: LogEntry) => console.info(entry.message, entry.instanceId);
- * const logger = useSPFxLogger(handleLog);
+ * import * as React from 'react';
+ * import { LogEntry, useSPFxLogger } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const handleLog = (entry: LogEntry) => console.info(entry.message, entry.instanceId);
+ *   const logger = useSPFxLogger(handleLog);
+ *   return <button onClick={() => logger.info('Selected')}>Log</button>;
+ * }
  * ```
  */
 export interface LogEntry {
@@ -57,28 +71,33 @@ export interface LogEntry {
   /** Correlation ID */
   readonly correlationId: string | undefined;
   
-  /** WebPart tag - only available for WebPart contexts */
+  /** WebPart tag; undefined for other hosts or when missing from context */
   readonly webPartTag?: string;
   
-  /** Extra metadata */
+  /** Extra metadata; undefined when omitted by the caller. */
   readonly extra?: Record<string, unknown>;
 }
 
 /**
- * Return type for useSPFxLogger hook
+ * Synchronous structured log methods using the configured sink or console, enriched with provider metadata.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const logger: SPFxLoggerInfo = useSPFxLogger();
- * const onSave = () => logger.info('Saved', { itemId: 12 });
+ * import * as React from 'react';
+ * import { SPFxLoggerInfo, useSPFxLogger } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const logger: SPFxLoggerInfo = useSPFxLogger();
+ *   const onSave = () => logger.info('Saved', { itemId: 12 });
+ *   return <button onClick={()=>void onSave()}>Run operation</button>;
+ * }
  * ```
  */
 export interface SPFxLoggerInfo {
   /**
    * Emits a debug message to the custom handler, or the corresponding console output (debug uses console.log). Handler failures propagate.
    * @param message - Log message.
-   * @param extra - Optional metadata included in the entry.
+   * @param extra - Metadata included in the entry; omitted or undefined adds no entry metadata.
    * @returns No value.
    */
   readonly debug: (message: string, extra?: Record<string, unknown>) => void;
@@ -86,7 +105,7 @@ export interface SPFxLoggerInfo {
   /**
    * Emits a info message to the custom handler, or the corresponding console output (debug uses console.log). Handler failures propagate.
    * @param message - Log message.
-   * @param extra - Optional metadata included in the entry.
+   * @param extra - Metadata included in the entry; omitted or undefined adds no entry metadata.
    * @returns No value.
    */
   readonly info: (message: string, extra?: Record<string, unknown>) => void;
@@ -94,7 +113,7 @@ export interface SPFxLoggerInfo {
   /**
    * Emits a warn message to the custom handler, or the corresponding console output (debug uses console.log). Handler failures propagate.
    * @param message - Log message.
-   * @param extra - Optional metadata included in the entry.
+   * @param extra - Metadata included in the entry; omitted or undefined adds no entry metadata.
    * @returns No value.
    */
   readonly warn: (message: string, extra?: Record<string, unknown>) => void;
@@ -102,7 +121,7 @@ export interface SPFxLoggerInfo {
   /**
    * Emits a error message to the custom handler, or the corresponding console output (debug uses console.log). Handler failures propagate.
    * @param message - Log message.
-   * @param extra - Optional metadata included in the entry.
+   * @param extra - Metadata included in the entry; omitted or undefined adds no entry metadata.
    * @returns No value.
    */
   readonly error: (message: string, extra?: Record<string, unknown>) => void;
@@ -130,50 +149,51 @@ export interface SPFxLoggerInfo {
  * - User activity tracking
  * - Support troubleshooting
  *
- * @param handler - Optional custom log handler
+ * @param handler - Synchronous custom sink; omitted or undefined uses the matching console method. Sink exceptions propagate; returned promises are not observed.
  * @returns Logger methods
  *
- * @example
+ * @example Console sink
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxLogger } from '@apvee/spfx-react-toolkit';
+ *
  * function MyComponent() {
  *   const logger = useSPFxLogger();
- *   
+ *
  *   const handleClick = () => {
  *     logger.info('Button clicked', { buttonId: 'save' });
  *   };
- *   
+ *
  *   const handleError = (error: Error) => {
  *     logger.error('Operation failed', {
  *       errorMessage: error.message,
  *       stack: error.stack
  *     });
  *   };
- *   
+ *
  *   return <button onClick={handleClick}>Click Me</button>;
  * }
  * ```
  *
- * @example Custom handler for Application Insights
+ * @example Custom telemetry sink
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const customHandler = (entry: LogEntry) => {
- *   appInsights.trackTrace({
- *     message: entry.message,
- *     severityLevel: entry.level,
- *     properties: {
- *       instanceId: entry.instanceId,
- *       correlationId: entry.correlationId,
- *       ...entry.extra
- *     }
- *   });
- * };
- *
- * const logger = useSPFxLogger(customHandler);
+ * import * as React from 'react';
+ * import { LogEntry, useSPFxLogger } from '@apvee/spfx-react-toolkit';
+ * function SaveButton({ publish }: { publish: (entry: LogEntry) => void }) {
+ *   const logger = useSPFxLogger(publish);
+ *   return <button onClick={() => logger.info('Save selected', { action: 'save' })}>Save</button>;
+ * }
  * ```
  * @throws When called outside an SPFx provider.
+ *
+ * @useWhen application events need structured host, user and correlation fields.
  */
 export function useSPFxLogger(
-  handler?: (entry: LogEntry) => void
+  handler?: /**
+    * Receives each structured log entry synchronously.
+    * @param entry - Message with host/user/correlation metadata.
+    * @returns No value; asynchronous completion is not observed.
+    */ (entry: LogEntry) => void
 ): SPFxLoggerInfo {
   const { id: instanceId, kind } = useSPFxInstanceInfo();
   const { displayName, loginName } = useSPFxUserInfo();

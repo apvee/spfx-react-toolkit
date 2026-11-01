@@ -1,3 +1,9 @@
+/**
+ * Exact-title list access combines explicit queries with tracked mutations.
+ *
+ * @packageDocumentation
+ * @docPage hooks/pnpjs
+ */
 import type { PnPContextInfo } from './useSPFxPnPContext';
 import { useSPFxPnPListInternal } from './useSPFxPnPList.internal';
 
@@ -8,16 +14,21 @@ import type { InitialFieldQuery, ComparisonResult } from '@pnp/sp/spqueryable';
 /**
  * Type representing a fluent filter function for type-safe query building.
  * Uses native PnPjs v4 fluent filter API types.
- * 
+ *
  * @template T - The type of the list item
+ * @param f - Native initial field-query builder for the item shape.
+ * @returns Composed comparison expression; does not execute a request.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { ListFilterFunction } from '@apvee/spfx-react-toolkit';
+ *
  * interface Task {
  *   Status: string;
  *   Priority: number;
  * }
- * 
- * const filterFn: ListFilterFunction<Task> = (f) => 
+ *
+ * const filterFn: ListFilterFunction<Task> = (f) =>
  *   f.text("Status").equals("Active")
  *     .and()
  *     .number("Priority").greaterThan(3);
@@ -30,9 +41,14 @@ export type ListFilterFunction<T> = (f: InitialFieldQuery<T>) => ComparisonResul
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const options: UseSPFxPnPListOptions = { pageSize: 25 };
- * const tasks = useSPFxPnPList('Tasks', options);
+ * import * as React from 'react';
+ * import { UseSPFxPnPListOptions, useSPFxPnPList } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const options: UseSPFxPnPListOptions = { pageSize: 25 };
+ *   const tasks = useSPFxPnPList('Tasks', options);
+ *   return <span>{tasks.items.length}</span>;
+ * }
  * ```
  */
 export interface UseSPFxPnPListOptions {
@@ -40,43 +56,75 @@ export interface UseSPFxPnPListOptions {
    * Default query page size used for subsequent loadMore calls. Omitted supplies no explicit limit; .top() in a builder overrides this, and a per-query pageSize overrides this default.
    * @example
    * ```tsx
-   * // Inside a React component beneath a matching host-specific SPFx provider:
-   * const tasks = useSPFxPnPList('Tasks', { pageSize: 25 });
+   * import * as React from 'react';
+   * import { useSPFxPnPList } from '@apvee/spfx-react-toolkit';
+   *
+   * function Example() {
+   *   const tasks = useSPFxPnPList('Tasks', { pageSize: 25 });
+   *   return <span>{tasks.items.length}</span>;
+   * }
    * ```
    */
   pageSize?: number;
 }
 
 /**
- * Return type for the useSPFxPnPList hook.
+ * Selected-list query/paging state and explicit CRUD/batch operations; mounting does not fetch items.
  *
  * @template T - The type of the list item
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const tasks: SPFxPnPListInfo<{ Id: number; Title: string }> = useSPFxPnPList('Tasks', { pageSize: 25 });
- * console.log(tasks.items, tasks.hasMore);
+ * import * as React from 'react';
+ * import { SPFxPnPListInfo, useSPFxPnPList } from '@apvee/spfx-react-toolkit';
+ *
+ * function Example() {
+ *   const tasks: SPFxPnPListInfo<{ Id: number; Title: string }> = useSPFxPnPList('Tasks', { pageSize: 25 });
+ *   console.log(tasks.items, tasks.hasMore);
+ *   return <span>{tasks.items.length}</span>;
+ * }
  * ```
  */
 export interface SPFxPnPListInfo<T = unknown> {
   /**
    * Executes a query, replacing items/paging state only after a successful current response. Builder .top() overrides per-call/hook pageSize; without either, SharePoint chooses the limit and hasMore is false.
-   * @param queryBuilder - Optional fluent transform; return its IItems query without executing it.
-   * @param options - Optional per-call page-size override.
+   * @param queryBuilder - Fluent transform; omitted or undefined queries the selected items without a transform. Return the query without executing it.
+   * @param options - Per-call page-size override; omitted or undefined uses the hook default unless the builder applies top.
    * @returns Returned items even when completion is obsolete.
    * @throws Uninitialized context, builder or request failures; current failures publish error.
    * @example
    * ```tsx
-   * // Inside a React component beneath a matching host-specific SPFx provider:
-   * const tasks = useSPFxPnPList('Tasks', { pageSize: 25 });
-   * const load = () => tasks.query(items => items.select('Id', 'Title'));
+   * import * as React from 'react';
+   * import { useSPFxPnPList } from '@apvee/spfx-react-toolkit';
+   *
+   * function Example() {
+   *   const tasks = useSPFxPnPList('Tasks', { pageSize: 25 });
+   *   const [result, setResult] = React.useState<unknown>();
+   *   const [failure, setFailure] = React.useState<string>();
+   *   const run = async () => {
+   *     setFailure(undefined);
+   *     try {
+   *       setResult(await tasks.query(items => items.select('Id', 'Title')));
+   *     } catch (failure) {
+   *       setFailure(failure instanceof Error ? failure.message : String(failure));
+   *     }
+   *   };
+   *   return <>
+   *     <button disabled={tasks.loading} onClick={() => void run()}>Load</button>
+   *     {(failure ?? tasks.error?.message) && <span role="alert">{failure ?? tasks.error?.message}</span>}
+   *     <pre>{JSON.stringify(result)}</pre>
+   *   </>;
+   * }
    * ```
    */
   query: (
-    queryBuilder?: (items: IItems) => IItems,
+    queryBuilder?: /**
+     * Refines the selected items query without executing it.
+     * @param items - Selected list items query.
+     * @returns Query to execute, including its select/filter/order/top clauses.
+     */ (items: IItems) => IItems,
     options?: {
-      /** Overrides the hook page size; explicit builder .top() takes precedence. */
+      /** Overrides the hook page size; omitted or undefined uses the hook setting. Explicit builder .top() takes precedence. */
       pageSize?: number
     }
   ) => Promise<T[]>;
@@ -102,7 +150,7 @@ export interface SPFxPnPListInfo<T = unknown> {
   error: Error | undefined;
 
   /**
-   * Indicates if the items array is empty.
+   * True only when items is empty, no query is loading and no error is present. This is also true while idle before the first query; it does not establish that a completed query returned no rows.
    */
   isEmpty: boolean;
 
@@ -178,7 +226,7 @@ export interface SPFxPnPListInfo<T = unknown> {
    * @returns Resolves after the batch, including partial item failure.
    * @throws Uninitialized context, selector or batch-execution failures.
    */
-  updateBatch: (updates: Array<{
+  updateBatch: (updates: Array</** Item IDs paired with fields to update within the selected list. */ {
       /** Numeric item ID within the selected list. */
       id: number;
       /** SharePoint field values to update. */
@@ -199,16 +247,62 @@ export interface SPFxPnPListInfo<T = unknown> {
  * @typeParam T - Expected list item fields.
  * @param listTitle - Exact list title; GUID/path-shaped strings remain titles.
  * @param options - Optional default page size; omitted leaves the SharePoint limit unless .top() is supplied.
- * @param pnpContext - Optional selected-web context; the default context hook still runs.
+ * @param pnpContext - Selected-web context; omitted or undefined uses the current-web default. The default context hook still runs.
  * @returns List items, query/paging state and CRUD/batch methods.
  * @throws Missing SPFx provider or default-context resolution failures. Request rejection channels are documented on each method.
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxPnPList } from '@apvee/spfx-react-toolkit';
+ *
  * function Tasks() {
  *   const tasks = useSPFxPnPList<{ Id: number; Title: string }>('Tasks', { pageSize: 25 });
- *   const load = () => tasks.query(items => items.select('Id', 'Title'));
- *   return <button onClick={load} disabled={tasks.loading}>Load tasks</button>;
+ *   const [result, setResult] = React.useState<unknown>();
+ *   const [failure, setFailure] = React.useState<string>();
+ *   const run = async () => {
+ *     setFailure(undefined);
+ *     try {
+ *       setResult(await tasks.query(items => items.select('Id', 'Title')));
+ *     } catch (failure) {
+ *       setFailure(failure instanceof Error ? failure.message : String(failure));
+ *     }
+ *   };
+ *   return <>
+ *     <button disabled={tasks.loading} onClick={() => void run()}>Load tasks</button>
+ *     {(failure ?? tasks.error?.message) && <span role="alert">{failure ?? tasks.error?.message}</span>}
+ *     <pre>{JSON.stringify(result)}</pre>
+ *   </>;
+ * }
+ * ```
+ *
+ * @useWhen a list identified by its exact title needs explicit queries and tracked CRUD operations.
+ *
+ *
+ * @example Compare four list selectors on an explicit web
+ * ```tsx
+ * import * as React from 'react';
+ * import {
+ *   useSPFxPnPContext, useSPFxPnPList, useSPFxPnPListById,
+ *   useSPFxPnPListByUrl, useSPFxPnPListByPath,
+ * } from '@apvee/spfx-react-toolkit';
+ *
+ * type Task = { Id: number; Title: string };
+ *
+ * function SelectedLists() {
+ *   // Explicitly select this web, including for cross-site access.
+ *   const context = useSPFxPnPContext('/sites/projects/team');
+ *   const byTitle = useSPFxPnPList<Task>('Tasks', { pageSize: 25 }, context);
+ *   const byId = useSPFxPnPListById<Task>('11111111-2222-3333-4444-555555555555', { pageSize: 25 }, context);
+ *   const byUrl = useSPFxPnPListByUrl<Task>('/sites/projects/team/Lists/Tasks', { pageSize: 25 }, context);
+ *   const byPath = useSPFxPnPListByPath<Task>('Lists/Tasks', { pageSize: 25 }, context);
+ *   const lists = [byTitle, byId, byUrl, byPath];
+ *   return <div>{lists.map((list, index) => <div key={index}>
+ *     <button disabled={!context.isInitialized || list.loading}
+ *       onClick={() => { void list.query().catch(() => undefined); }}>Load mode {index + 1}</button>
+ *     {list.error && <p>{list.error.message}</p>}
+ *     {list.items.map(item => <p key={item.Id}>{item.Title}</p>)}
+ *   </div>)}</div>;
  * }
  * ```
  */

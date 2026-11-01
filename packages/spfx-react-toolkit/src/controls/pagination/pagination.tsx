@@ -1,3 +1,9 @@
+/**
+ * Controlled offset, cursor and load-more requests with application-owned data.
+ *
+ * @packageDocumentation
+ * @docPage controls/pagination
+ */
 import * as React from 'react';
 import { Button, Spinner } from '@fluentui/react-components';
 import { ChevronDoubleLeftRegular, ChevronDoubleRightRegular, ChevronLeftRegular, ChevronRightRegular } from '@fluentui/react-icons';
@@ -23,13 +29,22 @@ type PaginationAction = 'first' | 'previous' | 'next' | 'last' | 'loadMore';
  * next/last are unavailable. Empty results at index zero disable every page action.
  * Loading progress replaces the last activated icon. Without a prior action it
  * appears in next (pages/cursor), or the single load-more action, keeping labels visible.
- * @param props Controlled state, localized labels, loading, button appearance/density and native nav attributes.
+ * @param props - Controlled state, localized labels, loading, button appearance/density and native nav attributes.
  * @returns A labelled navigation landmark, or an empty fragment for invalid runtime state.
  * @example
  * ```tsx
+ * import * as React from 'react';
+ * import { Pagination } from '@apvee/spfx-react-toolkit';
+ * const hasMore = true;
+ * const loadingMore = false;
+ * async function loadMore(): Promise<void> { console.log('Next batch requested'); }
+ * function reportError(error: unknown): void { console.error(error); }
  * <Pagination pagination={{ type: 'loadMore', hasNextPage: hasMore }} loading={loadingMore}
  *   onPaginationChange={() => { void loadMore().catch(reportError); }} />
  * ```
+ *
+ * @useWhen The application owns page data and needs controlled offset, cursor or load-more request controls.
+ * @avoidWhen The widget must fetch or slice data or store cursor tokens itself; those responsibilities belong in the consumer.
  */
 export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(({
   pagination, onPaginationChange, loading = false, size = 'medium', appearance = 'subtle', strings: overrides,
@@ -41,9 +56,13 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(({
   delete navProps.dangerouslySetInnerHTML;
   const sx = useSx(), styles = usePaginationStyles();
   const [activeRequest, setActiveRequest] = React.useState<{
-    /** Mode associated with the recorded click; ignored when the controlled mode changes. */
+    /**
+     * Mode associated with the recorded click; ignored when the controlled mode changes.
+     */
     mode: 'pages' | 'cursor' | 'loadMore';
-    /** Most recently requested navigation action, used only for spinner placement. */
+    /**
+     * Most recently requested navigation action, used only for spinner placement.
+     */
     action: PaginationAction;
   }>();
   const wasLoading = React.useRef(loading);

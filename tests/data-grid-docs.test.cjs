@@ -12,7 +12,12 @@ test('DataGrid source JSDoc and public guide cover all exposed members and row/s
     const missing = document.replaceAll(name, name + 'Extra');
     assert.throws(() => assertDocumentedSurface(missing, surface), new RegExp(name.replaceAll('.', '\\.')));
   }
-  for (const contract of ['off-page', 'consumer-supplied order', 'missing', 'invalid', 'NaN', '0000', '9.3.27', 'showValue={false}', 'Number.MAX_VALUE', 'HTMLDivElement', 'ReadonlyMap', 'no-visible-columns']) assert.ok(document.toLowerCase().includes(contract.toLowerCase()), contract);
-  assert.match(fs.readFileSync('docs/api/INDEX.md', 'utf8'), /\.\/controls\/data-grid\.md/);
-  assert.match(fs.readFileSync('docs/development/sharepoint-validation/checklists/data-grid.md', 'utf8'), /^# DataGrid/m);
+  const behaviorDocument = document + '\n' + fs.readFileSync(path.resolve('docs/guides/data-grids.md'), 'utf8');
+  for (const contract of ['off-page', 'consumer-supplied order', 'missing', 'invalid', 'NaN', '0000', 'showValue={false}', 'Number.MAX_VALUE', 'HTMLDivElement', 'ReadonlyMap', 'no-visible-columns']) assert.ok(behaviorDocument.toLowerCase().includes(contract.toLowerCase()), contract);
+  assert.match(fs.readFileSync('docs/getting-started/installation.md', 'utf8'), /@fluentui\/react-charts@\^9\.3\.27/);
+  assert.match(fs.readFileSync('docs/api/INDEX.md', 'utf8'), /(?:\.\/)?controls\/data-grid\.md/);
+  const hostChecklist = fs.readFileSync('docs/development/sharepoint-validation/INDEX.md', 'utf8');
+  assert.match(hostChecklist, /^## Focus, input and accessibility/m);
+  assert.match(hostChecklist, /DataGrid.*header\/selection announcements, action isolation, overflow and chart summary alternatives/);
+  assert.match(hostChecklist, /NOT EXECUTED/);
 });

@@ -1,0 +1,5 @@
+{
+  "references": ["renamed", "publicCallback", "metrics.px", "metrics.nested.px", "Compound.Header", "makeSuite"],
+  "surfaceRules": [{ "mode": "dialog", "triggerOptional": true }, { "mode": "popover", "triggerOptional": false }],
+  "suiteMembers": ["Field", "Root"]
+}

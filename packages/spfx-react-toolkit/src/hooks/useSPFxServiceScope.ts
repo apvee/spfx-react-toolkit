@@ -1,3 +1,9 @@
+/**
+ * Consume registered services through the active native host scope.
+ *
+ * @packageDocumentation
+ * @docPage hooks/context
+ */
 // useSPFxServiceScope.ts
 // Hook for SPFx ServiceScope (Dependency Injection)
 
@@ -6,13 +12,19 @@ import { useSPFxContext } from './useSPFxContext';
 import type { ServiceScope, ServiceKey } from '@microsoft/sp-core-library';
 
 /**
- * Return type for useSPFxServiceScope hook
+ * Native host ServiceScope and a typed consume helper; no services are registered or finished.
  *
  * @example
  * ```tsx
- * // Inside a React component beneath a matching host-specific SPFx provider:
- * const scope: SPFxServiceScopeInfo = useSPFxServiceScope();
- * const client = scope.consume(HttpClient.serviceKey);
+ * import * as React from 'react';
+ * import { SPFxServiceScopeInfo, useSPFxServiceScope } from '@apvee/spfx-react-toolkit';
+ * import { HttpClient } from '@microsoft/sp-http';
+ *
+ * function Example() {
+ *   const scope: SPFxServiceScopeInfo = useSPFxServiceScope();
+ *   const client = scope.consume(HttpClient.serviceKey);
+ *   return <span>{client ? 'Available' : 'Unavailable'}</span>;
+ * }
  * ```
  */
 export interface SPFxServiceScopeInfo {
@@ -24,6 +36,7 @@ export interface SPFxServiceScopeInfo {
   
   /**
    * Consumes a registered service from the native scope.
+   * @typeParam T - Service instance type registered by the key.
    * @param serviceKey - The service key registered in the scope.
    * @returns Native service instance.
    * @throws Missing scope or native ServiceScope lifecycle/registration failures.
@@ -36,14 +49,50 @@ export interface SPFxServiceScopeInfo {
  * @returns Optional native scope and a consume helper.
  * @throws When called outside an SPFx provider.
  *
- * @example
+ * @example Basic usage
  * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxServiceScope } from '@apvee/spfx-react-toolkit';
+ *
  * import { HttpClient } from '@microsoft/sp-http';
  *
  * function ClientStatus() {
  *   const { consume } = useSPFxServiceScope();
  *   const client = consume(HttpClient.serviceKey);
  *   return <span>{client ? 'Client available' : 'Unavailable'}</span>;
+ * }
+ * ```
+ *
+ * @useWhen a component must consume an SPFx service registered in its host scope.
+ *
+ *
+ * @example Consume a registered service after native scope readiness
+ * ```tsx
+ * import * as React from 'react';
+ * import { ServiceKey } from '@microsoft/sp-core-library';
+ * import { PageContext } from '@microsoft/sp-page-context';
+ * import { useSPFxServiceScope } from '@apvee/spfx-react-toolkit';
+ * interface ItemService { getData: () => Promise<string[]> }
+ * class DefaultItems implements ItemService {
+ *   public getData(): Promise<string[]> { return Promise.resolve(['Example item']); }
+ * }
+ * const itemKey = ServiceKey.create<ItemService>('example:Items', DefaultItems);
+ * // The host owns custom registration/finishing; this key also supplies a native default implementation.
+ * function ServiceItems() {
+ *   const { consume } = useSPFxServiceScope();
+ *   const [data, setData] = React.useState<string[]>([]);
+ *   const [error, setError] = React.useState('');
+ *   const page = consume(PageContext.serviceKey);
+ *   React.useEffect(() => {
+ *     let disposed = false;
+ *     const service = consume(itemKey);
+ *     service.getData().then(items => { if (!disposed) setData(items); })
+ *       .catch(failure => { if (!disposed) setError(String(failure)); });
+ *     return () => { disposed = true; };
+ *   }, [consume]);
+ *   return <section><h2>{page.web.title}</h2>{error && <p role="alert">{error}</p>}
+ *     <ul>{data.map((item, index) => <li key={index}>{item}</li>)}</ul>
+ *   </section>;
  * }
  * ```
  */

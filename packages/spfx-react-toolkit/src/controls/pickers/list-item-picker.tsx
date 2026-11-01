@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @docPage controls/pickers
+ */
 import * as React from 'react';
 import type { ListItemPickerProps, ListItemPickerOption } from './picker.types';
 import type { ListItemPickerValue } from './picker-values.types';
@@ -6,12 +10,21 @@ import { usePickerSourceContext } from './usePickerSourceContext.internal';
 import { usePickerRuntime } from './usePickerRuntime.internal';
 import { PickerRenderer } from './picker-renderer.internal';
 
-/** Search actual list items/files/folders beneath an SPFx provider, beyond consumer-provided menu candidates.
+/**
+ * Search actual list items/files/folders beneath an SPFx provider, beyond consumer-provided menu candidates.
  * Defaults: TagPicker, multiple selection, Id key, startsWith search, folders excluded.
  * Text/calculated/nontext fields use the appropriate REST/CAML projection with bounded paging.
- * @param props Required list/textField, query options, scoped models and presentation.
+ * @param props - Required list/textField, query options, scoped models and presentation.
  * @returns A native Fluent picker with minimal JSON references; source fields are not persisted.
- * @example <ListItemPicker label="Documenti" list="Documents" textField="FileLeafRef" presentation="tagPicker" />
+ * @example
+ * ```tsx
+ * import * as React from 'react';
+ * import { ListItemPicker } from '@apvee/spfx-react-toolkit';
+ * <ListItemPicker label="Documenti" list="Documents" textField="FileLeafRef" presentation="tagPicker" />
+ * ```
+ *
+ * @useWhen A user must select serializable list-item or file/folder references from one configured list.
+ * @avoidWhen Use FileFolderPicker for hosted file browsing across supported storage sources.
  */
 export function ListItemPicker(props: ListItemPickerProps): React.ReactElement {
   const context = usePickerSourceContext(), source = createListItemPickerSource(props, context);
