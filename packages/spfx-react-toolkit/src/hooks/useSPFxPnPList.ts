@@ -305,6 +305,104 @@ export interface SPFxPnPListInfo<T = unknown> {
  *   </div>)}</div>;
  * }
  * ```
+
+ * @example Read a user-selected list with observable results
+ * ```tsx
+ * import * as React from 'react';
+ * import { Button, Field, Input } from '@fluentui/react-components';
+ * import { useSPFxPnPContext, useSPFxPnPList } from '@apvee/spfx-react-toolkit';
+ *
+ * interface DemoRegions {
+ *   controls?: React.ReactNode;
+ *   commands?: React.ReactNode;
+ *   status?: React.ReactNode;
+ *   diagnostics?: React.ReactNode;
+ *   children?: React.ReactNode;
+ * }
+ * type ReadOutcome =
+ *   | { resource: string; phase: 'pending' }
+ *   | { resource: string; phase: 'success'; items: { Id: number; Title: string }[] }
+ *   | { resource: string; phase: 'error'; message: string };
+ * function standalone(regions: DemoRegions): React.ReactElement {
+ *   return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+ * }
+ *
+ * export function Demo({ render = standalone, resetRevision = 0 }: {
+ *   render?: (regions: DemoRegions) => React.ReactElement;
+ *   resetRevision?: number;
+ * } = {}): React.ReactElement {
+ *   // Mount below the SPFx host provider, for example inside WebPartShell.
+ *   // Choose an existing list in the current web that you are authorized to read.
+ *   const [title, setTitle] = React.useState('');
+ *   const context = useSPFxPnPContext();
+ *   const list = useSPFxPnPList<{ Id: number; Title: string }>(title, undefined, context);
+ *   const [outcome, setOutcome] = React.useState<ReadOutcome>();
+ *   const requestVersion = React.useRef(0);
+ *   const mounted = React.useRef(false);
+ *   const revision = React.useRef(resetRevision);
+ *   React.useLayoutEffect(() => {
+ *     mounted.current = true;
+ *     return () => { mounted.current = false; requestVersion.current++; };
+ *   }, []);
+ *   React.useLayoutEffect(() => {
+ *     // A new context invalidates results from the previous web/client.
+ *     requestVersion.current++;
+ *     setOutcome(undefined);
+ *   }, [context.sp, context.isInitialized]);
+ *   React.useLayoutEffect(() => {
+ *     if (revision.current === resetRevision) return;
+ *     revision.current = resetRevision;
+ *     requestVersion.current++;
+ *     setTitle('');
+ *     setOutcome(undefined);
+ *   }, [resetRevision]);
+ *   const selectTitle = (value: string): void => {
+ *     // Invalidate synchronously, before a pending promise can publish a result.
+ *     requestVersion.current++;
+ *     setTitle(value);
+ *     setOutcome(undefined);
+ *   };
+ *   const read = async (): Promise<void> => {
+ *     if (!title.trim().length || !context.isInitialized || list.loading) return;
+ *     const resource = title;
+ *     const version = ++requestVersion.current;
+ *     const isCurrent = (): boolean => mounted.current && requestVersion.current === version;
+ *     setOutcome({ resource, phase: 'pending' });
+ *     try {
+ *       // The returned promise can settle after selection/reset/unmount.
+ *       const items = await list.query(items => items.select('Id', 'Title').top(5));
+ *       if (isCurrent()) setOutcome({ resource, phase: 'success', items });
+ *     } catch (error) {
+ *       // Readiness can change after the command was enabled; always catch.
+ *       if (isCurrent()) setOutcome({ resource, phase: 'error', message: error instanceof Error ? error.message : String(error) });
+ *     }
+ *   };
+ *   return render({
+ *     controls: <Field label="List title">
+ *       <Input aria-label="List title" value={title} onChange={(_event, data) => selectTitle(data.value)} />
+ *     </Field>,
+ *     commands: <Button disabled={!title.trim().length || !context.isInitialized || list.loading}
+ *       onClick={read}>Read selected list</Button>,
+ *     status: <div role="status" aria-live="polite">
+ *       <p>Selected list: {title || '(none)'}</p>
+ *       <p>Web: {context.siteUrl}; fields: Id, Title; maximum rows: 5</p>
+ *       {context.error && <p role="alert">Context initialization error: {context.error.message}</p>}
+ *       {!context.isInitialized && !context.error && <p>Context is not initialized.</p>}
+ *       {outcome?.phase === 'pending' && list.loading && <p>Loading {outcome.resource}…</p>}
+ *       {outcome?.phase === 'error' && <p role="alert">Request error for {outcome.resource}: {outcome.message}</p>}
+ *       {outcome?.phase === 'success' && <p>Results for {outcome.resource}: {outcome.items.length}</p>}
+ *     </div>,
+ *     children: outcome?.phase === 'success'
+ *       ? <ul aria-label={`Results for ${outcome.resource}`}>{outcome.items.map(item => <li key={item.Id}>{item.Id}: {item.Title}</li>)}</ul>
+ *       : undefined,
+ *     diagnostics: <p>Only the command reads items. Editing the exact title or resetting clears local results and invalidates pending completions; no request is canceled at the server. Context initialization errors remain separate. No items are written.</p>,
+ *   });
+ * }
+ * export const demo = {
+ *   host: 'webPart', kind: 'read', contentPlacement: 'configuration',
+ *   observe: 'Choose an existing list and run the read explicitly; loading, results and errors identify the selected list.',
+ * };
+ * ```
  */
 export function useSPFxPnPList<T = unknown>(
   listTitle: string,

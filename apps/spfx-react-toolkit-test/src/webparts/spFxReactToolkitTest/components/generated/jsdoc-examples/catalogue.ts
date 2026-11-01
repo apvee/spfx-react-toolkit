@@ -198,6 +198,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717' */ "./7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717")
 },
 {
+  "id": "987a602b9876b30335971c617d05d9c716fae7b4d434c5142bf3f1ca9727d305",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList",
+  "title": "Read a user-selected list with observable results",
+  "groupRoute": "docs/api/hooks/pnpjs.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList",
+  "featureTitle": "useSPFxPnPList",
+  "publicNames": [
+    "useSPFxPnPList"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts",
+    "line": 311
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Choose an existing list and run the read explicitly; loading, results and errors identify the selected list."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-987a602b9876b30335971c617d05d9c716fae7b4d434c5142bf3f1ca9727d305' */ "./987a602b9876b30335971c617d05d9c716fae7b4d434c5142bf3f1ca9727d305")
+},
+{
   "id": "d41ff401e795fa9c1800585f3d2bdf498395dbac07dce27da9c8d3a2aa023376",
   "ownerKey": "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback",
   "title": "Report current count through a retained callback",
@@ -251,6 +274,7 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[3], executableExamples[4], executableExamples[5]] }
   ] },
   { key: "hooks", title: "Hook", features: [
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[6], executableExamples[7]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[6]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[7], executableExamples[8]] }
   ] }
 ];

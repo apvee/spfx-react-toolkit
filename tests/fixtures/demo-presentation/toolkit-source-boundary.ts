@@ -36,3 +36,7 @@ export * from '../../../packages/spfx-react-toolkit/src/controls/editable-text';
 export * from '../../../packages/spfx-react-toolkit/src/controls/pickers';
 export * from '../../../packages/spfx-react-toolkit/src/controls/file-folder-picker';
 export { useSPFxConfigurationStore } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxConfigurationStore';
+
+// Explicit exports override the unavailable legacy hook stubs for the read pilot.
+export { useSPFxPnPContext } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnPContext';
+export { useSPFxPnPList } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnPList';
