@@ -33,7 +33,8 @@ test('browser pilot filter preserves its prior cohort and adds exact service and
     PrincipalPicker: ['Explore principal discovery and explicit identity resolution'],
   };
   const spGroup = { SharePointGroupTrim: ['Stage direct SharePoint group membership and observe protected lifetimes'] };
-  const trims = { ...spGroup, SharePointPermissionTrim: ['Stage resource permissions and observe protected lifetimes', 'Compose permission and Entra checks with nested AND'] };
+  const entra = { EntraGroupTrim: ['Stage Entra relationships and observe protected lifetimes'] };
+  const trims = { ...entra, ...spGroup, SharePointPermissionTrim: ['Stage resource permissions and observe protected lifetimes', 'Compose permission and Entra checks with nested AND'] };
   const additions = { ...direct, ...search, ...pickers, ...trims };
   for (const [name, titles] of Object.entries(additions)) assert.deepEqual(pilotTitles[name], titles);
   const features = Object.entries(pilotTitles).map(([title, titles]) => ({ key: title, title, scenarios: [...titles.map(title => ({ title })), { title: 'Future scenario' }] }));
@@ -69,7 +70,10 @@ test('browser pilot filter preserves its prior cohort and adds exact service and
   const shell = missingScenario.flatMap(group => group.features).find(feature => feature.title === 'WebPartShell');
   shell.scenarios = shell.scenarios.filter(scenario => scenario.title !== 'Configure the actual web part Shell');
   assert.throws(() => filterPilotGroups(missingScenario), /Missing pilot scenario or duplicate: WebPartShell\/Configure the actual web part Shell/);
-  const acceptedPermission = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(spGroup, feature.title));
+  const acceptedGroup = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(entra, feature.title));
+  assert.equal(acceptedGroup.length, 62, 'all accepted 5c2 features preserved');
+  assert.equal(acceptedGroup.flatMap(feature => feature.scenarios).length, 73, 'all accepted 5c2 scenarios preserved');
+  const acceptedPermission = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(spGroup, feature.title) && !Object.hasOwn(entra, feature.title));
   assert.equal(acceptedPermission.length,61,'all accepted 5c1 features preserved');
   assert.equal(acceptedPermission.flatMap(feature=>feature.scenarios).length,72,'all accepted 5c1 scenarios preserved');
   const prior = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(trims, feature.title));

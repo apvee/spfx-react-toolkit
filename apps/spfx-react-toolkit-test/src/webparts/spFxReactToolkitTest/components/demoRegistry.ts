@@ -22,12 +22,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
       { symbol: 'SPFxListViewCommandSetProvider', kind: 'host', notes: 'Host-specific provider export verified; requires Command Set host for mounting.' },
     ],
   },
-  {
-    key: 'entra-group-trim', title: 'Entra Group Trim', iconName: 'Permissions',
-    description: 'Current-user access checks.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-entra-group-trim' */ './panels/EntraGroupTrimPanel')),
-    coverage: [{ symbol: 'EntraGroupTrim', kind: 'read', notes: 'Actual native reads, all branches, selectors, protected state and explicit repeat; local transport fixtures and tenant validation are separate.' }],
-  },
+
 ];
 
 export const demoCoverage: readonly DemoCoverageItem[] = demoRegistry.flatMap(entry => entry.coverage);

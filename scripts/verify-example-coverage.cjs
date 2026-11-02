@@ -336,11 +336,13 @@ const { assertDemoControls } = require('./demo-controls.helpers.cjs');
 assertDemoControls(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest'));
 console.log('Verified Fluent 9 demo controls and host theme inheritance.');
 
-for (const name of ['EntraGroupTrim']) {
-  const product = read(path.join(panelsPath, `${name}Panel.tsx`));
-  for (const marker of ['DemoCard', 'data-demo-variant', `${name}.Loading`, `${name}.Fallback`, `${name}.ErrorFallback`, 'key={applied.run}', 'data-trim-demo="applied-target"', 'data-trim-demo="run"', 'TrimProtectedContent', 'observation.gauge']) {
-    if (!product.includes(marker)) throw new Error(`${name} observable scenario missing ${marker}`);
+{
+  const title = 'Stage Entra relationships and observe protected lifetimes';
+  const source = ownedExecutable('entra-group-trim', title);
+  for (const marker of ['export function Demo(', 'resetRevision', 'observe:', 'key={applied.id}', 'ProtectedContent', 'data-trim-demo="run"', 'data-trim-demo="applied-target"', 'EntraGroupTrim.Loading', 'EntraGroupTrim.Fallback', 'EntraGroupTrim.ErrorFallback', "draft.values.split(';')", 'value.trim()', 'Object.freeze', 'groups={applied.groups}', 'groupType={applied.groupType}', 'relationship={applied.relationship}', 'match={applied.match}', 'EntraGroupSelector', 'EntraGroupType', 'EntraGroupRelationship', '<option>All</option>', '<option>M365</option>', '<option>Security</option>', '<option>member</option>', '<option>owner</option>', '<option>memberOrOwner</option>']) {
+    if (!source.includes(marker)) throw new Error(`Canonical Entra scenario missing ${marker}`);
   }
+  if (!generated.symbols.has('EntraGroupTrim') || !catalogueSource.includes(JSON.stringify(title))) throw new Error(`Canonical Entra scenario unavailable: ${title}`);
 }
 for (const [file, title, markers] of [
   ['useSPFxCrossSitePermissions.ts', 'Check staged web list item and folder permissions', ['useSPFxCrossSitePermissions(run.target)', 'Run / repeat', 'key={run.id}', 'Applied target']],

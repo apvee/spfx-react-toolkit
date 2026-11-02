@@ -119,7 +119,9 @@ Duplicate, wrong-family and detectable fragment-wrapped markers fail closed. Kee
 
 Provider, native client, PageContext/current-user identity and target changes hide previous asynchronous grants during render. Obsolete/unmounted requests cannot restore them. Identical inflight reads may be shared within the matching provider only; settled grants are not cached and there is no polling. Host changes still require a React render. Run/repeat in the sample deliberately changes the trim key to perform a fresh check. UI trimming is advisory; each server operation still needs authorization.
 
-The lazy **Entra Group Trim** sample uses this actual control and native APIs, editable selectors, enum fields, all three branches, a protected counter and effect mount gauge. Local fixtures replace only unavailable transports and do not establish authenticated tenant behavior. See [development verification](../development/INDEX.md) and the [controls index](../../api/INDEX.md#references).
+The source-owned **Stage Entra relationships and observe protected lifetimes** scenario stages exact names/GUIDs, classification, relationship and all/any before Run. It uses the actual control and native APIs, with a real protected counter, caller ref and mount/cleanup observations. Drafts and Reset start no checks; Run repeats a settled check. Local native doubles establish control behavior, while [authenticated host validation](../development/sharepoint-validation/INDEX.md) remains separate.
+
+<!-- toolkit:include symbol="EntraGroupTrim" section="example" title="Stage Entra relationships and observe protected lifetimes" -->
 
 `EntraGroupTrimBranchProps` describes each structural marker. `EntraGroupTrimProps` describes the control.
 

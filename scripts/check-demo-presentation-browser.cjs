@@ -97,6 +97,7 @@ async function select(page, key) {
     site: ['useSPFxSiteKeyValueStore', 'Explore collection root records with guarded mutations'],
     'site-service': ['createSPFxSiteKeyValueStoreService', 'Read a collection root record before a consented save'],
     context: ['useSPFxCrossSitePermissions', 'Check staged legacy site web and list permissions'],
+    'entra-group-trim': ['EntraGroupTrim', 'Stage Entra relationships and observe protected lifetimes'],
     'sharepoint-group-trim': ['SharePointGroupTrim', 'Stage direct SharePoint group membership and observe protected lifetimes'],
     'sharepoint-permission-trim': ['SharePointPermissionTrim', 'Stage resource permissions and observe protected lifetimes'],
     'permission-and': ['SharePointPermissionTrim', 'Compose permission and Entra checks with nested AND'],

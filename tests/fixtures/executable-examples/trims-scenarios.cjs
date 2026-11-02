@@ -1,4 +1,4 @@
-// Finite native permission, named-AND and direct SPGroup oracle in the existing one-cache DOM harness.
+// Finite native permission, named-AND, direct SPGroup and Entra oracle in the existing one-cache DOM harness.
 const { createPickerHarness } = require('../picker-source-harness.cjs');
 const { scenario } = require('./cards-description-list.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
@@ -11,6 +11,9 @@ const owner = 'packages/spfx-react-toolkit/src/controls/sharepoint-permission-tr
 const single = 'Stage resource permissions and observe protected lifetimes', nested = 'Compose permission and Entra checks with nested AND';
 const spGroupOwner = 'packages/spfx-react-toolkit/src/controls/sharepoint-group-trim/sharepoint-group-trim.tsx#SharePointGroupTrim';
 const spGroup = 'Stage direct SharePoint group membership and observe protected lifetimes';
+const entraOwner = 'packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx#EntraGroupTrim';
+const entra = 'Stage Entra relationships and observe protected lifetimes';
+const entraIds = Array.from({ length: 21 }, (_, i) => `bbbbbbbb-1111-4111-8111-${String(i + 1).padStart(12, '0')}`);
 const listId = 'aaaaaaaa-1111-4111-8111-111111111111', groupId = 'bbbbbbbb-1111-4111-8111-111111111111';
 const web = 'https://tenant.test/sites/team';
 function deferred(record) { let resolve, reject; const promise = new Promise((a,b) => { resolve = a; reject = b; }); return Object.assign(record, { promise, resolve, reject, settled: false }); }
@@ -33,12 +36,30 @@ function createTrimsFixture(t, title = single, options = {}) {
   Object.assign(toolkit, context, pageModule, library('hooks/useSPFxSPHttpClient'), library('core/provider-webpart', true), library('controls/web-part-shell/web-part-shell', true));
   for (const slug of ['sharepoint-permission-trim', 'entra-group-trim', ...(title === spGroup ? ['sharepoint-group-trim'] : [])]) Object.assign(toolkit, library(`controls/${slug}/${slug}`, true));
   const calls = [], initializations = [], captures = [], nativeAttempts = [], protocolErrors = [];
-  const selected = scenario(title, title === spGroup ? spGroupOwner : owner);
+  const selected = scenario(title, title === spGroup ? spGroupOwner : title === entra ? entraOwner : owner);
   // No live-network fallback is admitted by this fixture.
   t.mock.method(global, 'fetch', url => { protocolErrors.push('Unexpected network: ' + url); throw new Error('Unexpected network: ' + url); });
   function dispatch(record) {
     // Record the native boundary before admission: rejected routes are still real attempted I/O.
-    nativeAttempts.push(Object.freeze({ ...record, login: record.page.user.loginName, web: record.page.web.absoluteUrl, headers: Object.freeze({ ...(record.init?.headers ?? {}) }), body: record.body ? Object.freeze({ groupIds: Object.freeze([...record.body.groupIds]) }) : undefined }));
+    let phase = 'sp-dispatch';
+    if (record.kind === 'graph') {
+      if (record.url.includes('/checkMemberGroups')) phase = 'member';
+      else if (record.url.includes('/owners')) phase = 'owners';
+      else if (record.url.startsWith('/me?')) phase = 'me';
+      else if (record.url.includes('/groups?') || record.url.includes('/directoryObjects?')) phase = 'name';
+      else phase = 'metadata';
+    }
+    nativeAttempts.push(Object.freeze({
+      ...record, phase,
+      query: Object.freeze([...new URLSearchParams(record.url.split('?')[1] ?? '')].map(pair => Object.freeze(pair))),
+      email: record.page.user.email, aad: record.page.aadInfo?.userId?.toString(),
+      login: record.page.user.loginName, web: record.page.web.absoluteUrl,
+      headers: Object.freeze({ ...(record.init?.headers ?? {}) }),
+      body: record.body ? Object.freeze({
+        ...record.body,
+        groupIds: Array.isArray(record.body.groupIds) ? Object.freeze([...record.body.groupIds]) : record.body.groupIds,
+      }) : undefined,
+    }));
     try { return admit(record); }
     catch (error) { protocolErrors.push(error.message); return Promise.reject(error); }
   }
@@ -68,19 +89,50 @@ function createTrimsFixture(t, title = single, options = {}) {
       } else if (suffix === 'effectivebasepermissions' || new RegExp('^' + list + '(?:/items\\((?:1|7)\\))?/effectivebasepermissions$').test(suffix)) { assert.equal(url.search, ''); phase = 'mask'; }
       else if (new RegExp('^' + list + '$').test(suffix)) { assert.deepEqual([...url.searchParams], [['$select', 'Id']]); phase = 'list'; }
       else { assert.equal(suffix, "GetFolderByServerRelativePath(DecodedUrl='/sites/team/Shared Documents/Reports')/ListItemAllFields"); assert.deepEqual([...url.searchParams], [['$select', 'EffectiveBasePermissions,ParentList/Id'], ['$expand', 'ParentList']]); phase = 'folder'; }
+    } else if (title === entra) {
+      assert.equal(url.origin, 'https://graph.microsoft.com');
+      assert.equal(url.hash, ''); assert.equal(url.username, ''); assert.equal(url.password, '');
+      const route = url.pathname.replace(/^\/(?:v1\.0|beta)/, '');
+      const query = [...url.searchParams], continuation = url.searchParams.get('$skiptoken');
+      assert.ok(continuation === null || ['names2', 'owners2', 'outsidePath'].includes(continuation), 'finite Graph continuation');
+      const baseQuery = query.filter(([key]) => key !== '$skiptoken');
+      const validIds = [groupId, ...entraIds];
+      const metadata = 'id,displayName,groupTypes,securityEnabled,mailEnabled,onPremisesSyncEnabled';
+      if (route === '/me/checkMemberGroups') {
+        assert.equal(record.method, 'POST'); assert.equal(url.search, '');
+        assert.deepEqual(Object.keys(record.body), ['groupIds']);
+        assert.ok(Array.isArray(record.body.groupIds) && record.body.groupIds.length > 0 && record.body.groupIds.length <= 20);
+        assert.equal(new Set(record.body.groupIds).size, record.body.groupIds.length);
+        for (const id of record.body.groupIds) assert.ok(validIds.includes(id), 'finite selected GUID');
+        phase = 'member';
+      } else {
+        assert.equal(record.method, 'GET'); assert.equal(record.body, undefined);
+        if (route === '/groups' || route === '/directoryObjects') {
+          assert.ok(['id,displayName', metadata].includes(baseQuery[0]?.[1])); assert.equal(baseQuery[0]?.[0], '$select');
+          assert.equal(baseQuery[1]?.[0], '$filter');
+          assert.ok(["displayName eq 'Project Readers'", "displayName eq 'Other Readers'", "displayName eq 'O''Brien & Readers'"].includes(baseQuery[1]?.[1]), 'finite exact Entra name');
+          assert.equal(baseQuery.length, 2); phase = 'name';
+        } else if (route === '/me') { assert.deepEqual(query, [['$select', 'id']]); phase = 'me'; }
+        else {
+          const match = /^\/groups\/([^/]+)(\/owners)?$/.exec(route); assert.ok(match, 'finite Graph route');
+          assert.ok(validIds.includes(match[1]), 'finite group GUID');
+          if (match[2]) { assert.deepEqual(baseQuery, []); phase = 'owners'; }
+          else { assert.deepEqual(query, [['$select', metadata]]); phase = 'metadata'; }
+        }
+      }
     } else {
       assert.equal(url.origin, 'https://graph.microsoft.com');
       if (url.pathname === '/groups') { assert.equal(record.method, 'GET'); assert.deepEqual([...url.searchParams], [['$select', 'id,displayName'], ['$filter', "displayName eq 'Project Readers'"]]); assert.equal(record.body, undefined); phase = 'name'; }
       else { assert.equal(url.pathname, '/me/checkMemberGroups'); assert.equal(url.search, ''); assert.equal(record.method, 'POST'); assert.deepEqual(record.body, { groupIds: [groupId] }); phase = 'member'; }
     }
-    const request = deferred({ ...record, capture: Object.freeze({ kind: record.kind, phase, method: record.method, url: record.url, query: Object.freeze([...url.searchParams].map(pair => Object.freeze(pair))), configuration: record.configuration, init: record.init ? Object.freeze({ headers: Object.freeze({ ...record.init.headers }) }) : undefined, body: record.body ? Object.freeze({ groupIds: Object.freeze([...record.body.groupIds]) }) : undefined, login: record.page.user.loginName, web: record.page.web.absoluteUrl, client: record.client, page: record.page, id: record.id }), phase, sequence: calls.length, headers: Object.freeze({ ...(record.headers ?? {}) }), body: record.body === undefined ? undefined : Object.freeze({ groupIds: Object.freeze([...record.body.groupIds]) }) });
+    const request = deferred({ ...record, capture: Object.freeze({ kind: record.kind, phase, method: record.method, url: record.url, query: Object.freeze([...url.searchParams].map(pair => Object.freeze(pair))), configuration: record.configuration, init: record.init ? Object.freeze({ headers: Object.freeze({ ...record.init.headers }) }) : undefined, body: record.body ? Object.freeze({ groupIds: Object.freeze([...record.body.groupIds]) }) : undefined, login: record.page.user.loginName, web: record.page.web.absoluteUrl, client: record.client, factory: record.factory, page: record.page, id: record.id, email: record.page.user.email, aad: record.page.aadInfo?.userId?.toString() }), phase, sequence: calls.length, headers: Object.freeze({ ...(record.headers ?? {}) }), body: record.body === undefined ? undefined : Object.freeze({ groupIds: Object.freeze([...record.body.groupIds]) }) });
     calls.push(request); return request.promise;
   }
   function host(id = 'trims-one', mask = options.mask) {
     const page = { web: { absoluteUrl: web, title: 'Team', permissions: mask === undefined ? undefined : new pageNative.SPPermission({ High: 0, Low: mask }) }, site: { absoluteUrl: web }, user: { id: 17, loginName: id, email: id + '@tenant.test' }, cultureInfo: {} };
     const sp = { get(url, configuration, init) { return dispatch({ kind: 'sp', id, client: sp, page, url, configuration, init, method: 'GET' }); } };
-    const graph = { api(url) { return { get: () => dispatch({ kind: 'graph', id, client: graph, page, url, method: 'GET' }), post: body => dispatch({ kind: 'graph', id, client: graph, page, url, method: 'POST', body }) }; } };
-    const factory = { getClient(version) { const request = deferred({ kind: 'initialization', id, page, factory, version, value: graph, capture: Object.freeze({ phase: 'graph-initialization', id, page, factory, version, login: page.user.loginName, web: page.web.absoluteUrl }), sequence: initializations.length }); initializations.push(request); try { assert.equal(version, '3'); } catch (error) { protocolErrors.push(error.message); request.reject(error); } return request.promise; } };
+    const graph = { api(url) { return { get: () => dispatch({ kind: 'graph', id, client: graph, factory, page, url, method: 'GET' }), post: body => dispatch({ kind: 'graph', id, client: graph, factory, page, url, method: 'POST', body }) }; } };
+    const factory = { getClient(version) { const request = deferred({ kind: 'initialization', id, page, factory, version, value: graph, capture: Object.freeze({ phase: 'graph-initialization', id, page, factory, version, login: page.user.loginName, email: page.user.email, aad: page.aadInfo?.userId?.toString(), client: graph, web: page.web.absoluteUrl }), sequence: initializations.length }); initializations.push(request); try { assert.equal(version, '3'); } catch (error) { protocolErrors.push(error.message); request.reject(error); } return request.promise; } };
     const theme = { tryGetTheme: () => undefined, themeChangedEvent: { add() {}, remove() {} } };
     const services = new Map([[keys.page, page], [keys.sp, sp], [keys.graph, factory], [keys.theme, theme]]);
     const scope = { whenFinished: callback => callback(), consume(key) { if (!services.has(key)) { protocolErrors.push('Unexpected native service key'); throw new Error('Unexpected native service key'); } return services.get(key); } };
@@ -141,4 +193,4 @@ function createTrimsFixture(t, title = single, options = {}) {
       assert.deepEqual(files.filter(f => !assets.has(f) && f.includes(compiled ? '/src/' : '/lib/')), [], 'observed opposite implementation is forbidden'); assert.equal(toolkit.useSPFxContext, library('core/context.internal', true).useSPFxContext); return { files, dataRoles }; },
   };
 }
-module.exports = { createTrimsFixture, single, nested, owner, spGroupOwner, spGroup, listId, groupId, web };
+module.exports = { createTrimsFixture, single, nested, owner, spGroupOwner, spGroup, entraOwner, entra, entraIds, listId, groupId, web };

@@ -190,8 +190,17 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     const input = host.querySelector('[role="region"] input'); input.value = 'Retained';
     render(root(), fluent.webDarkTheme);
     assert.equal(host.querySelector('[role="region"] input'), input); assert.equal(input.value, 'Retained');
-    assert.equal(mounts.get(registry[0].key), 1); assert.equal(unmounts.get(registry[0].key), 1);
-    act(() => features[0].click()); await act(async () => { await Promise.resolve(); });
+    assert.equal(mounts.get(registry[0].key), 1);
+    if (registry.length === 1) {
+      // The last native-provider panel has no sibling panel to navigate away to.
+      // Depart the actual host before revisiting; keep the same cached lazy module.
+      act(() => { ReactDOM.unmountComponentAtNode(host); });
+      assert.equal(unmounts.get(registry[0].key), 1);
+      render(root()); await act(async () => { await Promise.resolve(); });
+    } else {
+      assert.equal(unmounts.get(registry[0].key), 1);
+      act(() => features[0].click()); await act(async () => { await Promise.resolve(); });
+    }
     assert.equal(mounts.get(registry[0].key), 2, 'revisiting remounts the real panel');
     assert.equal(host.querySelectorAll('[data-test-panel]').length, 1, 'inactive panels are not mounted');
     assert.equal(loads.size, registry.length, 'every remaining lazy factory was exercised');

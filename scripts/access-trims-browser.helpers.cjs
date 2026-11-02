@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-/** Shared acceptance for the same actual app/panels against source and compiled controls. */
+/** Shared acceptance for the same canonical source-owned app scenarios against source and compiled controls. */
 async function accessTrimsBrowser({ page, check, select, singleExample, labels, overflow, capture }) {
   const configure = patch => page.evaluate(patch => window.trimFixture.configure(patch), patch);
   const release = () => page.evaluate(() => window.trimFixture.release());
@@ -17,7 +17,7 @@ async function accessTrimsBrowser({ page, check, select, singleExample, labels, 
     const previousReads = await page.evaluate(() => window.trimFixture.calls.length);
     if (key === 'sharepoint-group-trim') await page.getByRole('textbox', { name: 'Group values', exact: true }).fill('Changed group');
     else if (key === 'sharepoint-permission-trim') await page.getByRole('textbox', { name: 'Web URL', exact: true }).fill('https://simulated.invalid/sites/next');
-    else await page.locator('[data-trim-demo=groups]').fill('Changed group');
+    else await page.getByRole('textbox', { name: 'Group values', exact: true }).fill('Changed group');
     check(`${key}: draft keeps applied identity`, await page.locator('[data-trim-demo=applied-target]').textContent(), previousTarget);
     check(`${key}: draft keeps counter`, await page.locator('[data-trim-demo=increment]').textContent(), 'Protected counter: 1');
     check(`${key}: draft issues no reads`, await page.evaluate(() => window.trimFixture.calls.length), previousReads);
@@ -30,16 +30,16 @@ async function accessTrimsBrowser({ page, check, select, singleExample, labels, 
     check(`${key}: recovery mounts fresh counter`, await page.locator('[data-trim-demo=increment]').textContent(), 'Protected counter: 0');
     check(`${key}: exactly two positive mounts`, (await page.locator('[data-trim-demo=mount-gauge]').textContent()).includes('Protected mounts: 2;') && (await page.locator('[data-trim-demo=mount-gauge]').textContent()).includes('active: true'), true);
     if (key === 'entra-group-trim') {
-      await page.locator('[data-trim-demo=group-type]').selectOption('M365');
-      await page.locator('[data-trim-demo=relationship]').selectOption('owner');
-      await page.locator('[data-trim-demo=match]').selectOption('any');
+      await page.getByRole('combobox', { name: 'Group type', exact: true }).selectOption('M365');
+      await page.getByRole('combobox', { name: 'Relationship', exact: true }).selectOption('owner');
+      await page.getByRole('combobox', { name: 'Match', exact: true }).selectOption('any');
       await page.locator('[data-trim-demo=run]').click(); await allowed();
-      await page.waitForFunction(() => document.querySelector('[data-trim-demo=applied-target]')?.textContent?.includes('"relationship":"owner"'));
+      await page.waitForFunction(() => document.querySelector('[data-trim-demo=applied-target]')?.textContent && JSON.parse(document.querySelector('[data-trim-demo=applied-target]').textContent).relationship === 'owner');
       check('Entra owner reads native direct owners', await page.evaluate(() => window.trimFixture.calls.some(call => call.url.includes('/owners'))), true);
-      await page.locator('[data-trim-demo=relationship]').selectOption('memberOrOwner'); await page.locator('[data-trim-demo=run]').click(); await allowed();
-      check('Entra relationship/match applied', (await page.locator('[data-trim-demo=applied-target]').textContent()).includes('"match":"any"'), true);
-      await page.locator('[data-trim-demo=group-type]').selectOption('Security'); await page.locator('[data-trim-demo=run]').click(); await state('error');
-      await page.locator('[data-trim-demo=group-type]').selectOption('M365'); await page.locator('[data-trim-demo=run]').click(); await allowed();
+      await page.getByRole('combobox', { name: 'Relationship', exact: true }).selectOption('memberOrOwner'); await page.locator('[data-trim-demo=run]').click(); await allowed();
+      check('Entra relationship/match applied', JSON.parse(await page.locator('[data-trim-demo=applied-target]').textContent()).match === 'any', true);
+      await page.getByRole('combobox', { name: 'Group type', exact: true }).selectOption('Security'); await page.locator('[data-trim-demo=run]').click(); await state('error');
+      await page.getByRole('combobox', { name: 'Group type', exact: true }).selectOption('M365'); await page.locator('[data-trim-demo=run]').click(); await allowed();
     }
     for (const width of [1280, 320]) { await page.setViewportSize({ width, height: 1000 }); await overflow(page, `${key}/${width}`); await capture(page, `${key}-${width}`); }
     await page.setViewportSize({ width: 1280, height: 1000 });
