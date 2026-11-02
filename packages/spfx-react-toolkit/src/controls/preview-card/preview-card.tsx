@@ -52,6 +52,168 @@ import type { PreviewCardProps } from './preview-card.types';
  *   </AutoSkeleton>;
  * }
  * ```
+ *
+ * @example Inspect preview media and image recovery
+ * ```tsx
+ * import * as React from 'react';
+ * import { Badge, Button, Checkbox, Field, Input, Select, FluentProvider, makeStyles, mergeClasses } from '@fluentui/react-components';
+ * import { Apps24Regular, Document16Regular, ArrowRight20Regular, ArrowSync20Regular, CheckmarkCircle16Regular, ImageOff20Regular, Info20Regular, Share16Regular } from '@fluentui/react-icons';
+ *
+ * import { AutoSkeleton, PreviewCard, useSx, text, background, minWidth } from '@apvee/spfx-react-toolkit';
+ * import type { PreviewCardProps, ContentCardProps } from '@apvee/spfx-react-toolkit';
+ *
+ * const cover = (accent: string): string => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="300" viewBox="0 0 640 300"><rect width="640" height="300" fill="${accent}"/><path d="M0 230L190 70l150 135L500 35l140 135v130H0Z" fill="#ffffff" opacity=".16"/><circle cx="514" cy="86" r="34" fill="#ffffff" opacity=".65"/><path d="M64 104h200M64 126h132" stroke="#ffffff" stroke-width="8" opacity=".7"/></svg>`);
+ * const firstCover = cover('#245b83'), secondCover = cover('#635585');
+ * const useCardStyles = makeStyles({ subject: { width: '100%', maxWidth: '520px' }, compact: { width: '100%', maxWidth: '280px' }, panel: { minWidth: 0 }, actions: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, controlRow: { gridColumn: '1 / -1' } });
+ * const modes = ['image', 'custom', 'empty-object', 'empty-callback', 'false', 'empty-fragment'] as const;
+ * type PreviewMode = typeof modes[number];
+ *
+ * type DemoRegions = {
+ *   controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode;
+ *   children?: React.ReactNode; diagnostics?: React.ReactNode;
+ * };
+ * const standalone = (regions: DemoRegions): React.ReactElement => <>
+ *   {regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}
+ * </>;
+ * export function Demo({ render = standalone, resetRevision = 0 }: {
+ *   render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number;
+ * } = {}): React.ReactElement {
+ *   const name = 'main';
+ *   const [rtl, setRtl] = React.useState(false);
+ *   const directionSx = useSx({ dir: rtl ? 'rtl' : undefined });
+ *   const sx = useSx(); const styles = useCardStyles(); const cardStyles = styles;
+ *   const [horizontal, setHorizontal] = React.useState(true), [narrow, setNarrow] = React.useState(false);
+ *   const [loading, setLoading] = React.useState(false), [disabled, setDisabled] = React.useState(false);
+ *   const [decorative, setDecorative] = React.useState(false), [customFallback, setCustomFallback] = React.useState(false);
+ *   const [logoCallback, setLogoCallback] = React.useState(false);
+ *   const [mode, setMode] = React.useState<PreviewMode>('image');
+ *   const [title, setTitle] = React.useState('Quarterly report');
+ *   const [description, setDescription] = React.useState('Team results, goals and next steps.');
+ *   const [notes, setNotes] = React.useState('To share at the team meeting.');
+ *   const [src, setSrc] = React.useState(firstCover);
+ *   const [headerClicks, setHeaderClicks] = React.useState(0), [actionClicks, setActionClicks] = React.useState(0);
+ *   const [rootClicks, setRootClicks] = React.useState(0);
+ *   const [observations, setObservations] = React.useState('Not inspected.');
+ *   const rootRef = React.useMemo(() => React.createRef<HTMLDivElement>(), []), titleRef = React.useMemo(() => React.createRef<HTMLSpanElement>(), []);
+ *   const previewRef = React.useMemo(() => React.createRef<HTMLDivElement>(), []);
+ *   const logoDivRef = React.useMemo(() => React.createRef<HTMLDivElement>(), []);
+ *   const buttonRef = React.useMemo(() => React.createRef<HTMLButtonElement>(), []);
+ *   const previewCalls = React.useRef(0), fallbackCalls = React.useRef(0), logoCalls = React.useRef(0);
+ *   const preview: PreviewCardProps['preview'] = mode === 'image' ? undefined : mode === 'custom' ? {
+ *     ref: previewRef, 'data-cards-demo': 'preview-slot', children: (Tag, props) => { previewCalls.current++; return <Tag {...props}><img src={secondCover} alt="Caller-owned custom cover" /></Tag>; },
+ *   } : mode === 'empty-object' ? { ref: previewRef, 'data-cards-demo': 'preview-slot' }
+ *     : mode === 'empty-callback' ? { children: () => { previewCalls.current++; return undefined; } }
+ *       : mode === 'false' ? false : <></>;
+ *   const commonProps: ContentCardProps & React.RefAttributes<HTMLDivElement> = {
+ *     ref: rootRef, title: { ref: titleRef, 'data-cards-demo': 'title-slot', className: 'cards-consumer-title', children: title || 'Untitled report' },
+ *     headingLevel: 2, description, disabled,
+ *     icon: <Document16Regular aria-hidden="true" />,
+ *     headerActions: { 'data-cards-demo': 'header-slot', children: <Button data-cards-demo="header-action" ref={buttonRef} icon={<Share16Regular aria-hidden="true" />} className={sx(text.noWrap)} appearance="subtle" size="small" onClick={() => setHeaderClicks(value => value + 1)}>Share</Button> },
+ *     actions: { 'data-cards-demo': 'actions-slot', children: <Button data-cards-demo="footer-action" icon={<ArrowRight20Regular aria-hidden="true" />} appearance="primary" size="small" onClick={() => setActionClicks(value => value + 1)}>Open report</Button> },
+ *     footer: { 'data-cards-demo': 'footer-slot', children: 'Updated today · Team Operations' },
+ *     focusMode: 'tab-exit',
+ *     onClick: () => setRootClicks(value => value + 1),
+ *     children: <Field label="Retained notes"><Input input={{ as: 'input', ...{ 'data-cards-demo': 'retained-input' } }} value={notes} onChange={(_, data) => setNotes(data.value)} /></Field>,
+ *   };
+ *   const previousReset = React.useRef(resetRevision);
+ *   React.useEffect(() => {
+ *     if (previousReset.current === resetRevision) return;
+ *     previousReset.current = resetRevision;
+ *     setHorizontal(true); setNarrow(false); setLoading(false); setDisabled(false);
+ *     setDecorative(false); setCustomFallback(false); setLogoCallback(false); setMode('image');
+ *     setTitle('Quarterly report'); setDescription('Team results, goals and next steps.');
+ *     setNotes('To share at the team meeting.'); setSrc(firstCover); setRtl(false);
+ *     setHeaderClicks(0); setActionClicks(0); setRootClicks(0);
+ *     setObservations('Not inspected.'); previewCalls.current = 0; fallbackCalls.current = 0; logoCalls.current = 0;
+ *   }, [resetRevision]);
+ *   return <FluentProvider data-cards-demo="provider" dir={rtl ? 'rtl' : undefined} className={directionSx(background.transparent, minWidth.zero)}>
+ *     <section data-cards-demo="instance" data-card-instance={name} className={styles.panel}>
+ *       {render({
+ *       controls: <>
+ *         <Field label="Title"><Input input={{ as: 'input', ...{ 'data-cards-demo': 'title-input' } }} value={title} onChange={(_, data) => setTitle(data.value)} /></Field>
+ *         <Field label="Description"><Input input={{ as: 'input', ...{ 'data-cards-demo': 'description-input' } }} value={description} onChange={(_, data) => setDescription(data.value)} /></Field>
+ *         <Field label="Orientation"><Select data-cards-demo="orientation" value={horizontal ? 'horizontal' : 'vertical'} onChange={event => setHorizontal(event.target.value === 'horizontal')}><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></Select></Field>
+ *         <Field label="Width"><Select data-cards-demo="width" value={narrow ? 'compact' : 'standard'} onChange={event => setNarrow(event.target.value === 'compact')}><option value="standard">Standard · up to 520 px</option><option value="compact">Compact · up to 280 px</option></Select></Field>
+ *         <div className={mergeClasses(styles.controlRow, styles.actions)}><Checkbox input={{ as: 'input', ...{ 'data-cards-demo': 'loading' } }} label="Loading (AutoSkeleton)" checked={loading} onChange={(_, data) => setLoading(data.checked === true)} /><Checkbox input={{ as: 'input', ...{ 'data-cards-demo': 'disabled' } }} label="Disabled" checked={disabled} onChange={(_, data) => setDisabled(data.checked === true)} /></div>
+ *       </>,
+ *       commands: <><Button size="small" data-cards-demo="fail-image" icon={<ImageOff20Regular aria-hidden="true" />} onClick={() => setSrc('/cards-demo-missing-image.png')}>Simulate image error</Button><Button size="small" data-cards-demo="new-src" icon={<ArrowSync20Regular aria-hidden="true" />} onClick={() => setSrc(current => current === firstCover ? secondCover : firstCover)}>Reload image</Button></>,
+ *       status: <div data-cards-demo="counters" className={styles.actions} aria-live="polite"><Badge appearance="tint" color={loading ? 'informative' : disabled ? 'warning' : 'success'} icon={<CheckmarkCircle16Regular aria-hidden="true" />}>{loading ? 'Loading' : disabled ? 'Disabled' : 'Ready'}</Badge><span>Image: {src === '/cards-demo-missing-image.png' ? 'fallback' : 'available'}</span><span>Header:{headerClicks} Footer:{actionClicks}</span></div>,
+ *       diagnostics: <>
+ *         <Checkbox input={{ as: 'input', ...{ 'data-cards-demo': 'direction' } }} label="RTL override (unchecked inherits host)" checked={rtl} onChange={(_, data) => setRtl(data.checked === true)} />
+ *         <Field label="preview"><Select data-cards-demo="preview-mode" value={mode} onChange={event => { const value = event.target.value; if (value === 'image' || value === 'custom' || value === 'empty-object' || value === 'empty-callback' || value === 'false' || value === 'empty-fragment') setMode(value); }}>{modes.map(value => <option key={value} value={value}>{value}</option>)}</Select></Field>
+ *         <Checkbox input={{ as: 'input', ...{ 'data-cards-demo': 'decorative' } }} label="image.alt: decorative" checked={decorative} onChange={(_, data) => setDecorative(data.checked === true)} />
+ *         <Checkbox input={{ as: 'input', ...{ 'data-cards-demo': 'logo-callback' } }} label="Logo render callback" checked={logoCallback} onChange={(_, data) => setLogoCallback(data.checked === true)} />
+ *         <Checkbox input={{ as: 'input', ...{ 'data-cards-demo': 'custom-fallback' } }} label="previewFallback: custom" checked={customFallback} onChange={(_, data) => setCustomFallback(data.checked === true)} />
+ *         <Button data-cards-demo="inspect-refs" icon={<Info20Regular aria-hidden="true" />} onClick={() => setObservations(`root:${rootRef.current?.tagName ?? 'absent'} title:${titleRef.current?.tagName ?? 'absent'} preview:${previewRef.current?.tagName ?? 'absent'} logo:${logoDivRef.current?.tagName ?? 'absent'} button:${buttonRef.current?.tagName ?? 'absent'} preview callbacks:${previewCalls.current} fallback callbacks:${fallbackCalls.current} logo callbacks:${logoCalls.current}`)}>Inspect refs and callbacks</Button>
+ *         <p data-cards-demo="observations">{observations}</p><p>Root bubbled:{rootClicks}</p>
+ *         <p>Notes and their native input remain mounted through orientation, width, loading and host presentation changes. Reset restores local values. Direction follows the host unless overridden.</p>
+ *       </>,
+ *       children: <div data-cards-demo="preview-container" className={narrow ? cardStyles.compact : cardStyles.subject}>
+ *         <AutoSkeleton data-cards-demo="skeleton" loading={loading}>
+ *           <PreviewCard {...commonProps} data-cards-demo="preview-card" orientation={horizontal ? 'horizontal' : 'vertical'} preview={preview}
+ *             image={{ src, alt: decorative ? '' : 'Illustrated quarterly report cover' }}
+ *             previewFallback={customFallback ? { 'data-cards-demo': 'fallback-slot', children: (Tag, props) => { fallbackCalls.current++; return <Tag {...props}>Custom unavailable cover</Tag>; } } : 'Cover unavailable'}
+ *             logo={logoCallback ? { ref: logoDivRef, 'data-cards-demo': 'logo-slot', children: (Tag, props) => { logoCalls.current++; return <Tag {...props}><Apps24Regular aria-hidden="true" /></Tag>; } } : { ref: logoDivRef, 'data-cards-demo': 'logo-slot', children: <Apps24Regular aria-hidden="true" /> }} />
+ *         </AutoSkeleton>
+ *       </div>,
+ *       })}
+ *     </section>
+ *   </FluentProvider>;
+ * }
+ * export const demo = {
+ *   host: 'none', kind: 'snapshot', contentPlacement: 'subject',
+ *   observe: 'Change preview modes, fail and reload its data image, inspect slot refs and callbacks, and retain the report note through layout and loading changes.',
+ * };
+ * ```
+ *
+ * @example Retain caller data when switching card types
+ * ```tsx
+ * import * as React from 'react';
+ * import { Field, Input, Select } from '@fluentui/react-components';
+ * import { ContentCard, PreviewCard } from '@apvee/spfx-react-toolkit';
+ * import type { ContentCardProps } from '@apvee/spfx-react-toolkit';
+ * type DemoRegions = {
+ *   controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode;
+ *   children?: React.ReactNode; diagnostics?: React.ReactNode;
+ * };
+ * const standalone = (regions: DemoRegions): React.ReactElement => <>
+ *   {regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}
+ * </>;
+ * export function Demo({ render = standalone, resetRevision = 0 }: {
+ *   render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number;
+ * } = {}): React.ReactElement {
+ *   const [kind, setKind] = React.useState<'preview' | 'content'>('preview');
+ *   const [title, setTitle] = React.useState('Quarterly report');
+ *   const [description, setDescription] = React.useState('Team results, goals and next steps.');
+ *   const [note, setNote] = React.useState('To share at the team meeting.');
+ *   const previousReset = React.useRef(resetRevision);
+ *   React.useEffect(() => {
+ *     if (previousReset.current === resetRevision) return;
+ *     previousReset.current = resetRevision;
+ *     setKind('preview'); setTitle('Quarterly report'); setDescription('Team results, goals and next steps.'); setNote('To share at the team meeting.');
+ *   }, [resetRevision]);
+ *   const shared: ContentCardProps = {
+ *     title: title || 'Untitled report', headingLevel: 2, description,
+ *     children: <Field label="Retained notes"><Input input={{ as: 'input', ...{ 'data-cards-demo': 'retained-input' } }} value={note} onChange={(_, data) => setNote(data.value)} /></Field>,
+ *   };
+ *   return <section data-cards-demo="instance" data-card-instance="switch-retention">{render({
+ *     controls: <>
+ *       <Field label="Type"><Select data-cards-demo="kind" data-demo-variant="card-type" value={kind} onChange={event => setKind(event.target.value === 'content' ? 'content' : 'preview')}><option value="preview">PreviewCard</option><option value="content">ContentCard</option></Select></Field>
+ *       <Field label="Title"><Input input={{ as: 'input', ...{ 'data-cards-demo': 'title-input' } }} value={title} onChange={(_, data) => setTitle(data.value)} /></Field>
+ *       <Field label="Description"><Input input={{ as: 'input', ...{ 'data-cards-demo': 'description-input' } }} value={description} onChange={(_, data) => setDescription(data.value)} /></Field>
+ *     </>,
+ *     status: <output aria-live="polite">Current presentation: {kind}</output>,
+ *     children: kind === 'preview'
+ *       ? <PreviewCard {...shared} data-cards-demo="preview-card" preview={<span>Caller-owned report preview</span>} />
+ *       : <ContentCard {...shared} data-cards-demo="content-card" />,
+ *     diagnostics: <p>Title, description and note live in this caller. Switching card types replaces the card subtree while retaining these values. Reset restores the PreviewCard baseline and keeps this scenario mounted.</p>,
+ *   })}</section>;
+ * }
+ * export const demo = {
+ *   host: 'none', kind: 'snapshot', contentPlacement: 'subject',
+ *   observe: 'Edit title, description and note, switch card types in both directions and verify that caller-owned values survive the replaced presentation.',
+ * };
+ * ```
  */
 export const PreviewCard = React.forwardRef<HTMLDivElement, PreviewCardProps>(({ image, preview, previewFallback, ...props }, ref) => {
   const sx = useSx(); const styles = useCardStyles();

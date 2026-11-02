@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Accordion, AccordionHeader, AccordionItem } from '@fluentui/react-components';
-import ProductPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/DescriptionListPanel';
+import { Demo } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/generated/jsdoc-examples/9ecb7aa0e0a35bac5eb68d8c09b02af3744c9b9d99a8c170af24f75e136c5d2a';
+import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
+const ProductPanel: React.FC = () => <section id="description-list-demo" data-description-list-demo="panel"><Demo render={regions => <DemoCard title="Inspect responsive metadata with data and compound APIs" iconName="List" {...regions} />} /></section>;
 import DescriptionListPanel, { DescriptionListExample } from './description-list-regressions';
 import { DemoAccordionPanel } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared';
 

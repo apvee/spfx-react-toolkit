@@ -13,7 +13,11 @@ const directory = path.join(root, process.env.DEMO_PRESENTATION_MODE === 'source
 const output = path.resolve(process.env.DEMO_PRESENTATION_EVIDENCE || path.join(root, '.docs/maintenance/evidence/demo-presentation'));
 const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
-const entries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
+const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
+const entries = legacyEntries.concat([
+  { key: 'content-card', title: 'ContentCard' }, { key: 'cards', title: 'PreviewCard' },
+  { key: 'card-retention', title: 'PreviewCard' }, { key: 'description-list', title: 'DescriptionList' },
+]);
 const checks = [], diagnostics = [], metrics = [], screenshots = [], fontAssets = [];
 const check = (name, actual, expected) => { checks.push({ name, actual, expected }); assert.deepEqual(actual, expected, name); };
 const server = http.createServer((request, response) => {
@@ -39,20 +43,27 @@ async function select(page, key) {
     selectedPanels.set(page, await selectGeneratedShellScenario(page));
     return;
   }
-  if (key === 'pagination' || key === 'imports') {
-    const title = key === 'pagination' ? 'Pagination' : 'useSx';
-    const scenario = key === 'pagination' ? 'Browse orders across pagination modes' : 'Compare root domain and historical imports';
+  const sourceCases = {
+    pagination: ['Pagination', 'Browse orders across pagination modes'], imports: ['useSx', 'Compare root domain and historical imports'],
+    'content-card': ['ContentCard', 'Configure content slots and native card interaction'],
+    cards: ['PreviewCard', 'Inspect preview media and image recovery'],
+    'card-retention': ['PreviewCard', 'Retain caller data when switching card types'],
+    'description-list': ['DescriptionList', 'Inspect responsive metadata with data and compound APIs'],
+  };
+  if (Object.hasOwn(sourceCases, key)) {
+    const [title, scenario] = sourceCases[key];
     const mobile = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
     if (await mobile.isVisible()) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: key === 'pagination' ? /^Controlli/ : /^Hook/ }).first();
+      const group = nav.getByRole('button', { name: key === 'imports' ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
     const panel = page.getByRole('region', { name: title, exact: true });
-    if (key === 'pagination') await panel.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption({ label: scenario });
+    const scenarios = panel.getByRole('combobox', { name: 'Scenario', exact: true });
+    if (await scenarios.count()) await scenarios.selectOption({ label: scenario });
     await panel.getByRole('heading', { name: scenario, exact: true }).waitFor();
     await panel.locator('[data-demo-section]').waitFor();
     selectedPanels.set(page,panel); await settle(page); return;
@@ -98,6 +109,8 @@ async function singleExample(page, key, checkpoint = 'initial') {
   check(`${name}: one principal subject or current result`, await panel.locator('[data-demo-subject],[data-demo-result]').count(), 1);
   const principalRoots = {
     cards: '.fui-Card:not([data-demo-configuration])',
+    'content-card': '.fui-Card:not([data-demo-configuration])',
+    'card-retention': '.fui-Card:not([data-demo-configuration])',
     form: 'form',
     'data-grid': '.fui-DataGrid',
     'description-list': 'dl',
@@ -150,6 +163,25 @@ async function singleExampleTransitions(page, key, inspectVariant = async () => 
 async function interact(page, key) {
   const panel = activePanel(page);
   switch (key) {
+    case 'content-card': {
+      const card = panel.locator('[data-cards-demo=content-card]');
+      const before = await card.getAttribute('aria-checked');
+      await card.click({ position: { x: 5, y: 5 } });
+      check('ContentCard accepts controlled native selection', await card.getAttribute('aria-checked') !== before, true);
+      break;
+    }
+    case 'card-retention': {
+      await panel.locator('[data-cards-demo=retained-input]').fill('Shared integrated draft');
+      await panel.locator('[data-cards-demo=title-input]').fill('Shared integrated title');
+      await panel.locator('[data-cards-demo=description-input]').fill('Shared integrated description');
+      for (const kind of ['content', 'preview']) {
+        await panel.locator('[data-cards-demo=kind]').selectOption(kind);
+        check(`${kind} retains caller note`, await panel.locator('[data-cards-demo=retained-input]').inputValue(), 'Shared integrated draft');
+        check(`${kind} retains caller title`, await panel.locator(`[data-cards-demo=${kind}-card] h2`).textContent(), 'Shared integrated title');
+        check(`${kind} retains caller description`, await panel.locator(`[data-cards-demo=${kind}-card]`).getByText('Shared integrated description', { exact: true }).count(), 1);
+      }
+      break;
+    }
     case 'cards': await panel.locator('[data-card-instance=main] [data-cards-demo=title-input]').fill('Integrated title'); check('Cards editable title', await panel.locator('[data-card-instance=main] [data-cards-demo=preview-card] h2').textContent(), 'Integrated title'); break;
     case 'web-part-shell': await panel.getByRole('button', { name: 'Show title', exact: true }).click(); check('Shell actual title visibility', await page.locator('[data-web-part-shell-header]').count(), 1); break;
     case 'description-list': { const select = panel.locator('[data-description-list-demo=layout]').first(); await select.selectOption('vertical'); check('DescriptionList actual vertical term/value layout', await panel.locator('[data-description-list-demo=list]').first().evaluate(list => { const term = list.querySelector('dt').getBoundingClientRect(), value = list.querySelector('dd').getBoundingClientRect(); return value.top >= term.bottom - 1; }), true); break; }
@@ -281,7 +313,7 @@ async function liveTheme(page) {
       console.log(`Focused source-owned JSDoc scenarios: ${checks.length} checks PASS (simulated native transport).`);
       return;
     }
-    check('Actual remaining transitional feature count', await page.locator('[data-example-feature^="legacy:"]').count(), entries.length);
+    check('Actual remaining transitional feature count', await page.locator('[data-example-feature^="legacy:"]').count(), legacyEntries.length);
     check('Coverage detailed default collapsed', await page.getByRole('button', { name: 'Detailed package coverage', exact: true }).getAttribute('aria-expanded'), 'false');
     await page.screenshot({ path: path.join(output, 'initial-viewport.png') });
     if (process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1') {
@@ -516,10 +548,10 @@ async function liveTheme(page) {
     await page.evaluate(() => window.demoFixtureHost.update({ theme: 'light', dir: 'ltr' }));
     await page.setViewportSize({ width: 320, height: 1000 }); await settle(page);
     const featureSelect = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
-    await featureSelect.selectOption(`legacy:${entries[0].key}`); await featureSelect.focus();
-    for (let index = 1; index < entries.length; index++) {
+    await featureSelect.selectOption(`legacy:${legacyEntries[0].key}`); await featureSelect.focus();
+    for (let index = 1; index < legacyEntries.length; index++) {
       await page.keyboard.press('ArrowDown'); await settle(page);
-      check(`Keyboard reaches transitional feature ${index + 1}`, await featureSelect.inputValue(), `legacy:${entries[index].key}`);
+      check(`Keyboard reaches transitional feature ${index + 1}`, await featureSelect.inputValue(), `legacy:${legacyEntries[index].key}`);
     }
     await capture(page, 'keyboard-navigation-320');
     for (const zoom of [1, 2]) {

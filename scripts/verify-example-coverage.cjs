@@ -174,7 +174,8 @@ console.log('Verified selectable root/domain/legacy Imports and dedicated equiva
 
 const controlSymbols = controlSurface.filter(item => ['EditableText', 'FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination', 'DescriptionList', 'ContentCard', 'PreviewCard', 'SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGroupTrim'].includes(item.name)).map(item => item.name);
 assertCovered('Controls', controlSymbols, registrySymbols);
-const descriptionListPanel = scenarioSource('DescriptionList');
+const descriptionListSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx'));
+const descriptionListPanel = scenarioSource('DescriptionList', descriptionListSource);
 for (const marker of ['DescriptionList.Item', 'items=', 'layout=', 'key={entry.id}',
   'children: (Component, props)', 'container.inlineSize', '[320, 479, 480, 639, 640, 900]',
   'createRef<HTMLDListElement>', 'createRef<HTMLDivElement>', 'Field label=', 'Select data-description-list-demo=',
@@ -259,9 +260,18 @@ for (const marker of ['Pagination', 'onPaginationChange', 'pageIndex', 'pageSize
   if (!paginationPanel.includes(marker)) throw new Error(`Observable Pagination scenario missing ${marker}`);
 }
 
-const cardsPanel = scenarioSource('Cards');
-for (const marker of ["key: 'cards'", "webpackChunkName: 'spfx-demo-cards'", "'./panels/CardsPanel'"]) {
-  if (!importsRegistry.includes(marker)) throw new Error(`Cards scenario registry missing ${marker}`);
+const contentCardSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx'));
+const previewCardSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx'));
+const cardsPanel = scenarioSource('Cards', contentCardSource + '\n' + previewCardSource);
+const sourceCases = [
+  ['ContentCard', 'Configure content slots and native card interaction'],
+  ['PreviewCard', 'Inspect preview media and image recovery'],
+  ['PreviewCard', 'Retain caller data when switching card types'],
+  ['DescriptionList', 'Inspect responsive metadata with data and compound APIs'],
+];
+const catalogueSource = read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts'));
+for (const [owner, title] of sourceCases) {
+  if (!generated.symbols.has(owner) || !catalogueSource.includes(JSON.stringify(title))) throw new Error(`Source-owned scenario unavailable: ${owner}/${title}`);
 }
 for (const marker of ['ContentCard', 'PreviewCard', 'title={{', 'description={{', 'headerActions={{', 'footer={{',
   'actions={{', 'previewFallback=', 'logo=', 'headingLevel=', 'image=', 'selected=', 'onSelectionChange=',
@@ -276,13 +286,16 @@ if (!cardsIsolation.includes('name="independent"') || !cardsIsolation.includes('
 console.log('Verified selectable single Cards, image lifecycle and versioned native/isolation conformance coverage.');
 
 
-for (const name of ['Cards', 'Stage', 'Form', 'DataGrid', 'Groups', 'DescriptionList', 'Styles', 'RelativeTime', 'FormattedText', 'EditableText', 'AutoSkeleton', 'StateMessage', 'Providers', 'Context']) {
+for (const name of ['Stage', 'Form', 'DataGrid', 'Groups', 'Styles', 'RelativeTime', 'FormattedText', 'EditableText', 'AutoSkeleton', 'StateMessage', 'Providers', 'Context']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
   if (!product.includes('data-demo-variant')) throw new Error(`${name} selectable product variant missing`);
 }
 for (const source of [paginationPanel, importsPanelSource]) {
   for (const marker of ['export function Demo(', 'return render({', 'data-demo-variant', 'observe:']) if (!source.includes(marker)) throw new Error(`Source-owned variant missing ${marker}`);
+}
+for (const source of [contentCardSource, previewCardSource, descriptionListSource]) {
+  for (const marker of ['export function Demo(', 'render({', 'resetRevision', 'observe:']) if (!source.includes(marker)) throw new Error(`Source-owned control scenario missing ${marker}`);
 }
 console.log('Verified live single-example variant declarations; execution/cardinality are browser checks.');
 // Guard the authored webpart tree, never native DOM emitted by Fluent/toolkit controls.

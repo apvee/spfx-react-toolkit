@@ -1,4 +1,4 @@
-// Actual CardsPanel, independently bundled against source and compiled library.
+// Actual source-owned card scenarios and independent conformance, against source and compiled library.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const http = require('node:http');
@@ -31,7 +31,6 @@ async function verify(boundary) {
     await page.goto(url);
     const live = page.locator('[data-card-instance="main"]');
     const liveTarget = marker => live.locator(`[data-cards-demo="${marker}"]`);
-    const liveSubject = () => live.locator('[data-cards-demo="preview-card"], [data-cards-demo="content-card"]');
     check('product has one configuration', await live.locator('[data-demo-configuration]').count(), 1);
     check('product has one actual card', await live.locator('.fui-Card').count(), 2);
     check('approved title', await liveTarget('title-input').inputValue(), 'Quarterly report');
@@ -49,12 +48,28 @@ async function verify(boundary) {
     check('single example keeps note DOM through layout and loading', await liveTarget('retained-input').evaluate(node => node === window.liveRetainedInput && node.value === 'Single example retained note'), true);
     await live.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click();
     check('open diagnostics still has one actual card', await live.locator('.fui-Card').count(), 2);
-    await liveTarget('kind').selectOption('content');
-    check('alternate card is a single ContentCard', await liveTarget('content-card').count(), 1);
-    check('alternate removes PreviewCard', await liveTarget('preview-card').count(), 0);
-    check('alternate preserves shared note', await liveTarget('retained-input').inputValue(), 'Single example retained note');
-    await liveTarget('kind').selectOption('preview');
-    check('switch back has one subject', await liveSubject().count(), 1);
+    await page.goto(`${url}/?cards-scenario=retention`);
+    const retention = page.locator('[data-card-instance="switch-retention"]');
+    const retained = marker => retention.locator(`[data-cards-demo="${marker}"]`);
+    await retained('title-input').fill('Shared caller title');
+    await retained('description-input').fill('Shared caller description');
+    await retained('retained-input').fill('Single example retained note');
+    for (const kind of ['content', 'preview']) {
+      await retained('kind').selectOption(kind);
+      check(`${kind} is the only type-switch subject`, await retention.locator('[data-cards-demo="preview-card"], [data-cards-demo="content-card"]').count(), 1);
+      check(`${kind} keeps caller title`, await retained(kind + '-card').locator('h2').textContent(), 'Shared caller title');
+      check(`${kind} keeps caller description`, await retained(kind + '-card').getByText('Shared caller description', { exact: true }).count(), 1);
+      check(`${kind} keeps caller note`, await retained('retained-input').inputValue(), 'Single example retained note');
+    }
+    await page.goto(`${url}/?cards-scenario=content`);
+    const contentProduct = page.locator('[data-card-instance="content-primary"]');
+    await contentProduct.locator('[data-cards-demo="content-card"]').click({ position: { x: 5, y: 5 } });
+    check('source ContentCard handles controlled selection request', (await contentProduct.locator('[data-cards-demo="counters"]').textContent()).includes('Selection requests:1 Selected:true'), true);
+    await contentProduct.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click();
+    await contentProduct.getByRole('checkbox', { name: 'Accept selection requests', exact: true }).uncheck();
+    await contentProduct.locator('[data-cards-demo="content-card"]').click({ position: { x: 5, y: 5 } });
+    check('source ContentCard can decline the next selection request', (await contentProduct.locator('[data-cards-demo="counters"]').textContent()).includes('Selection requests:2 Selected:true'), true);
+    await page.goto(url);
     const liveMediaBox = () => liveTarget('preview-card').evaluate(node => { const r = node.querySelector('[data-card-preview]').getBoundingClientRect(); return { width: r.width, height: r.height }; });
     const originalLiveMedia = await liveMediaBox();
     await liveTarget('fail-image').click(); await liveTarget('preview-card').locator('[data-card-image-fallback]').waitFor();
@@ -62,7 +77,6 @@ async function verify(boundary) {
     await liveTarget('new-src').click();
     check('single example new source clears fallback', await liveTarget('preview-card').locator('[data-card-image-fallback]').count(), 0);
     await liveTarget('width').selectOption('standard'); await liveTarget('orientation').selectOption('horizontal');
-    await live.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click();
 
     await page.getByRole('button', { name: 'Independent RTL instance', exact: true }).click();
     await page.locator('[data-card-instance=regression]').getByRole('button', { name: 'Selection and native Card comparison', exact: true }).click();

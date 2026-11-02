@@ -148,7 +148,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     assert.equal(retainedNote.closest('.fui-AccordionPanel').hasAttribute('inert'), false);
     const rootModule = load(path.join(base, 'demoRegistry.ts'));
     registry = rootModule.demoRegistry;
-    assert.equal(registry.length, 27, 'all residual panels participate in lazy navigation');
+    assert.equal(registry.length, 25, 'all residual panels participate in lazy navigation');
     const paths = [...read('demoRegistry.ts').matchAll(/component: lazyPanel\(\(\) => import\(\/\*[^*]+\*\/ '([^']+)'\)\)/g)].map(match => match[1]);
     assert.equal(paths.length, registry.length);
     registry.forEach((entry, i) => { entry.componentPath = paths[i]; });
@@ -161,7 +161,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     assert.ok(coverageToggle, 'verbose coverage has a disclosure');
     assert.equal(coverageToggle.getAttribute('aria-expanded'), 'false', 'demo examples precede collapsed metadata');
     act(() => coverageToggle.click());
-    assert.match(host.textContent, /ContentCard/);
+    assert.match(host.textContent, /FileFolderPicker \(Read\)/);
     act(() => coverageToggle.click());
     const features = Array.from(host.querySelectorAll('[data-example-feature]'));
     assert.equal(features.length, registry.length, 'one legacy feature entry per panel, not per covered symbol');

@@ -3,14 +3,12 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
-const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
 
-test('Description List registry loads one executable compound-control scenario', () => {
-  const registry = fs.readFileSync(path.join(base, 'demoRegistry.ts'), 'utf8');
-  for (const token of ["key: 'description-list'", "symbol: 'DescriptionList'", "webpackChunkName: 'spfx-demo-description-list'"]) {
-    assert.equal(registry.split(token).length - 1, 1, token);
-  }
-  assert.match(registry, /import\(.*\.\/panels\/DescriptionListPanel/);
+test('DescriptionList is available through its generated owner scenario', () => {
+  const { entry } = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Inspect responsive metadata with data and compound APIs');
+  assert.equal(entry.featureTitle, 'DescriptionList');
+  assert.equal(entry.metadata.host, 'none');
+  assert.ok(entry.metadata.observe.length > 0);
 });
 
 test('Description List demo retains the acceptance scenarios used for rendered host verification', () => {
@@ -57,24 +55,12 @@ test('Description List demo retains the acceptance scenarios used for rendered h
  });
 
 
-test('Product scenario owns one configuration and selectable variants without comparison galleries', () => {
-  const product = fs.readFileSync(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/DescriptionListPanel.tsx'), 'utf8');
-  const compiler = require('typescript');
-  const parsed = compiler.createSourceFile('product.tsx', product, compiler.ScriptTarget.Latest, true, compiler.ScriptKind.TSX);
-  const cards = []; let createInRender = false;
-  function inspect(node) {
-    if (compiler.isJsxOpeningElement(node) && node.tagName.getText(parsed) === 'DemoCard') cards.push(node);
-    if (compiler.isCallExpression(node) && ['createForm', 'createDataGrid'].includes(node.expression.getText(parsed))) {
-      for (let parent = node.parent; parent; parent = parent.parent) if (compiler.isFunctionLike(parent)) createInRender = true;
-    }
-    compiler.forEachChild(node, inspect);
-  }
-  inspect(parsed);
+test('source metadata scenario owns regions and its data/compound variant', () => {
+  const { source } = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Inspect responsive metadata with data and compound APIs');
+  const parsed = ts.createSourceFile('source.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
   assert.equal(parsed.parseDiagnostics.length, 0);
-  assert.equal(cards.length, 1);
-  assert.equal(createInRender, false);
-  assert.match(product, /data-demo-variant="API"/);
-  assert.doesNotMatch(product, /Independent |comparison|hidden=\{(?:mode|family) !==/);
+  for (const token of ['controls:', 'status:', 'diagnostics:', 'children:', 'data-demo-variant="API"', 'key={entry.id}']) assert.ok(source.includes(token), token);
+  assert.doesNotMatch(source, /Independent |comparison|components\/|panels\/|style=/);
   const browserChecks = fs.readFileSync(path.resolve(__dirname, 'fixtures/demo-control-isolation/task3-product.browser.cjs'), 'utf8');
   assert.match(browserChecks, /descriptionListProduct/);
 });

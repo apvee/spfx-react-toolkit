@@ -40,25 +40,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
-    key: 'cards',
-    title: 'Content and Preview Cards',
-    iconName: 'Picture',
-    description: 'One selectable report card with editable properties, image lifecycle and retained notes.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-cards' */ './panels/CardsPanel')),
-    coverage: [
-      { symbol: 'ContentCard', kind: 'snapshot', notes: 'Selectable ContentCard report with retained props/notes; literal/native peer parity in versioned fixtures.' },
-      { symbol: 'PreviewCard', kind: 'snapshot', notes: 'Selectable PreviewCard report, image lifecycle and retained notes; slot/empty-media/native/independent regressions in versioned fixtures.' },
-    ],
-  },
-  {
-    key: 'description-list',
-    title: 'Description List',
-    iconName: 'Info',
-    description: 'One document detail with selectable data/compound composition and responsive layout.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-description-list' */ './panels/DescriptionListPanel')),
-    coverage: [{ symbol: 'DescriptionList', kind: 'snapshot', notes: 'Data/compound APIs, rich slots, literal/zero/empty values, 480px container threshold, nested containers, stable child state, native refs/hidden/events and independent state, inherited host theme and explicit RTL overrides.' }],
-  },
-  {
     key: 'data-grid',
     title: 'DataGrid',
     iconName: 'Table',

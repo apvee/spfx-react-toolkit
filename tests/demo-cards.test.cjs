@@ -70,67 +70,22 @@ test('retained regression fixture controls execute against the source cards and 
     act(() => { find('new-src').click(); }); assert.ok(find('preview-card').querySelector('[data-card-preview] > img'));
     check('loading', true); assert.equal(find('skeleton').getAttribute('aria-busy'), 'true'); assert.equal(find('retained-input'), input);
     check('loading', false); assert.equal(find('retained-input'), input);
-    const actualModule = { exports: {} };
-    const source = fs.readFileSync('apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/CardsPanel.tsx', 'utf8');
-    const actualCompiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.React } });
-    new Function('require', 'module', 'exports', actualCompiled.outputText)(name => name === '@apvee/spfx-react-toolkit' ? library : name === '../shared' ? shared : require(name), actualModule, actualModule.exports);
-    act(() => { ReactDOM.render(React.createElement(RendererProvider, { renderer }, React.createElement(fluent.FluentProvider, { theme: fluent.webLightTheme }, React.createElement(actualModule.exports.default))), host); });
-    const findActual = marker => host.querySelector(`[data-cards-demo="${marker}"]`);
-    const change = (marker, value) => act(() => Simulate.change(findActual(marker), { target: { value } }));
-    const one = () => assert.equal(host.querySelectorAll('[data-cards-demo=preview-card], [data-cards-demo=content-card]').length, 1);
-    one(); assert.equal(host.querySelectorAll('[data-demo-configuration]').length, 1);
-    assert.equal(findActual('preview-card').getAttribute('aria-checked'), null);
-    assert.equal(findActual('title-input').value, 'Quarterly report');
-    assert.equal(findActual('description-input').value, 'Team results, goals and next steps.');
-    assert.equal(findActual('orientation').value, 'horizontal'); assert.equal(findActual('width').value, 'standard');
-    assert.ok(findActual('logo-slot').querySelector('svg path[d]'));
-    const actualNotes = findActual('retained-input'); change('retained-input', 'Notes shared across presentations');
-    change('orientation', 'vertical'); change('width', 'compact');
-    act(() => { findActual('loading').click(); }); assert.equal(findActual('skeleton').getAttribute('aria-busy'), 'true');
-    assert.equal(findActual('retained-input'), actualNotes); assert.equal(actualNotes.value, 'Notes shared across presentations');
-    act(() => { findActual('loading').click(); });
-    act(() => { host.querySelector('.fui-AccordionHeader button').click(); }); one();
-    change('kind', 'content'); one(); assert.ok(findActual('content-card')); assert.equal(findActual('preview-card'), null);
-    assert.equal(findActual('retained-input').value, actualNotes.value); assert.equal(findActual('content-card').querySelector('h2').textContent, 'Quarterly report');
-    change('title-input', 'Updated shared title'); change('kind', 'preview'); one();
-    assert.equal(findActual('preview-card').querySelector('h2').textContent, 'Updated shared title');
-    assert.equal(findActual('retained-input').value, 'Notes shared across presentations');
-    act(() => { findActual('fail-image').click(); }); act(() => Simulate.error(findActual('preview-card').querySelector('[data-card-preview] > img')));
-    assert.ok(findActual('preview-card').querySelector('[data-card-image-fallback]'));
-    act(() => { findActual('new-src').click(); }); assert.ok(findActual('preview-card').querySelector('[data-card-preview] > img'));
-    assert.equal(host.querySelector('[data-cards-demo=native-card]'), null);
   } finally {
     act(() => { ReactDOM.unmountComponentAtNode(host); }); host.remove(); dom.window.close(); await harness.cleanup();
   }
 });
 
- test('demo configuration, preview and retained diagnostics use shared v9 regions', () => {
-  const panel = fs.readFileSync('apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/CardsPanel.tsx', 'utf8');
-  assert.match(panel, /<DemoCard/);
-  assert.match(panel, /controls=\{/);
-  assert.match(panel, /diagnostics=\{/);
-  assert.doesNotMatch(panel, /native-card|selection-child/);
-  assert.doesNotMatch(panel, /<(input|select|textarea|button|details)\b/);
- });
-
-
-test('Cards scenario separates configuration commands, outcomes and advanced diagnostics', () => {
-  const panel = fs.readFileSync('apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/CardsPanel.tsx', 'utf8');
-  const ast = require('typescript');
-  const parsed = ast.createSourceFile('panel.tsx', panel, ast.ScriptTarget.Latest, true, ast.ScriptKind.TSX);
-  const cards = [];
-  function visit(node) {
-    if (ast.isJsxOpeningElement(node) && node.tagName.getText(parsed) === 'DemoCard') cards.push(node);
-    ast.forEachChild(node, visit);
+test('source card examples expose complete named regions without private app imports', () => {
+  const { scenario } = require('./fixtures/executable-examples/cards-description-list.cjs');
+  for (const title of ['Configure content slots and native card interaction', 'Inspect preview media and image recovery', 'Retain caller data when switching card types']) {
+    const { source } = scenario(title);
+    assert.match(source, /controls:/); assert.match(source, /diagnostics:/); assert.match(source, /children:/);
+    assert.match(source, /export function Demo/); assert.match(source, /resetRevision/);
+    assert.doesNotMatch(source, /components\/|panels\/|style=|\.style\./);
+    assert.doesNotMatch(source, /<(input|select|textarea|button|details)\b/);
   }
-  visit(parsed);
-  assert.equal(parsed.parseDiagnostics.length, 0);
-  assert.equal(cards.length, 1, 'one configuration shell owns the scenario');
-  const attrs = new Map(cards[0].attributes.properties.filter(ast.isJsxAttribute).map(attr => [attr.name.getText(parsed), attr.getText(parsed)]));
-  for (const name of ['controls', 'commands', 'status', 'diagnostics']) assert.ok(attrs.has(name), name);
-  assert.ok(!attrs.has('observations'));
-  assert.match(attrs.get('commands'), /fail-image/);
-  assert.doesNotMatch(attrs.get('commands'), /inspect-refs/);
-  assert.match(attrs.get('diagnostics'), /inspect-refs/);
-  assert.doesNotMatch(panel, /Independent RTL instance/);
+  const { source } = scenario('Inspect preview media and image recovery');
+  assert.match(source, /commands:.*fail-image/);
+  assert.match(source.slice(source.indexOf('diagnostics:')), /inspect-refs/);
+  assert.doesNotMatch(source, /native-card|selection-child|Independent RTL instance/);
 });

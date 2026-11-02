@@ -58,6 +58,52 @@ export interface ExecutableGroup {
 
 export const executableExamples: readonly ExecutableExampleEntry[] = [
 {
+  "id": "60c33ada62e5de74ffb49f20cb3ab7db19420b87493206efe5343a47a1e8aab3",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx#ContentCard",
+  "title": "Configure content slots and native card interaction",
+  "groupRoute": "docs/api/controls/content-card.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx#ContentCard",
+  "featureTitle": "ContentCard",
+  "publicNames": [
+    "ContentCard"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx",
+    "line": 30
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Edit the report, compare literal and formatted slots, activate header and footer actions, request native selection and retain the note through loading, presentation and reset."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-60c33ada62e5de74ffb49f20cb3ab7db19420b87493206efe5343a47a1e8aab3' */ "./60c33ada62e5de74ffb49f20cb3ab7db19420b87493206efe5343a47a1e8aab3")
+},
+{
+  "id": "9ecb7aa0e0a35bac5eb68d8c09b02af3744c9b9d99a8c170af24f75e136c5d2a",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#DescriptionList",
+  "title": "Inspect responsive metadata with data and compound APIs",
+  "groupRoute": "docs/api/controls/description-list.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#DescriptionList",
+  "featureTitle": "DescriptionList",
+  "publicNames": [
+    "DescriptionList"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx",
+    "line": 119
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Resize the named container across 480px, compare data and compound layouts, reorder stable IDs without losing the counter, and inspect native refs, hidden state and events."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-9ecb7aa0e0a35bac5eb68d8c09b02af3744c9b9d99a8c170af24f75e136c5d2a' */ "./9ecb7aa0e0a35bac5eb68d8c09b02af3744c9b9d99a8c170af24f75e136c5d2a")
+},
+{
   "id": "9683f13667de14283119638684b1fbc134bf95fe6d1d842aafafff359750b401",
   "ownerKey": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination",
   "title": "Browse controlled rows",
@@ -148,6 +194,52 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Browse 23 orders with known pages, unknown totals, cursors or appended batches. Change filters and presentation; hold a request, inspect its native busy ref, then complete once or Reset."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-a07f48c5bc9c9b2205540773cc72cbeeadb752470bb6c3e67ff22ec10c3e5ee0' */ "./a07f48c5bc9c9b2205540773cc72cbeeadb752470bb6c3e67ff22ec10c3e5ee0")
+},
+{
+  "id": "e28438309bd3c4e9a1700761e8eab4eb4a08e5cd5d57d7a2504fdd526ae9e264",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard",
+  "title": "Inspect preview media and image recovery",
+  "groupRoute": "docs/api/controls/preview-card.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard",
+  "featureTitle": "PreviewCard",
+  "publicNames": [
+    "PreviewCard"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx",
+    "line": 58
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Change preview modes, fail and reload its data image, inspect slot refs and callbacks, and retain the report note through layout and loading changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-e28438309bd3c4e9a1700761e8eab4eb4a08e5cd5d57d7a2504fdd526ae9e264' */ "./e28438309bd3c4e9a1700761e8eab4eb4a08e5cd5d57d7a2504fdd526ae9e264")
+},
+{
+  "id": "664a82490443458f53895ecce9de0cbaa8fe734d84249cfd793dd43076762400",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard",
+  "title": "Retain caller data when switching card types",
+  "groupRoute": "docs/api/controls/preview-card.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard",
+  "featureTitle": "PreviewCard",
+  "publicNames": [
+    "PreviewCard"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx",
+    "line": 171
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Edit title, description and note, switch card types in both directions and verify that caller-owned values survive the replaced presentation."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-664a82490443458f53895ecce9de0cbaa8fe734d84249cfd793dd43076762400' */ "./664a82490443458f53895ecce9de0cbaa8fe734d84249cfd793dd43076762400")
 },
 {
   "id": "524ada20fca467ad721252dc50e1ffa9546c8e06f490d7728060dd959a62a61f",
@@ -340,13 +432,16 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
 
 export const executableGroups: readonly ExecutableGroup[] = [
   { key: "controls", title: "Controlli", features: [
-    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[0], executableExamples[1], executableExamples[2], executableExamples[3]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[4], executableExamples[5], executableExamples[6]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[7]] }
+    { key: "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx#ContentCard", title: "ContentCard", scenarios: [executableExamples[0]] },
+    { key: "packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#DescriptionList", title: "DescriptionList", scenarios: [executableExamples[1]] },
+    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[2], executableExamples[3], executableExamples[4], executableExamples[5]] },
+    { key: "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard", title: "PreviewCard", scenarios: [executableExamples[6], executableExamples[7]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[8], executableExamples[9], executableExamples[10]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[11]] }
   ] },
   { key: "hooks", title: "Hook", features: [
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[8]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[9], executableExamples[10]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[11]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[12]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[13], executableExamples[14]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[15]] }
   ] }
 ];
