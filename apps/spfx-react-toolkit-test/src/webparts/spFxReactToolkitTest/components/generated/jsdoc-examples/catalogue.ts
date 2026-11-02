@@ -1717,6 +1717,75 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-7c386c891ae60b5082ed4b18a3153d0b5cd953375fbd1b217ddcd0bd9d96cd10' */ "./7c386c891ae60b5082ed4b18a3153d0b5cd953375fbd1b217ddcd0bd9d96cd10")
 },
 {
+  "id": "552ea226d55fd76ccd4eb32ce763a547580f378fdbde1c97d645e74c8818f809",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxLocalStorage",
+  "title": "Save and clear an instance scoped local value",
+  "groupRoute": "docs/api/hooks/storage/local-storage.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxLocalStorage",
+  "featureTitle": "useSPFxLocalStorage",
+  "publicNames": [
+    "useSPFxLocalStorage"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts",
+    "line": 338
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "write",
+    "contentPlacement": "configuration",
+    "observe": "Save Local updates the current instance value and attempts browser persistence; Clear Local removes its scoped key and restores the empty fallback without new feedback. Reset clears only input/feedback and keeps the current hook value, without rereading browser storage."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-552ea226d55fd76ccd4eb32ce763a547580f378fdbde1c97d645e74c8818f809' */ "./552ea226d55fd76ccd4eb32ce763a547580f378fdbde1c97d645e74c8818f809")
+},
+{
+  "id": "62918f43a492f0851b2d52597c7623f279fa6cd27b59ab8c904eb5fb7ae49933",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxLogger.ts#useSPFxLogger",
+  "title": "Write native log levels and inspect recent calls",
+  "groupRoute": "docs/api/hooks/performance.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxLogger.ts#useSPFxLogger",
+  "featureTitle": "useSPFxLogger",
+  "publicNames": [
+    "useSPFxLogger"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxLogger.ts",
+    "line": 193
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "write",
+    "contentPlacement": "configuration",
+    "observe": "Info, Warning and Error call the native console logger with safe synthetic demo messages; the current result replaces its predecessor and collapsed diagnostics retain the last five UI calls. Reset clears only this UI history, not console output."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-62918f43a492f0851b2d52597c7623f279fa6cd27b59ab8c904eb5fb7ae49933' */ "./62918f43a492f0851b2d52597c7623f279fa6cd27b59ab8c904eb5fb7ae49933")
+},
+{
+  "id": "a8f6922a6ab9dd0a8e2bbbbac05c9bfa2b31d2c1354489345fe92be47734d14e",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#useSPFxPerformance",
+  "title": "Measure a cancellable local timed operation",
+  "groupRoute": "docs/api/hooks/performance.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#useSPFxPerformance",
+  "featureTitle": "useSPFxPerformance",
+  "publicNames": [
+    "useSPFxPerformance"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts",
+    "line": 195
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Run measures a real local 250 ms wait and shows the actual result and duration (which may be zero when unsupported). Reset, host replacement and departure cancel the owned wait and suppress obsolete results; they do not clear unrelated browser timeline entries."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-a8f6922a6ab9dd0a8e2bbbbac05c9bfa2b31d2c1354489345fe92be47734d14e' */ "./a8f6922a6ab9dd0a8e2bbbbac05c9bfa2b31d2c1354489345fe92be47734d14e")
+},
+{
   "id": "987a602b9876b30335971c617d05d9c716fae7b4d434c5142bf3f1ca9727d305",
   "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList",
   "title": "Read a user-selected list with observable results",
@@ -1738,6 +1807,52 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Choose an existing list and run the read explicitly; loading, results and errors identify the selected list."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-987a602b9876b30335971c617d05d9c716fae7b4d434c5142bf3f1ca9727d305' */ "./987a602b9876b30335971c617d05d9c716fae7b4d434c5142bf3f1ca9727d305")
+},
+{
+  "id": "2137a2e347029a89850685b1ae219eac8144d664ba5818116da16c3a283cca90",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties",
+  "title": "Edit the current host description with merge and updater",
+  "groupRoute": "docs/api/hooks/properties.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties",
+  "featureTitle": "useSPFxProperties",
+  "publicNames": [
+    "useSPFxProperties"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts",
+    "line": 187
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "write",
+    "contentPlacement": "configuration",
+    "observe": "Edit Description, merge it, then append updated with the replacing updater; unrelated host keys remain. Reset adopts the current description and clears local feedback without writing the host."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-2137a2e347029a89850685b1ae219eac8144d664ba5818116da16c3a283cca90' */ "./2137a2e347029a89850685b1ae219eac8144d664ba5818116da16c3a283cca90")
+},
+{
+  "id": "b3374a9d50255203fff5b45f94f898198d3e68c1c5903f97e5f5eed3c2c286dc",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage",
+  "title": "Save and clear an instance scoped session value",
+  "groupRoute": "docs/api/hooks/storage/session-storage.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage",
+  "featureTitle": "useSPFxSessionStorage",
+  "publicNames": [
+    "useSPFxSessionStorage"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts",
+    "line": 549
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "write",
+    "contentPlacement": "configuration",
+    "observe": "Save Session updates the current instance value and attempts browser persistence; Clear Session removes its scoped key and restores the empty fallback without new feedback. Reset clears only input/feedback and keeps the current hook value, without rereading browser storage."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-b3374a9d50255203fff5b45f94f898198d3e68c1c5903f97e5f5eed3c2c286dc' */ "./b3374a9d50255203fff5b45f94f898198d3e68c1c5903f97e5f5eed3c2c286dc")
 },
 {
   "id": "d41ff401e795fa9c1800585f3d2bdf498395dbac07dce27da9c8d3a2aa023376",
@@ -1903,8 +2018,13 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/helpers/styles/width.ts#<module>", title: "width", scenarios: [executableExamples[71]] }
   ] },
   { key: "hooks", title: "Hook", features: [
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[72]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[73], executableExamples[74]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[75], executableExamples[76]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxLocalStorage", title: "useSPFxLocalStorage", scenarios: [executableExamples[72]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxLogger.ts#useSPFxLogger", title: "useSPFxLogger", scenarios: [executableExamples[73]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#useSPFxPerformance", title: "useSPFxPerformance", scenarios: [executableExamples[74]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[75]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties", title: "useSPFxProperties", scenarios: [executableExamples[76]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage", title: "useSPFxSessionStorage", scenarios: [executableExamples[77]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[78], executableExamples[79]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[80], executableExamples[81]] }
   ] }
 ];

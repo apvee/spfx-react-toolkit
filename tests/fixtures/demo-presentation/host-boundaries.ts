@@ -3,7 +3,6 @@ export { useFixtureTeams as useSPFxTeams } from '../demo-fixture-host';
 export const useSPFxThemeInfo = (): undefined => undefined;
 const page = { site: { absoluteUrl: 'https://simulated.invalid/sites/demo' }, web: { absoluteUrl: 'https://simulated.invalid/sites/demo' }, cultureInfo: { currentCultureName: 'en-US', currentUICultureName: 'en-US' } };
 export const useSPFxPageContext = () => page;
-export const useSPFxContext = () => ({ kind: 'WebPart', spfxContext: { pageContext: page } });
 export const useSPFxInstanceInfo = () => ({ id: 'simulated-demo', kind: 'WebPart' });
 export const useSPFxIsEdit = () => false;
 export const useSPFxEnvironmentInfo = () => ({ type: 'Local simulated host' });
@@ -17,15 +16,6 @@ export const useSPFxCorrelationInfo = () => ({ correlationId: 'local-fixture', t
 export const useSPFxContainerInfo = () => ({ element: document.getElementById('root') });
 export const useSPFxContainerSize = () => ({ width: innerWidth, height: innerHeight, size: 'local' });
 export const useSPFxServiceScope = () => ({ serviceScope: undefined });
-function useMemoryStorage(_key: string, initial: string) {
-  const [value, setValue] = React.useState(initial);
-  return { value, setValue, remove: () => setValue(initial) };
-}
-export const useSPFxLocalStorage = useMemoryStorage;
-export const useSPFxSessionStorage = useMemoryStorage;
-const logger = { info: () => {}, warn: () => {}, error: () => {} };
-export const useSPFxLogger = () => logger;
-export const useSPFxPerformance = () => ({ time: async (_label: string, operation: () => Promise<unknown>) => { const start = performance.now(); const result = await operation(); return { result, durationMs: performance.now() - start }; } });
 const forbiddenWrite = async (): Promise<never> => { throw new Error('Fixture forbids CRUD'); };
 const unavailable = { isReady: false, isInitializing: false, isLoading: false, error: undefined, invoke: async () => undefined, baseUrl: page.web.absoluteUrl };
 export const useSPFxHttpClient = () => unavailable;

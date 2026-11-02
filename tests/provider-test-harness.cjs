@@ -32,6 +32,7 @@ function createHarness(options = {}) {
   const cache = new Map();
   const sourceRoot = path.resolve(__dirname, '../packages/spfx-react-toolkit/src');
   const themeKey = {};
+  const pageContextKey = {};
   function load(relative) {
     const file = path.resolve(sourceRoot, relative);
     if (cache.has(file)) return cache.get(file).exports;
@@ -42,6 +43,7 @@ function createHarness(options = {}) {
     }}).outputText;
     function sourceRequire(specifier) {
       if (specifier.startsWith('ApveeSpfxReactToolkit')) return nativeResources.require(specifier);
+      if (specifier === '@microsoft/sp-page-context') return { PageContext: { serviceKey: pageContextKey } };
       if (specifier === '@microsoft/sp-component-base') return { ThemeProvider: { serviceKey: themeKey } };
       if (specifier === '@microsoft/sp-core-library') return { DisplayMode: { Read: 1, Edit: 2 } };
       if (!specifier.startsWith('.')) return require(specifier);
@@ -101,6 +103,6 @@ function createHarness(options = {}) {
     localStorage.clear();
     sessionStorage.clear();
   }
-  return { React, act, load, scope, instance, mount, close, window: dom.window, nativeResources };
+  return { React, act, load, scope, instance, mount, close, window: dom.window, nativeResources, pageContextKey };
 }
 module.exports = { createHarness };

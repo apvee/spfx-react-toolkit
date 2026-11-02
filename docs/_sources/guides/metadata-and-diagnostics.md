@@ -62,6 +62,6 @@ Partial `setProperties` updates differ from an updater returning the complete ne
 
 Use {@link useSPFxPerformance} to time an actual operation and await its callback. Concurrent same-name timing calls use distinct internal marks; explicit public mark names and browser entries remain caller-owned. A zero-duration fallback is not evidence that work was free. Callback failures still reject. {@link useSPFxLogger} adds instance/correlation context to native logging without creating a remote telemetry transport; avoid secrets and tokens in diagnostic messages.
 
-<!-- toolkit:include symbol="useSPFxPerformance" section="example" -->
+<!-- toolkit:include symbol="useSPFxPerformance" section="example" title="Measure a requested data load" -->
 
 Local lifecycle, metadata and timing checks do not execute every native host. Use the [host procedures](../development/sharepoint-validation/INDEX.md) and record real outcomes separately.

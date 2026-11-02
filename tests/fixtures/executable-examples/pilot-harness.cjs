@@ -14,14 +14,18 @@ function pilotModules(h) {
     ['hooks/useStableCallback.ts', ['useStableCallback']],
     ['controls/pagination/pagination.tsx', ['Pagination']],
     ['hooks/useSPFxProperties.ts', ['useSPFxProperties']],
+    ['hooks/useSPFxContext.ts', ['useSPFxContext']],
+    ['hooks/useSPFxStorage.ts', ['useSPFxLocalStorage', 'useSPFxSessionStorage']],
+    ['hooks/useSPFxLogger.ts', ['useSPFxLogger']],
+    ['hooks/useSPFxPerformance.ts', ['useSPFxPerformance']],
     ['hooks/useSPFxDisplayMode.ts', ['useSPFxDisplayMode']],
     ['hooks/useSPFxFluent9ThemeInfo.ts', ['useSPFxFluent9ThemeInfo']],
     ['controls/web-part-shell/web-part-shell-metadata.ts', ['getWebPartShellPropertiesMetadata']],
     ['controls/web-part-shell/web-part-shell.tsx', ['WebPartShell']],
   ]) {
-    // Generic service harness cannot load the native SDK; load Shell lazily only
-    // in the Shell harness, which supplies those unavailable service identities.
-    if ((file.includes('web-part-shell/web-part-shell.tsx') || file.includes('useSPFxFluent9ThemeInfo')) && !h.WebPartShell) continue;
+    // Generic service harness cannot load native SDK identities. Shell and its
+    // runtime diagnostics hooks use the native services supplied by the Shell harness.
+    if ((file.includes('web-part-shell/web-part-shell.tsx') || file.includes('useSPFxFluent9ThemeInfo') || file.includes('useSPFxLogger') || file.includes('useSPFxPerformance')) && !h.WebPartShell) continue;
     const exports = h.load(file);
     for (const name of names) toolkit[name] = exports[name];
   }
@@ -60,7 +64,7 @@ function pilotModules(h) {
     assert.ok(entry, `Source-owned executable scenario: ${title}`);
     return { entry, ...load(path.join(base, `generated/jsdoc-examples/${entry.id}.tsx`)) };
   }
-  return { scenario, catalogue, load: relative => load(path.join(base, relative)) };
+  return { scenario, catalogue, toolkit, load: relative => load(path.join(base, relative)) };
 }
 function button(container, text) {
   const result = [...container.querySelectorAll('button')].find(node => node.textContent === text || node.getAttribute('aria-label') === text);

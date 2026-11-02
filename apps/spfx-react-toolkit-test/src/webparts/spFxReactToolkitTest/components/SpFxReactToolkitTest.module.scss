@@ -5,24 +5,3 @@
 .teams {
   font-family: inherit;
 }
-
-// RuntimePanel still consumes these classes until its v9 migration.
-.logMessage {
-  padding: var(--spacingVerticalS);
-  margin-bottom: var(--spacingVerticalXS);
-  border-radius: var(--borderRadiusMedium);
-  font-family: var(--fontFamilyMonospace);
-  font-size: var(--fontSizeBase200);
-}
-
-.info {
-  background-color: var(--colorNeutralBackground2);
-}
-
-.warning {
-  background-color: var(--colorStatusWarningBackground1);
-}
-
-.error {
-  background-color: var(--colorStatusDangerBackground1);
-}

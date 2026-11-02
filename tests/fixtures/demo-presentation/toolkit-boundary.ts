@@ -40,3 +40,9 @@ export { useSPFxConfigurationStore } from '../../../packages/spfx-react-toolkit/
 // Explicit exports override the unavailable legacy hook stubs for the read pilot.
 export { useSPFxPnPContext } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPnPContext';
 export { useSPFxPnPList } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPnPList';
+
+// Runtime cases use the actual provider-bound subject hooks and native context witness.
+export { useSPFxContext } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxContext';
+export { useSPFxSessionStorage, useSPFxLocalStorage } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxStorage';
+export { useSPFxLogger } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxLogger';
+export { useSPFxPerformance } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPerformance';

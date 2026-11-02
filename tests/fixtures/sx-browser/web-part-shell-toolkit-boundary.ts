@@ -28,3 +28,11 @@ export * from '../../../packages/spfx-react-toolkit/src/controls/state-message';
 export * from '../../../packages/spfx-react-toolkit/src/controls/auto-skeleton';
 export * from '../../../packages/spfx-react-toolkit/src/controls/relative-time';
 export * from '../../../packages/spfx-react-toolkit/src/controls/formatted-text';
+
+// All generated cases are bundled by the Shell conformance fixture.
+export { useSPFxSessionStorage, useSPFxLocalStorage } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxStorage';
+export { useSPFxLogger } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxLogger';
+export { useSPFxPerformance } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxPerformance';
+
+// Prior generated DataGrid cases are also dependencies of this complete catalogue.
+export * from '../../../packages/spfx-react-toolkit/src/controls/data-grid';

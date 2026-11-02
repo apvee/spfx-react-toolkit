@@ -246,6 +246,8 @@ function ConfigurableForm() {
 
 Use [useSPFxPerformance](../api/hooks/performance.md#usespfxperformance) to time an actual operation and await its callback. Concurrent same-name timing calls use distinct internal marks; explicit public mark names and browser entries remain caller-owned. A zero-duration fallback is not evidence that work was free. Callback failures still reject. [useSPFxLogger](../api/hooks/performance.md#usespfxlogger) adds instance/correlation context to native logging without creating a remote telemetry transport; avoid secrets and tokens in diagnostic messages.
 
+#### Measure a requested data load
+
 ```tsx
 import * as React from 'react';
 import { useSPFxPerformance } from '@apvee/spfx-react-toolkit';

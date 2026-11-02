@@ -20,8 +20,12 @@ const entries = legacyEntries.concat([
   { key: 'content-card', title: 'ContentCard' }, { key: 'cards', title: 'PreviewCard' },
   { key: 'card-retention', title: 'PreviewCard' }, { key: 'description-list', title: 'DescriptionList' },
   { key: 'stage', title: 'Stage' }, { key: 'groups', title: 'SettingsGroup' },
+  { key: 'runtime-properties', title: 'useSPFxProperties' }, { key: 'runtime-session', title: 'useSPFxSessionStorage' },
+  { key: 'runtime-local', title: 'useSPFxLocalStorage' }, { key: 'runtime-logger', title: 'useSPFxLogger' },
+  { key: 'runtime-performance', title: 'useSPFxPerformance' },
   { key: 'accordion-group', title: 'AccordionGroup' }, { key: 'state-message', title: 'StateMessage' },
 ]);
+const expectedRuntimeDiagnostics = [];
 const checks = [], diagnostics = [], metrics = [], screenshots = [], fontAssets = [];
 const check = (name, actual, expected) => { checks.push({ name, actual, expected }); assert.deepEqual(actual, expected, name); };
 const server = http.createServer((request, response) => {
@@ -34,7 +38,11 @@ const server = http.createServer((request, response) => {
 });
 const observe = page => {
   page.on('pageerror', error => diagnostics.push({ type: 'pageerror', text: error.message }));
-  page.on('console', message => { if (['error', 'warning'].includes(message.type())) diagnostics.push({ type: message.type(), text: message.text() }); });
+  page.on('console', message => {
+    const expected = /^\[(INFO|WARN|ERROR)\] \d{4}-\d{2}-\d{2}T[0-9:.]+Z WebPart\/integrated-demo – SPFx toolkit demo (info|warning|error) \{\}$/.exec(message.text());
+    if (expected && ((message.type() === 'info' && expected[1] === 'INFO' && expected[2] === 'info') || (message.type() === 'warning' && expected[1] === 'WARN' && expected[2] === 'warning') || (message.type() === 'error' && expected[1] === 'ERROR' && expected[2] === 'error'))) { expectedRuntimeDiagnostics.push({ type: message.type(), text: message.text() }); return; }
+    if (['error', 'warning'].includes(message.type())) diagnostics.push({ type: message.type(), text: message.text() });
+  });
 };
 const settle = page => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 async function guardNetwork(page, url) {
@@ -48,6 +56,11 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    'runtime-properties': ['useSPFxProperties', 'Edit the current host description with merge and updater'],
+    'runtime-session': ['useSPFxSessionStorage', 'Save and clear an instance scoped session value'],
+    'runtime-local': ['useSPFxLocalStorage', 'Save and clear an instance scoped local value'],
+    'runtime-logger': ['useSPFxLogger', 'Write native log levels and inspect recent calls'],
+    'runtime-performance': ['useSPFxPerformance', 'Measure a cancellable local timed operation'],
     styles: ['useSx', 'Explore eight style recipes with the host renderer'],
     'auto-skeleton': ['AutoSkeleton', 'Explore mounted profile loading and native focus'],
     'relative-time': ['RelativeTime', 'Explore relative clocks and fallback slots'],
@@ -71,7 +84,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: ['imports', 'styles'].includes(key) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: (['imports', 'styles'].includes(key) || key.startsWith('runtime-')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -280,7 +293,32 @@ async function interact(page, key) {
     }
     case 'providers': await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click(); check('Provider disclosure', await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).getAttribute('aria-expanded'), 'true'); break;
     case 'context': await panel.locator('select[data-demo-variant=context]').selectOption('cross-site'); await panel.locator('[data-context-demo=url-draft]').fill('https://simulated.invalid/sites/target'); check('Context staged URL draft', await panel.locator('[data-context-demo=url-draft]').inputValue(), 'https://simulated.invalid/sites/target'); break;
-    case 'runtime': await panel.getByLabel('Description', { exact: true }).fill('Integrated properties'); await panel.getByRole('button', { name: 'setProperties', exact: true }).click(); check('Runtime actual provider properties', (await panel.textContent()).includes('Current Description:Integrated properties'), true); break;
+    case 'runtime-properties':
+      await panel.getByLabel('Description', { exact: true }).fill('Integrated properties');
+      await panel.getByRole('button', { name: 'setProperties', exact: true }).click();
+      check('Runtime actual provider properties', await panel.locator('output').textContent(), 'Current Description: Integrated properties');
+      await panel.getByRole('button', { name: 'updateProperties', exact: true }).click();
+      check('Runtime complete property updater', await panel.locator('output').textContent(), 'Current Description: Integrated properties updated'); break;
+    case 'runtime-session': case 'runtime-local': {
+      const label = key === 'runtime-session' ? 'Session' : 'Local';
+      await panel.getByRole('textbox', { name: label + ' value', exact: true }).fill('Integrated scoped value');
+      await panel.getByRole('button', { name: 'Save ' + label, exact: true }).click();
+      check(key + ': actual hook value', await panel.locator('output').textContent(), 'Current value: Integrated scoped value');
+      check(key + ': best-effort feedback', (await panel.textContent()).includes('persistence attempted'), true);
+      await panel.getByRole('button', { name: 'Clear ' + label, exact: true }).click();
+      check(key + ': exact clear fallback', await panel.locator('output').textContent(), 'Current value: '); break;
+    }
+    case 'runtime-logger': {
+      const before = expectedRuntimeDiagnostics.length;
+      for (const level of ['Info', 'Warning', 'Error']) await panel.getByRole('button', { name: level, exact: true }).click();
+      check('Runtime native logger current result', await panel.locator('[data-runtime-result]').textContent(), 'ERROR: SPFx toolkit demo error');
+      check('Runtime logger diagnostics collapsed', await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).getAttribute('aria-expanded'), 'false');
+      check('Runtime native console levels', expectedRuntimeDiagnostics.slice(before).map(message => message.type), ['info', 'warning', 'error']); break;
+    }
+    case 'runtime-performance':
+      await panel.getByRole('button', { name: 'Run timed operation', exact: true }).click();
+      await panel.getByText('Last Result: Timed operation completed', { exact: true }).waitFor();
+      check('Runtime actual timed result', await panel.locator('output').textContent(), 'Last Result: Timed operation completed'); break;
     case 'clients': await panel.locator('select[data-demo-variant=ClientsPanel]').selectOption('aad'); await panel.getByLabel('Resource URL or App ID URI', { exact: true }).fill('api://simulated'); check('Clients configuration draft', await panel.getByLabel('Resource URL or App ID URI', { exact: true }).inputValue(), 'api://simulated'); break;
     case 'graph': await panel.getByRole('button', { name: 'Run', exact: true }).click(); await panel.getByText('Simulated network unavailable', { exact: true }).waitFor(); check('Graph simulated read error visible', await panel.getByText('Simulated network unavailable', { exact: true }).count(), 1); break;
     case 'site': case 'tenant': await panel.locator(`select[data-demo-variant=${key === 'site' ? 'SitePanel' : 'TenantPanel'}]`).selectOption(key === 'site' ? 'save' : 'store'); if (key === 'tenant') await panel.locator('select[data-demo-variant=TenantStoreScenario]').selectOption('save'); await panel.getByLabel('Value', { exact: true }).fill('Local draft'); check(`${key}: editable draft`, await panel.getByLabel('Value', { exact: true }).inputValue(), 'Local draft'); break;
@@ -601,7 +639,7 @@ async function liveTheme(page) {
     check('Unexpected app/browser/network diagnostics', diagnostics.filter(message => !(message.type === 'warning' && message.text === nativeColorWarning)), []);
     console.log(`Integrated actual app: ${checks.length} PASS checks; ${screenshots.length} screenshots; native 200% proved.`);
   } finally {
-    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? 'focused source-owned JSDoc migration checkpoint (11 scenarios, 5 features; original 9-case pilot retained)' : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { features: 5, scenarios: 11, originalPilotScenarios: 9, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/remaining registry panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, metrics, screenshots }, undefined, 2));
+    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? 'focused source-owned JSDoc migration checkpoint (11 scenarios, 5 features; original 9-case pilot retained)' : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { features: 5, scenarios: 11, originalPilotScenarios: 9, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/remaining registry panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, expectedRuntimeDiagnostics, metrics, screenshots }, undefined, 2));
     await browser?.close(); await new Promise(resolve => server.close(resolve));
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

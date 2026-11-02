@@ -17,10 +17,13 @@ function createHarness() {
   function instance(id, scope) {
     const serviceScope = scope || h.scope();
     const consume = serviceScope.consume.bind(serviceScope);
-    serviceScope.consume = key => { const service = consume(key); service.tryGetTheme = () => undefined; return service; };
     const host = h.instance(id, serviceScope);
+    serviceScope.consume = key => {
+      if (key === h.pageContextKey) return host.context.pageContext;
+      const service = consume(key); service.tryGetTheme = () => undefined; return service;
+    };
     host.context.domElement = host.domElement;
-    host.context.pageContext = { cultureInfo: { isRightToLeft: false } };
+    host.context.pageContext = { cultureInfo: { isRightToLeft: false }, user: { displayName: 'Fixture User', loginName: 'fixture-user', email: 'fixture@example.invalid' }, site: { id: '11111111-0000-0000-0000-000000000001', serverRelativeUrl: '/sites/demo', absoluteUrl: 'https://fixture.invalid/sites/demo' }, web: { id: '22222222-0000-0000-0000-000000000002', title: 'Fixture web', serverRelativeUrl: '/sites/demo', absoluteUrl: 'https://fixture.invalid/sites/demo' } };
     Object.defineProperty(host, 'instanceId', { get: () => host.context.instanceId });
     return host;
   }

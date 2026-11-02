@@ -1,9 +1,9 @@
 // Deterministic native transport boundaries only. Real providers/hooks/adapters decide access.
 import { PageContext, SPHttpClient, MSGraphClientFactory, AadTokenProviderFactory } from './spfx-services';
 export const fixturePage = {
-  site: { absoluteUrl: 'https://simulated.invalid/sites/demo' },
-  web: { absoluteUrl: 'https://simulated.invalid/sites/demo', serverRelativeUrl: '/sites/demo' },
-  user: { loginName: 'fixture-user', email: 'fixture@example.invalid' },
+  site: { id: '11111111-0000-0000-0000-000000000001', serverRelativeUrl: '/sites/demo', absoluteUrl: 'https://simulated.invalid/sites/demo' },
+  web: { id: '22222222-0000-0000-0000-000000000002', title: 'Fixture web', absoluteUrl: 'https://simulated.invalid/sites/demo', serverRelativeUrl: '/sites/demo' },
+  user: { displayName: 'Fixture User', loginName: 'fixture-user', email: 'fixture@example.invalid' },
   aadInfo: { userId: 'aaaaaaaa-0000-0000-0000-000000000001' },
   cultureInfo: { currentCultureName: 'en-US', currentUICultureName: 'en-US', isRightToLeft: false }, legacyPageContext: {},
 };

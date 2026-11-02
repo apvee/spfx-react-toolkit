@@ -84,20 +84,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
-    key: 'runtime',
-    title: 'Runtime',
-    iconName: 'DeveloperTools',
-    description: 'Webpart properties, scoped browser storage, logging, and performance helpers.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-runtime' */ './panels/RuntimePanel')),
-    coverage: [
-      { symbol: 'useSPFxProperties', kind: 'write', notes: 'Updates SPFx properties through the provider.' },
-      { symbol: 'useSPFxSessionStorage', kind: 'write', notes: 'Instance-scoped session storage.' },
-      { symbol: 'useSPFxLocalStorage', kind: 'write', notes: 'Instance-scoped local storage.' },
-      { symbol: 'useSPFxLogger', kind: 'write', notes: 'SPFx Log wrapper.' },
-      { symbol: 'useSPFxPerformance', kind: 'read', notes: 'Performance timing helper.' },
-    ],
-  },
-  {
     key: 'clients',
     title: 'Clients',
     iconName: 'Cloud',
