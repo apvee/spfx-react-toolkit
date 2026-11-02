@@ -121,6 +121,35 @@ test('overflow helper labels the real nested public member paths', t => {
   }
 });
 
+for (const compiled of [false, true]) {
+  test(`presets ${compiled ? 'compiled' : 'source'}: later overrides replace only their color property and reset to canvas`, t => {
+    const entry = catalogue().find(entry => entry.publicNames.includes('presets') && entry.ownerKey.endsWith('#<module>'));
+    const f = stylesFixture(entry.title, { compiled, initialRevision: 9 }); t.after(() => f.close());
+    const probe = f.container.querySelector('[data-style-helper="presets"]');
+    const preset = f.container.querySelector('select');
+    const [foregroundOverride, backgroundOverride] = f.container.querySelectorAll('input[type=checkbox]');
+    assert.ok(foregroundOverride, 'Real foreground override control');
+    assert.ok(backgroundOverride, 'Real background override control');
+    const colors = (foreground, background) => {
+      const rules = f.rules(probe);
+      assert.match(rules, new RegExp(`--apvee-sx-color-base:\\s*var\\(--${foreground}\\)`));
+      assert.match(rules, new RegExp(`--apvee-sx-backgroundColor-base:\\s*var\\(--${background}\\)`));
+    };
+    assert.equal(preset.value, 'canvas'); colors('colorNeutralForeground1', 'colorNeutralBackground1');
+    f.change(preset, 'brand'); colors('colorNeutralForegroundOnBrand', 'colorBrandBackground');
+    f.change(foregroundOverride, true); colors('colorBrandForeground1', 'colorBrandBackground');
+    f.change(backgroundOverride, true); colors('colorBrandForeground1', 'colorSubtleBackground');
+    f.change(foregroundOverride, false); colors('colorNeutralForegroundOnBrand', 'colorSubtleBackground');
+    f.change(backgroundOverride, false); colors('colorNeutralForegroundOnBrand', 'colorBrandBackground');
+    f.change(foregroundOverride, true); f.change(backgroundOverride, true);
+    f.h.act(() => foregroundOverride.focus()); f.reset();
+    assert.equal(preset.value, 'canvas'); assert.equal(foregroundOverride.checked, false); assert.equal(backgroundOverride.checked, false);
+    assert.equal(f.container.querySelector('[data-style-helper="presets"]'), probe);
+    assert.equal(f.container.querySelector('input[type=checkbox]'), foregroundOverride); assert.equal(document.activeElement, foregroundOverride);
+    colors('colorNeutralForeground1', 'colorNeutralBackground1');
+  });
+}
+
 test('43 independent namespace cases and three native state cases run their real descriptors and reset without remount', () => {
   const entries = catalogue().filter(entry => entry.ownerKey.includes('/helpers/styles/') && !entry.ownerKey.includes('::'));
   assert.equal(entries.filter(entry => entry.ownerKey.endsWith('#<module>')).length, 43);

@@ -16413,8 +16413,8 @@ const descriptor = presets.canvas;
 
 ```tsx
 import * as React from 'react';
-import { Field, Select } from '@fluentui/react-components';
-import { useSx, width, minWidth, overflow, padding, presets, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+import { Checkbox, Field, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, foreground, background, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
 interface DemoRegions {
   controls?: React.ReactNode;
   commands?: React.ReactNode;
@@ -16431,27 +16431,34 @@ export function Demo({ render = standalone, resetRevision = 0 }: {
   resetRevision?: number;
 } = {}): React.ReactElement {
   const sx = useSx();
-  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [member, setMember] = React.useState('canvas');
+  const [foregroundOverride, setForegroundOverride] = React.useState(false);
+  const [backgroundOverride, setBackgroundOverride] = React.useState(false);
   const revision = React.useRef(resetRevision);
   React.useEffect(() => {
     if (revision.current === resetRevision) return;
     revision.current = resetRevision;
-    setMember(Object.keys(choices)[0]);
+    setMember('canvas'); setForegroundOverride(false); setBackgroundOverride(false);
   }, [resetRevision]);
   const descriptor = choices[member];
   return render({
     controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
       if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
     }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      <Checkbox label="Override foreground with brand" checked={foregroundOverride} onChange={(_, data) => setForegroundOverride(data.checked === true)} />
+      <Checkbox label="Override background with subtle" checked={backgroundOverride} onChange={(_, data) => setBackgroundOverride(data.checked === true)} />
     </>,
-    status: <p aria-live="polite">Applied: presets.{member}.</p>,
-    children: <section role="region" aria-label="presets descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="presets" aria-disabled={member === 'disabled'} className={sx(padding.medium, descriptor)}>Actual presets subject</div></section>,
-    diagnostics: <p>Select paired color preset descriptors; foreground/background override composition. Inverted is intended for the verified light/dark palettes; it is unsuitable for active content in the installed Fluent high contrast palette. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+    status: <p aria-live="polite">Applied: presets.{member}. Foreground override: {foregroundOverride ? 'brand' : 'none'}. Background override: {backgroundOverride ? 'subtle' : 'none'}.</p>,
+    children: <section role="region" aria-label="presets descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}>
+      <div data-style-helper="presets" aria-disabled={member === 'disabled'} className={sx(padding.medium, descriptor,
+        foregroundOverride && foreground.brand, backgroundOverride && background.subtle)}>Actual presets subject</div>
+    </section>,
+    diagnostics: <p>Later foreground.brand replaces only the preset foreground; later background.subtle replaces only its background. Toggle them independently, together, then off to restore each preset property. Inverted is intended for the verified light/dark palettes; it is unsuitable for active content in the installed Fluent high contrast palette. Token descriptors inherit the host theme; Reset restores canvas with both overrides off without remounting the Demo.</p>,
   });
 }
 export const demo = {
   host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
-  observe: 'Select paired color preset descriptors — foreground/background override composition. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+  observe: 'Select a paired preset, then toggle later foreground.brand and background.subtle overrides independently. Each overrides only its own property; disabling it restores that preset property. Reset restores canvas with both overrides off while retaining this Demo.',
 };
 ```
 
@@ -16631,7 +16638,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (220)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L58)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:65](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L65)
 
 ## presets.alternative
 
@@ -16684,7 +16691,7 @@ alternative: SxBaseDescriptor
 
 ### Source (221)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:95](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L95)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:102](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L102)
 
 ## presets.brand
 
@@ -16737,7 +16744,7 @@ brand: SxBaseDescriptor
 
 ### Source (222)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:151](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L151)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:158](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L158)
 
 ## presets.brandTint
 
@@ -16790,7 +16797,7 @@ brandTint: SxBaseDescriptor
 
 ### Source (223)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:170](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L170)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:177](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L177)
 
 ## presets.canvas
 
@@ -16843,7 +16850,7 @@ canvas: SxBaseDescriptor
 
 ### Source (224)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:76](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L76)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:83](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L83)
 
 ## presets.danger
 
@@ -16900,7 +16907,7 @@ Alias/access for [presets.danger](styles.md#presetsdanger).
 
 ### Source (225)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:248](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L248)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:255](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L255)
 
 ## presets.disabled
 
@@ -16955,7 +16962,7 @@ disabled: SxBaseDescriptor
 
 ### Source (226)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:269](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L269)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:276](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L276)
 
 ## presets.inverted
 
@@ -17010,7 +17017,7 @@ inverted: SxBaseDescriptor
 
 ### Source (227)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:191](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L191)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:198](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L198)
 
 ## presets.subtle
 
@@ -17063,7 +17070,7 @@ subtle: SxBaseDescriptor
 
 ### Source (228)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:114](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L114)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:121](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L121)
 
 ## presets.success
 
@@ -17120,7 +17127,7 @@ Alias/access for [presets.success](styles.md#presetssuccess).
 
 ### Source (229)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:210](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L210)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:217](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L217)
 
 ## presets.transparent
 
@@ -17173,7 +17180,7 @@ transparent: SxBaseDescriptor
 
 ### Source (230)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:133](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L133)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:140](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L140)
 
 ## presets.warning
 
@@ -17230,7 +17237,7 @@ Alias/access for [presets.warning](styles.md#presetswarning).
 
 ### Source (231)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:229](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L229)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:236](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L236)
 
 ## responsive
 

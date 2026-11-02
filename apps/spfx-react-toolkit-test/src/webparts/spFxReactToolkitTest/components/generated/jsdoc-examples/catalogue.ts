@@ -1551,7 +1551,7 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "host": "none",
     "kind": "snapshot",
     "contentPlacement": "configuration",
-    "observe": "Select paired color preset descriptors — foreground/background override composition. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+    "observe": "Select a paired preset, then toggle later foreground.brand and background.subtle overrides independently. Each overrides only its own property; disabling it restores that preset property. Reset restores canvas with both overrides off while retaining this Demo."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-0139115b31200ccb9e66bd8984d9936df6a84d33647a435e4364188a4080a1be' */ "./0139115b31200ccb9e66bd8984d9936df6a84d33647a435e4364188a4080a1be")
 },

@@ -13,8 +13,8 @@
  * @example Select paired color preset descriptors — foreground/background override composition
  * ```tsx
  * import * as React from 'react';
- * import { Field, Select } from '@fluentui/react-components';
- * import { useSx, width, minWidth, overflow, padding, presets, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+ * import { Checkbox, Field, Select } from '@fluentui/react-components';
+ * import { useSx, width, minWidth, overflow, padding, presets, foreground, background, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
  * interface DemoRegions {
  *   controls?: React.ReactNode;
  *   commands?: React.ReactNode;
@@ -31,27 +31,34 @@
  *   resetRevision?: number;
  * } = {}): React.ReactElement {
  *   const sx = useSx();
- *   const [member, setMember] = React.useState(Object.keys(choices)[0]);
+ *   const [member, setMember] = React.useState('canvas');
+ *   const [foregroundOverride, setForegroundOverride] = React.useState(false);
+ *   const [backgroundOverride, setBackgroundOverride] = React.useState(false);
  *   const revision = React.useRef(resetRevision);
  *   React.useEffect(() => {
  *     if (revision.current === resetRevision) return;
  *     revision.current = resetRevision;
- *     setMember(Object.keys(choices)[0]);
+ *     setMember('canvas'); setForegroundOverride(false); setBackgroundOverride(false);
  *   }, [resetRevision]);
  *   const descriptor = choices[member];
  *   return render({
  *     controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
  *       if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
  *     }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+ *       <Checkbox label="Override foreground with brand" checked={foregroundOverride} onChange={(_, data) => setForegroundOverride(data.checked === true)} />
+ *       <Checkbox label="Override background with subtle" checked={backgroundOverride} onChange={(_, data) => setBackgroundOverride(data.checked === true)} />
  *     </>,
- *     status: <p aria-live="polite">Applied: presets.{member}.</p>,
- *     children: <section role="region" aria-label="presets descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="presets" aria-disabled={member === 'disabled'} className={sx(padding.medium, descriptor)}>Actual presets subject</div></section>,
- *     diagnostics: <p>Select paired color preset descriptors; foreground/background override composition. Inverted is intended for the verified light/dark palettes; it is unsuitable for active content in the installed Fluent high contrast palette. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+ *     status: <p aria-live="polite">Applied: presets.{member}. Foreground override: {foregroundOverride ? 'brand' : 'none'}. Background override: {backgroundOverride ? 'subtle' : 'none'}.</p>,
+ *     children: <section role="region" aria-label="presets descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}>
+ *       <div data-style-helper="presets" aria-disabled={member === 'disabled'} className={sx(padding.medium, descriptor,
+ *         foregroundOverride && foreground.brand, backgroundOverride && background.subtle)}>Actual presets subject</div>
+ *     </section>,
+ *     diagnostics: <p>Later foreground.brand replaces only the preset foreground; later background.subtle replaces only its background. Toggle them independently, together, then off to restore each preset property. Inverted is intended for the verified light/dark palettes; it is unsuitable for active content in the installed Fluent high contrast palette. Token descriptors inherit the host theme; Reset restores canvas with both overrides off without remounting the Demo.</p>,
  *   });
  * }
  * export const demo = {
  *   host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
- *   observe: 'Select paired color preset descriptors — foreground/background override composition. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+ *   observe: 'Select a paired preset, then toggle later foreground.brand and background.subtle overrides independently. Each overrides only its own property; disabling it restores that preset property. Reset restores canvas with both overrides off while retaining this Demo.',
  * };
  * ```
  */
