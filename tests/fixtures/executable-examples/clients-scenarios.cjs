@@ -26,9 +26,10 @@ function createClientsFixture(t, title, options = {}) {
     const toolkit = {}, context = {}, pageModule = {};
     const keys = Object.fromEntries(['page', 'theme', 'http', 'sp', 'graph', 'aad', 'token'].map(key => [key, {}]));
     const native = Object.fromEntries([['HttpClient', 'http'], ['SPHttpClient', 'sp'], ['MSGraphClientFactory', 'graph'], ['AadHttpClientFactory', 'aad'], ['AadTokenProviderFactory', 'token'], ['AadHttpClient', 'aadClient']].map(([name, key]) => [name, { serviceKey: keys[key], configurations: { v1: {} } }]));
+    const pageNative = { PageContext: { serviceKey: keys.page } };
     const h = createHarness({ '@apvee/spfx-react-toolkit': toolkit, '@microsoft/sp-http': native,
-        '@microsoft/sp-core-library': { DisplayMode: { Read: 1, Edit: 2 } },
-        '@microsoft/sp-page-context': { PageContext: { serviceKey: keys.page } },
+        '@microsoft/sp-core-library': { DisplayMode: { Read: 1, Edit: 2 }, _SPKillSwitch: { isActivated: () => false } },
+        '@microsoft/sp-page-context': pageNative,
         '@microsoft/sp-component-base': { ThemeProvider: { serviceKey: keys.theme } },
         './useSPFxContext': context, './useSPFxPageContext': pageModule,
         // The generic TS arrow is parsed as TSX by services-test-harness; reuse its established TS-only loader.
@@ -44,6 +45,12 @@ function createClientsFixture(t, title, options = {}) {
     for (const name of ['Context', 'PageContext', 'ServiceScope', 'InstanceInfo', 'HttpClient', 'SPHttpClient', 'MSGraphClient', 'AadHttpClient', 'AadTokenProvider', 'ApiPermissionPrecheck', 'Properties', 'Fluent9ThemeInfo'])
         Object.assign(toolkit, library('hooks/useSPFx' + name));
     if (options.graphData) for (const name of ['UserInfo', 'UserPhoto', 'OneDriveAppData']) Object.assign(toolkit, library('hooks/useSPFx' + name));
+    if (options.siteStore) {
+        pageNative.SPPermission = h.load(require.resolve('@microsoft/sp-page-context/lib-commonjs/SPPermission')).default;
+        const service = library('services/spfx-site-key-value-store.service');
+        Object.assign(toolkit, service);
+        toolkit.useSPFxSiteKeyValueStore = compiled ? library('hooks/useSPFxSiteKeyValueStore').useSPFxSiteKeyValueStore : loadHook('useSPFxSiteKeyValueStore', 'useSPFxSiteKeyValueStore', { './useSPFxSPHttpClient': toolkit, './useSPFxPageContext': toolkit, '../services/spfx-site-key-value-store.service': service });
+    }
     Object.assign(toolkit, library('hooks/useSx'), library('core/provider-webpart'), library('controls/web-part-shell/web-part-shell'), library('helpers/styles/index'), library('helpers/spfx-api-permission-precheck.helpers'));
     Object.defineProperty(window, 'crypto', { configurable: true, value: require('node:crypto').webcrypto });
     const calls = [], initializations = [], tokens = [], observers = [], commits = [], downloads = [];
@@ -53,7 +60,11 @@ function createClientsFixture(t, title, options = {}) {
     });
     const themeHandlers = new Set();
     const themeService = { tryGetTheme: () => undefined, themeChangedEvent: { add: (_o, fn) => themeHandlers.add(fn), remove: (_o, fn) => themeHandlers.delete(fn) } };
-    function http(kind) { const client = { get(url, configuration, init) { const request = deferred({ kind, client, url, configuration, init }); calls.push(request); return request.promise; } }; return client; }
+    function http(kind) {
+        const client = { get(url, configuration, init) { const request = deferred({ kind, client, url, configuration, init, ...(options.siteStore ? { method: 'GET' } : {}) }); calls.push(request); return request.promise; } };
+        if (options.siteStore && kind === 'sp') client.post = (url, configuration, init) => { const request = deferred({ kind, client, url, configuration, init, method: 'POST' }); calls.push(request); return request.promise; };
+        return client;
+    }
     function host(id = 'clients-one') {
         const page = { web: { absoluteUrl: 'https://tenant.test/sites/' + id, title: id }, site: { absoluteUrl: 'https://tenant.test/sites/' + id }, user: { displayName: 'Fixture User', loginName: 'fixture-user', email: 'fixture@example.invalid' }, cultureInfo: {} };
         const popup = new Map(), redirect = new Map();
@@ -78,8 +89,8 @@ function createClientsFixture(t, title, options = {}) {
     let redrawChild;
     let instance = host(), revision = options.revision ?? 0, selected = scenario(title, options.ownerKey), regions;
     const source = fs.readFileSync;
-    if (options.unmasked)
-        fs.readFileSync = (file, ...args) => { const value = source(file, ...args); return String(file) === selected.file ? value.replace('observedScope === serviceScope', 'true').replace('observedTarget === info.resourceUrl', 'true') : value; };
+    if (options.unmasked || options.siteMutation)
+        fs.readFileSync = (file, ...args) => { const value = source(file, ...args); return String(file) === selected.file ? (options.siteMutation ? value.replaceAll('ledger.current.size > 0', 'false') : value.replace('observedScope === serviceScope', 'true').replace('observedTarget === info.resourceUrl', 'true')) : value; };
     let Demo;
     try {
         Demo = h.load(selected.file).Demo;

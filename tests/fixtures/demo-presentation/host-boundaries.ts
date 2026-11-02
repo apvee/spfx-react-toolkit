@@ -10,7 +10,6 @@ function useLocalRead() {
 }
 export const useSPFxTenantProperty = useLocalRead;
 const store = { isReady: false, canWrite: false, isLoading: false, isWriting: false, get: async () => undefined, list: async () => [], save: forbiddenWrite, remove: forbiddenWrite };
-export const useSPFxSiteKeyValueStore = () => store;
 export const useSPFxTenantKeyValueStore = () => store;
 export const useSPFxPnPContext = () => ({ isInitialized: false, sp: undefined });
 // Match the real hook's stable callback identity across renders of a scope.

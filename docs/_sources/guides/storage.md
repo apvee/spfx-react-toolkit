@@ -110,6 +110,18 @@ Use `pageContext.site.absoluteUrl` for collection-wide settings shared across su
 
 The complete service recipe reads a boolean, checks `canCurrentUserWrite`, then awaits save at the same root. Treat the indicator as UI guidance: actual SharePoint grants and item restrictions still decide the mutation. The React hook captures read failures in state and returns its documented fallback; the standalone service rejects. Distinguish an absent key from that fallback/error before telling a reader a setting does not exist.
 
+## Explicit collection-root exploration
+
+The Site hook scenario requires explicit activation before its permission initialization. Read/List never provision; Save and confirmed Remove require consent to the displayed disposable key and exact value/description policy. Text, JSON, bigint and Date inputs expose their different read-back types; omitting a description preserves existing metadata while explicit empty text clears it. A failed fallback-returning hook read remains an error, not absence or an empty inventory. Can Write is advisory for the hook.
+
+The separate service scenario explicitly reads the root record and observes effective permissions before its optional consented boolean save. It deliberately requires a current true indicator, which does not guarantee later grants/schema success. Neither normal mutation automatically reads back. Observed ETags guard the service snapshot rather than an earlier UI Read.
+
+Reset preserves the outer Demo and actual pending-write ledger, hides results/consent, and deactivates the hook session. Reactivation is explicit and waits for the original public write promise to settle. Internal service requests may continue after Reset; neither Reset nor navigation cancels or rolls back server work. The lock belongs to that still-mounted Demo and does not serialize another scenario. Real tenant writes and cleanup require separate authorization.
+
+<!-- toolkit:include symbol="useSPFxSiteKeyValueStore" section="example" title="Explore collection root records with guarded mutations" -->
+
+<!-- toolkit:include symbol="createSPFxSiteKeyValueStoreService" section="example" title="Read a collection root record before a consented save" -->
+
 ## Layered whole-record configuration
 
 A site record replaces the **whole** tenant record for its key. False, zero, empty text and legacy `null` remain present overrides; fallback occurs only for confirmed site absence. There is no JSON-property merge and a failed site read must not silently turn into a tenant default. Physical inventory identifies scope-local IDs and rows, rather than an effective merged list.

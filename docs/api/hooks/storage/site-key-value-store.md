@@ -446,6 +446,188 @@ function SiteSettings() {
 }
 ```
 
+#### Explore collection root records with guarded mutations
+
+```tsx
+import * as React from 'react';
+import { makeStyles, Accordion, AccordionHeader, AccordionItem, AccordionPanel, Button, Checkbox, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, Field, Input, Select, Text } from '@fluentui/react-components';
+import { useSPFxInstanceInfo, useSPFxPageContext, useSPFxSiteKeyValueStore, useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
+import type { SPFxSiteKeyValueStoreItem } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Presenter = (regions: DemoRegions) => React.ReactElement;
+type Session = { generation: object; root: string; web: string; client: unknown; page: unknown; instance: string };
+type Action = 'get' | 'list' | 'save' | 'remove';
+type Format = 'text' | 'json' | 'bigint' | 'date';
+const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
+type Ticket = { promise?: Promise<void> };
+
+function present(regions: DemoRegions, render?: Presenter): React.ReactElement {
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+
+// This bounded child owns the hook session. Reset deliberately unmounts it.
+function SiteSession({ session, current, write, pending, isLocked, render }: {
+  session: Session; current: () => boolean; write: (operation: () => Promise<void>) => Promise<void> | undefined;
+  pending: boolean; isLocked: () => boolean; render?: Presenter;
+}): React.ReactElement {
+  const store = useSPFxSiteKeyValueStore();
+  const styles = useStyles();
+  const [action, setAction] = React.useState<Action>('get');
+  const [key, setKey] = React.useState('spfx-toolkit-site-demo-disposable');
+  const [value, setValue] = React.useState('');
+  const [format, setFormat] = React.useState<Format>('text');
+  const [replaceDescription, setReplaceDescription] = React.useState(false);
+  const [description, setDescription] = React.useState('Disposable SPFx React Toolkit site demo item');
+  const [consent, setConsent] = React.useState<object>();
+  const approval = React.useRef<object>();
+  approval.current = consent;
+  const approve = (next: object | undefined): void => { approval.current = next; setConsent(next); };
+  const [outcome, setOutcome] = React.useState<{ boundary: object; action: Action; message?: string; failure?: string; item?: SPFxSiteKeyValueStoreItem; items?: SPFxSiteKeyValueStoreItem[] }>();
+  const boundary = React.useRef({ fingerprint: '', token: {} });
+  const fingerprint = JSON.stringify([action, key, value, format, replaceDescription, description]);
+  if (boundary.current.fingerprint !== fingerprint) boundary.current = { fingerprint, token: {} };
+  const target = boundary.current.token;
+  const latest = React.useRef(0);
+  const mounted = React.useRef(true);
+  const confirmationRef = React.useRef<object>();
+  const restoreFocus = React.useRef<{ trigger: HTMLButtonElement; current: () => boolean }>();
+  const [confirmation, setConfirmation] = React.useState<{ token: object; confirm: () => void; cancel: () => void; key: string }>();
+  React.useLayoutEffect(() => {
+    const request = restoreFocus.current;
+    if (!confirmation && request) { restoreFocus.current = undefined; if (request.current() && request.trigger.isConnected) request.trigger.focus(); }
+  }, [confirmation]);
+  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; confirmationRef.current = undefined; }; }, []);
+  const valid = (): boolean => mounted.current && current() && boundary.current.token === target;
+  const disposable = key.startsWith('spfx-toolkit-site-demo-') && key.length > 'spfx-toolkit-site-demo-'.length;
+  const visible = valid() && outcome?.boundary === target ? outcome : undefined;
+  const reading = visible?.action === 'get' || visible?.action === 'list';
+  // The public read resolves a fallback. Its CURRENT rendered error takes precedence.
+  const failure = visible ? visible.failure ?? (reading ? store.error?.message : store.writeError?.message) : undefined;
+  const locked = pending || confirmation !== undefined;
+
+  const run = async (trigger: HTMLButtonElement): Promise<void> => {
+    if (!valid() || isLocked() || pending || confirmationRef.current || !store.isReady || store.isLoading || store.isWriting) return;
+    if (action !== 'list' && !key) return;
+    const mutating = action === 'save' || action === 'remove';
+    if (mutating && (!disposable || approval.current !== target)) return;
+    const operation = ++latest.current;
+    const owns = (): boolean => valid() && latest.current === operation;
+    const execute = async (remove?: () => Promise<void>): Promise<void> => {
+      if (!owns()) return;
+      setOutcome({ boundary: target, action });
+      try {
+        if (action === 'get') {
+          const item = await store.get(key);
+          if (owns()) setOutcome({ boundary: target, action, item, message: item ? `Found ${key}.` : `${key} not found.` });
+        } else if (action === 'list') {
+          const items = await store.list();
+          if (owns()) setOutcome({ boundary: target, action, items, message: `Loaded ${items.length} site key-value item(s).` });
+        } else {
+          let input: unknown = value;
+          if (action === 'save') {
+            if (format === 'json') input = JSON.parse(value);
+            else if (format === 'bigint') input = BigInt(value);
+            else if (format === 'date') { const date = new Date(value); if (!Number.isFinite(date.getTime())) throw new Error('Enter a valid Date.'); input = date; }
+          }
+          // The parent retains the ORIGINAL public promise through Reset/child unmount.
+          const promise = write(remove ?? (() => replaceDescription ? store.save(key, input, description) : store.save(key, input)));
+          if (!promise) return;
+          await promise;
+          if (owns()) { approve(undefined); setOutcome({ boundary: target, action, message: `${action === 'save' ? 'Saved' : 'Removed'} ${key}.` }); }
+        }
+      } catch (error) {
+        if (owns()) setOutcome({ boundary: target, action, failure: error instanceof Error ? error.message : String(error) });
+      }
+    };
+    if (action !== 'remove') { await execute(); return; }
+    const token = {};
+    const remove = store.remove;
+    const capturedKey = key;
+    confirmationRef.current = token;
+    const cancel = (): void => {
+      if (!owns() || confirmationRef.current !== token) return;
+      restoreFocus.current = { trigger, current: owns };
+      confirmationRef.current = undefined; setConfirmation(undefined);
+    };
+    const confirm = (): Promise<void> | undefined => {
+      if (!owns() || confirmationRef.current !== token || approval.current !== target) return;
+      confirmationRef.current = undefined; setConfirmation(undefined);
+      return execute(() => remove(capturedKey));
+    };
+    setConfirmation({ token, confirm, cancel, key: capturedKey });
+  };
+  const shownValue = (item: SPFxSiteKeyValueStoreItem): string => typeof item.value === 'string' ? JSON.stringify(item.value) : JSON.stringify(item.value) ?? String(item.value);
+  const regions: DemoRegions = {
+    controls: <>
+      <Field label="Operation"><Select aria-label="Operation" disabled={locked} value={action} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current) { approve(undefined); setAction(data.value as Action); } }}><option value="get">Read</option><option value="list">List</option><option value="save">Save</option><option value="remove">Remove</option></Select></Field>
+      {action !== 'list' && <Field label="Key"><Input aria-label="Key" disabled={locked} value={key} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current) { approve(undefined); setKey(data.value); } }}/></Field>}
+      {action === 'save' && <>
+        <Field label="Value format"><Select aria-label="Value format" disabled={locked} value={format} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current) { approve(undefined); setFormat(data.value as Format); } }}><option value="text">Text</option><option value="json">JSON</option><option value="bigint">Big integer</option><option value="date">Date (ISO)</option></Select></Field>
+        <Field label="Value"><Input aria-label="Value" disabled={locked} value={value} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current) { approve(undefined); setValue(data.value); } }}/></Field>
+        <Checkbox label="Replace/clear destination description" disabled={locked} checked={replaceDescription} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current) { approve(undefined); setReplaceDescription(data.checked === true); } }}/>
+        <Field label="Description"><Input aria-label="Description" disabled={locked || !replaceDescription} value={description} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current) { approve(undefined); setDescription(data.value); } }}/></Field>
+      </>}
+      {(action === 'save' || action === 'remove') && <>
+        <Text as="p">{action} at {session.root}; key {key}; format {format}; value {JSON.stringify(value)}; {replaceDescription ? `description ${JSON.stringify(description)}` : 'preserve destination description'}. Saving may provision or repair the store.</Text>
+        <Checkbox label="I consent to this exact disposable mutation" disabled={locked || !disposable} checked={consent === target} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current && valid()) approve(data.checked === true ? target : undefined); }}/>
+      </>}
+    </>,
+    commands: <Button appearance="primary" disabled={!store.isReady || store.isLoading || store.isWriting || locked || (action !== 'list' && !key) || ((action === 'save' || action === 'remove') && (!disposable || approval.current !== target))} onClick={event => run(event.currentTarget)}>Run</Button>,
+    status: <>{failure ? <Text role="alert">{failure}</Text> : visible?.message ? <Text role="status">{visible.message}</Text> : <Text>Run the selected operation.</Text>}</>,
+    children: <>
+      <dl aria-label="Site store state"><dt>Ready</dt><dd>{String(store.isReady)}</dd><dt>Can Write</dt><dd>{String(store.canWrite)}</dd><dt>Loading</dt><dd>{String(Boolean(visible) && store.isLoading)}</dd><dt>Writing</dt><dd>{String(pending)}</dd><dt>Collection root URL</dt><dd>{session.root}</dd><dt>Current web URL</dt><dd>{session.web}</dd></dl>
+      {!failure && visible?.item && <dl aria-label="Selected site record"><dt>Selected key</dt><dd>{visible.item.key}</dd><dt>Selected value</dt><dd>{shownValue(visible.item)}{visible.item.value === '' ? ' (empty string)' : ''}</dd><dt>Value type</dt><dd>{typeof visible.item.value}</dd><dt>Description</dt><dd>{visible.item.description ?? '(not set)'}</dd></dl>}
+      {!failure && visible?.items && <><Text>Inventory count: {visible.items.length}</Text><dl aria-label="First ten site records">{visible.items.slice(0, 10).map((item, index) => <React.Fragment key={index}><dt>{item.key}</dt><dd>{shownValue(item)}</dd></React.Fragment>)}</dl></>}
+      <Dialog open={confirmation !== undefined} onOpenChange={(_, data) => { if (!data.open) confirmation?.cancel(); }}><DialogSurface><DialogBody><DialogTitle>Confirm exact site removal</DialogTitle><DialogContent>Remove {confirmation?.key} at {session.root}. This cannot be undone by Reset.</DialogContent><DialogActions><Button onClick={confirmation?.cancel}>Cancel</Button><Button appearance="primary" onClick={confirmation?.confirm}>Confirm removal</Button></DialogActions></DialogBody></DialogSurface></Dialog>
+    </>,
+    diagnostics: <>
+      <Text as="p">All subsites share the collection-root store. Can Write is an effective indicator, not authorization or a prerequisite for an otherwise consented hook request. SharePoint enforces grants; schema changes may need additional rights. Reads/removal never provision. Normal Save/Remove does not read back automatically. ETags guard the service snapshot, not an earlier Read. Bigint and Date read as strings. Reset hides results; dispatched writes can still complete. This local lock does not serialize other scenarios.</Text>
+      {!failure && visible && <Accordion collapsible><AccordionItem value="payload"><AccordionHeader>Full site payload</AccordionHeader><AccordionPanel><div role="region" aria-label="Full site payload" tabIndex={0} className={styles.payload}><pre>{JSON.stringify(visible.item ?? visible.items, undefined, 2)}</pre></div></AccordionPanel></AccordionItem></Accordion>}
+    </>,
+  };
+  return present(regions, render);
+}
+
+export function Demo({ render, resetRevision = 0 }: { render?: Presenter; resetRevision?: number } = {}): React.ReactElement {
+  const page = useSPFxPageContext();
+  const { client } = useSPFxSPHttpClient();
+  const info = useSPFxInstanceInfo();
+  const root = page.site.absoluteUrl.trim().replace(/\/+$/, '');
+  const web = page.web.absoluteUrl.trim().replace(/\/+$/, '');
+  const boundary = React.useRef({ revision: resetRevision, root, web, client, page, instance: info.id, generation: {} });
+  const previous = boundary.current;
+  if (previous.revision !== resetRevision || previous.root !== root || previous.web !== web || previous.client !== client || previous.page !== page || previous.instance !== info.id) boundary.current = { revision: resetRevision, root, web, client, page, instance: info.id, generation: {} };
+  const generation = boundary.current.generation;
+  const [session, setSession] = React.useState<Session>();
+  const ledger = React.useRef(new Set<Ticket>());
+  const [, refresh] = React.useState(0);
+  const mounted = React.useRef(true);
+  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const current = (): boolean => mounted.current && boundary.current.generation === generation;
+  const write = (operation: () => Promise<void>): Promise<void> | undefined => {
+    if (!current() || ledger.current.size > 0) return undefined;
+    const ticket: Ticket = {}; ledger.current.add(ticket); refresh(count => count + 1);
+    const release = (): void => { ledger.current.delete(ticket); if (mounted.current) refresh(count => count + 1); };
+    try { const promise = operation(); ticket.promise = promise; return promise.finally(release); }
+    catch (error) { release(); throw error; }
+  };
+  const active = session?.generation === generation;
+  const pending = ledger.current.size > 0;
+  const activate = (): void => {
+    if (!current() || ledger.current.size > 0 || active || !client || !root) return;
+    setSession({ generation, root, web, client, page, instance: info.id });
+  };
+  // The outer activation control remains the same DOM node across child teardown.
+  return <>
+    <Button disabled={active || pending || !client || !root} onClick={activate}>Activate site store</Button>
+    {pending && <Text role="status">Previous write still pending</Text>}
+    {active && session ? <SiteSession session={session} current={current} write={write} pending={pending} isLocked={() => ledger.current.size > 0} render={render}/> : present({ children: <Text>Activate the site store to permit read-only permission initialization. Reset does not cancel server work.</Text> }, render)}
+  </>;
+}
+export const demo = { host: 'webPart', kind: 'write', contentPlacement: 'configuration', observe: 'Activate the site store, run collection-root reads and consented mutations, and compare exact values with the separate read and write errors.' };
+```
+
 ### Signatures (5)
 
 ```ts
@@ -503,4 +685,4 @@ Contract: see [SPFxSiteKeyValueStoreResult.save](site-key-value-store.md#spfxsit
 
 ### Source (7)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts:209](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#L209)
+[packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts:390](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#L390)

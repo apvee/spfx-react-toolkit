@@ -77,3 +77,7 @@ export { summarizeSPFxApiPermissionResults } from '../../../packages/spfx-react-
 // GraphData subjects retain actual hook/service/URL ownership; native transports alone are controlled.
 export { useSPFxUserPhoto } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxUserPhoto';
 export { useSPFxOneDriveAppData } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxOneDriveAppData';
+
+// Site cases call the actual public hook and factory; only native HTTP is controlled.
+export { useSPFxSiteKeyValueStore, type SPFxSiteKeyValueStoreItem } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxSiteKeyValueStore';
+export { createSPFxSiteKeyValueStoreService, type SPFxSiteKeyValueStoreServiceItem } from '../../../packages/spfx-react-toolkit/lib/services/spfx-site-key-value-store.service';

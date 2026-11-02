@@ -2453,6 +2453,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-14132da744a6d6d5b362ac82b0d7a5fb27641f3f6d6c261947aa309102fcbdc5' */ "./14132da744a6d6d5b362ac82b0d7a5fb27641f3f6d6c261947aa309102fcbdc5")
 },
 {
+  "id": "525e241b34eb738e7fe3a01e02c20583004a5d22064e0a11e47d423849b73970",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore",
+  "title": "Explore collection root records with guarded mutations",
+  "groupRoute": "docs/api/hooks/storage/site-key-value-store.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore",
+  "featureTitle": "useSPFxSiteKeyValueStore",
+  "publicNames": [
+    "useSPFxSiteKeyValueStore"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts",
+    "line": 211
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "write",
+    "contentPlacement": "configuration",
+    "observe": "Activate the site store, run collection-root reads and consented mutations, and compare exact values with the separate read and write errors."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-525e241b34eb738e7fe3a01e02c20583004a5d22064e0a11e47d423849b73970' */ "./525e241b34eb738e7fe3a01e02c20583004a5d22064e0a11e47d423849b73970")
+},
+{
   "id": "5062ba39e03063855fdd7a7e38635cf2980a1dd15f4aa5fa37eee376b9ad008a",
   "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams",
   "title": "Observe application SDK readiness and theme",
@@ -2635,6 +2658,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Select eight recipes and actual public descriptor choices. Values persist across recipes; Reset preserves the recipe and component identity while restoring values, invalid numeric drafts, direction and counters. Resize the real container or viewport for inclusive queries; use native pointer, keyboard and two-axis scrolling for interaction feedback."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-6010887cfaf12213f5fc382a3f51f03ca038e58485625b8c904f3b8fb0f01e30' */ "./6010887cfaf12213f5fc382a3f51f03ca038e58485625b8c904f3b8fb0f01e30")
+},
+{
+  "id": "196995dd0cc3cb7889f414c4282acab61e85718a2c301a02b5286bac3fd4a9d3",
+  "ownerKey": "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService",
+  "title": "Read a collection root record before a consented save",
+  "groupRoute": "docs/api/services/site-key-value-store.md",
+  "groupKey": "services",
+  "featureKey": "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService",
+  "featureTitle": "createSPFxSiteKeyValueStoreService",
+  "publicNames": [
+    "createSPFxSiteKeyValueStoreService"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts",
+    "line": 155
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "write",
+    "contentPlacement": "configuration",
+    "observe": "Read the collection-root record and permission indicator before explicitly consenting to the service write."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-196995dd0cc3cb7889f414c4282acab61e85718a2c301a02b5286bac3fd4a9d3' */ "./196995dd0cc3cb7889f414c4282acab61e85718a2c301a02b5286bac3fd4a9d3")
 }
 ];
 
@@ -2739,11 +2785,15 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts#useSPFxServiceScope", title: "useSPFxServiceScope", scenarios: [executableExamples[101]] },
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage", title: "useSPFxSessionStorage", scenarios: [executableExamples[102]] },
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo", title: "useSPFxSiteInfo", scenarios: [executableExamples[103]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams", title: "useSPFxTeams", scenarios: [executableExamples[104]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[105]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[106]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto", title: "useSPFxUserPhoto", scenarios: [executableExamples[107]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[108], executableExamples[109]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[110], executableExamples[111]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore", title: "useSPFxSiteKeyValueStore", scenarios: [executableExamples[104]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams", title: "useSPFxTeams", scenarios: [executableExamples[105]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[106]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[107]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto", title: "useSPFxUserPhoto", scenarios: [executableExamples[108]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[109], executableExamples[110]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[111], executableExamples[112]] }
+  ] },
+  { key: "services", title: "Servizi", features: [
+    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[113]] }
   ] }
 ];

@@ -143,7 +143,7 @@ test('numeric drafts allow clearing and sequential replacement while retaining v
 
 test('hook, provider, style and service panels use Fluent configuration and shared demo regions', () => {
   const componentRoot = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
-  const panels = ['Providers', 'Site', 'Tenant', 'PnP', 'Search'];
+  const panels = ['Providers', 'Tenant', 'PnP', 'Search'];
   const files = panels.map(name => path.join(componentRoot, 'panels', name + 'Panel.tsx'))
     .concat(fs.readdirSync(path.join(componentRoot, 'demos')).filter(name => /^PnP.*\.tsx$/.test(name)).map(name => path.join(componentRoot, 'demos', name)));
   for (const file of files) {
@@ -244,6 +244,28 @@ test('hook, provider, style and service panels use Fluent configuration and shar
       assert.match(source, /<Field\b[\s\S]*<Select\b/); assert.match(source, /<Input\b/);
       assert.match(source, /<Accordion\b/); assert.match(source, /overflowX: 'auto'/);
     } else assert.match(source, /<Image\b[\s\S]*<Avatar\b/);
+  }
+  const siteTitles = {
+    useSPFxSiteKeyValueStore: 'Explore collection root records with guarded mutations',
+    createSPFxSiteKeyValueStoreService: 'Read a collection root record before a consented save',
+  };
+  const siteOwners = ['packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore', 'packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService'];
+  const siteCases = catalogueModule.exports.executableExamples.filter(entry => siteOwners.includes(entry.ownerKey));
+  assert.deepEqual(siteCases.map(entry => [entry.featureTitle, entry.title]).sort(), Object.entries(siteTitles).sort());
+  for (const entry of siteCases) {
+    const source = fs.readFileSync(path.join(generatedRoot, entry.id + '.tsx'), 'utf8');
+    assert.deepEqual([entry.metadata.host, entry.metadata.kind, entry.metadata.contentPlacement], ['webPart', 'write', 'configuration']);
+    assert.equal(entry.groupKey, entry.featureTitle === 'useSPFxSiteKeyValueStore' ? 'hooks' : 'services');
+    assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|summary|a)\b|<FluentProvider\b/);
+    const parsed = ts.createSourceFile(entry.id + '.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    let calls = 0;
+    function inspectSite(node) {
+      if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === entry.featureTitle) calls++;
+      if (ts.isJsxAttribute(node)) assert.ok(!['style', 'styles'].includes(node.name.text), 'Site authored styles are classes');
+      ts.forEachChild(node, inspectSite);
+    }
+    inspectSite(parsed); assert.equal(calls, 1);
+    assert.match(source, /<Field\b[\s\S]*<Input\b/); assert.match(source, /<Checkbox\b/); assert.match(source, /overflowX: 'auto'/);
   }
   // Context's finite acceptance cohort must not absorb later client/data hook families.
   const contextNames = ['Context', 'PageContext', 'InstanceInfo', 'DisplayMode', 'IsEdit', 'EnvironmentInfo',

@@ -68,3 +68,7 @@ export { useSPFxApiPermissionPrecheck } from '../../../packages/spfx-react-toolk
 export { useSPFxUserPhoto } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto';
 export { useSPFxOneDriveAppData } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData';
 export { summarizeSPFxApiPermissionResults, type SPFxApiPermissionCheckResult } from '../../../packages/spfx-react-toolkit/src/helpers/spfx-api-permission-precheck.helpers';
+
+// Site cases call the actual public hook and factory; only native HTTP is controlled.
+export { useSPFxSiteKeyValueStore, type SPFxSiteKeyValueStoreItem } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore';
+export { createSPFxSiteKeyValueStoreService, type SPFxSiteKeyValueStoreServiceItem } from '../../../packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service';

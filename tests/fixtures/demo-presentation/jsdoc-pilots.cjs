@@ -1,5 +1,7 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
+  useSPFxSiteKeyValueStore: ['Explore collection root records with guarded mutations'],
+  createSPFxSiteKeyValueStoreService: ['Read a collection root record before a consented save'],
   useSPFxUserPhoto: ['Read the current user photo with managed URL cleanup'],
   useSPFxOneDriveAppData: ['Read and explicitly replace OneDrive app data'],
   useSPFxHttpClient: ['Load an external todo with tracked invocation state'],

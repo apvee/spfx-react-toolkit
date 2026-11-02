@@ -20,7 +20,35 @@ const calls: Array<{ transport: string; url: string; body?: unknown }> = [];
 const requests: Array<{ url: string; resolve(payload?: unknown): void; reject(error: Error): void }> = [];
 async function pause(): Promise<void> { if (hold) await new Promise<void>(resolve => waiting.push(resolve)); else await new Promise<void>(resolve => setTimeout(resolve, 60)); }
 function exactName(url: string, field: string): string { return new RegExp(`${field} eq '((?:[^']|'')*)'`).exec(decodeURIComponent(url))?.[1].replace(/''/g, "'") ?? 'Project Readers'; }
+// Storage is a separate native HTTP queue; generic trim payloads are not store rows.
+const storeRequests: NativeRequest[] = [];
+let holdStores = false, storeAbsent = false;
+let storeMask: unknown = { High: '0', Low: '14' };
+let storeRows: unknown[] = [];
+const storeRoots = new Set<string>();
+function isStoreRequest(url: string): boolean {
+  if (url.includes("/lists/getByTitle('SiteKeyValueStore')")) { storeRoots.add(url.slice(0, url.indexOf('/_api/'))); return true; }
+  return storeAbsent && [...storeRoots].some(root => url === root + '/_api/web/effectiveBasePermissions');
+}
+function storageRequest(method: string, url: string, configuration: unknown, options?: unknown): Promise<unknown> {
+  return controlled(storeRequests, 'sp-store', url, holdStores, () => {
+    const absent = storeAbsent && url.endsWith('?$select=Id');
+    const body = url.endsWith('/effectiveBasePermissions') ? storeMask : url.includes('/fields?') ? { value: [
+      { InternalName: 'Title', FieldTypeKind: 2, Indexed: true, EnforceUniqueValues: true },
+      { InternalName: 'Value', FieldTypeKind: 3 }, { InternalName: 'Description', FieldTypeKind: 3 },
+    ] } : url.includes('/items?') ? { value: storeRows } : {};
+    return new Response(JSON.stringify(body), { status: absent ? 404 : 200, headers: { 'Content-Type': 'application/json' } });
+  }, { method, configuration, options });
+}
+export const storesNative = { requests: storeRequests,
+  configure(options: { hold?: boolean; absent?: boolean; mask?: unknown; rows?: unknown[] }): void {
+    holdStores = options.hold ?? holdStores; storeAbsent = options.absent ?? storeAbsent;
+    if (options.mask !== undefined) storeMask = options.mask;
+    if (options.rows !== undefined) storeRows = options.rows;
+  },
+};
 const sp = { get: async (url: string, _configuration: unknown, _options: unknown) => {
+  if (isStoreRequest(url)) return storageRequest('GET', url, _configuration, _options);
   calls.push({ transport: 'sp', url });
   const appliedMode = mode;
   const override = await new Promise<{ payload?: unknown } | undefined>((resolve, reject) => {
@@ -34,6 +62,9 @@ const sp = { get: async (url: string, _configuration: unknown, _options: unknown
   const mask = { High: '0', Low: appliedMode === 'denied' ? '0' : '31' };
   const payload = url.includes('/_api/web?$select=Title,Url') ? { Title: 'Fixture web', Url: url.slice(0, url.indexOf('/_api/')) } : url.includes('/hubsitedata(false)') ? { value: JSON.stringify({ url: 'https://simulated.invalid/sites/fixture-hub' }) } : url.includes('/currentuser') ? { Id: 17 } : url.includes('/users') ? { value: appliedMode === 'denied' ? [] : [{ Id: 17 }] } : url.includes('/sitegroups(') ? { Id: 2, Title: 'Project Readers' } : url.includes('/sitegroups?') ? { value: [{ Id: 2, Title: exactName(url, 'Title') }] } : url.includes('GetFolderByServerRelativePath') ? { EffectiveBasePermissions: mask, ParentList: { Id: listId } } : url.includes('?$select=Id') ? { Id: listId } : mask;
   return { ok: true, status: 200, json: async () => payload };
+}, post: (url: string, configuration: unknown, options: unknown) => {
+  if (!isStoreRequest(url) && !url.endsWith('/_api/web/lists')) return Promise.reject(new Error('Unsupported fixture SP POST'));
+  return storageRequest('POST', url, configuration, options);
 } };
 const graphDataPath = '/me/drive/special/approot:/spfx-react-toolkit-demo/test-data.json';
 const graphDataDownload = 'https://download.fixture.invalid/app-data';

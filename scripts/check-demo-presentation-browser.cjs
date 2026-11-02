@@ -15,6 +15,7 @@ const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Goog
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
+  { key: 'site', title: 'useSPFxSiteKeyValueStore' }, { key: 'site-service', title: 'createSPFxSiteKeyValueStoreService' },
   { key: 'styles', title: 'useSx' }, { key: 'auto-skeleton', title: 'AutoSkeleton' }, { key: 'relative-time', title: 'RelativeTime' },
   { key: 'formatted-text', title: 'FormattedText' }, { key: 'editable-text', title: 'EditableText' },
   { key: 'content-card', title: 'ContentCard' }, { key: 'cards', title: 'PreviewCard' },
@@ -56,6 +57,8 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    site: ['useSPFxSiteKeyValueStore', 'Explore collection root records with guarded mutations'],
+    'site-service': ['createSPFxSiteKeyValueStoreService', 'Read a collection root record before a consented save'],
     context: ['useSPFxCrossSitePermissions', 'Check staged legacy site web and list permissions'],
     'context-scoped': ['useSPFxCrossSitePermissions', 'Check staged web list item and folder permissions'],
     'context-hub': ['useSPFxHubSiteInfo', 'Start a scope bound hub association lookup'],
@@ -87,7 +90,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: (['imports', 'styles'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: key === 'site-service' ? /^Servizi/ : (['imports', 'styles', 'site'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -329,7 +332,9 @@ async function interact(page, key) {
       await panel.getByText('Last Result: Timed operation completed', { exact: true }).waitFor();
       check('Runtime actual timed result', await panel.locator('output').textContent(), 'Last Result: Timed operation completed'); break;
     case 'graph': await panel.getByRole('button', { name: 'Run', exact: true }).click(); await panel.getByText('Simulated network unavailable', { exact: true }).waitFor(); check('Graph simulated read error visible', await panel.getByText('Simulated network unavailable', { exact: true }).count(), 1); break;
-    case 'site': case 'tenant': await panel.locator(`select[data-demo-variant=${key === 'site' ? 'SitePanel' : 'TenantPanel'}]`).selectOption(key === 'site' ? 'save' : 'store'); if (key === 'tenant') await panel.locator('select[data-demo-variant=TenantStoreScenario]').selectOption('save'); await panel.getByLabel('Value', { exact: true }).fill('Local draft'); check(`${key}: editable draft`, await panel.getByLabel('Value', { exact: true }).inputValue(), 'Local draft'); break;
+    case 'site': await panel.getByRole('button', { name: 'Activate site store', exact: true }).click(); await panel.getByLabel('Operation', { exact: true }).selectOption('save'); await panel.getByLabel('Value', { exact: true }).fill('Local draft'); check('site: editable draft', await panel.getByLabel('Value', { exact: true }).inputValue(), 'Local draft'); break;
+    case 'site-service': await panel.getByLabel('Key', { exact: true }).fill('spfx-toolkit-site-demo-service-draft'); check('site service: Save initially locked', await panel.getByRole('button', { name: 'Save', exact: true }).isDisabled(), true); break;
+    case 'tenant': await panel.locator('select[data-demo-variant=TenantPanel]').selectOption('store'); await panel.locator('select[data-demo-variant=TenantStoreScenario]').selectOption('save'); await panel.getByLabel('Value', { exact: true }).fill('Local draft'); check(`${key}: editable draft`, await panel.getByLabel('Value', { exact: true }).inputValue(), 'Local draft'); break;
     case 'pnp': await panel.locator('select[data-demo-variant=PnPPanel]').selectOption('listAccess'); await panel.getByLabel('List GUID', { exact: true }).fill('11111111-2222-3333-4444-555555555555'); check('PnP GUID config', await panel.getByLabel('List GUID', { exact: true }).inputValue(), '11111111-2222-3333-4444-555555555555'); break;
     case 'search': await panel.locator('select[data-demo-variant=SearchPanel]').selectOption('suggestions'); await panel.getByLabel('Search with Autocomplete', { exact: true }).fill('local'); await panel.getByRole('button', { name: 'local simulated suggestion', exact: true }).waitFor(); check('Search real debounce/suggestion UI', await panel.getByRole('button', { name: 'local simulated suggestion', exact: true }).count(), 1); break;
     default: throw new Error(`Uncovered panel ${key}`);
