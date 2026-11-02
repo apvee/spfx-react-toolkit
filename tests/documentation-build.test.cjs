@@ -95,8 +95,16 @@ test('real copied library build compiles/localizes stale or missing documents; s
   const developmentSource = path.join(root, 'docs/_sources/development/documentation.md');
   const originalDevelopment = fs.readFileSync(developmentSource, 'utf8');
   fs.appendFileSync(developmentSource, '\nBuild integration development freshness probe.\n');
-  const developmentRoutes = Object.keys(snapshot(root)).filter(route => route.startsWith('docs/development/') && route.endsWith('.md'));
-  assert.equal(developmentRoutes.length, 5);
+  const developmentRoutes = Object.keys(snapshot(root)).filter(route => route.startsWith('docs/development/') && route.endsWith('.md')).sort();
+  const expectedDevelopmentRoutes = [
+    'docs/development/INDEX.md',
+    'docs/development/documentation.md',
+    'docs/development/native-executable-scenarios.md',
+    'docs/development/setup.md',
+    'docs/development/sharepoint-validation/INDEX.md',
+    'docs/development/verification.md',
+  ];
+  assert.deepEqual(developmentRoutes, expectedDevelopmentRoutes);
   function build(label, expectedRoutes) {
     const before = snapshot(root);
     const result = spawnSync('npm', ['run', 'build:library'], { cwd: root, env: { ...process.env, TOOLKIT_DOCS_MODE: 'check' }, encoding: 'utf8', timeout: 110000 });
@@ -120,6 +128,6 @@ test('real copied library build compiles/localizes stale or missing documents; s
   fs.writeFileSync(developmentSource, originalDevelopment);
   fs.unlinkSync(path.join(root, 'llms.txt'));
   fs.rmSync(path.join(root, 'docs/development'), { recursive: true });
-  build('missing development directory and llms.txt', [...developmentRoutes, 'llms.txt']);
+  build('missing development directory and llms.txt', [...expectedDevelopmentRoutes, 'llms.txt']);
   assert.equal(fs.existsSync(path.join(root, 'docs/development')), false, 'build must not recreate the missing directory');
 });
