@@ -63,3 +63,15 @@ export * from './named-erased-barrel';
 export type { Control as TypeControl } from './control';
 export * as mergedFunction from './merged-function';
 export * as destructured from './destructured';
+/**
+ * A runtime namespace binding with a default expression.
+ * @example Default binding recipe
+ * ```tsx
+ * import * as React from 'react';
+ * import { settings } from '@fixture/namespace';
+ * export function Demo(): React.ReactElement { return <div>{settings.default.actual}</div>; }
+ * export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'The default settings value is visible.' };
+ * ```
+ */
+export * as settings from './settings';
+export * as erasedDefault from './erased-default';

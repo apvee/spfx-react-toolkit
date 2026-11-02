@@ -47,6 +47,23 @@ test('namespace runtime descendants retain merged functions and destructured imp
   assert.equal(binding('destructured')?.runtimeExport, true);
 });
 
+test('namespace default expression exports own module and binding recipes while erased default types stay excluded', () => {
+  assert.equal(binding('settings')?.runtimeExport, true);
+  assert.equal(model.contracts['src/settings.ts'].examples[0].ownerKey, 'src/settings.ts#<module>');
+  assert.strictEqual(model.contracts['src/settings.ts'], model.contracts['src/settings.ts#<module>']);
+  const moduleRecipe = result.examples.find(item => item.title === 'Default expression recipe');
+  const bindingRecipe = result.examples.find(item => item.title === 'Default binding recipe');
+  assert.ok(moduleRecipe && bindingRecipe);
+  assert.equal(moduleRecipe.featureKey, 'src/settings.ts#<module>');
+  assert.equal(bindingRecipe.ownerKey, '@fixture/namespace#settings');
+  assert.equal(bindingRecipe.featureKey, moduleRecipe.featureKey);
+  assert.deepEqual(moduleRecipe.publicNames, ['settings']);
+  assert.equal(binding('erasedDefault')?.runtimeExport, false);
+  assert.equal(model.contracts['src/erased-default.ts'].examples[0].ownerKey, 'src/erased-default.ts');
+  assert.ok(!result.examples.some(item => item.title === 'Erased default recipe'));
+  assert.ok(result.diagnostics.some(item => item.code === 'EXECUTABLE_RUNTIME_OWNER' && item.symbol === 'src/erased-default.ts'));
+});
+
 test('namespace module ownership uses the unique public runtime entity before parsing any file contract', () => {
   const contract = model.contracts['src/width.ts'];
   assert.equal(contract.examples[0].ownerKey, 'src/width.ts#<module>');
@@ -66,7 +83,8 @@ test('namespace module ownership uses the unique public runtime entity before pa
 
 test('namespace executable owner and names exclude erased aliases without losing genuine binding recipes', () => {
   assert.deepEqual(result.examples.map(item => item.title).sort(), [
-    'Control declaration recipe', 'Declared namespace recipe', 'Nonnamespace binding recipe', 'Runtime binding recipe', 'Width recipe',
+    'Control declaration recipe', 'Declared namespace recipe', 'Default binding recipe', 'Default expression recipe',
+    'Nonnamespace binding recipe', 'Runtime binding recipe', 'Width recipe',
   ]);
   const width = result.examples.find(item => item.title === 'Width recipe');
   assert.equal(width.ownerKey, 'src/width.ts#<module>');

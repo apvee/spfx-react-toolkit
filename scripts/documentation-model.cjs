@@ -279,6 +279,7 @@ function buildApiGraph(root, config, query = {}) {
     const implemented = Boolean(symbol.flags & ts.SymbolFlags.Value) && Boolean(symbol.declarations?.some(node => {
       if (!nonAmbient(node)) return false;
       if (ts.isFunctionDeclaration(node)) return Boolean(node.body);
+      if (ts.isExportAssignment(node)) return !node.isExportEquals;
       if (ts.isVariableDeclaration(node) || ts.isBindingElement(node) || ts.isClassDeclaration(node)) return true;
       return ts.isEnumDeclaration(node) && (options.preserveConstEnums ||
         !ts.getModifiers(node)?.some(modifier => modifier.kind === ts.SyntaxKind.ConstKeyword));
