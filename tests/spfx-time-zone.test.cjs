@@ -1,6 +1,5 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const Module = require('node:module');
 const mapping = require('./fixtures/spfx-time-zone-mapping.json');
 const { createHarness } = require('./provider-test-harness.cjs');
 
@@ -111,22 +110,12 @@ test('representative zones retain independent winter and summer rules', () => ru
 }));
 
 test('locale hook agrees with helper across isolated providers and in-place zone ID updates', () => run(h => {
-  const pageContextKey = {};
-  // The SDK runtime requires SPFx's resource loader; only its service identity is needed here.
-  const originalLoad = Module._load;
-  let useSPFxLocaleInfo;
-  try {
-    Module._load = function (specifier, ...args) {
-      if (specifier === '@microsoft/sp-page-context') return { PageContext: { serviceKey: pageContextKey } };
-      return originalLoad.call(this, specifier, ...args);
-    };
-    ({ useSPFxLocaleInfo } = h.load('hooks/useSPFxLocaleInfo.ts'));
-  } finally { Module._load = originalLoad; }
+  const { useSPFxLocaleInfo } = h.load('hooks/useSPFxLocaleInfo.ts');
   const { getSPFxLocaleInfo } = h.load('helpers/spfx-page-context.helpers.ts');
   function observer(id, context) {
     const host = h.instance(id);
     const consume = host.context.serviceScope.consume;
-    host.context.serviceScope.consume = key => key === pageContextKey ? context : consume(key);
+    host.context.serviceScope.consume = key => key === h.pageContextKey ? context : consume(key);
     let latest;
     function Child() { latest = useSPFxLocaleInfo(); return h.React.createElement(h.React.Fragment); }
     const fixture = h.mount(host, Child);

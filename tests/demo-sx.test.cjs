@@ -143,7 +143,7 @@ test('numeric drafts allow clearing and sequential replacement while retaining v
 
 test('hook, provider, style and service panels use Fluent configuration and shared demo regions', () => {
   const componentRoot = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
-  const panels = ['Providers', 'Context', 'Runtime', 'Clients', 'GraphData', 'Site', 'Tenant', 'PnP', 'Search'];
+  const panels = ['Providers', 'Context', 'Clients', 'GraphData', 'Site', 'Tenant', 'PnP', 'Search'];
   const files = panels.map(name => path.join(componentRoot, 'panels', name + 'Panel.tsx'))
     .concat(fs.readdirSync(path.join(componentRoot, 'demos')).filter(name => /^PnP.*\.tsx$/.test(name)).map(name => path.join(componentRoot, 'demos', name)));
   for (const file of files) {
@@ -165,8 +165,39 @@ test('hook, provider, style and service panels use Fluent configuration and shar
     .filter(entry => entry.groupKey === 'hooks' && entry.metadata.host === 'none')
     .map(entry => fs.readFileSync(path.join(generatedRoot, entry.id + '.tsx'), 'utf8'));
   assert.equal(hooks.length, 3, 'two callback pilots and the complete import-interoperability scenario own shared configuration regions');
+  const runtimeOwners = [
+    'packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties',
+    'packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage',
+    'packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxLocalStorage',
+    'packages/spfx-react-toolkit/src/hooks/useSPFxLogger.ts#useSPFxLogger',
+    'packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#useSPFxPerformance',
+  ];
+  const runtimeCases = catalogueModule.exports.executableExamples.filter(entry => runtimeOwners.includes(entry.ownerKey));
+  assert.deepEqual(runtimeCases.map(entry => entry.ownerKey).sort(), [...runtimeOwners].sort(), 'five actual Runtime owners replace the retired panel');
+  for (const entry of runtimeCases) {
+    assert.equal(entry.metadata.host, 'webPart', entry.title);
+    assert.equal(entry.metadata.contentPlacement, 'configuration', entry.title);
+  }
   for (const source of hooks) {
     assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|a)\b|\bstyles?\s*=/);
+    assert.match(source, /return render\(\{/);
+    assert.match(source, /contentPlacement: 'configuration'/);
+  }
+  const ts = require('typescript');
+  for (const entry of runtimeCases) {
+    const source = fs.readFileSync(path.join(generatedRoot, entry.id + '.tsx'), 'utf8');
+    assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|a)\b/, entry.title);
+    // Class maps named styles are valid; reject actual JSX style attributes.
+    const parsed = ts.createSourceFile(entry.id + '.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    function inspect(node) {
+      if (ts.isJsxAttribute(node)) assert.ok(!['style', 'styles'].includes(node.name.text), `${entry.title} must use classes rather than inline style attributes`);
+      ts.forEachChild(node, inspect);
+    }
+    inspect(parsed);
+    assert.match(source, /commands:\s*<>\s*<Button\b/, `${entry.title} exposes actual Fluent commands`);
+    if (['useSPFxProperties', 'useSPFxLocalStorage', 'useSPFxSessionStorage'].includes(entry.featureTitle)) {
+      assert.match(source, /controls:\s*<(?:Field|Input)\b/, `${entry.title} exposes actual Fluent input configuration`);
+    }
     assert.match(source, /return render\(\{/);
     assert.match(source, /contentPlacement: 'configuration'/);
   }
