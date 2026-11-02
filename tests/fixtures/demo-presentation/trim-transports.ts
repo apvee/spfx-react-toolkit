@@ -113,10 +113,15 @@ const tokenProvider = {
 };
 const tokenFactory = { getTokenProvider: () => initialization('token', 'provider', tokenProvider) };
 // Only the exact fake download is handled here; it never reaches a server.
-const browserFetch = window.fetch.bind(window);
+// SP/trim-only consumers may have no ambient fetch. Require it only for a
+// delegated request; the bounded fake download is controlled independently.
+const browserFetch = typeof window.fetch === 'function' ? window.fetch.bind(window) : undefined;
 window.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
-  if (url !== graphDataDownload) return browserFetch(input, init);
+  if (url !== graphDataDownload) {
+    if (!browserFetch) return Promise.reject(new Error('Native fetch is unavailable for this fixture request.'));
+    return browserFetch(input, init);
+  }
   return controlled(downloadRequests, 'download', url, holdDownloads, () => new Response(graphDataContent, { status: 200 }), { credentials: init?.credentials }).then(value => {
     if (!(value instanceof Response)) throw new Error('Fixture download requires a native Response');
     return value;

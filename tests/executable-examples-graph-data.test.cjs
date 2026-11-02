@@ -275,3 +275,50 @@ test('OneDrive legacy JSON null remains present without crashing or claiming a m
   assert.ok(!result.includes('File not found.')); assert.ok(!result.includes('No data returned.'));
   assert.equal(f.calls.length, 1);
 });
+
+// Exercise the shared native module itself with the consumer's actual ambient
+// fetch capability, not a subject-hook or Context-consumer workaround.
+function nativeFetchTransport(t, ambientFetch) {
+  const { createHarness } = require('./services-test-harness.cjs');
+  const path = require('node:path');
+  const descriptor = Object.getOwnPropertyDescriptor(window, 'fetch');
+  if (ambientFetch === undefined) delete window.fetch;
+  else Object.defineProperty(window, 'fetch', { configurable: true, writable: true, value: ambientFetch });
+  t.after(() => { if (descriptor) Object.defineProperty(window, 'fetch', descriptor); else delete window.fetch; });
+  const h = createHarness(); t.after(h.close);
+  return h.load(path.resolve(__dirname, 'fixtures/demo-presentation/trim-transports.ts'));
+}
+
+test('shared native fetch imports without ambient fetch, controls known downloads and rejects an unavailable fallback', async t => {
+  const native = nativeFetchTransport(t);
+  assert.equal(native.clientsNative.initializations.length, 0);
+  native.clientsNative.configure({ holdDownloads: true });
+  const pending = window.fetch(downloadUrl, { credentials: 'omit' });
+  assert.equal(native.clientsNative.downloads.length, 1);
+  const download = native.clientsNative.downloads[0];
+  assert.equal(download.kind, 'download'); assert.equal(download.target, downloadUrl);
+  assert.deepEqual(download.settings, { credentials: 'omit' });
+  download.resolve(new Response('controlled bytes', { status: 200 }));
+  assert.equal(await (await pending).text(), 'controlled bytes');
+  await assert.rejects(window.fetch('https://unhandled.fixture.invalid/data'), /Native fetch is unavailable/);
+  assert.equal(native.clientsNative.downloads.length, 1, 'unknown fallback never fabricates a controlled response');
+});
+
+test('shared native fetch delegates unknown requests with original receiver and argument identities', async t => {
+  const calls = [];
+  const response = new Response('delegated bytes', { status: 206 });
+  const native = nativeFetchTransport(t, function fetch(input, init) { calls.push({ receiver: this, input, init }); return Promise.resolve(response); });
+  const request = new Request('https://fallback.fixture.invalid/data', { method: 'POST', body: 'request bytes' });
+  const options = { method: 'PUT', body: 'override bytes', headers: { 'X-Fixture': 'native' }, credentials: 'omit' };
+  assert.equal(await window.fetch(request, options), response);
+  assert.equal(calls.length, 1); assert.equal(calls[0].receiver, window);
+  assert.equal(calls[0].input, request); assert.equal(calls[0].init, options);
+  assert.equal(native.clientsNative.downloads.length, 0);
+});
+
+test('shared native fetch preserves the actual fallback rejection instead of inventing success', async t => {
+  const failure = new Error('Native fallback rejected');
+  const native = nativeFetchTransport(t, () => Promise.reject(failure));
+  await assert.rejects(window.fetch('https://fallback.fixture.invalid/rejected'), error => error === failure);
+  assert.equal(native.clientsNative.downloads.length, 0);
+});
