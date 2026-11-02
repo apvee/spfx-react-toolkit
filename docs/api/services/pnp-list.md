@@ -882,6 +882,114 @@ async function demonstrate(sp: SPFI) {
 }
 ```
 
+#### Read and page an explicitly selected list service
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Select, makeStyles } from '@fluentui/react-components';
+import { useSPFxContext, useSPFxPageContext, createSPFxPnPContextService, createSPFxPnPListService, type SPFxPnPListSelector, type SPFxPnPListService, type SPFxPnPListQueryBuilder, type SPFxPnPListQueryResult } from '@apvee/spfx-react-toolkit';
+import '@pnp/sp/webs';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+const useStyles = makeStyles({ controls: { display: 'flex', flexDirection: 'column', gap: '12px' } });
+type Mode = 'title' | 'id' | 'url' | 'path';
+interface Item {
+  readonly Id: number;
+  // SharePoint's unset optional text field can be null; local absence uses undefined.
+  // eslint-disable-next-line @rushstack/no-new-null
+  readonly Title?: string | null;
+}
+type Data = { items: Item[]; page: SPFxPnPListQueryResult<Item>; service: SPFxPnPListService<Item>; builder: SPFxPnPListQueryBuilder; pageSize: number };
+type Outcome = { token: object; request: number; data?: Data } & (
+  | { phase: 'pending' }
+  | { phase: 'success' }
+  | { phase: 'error'; message: string }
+);
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const classes = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const pageContext = useSPFxPageContext();
+  const webUrl = pageContext.web.absoluteUrl;
+  const [selector, setSelector] = React.useState<{ kind: Mode; value: string }>({ kind: 'title', value: '' });
+  const configured = React.useMemo(() => {
+    try { return { sp: createSPFxPnPContextService(spfxContext, pageContext).createSPFI(), error: undefined }; }
+    catch (error) { return { sp: undefined, error: error instanceof Error ? error.message : String(error) }; }
+  }, [spfxContext, pageContext, webUrl]);
+  const values: readonly unknown[] = [configured, selector, resetRevision];
+  const boundary = React.useRef({ values, token: {} });
+  if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {} };
+  const token = boundary.current.token;
+  const mounted = React.useRef(false);
+  const sequence = React.useRef(0);
+  const dispatch = React.useRef<{ token: object; request: number }>();
+  const [outcome, setOutcome] = React.useState<Outcome>();
+  const current = (): boolean => mounted.current && boundary.current.token === token;
+  const visible = current() && outcome?.token === token ? outcome : undefined;
+  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
+  const revision = React.useRef(resetRevision);
+  React.useLayoutEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    sequence.current++;
+    setSelector({ kind: 'title', value: '' }); setOutcome(undefined);
+  }, [resetRevision]);
+  const changeSelector = (kind: Mode, value: string): void => {
+    if (!current() || (selector.kind === kind && selector.value === value)) return;
+    boundary.current = { ...boundary.current, token: {} };
+    sequence.current++;
+    setSelector({ kind, value }); setOutcome(undefined);
+  };
+  const run = async (more: boolean): Promise<void> => {
+    const sp = configured.sp;
+    const previous = more ? visible?.data : undefined;
+    if (!current() || !sp || !selector.value.trim() || dispatch.current?.token === token || (more && (!previous?.page.hasMore || visible?.request !== sequence.current))) return;
+    const request = ++sequence.current;
+    const owns = (): boolean => current() && sequence.current === request;
+    dispatch.current = { token, request };
+    setOutcome({ token, request, phase: 'pending', data: previous });
+    try {
+      const target: SPFxPnPListSelector = selector.kind === 'title' ? { kind: 'title', title: selector.value }
+        : selector.kind === 'id' ? { kind: 'id', id: selector.value }
+        : selector.kind === 'url' ? { kind: 'url', serverRelativeUrl: selector.value }
+        : { kind: 'path', webRelativePath: selector.value };
+      const service = previous?.service ?? createSPFxPnPListService<Item>(sp, target, 10);
+      const builder: SPFxPnPListQueryBuilder = previous?.builder ?? (items => items.select('Id', 'Title').orderBy('Id', false));
+      const pageSize = previous?.pageSize ?? 10;
+      const page = previous ? await service.loadMore(builder, pageSize, previous.page.nextSkip) : await service.query(builder);
+      if (owns()) setOutcome({ token, request, phase: 'success', data: { items: previous ? previous.items.concat(page.items) : page.items, page, service, builder, pageSize } });
+    } catch (error) {
+      if (owns()) setOutcome({ token, request, phase: 'error', data: previous, message: error instanceof Error ? error.message : String(error) });
+    } finally {
+      if (owns() && dispatch.current?.request === request && dispatch.current.token === token) dispatch.current = undefined;
+    }
+  };
+  const dismiss = (): void => {
+    if (!current() || visible?.phase !== 'error' || visible.request !== sequence.current) return;
+    setOutcome(visible.data ? { token, request: visible.request, phase: 'success', data: visible.data } : undefined);
+  };
+  const label = selector.kind === 'title' ? 'List title' : selector.kind === 'id' ? 'List GUID' : selector.kind === 'url' ? 'Server-relative list URL' : 'Web-relative list path';
+  const regions: DemoRegions = {
+    controls: <div className={classes.controls}>
+      <Field label="Selector mode"><Select aria-label="Selector mode" value={selector.kind} onChange={(_event, data) => {
+        const kind = data.value;
+        if (kind !== selector.kind && (kind === 'title' || kind === 'id' || kind === 'url' || kind === 'path')) changeSelector(kind, '');
+      }}><option value="title">Title</option><option value="id">GUID</option><option value="url">Server-relative URL</option><option value="path">Web-relative path</option></Select></Field>
+      <Field label={label}><Input aria-label={label} value={selector.value} onChange={(_event, data) => changeSelector(selector.kind, data.value)} /></Field>
+    </div>,
+    commands: <><Button disabled={!configured.sp || !selector.value.trim() || visible?.phase === 'pending'} onClick={() => run(false)}>Run</Button><Button disabled={!visible?.data?.page.hasMore || visible.phase === 'pending'} onClick={() => run(true)}>Next page</Button></>,
+    status: <><p>Configured web: {webUrl}; selector: {selector.kind} = {selector.value}</p>
+      {configured.error && <p role="alert">Client initialization error: {configured.error}</p>}
+      {visible?.phase === 'error' && <div role="alert">Request error: {visible.message} <Button onClick={dismiss}>Dismiss</Button></div>}
+      <p role="status">{visible?.phase === 'pending' ? 'Reading list...' : visible?.phase === 'success' ? visible.data?.items.length ? 'List read complete.' : 'No items loaded.' : 'Enter a list selector and Run.'}</p>
+    </>,
+    children: visible?.data ? <section aria-label="List service result"><h4>Items ({visible.data.items.length})</h4><ul>{visible.data.items.map(item => <li key={item.Id}>#{item.Id} - {item.Title || '(untitled)'}</li>)}</ul><dl><dt>Last page items</dt><dd>{visible.data.page.items.length}</dd><dt>effectivePageSize</dt><dd>{visible.data.page.effectivePageSize ?? 'Unspecified'}</dd><dt>hasMore</dt><dd>{String(visible.data.page.hasMore)}</dd><dt>nextSkip</dt><dd>{visible.data.page.nextSkip}</dd></dl></section> : undefined,
+    diagnostics: <p>Mount below the matching SPFx provider. Run captures one exact primitive selector and service. Next page reuses its builder, page size10 and returned offset. Draft/mode/reset/client/departure changes invalidate results and retained commands. Failed pages retain rows and retry the same offset. No construction/draft/reset request, selector inference, metadata lookup or write runs. Strings remain exact titles; URL/path inputs are decoded roots; paths use the configured web base. Validation is lazy. hasMore is a count heuristic; installed PnP serializes count offsets as p_ID, not a validated continuation cursor for noncontiguous IDs, descending order or concurrent edits. Dispatched reads can finish after retirement and are not canceled.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Run one explicit list selector and request its next page with the same captured service, query and page size while inspecting items and paging metadata.' };
+```
+
 ### Type (6)
 
 ```ts
@@ -986,4 +1094,4 @@ Contract: see [SPFxPnPListService.updateBatch](pnp-list.md#spfxpnplistservice).
 
 ### Source (17)
 
-[packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts:406](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#L406)
+[packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts:513](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#L513)

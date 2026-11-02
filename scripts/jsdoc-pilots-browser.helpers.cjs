@@ -19,7 +19,7 @@ async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
   const selectedPanel = title => page.getByRole('region', { name: title, exact: true });
   const reset = () => page.getByRole('button', { name: 'Ripristina scenario', exact: true });
   async function feature(title) {
-    const family = ['WebPartShell', 'Pagination'].includes(title) ? 'Controlli' : ['createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(title) ? 'Servizi' : 'Hook';
+    const family = ['WebPartShell', 'Pagination'].includes(title) ? 'Controlli' : ['createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(title) ? 'Servizi' : 'Hook';
     if (await group(family).getAttribute('aria-expanded') !== 'true') await group(family).click();
     await navigation.getByRole('button', { name: title, exact: true }).click();
     await selectedPanel(title).locator('[data-demo-section]').waitFor();

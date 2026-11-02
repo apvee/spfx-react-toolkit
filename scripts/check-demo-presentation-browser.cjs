@@ -17,6 +17,9 @@ const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Goog
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
+  { key: 'pnp-context-service', title: 'createSPFxPnPContextService' },
+  { key: 'pnp-service', title: 'createSPFxPnPService' },
+  { key: 'pnp-list-service', title: 'createSPFxPnPListService' },
   { key: 'pnp-crud', title: 'useSPFxPnPList' },
   { key: 'pnp-list-id', title: 'useSPFxPnPListById' },
   { key: 'pnp-list-url', title: 'useSPFxPnPListByUrl' },
@@ -68,6 +71,9 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    'pnp-context-service': ['createSPFxPnPContextService', 'Explore PnP context caching and request headers'],
+    'pnp-service': ['createSPFxPnPService', 'Read through a supplied PnP service client'],
+    'pnp-list-service': ['createSPFxPnPListService', 'Read and page an explicitly selected list service'],
     'pnp-crud': ['useSPFxPnPList', 'Manage list items with paging and captured delete consent'],
     'pnp-list-id': ['useSPFxPnPListById', 'Read items by list GUID'],
     'pnp-list-url': ['useSPFxPnPListByUrl', 'Read items by decoded server-relative URL'],
@@ -113,7 +119,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['pnp-crud', 'pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: ['pnp-context-service', 'pnp-service', 'pnp-list-service', 'site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['pnp-crud', 'pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -373,6 +379,34 @@ async function interact(page, key) {
     case 'tenant-property-service': await panel.getByLabel('Catalog URL', { exact: true }).fill('https://simulated.invalid/sites/catalog'); await panel.getByRole('button', { name: 'Read', exact: true }).click(); await panel.getByText('Property not set', { exact: true }).waitFor(); break;
     case 'tenant': await panel.getByRole('button', { name: 'Activate tenant store', exact: true }).click(); await settle(page); await panel.getByLabel('Operation', { exact: true }).selectOption('save'); await panel.getByLabel('Value', { exact: true }).fill('Local draft'); check('tenant: editable draft', await panel.getByLabel('Value', { exact: true }).inputValue(), 'Local draft'); break;
     case 'tenant-service': await panel.getByLabel('Catalog URL', { exact: true }).fill('https://simulated.invalid/sites/catalog'); check('tenant service: Save initially locked', await panel.getByRole('button', { name: 'Save and read numeric-looking text', exact: true }).isDisabled(), true); break;
+    case 'pnp-context-service': {
+      const before = await page.evaluate(() => window.clientsFixture.requests.length);
+      await panel.getByRole('button', { name: 'Read web', exact: true }).click();
+      await panel.getByText('Read complete; the configured cache may have supplied this result.', { exact: true }).waitFor();
+      check('Context service cache configuration', (await panel.textContent()).includes('Cache timeout: 60000 ms; X-Application: reports'), true);
+      check('Context service native miss header', await page.evaluate(() => { const r = window.clientsFixture.requests.slice(-1)[0]; return [r.kind, new Headers(r.settings.headers).get('X-Application'), new URL(r.target).pathname]; }), ['pnp-web', 'reports', '/sites/projects/_api/web']);
+      await panel.getByRole('button', { name: 'Read web', exact: true }).click(); await settle(page);
+      check('Context service repeat uses installed cache', await page.evaluate(() => window.clientsFixture.requests.length), before + 1); break;
+    }
+    case 'pnp-service': {
+      await page.evaluate(() => window.clientsFixture.configure({ pnpServices: true }));
+      await panel.getByRole('button', { name: 'Invoke web read', exact: true }).click();
+      await panel.getByText('Service read complete.', { exact: true }).waitFor();
+      check('Generic service exact identity', (await panel.textContent()).includes('Exact supplied client retained: true'), true);
+      await panel.getByRole('button', { name: 'Batch web reads', exact: true }).click(); await panel.getByText('Service batch web', { exact: true }).waitFor();
+      check('Generic service exact two-read envelope', await page.evaluate(() => { const r = window.clientsFixture.requests.filter(r => r.kind === 'pnp-batch').slice(-1)[0]; return [...r.settings.body.matchAll(/^GET (.+) HTTP\/1\.1$/gm)].map(m => new URL(m[1]).searchParams.get('$select')); }), ['Title', 'Url']);
+      await page.evaluate(() => window.clientsFixture.configure({ pnpServices: false })); break;
+    }
+    case 'pnp-list-service': {
+      await page.evaluate(() => window.clientsFixture.configure({ pnpServices: true }));
+      const before = await page.evaluate(() => window.clientsFixture.requests.length);
+      await panel.getByLabel('List title', { exact: true }).fill('Service tasks');
+      check('List service draft request-free', await page.evaluate(() => window.clientsFixture.requests.length), before);
+      await panel.getByRole('button', { name: 'Run', exact: true }).click(); await panel.getByText('#42 - Fixture service row', { exact: true }).waitFor();
+      check('List service actual metadata', await panel.getByRole('definition').allTextContents(), ['1', '10', 'false', '1']);
+      check('List service actual transport', await page.evaluate(() => window.clientsFixture.requests.slice(-1)[0].kind), 'pnp-service-items');
+      await page.evaluate(() => window.clientsFixture.configure({ pnpServices: false })); break;
+    }
     case 'pnp-operations': {
       const before = await page.evaluate(() => window.clientsFixture.requests.length);
       await panel.getByLabel('Request', { exact: true }).selectOption('batch');

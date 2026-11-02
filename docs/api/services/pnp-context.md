@@ -393,6 +393,105 @@ async function demonstrate(context: ISPFXContext & { pageContext: PageContext })
 }
 ```
 
+#### Explore PnP context caching and request headers
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, makeStyles } from '@fluentui/react-components';
+import { useSPFxContext, useSPFxPageContext, createSPFxPnPContextService } from '@apvee/spfx-react-toolkit';
+import '@pnp/sp/webs';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+const useStyles = makeStyles({ controls: { display: 'flex', flexDirection: 'column', gap: '12px' } });
+// SharePoint's legacy Description can be null; local absence uses undefined.
+// eslint-disable-next-line @rushstack/no-new-null
+type Data = { Title: string; Url: string; Description?: string | null };
+type Outcome = { token: object; request: number } & (
+  | { phase: 'pending' }
+  | { phase: 'success'; data: Data }
+  | { phase: 'error'; message: string }
+);
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const classes = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const pageContext = useSPFxPageContext();
+  const webUrl = pageContext.web.absoluteUrl;
+  const [target, setTarget] = React.useState('/sites/projects');
+  const configured = React.useMemo(() => {
+    try {
+      const factory = createSPFxPnPContextService(spfxContext, pageContext);
+      const sp = factory.createSPFI(target, {
+        cache: { enabled: true, storage: 'session', timeout: 60000 },
+        headers: { 'X-Application': 'reports' },
+      });
+      return { sp, url: factory.resolveSiteUrl(target), key: factory.getConfigKey({ cache: { enabled: false } }), error: undefined };
+    } catch (error) {
+      return { sp: undefined, url: target, key: undefined, error: error instanceof Error ? error.message : String(error) };
+    }
+  }, [spfxContext, pageContext, webUrl, target]);
+  const values: readonly unknown[] = [configured, target, resetRevision];
+  const boundary = React.useRef({ values, token: {} });
+  if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {} };
+  const token = boundary.current.token;
+  const mounted = React.useRef(false);
+  const sequence = React.useRef(0);
+  const dispatch = React.useRef<{ token: object; request: number }>();
+  const [outcome, setOutcome] = React.useState<Outcome>();
+  const current = (): boolean => mounted.current && boundary.current.token === token;
+  const visible = current() && outcome?.token === token ? outcome : undefined;
+  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
+  const revision = React.useRef(resetRevision);
+  React.useLayoutEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    sequence.current++;
+    setTarget('/sites/projects'); setOutcome(undefined);
+  }, [resetRevision]);
+  const changeTarget = (value: string): void => {
+    if (!current() || value === target) return;
+    boundary.current = { ...boundary.current, token: {} };
+    sequence.current++;
+    setTarget(value); setOutcome(undefined);
+  };
+  const read = async (): Promise<void> => {
+    const sp = configured.sp;
+    if (!current() || !sp || dispatch.current?.token === token) return;
+    const request = ++sequence.current;
+    const owns = (): boolean => current() && sequence.current === request;
+    dispatch.current = { token, request };
+    setOutcome({ token, request, phase: 'pending' });
+    try {
+      const data: Data = await sp.web.select('Title', 'Url', 'Description')();
+      if (owns()) setOutcome({ token, request, phase: 'success', data });
+    } catch (error) {
+      if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
+    } finally {
+      if (owns() && dispatch.current?.request === request && dispatch.current.token === token) dispatch.current = undefined;
+    }
+  };
+  const dismiss = (): void => {
+    if (!current() || visible?.phase !== 'error' || visible.request !== sequence.current) return;
+    setOutcome(undefined);
+  };
+  const regions: DemoRegions = {
+    controls: <div className={classes.controls}><Field label="Site URL"><Input aria-label="Site URL" value={target} onChange={(_event, data) => changeTarget(data.value)} /></Field></div>,
+    commands: <Button disabled={!configured.sp || visible?.phase === 'pending'} onClick={read}>Read web</Button>,
+    status: <>
+      <p>Resolved site: {configured.url}</p>
+      <p>Cache enabled: true; Cache storage: session; Cache timeout: 60000 ms; X-Application: reports</p>
+      <p>Disabled-cache configuration key (serialization only): {configured.key}</p>
+      {configured.error && <p role="alert">Client initialization error: {configured.error}</p>}
+      {visible?.phase === 'error' && <div role="alert">Request error: {visible.message} <Button onClick={dismiss}>Dismiss</Button></div>}
+      <p role="status">{visible?.phase === 'pending' ? 'Reading web...' : visible?.phase === 'success' ? 'Read complete; the configured cache may have supplied this result.' : 'Read web explicitly to inspect its information.'}</p>
+    </>,
+    children: visible?.phase === 'success' ? <dl aria-label="Context service result"><dt>Title</dt><dd>{visible.data.Title}</dd><dt>URL</dt><dd>{visible.data.Url}</dd><dt>Description</dt><dd>{visible.data.Description || '(no description)'}</dd></dl> : undefined,
+    diagnostics: <p>Mount below the matching SPFx provider. Only Read web requests data; the raw Site URL is preserved. The disabled-cache key is serialization and does not disable this client's cache. Repeated reads may replay data until expiry. Default keys use the URL only: providers and headers can share a session entry, so this is not authenticated-identity cache isolation or a freshness guarantee. Reset restores the draft and hides pending outcomes without clearing browser cache. Client/target/reset/departure changes retire commands and late results; dispatched reads may finish and are not canceled.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Read an explicitly selected web with session caching and the reports header, then repeat the read and inspect its effective configuration without assuming a fresh server response.' };
+```
+
 ### Signatures (5)
 
 ```ts
@@ -444,4 +543,4 @@ Contract: see [SPFxPnPContextService.resolveSiteUrl](pnp-context.md#spfxpnpconte
 
 ### Source (11)
 
-[packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts:178](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#L178)
+[packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts:276](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#L276)

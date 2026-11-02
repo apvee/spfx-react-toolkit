@@ -32,7 +32,7 @@ function createClientsFixture(t, title, options = {}) {
         '@microsoft/sp-page-context': pageNative,
         '@microsoft/sp-component-base': { ThemeProvider: { serviceKey: keys.theme } },
         ...(options.pnpContext ? { '@pnp/sp': pnpModule } : {}),
-        ...(options.pnpCrud ? { '../../../packages/spfx-react-toolkit/lib/services/spfx-pnp-context.service': pnpFactory } : {}),
+        ...((options.pnpCrud || options.pnpServices) ? { '../../../packages/spfx-react-toolkit/lib/services/spfx-pnp-context.service': pnpFactory } : {}),
         './useSPFxContext': context, './useSPFxPageContext': pageModule,
         // The generic TS arrow is parsed as TSX by services-test-harness; reuse its established TS-only loader.
         // This module imports React only, owns state per call and creates no provider/store/context.
@@ -60,7 +60,9 @@ function createClientsFixture(t, title, options = {}) {
         fs.readFileSync = (file, ...args) => { pnpFiles.push(String(file)); return read(file, ...args); };
         try {
             Object.assign(toolkit, library('hooks/useSPFxPnPContext'));
-            if (options.pnpCrud) { Object.assign(toolkit, library('hooks/useSPFxPnPList')); Object.assign(pnpFactory, library('services/spfx-pnp-context.service')); }
+            if (options.pnpCrud) Object.assign(toolkit, library('hooks/useSPFxPnPList'));
+            if (options.pnpCrud || options.pnpServices) Object.assign(pnpFactory, library('services/spfx-pnp-context.service'));
+            if (options.pnpServices) for (const name of ['spfx-pnp-context.service', 'spfx-pnp.service', 'spfx-pnp-list.service']) Object.assign(toolkit, library('services/' + name));
             if (options.pnpOperations) Object.assign(toolkit, library('hooks/useSPFxPnP'));
             if (options.pnpSelectors) for (const name of ['Id', 'Url', 'Path']) Object.assign(toolkit, library('hooks/useSPFxPnPListBy' + name));
         }
@@ -92,7 +94,33 @@ function createClientsFixture(t, title, options = {}) {
     const calls = [], initializations = [], tokens = [], observers = [], commits = [], downloads = [];
     if (options.pnpContext) t.mock.method(global, 'fetch', (url, init) => {
         const target = new URL(String(url));
-        if (options.pnpCrud) {
+        if (options.pnpServices) {
+            assert.equal(target.origin, 'https://tenant.test');
+            const method = init.method ?? 'GET';
+            if (target.pathname.endsWith('/_api/contextinfo')) {
+                assert.equal(method, 'POST'); assert.equal(target.search, '', 'digest query must be empty');
+                assert.equal(new Headers(init.headers).get('X-PnPjs-NoDigest'), '1');
+            } else if (target.pathname.endsWith('/_api/$batch')) {
+                assert.equal(method, 'POST'); assert.equal(target.search, '', 'batch query must be empty');
+                const headers = new Headers(init.headers), body = typeof init.body === 'string' ? init.body : '';
+                const boundary = /^multipart\/mixed; boundary=(batch_[\w-]+)$/.exec(headers.get('Content-Type') ?? '')?.[1];
+                const lines = body.split('\n').filter(line => / HTTP\/1\.1\r?$/.test(line));
+                const root = target.origin + target.pathname.slice(0, -'/_api/$batch'.length);
+                assert.ok(boundary && body.endsWith('--' + boundary + '--\n') && !body.includes('changeset') && headers.get('X-RequestDigest'), 'exact two-read batch envelope');
+                assert.deepEqual(lines.map(line => /^GET (.+) HTTP\/1\.1\r?$/.exec(line)?.[1]), [root + '/_api/web?%24select=Title', root + '/_api/web?%24select=Url'], 'exact two-read batch targets');
+            } else {
+                assert.equal(method, 'GET', 'direct service mode never enables business writes');
+                if (target.pathname.endsWith('/_api/web')) {
+                    assert.ok(['Title,Url,Description', 'Title', 'Url'].includes(target.searchParams.get('$select')));
+                    assert.equal([...target.searchParams].length, 1);
+                } else {
+                    assert.match(target.pathname, /\/_api\/web\/(?:lists\/getByTitle\('(?:[^'/]|'')+'\)|lists\('[a-f\d-]+'\)|getList\('.+'\))\/items$/);
+                    assert.deepEqual([...target.searchParams].filter(([key]) => key !== '$skiptoken').sort(), [['$orderby', 'Id desc'], ['$select', 'Id,Title'], ['$top', '10']]);
+                    assert.equal([...target.searchParams].length, target.searchParams.has('$skiptoken') ? 4 : 3);
+                    if (target.searchParams.has('$skiptoken')) assert.match(target.searchParams.get('$skiptoken'), /^Paged=TRUE&p_ID=\d+$/);
+                }
+            }
+        } else if (options.pnpCrud) {
             assert.equal(target.origin, 'https://tenant.test');
             const method = init.method ?? 'GET', headers = new Headers(init.headers);
             const items = /\/_api\/web\/lists\/getByTitle\('(?:[^'/]|'')+'\)\/items(\(\d+\))?$/.exec(target.pathname);
@@ -179,7 +207,7 @@ function createClientsFixture(t, title, options = {}) {
     const Shell = h.load(path.join(base, 'WebPartShellDemoHost.tsx')).WebPartShellDemoHost;
     const { DemoCard } = h.load(path.join(base, 'shared/DemoCard.tsx'));
     const Explorer = options.explorer ? h.load(path.join(base, 'ExampleExplorer.tsx')).ExampleExplorer : undefined;
-    const groups = options.explorer ? h.load(path.join(base, 'generated/jsdoc-examples/catalogue.ts')).executableGroups.map(group => ({ ...group, features: group.features.filter(feature => ['useSPFxContext', 'useSPFxPnPContext', ...(options.pnpOperations ? ['useSPFxPnP'] : []), ...(options.pnpCrud ? ['useSPFxPnPList'] : []), ...(options.pnpSelectors ? ['useSPFxPnPListById', 'useSPFxPnPListByUrl', 'useSPFxPnPListByPath'] : [])].includes(feature.title)) })).filter(group => group.features.length) : [];
+    const groups = options.explorer ? h.load(path.join(base, 'generated/jsdoc-examples/catalogue.ts')).executableGroups.map(group => ({ ...group, features: group.features.filter(feature => ['useSPFxContext', 'useSPFxPnPContext', ...(options.pnpOperations ? ['useSPFxPnP'] : []), ...(options.pnpCrud ? ['useSPFxPnPList'] : []), ...(options.pnpServices ? ['createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService'] : []), ...(options.pnpSelectors ? ['useSPFxPnPListById', 'useSPFxPnPListByUrl', 'useSPFxPnPListByPath'] : [])].includes(feature.title)) })).filter(group => group.features.length) : [];
 
     const renderer = createDOMRenderer(document, { unstable_filterCSSRule: rule => !rule.startsWith('@container') });
     const container = document.createElement('div');

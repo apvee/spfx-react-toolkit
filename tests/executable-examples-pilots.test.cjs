@@ -22,7 +22,7 @@ function fixture(t, title, initialRevision = 7) {
 }
 const ids = h => [...h.container.querySelectorAll('[data-order-id]')].map(row => Number(row.dataset.orderId));
 
-test('real catalogue groups uniquely cover source-owned scenarios and preserve all 47 accepted pilot owners', t => {
+test('real catalogue groups uniquely cover source-owned scenarios and preserve every independently specified accepted pilot owner', t => {
   const h = fixture(t, 'Browse controlled rows');
   const { executableExamples: entries, executableGroups: groups } = h.modules.catalogue;
   assert.ok(entries.length > 0); assert.ok(groups.length > 0);
@@ -46,7 +46,13 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve a
   }
   // Independent accepted pilot cases remain mandatory as other families migrate.
   const { pilotTitles, filterPilotGroups } = require('./fixtures/demo-presentation/jsdoc-pilots.cjs');
+  const directServiceOwners = {
+    createSPFxPnPContextService: 'packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#createSPFxPnPContextService',
+    createSPFxPnPService: 'packages/spfx-react-toolkit/src/services/spfx-pnp.service.ts#createSPFxPnPService',
+    createSPFxPnPListService: 'packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#createSPFxPnPListService',
+  };
   const pilotOwners = {
+    ...directServiceOwners,
     useSPFxPnPListById: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts#useSPFxPnPListById',
     useSPFxPnPListByUrl: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts#useSPFxPnPListByUrl',
     useSPFxPnPListByPath: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath.ts#useSPFxPnPListByPath',
@@ -98,13 +104,13 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve a
     useSPFxAadTokenProvider: 'packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts#useSPFxAadTokenProvider',
     useSPFxApiPermissionPrecheck: 'packages/spfx-react-toolkit/src/hooks/useSPFxApiPermissionPrecheck.ts#useSPFxApiPermissionPrecheck',
   };
-  assert.equal(Object.keys(pilotOwners).length, 47, 'three PnP selectors, one PnP operation, one PnP context, two configuration, five original, 21 Context, six Clients, two GraphData two Site two tenant-property and two tenant-list owners');
+  assert.equal(Object.keys(pilotOwners).filter(name => !Object.hasOwn(directServiceOwners, name)).length, 47, 'three PnP selectors, one PnP operation, one PnP context, two configuration, five original, 21 Context, six Clients, two GraphData two Site two tenant-property and two tenant-list owners');
   assert.deepEqual(Object.keys(pilotTitles).sort(), Object.keys(pilotOwners).sort(), 'every accepted pilot has an independent canonical owner expectation');
   const pilots = filterPilotGroups(groups);
   assert.deepEqual(pilots.flatMap(group => group.features.map(feature => feature.title)).sort(), Object.keys(pilotTitles).sort());
   for (const group of pilots) for (const feature of group.features) {
     assert.equal(feature.key, pilotOwners[feature.title]);
-    assert.equal(group.key, feature.title === 'WebPartShell' || feature.title === 'Pagination' ? 'controls' : ['createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(feature.title) ? 'services' : 'hooks');
+    assert.equal(group.key, feature.title === 'WebPartShell' || feature.title === 'Pagination' ? 'controls' : ['createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(feature.title) ? 'services' : 'hooks');
     assert.deepEqual(feature.scenarios.map(entry => entry.title).sort(), [...pilotTitles[feature.title]].sort());
     for (const entry of feature.scenarios) {
       assert.equal(entry, byId.get(entry.id), 'filtered scenarios retain their actual canonical catalogue entry');

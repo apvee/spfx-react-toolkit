@@ -1,5 +1,8 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
+  createSPFxPnPContextService: ['Explore PnP context caching and request headers'],
+  createSPFxPnPService: ['Read through a supplied PnP service client'],
+  createSPFxPnPListService: ['Read and page an explicitly selected list service'],
   useSPFxPnPListById: ['Read items by list GUID'],
   useSPFxPnPListByUrl: ['Read items by decoded server-relative URL'],
   useSPFxPnPListByPath: ['Read items by decoded web-relative path'],

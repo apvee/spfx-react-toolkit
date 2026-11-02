@@ -2890,6 +2890,75 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-061da167bfaed0ecc1eb1b04783405e89d99d06cee4b0a6988011d9b7af8f451' */ "./061da167bfaed0ecc1eb1b04783405e89d99d06cee4b0a6988011d9b7af8f451")
 },
 {
+  "id": "65d6f36b2205ce3fb3aa51a9c0814c97bdb31dab0809e9ac9fa2e7fea30ae52b",
+  "ownerKey": "packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#createSPFxPnPContextService",
+  "title": "Explore PnP context caching and request headers",
+  "groupRoute": "docs/api/services/pnp-context.md",
+  "groupKey": "services",
+  "featureKey": "packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#createSPFxPnPContextService",
+  "featureTitle": "createSPFxPnPContextService",
+  "publicNames": [
+    "createSPFxPnPContextService"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts",
+    "line": 180
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Read an explicitly selected web with session caching and the reports header, then repeat the read and inspect its effective configuration without assuming a fresh server response."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-65d6f36b2205ce3fb3aa51a9c0814c97bdb31dab0809e9ac9fa2e7fea30ae52b' */ "./65d6f36b2205ce3fb3aa51a9c0814c97bdb31dab0809e9ac9fa2e7fea30ae52b")
+},
+{
+  "id": "ff06ef728af78c0f31afee0ca9e146b8856b978d79e5e28d93273f7f5d06e594",
+  "ownerKey": "packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#createSPFxPnPListService",
+  "title": "Read and page an explicitly selected list service",
+  "groupRoute": "docs/api/services/pnp-list.md",
+  "groupKey": "services",
+  "featureKey": "packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#createSPFxPnPListService",
+  "featureTitle": "createSPFxPnPListService",
+  "publicNames": [
+    "createSPFxPnPListService"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts",
+    "line": 408
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Run one explicit list selector and request its next page with the same captured service, query and page size while inspecting items and paging metadata."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-ff06ef728af78c0f31afee0ca9e146b8856b978d79e5e28d93273f7f5d06e594' */ "./ff06ef728af78c0f31afee0ca9e146b8856b978d79e5e28d93273f7f5d06e594")
+},
+{
+  "id": "2c447390ac2efa8cb440734b496b0215dc2a8979d62f62ebcd3638000a41ce46",
+  "ownerKey": "packages/spfx-react-toolkit/src/services/spfx-pnp.service.ts#createSPFxPnPService",
+  "title": "Read through a supplied PnP service client",
+  "groupRoute": "docs/api/services/pnp.md",
+  "groupKey": "services",
+  "featureKey": "packages/spfx-react-toolkit/src/services/spfx-pnp.service.ts#createSPFxPnPService",
+  "featureTitle": "createSPFxPnPService",
+  "publicNames": [
+    "createSPFxPnPService"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/services/spfx-pnp.service.ts",
+    "line": 104
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Compare explicit invoke and queued batch web reads while the service retains the exact supplied client and obsolete commands cannot publish results."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-2c447390ac2efa8cb440734b496b0215dc2a8979d62f62ebcd3638000a41ce46' */ "./2c447390ac2efa8cb440734b496b0215dc2a8979d62f62ebcd3638000a41ce46")
+},
+{
   "id": "196995dd0cc3cb7889f414c4282acab61e85718a2c301a02b5286bac3fd4a9d3",
   "ownerKey": "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService",
   "title": "Read a collection root record before a consented save",
@@ -3079,8 +3148,11 @@ export const executableGroups: readonly ExecutableGroup[] = [
   ] },
   { key: "services", title: "Servizi", features: [
     { key: "packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService", title: "createSPFxConfigurationStoreService", scenarios: [executableExamples[122]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[123]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService", title: "createSPFxTenantKeyValueStoreService", scenarios: [executableExamples[124]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[125]] }
+    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#createSPFxPnPContextService", title: "createSPFxPnPContextService", scenarios: [executableExamples[123]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#createSPFxPnPListService", title: "createSPFxPnPListService", scenarios: [executableExamples[124]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp.service.ts#createSPFxPnPService", title: "createSPFxPnPService", scenarios: [executableExamples[125]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[126]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService", title: "createSPFxTenantKeyValueStoreService", scenarios: [executableExamples[127]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[128]] }
   ] }
 ];
