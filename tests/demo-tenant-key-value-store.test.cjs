@@ -6,9 +6,10 @@ const { FluentProvider, webLightTheme } = require('@fluentui/react-components');
 const { createHarness } = require('./services-test-harness.cjs');
 const panel = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/TenantPanel.tsx');
 
-function fixture(t, overrides = {}) {
+function fixture(t, overrides = {}, { selectStore = true } = {}) {
   const calls = [], values = new Map(), client = {}, isMountedRef = { current: true };
-  const discoverAppCatalogUrl = async () => 'https://tenant.test/catalog';
+  const discoveries = [];
+  const discoverAppCatalogUrl = async () => { discoveries.push('catalog'); return 'https://tenant.test/catalog'; };
   const checkWritePermission = async () => true;
   const service = {
     ensureListReady: async () => { throw new Error('Demo reads must never provision'); },
@@ -26,8 +27,7 @@ function fixture(t, overrides = {}) {
   boundaries['../shared'] = Object.assign({}, ...['ActionResult', 'DemoCard', 'InfoGrid', 'JsonDetails', 'StatusBadge']
     .map(name => h.load(path.resolve(path.dirname(panel), '../shared', name + '.tsx'))));
   boundaries['@apvee/spfx-react-toolkit'] = {
-    useSPFxTenantKeyValueStore: h.load('hooks/useSPFxTenantKeyValueStore.ts').useSPFxTenantKeyValueStore,
-    useSPFxTenantProperty: () => ({ load: async () => {}, isLoading: false })
+    useSPFxTenantKeyValueStore: h.load('hooks/useSPFxTenantKeyValueStore.ts').useSPFxTenantKeyValueStore
   };
   t.after(h.close);
   window.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
@@ -38,7 +38,7 @@ function fixture(t, overrides = {}) {
     const element = view.container.querySelector(selector); assert.ok(element, selector);
     h.act(() => Simulate.change(element, { target: { value } }));
   }
-  select('[data-demo-variant="TenantPanel"]', 'store');
+  if (selectStore) select('[data-demo-variant="TenantPanel"]', 'store');
   const operation = value => select('[data-demo-variant="TenantStoreScenario"]', value);
   const input = (index, value) => h.act(() => Simulate.change(view.container.querySelectorAll('input')[index], { target: { value } }));
   const run = async () => h.act(async () => {
@@ -46,7 +46,7 @@ function fixture(t, overrides = {}) {
     assert.equal(button.disabled, false); Simulate.click(button);
     for (let i = 0; i < 12; i++) await Promise.resolve();
   });
-  return { ...view, calls, values, operation, input, run, select };
+  return { ...view, calls, values, discoveries, operation, input, run, select };
 }
 
 test('tenant demo saves empty text, explicitly clears description and displays the read value type', async t => {
@@ -83,3 +83,13 @@ for (const operation of ['get', 'list', 'save', 'remove']) {
     assert.doesNotMatch(f.container.textContent, /not found\.|Loaded 0 tenant|Saved spfx|Removed spfx/);
   });
 }
+
+test('retained tenant legacy feature waits for explicit store choice before discovery', t => {
+  const f = fixture(t, {}, { selectStore: false });
+  assert.deepEqual(f.discoveries, [], 'feature selection does not mount the operational TenantKV hook');
+  const selector = f.container.querySelector('[data-demo-variant="TenantPanel"]');
+  assert.equal(selector.value, '');
+  assert.ok(![...selector.options].some(option => option.value === 'properties'));
+  f.select('[data-demo-variant="TenantPanel"]', 'store');
+  assert.deepEqual(f.discoveries, ['catalog'], 'the explicit choice mounts the genuine existing store');
+});

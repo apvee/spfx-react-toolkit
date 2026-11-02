@@ -47,7 +47,33 @@ export const storesNative = { requests: storeRequests,
     if (options.rows !== undefined) storeRows = options.rows;
   },
 };
+// Read-only property protocols have their own native queue, never generic trim payloads.
+const propertyRequests: NativeRequest[] = [];
+let holdProperties = false;
+let propertyCatalog = 'https://simulated.invalid/sites/catalog';
+let propertyEntities: Record<string, unknown> = {};
+export const propertiesNative = { requests: propertyRequests,
+  configure(options: { hold?: boolean; catalogUrl?: string; entities?: Record<string, unknown> }): void {
+    holdProperties = options.hold ?? holdProperties;
+    propertyCatalog = options.catalogUrl ?? propertyCatalog;
+    propertyEntities = options.entities ?? propertyEntities;
+  },
+};
+declare global { interface Window { propertiesFixture: typeof propertiesNative; } }
+window.propertiesFixture = propertiesNative;
+function propertyRequest(url: string, configuration: unknown, options?: unknown): Promise<unknown> | undefined {
+  const discovery = url.endsWith('/_api/SP_TenantSettings_Current');
+  const match = /\/_api\/web\/GetStorageEntity\('([^']*)'\)$/.exec(url);
+  if (!discovery && !match) return undefined;
+  return controlled(propertyRequests, 'sp-property', url, holdProperties, () => {
+    const key = match ? decodeURIComponent(match[1]).replace(/''/g, "'") : '';
+    const body = discovery ? { CorporateCatalogUrl: propertyCatalog } : propertyEntities[key] ?? {};
+    return new Response(JSON.stringify(body), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  }, { method: 'GET', configuration, options });
+}
 const sp = { get: async (url: string, _configuration: unknown, _options: unknown) => {
+  const property = propertyRequest(url, _configuration, _options);
+  if (property) return property;
   if (isStoreRequest(url)) return storageRequest('GET', url, _configuration, _options);
   calls.push({ transport: 'sp', url });
   const appliedMode = mode;

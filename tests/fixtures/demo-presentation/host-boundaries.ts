@@ -1,14 +1,6 @@
-import * as React from 'react';
 const page = { site: { absoluteUrl: 'https://simulated.invalid/sites/demo' }, web: { absoluteUrl: 'https://simulated.invalid/sites/demo' }, cultureInfo: { currentCultureName: 'en-US', currentUICultureName: 'en-US' } };
 const forbiddenWrite = async (): Promise<never> => { throw new Error('Fixture forbids CRUD'); };
 const unavailable = { isReady: false, isInitializing: false, isLoading: false, error: undefined, invoke: async () => undefined, baseUrl: page.web.absoluteUrl };
-function useLocalRead() {
-  const [isLoading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<Error>();
-  const load = React.useCallback(async () => { setLoading(true); await new Promise(resolve => setTimeout(resolve, 100)); setError(new Error('Simulated network unavailable')); setLoading(false); }, []);
-  return { isReady: false, isLoading, error, load, reload: load, isWriting: false, write: forbiddenWrite };
-}
-export const useSPFxTenantProperty = useLocalRead;
 const store = { isReady: false, canWrite: false, isLoading: false, isWriting: false, get: async () => undefined, list: async () => [], save: forbiddenWrite, remove: forbiddenWrite };
 export const useSPFxTenantKeyValueStore = () => store;
 export const useSPFxPnPContext = () => ({ isInitialized: false, sp: undefined });

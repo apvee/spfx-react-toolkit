@@ -1013,3 +1013,161 @@ function TenantConfiguredWidget({ request }: { request: (endpoint: string, apiKe
   </div>;
 }
 ```
+
+## Run read-only tenant property examples
+
+Select the tenant-property hook example and explicitly activate its manual session before Run. Activation makes no HTTP request; Run loads both configured keys concurrently through independent catalog caches. Reset or a changed host/web identity requires explicit activation again and hides obsolete results. Already-started logical reads may still finish; current read errors take precedence over retained values.
+
+#### Read tenant version and counter with explicit activation
+
+```tsx
+import * as React from 'react';
+import { makeStyles, Accordion, AccordionHeader, AccordionItem, AccordionPanel, Button, Text } from '@fluentui/react-components';
+import { useSPFxInstanceInfo, useSPFxPageContext, useSPFxSPHttpClient, useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Presenter = (regions: DemoRegions) => React.ReactElement;
+const useStyles = makeStyles({ payload: { minWidth: 0, maxWidth: '100%', overflowX: 'auto' } });
+function present(regions: DemoRegions, render?: Presenter): React.ReactElement {
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+
+// Reset ends this resource session; the outer Demo and activation button remain mounted.
+function TenantProperties({ current, render }: { current: () => boolean; render?: Presenter }): React.ReactElement {
+  const version = useSPFxTenantProperty<string>('spfx-toolkit-test-version', false);
+  const counter = useSPFxTenantProperty<number>('spfx-toolkit-test-counter', false);
+  const styles = useStyles();
+  const identity = React.useRef({ version: version.load, counter: counter.load, token: {} });
+  if (identity.current.version !== version.load || identity.current.counter !== counter.load) identity.current = { version: version.load, counter: counter.load, token: {} };
+  const token = identity.current.token;
+  const mounted = React.useRef(true);
+  const latest = React.useRef(0);
+  const [execution, setExecution] = React.useState<{ token: object; operation: number; completed: boolean }>();
+  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const valid = (): boolean => mounted.current && current() && identity.current.token === token;
+  const run = async (): Promise<void> => {
+    if (!valid()) return;
+    const operation = ++latest.current;
+    const snapshot = { version: version.load, counter: counter.load };
+    setExecution({ token, operation, completed: false });
+    // These public loads resolve on failure. Inspect their CURRENT rendered errors below.
+    await Promise.all([snapshot.version(), snapshot.counter()]);
+    if (valid() && operation === latest.current && identity.current.version === snapshot.version && identity.current.counter === snapshot.counter) setExecution({ token, operation, completed: true });
+  };
+  const visible = valid() && execution?.token === token && execution.operation === latest.current ? execution : undefined;
+  const failure = visible ? version.error ?? counter.error : undefined;
+  const completed = visible?.completed && !failure;
+  const regions: DemoRegions = {
+    commands: <Button appearance="primary" disabled={version.isLoading || counter.isLoading} onClick={run}>Run</Button>,
+    status: failure ? <Text role="alert">{failure.message}</Text> : <Text role="status">{visible && !visible.completed ? 'Reading tenant properties...' : completed ? 'Tenant property reads completed.' : 'Run to read the properties.'}</Text>,
+    children: completed ? <dl aria-label="Tenant properties">
+      <dt>spfx-toolkit-test-version</dt><dd>{version.data === undefined ? '(not set)' : String(version.data)}</dd>
+      <dt>spfx-toolkit-test-counter</dt><dd>{counter.data === undefined ? '(not set)' : String(counter.data)}</dd>
+      <dt>Version description</dt><dd>{version.description === undefined ? '(not set)' : typeof version.description === 'string' ? JSON.stringify(version.description) : '(legacy description unavailable)'}</dd>
+      <dt>Counter description</dt><dd>{counter.description === undefined ? '(not set)' : typeof counter.description === 'string' ? JSON.stringify(counter.description) : '(legacy description unavailable)'}</dd>
+      <dt>Version ready</dt><dd>{String(version.isReady)}</dd><dt>Counter ready</dt><dd>{String(counter.isReady)}</dd>
+    </dl> : undefined,
+    diagnostics: <>
+      <Text as="p">Both hooks use manual loading. Run starts two independent catalog discoveries on their first read; later reads reuse each session's successful cache. Properties are read-only. Hook generics do not validate stored data. Current errors take precedence over retained data; failed reload values are hidden. Each Ready flag requires defined data and no loading/error; zero is valid.</Text>
+      <Text as="p">Reset or host changes end this session and require explicit activation. Already-started logical reads are not cancelled: discovery can still continue to a property GET after departure, while obsolete results stay hidden. The wrapper observes web/root URL scalars on render because the public discovery hook does not independently track every in-place URL mutation.</Text>
+      {completed && <Accordion collapsible><AccordionItem value="payload"><AccordionHeader>Full tenant property results</AccordionHeader><AccordionPanel><div className={styles.payload} role="region" aria-label="Full tenant property results" tabIndex={0}><pre>{JSON.stringify({ version: { value: version.data, description: version.description }, counter: { value: counter.data, description: counter.description } }, undefined, 2)}</pre></div></AccordionPanel></AccordionItem></Accordion>}
+    </>,
+  };
+  return present(regions, render);
+}
+
+export function Demo({ render, resetRevision = 0 }: { render?: Presenter; resetRevision?: number } = {}): React.ReactElement {
+  const page = useSPFxPageContext();
+  const { client } = useSPFxSPHttpClient();
+  const instance = useSPFxInstanceInfo();
+  const web = page.web.absoluteUrl.trim().replace(/\/+$/, '');
+  const root = page.site.absoluteUrl.trim().replace(/\/+$/, '');
+  const boundary = React.useRef({ page, client, web, root, instance: instance.id, revision: resetRevision, token: {} });
+  const previous = boundary.current;
+  if (previous.page !== page || previous.client !== client || previous.web !== web || previous.root !== root || previous.instance !== instance.id || previous.revision !== resetRevision) boundary.current = { page, client, web, root, instance: instance.id, revision: resetRevision, token: {} };
+  const token = boundary.current.token;
+  const [session, setSession] = React.useState<object>();
+  const mounted = React.useRef(true);
+  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const current = (): boolean => mounted.current && boundary.current.token === token && page.web.absoluteUrl.trim().replace(/\/+$/, '') === web && page.site.absoluteUrl.trim().replace(/\/+$/, '') === root;
+  const active = session === token;
+  const activate = (): void => { if (current() && client && web && root && !active) setSession(token); };
+  return <>
+    <Button disabled={!client || !web || !root || active} onClick={activate}>Activate tenant properties</Button>
+    {active ? <TenantProperties current={current} render={render}/> : present({ children: <Text>Activate tenant properties, then Run to read the version and counter. Selection, activation and Reset issue no HTTP requests.</Text> }, render)}
+  </>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Run both tenant property loads explicitly and observe current values, descriptions, missing values and read failures.' };
+```
+
+For an already known tenant catalog, use the direct factory example. Supply the actual catalog URL; the factory adds no discovery or writes. It reads unknown data, validates a boolean and distinguishes absence, a wrong decoded type and a failed HTTP/response parse.
+
+#### Read and validate a catalog StorageEntity
+
+```tsx
+import * as React from 'react';
+import { makeStyles, Button, Field, Input, Text } from '@fluentui/react-components';
+import { createSPFxTenantPropertyService, useSPFxInstanceInfo, useSPFxPageContext, useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
+import type { SPFxTenantProperty } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+const useStyles = makeStyles({ payload: { minWidth: 0, maxWidth: '100%', overflowX: 'auto' } });
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const page = useSPFxPageContext();
+  const { client } = useSPFxSPHttpClient();
+  const instance = useSPFxInstanceInfo();
+  const styles = useStyles();
+  const service = React.useMemo(() => client ? createSPFxTenantPropertyService(client) : undefined, [client]);
+  const [catalog, setCatalog] = React.useState('');
+  const [key, setKey] = React.useState('my-app:featureEnabled');
+  const web = page.web.absoluteUrl.trim().replace(/\/+$/, '');
+  const root = page.site.absoluteUrl.trim().replace(/\/+$/, '');
+  const boundary = React.useRef({ page, client, web, root, instance: instance.id, revision: resetRevision, catalog, key, token: {} });
+  const previous = boundary.current;
+  if (previous.page !== page || previous.client !== client || previous.web !== web || previous.root !== root || previous.instance !== instance.id || previous.revision !== resetRevision || previous.catalog !== catalog || previous.key !== key) boundary.current = { page, client, web, root, instance: instance.id, revision: resetRevision, catalog, key, token: {} };
+  const token = boundary.current.token;
+  const mounted = React.useRef(true);
+  const latest = React.useRef(0);
+  const [outcome, setOutcome] = React.useState<{ token: object; operation: number; pending?: boolean; property?: SPFxTenantProperty; failure?: string }>();
+  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const resetSeen = React.useRef(resetRevision);
+  React.useLayoutEffect(() => {
+    if (resetSeen.current !== resetRevision) { resetSeen.current = resetRevision; setCatalog(''); setKey('my-app:featureEnabled'); setOutcome(undefined); }
+  }, [resetRevision]);
+  const current = (): boolean => mounted.current && boundary.current.token === token && page.web.absoluteUrl.trim().replace(/\/+$/, '') === web && page.site.absoluteUrl.trim().replace(/\/+$/, '') === root;
+  const read = async (): Promise<void> => {
+    if (!current() || !service || !catalog.trim() || !key) return;
+    const operation = ++latest.current;
+    const owns = (): boolean => current() && latest.current === operation;
+    setOutcome({ token, operation, pending: true });
+    try {
+      const url = new URL(catalog.trim());
+      if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password || url.search || url.hash) throw new Error('Enter an absolute catalog URL without credentials, query or fragment.');
+      const property = await service.get<unknown>(key, catalog.trim().replace(/\/+$/, ''));
+      if (owns()) setOutcome({ token, operation, property });
+    } catch (error) {
+      if (owns()) setOutcome({ token, operation, failure: error instanceof Error ? error.message : String(error) });
+    }
+  };
+  const visible = current() && outcome?.token === token && outcome.operation === latest.current ? outcome : undefined;
+  const property = visible?.property;
+  const message = property ? property.value === undefined ? 'Property not set' : typeof property.value === 'boolean' ? `Validated boolean: ${String(property.value)}` : 'Expected a boolean' : undefined;
+  const regions: DemoRegions = {
+    controls: <>
+      <Field label="Catalog URL"><Input aria-label="Catalog URL" value={catalog} onChange={(_, data) => { if (current()) { boundary.current = { ...boundary.current, catalog: data.value, token: {} }; setCatalog(data.value); } }}/></Field>
+      <Field label="Property key"><Input aria-label="Property key" value={key} onChange={(_, data) => { if (current()) { boundary.current = { ...boundary.current, key: data.value, token: {} }; setKey(data.value); } }}/></Field>
+    </>,
+    commands: <Button appearance="primary" disabled={!service || !catalog.trim() || !key || visible?.pending} onClick={read}>Read</Button>,
+    status: visible?.failure ? <Text role="alert">{visible.failure}</Text> : <Text role="status">{visible?.pending ? 'Reading StorageEntity...' : message ?? 'Supply the known tenant catalog URL and Read explicitly.'}</Text>,
+    children: property ? <dl aria-label="StorageEntity result"><dt>Value type</dt><dd>{property.value === undefined ? '(not set)' : typeof property.value}</dd>
+      <dt>Description</dt><dd>{property.description === undefined ? '(not set)' : typeof property.description === 'string' ? JSON.stringify(property.description) : '(legacy description unavailable)'}</dd></dl> : undefined,
+    diagnostics: <>
+      <Text as="p">This factory does not discover the catalog, cache values, provision a list or write data. A current web URL is not a catalog address. HTTP 403/404 and malformed response JSON are failures. A missing or legacy REST-null Value means absence and clears its description. Defined stored text is decoded JSON-first; invalid stored JSON falls back to a string and fails this boolean validator.</Text>
+      <Text as="p">Description metadata is passed through by the legacy service. Empty descriptions remain visible as quoted empty text; legacy null metadata is shown as unavailable. Reset clears inputs/results and invalidates publication, without cancelling an already-started read.</Text>
+      {property && <div className={styles.payload} role="region" aria-label="Raw StorageEntity result" tabIndex={0}><pre>{JSON.stringify(property, undefined, 2)}</pre></div>}
+    </>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Read a StorageEntity from the supplied catalog and distinguish validated boolean data from missing, malformed or failed data.' };
+```

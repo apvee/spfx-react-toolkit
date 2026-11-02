@@ -19,7 +19,7 @@ async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
   const selectedPanel = title => page.getByRole('region', { name: title, exact: true });
   const reset = () => page.getByRole('button', { name: 'Ripristina scenario', exact: true });
   async function feature(title) {
-    const family = ['WebPartShell', 'Pagination'].includes(title) ? 'Controlli' : 'Hook';
+    const family = ['WebPartShell', 'Pagination'].includes(title) ? 'Controlli' : ['createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService'].includes(title) ? 'Servizi' : 'Hook';
     if (await group(family).getAttribute('aria-expanded') !== 'true') await group(family).click();
     await navigation.getByRole('button', { name: title, exact: true }).click();
     await selectedPanel(title).locator('[data-demo-section]').waitFor();
@@ -50,8 +50,8 @@ async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
   const rows = panel => panel.locator('tbody tr').evaluateAll(nodes => nodes.map(node => Number(node.getAttribute('data-order-id'))));
   const calls = () => page.evaluate(() => window.pnpReadFixture.calls.length);
   check('Initial fixture mount issues no business requests', await calls(), 0);
-  check('JSDoc filter: exactly 26 features', await navigation.locator('[data-example-feature]').count(), 26);
-  check('JSDoc filter: exactly two generated groups', await navigation.locator('button[aria-expanded]').count(), 2);
+  check('JSDoc filter: accepted features', await navigation.locator('[data-example-feature]').count(), Object.keys(pilotTitles).length);
+  check('JSDoc filter: controls, hooks and services groups', await navigation.locator('button[aria-expanded]').count(), 3);
   let panel = await feature('WebPartShell');
   await group('Hook').click();
   check('Opening hooks leaves controls open', await group('Controlli').getAttribute('aria-expanded'), 'true');

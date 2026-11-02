@@ -3,6 +3,8 @@ const { createClientsFixture } = require('./clients-scenarios.cjs');
 const assert = require('node:assert/strict');
 const { Simulate } = require('react-dom/test-utils');
 const owners = {
+  propertyHook: ['packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty', 'Read tenant version and counter with explicit activation'],
+  propertyService: ['packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService', 'Read and validate a catalog StorageEntity'],
   hook: ['packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore', 'Explore collection root records with guarded mutations'],
   service: ['packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService', 'Read a collection root record before a consented save'],
 };
@@ -10,7 +12,8 @@ function response(body = {}, status = 200, text = '') { return { ok: status >= 2
 const schema = [{ InternalName: 'Title', FieldTypeKind: 2, Indexed: true, EnforceUniqueValues: true }, { InternalName: 'Value', FieldTypeKind: 3 }, { InternalName: 'Description', FieldTypeKind: 3 }];
 function createStoreFixture(t, kind = 'hook', options = {}) {
   const [ownerKey, title] = owners[kind];
-  const f = createClientsFixture(t, title, { ...options, siteStore: true, ownerKey, compiled: options.compiled ?? process.env.SITE_STORE_IMPLEMENTATION === 'compiled' });
+  const property = kind === 'propertyHook' || kind === 'propertyService';
+  const f = createClientsFixture(t, title, { ...options, siteStore: !property, tenantProperties: property, ownerKey, compiled: options.compiled ?? process.env[property ? 'TENANT_PROPERTY_IMPLEMENTATION' : 'SITE_STORE_IMPLEMENTATION'] === 'compiled' });
   // MessageBar/Dialog native layout observation, not a layout claim.
   const nodeGlobal = Object.getOwnPropertyDescriptor(global, 'Node');
   Object.defineProperty(global, 'Node', { configurable: true, value: window.Node });

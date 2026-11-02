@@ -141,3 +141,13 @@ Only a recognized metadata not-found result is absence. An expired/failed downlo
 A saved picker reference is identity data, not a durable download token or a guaranteed current display model. Persist the complete accepted JSON array, including unresolved references, and resolve display separately. Do not replace it with the visible/resolved subset or save personal access tokens/history through a picker. See [reference selection](pickers.md#selecting-sharepoint-values) and the canonical picker contracts for source identity and stale-reference behavior.
 
 <!-- toolkit:include symbol="useSPFxTenantProperty" section="example" title="Compose feature flags endpoint configuration and branding" -->
+
+## Run read-only tenant property examples
+
+Select the tenant-property hook example and explicitly activate its manual session before Run. Activation makes no HTTP request; Run loads both configured keys concurrently through independent catalog caches. Reset or a changed host/web identity requires explicit activation again and hides obsolete results. Already-started logical reads may still finish; current read errors take precedence over retained values.
+
+<!-- toolkit:include symbol="useSPFxTenantProperty" section="example" title="Read tenant version and counter with explicit activation" -->
+
+For an already known tenant catalog, use the direct factory example. Supply the actual catalog URL; the factory adds no discovery or writes. It reads unknown data, validates a boolean and distinguishes absence, a wrong decoded type and a failed HTTP/response parse.
+
+<!-- toolkit:include symbol="createSPFxTenantPropertyService" section="example" title="Read and validate a catalog StorageEntity" -->

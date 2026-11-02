@@ -47,6 +47,8 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve a
   // Independent accepted pilot cases remain mandatory as other families migrate.
   const { pilotTitles, filterPilotGroups } = require('./fixtures/demo-presentation/jsdoc-pilots.cjs');
   const pilotOwners = {
+    useSPFxTenantProperty: 'packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty',
+    createSPFxTenantPropertyService: 'packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService',
     useSPFxSiteKeyValueStore: 'packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore',
     createSPFxSiteKeyValueStoreService: 'packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService',
     useSPFxUserPhoto: 'packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto',
@@ -86,13 +88,13 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve a
     useSPFxAadTokenProvider: 'packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts#useSPFxAadTokenProvider',
     useSPFxApiPermissionPrecheck: 'packages/spfx-react-toolkit/src/hooks/useSPFxApiPermissionPrecheck.ts#useSPFxApiPermissionPrecheck',
   };
-  assert.equal(Object.keys(pilotOwners).length, 36, 'five original, 21 Context, six Clients, two GraphData and two Site owners');
+  assert.equal(Object.keys(pilotOwners).length, 38, 'five original, 21 Context, six Clients, two GraphData two Site and two tenant-property owners');
   assert.deepEqual(Object.keys(pilotTitles).sort(), Object.keys(pilotOwners).sort(), 'every accepted pilot has an independent canonical owner expectation');
   const pilots = filterPilotGroups(groups);
   assert.deepEqual(pilots.flatMap(group => group.features.map(feature => feature.title)).sort(), Object.keys(pilotTitles).sort());
   for (const group of pilots) for (const feature of group.features) {
     assert.equal(feature.key, pilotOwners[feature.title]);
-    assert.equal(group.key, feature.title === 'WebPartShell' || feature.title === 'Pagination' ? 'controls' : feature.title === 'createSPFxSiteKeyValueStoreService' ? 'services' : 'hooks');
+    assert.equal(group.key, feature.title === 'WebPartShell' || feature.title === 'Pagination' ? 'controls' : ['createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService'].includes(feature.title) ? 'services' : 'hooks');
     assert.deepEqual(feature.scenarios.map(entry => entry.title).sort(), [...pilotTitles[feature.title]].sort());
     for (const entry of feature.scenarios) {
       assert.equal(entry, byId.get(entry.id), 'filtered scenarios retain their actual canonical catalogue entry');

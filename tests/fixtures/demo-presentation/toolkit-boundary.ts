@@ -81,3 +81,7 @@ export { useSPFxOneDriveAppData } from '../../../packages/spfx-react-toolkit/lib
 // Site cases call the actual public hook and factory; only native HTTP is controlled.
 export { useSPFxSiteKeyValueStore, type SPFxSiteKeyValueStoreItem } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxSiteKeyValueStore';
 export { createSPFxSiteKeyValueStoreService, type SPFxSiteKeyValueStoreServiceItem } from '../../../packages/spfx-react-toolkit/lib/services/spfx-site-key-value-store.service';
+
+// Tenant property cases retain actual hooks, discovery and the direct read-only factory.
+export { useSPFxTenantProperty, type SPFxTenantPropertyResult } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxTenantProperty';
+export { createSPFxTenantPropertyService, type SPFxTenantProperty, type SPFxTenantPropertyService } from '../../../packages/spfx-react-toolkit/lib/services/spfx-tenant-property.service';

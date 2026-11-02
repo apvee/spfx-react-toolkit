@@ -8,6 +8,8 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright')
 const { teamsDarkTheme, webLightTheme } = require('@fluentui/react-components');
 const { selectGeneratedShellScenario } = require('./web-part-shell-browser.helpers.cjs');
 const { groupsProduct } = require('../tests/fixtures/demo-control-isolation/task3-product.browser.cjs');
+const { pilotTitles } = require('../tests/fixtures/demo-presentation/jsdoc-pilots.cjs');
+const pilotScope = { features: Object.keys(pilotTitles).length, scenarios: Object.values(pilotTitles).reduce((sum, titles) => sum + titles.length, 0) };
 const root = path.resolve(__dirname, '..');
 const directory = path.join(root, process.env.DEMO_PRESENTATION_MODE === 'source' ? 'temp/demo-presentation-source-browser' : 'temp/demo-presentation-browser');
 const output = path.resolve(process.env.DEMO_PRESENTATION_EVIDENCE || path.join(root, '.docs/maintenance/evidence/demo-presentation'));
@@ -15,6 +17,7 @@ const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Goog
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
+  { key: 'tenant-properties', title: 'useSPFxTenantProperty' }, { key: 'tenant-property-service', title: 'createSPFxTenantPropertyService' },
   { key: 'site', title: 'useSPFxSiteKeyValueStore' }, { key: 'site-service', title: 'createSPFxSiteKeyValueStoreService' },
   { key: 'styles', title: 'useSx' }, { key: 'auto-skeleton', title: 'AutoSkeleton' }, { key: 'relative-time', title: 'RelativeTime' },
   { key: 'formatted-text', title: 'FormattedText' }, { key: 'editable-text', title: 'EditableText' },
@@ -57,6 +60,8 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    'tenant-properties': ['useSPFxTenantProperty', 'Read tenant version and counter with explicit activation'],
+    'tenant-property-service': ['createSPFxTenantPropertyService', 'Read and validate a catalog StorageEntity'],
     site: ['useSPFxSiteKeyValueStore', 'Explore collection root records with guarded mutations'],
     'site-service': ['createSPFxSiteKeyValueStoreService', 'Read a collection root record before a consented save'],
     context: ['useSPFxCrossSitePermissions', 'Check staged legacy site web and list permissions'],
@@ -90,7 +95,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: key === 'site-service' ? /^Servizi/ : (['imports', 'styles', 'site'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service'].includes(key) ? /^Servizi/ : (['imports', 'styles', 'site', 'tenant-properties'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -334,6 +339,15 @@ async function interact(page, key) {
     case 'graph': await panel.getByRole('button', { name: 'Run', exact: true }).click(); await panel.getByText('Simulated network unavailable', { exact: true }).waitFor(); check('Graph simulated read error visible', await panel.getByText('Simulated network unavailable', { exact: true }).count(), 1); break;
     case 'site': await panel.getByRole('button', { name: 'Activate site store', exact: true }).click(); await panel.getByLabel('Operation', { exact: true }).selectOption('save'); await panel.getByLabel('Value', { exact: true }).fill('Local draft'); check('site: editable draft', await panel.getByLabel('Value', { exact: true }).inputValue(), 'Local draft'); break;
     case 'site-service': await panel.getByLabel('Key', { exact: true }).fill('spfx-toolkit-site-demo-service-draft'); check('site service: Save initially locked', await panel.getByRole('button', { name: 'Save', exact: true }).isDisabled(), true); break;
+    case 'tenant-properties': {
+      const before = await page.evaluate(() => window.propertiesFixture.requests.length);
+      await panel.getByRole('button', { name: 'Activate tenant properties', exact: true }).click(); await settle(page);
+      check('property activation performs no discovery', await page.evaluate(() => window.propertiesFixture.requests.length), before);
+      await panel.getByRole('button', { name: 'Run', exact: true }).click();
+      await panel.getByText('Tenant property reads completed.', { exact: true }).waitFor();
+      check('property first Run has two discoveries and two reads', await page.evaluate(() => window.propertiesFixture.requests.length), before + 4); break;
+    }
+    case 'tenant-property-service': await panel.getByLabel('Catalog URL', { exact: true }).fill('https://simulated.invalid/sites/catalog'); await panel.getByRole('button', { name: 'Read', exact: true }).click(); await panel.getByText('Property not set', { exact: true }).waitFor(); break;
     case 'tenant': await panel.locator('select[data-demo-variant=TenantPanel]').selectOption('store'); await panel.locator('select[data-demo-variant=TenantStoreScenario]').selectOption('save'); await panel.getByLabel('Value', { exact: true }).fill('Local draft'); check(`${key}: editable draft`, await panel.getByLabel('Value', { exact: true }).inputValue(), 'Local draft'); break;
     case 'pnp': await panel.locator('select[data-demo-variant=PnPPanel]').selectOption('listAccess'); await panel.getByLabel('List GUID', { exact: true }).fill('11111111-2222-3333-4444-555555555555'); check('PnP GUID config', await panel.getByLabel('List GUID', { exact: true }).inputValue(), '11111111-2222-3333-4444-555555555555'); break;
     case 'search': await panel.locator('select[data-demo-variant=SearchPanel]').selectOption('suggestions'); await panel.getByLabel('Search with Autocomplete', { exact: true }).fill('local'); await panel.getByRole('button', { name: 'local simulated suggestion', exact: true }).waitFor(); check('Search real debounce/suggestion UI', await panel.getByRole('button', { name: 'local simulated suggestion', exact: true }).count(), 1); break;
@@ -652,7 +666,7 @@ async function liveTheme(page) {
     check('Unexpected app/browser/network diagnostics', diagnostics.filter(message => !(message.type === 'warning' && message.text === nativeColorWarning)), []);
     console.log(`Integrated actual app: ${checks.length} PASS checks; ${screenshots.length} screenshots; native 200% proved.`);
   } finally {
-    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? 'focused source-owned JSDoc migration checkpoint (33 scenarios, 26 features; original 9-case pilot retained)' : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { features: 26, scenarios: 33, originalPilotScenarios: 9, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/remaining registry panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, expectedRuntimeDiagnostics, metrics, screenshots }, undefined, 2));
+    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `focused source-owned JSDoc migration checkpoint (${pilotScope.scenarios} scenarios, ${pilotScope.features} features)` : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { ...pilotScope, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/remaining registry panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, expectedRuntimeDiagnostics, metrics, screenshots }, undefined, 2));
     await browser?.close(); await new Promise(resolve => server.close(resolve));
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

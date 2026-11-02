@@ -1,40 +1,11 @@
 import * as React from 'react';
 import { Select, Button, Field, Input, MessageBar, MessageBarBody, Label } from '@fluentui/react-components';
-import { useSPFxTenantKeyValueStore, useSPFxTenantProperty } from '@apvee/spfx-react-toolkit';
+import { useSPFxTenantKeyValueStore } from '@apvee/spfx-react-toolkit';
 import type { SPFxTenantKeyValueStoreItem } from '@apvee/spfx-react-toolkit';
 import { ActionResult, DemoCard, InfoGrid, JsonDetails, StatusBadge } from '../shared';
 import { useDemoStyles } from '../shared/demoStyles';
 type TenantAction = 'list' | 'get' | 'save' | 'remove';
 type TenantValueFormat = 'text' | 'json' | 'bigint' | 'date';
-const TenantPropertyScenario: React.FC<{
-    readonly selector: (busy?: boolean) => React.ReactNode;
-}> = ({ selector }) => {
-    const version = useSPFxTenantProperty<string>('spfx-toolkit-test-version', false);
-    const counter = useSPFxTenantProperty<number>('spfx-toolkit-test-counter', false);
-    const [executed, setExecuted] = React.useState<{ readonly version: typeof version.load; readonly counter: typeof counter.load; readonly request: number }>();
-    const generation = React.useRef(0);
-    const identity = React.useRef({ version: version.load, counter: counter.load });
-    if (identity.current.version !== version.load || identity.current.counter !== counter.load) {
-        identity.current = { version: version.load, counter: counter.load };
-        generation.current += 1;
-    }
-    const mounted = React.useRef(true);
-    React.useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
-    const execute = React.useCallback(async () => {
-        const snapshot = { version: version.load, counter: counter.load, request: ++generation.current };
-        setExecuted(undefined);
-        await Promise.all([snapshot.version(), snapshot.counter()]);
-        if (mounted.current && generation.current === snapshot.request && identity.current.version === snapshot.version && identity.current.counter === snapshot.counter)
-            setExecuted(snapshot);
-    }, [version, counter]);
-    const current = executed?.request === generation.current && executed.version === version.load && executed.counter === counter.load;
-    const loading = version.isLoading || counter.isLoading;
-    const error = version.error ?? counter.error;
-    return <DemoCard title="Tenant Properties" description="Read the tenant version and counter." iconName="ServerEnviroment" controls={selector()} error={error} contentPlacement="configuration" commands={<Button appearance="primary" disabled={loading} onClick={execute}>Run</Button>} diagnostics={<>
-        <Label>Tenant properties are read-only through REST.</Label><InfoGrid rows={[{ label: 'Version Description', value: version.description }, { label: 'Counter Description', value: counter.description }]}/></>}>
-    {loading ? <Label>Loading...</Label> : !current || error ? <Label>Run to read the properties.</Label> : <InfoGrid rows={[{ label: 'spfx-toolkit-test-version', value: version.data ?? '(not set)' }, { label: 'spfx-toolkit-test-counter', value: counter.data === undefined ? '(not set)' : String(counter.data) }]}/>}
-  </DemoCard>;
-};
 const TenantStoreScenario: React.FC<{
     readonly selector: (busy?: boolean) => React.ReactNode;
 }> = ({ selector }) => {
@@ -153,8 +124,8 @@ const TenantStoreScenario: React.FC<{
 };
 const TenantPanel: React.FC = () => {
     const demoStyles = useDemoStyles();
-    const [scenario, setScenario] = React.useState('properties');
-    const selector = (busy = false): React.ReactNode => <Field className={demoStyles.controlRow} label="Service"><Select disabled={busy} select={{ 'data-demo-variant': 'TenantPanel' } as React.SelectHTMLAttributes<HTMLSelectElement>} value={scenario} onChange={(_, data) => setScenario(data.value)}><option value="properties">Tenant properties</option><option value="store">Tenant storage</option></Select></Field>;
-    return scenario === 'properties' ? <TenantPropertyScenario selector={selector}/> : <TenantStoreScenario selector={selector}/>;
+    const [selected, setSelected] = React.useState(false);
+    const selector = (busy = false): React.ReactNode => <Field className={demoStyles.controlRow} label="Service"><Select disabled={busy} select={{ 'data-demo-variant': 'TenantPanel' } as React.SelectHTMLAttributes<HTMLSelectElement>} value={selected ? 'store' : ''} onChange={(_, data) => setSelected(data.value === 'store')}><option value="" disabled>Choose tenant storage</option><option value="store">Tenant storage</option></Select></Field>;
+    return selected ? <TenantStoreScenario selector={selector}/> : <DemoCard title="Tenant storage" description="Choose the existing tenant store explicitly." iconName="TableGroup" controls={selector()} contentPlacement="configuration"><Label>Select Tenant storage to initialize its catalog and permission checks.</Label></DemoCard>;
 };
 export default TenantPanel;

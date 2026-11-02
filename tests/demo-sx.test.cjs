@@ -267,6 +267,28 @@ test('hook, provider, style and service panels use Fluent configuration and shar
     inspectSite(parsed); assert.equal(calls, 1);
     assert.match(source, /<Field\b[\s\S]*<Input\b/); assert.match(source, /<Checkbox\b/); assert.match(source, /overflowX: 'auto'/);
   }
+  const propertyOwners = {
+    useSPFxTenantProperty: ['packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty', 'Read tenant version and counter with explicit activation'],
+    createSPFxTenantPropertyService: ['packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService', 'Read and validate a catalog StorageEntity'],
+  };
+  const propertyCases = catalogueModule.exports.executableExamples.filter(entry => Object.values(propertyOwners).some(([owner]) => owner === entry.ownerKey));
+  assert.equal(propertyCases.length, 2, 'exact two independent tenant-property owners');
+  for (const entry of propertyCases) {
+    assert.deepEqual([entry.ownerKey, entry.title], propertyOwners[entry.featureTitle]);
+    assert.deepEqual([entry.metadata.host, entry.metadata.kind, entry.metadata.contentPlacement], ['webPart', 'read', 'configuration']);
+    assert.equal(entry.groupKey, entry.featureTitle === 'useSPFxTenantProperty' ? 'hooks' : 'services');
+    const source = fs.readFileSync(path.join(generatedRoot, entry.id + '.tsx'), 'utf8');
+    assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|summary|a)\b|<FluentProvider\b/);
+    const parsed = ts.createSourceFile(entry.id + '.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    let calls = 0;
+    function inspectProperty(node) {
+      if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === entry.featureTitle) calls++;
+      if (ts.isJsxAttribute(node)) assert.ok(!['style', 'styles'].includes(node.name.text));
+      ts.forEachChild(node, inspectProperty);
+    }
+    inspectProperty(parsed); assert.equal(calls, entry.featureTitle === 'useSPFxTenantProperty' ? 2 : 1);
+    assert.match(source, /overflowX: 'auto'/);
+  }
   // Context's finite acceptance cohort must not absorb later client/data hook families.
   const contextNames = ['Context', 'PageContext', 'InstanceInfo', 'DisplayMode', 'IsEdit', 'EnvironmentInfo',
     'UserInfo', 'SiteInfo', 'ListInfo', 'LocaleInfo', 'HubSiteInfo', 'Teams', 'PageType', 'CorrelationInfo',

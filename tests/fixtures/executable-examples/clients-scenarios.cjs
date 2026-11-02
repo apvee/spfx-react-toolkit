@@ -45,6 +45,10 @@ function createClientsFixture(t, title, options = {}) {
     for (const name of ['Context', 'PageContext', 'ServiceScope', 'InstanceInfo', 'HttpClient', 'SPHttpClient', 'MSGraphClient', 'AadHttpClient', 'AadTokenProvider', 'ApiPermissionPrecheck', 'Properties', 'Fluent9ThemeInfo'])
         Object.assign(toolkit, library('hooks/useSPFx' + name));
     if (options.graphData) for (const name of ['UserInfo', 'UserPhoto', 'OneDriveAppData']) Object.assign(toolkit, library('hooks/useSPFx' + name));
+    if (options.tenantProperties) {
+        pageNative.SPPermission = h.load(require.resolve('@microsoft/sp-page-context/lib-commonjs/SPPermission')).default;
+        Object.assign(toolkit, library('services/spfx-tenant-property.service'), library('hooks/useSPFxTenantProperty'));
+    }
     if (options.siteStore) {
         pageNative.SPPermission = h.load(require.resolve('@microsoft/sp-page-context/lib-commonjs/SPPermission')).default;
         const service = library('services/spfx-site-key-value-store.service');
@@ -89,8 +93,8 @@ function createClientsFixture(t, title, options = {}) {
     let redrawChild;
     let instance = host(), revision = options.revision ?? 0, selected = scenario(title, options.ownerKey), regions;
     const source = fs.readFileSync;
-    if (options.unmasked || options.siteMutation)
-        fs.readFileSync = (file, ...args) => { const value = source(file, ...args); return String(file) === selected.file ? (options.siteMutation ? value.replaceAll('ledger.current.size > 0', 'false') : value.replace('observedScope === serviceScope', 'true').replace('observedTarget === info.resourceUrl', 'true')) : value; };
+    if (options.unmasked || options.siteMutation || options.propertyMutation)
+        fs.readFileSync = (file, ...args) => { const value = source(file, ...args); return String(file) === selected.file ? (options.propertyMutation === 'target' ? value.replaceAll('boundary.current.token === token', 'true') : options.propertyMutation === 'errors' ? value.replace('const failure = visible ? version.error ?? counter.error : undefined;', 'const failure = undefined;') : options.siteMutation ? value.replaceAll('ledger.current.size > 0', 'false') : value.replace('observedScope === serviceScope', 'true').replace('observedTarget === info.resourceUrl', 'true')) : value; };
     let Demo;
     try {
         Demo = h.load(selected.file).Demo;

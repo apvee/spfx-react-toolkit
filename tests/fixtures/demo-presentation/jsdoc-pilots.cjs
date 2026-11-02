@@ -1,5 +1,7 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
+  useSPFxTenantProperty: ['Read tenant version and counter with explicit activation'],
+  createSPFxTenantPropertyService: ['Read and validate a catalog StorageEntity'],
   useSPFxSiteKeyValueStore: ['Explore collection root records with guarded mutations'],
   createSPFxSiteKeyValueStoreService: ['Read a collection root record before a consented save'],
   useSPFxUserPhoto: ['Read the current user photo with managed URL cleanup'],

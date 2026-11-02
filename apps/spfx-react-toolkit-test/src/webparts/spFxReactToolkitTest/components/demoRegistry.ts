@@ -57,10 +57,9 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     key: 'tenant',
     title: 'Tenant',
     iconName: 'Org',
-    description: 'Tenant property reads and tenant key-value store CRUD.',
+    description: 'Tenant key-value store CRUD.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-tenant' */ './panels/TenantPanel')),
     coverage: [
-      { symbol: 'useSPFxTenantProperty', kind: 'read', notes: 'Read tenant properties from the app catalog.' },
       { symbol: 'useSPFxTenantKeyValueStore', kind: 'write', notes: 'Manual tenant CRUD, complete paging, effective permissions and observable text/JSON/bigint/date readback; reads never provision.' },
     ],
   },

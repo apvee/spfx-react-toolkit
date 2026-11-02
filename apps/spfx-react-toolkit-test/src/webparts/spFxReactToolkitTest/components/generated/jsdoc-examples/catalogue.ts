@@ -2499,6 +2499,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-5062ba39e03063855fdd7a7e38635cf2980a1dd15f4aa5fa37eee376b9ad008a' */ "./5062ba39e03063855fdd7a7e38635cf2980a1dd15f4aa5fa37eee376b9ad008a")
 },
 {
+  "id": "c45bf5ab58117bfb70b1fdcad2035617432d5ecc8ab24c35e51f264151326b16",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty",
+  "title": "Read tenant version and counter with explicit activation",
+  "groupRoute": "docs/api/hooks/storage/tenant-property.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty",
+  "featureTitle": "useSPFxTenantProperty",
+  "publicNames": [
+    "useSPFxTenantProperty"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts",
+    "line": 264
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Run both tenant property loads explicitly and observe current values, descriptions, missing values and read failures."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-c45bf5ab58117bfb70b1fdcad2035617432d5ecc8ab24c35e51f264151326b16' */ "./c45bf5ab58117bfb70b1fdcad2035617432d5ecc8ab24c35e51f264151326b16")
+},
+{
   "id": "a7ac1b67dd7b66a01c14d3e59b4fb1803cdbc858ac1b0c0dac3b5c72e71c0903",
   "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo",
   "title": "Observe the native SPFx theme snapshot",
@@ -2681,6 +2704,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Read the collection-root record and permission indicator before explicitly consenting to the service write."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-196995dd0cc3cb7889f414c4282acab61e85718a2c301a02b5286bac3fd4a9d3' */ "./196995dd0cc3cb7889f414c4282acab61e85718a2c301a02b5286bac3fd4a9d3")
+},
+{
+  "id": "25b252c39a42993a418d74e7cfdc7ce7560300bb71d2f7dcc2b21d66c81070f0",
+  "ownerKey": "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService",
+  "title": "Read and validate a catalog StorageEntity",
+  "groupRoute": "docs/api/services/tenant-property.md",
+  "groupKey": "services",
+  "featureKey": "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService",
+  "featureTitle": "createSPFxTenantPropertyService",
+  "publicNames": [
+    "createSPFxTenantPropertyService"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts",
+    "line": 107
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Read a StorageEntity from the supplied catalog and distinguish validated boolean data from missing, malformed or failed data."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-25b252c39a42993a418d74e7cfdc7ce7560300bb71d2f7dcc2b21d66c81070f0' */ "./25b252c39a42993a418d74e7cfdc7ce7560300bb71d2f7dcc2b21d66c81070f0")
 }
 ];
 
@@ -2787,13 +2833,15 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo", title: "useSPFxSiteInfo", scenarios: [executableExamples[103]] },
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore", title: "useSPFxSiteKeyValueStore", scenarios: [executableExamples[104]] },
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams", title: "useSPFxTeams", scenarios: [executableExamples[105]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[106]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[107]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto", title: "useSPFxUserPhoto", scenarios: [executableExamples[108]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[109], executableExamples[110]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[111], executableExamples[112]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty", title: "useSPFxTenantProperty", scenarios: [executableExamples[106]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[107]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[108]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto", title: "useSPFxUserPhoto", scenarios: [executableExamples[109]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[110], executableExamples[111]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[112], executableExamples[113]] }
   ] },
   { key: "services", title: "Servizi", features: [
-    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[113]] }
+    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[114]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[115]] }
   ] }
 ];
