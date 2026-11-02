@@ -14,13 +14,15 @@ import StateMessagePanel from '../foundation-legacy/StateMessagePanel';
 import ProductStateMessagePanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/StateMessagePanel';
 import FormPanel from '../demo-control-isolation/form-regressions';
 import GroupsPanel from '../demo-control-isolation/groups-regressions';
-import ProductImportsPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/ImportsPanel';
+import { Demo as ImportsDemo } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/generated/jsdoc-examples/832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88';
+import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
+const ProductImportsScenario: React.FC = () => <ImportsDemo render={regions => <DemoCard title="Compare root domain and historical imports" iconName="Info" contentPlacement="configuration" {...regions} />} />;
 const groupFixtureIcon = <svg width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 5h16v14H4zm2 2v10h12V7z" /></svg>;
 registerIcons({ icons: { Color: 'color', Font: 'font', Clock: 'clock', Processing: 'loading', Info: groupFixtureIcon, Settings: groupFixtureIcon, Mail: groupFixtureIcon, Ringer: groupFixtureIcon } });
 const products: Readonly<Record<string, React.ComponentType>> = {
   styles: ProductStylesPanel, 'relative-time': ProductRelativeTimePanel,
   'formatted-text': ProductFormattedTextPanel, 'auto-skeleton': ProductAutoSkeletonPanel,
-  'state-message': ProductStateMessagePanel, imports: ProductImportsPanel,
+  'state-message': ProductStateMessagePanel, imports: ProductImportsScenario,
 };
 const query = new URLSearchParams(window.location.search);
 const Product = products[query.get('foundation-product') ?? ''];

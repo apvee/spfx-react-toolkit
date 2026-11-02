@@ -127,6 +127,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-2d308f4ed4728174423af4867bfda6b265243ed459b7111d1db58e5e5075531a' */ "./2d308f4ed4728174423af4867bfda6b265243ed459b7111d1db58e5e5075531a")
 },
 {
+  "id": "a07f48c5bc9c9b2205540773cc72cbeeadb752470bb6c3e67ff22ec10c3e5ee0",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination",
+  "title": "Browse orders across pagination modes",
+  "groupRoute": "docs/api/controls/pagination.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination",
+  "featureTitle": "Pagination",
+  "publicNames": [
+    "Pagination"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx",
+    "line": 282
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Browse 23 orders with known pages, unknown totals, cursors or appended batches. Change filters and presentation; hold a request, inspect its native busy ref, then complete once or Reset."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-a07f48c5bc9c9b2205540773cc72cbeeadb752470bb6c3e67ff22ec10c3e5ee0' */ "./a07f48c5bc9c9b2205540773cc72cbeeadb752470bb6c3e67ff22ec10c3e5ee0")
+},
+{
   "id": "524ada20fca467ad721252dc50e1ffa9546c8e06f490d7728060dd959a62a61f",
   "ownerKey": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell",
   "title": "Configure the actual web part Shell",
@@ -289,17 +312,41 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Rerender the mounted component, then invoke its original callback. Identity stays yes, including after Reset clears the rerender and invocation counts."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-3d1b9688a4a92bbeb2147405d82aed353d95d1521353a65cac6d0ee9591a8427' */ "./3d1b9688a4a92bbeb2147405d82aed353d95d1521353a65cac6d0ee9591a8427")
+},
+{
+  "id": "832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx",
+  "title": "Compare root domain and historical imports",
+  "groupRoute": "docs/api/hooks/react.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx",
+  "featureTitle": "useSx",
+  "publicNames": [
+    "useSx"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSx.ts",
+    "line": 68
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select a root, domain or supported historical import adapter. Its captured callback sees the latest count; mixed width descriptors override 240px with 360px, then restore it. Reset keeps the selected adapter and captured identity."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88' */ "./832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88")
 }
 ];
 
 export const executableGroups: readonly ExecutableGroup[] = [
   { key: "controls", title: "Controlli", features: [
-    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[0], executableExamples[1], executableExamples[2]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[3], executableExamples[4], executableExamples[5]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[6]] }
+    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[0], executableExamples[1], executableExamples[2], executableExamples[3]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[4], executableExamples[5], executableExamples[6]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[7]] }
   ] },
   { key: "hooks", title: "Hook", features: [
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[7]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[8], executableExamples[9]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[8]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[9], executableExamples[10]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[11]] }
   ] }
 ];

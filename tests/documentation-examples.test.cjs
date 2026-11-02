@@ -189,3 +189,47 @@ test('checks the same source mirror before and after stale lib appears without e
     assert.deepEqual(files(mirror), withStale);
   } finally { fs.rmSync(mirror, { recursive: true, force: true }); }
 });
+
+test('finite historical exports resolve canonical public symbols from source without admitting private or wildcard paths', () => {
+  const mirror = fs.mkdtempSync(path.join(os.tmpdir(), 'documentation-historical-'));
+  try {
+    fs.cpSync(fixture, mirror, { recursive: true });
+    fs.symlinkSync(path.join(__dirname, '../node_modules'), path.join(mirror, 'node_modules'), 'dir');
+    const metadataFile = path.join(mirror, 'package.json');
+    const metadata = JSON.parse(fs.readFileSync(metadataFile, 'utf8'));
+    metadata.exports['./lib/pagination'] = { types: './lib/pagination.d.ts', default: './lib/pagination.js' };
+    metadata.exports['./lib/pagination.js'] = { types: './lib/pagination.d.ts', default: './lib/pagination.js' };
+    metadata.exports['./lib/private'] = { types: './lib/private.d.ts', default: './lib/private.js' };
+    metadata.exports['./lib/mixed'] = { types: './lib/mixed.d.ts', default: './lib/mixed.js' };
+    metadata.exports['./lib/width'] = { types: './lib/width.d.ts', default: './lib/width.js' };
+    fs.writeFileSync(path.join(mirror, 'src/mixed.ts'), "export { Pagination } from './pagination'; export const secret = 1;\n");
+    fs.writeFileSync(path.join(mirror, 'src/width.ts'), "export function px(value: number): string { return value + 'px'; }\n");
+    fs.appendFileSync(path.join(mirror, 'src/index.ts'), "\nexport * as width from './width';\n");
+    fs.writeFileSync(metadataFile, JSON.stringify(metadata));
+    const graph = buildApiGraph(mirror, config);
+    const publicNames = graph.bindings.map(binding => binding.specifier);
+    assert.ok(publicNames.every(specifier => !specifier.includes('/lib/')), 'compatibility imports do not become canonical advertised bindings');
+    const positive = custom(["import { Pagination as root } from '@apvee/spfx-react-toolkit';\nimport { Pagination as historical } from '@apvee/spfx-react-toolkit/lib/pagination';\nimport * as historicalModule from '@apvee/spfx-react-toolkit/lib/pagination.js';\nconst same: typeof root = historical; const namespaceSame: typeof root = historicalModule.Pagination;\nimport { width } from '@apvee/spfx-react-toolkit';\nimport * as historicalWidth from '@apvee/spfx-react-toolkit/lib/width';\nconst px: typeof width.px = historicalWidth.px;"]);
+    positive.graph = graph;
+    assert.deepEqual(check(mirror, positive), []);
+    const executable = buildDocumentationModel(graph, config);
+    executable.examples = [{ ownerKey: graph.entities.find(entity => entity.qualifiedName === 'Pagination').key,
+      title: 'Historical import contract', language: 'tsx', source: { file: 'historical.jsdoc', line: 1 },
+      code: "import * as React from 'react';\nimport * as historicalWidth from '@apvee/spfx-react-toolkit/lib/width';\nexport function Demo(): React.ReactElement { return <div>{historicalWidth.px(240)}</div>; }\nexport const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Historical width is visible.' };" }];
+    const collected = require('../scripts/executable-examples-model.cjs').collectExecutableExamples(mirror, executable, config);
+    assert.deepEqual(collected.diagnostics, []);
+    assert.equal(collected.examples.length, 1, 'the structural executable checker shares the exact source resolution contract');
+    const invalid = custom([
+      "import { privateValue } from '@apvee/spfx-react-toolkit/lib/private';",
+      "import { Pagination } from '@apvee/spfx-react-toolkit/lib/mixed';",
+      "import { Pagination } from '@apvee/spfx-react-toolkit/lib/not-exported';",
+      "import { Pagination } from '@apvee/spfx-react-toolkit/src/pagination';",
+      "import { Pagination } from '@apvee/spfx-react-toolkit/lib/../pagination';",
+    ]);
+    invalid.graph = graph;
+    assert.deepEqual(check(mirror, invalid).map(item => item.code), ['TS2307','TS2307','TS2307','TS2307','TS2307']);
+    fs.mkdirSync(path.join(mirror,'lib'));
+    fs.writeFileSync(path.join(mirror,'lib/pagination.d.ts'), 'export declare const Pagination: never;\n');
+    assert.deepEqual(check(mirror,positive), [], 'stale compiled declarations cannot change the source identity');
+  } finally { fs.rmSync(mirror, { recursive: true, force: true }); }
+});

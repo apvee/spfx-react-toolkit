@@ -14,7 +14,7 @@ const { createDocumentationInputs } = require('./documentation-inputs.cjs');
 /** @typedef {{name: string, optional: boolean, rest: boolean, type: TypeUse}} ApiParameter */
 /** @typedef {{key: string, source: DocLocation, docSource?: DocLocation, sourceOwned: boolean, rawDoc: string, text: string, typeParameters: ApiTypeParameter[], lexicalTypeParameters: ApiTypeParameter[], parameters: ApiParameter[], returns: TypeShape}} ApiSignature */
 /** @typedef {{key: string, qualifiedName: string, kind: string, namespaceRole?: 'sourceFile'|'declaration', parameterDocumentation?: {ownerKey: string, name: string}, source: DocLocation, docSource?: DocLocation, rawDoc: string, moduleDoc: string, moduleDocSource?: DocLocation, type?: TypeUse, typeExpression?: string, typeParameters: ApiTypeParameter[], heritage: TypeUse[], signatures: ApiSignature[], members: ApiMember[], variants: ApiVariant[], references: string[], visibility: 'public'|'support'|'external'}} ApiEntity */
-/** @typedef {{entities: ApiEntity[], bindings: PublicBinding[], diagnostics: Diagnostic[], entryQueries?: Record<string, PublicBinding[]>}} ApiGraph */
+/** @typedef {{entities: ApiEntity[], bindings: PublicBinding[], diagnostics: Diagnostic[], entryQueries?: Record<string, PublicBinding[]>, compatibilityEntries: Record<string, string>}} ApiGraph */
 
 const compare = (left, right) => left < right ? -1 : left > right ? 1 : 0;
 const posix = value => value.split(path.sep).join('/');
@@ -43,16 +43,18 @@ function buildApiGraph(root, config, query = {}) {
   const parsed = inputs.loadConfig();
   const entries = [...inputs.sourceEntries(metadata)].map(([specifier, file]) => ({ specifier, file }))
     .sort((a, b) => compare(a.specifier, b.specifier));
+  const historical = [...inputs.sourceEntries(metadata, true)];
   const requested = [...new Set(query.requestedSourceEntries || [])].map(route => ({ route, file: inputs.requestedSourceEntry(route) }));
   const entryQueries = Object.fromEntries(requested.map(item => [item.route, []]));
   const options = { ...parsed.options, noEmit: true };
-  const program = ts.createProgram([...new Set([...parsed.fileNames, ...entries.map(item => item.file), ...requested.map(item => item.file)])], options, inputs.createCompilerHost(options));
+  const program = ts.createProgram([...new Set([...parsed.fileNames, ...entries.map(item => item.file), ...historical.map(([, file]) => file), ...requested.map(item => item.file)])], options, inputs.createCompilerHost(options));
   const checker = program.getTypeChecker();
   /** @type {Map<string, ApiEntity>} */
   const entities = new Map();
   /** @type {PublicBinding[]} */
   const bindings = [];
   const pending = new Map();
+  const publicSymbols = new Set();
   const target = symbol => symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
   function declaration(symbol) {
     const original = symbol.valueDeclaration || symbol.declarations?.[0];
@@ -244,6 +246,7 @@ function buildApiGraph(root, config, query = {}) {
   }
   function publicBinding(symbol, specifier, exportedName, memberPath = [], ownerKey, ancestry = new Set(), destination = bindings, visibility = 'public') {
     const resolved = target(symbol);
+    if (visibility === 'public') publicSymbols.add(resolved);
     const key = register(resolved, visibility);
     if (!key || ancestry.has(key)) return;
     const node = declaration(symbol);
@@ -262,6 +265,18 @@ function buildApiGraph(root, config, query = {}) {
     const module = source && checker.getSymbolAtLocation(source);
     if (!module) throw new Error(`Missing TypeScript module: ${entry.file}`);
     for (const symbol of checker.getExportsOfModule(module).sort((a, b) => compare(a.name, b.name))) publicBinding(symbol, entry.specifier, symbol.name);
+  }
+  // Compatibility resolution is deliberately separate from advertised clean
+  // bindings. Even an exact historical export fails closed when any top-level
+  // symbol is private; namespace descendants qualify through the same checker.
+  const compatibilityEntries = {};
+  for (const [specifier, file] of historical) {
+    const source = program.getSourceFile(file);
+    const module = source && checker.getSymbolAtLocation(source);
+    const symbols = module ? checker.getExportsOfModule(module) : [];
+    if (symbols.length && symbols.every(symbol => publicSymbols.has(target(symbol)))) {
+      compatibilityEntries[specifier] = posix(path.relative(root, file));
+    }
   }
   for (const entry of requested) {
     const source = program.getSourceFile(entry.file);
@@ -323,7 +338,7 @@ function buildApiGraph(root, config, query = {}) {
     line: diagnostic.file && diagnostic.start !== undefined ? diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start).line + 1 : 1,
     message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
   })).sort((a, b) => compare(a.file, b.file) || a.line - b.line || compare(a.code, b.code) || compare(a.message, b.message));
-  return { entities: [...entities.values()].sort((a, b) => compare(a.key, b.key)),
+  return { compatibilityEntries, entities: [...entities.values()].sort((a, b) => compare(a.key, b.key)),
     bindings: bindings.sort((a, b) => compare(`${a.specifier}#${a.exportedName}.${a.memberPath.join('.')}`, `${b.specifier}#${b.exportedName}.${b.memberPath.join('.')}`)), diagnostics, ...(requested.length ? { entryQueries } : {}) };
 }
 

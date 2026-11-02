@@ -141,7 +141,9 @@ function findInvalidExampleImports(root, files, exports) {
   }
   if (legacyEntries.size) {
     const graph = checkedGraph(root, defaultConfig, { requestedSourceEntries: [...legacyEntries.values()] });
-    for (const [importPath, entry] of legacyEntries) available.set(importPath, new Set(graph.entryQueries[entry].filter(binding => !binding.memberPath.length).map(binding => binding.exportedName)));
+    for (const [importPath, entry] of legacyEntries) {
+      if (Object.hasOwn(graph.compatibilityEntries, importPath)) available.set(importPath, new Set(graph.entryQueries[entry].filter(binding => !binding.memberPath.length).map(binding => binding.exportedName)));
+    }
   }
   for (const { importPath, requested, location } of requests) {
     const names = available.get(importPath);

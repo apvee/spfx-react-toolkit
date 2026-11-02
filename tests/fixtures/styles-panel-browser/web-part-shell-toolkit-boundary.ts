@@ -11,3 +11,7 @@ export * from '../../../packages/spfx-react-toolkit/lib/controls/editable-text';
 
 export { useSPFxPnPContext } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPnPContext';
 export { useSPFxPnPList } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPnPList';
+
+// The real catalogue also emits the import-interoperability scenario.
+export { useStableCallback } from '../../../packages/spfx-react-toolkit/lib/hooks/useStableCallback';
+export { Pagination, type PaginationChangeData, type PaginationProps, type PaginationSize, type PaginationState } from '../../../packages/spfx-react-toolkit/lib/controls/pagination';

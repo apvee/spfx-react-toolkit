@@ -1,8 +1,9 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
   WebPartShell: ['Configure the actual web part Shell', 'Retain content through Shell presentation changes', 'Observe content remount between subtle and Card'],
-  Pagination: ['Browse controlled rows', 'Browse controlled rows with pending completion', 'Show an empty controlled result'],
+  Pagination: ['Browse controlled rows', 'Browse controlled rows with pending completion', 'Show an empty controlled result', 'Browse orders across pagination modes'],
   useStableCallback: ['Report current count through a retained callback', 'Retain callback identity through rerenders'],
+  useSx: ['Compare root domain and historical imports'],
   useSPFxPnPList: ['Read a user-selected list with observable results'],
 };
 function filterPilotGroups(groups) {

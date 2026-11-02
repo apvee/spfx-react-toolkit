@@ -5,9 +5,14 @@ const path = require('node:path');
 const ts = require('typescript');
 const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
 
-test('all demo panels inherit theme and default direction; theme diagnostics remain', () => {
-  for (const name of ['AutoSkeleton', 'Cards', 'DataGrid', 'DescriptionList', 'Form', 'EditableText', 'FormattedText', 'Groups', 'Imports', 'Pagination', 'RelativeTime', 'Stage', 'StateMessage', 'Styles']) {
-    const source = fs.readFileSync(path.join(base, `panels/${name}Panel.tsx`), 'utf8');
+test('demo panels and migrated scenarios inherit theme and default direction; theme diagnostics remain', () => {
+  const panels = ['AutoSkeleton', 'Cards', 'DataGrid', 'DescriptionList', 'Form', 'EditableText', 'FormattedText', 'Groups', 'RelativeTime', 'Stage', 'StateMessage', 'Styles'];
+  const files = panels.map(name => `panels/${name}Panel.tsx`).concat([
+    'generated/jsdoc-examples/a07f48c5bc9c9b2205540773cc72cbeeadb752470bb6c3e67ff22ec10c3e5ee0.tsx',
+    'generated/jsdoc-examples/832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88.tsx',
+  ]);
+  for (const file of files) {
+    const source = fs.readFileSync(path.join(base,file), 'utf8');
     assert.doesNotMatch(source, /webLightTheme|webDarkTheme|teamsDarkTheme|teamsHighContrastTheme|getTeamsFluentTheme|setDark|setThemeChoice|theme=|Dark theme/);
     assert.doesNotMatch(source, /dir=\{rtl \? 'rtl' : 'ltr'\}/);
   }

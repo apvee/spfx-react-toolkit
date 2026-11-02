@@ -143,7 +143,7 @@ test('numeric drafts allow clearing and sequential replacement while retaining v
 
 test('hook, provider, style and service panels use Fluent configuration and shared demo regions', () => {
   const componentRoot = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
-  const panels = ['Styles', 'Imports', 'Providers', 'Context', 'Runtime', 'Clients', 'GraphData', 'Site', 'Tenant', 'PnP', 'Search'];
+  const panels = ['Styles', 'Providers', 'Context', 'Runtime', 'Clients', 'GraphData', 'Site', 'Tenant', 'PnP', 'Search'];
   const files = panels.map(name => path.join(componentRoot, 'panels', name + 'Panel.tsx'))
     .concat(fs.readdirSync(path.join(componentRoot, 'demos')).filter(name => /^PnP.*\.tsx$/.test(name)).map(name => path.join(componentRoot, 'demos', name)));
   for (const file of files) {
@@ -158,7 +158,7 @@ test('hook, provider, style and service panels use Fluent configuration and shar
   const hooks = fs.readdirSync(generatedRoot).filter(name => name.endsWith('.tsx'))
     .map(name => fs.readFileSync(path.join(generatedRoot, name), 'utf8'))
     .filter(source => source.includes('useStableCallback'));
-  assert.equal(hooks.length, 2, 'callback scenarios moved into their owning source examples');
+  assert.equal(hooks.length, 3, 'two callback pilots and the complete import-interoperability scenario own shared configuration regions');
   for (const source of hooks) {
     assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|a)\b|\bstyles?\s*=/);
     assert.match(source, /return render\(\{/);

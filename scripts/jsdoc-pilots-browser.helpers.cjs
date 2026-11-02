@@ -39,7 +39,7 @@ async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
   const rows = panel => panel.locator('tbody tr').evaluateAll(nodes => nodes.map(node => Number(node.getAttribute('data-order-id'))));
   const calls = () => page.evaluate(() => window.pnpReadFixture.calls.length);
   check('Initial fixture mount issues no business requests', await calls(), 0);
-  check('JSDoc filter: exactly four features', await navigation.locator('[data-example-feature]').count(), 4);
+  check('JSDoc filter: exactly five features', await navigation.locator('[data-example-feature]').count(), 5);
   check('JSDoc filter: exactly two generated groups', await navigation.locator('button[aria-expanded]').count(), 2);
   let panel = await feature('WebPartShell');
   await group('Hook').click();
@@ -140,6 +140,69 @@ async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
   check('Empty rows', await rows(panel), []);
   check('Empty next disabled', await panel.getByRole('button', { name: 'Next page', exact: true }).isDisabled(), true);
   await restore(panel, 'Empty rows'); check('Empty stays empty', await rows(panel), []); await capture(page, 'jsdoc-pagination-empty');
+
+  panel = await scenario('Pagination', pilotTitles.Pagination[3]);
+  const advancedRows = () => panel.locator('[data-order-id]').evaluateAll(nodes => nodes.map(node => node.getAttribute('data-order-id')));
+  for (const mode of ['known','unknown','cursor','loadMore']) {
+    await panel.locator('select[data-pagination-demo=mode]').selectOption(mode);
+    check(`Advanced ${mode}: baseline rows`, await advancedRows(), ['order-1','order-2','order-3','order-4','order-5']);
+    await panel.getByRole('button', { name: mode === 'loadMore' ? 'Load additional orders' : 'Next page', exact: true }).click();
+    check(`Advanced ${mode}: actual rows change or append`, await advancedRows(), mode === 'loadMore'
+      ? ['order-1','order-2','order-3','order-4','order-5','order-6','order-7','order-8','order-9','order-10']
+      : ['order-6','order-7','order-8','order-9','order-10']);
+  }
+  await panel.getByRole('checkbox', { name: 'Complete requests manually', exact: true }).check();
+  await panel.getByRole('button', { name: 'Load additional orders', exact: true }).click();
+  check('Advanced pending locks native nav', await panel.locator('nav').getAttribute('aria-busy'), 'true');
+  check('Advanced pending retains ten real orders', (await advancedRows()).length, 10);
+  await panel.getByRole('button', { name: 'Complete loading', exact: true }).click();
+  check('Advanced completion appends exactly one batch', (await advancedRows()).length, 15);
+  await panel.getByRole('button', { name: 'Load additional orders', exact: true }).click();
+  await panel.locator('select[data-pagination-demo=filter]').selectOption('missing');
+  check('Filter clears actual pending state', await panel.getByRole('button', { name: 'Complete loading', exact: true }).isDisabled(), true);
+  check('Advanced empty result has no rows', await advancedRows(), []);
+  await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click();
+  await panel.getByRole('checkbox', { name: 'Hide navigation', exact: true }).check();
+  await panel.getByRole('button', { name: 'Inspect navigation ref', exact: true }).click();
+  await text(panel, 'Native ref: NAV; hidden=true; busy=absent');
+  await panel.getByRole('checkbox', { name: 'Hide navigation', exact: true }).uncheck();
+  await panel.getByRole('checkbox', { name: 'RTL override (unchecked inherits host)', exact: true }).check();
+  check('Advanced explicit RTL reaches actual nav', await panel.locator('nav').evaluate(node => getComputedStyle(node).direction), 'rtl');
+  await restore(panel, 'Advanced modes');
+  check('Advanced reset restores five orders', (await advancedRows()).length, 5);
+  check('Advanced reset releases RTL', await panel.getByRole('checkbox', { name: 'RTL override (unchecked inherits host)', exact: true }).isChecked(), false);
+  await capture(page, 'jsdoc-pagination-advanced');
+
+  panel = await scenario('useSx', pilotTitles.useSx[0]);
+  const adapterClasses = [];
+  for (const adapter of ['root','domain','legacy']) {
+    await panel.locator('select[data-demo-variant=imports]').selectOption(adapter);
+    check(`${adapter}: one actual adapter`, await panel.locator('[data-imports-demo=root],[data-imports-demo=domain],[data-imports-demo=legacy]').count(), 1);
+    await panel.getByRole('button', { name: 'Increment counter', exact: true }).click();
+    await panel.getByRole('button', { name: 'Invoke captured callback', exact: true }).click();
+    await text(panel, 'Observed counter: 1'); await text(panel, 'Same callback identity: yes');
+    const preview = panel.locator(`[data-imports-demo="${adapter}-preview"]`);
+    adapterClasses.push(await preview.getAttribute('class'));
+    check(`${adapter}: real baseline width`, await preview.evaluate(node => getComputedStyle(node).width), '240px');
+    await panel.getByRole('button', { name: 'Apply alternate width', exact: true }).click();
+    check(`${adapter}: real composed width`, await preview.evaluate(node => getComputedStyle(node).width), '360px');
+    await panel.getByRole('button', { name: 'Remove alternate width', exact: true }).click();
+    check(`${adapter}: width override removed`, await preview.evaluate(node => getComputedStyle(node).width), '240px');
+    await restore(panel, `${adapter} imports`);
+    await panel.getByRole('button', { name: 'Invoke captured callback', exact: true }).click();
+    await text(panel, 'Observed counter: 0'); await text(panel, 'Same callback identity: yes');
+  }
+  check('Import adapters share actual composed classes', new Set(adapterClasses).size, 1);
+  await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click();
+  await panel.getByRole('button', { name: 'Override direction to RTL', exact: true }).click();
+  check('Imports explicit direction reaches real provider', await panel.locator('[data-imports-demo=provider]').evaluate(node => getComputedStyle(node).direction), 'rtl');
+  await panel.getByRole('button', { name: 'Use host direction', exact: true }).click();
+  await page.setViewportSize({ width: 320, height: 900 }); await settle(page);
+  await panel.getByRole('button', { name: 'Apply alternate width', exact: true }).click();
+  const scroll = panel.locator('[data-imports-demo=legacy-scroll]');
+  check('Imports real fixed width scrolls in bounded region', await scroll.evaluate(node => node.scrollWidth > node.clientWidth && getComputedStyle(node).overflowX === 'auto' && node.tabIndex === 0), true);
+  await overflow(page, 'Import interoperability 320px'); await capture(page, 'jsdoc-imports-320');
+  await page.setViewportSize({ width: 1440, height: 1100 }); await settle(page);
 
   panel = await scenario('useStableCallback', pilotTitles.useStableCallback[0]);
   await panel.getByRole('button', { name: 'Increment counter', exact: true }).click(); await panel.getByRole('button', { name: 'Increment counter', exact: true }).click();

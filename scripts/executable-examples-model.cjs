@@ -138,7 +138,7 @@ export type Component = (props: Props) => React.ReactElement;
 ` + shellContract;
   virtual.set(contractFile, { text: contractText });
   for (const filename of virtual.keys()) if (fs.existsSync(filename)) throw new Error(`Virtual executable example collides with source file: ${path.relative(root, filename)}`);
-  const host = inputs.createCompilerHost(options);
+  const host = inputs.createCompilerHost(options, model.graph.compatibilityEntries);
   const read = host.readFile.bind(host);
   const exists = host.fileExists.bind(host);
   host.readFile = filename => virtual.get(filename)?.text ?? read(filename);

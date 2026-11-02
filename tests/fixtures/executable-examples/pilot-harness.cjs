@@ -8,6 +8,8 @@ const base = path.resolve(__dirname, '../../../apps/spfx-react-toolkit-test/src/
 // provider universe. No subject hook/control or its state is simulated.
 function pilotModules(h) {
   const toolkit = {};
+  Object.assign(toolkit, h.load('helpers/styles/index.ts'), h.load('hooks/useSx.ts'));
+  const metadata = require('../../../packages/spfx-react-toolkit/package.json');
   for (const [file, names] of [
     ['hooks/useStableCallback.ts', ['useStableCallback']],
     ['controls/pagination/pagination.tsx', ['Pagination']],
@@ -31,7 +33,18 @@ function pilotModules(h) {
       module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.React,
     } }).outputText;
     new Function('require', 'module', 'exports', output)(name => {
-      if (name.startsWith('@apvee/spfx-react-toolkit')) return toolkit;
+      if (name === metadata.name) return toolkit;
+      // These domain barrels also export native SDK hooks. The harness exposes
+      // only the real implementations loaded above in this provider universe.
+      if (name === metadata.name + '/hooks' || name === metadata.name + '/styles') return toolkit;
+      if (name.startsWith(metadata.name + '/')) {
+        const alias = '.' + name.slice(metadata.name.length);
+        const entry = metadata.exports[alias];
+        assert.ok(entry && typeof entry.types === 'string', `Exact public entry ${name}`);
+        // Mirror the package's exact module target using the source implementation,
+        // rather than collapsing namespace leaves into the root object.
+        return h.load(entry.types.replace(/^\.\/lib\//, '').replace(/\.d\.ts$/, '.ts'));
+      }
       if (name.endsWith('.scss')) return { default: {} };
       if (!name.startsWith('.')) return require(name);
       const target = path.resolve(path.dirname(file), name);

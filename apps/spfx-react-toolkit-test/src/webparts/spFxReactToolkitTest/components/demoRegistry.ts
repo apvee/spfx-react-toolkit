@@ -59,14 +59,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     coverage: [{ symbol: 'DescriptionList', kind: 'snapshot', notes: 'Data/compound APIs, rich slots, literal/zero/empty values, 480px container threshold, nested containers, stable child state, native refs/hidden/events and independent state, inherited host theme and explicit RTL overrides.' }],
   },
   {
-    key: 'pagination',
-    title: 'Pagination',
-    iconName: 'ChevronRight',
-    description: 'Controlled page, cursor and load-more requests with real consumer-owned results.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-pagination' */ './panels/PaginationPanel')),
-    coverage: [{ symbol: 'Pagination', kind: 'snapshot', notes: 'Four modes, actual paged rows, filter/page-size/total resets, deterministic pending completion, native and overridden labels, native form/ref/hidden, host theme/RTL and independent instances.' }],
-  },
-  {
     key: 'data-grid',
     title: 'DataGrid',
     iconName: 'Table',
@@ -154,14 +146,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     coverage: [
       { symbol: 'FormattedText', kind: 'snapshot', notes: 'Editable props, narrow width, RTL, mixed JSX and observable native ref/click behavior.' },
     ],
-  },
-  {
-    key: 'imports',
-    title: 'Imports',
-    iconName: 'Code',
-    description: 'Select one root, domain or legacy adapter and inspect its captured callback and composed styles.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-imports' */ './panels/ImportsPanel')),
-    coverage: [], // Generated hook scenarios and the existing Styles entry own the exported symbols.
   },
   {
     key: 'styles',

@@ -148,7 +148,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     assert.equal(retainedNote.closest('.fui-AccordionPanel').hasAttribute('inert'), false);
     const rootModule = load(path.join(base, 'demoRegistry.ts'));
     registry = rootModule.demoRegistry;
-    assert.equal(registry.length, 30, 'all residual panels participate in lazy navigation');
+    assert.equal(registry.length, 27, 'all residual panels participate in lazy navigation');
     const paths = [...read('demoRegistry.ts').matchAll(/component: lazyPanel\(\(\) => import\(\/\*[^*]+\*\/ '([^']+)'\)\)/g)].map(match => match[1]);
     assert.equal(paths.length, registry.length);
     registry.forEach((entry, i) => { entry.componentPath = paths[i]; });
@@ -193,8 +193,8 @@ test('browser cardinality helpers reject duplicate Groups roots and roots added 
   const { JSDOM } = require('jsdom');
   const source = fs.readFileSync(path.resolve(__dirname, '../scripts/check-demo-presentation-browser.cjs'), 'utf8');
   const helperSource = source.slice(source.indexOf('async function singleExample('), source.indexOf('async function interact('));
-  const { singleExample, singleExampleTransitions } = new Function('check', 'settle', `${helperSource}\nreturn { singleExample, singleExampleTransitions };`)(
-    (name, actual, expected) => assert.deepEqual(actual, expected, name), async () => {});
+  const { singleExample, singleExampleTransitions } = new Function('check', 'settle', 'activePanel', `${helperSource}\nreturn { singleExample, singleExampleTransitions };`)(
+    (name, actual, expected) => assert.deepEqual(actual, expected, name), async () => {}, page => page.getByRole('tabpanel'));
   const dom = new JSDOM(`<div role="tabpanel"><section data-demo-section>
     <div data-demo-configuration><button aria-expanded="false">Advanced diagnostics</button>
       <select data-demo-variant="group-type"><option value="settings">Settings</option><option value="accordion" selected>Accordion</option><option value="disabled" disabled>Disabled</option></select>

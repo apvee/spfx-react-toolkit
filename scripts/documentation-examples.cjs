@@ -34,7 +34,8 @@ function suppressionDiagnostics(example) {
 
 /**
  * Check normalized source examples without emitting, executing or reading old lib
- * output. Toolkit specifiers resolve exclusively through clean package exports
+ * output. Toolkit specifiers resolve through clean package exports and exact
+ * historical modules whose exports the canonical checker proves public
  * into this root's sources; peers and configured ambient declarations stay real.
  * Examples cannot import local paths or use local/toolkit triple-slash references;
  * configured aliases cannot expose the toolkit's private source or output.
@@ -61,7 +62,7 @@ function checkDocumentationExamples(root, model, config) {
     if (fs.existsSync(filename)) throw new Error(`Virtual example collides with source file: ${posix(path.relative(root, filename))}`);
     virtual.set(filename, { example, text: example.code + '\nexport {};\n' });
   }
-  const host = inputs.createCompilerHost(options);
+  const host = inputs.createCompilerHost(options, model.graph.compatibilityEntries);
   const read = host.readFile.bind(host);
   const exists = host.fileExists.bind(host);
   host.readFile = filename => virtual.get(filename)?.text ?? read(filename);

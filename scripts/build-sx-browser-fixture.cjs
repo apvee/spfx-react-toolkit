@@ -19,12 +19,13 @@ if (stageOnly && [shellOnly, gridOnly, process.env.SX_BROWSER_FORM_ONLY === '1',
 const chartProbe = process.env.DATA_GRID_CHART_PROBE === '1';
 if (chartProbe && !gridOnly) throw new Error('DATA_GRID_CHART_PROBE=1 requires SX_BROWSER_DATA_GRID_ONLY=1 to select the isolated Grid fixture.');
 const actualCharts = path.join(root, 'node_modules/@fluentui/react-charts/lib/index.js');
+const executableAliases = shellOnly ? require('./executable-fixture-aliases.cjs').executableFixtureAliases(root, true) : {};
 const entry = path.join(fixture, cardsOnly ? 'cards.tsx' : descriptionListOnly ? 'description-list.tsx' : paginationOnly ? 'pagination.tsx' : stageOnly ? 'stage.tsx' : shellOnly ? 'web-part-shell.tsx' : gridOnly ? 'data-grid.tsx' : 'index.tsx');
 const boundary = path.join(fixture, cardsOnly ? 'cards-toolkit-boundary.ts' : descriptionListOnly ? 'description-list-toolkit-boundary.ts' : paginationOnly ? 'pagination-toolkit-boundary.ts' : stageOnly ? 'stage-toolkit-boundary.ts' : shellOnly ? 'web-part-shell-toolkit-boundary.ts' : gridOnly ? 'data-grid-toolkit-boundary.ts' : 'form-toolkit-boundary.ts');
 const program = ts.createProgram([entry, path.join(root, 'packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts'), ...(chartProbe ? [path.join(fixture, 'data-grid-chart-probe.tsx')] : [])], {
   noEmit: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext,
   moduleResolution: ts.ModuleResolutionKind.NodeJs, jsx: ts.JsxEmit.React,
-  baseUrl: root, paths: { '@apvee/spfx-react-toolkit': [path.relative(root, boundary)], '@data-grid/actual-charts': ['node_modules/@fluentui/react-charts/dist/index.d.ts'] },
+  baseUrl: root, paths: { ...Object.fromEntries(Object.entries(executableAliases).map(([name,file]) => [name.slice(0,-1),[path.relative(root,file)]])), '@apvee/spfx-react-toolkit': [path.relative(root, boundary)], '@data-grid/actual-charts': ['node_modules/@fluentui/react-charts/dist/index.d.ts'] },
   strict: true, skipLibCheck: true, esModuleInterop: true, lib: ['lib.es2020.d.ts', 'lib.dom.d.ts']
 });
 const diagnostics = ts.getPreEmitDiagnostics(program);
@@ -38,6 +39,7 @@ if (diagnostics.length) {
     output: { path: output, filename: 'fixture.js' }, resolve: { extensions: ['.tsx', '.ts', '.js'], alias: {
       ...require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
       '@apvee/spfx-react-toolkit$': boundary,
+      ...executableAliases,
       ...(shellOnly ? { '@microsoft/sp-core-library$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts'), '@microsoft/sp-component-base$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts'), '@microsoft/sp-page-context$': path.join(fixture, '../demo-presentation/spfx-services.ts'), '@microsoft/sp-http$': path.join(fixture, '../demo-presentation/spfx-services.ts') } : {}),
       ...(chartProbe ? { '@fluentui/react-charts$': path.join(fixture, 'data-grid-chart-probe.tsx'), '@data-grid/actual-charts$': actualCharts } : {}),
       // React 17 supplies this legacy entry without an exports map. Modern

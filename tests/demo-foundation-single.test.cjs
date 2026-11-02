@@ -37,7 +37,7 @@ function fixture(t, name, teamsTheme) {
   for(const [key,value] of Object.entries(hooks)) toolkit['useSPFx'+key]=()=>value;
   toolkit.useSPFxCrossSitePermissions=target=>{requests.push(target);return {isLoading:false,hasWebPermission:()=>false,hasPermission:()=>false};};
   for(const key of ['SPFxWebPartProvider','SPFxApplicationCustomizerProvider','SPFxFieldCustomizerProvider','SPFxListViewCommandSetProvider']) toolkit[key]=()=>undefined;
-  const Component = h.load(path.join(base,name+'Panel.tsx')).default;
+  const Component = name === 'Imports' ? h.load(path.resolve(base, '../generated/jsdoc-examples/832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88.tsx')).Demo : h.load(path.join(base,name+'Panel.tsx')).default;
   const renderer = createDOMRenderer(null);
   const view = h.mountComponent(()=>h.React.createElement(RendererProvider,{renderer},h.React.createElement(fluent.FluentProvider,{theme:fluent.webLightTheme},h.React.createElement(Component))));
   t.after(()=>{view.unmount();h.close();});
@@ -109,12 +109,13 @@ test('Providers distinguish actual host activation from exported provider availa
 test('selected Imports adapters mount alone and original callback reads each adapter’s latest state',t=>{
   const f=fixture(t,'Imports');
   for(const adapter of ['root','domain','legacy','root']) {
-    f.select('[data-demo-variant="imports"]',adapter);f.one();
+    f.select('[data-demo-variant="imports"]',adapter);
+    assert.equal(f.view.container.querySelectorAll('[data-imports-demo=provider]').length,1);
     for(const other of ['root','domain','legacy'].filter(x=>x!==adapter)) assert.equal(f.view.container.querySelector(`[data-imports-demo="${other}"]`),null);
     const section=f.view.container.querySelector(`[data-imports-demo="${adapter}"]`);
     const click=label=>f.h.act(()=>Simulate.click(Array.from(section.querySelectorAll('button')).find(x=>x.textContent===label)));
     click('Increment counter');click('Increment counter');click('Invoke captured callback');assert.match(section.textContent,/Observed counter: 2/);assert.match(section.textContent,/Same callback identity: yes/);
-    assert.ok(f.view.container.querySelector(`[data-imports-demo="${adapter}-preview"]`).closest('[data-demo-result]'));
+    assert.ok(f.view.container.querySelector(`[data-imports-demo="${adapter}-preview"]`).closest('[data-imports-demo=provider]'));
   }
 });
 

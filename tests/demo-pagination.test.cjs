@@ -6,12 +6,11 @@ const ts = require('typescript');
 const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
 const readPanel = () => fs.readFileSync(path.resolve(__dirname, 'fixtures/demo-control-isolation/pagination-regressions.tsx'), 'utf8');
 
-test('Pagination residual registry keeps its rich lazy panel beside generated pilots', () => {
+test('advanced source-owned Pagination replaces its retired legacy route', () => {
   const registry = fs.readFileSync(path.join(base, 'demoRegistry.ts'), 'utf8');
-  for (const token of ["key: 'pagination'", "symbol: 'Pagination'", "webpackChunkName: 'spfx-demo-pagination'"]) {
-    assert.equal(registry.split(token).length - 1, 1, token);
-  }
-  assert.match(registry, /import\(.*\.\/panels\/PaginationPanel/);
+  assert.doesNotMatch(registry, /key: 'pagination'|panels\/PaginationPanel|spfx-demo-pagination/);
+  const catalogue = fs.readFileSync(path.join(base, 'generated/jsdoc-examples/catalogue.ts'), 'utf8');
+  assert.ok(catalogue.includes('"title": "Browse orders across pagination modes"'));
 });
 
 test('Pagination demo exposes result navigation and consumer lifecycle acceptance markers', () => {
@@ -54,12 +53,12 @@ test('Pagination demo exposes result navigation and consumer lifecycle acceptanc
 
 
 test('Product scenario owns one configuration and selectable variants without comparison galleries', () => {
-  const product = fs.readFileSync(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/PaginationPanel.tsx'), 'utf8');
+  const product = fs.readFileSync(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/generated/jsdoc-examples/a07f48c5bc9c9b2205540773cc72cbeeadb752470bb6c3e67ff22ec10c3e5ee0.tsx'), 'utf8');
   const compiler = require('typescript');
   const parsed = compiler.createSourceFile('product.tsx', product, compiler.ScriptTarget.Latest, true, compiler.ScriptKind.TSX);
   const cards = []; let createInRender = false;
   function inspect(node) {
-    if (compiler.isJsxOpeningElement(node) && node.tagName.getText(parsed) === 'DemoCard') cards.push(node);
+    if (compiler.isJsxSelfClosingElement(node) && node.tagName.getText(parsed) === 'Pagination') cards.push(node);
     if (compiler.isCallExpression(node) && ['createForm', 'createDataGrid'].includes(node.expression.getText(parsed))) {
       for (let parent = node.parent; parent; parent = parent.parent) if (compiler.isFunctionLike(parent)) createInRender = true;
     }
@@ -76,10 +75,10 @@ test('Product scenario owns one configuration and selectable variants without co
 });
 
 
-test('source-owned Pagination pilots coexist with rich cursor/load-more residual coverage', () => {
+test('source-owned Pagination pilots and advanced modes retain independent conformance coverage', () => {
   const source = fs.readFileSync(path.resolve(__dirname, '../packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx'), 'utf8');
   const catalogue = fs.readFileSync(path.join(base, 'generated/jsdoc-examples/catalogue.ts'), 'utf8');
-  for (const title of ['Browse controlled rows', 'Browse controlled rows with pending completion', 'Show an empty controlled result']) {
+  for (const title of ['Browse controlled rows', 'Browse controlled rows with pending completion', 'Show an empty controlled result', 'Browse orders across pagination modes']) {
     assert.ok(source.includes(`@example ${title}\n`));
     assert.ok(catalogue.includes(`"title": "${title}"`));
   }

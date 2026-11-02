@@ -67,7 +67,7 @@ function createDependencyAdmission(installationRoot) {
  * is not an admitted dependency. No global filesystem/ts.sys hook is changed.
  * @param {string} root Repository or isolated fixture root.
  * @param {Config} config Versioned source/package/config locations.
- * @returns {{root: string, readFile: (filename: string) => string | undefined, loadConfig: () => import('typescript').ParsedCommandLine, createCompilerHost: (options: import('typescript').CompilerOptions) => import('typescript').CompilerHost, sourceEntries: (metadata: {name: string, exports: Record<string, unknown>}) => Map<string, string>, requestedSourceEntry: (route: string) => string}} Scoped guarded compiler operations.
+ * @returns {{root: string, readFile: (filename: string) => string | undefined, loadConfig: () => import('typescript').ParsedCommandLine, createCompilerHost: (options: import('typescript').CompilerOptions, compatibilityEntries?: Record<string, string>) => import('typescript').CompilerHost, sourceEntries: (metadata: {name: string, exports: Record<string, unknown>}, historical?: boolean) => Map<string, string>, requestedSourceEntry: (route: string) => string}} Scoped guarded compiler operations.
  */
 function createDocumentationInputs(root, config) {
   root = fs.realpathSync(path.resolve(root));
@@ -136,10 +136,16 @@ function createDocumentationInputs(root, config) {
     [...reads, ...parsed.fileNames].forEach(assertAllowed);
     return parsed;
   }
-  function createCompilerHost(options) {
+  function createCompilerHost(options, compatibilityEntries = {}) {
     const host = ts.createCompilerHost(options);
     const metadata = JSON.parse(readFile(path.join(packageRoot, 'package.json')));
     const entries = sourceEntries(metadata);
+    const historical = sourceEntries(metadata, true);
+    for (const [specifier, route] of Object.entries(compatibilityEntries)) {
+      const file = requestedSourceEntry(route);
+      if (historical.get(specifier) !== file) throw new Error(`Invalid historical source mapping: ${specifier}.`);
+      entries.set(specifier, file);
+    }
     const cache = ts.createModuleResolutionCache(root, filename => filename, options);
     Object.assign(host, { readFile, fileExists, directoryExists, readDirectory, realpath,
       getDirectories: directory => directoryExists(directory) ? ts.sys.getDirectories(directory).filter(name => admitted(path.join(directory, name))) : [],
@@ -154,10 +160,14 @@ function createDocumentationInputs(root, config) {
     });
     return host;
   }
-  function sourceEntries(metadata) {
+  function sourceEntries(metadata, historical = false) {
     const entries = new Map();
     for (const [key, target] of Object.entries(metadata.exports)) {
-      if (key === './lib' || key.startsWith('./lib/') || typeof target !== 'object' || !target || typeof target.types !== 'string') continue;
+      const legacy = key === './lib' || key.startsWith('./lib/');
+      if (legacy !== historical || typeof target !== 'object' || !target || typeof target.types !== 'string') continue;
+      // Historical compatibility is finite package metadata, never a wildcard or
+      // physical-file lookup. The graph separately proves every exported symbol.
+      if (historical && (key.includes('*') || !/^\.\/lib(?:\/(?:[^./\\][^/\\]*\/)*[^./\\][^/\\]*)?$/.test(key))) continue;
       if (!/^\.\/lib\/(?:[^./\\][^/\\]*\/)*[^./\\][^/\\]*\.d\.ts$/.test(target.types) || key.includes('*')) throw new Error(`Unsupported source mapping for ${key}: ${target.types}`);
       const stem = target.types.slice('./lib/'.length).replace(/\.d\.ts$/, '');
       const filename = ['.ts', '.tsx'].map(extension => assertAllowed(path.resolve(sourceRoot, stem + extension))).find(fileExists);

@@ -144,8 +144,7 @@ const regressionFiles = {
   Pagination: 'demo-control-isolation/pagination-regressions.tsx',
   DescriptionList: 'demo-control-isolation/description-list-regressions.tsx',
 };
-function scenarioSource(name) {
-  const product = read(path.join(panelsPath, `${name}Panel.tsx`));
+function scenarioSource(name, product = read(path.join(panelsPath, `${name}Panel.tsx`))) {
   const relative = regressionFiles[name] || `foundation-legacy/${name}Panel.tsx`;
   const fixture = path.join(root, 'tests/fixtures', relative);
   return product + (fs.existsSync(fixture) ? '\n' + read(fixture) : '');
@@ -160,10 +159,10 @@ assertStyleExampleCoverage(
 console.log(`Verified webpart demo coverage for ${hookSymbols.length} hooks, ${providerSymbols.length} providers and ${styleSurface.filter(item => !item.name.startsWith('Sx')).length} qualified runtime style exports (interactive catalog/scopes).`);
 
 // This scenario verifies import interoperability without counting existing hooks twice.
-const importsPanelSource = scenarioSource('Imports');
+const importsPanelSource = scenarioSource('Imports', read(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSx.ts')));
 const importsRegistry = read(registryPath);
-for (const marker of ["key: 'imports'", "webpackChunkName: 'spfx-demo-imports'", "'./panels/ImportsPanel'"]) {
-  if (!importsRegistry.includes(marker)) throw new Error(`Imports scenario registry missing ${marker}`);
+if (!read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')).includes('"title": "Compare root domain and historical imports"')) {
+  throw new Error('Source-owned import interoperability scenario is unavailable');
 }
 for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invoke original callback',
   'Apply width override', 'Remove width override', 'data-imports-demo="direction"',
@@ -255,7 +254,7 @@ for (const marker of ['Stage.Header', 'Stage.Body', 'Stage.Footer', 'Editor.Root
 }
 console.log('Verified Stage compound modes, dimensions, Form and native popup scenarios.');
 
-const paginationPanel = scenarioSource('Pagination');
+const paginationPanel = scenarioSource('Pagination', read(path.join(root, 'packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx')));
 for (const marker of ['Pagination', 'onPaginationChange', 'pageIndex', 'pageSize', 'totalItems', 'hasNextPage', 'hasPreviousPage', 'loading', 'data-pagination-demo="summary"']) {
   if (!paginationPanel.includes(marker)) throw new Error(`Observable Pagination scenario missing ${marker}`);
 }
@@ -277,10 +276,13 @@ if (!cardsIsolation.includes('name="independent"') || !cardsIsolation.includes('
 console.log('Verified selectable single Cards, image lifecycle and versioned native/isolation conformance coverage.');
 
 
-for (const name of ['Cards', 'Stage', 'Form', 'DataGrid', 'Groups', 'Pagination', 'DescriptionList', 'Styles', 'Imports', 'RelativeTime', 'FormattedText', 'EditableText', 'AutoSkeleton', 'StateMessage', 'Providers', 'Context']) {
+for (const name of ['Cards', 'Stage', 'Form', 'DataGrid', 'Groups', 'DescriptionList', 'Styles', 'RelativeTime', 'FormattedText', 'EditableText', 'AutoSkeleton', 'StateMessage', 'Providers', 'Context']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
   if (!product.includes('data-demo-variant')) throw new Error(`${name} selectable product variant missing`);
+}
+for (const source of [paginationPanel, importsPanelSource]) {
+  for (const marker of ['export function Demo(', 'return render({', 'data-demo-variant', 'observe:']) if (!source.includes(marker)) throw new Error(`Source-owned variant missing ${marker}`);
 }
 console.log('Verified live single-example variant declarations; execution/cardinality are browser checks.');
 // Guard the authored webpart tree, never native DOM emitted by Fluent/toolkit controls.
@@ -306,7 +308,6 @@ for (const marker of ['<EntraGroupTrim groups={[{ name: applied.group }]}', 'Per
 
 // Each migrated family retains an observable override on its existing live subject.
 for (const [panel, marker] of [
-  ['PaginationPanel.tsx', 'data-pagination-demo="localization"'],
   ['DataGridPanel.tsx', 'id="dg-strings"'],
   ['StagePanel.tsx', 'data-stage-demo="strings"'],
   ['FormPanel.tsx', "'data-form-demo': 'strings'"],
@@ -316,3 +317,5 @@ for (const [panel, marker] of [
   const source = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels', panel), 'utf8');
   if (!source.includes(marker) || !/strings[=:]/.test(source)) throw new Error(`${panel}: native/family dictionary override must remain observable`);
 }
+
+if (!paginationPanel.includes('data-pagination-demo="localization"') || !paginationPanel.includes('strings={localized ? customEnglishStrings : undefined}')) throw new Error('Source-owned Pagination must retain observable dictionary overrides');

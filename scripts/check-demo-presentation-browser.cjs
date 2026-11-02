@@ -39,6 +39,24 @@ async function select(page, key) {
     selectedPanels.set(page, await selectGeneratedShellScenario(page));
     return;
   }
+  if (key === 'pagination' || key === 'imports') {
+    const title = key === 'pagination' ? 'Pagination' : 'useSx';
+    const scenario = key === 'pagination' ? 'Browse orders across pagination modes' : 'Compare root domain and historical imports';
+    const mobile = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
+    if (await mobile.isVisible()) {
+      await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
+    } else {
+      const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
+      const group = nav.getByRole('button', { name: key === 'pagination' ? /^Controlli/ : /^Hook/ }).first();
+      if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
+      await nav.getByRole('button', { name: title, exact: true }).click();
+    }
+    const panel = page.getByRole('region', { name: title, exact: true });
+    if (key === 'pagination') await panel.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption({ label: scenario });
+    await panel.getByRole('heading', { name: scenario, exact: true }).waitFor();
+    await panel.locator('[data-demo-section]').waitFor();
+    selectedPanels.set(page,panel); await settle(page); return;
+  }
   const entry = entries.find(item => item.key === key);
   const mobile = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
   if (await mobile.isVisible()) await mobile.selectOption(`legacy:${key}`);
@@ -526,7 +544,7 @@ async function liveTheme(page) {
     check('Unexpected app/browser/network diagnostics', diagnostics.filter(message => !(message.type === 'warning' && message.text === nativeColorWarning)), []);
     console.log(`Integrated actual app: ${checks.length} PASS checks; ${screenshots.length} screenshots; native 200% proved.`);
   } finally {
-    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? 'focused source-owned JSDoc pilots' : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/remaining registry panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, metrics, screenshots }, undefined, 2));
+    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? 'focused source-owned JSDoc migration checkpoint (11 scenarios, 5 features; original 9-case pilot retained)' : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { features: 5, scenarios: 11, originalPilotScenarios: 9, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/remaining registry panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, metrics, screenshots }, undefined, 2));
     await browser?.close(); await new Promise(resolve => server.close(resolve));
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

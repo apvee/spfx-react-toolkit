@@ -38,7 +38,7 @@ try {
   fs.appendFileSync(fixtureSource, '\nimport * as escaped from "../escaped";\nexport const forbidden = escaped;\n');
   const graph = buildApiGraph(fixture, fixtureConfig);
   assert.ok(graph.diagnostics.some(diagnostic => diagnostic.code === 'TS2307' && /escaped/.test(diagnostic.message)), JSON.stringify(graph.diagnostics));
-  const diagnostics = checkDocumentationExamples(fixture, { examples: [{ ownerKey: 'escape', language: 'ts', source: { file: 'escape.ts', line: 1 }, code: `import * as escaped from ${JSON.stringify(path.join(original, config.sourceRoot, 'index.ts'))};` }] }, fixtureConfig);
+  const diagnostics = checkDocumentationExamples(fixture, { graph, examples: [{ ownerKey: 'escape', language: 'ts', source: { file: 'escape.ts', line: 1 }, code: `import * as escaped from ${JSON.stringify(path.join(original, config.sourceRoot, 'index.ts'))};` }] }, fixtureConfig);
   assert.ok(diagnostics.some(diagnostic => diagnostic.code === 'TS2307' && diagnostic.file === 'escape.ts'), JSON.stringify(diagnostics));
   assert.ok(diagnostics.some(diagnostic => diagnostic.code === 'TS2307' && diagnostic.file === 'src/index.ts' && /escaped/.test(diagnostic.message)), JSON.stringify(diagnostics));
 } finally { fs.writeFileSync(fixtureSource, saved); fs.unlinkSync(importedAlias); }
