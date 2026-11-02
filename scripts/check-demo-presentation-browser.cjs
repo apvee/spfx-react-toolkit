@@ -15,6 +15,8 @@ const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Goog
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
+  { key: 'auto-skeleton', title: 'AutoSkeleton' }, { key: 'relative-time', title: 'RelativeTime' },
+  { key: 'formatted-text', title: 'FormattedText' }, { key: 'editable-text', title: 'EditableText' },
   { key: 'content-card', title: 'ContentCard' }, { key: 'cards', title: 'PreviewCard' },
   { key: 'card-retention', title: 'PreviewCard' }, { key: 'description-list', title: 'DescriptionList' },
   { key: 'stage', title: 'Stage' }, { key: 'groups', title: 'SettingsGroup' },
@@ -46,6 +48,11 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    'auto-skeleton': ['AutoSkeleton', 'Explore mounted profile loading and native focus'],
+    'relative-time': ['RelativeTime', 'Explore relative clocks and fallback slots'],
+    'formatted-text': ['FormattedText', 'Explore semantic text and inline Markdown'],
+    'editable-text': ['EditableText', 'Edit a controlled block with policy and dictionaries'],
+
     pagination: ['Pagination', 'Browse orders across pagination modes'], imports: ['useSx', 'Compare root domain and historical imports'],
     'content-card': ['ContentCard', 'Configure content slots and native card interaction'],
     cards: ['PreviewCard', 'Inspect preview media and image recovery'],

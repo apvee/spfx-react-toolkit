@@ -62,46 +62,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
-    key: 'auto-skeleton',
-    title: 'AutoSkeleton',
-    iconName: 'Processing',
-    description: 'Measured loading geometry, persistent child state, resize, focus and direction.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-auto-skeleton' */ './panels/AutoSkeletonPanel')),
-    coverage: [
-      { symbol: 'AutoSkeleton', kind: 'snapshot', notes: 'Loading, wave/pulse/none animation, static placeholders, minimum size, ignored subtrees, empty content, resize, host theme/RTL and native ref/focus/state observations.' },
-    ],
-  },
-  {
-    key: 'relative-time',
-    title: 'RelativeTime',
-    iconName: 'Clock',
-    description: 'Explicit instants, calendar boundaries, clock modes and accessible full dates.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-relative-time' */ './panels/RelativeTimePanel')),
-    coverage: [
-      { symbol: 'RelativeTime', kind: 'snapshot', notes: 'Editable props, fixed/live/frozen clock, tooltip, fallback, native ref/click and FormattedText/Badge composition.' },
-    ],
-  },
-  {
-    key: 'editable-text',
-    title: 'EditableText',
-    iconName: 'Font',
-    description: 'Controlled formatted block with Read/Edit modes and live block policy.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-editable-text' */ './panels/EditableTextPanel')),
-    coverage: [
-      { symbol: 'EditableText', kind: 'snapshot', notes: 'One controlled React subject, four block presets, Read/Edit, source/fallback/empty commands, visible projection versus stored input and collapsed dictionary/callback diagnostics.' },
-    ],
-  },
-  {
-    key: 'formatted-text',
-    title: 'FormattedText',
-    iconName: 'Font',
-    description: 'Inline Markdown, typography, native elements and constrained overflow.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-formatted-text' */ './panels/FormattedTextPanel')),
-    coverage: [
-      { symbol: 'FormattedText', kind: 'snapshot', notes: 'Editable props, narrow width, RTL, mixed JSX and observable native ref/click behavior.' },
-    ],
-  },
-  {
     key: 'styles',
     title: 'Styles',
     iconName: 'Color',

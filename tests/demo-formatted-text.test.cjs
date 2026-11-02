@@ -6,9 +6,8 @@ const components = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/
 
 test('FormattedText sample is lazy and owns its public control coverage', () => {
   const registry = fs.readFileSync(path.join(components, 'demoRegistry.ts'), 'utf8');
-  assert.match(registry, /key: 'formatted-text'/);
-  assert.match(registry, /spfx-demo-formatted-text/);
-  assert.match(registry, /symbol: 'FormattedText'/);
+  assert.doesNotMatch(registry, /panels\/FormattedTextPanel/);
+  assert.equal(require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Explore semantic text and inline Markdown').entry.featureTitle, 'FormattedText');
 });
 
 test('FormattedText legacy fixture retains editable props and observable layout, mixed JSX and native interactions', () => {
@@ -29,10 +28,10 @@ test('FormattedText legacy fixture retains editable props and observable layout,
 
 // Configuration controls belong to Fluent and remain separate from the demonstrated control.
 test('FormattedText configuration uses Fluent native slots and retained diagnostic regions', () => {
-  const panel = fs.readFileSync(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/FormattedTextPanel.tsx'), 'utf8');
+  const panel = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Explore semantic text and inline Markdown').source;
   assert.doesNotMatch(panel, /<(?:input|select|textarea|button|details)\b|style=|from '@fluentui\/react'/);
-  assert.match(panel, /controls=\{/);
-  assert.match(panel, /diagnostics=\{/);
+  assert.match(panel, /controls: /);
+  assert.match(panel, /diagnostics: /);
   assert.doesNotMatch(panel, /defaultOpenItems/);
   assert.match(panel, /input=\{\{/);
   assert.match(panel, /onChange=\{\(_event, data\)/);

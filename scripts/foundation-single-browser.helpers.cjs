@@ -53,10 +53,10 @@ async function checkFoundationSingleBrowser(page, check) {
   await open();
   check('FormattedText diagnostics contain no second subject', await ft('preview').count(), 1);
   await choice('formatted-text').selectOption('jsx');
-  check('FormattedText JSX is in current subject', await page.locator('[data-demo-subject] [data-formatted-text-demo="mixed-jsx"] button').count(), 1);
-  await page.locator('[data-demo-subject] [data-formatted-text-demo="mixed-jsx"] button').click();
+  check('FormattedText JSX is in current subject', await page.locator('[data-demo-subject] [data-formatted-text-demo="mixed-jsx"]').count(), 1);
+  await page.locator('[data-demo-subject] [data-formatted-text-demo="mixed-jsx"]').click();
   check('FormattedText one JSX activation counted once', (await ft('observations').textContent()).includes('Preview clicks: 1.'), true);
-  await page.locator('[data-demo-subject] [data-formatted-text-demo="mixed-jsx"] button').press('Enter');
+  await page.locator('[data-demo-subject] [data-formatted-text-demo="mixed-jsx"]').press('Enter');
   check('FormattedText keyboard activation counted once', (await ft('observations').textContent()).includes('Preview clicks: 2.'), true);
   await choice('formatted-text').selectOption('text');
   check('FormattedText returns to retained text', await ft('preview').locator('strong').textContent(), 'progetto');

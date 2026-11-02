@@ -7,11 +7,10 @@ const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 
 test('AutoSkeleton has a lazy demo with observable props, geometry and retained content', () => {
   const base = 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/';
-  const panel = read(`${base}panels/AutoSkeletonPanel.tsx`);
+  const panel = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Explore mounted profile loading and native focus').source;
   const registry = read(`${base}demoRegistry.ts`);
-  assert.match(registry, /key: 'auto-skeleton'/);
-  assert.match(registry, /symbol: 'AutoSkeleton'/);
-  assert.match(registry, /import\(.*AutoSkeletonPanel/);
+  assert.doesNotMatch(registry, /panels\/AutoSkeletonPanel/);
+  assert.equal(require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Explore mounted profile loading and native focus').entry.featureTitle, 'AutoSkeleton');
   for (const marker of ['loading', 'animation', 'minSize', 'ignoreSelectors', 'resize', 'empty',
     'direction', 'preview', 'inspect-ref', 'observations', 'focus-load', 'focus-target', 'circle', 'rectangle', 'mixed-text']) {
     assert.ok((panel.includes(`data-auto-skeleton-demo="${marker}"`) || panel.includes(`'data-auto-skeleton-demo': '${marker}'`)), marker);
@@ -41,10 +40,10 @@ test('source and compiled sample browser fixtures include AutoSkeleton', () => {
 
 // Configuration controls belong to Fluent and remain separate from the demonstrated control.
 test('AutoSkeleton configuration uses Fluent native slots and retained diagnostic regions', () => {
-  const panel = fs.readFileSync(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/AutoSkeletonPanel.tsx'), 'utf8');
+  const panel = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Explore mounted profile loading and native focus').source;
   assert.doesNotMatch(panel, /<(?:input|select|textarea|button|details)\b|style=|from '@fluentui\/react'/);
-  assert.match(panel, /controls=\{/);
-  assert.match(panel, /diagnostics=\{/);
+  assert.match(panel, /controls: /);
+  assert.match(panel, /diagnostics: /);
   assert.doesNotMatch(panel, /defaultOpenItems/);
   assert.match(panel, /input=\{\{/);
   assert.match(panel, /onChange=\{\(_event, data\)/);

@@ -4,7 +4,7 @@ import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { RendererProvider } from '@griffel/react';
 import { createDOMRenderer } from '@griffel/core';
 import { mountDemoFixture } from '../demo-fixture-host';
-import EditableTextPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/EditableTextPanel';
+import { EditableTextScenario as EditableTextPanel } from '../executable-examples/editable-text-scenario';
 import { EditableTextIsolationFixture } from '../demo-control-isolation/editable-text-regressions';
 import { createTheme } from '@fluentui/react';
 import { WebPartShell, useSx, width, type IWebPartShellProperties, type WebPartShellProps, type EditableTextStrings, type EditableTextStringsOverride } from '@apvee/spfx-react-toolkit';

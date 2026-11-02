@@ -22,10 +22,10 @@ function fixture(t, title, initialRevision = 7) {
 }
 const ids = h => [...h.container.querySelectorAll('[data-order-id]')].map(row => Number(row.dataset.orderId));
 
-test('real catalog derives thirteen features and twenty source-owned scenarios', t => {
+test('real catalog derives seventeen features and twenty-four source-owned scenarios', t => {
   const h = fixture(t, 'Browse controlled rows');
-  assert.equal(h.modules.catalogue.executableExamples.length, 20);
-  assert.equal(h.modules.catalogue.executableGroups.flatMap(group => group.features).length, 13);
+  assert.equal(h.modules.catalogue.executableExamples.length, 24);
+  assert.equal(h.modules.catalogue.executableGroups.flatMap(group => group.features).length, 17);
   assert.deepEqual(h.modules.catalogue.executableGroups.map(group => group.key), ['controls', 'hooks']);
 });
 for (const title of ['Report current count through a retained callback']) {

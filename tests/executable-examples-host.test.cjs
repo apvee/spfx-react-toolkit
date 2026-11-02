@@ -157,8 +157,8 @@ test('pending read unmount causes no view update or additional I/O', async t => 
 
 test('generated Hook navigation, expansion and scenario selection never query the selected list', async t => {
   const h = fixture(t, { explorer: true }); await h.flush();
-  assert.equal(h.catalogue.executableExamples.length, 20);
-  assert.equal(h.catalogue.executableGroups.flatMap(group => group.features).length, 13);
+  assert.equal(h.catalogue.executableExamples.length, 24);
+  assert.equal(h.catalogue.executableGroups.flatMap(group => group.features).length, 17);
   assert.deepEqual(h.entry.metadata, { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Choose an existing list and run the read explicitly; loading, results and errors identify the selected list.' });
   const generic = h.catalogue.executableExamples.find(entry => entry.featureTitle === 'useStableCallback');
   h.act(() => h.navigation.selectFeature(generic.featureKey)); await h.flush();

@@ -183,7 +183,18 @@ for (const marker of ['DescriptionList.Item', 'items=', 'layout=', 'key={entry.i
   'data-description-list-demo="inspect-ref"', 'data-description-list-demo="counter"']) {
   if (!descriptionListPanel.includes(marker)) throw new Error(`DescriptionList interactive example missing ${marker}`);
 }
-const editableTextPanel = scenarioSource('EditableText');
+// Product policy reads only the exact owned executable recipe, never conformance fixtures.
+function ownedExecutable(slug, title) {
+  const source = read(path.join(root, 'packages/spfx-react-toolkit/src/controls', slug, slug + '.tsx'));
+  const start = source.indexOf(' * @example ' + title + '\n');
+  if (start < 0) throw new Error('Missing owned executable: ' + title);
+  const fence = ' * ```tsx\n';
+  const code = source.indexOf(fence, start);
+  const end = source.indexOf(' * ```', code + fence.length);
+  if (code < 0 || end < 0) throw new Error('Missing complete owned executable: ' + title);
+  return source.slice(code + fence.length, end).split('\n').map(line => line.replace(/^ \* ?/, '')).join('\n');
+}
+const editableTextPanel = ownedExecutable('editable-text', 'Edit a controlled block with policy and dictionaries');
 for (const marker of ['<EditableText ', 'allowedBlocks=', 'onChange=', 'data-editable-text-demo="preview"',
   'data-editable-text-demo="h2"', 'data-editable-text-demo="fallback"', 'data-editable-text-demo="empty"',
   "'data-editable-text-demo': 'mode'", "'data-editable-text-demo': 'preset'", "'data-editable-text-demo': 'strings'",
@@ -191,19 +202,19 @@ for (const marker of ['<EditableText ', 'allowedBlocks=', 'onChange=', 'data-edi
   if (!editableTextPanel.includes(marker)) throw new Error(`EditableText interactive example missing ${marker}`);
 }
 if ((editableTextPanel.match(/<EditableText /g) || []).length !== 1) throw new Error('EditableText product must mount exactly one subject');
-const textPanel = scenarioSource('FormattedText');
+const textPanel = ownedExecutable('formatted-text', 'Explore semantic text and inline Markdown');
 for (const marker of ['FormattedText', 'maxLines', 'markdown', 'subtle', 'highlight', 'variant', 'as', 'font', 'align', 'wrap', 'truncate', 'italic', 'underline', 'strikethrough', 'ref', 'onClick']) {
   if (!textPanel.includes(marker)) throw new Error(`FormattedText interactive example missing ${marker}`);
 }
 console.log(`Verified ${controlSymbols.length} public control scenario.`);
 
-const relativePanel = scenarioSource('RelativeTime');
+const relativePanel = ownedExecutable('relative-time', 'Explore relative clocks and fallback slots');
 for (const marker of ['RelativeTime', 'dateTime', 'referenceTime', 'locale', 'format', 'autoUpdate', 'showTooltip', 'timeZone', 'fallback', 'ref']) {
   if (!relativePanel.includes(marker)) throw new Error(`RelativeTime interactive example missing ${marker}`);
 }
 if (!read(path.join(panelsPath, 'ContextPanel.tsx')).includes('ianaTimeZone')) throw new Error('Locale mapping scenario missing');
 
-const skeletonPanel = scenarioSource('AutoSkeleton');
+const skeletonPanel = ownedExecutable('auto-skeleton', 'Explore mounted profile loading and native focus');
 for (const marker of ['AutoSkeleton', 'loading', 'animation', 'minSize', 'ignoreSelectors', 'ref', 'data-skeleton-shape', 'rectangle', 'circle']) {
   if (!skeletonPanel.includes(marker)) throw new Error(`AutoSkeleton interactive example missing ${marker}`);
 }
@@ -265,6 +276,10 @@ const contentCardSource = read(path.join(root, 'packages/spfx-react-toolkit/src/
 const previewCardSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx'));
 const cardsPanel = scenarioSource('Cards', contentCardSource + '\n' + previewCardSource);
 const sourceCases = [
+  ['AutoSkeleton', 'Explore mounted profile loading and native focus'],
+  ['RelativeTime', 'Explore relative clocks and fallback slots'],
+  ['FormattedText', 'Explore semantic text and inline Markdown'],
+  ['EditableText', 'Edit a controlled block with policy and dictionaries'],
   ['ContentCard', 'Configure content slots and native card interaction'],
   ['PreviewCard', 'Inspect preview media and image recovery'],
   ['PreviewCard', 'Retain caller data when switching card types'],
@@ -291,12 +306,12 @@ if (!cardsIsolation.includes('name="independent"') || !cardsIsolation.includes('
 console.log('Verified selectable single Cards, image lifecycle and versioned native/isolation conformance coverage.');
 
 
-for (const name of ['Form', 'DataGrid', 'Styles', 'RelativeTime', 'FormattedText', 'EditableText', 'AutoSkeleton', 'Providers', 'Context']) {
+for (const name of ['Form', 'DataGrid', 'Styles', 'Providers', 'Context']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
   if (!product.includes('data-demo-variant')) throw new Error(`${name} selectable product variant missing`);
 }
-for (const source of [paginationPanel, importsPanelSource]) {
+for (const source of [paginationPanel, importsPanelSource, editableTextPanel, textPanel, relativePanel, skeletonPanel]) {
   for (const marker of ['export function Demo(', 'return render({', 'data-demo-variant', 'observe:']) if (!source.includes(marker)) throw new Error(`Source-owned variant missing ${marker}`);
 }
 for (const source of [contentCardSource, previewCardSource, descriptionListSource, stageSource, settingsSource, accordionSource, stateSource]) {

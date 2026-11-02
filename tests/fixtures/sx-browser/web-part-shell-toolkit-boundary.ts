@@ -15,3 +15,16 @@ export { useSPFxPnPList } from '../../../packages/spfx-react-toolkit/src/hooks/u
 // The real catalogue also emits the import-interoperability scenario.
 export { useStableCallback } from '../../../packages/spfx-react-toolkit/src/hooks/useStableCallback';
 export { Pagination, type PaginationChangeData, type PaginationProps, type PaginationSize, type PaginationState } from '../../../packages/spfx-react-toolkit/src/controls/pagination';
+
+// The actual catalogue is typechecked and bundled even when this host selects Shell.
+export * from '../../../packages/spfx-react-toolkit/src/controls/stage';
+export * from '../../../packages/spfx-react-toolkit/src/controls/form';
+export * from '../../../packages/spfx-react-toolkit/src/controls/content-card';
+export * from '../../../packages/spfx-react-toolkit/src/controls/preview-card';
+export * from '../../../packages/spfx-react-toolkit/src/controls/description-list';
+export * from '../../../packages/spfx-react-toolkit/src/controls/settings-group';
+export * from '../../../packages/spfx-react-toolkit/src/controls/accordion-group';
+export * from '../../../packages/spfx-react-toolkit/src/controls/state-message';
+export * from '../../../packages/spfx-react-toolkit/src/controls/auto-skeleton';
+export * from '../../../packages/spfx-react-toolkit/src/controls/relative-time';
+export * from '../../../packages/spfx-react-toolkit/src/controls/formatted-text';

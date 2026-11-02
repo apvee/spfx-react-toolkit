@@ -10,6 +10,8 @@ const { Simulate } = require('react-dom/test-utils');
 const { RendererProvider } = require('@griffel/react');
 const { createDOMRenderer } = require('@griffel/core');
 const fluent = require('@fluentui/react-components');
+const { scenario } = require('./fixtures/executable-examples/cards-description-list.cjs');
+const title = 'Edit a controlled block with policy and dictionaries';
 const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
 function fixture(t) {
   const h = createHarness();
@@ -24,23 +26,30 @@ function fixture(t) {
       const target = path.resolve(path.dirname(file), name);
       return load(['.ts', '.tsx', '/index.ts'].map(ext => target + ext).find(file => fs.existsSync(file)));
     };
-    vm.runInThisContext('(function(require,module,exports){' + output + '\n})', { filename: file })(localRequire, module, module.exports);
+    const inspectDictionary = file === scenario(title).file ? '\nmodule.exports.dictionary = italianEditableTextStrings;' : '';
+    vm.runInThisContext('(function(require,module,exports){' + output + inspectDictionary + '\n})', { filename: file })(localRequire, module, module.exports);
     return module.exports;
   }
-  const Panel = load(path.join(base, 'panels/EditableTextPanel.tsx')).default;
+  const emitted = scenario(title);
+  const Panel = load(emitted.file).Demo;
+  const { DemoCard } = load(path.join(base, 'shared/DemoCard.tsx'));
+  let revision = 9;
+  const renderRegions = regions => h.React.createElement(DemoCard, { title, iconName: 'Info', ...regions });
   const container = document.createElement('div'); document.body.appendChild(container);
   const renderer = createDOMRenderer(document);
-  h.act(() => ReactDOM.render(h.React.createElement(RendererProvider, { renderer }, h.React.createElement(fluent.FluentProvider, { theme: fluent.webLightTheme }, h.React.createElement(Panel))), container));
+  const render = () => h.act(() => ReactDOM.render(h.React.createElement(RendererProvider, { renderer }, h.React.createElement(fluent.FluentProvider, { theme: fluent.webLightTheme }, h.React.createElement(Panel, { render: renderRegions, resetRevision: revision }))), container));
+  render();
   t.after(() => { h.act(() => ReactDOM.unmountComponentAtNode(container)); container.remove(); h.close(); });
   const find = marker => { const node = container.querySelector(`[data-editable-text-demo="${marker}"]`); assert.ok(node, marker); return node; };
   const select = (marker, value) => h.act(() => Simulate.change(find(marker), { target: { value } }));
   const click = marker => h.act(() => Simulate.click(find(marker)));
-  return { h, container, find, select, click, load };
+  return { h, container, find, select, click, load, reset() { revision++; render(); } };
 }
 test('EditableText has one exact lazy registry entry and a separate multi-instance fixture', () => {
   const registry = fs.readFileSync(path.join(base, 'demoRegistry.ts'), 'utf8');
-  for (const token of ["key: 'editable-text'", "symbol: 'EditableText'", "webpackChunkName: 'spfx-demo-editable-text'"]) assert.equal(registry.split(token).length - 1, 1, token);
-  const source = fs.readFileSync(path.join(base, 'panels/EditableTextPanel.tsx'), 'utf8');
+  assert.doesNotMatch(registry, /panels\/EditableTextPanel/);
+  assert.equal(scenario(title).entry.featureTitle, 'EditableText');
+  const source = scenario(title).source;
   assert.doesNotMatch(source, /useSPFx|\.internal|style=|key=\{(?:preset|mode)\}/);
   const isolated = fs.readFileSync(path.join(__dirname, 'fixtures/demo-control-isolation/editable-text-regressions.tsx'), 'utf8');
   assert.equal((isolated.match(/<EditableText /g) || []).length, 2);
@@ -52,6 +61,7 @@ test('single controlled subject projects four policies without changing the stor
   const root = f.find('preview');
   assert.equal(root.querySelector('h2').textContent, 'Project update');
   assert.equal(f.find('mode').value, 'read');
+  assert.equal(f.h.engineLoads, 0, 'this standalone body Read does not initialize its editor');
   for (const [preset, tag] of [['paragraph', 'p'], ['headings', 'h2'], ['h2-h4', 'h2'], ['all', 'h2']]) {
     f.select('preset', preset);
     assert.equal(f.find('preview'), root);
@@ -93,7 +103,7 @@ test('native, complete Italian and partial dictionaries update one editing sessi
     assert.equal(editor.getHTML(), html); assert.equal(editor.state.selection.from, 2); assert.equal(editor.state.selection.to, 5);
     assert.equal(f.find('stored').textContent, stored); assert.equal(f.find('status').textContent, status);
   }
-  const full = f.load(path.join(base, 'panels/editable-text-italian-strings.ts')).italianEditableTextStrings;
+  const full = f.load(scenario(title).file).dictionary;
   const canonical = require('../packages/spfx-react-toolkit/src/controls/editable-text/localization/resources/it-IT.json');
   for (const [key, value] of Object.entries(canonical)) {
     if (key === 'editorLabel' || key.endsWith('Template')) continue;
@@ -120,9 +130,63 @@ test('multi-instance fixture and public guide examples compile against the real 
   host.getSourceFile = (file, languageVersion, onError, shouldCreateNewSourceFile) => virtual.has(file)
     ? ts.createSourceFile(file, virtual.get(file), languageVersion, true, ts.ScriptKind.TSX)
     : getSourceFile(file, languageVersion, onError, shouldCreateNewSourceFile);
-  const program = ts.createProgram([path.join(__dirname, 'fixtures/demo-control-isolation/editable-text-regressions.tsx'), path.join(base, 'panels/editable-text-italian-strings.ts'), ...virtual.keys()], options, host);
+  const program = ts.createProgram([path.join(__dirname, 'fixtures/demo-control-isolation/editable-text-regressions.tsx'), scenario(title).file, ...virtual.keys()], options, host);
   const diagnostics = ts.getPreEmitDiagnostics(program);
   assert.equal(diagnostics.length, 0, ts.formatDiagnosticsWithColorAndContext(diagnostics, {
     getCanonicalFileName: file => file, getCurrentDirectory: () => process.cwd(), getNewLine: () => '\n',
   }));
+});
+
+
+test('source Reset retains the root and rejects pending editor teardown publication', async t => {
+  const f = fixture(t), root = f.find('preview'), mode = f.find('mode');
+  f.select('mode', 'edit'); await f.h.settle();
+  const textbox = root.querySelector('[contenteditable=true]'), editor = textbox.editor;
+  f.h.act(() => textbox.dispatchEvent(new f.h.window.CompositionEvent('compositionstart', { bubbles: true })));
+  f.h.act(() => editor.commands.insertContent('Pending composition '));
+  f.reset();
+  assert.equal(f.find('preview'), root); assert.equal(f.find('mode'), mode); assert.equal(mode.value, 'read');
+  assert.equal(root.querySelector('[contenteditable]'), null);
+  assert.equal(f.find('stored').textContent, '<h2><strong>Project</strong> update</h2>');
+  assert.match(f.find('status').textContent, /Callbacks: 0/); assert.equal(f.find('callback').textContent, 'No user changes');
+  f.select('mode', 'edit'); await f.h.settle();
+  const fresh = root.querySelector('[contenteditable=true]').editor;
+  assert.notEqual(fresh, editor); assert.equal(fresh.getHTML(), '<h2><strong>Project</strong> update</h2>');
+  f.h.act(() => fresh.commands.insertContent('Fresh '));
+  assert.match(f.find('stored').textContent, /Fresh/); assert.match(f.find('status').textContent, /Callbacks: 1/);
+});
+
+test('source Project Strong command requests refocus and preserves exact canonical callback and undo history', async t => {
+  const f = fixture(t); f.select('mode', 'edit'); await f.h.settle();
+  const root = f.find('preview'), textbox = root.querySelector('[contenteditable=true]'), editor = textbox.editor;
+  // JSDOM15 lacks native Selection/Range; observe only the native focus request,
+  // matching the established toolbar harness. Browser runners retain actual focus checks.
+  let focusRequests = 0; editor.view.focus = () => { focusRequests++; };
+  f.select('strings', 'custom');
+  f.h.act(() => editor.commands.setTextSelection({ from: 1, to: 8 }));
+  f.h.act(() => textbox.dispatchEvent(new f.h.window.FocusEvent('focusin', { bubbles: true }))); await f.h.settle();
+  const strong = document.querySelector('[data-title-toolbar] button[aria-label="Strong"]');
+  assert.ok(strong, 'the actual partial dictionary labels the real toolbar command');
+  f.h.act(() => Simulate.click(strong));
+  assert.equal(focusRequests, 1);
+  assert.equal(root.querySelector('[contenteditable=true]').editor, editor);
+  assert.equal(f.find('stored').textContent, '<h2>Project update</h2>');
+  assert.equal(f.find('callback').textContent, JSON.stringify({ html: '<h2>Project update</h2>', text: 'Project update' }));
+  assert.match(f.find('status').textContent, /Callbacks: 1/);
+  f.h.act(() => editor.commands.undo());
+  assert.equal(f.find('stored').textContent, '<h2><strong>Project</strong> update</h2>');
+  assert.match(f.find('status').textContent, /Callbacks: 2/);
+});
+
+test('ordinary source Read transition allows one final canonical composition flush', async t => {
+  const f = fixture(t), root = f.find('preview'); f.select('mode', 'edit'); await f.h.settle();
+  const editor = root.querySelector('[contenteditable=true]').editor;
+  f.h.act(() => editor.view.dom.dispatchEvent(new f.h.window.CompositionEvent('compositionstart', { bubbles: true })));
+  f.h.act(() => editor.commands.insertContent('Final '));
+  assert.match(f.find('status').textContent, /Callbacks: 0/);
+  f.select('mode', 'read');
+  assert.equal(f.find('preview'), root); assert.equal(editor.isDestroyed, true); assert.equal(root.querySelector('[contenteditable]'), null);
+  assert.equal(f.find('stored').textContent, '<h2><strong>Final Project</strong> update</h2>');
+  assert.equal(f.find('callback').textContent, JSON.stringify({ html: '<h2><strong>Final Project</strong> update</h2>', text: 'Final Project update' }));
+  assert.match(f.find('status').textContent, /Callbacks: 1/);
 });

@@ -7,9 +7,8 @@ const read = file => fs.readFileSync(path.join(base, file), 'utf8');
 test('RelativeTime legacy fixture retains editable prop and native marker coverage; registry remains lazy', () => {
   const panel = fs.readFileSync(path.join(__dirname, 'fixtures/foundation-legacy/RelativeTimePanel.tsx'), 'utf8');
   const registry = read('demoRegistry.ts');
-  assert.match(registry, /key: 'relative-time'/);
-  assert.match(registry, /symbol: 'RelativeTime'/);
-  assert.match(registry, /import\(.*RelativeTimePanel/);
+  assert.doesNotMatch(registry, /panels\/RelativeTimePanel/);
+  assert.equal(require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Explore relative clocks and fallback slots').entry.featureTitle, 'RelativeTime');
   for (const marker of ['dateTime', 'locale', 'format', 'autoUpdate', 'showTooltip', 'timeZone', 'fallback', 'referenceTime', 'mode', 'preview', 'inspect-ref', 'observations', 'inspect-slot']) {
     assert.ok((panel.includes(`data-relative-time-demo="${marker}"`) || panel.includes(`'data-relative-time-demo': '${marker}'`)), marker);
   }
@@ -29,10 +28,10 @@ test('Context legacy fixture explicitly distinguishes a mapped site zone from un
 
 // Configuration controls belong to Fluent and remain separate from the demonstrated control.
 test('RelativeTime configuration uses Fluent native slots and retained diagnostic regions', () => {
-  const panel = fs.readFileSync(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/RelativeTimePanel.tsx'), 'utf8');
+  const panel = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Explore relative clocks and fallback slots').source;
   assert.doesNotMatch(panel, /<(?:input|select|textarea|button|details)\b|style=|from '@fluentui\/react'/);
-  assert.match(panel, /controls=\{/);
-  assert.match(panel, /diagnostics=\{/);
+  assert.match(panel, /controls: /);
+  assert.match(panel, /diagnostics: /);
   assert.doesNotMatch(panel, /defaultOpenItems/);
   assert.match(panel, /input=\{\{/);
   assert.match(panel, /onChange=\{\(_event, data\)/);

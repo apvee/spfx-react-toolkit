@@ -81,6 +81,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-d831bb775ce3d3cfef852e46a90a5aa99dc9919b66ee4cfb868c54dec0504d75' */ "./d831bb775ce3d3cfef852e46a90a5aa99dc9919b66ee4cfb868c54dec0504d75")
 },
 {
+  "id": "e075dc16007a7bb79e170fac496a3d7a9939e6882b4c4f4b0de8b18f71fceb04",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton.tsx#AutoSkeleton",
+  "title": "Explore mounted profile loading and native focus",
+  "groupRoute": "docs/api/controls/auto-skeleton.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton.tsx#AutoSkeleton",
+  "featureTitle": "AutoSkeleton",
+  "publicNames": [
+    "AutoSkeleton"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton.tsx",
+    "line": 80
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Type a note, vary loading and geometry, and observe retained content, native focus and measured shapes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-e075dc16007a7bb79e170fac496a3d7a9939e6882b4c4f4b0de8b18f71fceb04' */ "./e075dc16007a7bb79e170fac496a3d7a9939e6882b4c4f4b0de8b18f71fceb04")
+},
+{
   "id": "60c33ada62e5de74ffb49f20cb3ab7db19420b87493206efe5343a47a1e8aab3",
   "ownerKey": "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx#ContentCard",
   "title": "Configure content slots and native card interaction",
@@ -125,6 +148,52 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Resize the named container across 480px, compare data and compound layouts, reorder stable IDs without losing the counter, and inspect native refs, hidden state and events."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-9ecb7aa0e0a35bac5eb68d8c09b02af3744c9b9d99a8c170af24f75e136c5d2a' */ "./9ecb7aa0e0a35bac5eb68d8c09b02af3744c9b9d99a8c170af24f75e136c5d2a")
+},
+{
+  "id": "e4d8e4f3dcffb7af68fa9531d2ba7c9824bb0aef10da8691df748d465b944e57",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/editable-text/editable-text.tsx#EditableText",
+  "title": "Edit a controlled block with policy and dictionaries",
+  "groupRoute": "docs/api/controls/editable-text.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/editable-text/editable-text.tsx#EditableText",
+  "featureTitle": "EditableText",
+  "publicNames": [
+    "EditableText"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/editable-text/editable-text.tsx",
+    "line": 161
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Edit one controlled block and compare stored HTML, visible policy projection, callback counts and live dictionaries."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-e4d8e4f3dcffb7af68fa9531d2ba7c9824bb0aef10da8691df748d465b944e57' */ "./e4d8e4f3dcffb7af68fa9531d2ba7c9824bb0aef10da8691df748d465b944e57")
+},
+{
+  "id": "5ef236bf57824833f0d5ebbab7cc83ba6a3797ed10bd6b9dc2bc8d272fc1c5d9",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/formatted-text/formatted-text.tsx#FormattedText",
+  "title": "Explore semantic text and inline Markdown",
+  "groupRoute": "docs/api/controls/formatted-text.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/formatted-text/formatted-text.tsx#FormattedText",
+  "featureTitle": "FormattedText",
+  "publicNames": [
+    "FormattedText"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/formatted-text/formatted-text.tsx",
+    "line": 62
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Change semantic tags, typography and overflow independently, and activate the retained mixed JSX action."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-5ef236bf57824833f0d5ebbab7cc83ba6a3797ed10bd6b9dc2bc8d272fc1c5d9' */ "./5ef236bf57824833f0d5ebbab7cc83ba6a3797ed10bd6b9dc2bc8d272fc1c5d9")
 },
 {
   "id": "9683f13667de14283119638684b1fbc134bf95fe6d1d842aafafff359750b401",
@@ -263,6 +332,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Edit title, description and note, switch card types in both directions and verify that caller-owned values survive the replaced presentation."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-664a82490443458f53895ecce9de0cbaa8fe734d84249cfd793dd43076762400' */ "./664a82490443458f53895ecce9de0cbaa8fe734d84249cfd793dd43076762400")
+},
+{
+  "id": "a1fadbadc90bc687cdc11d676df4b5fae241637fb53645f576789fed564f278a",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx#RelativeTime",
+  "title": "Explore relative clocks and fallback slots",
+  "groupRoute": "docs/api/controls/relative-time.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx#RelativeTime",
+  "featureTitle": "RelativeTime",
+  "publicNames": [
+    "RelativeTime"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx",
+    "line": 67
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Compare fixed, live and frozen clocks, then inspect native time and fallback slot refs and events."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-a1fadbadc90bc687cdc11d676df4b5fae241637fb53645f576789fed564f278a' */ "./a1fadbadc90bc687cdc11d676df4b5fae241637fb53645f576789fed564f278a")
 },
 {
   "id": "d5c5a31b8579e43d902cc188c1ceff6bc30379186accc7fd63e65126262c26a0",
@@ -525,19 +617,23 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
 export const executableGroups: readonly ExecutableGroup[] = [
   { key: "controls", title: "Controlli", features: [
     { key: "packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx#AccordionGroup", title: "AccordionGroup", scenarios: [executableExamples[0]] },
-    { key: "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx#ContentCard", title: "ContentCard", scenarios: [executableExamples[1]] },
-    { key: "packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#DescriptionList", title: "DescriptionList", scenarios: [executableExamples[2]] },
-    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[3], executableExamples[4], executableExamples[5], executableExamples[6]] },
-    { key: "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard", title: "PreviewCard", scenarios: [executableExamples[7], executableExamples[8]] },
-    { key: "packages/spfx-react-toolkit/src/controls/settings-group/settings-group.tsx#SettingsGroup", title: "SettingsGroup", scenarios: [executableExamples[9]] },
-    { key: "packages/spfx-react-toolkit/src/controls/stage/stage.tsx#Stage", title: "Stage", scenarios: [executableExamples[10]] },
-    { key: "packages/spfx-react-toolkit/src/controls/state-message/state-message.tsx#StateMessage", title: "StateMessage", scenarios: [executableExamples[11]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[12], executableExamples[13], executableExamples[14]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[15]] }
+    { key: "packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton.tsx#AutoSkeleton", title: "AutoSkeleton", scenarios: [executableExamples[1]] },
+    { key: "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx#ContentCard", title: "ContentCard", scenarios: [executableExamples[2]] },
+    { key: "packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#DescriptionList", title: "DescriptionList", scenarios: [executableExamples[3]] },
+    { key: "packages/spfx-react-toolkit/src/controls/editable-text/editable-text.tsx#EditableText", title: "EditableText", scenarios: [executableExamples[4]] },
+    { key: "packages/spfx-react-toolkit/src/controls/formatted-text/formatted-text.tsx#FormattedText", title: "FormattedText", scenarios: [executableExamples[5]] },
+    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[6], executableExamples[7], executableExamples[8], executableExamples[9]] },
+    { key: "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard", title: "PreviewCard", scenarios: [executableExamples[10], executableExamples[11]] },
+    { key: "packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx#RelativeTime", title: "RelativeTime", scenarios: [executableExamples[12]] },
+    { key: "packages/spfx-react-toolkit/src/controls/settings-group/settings-group.tsx#SettingsGroup", title: "SettingsGroup", scenarios: [executableExamples[13]] },
+    { key: "packages/spfx-react-toolkit/src/controls/stage/stage.tsx#Stage", title: "Stage", scenarios: [executableExamples[14]] },
+    { key: "packages/spfx-react-toolkit/src/controls/state-message/state-message.tsx#StateMessage", title: "StateMessage", scenarios: [executableExamples[15]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[16], executableExamples[17], executableExamples[18]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[19]] }
   ] },
   { key: "hooks", title: "Hook", features: [
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[16]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[17], executableExamples[18]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[19]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[20]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[21], executableExamples[22]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[23]] }
   ] }
 ];

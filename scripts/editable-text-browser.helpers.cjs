@@ -20,7 +20,7 @@ async function checkEditableTextBrowser(page, record) {
   const requests = []; const onRequest = request => { if (/\.js(?:\?|$)/.test(request.url())) requests.push(request.url()); };
   page.on('request', onRequest);
   await page.goto(query('editable-text')); await subject.locator('h2').waitFor();
-  await check(`${label}: pure panel one subject`, await subject.count(), 1);
+  await check(`${label}: generated standalone scenario one subject`, await subject.count(), 1);
   await check(`${label}: standalone creates no Shell`, await page.locator('[data-web-part-shell]').count(), 0);
   await check(`${label}: standalone Read requests no engine chunk`, requests.filter(value => !value.endsWith('/fixture.js')), []);
   await demo('mode').selectOption('edit'); await editor.waitFor(); await focus();

@@ -66,9 +66,11 @@ Render this content under an initialized matching SPFx provider, for example [We
 
 ### Observable sample and verification
 
-The lazy `editable-text` tab (`spfx-demo-editable-text`) consumes compiled library exports. It mounts one controlled subject under DemoCard, with all/paragraph/headings/H2–H4 presets, Read/Edit, H2/fallback/empty commands and separate raw stored input versus actual visible policy projection. The editor dictionary selector and last callback are in initially collapsed diagnostics; the selector changes per-instance labels rather than the native SPFx culture. Presets preserve the root; a Read transition ends only that editor session. The separate `tests/fixtures/demo-control-isolation/editable-text-regressions.tsx` accepts a real SPFx web part instance and places two independently controlled policies beside the Shell-owned title.
+Choose **Controlli → EditableText → Edit a controlled block with policy and dictionaries** in the generated explorer. The source-owned scenario consumes compiled library exports and mounts one controlled subject under DemoCard. It retains all/paragraph/headings/H2–H4 policies, Read/Edit, H2/fallback/empty commands and separate stored input versus actual visible policy projection. The complete caller-owned Italian dictionary and partial Project labels live in the portable source recipe; native resource module setup remains required even with complete overrides. Dictionaries and the last callback appear in initially collapsed diagnostics.
 
-Automated DOM tests exercise the pure React panel and real control; compilation and local tests do not establish authenticated SharePoint behavior. See [SharePoint validation](../development/sharepoint-validation/INDEX.md) for pending host, keyboard, IME and document-boundary checks.
+Policy and dictionary changes retain the root and live editor, without normalizing the stored input or emitting a callback. Read ends the body editor session. Reset restores the H2/Read baseline and rejects pending composition flushed by the discarded session. The surrounding Shell title owns a separate editor; an Edit host may already have loaded the shared engine even while this body remains Read.
+
+The separate `tests/fixtures/demo-control-isolation/editable-text-regressions.tsx` retains two independently controlled policies beside the Shell-owned title, native class/style/ref/event forwarding and localized command isolation. DOM tests execute the actual generated source and real editor. Local compilation/tests and fixture builds do not establish native browser focus, physical IME, assistive technology or authenticated SharePoint behavior. See [SharePoint validation](../development/sharepoint-validation/INDEX.md).
 
 ## Web part title authority and editing
 

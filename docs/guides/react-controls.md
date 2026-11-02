@@ -907,3 +907,13 @@ export function PageNavigation(): React.ReactElement {
   onPaginationChange={(_event, data) => { if (data.type === 'pages') setPageIndex(data.pageIndex); }} />;
 }
 ```
+
+### Explore text, clocks and loading content
+
+The test web part's generated Controlli group exposes AutoSkeleton, RelativeTime and FormattedText scenarios from their owning API examples. Each mounts one live subject and retains configuration while diagnostics open. Reset restores the scenario baseline without replacing its controller.
+
+In AutoSkeleton, type a profile note before loading or changing animation, width, minimum size or ignore policy. Loading keeps the same content; native inert and browser geometry determine overlay and focus behavior. Empty content removes the actual profile and can remount it when restored. The mount count records real mounts across Reset rather than inventing a new lifetime.
+
+RelativeTime starts from explicit January/February 2026 instants with a UTC description. Compare fixed, live and frozen reference clocks, change the presentation without resampling a frozen instant, and select the invalid or callback fallback case to inspect its span separately from the time root. The one-minute command reads the clock only when activated.
+
+FormattedText keeps semantic tag, typography and Markdown independent. Its editable width accepts integer values from 160 to 640; invalid drafts retain the last valid preview and restore on blur. Mixed JSX uses the same subject, preserving the authored action while parsing owned strings. A positive maximum line count takes precedence over wrap and truncation. These generic React scenarios use the surrounding Fluent theme and Griffel renderer without requiring an SPFx provider.

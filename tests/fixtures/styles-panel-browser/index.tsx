@@ -5,11 +5,11 @@ import { PnPSearchSuggestionsDemo } from '../../../apps/spfx-react-toolkit-test/
 import StylesPanel from '../foundation-legacy/StylesPanel';
 import ProductStylesPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/StylesPanel';
 import RelativeTimePanel from '../foundation-legacy/RelativeTimePanel';
-import ProductRelativeTimePanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/RelativeTimePanel';
+import { RelativeTimeScenario as ProductRelativeTimePanel } from '../executable-examples/relative-time-scenario';
 import FormattedTextPanel from '../foundation-legacy/FormattedTextPanel';
-import ProductFormattedTextPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/FormattedTextPanel';
+import { FormattedTextScenario as ProductFormattedTextPanel } from '../executable-examples/formatted-text-scenario';
 import AutoSkeletonPanel from '../foundation-legacy/AutoSkeletonPanel';
-import ProductAutoSkeletonPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/AutoSkeletonPanel';
+import { AutoSkeletonScenario as ProductAutoSkeletonPanel } from '../executable-examples/auto-skeleton-scenario';
 import StateMessagePanel from '../foundation-legacy/StateMessagePanel';
 import { StateMessageScenario as ProductStateMessagePanel } from '../executable-examples/state-message-scenario';
 import FormPanel from '../demo-control-isolation/form-regressions';

@@ -155,9 +155,15 @@ test('hook, provider, style and service panels use Fluent configuration and shar
     assert.ok(/DemoCard|useDemoStyles/.test(source) || delegated, `${path.basename(file)} must own shared regions or delegate an actual demo component`);
   }
   const generatedRoot = path.join(componentRoot, 'generated/jsdoc-examples');
-  const hooks = fs.readdirSync(generatedRoot).filter(name => name.endsWith('.tsx'))
-    .map(name => fs.readFileSync(path.join(generatedRoot, name), 'utf8'))
-    .filter(source => source.includes('useStableCallback'));
+  const catalogueModule = { exports: {} };
+  const catalogueText = fs.readFileSync(path.join(generatedRoot, 'catalogue.ts'), 'utf8');
+  new Function('module', 'exports', require('typescript').transpileModule(catalogueText, {
+    compilerOptions: { module: require('typescript').ModuleKind.CommonJS },
+  }).outputText)(catalogueModule, catalogueModule.exports);
+  // A control using a helper does not become a selectable hook scenario.
+  const hooks = catalogueModule.exports.executableExamples
+    .filter(entry => entry.groupKey === 'hooks' && entry.metadata.host === 'none')
+    .map(entry => fs.readFileSync(path.join(generatedRoot, entry.id + '.tsx'), 'utf8'));
   assert.equal(hooks.length, 3, 'two callback pilots and the complete import-interoperability scenario own shared configuration regions');
   for (const source of hooks) {
     assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|a)\b|\bstyles?\s*=/);

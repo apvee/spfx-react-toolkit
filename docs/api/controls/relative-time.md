@@ -69,6 +69,103 @@ function OptionalDate({ dateTime }: { dateTime: Date | string | number | undefin
 }
 ```
 
+#### Explore relative clocks and fallback slots
+
+```tsx
+// This standalone React scenario uses the host Fluent theme and Griffel renderer.
+import * as React from 'react';
+import { FluentProvider, Checkbox, Select, Button, Field, Input, makeStyles, tokens } from '@fluentui/react-components';
+import { RelativeTime, RelativeTimeProps, useSx, background, minWidth } from '@apvee/spfx-react-toolkit';
+
+const useStyles = makeStyles({
+  controls: { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: tokens.spacingVerticalM, minWidth: 0,
+    '& > *': { minWidth: 0, maxWidth: '100%' }, '@media (max-width: 600px)': { gridTemplateColumns: 'minmax(0, 1fr)' } },
+  controlRow: { gridColumn: '1 / -1' },
+});
+const formats: readonly NonNullable<RelativeTimeProps['format']>[] = ['long', 'short', 'narrow'];
+const modes = ['fixed', 'live', 'frozen'] as const;
+type DemoRegions = {
+  controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode;
+  diagnostics?: React.ReactNode; children?: React.ReactNode;
+};
+const standalone = (regions: DemoRegions): React.ReactElement => <>
+  {regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}
+</>;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number;
+}): React.ReactElement {
+  const [rtl, setRtl] = React.useState(false);
+  const directionSx = useSx({ dir: rtl ? 'rtl' : undefined });
+  const directionControl = <Checkbox input={{ as: 'input', ...{ 'data-relative-time-demo': 'direction' } }} checked={rtl} onChange={(_event, data) => setRtl(data.checked === true)} label="RTL direction" />;
+  const demoStyles = useStyles();
+  const [date, setDate] = React.useState('2026-01-31T12:00:00Z');
+  const [reference, setReference] = React.useState('2026-02-28T12:00:00Z');
+  const [locale, setLocale] = React.useState('en-US');
+  const [scenario, setScenario] = React.useState('event');
+  const [format, setFormat] = React.useState<NonNullable<RelativeTimeProps['format']>>('long');
+  const [mode, setMode] = React.useState<typeof modes[number]>('fixed');
+  const [showTooltip, setShowTooltip] = React.useState(true);
+  const [timeZone, setTimeZone] = React.useState('UTC');
+  const [fallback, setFallback] = React.useState('Date unavailable');
+  const fallbackRef = React.useMemo(() => React.createRef<HTMLSpanElement>(), []);
+  const [fallbackClicks, setFallbackClicks] = React.useState(0);
+  const [slotTag, setSlotTag] = React.useState('not inspected');
+  const rootRef = React.useMemo(() => React.createRef<HTMLTimeElement>(), []);
+  const [observedTag, setObservedTag] = React.useState('not inspected');
+  const [clicks, setClicks] = React.useState(0);
+  const props: RelativeTimeProps = {
+    dateTime: scenario === 'invalid' ? '2026-02-30T12:00:00Z' : scenario === 'slot' ? undefined : date, locale, format, autoUpdate: mode !== 'frozen', showTooltip,
+    timeZone: timeZone || undefined, fallback: scenario === 'slot' ? { ref: fallbackRef, 'data-relative-time-demo': 'fallback-slot', onClick: () => setFallbackClicks(value => value + 1), children: (Component, slotProps) => <Component {...slotProps}>{fallback}</Component> } : fallback, referenceTime: mode === 'fixed' ? reference : undefined,
+  };
+  const previousReset = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (previousReset.current === resetRevision) return;
+    previousReset.current = resetRevision;
+    setDate('2026-01-31T12:00:00Z'); setReference('2026-02-28T12:00:00Z');
+    setLocale('en-US'); setScenario('event'); setFormat('long'); setMode('fixed'); setShowTooltip(true);
+    setTimeZone('UTC'); setFallback('Date unavailable'); setFallbackClicks(0); setSlotTag('not inspected');
+    setObservedTag('not inspected'); setClicks(0); setRtl(false);
+  }, [resetRevision]);
+  return render({ controls: <><Field label="Scenario"><Select select={{ as: 'select', ...{ 'data-demo-variant': 'relative-time', 'data-relative-time-demo': 'scenario' } }} value={scenario} onChange={(_, data) => setScenario(data.value)}><option value="event">Latest update</option><option value="invalid">Invalid date</option><option value="slot">Fallback content</option></Select></Field>
+<Field label="Updated at"><Input input={{ as: 'input', ...{ 'data-relative-time-demo': 'dateTime' } }} value={date} onChange={(_event, data) => setDate(data.value)} /></Field>
+<Field label="Language"><Select select={{ as: 'select', ...{ 'data-relative-time-demo': 'locale' } }} value={locale} onChange={(_event, data) => setLocale(data.value)}>
+          {['en-US', 'it-IT', 'ar-SA'].map(value => <option key={value}>{value}</option>)}
+        </Select></Field>
+<Field label="Format"><Select select={{ as: 'select', ...{ 'data-relative-time-demo': 'format' } }} value={format} onChange={(_event, data) => {
+          const selected = formats.find(value => value === data.value); if (selected) setFormat(selected);
+        }}>{formats.map(value => <option key={value}>{value}</option>)}</Select></Field>
+<Field label="Reference clock"><Select select={{ as: 'select', ...{ 'data-relative-time-demo': 'mode' } }} value={mode} onChange={(_event, data) => {
+          const selected = modes.find(value => value === data.value); if (selected) setMode(selected);
+        }}>{modes.map(value => <option key={value}>{value}</option>)}</Select></Field>
+<Checkbox input={{ as: 'input', ...{ 'data-relative-time-demo': 'showTooltip' } }} checked={showTooltip} onChange={(_event, data) => setShowTooltip(data.checked === true)} label="Show full date" /></>,
+    commands: <>
+      <Button type="button" onClick={() => setDate(new Date(Date.now() - 60000).toISOString())}>Simulate one minute ago</Button>
+    </>,
+    status: <p aria-live="polite">Clock: {mode} · Preview clicks: {clicks}</p>,
+    diagnostics: <><div className={demoStyles.controls}><Field label="Time zone"><Select select={{ as: 'select', ...{ 'data-relative-time-demo': 'timeZone' } }} value={timeZone} onChange={(_event, data) => setTimeZone(data.value)}>
+          <option value="">Runtime zone (explicit fallback)</option><option>UTC</option><option>Europe/Rome</option><option>America/Los_Angeles</option>
+        </Select></Field>
+<Field label="Reference date"><Input input={{ as: 'input', ...{ 'data-relative-time-demo': 'referenceTime' } }} value={reference} onChange={(_event, data) => setReference(data.value)} /></Field>
+<Checkbox input={{ as: 'input', ...{ 'data-relative-time-demo': 'autoUpdate' } }} checked={mode !== 'frozen'} onChange={(_event, data) => setMode(data.checked === true ? 'live' : 'frozen')} label="Automatic updates" />
+<Field label="Fallback text"><Input input={{ as: 'input', ...{ 'data-relative-time-demo': 'fallback' } }} value={fallback} onChange={(_event, data) => setFallback(data.value)} /></Field>
+<p>Fixed reference takes priority over autoUpdate. Frozen mode samples after commit when the event instant or clock mode changes; changing presentation keeps that sample.</p></div>
+{directionControl}
+
+<Button data-relative-time-demo="inspect-slot" type="button" onClick={() => setSlotTag(fallbackRef.current?.tagName.toLowerCase() ?? 'unmounted')}>Inspect fallback slot ref</Button>
+
+<p>Fallback element: {slotTag}. Fallback clicks: {fallbackClicks}.</p>
+
+<Button data-relative-time-demo="inspect-ref" type="button" onClick={() => setObservedTag(rootRef.current?.tagName.toLowerCase() ?? 'unmounted')}>Inspect root ref</Button>
+
+<p data-relative-time-demo="observations">Ref element: {observedTag}. Preview clicks: {clicks}.</p>
+</>,
+    children: <FluentProvider dir={rtl ? 'rtl' : undefined} className={directionSx(background.transparent, minWidth.zero)}><RelativeTime {...props} data-relative-time-demo="preview" ref={rootRef} onClick={() => setClicks(value => value + 1)} /></FluentProvider> });
+}
+
+export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject',
+  observe: 'Compare fixed, live and frozen clocks, then inspect native time and fallback slot refs and events.' };
+```
+
 ### Signatures
 
 ```ts
@@ -113,7 +210,7 @@ ReactElement<any, string | JSXElementConstructor<any>>
 
 ### Source
 
-[packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx:65](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx#L65)
+[packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx:161](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx#L161)
 
 ## RelativeTimeProps
 
