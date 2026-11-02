@@ -11,6 +11,26 @@ const titles = {
   logger: 'Write native log levels and inspect recent calls',
   performance: 'Measure a cancellable local timed operation',
 };
+// Independent expectations for this Runtime cohort only, never a production catalogue inventory.
+const runtimeCases = [
+  { ownerKey: 'packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties', title: titles.properties, kind: 'write' },
+  { ownerKey: 'packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage', title: titles.session, kind: 'write' },
+  { ownerKey: 'packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxLocalStorage', title: titles.local, kind: 'write' },
+  { ownerKey: 'packages/spfx-react-toolkit/src/hooks/useSPFxLogger.ts#useSPFxLogger', title: titles.logger, kind: 'write' },
+  { ownerKey: 'packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#useSPFxPerformance', title: titles.performance, kind: 'read' },
+];
+function assertRuntimeCatalogue(entries) {
+  const owned = entries.filter(entry => runtimeCases.some(expected => expected.ownerKey === entry.ownerKey));
+  for (const expected of runtimeCases) {
+    const matches = owned.filter(entry => entry.ownerKey === expected.ownerKey && entry.title === expected.title);
+    assert.equal(matches.length, 1, 'Exactly one Runtime case: ' + expected.ownerKey + '/' + expected.title);
+    const entry = matches[0];
+    assert.equal(entry.metadata.host, 'webPart');
+    assert.equal(entry.metadata.contentPlacement, 'configuration');
+    assert.equal(entry.metadata.kind, expected.kind);
+  }
+  assert.equal(owned.length, 5, 'Exactly five Runtime cases for the expected canonical owners');
+}
 function fixture(t, kind, options = {}) {
   const h = createHarness(); t.after(() => h.close());
   const modules = pilotModules(h);
@@ -63,7 +83,7 @@ test('Runtime has exactly five source-owned cases with canonical owners and conf
   for (const [kind, title] of Object.entries(titles)) {
     const f = fixture(t, kind);
     assert.equal(f.entry.title, title);
-    assert.equal(f.catalogue.executableExamples.length, 104, '82 previous cases plus exactly 22 Context cases');
+    assertRuntimeCatalogue(f.catalogue.executableExamples);
     assert.equal(f.entry.metadata.host, 'webPart');
     assert.equal(f.entry.metadata.contentPlacement, 'configuration');
     const symbol = { properties: 'useSPFxProperties', session: 'useSPFxSessionStorage', local: 'useSPFxLocalStorage', logger: 'useSPFxLogger', performance: 'useSPFxPerformance' }[kind];
@@ -273,4 +293,31 @@ test('Properties missing description displays empty and adopts native host edits
   f.change('Uncommitted local draft'); f.reset();
   assert.equal(f.container.querySelector('input'), input); assert.equal(input.value, 'Property pane description');
   assert.equal(f.refreshes, 0);
+});
+
+test('Runtime catalogue contract accepts unrelated owner growth without mutating the real catalogue', t => {
+  const f = fixture(t, 'properties'); const entries = f.catalogue.executableExamples;
+  const original = entries.slice();
+  assertRuntimeCatalogue(entries);
+  const unrelated = entries.find(entry => !runtimeCases.some(expected => expected.ownerKey === entry.ownerKey));
+  assert.ok(unrelated, 'real catalogue includes another canonical owner');
+  const title = 'Additional unrelated source-owned case';
+  const id = require('node:crypto').createHash('sha256').update(JSON.stringify([unrelated.ownerKey, title])).digest('hex');
+  assertRuntimeCatalogue([...entries, { ...unrelated, id, title }]);
+  assert.deepEqual(entries, original, 'ownership checks leave the real catalogue unchanged');
+});
+test('Runtime catalogue contract rejects each missing expected canonical owner/title pair', t => {
+  const f = fixture(t, 'properties'); const entries = f.catalogue.executableExamples;
+  for (const expected of runtimeCases) {
+    const remaining = entries.filter(entry => entry.ownerKey !== expected.ownerKey || entry.title !== expected.title);
+    assert.throws(() => assertRuntimeCatalogue(remaining), error => error.code === 'ERR_ASSERTION' && error.message.includes('Exactly one Runtime case: ' + expected.ownerKey + '/' + expected.title));
+  }
+});
+test('Runtime catalogue contract rejects each duplicated expected canonical owner/title pair', t => {
+  const f = fixture(t, 'properties'); const entries = f.catalogue.executableExamples;
+  for (const expected of runtimeCases) {
+    const entry = entries.find(entry => entry.ownerKey === expected.ownerKey && entry.title === expected.title);
+    assert.ok(entry);
+    assert.throws(() => assertRuntimeCatalogue([...entries, { ...entry }]), error => error.code === 'ERR_ASSERTION' && error.message.includes('Exactly one Runtime case: ' + expected.ownerKey + '/' + expected.title));
+  }
 });
