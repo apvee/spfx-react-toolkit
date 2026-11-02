@@ -87,8 +87,10 @@ async function formProduct(page, { url, check }) {
   await check('form return to edited adapter resets only target domain', (await live()).quantity, 2);
   await check('form reset retains independent text draft', (await live()).notes, 'Compatibile');
   await check('form reset retains common title draft', await reference.inputValue(), 'Draft conservato');
-  for (const family of ['object','array','schema','dynamic','rules']) {
-    await select('mode').selectOption(family); await cardinality(panel, check, `form ${family}`, 'form');
+  for (const family of ['object','array','rules','schema','dynamic']) {
+    if (family === 'schema' || family === 'dynamic') {
+      await page.goto(`${url}/?form-only=1&product-demo=1&form-scenario=${family}`); await panel.waitFor(); await diagnostics(panel);
+    } else await select('mode').selectOption(family); await cardinality(panel, check, `form ${family}`, 'form');
     if (family === 'object') { await panel.getByRole('textbox', { name: 'Owner', exact: true }).fill('Ada Rossi'); await check('form object writes nested model', (await live()).customer.name, 'Ada Rossi'); }
     if (family === 'array') { await panel.getByRole('textbox', { name: 'Activity name 1', exact: true }).fill('Analisi'); await check('form array writes nested model', (await live()).lines[0].code, 'Analisi'); }
     if (family === 'schema' || family === 'dynamic') {
@@ -105,7 +107,7 @@ async function formProduct(page, { url, check }) {
         const countBefore = await panel.locator('[data-form-demo="status"]').textContent();
         await activeInput.fill('invalid'); await panel.locator('[data-form-demo="submit"]').click();
         await check('form schema invalid quantity blocks callback', (await panel.locator('[data-form-demo="status"]').textContent()).match(/Saves: \d+/)[0], countBefore.match(/Saves: \d+/)[0]);
-        await check('form schema current invalid quantity error', (await panel.locator('[data-form-demo="schema-errors"]').textContent()).includes('Enter a finite number'), true);
+        await check('form schema current invalid quantity error', (await panel.locator('[data-form-demo="errors"]').textContent()).includes('Enter a finite number'), true);
       }
       await panel.locator('[data-form-demo="new-record"]').click();
       await check(`form ${family} load changes actual current model`, await activeInput.inputValue(), family === 'schema' ? '12' : 'Annual report');
@@ -113,7 +115,8 @@ async function formProduct(page, { url, check }) {
       await activeInput.fill(family === 'schema' ? '24' : 'Report pending');
       await panel.getByRole('checkbox', { name: 'Complete save manually', exact: true }).check();
       await panel.locator('[data-form-demo="submit"]').click();
-      await check(`form ${family} pending locks family selector`, await select('mode').isDisabled(), true);
+      await check(`form ${family} pending disables native submit`, await panel.locator('[data-form-demo="submit"]').isDisabled(), true);
+      await check(`form ${family} pending disables native reset`, await panel.locator('[data-form-demo="reset"]').isDisabled(), true);
       await panel.locator('[data-form-demo="complete-save"]').click();
       await check(`form ${family} pending completed output`, JSON.parse(await panel.locator('[data-form-demo="saved"]').textContent()), family === 'schema' ? { quantity: 24 } : { dynamic: 'Report pending' });
       await panel.getByRole('checkbox', { name: 'Complete save manually', exact: true }).uncheck();

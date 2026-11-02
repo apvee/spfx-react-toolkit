@@ -14,11 +14,15 @@ function jsxNames() {
   walk(source, node => { if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) names.push(node.tagName.getText(source)); });
   return names;
 }
-test('Form registry owns one lazy entry and each public value exactly once', () => {
-  for (const value of ["key: 'form'", "symbol: 'Form'", "symbol: 'createForm'", "webpackChunkName: 'spfx-demo-form'"]) {
-    assert.equal(registry.split(value).length - 1, 1, value);
-  }
-  assert.match(registry, /import\(.*\.\/panels\/FormPanel/);
+test('Form owners have canonical scenarios and the legacy product panel is retired', () => {
+  const { scenario } = require('./fixtures/executable-examples/cards-description-list.cjs');
+  for (const [title, owner] of [
+    ['Edit typed reports across native fields and composition', 'createForm'],
+    ['Validate and transform quantity with recoverable failures', 'createForm'],
+    ['Edit a dynamic report with explicit save and reset', 'Form'],
+  ]) assert.equal(scenario(title).entry.featureTitle, owner);
+  assert.doesNotMatch(registry, /spfx-demo-form|panels\/FormPanel/);
+  assert.equal(fs.existsSync(path.join(base, 'panels/FormPanel.tsx')), false);
   assert.match(panel, /from '@apvee\/spfx-react-toolkit'/);
   assert.doesNotMatch(panel, /packages\/.*src|controls\/Form|style=|\.style\./);
 });
@@ -95,7 +99,7 @@ test('Settings rows opt in around existing RHF fields without competing labels o
     assert.ok(ancestor, 'settings share existing submit/reset ownership');
   });
   for (const marker of ['settings-group', 'settings-reference', 'settings-enabled']) assert.ok(panel.includes(`data-form-demo="${marker}"`), marker);
-  assert.equal(registry.split("symbol: 'SettingsGroup'").length - 1, 1, 'retain unique SettingsGroup owner');
+  assert.ok(require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Preserve notification settings across group presentations').entry.publicNames.includes('SettingsGroup'));
 });
 
 test('Form presentation sample observes inner refs events and callback content', () => {
@@ -169,58 +173,15 @@ test('schema mode hides record submission commands and saved status while keepin
 });
 
 
-test('Product scenario owns one configuration and selectable variants without comparison galleries', () => {
-  const product = fs.readFileSync(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/FormPanel.tsx'), 'utf8');
-  const compiler = require('typescript');
-  const parsed = compiler.createSourceFile('product.tsx', product, compiler.ScriptTarget.Latest, true, compiler.ScriptKind.TSX);
-  const cards = []; let createInRender = false;
-  function inspect(node) {
-    if (compiler.isJsxOpeningElement(node) && node.tagName.getText(parsed) === 'DemoCard') cards.push(node);
-    if (compiler.isCallExpression(node) && ['createForm', 'createDataGrid'].includes(node.expression.getText(parsed))) {
-      for (let parent = node.parent; parent; parent = parent.parent) if (compiler.isFunctionLike(parent)) createInRender = true;
-    }
-    compiler.forEachChild(node, inspect);
-  }
-  inspect(parsed);
-  assert.equal(parsed.parseDiagnostics.length, 0);
-  assert.equal(cards.length, 1);
-  assert.equal(createInRender, false);
+test('Source product has one active adapter and preserves independent conformance', () => {
+  const { scenario } = require('./fixtures/executable-examples/cards-description-list.cjs');
+  const product = scenario('Edit typed reports across native fields and composition').source;
   assert.match(product, /data-demo-variant="FormAdapter"/);
-  assert.doesNotMatch(product, /Independent |comparison|hidden=\{(?:mode|family) !==/);
-  const browserChecks = fs.readFileSync(path.resolve(__dirname, 'fixtures/demo-control-isolation/task3-product.browser.cjs'), 'utf8');
-  assert.match(browserChecks, /formProduct/);
-});
-
-test('actual product schema and dynamic configuration owns disabled, dirty state and model loading', async () => {
-  process.env.NODE_ENV = 'test';
-  const hostHarness = require('./fixtures/form-selection-harness.cjs');
-  const sourceHarness = require('./fixtures/formatted-text-harness.cjs');
-  await hostHarness.setup();
-  document.createRange = () => ({ selectNodeContents() {}, getClientRects() { return []; } });
-  let fixture;
-  try {
-    const library = await sourceHarness.loadModule('tests/fixtures/sx-browser/form-toolkit-boundary.ts', { reactHookForm: true });
-    const shared = await sourceHarness.loadModule('apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/index.ts');
-    const compiled = ts.transpileModule(fs.readFileSync(path.join(base, 'panels/FormPanel.tsx'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.React } });
-    const actual = { exports: {} };
-    new Function('require', 'module', 'exports', compiled.outputText)(name => name === '@apvee/spfx-react-toolkit' ? library : name === '../shared' ? shared : require(name), actual, actual.exports);
-    fixture = hostHarness.mount(hostHarness.React.createElement(actual.exports.default));
-    const find = marker => fixture.host.querySelector(`[data-form-demo="${marker}"]`);
-    assert.equal(find('slot-hint').textContent, 'Summarize team results, decisions and next steps.');
-    for (const family of ['schema', 'dynamic']) {
-      hostHarness.change(find('mode'), family);
-      assert.equal(fixture.host.querySelectorAll('form').length, 1);
-      const input = fixture.host.querySelector(`input[name="${family === 'schema' ? 'quantity' : 'dynamic'}"]`);
-      assert.ok(input, 'the current model supplies the actual input');
-      assert.match(find('status').textContent, /Dirty: false/);
-      hostHarness.act(() => find('disabled').click());
-      assert.equal(input.disabled, true, `${family} field is disabled by current configuration`);
-      hostHarness.act(() => find('disabled').click());
-      await hostHarness.act(async () => { hostHarness.change(input, family === 'schema' ? '23' : 'Edited dynamic'); await Promise.resolve(); });
-      assert.match(find('status').textContent, /Dirty: true/);
-      hostHarness.click(find('new-record'));
-      assert.equal(input.value, family === 'schema' ? '12' : 'Annual report', `${family} loads the current model`);
-      assert.match(find('status').textContent, /Dirty: false/);
-    }
-  } finally { fixture?.close(); await hostHarness.cleanup(); }
+  assert.match(product, /family === 'rules' \? variableField\(\)/);
+  assert.doesNotMatch(product, /hidden=\{(?:mode|family) !==|fixtures\/|components\//);
+  const parsed = ts.createSourceFile('form.tsx', product, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  let inRender = false;
+  walk(parsed, node => { if (ts.isCallExpression(node) && node.expression.getText(parsed) === 'createForm') for (let p = node.parent; p; p = p.parent) if (ts.isFunctionLike(p)) inRender = true; });
+  assert.equal(inRender, false);
+  assert.match(fs.readFileSync(path.resolve(__dirname, 'fixtures/demo-control-isolation/task3-product.browser.cjs'), 'utf8'), /formProduct/);
 });

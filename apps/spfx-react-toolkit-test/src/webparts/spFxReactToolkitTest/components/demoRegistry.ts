@@ -51,17 +51,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
-    key: 'form',
-    title: 'Form',
-    iconName: 'Edit',
-    description: 'One form with selectable adapters and model families, validation and explicit save/reset.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-form' */ './panels/FormPanel')),
-    coverage: [
-      { symbol: 'Form', kind: 'snapshot', notes: 'Selectable dynamic, typed, object, array and schema form; optional colorful TagPicker avatars; conformance comparisons in versioned fixtures.' },
-      { symbol: 'createForm', kind: 'snapshot', notes: '22 adapters, automatic SettingsGroup field labels/hints, hook-level labels/failure dictionary, four compositions, rules/schema, native files, drafts, reset, pending save and retries.' },
-    ],
-  },
-  {
     key: 'styles',
     title: 'Styles',
     iconName: 'Color',

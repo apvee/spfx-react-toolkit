@@ -234,7 +234,8 @@ for (const marker of ['SettingsGroup.Item', 'AccordionGroup.Item', 'Input aria-l
 
 assertFormExampleCoverage(
   formSurface,
-  read(registryPath), scenarioSource('Form')
+  read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')),
+  read(path.join(root, 'packages/spfx-react-toolkit/src/controls/form/create-form.ts')) + '\n' + read(path.join(root, 'packages/spfx-react-toolkit/src/controls/form/form.tsx'))
 );
 console.log('Verified selectable Form adapters plus versioned scope/hook conformance coverage.');
 
@@ -276,6 +277,9 @@ const contentCardSource = read(path.join(root, 'packages/spfx-react-toolkit/src/
 const previewCardSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx'));
 const cardsPanel = scenarioSource('Cards', contentCardSource + '\n' + previewCardSource);
 const sourceCases = [
+  ['Form', 'Edit a dynamic report with explicit save and reset'],
+  ['createForm', 'Edit typed reports across native fields and composition'],
+  ['createForm', 'Validate and transform quantity with recoverable failures'],
   ['AutoSkeleton', 'Explore mounted profile loading and native focus'],
   ['RelativeTime', 'Explore relative clocks and fallback slots'],
   ['FormattedText', 'Explore semantic text and inline Markdown'],
@@ -306,7 +310,7 @@ if (!cardsIsolation.includes('name="independent"') || !cardsIsolation.includes('
 console.log('Verified selectable single Cards, image lifecycle and versioned native/isolation conformance coverage.');
 
 
-for (const name of ['Form', 'DataGrid', 'Styles', 'Providers', 'Context']) {
+for (const name of ['DataGrid', 'Styles', 'Providers', 'Context']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
   if (!product.includes('data-demo-variant')) throw new Error(`${name} selectable product variant missing`);
@@ -342,7 +346,6 @@ for (const marker of ['<EntraGroupTrim groups={[{ name: applied.group }]}', 'Per
 // Each migrated family retains an observable override on its existing live subject.
 for (const [panel, marker] of [
   ['DataGridPanel.tsx', 'id="dg-strings"'],
-  ['FormPanel.tsx', "'data-form-demo': 'strings'"],
   ['PickersPanel.tsx', 'data-picker-demo="strings"'],
   ['FileFolderPickerPanel.tsx', 'data-file-picker-demo="strings"'],
 ]) {

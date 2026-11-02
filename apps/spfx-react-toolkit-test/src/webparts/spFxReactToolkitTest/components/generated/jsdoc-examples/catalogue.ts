@@ -173,6 +173,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-e4d8e4f3dcffb7af68fa9531d2ba7c9824bb0aef10da8691df748d465b944e57' */ "./e4d8e4f3dcffb7af68fa9531d2ba7c9824bb0aef10da8691df748d465b944e57")
 },
 {
+  "id": "eeef13d46fdec7f3931e72f1ee38b4f7758c58431510d28336235f10aa0688db",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/form/form.tsx#Form",
+  "title": "Edit a dynamic report with explicit save and reset",
+  "groupRoute": "docs/api/controls/form.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/form/form.tsx#Form",
+  "featureTitle": "Form",
+  "publicNames": [
+    "Form"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/form/form.tsx",
+    "line": 286
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Edit dynamic text, save a snapshot, load a pristine annual report and cancel pending saves on reset."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-eeef13d46fdec7f3931e72f1ee38b4f7758c58431510d28336235f10aa0688db' */ "./eeef13d46fdec7f3931e72f1ee38b4f7758c58431510d28336235f10aa0688db")
+},
+{
   "id": "5ef236bf57824833f0d5ebbab7cc83ba6a3797ed10bd6b9dc2bc8d272fc1c5d9",
   "ownerKey": "packages/spfx-react-toolkit/src/controls/formatted-text/formatted-text.tsx#FormattedText",
   "title": "Explore semantic text and inline Markdown",
@@ -498,6 +521,52 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717' */ "./7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717")
 },
 {
+  "id": "4f685167cdc22f155e5c3d314de64d4911b91ebc23a5d2e0566cc9798ae92f89",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/form/create-form.ts#createForm",
+  "title": "Edit typed reports across native fields and composition",
+  "groupRoute": "docs/api/controls/form.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/form/create-form.ts#createForm",
+  "featureTitle": "createForm",
+  "publicNames": [
+    "createForm"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/form/create-form.ts",
+    "line": 155
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Edit native values across 22 adapters and shared report compositions; save a snapshot, recover from failure, and reset pending work."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-4f685167cdc22f155e5c3d314de64d4911b91ebc23a5d2e0566cc9798ae92f89' */ "./4f685167cdc22f155e5c3d314de64d4911b91ebc23a5d2e0566cc9798ae92f89")
+},
+{
+  "id": "79af64c16e48b9fef85a2e4976d0500d7c52db043b51ef3b8f341120f02dd18b",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/form/create-form.ts#createForm",
+  "title": "Validate and transform quantity with recoverable failures",
+  "groupRoute": "docs/api/controls/form.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/form/create-form.ts#createForm",
+  "featureTitle": "createForm",
+  "publicNames": [
+    "createForm"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/form/create-form.ts",
+    "line": 433
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Submit numeric output while live input stays text; blank, nonfinite, thrown validation and failed saves recover on retry and reset."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-79af64c16e48b9fef85a2e4976d0500d7c52db043b51ef3b8f341120f02dd18b' */ "./79af64c16e48b9fef85a2e4976d0500d7c52db043b51ef3b8f341120f02dd18b")
+},
+{
   "id": "9496a583c497d2af126e303996591d022fca61c8ca6d77ebd843829fd3a1af5a",
   "ownerKey": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata",
   "title": "Inspect searchable Shell title metadata",
@@ -621,19 +690,21 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx#ContentCard", title: "ContentCard", scenarios: [executableExamples[2]] },
     { key: "packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#DescriptionList", title: "DescriptionList", scenarios: [executableExamples[3]] },
     { key: "packages/spfx-react-toolkit/src/controls/editable-text/editable-text.tsx#EditableText", title: "EditableText", scenarios: [executableExamples[4]] },
-    { key: "packages/spfx-react-toolkit/src/controls/formatted-text/formatted-text.tsx#FormattedText", title: "FormattedText", scenarios: [executableExamples[5]] },
-    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[6], executableExamples[7], executableExamples[8], executableExamples[9]] },
-    { key: "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard", title: "PreviewCard", scenarios: [executableExamples[10], executableExamples[11]] },
-    { key: "packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx#RelativeTime", title: "RelativeTime", scenarios: [executableExamples[12]] },
-    { key: "packages/spfx-react-toolkit/src/controls/settings-group/settings-group.tsx#SettingsGroup", title: "SettingsGroup", scenarios: [executableExamples[13]] },
-    { key: "packages/spfx-react-toolkit/src/controls/stage/stage.tsx#Stage", title: "Stage", scenarios: [executableExamples[14]] },
-    { key: "packages/spfx-react-toolkit/src/controls/state-message/state-message.tsx#StateMessage", title: "StateMessage", scenarios: [executableExamples[15]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[16], executableExamples[17], executableExamples[18]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[19]] }
+    { key: "packages/spfx-react-toolkit/src/controls/form/form.tsx#Form", title: "Form", scenarios: [executableExamples[5]] },
+    { key: "packages/spfx-react-toolkit/src/controls/formatted-text/formatted-text.tsx#FormattedText", title: "FormattedText", scenarios: [executableExamples[6]] },
+    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[7], executableExamples[8], executableExamples[9], executableExamples[10]] },
+    { key: "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard", title: "PreviewCard", scenarios: [executableExamples[11], executableExamples[12]] },
+    { key: "packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx#RelativeTime", title: "RelativeTime", scenarios: [executableExamples[13]] },
+    { key: "packages/spfx-react-toolkit/src/controls/settings-group/settings-group.tsx#SettingsGroup", title: "SettingsGroup", scenarios: [executableExamples[14]] },
+    { key: "packages/spfx-react-toolkit/src/controls/stage/stage.tsx#Stage", title: "Stage", scenarios: [executableExamples[15]] },
+    { key: "packages/spfx-react-toolkit/src/controls/state-message/state-message.tsx#StateMessage", title: "StateMessage", scenarios: [executableExamples[16]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[17], executableExamples[18], executableExamples[19]] },
+    { key: "packages/spfx-react-toolkit/src/controls/form/create-form.ts#createForm", title: "createForm", scenarios: [executableExamples[20], executableExamples[21]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[22]] }
   ] },
   { key: "hooks", title: "Hook", features: [
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[20]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[21], executableExamples[22]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[23]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[23]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[24], executableExamples[25]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[26]] }
   ] }
 ];

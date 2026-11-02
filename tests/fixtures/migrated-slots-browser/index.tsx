@@ -6,7 +6,7 @@ import { StateMessageScenario as StateMessagePanel } from '../executable-example
 import { RelativeTimeScenario as RelativeTimePanel } from '../executable-examples/relative-time-scenario';
 import { FormattedTextScenario as FormattedTextPanel } from '../executable-examples/formatted-text-scenario';
 import { AutoSkeletonScenario as AutoSkeletonPanel } from '../executable-examples/auto-skeleton-scenario';
-import FormPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/FormPanel';
+import { FormTypedScenario as FormPanel } from '../executable-examples/form-scenarios';
 // Host substitutes local v8 icons, matching the established sample browser fixture.
 const icon = <svg width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 5h16v14H4zm2 2v10h12V7z" /></svg>;
 registerIcons({ icons: { Settings: icon, Mail: icon, Ringer: icon, Info: icon, Clock: icon } });
