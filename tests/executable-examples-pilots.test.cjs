@@ -22,7 +22,7 @@ function fixture(t, title, initialRevision = 7) {
 }
 const ids = h => [...h.container.querySelectorAll('[data-order-id]')].map(row => Number(row.dataset.orderId));
 
-test('real catalogue groups uniquely cover source-owned scenarios and preserve all 43 accepted pilot owners', t => {
+test('real catalogue groups uniquely cover source-owned scenarios and preserve all 44 accepted pilot owners', t => {
   const h = fixture(t, 'Browse controlled rows');
   const { executableExamples: entries, executableGroups: groups } = h.modules.catalogue;
   assert.ok(entries.length > 0); assert.ok(groups.length > 0);
@@ -47,6 +47,7 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve a
   // Independent accepted pilot cases remain mandatory as other families migrate.
   const { pilotTitles, filterPilotGroups } = require('./fixtures/demo-presentation/jsdoc-pilots.cjs');
   const pilotOwners = {
+    useSPFxPnP: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnP.ts#useSPFxPnP',
     useSPFxPnPContext: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPContext.ts#useSPFxPnPContext',
     useSPFxConfigurationStore: 'packages/spfx-react-toolkit/src/hooks/useSPFxConfigurationStore.ts#useSPFxConfigurationStore',
     createSPFxConfigurationStoreService: 'packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService',
@@ -93,7 +94,7 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve a
     useSPFxAadTokenProvider: 'packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts#useSPFxAadTokenProvider',
     useSPFxApiPermissionPrecheck: 'packages/spfx-react-toolkit/src/hooks/useSPFxApiPermissionPrecheck.ts#useSPFxApiPermissionPrecheck',
   };
-  assert.equal(Object.keys(pilotOwners).length, 43, 'one PnP context, two configuration, five original, 21 Context, six Clients, two GraphData two Site two tenant-property and two tenant-list owners');
+  assert.equal(Object.keys(pilotOwners).length, 44, 'one PnP operation, one PnP context, two configuration, five original, 21 Context, six Clients, two GraphData two Site two tenant-property and two tenant-list owners');
   assert.deepEqual(Object.keys(pilotTitles).sort(), Object.keys(pilotOwners).sort(), 'every accepted pilot has an independent canonical owner expectation');
   const pilots = filterPilotGroups(groups);
   assert.deepEqual(pilots.flatMap(group => group.features.map(feature => feature.title)).sort(), Object.keys(pilotTitles).sort());

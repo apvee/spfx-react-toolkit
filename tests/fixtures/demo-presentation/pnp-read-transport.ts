@@ -34,8 +34,12 @@ export const createSPFxPnPContextService: typeof createRealService = (...args) =
         // New context cases use the shared native terminal queue, never pilot list JSON.
         // The existing builder resolves this helper's factory to the selected source/lib mode.
         const target = new URL(String(url));
-        if (target.pathname.endsWith('/_api/web')) {
-          if ((init.method ?? 'GET') !== 'GET') throw new Error('Simulated read fixture forbids CRUD');
+        const read = /\/_api\/web(?:\/lists|\/currentUser)?$/.test(target.pathname);
+        const protocol = /\/_api\/(?:contextinfo|\$batch)$/.test(target.pathname);
+        if (read || protocol) {
+          if (read && (init.method ?? 'GET') !== 'GET') throw new Error('Simulated read fixture forbids CRUD');
+          // Only the bounded terminal protocol may accept digest/read-batch POST.
+          // These routes never alter the original GET-only pilot ledger or policy.
           return fetch(String(url), init);
         }
         const method = init.method ?? 'GET';

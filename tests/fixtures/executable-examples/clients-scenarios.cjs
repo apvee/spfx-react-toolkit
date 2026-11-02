@@ -57,7 +57,10 @@ function createClientsFixture(t, title, options = {}) {
         // Use the harness's existing module cache and exact dependency boundary.
         const read = fs.readFileSync;
         fs.readFileSync = (file, ...args) => { pnpFiles.push(String(file)); return read(file, ...args); };
-        try { Object.assign(toolkit, library('hooks/useSPFxPnPContext')); }
+        try {
+            Object.assign(toolkit, library('hooks/useSPFxPnPContext'));
+            if (options.pnpOperations) Object.assign(toolkit, library('hooks/useSPFxPnP'));
+        }
         finally { fs.readFileSync = read; }
     }
     if (options.graphData) for (const name of ['UserInfo', 'UserPhoto', 'OneDriveAppData']) Object.assign(toolkit, library('hooks/useSPFx' + name));
@@ -86,9 +89,15 @@ function createClientsFixture(t, title, options = {}) {
     const calls = [], initializations = [], tokens = [], observers = [], commits = [], downloads = [];
     if (options.pnpContext) t.mock.method(global, 'fetch', (url, init) => {
         const target = new URL(String(url));
-        assert.equal(init.method, 'GET', 'PnP context fixture permits reads only');
-        assert.ok(target.pathname.endsWith('/_api/web'), 'bounded native web endpoint');
-        assert.equal(target.searchParams.get('$select'), 'Title,Url,Description');
+        if (!options.pnpOperations) {
+            assert.equal(init.method, 'GET', 'PnP context fixture permits reads only');
+            assert.ok(target.pathname.endsWith('/_api/web'), 'bounded native web endpoint');
+            assert.equal(target.searchParams.get('$select'), 'Title,Url,Description');
+        } else {
+            assert.equal(target.origin, 'https://tenant.test');
+            assert.ok(['/web/lists', '/web/currentUser', '/web', '/contextinfo', '/$batch'].some(path => target.pathname.endsWith('/_api' + path)), 'bounded native PnP read protocol');
+            assert.ok(init.method === 'GET' || (init.method === 'POST' && /\/_api\/(contextinfo|\$batch)$/.test(target.pathname)), 'only digest/read-batch protocol POST');
+        }
         const request = deferred({ kind: 'pnp', url: String(url), init, method: init.method });
         calls.push(request); return request.promise;
     });
@@ -140,7 +149,7 @@ function createClientsFixture(t, title, options = {}) {
     const Shell = h.load(path.join(base, 'WebPartShellDemoHost.tsx')).WebPartShellDemoHost;
     const { DemoCard } = h.load(path.join(base, 'shared/DemoCard.tsx'));
     const Explorer = options.explorer ? h.load(path.join(base, 'ExampleExplorer.tsx')).ExampleExplorer : undefined;
-    const groups = options.explorer ? h.load(path.join(base, 'generated/jsdoc-examples/catalogue.ts')).executableGroups.map(group => ({ ...group, features: group.features.filter(feature => ['useSPFxContext', 'useSPFxPnPContext'].includes(feature.title)) })).filter(group => group.features.length) : [];
+    const groups = options.explorer ? h.load(path.join(base, 'generated/jsdoc-examples/catalogue.ts')).executableGroups.map(group => ({ ...group, features: group.features.filter(feature => ['useSPFxContext', 'useSPFxPnPContext', ...(options.pnpOperations ? ['useSPFxPnP'] : [])].includes(feature.title)) })).filter(group => group.features.length) : [];
 
     const renderer = createDOMRenderer(document, { unstable_filterCSSRule: rule => !rule.startsWith('@container') });
     const container = document.createElement('div');

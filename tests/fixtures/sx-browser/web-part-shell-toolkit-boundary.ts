@@ -84,3 +84,5 @@ export { createSPFxTenantKeyValueStoreService, type SPFxTenantKeyValueStoreServi
 // Configuration cases retain actual facade, physical stores and mode-specific identity.
 export { useSPFxConfigurationStore } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxConfigurationStore';
 export { createSPFxConfigurationStoreService, type SPFxConfigurationStoreItem, type SPFxConfigurationStoreMode, type SPFxConfigurationStoreScope } from '../../../packages/spfx-react-toolkit/src/services/spfx-configuration-store.service';
+
+export { useSPFxPnP } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnP';

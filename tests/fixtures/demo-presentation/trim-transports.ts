@@ -177,10 +177,50 @@ window.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response>
   const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
   if (url !== graphDataDownload) {
     const target = new URL(url);
-    if (target.pathname.endsWith('/_api/web') && target.origin === 'https://simulated.invalid'
-      && (init?.method ?? 'GET') === 'GET' && target.searchParams.get('$select') === 'Title,Url,Description') {
-      return clientWork('pnp-web', url, () => new Response(JSON.stringify({ Title: 'Fixture PnP web', Url: target.origin + target.pathname.slice(0, -'/_api/web'.length), Description: 'Native response simulation; no tenant request' }), { status: 200, headers: { 'Content-Type': 'application/json' } }), { method: 'GET', headers: init?.headers }).then(value => {
-        if (!(value instanceof Response)) throw new Error('PnP web fixture requires a native Response');
+    const method = init?.method ?? 'GET';
+    const selected = target.searchParams.get('$select');
+    const sameOrigin = target.origin === 'https://simulated.invalid';
+    const listRead = target.pathname.endsWith('/_api/web/lists') && selected === 'Title,ItemCount'
+      && target.searchParams.get('$filter') === 'Hidden eq false' && target.searchParams.get('$top') === '10'
+      && Array.from(target.searchParams).length === 3;
+    const webRead = target.pathname.endsWith('/_api/web') && (selected === 'Title,Url,Description' || selected === 'Title')
+      && Array.from(target.searchParams).length === 1;
+    const userRead = target.pathname.endsWith('/_api/web/currentUser') && selected === 'Title' && Array.from(target.searchParams).length === 1;
+    if (sameOrigin && method === 'GET' && (listRead || webRead || userRead)) {
+      const kind = listRead ? 'pnp-lists' : userRead ? 'pnp-user' : 'pnp-web';
+      const body = listRead ? { value: [{ Title: 'Operations tasks', ItemCount: 17 }] } : userRead ? { Title: 'Operations reader' }
+        : selected === 'Title' ? { Title: 'Operations web' }
+        : { Title: 'Fixture PnP web', Url: target.origin + target.pathname.slice(0, -'/_api/web'.length), Description: 'Native response simulation; no tenant request' };
+      return clientWork(kind, url, () => new Response(JSON.stringify(body), { status: 200, headers: { 'Content-Type': 'application/json' } }), { method, headers: init?.headers }).then(value => {
+        if (!(value instanceof Response)) throw new Error('PnP read fixture requires a native Response');
+        return value;
+      });
+    }
+    if (sameOrigin && method === 'POST' && target.pathname.endsWith('/_api/contextinfo') && !target.search) {
+      if (new Headers(init?.headers).get('X-PnPjs-NoDigest') !== '1') return Promise.reject(new Error('Unsupported native PnP digest request'));
+      return clientWork('pnp-digest', url, () => new Response(JSON.stringify({ FormDigestValue: 'fixture-pnp-operations-digest', FormDigestTimeoutSeconds: 1800 }), { headers: { 'Content-Type': 'application/json' } }), { method, headers: init?.headers }).then(value => {
+        if (!(value instanceof Response)) throw new Error('PnP digest fixture requires a native Response');
+        return value;
+      });
+    }
+    if (sameOrigin && method === 'POST' && target.pathname.endsWith('/_api/$batch') && !target.search) {
+      const body = typeof init?.body === 'string' ? init.body : '';
+      const headers = new Headers(init?.headers);
+      const boundary = /^multipart\/mixed; boundary=(batch_[\w-]+)$/.exec(headers.get('Content-Type') ?? '')?.[1];
+      const lines = body.split('\n').filter(line => / HTTP\/1\.1\r?$/.test(line));
+      const root = url.slice(0, url.indexOf('/_api/'));
+      const expected = [root + '/_api/web/lists?%24select=Title&%24top=5', root + '/_api/web/currentUser?%24select=Title', root + '/_api/web?%24select=Title'];
+      // Inspect the finite read envelope; installed PnP remains the multipart parser.
+      if (!boundary || !body.endsWith('--' + boundary + '--\n') || body.includes('changeset') || !headers.get('X-RequestDigest')
+        || lines.length !== 3 || lines.some((line, index) => /^GET (.+) HTTP\/1\.1\r?$/.exec(line)?.[1] !== expected[index])) {
+        return Promise.reject(new Error('Unsupported native PnP read batch'));
+      }
+      return clientWork('pnp-batch', url, () => {
+        const values = [{ value: [{ Title: 'Operations tasks' }, { Title: 'Operations news' }] }, { Title: 'Operations reader' }, { Title: 'Operations web' }];
+        const parts = values.reduce<string[]>((result, value) => result.concat(['--batchresponse_operations', 'Content-Type: application/http', 'Content-Transfer-Encoding: binary', '', 'HTTP/1.1 200 OK', 'Content-Type: application/json', '', JSON.stringify(value)]), []);
+        return new Response(parts.concat(['--batchresponse_operations--', '']).join('\r\n'), { headers: { 'Content-Type': 'multipart/mixed; boundary=batchresponse_operations' } });
+      }, { method, headers: init?.headers, body }).then(value => {
+        if (!(value instanceof Response)) throw new Error('PnP batch fixture requires a native Response');
         return value;
       });
     }

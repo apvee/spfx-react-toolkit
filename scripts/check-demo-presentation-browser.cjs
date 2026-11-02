@@ -17,6 +17,7 @@ const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Goog
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
+  { key: 'pnp-operations', title: 'useSPFxPnP' },
   { key: 'pnp-context', title: 'useSPFxPnPContext' },
   { key: 'configuration', title: 'useSPFxConfigurationStore' }, { key: 'configuration-service', title: 'createSPFxConfigurationStoreService' },
   { key: 'tenant', title: 'useSPFxTenantKeyValueStore' }, { key: 'tenant-service', title: 'createSPFxTenantKeyValueStoreService' },
@@ -63,6 +64,7 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    'pnp-operations': ['useSPFxPnP', 'Compare explicit invoke and batch reads'],
     'pnp-context': ['useSPFxPnPContext', 'Read current or cross-site web information'],
     configuration: ['useSPFxConfigurationStore', 'Compare layered configuration and physical inventories'],
     'configuration-service': ['createSPFxConfigurationStoreService', 'Compose tenant defaults and site overrides with the service'],
@@ -103,7 +105,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -363,6 +365,21 @@ async function interact(page, key) {
     case 'tenant-property-service': await panel.getByLabel('Catalog URL', { exact: true }).fill('https://simulated.invalid/sites/catalog'); await panel.getByRole('button', { name: 'Read', exact: true }).click(); await panel.getByText('Property not set', { exact: true }).waitFor(); break;
     case 'tenant': await panel.getByRole('button', { name: 'Activate tenant store', exact: true }).click(); await settle(page); await panel.getByLabel('Operation', { exact: true }).selectOption('save'); await panel.getByLabel('Value', { exact: true }).fill('Local draft'); check('tenant: editable draft', await panel.getByLabel('Value', { exact: true }).inputValue(), 'Local draft'); break;
     case 'tenant-service': await panel.getByLabel('Catalog URL', { exact: true }).fill('https://simulated.invalid/sites/catalog'); check('tenant service: Save initially locked', await panel.getByRole('button', { name: 'Save and read numeric-looking text', exact: true }).isDisabled(), true); break;
+    case 'pnp-operations': {
+      const before = await page.evaluate(() => window.clientsFixture.requests.length);
+      await panel.getByLabel('Request', { exact: true }).selectOption('batch');
+      await panel.getByLabel('Request', { exact: true }).selectOption('invoke');
+      check('PnP operation mode edits send no native requests', await page.evaluate(() => window.clientsFixture.requests.length), before);
+      await panel.getByRole('button', { name: 'Run', exact: true }).click();
+      await panel.getByText('Operations tasks - 17 items', { exact: true }).waitFor();
+      check('PnP invoke physical web/query', await page.evaluate(() => window.clientsFixture.requests.slice(-1).map(request => { const url = new URL(request.target); return [request.kind, url.pathname, [...url.searchParams].sort()]; })), [['pnp-lists', '/sites/demo/_api/web/lists', [['$filter', 'Hidden eq false'], ['$select', 'Title,ItemCount'], ['$top', '10']]]]);
+      await panel.getByLabel('Request', { exact: true }).selectOption('batch');
+      await panel.getByRole('button', { name: 'Run', exact: true }).click();
+      await panel.getByText('Operations reader', { exact: true }).waitFor();
+      check('PnP batch object results', await panel.getByRole('definition').allTextContents(), ['Operations web', 'Operations reader']);
+      check('PnP batch is three inner reads', await page.evaluate(() => { const request = window.clientsFixture.requests.filter(request => request.kind === 'pnp-batch').slice(-1)[0]; return [request.settings.method, [...request.settings.body.matchAll(/^GET (.+) HTTP\/1\.1$/gm)].map(match => { const url = new URL(match[1]); return [url.pathname, [...url.searchParams]]; }), request.settings.body.includes('changeset')]; }), ['POST', [['/sites/demo/_api/web/lists', [['$select', 'Title'], ['$top', '5']]], ['/sites/demo/_api/web/currentUser', [['$select', 'Title']]], ['/sites/demo/_api/web', [['$select', 'Title']]]], false]);
+      break;
+    }
     case 'pnp-context': {
       const before = await page.evaluate(() => window.clientsFixture.requests.length);
       await panel.getByRole('textbox', { name: 'Site URL', exact: true }).fill('/sites/context-target');

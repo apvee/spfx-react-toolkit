@@ -4,7 +4,6 @@
  */
 
 // PnP Operations (invoke/batch) demo
-export { PnPOperationsDemo } from './PnPOperationsDemo';
 
 // PnP List CRUD demo
 export { PnPListDemo } from './PnPListDemo';

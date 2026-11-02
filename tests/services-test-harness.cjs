@@ -27,7 +27,7 @@ function createHarness(boundaries = {}, options = {}) {
     if (cache.has(file)) return cache.get(file).exports;
     const module = { exports: {} };
     cache.set(file, module);
-    const output = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { allowJs: true, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.React }}).outputText;
+    const output = ts.transpileModule(fs.readFileSync(file, 'utf8'), { fileName: file, compilerOptions: { allowJs: true, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.React }}).outputText;
     function sourceRequire(specifier) {
       if (specifier.startsWith('ApveeSpfxReactToolkit')) return nativeResources.require(specifier);
       if (Object.hasOwn(boundaries, specifier)) return boundaries[specifier];

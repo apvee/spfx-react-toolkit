@@ -1,9 +1,4 @@
-const page = { site: { absoluteUrl: 'https://simulated.invalid/sites/demo' }, web: { absoluteUrl: 'https://simulated.invalid/sites/demo' }, cultureInfo: { currentCultureName: 'en-US', currentUICultureName: 'en-US' } };
 const forbiddenWrite = async (): Promise<never> => { throw new Error('Fixture forbids CRUD'); };
-const unavailable = { isReady: false, isInitializing: false, isLoading: false, error: undefined, invoke: async () => undefined, baseUrl: page.web.absoluteUrl };
-// Match the real hook's stable callback identity across renders of a scope.
-const pnp = { ...unavailable, batch: async () => undefined, clearError: () => {} };
-export const useSPFxPnP = () => pnp;
 const list = { items: [], loading: false, isEmpty: false, hasMore: false, query: async () => [], loadMore: async () => [], clearError: () => {}, create: forbiddenWrite, update: forbiddenWrite, remove: forbiddenWrite };
 export const useSPFxPnPList = () => list;
 export const useSPFxPnPListById = () => list;

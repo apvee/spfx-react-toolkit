@@ -10,7 +10,7 @@ const modes = [
   ['Url', 'url', 'serverRelativeUrl', 'Server-relative list URL', 'Query by URL', '/sites/projects/Lists/Tasks'],
   ['Path', 'path', 'webRelativePath', 'Web-relative list path', 'Query by path', 'Lists/Tasks'],
 ];
-function fixture(t) {
+function fixture(t, { panel = false } = {}) {
   const factories = [], calls = [];
   let resolve, reject;
   const context = { sp: {}, isInitialized: true };
@@ -33,7 +33,7 @@ function fixture(t) {
   // JSDOM has no layout observer; messages still use the actual Fluent DOM.
   window.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
   t.mock.method(window, 'setTimeout', (callback, delay) => setTimeout(callback, delay));
-  const Component = h.load(demo).PnPListAccessDemo;
+  const Component = panel ? h.load(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/PnPPanel.tsx')).default : h.load(demo).PnPListAccessDemo;
   const view = h.mountComponent(() => h.React.createElement(FluentProvider, { theme: webLightTheme }, h.React.createElement(Component)));
   const flush = async () => h.act(async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); await new Promise(r => setTimeout(r, 0)); });
   function button(name) { const element = Array.from(view.container.querySelectorAll('button')).find(b => b.textContent === name); assert.ok(element, name); return element; }
@@ -101,4 +101,10 @@ test('list query sections keep query inputs separate from commands without blank
     assert.equal(commands.querySelectorAll('input').length, 0);
     assert.equal(commands.textContent, action);
   }
+});
+
+test('remaining PnP panel defaults to blank explicit list access without requests', async t => {
+  const f = fixture(t, { panel: true }); await f.flush();
+  assert.equal(f.container.querySelector('select[data-demo-variant="PnPPanel"]').value, 'listAccess');
+  assert.equal(f.button('Query by GUID').disabled, true); assert.deepEqual(f.calls, []);
 });
