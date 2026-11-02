@@ -188,21 +188,32 @@ export type Component = (props: Props) => React.ReactElement;
     if (actual.isUnion() || expected.isUnion()) {
       const actualParts = actual.isUnion() ? actual.types : [actual];
       const expectedParts = expected.isUnion() ? expected.types : [expected];
-      return actualParts.every(part => expectedParts.some(other => equivalentShellField(part, other, new Map(seen))));
+      return actualParts.every(part => expectedParts.some(other => equivalentShellField(part, other, new Map(seen)))) &&
+        expectedParts.every(other => actualParts.some(part => equivalentShellField(part, other, new Map(seen))));
     }
-    const calls = checker.getSignaturesOfType(actual, ts.SignatureKind.Call);
-    const expectedCalls = checker.getSignaturesOfType(expected, ts.SignatureKind.Call);
-    if (calls.length !== expectedCalls.length || !calls.every((call, index) => {
-      const target = expectedCalls[index];
-      return call.parameters.length === target.parameters.length && call.minArgumentCount === target.minArgumentCount &&
-        equivalentShellField(checker.getReturnTypeOfSignature(call), checker.getReturnTypeOfSignature(target), seen) &&
-        call.parameters.every((parameter, position) => equivalentShellField(
-          checker.getTypeOfSymbolAtLocation(parameter, parameter.valueDeclaration || contractSource),
-          checker.getTypeOfSymbolAtLocation(target.parameters[position], target.parameters[position].valueDeclaration || contractSource), seen));
-    })) return false;
-    return checker.getPropertiesOfType(actual).every(property => {
+    const indexes = checker.getIndexInfosOfType(actual);
+    const expectedIndexes = checker.getIndexInfosOfType(expected);
+    if (indexes.length !== expectedIndexes.length || !indexes.every(index => expectedIndexes.some(target =>
+      index.isReadonly === target.isReadonly && equivalentShellField(index.keyType, target.keyType, new Map(seen)) &&
+      equivalentShellField(index.type, target.type, new Map(seen))))) return false;
+    for (const kind of [ts.SignatureKind.Call, ts.SignatureKind.Construct]) {
+      const calls = checker.getSignaturesOfType(actual, kind);
+      const expectedCalls = checker.getSignaturesOfType(expected, kind);
+      if (calls.length !== expectedCalls.length || !calls.every((call, index) => {
+        const target = expectedCalls[index];
+        return call.parameters.length === target.parameters.length && call.minArgumentCount === target.minArgumentCount &&
+          (call.typeParameters?.length ?? 0) === (target.typeParameters?.length ?? 0) &&
+          equivalentShellField(checker.getReturnTypeOfSignature(call), checker.getReturnTypeOfSignature(target), seen) &&
+          call.parameters.every((parameter, position) => equivalentShellField(
+            checker.getTypeOfSymbolAtLocation(parameter, parameter.valueDeclaration || contractSource),
+            checker.getTypeOfSymbolAtLocation(target.parameters[position], target.parameters[position].valueDeclaration || contractSource), seen));
+      })) return false;
+    }
+    const properties = checker.getPropertiesOfType(actual);
+    if (properties.length !== checker.getPropertiesOfType(expected).length) return false;
+    return properties.every(property => {
       const counterpart = checker.getPropertyOfType(expected, property.name);
-      if (!counterpart) return false;
+      if (!counterpart || Boolean(property.flags & ts.SymbolFlags.Optional) !== Boolean(counterpart.flags & ts.SymbolFlags.Optional)) return false;
       return equivalentShellField(checker.getTypeOfSymbolAtLocation(property, property.valueDeclaration || contractSource),
         checker.getTypeOfSymbolAtLocation(counterpart, counterpart.valueDeclaration || contractSource), seen);
     });

@@ -290,6 +290,26 @@ test('rejects unsafe, required, narrowed and indexed Shell extensions and patch 
   }
 });
 
+const reviewedUnsafeShellShapes = [
+  ['empty naming dictionary', 'strings', '{}'],
+  ['missing naming member', 'strings', '{ titleEditorLabel?: string }'],
+  ['unsupported construct signature', 'strings', '{ titleEditorLabel?: string; titlePlaceholder?: string; new(): {} }'],
+  ['unsafe naming index', 'strings', '{ titleEditorLabel?: string; titlePlaceholder?: string; [key: string]: any }'],
+  ['unsafe nested color index', 'titleEditorStrings', '{ bold?: string; colorNames?: { red?: string; [key: string]: any }; formattingShortcut?: (label: string, shortcut: string) => string }'],
+];
+for (const [label, field, shape] of reviewedUnsafeShellShapes) for (const boundary of ['presentation', 'patch']) {
+  test(`rejects reviewed ${label} at Shell ${boundary} boundary`, () => {
+    const shell = fs.readFileSync(path.join(fixture, 'cases/shell.jsdoc'), 'utf8');
+    const extension = boundary === 'presentation' ? `{ ${field}?: ${shape} }` : `Pick<WebPartShellProps<IWebPartShellProperties>, '${field}'>`;
+    let raw = shell.replace("'padding'>>", "'padding'>> & " + extension);
+    if (boundary === 'patch') raw = raw.replace("patch: Partial<DemoShellPort['presentation']>",
+      `patch: Partial<Omit<DemoShellPort['presentation'], '${field}'>> & { ${field}?: ${shape} }`);
+    const result = collect(replaceDoc(raw));
+    assert.equal(result.examples.length, 0, JSON.stringify(result.diagnostics));
+    assert.ok(result.diagnostics.some(item => item.code === 'EXECUTABLE_COMPONENT'));
+  });
+}
+
 test('reports snippet compiler errors at physical source lines without evaluating metadata', () => {
   const result = invalid(component + '\nconst broken: number = "text";\n' + metadata, 'TS2322');
   assert.ok(result.diagnostics.some(item => item.code === 'TS2322' && item.line === 6));

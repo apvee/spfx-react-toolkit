@@ -4,6 +4,23 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+// The selected configuration loader in both native fixture bundles requests
+// exactly its generated module plus this shared Fluent Switch chunk. Keep this
+// boundary independent of editor naming so an unrelated runtime chunk fails too.
+const nativeReadJavaScript = [
+  'fixture.js',
+  'spfx-jsdoc-524ada20fca467ad721252dc50e1ffa9546c8e06f490d7728060dd959a62a61f.fixture.js',
+  'vendors-node_modules_fluentui_react-switch_lib_components_Switch_Switch_js.fixture.js',
+];
+function unexpectedReadJavaScript(requests, url) {
+  const fixture = new URL(url);
+  const allowed = new Set(nativeReadJavaScript.map(file => new URL(file, fixture).pathname));
+  return requests.filter(request => {
+    const script = new URL(request);
+    return script.origin !== fixture.origin || !allowed.has(script.pathname);
+  });
+}
+
 /** Select the current generated feature/scenario through the actual explorer. */
 async function selectGeneratedShellScenario(page, title = 'Configure the actual web part Shell') {
   const mobile = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
@@ -95,7 +112,8 @@ async function checkWebPartShellBrowser(page, record) {
   await check('Shell local origin', new URL(page.url()).origin, url);
   await check('Shell meaningful sample', await root.locator('[data-shell-demo="panel"]').count(), 1);
   await check('Shell no framework overlay', await page.locator('webpack-dev-server-client-overlay,#webpack-dev-server-client-overlay,nextjs-portal').count(), 0);
-  await check('Read requests zero editor-engine chunks; generated scenarios may load', requests.filter(request => /editable-text-editor|prosemirror|tiptap/i.test(new URL(request).pathname)), []);
+  await check('Read JavaScript is limited to fixture, selected scenario and demonstrated peer chunks', unexpectedReadJavaScript(requests, url), []);
+  await check('Read requests zero editor-engine chunks', requests.filter(request => /editable-text-editor|prosemirror|tiptap/i.test(new URL(request).pathname)), []);
   await check('Read creates no editable engine DOM', await root.locator('[contenteditable]').count(), 0);
   await check('Read mount never writes properties', (await observations()).refreshes, [0, 0]);
   await check('metadata search/plain fixture property retained', (await observations()).properties.listId, 'keep-0');
@@ -684,4 +702,4 @@ async function checkWebPartShellBrowser(page, record) {
     physicalIME: 'NOT EXECUTED', touchHardware: 'NOT EXECUTED', screenReader: 'NOT EXECUTED', nativeTenantCommandParity: 'NOT EXECUTED', tenantSaveReload: 'NOT EXECUTED', injectedFailure: { aborted, errors: injectedErrors }, requests, final: await observations()
   }, null, 2));
 }
-module.exports = { checkWebPartShellBrowser, selectGeneratedShellScenario };
+module.exports = { checkWebPartShellBrowser, selectGeneratedShellScenario, unexpectedReadJavaScript };
