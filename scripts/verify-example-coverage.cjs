@@ -336,7 +336,7 @@ const { assertDemoControls } = require('./demo-controls.helpers.cjs');
 assertDemoControls(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest'));
 console.log('Verified Fluent 9 demo controls and host theme inheritance.');
 
-for (const name of ['SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGroupTrim']) {
+for (const name of ['SharePointGroupTrim', 'EntraGroupTrim']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   for (const marker of ['DemoCard', 'data-demo-variant', `${name}.Loading`, `${name}.Fallback`, `${name}.ErrorFallback`, 'key={applied.run}', 'data-trim-demo="applied-target"', 'data-trim-demo="run"', 'TrimProtectedContent', 'observation.gauge']) {
     if (!product.includes(marker)) throw new Error(`${name} observable scenario missing ${marker}`);
@@ -353,8 +353,12 @@ for (const [file, title, markers] of [
 }
 console.log('Verified actual trim scenarios and canonical Context availability; execution remains separately verified.');
 
-for (const marker of ['<EntraGroupTrim groups={[{ name: applied.group }]}', 'Permission AND Entra membership']) {
-  if (!read(path.join(panelsPath, 'SharePointPermissionTrimPanel.tsx')).includes(marker)) throw new Error(`Permission/Entra AND sample missing ${marker}`);
+for (const title of ['Stage resource permissions and observe protected lifetimes', 'Compose permission and Entra checks with nested AND']) {
+  const source = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/controls/sharepoint-permission-trim/sharepoint-permission-trim.tsx')), title);
+  const markers = ['export function Demo(', 'resetRevision', 'observe:', 'key={applied.id}', 'ProtectedContent', 'data-trim-demo="run"', 'data-trim-demo="applied-target"', 'SharePointPermissionTrim.Loading', 'SharePointPermissionTrim.Fallback', 'SharePointPermissionTrim.ErrorFallback'];
+  if (title === 'Compose permission and Entra checks with nested AND') markers.push('<EntraGroupTrim groups={[{ name: applied.group }]}', 'groupType="All" relationship="member" match="all"', 'level="inner"');
+  for (const marker of markers) if (!source.includes(marker)) throw new Error(`Canonical permission/AND scenario missing ${marker}`);
+  if (!read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')).includes(JSON.stringify(title))) throw new Error(`Canonical permission scenario unavailable: ${title}`);
 }
 
 // The hosted dictionary override belongs to its exact canonical case, not a retired panel.

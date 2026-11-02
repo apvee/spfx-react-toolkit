@@ -1,5 +1,6 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
+  SharePointPermissionTrim: ['Stage resource permissions and observe protected lifetimes', 'Compose permission and Entra checks with nested AND'],
   FileFolderPicker: ['Explore hosted files and folders with explicit source policies'],
   SitePicker: ['Explore site selection and contextual search'],
   ListPicker: ['Explore list catalogs and independent consumer choices'],

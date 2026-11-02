@@ -10,12 +10,12 @@ async function accessTrimsBrowser({ page, check, select, singleExample, labels, 
     check(`${key}: no check before Run`, await page.locator('[data-trim-demo=idle]').count(), 1);
     await configure({ mode: 'allowed', hold: true });
     await page.locator('[data-trim-demo=run]').click(); await state('loading');
-    check(`${key}: no protected effects while loading`, await page.locator('[data-trim-demo=mount-gauge]').textContent(), 'Protected mounts: 0; active: false');
+    check(`${key}: no protected effects while loading`, (await page.locator('[data-trim-demo=mount-gauge]').textContent()).includes('Protected mounts: 0;') && (await page.locator('[data-trim-demo=mount-gauge]').textContent()).includes('active: false'), true);
     await release(); await allowed(); await page.locator('[data-trim-demo=increment]').click();
     check(`${key}: counter active`, await page.locator('[data-trim-demo=increment]').textContent(), 'Protected counter: 1');
     const previousTarget = await page.locator('[data-trim-demo=applied-target]').textContent();
     const previousReads = await page.evaluate(() => window.trimFixture.calls.length);
-    if (key === 'sharepoint-permission-trim') await page.locator('[data-trim-demo=web-url]').fill('https://simulated.invalid/sites/next');
+    if (key === 'sharepoint-permission-trim') await page.getByRole('textbox', { name: 'Web URL', exact: true }).fill('https://simulated.invalid/sites/next');
     else await page.locator('[data-trim-demo=groups]').fill('Changed group');
     check(`${key}: draft keeps applied identity`, await page.locator('[data-trim-demo=applied-target]').textContent(), previousTarget);
     check(`${key}: draft keeps counter`, await page.locator('[data-trim-demo=increment]').textContent(), 'Protected counter: 1');
@@ -27,7 +27,7 @@ async function accessTrimsBrowser({ page, check, select, singleExample, labels, 
     await configure({ mode: 'error', hold: true }); await page.locator('[data-trim-demo=run]').click(); await state('loading'); await release(); await state('error');
     await configure({ mode: 'allowed', hold: true }); await page.locator('[data-trim-demo=run]').click(); await state('loading'); await release(); await allowed();
     check(`${key}: recovery mounts fresh counter`, await page.locator('[data-trim-demo=increment]').textContent(), 'Protected counter: 0');
-    check(`${key}: exactly two positive mounts`, (await page.locator('[data-trim-demo=mount-gauge]').textContent()).includes('Protected mounts: 2; active: true'), true);
+    check(`${key}: exactly two positive mounts`, (await page.locator('[data-trim-demo=mount-gauge]').textContent()).includes('Protected mounts: 2;') && (await page.locator('[data-trim-demo=mount-gauge]').textContent()).includes('active: true'), true);
     if (key === 'entra-group-trim') {
       await page.locator('[data-trim-demo=group-type]').selectOption('M365');
       await page.locator('[data-trim-demo=relationship]').selectOption('owner');
@@ -43,8 +43,9 @@ async function accessTrimsBrowser({ page, check, select, singleExample, labels, 
     for (const width of [1280, 320]) { await page.setViewportSize({ width, height: 1000 }); await overflow(page, `${key}/${width}`); await capture(page, `${key}-${width}`); }
     await page.setViewportSize({ width: 1280, height: 1000 });
   }
-  await select(page, 'sharepoint-permission-trim');
-  await page.locator('[data-demo-variant=sharepoint-permission-trim]').selectOption('and');
+  await select(page, 'permission-and');
+  await singleExample(page, 'permission-and');
+  await labels(page, 'permission-and');
   await configure({ mode: 'denied', hold: false });
   const beforeAND = await page.evaluate(() => window.trimFixture.calls.length);
   await page.locator('[data-trim-demo=run]').click(); await state('denied');

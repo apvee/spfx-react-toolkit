@@ -106,3 +106,7 @@ export type { PickerSelectionData, PrincipalType, SitePickerOption, ListPickerOp
 
 export { getSPFxCorrelationInfo } from '../../../packages/spfx-react-toolkit/lib/helpers/spfx-page-context.helpers';
 export { FileFolderPicker, type FileFolderPickerScope, type FileFolderPickerValue, type FileFolderPickerOption, type FileFolderPickerInitialLocation, type FileFolderPickerPreset, type FileFolderPickerProps } from '../../../packages/spfx-react-toolkit/lib/controls/file-folder-picker';
+
+// The released permission-resource and nested AND catalogue cases use real matching controls.
+export * from '../../../packages/spfx-react-toolkit/lib/controls/sharepoint-permission-trim';
+export * from '../../../packages/spfx-react-toolkit/lib/controls/entra-group-trim';

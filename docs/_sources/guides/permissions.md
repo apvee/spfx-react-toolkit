@@ -147,11 +147,15 @@ The lazy **SharePoint Group Trim** sample uses this actual control and native AP
 
 Available current-web masks use `useSPFxPermissions` without REST and inherit PageContext freshness. A missing mask or remote web uses native SPHttpClient. Scoped resources read their own effective permissions, not unrelated masks. HTTP/payload failures produce ErrorFallback with no partial grants. Requires a matching SPFx provider and its native PageContext/SPHttpClient; no PnP registrations are required.
 
-The lazy **SharePoint Permission Trim** sample uses this actual control and native APIs, editable selectors, enum fields, all three branches, a protected counter and effect mount gauge. Local fixtures replace only unavailable transports and do not establish authenticated tenant behavior. See [development verification](../development/INDEX.md) and the [controls index](../../api/INDEX.md#references).
+Stage current or explicit web/list/item/folder targets, native permission values and all/any matching, then Run. Draft edits retain the applied decision and actual protected counter. Repeating a settled check creates a new attempt; pending equivalent reads may share only within the matching provider. Reset retires the check, clears observations and restores idle without replacing the editor. Local native-boundary tests and authenticated SharePoint validation remain separate.
+
+<!-- toolkit:include symbol="SharePointPermissionTrim" section="example" title="Stage resource permissions and observe protected lifetimes" -->
 
 ### AND composition
 
-Nest actual trims to require both decisions. The inner check mounts only when the outer check allows, so an outer denial/error does not start the inner request. The Permission Trim sample includes this selectable composition. Its nested Entra check additionally needs the native Graph client and approved User.Read/GroupMember.Read.All access.
+Nest actual trims to require both decisions. The inner check mounts only when the outer check allows, so an outer denial/error does not start the inner request. The separate source-owned AND case retains the complete staged resource editor and names its outer and inner branches. Its nested Entra check additionally needs the native Graph client and approved User.Read/GroupMember.Read.All access.
+
+<!-- toolkit:include symbol="SharePointPermissionTrim" section="example" title="Compose permission and Entra checks with nested AND" -->
 
 `SharePointPermissionTrimBranchProps` describes each structural marker. `SharePointPermissionTrimProps` describes the control.
 

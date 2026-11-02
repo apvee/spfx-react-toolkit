@@ -32,10 +32,11 @@ test('browser pilot filter preserves its prior cohort and adds exact service and
     ViewPicker: ['Explore scoped view catalogs'], ListItemPicker: ['Explore list item labels and query pages'],
     PrincipalPicker: ['Explore principal discovery and explicit identity resolution'],
   };
-  const additions = { ...direct, ...search, ...pickers };
+  const trims = { SharePointPermissionTrim: ['Stage resource permissions and observe protected lifetimes', 'Compose permission and Entra checks with nested AND'] };
+  const additions = { ...direct, ...search, ...pickers, ...trims };
   for (const [name, titles] of Object.entries(additions)) assert.deepEqual(pilotTitles[name], titles);
   const features = Object.entries(pilotTitles).map(([title, titles]) => ({ key: title, title, scenarios: [...titles.map(title => ({ title })), { title: 'Future scenario' }] }));
-  const expectedGroup = title => (['WebPartShell', 'Pagination'].includes(title) || Object.hasOwn(pickers, title)) ? 'controls' : ['createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(title) ? 'services' : 'hooks';
+  const expectedGroup = title => (['WebPartShell', 'Pagination'].includes(title) || Object.hasOwn(pickers, title) || Object.hasOwn(trims, title)) ? 'controls' : ['createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(title) ? 'services' : 'hooks';
   const groups = ['controls', 'hooks', 'services'].map(key => ({ key, features: features.filter(feature => expectedGroup(feature.title) === key) })).concat([{ key: 'future', features: [{ title: 'Future feature', scenarios: [] }] }]);
   const original = structuredClone(groups);
   const filtered = filterPilotGroups(groups);
@@ -47,10 +48,10 @@ test('browser pilot filter preserves its prior cohort and adds exact service and
   assert.equal(filtered.flatMap(group => group.features).flatMap(feature => feature.scenarios).length, 55 + Object.values(additions).flat().length);
   assert.deepEqual(groups, original, 'filter never mutates any app catalogue group, feature or scenario');
 
-  const preceding = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(search, feature.title) && !Object.hasOwn(pickers, feature.title));
+  const preceding = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(search, feature.title) && !Object.hasOwn(pickers, feature.title) && !Object.hasOwn(trims, feature.title));
   assert.equal(preceding.length, 50, 'complete accepted predecessor cohort');
   assert.equal(preceding.flatMap(feature => feature.scenarios).length, 58);
-  const g1 = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(pickers, feature.title)).map(feature => ({ ...feature, scenarios: feature.scenarios.filter(entry => !['Filter search results with native refiner tokens','Request debounced suggestions after explicit start'].includes(entry.title)) }));
+  const g1 = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(pickers, feature.title) && !Object.hasOwn(trims, feature.title)).map(feature => ({ ...feature, scenarios: feature.scenarios.filter(entry => !['Filter search results with native refiner tokens','Request debounced suggestions after explicit start'].includes(entry.title)) }));
   assert.equal(g1.length, 52, 'complete accepted g1 feature cohort');
   assert.equal(g1.flatMap(feature => feature.scenarios).length, 60, 'complete accepted g1 scenario cohort');
   for (const title of ['Filter search results with native refiner tokens','Request debounced suggestions after explicit start']) {
@@ -67,9 +68,20 @@ test('browser pilot filter preserves its prior cohort and adds exact service and
   const shell = missingScenario.flatMap(group => group.features).find(feature => feature.title === 'WebPartShell');
   shell.scenarios = shell.scenarios.filter(scenario => scenario.title !== 'Configure the actual web part Shell');
   assert.throws(() => filterPilotGroups(missingScenario), /Missing pilot scenario or duplicate: WebPartShell\/Configure the actual web part Shell/);
-  assert.equal(filtered.flatMap(group=>group.features).length,60);
-  assert.equal(filtered.flatMap(group=>group.features).flatMap(feature=>feature.scenarios).length,70);
-  for (const owner of [...Object.keys(pickers), 'useSPFxPnPSearch', 'SearchVerticals', 'createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'useSPFxPnPListById', 'useSPFxPnPListByUrl', 'useSPFxPnPListByPath', 'useSPFxPnP', 'useSPFxPnPContext', 'useSPFxConfigurationStore', 'createSPFxConfigurationStoreService', 'useSPFxTenantProperty', 'createSPFxTenantPropertyService', 'useSPFxTenantKeyValueStore', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService']) {
+  const prior = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(trims, feature.title));
+  assert.equal(prior.length,60,'complete final accepted predecessor feature cohort');
+  assert.equal(prior.flatMap(feature=>feature.scenarios).length,70,'complete final accepted predecessor scenario cohort');
+  assert.equal(filtered.flatMap(group=>group.features).length,60+Object.keys(trims).length);
+  assert.equal(filtered.flatMap(group=>group.features).flatMap(feature=>feature.scenarios).length,70+Object.values(trims).flat().length);
+  for (const title of trims.SharePointPermissionTrim) {
+    const missing = structuredClone(groups), duplicate = structuredClone(groups);
+    const missingOwner = missing.flatMap(group => group.features).find(feature => feature.title === 'SharePointPermissionTrim');
+    missingOwner.scenarios = missingOwner.scenarios.filter(entry => entry.title !== title);
+    assert.throws(() => filterPilotGroups(missing), /Missing pilot scenario or duplicate: SharePointPermissionTrim/);
+    duplicate.flatMap(group => group.features).find(feature => feature.title === 'SharePointPermissionTrim').scenarios.push({ title });
+    assert.throws(() => filterPilotGroups(duplicate), /Missing pilot scenario or duplicate: SharePointPermissionTrim/);
+  }
+  for (const owner of [...Object.keys(trims), ...Object.keys(pickers), 'useSPFxPnPSearch', 'SearchVerticals', 'createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'useSPFxPnPListById', 'useSPFxPnPListByUrl', 'useSPFxPnPListByPath', 'useSPFxPnP', 'useSPFxPnPContext', 'useSPFxConfigurationStore', 'createSPFxConfigurationStoreService', 'useSPFxTenantProperty', 'createSPFxTenantPropertyService', 'useSPFxTenantKeyValueStore', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService']) {
     const missing = structuredClone(groups);
     for (const group of missing) group.features = group.features.filter(feature => feature.title !== owner);
     assert.throws(() => filterPilotGroups(missing), new RegExp('Missing pilot feature or duplicate: ' + owner));

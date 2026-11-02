@@ -166,7 +166,15 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     assert.ok(coverageToggle, 'verbose coverage has a disclosure');
     assert.equal(coverageToggle.getAttribute('aria-expanded'), 'false', 'demo examples precede collapsed metadata');
     act(() => coverageToggle.click());
-    assert.match(host.textContent, /FileFolderPicker \(Read\)/);
+    assert.match(host.textContent, /SPFxWebPartProvider \(Host\)/, 'detailed coverage still describes the actual remaining native host provider');
+    assert.doesNotMatch(host.textContent, /FileFolderPicker \(Read\)/, 'the retired panel is not transitional coverage');
+    const hosted = require('./fixtures/executable-examples/cards-description-list.cjs').scenario(
+      'Explore hosted files and folders with explicit source policies',
+      'packages/spfx-react-toolkit/src/controls/file-folder-picker/file-folder-picker.tsx#FileFolderPicker');
+    assert.deepEqual(hosted.entry.publicNames, ['FileFolderPicker']);
+    assert.deepEqual(hosted.entry.metadata, { host: 'webPart', kind: 'write', contentPlacement: 'configuration', observe: 'Start the hosted picker, apply an explicit source and starting location, then compare file policies and retained references; Reset closes the local session and requires Start again.' });
+    assert.equal(typeof hosted.entry.load, 'function', 'canonical availability retains an actual lazy module, without opening the native dialog');
+    assert.ok(fs.existsSync(hosted.file), 'the source-owned executable module exists independently of the native Property Pane factory');
     act(() => coverageToggle.click());
     const features = Array.from(host.querySelectorAll('[data-example-feature]'));
     assert.equal(features.length, registry.length, 'one legacy feature entry per panel, not per covered symbol');

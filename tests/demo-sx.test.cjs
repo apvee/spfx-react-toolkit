@@ -143,7 +143,7 @@ test('numeric drafts allow clearing and sequential replacement while retaining v
 
 test('hook, provider, style and service panels use Fluent configuration and shared demo regions', () => {
   const componentRoot = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
-  const panels = ['Providers', 'Search'];
+  const panels = ['Providers'];
   const files = panels.map(name => path.join(componentRoot, 'panels', name + 'Panel.tsx'))
     .concat(fs.readdirSync(path.join(componentRoot, 'demos')).filter(name => /^PnP.*\.tsx$/.test(name)).map(name => path.join(componentRoot, 'demos', name)));
   for (const file of files) {
@@ -160,6 +160,24 @@ test('hook, provider, style and service panels use Fluent configuration and shar
   new Function('module', 'exports', require('typescript').transpileModule(catalogueText, {
     compilerOptions: { module: require('typescript').ModuleKind.CommonJS },
   }).outputText)(catalogueModule, catalogueModule.exports);
+  const searchExpectations = [
+    ['useSPFxPnPSearch', 'Search SharePoint text with explicit execution'],
+    ['useSPFxPnPSearch', 'Filter search results with native refiner tokens'],
+    ['useSPFxPnPSearch', 'Request debounced suggestions after explicit start'],
+    ['SearchVerticals', 'Search selected verticals with builder paging'],
+  ];
+  const searchOwners = new Set(searchExpectations.map(([name]) => `packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#${name}`));
+  const searchCases = catalogueModule.exports.executableExamples.filter(entry => searchOwners.has(entry.ownerKey));
+  assert.deepEqual(searchCases.map(entry => [entry.featureTitle, entry.title]).sort(), searchExpectations.sort(), 'all four canonical Search workflows replace the retired text-read panel');
+  for (const entry of searchCases) {
+    const source = fs.readFileSync(path.join(generatedRoot, entry.id + '.tsx'), 'utf8');
+    assert.deepEqual([entry.metadata.host, entry.metadata.kind, entry.metadata.contentPlacement], ['webPart', 'read', 'configuration']);
+    assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|a)\b|\bstyles?\s*=/, entry.title);
+    assert.doesNotMatch(source, /<FluentProvider\b|theme=/, 'portable Search inherits the actual host theme');
+    assert.match(source, /className=/, 'Search still authors classes with its existing host renderer');
+    assert.match(source, /return render \? render\(regions\)/, 'Search forwards its actual shared regions and retains standalone rendering');
+    assert.match(source, /commands:\s*<>?\s*<Button|commands:\s*<Button/, 'Search retains actual Fluent commands');
+  }
   const crudCases = catalogueModule.exports.executableExamples.filter(entry => entry.ownerKey === 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList' && entry.title === 'Manage list items with paging and captured delete consent');
   assert.equal(crudCases.length, 1, 'canonical CRUD replaces the final legacy PnP panel');
   const crudSource = fs.readFileSync(path.join(generatedRoot, crudCases[0].id + '.tsx'), 'utf8');

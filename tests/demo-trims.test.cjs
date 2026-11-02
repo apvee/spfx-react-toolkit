@@ -1,8 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
-const { createHarness } = require('./services-test-harness.cjs');
 const { loadHook } = require('./async-test-harness.cjs');
+const { createHarness } = require('./services-test-harness.cjs');
 const { Simulate } = require('react-dom/test-utils');
 const fluent = require('@fluentui/react-components');
 const { RendererProvider } = require('@griffel/react');
@@ -28,8 +28,7 @@ function fixture(t, name) {
     './useAsyncInvoke.internal': { useAsyncInvoke: loadHook('useAsyncInvoke.internal', 'useAsyncInvoke') },
   });
   useContext = h.load('core/context.internal.tsx').useSPFxContext; usePage = h.load('hooks/useSPFxPageContext.ts').useSPFxPageContext;
-  Object.assign(toolkit, h.load('hooks/useSPFxCrossSitePermissions.ts'));
-  for (const [family, slug] of [['SharePointPermissionTrim', 'sharepoint-permission-trim'], ['SharePointGroupTrim', 'sharepoint-group-trim'], ['EntraGroupTrim', 'entra-group-trim']]) Object.assign(toolkit, h.load(`controls/${slug}/${slug}.tsx`));
+  for (const slug of ['sharepoint-group-trim', 'entra-group-trim']) Object.assign(toolkit, h.load(`controls/${slug}/${slug}.tsx`));
   const Provider = h.load('core/provider-base.internal.tsx').SPFxProviderBase;
   const theme = { tryGetTheme: () => ({}), themeChangedEvent: { add() {}, remove() {} } };
   const factory = { getClient: async () => graph };
@@ -44,7 +43,7 @@ function fixture(t, name) {
   const finish = async () => { for (let i = 0; i < 12; i++) { await flush(); while (pending.length) { await h.act(async () => pending.shift()()); } } };
   return { h, view, calls, select, click, flush, finish, mode: value => { mode = value; } };
 }
-for (const name of ['SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGroupTrim']) test(`${name} actual panel stages native reads and protects component lifetimes`, async t => {
+for (const name of ['SharePointGroupTrim', 'EntraGroupTrim']) test(`${name} actual panel stages native reads and protects component lifetimes`, async t => {
   const f = fixture(t, name); await f.flush();
   assert.equal(f.view.container.querySelectorAll('[data-demo-section]').length, 1);
   assert.equal(f.calls.length, 0); assert.ok(f.view.container.querySelector('[data-trim-demo=idle]'));
@@ -54,7 +53,7 @@ for (const name of ['SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGro
   await f.finish(); assert.ok(f.view.container.querySelector('[data-trim-demo=protected]'));
   f.click('[data-trim-demo=increment]'); assert.match(f.view.container.textContent, /Protected counter: 1/); assert.match(f.view.container.textContent, /Protected mounts: 1; active: true/);
   const applied = f.view.container.querySelector('[data-trim-demo=applied-target]').textContent;
-  if (name === 'SharePointPermissionTrim') f.select('[data-trim-demo=web-url]', 'https://tenant.test/sites/next'); else f.select('[data-trim-demo=groups]', 'Changed group');
+  f.select('[data-trim-demo=groups]', 'Changed group');
   assert.equal(f.view.container.querySelector('[data-trim-demo=applied-target]').textContent, applied); assert.match(f.view.container.textContent, /Protected counter: 1/);
   const before = f.calls.length;
   f.mode('denied');
@@ -62,14 +61,23 @@ for (const name of ['SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGro
   assert.equal(f.view.container.querySelector('[data-trim-demo=protected]'), null); await f.finish();
   assert.equal(f.view.container.querySelector('[data-trim-demo=state]').getAttribute('data-trim-state'), 'denied');
   assert.ok(f.calls.length > before); assert.match(f.view.container.textContent, /active: false/);
-  if (name !== 'SharePointPermissionTrim') f.select('[data-trim-demo=groups]', 'Project Readers');
-  else f.select('[data-trim-demo=web-url]', 'invalid URL');
+  f.select('[data-trim-demo=groups]', 'Project Readers');
   f.mode('error'); f.click('[data-trim-demo=run]'); await f.finish();
   assert.equal(f.view.container.querySelector('[data-trim-demo=state]').getAttribute('data-trim-state'), 'error');
 });
-test('permission sample nested AND checks mount inner Entra group only after permission grant', async t => {
-  const f = fixture(t, 'SharePointPermissionTrim'); await f.flush();
-  f.select('[data-demo-variant=sharepoint-permission-trim]', 'and'); f.mode('denied'); f.click('[data-trim-demo=run]'); await f.finish();
-  assert.equal(f.calls.some(call => call.url.startsWith('/groups')), false); assert.equal(f.view.container.querySelector('[data-trim-demo=protected]'), null);
-  f.mode('allowed'); f.click('[data-trim-demo=run]'); await f.finish(); assert.ok(f.calls.some(call => call.url.startsWith('/groups'))); assert.ok(f.view.container.querySelector('[data-trim-demo=protected]'));
+const { createTrimsFixture, single, nested, groupId } = require('./fixtures/executable-examples/trims-scenarios.cjs');
+test('canonical permission workflow stages real native reads and protects lifetimes', async t => {
+  const f = createTrimsFixture(t, single); await f.flush(); assert.equal(f.calls.length, 0);
+  f.click(); await f.flush(); assert.ok(f.container.querySelector('[data-trim-state="loading"]')); assert.equal(f.diagnostics.mounts, 0);
+  await f.settle(f.calls[0], { High: 0, Low: 1 }); f.click('Protected counter: 0'); assert.equal(f.diagnostics.counter, 1);
+  const target = f.diagnostics.target; f.change('Web URL', 'https://tenant.test/sites/remote'); assert.deepEqual(f.diagnostics.target, target); assert.equal(f.calls.length, 1);
+  f.click(); await f.flush(); await f.settle(f.calls[1], { High: 0, Low: 0 }); assert.ok(f.container.querySelector('[data-trim-state="denied"]')); assert.equal(f.diagnostics.active, false);
+  f.change('Web URL', 'invalid URL'); f.click(); await f.flush(); assert.ok(f.container.querySelector('[data-trim-state="error"]')); assert.equal(f.calls.length, 2);
+});
+test('canonical nested AND starts Graph only after actual outer permission grant', async t => {
+  const f = createTrimsFixture(t, nested); f.click(); await f.flush(); await f.settle(f.calls[0], { High: 0, Low: 0 });
+  assert.equal(f.initializations.length, 0); assert.equal(f.diagnostics.mounts, 0);
+  f.click(); await f.flush(); await f.settle(f.calls[1], { High: 0, Low: 1 }); assert.equal(f.initializations.length, 1);
+  await f.initialize(); await f.settle(f.calls[2], { value: [{ id: groupId, displayName: 'Project Readers' }] });
+  await f.settle(f.calls[3], { value: [groupId] }); assert.equal(f.diagnostics.mounts, 1); assert.equal(f.diagnostics.active, true);
 });

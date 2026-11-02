@@ -55,6 +55,7 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve e
     useSPFxPnPSearch: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#useSPFxPnPSearch',
     SearchVerticals: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#SearchVerticals',
   };
+  const trimOwners = { SharePointPermissionTrim: 'packages/spfx-react-toolkit/src/controls/sharepoint-permission-trim/sharepoint-permission-trim.tsx#SharePointPermissionTrim' };
   const pickerOwners = {
     FileFolderPicker: 'packages/spfx-react-toolkit/src/controls/file-folder-picker/file-folder-picker.tsx#FileFolderPicker',
     SitePicker: 'packages/spfx-react-toolkit/src/controls/pickers/site-picker.tsx#SitePicker',
@@ -67,6 +68,7 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve e
   };
   const pilotOwners = {
     ...pickerOwners,
+    ...trimOwners,
     ...searchOwners,
     ...directServiceOwners,
     useSPFxPnPListById: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts#useSPFxPnPListById',
@@ -120,14 +122,14 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve e
     useSPFxAadTokenProvider: 'packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts#useSPFxAadTokenProvider',
     useSPFxApiPermissionPrecheck: 'packages/spfx-react-toolkit/src/hooks/useSPFxApiPermissionPrecheck.ts#useSPFxApiPermissionPrecheck',
   };
-  assert.equal(Object.keys(pilotOwners).filter(name => !Object.hasOwn(directServiceOwners, name) && !Object.hasOwn(searchOwners, name) && !Object.hasOwn(pickerOwners, name)).length, 47, 'three PnP selectors, one PnP operation, one PnP context, two configuration, five original, 21 Context, six Clients, two GraphData two Site two tenant-property and two tenant-list owners');
-  assert.equal(Object.keys(pilotOwners).filter(name => !Object.hasOwn(searchOwners, name) && !Object.hasOwn(pickerOwners, name)).length, 50, 'complete accepted predecessor owner cohort');
+  assert.equal(Object.keys(pilotOwners).filter(name => !Object.hasOwn(directServiceOwners, name) && !Object.hasOwn(searchOwners, name) && !Object.hasOwn(pickerOwners, name) && !Object.hasOwn(trimOwners, name)).length, 47, 'three PnP selectors, one PnP operation, one PnP context, two configuration, five original, 21 Context, six Clients, two GraphData two Site two tenant-property and two tenant-list owners');
+  assert.equal(Object.keys(pilotOwners).filter(name => !Object.hasOwn(searchOwners, name) && !Object.hasOwn(pickerOwners, name) && !Object.hasOwn(trimOwners, name)).length, 50, 'complete accepted predecessor owner cohort');
   assert.deepEqual(Object.keys(pilotTitles).sort(), Object.keys(pilotOwners).sort(), 'every accepted pilot has an independent canonical owner expectation');
   const pilots = filterPilotGroups(groups);
   assert.deepEqual(pilots.flatMap(group => group.features.map(feature => feature.title)).sort(), Object.keys(pilotTitles).sort());
   for (const group of pilots) for (const feature of group.features) {
     assert.equal(feature.key, pilotOwners[feature.title]);
-    assert.equal(group.key, feature.title === 'WebPartShell' || feature.title === 'Pagination' || Object.hasOwn(pickerOwners, feature.title) ? 'controls' : ['createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(feature.title) ? 'services' : 'hooks');
+    assert.equal(group.key, feature.title === 'WebPartShell' || feature.title === 'Pagination' || (Object.hasOwn(pickerOwners, feature.title) || Object.hasOwn(trimOwners, feature.title)) ? 'controls' : ['createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(feature.title) ? 'services' : 'hooks');
     assert.deepEqual(feature.scenarios.map(entry => entry.title).sort(), [...pilotTitles[feature.title]].sort());
     for (const entry of feature.scenarios) {
       assert.equal(entry, byId.get(entry.id), 'filtered scenarios retain their actual canonical catalogue entry');

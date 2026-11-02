@@ -97,6 +97,8 @@ async function select(page, key) {
     site: ['useSPFxSiteKeyValueStore', 'Explore collection root records with guarded mutations'],
     'site-service': ['createSPFxSiteKeyValueStoreService', 'Read a collection root record before a consented save'],
     context: ['useSPFxCrossSitePermissions', 'Check staged legacy site web and list permissions'],
+    'sharepoint-permission-trim': ['SharePointPermissionTrim', 'Stage resource permissions and observe protected lifetimes'],
+    'permission-and': ['SharePointPermissionTrim', 'Compose permission and Entra checks with nested AND'],
     'context-scoped': ['useSPFxCrossSitePermissions', 'Check staged web list item and folder permissions'],
     'context-hub': ['useSPFxHubSiteInfo', 'Start a scope bound hub association lookup'],
     'runtime-properties': ['useSPFxProperties', 'Edit the current host description with merge and updater'],
