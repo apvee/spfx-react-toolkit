@@ -245,3 +245,92 @@ for (const nextRead of ['denied', 'failed', 'allowed']) test(`direct service ret
     assert.match(f.container.textContent, /Saved /);
   }
 });
+
+function capturedDraftChange(f, label) {
+  function visit(value) {
+    if (!value || typeof value !== 'object') return undefined;
+    if ((value.props?.['aria-label'] === label || value.props?.label === label) && value.props?.onChange) return value.props.onChange;
+    for (const child of Array.isArray(value) ? value : [value.props?.children]) { const found = visit(child); if (found) return found; }
+    return undefined;
+  }
+  const change = visit(f.regions.controls); assert.equal(typeof change, 'function', label + ' authored draft callback');
+  return value => change(undefined, typeof value === 'boolean' ? { checked: value } : { value });
+}
+for (const kind of ['hook', 'service']) {
+  test(`${kind} no-edit admission positive dispatches one actual native write`, async t => {
+    const f = await writable(t, kind); const command = f.handler(kind === 'hook' ? 'Run' : 'Save');
+    f.h.act(() => { command(); }); await f.drain(protocol());
+    assert.equal(f.calls.filter(r => r.method === 'POST').length, 1); assert.match(f.container.textContent, /Saved /);
+  });
+  test(`${kind} batched Key admission checkpoint retires old consent and command before commit`, async t => {
+    const f = await writable(t, kind); const edit = capturedDraftChange(f, 'Key'), consent = capturedServiceConsent(f), command = f.handler(kind === 'hook' ? 'Run' : 'Save');
+    const button = f.find(kind === 'hook' ? 'Run' : 'Save'), count = f.calls.length, previousKey = f.container.querySelector('[aria-label="Key"]').value;
+    let inside;
+    f.h.act(() => { edit('spfx-toolkit-site-demo-next'); consent(true); command(); inside = f.calls.length - count; });
+    const after = f.calls.length - count;
+    // Settle any erroneously admitted ORIGINAL public operation; this is not cancellation.
+    await f.drain(protocol());
+    const posts = f.calls.filter(r => r.method === 'POST');
+    t.diagnostic(`${kind}: native request delta inside/after batch=${inside}/${after}; writes=${posts.length}; previous key=${previousKey}; posted key=${posts[0] ? JSON.parse(posts[0].init.body).Title : '(none)'}`);
+    assert.deepEqual([inside, after], [0, 0], 'draft change must invalidate admission synchronously before React commits');
+    assert.equal(f.find(kind === 'hook' ? 'Run' : 'Save'), button);
+    assert.equal(f.container.querySelector('[aria-label="Key"]').value, 'spfx-toolkit-site-demo-next');
+    assert.equal(visibleConsentChecked(f), false);
+    assert.equal(posts.length, 0); assert.ok(!f.container.textContent.includes('Saved '));
+  });
+}
+function visibleConsentChecked(f) {
+  const input = [...f.container.querySelectorAll('input[type="checkbox"]')].find(node => node.closest('label')?.textContent.includes('I consent to this exact disposable mutation') || document.querySelector(`label[for="${node.id}"]`)?.textContent.includes('I consent to this exact disposable mutation'));
+  return input?.checked ?? false;
+}
+const richDraftCases = [
+  { label: 'Operation', next: 'get' },
+  { label: 'Key', next: 'spfx-toolkit-site-demo-next', title: 'spfx-toolkit-site-demo-next', encoded: '"123"' },
+  { label: 'Value format', next: 'json', encoded: '123' },
+  { label: 'Value', next: '456', encoded: '"456"' },
+  { label: 'Replace/clear destination description', next: true, encoded: '"123"', description: 'Disposable SPFx React Toolkit site demo item' },
+  { label: 'Description', next: 'New description', encoded: '"123"', description: 'New description' },
+];
+for (const scenario of richDraftCases) test(`hook batched ${scenario.label} draft admission blocks retained consent and Run`, async t => {
+  const f = await writable(t); f.change('Value', '123');
+  if (scenario.label === 'Description') { f.check('Replace/clear destination description'); f.change('Description', 'Old description'); }
+  f.check('I consent to this exact disposable mutation');
+  const change = capturedDraftChange(f, scenario.label), consent = capturedServiceConsent(f), command = f.handler('Run'), count = f.calls.length;
+  let inside;
+  f.h.act(() => { change(scenario.next); consent(true); command(); inside = f.calls.length - count; });
+  const after = f.calls.length - count; await f.drain(protocol());
+  assert.deepEqual([inside, after], [0, 0], 'an accepted draft change retires admission before commit');
+  assert.equal(visibleConsentChecked(f), false);
+  assert.ok(!f.container.textContent.includes('Saved '));
+  if (scenario.label === 'Operation') {
+    f.click('Run'); await f.drain(protocol()); assert.ok(f.calls.length > count); assert.match(f.container.textContent, /not found\./); assert.equal(f.calls.filter(r => r.method === 'POST').length, 0);
+  } else {
+    f.check('I consent to this exact disposable mutation'); f.click('Run'); await f.drain(protocol());
+    const posts = f.calls.filter(r => r.method === 'POST'); assert.equal(posts.length, 1); const payload = JSON.parse(posts[0].init.body);
+    assert.equal(payload.Title, scenario.title ?? 'spfx-toolkit-site-demo-disposable'); assert.equal(payload.Value, scenario.encoded);
+    if (scenario.description !== undefined) assert.equal(payload.Description, scenario.description);
+    assert.match(f.container.textContent, /Saved /);
+  }
+});
+for (const kind of ['hook', 'service']) test(`${kind} accepted A-to-B-to-A draft transitions never revive either retained admission`, async t => {
+  const f = await writable(t, kind); const originalKey = f.container.querySelector('[aria-label="Key"]').value;
+  const consentA = capturedServiceConsent(f), commandA = f.handler(kind === 'hook' ? 'Run' : 'Save');
+  f.change('Key', 'spfx-toolkit-site-demo-B'); // Accepted A→B and commit before capturing B's actual handlers.
+  if (kind === 'service') { f.click('Read'); await f.drain(protocol()); }
+  f.check('I consent to this exact disposable mutation');
+  const changeB = capturedDraftChange(f, 'Key'), consentB = capturedServiceConsent(f), commandB = f.handler(kind === 'hook' ? 'Run' : 'Save'), count = f.calls.length;
+  let inside;
+  f.h.act(() => { changeB(originalKey); consentA(true); commandA(); consentB(true); commandB(); inside = f.calls.length - count; });
+  const after = f.calls.length - count; await f.drain(protocol());
+  assert.deepEqual([inside, after], [0, 0]); assert.equal(f.container.querySelector('[aria-label="Key"]').value, originalKey, 'B→A was accepted by B current setter, not forced through an obsolete A setter');
+  await f.flush(() => { consentA(true); commandA(); consentB(true); commandB(); }); assert.equal(f.calls.length, count);
+  if (kind === 'service') { f.click('Read'); await f.drain(protocol()); }
+  f.check('I consent to this exact disposable mutation'); f.click(kind === 'hook' ? 'Run' : 'Save'); await f.drain(protocol());
+  assert.equal(f.calls.filter(r => r.method === 'POST').length, 1); assert.match(f.container.textContent, /Saved /);
+});
+for (const kind of ['hook', 'service']) test(`${kind} same-value Key event preserves current no-edit admission`, async t => {
+  const f = await writable(t, kind); const key = f.container.querySelector('[aria-label="Key"]').value;
+  const change = capturedDraftChange(f, 'Key'), consent = capturedServiceConsent(f), command = f.handler(kind === 'hook' ? 'Run' : 'Save');
+  f.h.act(() => { change(key); consent(true); command(); }); await f.drain(protocol());
+  assert.equal(f.calls.filter(r => r.method === 'POST').length, 1); assert.match(f.container.textContent, /Saved /);
+});

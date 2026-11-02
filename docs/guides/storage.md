@@ -744,6 +744,13 @@ function SiteSession({ session, current, write, pending, isLocked, render }: {
   // The public read resolves a fallback. Its CURRENT rendered error takes precedence.
   const failure = visible ? visible.failure ?? (reading ? store.error?.message : store.writeError?.message) : undefined;
   const locked = pending || confirmation !== undefined;
+  const updateDraft = (changed: boolean, update: () => void): void => {
+    if (!changed || !valid() || locked || isLocked() || confirmationRef.current) return;
+    // Retire captured admission before React can batch the draft state update.
+    boundary.current = { ...boundary.current, token: {} };
+    approve(undefined);
+    update();
+  };
 
   const run = async (trigger: HTMLButtonElement): Promise<void> => {
     if (!valid() || isLocked() || pending || confirmationRef.current || !store.isReady || store.isLoading || store.isWriting) return;
@@ -799,13 +806,13 @@ function SiteSession({ session, current, write, pending, isLocked, render }: {
   const shownValue = (item: SPFxSiteKeyValueStoreItem): string => typeof item.value === 'string' ? JSON.stringify(item.value) : JSON.stringify(item.value) ?? String(item.value);
   const regions: DemoRegions = {
     controls: <>
-      <Field label="Operation"><Select aria-label="Operation" disabled={locked} value={action} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current) { approve(undefined); setAction(data.value as Action); } }}><option value="get">Read</option><option value="list">List</option><option value="save">Save</option><option value="remove">Remove</option></Select></Field>
-      {action !== 'list' && <Field label="Key"><Input aria-label="Key" disabled={locked} value={key} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current) { approve(undefined); setKey(data.value); } }}/></Field>}
+      <Field label="Operation"><Select aria-label="Operation" disabled={locked} value={action} onChange={(_, data) => { updateDraft(data.value !== action, () => setAction(data.value as Action)); }}><option value="get">Read</option><option value="list">List</option><option value="save">Save</option><option value="remove">Remove</option></Select></Field>
+      {action !== 'list' && <Field label="Key"><Input aria-label="Key" disabled={locked} value={key} onChange={(_, data) => { updateDraft(data.value !== key, () => setKey(data.value)); }}/></Field>}
       {action === 'save' && <>
-        <Field label="Value format"><Select aria-label="Value format" disabled={locked} value={format} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current) { approve(undefined); setFormat(data.value as Format); } }}><option value="text">Text</option><option value="json">JSON</option><option value="bigint">Big integer</option><option value="date">Date (ISO)</option></Select></Field>
-        <Field label="Value"><Input aria-label="Value" disabled={locked} value={value} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current) { approve(undefined); setValue(data.value); } }}/></Field>
-        <Checkbox label="Replace/clear destination description" disabled={locked} checked={replaceDescription} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current) { approve(undefined); setReplaceDescription(data.checked === true); } }}/>
-        <Field label="Description"><Input aria-label="Description" disabled={locked || !replaceDescription} value={description} onChange={(_, data) => { if (!locked && !isLocked() && !confirmationRef.current) { approve(undefined); setDescription(data.value); } }}/></Field>
+        <Field label="Value format"><Select aria-label="Value format" disabled={locked} value={format} onChange={(_, data) => { updateDraft(data.value !== format, () => setFormat(data.value as Format)); }}><option value="text">Text</option><option value="json">JSON</option><option value="bigint">Big integer</option><option value="date">Date (ISO)</option></Select></Field>
+        <Field label="Value"><Input aria-label="Value" disabled={locked} value={value} onChange={(_, data) => { updateDraft(data.value !== value, () => setValue(data.value)); }}/></Field>
+        <Checkbox label="Replace/clear destination description" disabled={locked} checked={replaceDescription} onChange={(_, data) => { updateDraft((data.checked === true) !== replaceDescription, () => setReplaceDescription(data.checked === true)); }}/>
+        <Field label="Description"><Input aria-label="Description" disabled={locked || !replaceDescription} value={description} onChange={(_, data) => { updateDraft(data.value !== description, () => setDescription(data.value)); }}/></Field>
       </>}
       {(action === 'save' || action === 'remove') && <>
         <Text as="p">{action} at {session.root}; key {key}; format {format}; value {JSON.stringify(value)}; {replaceDescription ? `description ${JSON.stringify(description)}` : 'preserve destination description'}. Saving may provision or repair the store.</Text>
@@ -948,7 +955,13 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
   };
   const regions: DemoRegions = {
     controls: <>
-      <Field label="Key"><Input aria-label="Key" disabled={pending} value={key} onChange={(_, data) => { if (ledger.current.size === 0) { approve(undefined); setKey(data.value); } }}/></Field>
+      <Field label="Key"><Input aria-label="Key" disabled={pending} value={key} onChange={(_, data) => {
+        if (!current() || ledger.current.size > 0 || data.value === key) return;
+        boundary.current = { ...boundary.current, token: {} };
+        observation.current = undefined;
+        approve(undefined);
+        setKey(data.value);
+      }}/></Field>
       <Text as="p">Optional Save: {root}, key {key}, boolean true, description "Shared across subsites". Only disposable keys are accepted; Save may provision/repair the root store.</Text>
       <Checkbox label="I consent to this exact disposable mutation" checked={consent === token} disabled={pending || !disposable || !hasCurrentWriteObservation()} onChange={(_, data) => { if (current() && ledger.current.size === 0 && hasCurrentWriteObservation()) approve(data.checked === true ? token : undefined); }}/>
     </>,

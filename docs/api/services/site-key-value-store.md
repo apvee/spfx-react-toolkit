@@ -549,7 +549,13 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
   };
   const regions: DemoRegions = {
     controls: <>
-      <Field label="Key"><Input aria-label="Key" disabled={pending} value={key} onChange={(_, data) => { if (ledger.current.size === 0) { approve(undefined); setKey(data.value); } }}/></Field>
+      <Field label="Key"><Input aria-label="Key" disabled={pending} value={key} onChange={(_, data) => {
+        if (!current() || ledger.current.size > 0 || data.value === key) return;
+        boundary.current = { ...boundary.current, token: {} };
+        observation.current = undefined;
+        approve(undefined);
+        setKey(data.value);
+      }}/></Field>
       <Text as="p">Optional Save: {root}, key {key}, boolean true, description "Shared across subsites". Only disposable keys are accepted; Save may provision/repair the root store.</Text>
       <Checkbox label="I consent to this exact disposable mutation" checked={consent === token} disabled={pending || !disposable || !hasCurrentWriteObservation()} onChange={(_, data) => { if (current() && ledger.current.size === 0 && hasCurrentWriteObservation()) approve(data.checked === true ? token : undefined); }}/>
     </>,
@@ -635,4 +641,4 @@ Contract: see [SPFxSiteKeyValueStoreService.save](site-key-value-store.md#spfxsi
 
 ### Source (9)
 
-[packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts:250](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#L250)
+[packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts:256](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#L256)
