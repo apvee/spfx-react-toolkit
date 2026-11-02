@@ -3,6 +3,8 @@ const { createClientsFixture } = require('./clients-scenarios.cjs');
 const assert = require('node:assert/strict');
 const { Simulate } = require('react-dom/test-utils');
 const owners = {
+  tenantHook: ['packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore.ts#useSPFxTenantKeyValueStore', 'Explore tenant records and exact text persistence'],
+  tenantService: ['packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService', 'Round trip numeric looking text through a tenant service'],
   propertyHook: ['packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty', 'Read tenant version and counter with explicit activation'],
   propertyService: ['packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService', 'Read and validate a catalog StorageEntity'],
   hook: ['packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore', 'Explore collection root records with guarded mutations'],
@@ -13,7 +15,8 @@ const schema = [{ InternalName: 'Title', FieldTypeKind: 2, Indexed: true, Enforc
 function createStoreFixture(t, kind = 'hook', options = {}) {
   const [ownerKey, title] = owners[kind];
   const property = kind === 'propertyHook' || kind === 'propertyService';
-  const f = createClientsFixture(t, title, { ...options, siteStore: !property, tenantProperties: property, ownerKey, compiled: options.compiled ?? process.env[property ? 'TENANT_PROPERTY_IMPLEMENTATION' : 'SITE_STORE_IMPLEMENTATION'] === 'compiled' });
+  const tenant = kind === 'tenantHook' || kind === 'tenantService';
+  const f = createClientsFixture(t, title, { ...options, siteStore: !property && !tenant, tenantStore: tenant, tenantProperties: property, ownerKey, compiled: options.compiled ?? process.env[property ? 'TENANT_PROPERTY_IMPLEMENTATION' : tenant ? 'TENANT_STORE_IMPLEMENTATION' : 'SITE_STORE_IMPLEMENTATION'] === 'compiled' });
   // MessageBar/Dialog native layout observation, not a layout claim.
   const nodeGlobal = Object.getOwnPropertyDescriptor(global, 'Node');
   Object.defineProperty(global, 'Node', { configurable: true, value: window.Node });

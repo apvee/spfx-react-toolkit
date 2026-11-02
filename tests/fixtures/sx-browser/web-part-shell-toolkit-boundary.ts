@@ -76,3 +76,7 @@ export { createSPFxSiteKeyValueStoreService, type SPFxSiteKeyValueStoreServiceIt
 // Tenant property cases retain actual hooks, discovery and the direct read-only factory.
 export { useSPFxTenantProperty, type SPFxTenantPropertyResult } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty';
 export { createSPFxTenantPropertyService, type SPFxTenantProperty, type SPFxTenantPropertyService } from '../../../packages/spfx-react-toolkit/src/services/spfx-tenant-property.service';
+
+// Tenant list cases retain actual hook/discovery/list implementations.
+export { useSPFxTenantKeyValueStore, type SPFxTenantKeyValueStoreItem } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore';
+export { createSPFxTenantKeyValueStoreService, type SPFxTenantKeyValueStoreService, type SPFxTenantKeyValueStoreServiceItem } from '../../../packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service';

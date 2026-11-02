@@ -151,3 +151,15 @@ Select the tenant-property hook example and explicitly activate its manual sessi
 For an already known tenant catalog, use the direct factory example. Supply the actual catalog URL; the factory adds no discovery or writes. It reads unknown data, validates a boolean and distinguishes absence, a wrong decoded type and a failed HTTP/response parse.
 
 <!-- toolkit:include symbol="createSPFxTenantPropertyService" section="example" title="Read and validate a catalog StorageEntity" -->
+
+## Explore tenant list records safely
+
+Activate the tenant-store hook session explicitly before its initial catalog discovery and effective permission checks. Client readiness does not mean discovery has completed or that a write is authorized. The logical scope is the tenant app-catalog store resolved internally for the captured discovery-web, collection, client, PageContext and host session. The hook does not expose its physical catalog URL; the discovery-web address is not a catalog address. A changed session requires explicit reactivation.
+
+Use disposable keys with a nonempty `spfx-toolkit-tenant-demo-` suffix and consent to the displayed exact operation, value and description policy. Ordinary Save and Remove have no automatic readback. The separate numeric-text recipe saves `'123'` with `'Application version'`, then reads explicitly; a failed read after a completed save is partial success. The direct service recipe uses only an explicitly supplied known catalog URL and has no discovery or permission API.
+
+Reset restores local UI and consent, retaining the original pending public-write lock even when its hook child unmounts. Already-dispatched setup, mutation and recovery requests may finish; Reset does not cancel, roll back or remove a stored record. No stale sequence may begin a later public read. Locks belong to each still-mounted Demo and do not serialize other scenarios.
+
+<!-- toolkit:include symbol="useSPFxTenantKeyValueStore" section="example" title="Explore tenant records and exact text persistence" -->
+
+<!-- toolkit:include symbol="createSPFxTenantKeyValueStoreService" section="example" title="Round trip numeric looking text through a tenant service" -->

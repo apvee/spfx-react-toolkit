@@ -49,6 +49,10 @@ function createClientsFixture(t, title, options = {}) {
         pageNative.SPPermission = h.load(require.resolve('@microsoft/sp-page-context/lib-commonjs/SPPermission')).default;
         Object.assign(toolkit, library('services/spfx-tenant-property.service'), library('hooks/useSPFxTenantProperty'));
     }
+    if (options.tenantStore) {
+        pageNative.SPPermission = h.load(require.resolve('@microsoft/sp-page-context/lib-commonjs/SPPermission')).default;
+        Object.assign(toolkit, library('services/spfx-tenant-key-value-store.service'), library('hooks/useSPFxTenantKeyValueStore'));
+    }
     if (options.siteStore) {
         pageNative.SPPermission = h.load(require.resolve('@microsoft/sp-page-context/lib-commonjs/SPPermission')).default;
         const service = library('services/spfx-site-key-value-store.service');
@@ -65,8 +69,8 @@ function createClientsFixture(t, title, options = {}) {
     const themeHandlers = new Set();
     const themeService = { tryGetTheme: () => undefined, themeChangedEvent: { add: (_o, fn) => themeHandlers.add(fn), remove: (_o, fn) => themeHandlers.delete(fn) } };
     function http(kind) {
-        const client = { get(url, configuration, init) { const request = deferred({ kind, client, url, configuration, init, ...(options.siteStore ? { method: 'GET' } : {}) }); calls.push(request); return request.promise; } };
-        if (options.siteStore && kind === 'sp') client.post = (url, configuration, init) => { const request = deferred({ kind, client, url, configuration, init, method: 'POST' }); calls.push(request); return request.promise; };
+        const client = { get(url, configuration, init) { const request = deferred({ kind, client, url, configuration, init, ...(options.siteStore || options.tenantStore ? { method: 'GET' } : {}) }); calls.push(request); return request.promise; } };
+        if ((options.siteStore || options.tenantStore) && kind === 'sp') client.post = (url, configuration, init) => { const request = deferred({ kind, client, url, configuration, init, method: 'POST' }); calls.push(request); return request.promise; };
         return client;
     }
     function host(id = 'clients-one') {

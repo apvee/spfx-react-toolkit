@@ -1171,3 +1171,292 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
 }
 export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Read a StorageEntity from the supplied catalog and distinguish validated boolean data from missing, malformed or failed data.' };
 ```
+
+## Explore tenant list records safely
+
+Activate the tenant-store hook session explicitly before its initial catalog discovery and effective permission checks. Client readiness does not mean discovery has completed or that a write is authorized. The logical scope is the tenant app-catalog store resolved internally for the captured discovery-web, collection, client, PageContext and host session. The hook does not expose its physical catalog URL; the discovery-web address is not a catalog address. A changed session requires explicit reactivation.
+
+Use disposable keys with a nonempty `spfx-toolkit-tenant-demo-` suffix and consent to the displayed exact operation, value and description policy. Ordinary Save and Remove have no automatic readback. The separate numeric-text recipe saves `'123'` with `'Application version'`, then reads explicitly; a failed read after a completed save is partial success. The direct service recipe uses only an explicitly supplied known catalog URL and has no discovery or permission API.
+
+Reset restores local UI and consent, retaining the original pending public-write lock even when its hook child unmounts. Already-dispatched setup, mutation and recovery requests may finish; Reset does not cancel, roll back or remove a stored record. No stale sequence may begin a later public read. Locks belong to each still-mounted Demo and do not serialize other scenarios.
+
+#### Explore tenant records and exact text persistence
+
+```tsx
+import * as React from 'react';
+import { makeStyles, Accordion, AccordionHeader, AccordionItem, AccordionPanel, Button, Checkbox, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, Field, Input, Select, Text } from '@fluentui/react-components';
+import { useSPFxInstanceInfo, useSPFxPageContext, useSPFxTenantKeyValueStore, useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
+import type { SPFxTenantKeyValueStoreItem } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Presenter = (regions: DemoRegions) => React.ReactElement;
+type Session = { generation: object; root: string; web: string; client: unknown; page: unknown; instance: string };
+type Action = 'get' | 'list' | 'save' | 'remove' | 'roundtrip';
+type Format = 'text' | 'json' | 'bigint' | 'date';
+const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
+type Ticket = { promise?: Promise<void> };
+
+function present(regions: DemoRegions, render?: Presenter): React.ReactElement {
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+
+// This bounded child owns the hook session. Reset deliberately unmounts it.
+function TenantSession({ session, current, write, pending, isLocked, render }: {
+  session: Session; current: () => boolean; write: (operation: () => Promise<void>) => Promise<void> | undefined;
+  pending: boolean; isLocked: () => boolean; render?: Presenter;
+}): React.ReactElement {
+  const store = useSPFxTenantKeyValueStore();
+  const styles = useStyles();
+  const [action, setAction] = React.useState<Action>('get');
+  const [key, setKey] = React.useState('spfx-toolkit-tenant-demo-disposable');
+  const [value, setValue] = React.useState('');
+  const [format, setFormat] = React.useState<Format>('text');
+  const [replaceDescription, setReplaceDescription] = React.useState(false);
+  const [description, setDescription] = React.useState('Disposable SPFx React Toolkit tenant demo item');
+  const [consent, setConsent] = React.useState<object>();
+  const approval = React.useRef<object>();
+  approval.current = consent;
+  const approve = (next: object | undefined): void => { approval.current = next; setConsent(next); };
+  const [outcome, setOutcome] = React.useState<{ boundary: object; action: Action; message?: string; failure?: string; persisted?: boolean; reading?: boolean; item?: SPFxTenantKeyValueStoreItem; items?: SPFxTenantKeyValueStoreItem[] }>();
+  const boundary = React.useRef({ fingerprint: '', token: {} });
+  const fingerprint = JSON.stringify([action, key, value, format, replaceDescription, description]);
+  if (boundary.current.fingerprint !== fingerprint) boundary.current = { fingerprint, token: {} };
+  const target = boundary.current.token;
+  const latest = React.useRef(0);
+  const sequence = React.useRef<object>();
+  const [, refreshSession] = React.useState(0);
+  const mounted = React.useRef(true);
+  const confirmationRef = React.useRef<object>();
+  const restoreFocus = React.useRef<{ trigger: HTMLButtonElement; current: () => boolean }>();
+  const [confirmation, setConfirmation] = React.useState<{ token: object; confirm: () => void; cancel: () => void; key: string }>();
+  React.useLayoutEffect(() => {
+    const request = restoreFocus.current;
+    if (!confirmation && request) { restoreFocus.current = undefined; if (request.current() && request.trigger.isConnected) request.trigger.focus(); }
+  }, [confirmation]);
+  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; confirmationRef.current = undefined; }; }, []);
+  const valid = (): boolean => mounted.current && current() && boundary.current.token === target;
+  const disposable = key.startsWith('spfx-toolkit-tenant-demo-') && key.length > 'spfx-toolkit-tenant-demo-'.length;
+  const visible = valid() && outcome?.boundary === target ? outcome : undefined;
+  const reading = visible?.action === 'get' || visible?.action === 'list' || visible?.reading === true;
+  // The public read resolves a fallback. Its CURRENT rendered error takes precedence.
+  const failure = visible ? visible.failure ?? (reading ? store.error?.message : store.writeError?.message) : undefined;
+  const locked = pending || confirmation !== undefined || sequence.current === target;
+  const edit = (change: () => void): void => {
+    if (!valid() || locked || sequence.current === target || isLocked() || confirmationRef.current) return;
+    // Retire captured consent/commands synchronously, before a batched React commit.
+    boundary.current = { ...boundary.current, token: {} }; approve(undefined); change(); refreshSession(count => count + 1);
+  };
+
+  const run = async (trigger: HTMLButtonElement): Promise<void> => {
+    if (!valid() || sequence.current === target || isLocked() || pending || confirmationRef.current || !store.isReady || store.isLoading || store.isWriting) return;
+    if (action !== 'list' && !key) return;
+    const mutating = action === 'save' || action === 'remove' || action === 'roundtrip';
+    if (mutating && (!disposable || approval.current !== target)) return;
+    const operation = ++latest.current;
+    const owns = (): boolean => valid() && latest.current === operation;
+    const execute = async (remove?: () => Promise<void>): Promise<void> => {
+      if (!owns() || isLocked()) return;
+      if (mutating) sequence.current = target;
+      setOutcome({ boundary: target, action });
+      try {
+        if (action === 'get') {
+          const item = await store.get(key);
+          if (owns()) setOutcome({ boundary: target, action, item, message: item ? `Found ${key}.` : `${key} not found.` });
+        } else if (action === 'list') {
+          const items = await store.list();
+          if (owns()) setOutcome({ boundary: target, action, items, message: `Loaded ${items.length} tenant key-value item(s).` });
+        } else {
+          let input: unknown = value;
+          if (action === 'save') {
+            if (format === 'json') input = JSON.parse(value);
+            else if (format === 'bigint') input = BigInt(value);
+            else if (format === 'date') { const date = new Date(value); if (!Number.isFinite(date.getTime())) throw new Error('Enter a valid Date.'); input = date; }
+          }
+          // The parent retains the ORIGINAL public promise through Reset/child unmount.
+          const promise = write(remove ?? (() => action === 'roundtrip' ? store.save(key, '123', 'Application version') : replaceDescription ? store.save(key, input, description) : store.save(key, input)));
+          if (!promise) return;
+          await promise;
+          if (!owns()) return;
+          approve(undefined);
+          if (action === 'roundtrip') {
+            setOutcome({ boundary: target, action, persisted: true, reading: true });
+            const item = await store.get<unknown>(key);
+            if (owns()) setOutcome({ boundary: target, action, persisted: true, reading: true, item, message: item?.value === '123' && typeof item.value === 'string' ? 'Read back exact text 123 (string).' : 'Readback did not contain exact text 123.' });
+          } else setOutcome({ boundary: target, action, message: `${action === 'save' ? 'Saved' : 'Removed'} ${key}.` });
+        }
+      } catch (error) {
+        if (owns()) setOutcome(previous => ({ ...previous, boundary: target, action, failure: error instanceof Error ? error.message : String(error) }));
+      } finally { if (sequence.current === target) sequence.current = undefined; if (mounted.current) refreshSession(count => count + 1); }
+    };
+    if (action !== 'remove') { await execute(); return; }
+    const token = {};
+    const remove = store.remove;
+    const capturedKey = key;
+    confirmationRef.current = token;
+    const cancel = (): void => {
+      if (!owns() || confirmationRef.current !== token) return;
+      restoreFocus.current = { trigger, current: owns };
+      confirmationRef.current = undefined; setConfirmation(undefined);
+    };
+    const confirm = (): Promise<void> | undefined => {
+      if (!owns() || confirmationRef.current !== token || approval.current !== target) return;
+      confirmationRef.current = undefined; setConfirmation(undefined);
+      return execute(() => remove(capturedKey));
+    };
+    setConfirmation({ token, confirm, cancel, key: capturedKey });
+  };
+  const shownValue = (item: SPFxTenantKeyValueStoreItem): string => typeof item.value === 'string' ? JSON.stringify(item.value) : JSON.stringify(item.value) ?? String(item.value);
+  const regions: DemoRegions = {
+    controls: <>
+      <Field label="Operation"><Select aria-label="Operation" disabled={locked} value={action} onChange={(_, data) => edit(() => setAction(data.value as Action))}><option value="get">Read</option><option value="list">List</option><option value="save">Save</option><option value="remove">Remove</option><option value="roundtrip">Save and read numeric-looking text</option></Select></Field>
+      {action !== 'list' && <Field label="Key"><Input aria-label="Key" disabled={locked} value={key} onChange={(_, data) => edit(() => setKey(data.value))}/></Field>}
+      {action === 'save' && <>
+        <Field label="Value format"><Select aria-label="Value format" disabled={locked} value={format} onChange={(_, data) => edit(() => setFormat(data.value as Format))}><option value="text">Text</option><option value="json">JSON</option><option value="bigint">Big integer</option><option value="date">Date (ISO)</option></Select></Field>
+        <Field label="Value"><Input aria-label="Value" disabled={locked} value={value} onChange={(_, data) => edit(() => setValue(data.value))}/></Field>
+        <Checkbox label="Replace/clear destination description" disabled={locked} checked={replaceDescription} onChange={(_, data) => edit(() => setReplaceDescription(data.checked === true))}/>
+        <Field label="Description"><Input aria-label="Description" disabled={locked || !replaceDescription} value={description} onChange={(_, data) => edit(() => setDescription(data.value))}/></Field>
+      </>}
+      {(action === 'save' || action === 'remove' || action === 'roundtrip') && <>
+        <Text as="p">{action} in the tenant app-catalog store resolved internally for this captured discovery session; key {key}; {action === 'roundtrip' ? 'exact text "123" and description "Application version"' : `format ${format}; value ${JSON.stringify(value)}; ${replaceDescription ? `description ${JSON.stringify(description)}` : 'preserve destination description'}`}. Saving may provision or repair the store.</Text>
+        <Checkbox label="I consent to this exact disposable mutation" disabled={locked || !disposable} checked={consent === target} onChange={(_, data) => { if (!locked && sequence.current !== target && valid() && !isLocked() && !confirmationRef.current && valid()) approve(data.checked === true ? target : undefined); }}/>
+      </>}
+    </>,
+    commands: <Button appearance="primary" disabled={!store.isReady || store.isLoading || store.isWriting || locked || (action !== 'list' && !key) || ((action === 'save' || action === 'remove' || action === 'roundtrip') && (!disposable || approval.current !== target))} onClick={event => run(event.currentTarget)}>{action === 'roundtrip' ? 'Save and read numeric-looking text' : 'Run'}</Button>,
+    status: <>{visible?.persisted && <Text role="status">Saved {key}. The subsequent read is a separate step.</Text>}{failure ? <Text role="alert">{failure}</Text> : visible?.message ? <Text role="status">{visible.message}</Text> : <Text>Run the selected operation.</Text>}</>,
+    children: <>
+      <dl aria-label="Tenant store state"><dt>Client ready</dt><dd>{String(store.isReady)}</dd><dt>Can Write</dt><dd>{String(store.canWrite)}</dd><dt>Loading</dt><dd>{String(Boolean(visible) && store.isLoading)}</dd><dt>Writing</dt><dd>{String(pending)}</dd><dt>Collection root URL</dt><dd>{session.root}</dd><dt>Discovery web URL</dt><dd>{session.web}</dd></dl>
+      {!failure && visible?.item && <dl aria-label="Selected tenant record"><dt>Selected key</dt><dd>{visible.item.key}</dd><dt>Selected value</dt><dd>{shownValue(visible.item)}{visible.item.value === '' ? ' (empty string)' : ''}</dd><dt>Value type</dt><dd>{typeof visible.item.value}</dd><dt>Description</dt><dd>{visible.item.description ?? '(not set)'}</dd></dl>}
+      {!failure && visible?.items && <><Text>Inventory count: {visible.items.length}</Text><dl aria-label="First ten tenant records">{visible.items.slice(0, 10).map((item, index) => <React.Fragment key={index}><dt>{item.key}</dt><dd>{shownValue(item)}</dd></React.Fragment>)}</dl></>}
+      <Dialog open={confirmation !== undefined} onOpenChange={(_, data) => { if (!data.open) confirmation?.cancel(); }}><DialogSurface><DialogBody><DialogTitle>Confirm exact tenant removal</DialogTitle><DialogContent>Remove {confirmation?.key} in the tenant app-catalog store resolved internally for this captured discovery session. This cannot be undone by Reset.</DialogContent><DialogActions><Button onClick={confirmation?.cancel}>Cancel</Button><Button appearance="primary" onClick={confirmation?.confirm}>Confirm removal</Button></DialogActions></DialogBody></DialogSurface></Dialog>
+    </>,
+    diagnostics: <>
+      <Text as="p">All sites share TenantKeyValueStore in the tenant app catalog. Physical catalog URL is unavailable through this hook API. The discovery-web and collection-root URLs identify the captured client/PageContext/host session; neither is a catalog address. Client ready means client availability, not completed discovery or authorization. Can Write is an effective indicator, not authorization or a prerequisite for an otherwise consented hook request. SharePoint enforces grants; schema changes may need additional rights. Reads/removal never provision. Normal Save/Remove does not read back automatically. ETags guard the service snapshot, not an earlier Read. Bigint and Date read as strings. Reset hides results; dispatched writes can still complete. This local lock does not serialize other scenarios.</Text>
+      {!failure && visible && <Accordion collapsible><AccordionItem value="payload"><AccordionHeader>Full tenant payload</AccordionHeader><AccordionPanel><div role="region" aria-label="Full tenant payload" tabIndex={0} className={styles.payload}><pre>{JSON.stringify(visible.item ?? visible.items, undefined, 2)}</pre></div></AccordionPanel></AccordionItem></Accordion>}
+    </>,
+  };
+  return present(regions, render);
+}
+
+export function Demo({ render, resetRevision = 0 }: { render?: Presenter; resetRevision?: number } = {}): React.ReactElement {
+  const page = useSPFxPageContext();
+  const { client } = useSPFxSPHttpClient();
+  const info = useSPFxInstanceInfo();
+  const root = page.site.absoluteUrl.trim().replace(/\/+$/, '');
+  const web = page.web.absoluteUrl.trim().replace(/\/+$/, '');
+  const boundary = React.useRef({ revision: resetRevision, root, web, client, page, instance: info.id, generation: {} });
+  const previous = boundary.current;
+  if (previous.revision !== resetRevision || previous.root !== root || previous.web !== web || previous.client !== client || previous.page !== page || previous.instance !== info.id) boundary.current = { revision: resetRevision, root, web, client, page, instance: info.id, generation: {} };
+  const generation = boundary.current.generation;
+  const [session, setSession] = React.useState<Session>();
+  const ledger = React.useRef(new Set<Ticket>());
+  const [, refresh] = React.useState(0);
+  const mounted = React.useRef(true);
+  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const current = (): boolean => mounted.current && boundary.current.generation === generation && page.web.absoluteUrl.trim().replace(/\/+$/, '') === web && page.site.absoluteUrl.trim().replace(/\/+$/, '') === root;
+  const write = (operation: () => Promise<void>): Promise<void> | undefined => {
+    if (!current() || ledger.current.size > 0) return undefined;
+    const ticket: Ticket = {}; ledger.current.add(ticket); refresh(count => count + 1);
+    const release = (): void => { ledger.current.delete(ticket); if (mounted.current) refresh(count => count + 1); };
+    try { const promise = operation(); ticket.promise = promise; return promise.finally(release); }
+    catch (error) { release(); throw error; }
+  };
+  const active = session?.generation === generation;
+  const pending = ledger.current.size > 0;
+  const activate = (): void => {
+    if (!current() || ledger.current.size > 0 || active || !client || !root) return;
+    setSession({ generation, root, web, client, page, instance: info.id });
+  };
+  // The outer activation control remains the same DOM node across child teardown.
+  return <>
+    <Button disabled={active || pending || !client || !root} onClick={activate}>Activate tenant store</Button>
+    {pending && <Text role="status">Previous write still pending</Text>}
+    {active && session ? <TenantSession session={session} current={current} write={write} pending={pending} isLocked={() => ledger.current.size > 0} render={render}/> : present({ children: <Text>Activate the tenant store to permit read-only catalog discovery and effective permission initialization. Reset does not cancel server work.</Text> }, render)}
+  </>;
+}
+export const demo = { host: 'webPart', kind: 'write', contentPlacement: 'configuration', observe: 'Activate the tenant store, preserve numeric-looking and empty text, and run physical reads or consented mutations with current-only results.' };
+```
+
+#### Round trip numeric looking text through a tenant service
+
+```tsx
+import * as React from 'react';
+import { makeStyles, Button, Checkbox, Field, Input, Text } from '@fluentui/react-components';
+import { createSPFxTenantKeyValueStoreService, useSPFxInstanceInfo, useSPFxPageContext, useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
+import type { SPFxTenantKeyValueStoreServiceItem } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Ticket = { promise?: Promise<void> };
+const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const page = useSPFxPageContext();
+  const { client } = useSPFxSPHttpClient();
+  const instance = useSPFxInstanceInfo();
+  const styles = useStyles();
+  const service = React.useMemo(() => client ? createSPFxTenantKeyValueStoreService(client) : undefined, [client]);
+  const web = page.web.absoluteUrl.trim().replace(/\/+$/, '');
+  const root = page.site.absoluteUrl.trim().replace(/\/+$/, '');
+  const [catalog, setCatalog] = React.useState('');
+  const [key, setKey] = React.useState('spfx-toolkit-tenant-demo-service');
+  const [consent, setConsent] = React.useState<object>();
+  const approval = React.useRef<object>();
+  const approve = (next: object | undefined): void => { approval.current = next; setConsent(next); };
+  const boundary = React.useRef({ revision: resetRevision, page, client, web, root, instance: instance.id, catalog, key, token: {} });
+  const previous = boundary.current;
+  if (previous.revision !== resetRevision || previous.page !== page || previous.client !== client || previous.web !== web || previous.root !== root || previous.instance !== instance.id || previous.catalog !== catalog || previous.key !== key) boundary.current = { revision: resetRevision, page, client, web, root, instance: instance.id, catalog, key, token: {} };
+  const token = boundary.current.token;
+  const mounted = React.useRef(true);
+  const ledger = React.useRef(new Set<Ticket>());
+  const sequence = React.useRef<object>();
+  const [, refresh] = React.useState(0);
+  const [outcome, setOutcome] = React.useState<{ token: object; persisted?: boolean; item?: SPFxTenantKeyValueStoreServiceItem; message?: string; failure?: string }>();
+  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const resetSeen = React.useRef(resetRevision);
+  React.useLayoutEffect(() => {
+    if (resetSeen.current !== resetRevision) { resetSeen.current = resetRevision; setCatalog(''); setKey('spfx-toolkit-tenant-demo-service'); approve(undefined); setOutcome(undefined); }
+  }, [resetRevision]);
+  const current = (): boolean => mounted.current && boundary.current.token === token && page.web.absoluteUrl.trim().replace(/\/+$/, '') === web && page.site.absoluteUrl.trim().replace(/\/+$/, '') === root;
+  const visible = current() && outcome?.token === token ? outcome : undefined;
+  const pending = ledger.current.size > 0;
+  const locked = pending || sequence.current === token;
+  const disposable = key.startsWith('spfx-toolkit-tenant-demo-') && key.length > 'spfx-toolkit-tenant-demo-'.length;
+  const run = async (): Promise<void> => {
+    if (!current() || !service || !catalog.trim() || !disposable || approval.current !== token || ledger.current.size > 0 || sequence.current === token) return;
+    let url: string;
+    try {
+      const parsed = new URL(catalog.trim());
+      if (!['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password || parsed.search || parsed.hash) throw new Error('Enter an absolute catalog URL without credentials, query or fragment.');
+      url = catalog.trim().replace(/\/+$/, '');
+    } catch (error) { setOutcome({ token, failure: error instanceof Error ? error.message : String(error) }); return; }
+    sequence.current = token;
+    const ticket: Ticket = {}; ledger.current.add(ticket); approve(undefined); setOutcome(undefined); refresh(count => count + 1);
+    const release = (): void => { ledger.current.delete(ticket); if (mounted.current) refresh(count => count + 1); };
+    let persisted = false;
+    try {
+      // Keep the original WHOLE public Save promise, including setup/snapshot/internal RPCs.
+      let promise: Promise<void>;
+      try { promise = service.save(key, '123', url); ticket.promise = promise; }
+      catch (error) { release(); throw error; }
+      await promise.finally(release);
+      if (!current()) return;
+      persisted = true; setOutcome({ token, persisted, message: 'Reading back the saved text...' });
+      const item = await service.get<unknown>(key, url);
+      if (current()) setOutcome({ token, persisted, item, message: item?.value === '123' && typeof item.value === 'string' ? 'Read back exact text 123 (string).' : 'Readback did not contain exact text 123.' });
+    } catch (error) { if (current()) setOutcome({ token, persisted, failure: error instanceof Error ? error.message : String(error) }); }
+    finally { if (sequence.current === token) sequence.current = undefined; if (mounted.current) refresh(count => count + 1); }
+  };
+  const regions: DemoRegions = {
+    controls: <>
+      <Field label="Catalog URL"><Input aria-label="Catalog URL" disabled={locked} value={catalog} onChange={(_, data) => { if (current() && ledger.current.size === 0 && sequence.current !== token) { boundary.current = { ...boundary.current, catalog: data.value, token: {} }; approve(undefined); setCatalog(data.value); } }}/></Field>
+      <Field label="Key"><Input aria-label="Key" disabled={locked} value={key} onChange={(_, data) => { if (current() && ledger.current.size === 0 && sequence.current !== token) { boundary.current = { ...boundary.current, key: data.value, token: {} }; approve(undefined); setKey(data.value); } }}/></Field>
+      <Text as="p">Save exact text "123" at supplied catalog {catalog || '(required)'}, key {key}; preserve destination description by omitting it. Save may provision or repair TenantKeyValueStore.</Text>
+      <Checkbox label="I consent to this exact disposable mutation" checked={consent === token} disabled={locked || !disposable || !catalog.trim()} onChange={(_, data) => { if (current() && ledger.current.size === 0 && sequence.current !== token) approve(data.checked === true ? token : undefined); }}/>
+    </>,
+    commands: <Button appearance="primary" disabled={!service || !catalog.trim() || !disposable || consent !== token || locked} onClick={run}>Save and read numeric-looking text</Button>,
+    status: <>{pending && <Text role="status">Previous write still pending</Text>}{visible?.persisted && <Text role="status">Saved {key}. The subsequent read is a separate step.</Text>}{visible?.failure ? <Text role="alert">{visible.failure}</Text> : <Text role="status">{visible?.message ?? 'Supply a known catalog URL, then explicitly consent to Save and read.'}</Text>}</>,
+    children: <dl aria-label="Tenant service result"><dt>Catalog URL</dt><dd>{catalog || '(required)'}</dd><dt>Key</dt><dd>{key}</dd>{visible?.item && <><dt>Selected value</dt><dd>{JSON.stringify(visible.item.value)}</dd><dt>Value type</dt><dd>{typeof visible.item.value}</dd><dt>Description</dt><dd>{visible.item.description ?? '(not set)'}</dd></>}</dl>,
+    diagnostics: <><Text as="p">This request-free factory uses only the explicitly supplied catalog URL. It does not discover a catalog or expose a permission API. SharePoint authorizes writes. ETags protect the service's snapshot, not an earlier application read. A completed Save followed by failed Read is partial success. Reset clears local inputs/consent/results; it never removes the key, cancels a dispatched write or rolls back server data. Pending writes retain the local lock until their original public promise settles. Other scenarios have independent locks.</Text><div role="region" aria-label="Tenant service payload" tabIndex={0} className={styles.payload}><pre>{JSON.stringify(visible?.item, undefined, 2)}</pre></div></>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'write', contentPlacement: 'configuration', observe: 'Save numeric-looking text through the service at the supplied catalog and read it back as a string.' };
+```

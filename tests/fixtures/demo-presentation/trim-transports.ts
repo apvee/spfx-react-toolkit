@@ -27,7 +27,7 @@ let storeMask: unknown = { High: '0', Low: '14' };
 let storeRows: unknown[] = [];
 const storeRoots = new Set<string>();
 function isStoreRequest(url: string): boolean {
-  if (url.includes("/lists/getByTitle('SiteKeyValueStore')")) { storeRoots.add(url.slice(0, url.indexOf('/_api/'))); return true; }
+  if (/\/lists\/getByTitle\('(Site|Tenant)KeyValueStore'\)/.test(url)) { storeRoots.add(url.slice(0, url.indexOf('/_api/'))); return true; }
   return storeAbsent && [...storeRoots].some(root => url === root + '/_api/web/effectiveBasePermissions');
 }
 function storageRequest(method: string, url: string, configuration: unknown, options?: unknown): Promise<unknown> {

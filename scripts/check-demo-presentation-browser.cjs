@@ -17,6 +17,7 @@ const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Goog
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
+  { key: 'tenant', title: 'useSPFxTenantKeyValueStore' }, { key: 'tenant-service', title: 'createSPFxTenantKeyValueStoreService' },
   { key: 'tenant-properties', title: 'useSPFxTenantProperty' }, { key: 'tenant-property-service', title: 'createSPFxTenantPropertyService' },
   { key: 'site', title: 'useSPFxSiteKeyValueStore' }, { key: 'site-service', title: 'createSPFxSiteKeyValueStoreService' },
   { key: 'styles', title: 'useSx' }, { key: 'auto-skeleton', title: 'AutoSkeleton' }, { key: 'relative-time', title: 'RelativeTime' },
@@ -60,6 +61,8 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    tenant: ['useSPFxTenantKeyValueStore', 'Explore tenant records and exact text persistence'],
+    'tenant-service': ['createSPFxTenantKeyValueStoreService', 'Round trip numeric looking text through a tenant service'],
     'tenant-properties': ['useSPFxTenantProperty', 'Read tenant version and counter with explicit activation'],
     'tenant-property-service': ['createSPFxTenantPropertyService', 'Read and validate a catalog StorageEntity'],
     site: ['useSPFxSiteKeyValueStore', 'Explore collection root records with guarded mutations'],
@@ -95,7 +98,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service'].includes(key) ? /^Servizi/ : (['imports', 'styles', 'site', 'tenant-properties'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service', 'tenant-service'].includes(key) ? /^Servizi/ : (['imports', 'styles', 'site', 'tenant-properties', 'tenant'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -348,7 +351,8 @@ async function interact(page, key) {
       check('property first Run has two discoveries and two reads', await page.evaluate(() => window.propertiesFixture.requests.length), before + 4); break;
     }
     case 'tenant-property-service': await panel.getByLabel('Catalog URL', { exact: true }).fill('https://simulated.invalid/sites/catalog'); await panel.getByRole('button', { name: 'Read', exact: true }).click(); await panel.getByText('Property not set', { exact: true }).waitFor(); break;
-    case 'tenant': await panel.locator('select[data-demo-variant=TenantPanel]').selectOption('store'); await panel.locator('select[data-demo-variant=TenantStoreScenario]').selectOption('save'); await panel.getByLabel('Value', { exact: true }).fill('Local draft'); check(`${key}: editable draft`, await panel.getByLabel('Value', { exact: true }).inputValue(), 'Local draft'); break;
+    case 'tenant': await panel.getByRole('button', { name: 'Activate tenant store', exact: true }).click(); await settle(page); await panel.getByLabel('Operation', { exact: true }).selectOption('save'); await panel.getByLabel('Value', { exact: true }).fill('Local draft'); check('tenant: editable draft', await panel.getByLabel('Value', { exact: true }).inputValue(), 'Local draft'); break;
+    case 'tenant-service': await panel.getByLabel('Catalog URL', { exact: true }).fill('https://simulated.invalid/sites/catalog'); check('tenant service: Save initially locked', await panel.getByRole('button', { name: 'Save and read numeric-looking text', exact: true }).isDisabled(), true); break;
     case 'pnp': await panel.locator('select[data-demo-variant=PnPPanel]').selectOption('listAccess'); await panel.getByLabel('List GUID', { exact: true }).fill('11111111-2222-3333-4444-555555555555'); check('PnP GUID config', await panel.getByLabel('List GUID', { exact: true }).inputValue(), '11111111-2222-3333-4444-555555555555'); break;
     case 'search': await panel.locator('select[data-demo-variant=SearchPanel]').selectOption('suggestions'); await panel.getByLabel('Search with Autocomplete', { exact: true }).fill('local'); await panel.getByRole('button', { name: 'local simulated suggestion', exact: true }).waitFor(); check('Search real debounce/suggestion UI', await panel.getByRole('button', { name: 'local simulated suggestion', exact: true }).count(), 1); break;
     default: throw new Error(`Uncovered panel ${key}`);

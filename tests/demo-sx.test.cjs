@@ -143,7 +143,7 @@ test('numeric drafts allow clearing and sequential replacement while retaining v
 
 test('hook, provider, style and service panels use Fluent configuration and shared demo regions', () => {
   const componentRoot = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
-  const panels = ['Providers', 'Tenant', 'PnP', 'Search'];
+  const panels = ['Providers', 'PnP', 'Search'];
   const files = panels.map(name => path.join(componentRoot, 'panels', name + 'Panel.tsx'))
     .concat(fs.readdirSync(path.join(componentRoot, 'demos')).filter(name => /^PnP.*\.tsx$/.test(name)).map(name => path.join(componentRoot, 'demos', name)));
   for (const file of files) {
@@ -160,6 +160,29 @@ test('hook, provider, style and service panels use Fluent configuration and shar
   new Function('module', 'exports', require('typescript').transpileModule(catalogueText, {
     compilerOptions: { module: require('typescript').ModuleKind.CommonJS },
   }).outputText)(catalogueModule, catalogueModule.exports);
+  const tenantTitles = {
+    useSPFxTenantKeyValueStore: 'Explore tenant records and exact text persistence',
+    createSPFxTenantKeyValueStoreService: 'Round trip numeric looking text through a tenant service',
+  };
+  const tenantOwners = ['packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore.ts#useSPFxTenantKeyValueStore', 'packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService'];
+  const tenantCases = catalogueModule.exports.executableExamples.filter(entry => tenantOwners.includes(entry.ownerKey));
+  assert.deepEqual(tenantCases.map(entry => [entry.featureTitle, entry.title]).sort(), Object.entries(tenantTitles).sort(), 'both actual source-owned Tenant list cases replace the retired panel');
+  for (const entry of tenantCases) {
+    const source = fs.readFileSync(path.join(generatedRoot, entry.id + '.tsx'), 'utf8');
+    assert.deepEqual([entry.metadata.host, entry.metadata.kind, entry.metadata.contentPlacement], ['webPart', 'write', 'configuration']);
+    assert.equal(entry.groupKey, entry.featureTitle === 'useSPFxTenantKeyValueStore' ? 'hooks' : 'services');
+    assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|summary|a)\b|<FluentProvider\b/);
+    const parser = require('typescript'); const parsed = parser.createSourceFile(entry.id + '.tsx', source, parser.ScriptTarget.Latest, true, parser.ScriptKind.TSX);
+    let calls = 0;
+    function inspectTenant(node) {
+      if (parser.isCallExpression(node) && parser.isIdentifier(node.expression) && node.expression.text === entry.featureTitle) calls++;
+      if (parser.isJsxAttribute(node)) assert.ok(!['style', 'styles'].includes(node.name.text), 'Tenant authored styles use classes');
+      parser.forEachChild(node, inspectTenant);
+    }
+    inspectTenant(parsed); assert.equal(calls, 1, 'each case invokes its own actual public owner once');
+    assert.match(source, /return render \? render\(regions\)/, 'standalone and shared renderers retain one controller');
+    assert.match(source, /overflowX: 'auto'/);
+  }
   // A control using a helper does not become a selectable hook scenario.
   const hooks = catalogueModule.exports.executableExamples
     .filter(entry => entry.groupKey === 'hooks' && entry.metadata.host === 'none')

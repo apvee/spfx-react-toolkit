@@ -1,5 +1,7 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
+  useSPFxTenantKeyValueStore: ['Explore tenant records and exact text persistence'],
+  createSPFxTenantKeyValueStoreService: ['Round trip numeric looking text through a tenant service'],
   useSPFxTenantProperty: ['Read tenant version and counter with explicit activation'],
   createSPFxTenantPropertyService: ['Read and validate a catalog StorageEntity'],
   useSPFxSiteKeyValueStore: ['Explore collection root records with guarded mutations'],

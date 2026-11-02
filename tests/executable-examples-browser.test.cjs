@@ -4,15 +4,20 @@ const { pilotTitles, filterPilotGroups } = require('./fixtures/demo-presentation
 const { createContextFixture } = require('./fixtures/executable-examples/context-scenarios.cjs');
 const { checkLegacyPermissionResult } = require('../scripts/jsdoc-pilots-browser.helpers.cjs');
 
-test('browser pilot filter selects exactly 38 features and 45 independently named scenarios without mutation', () => {
+test('tenant list acceptance contains the two exact new hook and factory cases', () => {
+  assert.deepEqual(pilotTitles.useSPFxTenantKeyValueStore, ['Explore tenant records and exact text persistence']);
+  assert.deepEqual(pilotTitles.createSPFxTenantKeyValueStoreService, ['Round trip numeric looking text through a tenant service']);
+});
+
+test('browser pilot filter selects exactly 40 features and 47 independently named scenarios without mutation', () => {
   const features = Object.entries(pilotTitles).map(([title, titles]) => ({ key: title, title, scenarios: [...titles.map(title => ({ title })), { title: 'Future scenario' }] }));
-  const expectedGroup = title => ['WebPartShell', 'Pagination'].includes(title) ? 'controls' : ['createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService'].includes(title) ? 'services' : 'hooks';
+  const expectedGroup = title => ['WebPartShell', 'Pagination'].includes(title) ? 'controls' : ['createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService'].includes(title) ? 'services' : 'hooks';
   const groups = ['controls', 'hooks', 'services'].map(key => ({ key, features: features.filter(feature => expectedGroup(feature.title) === key) })).concat([{ key: 'future', features: [{ title: 'Future feature', scenarios: [] }] }]);
   const original = structuredClone(groups);
   const filtered = filterPilotGroups(groups);
   assert.equal(filtered.length, 3);
-  assert.equal(filtered.flatMap(group => group.features).length, 38);
-  assert.equal(filtered.flatMap(group => group.features).flatMap(feature => feature.scenarios).length, 45);
+  assert.equal(filtered.flatMap(group => group.features).length, 40);
+  assert.equal(filtered.flatMap(group => group.features).flatMap(feature => feature.scenarios).length, 47);
   assert.deepEqual(groups, original, 'filter never mutates any app catalogue group, feature or scenario');
 
   const missingFeature = structuredClone(groups);
@@ -22,7 +27,7 @@ test('browser pilot filter selects exactly 38 features and 45 independently name
   const shell = missingScenario.flatMap(group => group.features).find(feature => feature.title === 'WebPartShell');
   shell.scenarios = shell.scenarios.filter(scenario => scenario.title !== 'Configure the actual web part Shell');
   assert.throws(() => filterPilotGroups(missingScenario), /Missing pilot scenario or duplicate: WebPartShell\/Configure the actual web part Shell/);
-  for (const owner of ['useSPFxTenantProperty', 'createSPFxTenantPropertyService']) {
+  for (const owner of ['useSPFxTenantProperty', 'createSPFxTenantPropertyService', 'useSPFxTenantKeyValueStore', 'createSPFxTenantKeyValueStoreService']) {
     const missing = structuredClone(groups);
     for (const group of missing) group.features = group.features.filter(feature => feature.title !== owner);
     assert.throws(() => filterPilotGroups(missing), new RegExp('Missing pilot feature or duplicate: ' + owner));

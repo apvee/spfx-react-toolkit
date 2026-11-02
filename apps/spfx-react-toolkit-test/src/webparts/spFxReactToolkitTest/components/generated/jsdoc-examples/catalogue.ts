@@ -2499,6 +2499,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-5062ba39e03063855fdd7a7e38635cf2980a1dd15f4aa5fa37eee376b9ad008a' */ "./5062ba39e03063855fdd7a7e38635cf2980a1dd15f4aa5fa37eee376b9ad008a")
 },
 {
+  "id": "150775e2f3f89b5c6202262b0f7027022a6cca93950730394f8ee429552c91fd",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore.ts#useSPFxTenantKeyValueStore",
+  "title": "Explore tenant records and exact text persistence",
+  "groupRoute": "docs/api/hooks/storage/tenant-key-value-store.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore.ts#useSPFxTenantKeyValueStore",
+  "featureTitle": "useSPFxTenantKeyValueStore",
+  "publicNames": [
+    "useSPFxTenantKeyValueStore"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore.ts",
+    "line": 270
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "write",
+    "contentPlacement": "configuration",
+    "observe": "Activate the tenant store, preserve numeric-looking and empty text, and run physical reads or consented mutations with current-only results."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-150775e2f3f89b5c6202262b0f7027022a6cca93950730394f8ee429552c91fd' */ "./150775e2f3f89b5c6202262b0f7027022a6cca93950730394f8ee429552c91fd")
+},
+{
   "id": "c45bf5ab58117bfb70b1fdcad2035617432d5ecc8ab24c35e51f264151326b16",
   "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty",
   "title": "Read tenant version and counter with explicit activation",
@@ -2706,6 +2729,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-196995dd0cc3cb7889f414c4282acab61e85718a2c301a02b5286bac3fd4a9d3' */ "./196995dd0cc3cb7889f414c4282acab61e85718a2c301a02b5286bac3fd4a9d3")
 },
 {
+  "id": "a1e7ea053acaef6c89bfb05612a772d49a04552a0bf1f9ba86ebd20250d695ac",
+  "ownerKey": "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService",
+  "title": "Round trip numeric looking text through a tenant service",
+  "groupRoute": "docs/api/services/tenant-key-value-store.md",
+  "groupKey": "services",
+  "featureKey": "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService",
+  "featureTitle": "createSPFxTenantKeyValueStoreService",
+  "publicNames": [
+    "createSPFxTenantKeyValueStoreService"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts",
+    "line": 145
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "write",
+    "contentPlacement": "configuration",
+    "observe": "Save numeric-looking text through the service at the supplied catalog and read it back as a string."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-a1e7ea053acaef6c89bfb05612a772d49a04552a0bf1f9ba86ebd20250d695ac' */ "./a1e7ea053acaef6c89bfb05612a772d49a04552a0bf1f9ba86ebd20250d695ac")
+},
+{
   "id": "25b252c39a42993a418d74e7cfdc7ce7560300bb71d2f7dcc2b21d66c81070f0",
   "ownerKey": "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService",
   "title": "Read and validate a catalog StorageEntity",
@@ -2833,15 +2879,17 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo", title: "useSPFxSiteInfo", scenarios: [executableExamples[103]] },
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore", title: "useSPFxSiteKeyValueStore", scenarios: [executableExamples[104]] },
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams", title: "useSPFxTeams", scenarios: [executableExamples[105]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty", title: "useSPFxTenantProperty", scenarios: [executableExamples[106]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[107]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[108]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto", title: "useSPFxUserPhoto", scenarios: [executableExamples[109]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[110], executableExamples[111]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[112], executableExamples[113]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore.ts#useSPFxTenantKeyValueStore", title: "useSPFxTenantKeyValueStore", scenarios: [executableExamples[106]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty", title: "useSPFxTenantProperty", scenarios: [executableExamples[107]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[108]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[109]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto", title: "useSPFxUserPhoto", scenarios: [executableExamples[110]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[111], executableExamples[112]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[113], executableExamples[114]] }
   ] },
   { key: "services", title: "Servizi", features: [
-    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[114]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[115]] }
+    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[115]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService", title: "createSPFxTenantKeyValueStoreService", scenarios: [executableExamples[116]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[117]] }
   ] }
 ];

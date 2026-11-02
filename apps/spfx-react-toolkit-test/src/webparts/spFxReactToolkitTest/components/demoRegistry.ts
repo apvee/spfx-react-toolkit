@@ -54,16 +54,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
-    key: 'tenant',
-    title: 'Tenant',
-    iconName: 'Org',
-    description: 'Tenant key-value store CRUD.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-tenant' */ './panels/TenantPanel')),
-    coverage: [
-      { symbol: 'useSPFxTenantKeyValueStore', kind: 'write', notes: 'Manual tenant CRUD, complete paging, effective permissions and observable text/JSON/bigint/date readback; reads never provision.' },
-    ],
-  },
-  {
     key: 'configuration',
     title: 'Configuration',
     iconName: 'TableGroup',
