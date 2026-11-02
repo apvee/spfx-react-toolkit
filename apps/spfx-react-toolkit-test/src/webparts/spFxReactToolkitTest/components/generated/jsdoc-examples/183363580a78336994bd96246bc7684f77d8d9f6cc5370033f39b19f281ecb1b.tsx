@@ -7,7 +7,7 @@ type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; sta
 type Item = { Title?: string; Path?: string; Author?: string; LastModifiedTime?: string };
 type Outcome = { token: object; request: number; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
 const choices = { All: SearchVerticals.All, Documents: SearchVerticals.Documents, Pages: SearchVerticals.Pages, People: SearchVerticals.People, Videos: SearchVerticals.Videos } as const;
-const useStyles = makeStyles({ controls: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, results: { display: 'grid', gap: '12px' } });
+const useStyles = makeStyles({ controls: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, results: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, maxWidth: '100%', gap: '12px', overflowWrap: 'anywhere', '& > article': { minWidth: 0, maxWidth: '100%' } } });
 
 export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
   const classes = useStyles();
