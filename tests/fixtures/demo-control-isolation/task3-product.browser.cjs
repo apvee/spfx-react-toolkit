@@ -133,7 +133,7 @@ async function dataGridProduct(page, { url, check }) {
   // Toolkit status/error surfaces belong to the subject and may replace the native grid.
   const subject = panel.locator('[data-demo-subject]');
   for (const api of ['typed','descriptors','dynamic']) {
-    await panel.locator('#dg-api').selectOption(api);
+    await page.goto(`${url}/?data-grid-only=1&product-demo=1&grid-scenario=${api}`); await panel.waitFor(); await diagnostics(panel);
     for (const preset of api === 'typed' ? ['overview','dates','team','metrics','custom'] : ['overview']) {
       if (api === 'typed') await panel.locator('#dg-preset').selectOption(preset);
       await cardinality(panel, check, `grid ${api} ${preset}`, '[role=grid]');
@@ -147,6 +147,13 @@ async function dataGridProduct(page, { url, check }) {
         if (preset === 'custom') { await grid.locator('[data-custom-row=a]').click(); await check('grid custom cell owns live state', await grid.locator('[data-custom-row=a]').textContent(), 'Custom 1'); }
       }
     }
+    const expectedId = api === 'dynamic' ? 'valid' : 'a';
+    await panel.locator('#dg-selection-mode').selectOption('multiselect'); await grid.getByRole('checkbox').nth(1).check();
+    await check(`grid ${api} native selection retains original and off-page IDs`, JSON.parse(await panel.locator('#dg-selection').textContent()).sort(), [expectedId, 'off-page'].sort());
+    await panel.locator('#dg-selection-mode').selectOption('none');
+    const activeCell = grid.locator('[data-grid-row-id]').first().locator('[role=gridcell]').first(); await activeCell.focus(); await activeCell.press('Enter');
+    await check(`grid ${api} native cell Enter activates original ID`, JSON.parse(await panel.locator('#dg-activation-output').textContent()), { rowId: expectedId });
+    await panel.locator('#dg-selection-mode').selectOption('multiselect');
   }
   await check('grid dynamic reports active rows', (await panel.locator('[role=status]').first().textContent()).includes('Rows: 3'), true);
   await check('grid dynamic hides typed sort and trend commands', await panel.locator('#dg-apply-sort,#dg-update-sparkline,#dg-color').count(), 0);
@@ -172,7 +179,7 @@ async function dataGridProduct(page, { url, check }) {
   await check('grid dynamic custom no-results slot visible', await subject.getByRole('status').filter({ hasText: /^Consumer-owned no-results slot$/ }).isVisible(), true);
   await check('grid dynamic custom no-results slot', await subject.getByRole('status').filter({ hasText: /^Consumer-owned no-results slot$/ }).count(), 1);
   await panel.getByRole('checkbox', { name: 'Empty rows', exact: true }).uncheck(); await panel.getByRole('checkbox', { name: 'Custom empty and no-results slots', exact: true }).uncheck(); await panel.locator('#dg-empty-state').selectOption('empty');
-  await panel.locator('#dg-api').selectOption('typed'); await panel.locator('#dg-preset').selectOption('overview');
+  await page.goto(`${url}/?data-grid-only=1&product-demo=1&grid-scenario=typed`); await panel.waitFor(); await diagnostics(panel);
   await grid.getByRole('checkbox').nth(1).check(); await check('grid selection actual intent', JSON.parse(await panel.locator('#dg-selection').textContent()).includes('a'), true);
   await grid.getByRole('button', { name: 'Open report', exact: true }).first().click(); await check('grid actual record action', JSON.parse(await panel.locator('#dg-action').textContent()), { rowId: 'a', actionId: 'review' });
   await panel.getByRole('checkbox', { name: 'Loading', exact: true }).check(); await cardinality(panel, check, 'grid pending', '[role=grid]'); await panel.getByRole('checkbox', { name: 'Loading', exact: true }).uncheck();

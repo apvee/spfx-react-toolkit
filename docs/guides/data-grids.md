@@ -28,7 +28,7 @@ Error and status object slots create an inner **div**. Header and placeholder ob
 
 Shorthand keeps its existing wrappers and JSX identity; strings remain literal. Nullish status/placeholders use their existing localized defaults (or the em dash). Boolean and empty content suppress default text while retaining the owned wrapper; an empty object requests an explicit inner container. Actions headers default only when undefined. Error is omitted for undefined, legacy null and false; **true**, empty strings, empty fragments and zero still request the error bar. No visible columns retains precedence over loading/empty status, and errors can coexist with rows and loading. Retry, sorting, sizing, selection and row activation are unchanged.
 
-Raw HTML and unsupported object props are rejected/filtered; React 17's erased `ReactNode` can defeat static object restrictions. Arbitrary JSX/callback subtrees remain the consumer's responsibility. Domain labels/icons/actions, value readers and `renderCell` callbacks retain their existing contracts and rendering paths. The lazy sample exposes inner refs, header callback clicks, object error/status and missing/invalid slots, and conditional suppression controls.
+Raw HTML and unsupported object props are rejected/filtered; React 17's erased `ReactNode` can defeat static object restrictions. Arbitrary JSX/callback subtrees remain the consumer's responsibility. Domain labels/icons/actions, value readers and `renderCell` callbacks retain their existing contracts and rendering paths. The source-owned scenarios expose inner refs, header callback clicks, object error/status and missing/invalid slots, and conditional suppression controls.
 
 ### Column inventory
 
@@ -90,9 +90,15 @@ Default empty/no-results text is horizontally centered with Fluent medium vertic
 
 There is no View, toolbar, search, filter, pagination, fetching or virtualization API. Supply data and orchestrate those behaviors in the consumer.
 
-The lazy DataGrid test-web-part scenario shows one compact grid with selectable typed, descriptor or dynamic APIs and column presets. Its controls update the active grid's rows, sizing, selection and status. Broader column, chart and native-behavior regression cases remain in the versioned [DataGrid fixture](../../tests/fixtures/demo-control-isolation/data-grid-regressions.tsx). Automated source/compiled browser runs and standalone tarball checks are local evidence. Authenticated SharePoint and screen-reader validation remain separate; see the [host checklist](../development/sharepoint-validation/INDEX.md).
+The explorer offers two createDataGrid scenarios and one DataGrid scenario. Choose typed document columns to switch five compact presets across all sixteen column families while preserving sort intent, selected IDs and supplied rows. Choose descriptors for one stable defineColumns collection with explicit sort application, or dynamic records to distinguish empty text, zero and false from missing and invalid values. Each scenario owns one grid, its consumer actions and its status/ref observations; switching scenarios starts that scenario's baseline. Broader column, chart and native-behavior regression cases remain in the versioned [DataGrid fixture](../../tests/fixtures/demo-control-isolation/data-grid-regressions.tsx). Automated source/compiled browser runs and standalone tarball checks are local evidence. Authenticated SharePoint and screen-reader validation remain separate; see the [host checklist](../development/sharepoint-validation/INDEX.md).
+
+Reset restores the current scenario without remounting Demo. The typed baseline returns to Documents: leaving Custom cells removes that child, and returning creates a new count. Width, theme and loading changes retain its mounted count while the custom preset stays present. Native grid refs detach when empty/no-results/all-hidden output replaces the grid; restoration reattaches a DIV. Header and missing-value refs apply to the typed and dynamic cases respectively; every case exposes its error DIV ref.
+
+The examples require the host FluentProvider/theme, shared Griffel renderer and Fluent Charts peer. Their standalone fallback renders controls, commands, status, grid and diagnostics in that order; optional render maps those same regions to a host presentation, and optional resetRevision defaults to zero. Its first observation is not a reset.
 
 The canonical [DataGrid](../api/controls/data-grid.md#datagrid) and [createDataGrid](../api/controls/data-grid.md#createdatagrid) reference owns every column, callback, type and default. The complete typed recipe below creates its suite once outside rendering.
+
+#### Create a typed descriptor grid
 
 ```tsx
 import * as React from 'react';

@@ -239,12 +239,17 @@ assertFormExampleCoverage(
 );
 console.log('Verified selectable Form adapters plus versioned scope/hook conformance coverage.');
 
-const gridPanel = scenarioSource('DataGrid');
+const gridSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/data-grid/create-data-grid.ts')) + '\n' + read(path.join(root, 'packages/spfx-react-toolkit/src/controls/data-grid/data-grid.tsx'));
+const gridPanel = scenarioSource('DataGrid', gridSource);
+if (!generated.symbols.has('DataGrid') || !generated.symbols.has('createDataGrid')) throw new Error('DataGrid requires canonical source-owned scenarios.');
 for (const marker of ['createDataGrid<DemoRow>()', 'Grid.defineColumns', '<DataGrid ', '<Grid.Column ', 'selectedItems=', 'onSelectionChange=', 'sortState=', 'onSortChange=', 'getRowId=', 'onRowActivate=', 'resizableColumns=', 'hiddenColumnIds=', 'onRetry=', 'dg-update-sparkline', 'dg-color', 'dg-inspect-ref', 'Invalid number', "new Set(['off-page'])"]) {
   if (!gridPanel.includes(marker)) throw new Error(`DataGrid interactive example missing ${marker}`);
 }
 for (const name of ['Text', 'Number', 'Boolean', 'Date', 'DateTime', 'Badge', 'Icon', 'Link', 'Person', 'People', 'Tags', 'Progress', 'Rating', 'Sparkline', 'Actions']) {
   if (!gridPanel.includes(`<Grid.${name}Column `)) throw new Error(`DataGrid sample missing ${name} column`);
+}
+for (const marker of ['export function Demo(', 'render(regions)', 'resetRevision', 'observe:']) {
+  if (!gridSource.includes(marker)) throw new Error(`Source-owned DataGrid scenario missing ${marker}`);
 }
 console.log('Verified DataGrid presets plus versioned full-family/native/chart conformance coverage.');
 
@@ -310,7 +315,7 @@ if (!cardsIsolation.includes('name="independent"') || !cardsIsolation.includes('
 console.log('Verified selectable single Cards, image lifecycle and versioned native/isolation conformance coverage.');
 
 
-for (const name of ['DataGrid', 'Styles', 'Providers', 'Context']) {
+for (const name of ['Styles', 'Providers', 'Context']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
   if (!product.includes('data-demo-variant')) throw new Error(`${name} selectable product variant missing`);
@@ -345,7 +350,6 @@ for (const marker of ['<EntraGroupTrim groups={[{ name: applied.group }]}', 'Per
 
 // Each migrated family retains an observable override on its existing live subject.
 for (const [panel, marker] of [
-  ['DataGridPanel.tsx', 'id="dg-strings"'],
   ['PickersPanel.tsx', 'data-picker-demo="strings"'],
   ['FileFolderPickerPanel.tsx', 'data-file-picker-demo="strings"'],
 ]) {
@@ -356,3 +360,5 @@ for (const [panel, marker] of [
 if (!paginationPanel.includes('data-pagination-demo="localization"') || !paginationPanel.includes('strings={localized ? customEnglishStrings : undefined}')) throw new Error('Source-owned Pagination must retain observable dictionary overrides');
 
 if (!stageSource.includes('data-stage-demo="strings"') || !stageSource.includes('strings={customStrings ?')) throw new Error('Source-owned Stage must retain native dictionary overrides');
+
+if (!gridSource.includes('id="dg-strings"') || !gridSource.includes('strings={gridStrings}')) throw new Error('Source-owned DataGrid must retain native dictionary overrides');

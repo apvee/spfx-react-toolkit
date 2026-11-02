@@ -127,6 +127,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-60c33ada62e5de74ffb49f20cb3ab7db19420b87493206efe5343a47a1e8aab3' */ "./60c33ada62e5de74ffb49f20cb3ab7db19420b87493206efe5343a47a1e8aab3")
 },
 {
+  "id": "a20740a2c7e96b1271767e6ac6c1bf0ade4fe7f337ff4c9bf8638d01b82d3bd9",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/data-grid/data-grid.tsx#DataGrid",
+  "title": "Classify dynamic row values and preserve controlled selection",
+  "groupRoute": "docs/api/controls/data-grid.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/data-grid/data-grid.tsx#DataGrid",
+  "featureTitle": "DataGrid",
+  "publicNames": [
+    "DataGrid"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/data-grid/data-grid.tsx",
+    "line": 287
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Compare valid empty text, zero and false with missing and invalid values, then select or activate original IDs and inspect native status and placeholder refs."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-a20740a2c7e96b1271767e6ac6c1bf0ade4fe7f337ff4c9bf8638d01b82d3bd9' */ "./a20740a2c7e96b1271767e6ac6c1bf0ade4fe7f337ff4c9bf8638d01b82d3bd9")
+},
+{
   "id": "9ecb7aa0e0a35bac5eb68d8c09b02af3744c9b9d99a8c170af24f75e136c5d2a",
   "ownerKey": "packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#DescriptionList",
   "title": "Inspect responsive metadata with data and compound APIs",
@@ -521,6 +544,52 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717' */ "./7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717")
 },
 {
+  "id": "72da85f16f9d5f684b5c802effaf3ef8c657ada6b8ea7b629af6f08734bc954f",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/data-grid/create-data-grid.ts#createDataGrid",
+  "title": "Explore typed document columns and controlled interaction",
+  "groupRoute": "docs/api/controls/data-grid.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/data-grid/create-data-grid.ts#createDataGrid",
+  "featureTitle": "createDataGrid",
+  "publicNames": [
+    "createDataGrid"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/data-grid/create-data-grid.ts",
+    "line": 36
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Switch all five column presets, apply controlled sort intent, select stable row IDs, activate rows and actions, then inspect native slots, Charts and retained custom state."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-72da85f16f9d5f684b5c802effaf3ef8c657ada6b8ea7b629af6f08734bc954f' */ "./72da85f16f9d5f684b5c802effaf3ef8c657ada6b8ea7b629af6f08734bc954f")
+},
+{
+  "id": "abf494bc983f86eb12fc98b6bfad805ef6dbd7eff892bb7116062585d6142a4c",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/data-grid/create-data-grid.ts#createDataGrid",
+  "title": "Supply descriptor columns with explicit sort and row order",
+  "groupRoute": "docs/api/controls/data-grid.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/data-grid/create-data-grid.ts#createDataGrid",
+  "featureTitle": "createDataGrid",
+  "publicNames": [
+    "createDataGrid"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/data-grid/create-data-grid.ts",
+    "line": 220
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Request sort without changing supplied order, explicitly apply or reverse rows, retain off-page selection, and inspect native status, sizing and ref boundaries."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-abf494bc983f86eb12fc98b6bfad805ef6dbd7eff892bb7116062585d6142a4c' */ "./abf494bc983f86eb12fc98b6bfad805ef6dbd7eff892bb7116062585d6142a4c")
+},
+{
   "id": "4f685167cdc22f155e5c3d314de64d4911b91ebc23a5d2e0566cc9798ae92f89",
   "ownerKey": "packages/spfx-react-toolkit/src/controls/form/create-form.ts#createForm",
   "title": "Edit typed reports across native fields and composition",
@@ -688,23 +757,25 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx#AccordionGroup", title: "AccordionGroup", scenarios: [executableExamples[0]] },
     { key: "packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton.tsx#AutoSkeleton", title: "AutoSkeleton", scenarios: [executableExamples[1]] },
     { key: "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx#ContentCard", title: "ContentCard", scenarios: [executableExamples[2]] },
-    { key: "packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#DescriptionList", title: "DescriptionList", scenarios: [executableExamples[3]] },
-    { key: "packages/spfx-react-toolkit/src/controls/editable-text/editable-text.tsx#EditableText", title: "EditableText", scenarios: [executableExamples[4]] },
-    { key: "packages/spfx-react-toolkit/src/controls/form/form.tsx#Form", title: "Form", scenarios: [executableExamples[5]] },
-    { key: "packages/spfx-react-toolkit/src/controls/formatted-text/formatted-text.tsx#FormattedText", title: "FormattedText", scenarios: [executableExamples[6]] },
-    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[7], executableExamples[8], executableExamples[9], executableExamples[10]] },
-    { key: "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard", title: "PreviewCard", scenarios: [executableExamples[11], executableExamples[12]] },
-    { key: "packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx#RelativeTime", title: "RelativeTime", scenarios: [executableExamples[13]] },
-    { key: "packages/spfx-react-toolkit/src/controls/settings-group/settings-group.tsx#SettingsGroup", title: "SettingsGroup", scenarios: [executableExamples[14]] },
-    { key: "packages/spfx-react-toolkit/src/controls/stage/stage.tsx#Stage", title: "Stage", scenarios: [executableExamples[15]] },
-    { key: "packages/spfx-react-toolkit/src/controls/state-message/state-message.tsx#StateMessage", title: "StateMessage", scenarios: [executableExamples[16]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[17], executableExamples[18], executableExamples[19]] },
-    { key: "packages/spfx-react-toolkit/src/controls/form/create-form.ts#createForm", title: "createForm", scenarios: [executableExamples[20], executableExamples[21]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[22]] }
+    { key: "packages/spfx-react-toolkit/src/controls/data-grid/data-grid.tsx#DataGrid", title: "DataGrid", scenarios: [executableExamples[3]] },
+    { key: "packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#DescriptionList", title: "DescriptionList", scenarios: [executableExamples[4]] },
+    { key: "packages/spfx-react-toolkit/src/controls/editable-text/editable-text.tsx#EditableText", title: "EditableText", scenarios: [executableExamples[5]] },
+    { key: "packages/spfx-react-toolkit/src/controls/form/form.tsx#Form", title: "Form", scenarios: [executableExamples[6]] },
+    { key: "packages/spfx-react-toolkit/src/controls/formatted-text/formatted-text.tsx#FormattedText", title: "FormattedText", scenarios: [executableExamples[7]] },
+    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[8], executableExamples[9], executableExamples[10], executableExamples[11]] },
+    { key: "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard", title: "PreviewCard", scenarios: [executableExamples[12], executableExamples[13]] },
+    { key: "packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx#RelativeTime", title: "RelativeTime", scenarios: [executableExamples[14]] },
+    { key: "packages/spfx-react-toolkit/src/controls/settings-group/settings-group.tsx#SettingsGroup", title: "SettingsGroup", scenarios: [executableExamples[15]] },
+    { key: "packages/spfx-react-toolkit/src/controls/stage/stage.tsx#Stage", title: "Stage", scenarios: [executableExamples[16]] },
+    { key: "packages/spfx-react-toolkit/src/controls/state-message/state-message.tsx#StateMessage", title: "StateMessage", scenarios: [executableExamples[17]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[18], executableExamples[19], executableExamples[20]] },
+    { key: "packages/spfx-react-toolkit/src/controls/data-grid/create-data-grid.ts#createDataGrid", title: "createDataGrid", scenarios: [executableExamples[21], executableExamples[22]] },
+    { key: "packages/spfx-react-toolkit/src/controls/form/create-form.ts#createForm", title: "createForm", scenarios: [executableExamples[23], executableExamples[24]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[25]] }
   ] },
   { key: "hooks", title: "Hook", features: [
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[23]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[24], executableExamples[25]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[26]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[26]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[27], executableExamples[28]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[29]] }
   ] }
 ];

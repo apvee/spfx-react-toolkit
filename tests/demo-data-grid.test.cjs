@@ -8,10 +8,10 @@ const base = 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/com
 test('DataGrid sample covers the complete family with consumer-owned observable states', () => {
   const registry = read(base + 'demoRegistry.ts');
   const panel = read('tests/fixtures/demo-control-isolation/data-grid-regressions.tsx');
-  assert.match(registry, /key: 'data-grid'/);
-  assert.match(registry, /webpackChunkName: 'spfx-demo-data-grid'/);
+  assert.doesNotMatch(registry, /key: 'data-grid'|spfx-demo-data-grid|panels\/DataGridPanel/);
   for (const symbol of ['DataGrid', 'createDataGrid']) {
-    assert.equal([...registry.matchAll(new RegExp(`symbol: '${symbol}'`, 'g'))].length, 1);
+    const catalogue = read(base + 'generated/jsdoc-examples/catalogue.ts');
+    assert.ok(catalogue.includes(`"featureTitle": ${JSON.stringify(symbol)}`), symbol);
   }
   for (const column of ['Text', 'Number', 'Boolean', 'Date', 'DateTime', 'Badge', 'Icon', 'Link', 'Person', 'People', 'Tags', 'Progress', 'Rating', 'Sparkline', 'Actions']) {
     assert.ok(panel.includes(`<Grid.${column}Column `), column);
@@ -62,64 +62,24 @@ test('DataGrid scenario separates configuration commands, outcomes and advanced 
 });
 
 
-test('Product scenario owns one configuration and selectable variants without comparison galleries', () => {
-  const product = fs.readFileSync(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/DataGridPanel.tsx'), 'utf8');
-  const compiler = require('typescript');
-  const parsed = compiler.createSourceFile('product.tsx', product, compiler.ScriptTarget.Latest, true, compiler.ScriptKind.TSX);
-  const cards = []; let createInRender = false;
-  function inspect(node) {
-    if (compiler.isJsxOpeningElement(node) && node.tagName.getText(parsed) === 'DemoCard') cards.push(node);
-    if (compiler.isCallExpression(node) && ['createForm', 'createDataGrid'].includes(node.expression.getText(parsed))) {
-      for (let parent = node.parent; parent; parent = parent.parent) if (compiler.isFunctionLike(parent)) createInRender = true;
-    }
-    compiler.forEachChild(node, inspect);
-  }
-  inspect(parsed);
-  assert.equal(parsed.parseDiagnostics.length, 0);
-  assert.equal(cards.length, 1);
-  assert.equal(createInRender, false);
-  assert.match(product, /data-demo-variant="API"/);
-  assert.doesNotMatch(product, /Independent |comparison|hidden=\{(?:mode|family) !==/);
-  const browserChecks = fs.readFileSync(path.resolve(__dirname, 'fixtures/demo-control-isolation/task3-product.browser.cjs'), 'utf8');
-  assert.match(browserChecks, /dataGridProduct/);
-});
-
-
-test('actual product renders selectable defaults and mutually exclusive activation for every API', async () => {
-  process.env.NODE_ENV = 'test';
-  const hostHarness = require('./fixtures/form-selection-harness.cjs');
-  const sourceHarness = require('./fixtures/formatted-text-harness.cjs');
-  await hostHarness.setup();
-  document.createRange = () => ({ selectNodeContents() {}, getClientRects() { return []; } });
-  let fixture;
-  try {
-    const library = await sourceHarness.loadModule('tests/fixtures/sx-browser/data-grid-toolkit-boundary.ts');
-    const shared = await sourceHarness.loadModule('apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/index.ts');
+test('canonical DataGrid recipes own one active subject without a copied API controller', () => {
+  const { scenario } = require('./fixtures/executable-examples/cards-description-list.cjs');
+  for (const title of ['Explore typed document columns and controlled interaction', 'Supply descriptor columns with explicit sort and row order', 'Classify dynamic row values and preserve controlled selection']) {
+    const { source } = scenario(title);
     const compiler = require('typescript');
-    const source = read(base + 'panels/DataGridPanel.tsx');
-    const compiled = compiler.transpileModule(source, { compilerOptions: { module: compiler.ModuleKind.CommonJS, target: compiler.ScriptTarget.ES2020, jsx: compiler.JsxEmit.React } });
-    const panel = { exports: {} };
-    new Function('require', 'module', 'exports', compiled.outputText)(name => name === '@apvee/spfx-react-toolkit' ? library : name === '../shared' ? shared : require(name), panel, panel.exports);
-    fixture = hostHarness.mount(hostHarness.React.createElement(panel.exports.default));
-    const change = (id, value) => hostHarness.change(fixture.host.querySelector(`#${id}`), value);
-    for (const api of ['typed', 'descriptors', 'dynamic']) {
-      change('dg-api', api); change('dg-selection-mode', 'multiselect');
-      assert.equal(fixture.host.querySelectorAll('[role=grid]').length, 1, `${api} default renders one actual grid`);
-      assert.ok(fixture.host.querySelectorAll('#data-grid-main input[type=checkbox]').length > 0, `${api} exposes native selection`);
-      const firstRow = fixture.host.querySelector('#data-grid-main [data-grid-row-id]');
-      const rowId = api === 'dynamic' ? 'valid' : 'a';
-      const wasSelected = JSON.parse(fixture.host.querySelector('#dg-selection').textContent).includes(rowId);
-      hostHarness.click(firstRow);
-      const selected = JSON.parse(fixture.host.querySelector('#dg-selection').textContent);
-      assert.equal(selected.includes(rowId), !wasSelected, `${api} selection toggles the retained model without activation`);
-      change('dg-selection-mode', 'none');
-      const activationRow = fixture.host.querySelector('#data-grid-main [data-grid-row-id]');
-      const activationCell = activationRow.querySelector('[role=gridcell]');
-      activationCell.focus();
-      assert.equal(document.activeElement, activationCell, `${api} keyboard starts at the native gridcell`);
-      hostHarness.key(activationCell, 'Enter');
-      assert.deepEqual(JSON.parse(fixture.host.querySelector('#dg-activation-output').textContent), { rowId: api === 'dynamic' ? 'valid' : 'a' });
-      assert.equal(fixture.host.querySelectorAll('#data-grid-main input[type=checkbox]').length, 0, `${api} activation has no conflicting selection`);
+    const parsed = compiler.createSourceFile('grid-example.tsx', source, compiler.ScriptTarget.Latest, true, compiler.ScriptKind.TSX);
+    let grids = 0, createInRender = false;
+    function inspect(node) {
+      if ((compiler.isJsxOpeningElement(node) || compiler.isJsxSelfClosingElement(node)) && ['Grid','DataGrid'].includes(node.tagName.getText(parsed))) grids++;
+      if (compiler.isCallExpression(node) && node.expression.getText(parsed) === 'createDataGrid') {
+        for (let parent=node.parent; parent; parent=parent.parent) if (compiler.isFunctionLike(parent)) createInRender = true;
+      }
+      compiler.forEachChild(node, inspect);
     }
-  } finally { fixture?.close(); await hostHarness.cleanup(); }
+    inspect(parsed); assert.equal(parsed.parseDiagnostics.length,0); assert.equal(grids,1); assert.equal(createInRender,false);
+    for (const region of ['controls:', 'commands:', 'status:', 'diagnostics:', 'children:']) assert.ok(source.includes(region),region);
+    assert.doesNotMatch(source,/dg-api|private|panels\//);
+  }
+  const browserChecks = read('tests/fixtures/demo-control-isolation/task3-product.browser.cjs');
+  assert.match(browserChecks,/dataGridProduct/); assert.match(browserChecks,/grid-scenario/);
 });

@@ -40,17 +40,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
-    key: 'data-grid',
-    title: 'DataGrid',
-    iconName: 'Table',
-    description: 'One compact grid with selectable APIs and column presets, controlled sort and selection.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-data-grid' */ './panels/DataGridPanel')),
-    coverage: [
-      { symbol: 'DataGrid', kind: 'snapshot', notes: 'Dynamic valid/missing/invalid values, native cells, absolute dates with unchanged Intl locale and configurable UI strings.' },
-      { symbol: 'createDataGrid', kind: 'snapshot', notes: 'Selectable compact column/API presets, controlled selection/sort and activation; full-family/chart conformance in versioned fixtures.' },
-    ],
-  },
-  {
     key: 'styles',
     title: 'Styles',
     iconName: 'Color',
