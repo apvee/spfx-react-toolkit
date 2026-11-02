@@ -1,5 +1,11 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
+  useSPFxHttpClient: ['Load an external todo with tracked invocation state'],
+  useSPFxSPHttpClient: ['Read the current SharePoint web title and URL'],
+  useSPFxMSGraphClient: ['Read the current Graph profile after initialization'],
+  useSPFxAadHttpClient: ['Initialize a custom API client and call a path'],
+  useSPFxAadTokenProvider: ['Inspect client readiness and token-provider initialization'],
+  useSPFxApiPermissionPrecheck: ['Manually check Graph and custom API delegated scopes'],
   WebPartShell: ['Configure the actual web part Shell', 'Retain content through Shell presentation changes', 'Observe content remount between subtle and Card'],
   Pagination: ['Browse controlled rows', 'Browse controlled rows with pending completion', 'Show an empty controlled result', 'Browse orders across pagination modes'],
   useStableCallback: ['Report current count through a retained callback', 'Retain callback identity through rerenders'],

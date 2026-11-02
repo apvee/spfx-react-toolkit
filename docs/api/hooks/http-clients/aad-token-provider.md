@@ -124,6 +124,45 @@ function TokenProbe() {
 }
 ```
 
+#### Inspect client readiness and token-provider initialization
+
+```tsx
+import * as React from 'react';
+import { useSPFxHttpClient, useSPFxSPHttpClient, useSPFxMSGraphClient, useSPFxAadHttpClient, useSPFxAadTokenProvider, useSPFxServiceScope } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const { serviceScope } = useSPFxServiceScope();
+  const http = useSPFxHttpClient();
+  const sp = useSPFxSPHttpClient();
+  const graph = useSPFxMSGraphClient();
+  const aad = useSPFxAadHttpClient();
+  const token = useSPFxAadTokenProvider();
+  // The hooks clear old initialization in passive effects. Mask the first new-scope commit.
+  const [observedScope, setObservedScope] = React.useState(serviceScope);
+  React.useEffect(() => { setObservedScope(serviceScope); }, [serviceScope]);
+  const current = observedScope === serviceScope;
+  const regions: DemoRegions = {
+    children: <dl aria-label="Client readiness">
+      <dt>HttpClient</dt><dd>{http.isReady ? 'Ready' : 'Unavailable'}</dd>
+      <dt>SPHttpClient</dt><dd>{sp.isReady ? 'Ready' : 'Unavailable'}</dd>
+      <dt>MSGraphClient</dt><dd>{current && graph.isReady ? 'Ready' : 'Unavailable'}</dd>
+      <dt>AadHttpClient</dt><dd>{current && aad.isReady ? 'Ready' : 'Unavailable'}</dd>
+      <dt>Token provider</dt><dd>Token provider: {current && token.isReady ? 'Ready' : 'Unavailable'}</dd>
+      <dt>SPHttp Base URL</dt><dd>{sp.baseUrl}</dd>
+      <dt>Graph Initializing</dt><dd>{!current || graph.isInitializing ? 'Yes' : 'No'}</dd>
+      <dt>AAD Resource</dt><dd>{aad.resourceUrl || 'Not configured'}</dd>
+      <dt>AAD Initializing</dt><dd>{!current || aad.isInitializing ? 'Yes' : 'No'}</dd>
+      <dt>AAD Token Provider Initializing</dt><dd>{!current || token.isInitializing ? 'Yes' : 'No'}</dd>
+    </dl>,
+    status: <>{current && [graph.initError, aad.initError, token.initError].map((error, index) => error && <p role="alert" key={index}>{error.message}</p>)}</>,
+    diagnostics: <p>Mount below the matching SPFx provider. Factories initialize clients/providers without business requests. No token is requested. Reset leaves native initialization and readiness intact.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Watch actual client and token-provider initialization, readiness and initialization failures without requesting a token.' };
+```
+
 ### Signatures
 
 ```ts
@@ -153,4 +192,4 @@ Provider, initialization state and readiness.
 
 ### Source (2)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts:119](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts#L119)
+[packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts:157](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts#L157)

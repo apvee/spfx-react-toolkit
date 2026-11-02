@@ -64,3 +64,12 @@ export { useSPFxContainerInfo } from '../../../packages/spfx-react-toolkit/lib/h
 export { useSPFxContainerSize } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxContainerSize';
 export { useSPFxThemeInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxThemeInfo';
 export { useSPFxServiceScope } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxServiceScope';
+
+// Clients subjects use actual hooks; factories/transports only are native doubles.
+export { useSPFxHttpClient } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxHttpClient';
+export { useSPFxSPHttpClient } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxSPHttpClient';
+export { useSPFxMSGraphClient } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxMSGraphClient';
+export { useSPFxAadHttpClient } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxAadHttpClient';
+export { useSPFxAadTokenProvider } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxAadTokenProvider';
+export { useSPFxApiPermissionPrecheck } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxApiPermissionPrecheck';
+export { summarizeSPFxApiPermissionResults } from '../../../packages/spfx-react-toolkit/lib/helpers/spfx-api-permission-precheck.helpers';

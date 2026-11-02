@@ -293,6 +293,95 @@ export interface SPFxSPHttpClientInfo {
  *   </div>;
  * }
  * ```
+ *
+ * @example Read the current SharePoint web title and URL
+ * ```tsx
+ * import * as React from 'react';
+ * import { Button, Accordion, AccordionItem, AccordionHeader, AccordionPanel, makeStyles } from '@fluentui/react-components';
+ * import { useSPFxSPHttpClient, useSPFxContext, useSPFxServiceScope, useSPFxPageContext } from '@apvee/spfx-react-toolkit';
+ * import { SPHttpClient } from '@microsoft/sp-http';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * const useStyles = makeStyles({ diagnostics: { minWidth: 0, maxWidth: '100%', overflowX: 'auto' } });
+ * // JSON payloads may contain legacy null values; scenario-owned absence uses undefined.
+ * function payloadText(value: unknown): string {
+ *   const seen = new WeakSet<object>();
+ *   return JSON.stringify(value, (key: string, item: unknown): unknown => {
+ *     if (key.startsWith('_') || key === 'serviceScope' || key === 'service') return '[Private]';
+ *     if (typeof item === 'object' && item !== undefined && item !== null) {
+ *       if (seen.has(item)) return '[Circular]';
+ *       seen.add(item);
+ *     }
+ *     return item;
+ *   }, 2) ?? 'No response';
+ * }
+ * function responseRows(value: unknown): React.ReactNode {
+ *   const entries = value !== undefined && typeof value === 'object' && value !== null
+ *     ? Object.entries(value).filter(([, field]) => ['string', 'number', 'boolean'].includes(typeof field)).slice(0, 8)
+ *     : value === undefined ? [] : [['Response', value]];
+ *   return entries.map(([key, field]) => <React.Fragment key={String(key)}><dt>{String(key)}</dt><dd>{String(field)}</dd></React.Fragment>);
+ * }
+ * export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const styles = useStyles();
+ *   const { spfxContext } = useSPFxContext();
+ *   const { serviceScope } = useSPFxServiceScope();
+ *   const page = useSPFxPageContext();
+ *   const info = useSPFxSPHttpClient();
+ *   const currentWeb = page.web.absoluteUrl.trim().replace(/\/$/, '');
+ *   React.useEffect(() => { if (info.baseUrl !== currentWeb) info.setBaseUrl(currentWeb); }, [currentWeb, info.baseUrl, info.setBaseUrl]);
+ *   const [observedScope, setObservedScope] = React.useState(serviceScope);
+ *
+ *   React.useEffect(() => { setObservedScope(serviceScope);  }, [serviceScope ]);
+ *   const initialized = observedScope === serviceScope ;
+ *   const values: readonly unknown[] = [spfxContext, serviceScope, serviceScope?.consume, page, page.web.absoluteUrl, info.invoke, resetRevision , currentWeb, info.baseUrl];
+ *   // A transition gets a new boundary even if a later draft/revision repeats an old value.
+ *   const boundary = React.useRef(values);
+ *   if (!values.every((value, index) => boundary.current[index] === value)) boundary.current = values;
+ *   const identity = boundary.current;
+ *   const live = React.useRef(identity);
+ *   live.current = identity;
+ *   const mounted = React.useRef(true);
+ *   React.useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+ *   const same = (capture: readonly unknown[]): boolean => mounted.current && capture === live.current && capture[1] === spfxContext.serviceScope && capture[2] === serviceScope?.consume && capture[4] === page.web.absoluteUrl;
+ *   const sequence = React.useRef(0);
+ *   // Hook loading counts current-client calls; this view also remembers obsolete native work.
+ *   const active = React.useRef(0);
+ *   const [activeActions, setActiveActions] = React.useState(0);
+ *   const [outcome, setOutcome] = React.useState<{ identity: readonly unknown[]; data?: unknown; failure?: string }>();
+ *   const visible = outcome && same(outcome.identity) ? outcome : undefined;
+ *   const execute = async (): Promise<void> => {
+ *     if (!same(identity) || !initialized || !info.isReady || info.baseUrl !== currentWeb) return;
+ *     const request = ++sequence.current;
+ *     setOutcome(undefined);
+ *     active.current++;
+ *     setActiveActions(active.current);
+ *     try {
+ *       const data = await info.invoke(async client => {
+ *         // invoke calls this synchronously today; keep the native I/O boundary guarded too.
+ *         if (!same(identity)) return undefined;
+ *         return client.get(`${info.baseUrl}/_api/web?$select=Title,Url`, SPHttpClient.configurations.v1).then(response => response.json());
+ *       });
+ *       if (same(identity) && sequence.current === request) setOutcome({ identity, data });
+ *     } catch (failure) {
+ *       if (same(identity) && sequence.current === request) setOutcome({ identity, failure: failure instanceof Error ? failure.message : String(failure) });
+ *     } finally {
+ *       active.current--;
+ *       // Cleanup may release obsolete work, but never republishes its result or error.
+ *       if (mounted.current) setActiveActions(active.current);
+ *     }
+ *   };
+ *
+ *   const regions: DemoRegions = {
+ *     controls: undefined,
+ *     commands: <><Button disabled={!initialized || !info.isReady || info.isLoading || activeActions > 0 || info.baseUrl !== currentWeb} onClick={execute}>Load current web</Button></>,
+ *     status: <><p role="status">Ready: {initialized && info.isReady && info.baseUrl === currentWeb ? 'Yes' : 'No'}; {info.isLoading || activeActions > 0 ? 'Loading: underlying requests are still completing' : 'Idle'}</p>{visible?.failure && <p role="alert">{visible.failure}</p>}</>,
+ *     children: <dl aria-label="SPHttpClient results"><dt>Response</dt><dd>{visible?.data === undefined ? 'Not loaded' : 'Loaded'}</dd><dt>Current request base</dt><dd>{currentWeb}</dd>{responseRows(visible?.data)}</dl>,
+ *     diagnostics: <><p>Mount below the matching SPFx provider. Reset invalidates this view; it does not cancel requests. These JSON callbacks do not inspect HTTP response.ok.</p>{visible?.data !== undefined && <Accordion collapsible><AccordionItem value="response"><AccordionHeader>Raw response</AccordionHeader><AccordionPanel><div className={styles.diagnostics} role="region" aria-label="Raw response JSON"><pre>{payloadText(visible.data)}</pre></div></AccordionPanel></AccordionItem></Accordion>}</>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Read the current SharePoint web Title and Url explicitly; the source synchronizes its base URL without issuing a request.' };
+ * ```
  */
 export function useSPFxSPHttpClient(initialBaseUrl?: string): SPFxSPHttpClientInfo {
   const { consume } = useSPFxServiceScope();

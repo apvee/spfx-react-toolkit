@@ -2,12 +2,6 @@ import * as React from 'react';
 const page = { site: { absoluteUrl: 'https://simulated.invalid/sites/demo' }, web: { absoluteUrl: 'https://simulated.invalid/sites/demo' }, cultureInfo: { currentCultureName: 'en-US', currentUICultureName: 'en-US' } };
 const forbiddenWrite = async (): Promise<never> => { throw new Error('Fixture forbids CRUD'); };
 const unavailable = { isReady: false, isInitializing: false, isLoading: false, error: undefined, invoke: async () => undefined, baseUrl: page.web.absoluteUrl };
-export const useSPFxHttpClient = () => unavailable;
-export const useSPFxSPHttpClient = () => unavailable;
-export const useSPFxMSGraphClient = () => unavailable;
-export const useSPFxAadHttpClient = () => ({ ...unavailable, setResourceUrl: () => {} });
-export const useSPFxAadTokenProvider = () => unavailable;
-export const useSPFxApiPermissionPrecheck = () => ({ isChecking: false, isConfigured: false, configurationState: 'simulated unavailable', missing: [], warnings: [], results: [], check: async () => {}, retryWithoutCache: async () => {} });
 function useLocalRead() {
   const [isLoading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<Error>();

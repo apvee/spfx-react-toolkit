@@ -11,10 +11,11 @@ export class SPPermission {
   static manageLists = new SPPermission({ High: 0, Low: 0x800 });
 }
 export class PageContext { static serviceKey = 'trim-page-context'; }
-export class HttpClient { static configurations = { v1: {} }; }
+export class HttpClient { static serviceKey = 'clients-http'; static configurations = { v1: {} }; }
 export class SPHttpClient { static configurations = { v1: {} }; static serviceKey = 'trim-sp-http'; }
 export class MSGraphClientFactory { static serviceKey = 'trim-graph-factory'; }
+export class AadHttpClientFactory { static serviceKey = 'clients-aad-factory'; }
 export class AadHttpClient { static configurations = { v1: {} }; }
 
-// Native authentication transport is intentionally unavailable in this local fixture.
+// Native factory and token work are controlled separately from business requests.
 export class AadTokenProviderFactory { static serviceKey = 'fixture-aad-token-factory'; }

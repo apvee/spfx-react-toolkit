@@ -54,21 +54,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
-    key: 'clients',
-    title: 'Clients',
-    iconName: 'Cloud',
-    description: 'SPFx HTTP clients and state-managed invoke helpers.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-clients' */ './panels/ClientsPanel')),
-    coverage: [
-      { symbol: 'useSPFxHttpClient', kind: 'read', notes: 'External HTTP call through SPFx HttpClient.' },
-      { symbol: 'useSPFxSPHttpClient', kind: 'read', notes: 'Current web REST read through SPHttpClient.' },
-      { symbol: 'useSPFxMSGraphClient', kind: 'read', notes: 'Graph client status and optional /me call.' },
-      { symbol: 'useSPFxAadHttpClient', kind: 'read', notes: 'AAD-secured client initialization by resource URL.' },
-      { symbol: 'useSPFxAadTokenProvider', kind: 'read', notes: 'AAD token provider initialization status.' },
-      { symbol: 'useSPFxApiPermissionPrecheck', kind: 'read', notes: 'Passive Graph/custom API delegated scope precheck.' },
-    ],
-  },
-  {
     key: 'graph',
     title: 'Graph Data',
     iconName: 'OneDrive',
