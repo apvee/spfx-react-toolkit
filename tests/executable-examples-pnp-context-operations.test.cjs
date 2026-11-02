@@ -446,15 +446,15 @@ test('operations native presentation fallback parses finite read responses and r
   await assert.rejects(window.fetch('https://simulated.invalid/_api/web/lists', { method: 'POST' }), /Unsupported native PnP fixture route/);
   assert.equal(native.clientsNative.requests.length, before); assert.equal(window.pnpReadFixture.calls.length, 0);
 });
-test('remaining PnP panel default constructs real selectors and services under actual provider with zero native traffic', async t => {
+test('remaining PnP panel default constructs real title-list hook and service under actual provider with zero native traffic', async t => {
   const f = operationsFixture(t); const mode = process.env.PNP_CONTEXT_IMPLEMENTATION === 'compiled' ? 'lib' : 'src';
-  for (const name of ['useSPFxPnPList', 'useSPFxPnPListById', 'useSPFxPnPListByUrl', 'useSPFxPnPListByPath']) Object.assign(f.toolkit, f.h.load(path.resolve('packages/spfx-react-toolkit', mode, 'hooks', name + (mode === 'src' ? '.ts' : '.js'))));
+  for (const name of ['useSPFxPnPList']) Object.assign(f.toolkit, f.h.load(path.resolve('packages/spfx-react-toolkit', mode, 'hooks', name + (mode === 'src' ? '.ts' : '.js'))));
   const Panel = f.h.load(path.resolve('apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/PnPPanel.tsx')).default;
   const { FluentProvider, webLightTheme } = require('@fluentui/react-components');
   const view = f.h.mountComponent(() => f.h.React.createElement(FluentProvider, { theme: webLightTheme }, f.h.React.createElement(f.toolkit.SPFxWebPartProvider, { instance: f.host('remaining-pnp') }, f.h.React.createElement(Panel))));
   t.after(view.unmount); await drain(f);
-  assert.equal(view.container.querySelector('select[data-demo-variant="PnPPanel"]').value, 'listAccess');
-  assert.equal([...view.container.querySelectorAll('button')].find(node => node.textContent === 'Query by GUID').disabled, true);
+  assert.equal(view.container.querySelector('select[data-demo-variant="PnPPanel"]').value, 'list');
+  assert.equal([...view.container.querySelectorAll('button')].find(node => node.textContent === 'Load').disabled, true);
   assert.equal(view.container.querySelector('input').value, ''); assert.equal(f.calls.length, 0);
 });
 

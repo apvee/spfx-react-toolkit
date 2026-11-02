@@ -4,16 +4,18 @@ const { test } = require('node:test');
 const { Simulate } = require('react-dom/test-utils');
 const { FluentProvider, webLightTheme } = require('@fluentui/react-components');
 const { createHarness } = require('./services-test-harness.cjs');
-const demo = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demos/PnPListAccessDemo.tsx');
+const { scenario } = require('./fixtures/executable-examples/cards-description-list.cjs');
 const modes = [
-  ['Id', 'id', 'id', 'List GUID', 'Query by GUID', '11111111-2222-3333-4444-555555555555'],
-  ['Url', 'url', 'serverRelativeUrl', 'Server-relative list URL', 'Query by URL', '/sites/projects/Lists/Tasks'],
-  ['Path', 'path', 'webRelativePath', 'Web-relative list path', 'Query by path', 'Lists/Tasks'],
+  ['Id', 'id', 'id', 'List GUID', 'Query by GUID', '11111111-2222-3333-4444-555555555555', 'Read items by list GUID'],
+  ['Url', 'url', 'serverRelativeUrl', 'Server-relative list URL', 'Query by URL', '/sites/projects/Lists/Tasks', 'Read items by decoded server-relative URL'],
+  ['Path', 'path', 'webRelativePath', 'Web-relative list path', 'Query by path', 'Lists/Tasks', 'Read items by decoded web-relative path'],
 ];
-function fixture(t, { panel = false } = {}) {
+// Real emitted examples and selector hooks; context and service are deliberately doubled.
+// Native HTTP serialization/provider evidence lives in executable-examples-pnp-selectors.
+function fixture(t, mode, { panel = false } = {}) {
   const factories = [], calls = [];
   let resolve, reject;
-  const context = { sp: {}, isInitialized: true };
+  const context = { sp: {}, isInitialized: true, siteUrl: 'https://tenant.test/sites/projects' };
   const boundaries = {
     './useSPFxPnPContext': { useSPFxPnPContext: () => context },
     '../services/spfx-pnp-list.service': { createSPFxPnPListService: (sp, target, size) => {
@@ -28,13 +30,16 @@ function fixture(t, { panel = false } = {}) {
     } },
   };
   const h = createHarness(boundaries);
-  boundaries['@apvee/spfx-react-toolkit'] = Object.assign({}, ...modes.map(([suffix]) => h.load('hooks/useSPFxPnPListBy' + suffix + '.ts')));
+  const toolkit = { ...boundaries['./useSPFxPnPContext'], ...h.load('hooks/useSPFxPnPList.ts'), ...Object.assign({}, ...modes.map(([suffix]) => h.load('hooks/useSPFxPnPListBy' + suffix + '.ts'))) };
+  boundaries['@apvee/spfx-react-toolkit'] = toolkit;
   t.after(h.close);
-  // JSDOM has no layout observer; messages still use the actual Fluent DOM.
   window.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
   t.mock.method(window, 'setTimeout', (callback, delay) => setTimeout(callback, delay));
-  const Component = panel ? h.load(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/PnPPanel.tsx')).default : h.load(demo).PnPListAccessDemo;
-  const view = h.mountComponent(() => h.React.createElement(FluentProvider, { theme: webLightTheme }, h.React.createElement(Component)));
+  const [suffix, , , , , , title] = mode;
+  const selected = panel ? undefined : scenario(title, 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListBy' + suffix + '.ts#useSPFxPnPListBy' + suffix);
+  const Component = panel ? h.load(path.resolve('apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/PnPPanel.tsx')).default : h.load(selected.file).Demo;
+  const { DemoCard } = h.load(path.resolve('apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard.tsx'));
+  const view = h.mountComponent(() => h.React.createElement(FluentProvider, { theme: webLightTheme }, h.React.createElement(Component, panel ? {} : { render: regions => h.React.createElement(DemoCard, { title: 'useSPFxPnPListBy' + suffix, contentPlacement: 'configuration', ...regions }) })));
   const flush = async () => h.act(async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); await new Promise(r => setTimeout(r, 0)); });
   function button(name) { const element = Array.from(view.container.querySelectorAll('button')).find(b => b.textContent === name); assert.ok(element, name); return element; }
   function input(label, value) {
@@ -43,68 +48,39 @@ function fixture(t, { panel = false } = {}) {
     const field = view.container.querySelector('#' + labelNode.htmlFor);
     h.act(() => Simulate.change(field, { target: { value } }));
   }
-  function select(method) { h.act(() => Simulate.change(view.container.querySelector('select'), { target: { value: method } })); }
-  return { ...h, ...view, select, factories, calls, context, flush, button, input,
+  return { ...h, ...view, factories, calls, context, flush, button, input,
     click: name => h.act(() => Simulate.click(button(name))),
     succeed: async items => { await h.act(async () => { resolve({ items, hasMore: false, nextSkip: items.length, effectivePageSize: 10 }); }); await flush(); },
     fail: async () => { await h.act(async () => { reject(new Error('Read denied')); }); await flush(); },
   };
 }
-test('all three concrete modes mount without queries and blank inputs disable actions', async t => {
-  const f = fixture(t); await f.flush();
-  assert.deepEqual(f.calls, []);
-  assert.deepEqual(f.factories.map(x => x.target.kind), ['id']);
-  assert.ok(f.factories.every(x => x.sp === f.context.sp && x.size === 10));
-  for (const [, kind, , label, action] of modes) {
-    f.select(kind);
-    assert.equal(f.button(action).disabled, true);
-    f.input(label, '   ');
-    assert.equal(f.button(action).disabled, true);
-  }
-  assert.deepEqual(f.calls, []);
-});
-for (const [suffix, kind, field, label, action, value] of modes) {
-  test(suffix + ' forwards input and first-page query, displays pending/results/error and recovers', async t => {
-    const f = fixture(t);
-    f.select(kind);
-    f.input(label, value);
-    assert.equal(f.button(action).disabled, false);
-    assert.deepEqual(f.calls, []);
-    f.click(action);
-    await f.flush();
-    assert.equal(f.button(action).disabled, true);
-    assert.ok(f.container.textContent.includes('Loading'));
+for (const mode of modes) {
+  const [suffix, kind, field, label, action, value] = mode;
+  test(suffix + ' emitted selector mounts without queries; blank/whitespace disable commands', async t => {
+    const f = fixture(t, mode); await f.flush();
+    assert.deepEqual(f.calls, []); assert.deepEqual(f.factories.map(x => x.target.kind), [kind]);
+    assert.ok(f.factories.every(x => x.sp === f.context.sp && x.size === 10));
+    assert.equal(f.button(action).disabled, true); f.input(label, '   '); assert.equal(f.button(action).disabled, true); assert.deepEqual(f.calls, []);
+  });
+  test(suffix + ' forwards raw input and first-page query, displays pending/results/error and recovers', async t => {
+    const f = fixture(t, mode); f.input(label, value); assert.equal(f.button(action).disabled, false); assert.deepEqual(f.calls, []);
+    f.click(action); await f.flush(); assert.equal(f.button(action).disabled, true); assert.ok(f.container.textContent.includes('Loading'));
     assert.deepEqual(f.calls[0], { target: { kind, [field]: value }, options: undefined, operations: [['select', 'Id', 'Title'], ['orderBy', 'Id', false]] });
     await f.succeed([{ Id: 42, Title: 'Result title' }, { Id: 43, Title: null }]);
-    assert.ok(f.container.textContent.includes('#42 - Result title'));
-    assert.ok(f.container.textContent.includes('#43 - (untitled)'));
-    assert.equal(f.button(action).disabled, false);
-    f.click(action); await f.fail();
-    assert.ok(f.container.textContent.includes('Read denied'));
-    assert.equal(f.button(action).disabled, false);
-    f.click(action); await f.succeed([]);
-    assert.ok(!f.container.textContent.includes('Read denied'));
-    assert.ok(f.container.textContent.includes('No items loaded.'));
+    assert.ok(f.container.textContent.includes('#42 - Result title')); assert.ok(f.container.textContent.includes('#43 - (untitled)')); assert.equal(f.button(action).disabled, false);
+    f.click(action); await f.fail(); assert.ok(f.container.textContent.includes('Read denied')); assert.equal(f.button(action).disabled, false);
+    f.click(action); await f.succeed([]); assert.ok(!f.container.textContent.includes('Read denied')); assert.ok(f.container.textContent.includes('No items loaded.'));
+  });
+  test(suffix + ' query region keeps inputs separate from commands without blank service previews', t => {
+    const f = fixture(t, mode); assert.equal(f.container.querySelectorAll('[aria-label$=" preview"]').length, 0); assert.equal(f.container.querySelectorAll('[data-demo-section]').length, 1);
+    const section = f.container.querySelector(`[data-demo-section][aria-label="useSPFxPnPListBy${suffix}"]`); assert.ok(section);
+    assert.ok(section.querySelector(`[aria-label="useSPFxPnPListBy${suffix} configuration"] input`));
+    const commands = section.querySelector(`[aria-label="useSPFxPnPListBy${suffix} commands"]`); assert.equal(commands.querySelectorAll('input').length, 0); assert.equal(commands.textContent, action);
   });
 }
-
-test('list query sections keep query inputs separate from commands without blank service previews', t => {
-  const f = fixture(t);
-  assert.equal(f.container.querySelectorAll('[aria-label$=" preview"]').length, 0);
-  assert.equal(f.container.querySelectorAll('[data-demo-section]').length, 1);
-  for (const [suffix, kind, , , action] of modes) {
-    f.select(kind);
-    const section = f.container.querySelector(`[data-demo-section][aria-label="useSPFxPnPListBy${suffix}"]`);
-    assert.ok(section);
-    assert.ok(section.querySelector(`[aria-label="useSPFxPnPListBy${suffix} configuration"] input`));
-    const commands = section.querySelector(`[aria-label="useSPFxPnPListBy${suffix} commands"]`);
-    assert.equal(commands.querySelectorAll('input').length, 0);
-    assert.equal(commands.textContent, action);
-  }
-});
-
-test('remaining PnP panel defaults to blank explicit list access without requests', async t => {
-  const f = fixture(t, { panel: true }); await f.flush();
-  assert.equal(f.container.querySelector('select[data-demo-variant="PnPPanel"]').value, 'listAccess');
-  assert.equal(f.button('Query by GUID').disabled, true); assert.deepEqual(f.calls, []);
+// Retargeted at retirement: actual title-list runtime is still deliberately service-doubled here.
+test('remaining PnP panel defaults to blank explicit title list without requests', async t => {
+  const f = fixture(t, modes[0], { panel: true }); await f.flush();
+  assert.equal(f.container.querySelector('select[data-demo-variant="PnPPanel"]').value, 'list');
+  assert.equal(f.button('Load').disabled, true); assert.deepEqual(f.calls, []);
 });

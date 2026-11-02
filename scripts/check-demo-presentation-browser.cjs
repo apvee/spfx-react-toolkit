@@ -17,6 +17,9 @@ const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Goog
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
+  { key: 'pnp-list-id', title: 'useSPFxPnPListById' },
+  { key: 'pnp-list-url', title: 'useSPFxPnPListByUrl' },
+  { key: 'pnp-list-path', title: 'useSPFxPnPListByPath' },
   { key: 'pnp-operations', title: 'useSPFxPnP' },
   { key: 'pnp-context', title: 'useSPFxPnPContext' },
   { key: 'configuration', title: 'useSPFxConfigurationStore' }, { key: 'configuration-service', title: 'createSPFxConfigurationStoreService' },
@@ -64,6 +67,9 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    'pnp-list-id': ['useSPFxPnPListById', 'Read items by list GUID'],
+    'pnp-list-url': ['useSPFxPnPListByUrl', 'Read items by decoded server-relative URL'],
+    'pnp-list-path': ['useSPFxPnPListByPath', 'Read items by decoded web-relative path'],
     'pnp-operations': ['useSPFxPnP', 'Compare explicit invoke and batch reads'],
     'pnp-context': ['useSPFxPnPContext', 'Read current or cross-site web information'],
     configuration: ['useSPFxConfigurationStore', 'Compare layered configuration and physical inventories'],
@@ -105,7 +111,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -390,7 +396,26 @@ async function interact(page, key) {
       check('PnP context uses native web request only', await page.evaluate(() => window.clientsFixture.requests.slice(-1).map(request => { const url = new URL(request.target); return [request.kind, url.origin + url.pathname, url.searchParams.get('$select')]; })), [['pnp-web', 'https://simulated.invalid/sites/context-target/_api/web', 'Title,Url,Description']]);
       break;
     }
-    case 'pnp': await panel.locator('select[data-demo-variant=PnPPanel]').selectOption('listAccess'); await panel.getByLabel('List GUID', { exact: true }).fill('11111111-2222-3333-4444-555555555555'); check('PnP GUID config', await panel.getByLabel('List GUID', { exact: true }).inputValue(), '11111111-2222-3333-4444-555555555555'); break;
+    case 'pnp': check('Remaining title list starts blank', await panel.getByLabel('List Title', { exact: true }).inputValue(), ''); check('Remaining title list requires explicit input', await panel.getByRole('button', { name: 'Load', exact: true }).isDisabled(), true); break;
+    case 'pnp-list-id':
+    case 'pnp-list-url':
+    case 'pnp-list-path': {
+      const config = key === 'pnp-list-id'
+        ? ['List GUID', 'Query by GUID', '11111111-2222-3333-4444-555555555555', "/sites/demo/_api/web/lists('11111111-2222-3333-4444-555555555555')/items"]
+        : key === 'pnp-list-url'
+          ? ['Server-relative list URL', 'Query by URL', '/sites/projects/Lists/Tasks', "/sites/demo/_api/web/getList('%2Fsites%2Fprojects%2FLists%2FTasks')/items"]
+          : ['Web-relative list path', 'Query by path', 'Lists/Tasks', "/sites/demo/_api/web/getList('%2Fsites%2Fdemo%2FLists%2FTasks')/items"];
+      const before = await page.evaluate(() => window.clientsFixture.requests.length);
+      const pilotBefore = await page.evaluate(() => window.pnpReadFixture.calls.length);
+      await panel.getByLabel(config[0], { exact: true }).fill(config[2]);
+      check(key + ': editing makes no requests', await page.evaluate(() => window.clientsFixture.requests.length), before);
+      await panel.getByRole('button', { name: config[1], exact: true }).click();
+      await panel.getByText('#42 - Fixture selector row', { exact: true }).waitFor();
+      check(key + ': native item route and query', await page.evaluate(() => window.clientsFixture.requests.slice(-1).map(request => { const url = new URL(request.target); return [request.kind, request.settings.method, url.pathname, [...url.searchParams].sort()]; })), [['pnp-items', 'GET', config[3], [['$orderby', 'Id desc'], ['$select', 'Id,Title'], ['$top', '10']]]]);
+      check(key + ': native ledger count', await page.evaluate(() => window.clientsFixture.requests.length), before + 1);
+      check(key + ': original pilot ledger stays separate', await page.evaluate(() => window.pnpReadFixture.calls.length), pilotBefore);
+      break;
+    }
     case 'search': await panel.locator('select[data-demo-variant=SearchPanel]').selectOption('suggestions'); await panel.getByLabel('Search with Autocomplete', { exact: true }).fill('local'); await panel.getByRole('button', { name: 'local simulated suggestion', exact: true }).waitFor(); check('Search real debounce/suggestion UI', await panel.getByRole('button', { name: 'local simulated suggestion', exact: true }).count(), 1); break;
     default: throw new Error(`Uncovered panel ${key}`);
   }

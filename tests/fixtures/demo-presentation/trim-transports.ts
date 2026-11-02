@@ -186,6 +186,15 @@ window.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response>
     const webRead = target.pathname.endsWith('/_api/web') && (selected === 'Title,Url,Description' || selected === 'Title')
       && Array.from(target.searchParams).length === 1;
     const userRead = target.pathname.endsWith('/_api/web/currentUser') && selected === 'Title' && Array.from(target.searchParams).length === 1;
+    const itemRead = /\/_api\/web\/(?:lists\('[a-f\d-]+'\)|getList\('.+'\))\/items$/.test(target.pathname)
+      && selected === 'Id,Title' && target.searchParams.get('$orderby') === 'Id desc' && target.searchParams.get('$top') === '10'
+      && Array.from(target.searchParams).length === 3;
+    if (sameOrigin && method === 'GET' && itemRead) {
+      return clientWork('pnp-items', url, () => new Response(JSON.stringify({ value: [{ Id: 42, Title: 'Fixture selector row' }] }), { headers: { 'Content-Type': 'application/json' } }), { method, headers: init?.headers }).then(value => {
+        if (!(value instanceof Response)) throw new Error('PnP item fixture requires a native Response');
+        return value;
+      });
+    }
     if (sameOrigin && method === 'GET' && (listRead || webRead || userRead)) {
       const kind = listRead ? 'pnp-lists' : userRead ? 'pnp-user' : 'pnp-web';
       const body = listRead ? { value: [{ Title: 'Operations tasks', ItemCount: 17 }] } : userRead ? { Title: 'Operations reader' }

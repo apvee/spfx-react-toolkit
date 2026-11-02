@@ -86,3 +86,8 @@ export { useSPFxConfigurationStore } from '../../../packages/spfx-react-toolkit/
 export { createSPFxConfigurationStoreService, type SPFxConfigurationStoreItem, type SPFxConfigurationStoreMode, type SPFxConfigurationStoreScope } from '../../../packages/spfx-react-toolkit/src/services/spfx-configuration-store.service';
 
 export { useSPFxPnP } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnP';
+
+// Selector cases execute their actual matching-mode hooks and shared list service.
+export { useSPFxPnPListById } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById';
+export { useSPFxPnPListByUrl } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl';
+export { useSPFxPnPListByPath } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath';

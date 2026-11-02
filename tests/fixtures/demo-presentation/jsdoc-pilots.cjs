@@ -1,5 +1,9 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
+  useSPFxPnPListById: ['Read items by list GUID'],
+  useSPFxPnPListByUrl: ['Read items by decoded server-relative URL'],
+  useSPFxPnPListByPath: ['Read items by decoded web-relative path'],
+
   useSPFxPnP: ['Compare explicit invoke and batch reads'],
   useSPFxPnPContext: ['Read current or cross-site web information'],
   useSPFxConfigurationStore: ['Compare layered configuration and physical inventories'],

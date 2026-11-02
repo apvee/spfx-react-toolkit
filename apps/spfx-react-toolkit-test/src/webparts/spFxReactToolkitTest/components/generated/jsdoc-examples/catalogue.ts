@@ -2407,6 +2407,75 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-987a602b9876b30335971c617d05d9c716fae7b4d434c5142bf3f1ca9727d305' */ "./987a602b9876b30335971c617d05d9c716fae7b4d434c5142bf3f1ca9727d305")
 },
 {
+  "id": "b5566e1c600d725d4c2235cf4bb1ebb6dc60482eeade1474fb4bd896a3bd68c4",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts#useSPFxPnPListById",
+  "title": "Read items by list GUID",
+  "groupRoute": "docs/api/hooks/pnpjs.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts#useSPFxPnPListById",
+  "featureTitle": "useSPFxPnPListById",
+  "publicNames": [
+    "useSPFxPnPListById"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts",
+    "line": 47
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Enter a list GUID, then Query by GUID to read the first 10 items in descending ID order; target changes and reset invalidate late results."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-b5566e1c600d725d4c2235cf4bb1ebb6dc60482eeade1474fb4bd896a3bd68c4' */ "./b5566e1c600d725d4c2235cf4bb1ebb6dc60482eeade1474fb4bd896a3bd68c4")
+},
+{
+  "id": "4745336e513c6a321cd9d4baa1d14412d420cad09f8b7cbdab09d996001c4cc4",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath.ts#useSPFxPnPListByPath",
+  "title": "Read items by decoded web-relative path",
+  "groupRoute": "docs/api/hooks/pnpjs.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath.ts#useSPFxPnPListByPath",
+  "featureTitle": "useSPFxPnPListByPath",
+  "publicNames": [
+    "useSPFxPnPListByPath"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath.ts",
+    "line": 47
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Enter a decoded list path relative to the configured web, then Query by path to read the first 10 items in descending ID order; target changes and reset invalidate late results."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-4745336e513c6a321cd9d4baa1d14412d420cad09f8b7cbdab09d996001c4cc4' */ "./4745336e513c6a321cd9d4baa1d14412d420cad09f8b7cbdab09d996001c4cc4")
+},
+{
+  "id": "a82faf935d8e24c7036dc7309289a71f0aece2551be7fdfd8dc05f201794649d",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts#useSPFxPnPListByUrl",
+  "title": "Read items by decoded server-relative URL",
+  "groupRoute": "docs/api/hooks/pnpjs.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts#useSPFxPnPListByUrl",
+  "featureTitle": "useSPFxPnPListByUrl",
+  "publicNames": [
+    "useSPFxPnPListByUrl"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts",
+    "line": 47
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Enter a decoded server-relative list URL, then Query by URL to read the first 10 items in descending ID order; target changes and reset invalidate late results."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-a82faf935d8e24c7036dc7309289a71f0aece2551be7fdfd8dc05f201794649d' */ "./a82faf935d8e24c7036dc7309289a71f0aece2551be7fdfd8dc05f201794649d")
+},
+{
   "id": "2137a2e347029a89850685b1ae219eac8144d664ba5818116da16c3a283cca90",
   "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties",
   "title": "Edit the current host description with merge and updater",
@@ -2967,25 +3036,28 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnP.ts#useSPFxPnP", title: "useSPFxPnP", scenarios: [executableExamples[99]] },
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPContext.ts#useSPFxPnPContext", title: "useSPFxPnPContext", scenarios: [executableExamples[100]] },
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[101]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties", title: "useSPFxProperties", scenarios: [executableExamples[102]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSPHttpClient.ts#useSPFxSPHttpClient", title: "useSPFxSPHttpClient", scenarios: [executableExamples[103]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts#useSPFxServiceScope", title: "useSPFxServiceScope", scenarios: [executableExamples[104]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage", title: "useSPFxSessionStorage", scenarios: [executableExamples[105]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo", title: "useSPFxSiteInfo", scenarios: [executableExamples[106]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore", title: "useSPFxSiteKeyValueStore", scenarios: [executableExamples[107]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams", title: "useSPFxTeams", scenarios: [executableExamples[108]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore.ts#useSPFxTenantKeyValueStore", title: "useSPFxTenantKeyValueStore", scenarios: [executableExamples[109]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty", title: "useSPFxTenantProperty", scenarios: [executableExamples[110]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[111]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[112]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto", title: "useSPFxUserPhoto", scenarios: [executableExamples[113]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[114], executableExamples[115]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[116], executableExamples[117]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts#useSPFxPnPListById", title: "useSPFxPnPListById", scenarios: [executableExamples[102]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath.ts#useSPFxPnPListByPath", title: "useSPFxPnPListByPath", scenarios: [executableExamples[103]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts#useSPFxPnPListByUrl", title: "useSPFxPnPListByUrl", scenarios: [executableExamples[104]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties", title: "useSPFxProperties", scenarios: [executableExamples[105]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSPHttpClient.ts#useSPFxSPHttpClient", title: "useSPFxSPHttpClient", scenarios: [executableExamples[106]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts#useSPFxServiceScope", title: "useSPFxServiceScope", scenarios: [executableExamples[107]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage", title: "useSPFxSessionStorage", scenarios: [executableExamples[108]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo", title: "useSPFxSiteInfo", scenarios: [executableExamples[109]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore", title: "useSPFxSiteKeyValueStore", scenarios: [executableExamples[110]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams", title: "useSPFxTeams", scenarios: [executableExamples[111]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore.ts#useSPFxTenantKeyValueStore", title: "useSPFxTenantKeyValueStore", scenarios: [executableExamples[112]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty", title: "useSPFxTenantProperty", scenarios: [executableExamples[113]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[114]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[115]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto", title: "useSPFxUserPhoto", scenarios: [executableExamples[116]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[117], executableExamples[118]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[119], executableExamples[120]] }
   ] },
   { key: "services", title: "Servizi", features: [
-    { key: "packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService", title: "createSPFxConfigurationStoreService", scenarios: [executableExamples[118]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[119]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService", title: "createSPFxTenantKeyValueStoreService", scenarios: [executableExamples[120]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[121]] }
+    { key: "packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService", title: "createSPFxConfigurationStoreService", scenarios: [executableExamples[121]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[122]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService", title: "createSPFxTenantKeyValueStoreService", scenarios: [executableExamples[123]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[124]] }
   ] }
 ];

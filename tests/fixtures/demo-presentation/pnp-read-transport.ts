@@ -35,9 +35,10 @@ export const createSPFxPnPContextService: typeof createRealService = (...args) =
         // The existing builder resolves this helper's factory to the selected source/lib mode.
         const target = new URL(String(url));
         const read = /\/_api\/web(?:\/lists|\/currentUser)?$/.test(target.pathname);
+        const selectorRead = /\/_api\/web\/(?:lists\('[a-f\d-]+'\)|getList\('.+'\))\/items$/.test(target.pathname);
         const protocol = /\/_api\/(?:contextinfo|\$batch)$/.test(target.pathname);
-        if (read || protocol) {
-          if (read && (init.method ?? 'GET') !== 'GET') throw new Error('Simulated read fixture forbids CRUD');
+        if (read || selectorRead || protocol) {
+          if ((read || selectorRead) && (init.method ?? 'GET') !== 'GET') throw new Error('Simulated read fixture forbids CRUD');
           // Only the bounded terminal protocol may accept digest/read-batch POST.
           // These routes never alter the original GET-only pilot ledger or policy.
           return fetch(String(url), init);

@@ -60,6 +60,7 @@ function createClientsFixture(t, title, options = {}) {
         try {
             Object.assign(toolkit, library('hooks/useSPFxPnPContext'));
             if (options.pnpOperations) Object.assign(toolkit, library('hooks/useSPFxPnP'));
+            if (options.pnpSelectors) for (const name of ['Id', 'Url', 'Path']) Object.assign(toolkit, library('hooks/useSPFxPnPListBy' + name));
         }
         finally { fs.readFileSync = read; }
     }
@@ -89,7 +90,12 @@ function createClientsFixture(t, title, options = {}) {
     const calls = [], initializations = [], tokens = [], observers = [], commits = [], downloads = [];
     if (options.pnpContext) t.mock.method(global, 'fetch', (url, init) => {
         const target = new URL(String(url));
-        if (!options.pnpOperations) {
+        if (options.pnpSelectors) {
+            assert.equal(target.origin, 'https://tenant.test');
+            assert.equal(init.method, 'GET', 'selector fixture permits item reads only');
+            assert.match(target.pathname, /\/_api\/web\/(?:lists\('[a-f\d-]+'\)|getList\('.+'\))\/items$/);
+            assert.deepEqual([...target.searchParams].sort(), [['$orderby', 'Id desc'], ['$select', 'Id,Title'], ['$top', '10']]);
+        } else if (!options.pnpOperations) {
             assert.equal(init.method, 'GET', 'PnP context fixture permits reads only');
             assert.ok(target.pathname.endsWith('/_api/web'), 'bounded native web endpoint');
             assert.equal(target.searchParams.get('$select'), 'Title,Url,Description');
@@ -149,7 +155,7 @@ function createClientsFixture(t, title, options = {}) {
     const Shell = h.load(path.join(base, 'WebPartShellDemoHost.tsx')).WebPartShellDemoHost;
     const { DemoCard } = h.load(path.join(base, 'shared/DemoCard.tsx'));
     const Explorer = options.explorer ? h.load(path.join(base, 'ExampleExplorer.tsx')).ExampleExplorer : undefined;
-    const groups = options.explorer ? h.load(path.join(base, 'generated/jsdoc-examples/catalogue.ts')).executableGroups.map(group => ({ ...group, features: group.features.filter(feature => ['useSPFxContext', 'useSPFxPnPContext', ...(options.pnpOperations ? ['useSPFxPnP'] : [])].includes(feature.title)) })).filter(group => group.features.length) : [];
+    const groups = options.explorer ? h.load(path.join(base, 'generated/jsdoc-examples/catalogue.ts')).executableGroups.map(group => ({ ...group, features: group.features.filter(feature => ['useSPFxContext', 'useSPFxPnPContext', ...(options.pnpOperations ? ['useSPFxPnP'] : []), ...(options.pnpSelectors ? ['useSPFxPnPListById', 'useSPFxPnPListByUrl', 'useSPFxPnPListByPath'] : [])].includes(feature.title)) })).filter(group => group.features.length) : [];
 
     const renderer = createDOMRenderer(document, { unstable_filterCSSRule: rule => !rule.startsWith('@container') });
     const container = document.createElement('div');
