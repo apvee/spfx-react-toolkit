@@ -1,5 +1,16 @@
 const { pilotTitles } = require('../tests/fixtures/demo-presentation/jsdoc-pilots.cjs');
 
+async function checkLegacyPermissionResult(panel, check) {
+  const result = panel.getByLabel('Legacy permission result', { exact: true });
+  await result.getByText('Site mask: Available; Web mask: Available; List mask: Unavailable', { exact: true }).waitFor();
+  check('Context legacy loading absent', await result.getByText('Loading legacy permissions', { exact: true }).count(), 0);
+  check('Context legacy errors absent', await result.getByRole('alert').count(), 0);
+  check('Context legacy decision labels', await result.locator('dt').allTextContents(),
+    ['Manage Web', 'Manage Lists', 'Add List Items', 'Site view list items', 'List view list items']);
+  check('Context legacy decision values', await result.locator('dd').allTextContents(),
+    ['false', 'false', 'true', 'true', 'false']);
+}
+
 // Local browser acceptance uses real generated modules/controls/Shell. Only SPFx
 // native services and HTTP transport are doubled by the integrated fixture.
 async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
@@ -223,7 +234,7 @@ async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
   const legacyReads = await nativeCalls(); await panel.getByRole('textbox', { name: 'Site URL', exact: true }).fill('https://simulated.invalid/sites/target');
   check('Context legacy draft performs no read', await nativeCalls(), legacyReads);
   await panel.getByRole('button', { name: 'Check / repeat', exact: true }).click();
-  await panel.getByLabel('Legacy permission result', { exact: true }).getByText('Available', { exact: false }).first().waitFor();
+  await checkLegacyPermissionResult(panel, check);
   check('Context legacy checks actual site and web masks', (await nativeCalls()) >= legacyReads + 2, true);
   panel = await scenario('useSPFxHubSiteInfo', pilotTitles.useSPFxHubSiteInfo[0]);
   const hubReads = await nativeCalls(); await panel.getByRole('button', { name: 'Start / repeat lookup', exact: true }).click();
@@ -269,4 +280,4 @@ async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
   check('Keyboard reaches central scenario selector', await page.getByRole('combobox', { name: 'Scenario', exact: true }).evaluate(element => element === document.activeElement), true);
   await overflow(page, 'JSDoc 320px'); await capture(page, 'jsdoc-mobile-320');
 }
-module.exports = { jsdocPilotsBrowser };
+module.exports = { jsdocPilotsBrowser, checkLegacyPermissionResult };

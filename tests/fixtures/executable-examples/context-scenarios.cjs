@@ -43,24 +43,54 @@ function createContextFixture(t, title, ownerKey, options = {}) {
   Object.assign(toolkit, h.load('core/provider-webpart.tsx'), h.load('controls/web-part-shell/web-part-shell.tsx'), h.load('hooks/useSPFxProperties.ts'), h.load('hooks/useSx.ts'), h.load('helpers/styles/index.ts'), h.load('controls/relative-time/relative-time.tsx'));
   Object.defineProperty(window, 'crypto', { configurable: true, value: require('node:crypto').webcrypto });
   const calls = [], handlers = new Set(), observations = [], roots = new Set();
+  const servicesByScope = new WeakMap();
   const themeService = { current: undefined, tryGetTheme() { return this.current; }, themeChangedEvent: { add: (_owner, fn) => handlers.add(fn), remove: (_owner, fn) => handlers.delete(fn) } };
-  function client() { return { get(url, configuration, init) { let resolve, reject; const promise = new Promise((a,b) => { resolve=a; reject=b; }); calls.push({ url, configuration, init, resolve: value => resolve({ ok: true, json: async () => value }), reject }); return promise; } }; }
+  function client() {
+    const nativeClient = { get(url, configuration, init) {
+      let resolve, reject;
+      const promise = new Promise((a, b) => { resolve = a; reject = b; });
+      calls.push({ client: nativeClient, url, configuration, init, resolve: value => resolve({ ok: true, json: async () => value }), reject });
+      return promise;
+    } };
+    return nativeClient;
+  }
+  function nativeScope(services, consume) {
+    const scope = { whenFinished: fn => fn(), consume: consume ?? (key => {
+      if (!services.has(key)) throw new Error('Unknown native service');
+      return services.get(key);
+    }) };
+    servicesByScope.set(scope, services);
+    return scope;
+  }
   function host(id = 'context-one', nativePage = page()) {
-    const sp = client();
-    const scope = { whenFinished: fn => fn(), consume(key) { if (key === keys.page) return nativePage; if (key === keys.sp) return sp; if (key === keys.theme) return themeService; throw new Error('Unknown native service'); } };
+    const scope = nativeScope(new Map([[keys.page, nativePage], [keys.sp, client()], [keys.theme, themeService]]));
     const domElement = document.createElement('div');
     return { instanceId: id, context: { instanceId: id, domElement, pageContext: nativePage, serviceScope: scope, propertyPane: { refresh() {} }, sdks: {} }, properties: { title: 'Native host', showTitle: false }, displayMode: 1, domElement, render() {} };
   }
-  let instance = host(), revision = 0, selected = scenario(title, ownerKey), Demo, parentRenders = 0;
-  // Negative control changes only the emitted child's scope comparison, in memory.
+  let instance = host(), revision = 0, selected = scenario(title, ownerKey), Demo, parentRenders = 0, provider;
+  // Negative controls change only an emitted Hub guard or captured identity, in memory.
   // It uses the established loader/compiler and restores the filesystem reader immediately.
   const read = fs.readFileSync;
-  if (options.parentOnly) fs.readFileSync = (file, ...args) => {
-    const source = read(file, ...args);
+  if (options.parentOnly || options.omitHubBoundary) fs.readFileSync = (file, ...args) => {
+    let source = read(file, ...args);
     if (String(file) !== selected.file) return source;
-    const marker = 'const current = sameScope(run.scope, scope);';
-    assert.equal(source.split(marker).length, 2, 'One emitted Hub child comparison');
-    return source.replace(marker, 'const current = true;');
+    if (options.parentOnly) {
+      const marker = 'const current = sameScope(run.scope, scope);';
+      assert.equal(source.split(marker).length, 2, 'One emitted Hub child comparison');
+      source = source.replace(marker, 'const current = true;');
+    }
+    if (options.omitHubBoundary) {
+      const markers = {
+        scope: ['page, scope.serviceScope, scope.serviceScope?.consume, client,', 'page, undefined, scope.serviceScope?.consume, client,'],
+        consume: ['page, scope.serviceScope, scope.serviceScope?.consume, client,', 'page, scope.serviceScope, undefined, client,'],
+        client: ['page, scope.serviceScope, scope.serviceScope?.consume, client,', 'page, scope.serviceScope, scope.serviceScope?.consume, undefined,'],
+      };
+      assert.ok(Object.hasOwn(markers, options.omitHubBoundary));
+      const [marker, replacement] = markers[options.omitHubBoundary];
+      assert.equal(source.split(marker).length, 2, 'One emitted native scope capture');
+      source = source.replace(marker, replacement);
+    }
+    return source;
   };
   try { Demo = h.load(selected.file).Demo; } finally { fs.readFileSync = read; }
   const base = path.resolve(__dirname, '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
@@ -69,7 +99,14 @@ function createContextFixture(t, title, ownerKey, options = {}) {
   const { DemoCard } = h.load(path.join(base, 'shared/DemoCard.tsx'));
   const container = document.createElement('div'); document.body.appendChild(container); roots.add(container);
   const renderer = createDOMRenderer(document, { unstable_filterCSSRule: rule => !rule.startsWith('@container') });
-  function Frame() { parentRenders++; return h.React.createElement(Demo, { resetRevision: revision, render: regions => h.React.createElement(DemoCard, { title: selected.entry.title, iconName: 'Info', contentPlacement: 'configuration', ...regions }) }); }
+  function Frame() {
+    parentRenders++;
+    provider = toolkit.useSPFxContext();
+    return h.React.createElement(Demo, {
+      resetRevision: revision,
+      render: regions => h.React.createElement(DemoCard, { title: selected.entry.title, iconName: 'Info', contentPlacement: 'configuration', ...regions }),
+    });
+  }
   function render() {
     h.act(() => { ReactDOM.render(h.React.createElement(RendererProvider, { renderer }, h.React.createElement(fluent.FluentProvider, { theme: fluent.webLightTheme },
       h.React.createElement(options.directProvider ? Provider : Shell, { instance }, h.React.createElement(h.React.Profiler, { id: 'Context', onRender: () => observations.push({ text: container.textContent, hubId: instance.context.pageContext.legacyPageContext?.hubSiteId, parentRenders }) }, h.React.createElement(Frame))))), container); });
@@ -83,7 +120,20 @@ function createContextFixture(t, title, ownerKey, options = {}) {
       const peer = h.mountComponent(() => h.React.createElement(RendererProvider, { renderer }, h.React.createElement(fluent.FluentProvider, { theme: fluent.webLightTheme }, h.React.createElement(Provider, { instance: nativeHost }, h.React.createElement(PeerDemo)))));
       return { ...peer, instance: nativeHost, click(name) { const node = [...peer.container.querySelectorAll('button')].find(button => button.textContent === name); assert.ok(node, name); h.act(() => { Simulate.click(node); }); } };
     },
-    get entry() { return selected.entry; }, get instance() { return instance; }, get parentRenders() { return parentRenders; },
+    get entry() { return selected.entry; }, get instance() { return instance; }, get provider() { return provider; }, get parentRenders() { return parentRenders; },
+    replaceNativeClient() {
+      const replacement = client();
+      servicesByScope.get(instance.context.serviceScope).set(keys.sp, replacement);
+      return replacement;
+    },
+    replaceNativeConsume() {
+      const scope = instance.context.serviceScope, consume = scope.consume;
+      scope.consume = key => consume(key);
+    },
+    replaceNativeScope() {
+      const scope = instance.context.serviceScope;
+      instance.context.serviceScope = nativeScope(servicesByScope.get(scope), scope.consume);
+    },
     replace(next) { instance = next; render(); }, reset() { revision++; render(); },
     select(nextTitle, nextOwner) { selected = scenario(nextTitle, nextOwner); Demo = h.load(selected.file).Demo; render(); },
     click(name) { const button = [...container.querySelectorAll('button')].find(node => node.textContent === name); assert.ok(button, name); h.act(() => Simulate.click(button)); },

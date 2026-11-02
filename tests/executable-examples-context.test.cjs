@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
-const { createContextFixture } = require('./fixtures/executable-examples/context-scenarios.cjs');
+const { createContextFixture, Permission } = require('./fixtures/executable-examples/context-scenarios.cjs');
 const hubTitle = 'Start a scope bound hub association lookup';
 const hubOwner = 'packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts#useSPFxHubSiteInfo';
 const snapshots = [
@@ -63,6 +63,52 @@ test('native masks expose independent site/web/list checks without REST', async 
   page.web.permissions = Permission.fullMask; page.site.permissions = Permission.viewListItems; page.list = { id: 'cccccccc-0000-0000-0000-000000000001', permissions: Permission.emptyMask }; f.render();
   assert.match(f.container.textContent, /Manage Webtrue.*Manage Liststrue.*Add List Itemstrue.*Site view list itemstrue.*List view list itemsfalse/);
   assert.equal(f.calls.length, 0);
+});
+
+test('native permission High and Low words independently govern real native and remote hook checks', async t => {
+  const f = createContextFixture(t, snapshots[0][1], owner('Context'), { directProvider: true });
+  // Native useRemoteAPIs is High 0x20; addListItems is Low 0x2. Require both.
+  const required = new Permission({ High: 0x20, Low: 0x2 });
+  const highOnly = new Permission({ High: 0x20, Low: 0 });
+  const lowOnly = new Permission({ High: 0, Low: 0x2 });
+  if (process.env.CONTEXT_PERMISSION_LOW_ONLY === '1') {
+    t.mock.method(Permission.prototype, 'hasPermission', function (permission) {
+      return (this.value.Low & permission.value.Low) === permission.value.Low;
+    });
+  }
+  function Wrapper({ children }) {
+    return f.h.React.createElement(f.toolkit.SPFxWebPartProvider, { instance: f.instance }, children);
+  }
+  for (const { mask, combined, high, low } of [
+    { mask: { High: 0x20, Low: 0x2 }, combined: true, high: true, low: true },
+    { mask: { High: 0, Low: 0x2 }, combined: false, high: false, low: true },
+    { mask: { High: 0x20, Low: 0 }, combined: false, high: true, low: false },
+    { mask: { High: 0x40, Low: 0x2 }, combined: false, high: false, low: true },
+    { mask: { High: 0x20, Low: 0x4 }, combined: false, high: true, low: false },
+    { mask: { High: 0x60, Low: 0x6 }, combined: true, high: true, low: true },
+  ]) {
+    const nativeMask = new Permission(mask);
+    assert.notEqual(nativeMask, Permission.fullMask, 'no fullMask identity shortcut');
+    f.instance.context.pageContext.web.permissions = nativeMask;
+    const first = f.calls.length;
+    const probe = f.h.mount(() => ({
+      native: f.toolkit.useSPFxPermissions(),
+      remote: f.toolkit.useSPFxCrossSitePermissions({ scope: 'list', listTitle: 'Native High-word boundary' }),
+    }), {}, Wrapper);
+    await f.flush();
+    assert.equal(f.calls.length, first + 1);
+    await f.flush(() => f.calls[first].resolve({ High: String(mask.High), Low: String(mask.Low) }));
+    assert.equal(probe.current.native.webPermissions, nativeMask);
+    assert.ok(probe.current.remote.permissions instanceof Permission);
+    assert.deepEqual(probe.current.remote.permissions.value, mask, 'actual parser retains both native mask words');
+    assert.equal(probe.current.native.hasWebPermission(required), combined, `native combined mask ${JSON.stringify(mask)}`);
+    assert.equal(probe.current.native.hasWebPermission(highOnly), high, `native High mask ${JSON.stringify(mask)}`);
+    assert.equal(probe.current.native.hasWebPermission(lowOnly), low, `native Low mask ${JSON.stringify(mask)}`);
+    assert.equal(probe.current.remote.hasPermission(required), combined, `remote combined mask ${JSON.stringify(mask)}`);
+    assert.equal(probe.current.remote.hasPermission(highOnly), high, `remote High mask ${JSON.stringify(mask)}`);
+    assert.equal(probe.current.remote.hasPermission(lowOnly), low, `remote Low mask ${JSON.stringify(mask)}`);
+    probe.unmount();
+  }
 });
 
 test('actual Read/Edit and native SDK acquisition/theme events keep host classification separate', async t => {
@@ -274,7 +320,7 @@ for (const failure of [false, true]) for (const mutation of ['hub', 'current-hub
   });
 }
 
-for (const action of ['reset', 'departure', 'context', 'page', 'scope', 'client', 'new-start']) for (const failure of [false, true]) {
+for (const action of ['reset', 'departure', 'context', 'page', 'new-start']) for (const failure of [false, true]) {
   test(`Hub ${action} retires old ${failure ? 'rejection' : 'URL'} before and after new Start`, async t => {
     const f = createContextFixture(t, hubTitle, hubOwner, { directProvider: true });
     f.click('Start / repeat lookup'); await f.flush(); const old = f.calls[0];
@@ -282,9 +328,7 @@ for (const action of ['reset', 'departure', 'context', 'page', 'scope', 'client'
     else if (action === 'departure') f.unmount();
     else if (action === 'context') f.replace(f.host('context-two'));
     else if (action === 'page') f.replace(f.host('context-one', f.page()));
-    else if (action === 'scope' || action === 'client') {
-      const next = f.host(); f.instance.context.serviceScope = next.context.serviceScope; f.instance.context.pageContext = next.context.pageContext; f.render();
-    } else f.click('Start / repeat lookup');
+    else f.click('Start / repeat lookup');
     const first = f.observations.length;
     await f.flush(() => failure ? old.reject(new Error('OLD-ERROR')) : old.resolve({ value: JSON.stringify({ url: 'https://tenant.test/OLD-HUB' }) }));
     for (const record of f.observations.slice(first)) assert.doesNotMatch(record.text, /OLD-HUB|OLD-ERROR/);
@@ -293,6 +337,64 @@ for (const action of ['reset', 'departure', 'context', 'page', 'scope', 'client'
       await f.flush(); await f.flush(() => f.calls.at(-1).resolve({ value: JSON.stringify({ url: 'https://tenant.test/NEW-HUB' }) }));
       assert.match(f.container.textContent, /NEW-HUB/);
     }
+  });
+}
+
+for (const boundary of ['client', 'consume', 'scope']) for (const timing of ['before-restart', 'after-restart']) for (const failure of [false, true]) {
+  test(`Hub native ${boundary}-only ${timing} ${failure ? 'reject' : 'resolve'} preserves other identities and suppresses obsolete commits`, async t => {
+    const f = createContextFixture(t, hubTitle, hubOwner, {
+      directProvider: true,
+      omitHubBoundary: process.env.CONTEXT_OMIT_HUB_BOUNDARY === boundary ? boundary : undefined,
+    });
+    f.click('Start / repeat lookup'); await f.flush();
+    const old = f.calls[0];
+    const before = {
+      instance: f.instance, provider: f.provider, context: f.instance.context,
+      page: f.instance.context.pageContext, scope: f.instance.context.serviceScope,
+      consume: f.instance.context.serviceScope.consume,
+      client: f.instance.context.serviceScope.consume(f.keys.sp),
+      web: f.instance.context.pageContext.web, user: f.instance.context.pageContext.user,
+      webUrl: f.instance.context.pageContext.web.absoluteUrl,
+      login: f.instance.context.pageContext.user.loginName,
+      renders: f.parentRenders,
+    };
+    if (boundary === 'client') f.replaceNativeClient();
+    else if (boundary === 'consume') f.replaceNativeConsume();
+    else f.replaceNativeScope();
+    const native = f.instance.context.serviceScope;
+    assert.equal(f.instance, before.instance); assert.equal(f.provider, before.provider);
+    assert.equal(f.instance.context, before.context); assert.equal(f.instance.context.pageContext, before.page);
+    assert.equal(f.instance.context.pageContext.web, before.web); assert.equal(f.instance.context.pageContext.user, before.user);
+    assert.equal(before.page.web.absoluteUrl, before.webUrl); assert.equal(before.page.user.loginName, before.login);
+    assert.equal(f.parentRenders, before.renders, 'native replacement itself does not rerender the provider or Demo parent');
+    if (boundary === 'scope') assert.notEqual(native, before.scope); else assert.equal(native, before.scope);
+    if (boundary === 'consume') assert.notEqual(native.consume, before.consume); else assert.equal(native.consume, before.consume);
+    if (boundary === 'client') assert.notEqual(native.consume(f.keys.sp), before.client); else assert.equal(native.consume(f.keys.sp), before.client);
+    assert.equal(native.consume(f.keys.page), before.page, 'the native PageContext service stays identical');
+    assert.equal(old.client, before.client);
+    const first = f.observations.length;
+    if (timing === 'after-restart') {
+      f.render();
+      assert.equal(f.provider, before.provider, 'the actual public provider value is unchanged');
+      f.click('Start / repeat lookup'); await f.flush();
+      assert.equal(f.calls.length, 2, 'only the explicit new Start dispatches the second GET');
+      assert.equal(f.calls[1].client, native.consume(f.keys.sp), 'fresh Start uses the current native client');
+      await f.flush(() => f.calls[1].resolve({ value: JSON.stringify({ url: 'https://tenant.test/NEW-HUB' }) }));
+      assert.match(f.container.textContent, /NEW-HUB/);
+    }
+    await f.flush(() => failure ? old.reject(new Error('OLD-ERROR')) : old.resolve({ value: JSON.stringify({ url: 'https://tenant.test/OLD-HUB' }) }));
+    for (const record of f.observations.slice(first)) assert.doesNotMatch(record.text, /OLD-HUB|OLD-ERROR/);
+    if (timing === 'before-restart') {
+      assert.ok(f.observations.slice(first).some(record => record.parentRenders === before.renders), 'old settlement commits through the child without a parent render');
+      assert.match(f.container.textContent, /Scope changed/);
+      assert.equal(f.calls.length, 1, 'this isolated native replacement does not schedule another GET before explicit Start');
+      f.click('Start / repeat lookup'); await f.flush();
+      assert.equal(f.calls.length, 2);
+      assert.equal(f.calls[1].client, native.consume(f.keys.sp));
+      await f.flush(() => f.calls[1].resolve({ value: JSON.stringify({ url: 'https://tenant.test/NEW-HUB' }) }));
+      assert.match(f.container.textContent, /NEW-HUB/);
+    } else assert.match(f.container.textContent, /NEW-HUB/);
+    t.diagnostic(`Hub ${boundary}-only/${timing}/${failure ? 'reject' : 'resolve'}: provider/page/web/user stable; native GETs=2 after explicit restart; obsolete display commits=0.`);
   });
 }
 
