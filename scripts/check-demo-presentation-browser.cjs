@@ -17,6 +17,7 @@ const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Goog
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
+  { key: 'pnp-crud', title: 'useSPFxPnPList' },
   { key: 'pnp-list-id', title: 'useSPFxPnPListById' },
   { key: 'pnp-list-url', title: 'useSPFxPnPListByUrl' },
   { key: 'pnp-list-path', title: 'useSPFxPnPListByPath' },
@@ -67,6 +68,7 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    'pnp-crud': ['useSPFxPnPList', 'Manage list items with paging and captured delete consent'],
     'pnp-list-id': ['useSPFxPnPListById', 'Read items by list GUID'],
     'pnp-list-url': ['useSPFxPnPListByUrl', 'Read items by decoded server-relative URL'],
     'pnp-list-path': ['useSPFxPnPListByPath', 'Read items by decoded web-relative path'],
@@ -111,7 +113,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['pnp-crud', 'pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -396,7 +398,7 @@ async function interact(page, key) {
       check('PnP context uses native web request only', await page.evaluate(() => window.clientsFixture.requests.slice(-1).map(request => { const url = new URL(request.target); return [request.kind, url.origin + url.pathname, url.searchParams.get('$select')]; })), [['pnp-web', 'https://simulated.invalid/sites/context-target/_api/web', 'Title,Url,Description']]);
       break;
     }
-    case 'pnp': check('Remaining title list starts blank', await panel.getByLabel('List Title', { exact: true }).inputValue(), ''); check('Remaining title list requires explicit input', await panel.getByRole('button', { name: 'Load', exact: true }).isDisabled(), true); break;
+    case 'pnp-crud': check('Canonical CRUD starts blank', await panel.getByLabel('List Title', { exact: true }).inputValue(), ''); check('Canonical CRUD requires explicit input', await panel.getByRole('button', { name: 'Load', exact: true }).isDisabled(), true); break;
     case 'pnp-list-id':
     case 'pnp-list-url':
     case 'pnp-list-path': {

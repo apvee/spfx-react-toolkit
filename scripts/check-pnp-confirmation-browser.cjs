@@ -29,12 +29,14 @@ const server = http.createServer((request, response) => {
     const url = `http://127.0.0.1:${server.address().port}`;
     await page.route('**/*', route => { if (new URL(route.request().url()).origin === url) return route.continue(); network.push(route.request().url()); return route.abort(); });
     await page.goto(url); check('Page identity', await page.title(), 'Mocked PnP confirmation checkpoint');
-    check('Meaningful actual demo', await page.getByRole('heading', { name: 'Example 3: useSPFxPnPList - CRUD Operations' }).count(), 1);
+    check('Meaningful actual demo', await page.getByRole('heading', { name: 'Manage list items with paging and captured delete consent' }).count(), 1);
     check('One selected service result', await page.locator('[data-demo-section] [data-demo-result]').count(), 1);
     check('Framework overlays absent', await page.locator('webpack-dev-server-client-overlay,#webpack-dev-server-client-overlay').count(), 0);
     const trigger = page.getByRole('button', { name: 'Delete', exact: true }).first();
     const dialog = page.getByRole('dialog', { name: 'Delete this item?' });
     await page.getByLabel('List Title', { exact: true }).fill('Mock list');
+    await page.getByRole('button', { name: 'Load', exact: true }).click();
+    await page.getByText('#42 - Intended item', { exact: true }).waitFor();
     for (const action of ['Cancel', 'Escape']) {
       await trigger.click(); await dialog.waitFor(); check(`${action}: intended item`, (await dialog.textContent()).includes('Delete item #42?'), true);
       check(`${action}: consent before removal`, await page.evaluate(() => window.pnpConfirmationMock.calls.length), 0);
@@ -50,25 +52,27 @@ const server = http.createServer((request, response) => {
     check('Confirmation inherits RTL', await dialog.evaluate(element => getComputedStyle(element).direction), 'rtl');
     check('Modal owns keyboard focus', await dialog.evaluate(element => element.contains(document.activeElement)), true);
     const screenshot = path.join(output, 'confirmation-dark-rtl.png'); await page.screenshot({ path: screenshot }); screenshots.push(screenshot);
-    check('Scenario locked during consent', await page.locator('select[data-demo-variant=PnPPanel]').isDisabled(), true);
+    check('Load locked during consent', await page.getByRole('button', { name: 'Load', exact: true }).isDisabled(), true);
+    check('Edit locked during consent', await page.getByRole('button', { name: 'Edit', exact: true }).first().isDisabled(), true);
     check('Target read-only during consent', await page.getByLabel('List Title', { exact: true }).getAttribute('readonly') !== null, true);
     await page.evaluate(() => window.pnpConfirmationMock.replaceOperation());
     await dialog.getByRole('button', { name: 'Delete item', exact: true }).click(); await dialog.waitFor({ state: 'hidden' });
     check('Captured ID and operation dispatch exactly once', await page.evaluate(() => window.pnpConfirmationMock.calls), [{ id: 42, listTitle: 'Mock list', operation: 0 }]);
-    check('Scenario locked during pending removal', await page.locator('select[data-demo-variant=PnPPanel]').isDisabled(), true);
+    check('Load locked during pending removal', await page.getByRole('button', { name: 'Load', exact: true }).isDisabled(), true);
+    check('Edit locked during pending removal', await page.getByRole('button', { name: 'Edit', exact: true }).first().isDisabled(), true);
     check('Target read-only during pending removal', await page.getByLabel('List Title', { exact: true }).getAttribute('readonly') !== null, true);
     await page.evaluate(() => window.pnpConfirmationMock.settle());
-    check('Scenario unlocked after mutation settles', await page.locator('select[data-demo-variant=PnPPanel]').isDisabled(), false);
+    check('Load available after mutation settles', await page.getByRole('button', { name: 'Load', exact: true }).isDisabled(), false);
     check('Mutation resolves before refetch removes origin', await page.getByText('#42 - Intended item', { exact: true }).count(), 1);
     check('Approval uses stable list focus before refetch', await page.getByLabel('List Title', { exact: true }).evaluate(element => document.activeElement === element), true);
     await page.evaluate(() => window.pnpConfirmationMock.publishRows());
     await page.getByText('#42 - Intended item', { exact: true }).waitFor({ state: 'hidden' });
-    await page.waitForFunction(() => document.activeElement?.getAttribute('placeholder') === 'e.g., Site Pages');
+    await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'List Title');
     check('Deleted origin restores useful list field focus', await page.getByLabel('List Title', { exact: true }).evaluate(element => document.activeElement === element), true);
     check('Other intended item remains', await page.getByText('#73 - Other item', { exact: true }).count(), 1);
     await page.getByRole('button', { name: 'Delete', exact: true }).click(); await dialog.waitFor();
     await dialog.getByRole('button', { name: 'Delete item', exact: true }).click(); await dialog.waitFor({ state: 'hidden' });
-    const destination = page.getByLabel('New item title...', { exact: true }); await destination.click();
+    const destination = page.getByLabel('New item title', { exact: true }); await destination.click();
     check('User chooses another focus destination', await destination.evaluate(element => document.activeElement === element), true);
     await page.evaluate(() => window.pnpConfirmationMock.settle());
     check('Later mutation completion preserves chosen focus', await destination.evaluate(element => document.activeElement === element), true);
@@ -77,9 +81,9 @@ const server = http.createServer((request, response) => {
     check('Later row publication preserves chosen focus', await destination.evaluate(element => document.activeElement === element), true);
     check('Second explicit operation dispatches once', await page.evaluate(() => window.pnpConfirmationMock.calls), [{ id: 42, listTitle: 'Mock list', operation: 0 }, { id: 73, listTitle: 'Mock list', operation: 1 }]);
     check('All actual network remains loopback', network, []); check('No unexpected browser diagnostics/native dialogs', diagnostics, []);
-    console.log(`PnP confirmation: ${checks.length} PASS checks; actual Fluent surface and mocked operation only.`);
+    console.log(`PnP confirmation: ${checks.length} PASS checks; actual Fluent surface and whole-hook-doubled UI conformance.`);
   } finally {
-    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ checks, diagnostics, network, screenshots, boundary: 'actual demo/Fluent Dialog; mocked PnP hook/removal; no actual CRUD, network or authenticated host', browserPlugin: 'not available' }, undefined, 2));
+    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ checks, diagnostics, network, screenshots, boundary: 'emitted source Demo/Fluent Dialog; whole-hook-doubled UI conformance; no actual CRUD, network or authenticated host', browserPlugin: 'not available' }, undefined, 2));
     await browser?.close(); await new Promise(resolve => server.close(resolve));
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

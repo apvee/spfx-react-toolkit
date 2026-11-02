@@ -26,7 +26,7 @@ const pilotTitles = {
   Pagination: ['Browse controlled rows', 'Browse controlled rows with pending completion', 'Show an empty controlled result', 'Browse orders across pagination modes'],
   useStableCallback: ['Report current count through a retained callback', 'Retain callback identity through rerenders'],
   useSx: ['Compare root domain and historical imports'],
-  useSPFxPnPList: ['Read a user-selected list with observable results'],
+  useSPFxPnPList: ['Read a user-selected list with observable results', 'Manage list items with paging and captured delete consent'],
   useSPFxContext: ['Inspect the current native host identity'],
   useSPFxPageContext: ['Inspect selected native page metadata'],
   useSPFxInstanceInfo: ['Inspect the provider instance identity'],

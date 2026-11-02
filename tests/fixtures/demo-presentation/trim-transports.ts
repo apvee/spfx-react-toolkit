@@ -138,6 +138,9 @@ const tokenRequests: NativeRequest[] = [];
 const downloadRequests: NativeRequest[] = [];
 let holdDownloads = false;
 let holdClients = false, holdInitialization = false, holdTokens = false;
+let pnpCrud = false;
+/** Fixture execution mode only; matching callers are not security-isolated. */
+export function isPnPCrudEnabled(): boolean { return pnpCrud; }
 let initializationError = false;
 function controlled(records: NativeRequest[], kind: string, target: string, held: boolean, fallback: () => unknown, settings?: unknown): Promise<unknown> {
   return new Promise((resolve, reject) => {
@@ -189,6 +192,30 @@ window.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response>
     const itemRead = /\/_api\/web\/(?:lists\('[a-f\d-]+'\)|getList\('.+'\))\/items$/.test(target.pathname)
       && selected === 'Id,Title' && target.searchParams.get('$orderby') === 'Id desc' && target.searchParams.get('$top') === '10'
       && Array.from(target.searchParams).length === 3;
+    const titleItems = /\/_api\/web\/lists\/getByTitle\('(?:[^'/]|'')+'\)\/items(\(\d+\))?$/.exec(target.pathname);
+    const titleRead = !!titleItems && !titleItems[1] && selected === 'Id,Title'
+      && target.searchParams.get('$orderby') === 'Id desc' && target.searchParams.get('$top') === '10'
+      && (Array.from(target.searchParams).length === 3 || (Array.from(target.searchParams).length === 4
+        && /^Paged=TRUE&p_ID=\d+$/.test(target.searchParams.get('$skiptoken') ?? '')));
+    if (pnpCrud && sameOrigin && titleItems) {
+      const headers = new Headers(init?.headers), verb = headers.get('X-HTTP-Method');
+      let payload: unknown;
+      if (method === 'POST' && verb !== 'DELETE') { try { payload = JSON.parse(typeof init?.body === 'string' ? init.body : ''); } catch { /* Reject below. */ } }
+      const fields = typeof payload === 'object' && payload !== null && Object.keys(payload).length === 1
+        && typeof (payload as { Title?: unknown }).Title === 'string';
+      const write = method === 'POST' && !target.search && !!headers.get('X-RequestDigest')
+        && (titleItems[1] ? headers.get('IF-Match') === '*' && ((verb === 'DELETE' && init?.body === undefined) || (verb === 'MERGE' && fields)) : !verb && fields);
+      if ((method === 'GET' && titleRead) || write) {
+        return clientWork(method === 'GET' ? 'pnp-title-items' : 'pnp-item-write', url, () => method === 'GET'
+          ? new Response(JSON.stringify({ value: [{ Id: 42, Title: 'Fixture CRUD row' }, { Id: 73, Title: 'Other CRUD row' }] }), { headers: { 'Content-Type': 'application/json' } })
+          : new Response(titleItems[1] ? undefined : JSON.stringify({ Id: 81 }), { status: titleItems[1] ? 204 : 200, headers: { 'Content-Type': 'application/json', ETag: '"fixture-v2"' } }),
+        { method, headers: init?.headers, body: init?.body }).then(value => {
+          if (!(value instanceof Response)) throw new Error('PnP CRUD fixture requires a native Response');
+          return value;
+        });
+      }
+      return Promise.reject(new Error('Unsupported native PnP CRUD protocol'));
+    }
     if (sameOrigin && method === 'GET' && itemRead) {
       return clientWork('pnp-items', url, () => new Response(JSON.stringify({ value: [{ Id: 42, Title: 'Fixture selector row' }] }), { headers: { 'Content-Type': 'application/json' } }), { method, headers: init?.headers }).then(value => {
         if (!(value instanceof Response)) throw new Error('PnP item fixture requires a native Response');
@@ -207,7 +234,7 @@ window.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response>
     }
     if (sameOrigin && method === 'POST' && target.pathname.endsWith('/_api/contextinfo') && !target.search) {
       if (new Headers(init?.headers).get('X-PnPjs-NoDigest') !== '1') return Promise.reject(new Error('Unsupported native PnP digest request'));
-      return clientWork('pnp-digest', url, () => new Response(JSON.stringify({ FormDigestValue: 'fixture-pnp-operations-digest', FormDigestTimeoutSeconds: 1800 }), { headers: { 'Content-Type': 'application/json' } }), { method, headers: init?.headers }).then(value => {
+      return clientWork('pnp-digest', url, () => new Response(JSON.stringify({ FormDigestValue: pnpCrud ? 'fixture-pnp-crud-digest' : 'fixture-pnp-operations-digest', FormDigestTimeoutSeconds: 1800 }), { headers: { 'Content-Type': 'application/json' } }), { method, headers: init?.headers }).then(value => {
         if (!(value instanceof Response)) throw new Error('PnP digest fixture requires a native Response');
         return value;
       });
@@ -243,7 +270,8 @@ window.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response>
   });
 };
 export const clientsNative = { requests: clientRequests, initializations, tokens: tokenRequests, downloads: downloadRequests,
-  configure(options: { holdRequests?: boolean; holdInitialization?: boolean; holdTokens?: boolean; holdDownloads?: boolean; initializationError?: boolean }): void {
+  configure(options: { holdRequests?: boolean; holdInitialization?: boolean; holdTokens?: boolean; holdDownloads?: boolean; initializationError?: boolean; pnpCrud?: boolean }): void {
+    pnpCrud = options.pnpCrud ?? pnpCrud;
     holdDownloads = options.holdDownloads ?? holdDownloads;
     holdClients = options.holdRequests ?? holdClients; holdInitialization = options.holdInitialization ?? holdInitialization; holdTokens = options.holdTokens ?? holdTokens; initializationError = options.initializationError ?? initializationError;
   },

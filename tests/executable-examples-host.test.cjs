@@ -167,7 +167,10 @@ test('generated Hook navigation, expansion and scenario selection never query th
   assert.equal(reads[0], h.entry);
   assert.equal(h.entry.ownerKey, readOwner);
   const readFeature = features.find(feature => feature.key === readOwner);
-  assert.deepEqual(readFeature.scenarios, [h.entry]);
+  assert.deepEqual(readFeature.scenarios.map(entry => entry.title), [title, 'Manage list items with paging and captured delete consent']);
+  assert.equal(readFeature.scenarios[0], h.entry, 'original read remains the first retained scenario');
+  assert.equal(readFeature.scenarios[1].ownerKey, readOwner);
+  assert.equal(readFeature.scenarios[1].metadata.kind, 'write');
   const callbackFeature = features.find(feature => feature.key === callbackOwner);
   assert.deepEqual(callbackFeature.scenarios.map(entry => entry.title).sort(),
     [...require('./fixtures/demo-presentation/jsdoc-pilots.cjs').pilotTitles.useStableCallback].sort());

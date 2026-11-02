@@ -23,7 +23,7 @@ function token(scopes = 'User.Read', aud = 'https://graph.microsoft.com') { retu
 function createClientsFixture(t, title, options = {}) {
     const compiled = options.compiled ?? process.env.CLIENTS_IMPLEMENTATION === 'compiled';
     const asyncModule = compiled ? {} : { useAsyncInvoke: loadHook('useAsyncInvoke.internal', 'useAsyncInvoke') };
-    const toolkit = {}, context = {}, pageModule = {}, pnpModule = {};
+    const toolkit = {}, context = {}, pageModule = {}, pnpModule = {}, pnpFactory = {};
     const keys = Object.fromEntries(['page', 'theme', 'http', 'sp', 'graph', 'aad', 'token'].map(key => [key, {}]));
     const native = Object.fromEntries([['HttpClient', 'http'], ['SPHttpClient', 'sp'], ['MSGraphClientFactory', 'graph'], ['AadHttpClientFactory', 'aad'], ['AadTokenProviderFactory', 'token'], ['AadHttpClient', 'aadClient']].map(([name, key]) => [name, { serviceKey: keys[key], configurations: { v1: {} } }]));
     const pageNative = { PageContext: { serviceKey: keys.page } };
@@ -32,6 +32,7 @@ function createClientsFixture(t, title, options = {}) {
         '@microsoft/sp-page-context': pageNative,
         '@microsoft/sp-component-base': { ThemeProvider: { serviceKey: keys.theme } },
         ...(options.pnpContext ? { '@pnp/sp': pnpModule } : {}),
+        ...(options.pnpCrud ? { '../../../packages/spfx-react-toolkit/lib/services/spfx-pnp-context.service': pnpFactory } : {}),
         './useSPFxContext': context, './useSPFxPageContext': pageModule,
         // The generic TS arrow is parsed as TSX by services-test-harness; reuse its established TS-only loader.
         // This module imports React only, owns state per call and creates no provider/store/context.
@@ -59,6 +60,7 @@ function createClientsFixture(t, title, options = {}) {
         fs.readFileSync = (file, ...args) => { pnpFiles.push(String(file)); return read(file, ...args); };
         try {
             Object.assign(toolkit, library('hooks/useSPFxPnPContext'));
+            if (options.pnpCrud) { Object.assign(toolkit, library('hooks/useSPFxPnPList')); Object.assign(pnpFactory, library('services/spfx-pnp-context.service')); }
             if (options.pnpOperations) Object.assign(toolkit, library('hooks/useSPFxPnP'));
             if (options.pnpSelectors) for (const name of ['Id', 'Url', 'Path']) Object.assign(toolkit, library('hooks/useSPFxPnPListBy' + name));
         }
@@ -90,7 +92,29 @@ function createClientsFixture(t, title, options = {}) {
     const calls = [], initializations = [], tokens = [], observers = [], commits = [], downloads = [];
     if (options.pnpContext) t.mock.method(global, 'fetch', (url, init) => {
         const target = new URL(String(url));
-        if (options.pnpSelectors) {
+        if (options.pnpCrud) {
+            assert.equal(target.origin, 'https://tenant.test');
+            const method = init.method ?? 'GET', headers = new Headers(init.headers);
+            const items = /\/_api\/web\/lists\/getByTitle\('(?:[^'/]|'')+'\)\/items(\(\d+\))?$/.exec(target.pathname);
+            if (target.pathname.endsWith('/_api/contextinfo')) {
+                assert.equal(method, 'POST'); assert.equal(target.search, ''); assert.equal(headers.get('X-PnPjs-NoDigest'), '1');
+            } else {
+                assert.ok(items, 'bounded title items only');
+                if (method === 'GET') {
+                    assert.equal(items[1], undefined);
+                    const params = [...target.searchParams].filter(([key]) => key !== '$skiptoken').sort();
+                    assert.deepEqual(params, [['$orderby', 'Id desc'], ['$select', 'Id,Title'], ['$top', '10']]);
+                    if (target.searchParams.has('$skiptoken')) assert.match(target.searchParams.get('$skiptoken'), /^Paged=TRUE&p_ID=\d+$/);
+                } else {
+                    assert.equal(method, 'POST'); assert.equal(target.search, ''); assert.ok(headers.get('X-RequestDigest'));
+                    const verb = headers.get('X-HTTP-Method');
+                    if (items[1]) { assert.ok(verb === 'MERGE' || verb === 'DELETE'); assert.equal(headers.get('IF-Match'), '*'); }
+                    else assert.equal(verb, null);
+                    if (verb === 'DELETE') assert.equal(init.body, undefined);
+                    else { const body = JSON.parse(init.body); assert.deepEqual(Object.keys(body), ['Title']); assert.equal(typeof body.Title, 'string'); }
+                }
+            }
+        } else if (options.pnpSelectors) {
             assert.equal(target.origin, 'https://tenant.test');
             assert.equal(init.method, 'GET', 'selector fixture permits item reads only');
             assert.match(target.pathname, /\/_api\/web\/(?:lists\('[a-f\d-]+'\)|getList\('.+'\))\/items$/);
@@ -155,7 +179,7 @@ function createClientsFixture(t, title, options = {}) {
     const Shell = h.load(path.join(base, 'WebPartShellDemoHost.tsx')).WebPartShellDemoHost;
     const { DemoCard } = h.load(path.join(base, 'shared/DemoCard.tsx'));
     const Explorer = options.explorer ? h.load(path.join(base, 'ExampleExplorer.tsx')).ExampleExplorer : undefined;
-    const groups = options.explorer ? h.load(path.join(base, 'generated/jsdoc-examples/catalogue.ts')).executableGroups.map(group => ({ ...group, features: group.features.filter(feature => ['useSPFxContext', 'useSPFxPnPContext', ...(options.pnpOperations ? ['useSPFxPnP'] : []), ...(options.pnpSelectors ? ['useSPFxPnPListById', 'useSPFxPnPListByUrl', 'useSPFxPnPListByPath'] : [])].includes(feature.title)) })).filter(group => group.features.length) : [];
+    const groups = options.explorer ? h.load(path.join(base, 'generated/jsdoc-examples/catalogue.ts')).executableGroups.map(group => ({ ...group, features: group.features.filter(feature => ['useSPFxContext', 'useSPFxPnPContext', ...(options.pnpOperations ? ['useSPFxPnP'] : []), ...(options.pnpCrud ? ['useSPFxPnPList'] : []), ...(options.pnpSelectors ? ['useSPFxPnPListById', 'useSPFxPnPListByUrl', 'useSPFxPnPListByPath'] : [])].includes(feature.title)) })).filter(group => group.features.length) : [];
 
     const renderer = createDOMRenderer(document, { unstable_filterCSSRule: rule => !rule.startsWith('@container') });
     const container = document.createElement('div');
@@ -169,7 +193,7 @@ function createClientsFixture(t, title, options = {}) {
     render();
     return { h, toolkit, keys, native, container, calls, downloads, initializations, tokens, commits, observers, themeHandlers, host, render, unmount,
         mountPeer(nativeHost = host('clients-peer')) { const peer = h.mountComponent(() => h.React.createElement(RendererProvider, { renderer }, h.React.createElement(fluent.FluentProvider, { theme: fluent.webLightTheme }, h.React.createElement(toolkit.SPFxWebPartProvider, { instance: nativeHost }, h.React.createElement(Demo))))); return { ...peer, instance: nativeHost, click(name) { const node = [...peer.container.querySelectorAll('button')].find(n => n.textContent === name); assert.ok(node, name); h.act(() => { Simulate.click(node); }); } }; },
-        pnpFiles, setPnPInitializationError(error) { pnpInitializationError = error; },
+        pnpFiles, pnpFactory, setPnPInitializationError(error) { pnpInitializationError = error; },
         get instance() { return instance; }, get regions() { return regions; }, get entry() { return selected.entry; },
         select(nextTitle, ownerKey) { selected = scenario(nextTitle, ownerKey); Demo = h.load(selected.file).Demo; render(); },
         replace(next) { instance = next; render(); },

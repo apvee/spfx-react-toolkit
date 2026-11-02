@@ -403,6 +403,193 @@ export interface SPFxPnPListInfo<T = unknown> {
  *   observe: 'Choose an existing list and run the read explicitly; loading, results and errors identify the selected list.',
  * };
  * ```
+ * @example Manage list items with paging and captured delete consent
+ * ```tsx
+ * import * as React from 'react';
+ * import { flushSync } from 'react-dom';
+ * import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, Field, Input } from '@fluentui/react-components';
+ * import { useSPFxPnPContext, useSPFxPnPList, useSx, flex, gap } from '@apvee/spfx-react-toolkit';
+ * // SharePoint may omit Title or return legacy null; local text drafts remain strings.
+ * type Item = { Id: number; Title?: string | null };
+ * type TextDraft = { session: object; value: string };
+ * interface DemoRegions { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; children?: React.ReactNode; diagnostics?: React.ReactNode; }
+ * export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const context = useSPFxPnPContext();
+ *   const [title, setTitle] = React.useState('');
+ *   const list = useSPFxPnPList<Item>(title, { pageSize: 10 }, context);
+ *   const sx = useSx();
+ *   const layout = sx(flex.column, gap.small);
+ *   const [newDraftState, setNewDraftState] = React.useState<TextDraft>(() => ({ session: {}, value: '' }));
+ *   const [editDraftState, setEditDraftState] = React.useState<TextDraft>(() => ({ session: {}, value: '' }));
+ *   const newDraft = React.useRef(newDraftState);
+ *   const editDraft = React.useRef(editDraftState);
+ *   const committedNew = React.useRef(newDraftState);
+ *   const committedEdit = React.useRef(editDraftState);
+ *   React.useLayoutEffect(() => {
+ *     committedNew.current = newDraftState; committedEdit.current = editDraftState;
+ *   }, [newDraftState, editDraftState]);
+ *   const [editing, setEditing] = React.useState<number>();
+ *   const mounted = React.useRef(true);
+ *   const boundary = React.useRef({ sp: context.sp, ready: context.isInitialized, title, revision: resetRevision, token: {} });
+ *   const command = React.useRef<{ token: object }>();
+ *   const physical = React.useRef<{ token: object; promise?: Promise<unknown> }>();
+ *   const drafts = React.useRef(0);
+ *   const readState = React.useRef({ loading: list.loading, more: list.loadingMore });
+ *   readState.current = { loading: list.loading, more: list.loadingMore };
+ *   const latestPage = React.useRef(list.loadMore);
+ *   latestPage.current = list.loadMore;
+ *   const [writing, setWriting] = React.useState(false);
+ *   const [activity, setActivity] = React.useState<{ token: object; text: string }>();
+ *   const [baseline, setBaseline] = React.useState<object>();
+ *   const [failure, setFailure] = React.useState<{ token: object; message: string }>();
+ *   const [notice, setNotice] = React.useState<{ token: object; message: string }>();
+ *   type Consent = { token: object; id: number; trigger: HTMLButtonElement; remove: (id: number) => Promise<void> };
+ *   const consent = React.useRef<Consent>();
+ *   const [approval, setApproval] = React.useState<Consent>();
+ *   // React 17 native ref props require a legacy null-initialized RefObject.
+ *   const input = React.useRef<HTMLInputElement>(null);
+ *   const old = boundary.current;
+ *   if (old.sp !== context.sp || old.ready !== context.isInitialized || old.title !== title || old.revision !== resetRevision) {
+ *     boundary.current = { sp: context.sp, ready: context.isInitialized, title, revision: resetRevision, token: {} };
+ *     command.current = undefined;
+ *     consent.current = undefined;
+ *     newDraft.current = { session: {}, value: '' };
+ *     editDraft.current = { session: {}, value: '' };
+ *   }
+ *   const token = boundary.current.token;
+ *   const draft = drafts.current;
+ *   const newSession = newDraft.current.session;
+ *   const editSession = editDraft.current.session;
+ *   const newTitle = newDraftState.session === newSession ? newDraftState.value : '';
+ *   const editTitle = editDraftState.session === editSession ? editDraftState.value : '';
+ *   const current = (): boolean => mounted.current && boundary.current.token === token;
+ *   const busy = (): boolean => physical.current !== undefined || command.current?.token === token || consent.current !== undefined || readState.current.loading || readState.current.more;
+ *   const locallyBusy = (): boolean => command.current?.token === token || physical.current?.token === token || consent.current?.token === token;
+ *   const localBusy = locallyBusy();
+ *   const ready = context.isInitialized && title.trim().length > 0;
+ *   const shown = baseline === token;
+ *   React.useEffect(() => {
+ *     setNewDraftState(newDraft.current); setEditDraftState(editDraft.current); setEditing(undefined); setApproval(undefined);
+ *     setFailure(undefined); setNotice(undefined); setActivity(undefined);
+ *   }, [token]);
+ *   const revision = React.useRef(resetRevision);
+ *   React.useEffect(() => {
+ *     if (revision.current === resetRevision) return;
+ *     revision.current = resetRevision;
+ *     setTitle(''); setBaseline(undefined); drafts.current++;
+ *   }, [resetRevision]);
+ *   React.useEffect(() => { mounted.current = true; return () => { mounted.current = false; consent.current = undefined; }; }, []);
+ *   const selectTitle = (value: string): void => {
+ *     if (!current() || locallyBusy() || value === title) return;
+ *     boundary.current = { ...boundary.current, token: {} };
+ *     drafts.current++; setTitle(value);
+ *   };
+ *   const read = async (more = false): Promise<void> => {
+ *     if (!current() || !ready || busy() || (more && (!shown || !list.hasMore || latestPage.current !== list.loadMore))) return;
+ *     const ticket = { token }; command.current = ticket;
+ *     setActivity({ token, text: more ? 'Loading more…' : 'Loading…' }); setFailure(undefined);
+ *     try {
+ *       if (more) await list.loadMore();
+ *       else await list.query(q => q.select('Id', 'Title').orderBy('Id', false));
+ *       if (current()) setBaseline(token);
+ *     } catch (error) {
+ *       if (current()) setFailure({ token, message: error instanceof Error ? error.message : String(error) });
+ *     } finally {
+ *       if (command.current === ticket) { command.current = undefined; if (current()) setActivity(undefined); }
+ *     }
+ *   };
+ *   const write = async (dispatch: () => Promise<unknown>, success: (result: unknown) => void, beforeDispatch?: () => void): Promise<void> => {
+ *     if (!current() || !ready || busy() || drafts.current !== draft) return;
+ *     // This ticket survives Reset/client changes until the ORIGINAL public promise settles.
+ *     const ticket: { token: object; promise?: Promise<unknown> } = { token };
+ *     physical.current = ticket; setWriting(true); setFailure(undefined); setNotice(undefined); list.clearError();
+ *     try {
+ *       beforeDispatch?.();
+ *       if (!current()) return;
+ *       ticket.promise = dispatch();
+ *       const result = await ticket.promise;
+ *       if (current()) success(result);
+ *     } catch (error) {
+ *       if (current()) setFailure({ token, message: error instanceof Error ? error.message : String(error) });
+ *     } finally {
+ *       if (physical.current === ticket) { physical.current = undefined; if (mounted.current) setWriting(false); }
+ *     }
+ *   };
+ *   const create = (): Promise<void> => {
+ *     if (!newTitle.trim() || newDraft.current.session !== newSession || newDraft.current.value !== newTitle) return Promise.resolve();
+ *     return write(() => list.create({ Title: newTitle }), id => { drafts.current++; newDraft.current = { session: {}, value: '' }; setNewDraftState(newDraft.current); setNotice({ token, message: `Created item #${String(id)}.` }); });
+ *   };
+ *   const save = (id: number): Promise<void> => {
+ *     if (!editTitle.trim() || editDraft.current.session !== editSession || editDraft.current.value !== editTitle) return Promise.resolve();
+ *     return write(() => list.update(id, { Title: editTitle }), () => { drafts.current++; editDraft.current = { session: {}, value: '' }; setEditing(undefined); setEditDraftState(editDraft.current); setNotice({ token, message: `Updated item #${id}.` }); });
+ *   };
+ *   const cancelConsent = (): void => {
+ *     const request = consent.current;
+ *     if (!current() || request?.token !== token || request !== approval) return;
+ *     // Event handlers use the existing React 17 react-dom peer to commit modal removal.
+ *     // Its closing surface would otherwise trap focus before restoration/dispatch.
+ *     consent.current = undefined; flushSync(() => setApproval(undefined));
+ *     if (request.trigger.isConnected && !request.trigger.disabled) request.trigger.focus(); else input.current?.focus();
+ *   };
+ *   const approve = (): Promise<void> => {
+ *     const request = consent.current;
+ *     if (!current() || request?.token !== token || request !== approval || physical.current || command.current || readState.current.loading || readState.current.more) return Promise.resolve();
+ *     // Consume captured consent before dispatch; a same-target callback replacement cannot retarget it.
+ *     consent.current = undefined;
+ *     return write(() => request.remove(request.id), () => setNotice({ token, message: `Deleted item #${request.id}.` }), () => {
+ *       // The physical ticket is already held when close/focus synchronously runs other handlers.
+ *       flushSync(() => setApproval(undefined)); input.current?.focus();
+ *     });
+ *   };
+ *   const error = failure?.token === token ? failure.message : shown ? list.error?.message : undefined;
+ *   const regions: DemoRegions = {
+ *     controls: <div className={layout}>
+ *       <Field label="List Title"><Input ref={input} aria-label="List Title" value={title} readOnly={localBusy}
+ *         onChange={(_, data) => selectTitle(data.value)} /></Field>
+ *       <Field label="New item title"><Input aria-label="New item title" value={newTitle} readOnly={localBusy}
+ *         onChange={(_, data) => {
+ *           if (!current() || locallyBusy() || committedNew.current !== newDraftState || newDraft.current.session !== newSession || data.value === newDraft.current.value) return;
+ *           // Retire commands on every accepted change; immutable state also commits accepted ABA edits.
+ *           newDraft.current = { session: newSession, value: data.value }; drafts.current++; setNewDraftState(newDraft.current);
+ *         }} /></Field>
+ *     </div>,
+ *     commands: <><Button disabled={!ready || writing || localBusy || list.loading || list.loadingMore} onClick={() => read()}>Load</Button>
+ *       <Button disabled={!ready || !newTitle.trim() || writing || localBusy || list.loading || list.loadingMore} onClick={create}>Create</Button></>,
+ *     status: <div role="status" aria-live="polite">
+ *       <p>Physical web: {context.siteUrl}; exact list: {title || '(none)'}. Commands create, update and delete items in this target.</p>
+ *       {context.error && <p role="alert">Context initialization error: {context.error.message}</p>}
+ *       {!context.isInitialized && !context.error && <p>Context is not initialized.</p>}
+ *       {writing && <p>A dispatched write is still pending, including after Reset.</p>}
+ *       {(activity?.token === token || (shown && (list.loading || list.loadingMore))) && <p>{activity?.token === token ? activity.text : list.loadingMore ? 'Loading more…' : 'Refreshing…'}</p>}
+ *       {notice?.token === token && <p>{notice.message}</p>}
+ *       {error && <><p role="alert">Request error: {error}</p><Button onClick={() => { if (current() && !busy()) { setFailure(undefined); list.clearError(); } }}>Dismiss</Button></>}
+ *       {shown && list.isEmpty && !activity && <p>No items found.</p>}
+ *     </div>,
+ *     children: <>
+ *       {shown && <div className={layout} aria-label="List items"><p>Items ({list.items.length}):</p>{list.items.map(item => <div key={item.Id}>
+ *         {editing === item.Id ? <><Input aria-label="Edit title" value={editTitle} readOnly={localBusy}
+ *           onChange={(_, data) => {
+ *             if (!current() || locallyBusy() || committedEdit.current !== editDraftState || editDraft.current.session !== editSession || data.value === editDraft.current.value) return;
+ *             editDraft.current = { session: editSession, value: data.value }; drafts.current++; setEditDraftState(editDraft.current);
+ *           }} />
+ *           <Button disabled={writing || localBusy || !editTitle.trim()} onClick={() => save(item.Id)}>Save</Button>
+ *           <Button disabled={writing || localBusy} onClick={() => { if (current() && !busy() && drafts.current === draft) { drafts.current++; editDraft.current = { session: {}, value: '' }; setEditing(undefined); setEditDraftState(editDraft.current); } }}>Cancel</Button></>
+ *           : <><span>#{item.Id} - {item.Title || '(untitled)'}</span>
+ *             <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={() => { if (current() && !busy() && drafts.current === draft) { drafts.current++; editDraft.current = { session: {}, value: item.Title ?? '' }; setEditing(item.Id); setEditDraftState(editDraft.current); } }}>Edit</Button>
+ *             <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={event => { if (current() && !busy() && drafts.current === draft) { const request = { token, id: item.Id, trigger: event.currentTarget, remove: list.remove }; consent.current = request; setApproval(request); } }}>Delete</Button></>}
+ *       </div>)}{list.hasMore && <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={() => read(true)}>Load More</Button>}</div>}
+ *       {approval?.token === token && <Dialog open onOpenChange={(_, data) => { if (!data.open) cancelConsent(); }}>
+ *         <DialogSurface><DialogBody><DialogTitle>Delete this item?</DialogTitle><DialogContent>Delete item #{approval?.id}? This action cannot be undone.</DialogContent>
+ *           <DialogActions><Button onClick={cancelConsent}>Cancel</Button><Button appearance="primary" disabled={writing || list.loading || list.loadingMore} onClick={approve}>Delete item</Button></DialogActions>
+ *         </DialogBody></DialogSurface>
+ *       </Dialog>}
+ *     </>,
+ *     diagnostics: <p>Load explicitly selects Id and Title in descending Id order, page size 10. Successful writes schedule the hook's existing 100 ms active-query refresh; rows change only when that read publishes. Create before Load need not refresh. A failed refresh does not roll back a successful write. Paging uses a count-based p_ID heuristic, not a guaranteed continuation for noncontiguous descending IDs or concurrent edits. Missing or legacy-null titles display as (untitled) and edit as an empty draft. Updates/deletes use wildcard ETags and do not protect against concurrent edits. Reset commits a blank target and hides rows until a fresh Load; dispatched requests are not canceled. The original write promise keeps this mounted example locked until settlement, even after Reset or client change; departure has no global lock. Choose a disposable list only when its writes are authorized.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'write', contentPlacement: 'configuration', observe: 'Load an explicitly selected list, create or edit titles, and load more rows; Delete captures the selected item for approval, while writes refresh the active query after 100 ms and reset invalidates local results without canceling dispatched requests.' };
+ * ```
  */
 export function useSPFxPnPList<T = unknown>(
   listTitle: string,

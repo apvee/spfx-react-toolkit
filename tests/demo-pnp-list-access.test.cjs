@@ -12,7 +12,7 @@ const modes = [
 ];
 // Real emitted examples and selector hooks; context and service are deliberately doubled.
 // Native HTTP serialization/provider evidence lives in executable-examples-pnp-selectors.
-function fixture(t, mode, { panel = false } = {}) {
+function fixture(t, mode, { crud = false } = {}) {
   const factories = [], calls = [];
   let resolve, reject;
   const context = { sp: {}, isInitialized: true, siteUrl: 'https://tenant.test/sites/projects' };
@@ -31,15 +31,16 @@ function fixture(t, mode, { panel = false } = {}) {
   };
   const h = createHarness(boundaries);
   const toolkit = { ...boundaries['./useSPFxPnPContext'], ...h.load('hooks/useSPFxPnPList.ts'), ...Object.assign({}, ...modes.map(([suffix]) => h.load('hooks/useSPFxPnPListBy' + suffix + '.ts'))) };
+  Object.assign(toolkit, h.load('hooks/useSx.ts'), h.load('helpers/styles/index.ts'));
   boundaries['@apvee/spfx-react-toolkit'] = toolkit;
   t.after(h.close);
   window.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
   t.mock.method(window, 'setTimeout', (callback, delay) => setTimeout(callback, delay));
   const [suffix, , , , , , title] = mode;
-  const selected = panel ? undefined : scenario(title, 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListBy' + suffix + '.ts#useSPFxPnPListBy' + suffix);
-  const Component = panel ? h.load(path.resolve('apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/PnPPanel.tsx')).default : h.load(selected.file).Demo;
+  const selected = crud ? scenario('Manage list items with paging and captured delete consent', 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList') : scenario(title, 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListBy' + suffix + '.ts#useSPFxPnPListBy' + suffix);
+  const Component = h.load(selected.file).Demo;
   const { DemoCard } = h.load(path.resolve('apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard.tsx'));
-  const view = h.mountComponent(() => h.React.createElement(FluentProvider, { theme: webLightTheme }, h.React.createElement(Component, panel ? {} : { render: regions => h.React.createElement(DemoCard, { title: 'useSPFxPnPListBy' + suffix, contentPlacement: 'configuration', ...regions }) })));
+  const view = h.mountComponent(() => h.React.createElement(FluentProvider, { theme: webLightTheme }, h.React.createElement(Component, { render: regions => h.React.createElement(DemoCard, { title: 'useSPFxPnPListBy' + suffix, contentPlacement: 'configuration', ...regions }) })));
   const flush = async () => h.act(async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); await new Promise(r => setTimeout(r, 0)); });
   function button(name) { const element = Array.from(view.container.querySelectorAll('button')).find(b => b.textContent === name); assert.ok(element, name); return element; }
   function input(label, value) {
@@ -79,8 +80,7 @@ for (const mode of modes) {
   });
 }
 // Retargeted at retirement: actual title-list runtime is still deliberately service-doubled here.
-test('remaining PnP panel defaults to blank explicit title list without requests', async t => {
-  const f = fixture(t, modes[0], { panel: true }); await f.flush();
-  assert.equal(f.container.querySelector('select[data-demo-variant="PnPPanel"]').value, 'list');
+test('canonical CRUD defaults to blank explicit title list without requests', async t => {
+  const f = fixture(t, modes[0], { crud: true }); await f.flush();
   assert.equal(f.button('Load').disabled, true); assert.deepEqual(f.calls, []);
 });

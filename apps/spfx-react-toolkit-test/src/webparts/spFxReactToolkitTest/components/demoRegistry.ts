@@ -54,16 +54,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
-    key: 'pnp',
-    title: 'PnPjs',
-    iconName: 'CloudDownload',
-    description: 'PnP context, invoke/batch helpers, and list operations.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-pnp' */ './panels/PnPPanel')),
-    coverage: [
-      { symbol: 'useSPFxPnPList', kind: 'write', notes: 'List query and optional CRUD operations.' },
-    ],
-  },
-  {
     key: 'search',
     title: 'Search',
     iconName: 'Search',

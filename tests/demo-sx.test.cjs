@@ -143,7 +143,7 @@ test('numeric drafts allow clearing and sequential replacement while retaining v
 
 test('hook, provider, style and service panels use Fluent configuration and shared demo regions', () => {
   const componentRoot = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
-  const panels = ['Providers', 'PnP', 'Search'];
+  const panels = ['Providers', 'Search'];
   const files = panels.map(name => path.join(componentRoot, 'panels', name + 'Panel.tsx'))
     .concat(fs.readdirSync(path.join(componentRoot, 'demos')).filter(name => /^PnP.*\.tsx$/.test(name)).map(name => path.join(componentRoot, 'demos', name)));
   for (const file of files) {
@@ -160,6 +160,12 @@ test('hook, provider, style and service panels use Fluent configuration and shar
   new Function('module', 'exports', require('typescript').transpileModule(catalogueText, {
     compilerOptions: { module: require('typescript').ModuleKind.CommonJS },
   }).outputText)(catalogueModule, catalogueModule.exports);
+  const crudCases = catalogueModule.exports.executableExamples.filter(entry => entry.ownerKey === 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList' && entry.title === 'Manage list items with paging and captured delete consent');
+  assert.equal(crudCases.length, 1, 'canonical CRUD replaces the final legacy PnP panel');
+  const crudSource = fs.readFileSync(path.join(generatedRoot, crudCases[0].id + '.tsx'), 'utf8');
+  assert.deepEqual([crudCases[0].metadata.host, crudCases[0].metadata.kind, crudCases[0].metadata.contentPlacement], ['webPart', 'write', 'configuration']);
+  assert.doesNotMatch(crudSource, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|summary|a)\b|<FluentProvider\b|\bstyle\s*=/);
+  assert.match(crudSource, /className=/, 'portable CRUD authors classes with the existing host renderer');
   const configurationTitles = {
     useSPFxConfigurationStore: 'Compare layered configuration and physical inventories',
     createSPFxConfigurationStoreService: 'Compose tenant defaults and site overrides with the service',

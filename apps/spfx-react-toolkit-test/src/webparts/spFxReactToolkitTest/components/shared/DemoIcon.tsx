@@ -84,7 +84,6 @@ const demoIcons: Readonly<Record<string, FluentIcon>> = {
   Timer: Clock24Regular,
   Cloud: Cloud24Regular,
   OneDrive: Cloud24Regular,
-  CloudDownload: ArrowDownload24Regular,
   Download: ArrowDownload24Regular,
   Code: Code24Regular,
   CommandPrompt: Code24Regular,

@@ -22,7 +22,7 @@ test('tenant list acceptance contains the two exact new hook and factory cases',
   assert.deepEqual(pilotTitles.createSPFxTenantKeyValueStoreService, ['Round trip numeric looking text through a tenant service']);
 });
 
-test('browser pilot filter selects exactly 47 features and 54 independently named scenarios without mutation', () => {
+test('browser pilot filter selects exactly 47 features and 55 independently named scenarios without mutation', () => {
   const features = Object.entries(pilotTitles).map(([title, titles]) => ({ key: title, title, scenarios: [...titles.map(title => ({ title })), { title: 'Future scenario' }] }));
   const expectedGroup = title => ['WebPartShell', 'Pagination'].includes(title) ? 'controls' : ['createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(title) ? 'services' : 'hooks';
   const groups = ['controls', 'hooks', 'services'].map(key => ({ key, features: features.filter(feature => expectedGroup(feature.title) === key) })).concat([{ key: 'future', features: [{ title: 'Future feature', scenarios: [] }] }]);
@@ -30,7 +30,7 @@ test('browser pilot filter selects exactly 47 features and 54 independently name
   const filtered = filterPilotGroups(groups);
   assert.equal(filtered.length, 3);
   assert.equal(filtered.flatMap(group => group.features).length, 47);
-  assert.equal(filtered.flatMap(group => group.features).flatMap(feature => feature.scenarios).length, 54);
+  assert.equal(filtered.flatMap(group => group.features).flatMap(feature => feature.scenarios).length, 55);
   assert.deepEqual(groups, original, 'filter never mutates any app catalogue group, feature or scenario');
 
   const missingFeature = structuredClone(groups);

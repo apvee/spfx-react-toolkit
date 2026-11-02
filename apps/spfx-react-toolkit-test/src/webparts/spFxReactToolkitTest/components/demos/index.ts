@@ -5,8 +5,6 @@
 
 // PnP Operations (invoke/batch) demo
 
-// PnP List CRUD demo
-export { PnPListDemo } from './PnPListDemo';
 
 // PnP Search demos
 export { PnPSearchBasicDemo } from './PnPSearchBasicDemo';

@@ -8,7 +8,7 @@ webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 
   output: { path: output, filename: 'fixture.js' },
   resolve: { extensions: ['.tsx', '.ts', '.js'], alias: {
     ...require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
-    '@apvee/spfx-react-toolkit$': path.join(fixture, 'toolkit-boundary.ts'),
+    ...Object.fromEntries(['@apvee/spfx-react-toolkit', '@apvee/spfx-react-toolkit/hooks/useSPFxPnPContext', '@apvee/spfx-react-toolkit/hooks/useSPFxPnPList', '@apvee/spfx-react-toolkit/styles'].map(name => [name + '$', path.join(fixture, 'toolkit-boundary.ts')])),
     'react/jsx-runtime$': require.resolve('react/jsx-runtime.js'),
   } },
   module: { rules: [{ test: /\.tsx?$/, use: path.join(__dirname, 'sx-browser-typescript-loader.cjs') }] },
@@ -16,5 +16,5 @@ webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 
   if (error || stats.hasErrors()) { console.error(error || stats.toString({ all: false, errors: true })); process.exitCode = 1; return; }
   fs.copyFileSync(path.join(fixture, 'index.html'), path.join(output, 'index.html'));
   console.log(stats.toString({ all: false, timings: true, assets: true, warnings: true }));
-  console.log(`Actual PnP demo + Fluent Dialog; mocked removal only: ${output}`);
+  console.log(`Emitted CRUD + actual Fluent Dialog; whole-hook-doubled UI conformance: ${output}`);
 });

@@ -2,6 +2,8 @@
 // construction. Replace only HTTP send; this cannot establish tenant access.
 import { createSPFxPnPContextService as createRealService } from '../../../packages/spfx-react-toolkit/lib/services/spfx-pnp-context.service';
 
+import { isPnPCrudEnabled } from './trim-transports';
+
 type Request = { readonly url: string; readonly method: string };
 const calls: Request[] = [];
 let failure: string | undefined;
@@ -43,6 +45,10 @@ export const createSPFxPnPContextService: typeof createRealService = (...args) =
           // These routes never alter the original GET-only pilot ledger or policy.
           return fetch(String(url), init);
         }
+        const titleItems = /\/_api\/web\/lists\/getByTitle\('(?:[^'/]|'')+'\)\/items(?:\(\d+\))?$/.test(target.pathname);
+        // Preserve the original top5 GET pilot in both modes; CRUD is finite fixture admission only.
+        if (titleItems && isPnPCrudEnabled() && !((init.method ?? 'GET') === 'GET' && target.searchParams.get('$top') === '5')) return fetch(String(url), init);
+        if (isPnPCrudEnabled() && !titleItems) throw new Error('Unsupported native PnP CRUD fixture route');
         const method = init.method ?? 'GET';
         calls.push({ url: String(url), method });
         if (method !== 'GET') throw new Error('Simulated read fixture forbids CRUD');
