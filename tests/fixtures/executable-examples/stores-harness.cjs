@@ -3,6 +3,8 @@ const { createClientsFixture } = require('./clients-scenarios.cjs');
 const assert = require('node:assert/strict');
 const { Simulate } = require('react-dom/test-utils');
 const owners = {
+  configurationHook: ['packages/spfx-react-toolkit/src/hooks/useSPFxConfigurationStore.ts#useSPFxConfigurationStore', 'Compare layered configuration and physical inventories'],
+  configurationService: ['packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService', 'Compose tenant defaults and site overrides with the service'],
   tenantHook: ['packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore.ts#useSPFxTenantKeyValueStore', 'Explore tenant records and exact text persistence'],
   tenantService: ['packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService', 'Round trip numeric looking text through a tenant service'],
   propertyHook: ['packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty', 'Read tenant version and counter with explicit activation'],
@@ -16,7 +18,8 @@ function createStoreFixture(t, kind = 'hook', options = {}) {
   const [ownerKey, title] = owners[kind];
   const property = kind === 'propertyHook' || kind === 'propertyService';
   const tenant = kind === 'tenantHook' || kind === 'tenantService';
-  const f = createClientsFixture(t, title, { ...options, siteStore: !property && !tenant, tenantStore: tenant, tenantProperties: property, ownerKey, compiled: options.compiled ?? process.env[property ? 'TENANT_PROPERTY_IMPLEMENTATION' : tenant ? 'TENANT_STORE_IMPLEMENTATION' : 'SITE_STORE_IMPLEMENTATION'] === 'compiled' });
+  const configuration = kind === 'configurationHook' || kind === 'configurationService';
+  const f = createClientsFixture(t, title, { ...options, siteStore: !property && !tenant && !configuration, tenantStore: tenant, configurationStore: configuration, tenantProperties: property, ownerKey, compiled: options.compiled ?? process.env[property ? 'TENANT_PROPERTY_IMPLEMENTATION' : tenant ? 'TENANT_STORE_IMPLEMENTATION' : configuration ? 'CONFIGURATION_STORE_IMPLEMENTATION' : 'SITE_STORE_IMPLEMENTATION'] === 'compiled' });
   // MessageBar/Dialog native layout observation, not a layout claim.
   const nodeGlobal = Object.getOwnPropertyDescriptor(global, 'Node');
   Object.defineProperty(global, 'Node', { configurable: true, value: window.Node });

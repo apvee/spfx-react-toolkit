@@ -1,5 +1,7 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
+  useSPFxConfigurationStore: ['Compare layered configuration and physical inventories'],
+  createSPFxConfigurationStoreService: ['Compose tenant defaults and site overrides with the service'],
   useSPFxTenantKeyValueStore: ['Explore tenant records and exact text persistence'],
   createSPFxTenantKeyValueStoreService: ['Round trip numeric looking text through a tenant service'],
   useSPFxTenantProperty: ['Read tenant version and counter with explicit activation'],

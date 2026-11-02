@@ -160,6 +160,29 @@ test('hook, provider, style and service panels use Fluent configuration and shar
   new Function('module', 'exports', require('typescript').transpileModule(catalogueText, {
     compilerOptions: { module: require('typescript').ModuleKind.CommonJS },
   }).outputText)(catalogueModule, catalogueModule.exports);
+  const configurationTitles = {
+    useSPFxConfigurationStore: 'Compare layered configuration and physical inventories',
+    createSPFxConfigurationStoreService: 'Compose tenant defaults and site overrides with the service',
+  };
+  const configurationOwners = ['packages/spfx-react-toolkit/src/hooks/useSPFxConfigurationStore.ts#useSPFxConfigurationStore', 'packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService'];
+  const configurationCases = catalogueModule.exports.executableExamples.filter(entry => configurationOwners.includes(entry.ownerKey));
+  assert.deepEqual(configurationCases.map(entry => [entry.featureTitle, entry.title]).sort(), Object.entries(configurationTitles).sort());
+  for (const entry of configurationCases) {
+    const source = fs.readFileSync(path.join(generatedRoot, entry.id + '.tsx'), 'utf8');
+    assert.deepEqual([entry.metadata.host, entry.metadata.kind, entry.metadata.contentPlacement], ['webPart', 'write', 'configuration']);
+    assert.equal(entry.groupKey, entry.featureTitle === 'useSPFxConfigurationStore' ? 'hooks' : 'services');
+    assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|summary|a)\b|<FluentProvider\b/);
+    const parser = require('typescript'); const parsed = parser.createSourceFile(entry.id + '.tsx', source, parser.ScriptTarget.Latest, true, parser.ScriptKind.TSX);
+    let calls = 0;
+    function inspectConfiguration(node) {
+      if (parser.isCallExpression(node) && parser.isIdentifier(node.expression) && node.expression.text === entry.featureTitle) calls++;
+      if (parser.isJsxAttribute(node)) assert.ok(!['style', 'styles'].includes(node.name.text), 'Configuration authored styles use classes');
+      parser.forEachChild(node, inspectConfiguration);
+    }
+    inspectConfiguration(parsed); assert.equal(calls, 1, 'each case invokes its own actual public owner once');
+    assert.match(source, /return render \? render\(regions\)/);
+    assert.match(source, /overflowX: 'auto'/);
+  }
   const tenantTitles = {
     useSPFxTenantKeyValueStore: 'Explore tenant records and exact text persistence',
     createSPFxTenantKeyValueStoreService: 'Round trip numeric looking text through a tenant service',

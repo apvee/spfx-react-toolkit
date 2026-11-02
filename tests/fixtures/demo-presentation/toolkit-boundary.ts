@@ -89,3 +89,6 @@ export { createSPFxTenantPropertyService, type SPFxTenantProperty, type SPFxTena
 // Tenant list cases retain actual hook/discovery/list implementations.
 export { useSPFxTenantKeyValueStore, type SPFxTenantKeyValueStoreItem } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxTenantKeyValueStore';
 export { createSPFxTenantKeyValueStoreService, type SPFxTenantKeyValueStoreService, type SPFxTenantKeyValueStoreServiceItem } from '../../../packages/spfx-react-toolkit/lib/services/spfx-tenant-key-value-store.service';
+
+// Configuration cases retain actual facade, physical stores and mode-specific identity.
+export { createSPFxConfigurationStoreService, type SPFxConfigurationStoreItem, type SPFxConfigurationStoreMode, type SPFxConfigurationStoreScope } from '../../../packages/spfx-react-toolkit/lib/services/spfx-configuration-store.service';

@@ -7,7 +7,7 @@ const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webpar
 const read = file => fs.readFileSync(path.join(base, file), 'utf8');
 
 test('shared presentation uses Fluent v9, host tokens and responsive named regions', () => {
-  for (const file of ['SpFxReactToolkitTest.tsx', ...['DemoCard', 'InfoGrid', 'InfoRow', 'StatusBadge', 'ActionResult', 'JsonDetails', 'DemoAccordionPanel'].map(name => `shared/${name}.tsx`)]) {
+  for (const file of ['SpFxReactToolkitTest.tsx', ...['DemoCard', 'InfoGrid', 'InfoRow', 'StatusBadge', 'JsonDetails', 'DemoAccordionPanel'].map(name => `shared/${name}.tsx`)]) {
     const source = read(file);
     assert.doesNotMatch(source, /from '@fluentui\/react'|style=|<details|<summary|<Stack|<Pivot/);
   }
@@ -86,7 +86,6 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
       status: React.createElement('output', {}, 'Observed result'),
     }, React.createElement(shared.InfoGrid, { rows: [{ label: 'Empty', value: '' }, { label: 'Missing', value: undefined }] }),
     React.createElement(shared.StatusBadge, { available: false, label: 'Unavailable' }),
-    React.createElement(shared.ActionResult, { result: undefined, error: new Error('Action failure') }),
     React.createElement(shared.JsonDetails, { label: 'Safe diagnostics', value: circular })));
     assert.equal(host.querySelector('h3').textContent, 'Example');
     assert.ok(host.querySelector('[aria-label="Configuration"]'));
@@ -100,7 +99,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     assert.equal(subject, host.querySelector('[data-demo-subject]'));
     assert.ok(!configurationCard.contains(subject), 'live subject is a sibling outside the settings Card');
     assert.ok(!configurationCard.contains(host.querySelector('h3')), 'section heading stays outside the settings Card');
-    assert.match(host.textContent, /Card failure.*Action failure/);
+    assert.match(host.textContent, /Card failure/); // Actual emitted Configuration tests cover caught-operation status/error placement.
     assert.match(host.textContent, /Empty:N\/A/);
     assert.match(host.textContent, /Missing:N\/A/);
     const disclosure = Array.from(host.querySelectorAll('button')).find(node => node.textContent === 'Safe diagnostics');

@@ -163,3 +163,19 @@ Reset restores local UI and consent, retaining the original pending public-write
 <!-- toolkit:include symbol="useSPFxTenantKeyValueStore" section="example" title="Explore tenant records and exact text persistence" -->
 
 <!-- toolkit:include symbol="createSPFxTenantKeyValueStoreService" section="example" title="Round trip numeric looking text through a tenant service" -->
+
+## Explore effective configuration and physical stores
+
+The complete hook scenario exposes tenant, site and layered modes with independent physical scope in layered mode. Read resolves the whole effective record; inventory, Save and Remove explicitly select one physical store. Site mode follows the collection root and ignores subsite-only navigation; tenant mode follows the discovery web. The sample initially selects layered mode, while the public API always requires an explicit mode.
+
+Manual Save and Remove never automatically read back. Exact text remains text, including numeric-looking and empty input; JSON, bigint and Date have the documented distinct read-back types. Omitted descriptions preserve destination metadata and explicit empty descriptions clear it. The separate default/override command writes numeric tenant 20 and site 50, reads site provenance, confirms removal of only site, then reads the tenant default. Each completed step remains visible if a later request fails; tenant cleanup is a separate explicit scoped operation.
+
+The factory scenario composes the same physical services directly with the required mode, collection root and discovery web. It additionally inventories site rows, preserving scope-local IDs and duplicates rather than merging stores. Both scenarios show the captured logical tenant destination honestly: the facade exposes no resolved physical catalog URL. An extra diagnostic discovery is not performed.
+
+Consent binds the exact disposable key, physical scope, value and description policy. Changed drafts retire old commands before React commits; no-op edits remain usable. Reset retains the mounted component and original pending public-write tickets until those promises settle. It invalidates stale publication and later recipe steps, without cancelling internal RPCs or rolling back accepted writes. The local gate does not serialize another scenario or host instance. Real writes, provisioning and cleanup require separate host authorization.
+
+<!-- toolkit:include symbol="useSPFxConfigurationStore" section="example" title="Compare layered configuration and physical inventories" -->
+
+<!-- toolkit:include symbol="createSPFxConfigurationStoreService" section="example" title="Compose tenant defaults and site overrides with the service" -->
+
+After Cancel or Escape, consumed consent stays revoked. The commands conditionally use Fluent `disabledFocusable` with the same disabled condition, so focus can return to the current trigger while the command remains unavailable. Its live ownership and consent guards still reject invocation; returning focus does not approve another write.

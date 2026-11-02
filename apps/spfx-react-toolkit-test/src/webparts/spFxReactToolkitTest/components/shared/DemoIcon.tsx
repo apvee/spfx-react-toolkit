@@ -143,7 +143,6 @@ const demoIcons: Readonly<Record<string, FluentIcon>> = {
   SharepointLogo: Globe24Filled,
   SpeedHigh: TopSpeed24Regular,
   Table: Table24Regular,
-  TableGroup: Table24Regular,
   Tag: Tag24Regular,
   TextAlignLeft: TextAlignLeft24Regular,
   TrackersMirrored: Location24Regular,

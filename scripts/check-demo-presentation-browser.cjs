@@ -17,6 +17,7 @@ const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Goog
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
+  { key: 'configuration', title: 'useSPFxConfigurationStore' }, { key: 'configuration-service', title: 'createSPFxConfigurationStoreService' },
   { key: 'tenant', title: 'useSPFxTenantKeyValueStore' }, { key: 'tenant-service', title: 'createSPFxTenantKeyValueStoreService' },
   { key: 'tenant-properties', title: 'useSPFxTenantProperty' }, { key: 'tenant-property-service', title: 'createSPFxTenantPropertyService' },
   { key: 'site', title: 'useSPFxSiteKeyValueStore' }, { key: 'site-service', title: 'createSPFxSiteKeyValueStoreService' },
@@ -61,6 +62,8 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    configuration: ['useSPFxConfigurationStore', 'Compare layered configuration and physical inventories'],
+    'configuration-service': ['createSPFxConfigurationStoreService', 'Compose tenant defaults and site overrides with the service'],
     tenant: ['useSPFxTenantKeyValueStore', 'Explore tenant records and exact text persistence'],
     'tenant-service': ['createSPFxTenantKeyValueStoreService', 'Round trip numeric looking text through a tenant service'],
     'tenant-properties': ['useSPFxTenantProperty', 'Read tenant version and counter with explicit activation'],
@@ -98,7 +101,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service', 'tenant-service'].includes(key) ? /^Servizi/ : (['imports', 'styles', 'site', 'tenant-properties', 'tenant'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -301,8 +304,13 @@ async function interact(page, key) {
       check('Editor dictionary retains stored content', await panel.locator('[data-editable-text-demo=stored]').textContent(), before);
       break;
     }
-    case 'configuration': {
-      check('Configuration form visible', await panel.locator('input').count() > 0, true);
+    case 'configuration': case 'configuration-service': {
+      const before = await page.evaluate(() => window.propertiesFixture.requests.length);
+      await panel.getByRole('textbox', { name: 'Key', exact: true }).fill('spfx-toolkit-config-demo-browser');
+      check('Configuration drafts do not discover tenant catalog', await page.evaluate(() => window.propertiesFixture.requests.length), before);
+      await panel.getByRole('button', { name: key === 'configuration' ? 'Run' : 'Read effective value', exact: true }).click();
+      await panel.getByText('spfx-toolkit-config-demo-browser not found.', { exact: true }).first().waitFor();
+      check('Configuration read uses lazy discovery after absent site', await page.evaluate(() => window.propertiesFixture.requests.length), before + 1);
       break;
     }
     case 'providers': await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click(); check('Provider disclosure', await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).getAttribute('aria-expanded'), 'true'); break;
