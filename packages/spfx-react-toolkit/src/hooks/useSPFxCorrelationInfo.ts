@@ -40,7 +40,7 @@ export interface SPFxCorrelationInfo {
  * @returns Correlation and tenant identifier strings, each undefined when unavailable.
  * @throws Error when no host-specific SPFx provider is present.
  *
- * @example
+ * @example Read CorrelationInfo metadata
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxCorrelationInfo } from '@apvee/spfx-react-toolkit';
@@ -52,6 +52,26 @@ export interface SPFxCorrelationInfo {
  * ```
  *
  * @useWhen a support or telemetry record needs the request correlation identifier exposed by the host.
+ *
+ * @example Inspect current diagnostic identifiers
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxCorrelationInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const info = useSPFxCorrelationInfo();
+ *   const regions: DemoRegions = {
+ *     children: <dl aria-label="useSPFxCorrelationInfo result">
+ *         <dt>Correlation ID</dt><dd>{info.correlationId ?? 'Unavailable'}</dd>
+ *         <dt>Tenant ID</dt><dd>{info.tenantId ?? 'Unavailable'}</dd>
+ *       </dl>,
+ *     diagnostics: <p>These native identifiers are diagnostic metadata; the hook does not inject headers or create tracing IDs.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual CorrelationInfo values and explicit unavailable fields as the native host changes.' };
+ * ```
  */
 export function useSPFxCorrelationInfo(): SPFxCorrelationInfo {
   const pageContext = useSPFxPageContext();

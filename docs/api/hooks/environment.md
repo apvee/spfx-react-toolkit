@@ -149,6 +149,8 @@ import { useSPFxEnvironmentInfo } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (3)
 
+#### Read EnvironmentInfo metadata
+
 ```tsx
 import * as React from 'react';
 import { useSPFxEnvironmentInfo } from '@apvee/spfx-react-toolkit';
@@ -157,6 +159,33 @@ function HostLabel() {
   const { type } = useSPFxEnvironmentInfo();
   return <span>{type}</span>;
 }
+```
+
+#### Observe the acquired application host
+
+```tsx
+import * as React from 'react';
+import { useSPFxEnvironmentInfo } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const info = useSPFxEnvironmentInfo();
+  const regions: DemoRegions = {
+    children: <dl aria-label="useSPFxEnvironmentInfo result">
+        <dt>Host</dt><dd>{info.type}</dd>
+        <dt>Local</dt><dd>{String(info.isLocal)}</dd>
+        <dt>Workbench</dt><dd>{String(info.isWorkbench)}</dd>
+        <dt>SharePoint</dt><dd>{String(info.isSharePoint)}</dd>
+        <dt>On premises</dt><dd>{String(info.isSharePointOnPrem)}</dd>
+        <dt>Teams</dt><dd>{String(info.isTeams)}</dd>
+        <dt>Office</dt><dd>{String(info.isOffice)}</dd>
+        <dt>Outlook</dt><dd>{String(info.isOutlook)}</dd>
+      </dl>,
+    diagnostics: <p>Local URL detection takes precedence. Application SDK acquisition is asynchronous; SDK availability alone does not identify Teams.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual EnvironmentInfo values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures
@@ -190,7 +219,7 @@ Primary host category plus URL/workbench and resolved application-host flags.
 
 ### Source (3)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxEnvironmentInfo.ts:95](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxEnvironmentInfo.ts#L95)
+[packages/spfx-react-toolkit/src/hooks/useSPFxEnvironmentInfo.ts:121](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxEnvironmentInfo.ts#L121)
 
 ## SPFxLocaleInfo
 
@@ -394,6 +423,36 @@ function PriceDisplay({ amount }: { amount: number }) {
 }
 ```
 
+#### Compare host cultures and seasonal site times
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { RelativeTime, useSPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const locale = useSPFxLocaleInfo();
+  const [season, setSeason] = React.useState<'winter' | 'summer'>('winter');
+  const previous = React.useRef(resetRevision);
+  React.useEffect(() => { if (previous.current !== resetRevision) { previous.current = resetRevision; setSeason('winter'); } }, [resetRevision]);
+  const dateTime = season === 'winter' ? '2026-01-15T12:00:00Z' : '2026-07-15T12:00:00Z';
+  const referenceTime = season === 'winter' ? '2026-01-15T13:00:00Z' : '2026-07-15T13:00:00Z';
+  const regions: DemoRegions = {
+    controls: <Field label="Period"><Select aria-label="Period" value={season} onChange={(_, data) => setSeason(data.value === 'summer' ? 'summer' : 'winter')}><option value="winter">Winter</option><option value="summer">Summer</option></Select></Field>,
+    children: <section aria-label="Locale result">
+      <p>Formatting culture: {locale.locale}; UI culture: {locale.uiLocale}; RTL: {String(locale.isRtl)}</p>
+      <p>Regional time zone: {locale.timeZone?.description ?? 'Unavailable'}; IANA representative: {locale.ianaTimeZone ?? 'Unavailable'}</p>
+      {locale.ianaTimeZone === undefined ? <p>IANA mapping unavailable. Site time is not rendered.</p>
+        : <RelativeTime dateTime={dateTime} referenceTime={referenceTime} locale={locale.uiLocale} timeZone={locale.ianaTimeZone} />}
+    </section>,
+    diagnostics: <p>Hover or focus the actual time to inspect its full date. The audited numeric SharePoint group selects a representative standard zone, not a user city or profile zone. Culture and offsets never choose the mapping; custom TIMEZONE.XML rules are not verified. Reset restores winter without changing native locale or zone.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Switch winter and summer to compare one actual RelativeTime using the host UI culture and audited site zone; missing mapping renders an explicit unavailable result.' };
+```
+
 ### Signatures (2)
 
 ```ts
@@ -422,7 +481,7 @@ Locale and regional settings, preserving the original SDK timeZone object
 
 ### Source (6)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts:190](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts#L190)
+[packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts:219](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts#L219)
 
 ## SPFxPageType
 
@@ -568,6 +627,8 @@ import { useSPFxPageType } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (9)
 
+#### Read PageType metadata
+
 ```tsx
 import * as React from 'react';
 import { useSPFxPageType } from '@apvee/spfx-react-toolkit';
@@ -576,6 +637,31 @@ function PageLabel() {
   const { pageType } = useSPFxPageType();
   return <span>{pageType}</span>;
 }
+```
+
+#### Inspect the supplied page classification
+
+```tsx
+import * as React from 'react';
+import { useSPFxPageType } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const info = useSPFxPageType();
+  const regions: DemoRegions = {
+    children: <dl aria-label="useSPFxPageType result">
+        <dt>Page type</dt><dd>{info.pageType}</dd>
+        <dt>Modern</dt><dd>{String(info.isModernPage)}</dd>
+        <dt>Site page</dt><dd>{String(info.isSitePage)}</dd>
+        <dt>Web part page</dt><dd>{String(info.isWebPartPage)}</dd>
+        <dt>List page</dt><dd>{String(info.isListPage)}</dd>
+        <dt>List form</dt><dd>{String(info.isListFormPage)}</dd>
+      </dl>,
+    diagnostics: <p>Unknown is a valid result. Native metadata classification does not probe the server or prove page capabilities.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual PageType values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (3)
@@ -607,7 +693,7 @@ Best-effort page category and category-specific flags.
 
 ### Source (9)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts:88](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts#L88)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts:112](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts#L112)
 
 ## SPFxTeamsInfo
 
@@ -716,6 +802,8 @@ import { useSPFxTeams } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (12)
 
+#### Read Teams metadata
+
 ```tsx
 import * as React from 'react';
 import { useSPFxTeams } from '@apvee/spfx-react-toolkit';
@@ -724,6 +812,28 @@ function ApplicationTheme() {
   const { supported, theme } = useSPFxTeams();
   return <span>{supported ? theme ?? 'Theme unavailable' : 'SDK context unavailable'}</span>;
 }
+```
+
+#### Observe application SDK readiness and theme
+
+```tsx
+import * as React from 'react';
+import { useSPFxTeams } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const info = useSPFxTeams();
+  const regions: DemoRegions = {
+    children: <dl aria-label="useSPFxTeams result">
+        <dt>SDK context acquired</dt><dd>{String(info.supported)}</dd>
+        <dt>SDK context available</dt><dd>{String(info.context !== undefined)}</dd>
+        <dt>SDK theme</dt><dd>{info.theme ?? 'Unavailable'}</dd>
+      </dl>,
+    diagnostics: <p>Supported means SDK context acquisition succeeded, including Office or Outlook. It is not a Teams host discriminator. The native SDK owns theme callbacks; cleanup releases provider subscribers.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual Teams values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (4)
@@ -750,4 +860,4 @@ SDK readiness, untyped host context and optional normalized application theme.
 
 ### Source (12)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts:78](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#L78)
+[packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts:99](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#L99)

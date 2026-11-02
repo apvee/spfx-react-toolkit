@@ -51,20 +51,20 @@ async function accessTrimsBrowser({ page, check, select, singleExample, labels, 
   check('AND denied outer never starts inner group read', await page.evaluate(index => window.trimFixture.calls.slice(index).some(call => call.transport === 'graph' && call.url.startsWith('/groups')), beforeAND), false);
   await configure({ mode: 'allowed', hold: false }); await page.locator('[data-trim-demo=run]').click(); await allowed();
   check('AND allowed starts actual inner group read', await page.evaluate(index => window.trimFixture.calls.slice(index).some(call => call.transport === 'graph' && call.url.startsWith('/groups')), beforeAND), true);
-  await select(page, 'context'); await page.locator('[data-demo-variant=context]').selectOption('scoped');
-  await configure({ mode: 'allowed', hold: true }); await page.locator('[data-context-demo=run-scoped]').click();
-  await page.waitForFunction(() => document.querySelector('[data-context-demo=scoped-state]')?.textContent === 'Loading scoped permissions');
-  await release(); await page.waitForFunction(() => document.querySelector('[data-context-demo=scoped-state]')?.textContent === 'Allowed: view list items');
+  await select(page, 'context-scoped');
+  await configure({ mode: 'allowed', hold: true }); await page.getByRole('button', { name: 'Run / repeat', exact: true }).click();
+  await page.getByText('Loading scoped permissions', { exact: true }).waitFor();
+  await release(); await page.getByText('Allowed: view list items', { exact: true }).waitFor();
   for (const scope of ['list', 'item', 'folder']) {
-    await page.locator('[data-trim-demo=scope]').selectOption(scope);
-    if (scope === 'folder') { await page.locator('[data-trim-demo=list-value]').fill('Shared Documents'); await page.locator('[data-trim-demo=folder-path]').fill('/sites/demo/Shared Documents/Reports'); }
-    await page.locator('[data-context-demo=run-scoped]').click();
-    await page.waitForFunction(() => document.querySelector('[data-context-demo=scoped-state]')?.textContent === 'Allowed: view list items');
-    check(`Context ${scope} applied target`, (await page.locator('[data-context-demo=scoped-target]').textContent()).includes(`"scope":"${scope}"`), true);
+    await page.getByRole('combobox', { name: 'Scope', exact: true }).selectOption(scope);
+    if (scope === 'folder') { await page.getByRole('textbox', { name: 'List value', exact: true }).fill('Shared Documents'); await page.getByRole('textbox', { name: 'Folder path', exact: true }).fill('/sites/demo/Shared Documents/Reports'); }
+    await page.getByRole('button', { name: 'Run / repeat', exact: true }).click();
+    await page.getByText('Allowed: view list items', { exact: true }).waitFor();
+    check(`Context ${scope} applied target`, (await page.getByLabel('Applied target', { exact: true }).textContent()).includes(`"scope":"${scope}"`), true);
   }
-  await configure({ mode: 'error', hold: false }); await page.locator('[data-context-demo=run-scoped]').click();
-  await page.waitForFunction(() => document.querySelector('[data-context-demo=scoped-state]')?.textContent?.startsWith('Error:'));
-  check('Context actual scoped error distinct from denial', (await page.locator('[data-context-demo=scoped-state]').textContent()).startsWith('Error:'), true);
+  await configure({ mode: 'error', hold: false }); await page.getByRole('button', { name: 'Run / repeat', exact: true }).click();
+  await page.getByRole('alert').filter({ hasText: 'Error:' }).waitFor();
+  check('Context actual scoped error distinct from denial', await page.getByText('Denied: view list items', { exact: true }).count(), 0);
   await configure({ mode: 'allowed', hold: false });
   const calls = await page.evaluate(() => window.trimFixture.calls);
   assert.ok(calls.some(call => call.transport === 'sp')); assert.ok(calls.some(call => call.transport === 'graph' && call.url === '/me/checkMemberGroups'));

@@ -97,7 +97,7 @@ export interface SPFxSiteInfo {
  * @returns Web/site identifiers, URLs and metadata, with optional group/classification/logo fields.
  * @throws Error when no host-specific SPFx provider is present.
  *
- * @example
+ * @example Read SiteInfo metadata
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxSiteInfo } from '@apvee/spfx-react-toolkit';
@@ -109,6 +109,32 @@ export interface SPFxSiteInfo {
  * ```
  *
  * @useWhen UI needs current web/site identifiers and optional group metadata without I/O.
+ *
+ * @example Inspect the current web and site collection
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxSiteInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const info = useSPFxSiteInfo();
+ *   const regions: DemoRegions = {
+ *     children: <dl aria-label="useSPFxSiteInfo result">
+ *         <dt>Web title</dt><dd>{info.title}</dd>
+ *         <dt>Web URL</dt><dd>{info.webUrl}</dd>
+ *         <dt>Site URL</dt><dd>{info.siteUrl}</dd>
+ *         <dt>Web ID</dt><dd>{info.webId}</dd>
+ *         <dt>Site ID</dt><dd>{info.siteId}</dd>
+ *         <dt>Classification</dt><dd>{info.siteClassification ?? 'Unavailable'}</dd>
+ *         <dt>Group</dt><dd>{info.siteGroup?.id ?? 'Unavailable'}</dd>
+ *         <dt>Logo available</dt><dd>{String(Boolean(info.logoUrl))}</dd>
+ *       </dl>,
+ *     diagnostics: <p>Optional classification, group and logo metadata depend on the native host.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual SiteInfo values and explicit unavailable fields as the native host changes.' };
+ * ```
  */
 export function useSPFxSiteInfo(): SPFxSiteInfo {
   const pageContext = useSPFxPageContext();

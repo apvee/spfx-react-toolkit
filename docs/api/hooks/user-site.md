@@ -75,6 +75,8 @@ import { useSPFxHubSiteInfo } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (2)
 
+#### Read the native hub association
+
 ```tsx
 import * as React from 'react';
 import { useSPFxHubSiteInfo } from '@apvee/spfx-react-toolkit';
@@ -86,6 +88,90 @@ function HubLink() {
   if (!hub.isHubSite || !hub.hubSiteUrl) return <span>Hub unavailable</span>;
   return <a href={hub.hubSiteUrl}>Visit hub</a>;
 }
+```
+
+#### Start a scope bound hub association lookup
+
+```tsx
+import * as React from 'react';
+import { Button } from '@fluentui/react-components';
+import { SPHttpClient } from '@microsoft/sp-http';
+import { useSPFxContext, useSPFxPageContext, useSPFxServiceScope, useSPFxHubSiteInfo } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Run = { id: number; revision: number; scope: readonly unknown[] };
+function sameScope(a: readonly unknown[], b: readonly unknown[]): boolean {
+  return a.length === b.length && a.every((value, index) => Object.is(value, b[index]));
+}
+function useLookupScope(): readonly unknown[] {
+  const provider = useSPFxContext();
+  const page = useSPFxPageContext();
+  const scope = useSPFxServiceScope();
+  let client: SPHttpClient | undefined;
+  try { client = scope.consume(SPHttpClient.serviceKey); } catch { client = undefined; }
+  const raw: unknown = page.legacyPageContext;
+  const legacy = typeof raw === 'object' && raw !== null ? raw as Record<string, unknown> : undefined;
+  const metadata = page as unknown as { webAbsoluteUrl?: unknown };
+  return [provider, provider.spfxContext, provider.kind, provider.instanceId, provider.spfxContext.instanceId,
+    page, scope.serviceScope, scope.serviceScope?.consume, client,
+    page.web.absoluteUrl, page.user.loginName, page.user.email,
+    typeof legacy?.hubSiteId === 'string' ? legacy.hubSiteId : undefined,
+    typeof legacy?.isHubSite === 'boolean' ? legacy.isHubSite : undefined,
+    typeof metadata.webAbsoluteUrl === 'string' ? metadata.webAbsoluteUrl : undefined];
+}
+function HubResult({ run, retire }: { run: Run; retire: (id: number) => void }): React.ReactElement {
+  const scope = useLookupScope();
+  const hub = useSPFxHubSiteInfo();
+  const current = sameScope(run.scope, scope);
+  React.useEffect(() => { if (!current) retire(run.id); }, [current, retire, run.id]);
+  // Check again on the child's own completion render: the parent may not render.
+  if (!current) return <p>Scope changed. Start a new lookup.</p>;
+  return <section aria-label="Hub lookup result">
+    <p>Applied web: {String(run.scope[9])}</p>
+    {hub.error ? <p role="alert">Error: {hub.error.message}</p>
+      : !hub.isHubSite ? <p>No hub association</p>
+      : hub.isLoading ? <p>Loading hub URL</p>
+      : hub.hubSiteUrl ? <p>Hub URL: {hub.hubSiteUrl}</p>
+      : <p>Hub URL not available yet</p>}
+    <p>Associated: {String(hub.isHubSite)}; Hub ID: {hub.hubSiteId ?? 'Unavailable'}</p>
+  </section>;
+}
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const scope = useLookupScope();
+  const [state, setState] = React.useState<{ run?: Run; expired: boolean }>({ expired: false });
+  const sequence = React.useRef(0);
+  const previous = React.useRef(resetRevision);
+  const alive = React.useRef(true);
+  const latest = React.useRef({ scope, revision: resetRevision });
+  latest.current = { scope, revision: resetRevision };
+  React.useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  React.useEffect(() => {
+    if (previous.current !== resetRevision) { previous.current = resetRevision; setState({ expired: false }); }
+  }, [resetRevision]);
+  const retire = React.useCallback((id: number) => {
+    if (alive.current) setState(previous => previous.run?.id === id ? { expired: true } : previous);
+  }, []);
+  const run = state.run;
+  const current = run !== undefined && run.revision === resetRevision && sameScope(run.scope, scope);
+  React.useEffect(() => {
+    if (run && !current) {
+      if (run.revision !== resetRevision) setState(previous => previous.run?.id === run.id ? { expired: false } : previous);
+      else retire(run.id);
+    }
+  }, [run, current, resetRevision, retire]);
+  const start = (): void => {
+    if (!alive.current || latest.current.revision !== resetRevision || !sameScope(scope, latest.current.scope)) return;
+    setState({ run: { id: ++sequence.current, revision: resetRevision, scope: scope.slice() }, expired: false });
+  };
+  const regions: DemoRegions = {
+    commands: <Button onClick={start}>Start / repeat lookup</Button>,
+    children: current && run ? <HubResult key={run.id} run={run} retire={retire} />
+      : <p>{state.expired || (run && run.revision === resetRevision) ? 'Scope changed. Start a new lookup.' : 'Idle. Start a hub lookup.'}</p>,
+    diagnostics: <p>Start gates the first query. Native refresh after Start and requests already sent can still run after scope change or reset; this example hides obsolete results and does not cancel requests. Mutable native metadata is checked when React renders.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Start the native hub lookup, compare association, URL and failure, then repeat or reset without displaying a result from a former host scope.' };
 ```
 
 ### Signatures
@@ -116,7 +202,7 @@ Hub association, optional URL/ID, asynchronous loading state and optional error.
 
 ### Source (2)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts:77](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts#L77)
+[packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts:161](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts#L161)
 
 ## SPFxListInfo
 
@@ -177,6 +263,8 @@ import { useSPFxListInfo } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (4)
 
+#### Read ListInfo metadata
+
 ```tsx
 import * as React from 'react';
 import { useSPFxListInfo } from '@apvee/spfx-react-toolkit';
@@ -185,6 +273,31 @@ function ListLabel() {
   const list = useSPFxListInfo();
   return <span>{list?.title ?? 'No list context'}</span>;
 }
+```
+
+#### Inspect the optional current list context
+
+```tsx
+import * as React from 'react';
+import { useSPFxListInfo } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const info = useSPFxListInfo();
+  const regions: DemoRegions = {
+    children: <dl aria-label="useSPFxListInfo result">
+        <dt>List context</dt><dd>{info ? 'Available' : 'No list context'}</dd>
+        <dt>List ID</dt><dd>{info?.id ?? 'Unavailable'}</dd>
+        <dt>List title</dt><dd>{info?.title ?? 'Unavailable'}</dd>
+        <dt>List URL</dt><dd>{info?.serverRelativeUrl || 'Unavailable'}</dd>
+        <dt>Template</dt><dd>{info?.baseTemplate === undefined ? 'Unavailable' : String(info.baseTemplate)}</dd>
+        <dt>Document library</dt><dd>{String(info?.isDocumentLibrary ?? false)}</dd>
+      </dl>,
+    diagnostics: <p>No list ID means no list context. Missing title becomes Unknown List, URL becomes empty, and template 101 alone identifies a library. No list request is issued.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual ListInfo values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (2)
@@ -225,7 +338,7 @@ SPFxListInfo
 
 ### Source (4)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxListInfo.ts:71](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxListInfo.ts#L71)
+[packages/spfx-react-toolkit/src/hooks/useSPFxListInfo.ts:95](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxListInfo.ts#L95)
 
 ## SPFxGroupInfo
 
@@ -331,6 +444,8 @@ import { useSPFxSiteInfo } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (7)
 
+#### Read SiteInfo metadata
+
 ```tsx
 import * as React from 'react';
 import { useSPFxSiteInfo } from '@apvee/spfx-react-toolkit';
@@ -339,6 +454,33 @@ function SiteLabel() {
   const { title, webUrl } = useSPFxSiteInfo();
   return <a href={webUrl}>{title}</a>;
 }
+```
+
+#### Inspect the current web and site collection
+
+```tsx
+import * as React from 'react';
+import { useSPFxSiteInfo } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const info = useSPFxSiteInfo();
+  const regions: DemoRegions = {
+    children: <dl aria-label="useSPFxSiteInfo result">
+        <dt>Web title</dt><dd>{info.title}</dd>
+        <dt>Web URL</dt><dd>{info.webUrl}</dd>
+        <dt>Site URL</dt><dd>{info.siteUrl}</dd>
+        <dt>Web ID</dt><dd>{info.webId}</dd>
+        <dt>Site ID</dt><dd>{info.siteId}</dd>
+        <dt>Classification</dt><dd>{info.siteClassification ?? 'Unavailable'}</dd>
+        <dt>Group</dt><dd>{info.siteGroup?.id ?? 'Unavailable'}</dd>
+        <dt>Logo available</dt><dd>{String(Boolean(info.logoUrl))}</dd>
+      </dl>,
+    diagnostics: <p>Optional classification, group and logo metadata depend on the native host.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual SiteInfo values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (3)
@@ -375,7 +517,7 @@ Web/site identifiers, URLs and metadata, with optional group/classification/logo
 
 ### Source (7)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts:113](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#L113)
+[packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts:139](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#L139)
 
 ## SPFxUserInfo
 
@@ -435,6 +577,8 @@ import { useSPFxUserInfo } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (9)
 
+#### Read UserInfo metadata
+
 ```tsx
 import * as React from 'react';
 import { useSPFxUserInfo } from '@apvee/spfx-react-toolkit';
@@ -443,6 +587,29 @@ function UserLabel() {
   const { displayName } = useSPFxUserInfo();
   return <span>{displayName}</span>;
 }
+```
+
+#### Inspect the current user display metadata
+
+```tsx
+import * as React from 'react';
+import { useSPFxUserInfo } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const info = useSPFxUserInfo();
+  const regions: DemoRegions = {
+    children: <dl aria-label="useSPFxUserInfo result">
+        <dt>User</dt><dd>{info.displayName}</dd>
+        <dt>Email</dt><dd>{info.email ?? 'Unavailable'}</dd>
+        <dt>External user</dt><dd>{String(info.isExternal)}</dd>
+        <dt>Login available</dt><dd>{String(Boolean(info.loginName))}</dd>
+      </dl>,
+    diagnostics: <p>Supplied display metadata performs no profile fetch and is not an authorization result.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual UserInfo values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (4)
@@ -470,7 +637,7 @@ Login/display names, optional email and external-guest flag.
 
 ### Source (9)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts:64](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#L64)
+[packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts:86](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#L86)
 
 ## SPFxUserPhotoOptions
 

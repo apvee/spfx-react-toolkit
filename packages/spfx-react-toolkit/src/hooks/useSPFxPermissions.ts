@@ -65,7 +65,7 @@ export interface SPFxPermissionsInfo {
  * @returns Available permission objects and mask-check helpers.
  * @throws When called outside an SPFx provider.
  *
- * @example
+ * @example Read Permissions metadata
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxPermissions } from '@apvee/spfx-react-toolkit';
@@ -81,6 +81,33 @@ export interface SPFxPermissionsInfo {
  * @useWhen current-page UI needs native site/web/list permission indicators without an extra REST lookup.
  *
  * @avoidWhen a server operation needs authorization; enforce access on the server rather than trusting a UI check.
+ *
+ * @example Inspect native current page permission masks
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxPermissions } from '@apvee/spfx-react-toolkit';
+ * import { SPPermission } from '@microsoft/sp-page-context';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const info = useSPFxPermissions();
+ *   const regions: DemoRegions = {
+ *     children: <dl aria-label="useSPFxPermissions result">
+ *         <dt>Manage Web</dt><dd>{String(info.hasWebPermission(SPPermission.manageWeb))}</dd>
+ *         <dt>Manage Lists</dt><dd>{String(info.hasWebPermission(SPPermission.manageLists))}</dd>
+ *         <dt>Add List Items</dt><dd>{String(info.hasWebPermission(SPPermission.addListItems))}</dd>
+ *         <dt>Site mask available</dt><dd>{String(info.sitePermissions !== undefined)}</dd>
+ *         <dt>Web mask available</dt><dd>{String(info.webPermissions !== undefined)}</dd>
+ *         <dt>List mask available</dt><dd>{String(info.listPermissions !== undefined)}</dd>
+ *         <dt>Site view list items</dt><dd>{String(info.hasSitePermission(SPPermission.viewListItems))}</dd>
+ *         <dt>List view list items</dt><dd>{String(info.hasListPermission(SPPermission.viewListItems))}</dd>
+ *       </dl>,
+ *     diagnostics: <p>Native masks perform no REST request. Missing masks produce false checks; the server still authorizes each operation.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual Permissions values and explicit unavailable fields as the native host changes.' };
+ * ```
  */
 export function useSPFxPermissions(): SPFxPermissionsInfo {
   const pageContext = useSPFxPageContext();

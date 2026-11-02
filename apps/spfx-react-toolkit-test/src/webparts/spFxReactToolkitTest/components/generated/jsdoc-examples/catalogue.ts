@@ -1717,6 +1717,305 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-7c386c891ae60b5082ed4b18a3153d0b5cd953375fbd1b217ddcd0bd9d96cd10' */ "./7c386c891ae60b5082ed4b18a3153d0b5cd953375fbd1b217ddcd0bd9d96cd10")
 },
 {
+  "id": "804ab128b8fa143dd25b5bdb8fd809c0d84acdbfcea02e0c6eed1d2be239c1ba",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxContainerInfo.ts#useSPFxContainerInfo",
+  "title": "Observe the native container and tracked size",
+  "groupRoute": "docs/api/hooks/theming.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxContainerInfo.ts#useSPFxContainerInfo",
+  "featureTitle": "useSPFxContainerInfo",
+  "publicNames": [
+    "useSPFxContainerInfo"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxContainerInfo.ts",
+    "line": 63
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual ContainerInfo values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-804ab128b8fa143dd25b5bdb8fd809c0d84acdbfcea02e0c6eed1d2be239c1ba' */ "./804ab128b8fa143dd25b5bdb8fd809c0d84acdbfcea02e0c6eed1d2be239c1ba")
+},
+{
+  "id": "e8062314e311bfc468a2e013202eefafa2364b1c335a538e423dbfb02604a4b1",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxContainerSize.ts#useSPFxContainerSize",
+  "title": "Observe the measured container width category",
+  "groupRoute": "docs/api/hooks/theming.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxContainerSize.ts#useSPFxContainerSize",
+  "featureTitle": "useSPFxContainerSize",
+  "publicNames": [
+    "useSPFxContainerSize"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxContainerSize.ts",
+    "line": 103
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual ContainerSize values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-e8062314e311bfc468a2e013202eefafa2364b1c335a538e423dbfb02604a4b1' */ "./e8062314e311bfc468a2e013202eefafa2364b1c335a538e423dbfb02604a4b1")
+},
+{
+  "id": "63229788f3c292dc64c34c9cf1a78b0dba35507f4e99cf1c4ce7a1fc074b3b4a",
+  "ownerKey": "packages/spfx-react-toolkit/src/core/context.internal.tsx#useSPFxContext",
+  "title": "Inspect the current native host identity",
+  "groupRoute": "docs/api/hooks/context.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/core/context.internal.tsx#useSPFxContext",
+  "featureTitle": "useSPFxContext",
+  "publicNames": [
+    "useSPFxContext"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/core/context.internal.tsx",
+    "line": 52
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual Context values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-63229788f3c292dc64c34c9cf1a78b0dba35507f4e99cf1c4ce7a1fc074b3b4a' */ "./63229788f3c292dc64c34c9cf1a78b0dba35507f4e99cf1c4ce7a1fc074b3b4a")
+},
+{
+  "id": "d3030e933db3aeec238806ec31fcc897e8cf36ca87b38f53160eabafb496906e",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts#useSPFxCorrelationInfo",
+  "title": "Inspect current diagnostic identifiers",
+  "groupRoute": "docs/api/hooks/performance.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts#useSPFxCorrelationInfo",
+  "featureTitle": "useSPFxCorrelationInfo",
+  "publicNames": [
+    "useSPFxCorrelationInfo"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts",
+    "line": 58
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual CorrelationInfo values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-d3030e933db3aeec238806ec31fcc897e8cf36ca87b38f53160eabafb496906e' */ "./d3030e933db3aeec238806ec31fcc897e8cf36ca87b38f53160eabafb496906e")
+},
+{
+  "id": "1f028fa769983e3e6c9197e0a0c2cc89f8f6e454dff4bfc70befcdadaa0cee76",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts#useSPFxCrossSitePermissions",
+  "title": "Check staged web list item and folder permissions",
+  "groupRoute": "docs/api/hooks/permissions.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts#useSPFxCrossSitePermissions",
+  "featureTitle": "useSPFxCrossSitePermissions",
+  "publicNames": [
+    "useSPFxCrossSitePermissions"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts",
+    "line": 176
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Run and repeat web, list, item and folder checks with title, GUID or decoded-path selectors; compare applied targets, loading, errors and actual allowed or denied masks."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-1f028fa769983e3e6c9197e0a0c2cc89f8f6e454dff4bfc70befcdadaa0cee76' */ "./1f028fa769983e3e6c9197e0a0c2cc89f8f6e454dff4bfc70befcdadaa0cee76")
+},
+{
+  "id": "d5b732543512eb8dbeec612aecb418f9446f3793bfbff4c7e682a86b482df433",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts#useSPFxCrossSitePermissions",
+  "title": "Check staged legacy site web and list permissions",
+  "groupRoute": "docs/api/hooks/permissions.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts#useSPFxCrossSitePermissions",
+  "featureTitle": "useSPFxCrossSitePermissions",
+  "publicNames": [
+    "useSPFxCrossSitePermissions"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts",
+    "line": 266
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Stage the legacy site, selected web and optional list GUID, then Check or repeat to inspect separate masks, pending state and errors without applying draft edits."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-d5b732543512eb8dbeec612aecb418f9446f3793bfbff4c7e682a86b482df433' */ "./d5b732543512eb8dbeec612aecb418f9446f3793bfbff4c7e682a86b482df433")
+},
+{
+  "id": "8a55761dcc44fe589534d47442edfac9bb0b26a7e1d536543115bbfd8db627d6",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts#useSPFxDisplayMode",
+  "title": "Observe the native Read and Edit mode",
+  "groupRoute": "docs/api/hooks/properties.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts#useSPFxDisplayMode",
+  "featureTitle": "useSPFxDisplayMode",
+  "publicNames": [
+    "useSPFxDisplayMode"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts",
+    "line": 61
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual DisplayMode values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-8a55761dcc44fe589534d47442edfac9bb0b26a7e1d536543115bbfd8db627d6' */ "./8a55761dcc44fe589534d47442edfac9bb0b26a7e1d536543115bbfd8db627d6")
+},
+{
+  "id": "108ac275b7302ec4756e82dceff9301142b7026e756d5f26a823db356e892dd1",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxEnvironmentInfo.ts#useSPFxEnvironmentInfo",
+  "title": "Observe the acquired application host",
+  "groupRoute": "docs/api/hooks/environment.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxEnvironmentInfo.ts#useSPFxEnvironmentInfo",
+  "featureTitle": "useSPFxEnvironmentInfo",
+  "publicNames": [
+    "useSPFxEnvironmentInfo"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxEnvironmentInfo.ts",
+    "line": 97
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual EnvironmentInfo values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-108ac275b7302ec4756e82dceff9301142b7026e756d5f26a823db356e892dd1' */ "./108ac275b7302ec4756e82dceff9301142b7026e756d5f26a823db356e892dd1")
+},
+{
+  "id": "87ef1fc972137eca8bfe26546d6286ecf84df19b0d52781853996c3b5efe399e",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts#useSPFxFluent9ThemeInfo",
+  "title": "Observe the projected Fluent theme tokens",
+  "groupRoute": "docs/api/hooks/theming.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts#useSPFxFluent9ThemeInfo",
+  "featureTitle": "useSPFxFluent9ThemeInfo",
+  "publicNames": [
+    "useSPFxFluent9ThemeInfo"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts",
+    "line": 66
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual Fluent9ThemeInfo values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-87ef1fc972137eca8bfe26546d6286ecf84df19b0d52781853996c3b5efe399e' */ "./87ef1fc972137eca8bfe26546d6286ecf84df19b0d52781853996c3b5efe399e")
+},
+{
+  "id": "ba156ce4868c6cecef6b999941475598d11a87925b36f8b5c25aeb6eaa1ed421",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts#useSPFxHubSiteInfo",
+  "title": "Start a scope bound hub association lookup",
+  "groupRoute": "docs/api/hooks/user-site.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts#useSPFxHubSiteInfo",
+  "featureTitle": "useSPFxHubSiteInfo",
+  "publicNames": [
+    "useSPFxHubSiteInfo"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts",
+    "line": 79
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Start the native hub lookup, compare association, URL and failure, then repeat or reset without displaying a result from a former host scope."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-ba156ce4868c6cecef6b999941475598d11a87925b36f8b5c25aeb6eaa1ed421' */ "./ba156ce4868c6cecef6b999941475598d11a87925b36f8b5c25aeb6eaa1ed421")
+},
+{
+  "id": "184d046bbfafda302f02ee5e1b9fc66f8cd4149add0a4e7f21649492aa43c658",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxInstanceInfo.ts#useSPFxInstanceInfo",
+  "title": "Inspect the provider instance identity",
+  "groupRoute": "docs/api/hooks/context.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxInstanceInfo.ts#useSPFxInstanceInfo",
+  "featureTitle": "useSPFxInstanceInfo",
+  "publicNames": [
+    "useSPFxInstanceInfo"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxInstanceInfo.ts",
+    "line": 58
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual InstanceInfo values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-184d046bbfafda302f02ee5e1b9fc66f8cd4149add0a4e7f21649492aa43c658' */ "./184d046bbfafda302f02ee5e1b9fc66f8cd4149add0a4e7f21649492aa43c658")
+},
+{
+  "id": "66857886b7186d17fd900a7067f72b721373a84a530299294fc52333f5811781",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts#useSPFxIsEdit",
+  "title": "Observe the native edit mode shortcut",
+  "groupRoute": "docs/api/hooks/properties.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts#useSPFxIsEdit",
+  "featureTitle": "useSPFxIsEdit",
+  "publicNames": [
+    "useSPFxIsEdit"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts",
+    "line": 118
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual IsEdit values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-66857886b7186d17fd900a7067f72b721373a84a530299294fc52333f5811781' */ "./66857886b7186d17fd900a7067f72b721373a84a530299294fc52333f5811781")
+},
+{
+  "id": "c9f2deceab228dd8588dfd9574bc8a2d2665a8d937be82d2c4a0f6f0109ada3b",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxListInfo.ts#useSPFxListInfo",
+  "title": "Inspect the optional current list context",
+  "groupRoute": "docs/api/hooks/user-site.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxListInfo.ts#useSPFxListInfo",
+  "featureTitle": "useSPFxListInfo",
+  "publicNames": [
+    "useSPFxListInfo"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxListInfo.ts",
+    "line": 73
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual ListInfo values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-c9f2deceab228dd8588dfd9574bc8a2d2665a8d937be82d2c4a0f6f0109ada3b' */ "./c9f2deceab228dd8588dfd9574bc8a2d2665a8d937be82d2c4a0f6f0109ada3b")
+},
+{
   "id": "552ea226d55fd76ccd4eb32ce763a547580f378fdbde1c97d645e74c8818f809",
   "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxLocalStorage",
   "title": "Save and clear an instance scoped local value",
@@ -1738,6 +2037,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Save Local updates the current instance value and attempts browser persistence; Clear Local removes its scoped key and restores the empty fallback without new feedback. Reset clears only input/feedback and keeps the current hook value, without rereading browser storage."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-552ea226d55fd76ccd4eb32ce763a547580f378fdbde1c97d645e74c8818f809' */ "./552ea226d55fd76ccd4eb32ce763a547580f378fdbde1c97d645e74c8818f809")
+},
+{
+  "id": "904d21120b2dfb4537eee3cf99669e75f94ee66334bddfded555cc8655b413b8",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts#useSPFxLocaleInfo",
+  "title": "Compare host cultures and seasonal site times",
+  "groupRoute": "docs/api/hooks/environment.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts#useSPFxLocaleInfo",
+  "featureTitle": "useSPFxLocaleInfo",
+  "publicNames": [
+    "useSPFxLocaleInfo"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts",
+    "line": 192
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Switch winter and summer to compare one actual RelativeTime using the host UI culture and audited site zone; missing mapping renders an explicit unavailable result."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-904d21120b2dfb4537eee3cf99669e75f94ee66334bddfded555cc8655b413b8' */ "./904d21120b2dfb4537eee3cf99669e75f94ee66334bddfded555cc8655b413b8")
 },
 {
   "id": "62918f43a492f0851b2d52597c7623f279fa6cd27b59ab8c904eb5fb7ae49933",
@@ -1763,6 +2085,52 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-62918f43a492f0851b2d52597c7623f279fa6cd27b59ab8c904eb5fb7ae49933' */ "./62918f43a492f0851b2d52597c7623f279fa6cd27b59ab8c904eb5fb7ae49933")
 },
 {
+  "id": "d225a6b7a0ca1c61ad5c145b515e779efb1f4226dfa05ac7f313b26090bf72ff",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPageContext.ts#useSPFxPageContext",
+  "title": "Inspect selected native page metadata",
+  "groupRoute": "docs/api/hooks/context.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPageContext.ts#useSPFxPageContext",
+  "featureTitle": "useSPFxPageContext",
+  "publicNames": [
+    "useSPFxPageContext"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxPageContext.ts",
+    "line": 35
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual PageContext values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-d225a6b7a0ca1c61ad5c145b515e779efb1f4226dfa05ac7f313b26090bf72ff' */ "./d225a6b7a0ca1c61ad5c145b515e779efb1f4226dfa05ac7f313b26090bf72ff")
+},
+{
+  "id": "d42b5ddd14da77743c151156bb43a96b19d07ae5d3ca31c327a23f496433de02",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts#useSPFxPageType",
+  "title": "Inspect the supplied page classification",
+  "groupRoute": "docs/api/hooks/environment.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts#useSPFxPageType",
+  "featureTitle": "useSPFxPageType",
+  "publicNames": [
+    "useSPFxPageType"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts",
+    "line": 90
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual PageType values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-d42b5ddd14da77743c151156bb43a96b19d07ae5d3ca31c327a23f496433de02' */ "./d42b5ddd14da77743c151156bb43a96b19d07ae5d3ca31c327a23f496433de02")
+},
+{
   "id": "a8f6922a6ab9dd0a8e2bbbbac05c9bfa2b31d2c1354489345fe92be47734d14e",
   "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#useSPFxPerformance",
   "title": "Measure a cancellable local timed operation",
@@ -1784,6 +2152,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Run measures a real local 250 ms wait and shows the actual result and duration (which may be zero when unsupported). Reset, host replacement and departure cancel the owned wait and suppress obsolete results; they do not clear unrelated browser timeline entries."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-a8f6922a6ab9dd0a8e2bbbbac05c9bfa2b31d2c1354489345fe92be47734d14e' */ "./a8f6922a6ab9dd0a8e2bbbbac05c9bfa2b31d2c1354489345fe92be47734d14e")
+},
+{
+  "id": "ea343876debcd16b5a267ad7e073ee0089cfd215928a5fed6b8c04a6c785f671",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts#useSPFxPermissions",
+  "title": "Inspect native current page permission masks",
+  "groupRoute": "docs/api/hooks/permissions.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts#useSPFxPermissions",
+  "featureTitle": "useSPFxPermissions",
+  "publicNames": [
+    "useSPFxPermissions"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts",
+    "line": 87
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual Permissions values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-ea343876debcd16b5a267ad7e073ee0089cfd215928a5fed6b8c04a6c785f671' */ "./ea343876debcd16b5a267ad7e073ee0089cfd215928a5fed6b8c04a6c785f671")
 },
 {
   "id": "987a602b9876b30335971c617d05d9c716fae7b4d434c5142bf3f1ca9727d305",
@@ -1832,6 +2223,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-2137a2e347029a89850685b1ae219eac8144d664ba5818116da16c3a283cca90' */ "./2137a2e347029a89850685b1ae219eac8144d664ba5818116da16c3a283cca90")
 },
 {
+  "id": "781f769d7639d40b0094fc5c8a1203ab3f93ddfa7440f7756f77b5d2466eff57",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts#useSPFxServiceScope",
+  "title": "Inspect the native registered service scope",
+  "groupRoute": "docs/api/hooks/context.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts#useSPFxServiceScope",
+  "featureTitle": "useSPFxServiceScope",
+  "publicNames": [
+    "useSPFxServiceScope"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts",
+    "line": 101
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual ServiceScope values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-781f769d7639d40b0094fc5c8a1203ab3f93ddfa7440f7756f77b5d2466eff57' */ "./781f769d7639d40b0094fc5c8a1203ab3f93ddfa7440f7756f77b5d2466eff57")
+},
+{
   "id": "b3374a9d50255203fff5b45f94f898198d3e68c1c5903f97e5f5eed3c2c286dc",
   "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage",
   "title": "Save and clear an instance scoped session value",
@@ -1853,6 +2267,98 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Save Session updates the current instance value and attempts browser persistence; Clear Session removes its scoped key and restores the empty fallback without new feedback. Reset clears only input/feedback and keeps the current hook value, without rereading browser storage."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-b3374a9d50255203fff5b45f94f898198d3e68c1c5903f97e5f5eed3c2c286dc' */ "./b3374a9d50255203fff5b45f94f898198d3e68c1c5903f97e5f5eed3c2c286dc")
+},
+{
+  "id": "14132da744a6d6d5b362ac82b0d7a5fb27641f3f6d6c261947aa309102fcbdc5",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo",
+  "title": "Inspect the current web and site collection",
+  "groupRoute": "docs/api/hooks/user-site.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo",
+  "featureTitle": "useSPFxSiteInfo",
+  "publicNames": [
+    "useSPFxSiteInfo"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts",
+    "line": 115
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual SiteInfo values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-14132da744a6d6d5b362ac82b0d7a5fb27641f3f6d6c261947aa309102fcbdc5' */ "./14132da744a6d6d5b362ac82b0d7a5fb27641f3f6d6c261947aa309102fcbdc5")
+},
+{
+  "id": "5062ba39e03063855fdd7a7e38635cf2980a1dd15f4aa5fa37eee376b9ad008a",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams",
+  "title": "Observe application SDK readiness and theme",
+  "groupRoute": "docs/api/hooks/environment.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams",
+  "featureTitle": "useSPFxTeams",
+  "publicNames": [
+    "useSPFxTeams"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts",
+    "line": 80
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual Teams values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-5062ba39e03063855fdd7a7e38635cf2980a1dd15f4aa5fa37eee376b9ad008a' */ "./5062ba39e03063855fdd7a7e38635cf2980a1dd15f4aa5fa37eee376b9ad008a")
+},
+{
+  "id": "a7ac1b67dd7b66a01c14d3e59b4fb1803cdbc858ac1b0c0dac3b5c72e71c0903",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo",
+  "title": "Observe the native SPFx theme snapshot",
+  "groupRoute": "docs/api/hooks/theming.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo",
+  "featureTitle": "useSPFxThemeInfo",
+  "publicNames": [
+    "useSPFxThemeInfo"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts",
+    "line": 34
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual ThemeInfo values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-a7ac1b67dd7b66a01c14d3e59b4fb1803cdbc858ac1b0c0dac3b5c72e71c0903' */ "./a7ac1b67dd7b66a01c14d3e59b4fb1803cdbc858ac1b0c0dac3b5c72e71c0903")
+},
+{
+  "id": "67446f39a917ab413a0e12939477af127c3343ce752a03bf18d27900fa3f3f81",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo",
+  "title": "Inspect the current user display metadata",
+  "groupRoute": "docs/api/hooks/user-site.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo",
+  "featureTitle": "useSPFxUserInfo",
+  "publicNames": [
+    "useSPFxUserInfo"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts",
+    "line": 66
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual UserInfo values and explicit unavailable fields as the native host changes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-67446f39a917ab413a0e12939477af127c3343ce752a03bf18d27900fa3f3f81' */ "./67446f39a917ab413a0e12939477af127c3343ce752a03bf18d27900fa3f3f81")
 },
 {
   "id": "d41ff401e795fa9c1800585f3d2bdf498395dbac07dce27da9c8d3a2aa023376",
@@ -2018,13 +2524,34 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/helpers/styles/width.ts#<module>", title: "width", scenarios: [executableExamples[71]] }
   ] },
   { key: "hooks", title: "Hook", features: [
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxLocalStorage", title: "useSPFxLocalStorage", scenarios: [executableExamples[72]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxLogger.ts#useSPFxLogger", title: "useSPFxLogger", scenarios: [executableExamples[73]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#useSPFxPerformance", title: "useSPFxPerformance", scenarios: [executableExamples[74]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[75]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties", title: "useSPFxProperties", scenarios: [executableExamples[76]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage", title: "useSPFxSessionStorage", scenarios: [executableExamples[77]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[78], executableExamples[79]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[80], executableExamples[81]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxContainerInfo.ts#useSPFxContainerInfo", title: "useSPFxContainerInfo", scenarios: [executableExamples[72]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxContainerSize.ts#useSPFxContainerSize", title: "useSPFxContainerSize", scenarios: [executableExamples[73]] },
+    { key: "packages/spfx-react-toolkit/src/core/context.internal.tsx#useSPFxContext", title: "useSPFxContext", scenarios: [executableExamples[74]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts#useSPFxCorrelationInfo", title: "useSPFxCorrelationInfo", scenarios: [executableExamples[75]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts#useSPFxCrossSitePermissions", title: "useSPFxCrossSitePermissions", scenarios: [executableExamples[76], executableExamples[77]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts#useSPFxDisplayMode", title: "useSPFxDisplayMode", scenarios: [executableExamples[78]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxEnvironmentInfo.ts#useSPFxEnvironmentInfo", title: "useSPFxEnvironmentInfo", scenarios: [executableExamples[79]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts#useSPFxFluent9ThemeInfo", title: "useSPFxFluent9ThemeInfo", scenarios: [executableExamples[80]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts#useSPFxHubSiteInfo", title: "useSPFxHubSiteInfo", scenarios: [executableExamples[81]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxInstanceInfo.ts#useSPFxInstanceInfo", title: "useSPFxInstanceInfo", scenarios: [executableExamples[82]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts#useSPFxIsEdit", title: "useSPFxIsEdit", scenarios: [executableExamples[83]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxListInfo.ts#useSPFxListInfo", title: "useSPFxListInfo", scenarios: [executableExamples[84]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxLocalStorage", title: "useSPFxLocalStorage", scenarios: [executableExamples[85]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts#useSPFxLocaleInfo", title: "useSPFxLocaleInfo", scenarios: [executableExamples[86]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxLogger.ts#useSPFxLogger", title: "useSPFxLogger", scenarios: [executableExamples[87]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPageContext.ts#useSPFxPageContext", title: "useSPFxPageContext", scenarios: [executableExamples[88]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts#useSPFxPageType", title: "useSPFxPageType", scenarios: [executableExamples[89]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#useSPFxPerformance", title: "useSPFxPerformance", scenarios: [executableExamples[90]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts#useSPFxPermissions", title: "useSPFxPermissions", scenarios: [executableExamples[91]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[92]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties", title: "useSPFxProperties", scenarios: [executableExamples[93]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts#useSPFxServiceScope", title: "useSPFxServiceScope", scenarios: [executableExamples[94]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage", title: "useSPFxSessionStorage", scenarios: [executableExamples[95]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo", title: "useSPFxSiteInfo", scenarios: [executableExamples[96]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams", title: "useSPFxTeams", scenarios: [executableExamples[97]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[98]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[99]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[100], executableExamples[101]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[102], executableExamples[103]] }
   ] }
 ];

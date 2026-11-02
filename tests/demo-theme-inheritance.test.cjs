@@ -23,7 +23,8 @@ test('demo panels and migrated scenarios inherit theme and default direction; th
     assert.doesNotMatch(source, /webLightTheme|webDarkTheme|teamsDarkTheme|teamsHighContrastTheme|getTeamsFluentTheme|setDark|setThemeChoice|theme=|Dark theme/, file);
     assert.doesNotMatch(source, /dir=\{rtl \? 'rtl' : 'ltr'\}/, file);
   }
-  assert.match(fs.readFileSync(path.join(base, 'panels/ContextPanel.tsx'), 'utf8'), /useSPFxFluent9ThemeInfo/);
+  const nativeTheme = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Observe the projected Fluent theme tokens', 'packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts#useSPFxFluent9ThemeInfo');
+  assert.match(nativeTheme.source, /useSPFxFluent9ThemeInfo/);
   const styles = entries.find(entry => entry.title === 'Explore eight style recipes with the host renderer');
   assert.ok(styles, 'The actual source-owned composition is available');
   assert.match(fs.readFileSync(path.join(base, 'generated/jsdoc-examples', styles.id + '.tsx'), 'utf8'), /hostThemeName === 'contrast'/);

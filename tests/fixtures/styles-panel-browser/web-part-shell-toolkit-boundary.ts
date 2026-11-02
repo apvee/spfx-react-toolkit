@@ -36,3 +36,24 @@ export { useSPFxPerformance } from '../../../packages/spfx-react-toolkit/lib/hoo
 
 // Prior generated DataGrid cases are also dependencies of this complete catalogue.
 export * from '../../../packages/spfx-react-toolkit/lib/controls/data-grid';
+
+// The complete canonical catalogue includes the actual Context cases.
+export { useSPFxPageContext } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPageContext';
+export { useSPFxInstanceInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxInstanceInfo';
+export { useSPFxIsEdit } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxDisplayMode';
+export { useSPFxEnvironmentInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxEnvironmentInfo';
+export { useSPFxUserInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxUserInfo';
+export { useSPFxSiteInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxSiteInfo';
+export { useSPFxListInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxListInfo';
+export { useSPFxLocaleInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxLocaleInfo';
+export { useSPFxHubSiteInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxHubSiteInfo';
+export { useSPFxTeams } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxTeams';
+export { useSPFxPageType } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPageType';
+export { useSPFxCorrelationInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxCorrelationInfo';
+export { useSPFxPermissions } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPermissions';
+export { useSPFxCrossSitePermissions, type SPFxCrossSitePermissionsOptions } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxCrossSitePermissions';
+export { useSPFxContainerInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxContainerInfo';
+export { useSPFxContainerSize } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxContainerSize';
+export { useSPFxThemeInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxThemeInfo';
+export { useSPFxServiceScope } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxServiceScope';
+export type { SPFxScopedPermissionsOptions } from '../../../packages/spfx-react-toolkit/lib/services/spfx-permission-target.types';

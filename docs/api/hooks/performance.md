@@ -64,6 +64,8 @@ import { useSPFxCorrelationInfo } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (2)
 
+#### Read CorrelationInfo metadata
+
 ```tsx
 import * as React from 'react';
 import { useSPFxCorrelationInfo } from '@apvee/spfx-react-toolkit';
@@ -72,6 +74,27 @@ function TenantLabel() {
   const { tenantId } = useSPFxCorrelationInfo();
   return <span>{tenantId ?? 'Tenant unavailable'}</span>;
 }
+```
+
+#### Inspect current diagnostic identifiers
+
+```tsx
+import * as React from 'react';
+import { useSPFxCorrelationInfo } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const info = useSPFxCorrelationInfo();
+  const regions: DemoRegions = {
+    children: <dl aria-label="useSPFxCorrelationInfo result">
+        <dt>Correlation ID</dt><dd>{info.correlationId ?? 'Unavailable'}</dd>
+        <dt>Tenant ID</dt><dd>{info.tenantId ?? 'Unavailable'}</dd>
+      </dl>,
+    diagnostics: <p>These native identifiers are diagnostic metadata; the hook does not inject headers or create tracing IDs.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual CorrelationInfo values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures
@@ -97,7 +120,7 @@ Correlation and tenant identifier strings, each undefined when unavailable.
 
 ### Source (2)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts#L56)
+[packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts:76](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts#L76)
 
 ## LogEntry
 

@@ -143,7 +143,7 @@ test('numeric drafts allow clearing and sequential replacement while retaining v
 
 test('hook, provider, style and service panels use Fluent configuration and shared demo regions', () => {
   const componentRoot = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
-  const panels = ['Providers', 'Context', 'Clients', 'GraphData', 'Site', 'Tenant', 'PnP', 'Search'];
+  const panels = ['Providers', 'Clients', 'GraphData', 'Site', 'Tenant', 'PnP', 'Search'];
   const files = panels.map(name => path.join(componentRoot, 'panels', name + 'Panel.tsx'))
     .concat(fs.readdirSync(path.join(componentRoot, 'demos')).filter(name => /^PnP.*\.tsx$/.test(name)).map(name => path.join(componentRoot, 'demos', name)));
   for (const file of files) {
@@ -184,6 +184,29 @@ test('hook, provider, style and service panels use Fluent configuration and shar
     assert.match(source, /contentPlacement: 'configuration'/);
   }
   const ts = require('typescript');
+  const expectedContext = Object.entries(require('./fixtures/demo-presentation/jsdoc-pilots.cjs').pilotTitles)
+    .filter(([name]) => name.startsWith('useSPFx') && name !== 'useSPFxPnPList');
+  const contextTitles = expectedContext.flatMap(([, titles]) => titles);
+  const contextCases = catalogueModule.exports.executableExamples.filter(entry => contextTitles.includes(entry.title));
+  assert.equal(expectedContext.length, 21, 'Context acceptance includes 21 actual APIs');
+  assert.equal(contextTitles.length, 22, 'the two cross-site overloads retain distinct cases');
+  assert.deepEqual(contextCases.map(entry => entry.title).sort(), [...contextTitles].sort(), 'all actual Context cases transfer the retired panel checks');
+  for (const entry of contextCases) {
+    const source = fs.readFileSync(path.join(generatedRoot, entry.id + '.tsx'), 'utf8');
+    assert.equal(entry.metadata.host, 'webPart', entry.title);
+    assert.equal(entry.metadata.contentPlacement, 'configuration', entry.title);
+    assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|a)\b/, entry.title);
+    const parsed = ts.createSourceFile(entry.id + '.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    function inspect(node) {
+      if (ts.isJsxAttribute(node)) assert.ok(!['style', 'styles'].includes(node.name.text), `${entry.title} uses host classes`);
+      ts.forEachChild(node, inspect);
+    }
+    inspect(parsed);
+    assert.match(source, /return render \? render\(regions\)/, 'source case forwards its actual regions');
+    if (entry.metadata.kind === 'read') assert.match(source, /commands:\s*<Button\b/, 'Hub and both cross-site cases expose actual explicit Fluent commands');
+    else if (entry.featureTitle === 'useSPFxLocaleInfo') assert.match(source, /controls:\s*<Field\b[\s\S]*<Select\b/, 'Locale has its real seasonal choice');
+    else assert.doesNotMatch(source, /<(?:Button|Input|Select)\b/, 'readonly native snapshots require no invented controls');
+  }
   for (const entry of runtimeCases) {
     const source = fs.readFileSync(path.join(generatedRoot, entry.id + '.tsx'), 'utf8');
     assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|a)\b/, entry.title);

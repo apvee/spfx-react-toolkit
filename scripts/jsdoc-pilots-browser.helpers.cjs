@@ -39,7 +39,7 @@ async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
   const rows = panel => panel.locator('tbody tr').evaluateAll(nodes => nodes.map(node => Number(node.getAttribute('data-order-id'))));
   const calls = () => page.evaluate(() => window.pnpReadFixture.calls.length);
   check('Initial fixture mount issues no business requests', await calls(), 0);
-  check('JSDoc filter: exactly five features', await navigation.locator('[data-example-feature]').count(), 5);
+  check('JSDoc filter: exactly 26 features', await navigation.locator('[data-example-feature]').count(), 26);
   check('JSDoc filter: exactly two generated groups', await navigation.locator('button[aria-expanded]').count(), 2);
   let panel = await feature('WebPartShell');
   await group('Hook').click();
@@ -204,6 +204,32 @@ async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
   await overflow(page, 'Import interoperability 320px'); await capture(page, 'jsdoc-imports-320');
   await page.setViewportSize({ width: 1440, height: 1100 }); await settle(page);
 
+  const nativeCalls = () => page.evaluate(() => window.trimFixture.calls.length);
+  for (const [name, titles] of Object.entries(pilotTitles).filter(([name]) => name.startsWith('useSPFx') && name !== 'useSPFxPnPList')) {
+    for (const title of titles) {
+      const before = await nativeCalls(); panel = await scenario(name, title);
+      check(`${title}: initial selection performs no native request`, await nativeCalls(), before);
+      check(`${title}: finite configuration result`, await panel.locator('[data-demo-result]').count(), 1);
+      await restore(panel, title); check(`${title}: reset performs no native request`, await nativeCalls(), before);
+    }
+  }
+  panel = await scenario('useSPFxLocaleInfo', pilotTitles.useSPFxLocaleInfo[0]);
+  await panel.getByRole('combobox', { name: 'Period', exact: true }).selectOption('summer');
+  check('Context summer is one actual time', await panel.locator('time').count(), 1);
+  check('Context summer exact instant', await panel.locator('time').getAttribute('datetime'), '2026-07-15T12:00:00.000Z');
+  await restore(panel, 'Context seasonal');
+  check('Context reset restores winter', await panel.locator('time').getAttribute('datetime'), '2026-01-15T12:00:00.000Z');
+  panel = await scenario('useSPFxCrossSitePermissions', pilotTitles.useSPFxCrossSitePermissions[0]);
+  const legacyReads = await nativeCalls(); await panel.getByRole('textbox', { name: 'Site URL', exact: true }).fill('https://simulated.invalid/sites/target');
+  check('Context legacy draft performs no read', await nativeCalls(), legacyReads);
+  await panel.getByRole('button', { name: 'Check / repeat', exact: true }).click();
+  await panel.getByLabel('Legacy permission result', { exact: true }).getByText('Available', { exact: false }).first().waitFor();
+  check('Context legacy checks actual site and web masks', (await nativeCalls()) >= legacyReads + 2, true);
+  panel = await scenario('useSPFxHubSiteInfo', pilotTitles.useSPFxHubSiteInfo[0]);
+  const hubReads = await nativeCalls(); await panel.getByRole('button', { name: 'Start / repeat lookup', exact: true }).click();
+  await panel.getByText('Hub URL: https://simulated.invalid/sites/fixture-hub', { exact: true }).waitFor();
+  check('Context Hub actual native read after Start', await nativeCalls(), hubReads + 1);
+  await restore(panel, 'Context Hub');
   panel = await scenario('useStableCallback', pilotTitles.useStableCallback[0]);
   await panel.getByRole('button', { name: 'Increment counter', exact: true }).click(); await panel.getByRole('button', { name: 'Increment counter', exact: true }).click();
   await panel.getByRole('button', { name: 'Invoke original callback', exact: true }).click();

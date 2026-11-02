@@ -34,7 +34,7 @@ if (process.env.NODE_ENV !== 'production') {
  * @returns Nearest provider metadata, including kind, instanceId and the SPFx context reference.
  * @throws Error when called outside a host-specific SPFx provider.
  *
- * @example
+ * @example Read Context metadata
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxContext } from '@apvee/spfx-react-toolkit';
@@ -46,6 +46,27 @@ if (process.env.NODE_ENV !== 'production') {
  * ```
  *
  * @useWhen a descendant needs the native host context or instance identity without subscribing to runtime state.
+ *
+ * @example Inspect the current native host identity
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxContext } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const info = useSPFxContext();
+ *   const regions: DemoRegions = {
+ *     children: <dl aria-label="useSPFxContext result">
+ *         <dt>Host kind</dt><dd>{info.kind}</dd>
+ *         <dt>Instance ID</dt><dd>{info.instanceId}</dd>
+ *         <dt>Native context available</dt><dd>{String(info.spfxContext !== undefined)}</dd>
+ *       </dl>,
+ *     diagnostics: <p>Provider metadata identifies this native host; mutable nested fields require a React render.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual Context values and explicit unavailable fields as the native host changes.' };
+ * ```
  */
 export function useSPFxContext(): SPFxContextValue {
   const context = React.useContext(SPFxContext);

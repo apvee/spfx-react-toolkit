@@ -62,7 +62,7 @@ export interface SPFxTeamsInfo {
  * @returns SDK readiness, untyped host context and optional normalized application theme.
  * @throws Error when no host-specific SPFx provider is present.
  *
- * @example
+ * @example Read Teams metadata
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxTeams } from '@apvee/spfx-react-toolkit';
@@ -74,6 +74,27 @@ export interface SPFxTeamsInfo {
  * ```
  *
  * @useWhen a component needs the acquired application SDK context and its published runtime theme.
+ *
+ * @example Observe application SDK readiness and theme
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxTeams } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const info = useSPFxTeams();
+ *   const regions: DemoRegions = {
+ *     children: <dl aria-label="useSPFxTeams result">
+ *         <dt>SDK context acquired</dt><dd>{String(info.supported)}</dd>
+ *         <dt>SDK context available</dt><dd>{String(info.context !== undefined)}</dd>
+ *         <dt>SDK theme</dt><dd>{info.theme ?? 'Unavailable'}</dd>
+ *       </dl>,
+ *     diagnostics: <p>Supported means SDK context acquisition succeeded, including Office or Outlook. It is not a Teams host discriminator. The native SDK owns theme callbacks; cleanup releases provider subscribers.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual Teams values and explicit unavailable fields as the native host changes.' };
+ * ```
  */
 export function useSPFxTeams(): SPFxTeamsInfo {
   const { spfxContext } = useSPFxContext();

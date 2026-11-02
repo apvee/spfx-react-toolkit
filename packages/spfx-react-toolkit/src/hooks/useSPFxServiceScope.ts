@@ -95,6 +95,25 @@ export interface SPFxServiceScopeInfo {
  *   </section>;
  * }
  * ```
+ *
+ * @example Inspect the native registered service scope
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxServiceScope } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const info = useSPFxServiceScope();
+ *   const regions: DemoRegions = {
+ *     children: <dl aria-label="useSPFxServiceScope result">
+ *         <dt>Native service scope</dt><dd>{info.serviceScope ? 'Available' : 'Unavailable'}</dd>
+ *       </dl>,
+ *     diagnostics: <p>The host registers and finishes services. This inspection neither registers a default service, finishes a scope nor performs a request.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual ServiceScope values and explicit unavailable fields as the native host changes.' };
+ * ```
  */
 export function useSPFxServiceScope(): SPFxServiceScopeInfo {
   const { spfxContext } = useSPFxContext();

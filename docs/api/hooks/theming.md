@@ -72,6 +72,8 @@ import { useSPFxContainerInfo } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (2)
 
+#### Read ContainerInfo metadata
+
 ```tsx
 import * as React from 'react';
 import { useSPFxContainerInfo } from '@apvee/spfx-react-toolkit';
@@ -80,6 +82,28 @@ function ContainerLabel() {
   const { size } = useSPFxContainerInfo();
   return <span>{size ? `${size.width} × ${size.height}` : 'Size unavailable'}</span>;
 }
+```
+
+#### Observe the native container and tracked size
+
+```tsx
+import * as React from 'react';
+import { useSPFxContainerInfo } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const info = useSPFxContainerInfo();
+  const regions: DemoRegions = {
+    children: <dl aria-label="useSPFxContainerInfo result">
+        <dt>Host element</dt><dd>{info.element?.tagName ?? 'Unavailable'}</dd>
+        <dt>Width</dt><dd>{info.size ? String(info.size.width) : 'Unmeasured'}</dd>
+        <dt>Height</dt><dd>{info.size ? String(info.size.height) : 'Unmeasured'}</dd>
+      </dl>,
+    diagnostics: <p>Resize the real host element. Its owner document supplies ResizeObserver; size is unavailable until observation and without native support. Replacement and unmount disconnect observation.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual ContainerInfo values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures
@@ -109,7 +133,7 @@ Container element and optional content-box width/height in CSS pixels.
 
 ### Source (2)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxContainerInfo.ts:61](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxContainerInfo.ts#L61)
+[packages/spfx-react-toolkit/src/hooks/useSPFxContainerInfo.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxContainerInfo.ts#L82)
 
 ## SPFxContainerSize
 
@@ -250,6 +274,8 @@ import { useSPFxContainerSize } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (5)
 
+#### Read ContainerSize metadata
+
 ```tsx
 import * as React from 'react';
 import { useSPFxContainerSize } from '@apvee/spfx-react-toolkit';
@@ -258,6 +284,34 @@ function ContainerLabel() {
   const { size, width } = useSPFxContainerSize();
   return <span>{size}: {width}px</span>;
 }
+```
+
+#### Observe the measured container width category
+
+```tsx
+import * as React from 'react';
+import { useSPFxContainerSize } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const info = useSPFxContainerSize();
+  const regions: DemoRegions = {
+    children: <dl aria-label="useSPFxContainerSize result">
+        <dt>Width</dt><dd>{String(info.width)}</dd>
+        <dt>Height</dt><dd>{String(info.height)}</dd>
+        <dt>Category</dt><dd>{info.size}</dd>
+        <dt>Small</dt><dd>{String(info.isSmall)}</dd>
+        <dt>Medium</dt><dd>{String(info.isMedium)}</dd>
+        <dt>Large</dt><dd>{String(info.isLarge)}</dd>
+        <dt>Extra large</dt><dd>{String(info.isXLarge)}</dd>
+        <dt>Double extra large</dt><dd>{String(info.isXXLarge)}</dd>
+        <dt>Triple extra large</dt><dd>{String(info.isXXXLarge)}</dd>
+      </dl>,
+    diagnostics: <p>Dimensions measure the host container in CSS pixels. Zero/small is the unmeasured fallback. Resize the actual host; no example control substitutes dimensions.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual ContainerSize values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (2)
@@ -292,7 +346,7 @@ Category, exact-category boolean flags and dimensions in CSS pixels.
 
 ### Source (5)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxContainerSize.ts:101](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxContainerSize.ts#L101)
+[packages/spfx-react-toolkit/src/hooks/useSPFxContainerSize.ts:128](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxContainerSize.ts#L128)
 
 ## SPFxFluent9ThemeInfo
 
@@ -389,6 +443,8 @@ import { useSPFxFluent9ThemeInfo } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (7)
 
+#### Read Fluent9ThemeInfo metadata
+
 ```tsx
 import * as React from 'react';
 import { FluentProvider } from '@fluentui/react-components';
@@ -398,6 +454,30 @@ function ThemedContent() {
   const { theme } = useSPFxFluent9ThemeInfo();
   return <FluentProvider theme={theme}><span>Themed content</span></FluentProvider>;
 }
+```
+
+#### Observe the projected Fluent theme tokens
+
+```tsx
+import * as React from 'react';
+import { useSPFxFluent9ThemeInfo } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const info = useSPFxFluent9ThemeInfo();
+  const regions: DemoRegions = {
+    children: <dl aria-label="useSPFxFluent9ThemeInfo result">
+        <dt>SDK theme</dt><dd>{info.teamsTheme ?? 'Unavailable'}</dd>
+        <dt>Legacy isTeams</dt><dd>{String(info.isTeams)}</dd>
+        <dt>Neutral background</dt><dd>{info.theme.colorNeutralBackground1}</dd>
+        <dt>Neutral foreground</dt><dd>{info.theme.colorNeutralForeground1}</dd>
+        <dt>Brand background</dt><dd>{info.theme.colorBrandBackground}</dd>
+      </dl>,
+    diagnostics: <p>Legacy isTeams means SDK acquisition succeeded and also covers Office/Outlook. These are selected projected tokens; actual host Fluent theme and direction remain inherited.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual Fluent9ThemeInfo values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (3)
@@ -460,7 +540,7 @@ Fluent theme plus SDK availability and optional normalized application-theme met
 
 ### Source (7)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts:64](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts#L64)
+[packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts:87](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts#L87)
 
 ## useSPFxThemeInfo
 
@@ -483,6 +563,8 @@ import { useSPFxThemeInfo } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (8)
 
+#### Read ThemeInfo metadata
+
 ```tsx
 import * as React from 'react';
 import { useSPFxThemeInfo } from '@apvee/spfx-react-toolkit';
@@ -491,6 +573,29 @@ function ThemeLabel() {
   const theme = useSPFxThemeInfo();
   return <span>{theme ? 'Host theme available' : 'Host theme unavailable'}</span>;
 }
+```
+
+#### Observe the native SPFx theme snapshot
+
+```tsx
+import * as React from 'react';
+import { useSPFxThemeInfo } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const info = useSPFxThemeInfo();
+  const regions: DemoRegions = {
+    children: <dl aria-label="useSPFxThemeInfo result">
+        <dt>Native theme</dt><dd>{info ? 'Available' : 'Unavailable'}</dd>
+        <dt>Inverted</dt><dd>{info ? String(info.isInverted) : 'Unavailable'}</dd>
+        <dt>Theme primary</dt><dd>{info?.palette?.themePrimary ?? 'Unavailable'}</dd>
+        <dt>Body text</dt><dd>{info?.semanticColors?.bodyText ?? 'Unavailable'}</dd>
+      </dl>,
+    diagnostics: <p>Native ThemeProvider subscriptions publish updates. Absence stays undefined. This example inherits the host presentation and does not manufacture an SPFx theme.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual ThemeInfo values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (4)
@@ -523,4 +628,4 @@ IReadonlyTheme
 
 ### Source (8)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts:32](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#L32)
+[packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts:54](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#L54)

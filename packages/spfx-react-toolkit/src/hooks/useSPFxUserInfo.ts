@@ -48,7 +48,7 @@ export interface SPFxUserInfo {
  * @returns Login/display names, optional email and external-guest flag.
  * @throws Error when no host-specific SPFx provider is present.
  *
- * @example
+ * @example Read UserInfo metadata
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxUserInfo } from '@apvee/spfx-react-toolkit';
@@ -60,6 +60,28 @@ export interface SPFxUserInfo {
  * ```
  *
  * @useWhen UI needs the signed-in user display/login metadata already supplied by PageContext.
+ *
+ * @example Inspect the current user display metadata
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxUserInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const info = useSPFxUserInfo();
+ *   const regions: DemoRegions = {
+ *     children: <dl aria-label="useSPFxUserInfo result">
+ *         <dt>User</dt><dd>{info.displayName}</dd>
+ *         <dt>Email</dt><dd>{info.email ?? 'Unavailable'}</dd>
+ *         <dt>External user</dt><dd>{String(info.isExternal)}</dd>
+ *         <dt>Login available</dt><dd>{String(Boolean(info.loginName))}</dd>
+ *       </dl>,
+ *     diagnostics: <p>Supplied display metadata performs no profile fetch and is not an authorization result.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual UserInfo values and explicit unavailable fields as the native host changes.' };
+ * ```
  */
 export function useSPFxUserInfo(): SPFxUserInfo {
   const pageContext = useSPFxPageContext();

@@ -47,7 +47,7 @@ export interface SPFxFluent9ThemeInfo {
  * @returns Fluent theme plus SDK availability and optional normalized application-theme metadata.
  * @throws Error when no host-specific SPFx provider is present.
  *
- * @example
+ * @example Read Fluent9ThemeInfo metadata
  * ```tsx
  * import * as React from 'react';
  * import { FluentProvider } from '@fluentui/react-components';
@@ -60,6 +60,29 @@ export interface SPFxFluent9ThemeInfo {
  * ```
  *
  * @useWhen custom Fluent 9 UI must use the theme derived from this provider host.
+ *
+ * @example Observe the projected Fluent theme tokens
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxFluent9ThemeInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const info = useSPFxFluent9ThemeInfo();
+ *   const regions: DemoRegions = {
+ *     children: <dl aria-label="useSPFxFluent9ThemeInfo result">
+ *         <dt>SDK theme</dt><dd>{info.teamsTheme ?? 'Unavailable'}</dd>
+ *         <dt>Legacy isTeams</dt><dd>{String(info.isTeams)}</dd>
+ *         <dt>Neutral background</dt><dd>{info.theme.colorNeutralBackground1}</dd>
+ *         <dt>Neutral foreground</dt><dd>{info.theme.colorNeutralForeground1}</dd>
+ *         <dt>Brand background</dt><dd>{info.theme.colorBrandBackground}</dd>
+ *       </dl>,
+ *     diagnostics: <p>Legacy isTeams means SDK acquisition succeeded and also covers Office/Outlook. These are selected projected tokens; actual host Fluent theme and direction remain inherited.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual Fluent9ThemeInfo values and explicit unavailable fields as the native host changes.' };
+ * ```
  */
 export function useSPFxFluent9ThemeInfo(): SPFxFluent9ThemeInfo {
   const teamsInfo = useSPFxTeams();

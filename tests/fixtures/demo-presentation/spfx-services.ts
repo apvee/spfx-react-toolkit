@@ -1,7 +1,9 @@
 export { DisplayMode, ThemeProvider } from '../web-part-shell-browser/spfx-services';
 export class SPPermission {
   public constructor(public readonly value: { High: number; Low: number }) {}
-  public hasPermission(permission: SPPermission): boolean { return ((this.value.Low & permission.value.Low) === permission.value.Low) && ((this.value.High & permission.value.High) === permission.value.High); }
+  public hasPermission(permission: SPPermission): boolean { return this === SPPermission.fullMask || ((this.value.Low & permission.value.Low) === permission.value.Low) && ((this.value.High & permission.value.High) === permission.value.High); }
+  static emptyMask = new SPPermission({ High: 0, Low: 0 });
+  static fullMask = new SPPermission({ High: 0x7fffffff, Low: 0xffffffff });
   static viewListItems = new SPPermission({ High: 0, Low: 1 });
   static editListItems = new SPPermission({ High: 0, Low: 4 });
   static addListItems = new SPPermission({ High: 0, Low: 2 });

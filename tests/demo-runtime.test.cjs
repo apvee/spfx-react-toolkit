@@ -63,7 +63,7 @@ test('Runtime has exactly five source-owned cases with canonical owners and conf
   for (const [kind, title] of Object.entries(titles)) {
     const f = fixture(t, kind);
     assert.equal(f.entry.title, title);
-    assert.equal(f.catalogue.executableExamples.length, 82, '77 previous cases plus exactly five Runtime cases');
+    assert.equal(f.catalogue.executableExamples.length, 104, '82 previous cases plus exactly 22 Context cases');
     assert.equal(f.entry.metadata.host, 'webPart');
     assert.equal(f.entry.metadata.contentPlacement, 'configuration');
     const symbol = { properties: 'useSPFxProperties', session: 'useSPFxSessionStorage', local: 'useSPFxLocalStorage', logger: 'useSPFxLogger', performance: 'useSPFxPerformance' }[kind];

@@ -1,6 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
+const { createContextFixture } = require('./fixtures/executable-examples/context-scenarios.cjs');
 const { createHarness } = require('./services-test-harness.cjs');
 const { Simulate } = require('react-dom/test-utils');
 const fluent = require('@fluentui/react-components');
@@ -26,16 +27,12 @@ function fixture(t, name, teamsTheme) {
     '@microsoft/sp-page-context': { SPPermission: { manageWeb: 1, manageLists: 2, addListItems: 3 } } });
   Object.assign(toolkit, h.load('helpers/styles/index.ts'), h.load('hooks/useSx.ts'), h.load('hooks/useStableCallback.ts'));
   Object.assign(legacyCallback,h.load('hooks/useStableCallback.ts')); Object.assign(legacySx,h.load('hooks/useSx.ts')); Object.assign(legacyWidth,h.load('helpers/styles/width.ts')); Object.assign(legacyTypography,h.load('helpers/styles/typography.ts')); Object.assign(legacyPadding,h.load('helpers/styles/padding-inline-start.ts'));
-  if (['RelativeTime','Context'].includes(name)) Object.assign(toolkit, h.load('controls/relative-time/relative-time.tsx'));
+  if (name === 'RelativeTime') Object.assign(toolkit, h.load('controls/relative-time/relative-time.tsx'));
   if (name === 'FormattedText') Object.assign(toolkit, h.load('controls/formatted-text/formatted-text.tsx'));
   if (name === 'StateMessage') Object.assign(toolkit, h.load('controls/state-message/state-message.tsx'));
   if (name === 'AutoSkeleton') Object.assign(toolkit, h.load('controls/auto-skeleton/auto-skeleton.tsx'));
-  const requests=[];
-  const hooks = {Context:{kind:'WebPart'},PageContext:{},InstanceInfo:{id:'sample',kind:'WebPart'},DisplayMode:{isEdit:false},IsEdit:false,
-    EnvironmentInfo:{type:'Local'},UserInfo:{displayName:'Giulia Rossi',email:'giulia@contoso.com',isExternal:false},SiteInfo:{title:'Project intranet',webUrl:'https://contoso.sharepoint.com/sites/intranet'},ListInfo:undefined,
-    LocaleInfo:{locale:'it-IT',uiLocale:'it-IT',isRtl:false,ianaTimeZone:'Europe/Rome'},HubSiteInfo:{isHubSite:false},Teams:{supported:false},PageType:{pageType:'Page'},CorrelationInfo:{},Permissions:{hasWebPermission:()=>false},ContainerInfo:{},ContainerSize:{width:800,height:400,size:'large'},ThemeInfo:{isInverted:false},Fluent9ThemeInfo:{teamsTheme},ServiceScope:{}};
-  for(const [key,value] of Object.entries(hooks)) toolkit['useSPFx'+key]=()=>value;
-  toolkit.useSPFxCrossSitePermissions=target=>{requests.push(target);return {isLoading:false,hasWebPermission:()=>false,hasPermission:()=>false};};
+  const hooks = { Context: { kind: 'WebPart' }, Fluent9ThemeInfo: { teamsTheme } };
+  for (const [key, value] of Object.entries(hooks)) toolkit['useSPFx' + key] = () => value;
   for(const key of ['SPFxWebPartProvider','SPFxApplicationCustomizerProvider','SPFxFieldCustomizerProvider','SPFxListViewCommandSetProvider']) toolkit[key]=()=>undefined;
   const ExistingComponent = name === 'Styles' ? h.load(path.resolve(__dirname, 'fixtures/executable-examples/styles-scenario.tsx')).StylesScenario : name === 'StateMessage' ? h.load(path.resolve(__dirname, 'fixtures/executable-examples/state-message-scenario.tsx')).StateMessageScenario : name === 'Imports' ? h.load(path.resolve(base, '../generated/jsdoc-examples/832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88.tsx')).Demo : ['AutoSkeleton','RelativeTime','FormattedText'].includes(name) ? undefined : h.load(path.join(base,name+'Panel.tsx')).default;
   const sourceTitles = {'AutoSkeleton': 'Explore mounted profile loading and native focus', 'RelativeTime': 'Explore relative clocks and fallback slots', 'FormattedText': 'Explore semantic text and inline Markdown'};
@@ -49,7 +46,7 @@ function fixture(t, name, teamsTheme) {
   const select=(selector,value)=>{const node=view.container.querySelector(selector);assert.ok(node,selector);h.act(()=>Simulate.change(node,{target:{value}}));};
   const one=()=>assert.equal(view.container.querySelectorAll('[data-demo-section]').length,1);
   const open=()=>{const button=Array.from(view.container.querySelectorAll('button')).find(x=>x.textContent.includes('Advanced diagnostics'));if(button)h.act(()=>Simulate.click(button));};
-  return {h,view,select,one,open,requests};
+  return {h,view,select,one,open};
 }
 test('current Styles scenario changes actual descriptor output and preserves inputs',t=>{
   const f=fixture(t,'Styles');f.one();
@@ -98,13 +95,22 @@ test('FormattedText mixed JSX parses Markdown and preserves the action and Markd
 test('AutoSkeleton and StateMessage retain a single real subject in diagnostics',t=>{
   for(const name of ['AutoSkeleton','StateMessage']){const f=fixture(t,name);f.one();f.open();const marker=name==='AutoSkeleton'?'data-auto-skeleton-demo':'data-state-message-demo';assert.equal(f.view.container.querySelectorAll(`[${marker}="preview"]`).length,1);f.view.unmount();f.h.close();}
 });
-test('Context filters actual host views, selects one season and stages URL until explicit command',t=>{
-  const f=fixture(t,'Context');f.one();assert.match(f.view.container.querySelector('[data-context-demo="result"]').textContent,/WebPart/);
-  for(const view of ['site','time','theme','permissions','container','cross-site']){f.select('[data-demo-variant="context"]',view);f.one();assert.equal(f.view.container.querySelector('[data-context-demo="result"]').getAttribute('data-context-view'),view);}
-  const input=f.view.container.querySelector('[data-context-demo="url-draft"]');f.h.act(()=>Simulate.change(input,{target:{value:'https://contoso.sharepoint.com/sites/target'}}));assert.ok(f.requests.every(x=>x===undefined));
-  f.h.act(()=>Simulate.click(f.view.container.querySelector('[data-context-demo="apply-url"]')));assert.equal(f.requests.at(-1),'https://contoso.sharepoint.com/sites/target');
-  f.select('[data-demo-variant="context"]','scoped');assert.equal(f.view.container.querySelector('[data-context-demo="scoped-state"]'),null);f.h.act(()=>Simulate.click(f.view.container.querySelector('[data-context-demo="run-scoped"]')));assert.deepEqual(f.requests.at(-1),{scope:'web',webUrl:undefined});assert.match(f.view.container.querySelector('[data-context-demo="scoped-state"]').textContent,/Denied/);
-  f.select('[data-demo-variant="context"]','time');assert.equal(f.view.container.querySelectorAll('time').length,1);f.select('[data-context-demo="season"]','summer');assert.equal(f.view.container.querySelectorAll('time').length,1);assert.equal(f.view.container.querySelector('time').getAttribute('datetime'),'2026-07-15T12:00:00.000Z');
+test('generated Context ingress preserves single host, seasonal, staged legacy and scoped results', async t => {
+  const host = createContextFixture(t, 'Inspect the current native host identity');
+  assert.match(host.container.querySelector('[data-demo-result]').textContent, /WebPart.*context-one/);
+  assert.equal(host.container.querySelectorAll('[data-demo-section]').length, 1);
+  host.select('Compare host cultures and seasonal site times');
+  assert.equal(host.container.querySelectorAll('time').length, 1); host.change('Period', 'summer');
+  assert.equal(host.container.querySelector('time').getAttribute('datetime'), '2026-07-15T12:00:00.000Z');
+  host.select('Check staged legacy site web and list permissions'); host.change('Site URL', 'https://tenant.test/sites/target');
+  assert.equal(host.calls.length, 0); host.click('Check / repeat'); await host.flush();
+  assert.equal(host.calls.length, 2); assert.match(host.calls[0].url, /site\/rootweb\/effectivebasepermissions$/);
+  host.select('Check staged web list item and folder permissions');
+  assert.equal(host.container.querySelector('[aria-label="Applied target"]'), null);
+  const before = host.calls.length; host.click('Run / repeat'); await host.flush();
+  assert.deepEqual(JSON.parse(host.container.querySelector('[aria-label="Applied target"]').textContent), { scope: 'web' });
+  await host.flush(() => host.calls[before].resolve({ High: '0', Low: '0' }));
+  assert.match(host.container.textContent, /Denied: view list items/); assert.equal(host.container.querySelectorAll('[data-demo-section]').length, 1);
 });
 test('Providers distinguish actual host activation from exported provider availability',t=>{
   const f=fixture(t,'Providers');f.one();assert.match(f.view.container.querySelector('[data-providers-demo="result"]').textContent,/Yes/);

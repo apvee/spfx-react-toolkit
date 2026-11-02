@@ -36,6 +36,8 @@ function HostStatus() {
 }
 ```
 
+The source-owned case **Inspect the current native host identity** is included in the canonical [useSPFxContext reference](../api/hooks/context.md#usespfxcontext). The exact integration recipe above belongs to its public re-export binding; the executable case belongs once to the original declaration.
+
 ## Consume a registered service
 
 The host owns registration and finishing its ServiceScope. Mount the matching provider after host initialization; it waits for scope readiness before mounting consumers. Native `consume` semantics still apply, including service defaults and failures. Consume stable dependencies inside memoized React work where appropriate; do not finish/register services from render.
@@ -96,6 +98,124 @@ const fullDate = info.ianaTimeZone
   : 'Site time zone unavailable';
 return fullDate;
 }
+```
+
+#### Compare host cultures and seasonal site times
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { RelativeTime, useSPFxLocaleInfo } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const locale = useSPFxLocaleInfo();
+  const [season, setSeason] = React.useState<'winter' | 'summer'>('winter');
+  const previous = React.useRef(resetRevision);
+  React.useEffect(() => { if (previous.current !== resetRevision) { previous.current = resetRevision; setSeason('winter'); } }, [resetRevision]);
+  const dateTime = season === 'winter' ? '2026-01-15T12:00:00Z' : '2026-07-15T12:00:00Z';
+  const referenceTime = season === 'winter' ? '2026-01-15T13:00:00Z' : '2026-07-15T13:00:00Z';
+  const regions: DemoRegions = {
+    controls: <Field label="Period"><Select aria-label="Period" value={season} onChange={(_, data) => setSeason(data.value === 'summer' ? 'summer' : 'winter')}><option value="winter">Winter</option><option value="summer">Summer</option></Select></Field>,
+    children: <section aria-label="Locale result">
+      <p>Formatting culture: {locale.locale}; UI culture: {locale.uiLocale}; RTL: {String(locale.isRtl)}</p>
+      <p>Regional time zone: {locale.timeZone?.description ?? 'Unavailable'}; IANA representative: {locale.ianaTimeZone ?? 'Unavailable'}</p>
+      {locale.ianaTimeZone === undefined ? <p>IANA mapping unavailable. Site time is not rendered.</p>
+        : <RelativeTime dateTime={dateTime} referenceTime={referenceTime} locale={locale.uiLocale} timeZone={locale.ianaTimeZone} />}
+    </section>,
+    diagnostics: <p>Hover or focus the actual time to inspect its full date. The audited numeric SharePoint group selects a representative standard zone, not a user city or profile zone. Culture and offsets never choose the mapping; custom TIMEZONE.XML rules are not verified. Reset restores winter without changing native locale or zone.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Switch winter and summer to compare one actual RelativeTime using the host UI culture and audited site zone; missing mapping renders an explicit unavailable result.' };
+```
+
+## Explicit hub lookup and display scope
+
+Start mounts the actual hub hook for a captured native scope. The example checks that scope in both parent and child renders, including a child completion after an in-place native metadata change. Reset, departure and an observed scope change retire displayed results and require another Start. The native hook does not cancel requests, make its initial client base URL reactive or independently observe arbitrary PageContext mutations. After Start, its native effect can schedule a refresh before the wrapper retires the child; those requests may still settle. This example isolates display ownership, without changing that public runtime contract.
+
+#### Start a scope bound hub association lookup
+
+```tsx
+import * as React from 'react';
+import { Button } from '@fluentui/react-components';
+import { SPHttpClient } from '@microsoft/sp-http';
+import { useSPFxContext, useSPFxPageContext, useSPFxServiceScope, useSPFxHubSiteInfo } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Run = { id: number; revision: number; scope: readonly unknown[] };
+function sameScope(a: readonly unknown[], b: readonly unknown[]): boolean {
+  return a.length === b.length && a.every((value, index) => Object.is(value, b[index]));
+}
+function useLookupScope(): readonly unknown[] {
+  const provider = useSPFxContext();
+  const page = useSPFxPageContext();
+  const scope = useSPFxServiceScope();
+  let client: SPHttpClient | undefined;
+  try { client = scope.consume(SPHttpClient.serviceKey); } catch { client = undefined; }
+  const raw: unknown = page.legacyPageContext;
+  const legacy = typeof raw === 'object' && raw !== null ? raw as Record<string, unknown> : undefined;
+  const metadata = page as unknown as { webAbsoluteUrl?: unknown };
+  return [provider, provider.spfxContext, provider.kind, provider.instanceId, provider.spfxContext.instanceId,
+    page, scope.serviceScope, scope.serviceScope?.consume, client,
+    page.web.absoluteUrl, page.user.loginName, page.user.email,
+    typeof legacy?.hubSiteId === 'string' ? legacy.hubSiteId : undefined,
+    typeof legacy?.isHubSite === 'boolean' ? legacy.isHubSite : undefined,
+    typeof metadata.webAbsoluteUrl === 'string' ? metadata.webAbsoluteUrl : undefined];
+}
+function HubResult({ run, retire }: { run: Run; retire: (id: number) => void }): React.ReactElement {
+  const scope = useLookupScope();
+  const hub = useSPFxHubSiteInfo();
+  const current = sameScope(run.scope, scope);
+  React.useEffect(() => { if (!current) retire(run.id); }, [current, retire, run.id]);
+  // Check again on the child's own completion render: the parent may not render.
+  if (!current) return <p>Scope changed. Start a new lookup.</p>;
+  return <section aria-label="Hub lookup result">
+    <p>Applied web: {String(run.scope[9])}</p>
+    {hub.error ? <p role="alert">Error: {hub.error.message}</p>
+      : !hub.isHubSite ? <p>No hub association</p>
+      : hub.isLoading ? <p>Loading hub URL</p>
+      : hub.hubSiteUrl ? <p>Hub URL: {hub.hubSiteUrl}</p>
+      : <p>Hub URL not available yet</p>}
+    <p>Associated: {String(hub.isHubSite)}; Hub ID: {hub.hubSiteId ?? 'Unavailable'}</p>
+  </section>;
+}
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const scope = useLookupScope();
+  const [state, setState] = React.useState<{ run?: Run; expired: boolean }>({ expired: false });
+  const sequence = React.useRef(0);
+  const previous = React.useRef(resetRevision);
+  const alive = React.useRef(true);
+  const latest = React.useRef({ scope, revision: resetRevision });
+  latest.current = { scope, revision: resetRevision };
+  React.useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  React.useEffect(() => {
+    if (previous.current !== resetRevision) { previous.current = resetRevision; setState({ expired: false }); }
+  }, [resetRevision]);
+  const retire = React.useCallback((id: number) => {
+    if (alive.current) setState(previous => previous.run?.id === id ? { expired: true } : previous);
+  }, []);
+  const run = state.run;
+  const current = run !== undefined && run.revision === resetRevision && sameScope(run.scope, scope);
+  React.useEffect(() => {
+    if (run && !current) {
+      if (run.revision !== resetRevision) setState(previous => previous.run?.id === run.id ? { expired: false } : previous);
+      else retire(run.id);
+    }
+  }, [run, current, resetRevision, retire]);
+  const start = (): void => {
+    if (!alive.current || latest.current.revision !== resetRevision || !sameScope(scope, latest.current.scope)) return;
+    setState({ run: { id: ++sequence.current, revision: resetRevision, scope: scope.slice() }, expired: false });
+  };
+  const regions: DemoRegions = {
+    commands: <Button onClick={start}>Start / repeat lookup</Button>,
+    children: current && run ? <HubResult key={run.id} run={run} retire={retire} />
+      : <p>{state.expired || (run && run.revision === resetRevision) ? 'Scope changed. Start a new lookup.' : 'Idle. Start a hub lookup.'}</p>,
+    diagnostics: <p>Start gates the first query. Native refresh after Start and requests already sent can still run after scope change or reset; this example hides obsolete results and does not cancel requests. Mutable native metadata is checked when React renders.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Start the native hub lookup, compare association, URL and failure, then repeat or reset without displaying a result from a former host scope.' };
 ```
 
 ## Theme subscriptions and container measurement

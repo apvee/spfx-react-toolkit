@@ -215,7 +215,8 @@ const relativePanel = ownedExecutable('relative-time', 'Explore relative clocks 
 for (const marker of ['RelativeTime', 'dateTime', 'referenceTime', 'locale', 'format', 'autoUpdate', 'showTooltip', 'timeZone', 'fallback', 'ref']) {
   if (!relativePanel.includes(marker)) throw new Error(`RelativeTime interactive example missing ${marker}`);
 }
-if (!read(path.join(panelsPath, 'ContextPanel.tsx')).includes('ianaTimeZone')) throw new Error('Locale mapping scenario missing');
+const localeScenario = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts')), 'Compare host cultures and seasonal site times');
+if (!localeScenario.includes('ianaTimeZone')) throw new Error('Locale mapping scenario missing');
 
 const skeletonPanel = ownedExecutable('auto-skeleton', 'Explore mounted profile loading and native focus');
 for (const marker of ['AutoSkeleton', 'loading', 'animation', 'minSize', 'ignoreSelectors', 'ref', 'data-skeleton-shape', 'rectangle', 'circle']) {
@@ -318,7 +319,7 @@ if (!cardsIsolation.includes('name="independent"') || !cardsIsolation.includes('
 console.log('Verified selectable single Cards, image lifecycle and versioned native/isolation conformance coverage.');
 
 
-for (const name of ['Providers', 'Context']) {
+for (const name of ['Providers']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
   if (!product.includes('data-demo-variant')) throw new Error(`${name} selectable product variant missing`);
@@ -341,11 +342,16 @@ for (const name of ['SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGro
     if (!product.includes(marker)) throw new Error(`${name} observable scenario missing ${marker}`);
   }
 }
-const scopedContext = read(path.join(panelsPath, 'ContextPanel.tsx'));
-for (const marker of ['ScopedPermissionResult', 'useSPFxCrossSitePermissions(target)', 'data-context-demo="run-scoped"', 'key={applied.run}']) {
-  if (!scopedContext.includes(marker)) throw new Error(`Context scoped sample missing ${marker}`);
+for (const [file, title, markers] of [
+  ['useSPFxCrossSitePermissions.ts', 'Check staged web list item and folder permissions', ['useSPFxCrossSitePermissions(run.target)', 'Run / repeat', 'key={run.id}', 'Applied target']],
+  ['useSPFxCrossSitePermissions.ts', 'Check staged legacy site web and list permissions', ['useSPFxCrossSitePermissions(run.siteUrl, run.options)', 'Check / repeat', 'key={run.id}']],
+  ['useSPFxHubSiteInfo.ts', 'Start a scope bound hub association lookup', ['useSPFxHubSiteInfo()', 'Start / repeat lookup', 'sameScope(run.scope, scope)', 'key={run.id}']],
+]) {
+  const source = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/hooks', file)), title);
+  for (const marker of markers) if (!source.includes(marker)) throw new Error(`Context source-owned case missing ${marker}`);
+  if (!read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')).includes(JSON.stringify(title))) throw new Error(`Context generated case unavailable: ${title}`);
 }
-console.log('Verified actual trim scenarios and scoped Context configuration; execution remains separately verified.');
+console.log('Verified actual trim scenarios and canonical Context availability; execution remains separately verified.');
 
 for (const marker of ['<EntraGroupTrim groups={[{ name: applied.group }]}', 'Permission AND Entra membership']) {
   if (!read(path.join(panelsPath, 'SharePointPermissionTrimPanel.tsx')).includes(marker)) throw new Error(`Permission/Entra AND sample missing ${marker}`);

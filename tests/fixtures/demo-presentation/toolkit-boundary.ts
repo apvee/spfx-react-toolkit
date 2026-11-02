@@ -46,3 +46,21 @@ export { useSPFxContext } from '../../../packages/spfx-react-toolkit/lib/hooks/u
 export { useSPFxSessionStorage, useSPFxLocalStorage } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxStorage';
 export { useSPFxLogger } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxLogger';
 export { useSPFxPerformance } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPerformance';
+
+// Context scenarios use actual owning hooks; only native SDK services/transports are doubled.
+export { useSPFxPageContext } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPageContext';
+export { useSPFxInstanceInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxInstanceInfo';
+export { useSPFxIsEdit } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxDisplayMode';
+export { useSPFxEnvironmentInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxEnvironmentInfo';
+export { useSPFxUserInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxUserInfo';
+export { useSPFxSiteInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxSiteInfo';
+export { useSPFxListInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxListInfo';
+export { useSPFxLocaleInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxLocaleInfo';
+export { useSPFxHubSiteInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxHubSiteInfo';
+export { useSPFxTeams } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxTeams';
+export { useSPFxPageType } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPageType';
+export { useSPFxCorrelationInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxCorrelationInfo';
+export { useSPFxContainerInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxContainerInfo';
+export { useSPFxContainerSize } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxContainerSize';
+export { useSPFxThemeInfo } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxThemeInfo';
+export { useSPFxServiceScope } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxServiceScope';

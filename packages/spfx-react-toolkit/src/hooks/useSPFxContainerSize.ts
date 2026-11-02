@@ -85,7 +85,7 @@ export interface SPFxContainerSizeInfo {
  * @returns Category, exact-category boolean flags and dimensions in CSS pixels.
  * @throws Error when no host-specific SPFx provider is present.
  *
- * @example
+ * @example Read ContainerSize metadata
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxContainerSize } from '@apvee/spfx-react-toolkit';
@@ -97,6 +97,33 @@ export interface SPFxContainerSizeInfo {
  * ```
  *
  * @useWhen a WebPart layout must switch on measured container width categories.
+ *
+ * @example Observe the measured container width category
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxContainerSize } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const info = useSPFxContainerSize();
+ *   const regions: DemoRegions = {
+ *     children: <dl aria-label="useSPFxContainerSize result">
+ *         <dt>Width</dt><dd>{String(info.width)}</dd>
+ *         <dt>Height</dt><dd>{String(info.height)}</dd>
+ *         <dt>Category</dt><dd>{info.size}</dd>
+ *         <dt>Small</dt><dd>{String(info.isSmall)}</dd>
+ *         <dt>Medium</dt><dd>{String(info.isMedium)}</dd>
+ *         <dt>Large</dt><dd>{String(info.isLarge)}</dd>
+ *         <dt>Extra large</dt><dd>{String(info.isXLarge)}</dd>
+ *         <dt>Double extra large</dt><dd>{String(info.isXXLarge)}</dd>
+ *         <dt>Triple extra large</dt><dd>{String(info.isXXXLarge)}</dd>
+ *       </dl>,
+ *     diagnostics: <p>Dimensions measure the host container in CSS pixels. Zero/small is the unmeasured fallback. Resize the actual host; no example control substitutes dimensions.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual ContainerSize values and explicit unavailable fields as the native host changes.' };
+ * ```
  */
 export function useSPFxContainerSize(): SPFxContainerSizeInfo {
   const { size: containerSize } = useSPFxContainerInfo();

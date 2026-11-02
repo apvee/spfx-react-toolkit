@@ -72,7 +72,7 @@ export interface SPFxPageTypeInfo {
  * @returns Best-effort page category and category-specific flags.
  * @throws Error when no host-specific SPFx provider is present.
  *
- * @example
+ * @example Read PageType metadata
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxPageType } from '@apvee/spfx-react-toolkit';
@@ -84,6 +84,30 @@ export interface SPFxPageTypeInfo {
  * ```
  *
  * @useWhen UI needs the page-layout classification available in legacy page metadata.
+ *
+ * @example Inspect the supplied page classification
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxPageType } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const info = useSPFxPageType();
+ *   const regions: DemoRegions = {
+ *     children: <dl aria-label="useSPFxPageType result">
+ *         <dt>Page type</dt><dd>{info.pageType}</dd>
+ *         <dt>Modern</dt><dd>{String(info.isModernPage)}</dd>
+ *         <dt>Site page</dt><dd>{String(info.isSitePage)}</dd>
+ *         <dt>Web part page</dt><dd>{String(info.isWebPartPage)}</dd>
+ *         <dt>List page</dt><dd>{String(info.isListPage)}</dd>
+ *         <dt>List form</dt><dd>{String(info.isListFormPage)}</dd>
+ *       </dl>,
+ *     diagnostics: <p>Unknown is a valid result. Native metadata classification does not probe the server or prove page capabilities.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual PageType values and explicit unavailable fields as the native host changes.' };
+ * ```
  */
 export function useSPFxPageType(): SPFxPageTypeInfo {
   const pageContext = useSPFxPageContext();

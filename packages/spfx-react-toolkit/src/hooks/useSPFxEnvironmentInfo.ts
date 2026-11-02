@@ -79,7 +79,7 @@ export interface SPFxEnvironmentInfo {
  * @returns Primary host category plus URL/workbench and resolved application-host flags.
  * @throws Error when no host-specific SPFx provider is present.
  *
- * @example
+ * @example Read EnvironmentInfo metadata
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxEnvironmentInfo } from '@apvee/spfx-react-toolkit';
@@ -91,6 +91,32 @@ export interface SPFxEnvironmentInfo {
  * ```
  *
  * @useWhen UI must adapt to the detected SharePoint, Teams or Office host.
+ *
+ * @example Observe the acquired application host
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxEnvironmentInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const info = useSPFxEnvironmentInfo();
+ *   const regions: DemoRegions = {
+ *     children: <dl aria-label="useSPFxEnvironmentInfo result">
+ *         <dt>Host</dt><dd>{info.type}</dd>
+ *         <dt>Local</dt><dd>{String(info.isLocal)}</dd>
+ *         <dt>Workbench</dt><dd>{String(info.isWorkbench)}</dd>
+ *         <dt>SharePoint</dt><dd>{String(info.isSharePoint)}</dd>
+ *         <dt>On premises</dt><dd>{String(info.isSharePointOnPrem)}</dd>
+ *         <dt>Teams</dt><dd>{String(info.isTeams)}</dd>
+ *         <dt>Office</dt><dd>{String(info.isOffice)}</dd>
+ *         <dt>Outlook</dt><dd>{String(info.isOutlook)}</dd>
+ *       </dl>,
+ *     diagnostics: <p>Local URL detection takes precedence. Application SDK acquisition is asynchronous; SDK availability alone does not identify Teams.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual EnvironmentInfo values and explicit unavailable fields as the native host changes.' };
+ * ```
  */
 export function useSPFxEnvironmentInfo(): SPFxEnvironmentInfo {
   const pageContext = useSPFxPageContext();

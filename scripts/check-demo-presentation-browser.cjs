@@ -56,6 +56,9 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    context: ['useSPFxCrossSitePermissions', 'Check staged legacy site web and list permissions'],
+    'context-scoped': ['useSPFxCrossSitePermissions', 'Check staged web list item and folder permissions'],
+    'context-hub': ['useSPFxHubSiteInfo', 'Start a scope bound hub association lookup'],
     'runtime-properties': ['useSPFxProperties', 'Edit the current host description with merge and updater'],
     'runtime-session': ['useSPFxSessionStorage', 'Save and clear an instance scoped session value'],
     'runtime-local': ['useSPFxLocalStorage', 'Save and clear an instance scoped local value'],
@@ -84,7 +87,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: (['imports', 'styles'].includes(key) || key.startsWith('runtime-')) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: (['imports', 'styles'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -292,7 +295,13 @@ async function interact(page, key) {
       break;
     }
     case 'providers': await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click(); check('Provider disclosure', await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).getAttribute('aria-expanded'), 'true'); break;
-    case 'context': await panel.locator('select[data-demo-variant=context]').selectOption('cross-site'); await panel.locator('[data-context-demo=url-draft]').fill('https://simulated.invalid/sites/target'); check('Context staged URL draft', await panel.locator('[data-context-demo=url-draft]').inputValue(), 'https://simulated.invalid/sites/target'); break;
+    case 'context': {
+      const before = await page.evaluate(() => window.trimFixture.calls.length);
+      await panel.getByRole('textbox', { name: 'Site URL', exact: true }).fill('https://simulated.invalid/sites/target');
+      check('Context staged URL draft', await panel.getByRole('textbox', { name: 'Site URL', exact: true }).inputValue(), 'https://simulated.invalid/sites/target');
+      check('Context draft does not query native transport', await page.evaluate(() => window.trimFixture.calls.length), before);
+      break;
+    }
     case 'runtime-properties':
       await panel.getByLabel('Description', { exact: true }).fill('Integrated properties');
       await panel.getByRole('button', { name: 'setProperties', exact: true }).click();
@@ -639,7 +648,7 @@ async function liveTheme(page) {
     check('Unexpected app/browser/network diagnostics', diagnostics.filter(message => !(message.type === 'warning' && message.text === nativeColorWarning)), []);
     console.log(`Integrated actual app: ${checks.length} PASS checks; ${screenshots.length} screenshots; native 200% proved.`);
   } finally {
-    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? 'focused source-owned JSDoc migration checkpoint (11 scenarios, 5 features; original 9-case pilot retained)' : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { features: 5, scenarios: 11, originalPilotScenarios: 9, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/remaining registry panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, expectedRuntimeDiagnostics, metrics, screenshots }, undefined, 2));
+    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? 'focused source-owned JSDoc migration checkpoint (33 scenarios, 26 features; original 9-case pilot retained)' : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { features: 26, scenarios: 33, originalPilotScenarios: 9, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/remaining registry panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, expectedRuntimeDiagnostics, metrics, screenshots }, undefined, 2));
     await browser?.close(); await new Promise(resolve => server.close(resolve));
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

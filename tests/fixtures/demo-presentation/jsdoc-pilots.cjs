@@ -5,6 +5,28 @@ const pilotTitles = {
   useStableCallback: ['Report current count through a retained callback', 'Retain callback identity through rerenders'],
   useSx: ['Compare root domain and historical imports'],
   useSPFxPnPList: ['Read a user-selected list with observable results'],
+  useSPFxContext: ['Inspect the current native host identity'],
+  useSPFxPageContext: ['Inspect selected native page metadata'],
+  useSPFxInstanceInfo: ['Inspect the provider instance identity'],
+  useSPFxDisplayMode: ['Observe the native Read and Edit mode'],
+  useSPFxIsEdit: ['Observe the native edit mode shortcut'],
+  useSPFxEnvironmentInfo: ['Observe the acquired application host'],
+  useSPFxUserInfo: ['Inspect the current user display metadata'],
+  useSPFxSiteInfo: ['Inspect the current web and site collection'],
+  useSPFxListInfo: ['Inspect the optional current list context'],
+  useSPFxLocaleInfo: ['Compare host cultures and seasonal site times'],
+  useSPFxHubSiteInfo: ['Start a scope bound hub association lookup'],
+  useSPFxTeams: ['Observe application SDK readiness and theme'],
+  useSPFxPageType: ['Inspect the supplied page classification'],
+  useSPFxCorrelationInfo: ['Inspect current diagnostic identifiers'],
+  useSPFxPermissions: ['Inspect native current page permission masks'],
+  useSPFxCrossSitePermissions: ['Check staged legacy site web and list permissions', 'Check staged web list item and folder permissions'],
+  useSPFxContainerInfo: ['Observe the native container and tracked size'],
+  useSPFxContainerSize: ['Observe the measured container width category'],
+  useSPFxThemeInfo: ['Observe the native SPFx theme snapshot'],
+  useSPFxFluent9ThemeInfo: ['Observe the projected Fluent theme tokens'],
+  useSPFxServiceScope: ['Inspect the native registered service scope'],
+
 };
 function filterPilotGroups(groups) {
   const features = groups.flatMap(group => group.features);

@@ -45,7 +45,7 @@ export interface SPFxContainerInfo {
  * @returns Container element and optional content-box width/height in CSS pixels.
  * @throws Error when no host-specific SPFx provider is present.
  *
- * @example
+ * @example Read ContainerInfo metadata
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxContainerInfo } from '@apvee/spfx-react-toolkit';
@@ -57,6 +57,27 @@ export interface SPFxContainerInfo {
  * ```
  *
  * @useWhen a WebPart needs its host element and observed CSS-pixel dimensions.
+ *
+ * @example Observe the native container and tracked size
+ * ```tsx
+ * import * as React from 'react';
+ * import { useSPFxContainerInfo } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const info = useSPFxContainerInfo();
+ *   const regions: DemoRegions = {
+ *     children: <dl aria-label="useSPFxContainerInfo result">
+ *         <dt>Host element</dt><dd>{info.element?.tagName ?? 'Unavailable'}</dd>
+ *         <dt>Width</dt><dd>{info.size ? String(info.size.width) : 'Unmeasured'}</dd>
+ *         <dt>Height</dt><dd>{info.size ? String(info.size.height) : 'Unmeasured'}</dd>
+ *       </dl>,
+ *     diagnostics: <p>Resize the real host element. Its owner document supplies ResizeObserver; size is unavailable until observation and without native support. Replacement and unmount disconnect observation.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual ContainerInfo values and explicit unavailable fields as the native host changes.' };
+ * ```
  */
 export function useSPFxContainerInfo(): SPFxContainerInfo {
   const element = useSPFxRuntimeSelector(state => state.containerEl);
