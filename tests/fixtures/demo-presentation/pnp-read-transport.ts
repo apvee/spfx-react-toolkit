@@ -45,6 +45,9 @@ export const createSPFxPnPContextService: typeof createRealService = (...args) =
           // These routes never alter the original GET-only pilot ledger or policy.
           return fetch(String(url), init);
         }
+        // Search is read-only POST; terminal admission remains separate from CRUD and the pilot.
+        if (target.pathname.endsWith('/_api/search/postquery')) return fetch(String(url), init);
+        if (target.pathname.includes('/_api/search/')) throw new Error('Unsupported native PnP Search fixture route');
         const titleItems = /\/_api\/web\/lists\/getByTitle\('(?:[^'/]|'')+'\)\/items(?:\(\d+\))?$/.test(target.pathname);
         // Preserve the original top5 GET pilot in both modes; CRUD is finite fixture admission only.
         if (titleItems && isPnPCrudEnabled() && !((init.method ?? 'GET') === 'GET' && target.searchParams.get('$top') === '5')) return fetch(String(url), init);

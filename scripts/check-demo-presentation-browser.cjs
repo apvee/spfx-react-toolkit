@@ -17,6 +17,8 @@ const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Goog
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
+  { key: 'search-text', title: 'useSPFxPnPSearch' },
+  { key: 'search-vertical', title: 'SearchVerticals' },
   { key: 'pnp-context-service', title: 'createSPFxPnPContextService' },
   { key: 'pnp-service', title: 'createSPFxPnPService' },
   { key: 'pnp-list-service', title: 'createSPFxPnPListService' },
@@ -71,6 +73,8 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    'search-text': ['useSPFxPnPSearch', 'Search SharePoint text with explicit execution'],
+    'search-vertical': ['SearchVerticals', 'Search selected verticals with builder paging'],
     'pnp-context-service': ['createSPFxPnPContextService', 'Explore PnP context caching and request headers'],
     'pnp-service': ['createSPFxPnPService', 'Read through a supplied PnP service client'],
     'pnp-list-service': ['createSPFxPnPListService', 'Read and page an explicitly selected list service'],
@@ -119,7 +123,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: ['pnp-context-service', 'pnp-service', 'pnp-list-service', 'site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['pnp-crud', 'pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: ['pnp-context-service', 'pnp-service', 'pnp-list-service', 'site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['search-text', 'search-vertical', 'pnp-crud', 'pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -452,7 +456,32 @@ async function interact(page, key) {
       check(key + ': original pilot ledger stays separate', await page.evaluate(() => window.pnpReadFixture.calls.length), pilotBefore);
       break;
     }
-    case 'search': await panel.locator('select[data-demo-variant=SearchPanel]').selectOption('suggestions'); await panel.getByLabel('Search with Autocomplete', { exact: true }).fill('local'); await panel.getByRole('button', { name: 'local simulated suggestion', exact: true }).waitFor(); check('Search real debounce/suggestion UI', await panel.getByRole('button', { name: 'local simulated suggestion', exact: true }).count(), 1); break;
+    case 'search-text':
+    case 'search-vertical': {
+      await page.evaluate(() => window.clientsFixture.configure({ pnpSearch: true }));
+      try {
+        const before = await page.evaluate(() => window.clientsFixture.requests.length);
+        if (key === 'search-text') await panel.getByLabel('Search SharePoint...', { exact: true }).fill('training');
+        else await panel.getByRole('button', { name: 'Documents', exact: true }).click();
+        check(key + ': configuration sends no HTTP', await page.evaluate(() => window.clientsFixture.requests.length), before);
+        await panel.getByRole('button', { name: key === 'search-text' ? 'Search' : 'Search All', exact: true }).click();
+        await panel.getByText('Fixture Search result 1', { exact: true }).waitFor();
+        check(key + ': actual native query', await page.evaluate(() => { const r = window.clientsFixture.requests.filter(r => r.kind === 'pnp-search').slice(-1)[0]; const q = JSON.parse(r.settings.body).request; return [r.settings.method, q.Querytext, q.RowLimit, q.SourceId]; }), key === 'search-text' ? ['POST', 'training', 10, undefined] : ['POST', '*', 5, '8413cd39-2156-4e00-b54d-11efd9abdb89']);
+        if (key === 'search-vertical') {
+          await panel.getByRole('button', { name: 'Load More', exact: true }).click();
+          await panel.getByText('Fixture Search result 7', { exact: true }).waitFor();
+          check('Search native append offset', await page.evaluate(() => JSON.parse(window.clientsFixture.requests.filter(r => r.kind === 'pnp-search').slice(-1)[0].settings.body).request.StartRow), 5);
+        }
+      } finally { await page.evaluate(() => window.clientsFixture.configure({ pnpSearch: false })); }
+      break;
+    }
+    case 'search': {
+      const before = await page.evaluate(() => window.clientsFixture.requests.length);
+      await panel.locator('select[data-demo-variant=SearchPanel]').selectOption('refiners');
+      check('Retained legacy refiner selection sends no HTTP', await page.evaluate(() => window.clientsFixture.requests.length), before);
+      // Suggestions retains separate explicitly doubled presentation coverage until g2.
+      break;
+    }
     default: throw new Error(`Uncovered panel ${key}`);
   }
 }

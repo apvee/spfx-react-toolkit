@@ -51,7 +51,12 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve e
     createSPFxPnPService: 'packages/spfx-react-toolkit/src/services/spfx-pnp.service.ts#createSPFxPnPService',
     createSPFxPnPListService: 'packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#createSPFxPnPListService',
   };
+  const searchOwners = {
+    useSPFxPnPSearch: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#useSPFxPnPSearch',
+    SearchVerticals: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#SearchVerticals',
+  };
   const pilotOwners = {
+    ...searchOwners,
     ...directServiceOwners,
     useSPFxPnPListById: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts#useSPFxPnPListById',
     useSPFxPnPListByUrl: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts#useSPFxPnPListByUrl',
@@ -104,7 +109,8 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve e
     useSPFxAadTokenProvider: 'packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts#useSPFxAadTokenProvider',
     useSPFxApiPermissionPrecheck: 'packages/spfx-react-toolkit/src/hooks/useSPFxApiPermissionPrecheck.ts#useSPFxApiPermissionPrecheck',
   };
-  assert.equal(Object.keys(pilotOwners).filter(name => !Object.hasOwn(directServiceOwners, name)).length, 47, 'three PnP selectors, one PnP operation, one PnP context, two configuration, five original, 21 Context, six Clients, two GraphData two Site two tenant-property and two tenant-list owners');
+  assert.equal(Object.keys(pilotOwners).filter(name => !Object.hasOwn(directServiceOwners, name) && !Object.hasOwn(searchOwners, name)).length, 47, 'three PnP selectors, one PnP operation, one PnP context, two configuration, five original, 21 Context, six Clients, two GraphData two Site two tenant-property and two tenant-list owners');
+  assert.equal(Object.keys(pilotOwners).filter(name => !Object.hasOwn(searchOwners, name)).length, 50, 'complete accepted predecessor owner cohort');
   assert.deepEqual(Object.keys(pilotTitles).sort(), Object.keys(pilotOwners).sort(), 'every accepted pilot has an independent canonical owner expectation');
   const pilots = filterPilotGroups(groups);
   assert.deepEqual(pilots.flatMap(group => group.features.map(feature => feature.title)).sort(), Object.keys(pilotTitles).sort());

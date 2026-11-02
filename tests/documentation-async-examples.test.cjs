@@ -112,7 +112,7 @@ test('the bounded corrected interaction recipes catch rejecting actions and rend
 // Select the residual public recipes by their canonical owner/title, independent
 // of whether their handlers contain a catch or any particular implementation.
 for (const [reference, title, kind] of [
-  ['SearchVerticals', undefined, 'people'],
+  ['SearchVerticals', 'Search People with an explicit builder', 'people'],
   ['useSPFxPnPSearch', 'Basic usage', 'documents'],
 ]) test(`normalized ${reference} ${title ?? 'example'} handles search failure and renders its result`, async t => {
   const example = getDocumentationExample(model, reference, title);

@@ -22,22 +22,27 @@ test('tenant list acceptance contains the two exact new hook and factory cases',
   assert.deepEqual(pilotTitles.createSPFxTenantKeyValueStoreService, ['Round trip numeric looking text through a tenant service']);
 });
 
-test('browser pilot filter preserves its prior cohort and adds three exact direct service cases without mutation', () => {
+test('browser pilot filter preserves its prior cohort and adds exact service and Search cases without mutation', () => {
   const direct = { createSPFxPnPContextService: ['Explore PnP context caching and request headers'], createSPFxPnPService: ['Read through a supplied PnP service client'], createSPFxPnPListService: ['Read and page an explicitly selected list service'] };
-  for (const [name, titles] of Object.entries(direct)) assert.deepEqual(pilotTitles[name], titles);
+  const search = { useSPFxPnPSearch: ['Search SharePoint text with explicit execution'], SearchVerticals: ['Search selected verticals with builder paging'] };
+  const additions = { ...direct, ...search };
+  for (const [name, titles] of Object.entries(additions)) assert.deepEqual(pilotTitles[name], titles);
   const features = Object.entries(pilotTitles).map(([title, titles]) => ({ key: title, title, scenarios: [...titles.map(title => ({ title })), { title: 'Future scenario' }] }));
   const expectedGroup = title => ['WebPartShell', 'Pagination'].includes(title) ? 'controls' : ['createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(title) ? 'services' : 'hooks';
   const groups = ['controls', 'hooks', 'services'].map(key => ({ key, features: features.filter(feature => expectedGroup(feature.title) === key) })).concat([{ key: 'future', features: [{ title: 'Future feature', scenarios: [] }] }]);
   const original = structuredClone(groups);
   const filtered = filterPilotGroups(groups);
   assert.equal(filtered.length, 3);
-  const retained = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(direct, feature.title));
+  const retained = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(additions, feature.title));
   assert.equal(retained.length, 47, 'exact earlier cohort retained');
   assert.equal(retained.flatMap(feature => feature.scenarios).length, 55);
-  assert.equal(filtered.flatMap(group => group.features).length, retained.length + Object.keys(direct).length);
-  assert.equal(filtered.flatMap(group => group.features).flatMap(feature => feature.scenarios).length, 55 + Object.values(direct).flat().length);
+  assert.equal(filtered.flatMap(group => group.features).length, retained.length + Object.keys(additions).length);
+  assert.equal(filtered.flatMap(group => group.features).flatMap(feature => feature.scenarios).length, 55 + Object.values(additions).flat().length);
   assert.deepEqual(groups, original, 'filter never mutates any app catalogue group, feature or scenario');
 
+  const preceding = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(search, feature.title));
+  assert.equal(preceding.length, 50, 'complete accepted predecessor cohort');
+  assert.equal(preceding.flatMap(feature => feature.scenarios).length, 58);
   const missingFeature = structuredClone(groups);
   for (const group of missingFeature) group.features = group.features.filter(feature => feature.title !== 'WebPartShell');
   assert.throws(() => filterPilotGroups(missingFeature), /Missing pilot feature or duplicate: WebPartShell/);
@@ -45,7 +50,7 @@ test('browser pilot filter preserves its prior cohort and adds three exact direc
   const shell = missingScenario.flatMap(group => group.features).find(feature => feature.title === 'WebPartShell');
   shell.scenarios = shell.scenarios.filter(scenario => scenario.title !== 'Configure the actual web part Shell');
   assert.throws(() => filterPilotGroups(missingScenario), /Missing pilot scenario or duplicate: WebPartShell\/Configure the actual web part Shell/);
-  for (const owner of ['createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'useSPFxPnPListById', 'useSPFxPnPListByUrl', 'useSPFxPnPListByPath', 'useSPFxPnP', 'useSPFxPnPContext', 'useSPFxConfigurationStore', 'createSPFxConfigurationStoreService', 'useSPFxTenantProperty', 'createSPFxTenantPropertyService', 'useSPFxTenantKeyValueStore', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService']) {
+  for (const owner of ['useSPFxPnPSearch', 'SearchVerticals', 'createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'useSPFxPnPListById', 'useSPFxPnPListByUrl', 'useSPFxPnPListByPath', 'useSPFxPnP', 'useSPFxPnPContext', 'useSPFxConfigurationStore', 'createSPFxConfigurationStoreService', 'useSPFxTenantProperty', 'createSPFxTenantPropertyService', 'useSPFxTenantKeyValueStore', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService']) {
     const missing = structuredClone(groups);
     for (const group of missing) group.features = group.features.filter(feature => feature.title !== owner);
     assert.throws(() => filterPilotGroups(missing), new RegExp('Missing pilot feature or duplicate: ' + owner));
@@ -53,6 +58,10 @@ test('browser pilot filter preserves its prior cohort and adds three exact direc
     const group = duplicate.find(group => group.features.some(feature => feature.title === owner));
     group.features.push(structuredClone(group.features.find(feature => feature.title === owner)));
     assert.throws(() => filterPilotGroups(duplicate), new RegExp('Missing pilot feature or duplicate: ' + owner));
+    const duplicateScenario = structuredClone(groups);
+    const duplicated = duplicateScenario.flatMap(group => group.features).find(feature => feature.title === owner);
+    duplicated.scenarios.push({ ...duplicated.scenarios[0] });
+    assert.throws(() => filterPilotGroups(duplicateScenario), new RegExp('Missing pilot scenario or duplicate: ' + owner));
     const missingScenario = structuredClone(groups);
     missingScenario.flatMap(group => group.features).find(feature => feature.title === owner).scenarios = [];
     assert.throws(() => filterPilotGroups(missingScenario), new RegExp('Missing pilot scenario or duplicate: ' + owner));

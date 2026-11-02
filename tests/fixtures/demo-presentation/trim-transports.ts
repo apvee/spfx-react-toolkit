@@ -1,4 +1,5 @@
 // Deterministic native transport boundaries only. Real providers/hooks/adapters decide access.
+import { acceptsSearchPost } from './pnp-search-protocol';
 import { PageContext, HttpClient, SPHttpClient, MSGraphClientFactory, AadHttpClientFactory, AadTokenProviderFactory, ThemeProvider } from './spfx-services';
 export const fixturePage = {
   site: { id: '11111111-0000-0000-0000-000000000001', serverRelativeUrl: '/sites/demo', absoluteUrl: 'https://simulated.invalid/sites/demo' },
@@ -140,6 +141,7 @@ let holdDownloads = false;
 let holdClients = false, holdInitialization = false, holdTokens = false;
 let pnpCrud = false;
 let pnpServices = false;
+let pnpSearch = false;
 /** Fixture execution mode only; matching callers are not security-isolated. */
 export function isPnPCrudEnabled(): boolean { return pnpCrud; }
 let initializationError = false;
@@ -182,6 +184,20 @@ window.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response>
   if (url !== graphDataDownload) {
     const target = new URL(url);
     const method = init?.method ?? 'GET';
+    if (pnpSearch && acceptsSearchPost(target, init, 'https://simulated.invalid')) {
+      // Admission above establishes this finite fixture payload; PnP still parses its native cell rows.
+      const query = (JSON.parse(String(init?.body)) as { request: { RowLimit: number; StartRow?: number } }).request;
+      const offset = query.StartRow ?? 0;
+      const total = query.RowLimit === 5 ? 7 : 1;
+      const rows = Array.from({ length: Math.min(query.RowLimit, Math.max(0, total - offset)) }, (_, index) => ({ Cells: [
+        { Key: 'DocId', Value: String(offset + index + 1) }, { Key: 'Title', Value: 'Fixture Search result ' + (offset + index + 1) },
+        { Key: 'Path', Value: 'https://simulated.invalid/result/' + (offset + index + 1) }, { Key: 'Author', Value: 'Fixture author' },
+      ] }));
+      return clientWork('pnp-search', url, () => new Response(JSON.stringify({ PrimaryQueryResult: { RelevantResults: { RowCount: rows.length, TotalRows: total, Table: { Rows: rows } } } }), { headers: { 'Content-Type': 'application/json' } }), { method, headers: init?.headers, body: init?.body }).then(value => {
+        if (!(value instanceof Response)) throw new Error('PnP Search fixture requires a native Response');
+        return value;
+      });
+    }
     const selected = target.searchParams.get('$select');
     const sameOrigin = target.origin === 'https://simulated.invalid';
     const listRead = target.pathname.endsWith('/_api/web/lists') && selected === 'Title,ItemCount'
@@ -284,9 +300,10 @@ window.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response>
   });
 };
 export const clientsNative = { requests: clientRequests, initializations, tokens: tokenRequests, downloads: downloadRequests,
-  configure(options: { holdRequests?: boolean; holdInitialization?: boolean; holdTokens?: boolean; holdDownloads?: boolean; initializationError?: boolean; pnpCrud?: boolean; pnpServices?: boolean }): void {
+  configure(options: { holdRequests?: boolean; holdInitialization?: boolean; holdTokens?: boolean; holdDownloads?: boolean; initializationError?: boolean; pnpCrud?: boolean; pnpServices?: boolean; pnpSearch?: boolean }): void {
     pnpCrud = options.pnpCrud ?? pnpCrud;
     pnpServices = options.pnpServices ?? pnpServices;
+    pnpSearch = options.pnpSearch ?? pnpSearch;
     holdDownloads = options.holdDownloads ?? holdDownloads;
     holdClients = options.holdRequests ?? holdClients; holdInitialization = options.holdInitialization ?? holdInitialization; holdTokens = options.holdTokens ?? holdTokens; initializationError = options.initializationError ?? initializationError;
   },

@@ -73,7 +73,6 @@ const demoIcons: Readonly<Record<string, FluentIcon>> = {
   CloudSecure: Shield24Regular,
   BlockedSiteSolid12: Shield24Regular,
   AppIconDefault: Apps24Regular,
-  SearchAndApps: Apps24Regular,
   WebAppBuilderFragment: Apps24Regular,
   Brightness: WeatherSunny24Regular,
   BulletedList: TextBulletListLtr24Regular,

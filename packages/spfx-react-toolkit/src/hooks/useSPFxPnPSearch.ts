@@ -50,7 +50,7 @@ type SearchQueryBuilderFn = (builder: ISearchBuilder) => ISearchBuilder;
  * Standard SharePoint Search Verticals (Result Sources).
  * Use these SourceIds to filter search results by content type.
  *
- * @example
+ * @example Search People with an explicit builder
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
@@ -78,6 +78,117 @@ type SearchQueryBuilderFn = (builder: ISearchBuilder) => ISearchBuilder;
  * ```
  *
  * @useWhen a builder needs one of the listed SharePoint result-source identifiers.
+ *
+ * @example Search selected verticals with builder paging
+ * ```tsx
+ * import * as React from 'react';
+ * import { Button, Link, makeStyles } from '@fluentui/react-components';
+ * import { useSPFxPnPContext, useSPFxPnPSearch, SearchVerticals } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * type Item = { Title?: string; Path?: string; Author?: string; LastModifiedTime?: string };
+ * type Outcome = { token: object; request: number; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
+ * const choices = { All: SearchVerticals.All, Documents: SearchVerticals.Documents, Pages: SearchVerticals.Pages, People: SearchVerticals.People, Videos: SearchVerticals.Videos } as const;
+ * const useStyles = makeStyles({ controls: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, results: { display: 'grid', gap: '12px' } });
+ *
+ * export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const classes = useStyles();
+ *   const context = useSPFxPnPContext();
+ *   const [vertical, setVertical] = React.useState<keyof typeof choices>('All');
+ *   const info = useSPFxPnPSearch<Item>({ pageSize: 5, selectProperties: ['Title', 'Path', 'Author', 'LastModifiedTime', 'FileType'] }, context);
+ *   // Only stable operation/client identities own this session, never the changing info object.
+ *   const values: readonly unknown[] = [info.search, info.loadMore, context.sp, resetRevision];
+ *   const boundary = React.useRef({ values, token: {}, version: 0, page: 0 });
+ *   if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {}, version: 0, page: 0 };
+ *   const session = boundary.current;
+ *   const token = session.token;
+ *   const version = session.version;
+ *   const pageVersion = session.page;
+ *   const mounted = React.useRef(false);
+ *   const sequence = React.useRef(0);
+ *   const dispatch = React.useRef<{ token: object; request: number; version: number }>();
+ *   const [outcome, setOutcome] = React.useState<Outcome>();
+ *   const [published, setPublished] = React.useState<{ token: object; version: number }>();
+ *   const current = (): boolean => mounted.current && boundary.current === session && session.version === version;
+ *   const visible = current() && outcome?.token === token ? outcome : undefined;
+ *   const showResults = current() && published?.token === token && published.version === version;
+ *   React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
+ *   const revision = React.useRef(resetRevision);
+ *   React.useLayoutEffect(() => {
+ *     if (revision.current === resetRevision) return;
+ *     revision.current = resetRevision;
+ *     sequence.current++;
+ *     setOutcome(undefined);
+ *     setPublished(undefined);
+ *     setVertical('All');
+ *   }, [resetRevision]);
+ *   const invalidate = (): void => {
+ *     session.version++;
+ *     session.page++;
+ *     sequence.current++;
+ *     setOutcome(undefined);
+ *     setPublished(undefined);
+ *   };
+ *   const choose = (next: keyof typeof choices): void => {
+ *     if (!current() || next === vertical) return;
+ *     invalidate();
+ *     setVertical(next);
+ *   };
+ *   const run = async (query: string, append = false): Promise<void> => {
+ *     if (!current() || !context.isInitialized || !query.trim() || (dispatch.current?.token === token && dispatch.current.version === version)) return;
+ *     if (append && (!showResults || !info.hasMore || session.page !== pageVersion)) return;
+ *     const request = ++sequence.current;
+ *     const owns = (): boolean => current() && sequence.current === request;
+ *     dispatch.current = { token, request, version };
+ *     session.page++;
+ *     setOutcome({ token, request, phase: 'pending' });
+ *     if (!append) setPublished(undefined);
+ *     try {
+ *       if (append) await info.loadMore();
+ *       else await info.search(builder => {
+ *         const configured = builder.text(query).sortList({ Property: 'LastModifiedTime', Direction: 1 });
+ *         const sourceId = choices[vertical];
+ *         return sourceId === undefined ? configured : configured.sourceId(sourceId);
+ *       });
+ *       if (owns()) {
+ *         setPublished({ token, version });
+ *         setOutcome({ token, request, phase: 'success' });
+ *       }
+ *     } catch (error) {
+ *       if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
+ *     } finally {
+ *       if (owns() && dispatch.current?.token === token && dispatch.current.request === request) dispatch.current = undefined;
+ *     }
+ *   };
+ *   const dismiss = (): void => {
+ *     if (!current() || visible?.phase !== 'error' || visible.request !== sequence.current) return;
+ *     info.clearError();
+ *     setOutcome(undefined);
+ *   };
+ *   const pending = visible?.phase === 'pending';
+ *   const regions: DemoRegions = {
+ *     controls: <div className={classes.controls}>{(Object.keys(choices) as Array<keyof typeof choices>).map(value => <Button key={value} appearance={vertical === value ? 'primary' : 'secondary'} onClick={() => choose(value)}>{value}</Button>)}</div>,
+ *     commands: <><Button disabled={!context.isInitialized || pending} onClick={() => run('*')}>Search All</Button><Button disabled={!context.isInitialized || pending} onClick={() => run('filetype:docx OR filetype:pdf')}>Search Documents</Button></>,
+ *     status: <>
+ *       {context.error && <p role="alert">Client initialization error: {context.error.message}</p>}
+ *       {visible?.phase === 'error' && <div role="alert">{visible.message} <Button onClick={dismiss}>Dismiss</Button></div>}
+ *       <p role="status">{pending ? 'Loading...' : showResults ? 'Search complete.' : 'Run the selected search.'}</p>
+ *     </>,
+ *     children: showResults ? <>
+ *       <p>Found {info.totalResults} result{info.totalResults === 1 ? '' : 's'} in &quot;{vertical}&quot;</p>
+ *       <div className={classes.results}>{info.results.map(result => <article key={result.id}>
+ *         <h3>{result.data.Title || '(No Title)'}</h3>
+ *         <p>{result.data.Author} - {result.data.LastModifiedTime ? new Date(result.data.LastModifiedTime).toLocaleDateString() : 'N/A'}</p>
+ *         {result.data.Path?.trim() ? <Link href={result.data.Path} target="_blank" rel="noopener noreferrer">{result.data.Path}</Link> : undefined}
+ *       </article>)}</div>
+ *       {info.hasMore && <Button disabled={pending} onClick={() => run('*', true)}>{pending ? 'Loading...' : 'Load More'}</Button>}
+ *     </> : undefined,
+ *     diagnostics: <p>Builder API with five vertical choices, LastModifiedTime sort and five-row paging. Mount below the matching SPFx provider. Select a vertical, then explicitly search. Paging retains the executed builder/source. Selection and reset hide obsolete work without canceling dispatched requests. Server permissions and indexing determine results; Sites and Conversations are not exercised here.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Choose a vertical, explicitly run Search All or Search Documents, and load additional results from that same source; selection and reset send no query and hide obsolete work.' };
+ * ```
  */
 export const SearchVerticals = {
   /**
@@ -556,6 +667,107 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
  *     <ul>{state.results.map(result => <li key={result.id}>{result.data.Title}</li>)}</ul>
  *   </div>;
  * }
+ * ```
+ *
+ * @example Search SharePoint text with explicit execution
+ * ```tsx
+ * import * as React from 'react';
+ * import { Button, Input, Link, makeStyles } from '@fluentui/react-components';
+ * import { useSPFxPnPContext, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * type Item = { Title?: string; Path?: string; FileType?: string };
+ * type Outcome = { token: object; request: number; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
+ * const useStyles = makeStyles({ results: { display: 'grid', gap: '12px' } });
+ *
+ * export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const classes = useStyles();
+ *   const context = useSPFxPnPContext();
+ *   const [text, setText] = React.useState('');
+ *   const info = useSPFxPnPSearch<Item>({ pageSize: 10 }, context);
+ *   // Only stable operation/client identities own this session, never the changing info object.
+ *   const values: readonly unknown[] = [info.search, context.sp, resetRevision];
+ *   const boundary = React.useRef({ values, token: {}, version: 0 });
+ *   if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {}, version: 0 };
+ *   const session = boundary.current;
+ *   const token = session.token;
+ *   const version = session.version;
+ *   const mounted = React.useRef(false);
+ *   const sequence = React.useRef(0);
+ *   const dispatch = React.useRef<{ token: object; request: number; version: number }>();
+ *   const [outcome, setOutcome] = React.useState<Outcome>();
+ *   const [published, setPublished] = React.useState<{ token: object; version: number }>();
+ *   const current = (): boolean => mounted.current && boundary.current === session && session.version === version;
+ *   const visible = current() && outcome?.token === token ? outcome : undefined;
+ *   const showResults = current() && published?.token === token && published.version === version;
+ *   React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
+ *   const revision = React.useRef(resetRevision);
+ *   React.useLayoutEffect(() => {
+ *     if (revision.current === resetRevision) return;
+ *     revision.current = resetRevision;
+ *     sequence.current++;
+ *     setOutcome(undefined);
+ *     setPublished(undefined);
+ *     setText('');
+ *   }, [resetRevision]);
+ *   const invalidate = (): void => {
+ *     session.version++;
+ *     sequence.current++;
+ *     setOutcome(undefined);
+ *     setPublished(undefined);
+ *   };
+ *   const edit = (next: string): void => {
+ *     if (!current() || next === text) return;
+ *     invalidate();
+ *     setText(next);
+ *   };
+ *   const run = async (query: string): Promise<void> => {
+ *     if (!current() || !context.isInitialized || !query.trim() || (dispatch.current?.token === token && dispatch.current.version === version)) return;
+ *     const request = ++sequence.current;
+ *     const owns = (): boolean => current() && sequence.current === request;
+ *     dispatch.current = { token, request, version };
+ *     setOutcome({ token, request, phase: 'pending' });
+ *     setPublished(undefined);
+ *     try {
+ *       await info.search(query);
+ *       if (owns()) {
+ *         setPublished({ token, version });
+ *         setOutcome({ token, request, phase: 'success' });
+ *       }
+ *     } catch (error) {
+ *       if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
+ *     } finally {
+ *       if (owns() && dispatch.current?.token === token && dispatch.current.request === request) dispatch.current = undefined;
+ *     }
+ *   };
+ *   const dismiss = (): void => {
+ *     if (!current() || visible?.phase !== 'error' || visible.request !== sequence.current) return;
+ *     info.clearError();
+ *     setOutcome(undefined);
+ *   };
+ *   const pending = visible?.phase === 'pending';
+ *   const regions: DemoRegions = {
+ *     controls: <Input aria-label="Search SharePoint..." placeholder="Search SharePoint..." value={text} onChange={(_, data) => edit(data.value)} onKeyDown={event => { if (event.key === 'Enter') return run(text); return undefined; }} />,
+ *     commands: <Button disabled={!context.isInitialized || !text.trim() || pending} onClick={() => run(text)}>Search</Button>,
+ *     status: <>
+ *       {context.error && <p role="alert">Client initialization error: {context.error.message}</p>}
+ *       {visible?.phase === 'error' && <div role="alert">{visible.message} <Button onClick={dismiss}>Dismiss</Button></div>}
+ *       <p role="status">{pending ? 'Loading...' : showResults ? 'Search complete.' : 'Run the selected search.'}</p>
+ *     </>,
+ *     children: showResults ? <>
+ *       <p>Found {info.totalResults} result{info.totalResults === 1 ? '' : 's'}</p>
+ *       <div className={classes.results}>{info.results.map(result => <article key={result.id}>
+ *         <h3>{result.data.Title || '(No Title)'}</h3>
+ *         {result.data.Path?.trim() ? <Link href={result.data.Path} target="_blank" rel="noopener noreferrer">{result.data.Path}</Link> : undefined}
+ *         {result.data.FileType && <p>Type: {result.data.FileType}</p>}
+ *       </article>)}</div>
+ *       {info.totalResults === 0 && <p>No results found. Try a different query.</p>}
+ *     </> : undefined,
+ *     diagnostics: <p>Simple text search. Try: document, report, ContentType:Document. Mount below the matching SPFx provider. Only Search or Enter sends nonempty text; the original nonempty KQL is preserved. Editing/reset hides obsolete work without canceling dispatched requests. Server permissions and indexing determine results.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Search or Enter runs the current nonempty text, shows its results or dismissible error, and reset or draft changes hide obsolete work without sending another query.' };
  * ```
  */
 export function useSPFxPnPSearch<T = Record<string, string>>(

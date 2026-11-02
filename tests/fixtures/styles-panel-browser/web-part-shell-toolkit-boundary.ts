@@ -96,3 +96,6 @@ export { useSPFxPnPListByPath } from '../../../packages/spfx-react-toolkit/lib/h
 export { createSPFxPnPContextService } from '../../../packages/spfx-react-toolkit/lib/services/spfx-pnp-context.service';
 export { createSPFxPnPService } from '../../../packages/spfx-react-toolkit/lib/services/spfx-pnp.service';
 export { createSPFxPnPListService, type SPFxPnPListSelector, type SPFxPnPListService, type SPFxPnPListQueryBuilder, type SPFxPnPListQueryResult } from '../../../packages/spfx-react-toolkit/lib/services/spfx-pnp-list.service';
+
+// Search cases retain the actual matching-mode hook, constants, service and PnP parser.
+export { useSPFxPnPSearch, SearchVerticals } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPnPSearch';
