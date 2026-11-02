@@ -143,7 +143,7 @@ test('numeric drafts allow clearing and sequential replacement while retaining v
 
 test('hook, provider, style and service panels use Fluent configuration and shared demo regions', () => {
   const componentRoot = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
-  const panels = ['Providers', 'GraphData', 'Site', 'Tenant', 'PnP', 'Search'];
+  const panels = ['Providers', 'Site', 'Tenant', 'PnP', 'Search'];
   const files = panels.map(name => path.join(componentRoot, 'panels', name + 'Panel.tsx'))
     .concat(fs.readdirSync(path.join(componentRoot, 'demos')).filter(name => /^PnP.*\.tsx$/.test(name)).map(name => path.join(componentRoot, 'demos', name)));
   for (const file of files) {
@@ -216,6 +216,34 @@ test('hook, provider, style and service panels use Fluent configuration and shar
       assert.match(source, /<Accordion\b/, 'raw diagnostics use actual Fluent accordion controls');
     } else assert.doesNotMatch(source, /<(?:Button|Input|Select)\b/, 'token readiness has no invented token command');
     if (['useSPFxAadHttpClient', 'useSPFxApiPermissionPrecheck'].includes(entry.featureTitle)) assert.match(source, /controls:[\s\S]*<Field\b[\s\S]*<Input\b/, 'resource configuration retains real Fluent fields');
+  }
+  const graphTitles = {
+    useSPFxUserPhoto: 'Read the current user photo with managed URL cleanup',
+    useSPFxOneDriveAppData: 'Read and explicitly replace OneDrive app data',
+  };
+  const graphOwners = Object.keys(graphTitles).map(name => `packages/spfx-react-toolkit/src/hooks/${name}.ts#${name}`);
+  const graphCases = catalogueModule.exports.executableExamples.filter(entry => graphOwners.includes(entry.ownerKey));
+  assert.deepEqual(graphCases.map(entry => [entry.featureTitle, entry.title]).sort(), Object.entries(graphTitles).sort(), 'exact two canonical GraphData cases replace the panel');
+  for (const entry of graphCases) {
+    const source = fs.readFileSync(path.join(generatedRoot, entry.id + '.tsx'), 'utf8');
+    assert.equal(entry.metadata.host, 'webPart'); assert.equal(entry.metadata.contentPlacement, 'configuration');
+    assert.equal(entry.metadata.kind, entry.featureTitle === 'useSPFxUserPhoto' ? 'read' : 'write');
+    assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]|<(?:input|select|textarea|button|details|summary|a)\b|<FluentProvider\b/);
+    const parsed = ts.createSourceFile(entry.id + '.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    let subjectCalls = 0;
+    function inspectGraph(node) {
+      if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === entry.featureTitle) subjectCalls++;
+      if (ts.isJsxAttribute(node)) assert.ok(!['style', 'styles'].includes(node.name.text), entry.title + ' uses classes');
+      ts.forEachChild(node, inspectGraph);
+    }
+    inspectGraph(parsed);
+    assert.equal(subjectCalls, 1, 'case calls its actual public subject, including generic invocations');
+    assert.match(source, /return render \? render\(regions\)/);
+    assert.match(source, /commands:\s*<>\s*<Button\b/);
+    if (entry.featureTitle === 'useSPFxOneDriveAppData') {
+      assert.match(source, /<Field\b[\s\S]*<Select\b/); assert.match(source, /<Input\b/);
+      assert.match(source, /<Accordion\b/); assert.match(source, /overflowX: 'auto'/);
+    } else assert.match(source, /<Image\b[\s\S]*<Avatar\b/);
   }
   // Context's finite acceptance cohort must not absorb later client/data hook families.
   const contextNames = ['Context', 'PageContext', 'InstanceInfo', 'DisplayMode', 'IsEdit', 'EnvironmentInfo',

@@ -70,6 +70,16 @@ Use the [configuration reference](../../api/hooks/storage/configuration-store.md
 
 <!-- toolkit:include symbol="useSPFxOneDriveAppData" section="example" title="Edit app-folder configuration" -->
 
+## Explicit Graph workflows and local reset
+
+The two complete host scenarios below keep Graph initialization behind Start and business requests behind Run. They require the matching SPFx provider and approved endpoint grants. The photo requests the default 240x240 bytes and displays a 96px image or named fallback. OneDrive uses the fixed demo app-folder file, with no automatic fetch or missing-file provisioning; only its explicit Write replaces content. Its generic JSON type does not validate arbitrary stored shapes.
+
+Reset preserves the operational child, original hook callbacks and genuine pending locks. It restores local drafts and hides stale publication; it does not clear hook state, cancel requests, revoke a still-owned photo URL or undo accepted OneDrive content. A current photo request may finish with a hidden owned URL after Reset, released by normal hook cleanup. Ordinary feature navigation can leave pending work, with unmount suppressing late UI publication. Real writes/cleanup require an authorized destination; metadata/download failures are not confirmed absence.
+
+<!-- toolkit:include symbol="useSPFxUserPhoto" section="example" title="Read the current user photo with managed URL cleanup" -->
+
+<!-- toolkit:include symbol="useSPFxOneDriveAppData" section="example" title="Read and explicitly replace OneDrive app data" -->
+
 ## Stable browser names
 
 Keep the instance ID and unscoped key stable to retrieve the same browser entry. {@link createScopedSPFxStorageKey} creates a name such as `spfx:webpart-42:filters`; it does not encrypt data or synchronize components. The browser hooks own initialization, JSON conversion, storage events and best-effort writes. Local and session persistence have different lifetimes even when their APIs look similar.

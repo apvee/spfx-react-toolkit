@@ -54,17 +54,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
-    key: 'graph',
-    title: 'Graph Data',
-    iconName: 'OneDrive',
-    description: 'Graph-backed convenience hooks for photo and OneDrive app data.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-graph-data' */ './panels/GraphDataPanel')),
-    coverage: [
-      { symbol: 'useSPFxUserPhoto', kind: 'read', notes: 'Current user photo with fallback.' },
-      { symbol: 'useSPFxOneDriveAppData', kind: 'write', notes: 'App folder load/write with isolated demo file.' },
-    ],
-  },
-  {
     key: 'site',
     title: 'Site',
     iconName: 'TableGroup',

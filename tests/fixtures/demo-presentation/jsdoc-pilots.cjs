@@ -1,5 +1,7 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
+  useSPFxUserPhoto: ['Read the current user photo with managed URL cleanup'],
+  useSPFxOneDriveAppData: ['Read and explicitly replace OneDrive app data'],
   useSPFxHttpClient: ['Load an external todo with tracked invocation state'],
   useSPFxSPHttpClient: ['Read the current SharePoint web title and URL'],
   useSPFxMSGraphClient: ['Read the current Graph profile after initialization'],

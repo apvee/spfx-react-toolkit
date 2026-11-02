@@ -88,3 +88,17 @@ test('OneDrive writes retain the Graph content endpoint and JSON payload', async
   assert.deepEqual(f.requests, [{ path: '/me/drive/special/approot:/demo/test.json:/content', header: ['Content-Type', 'application/json'], content: '{"counter":3}' }]);
   assert.equal(f.downloads.length, 0);
 });
+
+test('OneDrive empty downloaded bytes are malformed JSON, not file absence', async t => {
+  const f = fixture(t);
+  t.mock.method(global, 'fetch', async () => new Response('', { status: 200 }));
+  await assert.rejects(f.service.read('test.json'), /Failed to parse JSON/);
+  assert.equal(f.requests.length, 1);
+});
+
+test('OneDrive serialization failure dispatches no Graph request', async t => {
+  const f = fixture(t);
+  const circular = {}; circular.self = circular;
+  await assert.rejects(f.service.write('test.json', circular), /circular/i);
+  assert.deepEqual(f.requests, []);
+});

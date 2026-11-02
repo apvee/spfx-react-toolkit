@@ -4,14 +4,14 @@ const { pilotTitles, filterPilotGroups } = require('./fixtures/demo-presentation
 const { createContextFixture } = require('./fixtures/executable-examples/context-scenarios.cjs');
 const { checkLegacyPermissionResult } = require('../scripts/jsdoc-pilots-browser.helpers.cjs');
 
-test('browser pilot filter selects exactly 32 features and 39 independently named scenarios without mutation', () => {
+test('browser pilot filter selects exactly 34 features and 41 independently named scenarios without mutation', () => {
   const features = Object.entries(pilotTitles).map(([title, titles]) => ({ key: title, title, scenarios: [...titles.map(title => ({ title })), { title: 'Future scenario' }] }));
   const groups = [{ key: 'controls', features: features.slice(0, 2) }, { key: 'hooks', features: features.slice(2) }, { key: 'future', features: [{ title: 'Future feature', scenarios: [] }] }];
   const original = structuredClone(groups);
   const filtered = filterPilotGroups(groups);
   assert.equal(filtered.length, 2);
-  assert.equal(filtered.flatMap(group => group.features).length, 32);
-  assert.equal(filtered.flatMap(group => group.features).flatMap(feature => feature.scenarios).length, 39);
+  assert.equal(filtered.flatMap(group => group.features).length, 34);
+  assert.equal(filtered.flatMap(group => group.features).flatMap(feature => feature.scenarios).length, 41);
   assert.deepEqual(groups, original, 'filter never mutates any app catalogue group, feature or scenario');
 
   const missingFeature = structuredClone(groups);

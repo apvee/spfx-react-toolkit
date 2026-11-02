@@ -73,3 +73,7 @@ export { useSPFxAadHttpClient } from '../../../packages/spfx-react-toolkit/src/h
 export { useSPFxAadTokenProvider } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider';
 export { useSPFxApiPermissionPrecheck } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxApiPermissionPrecheck';
 export { summarizeSPFxApiPermissionResults } from '../../../packages/spfx-react-toolkit/src/helpers/spfx-api-permission-precheck.helpers';
+
+// GraphData subjects retain actual hook/service/URL ownership; native transports alone are controlled.
+export { useSPFxUserPhoto } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto';
+export { useSPFxOneDriveAppData } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData';

@@ -1,91 +1,58 @@
+// Legacy GraphData concerns transferred to actual owning source/lib scenarios.
+// Native Graph factory/terminal/fetch alone are controlled; no subject hook doubles.
 const assert = require('node:assert/strict');
-const path = require('node:path');
 const { test } = require('node:test');
-const { Simulate } = require('react-dom/test-utils');
-const { FluentProvider, webLightTheme } = require('@fluentui/react-components');
-const { createHarness } = require('./services-test-harness.cjs');
-const panel = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/GraphDataPanel.tsx');
-function fixture(t, options = {}) {
-  const calls = [];
-  const graph = { client: {}, isReady: true, isInitializing: false, ...options.graph };
-  let settle;
-  const boundaries = {
-    './useSPFxMSGraphClient': { useSPFxMSGraphClient: () => graph },
-    '../services/spfx-onedrive-app-data.service': { createSPFxOneDriveAppDataService: client => options.serviceFactory ? options.serviceFactory(client, calls) : ({ read: async (file, folder) => { calls.push(['read', file, folder]); return { isNotFound: true }; }, write: async (...args) => { calls.push(['write', ...args]); await new Promise(resolve => { settle = resolve; }); } }) },
-  };
-  const h = createHarness(boundaries);
-  boundaries['../shared'] = Object.assign({}, ...['DemoCard', 'InfoGrid', 'JsonDetails'].map(name => h.load(path.resolve(path.dirname(panel), '../shared', name + '.tsx'))));
-  boundaries['@apvee/spfx-react-toolkit'] = { useSPFxMSGraphClient: () => graph, useSPFxOneDriveAppData: h.load('hooks/useSPFxOneDriveAppData.ts').useSPFxOneDriveAppData, useSPFxUserInfo: () => ({ displayName: 'Sample user' }), useSPFxUserPhoto: () => ({ isReady: true, reload: async () => {} }) };
-  window.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
-  t.after(h.close);
-  const Panel = h.load(panel).default;
-  const Component = () => h.React.createElement(FluentProvider, { theme: webLightTheme }, h.React.createElement(Panel));
-  const view = h.mountComponent(Component);
-  const choose = (marker, value) => h.act(() => Simulate.change(view.container.querySelector(`select[data-demo-variant="${marker}"]`), { target: { value } }));
-  const execute = async () => h.act(async () => { Simulate.click([...view.container.querySelectorAll('button')].find(button => button.textContent === 'Run')); for (let i = 0; i < 8; i++) await Promise.resolve(); });
-  return { ...h, ...view, graph, calls, choose, execute, refresh: () => h.act(() => { require('react-dom').render(h.React.createElement(Component), view.container); }), settle: async () => h.act(async () => { settle(); await Promise.resolve(); }) };
+const { createGraphDataFixture } = require('./fixtures/executable-examples/graph-data-scenarios.cjs');
+const drivePath = '/me/drive/special/approot:/spfx-react-toolkit-demo/test-data.json';
+const runButton = f => [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Run');
+async function fixture(t) {
+  const f = createGraphDataFixture(t, 'useSPFxOneDriveAppData');
+  assert.equal(f.initializations.length, 0);
+  f.click('Start'); await f.ready();
+  return f;
 }
-test('OneDrive missing-file read does not create; selector changes never invoke services and explicit write locks its target', async t => {
-  const f = fixture(t);
-  assert.deepEqual(f.calls, []);
-  f.choose('GraphDataPanel', 'onedrive');
-  assert.deepEqual(f.calls, [], 'selecting OneDrive must not read or write');
-  assert.equal(f.container.querySelectorAll('[data-demo-section]').length, 1);
-  await f.execute();
-  assert.deepEqual(f.calls, [['read', 'test-data.json', 'spfx-react-toolkit-demo']]);
+test('OneDrive missing-file read does not create; configuration is passive and explicit write locks its fixed target', async t => {
+  const f = await fixture(t);
+  assert.deepEqual(f.calls, []); f.click('Run');
+  assert.equal(f.calls[0].url, drivePath);
+  await f.flush(() => f.calls[0].reject(Object.assign(new Error('Missing'), { statusCode: 404 })));
   assert.match(f.container.querySelector('[data-demo-result]').textContent, /File not found/);
-  f.choose('OneDriveScenario', 'write');
+  assert.equal(f.downloads.length, 0);
+  f.change('OneDrive operation', 'write');
   assert.equal(f.calls.length, 1);
   assert.ok(!f.container.querySelector('[data-demo-result]').textContent.includes('File not found'));
-  await f.execute();
-  assert.equal(f.calls.length, 2);
-  assert.equal(f.calls[1][0], 'write');
-  assert.equal(f.container.querySelector('select[data-demo-variant="GraphDataPanel"]').disabled, true);
-  assert.equal(f.container.querySelector('select[data-demo-variant="OneDriveScenario"]').disabled, true);
+  f.click('Run'); assert.equal(f.calls.length, 2); assert.equal(f.calls[1].method, 'PUT');
+  assert.equal(f.calls[1].url, drivePath + ':/content');
+  assert.equal(f.container.querySelector('select').disabled, true);
   assert.equal(f.container.querySelector('input').disabled, true);
-  await f.settle();
-  assert.equal(f.container.querySelector('select[data-demo-variant="GraphDataPanel"]').disabled, false);
+  assert.equal(runButton(f).disabled, true);
+  await f.flush(() => f.calls[1].resolve({}));
+  assert.equal(f.container.querySelector('select').disabled, false);
 });
-
-function deferred() { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; }
-for (const isInitializing of [false, true]) {
-  test(`unavailable OneDrive client (${isInitializing ? 'initializing' : 'missing'}) cannot execute or claim a persisted default`, async t => {
-    const f = fixture(t, { graph: { client: undefined, isReady: false, isInitializing } });
-    f.choose('GraphDataPanel', 'onedrive');
-    const button = [...f.container.querySelectorAll('button')].find(button => button.textContent === 'Run');
-    assert.equal(button.disabled, true);
-    await f.execute(); // Simulated dispatch also tests the defensive callback guard.
-    assert.deepEqual(f.calls, []);
-    const result = f.container.querySelector('[data-demo-result]').textContent;
-    assert.match(result, /Graph unavailable/);
-    assert.ok(!result.includes('Saved message'));
-    assert.ok(!result.includes('Counter'));
-  });
-}
-test('obsolete OneDrive write rejection cannot replace a newer read on another real-hook service identity', async t => {
-  const pending = deferred();
-  const f = fixture(t, { serviceFactory: (client, calls) => ({
-    read: async () => { calls.push(['read', client]); return { isNotFound: false, data: { message: 'Current service read', counter: 4, timestamp: 1 } }; },
-    write: async () => { calls.push(['write', client]); return pending.promise; },
-  }) });
-  f.choose('GraphDataPanel', 'onedrive'); f.choose('OneDriveScenario', 'write'); await f.execute();
-  const oldClient = f.graph.client;
-  f.graph.client = {}; f.refresh();
-  f.choose('OneDriveScenario', 'read'); await f.execute();
-  assert.match(f.container.querySelector('[data-demo-result]').textContent, /Current service read/);
-  await f.act(async () => { pending.reject(new Error('Obsolete write failed')); await pending.promise.catch(() => {}); });
+for (const state of ['initializing', 'missing']) test(`unavailable OneDrive client (${state}) cannot execute or claim a persisted default`, async t => {
+  const f = createGraphDataFixture(t, 'useSPFxOneDriveAppData');
+  f.click('Start'); await f.flush();
+  if (state === 'missing') await f.flush(() => f.initializations.forEach(request => request.reject(new Error('Graph unavailable'))));
+  assert.equal(runButton(f).disabled, true);
+  await f.flush(() => { f.action('Run')(); });
+  assert.equal(f.calls.length, 0);
+  const result = f.container.querySelector('[data-demo-result]').textContent;
+  assert.match(result, /Graph unavailable/); assert.ok(!result.includes('Saved message')); assert.ok(!result.includes('Counter'));
+});
+test('obsolete OneDrive write rejection cannot replace a newer read on another actual native client identity', async t => {
+  const f = await fixture(t); f.change('OneDrive operation', 'write'); f.click('Run'); const old = f.calls[0];
+  f.changeScope(f.host('legacy-B')); await f.ready(); f.change('OneDrive operation', 'read'); f.click('Run');
+  await f.flush(() => f.calls[1].resolve({ '@microsoft.graph.downloadUrl': 'https://download.fixture.invalid/app-data' }));
+  await f.flush(() => f.downloads[0].resolve(new Response('{"message":"Current service read","counter":4,"timestamp":1}')));
+  await f.flush(() => old.reject(new Error('Obsolete write failed')));
   assert.ok(!f.container.textContent.includes('Obsolete write failed'));
   assert.match(f.container.querySelector('[data-demo-result]').textContent, /Current service read/);
-  assert.equal(f.calls[0][1], oldClient);
-  assert.notEqual(f.calls[1][1], oldClient);
+  assert.notEqual(old.client, f.calls[1].client);
 });
-test('obsolete successful OneDrive write cannot erase a draft edited after the Graph identity changes', async t => {
-  const pending = deferred();
-  const f = fixture(t, { serviceFactory: () => ({ read: async () => ({ isNotFound: true }), write: () => pending.promise }) });
-  f.choose('GraphDataPanel', 'onedrive'); f.choose('OneDriveScenario', 'write'); await f.execute();
-  f.graph.client = {}; f.refresh();
-  f.act(() => Simulate.change(f.container.querySelector('input'), { target: { value: 'Draft for the new service' } }));
-  await f.act(async () => { pending.resolve(); await pending.promise; });
+test('obsolete successful OneDrive write cannot erase a draft edited after Graph identity changes', async t => {
+  const f = await fixture(t); f.change('OneDrive operation', 'write'); f.click('Run');
+  f.changeScope(f.host('draft-B')); await f.ready(); f.change('Message', 'Draft for the new service');
+  await f.flush(() => f.calls[0].resolve({}));
   assert.equal(f.container.querySelector('input').value, 'Draft for the new service');
   assert.ok(!f.container.querySelector('[data-demo-result]').textContent.includes('Saved message'));
 });

@@ -2200,6 +2200,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-ba2b00dcb75e15ac379b69b302aed89480aca99ac082d30fc31d13089ac48140' */ "./ba2b00dcb75e15ac379b69b302aed89480aca99ac082d30fc31d13089ac48140")
 },
 {
+  "id": "80fecd7a6578b64072f50fabc17fe4bca7af2582601521e6b56968dce1cfb755",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData.ts#useSPFxOneDriveAppData",
+  "title": "Read and explicitly replace OneDrive app data",
+  "groupRoute": "docs/api/hooks/storage/onedrive-app-data.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData.ts#useSPFxOneDriveAppData",
+  "featureTitle": "useSPFxOneDriveAppData",
+  "publicNames": [
+    "useSPFxOneDriveAppData"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData.ts",
+    "line": 235
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "write",
+    "contentPlacement": "configuration",
+    "observe": "Start initializes Graph without reading or writing. Read missing data never creates a file; explicit Write replaces the fixed app-folder message and increments its counter. Pending writes lock inputs. Reset restores local drafts and hides old publication while preserving the hook and real pending locks; it cannot undo remote writes."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-80fecd7a6578b64072f50fabc17fe4bca7af2582601521e6b56968dce1cfb755' */ "./80fecd7a6578b64072f50fabc17fe4bca7af2582601521e6b56968dce1cfb755")
+},
+{
   "id": "d225a6b7a0ca1c61ad5c145b515e779efb1f4226dfa05ac7f313b26090bf72ff",
   "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPageContext.ts#useSPFxPageContext",
   "title": "Inspect selected native page metadata",
@@ -2499,6 +2522,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-67446f39a917ab413a0e12939477af127c3343ce752a03bf18d27900fa3f3f81' */ "./67446f39a917ab413a0e12939477af127c3343ce752a03bf18d27900fa3f3f81")
 },
 {
+  "id": "d1537f414ea3c062b5a84099c7eb3c4c0807b6793f5108777e5ebca8858162ec",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto",
+  "title": "Read the current user photo with managed URL cleanup",
+  "groupRoute": "docs/api/hooks/user-site.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto",
+  "featureTitle": "useSPFxUserPhoto",
+  "publicNames": [
+    "useSPFxUserPhoto"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts",
+    "line": 215
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "observe": "Start initializes Graph without a photo request; Run reads the current user at default 240x240, displays a 96px photo or named fallback, loading, error and blob bytes. Reset hides output while preserving the hook, pending work and owned URL until normal cleanup."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-d1537f414ea3c062b5a84099c7eb3c4c0807b6793f5108777e5ebca8858162ec' */ "./d1537f414ea3c062b5a84099c7eb3c4c0807b6793f5108777e5ebca8858162ec")
+},
+{
   "id": "d41ff401e795fa9c1800585f3d2bdf498395dbac07dce27da9c8d3a2aa023376",
   "ownerKey": "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback",
   "title": "Report current count through a retained callback",
@@ -2682,20 +2728,22 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts#useSPFxLocaleInfo", title: "useSPFxLocaleInfo", scenarios: [executableExamples[90]] },
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxLogger.ts#useSPFxLogger", title: "useSPFxLogger", scenarios: [executableExamples[91]] },
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxMSGraphClient.ts#useSPFxMSGraphClient", title: "useSPFxMSGraphClient", scenarios: [executableExamples[92]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPageContext.ts#useSPFxPageContext", title: "useSPFxPageContext", scenarios: [executableExamples[93]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts#useSPFxPageType", title: "useSPFxPageType", scenarios: [executableExamples[94]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#useSPFxPerformance", title: "useSPFxPerformance", scenarios: [executableExamples[95]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts#useSPFxPermissions", title: "useSPFxPermissions", scenarios: [executableExamples[96]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[97]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties", title: "useSPFxProperties", scenarios: [executableExamples[98]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSPHttpClient.ts#useSPFxSPHttpClient", title: "useSPFxSPHttpClient", scenarios: [executableExamples[99]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts#useSPFxServiceScope", title: "useSPFxServiceScope", scenarios: [executableExamples[100]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage", title: "useSPFxSessionStorage", scenarios: [executableExamples[101]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo", title: "useSPFxSiteInfo", scenarios: [executableExamples[102]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams", title: "useSPFxTeams", scenarios: [executableExamples[103]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[104]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[105]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[106], executableExamples[107]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[108], executableExamples[109]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData.ts#useSPFxOneDriveAppData", title: "useSPFxOneDriveAppData", scenarios: [executableExamples[93]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPageContext.ts#useSPFxPageContext", title: "useSPFxPageContext", scenarios: [executableExamples[94]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts#useSPFxPageType", title: "useSPFxPageType", scenarios: [executableExamples[95]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#useSPFxPerformance", title: "useSPFxPerformance", scenarios: [executableExamples[96]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts#useSPFxPermissions", title: "useSPFxPermissions", scenarios: [executableExamples[97]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[98]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties", title: "useSPFxProperties", scenarios: [executableExamples[99]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSPHttpClient.ts#useSPFxSPHttpClient", title: "useSPFxSPHttpClient", scenarios: [executableExamples[100]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts#useSPFxServiceScope", title: "useSPFxServiceScope", scenarios: [executableExamples[101]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage", title: "useSPFxSessionStorage", scenarios: [executableExamples[102]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo", title: "useSPFxSiteInfo", scenarios: [executableExamples[103]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams", title: "useSPFxTeams", scenarios: [executableExamples[104]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[105]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[106]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto", title: "useSPFxUserPhoto", scenarios: [executableExamples[107]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[108], executableExamples[109]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[110], executableExamples[111]] }
   ] }
 ];

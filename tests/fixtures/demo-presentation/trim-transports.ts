@@ -35,9 +35,20 @@ const sp = { get: async (url: string, _configuration: unknown, _options: unknown
   const payload = url.includes('/_api/web?$select=Title,Url') ? { Title: 'Fixture web', Url: url.slice(0, url.indexOf('/_api/')) } : url.includes('/hubsitedata(false)') ? { value: JSON.stringify({ url: 'https://simulated.invalid/sites/fixture-hub' }) } : url.includes('/currentuser') ? { Id: 17 } : url.includes('/users') ? { value: appliedMode === 'denied' ? [] : [{ Id: 17 }] } : url.includes('/sitegroups(') ? { Id: 2, Title: 'Project Readers' } : url.includes('/sitegroups?') ? { value: [{ Id: 2, Title: exactName(url, 'Title') }] } : url.includes('GetFolderByServerRelativePath') ? { EffectiveBasePermissions: mask, ParentList: { Id: listId } } : url.includes('?$select=Id') ? { Id: listId } : mask;
   return { ok: true, status: 200, json: async () => payload };
 } };
-const graph = { api: (url: string) => { let projection = ''; const builder = {
+const graphDataPath = '/me/drive/special/approot:/spfx-react-toolkit-demo/test-data.json';
+const graphDataDownload = 'https://download.fixture.invalid/app-data';
+let graphDataContent = '{"message":"Fixture saved message","counter":0,"timestamp":1}';
+const graph = { api: (url: string) => { let projection = ''; const headers: Record<string, string> = {}; const builder = {
+  header(name: string, value: string) { headers[name] = value; return builder; },
+  put(body: string) {
+    calls.push({ transport: 'graph', url, body });
+    if (url !== graphDataPath + ':/content') return Promise.reject(new Error('Unsupported fixture Graph PUT'));
+    return clientWork('graph', url, () => { graphDataContent = body; return {}; }, { method: 'PUT', headers: { ...headers }, body });
+  },
   select(fields: string) { projection = fields; return builder; },
   get: async () => { calls.push({ transport: 'graph', url });
+    if (url === '/me/photos/240x240/$value') return clientWork('graph', url, () => new Blob(['<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><rect width="96" height="96" fill="#6264a7"/></svg>'], { type: 'image/svg+xml' }), { method: 'GET', role: 'photo' });
+    if (url === graphDataPath) return clientWork('graph', url, () => ({ '@microsoft.graph.downloadUrl': graphDataDownload }), { method: 'GET', role: 'appDataMetadata' });
     if (url === '/me') return clientWork('graph', url, () => ({ displayName: 'Fixture User', mail: 'fixture@example.invalid', userPrincipalName: 'fixture@example.invalid' }), { select: projection });
     await pause(); if (mode === 'error') throw new Error('Fixture Graph forbidden');
     if (url.startsWith('/me?')) return { id: userId };
@@ -67,6 +78,8 @@ type NativeRequest = { kind: string; target: string; settings?: unknown; resolve
 const clientRequests: NativeRequest[] = [];
 const initializations: NativeRequest[] = [];
 const tokenRequests: NativeRequest[] = [];
+const downloadRequests: NativeRequest[] = [];
+let holdDownloads = false;
 let holdClients = false, holdInitialization = false, holdTokens = false;
 let initializationError = false;
 function controlled(records: NativeRequest[], kind: string, target: string, held: boolean, fallback: () => unknown, settings?: unknown): Promise<unknown> {
@@ -99,8 +112,19 @@ const tokenProvider = {
   },
 };
 const tokenFactory = { getTokenProvider: () => initialization('token', 'provider', tokenProvider) };
-export const clientsNative = { requests: clientRequests, initializations, tokens: tokenRequests,
-  configure(options: { holdRequests?: boolean; holdInitialization?: boolean; holdTokens?: boolean; initializationError?: boolean }): void {
+// Only the exact fake download is handled here; it never reaches a server.
+const browserFetch = window.fetch.bind(window);
+window.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+  const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+  if (url !== graphDataDownload) return browserFetch(input, init);
+  return controlled(downloadRequests, 'download', url, holdDownloads, () => new Response(graphDataContent, { status: 200 }), { credentials: init?.credentials }).then(value => {
+    if (!(value instanceof Response)) throw new Error('Fixture download requires a native Response');
+    return value;
+  });
+};
+export const clientsNative = { requests: clientRequests, initializations, tokens: tokenRequests, downloads: downloadRequests,
+  configure(options: { holdRequests?: boolean; holdInitialization?: boolean; holdTokens?: boolean; holdDownloads?: boolean; initializationError?: boolean }): void {
+    holdDownloads = options.holdDownloads ?? holdDownloads;
     holdClients = options.holdRequests ?? holdClients; holdInitialization = options.holdInitialization ?? holdInitialization; holdTokens = options.holdTokens ?? holdTokens; initializationError = options.initializationError ?? initializationError;
   },
   firePassiveEvents(): { popupCancelled: number; redirectCancelled: number } {

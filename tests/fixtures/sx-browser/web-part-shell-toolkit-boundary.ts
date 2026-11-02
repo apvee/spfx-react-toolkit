@@ -57,3 +57,14 @@ export { useSPFxContainerSize } from '../../../packages/spfx-react-toolkit/src/h
 export { useSPFxThemeInfo } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo';
 export { useSPFxServiceScope } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope';
 export type { SPFxScopedPermissionsOptions } from '../../../packages/spfx-react-toolkit/src/services/spfx-permission-target.types';
+
+// These actual Clients/GraphData subjects are dependencies of the complete lazy catalogue.
+export { useSPFxHttpClient } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxHttpClient';
+export { useSPFxSPHttpClient } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxSPHttpClient';
+export { useSPFxMSGraphClient } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxMSGraphClient';
+export { useSPFxAadHttpClient } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxAadHttpClient';
+export { useSPFxAadTokenProvider } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider';
+export { useSPFxApiPermissionPrecheck } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxApiPermissionPrecheck';
+export { useSPFxUserPhoto } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto';
+export { useSPFxOneDriveAppData } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData';
+export { summarizeSPFxApiPermissionResults, type SPFxApiPermissionCheckResult } from '../../../packages/spfx-react-toolkit/src/helpers/spfx-api-permission-precheck.helpers';

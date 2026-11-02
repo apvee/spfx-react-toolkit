@@ -8,8 +8,6 @@ function useLocalRead() {
   const load = React.useCallback(async () => { setLoading(true); await new Promise(resolve => setTimeout(resolve, 100)); setError(new Error('Simulated network unavailable')); setLoading(false); }, []);
   return { isReady: false, isLoading, error, load, reload: load, isWriting: false, write: forbiddenWrite };
 }
-export const useSPFxUserPhoto = useLocalRead;
-export const useSPFxOneDriveAppData = useLocalRead;
 export const useSPFxTenantProperty = useLocalRead;
 const store = { isReady: false, canWrite: false, isLoading: false, isWriting: false, get: async () => undefined, list: async () => [], save: forbiddenWrite, remove: forbiddenWrite };
 export const useSPFxSiteKeyValueStore = () => store;

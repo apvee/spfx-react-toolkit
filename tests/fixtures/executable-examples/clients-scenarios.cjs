@@ -34,6 +34,7 @@ function createClientsFixture(t, title, options = {}) {
         // The generic TS arrow is parsed as TSX by services-test-harness; reuse its established TS-only loader.
         // This module imports React only, owns state per call and creates no provider/store/context.
         './useAsyncInvoke.internal': asyncModule,
+        ...(options.oneDriveService ? { '../services/spfx-onedrive-app-data.service': { createSPFxOneDriveAppDataService: () => options.oneDriveService } } : {}),
     });
     const libraryRoot = path.resolve(__dirname, '../../../packages/spfx-react-toolkit', compiled ? 'lib' : 'src');
     function library(file) { return h.load(path.join(libraryRoot, file + (compiled ? '.js' : /provider|web-part-shell/.test(file) ? '.tsx' : '.ts'))); }
@@ -42,18 +43,28 @@ function createClientsFixture(t, title, options = {}) {
     Object.assign(pageModule, library('hooks/useSPFxPageContext'));
     for (const name of ['Context', 'PageContext', 'ServiceScope', 'InstanceInfo', 'HttpClient', 'SPHttpClient', 'MSGraphClient', 'AadHttpClient', 'AadTokenProvider', 'ApiPermissionPrecheck', 'Properties', 'Fluent9ThemeInfo'])
         Object.assign(toolkit, library('hooks/useSPFx' + name));
+    if (options.graphData) for (const name of ['UserInfo', 'UserPhoto', 'OneDriveAppData']) Object.assign(toolkit, library('hooks/useSPFx' + name));
     Object.assign(toolkit, library('hooks/useSx'), library('core/provider-webpart'), library('controls/web-part-shell/web-part-shell'), library('helpers/styles/index'), library('helpers/spfx-api-permission-precheck.helpers'));
     Object.defineProperty(window, 'crypto', { configurable: true, value: require('node:crypto').webcrypto });
-    const calls = [], initializations = [], tokens = [], observers = [], commits = [];
+    const calls = [], initializations = [], tokens = [], observers = [], commits = [], downloads = [];
+    if (options.graphData) t.mock.method(global, 'fetch', (url, init) => {
+        assert.equal(url, 'https://download.fixture.invalid/app-data');
+        const request = deferred({ url, init }); downloads.push(request); return request.promise;
+    });
     const themeHandlers = new Set();
     const themeService = { tryGetTheme: () => undefined, themeChangedEvent: { add: (_o, fn) => themeHandlers.add(fn), remove: (_o, fn) => themeHandlers.delete(fn) } };
     function http(kind) { const client = { get(url, configuration, init) { const request = deferred({ kind, client, url, configuration, init }); calls.push(request); return request.promise; } }; return client; }
     function host(id = 'clients-one') {
-        const page = { web: { absoluteUrl: 'https://tenant.test/sites/' + id, title: id }, site: { absoluteUrl: 'https://tenant.test/sites/' + id }, user: {}, cultureInfo: {} };
+        const page = { web: { absoluteUrl: 'https://tenant.test/sites/' + id, title: id }, site: { absoluteUrl: 'https://tenant.test/sites/' + id }, user: { displayName: 'Fixture User', loginName: 'fixture-user', email: 'fixture@example.invalid' }, cultureInfo: {} };
         const popup = new Map(), redirect = new Map();
         const event = handlers => ({ add(observer, handler) { observers.push(observer); handlers.set(handler, observer); }, remove(_observer, handler) { handlers.delete(handler); } });
         const provider = { popupEvent: event(popup), onBeforeRedirectEvent: event(redirect), getToken(resource, settings) { const request = deferred({ id, resource, settings }); tokens.push(request); return request.promise; } };
-        const graph = { api(url) { const query = { select(fields) { query.fields = fields; return query; }, get() { const request = deferred({ kind: 'graph', client: graph, url, fields: query.fields }); calls.push(request); return request.promise; } }; return query; } };
+        const graph = { api(url) {
+            const headers = {};
+            function request(method, body) { const pending = deferred({ kind: 'graph', client: graph, url, fields: query.fields, method, headers: { ...headers }, body }); calls.push(pending); return pending.promise; }
+            const query = { select(fields) { query.fields = fields; return query; }, header(name, value) { headers[name] = value; return query; }, get() { return request('GET'); }, put(body) { return request('PUT', body); } };
+            return query;
+        } };
         function init(kind, value, target) { const request = deferred({ id, kind, target, value }); initializations.push(request); return request.promise; }
         const services = new Map([[keys.page, page], [keys.theme, themeService], [keys.http, http('http')], [keys.sp, http('sp')],
             [keys.graph, { getClient: version => init('graph', graph, version) }],
@@ -65,7 +76,7 @@ function createClientsFixture(t, title, options = {}) {
         return { instanceId: id, context: { instanceId: id, domElement, pageContext: page, serviceScope: scope, sdks: {}, propertyPane: { refresh() { } } }, properties: { title: 'Clients fixture', showTitle: false }, displayMode: 1, domElement, render() { }, native: { services, provider, popup, redirect } };
     }
     let redrawChild;
-    let instance = host(), revision = options.revision ?? 0, selected = scenario(title), regions;
+    let instance = host(), revision = options.revision ?? 0, selected = scenario(title, options.ownerKey), regions;
     const source = fs.readFileSync;
     if (options.unmasked)
         fs.readFileSync = (file, ...args) => { const value = source(file, ...args); return String(file) === selected.file ? value.replace('observedScope === serviceScope', 'true').replace('observedTarget === info.resourceUrl', 'true') : value; };
@@ -89,9 +100,10 @@ function createClientsFixture(t, title, options = {}) {
         return; h.act(() => { ReactDOM.unmountComponentAtNode(container); }); container.remove(); closed = true; }
     t.after(() => { unmount(); h.close(); });
     render();
-    return { h, toolkit, keys, native, container, calls, initializations, tokens, commits, observers, themeHandlers, host, render, unmount,
+    return { h, toolkit, keys, native, container, calls, downloads, initializations, tokens, commits, observers, themeHandlers, host, render, unmount,
         mountPeer(nativeHost = host('clients-peer')) { const peer = h.mountComponent(() => h.React.createElement(RendererProvider, { renderer }, h.React.createElement(fluent.FluentProvider, { theme: fluent.webLightTheme }, h.React.createElement(toolkit.SPFxWebPartProvider, { instance: nativeHost }, h.React.createElement(Demo))))); return { ...peer, instance: nativeHost, click(name) { const node = [...peer.container.querySelectorAll('button')].find(n => n.textContent === name); assert.ok(node, name); h.act(() => { Simulate.click(node); }); } }; },
         get instance() { return instance; }, get regions() { return regions; }, get entry() { return selected.entry; },
+        select(nextTitle, ownerKey) { selected = scenario(nextTitle, ownerKey); Demo = h.load(selected.file).Demo; render(); },
         replace(next) { instance = next; render(); },
         changeScope(next) { instance.context.serviceScope = next.context.serviceScope; h.act(() => redrawChild()); }, reset() { revision++; render(); },
         setRevision(value) { revision = value; render(); },
