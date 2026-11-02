@@ -22,7 +22,7 @@ function fixture(t, title, initialRevision = 7) {
 }
 const ids = h => [...h.container.querySelectorAll('[data-order-id]')].map(row => Number(row.dataset.orderId));
 
-test('real catalogue groups uniquely cover source-owned scenarios and preserve pilot owners', t => {
+test('real catalogue groups uniquely cover source-owned scenarios and preserve all 32 accepted pilot owners', t => {
   const h = fixture(t, 'Browse controlled rows');
   const { executableExamples: entries, executableGroups: groups } = h.modules.catalogue;
   assert.ok(entries.length > 0); assert.ok(groups.length > 0);
@@ -52,14 +52,49 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve p
     useStableCallback: 'packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback',
     useSx: 'packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx',
     useSPFxPnPList: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList',
+    // The accepted Context cohort owns 21 APIs, including the two cross-site cases.
+    useSPFxContext: 'packages/spfx-react-toolkit/src/core/context.internal.tsx#useSPFxContext',
+    useSPFxPageContext: 'packages/spfx-react-toolkit/src/hooks/useSPFxPageContext.ts#useSPFxPageContext',
+    useSPFxInstanceInfo: 'packages/spfx-react-toolkit/src/hooks/useSPFxInstanceInfo.ts#useSPFxInstanceInfo',
+    useSPFxDisplayMode: 'packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts#useSPFxDisplayMode',
+    useSPFxIsEdit: 'packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts#useSPFxIsEdit',
+    useSPFxEnvironmentInfo: 'packages/spfx-react-toolkit/src/hooks/useSPFxEnvironmentInfo.ts#useSPFxEnvironmentInfo',
+    useSPFxUserInfo: 'packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo',
+    useSPFxSiteInfo: 'packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo',
+    useSPFxListInfo: 'packages/spfx-react-toolkit/src/hooks/useSPFxListInfo.ts#useSPFxListInfo',
+    useSPFxLocaleInfo: 'packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts#useSPFxLocaleInfo',
+    useSPFxHubSiteInfo: 'packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts#useSPFxHubSiteInfo',
+    useSPFxTeams: 'packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams',
+    useSPFxPageType: 'packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts#useSPFxPageType',
+    useSPFxCorrelationInfo: 'packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts#useSPFxCorrelationInfo',
+    useSPFxPermissions: 'packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts#useSPFxPermissions',
+    useSPFxCrossSitePermissions: 'packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts#useSPFxCrossSitePermissions',
+    useSPFxContainerInfo: 'packages/spfx-react-toolkit/src/hooks/useSPFxContainerInfo.ts#useSPFxContainerInfo',
+    useSPFxContainerSize: 'packages/spfx-react-toolkit/src/hooks/useSPFxContainerSize.ts#useSPFxContainerSize',
+    useSPFxThemeInfo: 'packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo',
+    useSPFxFluent9ThemeInfo: 'packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts#useSPFxFluent9ThemeInfo',
+    useSPFxServiceScope: 'packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts#useSPFxServiceScope',
+    // Six distinct Clients owners remain mandatory beside the original five pilots.
+    useSPFxHttpClient: 'packages/spfx-react-toolkit/src/hooks/useSPFxHttpClient.ts#useSPFxHttpClient',
+    useSPFxSPHttpClient: 'packages/spfx-react-toolkit/src/hooks/useSPFxSPHttpClient.ts#useSPFxSPHttpClient',
+    useSPFxMSGraphClient: 'packages/spfx-react-toolkit/src/hooks/useSPFxMSGraphClient.ts#useSPFxMSGraphClient',
+    useSPFxAadHttpClient: 'packages/spfx-react-toolkit/src/hooks/useSPFxAadHttpClient.ts#useSPFxAadHttpClient',
+    useSPFxAadTokenProvider: 'packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts#useSPFxAadTokenProvider',
+    useSPFxApiPermissionPrecheck: 'packages/spfx-react-toolkit/src/hooks/useSPFxApiPermissionPrecheck.ts#useSPFxApiPermissionPrecheck',
   };
+  assert.equal(Object.keys(pilotOwners).length, 32, 'five original, 21 Context and six Clients owners');
+  assert.deepEqual(Object.keys(pilotTitles).sort(), Object.keys(pilotOwners).sort(), 'every accepted pilot has an independent canonical owner expectation');
   const pilots = filterPilotGroups(groups);
   assert.deepEqual(pilots.flatMap(group => group.features.map(feature => feature.title)).sort(), Object.keys(pilotTitles).sort());
   for (const group of pilots) for (const feature of group.features) {
     assert.equal(feature.key, pilotOwners[feature.title]);
     assert.equal(group.key, feature.title === 'WebPartShell' || feature.title === 'Pagination' ? 'controls' : 'hooks');
     assert.deepEqual(feature.scenarios.map(entry => entry.title).sort(), [...pilotTitles[feature.title]].sort());
-    for (const entry of feature.scenarios) assert.equal(entry, byId.get(entry.id));
+    for (const entry of feature.scenarios) {
+      assert.equal(entry, byId.get(entry.id), 'filtered scenarios retain their actual canonical catalogue entry');
+      const expectedId = require('node:crypto').createHash('sha256').update(JSON.stringify([pilotOwners[feature.title], entry.title])).digest('hex');
+      assert.equal(entry.id, expectedId, 'accepted owner/title retains its canonical scenario identity');
+    }
   }
 });
 for (const title of ['Report current count through a retained callback']) {

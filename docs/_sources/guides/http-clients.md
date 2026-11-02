@@ -23,11 +23,54 @@ The four request-client hooks provide SPFx HTTP clients with invocation loading/
 
 Client acquisition and request invocation are separate phases. Link the owning API for exact result members/defaults and catch action promises. Direct client calls bypass hook invocation state. The token-provider hook does not request a token or supply invocation tracking; the permission-precheck hook returns diagnostics rather than a request client.
 
+## Explore explicit client scenarios
+
+Mount the source-owned scenarios below the [provider matching the native host](../../api/core/providers.md). They keep business reads behind explicit commands and can render independently or forward their regions to the sample explorer. Client/provider factory initialization is separate from a business request or an explicit token acquisition.
+
+### Inspect readiness before choosing an operation
+
+Inspect all five client/provider states without adding a token request. Graph client and token-provider acquisition can begin when their hooks mount; initialization errors and readiness remain separate from request loading and errors.
+
+<!-- toolkit:include symbol="useSPFxAadTokenProvider" section="example" title="Inspect client readiness and token-provider initialization" -->
+
+### Load external JSON
+
+Use the external todo scenario to observe a tracked invocation, caught action failures and returned scalar fields. The HTTP, SharePoint and AAD JSON callbacks in these scenarios parse the response without inspecting `response.ok`; the hook does not turn a non-success HTTP response into a rejection automatically. Add the required status policy to your own callback.
+
+<!-- toolkit:include symbol="useSPFxHttpClient" section="example" title="Load an external todo with tracked invocation state" -->
+
+### Read the current SharePoint web
+
+The current-web scenario synchronizes its request base through `setBaseUrl` when native page metadata changes, without issuing a read. The hook's initial base URL is captured state; it does not follow later page changes by itself.
+
+<!-- toolkit:include symbol="useSPFxSPHttpClient" section="example" title="Read the current SharePoint web title and URL" -->
+
+### Load the Graph profile after initialization
+
+Wait for Graph acquisition to finish, then explicitly load `/me`. Keep initialization failures separate from invocation failures and verify the required delegated `User.Read` approval for the actual tenant.
+
+<!-- toolkit:include symbol="useSPFxMSGraphClient" section="example" title="Read the current Graph profile after initialization" -->
+
+### Select a custom API resource and call a path
+
+Edit the resource and path drafts, initialize the trimmed resource explicitly, then call only when the acquired client matches that resource. Editing either draft invalidates the old local result. An `api://` identifier can identify a token resource without being an HTTP endpoint; the unchanged failed resource has no dedicated initialization-retry API.
+
+<!-- toolkit:include symbol="useSPFxAadHttpClient" section="example" title="Initialize a custom API client and call a path" -->
+
 ## Concurrent invocations
 
 The HTTP, SharePoint REST, AadHttpClient and Graph client hooks use the same invocation tracker. `isLoading` remains true while any invocation on the current client is pending. Starting an invocation clears displayed error; only the latest-started invocation can publish an error. Client replacement and unmount ignore obsolete UI updates while caller promises still resolve/reject. `clearError()` does not cancel requests. Initialization flags/errors are separate from invocation state.
 
 
+## Reset local results and check delegated scopes
+
+The executable request scenarios own result publication and invalidation in addition to the hook's invocation state. Their optional `resetRevision` starts at zero; its first mounted value is a baseline, and a later change restores the scenario's local drafts/results while retaining the mounted component and controls. Reset invalidates obsolete local completions and retained commands. It does not cancel native requests or initialization, rebuild the provider, clear token caches or grant permissions. The examples continue to show activity from older native requests even when a client selection changes; `isLoading` itself describes only invocations on the current client. A readiness snapshot keeps the actual native initialization state through Reset.
+
+The manual permission scenario uses the mounted [useSPFxApiPermissionPrecheck hook](../../api/hooks/http-clients/api-permission-precheck.md) with `autoCheck: false` and `mode: 'passive'`. It retains only completed results returned by `check()` or `retryWithoutCache()` and derives their diagnostics through `summarizeSPFxApiPermissionResults`. A configuration/provider change can reset hook checking state before the original public promise settles, so the scenario keeps a separate original-promise latch and blocks another check until that promise settles. Reset clears its local completed snapshot and resource draft while preserving that pending truth.
+
+An empty completed-results view summarizes to `configurationState: 'idle'` with `isConfigured: true`; this is not a completed grant check. Passive popup/redirect guards detach when the overall public check settles. A timeout does not cancel native token acquisition, which may settle later. Retry without cache forwards an uncached token preference while keeping passive mode; it neither clears a cache nor changes tenant grants. Token diagnostics do not establish server authorization or prove a later API request will succeed.
+
+<!-- toolkit:include symbol="useSPFxApiPermissionPrecheck" section="example" title="Manually check Graph and custom API delegated scopes" -->
 
 ## Configure API permission requests
 

@@ -25,11 +25,511 @@ The four request-client hooks provide SPFx HTTP clients with invocation loading/
 
 Client acquisition and request invocation are separate phases. Link the owning API for exact result members/defaults and catch action promises. Direct client calls bypass hook invocation state. The token-provider hook does not request a token or supply invocation tracking; the permission-precheck hook returns diagnostics rather than a request client.
 
+## Explore explicit client scenarios
+
+Mount the source-owned scenarios below the [provider matching the native host](../api/core/providers.md). They keep business reads behind explicit commands and can render independently or forward their regions to the sample explorer. Client/provider factory initialization is separate from a business request or an explicit token acquisition.
+
+### Inspect readiness before choosing an operation
+
+Inspect all five client/provider states without adding a token request. Graph client and token-provider acquisition can begin when their hooks mount; initialization errors and readiness remain separate from request loading and errors.
+
+#### Inspect client readiness and token-provider initialization
+
+```tsx
+import * as React from 'react';
+import { useSPFxHttpClient, useSPFxSPHttpClient, useSPFxMSGraphClient, useSPFxAadHttpClient, useSPFxAadTokenProvider, useSPFxServiceScope } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const { serviceScope } = useSPFxServiceScope();
+  const http = useSPFxHttpClient();
+  const sp = useSPFxSPHttpClient();
+  const graph = useSPFxMSGraphClient();
+  const aad = useSPFxAadHttpClient();
+  const token = useSPFxAadTokenProvider();
+  // The hooks clear old initialization in passive effects. Mask the first new-scope commit.
+  const [observedScope, setObservedScope] = React.useState(serviceScope);
+  React.useEffect(() => { setObservedScope(serviceScope); }, [serviceScope]);
+  const current = observedScope === serviceScope;
+  const regions: DemoRegions = {
+    children: <dl aria-label="Client readiness">
+      <dt>HttpClient</dt><dd>{http.isReady ? 'Ready' : 'Unavailable'}</dd>
+      <dt>SPHttpClient</dt><dd>{sp.isReady ? 'Ready' : 'Unavailable'}</dd>
+      <dt>MSGraphClient</dt><dd>{current && graph.isReady ? 'Ready' : 'Unavailable'}</dd>
+      <dt>AadHttpClient</dt><dd>{current && aad.isReady ? 'Ready' : 'Unavailable'}</dd>
+      <dt>Token provider</dt><dd>Token provider: {current && token.isReady ? 'Ready' : 'Unavailable'}</dd>
+      <dt>SPHttp Base URL</dt><dd>{sp.baseUrl}</dd>
+      <dt>Graph Initializing</dt><dd>{!current || graph.isInitializing ? 'Yes' : 'No'}</dd>
+      <dt>AAD Resource</dt><dd>{aad.resourceUrl || 'Not configured'}</dd>
+      <dt>AAD Initializing</dt><dd>{!current || aad.isInitializing ? 'Yes' : 'No'}</dd>
+      <dt>AAD Token Provider Initializing</dt><dd>{!current || token.isInitializing ? 'Yes' : 'No'}</dd>
+    </dl>,
+    status: <>{current && [graph.initError, aad.initError, token.initError].map((error, index) => error && <p role="alert" key={index}>{error.message}</p>)}</>,
+    diagnostics: <p>Mount below the matching SPFx provider. Factories initialize clients/providers without business requests. No token is requested. Reset leaves native initialization and readiness intact.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Watch actual client and token-provider initialization, readiness and initialization failures without requesting a token.' };
+```
+
+### Load external JSON
+
+Use the external todo scenario to observe a tracked invocation, caught action failures and returned scalar fields. The HTTP, SharePoint and AAD JSON callbacks in these scenarios parse the response without inspecting `response.ok`; the hook does not turn a non-success HTTP response into a rejection automatically. Add the required status policy to your own callback.
+
+#### Load an external todo with tracked invocation state
+
+```tsx
+import * as React from 'react';
+import { Button, Accordion, AccordionItem, AccordionHeader, AccordionPanel, makeStyles } from '@fluentui/react-components';
+import { useSPFxHttpClient, useSPFxContext, useSPFxServiceScope, useSPFxPageContext } from '@apvee/spfx-react-toolkit';
+import { HttpClient } from '@microsoft/sp-http';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+const useStyles = makeStyles({ diagnostics: { minWidth: 0, maxWidth: '100%', overflowX: 'auto' } });
+// JSON payloads may contain legacy null values; scenario-owned absence uses undefined.
+function payloadText(value: unknown): string {
+  const seen = new WeakSet<object>();
+  return JSON.stringify(value, (key: string, item: unknown): unknown => {
+    if (key.startsWith('_') || key === 'serviceScope' || key === 'service') return '[Private]';
+    if (typeof item === 'object' && item !== undefined && item !== null) {
+      if (seen.has(item)) return '[Circular]';
+      seen.add(item);
+    }
+    return item;
+  }, 2) ?? 'No response';
+}
+function responseRows(value: unknown): React.ReactNode {
+  const entries = value !== undefined && typeof value === 'object' && value !== null
+    ? Object.entries(value).filter(([, field]) => ['string', 'number', 'boolean'].includes(typeof field)).slice(0, 8)
+    : value === undefined ? [] : [['Response', value]];
+  return entries.map(([key, field]) => <React.Fragment key={String(key)}><dt>{String(key)}</dt><dd>{String(field)}</dd></React.Fragment>);
+}
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const styles = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const { serviceScope } = useSPFxServiceScope();
+  const page = useSPFxPageContext();
+  const info = useSPFxHttpClient();
+
+  const [observedScope, setObservedScope] = React.useState(serviceScope);
+
+  React.useEffect(() => { setObservedScope(serviceScope);  }, [serviceScope ]);
+  const initialized = observedScope === serviceScope ;
+  const values: readonly unknown[] = [spfxContext, serviceScope, serviceScope?.consume, page, page.web.absoluteUrl, info.invoke, resetRevision ];
+  // A transition gets a new boundary even if a later draft/revision repeats an old value.
+  const boundary = React.useRef(values);
+  if (!values.every((value, index) => boundary.current[index] === value)) boundary.current = values;
+  const identity = boundary.current;
+  const live = React.useRef(identity);
+  live.current = identity;
+  const mounted = React.useRef(true);
+  React.useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const same = (capture: readonly unknown[]): boolean => mounted.current && capture === live.current && capture[1] === spfxContext.serviceScope && capture[2] === serviceScope?.consume && capture[4] === page.web.absoluteUrl;
+  const sequence = React.useRef(0);
+  // Hook loading counts current-client calls; this view also remembers obsolete native work.
+  const active = React.useRef(0);
+  const [activeActions, setActiveActions] = React.useState(0);
+  const [outcome, setOutcome] = React.useState<{ identity: readonly unknown[]; data?: unknown; failure?: string }>();
+  const visible = outcome && same(outcome.identity) ? outcome : undefined;
+  const execute = async (): Promise<void> => {
+    if (!same(identity) || !initialized || !info.isReady ) return;
+    const request = ++sequence.current;
+    setOutcome(undefined);
+    active.current++;
+    setActiveActions(active.current);
+    try {
+      const data = await info.invoke(async client => {
+        // invoke calls this synchronously today; keep the native I/O boundary guarded too.
+        if (!same(identity)) return undefined;
+        return client.get('https://jsonplaceholder.typicode.com/todos/1', HttpClient.configurations.v1).then(response => response.json());
+      });
+      if (same(identity) && sequence.current === request) setOutcome({ identity, data });
+    } catch (failure) {
+      if (same(identity) && sequence.current === request) setOutcome({ identity, failure: failure instanceof Error ? failure.message : String(failure) });
+    } finally {
+      active.current--;
+      // Cleanup may release obsolete work, but never republishes its result or error.
+      if (mounted.current) setActiveActions(active.current);
+    }
+  };
+
+  const regions: DemoRegions = {
+    controls: undefined,
+    commands: <><Button disabled={!initialized || !info.isReady || info.isLoading || activeActions > 0 } onClick={execute}>Load external todo</Button></>,
+    status: <><p role="status">Ready: {initialized && info.isReady  ? 'Yes' : 'No'}; {info.isLoading || activeActions > 0 ? 'Loading: underlying requests are still completing' : 'Idle'}</p>{visible?.failure && <p role="alert">{visible.failure}</p>}</>,
+    children: <dl aria-label="HttpClient results"><dt>Response</dt><dd>{visible?.data === undefined ? 'Not loaded' : 'Loaded'}</dd>{responseRows(visible?.data)}</dl>,
+    diagnostics: <><p>Mount below the matching SPFx provider. Reset invalidates this view; it does not cancel requests. These JSON callbacks do not inspect HTTP response.ok.</p>{visible?.data !== undefined && <Accordion collapsible><AccordionItem value="response"><AccordionHeader>Raw response</AccordionHeader><AccordionPanel><div className={styles.diagnostics} role="region" aria-label="Raw response JSON"><pre>{payloadText(visible.data)}</pre></div></AccordionPanel></AccordionItem></Accordion>}</>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Load the external todo explicitly; observe primitive response values, pending requests, caught failures and Reset invalidation.' };
+```
+
+### Read the current SharePoint web
+
+The current-web scenario synchronizes its request base through `setBaseUrl` when native page metadata changes, without issuing a read. The hook's initial base URL is captured state; it does not follow later page changes by itself.
+
+#### Read the current SharePoint web title and URL
+
+```tsx
+import * as React from 'react';
+import { Button, Accordion, AccordionItem, AccordionHeader, AccordionPanel, makeStyles } from '@fluentui/react-components';
+import { useSPFxSPHttpClient, useSPFxContext, useSPFxServiceScope, useSPFxPageContext } from '@apvee/spfx-react-toolkit';
+import { SPHttpClient } from '@microsoft/sp-http';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+const useStyles = makeStyles({ diagnostics: { minWidth: 0, maxWidth: '100%', overflowX: 'auto' } });
+// JSON payloads may contain legacy null values; scenario-owned absence uses undefined.
+function payloadText(value: unknown): string {
+  const seen = new WeakSet<object>();
+  return JSON.stringify(value, (key: string, item: unknown): unknown => {
+    if (key.startsWith('_') || key === 'serviceScope' || key === 'service') return '[Private]';
+    if (typeof item === 'object' && item !== undefined && item !== null) {
+      if (seen.has(item)) return '[Circular]';
+      seen.add(item);
+    }
+    return item;
+  }, 2) ?? 'No response';
+}
+function responseRows(value: unknown): React.ReactNode {
+  const entries = value !== undefined && typeof value === 'object' && value !== null
+    ? Object.entries(value).filter(([, field]) => ['string', 'number', 'boolean'].includes(typeof field)).slice(0, 8)
+    : value === undefined ? [] : [['Response', value]];
+  return entries.map(([key, field]) => <React.Fragment key={String(key)}><dt>{String(key)}</dt><dd>{String(field)}</dd></React.Fragment>);
+}
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const styles = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const { serviceScope } = useSPFxServiceScope();
+  const page = useSPFxPageContext();
+  const info = useSPFxSPHttpClient();
+  const currentWeb = page.web.absoluteUrl.trim().replace(/\/$/, '');
+  React.useEffect(() => { if (info.baseUrl !== currentWeb) info.setBaseUrl(currentWeb); }, [currentWeb, info.baseUrl, info.setBaseUrl]);
+  const [observedScope, setObservedScope] = React.useState(serviceScope);
+
+  React.useEffect(() => { setObservedScope(serviceScope);  }, [serviceScope ]);
+  const initialized = observedScope === serviceScope ;
+  const values: readonly unknown[] = [spfxContext, serviceScope, serviceScope?.consume, page, page.web.absoluteUrl, info.invoke, resetRevision , currentWeb, info.baseUrl];
+  // A transition gets a new boundary even if a later draft/revision repeats an old value.
+  const boundary = React.useRef(values);
+  if (!values.every((value, index) => boundary.current[index] === value)) boundary.current = values;
+  const identity = boundary.current;
+  const live = React.useRef(identity);
+  live.current = identity;
+  const mounted = React.useRef(true);
+  React.useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const same = (capture: readonly unknown[]): boolean => mounted.current && capture === live.current && capture[1] === spfxContext.serviceScope && capture[2] === serviceScope?.consume && capture[4] === page.web.absoluteUrl;
+  const sequence = React.useRef(0);
+  // Hook loading counts current-client calls; this view also remembers obsolete native work.
+  const active = React.useRef(0);
+  const [activeActions, setActiveActions] = React.useState(0);
+  const [outcome, setOutcome] = React.useState<{ identity: readonly unknown[]; data?: unknown; failure?: string }>();
+  const visible = outcome && same(outcome.identity) ? outcome : undefined;
+  const execute = async (): Promise<void> => {
+    if (!same(identity) || !initialized || !info.isReady || info.baseUrl !== currentWeb) return;
+    const request = ++sequence.current;
+    setOutcome(undefined);
+    active.current++;
+    setActiveActions(active.current);
+    try {
+      const data = await info.invoke(async client => {
+        // invoke calls this synchronously today; keep the native I/O boundary guarded too.
+        if (!same(identity)) return undefined;
+        return client.get(`${info.baseUrl}/_api/web?$select=Title,Url`, SPHttpClient.configurations.v1).then(response => response.json());
+      });
+      if (same(identity) && sequence.current === request) setOutcome({ identity, data });
+    } catch (failure) {
+      if (same(identity) && sequence.current === request) setOutcome({ identity, failure: failure instanceof Error ? failure.message : String(failure) });
+    } finally {
+      active.current--;
+      // Cleanup may release obsolete work, but never republishes its result or error.
+      if (mounted.current) setActiveActions(active.current);
+    }
+  };
+
+  const regions: DemoRegions = {
+    controls: undefined,
+    commands: <><Button disabled={!initialized || !info.isReady || info.isLoading || activeActions > 0 || info.baseUrl !== currentWeb} onClick={execute}>Load current web</Button></>,
+    status: <><p role="status">Ready: {initialized && info.isReady && info.baseUrl === currentWeb ? 'Yes' : 'No'}; {info.isLoading || activeActions > 0 ? 'Loading: underlying requests are still completing' : 'Idle'}</p>{visible?.failure && <p role="alert">{visible.failure}</p>}</>,
+    children: <dl aria-label="SPHttpClient results"><dt>Response</dt><dd>{visible?.data === undefined ? 'Not loaded' : 'Loaded'}</dd><dt>Current request base</dt><dd>{currentWeb}</dd>{responseRows(visible?.data)}</dl>,
+    diagnostics: <><p>Mount below the matching SPFx provider. Reset invalidates this view; it does not cancel requests. These JSON callbacks do not inspect HTTP response.ok.</p>{visible?.data !== undefined && <Accordion collapsible><AccordionItem value="response"><AccordionHeader>Raw response</AccordionHeader><AccordionPanel><div className={styles.diagnostics} role="region" aria-label="Raw response JSON"><pre>{payloadText(visible.data)}</pre></div></AccordionPanel></AccordionItem></Accordion>}</>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Read the current SharePoint web Title and Url explicitly; the source synchronizes its base URL without issuing a request.' };
+```
+
+### Load the Graph profile after initialization
+
+Wait for Graph acquisition to finish, then explicitly load `/me`. Keep initialization failures separate from invocation failures and verify the required delegated `User.Read` approval for the actual tenant.
+
+#### Read the current Graph profile after initialization
+
+```tsx
+import * as React from 'react';
+import { Button, Accordion, AccordionItem, AccordionHeader, AccordionPanel, makeStyles } from '@fluentui/react-components';
+import { useSPFxMSGraphClient, useSPFxContext, useSPFxServiceScope, useSPFxPageContext } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+const useStyles = makeStyles({ diagnostics: { minWidth: 0, maxWidth: '100%', overflowX: 'auto' } });
+// JSON payloads may contain legacy null values; scenario-owned absence uses undefined.
+function payloadText(value: unknown): string {
+  const seen = new WeakSet<object>();
+  return JSON.stringify(value, (key: string, item: unknown): unknown => {
+    if (key.startsWith('_') || key === 'serviceScope' || key === 'service') return '[Private]';
+    if (typeof item === 'object' && item !== undefined && item !== null) {
+      if (seen.has(item)) return '[Circular]';
+      seen.add(item);
+    }
+    return item;
+  }, 2) ?? 'No response';
+}
+function responseRows(value: unknown): React.ReactNode {
+  const entries = value !== undefined && typeof value === 'object' && value !== null
+    ? Object.entries(value).filter(([, field]) => ['string', 'number', 'boolean'].includes(typeof field)).slice(0, 8)
+    : value === undefined ? [] : [['Response', value]];
+  return entries.map(([key, field]) => <React.Fragment key={String(key)}><dt>{String(key)}</dt><dd>{String(field)}</dd></React.Fragment>);
+}
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const styles = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const { serviceScope } = useSPFxServiceScope();
+  const page = useSPFxPageContext();
+  const info = useSPFxMSGraphClient();
+
+  const [observedScope, setObservedScope] = React.useState(serviceScope);
+
+  React.useEffect(() => { setObservedScope(serviceScope);  }, [serviceScope ]);
+  const initialized = observedScope === serviceScope ;
+  const values: readonly unknown[] = [spfxContext, serviceScope, serviceScope?.consume, page, page.web.absoluteUrl, info.invoke, resetRevision ];
+  // A transition gets a new boundary even if a later draft/revision repeats an old value.
+  const boundary = React.useRef(values);
+  if (!values.every((value, index) => boundary.current[index] === value)) boundary.current = values;
+  const identity = boundary.current;
+  const live = React.useRef(identity);
+  live.current = identity;
+  const mounted = React.useRef(true);
+  React.useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const same = (capture: readonly unknown[]): boolean => mounted.current && capture === live.current && capture[1] === spfxContext.serviceScope && capture[2] === serviceScope?.consume && capture[4] === page.web.absoluteUrl;
+  const sequence = React.useRef(0);
+  // Hook loading counts current-client calls; this view also remembers obsolete native work.
+  const active = React.useRef(0);
+  const [activeActions, setActiveActions] = React.useState(0);
+  const [outcome, setOutcome] = React.useState<{ identity: readonly unknown[]; data?: unknown; failure?: string }>();
+  const visible = outcome && same(outcome.identity) ? outcome : undefined;
+  const execute = async (): Promise<void> => {
+    if (!same(identity) || !initialized || !info.isReady ) return;
+    const request = ++sequence.current;
+    setOutcome(undefined);
+    active.current++;
+    setActiveActions(active.current);
+    try {
+      const data = await info.invoke(async client => {
+        // invoke calls this synchronously today; keep the native I/O boundary guarded too.
+        if (!same(identity)) return undefined;
+        return client.api('/me').select('displayName,mail,userPrincipalName').get();
+      });
+      if (same(identity) && sequence.current === request) setOutcome({ identity, data });
+    } catch (failure) {
+      if (same(identity) && sequence.current === request) setOutcome({ identity, failure: failure instanceof Error ? failure.message : String(failure) });
+    } finally {
+      active.current--;
+      // Cleanup may release obsolete work, but never republishes its result or error.
+      if (mounted.current) setActiveActions(active.current);
+    }
+  };
+
+  const regions: DemoRegions = {
+    controls: undefined,
+    commands: <><Button disabled={!initialized || !info.isReady || info.isLoading || activeActions > 0 } onClick={execute}>Load /me</Button></>,
+    status: <><p role="status">Ready: {initialized && info.isReady  ? 'Yes' : 'No'}; {info.isLoading || activeActions > 0 ? 'Loading: underlying requests are still completing' : 'Idle'}; {info.isInitializing ? 'Initializing Graph' : ''}{info.initError && <span role="alert">{info.initError.message}</span>}</p>{visible?.failure && <p role="alert">{visible.failure}</p>}</>,
+    children: <dl aria-label="MSGraphClient results"><dt>Response</dt><dd>{visible?.data === undefined ? 'Not loaded' : 'Loaded'}</dd>{responseRows(visible?.data)}</dl>,
+    diagnostics: <><p>Mount below the matching SPFx provider. Requires delegated Graph User.Read granted to this package. Factory initialization is separate from the explicit profile request. Reset does not cancel native work.</p>{visible?.data !== undefined && <Accordion collapsible><AccordionItem value="response"><AccordionHeader>Raw response</AccordionHeader><AccordionPanel><div className={styles.diagnostics} role="region" aria-label="Raw response JSON"><pre>{payloadText(visible.data)}</pre></div></AccordionPanel></AccordionItem></Accordion>}</>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Observe Graph initialization separately from an explicit /me profile request, then inspect returned profile values and caught failures.' };
+```
+
+### Select a custom API resource and call a path
+
+Edit the resource and path drafts, initialize the trimmed resource explicitly, then call only when the acquired client matches that resource. Editing either draft invalidates the old local result. An `api://` identifier can identify a token resource without being an HTTP endpoint; the unchanged failed resource has no dedicated initialization-retry API.
+
+#### Initialize a custom API client and call a path
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Accordion, AccordionItem, AccordionHeader, AccordionPanel, makeStyles } from '@fluentui/react-components';
+import { useSPFxAadHttpClient, useSPFxContext, useSPFxServiceScope, useSPFxPageContext } from '@apvee/spfx-react-toolkit';
+import { AadHttpClient } from '@microsoft/sp-http';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+const useStyles = makeStyles({ diagnostics: { minWidth: 0, maxWidth: '100%', overflowX: 'auto' } });
+// JSON payloads may contain legacy null values; scenario-owned absence uses undefined.
+function payloadText(value: unknown): string {
+  const seen = new WeakSet<object>();
+  return JSON.stringify(value, (key: string, item: unknown): unknown => {
+    if (key.startsWith('_') || key === 'serviceScope' || key === 'service') return '[Private]';
+    if (typeof item === 'object' && item !== undefined && item !== null) {
+      if (seen.has(item)) return '[Circular]';
+      seen.add(item);
+    }
+    return item;
+  }, 2) ?? 'No response';
+}
+function responseRows(value: unknown): React.ReactNode {
+  const entries = value !== undefined && typeof value === 'object' && value !== null
+    ? Object.entries(value).filter(([, field]) => ['string', 'number', 'boolean'].includes(typeof field)).slice(0, 8)
+    : value === undefined ? [] : [['Response', value]];
+  return entries.map(([key, field]) => <React.Fragment key={String(key)}><dt>{String(key)}</dt><dd>{String(field)}</dd></React.Fragment>);
+}
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const styles = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const { serviceScope } = useSPFxServiceScope();
+  const page = useSPFxPageContext();
+  const info = useSPFxAadHttpClient();
+  const [resource, setResource] = React.useState('');
+  const [path, setPath] = React.useState('/api/health');
+  const target = resource.trim();
+  const [observedScope, setObservedScope] = React.useState(serviceScope);
+  const [observedTarget, setObservedTarget] = React.useState(info.resourceUrl);
+  React.useEffect(() => { setObservedScope(serviceScope); setObservedTarget(info.resourceUrl); }, [serviceScope , info.resourceUrl]);
+  const initialized = observedScope === serviceScope && observedTarget === info.resourceUrl;
+  const values: readonly unknown[] = [spfxContext, serviceScope, serviceScope?.consume, page, page.web.absoluteUrl, info.invoke, resetRevision , target, path, info.resourceUrl];
+  // A transition gets a new boundary even if a later draft/revision repeats an old value.
+  const boundary = React.useRef(values);
+  if (!values.every((value, index) => boundary.current[index] === value)) boundary.current = values;
+  const identity = boundary.current;
+  const live = React.useRef(identity);
+  live.current = identity;
+  const mounted = React.useRef(true);
+  React.useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const same = (capture: readonly unknown[]): boolean => mounted.current && capture === live.current && capture[1] === spfxContext.serviceScope && capture[2] === serviceScope?.consume && capture[4] === page.web.absoluteUrl;
+  const sequence = React.useRef(0);
+  // Hook loading counts current-client calls; this view also remembers obsolete native work.
+  const active = React.useRef(0);
+  const [activeActions, setActiveActions] = React.useState(0);
+  const [outcome, setOutcome] = React.useState<{ identity: readonly unknown[]; data?: unknown; failure?: string }>();
+  const visible = outcome && same(outcome.identity) ? outcome : undefined;
+  const execute = async (): Promise<void> => {
+    if (!same(identity) || !initialized || !info.isReady || !target || info.resourceUrl !== target) return;
+    const request = ++sequence.current;
+    setOutcome(undefined);
+    active.current++;
+    setActiveActions(active.current);
+    try {
+      const data = await info.invoke(async client => {
+        // invoke calls this synchronously today; keep the native I/O boundary guarded too.
+        if (!same(identity)) return undefined;
+        return client.get(`${info.resourceUrl}${path.startsWith('/') ? path : `/${path}`}`, AadHttpClient.configurations.v1).then(response => response.json());
+      });
+      if (same(identity) && sequence.current === request) setOutcome({ identity, data });
+    } catch (failure) {
+      if (same(identity) && sequence.current === request) setOutcome({ identity, failure: failure instanceof Error ? failure.message : String(failure) });
+    } finally {
+      active.current--;
+      // Cleanup may release obsolete work, but never republishes its result or error.
+      if (mounted.current) setActiveActions(active.current);
+    }
+  };
+  const baseline = React.useRef(resetRevision);
+  React.useEffect(() => { if (baseline.current !== resetRevision) { baseline.current = resetRevision; setResource(''); setPath('/api/health'); info.setResourceUrl(''); setOutcome(undefined); } }, [resetRevision, info.setResourceUrl]);
+  const regions: DemoRegions = {
+    controls: <><Field label="Resource URL or App ID URI"><Input aria-label="Resource URL or App ID URI" value={resource} onChange={(_, data) => setResource(data.value)} /></Field><Field label="Path"><Input aria-label="Path" value={path} onChange={(_, data) => setPath(data.value)} /></Field></>,
+    commands: <><Button disabled={!initialized || !info.isReady || info.isLoading || activeActions > 0 || !target || info.resourceUrl !== target} onClick={execute}>Call path</Button><Button disabled={!target || info.isInitializing} onClick={() => { if (same(identity)) info.setResourceUrl(target); }}>Initialize AAD client</Button></>,
+    status: <><p role="status">Ready: {initialized && info.isReady && !!target && info.resourceUrl === target ? 'Yes' : 'No'}; {info.isLoading || activeActions > 0 ? 'Loading: underlying requests are still completing' : 'Idle'}; {initialized && info.isInitializing ? 'Initializing AAD client' : ''}{initialized && info.initError && <span role="alert">{info.initError.message}</span>}</p>{visible?.failure && <p role="alert">{visible.failure}</p>}</>,
+    children: <dl aria-label="AadHttpClient results"><dt>Response</dt><dd>{visible?.data === undefined ? 'Not loaded' : 'Loaded'}</dd><dt>Initialized resource</dt><dd>{info.resourceUrl || 'Not configured'}</dd>{responseRows(visible?.data)}</dl>,
+    diagnostics: <><p>Mount below the matching SPFx provider. Resource acquisition and HTTP request URLs are distinct; an api:// identifier does not establish an HTTP endpoint. There is no initialization retry API for an unchanged failed resource. Reset does not cancel initialization or requests. HTTP response.ok is not inspected.</p>{visible?.data !== undefined && <Accordion collapsible><AccordionItem value="response"><AccordionHeader>Raw response</AccordionHeader><AccordionPanel><div className={styles.diagnostics} role="region" aria-label="Raw response JSON"><pre>{payloadText(visible.data)}</pre></div></AccordionPanel></AccordionItem></Accordion>}</>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Initialize a selected custom API resource, call a path explicitly, and observe readiness, pending work and target-safe results across edits and Reset.' };
+```
+
 ## Concurrent invocations
 
 The HTTP, SharePoint REST, AadHttpClient and Graph client hooks use the same invocation tracker. `isLoading` remains true while any invocation on the current client is pending. Starting an invocation clears displayed error; only the latest-started invocation can publish an error. Client replacement and unmount ignore obsolete UI updates while caller promises still resolve/reject. `clearError()` does not cancel requests. Initialization flags/errors are separate from invocation state.
 
 
+## Reset local results and check delegated scopes
+
+The executable request scenarios own result publication and invalidation in addition to the hook's invocation state. Their optional `resetRevision` starts at zero; its first mounted value is a baseline, and a later change restores the scenario's local drafts/results while retaining the mounted component and controls. Reset invalidates obsolete local completions and retained commands. It does not cancel native requests or initialization, rebuild the provider, clear token caches or grant permissions. The examples continue to show activity from older native requests even when a client selection changes; `isLoading` itself describes only invocations on the current client. A readiness snapshot keeps the actual native initialization state through Reset.
+
+The manual permission scenario uses the mounted [useSPFxApiPermissionPrecheck hook](../api/hooks/http-clients/api-permission-precheck.md) with `autoCheck: false` and `mode: 'passive'`. It retains only completed results returned by `check()` or `retryWithoutCache()` and derives their diagnostics through `summarizeSPFxApiPermissionResults`. A configuration/provider change can reset hook checking state before the original public promise settles, so the scenario keeps a separate original-promise latch and blocks another check until that promise settles. Reset clears its local completed snapshot and resource draft while preserving that pending truth.
+
+An empty completed-results view summarizes to `configurationState: 'idle'` with `isConfigured: true`; this is not a completed grant check. Passive popup/redirect guards detach when the overall public check settles. A timeout does not cancel native token acquisition, which may settle later. Retry without cache forwards an uncached token preference while keeping passive mode; it neither clears a cache nor changes tenant grants. Token diagnostics do not establish server authorization or prove a later API request will succeed.
+
+#### Manually check Graph and custom API delegated scopes
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Accordion, AccordionItem, AccordionHeader, AccordionPanel, makeStyles } from '@fluentui/react-components';
+import { useSPFxApiPermissionPrecheck, useSPFxAadTokenProvider, useSPFxContext, useSPFxServiceScope, summarizeSPFxApiPermissionResults, SPFxApiPermissionCheckResult } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+const useStyles = makeStyles({ diagnostics: { minWidth: 0, maxWidth: '100%', overflowX: 'auto' } });
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const styles = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const { serviceScope } = useSPFxServiceScope();
+  const token = useSPFxAadTokenProvider();
+  const [resource, setResource] = React.useState('');
+  const target = resource.trim();
+  const config = React.useMemo(() => ({ graph: ['User.Read'], customApis: target ? [{ name: 'Custom API', resource: target, scopes: ['user_impersonation'] }] : [] }), [target]);
+  const options = React.useMemo(() => ({ autoCheck: false, mode: 'passive' } as const), []);
+  const info = useSPFxApiPermissionPrecheck(config, options);
+  const [observedScope, setObservedScope] = React.useState(serviceScope);
+  React.useEffect(() => { setObservedScope(serviceScope); }, [serviceScope]);
+  const values: readonly unknown[] = [spfxContext, serviceScope, serviceScope?.consume, target, resetRevision, info.check, info.retryWithoutCache];
+  // A transition gets a new boundary even if a later draft/revision repeats an old value.
+  const boundary = React.useRef(values);
+  if (!values.every((value, index) => boundary.current[index] === value)) boundary.current = values;
+  const identity = boundary.current;
+  const live = React.useRef(identity);
+  live.current = identity;
+  const mounted = React.useRef(true);
+  React.useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const same = (capture: readonly unknown[]): boolean => mounted.current && capture === live.current && capture[1] === spfxContext.serviceScope && capture[2] === serviceScope?.consume;
+  const [completed, setCompleted] = React.useState<{ identity: readonly unknown[]; results?: readonly SPFxApiPermissionCheckResult[]; failure?: string }>();
+  // A configuration change may clear hook isChecking before its original promise settles.
+  const originalPending = React.useRef(false);
+  const [pending, setPending] = React.useState(false);
+  const releaseOriginal = (): void => {
+    originalPending.current = false;
+    if (mounted.current) setPending(false);
+  };
+  const run = async (withoutCache: boolean): Promise<void> => {
+    if (!same(identity) || originalPending.current || observedScope !== serviceScope || !token.isReady) return;
+    originalPending.current = true;
+    setPending(true);
+    setCompleted(undefined);
+    try {
+      const results = await (withoutCache ? info.retryWithoutCache() : info.check());
+      if (same(identity)) setCompleted({ identity, results });
+    } catch (failure) {
+      if (same(identity)) setCompleted({ identity, failure: failure instanceof Error ? failure.message : String(failure) });
+    } finally {
+      // Settlement releases this original promise's latch even when its view became obsolete.
+      releaseOriginal();
+    }
+  };
+  const baseline = React.useRef(resetRevision);
+  React.useEffect(() => { if (baseline.current !== resetRevision) { baseline.current = resetRevision; setResource(''); setCompleted(undefined); } }, [resetRevision]);
+  const visible = completed && same(completed.identity) ? completed : undefined;
+  const summary = summarizeSPFxApiPermissionResults(visible?.results ?? [], pending || info.isChecking);
+  const disabled = observedScope !== serviceScope || !token.isReady || pending || info.isChecking;
+  const regions: DemoRegions = {
+    controls: <Field label="Resource URL or App ID URI"><Input aria-label="Resource URL or App ID URI" value={resource} onChange={(_, data) => setResource(data.value)} /></Field>,
+    commands: <><Button disabled={disabled} onClick={() => run(false)}>Check permissions</Button><Button disabled={disabled} onClick={() => run(true)}>Retry without cache</Button></>,
+    status: <>{pending && <p role="status">Previous check may still be completing. Reset does not cancel native work.</p>}{visible?.failure && <p role="alert">{visible.failure}</p>}{observedScope === serviceScope && info.tokenProviderError && <p role="alert">{info.tokenProviderError.message}</p>}</>,
+    children: <><dl aria-label="API permission precheck results"><dt>Configuration State</dt><dd>{summary.configurationState}</dd><dt>Configured</dt><dd>{summary.isConfigured ? 'Yes' : 'No'}</dd><dt>Required Graph Scope</dt><dd>User.Read</dd><dt>Custom API Resource</dt><dd>{target || 'Not configured'}</dd></dl>{summary.missing.map(result => <p role="alert" key={result.id}>{result.message}</p>)}{summary.warnings.map(result => <p key={result.id}>{result.message}</p>)}{summary.unknown.map(result => <p key={result.id}>{result.message}</p>)}</>,
+    diagnostics: <><p>Mount below the matching SPFx provider. Passive checks block auth popups/redirects while their public promise runs. Timeout does not cancel token acquisition; event guards detach when the overall check settles. Retry bypasses the token cache without changing passive mode. This diagnoses delegated scopes; it grants no access. Reset only clears this local completed view. Idle with no results is not a completed grant check.</p>{visible?.results && <Accordion collapsible><AccordionItem value="scopes"><AccordionHeader>Completed scope diagnostics</AccordionHeader><AccordionPanel><div className={styles.diagnostics}><ul>{visible.results.map(result => <li key={result.id}>{result.resourceName} / {result.scope}: {result.status}. {result.message}</li>)}</ul><pre>{JSON.stringify(visible.results, undefined, 2)}</pre></div></AccordionPanel></AccordionItem></Accordion>}</>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Manually check Graph User.Read and optional custom delegated scopes; compare a passive uncached retry and Reset while native work is pending.' };
+```
 
 ## Configure API permission requests
 
