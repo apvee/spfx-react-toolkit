@@ -69,7 +69,7 @@ function fixture(t, { explorer = false, simulatedBrowserTransport = false } = {}
     const input = view.container.querySelector('input[aria-label="List title"]');
     assert.ok(input); Simulate.change(input, { target: { value } });
   });
-  return { ...h, ...view, calls, catalogue, entry, flush, rerender, change,
+  return { ...h, ...view, calls, catalogue, groups, entry, flush, rerender, change,
     get renders() { return renders; }, get navigation() { return navigation; },
     click(text = 'Read selected list') { h.act(() => Simulate.click(button(view.container, text))); },
     reset() { revision++; rerender(); },
@@ -157,15 +157,32 @@ test('pending read unmount causes no view update or additional I/O', async t => 
 
 test('generated Hook navigation, expansion and scenario selection never query the selected list', async t => {
   const h = fixture(t, { explorer: true }); await h.flush();
-  assert.equal(h.catalogue.executableExamples.length, 24);
-  assert.equal(h.catalogue.executableGroups.flatMap(group => group.features).length, 17);
+  const readOwner = 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList';
+  const callbackOwner = 'packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback';
+  assert.deepEqual(h.groups.map(group => group.key), ['hooks']);
+  const features = h.groups.flatMap(group => group.features);
+  assert.deepEqual(features.map(feature => feature.key).sort(), [readOwner, callbackOwner].sort());
+  const reads = h.catalogue.executableExamples.filter(entry => entry.title === title);
+  assert.equal(reads.length, 1, 'one source-owned selected-list read scenario');
+  assert.equal(reads[0], h.entry);
+  assert.equal(h.entry.ownerKey, readOwner);
+  const readFeature = features.find(feature => feature.key === readOwner);
+  assert.deepEqual(readFeature.scenarios, [h.entry]);
+  const callbackFeature = features.find(feature => feature.key === callbackOwner);
+  assert.deepEqual(callbackFeature.scenarios.map(entry => entry.title).sort(),
+    [...require('./fixtures/demo-presentation/jsdoc-pilots.cjs').pilotTitles.useStableCallback].sort());
+  for (const entry of callbackFeature.scenarios) assert.equal(entry.ownerKey, callbackOwner);
   assert.deepEqual(h.entry.metadata, { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Choose an existing list and run the read explicitly; loading, results and errors identify the selected list.' });
-  const generic = h.catalogue.executableExamples.find(entry => entry.featureTitle === 'useStableCallback');
+  assert.equal(h.calls.length, 0, 'mount performs no list I/O');
+  const generic = callbackFeature.scenarios[0];
   h.act(() => h.navigation.selectFeature(generic.featureKey)); await h.flush();
   assert.equal(h.container.querySelector('input[aria-label="List title"]'), null);
+  assert.equal(h.calls.length, 0, 'feature selection performs no list I/O');
   h.act(() => h.navigation.toggleGroup('hooks')); h.act(() => h.navigation.toggleGroup('hooks'));
+  assert.equal(h.calls.length, 0, 'group expansion performs no list I/O');
   h.act(() => h.navigation.selectFeature(h.entry.featureKey)); await h.flush();
   h.act(() => h.navigation.selectScenario(h.entry.featureKey, h.entry.id)); await h.flush();
+  assert.equal(h.calls.length, 0, 'read scenario selection performs no list I/O');
   h.change('Team A'); await h.flush(); assert.equal(h.calls.length, 0);
   h.click(); await h.flush(); assert.equal(h.calls.length, 1);
   h.click('Ripristina scenario'); assert.equal(h.container.querySelector('input[aria-label="List title"]').value, '');

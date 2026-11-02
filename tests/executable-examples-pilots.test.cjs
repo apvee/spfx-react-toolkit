@@ -22,11 +22,45 @@ function fixture(t, title, initialRevision = 7) {
 }
 const ids = h => [...h.container.querySelectorAll('[data-order-id]')].map(row => Number(row.dataset.orderId));
 
-test('real catalog derives seventeen features and twenty-four source-owned scenarios', t => {
+test('real catalogue groups uniquely cover source-owned scenarios and preserve pilot owners', t => {
   const h = fixture(t, 'Browse controlled rows');
-  assert.equal(h.modules.catalogue.executableExamples.length, 24);
-  assert.equal(h.modules.catalogue.executableGroups.flatMap(group => group.features).length, 17);
-  assert.deepEqual(h.modules.catalogue.executableGroups.map(group => group.key), ['controls', 'hooks']);
+  const { executableExamples: entries, executableGroups: groups } = h.modules.catalogue;
+  assert.ok(entries.length > 0); assert.ok(groups.length > 0);
+  assert.ok(groups.every(group => group.key.trim().length > 0 && group.features.length > 0));
+  assert.equal(new Set(groups.map(group => group.key)).size, groups.length, 'group keys are unique');
+  const features = groups.flatMap(group => group.features);
+  assert.ok(features.every(feature => feature.key.trim().length > 0 && feature.scenarios.length > 0));
+  assert.equal(new Set(features.map(feature => feature.key)).size, features.length, 'feature keys are globally unique');
+  assert.equal(new Set(entries.map(entry => entry.id)).size, entries.length, 'global scenario ids are unique');
+  assert.equal(new Set(entries.map(entry => JSON.stringify([entry.ownerKey, entry.title]))).size, entries.length, 'canonical owner-title pairs are unique');
+  const groupedEntries = features.flatMap(feature => feature.scenarios);
+  assert.equal(new Set(groupedEntries.map(entry => entry.id)).size, groupedEntries.length, 'each scenario appears in one feature');
+  assert.deepEqual(groupedEntries.map(entry => entry.id).sort(), entries.map(entry => entry.id).sort(), 'groups cover exactly the actual catalogue');
+  const byId = new Map(entries.map(entry => [entry.id, entry]));
+  for (const group of groups) for (const feature of group.features) for (const entry of feature.scenarios) {
+    assert.equal(entry, byId.get(entry.id), 'grouped scenarios retain the complete canonical entry');
+    assert.equal(entry.groupKey, group.key);
+    assert.equal(entry.featureKey, feature.key);
+    assert.equal(entry.featureTitle, feature.title);
+    assert.equal(entry.ownerKey, feature.key);
+  }
+  // Independent accepted pilot cases remain mandatory as other families migrate.
+  const { pilotTitles, filterPilotGroups } = require('./fixtures/demo-presentation/jsdoc-pilots.cjs');
+  const pilotOwners = {
+    WebPartShell: 'packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell',
+    Pagination: 'packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination',
+    useStableCallback: 'packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback',
+    useSx: 'packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx',
+    useSPFxPnPList: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList',
+  };
+  const pilots = filterPilotGroups(groups);
+  assert.deepEqual(pilots.flatMap(group => group.features.map(feature => feature.title)).sort(), Object.keys(pilotTitles).sort());
+  for (const group of pilots) for (const feature of group.features) {
+    assert.equal(feature.key, pilotOwners[feature.title]);
+    assert.equal(group.key, feature.title === 'WebPartShell' || feature.title === 'Pagination' ? 'controls' : 'hooks');
+    assert.deepEqual(feature.scenarios.map(entry => entry.title).sort(), [...pilotTitles[feature.title]].sort());
+    for (const entry of feature.scenarios) assert.equal(entry, byId.get(entry.id));
+  }
 });
 for (const title of ['Report current count through a retained callback']) {
   test(`${title}: original committed callback observes state; reset retains its identity`, t => {

@@ -6,15 +6,22 @@ const ts = require('typescript');
 const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
 
 test('demo panels and migrated scenarios inherit theme and default direction; theme diagnostics remain', () => {
-  const panels = ['AutoSkeleton', 'Cards', 'DataGrid', 'DescriptionList', 'Form', 'EditableText', 'FormattedText', 'Groups', 'RelativeTime', 'Stage', 'StateMessage', 'Styles'];
-  const files = panels.map(name => `panels/${name}Panel.tsx`).concat([
-    'generated/jsdoc-examples/a07f48c5bc9c9b2205540773cc72cbeeadb752470bb6c3e67ff22ec10c3e5ee0.tsx',
-    'generated/jsdoc-examples/832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88.tsx',
-  ]);
+  // Read catalogue metadata without invoking any lazy scenario loader.
+  const catalogue = { exports: {} };
+  const compiled = ts.transpileModule(fs.readFileSync(path.join(base, 'generated/jsdoc-examples/catalogue.ts'), 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+  });
+  new Function('module', 'exports', compiled.outputText)(catalogue, catalogue.exports);
+  const entries = catalogue.exports.executableExamples;
+  assert.ok(entries.length > 0, 'source-owned scenarios participate in inheritance checks');
+  assert.equal(new Set(entries.map(entry => entry.id)).size, entries.length, 'scenario ids are unique');
+  assert.equal(new Set(entries.map(entry => JSON.stringify([entry.ownerKey, entry.title]))).size, entries.length, 'owner-title pairs are unique');
+  const files = fs.readdirSync(path.join(base, 'panels')).filter(file => file.endsWith('Panel.tsx'))
+    .map(file => `panels/${file}`).concat(entries.map(entry => `generated/jsdoc-examples/${entry.id}.tsx`));
   for (const file of files) {
     const source = fs.readFileSync(path.join(base,file), 'utf8');
-    assert.doesNotMatch(source, /webLightTheme|webDarkTheme|teamsDarkTheme|teamsHighContrastTheme|getTeamsFluentTheme|setDark|setThemeChoice|theme=|Dark theme/);
-    assert.doesNotMatch(source, /dir=\{rtl \? 'rtl' : 'ltr'\}/);
+    assert.doesNotMatch(source, /webLightTheme|webDarkTheme|teamsDarkTheme|teamsHighContrastTheme|getTeamsFluentTheme|setDark|setThemeChoice|theme=|Dark theme/, file);
+    assert.doesNotMatch(source, /dir=\{rtl \? 'rtl' : 'ltr'\}/, file);
   }
   assert.match(fs.readFileSync(path.join(base, 'panels/ContextPanel.tsx'), 'utf8'), /useSPFxFluent9ThemeInfo/);
   assert.match(fs.readFileSync(path.join(base, 'panels/StylesPanel.tsx'), 'utf8'), /hostThemeName === 'contrast'/);

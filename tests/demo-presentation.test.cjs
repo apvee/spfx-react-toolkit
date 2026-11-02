@@ -148,9 +148,15 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     assert.equal(retainedNote.closest('.fui-AccordionPanel').hasAttribute('inert'), false);
     const rootModule = load(path.join(base, 'demoRegistry.ts'));
     registry = rootModule.demoRegistry;
-    assert.equal(registry.length, 18, 'all residual panels participate in lazy navigation');
     const paths = [...read('demoRegistry.ts').matchAll(/component: lazyPanel\(\(\) => import\(\/\*[^*]+\*\/ '([^']+)'\)\)/g)].map(match => match[1]);
+    const panelPaths = fs.readdirSync(path.join(base, 'panels')).filter(file => file.endsWith('Panel.tsx'))
+      .map(file => `./panels/${file.slice(0, -4)}`);
+    assert.ok(registry.length > 0, 'remaining transitional panels participate in lazy navigation');
+    assert.ok(registry.every(entry => typeof entry.key === 'string' && entry.key.trim().length > 0));
+    assert.equal(new Set(registry.map(entry => entry.key)).size, registry.length, 'panel keys are unique');
+    assert.equal(new Set(paths).size, paths.length, 'each panel has one lazy import');
     assert.equal(paths.length, registry.length);
+    assert.deepEqual([...paths].sort(), panelPaths.sort(), 'every remaining panel module has exactly one active registry entry');
     registry.forEach((entry, i) => { entry.componentPath = paths[i]; });
     const Demo = load(path.join(base, 'SpFxReactToolkitTest.tsx')).default;
     const { ExampleExplorerStateProvider } = load(path.join(base, 'shared/ExampleExplorerState.tsx'));
@@ -170,6 +176,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     for (let i = 0; i < registry.length; i++) {
       act(() => features[i].click()); await act(async () => { await Promise.resolve(); });
       const panels = host.querySelectorAll('[role="region"]'); assert.equal(panels.length, 1);
+      assert.equal(features[i].getAttribute('data-example-feature'), `legacy:${registry[i].key}`);
       assert.equal(features[i].getAttribute('aria-current'), 'true');
       assert.equal(panels[0].querySelector('input').getAttribute('data-test-panel'), registry[i].key);
     }
@@ -180,6 +187,8 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     act(() => features[0].click()); await act(async () => { await Promise.resolve(); });
     assert.equal(mounts.get(registry[0].key), 2, 'revisiting remounts the real panel');
     assert.equal(host.querySelectorAll('[data-test-panel]').length, 1, 'inactive panels are not mounted');
+    assert.equal(loads.size, registry.length, 'every remaining lazy factory was exercised');
+    assert.ok([...loads.values()].every(count => count === 1), 'revisiting a panel reuses its lazy module');
   } finally {
     act(() => { ReactDOM.unmountComponentAtNode(host); }); host.remove(); dom.window.close();
     for (const [name, descriptor] of previousGlobals) {
