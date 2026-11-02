@@ -54,17 +54,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
-    key: 'search',
-    title: 'Search',
-    iconName: 'Search',
-    description: 'SharePoint search, builder API, refiners, suggestions, and verticals.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-search' */ './panels/SearchPanel')),
-    coverage: [
-      { symbol: 'useSPFxPnPSearch', kind: 'read', notes: 'Search text, builder, refiners, and suggestions.' },
-      { symbol: 'SearchVerticals', kind: 'snapshot', notes: 'Built-in source ids for common verticals.' },
-    ],
-  },
-  {
     key: 'sharepoint-permission-trim', title: 'SharePoint Permission Trim', iconName: 'Permissions',
     description: 'Current-user access checks.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-sharepoint-permission-trim' */ './panels/SharePointPermissionTrimPanel')),

@@ -18,6 +18,8 @@ const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/s
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
   { key: 'search-text', title: 'useSPFxPnPSearch' },
+  { key: 'search-facet', title: 'useSPFxPnPSearch' },
+  { key: 'search-suggestions', title: 'useSPFxPnPSearch' },
   { key: 'search-vertical', title: 'SearchVerticals' },
   { key: 'pnp-context-service', title: 'createSPFxPnPContextService' },
   { key: 'pnp-service', title: 'createSPFxPnPService' },
@@ -74,6 +76,8 @@ async function select(page, key) {
   }
   const sourceCases = {
     'search-text': ['useSPFxPnPSearch', 'Search SharePoint text with explicit execution'],
+    'search-facet': ['useSPFxPnPSearch', 'Filter search results with native refiner tokens'],
+    'search-suggestions': ['useSPFxPnPSearch', 'Request debounced suggestions after explicit start'],
     'search-vertical': ['SearchVerticals', 'Search selected verticals with builder paging'],
     'pnp-context-service': ['createSPFxPnPContextService', 'Explore PnP context caching and request headers'],
     'pnp-service': ['createSPFxPnPService', 'Read through a supplied PnP service client'],
@@ -475,11 +479,29 @@ async function interact(page, key) {
       } finally { await page.evaluate(() => window.clientsFixture.configure({ pnpSearch: false })); }
       break;
     }
-    case 'search': {
-      const before = await page.evaluate(() => window.clientsFixture.requests.length);
-      await panel.locator('select[data-demo-variant=SearchPanel]').selectOption('refiners');
-      check('Retained legacy refiner selection sends no HTTP', await page.evaluate(() => window.clientsFixture.requests.length), before);
-      // Suggestions retains separate explicitly doubled presentation coverage until g2.
+    case 'search-facet':
+    case 'search-suggestions': {
+      await page.evaluate(() => window.clientsFixture.configure({ pnpSearch: true }));
+      try {
+        const before = await page.evaluate(() => window.clientsFixture.requests.length);
+        if (key === 'search-facet') {
+          await panel.getByLabel('Match values within each facet', { exact: true }).selectOption('and');
+          check('Facet operator sends no HTTP', await page.evaluate(() => window.clientsFixture.requests.length), before);
+          await panel.getByRole('button', { name: 'Search All Content', exact: true }).click();
+          await panel.getByRole('button', { name: 'pdf (2)', exact: true }).click();
+          await panel.getByText('Search complete.', { exact: true }).waitFor();
+          check('Facet passes native token', await page.evaluate(() => JSON.parse(window.clientsFixture.requests.filter(r => r.kind === 'pnp-search').slice(-1)[0].settings.body).request.RefinementFilters), ['FileType:"ǂǂ706466"']);
+        } else {
+          await panel.getByLabel('Search with Autocomplete', { exact: true }).fill('ricevuta');
+          check('Unarmed suggestions send no HTTP', await page.evaluate(() => window.clientsFixture.requests.length), before);
+          await panel.getByRole('button', { name: 'Start suggestions', exact: true }).click();
+          const suggestion = panel.getByRole('button', { name: 'ricevuta suggestion', exact: true }); await suggestion.waitFor();
+          check('Suggest native URL', await page.evaluate(() => window.clientsFixture.requests.slice(-1).map(r => [r.settings.method, r.target])), [['GET', 'https://simulated.invalid/sites/demo/_api/search/suggest?querytext=%27ricevuta%27']]);
+          const selected = await page.evaluate(() => window.clientsFixture.requests.length); await suggestion.click();
+          await panel.getByRole('button', { name: 'Stop suggestions', exact: true }).click();
+          check('Selection and Stop send no HTTP', await page.evaluate(() => window.clientsFixture.requests.length), selected);
+        }
+      } finally { await page.evaluate(() => window.clientsFixture.configure({ pnpSearch: false })); }
       break;
     }
     default: throw new Error(`Uncovered panel ${key}`);

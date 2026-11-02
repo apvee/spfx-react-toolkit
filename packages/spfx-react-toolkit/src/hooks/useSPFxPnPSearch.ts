@@ -769,6 +769,191 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
  * }
  * export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Search or Enter runs the current nonempty text, shows its results or dismissible error, and reset or draft changes hide obsolete work without sending another query.' };
  * ```
+ *
+ * @example Filter search results with native refiner tokens
+ * ```tsx
+ * import * as React from 'react';
+ * import { Button, Field, Label, Link, Select, makeStyles } from '@fluentui/react-components';
+ * import { useSPFxPnPContext, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * type Item = { Title?: string; Path?: string; FileType?: string; Author?: string };
+ * type Outcome = { token: object; request: number; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
+ * const useStyles = makeStyles({ results: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, maxWidth: '100%', gap: '12px', overflowWrap: 'anywhere', '& > article': { minWidth: 0, maxWidth: '100%' } }, facets: { display: 'grid', gap: '8px' } });
+ *
+ * export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const classes = useStyles();
+ *   const context = useSPFxPnPContext();
+ *   const [operator, setOperator] = React.useState<'or' | 'and'>('or');
+ *   const info = useSPFxPnPSearch<Item>({ pageSize: 10, selectProperties: ['Title', 'Path', 'FileType', 'Author'], refiners: 'FileType,DisplayAuthor,Size,Write', refinerOperator: operator }, context);
+ *   // Results/loading change on every operation; only stable methods/client/options own the boundary.
+ *   const values: readonly unknown[] = [info.search, info.applyRefiner, context.sp, operator, resetRevision];
+ *   const boundary = React.useRef({ values, token: {}, version: 0 });
+ *   if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {}, version: 0 };
+ *   const session = boundary.current;
+ *   const token = session.token;
+ *   const version = session.version;
+ *   const mounted = React.useRef(false);
+ *   const sequence = React.useRef(0);
+ *   const dispatch = React.useRef<{ token: object; request: number; version: number }>();
+ *   const [outcome, setOutcome] = React.useState<Outcome>();
+ *   const [published, setPublished] = React.useState<{ token: object; version: number; request: number }>();
+ *   const current = (): boolean => mounted.current && boundary.current === session && session.version === version;
+ *   const visible = current() && outcome?.token === token ? outcome : undefined;
+ *   const showResults = current() && published?.token === token && published.version === version;
+ *   React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
+ *   const revision = React.useRef(resetRevision);
+ *   React.useLayoutEffect(() => {
+ *     if (revision.current === resetRevision) return;
+ *     revision.current = resetRevision;
+ *     sequence.current++;
+ *     setOutcome(undefined);
+ *     setPublished(undefined);
+ *     setOperator('or');
+ *   }, [resetRevision]);
+ *   const chooseOperator = (next: 'or' | 'and'): void => {
+ *     if (!current() || next === operator) return;
+ *     session.version++;
+ *     sequence.current++;
+ *     setOutcome(undefined);
+ *     setPublished(undefined);
+ *     setOperator(next);
+ *   };
+ *   const run = async (facet?: { name: string; token: string }): Promise<void> => {
+ *     if (!current() || !context.isInitialized || (dispatch.current?.token === token && dispatch.current.version === version)) return;
+ *     if (facet && (!facet.token || !showResults || published?.request !== sequence.current)) return;
+ *     const request = ++sequence.current;
+ *     const owns = (): boolean => current() && sequence.current === request;
+ *     dispatch.current = { token, request, version };
+ *     setOutcome({ token, request, phase: 'pending' });
+ *     setPublished(undefined);
+ *     try {
+ *       // applyRefiner returns Promise<void>; display the real hook state only after current completion.
+ *       if (facet) await info.applyRefiner(facet.name, facet.token);
+ *       else await info.search('*');
+ *       if (owns()) {
+ *         setPublished({ token, version, request });
+ *         setOutcome({ token, request, phase: 'success' });
+ *       }
+ *     } catch (error) {
+ *       if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
+ *     } finally {
+ *       if (owns() && dispatch.current?.token === token && dispatch.current.request === request) dispatch.current = undefined;
+ *     }
+ *   };
+ *   const dismiss = (): void => {
+ *     if (!current() || visible?.phase !== 'error' || visible.request !== sequence.current) return;
+ *     info.clearError();
+ *     setOutcome(undefined);
+ *   };
+ *   const pending = visible?.phase === 'pending';
+ *   const regions: DemoRegions = {
+ *     controls: <><Field label="Match values within each facet"><Select aria-label="Match values within each facet" value={operator} onChange={event => chooseOperator(event.target.value === 'or' ? 'or' : 'and')}><option value="or">Any selected value (OR)</option><option value="and">All selected values (AND)</option></Select></Field><Label>Different facets combine with AND. Changing this choice resets the search.</Label></>,
+ *     commands: <Button disabled={!context.isInitialized || pending} onClick={() => run()}>Search All Content</Button>,
+ *     status: <>{context.error && <p role="alert">Client initialization error: {context.error.message}</p>}{visible?.phase === 'error' && <div role="alert">{visible.message} <Button onClick={dismiss}>Dismiss</Button></div>}<p role="status">{pending ? 'Loading...' : showResults ? 'Search complete.' : 'Click "Search All Content" to see results.'}</p></>,
+ *     children: showResults ? <><p>Found {info.totalResults} results</p><div className={classes.facets}>{info.refiners.map(refiner => <section key={refiner.name}><h3>{refiner.name}</h3>{refiner.entries.slice(0, 5).map((entry, index) => <Button key={JSON.stringify([refiner.name, entry.token, entry.value, index])} disabled={pending || !entry.token} onClick={() => run({ name: refiner.name, token: entry.token })}>{`${entry.value} (${entry.count})`}</Button>)}</section>)}</div><div className={classes.results}>{info.results.map(result => <article key={result.id}><h3>{result.data.Title || '(No Title)'}</h3><p>{result.data.FileType} | {result.data.Author}</p>{result.data.Path?.trim() ? <Link href={result.data.Path} target="_blank" rel="noopener noreferrer">{result.data.Path}</Link> : undefined}</article>)}</div>{info.totalResults === 0 && <p>No results found. Try a different query.</p>}</> : undefined,
+ *     diagnostics: <p>Faceted search with FileType, DisplayAuthor, Size and Write refiners. Click to filter/toggle. Mount below the matching SPFx provider with Fluent and Griffel peers. Native tokens, including ranges, are passed unchanged. Search clears filters; changing OR/AND or resetting only hides obsolete work. Dispatched requests may still settle. Server permissions and indexing determine results.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Run Search All Content, toggle native refiner tokens, and change OR or AND to reset the view without sending a query.' };
+ * ```
+ *
+ * @example Request debounced suggestions after explicit start
+ * ```tsx
+ * import * as React from 'react';
+ * import { Button, Field, Input, makeStyles } from '@fluentui/react-components';
+ * import { useSPFxPnPContext, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * type Outcome = { token: object; version: number; phase: 'pending' } | { token: object; version: number; phase: 'ready'; suggestions: string[] } | { token: object; version: number; phase: 'error'; message: string };
+ * const useStyles = makeStyles({ suggestions: { display: 'grid', gap: '8px' } });
+ *
+ * export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const classes = useStyles();
+ *   const context = useSPFxPnPContext();
+ *   const { suggest } = useSPFxPnPSearch(undefined, context);
+ *   const [draft, setDraft] = React.useState({ raw: '', armed: false });
+ *   const [outcome, setOutcome] = React.useState<Outcome>();
+ *   const values: readonly unknown[] = [suggest, context.sp, resetRevision];
+ *   const boundary = React.useRef({ values, token: {}, version: 0, raw: '', armed: false });
+ *   if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {}, version: 0, raw: draft.raw, armed: false };
+ *   const session = boundary.current;
+ *   const token = session.token;
+ *   const version = session.version;
+ *   const mounted = React.useRef(false);
+ *   const timer = React.useRef<ReturnType<typeof setTimeout>>();
+ *   const current = (): boolean => mounted.current && boundary.current === session && session.version === version;
+ *   const cancelTimer = (): void => { if (timer.current !== undefined) { clearTimeout(timer.current); timer.current = undefined; } };
+ *   React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; session.armed = false; session.version++; cancelTimer(); }; }, []);
+ *   const revision = React.useRef(resetRevision);
+ *   React.useLayoutEffect(() => {
+ *     cancelTimer();
+ *     if (revision.current !== resetRevision) { revision.current = resetRevision; session.raw = ''; }
+ *     session.armed = false;
+ *     setDraft({ raw: session.raw, armed: false });
+ *     setOutcome(undefined);
+ *   }, [suggest, context.sp, resetRevision]);
+ *   const retire = (): number => { session.version++; cancelTimer(); setOutcome(undefined); return session.version; };
+ *   const schedule = (acceptedVersion: number): void => {
+ *     if (!session.armed || session.raw.length < 2) return;
+ *     const raw = session.raw;
+ *     const method = suggest;
+ *     const owns = (): boolean => mounted.current && boundary.current === session && session.version === acceptedVersion && session.armed && session.raw === raw && boundary.current.values[0] === method;
+ *     setOutcome({ token, version: acceptedVersion, phase: 'pending' });
+ *     timer.current = setTimeout(() => {
+ *       if (!owns()) return;
+ *       timer.current = undefined;
+ *       const request = async (): Promise<void> => {
+ *         try {
+ *           const suggestions = await method(raw);
+ *           if (owns()) setOutcome({ token, version: acceptedVersion, phase: 'ready', suggestions });
+ *         } catch (error) {
+ *           if (owns()) setOutcome({ token, version: acceptedVersion, phase: 'error', message: error instanceof Error && error.message ? error.message : 'The suggestion request failed.' });
+ *         }
+ *       };
+ *       return request();
+ *     }, 300);
+ *   };
+ *   const edit = (raw: string): void => {
+ *     if (!current() || raw === session.raw) return;
+ *     // Accept raw text and revoke old work before publishing React state, including A -> B -> A.
+ *     session.raw = raw;
+ *     const acceptedVersion = retire();
+ *     setDraft({ raw, armed: session.armed });
+ *     schedule(acceptedVersion);
+ *   };
+ *   const start = (): void => {
+ *     if (!current() || session.armed || !context.isInitialized) return;
+ *     const acceptedVersion = retire();
+ *     session.armed = true;
+ *     setDraft({ raw: session.raw, armed: true });
+ *     schedule(acceptedVersion);
+ *   };
+ *   const stop = (): void => {
+ *     if (!current()) return;
+ *     retire();
+ *     session.armed = false;
+ *     setDraft({ raw: session.raw, armed: false });
+ *   };
+ *   const visible = current() && outcome?.token === token && outcome.version === version ? outcome : undefined;
+ *   const select = (suggestion: string): void => {
+ *     if (!current() || visible?.phase !== 'ready' || !visible.suggestions.includes(suggestion)) return;
+ *     retire();
+ *     session.raw = suggestion;
+ *     setDraft({ raw: suggestion, armed: session.armed });
+ *   };
+ *   const regions: DemoRegions = {
+ *     controls: <Field label="Search with Autocomplete"><Input aria-label="Search with Autocomplete" placeholder="Type at least 2 characters..." value={draft.raw} onChange={(_, data) => edit(data.value)} /></Field>,
+ *     commands: <><Button disabled={!context.isInitialized} onClick={start}>Start suggestions</Button><Button onClick={stop}>Stop suggestions</Button></>,
+ *     status: <>{context.error && <p role="alert">Client initialization error: {context.error.message}</p>}{visible?.phase === 'pending' && <p role="status">Loading suggestions...</p>}{visible?.phase === 'error' && <div role="alert">Could not load suggestions. {visible.message} Edit the search text to try again.</div>}{!visible && <p role="status">{draft.armed ? 'Edit the search text for suggestions.' : 'Start suggestions to enable autocomplete.'}</p>}</>,
+ *     children: visible?.phase === 'ready' ? visible.suggestions.length > 0 ? <div className={classes.suggestions}>{visible.suggestions.map((suggestion, index) => <Button key={JSON.stringify([suggestion, index])} onClick={() => select(suggestion)}>{suggestion}</Button>)}</div> : <p>No suggestions available for this text. SharePoint query suggestions depend on search history and tenant configuration. Indexed documents alone do not guarantee suggestions.</p> : undefined,
+ *     diagnostics: <p>Mount below the matching SPFx provider with Fluent and Griffel peers. Start explicitly arms 300 ms suggestions for raw text of at least two characters. Stop retains the draft; reset empties it. Selection changes text without another request. Only local timers are canceled: dispatched requests may still settle. SharePoint permissions, query history and tenant configuration determine suggestions.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Start suggestions to debounce edits for 300 ms and show only the current response; Stop or reset returns to idle, and choosing a suggestion changes the text without another request.' };
+ * ```
  */
 export function useSPFxPnPSearch<T = Record<string, string>>(
   options?: UseSPFxPnPSearchOptions,

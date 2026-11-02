@@ -192,25 +192,22 @@ test('refiner token survives refetch and pagination, toggles off and clears on a
 
 test('Faceted Search demo combines PDF and DisplayAuthor tokens and removes only the toggled facet', async t => {
   const f = fixture(t);
-  let pending;
-  f.boundaries['@apvee/spfx-react-toolkit'] = { useSPFxPnPSearch: options => {
-    const info = f.useSPFxPnPSearch(options);
-    return { ...info,
-      search: (...args) => (pending = info.search(...args)),
-      applyRefiner: (...args) => (pending = info.applyRefiner(...args))
-    };
-  } };
-  const file = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demos/PnPSearchRefinersDemo.tsx');
-  const { PnPSearchRefinersDemo } = f.load(file);
+  // Actual source hook/service/PnP tier; stable methods are not wrapped per render.
+  const context = { sp: f.sp, isInitialized: true };
+  f.boundaries['@apvee/spfx-react-toolkit'] = { useSPFxPnPSearch: f.useSPFxPnPSearch, useSPFxPnPContext: () => context };
+  const file = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Filter search results with native refiner tokens', 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#useSPFxPnPSearch').file;
+  const { Demo } = f.load(file);
   const view = f.mountComponent(() => f.React.createElement(FluentProvider,
-    { theme: webLightTheme }, f.React.createElement(PnPSearchRefinersDemo)));
+    { theme: webLightTheme }, f.React.createElement(Demo)));
   async function click(text) {
     const button = Array.from(view.container.querySelectorAll('button')).find(b => b.textContent === text);
     assert.ok(button, text);
-    await f.act(async () => {
-      Simulate.click(button);
-      await pending;
-    });
+    f.act(() => Simulate.click(button));
+    for (let attempt = 0; attempt < 50; attempt++) {
+      await f.act(async () => { await new Promise(resolve => setTimeout(resolve, 0)); });
+      if (view.container.textContent.includes('Search complete.')) return;
+    }
+    assert.fail('Actual emitted facet operation did not complete: ' + view.container.textContent);
   }
   await click('Search All Content');
   assert.equal(f.request(0).Refiners, 'FileType,DisplayAuthor,Size,Write');

@@ -121,10 +121,11 @@ async function thumbInteractions(axis) {
   if (process.env.STYLES_PANEL_SUGGESTIONS_ONLY === '1') {
     await page.goto(`${url}?suggestions-only=1`);
     const input = page.getByRole('textbox', { name: 'Search with Autocomplete' });
+    await page.getByRole('button', { name: 'Start suggestions', exact: true }).click();
     await input.fill('keyboard');
     const suggestion = page.getByRole('button', { name: 'keyboard suggestion', exact: true });
     await suggestion.waitFor();
-    await input.focus(); await page.keyboard.press('Tab');
+    await input.focus(); await page.keyboard.press('Tab'); await page.keyboard.press('Tab'); await page.keyboard.press('Tab');
     check('suggestion receives keyboard focus', await suggestion.evaluate(e => e === document.activeElement), true);
     await page.keyboard.press('Enter');
     check('Enter accepts suggestion', await input.inputValue(), 'keyboard suggestion');

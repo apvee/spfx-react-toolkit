@@ -101,7 +101,7 @@ function createClientsFixture(t, title, options = {}) {
                 assert.equal(init.method, 'POST'); assert.equal(target.search, ''); assert.equal(new Headers(init.headers).get('X-PnPjs-NoDigest'), '1');
             } else {
                 const protocol = h.load(path.resolve(__dirname, '../demo-presentation/pnp-search-protocol.ts'));
-                assert.ok(protocol.acceptsSearchPost(target, init, 'https://tenant.test'), 'bounded native Search POST only');
+                assert.ok(protocol.acceptsSearchPost(target, init, 'https://tenant.test') || protocol.acceptsSearchSuggest(target, init, 'https://tenant.test'), 'bounded native Search POST or Suggest GET only');
             }
         } else if (options.pnpServices) {
             assert.equal(target.origin, 'https://tenant.test');

@@ -1,5 +1,5 @@
 // Deterministic native transport boundaries only. Real providers/hooks/adapters decide access.
-import { acceptsSearchPost } from './pnp-search-protocol';
+import { acceptsSearchPost, acceptsSearchSuggest } from './pnp-search-protocol';
 import { PageContext, HttpClient, SPHttpClient, MSGraphClientFactory, AadHttpClientFactory, AadTokenProviderFactory, ThemeProvider } from './spfx-services';
 export const fixturePage = {
   site: { id: '11111111-0000-0000-0000-000000000001', serverRelativeUrl: '/sites/demo', absoluteUrl: 'https://simulated.invalid/sites/demo' },
@@ -184,16 +184,29 @@ window.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response>
   if (url !== graphDataDownload) {
     const target = new URL(url);
     const method = init?.method ?? 'GET';
+    if (pnpSearch && acceptsSearchSuggest(target, init, 'https://simulated.invalid')) {
+      const raw = (target.searchParams.get('querytext') ?? '').slice(1, -1);
+      return clientWork('pnp-search', url, () => new Response(JSON.stringify({ PeopleNames: [], PersonalResults: [], Queries: [raw + ' suggestion'] }), { headers: { 'Content-Type': 'application/json' } }), { method, headers: init?.headers, body: init?.body }).then(value => {
+        if (!(value instanceof Response)) throw new Error('PnP Search fixture requires a native Response');
+        return value;
+      });
+    }
     if (pnpSearch && acceptsSearchPost(target, init, 'https://simulated.invalid')) {
       // Admission above establishes this finite fixture payload; PnP still parses its native cell rows.
-      const query = (JSON.parse(String(init?.body)) as { request: { RowLimit: number; StartRow?: number } }).request;
+      const query = (JSON.parse(String(init?.body)) as { request: { RowLimit: number; StartRow?: number; Refiners?: string } }).request;
       const offset = query.StartRow ?? 0;
       const total = query.RowLimit === 5 ? 7 : 1;
       const rows = Array.from({ length: Math.min(query.RowLimit, Math.max(0, total - offset)) }, (_, index) => ({ Cells: [
         { Key: 'DocId', Value: String(offset + index + 1) }, { Key: 'Title', Value: 'Fixture Search result ' + (offset + index + 1) },
         { Key: 'Path', Value: 'https://simulated.invalid/result/' + (offset + index + 1) }, { Key: 'Author', Value: 'Fixture author' },
       ] }));
-      return clientWork('pnp-search', url, () => new Response(JSON.stringify({ PrimaryQueryResult: { RelevantResults: { RowCount: rows.length, TotalRows: total, Table: { Rows: rows } } } }), { headers: { 'Content-Type': 'application/json' } }), { method, headers: init?.headers, body: init?.body }).then(value => {
+      const refinements = query.Refiners ? { Refiners: [
+        { Name: 'FileType', Entries: [{ RefinementName: 'pdf', RefinementToken: '"ǂǂ706466"', RefinementCount: '2' }, { RefinementName: 'docx', RefinementToken: '"ǂǂ646f6378"', RefinementCount: '2' }, { RefinementName: 'missing token', RefinementCount: '1' }, { RefinementName: 'Fourth', RefinementToken: '', RefinementCount: '1' }, { RefinementName: 'Fifth', RefinementToken: '', RefinementCount: '1' }, { RefinementName: 'Hidden sixth', RefinementToken: '', RefinementCount: '1' }] },
+        { Name: 'DisplayAuthor', Entries: [{ RefinementName: 'Fabio Franzini', RefinementToken: '"ǂǂ466162696f204672616e7a696e69"', RefinementCount: '2' }] },
+        { Name: 'Size', Entries: [{ RefinementName: 'Small', RefinementToken: 'range(100,1000,from="GE",to="LT")', RefinementCount: '2' }] },
+        { Name: 'Write', Entries: [{ RefinementName: '2026', RefinementToken: 'range(2026-01-01T00:00:00Z,2027-01-01T00:00:00Z)', RefinementCount: '2' }] },
+      ] } : undefined;
+      return clientWork('pnp-search', url, () => new Response(JSON.stringify({ PrimaryQueryResult: { RefinementResults: refinements, RelevantResults: { RowCount: rows.length, TotalRows: total, Table: { Rows: rows } } } }), { headers: { 'Content-Type': 'application/json' } }), { method, headers: init?.headers, body: init?.body }).then(value => {
         if (!(value instanceof Response)) throw new Error('PnP Search fixture requires a native Response');
         return value;
       });

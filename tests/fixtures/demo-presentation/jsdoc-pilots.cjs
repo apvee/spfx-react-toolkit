@@ -1,6 +1,6 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
-  useSPFxPnPSearch: ['Search SharePoint text with explicit execution'],
+  useSPFxPnPSearch: ['Search SharePoint text with explicit execution', 'Filter search results with native refiner tokens', 'Request debounced suggestions after explicit start'],
   SearchVerticals: ['Search selected verticals with builder paging'],
   createSPFxPnPContextService: ['Explore PnP context caching and request headers'],
   createSPFxPnPService: ['Read through a supplied PnP service client'],

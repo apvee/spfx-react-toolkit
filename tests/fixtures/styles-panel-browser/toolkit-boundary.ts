@@ -17,6 +17,8 @@ export * from '../../../packages/spfx-react-toolkit/lib/controls/form';
 
 export { getSPFxLocaleInfo } from '../../../packages/spfx-react-toolkit/lib/helpers/spfx-page-context.helpers';
 
-// The suggestions fixture uses a deterministic service boundary: no search network calls.
+// Isolated suggestion presentation double; native provider/PnP evidence lives in Search tests.
+const suggestionContext = { sp: {}, isInitialized: true };
+export const useSPFxPnPContext = (): typeof suggestionContext => suggestionContext;
 const suggest = async (query: string): Promise<string[]> => [`${query} suggestion`];
 export const useSPFxPnPSearch = (): { readonly suggest: typeof suggest } => ({ suggest });

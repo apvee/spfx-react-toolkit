@@ -1,7 +1,7 @@
 import { mountDemoFixture } from '../demo-fixture-host';
 import * as React from 'react';
 import { registerIcons } from '@fluentui/react';
-import { PnPSearchSuggestionsDemo } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demos/PnPSearchSuggestionsDemo';
+import { Demo as SuggestionsDemo } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/generated/jsdoc-examples/22e60530537a41f79bcf0ba2268a0576bb0b2a5b76d136c67537c333890823d9';
 import StylesPanel from '../foundation-legacy/StylesPanel';
 import { StylesScenario as ProductStylesPanel } from '../executable-examples/styles-scenario';
 import RelativeTimePanel from '../foundation-legacy/RelativeTimePanel';
@@ -26,4 +26,4 @@ const products: Readonly<Record<string, React.ComponentType>> = {
 };
 const query = new URLSearchParams(window.location.search);
 const Product = products[query.get('foundation-product') ?? ''];
-mountDemoFixture(Product ? <Product /> : query.has('suggestions-only') ? <PnPSearchSuggestionsDemo /> : query.has('form-only') ? <section data-form-boundary="compiled"><FormPanel /></section> : <><StylesPanel /><FormattedTextPanel /><RelativeTimePanel /><AutoSkeletonPanel /><StateMessagePanel /><GroupsPanel /></>);
+mountDemoFixture(Product ? <Product /> : query.has('suggestions-only') ? <SuggestionsDemo render={regions => <DemoCard title="Request debounced suggestions after explicit start" iconName="Search" contentPlacement="configuration" {...regions} />} /> : query.has('form-only') ? <section data-form-boundary="compiled"><FormPanel /></section> : <><StylesPanel /><FormattedTextPanel /><RelativeTimePanel /><AutoSkeletonPanel /><StateMessagePanel /><GroupsPanel /></>);

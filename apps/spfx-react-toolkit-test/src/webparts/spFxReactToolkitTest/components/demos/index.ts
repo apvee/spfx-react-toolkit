@@ -7,5 +7,3 @@
 
 
 // PnP Search demos
-export { PnPSearchRefinersDemo } from './PnPSearchRefinersDemo';
-export { PnPSearchSuggestionsDemo } from './PnPSearchSuggestionsDemo';

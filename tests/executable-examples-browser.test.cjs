@@ -24,7 +24,7 @@ test('tenant list acceptance contains the two exact new hook and factory cases',
 
 test('browser pilot filter preserves its prior cohort and adds exact service and Search cases without mutation', () => {
   const direct = { createSPFxPnPContextService: ['Explore PnP context caching and request headers'], createSPFxPnPService: ['Read through a supplied PnP service client'], createSPFxPnPListService: ['Read and page an explicitly selected list service'] };
-  const search = { useSPFxPnPSearch: ['Search SharePoint text with explicit execution'], SearchVerticals: ['Search selected verticals with builder paging'] };
+  const search = { useSPFxPnPSearch: ['Search SharePoint text with explicit execution', 'Filter search results with native refiner tokens', 'Request debounced suggestions after explicit start'], SearchVerticals: ['Search selected verticals with builder paging'] };
   const additions = { ...direct, ...search };
   for (const [name, titles] of Object.entries(additions)) assert.deepEqual(pilotTitles[name], titles);
   const features = Object.entries(pilotTitles).map(([title, titles]) => ({ key: title, title, scenarios: [...titles.map(title => ({ title })), { title: 'Future scenario' }] }));
@@ -43,6 +43,16 @@ test('browser pilot filter preserves its prior cohort and adds exact service and
   const preceding = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(search, feature.title));
   assert.equal(preceding.length, 50, 'complete accepted predecessor cohort');
   assert.equal(preceding.flatMap(feature => feature.scenarios).length, 58);
+  const g1 = filtered.flatMap(group => group.features).map(feature => ({ ...feature, scenarios: feature.scenarios.filter(entry => !['Filter search results with native refiner tokens','Request debounced suggestions after explicit start'].includes(entry.title)) }));
+  assert.equal(g1.length, 52, 'complete accepted g1 feature cohort');
+  assert.equal(g1.flatMap(feature => feature.scenarios).length, 60, 'complete accepted g1 scenario cohort');
+  for (const title of ['Filter search results with native refiner tokens','Request debounced suggestions after explicit start']) {
+    const missing = structuredClone(groups), duplicate = structuredClone(groups);
+    missing.flatMap(g => g.features).find(f => f.title === 'useSPFxPnPSearch').scenarios = missing.flatMap(g => g.features).find(f => f.title === 'useSPFxPnPSearch').scenarios.filter(entry => entry.title !== title);
+    assert.throws(() => filterPilotGroups(missing), /Missing pilot scenario or duplicate/);
+    duplicate.flatMap(g => g.features).find(f => f.title === 'useSPFxPnPSearch').scenarios.push({ title });
+    assert.throws(() => filterPilotGroups(duplicate), /Missing pilot scenario or duplicate/);
+  }
   const missingFeature = structuredClone(groups);
   for (const group of missingFeature) group.features = group.features.filter(feature => feature.title !== 'WebPartShell');
   assert.throws(() => filterPilotGroups(missingFeature), /Missing pilot feature or duplicate: WebPartShell/);
@@ -119,4 +129,13 @@ test('legacy checker contract rejects available masks with unexpected native dec
   const f = await legacyFixture(t);
   await f.flush(() => f.calls.forEach(call => call.resolve({ High: '0', Low: '0' })));
   await assert.rejects(() => checkLegacyPermissionResult(f.panel, check), /legacy decision values/);
+});
+
+test('isolated Styles suggestions route imports the exact canonical emitted case and retains its presentation tier', () => {
+  const fs = require('node:fs'), path = require('node:path');
+  const selected = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Request debounced suggestions after explicit start','packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#useSPFxPnPSearch');
+  const source = fs.readFileSync(path.resolve('tests/fixtures/styles-panel-browser/index.tsx'),'utf8');
+  assert.ok(source.includes('/generated/jsdoc-examples/' + selected.entry.id + "'"));
+  assert.match(source, /<SuggestionsDemo render=/);
+  assert.match(fs.readFileSync(path.resolve('tests/fixtures/styles-panel-browser/toolkit-boundary.ts'),'utf8'), /Isolated suggestion presentation double/);
 });
