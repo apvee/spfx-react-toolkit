@@ -293,7 +293,7 @@ const ErrorFallback: React.ComponentType<SharePointPermissionTrimBranchProps> = 
  *   const classes = useStyles();
  *   const owner = useSPFxContext(), page = useSPFxPageContext(), { client } = useSPFxSPHttpClient();
  *   // Observe actual public host identities only; the trims remain decision authority.
- *   const identity = [owner, owner.spfxContext, client, page, page.user.loginName, page.user.email, page.web.absoluteUrl];
+ *   const identity = [owner, owner.spfxContext, client, page, page.user.loginName, page.user.email, page.aadInfo?.userId?.toString(), page.web.absoluteUrl];
  *   const boundary = React.useRef({ revision: resetRevision, identity, epoch: 0, runEpoch: 0, attempt: 0, mounted: true });
  *   const [draft, setDraft] = React.useState<Draft>(defaults);
  *   const [applied, setApplied] = React.useState<Attempt>();

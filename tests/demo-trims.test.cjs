@@ -15,7 +15,7 @@ const constants = Object.assign(Permission, { viewListItems: new Permission({ Lo
 function fixture(t, name) {
   const toolkit = {}; let useContext, usePage;
   const pending = []; const calls = [];
-  const sp = { get: (url, config, options) => new Promise(resolve => { calls.push({ url, config, options }); pending.push(() => resolve({ ok: true, json: async () => mode === 'error' ? { malformed: true } : url.includes('currentuser') ? { Id: 17 } : url.includes('/users') ? { value: mode === 'denied' ? [] : [{ Id: 17 }] } : url.includes('sitegroups') ? { value: [{ Id: 2, Title: decodeURIComponent(url).includes('Changed group') ? 'Changed group' : 'Project Readers' }] } : { High: '0', Low: mode === 'denied' ? '0' : '7' } })); }) };
+  const sp = { get: () => { throw new Error('Entra-only panel must not request SharePoint'); } };
   let mode = 'allowed';
   const groupId = 'bbbbbbbb-0000-0000-0000-000000000001';
   const graph = { api: url => ({ get: () => new Promise((resolve, reject) => { calls.push({ url }); pending.push(() => mode === 'error' ? reject(new Error('Graph unavailable')) : resolve(url.startsWith('/groups?') ? { value: [{ id: groupId, displayName: decodeURIComponent(url).includes('Changed group') ? 'Changed group' : 'Project Readers', groupTypes: ['Unified'], securityEnabled: false, mailEnabled: true, onPremisesSyncEnabled: false }] } : { value: [] })); }), post: body => new Promise((resolve, reject) => { calls.push({ url, body }); pending.push(() => mode === 'error' ? reject(new Error('Graph unavailable')) : resolve({ value: mode === 'denied' ? [] : body.groupIds })); }) }) };
@@ -28,7 +28,7 @@ function fixture(t, name) {
     './useAsyncInvoke.internal': { useAsyncInvoke: loadHook('useAsyncInvoke.internal', 'useAsyncInvoke') },
   });
   useContext = h.load('core/context.internal.tsx').useSPFxContext; usePage = h.load('hooks/useSPFxPageContext.ts').useSPFxPageContext;
-  for (const slug of ['sharepoint-group-trim', 'entra-group-trim']) Object.assign(toolkit, h.load(`controls/${slug}/${slug}.tsx`));
+  for (const slug of ['entra-group-trim']) Object.assign(toolkit, h.load(`controls/${slug}/${slug}.tsx`));
   const Provider = h.load('core/provider-base.internal.tsx').SPFxProviderBase;
   const theme = { tryGetTheme: () => ({}), themeChangedEvent: { add() {}, remove() {} } };
   const factory = { getClient: async () => graph };
@@ -43,7 +43,7 @@ function fixture(t, name) {
   const finish = async () => { for (let i = 0; i < 12; i++) { await flush(); while (pending.length) { await h.act(async () => pending.shift()()); } } };
   return { h, view, calls, select, click, flush, finish, mode: value => { mode = value; } };
 }
-for (const name of ['SharePointGroupTrim', 'EntraGroupTrim']) test(`${name} actual panel stages native reads and protects component lifetimes`, async t => {
+for (const name of ['EntraGroupTrim']) test(`${name} actual panel stages native reads and protects component lifetimes`, async t => {
   const f = fixture(t, name); await f.flush();
   assert.equal(f.view.container.querySelectorAll('[data-demo-section]').length, 1);
   assert.equal(f.calls.length, 0); assert.ok(f.view.container.querySelector('[data-trim-demo=idle]'));
@@ -65,7 +65,7 @@ for (const name of ['SharePointGroupTrim', 'EntraGroupTrim']) test(`${name} actu
   f.mode('error'); f.click('[data-trim-demo=run]'); await f.finish();
   assert.equal(f.view.container.querySelector('[data-trim-demo=state]').getAttribute('data-trim-state'), 'error');
 });
-const { createTrimsFixture, single, nested, groupId } = require('./fixtures/executable-examples/trims-scenarios.cjs');
+const { createTrimsFixture, single, nested, spGroup, groupId } = require('./fixtures/executable-examples/trims-scenarios.cjs');
 test('canonical permission workflow stages real native reads and protects lifetimes', async t => {
   const f = createTrimsFixture(t, single); await f.flush(); assert.equal(f.calls.length, 0);
   f.click(); await f.flush(); assert.ok(f.container.querySelector('[data-trim-state="loading"]')); assert.equal(f.diagnostics.mounts, 0);
@@ -80,4 +80,16 @@ test('canonical nested AND starts Graph only after actual outer permission grant
   f.click(); await f.flush(); await f.settle(f.calls[1], { High: 0, Low: 1 }); assert.equal(f.initializations.length, 1);
   await f.initialize(); await f.settle(f.calls[2], { value: [{ id: groupId, displayName: 'Project Readers' }] });
   await f.settle(f.calls[3], { value: [groupId] }); assert.equal(f.diagnostics.mounts, 1); assert.equal(f.diagnostics.active, true);
+});
+
+test('canonical SharePoint groups stage native checks and retain direct-membership lifetime parity', async t => {
+  const f = createTrimsFixture(t, spGroup); assert.equal(f.calls.length, 0);
+  f.click(); await f.flush(); assert.ok(f.container.querySelector('[data-trim-state="loading"]'));
+  await f.settle(f.calls[0], { value: [{ Id: 2, Title: 'Project Readers' }] });
+  await f.settle(f.calls[1], { Id: 17 }); await f.settle(f.calls[2], { value: [{ Id: 17 }] });
+  f.click('Protected counter: 0'); assert.equal(f.diagnostics.counter, 1); assert.equal(f.diagnostics.mounts, 1);
+  const groups = f.diagnostics.groups; f.change('Group values', 'Other Readers'); assert.deepEqual(f.diagnostics.groups, groups); assert.equal(f.calls.length, 3);
+  f.click(); await f.flush(); await f.settle(f.calls[3], { value: [{ Id: 3, Title: 'Other Readers' }] });
+  await f.settle(f.calls[4], { Id: 17 }); await f.settle(f.calls[5], { value: [] }); assert.ok(f.container.querySelector('[data-trim-state="denied"]')); assert.equal(f.diagnostics.unmounts, 1);
+  f.click(); await f.flush(); await f.reject(f.calls[6]); assert.ok(f.container.querySelector('[data-trim-state="error"]')); assert.equal(f.initializations.length, 0);
 });

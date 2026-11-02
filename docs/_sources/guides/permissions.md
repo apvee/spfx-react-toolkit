@@ -133,7 +133,9 @@ Graph paging currently accepts HTTPS next links on `graph.microsoft.com` only. N
 
 Requires a matching SPFx provider and native SPHttpClient. Reads the selected web's current-user site-local ID and direct users for every selected site group across all pages. This does not expand Entra principals nested in SharePoint groups and does not query a transitive directory membership. Exact names use escaped Title filters, local exact equality and all-page ambiguity checks. Missing or ambiguous groups, invalid IDs, HTTP/payload/paging failures are errors; an earlier positive membership cannot hide a later failure. Remote-web IDs belong to that web's site collection.
 
-The lazy **SharePoint Group Trim** sample uses this actual control and native APIs, editable selectors, enum fields, all three branches, a protected counter and effect mount gauge. Local fixtures replace only unavailable transports and do not establish authenticated tenant behavior. See [development verification](../development/INDEX.md) and the [controls index](../../api/INDEX.md#references).
+Stage exact names or numeric IDs, semicolon-separated selections, current or explicit web and all/any matching, then Run. Draft edits retain the applied decision and protected counter. A settled repeat checks again; Reset restores idle without replacing the editor or starting membership reads. Local native-boundary tests and authenticated SharePoint validation remain separate; see [development verification](../development/INDEX.md).
+
+<!-- toolkit:include symbol="SharePointGroupTrim" section="example" title="Stage direct SharePoint group membership and observe protected lifetimes" -->
 
 `SharePointGroupTrimBranchProps` describes each structural marker. `SharePointGroupTrimProps` describes the control.
 

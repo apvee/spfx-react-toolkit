@@ -336,7 +336,7 @@ const { assertDemoControls } = require('./demo-controls.helpers.cjs');
 assertDemoControls(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest'));
 console.log('Verified Fluent 9 demo controls and host theme inheritance.');
 
-for (const name of ['SharePointGroupTrim', 'EntraGroupTrim']) {
+for (const name of ['EntraGroupTrim']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   for (const marker of ['DemoCard', 'data-demo-variant', `${name}.Loading`, `${name}.Fallback`, `${name}.ErrorFallback`, 'key={applied.run}', 'data-trim-demo="applied-target"', 'data-trim-demo="run"', 'TrimProtectedContent', 'observation.gauge']) {
     if (!product.includes(marker)) throw new Error(`${name} observable scenario missing ${marker}`);
@@ -393,3 +393,12 @@ if (!paginationPanel.includes('data-pagination-demo="localization"') || !paginat
 if (!stageSource.includes('data-stage-demo="strings"') || !stageSource.includes('strings={customStrings ?')) throw new Error('Source-owned Stage must retain native dictionary overrides');
 
 if (!gridSource.includes('id="dg-strings"') || !gridSource.includes('strings={gridStrings}')) throw new Error('Source-owned DataGrid must retain native dictionary overrides');
+
+{
+  const title = 'Stage direct SharePoint group membership and observe protected lifetimes';
+  const source = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/controls/sharepoint-group-trim/sharepoint-group-trim.tsx')), title);
+  for (const marker of ['export function Demo(', 'resetRevision', 'observe:', 'key={applied.id}', 'ProtectedContent', 'data-trim-demo="run"', 'data-trim-demo="applied-target"', 'SharePointGroupTrim.Loading', 'SharePointGroupTrim.Fallback', 'SharePointGroupTrim.ErrorFallback', "draft.values.split(';')", 'Number(value.trim())', 'Object.freeze', 'groups={applied.groups}', 'webUrl={applied.webUrl}', 'match={applied.match}']) {
+    if (!source.includes(marker)) throw new Error(`Canonical SharePoint group scenario missing ${marker}`);
+  }
+  if (!read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')).includes(JSON.stringify(title))) throw new Error(`Canonical SharePoint group scenario unavailable: ${title}`);
+}

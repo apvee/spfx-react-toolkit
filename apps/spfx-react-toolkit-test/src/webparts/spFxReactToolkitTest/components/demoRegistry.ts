@@ -23,12 +23,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
-    key: 'sharepoint-group-trim', title: 'SharePoint Group Trim', iconName: 'Permissions',
-    description: 'Current-user access checks.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-sharepoint-group-trim' */ './panels/SharePointGroupTrimPanel')),
-    coverage: [{ symbol: 'SharePointGroupTrim', kind: 'read', notes: 'Actual native reads, all branches, selectors, protected state and explicit repeat; local transport fixtures and tenant validation are separate.' }],
-  },
-  {
     key: 'entra-group-trim', title: 'Entra Group Trim', iconName: 'Permissions',
     description: 'Current-user access checks.',
     component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-entra-group-trim' */ './panels/EntraGroupTrimPanel')),

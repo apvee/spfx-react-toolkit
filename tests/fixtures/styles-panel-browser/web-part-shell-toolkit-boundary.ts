@@ -110,3 +110,6 @@ export { FileFolderPicker, type FileFolderPickerScope, type FileFolderPickerValu
 // The released permission-resource and nested AND catalogue cases use real matching controls.
 export * from '../../../packages/spfx-react-toolkit/lib/controls/sharepoint-permission-trim';
 export * from '../../../packages/spfx-react-toolkit/lib/controls/entra-group-trim';
+
+// Direct SharePoint membership retains the actual matching control and public types.
+export * from '../../../packages/spfx-react-toolkit/lib/controls/sharepoint-group-trim';

@@ -55,7 +55,7 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve e
     useSPFxPnPSearch: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#useSPFxPnPSearch',
     SearchVerticals: 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#SearchVerticals',
   };
-  const trimOwners = { SharePointPermissionTrim: 'packages/spfx-react-toolkit/src/controls/sharepoint-permission-trim/sharepoint-permission-trim.tsx#SharePointPermissionTrim' };
+  const trimOwners = { SharePointGroupTrim: 'packages/spfx-react-toolkit/src/controls/sharepoint-group-trim/sharepoint-group-trim.tsx#SharePointGroupTrim', SharePointPermissionTrim: 'packages/spfx-react-toolkit/src/controls/sharepoint-permission-trim/sharepoint-permission-trim.tsx#SharePointPermissionTrim' };
   const pickerOwners = {
     FileFolderPicker: 'packages/spfx-react-toolkit/src/controls/file-folder-picker/file-folder-picker.tsx#FileFolderPicker',
     SitePicker: 'packages/spfx-react-toolkit/src/controls/pickers/site-picker.tsx#SitePicker',

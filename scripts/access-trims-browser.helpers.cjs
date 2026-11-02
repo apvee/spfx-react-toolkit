@@ -15,7 +15,8 @@ async function accessTrimsBrowser({ page, check, select, singleExample, labels, 
     check(`${key}: counter active`, await page.locator('[data-trim-demo=increment]').textContent(), 'Protected counter: 1');
     const previousTarget = await page.locator('[data-trim-demo=applied-target]').textContent();
     const previousReads = await page.evaluate(() => window.trimFixture.calls.length);
-    if (key === 'sharepoint-permission-trim') await page.getByRole('textbox', { name: 'Web URL', exact: true }).fill('https://simulated.invalid/sites/next');
+    if (key === 'sharepoint-group-trim') await page.getByRole('textbox', { name: 'Group values', exact: true }).fill('Changed group');
+    else if (key === 'sharepoint-permission-trim') await page.getByRole('textbox', { name: 'Web URL', exact: true }).fill('https://simulated.invalid/sites/next');
     else await page.locator('[data-trim-demo=groups]').fill('Changed group');
     check(`${key}: draft keeps applied identity`, await page.locator('[data-trim-demo=applied-target]').textContent(), previousTarget);
     check(`${key}: draft keeps counter`, await page.locator('[data-trim-demo=increment]').textContent(), 'Protected counter: 1');

@@ -32,7 +32,8 @@ test('browser pilot filter preserves its prior cohort and adds exact service and
     ViewPicker: ['Explore scoped view catalogs'], ListItemPicker: ['Explore list item labels and query pages'],
     PrincipalPicker: ['Explore principal discovery and explicit identity resolution'],
   };
-  const trims = { SharePointPermissionTrim: ['Stage resource permissions and observe protected lifetimes', 'Compose permission and Entra checks with nested AND'] };
+  const spGroup = { SharePointGroupTrim: ['Stage direct SharePoint group membership and observe protected lifetimes'] };
+  const trims = { ...spGroup, SharePointPermissionTrim: ['Stage resource permissions and observe protected lifetimes', 'Compose permission and Entra checks with nested AND'] };
   const additions = { ...direct, ...search, ...pickers, ...trims };
   for (const [name, titles] of Object.entries(additions)) assert.deepEqual(pilotTitles[name], titles);
   const features = Object.entries(pilotTitles).map(([title, titles]) => ({ key: title, title, scenarios: [...titles.map(title => ({ title })), { title: 'Future scenario' }] }));
@@ -68,18 +69,21 @@ test('browser pilot filter preserves its prior cohort and adds exact service and
   const shell = missingScenario.flatMap(group => group.features).find(feature => feature.title === 'WebPartShell');
   shell.scenarios = shell.scenarios.filter(scenario => scenario.title !== 'Configure the actual web part Shell');
   assert.throws(() => filterPilotGroups(missingScenario), /Missing pilot scenario or duplicate: WebPartShell\/Configure the actual web part Shell/);
+  const acceptedPermission = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(spGroup, feature.title));
+  assert.equal(acceptedPermission.length,61,'all accepted 5c1 features preserved');
+  assert.equal(acceptedPermission.flatMap(feature=>feature.scenarios).length,72,'all accepted 5c1 scenarios preserved');
   const prior = filtered.flatMap(group => group.features).filter(feature => !Object.hasOwn(trims, feature.title));
   assert.equal(prior.length,60,'complete final accepted predecessor feature cohort');
   assert.equal(prior.flatMap(feature=>feature.scenarios).length,70,'complete final accepted predecessor scenario cohort');
   assert.equal(filtered.flatMap(group=>group.features).length,60+Object.keys(trims).length);
   assert.equal(filtered.flatMap(group=>group.features).flatMap(feature=>feature.scenarios).length,70+Object.values(trims).flat().length);
-  for (const title of trims.SharePointPermissionTrim) {
+  for (const [name,titles] of Object.entries(trims)) for (const title of titles) {
     const missing = structuredClone(groups), duplicate = structuredClone(groups);
-    const missingOwner = missing.flatMap(group => group.features).find(feature => feature.title === 'SharePointPermissionTrim');
+    const missingOwner = missing.flatMap(group => group.features).find(feature => feature.title === name);
     missingOwner.scenarios = missingOwner.scenarios.filter(entry => entry.title !== title);
-    assert.throws(() => filterPilotGroups(missing), /Missing pilot scenario or duplicate: SharePointPermissionTrim/);
-    duplicate.flatMap(group => group.features).find(feature => feature.title === 'SharePointPermissionTrim').scenarios.push({ title });
-    assert.throws(() => filterPilotGroups(duplicate), /Missing pilot scenario or duplicate: SharePointPermissionTrim/);
+    assert.throws(() => filterPilotGroups(missing), new RegExp('Missing pilot scenario or duplicate: '+name));
+    duplicate.flatMap(group => group.features).find(feature => feature.title === name).scenarios.push({ title });
+    assert.throws(() => filterPilotGroups(duplicate), new RegExp('Missing pilot scenario or duplicate: '+name));
   }
   for (const owner of [...Object.keys(trims), ...Object.keys(pickers), 'useSPFxPnPSearch', 'SearchVerticals', 'createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'useSPFxPnPListById', 'useSPFxPnPListByUrl', 'useSPFxPnPListByPath', 'useSPFxPnP', 'useSPFxPnPContext', 'useSPFxConfigurationStore', 'createSPFxConfigurationStoreService', 'useSPFxTenantProperty', 'createSPFxTenantPropertyService', 'useSPFxTenantKeyValueStore', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService']) {
     const missing = structuredClone(groups);

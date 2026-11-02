@@ -1,4 +1,4 @@
-// Finite native permission + named-AND oracle, composed in the existing one-cache DOM harness.
+// Finite native permission, named-AND and direct SPGroup oracle in the existing one-cache DOM harness.
 const { createPickerHarness } = require('../picker-source-harness.cjs');
 const { scenario } = require('./cards-description-list.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
@@ -9,6 +9,8 @@ const { RendererProvider } = require('@griffel/react');
 const fluent = require('@fluentui/react-components');
 const owner = 'packages/spfx-react-toolkit/src/controls/sharepoint-permission-trim/sharepoint-permission-trim.tsx#SharePointPermissionTrim';
 const single = 'Stage resource permissions and observe protected lifetimes', nested = 'Compose permission and Entra checks with nested AND';
+const spGroupOwner = 'packages/spfx-react-toolkit/src/controls/sharepoint-group-trim/sharepoint-group-trim.tsx#SharePointGroupTrim';
+const spGroup = 'Stage direct SharePoint group membership and observe protected lifetimes';
 const listId = 'aaaaaaaa-1111-4111-8111-111111111111', groupId = 'bbbbbbbb-1111-4111-8111-111111111111';
 const web = 'https://tenant.test/sites/team';
 function deferred(record) { let resolve, reject; const promise = new Promise((a,b) => { resolve = a; reject = b; }); return Object.assign(record, { promise, resolve, reject, settled: false }); }
@@ -29,9 +31,9 @@ function createTrimsFixture(t, title = single, options = {}) {
   const library = (stem, tsx = false) => h.load(path.join(root, stem + (compiled ? '.js' : tsx ? '.tsx' : '.ts')));
   Object.assign(context, library('hooks/useSPFxContext')); Object.assign(pageModule, library('hooks/useSPFxPageContext'));
   Object.assign(toolkit, context, pageModule, library('hooks/useSPFxSPHttpClient'), library('core/provider-webpart', true), library('controls/web-part-shell/web-part-shell', true));
-  for (const slug of ['sharepoint-permission-trim', 'entra-group-trim']) Object.assign(toolkit, library(`controls/${slug}/${slug}`, true));
+  for (const slug of ['sharepoint-permission-trim', 'entra-group-trim', ...(title === spGroup ? ['sharepoint-group-trim'] : [])]) Object.assign(toolkit, library(`controls/${slug}/${slug}`, true));
   const calls = [], initializations = [], captures = [], nativeAttempts = [], protocolErrors = [];
-  const selected = scenario(title, owner);
+  const selected = scenario(title, title === spGroup ? spGroupOwner : owner);
   // No live-network fallback is admitted by this fixture.
   t.mock.method(global, 'fetch', url => { protocolErrors.push('Unexpected network: ' + url); throw new Error('Unexpected network: ' + url); });
   function dispatch(record) {
@@ -50,7 +52,20 @@ function createTrimsFixture(t, title = single, options = {}) {
       assert.deepEqual(record.init, { headers: { Accept: 'application/json;odata.metadata=none' } });
       const suffix = decodeURIComponent(url.pathname.slice(url.pathname.indexOf('/_api/web/') + 10));
       const list = "(?:lists/getByTitle\\('(?:Tasks|O''Brien)'\\)|lists\\(guid'aaaaaaaa-1111-4111-8111-111111111111'\\)|GetListUsingPath\\(DecodedUrl='/sites/(?:team|remote|new)/Lists/Tasks'\\))";
-      if (suffix === 'effectivebasepermissions' || new RegExp('^' + list + '(?:/items\\((?:1|7)\\))?/effectivebasepermissions$').test(suffix)) { assert.equal(url.search, ''); phase = 'mask'; }
+      if (title === spGroup) {
+        const page = [...url.searchParams].filter(([key]) => key !== '$skiptoken');
+        // URLSearchParams.get uses the native null sentinel for an absent query key.
+        const continuation = url.searchParams.get('$skiptoken');
+        assert.ok(continuation === null || ['names2', 'members2'].includes(continuation), 'finite group continuation');
+        if (suffix === 'sitegroups') {
+          assert.equal(page[0]?.[0], '$select'); assert.equal(page[0]?.[1], 'Id,Title');
+          assert.equal(page[1]?.[0], '$filter');
+          assert.ok(["Title eq 'Project Readers'", "Title eq 'Other Readers'", "Title eq 'O''Brien & Readers'"].includes(page[1]?.[1]), 'finite exact group name');
+          assert.equal(page.length, 2); phase = 'group-name';
+        } else if (/^sitegroups\((?:2|3)\)$/.test(suffix)) { assert.deepEqual(page, [['$select', 'Id,Title']]); assert.equal(continuation, null); phase = 'group-id'; }
+        else if (suffix === 'currentuser') { assert.deepEqual(page, [['$select', 'Id']]); assert.equal(continuation, null); phase = 'group-currentuser'; }
+        else { assert.match(suffix, /^sitegroups\((?:2|3)\)\/users$/); assert.deepEqual(page, [['$select', 'Id']]); phase = 'group-users'; }
+      } else if (suffix === 'effectivebasepermissions' || new RegExp('^' + list + '(?:/items\\((?:1|7)\\))?/effectivebasepermissions$').test(suffix)) { assert.equal(url.search, ''); phase = 'mask'; }
       else if (new RegExp('^' + list + '$').test(suffix)) { assert.deepEqual([...url.searchParams], [['$select', 'Id']]); phase = 'list'; }
       else { assert.equal(suffix, "GetFolderByServerRelativePath(DecodedUrl='/sites/team/Shared Documents/Reports')/ListItemAllFields"); assert.deepEqual([...url.searchParams], [['$select', 'EffectiveBasePermissions,ParentList/Id'], ['$expand', 'ParentList']]); phase = 'folder'; }
     } else {
@@ -62,7 +77,7 @@ function createTrimsFixture(t, title = single, options = {}) {
     calls.push(request); return request.promise;
   }
   function host(id = 'trims-one', mask = options.mask) {
-    const page = { web: { absoluteUrl: web, title: 'Team', permissions: mask === undefined ? undefined : new pageNative.SPPermission({ High: 0, Low: mask }) }, site: { absoluteUrl: web }, user: { loginName: id, email: id + '@tenant.test' }, cultureInfo: {} };
+    const page = { web: { absoluteUrl: web, title: 'Team', permissions: mask === undefined ? undefined : new pageNative.SPPermission({ High: 0, Low: mask }) }, site: { absoluteUrl: web }, user: { id: 17, loginName: id, email: id + '@tenant.test' }, cultureInfo: {} };
     const sp = { get(url, configuration, init) { return dispatch({ kind: 'sp', id, client: sp, page, url, configuration, init, method: 'GET' }); } };
     const graph = { api(url) { return { get: () => dispatch({ kind: 'graph', id, client: graph, page, url, method: 'GET' }), post: body => dispatch({ kind: 'graph', id, client: graph, page, url, method: 'POST', body }) }; } };
     const factory = { getClient(version) { const request = deferred({ kind: 'initialization', id, page, factory, version, value: graph, capture: Object.freeze({ phase: 'graph-initialization', id, page, factory, version, login: page.user.loginName, web: page.web.absoluteUrl }), sequence: initializations.length }); initializations.push(request); try { assert.equal(version, '3'); } catch (error) { protocolErrors.push(error.message); request.reject(error); } return request.promise; } };
@@ -99,12 +114,12 @@ function createTrimsFixture(t, title = single, options = {}) {
     change(label, value) { const node = container.querySelector(`[aria-label="${label}"]`); assert.ok(node, label); h.act(() => { node.value = value; Simulate.change(node, { target: { value } }); }); },
     setRevision(value) { revision = value; render(); }, reset() { revision++; render(); }, replace(next) { instance = next; render(); },
     async flush(fn = () => {}) { await h.act(async () => { fn(); for (let i = 0; i < 35; i++) await Promise.resolve(); }); },
-    async settle(request, payload, status = 200) { assert.equal(request.settled, false); request.settled = true; await this.flush(() => request.resolve(request.kind === 'sp' ? { ok: status < 400, status, json: async () => payload } : payload)); },
+    async settle(request, payload, status = 200) { assert.equal(request.settled, false); request.settled = true; await this.flush(() => request.resolve(request.kind === 'sp' ? title === spGroup ? new Response(JSON.stringify(payload), { status, headers: { 'Content-Type': 'application/json' } }) : { ok: status < 400, status, json: async () => payload } : payload)); },
     async reject(request, error = new Error('native request failed')) { request.settled = true; await this.flush(() => request.reject(error)); },
     async initialize(request = initializations.at(-1), error) { request.settled = true; await this.flush(() => error ? request.reject(error) : request.resolve(request.value)); },
     mountPeer(owner = host('trims-peer')) { const view = h.mountComponent(() => tree(h.React.createElement(Demo), owner)); const peer = { ...view, instance: owner, click() { h.act(() => Simulate.click([...view.container.querySelectorAll('button')].find(n => n.textContent === 'Run'))); }, unmount() { view.unmount(); peers.delete(peer); } }; peers.add(peer); return peer; },
     origins() { const files = [...new Set(seen.filter(f => f.startsWith(path.dirname(root) + path.sep) && /\/(src|lib)\//.test(f)))];
-      const stems = ['core/provider-webpart','core/context.internal','hooks/useSPFxContext','hooks/useSPFxPageContext','hooks/useSPFxSPHttpClient','hooks/useSPFxMSGraphClient','hooks/useSPFxServiceScope','controls/sharepoint-permission-trim/sharepoint-permission-trim','controls/entra-group-trim/entra-group-trim','controls/access-trim-children.internal','hooks/useSPFxCrossSitePermissions','hooks/useSPFxPermissions','hooks/useAccessRequest.internal','services/spfx-scoped-permissions.internal','services/spfx-entra-groups.internal','helpers/spfx-permissions.helpers'];
+      const stems = ['core/provider-webpart','core/context.internal','hooks/useSPFxContext','hooks/useSPFxPageContext','hooks/useSPFxSPHttpClient','hooks/useSPFxMSGraphClient','hooks/useSPFxServiceScope','controls/sharepoint-permission-trim/sharepoint-permission-trim','controls/entra-group-trim/entra-group-trim','controls/access-trim-children.internal','hooks/useSPFxCrossSitePermissions','hooks/useSPFxPermissions','hooks/useAccessRequest.internal','services/spfx-scoped-permissions.internal','services/spfx-entra-groups.internal','helpers/spfx-permissions.helpers', ...(title === spGroup ? ['controls/sharepoint-group-trim/sharepoint-group-trim', 'services/spfx-sharepoint-groups.internal'] : [])];
       for (const stem of stems) assert.ok(files.includes(path.join(root, stem + (compiled ? '.js' : /core\/(provider-webpart|context.internal)|controls\//.test(stem) ? '.tsx' : '.ts'))), 'observed matching implementation ' + stem);
       const ts = require('typescript');
       const inventory = JSON.parse(read(path.join(path.dirname(root), 'localization/resources.json'), 'utf8'));
@@ -126,4 +141,4 @@ function createTrimsFixture(t, title = single, options = {}) {
       assert.deepEqual(files.filter(f => !assets.has(f) && f.includes(compiled ? '/src/' : '/lib/')), [], 'observed opposite implementation is forbidden'); assert.equal(toolkit.useSPFxContext, library('core/context.internal', true).useSPFxContext); return { files, dataRoles }; },
   };
 }
-module.exports = { createTrimsFixture, single, nested, owner, listId, groupId, web };
+module.exports = { createTrimsFixture, single, nested, owner, spGroupOwner, spGroup, listId, groupId, web };
