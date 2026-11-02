@@ -24,7 +24,9 @@ test('demo panels and migrated scenarios inherit theme and default direction; th
     assert.doesNotMatch(source, /dir=\{rtl \? 'rtl' : 'ltr'\}/, file);
   }
   assert.match(fs.readFileSync(path.join(base, 'panels/ContextPanel.tsx'), 'utf8'), /useSPFxFluent9ThemeInfo/);
-  assert.match(fs.readFileSync(path.join(base, 'panels/StylesPanel.tsx'), 'utf8'), /hostThemeName === 'contrast'/);
+  const styles = entries.find(entry => entry.title === 'Explore eight style recipes with the host renderer');
+  assert.ok(styles, 'The actual source-owned composition is available');
+  assert.match(fs.readFileSync(path.join(base, 'generated/jsdoc-examples', styles.id + '.tsx'), 'utf8'), /hostThemeName === 'contrast'/);
   const host = fs.readFileSync(path.join(base, 'WebPartShellDemoHost.tsx'), 'utf8');
   assert.doesNotMatch(host, /options.theme|theme=/);
   assert.match(host, /const dir = props\.dir \?\? overrides\.dir/);

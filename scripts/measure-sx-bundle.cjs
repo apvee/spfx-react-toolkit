@@ -99,7 +99,12 @@ async function bundle(name, fixture, library) {
   const dir = path.join(work, name);
   const config = { mode: 'production', devtool: false, entry: path.join(root, 'tests/fixtures/sx-bundle', fixture),
     output: { path: dir, filename: 'entry.js', chunkFilename: '[name].js', library: { type: 'commonjs2' } },
-    resolve: { extensions: ['.tsx', '.ts', '.js'], alias: { '@apvee/spfx-react-toolkit': library }, modules: [path.join(root, 'node_modules'), 'node_modules'] },
+    resolve: { extensions: ['.tsx', '.ts', '.js'], alias: { '@apvee/spfx-react-toolkit': library,
+      ...(process.env.SX_MEASURE_FULL_UI_ONLY === '1' ? {
+        ...require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: library }),
+        'react/jsx-runtime$': require.resolve('react/jsx-runtime.js'),
+      } : {}),
+    }, modules: [path.join(root, 'node_modules'), 'node_modules'] },
     resolveLoader: { modules: [path.join(root, 'node_modules')] },
     externals: [({ request }, done) => /^(react|react-dom)$/.test(request || '') || /^@microsoft\/sp-/.test(request || '') ? done(null, `commonjs ${request}`) : done()],
     module: { rules: [{ test: /\.tsx?$/, use: path.join(root, 'scripts/sx-browser-typescript-loader.cjs') }] },
@@ -111,6 +116,9 @@ async function bundle(name, fixture, library) {
   const detail = stats.toJson({ all: false, assets: true, chunks: true, modules: true, usedExports: true, reasons: true, errors: true, warnings: true });
   fs.writeFileSync(path.join(output, `${name}-stats.json`), JSON.stringify(detail, null, 2));
   if (stats.hasErrors() || detail.warnings.some(w => /export .*was not found|Module not found/.test(w.message))) throw new Error(`${name}: ${JSON.stringify([...detail.errors, ...detail.warnings])}`);
+  if (process.env.SX_MEASURE_FULL_UI_ONLY === '1' && detail.modules.some(module => /packages[\\/]spfx-react-toolkit[\\/](?:src|lib)[\\/]/.test(module.name || ''))) {
+    throw new Error('Full UI candidate imports escaped to the workspace library');
+  }
   // All emitted chunk assets are reachable from this single entry. Source maps
   // and license sidecars are excluded. A Set counts shared chunks only once.
   const names = [...new Set(detail.chunks.flatMap(chunk => chunk.files).filter(f => f.endsWith('.js')))];
@@ -153,11 +161,53 @@ function cssGrowth() {
   save();
 }
 async function main() {
+  const fullUiOnly = process.env.SX_MEASURE_FULL_UI_ONLY === '1';
+  if (fullUiOnly && !process.env.SX_MEASURE_CANDIDATE_TARBALL) throw new Error('SX_MEASURE_FULL_UI_ONLY requires an explicit SX_MEASURE_CANDIDATE_TARBALL');
   for (const name of ['typescript', 'webpack', 'react', '@griffel/core', '@griffel/react', '@fluentui/react-theme', '@fluentui/react-shared-contexts']) report.versions[name] = require(`${name}/package.json`).version;
   report.lockfileSha256 = hash(fs.readFileSync(path.join(root, 'package-lock.json')));
   report.fixtureHost = { react: 'host external17.0.1', spfx: 'all @microsoft/sp-* are host externals1.21.1', webpack: 'locked installed production,minimize,usedExports; module concatenation disabled for attribution; no custom sideEffects override', configSha256: hash(fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/config/config.json'))) };
-  report.fixtureHost.manifests = fs.readdirSync(path.join(root, 'artifacts/sx-baseline/dist')).filter(n => n.endsWith('.manifest.json')).map(name => ({ name, sha256: hash(fs.readFileSync(path.join(root, 'artifacts/sx-baseline/dist', name))) }));
+  if (!fullUiOnly) report.fixtureHost.manifests = fs.readdirSync(path.join(root, 'artifacts/sx-baseline/dist')).filter(n => n.endsWith('.manifest.json')).map(name => ({ name, sha256: hash(fs.readFileSync(path.join(root, 'artifacts/sx-baseline/dist', name))) }));
   report.npm = command('npm-version', 'npm', ['--version']).stdout.trim();
+  if (fullUiOnly) {
+    report.scope = 'full UI candidate bundle and transitive entry typecheck only; workspace-source CSS/cache probe is separate';
+    const candidate = path.resolve(process.env.SX_MEASURE_CANDIDATE_TARBALL);
+    report.candidateTarballSha256 = hash(fs.readFileSync(candidate));
+    fs.copyFileSync(candidate, path.join(output, 'candidate.tgz'));
+    const directory = path.join(work, 'full-ui-candidate');
+    fs.rmSync(directory, { recursive: true, force: true });
+    fs.mkdirSync(directory, { recursive: true });
+    command('extract-candidate', 'tar', ['-xzf', candidate, '-C', directory]);
+    const library = path.join(directory, 'package');
+    const entry = path.join(root, 'tests/fixtures/sx-bundle/full.tsx');
+    const configuration = path.join(work, 'full-ui-typecheck.json');
+    fs.writeFileSync(configuration, JSON.stringify({ compilerOptions: {
+      noEmit: true, strict: true, skipLibCheck: true, target: 'es2020', module: 'esnext', moduleResolution: 'node', jsx: 'react',
+      baseUrl: root, paths: { '@apvee/spfx-react-toolkit': [path.join(library, 'lib/index.d.ts')], '@apvee/spfx-react-toolkit/*': [path.join(library, '*')] },
+    }, files: [entry] }, undefined, 2) + '\n');
+    command('typecheck-full-ui', process.execPath, [require.resolve('typescript/bin/tsc'), '--project', configuration, '--noEmit']);
+    // Retain every source in this actual TS entry's local dependency closure,
+    // including the presentation adapter/emitted Demo, independently of snippets.
+    const config = ts.readConfigFile(configuration, ts.sys.readFile);
+    const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, path.dirname(configuration));
+    const program = ts.createProgram(parsed.fileNames, parsed.options);
+    report.entrySources = program.getSourceFiles().filter(file => !file.isDeclarationFile && !file.fileName.includes('/node_modules/'))
+      .map(file => {
+        const relative = path.relative(root, file.fileName);
+        const data = fs.readFileSync(file.fileName);
+        const destination = path.join(output, 'sources', relative);
+        fs.mkdirSync(path.dirname(destination), { recursive: true });
+        fs.writeFileSync(destination, data);
+        return { file: relative, sha256: hash(data), bytes: data.length };
+      });
+    report.entry = { file: path.relative(root, entry), sha256: hash(fs.readFileSync(entry)) };
+    await bundle('full-ui', 'full.tsx', library);
+    cssGrowth();
+    report.css.scope = 'Actual workspace SOURCE harness, not the candidate tarball or browser';
+    report.caveats.push('Narrow mode skips build, pack, unrelated bundle probes, frozen baseline measurement and SPFx ship.');
+    save();
+    console.log(`Evidence: ${output}/measurement.json`);
+    return;
+  }
   const baselineTarball = path.join(root, 'artifacts/sx-baseline/library.tgz');
   report.baselineTarballSha256 = hash(fs.readFileSync(baselineTarball));
   if (report.baselineTarballSha256 !== 'd87c017581e27d58d2525be9133041953341dc85f9ea61601d68ba92303fa7d5') throw new Error('Frozen baseline tarball hash mismatch');

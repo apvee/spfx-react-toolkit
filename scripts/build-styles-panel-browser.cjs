@@ -38,5 +38,5 @@ webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 
   if (error || stats.hasErrors()) { console.error(error || stats.toString({ all: false, errors: true })); process.exitCode = 1; return; }
   fs.copyFileSync(path.join(fixture, cardsOnly ? '../cards-browser/index.html' : descriptionListOnly ? '../description-list-browser/index.html' : paginationOnly ? '../pagination-browser/index.html' : shellOnly ? '../web-part-shell-browser/index.html' : 'index.html'), path.join(output, 'index.html'));
   console.log(stats.toString({ all: false, timings: true, assets: true, warnings: true }));
-  console.log(`Actual StylesPanel fixture: ${output}`);
+  console.log(`Compiled Styles/product and conformance fixture: ${output}`);
 });

@@ -42,12 +42,12 @@ test('qualified members and public type properties require actual source JSDoc',
 test('style example coverage rejects missing nested members and missing interactive scope use', () => {
   const { assertStyleExampleCoverage } = require('../scripts/style-example.helpers.cjs');
   const surface = [{ name: 'overflow.horizontal.auto' }, { name: 'responsive.medium' }, { name: 'hover' }];
-  const registry = "const demoRegistry = [{ key: 'styles', component: lazyPanel(() => import('./panels/StylesPanel')), coverage: [{ symbol: 'overflow' }, { symbol: 'responsive' }, { symbol: 'hover' }] }];";
+  const catalogue = "const executableExamples = [{ ownerKey: 'overflow-owner', featureKey: 'overflow-owner', publicNames: ['overflow'] }, { ownerKey: 'responsive-owner', featureKey: 'responsive-owner', publicNames: ['responsive'] }, { ownerKey: 'hover-owner', featureKey: 'hover-owner', publicNames: ['hover'] }];";
   const panel = "const sx = useSx(); responsive[threshold](hover(value)); const x = <Choice id=\"responsive-threshold\" choices={[\'medium\']} onChange={change}/>; const preview = <div className={sx(descriptor)} />; stylesCatalog[familyIndex];";
-  assert.throws(() => assertStyleExampleCoverage(surface, registry, panel, "family('overflow', overflow)"), /overflow.horizontal/);
-  assert.doesNotThrow(() => assertStyleExampleCoverage(surface, registry, panel, "family('overflow.horizontal', overflow.horizontal)"));
-  assert.throws(() => assertStyleExampleCoverage(surface, registry, panel.replace('hover(value)', 'value'), "family('overflow.horizontal', overflow.horizontal)"), /hover/);
-  assert.throws(() => assertStyleExampleCoverage(surface, registry, panel.replace("['medium']", "['small']"), "family('overflow.horizontal', overflow.horizontal)"), /responsive.medium threshold choice/);
+  assert.throws(() => assertStyleExampleCoverage(surface, catalogue, panel + "family('overflow', overflow)"), /overflow.horizontal/);
+  assert.doesNotThrow(() => assertStyleExampleCoverage(surface, catalogue, panel + "family('overflow.horizontal', overflow.horizontal)"));
+  assert.throws(() => assertStyleExampleCoverage(surface, catalogue, panel.replace('hover(value)', 'value') + "family('overflow.horizontal', overflow.horizontal)"), /hover/);
+  assert.throws(() => assertStyleExampleCoverage(surface, catalogue, panel.replace("['medium']", "['small']") + "family('overflow.horizontal', overflow.horizontal)"), /responsive.medium threshold choice/);
 });
 
 test('default surfaces retain own declarations while opt-in coverage follows real local inheritance', () => {

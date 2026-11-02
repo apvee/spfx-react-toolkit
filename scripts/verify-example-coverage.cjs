@@ -150,11 +150,11 @@ function scenarioSource(name, product = read(path.join(panelsPath, `${name}Panel
   return product + (fs.existsSync(fixture) ? '\n' + read(fixture) : '');
 }
 
+const styleCompositionSource = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSx.ts')), 'Explore eight style recipes with the host renderer');
 assertStyleExampleCoverage(
   styleSurface,
-  read(registryPath),
-  scenarioSource('Styles'),
-  read(path.join(panelsPath, 'stylesCatalog.ts'))
+  read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')),
+  styleCompositionSource
 );
 console.log(`Verified webpart demo coverage for ${hookSymbols.length} hooks, ${providerSymbols.length} providers and ${styleSurface.filter(item => !item.name.startsWith('Sx')).length} qualified runtime style exports (interactive catalog/scopes).`);
 
@@ -186,6 +186,9 @@ for (const marker of ['DescriptionList.Item', 'items=', 'layout=', 'key={entry.i
 // Product policy reads only the exact owned executable recipe, never conformance fixtures.
 function ownedExecutable(slug, title) {
   const source = read(path.join(root, 'packages/spfx-react-toolkit/src/controls', slug, slug + '.tsx'));
+  return ownedSourceExample(source, title);
+}
+function ownedSourceExample(source, title) {
   const start = source.indexOf(' * @example ' + title + '\n');
   if (start < 0) throw new Error('Missing owned executable: ' + title);
   const fence = ' * ```tsx\n';
@@ -315,12 +318,12 @@ if (!cardsIsolation.includes('name="independent"') || !cardsIsolation.includes('
 console.log('Verified selectable single Cards, image lifecycle and versioned native/isolation conformance coverage.');
 
 
-for (const name of ['Styles', 'Providers', 'Context']) {
+for (const name of ['Providers', 'Context']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
   if (!product.includes('data-demo-variant')) throw new Error(`${name} selectable product variant missing`);
 }
-for (const source of [paginationPanel, importsPanelSource, editableTextPanel, textPanel, relativePanel, skeletonPanel]) {
+for (const source of [styleCompositionSource, paginationPanel, importsPanelSource, editableTextPanel, textPanel, relativePanel, skeletonPanel]) {
   for (const marker of ['export function Demo(', 'return render({', 'data-demo-variant', 'observe:']) if (!source.includes(marker)) throw new Error(`Source-owned variant missing ${marker}`);
 }
 for (const source of [contentCardSource, previewCardSource, descriptionListSource, stageSource, settingsSource, accordionSource, stateSource]) {

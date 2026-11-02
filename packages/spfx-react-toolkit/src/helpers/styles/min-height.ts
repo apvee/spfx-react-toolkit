@@ -4,10 +4,64 @@
  * @packageDocumentation
  * @docPage helpers/styles
  * @useWhen A flex child must shrink so a bounded descendant can scroll, or retain a deliberate minimum height.
- * @example
+ * @example Basic usage
  * ```ts
  * import { minHeight } from '@apvee/spfx-react-toolkit/styles';
  * const descriptor = minHeight.zero;
+ * ```
+ *
+ * @example Select minimum height descriptors — zero/pixels with visible content
+ * ```tsx
+ * import * as React from 'react';
+ * import { Field, Input, Select } from '@fluentui/react-components';
+ * import { useSx, width, height, minWidth, overflow, padding, presets, minHeight, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+ * interface DemoRegions {
+ *   controls?: React.ReactNode;
+ *   commands?: React.ReactNode;
+ *   status?: React.ReactNode;
+ *   children?: React.ReactNode;
+ *   diagnostics?: React.ReactNode;
+ * }
+ * function standalone(regions: DemoRegions): React.ReactElement {
+ *   return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+ * }
+ * type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+ * const choices: Readonly<Record<string, Selection>> = minHeight;
+ * export function Demo({ render = standalone, resetRevision = 0 }: {
+ *   render?: (regions: DemoRegions) => React.ReactElement;
+ *   resetRevision?: number;
+ * } = {}): React.ReactElement {
+ *   const sx = useSx();
+ *   const [member, setMember] = React.useState(Object.keys(choices)[0]);
+ *   const [value, setValue] = React.useState(120);
+ *   const [draft, setDraft] = React.useState('120');
+ *   const revision = React.useRef(resetRevision);
+ *   React.useEffect(() => {
+ *     if (revision.current === resetRevision) return;
+ *     revision.current = resetRevision;
+ *     setMember(Object.keys(choices)[0]); setValue(120); setDraft('120');
+ *   }, [resetRevision]);
+ *   const selection = choices[member];
+ *   const descriptor = typeof selection === 'function' ? selection(value) : selection;
+ *   return render({
+ *     controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+ *       if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+ *     }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+ *       {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+ *         setDraft(data.value);
+ *         const number = Number(data.value);
+ *         if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+ *       }} onBlur={() => setDraft(String(value))} /></Field>}
+ *     </>,
+ *     status: <p aria-live="polite">Applied: minHeight.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+ *     children: <section role="region" aria-label="minHeight descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div className={sx(height.px(180), width.px(240))}><div data-style-helper="minHeight" className={sx(width.px(180), presets.alternative, descriptor)}><p>Visible content</p></div></div></section>,
+ *     diagnostics: <p>Select minimum height descriptors; zero/pixels with visible content. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+ *   });
+ * }
+ * export const demo = {
+ *   host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+ *   observe: 'Select minimum height descriptors — zero/pixels with visible content. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+ * };
  * ```
  */
 import { SxBaseDescriptor } from './types';

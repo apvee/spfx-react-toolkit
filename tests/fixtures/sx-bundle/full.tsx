@@ -1,1 +1,2 @@
-export { default as StylesPanel } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/StylesPanel';
+// Full eight-recipe source UI with the existing DemoCard presentation.
+export { StylesScenario as StylesPanel } from '../executable-examples/styles-scenario';

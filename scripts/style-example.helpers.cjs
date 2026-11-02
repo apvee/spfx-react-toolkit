@@ -8,22 +8,23 @@ function property(object, name) {
 }
 
 /** Static linkage complements behavioral demo tests; it cannot establish browser outcomes. */
-function assertStyleExampleCoverage(surface, registrySource, panelSource, catalogSource) {
-  let entry;
-  walk(parse(registrySource), node => {
-    if (ts.isObjectLiteralExpression(node) && property(node, 'key')?.text === 'styles') entry = node;
-  });
-  assert.ok(entry, 'Styles lazy demo entry missing');
-  assert.match(property(entry, 'component')?.getText() ?? '', /lazyPanel[\s\S]*import\([\s\S]*StylesPanel/, 'Styles panel must be lazy');
-  const registrySymbols = new Set();
-  walk(property(entry, 'coverage'), node => {
-    if (ts.isPropertyAssignment(node) && node.name.getText() === 'symbol') registrySymbols.add(node.initializer.text);
+function assertStyleExampleCoverage(surface, catalogueSource, compositionSource) {
+  const examples = [];
+  walk(parse(catalogueSource), node => {
+    if (!ts.isObjectLiteralExpression(node)) return;
+    const names = property(node, 'publicNames');
+    const owner = property(node, 'ownerKey');
+    const feature = property(node, 'featureKey');
+    if (names && ts.isArrayLiteralExpression(names) && owner && ts.isStringLiteral(owner) && feature && ts.isStringLiteral(feature)) {
+      examples.push({ owner: owner.text, feature: feature.text, names: names.elements.filter(ts.isStringLiteral).map(name => name.text) });
+    }
   });
   const styleSymbols = new Set(surface.filter(item => !item.name.startsWith('Sx')).map(item => item.name.split('.')[0]));
-  for (const symbol of styleSymbols) assert.ok(registrySymbols.has(symbol), `Styles registry missing ${symbol}`);
-
+  for (const symbol of styleSymbols) {
+    assert.ok(examples.some(example => example.owner === example.feature && example.names.includes(symbol)), `Canonical style owner scenario missing ${symbol}`);
+  }
   const families = new Map();
-  walk(parse(catalogSource), node => {
+  walk(parse(compositionSource), node => {
     if (ts.isCallExpression(node) && node.expression.getText() === 'family' && ts.isStringLiteral(node.arguments[0])) {
       families.set(node.arguments[0].text, node.arguments[1]);
     }
@@ -43,10 +44,10 @@ function assertStyleExampleCoverage(surface, registrySource, panelSource, catalo
   }
   for (const symbol of ['hover', 'active', 'focusVisible', 'responsive', 'viewport']) {
     if (!styleSymbols.has(symbol)) continue;
-    assert.match(panelSource, new RegExp('\\b' + symbol + '\\s*(?:\\[|\\.|\\()'), `Interactive panel missing ${symbol} scope use`);
+    assert.match(compositionSource, new RegExp('\\b' + symbol + '\\s*(?:\\[|\\.|\\()'), `Interactive composition missing ${symbol} scope use`);
   }
   const thresholdChoices = new Map();
-  walk(parse(panelSource), node => {
+  walk(parse(compositionSource), node => {
     if (!ts.isJsxSelfClosingElement(node) && !ts.isJsxOpeningElement(node)) return;
     const id = node.attributes.properties.find(attribute => ts.isJsxAttribute(attribute) && attribute.name.text === 'id')?.initializer;
     const choices = node.attributes.properties.find(attribute => ts.isJsxAttribute(attribute) && attribute.name.text === 'choices')?.initializer;
@@ -56,11 +57,11 @@ function assertStyleExampleCoverage(surface, registrySource, panelSource, catalo
   });
   for (const item of surface.filter(declaration => /^(responsive|viewport)\./.test(declaration.name))) {
     const [namespace, threshold] = item.name.split('.');
-    assert.ok(thresholdChoices.get(namespace + '-threshold')?.has(threshold), `Interactive panel missing ${item.name} threshold choice`);
+    assert.ok(thresholdChoices.get(namespace + '-threshold')?.has(threshold), `Interactive composition missing ${item.name} threshold choice`);
   }
-  assert.match(panelSource, /\buseSx\s*\(/, 'Interactive panel must use the hook');
-  assert.match(panelSource, /stylesCatalog\s*\[/, 'Interactive panel must consume the catalog');
-  assert.match(panelSource, /onChange\s*=/, 'Interactive panel must expose selection actions');
-  assert.match(panelSource, /className\s*=\s*\{sx\([^}]*\bdescriptor\b/, 'Interactive preview must apply the selected descriptor through sx');
+  assert.match(compositionSource, /\buseSx\s*\(/, 'Interactive composition must use the hook');
+  assert.match(compositionSource, /stylesCatalog\s*\[/, 'Interactive composition must consume the catalog');
+  assert.match(compositionSource, /onChange\s*=/, 'Interactive composition must expose selection actions');
+  assert.match(compositionSource, /className\s*=\s*\{sx\([^}]*\bdescriptor\b/, 'Interactive preview must apply the selected descriptor through sx');
 }
 module.exports = { assertStyleExampleCoverage };

@@ -15,7 +15,7 @@ interface CatalogFamily {
 }
 const family = (name: string, members: Readonly<Record<string, Selection>>): CatalogFamily => ({ name, members });
 
-/** Private interactive choices; these are real public descriptors, never CSS substitutes. */
+/** Independent conformance fixture choices; these are not product or generation inputs. */
 export const stylesCatalog: readonly CatalogFamily[] = [
   family('width', width), family('minWidth', minWidth), family('height', height),
   family('minHeight', minHeight), family('maxWidth', maxWidth), family('maxHeight', maxHeight),

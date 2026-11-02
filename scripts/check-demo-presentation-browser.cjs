@@ -15,7 +15,7 @@ const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Goog
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
-  { key: 'auto-skeleton', title: 'AutoSkeleton' }, { key: 'relative-time', title: 'RelativeTime' },
+  { key: 'styles', title: 'useSx' }, { key: 'auto-skeleton', title: 'AutoSkeleton' }, { key: 'relative-time', title: 'RelativeTime' },
   { key: 'formatted-text', title: 'FormattedText' }, { key: 'editable-text', title: 'EditableText' },
   { key: 'content-card', title: 'ContentCard' }, { key: 'cards', title: 'PreviewCard' },
   { key: 'card-retention', title: 'PreviewCard' }, { key: 'description-list', title: 'DescriptionList' },
@@ -48,6 +48,7 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    styles: ['useSx', 'Explore eight style recipes with the host renderer'],
     'auto-skeleton': ['AutoSkeleton', 'Explore mounted profile loading and native focus'],
     'relative-time': ['RelativeTime', 'Explore relative clocks and fallback slots'],
     'formatted-text': ['FormattedText', 'Explore semantic text and inline Markdown'],
@@ -70,12 +71,14 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: key === 'imports' ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: ['imports', 'styles'].includes(key) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
     const panel = page.getByRole('region', { name: title, exact: true });
-    const scenarios = panel.getByRole('combobox', { name: 'Scenario', exact: true });
+    // The composition recipe also has a Field named Scenario. The explorer's
+    // central selector owns this explicit native aria-label; Field uses labelledby.
+    const scenarios = panel.locator('select[aria-label="Scenario"]');
     if (await scenarios.count()) await scenarios.selectOption({ label: scenario });
     await panel.getByRole('heading', { name: scenario, exact: true }).waitFor();
     await panel.locator('[data-demo-section]').waitFor();

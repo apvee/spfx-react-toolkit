@@ -3,7 +3,7 @@ import * as React from 'react';
 import { registerIcons } from '@fluentui/react';
 import { PnPSearchSuggestionsDemo } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demos/PnPSearchSuggestionsDemo';
 import StylesPanel from '../foundation-legacy/StylesPanel';
-import ProductStylesPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/StylesPanel';
+import { StylesScenario as ProductStylesPanel } from '../executable-examples/styles-scenario';
 import RelativeTimePanel from '../foundation-legacy/RelativeTimePanel';
 import { RelativeTimeScenario as ProductRelativeTimePanel } from '../executable-examples/relative-time-scenario';
 import FormattedTextPanel from '../foundation-legacy/FormattedTextPanel';

@@ -659,6 +659,1064 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-9496a583c497d2af126e303996591d022fca61c8ca6d77ebd843829fd3a1af5a' */ "./9496a583c497d2af126e303996591d022fca61c8ca6d77ebd843829fd3a1af5a")
 },
 {
+  "id": "2a367bde45dcda003e45835a48a86a7eb22db0ef9a9f9dff5b03c02650694a9d",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/states.ts#active",
+  "title": "Apply descriptors during native press — held press then release; invocation observation",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/states.ts#active",
+  "featureTitle": "active",
+  "publicNames": [
+    "active"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/states.ts",
+    "line": 87
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Use the native active interaction and selected/disabled controls. The enabled descriptor is omitted when disabled; native clicks increment once. Reset restores false/false/zero while retaining the Demo and native control identity."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-2a367bde45dcda003e45835a48a86a7eb22db0ef9a9f9dff5b03c02650694a9d' */ "./2a367bde45dcda003e45835a48a86a7eb22db0ef9a9f9dff5b03c02650694a9d")
+},
+{
+  "id": "e9fa93de92587936623721b787da65797ae5a1e29244fca8dd5ae9b8ea0f0ce4",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#<module>",
+  "title": "Select cross axis item alignment — actual fixed-height flex parent",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#<module>",
+  "featureTitle": "alignItems",
+  "publicNames": [
+    "alignItems"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/align-items.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select cross axis item alignment — actual fixed-height flex parent. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-e9fa93de92587936623721b787da65797ae5a1e29244fca8dd5ae9b8ea0f0ce4' */ "./e9fa93de92587936623721b787da65797ae5a1e29244fca8dd5ae9b8ea0f0ce4")
+},
+{
+  "id": "17f828b8bc1403fccd68ab205250f93ff8f164ec14239121a81bfcbaaf3f2366",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#<module>",
+  "title": "Select an individual flex item alignment — subject is a child, not the parent",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#<module>",
+  "featureTitle": "alignSelf",
+  "publicNames": [
+    "alignSelf"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/align-self.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select an individual flex item alignment — subject is a child, not the parent. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-17f828b8bc1403fccd68ab205250f93ff8f164ec14239121a81bfcbaaf3f2366' */ "./17f828b8bc1403fccd68ab205250f93ff8f164ec14239121a81bfcbaaf3f2366")
+},
+{
+  "id": "95b792ae5ee45654fcf5047b54c077b8501ee69cd18f6fc0ee2f6ef296844e4f",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/background.ts#<module>",
+  "title": "Select background role descriptors — actual surface and disabled aria",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/background.ts#<module>",
+  "featureTitle": "background",
+  "publicNames": [
+    "background"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/background.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select background role descriptors — actual surface and disabled aria. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-95b792ae5ee45654fcf5047b54c077b8501ee69cd18f6fc0ee2f6ef296844e4f' */ "./95b792ae5ee45654fcf5047b54c077b8501ee69cd18f6fc0ee2f6ef296844e4f")
+},
+{
+  "id": "62da0f90c48aaeaaeca3441e7340b2c683ca405934d028fe56c6116818739d5c",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#<module>",
+  "title": "Select border color descriptors — keep explicit solid border/width",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#<module>",
+  "featureTitle": "borderColor",
+  "publicNames": [
+    "borderColor"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/border-color.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select border color descriptors — keep explicit solid border/width. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-62da0f90c48aaeaaeca3441e7340b2c683ca405934d028fe56c6116818739d5c' */ "./62da0f90c48aaeaaeca3441e7340b2c683ca405934d028fe56c6116818739d5c")
+},
+{
+  "id": "020219417e0abef3f6a3a3586c9076d96c31d6316e3a996e0ca33dd5d5d77709",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#<module>",
+  "title": "Select border radius descriptors — visible bounded surface",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#<module>",
+  "featureTitle": "borderRadius",
+  "publicNames": [
+    "borderRadius"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select border radius descriptors — visible bounded surface. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-020219417e0abef3f6a3a3586c9076d96c31d6316e3a996e0ca33dd5d5d77709' */ "./020219417e0abef3f6a3a3586c9076d96c31d6316e3a996e0ca33dd5d5d77709")
+},
+{
+  "id": "997a38db3570f61dcea54e57e77f9e9d229feea0fb5c90b4c55f70628c5444c3",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/border-style.ts#<module>",
+  "title": "Select border style descriptors — keep explicit width/color",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/border-style.ts#<module>",
+  "featureTitle": "borderStyle",
+  "publicNames": [
+    "borderStyle"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/border-style.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select border style descriptors — keep explicit width/color. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-997a38db3570f61dcea54e57e77f9e9d229feea0fb5c90b4c55f70628c5444c3' */ "./997a38db3570f61dcea54e57e77f9e9d229feea0fb5c90b4c55f70628c5444c3")
+},
+{
+  "id": "37d33095774a1410f2716d079761b158ae7d44f3196dd54da993ed2308315aae",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#<module>",
+  "title": "Select border width descriptors — keep explicit solid border/color",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#<module>",
+  "featureTitle": "borderWidth",
+  "publicNames": [
+    "borderWidth"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/border-width.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select border width descriptors — keep explicit solid border/color. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-37d33095774a1410f2716d079761b158ae7d44f3196dd54da993ed2308315aae' */ "./37d33095774a1410f2716d079761b158ae7d44f3196dd54da993ed2308315aae")
+},
+{
+  "id": "8b629921eb5370cac13e97f61576ae4abcbe31731c8fbc6cefce3e5bb2e1e915",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#<module>",
+  "title": "Select shadow elevation descriptors — actual surface with room for shadow",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#<module>",
+  "featureTitle": "boxShadow",
+  "publicNames": [
+    "boxShadow"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select shadow elevation descriptors — actual surface with room for shadow. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-8b629921eb5370cac13e97f61576ae4abcbe31731c8fbc6cefce3e5bb2e1e915' */ "./8b629921eb5370cac13e97f61576ae4abcbe31731c8fbc6cefce3e5bb2e1e915")
+},
+{
+  "id": "666586474782f767252a7db61c4bdfb67e71ad883c92424a99f363b6edcdbd61",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/container.ts#<module>",
+  "title": "Toggle a named inline size query ancestor — nested child visibly responds when ancestor establishment changes",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/container.ts#<module>",
+  "featureTitle": "container",
+  "publicNames": [
+    "container"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/container.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select small, medium or large and compare threshold minus one with its inclusive limit. Toggle named containment at 720px to switch the child between its 180px column and 300px row. Reset restores the displayed baseline."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-666586474782f767252a7db61c4bdfb67e71ad883c92424a99f363b6edcdbd61' */ "./666586474782f767252a7db61c4bdfb67e71ad883c92424a99f363b6edcdbd61")
+},
+{
+  "id": "8ff007cbd58fea4e7d0b66769f1cb052f761bf4f9cb7346e57657b1d66c968c3",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/flex.ts#<module>",
+  "title": "Select flex direction and wrapping — actual sized item row/column/wrap",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/flex.ts#<module>",
+  "featureTitle": "flex",
+  "publicNames": [
+    "flex"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/flex.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select flex direction and wrapping — actual sized item row/column/wrap. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-8ff007cbd58fea4e7d0b66769f1cb052f761bf4f9cb7346e57657b1d66c968c3' */ "./8ff007cbd58fea4e7d0b66769f1cb052f761bf4f9cb7346e57657b1d66c968c3")
+},
+{
+  "id": "8112c550039c8ec6a65a4094b1c39b25a9decc2d4d1931aa08892572d065d54b",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#<module>",
+  "title": "Select flex item growth and shrink — target item among constrained siblings",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#<module>",
+  "featureTitle": "flexItem",
+  "publicNames": [
+    "flexItem"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select flex item growth and shrink — target item among constrained siblings. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-8112c550039c8ec6a65a4094b1c39b25a9decc2d4d1931aa08892572d065d54b' */ "./8112c550039c8ec6a65a4094b1c39b25a9decc2d4d1931aa08892572d065d54b")
+},
+{
+  "id": "16e0a28835e4ed9d9915eb1d4a39a9ec4812d78aacb71fd541fe59608e45b847",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/states.ts#focusVisible",
+  "title": "Apply descriptors during keyboard focus — native Tab focus and retained indicator",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/states.ts#focusVisible",
+  "featureTitle": "focusVisible",
+  "publicNames": [
+    "focusVisible"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/states.ts",
+    "line": 151
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Use the native focusVisible interaction and selected/disabled controls. The enabled descriptor is omitted when disabled; native clicks increment once. Reset restores false/false/zero while retaining the Demo and native control identity."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-16e0a28835e4ed9d9915eb1d4a39a9ec4812d78aacb71fd541fe59608e45b847' */ "./16e0a28835e4ed9d9915eb1d4a39a9ec4812d78aacb71fd541fe59608e45b847")
+},
+{
+  "id": "40bcaae8f39512293d6148e02a7e59b34ae746c3d5b52ee8d9be33fdbb1d7f9f",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#<module>",
+  "title": "Select foreground role descriptors — actual text and disabled aria",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#<module>",
+  "featureTitle": "foreground",
+  "publicNames": [
+    "foreground"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/foreground.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select foreground role descriptors — actual text and disabled aria. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-40bcaae8f39512293d6148e02a7e59b34ae746c3d5b52ee8d9be33fdbb1d7f9f' */ "./40bcaae8f39512293d6148e02a7e59b34ae746c3d5b52ee8d9be33fdbb1d7f9f")
+},
+{
+  "id": "b7a3cc6c69485d80d781437d95281650b98fc2ddeccf775a1f780eb547c47759",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/gap.ts#<module>",
+  "title": "Select gap scales and pixel spacing — real multi-item flex/grid layout",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/gap.ts#<module>",
+  "featureTitle": "gap",
+  "publicNames": [
+    "gap"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/gap.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select gap scales and pixel spacing — real multi-item flex/grid layout. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-b7a3cc6c69485d80d781437d95281650b98fc2ddeccf775a1f780eb547c47759' */ "./b7a3cc6c69485d80d781437d95281650b98fc2ddeccf775a1f780eb547c47759")
+},
+{
+  "id": "f5aa1f7681f35d8386eded19dd2f546a6e119ba24a23b831cad5e9d1d59c7bf2",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/grid.ts#<module>",
+  "title": "Select positive grid column counts — actual four-item grid and invalid drafts",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/grid.ts#<module>",
+  "featureTitle": "grid",
+  "publicNames": [
+    "grid"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/grid.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select positive grid column counts — actual four-item grid and invalid drafts. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-f5aa1f7681f35d8386eded19dd2f546a6e119ba24a23b831cad5e9d1d59c7bf2' */ "./f5aa1f7681f35d8386eded19dd2f546a6e119ba24a23b831cad5e9d1d59c7bf2")
+},
+{
+  "id": "378f08d4101e3852c189a84057cee722cab7faa6fd23e0b9ea29c5614ed87862",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/height.ts#<module>",
+  "title": "Select height descriptors — auto/full/pixels under a sized parent",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/height.ts#<module>",
+  "featureTitle": "height",
+  "publicNames": [
+    "height"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/height.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select height descriptors — auto/full/pixels under a sized parent. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-378f08d4101e3852c189a84057cee722cab7faa6fd23e0b9ea29c5614ed87862' */ "./378f08d4101e3852c189a84057cee722cab7faa6fd23e0b9ea29c5614ed87862")
+},
+{
+  "id": "6f2bd6d00c2ba5d5acea8379d9b270ab6b8931dbed3918162c10b15238873e08",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/states.ts#hover",
+  "title": "Apply descriptors during native hover — pointer-controlled native Button",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/states.ts#hover",
+  "featureTitle": "hover",
+  "publicNames": [
+    "hover"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/states.ts",
+    "line": 23
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Use the native hover interaction and selected/disabled controls. The enabled descriptor is omitted when disabled; native clicks increment once. Reset restores false/false/zero while retaining the Demo and native control identity."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-6f2bd6d00c2ba5d5acea8379d9b270ab6b8931dbed3918162c10b15238873e08' */ "./6f2bd6d00c2ba5d5acea8379d9b270ab6b8931dbed3918162c10b15238873e08")
+},
+{
+  "id": "b342c964664fe98a34aa073744862733444de01b8a1cc03ba4c427676b2dac03",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#<module>",
+  "title": "Select main axis item alignment — spare inline space and real siblings",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#<module>",
+  "featureTitle": "justifyContent",
+  "publicNames": [
+    "justifyContent"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select main axis item alignment — spare inline space and real siblings. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-b342c964664fe98a34aa073744862733444de01b8a1cc03ba4c427676b2dac03' */ "./b342c964664fe98a34aa073744862733444de01b8a1cc03ba4c427676b2dac03")
+},
+{
+  "id": "779cacdfab18ada1d642e7700bc8ed1cfcb05fab7f897677ee8c5204192eead6",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/margin.ts#<module>",
+  "title": "Select all side margin descriptors — actual subject among bounded siblings",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/margin.ts#<module>",
+  "featureTitle": "margin",
+  "publicNames": [
+    "margin"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/margin.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select all side margin descriptors — actual subject among bounded siblings. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-779cacdfab18ada1d642e7700bc8ed1cfcb05fab7f897677ee8c5204192eead6' */ "./779cacdfab18ada1d642e7700bc8ed1cfcb05fab7f897677ee8c5204192eead6")
+},
+{
+  "id": "f0ea2055710f8fc4babc8d4f2642da67c7c79c9f05216b5f169eece7fa15de34",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#<module>",
+  "title": "Select block margin descriptors — actual adjacent blocks",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#<module>",
+  "featureTitle": "marginBlock",
+  "publicNames": [
+    "marginBlock"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select block margin descriptors — actual adjacent blocks. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-f0ea2055710f8fc4babc8d4f2642da67c7c79c9f05216b5f169eece7fa15de34' */ "./f0ea2055710f8fc4babc8d4f2642da67c7c79c9f05216b5f169eece7fa15de34")
+},
+{
+  "id": "0203ebf0bb1a12f1c0a1460fba64f1cee247057243320d9fec7cfbe5272e4e69",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#<module>",
+  "title": "Select block end margin descriptors — adjacent bounded blocks",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#<module>",
+  "featureTitle": "marginBlockEnd",
+  "publicNames": [
+    "marginBlockEnd"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select block end margin descriptors — adjacent bounded blocks. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-0203ebf0bb1a12f1c0a1460fba64f1cee247057243320d9fec7cfbe5272e4e69' */ "./0203ebf0bb1a12f1c0a1460fba64f1cee247057243320d9fec7cfbe5272e4e69")
+},
+{
+  "id": "f92837831554764f6ea230c58eb42098acca9b20b0747c33562ec2ba873a099b",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#<module>",
+  "title": "Select block start margin descriptors — adjacent bounded blocks",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#<module>",
+  "featureTitle": "marginBlockStart",
+  "publicNames": [
+    "marginBlockStart"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select block start margin descriptors — adjacent bounded blocks. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-f92837831554764f6ea230c58eb42098acca9b20b0747c33562ec2ba873a099b' */ "./f92837831554764f6ea230c58eb42098acca9b20b0747c33562ec2ba873a099b")
+},
+{
+  "id": "e80d31c887bf002de8aa3fb55c923d06cca1e5816b5932b82a32dc7da30d9668",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#<module>",
+  "title": "Select inline margin descriptors — host/LTR/RTL",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#<module>",
+  "featureTitle": "marginInline",
+  "publicNames": [
+    "marginInline"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select inline margin descriptors — host/LTR/RTL. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value and host direction while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-e80d31c887bf002de8aa3fb55c923d06cca1e5816b5932b82a32dc7da30d9668' */ "./e80d31c887bf002de8aa3fb55c923d06cca1e5816b5932b82a32dc7da30d9668")
+},
+{
+  "id": "b3ad90c680f40517a3618c6b8d8b26465b1c5e92851d53e5182e44f592f67776",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#<module>",
+  "title": "Select inline end margin descriptors — host/LTR/RTL",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#<module>",
+  "featureTitle": "marginInlineEnd",
+  "publicNames": [
+    "marginInlineEnd"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select inline end margin descriptors — host/LTR/RTL. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value and host direction while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-b3ad90c680f40517a3618c6b8d8b26465b1c5e92851d53e5182e44f592f67776' */ "./b3ad90c680f40517a3618c6b8d8b26465b1c5e92851d53e5182e44f592f67776")
+},
+{
+  "id": "a7f359b90eae123c29f5c2bdde4f8d26ccef61c20f357cd5a5d8412ee98f4688",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#<module>",
+  "title": "Select inline start margin descriptors — host/LTR/RTL",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#<module>",
+  "featureTitle": "marginInlineStart",
+  "publicNames": [
+    "marginInlineStart"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select inline start margin descriptors — host/LTR/RTL. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value and host direction while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-a7f359b90eae123c29f5c2bdde4f8d26ccef61c20f357cd5a5d8412ee98f4688' */ "./a7f359b90eae123c29f5c2bdde4f8d26ccef61c20f357cd5a5d8412ee98f4688")
+},
+{
+  "id": "5f689b5003b95e4d4d1467483af5e3f67c12ffa8cc3987067bc10706050dd656",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/max-height.ts#<module>",
+  "title": "Select maximum height descriptors — none/pixels on tall content",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/max-height.ts#<module>",
+  "featureTitle": "maxHeight",
+  "publicNames": [
+    "maxHeight"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/max-height.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select maximum height descriptors — none/pixels on tall content. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-5f689b5003b95e4d4d1467483af5e3f67c12ffa8cc3987067bc10706050dd656' */ "./5f689b5003b95e4d4d1467483af5e3f67c12ffa8cc3987067bc10706050dd656")
+},
+{
+  "id": "79bf6b720d0ea7ba1518739cc4f462098b998f1b15a4cb0c5d4eecd4c9861c88",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/max-width.ts#<module>",
+  "title": "Select maximum width descriptors — none/pixels on full-width content",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/max-width.ts#<module>",
+  "featureTitle": "maxWidth",
+  "publicNames": [
+    "maxWidth"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/max-width.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select maximum width descriptors — none/pixels on full-width content. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-79bf6b720d0ea7ba1518739cc4f462098b998f1b15a4cb0c5d4eecd4c9861c88' */ "./79bf6b720d0ea7ba1518739cc4f462098b998f1b15a4cb0c5d4eecd4c9861c88")
+},
+{
+  "id": "5baa5e0760ee98fadeef2bbf8ec4543d89784e54f6bb0a99c8c87058d8156913",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/min-height.ts#<module>",
+  "title": "Select minimum height descriptors — zero/pixels with visible content",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/min-height.ts#<module>",
+  "featureTitle": "minHeight",
+  "publicNames": [
+    "minHeight"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/min-height.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select minimum height descriptors — zero/pixels with visible content. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-5baa5e0760ee98fadeef2bbf8ec4543d89784e54f6bb0a99c8c87058d8156913' */ "./5baa5e0760ee98fadeef2bbf8ec4543d89784e54f6bb0a99c8c87058d8156913")
+},
+{
+  "id": "ded36a05a0c529a54f2b8aa443a7c8a2d3f93a1960e26fa8e8dc05d2cea3d54d",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/min-width.ts#<module>",
+  "title": "Select minimum width descriptors — zero/pixels versus constrained parent",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/min-width.ts#<module>",
+  "featureTitle": "minWidth",
+  "publicNames": [
+    "minWidth"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/min-width.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select minimum width descriptors — zero/pixels versus constrained parent. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-ded36a05a0c529a54f2b8aa443a7c8a2d3f93a1960e26fa8e8dc05d2cea3d54d' */ "./ded36a05a0c529a54f2b8aa443a7c8a2d3f93a1960e26fa8e8dc05d2cea3d54d")
+},
+{
+  "id": "f9b1f8c21291dd19f196d9ebd4035de5718542407cf7882a7415d918a9e55666",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#<module>",
+  "title": "Select overflow behavior on both axes — bounded wide/tall content; include axis choices as real public nested members",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#<module>",
+  "featureTitle": "overflow",
+  "publicNames": [
+    "overflow"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/overflow.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select overflow behavior on both axes — bounded wide/tall content; include axis choices as real public nested members. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-f9b1f8c21291dd19f196d9ebd4035de5718542407cf7882a7415d918a9e55666' */ "./f9b1f8c21291dd19f196d9ebd4035de5718542407cf7882a7415d918a9e55666")
+},
+{
+  "id": "88bfa1d69ab74a4448d6d541916123d9ad7fe45f66d3d22567a06724434a9d46",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/padding.ts#<module>",
+  "title": "Select all side padding descriptors — visible outer boundary/inner text",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/padding.ts#<module>",
+  "featureTitle": "padding",
+  "publicNames": [
+    "padding"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/padding.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select all side padding descriptors — visible outer boundary/inner text. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-88bfa1d69ab74a4448d6d541916123d9ad7fe45f66d3d22567a06724434a9d46' */ "./88bfa1d69ab74a4448d6d541916123d9ad7fe45f66d3d22567a06724434a9d46")
+},
+{
+  "id": "31d53c51318ec6c65136149205ae3f70a24f2185fb6ee869f628875a96c2a304",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#<module>",
+  "title": "Select block padding descriptors — visible top/bottom content spacing",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#<module>",
+  "featureTitle": "paddingBlock",
+  "publicNames": [
+    "paddingBlock"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select block padding descriptors — visible top/bottom content spacing. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-31d53c51318ec6c65136149205ae3f70a24f2185fb6ee869f628875a96c2a304' */ "./31d53c51318ec6c65136149205ae3f70a24f2185fb6ee869f628875a96c2a304")
+},
+{
+  "id": "36614956eb5494621c5116921864931e44ec81d4934d1d632ed54ed78ceae3b1",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#<module>",
+  "title": "Select block end padding descriptors — visible end spacing",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#<module>",
+  "featureTitle": "paddingBlockEnd",
+  "publicNames": [
+    "paddingBlockEnd"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select block end padding descriptors — visible end spacing. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-36614956eb5494621c5116921864931e44ec81d4934d1d632ed54ed78ceae3b1' */ "./36614956eb5494621c5116921864931e44ec81d4934d1d632ed54ed78ceae3b1")
+},
+{
+  "id": "dc5d97077c2a48132f6116f28407d77bec7cf56771545f53379bbeb63f2edaf2",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#<module>",
+  "title": "Select block start padding descriptors — visible start spacing",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#<module>",
+  "featureTitle": "paddingBlockStart",
+  "publicNames": [
+    "paddingBlockStart"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select block start padding descriptors — visible start spacing. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-dc5d97077c2a48132f6116f28407d77bec7cf56771545f53379bbeb63f2edaf2' */ "./dc5d97077c2a48132f6116f28407d77bec7cf56771545f53379bbeb63f2edaf2")
+},
+{
+  "id": "fbae6b79b21272d67f523023d17c5072efdecc556226b7185abf2d80068b400a",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#<module>",
+  "title": "Select inline padding descriptors — host/LTR/RTL and opposite edges",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#<module>",
+  "featureTitle": "paddingInline",
+  "publicNames": [
+    "paddingInline"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select inline padding descriptors — host/LTR/RTL and opposite edges. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value and host direction while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-fbae6b79b21272d67f523023d17c5072efdecc556226b7185abf2d80068b400a' */ "./fbae6b79b21272d67f523023d17c5072efdecc556226b7185abf2d80068b400a")
+},
+{
+  "id": "5955e74565626a5ca5807aa208b03f56ce71d71974bb9a722bf3aeef0e964979",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#<module>",
+  "title": "Select inline end padding descriptors — host/LTR/RTL",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#<module>",
+  "featureTitle": "paddingInlineEnd",
+  "publicNames": [
+    "paddingInlineEnd"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select inline end padding descriptors — host/LTR/RTL. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value and host direction while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-5955e74565626a5ca5807aa208b03f56ce71d71974bb9a722bf3aeef0e964979' */ "./5955e74565626a5ca5807aa208b03f56ce71d71974bb9a722bf3aeef0e964979")
+},
+{
+  "id": "0c3acd62e92e3ebd5473793478717259409c4a5615ab20cbe7c580d6bd6785ca",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#<module>",
+  "title": "Select inline start padding descriptors — host/LTR/RTL",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#<module>",
+  "featureTitle": "paddingInlineStart",
+  "publicNames": [
+    "paddingInlineStart"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select inline start padding descriptors — host/LTR/RTL. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value and host direction while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-0c3acd62e92e3ebd5473793478717259409c4a5615ab20cbe7c580d6bd6785ca' */ "./0c3acd62e92e3ebd5473793478717259409c4a5615ab20cbe7c580d6bd6785ca")
+},
+{
+  "id": "0139115b31200ccb9e66bd8984d9936df6a84d33647a435e4364188a4080a1be",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/presets.ts#<module>",
+  "title": "Select paired color preset descriptors — foreground/background override composition",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/presets.ts#<module>",
+  "featureTitle": "presets",
+  "publicNames": [
+    "presets"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/presets.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select paired color preset descriptors — foreground/background override composition. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-0139115b31200ccb9e66bd8984d9936df6a84d33647a435e4364188a4080a1be' */ "./0139115b31200ccb9e66bd8984d9936df6a84d33647a435e4364188a4080a1be")
+},
+{
+  "id": "218bd76d47f8680fc0a3faf3cc6a928a529359cb40a67d174309b76d1b1da4f6",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#<module>",
+  "title": "Resize a named container at each breakpoint — inclusive small/medium/large with a real ancestor",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#<module>",
+  "featureTitle": "responsive",
+  "publicNames": [
+    "responsive"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/responsive.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select small, medium or large and compare threshold minus one with its inclusive limit. Change ancestor width while the viewport remains fixed. Reset restores the displayed baseline."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-218bd76d47f8680fc0a3faf3cc6a928a529359cb40a67d174309b76d1b1da4f6' */ "./218bd76d47f8680fc0a3faf3cc6a928a529359cb40a67d174309b76d1b1da4f6")
+},
+{
+  "id": "a8222f797f5b0ed6d2959703fabfc76a7d78bd81e9aab3dd3587e1982085fa66",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts#<module>",
+  "title": "Scroll with the Fluent scrollbar descriptor — both axes and native keyboard/drag",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts#<module>",
+  "featureTitle": "scrollbar",
+  "publicNames": [
+    "scrollbar"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Toggle the real Fluent scrollbar descriptor on a bounded two-axis overflowing surface; use native arrows, thumb hover and dragging. Reset re-enables the descriptor. CSS rules alone do not prove native scrollbar paint."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-a8222f797f5b0ed6d2959703fabfc76a7d78bd81e9aab3dd3587e1982085fa66' */ "./a8222f797f5b0ed6d2959703fabfc76a7d78bd81e9aab3dd3587e1982085fa66")
+},
+{
+  "id": "d3bcb9e51e6f5dd6aa0128df5b9ae8f347cabdbc2f8ea7c894287d206e60a7ad",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/text.ts#<module>",
+  "title": "Select wrapping and truncation descriptors — long bounded text",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/text.ts#<module>",
+  "featureTitle": "text",
+  "publicNames": [
+    "text"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/text.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select wrapping and truncation descriptors — long bounded text. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-d3bcb9e51e6f5dd6aa0128df5b9ae8f347cabdbc2f8ea7c894287d206e60a7ad' */ "./d3bcb9e51e6f5dd6aa0128df5b9ae8f347cabdbc2f8ea7c894287d206e60a7ad")
+},
+{
+  "id": "9325d8cf8647331dc3fb6731581d57cf699ace26ed5ef978144d54a26f3fec6a",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#<module>",
+  "title": "Select text alignment descriptors — bounded multiline content and direction",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#<module>",
+  "featureTitle": "textAlign",
+  "publicNames": [
+    "textAlign"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/text-align.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select text alignment descriptors — bounded multiline content and direction. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice, host direction while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-9325d8cf8647331dc3fb6731581d57cf699ace26ed5ef978144d54a26f3fec6a' */ "./9325d8cf8647331dc3fb6731581d57cf699ace26ed5ef978144d54a26f3fec6a")
+},
+{
+  "id": "72dadf99ea70387016a93eadf89f9f15577a4f51d1f47c6b9e19390152c4f49b",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/typography.ts#<module>",
+  "title": "Select typography role descriptors — actual sized sample text",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/typography.ts#<module>",
+  "featureTitle": "typography",
+  "publicNames": [
+    "typography"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/typography.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select typography role descriptors — actual sized sample text. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-72dadf99ea70387016a93eadf89f9f15577a4f51d1f47c6b9e19390152c4f49b' */ "./72dadf99ea70387016a93eadf89f9f15577a4f51d1f47c6b9e19390152c4f49b")
+},
+{
+  "id": "116a9e6ae1bf59e5bcd45469a9574949f084554bab472552bd641f51656293cd",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#<module>",
+  "title": "Resize the viewport at each breakpoint — inclusive small/medium/large",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#<module>",
+  "featureTitle": "viewport",
+  "publicNames": [
+    "viewport"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/viewport.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select small, medium or large and compare threshold minus one with its inclusive limit. Resize the actual viewport independently of the fixed ancestor. Reset restores the displayed baseline."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-116a9e6ae1bf59e5bcd45469a9574949f084554bab472552bd641f51656293cd' */ "./116a9e6ae1bf59e5bcd45469a9574949f084554bab472552bd641f51656293cd")
+},
+{
+  "id": "7c386c891ae60b5082ed4b18a3153d0b5cd953375fbd1b217ddcd0bd9d96cd10",
+  "ownerKey": "packages/spfx-react-toolkit/src/helpers/styles/width.ts#<module>",
+  "title": "Select width descriptors — auto/full/pixels with a bounded horizontal region",
+  "groupRoute": "docs/api/helpers/styles.md",
+  "groupKey": "helpers",
+  "featureKey": "packages/spfx-react-toolkit/src/helpers/styles/width.ts#<module>",
+  "featureTitle": "width",
+  "publicNames": [
+    "width"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/helpers/styles/width.ts",
+    "line": 15
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select width descriptors — auto/full/pixels with a bounded horizontal region. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-7c386c891ae60b5082ed4b18a3153d0b5cd953375fbd1b217ddcd0bd9d96cd10' */ "./7c386c891ae60b5082ed4b18a3153d0b5cd953375fbd1b217ddcd0bd9d96cd10")
+},
+{
   "id": "987a602b9876b30335971c617d05d9c716fae7b4d434c5142bf3f1ca9727d305",
   "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList",
   "title": "Read a user-selected list with observable results",
@@ -749,6 +1807,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Select a root, domain or supported historical import adapter. Its captured callback sees the latest count; mixed width descriptors override 240px with 360px, then restore it. Reset keeps the selected adapter and captured identity."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88' */ "./832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88")
+},
+{
+  "id": "6010887cfaf12213f5fc382a3f51f03ca038e58485625b8c904f3b8fb0f01e30",
+  "ownerKey": "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx",
+  "title": "Explore eight style recipes with the host renderer",
+  "groupRoute": "docs/api/hooks/react.md",
+  "groupKey": "hooks",
+  "featureKey": "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx",
+  "featureTitle": "useSx",
+  "publicNames": [
+    "useSx"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/hooks/useSx.ts",
+    "line": 204
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Select eight recipes and actual public descriptor choices. Values persist across recipes; Reset preserves the recipe and component identity while restoring values, invalid numeric drafts, direction and counters. Resize the real container or viewport for inclusive queries; use native pointer, keyboard and two-axis scrolling for interaction feedback."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-6010887cfaf12213f5fc382a3f51f03ca038e58485625b8c904f3b8fb0f01e30' */ "./6010887cfaf12213f5fc382a3f51f03ca038e58485625b8c904f3b8fb0f01e30")
 }
 ];
 
@@ -773,9 +1854,57 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/controls/form/create-form.ts#createForm", title: "createForm", scenarios: [executableExamples[23], executableExamples[24]] },
     { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[25]] }
   ] },
+  { key: "helpers", title: "Helper e stili", features: [
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/states.ts#active", title: "active", scenarios: [executableExamples[26]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#<module>", title: "alignItems", scenarios: [executableExamples[27]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#<module>", title: "alignSelf", scenarios: [executableExamples[28]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/background.ts#<module>", title: "background", scenarios: [executableExamples[29]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#<module>", title: "borderColor", scenarios: [executableExamples[30]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#<module>", title: "borderRadius", scenarios: [executableExamples[31]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/border-style.ts#<module>", title: "borderStyle", scenarios: [executableExamples[32]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#<module>", title: "borderWidth", scenarios: [executableExamples[33]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#<module>", title: "boxShadow", scenarios: [executableExamples[34]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/container.ts#<module>", title: "container", scenarios: [executableExamples[35]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/flex.ts#<module>", title: "flex", scenarios: [executableExamples[36]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#<module>", title: "flexItem", scenarios: [executableExamples[37]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/states.ts#focusVisible", title: "focusVisible", scenarios: [executableExamples[38]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#<module>", title: "foreground", scenarios: [executableExamples[39]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/gap.ts#<module>", title: "gap", scenarios: [executableExamples[40]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/grid.ts#<module>", title: "grid", scenarios: [executableExamples[41]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/height.ts#<module>", title: "height", scenarios: [executableExamples[42]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/states.ts#hover", title: "hover", scenarios: [executableExamples[43]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#<module>", title: "justifyContent", scenarios: [executableExamples[44]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin.ts#<module>", title: "margin", scenarios: [executableExamples[45]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#<module>", title: "marginBlock", scenarios: [executableExamples[46]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#<module>", title: "marginBlockEnd", scenarios: [executableExamples[47]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#<module>", title: "marginBlockStart", scenarios: [executableExamples[48]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#<module>", title: "marginInline", scenarios: [executableExamples[49]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#<module>", title: "marginInlineEnd", scenarios: [executableExamples[50]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#<module>", title: "marginInlineStart", scenarios: [executableExamples[51]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/max-height.ts#<module>", title: "maxHeight", scenarios: [executableExamples[52]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/max-width.ts#<module>", title: "maxWidth", scenarios: [executableExamples[53]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/min-height.ts#<module>", title: "minHeight", scenarios: [executableExamples[54]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/min-width.ts#<module>", title: "minWidth", scenarios: [executableExamples[55]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#<module>", title: "overflow", scenarios: [executableExamples[56]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding.ts#<module>", title: "padding", scenarios: [executableExamples[57]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#<module>", title: "paddingBlock", scenarios: [executableExamples[58]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#<module>", title: "paddingBlockEnd", scenarios: [executableExamples[59]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#<module>", title: "paddingBlockStart", scenarios: [executableExamples[60]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#<module>", title: "paddingInline", scenarios: [executableExamples[61]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#<module>", title: "paddingInlineEnd", scenarios: [executableExamples[62]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#<module>", title: "paddingInlineStart", scenarios: [executableExamples[63]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/presets.ts#<module>", title: "presets", scenarios: [executableExamples[64]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#<module>", title: "responsive", scenarios: [executableExamples[65]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts#<module>", title: "scrollbar", scenarios: [executableExamples[66]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/text.ts#<module>", title: "text", scenarios: [executableExamples[67]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#<module>", title: "textAlign", scenarios: [executableExamples[68]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/typography.ts#<module>", title: "typography", scenarios: [executableExamples[69]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#<module>", title: "viewport", scenarios: [executableExamples[70]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/width.ts#<module>", title: "width", scenarios: [executableExamples[71]] }
+  ] },
   { key: "hooks", title: "Hook", features: [
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[26]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[27], executableExamples[28]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[29]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[72]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[73], executableExamples[74]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[75], executableExamples[76]] }
   ] }
 ];

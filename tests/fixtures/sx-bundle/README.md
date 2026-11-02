@@ -12,7 +12,7 @@ Webpack/TypeScript/React/Fluent/Griffel versions. It installs nothing.
   PnP registration effects.
 - `fluent-direct` and `fluent-wrapper`: identical FluentProvider + webLightTheme
   host that already consumes the toolkit, with equivalent minimum UI.
-- `full`: the actual interactive sample StylesPanel and its catalog, consuming
+- `full`: the actual emitted eight-recipe source Demo through the existing DemoCard region presentation adapter, including its complete descriptor selector, consuming
   the candidate library through the package root.
 
 React17/ReactDOM and SPFx modules are host externals consistently across every
@@ -49,3 +49,12 @@ establish browser computed CSS, rendering performance, heap consumption, garbage
 collection of discarded renderers, or tenant behavior.
 
 `baseline.json` preserves the legacy style measurement metadata used by `scripts/measure-sx-bundle.cjs`. It remains versioned independently of local `.docs/` evidence; the canonical production contract and baseline remain under `tests/fixtures/tree-shaking/`.
+
+For a scoped full-UI comparison, set `SX_MEASURE_FULL_UI_ONLY=1` and supply an
+explicit `SX_MEASURE_CANDIDATE_TARBALL`. This mode transitively typechecks the full
+entry against that archive and bundles only full-ui, using the candidate native
+localization resources and the pinned React 17 JSX runtime adapter. It does not
+build, pack, measure the frozen baseline or unrelated probes, or ship SPFx.
+Its separate CSS/cache probe uses actual **workspace source**, not the tarball.
+Before/after comparisons must use the same immutable candidate and options;
+reports archive the entry dependency sources, hashes, stats and emitted JS.

@@ -143,7 +143,7 @@ test('numeric drafts allow clearing and sequential replacement while retaining v
 
 test('hook, provider, style and service panels use Fluent configuration and shared demo regions', () => {
   const componentRoot = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
-  const panels = ['Styles', 'Providers', 'Context', 'Runtime', 'Clients', 'GraphData', 'Site', 'Tenant', 'PnP', 'Search'];
+  const panels = ['Providers', 'Context', 'Runtime', 'Clients', 'GraphData', 'Site', 'Tenant', 'PnP', 'Search'];
   const files = panels.map(name => path.join(componentRoot, 'panels', name + 'Panel.tsx'))
     .concat(fs.readdirSync(path.join(componentRoot, 'demos')).filter(name => /^PnP.*\.tsx$/.test(name)).map(name => path.join(componentRoot, 'demos', name)));
   for (const file of files) {
@@ -170,6 +170,12 @@ test('hook, provider, style and service panels use Fluent configuration and shar
     assert.match(source, /return render\(\{/);
     assert.match(source, /contentPlacement: 'configuration'/);
   }
+  const stylesCase = catalogueModule.exports.executableExamples.find(entry => entry.title === 'Explore eight style recipes with the host renderer');
+  assert.ok(stylesCase);
+  const stylesSource = fs.readFileSync(path.join(generatedRoot, stylesCase.id + '.tsx'), 'utf8');
+  assert.doesNotMatch(stylesSource, /from ['\"]@fluentui\/react['\"]|<(?:input|select|textarea|button|details|a)\b|\bstyles?\s*=/);
+  assert.match(stylesSource, /return render\(\{/);
+  assert.match(stylesSource, /contentPlacement: 'configuration'/);
   assert.match(fs.readFileSync(path.join(componentRoot, 'shared/ExecutableExampleHost.tsx'), 'utf8'), /<DemoCard/, 'host owns the shared presentation for source examples');
 });
 

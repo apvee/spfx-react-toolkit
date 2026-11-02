@@ -1,4 +1,4 @@
-// Product acceptance uses the compiled actual sample panels. Legacy comparisons
+// Product acceptance uses actual emitted scenarios and remaining sample panels. Legacy comparisons
 // remain on the normal full fixture route and retain their existing assertions.
 async function checkFoundationSingleBrowser(page, check) {
   const origin = new URL(page.url()).origin;

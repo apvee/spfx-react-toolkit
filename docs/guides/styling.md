@@ -24,7 +24,9 @@ Use the host's shared React/Griffel runtime and renderer. Token-based selections
 
 The [reference](../api/helpers/styles.md) owns the qualified descriptor catalog, composition order, state/query precedence, theme limitations and cache lifetime. The [generic hook reference](../api/hooks/react.md#usesx) documents hook options. Use those contracts for responsive, state and scrollbar recipes instead of copying mappings into this guide.
 
-The lazy Styles sample provides an interactive catalog; [local browser checks](../development/verification.md#local-browser-checks) and [authenticated host checks](../development/sharepoint-validation/INDEX.md#focus-input-and-accessibility) establish different verification boundaries.
+In the sample explorer, select **Hook → useSx → Explore eight style recipes with the host renderer** for the eight recipes and the complete descriptor selector. Recipe changes retain values; Reset keeps the selected recipe and restores its values, numeric drafts, counters and host direction. Individual style namespaces and interaction helpers have their own cases in the helper group. The full composition reads real web-part theme metadata; portable helper cases inherit theme variables without an SPFx provider.
+
+The [local browser checks](../development/verification.md#local-browser-checks) and [authenticated host checks](../development/sharepoint-validation/INDEX.md#focus-input-and-accessibility) establish different verification boundaries.
 
 ## Host theme stroke mapping
 

@@ -26,9 +26,57 @@ import { alignItems } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples
 
+#### Basic usage
+
 ```ts
 import { alignItems } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = alignItems.start;
+```
+
+#### Select cross axis item alignment — actual fixed-height flex parent
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, flex, gap, padding, presets, alignItems, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = alignItems;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: alignItems.{member}.</p>,
+    children: <section role="region" aria-label="alignItems descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="alignItems" className={sx(flex.row, width.px(320), height.px(140), gap.small, presets.alternative, descriptor)}><span className={sx(width.px(100))}>First child</span><span className={sx(width.px(100), height.px(70))}>Second taller child</span><span className={sx(width.px(100))}>Third child</span></div></section>,
+    diagnostics: <p>Select cross axis item alignment; actual fixed-height flex parent. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select cross axis item alignment — actual fixed-height flex parent. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members
@@ -121,7 +169,7 @@ Alias/access for [alignItems](styles.md#alignitems).
 
 ### Source
 
-[packages/spfx-react-toolkit/src/helpers/styles/align-items.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/align-items.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#L58)
 
 ## alignItems.baseline
 
@@ -176,7 +224,7 @@ Alias/access for [alignItems.baseline](styles.md#alignitemsbaseline).
 
 ### Source (2)
 
-[packages/spfx-react-toolkit/src/helpers/styles/align-items.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/align-items.ts:129](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#L129)
 
 ## alignItems.center
 
@@ -231,7 +279,7 @@ Alias/access for [alignItems.center](styles.md#alignitemscenter).
 
 ### Source (3)
 
-[packages/spfx-react-toolkit/src/helpers/styles/align-items.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/align-items.ts:87](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#L87)
 
 ## alignItems.end
 
@@ -286,7 +334,7 @@ Alias/access for [alignItems.end](styles.md#alignitemsend).
 
 ### Source (4)
 
-[packages/spfx-react-toolkit/src/helpers/styles/align-items.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/align-items.ts:101](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#L101)
 
 ## alignItems.start
 
@@ -341,7 +389,7 @@ Alias/access for [alignItems.start](styles.md#alignitemsstart).
 
 ### Source (5)
 
-[packages/spfx-react-toolkit/src/helpers/styles/align-items.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/align-items.ts:73](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#L73)
 
 ## alignItems.stretch
 
@@ -396,7 +444,7 @@ Alias/access for [alignItems.stretch](styles.md#alignitemsstretch).
 
 ### Source (6)
 
-[packages/spfx-react-toolkit/src/helpers/styles/align-items.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/align-items.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#L115)
 
 ## alignSelf
 
@@ -416,9 +464,57 @@ import { alignSelf } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (12)
 
+#### Basic usage (2)
+
 ```ts
 import { alignSelf } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = alignSelf.auto;
+```
+
+#### Select an individual flex item alignment — subject is a child, not the parent
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, flex, gap, padding, presets, alignSelf, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = alignSelf;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: alignSelf.{member}.</p>,
+    children: <section role="region" aria-label="alignSelf descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div className={sx(flex.row, width.px(240), height.px(150), gap.small)}><span className={sx(width.px(140), presets.canvas)}>Sibling</span><div data-style-helper="alignSelf" className={sx(width.px(140), padding.small, presets.alternative, descriptor)}>Actual alignSelf subject</div><span className={sx(width.px(140), presets.canvas)}>Sibling</span></div></section>,
+    diagnostics: <p>Select an individual flex item alignment; subject is a child, not the parent. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select an individual flex item alignment — subject is a child, not the parent. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (7)
@@ -507,7 +603,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (7)
 
-[packages/spfx-react-toolkit/src/helpers/styles/align-self.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/align-self.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#L58)
 
 ## alignSelf.auto
 
@@ -562,7 +658,7 @@ Alias/access for [alignSelf.auto](styles.md#alignselfauto).
 
 ### Source (8)
 
-[packages/spfx-react-toolkit/src/helpers/styles/align-self.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/align-self.ts:73](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#L73)
 
 ## alignSelf.center
 
@@ -613,7 +709,7 @@ center: SxBaseDescriptor
 
 ### Source (9)
 
-[packages/spfx-react-toolkit/src/helpers/styles/align-self.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/align-self.ts:101](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#L101)
 
 ## alignSelf.end
 
@@ -664,7 +760,7 @@ end: SxBaseDescriptor
 
 ### Source (10)
 
-[packages/spfx-react-toolkit/src/helpers/styles/align-self.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/align-self.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#L115)
 
 ## alignSelf.start
 
@@ -715,7 +811,7 @@ start: SxBaseDescriptor
 
 ### Source (11)
 
-[packages/spfx-react-toolkit/src/helpers/styles/align-self.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/align-self.ts:87](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#L87)
 
 ## alignSelf.stretch
 
@@ -766,7 +862,7 @@ stretch: SxBaseDescriptor
 
 ### Source (12)
 
-[packages/spfx-react-toolkit/src/helpers/styles/align-self.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/align-self.ts:129](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#L129)
 
 ## background
 
@@ -786,9 +882,57 @@ import { background } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (23)
 
+#### Basic usage (3)
+
 ```ts
 import { background } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = background.canvas;
+```
+
+#### Select background role descriptors — actual surface and disabled aria
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, background, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = background;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: background.{member}.</p>,
+    children: <section role="region" aria-label="background descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="background" aria-disabled={member === 'disabled'} className={sx(padding.medium, descriptor)}>Actual background subject</div></section>,
+    diagnostics: <p>Select background role descriptors; actual surface and disabled aria. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select background role descriptors — actual surface and disabled aria. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (13)
@@ -922,7 +1066,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (13)
 
-[packages/spfx-react-toolkit/src/helpers/styles/background.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/background.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L58)
 
 ## background.alternative
 
@@ -978,7 +1122,7 @@ Alias/access for [background.alternative](styles.md#backgroundalternative).
 
 ### Source (14)
 
-[packages/spfx-react-toolkit/src/helpers/styles/background.ts:45](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L45)
+[packages/spfx-react-toolkit/src/helpers/styles/background.ts:90](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L90)
 
 ## background.brand
 
@@ -1034,7 +1178,7 @@ Alias/access for [background.brand](styles.md#backgroundbrand).
 
 ### Source (15)
 
-[packages/spfx-react-toolkit/src/helpers/styles/background.ts:90](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L90)
+[packages/spfx-react-toolkit/src/helpers/styles/background.ts:135](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L135)
 
 ## background.brandTint
 
@@ -1090,7 +1234,7 @@ Alias/access for [background.brandTint](styles.md#backgroundbrandtint).
 
 ### Source (16)
 
-[packages/spfx-react-toolkit/src/helpers/styles/background.ts:105](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L105)
+[packages/spfx-react-toolkit/src/helpers/styles/background.ts:150](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L150)
 
 ## background.canvas
 
@@ -1146,7 +1290,7 @@ Alias/access for [background.canvas](styles.md#backgroundcanvas).
 
 ### Source (17)
 
-[packages/spfx-react-toolkit/src/helpers/styles/background.ts:30](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L30)
+[packages/spfx-react-toolkit/src/helpers/styles/background.ts:75](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L75)
 
 ## background.disabled
 
@@ -1202,7 +1346,7 @@ Alias/access for [background.disabled](styles.md#backgrounddisabled).
 
 ### Source (18)
 
-[packages/spfx-react-toolkit/src/helpers/styles/background.ts:135](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L135)
+[packages/spfx-react-toolkit/src/helpers/styles/background.ts:180](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L180)
 
 ## background.inverted
 
@@ -1258,7 +1402,7 @@ Alias/access for [background.inverted](styles.md#backgroundinverted).
 
 ### Source (19)
 
-[packages/spfx-react-toolkit/src/helpers/styles/background.ts:120](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L120)
+[packages/spfx-react-toolkit/src/helpers/styles/background.ts:165](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L165)
 
 ## background.subtle
 
@@ -1314,7 +1458,7 @@ Alias/access for [background.subtle](styles.md#backgroundsubtle).
 
 ### Source (20)
 
-[packages/spfx-react-toolkit/src/helpers/styles/background.ts:60](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L60)
+[packages/spfx-react-toolkit/src/helpers/styles/background.ts:105](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L105)
 
 ## background.transparent
 
@@ -1370,7 +1514,7 @@ Alias/access for [background.transparent](styles.md#backgroundtransparent).
 
 ### Source (21)
 
-[packages/spfx-react-toolkit/src/helpers/styles/background.ts:75](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L75)
+[packages/spfx-react-toolkit/src/helpers/styles/background.ts:120](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/background.ts#L120)
 
 ## borderColor
 
@@ -1390,9 +1534,57 @@ import { borderColor } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (40)
 
+#### Basic usage (4)
+
 ```ts
 import { borderColor } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = borderColor.primary;
+```
+
+#### Select border color descriptors — keep explicit solid border/width
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, padding, presets, borderWidth, borderStyle, borderColor, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = borderColor;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: borderColor.{member}.</p>,
+    children: <section role="region" aria-label="borderColor descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="borderColor" aria-disabled={member === 'disabled'} className={sx(width.px(180), height.px(100), padding.small, borderWidth.thick, borderStyle.solid, borderColor.primary, presets.canvas, descriptor)}>Actual borderColor subject</div></section>,
+    diagnostics: <p>Select border color descriptors; keep explicit solid border/width. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select border color descriptors — keep explicit solid border/width. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (22)
@@ -1466,7 +1658,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (22)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-color.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/border-color.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#L58)
 
 ## borderColor.brand
 
@@ -1518,7 +1710,7 @@ brand: SxBaseDescriptor
 
 ### Source (23)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-color.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/border-color.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#L115)
 
 ## borderColor.disabled
 
@@ -1570,7 +1762,7 @@ disabled: SxBaseDescriptor
 
 ### Source (24)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-color.ts:90](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#L90)
+[packages/spfx-react-toolkit/src/helpers/styles/border-color.ts:135](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#L135)
 
 ## borderColor.primary
 
@@ -1626,7 +1818,7 @@ Alias/access for [borderColor.primary](styles.md#bordercolorprimary).
 
 ### Source (25)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-color.ts:30](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#L30)
+[packages/spfx-react-toolkit/src/helpers/styles/border-color.ts:75](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#L75)
 
 ## borderColor.subtle
 
@@ -1678,7 +1870,7 @@ subtle: SxBaseDescriptor
 
 ### Source (26)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-color.ts:50](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#L50)
+[packages/spfx-react-toolkit/src/helpers/styles/border-color.ts:95](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#L95)
 
 ## borderRadius
 
@@ -1698,9 +1890,57 @@ import { borderRadius } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (49)
 
+#### Basic usage (5)
+
 ```ts
 import { borderRadius } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = borderRadius.none;
+```
+
+#### Select border radius descriptors — visible bounded surface
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, padding, presets, borderWidth, borderStyle, borderColor, borderRadius, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = borderRadius;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: borderRadius.{member}.</p>,
+    children: <section role="region" aria-label="borderRadius descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="borderRadius" className={sx(width.px(180), height.px(100), padding.small, borderWidth.thick, borderStyle.solid, borderColor.primary, presets.canvas, descriptor)}>Actual borderRadius subject</div></section>,
+    diagnostics: <p>Select border radius descriptors; visible bounded surface. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select border radius descriptors — visible bounded surface. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (27)
@@ -1804,7 +2044,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (27)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L58)
 
 ## borderRadius.circular
 
@@ -1860,7 +2100,7 @@ Alias/access for [borderRadius.circular](styles.md#borderradiuscircular).
 
 ### Source (28)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:130](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L130)
+[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:175](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L175)
 
 ## borderRadius.extraLarge
 
@@ -1916,7 +2156,7 @@ Alias/access for [borderRadius.extraLarge](styles.md#borderradiusextralarge).
 
 ### Source (29)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:110](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L110)
+[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:155](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L155)
 
 ## borderRadius.large
 
@@ -1972,7 +2212,7 @@ Alias/access for [borderRadius.large](styles.md#borderradiuslarge).
 
 ### Source (30)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:90](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L90)
+[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:135](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L135)
 
 ## borderRadius.medium
 
@@ -2028,7 +2268,7 @@ Alias/access for [borderRadius.medium](styles.md#borderradiusmedium).
 
 ### Source (31)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L115)
 
 ## borderRadius.none
 
@@ -2084,7 +2324,7 @@ Alias/access for [borderRadius.none](styles.md#borderradiusnone).
 
 ### Source (32)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:30](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L30)
+[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:75](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L75)
 
 ## borderRadius.small
 
@@ -2140,7 +2380,7 @@ Alias/access for [borderRadius.small](styles.md#borderradiussmall).
 
 ### Source (33)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:50](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L50)
+[packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts:95](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#L95)
 
 ## borderStyle
 
@@ -2160,9 +2400,57 @@ import { borderStyle } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (62)
 
+#### Basic usage (6)
+
 ```ts
 import { borderStyle } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = borderStyle.solid;
+```
+
+#### Select border style descriptors — keep explicit width/color
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, padding, presets, borderWidth, borderStyle, borderColor, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = borderStyle;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: borderStyle.{member}.</p>,
+    children: <section role="region" aria-label="borderStyle descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="borderStyle" className={sx(width.px(180), height.px(100), padding.small, borderWidth.thick, borderStyle.solid, borderColor.primary, presets.canvas, descriptor)}>Actual borderStyle subject</div></section>,
+    diagnostics: <p>Select border style descriptors; keep explicit width/color. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select border style descriptors — keep explicit width/color. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (34)
@@ -2191,7 +2479,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (34)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-style.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-style.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/border-style.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-style.ts#L58)
 
 ## borderStyle.solid
 
@@ -2247,7 +2535,7 @@ Alias/access for [borderStyle.solid](styles.md#borderstylesolid).
 
 ### Source (35)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-style.ts:29](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-style.ts#L29)
+[packages/spfx-react-toolkit/src/helpers/styles/border-style.ts:74](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-style.ts#L74)
 
 ## borderWidth
 
@@ -2267,9 +2555,57 @@ import { borderWidth } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (65)
 
+#### Basic usage (7)
+
 ```ts
 import { borderWidth } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = borderWidth.none;
+```
+
+#### Select border width descriptors — keep explicit solid border/color
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, padding, presets, borderWidth, borderStyle, borderColor, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = borderWidth;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: borderWidth.{member}.</p>,
+    children: <section role="region" aria-label="borderWidth descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="borderWidth" className={sx(width.px(180), height.px(100), padding.small, borderWidth.thick, borderStyle.solid, borderColor.primary, presets.canvas, descriptor)}>Actual borderWidth subject</div></section>,
+    diagnostics: <p>Select border width descriptors; keep explicit solid border/color. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select border width descriptors — keep explicit solid border/color. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (36)
@@ -2328,7 +2664,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (36)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-width.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/border-width.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#L58)
 
 ## borderWidth.none
 
@@ -2380,7 +2716,7 @@ none: SxBaseDescriptor
 
 ### Source (37)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-width.ts:30](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#L30)
+[packages/spfx-react-toolkit/src/helpers/styles/border-width.ts:75](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#L75)
 
 ## borderWidth.thick
 
@@ -2436,7 +2772,7 @@ Alias/access for [borderWidth.thick](styles.md#borderwidththick).
 
 ### Source (38)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-width.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/border-width.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#L115)
 
 ## borderWidth.thin
 
@@ -2492,7 +2828,7 @@ Alias/access for [borderWidth.thin](styles.md#borderwidththin).
 
 ### Source (39)
 
-[packages/spfx-react-toolkit/src/helpers/styles/border-width.ts:50](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#L50)
+[packages/spfx-react-toolkit/src/helpers/styles/border-width.ts:95](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#L95)
 
 ## boxShadow
 
@@ -2512,9 +2848,57 @@ import { boxShadow } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (72)
 
+#### Basic usage (8)
+
 ```ts
 import { boxShadow } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = boxShadow.none;
+```
+
+#### Select shadow elevation descriptors — actual surface with room for shadow
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, padding, presets, boxShadow, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = boxShadow;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: boxShadow.{member}.</p>,
+    children: <section role="region" aria-label="boxShadow descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="boxShadow" className={sx(width.px(180), height.px(100), padding.medium, presets.canvas, descriptor)}>Actual boxShadow subject</div></section>,
+    diagnostics: <p>Select shadow elevation descriptors; actual surface with room for shadow. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select shadow elevation descriptors — actual surface with room for shadow. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (40)
@@ -2573,7 +2957,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (40)
 
-[packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#L58)
 
 ## boxShadow.medium
 
@@ -2625,7 +3009,7 @@ medium: SxBaseDescriptor
 
 ### Source (41)
 
-[packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts:60](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#L60)
+[packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts:105](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#L105)
 
 ## boxShadow.none
 
@@ -2677,7 +3061,7 @@ none: SxBaseDescriptor
 
 ### Source (42)
 
-[packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts:30](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#L30)
+[packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts:75](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#L75)
 
 ## boxShadow.small
 
@@ -2729,7 +3113,7 @@ small: SxBaseDescriptor
 
 ### Source (43)
 
-[packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts:45](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#L45)
+[packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts:90](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#L90)
 
 ## container
 
@@ -2749,9 +3133,69 @@ import { container } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (79)
 
+#### Basic usage (9)
+
 ```ts
 import { container } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = container.inlineSize;
+```
+
+#### Toggle a named inline size query ancestor — nested child visibly responds when ancestor establishment changes
+
+```tsx
+import * as React from 'react';
+import { Checkbox, Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, flex, gap, padding, presets, container, responsive } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [threshold, setThreshold] = React.useState<'small' | 'medium' | 'large'>('medium');
+  const [size, setSize] = React.useState(420);
+  const [draft, setDraft] = React.useState('420');
+  const [established, setEstablished] = React.useState(true);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setThreshold('medium'); setSize(420); setDraft('420'); setEstablished(true);
+  }, [resetRevision]);
+  return render({
+    controls: <>
+      <Field label="Breakpoint"><Select value={threshold} onChange={(_, data) => {
+        if (data.value === 'small' || data.value === 'medium' || data.value === 'large') setThreshold(data.value);
+      }}><option value="small">small</option><option value="medium">medium</option><option value="large">large</option></Select></Field>
+      <Field label="Ancestor width"><Input type="number" min={0} step="any" value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        if (data.value.trim() && Number.isFinite(Number(data.value)) && Number(data.value) >= 0) setSize(Number(data.value));
+      }} onBlur={() => setDraft(String(size))} /></Field>
+      <Checkbox label="Establish named container" checked={established} onChange={(_, data) => setEstablished(data.checked === true)} />
+    </>,
+    status: <p>Inclusive thresholds: small 480px, medium 640px, large 1024px. The child measures its nearest named ancestor, never itself.</p>,
+    children: <section role="region" aria-label="container query preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.horizontal.auto)}>
+      <div data-style-helper="container-ancestor" className={sx(established && container.inlineSize, width.px(size))}>
+        <div data-style-helper="container" className={sx(width.px(180), flex.column, gap.small, padding.small, presets.alternative,
+          responsive[threshold](width.px(300), flex.row))}><span>First item</span><span>Second item</span></div>
+      </div>
+    </section>,
+    diagnostics: <p>Reset restores medium and the 420px ancestor without replacing the Demo or host renderer.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select small, medium or large and compare threshold minus one with its inclusive limit. Toggle named containment at 720px to switch the child between its 180px column and 300px row. Reset restores the displayed baseline.',
+};
 ```
 
 ### Members (44)
@@ -2781,7 +3225,7 @@ export function ResponsiveRows(): React.ReactElement {
 
 ### Source (44)
 
-[packages/spfx-react-toolkit/src/helpers/styles/container.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/container.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/container.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/container.ts#L70)
 
 ## container.inlineSize
 
@@ -2840,7 +3284,7 @@ Alias/access for [container.inlineSize](styles.md#containerinlinesize).
 
 ### Source (45)
 
-[packages/spfx-react-toolkit/src/helpers/styles/container.ts:33](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/container.ts#L33)
+[packages/spfx-react-toolkit/src/helpers/styles/container.ts:90](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/container.ts#L90)
 
 ## flexItem
 
@@ -2860,9 +3304,58 @@ import { flexItem } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (82)
 
+#### Basic usage (10)
+
 ```ts
 import { flexItem } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = flexItem.grow;
+```
+
+#### Select flex item growth and shrink — target item among constrained siblings
+
+```tsx
+import * as React from 'react';
+import { Checkbox, Field, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, flex, gap, padding, presets, flexItem, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = flexItem;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [wide, setWide] = React.useState(false);
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setWide(false); setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Checkbox label="Extra row space" checked={wide} onChange={(_, data) => setWide(data.checked === true)} /><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: flexItem.{member}.</p>,
+    children: <section role="region" aria-label="flexItem descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div className={sx(flex.row, width.px(wide ? 640 : 240), height.px(150), gap.small)}><span className={sx(width.px(140), presets.canvas)}>Sibling</span><div data-style-helper="flexItem" className={sx(width.px(140), padding.small, presets.alternative, descriptor)}>Actual flexItem subject</div><span className={sx(width.px(140), presets.canvas)}>Sibling</span></div></section>,
+    diagnostics: <p>Select flex item growth and shrink; target item among constrained siblings. Toggle extra row space for growth versus a constrained row for shrink. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select flex item growth and shrink — target item among constrained siblings. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (46)
@@ -2936,7 +3429,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (46)
 
-[packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts:59](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#L59)
 
 ## flexItem.grow
 
@@ -2991,7 +3484,7 @@ Alias/access for [flexItem.grow](styles.md#flexitemgrow).
 
 ### Source (47)
 
-[packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts:74](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#L74)
 
 ## flexItem.noGrow
 
@@ -3046,7 +3539,7 @@ Alias/access for [flexItem.noGrow](styles.md#flexitemnogrow).
 
 ### Source (48)
 
-[packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts:88](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#L88)
 
 ## flexItem.noShrink
 
@@ -3101,7 +3594,7 @@ Alias/access for [flexItem.noShrink](styles.md#flexitemnoshrink).
 
 ### Source (49)
 
-[packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts:116](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#L116)
 
 ## flexItem.shrink
 
@@ -3156,7 +3649,7 @@ Alias/access for [flexItem.shrink](styles.md#flexitemshrink).
 
 ### Source (50)
 
-[packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts:102](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#L102)
 
 ## flex
 
@@ -3176,9 +3669,57 @@ import { flex } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (91)
 
+#### Basic usage (11)
+
 ```ts
 import { flex } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = flex.row;
+```
+
+#### Select flex direction and wrapping — actual sized item row/column/wrap
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, flex, gap, padding, presets, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = flex;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: flex.{member}.</p>,
+    children: <section role="region" aria-label="flex descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="flex" className={sx(flex.row, width.px(240), height.px(140), gap.small, presets.alternative, descriptor)}><span className={sx(width.px(100))}>First child</span><span className={sx(width.px(100), height.px(70))}>Second taller child</span><span className={sx(width.px(100))}>Third child</span></div></section>,
+    diagnostics: <p>Select flex direction and wrapping; actual sized item row/column/wrap. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select flex direction and wrapping — actual sized item row/column/wrap. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (51)
@@ -3252,7 +3793,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (51)
 
-[packages/spfx-react-toolkit/src/helpers/styles/flex.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/flex.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex.ts#L58)
 
 ## flex.column
 
@@ -3307,7 +3848,7 @@ Alias/access for [flex.column](styles.md#flexcolumn).
 
 ### Source (52)
 
-[packages/spfx-react-toolkit/src/helpers/styles/flex.ts:45](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex.ts#L45)
+[packages/spfx-react-toolkit/src/helpers/styles/flex.ts:90](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex.ts#L90)
 
 ## flex.noWrap
 
@@ -3362,7 +3903,7 @@ Alias/access for [flex.noWrap](styles.md#flexnowrap).
 
 ### Source (53)
 
-[packages/spfx-react-toolkit/src/helpers/styles/flex.ts:76](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex.ts#L76)
+[packages/spfx-react-toolkit/src/helpers/styles/flex.ts:121](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex.ts#L121)
 
 ## flex.row
 
@@ -3417,7 +3958,7 @@ Alias/access for [flex.row](styles.md#flexrow).
 
 ### Source (54)
 
-[packages/spfx-react-toolkit/src/helpers/styles/flex.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/flex.ts:73](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex.ts#L73)
 
 ## flex.wrap
 
@@ -3472,7 +4013,7 @@ Alias/access for [flex.wrap](styles.md#flexwrap).
 
 ### Source (55)
 
-[packages/spfx-react-toolkit/src/helpers/styles/flex.ts:62](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex.ts#L62)
+[packages/spfx-react-toolkit/src/helpers/styles/flex.ts:107](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/flex.ts#L107)
 
 ## foreground
 
@@ -3492,9 +4033,57 @@ import { foreground } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (100)
 
+#### Basic usage (12)
+
 ```ts
 import { foreground } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = foreground.primary;
+```
+
+#### Select foreground role descriptors — actual text and disabled aria
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, foreground, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = foreground;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: foreground.{member}.</p>,
+    children: <section role="region" aria-label="foreground descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><p data-style-helper="foreground" aria-disabled={member === 'disabled'} className={sx(padding.medium, descriptor)}>Actual foreground subject</p></section>,
+    diagnostics: <p>Select foreground role descriptors; actual text and disabled aria. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select foreground role descriptors — actual text and disabled aria. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (56)
@@ -3628,7 +4217,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (56)
 
-[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L58)
 
 ## foreground.brand
 
@@ -3680,7 +4269,7 @@ brand: SxBaseDescriptor
 
 ### Source (57)
 
-[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:90](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L90)
+[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:135](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L135)
 
 ## foreground.disabled
 
@@ -3732,7 +4321,7 @@ disabled: SxBaseDescriptor
 
 ### Source (58)
 
-[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:75](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L75)
+[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:120](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L120)
 
 ## foreground.inverted
 
@@ -3784,7 +4373,7 @@ inverted: SxBaseDescriptor
 
 ### Source (59)
 
-[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:120](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L120)
+[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:165](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L165)
 
 ## foreground.link
 
@@ -3840,7 +4429,7 @@ Alias/access for [foreground.link](styles.md#foregroundlink).
 
 ### Source (60)
 
-[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:135](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L135)
+[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:180](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L180)
 
 ## foreground.muted
 
@@ -3896,7 +4485,7 @@ Alias/access for [foreground.muted](styles.md#foregroundmuted).
 
 ### Source (61)
 
-[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:60](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L60)
+[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:105](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L105)
 
 ## foreground.onBrand
 
@@ -3952,7 +4541,7 @@ Alias/access for [foreground.onBrand](styles.md#foregroundonbrand).
 
 ### Source (62)
 
-[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:105](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L105)
+[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:150](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L150)
 
 ## foreground.primary
 
@@ -4004,7 +4593,7 @@ primary: SxBaseDescriptor
 
 ### Source (63)
 
-[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:30](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L30)
+[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:75](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L75)
 
 ## foreground.subtle
 
@@ -4056,7 +4645,7 @@ subtle: SxBaseDescriptor
 
 ### Source (64)
 
-[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:45](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L45)
+[packages/spfx-react-toolkit/src/helpers/styles/foreground.ts:90](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#L90)
 
 ## gap
 
@@ -4076,9 +4665,66 @@ import { gap } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (117)
 
+#### Basic usage (13)
+
 ```ts
 import { gap } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = gap.none;
+```
+
+#### Select gap scales and pixel spacing — real multi-item flex/grid layout
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, flex, gap, padding, presets, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = gap;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: gap.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="gap descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="gap" className={sx(flex.row, presets.alternative, padding.small, descriptor)}><span>First item</span><span>Second item</span><span>Third item</span></div></section>,
+    diagnostics: <p>Select gap scales and pixel spacing; real multi-item flex/grid layout. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select gap scales and pixel spacing — real multi-item flex/grid layout. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (65)
@@ -4211,7 +4857,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (65)
 
-[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L67)
 
 ## gap.extraLarge
 
@@ -4262,7 +4908,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (66)
 
-[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:152](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L152)
 
 ## gap.extraSmall
 
@@ -4317,7 +4963,7 @@ Alias/access for [gap.extraSmall](styles.md#gapextrasmall).
 
 ### Source (67)
 
-[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:96](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L96)
 
 ## gap.large
 
@@ -4368,7 +5014,7 @@ large: SxBaseDescriptor
 
 ### Source (68)
 
-[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:138](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L138)
 
 ## gap.medium
 
@@ -4419,7 +5065,7 @@ medium: SxBaseDescriptor
 
 ### Source (69)
 
-[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:124](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L124)
 
 ## gap.none
 
@@ -4470,7 +5116,7 @@ none: SxBaseDescriptor
 
 ### Source (70)
 
-[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L82)
 
 ## gap.px
 
@@ -4553,7 +5199,7 @@ Alias/access for [gap.px](styles.md#gappx).
 
 ### Source (71)
 
-[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:169](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L169)
 
 ## gap.small
 
@@ -4604,7 +5250,7 @@ small: SxBaseDescriptor
 
 ### Source (72)
 
-[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/gap.ts:110](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/gap.ts#L110)
 
 ## grid
 
@@ -4624,9 +5270,66 @@ import { grid } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (133)
 
+#### Basic usage (14)
+
 ```ts
 import { grid } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = grid.columns(3);
+```
+
+#### Select positive grid column counts — actual four-item grid and invalid drafts
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, gap, padding, presets, grid, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = grid;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(2);
+  const [draft, setDraft] = React.useState('2');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(2); setDraft('2');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Columns"><Input type="number" min={1} step={1} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 1 && Number.isInteger(number)) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: grid.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="grid descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="grid" className={sx(width.px(320), gap.small, descriptor)}>{[1, 2, 3, 4].map(item => <div key={item} className={sx(padding.small, presets.alternative)}>Item {item}</div>)}</div></section>,
+    diagnostics: <p>Select positive grid column counts; actual four-item grid and invalid drafts. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select positive grid column counts — actual four-item grid and invalid drafts. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (72)
@@ -4667,7 +5370,7 @@ Immutable display and column-template recipe.
 
 ### Source (73)
 
-[packages/spfx-react-toolkit/src/helpers/styles/grid.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/grid.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/grid.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/grid.ts#L67)
 
 ## grid.columns
 
@@ -4750,7 +5453,7 @@ Alias/access for [grid.columns](styles.md#gridcolumns).
 
 ### Source (74)
 
-[packages/spfx-react-toolkit/src/helpers/styles/grid.ts:31](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/grid.ts#L31)
+[packages/spfx-react-toolkit/src/helpers/styles/grid.ts:85](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/grid.ts#L85)
 
 ## height
 
@@ -4770,9 +5473,66 @@ import { height } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (137)
 
+#### Basic usage (15)
+
 ```ts
 import { height } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = height.auto;
+```
+
+#### Select height descriptors — auto/full/pixels under a sized parent
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, padding, presets, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = height;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(120);
+  const [draft, setDraft] = React.useState('120');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(120); setDraft('120');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: height.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="height descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div className={sx(height.px(180), width.px(240))}><div data-style-helper="height" className={sx(width.px(180), presets.alternative, descriptor)}><p>Visible content</p><p>Second line</p><p>Third line</p></div></div></section>,
+    diagnostics: <p>Select height descriptors; auto/full/pixels under a sized parent. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select height descriptors — auto/full/pixels under a sized parent. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (73)
@@ -4845,7 +5605,7 @@ Immutable height descriptor.
 
 ### Source (75)
 
-[packages/spfx-react-toolkit/src/helpers/styles/height.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/height.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/height.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/height.ts#L67)
 
 ## height.auto
 
@@ -4896,7 +5656,7 @@ auto: SxBaseDescriptor
 
 ### Source (76)
 
-[packages/spfx-react-toolkit/src/helpers/styles/height.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/height.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/height.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/height.ts#L82)
 
 ## height.full
 
@@ -4951,7 +5711,7 @@ Alias/access for [height.full](styles.md#heightfull).
 
 ### Source (77)
 
-[packages/spfx-react-toolkit/src/helpers/styles/height.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/height.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/height.ts:96](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/height.ts#L96)
 
 ## height.px
 
@@ -5030,7 +5790,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (78)
 
-[packages/spfx-react-toolkit/src/helpers/styles/height.ts:59](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/height.ts#L59)
+[packages/spfx-react-toolkit/src/helpers/styles/height.ts:113](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/height.ts#L113)
 
 ## justifyContent
 
@@ -5050,9 +5810,57 @@ import { justifyContent } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (145)
 
+#### Basic usage (16)
+
 ```ts
 import { justifyContent } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = justifyContent.start;
+```
+
+#### Select main axis item alignment — spare inline space and real siblings
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, flex, gap, padding, presets, justifyContent, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = justifyContent;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: justifyContent.{member}.</p>,
+    children: <section role="region" aria-label="justifyContent descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="justifyContent" className={sx(flex.row, width.px(480), height.px(140), gap.small, presets.alternative, descriptor)}><span className={sx(width.px(100))}>First child</span><span className={sx(width.px(100), height.px(70))}>Second taller child</span><span className={sx(width.px(100))}>Third child</span></div></section>,
+    diagnostics: <p>Select main axis item alignment; spare inline space and real siblings. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select main axis item alignment — spare inline space and real siblings. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (76)
@@ -5126,7 +5934,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (79)
 
-[packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#L58)
 
 ## justifyContent.center
 
@@ -5177,7 +5985,7 @@ center: SxBaseDescriptor
 
 ### Source (80)
 
-[packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts:87](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#L87)
 
 ## justifyContent.end
 
@@ -5228,7 +6036,7 @@ end: SxBaseDescriptor
 
 ### Source (81)
 
-[packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts:101](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#L101)
 
 ## justifyContent.spaceBetween
 
@@ -5283,7 +6091,7 @@ Alias/access for [justifyContent.spaceBetween](styles.md#justifycontentspacebetw
 
 ### Source (82)
 
-[packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#L115)
 
 ## justifyContent.start
 
@@ -5334,7 +6142,7 @@ start: SxBaseDescriptor
 
 ### Source (83)
 
-[packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts:73](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#L73)
 
 ## marginBlockEnd
 
@@ -5354,9 +6162,66 @@ import { marginBlockEnd } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (154)
 
+#### Basic usage (17)
+
 ```ts
 import { marginBlockEnd } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = marginBlockEnd.none;
+```
+
+#### Select block end margin descriptors — adjacent bounded blocks
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, borderWidth, borderStyle, borderColor, marginBlockEnd, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = marginBlockEnd;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: marginBlockEnd.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="marginBlockEnd descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div className={sx(width.px(320), borderWidth.thin, borderStyle.solid, borderColor.primary)}><p>Previous sibling</p><div data-style-helper="marginBlockEnd" className={sx(presets.alternative, padding.small, descriptor)}>Actual marginBlockEnd subject</div><p>Next sibling</p></div></section>,
+    diagnostics: <p>Select block end margin descriptors; adjacent bounded blocks. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select block end margin descriptors — adjacent bounded blocks. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (81)
@@ -5489,7 +6354,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (84)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L67)
 
 ## marginBlockEnd.extraLarge
 
@@ -5540,7 +6405,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (85)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:152](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L152)
 
 ## marginBlockEnd.extraSmall
 
@@ -5591,7 +6456,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (86)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:96](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L96)
 
 ## marginBlockEnd.large
 
@@ -5642,7 +6507,7 @@ large: SxBaseDescriptor
 
 ### Source (87)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:138](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L138)
 
 ## marginBlockEnd.medium
 
@@ -5693,7 +6558,7 @@ medium: SxBaseDescriptor
 
 ### Source (88)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:124](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L124)
 
 ## marginBlockEnd.none
 
@@ -5744,7 +6609,7 @@ none: SxBaseDescriptor
 
 ### Source (89)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L82)
 
 ## marginBlockEnd.px
 
@@ -5823,7 +6688,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (90)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:169](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L169)
 
 ## marginBlockEnd.small
 
@@ -5874,7 +6739,7 @@ small: SxBaseDescriptor
 
 ### Source (91)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts:110](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#L110)
 
 ## marginBlockStart
 
@@ -5894,9 +6759,66 @@ import { marginBlockStart } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (170)
 
+#### Basic usage (18)
+
 ```ts
 import { marginBlockStart } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = marginBlockStart.none;
+```
+
+#### Select block start margin descriptors — adjacent bounded blocks
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, borderWidth, borderStyle, borderColor, marginBlockStart, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = marginBlockStart;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: marginBlockStart.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="marginBlockStart descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div className={sx(width.px(320), borderWidth.thin, borderStyle.solid, borderColor.primary)}><p>Previous sibling</p><div data-style-helper="marginBlockStart" className={sx(presets.alternative, padding.small, descriptor)}>Actual marginBlockStart subject</div><p>Next sibling</p></div></section>,
+    diagnostics: <p>Select block start margin descriptors; adjacent bounded blocks. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select block start margin descriptors — adjacent bounded blocks. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (88)
@@ -6029,7 +6951,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (92)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L67)
 
 ## marginBlockStart.extraLarge
 
@@ -6080,7 +7002,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (93)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:152](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L152)
 
 ## marginBlockStart.extraSmall
 
@@ -6131,7 +7053,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (94)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:96](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L96)
 
 ## marginBlockStart.large
 
@@ -6182,7 +7104,7 @@ large: SxBaseDescriptor
 
 ### Source (95)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:138](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L138)
 
 ## marginBlockStart.medium
 
@@ -6233,7 +7155,7 @@ medium: SxBaseDescriptor
 
 ### Source (96)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:124](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L124)
 
 ## marginBlockStart.none
 
@@ -6284,7 +7206,7 @@ none: SxBaseDescriptor
 
 ### Source (97)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L82)
 
 ## marginBlockStart.px
 
@@ -6363,7 +7285,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (98)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:169](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L169)
 
 ## marginBlockStart.small
 
@@ -6414,7 +7336,7 @@ small: SxBaseDescriptor
 
 ### Source (99)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts:110](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#L110)
 
 ## marginBlock
 
@@ -6434,9 +7356,66 @@ import { marginBlock } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (186)
 
+#### Basic usage (19)
+
 ```ts
 import { marginBlock } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = marginBlock.none;
+```
+
+#### Select block margin descriptors — actual adjacent blocks
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, borderWidth, borderStyle, borderColor, marginBlock, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = marginBlock;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: marginBlock.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="marginBlock descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div className={sx(width.px(320), borderWidth.thin, borderStyle.solid, borderColor.primary)}><p>Previous sibling</p><div data-style-helper="marginBlock" className={sx(presets.alternative, padding.small, descriptor)}>Actual marginBlock subject</div><p>Next sibling</p></div></section>,
+    diagnostics: <p>Select block margin descriptors; actual adjacent blocks. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select block margin descriptors — actual adjacent blocks. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (95)
@@ -6569,7 +7548,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (100)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L67)
 
 ## marginBlock.extraLarge
 
@@ -6620,7 +7599,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (101)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:152](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L152)
 
 ## marginBlock.extraSmall
 
@@ -6671,7 +7650,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (102)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:96](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L96)
 
 ## marginBlock.large
 
@@ -6722,7 +7701,7 @@ large: SxBaseDescriptor
 
 ### Source (103)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:138](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L138)
 
 ## marginBlock.medium
 
@@ -6773,7 +7752,7 @@ medium: SxBaseDescriptor
 
 ### Source (104)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:124](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L124)
 
 ## marginBlock.none
 
@@ -6824,7 +7803,7 @@ none: SxBaseDescriptor
 
 ### Source (105)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L82)
 
 ## marginBlock.px
 
@@ -6903,7 +7882,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (106)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:169](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L169)
 
 ## marginBlock.small
 
@@ -6954,7 +7933,7 @@ small: SxBaseDescriptor
 
 ### Source (107)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts:110](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#L110)
 
 ## marginInlineEnd
 
@@ -6974,9 +7953,70 @@ import { marginInlineEnd } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (202)
 
+#### Basic usage (20)
+
 ```ts
 import { marginInlineEnd } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = marginInlineEnd.none;
+```
+
+#### Select inline end margin descriptors — host/LTR/RTL
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select, FluentProvider } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, borderWidth, borderStyle, borderColor, marginInlineEnd, background, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = marginInlineEnd;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const [direction, setDirection] = React.useState<'host' | 'ltr' | 'rtl'>('host');
+  const sx = useSx({ dir: direction === 'host' ? undefined : direction });
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24'); setDirection('host');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+      <Field label="Direction"><Select value={direction} onChange={(_, data) => {
+        if (data.value === 'host' || data.value === 'ltr' || data.value === 'rtl') setDirection(data.value);
+      }}><option value="host">host</option><option value="ltr">ltr</option><option value="rtl">rtl</option></Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: marginInlineEnd.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="marginInlineEnd descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><FluentProvider dir={direction === 'host' ? undefined : direction} className={sx(background.transparent, minWidth.zero)}><div className={sx(width.px(320), borderWidth.thin, borderStyle.solid, borderColor.primary)}><p>Previous sibling</p><div data-style-helper="marginInlineEnd" className={sx(presets.alternative, padding.small, descriptor)}>Actual marginInlineEnd subject</div><p>Next sibling</p></div></FluentProvider></section>,
+    diagnostics: <p>Select inline end margin descriptors; host/LTR/RTL. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select inline end margin descriptors — host/LTR/RTL. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value and host direction while retaining this Demo.',
+};
 ```
 
 ### Members (102)
@@ -7109,7 +8149,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (108)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:71](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L71)
 
 ## marginInlineEnd.extraLarge
 
@@ -7160,7 +8200,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (109)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:156](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L156)
 
 ## marginInlineEnd.extraSmall
 
@@ -7211,7 +8251,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (110)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:100](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L100)
 
 ## marginInlineEnd.large
 
@@ -7262,7 +8302,7 @@ large: SxBaseDescriptor
 
 ### Source (111)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:142](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L142)
 
 ## marginInlineEnd.medium
 
@@ -7313,7 +8353,7 @@ medium: SxBaseDescriptor
 
 ### Source (112)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:128](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L128)
 
 ## marginInlineEnd.none
 
@@ -7364,7 +8404,7 @@ none: SxBaseDescriptor
 
 ### Source (113)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:86](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L86)
 
 ## marginInlineEnd.px
 
@@ -7443,7 +8483,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (114)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:173](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L173)
 
 ## marginInlineEnd.small
 
@@ -7494,7 +8534,7 @@ small: SxBaseDescriptor
 
 ### Source (115)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts:114](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#L114)
 
 ## marginInlineStart
 
@@ -7514,9 +8554,70 @@ import { marginInlineStart } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (218)
 
+#### Basic usage (21)
+
 ```ts
 import { marginInlineStart } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = marginInlineStart.none;
+```
+
+#### Select inline start margin descriptors — host/LTR/RTL
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select, FluentProvider } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, borderWidth, borderStyle, borderColor, marginInlineStart, background, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = marginInlineStart;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const [direction, setDirection] = React.useState<'host' | 'ltr' | 'rtl'>('host');
+  const sx = useSx({ dir: direction === 'host' ? undefined : direction });
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24'); setDirection('host');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+      <Field label="Direction"><Select value={direction} onChange={(_, data) => {
+        if (data.value === 'host' || data.value === 'ltr' || data.value === 'rtl') setDirection(data.value);
+      }}><option value="host">host</option><option value="ltr">ltr</option><option value="rtl">rtl</option></Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: marginInlineStart.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="marginInlineStart descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><FluentProvider dir={direction === 'host' ? undefined : direction} className={sx(background.transparent, minWidth.zero)}><div className={sx(width.px(320), borderWidth.thin, borderStyle.solid, borderColor.primary)}><p>Previous sibling</p><div data-style-helper="marginInlineStart" className={sx(presets.alternative, padding.small, descriptor)}>Actual marginInlineStart subject</div><p>Next sibling</p></div></FluentProvider></section>,
+    diagnostics: <p>Select inline start margin descriptors; host/LTR/RTL. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select inline start margin descriptors — host/LTR/RTL. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value and host direction while retaining this Demo.',
+};
 ```
 
 ### Members (109)
@@ -7649,7 +8750,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (116)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:71](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L71)
 
 ## marginInlineStart.extraLarge
 
@@ -7700,7 +8801,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (117)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:156](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L156)
 
 ## marginInlineStart.extraSmall
 
@@ -7751,7 +8852,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (118)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:100](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L100)
 
 ## marginInlineStart.large
 
@@ -7802,7 +8903,7 @@ large: SxBaseDescriptor
 
 ### Source (119)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:142](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L142)
 
 ## marginInlineStart.medium
 
@@ -7853,7 +8954,7 @@ medium: SxBaseDescriptor
 
 ### Source (120)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:128](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L128)
 
 ## marginInlineStart.none
 
@@ -7904,7 +9005,7 @@ none: SxBaseDescriptor
 
 ### Source (121)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:86](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L86)
 
 ## marginInlineStart.px
 
@@ -7983,7 +9084,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (122)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:173](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L173)
 
 ## marginInlineStart.small
 
@@ -8034,7 +9135,7 @@ small: SxBaseDescriptor
 
 ### Source (123)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts:114](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#L114)
 
 ## marginInline
 
@@ -8054,9 +9155,70 @@ import { marginInline } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (234)
 
+#### Basic usage (22)
+
 ```ts
 import { marginInline } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = marginInline.none;
+```
+
+#### Select inline margin descriptors — host/LTR/RTL
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select, FluentProvider } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, borderWidth, borderStyle, borderColor, marginInline, background, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = marginInline;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const [direction, setDirection] = React.useState<'host' | 'ltr' | 'rtl'>('host');
+  const sx = useSx({ dir: direction === 'host' ? undefined : direction });
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24'); setDirection('host');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+      <Field label="Direction"><Select value={direction} onChange={(_, data) => {
+        if (data.value === 'host' || data.value === 'ltr' || data.value === 'rtl') setDirection(data.value);
+      }}><option value="host">host</option><option value="ltr">ltr</option><option value="rtl">rtl</option></Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: marginInline.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="marginInline descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><FluentProvider dir={direction === 'host' ? undefined : direction} className={sx(background.transparent, minWidth.zero)}><div className={sx(width.px(320), borderWidth.thin, borderStyle.solid, borderColor.primary)}><p>Previous sibling</p><div data-style-helper="marginInline" className={sx(presets.alternative, padding.small, descriptor)}>Actual marginInline subject</div><p>Next sibling</p></div></FluentProvider></section>,
+    diagnostics: <p>Select inline margin descriptors; host/LTR/RTL. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select inline margin descriptors — host/LTR/RTL. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value and host direction while retaining this Demo.',
+};
 ```
 
 ### Members (116)
@@ -8189,7 +9351,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (124)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:71](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L71)
 
 ## marginInline.extraLarge
 
@@ -8240,7 +9402,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (125)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:156](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L156)
 
 ## marginInline.extraSmall
 
@@ -8291,7 +9453,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (126)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:100](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L100)
 
 ## marginInline.large
 
@@ -8342,7 +9504,7 @@ large: SxBaseDescriptor
 
 ### Source (127)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:142](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L142)
 
 ## marginInline.medium
 
@@ -8393,7 +9555,7 @@ medium: SxBaseDescriptor
 
 ### Source (128)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:128](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L128)
 
 ## marginInline.none
 
@@ -8444,7 +9606,7 @@ none: SxBaseDescriptor
 
 ### Source (129)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:86](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L86)
 
 ## marginInline.px
 
@@ -8523,7 +9685,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (130)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:173](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L173)
 
 ## marginInline.small
 
@@ -8574,7 +9736,7 @@ small: SxBaseDescriptor
 
 ### Source (131)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts:114](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#L114)
 
 ## margin
 
@@ -8594,9 +9756,66 @@ import { margin } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (250)
 
+#### Basic usage (23)
+
 ```ts
 import { margin } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = margin.none;
+```
+
+#### Select all side margin descriptors — actual subject among bounded siblings
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, borderWidth, borderStyle, borderColor, margin, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = margin;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: margin.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="margin descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div className={sx(width.px(320), borderWidth.thin, borderStyle.solid, borderColor.primary)}><p>Previous sibling</p><div data-style-helper="margin" className={sx(presets.alternative, padding.small, descriptor)}>Actual margin subject</div><p>Next sibling</p></div></section>,
+    diagnostics: <p>Select all side margin descriptors; actual subject among bounded siblings. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select all side margin descriptors — actual subject among bounded siblings. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (123)
@@ -8729,7 +9948,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (132)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L67)
 
 ## margin.extraLarge
 
@@ -8780,7 +9999,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (133)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:152](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L152)
 
 ## margin.extraSmall
 
@@ -8831,7 +10050,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (134)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:96](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L96)
 
 ## margin.large
 
@@ -8882,7 +10101,7 @@ large: SxBaseDescriptor
 
 ### Source (135)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:138](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L138)
 
 ## margin.medium
 
@@ -8933,7 +10152,7 @@ medium: SxBaseDescriptor
 
 ### Source (136)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:124](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L124)
 
 ## margin.none
 
@@ -8984,7 +10203,7 @@ none: SxBaseDescriptor
 
 ### Source (137)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L82)
 
 ## margin.px
 
@@ -9063,7 +10282,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (138)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:169](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L169)
 
 ## margin.small
 
@@ -9114,7 +10333,7 @@ small: SxBaseDescriptor
 
 ### Source (139)
 
-[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/margin.ts:110](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/margin.ts#L110)
 
 ## maxHeight
 
@@ -9134,9 +10353,66 @@ import { maxHeight } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (266)
 
+#### Basic usage (24)
+
 ```ts
 import { maxHeight } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = maxHeight.none;
+```
+
+#### Select maximum height descriptors — none/pixels on tall content
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, padding, presets, maxHeight, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = maxHeight;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(120);
+  const [draft, setDraft] = React.useState('120');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(120); setDraft('120');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: maxHeight.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="maxHeight descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div className={sx(height.px(180), width.px(240))}><div data-style-helper="maxHeight" className={sx(width.px(180), height.px(240), overflow.auto, presets.alternative, descriptor)}><p>Visible content</p><p>Second line</p><p>Third line</p></div></div></section>,
+    diagnostics: <p>Select maximum height descriptors; none/pixels on tall content. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select maximum height descriptors — none/pixels on tall content. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (130)
@@ -9194,7 +10470,7 @@ Immutable maxHeight descriptor.
 
 ### Source (140)
 
-[packages/spfx-react-toolkit/src/helpers/styles/max-height.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/max-height.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/max-height.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/max-height.ts#L67)
 
 ## maxHeight.none
 
@@ -9245,7 +10521,7 @@ none: SxBaseDescriptor
 
 ### Source (141)
 
-[packages/spfx-react-toolkit/src/helpers/styles/max-height.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/max-height.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/max-height.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/max-height.ts#L82)
 
 ## maxHeight.px
 
@@ -9324,7 +10600,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (142)
 
-[packages/spfx-react-toolkit/src/helpers/styles/max-height.ts:45](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/max-height.ts#L45)
+[packages/spfx-react-toolkit/src/helpers/styles/max-height.ts:99](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/max-height.ts#L99)
 
 ## maxWidth
 
@@ -9344,9 +10620,66 @@ import { maxWidth } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (272)
 
+#### Basic usage (25)
+
 ```ts
 import { maxWidth } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = maxWidth.none;
+```
+
+#### Select maximum width descriptors — none/pixels on full-width content
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, maxWidth, overflow, flex, padding, presets, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = maxWidth;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(240);
+  const [draft, setDraft] = React.useState('240');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(240); setDraft('240');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: maxWidth.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="maxWidth descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div className={sx(flex.row, width.px(320))}><div data-style-helper="maxWidth" className={sx(width.full, presets.alternative, padding.small, descriptor)}>Actual maxWidth subject</div></div></section>,
+    diagnostics: <p>Select maximum width descriptors; none/pixels on full-width content. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select maximum width descriptors — none/pixels on full-width content. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (132)
@@ -9404,7 +10737,7 @@ Immutable maxWidth descriptor.
 
 ### Source (143)
 
-[packages/spfx-react-toolkit/src/helpers/styles/max-width.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/max-width.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/max-width.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/max-width.ts#L67)
 
 ## maxWidth.none
 
@@ -9455,7 +10788,7 @@ none: SxBaseDescriptor
 
 ### Source (144)
 
-[packages/spfx-react-toolkit/src/helpers/styles/max-width.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/max-width.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/max-width.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/max-width.ts#L82)
 
 ## maxWidth.px
 
@@ -9534,7 +10867,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (145)
 
-[packages/spfx-react-toolkit/src/helpers/styles/max-width.ts:45](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/max-width.ts#L45)
+[packages/spfx-react-toolkit/src/helpers/styles/max-width.ts:99](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/max-width.ts#L99)
 
 ## minHeight
 
@@ -9554,9 +10887,66 @@ import { minHeight } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (278)
 
+#### Basic usage (26)
+
 ```ts
 import { minHeight } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = minHeight.zero;
+```
+
+#### Select minimum height descriptors — zero/pixels with visible content
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, padding, presets, minHeight, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = minHeight;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(120);
+  const [draft, setDraft] = React.useState('120');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(120); setDraft('120');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: minHeight.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="minHeight descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div className={sx(height.px(180), width.px(240))}><div data-style-helper="minHeight" className={sx(width.px(180), presets.alternative, descriptor)}><p>Visible content</p></div></div></section>,
+    diagnostics: <p>Select minimum height descriptors; zero/pixels with visible content. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select minimum height descriptors — zero/pixels with visible content. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (134)
@@ -9614,7 +11004,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (146)
 
-[packages/spfx-react-toolkit/src/helpers/styles/min-height.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/min-height.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/min-height.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/min-height.ts#L67)
 
 ## minHeight.px
 
@@ -9693,7 +11083,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (147)
 
-[packages/spfx-react-toolkit/src/helpers/styles/min-height.ts:45](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/min-height.ts#L45)
+[packages/spfx-react-toolkit/src/helpers/styles/min-height.ts:99](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/min-height.ts#L99)
 
 ## minHeight.zero
 
@@ -9748,7 +11138,7 @@ Alias/access for [minHeight.zero](styles.md#minheightzero).
 
 ### Source (148)
 
-[packages/spfx-react-toolkit/src/helpers/styles/min-height.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/min-height.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/min-height.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/min-height.ts#L82)
 
 ## minWidth
 
@@ -9768,9 +11158,66 @@ import { minWidth } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (284)
 
+#### Basic usage (27)
+
 ```ts
 import { minWidth } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = minWidth.zero;
+```
+
+#### Select minimum width descriptors — zero/pixels versus constrained parent
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, flex, padding, presets, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = minWidth;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(240);
+  const [draft, setDraft] = React.useState('240');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(240); setDraft('240');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: minWidth.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="minWidth descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div className={sx(flex.row, width.px(180))}><div data-style-helper="minWidth" className={sx(width.px(240), presets.alternative, padding.small, descriptor)}>Actual minWidth subject</div></div></section>,
+    diagnostics: <p>Select minimum width descriptors; zero/pixels versus constrained parent. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select minimum width descriptors — zero/pixels versus constrained parent. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (136)
@@ -9828,7 +11275,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (149)
 
-[packages/spfx-react-toolkit/src/helpers/styles/min-width.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/min-width.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/min-width.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/min-width.ts#L67)
 
 ## minWidth.px
 
@@ -9907,7 +11354,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (150)
 
-[packages/spfx-react-toolkit/src/helpers/styles/min-width.ts:45](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/min-width.ts#L45)
+[packages/spfx-react-toolkit/src/helpers/styles/min-width.ts:99](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/min-width.ts#L99)
 
 ## minWidth.zero
 
@@ -9958,7 +11405,7 @@ zero: SxBaseDescriptor
 
 ### Source (151)
 
-[packages/spfx-react-toolkit/src/helpers/styles/min-width.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/min-width.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/min-width.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/min-width.ts#L82)
 
 ## overflow.horizontal
 
@@ -10476,9 +11923,57 @@ import { overflow } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (302)
 
+#### Basic usage (28)
+
 ```ts
 import { overflow } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = overflow.visible;
+```
+
+#### Select overflow behavior on both axes — bounded wide/tall content; include axis choices as real public nested members
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, height, minWidth, overflow, padding, borderWidth, borderStyle, borderColor, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = { visible: overflow.visible, hidden: overflow.hidden, auto: overflow.auto, 'horizontal.visible': overflow.horizontal.visible, 'horizontal.hidden': overflow.horizontal.hidden, 'horizontal.auto': overflow.horizontal.auto, 'vertical.visible': overflow.vertical.visible, 'vertical.hidden': overflow.vertical.hidden, 'vertical.auto': overflow.vertical.auto };
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: overflow.{member}.</p>,
+    children: <section role="region" aria-label="overflow descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="overflow" className={sx(width.px(180), height.px(100), borderWidth.thin, borderStyle.solid, borderColor.primary, descriptor)}><div className={sx(width.px(480), height.px(240))}>Wide and tall actual overflow content</div></div></section>,
+    diagnostics: <p>Select overflow behavior on both axes; bounded wide/tall content; include axis choices as real public nested members. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select overflow behavior on both axes — bounded wide/tall content; include axis choices as real public nested members. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (146)
@@ -10543,7 +12038,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (160)
 
-[packages/spfx-react-toolkit/src/helpers/styles/overflow.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/overflow.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#L58)
 
 ## overflow.auto
 
@@ -10594,7 +12089,7 @@ auto: SxBaseDescriptor
 
 ### Source (161)
 
-[packages/spfx-react-toolkit/src/helpers/styles/overflow.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#L67)
+[packages/spfx-react-toolkit/src/helpers/styles/overflow.ts:112](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#L112)
 
 ## overflow.hidden
 
@@ -10645,7 +12140,7 @@ hidden: SxBaseDescriptor
 
 ### Source (162)
 
-[packages/spfx-react-toolkit/src/helpers/styles/overflow.ts:50](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#L50)
+[packages/spfx-react-toolkit/src/helpers/styles/overflow.ts:95](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#L95)
 
 ## overflow.visible
 
@@ -10696,7 +12191,7 @@ visible: SxBaseDescriptor
 
 ### Source (163)
 
-[packages/spfx-react-toolkit/src/helpers/styles/overflow.ts:33](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#L33)
+[packages/spfx-react-toolkit/src/helpers/styles/overflow.ts:78](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#L78)
 
 ## paddingBlockEnd
 
@@ -10716,9 +12211,66 @@ import { paddingBlockEnd } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (309)
 
+#### Basic usage (29)
+
 ```ts
 import { paddingBlockEnd } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = paddingBlockEnd.none;
+```
+
+#### Select block end padding descriptors — visible end spacing
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, paddingBlockEnd, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = paddingBlockEnd;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: paddingBlockEnd.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="paddingBlockEnd descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="paddingBlockEnd" className={sx(presets.alternative, padding.small, descriptor)}>Actual paddingBlockEnd subject</div></section>,
+    diagnostics: <p>Select block end padding descriptors; visible end spacing. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select block end padding descriptors — visible end spacing. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (150)
@@ -10851,7 +12403,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (164)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L67)
 
 ## paddingBlockEnd.extraLarge
 
@@ -10902,7 +12454,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (165)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:152](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L152)
 
 ## paddingBlockEnd.extraSmall
 
@@ -10953,7 +12505,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (166)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:96](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L96)
 
 ## paddingBlockEnd.large
 
@@ -11004,7 +12556,7 @@ large: SxBaseDescriptor
 
 ### Source (167)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:138](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L138)
 
 ## paddingBlockEnd.medium
 
@@ -11055,7 +12607,7 @@ medium: SxBaseDescriptor
 
 ### Source (168)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:124](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L124)
 
 ## paddingBlockEnd.none
 
@@ -11106,7 +12658,7 @@ none: SxBaseDescriptor
 
 ### Source (169)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L82)
 
 ## paddingBlockEnd.px
 
@@ -11185,7 +12737,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (170)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:169](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L169)
 
 ## paddingBlockEnd.small
 
@@ -11236,7 +12788,7 @@ small: SxBaseDescriptor
 
 ### Source (171)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts:110](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#L110)
 
 ## paddingBlockStart
 
@@ -11256,9 +12808,66 @@ import { paddingBlockStart } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (325)
 
+#### Basic usage (30)
+
 ```ts
 import { paddingBlockStart } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = paddingBlockStart.none;
+```
+
+#### Select block start padding descriptors — visible start spacing
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, paddingBlockStart, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = paddingBlockStart;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: paddingBlockStart.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="paddingBlockStart descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="paddingBlockStart" className={sx(presets.alternative, padding.small, descriptor)}>Actual paddingBlockStart subject</div></section>,
+    diagnostics: <p>Select block start padding descriptors; visible start spacing. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select block start padding descriptors — visible start spacing. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (157)
@@ -11391,7 +13000,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (172)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L67)
 
 ## paddingBlockStart.extraLarge
 
@@ -11442,7 +13051,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (173)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:152](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L152)
 
 ## paddingBlockStart.extraSmall
 
@@ -11493,7 +13102,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (174)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:96](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L96)
 
 ## paddingBlockStart.large
 
@@ -11544,7 +13153,7 @@ large: SxBaseDescriptor
 
 ### Source (175)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:138](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L138)
 
 ## paddingBlockStart.medium
 
@@ -11595,7 +13204,7 @@ medium: SxBaseDescriptor
 
 ### Source (176)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:124](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L124)
 
 ## paddingBlockStart.none
 
@@ -11646,7 +13255,7 @@ none: SxBaseDescriptor
 
 ### Source (177)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L82)
 
 ## paddingBlockStart.px
 
@@ -11725,7 +13334,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (178)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:169](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L169)
 
 ## paddingBlockStart.small
 
@@ -11776,7 +13385,7 @@ small: SxBaseDescriptor
 
 ### Source (179)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts:110](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#L110)
 
 ## paddingBlock
 
@@ -11796,9 +13405,66 @@ import { paddingBlock } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (341)
 
+#### Basic usage (31)
+
 ```ts
 import { paddingBlock } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = paddingBlock.none;
+```
+
+#### Select block padding descriptors — visible top/bottom content spacing
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, paddingBlock, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = paddingBlock;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: paddingBlock.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="paddingBlock descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="paddingBlock" className={sx(presets.alternative, padding.small, descriptor)}>Actual paddingBlock subject</div></section>,
+    diagnostics: <p>Select block padding descriptors; visible top/bottom content spacing. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select block padding descriptors — visible top/bottom content spacing. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (164)
@@ -11931,7 +13597,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (180)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L67)
 
 ## paddingBlock.extraLarge
 
@@ -11982,7 +13648,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (181)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:152](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L152)
 
 ## paddingBlock.extraSmall
 
@@ -12033,7 +13699,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (182)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:96](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L96)
 
 ## paddingBlock.large
 
@@ -12084,7 +13750,7 @@ large: SxBaseDescriptor
 
 ### Source (183)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:138](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L138)
 
 ## paddingBlock.medium
 
@@ -12135,7 +13801,7 @@ medium: SxBaseDescriptor
 
 ### Source (184)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:124](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L124)
 
 ## paddingBlock.none
 
@@ -12186,7 +13852,7 @@ none: SxBaseDescriptor
 
 ### Source (185)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L82)
 
 ## paddingBlock.px
 
@@ -12265,7 +13931,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (186)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:169](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L169)
 
 ## paddingBlock.small
 
@@ -12316,7 +13982,7 @@ small: SxBaseDescriptor
 
 ### Source (187)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts:110](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#L110)
 
 ## paddingInlineEnd
 
@@ -12336,9 +14002,70 @@ import { paddingInlineEnd } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (357)
 
+#### Basic usage (32)
+
 ```ts
 import { paddingInlineEnd } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = paddingInlineEnd.none;
+```
+
+#### Select inline end padding descriptors — host/LTR/RTL
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select, FluentProvider } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, paddingInlineEnd, background, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = paddingInlineEnd;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const [direction, setDirection] = React.useState<'host' | 'ltr' | 'rtl'>('host');
+  const sx = useSx({ dir: direction === 'host' ? undefined : direction });
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24'); setDirection('host');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+      <Field label="Direction"><Select value={direction} onChange={(_, data) => {
+        if (data.value === 'host' || data.value === 'ltr' || data.value === 'rtl') setDirection(data.value);
+      }}><option value="host">host</option><option value="ltr">ltr</option><option value="rtl">rtl</option></Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: paddingInlineEnd.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="paddingInlineEnd descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><FluentProvider dir={direction === 'host' ? undefined : direction} className={sx(background.transparent, minWidth.zero)}><div data-style-helper="paddingInlineEnd" className={sx(presets.alternative, padding.small, descriptor)}>Actual paddingInlineEnd subject</div></FluentProvider></section>,
+    diagnostics: <p>Select inline end padding descriptors; host/LTR/RTL. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select inline end padding descriptors — host/LTR/RTL. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value and host direction while retaining this Demo.',
+};
 ```
 
 ### Members (171)
@@ -12471,7 +14198,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (188)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:71](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L71)
 
 ## paddingInlineEnd.extraLarge
 
@@ -12522,7 +14249,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (189)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:156](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L156)
 
 ## paddingInlineEnd.extraSmall
 
@@ -12573,7 +14300,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (190)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:100](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L100)
 
 ## paddingInlineEnd.large
 
@@ -12624,7 +14351,7 @@ large: SxBaseDescriptor
 
 ### Source (191)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:142](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L142)
 
 ## paddingInlineEnd.medium
 
@@ -12675,7 +14402,7 @@ medium: SxBaseDescriptor
 
 ### Source (192)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:128](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L128)
 
 ## paddingInlineEnd.none
 
@@ -12726,7 +14453,7 @@ none: SxBaseDescriptor
 
 ### Source (193)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:86](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L86)
 
 ## paddingInlineEnd.px
 
@@ -12805,7 +14532,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (194)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:173](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L173)
 
 ## paddingInlineEnd.small
 
@@ -12856,7 +14583,7 @@ small: SxBaseDescriptor
 
 ### Source (195)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts:114](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#L114)
 
 ## paddingInlineStart
 
@@ -12876,9 +14603,70 @@ import { paddingInlineStart } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (373)
 
+#### Basic usage (33)
+
 ```ts
 import { paddingInlineStart } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = paddingInlineStart.none;
+```
+
+#### Select inline start padding descriptors — host/LTR/RTL
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select, FluentProvider } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, paddingInlineStart, background, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = paddingInlineStart;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const [direction, setDirection] = React.useState<'host' | 'ltr' | 'rtl'>('host');
+  const sx = useSx({ dir: direction === 'host' ? undefined : direction });
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24'); setDirection('host');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+      <Field label="Direction"><Select value={direction} onChange={(_, data) => {
+        if (data.value === 'host' || data.value === 'ltr' || data.value === 'rtl') setDirection(data.value);
+      }}><option value="host">host</option><option value="ltr">ltr</option><option value="rtl">rtl</option></Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: paddingInlineStart.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="paddingInlineStart descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><FluentProvider dir={direction === 'host' ? undefined : direction} className={sx(background.transparent, minWidth.zero)}><div data-style-helper="paddingInlineStart" className={sx(presets.alternative, padding.small, descriptor)}>Actual paddingInlineStart subject</div></FluentProvider></section>,
+    diagnostics: <p>Select inline start padding descriptors; host/LTR/RTL. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select inline start padding descriptors — host/LTR/RTL. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value and host direction while retaining this Demo.',
+};
 ```
 
 ### Members (178)
@@ -13011,7 +14799,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (196)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:71](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L71)
 
 ## paddingInlineStart.extraLarge
 
@@ -13062,7 +14850,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (197)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:156](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L156)
 
 ## paddingInlineStart.extraSmall
 
@@ -13113,7 +14901,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (198)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:100](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L100)
 
 ## paddingInlineStart.large
 
@@ -13164,7 +14952,7 @@ large: SxBaseDescriptor
 
 ### Source (199)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:142](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L142)
 
 ## paddingInlineStart.medium
 
@@ -13215,7 +15003,7 @@ medium: SxBaseDescriptor
 
 ### Source (200)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:128](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L128)
 
 ## paddingInlineStart.none
 
@@ -13266,7 +15054,7 @@ none: SxBaseDescriptor
 
 ### Source (201)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:86](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L86)
 
 ## paddingInlineStart.px
 
@@ -13345,7 +15133,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (202)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:173](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L173)
 
 ## paddingInlineStart.small
 
@@ -13396,7 +15184,7 @@ small: SxBaseDescriptor
 
 ### Source (203)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts:114](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#L114)
 
 ## paddingInline
 
@@ -13416,9 +15204,70 @@ import { paddingInline } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (389)
 
+#### Basic usage (34)
+
 ```ts
 import { paddingInline } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = paddingInline.none;
+```
+
+#### Select inline padding descriptors — host/LTR/RTL and opposite edges
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select, FluentProvider } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, paddingInline, background, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = paddingInline;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const [direction, setDirection] = React.useState<'host' | 'ltr' | 'rtl'>('host');
+  const sx = useSx({ dir: direction === 'host' ? undefined : direction });
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24'); setDirection('host');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+      <Field label="Direction"><Select value={direction} onChange={(_, data) => {
+        if (data.value === 'host' || data.value === 'ltr' || data.value === 'rtl') setDirection(data.value);
+      }}><option value="host">host</option><option value="ltr">ltr</option><option value="rtl">rtl</option></Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: paddingInline.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="paddingInline descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><FluentProvider dir={direction === 'host' ? undefined : direction} className={sx(background.transparent, minWidth.zero)}><div data-style-helper="paddingInline" className={sx(presets.alternative, padding.small, descriptor)}>Actual paddingInline subject</div></FluentProvider></section>,
+    diagnostics: <p>Select inline padding descriptors; host/LTR/RTL and opposite edges. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select inline padding descriptors — host/LTR/RTL and opposite edges. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value and host direction while retaining this Demo.',
+};
 ```
 
 ### Members (185)
@@ -13551,7 +15400,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (204)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:71](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L71)
 
 ## paddingInline.extraLarge
 
@@ -13602,7 +15451,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (205)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:156](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L156)
 
 ## paddingInline.extraSmall
 
@@ -13653,7 +15502,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (206)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:100](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L100)
 
 ## paddingInline.large
 
@@ -13704,7 +15553,7 @@ large: SxBaseDescriptor
 
 ### Source (207)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:142](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L142)
 
 ## paddingInline.medium
 
@@ -13755,7 +15604,7 @@ medium: SxBaseDescriptor
 
 ### Source (208)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:128](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L128)
 
 ## paddingInline.none
 
@@ -13806,7 +15655,7 @@ none: SxBaseDescriptor
 
 ### Source (209)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:86](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L86)
 
 ## paddingInline.px
 
@@ -13885,7 +15734,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (210)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:173](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L173)
 
 ## paddingInline.small
 
@@ -13936,7 +15785,7 @@ small: SxBaseDescriptor
 
 ### Source (211)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts:114](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#L114)
 
 ## padding
 
@@ -13956,9 +15805,66 @@ import { padding } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (405)
 
+#### Basic usage (35)
+
 ```ts
 import { padding } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = padding.none;
+```
+
+#### Select all side padding descriptors — visible outer boundary/inner text
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = padding;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(24);
+  const [draft, setDraft] = React.useState('24');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(24); setDraft('24');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: padding.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="padding descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="padding" className={sx(presets.alternative, padding.small, descriptor)}>Actual padding subject</div></section>,
+    diagnostics: <p>Select all side padding descriptors; visible outer boundary/inner text. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select all side padding descriptors — visible outer boundary/inner text. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (192)
@@ -14091,7 +15997,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (212)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L67)
 
 ## padding.extraLarge
 
@@ -14142,7 +16048,7 @@ extraLarge: SxBaseDescriptor
 
 ### Source (213)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:98](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L98)
+[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:152](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L152)
 
 ## padding.extraSmall
 
@@ -14193,7 +16099,7 @@ extraSmall: SxBaseDescriptor
 
 ### Source (214)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:96](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L96)
 
 ## padding.large
 
@@ -14244,7 +16150,7 @@ large: SxBaseDescriptor
 
 ### Source (215)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:84](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L84)
+[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:138](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L138)
 
 ## padding.medium
 
@@ -14295,7 +16201,7 @@ medium: SxBaseDescriptor
 
 ### Source (216)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L70)
+[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:124](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L124)
 
 ## padding.none
 
@@ -14346,7 +16252,7 @@ none: SxBaseDescriptor
 
 ### Source (217)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L82)
 
 ## padding.px
 
@@ -14425,7 +16331,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (218)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:115](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L115)
+[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:169](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L169)
 
 ## padding.small
 
@@ -14476,7 +16382,7 @@ small: SxBaseDescriptor
 
 ### Source (219)
 
-[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/padding.ts:110](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/padding.ts#L110)
 
 ## presets
 
@@ -14496,9 +16402,57 @@ import { presets } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (421)
 
+#### Basic usage (36)
+
 ```ts
 import { presets } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = presets.canvas;
+```
+
+#### Select paired color preset descriptors — foreground/background override composition
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = presets;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: presets.{member}.</p>,
+    children: <section role="region" aria-label="presets descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="presets" aria-disabled={member === 'disabled'} className={sx(padding.medium, descriptor)}>Actual presets subject</div></section>,
+    diagnostics: <p>Select paired color preset descriptors; foreground/background override composition. Inverted is intended for the verified light/dark palettes; it is unsuitable for active content in the installed Fluent high contrast palette. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select paired color preset descriptors — foreground/background override composition. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (199)
@@ -14677,7 +16631,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (220)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L58)
 
 ## presets.alternative
 
@@ -14730,7 +16684,7 @@ alternative: SxBaseDescriptor
 
 ### Source (221)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:50](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L50)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:95](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L95)
 
 ## presets.brand
 
@@ -14783,7 +16737,7 @@ brand: SxBaseDescriptor
 
 ### Source (222)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:106](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L106)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:151](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L151)
 
 ## presets.brandTint
 
@@ -14836,7 +16790,7 @@ brandTint: SxBaseDescriptor
 
 ### Source (223)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:125](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L125)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:170](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L170)
 
 ## presets.canvas
 
@@ -14889,7 +16843,7 @@ canvas: SxBaseDescriptor
 
 ### Source (224)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:31](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L31)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:76](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L76)
 
 ## presets.danger
 
@@ -14946,7 +16900,7 @@ Alias/access for [presets.danger](styles.md#presetsdanger).
 
 ### Source (225)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:203](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L203)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:248](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L248)
 
 ## presets.disabled
 
@@ -15001,7 +16955,7 @@ disabled: SxBaseDescriptor
 
 ### Source (226)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:224](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L224)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:269](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L269)
 
 ## presets.inverted
 
@@ -15056,7 +17010,7 @@ inverted: SxBaseDescriptor
 
 ### Source (227)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:146](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L146)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:191](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L191)
 
 ## presets.subtle
 
@@ -15109,7 +17063,7 @@ subtle: SxBaseDescriptor
 
 ### Source (228)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:69](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L69)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:114](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L114)
 
 ## presets.success
 
@@ -15166,7 +17120,7 @@ Alias/access for [presets.success](styles.md#presetssuccess).
 
 ### Source (229)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:165](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L165)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:210](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L210)
 
 ## presets.transparent
 
@@ -15219,7 +17173,7 @@ transparent: SxBaseDescriptor
 
 ### Source (230)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:88](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L88)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:133](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L133)
 
 ## presets.warning
 
@@ -15276,7 +17230,7 @@ Alias/access for [presets.warning](styles.md#presetswarning).
 
 ### Source (231)
 
-[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:184](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L184)
+[packages/spfx-react-toolkit/src/helpers/styles/presets.ts:229](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/presets.ts#L229)
 
 ## responsive
 
@@ -15296,9 +17250,67 @@ import { responsive } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (444)
 
+#### Basic usage (37)
+
 ```ts
 import { responsive, foreground, hover } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = responsive.small(hover(foreground.subtle));
+```
+
+#### Resize a named container at each breakpoint — inclusive small/medium/large with a real ancestor
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, flex, gap, padding, presets, responsive, container } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [threshold, setThreshold] = React.useState<'small' | 'medium' | 'large'>('medium');
+  const [size, setSize] = React.useState(420);
+  const [draft, setDraft] = React.useState('420');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setThreshold('medium'); setSize(420); setDraft('420');
+  }, [resetRevision]);
+  return render({
+    controls: <>
+      <Field label="Breakpoint"><Select value={threshold} onChange={(_, data) => {
+        if (data.value === 'small' || data.value === 'medium' || data.value === 'large') setThreshold(data.value);
+      }}><option value="small">small</option><option value="medium">medium</option><option value="large">large</option></Select></Field>
+      <Field label="Ancestor width"><Input type="number" min={0} step="any" value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        if (data.value.trim() && Number.isFinite(Number(data.value)) && Number(data.value) >= 0) setSize(Number(data.value));
+      }} onBlur={() => setDraft(String(size))} /></Field>
+    </>,
+    status: <p>Inclusive thresholds: small 480px, medium 640px, large 1024px. The child measures its nearest named ancestor, never itself.</p>,
+    children: <section role="region" aria-label="responsive query preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.horizontal.auto)}>
+      <div data-style-helper="responsive-ancestor" className={sx(container.inlineSize, width.px(size))}>
+        <div data-style-helper="responsive" className={sx(width.px(180), flex.column, gap.small, padding.small, presets.alternative,
+          responsive[threshold](width.px(300), flex.row))}><span>First item</span><span>Second item</span></div>
+      </div>
+    </section>,
+    diagnostics: <p>Reset restores medium and the 420px ancestor without replacing the Demo or host renderer.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select small, medium or large and compare threshold minus one with its inclusive limit. Change ancestor width while the viewport remains fixed. Reset restores the displayed baseline.',
+};
 ```
 
 ### Members (211)
@@ -15370,7 +17382,7 @@ Immutable container query descriptor.
 
 ### Source (232)
 
-[packages/spfx-react-toolkit/src/helpers/styles/responsive.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/responsive.ts:68](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#L68)
 
 ## responsive.large
 
@@ -15437,7 +17449,7 @@ const descriptor = responsive.large(hover(foreground.subtle));
 
 ### Source (233)
 
-[packages/spfx-react-toolkit/src/helpers/styles/responsive.ts:54](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#L54)
+[packages/spfx-react-toolkit/src/helpers/styles/responsive.ts:109](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#L109)
 
 ## responsive.medium
 
@@ -15504,7 +17516,7 @@ const descriptor = responsive.medium(hover(foreground.subtle));
 
 ### Source (234)
 
-[packages/spfx-react-toolkit/src/helpers/styles/responsive.ts:40](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#L40)
+[packages/spfx-react-toolkit/src/helpers/styles/responsive.ts:95](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#L95)
 
 ## responsive.small
 
@@ -15571,7 +17583,7 @@ const descriptor = responsive.small(hover(foreground.subtle));
 
 ### Source (235)
 
-[packages/spfx-react-toolkit/src/helpers/styles/responsive.ts:26](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#L26)
+[packages/spfx-react-toolkit/src/helpers/styles/responsive.ts:81](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#L81)
 
 ## scrollbar
 
@@ -15591,9 +17603,57 @@ import { scrollbar } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (454)
 
+#### Basic usage (38)
+
 ```ts
 import { scrollbar } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = scrollbar.fluent;
+```
+
+#### Scroll with the Fluent scrollbar descriptor — both axes and native keyboard/drag
+
+```tsx
+import * as React from 'react';
+import { Checkbox, makeStyles } from '@fluentui/react-components';
+import { useSx, width, height, maxWidth, overflow, padding, presets, scrollbar } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const useProbeStyles = makeStyles({ surface: { boxSizing: 'border-box' } });
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const classes = useProbeStyles();
+  const [enabled, setEnabled] = React.useState(true);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setEnabled(true);
+  }, [resetRevision]);
+  return render({
+    controls: <Checkbox label="Fluent scrollbar" checked={enabled} onChange={(_, data) => setEnabled(data.checked === true)} />,
+    status: <p>Scroll both axes with the keyboard or drag their native thumbs. Chromium has 6px rounded feedback; other engines retain native thin fallback.</p>,
+    children: <div data-style-helper="scrollbar" role="region" aria-label="Native scrollbar preview" tabIndex={0}
+      className={sx(classes.surface, height.px(140), width.full, maxWidth.px(320), overflow.auto, enabled && scrollbar.fluent, presets.alternative, padding.small)}>
+      <div className={sx(width.px(600))}>{Array.from({ length: 14 }, (_, index) => <p key={index}>Scrollable row {index + 1}</p>)}</div>
+    </div>,
+    diagnostics: <p>Forced colors retains native/system colors and forcedColorAdjust:auto. Reset re-enables the descriptor without replacing the renderer or the scroll surface.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Toggle the real Fluent scrollbar descriptor on a bounded two-axis overflowing surface; use native arrows, thumb hover and dragging. Reset re-enables the descriptor. CSS rules alone do not prove native scrollbar paint.',
+};
 ```
 
 ### Members (212)
@@ -15622,7 +17682,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (236)
 
-[packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts#L58)
 
 ## scrollbar.fluent
 
@@ -15686,7 +17746,7 @@ Alias/access for [scrollbar.fluent](styles.md#scrollbarfluent).
 
 ### Source (237)
 
-[packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts:40](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts#L40)
+[packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts:85](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts#L85)
 
 ## active
 
@@ -15706,9 +17766,61 @@ import { active } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (457)
 
+#### Basic usage (39)
+
 ```ts
 import { responsive, active, foreground } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = responsive.medium(active(foreground.subtle));
+```
+
+#### Apply descriptors during native press — held press then release; invocation observation
+
+```tsx
+import * as React from 'react';
+import { Button, Checkbox, makeStyles } from '@fluentui/react-components';
+import { useSx, padding, presets, borderWidth, borderStyle, borderColor, active } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const useProbeStyles = makeStyles({ action: { transitionProperty: 'none' } });
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const classes = useProbeStyles();
+  const [disabled, setDisabled] = React.useState(false);
+  const [selected, setSelected] = React.useState(false);
+  const [count, setCount] = React.useState(0);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setDisabled(false); setSelected(false); setCount(0);
+  }, [resetRevision]);
+  return render({
+    controls: <><Checkbox label="Disabled action" checked={disabled} onChange={(_, data) => setDisabled(data.checked === true)} />
+      <Checkbox label="Selected action" checked={selected} onChange={(_, data) => setSelected(data.checked === true)} /></>,
+    status: <p aria-live="polite">Action invocations: {count}. Selected: {String(selected)}.</p>,
+    children: <Button data-style-helper="active" type="button" disabled={disabled} aria-pressed={selected}
+      className={sx(classes.action, padding.medium, borderWidth.thin, borderStyle.solid, borderColor.primary,
+        disabled ? presets.disabled : selected ? presets.brandTint : presets.canvas,
+        !disabled && active(presets.brand))}
+      onClick={() => setCount(value => value + 1)}>Native active action</Button>,
+    diagnostics: <p>Hold a native pointer press, then release; CSS active feedback does not persist as selection. Reset restores values without remounting this Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Use the native active interaction and selected/disabled controls. The enabled descriptor is omitted when disabled; native clicks increment once. Reset restores false/false/zero while retaining the Demo and native control identity.',
+};
 ```
 
 ### Signatures (25)
@@ -15741,7 +17853,7 @@ Immutable state descriptor.
 
 ### Source (238)
 
-[packages/spfx-react-toolkit/src/helpers/styles/states.ts:36](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/states.ts#L36)
+[packages/spfx-react-toolkit/src/helpers/styles/states.ts:134](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/states.ts#L134)
 
 ## focusVisible
 
@@ -15761,9 +17873,61 @@ import { focusVisible } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (458)
 
+#### Basic usage (40)
+
 ```ts
 import { responsive, focusVisible, foreground } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = responsive.medium(focusVisible(foreground.subtle));
+```
+
+#### Apply descriptors during keyboard focus — native Tab focus and retained indicator
+
+```tsx
+import * as React from 'react';
+import { Button, Checkbox, makeStyles } from '@fluentui/react-components';
+import { useSx, padding, presets, borderWidth, borderStyle, borderColor, focusVisible } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const useProbeStyles = makeStyles({ action: { transitionProperty: 'none' } });
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const classes = useProbeStyles();
+  const [disabled, setDisabled] = React.useState(false);
+  const [selected, setSelected] = React.useState(false);
+  const [count, setCount] = React.useState(0);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setDisabled(false); setSelected(false); setCount(0);
+  }, [resetRevision]);
+  return render({
+    controls: <><Checkbox label="Disabled action" checked={disabled} onChange={(_, data) => setDisabled(data.checked === true)} />
+      <Checkbox label="Selected action" checked={selected} onChange={(_, data) => setSelected(data.checked === true)} /></>,
+    status: <p aria-live="polite">Action invocations: {count}. Selected: {String(selected)}.</p>,
+    children: <Button data-style-helper="focusVisible" type="button" disabled={disabled} aria-pressed={selected}
+      className={sx(classes.action, padding.medium, borderWidth.thin, borderStyle.solid, borderColor.primary,
+        disabled ? presets.disabled : selected ? presets.brandTint : presets.canvas,
+        !disabled && focusVisible(borderColor.brand))}
+      onClick={() => setCount(value => value + 1)}>Native focusVisible action</Button>,
+    diagnostics: <p>Use Tab to reach the action; retain the native Fluent focus indicator. Reset restores values without remounting this Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Use the native focusVisible interaction and selected/disabled controls. The enabled descriptor is omitted when disabled; native clicks increment once. Reset restores false/false/zero while retaining the Demo and native control identity.',
+};
 ```
 
 ### Signatures (26)
@@ -15796,7 +17960,7 @@ Immutable state descriptor.
 
 ### Source (239)
 
-[packages/spfx-react-toolkit/src/helpers/styles/states.ts:51](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/states.ts#L51)
+[packages/spfx-react-toolkit/src/helpers/styles/states.ts:198](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/states.ts#L198)
 
 ## hover
 
@@ -15816,9 +17980,61 @@ import { hover } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (459)
 
+#### Basic usage (41)
+
 ```ts
 import { responsive, hover, foreground } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = responsive.medium(hover(foreground.subtle));
+```
+
+#### Apply descriptors during native hover — pointer-controlled native Button
+
+```tsx
+import * as React from 'react';
+import { Button, Checkbox, makeStyles } from '@fluentui/react-components';
+import { useSx, padding, presets, borderWidth, borderStyle, borderColor, hover } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const useProbeStyles = makeStyles({ action: { transitionProperty: 'none' } });
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const classes = useProbeStyles();
+  const [disabled, setDisabled] = React.useState(false);
+  const [selected, setSelected] = React.useState(false);
+  const [count, setCount] = React.useState(0);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setDisabled(false); setSelected(false); setCount(0);
+  }, [resetRevision]);
+  return render({
+    controls: <><Checkbox label="Disabled action" checked={disabled} onChange={(_, data) => setDisabled(data.checked === true)} />
+      <Checkbox label="Selected action" checked={selected} onChange={(_, data) => setSelected(data.checked === true)} /></>,
+    status: <p aria-live="polite">Action invocations: {count}. Selected: {String(selected)}.</p>,
+    children: <Button data-style-helper="hover" type="button" disabled={disabled} aria-pressed={selected}
+      className={sx(classes.action, padding.medium, borderWidth.thin, borderStyle.solid, borderColor.primary,
+        disabled ? presets.disabled : selected ? presets.brandTint : presets.canvas,
+        !disabled && hover(presets.alternative))}
+      onClick={() => setCount(value => value + 1)}>Native hover action</Button>,
+    diagnostics: <p>Move the pointer over and away from the native action; hover does not change application selection. Reset restores values without remounting this Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Use the native hover interaction and selected/disabled controls. The enabled descriptor is omitted when disabled; native clicks increment once. Reset restores false/false/zero while retaining the Demo and native control identity.',
+};
 ```
 
 ### Signatures (27)
@@ -15851,7 +18067,7 @@ Immutable state descriptor.
 
 ### Source (240)
 
-[packages/spfx-react-toolkit/src/helpers/styles/states.ts:21](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/states.ts#L21)
+[packages/spfx-react-toolkit/src/helpers/styles/states.ts:70](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/states.ts#L70)
 
 ## textAlign
 
@@ -15871,9 +18087,61 @@ import { textAlign } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (460)
 
+#### Basic usage (42)
+
 ```ts
 import { textAlign } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = textAlign.start;
+```
+
+#### Select text alignment descriptors — bounded multiline content and direction
+
+```tsx
+import * as React from 'react';
+import { Field, Select, FluentProvider } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, textAlign, background, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = textAlign;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const [direction, setDirection] = React.useState<'host' | 'ltr' | 'rtl'>('host');
+  const sx = useSx({ dir: direction === 'host' ? undefined : direction });
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setDirection('host');
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      <Field label="Direction"><Select value={direction} onChange={(_, data) => {
+        if (data.value === 'host' || data.value === 'ltr' || data.value === 'rtl') setDirection(data.value);
+      }}><option value="host">host</option><option value="ltr">ltr</option><option value="rtl">rtl</option></Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: textAlign.{member}.</p>,
+    children: <section role="region" aria-label="textAlign descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><FluentProvider dir={direction === 'host' ? undefined : direction} className={sx(background.transparent, minWidth.zero)}><p data-style-helper="textAlign" className={sx(width.px(180), presets.canvas, descriptor)}>Long sample text demonstrates actual wrapping, truncation, alignment and typography. Additional words extend beyond this narrow surface.</p></FluentProvider></section>,
+    diagnostics: <p>Select text alignment descriptors; bounded multiline content and direction. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select text alignment descriptors — bounded multiline content and direction. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice, host direction while retaining this Demo.',
+};
 ```
 
 ### Members (214)
@@ -15932,7 +18200,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (241)
 
-[packages/spfx-react-toolkit/src/helpers/styles/text-align.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/text-align.ts:62](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#L62)
 
 ## textAlign.center
 
@@ -15983,7 +18251,7 @@ center: SxBaseDescriptor
 
 ### Source (242)
 
-[packages/spfx-react-toolkit/src/helpers/styles/text-align.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/text-align.ts:91](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#L91)
 
 ## textAlign.end
 
@@ -16034,7 +18302,7 @@ end: SxBaseDescriptor
 
 ### Source (243)
 
-[packages/spfx-react-toolkit/src/helpers/styles/text-align.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/text-align.ts:105](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#L105)
 
 ## textAlign.start
 
@@ -16085,7 +18353,7 @@ start: SxBaseDescriptor
 
 ### Source (244)
 
-[packages/spfx-react-toolkit/src/helpers/styles/text-align.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/text-align.ts:77](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#L77)
 
 ## text
 
@@ -16105,9 +18373,57 @@ import { text } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (467)
 
+#### Basic usage (43)
+
 ```ts
 import { text } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = text.wrap;
+```
+
+#### Select wrapping and truncation descriptors — long bounded text
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, text, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = text;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: text.{member}.</p>,
+    children: <section role="region" aria-label="text descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><p data-style-helper="text" className={sx(width.px(180), presets.canvas, descriptor)}>Long sample text demonstrates actual wrapping, truncation, alignment and typography. Additional words extend beyond this narrow surface.</p></section>,
+    diagnostics: <p>Select wrapping and truncation descriptors; long bounded text. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select wrapping and truncation descriptors — long bounded text. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (218)
@@ -16166,7 +18482,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (245)
 
-[packages/spfx-react-toolkit/src/helpers/styles/text.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/text.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text.ts#L58)
 
 ## text.noWrap
 
@@ -16217,7 +18533,7 @@ noWrap: SxBaseDescriptor
 
 ### Source (246)
 
-[packages/spfx-react-toolkit/src/helpers/styles/text.ts:41](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text.ts#L41)
+[packages/spfx-react-toolkit/src/helpers/styles/text.ts:86](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text.ts#L86)
 
 ## text.truncate
 
@@ -16273,7 +18589,7 @@ Alias/access for [text.truncate](styles.md#texttruncate).
 
 ### Source (247)
 
-[packages/spfx-react-toolkit/src/helpers/styles/text.ts:55](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text.ts#L55)
+[packages/spfx-react-toolkit/src/helpers/styles/text.ts:100](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text.ts#L100)
 
 ## text.wrap
 
@@ -16324,7 +18640,7 @@ wrap: SxBaseDescriptor
 
 ### Source (248)
 
-[packages/spfx-react-toolkit/src/helpers/styles/text.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/text.ts:73](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/text.ts#L73)
 
 ## SxBaseDescriptor
 
@@ -16687,9 +19003,57 @@ import { typography } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (481)
 
+#### Basic usage (44)
+
 ```ts
 import { typography } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = typography.body1;
+```
+
+#### Select typography role descriptors — actual sized sample text
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, typography, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+const choices: Readonly<Record<string, SxBaseDescriptor>> = typography;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]);
+  }, [resetRevision]);
+  const descriptor = choices[member];
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+    </>,
+    status: <p aria-live="polite">Applied: typography.{member}.</p>,
+    children: <section role="region" aria-label="typography descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><p data-style-helper="typography" className={sx(width.px(180), presets.canvas, descriptor)}>Long sample text demonstrates actual wrapping, truncation, alignment and typography. Additional words extend beyond this narrow surface.</p></section>,
+    diagnostics: <p>Select typography role descriptors; actual sized sample text. Token descriptors inherit the host theme; Reset restores the first choice without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select typography role descriptors — actual sized sample text. Select actual namespace members and compare their effect on the actual subject. Reset restores the first choice while retaining this Demo.',
+};
 ```
 
 ### Members (228)
@@ -17026,7 +19390,7 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (256)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:58](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L58)
 
 ## typography.body1
 
@@ -17086,7 +19450,7 @@ Alias/access for [typography.body1](styles.md#typographybody1).
 
 ### Source (257)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:33](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L33)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:78](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L78)
 
 ## typography.body1Strong
 
@@ -17146,7 +19510,7 @@ Alias/access for [typography.body1Strong](styles.md#typographybody1strong).
 
 ### Source (258)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:56](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L56)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:101](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L101)
 
 ## typography.body1Stronger
 
@@ -17206,7 +19570,7 @@ Alias/access for [typography.body1Stronger](styles.md#typographybody1stronger).
 
 ### Source (259)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:79](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L79)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:124](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L124)
 
 ## typography.body2
 
@@ -17266,7 +19630,7 @@ Alias/access for [typography.body2](styles.md#typographybody2).
 
 ### Source (260)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:102](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L102)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:147](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L147)
 
 ## typography.caption1
 
@@ -17326,7 +19690,7 @@ Alias/access for [typography.caption1](styles.md#typographycaption1).
 
 ### Source (261)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:125](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L125)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:170](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L170)
 
 ## typography.caption1Strong
 
@@ -17386,7 +19750,7 @@ Alias/access for [typography.caption1Strong](styles.md#typographycaption1strong)
 
 ### Source (262)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:148](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L148)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:193](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L193)
 
 ## typography.caption1Stronger
 
@@ -17446,7 +19810,7 @@ Alias/access for [typography.caption1Stronger](styles.md#typographycaption1stron
 
 ### Source (263)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:171](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L171)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:216](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L216)
 
 ## typography.caption2
 
@@ -17506,7 +19870,7 @@ Alias/access for [typography.caption2](styles.md#typographycaption2).
 
 ### Source (264)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:194](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L194)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:239](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L239)
 
 ## typography.caption2Strong
 
@@ -17566,7 +19930,7 @@ Alias/access for [typography.caption2Strong](styles.md#typographycaption2strong)
 
 ### Source (265)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:217](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L217)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:262](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L262)
 
 ## typography.display
 
@@ -17626,7 +19990,7 @@ Alias/access for [typography.display](styles.md#typographydisplay).
 
 ### Source (266)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:401](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L401)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:446](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L446)
 
 ## typography.largeTitle
 
@@ -17686,7 +20050,7 @@ Alias/access for [typography.largeTitle](styles.md#typographylargetitle).
 
 ### Source (267)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:378](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L378)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:423](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L423)
 
 ## typography.subtitle1
 
@@ -17746,7 +20110,7 @@ Alias/access for [typography.subtitle1](styles.md#typographysubtitle1).
 
 ### Source (268)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:240](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L240)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:285](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L285)
 
 ## typography.subtitle2
 
@@ -17806,7 +20170,7 @@ Alias/access for [typography.subtitle2](styles.md#typographysubtitle2).
 
 ### Source (269)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:263](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L263)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:308](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L308)
 
 ## typography.subtitle2Stronger
 
@@ -17866,7 +20230,7 @@ Alias/access for [typography.subtitle2Stronger](styles.md#typographysubtitle2str
 
 ### Source (270)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:286](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L286)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:331](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L331)
 
 ## typography.title1
 
@@ -17926,7 +20290,7 @@ Alias/access for [typography.title1](styles.md#typographytitle1).
 
 ### Source (271)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:309](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L309)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:354](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L354)
 
 ## typography.title2
 
@@ -17986,7 +20350,7 @@ Alias/access for [typography.title2](styles.md#typographytitle2).
 
 ### Source (272)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:332](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L332)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:377](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L377)
 
 ## typography.title3
 
@@ -18046,7 +20410,7 @@ Alias/access for [typography.title3](styles.md#typographytitle3).
 
 ### Source (273)
 
-[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:355](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L355)
+[packages/spfx-react-toolkit/src/helpers/styles/typography.ts:400](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/typography.ts#L400)
 
 ## viewport
 
@@ -18066,9 +20430,61 @@ import { viewport } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (516)
 
+#### Basic usage (45)
+
 ```ts
 import { viewport, foreground, hover } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = viewport.small(hover(foreground.subtle));
+```
+
+#### Resize the viewport at each breakpoint — inclusive small/medium/large
+
+```tsx
+import * as React from 'react';
+import { Field, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, flex, gap, padding, presets, viewport } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [threshold, setThreshold] = React.useState<'small' | 'medium' | 'large'>('medium');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setThreshold('medium');
+  }, [resetRevision]);
+  return render({
+    controls: <>
+      <Field label="Breakpoint"><Select value={threshold} onChange={(_, data) => {
+        if (data.value === 'small' || data.value === 'medium' || data.value === 'large') setThreshold(data.value);
+      }}><option value="small">small</option><option value="medium">medium</option><option value="large">large</option></Select></Field>
+    </>,
+    status: <p>Inclusive thresholds: small 480px, medium 640px, large 1024px. Resize the actual viewport; this query does not measure the ancestor.</p>,
+    children: <section role="region" aria-label="viewport query preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.horizontal.auto)}>
+      <div data-style-helper="viewport-ancestor" className={sx(width.px(420))}>
+        <div data-style-helper="viewport" className={sx(width.px(180), flex.column, gap.small, padding.small, presets.alternative,
+          viewport[threshold](width.px(300), flex.row))}><span>First item</span><span>Second item</span></div>
+      </div>
+    </section>,
+    diagnostics: <p>Reset restores medium without replacing the Demo or host renderer.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select small, medium or large and compare threshold minus one with its inclusive limit. Resize the actual viewport independently of the fixed ancestor. Reset restores the displayed baseline.',
+};
 ```
 
 ### Members (246)
@@ -18140,7 +20556,7 @@ Immutable viewport query descriptor.
 
 ### Source (274)
 
-[packages/spfx-react-toolkit/src/helpers/styles/viewport.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/viewport.ts:62](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#L62)
 
 ## viewport.large
 
@@ -18207,7 +20623,7 @@ const descriptor = viewport.large(hover(foreground.subtle));
 
 ### Source (275)
 
-[packages/spfx-react-toolkit/src/helpers/styles/viewport.ts:54](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#L54)
+[packages/spfx-react-toolkit/src/helpers/styles/viewport.ts:103](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#L103)
 
 ## viewport.medium
 
@@ -18274,7 +20690,7 @@ const descriptor = viewport.medium(hover(foreground.subtle));
 
 ### Source (276)
 
-[packages/spfx-react-toolkit/src/helpers/styles/viewport.ts:40](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#L40)
+[packages/spfx-react-toolkit/src/helpers/styles/viewport.ts:89](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#L89)
 
 ## viewport.small
 
@@ -18341,7 +20757,7 @@ const descriptor = viewport.small(hover(foreground.subtle));
 
 ### Source (277)
 
-[packages/spfx-react-toolkit/src/helpers/styles/viewport.ts:26](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#L26)
+[packages/spfx-react-toolkit/src/helpers/styles/viewport.ts:75](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#L75)
 
 ## width
 
@@ -18361,9 +20777,66 @@ import { width } from '@apvee/spfx-react-toolkit/styles';
 
 ### Examples (526)
 
+#### Basic usage (46)
+
 ```ts
 import { width } from '@apvee/spfx-react-toolkit/styles';
 const descriptor = width.auto;
+```
+
+#### Select width descriptors — auto/full/pixels with a bounded horizontal region
+
+```tsx
+import * as React from 'react';
+import { Field, Input, Select } from '@fluentui/react-components';
+import { useSx, width, minWidth, overflow, padding, presets, type SxBaseDescriptor } from '@apvee/spfx-react-toolkit';
+interface DemoRegions {
+  controls?: React.ReactNode;
+  commands?: React.ReactNode;
+  status?: React.ReactNode;
+  children?: React.ReactNode;
+  diagnostics?: React.ReactNode;
+}
+function standalone(regions: DemoRegions): React.ReactElement {
+  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
+}
+type Selection = SxBaseDescriptor | ((value: number) => SxBaseDescriptor);
+const choices: Readonly<Record<string, Selection>> = width;
+export function Demo({ render = standalone, resetRevision = 0 }: {
+  render?: (regions: DemoRegions) => React.ReactElement;
+  resetRevision?: number;
+} = {}): React.ReactElement {
+  const sx = useSx();
+  const [member, setMember] = React.useState(Object.keys(choices)[0]);
+  const [value, setValue] = React.useState(240);
+  const [draft, setDraft] = React.useState('240');
+  const revision = React.useRef(resetRevision);
+  React.useEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    setMember(Object.keys(choices)[0]); setValue(240); setDraft('240');
+  }, [resetRevision]);
+  const selection = choices[member];
+  const descriptor = typeof selection === 'function' ? selection(value) : selection;
+  return render({
+    controls: <><Field label="Descriptor"><Select value={member} onChange={(_, data) => {
+      if (Object.prototype.hasOwnProperty.call(choices, data.value)) setMember(data.value);
+    }}>{Object.keys(choices).map(key => <option key={key} value={key}>{key}</option>)}</Select></Field>
+      {typeof selection === 'function' && <Field label="Pixels"><Input type="number" min={0} step={"any"} value={draft} onChange={(_, data) => {
+        setDraft(data.value);
+        const number = Number(data.value);
+        if (data.value.trim() && Number.isFinite(number) && number >= 0) setValue(number);
+      }} onBlur={() => setDraft(String(value))} /></Field>}
+    </>,
+    status: <p aria-live="polite">Applied: width.{member}{typeof selection === 'function' ? `(${value})` : ''}. Invalid drafts preserve the last valid descriptor.</p>,
+    children: <section role="region" aria-label="width descriptor preview" tabIndex={0} className={sx(width.full, minWidth.zero, overflow.auto, padding.medium)}><div data-style-helper="width" className={sx(presets.alternative, padding.small, descriptor)}>Actual width subject</div></section>,
+    diagnostics: <p>Select width descriptors; auto/full/pixels with a bounded horizontal region. Token descriptors inherit the host theme; Reset restores the first choice and numeric baseline without remounting the Demo.</p>,
+  });
+}
+export const demo = {
+  host: 'none', kind: 'snapshot', contentPlacement: 'configuration',
+  observe: 'Select width descriptors — auto/full/pixels with a bounded horizontal region. Select actual namespace members and finite values; constants omit the numeric field. Reset restores the first choice, numeric draft/value while retaining this Demo.',
+};
 ```
 
 ### Members (247)
@@ -18436,7 +20909,7 @@ Immutable width descriptor.
 
 ### Source (278)
 
-[packages/spfx-react-toolkit/src/helpers/styles/width.ts:13](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/width.ts#L13)
+[packages/spfx-react-toolkit/src/helpers/styles/width.ts:67](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/width.ts#L67)
 
 ## width.auto
 
@@ -18487,7 +20960,7 @@ auto: SxBaseDescriptor
 
 ### Source (279)
 
-[packages/spfx-react-toolkit/src/helpers/styles/width.ts:28](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/width.ts#L28)
+[packages/spfx-react-toolkit/src/helpers/styles/width.ts:82](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/width.ts#L82)
 
 ## width.full
 
@@ -18538,7 +21011,7 @@ full: SxBaseDescriptor
 
 ### Source (280)
 
-[packages/spfx-react-toolkit/src/helpers/styles/width.ts:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/width.ts#L42)
+[packages/spfx-react-toolkit/src/helpers/styles/width.ts:96](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/width.ts#L96)
 
 ## width.px
 
@@ -18617,4 +21090,4 @@ export function StyledSurface(): React.ReactElement {
 
 ### Source (281)
 
-[packages/spfx-react-toolkit/src/helpers/styles/width.ts:59](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/width.ts#L59)
+[packages/spfx-react-toolkit/src/helpers/styles/width.ts:113](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/helpers/styles/width.ts#L113)

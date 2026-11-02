@@ -5,7 +5,7 @@ import { FluentProvider } from '@fluentui/react-provider';
 import { useSx, useSPFxFluent9ThemeInfo, SxBaseDescriptor, width, height, minWidth, maxWidth, padding, paddingInlineStart, gap, grid, flex, container, foreground, background, presets, typography, borderWidth, borderStyle, borderColor, overflow, scrollbar, responsive, viewport, hover, active, focusVisible, } from '@apvee/spfx-react-toolkit';
 import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
 import { useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/demoStyles';
-import { stylesCatalog } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/stylesCatalog';
+import { stylesCatalog } from './styles-catalog';
 // The peer Button animates colors. Disable that transition in this recipe probe
 // so hover/active/focus can be compared immediately without an interpolated color.
 const useStateProbeStyles = makeStyles({ action: { transitionProperty: 'none' }, scroll: { boxSizing: 'border-box' } });
