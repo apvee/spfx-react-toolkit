@@ -234,14 +234,6 @@ function operationsFixture(t, options = {}) {
   Object.defineProperty(window, 'ResizeObserver', { configurable: true, value: class { observe() {} unobserve() {} disconnect() {} } });
   t.after(() => { if (previous) Object.defineProperty(window, 'ResizeObserver', previous); else delete window.ResizeObserver; });
   const f = createClientsFixture(t, operationsTitle, { ...options, pnpContext: true, pnpOperations: true, ownerKey: operationsOwner, compiled: options.compiled ?? process.env.PNP_CONTEXT_IMPLEMENTATION === 'compiled' });
-  // The unchanged public operation hook publishes late state after departure/client remount.
-  // Capture only that known React 17 diagnostic for this exact emitted subject.
-  f.expectedWarnings = [];
-  const error = console.error;
-  t.mock.method(console, 'error', (...args) => {
-    if (String(args[0]).includes("Can't perform a React state update on an unmounted component") && args.some(value => String(value).includes(f.entry.id))) f.expectedWarnings.push(args);
-    else error(...args);
-  });
   return f;
 }
 const json = body => new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json' } });
@@ -464,4 +456,20 @@ test('remaining PnP panel default constructs real selectors and services under a
   assert.equal(view.container.querySelector('select[data-demo-variant="PnPPanel"]').value, 'listAccess');
   assert.equal([...view.container.querySelectorAll('button')].find(node => node.textContent === 'Query by GUID').disabled, true);
   assert.equal(view.container.querySelector('input').value, ''); assert.equal(f.calls.length, 0);
+});
+
+test('operations diagnostic plumbing exposes a labeled synthetic source-owned probe to an outside observer', t => {
+  // Plumbing proof only: this is not a real source-owned unmount fault or tenant diagnostic.
+  const message = "Synthetic diagnostic plumbing probe: Can't perform a React state update on an unmounted component";
+  const observed = [];
+  const error = console.error;
+  t.mock.method(console, 'error', (...args) => {
+    if (args[0] === message) observed.push(args);
+    else error(...args);
+  });
+  // The observer must sit outside the fixture so a fixture interceptor cannot conceal this probe.
+  const f = operationsFixture(t);
+  const stack = `Synthetic source-owned Demo stack for ${f.entry.id}`;
+  console.error(message, stack);
+  assert.deepEqual(observed, [[message, stack]], 'outside observer must receive the labeled probe');
 });
