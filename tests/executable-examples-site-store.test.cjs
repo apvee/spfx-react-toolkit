@@ -208,3 +208,40 @@ test('actual native older failed read cannot erase a newer successful record or 
   reads[0].settled = true; await f.flush(() => reads[0].resolve(response({}, 403))); await f.drain(protocol());
   assert.equal(f.dt('Selected key'), 'latest'); assert.equal(f.dt('Selected value'), '"current result"'); assert.ok(!f.container.textContent.includes('Forbidden')); assert.ok(!f.container.textContent.includes('not found.'));
 });
+
+// Retain the source-owned Checkbox callback, bypassing both disabled DOM and
+// Fluent's live event trampoline, exactly as a consumer may retain an old prop.
+function capturedServiceConsent(f) {
+  function visit(value) {
+    if (!value || typeof value !== 'object') return undefined;
+    if (value.props?.label === 'I consent to this exact disposable mutation') return value.props.onChange;
+    for (const child of Array.isArray(value) ? value : [value.props?.children]) { const found = visit(child); if (found) return found; }
+    return undefined;
+  }
+  const change = visit(f.regions.controls); assert.equal(typeof change, 'function');
+  return checked => change(undefined, { checked });
+}
+test('direct service retained Save cannot reuse a successful Read observation after the Save rejects', async t => {
+  const f = await writable(t, 'service'); const savedHandler = f.handler('Save');
+  f.click('Save'); await f.drain(r => r.method === 'POST' ? response({}, 403) : protocol()(r));
+  assert.match(f.container.textContent, /Forbidden/); assert.equal(f.dt('Can Write'), '(not observed)'); assert.equal(f.find('Save').disabled, true);
+  const count = f.calls.length; await f.flush(() => savedHandler());
+  assert.equal(f.calls.length, count, 'a retained pre-failure Save cannot dispatch without a current observed permission');
+});
+for (const nextRead of ['denied', 'failed', 'allowed']) test(`direct service retained consent and Save cannot reuse an observation superseded by a newer ${nextRead} Read`, async t => {
+  const f = await writable(t, 'service'); const consent = capturedServiceConsent(f), save = f.handler('Save');
+  f.click('Read');
+  await f.drain(nextRead === 'failed' ? () => response({}, 403) : protocol(nextRead === 'denied' ? 6 : 14));
+  assert.equal(f.dt('Can Write'), nextRead === 'failed' ? '(not observed)' : String(nextRead === 'allowed'));
+  assert.equal(f.container.querySelector('input[type="checkbox"]').checked, false, 'new Read retires consent');
+  const count = f.calls.length;
+  await f.flush(() => { consent(true); save(); });
+  assert.equal(f.calls.length, count, 'the superseded observation cannot admit a native request');
+  assert.equal(f.container.querySelector('input[type="checkbox"]').checked, false, 'captured consent cannot revive the superseded observation');
+  if (nextRead === 'allowed') {
+    f.check('I consent to this exact disposable mutation'); await f.flush(() => save());
+    assert.equal(f.calls.length, count, 'fresh consent does not make a handler from an older observation current');
+    f.click('Save'); await f.drain(protocol()); assert.equal(f.calls.filter(r => r.method === 'POST').length, 1);
+    assert.match(f.container.textContent, /Saved /);
+  }
+});

@@ -500,6 +500,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
   const mounted = React.useRef(true);
   const ledger = React.useRef(new Set<Ticket>());
   const latest = React.useRef(0);
+  const observation = React.useRef<{ token: object; operation: number; canWrite: boolean }>();
   const reading = React.useRef<object>();
   const [, refresh] = React.useState(0);
   React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
@@ -511,23 +512,31 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
   const visible = current() && outcome?.token === token ? outcome : undefined;
   const pending = ledger.current.size > 0;
   const isReading = reading.current === token;
+  const observed = observation.current;
+  // Retained handlers must still own this exact completed Read, not a captured UI value.
+  const hasCurrentWriteObservation = (): boolean => current() && observed !== undefined &&
+    observation.current === observed && observed.token === token && observed.operation === latest.current && observed.canWrite;
   const disposable = key.startsWith('spfx-toolkit-site-demo-') && key.length > 'spfx-toolkit-site-demo-'.length;
   const read = async (): Promise<void> => {
     if (!current() || !service || !root || ledger.current.size > 0 || reading.current === token) return;
-    const operation = ++latest.current; reading.current = token; approve(undefined); setOutcome(undefined); refresh(count => count + 1);
+    const operation = ++latest.current; observation.current = undefined; reading.current = token; approve(undefined); setOutcome(undefined); refresh(count => count + 1);
     const owns = (): boolean => current() && latest.current === operation;
     try {
       const item = await service.get(key, root);
       if (!owns()) return;
       const canWrite = await service.canCurrentUserWrite(root);
-      if (owns()) setOutcome({ token, item, canWrite, message: item ? `Found ${key}.` : `${key} not found.` });
+      if (owns()) {
+        observation.current = { token, operation, canWrite };
+        setOutcome({ token, item, canWrite, message: item ? `Found ${key}.` : `${key} not found.` });
+      }
     } catch (error) { if (owns()) setOutcome({ token, failure: error instanceof Error ? error.message : String(error) }); }
     finally { if (reading.current === token) reading.current = undefined; if (mounted.current) refresh(count => count + 1); }
   };
   const save = async (): Promise<void> => {
-    if (!current() || !service || !root || ledger.current.size > 0 || reading.current === token || approval.current !== token || !disposable || visible?.canWrite !== true) return;
+    if (!current() || !service || !root || ledger.current.size > 0 || reading.current === token || approval.current !== token || !disposable || !hasCurrentWriteObservation()) return;
     const operation = ++latest.current;
-    const ticket: Ticket = {}; ledger.current.add(ticket); refresh(count => count + 1);
+    const ticket: Ticket = {}; ledger.current.add(ticket);
+    observation.current = undefined; approve(undefined); setOutcome(undefined); refresh(count => count + 1);
     const owns = (): boolean => current() && latest.current === operation;
     const release = (): void => { ledger.current.delete(ticket); if (mounted.current) refresh(count => count + 1); };
     try {
@@ -542,9 +551,9 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     controls: <>
       <Field label="Key"><Input aria-label="Key" disabled={pending} value={key} onChange={(_, data) => { if (ledger.current.size === 0) { approve(undefined); setKey(data.value); } }}/></Field>
       <Text as="p">Optional Save: {root}, key {key}, boolean true, description "Shared across subsites". Only disposable keys are accepted; Save may provision/repair the root store.</Text>
-      <Checkbox label="I consent to this exact disposable mutation" checked={consent === token} disabled={pending || !disposable || visible?.canWrite !== true} onChange={(_, data) => { if (current() && ledger.current.size === 0 && visible?.canWrite === true) approve(data.checked === true ? token : undefined); }}/>
+      <Checkbox label="I consent to this exact disposable mutation" checked={consent === token} disabled={pending || !disposable || !hasCurrentWriteObservation()} onChange={(_, data) => { if (current() && ledger.current.size === 0 && hasCurrentWriteObservation()) approve(data.checked === true ? token : undefined); }}/>
     </>,
-    commands: <><Button disabled={!service || !root || pending || isReading} onClick={read}>Read</Button><Button disabled={!service || pending || isReading || !disposable || approval.current !== token || visible?.canWrite !== true} onClick={save}>Save</Button></>,
+    commands: <><Button disabled={!service || !root || pending || isReading} onClick={read}>Read</Button><Button disabled={!service || pending || isReading || !disposable || approval.current !== token || !hasCurrentWriteObservation()} onClick={save}>Save</Button></>,
     status: <>{pending && <Text role="status">Previous write still pending</Text>}{visible?.failure ? <Text role="alert">{visible.failure}</Text> : visible?.message ? <Text role="status">{visible.message}</Text> : <Text>{isReading ? 'Reading...' : 'Read the record and permission indicator before consenting to Save.'}</Text>}</>,
     children: <>
       <dl aria-label="Site service result"><dt>Collection root URL</dt><dd>{root}</dd><dt>Current web URL</dt><dd>{web}</dd><dt>Can Write</dt><dd>{visible?.canWrite === undefined ? '(not observed)' : String(visible.canWrite)}</dd>
@@ -626,4 +635,4 @@ Contract: see [SPFxSiteKeyValueStoreService.save](site-key-value-store.md#spfxsi
 
 ### Source (9)
 
-[packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts:241](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#L241)
+[packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts:250](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#L250)
