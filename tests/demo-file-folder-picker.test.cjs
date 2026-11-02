@@ -11,7 +11,18 @@ test('native sample exposes a real factory with independent hosted modes and sup
 test('native sample source cascade clears dependent refs only; presentation and labels retain refs',()=>{const part=loadPart();part.properties={fileFolderValues:[selected],pickerSites:[],pickerLists:[]};part.onPropertyPaneFieldChanged('fileFolderSize','medium','large');assert.deepEqual(part.properties.fileFolderValues,[selected]);const revision=fields(part).find(f=>f.targetProperty==='fileFolderValues').properties.valueRevision;
  part.onPropertyPaneFieldChanged('fileFolderScope','siteCollection','library');assert.deepEqual(part.properties.fileFolderValues,[]);assert.ok(fields(part).find(f=>f.targetProperty==='fileFolderValues').properties.valueRevision>revision);});
 test('missing dependent library disables native picker; selected library uses stable toolkit selector',()=>{const part=loadPart();part.properties={fileFolderScope:'library'};assert.equal(fields(part).find(f=>f.targetProperty==='fileFolderValues').properties.disabled,true);const site={kind:'site',url:'https://tenant.sharepoint.com/sites/hr'},list={kind:'list',webUrl:site.url,listId:'11111111-1111-4111-8111-111111111111'};part.properties={fileFolderScope:'library',pickerSites:[site],pickerLists:[list]};const props=fields(part).find(f=>f.targetProperty==='fileFolderValues').properties;assert.equal(props.disabled,false);assert.deepEqual(props.scope,{kind:'library',webUrl:site.url,list:{kind:'id',id:list.listId}});});
-test('registry and live sample expose actual hosted control, consumer values and starting location',()=>{const panel=fs.readFileSync(path.join(base,'components/panels/FileFolderPickerPanel.tsx'),'utf8'),registry=fs.readFileSync(path.join(base,'components/demoRegistry.ts'),'utf8');for(const symbol of ['FileFolderPicker','PropertyPaneFileFolderPicker'])assert.match(registry,new RegExp("symbol: '"+symbol+"'"));assert.match(panel,/<FileFolderPicker /);for(const prop of ['scope','initialLocation','itemTypes','fileCategory','multiselect','size','selectionLimit','extensions','value','initialOptions'])assert.match(panel,new RegExp(prop+'=\\{'));assert.doesNotMatch(panel,/localStorage|sessionStorage|\/me\/drive|createIfMissing/);});
+test('canonical hosted scenario and actual native WebPart keep their independent ownership',()=>{
+ const {scenario}=require('./fixtures/executable-examples/cards-description-list.cjs');
+ const {entry,source}=scenario('Explore hosted files and folders with explicit source policies','packages/spfx-react-toolkit/src/controls/file-folder-picker/file-folder-picker.tsx#FileFolderPicker');
+ assert.equal(entry.metadata.kind,'write');assert.match(source,/<FileFolderPicker /);
+ for(const prop of ['scope','initialLocation','itemTypes','fileCategory','multiselect','size','selectionLimit','extensions','value','initialOptions'])assert.match(source,new RegExp(prop+'=\\{'));
+ assert.doesNotMatch(source,/localStorage|sessionStorage|\/me\/drive|createIfMissing/);
+ const webPart=fs.readFileSync(path.join(base,'SpFxReactToolkitTestWebPart.ts'),'utf8');
+ assert.match(webPart,/import \{ PropertyPaneFileFolderPicker \} from '@apvee\/spfx-react-toolkit\/property-pane\/file-folder-picker'/);
+ assert.match(webPart,/PropertyPaneFileFolderPicker\('fileFolderValues'/);
+ const props=fields(loadPart()).find(field=>field.targetProperty==='fileFolderValues').properties;
+ assert.equal(props.preset,'focused');assert.equal(props.valueRevision,0);
+});
 
 test('native OneDrive source uses current user without URL entry',()=>{const part=loadPart();part.properties={fileFolderScope:'oneDrive'};const configured=fields(part);assert.deepEqual(configured.find(f=>f.targetProperty==='fileFolderValues').properties.scope,{kind:'oneDrive',folder:undefined});assert.equal(configured.some(f=>f.targetProperty==='fileFolderBaseUrl'),false);});
 
@@ -36,48 +47,24 @@ test('native preset menu offers only focused and extended for saved legacy confi
   assert.equal(part.properties.fileFolderTitle,'Saved title');assert.equal(part.properties.fileFolderGraph,false);
  }
 });
-test('React and native new demos share preset intents and preset-only edits retain selection and models',async()=>{
- const {createPickerHarness}=require('./fixtures/picker-source-harness.cjs');
- const React=require('react'),{Simulate}=require('react-dom/test-utils');let observed,mounts=0,changes=0;
- const models=[{value:selected,text:'Report.pdf'}];
- const Probe=p=>{observed=p;React.useEffect(()=>{mounts++;},[]);return React.createElement('button',{onClick:()=>{changes++;p.onChange({reason:'pick',values:[selected],items:models,unresolvedValues:[]});}},'Seed selection');};
- const h=createPickerHarness({
- '@apvee/spfx-react-toolkit':{useSPFxPageContext:()=>({web:{absoluteUrl:'https://tenant.sharepoint.com/sites/hr'}}),FileFolderPicker:Probe},
- '../shared/DemoCard':{DemoCard:p=>React.createElement('div',undefined,React.createElement('section',{'data-config':true},p.controls),p.commands,React.createElement('section',{'data-diagnostics':true},p.diagnostics),p.children)},
- '../shared/DemoAccordionPanel':{DemoAccordionPanel:p=>React.createElement('div',undefined,p.children)},
- });
- const Panel=h.load(path.join(base,'components/panels/FileFolderPickerPanel.tsx')).default,m=h.mountComponent(()=>React.createElement(Panel));
- const input=label=>{const l=[...m.container.querySelectorAll('label')].find(l=>l.textContent===label);assert.ok(l,label);return m.container.querySelector(`[id="${l.htmlFor}"]`);};
- const change=(label,value)=>{const el=input(label);h.act(()=>{el.value=value;Simulate.change(el);});};
- try{
-  const native=fields(loadPart()).find(f=>f.targetProperty==='fileFolderValues').properties;
-  for(const key of ['preset','itemTypes','multiselect','uploadEnabled','createFolderEnabled','searchable','colorfulTagAvatars'])assert.equal(observed[key],native[key],key);
-  const metadata=require('./fixtures/file-folder-picker/metadata.cjs').setup();
-  const resolved=await metadata.load('scope').resolveFileFolderPickerScope({kind:'siteCollection'},undefined,metadata.context,metadata.cache);
-  const compile=metadata.load('config').compileFileFolderPickerConfig,channel={origin:'https://tenant.sharepoint.com',channelId:'demo-parity'};
-  assert.deepEqual(compile(resolved,observed,channel),compile(resolved,native,channel),'same library resolver yields identical hosted SDK JSON');
-  assert.equal(observed.preset,'focused');h.act(()=>Simulate.click([...m.container.querySelectorAll('button')].find(b=>b.textContent==='Seed selection')));
-  const savedModels=observed.initialOptions;
-  const colorful = input('Colorful tag avatars');
-  h.act(()=>{colorful.checked=true;Simulate.change(colorful);});
-  assert.equal(observed.colorfulTagAvatars,true);assert.deepEqual(observed.value,[selected]);assert.equal(observed.initialOptions,savedModels);
-  change('File extensions (comma separated)', '.pdf');assert.deepEqual(observed.extensions,['.pdf']);
-  change('File category','images');assert.equal(observed.fileCategory,'images');assert.equal(observed.extensions,undefined);assert.equal(input('File extensions (comma separated)').value,'');assert.equal(input('File extensions (comma separated)').disabled,true);
-  change('Selectable items','all');assert.equal(observed.fileCategory,'images');assert.equal(observed.itemTypes,'all');assert.deepEqual(observed.value,[selected]);assert.equal(observed.initialOptions,savedModels);
-  change('Selectable items','folders');assert.equal(observed.fileCategory,undefined);assert.equal(observed.extensions,undefined);assert.deepEqual(observed.value,[selected]);assert.equal([...m.container.querySelectorAll('label')].some(l=>l.textContent==='File category'),false);
-  change('Selectable items','files');assert.equal(observed.fileCategory,undefined);assert.equal(input('File extensions (comma separated)').disabled,false);
-  change('File category','documents');change('File category','');assert.equal(observed.fileCategory,undefined);assert.deepEqual(observed.extensions,[]);
-  change('Preset','extended');assert.equal(observed.preset,'extended');assert.deepEqual(observed.value,[selected]);assert.equal(observed.initialOptions,savedModels);assert.equal(mounts,1);assert.equal(changes,1);
-  for(const key of ['graphEnabled','claimsChallengeEnabled','visibleLocations','initialView','navigationPreset','localFilesMode','title','layout'])assert.equal(observed[key],undefined,key);
-  assert.doesNotMatch(m.container.textContent,/Optional Graph|Request Recent|Initial native layout|Native tray|On this device label/);
-  assert.equal(m.container.querySelector('[data-diagnostics]').querySelector('input,select,textarea'),null,'diagnostics are read-only');
-  change('Initial web URL (navigation only)','https://tenant.sharepoint.com/sites/hr');change('Initial library title (navigation only)','Documents');change('Initial folder (navigation only)','Policies');
-  const apply=()=>h.act(()=>Simulate.click([...m.container.querySelectorAll('button')].find(b=>b.textContent==='Apply source and clear demo selection')));
-  apply();const initial=observed.initialLocation;assert.equal(initial.folder,'Policies');change('Preset','focused');assert.equal(observed.initialLocation,initial);
-  change('Source','oneDrive');assert.equal(input('Initial folder (navigation only)').value,'');assert.equal([...m.container.querySelectorAll('label')].some(l=>l.textContent==='Initial web URL (navigation only)'),false);
-  apply();assert.deepEqual(observed.scope,{kind:'oneDrive',folder:undefined});assert.equal(observed.initialLocation,undefined);
-
- }finally{m.unmount();h.close();}
+test('canonical actual React and native new demos share preset intents and retained models after explicit Start',async t=>{
+ const {createFileFolderFixture,web,endpoint}=require('./fixtures/executable-examples/file-folder-picker-scenario.cjs');
+ const f=createFileFolderFixture(t);assert.equal(f.subject.mounts,0);f.click('Start');await f.ready();
+ const native=fields(loadPart()).find(field=>field.targetProperty==='fileFolderValues').properties;
+ for(const key of ['preset','itemTypes','multiselect','uploadEnabled','createFolderEnabled','searchable','colorfulTagAvatars'])assert.equal(f.subject.props[key],native[key],key);
+ const cache=f.library('controls/pickers/picker-request-cache.internal').createPickerRequestCache(f.instance.context);
+ const resolved=await f.library('controls/file-folder-picker/file-folder-picker-scope.internal').resolveFileFolderPickerScope({kind:'siteCollection'},undefined,f.sourceContext(),cache);
+ const compile=f.library('controls/file-folder-picker/file-folder-picker-config.internal').compileFileFolderPickerConfig,channel={origin:'https://tenant.sharepoint.com',channelId:'demo-parity'};
+ assert.deepEqual(compile(resolved,f.subject.props,channel),compile(resolved,native,channel),'lower-tier prop equivalence supplements independently expected real protocol tests');cache.dispose();
+ f.browse();await f.flush();const opening=f.opening();opening.initialize();opening.command('pick',{command:'pick',items:[{id:'FileA',parentReference:{driveId:'b!Drive'},'@sharePoint.endpoint':endpoint}]});await f.flush();
+ const values=f.subject.props.value,models=f.subject.props.initialOptions;assert.equal(models===f.changes[0].items,true);
+ f.toggle('Colorful tag avatars');f.change('Preset','extended');assert.equal(f.subject.props.value===values,true);assert.equal(f.subject.props.initialOptions===models,true);assert.equal(f.subject.mounts,1);
+ f.change('File extensions (comma separated)','.pdf');assert.deepEqual(f.subject.props.extensions,['.pdf']);f.change('File category','images');assert.equal(f.subject.props.fileCategory,'images');assert.equal(f.subject.props.extensions,undefined);assert.equal(f.node('File extensions (comma separated)').value,'');assert.equal(f.node('File extensions (comma separated)').disabled,true);
+ f.change('Selectable items','all');assert.equal(f.subject.props.fileCategory,'images');f.change('Selectable items','folders');assert.equal(f.subject.props.fileCategory,undefined);assert.equal(f.subject.props.extensions,undefined);assert.equal(f.container.querySelector('[aria-label="File category"]')===null,true);
+ f.change('Selectable items','files');assert.equal(f.node('File extensions (comma separated)').disabled,false);f.change('File category','documents');f.change('File category','');assert.deepEqual(f.subject.props.extensions,[]);assert.equal(f.subject.props.value===values,true);assert.equal(f.subject.props.initialOptions===models,true);
+ f.change('Initial web URL (navigation only)',web);f.change('Initial library title (navigation only)','Documents');f.change('Initial folder (navigation only)','Policies');f.click('Apply source and clear demo selection');const initial=f.subject.props.initialLocation;assert.equal(initial.folder,'Policies');f.change('Preset','focused');assert.equal(f.subject.props.initialLocation===initial,true);
+ f.change('Source','oneDrive');assert.equal(f.node('Initial folder (navigation only)').value,'');f.click('Apply source and clear demo selection');assert.deepEqual(f.subject.props.scope,{kind:'oneDrive',folder:undefined});assert.equal(f.subject.props.initialLocation,undefined);
+ for(const key of ['graphEnabled','claimsChallengeEnabled','visibleLocations','initialView','navigationPreset','localFilesMode','title','layout'])assert.equal(f.subject.props[key],undefined,key);
 });
 
 test('native options and diagnostics are compact and only relevant limits/filters are shown', () => {

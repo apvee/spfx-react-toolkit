@@ -357,12 +357,14 @@ for (const marker of ['<EntraGroupTrim groups={[{ name: applied.group }]}', 'Per
   if (!read(path.join(panelsPath, 'SharePointPermissionTrimPanel.tsx')).includes(marker)) throw new Error(`Permission/Entra AND sample missing ${marker}`);
 }
 
-// Each migrated family retains an observable override on its existing live subject.
-for (const [panel, marker] of [
-  ['FileFolderPickerPanel.tsx', 'data-file-picker-demo="strings"'],
-]) {
-  const source = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels', panel), 'utf8');
-  if (!source.includes(marker) || !/strings[=:]/.test(source)) throw new Error(`${panel}: native/family dictionary override must remain observable`);
+// The hosted dictionary override belongs to its exact canonical case, not a retired panel.
+{
+  const title = 'Explore hosted files and folders with explicit source policies';
+  const source = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/controls/file-folder-picker/file-folder-picker.tsx')), title);
+  if (!generated.symbols.has('FileFolderPicker')) throw new Error('Canonical hosted picker scenario is unavailable');
+  for (const marker of ['label="Custom browse text"', 'checked={customStrings}', 'setCustomStrings(data.checked)', 'strings={customStrings ?', "files: 'Choose report attachments…'", "folders: 'Choose a report folder…'", "all: 'Choose report content…'"]) {
+    if (!source.includes(marker)) throw new Error(`Canonical hosted picker dictionary override missing ${marker}`);
+  }
 }
 
 // Seven concrete canonical picker owners each retain a working dictionary switch.

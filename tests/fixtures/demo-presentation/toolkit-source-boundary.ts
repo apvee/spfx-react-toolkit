@@ -107,3 +107,5 @@ export { createSPFxPnPListService, type SPFxPnPListSelector, type SPFxPnPListSer
 
 // Search cases retain the actual matching-mode hook, constants, service and PnP parser.
 export { useSPFxPnPSearch, SearchVerticals } from '../../../packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch';
+
+export { getSPFxCorrelationInfo } from '../../../packages/spfx-react-toolkit/src/helpers/spfx-page-context.helpers';

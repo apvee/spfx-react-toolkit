@@ -26,6 +26,7 @@ test('browser pilot filter preserves its prior cohort and adds exact service and
   const direct = { createSPFxPnPContextService: ['Explore PnP context caching and request headers'], createSPFxPnPService: ['Read through a supplied PnP service client'], createSPFxPnPListService: ['Read and page an explicitly selected list service'] };
   const search = { useSPFxPnPSearch: ['Search SharePoint text with explicit execution', 'Filter search results with native refiner tokens', 'Request debounced suggestions after explicit start'], SearchVerticals: ['Search selected verticals with builder paging'] };
   const pickers = {
+    FileFolderPicker: ['Explore hosted files and folders with explicit source policies'],
     SitePicker: ['Explore site selection and contextual search'], ListPicker: ['Explore list catalogs and independent consumer choices'],
     FieldPicker: ['Explore site columns and list fields'], ContentTypePicker: ['Explore site and list content type references'],
     ViewPicker: ['Explore scoped view catalogs'], ListItemPicker: ['Explore list item labels and query pages'],
@@ -66,8 +67,8 @@ test('browser pilot filter preserves its prior cohort and adds exact service and
   const shell = missingScenario.flatMap(group => group.features).find(feature => feature.title === 'WebPartShell');
   shell.scenarios = shell.scenarios.filter(scenario => scenario.title !== 'Configure the actual web part Shell');
   assert.throws(() => filterPilotGroups(missingScenario), /Missing pilot scenario or duplicate: WebPartShell\/Configure the actual web part Shell/);
-  assert.equal(filtered.flatMap(group=>group.features).length,59);
-  assert.equal(filtered.flatMap(group=>group.features).flatMap(feature=>feature.scenarios).length,69);
+  assert.equal(filtered.flatMap(group=>group.features).length,60);
+  assert.equal(filtered.flatMap(group=>group.features).flatMap(feature=>feature.scenarios).length,70);
   for (const owner of [...Object.keys(pickers), 'useSPFxPnPSearch', 'SearchVerticals', 'createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'useSPFxPnPListById', 'useSPFxPnPListByUrl', 'useSPFxPnPListByPath', 'useSPFxPnP', 'useSPFxPnPContext', 'useSPFxConfigurationStore', 'createSPFxConfigurationStoreService', 'useSPFxTenantProperty', 'createSPFxTenantPropertyService', 'useSPFxTenantKeyValueStore', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService']) {
     const missing = structuredClone(groups);
     for (const group of missing) group.features = group.features.filter(feature => feature.title !== owner);

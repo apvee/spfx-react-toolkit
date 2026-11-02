@@ -1,5 +1,6 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
+  FileFolderPicker: ['Explore hosted files and folders with explicit source policies'],
   SitePicker: ['Explore site selection and contextual search'],
   ListPicker: ['Explore list catalogs and independent consumer choices'],
   FieldPicker: ['Explore site columns and list fields'],

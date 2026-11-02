@@ -10,17 +10,6 @@ const lazyPanel = (
 /** Temporary panels only: these entries are not generated features or executed test results. */
 export const demoRegistry: readonly DemoRegistryEntry[] = [
   {
-    key: 'file-folder-picker', title: 'File and folder picker', iconName: 'Folder',
-    description: 'Microsoft v8 hosted picker with verified SharePoint and OneDrive Business boundaries.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-file-folder-picker' */ './panels/FileFolderPickerPanel')),
-    coverage: [
-      { symbol: 'FileFolderPicker', kind: 'read', notes: 'One live hosted v8 picker; custom browse dictionary, source/kind/category/cardinality/presentation, optional colorful tag avatars and consumer-owned JSON references.' },
-      { symbol: 'PropertyPaneFileFolderPicker', kind: 'host', notes: 'Native direct JSON arrays, independent hosted presentation, optional colorful tag avatars and category/selection policy; source cascade resets explicitly.' },
-    ],
-  },
-
-
-  {
     key: 'providers',
     title: 'Providers',
     iconName: 'PlugConnected',

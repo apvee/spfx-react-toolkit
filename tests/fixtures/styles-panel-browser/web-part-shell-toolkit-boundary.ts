@@ -103,3 +103,6 @@ export { useSPFxPnPSearch, SearchVerticals } from '../../../packages/spfx-react-
 // Whole-catalogue picker cases use the actual matching-mode controls and public model contracts.
 export { SitePicker, ListPicker, FieldPicker, ContentTypePicker, ViewPicker, ListItemPicker, PrincipalPicker } from '../../../packages/spfx-react-toolkit/lib/controls/pickers';
 export type { PickerSelectionData, PrincipalType, SitePickerOption, ListPickerOption, FieldPickerOption, ContentTypePickerOption, ViewPickerOption, ListItemPickerOption, PrincipalPickerOption } from '../../../packages/spfx-react-toolkit/lib/controls/pickers';
+
+export { getSPFxCorrelationInfo } from '../../../packages/spfx-react-toolkit/lib/helpers/spfx-page-context.helpers';
+export { FileFolderPicker, type FileFolderPickerScope, type FileFolderPickerValue, type FileFolderPickerOption, type FileFolderPickerInitialLocation, type FileFolderPickerPreset, type FileFolderPickerProps } from '../../../packages/spfx-react-toolkit/lib/controls/file-folder-picker';
