@@ -12,6 +12,7 @@ webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 
     '@apvee/spfx-react-toolkit$': path.join(fixture, source ? 'toolkit-source-boundary.ts' : 'toolkit-boundary.ts'),
     ...require('./executable-fixture-aliases.cjs').executableFixtureAliases(root, source),
     ...Object.fromEntries(['sp-core-library', 'sp-component-base', 'sp-page-context', 'sp-http'].map(name => [`@microsoft/${name}$`, path.join(fixture, 'spfx-services.ts')])),
+    '@microsoft/sp-property-pane$': path.join(fixture, 'spfx-property-pane.ts'),
     'react/jsx-runtime$': require.resolve('react/jsx-runtime.js'),
   } },
   plugins: [new webpack.DefinePlugin({ 'process.env.DEMO_PRESENTATION_JSDOC_ONLY': JSON.stringify(process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? '1' : '0') }), new webpack.NormalModuleReplacementPlugin(/^\.\.\/services\/spfx-pnp-context\.service$/, resource => {

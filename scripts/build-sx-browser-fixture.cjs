@@ -22,13 +22,35 @@ const actualCharts = path.join(root, 'node_modules/@fluentui/react-charts/lib/in
 const executableAliases = shellOnly ? require('./executable-fixture-aliases.cjs').executableFixtureAliases(root, true) : {};
 const entry = path.join(fixture, cardsOnly ? 'cards.tsx' : descriptionListOnly ? 'description-list.tsx' : paginationOnly ? 'pagination.tsx' : stageOnly ? 'stage.tsx' : shellOnly ? 'web-part-shell.tsx' : gridOnly ? 'data-grid.tsx' : 'index.tsx');
 const boundary = path.join(fixture, cardsOnly ? 'cards-toolkit-boundary.ts' : descriptionListOnly ? 'description-list-toolkit-boundary.ts' : paginationOnly ? 'pagination-toolkit-boundary.ts' : stageOnly ? 'stage-toolkit-boundary.ts' : shellOnly ? 'web-part-shell-toolkit-boundary.ts' : gridOnly ? 'data-grid-toolkit-boundary.ts' : 'form-toolkit-boundary.ts');
-const program = ts.createProgram([entry, path.join(root, 'packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts'), ...(chartProbe ? [path.join(fixture, 'data-grid-chart-probe.tsx')] : [])], {
+// The catalogue's type-only actual AppProps proof needs the full public source
+// type graph, not the deliberately finite runtime fixture barrel. Webpack keeps
+// its separate narrow aliases below; no runtime implementation is widened here.
+const typeInputs = require('./documentation-inputs.cjs').createDocumentationInputs(root, require('./documentation.config.cjs'));
+const packageMetadata = JSON.parse(fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/package.json'), 'utf8'));
+const sourceTypePaths = shellOnly ? Object.fromEntries([...typeInputs.sourceEntries(packageMetadata), ...typeInputs.sourceEntries(packageMetadata, true)]
+  .map(([name, file]) => [name, [path.relative(root, file)]])) : { '@apvee/spfx-react-toolkit': [path.relative(root, boundary)] };
+const appAmbient = shellOnly ? [path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/loc/mystrings.d.ts')] : [];
+const program = ts.createProgram([entry, ...appAmbient, path.join(root, 'packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts'), ...(chartProbe ? [path.join(fixture, 'data-grid-chart-probe.tsx')] : [])], {
   noEmit: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext,
   moduleResolution: ts.ModuleResolutionKind.NodeJs, jsx: ts.JsxEmit.React,
-  baseUrl: root, paths: { ...Object.fromEntries(Object.entries(executableAliases).map(([name,file]) => [name.slice(0,-1),[path.relative(root,file)]])), '@apvee/spfx-react-toolkit': [path.relative(root, boundary)], '@data-grid/actual-charts': ['node_modules/@fluentui/react-charts/dist/index.d.ts'] },
+  baseUrl: root, paths: { ...sourceTypePaths, '@data-grid/actual-charts': ['node_modules/@fluentui/react-charts/dist/index.d.ts'] },
   strict: true, skipLibCheck: true, esModuleInterop: true, lib: ['lib.es2020.d.ts', 'lib.dom.d.ts']
 });
 const diagnostics = ts.getPreEmitDiagnostics(program);
+if (shellOnly) {
+  // Keep the original finite-barrel missing-export check for copied source
+  // modules independently of catalogue's private actual-host type-only proof.
+  const generated = path.join(root, require('./executable-examples-render.cjs').executableRoot);
+  const copiedModules = fs.readdirSync(generated).filter(name => /^[a-f0-9]{64}\.tsx$/.test(name)).map(name => path.join(generated, name));
+  const runtimeProgram = ts.createProgram([...copiedModules, path.join(root, 'packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts')], {
+    ...program.getCompilerOptions(), paths: {
+      ...Object.fromEntries(Object.entries(executableAliases).map(([name, file]) => [name.slice(0, -1), [path.relative(root, file)]])),
+      '@apvee/spfx-react-toolkit': [path.relative(root, boundary)]
+    }
+  });
+  diagnostics.push(...ts.getPreEmitDiagnostics(runtimeProgram));
+  console.log(`Checked ${copiedModules.length} copied modules against finite runtime type aliases separately from the full public host-domain graph.`);
+}
 if (diagnostics.length) {
   console.error(ts.formatDiagnosticsWithColorAndContext(diagnostics, {
     getCanonicalFileName: f => f, getCurrentDirectory: () => root, getNewLine: () => '\n'
@@ -41,6 +63,7 @@ if (diagnostics.length) {
       '@apvee/spfx-react-toolkit$': boundary,
       ...executableAliases,
       ...(shellOnly ? { '@microsoft/sp-core-library$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts'), '@microsoft/sp-component-base$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts'), '@microsoft/sp-page-context$': path.join(fixture, '../demo-presentation/spfx-services.ts'), '@microsoft/sp-http$': path.join(fixture, '../demo-presentation/spfx-services.ts') } : {}),
+      ...(shellOnly ? { '@microsoft/sp-property-pane$': path.join(fixture, '../demo-presentation/spfx-property-pane.ts') } : {}),
       ...(chartProbe ? { '@fluentui/react-charts$': path.join(fixture, 'data-grid-chart-probe.tsx'), '@data-grid/actual-charts$': actualCharts } : {}),
       // React 17 supplies this legacy entry without an exports map. Modern
       // Fluent/Griffel ESM imports need its explicit extension in Webpack 5.

@@ -126,8 +126,12 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve e
   assert.equal(Object.keys(pilotOwners).filter(name => !Object.hasOwn(searchOwners, name) && !Object.hasOwn(pickerOwners, name) && !Object.hasOwn(trimOwners, name)).length, 50, 'complete accepted predecessor owner cohort');
   assert.deepEqual(Object.keys(pilotTitles).sort(), Object.keys(pilotOwners).sort(), 'every accepted pilot has an independent canonical owner expectation');
   const pilots = filterPilotGroups(groups);
-  assert.deepEqual(pilots.flatMap(group => group.features.map(feature => feature.title)).sort(), Object.keys(pilotTitles).sort());
-  for (const group of pilots) for (const feature of group.features) {
+  const native = pilots.flatMap(group => group.features).filter(feature => feature.scenarios.some(entry => entry.metadata.hostAdapter === 'propertyPane'));
+  assert.deepEqual(native.map(feature => feature.title), ['PropertyPaneSitePicker']);
+  assert.equal(native.flatMap(feature => feature.scenarios).length, 1);
+  const prior = pilots.flatMap(group => group.features).filter(feature => !native.includes(feature));
+  assert.deepEqual(prior.map(feature => feature.title).sort(), Object.keys(pilotTitles).sort());
+  for (const group of pilots) for (const feature of group.features.filter(feature => prior.includes(feature))) {
     assert.equal(feature.key, pilotOwners[feature.title]);
     assert.equal(group.key, feature.title === 'WebPartShell' || feature.title === 'Pagination' || (Object.hasOwn(pickerOwners, feature.title) || Object.hasOwn(trimOwners, feature.title)) ? 'controls' : ['createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(feature.title) ? 'services' : 'hooks');
     assert.deepEqual(feature.scenarios.map(entry => entry.title).sort(), [...pilotTitles[feature.title]].sort());

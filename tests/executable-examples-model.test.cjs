@@ -315,3 +315,41 @@ test('reports snippet compiler errors at physical source lines without evaluatin
   assert.ok(result.diagnostics.some(item => item.code === 'TS2322' && item.line === 6));
   invalid(component + '\nexport const demo = (() => { throw new Error("must never run"); })();', 'EXECUTABLE_METADATA');
 });
+
+const nativeDoc = fs.readFileSync(path.join(fixture, 'cases/native.jsdoc'), 'utf8');
+test('accepts the complete optional function-valued native port without private canonical inputs', () => {
+  const result = collect(replaceDoc(nativeDoc));
+  assert.deepEqual(result.diagnostics, []);
+  assert.equal(result.examples.length, 1);
+  assert.equal(result.examples[0].metadata.hostAdapter, 'propertyPane');
+});
+
+for (const [name, before, after] of [
+  ['mutable environment function', 'readonly refresh: () => void;', 'refresh: () => void;'],
+  ['required port', 'propertyPane?:', 'propertyPane:'],
+  ['method bivariance', 'readonly refresh: () => void;', 'refresh(): void;'],
+  ['extra environment', 'readonly refresh: () => void;', 'readonly refresh: () => void; readonly extra: string;'],
+  ['extra create argument', '(host: NativePropertyPaneEnvironment<P>)', '(host: NativePropertyPaneEnvironment<P>, required: string)'],
+  ['narrow event callback', 'oldValue: unknown', 'oldValue: string'],
+  ['any callback', 'newValue: unknown', 'newValue: any'],
+  ['unknown environment', 'readonly instance: BaseClientSideWebPart<P>', 'readonly instance: unknown'],
+  ['wrong factory return', '() => IPropertyPaneConfiguration', '() => string'],
+  ['wrong preparation discriminator', "status: 'prepared'", "status: 'ready'"],
+  ['wrong lease return', 'readonly release: () => void', 'readonly release: () => number'],
+  ['extra required member', 'readonly dispose: () => void;', 'readonly dispose: () => void; readonly start: () => void;'],
+  ['any source', 'pickerSites?: string[]', 'pickerSites?: any[]'],
+  ['unknown source', 'pickerSites?: string[]', 'pickerSites?: unknown[]'],
+  ['source index signature', 'pickerSites?: string[]', '[key: string]: string[] | undefined'],
+  ['unsafe cast', "return <div>{props.propertyPane ? 'Ready' : 'Host missing'}</div>;", "return <div>{String((props.propertyPane as unknown) !== undefined)}</div>;"],
+]) test(`native structural contract rejects ${name}`, () => {
+  assert.ok(nativeDoc.includes(before), name);
+  const result = collect(replaceDoc(nativeDoc.replace(before, after)));
+  assert.equal(result.examples.length, 0, name);
+  assert.ok(result.diagnostics.some(item => item.code === 'EXECUTABLE_COMPONENT'), JSON.stringify(result.diagnostics));
+});
+test('native metadata cannot be used for non-WebPart or subject content and native port cannot hide in ordinary metadata', () => {
+  for (const [before, after] of [["host: 'webPart'", "host: 'none'"], ["contentPlacement: 'configuration'", "contentPlacement: 'subject'"]]) {
+    assert.ok(collect(replaceDoc(nativeDoc.replace(before, after))).diagnostics.some(item => item.code === 'EXECUTABLE_METADATA'));
+  }
+  assert.ok(collect(replaceDoc(nativeDoc.replace(", hostAdapter: 'propertyPane'", ''))).diagnostics.some(item => item.code === 'EXECUTABLE_COMPONENT'));
+});

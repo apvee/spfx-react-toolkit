@@ -1,0 +1,32 @@
+/** Native fixture.
+ * @example Native fixture
+ * ```tsx
+ * import * as React from 'react';
+ * import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+ * import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
+ * interface SourceProperties { pickerSites?: string[]; }
+ * interface NativePropertyPaneEnvironment<P extends object> {
+ *   readonly instance: BaseClientSideWebPart<P>;
+ *   readonly readProperties: () => P;
+ *   readonly refresh: () => void;
+ * }
+ * interface NativePropertyPaneController {
+ *   readonly getConfiguration: () => IPropertyPaneConfiguration;
+ *   readonly fieldChanged: (propertyPath: string, oldValue: unknown, newValue: unknown) => void;
+ *   readonly configurationComplete: () => void;
+ *   readonly changesApplied: () => void;
+ *   readonly dispose: () => void;
+ * }
+ * interface NativePropertyPanePreparation { readonly release: () => void; }
+ * type NativePropertyPanePreparationResult =
+ *   | { readonly status: 'prepared'; readonly lease: NativePropertyPanePreparation }
+ *   | { readonly status: 'blocked'; readonly reason: string };
+ * interface DemoPropertyPanePort<P extends object> {
+ *   readonly prepare: (create: (host: NativePropertyPaneEnvironment<P>) => NativePropertyPaneController) => NativePropertyPanePreparationResult;
+ * }
+ * export function Demo(props: { propertyPane?: DemoPropertyPanePort<SourceProperties> }): React.ReactElement {
+ *   return <div>{props.propertyPane ? 'Ready' : 'Host missing'}</div>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: 'Prepare then use native Edit.' };
+ * ```
+ */

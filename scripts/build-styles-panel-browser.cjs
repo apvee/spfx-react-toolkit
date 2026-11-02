@@ -26,6 +26,7 @@ webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 
     ...require('./executable-fixture-aliases.cjs').executableFixtureAliases(root, false),
     ...(!cardsOnly && !descriptionListOnly && !paginationOnly && !stageOnly && !shellOnly && !gridOnly && !formOnly ? { '@apvee/spfx-react-toolkit/hooks$': path.join(fixture, 'toolkit-boundary.ts'), '@apvee/spfx-react-toolkit/styles$': path.join(fixture, 'toolkit-boundary.ts') } : {}),
     ...(shellOnly ? { '@microsoft/sp-core-library$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts'), '@microsoft/sp-component-base$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts'), '@microsoft/sp-page-context$': path.join(fixture, '../demo-presentation/spfx-services.ts'), '@microsoft/sp-http$': path.join(fixture, '../demo-presentation/spfx-services.ts') } : {}),
+    ...(shellOnly ? { '@microsoft/sp-property-pane$': path.join(fixture, '../demo-presentation/spfx-property-pane.ts') } : {}),
     ...(chartProbe ? { '@fluentui/react-charts$': path.join(root, 'tests/fixtures/sx-browser/data-grid-chart-probe.tsx'), '@data-grid/actual-charts$': path.join(root, 'node_modules/@fluentui/react-charts/lib/index.js') } : {}),
     // Resolve modern Fluent/Griffel ESM to the host's legacy React 17 entry.
     'react/jsx-runtime$': require.resolve('react/jsx-runtime.js'),

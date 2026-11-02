@@ -6,8 +6,9 @@ const { assertFormExampleCoverage } = require('./form-example.helpers.cjs');
 const { collectExecutableCoverage } = require('./executable-example-coverage.helpers.cjs');
 
 const root = path.resolve(__dirname, '..');
-const [styleSurface, controlSurface, formSurface] = collectPublicSurfaces([
+const [styleSurface, controlSurface, formSurface, nativePickerSurface, nativeFileSurface] = collectPublicSurfaces([
   'helpers/styles/index.ts', 'controls/index.ts', 'controls/form/index.ts',
+  'property-pane/pickers/index.ts', 'property-pane/file-folder-picker/index.ts',
 ].map(entry => path.join(root, 'packages/spfx-react-toolkit/src', entry)));
 const hooksIndexPath = path.join(root, 'packages', 'spfx-react-toolkit', 'src', 'hooks', 'index.ts');
 const coreIndexPath = path.join(root, 'packages', 'spfx-react-toolkit', 'src', 'core', 'index.ts');
@@ -127,6 +128,11 @@ const legacySymbols = getRegistrySymbols();
 const generated = collectExecutableCoverage(read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')));
 const registrySymbols = new Set([...legacySymbols, ...generated.symbols]);
 console.log(`Generated scenario availability: ${generated.featureCount} features, ${generated.scenarioCount} scenarios, ${generated.symbols.size} unique symbols/aliases, ${generated.associationCount} scenario/API associations (not execution results).`);
+const nativeOwners = new Set([...nativePickerSurface, ...nativeFileSurface]
+  .filter(item => /^PropertyPane.+Picker$/.test(item.name))
+  .map(item => path.relative(root, item.filePath).split(path.sep).join('/') + '#' + item.name));
+for (const owner of generated.nativeOwners) if (!nativeOwners.has(owner)) throw new Error('Native executable must own a current canonical public native factory: ' + owner);
+console.log(`Native preparation availability: ${generated.nativeOwners.size}/${nativeOwners.size} canonical factory owners (production port remains absent until atomic cutover; not host execution).`);
 console.log(`Temporary legacy coverage: ${legacySymbols.size} unique symbols; existing panels remain separate from generated counts.`);
 
 assertCovered('Hooks', hookSymbols, registrySymbols);

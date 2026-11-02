@@ -10,6 +10,7 @@ function collectExecutableCoverage(text) {
     }
   }
   if (!entries || !ts.isArrayLiteralExpression(entries)) throw new Error('Generated catalogue must declare executableExamples as a literal array.');
+  const nativeOwners = new Set();
   const ids = new Set(), identities = new Set(), features = new Set(), symbols = new Set(), associations = new Set();
   for (const entry of entries.elements) {
     if (!ts.isObjectLiteralExpression(entry)) throw new Error('Generated scenario must be a literal object.');
@@ -23,6 +24,10 @@ function collectExecutableCoverage(text) {
     if (identities.has(identity)) throw new Error(`Duplicate scenario identity: ${identity}`);
     if (ids.has(id)) throw new Error(`Duplicate scenario id: ${id}`);
     identities.add(identity); ids.add(id); features.add(string('featureKey'));
+    const metadata = fields.get('metadata');
+    if (metadata && ts.isObjectLiteralExpression(metadata) && metadata.properties.some(property =>
+      ts.isPropertyAssignment(property) && property.name.text === 'hostAdapter' &&
+      ts.isStringLiteral(property.initializer) && property.initializer.text === 'propertyPane')) nativeOwners.add(string('ownerKey'));
     const names = fields.get('publicNames');
     if (!names || !ts.isArrayLiteralExpression(names)) throw new Error('Generated scenario requires literal publicNames.');
     for (const name of names.elements) {
@@ -30,7 +35,7 @@ function collectExecutableCoverage(text) {
       symbols.add(name.text); associations.add(JSON.stringify([id, name.text]));
     }
   }
-  return { featureCount: features.size, scenarioCount: ids.size, symbols, associationCount: associations.size };
+  return { featureCount: features.size, scenarioCount: ids.size, symbols, associationCount: associations.size, nativeOwners };
 }
 
 

@@ -9,7 +9,7 @@ const { bindingContractKey, memberContractKey } = require('./documentation-contr
 /** @typedef {import('./documentation-model.cjs').Diagnostic} Diagnostic */
 /** @typedef {import('./documentation-contract.cjs').DocumentationModel} DocumentationModel */
 /** @typedef {import('./documentation-contract.cjs').DocExample} DocExample */
-/** @typedef {{host: 'none'|'webPart', kind: 'snapshot'|'read'|'write', contentPlacement: 'subject'|'configuration', observe: string, hostAdapter?: 'webPartShell'}} ExecutableMetadata */
+/** @typedef {{host: 'none'|'webPart', kind: 'snapshot'|'read'|'write', contentPlacement: 'subject'|'configuration', observe: string, hostAdapter?: 'webPartShell'|'propertyPane'}} ExecutableMetadata */
 /** @typedef {{id: string, ownerKey: string, title: string, groupRoute: string, groupKey: string, featureKey: string, featureTitle: string, publicNames: string[], source: import('./documentation-model.cjs').DocLocation, code: string, metadata: ExecutableMetadata}} ExecutableExample */
 
 const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
@@ -37,7 +37,7 @@ function readMetadata(declaration) {
   const result = {};
   const allowed = {
     host: ['none', 'webPart'], kind: ['snapshot', 'read', 'write'],
-    contentPlacement: ['subject', 'configuration'], hostAdapter: ['webPartShell'],
+    contentPlacement: ['subject', 'configuration'], hostAdapter: ['webPartShell', 'propertyPane'],
   };
   for (const property of declaration.initializer.properties) {
     if (!ts.isPropertyAssignment(property) ||
@@ -102,7 +102,9 @@ function collectExecutableExamples(root, model, config) {
     if (!exports.has('Demo') && !exports.has('demo')) continue;
     const shell = source.statements.some(statement => ts.isVariableStatement(statement) &&
       statement.declarationList.declarations.some(declaration => readMetadata(declaration)?.hostAdapter === 'webPartShell'));
-    const candidate = { example, owner: runtimeOwner(model, example.ownerKey), shell };
+    const native = source.statements.some(statement => ts.isVariableStatement(statement) &&
+      statement.declarationList.declarations.some(declaration => readMetadata(declaration)?.hostAdapter === 'propertyPane'));
+    const candidate = { example, owner: runtimeOwner(model, example.ownerKey), shell, native };
     candidates.push(candidate);
     if (!exports.has('Demo') || !exports.has('demo')) report(example, 'EXECUTABLE_INCOMPLETE_CONTRACT', 'Executable examples require both named exports Demo and demo.');
     if (example.language !== 'tsx') report(example, 'EXECUTABLE_LANGUAGE', 'Executable examples require a tsx code block.');
@@ -135,12 +137,46 @@ type ShellPort = {
 export type ShellProps = Props & { shell?: ShellPort };
 export type ShellComponent = (props: ShellProps) => React.ReactElement;
 ` : '';
+  const nativeContract = candidates.some(candidate => candidate.native) ? `
+import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
+export interface NativeEnvironment<P extends object> {
+  readonly instance: BaseClientSideWebPart<P>;
+  readonly readProperties: () => P;
+  readonly refresh: () => void;
+}
+export interface NativeController {
+  readonly getConfiguration: () => IPropertyPaneConfiguration;
+  readonly fieldChanged: (propertyPath: string, oldValue: unknown, newValue: unknown) => void;
+  readonly configurationComplete: () => void;
+  readonly changesApplied: () => void;
+  readonly dispose: () => void;
+}
+export type NativeResult =
+  | { readonly status: 'prepared'; readonly lease: { readonly release: () => void } }
+  | { readonly status: 'blocked'; readonly reason: string };
+export interface NativePort<P extends object> {
+  readonly prepare: (create: (host: NativeEnvironment<P>) => NativeController) => NativeResult;
+}
+export type NativeSource<T> = T extends NativePort<infer P> ? P : never;
+` : '';
   const contractText = `import type * as React from 'react';
 export type Regions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
 export type Props = { render?: (regions: Regions) => React.ReactElement; resetRevision?: number };
 export type Component = (props: Props) => React.ReactElement;
-` + shellContract;
+` + shellContract + nativeContract;
   virtual.set(contractFile, { text: contractText });
+  for (const [filename, candidate] of [...virtual]) {
+    if (!candidate.native) continue;
+    const proofFile = filename.replace(/\.[^.]+$/, '.native.ts');
+    candidate.proofFile = proofFile;
+    virtual.set(proofFile, { text: `import type { Demo } from './${path.basename(filename, '.tsx')}';
+import type { NativeSource, NativePort } from './.__executable_contract';
+type Props = Parameters<typeof Demo>[0];
+export type Source = NativeSource<NonNullable<Props['propertyPane']>>;
+export type ExpectedPort = NativePort<Source>;
+` });
+  }
   for (const filename of virtual.keys()) if (fs.existsSync(filename)) throw new Error(`Virtual executable example collides with source file: ${path.relative(root, filename)}`);
   const host = inputs.createCompilerHost(options, model.graph.compatibilityEntries);
   const read = host.readFile.bind(host);
@@ -257,6 +293,73 @@ export type Component = (props: Props) => React.ReactElement;
         withoutUndefined(expectedType).every(part => withoutUndefined(type).some(other => equivalentShellField(part, other)));
     });
   };
+  // Native callbacks must be function properties, not TypeScript's bivariant
+  // methods. Compare every structural member/parameter/return/discriminant; the
+  // two public peer identities are checked with the exact extracted property P.
+  const equivalentNative = (actual, expected, seen = new Map()) => {
+    if (actual === expected) return true;
+    if (hasUnsafeType(actual) || hasUnsafeType(expected)) return actual.flags === expected.flags;
+    if (!equivalentType(actual, expected)) return false;
+    if (seen.get(actual) === expected) return true;
+    seen.set(actual, expected);
+    if (actual.isUnion() || expected.isUnion()) {
+      const a = actual.isUnion() ? actual.types : [actual], b = expected.isUnion() ? expected.types : [expected];
+      return a.length === b.length && a.every(part => b.some(target => equivalentNative(part, target, new Map(seen))));
+    }
+    if (checker.getIndexInfosOfType(actual).length !== checker.getIndexInfosOfType(expected).length) return false;
+    for (const kind of [ts.SignatureKind.Call, ts.SignatureKind.Construct]) {
+      const a = checker.getSignaturesOfType(actual, kind), b = checker.getSignaturesOfType(expected, kind);
+      if (a.length !== b.length || !a.every((call, index) => {
+        const target = b[index];
+        return call.parameters.length === target.parameters.length && call.minArgumentCount === target.minArgumentCount &&
+          (call.typeParameters?.length ?? 0) === (target.typeParameters?.length ?? 0) &&
+          equivalentNative(checker.getReturnTypeOfSignature(call), checker.getReturnTypeOfSignature(target), new Map(seen)) &&
+          call.parameters.every((parameter, i) => equivalentNative(
+            checker.getTypeOfSymbolAtLocation(parameter, parameter.valueDeclaration || contractSource),
+            checker.getTypeOfSymbolAtLocation(target.parameters[i], target.parameters[i].valueDeclaration || contractSource), new Map(seen)));
+      })) return false;
+    }
+    const a = checker.getPropertiesOfType(actual), b = checker.getPropertiesOfType(expected);
+    return a.length === b.length && a.every(property => {
+      const target = checker.getPropertyOfType(expected, property.name);
+      if (!target || Boolean(property.flags & ts.SymbolFlags.Optional) !== Boolean(target.flags & ts.SymbolFlags.Optional)) return false;
+      if (property.declarations?.some(node => ts.isMethodSignature(node) || ts.isMethodDeclaration(node))) return false;
+      const readonly = symbol => Boolean(symbol.declarations?.some(node => ts.getCombinedModifierFlags(node) & ts.ModifierFlags.Readonly));
+      if (readonly(property) !== readonly(target)) return false;
+      return equivalentNative(checker.getTypeOfSymbolAtLocation(property, property.valueDeclaration || contractSource),
+        checker.getTypeOfSymbolAtLocation(target, target.valueDeclaration || contractSource), new Map(seen));
+    });
+  };
+  const safeNativeSource = (type, seen = new Set()) => {
+    if (hasUnsafeType(type)) return false;
+    if (seen.has(type)) return true;
+    seen.add(type);
+    if (type.isUnion()) return type.types.every(part => safeNativeSource(part, seen));
+    if (checker.isArrayType(type) || checker.isTupleType(type)) return checker.getTypeArguments(type).every(part => safeNativeSource(part, seen));
+    if (type.flags & (ts.TypeFlags.StringLike | ts.TypeFlags.NumberLike | ts.TypeFlags.BooleanLike | ts.TypeFlags.Undefined | ts.TypeFlags.Void)) return true;
+    if (checker.getIndexInfosOfType(type).length) return false;
+    for (const call of checker.getSignaturesOfType(type, ts.SignatureKind.Call)) {
+      if (!safeNativeSource(checker.getReturnTypeOfSignature(call), seen) || call.parameters.some(parameter =>
+        !safeNativeSource(checker.getTypeOfSymbolAtLocation(parameter, parameter.valueDeclaration || contractSource), seen))) return false;
+    }
+    return checker.getPropertiesOfType(type).every(property =>
+      !property.declarations?.some(node => ts.isMethodSignature(node) || ts.isMethodDeclaration(node)) &&
+      safeNativeSource(checker.getTypeOfSymbolAtLocation(property, property.valueDeclaration || contractSource), seen));
+  };
+  const compatibleNativePort = (props, candidate, location, source) => {
+    const property = checker.getPropertyOfType(props, 'propertyPane');
+    if (!property || !(property.flags & ts.SymbolFlags.Optional)) return false;
+    const proof = program.getSourceFile(candidate.proofFile);
+    const types = new Map(exportsOf(proof).map(symbol => [symbol.name, checker.getDeclaredTypeOfSymbol(symbol)]));
+    const domain = types.get('Source');
+    if (!domain || !safeNativeSource(domain) || checker.getIndexInfosOfType(domain).length || !checker.getPropertiesOfType(domain).length) return false;
+    let unsafeCast = false;
+    const visit = node => { if (ts.isAsExpression(node) || ts.isTypeAssertionExpression(node) || ts.isNonNullExpression(node)) unsafeCast = true; ts.forEachChild(node, visit); };
+    visit(source);
+    if (unsafeCast) return false;
+    const alternatives = withoutUndefined(checker.getTypeOfSymbolAtLocation(property, location));
+    return alternatives.length === 1 && equivalentNative(alternatives[0], types.get('ExpectedPort'));
+  };
   const compatibleOptionalProp = (props, expected, name, location) => {
     const prop = checker.getPropertyOfType(props, name);
     if (!prop) return true;
@@ -292,16 +395,21 @@ export type Component = (props: Props) => React.ReactElement;
     const type = checker.getTypeOfSymbolAtLocation(component, location);
     const signatures = checker.getSignaturesOfType(type, ts.SignatureKind.Call);
     const shellAdapter = candidate.metadata?.hostAdapter === 'webPartShell';
+    const nativeAdapter = candidate.metadata?.hostAdapter === 'propertyPane';
     const expectedProps = contracts.get(shellAdapter ? 'ShellProps' : 'Props');
-    let valid = !hasUnsafeType(type) && signatures.length > 0 && checker.isTypeAssignableTo(type, contracts.get(shellAdapter ? 'ShellComponent' : 'Component'));
+    let valid = !hasUnsafeType(type) && signatures.length > 0 && (nativeAdapter || checker.isTypeAssignableTo(type, contracts.get(shellAdapter ? 'ShellComponent' : 'Component')));
     for (const signature of signatures) {
-      if (hasUnsafeType(checker.getReturnTypeOfSignature(signature))) valid = false;
+      if (hasUnsafeType(checker.getReturnTypeOfSignature(signature)) ||
+        !checker.isTypeAssignableTo(checker.getReturnTypeOfSignature(signature), checker.getReturnTypeOfSignature(checker.getSignaturesOfType(contracts.get('Component'), ts.SignatureKind.Call)[0])) ||
+        signature.minArgumentCount > 1) valid = false;
       if (signature.parameters[0]) {
         const props = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(signature.parameters[0], location));
+        if (nativeAdapter && checker.getPropertiesOfType(props).some(property => !(property.flags & ts.SymbolFlags.Optional))) valid = false;
         if (hasUnsafeType(props) || !compatibleOptionalProp(props, expectedProps, 'render', location) ||
           !compatibleOptionalProp(props, expectedProps, 'resetRevision', location) ||
-          (shellAdapter ? !compatibleOptionalProp(props, expectedProps, 'shell', location) : checker.getPropertyOfType(props, 'shell'))) valid = false;
-      }
+          (shellAdapter ? !compatibleOptionalProp(props, expectedProps, 'shell', location) : checker.getPropertyOfType(props, 'shell')) ||
+          (nativeAdapter ? !compatibleNativePort(props, candidate, location, source) : checker.getPropertyOfType(props, 'propertyPane'))) valid = false;
+      } else if (nativeAdapter) valid = false;
     }
     if (!valid) report(example, 'EXECUTABLE_COMPONENT', 'Demo must synchronously return React.ReactElement, mount without required props, and accept compatible optional render/resetRevision inputs.', location);
   }

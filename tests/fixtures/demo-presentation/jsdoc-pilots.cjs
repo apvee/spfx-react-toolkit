@@ -74,8 +74,10 @@ function filterPilotGroups(groups) {
     for (const scenario of scenarios) if (matches[0].scenarios.filter(entry => entry.title === scenario).length !== 1)
       throw new Error(`Missing pilot scenario or duplicate: ${title}/${scenario}`);
   }
-  return groups.map(group => ({ ...group, features: group.features.filter(feature => Object.hasOwn(pilotTitles, feature.title))
-    .map(feature => ({ ...feature, scenarios: feature.scenarios.filter(entry => pilotTitles[feature.title].includes(entry.title)) })) }))
+  return groups.map(group => ({ ...group, features: group.features
+    .map(feature => ({ ...feature, scenarios: feature.scenarios.filter(entry =>
+      pilotTitles[feature.title]?.includes(entry.title) || entry.metadata?.hostAdapter === 'propertyPane') }))
+    .filter(feature => feature.scenarios.length > 0) }))
     .filter(group => group.features.length > 0);
 }
 module.exports = { pilotTitles, filterPilotGroups };
