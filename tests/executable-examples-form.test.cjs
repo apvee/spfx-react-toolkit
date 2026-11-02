@@ -173,3 +173,61 @@ for (const kind of Object.keys(titles)) test(`${kind} native per-form dictionary
     await f.select('mode','array'); assert.ok([...f.find('array-section').querySelectorAll('button')].find(node=>node.textContent==='Add report line'));
   }
 });
+for (const destination of ['rules', 'array']) {
+  test(`typed required Title remains registered across repeated object to ${destination} transitions`, async t => {
+    const f = fixture(t, 'typed');
+    const title = () => f.find('settings-reference').querySelector('input');
+    const saves = () => Number(f.find('status').textContent.match(/Saves: (\d+)/)[1]);
+    const requiredError = () => assert.ok(JSON.parse(f.find('errors').textContent).includes('reference: Title is required'));
+
+    await f.change(title(), '');
+    await f.submit();
+    assert.equal(saves(), 0, 'the initial empty Title must block saving');
+    requiredError();
+
+    await f.select('mode', 'object');
+    let preview = f.find('root').querySelector('input[readonly]');
+    assert.ok(preview, 'object mode retains a native readonly reference preview');
+    assert.equal(preview.readOnly, true);
+    assert.equal(preview.value, '');
+    await f.select('mode', destination);
+    await f.submit();
+    assert.equal(saves(), 0, 'leaving the readonly preview must not disable required Title validation');
+    assert.equal(f.output(), undefined, 'an empty Title must never reach the save callback');
+    requiredError();
+
+    await f.change(title(), 'First valid report');
+    await f.submit();
+    assert.equal(saves(), 1);
+    assert.equal(f.output().reference, 'First valid report');
+
+    await f.select('mode', 'object');
+    preview = f.find('root').querySelector('input[readonly]');
+    assert.equal(preview.readOnly, true);
+    assert.equal(preview.value, 'First valid report');
+    await f.change(title(), 'Updated while previewed');
+    assert.equal(preview.value, 'Updated while previewed', 'the readonly preview follows the watched Title');
+    await f.check('disabled', true);
+    assert.equal(preview.disabled, true, 'the preview preserves the disabled presentation');
+    await f.check('disabled', false);
+    assert.equal(preview.disabled, false);
+    await f.select('mode', destination);
+    await f.submit();
+    assert.equal(saves(), 2);
+    assert.equal(f.output().reference, 'Updated while previewed');
+
+    await f.change(title(), '');
+    await f.select('mode', 'object');
+    assert.equal(f.find('root').querySelector('input[readonly]').value, '');
+    await f.select('mode', destination);
+    await f.submit();
+    assert.equal(saves(), 2, 'required validation survives repeated composition boundaries');
+    assert.equal(f.output().reference, 'Updated while previewed', 'the previous saved snapshot stays intact');
+    requiredError();
+
+    await f.change(title(), 'Recovered valid report');
+    await f.submit();
+    assert.equal(saves(), 3);
+    assert.equal(f.output().reference, 'Recovered valid report');
+  });
+}

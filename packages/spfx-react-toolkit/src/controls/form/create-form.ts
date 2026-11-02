@@ -397,7 +397,7 @@ import { createStandardSchemaResolver } from './form-validation.internal';
  *           {family !== 'rules' && <SettingsGroup.Item field title="Enabled" description="Changes are persisted only by Save report." data-form-demo="settings-enabled"><Order.Switch name="enabled" /></SettingsGroup.Item>}
  *         </SettingsGroup>
  *         {family === 'rules' ? variableField() : family === 'object' ? <>
- *           <Order.Input name="reference" label="Read-only reference preview" readOnly /><CustomField />
+ *           <Field label="Read-only reference preview"><Input value={values.reference} readOnly disabled={disabled} /></Field><CustomField />
  *           <Order.Object name="customer">{({ Fields }) => <Fields.Input name="name" label="Owner" />}</Order.Object>
  *           <Order.ObjectSection name="address" disabled={scopeDisabled} title={{ 'data-form-demo': 'slot-section-title', children: 'Location' }} description={{ 'data-form-demo': 'slot-section-description', children: (Component, props) => <Component {...props}>Team address.</Component> }}>{({ Fields }) => <Fields.Input name="city" label="City" />}</Order.ObjectSection>
  *         </> : <>
