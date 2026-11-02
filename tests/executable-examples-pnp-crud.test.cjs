@@ -644,3 +644,59 @@ for (const action of ['Cancel', 'Escape']) for (const origin of ['disabled', 're
     assert.equal(business(f).length, 1);
     assert.equal(document.activeElement === f.container.querySelector('[aria-label="List Title"]'), true, 'later read publication leaves focus alone');
 });
+
+for (const refreshFails of [false, true])
+    test(`CRUD superseded page rejection cannot replace a newer automatic refresh ${refreshFails ? 'error' : 'success'}`, async (t) => {
+        const f = fixture(t);
+        const ten = Array.from({ length: 10 }, (_, i) => ({ Id: 42 - i, Title: 'Original ' + i }));
+        await load(f, ten);
+        const { promise, index } = await startCreate(f);
+        await finish(f, index, json({ Id: 81 }));
+        await promise;
+        let page;
+        f.h.act(() => { page = f.action('Load More')(); });
+        await drain(f);
+        const pageIndex = f.calls.length - 1;
+        assert.equal(new URL(f.calls[pageIndex].url).searchParams.get('$skiptoken'), 'Paged=TRUE&p_ID=10', 'hold the page before the existing refresh timer fires');
+        await new Promise(resolve => setTimeout(resolve, 110));
+        await drain(f);
+        const refreshIndex = f.calls.length - 1;
+        assert.notEqual(refreshIndex, pageIndex, 'the actual automatic query supersedes the held page');
+        assert.equal(new URL(f.calls[refreshIndex].url).searchParams.has('$skiptoken'), false);
+        await finish(f, refreshIndex, refreshFails
+            ? new Response('Current refresh denial', { status: 403 })
+            : json({ value: [{ Id: 81, Title: 'Newer refresh result' }] }));
+        if (refreshFails)
+            assert.match(f.container.textContent, /Request error:.*Current refresh denial/);
+        else {
+            assert.match(f.container.textContent, /Newer refresh result/);
+            assert.equal(f.container.querySelector('[role="alert"]'), null);
+        }
+        await finish(f, pageIndex, new Response('Obsolete page denial', { status: 403 }));
+        await page;
+        assert.equal(f.container.textContent.includes('Obsolete page denial'), false, 'superseded page must not publish its obsolete failure');
+        if (refreshFails) {
+            assert.match(f.container.textContent, /Request error:.*Current refresh denial/, 'the hook current error remains authoritative');
+            assert.match(f.container.textContent, /Original 0/, 'failed refresh preserves previous rows');
+        }
+        else {
+            assert.match(f.container.textContent, /Newer refresh result/, 'obsolete rejection cannot replace newer rows');
+            assert.equal(f.container.querySelector('[role="alert"]'), null);
+        }
+        const beforeRetry = f.calls.length;
+        const loadButton = [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Load');
+        assert.equal(loadButton.disabled, false, 'read admission recovers when the original page promise settles');
+        f.click('Load');
+        await drain(f);
+        assert.equal(f.calls.length, beforeRetry + 1);
+        assert.equal(new URL(f.calls[beforeRetry].url).searchParams.has('$skiptoken'), false);
+        await finish(f, beforeRetry, new Response('Current explicit denial', { status: 403 }));
+        assert.match(f.container.textContent, /Request error:.*Current explicit denial/, 'a current explicit read error still appears');
+        f.click('Dismiss');
+        assert.equal(f.container.querySelector('[role="alert"]'), null);
+        f.click('Load');
+        await drain(f);
+        await finish(f, f.calls.length - 1, json({ value: [{ Id: 82, Title: 'Recovered current rows' }] }));
+        assert.match(f.container.textContent, /Recovered current rows/);
+        assert.equal(f.container.querySelector('[role="alert"]'), null);
+    });

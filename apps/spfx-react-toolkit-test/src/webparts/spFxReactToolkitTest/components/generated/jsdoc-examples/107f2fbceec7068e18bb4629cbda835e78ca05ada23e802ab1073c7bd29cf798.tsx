@@ -35,6 +35,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
   const [writing, setWriting] = React.useState(false);
   const [activity, setActivity] = React.useState<{ token: object; text: string }>();
   const [baseline, setBaseline] = React.useState<object>();
+  const [readScope, setReadScope] = React.useState<object>();
   const [failure, setFailure] = React.useState<{ token: object; message: string }>();
   const [notice, setNotice] = React.useState<{ token: object; message: string }>();
   type Consent = { token: object; id: number; trigger: HTMLButtonElement; remove: (id: number) => Promise<void> };
@@ -82,12 +83,15 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     if (!current() || !ready || busy() || (more && (!shown || !list.hasMore || latestPage.current !== list.loadMore))) return;
     const ticket = { token }; command.current = ticket;
     setActivity({ token, text: more ? 'Loading more…' : 'Loading…' }); setFailure(undefined);
+    // Reveal first-Load errors; request currentness remains owned by the hook.
+    setReadScope(token);
     try {
       if (more) await list.loadMore();
       else await list.query(q => q.select('Id', 'Title').orderBy('Id', false));
       if (current()) setBaseline(token);
-    } catch (error) {
-      if (current()) setFailure({ token, message: error instanceof Error ? error.message : String(error) });
+    } catch {
+      // A newer automatic query can supersede this page within the same token.
+      // Consume its rejection and display only the hook's current read error.
     } finally {
       if (command.current === ticket) { command.current = undefined; if (current()) setActivity(undefined); }
     }
@@ -135,7 +139,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
       flushSync(() => setApproval(undefined)); input.current?.focus();
     });
   };
-  const error = failure?.token === token ? failure.message : shown ? list.error?.message : undefined;
+  const error = failure?.token === token ? failure.message : shown || readScope === token ? list.error?.message : undefined;
   const regions: DemoRegions = {
     controls: <div className={layout}>
       <Field label="List Title"><Input ref={input} aria-label="List Title" value={title} readOnly={localBusy}
