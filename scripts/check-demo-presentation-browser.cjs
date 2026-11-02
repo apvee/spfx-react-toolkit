@@ -6,6 +6,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 const { teamsDarkTheme, webLightTheme } = require('@fluentui/react-components');
+const { selectGeneratedShellScenario } = require('./web-part-shell-browser.helpers.cjs');
 const { groupsProduct } = require('../tests/fixtures/demo-control-isolation/task3-product.browser.cjs');
 const root = path.resolve(__dirname, '..');
 const directory = path.join(root, process.env.DEMO_PRESENTATION_MODE === 'source' ? 'temp/demo-presentation-source-browser' : 'temp/demo-presentation-browser');
@@ -31,14 +32,28 @@ const settle = page => page.evaluate(() => new Promise(resolve => requestAnimati
 async function guardNetwork(page, url) {
   await page.route('**/*', async route => { const request = new URL(route.request().url()); if (/^https:\/\/res-1\.cdn\.office\.net\/files\/fabric-cdn-prod_[^/]+\/assets\/fonts\/segoeui-westeuropean\/segoeui-(regular|semibold|bold)\.woff2?$/.test(request.href)) { fontAssets.push({ requested: request.href, localSource: '/System/Library/Fonts/Supplemental/Arial.ttf', boundary: 'Unavailable external legacy text font; local system substitute' }); return route.fulfill({ contentType: 'font/ttf', body: fs.readFileSync('/System/Library/Fonts/Supplemental/Arial.ttf') }); } if (request.origin !== url && !['data:', 'blob:'].includes(request.protocol)) { diagnostics.push({ type: 'network', text: request.href }); return route.abort(); } return route.continue(); });
 }
+const selectedPanels = new WeakMap();
+const activePanel = page => selectedPanels.get(page) || page.locator('[role="region"][aria-label]').filter({ has: page.locator('[data-demo-section]') }).first();
 async function select(page, key) {
+  if (key === 'web-part-shell') {
+    selectedPanels.set(page, await selectGeneratedShellScenario(page));
+    return;
+  }
   const entry = entries.find(item => item.key === key);
-  const tab = page.getByRole('tab', { name: entry.title, exact: true });
-  await tab.click();
-  await page.waitForFunction(() => document.querySelector('[role=tabpanel] h3, [role=tabpanel] [data-shell-demo=panel]'));
+  const mobile = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
+  if (await mobile.isVisible()) await mobile.selectOption(`legacy:${key}`);
+  else {
+    const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
+    const group = nav.getByRole('button', { name: /^Scenari esistenti/ }).first();
+    if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
+    await nav.getByRole('button', { name: entry.title, exact: true }).click();
+    check(`${key}: selected`, await nav.getByRole('button', { name: entry.title, exact: true }).getAttribute('aria-current'), 'true');
+  }
+  const panel = page.getByRole('region', { name: entry.title, exact: true });
+  selectedPanels.set(page, panel);
+  await panel.locator('[data-demo-section]').waitFor();
   await settle(page);
-  check(`${key}: selected`, await tab.getAttribute('aria-selected'), 'true');
-  check(`${key}: tabpanel linkage`, await page.getByRole('tabpanel').getAttribute('aria-labelledby'), await tab.getAttribute('id'));
+  check(`${key}: selected feature region`, await panel.getAttribute('aria-label'), entry.title);
 }
 async function capture(page, name) {
   const file = path.join(output, `${name}.png`); await page.screenshot({ path: file, fullPage: true }); screenshots.push(file);
@@ -49,7 +64,7 @@ async function overflow(page, name) {
   check(`${name}: page overflow`, value.scroll <= value.client + 1, true);
 }
 async function labels(page, name) {
-  const missing = await page.getByRole('tabpanel').evaluate(panel => [...panel.querySelectorAll('input:not([type=hidden]),select,textarea,button')].filter(element => {
+  const missing = await activePanel(page).evaluate(panel => [...panel.querySelectorAll('input:not([type=hidden]),select,textarea,button')].filter(element => {
     if (!element.getClientRects().length || element.closest('[inert]') || getComputedStyle(element).visibility === 'hidden') return false;
     const labelled = element.getAttribute('aria-labelledby');
     const name = element.getAttribute('aria-label') || (labelled && labelled.split(' ').map(id => document.getElementById(id)?.textContent || '').join(' ')) || [...element.labels || []].map(label => label.textContent).join(' ') || (element.tagName === 'BUTTON' ? element.textContent : '');
@@ -59,7 +74,7 @@ async function labels(page, name) {
 }
 async function singleExample(page, key, checkpoint = 'initial') {
   const name = `${key}/${checkpoint}`;
-  const panel = page.getByRole('tabpanel');
+  const panel = activePanel(page);
   check(`${name}: one demo section`, await panel.locator('[data-demo-section]').count(), 1);
   check(`${name}: one configuration card`, await panel.locator('[data-demo-configuration]').count(), 1);
   check(`${name}: one principal subject or current result`, await panel.locator('[data-demo-subject],[data-demo-result]').count(), 1);
@@ -75,7 +90,7 @@ async function singleExample(page, key, checkpoint = 'initial') {
 // Select only explicit principal variants: ordinary property controls are covered by
 // panel behavior checks, rather than an exhaustive combination of every setting.
 async function singleExampleTransitions(page, key, inspectVariant = async () => {}) {
-  const panel = page.getByRole('tabpanel');
+  const panel = activePanel(page);
   const diagnostics = panel.getByRole('button', { name: 'Advanced diagnostics', exact: true });
   const openDiagnostics = async checkpoint => {
     if (await diagnostics.count()) {
@@ -115,10 +130,10 @@ async function singleExampleTransitions(page, key, inspectVariant = async () => 
   }
 }
 async function interact(page, key) {
-  const panel = page.getByRole('tabpanel');
+  const panel = activePanel(page);
   switch (key) {
     case 'cards': await panel.locator('[data-card-instance=main] [data-cards-demo=title-input]').fill('Integrated title'); check('Cards editable title', await panel.locator('[data-card-instance=main] [data-cards-demo=preview-card] h2').textContent(), 'Integrated title'); break;
-    case 'web-part-shell': await panel.locator('[data-shell-demo=note]').fill('Retained shell note'); await panel.locator('[data-shell-demo=increment]').click(); check('Shell counter', (await panel.locator('[data-shell-demo=observations]').textContent()).includes('"count":1'), true); break;
+    case 'web-part-shell': await panel.getByRole('button', { name: 'Show title', exact: true }).click(); check('Shell actual title visibility', await page.locator('[data-web-part-shell-header]').count(), 1); break;
     case 'description-list': { const select = panel.locator('[data-description-list-demo=layout]').first(); await select.selectOption('vertical'); check('DescriptionList actual vertical term/value layout', await panel.locator('[data-description-list-demo=list]').first().evaluate(list => { const term = list.querySelector('dt').getBoundingClientRect(), value = list.querySelector('dd').getBoundingClientRect(); return value.top >= term.bottom - 1; }), true); break; }
     case 'pagination': { const before = await panel.locator('[data-pagination-demo=summary]').first().textContent(); await panel.getByRole('button', { name: 'Next page', exact: true }).first().click(); check('Pagination actual results change', await panel.locator('[data-pagination-demo=summary]').first().textContent() !== before, true); break; }
     case 'data-grid': { const row = panel.locator('#data-grid-main .fui-DataGridBody > [role=row]').first(); const before = (await row.boundingBox()).height; await panel.locator('#dg-size').selectOption('small'); check('DataGrid actual row height follows size', (await row.boundingBox()).height < before, true); break; }
@@ -167,7 +182,7 @@ async function interact(page, key) {
     }
     case 'file-folder-picker': {
       await panel.getByRole('switch', { name: 'Custom browse text', exact: true }).check();
-      await page.waitForFunction(() => document.querySelector('[role=tabpanel] button[aria-haspopup=dialog]')?.getAttribute('aria-label') === 'Choose report attachments…');
+      await panel.getByRole('button', { name: 'Choose report attachments…', exact: true }).waitFor();
       check('File picker per-instance browse dictionary', await panel.locator('button[aria-haspopup=dialog]').getAttribute('aria-label'), 'Choose report attachments…');
       break;
     }
@@ -245,20 +260,20 @@ async function liveTheme(page) {
     if (process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1') {
       await require('./jsdoc-pilots-browser.helpers.cjs').jsdocPilotsBrowser({ page, check, settle, overflow, capture });
       check('Unexpected JSDoc pilot diagnostics', diagnostics, []);
-      console.log(`Nine source-owned JSDoc scenarios: ${checks.length} checks PASS (simulated native transport).`);
+      console.log(`Focused source-owned JSDoc scenarios: ${checks.length} checks PASS (simulated native transport).`);
       return;
     }
-    check('Actual registered tab count', await page.getByRole('tab').count(), entries.length);
+    check('Actual remaining transitional feature count', await page.locator('[data-example-feature^="legacy:"]').count(), entries.length);
     check('Coverage detailed default collapsed', await page.getByRole('button', { name: 'Detailed package coverage', exact: true }).getAttribute('aria-expanded'), 'false');
     await page.screenshot({ path: path.join(output, 'initial-viewport.png') });
     if (process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1') {
       for (const key of ['file-folder-picker', 'pickers', 'pagination', 'data-grid', 'form', 'stage', 'web-part-shell', 'editable-text']) {
         await select(page, key);
         try { await interact(page, key); } catch (error) {
-          fs.writeFileSync(path.join(output, 'localization-debug.json'), JSON.stringify(await page.getByRole('tabpanel').evaluate(panel => ({ key: panel.textContent?.slice(0, 6000), controls: [...panel.querySelectorAll('input,textarea,button,form')].map(element => ({ tag: element.tagName, name: element.getAttribute('name'), type: element.getAttribute('type'), disabled: element.disabled, value: element.value, text: element.tagName === 'BUTTON' ? element.textContent : undefined, noValidate: element.noValidate })) })), undefined, 2));
+          fs.writeFileSync(path.join(output, 'localization-debug.json'), JSON.stringify(await activePanel(page).evaluate(panel => ({ key: panel.textContent?.slice(0, 6000), controls: [...panel.querySelectorAll('input,textarea,button,form')].map(element => ({ tag: element.tagName, name: element.getAttribute('name'), type: element.getAttribute('type'), disabled: element.disabled, value: element.value, text: element.tagName === 'BUTTON' ? element.textContent : undefined, noValidate: element.noValidate })) })), undefined, 2));
           throw error;
         }
-        const panel = page.getByRole('tabpanel');
+        const panel = activePanel(page);
         if (key === 'data-grid') {
           await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click();
           await panel.locator('#dg-strings').check();
@@ -277,11 +292,14 @@ async function liveTheme(page) {
           await page.getByRole('button', { name: 'Dismiss A', exact: true }).click();
           check('Stage custom close dictionary', await page.locator('.fui-PopoverSurface').count(), 0);
         } else if (key === 'web-part-shell') {
+          await page.evaluate(() => window.shellExampleFixture.setMode('Edit'));
+          await settle(page);
           await panel.getByRole('switch', { name: 'Show title', exact: true }).check();
           await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click();
           await panel.getByRole('switch', { name: 'Custom title naming', exact: true }).check();
           await page.locator('[aria-label="Project section heading"]').waitFor();
           check('Shell custom title naming dictionary', await page.locator('[aria-label="Project section heading"]').count(), 1);
+          await page.evaluate(() => window.shellExampleFixture.setMode('Read')); await settle(page);
         } else if (key === 'editable-text') {
           const before = await panel.locator('[data-editable-text-demo=stored]').textContent();
           await panel.locator('[data-editable-text-demo=mode]').selectOption('edit');
@@ -325,13 +343,13 @@ async function liveTheme(page) {
         await settle(page);
         await capture(page, name);
         const subjectFile = path.join(output, `${name}-subject.png`);
-        await page.getByRole('tabpanel').locator('[data-demo-subject]').screenshot({ path: subjectFile }); screenshots.push(subjectFile);
+        await activePanel(page).locator('[data-demo-subject]').screenshot({ path: subjectFile }); screenshots.push(subjectFile);
       };
       await select(page, 'groups');
       check('Groups visible card appearance is the demo default', await page.locator('select[data-groups-demo=appearance]').inputValue(), 'filled');
       check('Groups appearance has only approved values', await page.locator('select[data-groups-demo=appearance] option').evaluateAll(nodes => nodes.map(node => node.value)), ['filled', 'alternate', 'outline']);
       await groupsProduct(page, { check });
-      const panel = page.getByRole('tabpanel');
+      const panel = activePanel(page);
       for (const type of ['settings', 'accordion']) {
         await panel.locator('select[data-demo-variant=GroupType]').selectOption(type);
         if (type === 'accordion') {
@@ -415,7 +433,7 @@ async function liveTheme(page) {
     }
     if (process.env.DEMO_PRESENTATION_ENGLISH_ONLY === '1') {
       const englishCopy = async key => {
-        const panel = page.getByRole('tabpanel');
+        const panel = activePanel(page);
         check(`${key}: English configuration heading`, await panel.getByText(/^Configuration and (simulation|results)$/).count(), 1);
         const diagnosticHeaders = panel.locator('[data-demo-configuration] > .fui-Accordion > .fui-AccordionItem > .fui-AccordionHeader button');
         check(`${key}: English diagnostics label when present`, await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).count(), await diagnosticHeaders.count());
@@ -430,7 +448,7 @@ async function liveTheme(page) {
       await select(page, 'cards');
       const title = page.locator('[data-card-instance=main] [data-cards-demo=title-input]');
       check('Cards English default title', await title.inputValue(), 'Quarterly report');
-      await page.getByRole('tabpanel').screenshot({ path: path.join(output, 'cards-english.png') });
+      await activePanel(page).screenshot({ path: path.join(output, 'cards-english.png') });
       await select(page, 'relative-time');
       check('RelativeTime English default locale', await page.locator('[data-relative-time-demo=locale]').inputValue(), 'en-US');
       await interact(page, 'relative-time');
@@ -447,10 +465,10 @@ async function liveTheme(page) {
       return;
     }
     for (const entry of entries) {
-      await select(page, entry.key); check(`${entry.key}: meaningful primary example`, await page.getByRole('tabpanel').locator('h3,[data-shell-demo=panel]').count() > 0, true);
+      await select(page, entry.key); check(`${entry.key}: meaningful primary example`, await activePanel(page).locator('h3,[data-shell-demo=panel]').count() > 0, true);
       await singleExampleTransitions(page, entry.key);
-      check(`${entry.key}: duplicate RTL demos absent`, await page.getByRole('tabpanel').getByRole('button', { name: /Independent RTL instance/ }).count(), 0);
-      const layoutIssues = await page.getByRole('tabpanel').evaluate(panel => [...panel.querySelectorAll('[data-demo-section]')].flatMap(section => {
+      check(`${entry.key}: duplicate RTL demos absent`, await activePanel(page).getByRole('button', { name: /Independent RTL instance/ }).count(), 0);
+      const layoutIssues = await activePanel(page).evaluate(panel => [...panel.querySelectorAll('[data-demo-section]')].flatMap(section => {
         const tools = section.querySelector(':scope > [data-demo-configuration]');
         const issues = [];
         if (!tools || getComputedStyle(tools).backgroundColor !== 'rgba(0, 0, 0, 0)' || getComputedStyle(tools).boxShadow !== 'none') issues.push('Configuration card must be transparent and have no shadow');
@@ -464,20 +482,27 @@ async function liveTheme(page) {
       check(`${entry.key}: approved section structure`, layoutIssues, []);
       await labels(page, entry.key);
       try { await interact(page, entry.key); } catch (error) {
-        fs.writeFileSync(path.join(output, 'interaction-debug.json'), JSON.stringify(await page.getByRole('tabpanel').evaluate(panel => ({ text: panel.textContent?.slice(0, 6000), controls: [...panel.querySelectorAll('input,select,button')].map(element => ({ tag: element.tagName, label: element.getAttribute('aria-label'), text: element.tagName === 'BUTTON' ? element.textContent : undefined, value: element.value })) })), undefined, 2));
+        fs.writeFileSync(path.join(output, 'interaction-debug.json'), JSON.stringify(await activePanel(page).evaluate(panel => ({ text: panel.textContent?.slice(0, 6000), controls: [...panel.querySelectorAll('input,select,button')].map(element => ({ tag: element.tagName, label: element.getAttribute('aria-label'), text: element.tagName === 'BUTTON' ? element.textContent : undefined, value: element.value })) })), undefined, 2));
         throw error;
       }
       await singleExample(page, entry.key, 'after-interaction'); console.log(`Verified interaction: ${entry.key}`);
       for (const width of [1280, 640, 320]) { await page.setViewportSize({ width, height: 1000 }); await settle(page); await singleExampleTransitions(page, entry.key, variant => overflow(page, `${entry.key}/${width}/${variant}`)); await capture(page, `${entry.key}-${width}`); await overflow(page, `${entry.key}/${width}`); }
       await page.setViewportSize({ width: 1280, height: 1000 });
     }
+    await select(page, 'web-part-shell'); await interact(page, 'web-part-shell');
+    const retainedShell = await selectGeneratedShellScenario(page, 'Retain content through Shell presentation changes');
+    await retainedShell.getByRole('textbox', { name: 'Project note', exact: true }).fill('Retained shell note');
+    await retainedShell.getByRole('button', { name: 'Increment counter', exact: true }).click();
+    check('Shell source counter', (await retainedShell.locator('[data-shell-demo=observations]').textContent()).includes('"count":1'), true);
     await liveTheme(page);
     await page.evaluate(() => window.demoFixtureHost.update({ theme: 'light', dir: 'ltr' }));
     await page.setViewportSize({ width: 320, height: 1000 }); await settle(page);
-    const firstTab = page.getByRole('tab').first(); await firstTab.focus(); await page.keyboard.press('ArrowRight'); await settle(page);
-    check('Keyboard arrow reaches and activates second tab', await page.getByRole('tab').nth(1).getAttribute('aria-selected'), 'true');
-    const tabs = page.getByRole('tab');
-    for (let i = 2; i < entries.length; i++) { await page.keyboard.press('ArrowRight'); await settle(page); check(`Keyboard reaches tab ${i + 1}`, await tabs.nth(i).getAttribute('aria-selected'), 'true'); }
+    const featureSelect = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
+    await featureSelect.selectOption(`legacy:${entries[0].key}`); await featureSelect.focus();
+    for (let index = 1; index < entries.length; index++) {
+      await page.keyboard.press('ArrowDown'); await settle(page);
+      check(`Keyboard reaches transitional feature ${index + 1}`, await featureSelect.inputValue(), `legacy:${entries[index].key}`);
+    }
     await capture(page, 'keyboard-navigation-320');
     for (const zoom of [1, 2]) {
       const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'demo-presentation-native-zoom-')); fs.mkdirSync(path.join(profile, 'Default'));
@@ -485,9 +510,9 @@ async function liveTheme(page) {
       let context;
       try {
         context = await chromium.launchPersistentContext(profile, { executablePath, headless: true, viewport: null, args: ['--window-size=1440,1000'] });
-        const native = context.pages()[0]; observe(native); await guardNetwork(native, url); await native.goto(url); await native.getByRole('tabpanel').locator('h3').first().waitFor();
+        const native = context.pages()[0]; observe(native); await guardNetwork(native, url); await native.goto(url); await native.locator('[data-demo-section]').first().waitFor();
         metrics.push(await native.evaluate(() => ({ width: innerWidth, height: innerHeight, dpr: devicePixelRatio, scale: visualViewport.scale })));
-        for (const { key } of entries) { await select(native, key); await singleExampleTransitions(native, key, variant => overflow(native, `${key}/native-${zoom * 100}%/${variant}`)); await overflow(native, `${key}/native-${zoom * 100}%`); await labels(native, `${key}/native-${zoom * 100}%`); await native.evaluate(() => document.querySelector('[role=tabpanel]').scrollIntoView({ block: 'start' }));
+        for (const { key } of entries) { await select(native, key); await singleExampleTransitions(native, key, variant => overflow(native, `${key}/native-${zoom * 100}%/${variant}`)); await overflow(native, `${key}/native-${zoom * 100}%`); await labels(native, `${key}/native-${zoom * 100}%`); await activePanel(native).scrollIntoViewIfNeeded();
           const session = await context.newCDPSession(native);
           const shot = await session.send('Page.captureScreenshot', { format: 'png', fromSurface: true, captureBeyondViewport: false });
           const buffer = Buffer.from(shot.data, 'base64');
@@ -501,7 +526,7 @@ async function liveTheme(page) {
     check('Unexpected app/browser/network diagnostics', diagnostics.filter(message => !(message.type === 'warning' && message.text === nativeColorWarning)), []);
     console.log(`Integrated actual app: ${checks.length} PASS checks; ${screenshots.length} screenshots; native 200% proved.`);
   } finally {
-    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: `actual app/registry/lazy panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, metrics, screenshots }, undefined, 2));
+    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? 'focused source-owned JSDoc pilots' : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/remaining registry panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, metrics, screenshots }, undefined, 2));
     await browser?.close(); await new Promise(resolve => server.close(resolve));
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

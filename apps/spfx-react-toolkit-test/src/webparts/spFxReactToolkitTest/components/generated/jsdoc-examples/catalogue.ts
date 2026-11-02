@@ -10,7 +10,8 @@ export interface ExecutableExampleRegions {
   children?: React.ReactNode;
 }
 
-export type ExecutableShellPresentation = Required<Pick<WebPartShellProps<IWebPartShellProperties>, 'appearance' | 'size' | 'titlePosition' | 'padding'>>;
+export type ExecutableShellPresentation = Required<Pick<WebPartShellProps<IWebPartShellProperties>, 'appearance' | 'size' | 'titlePosition' | 'padding'>> &
+  Pick<WebPartShellProps<IWebPartShellProperties>, 'surface' | 'dir' | 'strings' | 'titleEditorStrings' | 'action'>;
 
 export interface ExecutableShellPort {
   presentation: ExecutableShellPresentation;
@@ -162,7 +163,7 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   ],
   "source": {
     "file": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx",
-    "line": 241
+    "line": 283
   },
   "metadata": {
     "host": "webPart",
@@ -186,7 +187,7 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   ],
   "source": {
     "file": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx",
-    "line": 322
+    "line": 365
   },
   "metadata": {
     "host": "webPart",
@@ -196,6 +197,29 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Edit the note and counter, then switch subtle and Card explicitly. Child state resets at the actual body boundary while explorer selection survives. Reset preserves all persisted title properties in Read and Edit."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717' */ "./7f76e04ccbcd39259309c4715ef7e8fb274ea0bca5fdc62e1a28058b0e3fe717")
+},
+{
+  "id": "9496a583c497d2af126e303996591d022fca61c8ca6d77ebd843829fd3a1af5a",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata",
+  "title": "Inspect searchable Shell title metadata",
+  "groupRoute": "docs/api/controls/web-part-shell.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata",
+  "featureTitle": "getWebPartShellPropertiesMetadata",
+  "publicNames": [
+    "getWebPartShellPropertiesMetadata"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts",
+    "line": 26
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "The helper marks only the plain title as searchable. Create fresh metadata to compare independent maps and title descriptors."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-9496a583c497d2af126e303996591d022fca61c8ca6d77ebd843829fd3a1af5a' */ "./9496a583c497d2af126e303996591d022fca61c8ca6d77ebd843829fd3a1af5a")
 },
 {
   "id": "987a602b9876b30335971c617d05d9c716fae7b4d434c5142bf3f1ca9727d305",
@@ -271,10 +295,11 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
 export const executableGroups: readonly ExecutableGroup[] = [
   { key: "controls", title: "Controlli", features: [
     { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[0], executableExamples[1], executableExamples[2]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[3], executableExamples[4], executableExamples[5]] }
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[3], executableExamples[4], executableExamples[5]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[6]] }
   ] },
   { key: "hooks", title: "Hook", features: [
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[6]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[7], executableExamples[8]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[7]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[8], executableExamples[9]] }
   ] }
 ];

@@ -5,7 +5,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 const { serve, settle, settlePalette } = require('./check-title-toolbar-localization-browser.cjs');
-const { checkWebPartShellBrowser } = require('./web-part-shell-browser.helpers.cjs');
+const { checkWebPartShellBrowser, selectGeneratedShellScenario } = require('./web-part-shell-browser.helpers.cjs');
 const root = path.resolve(__dirname, '..');
 const output = path.join(root, '.docs/maintenance/title-toolbar-localization/geometry');
 const checks = [];
@@ -77,7 +77,7 @@ async function checkColorOverflowResize(page, editable, boundary) {
       try {
         const page = await browser.newPage({ viewport: { width: 1280, height: 1000 } });
         page.on('pageerror', error => diagnostics.push(error.message));
-        await page.goto(server.url);
+        await page.goto(server.url); await selectGeneratedShellScenario(page);
         if (process.env.TITLE_TOOLBAR_SKIP_LEGACY !== '1' && process.env.TITLE_TOOLBAR_RESET_ONLY !== '1') {
           await checkWebPartShellBrowser(page, { url: server.url, output, label: boundary, check, consoleMessages: [] });
           console.log(`${boundary}: existing Shell/native title acceptance passed.`);
@@ -137,7 +137,7 @@ async function checkColorOverflowResize(page, editable, boundary) {
           let context;
           try {
             context = await chromium.launchPersistentContext(profile, { executablePath, headless: true, viewport: null, args: ['--window-size=1280,1000'] });
-            const native = context.pages()[0]; await native.goto(server.url);
+            const native = context.pages()[0]; await native.goto(server.url); await selectGeneratedShellScenario(native);
             await native.evaluate(() => window.shellFixture.render({ mode: 'Edit', width: 500, properties: { title: 'Zoom title', titleHTML: '<h2>Zoom title</h2>', showTitle: true } }));
             const editor = native.locator('[data-shell-root=first] [contenteditable=true]'); await editor.waitFor();
             for (const dir of ['ltr', 'rtl']) {

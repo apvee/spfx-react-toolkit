@@ -15,7 +15,8 @@ export interface ExecutableExampleRegions {
   children?: React.ReactNode;
 }
 
-export type ExecutableShellPresentation = Required<Pick<WebPartShellProps<IWebPartShellProperties>, 'appearance' | 'size' | 'titlePosition' | 'padding'>>;
+export type ExecutableShellPresentation = Required<Pick<WebPartShellProps<IWebPartShellProperties>, 'appearance' | 'size' | 'titlePosition' | 'padding'>> &
+  Pick<WebPartShellProps<IWebPartShellProperties>, 'surface' | 'dir' | 'strings' | 'titleEditorStrings' | 'action'>;
 
 export interface ExecutableShellPort {
   presentation: ExecutableShellPresentation;

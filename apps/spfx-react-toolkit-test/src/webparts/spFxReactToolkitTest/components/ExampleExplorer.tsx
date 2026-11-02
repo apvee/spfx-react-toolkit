@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Field, MessageBar, MessageBarBody, Select, Spinner, Text } from '@fluentui/react-components';
 import type { ExecutableGroup } from './generated/jsdoc-examples/catalogue';
-import type { DemoRegistryEntry } from './demoRegistry';
+import type { DemoRegistryEntry } from './demoRegistry.types';
 import { ExampleExplorerNavigation, getNavigationGroups } from './shared/ExampleExplorerNavigation';
 import { useExampleExplorerState } from './shared/ExampleExplorerState';
 import { ExecutableExampleHost } from './shared/ExecutableExampleHost';

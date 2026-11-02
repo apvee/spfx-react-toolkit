@@ -233,12 +233,15 @@ for (const name of ['Text', 'Number', 'Boolean', 'Date', 'DateTime', 'Badge', 'I
 }
 console.log('Verified DataGrid presets plus versioned full-family/native/chart conformance coverage.');
 
-const shellPanel = scenarioSource('WebPartShell');
-for (const marker of ['appearance', 'card-size', 'title-position', 'show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'strings', 'title-editor-strings', 'note', 'increment', 'observations']) {
-  if (!shellPanel.includes(`data-shell-demo="${marker}"`)) throw new Error(`WebPartShell sample missing ${marker}`);
+const shellPanel = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx'));
+const shellMetadata = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts'));
+if (!generated.symbols.has('WebPartShell') || !generated.symbols.has('getWebPartShellPropertiesMetadata')) throw new Error('Shell and metadata require generated source-owned scenarios.');
+for (const marker of ['appearance', 'card-size', 'title-position', 'show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'strings', 'title-editor-strings', 'action-slot-toggle', 'observations']) {
+  if (!shellPanel.includes(`data-shell-demo="${marker}"`) && !shellPanel.includes(`'data-shell-demo': '${marker}'`)) throw new Error(`WebPartShell sample missing ${marker}`);
 }
 const shellHost = read(path.join(path.dirname(registryPath), 'WebPartShellDemoHost.tsx'));
-if ((shellHost.match(/<WebPartShell /g) || []).length !== 1 || /<WebPartShell /.test(shellPanel)) throw new Error('WebPartShell sample must wrap the web part exactly once');
+if (!shellPanel.includes('aria-label="Project note"') || !shellPanel.includes('Increment counter') || !shellMetadata.includes('@example Inspect searchable Shell title metadata')) throw new Error('Shell needs source-owned body state and real metadata scenarios.');
+if ((shellHost.match(/<WebPartShell /g) || []).length !== 1) throw new Error('WebPartShell sample must wrap the web part exactly once');
 console.log('Verified WebPartShell root host, metadata and observable child/presentation scenario.');
 
 const stagePanelSource = scenarioSource('Stage');
@@ -274,7 +277,7 @@ if (!cardsIsolation.includes('name="independent"') || !cardsIsolation.includes('
 console.log('Verified selectable single Cards, image lifecycle and versioned native/isolation conformance coverage.');
 
 
-for (const name of ['Cards', 'Stage', 'Form', 'DataGrid', 'Groups', 'Pagination', 'DescriptionList', 'Styles', 'Imports', 'RelativeTime', 'FormattedText', 'EditableText', 'AutoSkeleton', 'StateMessage', 'WebPartShell', 'Providers', 'Context']) {
+for (const name of ['Cards', 'Stage', 'Form', 'DataGrid', 'Groups', 'Pagination', 'DescriptionList', 'Styles', 'Imports', 'RelativeTime', 'FormattedText', 'EditableText', 'AutoSkeleton', 'StateMessage', 'Providers', 'Context']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
   if (!product.includes('data-demo-variant')) throw new Error(`${name} selectable product variant missing`);

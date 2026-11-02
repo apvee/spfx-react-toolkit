@@ -14,7 +14,7 @@ function fixture(t, { explorer = false, simulatedBrowserTransport = false } = {}
   const calls = [];
   let initializationError;
   const boundaries = {
-    '../WebPartShellDemoHost': { useShellDemoOptions() { throw new Error('Ordinary read scenario must not use the Shell adapter'); } },
+    '../WebPartShellDemoHost': { useShellPresentation() { throw new Error('Ordinary read scenario must not use the Shell adapter'); } },
   };
   const h = createHarness(boundaries); t.after(h.close);
   // JSDOM 15 omits the browser crypto identity used by real Fluent focus handling.
@@ -157,8 +157,8 @@ test('pending read unmount causes no view update or additional I/O', async t => 
 
 test('generated Hook navigation, expansion and scenario selection never query the selected list', async t => {
   const h = fixture(t, { explorer: true }); await h.flush();
-  assert.equal(h.catalogue.executableExamples.length, 9);
-  assert.equal(h.catalogue.executableGroups.flatMap(group => group.features).length, 4);
+  assert.equal(h.catalogue.executableExamples.length, 10);
+  assert.equal(h.catalogue.executableGroups.flatMap(group => group.features).length, 5);
   assert.deepEqual(h.entry.metadata, { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Choose an existing list and run the read explicitly; loading, results and errors identify the selected list.' });
   const generic = h.catalogue.executableExamples.find(entry => entry.featureTitle === 'useStableCallback');
   h.act(() => h.navigation.selectFeature(generic.featureKey)); await h.flush();

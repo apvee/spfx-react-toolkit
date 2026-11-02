@@ -1,21 +1,7 @@
 import * as React from 'react';
 
-export type DemoCoverageKind = 'host' | 'snapshot' | 'read' | 'write';
-
-export interface DemoCoverageItem {
-  readonly symbol: string;
-  readonly kind: DemoCoverageKind;
-  readonly notes: string;
-}
-
-export interface DemoRegistryEntry {
-  readonly key: string;
-  readonly title: string;
-  readonly iconName: string;
-  readonly description: string;
-  readonly coverage: readonly DemoCoverageItem[];
-  readonly component: React.LazyExoticComponent<React.ComponentType>;
-}
+import type { DemoCoverageItem, DemoRegistryEntry } from './demoRegistry.types';
+export type { DemoCoverageKind, DemoCoverageItem, DemoRegistryEntry } from './demoRegistry.types';
 
 const lazyPanel = (
   loader: () => Promise<{ default: React.ComponentType }>
@@ -62,17 +48,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     coverage: [
       { symbol: 'ContentCard', kind: 'snapshot', notes: 'Selectable ContentCard report with retained props/notes; literal/native peer parity in versioned fixtures.' },
       { symbol: 'PreviewCard', kind: 'snapshot', notes: 'Selectable PreviewCard report, image lifecycle and retained notes; slot/empty-media/native/independent regressions in versioned fixtures.' },
-    ],
-  },
-  {
-    key: 'web-part-shell',
-    title: 'WebPartShell',
-    iconName: 'Page',
-    description: 'One root Shell, editable rich title, persistent children and host presentation overrides.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-web-part-shell' */ './panels/WebPartShellPanel')),
-    coverage: [
-      { symbol: 'WebPartShell', kind: 'host', notes: 'Actual root wrapper, hook action, title visibility, rich/plain/empty, child counter/note, theme/RTL and surface/padding.' },
-      { symbol: 'getWebPartShellPropertiesMetadata', kind: 'snapshot', notes: 'Web part metadata getter marks the plain title as searchable.' },
     ],
   },
   {

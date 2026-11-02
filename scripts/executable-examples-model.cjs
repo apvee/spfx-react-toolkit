@@ -124,7 +124,8 @@ function collectExecutableExamples(root, model, config) {
   const shellContract = candidates.some(candidate => candidate.shell) ? `
 import type { WebPartShellProps, IWebPartShellProperties } from '${metadata.name}/controls/web-part-shell';
 type ShellPort = {
-  presentation: Required<Pick<WebPartShellProps<IWebPartShellProperties>, 'appearance' | 'size' | 'titlePosition' | 'padding'>>;
+  presentation: Required<Pick<WebPartShellProps<IWebPartShellProperties>, 'appearance' | 'size' | 'titlePosition' | 'padding'>> &
+  Pick<WebPartShellProps<IWebPartShellProperties>, 'surface' | 'dir' | 'strings' | 'titleEditorStrings' | 'action'>;
   updatePresentation(patch: Partial<ShellPort['presentation']>): void;
 };
 export type ShellProps = Props & { shell?: ShellPort };
@@ -177,25 +178,69 @@ export type Component = (props: Props) => React.ReactElement;
     const property = checker.getPropertyOfType(type, name);
     return property && checker.getTypeOfSymbolAtLocation(property, location);
   };
+  const equivalentShellField = (actual, expected, seen = new Map()) => {
+    if (!equivalentType(actual, expected)) return false;
+    if (actual === expected || seen.get(actual) === expected) return true;
+    seen.set(actual, expected);
+    // Public slot types contain legitimate peer internals; matching public type
+    // identities are accepted above. A structurally supplied dictionary must not
+    // smuggle any/unknown through otherwise bivariant/structural assignability.
+    if (actual.isUnion() || expected.isUnion()) {
+      const actualParts = actual.isUnion() ? actual.types : [actual];
+      const expectedParts = expected.isUnion() ? expected.types : [expected];
+      return actualParts.every(part => expectedParts.some(other => equivalentShellField(part, other, new Map(seen))));
+    }
+    const calls = checker.getSignaturesOfType(actual, ts.SignatureKind.Call);
+    const expectedCalls = checker.getSignaturesOfType(expected, ts.SignatureKind.Call);
+    if (calls.length !== expectedCalls.length || !calls.every((call, index) => {
+      const target = expectedCalls[index];
+      return call.parameters.length === target.parameters.length && call.minArgumentCount === target.minArgumentCount &&
+        equivalentShellField(checker.getReturnTypeOfSignature(call), checker.getReturnTypeOfSignature(target), seen) &&
+        call.parameters.every((parameter, position) => equivalentShellField(
+          checker.getTypeOfSymbolAtLocation(parameter, parameter.valueDeclaration || contractSource),
+          checker.getTypeOfSymbolAtLocation(target.parameters[position], target.parameters[position].valueDeclaration || contractSource), seen));
+    })) return false;
+    return checker.getPropertiesOfType(actual).every(property => {
+      const counterpart = checker.getPropertyOfType(expected, property.name);
+      if (!counterpart) return false;
+      return equivalentShellField(checker.getTypeOfSymbolAtLocation(property, property.valueDeclaration || contractSource),
+        checker.getTypeOfSymbolAtLocation(counterpart, counterpart.valueDeclaration || contractSource), seen);
+    });
+  };
   const compatibleShellPort = (actual, expected, location) => {
     const presentation = propType(actual, 'presentation', location);
     const expectedPresentation = propType(expected, 'presentation', location);
-    if (!presentation || !equivalentType(presentation, expectedPresentation)) return false;
+    if (!presentation || hasUnsafeType(presentation) || checker.getIndexInfosOfType(presentation).length) return false;
+    const fields = checker.getPropertiesOfType(presentation);
     for (const name of ['appearance', 'size', 'titlePosition', 'padding']) {
-      const type = propType(presentation, name, location);
-      if (!type || !equivalentType(type, propType(expectedPresentation, name, location))) return false;
+      if (!checker.getPropertyOfType(presentation, name)) return false;
+    }
+    // A consumer may keep the original four-field subset. Any optional extension
+    // it accepts must preserve the full public type and omission contract.
+    for (const field of fields) {
+      const expectedField = checker.getPropertyOfType(expectedPresentation, field.name);
+      if (!expectedField || Boolean(field.flags & ts.SymbolFlags.Optional) !== Boolean(expectedField.flags & ts.SymbolFlags.Optional) ||
+        !equivalentShellField(checker.getTypeOfSymbolAtLocation(field, location), checker.getTypeOfSymbolAtLocation(expectedField, location))) return false;
     }
     const update = propType(actual, 'updatePresentation', location);
-    const expectedUpdate = propType(expected, 'updatePresentation', location);
     if (!update || hasUnsafeType(update)) return false;
     const signatures = checker.getSignaturesOfType(update, ts.SignatureKind.Call);
-    const expectedSignature = checker.getSignaturesOfType(expectedUpdate, ts.SignatureKind.Call)[0];
-    // Methods are bivariant in TypeScript. Compare their patch parameters
-    // explicitly so a port demanding a required/narrow patch cannot pass.
-    return signatures.length === 1 && signatures[0].parameters.length === 1 &&
-      equivalentType(checker.getTypeOfSymbolAtLocation(signatures[0].parameters[0], location),
-        checker.getTypeOfSymbolAtLocation(expectedSignature.parameters[0], location)) &&
-      Boolean(checker.getReturnTypeOfSignature(signatures[0]).flags & ts.TypeFlags.Void);
+    if (signatures.length !== 1 || signatures[0].parameters.length !== 1 || signatures[0].minArgumentCount !== 1 ||
+      !Boolean(checker.getReturnTypeOfSignature(signatures[0]).flags & ts.TypeFlags.Void)) return false;
+    const patch = checker.getTypeOfSymbolAtLocation(signatures[0].parameters[0], location);
+    if (hasUnsafeType(patch) || checker.getIndexInfosOfType(patch).length) return false;
+    const patchFields = checker.getPropertiesOfType(patch);
+    if (patchFields.length !== fields.length) return false;
+    // Methods are bivariant. Inspect every patch field explicitly rather than
+    // permitting a required/narrow parameter to pass function assignability.
+    return patchFields.every(field => {
+      const accepted = checker.getPropertyOfType(presentation, field.name);
+      if (!accepted || !(field.flags & ts.SymbolFlags.Optional)) return false;
+      const type = checker.getTypeOfSymbolAtLocation(field, location);
+      const expectedType = checker.getTypeOfSymbolAtLocation(accepted, location);
+      return !hasUnsafeType(type) && withoutUndefined(type).every(part => withoutUndefined(expectedType).some(other => equivalentShellField(part, other))) &&
+        withoutUndefined(expectedType).every(part => withoutUndefined(type).some(other => equivalentShellField(part, other)));
+    });
   };
   const compatibleOptionalProp = (props, expected, name, location) => {
     const prop = checker.getPropertyOfType(props, name);

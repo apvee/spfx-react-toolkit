@@ -255,6 +255,41 @@ test('rejects required Shell props and narrowed presentation update parameters',
   }
 });
 
+test('accepts old, optional subset and full bounded Shell presentation consumers', () => {
+  const shell = fs.readFileSync(path.join(fixture, 'cases/shell.jsdoc'), 'utf8');
+  for (const fields of [undefined, "'surface' | 'dir'", "'surface' | 'dir' | 'strings' | 'titleEditorStrings' | 'action'"]) {
+    const raw = fields ? shell.replace("'padding'>>", "'padding'>> & Pick<WebPartShellProps<IWebPartShellProperties>, " + fields + ">") : shell;
+    const result = collect(replaceDoc(raw));
+    assert.deepEqual(result.diagnostics, [], fields);
+    assert.equal(result.examples.length, 1);
+  }
+});
+
+test('rejects unsafe, required, narrowed and indexed Shell extensions and patch signatures', () => {
+  const shell = fs.readFileSync(path.join(fixture, 'cases/shell.jsdoc'), 'utf8');
+  const full = shell.replace("'padding'>>", "'padding'>> & Pick<WebPartShellProps<IWebPartShellProperties>, 'surface' | 'dir' | 'strings' | 'titleEditorStrings' | 'action'>");
+  const invalid = [
+    shell.replace("'padding'>>", "'padding'>> & { extra?: string }"),
+    shell.replace("'padding'>>", "'padding'>> & { surface: 'auto' | 'section' | 'application' }"),
+    shell.replace("'padding'>>", "'padding'>> & { surface?: 'auto' }"),
+    shell.replace("'padding'>>", "'padding'>> & { dir?: any }"),
+    shell.replace("'padding'>>", "'padding'>> & { strings?: unknown }"),
+    shell.replace("'padding'>>", "'padding'>> & { strings?: { titleEditorLabel?: any; titlePlaceholder?: string } }"),
+    shell.replace("'padding'>>", "'padding'>> & { action?: never }"),
+    shell.replace("'padding'>>", "'padding'>> & { titleEditorStrings?: { bold?: string; colorNames?: { red?: string }; formattingShortcut?: (label: any, shortcut: string) => string } }"),
+    shell.replace("'padding'>>", "'padding'>> & { [key: string]: unknown }"),
+    full.replace("patch: Partial<DemoShellPort['presentation']>", "patch: { surface?: 'auto' }"),
+    full.replace("patch: Partial<DemoShellPort['presentation']>", "patch: Partial<DemoShellPort['presentation']> & { surface: 'auto' }"),
+    full.replace("patch: Partial<DemoShellPort['presentation']>", "patch: any"),
+    full.replace("patch: Partial<DemoShellPort['presentation']>", "patch: Partial<DemoShellPort['presentation']> & { extra?: string }"),
+  ];
+  for (const raw of invalid) {
+    const result = collect(replaceDoc(raw));
+    assert.equal(result.examples.length, 0, raw);
+    assert.ok(result.diagnostics.some(item => item.code === 'EXECUTABLE_COMPONENT'), JSON.stringify(result.diagnostics));
+  }
+});
+
 test('reports snippet compiler errors at physical source lines without evaluating metadata', () => {
   const result = invalid(component + '\nconst broken: number = "text";\n' + metadata, 'TS2322');
   assert.ok(result.diagnostics.some(item => item.code === 'TS2322' && item.line === 6));

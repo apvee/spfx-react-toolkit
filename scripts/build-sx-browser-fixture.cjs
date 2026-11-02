@@ -38,7 +38,7 @@ if (diagnostics.length) {
     output: { path: output, filename: 'fixture.js' }, resolve: { extensions: ['.tsx', '.ts', '.js'], alias: {
       ...require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
       '@apvee/spfx-react-toolkit$': boundary,
-      ...(shellOnly ? { '@microsoft/sp-core-library$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts'), '@microsoft/sp-component-base$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts') } : {}),
+      ...(shellOnly ? { '@microsoft/sp-core-library$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts'), '@microsoft/sp-component-base$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts'), '@microsoft/sp-page-context$': path.join(fixture, '../demo-presentation/spfx-services.ts'), '@microsoft/sp-http$': path.join(fixture, '../demo-presentation/spfx-services.ts') } : {}),
       ...(chartProbe ? { '@fluentui/react-charts$': path.join(fixture, 'data-grid-chart-probe.tsx'), '@data-grid/actual-charts$': actualCharts } : {}),
       // React 17 supplies this legacy entry without an exports map. Modern
       // Fluent/Griffel ESM imports need its explicit extension in Webpack 5.

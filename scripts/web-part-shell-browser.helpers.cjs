@@ -4,6 +4,25 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+/** Select the current generated feature/scenario through the actual explorer. */
+async function selectGeneratedShellScenario(page, title = 'Configure the actual web part Shell') {
+  const mobile = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
+  if (await mobile.isVisible()) {
+    const value = await mobile.locator('option').filter({ hasText: /^WebPartShell$/ }).getAttribute('value');
+    await mobile.selectOption(value);
+  } else {
+    const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
+    const group = nav.getByRole('button', { name: /^Controlli/ }).first();
+    if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
+    await nav.getByRole('button', { name: 'WebPartShell', exact: true }).click();
+  }
+  const panel = page.getByRole('region', { name: 'WebPartShell', exact: true });
+  await panel.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption({ label: title });
+  await panel.getByRole('heading', { name: title, exact: true }).waitFor();
+  await panel.locator('[data-demo-section]').waitFor();
+  return panel;
+}
+
 async function checkWebPartShellBrowser(page, record) {
   const { url, output, label, check } = record;
   const root = page.locator('[data-shell-root="first"]');
@@ -71,12 +90,12 @@ async function checkWebPartShellBrowser(page, record) {
   });
   const requests = [];
   page.on('request', request => { if (/\.js(?:\?|$)/.test(request.url())) requests.push(request.url()); });
-  await page.goto(url); await root.locator('h2').waitFor();
+  await page.goto(url); await selectGeneratedShellScenario(page); await root.locator('[data-web-part-shell-header] h2').waitFor();
   await check('Shell page identity', await page.title(), 'WebPartShell browser fixture');
   await check('Shell local origin', new URL(page.url()).origin, url);
   await check('Shell meaningful sample', await root.locator('[data-shell-demo="panel"]').count(), 1);
   await check('Shell no framework overlay', await page.locator('webpack-dev-server-client-overlay,#webpack-dev-server-client-overlay,nextjs-portal').count(), 0);
-  await check('Read requests zero editor chunks', requests.filter(request => !request.endsWith('/fixture.js')), []);
+  await check('Read requests zero editor-engine chunks; generated scenarios may load', requests.filter(request => /editable-text-editor|prosemirror|tiptap/i.test(new URL(request).pathname)), []);
   await check('Read creates no editable engine DOM', await root.locator('[contenteditable]').count(), 0);
   await check('Read mount never writes properties', (await observations()).refreshes, [0, 0]);
   await check('metadata search/plain fixture property retained', (await observations()).properties.listId, 'keep-0');
@@ -111,7 +130,7 @@ async function checkWebPartShellBrowser(page, record) {
     await check(`${tag}: mounting Read/Edit does not persist inherited styles`, await savedHTML(), html);
   }
   await render({ mode: 'Read', fluentTheme: { fontSizeHero700: '40px', lineHeightHero700: '48px' }, properties: { titleHTML: '<h2>Theme title</h2>' } });
-  await check('Custom theme: Read resolves typography tokens', await typography(root.locator('h2')), ['40px', '48px', '600']);
+  await check('Custom theme: Read resolves typography tokens', await typography(root.locator('[data-web-part-shell-header] h2')), ['40px', '48px', '600']);
   await page.getByRole('button', { name: 'Enter page Edit mode', exact: true }).click(); await editable.waitFor(); await editable.focus();
   await check('Custom theme: Edit resolves the same tokens', await typography(editable.locator('h2')), ['40px', '48px', '600']);
   await check('Custom theme: picker matches rendered size', await toolbar().getByRole('combobox', { name: 'Font size', exact: true }).inputValue(), '40');
@@ -125,7 +144,7 @@ async function checkWebPartShellBrowser(page, record) {
   await check('Default spacing restores theme token in Edit', await editable.locator('h2').evaluate(e => getComputedStyle(e).lineHeight), '52px');
   await check('Default spacing retains explicit size in HTML', await savedHTML(), '<h2><span class="wps-size-20">Explicit</span></h2>');
   await render({ mode: 'Read' });
-  await check('Default spacing has identical Read output', await root.locator('h2').evaluate(e => getComputedStyle(e).lineHeight), '52px');
+  await check('Default spacing has identical Read output', await root.locator('[data-web-part-shell-header] h2').evaluate(e => getComputedStyle(e).lineHeight), '52px');
   await render({ mode: 'Read', fluentTheme: undefined, properties: { title: 'Alpha Beta Gamma', titleHTML: undefined } });
   // Fresh host theme reproduces the same-mask interval from the independent
   // review: budget changes alone must refit the currently visible command row.
@@ -153,8 +172,8 @@ async function checkWebPartShellBrowser(page, record) {
   }
   await page.setViewportSize({ width: 1210, height: 900 }); await render({ mode: 'Read', width: 900, dir: 'ltr' });
 
-  await root.locator('[data-shell-demo="note"]').fill('Persistent browser note');
-  await root.locator('[data-shell-demo="increment"]').click();
+  await root.locator('[data-shell-fixture="note"]').fill('Persistent browser note');
+  await root.locator('[data-shell-fixture="increment"]').click();
 
   for (const host of ['SharePoint', 'SingleWebPartAppPage', 'Teams', 'Office', 'Outlook']) {
     await render({ host, surface: 'auto' });
@@ -271,8 +290,8 @@ async function checkWebPartShellBrowser(page, record) {
   await check('Narrow RTL overflow command preserves native range length', await page.evaluate(() => document.getSelection().toString().length), 5);
   await render({ dir: 'ltr' });
   await page.setViewportSize({ width: 1210, height: 900 }); await render({ width: 900, properties: { title: "We're here to help", titleHTML: "<h2>We're here to help</h2>" } }); await editable.focus(); await capture('native-comparison'); await reset();
-  await check('Edit retains child note', await root.locator('[data-shell-demo="note"]').inputValue(), 'Persistent browser note');
-  await check('Edit retains child count', (await root.locator('[data-shell-demo="observations"]').textContent()).includes('"count":1'), true);
+  await check('Edit retains child note', await root.locator('[data-shell-fixture="note"]').inputValue(), 'Persistent browser note');
+  await check('Edit retains child count', (await root.locator('[data-shell-fixture="observations"]').textContent()).includes('"count":1'), true);
   await check('No child remount across host/theme/mode changes', (await observations()).mounts, 1);
   await selectRange(0, 5); await command('Bold'); await waitHTML('<strong>Alpha</strong>'); await focusProof('Bold');
   await command('Italic'); await waitHTML('<em>'); await focusProof('Italic');
@@ -412,19 +431,26 @@ async function checkWebPartShellBrowser(page, record) {
   await render({ mode: 'Read' });
   await check('Empty Read has no fake placeholder title', await root.locator('h1,h2,h3,h4,p').filter({ hasText: '編集中' }).count(), 0);
   await check('Read destroys editable DOM', await root.locator('[contenteditable]').count(), 0);
-  await check('Child state still persistent after editor teardown', await root.locator('[data-shell-demo="note"]').inputValue(), 'Persistent browser note');
+  await check('Child state still persistent after editor teardown', await root.locator('[data-shell-fixture="note"]').inputValue(), 'Persistent browser note');
   await check('Child did not unmount', (await observations()).cleanups, 0);
+  await check('Actual Read mode disables title content commands', await root.locator('[data-shell-demo="plain"]').isDisabled(), true);
+  await render({ mode: 'Edit' });
   await root.locator('[data-shell-demo="plain"]').click();
-  await check('Actual sample plain action renders its current subject', await root.locator('h2').textContent(), 'Project documents');
+  await render({ mode: 'Read' });
+  await check('Actual sample plain action renders its current subject', await root.locator('[data-web-part-shell-header] h2').textContent(), 'Project documents');
   await render({ properties: { title: 'Literal <sample> title', titleHTML: undefined } });
-  await check('Plain fallback renders angle brackets as literal text', await root.locator('h2').textContent(), 'Literal <sample> title');
+  await check('Plain fallback renders angle brackets as literal text', await root.locator('[data-web-part-shell-header] h2').textContent(), 'Literal <sample> title');
+  await render({ mode: 'Edit' });
   await root.locator('[data-shell-demo="rich"]').click();
-  await check('Actual sample rich control renders formatting', await root.locator('h2 strong').textContent(), 'Project');
+  await render({ mode: 'Read' });
+  await check('Actual sample rich control renders formatting', await root.locator('[data-web-part-shell-header] h2 strong').textContent(), 'Project');
   await render({ surface: undefined, padding: undefined, dir: undefined });
   await root.locator('[data-shell-demo="surface"]').selectOption('section');
   await check('Actual sample surface override affects root', await root.getAttribute('data-web-part-shell-surface'), 'section');
   await root.locator('[data-shell-demo="padding"]').selectOption('small');
   await check('Actual sample padding override affects layout', await root.locator('[data-web-part-shell-content]').evaluate(e => getComputedStyle(e).paddingInlineStart), '8px');
+  const diagnostics = root.getByRole('button', { name: 'Advanced diagnostics', exact: true });
+  if (await diagnostics.getAttribute('aria-expanded') !== 'true') await diagnostics.click();
   await root.locator('[data-shell-demo="direction"]').selectOption('rtl');
   await check('Actual sample direction affects root', await root.evaluate(e => getComputedStyle(e).direction), 'rtl');
   await render({ theme: 'dark', host: 'Teams' });
@@ -458,12 +484,12 @@ async function checkWebPartShellBrowser(page, record) {
   await appearanceSelect().selectOption('filled');
   await check('Actual sample creates native Fluent Card', await card().evaluate(element => element.classList.contains('fui-Card')), true);
   await check('Options survive subtle/Card body remount', await positionSelect().inputValue(), 'inside');
-  await root.locator('[data-shell-demo="note"]').fill('Card persistent note');
-  await root.locator('[data-shell-demo="increment"]').click();
+  await root.locator('[data-shell-fixture="note"]').fill('Card persistent note');
+  await root.locator('[data-shell-fixture="increment"]').click();
   const cardBaseline = await observations();
   const retainedCardState = async name => {
-    await check(`${name}: body note retained`, await root.locator('[data-shell-demo="note"]').inputValue(), 'Card persistent note');
-    await check(`${name}: body counter retained`, JSON.parse(await root.locator('[data-shell-demo="observations"]').textContent()).count, 1);
+    await check(`${name}: body note retained`, await root.locator('[data-shell-fixture="note"]').inputValue(), 'Card persistent note');
+    await check(`${name}: body counter retained`, JSON.parse(await root.locator('[data-shell-fixture="observations"]').textContent()).count, 1);
     await check(`${name}: body lifetime retained`, [(await observations()).mounts, (await observations()).cleanups], [cardBaseline.mounts, cardBaseline.cleanups]);
     await check(`${name}: outer root retained`, await root.evaluate(element => element === window.__shellCardOuterRoot), true);
     await check(`${name}: second instance state isolated`, await other.getByRole('textbox', { name: 'Other child', exact: true }).inputValue(), 'Independent Card state');
@@ -640,15 +666,15 @@ async function checkWebPartShellBrowser(page, record) {
     if (!aborted) { aborted = route.request().url(); await route.abort('failed'); } else await route.continue();
   });
   try {
-    await retryPage.goto(url); await retryPage.locator('[data-shell-root="first"] h2').waitFor();
+    await retryPage.goto(url); await selectGeneratedShellScenario(retryPage); await retryPage.locator('[data-shell-root="first"] [data-web-part-shell-header] h2').waitFor();
     await retryPage.evaluate(() => window.shellFixture.render({ mode: 'Edit', otherProperties: { showTitle: false } }));
     await retryPage.getByRole('button', { name: 'Retry', exact: true }).waitFor();
-    await retryPage.locator('[data-shell-demo="note"]').fill('Retry retained note');
+    await retryPage.locator('[data-shell-fixture="note"]').fill('Retry retained note');
     await retryPage.getByRole('button', { name: 'Retry', exact: true }).click();
     await retryPage.locator('[data-shell-root="first"] [contenteditable]').waitFor();
     await check('Loader retry mounts actual editor', await retryPage.locator('[contenteditable]').count(), 1);
     await check('Loader failure never remounts children', await retryPage.evaluate(() => window.shellFixture.observe().mounts), 1);
-    await check('Loader retry retains child note', await retryPage.locator('[data-shell-demo="note"]').inputValue(), 'Retry retained note');
+    await check('Loader retry retains child note', await retryPage.locator('[data-shell-fixture="note"]').inputValue(), 'Retry retained note');
     await check('Injected loader failure was exact editor chunk', Boolean(aborted && aborted.includes('editable-text-editor')), true);
     await retryPage.screenshot({ path: path.join(output, `${label}-shell-loader-retry.png`) });
   } finally { await retryContext.close(); }
@@ -658,4 +684,4 @@ async function checkWebPartShellBrowser(page, record) {
     physicalIME: 'NOT EXECUTED', touchHardware: 'NOT EXECUTED', screenReader: 'NOT EXECUTED', nativeTenantCommandParity: 'NOT EXECUTED', tenantSaveReload: 'NOT EXECUTED', injectedFailure: { aborted, errors: injectedErrors }, requests, final: await observations()
   }, null, 2));
 }
-module.exports = { checkWebPartShellBrowser };
+module.exports = { checkWebPartShellBrowser, selectGeneratedShellScenario };

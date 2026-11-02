@@ -19,21 +19,23 @@ test('sample root consumes one compiled-root Shell with persisted title and meta
   const host = read(`${base}components/WebPartShellDemoHost.tsx`);
   assert.match(host, /from '@apvee\/spfx-react-toolkit'/);
   assert.equal((host.match(/<WebPartShell /g) || []).length, 1);
-  assert.match(host, /action=\{options.actionSlot/);
-  assert.match(host, /children: \(Component, slotProps\)/);
-  assert.match(host, /data-shell-demo': 'action-slot'/);
+  assert.match(host, /action=\{action === undefined \? <ShellDemoAction \/>/);
+  assert.doesNotMatch(host, /Project section heading|Project heading controls|customNaming|customEditor|actionSlot/);
   assert.match(host, /useSPFxProperties/);
   assert.doesNotMatch(read(`${base}components/SpFxReactToolkitTest.module.scss`), /padding: 1em/);
 });
 
-test('Shell panel is registered and makes persisted state and surface options observable', () => {
+test('generated Shell scenarios replace the transitional panel with source-owned complete behavior', () => {
   const registry = read(`${base}components/demoRegistry.ts`);
-  assert.match(registry, /key: 'web-part-shell'/);
-  for (const symbol of ['WebPartShell', 'getWebPartShellPropertiesMetadata']) assert.ok(registry.includes(`symbol: '${symbol}'`));
-  const panel = read(`${base}components/panels/WebPartShellPanel.tsx`);
-  for (const marker of ['appearance', 'card-size', 'title-position', 'show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'action-slot-toggle', 'strings', 'title-editor-strings', 'note', 'increment', 'observations']) assert.ok(panel.includes(`data-shell-demo="${marker}"`) || panel.includes(`'data-shell-demo': '${marker}'`), marker);
-  assert.match(panel, /useSPFxProperties/);
-  assert.doesNotMatch(panel, /<WebPartShell |style=/);
+  assert.doesNotMatch(registry, /key: 'web-part-shell'|panels\/WebPartShellPanel/);
+  assert.equal(fs.existsSync(path.join(root, `${base}components/panels/WebPartShellPanel.tsx`)), false);
+  const owner = read('packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx');
+  for (const marker of ['appearance', 'card-size', 'title-position', 'show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'action-slot-toggle', 'strings', 'title-editor-strings', 'observations']) assert.ok(owner.includes(`data-shell-demo="${marker}"`) || owner.includes(`'data-shell-demo': '${marker}'`), marker);
+  assert.match(owner, /useSPFxProperties/); assert.match(owner, /children: \(Component, slotProps\)/);
+  assert.match(owner, /aria-label="Project note"/); assert.match(owner, /Increment counter/);
+  const fixture = read('tests/fixtures/web-part-shell-browser/host.tsx');
+  assert.match(fixture, /<ExampleExplorer groups=\{shellGroups\}/);
+  assert.doesNotMatch(fixture, /WebPartShellPanel/);
 });
 
 test('isolated source and compiled Shell routes keep real hooks and use shared browser acceptance', () => {
@@ -47,23 +49,15 @@ test('isolated source and compiled Shell routes keep real hooks and use shared b
   assert.match(read('scripts/build-styles-panel-browser.cjs'), /plugins:\s*shellOnly(?:\s*\|\|\s*stageOnly)?\s*\?\s*\[\]/);
 });
 
-test('sample forwards typed Card options with explicit consumer props taking precedence', () => {
+test('sample forwards effective typed native policy with explicit consumer props taking precedence', () => {
   const host = read(`${base}components/WebPartShellDemoHost.tsx`);
-  assert.match(host, /appearance: WebPartShellProps<IWebPartShellProperties>\['appearance'\]/);
-  assert.match(host, /titlePosition: WebPartShellProps<IWebPartShellProperties>\['titlePosition'\]/);
-  assert.match(host, /appearance: 'subtle'/);
-  assert.match(host, /titlePosition: 'outside'/);
-  assert.match(host, /appearance=\{props\.appearance \?\? options\.appearance\}/);
-  assert.match(host, /titlePosition=\{props\.titlePosition \?\? options\.titlePosition\}/);
-  assert.match(host, /size: WebPartShellProps<IWebPartShellProperties>\['size'\]/);
-  assert.match(host, /size: 'medium'/);
-  assert.match(host, /size=\{props\.size \?\? options\.size\}/);
+  assert.match(host, /Partial<ExecutableShellPresentation>/);
+  for (const field of ['appearance', 'size', 'titlePosition', 'padding', 'surface', 'dir', 'strings', 'titleEditorStrings']) assert.ok(host.includes(`props.${field} ?? overrides.${field}`), field);
+  assert.match(host, /props.action !== undefined \? props.action : overrides.action/);
+  assert.match(host, /appearance: 'subtle'/); assert.match(host, /size: 'medium'/); assert.match(host, /titlePosition: 'outside'/);
   const fixture = read('tests/fixtures/web-part-shell-browser/host.tsx');
-  assert.match(fixture, /size=\{state\.size\}/);
-  assert.match(fixture, /appearance=\{state\.appearance\}/);
-  assert.match(fixture, /titlePosition=\{state\.titlePosition\}/);
+  for (const field of ['size', 'appearance', 'titlePosition']) assert.ok(fixture.includes(`${field}={state.${field}}`), field);
 });
-
 
 test('three source-owned Shell pilots use the actual host port while rich dictionaries and metadata remain available', () => {
   const owner = read('packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx');

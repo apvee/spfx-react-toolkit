@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Field, Select, Text, useId } from '@fluentui/react-components';
 import { ChevronDownRegular, ChevronRightRegular } from '@fluentui/react-icons';
 import type { ExecutableGroup } from '../generated/jsdoc-examples/catalogue';
-import type { DemoRegistryEntry } from '../demoRegistry';
+import type { DemoRegistryEntry } from '../demoRegistry.types';
 import { useExampleExplorerState } from './ExampleExplorerState';
 import { useExampleExplorerStyles } from './exampleExplorerStyles';
 

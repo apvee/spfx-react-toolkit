@@ -27,7 +27,7 @@ function fixture(t, title, mode = 1, options = {}) {
     return h.React.createElement(Demo, { key: scenarioKey, shell: port, resetRevision: revision });
   }
   function render() { h.act(() => ReactDOM.render(h.React.createElement(RendererProvider, { renderer, targetDocument: document },
-    h.React.createElement(WebPartShellDemoHost, { instance, 'data-real-shell': '' }, h.React.createElement(Content))), container)); }
+    h.React.createElement(WebPartShellDemoHost, { instance, 'data-real-shell': '', ...options.consumerProps }, h.React.createElement(Content))), container)); }
   const navigationControl = document.createElement('button'); navigationControl.textContent = 'Scenario selector';
   document.body.appendChild(navigationControl); t.after(() => navigationControl.remove());
   if (options.focusNavigation) navigationControl.focus();
@@ -118,7 +118,7 @@ test('Pagination reset and scenario departure cancel late completion without rep
   assert.deepEqual(rows(), []); assert.match(h.container.textContent, /0–0 of 0/);
   assert.equal(h.container.querySelector('[data-real-shell]'), root);
   assert.equal(h.container.querySelector('[data-web-part-shell-body]'), body);
-  assert.deepEqual(h.port.presentation, { appearance: 'outline', size: 'large', titlePosition: 'inside', padding: 'auto' });
+  assert.deepEqual(h.port.presentation, { appearance: 'outline', size: 'large', titlePosition: 'inside', padding: 'auto', surface: undefined, dir: undefined, strings: undefined, titleEditorStrings: undefined, action: undefined });
   assert.equal(h.instance.properties.title, 'Persisted title'); assert.equal(h.refreshes, 0);
 });
 
@@ -227,4 +227,123 @@ test('explicit explorer Reset restores focus after actual Shell body remount wit
     h.act(() => ReactDOM.unmountComponentAtNode(container));
     assert.equal(pending.size, 0, 'provider unmount removes its per-document listeners');
   } finally { document.addEventListener = add; document.removeEventListener = remove; }
+});
+
+
+test('source Shell controls drive actual surface, direction, independent dictionaries and action slot without mount writes', t => {
+  const h = fixture(t, 'Configure the actual web part Shell', 2);
+  const root = () => h.container.querySelector('[data-real-shell]');
+  assert.equal(h.refreshes, 0);
+  h.change('select[aria-label="Surface"]', 'application');
+  assert.equal(root().getAttribute('data-web-part-shell-surface'), 'application');
+  h.change('select[aria-label="Direction"]', 'rtl');
+  assert.equal(root().closest('[dir]').getAttribute('dir'), 'rtl');
+  function toggle(marker, checked) {
+    h.act(() => { const node = h.container.querySelector(`[data-shell-demo="${marker}"]`); node.checked = checked; Simulate.change(node); });
+  }
+  toggle('strings', true);
+  assert.deepEqual(h.port.presentation.strings, { titleEditorLabel: 'Project section heading', titlePlaceholder: 'Add a project heading' });
+  assert.equal(h.port.presentation.titleEditorStrings, undefined);
+  toggle('title-editor-strings', true);
+  assert.deepEqual(h.port.presentation.titleEditorStrings, { bold: 'Strong', formattingControls: 'Project heading controls', colorNames: { red: 'Alert red' } });
+  toggle('strings', false);
+  assert.equal(h.port.presentation.strings, undefined);
+  assert.equal(h.port.presentation.titleEditorStrings.bold, 'Strong');
+  assert.equal(h.refreshes, 0, 'presentation and dictionaries never publish title properties');
+  h.change('select[aria-label="Header action"]', 'ordinary');
+  assert.equal(h.container.querySelectorAll('[data-shell-demo="action-slot"]').length, 0);
+  assert.equal(h.container.querySelectorAll('[data-shell-demo="action"]').length, 1);
+  h.change('select[aria-label="Header action"]', 'slot');
+  assert.equal(h.container.querySelectorAll('[data-shell-demo="action-slot"] > [data-shell-demo="action"]').length, 1);
+  const action = h.port.presentation.action;
+  h.select('Retain content through Shell presentation changes');
+  assert.equal(h.port.presentation.action, action, 'configured stateless slot survives scenario departure');
+  h.click('Use Card baseline');
+  assert.equal(h.port.presentation.action, action, 'native body remount does not tear down configured presentation');
+  h.click('Hide title');
+  assert.equal(h.instance.properties.showTitle, false);
+  assert.equal(h.container.querySelectorAll('[data-shell-demo="action"], [data-shell-demo="action-slot"]').length, 0);
+  h.setProperties({ showTitle: true });
+  assert.equal(h.container.querySelectorAll('[data-shell-demo="action-slot"] > [data-shell-demo="action"]').length, 1);
+  h.select('Configure the actual web part Shell'); h.reset();
+  for (const key of ['surface', 'dir', 'strings', 'titleEditorStrings', 'action']) assert.equal(h.port.presentation[key], undefined, key);
+  assert.equal(h.container.querySelectorAll('[data-shell-demo="action"]').length, 1, 'Reset restores generic native action');
+  assert.equal(h.container.querySelectorAll('[data-shell-demo="action-slot"]').length, 0);
+});
+
+test('consumer native Shell props take precedence and source undefined releases only its overrides', t => {
+  const consumerProps = { surface: 'section', dir: 'ltr', strings: { titleEditorLabel: 'Consumer title' }, titleEditorStrings: { bold: 'Consumer bold' } };
+  const h = fixture(t, 'Configure the actual web part Shell', 1, { consumerProps });
+  h.act(() => h.port.updatePresentation({ surface: 'application', dir: 'rtl', strings: { titleEditorLabel: 'Source title' }, titleEditorStrings: { bold: 'Source bold' } }));
+  assert.equal(h.port.presentation.surface, 'section'); assert.equal(h.port.presentation.dir, 'ltr');
+  assert.equal(h.port.presentation.strings, consumerProps.strings); assert.equal(h.port.presentation.titleEditorStrings, consumerProps.titleEditorStrings);
+  delete consumerProps.surface; delete consumerProps.dir; delete consumerProps.strings; delete consumerProps.titleEditorStrings; h.render();
+  assert.equal(h.port.presentation.surface, 'application'); assert.equal(h.port.presentation.dir, 'rtl');
+  h.act(() => h.port.updatePresentation({ surface: undefined, dir: undefined, strings: undefined, titleEditorStrings: undefined }));
+  assert.equal(h.port.presentation.surface, undefined); assert.equal(h.port.presentation.dir, undefined);
+  assert.equal(h.port.presentation.strings, undefined); assert.equal(h.port.presentation.titleEditorStrings, undefined);
+  assert.equal(h.refreshes, 0);
+  consumerProps.action = h.React.createElement('button', { 'data-consumer-action': '' }, 'Consumer action'); h.render();
+  h.change('select[aria-label="Header action"]', 'slot');
+  assert.equal(h.container.querySelectorAll('[data-consumer-action]').length, 1);
+  assert.equal(h.container.querySelectorAll('[data-shell-demo="action-slot"]').length, 0);
+  delete consumerProps.action; h.render();
+  assert.equal(h.container.querySelectorAll('[data-shell-demo="action-slot"]').length, 1);
+});
+
+test('configured action callback is suppressed while hidden and actual host disposal unmounts it', t => {
+  const h = fixture(t, 'Configure the actual web part Shell');
+  let renders = 0, mounts = 0, cleanups = 0;
+  function ActionProbe() {
+    h.React.useEffect(() => { mounts++; return () => { cleanups++; }; }, []);
+    return h.React.createElement('button', { 'data-action-probe': '' }, 'Probe');
+  }
+  h.act(() => h.port.updatePresentation({ action: { children: (Component, props) => {
+    renders++; return h.React.createElement(Component, props, h.React.createElement(ActionProbe));
+  } } }));
+  assert.equal(mounts, 1);
+  h.setProperties({ showTitle: false });
+  assert.equal(cleanups, 1); const hiddenRenders = renders;
+  h.act(() => h.port.updatePresentation({ size: 'large' })); h.render();
+  assert.equal(renders, hiddenRenders, 'hidden header never invokes source slot');
+  h.setProperties({ showTitle: true }); assert.equal(mounts, 2);
+  h.act(() => ReactDOM.unmountComponentAtNode(h.container));
+  assert.equal(cleanups, 2); assert.equal(h.container.querySelector('[data-action-probe]'), null);
+});
+
+test('metadata scenario inspects real plain-title metadata and fresh map/descriptor ownership', t => {
+  const h = createHarness(); t.after(h.close);
+  const { Demo } = pilotModules(h).scenario('Inspect searchable Shell title metadata');
+  const host = document.createElement('div'); document.body.appendChild(host);
+  t.after(() => { h.act(() => ReactDOM.unmountComponentAtNode(host)); host.remove(); });
+  let revision = 4;
+  const render = () => h.act(() => ReactDOM.render(h.React.createElement(Demo, { resetRevision: revision }), host));
+  render(); assert.match(host.textContent, /Plain title searchable: yes/); assert.match(host.textContent, /No comparison requested/);
+  h.act(() => Simulate.click(button(host, 'Create fresh metadata')));
+  assert.match(host.textContent, /Fresh map and title descriptor: yes/);
+  revision++; render(); assert.match(host.textContent, /No comparison requested/);
+});
+
+
+test('configuration diagnostics safely project a consumer JSX action with a live React owner', t => {
+  const h = createHarness(); t.after(h.close);
+  const modules = pilotModules(h);
+  const { WebPartShellDemoHost } = modules.load('WebPartShellDemoHost.tsx');
+  const { useExecutableShellPort } = modules.load('shared/useExecutableShellPort.ts');
+  const { Demo } = modules.scenario('Configure the actual web part Shell');
+  const instance = h.instance('owned-consumer-action');
+  let port;
+  function Content() { port = useExecutableShellPort(); return h.React.createElement(Demo, { shell: port }); }
+  function Consumer() {
+    return h.React.createElement(WebPartShellDemoHost, { instance,
+      action: h.React.createElement('button', { 'data-consumer-owned-action': '' }, 'Consumer owned action') }, h.React.createElement(Content));
+  }
+  const renderer = createDOMRenderer(document, { unstable_filterCSSRule: rule => !rule.startsWith('@container') });
+  const host = document.createElement('div'); document.body.appendChild(host);
+  t.after(() => { h.act(() => ReactDOM.unmountComponentAtNode(host)); host.remove(); });
+  h.act(() => ReactDOM.render(h.React.createElement(RendererProvider, { renderer }, h.React.createElement(Consumer)), host));
+  assert.throws(() => JSON.stringify(port.presentation.action), /circular/i, 'the fixture owns a real React Fiber rather than an owner-null element');
+  assert.equal(host.querySelectorAll('[data-consumer-owned-action]').length, 1);
+  const observations = JSON.parse(host.querySelector('[data-shell-demo="observations"]').textContent);
+  assert.equal(observations.action, 'ordinary'); assert.equal(observations.appearance, 'subtle');
 });

@@ -208,7 +208,7 @@ test('Shell port projects only presentation defaults and delegates patches; inst
     let port, options, state;
     const instances = new Map();
     function Probe({ id }) {
-      port = useExecutableShellPort(); options = hostModule.useShellDemoOptions(); state = h.state.useExampleExplorerState();
+      port = useExecutableShellPort(); options = hostModule.useShellPresentation(); state = h.state.useExampleExplorerState();
       instances.set(id, { port, options, state });
       return h.React.createElement(ExampleExplorer, { groups: s.groups, legacyEntries: [] });
     }
@@ -216,9 +216,10 @@ test('Shell port projects only presentation defaults and delegates patches; inst
       { instance: { instanceId: id }, children: h.React.createElement(Probe, { id }) })); }
     function render(ids) { h.act(() => { h.ReactDOM.render(h.React.createElement(h.fluent.FluentProvider, { theme: h.fluent.webLightTheme }, ids.map(instance)), h.host); }); }
     render(['first']); await h.flush();
-    assert.deepEqual(port.presentation, { appearance: 'subtle', size: 'medium', titlePosition: 'outside', padding: 'auto' });
-    h.act(() => { options.update({ appearance: undefined, size: undefined, titlePosition: undefined, padding: undefined, dir: 'rtl', actionSlot: true }); });
-    assert.deepEqual(port.presentation, { appearance: 'subtle', size: 'medium', titlePosition: 'outside', padding: 'auto' });
+    assert.deepEqual(port.presentation, { appearance: 'subtle', size: 'medium', titlePosition: 'outside', padding: 'auto', surface: undefined, dir: undefined, strings: undefined, titleEditorStrings: undefined, action: undefined });
+    h.act(() => { options.updatePresentation({ appearance: undefined, size: undefined, titlePosition: undefined, padding: undefined, dir: 'rtl', action: h.React.createElement('button', { 'data-source-action': '' }, 'Source action') }); });
+    assert.equal(port.presentation.dir, 'rtl');
+    assert.equal(port.presentation.appearance, 'subtle');
     h.change(h.host.querySelector('select[aria-label="Scenario"]'), 'b'); await h.flush();
     const before = h.host.querySelector('input'); h.change(before, 'before card');
     h.act(() => { port.updatePresentation({ appearance: 'outline', size: 'small' }); }); await h.flush();
@@ -226,7 +227,7 @@ test('Shell port projects only presentation defaults and delegates patches; inst
     assert.equal(h.host.querySelector('select[aria-label="Scenario"]').value, 'b', 'selection survives real body remount');
     assert.notEqual(h.host.querySelector('input'), before, 'scenario follows the real Shell body boundary');
     assert.equal(h.host.querySelector('input').value, 'baseline');
-    assert.equal(options.options.dir, 'rtl'); assert.equal(options.options.actionSlot, true);
+    assert.equal(options.presentation.dir, 'rtl'); assert.equal(options.presentation.action.props['data-source-action'], '');
     assert.equal(port.presentation.appearance, 'outline');
     const cardInput = h.host.querySelector('input'); h.change(cardInput, 'card note');
     h.act(() => port.updatePresentation({ appearance: 'filled', size: 'large', titlePosition: 'inside', padding: 'none' })); await h.flush();
@@ -245,15 +246,18 @@ test('Shell port projects only presentation defaults and delegates patches; inst
     render(['third']); await h.flush();
     assert.equal(state.selectedFeatureKey, 'alpha'); assert.deepEqual(state.selectedScenarioByFeature, {});
     assert.equal(state.resetRevision, 0, 'changing instanceId in the same host position replaces navigation provider');
+    assert.equal(port.presentation.action, undefined, 'replacement native instance disposes source action override');
+    assert.equal(port.presentation.dir, undefined);
+    assert.equal(port.presentation.appearance, 'subtle');
     // The ordinary host renders without a Shell options provider.
-    const originalOptionsHook = hostModule.useShellDemoOptions;
+    const originalOptionsHook = hostModule.useShellPresentation;
     let ordinaryHookCalls = 0;
-    hostModule.useShellDemoOptions = () => { ordinaryHookCalls++; return originalOptionsHook(); };
+    hostModule.useShellPresentation = () => { ordinaryHookCalls++; return originalOptionsHook(); };
     const { ExecutableExampleHost } = h.load('shared/ExecutableExampleHost.tsx');
     h.act(() => { h.ReactDOM.render(h.React.createElement(h.fluent.FluentProvider, { theme: h.fluent.webLightTheme }, h.React.createElement(ExecutableExampleHost, { entry: s.groups[0].features[0].scenarios[0], resetRevision: 0 })), h.host); });
     await h.flush('[data-example="a"]'); assert.equal(h.host.querySelector('[data-example]').textContent, 'Ordinary example');
     assert.equal(ordinaryHookCalls, 0, 'ordinary examples do not read the private Shell context');
-    hostModule.useShellDemoOptions = originalOptionsHook;
+    hostModule.useShellPresentation = originalOptionsHook;
     const shellEntry = s.entry('shell', 'shell', 'controls', 'webPartShell');
     h.act(() => { h.ReactDOM.render(h.React.createElement(h.fluent.FluentProvider, { theme: h.fluent.webLightTheme }, h.React.createElement(ExecutableExampleHost, { entry: shellEntry, resetRevision: 0 })), h.host); });
     await h.flush('[data-example="shell"]');

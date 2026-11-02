@@ -9,7 +9,9 @@ import { EditableTextIsolationFixture } from '../demo-control-isolation/editable
 import { createTheme } from '@fluentui/react';
 import { WebPartShell, useSx, width, type IWebPartShellProperties, type WebPartShellProps, type EditableTextStrings, type EditableTextStringsOverride } from '@apvee/spfx-react-toolkit';
 import { WebPartShellDemoHost } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/WebPartShellDemoHost';
-import WebPartShellPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/WebPartShellPanel';
+import { ExampleExplorer } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/ExampleExplorer';
+import { executableGroups } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/generated/jsdoc-examples/catalogue';
+const shellGroups = executableGroups.map(group => ({ ...group, features: group.features.filter(feature => feature.title === 'WebPartShell') })).filter(group => group.features.length > 0);
 
 type HostName = 'SharePoint' | 'SingleWebPartAppPage' | 'Teams' | 'Office' | 'Outlook';
 type ThemeName = 'light' | 'dark' | 'highContrast';
@@ -111,7 +113,14 @@ export function mountShellFixture(boundary: 'source' | 'compiled'): void {
   });
   function PersistentChild(): JSX.Element {
     React.useEffect(() => { mounts++; return () => { cleanups++; }; }, []);
-    return <WebPartShellPanel />;
+    // Independent native body probe: fixtures verify Shell lifecycle even while
+    // the real explorer displays the source-owned configuration (which has no note).
+    const [note, setNote] = React.useState('Intranet project review');
+    const [count, setCount] = React.useState(0);
+    return <><ExampleExplorer groups={shellGroups} legacyEntries={[]} />
+      <input aria-label="Independent native child note" data-shell-fixture="note" value={note} onChange={event => setNote(event.target.value)} />
+      <button data-shell-fixture="increment" onClick={() => setCount(value => value + 1)}>Increment native fixture counter</button>
+      <output data-shell-fixture="observations">{JSON.stringify({ note, count })}</output></>;
   }
   function Fixture(): JSX.Element {
     const sx = useSx();

@@ -13,11 +13,13 @@ function pilotModules(h) {
     ['controls/pagination/pagination.tsx', ['Pagination']],
     ['hooks/useSPFxProperties.ts', ['useSPFxProperties']],
     ['hooks/useSPFxDisplayMode.ts', ['useSPFxDisplayMode']],
+    ['hooks/useSPFxFluent9ThemeInfo.ts', ['useSPFxFluent9ThemeInfo']],
+    ['controls/web-part-shell/web-part-shell-metadata.ts', ['getWebPartShellPropertiesMetadata']],
     ['controls/web-part-shell/web-part-shell.tsx', ['WebPartShell']],
   ]) {
     // Generic service harness cannot load the native SDK; load Shell lazily only
     // in the Shell harness, which supplies those unavailable service identities.
-    if (file.includes('web-part-shell') && !h.WebPartShell) continue;
+    if ((file.includes('web-part-shell/web-part-shell.tsx') || file.includes('useSPFxFluent9ThemeInfo')) && !h.WebPartShell) continue;
     const exports = h.load(file);
     for (const name of names) toolkit[name] = exports[name];
   }

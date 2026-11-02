@@ -5,6 +5,7 @@ const path = require('node:path');
 const http = require('node:http');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 const harness = require('../tests/fixtures/formatted-text-harness.cjs');
+const { selectGeneratedShellScenario } = require('./web-part-shell-browser.helpers.cjs');
 const root = path.resolve(__dirname, '..');
 const output = path.join(root, '.docs/maintenance/title-toolbar-localization/browser');
 const checks = [];
@@ -54,7 +55,7 @@ if (require.main === module) (async () => {
       page.on('pageerror', error => diagnostics.push(`${boundary}: ${error.message}`));
       page.on('console', message => { if (message.type() === 'error') diagnostics.push(`${boundary}: ${message.text()}`); });
       try {
-        await page.goto(server.url);
+        await page.goto(server.url); await selectGeneratedShellScenario(page);
         const render = async patch => { await page.evaluate(value => window.shellFixture.render(value), patch); await settle(page); };
         await render({ mode: 'Edit', ...dictionaryPatch('en-US'), otherStrings: resources['it-IT'], otherTitleEditorResource: editorResources['it-IT'], width: 900,
           properties: { title: 'Author content', titleHTML: '<h2><strong>Author content</strong></h2>', showTitle: true } });

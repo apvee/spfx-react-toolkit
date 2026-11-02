@@ -8,3 +8,6 @@ export { useSx } from '../../../packages/spfx-react-toolkit/lib/hooks/useSx';
 export * from '../../../packages/spfx-react-toolkit/lib/helpers/styles';
 
 export * from '../../../packages/spfx-react-toolkit/lib/controls/editable-text';
+
+export { useSPFxPnPContext } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPnPContext';
+export { useSPFxPnPList } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPnPList';
