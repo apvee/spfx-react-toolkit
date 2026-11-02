@@ -226,9 +226,30 @@ function buildDocumentationModel(graph, config) {
   const bindingContracts = {};
   const diagnostics = [...graph.diagnostics];
   const entities = new Map(graph.entities.map(entity => [entity.key, entity]));
+  // Decide physical module ownership from the complete canonical graph before
+  // any member can create its shared file contract through iteration order.
+  const moduleOwners = new Map();
+  for (const entity of graph.entities) {
+    if (entity.kind !== 'namespace' || entity.namespaceRole !== 'sourceFile' || entity.visibility !== 'public' ||
+      !entity.moduleDoc || entity.moduleDocSource?.file !== entity.source.file ||
+      !graph.bindings.some(binding => binding.entityKey === entity.key && binding.specifier && binding.runtimeExport === true)) continue;
+    const candidates = moduleOwners.get(entity.source.file) || new Map();
+    candidates.set(entity.key, entity);
+    moduleOwners.set(entity.source.file, candidates);
+  }
+  for (const [file, candidates] of moduleOwners) if (candidates.size > 1) {
+    const source = [...candidates.values()].sort((a, b) => compare(a.key, b.key))[0].moduleDocSource;
+    addDiagnostic(diagnostics, source, file, 'DOC_AMBIGUOUS_MODULE_OWNER', 'A module header requires one canonical public runtime namespace owner.');
+  }
   for (const entity of graph.entities) {
     if (entity.visibility === 'external') continue;
-    if (entity.moduleDoc && !contracts[entity.source.file]) contracts[entity.source.file] = parseContract(entity.moduleDoc, entity.moduleDocSource || entity.source, entity.source.file, diagnostics);
+    if (entity.moduleDoc && !contracts[entity.source.file]) {
+      const candidates = moduleOwners.get(entity.source.file);
+      const owner = candidates?.size === 1 ? [...candidates.values()][0] : undefined;
+      const sameHeader = owner && owner.moduleDoc === entity.moduleDoc && owner.moduleDocSource.file === entity.moduleDocSource?.file &&
+        owner.moduleDocSource.line === entity.moduleDocSource?.line;
+      contracts[entity.source.file] = parseContract(entity.moduleDoc, entity.moduleDocSource || entity.source, sameHeader ? owner.key : entity.source.file, diagnostics);
+    }
     contracts[entity.key] = entity.namespaceRole === 'sourceFile' && !entity.rawDoc && contracts[entity.source.file]
       ? contracts[entity.source.file]
       : parseContract(entity.rawDoc, entity.docSource || entity.source, entity.key, diagnostics);

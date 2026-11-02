@@ -1,0 +1,11 @@
+{
+  "name": "@fixture/namespace",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts"
+    },
+    "./styles": {
+      "types": "./lib/runtime-barrel.d.ts"
+    }
+  }
+}

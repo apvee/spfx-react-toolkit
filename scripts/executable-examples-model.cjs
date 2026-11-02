@@ -59,7 +59,11 @@ function runtimeOwner(model, key) {
   const direct = model.graph.entities.find(entity => entity.key === key);
   if (direct) return ['type', 'interface'].includes(direct.kind) ? undefined : direct;
   const binding = model.graph.bindings.find(item => bindingContractKey(item) === key);
-  if (binding) return runtimeOwner(model, binding.entityKey);
+  if (binding) {
+    const target = model.graph.entities.find(entity => entity.key === binding.entityKey);
+    if (target?.namespaceRole === 'sourceFile' && binding.runtimeExport !== true) return undefined;
+    return runtimeOwner(model, binding.entityKey);
+  }
   return model.graph.entities.find(entity => !['type', 'interface'].includes(entity.kind) && (
     entity.signatures.some(signature => signature.key === key) ||
     entity.members.some(member => memberContractKey(entity.key, member.name) === key)));
@@ -319,7 +323,8 @@ export type Component = (props: Props) => React.ReactElement;
       report(example, 'EXECUTABLE_RUNTIME_OWNER', 'The runtime API owner requires a canonical documentation page.');
       continue;
     }
-    const bindings = model.graph.bindings.filter(binding => binding.entityKey === owner.key)
+    const bindings = model.graph.bindings.filter(binding => binding.entityKey === owner.key &&
+      (owner.namespaceRole !== 'sourceFile' || binding.runtimeExport === true))
       .map(binding => ({ name: [binding.exportedName, ...binding.memberPath].join('.'), nested: binding.memberPath.length > 0 }));
     const publicNames = [...new Set(bindings.map(binding => binding.name))].sort(compare);
     // Match the canonical documentation model's public heading preference.

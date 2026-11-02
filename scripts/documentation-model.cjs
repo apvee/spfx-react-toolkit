@@ -5,7 +5,7 @@ const { createDocumentationInputs } = require('./documentation-inputs.cjs');
 /** @typedef {{packageRoot: string, sourceRoot: string, tsconfig: string, repositoryUrl?: string, repositoryRef?: string}} Config */
 /** @typedef {{file: string, line: number}} DocLocation */
 /** @typedef {{code: string, file: string, line: number, symbol?: string, message: string}} Diagnostic */
-/** @typedef {{specifier: string, exportedName: string, entityKey: string, memberPath: string[], ownerKey?: string, rawDoc?: string, docSource?: DocLocation}} PublicBinding */
+/** @typedef {{specifier: string, exportedName: string, entityKey: string, memberPath: string[], ownerKey?: string, rawDoc?: string, docSource?: DocLocation, runtimeExport?: boolean}} PublicBinding runtimeExport is retained for source-file namespaces only: the complete clean export path reaches an implemented runtime descendant. */
 /** @typedef {{text: string, references: string[]}} TypeUse */
 /** @typedef {{name: string, source: DocLocation, docSource?: DocLocation, ownerKey?: string, rawDoc: string, optional: boolean, readonly?: boolean, forbidden: boolean, declaredType?: string, type: TypeUse}} ApiMember ownerKey identifies the declaring named or anonymous type, not its lexical named ancestor. */
 /** @typedef {{text: string, members: ApiMember[]}} ApiVariant */
@@ -244,27 +244,96 @@ function buildApiGraph(root, config, query = {}) {
       };
     });
   }
-  function publicBinding(symbol, specifier, exportedName, memberPath = [], ownerKey, ancestry = new Set(), destination = bindings, visibility = 'public') {
+  function nonAmbient(node) {
+    if (node.getSourceFile().isDeclarationFile) return false;
+    for (let current = node; current; current = current.parent) {
+      if (ts.canHaveModifiers(current) && ts.getModifiers(current)?.some(modifier => modifier.kind === ts.SyntaxKind.DeclareKeyword)) return false;
+    }
+    return true;
+  }
+  const moduleAt = node => node && checker.getSymbolAtLocation(node);
+  function runtimeNamespace(symbol, visiting) {
+    return Boolean(symbol?.declarations?.some(nonAmbient)) && checker.getExportsOfModule(symbol)
+      .some(child => runtimeExport(symbol, child.name, visiting));
+  }
+  function runtimeValue(symbol, visiting, aliases = new Set()) {
+    if (!symbol || aliases.has(symbol)) return false;
+    if (symbol.flags & ts.SymbolFlags.Alias) {
+      const next = new Set([...aliases, symbol]);
+      return (symbol.declarations || []).some(node => {
+        if (ts.isTypeOnlyExportDeclaration(node) || ts.isTypeOnlyImportDeclaration(node)) return false;
+        if (ts.isNamespaceExport(node)) return runtimeNamespace(moduleAt(node.parent.moduleSpecifier), visiting);
+        if (ts.isExportSpecifier(node)) {
+          const statement = node.parent.parent;
+          if (statement.moduleSpecifier) return runtimeExport(moduleAt(statement.moduleSpecifier), (node.propertyName || node.name).text, visiting);
+        }
+        if (ts.isImportSpecifier(node)) {
+          const statement = node.parent.parent.parent;
+          return runtimeExport(moduleAt(statement.moduleSpecifier), (node.propertyName || node.name).text, visiting);
+        }
+        if (ts.isNamespaceImport(node)) return runtimeNamespace(moduleAt(node.parent.parent.moduleSpecifier), visiting);
+        if (ts.isImportClause(node)) return runtimeExport(moduleAt(node.parent.moduleSpecifier), 'default', visiting);
+        return runtimeValue(checker.getImmediateAliasedSymbol(symbol), visiting, next);
+      });
+    }
+    const implemented = Boolean(symbol.flags & ts.SymbolFlags.Value) && Boolean(symbol.declarations?.some(node => {
+      if (!nonAmbient(node)) return false;
+      if (ts.isFunctionDeclaration(node)) return Boolean(node.body);
+      if (ts.isVariableDeclaration(node) || ts.isBindingElement(node) || ts.isClassDeclaration(node)) return true;
+      return ts.isEnumDeclaration(node) && (options.preserveConstEnums ||
+        !ts.getModifiers(node)?.some(modifier => modifier.kind === ts.SyntaxKind.ConstKeyword));
+    }));
+    return implemented || Boolean(symbol.flags & ts.SymbolFlags.Module) && runtimeNamespace(symbol, visiting);
+  }
+  // The checker flattens export-star results. Keep their originating module and
+  // name while following the same checker, rather than treating final aliases as
+  // proof that every intermediate import/export survives at runtime.
+  function runtimeExport(module, name, visiting = []) {
+    if (!module || visiting.some(route => route.module === module && route.name === name)) return false;
+    const symbol = checker.getExportsOfModule(module).find(item => item.name === name);
+    if (!symbol) return false;
+    const next = [...visiting, { module, name }];
+    const own = module.exports?.get(ts.escapeLeadingUnderscores(name));
+    // Explicit exports shadow star routes, including an explicit type-only alias.
+    if (own) return runtimeValue(own, next);
+    for (const node of module.declarations || []) {
+      const statements = ts.isSourceFile(node) ? node.statements
+        : ts.isModuleDeclaration(node) && node.body && ts.isModuleBlock(node.body) ? node.body.statements : [];
+      for (const statement of statements) {
+        if (!ts.isExportDeclaration(statement) || statement.exportClause || statement.isTypeOnly || !statement.moduleSpecifier) continue;
+        const source = moduleAt(statement.moduleSpecifier);
+        const candidate = source && checker.getExportsOfModule(source).find(item => item.name === name);
+        if (candidate && target(candidate) === target(symbol) && runtimeExport(source, name, next)) return true;
+      }
+    }
+    return false;
+  }
+  function publicBinding(symbol, specifier, exportedName, memberPath = [], ownerKey, ancestry = new Set(), destination = bindings, visibility = 'public', runtimeRoutes = []) {
     const resolved = target(symbol);
     if (visibility === 'public') publicSymbols.add(resolved);
     const key = register(resolved, visibility);
     if (!key || ancestry.has(key)) return;
     const node = declaration(symbol);
     const rawDoc = docs(node);
+    const sourceNamespace = entities.get(key).namespaceRole === 'sourceFile';
     destination.push({ specifier, exportedName, entityKey: key, memberPath, ...(ownerKey ? { ownerKey } : {}),
+      ...(sourceNamespace ? { runtimeExport: visibility === 'public' && runtimeRoutes.length > 0 && runtimeRoutes.every(route => runtimeExport(route.module, route.name)) } : {}),
       ...(rawDoc ? { rawDoc, docSource: docLocation(node).docSource || location(node) } : {}) });
     const next = new Set([...ancestry, key]);
     const namespace = Boolean(resolved.flags & ts.SymbolFlags.Module);
     const value = Boolean(resolved.flags & ts.SymbolFlags.Value) && !namespace;
     const children = namespace ? checker.getExportsOfModule(resolved)
       : value ? checker.getPropertiesOfType(checker.getTypeOfSymbolAtLocation(resolved, declaration(resolved))).filter(child => isLocal(declaration(child)) && !ts.isComputedPropertyName(declaration(child).name)) : [];
-    for (const child of children.sort((a, b) => compare(a.name, b.name))) publicBinding(child, specifier, exportedName, [...memberPath, child.name], key, next, destination, visibility);
+    for (const child of children.sort((a, b) => compare(a.name, b.name))) publicBinding(child, specifier, exportedName, [...memberPath, child.name], key, next, destination, visibility,
+      namespace ? [...runtimeRoutes, { module: resolved, name: child.name }] : runtimeRoutes);
   }
   for (const entry of entries) {
     const source = program.getSourceFile(entry.file);
     const module = source && checker.getSymbolAtLocation(source);
     if (!module) throw new Error(`Missing TypeScript module: ${entry.file}`);
-    for (const symbol of checker.getExportsOfModule(module).sort((a, b) => compare(a.name, b.name))) publicBinding(symbol, entry.specifier, symbol.name);
+    for (const symbol of checker.getExportsOfModule(module).sort((a, b) => compare(a.name, b.name))) {
+      publicBinding(symbol, entry.specifier, symbol.name, [], undefined, new Set(), bindings, 'public', [{ module, name: symbol.name }]);
+    }
   }
   // Compatibility resolution is deliberately separate from advertised clean
   // bindings. Even an exact historical export fails closed when any top-level
