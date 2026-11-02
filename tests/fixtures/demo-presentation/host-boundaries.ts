@@ -1,7 +1,6 @@
 const page = { site: { absoluteUrl: 'https://simulated.invalid/sites/demo' }, web: { absoluteUrl: 'https://simulated.invalid/sites/demo' }, cultureInfo: { currentCultureName: 'en-US', currentUICultureName: 'en-US' } };
 const forbiddenWrite = async (): Promise<never> => { throw new Error('Fixture forbids CRUD'); };
 const unavailable = { isReady: false, isInitializing: false, isLoading: false, error: undefined, invoke: async () => undefined, baseUrl: page.web.absoluteUrl };
-export const useSPFxPnPContext = () => ({ isInitialized: false, sp: undefined });
 // Match the real hook's stable callback identity across renders of a scope.
 const pnp = { ...unavailable, batch: async () => undefined, clearError: () => {} };
 export const useSPFxPnP = () => pnp;

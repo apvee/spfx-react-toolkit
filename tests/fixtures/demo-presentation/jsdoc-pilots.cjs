@@ -1,5 +1,6 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
+  useSPFxPnPContext: ['Read current or cross-site web information'],
   useSPFxConfigurationStore: ['Compare layered configuration and physical inventories'],
   createSPFxConfigurationStoreService: ['Compose tenant defaults and site overrides with the service'],
   useSPFxTenantKeyValueStore: ['Explore tenant records and exact text persistence'],

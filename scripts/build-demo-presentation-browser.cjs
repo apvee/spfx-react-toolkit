@@ -16,6 +16,9 @@ webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 
   } },
   plugins: [new webpack.DefinePlugin({ 'process.env.DEMO_PRESENTATION_JSDOC_ONLY': JSON.stringify(process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? '1' : '0') }), new webpack.NormalModuleReplacementPlugin(/^\.\.\/services\/spfx-pnp-context\.service$/, resource => {
     if ([path.join(root, 'packages/spfx-react-toolkit/lib/hooks'), path.join(root, 'packages/spfx-react-toolkit/src/hooks')].includes(resource.context)) resource.request = path.join(fixture, 'pnp-read-transport.ts');
+  }), new webpack.NormalModuleReplacementPlugin(/^\.\.\/\.\.\/\.\.\/packages\/spfx-react-toolkit\/lib\/services\/spfx-pnp-context\.service$/, resource => {
+    // Correct the existing pilot helper's factory only; no root/barrel preload.
+    if (resource.context === fixture) resource.request = path.join(root, 'packages/spfx-react-toolkit', source ? 'src' : 'lib', 'services', `spfx-pnp-context.service.${source ? 'ts' : 'js'}`);
   })],
   module: { rules: [{ test: /\.tsx?$/, use: path.join(__dirname, 'sx-browser-typescript-loader.cjs') }, { test: /\.scss$/, use: path.join(fixture, 'stylesheet-loader.cjs') }] },
 }, (error, stats) => {

@@ -17,6 +17,7 @@ const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Goog
 const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
 const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
 const entries = legacyEntries.concat([
+  { key: 'pnp-context', title: 'useSPFxPnPContext' },
   { key: 'configuration', title: 'useSPFxConfigurationStore' }, { key: 'configuration-service', title: 'createSPFxConfigurationStoreService' },
   { key: 'tenant', title: 'useSPFxTenantKeyValueStore' }, { key: 'tenant-service', title: 'createSPFxTenantKeyValueStoreService' },
   { key: 'tenant-properties', title: 'useSPFxTenantProperty' }, { key: 'tenant-property-service', title: 'createSPFxTenantPropertyService' },
@@ -62,6 +63,7 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    'pnp-context': ['useSPFxPnPContext', 'Read current or cross-site web information'],
     configuration: ['useSPFxConfigurationStore', 'Compare layered configuration and physical inventories'],
     'configuration-service': ['createSPFxConfigurationStoreService', 'Compose tenant defaults and site overrides with the service'],
     tenant: ['useSPFxTenantKeyValueStore', 'Explore tenant records and exact text persistence'],
@@ -101,7 +103,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: ['site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -361,6 +363,16 @@ async function interact(page, key) {
     case 'tenant-property-service': await panel.getByLabel('Catalog URL', { exact: true }).fill('https://simulated.invalid/sites/catalog'); await panel.getByRole('button', { name: 'Read', exact: true }).click(); await panel.getByText('Property not set', { exact: true }).waitFor(); break;
     case 'tenant': await panel.getByRole('button', { name: 'Activate tenant store', exact: true }).click(); await settle(page); await panel.getByLabel('Operation', { exact: true }).selectOption('save'); await panel.getByLabel('Value', { exact: true }).fill('Local draft'); check('tenant: editable draft', await panel.getByLabel('Value', { exact: true }).inputValue(), 'Local draft'); break;
     case 'tenant-service': await panel.getByLabel('Catalog URL', { exact: true }).fill('https://simulated.invalid/sites/catalog'); check('tenant service: Save initially locked', await panel.getByRole('button', { name: 'Save and read numeric-looking text', exact: true }).isDisabled(), true); break;
+    case 'pnp-context': {
+      const before = await page.evaluate(() => window.clientsFixture.requests.length);
+      await panel.getByRole('textbox', { name: 'Site URL', exact: true }).fill('/sites/context-target');
+      check('PnP context draft sends no native requests', await page.evaluate(() => window.clientsFixture.requests.length), before);
+      await panel.getByRole('button', { name: 'Run', exact: true }).click();
+      await panel.getByText('Site information loaded.', { exact: true }).waitFor();
+      check('PnP context real web Response title', await panel.getByRole('definition').allTextContents(), ['Fixture PnP web', 'https://simulated.invalid/sites/context-target', 'Native response simulation; no tenant request']);
+      check('PnP context uses native web request only', await page.evaluate(() => window.clientsFixture.requests.slice(-1).map(request => { const url = new URL(request.target); return [request.kind, url.origin + url.pathname, url.searchParams.get('$select')]; })), [['pnp-web', 'https://simulated.invalid/sites/context-target/_api/web', 'Title,Url,Description']]);
+      break;
+    }
     case 'pnp': await panel.locator('select[data-demo-variant=PnPPanel]').selectOption('listAccess'); await panel.getByLabel('List GUID', { exact: true }).fill('11111111-2222-3333-4444-555555555555'); check('PnP GUID config', await panel.getByLabel('List GUID', { exact: true }).inputValue(), '11111111-2222-3333-4444-555555555555'); break;
     case 'search': await panel.locator('select[data-demo-variant=SearchPanel]').selectOption('suggestions'); await panel.getByLabel('Search with Autocomplete', { exact: true }).fill('local'); await panel.getByRole('button', { name: 'local simulated suggestion', exact: true }).waitFor(); check('Search real debounce/suggestion UI', await panel.getByRole('button', { name: 'local simulated suggestion', exact: true }).count(), 1); break;
     default: throw new Error(`Uncovered panel ${key}`);

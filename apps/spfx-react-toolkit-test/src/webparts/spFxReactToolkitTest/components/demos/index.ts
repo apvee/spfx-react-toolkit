@@ -3,9 +3,6 @@
  * Each demo showcases specific hooks from the SPFx React Toolkit
  */
 
-// PnP Context demo
-export { PnPContextDemo } from './PnPContextDemo';
-
 // PnP Operations (invoke/batch) demo
 export { PnPOperationsDemo } from './PnPOperationsDemo';
 

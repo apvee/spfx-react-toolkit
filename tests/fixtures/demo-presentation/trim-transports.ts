@@ -176,6 +176,15 @@ const browserFetch = typeof window.fetch === 'function' ? window.fetch.bind(wind
 window.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
   if (url !== graphDataDownload) {
+    const target = new URL(url);
+    if (target.pathname.endsWith('/_api/web') && target.origin === 'https://simulated.invalid'
+      && (init?.method ?? 'GET') === 'GET' && target.searchParams.get('$select') === 'Title,Url,Description') {
+      return clientWork('pnp-web', url, () => new Response(JSON.stringify({ Title: 'Fixture PnP web', Url: target.origin + target.pathname.slice(0, -'/_api/web'.length), Description: 'Native response simulation; no tenant request' }), { status: 200, headers: { 'Content-Type': 'application/json' } }), { method: 'GET', headers: init?.headers }).then(value => {
+        if (!(value instanceof Response)) throw new Error('PnP web fixture requires a native Response');
+        return value;
+      });
+    }
+    if (target.pathname.includes('/_api/')) return Promise.reject(new Error('Unsupported native PnP fixture route'));
     if (!browserFetch) return Promise.reject(new Error('Native fetch is unavailable for this fixture request.'));
     return browserFetch(input, init);
   }

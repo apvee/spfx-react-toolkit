@@ -31,6 +31,13 @@ export const createSPFxPnPContextService: typeof createRealService = (...args) =
     ...service,
     createSPFI: (...options) => service.createSPFI(...options).using(instance => {
       instance.on.send.replace(async (url, init) => {
+        // New context cases use the shared native terminal queue, never pilot list JSON.
+        // The existing builder resolves this helper's factory to the selected source/lib mode.
+        const target = new URL(String(url));
+        if (target.pathname.endsWith('/_api/web')) {
+          if ((init.method ?? 'GET') !== 'GET') throw new Error('Simulated read fixture forbids CRUD');
+          return fetch(String(url), init);
+        }
         const method = init.method ?? 'GET';
         calls.push({ url: String(url), method });
         if (method !== 'GET') throw new Error('Simulated read fixture forbids CRUD');

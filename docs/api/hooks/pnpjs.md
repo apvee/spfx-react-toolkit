@@ -681,6 +681,8 @@ import { useSPFxPnPContext } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (9)
 
+#### Basic usage
+
 ```tsx
 import * as React from 'react';
 import { useSPFxPnPContext } from '@apvee/spfx-react-toolkit';
@@ -689,6 +691,83 @@ function PnPStatus() {
   const context = useSPFxPnPContext('/sites/projects', { cache: { enabled: true } });
   return <span>{context.error?.message ?? context.siteUrl}</span>;
 }
+```
+
+#### Read current or cross-site web information
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
+import { useSPFxPnPContext } from '@apvee/spfx-react-toolkit';
+import '@pnp/sp/webs';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Outcome = { token: object; request: number } & (
+  | { phase: 'pending' }
+  | { phase: 'success'; title: string; url: string; description: string }
+  | { phase: 'error'; message: string }
+);
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  // Mount below the matching SPFx provider, for example inside WebPartShell.
+  const [target, setTarget] = React.useState('');
+  const context = useSPFxPnPContext(target);
+  const values: readonly unknown[] = [context.sp, target, resetRevision];
+  const boundary = React.useRef({ values, token: {} });
+  if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {} };
+  const token = boundary.current.token;
+  const mounted = React.useRef(false);
+  const sequence = React.useRef(0);
+  const [outcome, setOutcome] = React.useState<Outcome>();
+  const current = (): boolean => mounted.current && boundary.current.token === token;
+  const visible = current() && outcome?.token === token ? outcome : undefined;
+  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
+  const revision = React.useRef(resetRevision);
+  React.useLayoutEffect(() => {
+    if (revision.current === resetRevision) return;
+    revision.current = resetRevision;
+    sequence.current++;
+    setTarget(''); setOutcome(undefined);
+  }, [resetRevision]);
+  const changeTarget = (value: string): void => {
+    if (!current() || value === target) return;
+    // Retire retained commands synchronously, before React commits the draft.
+    boundary.current = { ...boundary.current, token: {} };
+    sequence.current++;
+    setTarget(value); setOutcome(undefined);
+  };
+  const run = async (): Promise<void> => {
+    const client = context.sp;
+    if (!current() || !context.isInitialized || !client) return;
+    const request = ++sequence.current;
+    const owns = (): boolean => current() && sequence.current === request;
+    setOutcome({ token, request, phase: 'pending' });
+    try {
+      // SharePoint's legacy Description field may be null; local absence uses undefined.
+      const web: { Title: string; Url: string; Description?: string | null } = await client.web.select('Title', 'Url', 'Description')();
+      if (owns()) setOutcome({ token, request, phase: 'success', title: web.Title, url: web.Url, description: web.Description || '(no description)' });
+    } catch (error) {
+      if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
+    }
+  };
+  const dismiss = (): void => {
+    if (current() && visible?.phase === 'error' && visible.request === sequence.current) setOutcome(undefined);
+  };
+  const regions: DemoRegions = {
+    controls: <Field label="Site URL" hint="Leave empty to use current site"><Input aria-label="Site URL" value={target} onChange={(_event, data) => changeTarget(data.value)} placeholder="e.g., /sites/hr or https://contoso.sharepoint.com/sites/hr" /></Field>,
+    commands: <Button appearance="primary" disabled={!context.isInitialized || visible?.phase === 'pending'} onClick={run}>Run</Button>,
+    status: <>
+      <p>Effective web: {context.siteUrl}; initialized: {context.isInitialized ? 'Yes' : 'No'}</p>
+      {context.error && <p role="alert">Context initialization error: {context.error.message}</p>}
+      {!context.isInitialized && !context.error && <p>Context is not initialized.</p>}
+      {visible?.phase === 'error' && <MessageBar intent="error"><MessageBarBody>Request error: {visible.message}</MessageBarBody><MessageBarActions><Button onClick={dismiss}>Dismiss</Button></MessageBarActions></MessageBar>}
+      <p role="status">{visible?.phase === 'pending' ? 'Loading selected web...' : visible?.phase === 'success' ? 'Site information loaded.' : 'Run to read the selected site.'}</p>
+    </>,
+    children: visible?.phase === 'success' ? <dl aria-label="Site information"><dt>Title</dt><dd>{visible.title}</dd><dt>URL</dt><dd>{visible.url}</dd><dt>Description</dt><dd>{visible.description}</dd></dl> : undefined,
+    diagnostics: <p>Only Run reads Title, Url and Description. The raw Site URL is passed unchanged to the public resolver. Client construction, draft edits and Reset send no requests. Initialization errors stay separate from request errors. Reset, target/client changes and departure invalidate this view; already dispatched reads may still finish. No request is canceled and no items are written.</p>,
+  };
+  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Leave Site URL empty for the current web or enter a cross-site URL, then Run to read Title, URL and Description; target changes and reset invalidate late results.' };
 ```
 
 ### Signatures (8)
@@ -727,7 +806,7 @@ Client, effective URL and initialization outcome.
 
 ### Source (13)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPContext.ts:134](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPContext.ts#L134)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPContext.ts:210](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPContext.ts#L210)
 
 ## ListFilterFunction
 
@@ -1562,7 +1641,7 @@ import { useSPFxPnPList } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (16)
 
-#### Basic usage
+#### Basic usage (2)
 
 ```tsx
 import * as React from 'react';
@@ -3445,7 +3524,7 @@ import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit/hooks';
 
 ### Examples (34)
 
-#### Basic usage (2)
+#### Basic usage (3)
 
 ```tsx
 import * as React from 'react';

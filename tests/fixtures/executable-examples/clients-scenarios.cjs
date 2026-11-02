@@ -23,7 +23,7 @@ function token(scopes = 'User.Read', aud = 'https://graph.microsoft.com') { retu
 function createClientsFixture(t, title, options = {}) {
     const compiled = options.compiled ?? process.env.CLIENTS_IMPLEMENTATION === 'compiled';
     const asyncModule = compiled ? {} : { useAsyncInvoke: loadHook('useAsyncInvoke.internal', 'useAsyncInvoke') };
-    const toolkit = {}, context = {}, pageModule = {};
+    const toolkit = {}, context = {}, pageModule = {}, pnpModule = {};
     const keys = Object.fromEntries(['page', 'theme', 'http', 'sp', 'graph', 'aad', 'token'].map(key => [key, {}]));
     const native = Object.fromEntries([['HttpClient', 'http'], ['SPHttpClient', 'sp'], ['MSGraphClientFactory', 'graph'], ['AadHttpClientFactory', 'aad'], ['AadTokenProviderFactory', 'token'], ['AadHttpClient', 'aadClient']].map(([name, key]) => [name, { serviceKey: keys[key], configurations: { v1: {} } }]));
     const pageNative = { PageContext: { serviceKey: keys.page } };
@@ -31,6 +31,7 @@ function createClientsFixture(t, title, options = {}) {
         '@microsoft/sp-core-library': { DisplayMode: { Read: 1, Edit: 2 }, _SPKillSwitch: { isActivated: () => false } },
         '@microsoft/sp-page-context': pageNative,
         '@microsoft/sp-component-base': { ThemeProvider: { serviceKey: keys.theme } },
+        ...(options.pnpContext ? { '@pnp/sp': pnpModule } : {}),
         './useSPFxContext': context, './useSPFxPageContext': pageModule,
         // The generic TS arrow is parsed as TSX by services-test-harness; reuse its established TS-only loader.
         // This module imports React only, owns state per call and creates no provider/store/context.
@@ -44,6 +45,21 @@ function createClientsFixture(t, title, options = {}) {
     Object.assign(pageModule, library('hooks/useSPFxPageContext'));
     for (const name of ['Context', 'PageContext', 'ServiceScope', 'InstanceInfo', 'HttpClient', 'SPHttpClient', 'MSGraphClient', 'AadHttpClient', 'AadTokenProvider', 'ApiPermissionPrecheck', 'Properties', 'Fluent9ThemeInfo'])
         Object.assign(toolkit, library('hooks/useSPFx' + name));
+    const pnpFiles = [];
+    let pnpInitializationError;
+    if (options.pnpContext) {
+        const pnp = h.load(require.resolve('@pnp/sp'));
+        // Explicit construction-dependency fault only; the real hook/factory remain loaded.
+        Object.assign(pnpModule, pnp, { spfi: (...args) => {
+            if (pnpInitializationError) throw pnpInitializationError;
+            return pnp.spfi(...args);
+        } });
+        // Use the harness's existing module cache and exact dependency boundary.
+        const read = fs.readFileSync;
+        fs.readFileSync = (file, ...args) => { pnpFiles.push(String(file)); return read(file, ...args); };
+        try { Object.assign(toolkit, library('hooks/useSPFxPnPContext')); }
+        finally { fs.readFileSync = read; }
+    }
     if (options.graphData) for (const name of ['UserInfo', 'UserPhoto', 'OneDriveAppData']) Object.assign(toolkit, library('hooks/useSPFx' + name));
     if (options.tenantProperties) {
         pageNative.SPPermission = h.load(require.resolve('@microsoft/sp-page-context/lib-commonjs/SPPermission')).default;
@@ -68,6 +84,14 @@ function createClientsFixture(t, title, options = {}) {
     Object.assign(toolkit, library('hooks/useSx'), library('core/provider-webpart'), library('controls/web-part-shell/web-part-shell'), library('helpers/styles/index'), library('helpers/spfx-api-permission-precheck.helpers'));
     Object.defineProperty(window, 'crypto', { configurable: true, value: require('node:crypto').webcrypto });
     const calls = [], initializations = [], tokens = [], observers = [], commits = [], downloads = [];
+    if (options.pnpContext) t.mock.method(global, 'fetch', (url, init) => {
+        const target = new URL(String(url));
+        assert.equal(init.method, 'GET', 'PnP context fixture permits reads only');
+        assert.ok(target.pathname.endsWith('/_api/web'), 'bounded native web endpoint');
+        assert.equal(target.searchParams.get('$select'), 'Title,Url,Description');
+        const request = deferred({ kind: 'pnp', url: String(url), init, method: init.method });
+        calls.push(request); return request.promise;
+    });
     if (options.graphData) t.mock.method(global, 'fetch', (url, init) => {
         assert.equal(url, 'https://download.fixture.invalid/app-data');
         const request = deferred({ url, init }); downloads.push(request); return request.promise;
@@ -115,10 +139,13 @@ function createClientsFixture(t, title, options = {}) {
     const base = path.resolve(__dirname, '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
     const Shell = h.load(path.join(base, 'WebPartShellDemoHost.tsx')).WebPartShellDemoHost;
     const { DemoCard } = h.load(path.join(base, 'shared/DemoCard.tsx'));
+    const Explorer = options.explorer ? h.load(path.join(base, 'ExampleExplorer.tsx')).ExampleExplorer : undefined;
+    const groups = options.explorer ? h.load(path.join(base, 'generated/jsdoc-examples/catalogue.ts')).executableGroups.map(group => ({ ...group, features: group.features.filter(feature => ['useSPFxContext', 'useSPFxPnPContext'].includes(feature.title)) })).filter(group => group.features.length) : [];
+
     const renderer = createDOMRenderer(document, { unstable_filterCSSRule: rule => !rule.startsWith('@container') });
     const container = document.createElement('div');
     document.body.appendChild(container);
-    function Frame() { const [, redraw] = h.React.useState(0); redrawChild = () => redraw(value => value + 1); return h.React.createElement(Demo, { resetRevision: revision, render: options.fallback ? undefined : next => { regions = next; return h.React.createElement(DemoCard, { title, iconName: 'Info', contentPlacement: 'configuration', ...next }); } }); }
+    function Frame() { const [, redraw] = h.React.useState(0); redrawChild = () => redraw(value => value + 1); return Explorer ? h.React.createElement(Explorer, { groups, legacyEntries: [] }) : h.React.createElement(Demo, { resetRevision: revision, render: options.fallback ? undefined : next => { regions = next; return h.React.createElement(DemoCard, { title, iconName: 'Info', contentPlacement: 'configuration', ...next }); } }); }
     function render() { h.act(() => { ReactDOM.render(h.React.createElement(RendererProvider, { renderer }, h.React.createElement(fluent.FluentProvider, { theme: fluent.webLightTheme }, h.React.createElement(options.directProvider ? toolkit.SPFxWebPartProvider : Shell, { instance }, h.React.createElement(h.React.Profiler, { id: 'Clients', onRender: () => commits.push({ id: instance.instanceId, text: container.textContent, buttons: [...container.querySelectorAll('button')].map(node => ({ text: node.textContent, disabled: node.disabled })) }) }, h.React.createElement(Frame))))), container); }); }
     let closed = false;
     function unmount() { if (closed)
@@ -127,6 +154,7 @@ function createClientsFixture(t, title, options = {}) {
     render();
     return { h, toolkit, keys, native, container, calls, downloads, initializations, tokens, commits, observers, themeHandlers, host, render, unmount,
         mountPeer(nativeHost = host('clients-peer')) { const peer = h.mountComponent(() => h.React.createElement(RendererProvider, { renderer }, h.React.createElement(fluent.FluentProvider, { theme: fluent.webLightTheme }, h.React.createElement(toolkit.SPFxWebPartProvider, { instance: nativeHost }, h.React.createElement(Demo))))); return { ...peer, instance: nativeHost, click(name) { const node = [...peer.container.querySelectorAll('button')].find(n => n.textContent === name); assert.ok(node, name); h.act(() => { Simulate.click(node); }); } }; },
+        pnpFiles, setPnPInitializationError(error) { pnpInitializationError = error; },
         get instance() { return instance; }, get regions() { return regions; }, get entry() { return selected.entry; },
         select(nextTitle, ownerKey) { selected = scenario(nextTitle, ownerKey); Demo = h.load(selected.file).Demo; render(); },
         replace(next) { instance = next; render(); },

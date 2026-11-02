@@ -63,7 +63,6 @@ const demoIcons: Readonly<Record<string, FluentIcon>> = {
   Info: Info24Regular,
   InfoSolid: Info24Regular,
   StatusCircleQuestionMark: Info24Regular,
-  CheckMark: Checkmark24Regular,
   Completed: Checkmark24Regular,
   CompletedSolid: Checkmark24Regular,
   ErrorBadge: ErrorCircle24Regular,
