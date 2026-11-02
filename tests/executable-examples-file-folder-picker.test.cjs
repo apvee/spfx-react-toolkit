@@ -581,14 +581,41 @@ test('5b actual result stamp rejects foreign provider context and opposite imple
     cache.dispose();
 });
 function pathForOpposite(f, stem) { return require('node:path').join(require('node:path').dirname(f.root), f.compiled ? 'src' : 'lib', stem + (f.compiled ? '.ts' : '.js')); }
+// This preparation is shared only by the two-item authoritative protocol controls below.
+async function openAtomicPair(f, category) {
+    if (category !== undefined)
+        f.change('File category', category);
+    f.toggle('Multiple selection');
+    f.change('Selection limit (empty: default)', '2');
+    await start(f);
+    const opening = await open(f);
+    assert.equal(f.subject.props.multiselect, true);
+    assert.equal(f.subject.props.selectionLimit, 2);
+    const config = f.posts.at(-1).config;
+    assert.deepEqual(config.selection, { mode: 'multiple', maximumCount: 2, enablePersistence: true });
+    assert.equal(config.typesAndSources.mode, 'files');
+    assert.deepEqual(config.typesAndSources.filters, category === 'documents' ? ['document'] : undefined);
+    return opening;
+}
+for (const category of [undefined, 'documents'])
+    test('5b actual protocol valid atomic pair succeeds under ' + (category ?? 'unrestricted'), async (t) => {
+        const f = createFileFolderFixture(t);
+        const x = await openAtomicPair(f, category);
+        x.command('p', { command: 'pick', items: [raw('FileB'), raw('FileA')] });
+        await f.flush();
+        assert.equal(x.port.messages.find(m => m.id === 'p' && m.type === 'result').data.result, 'success',
+            'valid pair must be accepted under the same policy: ' + JSON.stringify(f.posts.at(-1).config.selection) + '; ' + f.diagnostics.error);
+        assert.deepEqual(f.diagnostics.values.map(value => value.itemId), ['FileB', 'FileA']);
+        assert.equal(f.changes.length, 1);
+        assert.equal(f.diagnostics.reason, 'pick');
+        assert.equal(f.diagnostics.error, '');
+        assert.equal(x.port.closed, true);
+    });
 for (const [name, patch] of [['foreign tenant', { sharepointIds: { tenantId: '99999999-9999-4999-8999-999999999999', siteId: ids.site, webId: ids.web, listId: ids.list } }], ['foreign collection', { sharepointIds: { tenantId: ids.tenant, siteId: '99999999-9999-4999-8999-999999999999', webId: ids.web, listId: ids.list } }], ['deleted', { deleted: {} }], ['shortcut', { remoteItem: {} }], ['misleading MIME', { name: 'Bad.exe', file: { mimeType: 'application/pdf' } }]])
     test('5b actual protocol confirmation rejects ' + name + ' without partial selection', async (t) => {
         const f = createFileFolderFixture(t);
-        if (name === 'misleading MIME')
-            f.change('File category', 'documents');
         f.items.FileA = { ...f.items.FileA, ...patch };
-        await start(f);
-        const x = await open(f);
+        const x = await openAtomicPair(f, name === 'misleading MIME' ? 'documents' : undefined);
         x.command('p', { command: 'pick', items: [raw('FileB'), raw('FileA')] });
         await f.flush();
         assert.deepEqual(f.diagnostics.values, []);
