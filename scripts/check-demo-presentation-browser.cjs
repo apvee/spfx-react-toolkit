@@ -17,6 +17,8 @@ const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/
 const entries = legacyEntries.concat([
   { key: 'content-card', title: 'ContentCard' }, { key: 'cards', title: 'PreviewCard' },
   { key: 'card-retention', title: 'PreviewCard' }, { key: 'description-list', title: 'DescriptionList' },
+  { key: 'stage', title: 'Stage' }, { key: 'groups', title: 'SettingsGroup' },
+  { key: 'accordion-group', title: 'AccordionGroup' }, { key: 'state-message', title: 'StateMessage' },
 ]);
 const checks = [], diagnostics = [], metrics = [], screenshots = [], fontAssets = [];
 const check = (name, actual, expected) => { checks.push({ name, actual, expected }); assert.deepEqual(actual, expected, name); };
@@ -49,6 +51,10 @@ async function select(page, key) {
     cards: ['PreviewCard', 'Inspect preview media and image recovery'],
     'card-retention': ['PreviewCard', 'Retain caller data when switching card types'],
     'description-list': ['DescriptionList', 'Inspect responsive metadata with data and compound APIs'],
+    stage: ['Stage', 'Edit a report with guarded Stage dismissal'],
+    groups: ['SettingsGroup', 'Preserve notification settings across group presentations'],
+    'accordion-group': ['AccordionGroup', 'Control disclosure selection and retained content'],
+    'state-message': ['StateMessage', 'Configure state artwork semantics and actions'],
   };
   if (Object.hasOwn(sourceCases, key)) {
     const [title, scenario] = sourceCases[key];
@@ -115,6 +121,7 @@ async function singleExample(page, key, checkpoint = 'initial') {
     'data-grid': '.fui-DataGrid',
     'description-list': 'dl',
     groups: '[data-groups-demo=settings],[data-groups-demo=accordion]',
+    'accordion-group': '[data-accordion-demo=group]',
   };
   if (principalRoots[key]) check(`${name}: one actual principal control, including retained diagnostics`, await panel.locator(principalRoots[key]).count(), 1);
 }
@@ -203,6 +210,14 @@ async function interact(page, key) {
     }
     case 'stage': await panel.locator('[data-stage-demo=mode]').first().selectOption('popover'); await panel.locator('[data-stage-demo=trigger]').first().click(); await page.locator('.fui-PopoverSurface').waitFor(); check('Stage actual popover presentation', await page.locator('.fui-PopoverSurface').count(), 1); await page.getByRole('button', { name: 'Close A', exact: true }).click(); await page.locator('.fui-PopoverSurface').waitFor({ state: 'hidden' }); break;
     case 'groups': await groupsProduct(page, { check }); break;
+    case 'accordion-group': {
+      const selector = panel.locator('select[data-accordion-demo=open-items]');
+      await selector.selectOption('advanced');
+      check('Independent Accordion controlled selection', await selector.inputValue(), 'advanced');
+      await panel.locator('[data-accordion-demo=close-all]').click();
+      check('Independent Accordion close all', await selector.inputValue(), '');
+      break;
+    }
     case 'state-message': { const artwork = panel.locator('[data-state-message-demo=preview] svg'); const before = await artwork.innerHTML(); await panel.locator('[data-state-message-demo=preset]').selectOption('error'); check('StateMessage actual preset artwork changes', await artwork.innerHTML() !== before, true); await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).click(); await panel.locator('[data-state-message-demo=role]').check(); check('StateMessage explicit alert applies to text region', await panel.locator('[data-state-message-demo=preview] [data-state-message-text]').getAttribute('role'), 'alert'); break; }
     case 'auto-skeleton': { const note = panel.locator('[data-auto-skeleton-demo=focus-target]'); await note.fill('Retained loading note'); await panel.locator('[data-auto-skeleton-demo=loading]').check(); check('AutoSkeleton actual busy state', await panel.locator('[data-auto-skeleton-demo=preview]').getAttribute('aria-busy'), 'true'); await panel.locator('[data-auto-skeleton-demo=loading]').uncheck(); check('AutoSkeleton retained note', await note.inputValue(), 'Retained loading note'); break; }
     case 'relative-time': { const locale = panel.locator('[data-relative-time-demo=locale]'); const preview = panel.locator('[data-relative-time-demo=preview]'); const before = await preview.textContent(); await locale.selectOption('it-IT'); check('RelativeTime actual translated text', await preview.textContent() !== before, true); await locale.selectOption('en-US'); break; }

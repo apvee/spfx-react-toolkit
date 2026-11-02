@@ -208,12 +208,15 @@ for (const marker of ['AutoSkeleton', 'loading', 'animation', 'minSize', 'ignore
   if (!skeletonPanel.includes(marker)) throw new Error(`AutoSkeleton interactive example missing ${marker}`);
 }
 
-const statePanel = scenarioSource('StateMessage');
+const stateSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/state-message/state-message.tsx'));
+const statePanel = scenarioSource('StateMessage', stateSource);
 for (const marker of ['StateMessage', 'preset', 'description', 'headingLevel', 'visual', 'role', 'primaryAction', 'secondaryAction', 'tertiaryAction', 'ref', 'resize']) {
   if (!statePanel.includes(marker)) throw new Error(`StateMessage interactive example missing ${marker}`);
 }
 
-const groupsPanel = scenarioSource('Groups');
+const settingsSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/settings-group/settings-group.tsx'));
+const accordionSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx'));
+const groupsPanel = scenarioSource('Groups', settingsSource + '\n' + accordionSource);
 for (const marker of ['SettingsGroup.Item', 'AccordionGroup.Item', 'Input aria-label=', 'Switch aria-label=', 'DemoIcon name=', 'openItems=', 'onToggle=', 'multiple=', 'unmountOnClose=', 'defaultValue=', 'title={<span>', 'ref=', 'data-groups-demo="direction"', 'data-groups-demo="resize"', 'data-groups-demo="inspect"']) {
   if (!groupsPanel.includes(marker) && !(/data-groups-demo="([^"]+)"/.test(marker) && groupsPanel.includes(`'data-groups-demo': '${marker.match(/"([^"]+)"/)[1]}'`))) throw new Error(`Groups interactive example missing ${marker}`);
 }
@@ -244,10 +247,8 @@ if (!shellPanel.includes('aria-label="Project note"') || !shellPanel.includes('I
 if ((shellHost.match(/<WebPartShell /g) || []).length !== 1) throw new Error('WebPartShell sample must wrap the web part exactly once');
 console.log('Verified WebPartShell root host, metadata and observable child/presentation scenario.');
 
-const stagePanelSource = scenarioSource('Stage');
-for (const marker of ["key: 'stage'", "webpackChunkName: 'spfx-demo-stage'", "'./panels/StagePanel'"]) {
-  if (!importsRegistry.includes(marker)) throw new Error(`Stage scenario registry missing ${marker}`);
-}
+const stageSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/stage/stage.tsx'));
+const stagePanelSource = scenarioSource('Stage', stageSource);
 for (const marker of ['Stage.Header', 'Stage.Body', 'Stage.Footer', 'Editor.Root', 'Editor.Submit',
   'data-stage-demo="mode"', 'data-stage-demo="size"', 'data-stage-demo="retention"',
   'data-stage-demo="dirty-guard"', 'data-stage-demo="hold-save"', 'data-stage-demo="menu-inline"']) {
@@ -268,6 +269,10 @@ const sourceCases = [
   ['PreviewCard', 'Inspect preview media and image recovery'],
   ['PreviewCard', 'Retain caller data when switching card types'],
   ['DescriptionList', 'Inspect responsive metadata with data and compound APIs'],
+  ['Stage', 'Edit a report with guarded Stage dismissal'],
+  ['SettingsGroup', 'Preserve notification settings across group presentations'],
+  ['AccordionGroup', 'Control disclosure selection and retained content'],
+  ['StateMessage', 'Configure state artwork semantics and actions'],
 ];
 const catalogueSource = read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts'));
 for (const [owner, title] of sourceCases) {
@@ -286,7 +291,7 @@ if (!cardsIsolation.includes('name="independent"') || !cardsIsolation.includes('
 console.log('Verified selectable single Cards, image lifecycle and versioned native/isolation conformance coverage.');
 
 
-for (const name of ['Stage', 'Form', 'DataGrid', 'Groups', 'Styles', 'RelativeTime', 'FormattedText', 'EditableText', 'AutoSkeleton', 'StateMessage', 'Providers', 'Context']) {
+for (const name of ['Form', 'DataGrid', 'Styles', 'RelativeTime', 'FormattedText', 'EditableText', 'AutoSkeleton', 'Providers', 'Context']) {
   const product = read(path.join(panelsPath, `${name}Panel.tsx`));
   if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
   if (!product.includes('data-demo-variant')) throw new Error(`${name} selectable product variant missing`);
@@ -294,7 +299,7 @@ for (const name of ['Stage', 'Form', 'DataGrid', 'Groups', 'Styles', 'RelativeTi
 for (const source of [paginationPanel, importsPanelSource]) {
   for (const marker of ['export function Demo(', 'return render({', 'data-demo-variant', 'observe:']) if (!source.includes(marker)) throw new Error(`Source-owned variant missing ${marker}`);
 }
-for (const source of [contentCardSource, previewCardSource, descriptionListSource]) {
+for (const source of [contentCardSource, previewCardSource, descriptionListSource, stageSource, settingsSource, accordionSource, stateSource]) {
   for (const marker of ['export function Demo(', 'render({', 'resetRevision', 'observe:']) if (!source.includes(marker)) throw new Error(`Source-owned control scenario missing ${marker}`);
 }
 console.log('Verified live single-example variant declarations; execution/cardinality are browser checks.');
@@ -322,7 +327,6 @@ for (const marker of ['<EntraGroupTrim groups={[{ name: applied.group }]}', 'Per
 // Each migrated family retains an observable override on its existing live subject.
 for (const [panel, marker] of [
   ['DataGridPanel.tsx', 'id="dg-strings"'],
-  ['StagePanel.tsx', 'data-stage-demo="strings"'],
   ['FormPanel.tsx', "'data-form-demo': 'strings'"],
   ['PickersPanel.tsx', 'data-picker-demo="strings"'],
   ['FileFolderPickerPanel.tsx', 'data-file-picker-demo="strings"'],
@@ -332,3 +336,5 @@ for (const [panel, marker] of [
 }
 
 if (!paginationPanel.includes('data-pagination-demo="localization"') || !paginationPanel.includes('strings={localized ? customEnglishStrings : undefined}')) throw new Error('Source-owned Pagination must retain observable dictionary overrides');
+
+if (!stageSource.includes('data-stage-demo="strings"') || !stageSource.includes('strings={customStrings ?')) throw new Error('Source-owned Stage must retain native dictionary overrides');

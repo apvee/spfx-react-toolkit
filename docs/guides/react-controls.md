@@ -539,6 +539,14 @@ Static description strings/fragments keep existing inline Markdown, including ob
 
 `as` can only repeat the fixed tag. Native attributes, classes, refs and consumer style are supported; raw HTML and unsupported native keys are discarded. Callers own valid phrasing/noninteractive title and label content. Arbitrary JSX/callback subtrees are not sanitized. React 17 erased `ReactNode` types can bypass literal-object type restrictions; runtime guards still protect toolkit containers.
 
+## Explore source-owned state and disclosure scenarios
+
+The sample explorer exposes [SettingsGroup](../api/controls/settings-group.md), [AccordionGroup](../api/controls/accordion-group.md), [StateMessage](../api/controls/state-message.md) and [Stage](../api/controls/stage.md) as separate generated features. Their complete runnable examples live in the owning API JSDoc and use the existing Fluent theme and renderer; they do not require an SPFx provider or perform external persistence.
+
+“Preserve notification settings across group presentations” keeps email, alert choices and action counts while its local Type control switches the actual group. Changing explorer features instead mounts the selected scenario with its own baseline. “Control disclosure selection and retained content” independently exercises AccordionGroup's native callback values, controlled selection, disabled trigger and retained versus unmounted note.
+
+“Configure state artwork semantics and actions” demonstrates all artwork presets, custom/hidden visuals, Markdown shorthand versus opaque slot callbacks, semantic headings and explicit alert roles. “Edit a report with guarded Stage dismissal” keeps one real Form.Root inside each native portal. Dirty or pending saves refuse ordinary close requests. Its in-surface **Reset editor** command deliberately cancels/discards the local draft, closes the editor and waits for the real submission gate before restoring defaults; the next submission remains usable. The explorer's Reset command uses the same owned reset request, but native modal surfaces can make outside navigation unavailable while open. No simulated save writes to SharePoint.
+
 ## Stage presentation and migration
 
 ### StagePresentation, StageSize and StageDrawerPosition

@@ -58,6 +58,29 @@ export interface ExecutableGroup {
 
 export const executableExamples: readonly ExecutableExampleEntry[] = [
 {
+  "id": "d831bb775ce3d3cfef852e46a90a5aa99dc9919b66ee4cfb868c54dec0504d75",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx#AccordionGroup",
+  "title": "Control disclosure selection and retained content",
+  "groupRoute": "docs/api/controls/accordion-group.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx#AccordionGroup",
+  "featureTitle": "AccordionGroup",
+  "publicNames": [
+    "AccordionGroup"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx",
+    "line": 109
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Use native triggers and controlled selection to open or close sections, then compare retained notes with content removed after closing."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-d831bb775ce3d3cfef852e46a90a5aa99dc9919b66ee4cfb868c54dec0504d75' */ "./d831bb775ce3d3cfef852e46a90a5aa99dc9919b66ee4cfb868c54dec0504d75")
+},
+{
   "id": "60c33ada62e5de74ffb49f20cb3ab7db19420b87493206efe5343a47a1e8aab3",
   "ownerKey": "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx#ContentCard",
   "title": "Configure content slots and native card interaction",
@@ -240,6 +263,75 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Edit title, description and note, switch card types in both directions and verify that caller-owned values survive the replaced presentation."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-664a82490443458f53895ecce9de0cbaa8fe734d84249cfd793dd43076762400' */ "./664a82490443458f53895ecce9de0cbaa8fe734d84249cfd793dd43076762400")
+},
+{
+  "id": "d5c5a31b8579e43d902cc188c1ceff6bc30379186accc7fd63e65126262c26a0",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/settings-group/settings-group.tsx#SettingsGroup",
+  "title": "Preserve notification settings across group presentations",
+  "groupRoute": "docs/api/controls/settings-group.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/settings-group/settings-group.tsx#SettingsGroup",
+  "featureTitle": "SettingsGroup",
+  "publicNames": [
+    "SettingsGroup"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/settings-group/settings-group.tsx",
+    "line": 147
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Change group presentation while preserving email and alert choices; collapse and reopen the profile note to compare retention with unmounting."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-d5c5a31b8579e43d902cc188c1ceff6bc30379186accc7fd63e65126262c26a0' */ "./d5c5a31b8579e43d902cc188c1ceff6bc30379186accc7fd63e65126262c26a0")
+},
+{
+  "id": "06e0030c1874dec9ca0a1d76b9acaf10b2d207e7c562ac7baf9ec8ac37986052",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/stage/stage.tsx#Stage",
+  "title": "Edit a report with guarded Stage dismissal",
+  "groupRoute": "docs/api/controls/stage.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/stage/stage.tsx#Stage",
+  "featureTitle": "Stage",
+  "publicNames": [
+    "Stage"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/stage/stage.tsx",
+    "line": 153
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Edit the report in each presentation; dirty or pending saves refuse dismissal, and accepted closes restore the native trigger focus."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-06e0030c1874dec9ca0a1d76b9acaf10b2d207e7c562ac7baf9ec8ac37986052' */ "./06e0030c1874dec9ca0a1d76b9acaf10b2d207e7c562ac7baf9ec8ac37986052")
+},
+{
+  "id": "94e1205d763e4c8c9a56f32767e20121cab006a5a851417917a59b7f58fee16c",
+  "ownerKey": "packages/spfx-react-toolkit/src/controls/state-message/state-message.tsx#StateMessage",
+  "title": "Configure state artwork semantics and actions",
+  "groupRoute": "docs/api/controls/state-message.md",
+  "groupKey": "controls",
+  "featureKey": "packages/spfx-react-toolkit/src/controls/state-message/state-message.tsx#StateMessage",
+  "featureTitle": "StateMessage",
+  "publicNames": [
+    "StateMessage"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/controls/state-message/state-message.tsx",
+    "line": 75
+  },
+  "metadata": {
+    "host": "none",
+    "kind": "snapshot",
+    "contentPlacement": "subject",
+    "observe": "Change presets, text and visual mode; inspect heading and live-region semantics, activate the primary action, and compare shorthand with literal slot callbacks."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-94e1205d763e4c8c9a56f32767e20121cab006a5a851417917a59b7f58fee16c' */ "./94e1205d763e4c8c9a56f32767e20121cab006a5a851417917a59b7f58fee16c")
 },
 {
   "id": "524ada20fca467ad721252dc50e1ffa9546c8e06f490d7728060dd959a62a61f",
@@ -432,16 +524,20 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
 
 export const executableGroups: readonly ExecutableGroup[] = [
   { key: "controls", title: "Controlli", features: [
-    { key: "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx#ContentCard", title: "ContentCard", scenarios: [executableExamples[0]] },
-    { key: "packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#DescriptionList", title: "DescriptionList", scenarios: [executableExamples[1]] },
-    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[2], executableExamples[3], executableExamples[4], executableExamples[5]] },
-    { key: "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard", title: "PreviewCard", scenarios: [executableExamples[6], executableExamples[7]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[8], executableExamples[9], executableExamples[10]] },
-    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[11]] }
+    { key: "packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx#AccordionGroup", title: "AccordionGroup", scenarios: [executableExamples[0]] },
+    { key: "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx#ContentCard", title: "ContentCard", scenarios: [executableExamples[1]] },
+    { key: "packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#DescriptionList", title: "DescriptionList", scenarios: [executableExamples[2]] },
+    { key: "packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx#Pagination", title: "Pagination", scenarios: [executableExamples[3], executableExamples[4], executableExamples[5], executableExamples[6]] },
+    { key: "packages/spfx-react-toolkit/src/controls/preview-card/preview-card.tsx#PreviewCard", title: "PreviewCard", scenarios: [executableExamples[7], executableExamples[8]] },
+    { key: "packages/spfx-react-toolkit/src/controls/settings-group/settings-group.tsx#SettingsGroup", title: "SettingsGroup", scenarios: [executableExamples[9]] },
+    { key: "packages/spfx-react-toolkit/src/controls/stage/stage.tsx#Stage", title: "Stage", scenarios: [executableExamples[10]] },
+    { key: "packages/spfx-react-toolkit/src/controls/state-message/state-message.tsx#StateMessage", title: "StateMessage", scenarios: [executableExamples[11]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx#WebPartShell", title: "WebPartShell", scenarios: [executableExamples[12], executableExamples[13], executableExamples[14]] },
+    { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[15]] }
   ] },
   { key: "hooks", title: "Hook", features: [
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[12]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[13], executableExamples[14]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[15]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[16]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[17], executableExamples[18]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[19]] }
   ] }
 ];

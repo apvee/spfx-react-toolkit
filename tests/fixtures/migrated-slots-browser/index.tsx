@@ -1,8 +1,8 @@
 import { mountDemoFixture } from '../demo-fixture-host';
 import * as React from 'react';
 import { registerIcons } from '@fluentui/react';
-import GroupsPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/GroupsPanel';
-import StateMessagePanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/StateMessagePanel';
+import GroupsPanel from '../demo-control-isolation/groups-regressions';
+import { StateMessageScenario as StateMessagePanel } from '../executable-examples/state-message-scenario';
 import RelativeTimePanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/RelativeTimePanel';
 import FormattedTextPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/FormattedTextPanel';
 import AutoSkeletonPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/AutoSkeletonPanel';

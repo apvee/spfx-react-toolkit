@@ -148,7 +148,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     assert.equal(retainedNote.closest('.fui-AccordionPanel').hasAttribute('inert'), false);
     const rootModule = load(path.join(base, 'demoRegistry.ts'));
     registry = rootModule.demoRegistry;
-    assert.equal(registry.length, 25, 'all residual panels participate in lazy navigation');
+    assert.equal(registry.length, 22, 'all residual panels participate in lazy navigation');
     const paths = [...read('demoRegistry.ts').matchAll(/component: lazyPanel\(\(\) => import\(\/\*[^*]+\*\/ '([^']+)'\)\)/g)].map(match => match[1]);
     assert.equal(paths.length, registry.length);
     registry.forEach((entry, i) => { entry.componentPath = paths[i]; });

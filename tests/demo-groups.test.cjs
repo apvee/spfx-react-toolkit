@@ -8,11 +8,10 @@ const base = 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/com
 test('groups have lazy interactive coverage without duplicate hook/provider inventory', () => {
   const registry = read(base + 'demoRegistry.ts');
   const panel = read('tests/fixtures/demo-control-isolation/groups-regressions.tsx');
-  assert.match(registry, /key: 'groups'/);
-  assert.match(registry, /webpackChunkName: 'spfx-demo-groups'/);
-  assert.match(registry, /import\(.*GroupsPanel/);
+  assert.doesNotMatch(registry, /panels\/GroupsPanel/);
   for (const symbol of ['SettingsGroup', 'AccordionGroup']) {
-    assert.equal([...registry.matchAll(new RegExp(`symbol: '${symbol}'`, 'g'))].length, 1);
+    const title = symbol === 'SettingsGroup' ? 'Preserve notification settings across group presentations' : 'Control disclosure selection and retained content';
+    assert.equal(require('./fixtures/executable-examples/cards-description-list.cjs').scenario(title).entry.featureTitle, symbol);
     assert.ok(panel.includes(`${symbol}.Item`));
   }
   for (const marker of ['direction', 'resize', 'multiple', 'unmount', 'hidden', 'disabled', 'settings', 'accordion', 'email', 'note', 'close-all', 'inspect', 'observations', 'title', 'description', 'action-label', 'accordion-title', 'accordion-description', 'open-items']) {
@@ -62,12 +61,12 @@ test('Groups configuration uses Fluent native slots and retained diagnostic regi
 
 
 test('Product scenario owns one configuration and selectable variants without comparison galleries', () => {
-  const product = fs.readFileSync(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/GroupsPanel.tsx'), 'utf8');
+  const product = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Preserve notification settings across group presentations').source;
   const compiler = require('typescript');
   const parsed = compiler.createSourceFile('product.tsx', product, compiler.ScriptTarget.Latest, true, compiler.ScriptKind.TSX);
   const cards = []; let createInRender = false;
   function inspect(node) {
-    if (compiler.isJsxOpeningElement(node) && node.tagName.getText(parsed) === 'DemoCard') cards.push(node);
+    if (compiler.isCallExpression(node) && node.expression.getText(parsed) === 'render') cards.push(node);
     if (compiler.isCallExpression(node) && ['createForm', 'createDataGrid'].includes(node.expression.getText(parsed))) {
       for (let parent = node.parent; parent; parent = parent.parent) if (compiler.isFunctionLike(parent)) createInRender = true;
     }

@@ -11,7 +11,7 @@ import ProductFormattedTextPanel from '../../../apps/spfx-react-toolkit-test/src
 import AutoSkeletonPanel from '../foundation-legacy/AutoSkeletonPanel';
 import ProductAutoSkeletonPanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/AutoSkeletonPanel';
 import StateMessagePanel from '../foundation-legacy/StateMessagePanel';
-import ProductStateMessagePanel from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/StateMessagePanel';
+import { StateMessageScenario as ProductStateMessagePanel } from '../executable-examples/state-message-scenario';
 import FormPanel from '../demo-control-isolation/form-regressions';
 import GroupsPanel from '../demo-control-isolation/groups-regressions';
 import { Demo as ImportsDemo } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/generated/jsdoc-examples/832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88';

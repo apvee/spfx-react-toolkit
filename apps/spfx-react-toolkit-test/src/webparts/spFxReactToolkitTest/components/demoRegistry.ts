@@ -62,33 +62,6 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
     ],
   },
   {
-    key: 'stage',
-    title: 'Stage',
-    iconName: 'OpenPane',
-    description: 'Explicit Dialog, Drawer and Popover surfaces with shared content and guarded forms.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-stage' */ './panels/StagePanel')),
-    coverage: [{ symbol: 'Stage', kind: 'snapshot', notes: 'Three presentations, sizes, literal/JSX headers, native/custom close dictionary, scroll, retention, nested popups, guarded Form save/reset, host theme/RTL and selectable Card isolation.' }],
-  },
-  {
-    key: 'groups',
-    title: 'SettingsGroup and AccordionGroup',
-    iconName: 'Settings',
-    description: 'One selectable SettingsGroup or AccordionGroup with shared preferences and retained notes.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-groups' */ './panels/GroupsPanel')),
-    coverage: [
-      { symbol: 'SettingsGroup', kind: 'snapshot', notes: 'Caller-labeled Input/Switch rows, literal text/JSX, actions, width, inherited host theme, explicit direction overrides, hidden and root ref; automatic field composition also runs in Form.' },
-      { symbol: 'AccordionGroup', kind: 'snapshot', notes: 'Controlled openItems, multiple, disabled, mounted note persistence, unmount reset and root ref.' },
-    ],
-  },
-  {
-    key: 'state-message',
-    title: 'StateMessage',
-    iconName: 'Info',
-    description: 'Section states, theme-aware artwork, container sizing and accessible actions.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-state-message' */ './panels/StateMessagePanel')),
-    coverage: [{ symbol: 'StateMessage', kind: 'snapshot', notes: 'Five presets, host theme, RTL, responsive host, custom/hidden visual, heading, role, button/link actions and root ref.' }],
-  },
-  {
     key: 'auto-skeleton',
     title: 'AutoSkeleton',
     iconName: 'Processing',

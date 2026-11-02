@@ -1,9 +1,9 @@
 const path = require('node:path');
 
-async function cardinality(panel, check, label, selector) {
+async function cardinality(panel, check, label, selector, placement = 'subject') {
   await check(`${label}: one section`, await panel.locator('[data-demo-section]').count(), 1);
   await check(`${label}: one configuration`, await panel.locator('[data-demo-configuration]').count(), 1);
-  await check(`${label}: one subject`, await panel.locator('[data-demo-subject]').count(), 1);
+  await check(`${label}: one principal region`, await panel.locator(placement === 'configuration' ? '[data-demo-result]' : '[data-demo-subject]').count(), 1);
   if (selector) await check(`${label}: one control`, await panel.locator(selector).count(), 1);
 }
 async function diagnostics(panel) {
@@ -194,9 +194,9 @@ async function stageProduct(page, { url, check }) {
     });
   };
   for (const mode of ['dialog','drawer','popover']) {
-    await panel.locator('select[data-stage-demo="mode"]').selectOption(mode); await cardinality(panel, check, `stage ${mode}`);
+    await panel.locator('select[data-stage-demo="mode"]').selectOption(mode); await cardinality(panel, check, `stage ${mode}`, undefined, 'configuration');
     await panel.locator('[data-stage-demo="trigger"]').click(); const surface = page.locator('[data-stage-demo="surface"]:visible'); await surface.waitFor();
-    await check(`stage ${mode} one form`, await surface.locator('form').count(), 1); await check(`stage ${mode} two fields`, await surface.locator('input').count(), 2);
+    await check(`stage ${mode} one form`, await surface.locator('form').count(), 1); await check(`stage ${mode} two fields`, await surface.locator('input:not([data-stage-demo=surface-note])').count(), 2);
     await check(`stage ${mode} presentation locked`, await panel.locator('select[data-stage-demo="mode"]').isDisabled(), true);
     await surface.locator('[name="name"]').fill(`Draft ${mode}`); await surface.locator('[data-stage-demo="save"]').click();
     await check(`stage ${mode} actual save`, (await panel.locator('[data-stage-demo="status"]').textContent()).includes(`Saved Draft ${mode}`), true);

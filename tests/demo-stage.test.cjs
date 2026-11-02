@@ -5,10 +5,10 @@ const path = require('node:path');
 const ts = require('typescript');
 const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
 function readPanel() { return fs.readFileSync(path.resolve(__dirname, 'fixtures/demo-control-isolation/stage-regressions.tsx'), 'utf8'); }
-test('Stage has one lazy registry entry with concrete surface and form coverage', () => {
-  const registry = fs.readFileSync(path.join(base, 'demoRegistry.ts'), 'utf8');
-  for (const text of ["key: 'stage'", "symbol: 'Stage'", "webpackChunkName: 'spfx-demo-stage'"]) assert.equal(registry.split(text).length - 1, 1, text);
-  assert.match(registry, /import\(.*\.\/panels\/StagePanel/);
+test('Stage has its own generated scenario with native Form coverage', () => {
+  const { entry, source } = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Edit a report with guarded Stage dismissal');
+  assert.equal(entry.featureTitle, 'Stage'); assert.equal(entry.metadata.contentPlacement, 'configuration');
+  for (const marker of ['Editor.Root', 'Editor.Submit', 'resetRevision', 'reset-editor', 'hold-save', 'strings']) assert.ok(source.includes(marker), marker);
 });
 test('Stage demo exposes executable acceptance scenarios through stable markers', () => {
   const panel = readPanel();
@@ -143,12 +143,12 @@ test('Stage scenario separates configuration commands, outcomes and advanced dia
 
 
 test('Product scenario owns one configuration and selectable variants without comparison galleries', () => {
-  const product = fs.readFileSync(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels/StagePanel.tsx'), 'utf8');
+  const product = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Edit a report with guarded Stage dismissal').source;
   const compiler = require('typescript');
   const parsed = compiler.createSourceFile('product.tsx', product, compiler.ScriptTarget.Latest, true, compiler.ScriptKind.TSX);
   const cards = []; let createInRender = false;
   function inspect(node) {
-    if (compiler.isJsxOpeningElement(node) && node.tagName.getText(parsed) === 'DemoCard') cards.push(node);
+    if (compiler.isCallExpression(node) && node.expression.getText(parsed) === 'render') cards.push(node);
     if (compiler.isCallExpression(node) && ['createForm', 'createDataGrid'].includes(node.expression.getText(parsed))) {
       for (let parent = node.parent; parent; parent = parent.parent) if (compiler.isFunctionLike(parent)) createInRender = true;
     }
