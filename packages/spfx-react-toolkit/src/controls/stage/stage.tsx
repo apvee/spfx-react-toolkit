@@ -183,6 +183,7 @@ StageRoot.displayName = 'Stage';
  * const standalone = (regions: DemoRegions): React.ReactElement => <>
  *   {regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}
  * </>;
+ * type ResetFocusIntent = { owner: Document; source: HTMLButtonElement; trigger?: HTMLButtonElement };
  * const SurfaceNote: React.FC<{ revision: number }> = ({ revision }) => {
  *   const [value, setValue] = React.useState('Session note');
  *   const previous = React.useRef(revision);
@@ -196,6 +197,7 @@ StageRoot.displayName = 'Stage';
  *   const sx = useSx();
  *   const styles = useStyles();
  *   const titleSlotRef = React.useMemo(() => React.createRef<HTMLSpanElement>(), []);
+ *   const triggerRef = React.useMemo(() => React.createRef<HTMLButtonElement>(), []);
  *   const [slotObservation, setSlotObservation] = React.useState('not inspected');
  *   const controlWidth = sx(minWidth.zero, width.full);
  *   const narrowField = sx(styles.narrowField, minWidth.zero, width.full);
@@ -232,16 +234,19 @@ StageRoot.displayName = 'Stage';
  *   const generation = React.useRef(0);
  *   const active = React.useRef(true);
  *   const previousReset = React.useRef(resetRevision);
+ *   const resetFocus = React.useRef<ResetFocusIntent | undefined>(undefined);
  *   const [resetPending, setResetPending] = React.useState(false);
  *   const [contentRevision, setContentRevision] = React.useState(0);
- *   const requestReset = React.useCallback((): void => {
+ *   const requestReset = React.useCallback((source?: HTMLButtonElement): void => {
+ *     resetFocus.current = source ? { owner: source.ownerDocument, source, trigger: triggerRef.current ?? undefined } : undefined;
  *     generation.current += 1;
  *     setOpen(false);
  *     setResetPending(true);
  *     pendingSave.current?.();
  *     pendingSave.current = undefined;
- *   }, []);
+ *   }, [triggerRef]);
  *   React.useEffect(() => () => {
+ *     resetFocus.current = undefined;
  *     active.current = false;
  *     generation.current += 1;
  *     pendingSave.current?.();
@@ -264,6 +269,23 @@ StageRoot.displayName = 'Stage';
  *     setRequest('No request'); setStatus('Not saved'); setSaveCount(0); setOpenCount(0); setActionCount(0);
  *     setSlotObservation('not inspected'); setContentRevision(value => value + 1); setResetPending(false);
  *   }, [resetPending, isSubmitting, methods]);
+ *   React.useLayoutEffect(() => {
+ *     if (resetPending || isSubmitting || open) return;
+ *     const intent = resetFocus.current;
+ *     if (!intent) return;
+ *     resetFocus.current = undefined;
+ *     const target = triggerRef.current, owner = intent.owner;
+ *     // Reset can replace a Drawer/Popover trigger when the closed baseline becomes Dialog.
+ *     // Native restoration cannot target that disconnected button. Repair only this explicit
+ *     // in-surface Reset intent; same-node Dialog and ordinary close remain native-owned.
+ *     if (!active.current || !target?.isConnected || target === intent.trigger || target.disabled ||
+ *       target.getAttribute('aria-disabled') === 'true' || target.ownerDocument !== owner) return;
+ *     const frame = owner.defaultView?.frameElement;
+ *     if (frame && frame.ownerDocument.activeElement !== frame) return;
+ *     const focused = owner.activeElement;
+ *     // A newer connected destination wins, including the global Reset/navigation controls.
+ *     if (focused === owner.body || focused === intent.source || focused === intent.trigger) target.focus();
+ *   }, [resetPending, isSubmitting, open, presentation, triggerRef]);
  *   React.useEffect(() => { if (open) setOpenCount(value => value + 1); }, [open]);
  *   const onOpenChange = (_event: StageOpenChangeEvent, data: StageOpenChangeData): void => {
  *     if (resetPending) return;
@@ -304,7 +326,7 @@ StageRoot.displayName = 'Stage';
  *     if (value === 'popover' && size === 'full') setSize('small');
  *     setPresentation(value);
  *   };
- *   const trigger = <Button type="button" data-stage-demo="trigger" disabled={resetPending || isSubmitting} appearance="primary">Open editor</Button>;
+ *   const trigger = <Button type="button" ref={triggerRef} data-stage-demo="trigger" disabled={resetPending || isSubmitting} appearance="primary">Open editor</Button>;
  *   const surfaceOptions: Extract<StageProps, { open: boolean }> = presentation === 'popover'
  *     ? { presentation, size: size === 'full' ? 'small' : size, withArrow, trigger, open, children: undefined }
  *     : { presentation, size, trigger, open, children: undefined };
@@ -367,7 +389,7 @@ StageRoot.displayName = 'Stage';
  *               className={narrowField} root={{ className: controlWidth }} input={{ className: sx(minWidth.zero) }}
  *               options={[{ value: 'one', label: 'Report' }, { value: 'two', label: 'Project' }]} /></div>
  *             <SurfaceNote revision={contentRevision} />
- *             <Button type="button" data-stage-demo="reset-editor" onClick={requestReset}>Reset editor</Button>
+ *             <Button type="button" data-stage-demo="reset-editor" onClick={event => requestReset(event.currentTarget)}>Reset editor</Button>
  *             <output data-stage-demo="dirty">Dirty: {String(isDirty)}</output>
  *             <output data-stage-demo="pending">Pending: {String(isSubmitting)}</output>
  *             {isSubmitting && <Button type="button" data-stage-demo="complete-save" onClick={() => pendingSave.current?.()}>Complete save</Button>}

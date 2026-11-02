@@ -189,3 +189,65 @@ test('Stage Reset before the asynchronous Form callback starts cancels that subm
   await f.click('complete-save'); assert.match(f.find('pending').textContent, /false/);
   assert.equal(f.find('status').textContent, 'Saved Quarterly report'); assert.match(f.find('save-count').textContent, /2/);
 });
+for (const mode of ['dialog', 'drawer', 'popover']) {
+  test(`Stage ${mode} local Reset preserves trigger ownership and repairs only a replacement focus target`, async t => {
+    const f = fixture(t, 'stage');
+    await f.select('mode', mode); await f.check('hold-save', true);
+    const original = f.find('trigger');
+    await f.act(() => { original.focus(); original.click(); });
+    await f.act(() => Simulate.submit(f.find('surface').querySelector('form')));
+    assert.match(f.find('pending').textContent, /true/);
+    const reset = f.find('reset-editor');
+    await f.act(() => { reset.focus(); reset.click(); });
+    const current = f.find('trigger');
+    assert.equal(f.find('mode').value, 'dialog'); assert.equal(current.disabled, false);
+    assert.equal(f.find('status').textContent, 'Not saved');
+    assert.equal(current === original, mode === 'dialog', 'closed presentation switches replace only the native adapter trigger');
+    if (mode !== 'dialog') assert.equal(original.isConnected, false);
+    // JSDOM does not reproduce native same-node Dialog restoration; actual IAB covers it.
+    // Source repair is deliberately limited to a disconnected/replaced restore target.
+    if (mode !== 'dialog') assert.equal(document.activeElement === current, true, 'the user must retain a connected Open editor focus destination');
+  });
+}
+test('Stage programmatic Reset preserves the externally focused configuration control', async t => {
+  const f = fixture(t, 'stage');
+  await f.select('mode', 'drawer');
+  const configuration = f.find('mode'); configuration.focus();
+  await f.reset();
+  assert.equal(f.find('mode'), configuration); assert.equal(configuration.value, 'dialog');
+  assert.equal(document.activeElement === configuration, true);
+});
+test('Stage local Reset does not steal a newer external focus while the held submission settles', async t => {
+  const f = fixture(t, 'stage');
+  await f.select('mode', 'popover'); await f.check('hold-save', true); await f.click('trigger');
+  await f.act(() => Simulate.submit(f.find('surface').querySelector('form')));
+  const reset = f.find('reset-editor'), outside = document.createElement('button');
+  outside.textContent = 'Next user action'; document.body.appendChild(outside); t.after(() => outside.remove());
+  await f.act(() => {
+    reset.focus(); reset.click();
+    // This models a newer user focus destination, never a repair to the expected trigger.
+    outside.focus();
+  });
+  assert.equal(f.find('status').textContent, 'Not saved'); assert.equal(f.find('trigger').disabled, false);
+  assert.equal(document.activeElement === outside, true);
+});
+test('Stage unmount cancels a local Reset focus intent before its held work settles', async t => {
+  const f = fixture(t, 'stage');
+  await f.select('mode', 'popover'); await f.check('hold-save', true); await f.click('trigger');
+  await f.act(() => Simulate.submit(f.find('surface').querySelector('form')));
+  const trigger = f.find('trigger'), reset = f.find('reset-editor');
+  await f.act(() => { reset.focus(); reset.click(); f.view.unmount(); });
+  assert.equal(trigger.isConnected, false); assert.equal(document.querySelector('[data-stage-demo=trigger]'), null);
+  assert.equal(document.activeElement === trigger, false); assert.ok(document.activeElement.isConnected);
+});
+
+test('Stage ordinary closes retain their presentation and native trigger without arming Reset repair', async t => {
+  const f = fixture(t, 'stage');
+  for (const mode of ['dialog', 'drawer', 'popover']) {
+    await f.select('mode', mode); const trigger = f.find('trigger');
+    await f.click('trigger');
+    await f.act(() => f.find('surface').querySelector('[data-stage-close]').click());
+    assert.equal(f.find('mode').value, mode); assert.equal(f.find('trigger') === trigger, true);
+    assert.match(f.find('open').textContent, /false/); assert.match(f.find('request').textContent, /closeButton: false/);
+  }
+});
