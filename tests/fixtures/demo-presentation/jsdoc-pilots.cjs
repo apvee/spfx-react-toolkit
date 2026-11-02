@@ -1,5 +1,12 @@
 // Independent browser acceptance expectations, never a generator/navigation input.
 const pilotTitles = {
+  SitePicker: ['Explore site selection and contextual search'],
+  ListPicker: ['Explore list catalogs and independent consumer choices'],
+  FieldPicker: ['Explore site columns and list fields'],
+  ContentTypePicker: ['Explore site and list content type references'],
+  ViewPicker: ['Explore scoped view catalogs'],
+  ListItemPicker: ['Explore list item labels and query pages'],
+  PrincipalPicker: ['Explore principal discovery and explicit identity resolution'],
   useSPFxPnPSearch: ['Search SharePoint text with explicit execution', 'Filter search results with native refiner tokens', 'Request debounced suggestions after explicit start'],
   SearchVerticals: ['Search selected verticals with builder paging'],
   createSPFxPnPContextService: ['Explore PnP context caching and request headers'],

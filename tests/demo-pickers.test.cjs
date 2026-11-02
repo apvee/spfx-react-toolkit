@@ -1,17 +1,23 @@
 const { createHarness } = require('./services-test-harness.cjs');
 const test = require('node:test'), assert = require('node:assert/strict'), fs = require('node:fs'), path = require('node:path');
 const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest');
-test('demo registry and actual web part exercise all seven React/native picker domains', () => {
-  const registry = fs.readFileSync(path.join(base, 'components/demoRegistry.ts'), 'utf8');
-  const panel = fs.readFileSync(path.join(base, 'components/panels/PickersPanel.tsx'), 'utf8');
+test('canonical React picker cases and actual WebPart retain all seven concrete domains', () => {
+  const { scenario } = require('./fixtures/executable-examples/cards-description-list.cjs');
   const webpart = fs.readFileSync(path.join(base, 'SpFxReactToolkitTestWebPart.ts'), 'utf8');
-  for (const name of ['SitePicker', 'ListPicker', 'FieldPicker', 'ViewPicker', 'ContentTypePicker', 'ListItemPicker', 'PrincipalPicker']) {
-    assert.ok(registry.includes(`symbol: '${name}'`)); assert.ok(registry.includes(`symbol: 'PropertyPane${name}'`));
-    assert.ok(panel.includes(`<${name} `)); assert.ok(webpart.includes(`PropertyPane${name}('picker`));
+  for (const [name, file, title] of [
+    ['SitePicker','site-picker','Explore site selection and contextual search'],
+    ['ListPicker','list-picker','Explore list catalogs and independent consumer choices'],
+    ['FieldPicker','field-picker','Explore site columns and list fields'],
+    ['ContentTypePicker','content-type-picker','Explore site and list content type references'],
+    ['ViewPicker','view-picker','Explore scoped view catalogs'],
+    ['ListItemPicker','list-item-picker','Explore list item labels and query pages'],
+    ['PrincipalPicker','principal-picker','Explore principal discovery and explicit identity resolution'],
+  ]) {
+    const selected=scenario(title,`packages/spfx-react-toolkit/src/controls/pickers/${file}.tsx#${name}`);
+    assert.ok(selected.source.includes(`<${name} `));assert.ok(webpart.includes(`PropertyPane${name}('picker`));
+    assert.doesNotMatch(selected.source,/localStorage|sessionStorage|createRoot/);
   }
-  for (const type of ['SitePickerValue', 'ListPickerValue', 'FieldPickerValue', 'ViewPickerValue', 'ContentTypePickerValue', 'ListItemPickerValue', 'PrincipalPickerValue']) assert.ok(webpart.includes(`?: ${type}[]`));
-  assert.match(panel, /DemoAccordionPanel/);
-  assert.doesNotMatch(panel, /localStorage|sessionStorage|createRoot/);
+  for (const type of ['SitePickerValue','ListPickerValue','FieldPickerValue','ViewPickerValue','ContentTypePickerValue','ListItemPickerValue','PrincipalPickerValue']) assert.ok(webpart.includes(`?: ${type}[]`));
 });
 
 function loadWebPart() {
@@ -188,53 +194,6 @@ test('content type values participate in global single mode and cosmetic updates
   assert.deepEqual(part.properties.pickerContentTypes, ['first']);
 });
 
-test('React content type demo clears descendant selection when its parent ID is removed', () => {
-  const h = createHarness({
-    '@fluentui/react-components': Object.fromEntries(['Accordion','AccordionHeader','AccordionItem','Button','Field','Input','Select','Switch'].map(name => [name,name])),
-    '@apvee/spfx-react-toolkit': Object.fromEntries(['SitePicker','ListPicker','FieldPicker','ViewPicker','ContentTypePicker','ListItemPicker','PrincipalPicker'].map(name => [name,name])),
-    '../shared/DemoCard': {DemoCard:'DemoCard'},
-    '../shared/DemoAccordionPanel': {DemoAccordionPanel:'DemoAccordionPanel'},
-  });
-  const Panel = h.load(path.join(base,'components/panels/PickersPanel.tsx')).default;
-  const root = h.mount(Panel);
-  function find(predicate, node) {
-    if (Array.isArray(node)) {
-      for (const child of node) { const found = find(predicate,child); if (found) return found; }
-    } else if (h.React.isValidElement(node)) {
-      if (predicate(node)) return node;
-      return find(predicate,node.props.controls) || find(predicate,node.props.children);
-    }
-    return undefined;
-  }
-  const field = label => find(node => node.type === 'Field' && node.props.label === label, root.current);
-  const picker = () => find(node => node.type === 'ContentTypePicker', root.current);
-  const descendants = () => find(node => node.type === 'Switch' && node.props.label === 'Include descendants of content type ID', root.current);
-  try {
-    h.act(() => field('Control').props.children.props.onChange(undefined,{value:'ContentTypePicker'}));
-    {
-      h.act(() => field('Content type ID filter').props.children.props.onChange(undefined,{value:'0x01'}));
-      h.act(() => descendants().props.onChange(undefined,{checked:true}));
-      assert.equal(picker().props.contentTypeId,'0x01');
-      assert.equal(picker().props.includeDescendants,true);
-      h.act(() => field('Content type ID filter').props.children.props.onChange(undefined,{value:''}));
-      assert.equal(picker().props.contentTypeId,undefined);
-      assert.equal(picker().props.includeDescendants,false,'clearing the ID must keep the source configuration valid');
-      assert.equal(descendants().props.checked,false);
-      assert.equal(descendants().props.disabled,true);
-    }
-    const filter = () => field('Content type ID filter').props.children;
-    assert.equal(filter().type,'Select','the ID filter offers validated presets instead of freeform partial IDs');
-    h.act(() => filter().props.onChange(undefined,{value:'0x01'}));
-    for (const invalidId of ['0','0x0','0x00','0x0101?x=1']) {
-      h.act(() => filter().props.onChange(undefined,{value:invalidId}));
-      assert.equal(picker().props.contentTypeId,'0x01','unoffered values must never become picker source props');
-    }
-    const value = {kind:'contentType',scope:'site',webUrl:'https://tenant.test/sites/hr',contentTypeId:'0x010101'};
-    const option = {key:'invoice',text:'Invoice',value,kind:'contentType',webUrl:value.webUrl,id:value.contentTypeId,name:'Invoice',group:'Demo',hidden:false,readOnly:false,sealed:false};
-    h.act(() => picker().props.onOptionSelect(undefined,{reason:'selection',selectedOptions:['invoice'],selectedItems:[option],selectedValues:[value],unresolvedOptions:[]}));
-    const options = filter().props.children;
-    assert.ok(options.flat().some(node => node?.props?.value === value.contentTypeId),'selected metadata IDs become available filter choices');
-    h.act(() => filter().props.onChange(undefined,{value:value.contentTypeId}));
-    assert.equal(picker().props.contentTypeId,value.contentTypeId);
-  } finally { root.unmount(); }
-});
+// The former React ContentType prop/choice oracle now executes the exact canonical
+// case and actual Subject in executable-examples-react-pickers.test.cjs. Native
+// cascade/configuration assertions above remain on the actual WebPart boundary.

@@ -18,27 +18,7 @@ export const demoRegistry: readonly DemoRegistryEntry[] = [
       { symbol: 'PropertyPaneFileFolderPicker', kind: 'host', notes: 'Native direct JSON arrays, independent hosted presentation, optional colorful tag avatars and category/selection policy; source cascade resets explicitly.' },
     ],
   },
-  {
-    key: 'pickers', title: 'SharePoint pickers', iconName: 'Search',
-    description: 'Seven live React pickers and native Property Pane JSON fields.',
-    component: lazyPanel(() => import(/* webpackChunkName: 'spfx-demo-pickers' */ './panels/PickersPanel')),
-    coverage: [
-      { symbol: 'SitePicker', kind: 'read', notes: 'Live authenticated picker; native/default or per-instance search/status dictionary, configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
-      { symbol: 'ListPicker', kind: 'read', notes: 'Live authenticated picker; native/default or per-instance search/status dictionary, configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
-      { symbol: 'FieldPicker', kind: 'read', notes: 'Live authenticated picker; native/default or per-instance search/status dictionary, configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
-      { symbol: 'ContentTypePicker', kind: 'read', notes: 'Live site collection/list metadata picker with per-instance strings; complete catalog, local filters, optional colorful tag avatars and JSON diagnostics.' },
-      { symbol: 'ViewPicker', kind: 'read', notes: 'Live authenticated picker; native/default or per-instance search/status dictionary, configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
-      { symbol: 'ListItemPicker', kind: 'read', notes: 'Live authenticated picker; native/default or per-instance search/status dictionary, configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
-      { symbol: 'PrincipalPicker', kind: 'read', notes: 'Live authenticated picker; native/default or per-instance search/status dictionary, configurable presentation, optional colorful tag avatars, selection, consumer models and JSON diagnostics.' },
-      { symbol: 'PropertyPaneSitePicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
-      { symbol: 'PropertyPaneListPicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
-      { symbol: 'PropertyPaneFieldPicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
-      { symbol: 'PropertyPaneContentTypePicker', kind: 'host', notes: 'Native site/list content type reference arrays with stable key and source cascade revision.' },
-      { symbol: 'PropertyPaneViewPicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
-      { symbol: 'PropertyPaneListItemPicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
-      { symbol: 'PropertyPanePrincipalPicker', kind: 'host', notes: 'Native custom field in getPropertyPaneConfiguration; stable key and JSON value arrays.' },
-    ],
-  },
+
 
   {
     key: 'providers',

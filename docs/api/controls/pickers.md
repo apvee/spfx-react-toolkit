@@ -50,6 +50,112 @@ import { ContentTypePicker } from '@apvee/spfx-react-toolkit';
 <ContentTypePicker label="List content type" scope="list" list="Documents" contentTypeId="0x0101" includeDescendants multiselect />
 ```
 
+#### Explore site and list content type references
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';
+import { ContentTypePicker, useSPFxContext, type ContentTypePickerOption, type PickerSelectionData } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Configuration = {
+  presentation: 'combobox' | 'tagPicker'; multi: boolean; searchable: boolean;
+  colorful: boolean; customStrings: boolean; customStatus: boolean; header: string;  webUrl: string; list: string; scope: 'site' | 'list'; group: string; includeHidden: boolean; contentTypeId: string; includeDescendants: boolean;
+};
+const baseline: Configuration = { presentation: 'combobox', multi: false, searchable: true, colorful: false, customStrings: false, customStatus: false, header: '', webUrl: '', list: '', scope: 'site', group: '', includeHidden: true, contentTypeId: '', includeDescendants: false };
+const useStyles = makeStyles({ controls: { display: 'grid', gap: '12px' }, commands: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, diagnostics: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } });
+
+// Mount beneath the existing SPFxWebPartProvider/WebPartShell, never another provider.
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const classes = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const scope = spfxContext.serviceScope;
+  const boundary = React.useRef({ resetRevision, owner: spfxContext, scope });
+  const session = boundary.current;
+  const [config, setConfig] = React.useState<Configuration>(baseline);
+  const [started, setStarted] = React.useState(false);
+  const [selection, setSelection] = React.useState<PickerSelectionData<ContentTypePickerOption> | undefined>();
+  const [available, setAvailable] = React.useState<readonly ContentTypePickerOption[] | undefined>();
+  const [error, setError] = React.useState('');
+  const [refresh, setRefresh] = React.useState(0);
+  const current = (): boolean => boundary.current === session;
+  const active = started && session.resetRevision === resetRevision && session.owner === spfxContext && session.scope === scope;
+  React.useLayoutEffect(() => {
+    const observed = boundary.current;
+    if (observed.resetRevision === resetRevision && observed.owner === spfxContext && observed.scope === scope) return;
+    boundary.current = { resetRevision, owner: spfxContext, scope };
+    setStarted(false); setConfig(baseline); setSelection(undefined); setAvailable(undefined); setError(''); setRefresh(0);
+  }, [resetRevision, spfxContext, scope]);
+  const update = (patch: Partial<Configuration>): void => {
+    if (!current()) return;
+    const next = { ...config, ...patch };
+    const normalizedWeb = (draft: string): string => {
+      const web = draft.trim() || spfxContext.pageContext.web.absoluteUrl;
+      try { return new URL(web).href.replace(/\/$/, '').toLowerCase(); }
+      catch { return web; } // Keep unarmed partial URL drafts editable; the picker validates its actual source.
+    };
+    const sourceKey = (value: Configuration): string => JSON.stringify([normalizedWeb(value.webUrl.trim().replace(/\/+$/, '')), value.scope, value.scope === 'list' ? value.list.trim() : undefined, value.group.toLowerCase() || undefined, value.includeHidden, value.contentTypeId.toLowerCase() || undefined, value.includeDescendants]);
+    // Retire old commands synchronously without remounting the operational picker.
+    if (sourceKey(config) !== sourceKey(next)) boundary.current = { ...session };
+    if (normalizedWeb(config.webUrl.trim().replace(/\/+$/, '')) !== normalizedWeb(next.webUrl.trim().replace(/\/+$/, '')) ||
+      config.scope !== next.scope || next.scope === 'list' && config.list.trim() !== next.list.trim()) {
+      setSelection(undefined); setAvailable(undefined);
+    }
+    setConfig(previous => ({ ...previous, ...patch }));
+  };
+  const target = config.webUrl.trim().replace(/\/+$/, '') || undefined;
+  const contentTypeFilterIds = Array.from(new Set(['0x01', '0x0101',
+    ...(selection?.selectedItems ?? []).map(option => option.value.contentTypeId),
+    ...(config.contentTypeId ? [config.contentTypeId] : []),
+  ]));
+  const common = {
+    label: 'ContentTypePicker', presentation: config.presentation, multiselect: config.multi, searchable: config.searchable,
+    colorfulTagAvatars: config.colorful, refreshKey: refresh,
+    selectedOptions: selection?.selectedOptions ?? [], initialOptions: selection?.selectedItems, availableOptions: available,
+    suggestionsHeader: config.header.trim() || undefined,
+    emptyContent: config.customStatus ? 'No candidates: type at least two characters.' : undefined,
+    loadingContent: config.customStatus ? <span>Fetching live suggestions…</span> : undefined,
+    errorContent: config.customStatus ? { children: 'Source unavailable: inspect diagnostics and retry.' } : undefined,
+    strings: config.customStrings ? { labels: { selectOne: 'Choose source content', selectMany: 'Choose source content', search: 'Find a source item', retry: 'Try this source again' }, status: { noOptions: 'No matching source items' } } : undefined,
+    onOptionSelect: (_: unknown, data: PickerSelectionData<ContentTypePickerOption>): void => { if (current()) { setSelection(data); setError(''); } },
+    onError: (failure: Error): void => { if (current()) setError(failure.message); },
+  };
+  const ready = config.scope === 'site' || Boolean(config.list.trim());
+  const controls = <div className={classes.controls}>
+    <Field label="Presentation"><Select aria-label="Presentation" value={config.presentation} onChange={(_, data) => update({ presentation: data.value === 'tagPicker' ? 'tagPicker' : 'combobox' })}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
+    <Switch label="Multiple selection" checked={config.multi} onChange={(_, data) => update({ multi: data.checked })} />
+    <Switch label="Enable search" checked={config.searchable} onChange={(_, data) => update({ searchable: data.checked })} />
+    <Switch label="Colorful tag avatars" checked={config.colorful} disabled={config.presentation !== 'tagPicker'} onChange={(_, data) => update({ colorful: data.checked })} />
+    <Field label="Suggestion header (empty: default)"><Input aria-label="Suggestion header" value={config.header} onChange={(_, data) => update({ header: data.value })} /></Field>
+    <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
+    <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
+    <Field label="Web URL (empty: current web)"><Input aria-label="Web URL" value={config.webUrl} onChange={(_, data) => update({ webUrl: data.value })} /></Field>
+    <Field label="Exact list title (Field: empty means site columns)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
+    <Field label="Content type scope"><Select aria-label="Content type scope" value={config.scope} onChange={(_, data) => update({ scope: data.value === 'list' ? 'list' : 'site' })}><option value="site">Site collection</option><option value="list">List</option></Select></Field>
+    <Field label="Exact content type group (empty: all)"><Input aria-label="Content type group" value={config.group} onChange={(_, data) => update({ group: data.value })} /></Field>
+    <Switch label="Include hidden content types" checked={config.includeHidden} onChange={(_, data) => update({ includeHidden: data.checked })} />
+    <Field label="Content type ID filter" hint="Choose a built-in parent or a currently selected metadata ID."><Select aria-label="Content type ID filter" value={config.contentTypeId} onChange={(_, data) => { if (data.value === '' || contentTypeFilterIds.includes(data.value)) update({ contentTypeId: data.value, includeDescendants: data.value ? config.includeDescendants : false }); }}><option value="">All content types</option>{contentTypeFilterIds.map(id => <option key={id} value={id}>{id === '0x01' ? 'Item (0x01)' : id === '0x0101' ? 'Document (0x0101)' : id}</option>)}</Select></Field>
+    <Switch label="Include descendants of content type ID" checked={config.includeDescendants} disabled={!config.contentTypeId} onChange={(_, data) => update({ includeDescendants: data.checked })} />
+  </div>;
+  const commands = <div className={classes.commands}>
+    <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>
+    <Button onClick={() => { if (current()) setAvailable(selection?.selectedItems ?? []); }}>Use confirmed models as consumer options</Button>
+    <Button onClick={() => { if (current()) setAvailable([]); }}>Empty consumer options</Button>
+    <Button onClick={() => { if (current()) setSelection(undefined); }}>Clear controlled selection</Button>
+    <Button onClick={() => { if (current()) { setError(''); setRefresh(value => value + 1); } }}>Refresh / retry</Button>
+  </div>;
+  const values = selection?.selectedValues ?? [];
+  const regions: DemoRegions = {
+    controls, commands,
+    status: <p role="status">{error || (active ? 'Started: use the picker below.' : 'Not started. Start explicitly to read the source.')}</p>,
+    children: <><p>Site scope reads the actual owning collection root, including from a subweb. List scope reads only attached definitions. Group and hierarchical ID filters apply locally over the full catalog; read-only and sealed definitions remain choices. A real effective web, scope or list change clears selection and consumer options. Presentation and equivalent source edits retain both. Selection never adds definitions, enables content types or synchronizes a hub.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{!ready ? <p>Enter an exact list title to query list content types.</p> : active ? (config.scope === 'site' ? <ContentTypePicker {...common} webUrl={target} group={config.group || undefined} includeHidden={config.includeHidden} contentTypeId={config.contentTypeId || undefined} includeDescendants={config.includeDescendants} scope="site" /> : <ContentTypePicker {...common} webUrl={target} group={config.group || undefined} includeHidden={config.includeHidden} contentTypeId={config.contentTypeId || undefined} includeDescendants={config.includeDescendants} scope="list" list={config.list.trim()} />) : <p>Start is required before the operational picker mounts.</p>}</>,
+    diagnostics: <pre className={classes.diagnostics}>{JSON.stringify({ started: active, selectedOptions: selection?.selectedOptions ?? [], selectedItems: selection?.selectedItems ?? [], selectedValues: values, unresolvedOptions: selection?.unresolvedOptions ?? [], reason: selection?.reason ?? 'No action', optionValue: selection?.optionValue, optionText: selection?.optionText, roundTrip: JSON.stringify(JSON.parse(JSON.stringify(values))) === JSON.stringify(values), consumerOptions: available, error }, undefined, 2)}</pre>,
+  };
+  return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Start a site or list content-type picker, apply group and parent-ID filters, and observe that source changes clear demo selection while presentation changes retain it.' };
+```
+
 ### Signatures
 
 ```ts
@@ -80,7 +186,7 @@ A Fluent Field with Dropdown or TagPicker. Single and multiple selections both u
 
 ### Source
 
-[packages/spfx-react-toolkit/src/controls/pickers/content-type-picker.tsx:42](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/content-type-picker.tsx#L42)
+[packages/spfx-react-toolkit/src/controls/pickers/content-type-picker.tsx:147](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/content-type-picker.tsx#L147)
 
 ## FieldPicker
 
@@ -106,10 +212,105 @@ import { FieldPicker } from '@apvee/spfx-react-toolkit/controls/pickers';
 
 ### Examples (2)
 
+#### Select writable list fields
+
 ```tsx
 import * as React from 'react';
 import { FieldPicker } from '@apvee/spfx-react-toolkit';
 <FieldPicker label="Campi" list="Projects" includeReadOnly={false} />
+```
+
+#### Explore site columns and list fields
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';
+import { FieldPicker, useSPFxContext, type FieldPickerOption, type PickerSelectionData } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Configuration = {
+  presentation: 'combobox' | 'tagPicker'; multi: boolean; searchable: boolean;
+  colorful: boolean; customStrings: boolean; customStatus: boolean; header: string;  webUrl: string; list: string;
+};
+const baseline: Configuration = { presentation: 'combobox', multi: false, searchable: true, colorful: false, customStrings: false, customStatus: false, header: '', webUrl: '', list: '' };
+const useStyles = makeStyles({ controls: { display: 'grid', gap: '12px' }, commands: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, diagnostics: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } });
+
+// Mount beneath the existing SPFxWebPartProvider/WebPartShell, never another provider.
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const classes = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const scope = spfxContext.serviceScope;
+  const boundary = React.useRef({ resetRevision, owner: spfxContext, scope });
+  const session = boundary.current;
+  const [config, setConfig] = React.useState<Configuration>(baseline);
+  const [started, setStarted] = React.useState(false);
+  const [selection, setSelection] = React.useState<PickerSelectionData<FieldPickerOption> | undefined>();
+  const [available, setAvailable] = React.useState<readonly FieldPickerOption[] | undefined>();
+  const [error, setError] = React.useState('');
+  const [refresh, setRefresh] = React.useState(0);
+  const current = (): boolean => boundary.current === session;
+  const active = started && session.resetRevision === resetRevision && session.owner === spfxContext && session.scope === scope;
+  React.useLayoutEffect(() => {
+    const observed = boundary.current;
+    if (observed.resetRevision === resetRevision && observed.owner === spfxContext && observed.scope === scope) return;
+    boundary.current = { resetRevision, owner: spfxContext, scope };
+    setStarted(false); setConfig(baseline); setSelection(undefined); setAvailable(undefined); setError(''); setRefresh(0);
+  }, [resetRevision, spfxContext, scope]);
+  const update = (patch: Partial<Configuration>): void => {
+    if (!current()) return;
+    const next = { ...config, ...patch };
+    const normalizedWeb = (draft: string): string => {
+      const web = draft.trim() || spfxContext.pageContext.web.absoluteUrl;
+      try { return new URL(web).href.replace(/\/$/, '').toLowerCase(); }
+      catch { return web; } // Keep unarmed partial URL drafts editable; the picker validates its actual source.
+    };
+    const sourceKey = (value: Configuration): string => JSON.stringify([normalizedWeb(value.webUrl), value.list.trim() || undefined]);
+    // Retire old commands synchronously without remounting the operational picker.
+    if (sourceKey(config) !== sourceKey(next)) boundary.current = { ...session };
+    setConfig(previous => ({ ...previous, ...patch }));
+  };
+  const target = config.webUrl.trim() || undefined;
+  const common = {
+    label: 'FieldPicker', presentation: config.presentation, multiselect: config.multi, searchable: config.searchable,
+    colorfulTagAvatars: config.colorful, refreshKey: refresh,
+    selectedOptions: selection?.selectedOptions ?? [], initialOptions: selection?.selectedItems, availableOptions: available,
+    suggestionsHeader: config.header.trim() || undefined,
+    emptyContent: config.customStatus ? 'No candidates: type at least two characters.' : undefined,
+    loadingContent: config.customStatus ? <span>Fetching live suggestions…</span> : undefined,
+    errorContent: config.customStatus ? { children: 'Source unavailable: inspect diagnostics and retry.' } : undefined,
+    strings: config.customStrings ? { labels: { selectOne: 'Choose source content', selectMany: 'Choose source content', search: 'Find a source item', retry: 'Try this source again' }, status: { noOptions: 'No matching source items' } } : undefined,
+    onOptionSelect: (_: unknown, data: PickerSelectionData<FieldPickerOption>): void => { if (current()) { setSelection(data); setError(''); } },
+    onError: (failure: Error): void => { if (current()) setError(failure.message); },
+  };
+  const ready = true;
+  const controls = <div className={classes.controls}>
+    <Field label="Presentation"><Select aria-label="Presentation" value={config.presentation} onChange={(_, data) => update({ presentation: data.value === 'tagPicker' ? 'tagPicker' : 'combobox' })}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
+    <Switch label="Multiple selection" checked={config.multi} onChange={(_, data) => update({ multi: data.checked })} />
+    <Switch label="Enable search" checked={config.searchable} onChange={(_, data) => update({ searchable: data.checked })} />
+    <Switch label="Colorful tag avatars" checked={config.colorful} disabled={config.presentation !== 'tagPicker'} onChange={(_, data) => update({ colorful: data.checked })} />
+    <Field label="Suggestion header (empty: default)"><Input aria-label="Suggestion header" value={config.header} onChange={(_, data) => update({ header: data.value })} /></Field>
+    <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
+    <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
+    <Field label="Web URL (empty: current web)"><Input aria-label="Web URL" value={config.webUrl} onChange={(_, data) => update({ webUrl: data.value })} /></Field>
+    <Field label="Exact list title (Field: empty means site columns)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
+  </div>;
+  const commands = <div className={classes.commands}>
+    <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>
+    <Button onClick={() => { if (current()) setAvailable(selection?.selectedItems ?? []); }}>Use confirmed models as consumer options</Button>
+    <Button onClick={() => { if (current()) setAvailable([]); }}>Empty consumer options</Button>
+    <Button onClick={() => { if (current()) setSelection(undefined); }}>Clear controlled selection</Button>
+    <Button onClick={() => { if (current()) { setError(''); setRefresh(value => value + 1); } }}>Refresh / retry</Button>
+  </div>;
+  const values = selection?.selectedValues ?? [];
+  const regions: DemoRegions = {
+    controls, commands,
+    status: <p role="status">{error || (active ? 'Started: use the picker below.' : 'Not started. Start explicitly to read the source.')}</p>,
+    children: <><p>An empty list means site columns; a list string is an exact title. The complete paged metadata catalog is cached, then filtered locally by a case-insensitive name prefix. There is no initial-catalog cap.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{!ready ? <p></p> : active ? <FieldPicker {...common} webUrl={target} list={config.list.trim() || undefined} /> : <p>Start is required before the operational picker mounts.</p>}</>,
+    diagnostics: <pre className={classes.diagnostics}>{JSON.stringify({ started: active, selectedOptions: selection?.selectedOptions ?? [], selectedItems: selection?.selectedItems ?? [], selectedValues: values, unresolvedOptions: selection?.unresolvedOptions ?? [], reason: selection?.reason ?? 'No action', optionValue: selection?.optionValue, optionText: selection?.optionText, roundTrip: JSON.stringify(JSON.parse(JSON.stringify(values))) === JSON.stringify(values), consumerOptions: available, error }, undefined, 2)}</pre>,
+  };
+  return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Start the field picker for site columns or an existing list, then search its complete catalog and compare Dropdown with removable selected tags.' };
 ```
 
 ### Signatures (2)
@@ -136,7 +337,7 @@ A native Fluent Field and picker; blank clearing emits an empty array.
 
 ### Source (2)
 
-[packages/spfx-react-toolkit/src/controls/pickers/field-picker.tsx:29](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/field-picker.tsx#L29)
+[packages/spfx-react-toolkit/src/controls/pickers/field-picker.tsx:121](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/field-picker.tsx#L121)
 
 ## ListItemPicker
 
@@ -162,10 +363,106 @@ import { ListItemPicker } from '@apvee/spfx-react-toolkit/controls/pickers';
 
 ### Examples (3)
 
+#### Select document items by file name
+
 ```tsx
 import * as React from 'react';
 import { ListItemPicker } from '@apvee/spfx-react-toolkit';
 <ListItemPicker label="Documenti" list="Documents" textField="FileLeafRef" presentation="tagPicker" />
+```
+
+#### Explore list item labels and query pages
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';
+import { ListItemPicker, useSPFxContext, type ListItemPickerOption, type PickerSelectionData } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Configuration = {
+  presentation: 'combobox' | 'tagPicker'; multi: boolean; searchable: boolean;
+  colorful: boolean; customStrings: boolean; customStatus: boolean; header: string;  webUrl: string; list: string; textField: string;
+};
+const baseline: Configuration = { presentation: 'combobox', multi: false, searchable: true, colorful: false, customStrings: false, customStatus: false, header: '', webUrl: '', list: '', textField: 'Title' };
+const useStyles = makeStyles({ controls: { display: 'grid', gap: '12px' }, commands: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, diagnostics: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } });
+
+// Mount beneath the existing SPFxWebPartProvider/WebPartShell, never another provider.
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const classes = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const scope = spfxContext.serviceScope;
+  const boundary = React.useRef({ resetRevision, owner: spfxContext, scope });
+  const session = boundary.current;
+  const [config, setConfig] = React.useState<Configuration>(baseline);
+  const [started, setStarted] = React.useState(false);
+  const [selection, setSelection] = React.useState<PickerSelectionData<ListItemPickerOption> | undefined>();
+  const [available, setAvailable] = React.useState<readonly ListItemPickerOption[] | undefined>();
+  const [error, setError] = React.useState('');
+  const [refresh, setRefresh] = React.useState(0);
+  const current = (): boolean => boundary.current === session;
+  const active = started && session.resetRevision === resetRevision && session.owner === spfxContext && session.scope === scope;
+  React.useLayoutEffect(() => {
+    const observed = boundary.current;
+    if (observed.resetRevision === resetRevision && observed.owner === spfxContext && observed.scope === scope) return;
+    boundary.current = { resetRevision, owner: spfxContext, scope };
+    setStarted(false); setConfig(baseline); setSelection(undefined); setAvailable(undefined); setError(''); setRefresh(0);
+  }, [resetRevision, spfxContext, scope]);
+  const update = (patch: Partial<Configuration>): void => {
+    if (!current()) return;
+    const next = { ...config, ...patch };
+    const normalizedWeb = (draft: string): string => {
+      const web = draft.trim() || spfxContext.pageContext.web.absoluteUrl;
+      try { return new URL(web).href.replace(/\/$/, '').toLowerCase(); }
+      catch { return web; } // Keep unarmed partial URL drafts editable; the picker validates its actual source.
+    };
+    const sourceKey = (value: Configuration): string => JSON.stringify([normalizedWeb(value.webUrl), value.list.trim(), value.textField.trim()]);
+    // Retire old commands synchronously without remounting the operational picker.
+    if (sourceKey(config) !== sourceKey(next)) boundary.current = { ...session };
+    setConfig(previous => ({ ...previous, ...patch }));
+  };
+  const target = config.webUrl.trim() || undefined;
+  const common = {
+    label: 'ListItemPicker', presentation: config.presentation, multiselect: config.multi, searchable: config.searchable,
+    colorfulTagAvatars: config.colorful, refreshKey: refresh,
+    selectedOptions: selection?.selectedOptions ?? [], initialOptions: selection?.selectedItems, availableOptions: available,
+    suggestionsHeader: config.header.trim() || undefined,
+    emptyContent: config.customStatus ? 'No candidates: type at least two characters.' : undefined,
+    loadingContent: config.customStatus ? <span>Fetching live suggestions…</span> : undefined,
+    errorContent: config.customStatus ? { children: 'Source unavailable: inspect diagnostics and retry.' } : undefined,
+    strings: config.customStrings ? { labels: { selectOne: 'Choose source content', selectMany: 'Choose source content', search: 'Find a source item', retry: 'Try this source again' }, status: { noOptions: 'No matching source items' } } : undefined,
+    onOptionSelect: (_: unknown, data: PickerSelectionData<ListItemPickerOption>): void => { if (current()) { setSelection(data); setError(''); } },
+    onError: (failure: Error): void => { if (current()) setError(failure.message); },
+  };
+  const ready = Boolean(config.list.trim() && config.textField.trim());
+  const controls = <div className={classes.controls}>
+    <Field label="Presentation"><Select aria-label="Presentation" value={config.presentation} onChange={(_, data) => update({ presentation: data.value === 'tagPicker' ? 'tagPicker' : 'combobox' })}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
+    <Switch label="Multiple selection" checked={config.multi} onChange={(_, data) => update({ multi: data.checked })} />
+    <Switch label="Enable search" checked={config.searchable} onChange={(_, data) => update({ searchable: data.checked })} />
+    <Switch label="Colorful tag avatars" checked={config.colorful} disabled={config.presentation !== 'tagPicker'} onChange={(_, data) => update({ colorful: data.checked })} />
+    <Field label="Suggestion header (empty: default)"><Input aria-label="Suggestion header" value={config.header} onChange={(_, data) => update({ header: data.value })} /></Field>
+    <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
+    <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
+    <Field label="Web URL (empty: current web)"><Input aria-label="Web URL" value={config.webUrl} onChange={(_, data) => update({ webUrl: data.value })} /></Field>
+    <Field label="Exact list title (Field: empty means site columns)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
+    <Field label="Item display field" hint="Use a valid field such as Title or FileLeafRef. Files with an empty display value use their filename."><Input aria-label="Item display field" value={config.textField} onChange={(_, data) => update({ textField: data.value })} /></Field>
+  </div>;
+  const commands = <div className={classes.commands}>
+    <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>
+    <Button onClick={() => { if (current()) setAvailable(selection?.selectedItems ?? []); }}>Use confirmed models as consumer options</Button>
+    <Button onClick={() => { if (current()) setAvailable([]); }}>Empty consumer options</Button>
+    <Button onClick={() => { if (current()) setSelection(undefined); }}>Clear controlled selection</Button>
+    <Button onClick={() => { if (current()) { setError(''); setRefresh(value => value + 1); } }}>Refresh / retry</Button>
+  </div>;
+  const values = selection?.selectedValues ?? [];
+  const regions: DemoRegions = {
+    controls, commands,
+    status: <p role="status">{error || (active ? 'Started: use the picker below.' : 'Not started. Start explicitly to read the source.')}</p>,
+    children: <><p>Typed item search reads bounded real query pages and reports partial results. Files also match their filename; folders are excluded by default. A valid field identifier is required even when a file has an empty field value and needs its filename label fallback.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{!ready ? <p>Enter an exact list title and a valid display field to start.</p> : active ? <ListItemPicker {...common} webUrl={target} list={config.list.trim()} textField={config.textField.trim()} /> : <p>Start is required before the operational picker mounts.</p>}</>,
+    diagnostics: <pre className={classes.diagnostics}>{JSON.stringify({ started: active, selectedOptions: selection?.selectedOptions ?? [], selectedItems: selection?.selectedItems ?? [], selectedValues: values, unresolvedOptions: selection?.unresolvedOptions ?? [], reason: selection?.reason ?? 'No action', optionValue: selection?.optionValue, optionText: selection?.optionText, roundTrip: JSON.stringify(JSON.parse(JSON.stringify(values))) === JSON.stringify(values), consumerOptions: available, error }, undefined, 2)}</pre>,
+  };
+  return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Enter an existing list and display field, start the item picker, and compare query pages, file-name labels and retained selected references.' };
 ```
 
 ### Signatures (3)
@@ -192,7 +489,7 @@ A native Fluent picker with minimal JSON references; source fields are not persi
 
 ### Source (3)
 
-[packages/spfx-react-toolkit/src/controls/pickers/list-item-picker.tsx:29](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/list-item-picker.tsx#L29)
+[packages/spfx-react-toolkit/src/controls/pickers/list-item-picker.tsx:122](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/list-item-picker.tsx#L122)
 
 ## ListPicker
 
@@ -218,10 +515,105 @@ import { ListPicker } from '@apvee/spfx-react-toolkit/controls/pickers';
 
 ### Examples (4)
 
+#### Select lists by base template
+
 ```tsx
 import * as React from 'react';
 import { ListPicker } from '@apvee/spfx-react-toolkit';
 <ListPicker label="Lista" baseTemplate={[100,101]} onOptionSelect={(_,data) => console.log(data.selectedValues)} />
+```
+
+#### Explore list catalogs and independent consumer choices
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';
+import { ListPicker, useSPFxContext, type ListPickerOption, type PickerSelectionData } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Configuration = {
+  presentation: 'combobox' | 'tagPicker'; multi: boolean; searchable: boolean;
+  colorful: boolean; customStrings: boolean; customStatus: boolean; header: string;  webUrl: string; catalogLimit: number;
+};
+const baseline: Configuration = { presentation: 'combobox', multi: false, searchable: true, colorful: false, customStrings: false, customStatus: false, header: '', webUrl: '', catalogLimit: 30 };
+const useStyles = makeStyles({ controls: { display: 'grid', gap: '12px' }, commands: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, diagnostics: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } });
+
+// Mount beneath the existing SPFxWebPartProvider/WebPartShell, never another provider.
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const classes = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const scope = spfxContext.serviceScope;
+  const boundary = React.useRef({ resetRevision, owner: spfxContext, scope });
+  const session = boundary.current;
+  const [config, setConfig] = React.useState<Configuration>(baseline);
+  const [started, setStarted] = React.useState(false);
+  const [selection, setSelection] = React.useState<PickerSelectionData<ListPickerOption> | undefined>();
+  const [available, setAvailable] = React.useState<readonly ListPickerOption[] | undefined>();
+  const [error, setError] = React.useState('');
+  const [refresh, setRefresh] = React.useState(0);
+  const current = (): boolean => boundary.current === session;
+  const active = started && session.resetRevision === resetRevision && session.owner === spfxContext && session.scope === scope;
+  React.useLayoutEffect(() => {
+    const observed = boundary.current;
+    if (observed.resetRevision === resetRevision && observed.owner === spfxContext && observed.scope === scope) return;
+    boundary.current = { resetRevision, owner: spfxContext, scope };
+    setStarted(false); setConfig(baseline); setSelection(undefined); setAvailable(undefined); setError(''); setRefresh(0);
+  }, [resetRevision, spfxContext, scope]);
+  const update = (patch: Partial<Configuration>): void => {
+    if (!current()) return;
+    const next = { ...config, ...patch };
+    const normalizedWeb = (draft: string): string => {
+      const web = draft.trim() || spfxContext.pageContext.web.absoluteUrl;
+      try { return new URL(web).href.replace(/\/$/, '').toLowerCase(); }
+      catch { return web; } // Keep unarmed partial URL drafts editable; the picker validates its actual source.
+    };
+    const sourceKey = (value: Configuration): string => JSON.stringify([normalizedWeb(value.webUrl)]);
+    // Retire old commands synchronously without remounting the operational picker.
+    if (sourceKey(config) !== sourceKey(next)) boundary.current = { ...session };
+    setConfig(previous => ({ ...previous, ...patch }));
+  };
+  const target = config.webUrl.trim() || undefined;
+  const common = {
+    label: 'ListPicker', presentation: config.presentation, multiselect: config.multi, searchable: config.searchable,
+    colorfulTagAvatars: config.colorful, refreshKey: refresh,
+    selectedOptions: selection?.selectedOptions ?? [], initialOptions: selection?.selectedItems, availableOptions: available,
+    suggestionsHeader: config.header.trim() || undefined,
+    emptyContent: config.customStatus ? 'No candidates: type at least two characters.' : undefined,
+    loadingContent: config.customStatus ? <span>Fetching live suggestions…</span> : undefined,
+    errorContent: config.customStatus ? { children: 'Source unavailable: inspect diagnostics and retry.' } : undefined,
+    strings: config.customStrings ? { labels: { selectOne: 'Choose source content', selectMany: 'Choose source content', search: 'Find a source item', retry: 'Try this source again' }, status: { noOptions: 'No matching source items' } } : undefined,
+    onOptionSelect: (_: unknown, data: PickerSelectionData<ListPickerOption>): void => { if (current()) { setSelection(data); setError(''); } },
+    onError: (failure: Error): void => { if (current()) setError(failure.message); },
+  };
+  const ready = true;
+  const controls = <div className={classes.controls}>
+    <Field label="Presentation"><Select aria-label="Presentation" value={config.presentation} onChange={(_, data) => update({ presentation: data.value === 'tagPicker' ? 'tagPicker' : 'combobox' })}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
+    <Switch label="Multiple selection" checked={config.multi} onChange={(_, data) => update({ multi: data.checked })} />
+    <Switch label="Enable search" checked={config.searchable} onChange={(_, data) => update({ searchable: data.checked })} />
+    <Switch label="Colorful tag avatars" checked={config.colorful} disabled={config.presentation !== 'tagPicker'} onChange={(_, data) => update({ colorful: data.checked })} />
+    <Field label="Suggestion header (empty: default)"><Input aria-label="Suggestion header" value={config.header} onChange={(_, data) => update({ header: data.value })} /></Field>
+    <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
+    <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
+    <Field label="Web URL (empty: current web)"><Input aria-label="Web URL" value={config.webUrl} onChange={(_, data) => update({ webUrl: data.value })} /></Field>
+    <Field label="Initial catalog limit (1–200, default 30)"><Select aria-label="Initial catalog limit" value={String(config.catalogLimit)} onChange={(_, data) => { const value = Number(data.value); if ([10, 20, 30, 50, 100, 200].includes(value)) update({ catalogLimit: value }); }}>{[10, 20, 30, 50, 100, 200].map(value => <option key={value} value={value}>{value}</option>)}</Select></Field>
+  </div>;
+  const commands = <div className={classes.commands}>
+    <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>
+    <Button onClick={() => { if (current()) setAvailable(selection?.selectedItems ?? []); }}>Use confirmed models as consumer options</Button>
+    <Button onClick={() => { if (current()) setAvailable([]); }}>Empty consumer options</Button>
+    <Button onClick={() => { if (current()) setSelection(undefined); }}>Clear controlled selection</Button>
+    <Button onClick={() => { if (current()) { setError(''); setRefresh(value => value + 1); } }}>Refresh / retry</Button>
+  </div>;
+  const values = selection?.selectedValues ?? [];
+  const regions: DemoRegions = {
+    controls, commands,
+    status: <p role="status">{error || (active ? 'Started: use the picker below.' : 'Not started. Start explicitly to read the source.')}</p>,
+    children: <><p>Opening an empty menu lazily loads the initial scoped catalog. Its available limit is independent of typed remote discovery; consumer precedence, duplicates and selected choices do not count twice. Partial catalogs retain their lookahead hint.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{!ready ? <p></p> : active ? <ListPicker {...common} webUrl={target} initialCatalogLimit={config.catalogLimit} /> : <p>Start is required before the operational picker mounts.</p>}</>,
+    diagnostics: <pre className={classes.diagnostics}>{JSON.stringify({ started: active, selectedOptions: selection?.selectedOptions ?? [], selectedItems: selection?.selectedItems ?? [], selectedValues: values, unresolvedOptions: selection?.unresolvedOptions ?? [], reason: selection?.reason ?? 'No action', optionValue: selection?.optionValue, optionText: selection?.optionText, roundTrip: JSON.stringify(JSON.parse(JSON.stringify(values))) === JSON.stringify(values), consumerOptions: available, error }, undefined, 2)}</pre>,
+  };
+  return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Start the list picker, change the initial catalog limit, then copy confirmed models into consumer options and clear selection without losing those candidates.' };
 ```
 
 ### Signatures (4)
@@ -248,7 +640,7 @@ Accessible Fluent Field and picker. No persistence or provisioning.
 
 ### Source (4)
 
-[packages/spfx-react-toolkit/src/controls/pickers/list-picker.tsx:29](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/list-picker.tsx#L29)
+[packages/spfx-react-toolkit/src/controls/pickers/list-picker.tsx:121](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/list-picker.tsx#L121)
 
 ## ContentTypePickerValue
 
@@ -5173,10 +5565,120 @@ import { PrincipalPicker } from '@apvee/spfx-react-toolkit/controls/pickers';
 
 ### Examples (59)
 
+#### Select recipients with explicit identity modes
+
 ```tsx
 import * as React from 'react';
 import { PrincipalPicker } from '@apvee/spfx-react-toolkit';
 <PrincipalPicker label="Destinatari" principalTypes={['user','microsoft365Group']} userIdentity={{mode:'both',ensureUser:false}} />
+```
+
+#### Explore principal discovery and explicit identity resolution
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';
+import { PrincipalPicker, useSPFxContext, type PrincipalPickerOption, type PickerSelectionData, type PrincipalType } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Configuration = {
+  presentation: 'combobox' | 'tagPicker'; multi: boolean; searchable: boolean;
+  colorful: boolean; customStrings: boolean; customStatus: boolean; header: string;  webUrl: string; types: 'users' | 'groups' | 'all'; idMode: 'available' | 'entra' | 'sharePoint' | 'both'; ensureUser: boolean; personal: boolean; currentUser: boolean;
+};
+const baseline: Configuration = { presentation: 'combobox', multi: false, searchable: true, colorful: false, customStrings: false, customStatus: false, header: '', webUrl: '', types: 'users', idMode: 'available', ensureUser: false, personal: false, currentUser: false };
+const useStyles = makeStyles({ controls: { display: 'grid', gap: '12px' }, commands: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, diagnostics: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } });
+
+// Mount beneath the existing SPFxWebPartProvider/WebPartShell, never another provider.
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const classes = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const scope = spfxContext.serviceScope;
+  const boundary = React.useRef({ resetRevision, owner: spfxContext, scope });
+  const session = boundary.current;
+  const [config, setConfig] = React.useState<Configuration>(baseline);
+  const [started, setStarted] = React.useState(false);
+  const [selection, setSelection] = React.useState<PickerSelectionData<PrincipalPickerOption> | undefined>();
+  const [available, setAvailable] = React.useState<readonly PrincipalPickerOption[] | undefined>();
+  const [error, setError] = React.useState('');
+  const [refresh, setRefresh] = React.useState(0);
+  const current = (): boolean => boundary.current === session;
+  const active = started && session.resetRevision === resetRevision && session.owner === spfxContext && session.scope === scope;
+  React.useLayoutEffect(() => {
+    const observed = boundary.current;
+    if (observed.resetRevision === resetRevision && observed.owner === spfxContext && observed.scope === scope) return;
+    boundary.current = { resetRevision, owner: spfxContext, scope };
+    setStarted(false); setConfig(baseline); setSelection(undefined); setAvailable(undefined); setError(''); setRefresh(0);
+  }, [resetRevision, spfxContext, scope]);
+  const update = (patch: Partial<Configuration>): void => {
+    if (!current()) return;
+    const next = { ...config, ...patch };
+    const normalizedWeb = (draft: string): string => {
+      const web = draft.trim() || spfxContext.pageContext.web.absoluteUrl;
+      try { return new URL(web).href.replace(/\/$/, '').toLowerCase(); }
+      catch { return web; } // Keep unarmed partial URL drafts editable; the picker validates its actual source.
+    };
+    // The actual Principal source serializes its identity policy verbatim.
+    // SharePoint/both target spelling is therefore part of that binding; no extra normalization is promised.
+    const sourceKey = (value: Configuration): string => JSON.stringify([
+      normalizedWeb(value.webUrl), value.types, value.idMode === 'sharePoint' || value.idMode === 'both'
+        ? { mode: value.idMode, webUrl: value.webUrl.trim() || undefined, ensureUser: value.ensureUser }
+        : { mode: value.idMode }, value.personal, value.currentUser,
+    ]);
+    // Retire old commands synchronously without remounting the operational picker.
+    if (sourceKey(config) !== sourceKey(next)) boundary.current = { ...session };
+    setConfig(previous => ({ ...previous, ...patch }));
+  };
+  const target = config.webUrl.trim() || undefined;
+  const principalTypes: readonly PrincipalType[] = config.types === 'users' ? ['user'] : config.types === 'groups'
+    ? ['sharePointGroup', 'microsoft365Group', 'securityGroup', 'distributionList']
+    : ['user', 'sharePointGroup', 'microsoft365Group', 'securityGroup', 'distributionList'];
+  const userIdentity = config.idMode === 'sharePoint' || config.idMode === 'both'
+    ? { mode: config.idMode, webUrl: target, ensureUser: config.ensureUser } : { mode: config.idMode };
+  const common = {
+    label: 'PrincipalPicker', presentation: config.presentation, multiselect: config.multi, searchable: config.searchable,
+    colorfulTagAvatars: config.colorful, refreshKey: refresh,
+    selectedOptions: selection?.selectedOptions ?? [], initialOptions: selection?.selectedItems, availableOptions: available,
+    suggestionsHeader: config.header.trim() || undefined,
+    emptyContent: config.customStatus ? 'No candidates: type at least two characters.' : undefined,
+    loadingContent: config.customStatus ? <span>Fetching live suggestions…</span> : undefined,
+    errorContent: config.customStatus ? { children: 'Source unavailable: inspect diagnostics and retry.' } : undefined,
+    strings: config.customStrings ? { labels: { selectOne: 'Choose source content', selectMany: 'Choose source content', search: 'Find a source item', retry: 'Try this source again' }, status: { noOptions: 'No matching source items' } } : undefined,
+    onOptionSelect: (_: unknown, data: PickerSelectionData<PrincipalPickerOption>): void => { if (current()) { setSelection(data); setError(''); } },
+    onError: (failure: Error): void => { if (current()) setError(failure.message); },
+  };
+  const ready = true;
+  const controls = <div className={classes.controls}>
+    <Field label="Presentation"><Select aria-label="Presentation" value={config.presentation} onChange={(_, data) => update({ presentation: data.value === 'tagPicker' ? 'tagPicker' : 'combobox' })}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
+    <Switch label="Multiple selection" checked={config.multi} onChange={(_, data) => update({ multi: data.checked })} />
+    <Switch label="Enable search" checked={config.searchable} onChange={(_, data) => update({ searchable: data.checked })} />
+    <Switch label="Colorful tag avatars" checked={config.colorful} disabled={config.presentation !== 'tagPicker'} onChange={(_, data) => update({ colorful: data.checked })} />
+    <Field label="Suggestion header (empty: default)"><Input aria-label="Suggestion header" value={config.header} onChange={(_, data) => update({ header: data.value })} /></Field>
+    <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
+    <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
+    <Field label="Web URL (empty: current web)"><Input aria-label="Web URL" value={config.webUrl} onChange={(_, data) => update({ webUrl: data.value })} /></Field>
+    <Field label="Principal types"><Select aria-label="Principal types" value={config.types} onChange={(_, data) => update({ types: data.value === 'groups' ? 'groups' : data.value === 'all' ? 'all' : 'users' })}><option value="users">Users</option><option value="groups">Groups</option><option value="all">Users and groups</option></Select></Field>
+    <Field label="User IDs"><Select aria-label="User IDs" value={config.idMode} onChange={(_, data) => update({ idMode: data.value === 'both' ? 'both' : data.value === 'sharePoint' ? 'sharePoint' : data.value === 'entra' ? 'entra' : 'available' })}><option>available</option><option>entra</option><option>sharePoint</option><option>both</option></Select></Field>
+    <Switch label="Allow ensureUser on explicit confirmation" checked={config.ensureUser} disabled={config.idMode !== 'sharePoint' && config.idMode !== 'both'} onChange={(_, data) => update({ ensureUser: data.checked })} />
+    <Switch label="Load Graph personal suggestions" checked={config.personal} onChange={(_, data) => update({ personal: data.checked })} />
+    <Switch label="Offer current user" checked={config.currentUser} onChange={(_, data) => update({ currentUser: data.checked })} />
+  </div>;
+  const commands = <div className={classes.commands}>
+    <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>
+    <Button onClick={() => { if (current()) setAvailable(selection?.selectedItems ?? []); }}>Use confirmed models as consumer options</Button>
+    <Button onClick={() => { if (current()) setAvailable([]); }}>Empty consumer options</Button>
+    <Button onClick={() => { if (current()) setSelection(undefined); }}>Clear controlled selection</Button>
+    <Button onClick={() => { if (current()) { setError(''); setRefresh(value => value + 1); } }}>Refresh / retry</Button>
+  </div>;
+  const values = selection?.selectedValues ?? [];
+  const regions: DemoRegions = {
+    controls, commands,
+    status: <p role="status">{error || (active ? 'Started: use the picker below.' : 'Not started. Start explicitly to read the source.')}</p>,
+    children: <><p>Personal and current-user suggestions start off. Graph-dependent discovery and identity resolution wait for client initialization; SharePoint-only choices remain usable after a Graph initialization failure. Only explicit confirmation or ID resolution can use opt-in ensureUser in sharePoint/both modes. Source confirmation and any ensureUser request precede validateSelection: a validator cannot prevent an already dispatched write. Reset retires this operational picker and prevents obsolete local publication; an already sent server write can still finish. Retirement does not abort, undo or serialize writes across sessions.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{!ready ? <p></p> : active ? <PrincipalPicker {...common} webUrl={target} principalTypes={principalTypes} userIdentity={userIdentity} loadPersonalSuggestions={config.personal} initialSuggestions={{ includeCurrentUser: config.currentUser }} /> : <p>Start is required before the operational picker mounts.</p>}</>,
+    diagnostics: <pre className={classes.diagnostics}>{JSON.stringify({ started: active, selectedOptions: selection?.selectedOptions ?? [], selectedItems: selection?.selectedItems ?? [], selectedValues: values, unresolvedOptions: selection?.unresolvedOptions ?? [], reason: selection?.reason ?? 'No action', optionValue: selection?.optionValue, optionText: selection?.optionText, roundTrip: JSON.stringify(JSON.parse(JSON.stringify(values))) === JSON.stringify(values), consumerOptions: available, error }, undefined, 2)}</pre>,
+  };
+  return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;
+}
+export const demo = { host: 'webPart', kind: 'write', contentPlacement: 'configuration', observe: 'Start principal discovery, compare user and group sources and ID modes, and observe that only explicit confirmation can use the optional ensureUser policy.' };
 ```
 
 ### Signatures (16)
@@ -5203,7 +5705,7 @@ A native Fluent picker. ensureUser only runs on accepted user actions or explici
 
 ### Source (75)
 
-[packages/spfx-react-toolkit/src/controls/pickers/principal-picker.tsx:66](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/principal-picker.tsx#L66)
+[packages/spfx-react-toolkit/src/controls/pickers/principal-picker.tsx:173](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/principal-picker.tsx#L173)
 
 ## SitePicker
 
@@ -5251,6 +5753,93 @@ function SearchFeedbackChoices() {
 }
 ```
 
+#### Explore site selection and contextual search
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';
+import { SitePicker, useSPFxContext, type SitePickerOption, type PickerSelectionData } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Configuration = {
+  presentation: 'combobox' | 'tagPicker'; multi: boolean; searchable: boolean;
+  colorful: boolean; customStrings: boolean; customStatus: boolean; header: string;  includeCurrentSite: boolean; includeHubSite: boolean;
+};
+const baseline: Configuration = { presentation: 'combobox', multi: false, searchable: true, colorful: false, customStrings: false, customStatus: false, header: '', includeCurrentSite: true, includeHubSite: true };
+const useStyles = makeStyles({ controls: { display: 'grid', gap: '12px' }, commands: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, diagnostics: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } });
+
+// Mount beneath the existing SPFxWebPartProvider/WebPartShell, never another provider.
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const classes = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const scope = spfxContext.serviceScope;
+  const boundary = React.useRef({ resetRevision, owner: spfxContext, scope });
+  const session = boundary.current;
+  const [config, setConfig] = React.useState<Configuration>(baseline);
+  const [started, setStarted] = React.useState(false);
+  const [selection, setSelection] = React.useState<PickerSelectionData<SitePickerOption> | undefined>();
+  const [available, setAvailable] = React.useState<readonly SitePickerOption[] | undefined>();
+  const [error, setError] = React.useState('');
+  const [refresh, setRefresh] = React.useState(0);
+  const current = (): boolean => boundary.current === session;
+  const active = started && session.resetRevision === resetRevision && session.owner === spfxContext && session.scope === scope;
+  React.useLayoutEffect(() => {
+    const observed = boundary.current;
+    if (observed.resetRevision === resetRevision && observed.owner === spfxContext && observed.scope === scope) return;
+    boundary.current = { resetRevision, owner: spfxContext, scope };
+    setStarted(false); setConfig(baseline); setSelection(undefined); setAvailable(undefined); setError(''); setRefresh(0);
+  }, [resetRevision, spfxContext, scope]);
+  const update = (patch: Partial<Configuration>): void => {
+    if (!current()) return;
+    const next = { ...config, ...patch };
+    const sourceKey = (value: Configuration): string => JSON.stringify([value.includeCurrentSite, value.includeHubSite]);
+    // Retire old commands synchronously without remounting the operational picker.
+    if (sourceKey(config) !== sourceKey(next)) boundary.current = { ...session };
+    setConfig(previous => ({ ...previous, ...patch }));
+  };
+  const common = {
+    label: 'SitePicker', presentation: config.presentation, multiselect: config.multi, searchable: config.searchable,
+    colorfulTagAvatars: config.colorful, refreshKey: refresh,
+    selectedOptions: selection?.selectedOptions ?? [], initialOptions: selection?.selectedItems, availableOptions: available,
+    suggestionsHeader: config.header.trim() || undefined,
+    emptyContent: config.customStatus ? 'No candidates: type at least two characters.' : undefined,
+    loadingContent: config.customStatus ? <span>Fetching live suggestions…</span> : undefined,
+    errorContent: config.customStatus ? { children: 'Source unavailable: inspect diagnostics and retry.' } : undefined,
+    strings: config.customStrings ? { labels: { selectOne: 'Choose source content', selectMany: 'Choose source content', search: 'Find a source item', retry: 'Try this source again' }, status: { noOptions: 'No matching source items' } } : undefined,
+    onOptionSelect: (_: unknown, data: PickerSelectionData<SitePickerOption>): void => { if (current()) { setSelection(data); setError(''); } },
+    onError: (failure: Error): void => { if (current()) setError(failure.message); },
+  };
+  const ready = true;
+  const controls = <div className={classes.controls}>
+    <Field label="Presentation"><Select aria-label="Presentation" value={config.presentation} onChange={(_, data) => update({ presentation: data.value === 'tagPicker' ? 'tagPicker' : 'combobox' })}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
+    <Switch label="Multiple selection" checked={config.multi} onChange={(_, data) => update({ multi: data.checked })} />
+    <Switch label="Enable search" checked={config.searchable} onChange={(_, data) => update({ searchable: data.checked })} />
+    <Switch label="Colorful tag avatars" checked={config.colorful} disabled={config.presentation !== 'tagPicker'} onChange={(_, data) => update({ colorful: data.checked })} />
+    <Field label="Suggestion header (empty: default)"><Input aria-label="Suggestion header" value={config.header} onChange={(_, data) => update({ header: data.value })} /></Field>
+    <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
+    <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
+    <Switch label="Offer current site collection" checked={config.includeCurrentSite} onChange={(_, data) => update({ includeCurrentSite: data.checked })} />
+    <Switch label="Offer associated hub" checked={config.includeHubSite} onChange={(_, data) => update({ includeHubSite: data.checked })} />
+  </div>;
+  const commands = <div className={classes.commands}>
+    <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>
+    <Button onClick={() => { if (current()) setAvailable(selection?.selectedItems ?? []); }}>Use confirmed models as consumer options</Button>
+    <Button onClick={() => { if (current()) setAvailable([]); }}>Empty consumer options</Button>
+    <Button onClick={() => { if (current()) setSelection(undefined); }}>Clear controlled selection</Button>
+    <Button onClick={() => { if (current()) { setError(''); setRefresh(value => value + 1); } }}>Refresh / retry</Button>
+  </div>;
+  const values = selection?.selectedValues ?? [];
+  const regions: DemoRegions = {
+    controls, commands,
+    status: <p role="status">{error || (active ? 'Started: use the picker below.' : 'Not started. Start explicitly to read the source.')}</p>,
+    children: <><p>Current collection and actually associated hub remain pinned during typed search, outside the ordinary five-item suggestion cap. There is no SitePicker webUrl prop. Search uses the real authenticated SharePoint search source.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{!ready ? <p></p> : active ? <SitePicker {...common} includeCurrentSite={config.includeCurrentSite} includeHubSite={config.includeHubSite} /> : <p>Start is required before the operational picker mounts.</p>}</>,
+    diagnostics: <pre className={classes.diagnostics}>{JSON.stringify({ started: active, selectedOptions: selection?.selectedOptions ?? [], selectedItems: selection?.selectedItems ?? [], selectedValues: values, unresolvedOptions: selection?.unresolvedOptions ?? [], reason: selection?.reason ?? 'No action', optionValue: selection?.optionValue, optionText: selection?.optionText, roundTrip: JSON.stringify(JSON.parse(JSON.stringify(values))) === JSON.stringify(values), consumerOptions: available, error }, undefined, 2)}</pre>,
+  };
+  return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Start the site picker, then compare its current-site and associated-hub choices with typed search while the selected value remains visible.' };
+```
+
 ### Signatures (17)
 
 ```ts
@@ -5275,7 +5864,7 @@ A native Fluent Field and site picker; changing display props retains its runtim
 
 ### Source (76)
 
-[packages/spfx-react-toolkit/src/controls/pickers/site-picker.tsx:47](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/site-picker.tsx#L47)
+[packages/spfx-react-toolkit/src/controls/pickers/site-picker.tsx:133](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/site-picker.tsx#L133)
 
 ## ViewPicker
 
@@ -5301,10 +5890,105 @@ import { ViewPicker } from '@apvee/spfx-react-toolkit/controls/pickers';
 
 ### Examples (61)
 
+#### Select a list view by GUID
+
 ```tsx
 import * as React from 'react';
 import { ViewPicker } from '@apvee/spfx-react-toolkit';
 <ViewPicker label="Vista" list={{kind:'id',id:'11111111-1111-4111-8111-111111111111'}} />
+```
+
+#### Explore scoped view catalogs
+
+```tsx
+import * as React from 'react';
+import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';
+import { ViewPicker, useSPFxContext, type ViewPickerOption, type PickerSelectionData } from '@apvee/spfx-react-toolkit';
+
+type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+type Configuration = {
+  presentation: 'combobox' | 'tagPicker'; multi: boolean; searchable: boolean;
+  colorful: boolean; customStrings: boolean; customStatus: boolean; header: string;  webUrl: string; list: string;
+};
+const baseline: Configuration = { presentation: 'combobox', multi: false, searchable: true, colorful: false, customStrings: false, customStatus: false, header: '', webUrl: '', list: '' };
+const useStyles = makeStyles({ controls: { display: 'grid', gap: '12px' }, commands: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, diagnostics: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } });
+
+// Mount beneath the existing SPFxWebPartProvider/WebPartShell, never another provider.
+export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+  const classes = useStyles();
+  const { spfxContext } = useSPFxContext();
+  const scope = spfxContext.serviceScope;
+  const boundary = React.useRef({ resetRevision, owner: spfxContext, scope });
+  const session = boundary.current;
+  const [config, setConfig] = React.useState<Configuration>(baseline);
+  const [started, setStarted] = React.useState(false);
+  const [selection, setSelection] = React.useState<PickerSelectionData<ViewPickerOption> | undefined>();
+  const [available, setAvailable] = React.useState<readonly ViewPickerOption[] | undefined>();
+  const [error, setError] = React.useState('');
+  const [refresh, setRefresh] = React.useState(0);
+  const current = (): boolean => boundary.current === session;
+  const active = started && session.resetRevision === resetRevision && session.owner === spfxContext && session.scope === scope;
+  React.useLayoutEffect(() => {
+    const observed = boundary.current;
+    if (observed.resetRevision === resetRevision && observed.owner === spfxContext && observed.scope === scope) return;
+    boundary.current = { resetRevision, owner: spfxContext, scope };
+    setStarted(false); setConfig(baseline); setSelection(undefined); setAvailable(undefined); setError(''); setRefresh(0);
+  }, [resetRevision, spfxContext, scope]);
+  const update = (patch: Partial<Configuration>): void => {
+    if (!current()) return;
+    const next = { ...config, ...patch };
+    const normalizedWeb = (draft: string): string => {
+      const web = draft.trim() || spfxContext.pageContext.web.absoluteUrl;
+      try { return new URL(web).href.replace(/\/$/, '').toLowerCase(); }
+      catch { return web; } // Keep unarmed partial URL drafts editable; the picker validates its actual source.
+    };
+    const sourceKey = (value: Configuration): string => JSON.stringify([normalizedWeb(value.webUrl), value.list.trim()]);
+    // Retire old commands synchronously without remounting the operational picker.
+    if (sourceKey(config) !== sourceKey(next)) boundary.current = { ...session };
+    setConfig(previous => ({ ...previous, ...patch }));
+  };
+  const target = config.webUrl.trim() || undefined;
+  const common = {
+    label: 'ViewPicker', presentation: config.presentation, multiselect: config.multi, searchable: config.searchable,
+    colorfulTagAvatars: config.colorful, refreshKey: refresh,
+    selectedOptions: selection?.selectedOptions ?? [], initialOptions: selection?.selectedItems, availableOptions: available,
+    suggestionsHeader: config.header.trim() || undefined,
+    emptyContent: config.customStatus ? 'No candidates: type at least two characters.' : undefined,
+    loadingContent: config.customStatus ? <span>Fetching live suggestions…</span> : undefined,
+    errorContent: config.customStatus ? { children: 'Source unavailable: inspect diagnostics and retry.' } : undefined,
+    strings: config.customStrings ? { labels: { selectOne: 'Choose source content', selectMany: 'Choose source content', search: 'Find a source item', retry: 'Try this source again' }, status: { noOptions: 'No matching source items' } } : undefined,
+    onOptionSelect: (_: unknown, data: PickerSelectionData<ViewPickerOption>): void => { if (current()) { setSelection(data); setError(''); } },
+    onError: (failure: Error): void => { if (current()) setError(failure.message); },
+  };
+  const ready = Boolean(config.list.trim());
+  const controls = <div className={classes.controls}>
+    <Field label="Presentation"><Select aria-label="Presentation" value={config.presentation} onChange={(_, data) => update({ presentation: data.value === 'tagPicker' ? 'tagPicker' : 'combobox' })}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
+    <Switch label="Multiple selection" checked={config.multi} onChange={(_, data) => update({ multi: data.checked })} />
+    <Switch label="Enable search" checked={config.searchable} onChange={(_, data) => update({ searchable: data.checked })} />
+    <Switch label="Colorful tag avatars" checked={config.colorful} disabled={config.presentation !== 'tagPicker'} onChange={(_, data) => update({ colorful: data.checked })} />
+    <Field label="Suggestion header (empty: default)"><Input aria-label="Suggestion header" value={config.header} onChange={(_, data) => update({ header: data.value })} /></Field>
+    <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
+    <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
+    <Field label="Web URL (empty: current web)"><Input aria-label="Web URL" value={config.webUrl} onChange={(_, data) => update({ webUrl: data.value })} /></Field>
+    <Field label="Exact list title (Field: empty means site columns)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
+  </div>;
+  const commands = <div className={classes.commands}>
+    <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>
+    <Button onClick={() => { if (current()) setAvailable(selection?.selectedItems ?? []); }}>Use confirmed models as consumer options</Button>
+    <Button onClick={() => { if (current()) setAvailable([]); }}>Empty consumer options</Button>
+    <Button onClick={() => { if (current()) setSelection(undefined); }}>Clear controlled selection</Button>
+    <Button onClick={() => { if (current()) { setError(''); setRefresh(value => value + 1); } }}>Refresh / retry</Button>
+  </div>;
+  const values = selection?.selectedValues ?? [];
+  const regions: DemoRegions = {
+    controls, commands,
+    status: <p role="status">{error || (active ? 'Started: use the picker below.' : 'Not started. Start explicitly to read the source.')}</p>,
+    children: <><p>An existing exact list is required. Opening loads the complete paged view catalog; typed case-insensitive prefix matching is local. Selected references remain separate from the popup query.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{!ready ? <p>Enter an exact list title to start.</p> : active ? <ViewPicker {...common} webUrl={target} list={config.list.trim()} /> : <p>Start is required before the operational picker mounts.</p>}</>,
+    diagnostics: <pre className={classes.diagnostics}>{JSON.stringify({ started: active, selectedOptions: selection?.selectedOptions ?? [], selectedItems: selection?.selectedItems ?? [], selectedValues: values, unresolvedOptions: selection?.unresolvedOptions ?? [], reason: selection?.reason ?? 'No action', optionValue: selection?.optionValue, optionText: selection?.optionText, roundTrip: JSON.stringify(JSON.parse(JSON.stringify(values))) === JSON.stringify(values), consumerOptions: available, error }, undefined, 2)}</pre>,
+  };
+  return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;
+}
+export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Enter an existing list and start the view picker, then filter the complete catalog while the selected view stays visible independently of the query.' };
 ```
 
 ### Signatures (18)
@@ -5331,4 +6015,4 @@ A native Fluent Field and view picker; selection values always remain scoped arr
 
 ### Source (77)
 
-[packages/spfx-react-toolkit/src/controls/pickers/view-picker.tsx:29](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/view-picker.tsx#L29)
+[packages/spfx-react-toolkit/src/controls/pickers/view-picker.tsx:121](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/view-picker.tsx#L121)

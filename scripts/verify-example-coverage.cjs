@@ -359,11 +359,27 @@ for (const marker of ['<EntraGroupTrim groups={[{ name: applied.group }]}', 'Per
 
 // Each migrated family retains an observable override on its existing live subject.
 for (const [panel, marker] of [
-  ['PickersPanel.tsx', 'data-picker-demo="strings"'],
   ['FileFolderPickerPanel.tsx', 'data-file-picker-demo="strings"'],
 ]) {
   const source = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels', panel), 'utf8');
   if (!source.includes(marker) || !/strings[=:]/.test(source)) throw new Error(`${panel}: native/family dictionary override must remain observable`);
+}
+
+// Seven concrete canonical picker owners each retain a working dictionary switch.
+for (const [file, name, title] of [
+  ['site-picker','SitePicker','Explore site selection and contextual search'],
+  ['list-picker','ListPicker','Explore list catalogs and independent consumer choices'],
+  ['field-picker','FieldPicker','Explore site columns and list fields'],
+  ['content-type-picker','ContentTypePicker','Explore site and list content type references'],
+  ['view-picker','ViewPicker','Explore scoped view catalogs'],
+  ['list-item-picker','ListItemPicker','Explore list item labels and query pages'],
+  ['principal-picker','PrincipalPicker','Explore principal discovery and explicit identity resolution'],
+]) {
+  if (!generated.symbols.has(name)) throw new Error(`${name}: canonical scenario is unavailable`);
+  const source = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/controls/pickers', file + '.tsx')), title);
+  for (const marker of ['label="Custom search and status text"', 'checked={config.customStrings}', 'update({ customStrings: data.checked })', 'strings: config.customStrings ?', "selectOne: 'Choose source content'", "search: 'Find a source item'", "noOptions: 'No matching source items'"]) {
+    if (!source.includes(marker)) throw new Error(`${name}: observable dictionary override missing ${marker}`);
+  }
 }
 
 if (!paginationPanel.includes('data-pagination-demo="localization"') || !paginationPanel.includes('strings={localized ? customEnglishStrings : undefined}')) throw new Error('Source-owned Pagination must retain observable dictionary overrides');

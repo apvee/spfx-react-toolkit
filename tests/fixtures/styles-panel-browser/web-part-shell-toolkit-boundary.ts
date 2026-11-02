@@ -99,3 +99,7 @@ export { createSPFxPnPListService, type SPFxPnPListSelector, type SPFxPnPListSer
 
 // Search cases retain the actual matching-mode hook, constants, service and PnP parser.
 export { useSPFxPnPSearch, SearchVerticals } from '../../../packages/spfx-react-toolkit/lib/hooks/useSPFxPnPSearch';
+
+// Whole-catalogue picker cases use the actual matching-mode controls and public model contracts.
+export { SitePicker, ListPicker, FieldPicker, ContentTypePicker, ViewPicker, ListItemPicker, PrincipalPicker } from '../../../packages/spfx-react-toolkit/lib/controls/pickers';
+export type { PickerSelectionData, PrincipalType, SitePickerOption, ListPickerOption, FieldPickerOption, ContentTypePickerOption, ViewPickerOption, ListItemPickerOption, PrincipalPickerOption } from '../../../packages/spfx-react-toolkit/lib/controls/pickers';
