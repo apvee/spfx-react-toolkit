@@ -8,7 +8,7 @@ Keep callback identity stable after commit while reading current state, and dist
 
 ### Import choices
 
-Root imports, `/hooks` and historical hook leaves remain supported. The narrow clean `/hooks/useStableCallback` and `/styles/useSx` aliases point to the same canonical hooks. `/styles` exposes `useSx` alongside descriptors and types. Mixed aliases share context and renderer identity rather than adding instances. See [package imports](package-imports.md) for complete examples, resolver/peer requirements and measured budgets. The Imports web part complements the generated useStableCallback scenarios and the existing Styles scenarios.
+Root imports, `/hooks` and historical hook leaves remain supported. The narrow clean `/hooks/useStableCallback` and `/styles/useSx` aliases point to the same canonical hooks. `/styles` exposes `useSx` alongside descriptors and types. Mixed aliases share context and renderer identity rather than adding instances. See [package imports](package-imports.md) for complete examples, resolver/peer requirements and measured budgets. In the generated explorer, the source-owned [**Compare root domain and historical imports**](../../api/hooks/react.md#compare-root-domain-and-historical-imports) scenario under `useSx` exercises import identity alongside the `useStableCallback` and styling scenarios.
 
 ### useStableCallback
 

@@ -1,6 +1,7 @@
 import type { FileFolderDemoSettings } from './components/shared/fileFolderPickerNavigation';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
+import { IdPrefixProvider } from '@fluentui/react-components';
 import { Version } from '@microsoft/sp-core-library';
 import {
   type IPropertyPaneConfiguration,
@@ -76,9 +77,11 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
 
   public render(): void {
     const element: React.ReactElement = React.createElement(
-      NativePropertyPaneContext.Provider,
-      { value: this.nativeContext },
-      React.createElement(WebPartShellDemoHost, { instance: this }, React.createElement(SpFxReactToolkitTest))
+      IdPrefixProvider,
+      // Independently bundled native roots cannot share Fluent's default ID counter.
+      { value: `spfx-toolkit-webpart-${this.instanceId}-` },
+      React.createElement(NativePropertyPaneContext.Provider, { value: this.nativeContext },
+        React.createElement(WebPartShellDemoHost, { instance: this }, React.createElement(SpFxReactToolkitTest)))
     );
     ReactDom.render(element, this.domElement);
   }

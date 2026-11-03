@@ -233,15 +233,30 @@ function inspectMembers({ checker, reachable, reads, writes, readDeclarations, a
       }
       return;
     }
-    if (ts.isArrayLiteralExpression(expression)) { if (deep) for (const element of expression.elements) consumeObject(element, true, visited); return; }
-    if (ts.isAsExpression(expression) || ts.isTypeAssertionExpression(expression) || ts.isParenthesizedExpression(expression) || ts.isNonNullExpression(expression)) { consumeObject(expression.expression, deep, visited); return; }
-    if (ts.isConditionalExpression(expression)) { consumeObject(expression.whenTrue, deep, visited); consumeObject(expression.whenFalse, deep, visited); return; }
+    if (ts.isArrayLiteralExpression(expression)) {
+      if (deep)
+        for (const element of expression.elements) consumeObject(element, true, visited);
+      return;
+    }
+    if (ts.isAsExpression(expression) || ts.isTypeAssertionExpression(expression) || ts.isParenthesizedExpression(expression) || ts.isNonNullExpression(expression)) {
+      consumeObject(expression.expression, deep, visited);
+      return;
+    }
+    if (ts.isConditionalExpression(expression)) {
+      consumeObject(expression.whenTrue, deep, visited);
+      consumeObject(expression.whenFalse, deep, visited);
+      return;
+    }
     if (ts.isCallExpression(expression)) {
       const declaration = checker.getResolvedSignature(expression)?.declaration;
       if (declaration && reachable.has(declaration.getSourceFile()) && declaration.body) {
         if (!ts.isBlock(declaration.body)) consumeObject(declaration.body, deep, visited);
         else {
-          function returns(node) { if (ts.isFunctionLike(node)) return; if (ts.isReturnStatement(node) && node.expression) consumeObject(node.expression, deep, visited); ts.forEachChild(node, returns); }
+          function returns(node) {
+            if (ts.isFunctionLike(node)) return;
+            if (ts.isReturnStatement(node) && node.expression) consumeObject(node.expression, deep, visited);
+            ts.forEachChild(node, returns);
+          }
           returns(declaration.body);
         }
       }
@@ -249,11 +264,16 @@ function inspectMembers({ checker, reachable, reads, writes, readDeclarations, a
     const symbol = ts.isShorthandPropertyAssignment(expression.parent) ? checker.getShorthandAssignmentValueSymbol(expression.parent) : checker.getSymbolAtLocation(ts.isPropertyAccessExpression(expression) ? expression.name : expression);
     const queue = symbol ? [symbol] : [], done = new Set();
     while (queue.length) {
-      const current = queue.pop(); if (!current || done.has(current)) continue; done.add(current);
+      const current = queue.pop();
+      if (!current || done.has(current)) continue;
+      done.add(current);
       for (const value of origins.get(current) || []) consumeObject(value, deep, visited);
       for (const next of relations.get(current) || []) queue.push(next);
-      for (const declaration of current.declarations || []) for (const equivalent of identities.get(declaration) || []) queue.push(equivalent);
-      for (const root of checker.getRootSymbols(current)) if (root !== current) queue.push(root);
+      for (const declaration of current.declarations || [])
+        for (const equivalent of identities.get(declaration) || [])
+          queue.push(equivalent);
+      for (const root of checker.getRootSymbols(current))
+        if (root !== current) queue.push(root);
     }
     finiteRead(expression, deep);
   }
@@ -278,11 +298,16 @@ function inspectMembers({ checker, reachable, reads, writes, readDeclarations, a
     const symbol = expressionSymbol(expression);
     const queue = symbol ? [symbol] : [], done = new Set(), found = [];
     while (queue.length) {
-      const current = queue.pop(); if (!current || done.has(current)) continue; done.add(current);
+      const current = queue.pop();
+      if (!current || done.has(current)) continue;
+      done.add(current);
       for (const value of origins.get(current) || []) found.push(...objectOrigins(value, visited));
       for (const next of relations.get(current) || []) queue.push(next);
-      for (const declaration of current.declarations || []) for (const equivalent of identities.get(declaration) || []) queue.push(equivalent);
-      for (const root of checker.getRootSymbols(current)) if (root !== current) queue.push(root);
+      for (const declaration of current.declarations || [])
+        for (const equivalent of identities.get(declaration) || [])
+          queue.push(equivalent);
+      for (const root of checker.getRootSymbols(current))
+        if (root !== current) queue.push(root);
     }
     return found;
   }
@@ -303,14 +328,17 @@ function inspectMembers({ checker, reachable, reads, writes, readDeclarations, a
     const symbol = expressionSymbol(expression);
     const queue = symbol ? [symbol] : [], done = new Set(), found = [];
     while (queue.length) {
-      const current = queue.pop(); if (!current || done.has(current)) continue; done.add(current);
+      const current = queue.pop();
+      if (!current || done.has(current)) continue;
+      done.add(current);
       for (const value of origins.get(current) || []) found.push(...callableOrigins(value, visited));
       for (const declaration of current.declarations || []) {
         if (ts.isFunctionLike(declaration) && declaration.body) found.push(declaration);
         for (const equivalent of identities.get(declaration) || []) queue.push(equivalent);
       }
       for (const next of relations.get(current) || []) queue.push(next);
-      for (const root of checker.getRootSymbols(current)) if (root !== current) queue.push(root);
+      for (const root of checker.getRootSymbols(current))
+        if (root !== current) queue.push(root);
     }
     return found;
   }
@@ -373,18 +401,38 @@ function inspectMembers({ checker, reachable, reads, writes, readDeclarations, a
     const key = `${expression.getSourceFile().fileName}:${expression.pos}:${expression.end}:${expression.kind}:${expected.id}:${[...omitted].join(',')}`;
     if (visited.has(key)) return;
     visited.add(key);
-    if (ts.isBindingElement(expression)) { for (const value of selectedBindingValues(expression)) consumeExternal(value, expected, visited, omitted); return; }
+    if (ts.isBindingElement(expression)) {
+      for (const value of selectedBindingValues(expression)) consumeExternal(value, expected, visited, omitted);
+      return;
+    }
     // Optional SDK fields are unions with undefined. Querying the union itself
     // loses array indices and callable signatures; project its concrete arms.
-    if (expected.isUnion()) { for (const arm of expected.types) consumeExternal(expression, arm, visited, omitted); return; }
-    if (ts.isParenthesizedExpression(expression) || ts.isAsExpression(expression) || ts.isTypeAssertionExpression(expression) || ts.isNonNullExpression(expression)) { consumeExternal(expression.expression, expected, visited, omitted); return; }
-    if (ts.isConditionalExpression(expression)) { consumeExternal(expression.whenTrue, expected, visited, omitted); consumeExternal(expression.whenFalse, expected, visited, omitted); return; }
-    if (ts.isBinaryExpression(expression) && [ts.SyntaxKind.QuestionQuestionToken, ts.SyntaxKind.BarBarToken, ts.SyntaxKind.AmpersandAmpersandToken].includes(expression.operatorToken.kind)) { consumeExternal(expression.left, expected, visited, omitted); consumeExternal(expression.right, expected, visited, omitted); return; }
+    if (expected.isUnion()) {
+      for (const arm of expected.types) consumeExternal(expression, arm, visited, omitted);
+      return;
+    }
+    if (ts.isParenthesizedExpression(expression) || ts.isAsExpression(expression) || ts.isTypeAssertionExpression(expression) || ts.isNonNullExpression(expression)) {
+      consumeExternal(expression.expression, expected, visited, omitted);
+      return;
+    }
+    if (ts.isConditionalExpression(expression)) {
+      consumeExternal(expression.whenTrue, expected, visited, omitted);
+      consumeExternal(expression.whenFalse, expected, visited, omitted);
+      return;
+    }
+    if (ts.isBinaryExpression(expression) && [ts.SyntaxKind.QuestionQuestionToken, ts.SyntaxKind.BarBarToken, ts.SyntaxKind.AmpersandAmpersandToken].includes(expression.operatorToken.kind)) {
+      consumeExternal(expression.left, expected, visited, omitted);
+      consumeExternal(expression.right, expected, visited, omitted);
+      return;
+    }
     const promised = checker.getPromisedTypeOfPromise(expected);
     if (ts.isCallExpression(expression) && promised) {
       const declaration = checker.getResolvedSignature(expression)?.declaration;
       if (declaration?.getSourceFile().fileName.includes('/typescript/lib/') && ts.isPropertyAccessExpression(expression.expression)) {
-        if (expression.expression.name.text === 'then') { const callback = expression.arguments[0]; if (callback && ts.isFunctionLike(callback)) externalReturns(callback, promised, visited); }
+        if (expression.expression.name.text === 'then') {
+          const callback = expression.arguments[0];
+          if (callback && ts.isFunctionLike(callback)) externalReturns(callback, promised, visited);
+        }
         if (expression.expression.name.text === 'resolve') consumeExternal(expression.arguments[0], promised, visited);
       }
     }
@@ -392,7 +440,9 @@ function inspectMembers({ checker, reachable, reads, writes, readDeclarations, a
       for (const signature of expected.getCallSignatures()) externalReturns(expression, checker.getReturnTypeOfSignature(signature), visited);
       return;
     }
-    for (const signature of expected.getCallSignatures()) for (const implementation of callableOrigins(expression)) externalReturns(implementation, checker.getReturnTypeOfSignature(signature), visited);
+    for (const signature of expected.getCallSignatures())
+      for (const implementation of callableOrigins(expression))
+        externalReturns(implementation, checker.getReturnTypeOfSignature(signature), visited);
     if (ts.isArrayLiteralExpression(expression)) {
       const element = checker.getIndexTypeOfType(expected, ts.IndexKind.Number);
       if (element) for (const value of expression.elements) ts.isSpreadElement(value) ? consumeExternal(value.expression, expected, visited) : consumeExternal(value, element, visited);
@@ -400,7 +450,10 @@ function inspectMembers({ checker, reachable, reads, writes, readDeclarations, a
     }
     if (ts.isJsxAttributes(expression)) {
       for (const attribute of expression.properties) {
-        if (ts.isJsxSpreadAttribute(attribute)) { consumeExternal(attribute.expression, expected, visited, omitted); continue; }
+        if (ts.isJsxSpreadAttribute(attribute)) {
+          consumeExternal(attribute.expression, expected, visited, omitted);
+          continue;
+        }
         if (!attribute.initializer || !ts.isJsxExpression(attribute.initializer) || !attribute.initializer.expression || omitted.has(attribute.name.text)) continue;
         const contract = expected.getProperty(attribute.name.text);
         if (contract) consumeExternal(attribute.initializer.expression, checker.getTypeOfSymbolAtLocation(contract, attribute), visited);
@@ -412,17 +465,24 @@ function inspectMembers({ checker, reachable, reads, writes, readDeclarations, a
       if (declaration?.getSourceFile().fileName.includes('/typescript/lib/')) {
         if (expression.expression.expression.getText() === 'Object' && ['freeze', 'seal'].includes(expression.expression.name.text)) consumeExternal(expression.arguments[0], expected, visited, omitted);
         if (['filter', 'slice', 'sort', 'reverse'].includes(expression.expression.name.text)) consumeExternal(expression.expression.expression, expected, visited, omitted);
-        if (expression.expression.name.text === 'map') { const element = checker.getIndexTypeOfType(expected, ts.IndexKind.Number), callback = expression.arguments[0]; if (element && callback && ts.isFunctionLike(callback)) externalReturns(callback, element, visited); }
+        if (expression.expression.name.text === 'map') {
+          const element = checker.getIndexTypeOfType(expected, ts.IndexKind.Number), callback = expression.arguments[0];
+          if (element && callback && ts.isFunctionLike(callback)) externalReturns(callback, element, visited);
+        }
       }
       if (declaration?.name?.getText() === 'useMemo' && declaration.getSourceFile().fileName.includes('/node_modules/@types/react/')) {
-        const callback = expression.arguments[0]; if (callback && ts.isFunctionLike(callback)) externalReturns(callback, expected, visited);
+        const callback = expression.arguments[0];
+        if (callback && ts.isFunctionLike(callback)) externalReturns(callback, expected, visited);
       }
     }
     if (ts.isObjectLiteralExpression(expression)) {
       const arms = variants(expected, expression);
 
       for (const member of expression.properties) {
-        if (ts.isSpreadAssignment(member)) { consumeExternal(member.expression, expected, visited, omitted); continue; }
+        if (ts.isSpreadAssignment(member)) {
+          consumeExternal(member.expression, expected, visited, omitted);
+          continue;
+        }
         if (!member.name) continue;
         const name = member.name.getText().replace(/^["']|["']$/g, '');
         if (omitted.has(name)) continue;
@@ -460,11 +520,16 @@ function inspectMembers({ checker, reachable, reads, writes, readDeclarations, a
     const symbol = expressionSymbol(expression);
     const queue = symbol ? [symbol] : [], done = new Set();
     while (queue.length) {
-      const current = queue.pop(); if (!current || done.has(current)) continue; done.add(current);
+      const current = queue.pop();
+      if (!current || done.has(current)) continue;
+      done.add(current);
       for (const value of origins.get(current) || []) consumeExternal(value, expected, visited, omitted);
       for (const next of relations.get(current) || []) queue.push(next);
-      for (const declaration of current.declarations || []) for (const equivalent of identities.get(declaration) || []) queue.push(equivalent);
-      for (const root of checker.getRootSymbols(current)) if (root !== current) queue.push(root);
+      for (const declaration of current.declarations || [])
+        for (const equivalent of identities.get(declaration) || [])
+          queue.push(equivalent);
+      for (const root of checker.getRootSymbols(current))
+        if (root !== current) queue.push(root);
     }
   }
   function externalReturns(declaration, expected, visited) {

@@ -159,10 +159,37 @@ test('indexed outer Top props cannot acquire an exact prerequisite role', () => 
 test('wrong Top prerequisite literal fails despite accepted copied source metadata', () => check(topFixture({wrongValue:true}), 'sourceDiagnostics', d => d.file === app+'src/host.tsx' && d.code === 'DEMO_TOP_CONTRACT' && d.line === 4));
 test('Top-like object on an unrelated component has no accepted prerequisite role', () => check({ [app+'src/scenario.ts']:undefined, [app+'src/scenario.tsx']: "import * as React from 'react';\nfunction Subject(_props:{applicationCustomizerTop?:{readonly placeholder:'Top'}}):React.ReactElement {return <p>Ready</p>;}\nexport function Demo():React.ReactElement {return <Subject applicationCustomizerTop={{placeholder:'Top'}} />;}\n", [app+'src/catalogue.ts']:files[app+'src/catalogue.ts'].replace('() => number','() => unknown') }, 'sourceDiagnostics', unusedScenarioMember('placeholder')));
 test('an external presentation annotation alone does not consume a local concrete member', () => check({[app+'src/scenario.ts']: "import type {DataGridBadgeValue} from '@apvee/spfx-react-toolkit/controls/data-grid';\nexport function Demo(): number { const value: DataGridBadgeValue & {observed:number} = {label:'unused',observed:1}; return value.observed; }\n"}, 'sourceDiagnostics', d=>d.file===app+'src/scenario.ts' && d.line===2 && d.code==='DEMO_UNUSED_MEMBER' && /member label /.test(d.message)));
-test('a same-type Form object outside the actual bound defaults gains no selected-key role', () => { const changes=bindingFixtures.form(); changes[app+'src/scenario.tsx']=changes[app+'src/scenario.tsx'].replace('interface Fields { live: string;', 'interface Fields { live: string; observed?:string;').replace('const defaults:', "const unrelated: Fields = {live:'unbound',observed:'kept'};\nconst defaults:").replace('return <Editor.Root', 'return <><p>{unrelated.observed}</p><Editor.Root').replace('</Editor.Root>;', '</Editor.Root></>;'); check(changes, 'sourceDiagnostics', unusedScenarioMember('live')); });
-test('finite Map presentation contracts retain genuine keys and fields', () => { const changes=bindingFixtures.grid(); changes[app+'src/scenario.tsx']=changes[app+'src/scenario.tsx'].replace('const presentations = {ready: {label:\'Ready\'}, pending: {label:\'Pending\'}};', "const presentations = new Map<'ready'|'pending', import('@apvee/spfx-react-toolkit/controls/data-grid').DataGridBadgeValue>([['ready',{label:'Ready'}],['pending',{label:'Pending'}]]);"); check(changes); });
-test('bound Form array paths retain selected nested fields', () => { const changes=bindingFixtures.form(); changes[app+'src/scenario.tsx']=changes[app+'src/scenario.tsx'].replace('interface Fields { live: string;  }', 'interface Fields { rows: {live:string}[]; }').replace("{ live: 'kept' }", "{ rows: [{live:'kept'}] }").replace('<Editor.Input name="live" />', '{[0].map(index=><Editor.Input key={index} name={`rows.${index}.live`} />)}'); check(changes); });
-test('bound Form array paths do not retain a nonselected nested member', () => { const changes=bindingFixtures.form(); changes[app+'src/scenario.tsx']=changes[app+'src/scenario.tsx'].replace('interface Fields { live: string;  }', 'interface Fields { rows: {live:string; orphan:string}[]; }').replace("{ live: 'kept' }", "{ rows: [{live:'kept',orphan:'unused'}] }").replace('<Editor.Input name="live" />', '{[0].map(index=><Editor.Input key={index} name={`rows.${index}.live`} />)}'); check(changes,'sourceDiagnostics',unusedScenarioMember('orphan')); });
+test('a same-type Form object outside the actual bound defaults gains no selected-key role', () => {
+  const changes = bindingFixtures.form();
+  changes[app+'src/scenario.tsx'] = changes[app+'src/scenario.tsx']
+    .replace('interface Fields { live: string;', 'interface Fields { live: string; observed?:string;')
+    .replace('const defaults:', "const unrelated: Fields = {live:'unbound',observed:'kept'};\nconst defaults:")
+    .replace('return <Editor.Root', 'return <><p>{unrelated.observed}</p><Editor.Root')
+    .replace('</Editor.Root>;', '</Editor.Root></>;');
+  check(changes, 'sourceDiagnostics', unusedScenarioMember('live'));
+});
+test('finite Map presentation contracts retain genuine keys and fields', () => {
+  const changes = bindingFixtures.grid();
+  changes[app+'src/scenario.tsx'] = changes[app+'src/scenario.tsx']
+    .replace('const presentations = {ready: {label:\'Ready\'}, pending: {label:\'Pending\'}};', "const presentations = new Map<'ready'|'pending', import('@apvee/spfx-react-toolkit/controls/data-grid').DataGridBadgeValue>([['ready',{label:'Ready'}],['pending',{label:'Pending'}]]);");
+  check(changes);
+});
+test('bound Form array paths retain selected nested fields', () => {
+  const changes = bindingFixtures.form();
+  changes[app+'src/scenario.tsx'] = changes[app+'src/scenario.tsx']
+    .replace('interface Fields { live: string;  }', 'interface Fields { rows: {live:string}[]; }')
+    .replace("{ live: 'kept' }", "{ rows: [{live:'kept'}] }")
+    .replace('<Editor.Input name="live" />', '{[0].map(index=><Editor.Input key={index} name={`rows.${index}.live`} />)}');
+  check(changes);
+});
+test('bound Form array paths do not retain a nonselected nested member', () => {
+  const changes = bindingFixtures.form();
+  changes[app+'src/scenario.tsx'] = changes[app+'src/scenario.tsx']
+    .replace('interface Fields { live: string;  }', 'interface Fields { rows: {live:string; orphan:string}[]; }')
+    .replace("{ live: 'kept' }", "{ rows: [{live:'kept',orphan:'unused'}] }")
+    .replace('<Editor.Input name="live" />', '{[0].map(index=><Editor.Input key={index} name={`rows.${index}.live`} />)}');
+  check(changes,'sourceDiagnostics',unusedScenarioMember('orphan'));
+});
 test('a faithfully paired extra native string remains an unused dictionary member', () => check({...resourceFiles,[app+'config/config.json']:resourceConfig(),[app+'src/strings.d.ts']:resourceFiles[app+'src/strings.d.ts'].replace('Label: string','Label: string; Unused: string'),[app+'src/loc/en-us.js']:'define([], function() { return { Label: "Label", Unused: "Unused" }; });\n'},'sourceDiagnostics',d=>d.file===app+'src/loc/en-us.js'&&d.line===1&&d.code==='DEMO_UNUSED_RESOURCE_MEMBER'&&/Unused/.test(d.message)));
 const toolkitResourceFiles = {
  'packages/spfx-react-toolkit/localization/resources.json': JSON.stringify({schemaVersion:1,resources:[{id:'ApveeSpfxReactToolkitPickersStrings',path:'lib/controls/pickers/loc/{locale}.js',locales:['en-US']}]}),

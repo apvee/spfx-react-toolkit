@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
+import { IdPrefixProvider } from '@fluentui/react-components';
 import { Log } from '@microsoft/sp-core-library';
 import {
   BaseApplicationCustomizer,
@@ -71,8 +72,10 @@ export default class SpFxReactToolkitTestApplicationCustomizer
     }
 
     const element = React.createElement(
-      ApplicationCustomizerExampleHost,
-      { instance: this }
+      IdPrefixProvider,
+      // Read the initialized SDK identity only after the terminal/placeholder guards.
+      { value: `spfx-toolkit-top-${this.instanceId}-` },
+      React.createElement(ApplicationCustomizerExampleHost, { instance: this })
     );
 
     ReactDom.render(element, this.topPlaceholder.domElement);

@@ -210,7 +210,10 @@ for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} 
   a.render(); b.render();
   for (const part of [a, b]) {
     const rendered = part.fixture.content[0]; assert.equal(rendered.event, 'render'); assert.equal(rendered.dom, part.domElement);
-    assert.equal(rendered.element.props.value.port, part.nativeHost.port); assert.equal(rendered.element.props.children.props.instance, part);
+    assert.equal(rendered.element.type, require('@fluentui/react-components').IdPrefixProvider);
+    const nativeContext = rendered.element.props.children;
+    assert.equal(nativeContext.props.value.port, part.nativeHost.port);
+    assert.equal(nativeContext.props.children.props.instance, part);
   }
   const aOwner = a.nativeHost.nativeView.controller, bOwner = b.nativeHost.nativeView.controller;
   a.onPropertyPaneConfigurationComplete(); a.onPropertyPaneConfigurationStart(); assert.equal(a.nativeHost.nativeView.controller, aOwner); assert.equal(b.nativeHost.nativeView.controller, bOwner);
