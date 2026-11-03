@@ -130,7 +130,7 @@ export function Demo({ render, resetRevision = 0, propertyPane }: {
   const [saved, setSaved] = React.useState<string>();
   const lease = React.useRef<NativePropertyPanePreparation>();
   const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane]);
+  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
   const previousRevision = React.useRef(resetRevision);
   React.useEffect(() => {
     if (previousRevision.current === resetRevision) return;
@@ -359,7 +359,7 @@ export function Demo({ render, resetRevision = 0, propertyPane }: {
   const [saved, setSaved] = React.useState<string>();
   const lease = React.useRef<NativePropertyPanePreparation>();
   const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane]);
+  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
   const previousRevision = React.useRef(resetRevision);
   React.useEffect(() => {
     if (previousRevision.current === resetRevision) return;
@@ -587,7 +587,7 @@ export function Demo({ render, resetRevision = 0, propertyPane }: {
   const [saved, setSaved] = React.useState<string>();
   const lease = React.useRef<NativePropertyPanePreparation>();
   const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane]);
+  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
   const previousRevision = React.useRef(resetRevision);
   React.useEffect(() => {
     if (previousRevision.current === resetRevision) return;
@@ -823,7 +823,7 @@ export function Demo({ render, resetRevision = 0, propertyPane }: {
   const [saved, setSaved] = React.useState<string>();
   const lease = React.useRef<NativePropertyPanePreparation>();
   const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane]);
+  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
   const previousRevision = React.useRef(resetRevision);
   React.useEffect(() => {
     if (previousRevision.current === resetRevision) return;
@@ -1189,7 +1189,7 @@ export function Demo({ render, resetRevision = 0, propertyPane }: {
   const [saved, setSaved] = React.useState<string>();
   const lease = React.useRef<NativePropertyPanePreparation>();
   const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane]);
+  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
   const previousRevision = React.useRef(resetRevision);
   React.useEffect(() => {
     if (previousRevision.current === resetRevision) return;
@@ -1471,7 +1471,7 @@ export function Demo({ render, resetRevision = 0, propertyPane }: {
   const [saved, setSaved] = React.useState<string>();
   const lease = React.useRef<NativePropertyPanePreparation>();
   const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane]);
+  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
   const previousRevision = React.useRef(resetRevision);
   React.useEffect(() => {
     if (previousRevision.current === resetRevision) return;
@@ -1690,7 +1690,7 @@ export function Demo({ render, resetRevision = 0, propertyPane }: {
   const [saved, setSaved] = React.useState<string>();
   const lease = React.useRef<NativePropertyPanePreparation>();
   const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane]);
+  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
   const previousRevision = React.useRef(resetRevision);
   React.useEffect(() => {
     if (previousRevision.current === resetRevision) return;

@@ -75,3 +75,34 @@ for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} 
   assert.deepEqual(f.dataRoles.map(row => row.id), ['ApveeSpfxReactToolkitPickersStrings']);
   t.diagnostic(JSON.stringify({ actualPrivateAdapter: f.adapterFile, actualSiteNativeData: f.dataRoles }));
 });
+
+for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} Site reused revision permanently retires original Prepare and Inspect`, async t => {
+  const f = createNativeSiteFixture(t, { compiled, revision: 7 }); await f.flush();
+  const button = f.container.querySelector('button'), originalPrepare = f.action('Prepare native scenario'), originalInspect = f.action('Inspect saved site references');
+  assert.match(f.container.querySelector('[role="status"]').textContent, /Prepare before opening/);
+  f.click('Prepare native scenario'); f.mountPane(f.getter()); await f.flush();
+  const native = f.nativeDom.querySelector('[role="combobox"]'); assert.ok(native); assert.equal(f.fields.length, 1);
+  f.setRevision(3); f.setRevision(7); await f.flush();
+  const survives = f.nativeDom.querySelector('[role="combobox"]') === native && f.handlers.size === 1;
+  const resetStatus = f.container.querySelector('[role="status"]').textContent;
+  f.h.act(() => { originalInspect(); }); const retiredInspectStatus = f.container.querySelector('[role="status"]').textContent;
+  f.closePane(); f.h.act(() => { originalPrepare(); });
+  const retiredConfiguration = f.getter(), retiredFieldCount = f.fields.length; f.closePane();
+  f.bag = {}; f.click('Prepare native scenario'); const current = f.getter(); f.mountPane(current); await f.flush();
+  const reference = { kind: 'site', url: 'https://tenant.test/sites/root', text: 'Fresh saved site' };
+  f.bag = { pickerSites: [reference] }; f.click('Inspect saved site references');
+  const freshSaved = f.container.querySelector('pre').textContent;
+  f.bag = { pickerSites: [{ ...reference, text: 'Later SDK site' }] }; f.h.act(() => { originalInspect(); });
+  const retiredSaved = f.container.querySelector('pre').textContent;
+  f.click('Inspect saved site references'); const currentSaved = JSON.parse(f.container.querySelector('pre').textContent);
+  t.diagnostic(JSON.stringify({ reusedRevision: 'Site', compiled, survives, retiredInspectStatus, resetStatus, retiredPages: retiredConfiguration.pages.length, retiredFieldCount, freshFields: f.fields.length }));
+  assert.equal(survives, true, 'Reset cannot dispose the already-produced native session');
+  assert.equal(retiredInspectStatus, resetStatus, 'original Inspect stays retired when revision 7 returns');
+  assert.equal(retiredConfiguration.pages.length, 0, 'original Prepare cannot create native configuration after ABA');
+  assert.equal(retiredFieldCount, 1, 'original Prepare cannot construct a field');
+  assert.equal(f.fields.length, 2, 'current fresh Prepare remains functional');
+  assert.equal(retiredSaved, freshSaved, 'original Inspect cannot observe through the new live reader');
+  assert.deepEqual(JSON.parse(freshSaved), [reference]); assert.deepEqual(currentSaved, [{ ...reference, text: 'Later SDK site' }]);
+  assert.equal(f.container.querySelector('button'), button, 'Demo identity survives both resets');
+  assert.equal(f.calls.length, 0, 'preparation and reset issue no business query'); f.closePane(); f.origins();
+});
