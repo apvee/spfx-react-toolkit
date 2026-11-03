@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Badge, Button, Field, Checkbox, FluentProvider, Link, Select } from '@fluentui/react-components';
-import { DemoCard, useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared';
+import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
+import { useDemoStyles } from '../demo-presentation-styles';
 import { DescriptionList, container, flex, gap, useSx, width, background, minWidth } from '@apvee/spfx-react-toolkit';
 import type { DescriptionListEntry, DescriptionListLayout } from '@apvee/spfx-react-toolkit';
 
@@ -58,7 +59,7 @@ export const DescriptionListExample: React.FC<{ instance: string; initialRtl?: b
   };
   return <FluentProvider dir={rtl ? 'rtl' : undefined} className={directionSx(background.transparent, minWidth.zero)}>
     <section data-description-list-demo="instance" data-description-list-instance={instance} className={sx(flex.column, gap.medium)}>
-      <DemoCard diagnosticsLabel="Advanced diagnostics" title={instance === 'primary' ? 'DescriptionList' : 'Independent DescriptionList'} description="Read-only labeled values preserve native terms and definitions. Auto stacks below 480px and aligns shared columns at 480px or wider in the nearest named container. Increment either counter, then change layout, width or order to observe retained child state. Switching between data and compound APIs creates a new example." iconName="List" controls={<>
+      <DemoCard diagnosticsLabel="Advanced diagnostics" title={instance === 'primary' ? 'DescriptionList' : 'Independent DescriptionList'} description="Read-only labeled values preserve native terms and definitions. Auto stacks below 480px and aligns shared columns at 480px or wider in the nearest named container. Increment either counter, then change layout, width or order to observe retained child state. Switching between data and compound APIs creates a new example." iconName="Info" controls={<>
 
         <Field label="Layout"><Select data-description-list-demo="layout" value={layout} onChange={event => { const value = event.target.value; if (value === 'auto' || value === 'horizontal' || value === 'vertical') setLayout(value); }}><option value="auto">Auto</option><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></Select></Field>
         <Field label="Container width"><Select data-description-list-demo="width" value={pixels} onChange={event => setPixels(Number(event.target.value))}>{widths.map(value => <option key={value} value={value}>{value}px</option>)}</Select></Field>

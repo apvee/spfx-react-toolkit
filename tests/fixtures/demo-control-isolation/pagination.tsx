@@ -4,7 +4,7 @@ import { Demo } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxRea
 import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
 const ProductScenario: React.FC = () => <section data-pagination-demo="panel"><Demo render={regions => <DemoCard title="Browse orders across pagination modes" iconName="Info" {...regions} />} /></section>;
 import PaginationPanel, { PaginationExample } from './pagination-regressions';
-import { DemoAccordionPanel } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared';
+import { DemoAccordionPanel } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoAccordionPanel';
 
 /** Independent RTL coverage is a dedicated fixture, not a duplicate product example. */
 const LegacyPaginationIsolationFixture: React.FC = () => <>

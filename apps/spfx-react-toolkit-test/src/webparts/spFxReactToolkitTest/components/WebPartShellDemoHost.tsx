@@ -12,9 +12,9 @@ export const useShellPresentation = (): React.ContextType<typeof ShellPresentati
 
 /** Generic native host action; source scenarios may explicitly override this slot. */
 function ShellDemoAction(): JSX.Element {
-  const { properties, setProperties } = useSPFxProperties<IWebPartShellProperties>();
-  return <Button size="small" data-shell-demo="action" onClick={() => setProperties({ showTitle: !(properties?.showTitle ?? true) })}>
-    {properties?.showTitle === false ? 'Show title' : 'Hide title'}
+  const { setProperties } = useSPFxProperties<IWebPartShellProperties>();
+  return <Button size="small" data-shell-demo="action" onClick={() => setProperties({ showTitle: false })}>
+    Hide title
   </Button>;
 }
 

@@ -112,11 +112,10 @@ function createNativeReferenceFixture(t, { subject = 'Site', compiled = false, c
   function dispatch(request) {
     // Record every attempted route before admission; a UI error cannot mask rejection.
     request.phase = phase; request.identity = 'native-' + subject + '-' + compiled;
-    if (!isFileFolder && !isIntegrated) request.query = Object.fromEntries(new URL(request.url).searchParams);
     request.body = request.init?.body; calls.push(request);
     let response;
     try {
-      if (isFileFolder || isIntegrated) request.query = Object.fromEntries(new URL(request.url).searchParams);
+      request.query = Object.fromEntries(new URL(request.url).searchParams);
       if (request.kind === 'sp') assert.equal(request.configuration, native.SPHttpClient.configurations.v1);
       response = route(request); assert.ok(response, 'bounded native transport ' + request.method + ' ' + request.url);
     } catch (error) { unexpected.push({ request, message: error.message }); throw error; }

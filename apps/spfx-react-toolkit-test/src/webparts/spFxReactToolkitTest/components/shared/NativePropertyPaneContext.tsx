@@ -3,7 +3,7 @@ import { Button } from '@fluentui/react-components';
 import type { ISpFxReactToolkitTestWebPartProps } from '../../SpFxReactToolkitTestWebPart';
 import type { DemoPropertyPanePort } from './NativePropertyPaneDemoHost';
 
-export interface NativePropertyPaneObservation {
+interface NativePropertyPaneObservation {
   readonly ordinal: number;
   readonly event: 'getter' | 'child-render' | 'parent-rendered' | 'field-dispose' | 'complete' | 'terminal-dispose';
   readonly open: boolean;
@@ -22,7 +22,7 @@ export class NativePropertyPaneObservations {
   public readonly clear = (): void => { this.events.length = 0; };
 }
 
-export interface NativePropertyPaneContextValue {
+interface NativePropertyPaneContextValue {
   readonly port: DemoPropertyPanePort<ISpFxReactToolkitTestWebPartProps>;
   readonly observations: NativePropertyPaneObservations;
 }

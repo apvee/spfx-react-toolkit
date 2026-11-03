@@ -7,15 +7,18 @@ const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webpar
 const read = file => fs.readFileSync(path.join(base, file), 'utf8');
 
 test('shared presentation uses Fluent v9, host tokens and responsive named regions', () => {
-  for (const file of ['SpFxReactToolkitTest.tsx', ...['DemoCard', 'InfoGrid', 'InfoRow', 'StatusBadge', 'JsonDetails', 'DemoAccordionPanel'].map(name => `shared/${name}.tsx`)]) {
+  for (const file of ['SpFxReactToolkitTest.tsx', ...['DemoCard', 'InfoGrid', 'InfoRow', 'DemoAccordionPanel'].map(name => `shared/${name}.tsx`)]) {
     const source = read(file);
     assert.doesNotMatch(source, /from '@fluentui\/react'|style=|<details|<summary|<Stack|<Pivot/);
   }
   const styles = read('shared/demoStyles.ts');
-  for (const region of ['root', 'controls', 'preview', 'actions', 'observations', 'scroll']) assert.match(styles, new RegExp(`${region}:`));
+  for (const region of ['root', 'controls', 'preview', 'actions', 'observations']) assert.match(styles, new RegExp(`${region}:`));
   assert.match(styles, /gridTemplateColumns: 'repeat\(2, minmax\(0, 1fr\)\)'/);
   assert.match(styles, /'@media \(max-width: 600px\)': \{ gridTemplateColumns: 'minmax\(0, 1fr\)' \}/);
-  assert.match(styles, /controlRow: \{ gridColumn: '1 \/ -1' \}/);
+  const comparisons = fs.readFileSync(path.resolve(__dirname, 'fixtures/demo-presentation-styles.ts'), 'utf8');
+  assert.match(comparisons, /scroll:.*overflowX: 'auto'/);
+  assert.match(comparisons, /panel:.*flexDirection: 'column'/);
+  assert.doesNotMatch(styles, /controlRow:|tabList:|provider:|json:|panel:|scroll:/);
   assert.match(styles, /tokens\.spacingVerticalXXL/);
   assert.doesNotMatch(read('SpFxReactToolkitTest.module.scss'), /References.scss|overflow: hidden|#[a-fA-F0-9]{3,6}/);
 });
@@ -67,7 +70,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     act(() => { ReactDOM.render(React.createElement(RendererProvider, { renderer }, React.createElement(fluent.FluentProvider, { theme }, children)), host); });
   }
   try {
-    const shared = load(path.join(base, 'shared/index.ts'));
+    const shared = { ...load(path.join(base, 'shared/index.ts')), ...load(path.join(base, 'shared/DemoIcon.tsx')), ...load(path.join(base, 'shared/DemoAccordionPanel.tsx')), ...load(path.resolve(__dirname, 'fixtures/foundation-legacy/JsonDetails.tsx')), ...load(path.resolve(__dirname, 'fixtures/foundation-legacy/StatusBadge.tsx')) };
     render(React.createElement(shared.DemoIcon, { name: 'toString' }));
     const demoSvg = host.querySelector('svg');
     assert.ok(demoSvg, 'unknown names, including object keys, use the information fallback');
@@ -100,7 +103,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     assert.ok(disclosure); act(() => disclosure.click());
     const json = host.querySelector('pre');
     assert.match(json.textContent, /\[Circular\]/); assert.match(json.textContent, /\[Private\]/); assert.doesNotMatch(json.textContent, /hidden/);
-    render(React.createElement(shared.DemoCard, { title: 'Service', iconName: 'Cloud', contentPlacement: 'configuration' },
+    render(React.createElement(shared.DemoCard, { title: 'Service', iconName: 'Info', contentPlacement: 'configuration' },
       React.createElement('output', {}, 'Three results')));
     assert.equal(host.querySelectorAll('[data-demo-subject]').length, 0);
     assert.equal(host.querySelectorAll('[data-demo-result]').length, 1);

@@ -510,11 +510,11 @@ import type { SPFxTenantKeyValueStoreItem } from '@apvee/spfx-react-toolkit';
 
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
 type Presenter = (regions: DemoRegions) => React.ReactElement;
-type Session = { generation: object; root: string; web: string; client: unknown; page: unknown; instance: string };
+type Session = { generation: object; root: string; web: string };
 type Action = 'get' | 'list' | 'save' | 'remove' | 'roundtrip';
 type Format = 'text' | 'json' | 'bigint' | 'date';
 const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
-type Ticket = { promise?: Promise<void> };
+type Ticket = object;
 
 function present(regions: DemoRegions, render?: Presenter): React.ReactElement {
   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
@@ -548,7 +548,7 @@ function TenantSession({ session, current, write, pending, isLocked, render }: {
   const mounted = React.useRef(true);
   const confirmationRef = React.useRef<object>();
   const restoreFocus = React.useRef<{ trigger: HTMLButtonElement; current: () => boolean }>();
-  const [confirmation, setConfirmation] = React.useState<{ token: object; confirm: () => void; cancel: () => void; key: string }>();
+  const [confirmation, setConfirmation] = React.useState<{ confirm: () => void; cancel: () => void; key: string }>();
   React.useLayoutEffect(() => {
     const request = restoreFocus.current;
     if (!confirmation && request) { restoreFocus.current = undefined; if (request.current() && request.trigger.isConnected) request.trigger.focus(); }
@@ -623,7 +623,7 @@ function TenantSession({ session, current, write, pending, isLocked, render }: {
       confirmationRef.current = undefined; setConfirmation(undefined);
       return execute(() => remove(capturedKey));
     };
-    setConfirmation({ token, confirm, cancel, key: capturedKey });
+    setConfirmation({ confirm, cancel, key: capturedKey });
   };
   const shownValue = (item: SPFxTenantKeyValueStoreItem): string => typeof item.value === 'string' ? JSON.stringify(item.value) : JSON.stringify(item.value) ?? String(item.value);
   const regions: DemoRegions = {
@@ -677,14 +677,14 @@ export function Demo({ render, resetRevision = 0 }: { render?: Presenter; resetR
     if (!current() || ledger.current.size > 0) return undefined;
     const ticket: Ticket = {}; ledger.current.add(ticket); refresh(count => count + 1);
     const release = (): void => { ledger.current.delete(ticket); if (mounted.current) refresh(count => count + 1); };
-    try { const promise = operation(); ticket.promise = promise; return promise.finally(release); }
+    try { const promise = operation(); return promise.finally(release); }
     catch (error) { release(); throw error; }
   };
   const active = session?.generation === generation;
   const pending = ledger.current.size > 0;
   const activate = (): void => {
     if (!current() || ledger.current.size > 0 || active || !client || !root) return;
-    setSession({ generation, root, web, client, page, instance: info.id });
+    setSession({ generation, root, web });
   };
   // The outer activation control remains the same DOM node across child teardown.
   return <>

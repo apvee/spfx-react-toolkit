@@ -29,7 +29,7 @@ function fixture(t, { autoStart = true, revision = 37, transform } = {}) {
   if (transform) { const read = fs.readFileSync; const mock = t.mock.method(fs, 'readFileSync', (file, ...args) => { const value = read(file, ...args); return String(file) === selected ? transform(value) : value; }); try { Component = h.load(selected).Demo; } finally { mock.mock.restore(); } } else Component = h.load(selected).Demo;
   function Root() { return h.React.createElement(FluentProvider, { theme: webLightTheme }, h.React.createElement(Component, { resetRevision: revision, render: value => { regions = value; return h.React.createElement('div', {}, value.controls, value.commands, value.status, value.children, value.diagnostics); } })); }
   const rendered = h.mountComponent(Root);
-  const rerender = () => h.act(() => ReactDOM.render(h.React.createElement(Root), rendered.container));
+  const rerender = () => h.act(() => { ReactDOM.render(h.React.createElement(Root), rendered.container); });
   const click = name => h.act(() => { const button = [...rendered.container.querySelectorAll('button')].find(b => b.textContent === name); assert.ok(button, name); Simulate.click(button); });
   if (autoStart) click('Start suggestions');
   function change(value) { h.act(() => { Simulate.change(rendered.container.querySelector('input'), { target: { value } }); }); }

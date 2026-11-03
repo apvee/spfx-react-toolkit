@@ -94,7 +94,6 @@ import { AutoSkeleton, AutoSkeletonProps, useSx, useStableCallback, alignItems, 
 const useStyles = makeStyles({
   controls: { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: tokens.spacingVerticalM, minWidth: 0,
     '& > *': { minWidth: 0, maxWidth: '100%' }, '@media (max-width: 600px)': { gridTemplateColumns: 'minmax(0, 1fr)' } },
-  controlRow: { gridColumn: '1 / -1' },
 
   preview: { boxSizing: 'border-box', maxWidth: '100%' },
   rectangle: { width: '160px', height: '24px', borderRadius: '4px', maxWidth: '100%' },
@@ -261,7 +260,7 @@ ReactElement<any, string | JSXElementConstructor<any>>
 
 ### Source
 
-[packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton.tsx:202](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton.tsx#L202)
+[packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton.tsx:201](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton.tsx#L201)
 
 ## AutoSkeletonProps
 

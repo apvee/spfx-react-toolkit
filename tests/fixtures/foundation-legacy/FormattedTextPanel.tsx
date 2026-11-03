@@ -7,7 +7,7 @@ import {
   useSx, typography, foreground, width, background, minWidth,
 } from '@apvee/spfx-react-toolkit';
 import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
-import { useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/demoStyles';
+import { useDemoStyles } from '../demo-presentation-styles';
 
 const useStyles = makeStyles({ frame: { maxWidth: '100%' } });
 function parsePreviewWidth(draft: string): number | undefined {
@@ -53,7 +53,7 @@ const FormattedTextExamples: React.FC<{ directionControl: React.ReactNode }> = (
   const [clicks, setClicks] = React.useState(0);
   const demoStyles = useDemoStyles();
   const controlsClass = demoStyles.controls;
-  return <DemoCard title="FormattedText" iconName="Font" description="Edit content and change its typography, semantic element and overflow independently."
+  return <DemoCard title="FormattedText" iconName="Info" description="Edit content and change its typography, semantic element and overflow independently."
     controls={<div className={demoStyles.controls}>
       {directionControl}
       <Field label="Text"><Textarea textarea={{ as: 'textarea', ...{ 'data-formatted-text-demo': 'text' } }} rows={4} value={source}

@@ -26,4 +26,4 @@ const products: Readonly<Record<string, React.ComponentType>> = {
 };
 const query = new URLSearchParams(window.location.search);
 const Product = products[query.get('foundation-product') ?? ''];
-mountDemoFixture(Product ? <Product /> : query.has('suggestions-only') ? <SuggestionsDemo render={regions => <DemoCard title="Request debounced suggestions after explicit start" iconName="Search" contentPlacement="configuration" {...regions} />} /> : query.has('form-only') ? <section data-form-boundary="compiled"><FormPanel /></section> : <><StylesPanel /><FormattedTextPanel /><RelativeTimePanel /><AutoSkeletonPanel /><StateMessagePanel /><GroupsPanel /></>);
+mountDemoFixture(Product ? <Product /> : query.has('suggestions-only') ? <SuggestionsDemo render={regions => <DemoCard title="Request debounced suggestions after explicit start" iconName="Info" contentPlacement="configuration" {...regions} />} /> : query.has('form-only') ? <section data-form-boundary="compiled"><FormPanel /></section> : <><StylesPanel /><FormattedTextPanel /><RelativeTimePanel /><AutoSkeletonPanel /><StateMessagePanel /><GroupsPanel /></>);

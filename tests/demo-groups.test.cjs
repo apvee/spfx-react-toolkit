@@ -17,7 +17,7 @@ test('groups have lazy interactive coverage without duplicate hook/provider inve
   for (const marker of ['direction', 'resize', 'multiple', 'unmount', 'hidden', 'disabled', 'settings', 'accordion', 'email', 'note', 'close-all', 'inspect', 'observations', 'title', 'description', 'action-label', 'accordion-title', 'accordion-description', 'open-items']) {
     assert.ok((panel.includes(`data-groups-demo="${marker}"`) || panel.includes(`'data-groups-demo': '${marker}'`)), marker);
   }
-  for (const marker of ['Input aria-label=', 'Switch aria-label=', 'DemoIcon name=', 'onToggle=', 'openItems=', 'setOpenItems([])', 'unmountOnClose=', 'defaultValue="Retained note"', 'title={<span>', 'action=', 'ref=']) {
+  for (const marker of ['Input aria-label=', 'Switch aria-label=', 'Mail24Regular', 'onToggle=', 'openItems=', 'setOpenItems([])', 'unmountOnClose=', 'defaultValue="Retained note"', 'title={<span>', 'action=', 'ref=']) {
     assert.ok(panel.includes(marker), marker);
   }
   assert.match(panel, /\[320, 500, 639, 640, 900\]/);

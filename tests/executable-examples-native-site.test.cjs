@@ -106,3 +106,16 @@ for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} 
   assert.equal(f.container.querySelector('button'), button, 'Demo identity survives both resets');
   assert.equal(f.calls.length, 0, 'preparation and reset issue no business query'); f.closePane(); f.origins();
 });
+test('native malformed transport attempts are recorded raw before guarded URL admission', t => {
+  const f = createNativeSiteFixture(t);
+  assert.throws(() => f.instance.context.spHttpClient.get('http://[invalid', undefined, {}), /Invalid URL/);
+  assert.equal(f.calls.length, 1);
+  assert.equal(f.calls[0].url, 'http://[invalid');
+  assert.equal(f.calls[0].query, undefined);
+  assert.equal(f.unexpected.length, 1);
+  assert.equal(f.unexpected[0].request, f.calls[0]);
+  assert.match(f.unexpected[0].message, /Invalid URL/);
+  // This single deliberate negative attempt is asserted here. Fixture teardown
+  // continues rejecting every other unadmitted route.
+  f.unexpected.splice(0, 1);
+});

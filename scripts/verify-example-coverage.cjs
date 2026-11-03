@@ -205,7 +205,7 @@ for (const marker of ['StateMessage', 'preset', 'description', 'headingLevel', '
 const settingsSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/settings-group/settings-group.tsx'));
 const accordionSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx'));
 const groupsPanel = scenarioSource('Groups', settingsSource + '\n' + accordionSource);
-for (const marker of ['SettingsGroup.Item', 'AccordionGroup.Item', 'Input aria-label=', 'Switch aria-label=', 'DemoIcon name=', 'openItems=', 'onToggle=', 'multiple=', 'unmountOnClose=', 'defaultValue=', 'title={<span>', 'ref=', 'data-groups-demo="direction"', 'data-groups-demo="resize"', 'data-groups-demo="inspect"']) {
+for (const marker of ['SettingsGroup.Item', 'AccordionGroup.Item', 'Input aria-label=', 'Switch aria-label=', 'Mail24Regular', 'openItems=', 'onToggle=', 'multiple=', 'unmountOnClose=', 'defaultValue=', 'title={<span>', 'ref=', 'data-groups-demo="direction"', 'data-groups-demo="resize"', 'data-groups-demo="inspect"']) {
   if (!groupsPanel.includes(marker) && !(/data-groups-demo="([^"]+)"/.test(marker) && groupsPanel.includes(`'data-groups-demo': '${marker.match(/"([^"]+)"/)[1]}'`))) throw new Error(`Groups interactive example missing ${marker}`);
 }
 

@@ -12,6 +12,17 @@ function protocol(catalog = catalogA, text = 'Current A') {
     throw new Error('Unexpected property protocol: ' + request.url);
   };
 }
+// Only deliberate hook-failure tests capture their exact expected diagnostic.
+// Every unrelated console error remains visible and fails this expectation.
+function expectPropertyErrors(t, message, count) {
+  const original = console.error;
+  const errors = [];
+  const capture = t.mock.method(console, 'error', (...args) => {
+    if (args[0] === 'Failed to load tenant property:' && args[1] instanceof Error && message.test(args[1].message)) errors.push(args);
+    else { original(...args); assert.fail('Unexpected console error in deliberate tenant-property failure test'); }
+  });
+  t.after(() => { capture.mock.restore(); assert.equal(errors.length, count, 'exact expected property-hook diagnostics'); });
+}
 test('manual properties: zero mount/activation HTTP, two real discovery caches and fresh scalar-navigation session', async t => {
   const f = createStoreFixture(t, 'propertyHook', { revision: 7 });
   await f.flush(); assert.deepEqual(f.calls, []);
@@ -63,6 +74,7 @@ for (const identity of ['client', 'page', 'root', 'instance']) test(`Tenant Prop
   assert.equal(f.dt(version), 'Current B');
 });
 for (const stage of ['discovery', 'property']) for (const ending of ['resolve', 'reject']) test(`Tenant Properties obsolete pending ${stage} ${ending} cannot replace newer host result`, async t => {
+  if (ending === 'reject') expectPropertyErrors(t, /Obsolete A/, 0);
   const f = createStoreFixture(t, 'propertyHook'); f.click('Activate tenant properties'); const old = f.handler('Run'); f.click('Run'); await f.flush();
   if (stage === 'property') await f.drain(r => r.url.endsWith('SP_TenantSettings_Current') ? protocol()(r) : undefined);
   const pending = f.calls.filter(r => !r.settled); assert.equal(pending.length, 2);
@@ -80,6 +92,7 @@ for (const stage of ['discovery', 'property']) for (const ending of ['resolve', 
   assert.equal(f.calls.length, count); assert.equal(f.dt(version), 'Current B'); assert.ok(!f.container.textContent.includes('Obsolete A'));
 });
 for (const stage of ['discovery', 'property']) for (const ending of ['resolve', 'reject']) test(`Reset retains outer DOM and blocks old Run across held ${stage} ${ending}`, async t => {
+  if (ending === 'reject') expectPropertyErrors(t, /Old failed/, 0);
   const f = createStoreFixture(t, 'propertyHook', { revision: 5 }); const activate = f.find('Activate tenant properties');
   f.click('Activate tenant properties'); const run = f.handler('Run'); f.click('Run'); await f.flush();
   if (stage === 'property') await f.drain(r => r.url.endsWith('SP_TenantSettings_Current') ? protocol()(r) : undefined);
@@ -91,6 +104,7 @@ for (const stage of ['discovery', 'property']) for (const ending of ['resolve', 
   f.click('Activate tenant properties'); f.click('Run'); await f.drain(protocol(catalogB, 'Reactivated')); assert.equal(f.dt(version), 'Reactivated');
 });
 for (const failedKey of [version, counter]) test(`current ${failedKey} failure beats retained data and successful dashboard on later render`, async t => {
+  expectPropertyErrors(t, /Failed to read property: Forbidden/, 1);
   const f = createStoreFixture(t, 'propertyHook'); f.click('Activate tenant properties'); f.click('Run'); await f.drain(protocol());
   assert.equal(f.dt(counter), '0'); f.click('Run'); await f.drain(r => r.url === propertyUrl(catalogA, failedKey) ? response({}, 403) : protocol()(r));
   assert.equal(f.container.querySelector('[role="alert"]').textContent, 'Failed to read property: Forbidden');
@@ -99,6 +113,7 @@ for (const failedKey of [version, counter]) test(`current ${failedKey} failure b
   f.click('Run'); await f.drain(protocol()); assert.equal(f.dt(version), 'Current A');
 });
 test('latest Run owns reverse property completions and rejection; departure blocks retained Run', async t => {
+  expectPropertyErrors(t, /Stale read/, 0);
   const f = createStoreFixture(t, 'propertyHook'); f.click('Activate tenant properties'); f.click('Run'); await f.drain(protocol());
   const run = f.handler('Run'); f.click('Run'); await f.flush(); const first = f.calls.filter(r => !r.settled); assert.equal(first.length, 2);
   await f.flush(() => run()); const next = f.calls.filter(r => !r.settled && !first.includes(r)); assert.equal(next.length, 2);
@@ -209,6 +224,7 @@ test('named target-guard negative control exposes a retained direct Read dispatc
   await f.settle(0, { Value: 'false' });
 });
 test('named hook error negative control exposes retained data as a false successful dashboard', async t => {
+  expectPropertyErrors(t, /Failed to read property: Forbidden/, 2);
   const f = createStoreFixture(t, 'propertyHook', { propertyMutation: 'errors' }); f.click('Activate tenant properties'); f.click('Run'); await f.drain(protocol());
   f.click('Run'); await f.drain(() => response({}, 403));
   assert.ok(f.container.textContent.includes('Tenant property reads completed.'), 'removing current error precedence exposes the regression');

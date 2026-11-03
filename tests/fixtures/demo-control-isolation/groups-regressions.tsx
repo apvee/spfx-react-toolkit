@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { DemoIcon } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoIcon';
 import { Button, Field, FluentProvider, Input, Switch, makeStyles, Checkbox, Select } from '@fluentui/react-components';
-import { Person24Regular, Settings24Regular } from '@fluentui/react-icons';
+import { Person24Regular, Settings24Regular, Mail24Regular, Alert24Regular, Info24Regular } from '@fluentui/react-icons';
 import { AccordionGroup, AccordionGroupValue, SettingsGroup, background, useSx, width } from '@apvee/spfx-react-toolkit';
 import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
-import { useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/demoStyles';
+import { useDemoStyles } from '../demo-presentation-styles';
 
 const useStyles = makeStyles({
   frame: { maxInlineSize: '100%', minInlineSize: 0, backgroundColor: 'transparent' },
@@ -50,7 +49,7 @@ const GroupsPanel: React.FC = () => {
     setObserved(`settings=${settings?.tagName.toLowerCase() ?? 'absent'}, accordion=${accordion?.tagName.toLowerCase() ?? 'absent'}, visible headings=${settings?.querySelectorAll('h1,h2,h3,h4,h5,h6').length ?? 0}, slot=${titleSlotRef.current?.tagName.toLowerCase() ?? 'absent'}, active=${settings?.ownerDocument.activeElement?.tagName.toLowerCase() ?? 'none'}, settings width requested=${size} rendered=${settings?.getBoundingClientRect().width ?? 'absent'}, accordion width requested=${accordionSize} rendered=${accordion?.getBoundingClientRect().width ?? 'absent'}`);
   };
   return <div className={demoStyles.root}>
-    <DemoCard diagnosticsLabel="Advanced diagnostics" title="SettingsGroup" iconName="Settings" description="Configure the heading and action, then edit caller-owned notification controls."
+    <DemoCard diagnosticsLabel="Advanced diagnostics" title="SettingsGroup" iconName="Info" description="Configure the heading and action, then edit caller-owned notification controls."
       controls={<div className={demoStyles.controls}>
       <Checkbox input={{ as: 'input', ...{ 'data-groups-demo': 'direction' } }} checked={rtl} onChange={(_event, data) => setRtl(data.checked === true)} label="Override host direction to RTL" />
       <Field label="Container width"><Select select={{ as: 'select', ...{ 'data-groups-demo': 'resize' } }} value={size} onChange={(_event, data) => {
@@ -68,11 +67,11 @@ const GroupsPanel: React.FC = () => {
           <SettingsGroup ref={settingsRef} appearance={appearance} hidden={hidden} data-groups-demo="settings" title={{ ref: titleSlotRef, 'data-groups-demo': 'title-slot', children: title }}
             description={description} headingLevel={2} icon={{ children: <Settings24Regular data-groups-demo="object-icon" width={80} height={80} aria-hidden="true" /> }}
             action={{ children: (Tag, props) => <Tag {...props} data-groups-demo="action-slot"><Button onClick={() => setActions(value => value + 1)}>{actionLabel}</Button></Tag> }}>
-            <SettingsGroup.Item title="Delivery address" icon={<DemoIcon name="Mail" />} description="Use your work email.">
+            <SettingsGroup.Item title="Delivery address" icon={<Mail24Regular aria-hidden="true" />} description="Use your work email.">
               <Input aria-label="Notification email" input={{ as: 'input', ...{ 'data-groups-demo': 'email' } }} value={email} onChange={(_event, data) => setEmail(data.value)} />
             </SettingsGroup.Item>
             <SettingsGroup.Item title={<span>Account alerts</span>} description={<span>Receive notifications about your account.</span>}
-              icon={<DemoIcon name="Ringer" />}>
+              icon={<Alert24Regular aria-hidden="true" />}>
               <Switch aria-label="Receive account alerts" checked={alerts} onChange={(_event, data) => setAlerts(data.checked)} />
             </SettingsGroup.Item>
           </SettingsGroup>
@@ -106,14 +105,14 @@ const GroupsPanel: React.FC = () => {
       </>}>
       <div className={sx(styles.frame, width.px(accordionSize))}><FluentProvider dir={accordionRtl ? 'rtl' : undefined} className={accordionSx(background.transparent, width.full)}><div data-groups-demo="accordion-frame" className={accordionSx(width.full)}>
           <AccordionGroup ref={accordionRef} appearance={accordionAppearance} data-groups-demo="accordion" title={accordionTitle}
-            description={accordionDescription} headingLevel={2} icon={<DemoIcon name="Info" />}
+            description={accordionDescription} headingLevel={2} icon={<Info24Regular aria-hidden="true" />}
             action={<Button data-groups-demo="close-all" onClick={() => setOpenItems([])}>Close all panels</Button>}
             openItems={openItems} onToggle={(_event, data) => setOpenItems(data.openItems)} multiple={multiple} collapsible>
             <AccordionGroup.Item value="profile" title={{ children: 'Profile details' }} description="Your account preferences."
               headingLevel={3} icon={{ children: (Tag, props) => <Tag {...props}><Person24Regular data-groups-demo="callback-icon" width={80} height={80} aria-hidden="true" /></Tag> }} disabled={disabled} unmountOnClose={unmountOnClose}>
               <Field label="Profile note"><Input input={{ as: 'input', ...{ 'data-groups-demo': 'note' } }} defaultValue="Retained note" /></Field>
             </AccordionGroup.Item>
-            <AccordionGroup.Item value="advanced" title={<span>Advanced preferences</span>} icon={<DemoIcon name="Ringer" />} unmountOnClose={unmountOnClose}>
+            <AccordionGroup.Item value="advanced" title={<span>Advanced preferences</span>} icon={<Alert24Regular aria-hidden="true" />} unmountOnClose={unmountOnClose}>
               <Switch label="Enable advanced notifications" defaultChecked />
             </AccordionGroup.Item>
           </AccordionGroup>

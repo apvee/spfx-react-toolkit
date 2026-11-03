@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Accordion, AccordionItem, AccordionHeader, Card, FluentProvider } from '@fluentui/react-components';
 import { Demo } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/generated/jsdoc-examples/06e0030c1874dec9ca0a1d76b9acaf10b2d207e7c562ac7baf9ec8ac37986052';
 import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
-const ProductPanel: React.FC = () => <Demo render={regions => <DemoCard title="Edit a report with guarded Stage dismissal" iconName="Edit" contentPlacement="configuration" {...regions} />} />;
+const ProductPanel: React.FC = () => <Demo render={regions => <DemoCard title="Edit a report with guarded Stage dismissal" iconName="Info" contentPlacement="configuration" {...regions} />} />;
 import StagePanel, { StageExample } from './stage-regressions';
-import { DemoAccordionPanel } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared';
+import { DemoAccordionPanel } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoAccordionPanel';
 
 /** A second provider and selectable ancestor exercise surface ownership independently. */
 const LegacyStageIsolationFixture: React.FC = () => {

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { FluentProvider, Text, makeStyles, tokens, Checkbox, Select, Button, Field, Input } from '@fluentui/react-components';
 import { StateMessage, StateMessagePreset, StateMessageHeadingLevel, useSx, width, background, minWidth } from '@apvee/spfx-react-toolkit';
 import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
-import { useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/demoStyles';
+import { useDemoStyles } from '../demo-presentation-styles';
 
 const presets: readonly StateMessagePreset[] = ['generic', 'empty', 'error', 'success', 'welcome'];
 const levels: readonly StateMessageHeadingLevel[] = [1, 2, 3, 4, 5, 6];

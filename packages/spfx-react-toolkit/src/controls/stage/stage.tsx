@@ -327,9 +327,11 @@ StageRoot.displayName = 'Stage';
  *     setPresentation(value);
  *   };
  *   const trigger = <Button type="button" ref={triggerRef} data-stage-demo="trigger" disabled={resetPending || isSubmitting} appearance="primary">Open editor</Button>;
- *   const surfaceOptions: Extract<StageProps, { open: boolean }> = presentation === 'popover'
- *     ? { presentation, size: size === 'full' ? 'small' : size, withArrow, trigger, open, children: undefined }
- *     : { presentation, size, trigger, open, children: undefined };
+ *   // JSX owns open and children below; keep only the presentation configuration here.
+ *   type SurfaceOptions<P> = P extends unknown ? Omit<P, 'open' | 'children'> : never;
+ *   const surfaceOptions: SurfaceOptions<Extract<StageProps, { open: boolean }>> = presentation === 'popover'
+ *     ? { presentation, size: size === 'full' ? 'small' : size, withArrow, trigger }
+ *     : { presentation, size, trigger };
  *
  *   return <section data-stage-demo="panel"><section data-stage-demo="instance" data-stage-instance={instance} className={sx(styles.instance, flex.column, gap.medium)}>
  *     {render({ controls: <>

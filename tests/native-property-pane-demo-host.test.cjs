@@ -64,7 +64,7 @@ test('live bag reads, first native witness, latest same-DOM disposal, scoped ref
   f.host.fieldChanged('values', [], ['before witness']); assert.equal(f.controllers[0].changes.length, 0);
   first.properties.onRender(element); f.host.rendered();
   f.host.fieldChanged('values', [], ['accepted']); assert.equal(f.refreshes, 1);
-  f.host.configurationStart(); f.host.configurationComplete(); f.host.changesApplied(); f.controllers[0].environment.refresh();
+  f.host.configurationComplete(); f.host.changesApplied(); f.controllers[0].environment.refresh();
   assert.equal(f.refreshes, 1, 'Start/Complete/AfterApply/background cannot refresh'); assert.equal(f.alive, 1);
   f.bag = { values: ['SDK replaced'] }; const second = f.field();
   assert.equal(f.controllers[0].reads.at(-1).values[0], 'SDK replaced');
@@ -72,7 +72,7 @@ test('live bag reads, first native witness, latest same-DOM disposal, scoped ref
   first.properties.onDispose(element); assert.equal(f.elements.size, 1); assert.equal(f.events.filter(e => e === 'unmount:A').length, 0);
   lease.lease.release(); assert.equal(f.alive, 1, 'produced lease survives source navigation/reset');
   const cell = [...f.host.produced.fields][0];
-  f.host.dispose(); f.host.dispose(); second.properties.onRender(element); second.properties.onDispose(element); f.host.configurationStart();
+  f.host.dispose(); f.host.dispose(); second.properties.onRender(element); second.properties.onDispose(element);
   assert.equal(f.elements.size, 0); assert.equal(f.alive, 0); assert.equal(f.controllers[0].disposed, 1); assert.equal(f.events.filter(e => e === 'unmount:A').length, 1);
   for (const key of ['controller', 'environment']) assert.equal(cell.generation?.[key], undefined);
   for (const key of ['render', 'dispose', 'dispatch', 'generation']) assert.equal(cell[key], undefined, 'retired small field cell clears ' + key);
@@ -82,7 +82,7 @@ test('open and remaining native DOM block prepare; Complete/foreign switch and b
   const f = fixture(); f.prepare('A'); f.open = true; const field = f.field(), element = {};
   field.properties.onRender(element); f.host.rendered();
   assert.equal(f.prepare('B').status, 'blocked');
-  f.host.configurationComplete(); f.host.configurationStart(); f.host.rendered();
+  f.host.configurationComplete(); f.host.rendered();
   assert.equal(f.alive, 1); f.host.fieldChanged('values', 1, 2); assert.equal(f.controllers[0].changes.length, 1);
   f.open = false; assert.equal(f.prepare('B').status, 'blocked', 'resources remain even with global closed flag');
   f.open = true; f.close([field, element]); assert.equal(f.alive, 0); assert.equal(f.prepare('B').status, 'prepared');
@@ -164,7 +164,7 @@ test('mixed or absent witnesses cannot switch native ownership; later named coll
     f.host.rendered(); assert.equal(f.host.nativeView, old);
     await next; const current = f.host.nativeView; assert.notEqual(current, old);
     f.host.rendered(); f.host.rendered(); assert.equal(f.host.nativeView, current);
-    sdk.close(f.host); f.host.configurationStart(); assert.equal(f.host.nativeView, undefined); assert.equal(f.alive, 0);
+    sdk.close(f.host); assert.equal(f.host.nativeView, undefined); assert.equal(f.alive, 0);
   })();
 });
 test('two adapters keep own properties, callbacks, tokens and synchronous refresh scopes independent', () => {

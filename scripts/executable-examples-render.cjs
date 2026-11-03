@@ -66,7 +66,7 @@ export interface ExecutableExampleEntry {
   load(): Promise<{ Demo: React.ComponentType<ExecutableExampleProps> }>;
 }
 
-export interface ExecutableFeature {
+interface ExecutableFeature {
   key: string;
   title: string;
   scenarios: readonly ExecutableExampleEntry[];
@@ -113,7 +113,7 @@ function renderExecutableExamples(examples) {
     const { id, ownerKey, title, groupRoute, groupKey, featureKey, featureTitle, publicNames, source, metadata } = example;
     artifacts[`${executableRoot}/${id}.tsx`] = ownership + '\n' + example.code;
     indices.set(id, index);
-    const data = JSON.stringify({ id, ownerKey, title, groupRoute, groupKey, featureKey, featureTitle, publicNames, source, metadata }, undefined, 2);
+    const data = JSON.stringify({ id, ownerKey, title, groupRoute, groupKey, featureKey, featureTitle, publicNames, source, metadata }, undefined, 2).replace(/\n\s*/g, ' ');
     const load = `import(/* webpackChunkName: 'spfx-jsdoc-${id}' */ "./${id}")`;
     const nativeLoad = `${load}.then(module => {
     type Source = NativeSourceProperties<NonNullable<Parameters<typeof module.Demo>[0]['propertyPane']>>;

@@ -77,9 +77,9 @@ function createNativeFileFolderBoundary(t, { h, sdk, calls, unexpected, identity
     } };
     ports.push(port);
     return { frame, port, channelId,
-      initialize(extra = {}) {
+      initialize() {
         const data = { type: 'initialize', channelId }, request = { kind: 'hosted-initialize', origin: 'https://tenant.sharepoint.com', data, channelId };
-        attempt(request, () => { messages.push({ direction: 'in', ...request }); h.act(() => { window.dispatchEvent(new window.MessageEvent('message', { origin: request.origin, source, data, ports: [port], ...extra })); }); });
+        attempt(request, () => { messages.push({ direction: 'in', ...request }); h.act(() => { window.dispatchEvent(new window.MessageEvent('message', { origin: request.origin, source, data, ports: [port] })); }); });
       },
       command(id, data) {
         const message = { type: 'command', id, data }, request = { kind: 'hosted-command', channelId, message };

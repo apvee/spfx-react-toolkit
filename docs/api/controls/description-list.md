@@ -75,7 +75,7 @@ function ConditionalDetails({ showStatus }: { showStatus: boolean }) {
 
 ```tsx
 import * as React from 'react';
-import { Badge, Button, Field, Checkbox, FluentProvider, Link, Select, makeStyles } from '@fluentui/react-components';
+import { Badge, Button, Field, Checkbox, FluentProvider, Link, Select, makeStyles, useId } from '@fluentui/react-components';
 
 import { DescriptionList, container, flex, gap, useSx, width, background, minWidth } from '@apvee/spfx-react-toolkit';
 import type { DescriptionListEntry, DescriptionListLayout } from '@apvee/spfx-react-toolkit';
@@ -100,6 +100,7 @@ export function Demo({ render = standalone, resetRevision = 0 }: {
   render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number;
 } = {}): React.ReactElement {
   const instance = 'primary';
+  const anchorId = useId('description-list-demo');
   const sx = useSx();
   const styles = useExampleStyles();
   const [layout, setLayout] = React.useState<DescriptionListLayout>('auto');
@@ -118,7 +119,7 @@ export function Demo({ render = standalone, resetRevision = 0 }: {
   const rootRef = React.useMemo(() => React.createRef<HTMLDListElement>(), []);
   const itemRef = React.useMemo(() => React.createRef<HTMLDivElement>(), []);
   const entries: readonly DescriptionListEntry[] = [
-    { id: 'owner', label: 'Owner', value: <Link href="#description-list-demo">Ada Rossi</Link> },
+    { id: 'owner', label: 'Owner', value: <Link href={`#${anchorId}`}>Ada Rossi</Link> },
     { id: 'status', label: 'Status', value: <Badge appearance="tint" color="success">In progress</Badge> },
     { id: 'team', label: 'Team', value: 'Operations' },
     { id: 'updated', label: 'Updated', value: '13 October 2026' },
@@ -140,7 +141,7 @@ export function Demo({ render = standalone, resetRevision = 0 }: {
     setObserved('not inspected'); setClicks(0); setItemClicks(0);
   }, [resetRevision]);
   return <FluentProvider data-description-list-demo="provider" dir={rtl ? 'rtl' : undefined} className={directionSx(background.transparent, minWidth.zero)}>
-    <section data-description-list-demo="instance" data-description-list-instance={instance} className={sx(flex.column, gap.medium)}>
+    <section id={anchorId} data-description-list-demo="instance" data-description-list-instance={instance} className={sx(flex.column, gap.medium)}>
       {render({ controls: <>
 
         <Field label="Layout"><Select data-description-list-demo="layout" value={layout} onChange={event => { const value = event.target.value; if (value === 'auto' || value === 'horizontal' || value === 'vertical') setLayout(value); }}><option value="auto">Auto</option><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></Select></Field>
@@ -262,7 +263,7 @@ A grouping div containing one dt and one dd; requires a DescriptionList parent.
 
 ### Source
 
-[packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx:223](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#L223)
+[packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx:224](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#L224)
 
 ## DescriptionList.Item
 
@@ -340,7 +341,7 @@ ReactElement<any, string | JSXElementConstructor<any>>
 
 ### Source (2)
 
-[packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx:236](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#L236)
+[packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx:237](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx#L237)
 
 ## DescriptionListBaseProps
 

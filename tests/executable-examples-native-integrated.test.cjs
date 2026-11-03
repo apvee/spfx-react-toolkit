@@ -11,7 +11,7 @@ test('integrated native case has one source owner and observable saved compatibi
 test('actual WebPart connects one terminal instance host and forwards every genuine native hook', () => {
   const source = fs.readFileSync(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/SpFxReactToolkitTestWebPart.ts'), 'utf8');
   assert.equal((source.match(/new NativePropertyPaneDemoHost/g) ?? []).length, 1);
-  for (const hook of ['fieldChanged', 'configurationStart', 'rendered', 'configurationComplete', 'changesApplied', 'dispose']) assert.match(source, new RegExp('nativeHost\\.' + hook + '\\('));
+  for (const hook of ['fieldChanged', 'rendered', 'configurationComplete', 'changesApplied', 'dispose']) assert.match(source, new RegExp('nativeHost\\.' + hook + '\\('));
   assert.doesNotMatch(source, /PropertyPaneSitePicker|PropertyPaneFileFolderPicker|pickerCascadeIdentity|_pickerSiteRevision/);
 });
 const { loadIntegratedBusiness } = require('./fixtures/executable-examples/integrated-native-business.cjs');

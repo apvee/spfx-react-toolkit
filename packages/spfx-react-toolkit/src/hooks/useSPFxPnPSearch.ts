@@ -87,7 +87,7 @@ type SearchQueryBuilderFn = (builder: ISearchBuilder) => ISearchBuilder;
  *
  * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
  * type Item = { Title?: string; Path?: string; Author?: string; LastModifiedTime?: string };
- * type Outcome = { token: object; request: number; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
+ * type Outcome = { token: object; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
  * const choices = { All: SearchVerticals.All, Documents: SearchVerticals.Documents, Pages: SearchVerticals.Pages, People: SearchVerticals.People, Videos: SearchVerticals.Videos } as const;
  * const useStyles = makeStyles({ controls: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, results: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, maxWidth: '100%', gap: '12px', overflowWrap: 'anywhere', '& > article': { minWidth: 0, maxWidth: '100%' } } });
  *
@@ -141,7 +141,7 @@ type SearchQueryBuilderFn = (builder: ISearchBuilder) => ISearchBuilder;
  *     const owns = (): boolean => current() && sequence.current === request;
  *     dispatch.current = { token, request, version };
  *     session.page++;
- *     setOutcome({ token, request, phase: 'pending' });
+ *     setOutcome({ token, phase: 'pending' });
  *     if (!append) setPublished(undefined);
  *     try {
  *       if (append) await info.loadMore();
@@ -152,7 +152,7 @@ type SearchQueryBuilderFn = (builder: ISearchBuilder) => ISearchBuilder;
  *       });
  *       if (owns()) {
  *         setPublished({ token, version });
- *         setOutcome({ token, request, phase: 'success' });
+ *         setOutcome({ token, phase: 'success' });
  *       }
  *     } catch (error) {
  *       if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
@@ -677,7 +677,7 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
  *
  * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
  * type Item = { Title?: string; Path?: string; FileType?: string };
- * type Outcome = { token: object; request: number; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
+ * type Outcome = { token: object; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
  * const useStyles = makeStyles({ results: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, maxWidth: '100%', gap: '12px', overflowWrap: 'anywhere', '& > article': { minWidth: 0, maxWidth: '100%' } } });
  *
  * export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
@@ -726,13 +726,13 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
  *     const request = ++sequence.current;
  *     const owns = (): boolean => current() && sequence.current === request;
  *     dispatch.current = { token, request, version };
- *     setOutcome({ token, request, phase: 'pending' });
+ *     setOutcome({ token, phase: 'pending' });
  *     setPublished(undefined);
  *     try {
  *       await info.search(query);
  *       if (owns()) {
  *         setPublished({ token, version });
- *         setOutcome({ token, request, phase: 'success' });
+ *         setOutcome({ token, phase: 'success' });
  *       }
  *     } catch (error) {
  *       if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
@@ -778,7 +778,7 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
  *
  * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
  * type Item = { Title?: string; Path?: string; FileType?: string; Author?: string };
- * type Outcome = { token: object; request: number; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
+ * type Outcome = { token: object; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
  * const useStyles = makeStyles({ results: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, maxWidth: '100%', gap: '12px', overflowWrap: 'anywhere', '& > article': { minWidth: 0, maxWidth: '100%' } }, facets: { display: 'grid', gap: '8px' } });
  *
  * export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
@@ -825,7 +825,7 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
  *     const request = ++sequence.current;
  *     const owns = (): boolean => current() && sequence.current === request;
  *     dispatch.current = { token, request, version };
- *     setOutcome({ token, request, phase: 'pending' });
+ *     setOutcome({ token, phase: 'pending' });
  *     setPublished(undefined);
  *     try {
  *       // applyRefiner returns Promise<void>; display the real hook state only after current completion.
@@ -833,7 +833,7 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
  *       else await info.search('*');
  *       if (owns()) {
  *         setPublished({ token, version, request });
- *         setOutcome({ token, request, phase: 'success' });
+ *         setOutcome({ token, phase: 'success' });
  *       }
  *     } catch (error) {
  *       if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });

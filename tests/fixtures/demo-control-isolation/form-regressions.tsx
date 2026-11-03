@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { DemoCard, DemoAccordionPanel, useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared';
+import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
+import { DemoAccordionPanel } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoAccordionPanel';
+import { useDemoStyles } from '../demo-presentation-styles';
 import { Accordion, AccordionItem, AccordionHeader, Button, Checkbox, Field, Input, Select, ColorArea, ColorSlider, ColorSwatch, FluentProvider, makeStyles, tokens } from '@fluentui/react-components';
 import { Form, createForm, FormDateTimeValue, FormTimePickerParseResult, FormHsvColor, FormMethods, SettingsGroup, flex, gap, useSx, width } from '@apvee/spfx-react-toolkit';
 
@@ -146,7 +148,7 @@ const RecordExample: React.FC<{ disabled: boolean; validationMode: ValidationMod
     if (fail) { setStatus('Save failed; disable failure and retry'); throw new Error('Simulated save failure'); }
     setSaved(snapshot); setStatus('Saved');
   };
-  return <DemoCard diagnosticsLabel="Advanced diagnostics" title="Form — typed bindings and composition" iconName="Edit" description="Required is presentation; Reference has its own rule. Disabled fields are omitted on submit; delayed saves own a snapshot." controls={<>
+  return <DemoCard diagnosticsLabel="Advanced diagnostics" title="Form — typed bindings and composition" iconName="Info" description="Required is presentation; Reference has its own rule. Disabled fields are omitted on submit; delayed saves own a snapshot." controls={<>
     {controls}
     <div className={sx(flex.column, gap.medium)}>
     <h4>Record field props</h4>

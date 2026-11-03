@@ -3,7 +3,7 @@ import * as React from 'react';
 import { FluentProvider, makeStyles, mergeClasses, tokens, Checkbox, Select, Button, Field, Input } from '@fluentui/react-components';
 import { AutoSkeleton, AutoSkeletonProps, useSx, useStableCallback, flex, gap, width, background, minWidth } from '@apvee/spfx-react-toolkit';
 import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
-import { useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/demoStyles';
+import { useDemoStyles } from '../demo-presentation-styles';
 
 const useStyles = makeStyles({
   preview: { boxSizing: 'border-box', maxWidth: '100%' },
@@ -47,7 +47,7 @@ const AutoSkeletonExamples: React.FC<{ directionControl: React.ReactNode }> = ({
   const rootRef = React.useMemo(() => React.createRef<HTMLDivElement>(), []);
   const inputRef = React.useMemo(() => React.createRef<HTMLInputElement>(), []);
   const onMount = useStableCallback(() => setMounts(value => value + 1));
-  return <DemoCard title="AutoSkeleton" iconName="Processing" description="Skeleton items follow mounted HTML geometry; loading keeps local child state."
+  return <DemoCard title="AutoSkeleton" iconName="Info" description="Skeleton items follow mounted HTML geometry; loading keeps local child state."
     controls={<div className={demoStyles.controls}>
       {directionControl}
       <Checkbox input={{ as: 'input', ...{ 'data-auto-skeleton-demo': 'loading' } }} checked={loading} onChange={(_event, data) => setLoading(data.checked === true)} label="Loading" />

@@ -25,7 +25,8 @@ jobs:
             exec "$1" scripts/generated.cjs --check
           ' docs-offline "$DOCS_NODE_BIN"
       - run: npm run build
-      - run: npm run verify
+      - name: Verify behavior, contracts and native demo reachability
+        run: npm run verify
       - run: npm run package:solution
       - run: npm run verify:package
         env:

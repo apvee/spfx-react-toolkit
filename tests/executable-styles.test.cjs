@@ -16,7 +16,7 @@ function catalogue() {
 function current(f, recipe) { f.change(f.node('scenario'), recipe); }
 for (const compiled of [false, true]) {
   const boundary = compiled ? 'compiled' : 'source';
-  test(`Styles ${boundary}: all eight recipes retain state and apply the real 43-family/220-member catalog`, t => {
+  test(`Styles ${boundary}: all eight recipes retain state and enumerate the real 43-family/220-member catalog`, t => {
     const f = stylesFixture(main, { compiled }); t.after(() => f.close());
     assert.equal(f.entry.metadata.host, 'webPart');
     f.change(f.node('layout-width'), '310.5');
@@ -36,6 +36,12 @@ for (const compiled of [false, true]) {
       }
     }
     assert.equal(members, 220);
+    for (const [family, member, property, css, value] of [['width', 'full', 'width', 'width', '100%'], ['flex', 'row', 'display', 'display', 'flex'], ['textAlign', 'center', 'textAlign', 'text-align', 'center']]) {
+      f.change(f.node('catalog-family'), family); f.change(f.node('catalog-member'), member);
+      const rules = f.rules(f.node('catalog-preview'));
+      assert.match(rules, new RegExp(`${css}:var\\(`));
+      assert.match(rules, new RegExp(`--[^:;]*${property}[^:;]*:${value.replace('%', '%')};`));
+    }
     f.change(f.node('catalog-family'), 'width'); f.change(f.node('catalog-member'), 'px'); f.change(f.node('catalog-value'), '84.5');
     f.change(f.node('catalog-family'), 'foreground'); assert.equal(f.node('catalog-value'), null);
     f.change(f.node('catalog-family'), 'width'); f.change(f.node('catalog-member'), 'px'); assert.equal(f.node('catalog-value').value, '84.5');
@@ -118,6 +124,11 @@ test('overflow helper labels the real nested public member paths', t => {
     const choice = `${axis}.${member}`;
     assert.ok([...select.options].some(option => option.value === choice), choice);
     f.change(select, choice); assert.match(f.container.textContent, new RegExp(`Applied: overflow\\.${axis}\\.${member}`));
+    const probe = f.container.querySelector('[data-style-helper="overflow"]');
+    assert.ok(probe);
+    const rules = f.rules(probe), property = axis === 'horizontal' ? 'X' : 'Y';
+    assert.match(rules, new RegExp(`overflow-${property.toLowerCase()}:var\\(`));
+    assert.match(rules, new RegExp(`--[^:;]*overflow${property}[^:;]*:${member};`));
   }
 });
 

@@ -768,3 +768,16 @@ test('5b React17 native closed disclosures retain inert configuration and read-o
     assert.equal(f.subject.mounts, 0);
     assert.equal(f.calls.length + f.tokens.length + f.initializations.length, 0);
 });
+for (const [label, destination] of [
+    ['foreign origin', 'https://foreign.test/sites/HR/_layouts/15/FilePicker.aspx'],
+    ['different opening path', 'https://tenant.sharepoint.com/wrong/_layouts/15/FilePicker.aspx'],
+    ['extra query', 'https://tenant.sharepoint.com/sites/HR/_layouts/15/FilePicker.aspx?tracking=1'],
+]) test('hosted POST capture rejects exact ' + label + ' before recording an opening', t => {
+    const f = createFileFolderFixture(t);
+    const frame = document.createElement('iframe'); frame.name = 'negative-hosted-post'; document.body.appendChild(frame);
+    const form = document.createElement('form'); form.target = frame.name; form.method = 'post';
+    const token = document.createElement('input'); token.name = 'access_token'; token.value = 'fixture-resource-token'; form.appendChild(token);
+    const url = new URL(destination); url.searchParams.set('filePicker', '{}'); url.searchParams.set('locale', 'en-US'); form.action = url.href;
+    try { assert.throws(() => form.submit(), /finite hosted|Expected values|strictly equal|deep-equal/); assert.equal(f.posts.length, 0); }
+    finally { frame.remove(); }
+});

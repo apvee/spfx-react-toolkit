@@ -5,7 +5,7 @@ import { useSPFxPnPContext, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
 
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
 type Item = { Title?: string; Path?: string; FileType?: string; Author?: string };
-type Outcome = { token: object; request: number; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
+type Outcome = { token: object; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
 const useStyles = makeStyles({ results: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, maxWidth: '100%', gap: '12px', overflowWrap: 'anywhere', '& > article': { minWidth: 0, maxWidth: '100%' } }, facets: { display: 'grid', gap: '8px' } });
 
 export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
@@ -52,7 +52,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     const request = ++sequence.current;
     const owns = (): boolean => current() && sequence.current === request;
     dispatch.current = { token, request, version };
-    setOutcome({ token, request, phase: 'pending' });
+    setOutcome({ token, phase: 'pending' });
     setPublished(undefined);
     try {
       // applyRefiner returns Promise<void>; display the real hook state only after current completion.
@@ -60,7 +60,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
       else await info.search('*');
       if (owns()) {
         setPublished({ token, version, request });
-        setOutcome({ token, request, phase: 'success' });
+        setOutcome({ token, phase: 'success' });
       }
     } catch (error) {
       if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });

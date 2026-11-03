@@ -17,8 +17,10 @@ Webpack/TypeScript/React/Fluent/Griffel versions. It installs nothing.
 
 React17/ReactDOM and SPFx modules are host externals consistently across every
 probe. Fluent/Griffel are bundled consistently. These fixtures measure generated
-code, not an authenticated SharePoint session. The full sample's ship build is
+code, not an authenticated SharePoint session. The workspace fixture typecheck and source CSS/cache probe are separate from the selected archive bundle. The current workspace sample's ship build is
 captured separately with the real SPFx host manifest/config and lazy chunks.
+
+The candidate is selected from the successful just-executed `npm pack --json` filename; stale pack-directory archives are never inferred or glob-selected. Explicit archives are a separate path. Script-owned extraction directories are replaced before each extraction. Candidate native AMD aliases come only from that selected archive, with the pinned React 17 JSX adapter; a present inventory with a missing asset fails. Older archives without a native inventory retain their genuine legacy boundary. Candidate bundles reject workspace-library fallback. The historical baseline receives no candidate native aliases; both archived roles use the same pinned host React 17 runtime adapter.
 
 The script sums each reachable JS chunk once, with gzip9 and Brotli11, excluding
 source maps and license sidecars. Stats include source sizes before minification,

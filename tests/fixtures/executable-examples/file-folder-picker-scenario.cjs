@@ -52,7 +52,12 @@ function createFileFolderFixture(t, options = {}) {
         const url = new URL(this.action), frame = [...document.querySelectorAll('iframe')].find(f => f.name === this.target);
         assert.ok(frame, 'real Stage iframe target');
         assert.equal(this.method, 'post');
-        assert.equal(url.pathname.endsWith('/_layouts/15/FilePicker.aspx'), true);
+        const opening = subject.props?.scope.kind === 'oneDrive' ? personal : web;
+        const expected = new URL(opening);
+        assert.equal(url.origin, expected.origin, 'finite hosted POST opening origin');
+        assert.equal(url.pathname, expected.pathname + '/_layouts/15/FilePicker.aspx', 'finite hosted POST opening path');
+        assert.deepEqual([...url.searchParams.keys()].sort(), ['filePicker', 'locale']);
+        assert.equal(url.searchParams.get('locale'), 'en-US');
         assert.equal(this.elements.access_token.value, 'fixture-resource-token');
         posts.push({ config: JSON.parse(url.searchParams.get('filePicker')), locale: url.searchParams.get('locale'), frame, action: url.origin + url.pathname });
     });
@@ -74,7 +79,7 @@ function createFileFolderFixture(t, options = {}) {
         assert.deepEqual(request.init.headers, isPersonal ? { Accept: 'application/json;odata=nometadata', 'OData-Version': '', Authorization: 'Bearer fixture-resource-token' } : { Accept: 'application/json;odata=nometadata', 'Content-Type': 'application/json;odata=nometadata', 'OData-Version': '' });
         const responseWeb = isPersonal ? personal : web, responsePath = isPersonal ? '/personal/user' : '/sites/HR';
         const base = isPersonal ? '/personal/user' : '/sites/HR';
-        const allowedSelect = value => assert.equal(url.searchParams.get('$select'), value);
+        const allowedSelect = (value, expand) => { assert.equal(url.searchParams.get('$select'), value); assert.deepEqual([...url.searchParams.keys()].sort(), expand ? ['$expand', '$select'] : ['$select']); };
         if (route === web.slice(new URL(web).origin.length) + '/_api/SP.UserProfiles.PeopleManager/GetMyProperties') {
             allowedSelect('PersonalUrl,Email');
             return json({ PersonalUrl: personal, Email: 'user@tenant.test' });
@@ -92,7 +97,7 @@ function createFileFolderFixture(t, options = {}) {
             return json({ Id: ids.list, Title: 'Documents', BaseTemplate: 850 });
         }
         if (route === base + `/_api/web/lists(guid'${ids.list}')`) {
-            allowedSelect('BaseType,RootFolder/ServerRelativeUrl,RootFolder/UniqueId');
+            allowedSelect('BaseType,RootFolder/ServerRelativeUrl,RootFolder/UniqueId', 'RootFolder');
             assert.equal(url.searchParams.get('$expand'), 'RootFolder');
             return json({ BaseType: 1, RootFolder: { ServerRelativeUrl: rootPath, UniqueId: ids.root } });
         }
@@ -105,6 +110,7 @@ function createFileFolderFixture(t, options = {}) {
             return json({ id: 'b!Drive', driveType: 'business', owner: { user: { email: 'user@tenant.test' } } });
         }
         if (route === base + '/_api/v2.0/drives/b!Drive/root') {
+            assert.deepEqual([...url.searchParams.keys()], ['$select']);
             assert.ok(['id,name,folder,root,parentReference,sharepointIds,webUrl,remoteItem,deleted', 'id,folder,root,parentReference,deleted,remoteItem', 'id,folder,root,parentReference,sharepointIds,deleted,remoteItem'].includes(url.searchParams.get('$select')));
             return json(isPersonal ? { ...items.Root, webUrl: personal + '/Documents' } : items.Root);
         }

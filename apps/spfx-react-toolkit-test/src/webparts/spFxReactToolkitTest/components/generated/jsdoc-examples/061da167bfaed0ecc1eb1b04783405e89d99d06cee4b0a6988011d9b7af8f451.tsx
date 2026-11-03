@@ -4,7 +4,7 @@ import { Button, Checkbox, Dialog, DialogActions, DialogBody, DialogContent, Dia
 import { createSPFxConfigurationStoreService, useSPFxInstanceInfo, useSPFxPageContext, useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
 import type { SPFxConfigurationStoreItem } from '@apvee/spfx-react-toolkit';
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type Ticket = { promise?: Promise<void> };
+type Ticket = object;
 type Outcome = { token: object; steps: string[]; message?: string; failure?: string; item?: SPFxConfigurationStoreItem; items?: SPFxConfigurationStoreItem[] };
 const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
 export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
@@ -60,7 +60,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
       const ticket: Ticket = {}; ledger.current.add(ticket); refresh(count => count + 1);
       const release = (): void => { ledger.current.delete(ticket); if (mounted.current) refresh(count => count + 1); };
       let promise: Promise<void>;
-      try { promise = dispatch(); ticket.promise = promise; } catch (error) { release(); throw error; }
+      try { promise = dispatch(); } catch (error) { release(); throw error; }
       // Keep the ORIGINAL whole public Promise, including discovery/probes/setup/recovery.
       await promise.finally(release); return owns();
     };

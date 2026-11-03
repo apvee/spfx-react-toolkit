@@ -45,7 +45,7 @@ function fixture(t) {
   const click = marker => h.act(() => Simulate.click(find(marker)));
   return { h, container, find, select, click, load, reset() { revision++; render(); } };
 }
-test('EditableText has one exact lazy registry entry and a separate multi-instance fixture', () => {
+test('EditableText has one exact lazy source-owned scenario and a separate multi-instance fixture', () => {
   const catalogue = fs.readFileSync(path.join(base, 'generated/jsdoc-examples/catalogue.ts'), 'utf8');
   assert.doesNotMatch(catalogue, /panels\/EditableTextPanel/);
   assert.equal(scenario(title).entry.featureTitle, 'EditableText');

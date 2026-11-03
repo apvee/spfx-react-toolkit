@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Accordion, AccordionItem, AccordionHeader, Button, Checkbox, Field, Select, FluentProvider, makeStyles } from '@fluentui/react-components';
-import { DemoCard, DemoAccordionPanel, useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared';
+import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
+import { DemoAccordionPanel } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoAccordionPanel';
+import { useDemoStyles } from '../demo-presentation-styles';
 import { CheckmarkCircle20Regular } from '@fluentui/react-icons';
 import { DataGrid, createDataGrid, useSx, flex, gap, width } from '@apvee/spfx-react-toolkit';
 import type { DataGridProps } from '@apvee/spfx-react-toolkit';
@@ -92,7 +94,7 @@ const DataGridPanel: React.FC = () => {
   };
   return <FluentProvider dir={dir === 'host' ? undefined : dir}>
     <section id="data-grid-demo" className={sx(flex.column, gap.medium)}>
-      <DemoCard diagnosticsLabel="Advanced diagnostics" title="DataGrid" iconName="Table" description="Configure the sixteen native cell presentations. The consumer owns rows, sorting intent and selection."
+      <DemoCard diagnosticsLabel="Advanced diagnostics" title="DataGrid" iconName="Info" description="Configure the sixteen native cell presentations. The consumer owns rows, sorting intent and selection."
         controls={<>
           <Field label="Direction"><Select id="dg-dir" value={dir} onChange={event => setDir(event.target.value === 'rtl' ? 'rtl' : event.target.value === 'ltr' ? 'ltr' : 'host')}><option value="host">Host</option><option value="ltr">LTR</option><option value="rtl">RTL</option></Select></Field>
           <Field label="Width"><Select id="dg-width" value={size} onChange={event => setSize(Number(event.target.value))}>{[320, 640, 1100].map(value => <option key={value} value={value}>{value}px</option>)}</Select></Field>

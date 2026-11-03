@@ -281,9 +281,11 @@ export function Demo({ render = standalone, resetRevision = 0 }: {
     setPresentation(value);
   };
   const trigger = <Button type="button" ref={triggerRef} data-stage-demo="trigger" disabled={resetPending || isSubmitting} appearance="primary">Open editor</Button>;
-  const surfaceOptions: Extract<StageProps, { open: boolean }> = presentation === 'popover'
-    ? { presentation, size: size === 'full' ? 'small' : size, withArrow, trigger, open, children: undefined }
-    : { presentation, size, trigger, open, children: undefined };
+  // JSX owns open and children below; keep only the presentation configuration here.
+  type SurfaceOptions<P> = P extends unknown ? Omit<P, 'open' | 'children'> : never;
+  const surfaceOptions: SurfaceOptions<Extract<StageProps, { open: boolean }>> = presentation === 'popover'
+    ? { presentation, size: size === 'full' ? 'small' : size, withArrow, trigger }
+    : { presentation, size, trigger };
 
   return <section data-stage-demo="panel"><section data-stage-demo="instance" data-stage-instance={instance} className={sx(styles.instance, flex.column, gap.medium)}>
     {render({ controls: <>
@@ -493,7 +495,7 @@ The header div within the active surface; its ref targets that div.
 
 ### Source
 
-[packages/spfx-react-toolkit/src/controls/stage/stage.tsx:423](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/stage/stage.tsx#L423)
+[packages/spfx-react-toolkit/src/controls/stage/stage.tsx:425](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/stage/stage.tsx#L425)
 
 ## Stage.Body
 
@@ -571,7 +573,7 @@ ReactElement<any, string | JSXElementConstructor<any>>
 
 ### Source (2)
 
-[packages/spfx-react-toolkit/src/controls/stage/stage.tsx:449](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/stage/stage.tsx#L449)
+[packages/spfx-react-toolkit/src/controls/stage/stage.tsx:451](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/stage/stage.tsx#L451)
 
 ## Stage.Footer
 
@@ -649,7 +651,7 @@ ReactElement<any, string | JSXElementConstructor<any>>
 
 ### Source (3)
 
-[packages/spfx-react-toolkit/src/controls/stage/stage.tsx:462](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/stage/stage.tsx#L462)
+[packages/spfx-react-toolkit/src/controls/stage/stage.tsx:464](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/stage/stage.tsx#L464)
 
 ## Stage.Header
 
@@ -727,7 +729,7 @@ ReactElement<any, string | JSXElementConstructor<any>>
 
 ### Source (4)
 
-[packages/spfx-react-toolkit/src/controls/stage/stage.tsx:436](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/stage/stage.tsx#L436)
+[packages/spfx-react-toolkit/src/controls/stage/stage.tsx:438](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/stage/stage.tsx#L438)
 
 ## StageBodyProps
 

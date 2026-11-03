@@ -130,7 +130,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
     <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
     <Field label="Web URL (empty: current web)"><Input aria-label="Web URL" value={config.webUrl} onChange={(_, data) => update({ webUrl: data.value })} /></Field>
-    <Field label="Exact list title (Field: empty means site columns)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
+    <Field label="Exact list title (required for list scope)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
     <Field label="Content type scope"><Select aria-label="Content type scope" value={config.scope} onChange={(_, data) => update({ scope: data.value === 'list' ? 'list' : 'site' })}><option value="site">Site collection</option><option value="list">List</option></Select></Field>
     <Field label="Exact content type group (empty: all)"><Input aria-label="Content type group" value={config.group} onChange={(_, data) => update({ group: data.value })} /></Field>
     <Switch label="Include hidden content types" checked={config.includeHidden} onChange={(_, data) => update({ includeHidden: data.checked })} />
@@ -282,7 +282,6 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     onOptionSelect: (_: unknown, data: PickerSelectionData<FieldPickerOption>): void => { if (current()) { setSelection(data); setError(''); } },
     onError: (failure: Error): void => { if (current()) setError(failure.message); },
   };
-  const ready = true;
   const controls = <div className={classes.controls}>
     <Field label="Presentation"><Select aria-label="Presentation" value={config.presentation} onChange={(_, data) => update({ presentation: data.value === 'tagPicker' ? 'tagPicker' : 'combobox' })}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
     <Switch label="Multiple selection" checked={config.multi} onChange={(_, data) => update({ multi: data.checked })} />
@@ -295,7 +294,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     <Field label="Exact list title (Field: empty means site columns)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
   </div>;
   const commands = <div className={classes.commands}>
-    <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>
+    <Button onClick={() => { if (current()) setStarted(true); }}>Start</Button>
     <Button onClick={() => { if (current()) setAvailable(selection?.selectedItems ?? []); }}>Use confirmed models as consumer options</Button>
     <Button onClick={() => { if (current()) setAvailable([]); }}>Empty consumer options</Button>
     <Button onClick={() => { if (current()) setSelection(undefined); }}>Clear controlled selection</Button>
@@ -305,7 +304,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
   const regions: DemoRegions = {
     controls, commands,
     status: <p role="status">{error || (active ? 'Started: use the picker below.' : 'Not started. Start explicitly to read the source.')}</p>,
-    children: <><p>An empty list means site columns; a list string is an exact title. The complete paged metadata catalog is cached, then filtered locally by a case-insensitive name prefix. There is no initial-catalog cap.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{!ready ? <p></p> : active ? <FieldPicker {...common} webUrl={target} list={config.list.trim() || undefined} /> : <p>Start is required before the operational picker mounts.</p>}</>,
+    children: <><p>An empty list means site columns; a list string is an exact title. The complete paged metadata catalog is cached, then filtered locally by a case-insensitive name prefix. There is no initial-catalog cap.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{active ? <FieldPicker {...common} webUrl={target} list={config.list.trim() || undefined} /> : <p>Start is required before the operational picker mounts.</p>}</>,
     diagnostics: <pre className={classes.diagnostics}>{JSON.stringify({ started: active, selectedOptions: selection?.selectedOptions ?? [], selectedItems: selection?.selectedItems ?? [], selectedValues: values, unresolvedOptions: selection?.unresolvedOptions ?? [], reason: selection?.reason ?? 'No action', optionValue: selection?.optionValue, optionText: selection?.optionText, roundTrip: JSON.stringify(JSON.parse(JSON.stringify(values))) === JSON.stringify(values), consumerOptions: available, error }, undefined, 2)}</pre>,
   };
   return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;
@@ -337,7 +336,7 @@ A native Fluent Field and picker; blank clearing emits an empty array.
 
 ### Source (2)
 
-[packages/spfx-react-toolkit/src/controls/pickers/field-picker.tsx:121](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/field-picker.tsx#L121)
+[packages/spfx-react-toolkit/src/controls/pickers/field-picker.tsx:120](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/field-picker.tsx#L120)
 
 ## ListItemPicker
 
@@ -443,7 +442,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
     <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
     <Field label="Web URL (empty: current web)"><Input aria-label="Web URL" value={config.webUrl} onChange={(_, data) => update({ webUrl: data.value })} /></Field>
-    <Field label="Exact list title (Field: empty means site columns)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
+    <Field label="Exact list title (required)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
     <Field label="Item display field" hint="Use a valid field such as Title or FileLeafRef. Files with an empty display value use their filename."><Input aria-label="Item display field" value={config.textField} onChange={(_, data) => update({ textField: data.value })} /></Field>
   </div>;
   const commands = <div className={classes.commands}>
@@ -585,7 +584,6 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     onOptionSelect: (_: unknown, data: PickerSelectionData<ListPickerOption>): void => { if (current()) { setSelection(data); setError(''); } },
     onError: (failure: Error): void => { if (current()) setError(failure.message); },
   };
-  const ready = true;
   const controls = <div className={classes.controls}>
     <Field label="Presentation"><Select aria-label="Presentation" value={config.presentation} onChange={(_, data) => update({ presentation: data.value === 'tagPicker' ? 'tagPicker' : 'combobox' })}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
     <Switch label="Multiple selection" checked={config.multi} onChange={(_, data) => update({ multi: data.checked })} />
@@ -598,7 +596,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     <Field label="Initial catalog limit (1–200, default 30)"><Select aria-label="Initial catalog limit" value={String(config.catalogLimit)} onChange={(_, data) => { const value = Number(data.value); if ([10, 20, 30, 50, 100, 200].includes(value)) update({ catalogLimit: value }); }}>{[10, 20, 30, 50, 100, 200].map(value => <option key={value} value={value}>{value}</option>)}</Select></Field>
   </div>;
   const commands = <div className={classes.commands}>
-    <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>
+    <Button onClick={() => { if (current()) setStarted(true); }}>Start</Button>
     <Button onClick={() => { if (current()) setAvailable(selection?.selectedItems ?? []); }}>Use confirmed models as consumer options</Button>
     <Button onClick={() => { if (current()) setAvailable([]); }}>Empty consumer options</Button>
     <Button onClick={() => { if (current()) setSelection(undefined); }}>Clear controlled selection</Button>
@@ -608,7 +606,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
   const regions: DemoRegions = {
     controls, commands,
     status: <p role="status">{error || (active ? 'Started: use the picker below.' : 'Not started. Start explicitly to read the source.')}</p>,
-    children: <><p>Opening an empty menu lazily loads the initial scoped catalog. Its available limit is independent of typed remote discovery; consumer precedence, duplicates and selected choices do not count twice. Partial catalogs retain their lookahead hint.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{!ready ? <p></p> : active ? <ListPicker {...common} webUrl={target} initialCatalogLimit={config.catalogLimit} /> : <p>Start is required before the operational picker mounts.</p>}</>,
+    children: <><p>Opening an empty menu lazily loads the initial scoped catalog. Its available limit is independent of typed remote discovery; consumer precedence, duplicates and selected choices do not count twice. Partial catalogs retain their lookahead hint.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{active ? <ListPicker {...common} webUrl={target} initialCatalogLimit={config.catalogLimit} /> : <p>Start is required before the operational picker mounts.</p>}</>,
     diagnostics: <pre className={classes.diagnostics}>{JSON.stringify({ started: active, selectedOptions: selection?.selectedOptions ?? [], selectedItems: selection?.selectedItems ?? [], selectedValues: values, unresolvedOptions: selection?.unresolvedOptions ?? [], reason: selection?.reason ?? 'No action', optionValue: selection?.optionValue, optionText: selection?.optionText, roundTrip: JSON.stringify(JSON.parse(JSON.stringify(values))) === JSON.stringify(values), consumerOptions: available, error }, undefined, 2)}</pre>,
   };
   return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;
@@ -640,7 +638,7 @@ Accessible Fluent Field and picker. No persistence or provisioning.
 
 ### Source (4)
 
-[packages/spfx-react-toolkit/src/controls/pickers/list-picker.tsx:121](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/list-picker.tsx#L121)
+[packages/spfx-react-toolkit/src/controls/pickers/list-picker.tsx:120](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/list-picker.tsx#L120)
 
 ## ContentTypePickerValue
 
@@ -5646,7 +5644,6 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     onOptionSelect: (_: unknown, data: PickerSelectionData<PrincipalPickerOption>): void => { if (current()) { setSelection(data); setError(''); } },
     onError: (failure: Error): void => { if (current()) setError(failure.message); },
   };
-  const ready = true;
   const controls = <div className={classes.controls}>
     <Field label="Presentation"><Select aria-label="Presentation" value={config.presentation} onChange={(_, data) => update({ presentation: data.value === 'tagPicker' ? 'tagPicker' : 'combobox' })}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
     <Switch label="Multiple selection" checked={config.multi} onChange={(_, data) => update({ multi: data.checked })} />
@@ -5663,7 +5660,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     <Switch label="Offer current user" checked={config.currentUser} onChange={(_, data) => update({ currentUser: data.checked })} />
   </div>;
   const commands = <div className={classes.commands}>
-    <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>
+    <Button onClick={() => { if (current()) setStarted(true); }}>Start</Button>
     <Button onClick={() => { if (current()) setAvailable(selection?.selectedItems ?? []); }}>Use confirmed models as consumer options</Button>
     <Button onClick={() => { if (current()) setAvailable([]); }}>Empty consumer options</Button>
     <Button onClick={() => { if (current()) setSelection(undefined); }}>Clear controlled selection</Button>
@@ -5673,7 +5670,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
   const regions: DemoRegions = {
     controls, commands,
     status: <p role="status">{error || (active ? 'Started: use the picker below.' : 'Not started. Start explicitly to read the source.')}</p>,
-    children: <><p>Personal and current-user suggestions start off. Graph-dependent discovery and identity resolution wait for client initialization; SharePoint-only choices remain usable after a Graph initialization failure. Only explicit confirmation or ID resolution can use opt-in ensureUser in sharePoint/both modes. Source confirmation and any ensureUser request precede validateSelection: a validator cannot prevent an already dispatched write. Reset retires this operational picker and prevents obsolete local publication; an already sent server write can still finish. Retirement does not abort, undo or serialize writes across sessions.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{!ready ? <p></p> : active ? <PrincipalPicker {...common} webUrl={target} principalTypes={principalTypes} userIdentity={userIdentity} loadPersonalSuggestions={config.personal} initialSuggestions={{ includeCurrentUser: config.currentUser }} /> : <p>Start is required before the operational picker mounts.</p>}</>,
+    children: <><p>Personal and current-user suggestions start off. Graph-dependent discovery and identity resolution wait for client initialization; SharePoint-only choices remain usable after a Graph initialization failure. Only explicit confirmation or ID resolution can use opt-in ensureUser in sharePoint/both modes. Source confirmation and any ensureUser request precede validateSelection: a validator cannot prevent an already dispatched write. Reset retires this operational picker and prevents obsolete local publication; an already sent server write can still finish. Retirement does not abort, undo or serialize writes across sessions.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{active ? <PrincipalPicker {...common} webUrl={target} principalTypes={principalTypes} userIdentity={userIdentity} loadPersonalSuggestions={config.personal} initialSuggestions={{ includeCurrentUser: config.currentUser }} /> : <p>Start is required before the operational picker mounts.</p>}</>,
     diagnostics: <pre className={classes.diagnostics}>{JSON.stringify({ started: active, selectedOptions: selection?.selectedOptions ?? [], selectedItems: selection?.selectedItems ?? [], selectedValues: values, unresolvedOptions: selection?.unresolvedOptions ?? [], reason: selection?.reason ?? 'No action', optionValue: selection?.optionValue, optionText: selection?.optionText, roundTrip: JSON.stringify(JSON.parse(JSON.stringify(values))) === JSON.stringify(values), consumerOptions: available, error }, undefined, 2)}</pre>,
   };
   return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;
@@ -5705,7 +5702,7 @@ A native Fluent picker. ensureUser only runs on accepted user actions or explici
 
 ### Source (75)
 
-[packages/spfx-react-toolkit/src/controls/pickers/principal-picker.tsx:173](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/principal-picker.tsx#L173)
+[packages/spfx-react-toolkit/src/controls/pickers/principal-picker.tsx:172](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/principal-picker.tsx#L172)
 
 ## SitePicker
 
@@ -5809,7 +5806,6 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     onOptionSelect: (_: unknown, data: PickerSelectionData<SitePickerOption>): void => { if (current()) { setSelection(data); setError(''); } },
     onError: (failure: Error): void => { if (current()) setError(failure.message); },
   };
-  const ready = true;
   const controls = <div className={classes.controls}>
     <Field label="Presentation"><Select aria-label="Presentation" value={config.presentation} onChange={(_, data) => update({ presentation: data.value === 'tagPicker' ? 'tagPicker' : 'combobox' })}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
     <Switch label="Multiple selection" checked={config.multi} onChange={(_, data) => update({ multi: data.checked })} />
@@ -5822,7 +5818,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     <Switch label="Offer associated hub" checked={config.includeHubSite} onChange={(_, data) => update({ includeHubSite: data.checked })} />
   </div>;
   const commands = <div className={classes.commands}>
-    <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>
+    <Button onClick={() => { if (current()) setStarted(true); }}>Start</Button>
     <Button onClick={() => { if (current()) setAvailable(selection?.selectedItems ?? []); }}>Use confirmed models as consumer options</Button>
     <Button onClick={() => { if (current()) setAvailable([]); }}>Empty consumer options</Button>
     <Button onClick={() => { if (current()) setSelection(undefined); }}>Clear controlled selection</Button>
@@ -5832,7 +5828,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
   const regions: DemoRegions = {
     controls, commands,
     status: <p role="status">{error || (active ? 'Started: use the picker below.' : 'Not started. Start explicitly to read the source.')}</p>,
-    children: <><p>Current collection and actually associated hub remain pinned during typed search, outside the ordinary five-item suggestion cap. There is no SitePicker webUrl prop. Search uses the real authenticated SharePoint search source.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{!ready ? <p></p> : active ? <SitePicker {...common} includeCurrentSite={config.includeCurrentSite} includeHubSite={config.includeHubSite} /> : <p>Start is required before the operational picker mounts.</p>}</>,
+    children: <><p>Current collection and actually associated hub remain pinned during typed search. The ordinary pre-search suggestion cap is five; typed remote search has its separate default page size of 50, and the native HTTP search request may fetch up to 200 rows. There is no SitePicker webUrl prop. Search uses the real authenticated SharePoint search source.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{active ? <SitePicker {...common} includeCurrentSite={config.includeCurrentSite} includeHubSite={config.includeHubSite} /> : <p>Start is required before the operational picker mounts.</p>}</>,
     diagnostics: <pre className={classes.diagnostics}>{JSON.stringify({ started: active, selectedOptions: selection?.selectedOptions ?? [], selectedItems: selection?.selectedItems ?? [], selectedValues: values, unresolvedOptions: selection?.unresolvedOptions ?? [], reason: selection?.reason ?? 'No action', optionValue: selection?.optionValue, optionText: selection?.optionText, roundTrip: JSON.stringify(JSON.parse(JSON.stringify(values))) === JSON.stringify(values), consumerOptions: available, error }, undefined, 2)}</pre>,
   };
   return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;
@@ -5864,7 +5860,7 @@ A native Fluent Field and site picker; changing display props retains its runtim
 
 ### Source (76)
 
-[packages/spfx-react-toolkit/src/controls/pickers/site-picker.tsx:133](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/site-picker.tsx#L133)
+[packages/spfx-react-toolkit/src/controls/pickers/site-picker.tsx:132](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/pickers/site-picker.tsx#L132)
 
 ## ViewPicker
 
@@ -5970,7 +5966,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
     <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
     <Field label="Web URL (empty: current web)"><Input aria-label="Web URL" value={config.webUrl} onChange={(_, data) => update({ webUrl: data.value })} /></Field>
-    <Field label="Exact list title (Field: empty means site columns)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
+    <Field label="Exact list title (required)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
   </div>;
   const commands = <div className={classes.commands}>
     <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>

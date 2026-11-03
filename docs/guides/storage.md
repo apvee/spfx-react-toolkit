@@ -695,11 +695,11 @@ import type { SPFxSiteKeyValueStoreItem } from '@apvee/spfx-react-toolkit';
 
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
 type Presenter = (regions: DemoRegions) => React.ReactElement;
-type Session = { generation: object; root: string; web: string; client: unknown; page: unknown; instance: string };
+type Session = { generation: object; root: string; web: string };
 type Action = 'get' | 'list' | 'save' | 'remove';
 type Format = 'text' | 'json' | 'bigint' | 'date';
 const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
-type Ticket = { promise?: Promise<void> };
+type Ticket = object;
 
 function present(regions: DemoRegions, render?: Presenter): React.ReactElement {
   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
@@ -731,7 +731,7 @@ function SiteSession({ session, current, write, pending, isLocked, render }: {
   const mounted = React.useRef(true);
   const confirmationRef = React.useRef<object>();
   const restoreFocus = React.useRef<{ trigger: HTMLButtonElement; current: () => boolean }>();
-  const [confirmation, setConfirmation] = React.useState<{ token: object; confirm: () => void; cancel: () => void; key: string }>();
+  const [confirmation, setConfirmation] = React.useState<{ confirm: () => void; cancel: () => void; key: string }>();
   React.useLayoutEffect(() => {
     const request = restoreFocus.current;
     if (!confirmation && request) { restoreFocus.current = undefined; if (request.current() && request.trigger.isConnected) request.trigger.focus(); }
@@ -801,7 +801,7 @@ function SiteSession({ session, current, write, pending, isLocked, render }: {
       confirmationRef.current = undefined; setConfirmation(undefined);
       return execute(() => remove(capturedKey));
     };
-    setConfirmation({ token, confirm, cancel, key: capturedKey });
+    setConfirmation({ confirm, cancel, key: capturedKey });
   };
   const shownValue = (item: SPFxSiteKeyValueStoreItem): string => typeof item.value === 'string' ? JSON.stringify(item.value) : JSON.stringify(item.value) ?? String(item.value);
   const regions: DemoRegions = {
@@ -855,14 +855,14 @@ export function Demo({ render, resetRevision = 0 }: { render?: Presenter; resetR
     if (!current() || ledger.current.size > 0) return undefined;
     const ticket: Ticket = {}; ledger.current.add(ticket); refresh(count => count + 1);
     const release = (): void => { ledger.current.delete(ticket); if (mounted.current) refresh(count => count + 1); };
-    try { const promise = operation(); ticket.promise = promise; return promise.finally(release); }
+    try { const promise = operation(); return promise.finally(release); }
     catch (error) { release(); throw error; }
   };
   const active = session?.generation === generation;
   const pending = ledger.current.size > 0;
   const activate = (): void => {
     if (!current() || ledger.current.size > 0 || active || !client || !root) return;
-    setSession({ generation, root, web, client, page, instance: info.id });
+    setSession({ generation, root, web });
   };
   // The outer activation control remains the same DOM node across child teardown.
   return <>
@@ -884,7 +884,7 @@ import type { SPFxSiteKeyValueStoreServiceItem } from '@apvee/spfx-react-toolkit
 
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
 const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
-type Ticket = { promise?: Promise<void> };
+type Ticket = object;
 export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
   const page = useSPFxPageContext();
   const { client } = useSPFxSPHttpClient();
@@ -947,7 +947,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     const release = (): void => { ledger.current.delete(ticket); if (mounted.current) refresh(count => count + 1); };
     try {
       const promise = service.save(key, true, root, 'Shared across subsites');
-      ticket.promise = promise;
+
       await promise.finally(release);
       if (owns()) { approve(undefined); setOutcome({ token, message: `Saved ${key}.` }); }
     } catch (error) { if (owns()) setOutcome({ token, failure: error instanceof Error ? error.message : String(error) }); }
@@ -1203,11 +1203,11 @@ import type { SPFxTenantKeyValueStoreItem } from '@apvee/spfx-react-toolkit';
 
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
 type Presenter = (regions: DemoRegions) => React.ReactElement;
-type Session = { generation: object; root: string; web: string; client: unknown; page: unknown; instance: string };
+type Session = { generation: object; root: string; web: string };
 type Action = 'get' | 'list' | 'save' | 'remove' | 'roundtrip';
 type Format = 'text' | 'json' | 'bigint' | 'date';
 const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
-type Ticket = { promise?: Promise<void> };
+type Ticket = object;
 
 function present(regions: DemoRegions, render?: Presenter): React.ReactElement {
   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
@@ -1241,7 +1241,7 @@ function TenantSession({ session, current, write, pending, isLocked, render }: {
   const mounted = React.useRef(true);
   const confirmationRef = React.useRef<object>();
   const restoreFocus = React.useRef<{ trigger: HTMLButtonElement; current: () => boolean }>();
-  const [confirmation, setConfirmation] = React.useState<{ token: object; confirm: () => void; cancel: () => void; key: string }>();
+  const [confirmation, setConfirmation] = React.useState<{ confirm: () => void; cancel: () => void; key: string }>();
   React.useLayoutEffect(() => {
     const request = restoreFocus.current;
     if (!confirmation && request) { restoreFocus.current = undefined; if (request.current() && request.trigger.isConnected) request.trigger.focus(); }
@@ -1316,7 +1316,7 @@ function TenantSession({ session, current, write, pending, isLocked, render }: {
       confirmationRef.current = undefined; setConfirmation(undefined);
       return execute(() => remove(capturedKey));
     };
-    setConfirmation({ token, confirm, cancel, key: capturedKey });
+    setConfirmation({ confirm, cancel, key: capturedKey });
   };
   const shownValue = (item: SPFxTenantKeyValueStoreItem): string => typeof item.value === 'string' ? JSON.stringify(item.value) : JSON.stringify(item.value) ?? String(item.value);
   const regions: DemoRegions = {
@@ -1370,14 +1370,14 @@ export function Demo({ render, resetRevision = 0 }: { render?: Presenter; resetR
     if (!current() || ledger.current.size > 0) return undefined;
     const ticket: Ticket = {}; ledger.current.add(ticket); refresh(count => count + 1);
     const release = (): void => { ledger.current.delete(ticket); if (mounted.current) refresh(count => count + 1); };
-    try { const promise = operation(); ticket.promise = promise; return promise.finally(release); }
+    try { const promise = operation(); return promise.finally(release); }
     catch (error) { release(); throw error; }
   };
   const active = session?.generation === generation;
   const pending = ledger.current.size > 0;
   const activate = (): void => {
     if (!current() || ledger.current.size > 0 || active || !client || !root) return;
-    setSession({ generation, root, web, client, page, instance: info.id });
+    setSession({ generation, root, web });
   };
   // The outer activation control remains the same DOM node across child teardown.
   return <>
@@ -1398,7 +1398,7 @@ import { createSPFxTenantKeyValueStoreService, useSPFxInstanceInfo, useSPFxPageC
 import type { SPFxTenantKeyValueStoreServiceItem } from '@apvee/spfx-react-toolkit';
 
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type Ticket = { promise?: Promise<void> };
+type Ticket = object;
 const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
 export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
   const page = useSPFxPageContext();
@@ -1447,7 +1447,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     try {
       // Keep the original WHOLE public Save promise, including setup/snapshot/internal RPCs.
       let promise: Promise<void>;
-      try { promise = service.save(key, '123', url); ticket.promise = promise; }
+      try { promise = service.save(key, '123', url); }
       catch (error) { release(); throw error; }
       await promise.finally(release);
       if (!current()) return;
@@ -1494,7 +1494,7 @@ import type { SPFxConfigurationStoreItem, SPFxConfigurationStoreMode, SPFxConfig
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
 type Action = 'get' | 'list' | 'save' | 'remove';
 type Format = 'text' | 'json' | 'bigint' | 'date';
-type Ticket = { promise?: Promise<void> };
+type Ticket = object;
 type Outcome = { token: object; steps: string[]; message?: string; failure?: string; item?: SPFxConfigurationStoreItem; items?: SPFxConfigurationStoreItem[] };
 const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
 export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
@@ -1579,7 +1579,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
       const ticket: Ticket = {}; ledger.current.add(ticket); refresh(count => count + 1);
       const release = (): void => { ledger.current.delete(ticket); if (mounted.current) refresh(count => count + 1); };
       let promise: Promise<void>;
-      try { promise = dispatch(); ticket.promise = promise; } catch (error) { release(); throw error; }
+      try { promise = dispatch(); } catch (error) { release(); throw error; }
       // The ORIGINAL public promise owns every internal RPC, including lazy discovery and setup.
       await promise.finally(release); return owns();
     };
@@ -1651,7 +1651,7 @@ import { Button, Checkbox, Dialog, DialogActions, DialogBody, DialogContent, Dia
 import { createSPFxConfigurationStoreService, useSPFxInstanceInfo, useSPFxPageContext, useSPFxSPHttpClient } from '@apvee/spfx-react-toolkit';
 import type { SPFxConfigurationStoreItem } from '@apvee/spfx-react-toolkit';
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type Ticket = { promise?: Promise<void> };
+type Ticket = object;
 type Outcome = { token: object; steps: string[]; message?: string; failure?: string; item?: SPFxConfigurationStoreItem; items?: SPFxConfigurationStoreItem[] };
 const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
 export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
@@ -1707,7 +1707,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
       const ticket: Ticket = {}; ledger.current.add(ticket); refresh(count => count + 1);
       const release = (): void => { ledger.current.delete(ticket); if (mounted.current) refresh(count => count + 1); };
       let promise: Promise<void>;
-      try { promise = dispatch(); ticket.promise = promise; } catch (error) { release(); throw error; }
+      try { promise = dispatch(); } catch (error) { release(); throw error; }
       // Keep the ORIGINAL whole public Promise, including discovery/probes/setup/recovery.
       await promise.finally(release); return owns();
     };

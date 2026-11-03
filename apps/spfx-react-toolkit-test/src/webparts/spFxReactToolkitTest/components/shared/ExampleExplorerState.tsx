@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { ExecutableGroup } from '../generated/jsdoc-examples/catalogue';
 
-export interface ExampleExplorerState {
+interface ExampleExplorerState {
   readonly selectedFeatureKey?: string;
   readonly selectedScenarioByFeature: Readonly<Record<string, string>>;
   readonly expandedGroupKeys: readonly string[];

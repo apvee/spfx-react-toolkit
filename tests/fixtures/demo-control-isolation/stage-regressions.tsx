@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { DemoCard, DemoAccordionPanel, useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared';
+import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
+import { DemoAccordionPanel } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoAccordionPanel';
+import { useDemoStyles } from '../demo-presentation-styles';
 import {
   Accordion, AccordionItem, AccordionHeader, Checkbox, Field, Select, Button, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger,
   makeStyles,
@@ -122,7 +124,7 @@ export const StageExample: React.FC<{ instance: string }> = ({ instance }) => {
     : { presentation, size, trigger, open, children: undefined };
 
   return <section data-stage-demo="instance" data-stage-instance={instance} className={sx(styles.instance, flex.column, gap.medium)}>
-    <DemoCard diagnosticsLabel="Advanced diagnostics" title={`Stage ${instance}`} iconName="Edit" description="Configure the next session while closed; all modes share the same form." contentPlacement="configuration" controls={<div className={demo.controls}>
+    <DemoCard diagnosticsLabel="Advanced diagnostics" title={`Stage ${instance}`} iconName="Info" description="Configure the next session while closed; all modes share the same form." contentPlacement="configuration" controls={<div className={demo.controls}>
       <Field label="Presentation"><Select data-stage-demo="mode" value={presentation} disabled={open} onChange={event => changePresentation(event.target.value)}>
         <option value="dialog">Dialog</option><option value="drawer">Drawer</option><option value="popover">Popover</option>
       </Select></Field>

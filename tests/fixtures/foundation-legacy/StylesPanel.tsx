@@ -4,7 +4,7 @@ import { Button, Checkbox, Field, Input, Select, makeStyles } from '@fluentui/re
 import { FluentProvider } from '@fluentui/react-provider';
 import { useSx, useSPFxFluent9ThemeInfo, SxBaseDescriptor, width, height, minWidth, maxWidth, padding, paddingInlineStart, gap, grid, flex, container, foreground, background, presets, typography, borderWidth, borderStyle, borderColor, overflow, scrollbar, responsive, viewport, hover, active, focusVisible, } from '@apvee/spfx-react-toolkit';
 import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
-import { useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/demoStyles';
+import { useDemoStyles } from '../demo-presentation-styles';
 import { stylesCatalog } from './styles-catalog';
 // The peer Button animates colors. Disable that transition in this recipe probe
 // so hover/active/focus can be compared immediately without an interpolated color.
@@ -86,7 +86,7 @@ const StylesExamples: React.FC<{
     </div>
   </div>);
   return <div className={sx(demoStyles.root, typography.body1)}>
-    <DemoCard title="Layout and roles" iconName="Color" controls={<>
+    <DemoCard title="Layout and roles" iconName="Info" controls={<>
       <Choice id="preset" label="Preset" value={preset} choices={keys(presets)} onChange={value => {
         if (value in presets)
           setPreset(value as keyof typeof presets);
@@ -124,7 +124,7 @@ const StylesExamples: React.FC<{
       </div>
     </DemoCard>
 
-    <DemoCard title="Every catalog selection" iconName="Color" controls={<>
+    <DemoCard title="Every catalog selection" iconName="Info" controls={<>
       <>
         <Choice id="catalog-family" label="Catalog namespace" value={family.name} choices={stylesCatalog.map(item => item.name)} onChange={value => {
           const index = stylesCatalog.findIndex(item => item.name === value);
@@ -154,7 +154,7 @@ const StylesExamples: React.FC<{
       </div>
     </DemoCard>
 
-    <DemoCard title="Interaction and direction" iconName="Color" controls={<>
+    <DemoCard title="Interaction and direction" iconName="Info" controls={<>
       <>
         <Checkbox input={{ as: 'input', ...{ 'data-sx-demo': 'disabled' } }} label="Disabled action" checked={disabled} onChange={(_, data) => setDisabled(data.checked === true)} />
         <Checkbox input={{ as: 'input', ...{ 'data-sx-demo': 'selected' } }} label="Selected action" checked={selected} onChange={(_, data) => setSelected(data.checked === true)} />
@@ -165,7 +165,7 @@ const StylesExamples: React.FC<{
       <div data-sx-demo="direction-preview" className={sx(frameClass, paddingInlineStart.px(32))}>Logical inline-start padding follows the active provider direction.</div>
     </DemoCard>
 
-    <DemoCard title="Independent container and viewport queries" iconName="Color" controls={<>
+    <DemoCard title="Independent container and viewport queries" iconName="Info" controls={<>
       <>
         <Choice id="responsive-threshold" label="Container threshold" value={threshold} choices={['small', 'medium', 'large']} onChange={value => {
           if (value === 'small' || value === 'medium' || value === 'large')
@@ -186,7 +186,7 @@ const StylesExamples: React.FC<{
       </div>
     </DemoCard>
 
-    <DemoCard title="The single Fluent scrollbar recipe" iconName="Color" description="Explicit overflow and dimensions demonstrate the Fluent scrollbar recipe.">
+    <DemoCard title="The single Fluent scrollbar recipe" iconName="Info" description="Explicit overflow and dimensions demonstrate the Fluent scrollbar recipe.">
       <p>Both axes use 6px rounded scrollbars in Edge/Chrome. Hover or drag either thumb to see its Fluent feedback, with native thin fallback elsewhere. Overflow and dimensions are explicit; forced colors retain system colors.</p>
       <div data-sx-demo="scroll-preview" tabIndex={0} aria-label="Scrollable recipe region" className={sx(stateStyles.scroll, height.px(140), width.full, maxWidth.px(320), overflow.auto, scrollbar.fluent, presets.alternative, padding.small)}>
         <div className={sx(width.px(600))}>
@@ -203,7 +203,7 @@ const StylesPanel: React.FC = () => {
   const hostThemeName = host.teamsTheme?.toLowerCase();
   const highContrast = hostThemeName === 'contrast' || hostThemeName === 'highcontrast';
   return <>
-    <DemoCard title="Styles" iconName="Color" description="Compose descriptors using the host theme and renderer." contentPlacement="configuration" controls={<>
+    <DemoCard title="Styles" iconName="Info" description="Compose descriptors using the host theme and renderer." contentPlacement="configuration" controls={<>
       <Choice id="direction" label="Provider direction" value={dir} choices={['host', 'ltr', 'rtl']} onChange={value => {
         if (value === 'host' || value === 'ltr' || value === 'rtl')
           setDir(value);

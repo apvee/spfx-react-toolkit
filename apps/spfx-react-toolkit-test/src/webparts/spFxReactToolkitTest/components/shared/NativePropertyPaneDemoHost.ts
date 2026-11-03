@@ -3,20 +3,20 @@ import type { IPropertyPaneConfiguration, IPropertyPaneCustomFieldProps, IProper
 import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
 /** Private source/host protocol. The initialized WebPart owns the instance and real lifecycle. */
-export interface NativePropertyPaneEnvironment<P extends object> {
+interface NativePropertyPaneEnvironment<P extends object> {
   readonly instance: BaseClientSideWebPart<P>;
   readonly readProperties: () => P;
   readonly refresh: () => void;
 }
-export interface NativePropertyPaneController {
+interface NativePropertyPaneController {
   readonly getConfiguration: () => IPropertyPaneConfiguration;
   readonly fieldChanged: (propertyPath: string, oldValue: unknown, newValue: unknown) => void;
   readonly configurationComplete: () => void;
   readonly changesApplied: () => void;
   readonly dispose: () => void;
 }
-export interface NativePropertyPanePreparation { readonly release: () => void; }
-export type NativePropertyPanePreparationResult =
+interface NativePropertyPanePreparation { readonly release: () => void; }
+type NativePropertyPanePreparationResult =
   | { readonly status: 'prepared'; readonly lease: NativePropertyPanePreparation }
   | { readonly status: 'blocked'; readonly reason: string };
 export interface DemoPropertyPanePort<P extends object> {
@@ -24,10 +24,8 @@ export interface DemoPropertyPanePort<P extends object> {
 }
 interface NativeHostEnvironment<P extends object> extends NativePropertyPaneEnvironment<P> { readonly isOpen: () => boolean; }
 interface Generation {
-  readonly token: object;
   controller?: NativePropertyPaneController;
   configuration?: IPropertyPaneConfiguration;
-  environment?: object;
   readonly fields: Set<FieldCell>;
   withdrawn: boolean;
   committed: boolean;
@@ -45,7 +43,6 @@ interface FieldDispatch {
 }
 interface MountedField { readonly cell: FieldCell; readonly context: unknown; }
 interface Candidate<P extends object> {
-  readonly token: object;
   create?: (host: NativePropertyPaneEnvironment<P>) => NativePropertyPaneController;
   generation?: Generation;
 }
@@ -107,7 +104,7 @@ export class NativePropertyPaneDemoHost<P extends object> {
     if (this.environment.isOpen()) return { status: 'blocked', reason: 'Close the actual native property pane before preparing.' };
     if (this.mounted.size) return { status: 'blocked', reason: 'Native fields still own resources; wait for actual native disposal.' };
     if (this.candidate) this.candidate.create = undefined;
-    const candidate: Candidate<P> = { token: {}, create };
+    const candidate: Candidate<P> = { create };
     this.candidate = candidate;
     return { status: 'prepared', lease: { release: () => {
       if (this.candidate !== candidate || candidate.generation) return;
@@ -131,7 +128,7 @@ export class NativePropertyPaneDemoHost<P extends object> {
     // committed warm view can coexist with one successor, but not two. The pinned
     // nonreentrant successful DTO/install route establishes this before user input.
     if (this.produced && this.nativeView && this.produced !== this.nativeView) return fallback();
-    const generation: Generation = { token: candidate.token, fields: new Set(), withdrawn: false, committed: false };
+    const generation: Generation = { fields: new Set(), withdrawn: false, committed: false };
     const environment = this.environment;
     const sourceEnvironment: NativePropertyPaneEnvironment<P> = {
       instance: environment.instance,
@@ -140,7 +137,6 @@ export class NativePropertyPaneDemoHost<P extends object> {
         if (!this.disposed && this.dispatching === generation && this.nativeView === generation && environment.isOpen()) environment.refresh();
       }
     };
-    generation.environment = sourceEnvironment;
     let configuration: IPropertyPaneConfiguration;
     try {
       generation.controller = candidate.create(sourceEnvironment);
@@ -247,7 +243,6 @@ export class NativePropertyPaneDemoHost<P extends object> {
     try { owner.controller.fieldChanged(propertyPath, oldValue, newValue); }
     finally { this.dispatching = undefined; }
   }
-  public configurationStart(): void { /* Delayed/tokenless Start grants no ownership or refresh rights. */ }
   public configurationComplete(): void {
     if (this.disposed) return;
     this.nativeView?.controller?.configurationComplete();
@@ -260,7 +255,6 @@ export class NativePropertyPaneDemoHost<P extends object> {
     const controller = generation.controller;
     generation.controller = undefined;
     generation.configuration = undefined;
-    generation.environment = undefined;
     this.witnesses.delete(generation);
     for (const cell of generation.fields) clearField(cell);
     generation.fields.clear();

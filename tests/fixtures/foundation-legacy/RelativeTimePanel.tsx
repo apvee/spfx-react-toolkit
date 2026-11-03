@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Badge, FluentProvider, Checkbox, Select, Button, Field, Input } from '@fluentui/react-components';
 import { RelativeTime, RelativeTimeProps, FormattedText, useSx, background, minWidth } from '@apvee/spfx-react-toolkit';
 import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
-import { useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/demoStyles';
+import { useDemoStyles } from '../demo-presentation-styles';
 
 const formats: readonly NonNullable<RelativeTimeProps['format']>[] = ['long', 'short', 'narrow'];
 const modes = ['fixed', 'live', 'frozen'] as const;
@@ -27,7 +27,7 @@ const RelativeTimeExamples: React.FC<{ directionControl: React.ReactNode }> = ({
     dateTime: date, locale, format, autoUpdate: mode !== 'frozen', showTooltip,
     timeZone: timeZone || undefined, fallback, referenceTime: mode === 'fixed' ? reference : undefined,
   };
-  return <DemoCard title="RelativeTime" iconName="Clock" description="Generic instant formatting; locale and time zone are chosen explicitly here."
+  return <DemoCard title="RelativeTime" iconName="Info" description="Generic instant formatting; locale and time zone are chosen explicitly here."
     controls={<div className={demoStyles.controls}>
       {directionControl}
       <Field label="Event ISO instant"><Input input={{ as: 'input', ...{ 'data-relative-time-demo': 'dateTime' } }} value={date} onChange={(_event, data) => setDate(data.value)} /></Field>

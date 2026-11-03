@@ -25,7 +25,7 @@
     "verify:public-docs": "node scripts/verify-public-docs.cjs",
     "verify:api": "node scripts/verify-api.cjs",
     "verify:package": "node scripts/verify-package.cjs",
-    "verify": "npm test && npm run typecheck && npm run lint && npm run verify:examples && npm run verify:runtime-store && npm run verify:public-docs && npm run verify:api && npm run verify:import-graph",
+    "verify": "npm test && npm run typecheck && npm run lint && npm run verify:examples && npm run verify:demo-reachability && npm run verify:runtime-store && npm run verify:public-docs && npm run verify:api && npm run verify:import-graph",
     "pack:library": "npm run build:library && node scripts/pack-library.cjs",
     "prepublishOnly": "npm run clean && npm run build && npm run verify",
     "verify:import-graph": "node scripts/audit-import-graph.cjs .docs/maintenance/evidence/tree-shaking/import-graph.json",
@@ -37,7 +37,8 @@
     "generated:sync": "node scripts/generated.cjs",
     "generated:check": "node scripts/generated.cjs --check",
     "examples:generate": "node scripts/executable-examples.cjs",
-    "examples:check": "node scripts/executable-examples.cjs --check"
+    "examples:check": "node scripts/executable-examples.cjs --check",
+    "verify:demo-reachability": "node scripts/verify-demo-reachability.cjs"
   },
   "devDependencies": {
     "typescript": "5.3.3",

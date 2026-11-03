@@ -14,7 +14,7 @@ import { ApplicationCustomizerExampleHost } from '../../webparts/spFxReactToolki
 
 const LOG_SOURCE: string = 'SpFxReactToolkitTestApplicationCustomizer';
 
-export interface ISpFxReactToolkitTestApplicationCustomizerProperties {
+interface ISpFxReactToolkitTestApplicationCustomizerProperties {
   testMessage: string;
 }
 

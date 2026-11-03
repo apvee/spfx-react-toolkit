@@ -464,4 +464,4 @@ export type ExpectedPort = NativePort<Source>;
       .sort((a, b) => compare(a.file, b.file) || a.line - b.line || compare(a.code, b.code) || compare(a.message, b.message) || compare(a.symbol || '', b.symbol || '')) };
 }
 
-module.exports = { collectExecutableExamples };
+module.exports = { collectExecutableExamples, readMetadata };

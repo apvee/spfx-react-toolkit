@@ -68,7 +68,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
     <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
     <Field label="Web URL (empty: current web)"><Input aria-label="Web URL" value={config.webUrl} onChange={(_, data) => update({ webUrl: data.value })} /></Field>
-    <Field label="Exact list title (Field: empty means site columns)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
+    <Field label="Exact list title (required)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
     <Field label="Item display field" hint="Use a valid field such as Title or FileLeafRef. Files with an empty display value use their filename."><Input aria-label="Item display field" value={config.textField} onChange={(_, data) => update({ textField: data.value })} /></Field>
   </div>;
   const commands = <div className={classes.commands}>

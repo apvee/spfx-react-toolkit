@@ -68,7 +68,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
     <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
     <Field label="Web URL (empty: current web)"><Input aria-label="Web URL" value={config.webUrl} onChange={(_, data) => update({ webUrl: data.value })} /></Field>
-    <Field label="Exact list title (Field: empty means site columns)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
+    <Field label="Exact list title (required)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
   </div>;
   const commands = <div className={classes.commands}>
     <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>

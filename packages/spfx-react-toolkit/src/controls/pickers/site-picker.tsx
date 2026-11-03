@@ -99,7 +99,6 @@ import { PickerRenderer } from './picker-renderer.internal';
  *     onOptionSelect: (_: unknown, data: PickerSelectionData<SitePickerOption>): void => { if (current()) { setSelection(data); setError(''); } },
  *     onError: (failure: Error): void => { if (current()) setError(failure.message); },
  *   };
- *   const ready = true;
  *   const controls = <div className={classes.controls}>
  *     <Field label="Presentation"><Select aria-label="Presentation" value={config.presentation} onChange={(_, data) => update({ presentation: data.value === 'tagPicker' ? 'tagPicker' : 'combobox' })}><option value="combobox">Dropdown</option><option value="tagPicker">TagPicker</option></Select></Field>
  *     <Switch label="Multiple selection" checked={config.multi} onChange={(_, data) => update({ multi: data.checked })} />
@@ -112,7 +111,7 @@ import { PickerRenderer } from './picker-renderer.internal';
  *     <Switch label="Offer associated hub" checked={config.includeHubSite} onChange={(_, data) => update({ includeHubSite: data.checked })} />
  *   </div>;
  *   const commands = <div className={classes.commands}>
- *     <Button disabled={!ready} onClick={() => { if (current()) setStarted(true); }}>Start</Button>
+ *     <Button onClick={() => { if (current()) setStarted(true); }}>Start</Button>
  *     <Button onClick={() => { if (current()) setAvailable(selection?.selectedItems ?? []); }}>Use confirmed models as consumer options</Button>
  *     <Button onClick={() => { if (current()) setAvailable([]); }}>Empty consumer options</Button>
  *     <Button onClick={() => { if (current()) setSelection(undefined); }}>Clear controlled selection</Button>
@@ -122,7 +121,7 @@ import { PickerRenderer } from './picker-renderer.internal';
  *   const regions: DemoRegions = {
  *     controls, commands,
  *     status: <p role="status">{error || (active ? 'Started: use the picker below.' : 'Not started. Start explicitly to read the source.')}</p>,
- *     children: <><p>Current collection and actually associated hub remain pinned during typed search, outside the ordinary five-item suggestion cap. There is no SitePicker webUrl prop. Search uses the real authenticated SharePoint search source.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{!ready ? <p></p> : active ? <SitePicker {...common} includeCurrentSite={config.includeCurrentSite} includeHubSite={config.includeHubSite} /> : <p>Start is required before the operational picker mounts.</p>}</>,
+ *     children: <><p>Current collection and actually associated hub remain pinned during typed search. The ordinary pre-search suggestion cap is five; typed remote search has its separate default page size of 50, and the native HTTP search request may fetch up to 200 rows. There is no SitePicker webUrl prop. Search uses the real authenticated SharePoint search source.</p><p>Sample defaults explicitly select Dropdown, single selection, search enabled and colorful avatars off. Copy confirmed models, clear selection, then reopen to compare independent consumer choices. Empty consumer options retains selection. No history is saved. Presentation, labels, strings and equivalent models retain the live picker. Popup search keeps the selected label in the trigger. Clearing query only clears search; selection clear removes its value. Multiple selected rows and tags can be removed without searching. Escape returns focus; Tab leaves without accepting a highlighted row.</p>{active ? <SitePicker {...common} includeCurrentSite={config.includeCurrentSite} includeHubSite={config.includeHubSite} /> : <p>Start is required before the operational picker mounts.</p>}</>,
  *     diagnostics: <pre className={classes.diagnostics}>{JSON.stringify({ started: active, selectedOptions: selection?.selectedOptions ?? [], selectedItems: selection?.selectedItems ?? [], selectedValues: values, unresolvedOptions: selection?.unresolvedOptions ?? [], reason: selection?.reason ?? 'No action', optionValue: selection?.optionValue, optionText: selection?.optionText, roundTrip: JSON.stringify(JSON.parse(JSON.stringify(values))) === JSON.stringify(values), consumerOptions: available, error }, undefined, 2)}</pre>,
  *   };
  *   return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;

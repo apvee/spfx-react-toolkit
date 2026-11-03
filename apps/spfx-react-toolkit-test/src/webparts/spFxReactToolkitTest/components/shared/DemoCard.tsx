@@ -4,7 +4,7 @@ import { DemoAccordionPanel } from './DemoAccordionPanel';
 import { DemoIcon } from './DemoIcon';
 import { useDemoStyles } from './demoStyles';
 
-export interface DemoCardProps {
+interface DemoCardProps {
   readonly title: string;
   readonly iconName: string;
   readonly children?: React.ReactNode;

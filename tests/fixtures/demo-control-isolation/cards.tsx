@@ -9,5 +9,5 @@ export const CardsIsolationFixture: React.FC = () => {
   const scenario = new URLSearchParams(window.location.search).get('cards-scenario');
   const Demo = scenario === 'content' ? ContentDemo : scenario === 'retention' ? RetentionDemo : PreviewDemo;
   const title = scenario === 'content' ? 'Configure content slots and native card interaction' : scenario === 'retention' ? 'Retain caller data when switching card types' : 'Inspect preview media and image recovery';
-  return <><section data-cards-demo="panel"><Demo render={regions => <DemoCard title={title} iconName="Page" {...regions} />} /></section><CardsLegacyIsolationFixture /></>;
+  return <><section data-cards-demo="panel"><Demo render={regions => <DemoCard title={title} iconName="Info" {...regions} />} /></section><CardsLegacyIsolationFixture /></>;
 };

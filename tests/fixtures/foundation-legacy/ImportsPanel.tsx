@@ -1,5 +1,5 @@
 /** Regression snapshot captured before single-subject consolidation; not product UI. */
-import { useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/demoStyles';
+import { useDemoStyles } from '../demo-presentation-styles';
 import { Button } from '@fluentui/react-components';
 import * as React from 'react';
 import { FluentProvider } from '@fluentui/react-provider';
@@ -48,7 +48,7 @@ const Probe: React.FC<ProbeProps> = ({ scope, title, state, callback, className 
       original.current = callback;
   }, [callback]);
   return <div data-imports-demo={scope}>
-    <DemoCard title={title} iconName="Code" description="Increment the counter, invoke its captured callback, and compose descriptors from mixed imports." contentPlacement="configuration" commands={<>
+    <DemoCard title={title} iconName="Info" description="Increment the counter, invoke its captured callback, and compose descriptors from mixed imports." contentPlacement="configuration" commands={<>
       <div className={demoStyles.actions}>
         <Button onClick={state.increment}>{"Increment counter"}</Button>
         <Button onClick={() => {
@@ -96,7 +96,7 @@ const ImportsPanel: React.FC = () => {
   const [rtl, setRtl] = React.useState(false);
   const directionSx = rootSx({ dir: rtl ? 'rtl' : undefined });
   return <div className={demoStyles.root}>
-    <DemoCard title="Import paths" iconName="Code" description="Compare equivalent root, domain, and legacy imports. Each counter is independent." contentPlacement="configuration" commands={<Button data-imports-demo="direction" onClick={() => setRtl(value => !value)}>{rtl ? 'Use host direction' : 'Override direction to RTL'}</Button>} />
+    <DemoCard title="Import paths" iconName="Info" description="Compare equivalent root, domain, and legacy imports. Each counter is independent." contentPlacement="configuration" commands={<Button data-imports-demo="direction" onClick={() => setRtl(value => !value)}>{rtl ? 'Use host direction' : 'Override direction to RTL'}</Button>} />
     <FluentProvider data-imports-demo="provider" dir={rtl ? 'rtl' : undefined} className={directionSx(background.transparent, minWidth.zero)}>
       <div className={demoStyles.root}>
       <RootProbe />

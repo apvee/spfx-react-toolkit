@@ -1905,13 +1905,13 @@ import * as React from 'react';
 import { flushSync } from 'react-dom';
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, Field, Input } from '@fluentui/react-components';
 import { useSPFxPnPContext, useSPFxPnPList, useSx, flex, gap } from '@apvee/spfx-react-toolkit';
-// SharePoint may omit Title or return legacy null; local text drafts remain strings.
-type Item = { Id: number; Title?: string | null };
 type TextDraft = { session: object; value: string };
 interface DemoRegions { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; children?: React.ReactNode; diagnostics?: React.ReactNode; }
 export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
   const context = useSPFxPnPContext();
   const [title, setTitle] = React.useState('');
+  // SharePoint may omit Title or return legacy null; local text drafts remain strings.
+  type Item = { Id: number; Title?: string | null };
   const list = useSPFxPnPList<Item>(title, { pageSize: 10 }, context);
   const sx = useSx();
   const layout = sx(flex.column, gap.small);
@@ -2017,11 +2017,22 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
   };
   const create = (): Promise<void> => {
     if (!newTitle.trim() || newDraft.current.session !== newSession || newDraft.current.value !== newTitle) return Promise.resolve();
-    return write(() => list.create({ Title: newTitle }), id => { drafts.current++; newDraft.current = { session: {}, value: '' }; setNewDraftState(newDraft.current); setNotice({ token, message: `Created item #${String(id)}.` }); });
+    return write(() => list.create({ Title: newTitle }), id => {
+      drafts.current++;
+      newDraft.current = { session: {}, value: '' };
+      setNewDraftState(newDraft.current);
+      setNotice({ token, message: `Created item #${String(id)}.` });
+    });
   };
   const save = (id: number): Promise<void> => {
     if (!editTitle.trim() || editDraft.current.session !== editSession || editDraft.current.value !== editTitle) return Promise.resolve();
-    return write(() => list.update(id, { Title: editTitle }), () => { drafts.current++; editDraft.current = { session: {}, value: '' }; setEditing(undefined); setEditDraftState(editDraft.current); setNotice({ token, message: `Updated item #${id}.` }); });
+    return write(() => list.update(id, { Title: editTitle }), () => {
+      drafts.current++;
+      editDraft.current = { session: {}, value: '' };
+      setEditing(undefined);
+      setEditDraftState(editDraft.current);
+      setNotice({ token, message: `Updated item #${id}.` });
+    });
   };
   const cancelConsent = (): void => {
     const request = consent.current;
@@ -2073,10 +2084,24 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
             editDraft.current = { session: editSession, value: data.value }; drafts.current++; setEditDraftState(editDraft.current);
           }} />
           <Button disabled={writing || localBusy || !editTitle.trim()} onClick={() => save(item.Id)}>Save</Button>
-          <Button disabled={writing || localBusy} onClick={() => { if (current() && !busy() && drafts.current === draft) { drafts.current++; editDraft.current = { session: {}, value: '' }; setEditing(undefined); setEditDraftState(editDraft.current); } }}>Cancel</Button></>
+          <Button disabled={writing || localBusy} onClick={() => { if (current() && !busy() && drafts.current === draft) {
+            drafts.current++;
+            editDraft.current = { session: {}, value: '' };
+            setEditing(undefined);
+            setEditDraftState(editDraft.current);
+          } }}>Cancel</Button></>
           : <><span>#{item.Id} - {item.Title || '(untitled)'}</span>
-            <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={() => { if (current() && !busy() && drafts.current === draft) { drafts.current++; editDraft.current = { session: {}, value: item.Title ?? '' }; setEditing(item.Id); setEditDraftState(editDraft.current); } }}>Edit</Button>
-            <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={event => { if (current() && !busy() && drafts.current === draft) { const request = { token, id: item.Id, trigger: event.currentTarget, remove: list.remove }; consent.current = request; setApproval(request); } }}>Delete</Button></>}
+            <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={() => { if (current() && !busy() && drafts.current === draft) {
+              drafts.current++;
+              editDraft.current = { session: {}, value: item.Title ?? '' };
+              setEditing(item.Id);
+              setEditDraftState(editDraft.current);
+            } }}>Edit</Button>
+            <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={event => { if (current() && !busy() && drafts.current === draft) {
+              const request = { token, id: item.Id, trigger: event.currentTarget, remove: list.remove };
+              consent.current = request;
+              setApproval(request);
+            } }}>Delete</Button></>}
       </div>)}{list.hasMore && <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={() => read(true)}>Load More</Button>}</div>}
       {approval?.token === token && <Dialog open onOpenChange={(_, data) => { if (!data.open) cancelConsent(); }}>
         <DialogSurface><DialogBody><DialogTitle>Delete this item?</DialogTitle><DialogContent>Delete item #{approval?.id}? This action cannot be undone.</DialogContent>
@@ -2219,7 +2244,7 @@ Contract: see [SPFxPnPListInfo.updateBatch](pnpjs.md#spfxpnplistinfo).
 
 ### Source (31)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts:598](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#L598)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts:623](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#L623)
 
 ## useSPFxPnPListById
 
@@ -3746,7 +3771,7 @@ import { useSPFxPnPContext, useSPFxPnPSearch, SearchVerticals } from '@apvee/spf
 
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
 type Item = { Title?: string; Path?: string; Author?: string; LastModifiedTime?: string };
-type Outcome = { token: object; request: number; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
+type Outcome = { token: object; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
 const choices = { All: SearchVerticals.All, Documents: SearchVerticals.Documents, Pages: SearchVerticals.Pages, People: SearchVerticals.People, Videos: SearchVerticals.Videos } as const;
 const useStyles = makeStyles({ controls: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, results: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, maxWidth: '100%', gap: '12px', overflowWrap: 'anywhere', '& > article': { minWidth: 0, maxWidth: '100%' } } });
 
@@ -3800,7 +3825,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     const owns = (): boolean => current() && sequence.current === request;
     dispatch.current = { token, request, version };
     session.page++;
-    setOutcome({ token, request, phase: 'pending' });
+    setOutcome({ token, phase: 'pending' });
     if (!append) setPublished(undefined);
     try {
       if (append) await info.loadMore();
@@ -3811,7 +3836,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
       });
       if (owns()) {
         setPublished({ token, version });
-        setOutcome({ token, request, phase: 'success' });
+        setOutcome({ token, phase: 'success' });
       }
     } catch (error) {
       if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
@@ -4257,7 +4282,7 @@ import { useSPFxPnPContext, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
 
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
 type Item = { Title?: string; Path?: string; FileType?: string };
-type Outcome = { token: object; request: number; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
+type Outcome = { token: object; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
 const useStyles = makeStyles({ results: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, maxWidth: '100%', gap: '12px', overflowWrap: 'anywhere', '& > article': { minWidth: 0, maxWidth: '100%' } } });
 
 export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
@@ -4306,13 +4331,13 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     const request = ++sequence.current;
     const owns = (): boolean => current() && sequence.current === request;
     dispatch.current = { token, request, version };
-    setOutcome({ token, request, phase: 'pending' });
+    setOutcome({ token, phase: 'pending' });
     setPublished(undefined);
     try {
       await info.search(query);
       if (owns()) {
         setPublished({ token, version });
-        setOutcome({ token, request, phase: 'success' });
+        setOutcome({ token, phase: 'success' });
       }
     } catch (error) {
       if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
@@ -4359,7 +4384,7 @@ import { useSPFxPnPContext, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
 
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
 type Item = { Title?: string; Path?: string; FileType?: string; Author?: string };
-type Outcome = { token: object; request: number; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
+type Outcome = { token: object; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
 const useStyles = makeStyles({ results: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, maxWidth: '100%', gap: '12px', overflowWrap: 'anywhere', '& > article': { minWidth: 0, maxWidth: '100%' } }, facets: { display: 'grid', gap: '8px' } });
 
 export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
@@ -4406,7 +4431,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     const request = ++sequence.current;
     const owns = (): boolean => current() && sequence.current === request;
     dispatch.current = { token, request, version };
-    setOutcome({ token, request, phase: 'pending' });
+    setOutcome({ token, phase: 'pending' });
     setPublished(undefined);
     try {
       // applyRefiner returns Promise<void>; display the real hook state only after current completion.
@@ -4414,7 +4439,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
       else await info.search('*');
       if (owns()) {
         setPublished({ token, version, request });
-        setOutcome({ token, request, phase: 'success' });
+        setOutcome({ token, phase: 'success' });
       }
     } catch (error) {
       if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });

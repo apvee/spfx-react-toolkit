@@ -575,5 +575,5 @@ function getDocumentationExample(model, reference, title) {
   return contract.examples[0];
 }
 
-module.exports = { apiHeadingName, buildDocumentationModel, validateDocumentation, memberContractKey, bindingContractKey,
+module.exports = { parseContract, apiHeadingName, buildDocumentationModel, validateDocumentation, memberContractKey, bindingContractKey,
   resolveDocumentationReference, getDocumentationSelection, getDocumentationExample, getPageIntroductions };

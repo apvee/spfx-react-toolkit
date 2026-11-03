@@ -5,7 +5,7 @@ import { createSPFxTenantKeyValueStoreService, useSPFxInstanceInfo, useSPFxPageC
 import type { SPFxTenantKeyValueStoreServiceItem } from '@apvee/spfx-react-toolkit';
 
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type Ticket = { promise?: Promise<void> };
+type Ticket = object;
 const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
 export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
   const page = useSPFxPageContext();
@@ -54,7 +54,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     try {
       // Keep the original WHOLE public Save promise, including setup/snapshot/internal RPCs.
       let promise: Promise<void>;
-      try { promise = service.save(key, '123', url); ticket.promise = promise; }
+      try { promise = service.save(key, '123', url); }
       catch (error) { release(); throw error; }
       await promise.finally(release);
       if (!current()) return;

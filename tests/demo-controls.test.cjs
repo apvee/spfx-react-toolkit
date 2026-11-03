@@ -19,15 +19,17 @@ test('demo icon regions reject placeholder SVGs and text glyphs while allowing i
     }
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
-test('List demo name renders the Fluent list icon instead of the information fallback', () => {
+test('actual app Info success and unknown names render independent native Fluent glyphs', () => {
   const ts = require('typescript'); const React = require('react');
   const { renderToStaticMarkup } = require('react-dom/server');
-  const { TextBulletListLtr24Regular } = require('@fluentui/react-icons');
+  const { Info24Regular, Checkmark24Regular } = require('@fluentui/react-icons');
   const file = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoIcon.tsx');
   const compiled = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.React, target: ts.ScriptTarget.ES2020 } });
   const module = { exports: {} }; new Function('require', 'module', 'exports', compiled.outputText)(require, module, module.exports);
   const paths = element => Array.from(renderToStaticMarkup(element).matchAll(/<path\b[^>]*\bd="([^"]+)"/g), match => match[1]);
-  assert.deepEqual(paths(React.createElement(module.exports.DemoIcon, { name: 'List' })), paths(React.createElement(TextBulletListLtr24Regular)));
+  for (const [name, Native] of [['Info', Info24Regular], ['CompletedSolid', Checkmark24Regular], ['List', Info24Regular], ['toString', Info24Regular]]) {
+    assert.deepEqual(paths(React.createElement(module.exports.DemoIcon, { name })), paths(React.createElement(Native)), name);
+  }
 });
 test('AST guard distinguishes authored controls/imports from semantic HTML and toolkit adapters', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'demo-controls-'));

@@ -63,7 +63,7 @@ export default class SpFxReactToolkitTestWebPart extends BaseClientSideWebPart<I
   protected onPropertyPaneFieldChanged(propertyPath: string, oldValue: unknown, newValue: unknown): void {
     this.nativeHost.fieldChanged(propertyPath, oldValue, newValue);
   }
-  protected onPropertyPaneConfigurationStart(): void { this.nativeHost.configurationStart(); }
+  protected onPropertyPaneConfigurationStart(): void { /* Native tokenless Start grants no adapter ownership or refresh rights. */ }
   protected onPropertyPaneRendered(): void {
     this.nativeObservations.record('parent-rendered', this.context.propertyPane.isPropertyPaneOpen());
     this.nativeHost.rendered();

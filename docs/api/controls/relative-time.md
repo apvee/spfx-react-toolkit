@@ -80,7 +80,6 @@ import { RelativeTime, RelativeTimeProps, useSx, background, minWidth } from '@a
 const useStyles = makeStyles({
   controls: { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: tokens.spacingVerticalM, minWidth: 0,
     '& > *': { minWidth: 0, maxWidth: '100%' }, '@media (max-width: 600px)': { gridTemplateColumns: 'minmax(0, 1fr)' } },
-  controlRow: { gridColumn: '1 / -1' },
 });
 const formats: readonly NonNullable<RelativeTimeProps['format']>[] = ['long', 'short', 'narrow'];
 const modes = ['fixed', 'live', 'frozen'] as const;
@@ -210,7 +209,7 @@ ReactElement<any, string | JSXElementConstructor<any>>
 
 ### Source
 
-[packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx:161](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx#L161)
+[packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx:160](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/relative-time/relative-time.tsx#L160)
 
 ## RelativeTimeProps
 

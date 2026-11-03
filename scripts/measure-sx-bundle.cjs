@@ -95,14 +95,16 @@ function shipCapture(directory, allowedNames) {
 }
 const { dataCalls } = require('./bundle-contract.internal.cjs');
 
-async function bundle(name, fixture, library) {
+async function bundle(name, fixture, library, role = 'candidate') {
   const dir = path.join(work, name);
   const config = { mode: 'production', devtool: false, entry: path.join(root, 'tests/fixtures/sx-bundle', fixture),
     output: { path: dir, filename: 'entry.js', chunkFilename: '[name].js', library: { type: 'commonjs2' } },
     resolve: { extensions: ['.tsx', '.ts', '.js'], alias: { '@apvee/spfx-react-toolkit': library,
-      ...(process.env.SX_MEASURE_FULL_UI_ONLY === '1' ? {
-        ...require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: library }),
-        'react/jsx-runtime$': require.resolve('react/jsx-runtime.js'),
+      // Both archived roles share this pinned host React17 resolver contract.
+      // It does not borrow native resources or source from another archive.
+      'react/jsx-runtime$': require.resolve('react/jsx-runtime.js'),
+      ...(role === 'candidate' ? {
+        ...(fs.existsSync(path.join(library, 'localization/resources.json')) ? require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: library }) : {}),
       } : {}),
     }, modules: [path.join(root, 'node_modules'), 'node_modules'] },
     resolveLoader: { modules: [path.join(root, 'node_modules')] },
@@ -116,8 +118,8 @@ async function bundle(name, fixture, library) {
   const detail = stats.toJson({ all: false, assets: true, chunks: true, modules: true, usedExports: true, reasons: true, errors: true, warnings: true });
   fs.writeFileSync(path.join(output, `${name}-stats.json`), JSON.stringify(detail, null, 2));
   if (stats.hasErrors() || detail.warnings.some(w => /export .*was not found|Module not found/.test(w.message))) throw new Error(`${name}: ${JSON.stringify([...detail.errors, ...detail.warnings])}`);
-  if (process.env.SX_MEASURE_FULL_UI_ONLY === '1' && detail.modules.some(module => /packages[\\/]spfx-react-toolkit[\\/](?:src|lib)[\\/]/.test(module.name || ''))) {
-    throw new Error('Full UI candidate imports escaped to the workspace library');
+  if (role === 'candidate' && detail.modules.some(module => /packages[\\/]spfx-react-toolkit[\\/](?:src|lib)[\\/]/.test(module.name || ''))) {
+    throw new Error('Candidate archive imports escaped to the workspace library');
   }
   // All emitted chunk assets are reachable from this single entry. Source maps
   // and license sidecars are excluded. A Set counts shared chunks only once.
@@ -214,16 +216,25 @@ async function main() {
   command('build-library', 'npm', ['run', 'build:library']);
   command('typecheck-fixtures', process.execPath, [require.resolve('typescript/bin/tsc'), '--noEmit', '--strict', '--skipLibCheck', '--target', 'es2020', '--module', 'esnext', '--moduleResolution', 'node', '--jsx', 'react', ...fs.readdirSync(path.join(root, 'tests/fixtures/sx-bundle')).filter(f => /\.tsx?$/.test(f)).map(f => path.join(root, 'tests/fixtures/sx-bundle', f))]);
   const candidateDir = path.join(work, 'candidate-pack'); fs.mkdirSync(candidateDir, { recursive: true });
-  if (!process.env.SX_MEASURE_CANDIDATE_TARBALL) command('pack-candidate', 'npm', ['pack', './packages/spfx-react-toolkit', '--ignore-scripts', '--pack-destination', candidateDir], { env: { ...process.env, npm_config_cache: path.join(work, 'npm-cache') } });
-  const candidateTarball = process.env.SX_MEASURE_CANDIDATE_TARBALL ? path.resolve(process.env.SX_MEASURE_CANDIDATE_TARBALL) : path.join(candidateDir, fs.readdirSync(candidateDir).find(f => f.endsWith('.tgz')));
+  let candidateTarball;
+  if (process.env.SX_MEASURE_CANDIDATE_TARBALL) candidateTarball = path.resolve(process.env.SX_MEASURE_CANDIDATE_TARBALL);
+  else {
+    const packed = command('pack-candidate', 'npm', ['pack', './packages/spfx-react-toolkit', '--ignore-scripts', '--json', '--pack-destination', candidateDir], { env: { ...process.env, npm_config_cache: path.join(work, 'npm-cache') } });
+    const records = JSON.parse(packed.stdout);
+    const expected = JSON.parse(fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/package.json'), 'utf8'));
+    if (!Array.isArray(records) || records.length !== 1 || records[0].name !== expected.name || records[0].version !== expected.version || typeof records[0].filename !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9._-]*\.tgz$/.test(records[0].filename)) throw new Error('npm pack must return one contained archive filename');
+    candidateTarball = path.resolve(candidateDir, records[0].filename);
+    if (path.dirname(candidateTarball) !== candidateDir || !fs.existsSync(candidateTarball)) throw new Error('npm pack returned an absent or uncontained archive');
+  }
+  report.candidateArchive = { file: candidateTarball, selection: process.env.SX_MEASURE_CANDIDATE_TARBALL ? 'explicit archive' : 'just-executed npm pack JSON' };
   report.candidateTarballSha256 = hash(fs.readFileSync(candidateTarball));
   fs.copyFileSync(candidateTarball, path.join(output, 'candidate.tgz'));
   const unpacked = {};
   for (const [name, tarball] of [['baseline', baselineTarball], ['candidate', candidateTarball]]) {
-    const dir = path.join(work, name); fs.mkdirSync(dir, { recursive: true });
+    const dir = path.join(work, name); fs.rmSync(dir, { recursive: true, force: true }); fs.mkdirSync(dir, { recursive: true });
     command(`extract-${name}`, 'tar', ['-xzf', tarball, '-C', dir]); unpacked[name] = path.join(dir, 'package');
   }
-  await bundle('unchanged-baseline', 'unchanged.ts', unpacked.baseline);
+  await bundle('unchanged-baseline', 'unchanged.ts', unpacked.baseline, 'historical-baseline');
   await bundle('unchanged-candidate', 'unchanged.ts', unpacked.candidate);
   await bundle('minimum-direct', 'direct.tsx', unpacked.candidate);
   await bundle('minimum-wrapper', 'wrapper.tsx', unpacked.candidate);
@@ -241,6 +252,7 @@ async function main() {
     }
   }
   cssGrowth();
+  report.css.scope = 'Actual workspace SOURCE harness, not candidate archive or browser';
   const baselineMetadata = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/sx-bundle/baseline.json')));
   report.baselineShip = shipCapture(path.join(root, 'artifacts/sx-baseline/dist'), baselineMetadata.files.filter(f => f.currentBuild).map(f => f.name));
   report.baselineShip.status = baselineMetadata.commands;
@@ -255,6 +267,7 @@ async function main() {
     const dist = path.join(root, 'apps/spfx-react-toolkit-test/dist');
     const current = fs.readdirSync(dist).filter(n => fs.statSync(path.join(dist, n)).mtimeMs >= start);
     report.candidateShip = shipCapture(dist, current);
+    report.candidateShip.scope = 'Current rebuilt workspace sample, separate from the selected archive bundle';
     report.candidateShip.status = report.commands.find(c => c.name === 'bundle-ship');
     const archive = path.join(output, 'ship-dist'); fs.mkdirSync(archive, { recursive: true });
     for (const item of report.candidateShip.files) fs.copyFileSync(path.join(dist, item.name), path.join(archive, item.name));

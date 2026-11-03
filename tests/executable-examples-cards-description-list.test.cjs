@@ -182,3 +182,20 @@ for (const kind of ['content', 'preview', 'retention', 'details']) {
     first.view.unmount(); assert.equal(retained.isConnected, false);
   });
 }
+test('DescriptionList portable anchors belong to each mounted Demo and survive Reset', t => {
+  const first = fixture(t, 'details');
+  const second = fixture(t, 'details');
+  const link = f => f.view.container.querySelector('a[href^="#"]');
+  const a = link(first), b = link(second);
+  assert.ok(a && b);
+  const firstId = a.getAttribute('href').slice(1), secondId = b.getAttribute('href').slice(1);
+  assert.notEqual(firstId, secondId, 'simultaneous instances own distinct anchors');
+  const firstTarget = first.view.container.querySelector(`[id="${firstId}"]`);
+  const secondTarget = second.view.container.querySelector(`[id="${secondId}"]`);
+  assert.ok(firstTarget && secondTarget, 'no fixture wrapper supplies the target');
+  first.reset();
+  assert.equal(link(first).getAttribute('href'), '#' + firstId);
+  assert.equal(first.view.container.querySelector(`[id="${firstId}"]`), firstTarget);
+  assert.equal(link(second), b);
+  assert.equal(second.view.container.querySelector(`[id="${secondId}"]`), secondTarget);
+});

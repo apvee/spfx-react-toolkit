@@ -26,13 +26,18 @@ test('retained regression fixture controls execute against the source cards and 
   const host = document.createElement('div'); document.body.appendChild(host);
   try {
     const library = await harness.loadModule('tests/fixtures/cards-demo-library.ts');
-    const shared = await harness.loadModule('apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/index.ts');
+    const presentation = new Map();
+    for (const name of ['DemoCard', 'DemoAccordionPanel']) presentation.set(
+      '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/' + name,
+      await harness.loadModule('apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/' + name + '.tsx')
+    );
+    presentation.set('../demo-presentation-styles', await harness.loadModule('tests/fixtures/demo-presentation-styles.ts'));
     const module = { exports: {} };
     const compiled = ts.transpileModule(fs.readFileSync(panelPath, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.React } });
-    new Function('require', 'module', 'exports', compiled.outputText)(name => name === '@apvee/spfx-react-toolkit' ? library : name.endsWith('/components/shared') ? shared : require(name), module, module.exports);
+    new Function('require', 'module', 'exports', compiled.outputText)(name => name === '@apvee/spfx-react-toolkit' ? library : presentation.get(name) || require(name), module, module.exports);
     const fixture = { exports: {} };
     const fixtureSource = ts.transpileModule(fs.readFileSync('tests/fixtures/demo-control-isolation/cards-legacy-isolation.tsx', 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.React } });
-    new Function('require', 'module', 'exports', fixtureSource.outputText)(name => name === './cards-regressions' ? module.exports : name.endsWith('/components/shared') ? shared : require(name), fixture, fixture.exports);
+    new Function('require', 'module', 'exports', fixtureSource.outputText)(name => name === './cards-regressions' ? module.exports : presentation.get(name) || require(name), fixture, fixture.exports);
     const { RendererProvider } = require('@griffel/react'); const renderer = require('@griffel/core').createDOMRenderer(document);
     const fluent = require('@fluentui/react-components');
     const render = theme => act(() => { ReactDOM.render(React.createElement(RendererProvider, { renderer }, React.createElement(fluent.FluentProvider, { theme }, React.createElement(fixture.exports.CardsLegacyIsolationFixture))), host); });

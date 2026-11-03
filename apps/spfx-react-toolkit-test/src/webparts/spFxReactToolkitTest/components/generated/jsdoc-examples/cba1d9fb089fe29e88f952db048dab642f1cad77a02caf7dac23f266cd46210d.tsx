@@ -76,7 +76,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     <Switch label="Customize status content" checked={config.customStatus} onChange={(_, data) => update({ customStatus: data.checked })} />
     <Switch label="Custom search and status text" checked={config.customStrings} onChange={(_, data) => update({ customStrings: data.checked })} />
     <Field label="Web URL (empty: current web)"><Input aria-label="Web URL" value={config.webUrl} onChange={(_, data) => update({ webUrl: data.value })} /></Field>
-    <Field label="Exact list title (Field: empty means site columns)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
+    <Field label="Exact list title (required for list scope)"><Input aria-label="Exact list title" value={config.list} onChange={(_, data) => update({ list: data.value })} /></Field>
     <Field label="Content type scope"><Select aria-label="Content type scope" value={config.scope} onChange={(_, data) => update({ scope: data.value === 'list' ? 'list' : 'site' })}><option value="site">Site collection</option><option value="list">List</option></Select></Field>
     <Field label="Exact content type group (empty: all)"><Input aria-label="Content type group" value={config.group} onChange={(_, data) => update({ group: data.value })} /></Field>
     <Switch label="Include hidden content types" checked={config.includeHidden} onChange={(_, data) => update({ includeHidden: data.checked })} />

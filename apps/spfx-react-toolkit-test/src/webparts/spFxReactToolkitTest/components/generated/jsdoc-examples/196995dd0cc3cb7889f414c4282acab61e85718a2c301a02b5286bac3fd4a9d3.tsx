@@ -6,7 +6,7 @@ import type { SPFxSiteKeyValueStoreServiceItem } from '@apvee/spfx-react-toolkit
 
 type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
 const useStyles = makeStyles({ payload: { overflowX: 'auto', maxWidth: '100%', minWidth: 0 } });
-type Ticket = { promise?: Promise<void> };
+type Ticket = object;
 export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
   const page = useSPFxPageContext();
   const { client } = useSPFxSPHttpClient();
@@ -69,7 +69,7 @@ export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoReg
     const release = (): void => { ledger.current.delete(ticket); if (mounted.current) refresh(count => count + 1); };
     try {
       const promise = service.save(key, true, root, 'Shared across subsites');
-      ticket.promise = promise;
+
       await promise.finally(release);
       if (owns()) { approve(undefined); setOutcome({ token, message: `Saved ${key}.` }); }
     } catch (error) { if (owns()) setOutcome({ token, failure: error instanceof Error ? error.message : String(error) }); }

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Field, Checkbox, FluentProvider, Select } from '@fluentui/react-components';
-import { DemoCard, useDemoStyles } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared';
+import { DemoCard } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoCard';
+import { useDemoStyles } from '../demo-presentation-styles';
 import { Pagination, createDataGrid, useSx, flex, gap, width, maxWidth, background, minWidth } from '@apvee/spfx-react-toolkit';
 import type { PaginationChangeData, PaginationProps, PaginationSize, PaginationState } from '@apvee/spfx-react-toolkit';
 
@@ -54,7 +55,7 @@ export const PaginationExample: React.FC<{ instance: string; initialRtl?: boolea
   };
   return <FluentProvider dir={rtl ? 'rtl' : undefined} className={directionSx(background.transparent, minWidth.zero)}>
     <section data-pagination-demo="instance" data-pagination-instance={instance} className={sx(flex.column, gap.medium)}>
-      <DemoCard diagnosticsLabel="Advanced diagnostics" title={instance === 'primary' ? 'Pagination' : 'Independent Pagination'} description="The application owns results and applies navigation requests. Change modes, filters or page size; enable manual completion to see the activated navigation icon become a spinner without timers. Navigation buttons never submit the enclosing form." iconName="List" controls={<>
+      <DemoCard diagnosticsLabel="Advanced diagnostics" title={instance === 'primary' ? 'Pagination' : 'Independent Pagination'} description="The application owns results and applies navigation requests. Change modes, filters or page size; enable manual completion to see the activated navigation icon become a spinner without timers. Navigation buttons never submit the enclosing form." iconName="Info" controls={<>
 
         <Field label="Mode"><Select data-pagination-demo="mode" value={mode} onChange={event => { const value = event.target.value; if (value === 'known' || value === 'unknown' || value === 'cursor' || value === 'loadMore') setMode(value); reset(); }}>
           <option value="known">Pages · known total</option><option value="unknown">Pages · unknown total</option><option value="cursor">Cursor</option><option value="loadMore">Load more</option>

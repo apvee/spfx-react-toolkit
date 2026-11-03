@@ -117,7 +117,7 @@ DescriptionListRoot.displayName = 'DescriptionList';
  * @example Inspect responsive metadata with data and compound APIs
  * ```tsx
  * import * as React from 'react';
- * import { Badge, Button, Field, Checkbox, FluentProvider, Link, Select, makeStyles } from '@fluentui/react-components';
+ * import { Badge, Button, Field, Checkbox, FluentProvider, Link, Select, makeStyles, useId } from '@fluentui/react-components';
  *
  * import { DescriptionList, container, flex, gap, useSx, width, background, minWidth } from '@apvee/spfx-react-toolkit';
  * import type { DescriptionListEntry, DescriptionListLayout } from '@apvee/spfx-react-toolkit';
@@ -142,6 +142,7 @@ DescriptionListRoot.displayName = 'DescriptionList';
  *   render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number;
  * } = {}): React.ReactElement {
  *   const instance = 'primary';
+ *   const anchorId = useId('description-list-demo');
  *   const sx = useSx();
  *   const styles = useExampleStyles();
  *   const [layout, setLayout] = React.useState<DescriptionListLayout>('auto');
@@ -160,7 +161,7 @@ DescriptionListRoot.displayName = 'DescriptionList';
  *   const rootRef = React.useMemo(() => React.createRef<HTMLDListElement>(), []);
  *   const itemRef = React.useMemo(() => React.createRef<HTMLDivElement>(), []);
  *   const entries: readonly DescriptionListEntry[] = [
- *     { id: 'owner', label: 'Owner', value: <Link href="#description-list-demo">Ada Rossi</Link> },
+ *     { id: 'owner', label: 'Owner', value: <Link href={`#${anchorId}`}>Ada Rossi</Link> },
  *     { id: 'status', label: 'Status', value: <Badge appearance="tint" color="success">In progress</Badge> },
  *     { id: 'team', label: 'Team', value: 'Operations' },
  *     { id: 'updated', label: 'Updated', value: '13 October 2026' },
@@ -182,7 +183,7 @@ DescriptionListRoot.displayName = 'DescriptionList';
  *     setObserved('not inspected'); setClicks(0); setItemClicks(0);
  *   }, [resetRevision]);
  *   return <FluentProvider data-description-list-demo="provider" dir={rtl ? 'rtl' : undefined} className={directionSx(background.transparent, minWidth.zero)}>
- *     <section data-description-list-demo="instance" data-description-list-instance={instance} className={sx(flex.column, gap.medium)}>
+ *     <section id={anchorId} data-description-list-demo="instance" data-description-list-instance={instance} className={sx(flex.column, gap.medium)}>
  *       {render({ controls: <>
  *
  *         <Field label="Layout"><Select data-description-list-demo="layout" value={layout} onChange={event => { const value = event.target.value; if (value === 'auto' || value === 'horizontal' || value === 'vertical') setLayout(value); }}><option value="auto">Auto</option><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></Select></Field>

@@ -409,13 +409,13 @@ export interface SPFxPnPListInfo<T = unknown> {
  * import { flushSync } from 'react-dom';
  * import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, Field, Input } from '@fluentui/react-components';
  * import { useSPFxPnPContext, useSPFxPnPList, useSx, flex, gap } from '@apvee/spfx-react-toolkit';
- * // SharePoint may omit Title or return legacy null; local text drafts remain strings.
- * type Item = { Id: number; Title?: string | null };
  * type TextDraft = { session: object; value: string };
  * interface DemoRegions { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; children?: React.ReactNode; diagnostics?: React.ReactNode; }
  * export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
  *   const context = useSPFxPnPContext();
  *   const [title, setTitle] = React.useState('');
+ *   // SharePoint may omit Title or return legacy null; local text drafts remain strings.
+ *   type Item = { Id: number; Title?: string | null };
  *   const list = useSPFxPnPList<Item>(title, { pageSize: 10 }, context);
  *   const sx = useSx();
  *   const layout = sx(flex.column, gap.small);
@@ -521,11 +521,22 @@ export interface SPFxPnPListInfo<T = unknown> {
  *   };
  *   const create = (): Promise<void> => {
  *     if (!newTitle.trim() || newDraft.current.session !== newSession || newDraft.current.value !== newTitle) return Promise.resolve();
- *     return write(() => list.create({ Title: newTitle }), id => { drafts.current++; newDraft.current = { session: {}, value: '' }; setNewDraftState(newDraft.current); setNotice({ token, message: `Created item #${String(id)}.` }); });
+ *     return write(() => list.create({ Title: newTitle }), id => {
+ *       drafts.current++;
+ *       newDraft.current = { session: {}, value: '' };
+ *       setNewDraftState(newDraft.current);
+ *       setNotice({ token, message: `Created item #${String(id)}.` });
+ *     });
  *   };
  *   const save = (id: number): Promise<void> => {
  *     if (!editTitle.trim() || editDraft.current.session !== editSession || editDraft.current.value !== editTitle) return Promise.resolve();
- *     return write(() => list.update(id, { Title: editTitle }), () => { drafts.current++; editDraft.current = { session: {}, value: '' }; setEditing(undefined); setEditDraftState(editDraft.current); setNotice({ token, message: `Updated item #${id}.` }); });
+ *     return write(() => list.update(id, { Title: editTitle }), () => {
+ *       drafts.current++;
+ *       editDraft.current = { session: {}, value: '' };
+ *       setEditing(undefined);
+ *       setEditDraftState(editDraft.current);
+ *       setNotice({ token, message: `Updated item #${id}.` });
+ *     });
  *   };
  *   const cancelConsent = (): void => {
  *     const request = consent.current;
@@ -577,10 +588,24 @@ export interface SPFxPnPListInfo<T = unknown> {
  *             editDraft.current = { session: editSession, value: data.value }; drafts.current++; setEditDraftState(editDraft.current);
  *           }} />
  *           <Button disabled={writing || localBusy || !editTitle.trim()} onClick={() => save(item.Id)}>Save</Button>
- *           <Button disabled={writing || localBusy} onClick={() => { if (current() && !busy() && drafts.current === draft) { drafts.current++; editDraft.current = { session: {}, value: '' }; setEditing(undefined); setEditDraftState(editDraft.current); } }}>Cancel</Button></>
+ *           <Button disabled={writing || localBusy} onClick={() => { if (current() && !busy() && drafts.current === draft) {
+ *             drafts.current++;
+ *             editDraft.current = { session: {}, value: '' };
+ *             setEditing(undefined);
+ *             setEditDraftState(editDraft.current);
+ *           } }}>Cancel</Button></>
  *           : <><span>#{item.Id} - {item.Title || '(untitled)'}</span>
- *             <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={() => { if (current() && !busy() && drafts.current === draft) { drafts.current++; editDraft.current = { session: {}, value: item.Title ?? '' }; setEditing(item.Id); setEditDraftState(editDraft.current); } }}>Edit</Button>
- *             <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={event => { if (current() && !busy() && drafts.current === draft) { const request = { token, id: item.Id, trigger: event.currentTarget, remove: list.remove }; consent.current = request; setApproval(request); } }}>Delete</Button></>}
+ *             <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={() => { if (current() && !busy() && drafts.current === draft) {
+ *               drafts.current++;
+ *               editDraft.current = { session: {}, value: item.Title ?? '' };
+ *               setEditing(item.Id);
+ *               setEditDraftState(editDraft.current);
+ *             } }}>Edit</Button>
+ *             <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={event => { if (current() && !busy() && drafts.current === draft) {
+ *               const request = { token, id: item.Id, trigger: event.currentTarget, remove: list.remove };
+ *               consent.current = request;
+ *               setApproval(request);
+ *             } }}>Delete</Button></>}
  *       </div>)}{list.hasMore && <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={() => read(true)}>Load More</Button>}</div>}
  *       {approval?.token === token && <Dialog open onOpenChange={(_, data) => { if (!data.open) cancelConsent(); }}>
  *         <DialogSurface><DialogBody><DialogTitle>Delete this item?</DialogTitle><DialogContent>Delete item #{approval?.id}? This action cannot be undone.</DialogContent>

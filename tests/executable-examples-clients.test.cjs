@@ -231,8 +231,8 @@ test('HTTP scalar rows preserve false zero empty and eight fields; private/cycle
     f.click('Load external todo');
     await f.flush(() => f.response(0, payload));
     const result = f.container.querySelector('[aria-label="HttpClient results"]');
-    assert.match(result.textContent, /Visible response|false|0/);
-    assert.ok([...result.querySelectorAll('dt')].some(n => n.textContent === 'empty'));
+    const rows = [...result.querySelectorAll('dt')].map(term => [term.textContent, term.nextElementSibling.textContent]);
+    assert.deepEqual(rows, [['Response', 'Loaded'], ['title', 'Visible response'], ['completed', 'false'], ['userId', '0'], ['empty', ''], ['a', '1'], ['b', '2'], ['c', '3'], ['d', '4']]);
     assert.doesNotMatch(result.textContent, /nested payload|omitted/);
     const trigger = [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Advanced diagnostics');
     assert.equal(trigger.getAttribute('aria-expanded'), 'false');

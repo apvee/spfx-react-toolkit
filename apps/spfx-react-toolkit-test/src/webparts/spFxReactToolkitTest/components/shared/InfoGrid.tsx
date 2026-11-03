@@ -2,13 +2,13 @@ import * as React from 'react';
 import { useDemoStyles } from './demoStyles';
 import { InfoRow } from './InfoRow';
 
-export interface InfoGridRow {
+interface InfoGridRow {
   readonly label: string;
   readonly value: string | undefined;
   readonly icon?: string;
 }
 
-export interface InfoGridProps {
+interface InfoGridProps {
   readonly rows: readonly InfoGridRow[];
 }
 

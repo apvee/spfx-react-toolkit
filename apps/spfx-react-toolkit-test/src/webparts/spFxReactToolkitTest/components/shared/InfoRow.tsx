@@ -6,7 +6,7 @@ import { useDemoStyles } from './demoStyles';
 /**
  * Props for the InfoRow component
  */
-export interface IInfoRowProps {
+interface IInfoRowProps {
   /** Label text to display */
   label: string;
   /** Value to display (shows 'N/A' if undefined) */

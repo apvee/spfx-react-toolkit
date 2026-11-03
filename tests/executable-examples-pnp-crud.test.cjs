@@ -700,3 +700,11 @@ for (const refreshFails of [false, true])
         assert.match(f.container.textContent, /Recovered current rows/);
         assert.equal(f.container.querySelector('[role="alert"]'), null);
     });
+test('CRUD malformed false wire title preserves the existing read fallback', async t => {
+    const f = fixture(t);
+    await load(f, [{ Id: 42, Title: false }]);
+    assert.match(f.container.textContent, /#42 - \(untitled\)/);
+    assert.equal(f.calls.length, 1);
+    // Boolean Title is outside the string/null wire contract. This check does
+    // not assert an editing contract for malformed server data.
+});

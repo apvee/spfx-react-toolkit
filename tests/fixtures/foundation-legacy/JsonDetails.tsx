@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Accordion, AccordionItem, AccordionHeader } from '@fluentui/react-components';
-import { DemoAccordionPanel } from './DemoAccordionPanel';
-import { useDemoStyles } from './demoStyles';
+import { DemoAccordionPanel } from '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/shared/DemoAccordionPanel';
+import { makeStyles, tokens } from '@fluentui/react-components';
+const useDemoStyles = makeStyles({ scroll: { overflowX: 'auto', minWidth: 0, maxWidth: '100%', borderRadius: tokens.borderRadiusMedium }, json: { margin: 0, padding: tokens.spacingVerticalM, fontFamily: tokens.fontFamilyMonospace, fontSize: tokens.fontSizeBase200, backgroundColor: tokens.colorNeutralBackground2 } });
 
 export interface JsonDetailsProps {
   readonly label: string;
