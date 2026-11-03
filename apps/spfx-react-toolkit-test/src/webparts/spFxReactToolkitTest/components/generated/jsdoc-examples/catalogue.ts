@@ -3309,6 +3309,35 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   })
 },
 {
+  "id": "c01ab6db5c953ab11892b553aa85d6d9de4a642f4936d2658c80c17329b07ced",
+  "ownerKey": "packages/spfx-react-toolkit/src/property-pane/file-folder-picker/property-pane-file-folder-picker.tsx#PropertyPaneFileFolderPicker",
+  "title": "Select native file and folder references",
+  "groupRoute": "docs/api/property-pane/file-folder-picker.md",
+  "groupKey": "property-pane",
+  "featureKey": "packages/spfx-react-toolkit/src/property-pane/file-folder-picker/property-pane-file-folder-picker.tsx#PropertyPaneFileFolderPicker",
+  "featureTitle": "PropertyPaneFileFolderPicker",
+  "publicNames": [
+    "PropertyPaneFileFolderPicker"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/property-pane/file-folder-picker/property-pane-file-folder-picker.tsx",
+    "line": 56
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "hostAdapter": "propertyPane",
+    "observe": "Prepare without querying, open this WebPart's actual native Edit property pane, use hosted Browse and explicitly confirm files or folders or cancel, then use native Close and inspect saved JSON; selection and Reset do not open the pane or query."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-c01ab6db5c953ab11892b553aa85d6d9de4a642f4936d2658c80c17329b07ced' */ "./c01ab6db5c953ab11892b553aa85d6d9de4a642f4936d2658c80c17329b07ced").then(module => {
+    type Source = NativeSourceProperties<NonNullable<Parameters<typeof module.Demo>[0]['propertyPane']>>;
+    // Prove every concrete source key/domain/optionality before common loader erasure.
+    const CheckedDemo: NativeCompatible<ISpFxReactToolkitTestWebPartProps, Source> extends true ? typeof module.Demo : never = module.Demo;
+    return { Demo: (props: ExecutableExampleProps): React.ReactElement => CheckedDemo(props) };
+  })
+},
+{
   "id": "76204ee1a554f761dfb09645d01a9e2b00b1e0da329619deb3cbfeab81d7e9e7",
   "ownerKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts#PropertyPaneListItemPicker",
   "title": "Select native item references",
@@ -3749,19 +3778,20 @@ export const executableGroups: readonly ExecutableGroup[] = [
   { key: "property-pane", title: "Property Pane", features: [
     { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-content-type-picker.ts#PropertyPaneContentTypePicker", title: "PropertyPaneContentTypePicker", scenarios: [executableExamples[138]] },
     { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-field-picker.ts#PropertyPaneFieldPicker", title: "PropertyPaneFieldPicker", scenarios: [executableExamples[139]] },
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts#PropertyPaneListItemPicker", title: "PropertyPaneListItemPicker", scenarios: [executableExamples[140]] },
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-picker.ts#PropertyPaneListPicker", title: "PropertyPaneListPicker", scenarios: [executableExamples[141]] },
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-principal-picker.ts#PropertyPanePrincipalPicker", title: "PropertyPanePrincipalPicker", scenarios: [executableExamples[142]] },
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts#PropertyPaneSitePicker", title: "PropertyPaneSitePicker", scenarios: [executableExamples[143]] },
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts#PropertyPaneViewPicker", title: "PropertyPaneViewPicker", scenarios: [executableExamples[144]] }
+    { key: "packages/spfx-react-toolkit/src/property-pane/file-folder-picker/property-pane-file-folder-picker.tsx#PropertyPaneFileFolderPicker", title: "PropertyPaneFileFolderPicker", scenarios: [executableExamples[140]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts#PropertyPaneListItemPicker", title: "PropertyPaneListItemPicker", scenarios: [executableExamples[141]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-picker.ts#PropertyPaneListPicker", title: "PropertyPaneListPicker", scenarios: [executableExamples[142]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-principal-picker.ts#PropertyPanePrincipalPicker", title: "PropertyPanePrincipalPicker", scenarios: [executableExamples[143]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts#PropertyPaneSitePicker", title: "PropertyPaneSitePicker", scenarios: [executableExamples[144]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts#PropertyPaneViewPicker", title: "PropertyPaneViewPicker", scenarios: [executableExamples[145]] }
   ] },
   { key: "services", title: "Servizi", features: [
-    { key: "packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService", title: "createSPFxConfigurationStoreService", scenarios: [executableExamples[145]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#createSPFxPnPContextService", title: "createSPFxPnPContextService", scenarios: [executableExamples[146]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#createSPFxPnPListService", title: "createSPFxPnPListService", scenarios: [executableExamples[147]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp.service.ts#createSPFxPnPService", title: "createSPFxPnPService", scenarios: [executableExamples[148]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[149]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService", title: "createSPFxTenantKeyValueStoreService", scenarios: [executableExamples[150]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[151]] }
+    { key: "packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService", title: "createSPFxConfigurationStoreService", scenarios: [executableExamples[146]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#createSPFxPnPContextService", title: "createSPFxPnPContextService", scenarios: [executableExamples[147]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#createSPFxPnPListService", title: "createSPFxPnPListService", scenarios: [executableExamples[148]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp.service.ts#createSPFxPnPService", title: "createSPFxPnPService", scenarios: [executableExamples[149]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[150]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService", title: "createSPFxTenantKeyValueStoreService", scenarios: [executableExamples[151]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[152]] }
   ] }
 ];

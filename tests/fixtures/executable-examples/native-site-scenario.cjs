@@ -7,21 +7,23 @@ const fluent = require('@fluentui/react-components');
 // A finite extension of the accepted Site fixture; each row selects a real public factory.
 const subjects = {
   Site: ['site', 'site'], List: ['list', 'list'], Field: ['field', 'field'], View: ['view', 'view'],
-  ContentType: ['content-type', 'content type'], ListItem: ['list-item', 'item'], Principal: ['principal', 'principal'],
+  ContentType: ['content-type', 'content type'], ListItem: ['list-item', 'item'], Principal: ['principal', 'principal'], FileFolder: ['file-folder', 'file and folder'],
 };
 function createNativeReferenceFixture(t, { subject = 'Site', compiled = false, connected = true, revision = 7, hold } = {}) {
   assert.ok(Object.hasOwn(subjects, subject));
   const [stem, noun] = subjects[subject], title = `Select native ${noun} references`;
-  const owner = `packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-${stem}-picker.ts#PropertyPane${subject}Picker`;
+  const isFileFolder = subject === 'FileFolder';
+  const owner = isFileFolder ? 'packages/spfx-react-toolkit/src/property-pane/file-folder-picker/property-pane-file-folder-picker.tsx#PropertyPaneFileFolderPicker' : `packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-${stem}-picker.ts#PropertyPane${subject}Picker`;
   Object.defineProperty(window, 'crypto', { configurable: true, value: require('node:crypto').webcrypto });
   let dataRoles = [];
-  const fields = [], calls = [], unexpected = [], pending = [], changes = [], seen = [], keys = { page: {}, sp: {}, graph: {}, theme: {} }, handlers = new Set();
+  const fields = [], calls = [], unexpected = [], pending = [], changes = [], seen = [], keys = { page: {}, sp: {}, graph: {}, theme: {}, token: {} }, handlers = new Set();
   const context = {}, pageHook = {}, factories = {};
   const read = fs.readFileSync;
   t.mock.method(fs, 'readFileSync', (file, ...args) => { seen.push(String(file)); return read(file, ...args); });
-  const native = { SPHttpClient: { serviceKey: keys.sp, configurations: { v1: {} } }, MSGraphClientFactory: { serviceKey: keys.graph } };
+  const native = { SPHttpClient: { serviceKey: keys.sp, configurations: { v1: {} } }, MSGraphClientFactory: { serviceKey: keys.graph }, AadTokenProviderFactory: { serviceKey: keys.token } };
   const h = createPickerHarness({
     '@apvee/spfx-react-toolkit/property-pane/pickers': factories,
+    '@apvee/spfx-react-toolkit/property-pane/file-folder-picker': factories,
     '@microsoft/sp-property-pane': { PropertyPaneFieldType: { Custom: 1 } },
     '@microsoft/sp-core-library': { DisplayMode: { Read: 1, Edit: 2 }, _SPKillSwitch: { isActivated: () => false } },
     '@microsoft/sp-page-context': { PageContext: { serviceKey: keys.page } },
@@ -33,12 +35,19 @@ function createNativeReferenceFixture(t, { subject = 'Site', compiled = false, c
   const library = (file, tsx = false) => h.load(path.join(root, file + (compiled ? '.js' : tsx ? '.tsx' : '.ts')));
   Object.assign(context, library('hooks/useSPFxContext'));
   Object.assign(pageHook, library('hooks/useSPFxPageContext'));
-  const actualFactory = library('property-pane/pickers/property-pane-' + stem + '-picker')['PropertyPane' + subject + 'Picker'];
+  const actualFactory = library(isFileFolder ? 'property-pane/file-folder-picker/property-pane-file-folder-picker' : 'property-pane/pickers/property-pane-' + stem + '-picker', isFileFolder)['PropertyPane' + subject + 'Picker'];
   factories['PropertyPane' + subject + 'Picker'] = (...args) => { const actual = actualFactory(...args); fields.push({ args, actual }); return actual; };
   const page = { web: { absoluteUrl: 'https://tenant.test/sites/root/sub' }, site: { absoluteUrl: 'https://tenant.test/sites/root' },
     user: { loginName: 'current@tenant.test', displayName: 'Current', email: 'current@tenant.test' }, cultureInfo: { isRightToLeft: false }, aadInfo: { tenantId: { toString: () => '11111111-1111-4111-8111-111111111111' } } };
+  if (isFileFolder) {
+    const { web, ids } = require('../file-folder-picker/metadata.cjs');
+    page.web.absoluteUrl = web + '/Subweb'; page.site.absoluteUrl = web;
+    page.aadInfo.tenantId.toString = () => ids.tenant; page.cultureInfo.currentUICultureName = 'en-US';
+  }
   let phase = 'selection';
+  const hosted = isFileFolder ? require('./native-file-folder-boundary.cjs').createNativeFileFolderBoundary(t, { h, sdk: native, calls, unexpected, identity: 'native-' + subject + '-' + compiled, phase: () => phase }) : undefined;
   function route(request) {
+    if (hosted) return hosted.route(request);
     const url = new URL(request.url), endpoint = decodeURIComponent(url.pathname).toLowerCase();
     assert.equal(url.origin, 'https://tenant.test');
     const result = nativePicker.route(request);
@@ -70,10 +79,11 @@ function createNativeReferenceFixture(t, { subject = 'Site', compiled = false, c
   function dispatch(request) {
     // Record every attempted route before admission; a UI error cannot mask rejection.
     request.phase = phase; request.identity = 'native-' + subject + '-' + compiled;
-    request.query = Object.fromEntries(new URL(request.url).searchParams);
+    if (!isFileFolder) request.query = Object.fromEntries(new URL(request.url).searchParams);
     request.body = request.init?.body; calls.push(request);
     let response;
     try {
+      if (isFileFolder) request.query = Object.fromEntries(new URL(request.url).searchParams);
       if (request.kind === 'sp') assert.equal(request.configuration, native.SPHttpClient.configurations.v1);
       response = route(request); assert.ok(response, 'bounded native transport ' + request.method + ' ' + request.url);
     } catch (error) { unexpected.push({ request, message: error.message }); throw error; }
@@ -86,7 +96,9 @@ function createNativeReferenceFixture(t, { subject = 'Site', compiled = false, c
   };
   t.mock.method(global, 'fetch', (url, init) => dispatch({ kind: 'pnp', url: String(url), init, method: init?.method ?? 'GET' }));
   const theme = { tryGetTheme: () => undefined, themeChangedEvent: { add(_owner, callback) { handlers.add(callback); }, remove(_owner, callback) { handlers.delete(callback); } } };
-  const scope = { whenFinished: callback => callback(), consume(key) { if (key === keys.page) return page; if (key === keys.sp) return sp; if (key === keys.theme) return theme; if (key === keys.graph) return { getClient: async () => { throw new Error('Default native Site fixture needs no Graph'); } }; throw new Error('Unexpected Site service'); } };
+  const scope = { whenFinished: callback => callback(), consume(key) { if (key === keys.page) return page; if (key === keys.sp) return sp; if (key === keys.theme) return theme; if (key === keys.token && hosted) return { getTokenProvider: async () => hosted.provider }; if (key === keys.graph) return { getClient: async () => { throw new Error('Default native Site fixture needs no Graph'); } }; throw new Error('Unexpected Site service'); } };
+  const savedWaiters = [];
+  const notifySaved = value => { resolveSaved(value); savedWaiters.splice(0).forEach(resolve => resolve(value)); };
   let resolveSaved;
   const saved = new Promise(resolve => { resolveSaved = resolve; });
   let open = false, bag = {}, lastSdkValues = {}, regions, portConnected = connected, refreshes = 0;
@@ -106,27 +118,30 @@ function createNativeReferenceFixture(t, { subject = 'Site', compiled = false, c
     h.act(() => { adapter.dispose(); ReactDOM.unmountComponentAtNode(nativeDom); ReactDOM.unmountComponentAtNode(container); });
     // Drain retired native continuations while this fixture still owns its transport.
     await h.act(async () => { for (let i = 0; i < 60; i++) await Promise.resolve(); await new Promise(resolve => setImmediate(resolve)); });
-    nativeDom.remove(); container.remove(); h.close(); assert.deepEqual(unexpected, [], 'all attempted transport routes were finitely admitted');
+    nativeDom.remove(); container.remove(); h.close();
+    if (hosted) assert.ok(hosted.ports.every(port => port.closed), 'all owned hosted ports close on actual native disposal');
+    assert.deepEqual(unexpected, [], 'all attempted transport routes were finitely admitted');
   });
-  return { h, root, library, adapter, saved, adapterFile, get dataRoles() { return dataRoles; }, instance, container, nativeDom, fields, calls, changes, pending, unexpected, handlers, seen, selected,
-    get bag() { return bag; }, set bag(value) { bag = value; lastSdkValues = { ...value }; resolveSaved(value); }, get regions() { return regions; }, get refreshes() { return refreshes; },
+  return { h, root, library, adapter, saved, hosted, adapterFile, get dataRoles() { return dataRoles; }, instance, container, nativeDom, fields, calls, changes, pending, unexpected, handlers, seen, selected,
+    get bag() { return bag; }, set bag(value) { bag = value; lastSdkValues = { ...value }; notifySaved(value); }, nextSaved() { return new Promise(resolve => savedWaiters.push(resolve)); }, get regions() { return regions; }, get refreshes() { return refreshes; },
     setRevision(value) { revision = value; render(); }, disconnect() { portConnected = false; render(); },
     action(label) { const children = regions.commands?.props.children; const node = (Array.isArray(children) ? children : [children]).find(node => node?.props.children === label); assert.ok(node, label); return node.props.onClick; },
     click(label) { const button = [...container.querySelectorAll('button')].find(node => node.textContent === label); assert.ok(button, label); h.act(() => button.click()); },
     change(label, value) { const input = container.querySelector('[aria-label="' + label + '"]'); assert.ok(input, label); h.act(() => { require('react-dom/test-utils').Simulate.change(input, { target: { value } }); }); },
+    browse() { phase = 'native-hosted-browse'; const button = nativeDom.querySelector('button[aria-haspopup="dialog"]'); assert.ok(button, 'actual native Browse'); assert.equal(button.disabled, false); h.act(() => button.click()); },
     open() { phase = 'native-menu'; const trigger = nativeDom.querySelector('[role="combobox"]'); assert.ok(trigger); h.act(() => { trigger.focus(); trigger.click(); }); },
     search(value) { phase = 'native-search'; const input = document.querySelector('.fui-SearchBox input') ?? nativeDom.querySelector('input[role="combobox"]'); assert.ok(input); h.act(() => { input.value = value; require('react-dom/test-utils').Simulate.change(input, { target: { value } }); }); },
     choose(label) { phase = 'native-confirm'; const option = [...document.querySelectorAll('[role="option"],[role="menuitemcheckbox"]')].find(node => node.textContent.includes(label)); assert.ok(option, label + ': ' + nativeDom.textContent + ' attempts=' + JSON.stringify(calls.map(({method,url})=>({method,url})))); h.act(() => { option.click(); }); },
     async wait(ms = 360) { await h.act(async () => { await new Promise(resolve => setTimeout(resolve, ms)); }); },
     async settle(item) { await h.act(async () => { item.resolve(item.response); for (let i = 0; i < 30; i++) await Promise.resolve(); }); },
     getter() { phase = 'getter'; open = true; return adapter.getConfiguration(() => ({ pages: [] })); },
-    mount(field, callback = (name, values, reactive) => { const old = lastSdkValues[name]; changes.push({ name, old, values, reactive }); bag = { ...bag, [name]: values }; lastSdkValues = { ...bag }; adapter.fieldChanged(name, old, values); resolveSaved(bag); }) { phase = 'native-render'; h.act(() => field.properties.onRender(nativeDom, undefined, callback)); adapter.rendered(); },
+    mount(field, callback = (name, values, reactive) => { const old = lastSdkValues[name]; changes.push({ name, old, values, reactive }); bag = { ...bag, [name]: values }; lastSdkValues = { ...bag }; adapter.fieldChanged(name, old, values); notifySaved(bag); }) { phase = 'native-render'; h.act(() => field.properties.onRender(nativeDom, undefined, callback)); adapter.rendered(); },
     mountPane(configuration) {
       phase = 'native-render'; const { PropertyPane } = require('../native-property-pane/pinned-components.cjs').pinnedComponents();
       h.act(() => { ReactDOM.render(h.React.createElement(PropertyPane, { data: {
         webPartId: instance.context.instanceId, title: 'Native references', configuration: { ...configuration, hideTitleBar: true }, properties: bag, isReactive: true,
         onRendered: () => { assert.ok(adapter.witnesses.size, 'real native child precedes pinned parent'); adapter.rendered(); },
-        onPropertyPaneFieldChanged: (name, values) => { const old = lastSdkValues[name]; changes.push({ name, old, values }); bag = { ...bag, [name]: values }; lastSdkValues = { ...bag }; adapter.fieldChanged(name, old, values); resolveSaved(bag); },
+        onPropertyPaneFieldChanged: (name, values) => { const old = lastSdkValues[name]; changes.push({ name, old, values }); bag = { ...bag, [name]: values }; lastSdkValues = { ...bag }; adapter.fieldChanged(name, old, values); notifySaved(bag); },
         onConfigurationEvent: () => {},
       } }), nativeDom); });
     },
@@ -139,6 +154,12 @@ function createNativeReferenceFixture(t, { subject = 'Site', compiled = false, c
       const data = new Set([...new Set(h.nativeResources.requestedIds)].flatMap(id => {
         const item = JSON.parse(read(path.join(path.dirname(root), 'localization/resources.json'), 'utf8')).resources.find(item => item.id === id);
         assert.ok(item);
+        if (isFileFolder) {
+          const paths = { ApveeSpfxReactToolkitFileFolderPickerStrings: 'lib/controls/file-folder-picker/loc/{locale}.js', ApveeSpfxReactToolkitStageStrings: 'lib/controls/stage/loc/{locale}.js' };
+          assert.equal(item.path, paths[id], 'exact actually requested declared FileFolder DATA role');
+          const config = JSON.parse(read(path.resolve(__dirname, '../../../apps/spfx-react-toolkit-test/config/config.json'), 'utf8'));
+          assert.equal(config.localizedResources[id], '../../node_modules/@apvee/spfx-react-toolkit/' + item.path);
+        }
         const asset = path.join(path.dirname(root), item.path.replace('{locale}', 'en-us'));
         const bytes = read(asset), ts = require('typescript');
         const source = ts.createSourceFile(asset, bytes.toString(), ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
@@ -154,7 +175,8 @@ function createNativeReferenceFixture(t, { subject = 'Site', compiled = false, c
         return asset;
       }));
       assert.equal(files.filter(file => !data.has(file)).some(file => file.includes(compiled ? '/src/' : '/lib/')), false);
-      for (const requiredStem of ['property-pane/pickers/property-pane-' + stem + '-picker', 'property-pane/pickers/property-pane-picker-factory.internal', 'property-pane/pickers/property-pane-picker.internal', 'controls/pickers/' + stem + '-picker', 'core/provider-webpart', 'core/context.internal'])
+      const requiredStems = isFileFolder ? ['property-pane/file-folder-picker/property-pane-file-folder-picker', 'property-pane/file-folder-picker/property-pane-file-folder-picker-value.internal', 'property-pane/pickers/property-pane-picker-host.internal', 'controls/file-folder-picker/file-folder-picker', 'controls/file-folder-picker/useFileFolderPicker.internal', 'controls/file-folder-picker/file-folder-picker-scope.internal', 'controls/file-folder-picker/file-folder-picker-results.internal', 'controls/file-folder-picker/file-folder-picker-session.internal', 'controls/file-folder-picker/file-folder-picker-protocol.internal', 'controls/file-folder-picker/file-folder-picker-navigation.internal', 'controls/pickers/picker-request-cache.internal', 'controls/stage/stage', 'core/provider-webpart', 'core/context.internal'] : ['property-pane/pickers/property-pane-' + stem + '-picker', 'property-pane/pickers/property-pane-picker-factory.internal', 'property-pane/pickers/property-pane-picker.internal', 'controls/pickers/' + stem + '-picker', 'core/provider-webpart', 'core/context.internal'];
+      for (const requiredStem of requiredStems)
         assert.ok(files.some(file => file === path.join(root, requiredStem + '.js') || file === path.join(root, requiredStem + '.ts') || file === path.join(root, requiredStem + '.tsx')), 'actual matching origin ' + requiredStem);
       assert.ok(seen.includes(adapterFile), 'actual matching private adapter implementation');
       assert.equal(seen.some(file => file.includes('/apps/spfx-react-toolkit-test/' + (compiled ? 'src' : 'lib') + '/') && file.includes('NativePropertyPaneDemoHost.')), false, 'no opposite private adapter');

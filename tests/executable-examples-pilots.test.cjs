@@ -128,10 +128,11 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve e
   const pilots = filterPilotGroups(groups);
   const native = pilots.flatMap(group => group.features).filter(feature => feature.scenarios.some(entry => entry.metadata.hostAdapter === 'propertyPane'));
   const path = require('node:path');
-  const [nativeSurface] = require('../scripts/public-surface.helpers.cjs').collectPublicSurfaces([
+  const nativeSurfaces = require('../scripts/public-surface.helpers.cjs').collectPublicSurfaces([
     path.join(__dirname, '../packages/spfx-react-toolkit/src/property-pane/pickers/index.ts'),
+    path.join(__dirname, '../packages/spfx-react-toolkit/src/property-pane/file-folder-picker/index.ts'),
   ]);
-  const nativeFactories = nativeSurface.filter(item => /^PropertyPane.+Picker$/.test(item.name));
+  const nativeFactories = nativeSurfaces.flat().filter(item => /^PropertyPane.+Picker$/.test(item.name));
   assert.deepEqual(native.map(feature => feature.title).sort(), nativeFactories.map(item => item.name).sort());
   assert.equal(native.flatMap(feature => feature.scenarios).length, nativeFactories.length);
   for (const factory of nativeFactories) {
