@@ -392,3 +392,15 @@ test('Top rejects erased and async entrypoints before common loader erasure', ()
   invalid(topCode.replace('export function Demo', 'export async function Demo').replace('): React.ReactElement {', '): Promise<React.ReactElement> {'), 'EXECUTABLE_COMPONENT');
   invalid(topCode.replace('export function Demo', 'function Actual') + '\nexport type { Actual as Demo };', 'EXECUTABLE_RUNTIME_EXPORT');
 });
+
+for (const [name, index] of [
+  ['string unknown', '[capability: string]: unknown'],
+  ['string any', '[capability: string]: any'],
+  ['number unknown', '[capability: number]: unknown'],
+  ['symbol unknown', '[capability: symbol]: unknown'],
+]) test(`Top outer index rejects ${name} capabilities`, () => {
+  const code = topCode.replace('resetRevision?: number;', `resetRevision?: number; ${index};`);
+  const result = collect(replaceDoc(snippet(code)));
+  assert.equal(result.examples.length, 0, JSON.stringify({ name, examples: result.examples.length, diagnostics: result.diagnostics }));
+  assert.ok(result.diagnostics.some(item => item.code === 'EXECUTABLE_COMPONENT'), JSON.stringify(result.diagnostics));
+});

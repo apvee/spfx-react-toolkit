@@ -417,6 +417,7 @@ export type ExpectedPort = NativePort<Source>;
         signature.minArgumentCount > 1) valid = false;
       if (signature.parameters[0]) {
         const props = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(signature.parameters[0], location));
+        if (topAdapter && checker.getIndexInfosOfType(props).length > 0) valid = false;
         if (topAdapter && checker.getPropertiesOfType(props).some(property => !['render', 'resetRevision', 'applicationCustomizerTop'].includes(property.name))) valid = false;
         if ((nativeAdapter || topAdapter) && checker.getPropertiesOfType(props).some(property => !(property.flags & ts.SymbolFlags.Optional))) valid = false;
         if (hasUnsafeType(props) || !compatibleOptionalProp(props, expectedProps, 'render', location) ||
