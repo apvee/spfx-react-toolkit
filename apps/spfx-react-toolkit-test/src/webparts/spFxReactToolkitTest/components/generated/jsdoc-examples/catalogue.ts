@@ -3251,6 +3251,151 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-6010887cfaf12213f5fc382a3f51f03ca038e58485625b8c904f3b8fb0f01e30' */ "./6010887cfaf12213f5fc382a3f51f03ca038e58485625b8c904f3b8fb0f01e30")
 },
 {
+  "id": "0dc0f6783a7866d99ad1a7e4e89b3950bde6a0da31ecae5159d909b02ada8c38",
+  "ownerKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-content-type-picker.ts#PropertyPaneContentTypePicker",
+  "title": "Select native content type references",
+  "groupRoute": "docs/api/property-pane/pickers.md",
+  "groupKey": "property-pane",
+  "featureKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-content-type-picker.ts#PropertyPaneContentTypePicker",
+  "featureTitle": "PropertyPaneContentTypePicker",
+  "publicNames": [
+    "PropertyPaneContentTypePicker"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-content-type-picker.ts",
+    "line": 57
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "hostAdapter": "propertyPane",
+    "observe": "Prepare the native ContentType picker, open this WebPart's actual Edit property pane, select content type references and use native Close and inspect the saved JSON; selection and Reset do not open the pane or query."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-0dc0f6783a7866d99ad1a7e4e89b3950bde6a0da31ecae5159d909b02ada8c38' */ "./0dc0f6783a7866d99ad1a7e4e89b3950bde6a0da31ecae5159d909b02ada8c38").then(module => {
+    type Source = NativeSourceProperties<NonNullable<Parameters<typeof module.Demo>[0]['propertyPane']>>;
+    // Prove every concrete source key/domain/optionality before common loader erasure.
+    const CheckedDemo: NativeCompatible<ISpFxReactToolkitTestWebPartProps, Source> extends true ? typeof module.Demo : never = module.Demo;
+    return { Demo: (props: ExecutableExampleProps): React.ReactElement => CheckedDemo(props) };
+  })
+},
+{
+  "id": "570aa0c13c0431f8d314098178fb7b8a73f9735e6ddffa25fb9a7546fc3c5d7b",
+  "ownerKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-field-picker.ts#PropertyPaneFieldPicker",
+  "title": "Select native field references",
+  "groupRoute": "docs/api/property-pane/pickers.md",
+  "groupKey": "property-pane",
+  "featureKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-field-picker.ts#PropertyPaneFieldPicker",
+  "featureTitle": "PropertyPaneFieldPicker",
+  "publicNames": [
+    "PropertyPaneFieldPicker"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-field-picker.ts",
+    "line": 55
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "hostAdapter": "propertyPane",
+    "observe": "Prepare the native Field picker, open this WebPart's actual Edit property pane, select field references and use native Close and inspect the saved JSON; selection and Reset do not open the pane or query."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-570aa0c13c0431f8d314098178fb7b8a73f9735e6ddffa25fb9a7546fc3c5d7b' */ "./570aa0c13c0431f8d314098178fb7b8a73f9735e6ddffa25fb9a7546fc3c5d7b").then(module => {
+    type Source = NativeSourceProperties<NonNullable<Parameters<typeof module.Demo>[0]['propertyPane']>>;
+    // Prove every concrete source key/domain/optionality before common loader erasure.
+    const CheckedDemo: NativeCompatible<ISpFxReactToolkitTestWebPartProps, Source> extends true ? typeof module.Demo : never = module.Demo;
+    return { Demo: (props: ExecutableExampleProps): React.ReactElement => CheckedDemo(props) };
+  })
+},
+{
+  "id": "76204ee1a554f761dfb09645d01a9e2b00b1e0da329619deb3cbfeab81d7e9e7",
+  "ownerKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts#PropertyPaneListItemPicker",
+  "title": "Select native item references",
+  "groupRoute": "docs/api/property-pane/pickers.md",
+  "groupKey": "property-pane",
+  "featureKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts#PropertyPaneListItemPicker",
+  "featureTitle": "PropertyPaneListItemPicker",
+  "publicNames": [
+    "PropertyPaneListItemPicker"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts",
+    "line": 55
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "hostAdapter": "propertyPane",
+    "observe": "Prepare the native ListItem picker, open this WebPart's actual Edit property pane, select item references and use native Close and inspect the saved JSON; selection and Reset do not open the pane or query."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-76204ee1a554f761dfb09645d01a9e2b00b1e0da329619deb3cbfeab81d7e9e7' */ "./76204ee1a554f761dfb09645d01a9e2b00b1e0da329619deb3cbfeab81d7e9e7").then(module => {
+    type Source = NativeSourceProperties<NonNullable<Parameters<typeof module.Demo>[0]['propertyPane']>>;
+    // Prove every concrete source key/domain/optionality before common loader erasure.
+    const CheckedDemo: NativeCompatible<ISpFxReactToolkitTestWebPartProps, Source> extends true ? typeof module.Demo : never = module.Demo;
+    return { Demo: (props: ExecutableExampleProps): React.ReactElement => CheckedDemo(props) };
+  })
+},
+{
+  "id": "f5e25493627e8db68e31f841206765bddb90beb3d7a18216d42b19ef3430409e",
+  "ownerKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-picker.ts#PropertyPaneListPicker",
+  "title": "Select native list references",
+  "groupRoute": "docs/api/property-pane/pickers.md",
+  "groupKey": "property-pane",
+  "featureKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-picker.ts#PropertyPaneListPicker",
+  "featureTitle": "PropertyPaneListPicker",
+  "publicNames": [
+    "PropertyPaneListPicker"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-picker.ts",
+    "line": 55
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "hostAdapter": "propertyPane",
+    "observe": "Prepare the native List picker, open this WebPart's actual Edit property pane, select list references and use native Close and inspect the saved JSON; selection and Reset do not open the pane or query."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-f5e25493627e8db68e31f841206765bddb90beb3d7a18216d42b19ef3430409e' */ "./f5e25493627e8db68e31f841206765bddb90beb3d7a18216d42b19ef3430409e").then(module => {
+    type Source = NativeSourceProperties<NonNullable<Parameters<typeof module.Demo>[0]['propertyPane']>>;
+    // Prove every concrete source key/domain/optionality before common loader erasure.
+    const CheckedDemo: NativeCompatible<ISpFxReactToolkitTestWebPartProps, Source> extends true ? typeof module.Demo : never = module.Demo;
+    return { Demo: (props: ExecutableExampleProps): React.ReactElement => CheckedDemo(props) };
+  })
+},
+{
+  "id": "7356d4fecec011302a5dfac540125d0486d22147713d5cdfa83b1f218a131030",
+  "ownerKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-principal-picker.ts#PropertyPanePrincipalPicker",
+  "title": "Select native principal references",
+  "groupRoute": "docs/api/property-pane/pickers.md",
+  "groupKey": "property-pane",
+  "featureKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-principal-picker.ts#PropertyPanePrincipalPicker",
+  "featureTitle": "PropertyPanePrincipalPicker",
+  "publicNames": [
+    "PropertyPanePrincipalPicker"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-principal-picker.ts",
+    "line": 55
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "hostAdapter": "propertyPane",
+    "observe": "Prepare the native Principal picker, open this WebPart's actual Edit property pane, select principal references and use native Close and inspect the saved JSON; selection and Reset do not open the pane or query."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-7356d4fecec011302a5dfac540125d0486d22147713d5cdfa83b1f218a131030' */ "./7356d4fecec011302a5dfac540125d0486d22147713d5cdfa83b1f218a131030").then(module => {
+    type Source = NativeSourceProperties<NonNullable<Parameters<typeof module.Demo>[0]['propertyPane']>>;
+    // Prove every concrete source key/domain/optionality before common loader erasure.
+    const CheckedDemo: NativeCompatible<ISpFxReactToolkitTestWebPartProps, Source> extends true ? typeof module.Demo : never = module.Demo;
+    return { Demo: (props: ExecutableExampleProps): React.ReactElement => CheckedDemo(props) };
+  })
+},
+{
   "id": "11887795574cbb21273f57f3dba5884fb0a223e3914722935634a72f5f34dfa2",
   "ownerKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts#PropertyPaneSitePicker",
   "title": "Select native site references",
@@ -3273,6 +3418,35 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "Prepare the native Site picker, open this WebPart's actual property pane, select site references and inspect the saved values; selection and Reset do not open the pane or query."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-11887795574cbb21273f57f3dba5884fb0a223e3914722935634a72f5f34dfa2' */ "./11887795574cbb21273f57f3dba5884fb0a223e3914722935634a72f5f34dfa2").then(module => {
+    type Source = NativeSourceProperties<NonNullable<Parameters<typeof module.Demo>[0]['propertyPane']>>;
+    // Prove every concrete source key/domain/optionality before common loader erasure.
+    const CheckedDemo: NativeCompatible<ISpFxReactToolkitTestWebPartProps, Source> extends true ? typeof module.Demo : never = module.Demo;
+    return { Demo: (props: ExecutableExampleProps): React.ReactElement => CheckedDemo(props) };
+  })
+},
+{
+  "id": "f18a696f75ba1e3d55700e1f3191130bf2ce222b7ce81cdbbed4496442747c6c",
+  "ownerKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts#PropertyPaneViewPicker",
+  "title": "Select native view references",
+  "groupRoute": "docs/api/property-pane/pickers.md",
+  "groupKey": "property-pane",
+  "featureKey": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts#PropertyPaneViewPicker",
+  "featureTitle": "PropertyPaneViewPicker",
+  "publicNames": [
+    "PropertyPaneViewPicker"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts",
+    "line": 55
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "read",
+    "contentPlacement": "configuration",
+    "hostAdapter": "propertyPane",
+    "observe": "Prepare the native View picker, open this WebPart's actual Edit property pane, select view references and use native Close and inspect the saved JSON; selection and Reset do not open the pane or query."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-f18a696f75ba1e3d55700e1f3191130bf2ce222b7ce81cdbbed4496442747c6c' */ "./f18a696f75ba1e3d55700e1f3191130bf2ce222b7ce81cdbbed4496442747c6c").then(module => {
     type Source = NativeSourceProperties<NonNullable<Parameters<typeof module.Demo>[0]['propertyPane']>>;
     // Prove every concrete source key/domain/optionality before common loader erasure.
     const CheckedDemo: NativeCompatible<ISpFxReactToolkitTestWebPartProps, Source> extends true ? typeof module.Demo : never = module.Demo;
@@ -3573,15 +3747,21 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[136], executableExamples[137]] }
   ] },
   { key: "property-pane", title: "Property Pane", features: [
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts#PropertyPaneSitePicker", title: "PropertyPaneSitePicker", scenarios: [executableExamples[138]] }
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-content-type-picker.ts#PropertyPaneContentTypePicker", title: "PropertyPaneContentTypePicker", scenarios: [executableExamples[138]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-field-picker.ts#PropertyPaneFieldPicker", title: "PropertyPaneFieldPicker", scenarios: [executableExamples[139]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts#PropertyPaneListItemPicker", title: "PropertyPaneListItemPicker", scenarios: [executableExamples[140]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-picker.ts#PropertyPaneListPicker", title: "PropertyPaneListPicker", scenarios: [executableExamples[141]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-principal-picker.ts#PropertyPanePrincipalPicker", title: "PropertyPanePrincipalPicker", scenarios: [executableExamples[142]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts#PropertyPaneSitePicker", title: "PropertyPaneSitePicker", scenarios: [executableExamples[143]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts#PropertyPaneViewPicker", title: "PropertyPaneViewPicker", scenarios: [executableExamples[144]] }
   ] },
   { key: "services", title: "Servizi", features: [
-    { key: "packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService", title: "createSPFxConfigurationStoreService", scenarios: [executableExamples[139]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#createSPFxPnPContextService", title: "createSPFxPnPContextService", scenarios: [executableExamples[140]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#createSPFxPnPListService", title: "createSPFxPnPListService", scenarios: [executableExamples[141]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp.service.ts#createSPFxPnPService", title: "createSPFxPnPService", scenarios: [executableExamples[142]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[143]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService", title: "createSPFxTenantKeyValueStoreService", scenarios: [executableExamples[144]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[145]] }
+    { key: "packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService", title: "createSPFxConfigurationStoreService", scenarios: [executableExamples[145]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#createSPFxPnPContextService", title: "createSPFxPnPContextService", scenarios: [executableExamples[146]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#createSPFxPnPListService", title: "createSPFxPnPListService", scenarios: [executableExamples[147]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp.service.ts#createSPFxPnPService", title: "createSPFxPnPService", scenarios: [executableExamples[148]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[149]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService", title: "createSPFxTenantKeyValueStoreService", scenarios: [executableExamples[150]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[151]] }
   ] }
 ];

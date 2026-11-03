@@ -37,9 +37,12 @@ test('browser aliases follow only actual owned imports through exact public sour
   write('/lib/widget','// Manual file'); assert.throws(() => executableFixtureAliases(root,true,config),/manually owned/);
 });
 
-test('native pilot public import resolves its actual owning factory in matching source/lib and the SDK seam is only the Custom enum', () => {
+test('multiple native owner imports retain their actual public barrel in matching source/lib and the SDK seam is only the Custom enum', () => {
   const root = path.resolve(__dirname, '..');
-  const owner = 'property-pane/pickers/property-pane-site-picker';
+  const metadata = JSON.parse(fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/package.json'), 'utf8'));
+  const declared = metadata.exports['./property-pane/pickers'].types;
+  assert.match(declared, /^\.\/lib\/.+\.d\.ts$/);
+  const owner = declared.slice('./lib/'.length).replace(/\.d\.ts$/, '');
   for (const source of [true, false]) {
     const aliases = executableFixtureAliases(root, source);
     assert.equal(aliases['@apvee/spfx-react-toolkit/property-pane/pickers$'], path.join(root, 'packages/spfx-react-toolkit', source ? 'src' : 'lib', owner + (source ? '.ts' : '.js')));

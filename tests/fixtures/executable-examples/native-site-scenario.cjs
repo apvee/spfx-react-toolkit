@@ -4,12 +4,18 @@ const nativePicker = require('./react-pickers-native.cjs');
 const path = require('node:path'), fs = require('node:fs'), assert = require('node:assert/strict');
 const ReactDOM = require('react-dom');
 const fluent = require('@fluentui/react-components');
-const title = 'Select native site references';
-const owner = 'packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts#PropertyPaneSitePicker';
-function createNativeSiteFixture(t, { compiled = false, connected = true, revision = 7 } = {}) {
+// A finite extension of the accepted Site fixture; each row selects a real public factory.
+const subjects = {
+  Site: ['site', 'site'], List: ['list', 'list'], Field: ['field', 'field'], View: ['view', 'view'],
+  ContentType: ['content-type', 'content type'], ListItem: ['list-item', 'item'], Principal: ['principal', 'principal'],
+};
+function createNativeReferenceFixture(t, { subject = 'Site', compiled = false, connected = true, revision = 7, hold } = {}) {
+  assert.ok(Object.hasOwn(subjects, subject));
+  const [stem, noun] = subjects[subject], title = `Select native ${noun} references`;
+  const owner = `packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-${stem}-picker.ts#PropertyPane${subject}Picker`;
   Object.defineProperty(window, 'crypto', { configurable: true, value: require('node:crypto').webcrypto });
   let dataRoles = [];
-  const fields = [], calls = [], seen = [], keys = { page: {}, sp: {}, graph: {}, theme: {} }, handlers = new Set();
+  const fields = [], calls = [], unexpected = [], pending = [], changes = [], seen = [], keys = { page: {}, sp: {}, graph: {}, theme: {} }, handlers = new Set();
   const context = {}, pageHook = {}, factories = {};
   const read = fs.readFileSync;
   t.mock.method(fs, 'readFileSync', (file, ...args) => { seen.push(String(file)); return read(file, ...args); });
@@ -27,29 +33,64 @@ function createNativeSiteFixture(t, { compiled = false, connected = true, revisi
   const library = (file, tsx = false) => h.load(path.join(root, file + (compiled ? '.js' : tsx ? '.tsx' : '.ts')));
   Object.assign(context, library('hooks/useSPFxContext'));
   Object.assign(pageHook, library('hooks/useSPFxPageContext'));
-  const actualFactory = library('property-pane/pickers/property-pane-site-picker').PropertyPaneSitePicker;
-  factories.PropertyPaneSitePicker = (...args) => { const actual = actualFactory(...args); fields.push({ args, actual }); return actual; };
+  const actualFactory = library('property-pane/pickers/property-pane-' + stem + '-picker')['PropertyPane' + subject + 'Picker'];
+  factories['PropertyPane' + subject + 'Picker'] = (...args) => { const actual = actualFactory(...args); fields.push({ args, actual }); return actual; };
   const page = { web: { absoluteUrl: 'https://tenant.test/sites/root/sub' }, site: { absoluteUrl: 'https://tenant.test/sites/root' },
     user: { loginName: 'current@tenant.test', displayName: 'Current', email: 'current@tenant.test' }, cultureInfo: { isRightToLeft: false }, aadInfo: { tenantId: { toString: () => '11111111-1111-4111-8111-111111111111' } } };
-  function dispatch(url, configuration, init) {
-    const request = { kind: 'sp', method: 'GET', url, configuration, init }; calls.push(request);
-    assert.equal(configuration, native.SPHttpClient.configurations.v1);
-    const response = nativePicker.route(request); assert.ok(response, 'bounded Site native transport ' + url); return Promise.resolve(response);
+  let phase = 'selection';
+  function route(request) {
+    const url = new URL(request.url), endpoint = decodeURIComponent(url.pathname).toLowerCase();
+    assert.equal(url.origin, 'https://tenant.test');
+    const result = nativePicker.route(request);
+    if (result !== undefined) return result;
+    if (subject === 'Site' && request.kind === 'sp' && endpoint === '/sites/root/_api/site' && url.searchParams.get('$select') === 'Id,Url') {
+      assert.equal(request.method, 'GET'); assert.deepEqual([...url.searchParams], [['$select', 'Id,Url']]);
+      return new Response(JSON.stringify({ Id: nativePicker.siteId, Url: 'https://tenant.test/sites/root' }), { headers: { 'Content-Type': 'application/json' } });
+    }
+    if (subject !== 'Principal' || request.kind !== 'sp') return undefined;
+    assert.deepEqual(request.init.headers, { Accept: 'application/json;odata=nometadata', 'Content-Type': 'application/json;odata=nometadata', 'OData-Version': '' });
+    if (endpoint === '/sites/root/sub/_api/sp.ui.applicationpages.clientpeoplepickerwebserviceinterface.clientpeoplepickersearchuser') {
+      assert.equal(request.method, 'POST'); assert.equal(url.search, '');
+      const body = JSON.parse(request.init.body); assert.deepEqual(Object.keys(body), ['queryParams']);
+      const q = body.queryParams;
+      assert.deepEqual(q, { AllowEmailAddresses: false, AllowMultipleEntities: false, AllUrlZones: false, MaximumEntitySuggestions: 50, PrincipalSource: 15, PrincipalType: 1, QueryString: q.QueryString, SharePointGroupID: 0, UseSubstrateSearch: false });
+      assert.ok(['Alice', 'alice@tenant.test'].includes(q.QueryString));
+      return new Response(JSON.stringify({ ClientPeoplePickerSearchUser: JSON.stringify([{ Key: 'alice@tenant.test', DisplayText: 'Alice', IsResolved: true, EntityType: 'User', EntityData: { Email: 'alice@tenant.test', UserPrincipalName: 'alice@tenant.test' } }]) }), { headers: { 'Content-Type': 'application/json' } });
+    }
+    if (endpoint === '/sites/root/sub/_api/site') {
+      assert.equal(request.method, 'GET'); assert.deepEqual([...url.searchParams], [['$select', 'Url']]);
+      return new Response(JSON.stringify({ Url: 'https://tenant.test/sites/root' }), { headers: { 'Content-Type': 'application/json' } });
+    }
+    if (endpoint === '/sites/root/sub/_api/web/siteusers/getbyloginname(@login)') {
+      assert.equal(request.method, 'GET'); assert.deepEqual(Object.fromEntries(url.searchParams), { '$select': 'Id,LoginName,Title,Email,PrincipalType', '@login': "'alice@tenant.test'" });
+      return new Response(JSON.stringify({ Id: 42, LoginName: 'alice@tenant.test', Title: 'Alice', Email: 'alice@tenant.test', PrincipalType: 1 }), { headers: { 'Content-Type': 'application/json' } });
+    }
+    return undefined;
   }
-  const sp = { get: dispatch, post() { throw new Error('Site fixture forbids tenant writes'); } };
-  t.mock.method(global, 'fetch', (url, init) => {
-    const request = { kind: 'pnp', url: String(url), init, method: init?.method ?? 'GET' };
-    calls.push(request);
-    const response = nativePicker.route(request);
-    assert.ok(response, 'bounded native Site Search verification only');
+  function dispatch(request) {
+    // Record every attempted route before admission; a UI error cannot mask rejection.
+    request.phase = phase; request.identity = 'native-' + subject + '-' + compiled;
+    request.query = Object.fromEntries(new URL(request.url).searchParams);
+    request.body = request.init?.body; calls.push(request);
+    let response;
+    try {
+      if (request.kind === 'sp') assert.equal(request.configuration, native.SPHttpClient.configurations.v1);
+      response = route(request); assert.ok(response, 'bounded native transport ' + request.method + ' ' + request.url);
+    } catch (error) { unexpected.push({ request, message: error.message }); throw error; }
+    if (hold?.(request)) return new Promise((resolve, reject) => pending.push({ request, response, resolve, reject }));
     return Promise.resolve(response);
-  });
+  }
+  const sp = {
+    get: (url, configuration, init) => dispatch({ kind: 'sp', method: 'GET', url, configuration, init }),
+    post: (url, configuration, init) => dispatch({ kind: 'sp', method: 'POST', url, configuration, init }),
+  };
+  t.mock.method(global, 'fetch', (url, init) => dispatch({ kind: 'pnp', url: String(url), init, method: init?.method ?? 'GET' }));
   const theme = { tryGetTheme: () => undefined, themeChangedEvent: { add(_owner, callback) { handlers.add(callback); }, remove(_owner, callback) { handlers.delete(callback); } } };
   const scope = { whenFinished: callback => callback(), consume(key) { if (key === keys.page) return page; if (key === keys.sp) return sp; if (key === keys.theme) return theme; if (key === keys.graph) return { getClient: async () => { throw new Error('Default native Site fixture needs no Graph'); } }; throw new Error('Unexpected Site service'); } };
   let resolveSaved;
   const saved = new Promise(resolve => { resolveSaved = resolve; });
-  let open = false, bag = {}, regions, portConnected = connected, refreshes = 0;
-  const instance = { context: { instanceId: 'native-site-' + compiled, pageContext: page, serviceScope: scope, spHttpClient: sp, propertyPane: { isPropertyPaneOpen: () => open, refresh: () => { refreshes++; } } },
+  let open = false, bag = {}, lastSdkValues = {}, regions, portConnected = connected, refreshes = 0;
+  const instance = { context: { instanceId: 'native-' + subject + '-' + compiled, pageContext: page, serviceScope: scope, spHttpClient: sp, propertyPane: { isPropertyPaneOpen: () => open, refresh: () => { refreshes++; } } },
     get properties() { return bag; }, displayMode: 2, domElement: document.createElement('div'), render() {} };
   const adapterFile = path.resolve(__dirname, '../../../apps/spfx-react-toolkit-test', compiled ? 'lib' : 'src', 'webparts/spFxReactToolkitTest/components/shared/NativePropertyPaneDemoHost.' + (compiled ? 'js' : 'ts'));
   const Host = h.load(adapterFile).NativePropertyPaneDemoHost;
@@ -61,14 +102,35 @@ function createNativeSiteFixture(t, { compiled = false, connected = true, revisi
     resetRevision: revision, ...(portConnected ? { propertyPane: adapter.port } : {}), render: next => { regions = next; return h.React.createElement('section', undefined, next.controls, next.commands, next.status, next.children, next.diagnostics); }
   })), container); }); }
   render();
-  t.after(() => { h.act(() => { adapter.dispose(); ReactDOM.unmountComponentAtNode(container); }); nativeDom.remove(); container.remove(); h.close(); });
-  return { h, root, library, adapter, saved, adapterFile, get dataRoles() { return dataRoles; }, instance, container, nativeDom, fields, calls, handlers, seen, selected,
-    get bag() { return bag; }, set bag(value) { bag = value; resolveSaved(value); }, get regions() { return regions; }, get refreshes() { return refreshes; },
+  t.after(async () => {
+    h.act(() => { adapter.dispose(); ReactDOM.unmountComponentAtNode(nativeDom); ReactDOM.unmountComponentAtNode(container); });
+    // Drain retired native continuations while this fixture still owns its transport.
+    await h.act(async () => { for (let i = 0; i < 60; i++) await Promise.resolve(); await new Promise(resolve => setImmediate(resolve)); });
+    nativeDom.remove(); container.remove(); h.close(); assert.deepEqual(unexpected, [], 'all attempted transport routes were finitely admitted');
+  });
+  return { h, root, library, adapter, saved, adapterFile, get dataRoles() { return dataRoles; }, instance, container, nativeDom, fields, calls, changes, pending, unexpected, handlers, seen, selected,
+    get bag() { return bag; }, set bag(value) { bag = value; lastSdkValues = { ...value }; resolveSaved(value); }, get regions() { return regions; }, get refreshes() { return refreshes; },
     setRevision(value) { revision = value; render(); }, disconnect() { portConnected = false; render(); },
     action(label) { const children = regions.commands?.props.children; const node = (Array.isArray(children) ? children : [children]).find(node => node?.props.children === label); assert.ok(node, label); return node.props.onClick; },
     click(label) { const button = [...container.querySelectorAll('button')].find(node => node.textContent === label); assert.ok(button, label); h.act(() => button.click()); },
-    getter() { open = true; return adapter.getConfiguration(() => ({ pages: [] })); },
-    mount(field, callback = (name, values) => { bag = { ...bag, [name]: values }; adapter.fieldChanged(name, undefined, values); }) { h.act(() => field.properties.onRender(nativeDom, undefined, callback)); adapter.rendered(); },
+    change(label, value) { const input = container.querySelector('[aria-label="' + label + '"]'); assert.ok(input, label); h.act(() => { require('react-dom/test-utils').Simulate.change(input, { target: { value } }); }); },
+    open() { phase = 'native-menu'; const trigger = nativeDom.querySelector('[role="combobox"]'); assert.ok(trigger); h.act(() => { trigger.focus(); trigger.click(); }); },
+    search(value) { phase = 'native-search'; const input = document.querySelector('.fui-SearchBox input') ?? nativeDom.querySelector('input[role="combobox"]'); assert.ok(input); h.act(() => { input.value = value; require('react-dom/test-utils').Simulate.change(input, { target: { value } }); }); },
+    choose(label) { phase = 'native-confirm'; const option = [...document.querySelectorAll('[role="option"],[role="menuitemcheckbox"]')].find(node => node.textContent.includes(label)); assert.ok(option, label + ': ' + nativeDom.textContent + ' attempts=' + JSON.stringify(calls.map(({method,url})=>({method,url})))); h.act(() => { option.click(); }); },
+    async wait(ms = 360) { await h.act(async () => { await new Promise(resolve => setTimeout(resolve, ms)); }); },
+    async settle(item) { await h.act(async () => { item.resolve(item.response); for (let i = 0; i < 30; i++) await Promise.resolve(); }); },
+    getter() { phase = 'getter'; open = true; return adapter.getConfiguration(() => ({ pages: [] })); },
+    mount(field, callback = (name, values, reactive) => { const old = lastSdkValues[name]; changes.push({ name, old, values, reactive }); bag = { ...bag, [name]: values }; lastSdkValues = { ...bag }; adapter.fieldChanged(name, old, values); resolveSaved(bag); }) { phase = 'native-render'; h.act(() => field.properties.onRender(nativeDom, undefined, callback)); adapter.rendered(); },
+    mountPane(configuration) {
+      phase = 'native-render'; const { PropertyPane } = require('../native-property-pane/pinned-components.cjs').pinnedComponents();
+      h.act(() => { ReactDOM.render(h.React.createElement(PropertyPane, { data: {
+        webPartId: instance.context.instanceId, title: 'Native references', configuration: { ...configuration, hideTitleBar: true }, properties: bag, isReactive: true,
+        onRendered: () => { assert.ok(adapter.witnesses.size, 'real native child precedes pinned parent'); adapter.rendered(); },
+        onPropertyPaneFieldChanged: (name, values) => { const old = lastSdkValues[name]; changes.push({ name, old, values }); bag = { ...bag, [name]: values }; lastSdkValues = { ...bag }; adapter.fieldChanged(name, old, values); resolveSaved(bag); },
+        onConfigurationEvent: () => {},
+      } }), nativeDom); });
+    },
+    closePane() { h.act(() => { ReactDOM.unmountComponentAtNode(nativeDom); }); open = false; adapter.configurationComplete(); },
     close(field) { h.act(() => field.properties.onDispose(nativeDom)); open = false; adapter.configurationComplete(); },
     async flush() { await h.act(async () => { for (let i = 0; i < 30; i++) await Promise.resolve(); await new Promise(resolve => setImmediate(resolve)); }); },
     origins() {
@@ -92,12 +154,13 @@ function createNativeSiteFixture(t, { compiled = false, connected = true, revisi
         return asset;
       }));
       assert.equal(files.filter(file => !data.has(file)).some(file => file.includes(compiled ? '/src/' : '/lib/')), false);
-      for (const stem of ['property-pane/pickers/property-pane-site-picker', 'property-pane/pickers/property-pane-picker-factory.internal', 'property-pane/pickers/property-pane-picker.internal', 'controls/pickers/site-picker', 'core/provider-webpart', 'core/context.internal'])
-        assert.ok(files.some(file => file === path.join(root, stem + '.js') || file === path.join(root, stem + '.ts') || file === path.join(root, stem + '.tsx')), 'actual matching origin ' + stem);
+      for (const requiredStem of ['property-pane/pickers/property-pane-' + stem + '-picker', 'property-pane/pickers/property-pane-picker-factory.internal', 'property-pane/pickers/property-pane-picker.internal', 'controls/pickers/' + stem + '-picker', 'core/provider-webpart', 'core/context.internal'])
+        assert.ok(files.some(file => file === path.join(root, requiredStem + '.js') || file === path.join(root, requiredStem + '.ts') || file === path.join(root, requiredStem + '.tsx')), 'actual matching origin ' + requiredStem);
       assert.ok(seen.includes(adapterFile), 'actual matching private adapter implementation');
       assert.equal(seen.some(file => file.includes('/apps/spfx-react-toolkit-test/' + (compiled ? 'src' : 'lib') + '/') && file.includes('NativePropertyPaneDemoHost.')), false, 'no opposite private adapter');
       return files;
     }
   };
 }
-module.exports = { createNativeSiteFixture };
+const createNativeSiteFixture = (t, options) => createNativeReferenceFixture(t, options);
+module.exports = { createNativeSiteFixture, createNativeReferenceFixture };

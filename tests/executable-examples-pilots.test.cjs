@@ -127,8 +127,18 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve e
   assert.deepEqual(Object.keys(pilotTitles).sort(), Object.keys(pilotOwners).sort(), 'every accepted pilot has an independent canonical owner expectation');
   const pilots = filterPilotGroups(groups);
   const native = pilots.flatMap(group => group.features).filter(feature => feature.scenarios.some(entry => entry.metadata.hostAdapter === 'propertyPane'));
-  assert.deepEqual(native.map(feature => feature.title), ['PropertyPaneSitePicker']);
-  assert.equal(native.flatMap(feature => feature.scenarios).length, 1);
+  const path = require('node:path');
+  const [nativeSurface] = require('../scripts/public-surface.helpers.cjs').collectPublicSurfaces([
+    path.join(__dirname, '../packages/spfx-react-toolkit/src/property-pane/pickers/index.ts'),
+  ]);
+  const nativeFactories = nativeSurface.filter(item => /^PropertyPane.+Picker$/.test(item.name));
+  assert.deepEqual(native.map(feature => feature.title).sort(), nativeFactories.map(item => item.name).sort());
+  assert.equal(native.flatMap(feature => feature.scenarios).length, nativeFactories.length);
+  for (const factory of nativeFactories) {
+    const feature = native.find(item => item.title === factory.name);
+    assert.equal(feature.key, path.relative(path.resolve(__dirname, '..'), factory.filePath).split(path.sep).join('/') + '#' + factory.name);
+    assert.deepEqual(feature.scenarios[0].publicNames, [factory.name], 'calls and imports do not create native owners');
+  }
   const prior = pilots.flatMap(group => group.features).filter(feature => !native.includes(feature));
   assert.deepEqual(prior.map(feature => feature.title).sort(), Object.keys(pilotTitles).sort());
   for (const group of pilots) for (const feature of group.features.filter(feature => prior.includes(feature))) {
