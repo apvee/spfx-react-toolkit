@@ -2,12 +2,68 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
+
+// Read only the native registration elements, not XML-looking bytes in comments
+// or CDATA. This bounded lexer handles the Elements/attribute protocol used by
+// SPFx assets; it neither resolves entities from a DTD nor loads external XML.
+function nativeRegistrationElements(text) {
+  const entries = [];
+  const stack = [];
+  let cursor = 0;
+  let rootSeen = false;
+  const lineAt = offset => text.slice(0, offset).split('\n').length;
+  const decode = value => value.replace(/&(?:quot|apos|amp|lt|gt|#\d+|#x[\da-f]+);/gi, entity => {
+    const named = { '&quot;': '"', '&apos;': "'", '&amp;': '&', '&lt;': '<', '&gt;': '>' };
+    if (named[entity]) return named[entity];
+    return String.fromCodePoint(parseInt(entity.slice(entity[2].toLowerCase() === 'x' ? 3 : 2, -1), entity[2].toLowerCase() === 'x' ? 16 : 10));
+  });
+  const tokens = /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<!\[CDATA\[[\s\S]*?\]\]>|<\/?[A-Za-z_][\w:.-]*(?:[^<>"']|"[^"]*"|'[^']*')*>/g;
+  try {
+    for (const match of text.matchAll(tokens)) {
+      if (text.slice(cursor, match.index).includes('<')) throw new Error('Malformed or unsupported native XML markup.');
+      cursor = match.index + match[0].length;
+      const token = match[0];
+      if (/^<(?:!--|\?|!\[CDATA\[)/.test(token)) continue;
+      const name = /^<\/?([\w:.-]+)/.exec(token)[1];
+      if (token.startsWith('</')) {
+        if (!/^<\/[\w:.-]+\s*>$/.test(token) || stack.pop()?.name !== name) throw new Error('Mismatched native XML closing element.');
+        continue;
+      }
+      const attributes = {};
+      const raw = token.slice(name.length + 1).replace(/\/?\s*>$/, '');
+      const attribute = /([A-Za-z_][\w:.-]*)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
+      const residue = raw.replace(attribute, (_, key, doubleQuoted, singleQuoted) => {
+        if (Object.hasOwn(attributes, key)) throw new Error(`Duplicate XML attribute ${key}.`);
+        attributes[key] = decode(doubleQuoted ?? singleQuoted);
+        return '';
+      });
+      if (residue.trim()) throw new Error('Malformed native XML attributes.');
+      const namespaces = { ...(stack.at(-1)?.namespaces || {}) };
+      for (const [key, value] of Object.entries(attributes)) {
+        if (key === 'xmlns') namespaces[''] = value;
+        else if (key.startsWith('xmlns:')) namespaces[key.slice(6)] = value;
+      }
+      const [prefix, local] = name.includes(':') ? name.split(':') : ['', name];
+      if (name.split(':').length > 2) throw new Error('Malformed qualified native XML element name.');
+      const namespace = namespaces[prefix] || '';
+      if (prefix && !namespaces[prefix]) throw new Error(`Unbound XML prefix ${prefix}.`);
+      if (!stack.length) {
+        if (rootSeen || local !== 'Elements' || namespace && namespace !== 'http://schemas.microsoft.com/sharepoint/') throw new Error('Expected one native Elements root.');
+        rootSeen = true;
+      }
+      if (stack.length === 1 && namespace === stack[0].namespace && ['CustomAction', 'ClientSideComponentInstance'].includes(local)) entries.push({ kind: local, attributes, line: lineAt(match.index) });
+      if (!/\/\s*>$/.test(token)) stack.push({ name, namespace, namespaces });
+    }
+    if (text.slice(cursor).includes('<') || stack.length || !rootSeen) throw new Error('Incomplete native XML document.');
+    return { entries };
+  } catch (error) { return { entries, error: error.message, line: lineAt(cursor) }; }
+}
 function inspectNativeConfiguration({ root, app, options, program, checker, report }) {
   const roots = [];
   const assets = new Set();
   const resources = [];
   const relative = file => path.relative(root, file).split(path.sep).join('/');
-  function issue(file, message, code = 'DEMO_NATIVE_CONFIG') { report.sourceDiagnostics.push({ file: relative(file), line: 1, code, message }); }
+  function issue(file, message, code = 'DEMO_NATIVE_CONFIG', line = 1) { report.sourceDiagnostics.push({ file: relative(file), line, code, message }); }
   function json(file) {
     try { const parsed = ts.parseConfigFileTextToJson(file, fs.readFileSync(file, 'utf8')); if (parsed.error) throw new Error(ts.flattenDiagnosticMessageText(parsed.error.messageText, '\n')); return parsed.config; }
     catch (error) { issue(file, error.message); return {}; }
@@ -49,16 +105,56 @@ function inspectNativeConfiguration({ root, app, options, program, checker, repo
   const extension = manifests.find(item => item.extensionType === 'ApplicationCustomizer');
   const serveFile = path.join(app, 'config/serve.json');
   const serve = json(serveFile);
-  for (const configuration of Object.values(serve.serveConfigurations || {})) for (const [id, action] of Object.entries(configuration.customActions || {})) if (id !== extension?.id || action.location !== 'ClientSideExtension.ApplicationCustomizer') issue(serveFile, `Unknown native custom action ${id}.`);
+  const nativeLocation = 'ClientSideExtension.ApplicationCustomizer';
+  const sameId = id => typeof id === 'string' && id.toLowerCase() === extension?.id?.toLowerCase();
+  const serveConfigurations = Object.values(serve.serveConfigurations || {});
+  if (!serveConfigurations.length) issue(serveFile, 'Missing native serve association for the configured ApplicationCustomizer.');
+  for (const configuration of serveConfigurations) {
+    const actions = Object.entries(configuration.customActions || {});
+    if (!actions.some(([id, action]) => sameId(id) && action.location === nativeLocation)) issue(serveFile, 'Missing required configured ApplicationCustomizer custom action.');
+    for (const [id, action] of actions) if (!sameId(id) || action.location !== nativeLocation) issue(serveFile, `Unknown native custom action ${id}.`);
+  }
   const solutionFile = path.join(app, 'config/package-solution.json');
   const solution = json(solutionFile);
+  const assetRoot = path.join(app, 'sharepoint/assets');
+  const associated = new Set();
+  const nativeFiles = new Set();
   for (const feature of solution.solution?.features || []) for (const name of feature.assets?.elementManifests || []) {
-    const file = path.join(app, 'sharepoint/assets', name);
+    const file = path.resolve(assetRoot, name);
+    const fromAssets = path.relative(assetRoot, file);
+    if (fromAssets === '..' || fromAssets.startsWith('..' + path.sep) || path.isAbsolute(fromAssets)) { issue(solutionFile, `Feature asset escapes native source ownership: ${name}.`); continue; }
+    associated.add(file);
     if (!fs.existsSync(file)) { issue(solutionFile, `Missing feature asset ${relative(file)}.`, 'DEMO_MISSING_ASSET'); continue; }
     assets.add(file);
-    const text = fs.readFileSync(file, 'utf8');
-    if (!extension || !text.includes(extension.id) || !text.includes('ClientSideExtension.ApplicationCustomizer')) issue(file, 'Feature registration does not match the configured ApplicationCustomizer.');
+    nativeFiles.add(file);
   }
+  // A surviving authored registration still requires its solution association;
+  // iterating only listed files would silently accept deletion of that edge.
+  function collectXml(directory) {
+    if (!fs.existsSync(directory)) return;
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const file = path.join(directory, entry.name);
+      if (entry.isDirectory()) collectXml(file);
+      else if (entry.isFile() && entry.name.endsWith('.xml')) nativeFiles.add(file);
+    }
+  }
+  collectXml(assetRoot);
+  let registrations = 0;
+  for (const file of nativeFiles) {
+    const parsed = nativeRegistrationElements(fs.readFileSync(file, 'utf8'));
+    if (parsed.error) {
+      if (associated.has(file) || parsed.entries.length) issue(file, parsed.error, 'DEMO_NATIVE_CONFIG', parsed.line);
+      continue;
+    }
+    if (parsed.entries.length && !associated.has(file)) issue(solutionFile, `Missing feature elementManifest association for ${relative(file)}.`);
+    if (associated.has(file) && !parsed.entries.length) issue(file, 'Configured feature asset has no active native registration.');
+    for (const entry of parsed.entries) {
+      const id = entry.attributes[entry.kind === 'CustomAction' ? 'ClientSideComponentId' : 'ComponentId'];
+      if (!sameId(id) || entry.attributes.Location !== nativeLocation) issue(file, 'Active feature registration does not match the configured ApplicationCustomizer.', 'DEMO_NATIVE_CONFIG', entry.line);
+      else if (associated.has(file)) registrations += 1;
+    }
+  }
+  if (!registrations) issue(solutionFile, 'Missing required active feature registration for the configured ApplicationCustomizer.');
   const declarations = program.getSourceFiles().filter(source => source.fileName.startsWith(options.rootDir));
   const ambient = new Map();
   for (const source of declarations) for (const statement of source.statements) if (ts.isModuleDeclaration(statement) && ts.isStringLiteral(statement.name) && !statement.name.text.startsWith('.')) ambient.set(statement.name.text, statement);

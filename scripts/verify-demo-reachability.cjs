@@ -167,6 +167,10 @@ function analyzeDemoReachability(root) {
   function moduleSource(expression, visited = new Set()) {
     if (!expression || visited.has(expression)) return undefined;
     visited.add(expression);
+    if (ts.isParenthesizedExpression(expression) || ts.isAsExpression(expression) || ts.isTypeAssertionExpression(expression) || ts.isSatisfiesExpression(expression) || ts.isNonNullExpression(expression)) return moduleSource(expression.expression, visited);
+    // TypeScript also binds an import specifier string to a module symbol.
+    // That string is not the runtime namespace value delivered to a consumer.
+    if (ts.isStringLiteralLike(expression)) return undefined;
     const symbol = checker.getTypeAtLocation(expression).symbol;
     const source = symbol?.declarations?.find(ts.isSourceFile) || target(checker.getSymbolAtLocation(expression))?.declarations?.find(ts.isSourceFile);
     if (source) return source;
@@ -212,16 +216,19 @@ function analyzeDemoReachability(root) {
         let qualifier = node.qualifier; while (ts.isQualifiedName(qualifier)) qualifier = qualifier.left;
         demand(resolve(node.argument.literal.text, source), qualifier.text, 'type');
       }
-      const jsxName = node.parent && (ts.isJsxOpeningElement(node.parent) || ts.isJsxClosingElement(node.parent) || ts.isJsxSelfClosingElement(node.parent) || ts.isJsxAttribute(node.parent) && node.parent.name === node);
-      if (ts.isIdentifier(node) && !jsxName && !declarationName(node) && sourceSet.has(moduleSource(node))) {
-        if (ts.isSpreadAssignment(node.parent) || ts.isSpreadElement(node.parent)) report.unresolvedDynamicReferences.push({ ...location(node), expression: node.parent.getText() });
-        if (ts.isCallExpression(node.parent) && node.parent.arguments.includes(node)) {
-          const signature = checker.getResolvedSignature(node.parent);
-          const parameter = signature?.parameters[node.parent.arguments.indexOf(node)];
+      // Inspect the complete delivered expression. Its namespace origin can
+      // survive transparent wrappers and aliases even when its asserted type
+      // is unknown; looking only at an identifier's parent loses that origin.
+      if ((ts.isSpreadAssignment(node) || ts.isSpreadElement(node) || ts.isJsxSpreadAttribute(node)) && sourceSet.has(moduleSource(node.expression))) report.unresolvedDynamicReferences.push({ ...location(node), expression: node.getText() });
+      if (ts.isCallExpression(node)) {
+        node.arguments.forEach((argument, index) => {
+          if (ts.isSpreadElement(argument) || !sourceSet.has(moduleSource(argument))) return;
+          const signature = checker.getResolvedSignature(node);
+          const parameter = signature?.parameters[index];
           const declaration = parameter?.valueDeclaration || parameter?.declarations?.[0];
           const type = declaration && checker.getTypeOfSymbolAtLocation(parameter, declaration);
-          if (!type || type.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown) || type.getStringIndexType()) report.unresolvedDynamicReferences.push({ ...location(node), expression: node.parent.getText() });
-        }
+          if (!type || type.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown) || type.getStringIndexType()) report.unresolvedDynamicReferences.push({ ...location(node), expression: node.getText() });
+        });
       }
       if (ts.isPropertyAccessExpression(node)) { if (isWrite(node)) { const symbol = checker.getSymbolAtLocation(node.name); if (symbol) { writes.add(symbol); for (const origin of checker.getRootSymbols(symbol)) writes.add(origin); } } else memberRead(node.expression, [node.name.text]); }
       if (ts.isElementAccessExpression(node) && node.argumentExpression && !isWrite(node)) {

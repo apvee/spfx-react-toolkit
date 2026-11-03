@@ -218,3 +218,71 @@ test('a broad key asserted to namespace keyof is unresolved rather than evidence
 test('a broad asserted local key alias still has an unresolved namespace demand',()=>check({[app+'src/host.ts']:"import * as namespace from './scenario';\ndeclare const key:string;\nconst selected=key as keyof typeof namespace;\nexport function mount():void {namespace[selected]();}\n"},'unresolvedDynamicReferences',d=>d.file===app+'src/host.ts'&&d.line===4));
 test('transparent assertion satisfies and non-null wrappers do not manufacture finite namespace demand',()=>check({[app+'src/host.ts']:"import * as namespace from './scenario';\ndeclare const key:string;\nexport function mount():void {namespace[((key as keyof typeof namespace)!) satisfies keyof typeof namespace]();}\n"},'unresolvedDynamicReferences',d=>d.file===app+'src/host.ts'&&d.line===3));
 test('a genuinely declared finite namespace union and a literal local alias remain supported',()=>check({[app+'src/scenario.ts']:files[app+'src/scenario.ts']+'export const Other=()=>2;\n',[app+'src/host.ts']:"import * as namespace from './scenario';\ndeclare const key:'Demo'|'Other';\nconst literal='Demo' as const;const alias=literal;\n"+files[app+'src/host.ts'].replace('entries.forEach(','namespace[key]();namespace[alias]();entries.forEach(')}));
+
+// FIX1 independent review counterexamples: the valid finite read stays present.
+const reviewFix1 = require('./fixtures/demo-reachability/review-fix1.cjs');
+const escapedAt = line => d => d.file === app + 'src/host.ts' && d.line === line;
+test('FIX1 I1 parenthesized namespace escape remains unresolved beside a finite read', () => {
+  check(reviewFix1.namespaceConsumer('namespace.Demo(); leak((namespace))'), 'unresolvedDynamicReferences', escapedAt(4));
+});
+test('FIX1 I1 asserted unknown namespace alias preserves its broad escape origin', () => {
+  check(reviewFix1.namespaceConsumer('namespace.Demo(); leak(alias)', 'const alias = (namespace as unknown);'), 'unresolvedDynamicReferences', escapedAt(5));
+});
+test('FIX1 I1 satisfies and non-null wrappers preserve namespace escape origin', () => {
+  check(reviewFix1.namespaceConsumer('namespace.Demo(); leak(((namespace satisfies unknown)!))'), 'unresolvedDynamicReferences', escapedAt(4));
+});
+test('FIX1 I1 wrapped namespace spread cannot hide behind a genuine read', () => {
+  check(reviewFix1.namespaceConsumer('namespace.Demo(); const copy = { ...((namespace)) }; console.log(copy.Demo)'), 'unresolvedDynamicReferences', escapedAt(4));
+});
+test('FIX1 I1 asserted alias spread does not consume an unrelated export slot', () => {
+  const changes = reviewFix1.namespaceConsumer('namespace.Demo(); const copy = { ...(alias as typeof namespace) }; console.log(copy.Demo)', 'const alias = namespace as unknown;');
+  changes[app + 'src/scenario.ts'] = files[app + 'src/scenario.ts'] + 'export const spare = 2;\n';
+  const report = check(changes, 'unresolvedDynamicReferences', escapedAt(5));
+  assert.ok(report.unusedExports.some(d => d.file === app + 'src/scenario.ts' && d.symbol === 'spare' && d.line === 2));
+});
+test('FIX1 I1 wrapped immutable namespace alias retains actual finite member demand', () => {
+  check(reviewFix1.namespaceConsumer('alias.Demo()', 'const alias = ((namespace as typeof namespace) satisfies typeof namespace)!;'));
+});
+test('FIX1 I1 wrapped alias can enter a genuine finite declared consumer', () => {
+  check(reviewFix1.namespaceConsumer('namespace.Demo(); consume((alias))', 'const alias = (namespace as typeof namespace);\nfunction consume(value: { Demo(): number }): number { return value.Demo(); }'));
+});
+const nativeProblem = (file, line = 1) => d => d.file === app + file && d.code === 'DEMO_NATIVE_CONFIG' && d.line === line;
+test('FIX1 I2 wrong active XML ID cannot borrow the correct registration from a comment', () => {
+  const { extensionId, wrongId, location } = reviewFix1;
+  check({ [app + 'sharepoint/assets/elements.xml']: `<Elements>\n<!-- ${extensionId} ${location} -->\n<CustomAction Location="${location}" ClientSideComponentId="${wrongId}" />\n</Elements>` }, 'sourceDiagnostics', nativeProblem('sharepoint/assets/elements.xml', 3));
+});
+test('FIX1 I2 wrong active XML location cannot borrow a comment location', () => {
+  const { extensionId, location } = reviewFix1;
+  check({ [app + 'sharepoint/assets/elements.xml']: `<Elements>\n<!-- ${location} -->\n<CustomAction Location="Wrong.Extension" ClientSideComponentId="${extensionId}" />\n</Elements>` }, 'sourceDiagnostics', nativeProblem('sharepoint/assets/elements.xml', 3));
+});
+test('FIX1 I2 deleted Top custom action fails its required serve association', () => {
+  check(reviewFix1.serveWithoutAction(), 'sourceDiagnostics', nativeProblem('config/serve.json'));
+});
+test('FIX1 I2 deleted customActions property cannot bypass native serve validation', () => {
+  check(reviewFix1.serveWithoutAction({ removeProperty: true }), 'sourceDiagnostics', nativeProblem('config/serve.json'));
+});
+test('FIX1 I2 removed feature association fails while the native XML source survives', () => {
+  check(reviewFix1.solutionWithoutAssociation(), 'sourceDiagnostics', nativeProblem('config/package-solution.json'));
+});
+test('FIX1 I2 deleted feature assets cannot bypass required native registration', () => {
+  check(reviewFix1.solutionWithoutAssociation({ removeAssets: true }), 'sourceDiagnostics', nativeProblem('config/package-solution.json'));
+});
+test('FIX1 I2 active prefixed single-quoted native registrations keep both physical associations', () => {
+  check(reviewFix1.nativePair());
+});
+test('FIX1 I2 deleting one of two required XML associations is not rescued by the other', () => {
+  const changes = reviewFix1.nativePair();
+  const solution = JSON.parse(changes[app + 'config/package-solution.json']);
+  solution.solution.features[0].assets.elementManifests = ['instance.xml'];
+  changes[app + 'config/package-solution.json'] = JSON.stringify(solution);
+  check(changes, 'sourceDiagnostics', nativeProblem('config/package-solution.json'));
+});
+test('FIX1 I2 active ClientSideComponentInstance ID is validated independently of comments', () => {
+  const changes = reviewFix1.nativePair();
+  changes[app + 'sharepoint/assets/instance.xml'] = changes[app + 'sharepoint/assets/instance.xml'].replace('ComponentId=\'' + reviewFix1.extensionId, 'ComponentId=\'' + reviewFix1.wrongId) + `\n<!-- ${reviewFix1.extensionId} -->`;
+  check(changes, 'sourceDiagnostics', nativeProblem('sharepoint/assets/instance.xml', 3));
+});
+test('FIX1 I2 malformed qualified tag cannot masquerade as an active native registration', () => {
+  const { extensionId, location } = reviewFix1;
+  check({ [app + 'sharepoint/assets/elements.xml']: `<sp:Elements xmlns:sp="http://schemas.microsoft.com/sharepoint/">\n<!-- Qualified names have at most one prefix. -->\n<sp:CustomAction:Other Location="${location}" ClientSideComponentId="${extensionId}" />\n</sp:Elements>` }, 'sourceDiagnostics', d => d.file === app + 'sharepoint/assets/elements.xml' && d.code === 'DEMO_NATIVE_CONFIG' && d.line > 0);
+});
