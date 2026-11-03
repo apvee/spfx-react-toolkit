@@ -10,7 +10,7 @@ export const useDemoStyles = makeStyles({
   configTitle: { display: 'flex', alignItems: 'center', gap: tokens.spacingHorizontalS, fontSize: tokens.fontSizeBase400 },
   description: { margin: 0, color: tokens.colorNeutralForeground2 },
   controls: {
-    display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', alignItems: 'start',
     gap: tokens.spacingVerticalM, minWidth: 0,
     '& > *': { minWidth: 0, maxWidth: '100%' },
     '@media (max-width: 600px)': { gridTemplateColumns: 'minmax(0, 1fr)' },
