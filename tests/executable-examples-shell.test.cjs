@@ -180,7 +180,7 @@ test('explicit explorer Reset restores focus after actual Shell body remount wit
   }); };
   elsewhere.focus();
   h.act(() => ReactDOM.render(h.React.createElement(RendererProvider, { renderer, targetDocument: document },
-    h.React.createElement(WebPartShellDemoHost, { instance }, h.React.createElement(ExampleExplorer, { groups, legacyEntries: [] }))), container));
+    h.React.createElement(WebPartShellDemoHost, { instance }, h.React.createElement(ExampleExplorer, { groups }))), container));
   // The host defaults to the full catalogue's first feature. Select the actual
   // Shell feature through the mobile selector, then observe its real lazy commit.
   h.act(() => Simulate.change(container.querySelector('select[aria-label="Funzionalità"]'), { target: { value: groups[0].features[0].key } }));

@@ -38,6 +38,7 @@ export interface ExecutableExampleProps {
   resetRevision?: number;
   shell?: ExecutableShellPort;
   propertyPane?: DemoPropertyPanePort<ISpFxReactToolkitTestWebPartProps>;
+  applicationCustomizerTop?: { readonly placeholder: 'Top' };
 }
 
 export interface ExecutableExampleEntry {
@@ -51,11 +52,11 @@ export interface ExecutableExampleEntry {
   publicNames: readonly string[];
   source: { file: string; line: number };
   metadata: {
-    host: 'none' | 'webPart';
+    host: 'none' | 'webPart' | 'applicationCustomizer';
     kind: 'snapshot' | 'read' | 'write';
     contentPlacement: 'subject' | 'configuration';
     observe: string;
-    hostAdapter?: 'webPartShell' | 'propertyPane';
+    hostAdapter?: 'webPartShell' | 'propertyPane' | 'applicationCustomizerTop';
   };
   load(): Promise<{ Demo: React.ComponentType<ExecutableExampleProps> }>;
 }
@@ -949,6 +950,122 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
     "observe": "The helper marks only the plain title as searchable. Create fresh metadata to compare independent maps and title descriptors."
   },
   load: () => import(/* webpackChunkName: 'spfx-jsdoc-9496a583c497d2af126e303996591d022fca61c8ca6d77ebd843829fd3a1af5a' */ "./9496a583c497d2af126e303996591d022fca61c8ca6d77ebd843829fd3a1af5a")
+},
+{
+  "id": "bd2363fb5ce5c5758ede892572cc3192710ac8b260b022dbeb44835c03b21503",
+  "ownerKey": "packages/spfx-react-toolkit/src/core/provider-application-customizer.tsx#SPFxApplicationCustomizerProvider",
+  "title": "Compare Application Customizer provider availability with the current host",
+  "groupRoute": "docs/api/core/providers.md",
+  "groupKey": "core",
+  "featureKey": "packages/spfx-react-toolkit/src/core/provider-application-customizer.tsx#SPFxApplicationCustomizerProvider",
+  "featureTitle": "SPFxApplicationCustomizerProvider",
+  "publicNames": [
+    "SPFxApplicationCustomizerProvider"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/core/provider-application-customizer.tsx",
+    "line": 134
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Choose each of four providers and compare the actual exported function, required kind and current host independently. Reset restores this owner’s provider choice without mounting a new provider."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-bd2363fb5ce5c5758ede892572cc3192710ac8b260b022dbeb44835c03b21503' */ "./bd2363fb5ce5c5758ede892572cc3192710ac8b260b022dbeb44835c03b21503")
+},
+{
+  "id": "e121eccfee5c8d4a4513790e21c63b7b97bd5f001a1d66eea36ea555b41c14e5",
+  "ownerKey": "packages/spfx-react-toolkit/src/core/provider-application-customizer.tsx#SPFxApplicationCustomizerProvider",
+  "title": "Inspect the actual Top placeholder provider",
+  "groupRoute": "docs/api/core/providers.md",
+  "groupKey": "core",
+  "featureKey": "packages/spfx-react-toolkit/src/core/provider-application-customizer.tsx#SPFxApplicationCustomizerProvider",
+  "featureTitle": "SPFxApplicationCustomizerProvider",
+  "publicNames": [
+    "SPFxApplicationCustomizerProvider"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/core/provider-application-customizer.tsx",
+    "line": 183
+  },
+  "metadata": {
+    "host": "applicationCustomizer",
+    "hostAdapter": "applicationCustomizerTop",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Inspect the actual AppCustomizer kind, instance ID, web title and testMessage in Top. An absent message shows No message; an empty string remains empty. Reset does not write the native host."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-e121eccfee5c8d4a4513790e21c63b7b97bd5f001a1d66eea36ea555b41c14e5' */ "./e121eccfee5c8d4a4513790e21c63b7b97bd5f001a1d66eea36ea555b41c14e5")
+},
+{
+  "id": "04d93e78ddf02cc519f0d8e78bf46182ee951dcd58c6a1b7aa03f4e94004d761",
+  "ownerKey": "packages/spfx-react-toolkit/src/core/provider-field-customizer.tsx#SPFxFieldCustomizerProvider",
+  "title": "Compare Field Customizer provider availability with the current host",
+  "groupRoute": "docs/api/core/providers.md",
+  "groupKey": "core",
+  "featureKey": "packages/spfx-react-toolkit/src/core/provider-field-customizer.tsx#SPFxFieldCustomizerProvider",
+  "featureTitle": "SPFxFieldCustomizerProvider",
+  "publicNames": [
+    "SPFxFieldCustomizerProvider"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/core/provider-field-customizer.tsx",
+    "line": 105
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Choose each of four providers and compare the actual exported function, required kind and current host independently. Reset restores this owner’s provider choice without mounting a new provider."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-04d93e78ddf02cc519f0d8e78bf46182ee951dcd58c6a1b7aa03f4e94004d761' */ "./04d93e78ddf02cc519f0d8e78bf46182ee951dcd58c6a1b7aa03f4e94004d761")
+},
+{
+  "id": "335e198cdd1488d3e4e34f307413318a70f6bc493075e9a429deae77b2c49723",
+  "ownerKey": "packages/spfx-react-toolkit/src/core/provider-listview-commandset.tsx#SPFxListViewCommandSetProvider",
+  "title": "Compare Command Set provider availability with the current host",
+  "groupRoute": "docs/api/core/providers.md",
+  "groupKey": "core",
+  "featureKey": "packages/spfx-react-toolkit/src/core/provider-listview-commandset.tsx#SPFxListViewCommandSetProvider",
+  "featureTitle": "SPFxListViewCommandSetProvider",
+  "publicNames": [
+    "SPFxListViewCommandSetProvider"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/core/provider-listview-commandset.tsx",
+    "line": 100
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Choose each of four providers and compare the actual exported function, required kind and current host independently. Reset restores this owner’s provider choice without mounting a new provider."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-335e198cdd1488d3e4e34f307413318a70f6bc493075e9a429deae77b2c49723' */ "./335e198cdd1488d3e4e34f307413318a70f6bc493075e9a429deae77b2c49723")
+},
+{
+  "id": "2824426017605db45203af09e79346fdff7b88d03e9218a30756fcff78cc12bd",
+  "ownerKey": "packages/spfx-react-toolkit/src/core/provider-webpart.tsx#SPFxWebPartProvider",
+  "title": "Compare WebPart provider availability with the current host",
+  "groupRoute": "docs/api/core/providers.md",
+  "groupKey": "core",
+  "featureKey": "packages/spfx-react-toolkit/src/core/provider-webpart.tsx#SPFxWebPartProvider",
+  "featureTitle": "SPFxWebPartProvider",
+  "publicNames": [
+    "SPFxWebPartProvider"
+  ],
+  "source": {
+    "file": "packages/spfx-react-toolkit/src/core/provider-webpart.tsx",
+    "line": 122
+  },
+  "metadata": {
+    "host": "webPart",
+    "kind": "snapshot",
+    "contentPlacement": "configuration",
+    "observe": "Choose each of four providers and compare the actual exported function, required kind and current host independently. Reset restores this owner’s provider choice without mounting a new provider."
+  },
+  load: () => import(/* webpackChunkName: 'spfx-jsdoc-2824426017605db45203af09e79346fdff7b88d03e9218a30756fcff78cc12bd' */ "./2824426017605db45203af09e79346fdff7b88d03e9218a30756fcff78cc12bd")
 },
 {
   "id": "2a367bde45dcda003e45835a48a86a7eb22db0ef9a9f9dff5b03c02650694a9d",
@@ -3706,121 +3823,127 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/controls/form/create-form.ts#createForm", title: "createForm", scenarios: [executableExamples[35], executableExamples[36]] },
     { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[37]] }
   ] },
+  { key: "core", title: "Provider e contesto", features: [
+    { key: "packages/spfx-react-toolkit/src/core/provider-application-customizer.tsx#SPFxApplicationCustomizerProvider", title: "SPFxApplicationCustomizerProvider", scenarios: [executableExamples[38], executableExamples[39]] },
+    { key: "packages/spfx-react-toolkit/src/core/provider-field-customizer.tsx#SPFxFieldCustomizerProvider", title: "SPFxFieldCustomizerProvider", scenarios: [executableExamples[40]] },
+    { key: "packages/spfx-react-toolkit/src/core/provider-listview-commandset.tsx#SPFxListViewCommandSetProvider", title: "SPFxListViewCommandSetProvider", scenarios: [executableExamples[41]] },
+    { key: "packages/spfx-react-toolkit/src/core/provider-webpart.tsx#SPFxWebPartProvider", title: "SPFxWebPartProvider", scenarios: [executableExamples[42]] }
+  ] },
   { key: "helpers", title: "Helper e stili", features: [
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/states.ts#active", title: "active", scenarios: [executableExamples[38]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#<module>", title: "alignItems", scenarios: [executableExamples[39]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#<module>", title: "alignSelf", scenarios: [executableExamples[40]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/background.ts#<module>", title: "background", scenarios: [executableExamples[41]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#<module>", title: "borderColor", scenarios: [executableExamples[42]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#<module>", title: "borderRadius", scenarios: [executableExamples[43]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/border-style.ts#<module>", title: "borderStyle", scenarios: [executableExamples[44]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#<module>", title: "borderWidth", scenarios: [executableExamples[45]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#<module>", title: "boxShadow", scenarios: [executableExamples[46]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/container.ts#<module>", title: "container", scenarios: [executableExamples[47]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/flex.ts#<module>", title: "flex", scenarios: [executableExamples[48]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#<module>", title: "flexItem", scenarios: [executableExamples[49]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/states.ts#focusVisible", title: "focusVisible", scenarios: [executableExamples[50]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#<module>", title: "foreground", scenarios: [executableExamples[51]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/gap.ts#<module>", title: "gap", scenarios: [executableExamples[52]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/grid.ts#<module>", title: "grid", scenarios: [executableExamples[53]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/height.ts#<module>", title: "height", scenarios: [executableExamples[54]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/states.ts#hover", title: "hover", scenarios: [executableExamples[55]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#<module>", title: "justifyContent", scenarios: [executableExamples[56]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin.ts#<module>", title: "margin", scenarios: [executableExamples[57]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#<module>", title: "marginBlock", scenarios: [executableExamples[58]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#<module>", title: "marginBlockEnd", scenarios: [executableExamples[59]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#<module>", title: "marginBlockStart", scenarios: [executableExamples[60]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#<module>", title: "marginInline", scenarios: [executableExamples[61]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#<module>", title: "marginInlineEnd", scenarios: [executableExamples[62]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#<module>", title: "marginInlineStart", scenarios: [executableExamples[63]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/max-height.ts#<module>", title: "maxHeight", scenarios: [executableExamples[64]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/max-width.ts#<module>", title: "maxWidth", scenarios: [executableExamples[65]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/min-height.ts#<module>", title: "minHeight", scenarios: [executableExamples[66]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/min-width.ts#<module>", title: "minWidth", scenarios: [executableExamples[67]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#<module>", title: "overflow", scenarios: [executableExamples[68]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding.ts#<module>", title: "padding", scenarios: [executableExamples[69]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#<module>", title: "paddingBlock", scenarios: [executableExamples[70]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#<module>", title: "paddingBlockEnd", scenarios: [executableExamples[71]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#<module>", title: "paddingBlockStart", scenarios: [executableExamples[72]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#<module>", title: "paddingInline", scenarios: [executableExamples[73]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#<module>", title: "paddingInlineEnd", scenarios: [executableExamples[74]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#<module>", title: "paddingInlineStart", scenarios: [executableExamples[75]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/presets.ts#<module>", title: "presets", scenarios: [executableExamples[76]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#<module>", title: "responsive", scenarios: [executableExamples[77]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts#<module>", title: "scrollbar", scenarios: [executableExamples[78]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/text.ts#<module>", title: "text", scenarios: [executableExamples[79]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#<module>", title: "textAlign", scenarios: [executableExamples[80]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/typography.ts#<module>", title: "typography", scenarios: [executableExamples[81]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#<module>", title: "viewport", scenarios: [executableExamples[82]] },
-    { key: "packages/spfx-react-toolkit/src/helpers/styles/width.ts#<module>", title: "width", scenarios: [executableExamples[83]] }
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/states.ts#active", title: "active", scenarios: [executableExamples[43]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#<module>", title: "alignItems", scenarios: [executableExamples[44]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#<module>", title: "alignSelf", scenarios: [executableExamples[45]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/background.ts#<module>", title: "background", scenarios: [executableExamples[46]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/border-color.ts#<module>", title: "borderColor", scenarios: [executableExamples[47]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/border-radius.ts#<module>", title: "borderRadius", scenarios: [executableExamples[48]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/border-style.ts#<module>", title: "borderStyle", scenarios: [executableExamples[49]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/border-width.ts#<module>", title: "borderWidth", scenarios: [executableExamples[50]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/box-shadow.ts#<module>", title: "boxShadow", scenarios: [executableExamples[51]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/container.ts#<module>", title: "container", scenarios: [executableExamples[52]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/flex.ts#<module>", title: "flex", scenarios: [executableExamples[53]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/flex-item.ts#<module>", title: "flexItem", scenarios: [executableExamples[54]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/states.ts#focusVisible", title: "focusVisible", scenarios: [executableExamples[55]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/foreground.ts#<module>", title: "foreground", scenarios: [executableExamples[56]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/gap.ts#<module>", title: "gap", scenarios: [executableExamples[57]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/grid.ts#<module>", title: "grid", scenarios: [executableExamples[58]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/height.ts#<module>", title: "height", scenarios: [executableExamples[59]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/states.ts#hover", title: "hover", scenarios: [executableExamples[60]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/justify-content.ts#<module>", title: "justifyContent", scenarios: [executableExamples[61]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin.ts#<module>", title: "margin", scenarios: [executableExamples[62]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-block.ts#<module>", title: "marginBlock", scenarios: [executableExamples[63]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-block-end.ts#<module>", title: "marginBlockEnd", scenarios: [executableExamples[64]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-block-start.ts#<module>", title: "marginBlockStart", scenarios: [executableExamples[65]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-inline.ts#<module>", title: "marginInline", scenarios: [executableExamples[66]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-inline-end.ts#<module>", title: "marginInlineEnd", scenarios: [executableExamples[67]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/margin-inline-start.ts#<module>", title: "marginInlineStart", scenarios: [executableExamples[68]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/max-height.ts#<module>", title: "maxHeight", scenarios: [executableExamples[69]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/max-width.ts#<module>", title: "maxWidth", scenarios: [executableExamples[70]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/min-height.ts#<module>", title: "minHeight", scenarios: [executableExamples[71]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/min-width.ts#<module>", title: "minWidth", scenarios: [executableExamples[72]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/overflow.ts#<module>", title: "overflow", scenarios: [executableExamples[73]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding.ts#<module>", title: "padding", scenarios: [executableExamples[74]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-block.ts#<module>", title: "paddingBlock", scenarios: [executableExamples[75]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-block-end.ts#<module>", title: "paddingBlockEnd", scenarios: [executableExamples[76]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-block-start.ts#<module>", title: "paddingBlockStart", scenarios: [executableExamples[77]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-inline.ts#<module>", title: "paddingInline", scenarios: [executableExamples[78]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-inline-end.ts#<module>", title: "paddingInlineEnd", scenarios: [executableExamples[79]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/padding-inline-start.ts#<module>", title: "paddingInlineStart", scenarios: [executableExamples[80]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/presets.ts#<module>", title: "presets", scenarios: [executableExamples[81]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/responsive.ts#<module>", title: "responsive", scenarios: [executableExamples[82]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/scrollbar.ts#<module>", title: "scrollbar", scenarios: [executableExamples[83]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/text.ts#<module>", title: "text", scenarios: [executableExamples[84]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/text-align.ts#<module>", title: "textAlign", scenarios: [executableExamples[85]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/typography.ts#<module>", title: "typography", scenarios: [executableExamples[86]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#<module>", title: "viewport", scenarios: [executableExamples[87]] },
+    { key: "packages/spfx-react-toolkit/src/helpers/styles/width.ts#<module>", title: "width", scenarios: [executableExamples[88]] }
   ] },
   { key: "hooks", title: "Hook", features: [
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#SearchVerticals", title: "SearchVerticals", scenarios: [executableExamples[84]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxAadHttpClient.ts#useSPFxAadHttpClient", title: "useSPFxAadHttpClient", scenarios: [executableExamples[85]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts#useSPFxAadTokenProvider", title: "useSPFxAadTokenProvider", scenarios: [executableExamples[86]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxApiPermissionPrecheck.ts#useSPFxApiPermissionPrecheck", title: "useSPFxApiPermissionPrecheck", scenarios: [executableExamples[87]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxConfigurationStore.ts#useSPFxConfigurationStore", title: "useSPFxConfigurationStore", scenarios: [executableExamples[88]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxContainerInfo.ts#useSPFxContainerInfo", title: "useSPFxContainerInfo", scenarios: [executableExamples[89]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxContainerSize.ts#useSPFxContainerSize", title: "useSPFxContainerSize", scenarios: [executableExamples[90]] },
-    { key: "packages/spfx-react-toolkit/src/core/context.internal.tsx#useSPFxContext", title: "useSPFxContext", scenarios: [executableExamples[91]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts#useSPFxCorrelationInfo", title: "useSPFxCorrelationInfo", scenarios: [executableExamples[92]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts#useSPFxCrossSitePermissions", title: "useSPFxCrossSitePermissions", scenarios: [executableExamples[93], executableExamples[94]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts#useSPFxDisplayMode", title: "useSPFxDisplayMode", scenarios: [executableExamples[95]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxEnvironmentInfo.ts#useSPFxEnvironmentInfo", title: "useSPFxEnvironmentInfo", scenarios: [executableExamples[96]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts#useSPFxFluent9ThemeInfo", title: "useSPFxFluent9ThemeInfo", scenarios: [executableExamples[97]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxHttpClient.ts#useSPFxHttpClient", title: "useSPFxHttpClient", scenarios: [executableExamples[98]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts#useSPFxHubSiteInfo", title: "useSPFxHubSiteInfo", scenarios: [executableExamples[99]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxInstanceInfo.ts#useSPFxInstanceInfo", title: "useSPFxInstanceInfo", scenarios: [executableExamples[100]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts#useSPFxIsEdit", title: "useSPFxIsEdit", scenarios: [executableExamples[101]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxListInfo.ts#useSPFxListInfo", title: "useSPFxListInfo", scenarios: [executableExamples[102]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxLocalStorage", title: "useSPFxLocalStorage", scenarios: [executableExamples[103]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts#useSPFxLocaleInfo", title: "useSPFxLocaleInfo", scenarios: [executableExamples[104]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxLogger.ts#useSPFxLogger", title: "useSPFxLogger", scenarios: [executableExamples[105]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxMSGraphClient.ts#useSPFxMSGraphClient", title: "useSPFxMSGraphClient", scenarios: [executableExamples[106]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData.ts#useSPFxOneDriveAppData", title: "useSPFxOneDriveAppData", scenarios: [executableExamples[107]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPageContext.ts#useSPFxPageContext", title: "useSPFxPageContext", scenarios: [executableExamples[108]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts#useSPFxPageType", title: "useSPFxPageType", scenarios: [executableExamples[109]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#useSPFxPerformance", title: "useSPFxPerformance", scenarios: [executableExamples[110]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts#useSPFxPermissions", title: "useSPFxPermissions", scenarios: [executableExamples[111]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnP.ts#useSPFxPnP", title: "useSPFxPnP", scenarios: [executableExamples[112]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPContext.ts#useSPFxPnPContext", title: "useSPFxPnPContext", scenarios: [executableExamples[113]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[114], executableExamples[115]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts#useSPFxPnPListById", title: "useSPFxPnPListById", scenarios: [executableExamples[116]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath.ts#useSPFxPnPListByPath", title: "useSPFxPnPListByPath", scenarios: [executableExamples[117]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts#useSPFxPnPListByUrl", title: "useSPFxPnPListByUrl", scenarios: [executableExamples[118]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#useSPFxPnPSearch", title: "useSPFxPnPSearch", scenarios: [executableExamples[119], executableExamples[120], executableExamples[121]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties", title: "useSPFxProperties", scenarios: [executableExamples[122]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSPHttpClient.ts#useSPFxSPHttpClient", title: "useSPFxSPHttpClient", scenarios: [executableExamples[123]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts#useSPFxServiceScope", title: "useSPFxServiceScope", scenarios: [executableExamples[124]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage", title: "useSPFxSessionStorage", scenarios: [executableExamples[125]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo", title: "useSPFxSiteInfo", scenarios: [executableExamples[126]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore", title: "useSPFxSiteKeyValueStore", scenarios: [executableExamples[127]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams", title: "useSPFxTeams", scenarios: [executableExamples[128]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore.ts#useSPFxTenantKeyValueStore", title: "useSPFxTenantKeyValueStore", scenarios: [executableExamples[129]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty", title: "useSPFxTenantProperty", scenarios: [executableExamples[130]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[131]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[132]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto", title: "useSPFxUserPhoto", scenarios: [executableExamples[133]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[134], executableExamples[135]] },
-    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[136], executableExamples[137]] }
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#SearchVerticals", title: "SearchVerticals", scenarios: [executableExamples[89]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxAadHttpClient.ts#useSPFxAadHttpClient", title: "useSPFxAadHttpClient", scenarios: [executableExamples[90]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts#useSPFxAadTokenProvider", title: "useSPFxAadTokenProvider", scenarios: [executableExamples[91]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxApiPermissionPrecheck.ts#useSPFxApiPermissionPrecheck", title: "useSPFxApiPermissionPrecheck", scenarios: [executableExamples[92]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxConfigurationStore.ts#useSPFxConfigurationStore", title: "useSPFxConfigurationStore", scenarios: [executableExamples[93]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxContainerInfo.ts#useSPFxContainerInfo", title: "useSPFxContainerInfo", scenarios: [executableExamples[94]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxContainerSize.ts#useSPFxContainerSize", title: "useSPFxContainerSize", scenarios: [executableExamples[95]] },
+    { key: "packages/spfx-react-toolkit/src/core/context.internal.tsx#useSPFxContext", title: "useSPFxContext", scenarios: [executableExamples[96]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxCorrelationInfo.ts#useSPFxCorrelationInfo", title: "useSPFxCorrelationInfo", scenarios: [executableExamples[97]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts#useSPFxCrossSitePermissions", title: "useSPFxCrossSitePermissions", scenarios: [executableExamples[98], executableExamples[99]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts#useSPFxDisplayMode", title: "useSPFxDisplayMode", scenarios: [executableExamples[100]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxEnvironmentInfo.ts#useSPFxEnvironmentInfo", title: "useSPFxEnvironmentInfo", scenarios: [executableExamples[101]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxFluent9ThemeInfo.ts#useSPFxFluent9ThemeInfo", title: "useSPFxFluent9ThemeInfo", scenarios: [executableExamples[102]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxHttpClient.ts#useSPFxHttpClient", title: "useSPFxHttpClient", scenarios: [executableExamples[103]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxHubSiteInfo.ts#useSPFxHubSiteInfo", title: "useSPFxHubSiteInfo", scenarios: [executableExamples[104]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxInstanceInfo.ts#useSPFxInstanceInfo", title: "useSPFxInstanceInfo", scenarios: [executableExamples[105]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxDisplayMode.ts#useSPFxIsEdit", title: "useSPFxIsEdit", scenarios: [executableExamples[106]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxListInfo.ts#useSPFxListInfo", title: "useSPFxListInfo", scenarios: [executableExamples[107]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxLocalStorage", title: "useSPFxLocalStorage", scenarios: [executableExamples[108]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts#useSPFxLocaleInfo", title: "useSPFxLocaleInfo", scenarios: [executableExamples[109]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxLogger.ts#useSPFxLogger", title: "useSPFxLogger", scenarios: [executableExamples[110]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxMSGraphClient.ts#useSPFxMSGraphClient", title: "useSPFxMSGraphClient", scenarios: [executableExamples[111]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData.ts#useSPFxOneDriveAppData", title: "useSPFxOneDriveAppData", scenarios: [executableExamples[112]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPageContext.ts#useSPFxPageContext", title: "useSPFxPageContext", scenarios: [executableExamples[113]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPageType.ts#useSPFxPageType", title: "useSPFxPageType", scenarios: [executableExamples[114]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#useSPFxPerformance", title: "useSPFxPerformance", scenarios: [executableExamples[115]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts#useSPFxPermissions", title: "useSPFxPermissions", scenarios: [executableExamples[116]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnP.ts#useSPFxPnP", title: "useSPFxPnP", scenarios: [executableExamples[117]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPContext.ts#useSPFxPnPContext", title: "useSPFxPnPContext", scenarios: [executableExamples[118]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#useSPFxPnPList", title: "useSPFxPnPList", scenarios: [executableExamples[119], executableExamples[120]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts#useSPFxPnPListById", title: "useSPFxPnPListById", scenarios: [executableExamples[121]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath.ts#useSPFxPnPListByPath", title: "useSPFxPnPListByPath", scenarios: [executableExamples[122]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts#useSPFxPnPListByUrl", title: "useSPFxPnPListByUrl", scenarios: [executableExamples[123]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#useSPFxPnPSearch", title: "useSPFxPnPSearch", scenarios: [executableExamples[124], executableExamples[125], executableExamples[126]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#useSPFxProperties", title: "useSPFxProperties", scenarios: [executableExamples[127]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSPHttpClient.ts#useSPFxSPHttpClient", title: "useSPFxSPHttpClient", scenarios: [executableExamples[128]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxServiceScope.ts#useSPFxServiceScope", title: "useSPFxServiceScope", scenarios: [executableExamples[129]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxStorage.ts#useSPFxSessionStorage", title: "useSPFxSessionStorage", scenarios: [executableExamples[130]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteInfo.ts#useSPFxSiteInfo", title: "useSPFxSiteInfo", scenarios: [executableExamples[131]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts#useSPFxSiteKeyValueStore", title: "useSPFxSiteKeyValueStore", scenarios: [executableExamples[132]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTeams.ts#useSPFxTeams", title: "useSPFxTeams", scenarios: [executableExamples[133]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTenantKeyValueStore.ts#useSPFxTenantKeyValueStore", title: "useSPFxTenantKeyValueStore", scenarios: [executableExamples[134]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxTenantProperty.ts#useSPFxTenantProperty", title: "useSPFxTenantProperty", scenarios: [executableExamples[135]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxThemeInfo.ts#useSPFxThemeInfo", title: "useSPFxThemeInfo", scenarios: [executableExamples[136]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserInfo.ts#useSPFxUserInfo", title: "useSPFxUserInfo", scenarios: [executableExamples[137]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#useSPFxUserPhoto", title: "useSPFxUserPhoto", scenarios: [executableExamples[138]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useStableCallback.ts#useStableCallback", title: "useStableCallback", scenarios: [executableExamples[139], executableExamples[140]] },
+    { key: "packages/spfx-react-toolkit/src/hooks/useSx.ts#useSx", title: "useSx", scenarios: [executableExamples[141], executableExamples[142]] }
   ] },
   { key: "property-pane", title: "Property Pane", features: [
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-content-type-picker.ts#PropertyPaneContentTypePicker", title: "PropertyPaneContentTypePicker", scenarios: [executableExamples[138]] },
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-field-picker.ts#PropertyPaneFieldPicker", title: "PropertyPaneFieldPicker", scenarios: [executableExamples[139]] },
-    { key: "packages/spfx-react-toolkit/src/property-pane/file-folder-picker/property-pane-file-folder-picker.tsx#PropertyPaneFileFolderPicker", title: "PropertyPaneFileFolderPicker", scenarios: [executableExamples[140]] },
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts#PropertyPaneListItemPicker", title: "PropertyPaneListItemPicker", scenarios: [executableExamples[141]] },
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-picker.ts#PropertyPaneListPicker", title: "PropertyPaneListPicker", scenarios: [executableExamples[142]] },
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-principal-picker.ts#PropertyPanePrincipalPicker", title: "PropertyPanePrincipalPicker", scenarios: [executableExamples[143]] },
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts#PropertyPaneSitePicker", title: "PropertyPaneSitePicker", scenarios: [executableExamples[144], executableExamples[145]] },
-    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts#PropertyPaneViewPicker", title: "PropertyPaneViewPicker", scenarios: [executableExamples[146]] }
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-content-type-picker.ts#PropertyPaneContentTypePicker", title: "PropertyPaneContentTypePicker", scenarios: [executableExamples[143]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-field-picker.ts#PropertyPaneFieldPicker", title: "PropertyPaneFieldPicker", scenarios: [executableExamples[144]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/file-folder-picker/property-pane-file-folder-picker.tsx#PropertyPaneFileFolderPicker", title: "PropertyPaneFileFolderPicker", scenarios: [executableExamples[145]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts#PropertyPaneListItemPicker", title: "PropertyPaneListItemPicker", scenarios: [executableExamples[146]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-picker.ts#PropertyPaneListPicker", title: "PropertyPaneListPicker", scenarios: [executableExamples[147]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-principal-picker.ts#PropertyPanePrincipalPicker", title: "PropertyPanePrincipalPicker", scenarios: [executableExamples[148]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts#PropertyPaneSitePicker", title: "PropertyPaneSitePicker", scenarios: [executableExamples[149], executableExamples[150]] },
+    { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts#PropertyPaneViewPicker", title: "PropertyPaneViewPicker", scenarios: [executableExamples[151]] }
   ] },
   { key: "services", title: "Servizi", features: [
-    { key: "packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService", title: "createSPFxConfigurationStoreService", scenarios: [executableExamples[147]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#createSPFxPnPContextService", title: "createSPFxPnPContextService", scenarios: [executableExamples[148]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#createSPFxPnPListService", title: "createSPFxPnPListService", scenarios: [executableExamples[149]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp.service.ts#createSPFxPnPService", title: "createSPFxPnPService", scenarios: [executableExamples[150]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[151]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService", title: "createSPFxTenantKeyValueStoreService", scenarios: [executableExamples[152]] },
-    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[153]] }
+    { key: "packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService", title: "createSPFxConfigurationStoreService", scenarios: [executableExamples[152]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#createSPFxPnPContextService", title: "createSPFxPnPContextService", scenarios: [executableExamples[153]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#createSPFxPnPListService", title: "createSPFxPnPListService", scenarios: [executableExamples[154]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-pnp.service.ts#createSPFxPnPService", title: "createSPFxPnPService", scenarios: [executableExamples[155]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-site-key-value-store.service.ts#createSPFxSiteKeyValueStoreService", title: "createSPFxSiteKeyValueStoreService", scenarios: [executableExamples[156]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-key-value-store.service.ts#createSPFxTenantKeyValueStoreService", title: "createSPFxTenantKeyValueStoreService", scenarios: [executableExamples[157]] },
+    { key: "packages/spfx-react-toolkit/src/services/spfx-tenant-property.service.ts#createSPFxTenantPropertyService", title: "createSPFxTenantPropertyService", scenarios: [executableExamples[158]] }
   ] }
 ];

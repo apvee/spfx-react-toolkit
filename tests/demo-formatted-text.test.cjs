@@ -5,8 +5,8 @@ const path = require('node:path');
 const components = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
 
 test('FormattedText sample is lazy and owns its public control coverage', () => {
-  const registry = fs.readFileSync(path.join(components, 'demoRegistry.ts'), 'utf8');
-  assert.doesNotMatch(registry, /panels\/FormattedTextPanel/);
+  const catalogue = fs.readFileSync(path.join(components, 'generated/jsdoc-examples/catalogue.ts'), 'utf8');
+  assert.doesNotMatch(catalogue, /panels\/FormattedTextPanel/);
   assert.equal(require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Explore semantic text and inline Markdown').entry.featureTitle, 'FormattedText');
 });
 

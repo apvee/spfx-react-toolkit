@@ -55,9 +55,9 @@ function harness() {
   const { ExampleExplorer } = load('ExampleExplorer.tsx');
   let currentState;
   function Probe() { currentState = state.useExampleExplorerState(); return React.createElement(React.Fragment); }
-  function render(groups, legacyEntries = [], theme = fluent.webLightTheme) {
+  function render(groups, theme = fluent.webLightTheme) {
     act(() => { ReactDOM.render(React.createElement(fluent.FluentProvider, { theme },
-      React.createElement(state.ExampleExplorerStateProvider, { initialGroups: groups }, React.createElement(Probe), React.createElement(ExampleExplorer, { groups, legacyEntries }))), host); });
+      React.createElement(state.ExampleExplorerStateProvider, { initialGroups: groups }, React.createElement(Probe), React.createElement(ExampleExplorer, { groups }))), host); });
   }
   const flush = async selector => {
     await act(async () => {
@@ -160,7 +160,7 @@ test('explorer groups, central scenarios, focus and reset preserve one real exam
     h.act(() => s.completions[0]()); assert.equal(liveInput.value, 'baseline', 'scenario invalidates pending work on reset');
     assert.equal(s.mounts.filter(id => id === 'b').length, 1, 'reset does not remount');
     h.click(h.button('Advanced diagnostics'));
-    h.render(s.groups, [], h.fluent.webDarkTheme); await h.flush();
+    h.render(s.groups, h.fluent.webDarkTheme); await h.flush();
     assert.equal(h.host.querySelector('input'), liveInput, 'theme and host rerenders retain example');
     h.change(mobile, 'beta'); await h.flush(); h.change(mobile, 'alpha'); await h.flush();
     assert.equal(h.host.querySelector('select[aria-label="Scenario"]').value, 'b', 'last scenario restored without hidden mount');
@@ -170,22 +170,10 @@ test('explorer groups, central scenarios, focus and reset preserve one real exam
   } finally { h.close(); }
 });
 
-test('empty, removed and temporary legacy selections have valid fallbacks and separate counts', async () => {
+test('empty and removed generated selections have honest fallbacks', async () => {
   const h = harness();
   try {
     h.render([]); assert.match(h.host.textContent, /Nessuno scenario disponibile/);
-    const legacy = ['old-a', 'old-b'].map(key => ({ key, title: key, description: 'Temporary panel', iconName: 'Info', coverage: [{ symbol: 'One' }, { symbol: 'Two' }],
-      component: h.React.lazy(() => Promise.resolve({ default: () => h.React.createElement('output', { 'data-legacy': key }, key) })) }));
-    h.render([], legacy); await h.flush();
-    assert.equal(h.host.querySelectorAll('[data-legacy]').length, 1);
-    assert.equal(h.host.querySelector('select[aria-label="Scenario"]'), null);
-    assert.equal(h.button('Ripristina scenario'), undefined, 'legacy does not pretend to implement executable reset');
-    assert.equal(h.host.querySelectorAll('optgroup').length, 1);
-    assert.equal(h.host.querySelector('optgroup').label, 'Scenari esistenti');
-    h.change(h.host.querySelector('select[aria-label="Funzionalità"]'), 'legacy:old-b'); await h.flush();
-    assert.equal(h.host.querySelector('[data-legacy]').getAttribute('data-legacy'), 'old-b');
-    h.render([], [legacy[0]]); await h.flush();
-    assert.equal(h.host.querySelector('[data-legacy]').getAttribute('data-legacy'), 'old-a');
     const s = scenarios(h); h.render(s.groups); await h.flush();
     h.change(h.host.querySelector('select[aria-label="Funzionalità"]'), 'alpha');
     h.change(h.host.querySelector('select[aria-label="Scenario"]'), 'b'); await h.flush();
@@ -199,18 +187,21 @@ test('empty, removed and temporary legacy selections have valid fallbacks and se
 test('Shell port projects only presentation defaults and delegates patches; instance keys isolate navigation above body remounts', async () => {
   const h = harness();
   try {
+    const s = scenarios(h);
+    h.load('generated/jsdoc-examples/catalogue.ts').executableGroups = s.groups;
+    h.load('shared/webPartExecutableGroups.ts').webPartExecutableGroups = s.groups;
     const hostModule = h.load('WebPartShellDemoHost.tsx');
     const { useExecutableShellPort } = h.load('shared/useExecutableShellPort.ts');
     const { ExampleExplorer } = h.load('ExampleExplorer.tsx');
-    const s = scenarios(h);
     // Supply test-only catalogue data to the real host module without writing generated files.
     h.load('generated/jsdoc-examples/catalogue.ts').executableGroups = s.groups;
+    h.load('shared/webPartExecutableGroups.ts').webPartExecutableGroups = s.groups;
     let port, options, state;
     const instances = new Map();
     function Probe({ id }) {
       port = useExecutableShellPort(); options = hostModule.useShellPresentation(); state = h.state.useExampleExplorerState();
       instances.set(id, { port, options, state });
-      return h.React.createElement(ExampleExplorer, { groups: s.groups, legacyEntries: [] });
+      return h.React.createElement(ExampleExplorer, { groups: s.groups });
     }
     function instance(id, index) { return h.React.createElement('div', { key: index, 'data-instance': id }, h.React.createElement(hostModule.WebPartShellDemoHost,
       { instance: { instanceId: id }, children: h.React.createElement(Probe, { id }) })); }
@@ -259,7 +250,7 @@ test('Shell port projects only presentation defaults and delegates patches; inst
     assert.equal(ordinaryHookCalls, 0, 'ordinary examples do not read the private Shell context');
     hostModule.useShellPresentation = originalOptionsHook;
     const shellEntry = s.entry('shell', 'shell', 'controls', 'webPartShell');
-    h.act(() => { h.ReactDOM.render(h.React.createElement(h.fluent.FluentProvider, { theme: h.fluent.webLightTheme }, h.React.createElement(ExecutableExampleHost, { entry: shellEntry, resetRevision: 0 })), h.host); });
+    h.act(() => { h.ReactDOM.render(h.React.createElement(h.fluent.FluentProvider, { theme: h.fluent.webLightTheme }, h.React.createElement(h.load('shared/ExecutableHostContext.tsx').ExecutableHostContext.Provider, { value: 'webPart' }, h.React.createElement(ExecutableExampleHost, { entry: shellEntry, resetRevision: 0 }))), h.host); });
     await h.flush('[data-example="shell"]');
     assert.equal(h.host.querySelector('[data-example]').textContent, 'subtle');
   } finally { h.close(); }
@@ -276,7 +267,7 @@ test('selected Shell commit wait includes a deferred module and the React Suspen
     shellEntry.load = () => new Promise(resolve => setImmediate(() => setImmediate(() => resolve(load()))));
     const { ExecutableExampleHost } = h.load('shared/ExecutableExampleHost.tsx');
     h.act(() => { h.ReactDOM.render(h.React.createElement(h.fluent.FluentProvider, { theme: h.fluent.webLightTheme },
-      h.React.createElement(ExecutableExampleHost, { entry: shellEntry, resetRevision: 0 })), h.host); });
+      h.React.createElement(h.load('shared/ExecutableHostContext.tsx').ExecutableHostContext.Provider, { value: 'webPart' }, h.React.createElement(ExecutableExampleHost, { entry: shellEntry, resetRevision: 0 }))), h.host); });
     assert.equal(h.host.querySelector('[data-example="deferred-shell"]'), null, 'loading starts without a hidden mounted example');
     await h.flush('[data-example="deferred-shell"]');
     const example = h.host.querySelector('[data-example="deferred-shell"]');

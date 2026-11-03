@@ -128,6 +128,86 @@ export interface SPFxApplicationCustomizerProviderProps<TProps extends {} = {}> 
  *   };
  * }
  * ```
+
+ * @example Compare Application Customizer provider availability with the current host
+ * ```tsx
+ * import * as React from 'react';
+ * import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Badge, Field, Select, makeStyles, tokens } from '@fluentui/react-components';
+ * import { SPFxWebPartProvider, SPFxApplicationCustomizerProvider, SPFxFieldCustomizerProvider, SPFxListViewCommandSetProvider, useSPFxContext } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * const useStyles = makeStyles({ result: { display: 'grid', rowGap: tokens.spacingVerticalS }, facts: { display: 'grid', gridTemplateColumns: 'auto 1fr', columnGap: tokens.spacingHorizontalM } });
+ * export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
+ *   const styles = useStyles();
+ *   const context = useSPFxContext();
+ *   const providers = [
+ *     { label: 'SPFxWebPartProvider', value: SPFxWebPartProvider, kind: 'WebPart' },
+ *     { label: 'SPFxApplicationCustomizerProvider', value: SPFxApplicationCustomizerProvider, kind: 'AppCustomizer' },
+ *     { label: 'SPFxFieldCustomizerProvider', value: SPFxFieldCustomizerProvider, kind: 'FieldCustomizer' },
+ *     { label: 'SPFxListViewCommandSetProvider', value: SPFxListViewCommandSetProvider, kind: 'CommandSet' },
+ *   ];
+ *   const [selection, setSelection] = React.useState('SPFxApplicationCustomizerProvider');
+ *   const revision = React.useRef(resetRevision);
+ *   const lifetime = React.useMemo(() => ({ active: true }), [resetRevision]);
+ *   React.useLayoutEffect(() => {
+ *     if (revision.current !== resetRevision) {
+ *       revision.current = resetRevision;
+ *       setSelection('SPFxApplicationCustomizerProvider');
+ *     }
+ *     return () => { lifetime.active = false; };
+ *   }, [resetRevision, lifetime]);
+ *   const selected = providers.find(provider => provider.label === selection) ?? providers.find(provider => provider.label === 'SPFxApplicationCustomizerProvider') ?? providers[0];
+ *   const available = typeof selected.value === 'function';
+ *   const regions: DemoRegions = {
+ *     controls: <Field label="Provider"><Select select={{ as: 'select', ...{ 'data-demo-variant': 'providers' } }} value={selection} onChange={(_, data) => {
+ *       if (lifetime.active && providers.some(provider => provider.label === data.value)) setSelection(data.value);
+ *     }}>{providers.map(provider => <option key={provider.label} value={provider.label}>{provider.label}</option>)}</Select></Field>,
+ *     children: <div className={styles.result} data-providers-demo="result">
+ *       <Badge appearance="tint" color={available ? 'success' : 'danger'}>{selected.label} export</Badge>
+ *       <dl className={styles.facts}>
+ *         <dt>Export available</dt><dd>{available ? 'Yes' : 'No'}</dd>
+ *         <dt>Current host</dt><dd>{context.kind}</dd>
+ *         <dt>Required host</dt><dd>{selected.kind}</dd>
+ *         <dt>Host match</dt><dd>{context.kind === selected.kind ? 'Yes' : 'No: requires another host'}</dd>
+ *       </dl>
+ *     </div>,
+ *     diagnostics: <p>Each provider requires its own initialized SPFx host. Selection does not mount new instances or query services. Export availability and host match do not establish native execution. Field Customizer and Command Set native lifecycle: NOT EXECUTED by this diagnostic.</p>,
+ *   };
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}<Accordion collapsible><AccordionItem value="diagnostics"><AccordionHeader>Advanced diagnostics</AccordionHeader><AccordionPanel>{regions.diagnostics}</AccordionPanel></AccordionItem></Accordion></>;
+ * }
+ * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Choose each of four providers and compare the actual exported function, required kind and current host independently. Reset restores this owner’s provider choice without mounting a new provider.' };
+ * ```
+
+ * @example Inspect the actual Top placeholder provider
+ * ```tsx
+ * import * as React from 'react';
+ * import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, MessageBar, MessageBarBody } from '@fluentui/react-components';
+ * import { useSPFxInstanceInfo, useSPFxPageContext, useSPFxProperties } from '@apvee/spfx-react-toolkit';
+ *
+ * type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+ * type DemoProps = { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number; applicationCustomizerTop?: { readonly placeholder: 'Top' } };
+ * function present(regions: DemoRegions, render?: DemoProps['render']): React.ReactElement {
+ *   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}<Accordion collapsible><AccordionItem value="diagnostics"><AccordionHeader>Advanced diagnostics</AccordionHeader><AccordionPanel>{regions.diagnostics}</AccordionPanel></AccordionItem></Accordion></>;
+ * }
+ * export function Demo({ render, applicationCustomizerTop }: DemoProps = {}): React.ReactElement {
+ *   if (!applicationCustomizerTop) return present({ status: <MessageBar><MessageBarBody>This observation requires the actual initialized Application Customizer in its native Top placeholder.</MessageBarBody></MessageBar> }, render);
+ *   return <ProviderObservation render={render} />;
+ * }
+ * function ProviderObservation({ render }: Pick<DemoProps, 'render'>): React.ReactElement {
+ *   const { id, kind } = useSPFxInstanceInfo();
+ *   if (kind !== 'AppCustomizer') return present({ status: <MessageBar intent="warning"><MessageBarBody>Top observation requires AppCustomizer; the actual provider is {kind}.</MessageBarBody></MessageBar> }, render);
+ *   return <TopObservation id={id} kind={kind} render={render} />;
+ * }
+ * function TopObservation({ id, kind, render }: { id: string; kind: string; render?: DemoProps['render'] }): React.ReactElement {
+ *   const pageContext = useSPFxPageContext();
+ *   const { properties } = useSPFxProperties<{ testMessage: string }>();
+ *   return present({
+ *     children: <p data-providers-demo="native-top">{`SPFxApplicationCustomizerProvider active: ${kind} ${id} | ${pageContext.web.title} | ${properties?.testMessage ?? 'No message'}`}</p>,
+ *     diagnostics: <p>This read-only observation uses the matching initialized provider owned by the native Top root. Reset has no local state to clear and never writes properties, replaces a provider or disposes the placeholder. Properties follow the provider’s shallow host-render reconciliation.</p>,
+ *   }, render);
+ * }
+ * export const demo = { host: 'applicationCustomizer', hostAdapter: 'applicationCustomizerTop', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual AppCustomizer kind, instance ID, web title and testMessage in Top. An absent message shows No message; an empty string remains empty. Reset does not write the native host.' };
+ * ```
  */
 export function SPFxApplicationCustomizerProvider<TProps extends {} = {}>(
   props: SPFxApplicationCustomizerProviderProps<TProps>

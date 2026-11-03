@@ -6,9 +6,9 @@ const read = file => fs.readFileSync(path.resolve(__dirname, '..', file), 'utf8'
 const base = 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/';
 
 test('DataGrid sample covers the complete family with consumer-owned observable states', () => {
-  const registry = read(base + 'demoRegistry.ts');
+  const catalogue = read(base + 'generated/jsdoc-examples/catalogue.ts');
   const panel = read('tests/fixtures/demo-control-isolation/data-grid-regressions.tsx');
-  assert.doesNotMatch(registry, /key: 'data-grid'|spfx-demo-data-grid|panels\/DataGridPanel/);
+  assert.doesNotMatch(catalogue, /key: 'data-grid'|spfx-demo-data-grid|panels\/DataGridPanel/);
   for (const symbol of ['DataGrid', 'createDataGrid']) {
     const catalogue = read(base + 'generated/jsdoc-examples/catalogue.ts');
     assert.ok(catalogue.includes(`"featureTitle": ${JSON.stringify(symbol)}`), symbol);

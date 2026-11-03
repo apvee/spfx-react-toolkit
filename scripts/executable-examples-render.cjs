@@ -43,6 +43,7 @@ export interface ExecutableExampleProps {
   render?: (regions: ExecutableExampleRegions) => React.ReactElement;
   resetRevision?: number;
   shell?: ExecutableShellPort;
+  applicationCustomizerTop?: { readonly placeholder: 'Top' };
 }
 
 export interface ExecutableExampleEntry {
@@ -56,11 +57,11 @@ export interface ExecutableExampleEntry {
   publicNames: readonly string[];
   source: { file: string; line: number };
   metadata: {
-    host: 'none' | 'webPart';
+    host: 'none' | 'webPart' | 'applicationCustomizer';
     kind: 'snapshot' | 'read' | 'write';
     contentPlacement: 'subject' | 'configuration';
     observe: string;
-    hostAdapter?: 'webPartShell' | 'propertyPane';
+    hostAdapter?: 'webPartShell' | 'propertyPane' | 'applicationCustomizerTop';
   };
   load(): Promise<{ Demo: React.ComponentType<ExecutableExampleProps> }>;
 }

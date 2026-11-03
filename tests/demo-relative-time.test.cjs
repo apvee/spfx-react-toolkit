@@ -4,10 +4,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
 const read = file => fs.readFileSync(path.join(base, file), 'utf8');
-test('RelativeTime legacy fixture retains editable prop and native marker coverage; registry remains lazy', () => {
+test('RelativeTime legacy fixture retains editable prop and native marker coverage; canonical catalogue remains lazy', () => {
   const panel = fs.readFileSync(path.join(__dirname, 'fixtures/foundation-legacy/RelativeTimePanel.tsx'), 'utf8');
-  const registry = read('demoRegistry.ts');
-  assert.doesNotMatch(registry, /panels\/RelativeTimePanel/);
+  const catalogue = read('generated/jsdoc-examples/catalogue.ts');
+  assert.doesNotMatch(catalogue, /panels\/RelativeTimePanel/);
   assert.equal(require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Explore relative clocks and fallback slots').entry.featureTitle, 'RelativeTime');
   for (const marker of ['dateTime', 'locale', 'format', 'autoUpdate', 'showTooltip', 'timeZone', 'fallback', 'referenceTime', 'mode', 'preview', 'inspect-ref', 'observations', 'inspect-slot']) {
     assert.ok((panel.includes(`data-relative-time-demo="${marker}"`) || panel.includes(`'data-relative-time-demo': '${marker}'`)), marker);

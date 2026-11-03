@@ -353,3 +353,42 @@ test('native metadata cannot be used for non-WebPart or subject content and nati
   }
   assert.ok(collect(replaceDoc(nativeDoc.replace(", hostAdapter: 'propertyPane'", ''))).diagnostics.some(item => item.code === 'EXECUTABLE_COMPONENT'));
 });
+
+const topCode = `import * as React from 'react';
+type Regions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
+export function Demo(props: { render?: (regions: Regions) => React.ReactElement; resetRevision?: number; applicationCustomizerTop?: { readonly placeholder: 'Top' } } = {}): React.ReactElement { return <div>{props.applicationCustomizerTop?.placeholder ?? 'Native Top required'}</div>; }
+export const demo = { host: 'applicationCustomizer', hostAdapter: 'applicationCustomizerTop', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Actual native Top provider.' };`;
+test('accepts the exact optional readonly Top signal without exposing native capabilities', () => {
+  const result = collect(replaceDoc(snippet(topCode)));
+  assert.deepEqual(result.diagnostics, []);
+  assert.equal(result.examples[0].metadata.hostAdapter, 'applicationCustomizerTop');
+});
+for (const [name, before, after, code] of [
+  ['missing adapter', ", hostAdapter: 'applicationCustomizerTop'", '', 'EXECUTABLE_METADATA'],
+  ['wrong host', "host: 'applicationCustomizer'", "host: 'webPart'", 'EXECUTABLE_METADATA'],
+  ['cross pair', "hostAdapter: 'applicationCustomizerTop'", "hostAdapter: 'propertyPane'", 'EXECUTABLE_METADATA'],
+  ['unknown adapter', "hostAdapter: 'applicationCustomizerTop'", "hostAdapter: 'nativeTop'", 'EXECUTABLE_METADATA'],
+  ['subject', "contentPlacement: 'configuration'", "contentPlacement: 'subject'", 'EXECUTABLE_METADATA'],
+  ['required signal', 'applicationCustomizerTop?:', 'applicationCustomizerTop:', 'EXECUTABLE_COMPONENT'],
+  ['mutable signal', "readonly placeholder: 'Top'", "placeholder: 'Top'", 'EXECUTABLE_COMPONENT'],
+  ['broad signal', "readonly placeholder: 'Top'", 'readonly placeholder: string', 'EXECUTABLE_COMPONENT'],
+  ['extra instance', "readonly placeholder: 'Top'", "readonly placeholder: 'Top'; readonly instance?: object", 'EXECUTABLE_COMPONENT'],
+  ['extra context', "readonly placeholder: 'Top'", "readonly placeholder: 'Top'; readonly context?: object", 'EXECUTABLE_COMPONENT'],
+  ['extra DOM', "readonly placeholder: 'Top'", "readonly placeholder: 'Top'; readonly domElement?: HTMLElement", 'EXECUTABLE_COMPONENT'],
+  ['extra dispose', "readonly placeholder: 'Top'", "readonly placeholder: 'Top'; dispose(): void", 'EXECUTABLE_COMPONENT'],
+  ['unsafe signal', "{ readonly placeholder: 'Top' }", 'any', 'EXECUTABLE_COMPONENT'],
+  ['unknown signal', "{ readonly placeholder: 'Top' }", 'unknown', 'EXECUTABLE_COMPONENT'],
+  ['never signal', "{ readonly placeholder: 'Top' }", 'never', 'EXECUTABLE_COMPONENT'],
+  ['missing signal', "; applicationCustomizerTop?: { readonly placeholder: 'Top' }", '', 'EXECUTABLE_COMPONENT'],
+]) test(`Top contract rejects ${name}`, () => invalid(topCode.replace(before, after), code));
+test('ordinary metadata cannot hide a Top signal', () => {
+  invalid(topCode.replace("host: 'applicationCustomizer', hostAdapter: 'applicationCustomizerTop'", "host: 'webPart'"), 'EXECUTABLE_COMPONENT');
+});
+
+for (const extra of ['instance?: object', 'context?: object', 'domElement?: HTMLElement', 'dispose?: () => void']) test(`Top Demo rejects an extra outer ${extra}`, () => {
+  invalid(topCode.replace('resetRevision?: number;', `resetRevision?: number; ${extra};`), 'EXECUTABLE_COMPONENT');
+});
+test('Top rejects erased and async entrypoints before common loader erasure', () => {
+  invalid(topCode.replace('export function Demo', 'export async function Demo').replace('): React.ReactElement {', '): Promise<React.ReactElement> {'), 'EXECUTABLE_COMPONENT');
+  invalid(topCode.replace('export function Demo', 'function Actual') + '\nexport type { Actual as Demo };', 'EXECUTABLE_RUNTIME_EXPORT');
+});

@@ -143,16 +143,19 @@ test('numeric drafts allow clearing and sequential replacement while retaining v
 
 test('hook, provider, style and service panels use Fluent configuration and shared demo regions', () => {
   const componentRoot = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
-  const panels = ['Providers'];
-  const files = panels.map(name => path.join(componentRoot, 'panels', name + 'Panel.tsx'))
-    .concat(fs.readdirSync(path.join(componentRoot, 'demos')).filter(name => /^PnP.*\.tsx$/.test(name)).map(name => path.join(componentRoot, 'demos', name)));
-  for (const file of files) {
-    const source = fs.readFileSync(file, 'utf8');
-    assert.doesNotMatch(source, /from ['"]@fluentui\/react['"]/, path.basename(file));
-    assert.doesNotMatch(source, /<(?:input|select|textarea|button|details|a)\b/, path.basename(file));
-    assert.doesNotMatch(source, /\bstyles?\s*=/, path.basename(file));
-    const delegated = /from ['"]\.\.\/demos['"]/.test(source) && /<PnP[A-Za-z]+Demo/.test(source);
-    assert.ok(/DemoCard|useDemoStyles/.test(source) || delegated, `${path.basename(file)} must own shared regions or delegate an actual demo component`);
+  for (const [owner, title] of [
+    ['SPFxWebPartProvider', 'Compare WebPart provider availability with the current host'],
+    ['SPFxApplicationCustomizerProvider', 'Compare Application Customizer provider availability with the current host'],
+    ['SPFxFieldCustomizerProvider', 'Compare Field Customizer provider availability with the current host'],
+    ['SPFxListViewCommandSetProvider', 'Compare Command Set provider availability with the current host'],
+    ['SPFxApplicationCustomizerProvider', 'Inspect the actual Top placeholder provider'],
+  ]) {
+    const actual = require('./fixtures/executable-examples/cards-description-list.cjs').scenario(title);
+    assert.equal(actual.entry.featureTitle, owner);
+    assert.match(actual.source, /@fluentui\/react-components/);
+    assert.doesNotMatch(actual.source, /from ['"]@fluentui\/react['"]|\bstyle\s*=/);
+    assert.match(actual.source, /render\(regions\)/);
+    assert.match(actual.source, /diagnostics:/);
   }
   const generatedRoot = path.join(componentRoot, 'generated/jsdoc-examples');
   const catalogueModule = { exports: {} };

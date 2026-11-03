@@ -3,6 +3,8 @@ import { MessageBar, MessageBarBody, Spinner } from '@fluentui/react-components'
 import type { ExecutableExampleEntry, ExecutableExampleProps, ExecutableExampleRegions } from '../generated/jsdoc-examples/catalogue';
 import { DemoCard } from './DemoCard';
 import { NativePropertyPaneContext, NativePropertyPaneDiagnostics } from './NativePropertyPaneContext';
+import { ExecutableHostContext } from './ExecutableHostContext';
+import { isExecutableEntryForHost } from './selectExecutableGroupsForHost';
 import { useExecutableShellPort } from './useExecutableShellPort';
 
 // Lazy component identities are shared across renders, resets and host presentation updates.
@@ -54,14 +56,22 @@ function NativeScenario({ entry, resetRevision, render }: ScenarioProps): React.
   return <Demo key={entry.id} render={nativeRender} resetRevision={resetRevision} {...(host ? { propertyPane: host.port } : {})} />;
 }
 
+/** The Top signal has no instance/DOM/lifecycle capabilities. Provider ownership stays in the adapter. */
+function TopScenario({ entry, resetRevision, render }: ScenarioProps): React.ReactElement {
+  const Demo = getComponent(entry);
+  return <Demo key={entry.id} render={render} resetRevision={resetRevision} applicationCustomizerTop={{ placeholder: 'Top' }} />;
+}
+
 export function ExecutableExampleHost({ entry, resetRevision }: {
   readonly entry: ExecutableExampleEntry;
   readonly resetRevision: number;
 }): React.ReactElement {
+  const actualHost = React.useContext(ExecutableHostContext);
   const render = React.useCallback((regions: ExecutableExampleRegions): React.ReactElement => (
     <DemoCard title={entry.title} iconName="Info" contentPlacement={entry.metadata.contentPlacement} {...regions} />
   ), [entry]);
-  const Scenario = entry.metadata.hostAdapter === 'webPartShell' ? ShellScenario : entry.metadata.hostAdapter === 'propertyPane' ? NativeScenario : OrdinaryScenario;
+  if (!isExecutableEntryForHost(entry, actualHost)) return <MessageBar intent="warning"><MessageBarBody>Scenario requires its matching native host: {entry.metadata.host}.</MessageBarBody></MessageBar>;
+  const Scenario = entry.metadata.hostAdapter === 'webPartShell' ? ShellScenario : entry.metadata.hostAdapter === 'propertyPane' ? NativeScenario : entry.metadata.hostAdapter === 'applicationCustomizerTop' ? TopScenario : OrdinaryScenario;
   return <ExampleLoadBoundary key={entry.id}>
     <React.Suspense fallback={<Spinner size="medium" label={`Caricamento ${entry.title}...`} />}>
       <Scenario entry={entry} resetRevision={resetRevision} render={render} />

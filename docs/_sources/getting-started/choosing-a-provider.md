@@ -17,7 +17,7 @@ Pass that instance through `instance` and place consumers below the provider. SP
 
 Generic `useStableCallback` and `useSx` need no SPFx provider. Typed styles still need the shared renderer and theme variables when using theme tokens. Helpers receive plain inputs; services receive initialized clients directly. See [non-React composition](../guides/helpers-and-services.md).
 
-The private sample has actual WebPart and Application Customizer entry points. Field Customizer and Command Set coverage currently checks exports; live mounting requires their matching hosts. An exported provider is not evidence that every host has been exercised. See [host validation](../../development/sharepoint-validation/INDEX.md).
+The private sample has actual WebPart and Application Customizer entry points. Each provider owns a four-choice availability diagnostic with an independent required-kind/function comparison and its own Reset baseline. Selection mounts no provider and starts no business I/O. Field Customizer and Command Set live mounting requires their matching native hosts. An exported provider is not evidence that every host has been exercised. See [host validation](../../development/sharepoint-validation/INDEX.md).
 
 ## Web part shell composition
 
@@ -69,3 +69,7 @@ WebPart providers expose the native `domElement`; other current host kinds expos
 <!-- toolkit:include symbol="SPFxFieldCustomizerProvider" section="example" title="Render and dispose each field cell" -->
 
 <!-- toolkit:include symbol="SPFxListViewCommandSetProvider" section="example" title="Dispose a temporary command dialog root" -->
+
+## Inspect the actual native Top provider
+
+The source-owned [Top observation](../../api/core/providers.md#spfxapplicationcustomizerprovider) runs only in the private sample’s real Application Customizer Top root. The native class retries a late placeholder and retains each captured root/disposal callback. One matching provider exposes actual `AppCustomizer` kind, instance ID, web title and `testMessage`; missing/nullish message text uses `No message`, while an empty message stays empty. Reset writes no properties and does not recreate or dispose that provider. WebPart navigation/counts exclude this native case, and Top excludes WebPart scenarios. Availability comparisons and local SDK doubles are separate from authenticated [host validation](../../development/sharepoint-validation/INDEX.md).

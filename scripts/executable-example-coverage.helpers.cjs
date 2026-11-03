@@ -35,7 +35,7 @@ function collectExecutableCoverage(text) {
       symbols.add(name.text); associations.add(JSON.stringify([id, name.text]));
     }
   }
-  return { featureCount: features.size, scenarioCount: ids.size, symbols, associationCount: associations.size, nativeOwners };
+  return { featureCount: features.size, scenarioCount: ids.size, symbols, associationCount: associations.size, nativeOwners, identities };
 }
 
 

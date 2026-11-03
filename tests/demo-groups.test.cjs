@@ -6,9 +6,9 @@ const read = file => fs.readFileSync(path.resolve(__dirname, '..', file), 'utf8'
 const base = 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/';
 
 test('groups have lazy interactive coverage without duplicate hook/provider inventory', () => {
-  const registry = read(base + 'demoRegistry.ts');
+  const catalogue = read(base + 'generated/jsdoc-examples/catalogue.ts');
   const panel = read('tests/fixtures/demo-control-isolation/groups-regressions.tsx');
-  assert.doesNotMatch(registry, /panels\/GroupsPanel/);
+  assert.doesNotMatch(catalogue, /panels\/GroupsPanel/);
   for (const symbol of ['SettingsGroup', 'AccordionGroup']) {
     const title = symbol === 'SettingsGroup' ? 'Preserve notification settings across group presentations' : 'Control disclosure selection and retained content';
     assert.equal(require('./fixtures/executable-examples/cards-description-list.cjs').scenario(title).entry.featureTitle, symbol);

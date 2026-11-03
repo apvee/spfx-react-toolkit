@@ -117,7 +117,7 @@ export function mountShellFixture(boundary: 'source' | 'compiled'): void {
     // the real explorer displays the source-owned configuration (which has no note).
     const [note, setNote] = React.useState('Intranet project review');
     const [count, setCount] = React.useState(0);
-    return <><ExampleExplorer groups={shellGroups} legacyEntries={[]} />
+    return <><ExampleExplorer groups={shellGroups} />
       <input aria-label="Independent native child note" data-shell-fixture="note" value={note} onChange={event => setNote(event.target.value)} />
       <button data-shell-fixture="increment" onClick={() => setCount(value => value + 1)}>Increment native fixture counter</button>
       <output data-shell-fixture="observations">{JSON.stringify({ note, count })}</output></>;

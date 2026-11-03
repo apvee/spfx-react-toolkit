@@ -42,6 +42,6 @@ function ShellFixtureRoot(): React.ReactElement {
       setTheme(next) { theme = next; for (const handler of themeHandlers) handler({ theme }); },
     };
   }, []);
-  return <WebPartShellDemoHost instance={instance}>{(process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' || new URLSearchParams(window.location.search).get('jsdocOnly') === '1') ? <ExampleExplorer groups={filterPilotGroups(executableGroups)} legacyEntries={[]} /> : <App />}</WebPartShellDemoHost>;
+  return <WebPartShellDemoHost instance={instance}>{(process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' || new URLSearchParams(window.location.search).get('jsdocOnly') === '1') ? <ExampleExplorer groups={filterPilotGroups(executableGroups)} /> : <App />}</WebPartShellDemoHost>;
 }
 mountDemoFixture(<ShellFixtureRoot />);

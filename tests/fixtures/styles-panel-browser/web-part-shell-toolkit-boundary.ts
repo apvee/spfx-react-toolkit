@@ -113,3 +113,9 @@ export * from '../../../packages/spfx-react-toolkit/lib/controls/entra-group-tri
 
 // Direct SharePoint membership retains the actual matching control and public types.
 export * from '../../../packages/spfx-react-toolkit/lib/controls/sharepoint-group-trim';
+
+// Provider availability cases compare the actual four exports without mounting them.
+export { SPFxWebPartProvider } from '../../../packages/spfx-react-toolkit/lib/core/provider-webpart';
+export { SPFxApplicationCustomizerProvider } from '../../../packages/spfx-react-toolkit/lib/core/provider-application-customizer';
+export { SPFxFieldCustomizerProvider } from '../../../packages/spfx-react-toolkit/lib/core/provider-field-customizer';
+export { SPFxListViewCommandSetProvider } from '../../../packages/spfx-react-toolkit/lib/core/provider-listview-commandset';

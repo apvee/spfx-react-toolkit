@@ -46,8 +46,8 @@ function fixture(t) {
   return { h, container, find, select, click, load, reset() { revision++; render(); } };
 }
 test('EditableText has one exact lazy registry entry and a separate multi-instance fixture', () => {
-  const registry = fs.readFileSync(path.join(base, 'demoRegistry.ts'), 'utf8');
-  assert.doesNotMatch(registry, /panels\/EditableTextPanel/);
+  const catalogue = fs.readFileSync(path.join(base, 'generated/jsdoc-examples/catalogue.ts'), 'utf8');
+  assert.doesNotMatch(catalogue, /panels\/EditableTextPanel/);
   assert.equal(scenario(title).entry.featureTitle, 'EditableText');
   const source = scenario(title).source;
   assert.doesNotMatch(source, /useSPFx|\.internal|style=|key=\{(?:preset|mode)\}/);

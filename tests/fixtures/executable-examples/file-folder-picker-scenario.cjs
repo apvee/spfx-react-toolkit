@@ -165,7 +165,7 @@ function createFileFolderFixture(t, options = {}) {
     const renderer = createDOMRenderer(document, { unstable_filterCSSRule: rule => !rule.startsWith('@container') });
     const container = document.createElement('div');
     document.body.appendChild(container);
-    function Frame() { return Explorer ? h.React.createElement(Explorer, { groups, legacyEntries: [] }) : h.React.createElement(Demo, { resetRevision: revision, render: options.fallback ? undefined : next => { regions = next; return h.React.createElement('section', undefined, next.controls, next.commands, next.status, next.children, next.diagnostics); } }); }
+    function Frame() { return Explorer ? h.React.createElement(Explorer, { groups }) : h.React.createElement(Demo, { resetRevision: revision, render: options.fallback ? undefined : next => { regions = next; return h.React.createElement('section', undefined, next.controls, next.commands, next.status, next.children, next.diagnostics); } }); }
     function tree(child, owner = instance) { return h.React.createElement(RendererProvider, { renderer }, h.React.createElement(fluent.FluentProvider, { theme: fluent.webLightTheme }, h.React.createElement(Shell ?? toolkit.SPFxWebPartProvider, { instance: owner }, child))); }
     function render() { h.act(() => { ReactDOM.render(tree(h.React.createElement(Frame)), container); }); }
     let closed = false;

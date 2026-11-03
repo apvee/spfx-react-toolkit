@@ -5,7 +5,7 @@ const path = require('node:path');
 const ts = require('typescript');
 const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
 const panel = fs.readFileSync(path.resolve(__dirname, 'fixtures/demo-control-isolation/form-regressions.tsx'), 'utf8');
-const registry = fs.readFileSync(path.join(base, 'demoRegistry.ts'), 'utf8');
+const catalogue = fs.readFileSync(path.join(base, 'generated/jsdoc-examples/catalogue.ts'), 'utf8');
 const source = ts.createSourceFile('FormPanel.tsx', panel, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
 const adapters = ['Input', 'Textarea', 'SearchBox', 'Checkbox', 'Switch', 'SpinButton', 'Slider', 'Select', 'RadioGroup', 'Dropdown', 'DropdownMulti', 'CheckboxGroup', 'Combobox', 'ComboboxMulti', 'TagPicker', 'Rating', 'ColorPicker', 'SwatchPicker', 'DatePicker', 'TimePicker', 'DateTime', 'FileInput'];
 function walk(node, visit) { visit(node); ts.forEachChild(node, child => walk(child, visit)); }
@@ -21,7 +21,7 @@ test('Form owners have canonical scenarios and the legacy product panel is retir
     ['Validate and transform quantity with recoverable failures', 'createForm'],
     ['Edit a dynamic report with explicit save and reset', 'Form'],
   ]) assert.equal(scenario(title).entry.featureTitle, owner);
-  assert.doesNotMatch(registry, /spfx-demo-form|panels\/FormPanel/);
+  assert.doesNotMatch(catalogue, /spfx-demo-form|panels\/FormPanel/);
   assert.equal(fs.existsSync(path.join(base, 'panels/FormPanel.tsx')), false);
   assert.match(panel, /from '@apvee\/spfx-react-toolkit'/);
   assert.doesNotMatch(panel, /packages\/.*src|controls\/Form|style=|\.style\./);

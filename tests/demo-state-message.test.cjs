@@ -5,8 +5,8 @@ const path = require('node:path');
 const read = name => fs.readFileSync(path.resolve(__dirname,'..',name),'utf8');
 test('StateMessage has a lazy interactive demo and real browser fixture coverage', () => {
   const base='apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/';
-  const registry=read(base+'demoRegistry.ts'), panel=require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Configure state artwork semantics and actions').source;
-  assert.doesNotMatch(registry,/panels\/StateMessagePanel/);
+  const catalogue=read(base+'generated/jsdoc-examples/catalogue.ts'), panel=require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Configure state artwork semantics and actions').source;
+  assert.doesNotMatch(catalogue,/panels\/StateMessagePanel/);
   assert.equal(require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Configure state artwork semantics and actions').entry.featureTitle, 'StateMessage');
   for(const marker of ['preset','direction','resize','long','role','visual','heading','preview','inspect','observations', 'slots', 'title', 'description'])assert.ok((panel.includes(`data-state-message-demo="${marker}"`) || panel.includes(`'data-state-message-demo': '${marker}'`)),marker);
   assert.match(panel,/primaryAction=/);assert.match(panel,/secondaryAction=/);assert.match(panel,/tertiaryAction=/);

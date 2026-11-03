@@ -16,8 +16,7 @@ test('demo panels and migrated scenarios inherit theme and default direction; th
   assert.ok(entries.length > 0, 'source-owned scenarios participate in inheritance checks');
   assert.equal(new Set(entries.map(entry => entry.id)).size, entries.length, 'scenario ids are unique');
   assert.equal(new Set(entries.map(entry => JSON.stringify([entry.ownerKey, entry.title]))).size, entries.length, 'owner-title pairs are unique');
-  const files = fs.readdirSync(path.join(base, 'panels')).filter(file => file.endsWith('Panel.tsx'))
-    .map(file => `panels/${file}`).concat(entries.map(entry => `generated/jsdoc-examples/${entry.id}.tsx`));
+  const files = entries.map(entry => `generated/jsdoc-examples/${entry.id}.tsx`);
   for (const file of files) {
     const source = fs.readFileSync(path.join(base,file), 'utf8');
     assert.doesNotMatch(source, /webLightTheme|webDarkTheme|teamsDarkTheme|teamsHighContrastTheme|getTeamsFluentTheme|setDark|setThemeChoice|theme=|Dark theme/, file);

@@ -14,7 +14,7 @@ const fixtureDocument = document;
 const previousRange = fixtureDocument.createRange;
 document.createRange = () => ({ selectNodeContents() {}, getClientRects() { return []; } });
 test.after(() => { fixtureDocument.createRange = previousRange; for (const [name,descriptor] of previousGlobals) { if(descriptor) Object.defineProperty(global,name,descriptor); else delete global[name]; } });
-const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/panels');
+const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components');
 function fixture(t, name, teamsTheme) {
   const toolkit = {}, legacyCallback={}, legacySx={}, legacyWidth={}, legacyTypography={}, legacyPadding={};
   const h = createHarness({ '@apvee/spfx-react-toolkit': toolkit, '@apvee/spfx-react-toolkit/hooks': toolkit,
@@ -34,12 +34,13 @@ function fixture(t, name, teamsTheme) {
   const hooks = { Context: { kind: 'WebPart' }, Fluent9ThemeInfo: { teamsTheme } };
   for (const [key, value] of Object.entries(hooks)) toolkit['useSPFx' + key] = () => value;
   for(const key of ['SPFxWebPartProvider','SPFxApplicationCustomizerProvider','SPFxFieldCustomizerProvider','SPFxListViewCommandSetProvider']) toolkit[key]=()=>undefined;
-  const ExistingComponent = name === 'Styles' ? h.load(path.resolve(__dirname, 'fixtures/executable-examples/styles-scenario.tsx')).StylesScenario : name === 'StateMessage' ? h.load(path.resolve(__dirname, 'fixtures/executable-examples/state-message-scenario.tsx')).StateMessageScenario : name === 'Imports' ? h.load(path.resolve(base, '../generated/jsdoc-examples/832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88.tsx')).Demo : ['AutoSkeleton','RelativeTime','FormattedText'].includes(name) ? undefined : h.load(path.join(base,name+'Panel.tsx')).default;
-  const sourceTitles = {'AutoSkeleton': 'Explore mounted profile loading and native focus', 'RelativeTime': 'Explore relative clocks and fallback slots', 'FormattedText': 'Explore semantic text and inline Markdown'};
+  const ExistingComponent = name === 'Styles' ? h.load(path.resolve(__dirname, 'fixtures/executable-examples/styles-scenario.tsx')).StylesScenario : name === 'StateMessage' ? h.load(path.resolve(__dirname, 'fixtures/executable-examples/state-message-scenario.tsx')).StateMessageScenario : name === 'Imports' ? h.load(path.resolve(base, 'generated/jsdoc-examples/832166d77b18a4d570db5f61f5b33c9e23a764fa19638b140c6f82c8789d8e88.tsx')).Demo : undefined;
+  const sourceTitles = {'Providers': 'Compare WebPart provider availability with the current host', 'AutoSkeleton': 'Explore mounted profile loading and native focus', 'RelativeTime': 'Explore relative clocks and fallback slots', 'FormattedText': 'Explore semantic text and inline Markdown'};
   const actual = sourceTitles[name] ? require('./fixtures/executable-examples/cards-description-list.cjs').scenario(sourceTitles[name]) : undefined;
-  const { DemoCard } = h.load(path.resolve(base, '../shared/DemoCard.tsx'));
+  const { DemoCard } = h.load(path.resolve(base, 'shared/DemoCard.tsx'));
   const SourceDemo = actual ? h.load(actual.file).Demo : undefined;
   const Component = SourceDemo ? () => h.React.createElement(SourceDemo, { render: regions => h.React.createElement(DemoCard, { title: sourceTitles[name], iconName: 'Info', ...regions }) }) : ExistingComponent;
+  assert.ok(Component, `Known source-owned or independent conformance fixture: ${name}`);
   const renderer = createDOMRenderer(null);
   const view = h.mountComponent(()=>h.React.createElement(RendererProvider,{renderer},h.React.createElement(fluent.FluentProvider,{theme:fluent.webLightTheme},h.React.createElement(Component))));
   t.after(()=>{view.unmount();h.close();});

@@ -14,9 +14,8 @@ const root = path.resolve(__dirname, '..');
 const directory = path.join(root, process.env.DEMO_PRESENTATION_MODE === 'source' ? 'temp/demo-presentation-source-browser' : 'temp/demo-presentation-browser');
 const output = path.resolve(process.env.DEMO_PRESENTATION_EVIDENCE || path.join(root, '.docs/maintenance/evidence/demo-presentation'));
 const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const registry = fs.readFileSync(path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/demoRegistry.ts'), 'utf8');
-const legacyEntries = [...registry.matchAll(/key: '([^']+)',\s*title: '([^']+)'/g)].map(match => ({ key: match[1], title: match[2] }));
-const entries = legacyEntries.concat([
+const entries = [
+  { key: 'providers', title: 'SPFxWebPartProvider' },
   { key: 'search-text', title: 'useSPFxPnPSearch' },
   { key: 'search-facet', title: 'useSPFxPnPSearch' },
   { key: 'search-suggestions', title: 'useSPFxPnPSearch' },
@@ -43,7 +42,7 @@ const entries = legacyEntries.concat([
   { key: 'runtime-local', title: 'useSPFxLocalStorage' }, { key: 'runtime-logger', title: 'useSPFxLogger' },
   { key: 'runtime-performance', title: 'useSPFxPerformance' },
   { key: 'accordion-group', title: 'AccordionGroup' }, { key: 'state-message', title: 'StateMessage' },
-]);
+];
 const expectedRuntimeDiagnostics = [];
 const checks = [], diagnostics = [], metrics = [], screenshots = [], fontAssets = [];
 const check = (name, actual, expected) => { checks.push({ name, actual, expected }); assert.deepEqual(actual, expected, name); };
@@ -75,6 +74,7 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    providers: ['SPFxWebPartProvider', 'Compare WebPart provider availability with the current host'],
     'search-text': ['useSPFxPnPSearch', 'Search SharePoint text with explicit execution'],
     'search-facet': ['useSPFxPnPSearch', 'Filter search results with native refiner tokens'],
     'search-suggestions': ['useSPFxPnPSearch', 'Request debounced suggestions after explicit start'],
@@ -131,7 +131,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: ['pnp-context-service', 'pnp-service', 'pnp-list-service', 'site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['search-text', 'search-vertical', 'pnp-crud', 'pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
+      const group = nav.getByRole('button', { name: key === 'providers' ? /^Provider e contesto/ : ['pnp-context-service', 'pnp-service', 'pnp-list-service', 'site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['search-text', 'search-vertical', 'pnp-crud', 'pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -144,21 +144,7 @@ async function select(page, key) {
     await panel.locator('[data-demo-section]').waitFor();
     selectedPanels.set(page,panel); await settle(page); return;
   }
-  const entry = entries.find(item => item.key === key);
-  const mobile = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
-  if (await mobile.isVisible()) await mobile.selectOption(`legacy:${key}`);
-  else {
-    const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-    const group = nav.getByRole('button', { name: /^Scenari esistenti/ }).first();
-    if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
-    await nav.getByRole('button', { name: entry.title, exact: true }).click();
-    check(`${key}: selected`, await nav.getByRole('button', { name: entry.title, exact: true }).getAttribute('aria-current'), 'true');
-  }
-  const panel = page.getByRole('region', { name: entry.title, exact: true });
-  selectedPanels.set(page, panel);
-  await panel.locator('[data-demo-section]').waitFor();
-  await settle(page);
-  check(`${key}: selected feature region`, await panel.getAttribute('aria-label'), entry.title);
+  throw new Error(`No canonical browser route for ${key}`);
 }
 async function capture(page, name) {
   const file = path.join(output, `${name}.png`); await page.screenshot({ path: file, fullPage: true }); screenshots.push(file);
@@ -560,7 +546,7 @@ async function liveTheme(page) {
       console.log(`Focused source-owned JSDoc scenarios: ${checks.length} checks PASS (simulated native transport).`);
       return;
     }
-    check('Actual remaining transitional feature count', await page.locator('[data-example-feature^="legacy:"]').count(), legacyEntries.length);
+    check('No transitional feature remains', await page.locator('[data-example-feature^="legacy:"]').count(), 0);
     check('Coverage detailed default collapsed', await page.getByRole('button', { name: 'Detailed package coverage', exact: true }).getAttribute('aria-expanded'), 'false');
     await page.screenshot({ path: path.join(output, 'initial-viewport.png') });
     if (process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1') {
@@ -795,10 +781,12 @@ async function liveTheme(page) {
     await page.evaluate(() => window.demoFixtureHost.update({ theme: 'light', dir: 'ltr' }));
     await page.setViewportSize({ width: 320, height: 1000 }); await settle(page);
     const featureSelect = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
-    await featureSelect.selectOption(`legacy:${legacyEntries[0].key}`); await featureSelect.focus();
-    for (let index = 1; index < legacyEntries.length; index++) {
+    const keyboardOptions = await featureSelect.locator('option').evaluateAll(options => options.map(option => option.value));
+    check('Generated keyboard navigation has multiple features', keyboardOptions.length > 1, true);
+    await featureSelect.selectOption(keyboardOptions[0]); await featureSelect.focus();
+    for (let index = 1; index < Math.min(4, keyboardOptions.length); index++) {
       await page.keyboard.press('ArrowDown'); await settle(page);
-      check(`Keyboard reaches transitional feature ${index + 1}`, await featureSelect.inputValue(), `legacy:${legacyEntries[index].key}`);
+      check(`Keyboard reaches generated feature ${index + 1}`, await featureSelect.inputValue(), keyboardOptions[index]);
     }
     await capture(page, 'keyboard-navigation-320');
     for (const zoom of [1, 2]) {
@@ -823,7 +811,7 @@ async function liveTheme(page) {
     check('Unexpected app/browser/network diagnostics', diagnostics.filter(message => !(message.type === 'warning' && message.text === nativeColorWarning)), []);
     console.log(`Integrated actual app: ${checks.length} PASS checks; ${screenshots.length} screenshots; native 200% proved.`);
   } finally {
-    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `focused source-owned JSDoc migration checkpoint (${pilotScope.scenarios} scenarios, ${pilotScope.features} features)` : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { ...pilotScope, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/remaining registry panels + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, expectedRuntimeDiagnostics, metrics, screenshots }, undefined, 2));
+    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `focused source-owned JSDoc migration checkpoint (${pilotScope.scenarios} scenarios, ${pilotScope.features} features)` : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { ...pilotScope, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/generated scenarios + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, expectedRuntimeDiagnostics, metrics, screenshots }, undefined, 2));
     await browser?.close(); await new Promise(resolve => server.close(resolve));
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

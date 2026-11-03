@@ -8,12 +8,7 @@ import {
 } from '@microsoft/sp-application-base';
 
 import * as strings from 'SpFxReactToolkitTestApplicationCustomizerStrings';
-import { SPFxApplicationCustomizerProvider } from '@apvee/spfx-react-toolkit';
-import {
-  useSPFxInstanceInfo,
-  useSPFxPageContext,
-  useSPFxProperties,
-} from '@apvee/spfx-react-toolkit';
+import { ApplicationCustomizerExampleHost } from '../../webparts/spFxReactToolkitTest/components/shared/ApplicationCustomizerExampleHost';
 
 /* eslint-disable @microsoft/spfx/pair-react-dom-render-unmount -- PlaceholderContent owns a separate domElement lifecycle. */
 
@@ -23,30 +18,13 @@ export interface ISpFxReactToolkitTestApplicationCustomizerProperties {
   testMessage: string;
 }
 
-const ExtensionProviderProbe: React.FC = () => {
-  const { id, kind } = useSPFxInstanceInfo();
-  const pageContext = useSPFxPageContext();
-  const { properties } = useSPFxProperties<ISpFxReactToolkitTestApplicationCustomizerProperties>();
-
-  return React.createElement(
-    'div',
-    {
-      style: {
-        background: '#f3f2f1',
-        borderBottom: '1px solid #edebe9',
-        color: '#323130',
-        fontSize: 12,
-        padding: '6px 12px',
-      },
-    },
-    `SPFxApplicationCustomizerProvider active: ${kind} ${id} | ${pageContext.web.title} | ${properties?.testMessage ?? 'No message'}`
-  );
-};
-
 export default class SpFxReactToolkitTestApplicationCustomizer
   extends BaseApplicationCustomizer<ISpFxReactToolkitTestApplicationCustomizerProperties> {
 
   private topPlaceholder?: PlaceholderContent;
+  // Pinned BaseComponent sets isDisposed only AFTER onDispose and deletes context.
+  // Close this native root before teardown so queued/reentrant callbacks cannot recreate it.
+  private terminal: boolean = false;
 
   public onInit(): Promise<void> {
     Log.info(LOG_SOURCE, `Initialized ${strings.Title}`);
@@ -58,6 +36,8 @@ export default class SpFxReactToolkitTestApplicationCustomizer
   }
 
   public onDispose(): void {
+    if (this.terminal) return;
+    this.terminal = true;
     this.context.placeholderProvider.changedEvent.remove(this, this.renderTopPlaceholder);
 
     if (this.topPlaceholder) {
@@ -68,6 +48,7 @@ export default class SpFxReactToolkitTestApplicationCustomizer
   }
 
   private renderTopPlaceholder = (): void => {
+    if (this.terminal) return;
     if (!this.topPlaceholder) {
       const createdPlaceholder: PlaceholderContent | undefined = this.context.placeholderProvider.tryCreateContent(
         PlaceholderName.Top,
@@ -90,9 +71,8 @@ export default class SpFxReactToolkitTestApplicationCustomizer
     }
 
     const element = React.createElement(
-      SPFxApplicationCustomizerProvider,
-      { instance: this },
-      React.createElement(ExtensionProviderProbe)
+      ApplicationCustomizerExampleHost,
+      { instance: this }
     );
 
     ReactDom.render(element, this.topPlaceholder.domElement);

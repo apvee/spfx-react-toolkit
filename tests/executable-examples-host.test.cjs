@@ -51,7 +51,8 @@ function fixture(t, { explorer = false, simulatedBrowserTransport = false } = {}
   // Include only the real read and generic callback features: no unavailable
   // native Shell API or unrelated sample transport participates in this test.
   const groups = catalogue.executableGroups.map(group => ({ ...group, features: group.features.filter(feature => ['useSPFxPnPList', 'useStableCallback'].includes(feature.title)) })).filter(group => group.features.length);
-  function Probe() { navigation = state.useExampleExplorerState(); return h.React.createElement(Explorer, { groups, legacyEntries: [] }); }
+  const ActualHost = explorer ? h.load(path.join(base, 'shared/ExecutableHostContext.tsx')).ExecutableHostContext : undefined;
+  function Probe() { navigation = state.useExampleExplorerState(); return h.React.createElement(ActualHost.Provider, { value: 'webPart' }, h.React.createElement(Explorer, { groups })); }
   // Griffel requires null for its legacy isomorphic renderer; JSDOM lacks container queries.
   const renderer = createDOMRenderer(null);
   function Root() {

@@ -72,3 +72,32 @@ test('AST guard rejects native browser dialogs without rejecting an owned confir
     }
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
+
+test('only the actual provider-owned Top boundary may project a const public-hook theme', () => {
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'native-top-theme-'));
+  const relative='components/shared/ApplicationCustomizerExampleHost.tsx';
+  const source=fs.readFileSync(path.resolve(__dirname,'../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest',relative),'utf8');
+  const file=path.join(dir,relative);fs.mkdirSync(path.dirname(file),{recursive:true});
+  try {
+    fs.writeFileSync(file,source);assert.equal(assertDemoControls(dir),1,'actual matching host projection');
+    const alias=source.replace('useSPFxFluent9ThemeInfo,','useSPFxFluent9ThemeInfo as readHostTheme,').replace('= useSPFxFluent9ThemeInfo();','= readHostTheme();');
+    fs.writeFileSync(file,alias);assert.equal(assertDemoControls(dir),1,'a genuine imported alias retains provenance');
+    for (const [name,patched] of [
+      ['literal despite unused genuine hook',source.replace('theme={theme}','theme={{}}')],
+      ['constructed theme',source.replace('theme={theme}','theme={{ ...theme }}')],
+      ['local unrelated value',source.replace('theme={theme}','theme={page}')],
+      ['wrong module',source.replace("from '@apvee/spfx-react-toolkit'", "from 'wrong-toolkit'")],
+      ['shadowed hook',source.replace('function TopPresentation():','function TopPresentation(useSPFxFluent9ThemeInfo = () => ({ theme: {} })):')],
+      ['non-const binding',source.replace('const { theme }','let { theme }')],
+      ['reassignment',source.replace('const page =','theme = {}; const page =')],
+      ['unrelated second provider',source.replace('<ExampleExplorer groups={groups} />','<FluentProvider theme={theme}><ExampleExplorer groups={groups} /></FluentProvider>')],
+      ['spread props',source.replace('theme={theme}','{...{ theme }}')],
+      ['different native wrapper input',source.replace('instance={instance}','instance={{}}')],
+      ['disconnected local child',source.replace('<TopPresentation />','<OtherPresentation />')],
+    ]) {
+      fs.writeFileSync(file,patched);assert.throws(()=>assertDemoControls(dir),/panel-owned theme|host theme projection/,name);
+    }
+    fs.rmSync(file);fs.writeFileSync(path.join(dir,'Other.tsx'),source);
+    assert.throws(()=>assertDemoControls(dir),/panel-owned theme/,'same code outside the actual host boundary');
+  } finally {fs.rmSync(dir,{recursive:true,force:true});}
+});

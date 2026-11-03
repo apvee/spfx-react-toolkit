@@ -24,7 +24,7 @@ export function ExampleExplorerStateProvider({ initialGroups, children }: {
   const firstFeature = groups[0]?.features.find(feature => feature.scenarios.length > 0);
   const [selection, setSelection] = React.useState<string | undefined>(() => firstFeature?.key);
   const [selectedScenarioByFeature, setScenarios] = React.useState<Readonly<Record<string, string>>>({});
-  const [expandedGroupKeys, setExpanded] = React.useState<readonly string[]>(() => groups[0] ? [groups[0].key] : ['legacy']);
+  const [expandedGroupKeys, setExpanded] = React.useState<readonly string[]>(() => groups[0] ? [groups[0].key] : []);
   const [resetRevision, setResetRevision] = React.useState(0);
   const resetFocus = React.useRef<{
     readonly trigger: HTMLButtonElement;
@@ -50,12 +50,12 @@ export function ExampleExplorerStateProvider({ initialGroups, children }: {
     clearResetFocus();
     if (abandoned && element.ownerDocument === intent.document) element.focus();
   }, [clearResetFocus]);
-  const selectedFeatureKey = selection?.startsWith('legacy:') || groups.some(group => group.features.some(feature => feature.key === selection && feature.scenarios.length > 0))
+  const selectedFeatureKey = groups.some(group => group.features.some(feature => feature.key === selection && feature.scenarios.length > 0))
     ? selection : firstFeature?.key;
 
   const selectFeature = React.useCallback((featureKey: string): void => {
     clearResetFocus();
-    const groupKey = featureKey.startsWith('legacy:') ? 'legacy' : initialGroups.find(group => group.features.some(feature => feature.key === featureKey && feature.scenarios.length > 0))?.key;
+    const groupKey = initialGroups.find(group => group.features.some(feature => feature.key === featureKey && feature.scenarios.length > 0))?.key;
     if (!groupKey) return;
     setSelection(featureKey);
     setExpanded(previous => previous.includes(groupKey) ? previous : [...previous, groupKey]);

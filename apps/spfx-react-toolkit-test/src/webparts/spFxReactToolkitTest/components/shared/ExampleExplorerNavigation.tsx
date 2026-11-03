@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Button, Field, Select, Text, useId } from '@fluentui/react-components';
 import { ChevronDownRegular, ChevronRightRegular } from '@fluentui/react-icons';
 import type { ExecutableGroup } from '../generated/jsdoc-examples/catalogue';
-import type { DemoRegistryEntry } from '../demoRegistry.types';
 import { useExampleExplorerState } from './ExampleExplorerState';
 import { useExampleExplorerStyles } from './exampleExplorerStyles';
 
@@ -12,21 +11,18 @@ interface NavigationGroup {
   readonly features: readonly { readonly key: string; readonly title: string }[];
 }
 
-/** The temporary bridge keeps one entry per existing panel, regardless of its covered symbols. */
-export function getNavigationGroups(groups: readonly ExecutableGroup[], legacyEntries: readonly DemoRegistryEntry[]): readonly NavigationGroup[] {
-  const generated = groups.map(group => ({ ...group, features: group.features.filter(feature => feature.scenarios.length > 0) })).filter(group => group.features.length > 0);
-  return [...generated, ...(legacyEntries.length > 0 ? [{ key: 'legacy', title: 'Scenari esistenti',
-    features: legacyEntries.map(entry => ({ key: `legacy:${entry.key}`, title: entry.title })) }] : [])];
+/** Empty groups/features never become selectable navigation entries. */
+export function getNavigationGroups(groups: readonly ExecutableGroup[]): readonly NavigationGroup[] {
+  return groups.map(group => ({ ...group, features: group.features.filter(feature => feature.scenarios.length > 0) })).filter(group => group.features.length > 0);
 }
 
-export function ExampleExplorerNavigation({ groups, legacyEntries }: {
+export function ExampleExplorerNavigation({ groups }: {
   readonly groups: readonly ExecutableGroup[];
-  readonly legacyEntries: readonly DemoRegistryEntry[];
 }): React.ReactElement {
   const state = useExampleExplorerState();
   const styles = useExampleExplorerStyles();
   const navigationId = useId('example-navigation');
-  const navigationGroups = getNavigationGroups(groups, legacyEntries);
+  const navigationGroups = getNavigationGroups(groups);
   const selectedKey = navigationGroups.flatMap(group => group.features).find(feature => feature.key === state.selectedFeatureKey)?.key ?? navigationGroups[0]?.features[0]?.key;
   return <>
     <Field label="Funzionalità" className={styles.mobile}>

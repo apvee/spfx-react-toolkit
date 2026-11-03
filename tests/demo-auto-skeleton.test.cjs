@@ -8,8 +8,8 @@ const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 test('AutoSkeleton has a lazy demo with observable props, geometry and retained content', () => {
   const base = 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/';
   const panel = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Explore mounted profile loading and native focus').source;
-  const registry = read(`${base}demoRegistry.ts`);
-  assert.doesNotMatch(registry, /panels\/AutoSkeletonPanel/);
+  const catalogue = read(`${base}generated/jsdoc-examples/catalogue.ts`);
+  assert.doesNotMatch(catalogue, /panels\/AutoSkeletonPanel/);
   assert.equal(require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Explore mounted profile loading and native focus').entry.featureTitle, 'AutoSkeleton');
   for (const marker of ['loading', 'animation', 'minSize', 'ignoreSelectors', 'resize', 'empty',
     'direction', 'preview', 'inspect-ref', 'observations', 'focus-load', 'focus-target', 'circle', 'rectangle', 'mixed-text']) {

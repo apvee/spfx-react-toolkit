@@ -12,15 +12,14 @@ const [styleSurface, controlSurface, formSurface, nativePickerSurface, nativeFil
 ].map(entry => path.join(root, 'packages/spfx-react-toolkit/src', entry)));
 const hooksIndexPath = path.join(root, 'packages', 'spfx-react-toolkit', 'src', 'hooks', 'index.ts');
 const coreIndexPath = path.join(root, 'packages', 'spfx-react-toolkit', 'src', 'core', 'index.ts');
-const registryPath = path.join(
+const componentRoot = path.join(
   root,
   'apps',
   'spfx-react-toolkit-test',
   'src',
   'webparts',
   'spFxReactToolkitTest',
-  'components',
-  'demoRegistry.ts'
+  'components'
 );
 
 function read(filePath) {
@@ -75,34 +74,6 @@ function getExportedSymbols(indexPath, matcher, exportedNamePrefix) {
   return [...symbols].sort();
 }
 
-function getRegistrySymbols() {
-  if (!fs.existsSync(registryPath)) {
-    throw new Error(`Example registry not found: ${path.relative(root, registryPath)}`);
-  }
-
-  const source = read(registryPath);
-  const symbolRegex = /\bsymbol:\s*['"]([^'"]+)['"]/g;
-  const symbols = new Set();
-  const duplicates = new Set();
-  let match;
-
-  while ((match = symbolRegex.exec(source)) !== null) {
-    if (symbols.has(match[1])) {
-      duplicates.add(match[1]);
-    }
-    symbols.add(match[1]);
-  }
-
-  if (duplicates.size > 0) {
-    throw new Error(
-      'Duplicate symbols in webpart demo coverage:\n' +
-      [...duplicates].sort().map(symbol => `  - ${symbol}`).join('\n')
-    );
-  }
-
-  return symbols;
-}
-
 function assertCovered(label, expected, actual) {
   const missing = expected.filter(symbol => !actual.has(symbol));
 
@@ -124,21 +95,18 @@ const providerSymbols = getExportedSymbols(
   /export\s+function\s+(SPFx[A-Za-z0-9]+Provider)/g,
   'SPFx'
 );
-const legacySymbols = getRegistrySymbols();
-const generated = collectExecutableCoverage(read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')));
-const registrySymbols = new Set([...legacySymbols, ...generated.symbols]);
+const generated = collectExecutableCoverage(read(path.join(componentRoot, 'generated/jsdoc-examples/catalogue.ts')));
+const scenarioSymbols = generated.symbols;
 console.log(`Generated scenario availability: ${generated.featureCount} features, ${generated.scenarioCount} scenarios, ${generated.symbols.size} unique symbols/aliases, ${generated.associationCount} scenario/API associations (not execution results).`);
 const nativeOwners = new Set([...nativePickerSurface, ...nativeFileSurface]
   .filter(item => /^PropertyPane.+Picker$/.test(item.name))
   .map(item => path.relative(root, item.filePath).split(path.sep).join('/') + '#' + item.name));
 for (const owner of generated.nativeOwners) if (!nativeOwners.has(owner)) throw new Error('Native executable must own a current canonical public native factory: ' + owner);
 console.log(`Native source availability: ${generated.nativeOwners.size}/${nativeOwners.size} canonical factory owners (production instance port connected; availability is not host execution).`);
-console.log(`Temporary legacy coverage: ${legacySymbols.size} unique symbols; existing panels remain separate from generated counts.`);
 
-assertCovered('Hooks', hookSymbols, registrySymbols);
-assertCovered('Providers', providerSymbols, registrySymbols);
+assertCovered('Hooks', hookSymbols, scenarioSymbols);
+assertCovered('Providers', providerSymbols, scenarioSymbols);
 
-const panelsPath = path.join(path.dirname(registryPath), 'panels');
 // Product variants and versioned conformance fixtures are distinct coverage surfaces.
 // Static markers prove neither browser execution nor simultaneous visible examples.
 const regressionFiles = {
@@ -150,7 +118,7 @@ const regressionFiles = {
   Pagination: 'demo-control-isolation/pagination-regressions.tsx',
   DescriptionList: 'demo-control-isolation/description-list-regressions.tsx',
 };
-function scenarioSource(name, product = read(path.join(panelsPath, `${name}Panel.tsx`))) {
+function scenarioSource(name, product) {
   const relative = regressionFiles[name] || `foundation-legacy/${name}Panel.tsx`;
   const fixture = path.join(root, 'tests/fixtures', relative);
   return product + (fs.existsSync(fixture) ? '\n' + read(fixture) : '');
@@ -159,15 +127,14 @@ function scenarioSource(name, product = read(path.join(panelsPath, `${name}Panel
 const styleCompositionSource = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSx.ts')), 'Explore eight style recipes with the host renderer');
 assertStyleExampleCoverage(
   styleSurface,
-  read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')),
+  read(path.join(componentRoot, 'generated/jsdoc-examples/catalogue.ts')),
   styleCompositionSource
 );
 console.log(`Verified webpart demo coverage for ${hookSymbols.length} hooks, ${providerSymbols.length} providers and ${styleSurface.filter(item => !item.name.startsWith('Sx')).length} qualified runtime style exports (interactive catalog/scopes).`);
 
 // This scenario verifies import interoperability without counting existing hooks twice.
 const importsPanelSource = scenarioSource('Imports', read(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSx.ts')));
-const importsRegistry = read(registryPath);
-if (!read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')).includes('"title": "Compare root domain and historical imports"')) {
+if (!read(path.join(componentRoot, 'generated/jsdoc-examples/catalogue.ts')).includes('"title": "Compare root domain and historical imports"')) {
   throw new Error('Source-owned import interoperability scenario is unavailable');
 }
 for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invoke original callback',
@@ -179,7 +146,7 @@ for (const marker of ['scope="root"', 'scope="domain"', 'scope="legacy"', 'Invok
 console.log('Verified selectable root/domain/legacy Imports and dedicated equivalence fixture.');
 
 const controlSymbols = controlSurface.filter(item => ['EditableText', 'FormattedText', 'RelativeTime', 'AutoSkeleton', 'StateMessage', 'SettingsGroup', 'AccordionGroup', 'Form', 'createForm', 'DataGrid', 'createDataGrid', 'WebPartShell', 'getWebPartShellPropertiesMetadata', 'Stage', 'Pagination', 'DescriptionList', 'ContentCard', 'PreviewCard', 'SharePointPermissionTrim', 'SharePointGroupTrim', 'EntraGroupTrim'].includes(item.name)).map(item => item.name);
-assertCovered('Controls', controlSymbols, registrySymbols);
+assertCovered('Controls', controlSymbols, scenarioSymbols);
 const descriptionListSource = read(path.join(root, 'packages/spfx-react-toolkit/src/controls/description-list/description-list.tsx'));
 const descriptionListPanel = scenarioSource('DescriptionList', descriptionListSource);
 for (const marker of ['DescriptionList.Item', 'items=', 'layout=', 'key={entry.id}',
@@ -244,7 +211,7 @@ for (const marker of ['SettingsGroup.Item', 'AccordionGroup.Item', 'Input aria-l
 
 assertFormExampleCoverage(
   formSurface,
-  read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')),
+  read(path.join(componentRoot, 'generated/jsdoc-examples/catalogue.ts')),
   read(path.join(root, 'packages/spfx-react-toolkit/src/controls/form/create-form.ts')) + '\n' + read(path.join(root, 'packages/spfx-react-toolkit/src/controls/form/form.tsx'))
 );
 console.log('Verified selectable Form adapters plus versioned scope/hook conformance coverage.');
@@ -269,7 +236,7 @@ if (!generated.symbols.has('WebPartShell') || !generated.symbols.has('getWebPart
 for (const marker of ['appearance', 'card-size', 'title-position', 'show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'strings', 'title-editor-strings', 'action-slot-toggle', 'observations']) {
   if (!shellPanel.includes(`data-shell-demo="${marker}"`) && !shellPanel.includes(`'data-shell-demo': '${marker}'`)) throw new Error(`WebPartShell sample missing ${marker}`);
 }
-const shellHost = read(path.join(path.dirname(registryPath), 'WebPartShellDemoHost.tsx'));
+const shellHost = read(path.join(componentRoot, 'WebPartShellDemoHost.tsx'));
 if (!shellPanel.includes('aria-label="Project note"') || !shellPanel.includes('Increment counter') || !shellMetadata.includes('@example Inspect searchable Shell title metadata')) throw new Error('Shell needs source-owned body state and real metadata scenarios.');
 if ((shellHost.match(/<WebPartShell /g) || []).length !== 1) throw new Error('WebPartShell sample must wrap the web part exactly once');
 console.log('Verified WebPartShell root host, metadata and observable child/presentation scenario.');
@@ -308,7 +275,7 @@ const sourceCases = [
   ['AccordionGroup', 'Control disclosure selection and retained content'],
   ['StateMessage', 'Configure state artwork semantics and actions'],
 ];
-const catalogueSource = read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts'));
+const catalogueSource = read(path.join(componentRoot, 'generated/jsdoc-examples/catalogue.ts'));
 for (const [owner, title] of sourceCases) {
   if (!generated.symbols.has(owner) || !catalogueSource.includes(JSON.stringify(title))) throw new Error(`Source-owned scenario unavailable: ${owner}/${title}`);
 }
@@ -325,11 +292,19 @@ if (!cardsIsolation.includes('name="independent"') || !cardsIsolation.includes('
 console.log('Verified selectable single Cards, image lifecycle and versioned native/isolation conformance coverage.');
 
 
-for (const name of ['Providers']) {
-  const product = read(path.join(panelsPath, `${name}Panel.tsx`));
-  if (!product.includes('DemoCard')) throw new Error(`${name} product configuration missing`);
-  if (!product.includes('data-demo-variant')) throw new Error(`${name} selectable product variant missing`);
+for (const [file, owner, title] of [
+  ['provider-webpart', 'SPFxWebPartProvider', 'Compare WebPart provider availability with the current host'],
+  ['provider-application-customizer', 'SPFxApplicationCustomizerProvider', 'Compare Application Customizer provider availability with the current host'],
+  ['provider-field-customizer', 'SPFxFieldCustomizerProvider', 'Compare Field Customizer provider availability with the current host'],
+  ['provider-listview-commandset', 'SPFxListViewCommandSetProvider', 'Compare Command Set provider availability with the current host'],
+  ['provider-application-customizer', 'SPFxApplicationCustomizerProvider', 'Inspect the actual Top placeholder provider'],
+]) {
+  const ownerKey = `packages/spfx-react-toolkit/src/core/${file}.tsx#${owner}`;
+  if (!generated.identities.has(JSON.stringify([ownerKey, title]))) throw new Error(`Actual provider owner/title association missing: ${ownerKey}/${title}`);
+  const source = ownedSourceExample(read(path.join(root, `packages/spfx-react-toolkit/src/core/${file}.tsx`)), title);
+  if (!source.includes('diagnostics:') || !source.includes('observe:')) throw new Error(`Observable provider regions missing: ${owner}`);
 }
+console.log('Verified four provider availability owners and separate actual Top observation; availability is not native execution.');
 for (const source of [styleCompositionSource, paginationPanel, importsPanelSource, editableTextPanel, textPanel, relativePanel, skeletonPanel]) {
   for (const marker of ['export function Demo(', 'return render({', 'data-demo-variant', 'observe:']) if (!source.includes(marker)) throw new Error(`Source-owned variant missing ${marker}`);
 }
@@ -357,7 +332,7 @@ for (const [file, title, markers] of [
 ]) {
   const source = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/hooks', file)), title);
   for (const marker of markers) if (!source.includes(marker)) throw new Error(`Context source-owned case missing ${marker}`);
-  if (!read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')).includes(JSON.stringify(title))) throw new Error(`Context generated case unavailable: ${title}`);
+  if (!read(path.join(componentRoot, 'generated/jsdoc-examples/catalogue.ts')).includes(JSON.stringify(title))) throw new Error(`Context generated case unavailable: ${title}`);
 }
 console.log('Verified actual trim scenarios and canonical Context availability; execution remains separately verified.');
 
@@ -366,7 +341,7 @@ for (const title of ['Stage resource permissions and observe protected lifetimes
   const markers = ['export function Demo(', 'resetRevision', 'observe:', 'key={applied.id}', 'ProtectedContent', 'data-trim-demo="run"', 'data-trim-demo="applied-target"', 'SharePointPermissionTrim.Loading', 'SharePointPermissionTrim.Fallback', 'SharePointPermissionTrim.ErrorFallback'];
   if (title === 'Compose permission and Entra checks with nested AND') markers.push('<EntraGroupTrim groups={[{ name: applied.group }]}', 'groupType="All" relationship="member" match="all"', 'level="inner"');
   for (const marker of markers) if (!source.includes(marker)) throw new Error(`Canonical permission/AND scenario missing ${marker}`);
-  if (!read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')).includes(JSON.stringify(title))) throw new Error(`Canonical permission scenario unavailable: ${title}`);
+  if (!read(path.join(componentRoot, 'generated/jsdoc-examples/catalogue.ts')).includes(JSON.stringify(title))) throw new Error(`Canonical permission scenario unavailable: ${title}`);
 }
 
 // The hosted dictionary override belongs to its exact canonical case, not a retired panel.
@@ -408,5 +383,5 @@ if (!gridSource.includes('id="dg-strings"') || !gridSource.includes('strings={gr
   for (const marker of ['export function Demo(', 'resetRevision', 'observe:', 'key={applied.id}', 'ProtectedContent', 'data-trim-demo="run"', 'data-trim-demo="applied-target"', 'SharePointGroupTrim.Loading', 'SharePointGroupTrim.Fallback', 'SharePointGroupTrim.ErrorFallback', "draft.values.split(';')", 'Number(value.trim())', 'Object.freeze', 'groups={applied.groups}', 'webUrl={applied.webUrl}', 'match={applied.match}']) {
     if (!source.includes(marker)) throw new Error(`Canonical SharePoint group scenario missing ${marker}`);
   }
-  if (!read(path.join(path.dirname(registryPath), 'generated/jsdoc-examples/catalogue.ts')).includes(JSON.stringify(title))) throw new Error(`Canonical SharePoint group scenario unavailable: ${title}`);
+  if (!read(path.join(componentRoot, 'generated/jsdoc-examples/catalogue.ts')).includes(JSON.stringify(title))) throw new Error(`Canonical SharePoint group scenario unavailable: ${title}`);
 }

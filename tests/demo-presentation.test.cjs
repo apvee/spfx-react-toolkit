@@ -38,11 +38,17 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
   const renderer = require('@griffel/core').createDOMRenderer(null);
   const host = document.createElement('div'); document.body.appendChild(host);
   const mounts = new Map(), unmounts = new Map(), loads = new Map();
-  let registry;
+  const groups = [{ key: 'core', title: 'Provider e contesto', features: ['first', 'second'].map(key => ({ key, title: key, scenarios: [{ id: key, title: key, metadata: { host: 'none', contentPlacement: 'configuration', observe: 'Observe generated lazy lifetime.' }, load: () => {
+    loads.set(key, (loads.get(key) || 0) + 1);
+    return Promise.resolve({ Demo: props => {
+      React.useEffect(() => { mounts.set(key, (mounts.get(key) || 0) + 1); return () => unmounts.set(key, (unmounts.get(key) || 0) + 1); }, []);
+      return props.render({ children: React.createElement('input', { 'data-test-scenario': key, defaultValue: key }), diagnostics: 'Source diagnostic' });
+    } });
+  } }] })) }];
   const cache = new Map();
   function load(file) {
     file = path.resolve(file);
-    if (file.endsWith('/generated/jsdoc-examples/catalogue.ts')) return { executableExamples: [], executableGroups: [] };
+    if (file.endsWith('/generated/jsdoc-examples/catalogue.ts')) return { executableExamples: groups.flatMap(g=>g.features.flatMap(f=>f.scenarios)), executableGroups: groups };
     if (cache.has(file)) return cache.get(file).exports;
     const module = { exports: {} }; cache.set(file, module);
     const compiled = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.React } });
@@ -51,20 +57,8 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
       if (name.endsWith('.scss')) return { default: {} };
       if (name.startsWith('.')) {
         const resolved = path.resolve(path.dirname(file), name);
-        if (name.includes('/panels/')) return { default: () => {
-          const entry = registry.find(item => item.componentPath === name);
-          React.useEffect(() => {
-            mounts.set(entry.key, (mounts.get(entry.key) || 0) + 1);
-            return () => unmounts.set(entry.key, (unmounts.get(entry.key) || 0) + 1);
-          }, []);
-          return React.createElement('input', { 'data-test-panel': entry.key, defaultValue: entry.key });
-        } };
         return load(fs.existsSync(`${resolved}.tsx`) ? `${resolved}.tsx` : fs.existsSync(`${resolved}.ts`) ? `${resolved}.ts` : path.join(resolved, 'index.ts'));
       }
-      if (name === 'react' && file.endsWith('demoRegistry.ts')) return { ...React, lazy: factory => {
-        const component = React.lazy(() => { loads.set(component, (loads.get(component) || 0) + 1); return factory(); });
-        return component;
-      } };
       return require(name);
     }, module, module.exports);
     return module.exports;
@@ -145,29 +139,16 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     act(() => retainedToggle.click());
     assert.equal(host.querySelector('input'), retainedNote); assert.equal(retainedNote.value, 'Edited note');
     assert.equal(retainedNote.closest('.fui-AccordionPanel').hasAttribute('inert'), false);
-    const rootModule = load(path.join(base, 'demoRegistry.ts'));
-    registry = rootModule.demoRegistry;
-    const paths = [...read('demoRegistry.ts').matchAll(/component: lazyPanel\(\(\) => import\(\/\*[^*]+\*\/ '([^']+)'\)\)/g)].map(match => match[1]);
-    const panelPaths = fs.readdirSync(path.join(base, 'panels')).filter(file => file.endsWith('Panel.tsx'))
-      .map(file => `./panels/${file.slice(0, -4)}`);
-    assert.ok(registry.length > 0, 'remaining transitional panels participate in lazy navigation');
-    assert.ok(registry.every(entry => typeof entry.key === 'string' && entry.key.trim().length > 0));
-    assert.equal(new Set(registry.map(entry => entry.key)).size, registry.length, 'panel keys are unique');
-    assert.equal(new Set(paths).size, paths.length, 'each panel has one lazy import');
-    assert.equal(paths.length, registry.length);
-    assert.deepEqual([...paths].sort(), panelPaths.sort(), 'every remaining panel module has exactly one active registry entry');
-    registry.forEach((entry, i) => { entry.componentPath = paths[i]; });
     const Demo = load(path.join(base, 'SpFxReactToolkitTest.tsx')).default;
     const { ExampleExplorerStateProvider } = load(path.join(base, 'shared/ExampleExplorerState.tsx'));
-    const root = () => React.createElement(ExampleExplorerStateProvider, { initialGroups: [] }, React.createElement(Demo));
-    render(root());
-    await act(async () => { await Promise.resolve(); });
+    const root = () => React.createElement(ExampleExplorerStateProvider, { initialGroups: groups }, React.createElement(Demo));
+    render(root()); await act(async () => { await Promise.resolve(); });
     const coverageToggle = Array.from(host.querySelectorAll('button')).find(node => node.textContent === 'Detailed package coverage');
-    assert.ok(coverageToggle, 'verbose coverage has a disclosure');
-    assert.equal(coverageToggle.getAttribute('aria-expanded'), 'false', 'demo examples precede collapsed metadata');
+    assert.ok(coverageToggle); assert.equal(coverageToggle.getAttribute('aria-expanded'), 'false');
+    assert.match(host.textContent, /2 funzionalità generate · 2 scenari disponibili per WebPart/);
     act(() => coverageToggle.click());
-    assert.match(host.textContent, /SPFxWebPartProvider \(Host\)/, 'detailed coverage still describes the actual remaining native host provider');
-    assert.doesNotMatch(host.textContent, /FileFolderPicker \(Read\)/, 'the retired panel is not transitional coverage');
+    assert.match(host.textContent, /Provider e contesto/);
+    assert.doesNotMatch(host.textContent, /host providers|pannelli transitori/);
     const hosted = require('./fixtures/executable-examples/cards-description-list.cjs').scenario(
       'Explore hosted files and folders with explicit source policies',
       'packages/spfx-react-toolkit/src/controls/file-folder-picker/file-folder-picker.tsx#FileFolderPicker');
@@ -177,34 +158,17 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     assert.ok(fs.existsSync(hosted.file), 'the source-owned executable module exists independently of the native Property Pane factory');
     act(() => coverageToggle.click());
     const features = Array.from(host.querySelectorAll('[data-example-feature]'));
-    assert.equal(features.length, registry.length, 'one legacy feature entry per panel, not per covered symbol');
-    assert.equal(host.querySelectorAll('optgroup').length, 1, 'only the temporary group is present while catalogue is empty');
-    assert.equal(loads.size, 1, 'inactive lazy factories do not load');
-    for (let i = 0; i < registry.length; i++) {
-      act(() => features[i].click()); await act(async () => { await Promise.resolve(); });
-      const panels = host.querySelectorAll('[role="region"]'); assert.equal(panels.length, 1);
-      assert.equal(features[i].getAttribute('data-example-feature'), `legacy:${registry[i].key}`);
-      assert.equal(features[i].getAttribute('aria-current'), 'true');
-      assert.equal(panels[0].querySelector('input').getAttribute('data-test-panel'), registry[i].key);
-    }
-    const input = host.querySelector('[role="region"] input'); input.value = 'Retained';
+    assert.equal(features.length, 2); assert.equal(loads.size, 1, 'inactive generated modules do not load');
+    const input = host.querySelector('[data-test-scenario]'); input.value = 'Retained';
     render(root(), fluent.webDarkTheme);
-    assert.equal(host.querySelector('[role="region"] input'), input); assert.equal(input.value, 'Retained');
-    assert.equal(mounts.get(registry[0].key), 1);
-    if (registry.length === 1) {
-      // The last native-provider panel has no sibling panel to navigate away to.
-      // Depart the actual host before revisiting; keep the same cached lazy module.
-      act(() => { ReactDOM.unmountComponentAtNode(host); });
-      assert.equal(unmounts.get(registry[0].key), 1);
-      render(root()); await act(async () => { await Promise.resolve(); });
-    } else {
-      assert.equal(unmounts.get(registry[0].key), 1);
-      act(() => features[0].click()); await act(async () => { await Promise.resolve(); });
-    }
-    assert.equal(mounts.get(registry[0].key), 2, 'revisiting remounts the real panel');
-    assert.equal(host.querySelectorAll('[data-test-panel]').length, 1, 'inactive panels are not mounted');
-    assert.equal(loads.size, registry.length, 'every remaining lazy factory was exercised');
-    assert.ok([...loads.values()].every(count => count === 1), 'revisiting a panel reuses its lazy module');
+    assert.equal(host.querySelector('[data-test-scenario]'), input); assert.equal(input.value, 'Retained');
+    assert.equal(mounts.get('first'), 1);
+    act(() => features[1].click()); await act(async () => { await Promise.resolve(); });
+    assert.equal(host.querySelectorAll('[data-test-scenario]').length, 1);
+    assert.equal(unmounts.get('first'), 1); assert.equal(mounts.get('second'), 1);
+    act(() => features[0].click()); await act(async () => { await Promise.resolve(); });
+    assert.equal(mounts.get('first'), 2); assert.equal(host.querySelector('[data-test-scenario]').value, 'first');
+    assert.equal(loads.get('first'), 1); assert.equal(loads.get('second'), 1, 'revisiting reuses actual lazy module cache');
   } finally {
     act(() => { ReactDOM.unmountComponentAtNode(host); }); host.remove(); dom.window.close();
     for (const [name, descriptor] of previousGlobals) {

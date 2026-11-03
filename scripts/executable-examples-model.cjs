@@ -9,7 +9,7 @@ const { bindingContractKey, memberContractKey } = require('./documentation-contr
 /** @typedef {import('./documentation-model.cjs').Diagnostic} Diagnostic */
 /** @typedef {import('./documentation-contract.cjs').DocumentationModel} DocumentationModel */
 /** @typedef {import('./documentation-contract.cjs').DocExample} DocExample */
-/** @typedef {{host: 'none'|'webPart', kind: 'snapshot'|'read'|'write', contentPlacement: 'subject'|'configuration', observe: string, hostAdapter?: 'webPartShell'|'propertyPane'}} ExecutableMetadata */
+/** @typedef {{host: 'none'|'webPart'|'applicationCustomizer', kind: 'snapshot'|'read'|'write', contentPlacement: 'subject'|'configuration', observe: string, hostAdapter?: 'webPartShell'|'propertyPane'|'applicationCustomizerTop'}} ExecutableMetadata */
 /** @typedef {{id: string, ownerKey: string, title: string, groupRoute: string, groupKey: string, featureKey: string, featureTitle: string, publicNames: string[], source: import('./documentation-model.cjs').DocLocation, code: string, metadata: ExecutableMetadata}} ExecutableExample */
 
 const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
@@ -36,8 +36,8 @@ function readMetadata(declaration) {
     !ts.isObjectLiteralExpression(declaration.initializer)) return undefined;
   const result = {};
   const allowed = {
-    host: ['none', 'webPart'], kind: ['snapshot', 'read', 'write'],
-    contentPlacement: ['subject', 'configuration'], hostAdapter: ['webPartShell', 'propertyPane'],
+    host: ['none', 'webPart', 'applicationCustomizer'], kind: ['snapshot', 'read', 'write'],
+    contentPlacement: ['subject', 'configuration'], hostAdapter: ['webPartShell', 'propertyPane', 'applicationCustomizerTop'],
   };
   for (const property of declaration.initializer.properties) {
     if (!ts.isPropertyAssignment(property) ||
@@ -50,7 +50,8 @@ function readMetadata(declaration) {
     result[name] = value;
   }
   if (!['host', 'kind', 'contentPlacement', 'observe'].every(name => Object.hasOwn(result, name))) return undefined;
-  if (result.hostAdapter && (result.host !== 'webPart' || result.contentPlacement !== 'configuration')) return undefined;
+  if (result.host === 'applicationCustomizer' ? result.hostAdapter !== 'applicationCustomizerTop' : result.hostAdapter === 'applicationCustomizerTop') return undefined;
+  if (result.hostAdapter && (result.contentPlacement !== 'configuration' || (result.hostAdapter !== 'applicationCustomizerTop' && result.host !== 'webPart'))) return undefined;
   return result;
 }
 
@@ -164,6 +165,8 @@ export type NativeSource<T> = T extends NativePort<infer P> ? P : never;
 export type Regions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
 export type Props = { render?: (regions: Regions) => React.ReactElement; resetRevision?: number };
 export type Component = (props: Props) => React.ReactElement;
+export type TopProps = Props & { applicationCustomizerTop?: { readonly placeholder: 'Top' } };
+export type TopComponent = (props: TopProps) => React.ReactElement;
 ` + shellContract + nativeContract;
   virtual.set(contractFile, { text: contractText });
   for (const [filename, candidate] of [...virtual]) {
@@ -360,6 +363,15 @@ export type ExpectedPort = NativePort<Source>;
     const alternatives = withoutUndefined(checker.getTypeOfSymbolAtLocation(property, location));
     return alternatives.length === 1 && equivalentNative(alternatives[0], types.get('ExpectedPort'));
   };
+  // Top conveys only a readonly prerequisite literal, never native capabilities.
+  const compatibleTopSignal = (props, location) => {
+    const property = checker.getPropertyOfType(props, 'applicationCustomizerTop');
+    if (!property || !(property.flags & ts.SymbolFlags.Optional)) return false;
+    const expected = propType(contracts.get('TopProps'), 'applicationCustomizerTop', contractSource);
+    const actual = withoutUndefined(checker.getTypeOfSymbolAtLocation(property, location));
+    const target = withoutUndefined(expected);
+    return actual.length === 1 && target.length === 1 && !hasUnsafeType(actual[0]) && equivalentNative(actual[0], target[0]);
+  };
   const compatibleOptionalProp = (props, expected, name, location) => {
     const prop = checker.getPropertyOfType(props, name);
     if (!prop) return true;
@@ -396,20 +408,23 @@ export type ExpectedPort = NativePort<Source>;
     const signatures = checker.getSignaturesOfType(type, ts.SignatureKind.Call);
     const shellAdapter = candidate.metadata?.hostAdapter === 'webPartShell';
     const nativeAdapter = candidate.metadata?.hostAdapter === 'propertyPane';
-    const expectedProps = contracts.get(shellAdapter ? 'ShellProps' : 'Props');
-    let valid = !hasUnsafeType(type) && signatures.length > 0 && (nativeAdapter || checker.isTypeAssignableTo(type, contracts.get(shellAdapter ? 'ShellComponent' : 'Component')));
+    const topAdapter = candidate.metadata?.hostAdapter === 'applicationCustomizerTop';
+    const expectedProps = contracts.get(shellAdapter ? 'ShellProps' : topAdapter ? 'TopProps' : 'Props');
+    let valid = !hasUnsafeType(type) && signatures.length > 0 && (nativeAdapter || checker.isTypeAssignableTo(type, contracts.get(shellAdapter ? 'ShellComponent' : topAdapter ? 'TopComponent' : 'Component')));
     for (const signature of signatures) {
       if (hasUnsafeType(checker.getReturnTypeOfSignature(signature)) ||
         !checker.isTypeAssignableTo(checker.getReturnTypeOfSignature(signature), checker.getReturnTypeOfSignature(checker.getSignaturesOfType(contracts.get('Component'), ts.SignatureKind.Call)[0])) ||
         signature.minArgumentCount > 1) valid = false;
       if (signature.parameters[0]) {
         const props = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(signature.parameters[0], location));
-        if (nativeAdapter && checker.getPropertiesOfType(props).some(property => !(property.flags & ts.SymbolFlags.Optional))) valid = false;
+        if (topAdapter && checker.getPropertiesOfType(props).some(property => !['render', 'resetRevision', 'applicationCustomizerTop'].includes(property.name))) valid = false;
+        if ((nativeAdapter || topAdapter) && checker.getPropertiesOfType(props).some(property => !(property.flags & ts.SymbolFlags.Optional))) valid = false;
         if (hasUnsafeType(props) || !compatibleOptionalProp(props, expectedProps, 'render', location) ||
           !compatibleOptionalProp(props, expectedProps, 'resetRevision', location) ||
           (shellAdapter ? !compatibleOptionalProp(props, expectedProps, 'shell', location) : checker.getPropertyOfType(props, 'shell')) ||
-          (nativeAdapter ? !compatibleNativePort(props, candidate, location, source) : checker.getPropertyOfType(props, 'propertyPane'))) valid = false;
-      } else if (nativeAdapter) valid = false;
+          (nativeAdapter ? !compatibleNativePort(props, candidate, location, source) : checker.getPropertyOfType(props, 'propertyPane')) ||
+          (topAdapter ? !compatibleTopSignal(props, location) : checker.getPropertyOfType(props, 'applicationCustomizerTop'))) valid = false;
+      } else if (nativeAdapter || topAdapter) valid = false;
     }
     if (!valid) report(example, 'EXECUTABLE_COMPONENT', 'Demo must synchronously return React.ReactElement, mount without required props, and accept compatible optional render/resetRevision inputs.', location);
   }

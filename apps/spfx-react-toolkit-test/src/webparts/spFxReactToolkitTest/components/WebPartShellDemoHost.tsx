@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Button } from '@fluentui/react-components';
-import { executableGroups, type ExecutableShellPresentation } from './generated/jsdoc-examples/catalogue';
+import { type ExecutableShellPresentation } from './generated/jsdoc-examples/catalogue';
+import { webPartExecutableGroups } from './shared/webPartExecutableGroups';
+import { ExecutableHostContext } from './shared/ExecutableHostContext';
 import { ExampleExplorerStateProvider } from './shared/ExampleExplorerState';
 import { WebPartShell, useSPFxProperties, type IWebPartShellProperties, type WebPartShellProps } from '@apvee/spfx-react-toolkit';
 
@@ -41,9 +43,9 @@ function InstanceShellHost(props: WebPartShellProps<IWebPartShellProperties>): J
   const presentation = React.useMemo(() => ({ appearance, size, titlePosition, padding, surface, dir, strings, titleEditorStrings, action }),
     [appearance, size, titlePosition, padding, surface, dir, strings, titleEditorStrings, action]);
   const value = React.useMemo(() => ({ presentation, updatePresentation }), [presentation, updatePresentation]);
-  return <ExampleExplorerStateProvider key={props.instance.instanceId} initialGroups={executableGroups}>
+  return <ExecutableHostContext.Provider value="webPart"><ExampleExplorerStateProvider key={props.instance.instanceId} initialGroups={webPartExecutableGroups}>
     <ShellPresentationContext.Provider value={value}>
       <WebPartShell {...props} {...presentation} action={action === undefined ? <ShellDemoAction /> : action} />
     </ShellPresentationContext.Provider>
-  </ExampleExplorerStateProvider>;
+  </ExampleExplorerStateProvider></ExecutableHostContext.Provider>;
 }

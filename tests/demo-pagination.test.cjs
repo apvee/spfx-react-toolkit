@@ -7,9 +7,8 @@ const base = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webpar
 const readPanel = () => fs.readFileSync(path.resolve(__dirname, 'fixtures/demo-control-isolation/pagination-regressions.tsx'), 'utf8');
 
 test('advanced source-owned Pagination replaces its retired legacy route', () => {
-  const registry = fs.readFileSync(path.join(base, 'demoRegistry.ts'), 'utf8');
-  assert.doesNotMatch(registry, /key: 'pagination'|panels\/PaginationPanel|spfx-demo-pagination/);
   const catalogue = fs.readFileSync(path.join(base, 'generated/jsdoc-examples/catalogue.ts'), 'utf8');
+  assert.doesNotMatch(catalogue, /key: 'pagination'|panels\/PaginationPanel|spfx-demo-pagination/);
   assert.ok(catalogue.includes('"title": "Browse orders across pagination modes"'));
 });
 

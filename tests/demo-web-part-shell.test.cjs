@@ -26,8 +26,8 @@ test('sample root consumes one compiled-root Shell with persisted title and meta
 });
 
 test('generated Shell scenarios replace the transitional panel with source-owned complete behavior', () => {
-  const registry = read(`${base}components/demoRegistry.ts`);
-  assert.doesNotMatch(registry, /key: 'web-part-shell'|panels\/WebPartShellPanel/);
+  const catalogue = read(`${base}components/generated/jsdoc-examples/catalogue.ts`);
+  assert.doesNotMatch(catalogue, /key: 'web-part-shell'|panels\/WebPartShellPanel/);
   assert.equal(fs.existsSync(path.join(root, `${base}components/panels/WebPartShellPanel.tsx`)), false);
   const owner = read('packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx');
   for (const marker of ['appearance', 'card-size', 'title-position', 'show-title', 'plain', 'rich', 'empty', 'direction', 'surface', 'padding', 'action-slot-toggle', 'strings', 'title-editor-strings', 'observations']) assert.ok(owner.includes(`data-shell-demo="${marker}"`) || owner.includes(`'data-shell-demo': '${marker}'`), marker);

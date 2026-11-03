@@ -27,5 +27,5 @@ webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 
   fs.writeFileSync(path.join(output, 'index.html'), fs.readFileSync(path.join(fixture, 'index.html'), 'utf8').replace('compiled controls and host styles', `${source ? 'source' : 'compiled'} controls, hooks, real provider and host styles`).replace('SPFx services/network snapshots are simulated', 'Unavailable native SPFx services/transports are simulated'));
   console.log(stats.toString({ all: false, timings: true, assets: true, warnings: true }));
   console.log(`JSDoc-only filter: ${process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1'} (checker can also select it through the fixture query).`);
-  console.log(`Actual app/registry + ${source ? 'source' : 'compiled'} feature controls; native transport doubles: ${output}`);
+  console.log(`Actual app/generated catalogue + ${source ? 'source' : 'compiled'} feature controls; native transport doubles: ${output}`);
 });
