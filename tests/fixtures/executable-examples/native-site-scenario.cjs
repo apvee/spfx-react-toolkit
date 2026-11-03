@@ -153,6 +153,13 @@ function createNativeReferenceFixture(t, { subject = 'Site', compiled = false, c
     resetRevision: revision, ...(portConnected ? { propertyPane: adapter.port } : {}), render: next => { regions = next; return h.React.createElement('section', undefined, next.controls, next.commands, next.status, next.children, next.diagnostics); }
   })), container); }); }
   render();
+  const diagnosticState = () => ({
+    open, mounted: adapter.mounted.size, witnessed: adapter.witnesses.size,
+    produced: adapter.produced !== undefined, nativeView: adapter.nativeView !== undefined,
+    fields: fields.length, requests: calls.length, unexpected: unexpected.length,
+    pending: pending.length, savedWaiters: savedWaiters.length, handlers: handlers.size,
+    hostedPorts: hosted?.ports.length ?? 0, closedPorts: hosted?.ports.filter(port => port.closed).length ?? 0,
+  });
   t.after(async () => {
     h.act(() => { adapter.dispose(); ReactDOM.unmountComponentAtNode(nativeDom); ReactDOM.unmountComponentAtNode(container); });
     // Drain retired native continuations while this fixture still owns its transport.
@@ -161,7 +168,7 @@ function createNativeReferenceFixture(t, { subject = 'Site', compiled = false, c
     if (hosted) assert.ok(hosted.ports.every(port => port.closed), 'all owned hosted ports close on actual native disposal');
     assert.deepEqual(unexpected, [], 'all attempted transport routes were finitely admitted');
   });
-  return { h, root, library, adapter, saved, hosted, pinned, adapterFile, get dataRoles() { return dataRoles; }, instance, container, nativeDom, nativeCallbacks, fields, calls, changes, pending, unexpected, handlers, seen, selected,
+  return { h, root, library, adapter, saved, hosted, pinned, adapterFile, get dataRoles() { return dataRoles; }, instance, container, nativeDom, nativeCallbacks, diagnosticState, fields, calls, changes, pending, unexpected, handlers, seen, selected,
     get bag() { return bag; }, set bag(value) { bag = value; lastSdkValues = { ...value }; notifySaved(value); }, nextSaved() { return new Promise(resolve => savedWaiters.push(resolve)); }, get regions() { return regions; }, get refreshes() { return refreshes; }, get automaticRefreshes() { return automaticRefreshes; }, get contentRefreshes() { return contentRefreshes; },
     setRevision(value) { revision = value; render(); }, disconnect() { portConnected = false; render(); },
     action(label) { const children = regions.commands?.props.children; const node = (Array.isArray(children) ? children : [children]).find(node => node?.props.children === label); assert.ok(node, label); return node.props.onClick; },

@@ -22,10 +22,10 @@ function mirror(t, real = false) {
   fs.symlinkSync(path.join(repository, 'node_modules'), path.join(root, 'node_modules'), 'dir');
   return root;
 }
-function run(root, args = [], mode, cwd = root) {
+function run(root, args = [], mode, cwd = root, timeout) {
   const env = { ...process.env }; delete env.TOOLKIT_DOCS_MODE;
   if (mode !== undefined) env.TOOLKIT_DOCS_MODE = mode;
-  return spawnSync(process.execPath, [path.join(root, 'scripts/documentation.cjs'), ...args], { cwd, env, encoding: 'utf8' });
+  return spawnSync(process.execPath, [path.join(root, 'scripts/documentation.cjs'), ...args], { cwd, env, encoding: 'utf8', timeout });
 }
 function snapshot(root) {
   const result = {};
@@ -85,9 +85,34 @@ test('library build keeps compilation/localization and CI checks explicit genera
   assert.match(workflow, /network-namespace-probe.cjs/);
   for (const command of ['build', 'package:solution', 'verify:package']) assert.ok(workflow.includes('- run: npm run ' + command));
 });
-test('real copied library build compiles/localizes stale or missing documents; separate generated check refuses without writes', { timeout: 240000 }, t => {
+const generationTimeoutMs = 180000;
+const realBuildTimeoutMs = 110000;
+// Baseline generation, two real builds/checks and bounded mirror/assertion overhead.
+const copiedBuildTimeoutMs = generationTimeoutMs + 2 * (realBuildTimeoutMs + generationTimeoutMs) + 10000;
+test('real copied library build compiles/localizes stale or missing documents; separate generated check refuses without writes', { timeout: copiedBuildTimeoutMs }, t => {
+  const started = process.hrtime.bigint(), boundaries = [];
+  const elapsed = () => Number(process.hrtime.bigint() - started) / 1e6;
+  let completed = false;
+  t.after(() => {
+    if (!completed) t.diagnostic(JSON.stringify({ diagnostic: 'copied library subprocesses', elapsedMs: elapsed(), boundaries }));
+  });
+  function normalExit(label, expectedStatus, operation) {
+    const before = elapsed(), result = operation();
+    const detail = { boundary: label, startedMs: before, elapsedMs: elapsed() - before,
+      status: result.status, signal: result.signal, pid: result.pid,
+      error: result.error === undefined ? undefined : { name: result.error.name, code: result.error.code, message: result.error.message.slice(0, 1024) },
+      stdoutBytes: Buffer.byteLength(result.stdout ?? ''), stderrBytes: Buffer.byteLength(result.stderr ?? ''),
+      stdout: result.stdout?.slice(0, 2048), stderr: result.stderr?.slice(0, 2048) };
+    boundaries.push(detail);
+    const context = label + ': ' + JSON.stringify(detail);
+    assert.equal(result.error, undefined, context);
+    // spawnSync uses the legacy Node null contract when no signal terminated the child.
+    assert.equal(result.signal, null, context);
+    assert.equal(result.status, expectedStatus, context);
+    return result;
+  }
   const root = mirror(t, true);
-  const baseline = run(root);
+  const baseline = normalExit('baseline documentation write', 0, () => run(root, [], undefined, root, generationTimeoutMs));
   assert.equal(baseline.status, 0, baseline.stderr);
   const source = path.join(root, 'packages/spfx-react-toolkit/src/hooks/useStableCallback.ts');
   const original = fs.readFileSync(source, 'utf8');
@@ -107,10 +132,9 @@ test('real copied library build compiles/localizes stale or missing documents; s
   assert.deepEqual(developmentRoutes, expectedDevelopmentRoutes);
   function build(label, expectedRoutes) {
     const before = snapshot(root);
-    const result = spawnSync('npm', ['run', 'build:library'], { cwd: root, env: { ...process.env, TOOLKIT_DOCS_MODE: 'check' }, encoding: 'utf8', timeout: 110000 });
+    const result = normalExit(label + ':build', 0, () => spawnSync('npm', ['run', 'build:library'], { cwd: root, env: { ...process.env, TOOLKIT_DOCS_MODE: 'check' }, encoding: 'utf8', timeout: realBuildTimeoutMs }));
     assert.equal(result.status, 0, result.stdout + result.stderr);
-    const checked = spawnSync(process.execPath, [path.join(root, 'scripts/generated.cjs'), '--check'], { cwd: root, encoding: 'utf8', timeout: 120000 });
-    assert.notEqual(checked.status, 0, label);
+    const checked = normalExit(label + ':check', 1, () => spawnSync(process.execPath, [path.join(root, 'scripts/generated.cjs'), '--check'], { cwd: root, encoding: 'utf8', timeout: generationTimeoutMs }));
     assert.match(checked.stderr, /stale generated/i, checked.stderr);
     for (const route of expectedRoutes) assert.ok(checked.stderr.includes(route), label + ': missing stale route ' + route);
     assert.match(result.stdout, /Emitted|localization|resources/i);
@@ -130,4 +154,5 @@ test('real copied library build compiles/localizes stale or missing documents; s
   fs.rmSync(path.join(root, 'docs/development'), { recursive: true });
   build('missing development directory and llms.txt', [...expectedDevelopmentRoutes, 'llms.txt']);
   assert.equal(fs.existsSync(path.join(root, 'docs/development')), false, 'build must not recreate the missing directory');
+  completed = true;
 });

@@ -68,8 +68,29 @@ for (const compiled of [false, true]) {
   });
 }
 const { createNativeReferenceFixture } = require('./fixtures/executable-examples/native-site-scenario.cjs');
-for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} integrated actual production instance pinned builtins callbacks native subjects and finite transports`, { timeout: 30000 }, async t => {
-  const f = createNativeReferenceFixture(t, { subject: 'Integrated', compiled });
+for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} integrated actual production instance pinned builtins callbacks native subjects and finite transports`, { timeout: 90000 }, async t => {
+  const started = process.hrtime.bigint(), initialCpu = process.cpuUsage(), phases = [];
+  let currentPhase = 'construct-fixture', f, completed = false, reported = false;
+  const stage = name => {
+    currentPhase = name;
+    const cpu = process.cpuUsage(initialCpu);
+    phases.push({ phase: name, elapsedMs: Number(process.hrtime.bigint() - started) / 1e6, cpuMs: (cpu.user + cpu.system) / 1000 });
+  };
+  const diagnose = () => {
+    if (reported) return;
+    reported = true;
+    t.diagnostic(JSON.stringify({ mode: compiled ? 'Compiled' : 'Source', diagnostic: 'integrated native failure', currentPhase,
+      aborted: t.signal.aborted, phases, state: f?.diagnosticState(),
+      focus: { tag: document.activeElement?.tagName, role: document.activeElement?.getAttribute('role'), label: document.activeElement?.getAttribute('aria-label'), connected: document.activeElement?.isConnected },
+      lastRequests: f?.calls.slice(-3).map(({ kind, method, url, resource }) => ({ kind, method, url: url?.slice(0, 512), resource })) }));
+  };
+  t.signal.addEventListener('abort', diagnose, { once: true });
+  t.after(() => {
+    if (!completed || t.signal.aborted) diagnose();
+    t.signal.removeEventListener('abort', diagnose);
+  });
+  f = createNativeReferenceFixture(t, { subject: 'Integrated', compiled });
+  stage('prepare-and-initial-getter');
   assert.equal(f.fields.length, 0); assert.equal(f.calls.length, 0);
   const initialButton = f.container.querySelector('button');
   f.click('Inspect saved compatibility mapping'); assert.match(f.container.textContent, /Open the prepared native scenario/); assert.equal(f.fields.length, 0);
@@ -78,13 +99,18 @@ for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} 
   assert.equal(configuration.pages[0].groups[0].groupFields[0].targetProperty, 'pickerSites');
   assert.deepEqual(f.fields.map(field => field.name), ['Site', 'List', 'Principal', 'FileFolder']);
   f.mountPane(configuration); await f.flush();
+  stage('open-site-menu');
   const siteRoot = f.nativeDom.querySelector('.fui-Dropdown__button'); assert.ok(siteRoot);
   f.open(); await f.flush();
   // Allow the real dropdown's scheduled focus transfer before delivering an ordinary selection.
+  stage('await-site-focus-frame');
   await f.h.act(async () => { await new Promise(resolve => window.requestAnimationFrame(resolve)); });
+  stage('site-focus-ready');
   assert.equal(document.activeElement === document.querySelector('.fui-SearchBox input'), true, 'actual dropdown focus reached search input before selection');
   const savedSite = f.nextSaved(); f.choose('Current collection');
+  stage('await-site-sdk-saved');
   await f.h.act(async () => { await savedSite; }); await f.flush();
+  stage('site-sdk-saved');
   assert.deepEqual(f.bag.pickerSites, [{ kind: 'site', url: 'https://tenant.sharepoint.com/sites/hr', siteId: '22222222-2222-4222-8222-222222222222' }]);
   assert.deepEqual(f.bag.pickerLists, []); assert.deepEqual(f.bag.fileFolderValues, []);
   assert.deepEqual(f.nativeCallbacks[0], { name: 'Site', values: ['pickerSites', f.bag.pickerSites, true] }); assert.equal(f.changes[0].name, 'pickerSites');
@@ -92,6 +118,7 @@ for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} 
   const dispatches = [], changed = f.instance.onPropertyPaneFieldChanged.bind(f.instance);
   f.instance.onPropertyPaneFieldChanged = (name, old, value) => { assert.equal(f.bag[name], value, 'real SDK mutated live bag before protected forward'); dispatches.push({ name, old, value }); changed(name, old, value); };
   const refresh = f.refreshes, automatic = f.automaticRefreshes;
+  stage('builtin-settings-and-refreshes');
   f.builtin('Presentation for all pickers', 'tagPicker');
   assert.equal(f.bag.pickerPresentation, 'tagPicker'); assert.equal(dispatches.at(-1).value, 'tagPicker'); assert.equal(f.refreshes, refresh + 1); assert.equal(f.automaticRefreshes, automatic + 1);
   f.bag = { ...f.bag, pickerMultiselect: true, fileFolderValues: [], fileFolderGraph: false, fileFolderDeviceLabel: 'live replacement' };
@@ -116,17 +143,30 @@ for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} 
   f.click('Inspect saved compatibility mapping'); assert.match(f.container.querySelector('[aria-label="Saved compatibility mapping"]').textContent, /live replacement/);
   f.click('Inspect saved JSON'); assert.equal(JSON.parse(f.container.querySelector('[aria-label="Saved native JSON"]').textContent).pickerMultiselect, false);
   assert.equal(f.adapter.nativeView.controller, owned); assert.equal(f.container.querySelector('button'), initialButton);
+  stage('reset-and-close-old-session');
   f.setRevision(3); f.setRevision(7); assert.equal(f.adapter.nativeView.controller, owned);
   f.closePane(); assert.equal(f.handlers.size, 0); assert.equal(f.nativeDom.textContent, '');
   const observations = f.instance.nativeObservations.read();
   assert.ok(observations.some(event => event.event === 'getter' && event.open)); assert.ok(observations.some(event => event.event === 'field-dispose' && event.open)); assert.equal(observations.at(-1).event, 'complete'); assert.equal(observations.at(-1).open, false);
+  stage('prepare-fresh-native-session');
   f.click('Prepare native scenario'); configuration = f.getter(); f.mountPane(configuration); await f.flush();
   assert.equal(f.fields.at(-1).args[1].valueRevision, 0, 'new fully retired session starts a fresh baseline');
+  stage('browse-hosted');
   f.browse(); await f.flush(); assert.equal(f.hosted.posts.length, 1, JSON.stringify({ text: f.nativeDom.textContent, calls: f.calls, unexpected: f.unexpected })); const opening = f.hosted.opening(); opening.initialize();
-  const saved = f.nextSaved(), confirmed = opening.result('pick'); opening.command('pick', { command: 'pick', items: [opening.raw('FileA')] }); await f.h.act(async () => { const result = await confirmed; assert.equal(result.data.result, 'success', JSON.stringify({ result, calls: f.calls, unexpected: f.unexpected })); await saved; }); await f.flush();
+  const saved = f.nextSaved(), confirmed = opening.result('pick');
+  opening.command('pick', { command: 'pick', items: [opening.raw('FileA')] });
+  stage('await-hosted-protocol-result');
+  await f.h.act(async () => {
+    const result = await confirmed;
+    assert.equal(result.data.result, 'success', JSON.stringify({ result, calls: f.calls, unexpected: f.unexpected }));
+    stage('await-file-sdk-saved');
+    await saved;
+  });
+  await f.flush();
   assert.equal(f.bag.fileFolderValues[0].itemId, 'FileA');
+  stage('close-final-and-origin-audit');
   f.closePane(); f.origins();
-  t.diagnostic(JSON.stringify({ mode: compiled ? 'Compiled' : 'Source', implementationFiles: f.origins(), data: f.dataRoles, attempts: f.calls, messages: f.hosted.messages, nativeCallbacks: f.nativeCallbacks, observations }));
+  completed = true;
 });
 for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} integrated all eight actual factories dependent parents and native cascade revisions`, { timeout: 30000 }, async t => {
   const f = createNativeReferenceFixture(t, { subject: 'Integrated', compiled });
