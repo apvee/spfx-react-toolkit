@@ -7,7 +7,7 @@ const { renderExecutableExamples, executableRoot } = require('../scripts/executa
 const root = path.resolve(__dirname, '..');
 const template = fs.readFileSync(path.join(__dirname, 'fixtures/executable-examples/cases/native.jsdoc'), 'utf8')
   .split(' * ```tsx\n')[1].split(' * ```')[0].split('\n').map(line => line.replace(/^ \* ?/, '')).join('\n')
-  .replace("import * as React from 'react';", "import * as React from 'react';\nimport type { SitePickerValue, ListPickerValue, FieldPickerValue, ViewPickerValue, ContentTypePickerValue, ListItemPickerValue, PrincipalPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';\nimport type { FileFolderPickerValue } from '@apvee/spfx-react-toolkit/controls/file-folder-picker';");
+  .replace("import * as React from 'react';", "import * as React from 'react';\nimport type { SitePickerValue, ListPickerValue, FieldPickerValue, ViewPickerValue, ContentTypePickerValue, ListItemPickerValue, PrincipalPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';\nimport type { FileFolderPickerValue, FileFolderPickerProps, FileFolderPickerPreset, FileFolderPickerScope } from '@apvee/spfx-react-toolkit/controls/file-folder-picker';");
 const id = 'a'.repeat(64);
 function emitted(code) {
   return renderExecutableExamples([{ id, ownerKey: 'source#Native', title: 'Native', groupRoute: 'docs/api/property-pane/pickers.md', groupKey: 'property-pane', featureKey: 'source#Native', featureTitle: 'Native', publicNames: ['Native'], source: { file: 'source.ts', line: 1 }, code, metadata: { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: 'Native fixture.' } }]);
@@ -23,7 +23,15 @@ function compile(domain) {
   const program = ts.createProgram([entry], { ...options, noEmit: true, noUnusedLocals: false }, host);
   return { artifacts, diagnostics: ts.getPreEmitDiagnostics(program).filter(d => d.file && virtual.has(d.file.fileName)).map(d => ({ code: d.code, message: ts.flattenDiagnosticMessageText(d.messageText, '\n') })) };
 }
-const integrated = 'pickerSites?: SitePickerValue[]; pickerLists?: ListPickerValue[]; pickerFields?: FieldPickerValue[]; pickerViews?: ViewPickerValue[]; pickerContentTypes?: ContentTypePickerValue[]; pickerItems?: ListItemPickerValue[]; pickerPrincipals?: PrincipalPickerValue[]; fileFolderValues?: FileFolderPickerValue[];';
+const arrays = 'pickerSites?: SitePickerValue[]; pickerLists?: ListPickerValue[]; pickerFields?: FieldPickerValue[]; pickerViews?: ViewPickerValue[]; pickerContentTypes?: ContentTypePickerValue[]; pickerItems?: ListItemPickerValue[]; pickerPrincipals?: PrincipalPickerValue[]; fileFolderValues?: FileFolderPickerValue[];';
+const settings = `pickerMultiselect?: boolean; pickerPresentation?: 'combobox' | 'tagPicker'; pickerColorfulTagAvatars?: boolean; pickerContentTypeScope?: 'site' | 'list';
+fileFolderScope?: FileFolderPickerScope['kind']; fileFolderItemTypes?: 'files' | 'folders' | 'all'; fileFolderMultiselect?: boolean; fileFolderSize?: 'medium' | 'large'; fileFolderColorfulTagAvatars?: boolean; fileFolderSearchable?: boolean;
+fileFolderFolder?: string; fileFolderHint?: string; fileFolderExtensions?: string; fileFolderSelectionLimit?: string; fileFolderInitialWeb?: string; fileFolderInitialLibrary?: string; fileFolderInitialFolder?: string; fileFolderCategory?: FileFolderPickerProps['fileCategory'] | '';
+fileFolderPreset?: FileFolderPickerPreset | 'legacy'; fileFolderTitle?: string; fileFolderLayout?: Extract<FileFolderPickerProps, { readonly preset?: undefined }>['layout']; fileFolderGraph?: boolean; fileFolderNavigationVisible?: boolean;
+fileFolderInitialView?: Extract<FileFolderPickerProps, { readonly preset?: undefined }>['initialView']; fileFolderNavigationPreset?: Extract<FileFolderPickerProps, { readonly preset?: undefined }>['navigationPreset'] | 'auto'; fileFolderSiteUrl?: string;
+fileFolderFromLink?: Extract<FileFolderPickerProps, { readonly preset?: undefined }>['fromLinkMode']; fileFolderDeviceUpload?: boolean; fileFolderDeviceLabel?: string; fileFolderUpload?: boolean; fileFolderCreateFolder?: boolean;
+fileFolderMyFiles?: boolean; fileFolderRecent?: boolean; fileFolderShared?: boolean; fileFolderQuickAccess?: boolean; fileFolderOrganization?: boolean; fileFolderSite?: boolean;`;
+const integrated = arrays + settings;
 for (const [name, domain] of [['single', 'pickerSites?: SitePickerValue[];'], ['full integrated domains with extra actual host keys', integrated]]) test(`emitted actual-app wrapper accepts ${name} before common erasure`, () => {
   const result = compile(domain); assert.deepEqual(result.diagnostics, []);
   const catalogue = result.artifacts[executableRoot + '/catalogue.ts'];
@@ -31,6 +39,10 @@ for (const [name, domain] of [['single', 'pickerSites?: SitePickerValue[];'], ['
   assert.match(catalogue, /import type \{ ISpFxReactToolkitTestWebPartProps \}/); assert.match(catalogue, /CheckedDemo\(props\)/);
 });
 for (const [name, domain] of [
+  ['scalar required even with undefined', integrated.replace('fileFolderGraph?: boolean', 'fileFolderGraph: boolean | undefined')],
+  ['scalar wrong domain', integrated.replace("fileFolderSize?: 'medium' | 'large'", "fileFolderSize?: 'small' | 'medium' | 'large'")],
+  ['legacy false preference narrowed', integrated.replace('fileFolderGraph?: boolean', 'fileFolderGraph?: true')],
+  ['legacy empty category omitted', integrated.replace("FileFolderPickerProps['fileCategory'] | ''", "FileFolderPickerProps['fileCategory']")],
   ['untyped any array', 'pickerSites?: any[];'],
   ['untyped unknown array', 'pickerSites?: unknown[];'],
   ['union branch-only missing actual key', 'type SourceProperties = { pickerSites?: SitePickerValue[] } | { pickerSites?: SitePickerValue[]; nonexistent?: string };'],

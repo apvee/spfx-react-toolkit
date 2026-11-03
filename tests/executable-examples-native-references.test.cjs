@@ -71,7 +71,7 @@ for (const compiled of [false, true]) for (const [name, , noun, target, key, lab
   });
   test(`${mode} ${name} absent port staging and repeated Reset cancel only own unproduced preparation`, async t => {
     const f = createNativeReferenceFixture(t, { subject: name, compiled, connected: false }); await f.flush();
-    assert.match(f.container.textContent, /initialized native scenario host is not connected/); assert.match(f.container.textContent, /existing full integrated configuration independently/);
+    assert.match(f.container.textContent, /initialized native scenario host is not connected/); assert.match(f.container.textContent, /Connect an initialized native host to enable Prepare/);
     assert.equal(f.container.querySelectorAll('input,button').length, 0); f.setRevision(3); f.setRevision(2); assert.equal(f.fields.length + f.calls.length, 0);
   });
   test(`${mode} ${name} repeated Reset invalidates original callbacks without remounting Demo`, async t => {

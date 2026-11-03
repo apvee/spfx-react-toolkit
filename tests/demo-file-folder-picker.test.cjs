@@ -1,9 +1,7 @@
 const test=require('node:test'), assert=require('node:assert/strict'),path=require('node:path'),fs=require('node:fs');
 const {createHarness}=require('./services-test-harness.cjs');
 const base=path.resolve(__dirname,'../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest');
-function loadPart(){const factory=(targetProperty,properties)=>({targetProperty,properties});class Base{constructor(){this.properties={};this.refreshes=0;this.context={pageContext:{web:{absoluteUrl:'https://tenant.sharepoint.com/sites/hr'}},propertyPane:{refresh:()=>this.refreshes++}}}}
- const h=createHarness({'@microsoft/sp-core-library':{Version:{parse:x=>x}},'@microsoft/sp-property-pane':Object.fromEntries(['TextField','Dropdown','Toggle','Label'].map(name=>['PropertyPane'+name,factory])),'@microsoft/sp-webpart-base':{BaseClientSideWebPart:Base},'@apvee/spfx-react-toolkit':{getWebPartShellPropertiesMetadata:()=>({})},'@apvee/spfx-react-toolkit/property-pane/pickers':Object.fromEntries(['Site','List','Field','View','ContentType','ListItem','Principal'].map(name=>['PropertyPane'+name+'Picker',factory])),'@apvee/spfx-react-toolkit/property-pane/file-folder-picker':{PropertyPaneFileFolderPicker:factory},SpFxReactToolkitTestWebPartStrings:{},'./components/WebPartShellDemoHost':{WebPartShellDemoHost:()=>undefined},'./components/SpFxReactToolkitTest':{default:()=>undefined}});
- return new (h.load(path.join(base,'SpFxReactToolkitTestWebPart.ts')).default)(); }
+const loadPart = require('./fixtures/executable-examples/integrated-native-business.cjs').loadIntegratedBusiness;
 function fields(part){return part.getPropertyPaneConfiguration().pages[0].groups.flatMap(group=>group.groupFields)}
 const selected={kind:'file',tenantId:'11111111-1111-4111-8111-111111111111',endpoint:'https://tenant.sharepoint.com/_api/v2.0',driveId:'b!d',itemId:'ONE',name:'Report.pdf'};
 test('native sample exposes a real factory with independent hosted modes and supported media sizes',()=>{const part=loadPart();part.properties={fileFolderValues:[selected],fileFolderItemTypes:'all',fileFolderMultiselect:true,fileFolderSize:'large',pickerPresentation:'combobox'};
@@ -17,7 +15,7 @@ test('canonical hosted scenario and actual native WebPart keep their independent
  assert.equal(entry.metadata.kind,'write');assert.match(source,/<FileFolderPicker /);
  for(const prop of ['scope','initialLocation','itemTypes','fileCategory','multiselect','size','selectionLimit','extensions','value','initialOptions'])assert.match(source,new RegExp(prop+'=\\{'));
  assert.doesNotMatch(source,/localStorage|sessionStorage|\/me\/drive|createIfMissing/);
- const webPart=fs.readFileSync(path.join(base,'SpFxReactToolkitTestWebPart.ts'),'utf8');
+ const webPart=scenario('Configure native metadata and file cascade').source;
  assert.match(webPart,/import \{ PropertyPaneFileFolderPicker \} from '@apvee\/spfx-react-toolkit\/property-pane\/file-folder-picker'/);
  assert.match(webPart,/PropertyPaneFileFolderPicker\('fileFolderValues'/);
  const props=fields(loadPart()).find(field=>field.targetProperty==='fileFolderValues').properties;
@@ -77,9 +75,9 @@ test('native options and diagnostics are compact and only relevant limits/filter
  assert.equal(props.selectionLimit,3);assert.equal(props.extensions,undefined);
 });
 test('legacy read adapter remains available independently of the native preset menu', () => {
- const h=createHarness({});const {fileFolderDemoExperience}=h.load(path.join(base,'components/shared/fileFolderPickerNavigation.ts'));
+ const part=loadPart();
  const settings={fileFolderInitialView:'recent',fileFolderMyFiles:true,fileFolderQuickAccess:true,fileFolderSite:true,fileFolderNavigationPreset:'oneDrive',fileFolderSiteUrl:'https://tenant-my.sharepoint.com/personal/user',fileFolderFromLink:'pivot',fileFolderDeviceUpload:true,fileFolderDeviceLabel:'Saved device label'};
- const picker=scope=>fileFolderDemoExperience(settings,scope);
+ const picker=scope=>{part.properties={...settings,fileFolderScope:scope.kind,fileFolderFolder:scope.folder};return part.inspectCompatibility().compatibility;};
  assert.deepEqual(picker({kind:'oneDrive'}).visibleLocations,['myFiles','site']);assert.equal(picker({kind:'oneDrive'}).initialView,'recent');assert.equal(picker({kind:'oneDrive'}).localFilesMode,'disabled');
  settings.fileFolderUpload=true;assert.equal(picker({kind:'oneDrive'}).localFilesMode,'upload');assert.equal(picker({kind:'oneDrive'}).localFilesLabel,'Saved device label');
  assert.equal(picker({kind:'oneDrive'}).navigationPreset,'oneDrive');assert.equal(picker({kind:'oneDrive'}).fromLinkMode,'pivot');

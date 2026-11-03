@@ -2,6 +2,7 @@ import * as React from 'react';
 import { MessageBar, MessageBarBody, Spinner } from '@fluentui/react-components';
 import type { ExecutableExampleEntry, ExecutableExampleProps, ExecutableExampleRegions } from '../generated/jsdoc-examples/catalogue';
 import { DemoCard } from './DemoCard';
+import { NativePropertyPaneContext, NativePropertyPaneDiagnostics } from './NativePropertyPaneContext';
 import { useExecutableShellPort } from './useExecutableShellPort';
 
 // Lazy component identities are shared across renders, resets and host presentation updates.
@@ -43,6 +44,16 @@ function ShellScenario({ entry, resetRevision, render }: ScenarioProps): React.R
   return <Demo key={entry.id} render={render} resetRevision={resetRevision} shell={shell} />;
 }
 
+/** Native port is optional and instance owned above Shell body and scenario selection. */
+function NativeScenario({ entry, resetRevision, render }: ScenarioProps): React.ReactElement {
+  const host = React.useContext(NativePropertyPaneContext);
+  const Demo = getComponent(entry);
+  const nativeRender = React.useCallback((regions: ExecutableExampleRegions): React.ReactElement => render({ ...regions,
+    diagnostics: <>{regions.diagnostics}<NativePropertyPaneDiagnostics /></>
+  }), [render]);
+  return <Demo key={entry.id} render={nativeRender} resetRevision={resetRevision} {...(host ? { propertyPane: host.port } : {})} />;
+}
+
 export function ExecutableExampleHost({ entry, resetRevision }: {
   readonly entry: ExecutableExampleEntry;
   readonly resetRevision: number;
@@ -50,7 +61,7 @@ export function ExecutableExampleHost({ entry, resetRevision }: {
   const render = React.useCallback((regions: ExecutableExampleRegions): React.ReactElement => (
     <DemoCard title={entry.title} iconName="Info" contentPlacement={entry.metadata.contentPlacement} {...regions} />
   ), [entry]);
-  const Scenario = entry.metadata.hostAdapter === 'webPartShell' ? ShellScenario : OrdinaryScenario;
+  const Scenario = entry.metadata.hostAdapter === 'webPartShell' ? ShellScenario : entry.metadata.hostAdapter === 'propertyPane' ? NativeScenario : OrdinaryScenario;
   return <ExampleLoadBoundary key={entry.id}>
     <React.Suspense fallback={<Spinner size="medium" label={`Caricamento ${entry.title}...`} />}>
       <Scenario entry={entry} resetRevision={resetRevision} render={render} />

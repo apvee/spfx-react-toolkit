@@ -11,8 +11,6 @@ const { compatibilityEntries } = require('../scripts/documentation-model.cjs').b
 const nativePickerBase = path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest');
 const nativePickerSpecifiers = new Map([
   [path.join(nativePickerBase, 'SpFxReactToolkitTestWebPart.ts'), new Set([
-    '@apvee/spfx-react-toolkit/property-pane/pickers',
-    '@apvee/spfx-react-toolkit/property-pane/file-folder-picker',
     '@apvee/spfx-react-toolkit/controls/file-folder-picker',
   ])],
   [path.join(nativePickerBase, 'components/shared/fileFolderPickerNavigation.ts'), new Set([

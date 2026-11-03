@@ -14,34 +14,19 @@ test('canonical React picker cases and actual WebPart retain all seven concrete 
     ['PrincipalPicker','principal-picker','Explore principal discovery and explicit identity resolution'],
   ]) {
     const selected=scenario(title,`packages/spfx-react-toolkit/src/controls/pickers/${file}.tsx#${name}`);
-    assert.ok(selected.source.includes(`<${name} `));assert.ok(webpart.includes(`PropertyPane${name}('picker`));
+    assert.ok(selected.source.includes(`<${name} `));assert.ok(scenario('Configure native metadata and file cascade').source.includes(`PropertyPane${name}('picker`));
     assert.doesNotMatch(selected.source,/localStorage|sessionStorage|createRoot/);
   }
   for (const type of ['SitePickerValue','ListPickerValue','FieldPickerValue','ViewPickerValue','ContentTypePickerValue','ListItemPickerValue','PrincipalPickerValue']) assert.ok(webpart.includes(`?: ${type}[]`));
 });
 
-function loadWebPart() {
-  const factory = (targetProperty, props) => ({ targetProperty, properties: props });
-  class Base { constructor() { this.properties = {}; this.refreshes = 0; this.context = { propertyPane: { refresh: () => this.refreshes++ } }; } }
-  const h = createHarness({
-    '@microsoft/sp-core-library': { Version: { parse: value => value } },
-    '@microsoft/sp-property-pane': { PropertyPaneTextField: factory, PropertyPaneToggle: factory, PropertyPaneLabel: factory, PropertyPaneDropdown: factory, PropertyPaneButton: factory },
-    '@microsoft/sp-webpart-base': { BaseClientSideWebPart: Base },
-    '@apvee/spfx-react-toolkit': { getWebPartShellPropertiesMetadata: () => ({}) },
-    '@apvee/spfx-react-toolkit/property-pane/pickers': Object.fromEntries(['Site', 'List', 'Field', 'View', 'ContentType', 'ListItem', 'Principal'].map(name => [`PropertyPane${name}Picker`, factory])),
-    '@apvee/spfx-react-toolkit/property-pane/file-folder-picker': {PropertyPaneFileFolderPicker:factory},
-    SpFxReactToolkitTestWebPartStrings: {},
-    './components/WebPartShellDemoHost': { WebPartShellDemoHost: () => undefined },
-    './components/SpFxReactToolkitTest': { default: () => undefined },
-  });
-  return new (h.load(path.join(base, 'SpFxReactToolkitTestWebPart.ts')).default)();
-}
+const loadWebPart = require('./fixtures/executable-examples/integrated-native-business.cjs').loadIntegratedBusiness;
 const selectedSite = { kind: 'site', url: 'https://tenant.test/sites/projects' };
 const selectedList = { kind: 'list', webUrl: selectedSite.url, listId: '11111111-1111-4111-8111-111111111111' };
 test('property pane uses selected site and list references instead of a manual list title', () => {
   const part = loadWebPart();
   part.properties = { pickerSites: [selectedSite], pickerLists: [selectedList] };
-  const fields = part.getPropertyPaneConfiguration().pages[0].groups[0].groupFields;
+  const fields = part.getPropertyPaneConfiguration().pages[0].groups.flatMap(group => group.groupFields);
   assert.equal(fields.some(field => field.targetProperty === 'pickerListTitle'), false);
   const byName = name => fields.find(field => field.targetProperty === name).properties;
   assert.equal(byName('pickerLists').webUrl, selectedSite.url);
@@ -54,7 +39,7 @@ test('property pane uses selected site and list references instead of a manual l
 });
 test('unbound dependent sources are unavailable and do not use a fabricated list target', () => {
   const part = loadWebPart();
-  const fields = part.getPropertyPaneConfiguration().pages[0].groups[0].groupFields;
+  const fields = part.getPropertyPaneConfiguration().pages[0].groups.flatMap(group => group.groupFields);
   assert.equal(fields.find(field => field.targetProperty === 'pickerLists').properties.disabled, true);
   for (const name of ['pickerFields', 'pickerViews', 'pickerItems']) assert.equal(fields.some(field => field.targetProperty === name), false);
   assert.ok(fields.some(field => field.properties.text === 'Select a site and a list to configure fields, views and items.'));
@@ -73,7 +58,7 @@ test('parent identity changes reset dependent refs and refresh once; display cha
   part.onPropertyPaneFieldChanged('pickerLists', [], [selectedList]);
   assert.deepEqual(part.properties.pickerSites, [selectedSite]); assert.deepEqual(part.properties.pickerLists, [selectedList]);
   for (const key of ['pickerFields', 'pickerViews', 'pickerItems']) assert.deepEqual(part.properties[key], []);
-  const config = part.getPropertyPaneConfiguration().pages[0].groups[0].groupFields;
+  const config = part.getPropertyPaneConfiguration().pages[0].groups.flatMap(group => group.groupFields);
   assert.equal(config.find(field => field.targetProperty === 'pickerFields').properties.valueRevision, 2);
   assert.equal(part.refreshes, 2);
 });
@@ -82,13 +67,13 @@ test('parent identity changes reset dependent refs and refresh once; display cha
 test('global presentation and selection apply to all native pickers without changing stable keys', () => {
   const part = loadWebPart();
   part.properties = { pickerSites: [selectedSite], pickerLists: [selectedList] };
-  const initial = part.getPropertyPaneConfiguration().pages[0].groups[0].groupFields;
+  const initial = part.getPropertyPaneConfiguration().pages[0].groups.flatMap(group => group.groupFields);
   assert.equal(initial.find(field => field.targetProperty === 'pickerSites').properties.colorfulTagAvatars, false);
   part.properties.pickerPresentation = 'tagPicker';
   part.properties.pickerColorfulTagAvatars = true;
   part.properties.pickerMultiselect = false;
   part.onPropertyPaneFieldChanged('pickerPresentation', 'combobox', 'tagPicker');
-  const fields = part.getPropertyPaneConfiguration().pages[0].groups[0].groupFields;
+  const fields = part.getPropertyPaneConfiguration().pages[0].groups.flatMap(group => group.groupFields);
   for (const key of ['pickerSites', 'pickerLists', 'pickerFields', 'pickerViews', 'pickerContentTypes', 'pickerItems', 'pickerPrincipals']) {
     const field = fields.find(field => field.targetProperty === key);
     assert.equal(field.properties.presentation, 'tagPicker');
@@ -111,7 +96,7 @@ test('colorful avatar toggle refreshes all native picker descriptors without res
     pickerItems: ['item'], pickerPrincipals: ['principal'], fileFolderValues: ['file'],
   };
   const before = { ...part.properties };
-  const fields = () => part.getPropertyPaneConfiguration().pages[0].groups[0].groupFields;
+  const fields = () => part.getPropertyPaneConfiguration().pages[0].groups.flatMap(group => group.groupFields);
   const initial = fields();
   for (const enabled of [true, false]) {
     part.properties.pickerColorfulTagAvatars = enabled;
@@ -153,7 +138,7 @@ test('global mode fields are initially visible without requiring accordion expan
 
 test('content type source scope is stable and uses only the required selected parents', () => {
   const part = loadWebPart();
-  const fields = () => part.getPropertyPaneConfiguration().pages[0].groups[0].groupFields;
+  const fields = () => part.getPropertyPaneConfiguration().pages[0].groups.flatMap(group => group.groupFields);
   const ct = () => fields().find(field => field.targetProperty === 'pickerContentTypes');
   assert.equal(ct(), undefined);
   part.properties = { pickerSites: [selectedSite] };

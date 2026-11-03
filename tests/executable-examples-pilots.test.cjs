@@ -134,7 +134,11 @@ test('real catalogue groups uniquely cover source-owned scenarios and preserve e
   ]);
   const nativeFactories = nativeSurfaces.flat().filter(item => /^PropertyPane.+Picker$/.test(item.name));
   assert.deepEqual(native.map(feature => feature.title).sort(), nativeFactories.map(item => item.name).sort());
-  assert.equal(native.flatMap(feature => feature.scenarios).length, nativeFactories.length);
+  const nativeCases = native.flatMap(feature => feature.scenarios);
+  assert.equal(nativeCases.length, nativeFactories.length + 1, 'eight minimum owners plus one complete integrated case');
+  const integrated = nativeCases.filter(entry => entry.title === 'Configure native metadata and file cascade');
+  assert.equal(integrated.length, 1); assert.deepEqual(integrated[0].publicNames, ['PropertyPaneSitePicker']);
+  assert.equal(integrated[0].ownerKey, native.find(feature => feature.title === 'PropertyPaneSitePicker').key);
   for (const factory of nativeFactories) {
     const feature = native.find(item => item.title === factory.name);
     assert.equal(feature.key, path.relative(path.resolve(__dirname, '..'), factory.filePath).split(path.sep).join('/') + '#' + factory.name);

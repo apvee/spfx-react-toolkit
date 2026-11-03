@@ -39,3 +39,35 @@ function createPinnedSdk() {
   };
 }
 module.exports = { createPinnedSdk, deferred };
+
+// Execute the installed pinned event handlers themselves. Terminal context/chrome
+// seams stay finite; this does not replace their bag-update or dispatch ordering.
+function pinnedFieldDispatch(consumer, { onAutomaticRefresh, onContentRefresh } = {}) {
+  const fs = require('node:fs'), path = require('node:path'), ts = require('typescript'), assert = require('node:assert/strict');
+  const roots = {
+    BaseWebPart: path.resolve(__dirname, '../../../node_modules/@microsoft/sp-webpart-base/lib-commonjs/core/BaseWebPart.js'),
+    PropertyPaneController: path.resolve(__dirname, '../../../node_modules/@microsoft/sp-property-pane/lib-commonjs/propertyPaneController/PropertyPaneController.js'),
+  };
+  const dependencies = {
+    lodash: require('lodash'), SPPropertyPane_1: require('./pinned-components.cjs').pinnedComponents().fields,
+    sp_component_base_1: { DynamicProperty: class {} }, KillSwitches_1: { isPropertyPaneUpdateASHAVetoKSActivated: () => true },
+    AUDIENCES_PROPERTY: '4eae8b0b-40f6-4ea9-aabb-b6834ae24532', ACE_WEBPART_MANIFEST_ID: 'f3bc67ee-015d-4678-a95f-c7e90ea62c1e',
+  };
+  function method(owner, name) {
+    const source = ts.createSourceFile(roots[owner], fs.readFileSync(roots[owner], 'utf8'), ts.ScriptTarget.Latest, true);
+    let expression;
+    function visit(node) { if (ts.isBinaryExpression(node) && node.left.getText(source) === owner + '.prototype.' + name) expression = node.right; ts.forEachChild(node, visit); }
+    visit(source); assert.ok(expression, owner + '.' + name);
+    return new Function(...Object.keys(dependencies), 'return (' + expression.getText(source) + ');')(...Object.values(dependencies));
+  }
+  consumer._updateProperty = method('BaseWebPart', '_updateProperty');
+  consumer._afterPropertyUpdated = method('BaseWebPart', '_afterPropertyUpdated');
+  consumer._internalSetDirtyBit = () => {};
+  consumer._refresh = () => onContentRefresh?.();
+  consumer._onPropertyPaneFieldChanged = method('BaseWebPart', '_onPropertyPaneFieldChanged');
+  const controller = { _currentPropertyPaneData: { webPartId: consumer.context.instanceId }, _tryGetConsumer: id => { assert.equal(id, consumer.context.instanceId); return consumer; }, _onPropertyPaneFieldChangeListeners: new Map(),
+    _renderPropertyPane: part => { assert.equal(part, consumer); onAutomaticRefresh?.(); }, _isCurrentlyConfiguredPropertyPaneReactive: () => true, _resetConfigurationCompleteTimeout() {} };
+  const changed = method('PropertyPaneController', '_onPropertyPaneFieldChanged');
+  return (name, value, fieldType) => changed.call(controller, name, value, fieldType);
+}
+module.exports.pinnedFieldDispatch = pinnedFieldDispatch;

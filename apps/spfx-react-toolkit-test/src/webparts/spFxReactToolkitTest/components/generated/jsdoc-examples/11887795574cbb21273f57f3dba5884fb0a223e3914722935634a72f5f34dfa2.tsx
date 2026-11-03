@@ -109,7 +109,7 @@ export function Demo({ render, resetRevision = 0, propertyPane }: {
     diagnostics: <pre>{saved ?? 'Use Inspect saved site references after an actual native selection.'}</pre>,
   } : {
     status: <p role="status">The initialized native scenario host is not connected. This selected native scenario is not active.</p>,
-    children: <p>This WebPart’s actual native Edit still opens the existing full integrated configuration independently of the selected entry until the final native cutover. There is no enabled Prepare action here. Selection and Reset do not query or open the pane.</p>,
+    children: <p>Connect an initialized native host to enable Prepare, then use this WebPart’s actual native Edit and Close. Selection and Reset do not query or open the pane.</p>,
   };
   return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
 }

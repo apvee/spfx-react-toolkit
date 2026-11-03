@@ -54,7 +54,7 @@ for (const compiled of [false, true]) {
   const mode = compiled ? 'COMPILED' : 'SOURCE';
   test(`${mode} FileFolder missing port stays inactive and unproduced preparation resets without I/O`, async t => {
     const f = createNativeReferenceFixture(t, { subject: 'FileFolder', compiled, connected: false });
-    assert.match(f.container.textContent, /selected native scenario is not active/); assert.match(f.container.textContent, /existing full integrated configuration independently/);
+    assert.match(f.container.textContent, /selected native scenario is not active/); assert.match(f.container.textContent, /Connect an initialized native host to enable Prepare/);
     assert.equal(f.container.querySelectorAll('button,input').length, 0); f.setRevision(3); f.setRevision(7); await f.flush();
     assert.equal(f.fields.length + f.calls.length, 0);
   });

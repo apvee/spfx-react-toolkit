@@ -2,11 +2,13 @@
 
 Native Property Pane examples use a private sample protocol to keep source-owned configuration separate from the initialized WebPart's SDK lifecycle. They require actual native Edit and Close, native resource mappings, the matching initialized host, and its existing authentication and delegated permissions.
 
-## Current staging
+## Connected native host
 
-The Site pilot is selectable, but the production sample does not yet connect its optional `propertyPane` port. Its fallback explains that the selected native scenario is inactive. The WebPart's actual native Edit continues to open the existing full integrated configuration independently of the selected entry until the later atomic cutover. Without the port there is no enabled Prepare action, controller, field or query. Dedicated fixtures supply the actual private adapter and mount the actual public factory; their results do not prove Workbench getter/open-flag ordering or authenticated selection.
+The sample connects one terminal native adapter per initialized WebPart. Select an owning native example, prepare while the pane is closed, then use this WebPart's actual native Edit and Close. Unprepared or closed getters return generic Show title and description settings with preparation and recovery instructions. The selected source owns native business configuration; navigation and Reset do not replace a produced session.
 
-The complete source-owned pilot is in [PropertyPaneSitePicker](../../api/property-pane/pickers.md#propertypanesitepicker). Its ordinary native recipes remain available for application integration.
+[PropertyPaneSitePicker](../../api/property-pane/pickers.md#propertypanesitepicker) includes the complete integrated metadata/file cascade in addition to its minimal Site case and ordinary integration recipes. The integrated case preserves parent-dependent arrays, independent file settings, saved JSON and an explicit read-only compatibility inspection. That inspection compares saved legacy preferences, including false and empty settings, with the effective focused/extended native menu policy after an actual getter supplies a live SDK reader. It never restores legacy switches or performs picker I/O.
+
+The existing scenario diagnostics include explicit Inspect native host lifecycle and Clear native host observations commands. Each instance retains at most 64 scalar observations: ordinal, event, public open flag and optional stable field key. Inspect snapshots genuine getter, child render, parent Rendered, latest field disposal and Complete observations into DOM-visible JSON; it grants no native ownership or recovery acknowledgement. Dedicated Source/Compiled fixtures remain local evidence. Actual Workbench timing and authenticated selection require separate validation.
 
 ## Author a bounded native source
 

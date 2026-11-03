@@ -2,7 +2,8 @@
 // owns the single loader/DOM/provider; parsing, validation and save stay production.
 const assert = require('node:assert/strict');
 const { ids, web, endpoint, metadata } = require('../file-folder-picker/metadata.cjs');
-function createNativeFileFolderBoundary(t, { h, sdk, calls, unexpected, identity, phase }) {
+function createNativeFileFolderBoundary(t, { h, sdk, calls, unexpected, identity, phase, expectedItemTypes = 'all' }) {
+  assert.ok(['files', 'folders', 'all'].includes(expectedItemTypes), 'explicit independent expected item policy');
   const posts = [], tokens = [], messages = [], ports = [];
   const items = { FileA: metadata(), Folder: metadata('Folder', { name: 'Policies', file: undefined, folder: {}, webUrl: web + '/Shared%20Documents/Policies' }) };
   function attempt(request, admit) {
@@ -39,7 +40,7 @@ function createNativeFileFolderBoundary(t, { h, sdk, calls, unexpected, identity
         entry: { sharePoint: { byPath: { web, fallbackToRoot: false } } }, theme: 'default', list: {},
         leftNav: { enabled: false, preset: 'current-site' }, tray: { prompt: 'selection-summary' }, search: { enabled: true },
         authentication: { enabled: true, tokens: { sharePoint: true, graph: true, substrate: false }, claimsChallenge: { enabled: true } },
-        typesAndSources: { mode: 'all', locations: { sharePoint: { byPath: { web } } }, access: { mode: 'read' },
+        typesAndSources: { mode: expectedItemTypes, locations: { sharePoint: { byPath: { web } } }, access: { mode: 'read' },
           pivots: { oneDrive: false, recent: false, shared: false, sharedLibraries: false, myOrganization: false, site: false } },
         selection, commands: { pick: { action: 'select', select: { urls: { download: false } } },
           upload: { enabled: false }, createFolder: { enabled: false }, browseThisDevice: { enabled: false }, fromALink: { enabled: false }, switchAccount: { mode: 'none' }, manageAccounts: { mode: 'none' } },

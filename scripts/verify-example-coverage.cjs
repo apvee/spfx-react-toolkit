@@ -132,7 +132,7 @@ const nativeOwners = new Set([...nativePickerSurface, ...nativeFileSurface]
   .filter(item => /^PropertyPane.+Picker$/.test(item.name))
   .map(item => path.relative(root, item.filePath).split(path.sep).join('/') + '#' + item.name));
 for (const owner of generated.nativeOwners) if (!nativeOwners.has(owner)) throw new Error('Native executable must own a current canonical public native factory: ' + owner);
-console.log(`Native preparation availability: ${generated.nativeOwners.size}/${nativeOwners.size} canonical factory owners (production port remains absent until atomic cutover; not host execution).`);
+console.log(`Native source availability: ${generated.nativeOwners.size}/${nativeOwners.size} canonical factory owners (production instance port connected; availability is not host execution).`);
 console.log(`Temporary legacy coverage: ${legacySymbols.size} unique symbols; existing panels remain separate from generated counts.`);
 
 assertCovered('Hooks', hookSymbols, registrySymbols);

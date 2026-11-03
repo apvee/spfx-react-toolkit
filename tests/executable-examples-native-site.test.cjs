@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const { scenario } = require('./fixtures/executable-examples/cards-description-list.cjs');
 const title = 'Select native site references';
 const owner = 'packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts#PropertyPaneSitePicker';
-test('native Site exact executable availability with truthful staging metadata', () => {
+test('native Site exact executable availability with truthful host prerequisite metadata', () => {
   const selected = scenario(title, owner);
   assert.deepEqual(selected.entry.metadata, { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: "Prepare the native Site picker, open this WebPart's actual property pane, select site references and inspect the saved values; selection and Reset do not open the pane or query." });
 });
@@ -11,10 +11,10 @@ test('native Site exact executable availability with truthful staging metadata',
 const { createNativeSiteFixture } = require('./fixtures/executable-examples/native-site-scenario.cjs');
 for (const compiled of [false, true]) {
   const mode = compiled ? 'COMPILED' : 'SOURCE';
-  test(`${mode} Site missing native port reports exact staging and exposes no enabled prepare, factory or query`, async t => {
+  test(`${mode} Site missing native port reports exact prerequisite and exposes no enabled prepare, factory or query`, async t => {
     const f = createNativeSiteFixture(t, { compiled, connected: false }); await f.flush();
     assert.match(f.container.textContent, /initialized native scenario host is not connected/);
-    assert.match(f.container.textContent, /existing full integrated configuration independently/);
+    assert.match(f.container.textContent, /Connect an initialized native host to enable Prepare/);
     assert.equal(f.container.querySelectorAll('button').length, 0); assert.equal(f.fields.length, 0); assert.equal(f.calls.length, 0);
     f.setRevision(8); await f.flush(); assert.equal(f.fields.length, 0); assert.equal(f.calls.length, 0);
   });

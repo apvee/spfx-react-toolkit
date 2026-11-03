@@ -2,7 +2,7 @@ import { PropertyPaneFieldType } from '@microsoft/sp-property-pane';
 import type { IPropertyPaneConfiguration, IPropertyPaneCustomFieldProps, IPropertyPaneField } from '@microsoft/sp-property-pane';
 import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
-/** Private source/host protocol. Production connection is deferred to the atomic native cutover. */
+/** Private source/host protocol. The initialized WebPart owns the instance and real lifecycle. */
 export interface NativePropertyPaneEnvironment<P extends object> {
   readonly instance: BaseClientSideWebPart<P>;
   readonly readProperties: () => P;
@@ -83,7 +83,7 @@ export class NativePropertyPaneDemoHost<P extends object> {
     dispose: (cell, element) => this.disposeField(cell, element)
   };
 
-  public constructor(environment: NativeHostEnvironment<P>) {
+  public constructor(environment: NativeHostEnvironment<P>, private observe?: (event: 'child-render' | 'field-dispose', fieldKey: string) => void) {
     this.environment = environment;
     this.port = { prepare: create => this.prepare(create) };
   }
@@ -203,6 +203,7 @@ export class NativePropertyPaneDemoHost<P extends object> {
     const [element, context] = args;
     const previous = this.mounted.get(element);
     if (previous && previous.cell !== cell && (previous.cell.generation !== generation || previous.cell.key !== cell.key)) this.disposeField(previous.cell, element);
+    this.observe?.('child-render', cell.key);
     cell.render?.(...args);
     this.mounted.set(element, { cell, context });
     if (previous && previous.cell !== cell) {
@@ -215,7 +216,7 @@ export class NativePropertyPaneDemoHost<P extends object> {
     const mounted = this.mounted.get(element);
     if (!mounted || mounted.cell !== cell) return;
     this.mounted.delete(element);
-    try { cell.dispose?.(element, mounted.context); }
+    try { this.observe?.('field-dispose', cell.key); cell.dispose?.(element, mounted.context); }
     finally {
       // Native accordion collapse can unmount and later remount this very
       // descriptor. Keep its originals while the generation remains live; close,
@@ -281,6 +282,7 @@ export class NativePropertyPaneDemoHost<P extends object> {
       this.produced = undefined;
       this.dispatching = undefined;
       this.environment = undefined;
+      this.observe = undefined;
       this.witnesses.clear();
       for (const generation of generations) if (generation) this.retire(generation);
     }

@@ -5,7 +5,8 @@ const React = require('react'), ReactDOM = require('react-dom');
 function pinnedComponents() {
   const root = path.resolve(__dirname, '../../../node_modules/@microsoft/sp-property-pane/lib-commonjs');
   const modules = new Map();
-  const real = new Set(['propertyPane/PropertyPane', 'propertyPane/IPropertyPane', 'propertyPanePage/PropertyPanePage', 'propertyPaneGroup/PropertyPaneGroup', 'propertyPaneGroup/PropertyPaneGroupHelper', 'propertyPaneFields/propertyPaneCustomField/PropertyPaneCustomFieldHost', 'propertyPaneFields/propertyPaneField/IPropertyPaneField']);
+  const builtinStems = ['Dropdown', 'Toggle', 'TextField', 'Label'].map(name => 'propertyPaneFields/propertyPane' + name + '/PropertyPane' + name);
+  const real = new Set([...builtinStems, 'propertyPane/PropertyPane', 'propertyPane/IPropertyPane', 'propertyPanePage/PropertyPanePage', 'propertyPaneGroup/PropertyPaneGroup', 'propertyPaneGroup/PropertyPaneGroupHelper', 'propertyPaneFields/propertyPaneCustomField/PropertyPaneCustomFieldHost', 'propertyPaneFields/propertyPaneField/IPropertyPaneField']);
   const pass = props => React.createElement('div', undefined, props.children);
   const core = { _SPFlight: { isEnabled: () => false }, Validate: { isNonemptyString: value => assert.ok(typeof value === 'string' && value.length > 0) }, Text: { format: text => text } };
   const diagnostics = { _LogSource: { create: id => ({ id }) }, _LogType: { Event: 1 }, _LogEntry: class {}, _EngagementLogger: { logEventWithLogEntry() {} } };
@@ -17,7 +18,9 @@ function pinnedComponents() {
       if (name === '@microsoft/sp-core-library') return core;
       if (name === '@microsoft/sp-diagnostics') return diagnostics;
       if (name === '@microsoft/sp-lodash-subset') return require('lodash');
-      if (name === '@ms/office-ui-fabric-react-bundle') return { Fabric: pass, FocusTrapZone: pass, Icon: () => React.createElement(React.Fragment), css: (...parts) => parts.filter(Boolean).join(' '), autobind: () => undefined };
+      if (name === '@fluentui/react/lib/Dropdown') return { DropdownMenuItemType: { Normal: 0 }, Dropdown: props => React.createElement('select', { 'aria-label': props.label, disabled: props.disabled, value: props.selectedKey ?? '', onChange: event => props.onChanged(props.options.find(option => String(option.key) === event.target.value), event.target.selectedIndex) }, props.options.map(option => React.createElement('option', { key: option.key, value: option.key }, option.text))) };
+      if (name === '@fluentui/react/lib/Toggle') return { Toggle: props => React.createElement('input', { type: 'checkbox', 'aria-label': props.label, checked: props.checked ?? false, disabled: props.disabled, onChange: event => props.onChanged(event.target.checked) }) };
+      if (name === '@ms/office-ui-fabric-react-bundle') return { TextField: props => React.createElement('input', { 'aria-label': props.label, disabled: props.disabled, value: props.value ?? '', onChange: event => props.onChange(event, event.target.value) }), Label: props => React.createElement('span', undefined, props.children), omit: require('lodash').omit, getTheme: () => ({ semanticColors: {} }), Fabric: pass, FocusTrapZone: pass, Icon: () => React.createElement(React.Fragment), css: (...parts) => parts.filter(Boolean).join(' '), autobind: () => undefined };
       if (name === '@microsoft/sp-component-base') return { DynamicProperty: class {} };
       if (name === '../common/KillSwitches') return new Proxy({}, { get: () => () => true });
       if (name === '../common/Flights') return new Proxy({}, { get: () => () => false });
@@ -37,6 +40,6 @@ function pinnedComponents() {
     return module.exports;
   }
   assert.equal(require('@microsoft/sp-property-pane/package.json').version, '1.21.1');
-  return { PropertyPane: load('propertyPane/PropertyPane').default, modules };
+  return { PropertyPane: load('propertyPane/PropertyPane').default, modules, fields: Object.assign({}, load('propertyPaneFields/propertyPaneField/IPropertyPaneField'), ...builtinStems.map(load)) };
 }
 module.exports = { pinnedComponents };

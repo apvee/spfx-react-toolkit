@@ -37,7 +37,7 @@ test('browser aliases follow only actual owned imports through exact public sour
   write('/lib/widget','// Manual file'); assert.throws(() => executableFixtureAliases(root,true,config),/manually owned/);
 });
 
-test('multiple native owner imports retain their actual public barrel in matching source/lib and the SDK seam is only the Custom enum', () => {
+test('multiple native owner imports retain their actual public barrel in matching source/lib and the SDK seam uses only actual pinned descriptor factories and enum', () => {
   const root = path.resolve(__dirname, '..');
   const metadata = JSON.parse(fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/package.json'), 'utf8'));
   const declared = metadata.exports['./property-pane/pickers'].types;
@@ -48,7 +48,20 @@ test('multiple native owner imports retain their actual public barrel in matchin
     assert.equal(aliases['@apvee/spfx-react-toolkit/property-pane/pickers$'], path.join(root, 'packages/spfx-react-toolkit', source ? 'src' : 'lib', owner + (source ? '.ts' : '.js')));
   }
   const native = fs.readFileSync(path.join(root, 'tests/fixtures/demo-presentation/spfx-property-pane.ts'), 'utf8');
-  assert.equal(native.replace(/^\/\/.*\n/gm, '').trim(), 'export const PropertyPaneFieldType = { Custom: 1 };');
+  const ts = require('typescript'), source = ts.createSourceFile('spfx-property-pane.ts', native, ts.ScriptTarget.Latest, true);
+  const expected = [
+    ['PropertyPaneFieldType', 'propertyPaneField/IPropertyPaneField'], ['PropertyPaneDropdown', 'propertyPaneDropdown/PropertyPaneDropdown'],
+    ['PropertyPaneToggle', 'propertyPaneToggle/PropertyPaneToggle'], ['PropertyPaneTextField', 'propertyPaneTextField/PropertyPaneTextField'], ['PropertyPaneLabel', 'propertyPaneLabel/PropertyPaneLabel'],
+  ];
+  assert.equal(source.statements.length, expected.length);
+  for (const [index, [name, stem]] of expected.entries()) {
+    const statement = source.statements[index]; assert.ok(ts.isExportDeclaration(statement));
+    assert.equal(statement.moduleSpecifier.text, '@microsoft/sp-property-pane/lib-commonjs/propertyPaneFields/' + stem);
+    assert.deepEqual(statement.exportClause.elements.map(element => element.name.text), [name]);
+    const actual = require(statement.moduleSpecifier.text);
+    if (name === 'PropertyPaneFieldType') assert.equal(actual[name].Custom, 1);
+    else { const properties = { label: 'Independent native field' }; const descriptor = actual[name]('setting', properties); assert.equal(descriptor.targetProperty, 'setting'); assert.equal(descriptor.properties, properties); assert.equal(descriptor.type, { PropertyPaneDropdown: 6, PropertyPaneToggle: 5, PropertyPaneTextField: 3, PropertyPaneLabel: 7 }[name]); }
+  }
   for (const script of ['build-demo-presentation-browser', 'build-sx-browser-fixture', 'build-styles-panel-browser']) {
     assert.match(fs.readFileSync(path.join(root, 'scripts', script + '.cjs'), 'utf8'), /'@microsoft\/sp-property-pane\$': path\.join\(fixture, '(?:\.\.\/demo-presentation\/)?spfx-property-pane\.ts'\)/);
   }
