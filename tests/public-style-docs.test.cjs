@@ -40,7 +40,7 @@ test('qualified members and public type properties require actual source JSDoc',
 });
 
 test('style example coverage rejects missing nested members and missing interactive scope use', () => {
-  const { assertStyleExampleCoverage } = require('../scripts/style-example.helpers.cjs');
+  const { assertStyleExampleCoverage } = require('../apps/spfx-react-toolkit-test/scripts/verification/style-example.helpers.cjs');
   const surface = [{ name: 'overflow.horizontal.auto' }, { name: 'responsive.medium' }, { name: 'hover' }];
   const catalogue = "const executableExamples = [{ ownerKey: 'overflow-owner', featureKey: 'overflow-owner', publicNames: ['overflow'] }, { ownerKey: 'responsive-owner', featureKey: 'responsive-owner', publicNames: ['responsive'] }, { ownerKey: 'hover-owner', featureKey: 'hover-owner', publicNames: ['hover'] }];";
   const panel = "const sx = useSx(); responsive[threshold](hover(value)); const x = <Choice id=\"responsive-threshold\" choices={[\'medium\']} onChange={change}/>; const preview = <div className={sx(descriptor)} />; stylesCatalog[familyIndex];";

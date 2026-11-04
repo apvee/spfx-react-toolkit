@@ -4,9 +4,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
 const { createHash } = require('node:crypto');
-const { parseContract } = require('./docs/documentation-contract.cjs');
-const { readMetadata } = require('./docs/executable-examples-model.cjs');
-const { ownership } = require('./docs/executable-examples-render.cjs');
+const { parseContract } = require('../../../../scripts/docs/documentation-contract.cjs');
+const { readMetadata } = require('../../../../scripts/docs/executable-examples-model.cjs');
+const { ownership } = require('../../../../scripts/docs/executable-examples-render.cjs');
 function proveMetadataReplicas({ root, reachable, resolve, checker, demand, problem, artifactMembers }) {
   function literal(node) {
     if (!node) return undefined;

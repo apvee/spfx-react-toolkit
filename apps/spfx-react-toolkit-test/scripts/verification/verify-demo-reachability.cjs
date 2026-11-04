@@ -297,7 +297,7 @@ function analyzeDemoReachability(root) {
   return report;
 }
 function runCli(args = []) {
-  let root = path.resolve(__dirname, '..');
+  let root = path.resolve(__dirname, '../../../..');
   try {
     if (args.length) {
       if (args.length !== 2 || args[0] !== '--root' || !args[1]) throw new Error('Usage: verify-demo-reachability.cjs [--root <repository>]');

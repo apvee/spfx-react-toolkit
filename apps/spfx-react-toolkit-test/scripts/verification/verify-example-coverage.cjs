@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const { collectPublicSurfaces } = require('./docs/public-surface.helpers.cjs');
+const { collectPublicSurfaces } = require('../../../../scripts/docs/public-surface.helpers.cjs');
 const { assertStyleExampleCoverage } = require('./style-example.helpers.cjs');
 const { assertFormExampleCoverage } = require('./form-example.helpers.cjs');
 const { collectExecutableCoverage } = require('./executable-example-coverage.helpers.cjs');
 
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../../../..');
 const [styleSurface, controlSurface, formSurface, nativePickerSurface, nativeFileSurface] = collectPublicSurfaces([
   'helpers/styles/index.ts', 'controls/index.ts', 'controls/form/index.ts',
   'property-pane/pickers/index.ts', 'property-pane/file-folder-picker/index.ts',

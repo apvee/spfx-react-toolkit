@@ -5,7 +5,7 @@ const path = require('node:path');
 const os = require('node:os');
 const { spawnSync } = require('node:child_process');
 const files = require('./fixtures/demo-reachability/files.cjs');
-const auditFile = path.resolve(__dirname, '../scripts/verify-demo-reachability.cjs');
+const auditFile = path.resolve(__dirname, '../apps/spfx-react-toolkit-test/scripts/verification/verify-demo-reachability.cjs');
 const app = 'apps/spfx-react-toolkit-test/';
 function fixture(changes = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'demo-reachability-'));
@@ -312,4 +312,35 @@ test('FIX1 I2 active ClientSideComponentInstance ID is validated independently o
 test('FIX1 I2 malformed qualified tag cannot masquerade as an active native registration', () => {
   const { extensionId, location } = reviewFix1;
   check({ [app + 'sharepoint/assets/elements.xml']: `<sp:Elements xmlns:sp="http://schemas.microsoft.com/sharepoint/">\n<!-- Qualified names have at most one prefix. -->\n<sp:CustomAction:Other Location="${location}" ClientSideComponentId="${extensionId}" />\n</sp:Elements>` }, 'sourceDiagnostics', d => d.file === app + 'sharepoint/assets/elements.xml' && d.code === 'DEMO_NATIVE_CONFIG' && d.line > 0);
+});
+
+// Exercise both real npm layers; npm must not consume the audit's --root flag.
+test('root npm audit facade forwards explicit fixture roots and diagnostics from a neutral cwd read-only', () => {
+  const repository = path.resolve(__dirname, '..');
+  for (const invalid of [false, true]) {
+    const root = fixture(invalid ? { [app + 'src/orphan.ts']: 'export const orphan = 1;\n' } : {});
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'demo-audit-cwd-'));
+    try {
+      const before = snapshot(root);
+      const cli = spawnSync('npm', ['--prefix', repository, 'run', 'verify:demo-reachability', '--', '--root', root], { cwd, encoding: 'utf8' });
+      assert.equal(cli.status, invalid ? 1 : 0, cli.stdout + cli.stderr);
+      assert.match(cli.stdout, /Demo reachability: 2 native roots, /);
+      if (invalid) assert.match(cli.stderr, /apps\/spfx-react-toolkit-test\/src\/orphan.ts:1 unreachableFiles/);
+      else assert.match(cli.stdout, /2 native roots, 0 problems/);
+      assert.deepEqual(snapshot(root), before, 'real npm facade preserves fixture bytes and mtime');
+      assert.deepEqual(fs.readdirSync(cwd), [], 'neutral cwd remains untouched');
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+      fs.rmSync(cwd, { recursive: true, force: true });
+    }
+  }
+});
+test('root npm audit facade preserves unsupported argv and failure exit', () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'demo-audit-cwd-'));
+  try {
+    const cli = spawnSync('npm', ['--prefix', path.resolve(__dirname, '..'), 'run', 'verify:demo-reachability', '--', '--repair'], { cwd, encoding: 'utf8' });
+    assert.equal(cli.status, 1, cli.stdout + cli.stderr);
+    assert.match(cli.stderr, /Usage: verify-demo-reachability.cjs \[--root <repository>\]/);
+    assert.deepEqual(fs.readdirSync(cwd), []);
+  } finally { fs.rmSync(cwd, { recursive: true, force: true }); }
 });

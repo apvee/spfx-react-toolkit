@@ -280,7 +280,7 @@ test('selected Shell commit wait includes a deferred module and the React Suspen
 });
 
 test('coverage projection counts scenarios by identity, aggregates aliases, and never executes loaders', () => {
-  const { collectExecutableCoverage } = require('../scripts/executable-example-coverage.helpers.cjs');
+  const { collectExecutableCoverage } = require('../apps/spfx-react-toolkit-test/scripts/verification/executable-example-coverage.helpers.cjs');
   const entry = (id, title) => `{ id: '${id}', ownerKey: 'owner', title: '${title}', featureKey: 'owner', publicNames: ['Public', 'Alias'], load: () => { throw new Error('must not execute'); } }`;
   const coverage = collectExecutableCoverage(`export const executableExamples = [${entry('one', 'First')}, ${entry('two', 'Second')}];`);
   assert.equal(coverage.featureCount, 1); assert.equal(coverage.scenarioCount, 2);

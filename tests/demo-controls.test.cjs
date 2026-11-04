@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { assertDemoControls } = require('../scripts/demo-controls.helpers.cjs');
+const { assertDemoControls } = require('../apps/spfx-react-toolkit-test/scripts/verification/demo-controls.helpers.cjs');
 
 test('entire authored webpart tree uses Fluent 9 and inherits the host theme', () => {
   assert.ok(assertDemoControls(path.resolve(__dirname, '../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest')) >= 40);

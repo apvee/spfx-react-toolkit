@@ -14,7 +14,9 @@
     "trust-dev-cert": "gulp trust-dev-cert",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
-    "postinstall": "spfx-react-toolkit configure-localization"
+    "postinstall": "spfx-react-toolkit configure-localization",
+    "verify:examples": "node scripts/verification/verify-example-coverage.cjs",
+    "verify:demo-reachability": "node scripts/verification/verify-demo-reachability.cjs"
   },
   "dependencies": {
     "@microsoft/sp-application-base": "1.21.1",

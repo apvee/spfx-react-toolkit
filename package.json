@@ -20,7 +20,7 @@
     "test": "node --test tests/*.test.cjs",
     "typecheck": "npm run typecheck --workspaces",
     "lint": "npm run lint --workspaces",
-    "verify:examples": "node scripts/verify-example-coverage.cjs",
+    "verify:examples": "npm run verify:examples --workspace @apvee/spfx-react-toolkit-test --",
     "verify:runtime-store": "node scripts/verify-runtime-store.cjs",
     "verify:public-docs": "node scripts/docs/verify-public-docs.cjs",
     "verify:api": "node scripts/verify-api.cjs",
@@ -38,7 +38,7 @@
     "generated:check": "node scripts/docs/generated.cjs --check",
     "examples:generate": "node scripts/docs/executable-examples.cjs",
     "examples:check": "node scripts/docs/executable-examples.cjs --check",
-    "verify:demo-reachability": "node scripts/verify-demo-reachability.cjs"
+    "verify:demo-reachability": "npm run verify:demo-reachability --workspace @apvee/spfx-react-toolkit-test --"
   },
   "devDependencies": {
     "typescript": "5.3.3",

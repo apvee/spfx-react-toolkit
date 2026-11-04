@@ -44,7 +44,7 @@ These instructions apply to the entire repository, including `packages/`, `apps/
 
 ## Repository architecture and compatibility
 
-- `packages/spfx-react-toolkit/src/` owns the public library; `apps/spfx-react-toolkit-test/` owns the private SPFx sample and host configuration. Root `tests/` and `scripts/` own behavioral tests and verification tooling.
+- `packages/spfx-react-toolkit/src/` owns the public library; `apps/spfx-react-toolkit-test/` owns the private SPFx sample and host configuration. Root `tests/` owns behavioral tests; root `scripts/` owns shared tooling, while `apps/spfx-react-toolkit-test/scripts/verification/` owns sample coverage and reachability audits.
 - Consult `README.md` and the maintained `docs/_sources/development/INDEX.md` for workspace boundaries, supported tooling and commands, including when generated documentation is absent. Consult `docs/_sources/development/sharepoint-validation/INDEX.md` when real-host validation is relevant. Their generated public routes are `docs/development/INDEX.md` and `docs/development/sharepoint-validation/INDEX.md`. Read affected API documentation in `docs/` when changing public behavior.
 - The sample consumes the library's compiled `lib` entry point. Build the library before the app; after library source changes, rebuild it and restart a running app serve process before evaluating the new behavior. Sync generated artifacts first only when the change affects them, following the [generated-artifact workflow](#generated-documentation-and-executable-examples).
 - Preserve public imports, exports, declaration contracts, package contents, peer dependency contracts, and provider instance isolation unless the user authorizes the relevant change.
