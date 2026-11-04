@@ -10,6 +10,9 @@ const { teamsDarkTheme, webLightTheme } = require('@fluentui/react-components');
 const { selectGeneratedShellScenario } = require('../helpers/web-part-shell-browser.helpers.cjs');
 const { groupsProduct } = require('../../fixtures/demo-control-isolation/task3-product.browser.cjs');
 const { pilotTitles } = require('../../fixtures/demo-presentation/jsdoc-pilots.cjs');
+const { exampleSourceBrowser, interfaceCopy, italianCaption, authored, settleSource } = require('../helpers/example-source-browser.helpers.cjs');
+const sourceEvidence = {};
+const observedSourceRequests = new WeakMap();
 const pilotScope = { features: Object.keys(pilotTitles).length, scenarios: Object.values(pilotTitles).reduce((sum, titles) => sum + titles.length, 0) };
 const root = path.resolve(__dirname, '../../..');
 const directory = path.join(root, process.env.DEMO_PRESENTATION_MODE === 'source' ? 'temp/demo-presentation-source-browser' : 'temp/demo-presentation-browser');
@@ -49,8 +52,13 @@ const checks = [], diagnostics = [], metrics = [], screenshots = [], fontAssets 
 const check = (name, actual, expected) => { checks.push({ name, actual, expected }); assert.deepEqual(actual, expected, name); };
 
 const observe = page => {
+  const requests = []; observedSourceRequests.set(page, requests);
+  page.on('request', request => { if (/\/spfx-jsdoc-source-[^/]+\.js$/.test(new URL(request.url()).pathname)) requests.push(request.url()); });
   page.on('pageerror', error => diagnostics.push({ type: 'pageerror', text: error.message }));
   page.on('console', message => {
+    if (message.type() === 'error' && message.text() === 'Failed to load resource: net::ERR_FAILED' && message.location().url === sourceEvidence.deniedAsset) {
+      (sourceEvidence.expectedAssetErrors ||= []).push({ text: message.text(), url: message.location().url }); return;
+    }
     const expected = /^\[(INFO|WARN|ERROR)\] \d{4}-\d{2}-\d{2}T[0-9:.]+Z WebPart\/integrated-demo – SPFx toolkit demo (info|warning|error) \{\}$/.exec(message.text());
     if (expected && ((message.type() === 'info' && expected[1] === 'INFO' && expected[2] === 'info') || (message.type() === 'warning' && expected[1] === 'WARN' && expected[2] === 'warning') || (message.type() === 'error' && expected[1] === 'ERROR' && expected[2] === 'error'))) { expectedRuntimeDiagnostics.push({ type: message.type(), text: message.text() }); return; }
     if (['error', 'warning'].includes(message.type())) diagnostics.push({ type: message.type(), text: message.text() });
@@ -68,6 +76,7 @@ async function select(page, key) {
     return;
   }
   const sourceCases = {
+    'native-site-source': ['PropertyPaneSitePicker', 'Select native site references'],
     providers: ['SPFxWebPartProvider', 'Compare WebPart provider availability with the current host'],
     'search-text': ['useSPFxPnPSearch', 'Search SharePoint text with explicit execution'],
     'search-facet': ['useSPFxPnPSearch', 'Filter search results with native refiner tokens'],
@@ -125,7 +134,7 @@ async function select(page, key) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
       const nav = page.getByRole('navigation', { name: 'Example groups and features' });
-      const group = nav.getByRole('button', { name: key === 'providers' ? /^Providers and context/ : ['pnp-context-service', 'pnp-service', 'pnp-list-service', 'site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Services/ : (['search-text', 'search-vertical', 'pnp-crud', 'pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hooks/ : /^Controls/ }).first();
+      const group = nav.getByRole('button', { name: key === 'native-site-source' ? /^Property Pane/ : key === 'providers' ? /^Providers and context/ : ['pnp-context-service', 'pnp-service', 'pnp-list-service', 'site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Services/ : (['search-text', 'search-vertical', 'pnp-crud', 'pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hooks/ : /^Controls/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -545,7 +554,7 @@ async function main() {
     defer(() => server.close());
     const url = server.url; let browser;
     defer(() => {
-      fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `focused source-owned JSDoc migration checkpoint (${pilotScope.scenarios} scenarios, ${pilotScope.features} features)` : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { ...pilotScope, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/generated scenarios + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, expectedRuntimeDiagnostics, metrics, screenshots }, undefined, 2));
+      fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `focused source-owned JSDoc migration checkpoint (${pilotScope.scenarios} scenarios, ${pilotScope.features} features)` : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { ...pilotScope, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/generated scenarios + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, sourceEvidence, checks, diagnostics, expectedRuntimeDiagnostics, metrics, screenshots }, undefined, 2));
     });
     browser = await chromium.launch({ headless: true, executablePath });
     defer(() => browser.close());
@@ -734,8 +743,8 @@ async function main() {
         check(`${key}: English configuration heading`, await panel.getByText(/^Configuration and (simulation|results)$/).count(), 1);
         const diagnosticHeaders = panel.locator('[data-demo-configuration] > .fui-Accordion > .fui-AccordionItem > .fui-AccordionHeader button');
         check(`${key}: English diagnostics label when present`, await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).count(), await diagnosticHeaders.count());
-        const copy = await panel.evaluate(element => [element.textContent, ...[...element.querySelectorAll('input,textarea,[aria-label],[title]')].flatMap(node => [node.value || '', node.getAttribute('aria-label') || '', node.getAttribute('title') || ''])].join(' '));
-        check(`${key}: old Italian captions absent`, /\b(?:Configurazione|Diagnostica|Titolo|Descrizione|Larghezza|Caricamento|Esegui|Salva|Ripristina|Operazione|Ordine|Ordini|Preferenze|Contatti|Aggiornamento|Immagine|Contenuto|Proprietà|Nessuna|Nessun)\b/u.test(copy), false);
+        const copy = await interfaceCopy(panel);
+        check(`${key}: old Italian captions absent`, italianCaption.test(copy), false);
       };
       for (const entry of entries) {
         await select(page, entry.key);
@@ -761,6 +770,9 @@ async function main() {
       console.log(`Single-example cardinality: ${entries.length} tabs PASS`);
       return;
     }
+    await exampleSourceBrowser({ page, check, select, activePanel, settle, overflow, capture, evidence: sourceEvidence, requests: observedSourceRequests.get(page) });
+    // Restore a fresh explorer for the unchanged ordinary acceptance paths.
+    await page.reload(); await page.locator('[data-demo-section]').first().waitFor();
     for (const entry of entries) {
       await select(page, entry.key); check(`${entry.key}: meaningful primary example`, await activePanel(page).locator('h3,[data-shell-demo=panel]').count() > 0, true);
       await singleExampleTransitions(page, entry.key);
@@ -817,15 +829,38 @@ async function main() {
         defer(() => context.close());
         const native = context.pages()[0]; observe(native); await guardNetwork(native, url); await native.goto(url); await native.locator('[data-demo-section]').first().waitFor();
         metrics.push(await native.evaluate(() => ({ width: innerWidth, height: innerHeight, dpr: devicePixelRatio, scale: visualViewport.scale })));
-        for (const { key } of entries) { await select(native, key); await singleExampleTransitions(native, key, variant => overflow(native, `${key}/native-${zoom * 100}%/${variant}`)); await overflow(native, `${key}/native-${zoom * 100}%`); await labels(native, `${key}/native-${zoom * 100}%`); await activePanel(native).scrollIntoViewIfNeeded();
+        for (const { key } of entries) { await select(native, key); await singleExampleTransitions(native, key, variant => overflow(native, `${key}/native-${zoom * 100}%/${variant}`)); if (key === 'cards') {
+            const panel = activePanel(native), expected = authored('Inspect preview media and image recovery');
+            const subject = await panel.locator('[data-demo-section]').elementHandle();
+            const before = await native.evaluate(() => window.clientsFixture.requests.length);
+            check(`Source native-${zoom * 100}% starts closed`, await panel.getByRole('button', { name: 'Example code', exact: true }).getAttribute('aria-expanded'), 'false');
+            check(`Source native-${zoom * 100}% is not eagerly fetched`, observedSourceRequests.get(native).length, 0);
+            await panel.getByRole('button', { name: 'Example code', exact: true }).click();
+            await panel.locator('[data-example-source-code]').waitFor();
+            await settleSource(panel.locator('[data-example-source-code]'));
+            check(`Source native-${zoom * 100}% literal text`, await panel.locator('[data-example-source-code]').textContent(), expected.code);
+            check(`Source native-${zoom * 100}% subject retained`, await subject.evaluate(element => element.isConnected), true); await subject.dispose();
+            check(`Source native-${zoom * 100}% no business requests`, await native.evaluate(() => window.clientsFixture.requests.length), before);
+          }
+          await overflow(native, `${key}/native-${zoom * 100}%`); await labels(native, `${key}/native-${zoom * 100}%`); await activePanel(native).scrollIntoViewIfNeeded();
           const session = await context.newCDPSession(native);
           const detach = defer(() => session.detach());
           const shot = await session.send('Page.captureScreenshot', { format: 'png', fromSurface: true, captureBeyondViewport: false });
           const buffer = Buffer.from(shot.data, 'base64');
           const filename = path.join(output, `${key}-native-${zoom * 100}-viewport-cdp.png`); fs.writeFileSync(filename, buffer); screenshots.push(filename);
-          check(`${key}/native-${zoom * 100}% physical capture width`, buffer.readUInt32BE(16), 1440); await detach(); }
+          check(`${key}/native-${zoom * 100}% physical capture width`, buffer.readUInt32BE(16), 1440);
+          if (key === 'cards') {
+            await activePanel(native).locator('[data-example-source-code]').scrollIntoViewIfNeeded();
+            const sourceShot = await session.send('Page.captureScreenshot', { format: 'png', fromSurface: true, captureBeyondViewport: false });
+            const sourceBuffer = Buffer.from(sourceShot.data, 'base64');
+            const sourceFilename = path.join(output, `example-source-native-${zoom * 100}-viewport-cdp.png`);
+            fs.writeFileSync(sourceFilename, sourceBuffer); screenshots.push(sourceFilename);
+            check(`Source native-${zoom * 100}% physical capture width`, sourceBuffer.readUInt32BE(16), 1440);
+          }
+          await detach(); }
       });
     }
+    check('Exactly one deliberate source asset error', sourceEvidence.expectedAssetErrors?.length, 1);
     check('Native 200% doubles DPR', metrics[1].dpr / metrics[0].dpr, 2);
     check('Native 200% halves CSS viewport', metrics[0].width / metrics[1].width, 2);
     const nativeColorWarning = "The keyword 'slider-vertical' specified to an 'appearance' property is not standardized. It will be removed in the future. Use <input type=range style=\"writing-mode: vertical-lr; direction: rtl\"> instead.";

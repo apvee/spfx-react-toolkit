@@ -29,7 +29,7 @@ export const useExampleExplorerStyles = makeStyles({
   sourceCode: {
     minWidth: 0, maxWidth: '100%', maxHeight: '24rem', overflowX: 'auto', overflowY: 'auto',
     boxSizing: 'border-box', margin: 0, padding: tokens.spacingHorizontalM,
-    whiteSpace: 'pre', fontFamily: tokens.fontFamilyMonospace, fontSize: tokens.fontSizeBase200,
+    whiteSpace: 'pre', textAlign: 'start', fontFamily: tokens.fontFamilyMonospace, fontSize: tokens.fontSizeBase200,
     lineHeight: tokens.lineHeightBase200, color: tokens.colorNeutralForeground1,
     backgroundColor: tokens.colorNeutralBackground2, border: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStroke2}`,
     borderRadius: tokens.borderRadiusMedium,

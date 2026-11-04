@@ -106,8 +106,10 @@ test('real app compiler consumes copied compiled library and catches invalid/mis
   const { renderExecutableArtifacts } = require('../scripts/docs/executable-examples.cjs');
   const context = buildValidatedDocumentationContext(root, h.config);
   const expected = renderExecutableArtifacts(root, context, h.config);
-  const probeRoute = Object.keys(expected).find(route => expected[route].includes('unusedCompilerProbe'));
-  assert.ok(probeRoute, 'checker-compatible source must be extracted');
+  // The paired .source.ts contains this import only as text; exercise the executable.
+  const probeRoutes = Object.keys(expected).filter(route => route.endsWith('.tsx') && expected[route].includes('unusedCompilerProbe'));
+  assert.equal(probeRoutes.length, 1, 'exactly one checker-compatible executable probe must be extracted');
+  const [probeRoute] = probeRoutes;
   fs.writeFileSync(path.join(root, probeRoute), expected[probeRoute]);
   const unused = compile(); assert.notEqual(unused.status, 0);
   assert.match(unused.stdout + unused.stderr, /TS6133.*unusedCompilerProbe/);
