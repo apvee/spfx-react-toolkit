@@ -5,9 +5,9 @@ const path = require('node:path');
 const ts = require('typescript');
 const root = path.resolve(__dirname, '..');
 const { cleanAliases } = require('../scripts/package-entrypoints.cjs');
-const { executableRoot, ownership } = require('../scripts/executable-examples-render.cjs');
+const { executableRoot, ownership } = require('../scripts/docs/executable-examples-render.cjs');
 const generatedBase = path.join(root, executableRoot);
-const { compatibilityEntries } = require('../scripts/documentation-model.cjs').buildApiGraph(root, require('../scripts/documentation.config.cjs'));
+const { compatibilityEntries } = require('../scripts/docs/documentation-model.cjs').buildApiGraph(root, require('../scripts/docs/documentation.config.cjs'));
 const nativePickerBase = path.join(root, 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest');
 const nativePickerSpecifiers = new Map([
   [path.join(nativePickerBase, 'SpFxReactToolkitTestWebPart.ts'), new Set([

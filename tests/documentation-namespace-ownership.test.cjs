@@ -3,10 +3,10 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
-const { buildApiGraph } = require('../scripts/documentation-model.cjs');
-const { buildDocumentationModel } = require('../scripts/documentation-contract.cjs');
-const { collectExecutableExamples } = require('../scripts/executable-examples-model.cjs');
-const { renderApiPages } = require('../scripts/documentation-render.cjs');
+const { buildApiGraph } = require('../scripts/docs/documentation-model.cjs');
+const { buildDocumentationModel } = require('../scripts/docs/documentation-contract.cjs');
+const { collectExecutableExamples } = require('../scripts/docs/executable-examples-model.cjs');
+const { renderApiPages } = require('../scripts/docs/documentation-render.cjs');
 
 const fixture = path.join(__dirname, 'fixtures/documentation/namespace-ownership');
 const config = { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json' };

@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const Module = require('node:module');
 const root = fs.realpathSync(path.resolve(__dirname, '../../../..'));
-const { createDependencyAdmission } = require(path.join(root, 'scripts/documentation-inputs.cjs'));
+const { createDependencyAdmission } = require(path.join(root, 'scripts/docs/documentation-inputs.cjs'));
 const dependencies = createDependencyAdmission(root);
 const within = file => { const relative = path.relative(root, file); return relative !== '..' && !relative.startsWith('..' + path.sep) && !path.isAbsolute(relative); };
 const reads = new Set();

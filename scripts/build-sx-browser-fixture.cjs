@@ -25,7 +25,7 @@ const boundary = path.join(fixture, cardsOnly ? 'cards-toolkit-boundary.ts' : de
 // The catalogue's type-only actual AppProps proof needs the full public source
 // type graph, not the deliberately finite runtime fixture barrel. Webpack keeps
 // its separate narrow aliases below; no runtime implementation is widened here.
-const typeInputs = require('./documentation-inputs.cjs').createDocumentationInputs(root, require('./documentation.config.cjs'));
+const typeInputs = require('./docs/documentation-inputs.cjs').createDocumentationInputs(root, require('./docs/documentation.config.cjs'));
 const packageMetadata = JSON.parse(fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/package.json'), 'utf8'));
 const sourceTypePaths = shellOnly ? Object.fromEntries([...typeInputs.sourceEntries(packageMetadata), ...typeInputs.sourceEntries(packageMetadata, true)]
   .map(([name, file]) => [name, [path.relative(root, file)]])) : { '@apvee/spfx-react-toolkit': [path.relative(root, boundary)] };
@@ -40,7 +40,7 @@ const diagnostics = ts.getPreEmitDiagnostics(program);
 if (shellOnly) {
   // Keep the original finite-barrel missing-export check for copied source
   // modules independently of catalogue's private actual-host type-only proof.
-  const generated = path.join(root, require('./executable-examples-render.cjs').executableRoot);
+  const generated = path.join(root, require('./docs/executable-examples-render.cjs').executableRoot);
   const copiedModules = fs.readdirSync(generated).filter(name => /^[a-f0-9]{64}\.tsx$/.test(name)).map(name => path.join(generated, name));
   const runtimeProgram = ts.createProgram([...copiedModules, path.join(root, 'packages/spfx-react-toolkit/src/localization/native-resources.internal.d.ts')], {
     ...program.getCompilerOptions(), paths: {

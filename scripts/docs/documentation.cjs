@@ -156,11 +156,11 @@ function findInvalidExampleImports(root, files, exports) {
 const generatedArtifacts = generateArtifacts;
 
 function runCli(args = process.argv.slice(2), env = process.env) {
-  assert.ok(args.length === 0 || (args.length === 1 && args[0] === '--check'), 'Usage: node scripts/documentation.cjs [--check]');
+  assert.ok(args.length === 0 || (args.length === 1 && args[0] === '--check'), 'Usage: node scripts/docs/documentation.cjs [--check]');
   const configured = env.TOOLKIT_DOCS_MODE === undefined ? 'write' : env.TOOLKIT_DOCS_MODE;
   assert.ok(configured === 'write' || configured === 'check', `Unknown documentation mode TOOLKIT_DOCS_MODE=${configured}; expected write or check.`);
   const mode = args.includes('--check') ? 'check' : configured;
-  const root = path.resolve(__dirname, '..');
+  const root = path.resolve(__dirname, '../..');
   const artifacts = generateArtifacts(root);
   const result = applyArtifacts(root, artifacts, mode);
   const stale = [...result.diff.missing, ...result.diff.changed, ...result.diff.orphan];

@@ -6,7 +6,7 @@ const { generateArtifacts, applyArtifacts } = require('./documentation-artifacts
 const { checkedGraph, projectPublicSurface, assertDocumentedSurface } = require('./public-surface.helpers.cjs');
 const { buildDocumentationModel, resolveDocumentationReference } = require('./documentation-contract.cjs');
 const { projectPackageExports, findInvalidExampleImports } = require('./documentation.cjs');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../..');
 
 // Composition validates the complete source contracts, examples and virtual link
 // universe before the same read-only ArtifactSet comparison used by the CLI.

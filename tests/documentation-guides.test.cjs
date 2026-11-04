@@ -4,9 +4,9 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 const MarkdownIt = require('markdown-it');
-const { buildApiGraph } = require('../scripts/documentation-model.cjs');
-const { buildDocumentationModel } = require('../scripts/documentation-contract.cjs');
-const render = require('../scripts/documentation-render.cjs');
+const { buildApiGraph } = require('../scripts/docs/documentation-model.cjs');
+const { buildDocumentationModel } = require('../scripts/docs/documentation-contract.cjs');
+const render = require('../scripts/docs/documentation-render.cjs');
 const fixture = path.join(__dirname, 'fixtures/documentation/guides');
 const config = { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json' };
 let model;
@@ -19,8 +19,8 @@ test.before(() => {
   contract.examples = [{ title: 'Basic', language: 'tsx', code: 'const text = `{@link Missing} [literal](bad.md)`;\n\n', source: contract.source }];
 });
 function api() {
-  assert.ok(fs.existsSync(path.join(__dirname, '../scripts/documentation-guides.cjs')), 'editorial resolver must exist');
-  return require('../scripts/documentation-guides.cjs');
+  assert.ok(fs.existsSync(path.join(__dirname, '../scripts/docs/documentation-guides.cjs')), 'editorial resolver must exist');
+  return require('../scripts/docs/documentation-guides.cjs');
 }
 function temporary(t) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'documentation-guides-'));
@@ -155,7 +155,7 @@ test('API module, member, signature, entity and catalog prose use each normalize
   assert.ok(!catalog.includes('{@link'));
 });
 test('shared parser preserves block/list/table layouts, reference definitions, multiline links and all literal code', () => {
-  const { transformMarkdown } = require('../scripts/documentation-markdown.cjs');
+  const { transformMarkdown } = require('../scripts/docs/documentation-markdown.cjs');
   const source = '> [quote](docs/a.md)\n>\n> [q]: docs/q.md\n\n- [list](docs/b.md)\n  continuation [next](docs/c.md)\n\n| Name | Link |\n| --- | --- |\n| A | [table](docs/d.md) |\n\n[wrapped](\n  docs/e.md\n  "title"\n)\n\n    [literal](docs/no.md)\n\n`` [literal](docs/no.md) ` ``\n';
   const output = transformMarkdown(source, { link: target => 'prefix/' + target });
   for (const name of ['a', 'b', 'c', 'd', 'e', 'q']) assert.ok(output.includes('prefix/docs/' + name + '.md'), name);
@@ -163,7 +163,7 @@ test('shared parser preserves block/list/table layouts, reference definitions, m
   assert.ok(output.includes('`` [literal](docs/no.md) ` ``'));
 });
 test('source spans remain correct for blockquoted includes, escaped table cells and image-label references', () => {
-  const { transformMarkdown } = require('../scripts/documentation-markdown.cjs');
+  const { transformMarkdown } = require('../scripts/docs/documentation-markdown.cjs');
   const handlers = { link: target => 'prefix/' + target, include: () => 'Included', reference: () => 'Resolved' };
   assert.equal(transformMarkdown('> <!-- toolkit:include symbol="Stage" section="selection" -->\n', handlers), '> Included\n');
   const table = '| Name | Link |\n| --- | --- |\n| a\\|b | [x](a.md) |\n';
@@ -248,7 +248,7 @@ test('round1 I1 heading anchors use rendered inline text across links, images, c
   const artifacts = { 'docs/guides/links.md': '# Links\n\n[One](../development/headings.md#read) [Two](../development/headings.md#read-1) [Entity](../development/headings.md#a--b) [Literals](../development/headings.md#code-image-tag)\n' };
   const targets = api().collectPublicTargets(root, { ...artifacts, 'docs/development/headings.md': manual }, config);
   assert.deepEqual(targets.find(target => target.route === 'docs/development/headings.md').anchors, ['read', 'read-1', 'a--b', 'code-image-tag']);
-  assert.deepEqual([...require('../scripts/documentation.cjs').markdownAnchors(manual)], ['read', 'read-1', 'a--b', 'code-image-tag']);
+  assert.deepEqual([...require('../scripts/docs/documentation.cjs').markdownAnchors(manual)], ['read', 'read-1', 'a--b', 'code-image-tag']);
   assert.deepEqual(api().validatePublicLinks(artifacts, targets, config), []);
   artifacts['docs/guides/links.md'] += '\n[False anchor](../development/headings.md#readref)\n';
   assert.deepEqual(api().validatePublicLinks(artifacts, targets, config).map(item => item.code), ['DOC_LINK_ANCHOR']);
@@ -305,9 +305,9 @@ test('round1 I1 canonical legal underscore symbol headings retain model/render/c
   const actual = buildDocumentationModel(graph, config);
   const page = actual.pages.find(page => page.entityKeys.includes(key));
   const output = render.renderApiPages(actual, config)[page.route];
-  const anchors = require('../scripts/documentation-markdown.cjs').markdownAnchors(output);
+  const anchors = require('../scripts/docs/documentation-markdown.cjs').markdownAnchors(output);
   assert.ok(anchors.includes(page.anchors[key]), page.anchors[key]);
-  assert.ok(require('../scripts/documentation.cjs').markdownAnchors(output).has(page.anchors[key]));
+  assert.ok(require('../scripts/docs/documentation.cjs').markdownAnchors(output).has(page.anchors[key]));
 });
 test('round1 R2 discovery and localization inventory reads also reject outside canonical inputs', t => {
   const outside = fs.mkdtempSync(path.join(os.tmpdir(), 'documentation-outside-source-'));

@@ -5,7 +5,7 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const test = require('node:test');
 const root = path.resolve(__dirname, '..');
-const proof = () => require('../scripts/verify-documentation-reproducibility.cjs');
+const proof = () => require('../scripts/docs/verify-documentation-reproducibility.cjs');
 
 test('hashes full ordinal paths and exact bytes with unambiguous framing', () => {
   const { hashArtifacts } = proof();
@@ -17,7 +17,7 @@ test('hashes full ordinal paths and exact bytes with unambiguous framing', () =>
 });
 
 test('lock admission rejects loose and nested unlocked packages, workspace links and escaping files', () => {
-  const { createDependencyAdmission } = require('../scripts/documentation-inputs.cjs');
+  const { createDependencyAdmission } = require('../scripts/docs/documentation-inputs.cjs');
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'docs-lock-'));
   try {
     const put = (route, text) => { fs.mkdirSync(path.dirname(path.join(temp, route)), { recursive: true }); fs.writeFileSync(path.join(temp, route), text); };
@@ -58,14 +58,23 @@ test('copied tiny engine reconstructs development only from sources and restores
   // inside the cold mirror must supply the required executable title.
   const apiSource = path.join(fixture, 'packages/spfx-react-toolkit/src/index.ts');
   fs.writeFileSync(apiSource, fs.readFileSync(apiSource, 'utf8').replace('@example Count', '@example'));
-  const generated = require('../scripts/executable-examples-render.cjs').executableRoot;
+  const generated = require('../scripts/docs/executable-examples-render.cjs').executableRoot;
   fs.mkdirSync(path.join(fixture, generated), { recursive: true });
   fs.writeFileSync(path.join(fixture, generated, 'poisoned.ts'), 'throw new Error(\"old executable output\");\n');
   // Exercise target-closure traversal as well as the initial docs-tree copy.
   fs.appendFileSync(path.join(fixture, 'docs/_sources/development/INDEX.md'), '\n[Old output](../../development/INDEX.md). [Contributor input](../../../contributor.md).\n');
   fs.writeFileSync(path.join(fixture, 'contributor.md'), '# Contributor input\n\nA source-owned target outside the standard copied roots.\n');
-  const result = proof().verifyReproducibility(root, { fixtureRoot: fixture, packageRoot: 'packages/spfx-react-toolkit', sourceRoot: 'packages/spfx-react-toolkit/src', tsconfig: 'packages/spfx-react-toolkit/tsconfig.json' });
+  // Linked tooling is finite validation data, never an executable engine input.
+  fs.mkdirSync(path.join(fixture, 'tests/browser'), { recursive: true });
+  fs.writeFileSync(path.join(fixture, 'tests/browser/linked-checker.cjs'), "throw new Error('linked checker must never execute');\n");
+  fs.writeFileSync(path.join(fixture, 'tests/browser/unreferenced.cjs'), "throw new Error('unreferenced sibling');\n");
+  fs.appendFileSync(path.join(fixture, 'docs/_sources/development/INDEX.md'), '\n[Checker](../../../tests/browser/linked-checker.cjs).\n');
+  const result = require('../scripts/docs/verify-documentation-reproducibility.cjs').verifyReproducibility(root, { fixtureRoot: fixture, packageRoot: 'packages/spfx-react-toolkit', sourceRoot: 'packages/spfx-react-toolkit/src', tsconfig: 'packages/spfx-react-toolkit/tsconfig.json' });
   assert.equal(result.ok, true);
+  assert.ok(result.copiedInputs.includes('tests/browser/linked-checker.cjs'));
+  assert.ok(!result.copiedInputs.includes('tests/browser/unreferenced.cjs'));
+  assert.ok(!result.copiedInputs.includes('scripts/audit-import-graph.cjs'));
+  assert.ok(result.copiedInputs.includes('scripts/docs/generated.cjs'));
   assert.equal(result.environments.length, 4);
   assert.ok(result.hashes.paths.includes('llms.txt'));
   assert.ok(result.audit.reads > 0);
@@ -74,15 +83,15 @@ test('copied tiny engine reconstructs development only from sources and restores
   assert.equal(result.developmentSourceMutationChanged, true);
   assert.equal(result.developmentRebuild.directoryAbsentBefore, true);
   assert.equal(result.developmentRebuild.sourcesRetained, true);
-  for (const route of ['scripts/generated.cjs', 'scripts/generated-artifacts.cjs', 'scripts/documentation-context.cjs', 'scripts/executable-examples.cjs', 'scripts/executable-examples-model.cjs', 'scripts/executable-examples-render.cjs']) assert.ok(result.copiedInputs.includes(route), route);
-  const { executableRoot } = require('../scripts/executable-examples-render.cjs');
+  for (const route of ['scripts/docs/generated.cjs', 'scripts/docs/generated-artifacts.cjs', 'scripts/docs/documentation-context.cjs', 'scripts/docs/executable-examples.cjs', 'scripts/docs/executable-examples-model.cjs', 'scripts/docs/executable-examples-render.cjs']) assert.ok(result.copiedInputs.includes(route), route);
+  const { executableRoot } = require('../scripts/docs/executable-examples-render.cjs');
   assert.ok(!result.copiedInputs.some(route => route.startsWith(executableRoot + '/')));
   assert.ok(result.families.examples.paths.includes(executableRoot + '/catalogue.ts'));
   assert.deepEqual([...result.families.documentation.paths, ...result.families.examples.paths].sort(), result.hashes.paths);
   assert.equal(result.executableSourceMutationChanged, true);
   assert.equal(result.executableManualPreserved, true);
   assert.equal(result.executableOrphanRemoved, true);
-  assert.ok(result.copiedInputs.includes('scripts/documentation-context.cjs'));
+  assert.ok(result.copiedInputs.includes('scripts/docs/documentation-context.cjs'));
   assert.ok(result.copiedInputs.includes('docs/_sources/development/INDEX.md'));
   assert.ok(result.copiedInputs.includes('docs/_sources/development/sharepoint-validation/INDEX.md'));
   assert.ok(result.copiedInputs.includes('contributor.md'));
@@ -101,7 +110,7 @@ test('stale development files and anchors cannot rescue a removed source target'
   t.after(() => fs.rmSync(fixture, { recursive: true, force: true }));
   fs.cpSync(path.join(__dirname, 'fixtures/documentation/artifact-set'), fixture, { recursive: true });
   const config = { packageRoot: 'packages/spfx-react-toolkit', sourceRoot: 'packages/spfx-react-toolkit/src', tsconfig: 'packages/spfx-react-toolkit/tsconfig.json' };
-  const { generateArtifacts, applyArtifacts } = require('../scripts/documentation-artifacts.cjs');
+  const { generateArtifacts, applyArtifacts } = require('../scripts/docs/documentation-artifacts.cjs');
   const artifacts = generateArtifacts(fixture, config);
   applyArtifacts(fixture, artifacts, 'write', config);
   const source = path.join(fixture, 'docs/_sources/development/sharepoint-validation/INDEX.md');
@@ -119,9 +128,9 @@ test('stale development files and anchors cannot rescue a removed source target'
 test('graph and examples share clean toolkit mapping and reject unknown private/native-from-root imports', () => {
   const fixture = path.join(__dirname, 'fixtures/documentation/reproducibility/self-import');
   const config = { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json' };
-  const { buildApiGraph } = require('../scripts/documentation-model.cjs');
-  const { buildDocumentationModel } = require('../scripts/documentation-contract.cjs');
-  const { checkDocumentationExamples } = require('../scripts/documentation-examples.cjs');
+  const { buildApiGraph } = require('../scripts/docs/documentation-model.cjs');
+  const { buildDocumentationModel } = require('../scripts/docs/documentation-contract.cjs');
+  const { checkDocumentationExamples } = require('../scripts/docs/documentation-examples.cjs');
   const graph = buildApiGraph(fixture, config);
   assert.deepEqual(graph.diagnostics, []);
   const control = graph.entities.find(entity => entity.qualifiedName === 'control');
@@ -137,4 +146,16 @@ test('graph and examples share clean toolkit mapping and reject unknown private/
   const diagnostics = checkDocumentationExamples(fixture, negative, config);
   assert.ok(diagnostics.some(item => item.code === 'TS2459' && item.line === 1));
   assert.ok(diagnostics.some(item => item.code === 'TS2307' && item.line === 2));
+});
+
+
+test('cold copy rejects escaping editorial targets and a missing nested engine', t => {
+  const h = require('./fixtures/generated-tooling/helpers.cjs');
+  const fixture = h.mirror(t, false);
+  const { verifyReproducibility } = require('../scripts/docs/verify-documentation-reproducibility.cjs');
+  const config = { ...h.config, fixtureRoot: fixture };
+  fs.appendFileSync(path.join(fixture, 'docs/_sources/development/INDEX.md'), '\n[Escape](../../../../outside.cjs).\n');
+  assert.throws(() => verifyReproducibility(root, config), /Cold input link escapes root/);
+  fs.rmSync(path.join(fixture, 'scripts/docs'), { recursive: true });
+  assert.throws(() => verifyReproducibility(fixture, config), /ENOENT|missing.*engine/i);
 });

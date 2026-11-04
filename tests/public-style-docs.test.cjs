@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
-const { collectPublicSurface, assertDocumentedSurface } = require('../scripts/public-surface.helpers.cjs');
+const { collectPublicSurface, assertDocumentedSurface } = require('../scripts/docs/public-surface.helpers.cjs');
 
 test('directory barrels, namespace exports and nested namespaces resolve actual public members', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'sx-docs-'));

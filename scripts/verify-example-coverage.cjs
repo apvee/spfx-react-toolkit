@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { collectPublicSurfaces } = require('./public-surface.helpers.cjs');
+const { collectPublicSurfaces } = require('./docs/public-surface.helpers.cjs');
 const { assertStyleExampleCoverage } = require('./style-example.helpers.cjs');
 const { assertFormExampleCoverage } = require('./form-example.helpers.cjs');
 const { collectExecutableCoverage } = require('./executable-example-coverage.helpers.cjs');

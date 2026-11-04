@@ -4,7 +4,7 @@ const path = require('node:path');
 
 /** Locate explicit package/config context without creating fixture metadata. */
 function sourceContext(entryPath) {
-  const repository = path.resolve(__dirname, '..');
+  const repository = path.resolve(__dirname, '../..');
   const config = require('./documentation.config.cjs');
   const relative = path.relative(path.join(repository, config.sourceRoot), entryPath);
   if (!relative.startsWith('..') && !path.isAbsolute(relative)) return { root: repository, config };

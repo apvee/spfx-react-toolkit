@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
-const { collectPublicSurfaces } = require('./public-surface.helpers.cjs');
+const { collectPublicSurfaces } = require('./docs/public-surface.helpers.cjs');
 const { getLocalizationPackageContract } = require('./package-entrypoints.cjs');
 const slash = value => value.split(path.sep).join('/');
 function sourceFiles(directory) {

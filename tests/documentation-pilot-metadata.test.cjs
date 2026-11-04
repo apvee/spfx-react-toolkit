@@ -1,10 +1,10 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
 const test = require('node:test');
-const { buildApiGraph, resolvePublicReference } = require('../scripts/documentation-model.cjs');
-const { buildDocumentationModel, validateDocumentation, resolveDocumentationReference } = require('../scripts/documentation-contract.cjs');
-const { renderApiPages, renderCatalog } = require('../scripts/documentation-render.cjs');
-const { markdownAnchors } = require('../scripts/documentation.cjs');
+const { buildApiGraph, resolvePublicReference } = require('../scripts/docs/documentation-model.cjs');
+const { buildDocumentationModel, validateDocumentation, resolveDocumentationReference } = require('../scripts/docs/documentation-contract.cjs');
+const { renderApiPages, renderCatalog } = require('../scripts/docs/documentation-render.cjs');
+const { markdownAnchors } = require('../scripts/docs/documentation.cjs');
 const config = { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json' };
 const root = path.join(__dirname, 'fixtures/documentation/pilot-metadata');
 let graph, model;
@@ -115,7 +115,7 @@ test('outer and inner generics validate at their authoring scope without accepti
 
 test('the independent fixture has complete normalized contracts and self-contained source-only examples', () => {
   assert.deepEqual(validateDocumentation(model), []);
-  const { checkDocumentationExamples } = require('../scripts/documentation-examples.cjs');
+  const { checkDocumentationExamples } = require('../scripts/docs/documentation-examples.cjs');
   assert.equal(model.examples.length, 15);
   assert.deepEqual(checkDocumentationExamples(root, model, config), []);
 });

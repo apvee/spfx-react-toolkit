@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { collectPublicSurface, assertDocumentedSurface } = require('../scripts/public-surface.helpers.cjs');
+const { collectPublicSurface, assertDocumentedSurface } = require('../scripts/docs/public-surface.helpers.cjs');
 
 test('Form docs cover compound members and Form-owned alias props, including nested error state', () => {
   const surface = collectPublicSurface(path.resolve('packages/spfx-react-toolkit/src/controls/form/index.ts'), { includeTypeMembers: true });

@@ -13,7 +13,7 @@ function fixturePackage(root) {
   writeConfig(root);
 }
 
-const script = path.resolve(__dirname, '../scripts/documentation.cjs');
+const script = path.resolve(__dirname, '../scripts/docs/documentation.cjs');
 const documentation = fs.existsSync(script) ? require(script) : {};
 
 test('npm README links work outside the repository while code and local license stay literal', () => {
@@ -42,9 +42,9 @@ test('catalog discovers aliases, imported re-exports and types from real TypeScr
 });
 
 test('new documented exports obtain canonical routes without a manual inventory', t => {
-  const { buildApiGraph } = require('../scripts/documentation-model.cjs');
-  const { buildDocumentationModel } = require('../scripts/documentation-contract.cjs');
-  const { renderCatalog } = require('../scripts/documentation-render.cjs');
+  const { buildApiGraph } = require('../scripts/docs/documentation-model.cjs');
+  const { buildDocumentationModel } = require('../scripts/docs/documentation-contract.cjs');
+  const { renderCatalog } = require('../scripts/docs/documentation-render.cjs');
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'toolkit-doc-discovery-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   fixturePackage(root);

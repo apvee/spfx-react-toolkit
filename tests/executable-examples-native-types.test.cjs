@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
-const { renderExecutableExamples, executableRoot } = require('../scripts/executable-examples-render.cjs');
+const { renderExecutableExamples, executableRoot } = require('../scripts/docs/executable-examples-render.cjs');
 const root = path.resolve(__dirname, '..');
 const template = fs.readFileSync(path.join(__dirname, 'fixtures/executable-examples/cases/native.jsdoc'), 'utf8')
   .split(' * ```tsx\n')[1].split(' * ```')[0].split('\n').map(line => line.replace(/^ \* ?/, '')).join('\n')
@@ -60,11 +60,11 @@ for (const [name, domain] of [
 });
 
 test('canonical native validation accepts actual public full integrated array domains without importing the app proof', () => {
-  const config = require('../scripts/documentation.config.cjs');
-  const graph = require('../scripts/documentation-model.cjs').buildApiGraph(root, config);
-  const model = require('../scripts/documentation-contract.cjs').buildDocumentationModel(graph, config);
+  const config = require('../scripts/docs/documentation.config.cjs');
+  const graph = require('../scripts/docs/documentation-model.cjs').buildApiGraph(root, config);
+  const model = require('../scripts/docs/documentation-contract.cjs').buildDocumentationModel(graph, config);
   const original = model.examples.find(example => example.title === 'Select native site references'); assert.ok(original);
   const code = template.replace('pickerSites?: string[];', integrated);
-  const result = require('../scripts/executable-examples-model.cjs').collectExecutableExamples(root, { ...model, examples: [{ ...original, code }] }, config);
+  const result = require('../scripts/docs/executable-examples-model.cjs').collectExecutableExamples(root, { ...model, examples: [{ ...original, code }] }, config);
   assert.deepEqual(result.diagnostics, []); assert.equal(result.examples.length, 1);
 });

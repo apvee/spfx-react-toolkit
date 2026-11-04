@@ -1,9 +1,9 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
 const test = require('node:test');
-const { buildApiGraph, resolvePublicReference } = require('../scripts/documentation-model.cjs');
-const { buildDocumentationModel, validateDocumentation, bindingContractKey } = require('../scripts/documentation-contract.cjs');
-const { checkDocumentationExamples } = require('../scripts/documentation-examples.cjs');
+const { buildApiGraph, resolvePublicReference } = require('../scripts/docs/documentation-model.cjs');
+const { buildDocumentationModel, validateDocumentation, bindingContractKey } = require('../scripts/docs/documentation-contract.cjs');
+const { checkDocumentationExamples } = require('../scripts/docs/documentation-examples.cjs');
 const root = path.join(__dirname, 'fixtures/documentation/overload-contracts');
 const config = { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json' };
 let graph;

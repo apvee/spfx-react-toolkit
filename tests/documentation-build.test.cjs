@@ -18,14 +18,14 @@ function mirror(t, real = false) {
   } else fs.cpSync(fixture, root, { recursive: true });
   fs.copyFileSync(path.join(repository, 'packages/spfx-react-toolkit/tsdoc.json'), path.join(root, 'packages/spfx-react-toolkit/tsdoc.json'));
   fs.copyFileSync(path.join(repository, 'package-lock.json'), path.join(root, 'package-lock.json'));
-  fs.cpSync(path.join(repository, 'scripts'), path.join(root, 'scripts'), { recursive: true });
+  require('./fixtures/generated-tooling/helpers.cjs').copyEngineInputs(root, ['scripts/localization-resources.cjs', 'scripts/pack-library.cjs']);
   fs.symlinkSync(path.join(repository, 'node_modules'), path.join(root, 'node_modules'), 'dir');
   return root;
 }
 function run(root, args = [], mode, cwd = root, timeout) {
   const env = { ...process.env }; delete env.TOOLKIT_DOCS_MODE;
   if (mode !== undefined) env.TOOLKIT_DOCS_MODE = mode;
-  return spawnSync(process.execPath, [path.join(root, 'scripts/documentation.cjs'), ...args], { cwd, env, encoding: 'utf8', timeout });
+  return spawnSync(process.execPath, [path.join(root, 'scripts/docs/documentation.cjs'), ...args], { cwd, env, encoding: 'utf8', timeout });
 }
 function snapshot(root) {
   const result = {};
@@ -75,13 +75,13 @@ test('library build keeps compilation/localization and CI checks explicit genera
   const metadata = require('../packages/spfx-react-toolkit/package.json');
   assert.equal(metadata.scripts.build, 'node ../../scripts/localization-resources.cjs --check-inventory && tsc -p tsconfig.json && node ../../scripts/localization-resources.cjs --emit');
   const root = require('../package.json');
-  assert.equal(root.scripts['docs:generate'], 'node scripts/documentation.cjs');
-  assert.equal(root.scripts['docs:check'], 'node scripts/documentation.cjs --check');
-  assert.equal(root.scripts['generated:sync'], 'node scripts/generated.cjs');
-  assert.equal(root.scripts['generated:check'], 'node scripts/generated.cjs --check');
+  assert.equal(root.scripts['docs:generate'], 'node scripts/docs/documentation.cjs');
+  assert.equal(root.scripts['docs:check'], 'node scripts/docs/documentation.cjs --check');
+  assert.equal(root.scripts['generated:sync'], 'node scripts/docs/generated.cjs');
+  assert.equal(root.scripts['generated:check'], 'node scripts/docs/generated.cjs --check');
   const workflow = fs.readFileSync(path.join(repository, '.github/workflows/verify.yml'), 'utf8');
   assert.ok(!workflow.includes('TOOLKIT_DOCS_MODE'));
-  assert.ok(workflow.indexOf('scripts/generated.cjs --check') < workflow.indexOf('- run: npm run build'));
+  assert.ok(workflow.indexOf('scripts/docs/generated.cjs --check') < workflow.indexOf('- run: npm run build'));
   assert.match(workflow, /network-namespace-probe.cjs/);
   for (const command of ['build', 'package:solution', 'verify:package']) assert.ok(workflow.includes('- run: npm run ' + command));
 });
@@ -134,7 +134,7 @@ test('real copied library build compiles/localizes stale or missing documents; s
     const before = snapshot(root);
     const result = normalExit(label + ':build', 0, () => spawnSync('npm', ['run', 'build:library'], { cwd: root, env: { ...process.env, TOOLKIT_DOCS_MODE: 'check' }, encoding: 'utf8', timeout: realBuildTimeoutMs }));
     assert.equal(result.status, 0, result.stdout + result.stderr);
-    const checked = normalExit(label + ':check', 1, () => spawnSync(process.execPath, [path.join(root, 'scripts/generated.cjs'), '--check'], { cwd: root, encoding: 'utf8', timeout: generationTimeoutMs }));
+    const checked = normalExit(label + ':check', 1, () => spawnSync(process.execPath, [path.join(root, 'scripts/docs/generated.cjs'), '--check'], { cwd: root, encoding: 'utf8', timeout: generationTimeoutMs }));
     assert.match(checked.stderr, /stale generated/i, checked.stderr);
     for (const route of expectedRoutes) assert.ok(checked.stderr.includes(route), label + ': missing stale route ' + route);
     assert.match(result.stdout, /Emitted|localization|resources/i);

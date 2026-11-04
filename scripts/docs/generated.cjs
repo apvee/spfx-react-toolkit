@@ -29,9 +29,9 @@ function generateAllArtifacts(root, config = defaultConfig) {
  * @returns {{documentation: import('./generated-artifacts.cjs').ArtifactResult, examples: import('./generated-artifacts.cjs').ArtifactResult}} Results for each family.
  */
 function runCli(args = []) {
-  assert.ok(args.length === 0 || (args.length === 1 && args[0] === '--check'), 'Usage: node scripts/generated.cjs [--check]');
+  assert.ok(args.length === 0 || (args.length === 1 && args[0] === '--check'), 'Usage: node scripts/docs/generated.cjs [--check]');
   const mode = args.length ? 'check' : 'write';
-  const root = path.resolve(__dirname, '..');
+  const root = path.resolve(__dirname, '../..');
   const artifacts = generateAllArtifacts(root);
   const documentation = applyGeneratedArtifacts(root, artifacts.documentation, mode, documentationPolicy());
   const examples = applyGeneratedArtifacts(root, artifacts.examples, mode, executableExamplesPolicy());

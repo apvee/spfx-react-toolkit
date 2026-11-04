@@ -2,8 +2,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const { buildApiGraph } = require('../scripts/documentation-model.cjs');
-const { buildDocumentationModel } = require('../scripts/documentation-contract.cjs');
+const { buildApiGraph } = require('../scripts/docs/documentation-model.cjs');
+const { buildDocumentationModel } = require('../scripts/docs/documentation-contract.cjs');
 
 const fixture = path.join(__dirname, 'fixtures/executable-examples');
 const config = { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json' };
@@ -14,9 +14,9 @@ test.before(() => {
   base = buildDocumentationModel(graph, config);
 });
 function collect(model = base) {
-  assert.ok(fs.existsSync(path.join(__dirname, '../scripts/executable-examples-model.cjs')),
+  assert.ok(fs.existsSync(path.join(__dirname, '../scripts/docs/executable-examples-model.cjs')),
     'executable example projection must exist');
-  return require('../scripts/executable-examples-model.cjs').collectExecutableExamples(fixture, model, config);
+  return require('../scripts/docs/executable-examples-model.cjs').collectExecutableExamples(fixture, model, config);
 }
 function replaceDoc(rawDoc, name = 'Widget') {
   const copy = structuredClone(graph);

@@ -22,7 +22,7 @@ jobs:
           test -x "$DOCS_NODE_BIN"
           sudo -n unshare --net -- sh -eu -c '
             "$1" tests/fixtures/documentation/reproducibility/network-namespace-probe.cjs
-            exec "$1" scripts/generated.cjs --check
+            exec "$1" scripts/docs/generated.cjs --check
           ' docs-offline "$DOCS_NODE_BIN"
       - run: npm run build
       - name: Verify behavior, contracts and native demo reachability

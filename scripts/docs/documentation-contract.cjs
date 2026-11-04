@@ -1,7 +1,7 @@
 const path = require('node:path');
 const { TSDocConfiguration, TSDocParser, TSDocTagDefinition, TSDocTagSyntaxKind } = require('@microsoft/tsdoc');
 const MarkdownIt = require('markdown-it');
-const profile = require('../packages/spfx-react-toolkit/tsdoc.json');
+const profile = require('../../packages/spfx-react-toolkit/tsdoc.json');
 const { resolvePublicReference } = require('./documentation-model.cjs');
 const { markdownHeadingSlug } = require('./documentation-markdown.cjs');
 

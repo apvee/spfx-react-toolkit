@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const test = require('node:test');
 const expected = require('./fixtures/documentation/semantic/expected.json');
-const { buildApiGraph, resolvePublicReference } = require('../scripts/documentation-model.cjs');
+const { buildApiGraph, resolvePublicReference } = require('../scripts/docs/documentation-model.cjs');
 const fixture = path.join(__dirname, 'fixtures/documentation/semantic');
 let graph;
 test.before(() => { graph = buildApiGraph(fixture, { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json' }); });
@@ -108,7 +108,7 @@ test('graph is serializable, deterministic and uses semantic keys and relative l
 
 test('real pilot preserves Stage branches, compound mounts, PreviewCard inheritance, styles, aliases and Form suites', () => {
   const root = path.resolve(__dirname, '..');
-  const actual = buildApiGraph(root, require('../scripts/documentation.config.cjs'));
+  const actual = buildApiGraph(root, require('../scripts/docs/documentation.config.cjs'));
   const find = reference => resolvePublicReference(actual, reference);
   assert.ok(find('Stage.Header').signatures.length);
   const variants = find('StageProps').variants;

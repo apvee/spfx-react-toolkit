@@ -4,16 +4,16 @@ const path = require('node:path');
 const os = require('node:os');
 const test = require('node:test');
 const MarkdownIt = require('markdown-it');
-const { buildApiGraph, resolvePublicReference } = require('../scripts/documentation-model.cjs');
-const { buildDocumentationModel, bindingContractKey, resolveDocumentationReference } = require('../scripts/documentation-contract.cjs');
-const { markdownAnchors } = require('../scripts/documentation.cjs');
+const { buildApiGraph, resolvePublicReference } = require('../scripts/docs/documentation-model.cjs');
+const { buildDocumentationModel, bindingContractKey, resolveDocumentationReference } = require('../scripts/docs/documentation-contract.cjs');
+const { markdownAnchors } = require('../scripts/docs/documentation.cjs');
 const fixture = path.join(__dirname, 'fixtures/documentation/render');
 const config = { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json', repositoryUrl: 'https://github.com/fixture/render', repositoryRef: 'stable' };
 let model;
 test.before(() => { model = buildDocumentationModel(buildApiGraph(fixture, config), config); });
 function api() {
-  assert.ok(fs.existsSync(path.join(__dirname, '../scripts/documentation-render.cjs')), 'pure renderer must exist');
-  return require('../scripts/documentation-render.cjs');
+  assert.ok(fs.existsSync(path.join(__dirname, '../scripts/docs/documentation-render.cjs')), 'pure renderer must exist');
+  return require('../scripts/docs/documentation-render.cjs');
 }
 test('source-owned inherited details and examples link to the retained owner without erasing effective rows', () => {
   const artifacts = api().renderApiPages(model, config);
@@ -27,7 +27,7 @@ test('source-owned inherited details and examples link to the retained owner wit
   assert.ok(page.includes('## examples.ExampleChild\n'));
   assert.ok(api().renderCatalog(model, config).includes('[`examples.ExampleChild`]'));
   for (const text of ['ExampleChild.value` | `string', 'Optional, readonly', 'ExampleMutable.value` | `number', 'Required', 'exampleFactory return.value', 'exampleFactory return.forbidden', 'Forbidden', "mode: 'disabled'", 'Local explanation.', "const localValue = 'local';", 'The source owner keeps this explanation.']) assert.ok(page.includes(text), text);
-  const { collectPublicTargets, validatePublicLinks } = require('../scripts/documentation-guides.cjs');
+  const { collectPublicTargets, validatePublicLinks } = require('../scripts/docs/documentation-guides.cjs');
   assert.deepEqual(validatePublicLinks(artifacts, collectPublicTargets(fixture, artifacts, config), config), []);
 });
 test('ownership sharing fails closed for different contracts, origins, missing owners and cyclic ownership', () => {
@@ -169,7 +169,7 @@ test('R3a local overrides and borrowed member prose keep distinct public fragmen
   assert.ok(overrideRow.includes('Local label. See [default details](#customized).'));
   assert.ok(overrideRow.includes('Inherited from [Original.label](original.md#original).'));
   assert.ok(customized.includes('Requires the local label context; see [requirements](#customized).'));
-  const { collectPublicTargets, validatePublicLinks } = require('../scripts/documentation-guides.cjs');
+  const { collectPublicTargets, validatePublicLinks } = require('../scripts/docs/documentation-guides.cjs');
   assert.deepEqual(validatePublicLinks(artifacts, collectPublicTargets(root, artifacts, config), config), []);
 });
 test('branch-specific member requirements remain with the branch rather than being replaced by another branch contract', () => {
@@ -262,7 +262,7 @@ test('README retains npm blob URLs, local LICENSE and fenced bytes with explicit
   assert.ok(!text.includes('\r') && text.endsWith('\n') && !text.endsWith('\n\n'));
 });
 test('real source pilot keeps Stage state/Popover constraints, Promise observations, aliases and generic factory suites truthful', () => {
-  const actualConfig = require('../scripts/documentation.config.cjs');
+  const actualConfig = require('../scripts/docs/documentation.config.cjs');
   const root = path.resolve(__dirname, '..');
   const actual = buildDocumentationModel(buildApiGraph(root, actualConfig), actualConfig);
   const artifacts = api().renderApiPages(actual, actualConfig);

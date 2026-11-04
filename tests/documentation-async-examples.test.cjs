@@ -4,9 +4,9 @@ const path = require('node:path');
 const ts = require('typescript');
 const { loadHook } = require('./async-test-harness.cjs');
 const { createHarness } = require('./services-test-harness.cjs');
-const { buildApiGraph } = require('../scripts/documentation-model.cjs');
-const { buildDocumentationModel, getDocumentationExample } = require('../scripts/documentation-contract.cjs');
-const config = require('../scripts/documentation.config.cjs');
+const { buildApiGraph } = require('../scripts/docs/documentation-model.cjs');
+const { buildDocumentationModel, getDocumentationExample } = require('../scripts/docs/documentation-contract.cjs');
+const config = require('../scripts/docs/documentation.config.cjs');
 let model;
 test.before(() => { model = buildDocumentationModel(buildApiGraph(path.resolve(__dirname, '..'), config), config); });
 

@@ -135,11 +135,11 @@ npm run generated:check
 # Run the build/tests appropriate to the change.
 ```
 
-`generated:sync` invokes `node scripts/generated.cjs`; `generated:check` adds exactly `--check`. The unified command builds one canonical context, validates the complete source-example set once, renders docs and executable modules/catalog in memory, and preflights both destination policies before any writes. It accepts no other flags and ignores `TOOLKIT_DOCS_MODE` and `TOOLKIT_EXAMPLES_MODE`. Both families are checked for missing, changed and owned orphan outputs without changing bytes, mtimes or directories. The script locates the repository from its own file, independently of the caller's working directory.
+`generated:sync` invokes `node scripts/docs/generated.cjs`; `generated:check` adds exactly `--check`. The unified command builds one canonical context, validates the complete source-example set once, renders docs and executable modules/catalog in memory, and preflights both destination policies before any writes. It accepts no other flags and ignores `TOOLKIT_DOCS_MODE` and `TOOLKIT_EXAMPLES_MODE`. Both families are checked for missing, changed and owned orphan outputs without changing bytes, mtimes or directories. The script locates the repository from its own file, independently of the caller's working directory.
 
 The policies stay separate: documentation can replace an expected historical unmarked page, but executable output never replaces a manual file at an expected destination. Invalid canonical contracts, executable contracts, links or either policy preflight prevent changes to both families. Filesystem failures during application may leave earlier replacements applied; cross-family rollback is not promised. Source snippets retain authored blank lines after their marker; document formatting retains its one-final-newline rule.
 
-The targeted commands remain available: `docs:generate`/`docs:check` call `scripts/documentation.cjs`, and `examples:generate`/`examples:check` call `scripts/executable-examples.cjs`. Only these targeted CLIs honor their respective `TOOLKIT_DOCS_MODE`/`TOOLKIT_EXAMPLES_MODE` values (`write` by default or `check`); unknown modes fail, and `--check` selects checking after validating the mode. The ordinary workflow uses the unified command instead of chaining these CLIs and repeating analysis.
+The targeted commands remain available: `docs:generate`/`docs:check` call `scripts/docs/documentation.cjs`, and `examples:generate`/`examples:check` call `scripts/docs/executable-examples.cjs`. Only these targeted CLIs honor their respective `TOOLKIT_DOCS_MODE`/`TOOLKIT_EXAMPLES_MODE` values (`write` by default or `check`); unknown modes fail, and `--check` selects checking after validating the mode. The ordinary workflow uses the unified command instead of chaining these CLIs and repeating analysis.
 
 The library build only checks localization inventory, compiles TypeScript and emits AMD resources. The app consumes the compiled library and versioned generated modules/catalog. A complete checkout builds without generation. Root/workspace build, serve, bundle, packaging and pack commands do not generate or check artifact freshness, including their npm lifecycle hooks. A missing or invalid generated module produces the normal app compiler error without hidden reconstruction. CI performs the explicit read-only generated check before build, without a global generation-mode override. Successful compilation and generated freshness are separate proofs. After library changes, keep sync → rebuild library → restart an active app serve; no generation at startup or new JSDoc watcher is installed.
 
@@ -159,7 +159,7 @@ Generation children preload the versioned offline guard, which rejects fetch, No
 ```bash
 sudo -n unshare --net -- sh -eu -c '
   "$1" tests/fixtures/documentation/reproducibility/network-namespace-probe.cjs
-  exec "$1" scripts/generated.cjs --check
+  exec "$1" scripts/docs/generated.cjs --check
 ' docs-offline "$DOCS_NODE_BIN"
 ```
 

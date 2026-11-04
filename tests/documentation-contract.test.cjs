@@ -2,14 +2,14 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const { buildApiGraph, resolvePublicReference } = require('../scripts/documentation-model.cjs');
+const { buildApiGraph, resolvePublicReference } = require('../scripts/docs/documentation-model.cjs');
 const fixture = path.join(__dirname, 'fixtures/documentation/contracts');
 const config = { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json' };
 let graph;
 test.before(() => { graph = buildApiGraph(fixture, config); });
 function api() {
-  assert.ok(fs.existsSync(path.join(__dirname, '../scripts/documentation-contract.cjs')), 'normalized contract module must exist');
-  return require('../scripts/documentation-contract.cjs');
+  assert.ok(fs.existsSync(path.join(__dirname, '../scripts/docs/documentation-contract.cjs')), 'normalized contract module must exist');
+  return require('../scripts/docs/documentation-contract.cjs');
 }
 function build(input = graph) { return api().buildDocumentationModel(input, config); }
 function get(model, reference) { return model.contracts[resolvePublicReference(model.graph, reference).key]; }
@@ -327,7 +327,7 @@ test('retains every public alias anchor separately from the canonical entity anc
 });
 
 test('model and checker agree on natural camel-case, dotted and formatted heading anchors', () => {
-  const { markdownAnchors } = require('../scripts/documentation.cjs');
+  const { markdownAnchors } = require('../scripts/docs/documentation.cjs');
   const model = build();
   for (const [reference, expected] of [['PagingOptions', 'pagingoptions'], ['widget.Part', 'widgetpart']]) {
     const target = api().resolveDocumentationReference(model, reference);

@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { collectPublicSurface, assertDocumentedSurface } = require('../scripts/public-surface.helpers.cjs');
+const { collectPublicSurface, assertDocumentedSurface } = require('../scripts/docs/public-surface.helpers.cjs');
 
 test('DataGrid source JSDoc and public guide cover all exposed members and row/state contracts', () => {
   const surface = collectPublicSurface(path.resolve('packages/spfx-react-toolkit/src/controls/data-grid/index.ts'), { includeTypeMembers: true });

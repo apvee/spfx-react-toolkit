@@ -74,7 +74,7 @@ function createDocumentationInputs(root, config) {
   const packageRoot = path.resolve(root, config.packageRoot);
   const sourceRoot = path.resolve(root, config.sourceRoot);
   const compiler = fs.realpathSync(path.dirname(require.resolve('typescript/package.json')));
-  const engineRoot = fs.realpathSync(path.resolve(__dirname, '..'));
+  const engineRoot = fs.realpathSync(path.resolve(__dirname, '../..'));
   const installations = [...new Set([...(fs.existsSync(path.join(root, 'package-lock.json')) ? [root] : []), engineRoot])];
   const admissions = installations.map(createDependencyAdmission);
   // Independent tiny fixtures may add their explicit lock-defined peers. A cold

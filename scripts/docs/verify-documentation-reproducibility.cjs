@@ -63,7 +63,34 @@ function copyInputs(root, source, mirror, config, reverse) {
   for (const route of ['README.md', 'AGENTS.md', 'LICENSE', 'package.json', 'package-lock.json']) add(source, route);
   // Fixture inputs intentionally have no workspace lock or executable engine.
   for (const route of ['package.json', 'package-lock.json']) if (!inputs.has(route)) add(root, route);
-  for (const entry of fs.readdirSync(path.join(root, 'scripts'))) if (/^documentation(?:[.-].*)?\.cjs$/.test(entry) || /^executable-examples(?:[.-].*)?\.cjs$/.test(entry) || entry === 'generated.cjs' || entry === 'generated-artifacts.cjs' || entry === 'public-surface.helpers.cjs' || entry === 'verify-documentation-reproducibility.cjs') add(root, 'scripts/' + entry);
+  // This finite executable closure belongs to the docs engine. Editorial links
+  // below may admit individual tooling files as data, never entire tool trees.
+  const engineFiles = [
+    'documentation-artifacts.cjs',
+    'documentation-context.cjs',
+    'documentation-contract.cjs',
+    'documentation-examples.cjs',
+    'documentation-guides.cjs',
+    'documentation-inputs.cjs',
+    'documentation-markdown.cjs',
+    'documentation-model.cjs',
+    'documentation-render.cjs',
+    'documentation.cjs',
+    'documentation.config.cjs',
+    'executable-examples-model.cjs',
+    'executable-examples-render.cjs',
+    'executable-examples.cjs',
+    'generated-artifacts.cjs',
+    'generated.cjs',
+    'public-surface.helpers.cjs',
+    'verify-documentation-reproducibility.cjs',
+    'verify-public-docs.cjs',
+  ];
+  for (const entry of engineFiles) {
+    const route = 'scripts/docs/' + entry;
+    if (!fs.existsSync(path.join(root, route))) throw new Error(`Missing cold documentation engine input: ${route}.`);
+    add(root, route);
+  }
   add(root, probes);
   add(source, config.sourceRoot);
   for (const name of ['package.json', 'tsconfig.json', 'tsdoc.json', 'THIRD-PARTY-NOTICES.md', 'localization/resources.json']) add(source, path.posix.join(config.packageRoot, name));
@@ -107,7 +134,7 @@ function childProcess(mirror, neutral, config, environment, extra = []) {
   const directory = path.join(mirror, probes);
   const args = ['--require', path.join(directory, 'offline-guard.cjs'), '--require', path.join(directory, 'read-audit.cjs')];
   if (environment.reverse) args.push('--require', path.join(directory, 'discovery-order.cjs'));
-  args.push(path.join(mirror, 'scripts/verify-documentation-reproducibility.cjs'), '--child', JSON.stringify(config), ...extra);
+  args.push(path.join(mirror, 'scripts/docs/verify-documentation-reproducibility.cjs'), '--child', JSON.stringify(config), ...extra);
   const child = spawnSync(process.execPath, args, { cwd: environment.reverse ? neutral : mirror, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024,
     env: { ...process.env, NODE_PATH: '', NODE_OPTIONS: '', TOOLKIT_DOCS_MODE: 'write', LANG: environment.locale, LC_ALL: environment.locale, TZ: environment.tz } });
   assert.equal(child.status, 0, `Copied documentation child failed (${environment.locale}/${environment.tz}):\n${child.stderr}\n${child.stdout}`);
@@ -252,7 +279,7 @@ function verifyReproducibility(root, config = defaultConfig) {
   } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
 }
 function runChild(config, mirrorPaths) {
-  const root = path.resolve(__dirname, '..');
+  const root = path.resolve(__dirname, '../..');
   const { generateAllArtifacts } = require('./generated.cjs');
   const { applyGeneratedArtifacts } = require('./generated-artifacts.cjs');
   const families = generateAllArtifacts(root, config);
@@ -275,7 +302,7 @@ function runChild(config, mirrorPaths) {
 if (require.main === module) {
   try {
     if (process.argv[2] === '--child') runChild(JSON.parse(process.argv[3]), process.argv.slice(4));
-    else console.log(JSON.stringify(verifyReproducibility(path.resolve(__dirname, '..')), undefined, 2));
+    else console.log(JSON.stringify(verifyReproducibility(path.resolve(__dirname, '../..')), undefined, 2));
   } catch (error) { console.error(error.stack || error); process.exitCode = 1; }
 }
 module.exports = { hashArtifacts, verifyReproducibility };

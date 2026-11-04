@@ -67,15 +67,15 @@ function generateExecutableArtifacts(root, config = defaultConfig) {
  * @returns {ArtifactResult} Applied differences, or successful check freshness.
  */
 function runCli(args = process.argv.slice(2), env = process.env) {
-  assert.ok(args.length === 0 || (args.length === 1 && args[0] === '--check'), 'Usage: node scripts/executable-examples.cjs [--check]');
+  assert.ok(args.length === 0 || (args.length === 1 && args[0] === '--check'), 'Usage: node scripts/docs/executable-examples.cjs [--check]');
   const configured = env.TOOLKIT_EXAMPLES_MODE === undefined ? 'write' : env.TOOLKIT_EXAMPLES_MODE;
   assert.ok(configured === 'write' || configured === 'check', `Unknown executable examples mode TOOLKIT_EXAMPLES_MODE=${configured}; expected write or check.`);
   const mode = args.includes('--check') ? 'check' : configured;
-  const root = path.resolve(__dirname, '..');
+  const root = path.resolve(__dirname, '../..');
   const artifacts = generateExecutableArtifacts(root);
   const result = applyGeneratedArtifacts(root, artifacts, mode, executableExamplesPolicy());
   const stale = [...result.diff.missing, ...result.diff.changed, ...result.diff.orphan];
-  if (!result.ok) throw new Error(`Stale generated executable examples: ${stale.join(', ')}. Run node scripts/executable-examples.cjs.`);
+  if (!result.ok) throw new Error(`Stale generated executable examples: ${stale.join(', ')}. Run node scripts/docs/executable-examples.cjs.`);
   console.log(mode === 'check' ? `Generated executable examples are current (${Object.keys(artifacts).length} artifacts).` : `Updated ${stale.length} executable example artifact(s).`);
   return result;
 }

@@ -1,10 +1,10 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
 const test = require('node:test');
-const { buildApiGraph, resolvePublicReference } = require('../scripts/documentation-model.cjs');
-const { buildDocumentationModel, memberContractKey, resolveDocumentationReference } = require('../scripts/documentation-contract.cjs');
-const { renderApiPages } = require('../scripts/documentation-render.cjs');
-const { markdownAnchors } = require('../scripts/documentation-markdown.cjs');
+const { buildApiGraph, resolvePublicReference } = require('../scripts/docs/documentation-model.cjs');
+const { buildDocumentationModel, memberContractKey, resolveDocumentationReference } = require('../scripts/docs/documentation-contract.cjs');
+const { renderApiPages } = require('../scripts/docs/documentation-render.cjs');
+const { markdownAnchors } = require('../scripts/docs/documentation-markdown.cjs');
 const root = path.join(__dirname, 'fixtures/documentation/nested-provenance');
 const config = { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json' };
 let graph, model, page;

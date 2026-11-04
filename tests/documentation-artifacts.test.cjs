@@ -4,11 +4,11 @@ const os = require('node:os');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const test = require('node:test');
-const config = require('../scripts/documentation.config.cjs');
+const config = require('../scripts/docs/documentation.config.cjs');
 const fixture = path.join(__dirname, 'fixtures/documentation/artifact-set');
 function api() {
-  assert.ok(fs.existsSync(path.join(__dirname, '../scripts/documentation-artifacts.cjs')), 'artifact composition and safe application must exist');
-  return require('../scripts/documentation-artifacts.cjs');
+  assert.ok(fs.existsSync(path.join(__dirname, '../scripts/docs/documentation-artifacts.cjs')), 'artifact composition and safe application must exist');
+  return require('../scripts/docs/documentation-artifacts.cjs');
 }
 function temporary(t) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'documentation-artifacts-'));
@@ -262,9 +262,9 @@ test('R1 rejects forbidden transitive compiler source/config closures before out
   }
 });
 test('R1 both compiler consumers reject config/source symlink aliases and escaped export mappings', t => {
-  const { buildApiGraph } = require('../scripts/documentation-model.cjs');
-  const { buildDocumentationModel } = require('../scripts/documentation-contract.cjs');
-  const { checkDocumentationExamples } = require('../scripts/documentation-examples.cjs');
+  const { buildApiGraph } = require('../scripts/docs/documentation-model.cjs');
+  const { buildDocumentationModel } = require('../scripts/docs/documentation-contract.cjs');
+  const { checkDocumentationExamples } = require('../scripts/docs/documentation-examples.cjs');
   for (const kind of ['source', 'evidence-alias', 'config', 'entry']) {
     const root = temporary(t);
     const clean = buildDocumentationModel(buildApiGraph(root, config), config);
@@ -418,9 +418,9 @@ test('shared API page and llms use the owning module introduction with exact lin
   const root = temporary(t);
   fs.cpSync(path.join(__dirname, 'fixtures/documentation/page-introduction'), root, { recursive: true });
   fs.appendFileSync(path.join(root, config.sourceRoot, 'index.ts'), "\nexport { zebra } from './nested/z-owner';\n");
-  const { buildApiGraph } = require('../scripts/documentation-model.cjs');
-  const { buildDocumentationModel, getPageIntroductions } = require('../scripts/documentation-contract.cjs');
-  const { renderApiPages } = require('../scripts/documentation-render.cjs');
+  const { buildApiGraph } = require('../scripts/docs/documentation-model.cjs');
+  const { buildDocumentationModel, getPageIntroductions } = require('../scripts/docs/documentation-contract.cjs');
+  const { renderApiPages } = require('../scripts/docs/documentation-render.cjs');
   const graph = buildApiGraph(root, config);
   const model = buildDocumentationModel(graph, config);
   const reversed = buildDocumentationModel({ ...graph, entities: [...graph.entities].reverse(), bindings: [...graph.bindings].reverse() }, config);
@@ -457,9 +457,9 @@ test('development source metadata and mutations replace poisoned output without 
   assert.deepEqual(snapshot(root), before);
 });
 test('both compiler consumers reject development source and config inputs including aliases', t => {
-  const { buildApiGraph } = require('../scripts/documentation-model.cjs');
-  const { buildDocumentationModel } = require('../scripts/documentation-contract.cjs');
-  const { checkDocumentationExamples } = require('../scripts/documentation-examples.cjs');
+  const { buildApiGraph } = require('../scripts/docs/documentation-model.cjs');
+  const { buildDocumentationModel } = require('../scripts/docs/documentation-contract.cjs');
+  const { checkDocumentationExamples } = require('../scripts/docs/documentation-examples.cjs');
   for (const kind of ['source', 'source-alias', 'config', 'config-alias']) {
     const root = temporary(t);
     const clean = buildDocumentationModel(buildApiGraph(root, config), config);
@@ -496,8 +496,8 @@ test('both compiler consumers reject development source and config inputs includ
 
 test('shared preflight keeps legacy expected outputs replaceable and protects both artifact families without mutation', t => {
   const root = temporary(t);
-  const { preflightGeneratedArtifacts, applyGeneratedArtifacts } = require('../scripts/generated-artifacts.cjs');
-  const { executableExamplesPolicy } = require('../scripts/executable-examples.cjs');
+  const { preflightGeneratedArtifacts, applyGeneratedArtifacts } = require('../scripts/docs/generated-artifacts.cjs');
+  const { executableExamplesPolicy } = require('../scripts/docs/executable-examples.cjs');
   const artifacts = api().generateArtifacts(root, config);
   fs.writeFileSync(path.join(root, 'llms.txt'), 'legacy unmarked output\n');
   const route = 'apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/generated/jsdoc-examples/catalogue.ts';
@@ -517,15 +517,15 @@ test('rendering a shared validated context preserves bytes without rebuilding or
   const root = temporary(t);
   const baseline = api().generateArtifacts(root, config);
   const dependencies = [
-    ['../scripts/documentation-model.cjs', 'buildApiGraph'],
-    ['../scripts/documentation-contract.cjs', 'buildDocumentationModel'],
-    ['../scripts/documentation-contract.cjs', 'validateDocumentation'],
-    ['../scripts/documentation-examples.cjs', 'checkDocumentationExamples'],
+    ['../scripts/docs/documentation-model.cjs', 'buildApiGraph'],
+    ['../scripts/docs/documentation-contract.cjs', 'buildDocumentationModel'],
+    ['../scripts/docs/documentation-contract.cjs', 'validateDocumentation'],
+    ['../scripts/docs/documentation-examples.cjs', 'checkDocumentationExamples'],
   ];
   const originals = dependencies.map(([name, key]) => require(name)[key]);
   const calls = dependencies.map(() => 0);
   const clear = () => {
-    for (const name of ['../scripts/documentation-context.cjs', '../scripts/documentation-artifacts.cjs']) {
+    for (const name of ['../scripts/docs/documentation-context.cjs', '../scripts/docs/documentation-artifacts.cjs']) {
       delete require.cache[require.resolve(name)];
     }
   };
@@ -535,13 +535,13 @@ test('rendering a shared validated context preserves bytes without rebuilding or
   };
   try {
     clear();
-    const { buildValidatedDocumentationContext } = require('../scripts/documentation-context.cjs');
+    const { buildValidatedDocumentationContext } = require('../scripts/docs/documentation-context.cjs');
     const { renderDocumentationArtifacts } = api();
     const context = buildValidatedDocumentationContext(root, config);
     assert.ok(context.graph && context.model);
     assert.deepEqual(renderDocumentationArtifacts(root, context, config), baseline);
     assert.deepEqual(renderDocumentationArtifacts(root, context, config), baseline);
-    const executable = require('../scripts/executable-examples.cjs').renderExecutableArtifacts(root, context, config);
+    const executable = require('../scripts/docs/executable-examples.cjs').renderExecutableArtifacts(root, context, config);
     assert.equal(Object.keys(executable).length, 1);
     assert.deepEqual(calls, [1, 1, 1, 1]);
   } finally {
@@ -559,4 +559,21 @@ test('shared writer preserves regular-file and directory requirements of documen
     assert.throws(() => api().compareArtifacts(root, {}, config), /directory|regular file/i);
     assert.deepEqual(snapshot(root), before);
   }
+});
+
+
+test('historical API index header is owned only after H1 on its exact route', t => {
+  const root = temporary(t);
+  const artifacts = api().generateArtifacts(root, config);
+  api().applyArtifacts(root, artifacts, 'write');
+  const historical = '<!-- Generated by scripts/documentation.cjs from public TypeScript exports. -->';
+  fs.writeFileSync(path.join(root, 'docs/api/INDEX.md'), '# Historical catalog\n\n' + historical + '\n');
+  fs.writeFileSync(path.join(root, 'docs/api/manual-historical.md'), '# Manual\n\n' + historical + '\n');
+  const withoutCatalog = { ...artifacts };
+  delete withoutCatalog['docs/api/INDEX.md'];
+  assert.deepEqual(api().compareArtifacts(root, withoutCatalog).orphan, ['docs/api/INDEX.md']);
+  api().applyArtifacts(root, withoutCatalog, 'write');
+  assert.ok(fs.existsSync(path.join(root, 'docs/api/manual-historical.md')));
+  fs.writeFileSync(path.join(root, 'docs/api/INDEX.md'), historical + '\n# Header follows\n');
+  assert.deepEqual(api().compareArtifacts(root, withoutCatalog).orphan, []);
 });

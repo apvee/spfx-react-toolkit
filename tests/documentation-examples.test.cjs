@@ -3,16 +3,16 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
-const { buildApiGraph } = require('../scripts/documentation-model.cjs');
-const { buildDocumentationModel, getDocumentationExample } = require('../scripts/documentation-contract.cjs');
+const { buildApiGraph } = require('../scripts/docs/documentation-model.cjs');
+const { buildDocumentationModel, getDocumentationExample } = require('../scripts/docs/documentation-contract.cjs');
 
 const fixture = path.join(__dirname, 'fixtures/documentation/examples');
 const config = { packageRoot: '.', sourceRoot: 'src', tsconfig: 'tsconfig.json' };
 let model;
 test.before(() => { model = buildDocumentationModel(buildApiGraph(fixture, config), config); });
 function check(root, input) {
-  assert.ok(fs.existsSync(path.join(__dirname, '../scripts/documentation-examples.cjs')), 'source example checker must exist');
-  return require('../scripts/documentation-examples.cjs').checkDocumentationExamples(root, input, config);
+  assert.ok(fs.existsSync(path.join(__dirname, '../scripts/docs/documentation-examples.cjs')), 'source example checker must exist');
+  return require('../scripts/docs/documentation-examples.cjs').checkDocumentationExamples(root, input, config);
 }
 function negative(name, input = model) {
   const graph = structuredClone(input.graph);
@@ -216,7 +216,7 @@ test('finite historical exports resolve canonical public symbols from source wit
     executable.examples = [{ ownerKey: graph.entities.find(entity => entity.qualifiedName === 'Pagination').key,
       title: 'Historical import contract', language: 'tsx', source: { file: 'historical.jsdoc', line: 1 },
       code: "import * as React from 'react';\nimport * as historicalWidth from '@apvee/spfx-react-toolkit/lib/width';\nexport function Demo(): React.ReactElement { return <div>{historicalWidth.px(240)}</div>; }\nexport const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Historical width is visible.' };" }];
-    const collected = require('../scripts/executable-examples-model.cjs').collectExecutableExamples(mirror, executable, config);
+    const collected = require('../scripts/docs/executable-examples-model.cjs').collectExecutableExamples(mirror, executable, config);
     assert.deepEqual(collected.diagnostics, []);
     assert.equal(collected.examples.length, 1, 'the structural executable checker shares the exact source resolution contract');
     const invalid = custom([
