@@ -10,7 +10,7 @@ test('Stage-only builders reject conflicting selections before producing browser
     ['build-styles-panel-browser.cjs', 'STYLES_PANEL_STAGE_ONLY', 'STYLES_PANEL_DATA_GRID_ONLY'],
     ['build-styles-panel-browser.cjs', 'STYLES_PANEL_STAGE_ONLY', 'STYLES_PANEL_FORM_ONLY'],
   ]) {
-    const result = spawnSync(process.execPath, [path.resolve(__dirname, '../scripts', script)], {
+    const result = spawnSync(process.execPath, [path.resolve(__dirname, 'browser/build', script)], {
       env: { ...process.env, [stageFlag]: '1', [conflictFlag]: '1' }, encoding: 'utf8', timeout: 30000,
     });
     assert.ifError(result.error);

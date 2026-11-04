@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
-const expected = require('../tests/fixtures/sx-browser/expected.json');
+const expected = require('../../fixtures/sx-browser/expected.json');
 const output = path.resolve(process.env.SX_BROWSER_EVIDENCE || (process.env.SX_BROWSER_STAGE_ONLY === '1' ? '.docs/maintenance/evidence/stage' : process.env.SX_BROWSER_SHELL_ONLY === '1' ? '.docs/maintenance/evidence/web-part-shell' : '.docs/maintenance/evidence/use-sx'));
 const label = process.env.SX_BROWSER_RUN_LABEL || (process.env.SX_BROWSER_STAGE_ONLY === '1' ? 'stage-source' : process.env.SX_BROWSER_SHELL_ONLY === '1' ? 'shell-source' : 'task-3-browser');
 const url = process.env.SX_BROWSER_URL || 'http://127.0.0.1:4317';
@@ -941,16 +941,16 @@ async function runGroups() {
   const version = browser.version();
   try {
     if (process.env.SX_BROWSER_STAGE_ONLY === '1') {
-      await require('./stage-browser.helpers.cjs').checkStageBrowser(page, { url, output, label, boundary: 'source', check, consoleMessages });
+      await require('../helpers/stage-browser.helpers.cjs').checkStageBrowser(page, { url, output, label, boundary: 'source', check, consoleMessages });
     } else if (process.env.SX_BROWSER_SHELL_ONLY === '1') {
-      await require('./web-part-shell-browser.helpers.cjs').checkWebPartShellBrowser(page, { url, output, label, boundary: 'source', check, consoleMessages });
-      await require('./editable-text-browser.helpers.cjs').checkEditableTextBrowser(page, { url, output, label, check });
+      await require('../helpers/web-part-shell-browser.helpers.cjs').checkWebPartShellBrowser(page, { url, output, label, boundary: 'source', check, consoleMessages });
+      await require('../helpers/editable-text-browser.helpers.cjs').checkEditableTextBrowser(page, { url, output, label, check });
     } else if (process.env.DATA_GRID_CHART_PROBE === '1') {
-      await require('./data-grid-browser.helpers.cjs').exerciseDataGridChartProbe({ page, url, output, label, boundary: 'source', check, consoleMessages, pageErrors: chartProbePageErrors });
+      await require('../helpers/data-grid-browser.helpers.cjs').exerciseDataGridChartProbe({ page, url, output, label, boundary: 'source', check, consoleMessages, pageErrors: chartProbePageErrors });
     } else if (process.env.SX_BROWSER_DATA_GRID_ONLY === '1') {
-      await require('./data-grid-browser.helpers.cjs').exerciseDataGrid({ page, url, output, label, boundary: 'source', check, consoleMessages });
+      await require('../helpers/data-grid-browser.helpers.cjs').exerciseDataGrid({ page, url, output, label, boundary: 'source', check, consoleMessages });
     } else if (process.env.SX_BROWSER_FORM_ONLY === '1') {
-      await require('./form-browser.helpers.cjs').exerciseForm({ page, url, output, label, boundary: 'source', check, consoleMessages });
+      await require('../helpers/form-browser.helpers.cjs').exerciseForm({ page, url, output, label, boundary: 'source', check, consoleMessages });
     } else if (process.env.SX_BROWSER_GROUPS_ONLY === '1') {
       await runGroups();
     } else {

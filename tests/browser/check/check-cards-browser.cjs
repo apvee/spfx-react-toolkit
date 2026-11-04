@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../../..');
 const evidence = path.resolve(process.env.CARDS_BROWSER_EVIDENCE || path.join(root, '.docs/maintenance/evidence/cards'));
 async function verify(boundary) {
   const directory = path.join(root, 'temp', boundary === 'source' ? 'sx-browser' : 'styles-panel-browser');

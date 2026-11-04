@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict'), fs = require('node:fs'), http = require('node:http'), path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
-const root = path.resolve(__dirname, '..'), directory = path.join(root, 'temp/pickers-browser'), evidence = path.resolve(process.env.PICKERS_BROWSER_EVIDENCE || path.join(root, '.docs/maintenance/evidence/pickers/dropdown'));
+const root = path.resolve(__dirname, '../../..'), directory = path.join(root, 'temp/pickers-browser'), evidence = path.resolve(process.env.PICKERS_BROWSER_EVIDENCE || path.join(root, '.docs/maintenance/evidence/pickers/dropdown'));
 async function main() {
   fs.mkdirSync(evidence, { recursive: true });
   const server = http.createServer((request, response) => {

@@ -1,4 +1,4 @@
-const { dataGridProduct } = require('../tests/fixtures/demo-control-isolation/task3-product.browser.cjs');
+const { dataGridProduct } = require('../../fixtures/demo-control-isolation/task3-product.browser.cjs');
 const path = require('node:path');
 const fs = require('node:fs');
 const os = require('node:os');

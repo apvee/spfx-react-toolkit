@@ -183,7 +183,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
 
 test('browser cardinality helpers reject duplicate Groups roots and roots added by transitions', async () => {
   const { JSDOM } = require('jsdom');
-  const source = fs.readFileSync(path.resolve(__dirname, '../scripts/check-demo-presentation-browser.cjs'), 'utf8');
+  const source = fs.readFileSync(path.resolve(__dirname, '../tests/browser/check/check-demo-presentation-browser.cjs'), 'utf8');
   const helperSource = source.slice(source.indexOf('async function singleExample('), source.indexOf('async function interact('));
   const { singleExample, singleExampleTransitions } = new Function('check', 'settle', 'activePanel', `${helperSource}\nreturn { singleExample, singleExampleTransitions };`)(
     (name, actual, expected) => assert.deepEqual(actual, expected, name), async () => {}, page => page.getByRole('tabpanel'));

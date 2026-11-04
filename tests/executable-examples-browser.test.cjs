@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const { pilotTitles, filterPilotGroups } = require('./fixtures/demo-presentation/jsdoc-pilots.cjs');
 const { createContextFixture } = require('./fixtures/executable-examples/context-scenarios.cjs');
-const { checkLegacyPermissionResult } = require('../scripts/jsdoc-pilots-browser.helpers.cjs');
+const { checkLegacyPermissionResult } = require('../tests/browser/helpers/jsdoc-pilots-browser.helpers.cjs');
 
 test('PnP operations acceptance retains the exact independent hook case', () => {
   assert.deepEqual(pilotTitles.useSPFxPnP, ['Compare explicit invoke and batch reads']);

@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { unexpectedReadJavaScript } = require('../scripts/web-part-shell-browser.helpers.cjs');
+const { unexpectedReadJavaScript } = require('../tests/browser/helpers/web-part-shell-browser.helpers.cjs');
 const url = 'http://127.0.0.1:4173/';
 const configuration = 'spfx-jsdoc-524ada20fca467ad721252dc50e1ffa9546c8e06f490d7728060dd959a62a61f.fixture.js';
 const switchPeer = 'vendors-node_modules_fluentui_react-switch_lib_components_Switch_Switch_js.fixture.js';

@@ -4,9 +4,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const http = require('node:http');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
-const harness = require('../tests/fixtures/formatted-text-harness.cjs');
-const { selectGeneratedShellScenario } = require('./web-part-shell-browser.helpers.cjs');
-const root = path.resolve(__dirname, '..');
+const harness = require('../../fixtures/formatted-text-harness.cjs');
+const { selectGeneratedShellScenario } = require('../helpers/web-part-shell-browser.helpers.cjs');
+const root = path.resolve(__dirname, '../../..');
 const output = path.join(root, '.docs/maintenance/title-toolbar-localization/browser');
 const checks = [];
 const diagnostics = [];
@@ -36,15 +36,15 @@ async function serve(directory) {
 }
 if (require.main === module) (async () => {
   fs.mkdirSync(output, { recursive: true });
-  const resources = Object.fromEntries(require('../tests/fixtures/sharepoint-ui-locales.json').cultures.map(culture => [culture,
-    require(`../packages/spfx-react-toolkit/src/controls/web-part-shell/localization/resources/${culture}.json`)]));
+  const resources = Object.fromEntries(require('../../fixtures/sharepoint-ui-locales.json').cultures.map(culture => [culture,
+    require(`../../../packages/spfx-react-toolkit/src/controls/web-part-shell/localization/resources/${culture}.json`)]));
   const editorResources = Object.fromEntries(Object.keys(resources).map(culture => [culture,
-    require(`../packages/spfx-react-toolkit/src/controls/editable-text/localization/resources/${culture}.json`)]));
+    require(`../../../packages/spfx-react-toolkit/src/controls/editable-text/localization/resources/${culture}.json`)]));
   const common = await harness.loadModule('packages/spfx-react-toolkit/src/controls/editable-text/localization/editable-text-strings.internal.ts');
   const stringsFor = culture => { const text = common.defineEditableTextStrings(editorResources[culture]); return { ...resources[culture], ...text, titleFormattingControls: text.formattingControls, moreTitleFormatting: text.moreFormatting }; };
   const dictionaryPatch = culture => ({ strings: resources[culture], titleEditorResource: editorResources[culture] });
   const { editableTextColorDescriptors: titleColorDescriptors } = await harness.loadModule('packages/spfx-react-toolkit/src/controls/editable-text/editable-text-format.internal.ts');
-  const cultures = require('../tests/fixtures/sharepoint-ui-locales.json').cultures;
+  const cultures = require('../../fixtures/sharepoint-ui-locales.json').cultures;
   check('50 canonical dictionary catalogs', Object.keys(resources).sort(), [...cultures].sort());
   const browser = await chromium.launch({ executablePath: process.env.SX_BROWSER_EXECUTABLE || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
   try {

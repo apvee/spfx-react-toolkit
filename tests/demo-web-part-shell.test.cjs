@@ -40,13 +40,13 @@ test('generated Shell scenarios replace the transitional panel with source-owned
 
 test('isolated source and compiled Shell routes keep real hooks and use shared browser acceptance', () => {
   for (const [builder, runner, flag] of [['build-sx-browser-fixture.cjs', 'check-sx-browser-fixture.cjs', 'SX_BROWSER_SHELL_ONLY'], ['build-styles-panel-browser.cjs', 'check-styles-panel-browser.cjs', 'STYLES_PANEL_SHELL_ONLY']]) {
-    assert.ok(read(`scripts/${builder}`).includes(flag));
-    assert.ok(read(`scripts/${runner}`).includes(flag));
-    assert.match(read(`scripts/${runner}`), /checkWebPartShellBrowser/);
+    assert.ok(read(`tests/browser/build/${builder}`).includes(flag));
+    assert.ok(read(`tests/browser/check/${runner}`).includes(flag));
+    assert.match(read(`tests/browser/check/${runner}`), /checkWebPartShellBrowser/);
   }
   assert.match(read('tests/fixtures/sx-browser/web-part-shell-toolkit-boundary.ts'), /src\/controls\/web-part-shell/);
   assert.match(read('tests/fixtures/styles-panel-browser/web-part-shell-toolkit-boundary.ts'), /lib\/controls\/web-part-shell/);
-  assert.match(read('scripts/build-styles-panel-browser.cjs'), /plugins:\s*shellOnly(?:\s*\|\|\s*stageOnly)?\s*\?\s*\[\]/);
+  assert.match(read('tests/browser/build/build-styles-panel-browser.cjs'), /plugins:\s*shellOnly(?:\s*\|\|\s*stageOnly)?\s*\?\s*\[\]/);
 });
 
 test('sample forwards effective typed native policy with explicit consumer props taking precedence', () => {

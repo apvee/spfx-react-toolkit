@@ -5,7 +5,7 @@ const http = require('node:http');
 const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 const { teamsDarkTheme } = require('@fluentui/react-components');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../../..');
 const directory = path.join(root, 'temp/pnp-confirmation-browser');
 const output = path.resolve(process.env.PNP_CONFIRMATION_EVIDENCE || '.docs/maintenance/evidence/pnp-confirmation');
 const checks = [], diagnostics = [], network = [], screenshots = [];

@@ -228,7 +228,7 @@ function buildConfig(consumerRoot, entry, directory, attribution) {
     // installed-origin checks below still reject workspace toolkit resolution.
     resolve: { extensions: ['.tsx', '.ts', '.js'], modules: ['node_modules'], alias: nativeAliases },
     externals: [({ request }, done) => /^(react|react-dom)(\/|$)/.test(request || '') || /^@microsoft\/sp-/.test(request || '') ? done(null, `commonjs ${request}`) : done()],
-    module: { rules: [{ test: /\.tsx?$/, use: path.join(root, 'scripts/sx-browser-typescript-loader.cjs') }] },
+    module: { rules: [{ test: /\.tsx?$/, use: path.join(root, 'tests/browser/helpers/sx-browser-typescript-loader.cjs') }] },
     optimization: { usedExports: true, minimize: true, concatenateModules: !attribution, moduleIds: 'deterministic', chunkIds: 'deterministic' } };
 }
 function statsOptions() {
@@ -270,7 +270,7 @@ function consumerProvenance(consumerRoot) {
   }
   if (ts.version !== versions.typescript || require('webpack/package.json').version !== versions.webpack) throw new Error('Measurement tooling differs from locked consumer toolchain');
   if (!/^v22\./.test(process.version) || Number(process.versions.node.split('.')[1]) < 14) throw new Error('Unsupported Node version');
-  return { ...readRuntimeToolchain(), versions, rootLockfileSha256: hash(fs.readFileSync(path.join(root, 'package-lock.json'))), consumerLockfileSha256: hash(fs.readFileSync(path.join(consumerRoot, 'package-lock.json'))), tarballSha256: hash(fs.readFileSync(tarball)), toolkitDir, consumerRoot, loaderSha256: hash(fs.readFileSync(path.join(root, 'scripts/sx-browser-typescript-loader.cjs'))), minifierVersion: require('terser/package.json').version, zlibVersion: process.versions.zlib, compression: { gzipLevel: 9, brotliQuality: 11 } };
+  return { ...readRuntimeToolchain(), versions, rootLockfileSha256: hash(fs.readFileSync(path.join(root, 'package-lock.json'))), consumerLockfileSha256: hash(fs.readFileSync(path.join(consumerRoot, 'package-lock.json'))), tarballSha256: hash(fs.readFileSync(tarball)), toolkitDir, consumerRoot, loaderSha256: hash(fs.readFileSync(path.join(root, 'tests/browser/helpers/sx-browser-typescript-loader.cjs'))), minifierVersion: require('terser/package.json').version, zlibVersion: process.versions.zlib, compression: { gzipLevel: 9, brotliQuality: 11 } };
 }
 async function measureTreeShaking({ consumerRoot, outputDir, contract, mode, attribution = false, fixtureIds }) {
   if (mode === 'enforce' && (attribution || fixtureIds)) throw new Error('Enforce requires the complete production contract');
@@ -311,6 +311,8 @@ async function measureTreeShaking({ consumerRoot, outputDir, contract, mode, att
       }
       const directory = path.join(outputDir, 'assets', fixture.id, variantId);
       const config = buildConfig(consumerRoot, entry, directory, attribution);
+      // Preserve the baseline's logical loader identity; only its physical location
+      // changes. buildConfig and loaderSha256 above use the actual relocated file.
       const normalizedConfig = { ...config, context: '<consumer>', entry: { main: slash(path.relative(consumerRoot, entry)) }, output: { ...config.output, path: '<output>' }, resolve: { ...config.resolve, alias: Object.fromEntries(Object.entries(config.resolve.alias).map(([id, target]) => [id, slash(path.relative(consumerRoot, target))])) }, module: { rules: [{ test: '\\.tsx?$', use: 'scripts/sx-browser-typescript-loader.cjs' }] }, externals: ['react/react-dom and @microsoft/sp-* host externals'] };
       const stats = await compile(config);
       const detail = stats.toJson(statsOptions());

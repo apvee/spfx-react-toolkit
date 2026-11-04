@@ -29,44 +29,44 @@ The audit complements behavioral/source/compiled/package tests and manual asset/
 The source fixture imports generic source modules with actual React/Griffel/Fluent and versioned expectations from [sx-browser](../../../tests/fixtures/sx-browser). It typechecks before bundling into ignored `temp/sx-browser`. Build and serve it without installing dependencies:
 
 ```bash
-node scripts/build-sx-browser-fixture.cjs
-node scripts/serve-sx-browser-fixture.cjs
+node tests/browser/build/build-sx-browser-fixture.cjs
+node tests/browser/serve/serve-sx-browser-fixture.cjs
 ```
 
-The default source URL is `http://127.0.0.1:4317`; the server accepts `SX_BROWSER_PORT`. Rebuild after source edits. An available browser connector can inspect it; the reproducible [source runner](../../../scripts/check-sx-browser-fixture.cjs) also accepts an existing Playwright module and browser:
+The default source URL is `http://127.0.0.1:4317`; the server accepts `SX_BROWSER_PORT`. Rebuild after source edits. An available browser connector can inspect it; the reproducible [source runner](../../../tests/browser/check/check-sx-browser-fixture.cjs) also accepts an existing Playwright module and browser:
 
 ```bash
 PLAYWRIGHT_MODULE_PATH=/path/to/installed/playwright \
 SX_BROWSER_EXECUTABLE=/path/to/browser \
-node scripts/check-sx-browser-fixture.cjs
+node tests/browser/check/check-sx-browser-fixture.cjs
 ```
 
-Without overrides it uses Node resolution for `playwright` and Playwright's installed browser. `SX_BROWSER_URL`, `SX_BROWSER_EVIDENCE` and `SX_BROWSER_RUN_LABEL` select server, evidence directory and file prefix. The separate [compiled-sample builder](../../../scripts/build-styles-panel-browser.cjs) resolves the built library; [its runner](../../../scripts/check-styles-panel-browser.cjs) owns a temporary server on port 4320 (`STYLES_PANEL_PORT` overrides), uses `PLAYWRIGHT_MODULE_PATH` and **`CHROME_EXECUTABLE_PATH`**, defaulting to installed macOS Google Chrome. `STYLES_PANEL_EVIDENCE` and `STYLES_PANEL_LABEL` select its output. Do not assume source and compiled executable options are interchangeable.
+Without overrides it uses Node resolution for `playwright` and Playwright's installed browser. `SX_BROWSER_URL`, `SX_BROWSER_EVIDENCE` and `SX_BROWSER_RUN_LABEL` select server, evidence directory and file prefix. The separate [compiled-sample builder](../../../tests/browser/build/build-styles-panel-browser.cjs) resolves the built library; [its runner](../../../tests/browser/check/check-styles-panel-browser.cjs) owns a temporary server on port 4320 (`STYLES_PANEL_PORT` overrides), uses `PLAYWRIGHT_MODULE_PATH` and **`CHROME_EXECUTABLE_PATH`**, defaulting to installed macOS Google Chrome. `STYLES_PANEL_EVIDENCE` and `STYLES_PANEL_LABEL` select its output. Do not assume source and compiled executable options are interchangeable.
 
 For example, isolate the actual DataGrid panel against both implementations:
 
 ```bash
 npm run build:library
 npm run build:app
-SX_BROWSER_DATA_GRID_ONLY=1 node scripts/build-sx-browser-fixture.cjs
-STYLES_PANEL_DATA_GRID_ONLY=1 node scripts/build-styles-panel-browser.cjs
-SX_BROWSER_DATA_GRID_ONLY=1 node scripts/check-sx-browser-fixture.cjs
-STYLES_PANEL_DATA_GRID_ONLY=1 node scripts/check-styles-panel-browser.cjs
+SX_BROWSER_DATA_GRID_ONLY=1 node tests/browser/build/build-sx-browser-fixture.cjs
+STYLES_PANEL_DATA_GRID_ONLY=1 node tests/browser/build/build-styles-panel-browser.cjs
+SX_BROWSER_DATA_GRID_ONLY=1 node tests/browser/check/check-sx-browser-fixture.cjs
+STYLES_PANEL_DATA_GRID_ONLY=1 node tests/browser/check/check-styles-panel-browser.cjs
 ```
 
-Keep the source fixture server running separately. The builders/runners also implement focused Form, Groups, Shell and Stage switches; inspect their actual option branches before selecting one and use the same mode for build/check. Pagination and DescriptionList have dedicated [Pagination](../../../scripts/check-pagination-browser.cjs) and [DescriptionList](../../../scripts/check-description-list-browser.cjs) checkers: build both fixtures with the matching `SX_BROWSER_PAGINATION_ONLY`/`STYLES_PANEL_PAGINATION_ONLY` or `SX_BROWSER_DESCRIPTION_LIST_ONLY`/`STYLES_PANEL_DESCRIPTION_LIST_ONLY` flags, then run the dedicated checker. Those checkers own temporary servers, accept `PLAYWRIGHT_MODULE_PATH` and `CHROME_EXECUTABLE_PATH`, and select evidence with `PAGINATION_BROWSER_EVIDENCE` or `DESCRIPTION_LIST_BROWSER_EVIDENCE`.
+Keep the source fixture server running separately. The builders/runners also implement focused Form, Groups, Shell and Stage switches; inspect their actual option branches before selecting one and use the same mode for build/check. Pagination and DescriptionList have dedicated [Pagination](../../../tests/browser/check/check-pagination-browser.cjs) and [DescriptionList](../../../tests/browser/check/check-description-list-browser.cjs) checkers: build both fixtures with the matching `SX_BROWSER_PAGINATION_ONLY`/`STYLES_PANEL_PAGINATION_ONLY` or `SX_BROWSER_DESCRIPTION_LIST_ONLY`/`STYLES_PANEL_DESCRIPTION_LIST_ONLY` flags, then run the dedicated checker. Those checkers own temporary servers, accept `PLAYWRIGHT_MODULE_PATH` and `CHROME_EXECUTABLE_PATH`, and select evidence with `PAGINATION_BROWSER_EVIDENCE` or `DESCRIPTION_LIST_BROWSER_EVIDENCE`.
 
 The optional Grid failure probe requires `DATA_GRID_CHART_PROBE=1` on both the Grid-only builder and runner. It injects a named rendering failure while delegating successful rendering to actual Charts; it does not prove valid data made Charts throw. Only its exact injected diagnostics are expected. Rebuild without that flag and restart the source server afterward. Normal acceptance must inspect console/page failures rather than suppress them. Native 200% Chrome zoom uses a disposable profile, doubling device pixel ratio and halving the CSS viewport with visual viewport scale one; a smaller viewport or pinch zoom is separate evidence.
 
 ### Integrated demo presentation checks
 
-The integrated fixture mounts the actual explorer and lazy scenarios/panels with compiled controls by default. Build with `node scripts/build-demo-presentation-browser.cjs`, then run `node scripts/check-demo-presentation-browser.cjs`. Set `DEMO_PRESENTATION_MODE=source` for both commands to test source controls; focused options such as `DEMO_PRESENTATION_TRIMS_ONLY=1` are owned by [the checker](../../../scripts/check-demo-presentation-browser.cjs). It accepts `PLAYWRIGHT_MODULE_PATH`, `CHROME_EXECUTABLE_PATH` and `DEMO_PRESENTATION_EVIDENCE`.
+The integrated fixture mounts the actual explorer and lazy scenarios/panels with compiled controls by default. Build with `node tests/browser/build/build-demo-presentation-browser.cjs`, then run `node tests/browser/check/check-demo-presentation-browser.cjs`. Set `DEMO_PRESENTATION_MODE=source` for both commands to test source controls; focused options such as `DEMO_PRESENTATION_TRIMS_ONLY=1` are owned by [the checker](../../../tests/browser/check/check-demo-presentation-browser.cjs). It accepts `PLAYWRIGHT_MODULE_PATH`, `CHROME_EXECUTABLE_PATH` and `DEMO_PRESENTATION_EVIDENCE`.
 
 To run the independently specified source-owned scenario selection, build the fixture, then select the focused checker:
 
 ```bash
-node scripts/build-demo-presentation-browser.cjs
-DEMO_PRESENTATION_JSDOC_ONLY=1 node scripts/check-demo-presentation-browser.cjs
+node tests/browser/build/build-demo-presentation-browser.cjs
+DEMO_PRESENTATION_JSDOC_ONLY=1 node tests/browser/check/check-demo-presentation-browser.cjs
 ```
 
 The filter's independent versioned expectations live in the browser fixture, never in the generator or application navigator. Missing/duplicate expected titles fail rather than silently reducing coverage. The focused runner checks independent groups, collapsed selection/content, central switch/reset, one mounted scenario, keyboard focus, mobile optgroups at 320 px, callback freshness/identity, actual controlled rows/pending completion/reset, all four advanced Pagination modes with filters/empty rows/native refs, root/domain/historical callback and descriptor interoperability with real 240→360→240 px widths and bounded keyboard-accessible scrolling, real Shell retention/remount with preserved navigation, and explicit simulated list reads/errors/stale-completion suppression. Capture screenshots and inspect JSON and process exit; adding assertions or compiling the fixture does not establish that the browser checks ran. Ordinary runner modes retain their existing paths. Record actual mode/flags and do not infer a full-suite result from this focused run.

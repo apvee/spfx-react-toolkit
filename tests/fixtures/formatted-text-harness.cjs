@@ -28,7 +28,7 @@ async function loadModule(entryPath, { parserFailure = false, reactHookForm = fa
         callback(null, `commonjs ${require.resolve(request, { paths: [root] })}`);
       } else callback();
     }],
-    module: { rules: [{ test: /\.tsx?$/, use: path.join(root, 'scripts/sx-browser-typescript-loader.cjs') }] }
+    module: { rules: [{ test: /\.tsx?$/, use: path.join(root, 'tests/browser/helpers/sx-browser-typescript-loader.cjs') }] }
   });
   const stats = await new Promise((resolve, reject) => {
     compiler.run((error, result) => compiler.close(closeError => {

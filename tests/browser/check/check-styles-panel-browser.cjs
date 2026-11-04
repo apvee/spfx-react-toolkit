@@ -5,7 +5,7 @@ const path = require('node:path');
 const http = require('node:http');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 const { teamsLightTheme, teamsDarkTheme, teamsHighContrastTheme, webLightTheme } = require('@fluentui/react-theme');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../../..');
 const fixtureRoot = path.join(root, 'temp/styles-panel-browser');
 const output = path.resolve(process.env.STYLES_PANEL_EVIDENCE || (process.env.STYLES_PANEL_STAGE_ONLY === '1' ? '.docs/maintenance/evidence/stage' : process.env.STYLES_PANEL_SHELL_ONLY === '1' ? '.docs/maintenance/evidence/web-part-shell' : '.docs/maintenance/evidence/use-sx'));
 const label = process.env.STYLES_PANEL_LABEL || (process.env.STYLES_PANEL_STAGE_ONLY === '1' ? 'stage-compiled' : process.env.STYLES_PANEL_SHELL_ONLY === '1' ? 'shell-compiled' : 'task-5-ui-browser');
@@ -92,29 +92,29 @@ async function thumbInteractions(axis) {
   page.on('console', message => { if (message.type() === 'error' || message.type() === 'warning') consoleMessages.push({ type: message.type(), text: message.text() }); });
   page.on('pageerror', error => pageErrors.push(error.message));
   if (process.env.STYLES_PANEL_STAGE_ONLY === '1') {
-    await require('./stage-browser.helpers.cjs').checkStageBrowser(page, { url, output, label, boundary: 'compiled', check, consoleMessages });
+    await require('../helpers/stage-browser.helpers.cjs').checkStageBrowser(page, { url, output, label, boundary: 'compiled', check, consoleMessages });
     check('Stage console health', consoleMessages, []);
     check('Stage page errors', pageErrors, []);
     return;
   }
   if (process.env.STYLES_PANEL_SHELL_ONLY === '1') {
-    await require('./web-part-shell-browser.helpers.cjs').checkWebPartShellBrowser(page, { url, output, label, boundary: 'compiled', check, consoleMessages });
-    await require('./editable-text-browser.helpers.cjs').checkEditableTextBrowser(page, { url, output, label, check });
+    await require('../helpers/web-part-shell-browser.helpers.cjs').checkWebPartShellBrowser(page, { url, output, label, boundary: 'compiled', check, consoleMessages });
+    await require('../helpers/editable-text-browser.helpers.cjs').checkEditableTextBrowser(page, { url, output, label, check });
     check('Shell console health', consoleMessages, []);
     check('Shell page errors', pageErrors, []);
     return;
   }
   if (process.env.DATA_GRID_CHART_PROBE === '1') {
-    await require('./data-grid-browser.helpers.cjs').exerciseDataGridChartProbe({ page, url, output, label, boundary: 'compiled', check, consoleMessages, pageErrors });
+    await require('../helpers/data-grid-browser.helpers.cjs').exerciseDataGridChartProbe({ page, url, output, label, boundary: 'compiled', check, consoleMessages, pageErrors });
     return;
   }
   if (process.env.STYLES_PANEL_DATA_GRID_ONLY === '1') {
-    await require('./data-grid-browser.helpers.cjs').exerciseDataGrid({ page, url, output, label, boundary: 'compiled', check, consoleMessages });
+    await require('../helpers/data-grid-browser.helpers.cjs').exerciseDataGrid({ page, url, output, label, boundary: 'compiled', check, consoleMessages });
     check('DataGrid page errors', pageErrors, []);
     return;
   }
   if (process.env.STYLES_PANEL_FORM_ONLY === '1') {
-    await require('./form-browser.helpers.cjs').exerciseForm({ page, url, output, label, boundary: 'compiled', check, consoleMessages });
+    await require('../helpers/form-browser.helpers.cjs').exerciseForm({ page, url, output, label, boundary: 'compiled', check, consoleMessages });
     check('Form page errors', pageErrors, []);
     return;
   }
@@ -138,7 +138,7 @@ async function thumbInteractions(axis) {
     return;
   }
   await page.goto(url);
-  await require('./foundation-single-browser.helpers.cjs').checkFoundationSingleBrowser(page, check);
+  await require('../helpers/foundation-single-browser.helpers.cjs').checkFoundationSingleBrowser(page, check);
   await page.goto(url); await node('layout-preview').waitFor();
   // The retained conformance panels now use the shared collapsed diagnostic shell.
   // Open those native disclosures before exercising their original ref/slot probes.

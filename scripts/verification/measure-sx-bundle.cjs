@@ -109,7 +109,7 @@ async function bundle(name, fixture, library, role = 'candidate') {
     }, modules: [path.join(root, 'node_modules'), 'node_modules'] },
     resolveLoader: { modules: [path.join(root, 'node_modules')] },
     externals: [({ request }, done) => /^(react|react-dom)$/.test(request || '') || /^@microsoft\/sp-/.test(request || '') ? done(null, `commonjs ${request}`) : done()],
-    module: { rules: [{ test: /\.tsx?$/, use: path.join(root, 'scripts/sx-browser-typescript-loader.cjs') }] },
+    module: { rules: [{ test: /\.tsx?$/, use: path.join(root, 'tests/browser/helpers/sx-browser-typescript-loader.cjs') }] },
     optimization: { concatenateModules: false, usedExports: true, minimize: true } };
   const stats = await new Promise((resolve, reject) => {
     const compiler = webpack(config);

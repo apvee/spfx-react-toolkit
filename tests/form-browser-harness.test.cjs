@@ -5,7 +5,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 function selectFixture(env) {
-  const script = path.resolve(__dirname, '../scripts/build-styles-panel-browser.cjs');
+  const script = path.resolve(__dirname, '../tests/browser/build/build-styles-panel-browser.cjs');
   let selected;
   const webpack = config => { selected = config; };
   webpack.NormalModuleReplacementPlugin = class {};

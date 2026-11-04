@@ -1,11 +1,11 @@
-const { descriptionListProduct } = require('../tests/fixtures/demo-control-isolation/task3-product.browser.cjs');
+const { descriptionListProduct } = require('../../fixtures/demo-control-isolation/task3-product.browser.cjs');
 // Run the actual sample through isolated source and compiled library boundaries.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../../..');
 const evidence = path.resolve(process.env.DESCRIPTION_LIST_BROWSER_EVIDENCE || path.join(root, '.docs/maintenance/evidence/description-list'));
 
 async function verify(boundary) {

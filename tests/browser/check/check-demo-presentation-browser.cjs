@@ -6,11 +6,11 @@ const os = require('node:os');
 const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 const { teamsDarkTheme, webLightTheme } = require('@fluentui/react-components');
-const { selectGeneratedShellScenario } = require('./web-part-shell-browser.helpers.cjs');
-const { groupsProduct } = require('../tests/fixtures/demo-control-isolation/task3-product.browser.cjs');
-const { pilotTitles } = require('../tests/fixtures/demo-presentation/jsdoc-pilots.cjs');
+const { selectGeneratedShellScenario } = require('../helpers/web-part-shell-browser.helpers.cjs');
+const { groupsProduct } = require('../../fixtures/demo-control-isolation/task3-product.browser.cjs');
+const { pilotTitles } = require('../../fixtures/demo-presentation/jsdoc-pilots.cjs');
 const pilotScope = { features: Object.keys(pilotTitles).length, scenarios: Object.values(pilotTitles).reduce((sum, titles) => sum + titles.length, 0) };
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../../..');
 const directory = path.join(root, process.env.DEMO_PRESENTATION_MODE === 'source' ? 'temp/demo-presentation-source-browser' : 'temp/demo-presentation-browser');
 const output = path.resolve(process.env.DEMO_PRESENTATION_EVIDENCE || path.join(root, '.docs/maintenance/evidence/demo-presentation'));
 const executablePath = process.env.CHROME_EXECUTABLE_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -541,7 +541,7 @@ async function liveTheme(page) {
     check('Local origin', new URL(page.url()).origin, url);
     check('Framework overlays absent', await page.locator('webpack-dev-server-client-overlay,#webpack-dev-server-client-overlay,nextjs-portal').count(), 0);
     if (process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1') {
-      await require('./jsdoc-pilots-browser.helpers.cjs').jsdocPilotsBrowser({ page, check, settle, overflow, capture });
+      await require('../helpers/jsdoc-pilots-browser.helpers.cjs').jsdocPilotsBrowser({ page, check, settle, overflow, capture });
       check('Unexpected JSDoc pilot diagnostics', diagnostics, []);
       console.log(`Focused source-owned JSDoc scenarios: ${checks.length} checks PASS (simulated native transport).`);
       return;
@@ -612,7 +612,7 @@ async function liveTheme(page) {
       return;
     }
     if (process.env.DEMO_PRESENTATION_TRIMS_ONLY === '1') {
-      const { accessTrimsBrowser } = require('./access-trims-browser.helpers.cjs');
+      const { accessTrimsBrowser } = require('../helpers/access-trims-browser.helpers.cjs');
       await accessTrimsBrowser({ page, check, select, singleExample, labels, overflow, capture });
       check('Unexpected trim browser/network diagnostics', diagnostics, []);
       console.log(`Actual ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} trim panels and scoped hook: ${checks.length} checks PASS.`);

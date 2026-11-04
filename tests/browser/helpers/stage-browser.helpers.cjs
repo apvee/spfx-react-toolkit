@@ -1,4 +1,4 @@
-const { stageProduct } = require('../tests/fixtures/demo-control-isolation/task3-product.browser.cjs');
+const { stageProduct } = require('../../fixtures/demo-control-isolation/task3-product.browser.cjs');
 // Both routes exercise the actual lazy-sample panel with real Fluent and Form.
 // Browser plugin not available; reuse installed Playwright, no dependency install.
 const fs = require('node:fs');

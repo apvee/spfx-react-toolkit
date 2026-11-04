@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { executableFixtureAliases } = require('../scripts/executable-fixture-aliases.cjs');
+const { executableFixtureAliases } = require('../tests/browser/helpers/executable-fixture-aliases.cjs');
 const { executableRoot, ownership } = require('../scripts/docs/executable-examples-render.cjs');
 test('browser aliases follow only actual owned imports through exact public source and compiled targets', t => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(),'executable-fixture-aliases-'));
@@ -63,7 +63,7 @@ test('multiple native owner imports retain their actual public barrel in matchin
     else { const properties = { label: 'Independent native field' }; const descriptor = actual[name]('setting', properties); assert.equal(descriptor.targetProperty, 'setting'); assert.equal(descriptor.properties, properties); assert.equal(descriptor.type, { PropertyPaneDropdown: 6, PropertyPaneToggle: 5, PropertyPaneTextField: 3, PropertyPaneLabel: 7 }[name]); }
   }
   for (const script of ['build-demo-presentation-browser', 'build-sx-browser-fixture', 'build-styles-panel-browser']) {
-    assert.match(fs.readFileSync(path.join(root, 'scripts', script + '.cjs'), 'utf8'), /'@microsoft\/sp-property-pane\$': path\.join\(fixture, '(?:\.\.\/demo-presentation\/)?spfx-property-pane\.ts'\)/);
+    assert.match(fs.readFileSync(path.join(root, 'tests/browser/build', script + '.cjs'), 'utf8'), /'@microsoft\/sp-property-pane\$': path\.join\(fixture, '(?:\.\.\/demo-presentation\/)?spfx-property-pane\.ts'\)/);
   }
 });
 

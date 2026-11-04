@@ -1,17 +1,17 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const webpack = require('webpack');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../../..');
 const fixture = path.join(root, 'tests/fixtures/pnp-confirmation-browser');
 const output = path.join(root, 'temp/pnp-confirmation-browser');
 webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 'index.tsx'),
   output: { path: output, filename: 'fixture.js' },
   resolve: { extensions: ['.tsx', '.ts', '.js'], alias: {
-    ...require('./verification/localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
+    ...require('../../../scripts/verification/localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
     ...Object.fromEntries(['@apvee/spfx-react-toolkit', '@apvee/spfx-react-toolkit/hooks/useSPFxPnPContext', '@apvee/spfx-react-toolkit/hooks/useSPFxPnPList', '@apvee/spfx-react-toolkit/styles'].map(name => [name + '$', path.join(fixture, 'toolkit-boundary.ts')])),
     'react/jsx-runtime$': require.resolve('react/jsx-runtime.js'),
   } },
-  module: { rules: [{ test: /\.tsx?$/, use: path.join(__dirname, 'sx-browser-typescript-loader.cjs') }] },
+  module: { rules: [{ test: /\.tsx?$/, use: path.join(__dirname, '../helpers/sx-browser-typescript-loader.cjs') }] },
 }, (error, stats) => {
   if (error || stats.hasErrors()) { console.error(error || stats.toString({ all: false, errors: true })); process.exitCode = 1; return; }
   fs.copyFileSync(path.join(fixture, 'index.html'), path.join(output, 'index.html'));

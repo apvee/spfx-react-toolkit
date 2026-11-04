@@ -1,4 +1,4 @@
-const { pilotTitles } = require('../tests/fixtures/demo-presentation/jsdoc-pilots.cjs');
+const { pilotTitles } = require('../../fixtures/demo-presentation/jsdoc-pilots.cjs');
 
 async function checkLegacyPermissionResult(panel, check) {
   const result = panel.getByLabel('Legacy permission result', { exact: true });

@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const webpack = require('webpack');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../../..');
 const fixture = path.join(root, 'tests/fixtures/styles-panel-browser');
 const output = path.join(root, 'temp/styles-panel-browser');
 const cardsOnly = process.env.STYLES_PANEL_CARDS_ONLY === '1';
@@ -21,9 +21,9 @@ if (chartProbe && !gridOnly) throw new Error('DATA_GRID_CHART_PROBE=1 requires S
 webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, cardsOnly ? 'cards.tsx' : descriptionListOnly ? 'description-list.tsx' : paginationOnly ? 'pagination.tsx' : stageOnly ? 'stage.tsx' : shellOnly ? 'web-part-shell.tsx' : gridOnly ? 'data-grid.tsx' : formOnly ? 'form.tsx' : 'index.tsx'),
   output: { path: output, filename: 'fixture.js' },
   resolve: { extensions: ['.tsx', '.ts', '.js'], alias: {
-    ...require('./verification/localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
+    ...require('../../../scripts/verification/localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
     '@apvee/spfx-react-toolkit$': path.join(fixture, cardsOnly ? 'cards-toolkit-boundary.ts' : descriptionListOnly ? 'description-list-toolkit-boundary.ts' : paginationOnly ? 'pagination-toolkit-boundary.ts' : stageOnly ? 'stage-toolkit-boundary.ts' : shellOnly ? 'web-part-shell-toolkit-boundary.ts' : gridOnly ? 'data-grid-toolkit-boundary.ts' : formOnly ? 'form-toolkit-boundary.ts' : 'toolkit-boundary.ts'),
-    ...require('./executable-fixture-aliases.cjs').executableFixtureAliases(root, false),
+    ...require('../helpers/executable-fixture-aliases.cjs').executableFixtureAliases(root, false),
     ...(!cardsOnly && !descriptionListOnly && !paginationOnly && !stageOnly && !shellOnly && !gridOnly && !formOnly ? { '@apvee/spfx-react-toolkit/hooks$': path.join(fixture, 'toolkit-boundary.ts'), '@apvee/spfx-react-toolkit/styles$': path.join(fixture, 'toolkit-boundary.ts') } : {}),
     ...(shellOnly ? { '@microsoft/sp-core-library$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts'), '@microsoft/sp-component-base$': path.join(fixture, '../web-part-shell-browser/spfx-services.ts'), '@microsoft/sp-page-context$': path.join(fixture, '../demo-presentation/spfx-services.ts'), '@microsoft/sp-http$': path.join(fixture, '../demo-presentation/spfx-services.ts') } : {}),
     ...(shellOnly ? { '@microsoft/sp-property-pane$': path.join(fixture, '../demo-presentation/spfx-property-pane.ts') } : {}),
@@ -34,7 +34,7 @@ webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 
   plugins: shellOnly || stageOnly ? [] : cardsOnly ? [] : descriptionListOnly ? [] : paginationOnly ? [] : formOnly ? [] : [new webpack.NormalModuleReplacementPlugin(/^\.\/useSPFx(Teams|ThemeInfo)$/, resource => {
     if (resource.context === path.join(root, 'packages/spfx-react-toolkit/lib/hooks')) resource.request = path.join(fixture, 'spfx-boundaries.ts');
   })],
-  module: { rules: [{ test: /\.tsx?$/, use: path.join(__dirname, 'sx-browser-typescript-loader.cjs') }] }
+  module: { rules: [{ test: /\.tsx?$/, use: path.join(__dirname, '../helpers/sx-browser-typescript-loader.cjs') }] }
 }, (error, stats) => {
   if (error || stats.hasErrors()) { console.error(error || stats.toString({ all: false, errors: true })); process.exitCode = 1; return; }
   fs.copyFileSync(path.join(fixture, cardsOnly ? '../cards-browser/index.html' : descriptionListOnly ? '../description-list-browser/index.html' : paginationOnly ? '../pagination-browser/index.html' : shellOnly ? '../web-part-shell-browser/index.html' : 'index.html'), path.join(output, 'index.html'));

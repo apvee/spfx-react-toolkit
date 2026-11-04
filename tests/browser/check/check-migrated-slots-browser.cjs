@@ -5,7 +5,7 @@ const http = require('node:http');
 const playwright = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const mode = process.argv[2] || 'source';
 if (!['source', 'compiled'].includes(mode)) throw new Error('Expected source or compiled');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../../..');
 const fixture = path.join(root, `temp/migrated-slots-${mode}`);
 const evidence = path.join(root, '.docs/maintenance/evidence/slot-migration');
 fs.mkdirSync(evidence, {recursive:true});

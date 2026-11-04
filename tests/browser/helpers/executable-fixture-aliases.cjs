@@ -2,9 +2,9 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
-const { buildApiGraph } = require('./docs/documentation-model.cjs');
-const defaultConfig = require('./docs/documentation.config.cjs');
-const { executableRoot, ownership } = require('./docs/executable-examples-render.cjs');
+const { buildApiGraph } = require('../../../scripts/docs/documentation-model.cjs');
+const defaultConfig = require('../../../scripts/docs/documentation.config.cjs');
+const { executableRoot, ownership } = require('../../../scripts/docs/executable-examples-render.cjs');
 
 /** Resolve the actual owned catalogue modules' non-root toolkit imports to one
  * fixture boundary. This is browser-build input, never canonical generation input.

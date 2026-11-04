@@ -1,4 +1,4 @@
-const { formProduct } = require('../tests/fixtures/demo-control-isolation/task3-product.browser.cjs');
+const { formProduct } = require('../../fixtures/demo-control-isolation/task3-product.browser.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
 
