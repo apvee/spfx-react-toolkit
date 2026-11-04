@@ -85,24 +85,24 @@ Packed-consumer checks establish actual root/domain/historical resolution, share
 
 ## Production import gates and baseline review
 
-When [full verification applies](#verification-scope), `npm run verify` includes the import-graph audit. `npm run verify:package` installs a fresh tarball consumer, runs canonical bundle/runtime/mutation gates and independent consumer TypeScript/lint/SPFx ship/solution checks. Inspect inner failures and warnings even when outer Gulp exits successfully. [The package verifier](../../scripts/verify-package.cjs) writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` changes that directory. Normal verification deletes its temporary consumer.
+When [full verification applies](#verification-scope), `npm run verify` includes the import-graph audit. `npm run verify:package` installs a fresh tarball consumer, runs canonical bundle/runtime/mutation gates and independent consumer TypeScript/lint/SPFx ship/solution checks. Inspect inner failures and warnings even when outer Gulp exits successfully. [The package verifier](../../scripts/verification/verify-package.cjs) writes its consumer path to `.docs/maintenance/evidence/tree-shaking/package/consumer-path.txt`; `SPFX_PACKAGE_EVIDENCE` changes that directory. Normal verification deletes its temporary consumer.
 
 For diagnostics or a deliberate baseline proposal, retain one fresh successful run:
 
 ```bash
 SPFX_KEEP_CONSUMER=1 npm run verify:package
 SPFX_DIAGNOSTIC_CONSUMER="$(cat .docs/maintenance/evidence/tree-shaking/package/consumer-path.txt)"
-node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUMER"
-node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUMER" --mode audit --fixtures helper,stable-callback --output /absolute/path/to/diagnostics
-node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUMER" --attribution
+node scripts/verification/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUMER"
+node scripts/verification/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUMER" --mode audit --fixtures helper,stable-callback --output /absolute/path/to/diagnostics
+node scripts/verification/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUMER" --attribution
 ```
 
-Read `consumer-path.txt` from the overridden evidence directory if configured. The [bundle CLI](../../scripts/verify-bundle-contract.cjs) requires `--consumer-root`, defaults to `enforce`, reads [the canonical contract](../../tests/fixtures/tree-shaking/contract.json) and writes default evidence under `.docs/maintenance/evidence/tree-shaking/bundle-contract`. Verify actual fixture IDs before selecting a subset. Audit and optional unoptimized attribution are diagnostics; neither produces a primary gate PASS. Enforce and baseline writing require the complete canonical contract: custom/subset contracts, empty comparisons or weakened expectations cannot bypass acceptance.
+Read `consumer-path.txt` from the overridden evidence directory if configured. The [bundle CLI](../../scripts/verification/verify-bundle-contract.cjs) requires `--consumer-root`, defaults to `enforce`, reads [the canonical contract](../../tests/fixtures/tree-shaking/contract.json) and writes default evidence under `.docs/maintenance/evidence/tree-shaking/bundle-contract`. Verify actual fixture IDs before selecting a subset. Audit and optional unoptimized attribution are diagnostics; neither produces a primary gate PASS. Enforce and baseline writing require the complete canonical contract: custom/subset contracts, empty comparisons or weakened expectations cannot bypass acceptance.
 
 Normal verification never writes [the informational baseline](../../tests/fixtures/tree-shaking/baseline.json). After reviewing a complete passing run, toolchain and package/lock/config/fixture hashes, emitted initial/async assets and raw/gzip/Brotli totals, explicitly propose:
 
 ```bash
-node scripts/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUMER" --mode enforce --write-baseline tests/fixtures/tree-shaking/baseline.json
+node scripts/verification/verify-bundle-contract.cjs --consumer-root "$SPFX_DIAGNOSTIC_CONSUMER" --mode enforce --write-baseline tests/fixtures/tree-shaking/baseline.json
 ```
 
 Review the diff. Informational absolute totals do not alter blocking alias-gap budgets or forbidden-retention rules in the canonical contract. Broad namespace/dynamic-catalog retention differs from a static named-import regression. Do not suppress transitive npm or SPFx metadata-age warnings.

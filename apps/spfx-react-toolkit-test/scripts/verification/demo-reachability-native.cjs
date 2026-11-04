@@ -195,7 +195,7 @@ function inspectNativeConfiguration({ root, app, options, program, checker, repo
   const library = path.join(root, 'packages/spfx-react-toolkit');
   const inventory = path.join(library, 'localization/resources.json');
   if (fs.existsSync(inventory)) {
-    const { getLocalizationPackageContract } = require('../../../../scripts/package-entrypoints.cjs');
+    const { getLocalizationPackageContract } = require('../../../../scripts/verification/package-entrypoints.cjs');
     const contract = getLocalizationPackageContract(library);
     const resources = json(inventory).resources || [];
     for (const resource of resources) {

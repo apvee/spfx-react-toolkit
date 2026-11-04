@@ -1,7 +1,7 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const baseline = require('./fixtures/api-baseline.json');
-const { assertCompatibleDeclaration } = require('../scripts/api-compatibility.helpers.cjs');
+const { assertCompatibleDeclaration } = require('../scripts/verification/api-compatibility.helpers.cjs');
 
 test('preserves every historical declaration, ignoring comments and whitespace', () => {
   for (const [name, snapshot] of Object.entries(baseline)) {
@@ -90,7 +90,7 @@ for (const [missingName] of allowedBarrels) {
   test(`integrated verify-api rejects a finished feature missing ${missingName} export`, () => {
     const fs = require('node:fs');
     const path = require('node:path');
-    const scriptPath = path.resolve(__dirname, '../scripts/verify-api.cjs');
+    const scriptPath = path.resolve(__dirname, '../scripts/verification/verify-api.cjs');
     const localRequire = require('node:module').createRequire(scriptPath);
     const declarationsRoot = path.resolve(__dirname, '../packages/spfx-react-toolkit/lib') + path.sep;
     const fileBoundary = {
@@ -195,7 +195,7 @@ test('webs registration approval retains strict list signatures and historical i
 test('integrated verify-api requires webs registration even without other completion markers', () => {
   const fs = require('node:fs');
   const path = require('node:path');
-  const scriptPath = path.resolve(__dirname, '../scripts/verify-api.cjs');
+  const scriptPath = path.resolve(__dirname, '../scripts/verification/verify-api.cjs');
   const localRequire = require('node:module').createRequire(scriptPath);
   const declarationsRoot = path.resolve(__dirname, '../packages/spfx-react-toolkit/lib') + path.sep;
   const fileBoundary = {
@@ -309,7 +309,7 @@ for (const missing of [...pnpHookPaths, 'selector', 'factory']) {
   test(`integrated verify-api requires finished PnP ${missing} independently of site store`, () => {
     const fs = require('node:fs');
     const path = require('node:path');
-    const scriptPath = path.resolve(__dirname, '../scripts/verify-api.cjs');
+    const scriptPath = path.resolve(__dirname, '../scripts/verification/verify-api.cjs');
     const localRequire = require('node:module').createRequire(scriptPath);
     const declarationsRoot = path.resolve(__dirname, '../packages/spfx-react-toolkit/lib') + path.sep;
     const fileBoundary = {
@@ -388,7 +388,7 @@ test('style completion checks preserve previous callback, site-store and PnP app
 
 const originalPackage = require('./fixtures/package-baseline.json');
 const currentPackage = require('../packages/spfx-react-toolkit/package.json');
-const { assertCompatiblePackageContract } = require('../scripts/api-compatibility.helpers.cjs');
+const { assertCompatiblePackageContract } = require('../scripts/verification/api-compatibility.helpers.cjs');
 test('permits only approved peer changes, exact additive entrypoints and styles facade files', () => {
   assert.doesNotThrow(() => assertCompatiblePackageContract(currentPackage, originalPackage));
 });
@@ -463,7 +463,7 @@ for (const [missingName] of styleBarrels) {
   test(`integrated verify-api requires finished style ${missingName}`, () => {
     const fs = require('node:fs');
     const path = require('node:path');
-    const scriptPath = path.resolve(__dirname, '../scripts/verify-api.cjs');
+    const scriptPath = path.resolve(__dirname, '../scripts/verification/verify-api.cjs');
     const localRequire = require('node:module').createRequire(scriptPath);
     const declarationsRoot = path.resolve(__dirname, '../packages/spfx-react-toolkit/lib') + path.sep;
     const fileBoundary = {
@@ -499,7 +499,7 @@ for (const marker of [
   test(`package gate rejects explicit subprocess failure with wrapper status zero: ${marker}`, async () => {
     const fs = require('node:fs');
     const path = require('node:path');
-    const scriptPath = path.resolve(__dirname, '../scripts/verify-package.cjs');
+    const scriptPath = path.resolve(__dirname, '../scripts/verification/verify-package.cjs');
     const localRequire = require('node:module').createRequire(scriptPath);
     const childBoundary = {
       spawnSync: () => ({ status: 0, signal: null, stdout: marker, stderr: '' }),
@@ -516,7 +516,7 @@ for (const marker of [
 test('package gate keeps visible data-age warnings distinct from actual subprocess failure', async () => {
   const fs = require('node:fs');
   const path = require('node:path');
-  const scriptPath = path.resolve(__dirname, '../scripts/verify-package.cjs');
+  const scriptPath = path.resolve(__dirname, '../scripts/verification/verify-package.cjs');
   const localRequire = require('node:module').createRequire(scriptPath);
   const childBoundary = {
     spawnSync: () => ({ status: 0, signal: null, stdout: '', stderr: '[baseline-browser-mapping] The data in this module is over two months old.' }),
@@ -534,7 +534,7 @@ test('package gate keeps visible data-age warnings distinct from actual subproce
 test('metadata preparation leaves malformed configuration and evaluation errors fatal', () => {
   const fs = require('node:fs');
   const path = require('node:path');
-  const script = fs.readFileSync(path.resolve(__dirname, '../scripts/build-metadata-preload.cjs'), 'utf8');
+  const script = fs.readFileSync(path.resolve(__dirname, '../scripts/verification/build-metadata-preload.cjs'), 'utf8');
   function invoke(resolveError, evaluationError) {
     const fakeRequire = () => { if (evaluationError) throw evaluationError; return () => []; };
     fakeRequire.resolve = name => { if (resolveError) throw resolveError; return name; };
@@ -550,7 +550,7 @@ test('metadata preparation leaves malformed configuration and evaluation errors 
 test('Gulp metadata guard prepares only the parent Gulp entry point', () => {
   const fs = require('node:fs');
   const path = require('node:path');
-  const script = fs.readFileSync(path.resolve(__dirname, '../scripts/gulp-build-metadata-preload.cjs'), 'utf8');
+  const script = fs.readFileSync(path.resolve(__dirname, '../scripts/verification/gulp-build-metadata-preload.cjs'), 'utf8');
   for (const [entry, expected] of [
     ['/consumer/node_modules/.bin/gulp', 1],
     ['/consumer/node_modules/gulp/bin/gulp.js', 1],
@@ -572,10 +572,48 @@ test('Gulp metadata guard prepares only the parent Gulp entry point', () => {
   }
 });
 
+test('metadata preload routes inherited subprocess and Worker advisories without eager worker preparation', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const { spawnSync } = require('node:child_process');
+  const directory = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'metadata-worker-boundary-'));
+  const preload = path.resolve(__dirname, '../scripts/verification/gulp-build-metadata-preload.cjs');
+  const prepared = path.join(directory, 'prepared.txt');
+  const advisory = '[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`';
+  const browserAdvisory = 'Browserslist: browsers data (caniuse-lite) is 12 months old. Please run:\n  npx update-browserslist-db@latest\n  Why you should do it regularly: https://github.com/browserslist/update-db#readme';
+  try {
+    fs.writeFileSync(path.join(directory, 'package.json'), JSON.stringify({ name: 'metadata-worker-host', private: true }));
+    for (const name of ['baseline-browser-mapping', 'browserslist']) {
+      const target = path.join(directory, 'node_modules', name);
+      fs.mkdirSync(target, { recursive: true });
+      fs.writeFileSync(path.join(target, 'package.json'), JSON.stringify({ name, main: 'index.js' }));
+      fs.writeFileSync(path.join(target, 'index.js'), `require('node:fs').appendFileSync(${JSON.stringify(prepared)}, ${JSON.stringify(name + '\n')}); module.exports = () => [];`);
+    }
+    const diagnostics = `console.warn(${JSON.stringify(advisory)}); console.warn(${JSON.stringify(browserAdvisory)}); console.warn('unknown warning'); console.error('unknown error');`;
+    const worker = path.join(directory, 'nested/compiler/worker.cjs');
+    fs.mkdirSync(path.dirname(worker), { recursive: true });
+    fs.writeFileSync(worker, diagnostics + `new (require('node:worker_threads').Worker)(${JSON.stringify(diagnostics)}, { eval: true });`);
+    const env = { ...process.env, NODE_OPTIONS: `${process.env.NODE_OPTIONS || ''} --require ${JSON.stringify(preload)}`.trim() };
+    const result = spawnSync(process.execPath, [worker], { cwd: directory, env, encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(fs.existsSync(prepared), false, 'Neither compiler subprocess nor Worker imports host metadata eagerly');
+    assert.equal(result.stdout.split('[verification metadata advisory]').length - 1, 4);
+    assert.equal(result.stderr.split('unknown warning').length - 1, 2);
+    assert.equal(result.stderr.split('unknown error').length - 1, 2);
+    const gulp = path.join(directory, 'nested/gulp.js');
+    fs.writeFileSync(gulp, '');
+    const parent = spawnSync(process.execPath, [gulp], { cwd: directory, env, encoding: 'utf8' });
+    assert.equal(parent.status, 0, parent.stderr);
+    assert.deepEqual(fs.readFileSync(prepared, 'utf8').trim().split('\n'), ['baseline-browser-mapping', 'browserslist']);
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
+});
+
 test('exact locked metadata advisories stay visible while every other diagnostic retains its channel', () => {
   const fs = require('node:fs');
   const path = require('node:path');
-  const script = fs.readFileSync(path.resolve(__dirname, '../scripts/build-metadata-preload.cjs'), 'utf8');
+  const script = fs.readFileSync(path.resolve(__dirname, '../scripts/verification/build-metadata-preload.cjs'), 'utf8');
   const baselineWarning = '[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`';
   const browserWarning = months => `Browserslist: browsers data (caniuse-lite) is ${months} ${months === 1 ? 'month' : 'months'} old. Please run:\n  npx update-browserslist-db@latest\n  Why you should do it regularly: https://github.com/browserslist/update-db#readme`;
   const visible = [];
@@ -622,7 +660,7 @@ test('exact locked metadata advisories stay visible while every other diagnostic
 test('advisory routing preserves fatal behavior of an unknown warning monitor', () => {
   const fs = require('node:fs');
   const path = require('node:path');
-  const script = fs.readFileSync(path.resolve(__dirname, '../scripts/build-metadata-preload.cjs'), 'utf8');
+  const script = fs.readFileSync(path.resolve(__dirname, '../scripts/verification/build-metadata-preload.cjs'), 'utf8');
   const moduleBoundary = { exports: {} };
   const consoleBoundary = { warn() { throw new Error('Strict warning monitor rejected the diagnostic'); } };
   new Function('require', 'module', 'console', 'process', script)(require, moduleBoundary, consoleBoundary,
@@ -644,7 +682,7 @@ function withMetadataPackageFixture(packageContents, moduleSource, check) {
       fs.writeFileSync(packageFile, packageContents);
       if (moduleSource !== undefined) fs.writeFileSync(path.join(path.dirname(packageFile), 'index.js'), moduleSource);
     }
-    const source = fs.readFileSync(path.resolve(__dirname, '../scripts/build-metadata-preload.cjs'), 'utf8');
+    const source = fs.readFileSync(path.resolve(__dirname, '../scripts/verification/build-metadata-preload.cjs'), 'utf8');
     const moduleBoundary = { exports: {} };
     new Function('require', 'module', 'process', source)(require, moduleBoundary, { cwd: () => directory });
     check(moduleBoundary.exports.prepareMetadata, { directory, packageFile });
@@ -702,7 +740,7 @@ test('permits only the approved controls root export once', () => {
   assert.throws(() => assertCompatibleDeclaration('index.d.ts', original + "\nexport * from './other-controls';", original));
 });
 test('control dependencies are exact additions rather than unrestricted peer/runtime changes', () => {
-  const { assertCompatiblePackageContract } = require('../scripts/api-compatibility.helpers.cjs');
+  const { assertCompatiblePackageContract } = require('../scripts/verification/api-compatibility.helpers.cjs');
   const manifest = require('../packages/spfx-react-toolkit/package.json');
   const original = require('./fixtures/package-baseline.json');
   for (const mutate of [

@@ -1,6 +1,6 @@
 # useSx cost probes
 
-Run `node scripts/measure-sx-bundle.cjs` from the repository root. It builds the
+Run `node scripts/verification/measure-sx-bundle.cjs` from the repository root. It builds the
 library, checks these TypeScript consumers, packs a candidate without lifecycle
 scripts, extracts the frozen baseline and candidate, and uses the installed
 Webpack/TypeScript/React/Fluent/Griffel versions. It installs nothing.
@@ -50,7 +50,7 @@ cache sizes before/cold/identical/repeated/1000-distinct/unmount steps. It does 
 establish browser computed CSS, rendering performance, heap consumption, garbage
 collection of discarded renderers, or tenant behavior.
 
-`baseline.json` preserves the legacy style measurement metadata used by `scripts/measure-sx-bundle.cjs`. It remains versioned independently of local `.docs/` evidence; the canonical production contract and baseline remain under `tests/fixtures/tree-shaking/`.
+`baseline.json` preserves the legacy style measurement metadata used by `scripts/verification/measure-sx-bundle.cjs`. It remains versioned independently of local `.docs/` evidence; the canonical production contract and baseline remain under `tests/fixtures/tree-shaking/`.
 
 For a scoped full-UI comparison, set `SX_MEASURE_FULL_UI_ONLY=1` and supply an
 explicit `SX_MEASURE_CANDIDATE_TARBALL`. This mode transitively typechecks the full

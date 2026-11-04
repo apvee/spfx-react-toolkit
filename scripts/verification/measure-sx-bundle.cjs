@@ -6,7 +6,7 @@ const zlib = require('node:zlib');
 const { spawnSync } = require('node:child_process');
 const webpack = require('webpack');
 const ts = require('typescript');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../..');
 const label = process.env.SX_MEASURE_LABEL || 'task-6-final';
 if (!/^[a-zA-Z0-9_-]+$/.test(label)) throw new Error('Invalid measurement label');
 const output = path.resolve(process.env.SX_MEASURE_OUTPUT || path.join(root, '.docs/maintenance/evidence/use-sx'), label);
@@ -134,7 +134,7 @@ async function bundle(name, fixture, library, role = 'candidate') {
   report.bundles.push(item); save(); console.log(`${name}: ${JSON.stringify(item.totals)}`);
 }
 function cssGrowth() {
-  const harness = require('../tests/fixtures/sx-harness.cjs');
+  const harness = require('../../tests/fixtures/sx-harness.cjs');
   harness.createSxDom();
   const { createDOMRenderer } = require('@griffel/core');
   const { styles, load } = harness.loadSxModules();
@@ -258,7 +258,7 @@ async function main() {
   report.baselineShip.status = baselineMetadata.commands;
   if (process.env.SX_MEASURE_SKIP_SHIP !== '1') {
     const start = Date.now();
-    const preload = path.resolve(process.env.SX_BUILD_METADATA_PRELOAD || path.join(root, 'scripts/gulp-build-metadata-preload.cjs'));
+    const preload = path.resolve(process.env.SX_BUILD_METADATA_PRELOAD || path.join(root, 'scripts/verification/gulp-build-metadata-preload.cjs'));
     if (!fs.existsSync(preload)) throw new Error(`Missing visible-warning metadata preloader: ${preload}`);
     // The verified guard keeps exact known data-age advisories visible on stdout
     // in workers, without importing metadata there. Only the Gulp parent warms

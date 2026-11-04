@@ -5,13 +5,13 @@ const os = require('node:os');
 const path = require('node:path');
 const {execFileSync, spawnSync} = require('node:child_process');
 const ts = require('typescript');
-const { collectPublicSurfaces } = require('./docs/public-surface.helpers.cjs');
+const { collectPublicSurfaces } = require('../docs/public-surface.helpers.cjs');
 const { assertEntrypointContract, verifyConsumerResolution, getLocalizationPackageContract } = require('./package-entrypoints.cjs');
 const {createRequire} = require('node:module');
 const {measureTreeShaking, runInstalledGates, verifyContractMutations} = require('./bundle-contract.internal.cjs');
 const {verifyProductionRuntime} = require('./verify-production-runtime.cjs');
 const {verifyLocalizationPackage} = require('./verify-localization-package.cjs');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../..');
 const library = path.join(root, 'packages/spfx-react-toolkit');
 const app = path.join(root, 'apps/spfx-react-toolkit-test');
 const temp = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'spfx-tarball-consumer-')));
@@ -33,7 +33,7 @@ function run(args, cwd, { prepareMetadata = false } = {}) {
     assert.ok(args[0] === 'run' && gulpTasks[args[1]], 'Metadata preparation requires a known strict Gulp task');
     assert.equal(script, 'gulp ' + gulpTasks[args[1]].join(' '), 'Consumer Gulp script changed; inspect before preparing');
     command = process.execPath;
-    const preload = path.join(root, 'scripts/gulp-build-metadata-preload.cjs');
+    const preload = path.join(root, 'scripts/verification/gulp-build-metadata-preload.cjs');
     env.NODE_OPTIONS = [env.NODE_OPTIONS, '--require', JSON.stringify(preload)].filter(Boolean).join(' ');
     commandArgs = ['--require', preload,
       createRequire(path.join(cwd, 'package.json')).resolve('gulp/bin/gulp.js'), ...gulpTasks[args[1]]];
@@ -307,7 +307,7 @@ try {
   assert.equal(manifest.workspaces, undefined, 'External consumer cannot contain workspaces');
   manifest.dependencies['@apvee/spfx-react-toolkit']='file:'+path.join(temp,packed.filename);
   const libraryManifest = JSON.parse(fs.readFileSync(path.join(library, 'package.json'), 'utf8'));
-  for (const peer of [...Object.keys(require('../tests/fixtures/dependency-baseline.json').shared), 'react-hook-form', '@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-icons']) {
+  for (const peer of [...Object.keys(require('../../tests/fixtures/dependency-baseline.json').shared), 'react-hook-form', '@fluentui/react-datepicker-compat', '@fluentui/react-timepicker-compat', '@fluentui/react-icons']) {
     assert.equal(manifest.dependencies[peer], libraryManifest.devDependencies[peer], `Independent consumer must explicitly provision tested shared peer: ${peer}`);
   }
   fs.writeFileSync(path.join(consumer,'package.json'),JSON.stringify(manifest,null,2));

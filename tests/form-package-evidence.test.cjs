@@ -5,7 +5,7 @@ const path = require('node:path');
 const os = require('node:os');
 
 test('package verification records long shared-peer commands without exceeding filename limits or losing arguments', () => {
-  const script = path.resolve(__dirname, '../scripts/verify-package.cjs');
+  const script = path.resolve(__dirname, '../scripts/verification/verify-package.cjs');
   const localRequire = require('node:module').createRequire(script);
   const evidence = fs.mkdtempSync(path.join(os.tmpdir(), 'form-package-evidence-'));
   const processBoundary = { env: { SPFX_PACKAGE_EVIDENCE: evidence }, stdout: { write() {} }, stderr: { write() {} } };

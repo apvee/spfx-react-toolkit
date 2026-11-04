@@ -6,7 +6,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { createRequire } = require('node:module');
 
-const script = path.resolve(__dirname, '../scripts/measure-sx-bundle.cjs');
+const script = path.resolve(__dirname, '../scripts/verification/measure-sx-bundle.cjs');
 const realRequire = createRequire(script);
 // Block subprocesses and compilation at the boundary: the RED must never build,
 // pack or ship the repository. Real before/after measurements cover the compiler.

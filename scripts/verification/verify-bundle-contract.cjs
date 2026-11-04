@@ -15,7 +15,7 @@ function parseArgs(args) {
 }
 async function main(args) {
   const options=parseArgs(args);
-  const contract = JSON.parse(fs.readFileSync(path.resolve(options.contract || path.join(__dirname, '../tests/fixtures/tree-shaking/contract.json'))));
+  const contract = JSON.parse(fs.readFileSync(path.resolve(options.contract || path.join(__dirname, '../../tests/fixtures/tree-shaking/contract.json'))));
   const input={ consumerRoot: options['consumer-root'], outputDir: options.output, mode: options.mode, contract, fixtureIds: options.fixtures?.split(',') };
   const report = await measureTreeShaking(input);
   console.log(`${report.mode}: passed=${report.passed}; ${report.failures.length} failures; ${report.warnings.length} warnings; ${report.durationMs}ms`);

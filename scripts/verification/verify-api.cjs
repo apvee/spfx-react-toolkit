@@ -4,8 +4,8 @@ const path = require('node:path');
 const ts = require('typescript');
 const { assertCompatibleDeclaration, assertCompatiblePackageContract } = require('./api-compatibility.helpers.cjs');
 const { assertEntrypointContract, collectPublishedFiles, getLocalizationPackageContract } = require('./package-entrypoints.cjs');
-const root = path.resolve(__dirname, '..');
-const baseline = require('../tests/fixtures/api-baseline.json');
+const root = path.resolve(__dirname, '../..');
+const baseline = require('../../tests/fixtures/api-baseline.json');
 const requireApprovedAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxSiteKeyValueStore.ts'));
 const requirePnPListAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts'));
 const requireSxAdditions = fs.existsSync(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSx.ts'));
@@ -28,9 +28,9 @@ for (const name of ['hooks/useSPFxPnPSearch.d.ts', 'services/spfx-pnp-search.ser
 assertCompatibleDeclaration('hooks/useSPFxCrossSitePermissions.d.ts',
   fs.readFileSync(path.join(root, 'packages/spfx-react-toolkit/lib/hooks/useSPFxCrossSitePermissions.d.ts'), 'utf8'),
   baseline['hooks/useSPFxCrossSitePermissions.d.ts'].declaration, { requireScopedPermissionsAdditions: true });
-const manifest = require('../packages/spfx-react-toolkit/package.json');
+const manifest = require('../../packages/spfx-react-toolkit/package.json');
 const nativeResourceIds = getLocalizationPackageContract().nativeIds;
-const originalPackage = require('../tests/fixtures/package-baseline.json');
+const originalPackage = require('../../tests/fixtures/package-baseline.json');
 assertCompatiblePackageContract(manifest, originalPackage);
 assertEntrypointContract(manifest, collectPublishedFiles());
 

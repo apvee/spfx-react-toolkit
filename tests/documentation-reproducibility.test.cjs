@@ -73,7 +73,7 @@ test('copied tiny engine reconstructs development only from sources and restores
   assert.equal(result.ok, true);
   assert.ok(result.copiedInputs.includes('tests/browser/linked-checker.cjs'));
   assert.ok(!result.copiedInputs.includes('tests/browser/unreferenced.cjs'));
-  assert.ok(!result.copiedInputs.includes('scripts/audit-import-graph.cjs'));
+  assert.ok(!result.copiedInputs.includes('scripts/verification/audit-import-graph.cjs'));
   assert.ok(result.copiedInputs.includes('scripts/docs/generated.cjs'));
   assert.equal(result.environments.length, 4);
   assert.ok(result.hashes.paths.includes('llms.txt'));

@@ -7,7 +7,7 @@ const { execFileSync } = require('node:child_process');
 const { isDeepStrictEqual } = require('node:util');
 const ts = require('typescript');
 const webpack = require('webpack');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../..');
 const toolkit = '@apvee/spfx-react-toolkit';
 const hash = data => crypto.createHash('sha256').update(data).digest('hex');
 const slash = value => value.replace(/\\/g, '/');

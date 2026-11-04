@@ -5,9 +5,9 @@ const path = require('node:path');
 const { createRequire } = require('node:module');
 const { ResolverFactory } = require('enhanced-resolve');
 const ts = require('typescript');
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../..');
 const library = path.join(root, 'packages/spfx-react-toolkit');
-const inventory = require('../tests/fixtures/package-entrypoints.json');
+const inventory = require('../../tests/fixtures/package-entrypoints.json');
 const cleanAliases = Object.freeze({
   '.': 'lib/index', './core': 'lib/core/index', './hooks': 'lib/hooks/index',
   './helpers': 'lib/helpers/index', './services': 'lib/services/index',

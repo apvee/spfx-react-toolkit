@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { scenarios, mutations } = require('./fixtures/localization-consumers/spfx-scenarios.cjs');
-const { strictResult, inspectArtifacts, verifyLocalizationPackage } = require('../scripts/verify-localization-package.cjs');
+const { strictResult, inspectArtifacts, verifyLocalizationPackage } = require('../scripts/verification/verify-localization-package.cjs');
 const inventory = require('../packages/spfx-react-toolkit/localization/resources.json');
 const paginationId = 'ApveeSpfxReactToolkitPaginationStrings';
 const ids = inventory.resources.map(resource => resource.id);

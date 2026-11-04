@@ -4,7 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../..');
 const outDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spfx-runtime-store-verify-'));
 
 try {

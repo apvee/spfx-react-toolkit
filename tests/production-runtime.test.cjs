@@ -3,11 +3,11 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
-const { executeProbe, runRuntimeMatrix } = require('../scripts/verify-production-runtime.cjs');
+const { executeProbe, runRuntimeMatrix } = require('../scripts/verification/verify-production-runtime.cjs');
 
 test('Node-executed production UI uses the browser context through legacy node-conditioned peers', async () => {
   const webpack = require('webpack');
-  const { buildRuntimeConfig } = require('../scripts/verify-production-runtime.cjs');
+  const { buildRuntimeConfig } = require('../scripts/verification/verify-production-runtime.cjs');
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'runtime-module-context-'));
   try {
     const shared = path.join(directory, 'node_modules/shared-context');
@@ -53,7 +53,7 @@ test('UI runtime supplies genuine WebCrypto to the JSDOM browser boundary', () =
 
 test('service runtime loads a real asynchronous chunk in Node without a browser script URL', async () => {
   const webpack = require('webpack');
-  const { buildRuntimeConfig } = require('../scripts/verify-production-runtime.cjs');
+  const { buildRuntimeConfig } = require('../scripts/verification/verify-production-runtime.cjs');
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'runtime-service-chunk-'));
   try {
     const entry = path.join(directory, 'entry.js');
@@ -97,8 +97,8 @@ test('matrix awaits work, writes progress without claiming PASS and aggregates i
 });
 test('a real Webpack alias to a toolkit package at an arbitrary path is rejected', async () => {
   const webpack=require('webpack');
-  const {statsOptions}=require('../scripts/bundle-contract.internal.cjs');
-  const {assertToolkitOrigin}=require('../scripts/verify-production-runtime.cjs');
+  const {statsOptions}=require('../scripts/verification/bundle-contract.internal.cjs');
+  const {assertToolkitOrigin}=require('../scripts/verification/verify-production-runtime.cjs');
   const directory=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'origin-unit-')));
   try {
     const copy=path.join(directory,'arbitrary'),consumer=path.join(directory,'consumer');
@@ -116,7 +116,7 @@ test('a real Webpack alias to a toolkit package at an arbitrary path is rejected
 });
 
 test('canonical runtime matrix includes all 54 installed probes and all three trim aliases', () => {
-  const { productionRuntimeCases } = require('../scripts/verify-production-runtime.cjs');
+  const { productionRuntimeCases } = require('../scripts/verification/verify-production-runtime.cjs');
   const cases = productionRuntimeCases();
   assert.equal(cases.length, 54);
   assert.equal(new Set(cases.map(item => `${item.scenario}/${item.variant}`)).size, 54);
@@ -129,6 +129,6 @@ test('canonical runtime matrix includes all 54 installed probes and all three tr
 
 
 test('standalone EditableText is a complete root/domain/control runtime scenario', () => {
-  const { productionRuntimeCases } = require('../scripts/verify-production-runtime.cjs');
+  const { productionRuntimeCases } = require('../scripts/verification/verify-production-runtime.cjs');
   assert.deepEqual(productionRuntimeCases().filter(item => item.scenario === 'editable-text').map(item => item.variant), ['root', 'domain', 'control']);
 });

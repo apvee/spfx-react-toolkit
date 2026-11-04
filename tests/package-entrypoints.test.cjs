@@ -86,7 +86,7 @@ test('new clean private and wildcard paths are absent', () => {
   }
 });
 test('contract generation is deterministic and rejects loss outside the declaration baseline', () => {
-  const { createEntrypointContract } = require('../scripts/package-entrypoints.cjs');
+  const { createEntrypointContract } = require('../scripts/verification/package-entrypoints.cjs');
   const forward = createEntrypointContract({ publishedFiles: files, cleanAliases: aliases });
   assert.deepEqual(forward, createEntrypointContract({ publishedFiles: [...files].reverse(), cleanAliases: aliases }));
   assert.deepEqual(forward.exports['./lib/helpers/styles/width'], {
@@ -97,7 +97,7 @@ test('contract generation is deterministic and rejects loss outside the declarat
   assert.throws(() => createEntrypointContract({ publishedFiles: files, cleanAliases: { ...aliases, './styles': 'lib/helpers/styles/index' } }), /clean alias/);
 });
 test('package guard rejects catch-all root rewriting, wrong condition order and missing legacy paths', () => {
-  const { assertCompatiblePackageContract } = require('../scripts/api-compatibility.helpers.cjs');
+  const { assertCompatiblePackageContract } = require('../scripts/verification/api-compatibility.helpers.cjs');
   const original = require('./fixtures/package-baseline.json');
   for (const mutate of [
     candidate => { candidate.typesVersions['*']['*'] = ['lib/*']; },
@@ -111,15 +111,19 @@ test('package guard rejects catch-all root rewriting, wrong condition order and 
     assert.throws(() => assertCompatiblePackageContract(candidate, original));
   }
 });
-test('explicit check verifies built targets and never writes the manifest', () => {
+test('explicit check resolves its repository from a foreign cwd and never writes the manifest', () => {
   const file = path.resolve(__dirname, '../packages/spfx-react-toolkit/package.json');
   const before = fs.readFileSync(file, 'utf8');
-  const result = spawnSync(process.execPath, ['scripts/package-entrypoints.cjs', '--check'], { cwd: path.resolve(__dirname, '..'), encoding: 'utf8' });
-  assert.equal(result.status, 0, result.stdout + result.stderr);
-  assert.equal(fs.readFileSync(file, 'utf8'), before);
+  const directory = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'entrypoint-foreign-cwd-'));
+  try {
+    const script = path.resolve(__dirname, '../scripts/verification/package-entrypoints.cjs');
+    const result = spawnSync(process.execPath, [script, '--check'], { cwd: directory, encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stdout + result.stderr);
+    assert.equal(fs.readFileSync(file, 'utf8'), before);
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
 });
 test('real TypeScript and Webpack resolvers honor clean and legacy entries', async () => {
-  const { verifyConsumerResolution } = require('../scripts/package-entrypoints.cjs');
+  const { verifyConsumerResolution } = require('../scripts/verification/package-entrypoints.cjs');
   const temporaryRoot = path.resolve(__dirname, '../temp');
   fs.mkdirSync(temporaryRoot, { recursive: true });
   const consumer = fs.mkdtempSync(path.join(temporaryRoot, 'entrypoint-test-'));

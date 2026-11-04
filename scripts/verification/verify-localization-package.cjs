@@ -6,8 +6,8 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { createRequire } = require('node:module');
 const { spawnSync } = require('node:child_process');
-const { scenarios, mutations } = require('../tests/fixtures/localization-consumers/spfx-scenarios.cjs');
-const root = path.resolve(__dirname, '..');
+const { scenarios, mutations } = require('../../tests/fixtures/localization-consumers/spfx-scenarios.cjs');
+const root = path.resolve(__dirname, '../..');
 const packageName = '@apvee/spfx-react-toolkit';
 const prefix = 'ApveeSpfxReactToolkit';
 const stripAnsi = text => text.replace(/\x1b\[[0-?]*[ -/]*[@-~]/g, '');
@@ -175,7 +175,7 @@ async function verifyLocalizationPackage({ consumerRoot, outputDir, only, proven
       const start = Date.now();
       const { project, registeredIds } = createProject({ consumerRoot, directory, scenario, inventory, installed });
       console.log(`SPFx localization building ${scenario.name}${scenario.locale ? ` --locale ${scenario.locale}` : ''}`);
-      const preload = path.join(root, 'scripts/gulp-build-metadata-preload.cjs');
+      const preload = path.join(root, 'scripts/verification/gulp-build-metadata-preload.cjs');
       const args = ['--require', preload, fromConsumer.resolve('gulp/bin/gulp.js'), 'bundle', '--ship', ...(scenario.locale ? ['--locale', scenario.locale] : [])];
       const env = { ...process.env, NODE_OPTIONS: [process.env.NODE_OPTIONS, '--require', JSON.stringify(preload)].filter(Boolean).join(' ') };
       const result = spawnSync(process.execPath, args, { cwd: project, env, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
@@ -218,6 +218,6 @@ async function verifyLocalizationPackage({ consumerRoot, outputDir, only, proven
 module.exports = { verifyLocalizationPackage, strictResult, inspectArtifacts };
 if (require.main === module) {
   const consumerRoot = process.argv[2];
-  assert.ok(consumerRoot, 'Usage: node scripts/verify-localization-package.cjs <installed-consumer> [evidence-directory] [scenario,...]');
+  assert.ok(consumerRoot, 'Usage: node scripts/verification/verify-localization-package.cjs <installed-consumer> [evidence-directory] [scenario,...]');
   verifyLocalizationPackage({ consumerRoot, outputDir: process.argv[3], only: process.argv[4]?.split(','), provenance: process.env.SPFX_LOCALIZATION_PROVENANCE }).catch(error => { console.error(error); process.exitCode = 1; });
 }

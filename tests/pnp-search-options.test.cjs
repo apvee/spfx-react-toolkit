@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
 const ts = require('typescript');
-const { assertCompatibleDeclaration } = require('../scripts/api-compatibility.helpers.cjs');
+const { assertCompatibleDeclaration } = require('../scripts/verification/api-compatibility.helpers.cjs');
 const baseline = require('./fixtures/api-baseline.json');
 
 for (const [moduleName, interfaceName] of [

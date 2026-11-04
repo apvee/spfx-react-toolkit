@@ -3,7 +3,7 @@ const root = path.resolve(__dirname, '..'), lib = path.join(root, 'packages/spfx
 const names = ['SitePicker', 'ListPicker', 'FieldPicker', 'ViewPicker', 'ContentTypePicker', 'ListItemPicker', 'PrincipalPicker'];
 test('clean picker entrypoints expose seven React and native APIs without new legacy aliases', () => {
   const manifest = require('../packages/spfx-react-toolkit/package.json');
-  const { assertEntrypointContract, collectPublishedFiles } = require('../scripts/package-entrypoints.cjs');
+  const { assertEntrypointContract, collectPublishedFiles } = require('../scripts/verification/package-entrypoints.cjs');
   assertEntrypointContract(manifest, collectPublishedFiles());
   assert.equal(manifest.exports['./controls/pickers'].default, './lib/controls/pickers/index.js');
   assert.equal(manifest.exports['./property-pane/pickers'].default, './lib/property-pane/pickers/index.js');

@@ -5,7 +5,7 @@ const path = require('node:path');
 const ts = require('typescript');
 const { execFileSync } = require('node:child_process');
 const { createRequire } = require('node:module');
-const { checkFixture } = require('../scripts/bundle-contract.internal.cjs');
+const { checkFixture } = require('../scripts/verification/bundle-contract.internal.cjs');
 const root = path.resolve(__dirname, '..');
 const library = path.join(root, 'packages/spfx-react-toolkit');
 const manifest = require('../packages/spfx-react-toolkit/package.json');
@@ -61,7 +61,7 @@ test('initial module assertions reject eager engine while allowing the async uni
 // The public contract must retain all existing dependency checks while adding the
 // exact implementation-only engine inventory (including optional menu pins).
 test('package compatibility gate permits only the exact private engine dependency inventory', () => {
-  const { assertCompatiblePackageContract } = require('../scripts/api-compatibility.helpers.cjs');
+  const { assertCompatiblePackageContract } = require('../scripts/verification/api-compatibility.helpers.cjs');
   const baseline = require('./fixtures/package-baseline.json');
   assert.doesNotThrow(() => assertCompatiblePackageContract(manifest, baseline));
   const changed = structuredClone(manifest); changed.dependencies['@tiptap/core'] = '^3.30.3';
@@ -69,7 +69,7 @@ test('package compatibility gate permits only the exact private engine dependenc
 });
 
 test('actual packed runtime requests no editor chunk in Read and loads and destroys engine in Edit', async () => {
-  const { compileProbe, executeProbe } = require('../scripts/verify-production-runtime.cjs');
+  const { compileProbe, executeProbe } = require('../scripts/verification/verify-production-runtime.cjs');
   fs.mkdirSync(path.join(root, 'temp'), { recursive: true });
   const directory = fs.mkdtempSync(path.join(root, 'temp/web-part-shell-runtime-'));
   try {

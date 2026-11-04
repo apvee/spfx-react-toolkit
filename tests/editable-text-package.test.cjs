@@ -56,7 +56,7 @@ test('packed declarations preserve all seven canonical exports and exclude inter
 
 
 test('actual packed Read/Edit uses explicit resource adapters, loads only its engine and isolates two regions', async () => {
-  const { compileProbe, executeProbe } = require('../scripts/verify-production-runtime.cjs');
+  const { compileProbe, executeProbe } = require('../scripts/verification/verify-production-runtime.cjs');
   fs.mkdirSync(path.join(root, 'temp'), { recursive: true });
   const directory = fs.mkdtempSync(path.join(root, 'temp/editable-text-runtime-'));
   try {
@@ -69,7 +69,7 @@ test('actual packed Read/Edit uses explicit resource adapters, loads only its en
     assert.ok(bundle.emittedModules.every(item => !item.resource.includes('/web-part-shell/') && !item.resource.startsWith('@microsoft/sp-')));
     const stats = JSON.parse(fs.readFileSync(path.join(directory, 'assets/stats.json'), 'utf8'));
     const contract = require('./fixtures/tree-shaking/contract.json');
-    const { checkFixture } = require('../scripts/bundle-contract.internal.cjs');
+    const { checkFixture } = require('../scripts/verification/bundle-contract.internal.cjs');
     const initialChunkIds = [...new Set(Object.values(stats.entrypoints).flatMap(entry => entry.chunks))];
     assert.deepEqual(checkFixture({ id: 'editable-text/control', initialChunkIds, emittedModules: bundle.emittedModules, retentionObservations: [] }, contract.fixtures.find(item => item.id === 'editable-text'), contract), []);
     const observation = executeProbe(bundle.bundlePath, 'editable-text', directory);

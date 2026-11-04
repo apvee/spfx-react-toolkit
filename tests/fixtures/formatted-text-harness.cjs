@@ -5,7 +5,7 @@ const webpack = require('webpack');
 const { createSxDom } = require('./sx-harness.cjs');
 const root = path.resolve(__dirname, '../..');
 const bundles = [];
-const { nativeResourceAliases } = require('../../scripts/localization-webpack.internal.cjs');
+const { nativeResourceAliases } = require('../../scripts/verification/localization-webpack.internal.cjs');
 
 /** Compile actual TS/ESM source while keeping the host's React and Fluent instances. */
 async function loadModule(entryPath, { parserFailure = false, reactHookForm = false, nativeCulture = 'en-US', nativeOverrides = {} } = {}) {

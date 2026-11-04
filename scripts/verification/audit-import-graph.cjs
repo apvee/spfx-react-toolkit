@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
-const { collectPublicSurfaces } = require('./docs/public-surface.helpers.cjs');
+const { collectPublicSurfaces } = require('../docs/public-surface.helpers.cjs');
 const { getLocalizationPackageContract } = require('./package-entrypoints.cjs');
 const slash = value => value.split(path.sep).join('/');
 function sourceFiles(directory) {
@@ -339,7 +339,7 @@ function reviewModuleEffects(module) {
   return manual;
 }
 if (require.main === module) {
-  const root = path.resolve(__dirname, '..');
+  const root = path.resolve(__dirname, '../..');
   const sourceRoot = path.join(root, 'packages/spfx-react-toolkit/src');
   const output = path.resolve(process.argv[2] || '.docs/maintenance/evidence/tree-shaking/initial/import-graph.json');
   const report = auditImportGraph({ sourceRoot, entrypoints: ['index.ts', 'core/index.ts', 'hooks/index.ts', 'services/index.ts', 'helpers/index.ts', 'helpers/styles/index.ts', 'controls/index.ts', 'controls/formatted-text/index.ts', 'controls/relative-time/index.ts', 'controls/auto-skeleton/index.ts', 'controls/state-message/index.ts', 'controls/settings-group/index.ts', 'controls/accordion-group/index.ts', 'controls/form/index.ts', 'controls/data-grid/index.ts', 'controls/editable-text/index.ts', 'controls/web-part-shell/index.ts', 'controls/stage/index.ts', 'controls/pagination/index.ts', 'controls/description-list/index.ts', 'controls/sharepoint-permission-trim/index.ts', 'controls/sharepoint-group-trim/index.ts', 'controls/entra-group-trim/index.ts'] });

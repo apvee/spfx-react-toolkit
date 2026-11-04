@@ -37,7 +37,7 @@ test('production raw-webpack probes resolve native resources from the installed 
   const os = require('node:os');
   const path = require('node:path');
   const webpack = require('webpack');
-  const { buildConfig } = require('../scripts/bundle-contract.internal.cjs');
+  const { buildConfig } = require('../scripts/verification/bundle-contract.internal.cjs');
   const root = path.resolve(__dirname, '..');
   const consumer = fs.mkdtempSync(path.join(os.tmpdir(), 'toolkit-native-consumer-'));
   t.after(() => fs.rmSync(consumer, { recursive: true, force: true }));

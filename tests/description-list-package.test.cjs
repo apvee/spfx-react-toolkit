@@ -11,7 +11,7 @@ const library = path.join(root, 'packages/spfx-react-toolkit');
 
 test('DescriptionList import aliases share zero-growth budgets and unrelated consumers exclude the control', () => {
   const contract = require('./fixtures/tree-shaking/contract.json');
-  const { checkFixture } = require('../scripts/bundle-contract.internal.cjs');
+  const { checkFixture } = require('../scripts/verification/bundle-contract.internal.cjs');
   const fixture = contract.fixtures.find(item => item.id === 'description-list');
   assert.ok(fixture);
   assert.deepEqual(Object.keys(fixture.variants), ['root', 'domain', 'control']);

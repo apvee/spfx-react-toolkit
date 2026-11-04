@@ -8,7 +8,7 @@ const output = path.join(root, source ? 'temp/demo-presentation-source-browser' 
 webpack({ mode: 'development', devtool: 'source-map', entry: path.join(fixture, 'index.tsx'),
   output: { path: output, filename: 'fixture.js', chunkFilename: '[name].js', publicPath: '/' },
   resolve: { extensions: ['.tsx', '.ts', '.js'], alias: {
-    ...require('./localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
+    ...require('./verification/localization-webpack.internal.cjs').nativeResourceAliases({ packageRoot: path.join(root, 'packages/spfx-react-toolkit') }),
     '@apvee/spfx-react-toolkit$': path.join(fixture, source ? 'toolkit-source-boundary.ts' : 'toolkit-boundary.ts'),
     ...require('./executable-fixture-aliases.cjs').executableFixtureAliases(root, source),
     ...Object.fromEntries(['sp-core-library', 'sp-component-base', 'sp-page-context', 'sp-http'].map(name => [`@microsoft/${name}$`, path.join(fixture, 'spfx-services.ts')])),

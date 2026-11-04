@@ -5,7 +5,7 @@ const webpack = require('webpack');
 const base = require('./formatted-text-harness.cjs');
 const root = path.resolve(__dirname, '../..');
 const temporary = [];
-const { nativeResourceAliases } = require('../../scripts/localization-webpack.internal.cjs');
+const { nativeResourceAliases } = require('../../scripts/verification/localization-webpack.internal.cjs');
 let chartFailure = false;
 let attempts = 0;
 /** Test-only fault seam. All successful renders delegate to the official Charts component. */

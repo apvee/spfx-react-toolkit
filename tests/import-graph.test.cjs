@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
-const { auditImportGraph } = require('../scripts/audit-import-graph.cjs');
+const { auditImportGraph } = require('../scripts/verification/audit-import-graph.cjs');
 const sourceRoot = path.join(__dirname, 'fixtures/import-graph');
 const audit = () => auditImportGraph({ sourceRoot, entrypoints: ['index.ts'] });
 test('type-only edges introduce no runtime dependency', () => {
@@ -63,7 +63,7 @@ test('exact native resource inventory IDs resolve externally without package met
 });
 
 test('only the five reviewed native string adapters receive manual resource classification', () => {
-  const { reviewModuleEffects } = require('../scripts/audit-import-graph.cjs');
+  const { reviewModuleEffects } = require('../scripts/verification/audit-import-graph.cjs');
   const module = path => ({ path, externalImports: [], topLevelInitializations: [{ expression: '{}' }], effects: { classification: 'review-required' } });
   for (const file of [
     'controls/editable-text/localization/editable-text-strings.internal.ts',
@@ -95,7 +95,7 @@ test('renamed imported namespaces retain runtime leaves and dependencies', () =>
 });
 
 test('source rules reject internal barrel imports, global renderers and unclassified registrations', () => {
-  const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
+  const { checkSourceRules } = require('../scripts/verification/audit-import-graph.cjs');
   const report = { edges: [
     { from: 'hooks/leaf.ts', kind: 'type-only', specifier: '../core', resolvedTarget: 'core/index.ts' },
     { from: 'hooks/leaf.ts', kind: 'import', specifier: '@apvee/spfx-react-toolkit', resolvedTarget: '@apvee/spfx-react-toolkit' }
@@ -108,7 +108,7 @@ test('source rules reject internal barrel imports, global renderers and unclassi
 
 test('repository source effects match the manifest and internal imports use direct modules', () => {
   const fs = require('node:fs');
-  const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
+  const { checkSourceRules } = require('../scripts/verification/audit-import-graph.cjs');
   const report = auditImportGraph({ sourceRoot: path.resolve(__dirname, '../packages/spfx-react-toolkit/src'), entrypoints: ['index.ts', 'controls/index.ts', 'controls/form/index.ts'] });
   const manifest = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../packages/spfx-react-toolkit/package.json')));
   assert.deepEqual(checkSourceRules(report, manifest.sideEffects), []);
@@ -128,7 +128,7 @@ test('repository source effects match the manifest and internal imports use dire
 });
 
 test('source rules preserve type-only reexports at public barrel boundaries', () => {
-  const {checkSourceRules} = require('../scripts/audit-import-graph.cjs');
+  const {checkSourceRules} = require('../scripts/verification/audit-import-graph.cjs');
   const report = {edges:[{from:'index.ts',specifier:'./core',resolvedTarget:'core/index.ts',kind:'type-only',declarationKind:'reexport'}],modules:[]};
   assert.deepEqual(checkSourceRules(report, []), []);
   const typeEdge = audit().edges.find(edge => edge.from === 'index.ts' && edge.specifier === './types');
@@ -138,7 +138,7 @@ test('source rules preserve type-only reexports at public barrel boundaries', ()
 test('namespace barrel reexports remain allowed while type-only internal barrel imports are rejected', () => {
   const fs = require('node:fs');
   const os = require('node:os');
-  const {checkSourceRules} = require('../scripts/audit-import-graph.cjs');
+  const {checkSourceRules} = require('../scripts/verification/audit-import-graph.cjs');
   const directory = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'graph-barrel-rule-')));
   try {
     fs.mkdirSync(path.join(directory, 'core'));
@@ -153,14 +153,14 @@ test('namespace barrel reexports remain allowed while type-only internal barrel 
 });
 
 test('renderer factories are deferred until called, including immediately invoked wrappers', () => {
-  const {checkSourceRules}=require('../scripts/audit-import-graph.cjs');
+  const {checkSourceRules}=require('../scripts/verification/audit-import-graph.cjs');
   const report=expression=>({edges:[],modules:[{path:'factory.ts',externalImports:[],topLevelInitializations:[{expression}]}]});
   for(const expression of ['() => createDOMRenderer()', 'function () { return makeStyles({}); }', '(() => () => createDOMRenderer())()']) assert.deepEqual(checkSourceRules(report(expression),[]),[],expression);
   for(const expression of ['createDOMRenderer()', '(() => createDOMRenderer())()', '(function () { return createRegistry(); })()', 'factory(createDOMRenderer())', '(() => () => createDOMRenderer())()()', '(function () { return () => createRegistry(); })()()']) assert.equal(checkSourceRules(report(expression),[])[0]?.kind,'package-global-renderer',expression);
 });
 
 test('object methods and accessors defer renderer calls while computed names execute', () => {
-  const {checkSourceRules}=require('../scripts/audit-import-graph.cjs');
+  const {checkSourceRules}=require('../scripts/verification/audit-import-graph.cjs');
   const report=expression=>({edges:[],modules:[{path:'factory.ts',externalImports:[],topLevelInitializations:[{expression}]}]});
   for(const expression of [
     '({ method() { return createDOMRenderer(); } })',
@@ -172,7 +172,7 @@ test('object methods and accessors defer renderer calls while computed names exe
 });
 
 test('invoked default parameters execute renderer calls only when the argument is absent', () => {
-  const {checkSourceRules}=require('../scripts/audit-import-graph.cjs');
+  const {checkSourceRules}=require('../scripts/verification/audit-import-graph.cjs');
   const report=expression=>({edges:[],modules:[{path:'factory.ts',externalImports:[],topLevelInitializations:[{expression}]}]});
   for(const expression of [
     '((renderer = createDOMRenderer()) => renderer)()',
@@ -186,7 +186,7 @@ test('invoked default parameters execute renderer calls only when the argument i
 });
 
 test('returned conditional factories remain deferred until the returned function is invoked', () => {
-  const {checkSourceRules}=require('../scripts/audit-import-graph.cjs');
+  const {checkSourceRules}=require('../scripts/verification/audit-import-graph.cjs');
   const report=expression=>({edges:[],modules:[{path:'factory.ts',externalImports:[],topLevelInitializations:[{expression}]}]});
   for(const expression of [
     '(() => true ? () => createDOMRenderer() : () => createRegistry())()()',
@@ -196,7 +196,7 @@ test('returned conditional factories remain deferred until the returned function
 });
 
 test('reviewed control style definitions are local but actual renderer allocation stays forbidden', () => {
-  const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
+  const { checkSourceRules } = require('../scripts/verification/audit-import-graph.cjs');
   for (const path of ['controls/file-folder-picker/file-folder-picker.styles.internal.ts', 'controls/formatted-text/formatted-text.styles.internal.ts', 'controls/form/controls/form-controls.styles.internal.ts', 'controls/form/composition/form-sections.styles.internal.ts', 'controls/cards/card.styles.internal.ts', 'controls/editable-text/editable-text-color-picker.internal.tsx', 'controls/editable-text/editable-text-editor.internal.tsx', 'controls/editable-text/editable-text-styles.internal.ts', 'controls/editable-text/editable-text-toolbar.internal.tsx']) {
     const module = expression => ({ path, externalImports: [], topLevelInitializations: [{ expression }] });
     assert.deepEqual(checkSourceRules({ edges: [], modules: [module('makeStyles({ root: {} })')] }, []), []);
@@ -220,7 +220,7 @@ test('trim root/domain/control exports share canonical leaves without registrati
       assert.ok(module.externalImports.every(edge => edge.kind !== 'bare-import'));
     }
   }
-  const { checkSourceRules } = require('../scripts/audit-import-graph.cjs');
+  const { checkSourceRules } = require('../scripts/verification/audit-import-graph.cjs');
   const manifest = require('../packages/spfx-react-toolkit/package.json');
   const issues = checkSourceRules(report, manifest.sideEffects);
   assert.ok(issues.every(issue => !families.some(([folder]) => issue.from?.startsWith(`controls/${folder}/`))), JSON.stringify(issues));
