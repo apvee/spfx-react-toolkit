@@ -132,6 +132,31 @@ test('emits exact source bytes, literal lazy imports and one feature with source
   assert.throws(() => renderExecutableExamples([first, { ...second, id: first.id }]), /collision|duplicate/i);
 });
 
+test('source payloads remain string typed and share a common catalogue entry type', t => {
+  const root = temporary(t);
+  const artifacts = api().generateExecutableArtifacts(root, config);
+  apply(root, artifacts, 'write');
+  const { source } = importNodes(artifacts[outputRoot + '/catalogue.ts']);
+  const declaration = source.statements.filter(ts.isVariableStatement).flatMap(statement => statement.declarationList.declarations).find(item => item.name.getText() === 'executableExamples');
+  const loaders = declaration.initializer.elements.map(entry => entry.properties.find(property => property.name?.getText() === 'loadSource').initializer.getText());
+  const probe = path.join(root, outputRoot, 'source-type-probe.ts');
+  fs.writeFileSync(probe, 'interface Entry { loadSource(): Promise<{ readonly code: string }>; }\n' +
+    'export const entries: readonly Entry[] = [' + loaders.map(loader => '{ loadSource: ' + loader + ' }').join(', ') + '];\n');
+  const program = ts.createProgram([probe], { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.Node10, strict: true, noEmit: true, types: [] });
+  const checker = program.getTypeChecker();
+  const diagnostics = ts.getPreEmitDiagnostics(program);
+  assert.deepEqual(diagnostics.map(diagnostic => ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')), []);
+  const entries = program.getSourceFile(probe).statements.filter(ts.isVariableStatement).flatMap(statement => statement.declarationList.declarations)[0];
+  const element = checker.getIndexTypeOfType(checker.getTypeAtLocation(entries.initializer), ts.IndexKind.Number);
+  const sourceTypes = sourceRoutes(artifacts).map(route => {
+    const module = program.getSourceFile(path.join(root, route));
+    const code = module.statements.filter(ts.isVariableStatement).flatMap(statement => statement.declarationList.declarations).find(item => item.name.getText() === 'code');
+    return checker.getTypeAtLocation(code.name).flags === ts.TypeFlags.String;
+  });
+  assert.deepEqual({ sourceTypes, elementUnionArms: element.isUnion() ? element.types.length : 1 },
+    { sourceTypes: [true, true], elementUnionArms: 1 }, 'different exact source payloads must not produce incompatible literal loader types');
+});
+
 test('body changes retain identity; title changes and removals clean up paired owned routes', t => {
   const root = temporary(t);
   const initial = api().generateExecutableArtifacts(root, config);
@@ -174,7 +199,7 @@ test('check and preflight are read-only for missing, changed and orphan sets; wr
   fs.unlinkSync(path.join(root, modules[0]));
   fs.appendFileSync(path.join(root, modules[1]), '// stale\n');
   fs.writeFileSync(path.join(root, outputRoot, 'orphan.tsx'), marker + '\nexport {};\n');
-  fs.writeFileSync(path.join(root, outputRoot, 'orphan.source.ts'), marker + '\nexport const code = "orphan";\n');
+  fs.writeFileSync(path.join(root, outputRoot, 'orphan.source.ts'), marker + '\nexport const code: string = "orphan";\n');
   const sources = sourceRoutes(artifacts);
   assert.equal(sources.length, 2, 'every Demo must have an owned source module');
   fs.unlinkSync(path.join(root, sources[0]));

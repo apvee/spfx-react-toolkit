@@ -113,7 +113,8 @@ function renderExecutableExamples(examples) {
   for (const [index, example] of ordered.entries()) {
     const { id, ownerKey, title, groupRoute, groupKey, featureKey, featureTitle, publicNames, source, metadata } = example;
     artifacts[`${executableRoot}/${id}.tsx`] = ownership + '\n' + example.code;
-    artifacts[`${executableRoot}/${id}.source.ts`] = ownership + '\n' + `export const code = ${JSON.stringify(example.code)};\n`;
+    // Source text must not create distinct literal types for otherwise compatible catalogue entries.
+    artifacts[`${executableRoot}/${id}.source.ts`] = ownership + '\n' + `export const code: string = ${JSON.stringify(example.code)};\n`;
     indices.set(id, index);
     const data = JSON.stringify({ id, ownerKey, title, groupRoute, groupKey, featureKey, featureTitle, publicNames, source, metadata }, undefined, 2).replace(/\n\s*/g, ' ');
     const load = `import(/* webpackChunkName: 'spfx-jsdoc-${id}' */ "./${id}")`;

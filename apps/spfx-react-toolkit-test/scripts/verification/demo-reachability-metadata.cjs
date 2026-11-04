@@ -71,7 +71,7 @@ function proveMetadataReplicas({ root, reachable, resolve, checker, demand, prob
             if (sourceComments.length !== 1 || sourceComments[0].kind !== ts.SyntaxKind.MultiLineCommentTrivia || sourceComments[0].text !== `/* webpackChunkName: 'spfx-jsdoc-source-${id}' */`) throw new Error('Source replica requires only its exact webpack chunk block comment.');
             const sourceOutput = resolve(sourceImport.arguments[0].text, source);
             if (!sourceOutput || !reachable.has(sourceOutput) || path.normalize(sourceOutput.fileName) !== path.normalize(path.join(path.dirname(output.fileName), id + '.source.ts'))) throw new Error('Source replica must be the reachable same-ID sibling of its Demo.');
-            if (sourceOutput.text !== ownership + '\n' + `export const code = ${JSON.stringify(example.code)};\n`) throw new Error('Source replica must export only the exact canonical JSON string.');
+            if (sourceOutput.text !== ownership + '\n' + `export const code: string = ${JSON.stringify(example.code)};\n`) throw new Error('Source replica must export only the exact canonical JSON string.');
             // Integrity reads source bytes without demanding its code export or
             // loader member. Runtime consumers must keep those slots live.
             const symbol = checker.getExportsOfModule(output.symbol).find(item => item.name === 'demo');
