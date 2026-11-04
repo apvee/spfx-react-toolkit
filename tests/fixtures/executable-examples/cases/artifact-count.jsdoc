@@ -8,6 +8,7 @@
  * ```tsx
  * import * as React from 'react';
  * import { count } from '@fixture/artifacts';
+ * //   Exact text: café 漢字 😀 'double: \"' `template ${count(99)}` <div>&amp;</div> import('payload-only')
  * throw new Error('must not execute during generation');
  * export function Demo(): React.ReactElement { return <div>{count(3)}</div>; }
  * export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Three is visible.' };

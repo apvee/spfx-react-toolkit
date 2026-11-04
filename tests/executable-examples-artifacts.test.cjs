@@ -46,13 +46,36 @@ function catalogue(artifacts) {
   const source = artifacts[outputRoot + '/catalogue.ts'];
   const js = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;
   const exports = {};
-  vm.runInNewContext(js, { exports });
-  return { source, ...exports };
+  const requested = [];
+  function requireSource(specifier) {
+    requested.push(specifier);
+    assert.match(specifier, /^\.\/[a-f0-9]{64}\.source$/);
+    const route = outputRoot + '/' + specifier.slice(2) + '.ts';
+    assert.ok(Object.hasOwn(artifacts, route), 'lazy source module must exist');
+    const moduleExports = {};
+    const output = ts.transpileModule(artifacts[route], { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;
+    vm.runInNewContext(output, { exports: moduleExports, require: () => assert.fail('source module must not import or execute Demo') });
+    return moduleExports;
+  }
+  vm.runInNewContext(js, { exports, require: requireSource });
+  return { source, requested, ...exports };
 }
+function importNodes(text, filename = 'catalogue.ts') {
+  const source = ts.createSourceFile(filename, text, ts.ScriptTarget.Latest, true);
+  const imports = [];
+  function visit(node) {
+    if (ts.isImportDeclaration(node) || ts.isImportEqualsDeclaration(node) ||
+      (ts.isCallExpression(node) && (node.expression.kind === ts.SyntaxKind.ImportKeyword || node.expression.getText(source) === 'require'))) imports.push(node);
+    ts.forEachChild(node, visit);
+  }
+  visit(source);
+  return { source, imports };
+}
+function sourceRoutes(artifacts) { return Object.keys(artifacts).filter(route => route.endsWith('.source.ts')); }
 function moduleRoutes(artifacts) { return Object.keys(artifacts).filter(route => route.endsWith('.tsx')); }
 function apply(root, expected, mode) { return writer().applyGeneratedArtifacts(root, expected, mode, api().executableExamplesPolicy(config)); }
 
-test('emits exact source bytes, literal lazy imports and one feature with source-ordered scenarios', t => {
+test('emits exact source bytes, literal lazy imports and one feature with source-ordered scenarios', async t => {
   const root = temporary(t);
   const before = snapshot(root);
   const artifacts = api().generateExecutableArtifacts(root, config);
@@ -61,6 +84,9 @@ test('emits exact source bytes, literal lazy imports and one feature with source
   const context = buildValidatedDocumentationContext(root, config);
   const cat = catalogue(artifacts);
   assert.equal(moduleRoutes(artifacts).length, 2);
+  assert.equal(sourceRoutes(artifacts).length, 2);
+  assert.equal(Object.keys(artifacts).length, 5);
+  assert.equal(cat.requested.length, 0, 'catalogue evaluation must not load source payloads');
   assert.deepEqual(Array.from(cat.executableExamples, entry => entry.title), ['Z first scenario', 'A second scenario']);
   assert.equal(cat.executableGroups.length, 1);
   assert.equal(cat.executableGroups[0].key, 'helpers');
@@ -74,8 +100,20 @@ test('emits exact source bytes, literal lazy imports and one feature with source
     assert.equal(artifacts[outputRoot + '/' + entry.id + '.tsx'], marker + '\n' + example.code);
     assert.ok(cat.source.includes(`import(/* webpackChunkName: 'spfx-jsdoc-${entry.id}' */ "./${entry.id}")`));
     assert.equal(typeof entry.load, 'function');
+    assert.equal(typeof entry.loadSource, 'function');
+    const loaded = await entry.loadSource();
+    assert.deepEqual(Object.keys(loaded), ['code']);
+    assert.equal(loaded.code, example.code);
+    assert.deepEqual({ ...entry.source }, example.source);
+    assert.ok(!cat.source.includes(example.code), 'eager catalogue must not contain snippet payload');
+    assert.ok(!cat.source.includes('must not execute during generation'));
+    const sourceText = artifacts[outputRoot + '/' + entry.id + '.source.ts'];
+    assert.ok(sourceText.startsWith(marker + '\n'));
+    assert.equal(importNodes(sourceText, entry.id + '.source.ts').imports.length, 0, 'source strings must have no executable imports');
     assert.equal(entry.metadata.host, 'none');
   }
+  assert.equal(cat.requested.length, 2);
+  assert.match(cat.source, /loadSource\(\): Promise<\{ readonly code: string \}>/);
   assert.match(cat.source, /export interface ExecutableExampleEntry/);
   assert.match(cat.source, /export interface ExecutableExampleProps/);
   assert.match(cat.source, /import type .*React/);
@@ -94,7 +132,7 @@ test('emits exact source bytes, literal lazy imports and one feature with source
   assert.throws(() => renderExecutableExamples([first, { ...second, id: first.id }]), /collision|duplicate/i);
 });
 
-test('body changes retain identity; title changes create a new route and an owned orphan', t => {
+test('body changes retain identity; title changes and removals clean up paired owned routes', t => {
   const root = temporary(t);
   const initial = api().generateExecutableArtifacts(root, config);
   apply(root, initial, 'write');
@@ -102,13 +140,26 @@ test('body changes retain identity; title changes create a new route and an owne
   fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace('count(3)', 'count(4)'));
   const body = api().generateExecutableArtifacts(root, config);
   assert.deepEqual(Object.keys(body), Object.keys(initial));
-  assert.equal(writer().compareGeneratedArtifacts(root, body, api().executableExamplesPolicy(config)).changed.length, 1);
+  const bodyDiff = writer().compareGeneratedArtifacts(root, body, api().executableExamplesPolicy(config));
+  const changedEntry = catalogue(initial).executableExamples.find(entry => entry.title === 'Z first scenario');
+  assert.deepEqual(bodyDiff.changed.sort(), [outputRoot + '/' + changedEntry.id + '.source.ts', outputRoot + '/' + changedEntry.id + '.tsx']);
   fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace('Z first scenario', 'Renamed scenario'));
   const renamed = api().generateExecutableArtifacts(root, config);
   const diff = writer().compareGeneratedArtifacts(root, renamed, api().executableExamplesPolicy(config));
-  assert.equal(diff.missing.length, 1);
-  assert.equal(diff.orphan.length, 1);
-  assert.ok(diff.orphan[0].endsWith('.tsx'));
+  assert.equal(diff.missing.length, 2);
+  assert.deepEqual(diff.orphan.sort(), [outputRoot + '/' + changedEntry.id + '.source.ts', outputRoot + '/' + changedEntry.id + '.tsx']);
+  apply(root, renamed, 'write');
+  for (const route of diff.orphan) assert.equal(fs.existsSync(path.join(root, route)), false);
+  fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replaceAll('export function Demo', 'export function OrdinaryDemo').replaceAll('export const demo', 'export const ordinaryMetadata'));
+  const removed = api().generateExecutableArtifacts(root, config);
+  const removalDiff = writer().compareGeneratedArtifacts(root, removed, api().executableExamplesPolicy(config));
+  assert.equal(removalDiff.orphan.length, 4);
+  assert.equal(removalDiff.orphan.filter(route => route.endsWith('.source.ts')).length, 2);
+  const before = snapshot(root);
+  assert.equal(apply(root, removed, 'check').ok, false);
+  assert.deepEqual(snapshot(root), before);
+  apply(root, removed, 'write');
+  assert.deepEqual(fs.readdirSync(path.join(root, outputRoot)), ['catalogue.ts']);
 });
 
 test('check and preflight are read-only for missing, changed and orphan sets; writes preserve unchanged mtimes and manual orphans', t => {
@@ -123,15 +174,21 @@ test('check and preflight are read-only for missing, changed and orphan sets; wr
   fs.unlinkSync(path.join(root, modules[0]));
   fs.appendFileSync(path.join(root, modules[1]), '// stale\n');
   fs.writeFileSync(path.join(root, outputRoot, 'orphan.tsx'), marker + '\nexport {};\n');
+  fs.writeFileSync(path.join(root, outputRoot, 'orphan.source.ts'), marker + '\nexport const code = "orphan";\n');
+  const sources = sourceRoutes(artifacts);
+  assert.equal(sources.length, 2, 'every Demo must have an owned source module');
+  fs.unlinkSync(path.join(root, sources[0]));
+  fs.appendFileSync(path.join(root, sources[1]), '// stale\n');
   const manual = '// Manual\n' + marker + '\n';
   fs.writeFileSync(path.join(root, outputRoot, 'manual.tsx'), manual);
   before = snapshot(root);
   const result = apply(root, artifacts, 'check');
-  assert.deepEqual(result.diff, { missing: [modules[0]], changed: [modules[1]], orphan: [outputRoot + '/orphan.tsx'] });
+  assert.deepEqual(result.diff, { missing: [sources[0], modules[0]].sort(), changed: [sources[1], modules[1]].sort(), orphan: [outputRoot + '/orphan.source.ts', outputRoot + '/orphan.tsx'] });
   assert.deepEqual(snapshot(root), before);
   assert.equal(apply(root, artifacts, 'write').ok, true);
   assert.equal(fs.readFileSync(path.join(root, outputRoot, 'manual.tsx'), 'utf8'), manual);
   assert.equal(fs.existsSync(path.join(root, outputRoot, 'orphan.tsx')), false);
+  assert.equal(fs.existsSync(path.join(root, outputRoot, 'orphan.source.ts')), false);
   assert.equal(snapshot(root)['./' + outputRoot + '/catalogue.ts'].mtime, before['./' + outputRoot + '/catalogue.ts'].mtime);
   const unchanged = snapshot(root);
   assert.equal(apply(root, artifacts, 'write').ok, true);
@@ -214,7 +271,7 @@ test('standalone CLI has independent validated modes, check precedence and a val
   assert.equal(empty.executableGroups.length, 0);
 });
 
-test('preserves authored trailing blank lines in executable modules while check stays read-only', t => {
+test('preserves authored trailing blank lines in executable modules while check stays read-only', async t => {
   const root = temporary(t);
   const source = path.join(root, config.sourceRoot, 'index.ts');
   const original = fs.readFileSync(source, 'utf8');
@@ -226,6 +283,7 @@ test('preserves authored trailing blank lines in executable modules while check 
   const artifacts = api().renderExecutableArtifacts(root, context, config);
   const entry = catalogue(artifacts).executableExamples.find(item => item.title === example.title);
   assert.equal(artifacts[outputRoot + '/' + entry.id + '.tsx'], marker + '\n' + example.code);
+  assert.equal((await entry.loadSource()).code, example.code);
   apply(root, artifacts, 'write');
   const before = snapshot(root);
   assert.equal(apply(root, artifacts, 'check').ok, true);
@@ -289,22 +347,23 @@ test('SPFx lazy chunks have deterministic names derived only from scenario ident
     code: 'export function Demo() { throw new Error("Never execute during generation"); }\n',
   }));
   const artifacts = renderExecutableExamples(examples);
-  const source = ts.createSourceFile('catalogue.ts', artifacts[outputRoot + '/catalogue.ts'], ts.ScriptTarget.Latest, true);
-  const imports = [];
-  function visit(node) {
-    if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) imports.push(node);
-    ts.forEachChild(node, visit);
-  }
-  visit(source);
-  assert.equal(imports.length, 2);
+  const parsed = importNodes(artifacts[outputRoot + '/catalogue.ts']);
+  const source = parsed.source;
+  const imports = parsed.imports.filter(node => ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword);
+  assert.equal(imports.length, 4);
   for (const [index, node] of imports.entries()) {
     assert.equal(node.arguments.length, 1);
     assert.ok(ts.isStringLiteral(node.arguments[0]), 'webpack needs a literal module specifier');
-    const id = examples[index].id;
-    assert.equal(node.arguments[0].text, './' + id);
-    assert.ok(node.getText(source).includes(`/* webpackChunkName: 'spfx-jsdoc-${id}' */`), 'SPFx-required magic comment');
+    const id = examples[Math.floor(index / 2)].id;
+    const isSource = index % 2 === 1;
+    assert.equal(node.arguments[0].text, './' + id + (isSource ? '.source' : ''));
+    assert.ok(node.getText(source).includes(`/* webpackChunkName: 'spfx-jsdoc-${isSource ? 'source-' : ''}${id}' */`), 'SPFx-required magic comment');
   }
   const moved = examples.map(entry => ({ ...entry, source: { ...entry.source, line: entry.source.line + 100 } }));
   const movedText = renderExecutableExamples(moved)[outputRoot + '/catalogue.ts'];
-  for (const { id } of examples) assert.ok(movedText.includes(`webpackChunkName: 'spfx-jsdoc-${id}'`), 'source movement does not rename chunks');
+  for (const { id } of examples) {
+    assert.ok(movedText.includes(`webpackChunkName: 'spfx-jsdoc-${id}'`), 'source movement does not rename Demo chunks');
+    assert.ok(movedText.includes(`webpackChunkName: 'spfx-jsdoc-source-${id}'`), 'source movement does not rename source chunks');
+    assert.equal(renderExecutableExamples(moved)[outputRoot + '/' + id + '.source.ts'], artifacts[outputRoot + '/' + id + '.source.ts']);
+  }
 });
