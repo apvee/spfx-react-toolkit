@@ -63,10 +63,14 @@ function proveMetadataReplicas({ root, reachable, resolve, checker, demand, prob
             const sourceFactory = sourceLoader && ts.isPropertyAssignment(sourceLoader) ? sourceLoader.initializer : undefined;
             const sourceImport = sourceFactory && ts.isArrowFunction(sourceFactory) && sourceFactory.parameters.length === 0 ? sourceFactory.body : undefined;
             if (!sourceImport || !ts.isCallExpression(sourceImport) || sourceImport.expression.kind !== ts.SyntaxKind.ImportKeyword || sourceImport.arguments.length !== 1 || !ts.isStringLiteral(sourceImport.arguments[0]) || sourceImport.arguments[0].text !== './' + id + '.source') throw new Error('Source replica requires its own direct literal loader and chunk identity.');
-            const sourceComments = ts.getTrailingCommentRanges(source.text, sourceImport.arguments[0].pos) || [];
-            if (!sourceComments.some(comment => comment.kind === ts.SyntaxKind.MultiLineCommentTrivia && source.text.slice(comment.pos, comment.end) === `/* webpackChunkName: 'spfx-jsdoc-source-${id}' */`)) throw new Error('Source replica requires its exact webpack chunk block comment.');
+            const sourceScanner = ts.createScanner(ts.ScriptTarget.Latest, false, ts.LanguageVariant.Standard, sourceImport.getText());
+            const sourceComments = [];
+            for (let token = sourceScanner.scan(); token !== ts.SyntaxKind.EndOfFileToken; token = sourceScanner.scan()) {
+              if (token === ts.SyntaxKind.SingleLineCommentTrivia || token === ts.SyntaxKind.MultiLineCommentTrivia) sourceComments.push({ kind: token, text: sourceScanner.getTokenText() });
+            }
+            if (sourceComments.length !== 1 || sourceComments[0].kind !== ts.SyntaxKind.MultiLineCommentTrivia || sourceComments[0].text !== `/* webpackChunkName: 'spfx-jsdoc-source-${id}' */`) throw new Error('Source replica requires only its exact webpack chunk block comment.');
             const sourceOutput = resolve(sourceImport.arguments[0].text, source);
-            if (!sourceOutput || !reachable.has(sourceOutput) || sourceOutput.fileName !== path.join(path.dirname(output.fileName), id + '.source.ts')) throw new Error('Source replica must be the reachable same-ID sibling of its Demo.');
+            if (!sourceOutput || !reachable.has(sourceOutput) || path.normalize(sourceOutput.fileName) !== path.normalize(path.join(path.dirname(output.fileName), id + '.source.ts'))) throw new Error('Source replica must be the reachable same-ID sibling of its Demo.');
             if (sourceOutput.text !== ownership + '\n' + `export const code = ${JSON.stringify(example.code)};\n`) throw new Error('Source replica must export only the exact canonical JSON string.');
             // Integrity reads source bytes without demanding its code export or
             // loader member. Runtime consumers must keep those slots live.

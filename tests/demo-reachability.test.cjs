@@ -158,6 +158,16 @@ test('a line-comment imitation cannot supply the source webpack chunk identity',
   changes[app + 'src/catalogue.ts'] = changes[app + 'src/catalogue.ts'].replace('import(/* webpackChunkName:', 'import(// /* webpackChunkName:').replace(/(spfx-jsdoc-source-[a-f0-9]+['] \*\/) /, '$1\n');
   check(changes, 'sourceDiagnostics', sourceProvenance);
 });
+test('a later conflicting webpack chunk directive cannot override the proven source identity', () => {
+  const changes = catalogueFixture();
+  changes[app + 'src/catalogue.ts'] = changes[app + 'src/catalogue.ts'].replace(/(spfx-jsdoc-source-[a-f0-9]+' \*\/)/, '$1 /* webpackChunkName: "forged" */');
+  check(changes, 'sourceDiagnostics', sourceProvenance);
+});
+test('a conflicting webpack chunk directive after the source argument cannot bypass provenance', () => {
+  const changes = catalogueFixture();
+  changes[app + 'src/catalogue.ts'] = changes[app + 'src/catalogue.ts'].replace(/(\.source")\)/, '$1 /* webpackChunkName: "forged" */)');
+  check(changes, 'sourceDiagnostics', sourceProvenance);
+});
 test('source loader cannot replace the imported code through a wrapper', () => {
   const changes = catalogueFixture();
   changes[app + 'src/catalogue.ts'] = changes[app + 'src/catalogue.ts'].replace(/(loadSource:.*?import\(.*?\))(?= }];)/, '$1.then(() => ({code: "forged"}))');
