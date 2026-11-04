@@ -1,33 +1,26 @@
 // Actual source-owned card scenarios and independent conformance, against source and compiled library.
+const { startFixtureServer } = require('../helpers/fixture-server.cjs');
+const { withBrowserCleanup } = require('../helpers/browser-runtime.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const http = require('node:http');
 const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 const root = path.resolve(__dirname, '../../..');
 const evidence = path.resolve(process.env.CARDS_BROWSER_EVIDENCE || path.join(root, '.docs/maintenance/evidence/cards'));
 async function verify(boundary) {
-  const directory = path.join(root, 'temp', boundary === 'source' ? 'sx-browser' : 'styles-panel-browser');
-  const server = http.createServer((request, response) => {
-    const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
-    if (pathname === '/favicon.ico') { response.writeHead(204).end(); return; }
-    // Real decode failure, without an unrelated HTTP console error.
-    if (pathname === '/cards-demo-missing-image.png') { response.writeHead(200, { 'Content-Type': 'image/png' }).end('invalid image'); return; }
-    const file = { '/': 'index.html', '/fixture.js': 'fixture.js', '/fixture.js.map': 'fixture.js.map' }[pathname];
-    if (!file) { response.writeHead(404).end(); return; }
-    response.setHeader('Content-Type', file.endsWith('.html') ? 'text/html' : 'application/javascript');
-    response.end(fs.readFileSync(path.join(directory, file)));
-  });
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const checks = [], errors = [], warnings = [];
-  const check = (name, actual, expected) => { assert.deepEqual(actual, expected, name); checks.push(name); };
-  let browser;
-  try {
+  return withBrowserCleanup(async defer => {
+    const directory = path.join(root, 'temp', boundary === 'source' ? 'sx-browser' : 'styles-panel-browser');
+    const server = await startFixtureServer({ directory, files: { '/': 'index.html', '/fixture.js': 'fixture.js', '/fixture.js.map': 'fixture.js.map' }, routes: { '/cards-demo-missing-image.png': { contentType: 'image/png', body: 'invalid image' } } });
+    defer(() => server.close());
+    const checks = [], errors = [], warnings = [];
+    const check = (name, actual, expected) => { assert.deepEqual(actual, expected, name); checks.push(name); };
+    let browser;
     browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_EXECUTABLE_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });
+    defer(() => browser.close());
     const page = await browser.newPage({ viewport: { width: 1280, height: 1100 } });
     page.on('pageerror', error => errors.push(error.message));
     page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); if (message.type() === 'warning') warnings.push(message.text()); });
-    const url = `http://127.0.0.1:${server.address().port}`;
+    const url = server.url;
     await page.goto(url);
     const live = page.locator('[data-card-instance="main"]');
     const liveTarget = marker => live.locator(`[data-cards-demo="${marker}"]`);
@@ -301,7 +294,7 @@ async function verify(boundary) {
     check('main edited props isolated', await target('title-input').inputValue(), 'Edited report title');
     check('console errors', errors, []); check('console warnings', warnings, []);
     return { boundary, url, browser: browser.version(), checks, errors, warnings };
-  } finally { await browser?.close(); await new Promise(resolve => server.close(resolve)); }
+  });
 }
 (async () => {
   fs.mkdirSync(evidence, { recursive: true });

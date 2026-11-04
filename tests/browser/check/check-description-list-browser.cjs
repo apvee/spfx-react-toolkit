@@ -1,44 +1,39 @@
+const { startFixtureServer } = require('../helpers/fixture-server.cjs');
+const { withBrowserCleanup } = require('../helpers/browser-runtime.cjs');
 const { descriptionListProduct } = require('../../fixtures/demo-control-isolation/task3-product.browser.cjs');
 // Run the actual sample through isolated source and compiled library boundaries.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const http = require('node:http');
 const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 const root = path.resolve(__dirname, '../../..');
 const evidence = path.resolve(process.env.DESCRIPTION_LIST_BROWSER_EVIDENCE || path.join(root, '.docs/maintenance/evidence/description-list'));
 
 async function verify(boundary) {
-  const directory = path.join(root, 'temp', boundary === 'source' ? 'sx-browser' : 'styles-panel-browser');
-  const server = http.createServer((request, response) => {
-    const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
-    if (pathname === '/favicon.ico') { response.writeHead(204).end(); return; }
-    const file = { '/': 'index.html', '/fixture.js': 'fixture.js', '/fixture.js.map': 'fixture.js.map' }[pathname];
-    if (!file) { response.writeHead(404).end(); return; }
-    response.setHeader('Content-Type', file.endsWith('.html') ? 'text/html' : 'application/javascript');
-    response.end(fs.readFileSync(path.join(directory, file)));
-  });
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  let browser;
-  const checks = [], errors = [], warnings = [];
-  const check = (name, value, expected) => { assert.deepEqual(value, expected, name); checks.push(name); };
-  const geometry = list => list.evaluate(node => {
-    const terms = [...node.querySelectorAll('dt')], definitions = [...node.querySelectorAll('dd')];
-    const term = terms[0]?.getBoundingClientRect(), value = definitions[0]?.getBoundingClientRect();
-    return {
-      horizontal: !!term && !!value && Math.abs(term.top - value.top) < 2,
-      aligned: definitions.every(cell => Math.abs(cell.getBoundingClientRect().left - value.left) < 2),
-      overflow: node.scrollWidth > node.clientWidth + 1,
-      inlineStyles: node.hasAttribute('style') || [...node.querySelectorAll('dt,dd')].some(cell => cell.hasAttribute('style')),
-      terms: terms.length, definitions: definitions.length,
-    };
-  });
-  try {
+  return withBrowserCleanup(async defer => {
+    const directory = path.join(root, 'temp', boundary === 'source' ? 'sx-browser' : 'styles-panel-browser');
+    const server = await startFixtureServer({ directory, files: { '/': 'index.html', '/fixture.js': 'fixture.js', '/fixture.js.map': 'fixture.js.map' } });
+    defer(() => server.close());
+    let browser;
+    const checks = [], errors = [], warnings = [];
+    const check = (name, value, expected) => { assert.deepEqual(value, expected, name); checks.push(name); };
+    const geometry = list => list.evaluate(node => {
+      const terms = [...node.querySelectorAll('dt')], definitions = [...node.querySelectorAll('dd')];
+      const term = terms[0]?.getBoundingClientRect(), value = definitions[0]?.getBoundingClientRect();
+      return {
+        horizontal: !!term && !!value && Math.abs(term.top - value.top) < 2,
+        aligned: definitions.every(cell => Math.abs(cell.getBoundingClientRect().left - value.left) < 2),
+        overflow: node.scrollWidth > node.clientWidth + 1,
+        inlineStyles: node.hasAttribute('style') || [...node.querySelectorAll('dt,dd')].some(cell => cell.hasAttribute('style')),
+        terms: terms.length, definitions: definitions.length,
+      };
+    });
     browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_EXECUTABLE_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });
+    defer(() => browser.close());
     const page = await browser.newPage({ viewport: { width: 1280, height: 1100 } });
     page.on('pageerror', error => errors.push(error.message));
     page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); if (message.type() === 'warning') warnings.push(message.text()); });
-    const url = `http://127.0.0.1:${server.address().port}`;
+    const url = server.url;
     await descriptionListProduct(page, { url, check });
     await page.goto(url);
     await page.getByRole('button', { name: 'Independent RTL instance', exact: true }).click();
@@ -164,7 +159,7 @@ async function verify(boundary) {
     check('console errors', errors, []);
     check('console warnings', warnings, []);
     return { boundary, url, checks, errors, warnings, browser: browser.version(), containerWidths: [320, 479, 480, 639, 640, 900] };
-  } finally { await browser?.close(); await new Promise(resolve => server.close(resolve)); }
+  });
 }
 async function main() {
   fs.mkdirSync(evidence, { recursive: true });

@@ -1,13 +1,15 @@
 // Native geometry, keyboard and existing Shell acceptance; no dependency installs.
+const { startFixtureServer } = require('../helpers/fixture-server.cjs');
+const { withBrowserCleanup } = require('../helpers/browser-runtime.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
-const { serve, settle, settlePalette } = require('./check-title-toolbar-localization-browser.cjs');
+const { settle, settlePalette } = require('../helpers/title-toolbar-browser.helpers.cjs');
 const { checkWebPartShellBrowser, selectGeneratedShellScenario } = require('../helpers/web-part-shell-browser.helpers.cjs');
 const root = path.resolve(__dirname, '../../..');
-const output = path.join(root, '.docs/maintenance/title-toolbar-localization/geometry');
+const output = path.resolve(process.env.TITLE_TOOLBAR_EVIDENCE || path.join(root, '.docs/maintenance/title-toolbar-localization/geometry'));
 const checks = [];
 const diagnostics = [];
 const executablePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -68,14 +70,18 @@ async function checkColorOverflowResize(page, editable, boundary) {
     await page.keyboard.press('Escape');
   }
 }
-(async () => {
-  fs.mkdirSync(output, { recursive: true });
-  const browser = await chromium.launch({ executablePath, headless: true });
-  try {
+async function main() {
+  return withBrowserCleanup(async defer => {
+    fs.mkdirSync(output, { recursive: true });
+    defer(() => { fs.writeFileSync(path.join(output, 'report.json'), JSON.stringify({ checks, diagnostics, authenticatedSharePoint: 'NOT EXECUTED' }, undefined, 2)); });
+    const browser = await chromium.launch({ executablePath, headless: true });
+    defer(() => browser.close());
     for (const boundary of ['source', 'compiled']) {
-      const server = await serve(path.join(root, 'temp', boundary === 'source' ? 'sx-browser' : 'styles-panel-browser'));
-      try {
+      await withBrowserCleanup(async defer => {
+        const server = await startFixtureServer({ directory: path.join(root, 'temp', boundary === 'source' ? 'sx-browser' : 'styles-panel-browser') });
+        defer(() => server.close());
         const page = await browser.newPage({ viewport: { width: 1280, height: 1000 } });
+        const closePage = defer(() => page.close());
         page.on('pageerror', error => diagnostics.push(error.message));
         await page.goto(server.url); await selectGeneratedShellScenario(page);
         if (process.env.TITLE_TOOLBAR_SKIP_LEGACY !== '1' && process.env.TITLE_TOOLBAR_RESET_ONLY !== '1') {
@@ -85,7 +91,7 @@ async function checkColorOverflowResize(page, editable, boundary) {
         await page.evaluate(() => window.shellFixture.render({ mode: 'Edit', uiCulture: 'en-US', width: 500, properties: { title: 'Themed title', titleHTML: '<h2>Themed title</h2>', showTitle: true } }));
         const editable = page.locator('[data-shell-root=first] [contenteditable=true]'); await editable.waitFor();
         await checkColorOverflowResize(page, editable, boundary);
-        if (process.env.TITLE_TOOLBAR_RESET_ONLY === '1') { await page.close(); continue; }
+        if (process.env.TITLE_TOOLBAR_RESET_ONLY === '1') { await closePage(); return; }
         await page.evaluate(() => window.shellFixture.render({ width: 500, dir: 'ltr' }));
         for (const theme of ['light', 'dark', 'highContrast']) {
           await page.evaluate(theme => window.shellFixture.render({ theme }), theme); await editable.focus(); await page.keyboard.press('Meta+a'); await settle(page); await palette(page);
@@ -128,15 +134,16 @@ async function checkColorOverflowResize(page, editable, boundary) {
         check(`${boundary} forced colors keeps Automatic named`, await page.locator('[data-title-color=automatic]').getAttribute('aria-label'), 'Automatic');
         check(`${boundary} forced colors keeps offered colors named`, await page.locator('[data-title-color]').evaluateAll(elements => elements.length > 1 && elements.every(element => Boolean(element.getAttribute('aria-label')?.trim()))), true);
         await page.screenshot({ path: path.join(output, `${boundary}-forced-colors.png`) }); await page.keyboard.press('Escape'); await page.emulateMedia({ forcedColors: 'none' });
-        await page.close();
+        await closePage();
         const metrics = [];
         for (const zoom of [1, 2]) {
-          const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'title-toolbar-native-zoom-'));
-          fs.mkdirSync(path.join(profile, 'Default'));
-          fs.writeFileSync(path.join(profile, 'Default/Preferences'), JSON.stringify({ partition: { default_zoom_level: { x: Math.log(zoom) / Math.log(1.2) } } }));
-          let context;
-          try {
-            context = await chromium.launchPersistentContext(profile, { executablePath, headless: true, viewport: null, args: ['--window-size=1280,1000'] });
+          await withBrowserCleanup(async defer => {
+            const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'title-toolbar-native-zoom-'));
+            defer(() => fs.rmSync(profile, { recursive: true, force: true }));
+            fs.mkdirSync(path.join(profile, 'Default'));
+            fs.writeFileSync(path.join(profile, 'Default/Preferences'), JSON.stringify({ partition: { default_zoom_level: { x: Math.log(zoom) / Math.log(1.2) } } }));
+            const context = await chromium.launchPersistentContext(profile, { executablePath, headless: true, viewport: null, args: ['--window-size=1280,1000'] });
+            defer(() => context.close());
             const native = context.pages()[0]; await native.goto(server.url); await selectGeneratedShellScenario(native);
             await native.evaluate(() => window.shellFixture.render({ mode: 'Edit', width: 500, properties: { title: 'Zoom title', titleHTML: '<h2>Zoom title</h2>', showTitle: true } }));
             const editor = native.locator('[data-shell-root=first] [contenteditable=true]'); await editor.waitFor();
@@ -144,8 +151,9 @@ async function checkColorOverflowResize(page, editable, boundary) {
               await native.evaluate(dir => window.shellFixture.render({ dir }), dir); await editor.focus(); await settle(native); await palette(native);
               check(`${boundary}/${zoom}/${dir} palette stays within viewport`, await native.locator('[data-title-color-picker]').evaluate(element => { const r = element.getBoundingClientRect(); return r.left >= -1 && r.right <= innerWidth + 1 && element.scrollWidth <= element.clientWidth + 1; }), true);
               const session = await context.newCDPSession(native);
+              const detach = defer(() => session.detach());
               const shot = await session.send('Page.captureScreenshot', { format: 'png', fromSurface: true, captureBeyondViewport: false });
-              fs.writeFileSync(path.join(output, `${boundary}-${zoom * 100}-${dir}.png`), Buffer.from(shot.data, 'base64')); await session.detach();
+              fs.writeFileSync(path.join(output, `${boundary}-${zoom * 100}-${dir}.png`), Buffer.from(shot.data, 'base64')); await detach();
               await native.keyboard.press('Escape');
             }
             await native.goto(`${server.url}/?scenario=editable-text`);
@@ -154,13 +162,14 @@ async function checkColorOverflowResize(page, editable, boundary) {
             await standalone.waitFor(); await standalone.focus(); await settle(native);
             check(`${boundary}/${zoom} standalone toolbar fits native zoom`, await native.locator('[data-title-toolbar]').evaluate(element => { const rect = element.getBoundingClientRect(); return rect.left >= -1 && rect.right <= innerWidth + 1; }), true);
             metrics.push(await native.evaluate(() => ({ dpr: devicePixelRatio, width: innerWidth })));
-          } finally { await context?.close(); fs.rmSync(profile, { recursive: true, force: true }); }
+          });
         }
         check(`${boundary} 200% is native double DPR`, metrics[1].dpr / metrics[0].dpr, 2);
         check(`${boundary} 200% halves CSS viewport`, metrics[0].width / metrics[1].width, 2);
-      } finally { await server.close(); }
+      });
     }
     check('Scoped browser runtime errors', diagnostics, []);
     console.log(`${checks.length} native title geometry/legacy checks PASS.`);
-  } finally { fs.writeFileSync(path.join(output, 'report.json'), JSON.stringify({ checks, diagnostics, authenticatedSharePoint: 'NOT EXECUTED' }, undefined, 2)); await browser.close(); }
-})().catch(error => { console.error(error); process.exitCode = 1; });
+  });
+}
+main().catch(error => { console.error(error); process.exitCode = 1; });

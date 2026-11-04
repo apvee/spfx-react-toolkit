@@ -1,7 +1,8 @@
 // Browser plugin unavailable: installed Playwright + Chrome; actual demo with mocked hook.
+const { startFixtureServer } = require('../helpers/fixture-server.cjs');
+const { withBrowserCleanup } = require('../helpers/browser-runtime.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const http = require('node:http');
 const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 const { teamsDarkTheme } = require('@fluentui/react-components');
@@ -10,23 +11,23 @@ const directory = path.join(root, 'temp/pnp-confirmation-browser');
 const output = path.resolve(process.env.PNP_CONFIRMATION_EVIDENCE || '.docs/maintenance/evidence/pnp-confirmation');
 const checks = [], diagnostics = [], network = [], screenshots = [];
 const check = (name, actual, expected) => { checks.push({ name, actual, expected }); assert.deepEqual(actual, expected, name); };
-const server = http.createServer((request, response) => {
-  const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
-  if (pathname === '/favicon.ico') return response.writeHead(204).end();
-  const file = path.join(directory, pathname === '/' ? 'index.html' : pathname.slice(1));
-  if (!file.startsWith(`${directory}/`) || !fs.existsSync(file)) return response.writeHead(404).end();
-  response.setHeader('Content-Type', file.endsWith('.html') ? 'text/html' : 'application/javascript'); response.end(fs.readFileSync(file));
-});
-(async () => {
-  fs.mkdirSync(output, { recursive: true }); await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  let browser;
-  try {
+
+async function main() {
+  return withBrowserCleanup(async defer => {
+    fs.mkdirSync(output, { recursive: true });
+    const server = await startFixtureServer({ directory });
+    defer(() => server.close());
+    let browser;
+    defer(() => {
+      fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ checks, diagnostics, network, screenshots, boundary: 'emitted source Demo/Fluent Dialog; whole-hook-doubled UI conformance; no actual CRUD, network or authenticated host', browserPlugin: 'not available' }, undefined, 2));
+    });
     browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_EXECUTABLE_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });
+    defer(() => browser.close());
     const page = await browser.newPage({ viewport: { width: 640, height: 850 } });
     page.on('pageerror', error => diagnostics.push(error.message));
     page.on('console', message => { if (['warning', 'error'].includes(message.type())) diagnostics.push(message.text()); });
     page.on('dialog', dialog => { diagnostics.push(`Unexpected native ${dialog.type()}`); dialog.dismiss(); });
-    const url = `http://127.0.0.1:${server.address().port}`;
+    const url = server.url;
     await page.route('**/*', route => { if (new URL(route.request().url()).origin === url) return route.continue(); network.push(route.request().url()); return route.abort(); });
     await page.goto(url); check('Page identity', await page.title(), 'Mocked PnP confirmation checkpoint');
     check('Meaningful actual demo', await page.getByRole('heading', { name: 'Manage list items with paging and captured delete consent' }).count(), 1);
@@ -82,8 +83,7 @@ const server = http.createServer((request, response) => {
     check('Second explicit operation dispatches once', await page.evaluate(() => window.pnpConfirmationMock.calls), [{ id: 42, listTitle: 'Mock list', operation: 0 }, { id: 73, listTitle: 'Mock list', operation: 1 }]);
     check('All actual network remains loopback', network, []); check('No unexpected browser diagnostics/native dialogs', diagnostics, []);
     console.log(`PnP confirmation: ${checks.length} PASS checks; actual Fluent surface and whole-hook-doubled UI conformance.`);
-  } finally {
-    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ checks, diagnostics, network, screenshots, boundary: 'emitted source Demo/Fluent Dialog; whole-hook-doubled UI conformance; no actual CRUD, network or authenticated host', browserPlugin: 'not available' }, undefined, 2));
-    await browser?.close(); await new Promise(resolve => server.close(resolve));
-  }
-})().catch(error => { console.error(error); process.exitCode = 1; });
+
+  });
+}
+main().catch(error => { console.error(error); process.exitCode = 1; });

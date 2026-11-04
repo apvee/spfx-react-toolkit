@@ -1,7 +1,8 @@
 // Optional local Playwright fixture runner; authenticated host evidence is separate.
+const { startFixtureServer } = require('../helpers/fixture-server.cjs');
+const { withBrowserCleanup } = require('../helpers/browser-runtime.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const http = require('node:http');
 const os = require('node:os');
 const path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
@@ -46,14 +47,7 @@ const entries = [
 const expectedRuntimeDiagnostics = [];
 const checks = [], diagnostics = [], metrics = [], screenshots = [], fontAssets = [];
 const check = (name, actual, expected) => { checks.push({ name, actual, expected }); assert.deepEqual(actual, expected, name); };
-const server = http.createServer((request, response) => {
-  const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
-  if (pathname === '/favicon.ico') { response.writeHead(204).end(); return; }
-  if (pathname === '/cards-demo-missing-image.png') { response.writeHead(200, { 'Content-Type': 'image/png' }).end('invalid image'); return; }
-  const file = path.join(directory, pathname === '/' ? 'index.html' : pathname.slice(1));
-  if (!file.startsWith(`${directory}/`) || !fs.existsSync(file)) { response.writeHead(404).end(); return; }
-  response.setHeader('Content-Type', file.endsWith('.html') ? 'text/html' : 'application/javascript'); response.end(fs.readFileSync(file));
-});
+
 const observe = page => {
   page.on('pageerror', error => diagnostics.push({ type: 'pageerror', text: error.message }));
   page.on('console', message => {
@@ -530,11 +524,17 @@ async function liveTheme(page) {
   check('Popup closes with Escape', await dialog.count(), 0);
   check('Popup restores trigger focus', await page.locator('[data-stage-demo=trigger]').first().evaluate(element => document.activeElement === element), true);
 }
-(async () => {
-  fs.mkdirSync(output, { recursive: true }); await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const url = `http://127.0.0.1:${server.address().port}`; let browser;
-  try {
+async function main() {
+  return withBrowserCleanup(async defer => {
+    fs.mkdirSync(output, { recursive: true });
+    const server = await startFixtureServer({ directory, routes: { '/cards-demo-missing-image.png': { contentType: 'image/png', body: 'invalid image' } } });
+    defer(() => server.close());
+    const url = server.url; let browser;
+    defer(() => {
+      fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `focused source-owned JSDoc migration checkpoint (${pilotScope.scenarios} scenarios, ${pilotScope.features} features)` : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { ...pilotScope, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/generated scenarios + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, expectedRuntimeDiagnostics, metrics, screenshots }, undefined, 2));
+    });
     browser = await chromium.launch({ headless: true, executablePath });
+    defer(() => browser.close());
     const page = await browser.newPage({ viewport: { width: 1280, height: 1000 } }); observe(page); page.setDefaultTimeout(10000);
     await guardNetwork(page, url);
     await page.goto(process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `${url}/?jsdocOnly=1` : url); check('Page identity', await page.title(), 'Integrated demo presentation checkpoint');
@@ -790,28 +790,30 @@ async function liveTheme(page) {
     }
     await capture(page, 'keyboard-navigation-320');
     for (const zoom of [1, 2]) {
-      const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'demo-presentation-native-zoom-')); fs.mkdirSync(path.join(profile, 'Default'));
-      fs.writeFileSync(path.join(profile, 'Default', 'Preferences'), JSON.stringify({ partition: { default_zoom_level: { x: Math.log(zoom) / Math.log(1.2) } } }));
-      let context;
-      try {
-        context = await chromium.launchPersistentContext(profile, { executablePath, headless: true, viewport: null, args: ['--window-size=1440,1000'] });
+      await withBrowserCleanup(async defer => {
+        const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'demo-presentation-native-zoom-'));
+        defer(() => fs.rmSync(profile, { recursive: true, force: true }));
+        fs.mkdirSync(path.join(profile, 'Default'));
+        fs.writeFileSync(path.join(profile, 'Default', 'Preferences'), JSON.stringify({ partition: { default_zoom_level: { x: Math.log(zoom) / Math.log(1.2) } } }));
+        const context = await chromium.launchPersistentContext(profile, { executablePath, headless: true, viewport: null, args: ['--window-size=1440,1000'] });
+        defer(() => context.close());
         const native = context.pages()[0]; observe(native); await guardNetwork(native, url); await native.goto(url); await native.locator('[data-demo-section]').first().waitFor();
         metrics.push(await native.evaluate(() => ({ width: innerWidth, height: innerHeight, dpr: devicePixelRatio, scale: visualViewport.scale })));
         for (const { key } of entries) { await select(native, key); await singleExampleTransitions(native, key, variant => overflow(native, `${key}/native-${zoom * 100}%/${variant}`)); await overflow(native, `${key}/native-${zoom * 100}%`); await labels(native, `${key}/native-${zoom * 100}%`); await activePanel(native).scrollIntoViewIfNeeded();
           const session = await context.newCDPSession(native);
+          const detach = defer(() => session.detach());
           const shot = await session.send('Page.captureScreenshot', { format: 'png', fromSurface: true, captureBeyondViewport: false });
           const buffer = Buffer.from(shot.data, 'base64');
           const filename = path.join(output, `${key}-native-${zoom * 100}-viewport-cdp.png`); fs.writeFileSync(filename, buffer); screenshots.push(filename);
-          check(`${key}/native-${zoom * 100}% physical capture width`, buffer.readUInt32BE(16), 1440); await session.detach(); }
-      } finally { await context?.close(); fs.rmSync(profile, { recursive: true, force: true }); }
+          check(`${key}/native-${zoom * 100}% physical capture width`, buffer.readUInt32BE(16), 1440); await detach(); }
+      });
     }
     check('Native 200% doubles DPR', metrics[1].dpr / metrics[0].dpr, 2);
     check('Native 200% halves CSS viewport', metrics[0].width / metrics[1].width, 2);
     const nativeColorWarning = "The keyword 'slider-vertical' specified to an 'appearance' property is not standardized. It will be removed in the future. Use <input type=range style=\"writing-mode: vertical-lr; direction: rtl\"> instead.";
     check('Unexpected app/browser/network diagnostics', diagnostics.filter(message => !(message.type === 'warning' && message.text === nativeColorWarning)), []);
     console.log(`Integrated actual app: ${checks.length} PASS checks; ${screenshots.length} screenshots; native 200% proved.`);
-  } finally {
-    fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({ scope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `focused source-owned JSDoc migration checkpoint (${pilotScope.scenarios} scenarios, ${pilotScope.features} features)` : process.env.DEMO_PRESENTATION_LOCALIZATION_ONLY === '1' ? 'eight localization families' : 'full demo presentation', jsdocOnly: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1', jsdocScope: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? { ...pilotScope, shellMetadataHelper: 'outside focused checkpoint; retained in full catalogue' } : undefined, browser: browser?.version(), browserPlugin: 'not available', fallback: 'Bundled Playwright + installed Chrome', boundary: process.env.DEMO_PRESENTATION_JSDOC_ONLY === '1' ? `actual explorer/generated pilot modules + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD` : `actual app/explorer/generated scenarios + ${process.env.DEMO_PRESENTATION_MODE || 'compiled'} controls/styles/hooks and real provider; native SP/Graph transport doubles; no tenant CRUD`, sharePointHost: 'NOT EXECUTED', unavailableFontBoundary: 'Exact legacy CDN Segoe assets fulfilled with installed Arial; no external requests', fontAssets, checks, diagnostics, expectedRuntimeDiagnostics, metrics, screenshots }, undefined, 2));
-    await browser?.close(); await new Promise(resolve => server.close(resolve));
-  }
-})().catch(error => { console.error(error); process.exitCode = 1; });
+
+  });
+}
+main().catch(error => { console.error(error); process.exitCode = 1; });

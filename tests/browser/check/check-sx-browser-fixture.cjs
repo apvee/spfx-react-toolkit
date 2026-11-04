@@ -1,5 +1,6 @@
 // Standalone real-browser checkpoint; uses an explicitly supplied installed Playwright.
 // No @playwright/test runner, network service, tenant or new dependency is needed.
+const { withBrowserCleanup } = require('../helpers/browser-runtime.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
@@ -927,11 +928,12 @@ async function runGroups() {
   await page.evaluate(() => window.sxFixture.render({ theme: 'light', dir: 'ltr' }));
 }
 
-(async () => {
+withBrowserCleanup(async defer => {
   fs.mkdirSync(output, { recursive: true });
   browser = await chromium.launch({ headless: true,
     ...(process.env.SX_BROWSER_EXECUTABLE ? { executablePath: process.env.SX_BROWSER_EXECUTABLE } : {}),
     ignoreDefaultArgs: ['--hide-scrollbars'] });
+  defer(() => browser.close());
   page = await browser.newPage({ viewport: { width: 1210, height: 900 } });
   page.on('console', message => { if (['error', 'warning'].includes(message.type())) consoleMessages.push({ type: message.type(), text: message.text() }); });
   page.on('pageerror', error => {
@@ -939,6 +941,13 @@ async function runGroups() {
     else errors.push(`Uncaught browser error: ${error.message}`);
   });
   const version = browser.version();
+  defer(() => {
+    const report = { version, node: process.version, url, viewport: { width: 1210, height: 900 },
+      module: process.env.PLAYWRIGHT_MODULE_PATH || 'playwright', executable: process.env.SX_BROWSER_EXECUTABLE || 'Playwright default',
+      localBrowser: true, ...(process.env.SX_BROWSER_STAGE_ONLY === '1' ? { boundary: 'Actual source Stage, Form, sample and supplemental real Fluent probes', browserRouting: 'Browser plugin not available' } : {}), ...(process.env.SX_BROWSER_SHELL_ONLY === '1' ? { boundary: 'Actual source Shell/provider/store/hooks and sample; SDK/SPFx services only', browserRouting: 'Browser plugin not available' } : {}), sharePointHost: 'NOT EXECUTED', observations, catalogContrasts, thumbInteractionCaptures, consoleMessages, ...(process.env.DATA_GRID_CHART_PROBE === '1' ? { chartProbePageErrors, chartProbe: 'Fixture-only injected rendering failure; successful renders use actual Charts' } : {}), errors };
+    fs.writeFileSync(path.join(output, `${label}.json`), JSON.stringify(report, null, 2));
+    console.log(JSON.stringify({ version, checks: observations.length, failures: errors.length, errors }, null, 2));
+  });
   try {
     if (process.env.SX_BROWSER_STAGE_ONLY === '1') {
       await require('../helpers/stage-browser.helpers.cjs').checkStageBrowser(page, { url, output, label, boundary: 'source', check, consoleMessages });
@@ -964,12 +973,6 @@ async function runGroups() {
     await runGroups();
     }
     if (process.env.SX_BROWSER_FORM_ONLY !== '1' && process.env.DATA_GRID_CHART_PROBE !== '1') await check('console-health', consoleMessages, []);
-  } catch (error) { errors.push(error.stack); }
-  const report = { version, node: process.version, url, viewport: { width: 1210, height: 900 },
-    module: process.env.PLAYWRIGHT_MODULE_PATH || 'playwright', executable: process.env.SX_BROWSER_EXECUTABLE || 'Playwright default',
-    localBrowser: true, ...(process.env.SX_BROWSER_STAGE_ONLY === '1' ? { boundary: 'Actual source Stage, Form, sample and supplemental real Fluent probes', browserRouting: 'Browser plugin not available' } : {}), ...(process.env.SX_BROWSER_SHELL_ONLY === '1' ? { boundary: 'Actual source Shell/provider/store/hooks and sample; SDK/SPFx services only', browserRouting: 'Browser plugin not available' } : {}), sharePointHost: 'NOT EXECUTED', observations, catalogContrasts, thumbInteractionCaptures, consoleMessages, ...(process.env.DATA_GRID_CHART_PROBE === '1' ? { chartProbePageErrors, chartProbe: 'Fixture-only injected rendering failure; successful renders use actual Charts' } : {}), errors };
-  fs.writeFileSync(path.join(output, `${label}.json`), JSON.stringify(report, null, 2));
-  console.log(JSON.stringify({ version, checks: observations.length, failures: errors.length, errors }, null, 2));
-  await browser.close();
+  } catch (error) { errors.push(error.stack); throw error; }
   assert.equal(errors.length, 0, 'Real-browser checkpoint failed; see evidence JSON.');
-})().catch(async error => { console.error(error); if (browser) await browser.close(); process.exitCode = 1; });
+}).catch(error => { console.error(error); process.exitCode = 1; });

@@ -1,30 +1,27 @@
+const { startFixtureServer } = require('../helpers/fixture-server.cjs');
+const { withBrowserCleanup } = require('../helpers/browser-runtime.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const http = require('node:http');
 const playwright = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const mode = process.argv[2] || 'source';
 if (!['source', 'compiled'].includes(mode)) throw new Error('Expected source or compiled');
 const root = path.resolve(__dirname, '../../..');
 const fixture = path.join(root, `temp/migrated-slots-${mode}`);
-const evidence = path.join(root, '.docs/maintenance/evidence/slot-migration');
+const evidence = path.resolve(process.env.MIGRATED_SLOTS_EVIDENCE || path.join(root, '.docs/maintenance/evidence/slot-migration'));
 fs.mkdirSync(evidence, {recursive:true});
 const checks = [];
 const errors = [];
 const peerWarnings = [];
 const colorWarning = `The keyword 'slider-vertical' specified to an 'appearance' property is not standardized. It will be removed in the future. Use <input type=range style="writing-mode: vertical-lr; direction: rtl"> instead.`;
 function check(name, condition) { assert.ok(condition, name); checks.push(name); }
-(async () => {
-  const server = http.createServer((request, response) => {
-    if (new URL(request.url, 'http://localhost').pathname === '/favicon.ico') { response.writeHead(204).end(); return; }
-    const filename = path.join(fixture, new URL(request.url, 'http://localhost').pathname === '/' ? 'index.html' : new URL(request.url, 'http://localhost').pathname.slice(1));
-    if (!filename.startsWith(fixture)) { response.writeHead(403).end(); return; }
-    fs.readFile(filename, (error, data) => { if (error) response.writeHead(404).end(); else { response.setHeader('Content-Type', filename.endsWith('.js') ? 'text/javascript' : 'text/html'); response.end(data); } });
-  });
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const base = `http://127.0.0.1:${server.address().port}`;
-  const browser = await playwright.chromium.launch({ executablePath: process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
-  try {
+async function main() {
+  return withBrowserCleanup(async defer => {
+    const server = await startFixtureServer({ directory: fixture });
+    defer(() => server.close());
+    const base = server.url;
+    const browser = await playwright.chromium.launch({ executablePath: process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
+    defer(() => browser.close());
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     page.on('pageerror', error => errors.push(String(error)));
     page.on('console', message => { if (message.type() === 'warning' && message.text() === colorWarning) peerWarnings.push(message.text());
@@ -237,5 +234,6 @@ function check(name, condition) { assert.ok(condition, name); checks.push(name);
     fs.writeFileSync(path.join(evidence,`migrated-${mode}-result.json`), JSON.stringify({mode,browser:browser.version(),base,viewports:[[1280,900],[390,844]],checks,console:errors,peerWarnings},null,2));
     assert.deepEqual(errors, [], `${mode}: console errors/warnings`);
     console.log(JSON.stringify({mode,checks:checks.length,console:errors},null,2));
-  } finally { await browser.close(); server.close(); }
-})().catch(error => { console.error(error); process.exitCode=1; });
+  });
+}
+main().catch(error => { console.error(error); process.exitCode=1; });

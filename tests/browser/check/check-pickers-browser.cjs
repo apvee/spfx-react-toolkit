@@ -1,23 +1,20 @@
-const assert = require('node:assert/strict'), fs = require('node:fs'), http = require('node:http'), path = require('node:path');
+const { startFixtureServer } = require('../helpers/fixture-server.cjs');
+const { withBrowserCleanup } = require('../helpers/browser-runtime.cjs');
+const assert = require('node:assert/strict'), fs = require('node:fs'), path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 const root = path.resolve(__dirname, '../../..'), directory = path.join(root, 'temp/pickers-browser'), evidence = path.resolve(process.env.PICKERS_BROWSER_EVIDENCE || path.join(root, '.docs/maintenance/evidence/pickers/dropdown'));
-async function main() {
+async function main(defer) {
   fs.mkdirSync(evidence, { recursive: true });
-  const server = http.createServer((request, response) => {
-    const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
-    if (pathname === '/favicon.ico') { response.writeHead(204).end(); return; }
-    const file = { '/': 'index.html', '/fixture.js': 'fixture.js', '/fixture.js.map': 'fixture.js.map' }[pathname];
-    if (!file) { response.writeHead(404).end(); return; }
-    response.setHeader('Content-Type', file.endsWith('.html') ? 'text/html' : 'application/javascript'); response.end(fs.readFileSync(path.join(directory, file)));
-  });
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const server = await startFixtureServer({ directory, files: { '/': 'index.html', '/fixture.js': 'fixture.js', '/fixture.js.map': 'fixture.js.map' } });
+  defer(() => server.close());
   let browser, page; const errors = [], checks = [], layouts = [];
   const check = (name, actual, expected) => { assert.deepEqual(actual, expected, name); checks.push(name); };
+  browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_EXECUTABLE_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });
+  defer(() => browser.close());
   try {
-    browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_EXECUTABLE_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });
     page = await browser.newPage({ viewport: { width: 1280, height: 1000 } });
     page.on('pageerror', error => errors.push(error.message)); page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-    await page.goto(`http://127.0.0.1:${server.address().port}`);
+    await page.goto(server.url);
     const cases = page.locator('[data-picker-case]'); await cases.last().waitFor(); check('56 actual compiled layout cases', await cases.count(), 56);
     const query = () => page.locator('.fui-SearchBox input:visible, .fui-TagPickerInput:focus');
     const rows = () => page.locator('.fui-Option:visible, .fui-TagPickerOption:visible');
@@ -542,8 +539,12 @@ async function main() {
     fs.writeFileSync(path.join(evidence, 'verification.json'), JSON.stringify({ boundary: 'compiled', mock: 'SDK service identifiers and REST transports', checks, galleryCheckCount, nativeChecks, nativeReads, nativeGeometry, layouts, errors, stats: await page.evaluate(() => window.pickerFixture.stats) }, null, 2));
     console.log(`Compiled pickers browser: ${checks.length} gallery checks + ${nativeChecks.length} native checks, ${layouts.length} layouts, errors ${errors.length}. Evidence ${evidence}`);
   } catch (error) {
-    if (page) { const diagnostic = await page.evaluate(() => ({ stats: window.pickerFixture.stats, state: window.pickerFixture.state, active: document.activeElement?.outerHTML.slice(0, 700), open: [...document.querySelectorAll('[aria-expanded="true"]')].map(n => n.getAttribute('aria-label')), rows: [...document.querySelectorAll('[role="option"],[role="menuitemcheckbox"]')].filter(n => n.getBoundingClientRect().width).map(n => n.textContent), errors: document.querySelector('[data-picker-case="PrincipalPicker-tagPicker-multi-wide"] [data-case-errors]')?.textContent })); console.error(JSON.stringify(diagnostic)); await page.screenshot({ path: path.join(evidence, 'failure.png') }); }
-    throw error;
-  } finally { await browser?.close(); await new Promise(resolve => server.close(resolve)); }
+    await withBrowserCleanup(async defer => {
+      defer(async () => {
+        if (page) { const diagnostic = await page.evaluate(() => ({ stats: window.pickerFixture.stats, state: window.pickerFixture.state, active: document.activeElement?.outerHTML.slice(0, 700), open: [...document.querySelectorAll('[aria-expanded="true"]')].map(n => n.getAttribute('aria-label')), rows: [...document.querySelectorAll('[role="option"],[role="menuitemcheckbox"]')].filter(n => n.getBoundingClientRect().width).map(n => n.textContent), errors: document.querySelector('[data-picker-case="PrincipalPicker-tagPicker-multi-wide"] [data-case-errors]')?.textContent })); console.error(JSON.stringify(diagnostic)); await page.screenshot({ path: path.join(evidence, 'failure.png') }); }
+      });
+      throw error;
+    });
+  }
 }
-main().catch(error => { console.error(error); process.exitCode = 1; });
+withBrowserCleanup(main).catch(error => { console.error(error); process.exitCode = 1; });

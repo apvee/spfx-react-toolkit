@@ -1,8 +1,9 @@
 // Actual sample-panel check. Browser plugin unavailable: use explicitly supplied
 // cached Playwright and installed Chrome; do not install or simulate a CSS engine.
+const { startFixtureServer } = require('../helpers/fixture-server.cjs');
+const { withBrowserCleanup } = require('../helpers/browser-runtime.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
-const http = require('node:http');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 const { teamsLightTheme, teamsDarkTheme, teamsHighContrastTheme, webLightTheme } = require('@fluentui/react-theme');
 const root = path.resolve(__dirname, '../../..');
@@ -10,7 +11,7 @@ const fixtureRoot = path.join(root, 'temp/styles-panel-browser');
 const output = path.resolve(process.env.STYLES_PANEL_EVIDENCE || (process.env.STYLES_PANEL_STAGE_ONLY === '1' ? '.docs/maintenance/evidence/stage' : process.env.STYLES_PANEL_SHELL_ONLY === '1' ? '.docs/maintenance/evidence/web-part-shell' : '.docs/maintenance/evidence/use-sx'));
 const label = process.env.STYLES_PANEL_LABEL || (process.env.STYLES_PANEL_STAGE_ONLY === '1' ? 'stage-compiled' : process.env.STYLES_PANEL_SHELL_ONLY === '1' ? 'shell-compiled' : 'task-5-ui-browser');
 const port = Number(process.env.STYLES_PANEL_PORT || 4320);
-const url = `http://127.0.0.1:${port}`;
+let url = `http://127.0.0.1:${port}`;
 const observations = [], failures = [], consoleMessages = [], pageErrors = [];
 const thumbInteractionCaptures = [];
 let browser, server, page;
@@ -74,20 +75,12 @@ async function thumbInteractions(axis) {
   await page.mouse.move(0, 0);
   await capture('leave', 'colorNeutralStrokeAccessible');
 }
-(async () => {
-  fs.mkdirSync(output, { recursive: true });
-  server = http.createServer((request, response) => {
-    const pathname = new URL(request.url, url).pathname;
-    if (pathname === '/favicon.ico') { response.writeHead(204).end(); return; }
-    const file = path.resolve(fixtureRoot, pathname === '/' ? 'index.html' : '.' + pathname);
-    if (!file.startsWith(fixtureRoot + path.sep)) { response.writeHead(403).end(); return; }
-    fs.readFile(file, (error, data) => {
-      if (error) { response.writeHead(404).end(); return; }
-      response.setHeader('Content-Type', file.endsWith('.html') ? 'text/html; charset=utf-8' : 'application/javascript'); response.end(data);
-    });
-  });
-  await new Promise((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', resolve); });
+async function main(defer) {
+  server = await startFixtureServer({ directory: fixtureRoot, port });
+  defer(() => server.close());
+  url = server.url;
   browser = await chromium.launch({ executablePath: process.env.CHROME_EXECUTABLE_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true, ignoreDefaultArgs: ['--hide-scrollbars'] });
+  defer(() => browser.close());
   page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   page.on('console', message => { if (message.type() === 'error' || message.type() === 'warning') consoleMessages.push({ type: message.type(), text: message.text() }); });
   page.on('pageerror', error => pageErrors.push(error.message));
@@ -485,12 +478,16 @@ async function thumbInteractions(axis) {
   check('Groups sample compact no overflow', await settings.evaluate(e => e.scrollWidth <= e.clientWidth), true);
   await settings.screenshot({ path: path.join(output, `${label}-groups-compact.png`) });
   check('console health', consoleMessages, []); check('page errors', pageErrors, []);
-})().catch(error => { failures.push(error.stack || error.message); }).finally(async () => {
-  const version = browser ? browser.version() : 'not launched';
-  if (browser) await browser.close();
-  if (server) await new Promise(resolve => server.close(resolve));
+}
+withBrowserCleanup(async defer => {
   fs.mkdirSync(output, { recursive: true });
-  fs.writeFileSync(path.join(output, `${label}.json`), JSON.stringify({ url, browser: version, boundary: process.env.STYLES_PANEL_STAGE_ONLY === '1' ? 'Actual compiled Stage, Form, sample and supplemental real Fluent probes; Browser plugin not available' : process.env.STYLES_PANEL_SHELL_ONLY === '1' ? 'Actual compiled Shell/provider/store/hooks and sample; SDK/SPFx services only; Browser plugin not available' : 'SPFx Teams/theme hook context only; actual compiled library, sample panel, React17, Griffel, FluentProvider', observations, thumbInteractionCaptures, failures, consoleMessages, pageErrors }, null, 2));
-  console.log(JSON.stringify({ browser: version, checks: observations.length, failures, consoleMessages, pageErrors }, null, 2));
-  if (failures.length) process.exitCode = 1;
-});
+  defer(() => {
+    const version = browser ? browser.version() : 'not launched';
+    fs.mkdirSync(output, { recursive: true });
+    fs.writeFileSync(path.join(output, `${label}.json`), JSON.stringify({ url, browser: version, boundary: process.env.STYLES_PANEL_STAGE_ONLY === '1' ? 'Actual compiled Stage, Form, sample and supplemental real Fluent probes; Browser plugin not available' : process.env.STYLES_PANEL_SHELL_ONLY === '1' ? 'Actual compiled Shell/provider/store/hooks and sample; SDK/SPFx services only; Browser plugin not available' : 'SPFx Teams/theme hook context only; actual compiled library, sample panel, React17, Griffel, FluentProvider', observations, thumbInteractionCaptures, failures, consoleMessages, pageErrors }, null, 2));
+    console.log(JSON.stringify({ browser: version, checks: observations.length, failures, consoleMessages, pageErrors }, null, 2));
+    if (failures.length) process.exitCode = 1;
+  });
+  try { await main(defer); }
+  catch (error) { failures.push(error.stack || error.message); throw error; }
+}).catch(error => { console.error(error); process.exitCode = 1; });
