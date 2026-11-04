@@ -60,6 +60,94 @@ Keep the source fixture server running separately. The builders/runners also imp
 
 The optional Grid failure probe requires `DATA_GRID_CHART_PROBE=1` on both the Grid-only builder and runner. It injects a named rendering failure while delegating successful rendering to actual Charts; it does not prove valid data made Charts throw. Only its exact injected diagnostics are expected. Rebuild without that flag and restart the source server afterward. Normal acceptance must inspect console/page failures rather than suppress them. Native 200% Chrome zoom uses a disposable profile, doubling device pixel ratio and halving the CSS viewport with visual viewport scale one; a smaller viewport or pinch zoom is separate evidence.
 
+### Focused manual fixtures
+
+Run these commands from the repository root after [installing the pinned workspace dependencies](setup.md#layout-and-build-boundary). Use the ordinary root npm commands for library/app builds and verification; the direct Node commands below are focused diagnostic tools. Compiled fixtures require `npm run build:library` first. Fixtures importing emitted sample examples require the versioned generated outputs; run explicit `npm run generated:sync` and `npm run generated:check` only after changing canonical inputs, then rebuild affected compiled code. Running these fixtures needs neither `npm run serve` nor an authenticated workbench. Rebuild the matching fixture after input changes; different Only modes overwrite the same temporary bundle.
+
+The following procedures retain eight separate tools: one FileFolder builder, the migrated-slots builder/checker, the pickers builder/checker, the PnP confirmation builder/checker and the Cards checker. Builders write `index.html`, `fixture.js` and source maps under ignored root `temp`; a successful bundle is not browser acceptance. Checkers fail with a nonzero exit on an assertion or runtime failure. Preserve raw stdout/stderr, mode, bundle identity and exit status alongside any JSON/screenshots: some checkers write their final report only after all assertions pass. Use distinct evidence directories to preserve prior runs.
+
+#### FileFolder compiled fixture
+
+The [FileFolder builder](../../tests/browser/build/build-file-folder-picker-browser.cjs) has no mode argument or environment options:
+
+```bash
+npm run build:library
+node tests/browser/build/build-file-folder-picker-browser.cjs
+```
+
+It writes `temp/file-folder-picker-browser`. There is no dedicated checker. Serve the bounded output using the existing [fixture server helper](../../tests/browser/helpers/fixture-server.cjs), then open its printed loopback URL with an available browser:
+
+```bash
+node <<'NODE'
+const path = require('node:path');
+const { startFixtureServer } = require('./tests/browser/helpers/fixture-server.cjs');
+(async () => {
+  const server = await startFixtureServer({
+    directory: path.resolve('temp/file-folder-picker-browser'),
+    files: { '/': 'index.html', '/fixture.js': 'fixture.js', '/fixture.js.map': 'fixture.js.map' },
+  });
+  const close = () => server.close().catch(error => { console.error(error); process.exitCode = 1; });
+  process.once('SIGINT', close);
+  process.once('SIGTERM', close);
+  console.log(server.url);
+})().catch(error => { console.error(error); process.exitCode = 1; });
+NODE
+```
+
+The helper binds `127.0.0.1` on an allocated port. Stop this process with Ctrl+C after inspection. Inspect selections, changes/errors, size, narrow/RTL/theme cases and the native property-pane adapter in the [fixture](../../tests/fixtures/file-folder-picker-browser/index.tsx); save observations/screenshots manually. It uses compiled control/provider/Stage and the native factory with simulated SDK, metadata and hosted sessions. It does not open or validate the real SharePoint picker dialog, send tenant requests or produce an automated PASS report.
+
+#### Migrated slots source and compiled
+
+The [builder](../../tests/browser/build/build-migrated-slots-browser.cjs) and [checker](../../tests/browser/check/check-migrated-slots-browser.cjs) accept the same positional `source` or `compiled` argument; omission means `source`, and any other value fails:
+
+```bash
+node tests/browser/build/build-migrated-slots-browser.cjs source
+node tests/browser/check/check-migrated-slots-browser.cjs source
+npm run build:library
+node tests/browser/build/build-migrated-slots-browser.cjs compiled
+node tests/browser/check/check-migrated-slots-browser.cjs compiled
+```
+
+Bundles are `temp/migrated-slots-source` and `temp/migrated-slots-compiled`. The checker owns its allocated loopback server and browser. Its historical overrides are **`PLAYWRIGHT_MODULE`** (default Node resolution of `playwright`) and **`CHROME_PATH`** (default `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`), not the names used by the ordinary runners. `MIGRATED_SLOTS_EVIDENCE` overrides `.docs/maintenance/evidence/slot-migration`; successful completion writes `migrated-source-result.json` or `migrated-compiled-result.json` and mode-prefixed screenshots there. The fixture exercises emitted sample panels with the selected implementation and local service/host doubles; it does not establish authenticated host behavior. A failed assertion can prevent the final JSON from being written.
+
+#### Pickers compiled gallery and native adapters
+
+The [pickers builder](../../tests/browser/build/build-pickers-browser.cjs) and [checker](../../tests/browser/check/check-pickers-browser.cjs) have no source/compiled mode switch:
+
+```bash
+npm run build:library
+node tests/browser/build/build-pickers-browser.cjs
+node tests/browser/check/check-pickers-browser.cjs
+```
+
+The builder writes `temp/pickers-browser` with 56 compiled control/provider/Fluent layouts. The checker owns an allocated loopback server and tests the gallery plus native property-pane adapters. `PLAYWRIGHT_MODULE_PATH` selects an existing Playwright installation (default `playwright`); `CHROME_EXECUTABLE_PATH` selects Chrome (default macOS Google Chrome path above). `PICKERS_BROWSER_EVIDENCE` overrides `.docs/maintenance/evidence/pickers/dropdown`. Successful completion writes `verification.json` and screenshots, including `narrow-viewport.png`. SDK identities and REST transports are simulated, including pending/error/paging and hydration cases; native adapters here do not establish actual tenant reads, permissions or property-pane persistence.
+
+#### PnP delete confirmation UI
+
+The [PnP confirmation builder](../../tests/browser/build/build-pnp-confirmation-browser.cjs) and [checker](../../tests/browser/check/check-pnp-confirmation-browser.cjs) have no mode argument:
+
+```bash
+node tests/browser/build/build-pnp-confirmation-browser.cjs
+node tests/browser/check/check-pnp-confirmation-browser.cjs
+```
+
+The builder writes `temp/pnp-confirmation-browser`. This is an emitted source Demo with actual Fluent Dialog and source styling; its [toolkit boundary](../../tests/fixtures/pnp-confirmation-browser/toolkit-boundary.ts) replaces the entire PnP hook/context. It does not execute the real CRUD hook, create a PnP client or prove transport/provider behavior. The checker exercises captured delete consent, cancellation, Escape and focus restoration, and rejects non-loopback requests. It owns its allocated server/browser, accepts `PLAYWRIGHT_MODULE_PATH` and `CHROME_EXECUTABLE_PATH` with the pickers defaults, and uses `PNP_CONFIRMATION_EVIDENCE` (default `.docs/maintenance/evidence/pnp-confirmation`). Cleanup writes `browser-results.json`, including partial checks/diagnostics/network, even on scenario failure; screenshots are recorded as reached. No library/app build is required for this source-and-hook-double fixture.
+
+#### Cards source and compiled
+
+The dedicated [Cards checker](../../tests/browser/check/check-cards-browser.cjs) expects matching Cards-only SX and Styles bundles. Do not use the ordinary default bundles or combine Cards with another Only flag:
+
+```bash
+npm run build:library
+SX_BROWSER_CARDS_ONLY=1 node tests/browser/build/build-sx-browser-fixture.cjs
+STYLES_PANEL_CARDS_ONLY=1 node tests/browser/build/build-styles-panel-browser.cjs
+node tests/browser/check/check-cards-browser.cjs
+```
+
+The checker reads `temp/sx-browser` then `temp/styles-panel-browser`, owning an allocated loopback server for each boundary. It does not use the external SX server or the Styles runner's fixed port. It accepts `PLAYWRIGHT_MODULE_PATH` and `CHROME_EXECUTABLE_PATH` with the pickers defaults. `CARDS_BROWSER_EVIDENCE` overrides `.docs/maintenance/evidence/cards`; successful completion writes `browser-results.json` with both boundary reports and screenshots. A source failure aborts the ordinary CLI before compiled execution and final JSON. Its explicit invalid-image route exercises fallback behavior; local source-owned scenarios and conformance checks do not establish authenticated host behavior.
+
+These procedures are not a claim of full browser acceptance. Local observations have reproduced picker loading-label locale mismatch (en-US bundle versus Italian expectation), PnP Escape dismissal, migrated diagnostic visibility, integrated Demo search cardinality and Cards fallback height (148 versus expected 150) failures. Record the actual first failure and unexecuted downstream checks; do not weaken assertions or infer a compiled result after a source abort. Toolbar source/compiled localization and geometry are separate checks. Authenticated SharePoint validation remains [a separate procedure](sharepoint-validation/INDEX.md).
+
 ### Integrated demo presentation checks
 
 The integrated fixture mounts the actual explorer and lazy scenarios/panels with compiled controls by default. Build with `node tests/browser/build/build-demo-presentation-browser.cjs`, then run `node tests/browser/check/check-demo-presentation-browser.cjs`. Set `DEMO_PRESENTATION_MODE=source` for both commands to test source controls; focused options such as `DEMO_PRESENTATION_TRIMS_ONLY=1` are owned by [the checker](../../tests/browser/check/check-demo-presentation-browser.cjs). It accepts `PLAYWRIGHT_MODULE_PATH`, `CHROME_EXECUTABLE_PATH` and `DEMO_PRESENTATION_EVIDENCE`.

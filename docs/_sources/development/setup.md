@@ -6,7 +6,7 @@ Install from the root lockfile, build the public library before the private samp
 
 ## Layout and build boundary
 
-Public implementation lives in `packages/spfx-react-toolkit/src`; its `lib` directory is compiler output. The sample's source, Gulp configuration and generated `lib`, `dist`, `temp` and `sharepoint` outputs live under `apps/spfx-react-toolkit-test`. Root `tests` and `scripts` own behavioral checks and verification tooling. Reusable fixtures are versioned in `tests/fixtures`; local maintenance evidence and plans belong in ignored `.docs/maintenance` and `.docs/superpowers`.
+Public implementation lives in `packages/spfx-react-toolkit/src`; its `lib` directory is compiler output. The sample's source, Gulp configuration and generated `lib`, `dist`, `temp` and `sharepoint` outputs live under `apps/spfx-react-toolkit-test`. Root `tests/*.test.cjs` owns behavioral checks. Shared documentation generation lives in `scripts/docs`, shared verification in `scripts/verification`, private library build/pack tools in `packages/spfx-react-toolkit/scripts`, sample coverage/reachability tools in `apps/spfx-react-toolkit-test/scripts/verification`, and browser builders/checkers/helpers/serve tools in `tests/browser`. Root npm commands remain the ordinary entry points; use the [focused browser procedures](verification.md#focused-manual-fixtures) for direct fixture diagnostics. Reusable fixtures are versioned in `tests/fixtures`; local maintenance evidence and plans belong in ignored `.docs/maintenance` and `.docs/superpowers`.
 
 ```bash
 npm ci
