@@ -55,8 +55,8 @@ function harness() {
   const { ExampleExplorer } = load('ExampleExplorer.tsx');
   let currentState;
   function Probe() { currentState = state.useExampleExplorerState(); return React.createElement(React.Fragment); }
-  function render(groups, theme = fluent.webLightTheme) {
-    act(() => { ReactDOM.render(React.createElement(fluent.FluentProvider, { theme },
+  function render(groups, theme = fluent.webLightTheme, targetDocument = document) {
+    act(() => { ReactDOM.render(React.createElement(fluent.FluentProvider, { theme, targetDocument },
       React.createElement(state.ExampleExplorerStateProvider, { initialGroups: groups }, React.createElement(Probe), React.createElement(ExampleExplorer, { groups }))), host); });
   }
   const flush = async selector => {
@@ -90,7 +90,7 @@ function harness() {
 }
 
 function scenarios(h) {
-  const mounts = [], cleanups = [], loads = [], completions = [];
+  const mounts = [], cleanups = [], loads = [], completions = [], sourceLoads = [];
   function entry(id, featureKey = 'alpha', groupKey = 'controls', adapter) {
     function Demo({ render, resetRevision = 0, shell }) {
       const [value, setValue] = h.React.useState('baseline');
@@ -109,12 +109,13 @@ function scenarios(h) {
     return { id, ownerKey: featureKey, title: `Scenario ${id}`, featureKey, featureTitle: featureKey, groupKey, groupRoute: `docs/api/${groupKey}/example.md`, publicNames: [featureKey], source: { file: 'fixture.tsx', line: 1 },
       metadata: { host: adapter ? 'webPart' : 'none', kind: 'snapshot', contentPlacement: 'subject', observe: `Observe ${id}`, ...(adapter ? { hostAdapter: adapter } : {}) },
       load: () => { loads.push(id); return Promise.resolve({ Demo }); },
+      loadSource: () => { sourceLoads.push(id); return Promise.resolve({ code: `// Authored ${id}\nexport const text = '<button>Italiano</button>';\n\n` }); },
     };
   }
   const a = entry('a'), b = entry('b'), c = entry('c', 'beta', 'hooks');
   const groups = [{ key: 'controls', title: 'Controls', features: [{ key: 'alpha', title: 'Alpha feature', scenarios: [a, b] }] },
     { key: 'hooks', title: 'Hooks', features: [{ key: 'beta', title: 'Beta feature', scenarios: [c] }] }];
-  return { groups, mounts, cleanups, loads, completions, entry };
+  return { groups, mounts, cleanups, loads, completions, sourceLoads, entry };
 }
 
 test('explorer groups, central scenarios, focus and reset preserve one real example lifecycle', async () => {
@@ -184,6 +185,123 @@ test('empty and removed generated selections have honest fallbacks', async () =>
   } finally { h.close(); }
 });
 
+function deferred() {
+  let resolve, reject;
+  const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
+  return { promise, resolve, reject };
+}
+
+test('source disclosure loads exact escaped text on demand, retains it and preserves the edited demo through Reset', async () => {
+  const h = harness();
+  try {
+    const s = scenarios(h); h.render(s.groups); await h.flush();
+    const input = h.host.querySelector('input'); h.change(input, 'Edited before source');
+    assert.deepEqual(s.sourceLoads, []);
+    const toggle = h.button('Example code');
+    assert.ok(toggle, 'every selected scenario exposes the source disclosure');
+    assert.equal(toggle.getAttribute('aria-expanded'), 'false');
+    h.click(toggle); await h.flush();
+    const code = h.host.querySelector('pre[data-example-source-code] code');
+    assert.equal(code.textContent, "// Authored a\nexport const text = '<button>Italiano</button>';\n\n");
+    const pre = code.parentElement;
+    assert.equal(pre.getAttribute('dir'), 'ltr'); assert.equal(pre.tabIndex, 0);
+    assert.equal(pre.getAttribute('role'), 'region'); assert.equal(pre.getAttribute('aria-label'), 'Example code');
+    assert.match(h.host.textContent, /fixture\.tsx:1/);
+    assert.equal(code.querySelector('button'), null, 'literal code never creates controls');
+    assert.equal(code.querySelector('[data-demo-section]'), null);
+    assert.ok(!h.host.querySelector('[data-demo-section]').contains(pre), 'source stays outside DemoCard');
+    assert.equal(h.host.querySelectorAll('[data-demo-section]').length, 1);
+    assert.equal(h.host.querySelector('input'), input); assert.equal(input.value, 'Edited before source');
+    assert.deepEqual(s.mounts, ['a']); assert.deepEqual(s.loads, ['a']);
+    h.click(toggle);
+    assert.equal(pre.closest('.fui-AccordionPanel').getAttribute('inert'), '', 'closed code and Copy leave the Tab order');
+    h.click(toggle); await h.flush(); assert.deepEqual(s.sourceLoads, ['a']);
+    h.click(h.button('Reset scenario')); await h.flush();
+    assert.equal(h.host.querySelector('input'), input); assert.equal(input.value, 'baseline');
+    assert.equal(toggle.getAttribute('aria-expanded'), 'true'); assert.equal(h.host.querySelector('pre code'), code);
+    assert.deepEqual(s.mounts, ['a']); assert.deepEqual(s.sourceLoads, ['a']);
+    const rules = Object.values(h.renderer.stylesheets).flatMap(sheet => sheet.cssRules());
+    const preRules = rules.filter(rule => Array.from(pre.classList).some(name => rule.includes(`.${name}{`))).join('\n');
+    assert.match(preRules, /max-height:24rem/); assert.match(preRules, /overflow-x:auto/);
+    assert.match(preRules, /max-width:100%/); assert.match(preRules, /min-width:0/);
+  } finally { h.close(); }
+});
+
+test('source failures need explicit Retry; late source success and failure cannot replace the newly selected closed view', async () => {
+  const h = harness();
+  try {
+    const s = scenarios(h), first = deferred(), second = deferred();
+    let loads = 0;
+    s.groups[0].features[0].scenarios[0].loadSource = () => { loads++; return loads === 1 ? first.promise : second.promise; };
+    h.render(s.groups); await h.flush(); h.click(h.button('Example code'));
+    assert.match(h.host.querySelector('[role="status"]').textContent, /Loading example code\.\.\./);
+    assert.equal(h.button('Copy code').disabled, true);
+    await h.act(async () => first.reject(new Error('offline')));
+    assert.match(h.host.querySelector('[role="status"]').textContent, /Unable to load example code\./);
+    h.click(h.button('Example code')); h.click(h.button('Example code')); await h.flush();
+    assert.equal(loads, 1, 'collapse and reopen do not retry an error');
+    h.click(h.button('Retry')); await h.flush(); assert.equal(loads, 2);
+    await h.act(async () => second.resolve({ code: 'retried\n\n' }));
+    assert.equal(h.host.querySelector('pre code').textContent, 'retried\n\n');
+    for (const outcome of ['resolve', 'reject']) {
+      h.change(h.host.querySelector('select[aria-label="Scenario"]'), 'b'); await h.flush();
+      const pending = deferred();
+      s.groups[0].features[0].scenarios[0].loadSource = () => pending.promise;
+      h.change(h.host.querySelector('select[aria-label="Scenario"]'), 'a'); await h.flush();
+      h.click(h.button('Example code'));
+      h.change(h.host.querySelector('select[aria-label="Scenario"]'), 'b'); await h.flush();
+      await h.act(async () => outcome === 'resolve' ? pending.resolve({ code: 'departed source' }) : pending.reject(new Error('departed error')));
+      assert.equal(h.button('Example code').getAttribute('aria-expanded'), 'false');
+      assert.doesNotMatch(h.host.textContent, /departed source|Unable to load example code/);
+      h.click(h.button('Example code')); await h.flush();
+      assert.equal(h.host.querySelector('pre code').textContent, "// Authored b\nexport const text = '<button>Italiano</button>';\n\n");
+    }
+  } finally { h.close(); }
+});
+
+test('copy uses the Fluent owner-document clipboard on explicit click, locks pending writes and announces only settled results', async () => {
+  const h = harness(), iframe = document.createElement('iframe'); document.body.appendChild(iframe);
+  const clipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
+  try {
+    const owner = iframe.contentDocument, writes = [], pending = deferred();
+    // This older JSDOM lacks Window.crypto; Tabster uses it for owner-document IDs.
+    Object.defineProperty(owner.defaultView, 'crypto', { value: require('node:crypto').webcrypto });
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText() { throw Error('Wrong document'); } } });
+    Object.defineProperty(owner.defaultView.navigator, 'clipboard', { configurable: true, value: { writeText(code) { writes.push(code); return pending.promise; } } });
+    const s = scenarios(h); h.render(s.groups, h.fluent.webLightTheme, owner); await h.flush();
+    h.click(h.button('Example code')); await h.flush();
+    assert.deepEqual(writes, [], 'viewing source performs no clipboard write');
+    const input = h.host.querySelector('input'); h.change(input, 'Retained copy note');
+    h.click(h.button('Copy code'));
+    assert.deepEqual(writes, ["// Authored a\nexport const text = '<button>Italiano</button>';\n\n"]);
+    assert.equal(h.button('Copying...').disabled, true); h.click(h.button('Copying...')); assert.equal(writes.length, 1);
+    assert.doesNotMatch(h.host.querySelector('[role="status"]').textContent, /Copied/);
+    await h.act(async () => pending.resolve());
+    assert.equal(h.host.querySelector('[role="status"]').textContent, 'Copied'); assert.equal(h.button('Copy code').disabled, false);
+    assert.equal(h.host.querySelector('input'), input); assert.equal(input.value, 'Retained copy note'); assert.deepEqual(s.mounts, ['a']);
+    for (const available of [false, true]) {
+      Object.defineProperty(owner.defaultView.navigator, 'clipboard', { configurable: true, value: available ? { writeText: () => Promise.reject(new Error('denied')) } : undefined });
+      h.click(h.button('Copy code')); await h.flush();
+      assert.equal(h.host.querySelector('[role="status"]').textContent, 'Unable to copy code. Select and copy it manually.');
+      assert.equal(h.host.querySelector('pre code').textContent, writes[0], 'manual selection remains available');
+    }
+    for (const outcome of ['resolve', 'reject']) {
+      const late = deferred();
+      Object.defineProperty(owner.defaultView.navigator, 'clipboard', { configurable: true, value: { writeText: () => late.promise } });
+      h.click(h.button('Copy code'));
+      h.change(h.host.querySelector('select[aria-label="Scenario"]'), 'b'); await h.flush();
+      await h.act(async () => outcome === 'resolve' ? late.resolve() : late.reject(new Error('late denial')));
+      assert.equal(h.button('Example code').getAttribute('aria-expanded'), 'false');
+      assert.doesNotMatch(h.host.textContent, /Copied|Unable to copy/);
+      h.change(h.host.querySelector('select[aria-label="Scenario"]'), 'a'); await h.flush();
+      h.click(h.button('Example code')); await h.flush();
+    }
+  } finally {
+    h.close(); iframe.remove();
+    if (clipboard) Object.defineProperty(navigator, 'clipboard', clipboard); else delete navigator.clipboard;
+  }
+});
+
 test('Shell port projects only presentation defaults and delegates patches; instance keys isolate navigation above body remounts', async () => {
   const h = harness();
   try {
@@ -213,17 +331,42 @@ test('Shell port projects only presentation defaults and delegates patches; inst
     assert.equal(port.presentation.appearance, 'subtle');
     h.change(h.host.querySelector('select[aria-label="Scenario"]'), 'b'); await h.flush();
     const before = h.host.querySelector('input'); h.change(before, 'before card');
+    h.click(h.button('Example code')); await h.flush();
+    const authoredSource = h.host.querySelector('pre code').textContent;
+    const oldCopy = deferred();
+    const clipboardBefore = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: () => oldCopy.promise } });
+    h.click(h.button('Copy code'));
+    assert.equal(h.host.querySelector('input'), before, 'source/copy keeps the native Shell body');
+    assert.equal(before.value, 'before card'); assert.equal(port.presentation.appearance, 'subtle');
     h.act(() => { port.updatePresentation({ appearance: 'outline', size: 'small' }); }); await h.flush();
     assert.equal(state.selectedFeatureKey, 'alpha'); assert.equal(state.selectedScenarioByFeature.alpha, 'b');
     assert.equal(h.host.querySelector('select[aria-label="Scenario"]').value, 'b', 'selection survives real body remount');
     assert.notEqual(h.host.querySelector('input'), before, 'scenario follows the real Shell body boundary');
     assert.equal(h.host.querySelector('input').value, 'baseline');
+    assert.equal(h.button('Example code').getAttribute('aria-expanded'), 'false', 'source ownership follows the Shell remount');
+    await h.act(async () => oldCopy.resolve());
+    assert.doesNotMatch(h.host.textContent, /Copied|Unable to copy/);
+    if (clipboardBefore) Object.defineProperty(navigator, 'clipboard', clipboardBefore); else delete navigator.clipboard;
+    h.click(h.button('Example code')); await h.flush();
+    assert.equal(h.host.querySelector('pre code').textContent, authoredSource, 'reopened remount shows the same authored text');
     assert.equal(options.presentation.dir, 'rtl'); assert.equal(options.presentation.action.props['data-source-action'], '');
     assert.equal(port.presentation.appearance, 'outline');
     const cardInput = h.host.querySelector('input'); h.change(cardInput, 'card note');
     h.act(() => port.updatePresentation({ appearance: 'filled', size: 'large', titlePosition: 'inside', padding: 'none' })); await h.flush();
     assert.equal(h.host.querySelector('input'), cardInput, 'non-subtle Card presentation updates preserve body');
     assert.equal(cardInput.value, 'card note');
+    // A source load dispatched in the old Card body also loses feedback ownership.
+    const oldSource = deferred();
+    const b = s.groups[0].features[0].scenarios[1], originalLoadSource = b.loadSource;
+    b.loadSource = () => oldSource.promise;
+    h.act(() => port.updatePresentation({ appearance: 'subtle' })); await h.flush();
+    h.click(h.button('Example code'));
+    h.act(() => port.updatePresentation({ appearance: 'outline' })); await h.flush();
+    await h.act(async () => oldSource.reject(new Error('old Shell body')));
+    assert.equal(h.button('Example code').getAttribute('aria-expanded'), 'false');
+    assert.doesNotMatch(h.host.textContent, /Unable to load example code/);
+    b.loadSource = originalLoadSource;
     h.act(() => state.resetScenario()); assert.equal(state.resetRevision, 1);
     render(['first', 'second']); await h.flush();
     assert.equal(instances.get('first').state.selectedScenarioByFeature.alpha, 'b');

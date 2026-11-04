@@ -154,7 +154,7 @@ for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} 
 });
 
 test('SDK/provider doubles: disposal before the generated lazy completion never publishes into captured or replacement DOM', async t => {
-  const handlers=new Set(), placeholders=[]; let resolveModule, mounted=0, cleaned=0;
+  const handlers=new Set(), placeholders=[]; let resolveModule, mounted=0, cleaned=0, sourceLoads=0;
   class NativeApplicationCustomizer {
     get instanceId() { return this.context.instanceId; }
     constructor() { this.context={instanceId:'late',placeholderProvider:{changedEvent:{add:(_owner,fn)=>handlers.add(fn),remove:(_owner,fn)=>handlers.delete(fn)},tryCreateContent:(_name,options)=>{
@@ -162,7 +162,7 @@ test('SDK/provider doubles: disposal before the generated lazy completion never 
       const placeholder={domElement,notifyDisposal:options.onDispose,dispose:()=>options.onDispose()}; placeholders.push(placeholder); return placeholder;
     }}}; }
   }
-  const entry={id:'delayed-native-top',title:'Delayed Top',featureKey:'top',featureTitle:'Top',metadata:{host:'applicationCustomizer',hostAdapter:'applicationCustomizerTop',contentPlacement:'configuration',observe:'Wait for an actual lazy module.'},load:()=>new Promise(resolve=>{resolveModule=resolve;})};
+  const entry={id:'delayed-native-top',ownerKey:'top',title:'Delayed Top',featureKey:'top',featureTitle:'Top',groupKey:'core',groupRoute:'docs/api/core/providers.md',publicNames:['SPFxApplicationCustomizerProvider'],source:{file:'fixture.tsx',line:1},metadata:{host:'applicationCustomizer',hostAdapter:'applicationCustomizerTop',kind:'snapshot',contentPlacement:'configuration',observe:'Wait for an actual lazy module.'},load:()=>new Promise(resolve=>{resolveModule=resolve;}),loadSource:()=>{sourceLoads++;return Promise.resolve({code:'// Delayed Top fixture\n'});}};
   const groups=[{key:'core',title:'Providers and context',features:[{key:'top',title:'Top',scenarios:[entry]}]}];
   let h;
   const toolkit={SPFxApplicationCustomizerProvider:props=>{h.React.useEffect(()=>{mounted++;return()=>{cleaned++;};},[]);return props.children;},useSPFxFluent9ThemeInfo:()=>({theme:require('@fluentui/react-components').webLightTheme}),useSPFxPageContext:()=>({cultureInfo:{isRightToLeft:false}})};
@@ -177,4 +177,5 @@ test('SDK/provider doubles: disposal before the generated lazy completion never 
   await h.act(async()=>{resolveModule({Demo:props=>h.React.createElement('output',{'data-late-top':''},props.applicationCustomizerTop.placeholder)});await Promise.resolve();});
   assert.equal(old.domElement.textContent,''); assert.equal(replacement.domElement.textContent,'');
   h.act(()=>{old.notifyDisposal();captured();instance.onDispose();}); assert.equal(placeholders.length,2); assert.equal(handlers.size,0);
+  assert.equal(sourceLoads,0,'native Top mount and disposal never load closed example source');
 });

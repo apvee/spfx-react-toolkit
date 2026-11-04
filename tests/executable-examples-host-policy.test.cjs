@@ -11,7 +11,7 @@ function policy() {
  new Function('module','exports',code)(module,module.exports);
  return module.exports;
 }
-const entry = (id, host, hostAdapter) => ({ id, metadata: { host, ...(hostAdapter ? { hostAdapter } : {}) }, load() { throw Error('Filtering must not load'); } });
+const entry = (id, host, hostAdapter) => ({ id, source: { file: 'fixture.tsx', line: 1 }, loadSource() { throw Error('Filtering must not load source'); }, metadata: { host, ...(hostAdapter ? { hostAdapter } : {}) }, load() { throw Error('Filtering must not load'); } });
 const top = entry('top', 'applicationCustomizer', 'applicationCustomizerTop');
 const ordinary = entry('none', 'none');
 const webpart = entry('webpart', 'webPart');

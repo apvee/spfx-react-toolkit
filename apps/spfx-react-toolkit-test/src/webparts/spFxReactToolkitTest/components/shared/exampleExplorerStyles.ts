@@ -23,4 +23,15 @@ export const useExampleExplorerStyles = makeStyles({
   breadcrumb: { color: tokens.colorNeutralForeground2, overflowWrap: 'anywhere' },
   toolbar: { display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: tokens.spacingHorizontalM, minWidth: 0,
     '& > *': { minWidth: 0, maxWidth: '100%' } },
+  source: { minWidth: 0, maxWidth: '100%' },
+  sourcePanel: { display: 'flex', flexDirection: 'column', gap: tokens.spacingVerticalS, minWidth: 0 },
+  sourceProvenance: { color: tokens.colorNeutralForeground2, overflowWrap: 'anywhere' },
+  sourceCode: {
+    minWidth: 0, maxWidth: '100%', maxHeight: '24rem', overflowX: 'auto', overflowY: 'auto',
+    boxSizing: 'border-box', margin: 0, padding: tokens.spacingHorizontalM,
+    whiteSpace: 'pre', fontFamily: tokens.fontFamilyMonospace, fontSize: tokens.fontSizeBase200,
+    lineHeight: tokens.lineHeightBase200, color: tokens.colorNeutralForeground1,
+    backgroundColor: tokens.colorNeutralBackground2, border: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStroke2}`,
+    borderRadius: tokens.borderRadiusMedium,
+  },
 });

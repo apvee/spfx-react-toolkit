@@ -4,6 +4,7 @@ import type { ExecutableGroup } from './generated/jsdoc-examples/catalogue';
 import { ExampleExplorerNavigation, getNavigationGroups } from './shared/ExampleExplorerNavigation';
 import { useExampleExplorerState } from './shared/ExampleExplorerState';
 import { ExecutableExampleHost } from './shared/ExecutableExampleHost';
+import { ExecutableExampleSource } from './shared/ExecutableExampleSource';
 import { useExampleExplorerStyles } from './shared/exampleExplorerStyles';
 
 export function ExampleExplorer({ groups }: {
@@ -20,7 +21,7 @@ export function ExampleExplorer({ groups }: {
   return <div className={styles.root}>
     <div className={styles.layout}>
       <ExampleExplorerNavigation groups={groups} />
-      <div className={styles.panel} role="region" aria-label={selected?.title ?? 'Esempi'}>
+      <div className={styles.panel} role="region" aria-label={selected?.title ?? 'Examples'}>
         {selected ? <>
           <Text className={styles.breadcrumb}>{group?.title} / {selected.title}</Text>
           <Text as="h2" size={600} weight="semibold" className={styles.heading}>{selected.title}</Text>
@@ -35,6 +36,7 @@ export function ExampleExplorer({ groups }: {
             </div>
             <Text><strong>What to observe: </strong>{entry.metadata.observe}</Text>
             <ExecutableExampleHost entry={entry} resetRevision={state.resetRevision} />
+            <ExecutableExampleSource key={entry.id} entry={entry} />
           </>}
         </> : <Text>No scenarios available.</Text>}
       </div>
