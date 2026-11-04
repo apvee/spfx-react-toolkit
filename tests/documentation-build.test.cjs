@@ -18,7 +18,7 @@ function mirror(t, real = false) {
   } else fs.cpSync(fixture, root, { recursive: true });
   fs.copyFileSync(path.join(repository, 'packages/spfx-react-toolkit/tsdoc.json'), path.join(root, 'packages/spfx-react-toolkit/tsdoc.json'));
   fs.copyFileSync(path.join(repository, 'package-lock.json'), path.join(root, 'package-lock.json'));
-  require('./fixtures/generated-tooling/helpers.cjs').copyEngineInputs(root, ['scripts/localization-resources.cjs', 'scripts/pack-library.cjs']);
+  require('./fixtures/generated-tooling/helpers.cjs').copyEngineInputs(root, ['packages/spfx-react-toolkit/scripts/localization-resources.cjs', 'packages/spfx-react-toolkit/scripts/pack-library.cjs']);
   fs.symlinkSync(path.join(repository, 'node_modules'), path.join(root, 'node_modules'), 'dir');
   return root;
 }
@@ -73,8 +73,10 @@ test('CLI --check overrides write, rejects unknown env and arguments, and valida
 });
 test('library build keeps compilation/localization and CI checks explicit generated artifacts before build', () => {
   const metadata = require('../packages/spfx-react-toolkit/package.json');
-  assert.equal(metadata.scripts.build, 'node ../../scripts/localization-resources.cjs --check-inventory && tsc -p tsconfig.json && node ../../scripts/localization-resources.cjs --emit');
+  assert.equal(metadata.scripts.build, 'node scripts/localization-resources.cjs --check-inventory && tsc -p tsconfig.json && node scripts/localization-resources.cjs --emit');
+  assert.equal(metadata.scripts['pack:artifact'], 'node scripts/pack-library.cjs');
   const root = require('../package.json');
+  assert.equal(root.scripts['pack:library'], 'npm run build:library && npm run pack:artifact --workspace @apvee/spfx-react-toolkit');
   assert.equal(root.scripts['docs:generate'], 'node scripts/docs/documentation.cjs');
   assert.equal(root.scripts['docs:check'], 'node scripts/docs/documentation.cjs --check');
   assert.equal(root.scripts['generated:sync'], 'node scripts/docs/generated.cjs');
@@ -155,4 +157,24 @@ test('real copied library build compiles/localizes stale or missing documents; s
   build('missing development directory and llms.txt', [...expectedDevelopmentRoutes, 'llms.txt']);
   assert.equal(fs.existsSync(path.join(root, 'docs/development')), false, 'build must not recreate the missing directory');
   completed = true;
+});
+
+test('package-owned pack uses its library and repository artifacts from a neutral cwd', t => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'library-pack-boundary-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const library = path.join(root, 'packages/spfx-react-toolkit');
+  fs.mkdirSync(path.join(library, 'scripts'), { recursive: true });
+  fs.copyFileSync(path.join(repository, 'packages/spfx-react-toolkit/scripts/pack-library.cjs'), path.join(library, 'scripts/pack-library.cjs'));
+  fs.writeFileSync(path.join(library, 'package.json'), JSON.stringify({ name: 'toolkit-pack-boundary', version: '1.0.0', files: ['payload.txt'] }));
+  fs.writeFileSync(path.join(library, 'payload.txt'), 'owned library payload\n');
+  const result = spawnSync(process.execPath, [path.join(library, 'scripts/pack-library.cjs')], { cwd: os.tmpdir(), encoding: 'utf8', timeout: 30000 });
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  const archive = path.join(root, 'artifacts/toolkit-pack-boundary-1.0.0.tgz');
+  assert.ok(fs.existsSync(archive), result.stdout + result.stderr);
+  const listing = spawnSync('tar', ['-tzf', archive], { encoding: 'utf8' });
+  assert.equal(listing.status, 0, listing.stderr);
+  assert.deepEqual(listing.stdout.trim().split('\n').sort(), ['package/package.json', 'package/payload.txt']);
+  const payload = spawnSync('tar', ['-xOzf', archive, 'package/payload.txt'], { encoding: 'utf8' });
+  assert.equal(payload.status, 0, payload.stderr);
+  assert.equal(payload.stdout, 'owned library payload\n');
 });

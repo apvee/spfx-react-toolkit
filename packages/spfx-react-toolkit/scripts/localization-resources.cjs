@@ -240,7 +240,7 @@ function main(args) {
   const modes = ['--write-inventory', '--check-inventory', '--emit'];
   const mode = args.shift();
   if (!modes.includes(mode)) throw new Error(`Expected one mode: ${modes.join(', ')}`);
-  let packageRoot = path.resolve(__dirname, '../packages/spfx-react-toolkit');
+  let packageRoot = path.resolve(__dirname, '..');
   if (args.length) {
     if (args.length !== 2 || args[0] !== '--package-root' || !args[1]) throw new Error('Unknown options; optional --package-root <directory> is supported');
     packageRoot = path.resolve(args[1]);
@@ -249,7 +249,7 @@ function main(args) {
   const bytes = JSON.stringify(buildInventory(packageRoot), undefined, 2) + '\n';
   const inventory = boundedOutputPath(packageRoot, 'localization/resources.json');
   if (mode === '--check-inventory') {
-    if (!fs.existsSync(inventory) || fs.readFileSync(inventory, 'utf8') !== bytes) throw new Error('Localization inventory is stale; run scripts/localization-resources.cjs --write-inventory');
+    if (!fs.existsSync(inventory) || fs.readFileSync(inventory, 'utf8') !== bytes) throw new Error('Localization inventory is stale; run node packages/spfx-react-toolkit/scripts/localization-resources.cjs --write-inventory from the repository root');
     return;
   }
   fs.writeFileSync(inventory, bytes);

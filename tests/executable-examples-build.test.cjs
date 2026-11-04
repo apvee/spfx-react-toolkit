@@ -24,7 +24,8 @@ test('root/workspace build, serve, bundle, package and pack lifecycles never gen
     fs.writeFileSync(filename, '#!/bin/sh\nprintf "%s\\n" "$0 $*" >> "$LIFECYCLE_LOG"\n'); fs.chmodSync(filename, 0o755);
   }
   fs.mkdirSync(path.join(root, 'scripts/docs'), { recursive: true });
-  for (const name of ['localization-resources', 'pack-library']) fs.writeFileSync(path.join(root, 'scripts/' + name + '.cjs'), "require('node:fs').appendFileSync(process.env.LIFECYCLE_LOG, process.argv.slice(1).join(' ') + '\\n');\n");
+  fs.mkdirSync(path.join(root, h.config.packageRoot, 'scripts'), { recursive: true });
+  for (const name of ['localization-resources', 'pack-library']) fs.writeFileSync(path.join(root, h.config.packageRoot, 'scripts/' + name + '.cjs'), "require('node:fs').appendFileSync(process.env.LIFECYCLE_LOG, process.argv.slice(1).join(' ') + '\\n');\n");
   for (const name of ['documentation', 'generated', 'executable-examples']) fs.writeFileSync(path.join(root, 'scripts/docs/' + name + '.cjs'), "throw new Error('Forbidden generation/check in lifecycle');\n");
   for (const route of metadata) {
     const scripts = JSON.parse(fs.readFileSync(path.join(root, route), 'utf8')).scripts;
@@ -59,7 +60,7 @@ test('real app compiler consumes copied compiled library and catches invalid/mis
     fs.mkdirSync(path.dirname(path.join(root, route)), { recursive: true });
     fs.cpSync(path.join(h.repository, route), path.join(root, route), { recursive: true, filter: source => !/(?:^|\/)(?:node_modules|lib|dist|temp|release|sharepoint|\.docs)(?:\/|$)/.test(source) });
   }
-  h.copyEngineInputs(root, ['scripts/localization-resources.cjs', 'scripts/pack-library.cjs']);
+  h.copyEngineInputs(root, ['packages/spfx-react-toolkit/scripts/localization-resources.cjs', 'packages/spfx-react-toolkit/scripts/pack-library.cjs']);
   fs.symlinkSync(path.join(h.repository, 'node_modules'), path.join(root, 'node_modules'), 'dir');
   // A root node_modules symlink contains the ORIGINAL workspace link. Override
   // that package at the app's nearest resolution boundary, preserving its peers.
